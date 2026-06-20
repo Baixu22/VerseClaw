@@ -1,0 +1,859 @@
+{
+  "gatewayNotRunning": "Gateway Not Running",
+  "gatewayRequired": "The OpenClaw Gateway needs to be running to use chat. It will start automatically, or you can start it from Settings.",
+  "welcome": {
+    "title": "ClawX Chat",
+    "subtitle": "What can I do for you?",
+    "askQuestions": "Handle Tasks",
+    "askQuestionsDesc": "Work on task-oriented requests",
+    "creativeTasks": "Continuous Execution",
+    "creativeTasksDesc": "Keep running through multi-step work",
+    "brainstorming": "Multi-Agent Parallel"
+  },
+  "noLogs": "(No logs available yet)",
+  "scrollToLatest": "Back to bottom",
+  "loadMoreHistory": "Load earlier messages",
+  "loadingMoreHistory": "Loading more…",
+  "toolbar": {
+    "refresh": "Refresh chat",
+    "currentAgent": "Talking to {{agent}}",
+    "workspace": "Workspace",
+    "saveToKnowledge": "Save to Knowledge"
+  },
+  "markdown": {
+    "codeBlock": "Code",
+    "copyCode": "Copy code",
+    "copiedCode": "Copied"
+  },
+  "toolUi": {
+    "actions": {
+      "back": "Back",
+      "next": "Next",
+      "copyResponse": "Copy response",
+      "copied": "Copied",
+      "insertResponse": "Insert response",
+      "sendResponse": "Send response"
+    },
+    "plan": {
+      "label": "Plan",
+      "progress": "{{completed}} of {{total}} complete",
+      "showMore": "Show {{count}} more"
+    },
+    "optionList": {
+      "label": "Options"
+    },
+    "questionFlow": {
+      "label": "Question",
+      "step": "Step {{current}} of {{total}}"
+    },
+    "preferencesPanel": {
+      "label": "Preferences",
+      "on": "On",
+      "off": "Off"
+    },
+    "receipt": {
+      "complete": "Complete",
+      "saved": "Saved",
+      "error": "Needs attention"
+    }
+  },
+  "knowledgeDraft": {
+    "title": "Save to Knowledge",
+    "description": "Review and edit the synthesis before it enters the Knowledge draft inbox. Applying it still requires user confirmation.",
+    "titleLabel": "Title",
+    "bodyLabel": "Draft",
+    "apply": "Create review draft",
+    "empty": "There is no visible conversation content to save.",
+    "invalid": "Add a title and draft body before applying.",
+    "applied": "Draft created for Knowledge review.",
+    "applyFailed": "Failed to save the knowledge draft.",
+    "proposalReason": "User requested this chat synthesis be saved as a pending Knowledge draft."
+  },
+  "generatedFiles": {
+    "title": "File changes ({{count}})",
+    "created": "Created",
+    "modified": "Modified",
+    "openFolder": "Open folder",
+    "viewAll": "View all changes"
+  },
+  "runError": {
+    "title": "Model call failed"
+  },
+  "artifactPanel": {
+    "tabs": {
+      "changes": "Changes",
+      "preview": "Preview",
+      "browser": "Workspace"
+    },
+    "workspaceTabs": {
+      "files": "Files",
+      "terminal": "Terminal",
+      "git": "Git",
+      "web": "Web",
+      "audit": "Audit"
+    },
+    "actions": {
+      "back": "Back to list"
+    },
+    "changes": {
+      "heading": "File changes ({{count}})",
+      "empty": "No file changes in this conversation yet",
+      "selectFileHint": "Click a file card in the chat or “View changes” to open a diff."
+    },
+    "preview": {
+      "emptyTitle": "No file selected",
+      "emptyHint": "Click a file card in the chat first; the selected file will preview here."
+    }
+  },
+  "filePreview": {
+    "tabs": {
+      "source": "Source",
+      "preview": "Preview",
+      "changes": "Changes",
+      "info": "Info"
+    },
+    "actions": {
+      "save": "Save",
+      "saving": "Saving...",
+      "revert": "Revert",
+      "openInFinder": "Reveal in file manager",
+      "openDirectly": "Open directly",
+      "close": "Close"
+    },
+    "info": {
+      "path": "Path",
+      "size": "Size",
+      "type": "Type"
+    },
+    "toast": {
+      "saved": "Saved to disk",
+      "saveFailed": "Save failed: {{error}}"
+    },
+    "errors": {
+      "outsideSandbox": "Path outside sandbox — access denied",
+      "outsideSandboxTitle": "Could not read this file",
+      "outsideSandboxHint": "ClawX could not read this path. The file may have been moved or deleted, or the current account may not have permission. You can still reveal it in the file manager.",
+      "readOnlyRoot": "File lives in a read-only location (e.g. bundled skill) and cannot be modified",
+      "tooLarge": "File too large ({{size}}); preview disabled",
+      "binary": "Binary file — text preview unavailable",
+      "notFound": "File not found",
+      "loadFailed": "Load failed: {{error}}",
+      "noPreview": "No preview available for this file",
+      "unsupportedFormatTitle": "This file format is not supported for built-in preview or diff",
+      "unsupportedFormatHint": "Built-in preview and diff currently support directly readable text/Markdown-style files only. Open the file in the file manager instead.",
+      "largeBinaryOpenTitle": "This file is too large for built-in preview",
+      "largeBinaryOpenHint": "This file is {{size}}. ClawX cannot preview it inline, but you can confirm and open it with the system default app.",
+      "openInFinderFailed": "Could not reveal file",
+      "openFailed": "Open failed: {{error}}"
+    },
+    "diff": {
+      "noChanges": "No changes to display",
+      "newFile": "New file — no original to compare",
+      "tooLarge": "File too large — diff view disabled, switch to the Source tab to view the full content",
+      "unavailable": "The current chat did not capture a precise baseline for this file, so no diff is available.",
+      "unavailableHint": "Use the Preview tab for the current file; use Git or another VCS for an exact diff."
+    },
+    "confirmOpen": {
+      "title": "Open file",
+      "message": "Open “{{fileName}}” with the system default app?",
+      "detail": "This file will be opened with the system default application.",
+      "size": "File size: {{size}}",
+      "cancel": "Cancel"
+    },
+    "pdf": {
+      "loadFailed": "Failed to load PDF: {{error}}",
+      "prev": "Previous page",
+      "next": "Next page",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "zoomReset": "Fit to width",
+      "pageInputAria": "Current page",
+      "singlePageHint": "Use the toolbar to switch between {{total}} pages"
+    },
+    "sheet": {
+      "loadFailed": "Failed to load spreadsheet: {{error}}",
+      "empty": "This file has no displayable worksheets",
+      "emptySheet": "This worksheet is empty",
+      "unnamedSheet": "Sheet {{idx}}",
+      "rowRange": "Rows {{from}}-{{to}} / {{total}}",
+      "prevPage": "Previous rows",
+      "nextPage": "Next rows"
+    }
+  },
+  "workspace": {
+    "title": "Workspace",
+    "freshBadge": "Updated this run",
+    "pickFile": "Select a file from the left to preview",
+    "empty": "Workspace is empty or inaccessible",
+    "truncated": "Directory truncated — only the first 5000 entries shown",
+    "actions": {
+      "refresh": "Refresh",
+      "openRootInFinder": "Reveal workspace in file manager",
+      "toggleHidden": "Toggle hidden files",
+      "showHidden": "Show hidden files",
+      "hideHidden": "Hide hidden files"
+    },
+    "terminal": {
+      "title": "Workspace terminal",
+      "noWorkspace": "No workspace selected",
+      "permission": {
+        "readOnly": "Read only",
+        "acceptEdits": "Accept edits",
+        "plan": "Plan",
+        "fullAccess": "Full access"
+      },
+      "status": {
+        "idle": "Idle",
+        "starting": "Starting",
+        "running": "Running",
+        "exited": "Exited",
+        "blocked": "Blocked"
+      },
+      "actions": {
+        "start": "Start",
+        "interrupt": "Ctrl+C",
+        "close": "Close",
+        "clear": "Clear",
+        "approve": "Approve"
+      },
+      "blocked": {
+        "title": "Interactive terminal is disabled in this permission mode",
+        "body": "Switch to Accept edits or Full access before starting a live terminal."
+      },
+      "approval": {
+        "title": "Interactive terminal is waiting for approval"
+      },
+      "toast": {
+        "approvalRequired": "Interactive terminal requires approval",
+        "blocked": "Terminal launch was blocked",
+        "approvalFailed": "Approval failed"
+      }
+    },
+    "web": {
+      "title": "Web preview",
+      "mode": {
+        "static": "Static",
+        "devServer": "Dev server",
+        "externalUrl": "External URL"
+      },
+      "status": {
+        "idle": "idle"
+      },
+      "fields": {
+        "targetPath": "Target path",
+        "targetPathPlaceholder": "Relative path, e.g. index.html",
+        "url": "URL",
+        "detectScriptsFirst": "Detect scripts first"
+      },
+      "actions": {
+        "detect": "Detect",
+        "start": "Start",
+        "stop": "Stop",
+        "pickComponent": "Pick component",
+        "picking": "Picking",
+        "clearSelection": "Clear selection",
+        "sendToComposer": "Send to composer",
+        "captureAndSend": "Capture and send",
+        "capturing": "Capturing"
+      },
+      "tooltips": {
+        "captureAndSend": "Send the selected component with a preview screenshot."
+      },
+      "browser": {
+        "placeholder": "Start a preview to load a URL",
+        "title": "Workspace preview"
+      },
+      "selection": {
+        "selected": "Selected"
+      },
+      "empty": "{{mode}} preview will appear here after it starts.",
+      "toast": {
+        "noScripts": "No package scripts were detected",
+        "startFailed": "Failed to start preview",
+        "started": "Web preview started",
+        "sent": "Sent to the composer",
+        "screenshotUnavailable": "Screenshot is unavailable; sent component details only",
+        "screenshotFailed": "Screenshot failed; sent component details only",
+        "screenshotSent": "Screenshot and component details sent"
+      },
+      "prompt": {
+        "title": "Please adjust the component selected in the Web preview.",
+        "context": "Preview context",
+        "mode": "Mode",
+        "previewUrl": "Preview URL",
+        "targetUrl": "Target URL",
+        "workspace": "Workspace",
+        "screenshot": "Preview screenshot",
+        "clip": "Clip",
+        "selected": "Selected component",
+        "tag": "Tag",
+        "text": "Text",
+        "attributes": "Attributes",
+        "position": "Position",
+        "html": "HTML snippet",
+        "instruction": "Locate the source for this selected component and adjust it. If the source cannot be identified reliably, explain what extra context is needed.",
+        "instructionWithScreenshot": "Use the screenshot and selected component details to locate the source and adjust this UI."
+      }
+    },
+    "git": {
+      "loading": "Loading Git status",
+      "detached": "Detached HEAD",
+      "summary": "{{count}} changes · ↑{{ahead}} ↓{{behind}}",
+      "clean": "Working tree clean",
+      "empty": {
+        "title": "No Git repository",
+        "body": "The active workspace is not inside a Git repository."
+      },
+      "actions": {
+        "refresh": "Refresh",
+        "stage": "Stage",
+        "unstage": "Unstage",
+        "commit": "Commit staged changes",
+        "createBranch": "Create branch",
+        "addWorktree": "Add worktree",
+        "createPr": "Create PR"
+      },
+      "diff": {
+        "unstaged": "Unstaged",
+        "staged": "Staged",
+        "empty": "No diff for the selected file."
+      },
+      "commit": {
+        "title": "Commit",
+        "placeholder": "Commit message"
+      },
+      "branchWorktree": {
+        "title": "Branch & worktree",
+        "branchPlaceholder": "New branch",
+        "worktreePlaceholder": "Branch for worktree"
+      },
+      "github": {
+        "title": "GitHub PRs",
+        "noPrs": "No open pull requests",
+        "notAuthenticated": "Run gh auth login in the terminal to enable PR actions.",
+        "titlePlaceholder": "PR title",
+        "bodyPlaceholder": "PR body"
+      },
+      "toast": {
+        "blocked": "Approval required",
+        "failed": "Git operation failed"
+      }
+    }
+  },
+  "taskPanel": {
+    "eyebrow": "Run View",
+    "title": "Task Outline",
+    "emptyTitle": "No structured steps yet",
+    "emptyBody": "Once a run starts, ClawX will surface thinking, tool calls, and handoff states here.",
+    "status": {
+      "idle": "Idle",
+      "running_one": "1 active step",
+      "running_other": "{{count}} active steps"
+    },
+    "stepStatus": {
+      "running": "Running",
+      "completed": "Done",
+      "error": "Error"
+    }
+  },
+  "executionGraph": {
+    "title": "Execution Graph",
+    "branchLabel": "branch",
+    "thinkingLabel": "Thinking",
+    "errorLabel": "Error",
+    "imageGenerateLabel": "Image generation",
+    "agentRun": "{{agent}} execution",
+    "collapsedSummary": "{{toolCount}} tool calls · {{processCount}} process messages",
+    "collapseAction": "Collapse execution graph",
+    "viewTrace": "View Trace"
+  },
+  "teamOrchestration": {
+    "title": "Team orchestration",
+    "mode": "Mode: {{mode}}",
+    "template": "Template: {{template}}",
+    "pendingVerifier": "Verifier pending",
+    "collapse": "Collapse team orchestration",
+    "expand": "Expand team orchestration",
+    "verifier": "Verifier",
+    "wave": "Wave {{wave}}",
+    "routeReasons": "Routing signals",
+    "showMoreNodes": "Show {{count}} more task nodes",
+    "metrics": {
+      "workers": "Workers",
+      "waves": "Waves",
+      "verifier": "Verifier",
+      "signals": "Signals"
+    },
+    "alert": {
+      "failure": "Failure",
+      "repair": "Repair",
+      "followup": "Follow-up",
+      "reroute": "Reroute"
+    },
+    "status": {
+      "running": "Running",
+      "planned": "Planned",
+      "completed": "Completed",
+      "partial": "Partial",
+      "failed": "Failed",
+      "verified": "Verified",
+      "refuted": "Refuted",
+      "error": "Error",
+      "accepted": "Accepted",
+      "ready": "Ready",
+      "skipped": "Skipped"
+    },
+    "phase": {
+      "plan": "Plan",
+      "architecture": "Architecture",
+      "worker": "Worker",
+      "implementation": "Implementation",
+      "verification": "Verification",
+      "review": "Review",
+      "security": "Security",
+      "docs": "Docs",
+      "verifier": "Verifier",
+      "repair": "Repair",
+      "redo": "Redo",
+      "followup": "Follow-up"
+    }
+  },
+  "imageGeneration": {
+    "generating": "Generating image, please wait…",
+    "previewLoading": "Loading image preview…",
+    "previewUnavailable": "Image preview is temporarily unavailable"
+  },
+  "composer": {
+    "attachFiles": "Attach files",
+    "pickSkill": "Choose skill",
+    "pickTool": "Choose tool",
+    "skillButton": "Skills",
+    "toolButton": "Tools",
+    "skillPickerTitle": "Quick skill access for {{agent}}",
+    "skillSearchPlaceholder": "Search skills",
+    "toolSearchPlaceholder": "Search tools, skills, or MCP services",
+    "skillLoading": "Loading skills...",
+    "skillEmpty": "No matching skills found",
+    "pickAgent": "Choose agent",
+    "pickModel": "Choose model",
+    "knowledgeScopeTitle": "Knowledge scope",
+    "knowledgeScope": {
+      "none": "No knowledge",
+      "memory": "Memory",
+      "wiki": "Wiki",
+      "all": "All knowledge"
+    },
+    "knowledgeScopeDescription": {
+      "none": "Send without memory or wiki context.",
+      "memory": "Use runtime memory cards when relevant.",
+      "wiki": "Use the ClawX-managed wiki for source-backed notes.",
+      "all": "Let memory and wiki both contribute context."
+    },
+    "knowledgeQuick": {
+      "enable": "Use wiki knowledge",
+      "disable": "Disable wiki knowledge"
+    },
+    "clearTarget": "Clear target agent",
+    "targetChip": "@{{agent}}",
+    "agentPickerTitle": "Route the next message to another agent",
+    "modelPickerTitle": "Switch model for this chat",
+    "modelSwitchFailed": "Failed to switch model: {{error}}",
+    "inputModeTitle": "Input mode",
+    "inputModeHint": "Applies to this message only",
+    "guideInjected": "Injected as guidance into the active run",
+    "guideFallback": "Active run ended; sent as a new message",
+    "queueQueued": "Queued — will be sent automatically after the current task completes",
+    "queueCount": "{{count}} message(s) queued",
+    "gatewayDisconnectedPlaceholder": "Gateway not connected...",
+    "send": "Send",
+    "stop": "Stop",
+    "gatewayConnected": "connected",
+    "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
+    "contextStatusTitle": "Context and token status",
+    "messageCount": "{{count}} messages",
+    "tokenUsage": "{{tokens}} tokens",
+    "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
+    "contextHidden": "{{count}} hidden",
+    "compaction": {
+      "compress": "Compress current session",
+      "compressTooltip": "Compress the current session history",
+      "dialogTitle": "Compress Current Session",
+      "dialogDescription": "This will summarize older chat history for the active session after confirmation. Long-task state stays in Task Ledger and Context Pack references.",
+      "tokenUsage": "Token usage",
+      "hiddenMessages": "Hidden messages",
+      "lastCompaction": "Last compression",
+      "neverCompacted": "Never",
+      "expectedEffect": "The next model request should carry less transcript pressure while preserving objectives, decisions, open tasks, failed attempts, touched files, constraints, and review items.",
+      "instructionsLabel": "Extra compression instructions",
+      "instructionsPlaceholder": "Optional: tell the summarizer what must be preserved.",
+      "confirm": "Compress current session",
+      "cancel": "Cancel",
+      "unknown": "Unknown",
+      "unavailable": "Compression unavailable",
+      "inProgress": "Compression is already in progress",
+      "activeRun": "Available after the current run finishes",
+      "toastSuccess": "Session compressed",
+      "toastSuccessWithTokens": "Session compressed: {{before}} -> {{after}} tokens",
+      "toastNoop": "Nothing compressed: {{reason}}",
+      "toastFailed": "Failed to compress session",
+      "reason": {
+        "active_run": "Available after the current run finishes",
+        "already_compacted": "Already compacted",
+        "session_too_small": "Session is too small",
+        "no_session": "No active session",
+        "no_transcript": "Transcript not found",
+        "gateway_unavailable": "Gateway unavailable"
+      }
+    },
+    "longTaskControl": {
+      "queued": "{{count}} queued",
+      "checkpoint": "{{trigger}} checkpoint",
+      "intervention": "{{mode}} {{status}}",
+      "warnings": "{{count}} warning(s)",
+      "drainNow": "Drain queued follow-up now",
+      "drainTooltip": "Send queued follow-up now",
+      "drainActiveRun": "Queued follow-up can drain after the current run finishes",
+      "drainSuccess": "Drained {{count}} queued follow-up(s)",
+      "drainFailed": "Failed to drain queued follow-up",
+      "mode": {
+        "interrupt": "interrupt",
+        "guide": "guide",
+        "queue": "queue",
+        "unknown": "intervention"
+      },
+      "status": {
+        "recorded": "recorded",
+        "queued": "queued",
+        "draining": "draining",
+        "drained": "drained",
+        "steered": "steered",
+        "fallback": "fallback",
+        "checkpointed": "checkpointed",
+        "failed": "failed"
+      },
+      "trigger": {
+        "compaction": "compaction",
+        "interrupt": "interrupt",
+        "run_abort": "abort",
+        "clawgraph_node_handoff": "handoff",
+        "audit_fail": "audit",
+        "manual_review": "review",
+        "session_rotation": "rotation",
+        "queue_drain": "queue",
+        "guide": "guide"
+      },
+      "reason": {
+        "active_run": "Available after the current run finishes",
+        "active_run_started_before_queue_drain": "A new run started before queue drain",
+        "empty_queue": "No queued follow-up",
+        "drain_failed": "Queue drain failed",
+        "gateway_unavailable": "Gateway unavailable"
+      }
+    },
+    "continuity": {
+      "recommended": "Recommended",
+      "tooltip": {
+        "fork": {
+          "default": "Recommended now: branch this transcript into a new conversation"
+        },
+        "handoff": {
+          "default": "Recommended now: prepare an editable continuation draft",
+          "gateway_unavailable": "Gateway is unavailable; prepare a draft instead",
+          "high_pressure": "Context is tight; prepare a continuation draft",
+          "truncated_context": "Some history is hidden; prepare a continuation draft",
+          "compaction_warning": "Context state needs care; prepare a continuation draft"
+        }
+      },
+      "dialogHint": {
+        "default": "Handoff is recommended for this session state.",
+        "gateway_unavailable": "Gateway is unavailable, so this draft-based handoff avoids relying on runtime forking.",
+        "high_pressure": "Context pressure is high, so this draft keeps the next step reviewable before a fresh session starts.",
+        "truncated_context": "Some transcript history is hidden, so a draft handoff is safer than copying the branch.",
+        "compaction_warning": "Context compression state has warnings, so a draft handoff is the safer continuation path."
+      },
+      "failure": {
+        "action": {
+          "prepareHandoff": "Prepare handoff",
+          "tryFork": "Try fork"
+        },
+        "fork": {
+          "active_run": {
+            "title": "Fork waits for the current run",
+            "description": "Let the current response finish before creating a conversation branch."
+          },
+          "gateway_unavailable": {
+            "title": "Fork needs Gateway",
+            "description": "Gateway is unavailable, so prepare an editable handoff draft instead."
+          },
+          "parent_too_large": {
+            "title": "Transcript is too large to fork",
+            "description": "Prepare a handoff draft that carries the current task forward without copying the full branch."
+          },
+          "transcript_unavailable": {
+            "title": "Transcript is not available",
+            "description": "Prepare a handoff draft from the available session signals instead."
+          },
+          "unknown": {
+            "title": "Fork failed",
+            "description": "The conversation branch could not be created."
+          }
+        },
+        "handoff": {
+          "active_run": {
+            "title": "Handoff waits for the current run",
+            "description": "Let the current response finish before preparing a handoff draft."
+          },
+          "gateway_unavailable": {
+            "title": "Handoff preparation failed",
+            "description": "Gateway is unavailable. Try again after it reconnects."
+          },
+          "parent_too_large": {
+            "title": "Handoff preparation failed",
+            "description": "The current context is too large to prepare cleanly."
+          },
+          "transcript_unavailable": {
+            "title": "Transcript is not available",
+            "description": "The handoff draft could not read enough conversation context."
+          },
+          "unknown": {
+            "title": "Handoff preparation failed",
+            "description": "The continuation draft could not be prepared."
+          }
+        }
+      }
+    },
+    "fork": {
+      "action": "Fork to new conversation",
+      "tooltip": "Create a new conversation branch from this transcript",
+      "disabledActiveRun": "Available after the current run finishes",
+      "toastCreated": "Forked conversation created",
+      "toastFailed": "Failed to fork conversation"
+    },
+    "handoff": {
+      "action": "Handoff to new conversation",
+      "tooltip": "Prepare a continuation draft in a new session",
+      "disabledActiveRun": "Available after the current run finishes",
+      "dialogTitle": "Handoff to New Conversation",
+      "dialogDescription": "Review and edit this continuation draft before creating a fresh session. It will be placed in the composer and will not be sent automatically.",
+      "draftLabel": "Handoff draft",
+      "create": "Create handoff session",
+      "cancel": "Cancel",
+      "toastPrepareFailed": "Failed to prepare handoff",
+      "toastCreateFailed": "Failed to create handoff session",
+      "toastCreated": "Handoff session created",
+      "ledgerSummary": "Handoff session created from {{source}}"
+    },
+    "workspaceActions": "Workspace actions",
+    "workspaceActionFailed": "Workspace action failed: {{error}}",
+    "permissionModeTitle": "Permission mode",
+    "permissionMode": {
+      "readOnly": "Read only",
+      "plan": "Plan",
+      "acceptEdits": "Accept edits",
+      "fullAccess": "Full access"
+    },
+    "pickWorkspaceFolder": "Choose workspace folder",
+    "newWorkspaceSession": "New workspace session",
+    "workspaceAgentTitle": "Workspace agent",
+    "retryFailedAttachments": "Retry failed attachments",
+    "folderDropUnsupported": "Couldn't attach this folder. Drag it again, or paste the folder path into your message.",
+    "folderAttachment": "Folder",
+    "skillPreviewTooltip": "Preview SKILL.md",
+    "skillPreviewNotFound": "Could not find this skill. Open the skill picker to refresh the list.",
+    "capability": {
+      "dialogTitle": "Apply capability changes?",
+      "dialogDescription": "ClawX detected local Skill or MCP management actions in this message. Review and confirm before anything changes.",
+      "confirm": "Confirm and send",
+      "cancel": "Cancel",
+      "applied": "Capability changes applied",
+      "failed": "Capability action failed: {{error}}",
+      "allFailed": "No capability changes were applied",
+      "resultSuccess": "Done",
+      "resultFailed": "Failed",
+      "localOnlyHint": "This version only enables discovered local skills and registers MCP JSON you provide. Remote marketplace or template installs are not run automatically.",
+      "mcpScope": "Scope: {{scope}} | Transport: {{transport}}",
+      "risk": {
+        "low": "Low risk",
+        "medium": "Review",
+        "high": "High risk"
+      },
+      "audit": {
+        "title": "Audit",
+        "blockedHint": "This action is blocked by the local audit. Adjust the Skill or MCP configuration before confirming.",
+        "status": {
+          "passed": "Passed",
+          "warning": "Review",
+          "blocked": "Blocked",
+          "unknown": "Unknown"
+        }
+      },
+      "unsupported": {
+        "generic": "ClawX needs a local skill match or MCP JSON before it can apply this from chat.",
+        "skillNotFound": "ClawX could not find that local skill. Open the skill picker or install the skill locally first.",
+        "mcpConfigRequired": "Paste a complete MCP JSON configuration to register an MCP service from chat.",
+        "mcpServerNotFound": "ClawX could not find that registered MCP service. Use the MCP service name or id."
+      }
+    },
+    "effortButton": "Effort",
+    "effortTitle": "Reasoning effort",
+    "effortHelpTooltip": "Higher effort lets the agent think longer before answering.",
+    "effortFaster": "Faster",
+    "effortSmarter": "Smarter",
+    "effortStatusAuto": "Auto",
+    "effortStatusMinimal": "Minimal",
+    "effortStatusLow": "Low",
+    "effortStatusMedium": "Medium",
+    "effortStatusHigh": "High",
+    "effortStatusXhigh": "Extra high",
+    "effortStatusMax": "Max",
+    "effortSwitchFailed": "Failed to update effort: {{error}}",
+    "workModeTitle": "Work mode",
+    "workMode": {
+      "plan": "Plan",
+      "build": "Build",
+      "review": "Review",
+      "docsData": "Docs/Data"
+    },
+    "workModeDescription": {
+      "plan": "Clarify scope, risks, and acceptance criteria before execution.",
+      "build": "Implement focused changes and verify them.",
+      "review": "Inspect diffs and risks without changing files by default.",
+      "docsData": "Work with documents, spreadsheets, PDFs, and reports."
+    },
+    "workModeRecommendedPermission": "Recommended: {{mode}}"
+  },
+  "historyBuckets": {
+    "today": "Today",
+    "withinWeek": "Last 7 days",
+    "withinMonth": "Last 30 days",
+    "older": "Older"
+  },
+  "sessionFilter": {
+    "all": "All",
+    "chat": "Chat",
+    "work": "Work"
+  },
+  "questionDirectory": {
+    "title": "Question directory",
+    "fallback": "Question {{number}}",
+    "moreHint": "{{count}} more questions not shown"
+  },
+  "workModePanel": {
+    "knowledge": "Knowledge: {{scope}}",
+    "permissionMismatch": "Current permission is {{current}}; recommended for this mode is {{recommended}}.",
+    "summary": {
+      "plan": "Planning mode focuses on assumptions, risks, affected areas, and acceptance criteria.",
+      "build": "Build mode focuses on implementation, verification, and concise change summaries.",
+      "review": "Review mode leads with findings, evidence, severity, and test gaps.",
+      "docsData": "Docs/Data mode focuses on document, spreadsheet, PDF, and report artifacts."
+    },
+    "artifacts": "Artifacts: {{types}}",
+    "kitStatus": "{{kit}}: {{status}}",
+    "artifactTypes": {
+      "markdown": "Markdown",
+      "docx": "DOCX",
+      "xlsx": "XLSX",
+      "csv": "CSV",
+      "pptx": "PPTX",
+      "pdf": "PDF",
+      "html": "HTML",
+      "image": "Image"
+    },
+    "capability": {
+      "ready": "Ready",
+      "missingSkill": "Missing skill",
+      "disabled": "Disabled",
+      "runtimeUnavailable": "Runtime unavailable",
+      "optionalExternal": "Optional"
+    },
+    "status": {
+      "plan": {
+        "primary": "Assumptions",
+        "secondary": "Risks",
+        "tertiary": "Acceptance criteria"
+      },
+      "build": {
+        "primary": "Workspace",
+        "secondary": "Permission",
+        "tertiary": "Tests"
+      },
+      "review": {
+        "primary": "Diff focus",
+        "secondary": "Severity",
+        "tertiary": "Test gaps"
+      },
+      "docsData": {
+        "primary": "Docs runtime-gated",
+        "secondary": "Sheets runtime-gated",
+        "tertiary": "PDF/PPTX runtime-gated"
+      }
+    }
+  },
+  "assistantRender": {
+    "branch": {
+      "previous": "Previous branch",
+      "next": "Next branch",
+      "count": "{{current}} / {{total}}"
+    },
+    "reasoning": {
+      "title": "Reasoning summary"
+    },
+    "tool": {
+      "running": "Running",
+      "completed": "Done",
+      "error": "Error"
+    },
+    "usage": {
+      "tokens": "tokens"
+    },
+    "status": {
+      "gateway": "Gateway",
+      "run": "Run",
+      "tools": "Tools",
+      "context": "Context",
+      "workspace": "Workspace",
+      "permission": "Permission"
+    },
+    "quote": {
+      "action": "Quote"
+    },
+    "error": {
+      "title": "Chat error",
+      "dismiss": "Dismiss error"
+    },
+    "attachment": {
+      "open": "Open file",
+      "folder": "Folder",
+      "file": "File"
+    }
+  },
+  "turnWork": {
+    "title": "Work panel",
+    "status": {
+      "idle": "No work captured",
+      "running": "Working now",
+      "completed": "Work completed",
+      "blocked": "Blocked",
+      "error": "Needs attention"
+    },
+    "tabs": {
+      "tasks": "Tasks",
+      "reports": "Reports",
+      "sources": "Sources"
+    },
+    "task": {
+      "running": "Running",
+      "completed": "Done",
+      "error": "Error"
+    },
+    "report": {
+      "created": "Created",
+      "modified": "Modified"
+    },
+    "empty": {
+      "tasks": "No task activity",
+      "reports": "No reports or file outputs",
+      "sources": "No web sources"
+    }
+  }
+}

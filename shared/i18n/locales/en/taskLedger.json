@@ -1,0 +1,87 @@
+{
+  "nav": "Task Ledger",
+  "title": "Task Ledger",
+  "subtitle": "Track long-running goals, dependencies, review points, decisions, and session links.",
+  "search": "Search tasks, decisions, sessions",
+  "empty": "No task ledger nodes yet.",
+  "tabs": {
+    "tree": "Tree",
+    "dag": "DAG",
+    "history": "History",
+    "review": "Review"
+  },
+  "actions": {
+    "refresh": "Refresh",
+    "exportHtml": "Export HTML",
+    "addNode": "Add",
+    "linkSession": "Link session",
+    "clearReview": "Clear review"
+  },
+  "form": {
+    "titlePlaceholder": "Node title",
+    "descriptionPlaceholder": "Description",
+    "parentPlaceholder": "Parent node",
+    "noParent": "No parent"
+  },
+  "kind": {
+    "goal": "Goal",
+    "milestone": "Milestone",
+    "task": "Task",
+    "check": "Check",
+    "decision": "Decision",
+    "risk": "Risk",
+    "deviation": "Deviation",
+    "review": "Review"
+  },
+  "status": {
+    "todo": "Todo",
+    "doing": "Doing",
+    "blocked": "Blocked",
+    "review": "Review",
+    "done": "Done",
+    "dropped": "Dropped"
+  },
+  "edge": {
+    "depends_on": "depends on",
+    "blocks": "blocks",
+    "relates_to": "relates to",
+    "derived_from": "derived from",
+    "supersedes": "supersedes",
+    "needs_review": "needs review"
+  },
+  "dag": {
+    "empty": "No dependency edges yet."
+  },
+  "history": {
+    "empty": "No ledger events yet.",
+    "summary": "{{count}} event records are stored in the append-only ledger."
+  },
+  "review": {
+    "empty": "Review queue is clear."
+  },
+  "session": {
+    "nodePlaceholder": "Session target",
+    "noNode": "No node",
+    "link": "Session link",
+    "linkedFromChat": "Linked from the current chat session"
+  },
+  "summary": {
+    "title": "Task Ledger",
+    "loading": "Loading ledger",
+    "counts": "{{nodes}} nodes · {{events}} events",
+    "empty": "No tracked long-running tasks yet.",
+    "currentGoal": "Current goal",
+    "active": "Active",
+    "blocked": "Blocked",
+    "review": "Review",
+    "blockers": "Blockers",
+    "needsReview": "Needs review",
+    "decisions": "Recent decisions",
+    "open": "Open ledger"
+  },
+  "toast": {
+    "created": "Task ledger node created",
+    "sessionLinked": "Session linked",
+    "exported": "Task ledger HTML exported"
+  }
+}

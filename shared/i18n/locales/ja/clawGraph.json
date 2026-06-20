@@ -1,0 +1,91 @@
+{
+  "nav": "ClawGraph",
+  "title": "ClawGraph",
+  "subtitle": "workspace YAML でステートレス worker、handoff、監査、レビューを実行します。",
+  "actions": {
+    "refresh": "更新",
+    "run": "ワークフロー実行",
+    "starting": "開始中",
+    "abort": "中止",
+    "approve": "承認",
+    "reject": "却下"
+  },
+  "workflows": {
+    "label": "ワークフロー",
+    "placeholder": "ワークフローを選択",
+    "empty": "ワークフローファイルがありません"
+  },
+  "compile": {
+    "label": "コンパイル",
+    "ok": "準備完了",
+    "notReady": "未準備",
+    "nodes": "ノード",
+    "parallel": "最大並列 {{count}}",
+    "noDiagnostics": "診断はありません。"
+  },
+  "run": {
+    "label": "実行",
+    "empty": "実行中の run はありません。",
+    "attempt": "{{count}} 回目",
+    "noRole": "ロールなし"
+  },
+  "tabs": {
+    "dag": "DAG",
+    "events": "イベント",
+    "review": "レビュー"
+  },
+  "dag": {
+    "empty": "ワークフローを実行するとノード状態が表示されます。",
+    "dependsOn": "{{deps}} に依存"
+  },
+  "events": {
+    "empty": "イベントはまだありません。"
+  },
+  "review": {
+    "empty": "未解決のレビュー項目はありません。"
+  },
+  "toast": {
+    "runStarted": "ClawGraph run を開始しました。",
+    "runFailed": "ClawGraph run に失敗しました。",
+    "approvalRequired": "ワークフロー実行には承認が必要です。"
+  },
+  "nodeType": {
+    "agent": "Agent",
+    "audit": "監査"
+  },
+  "status": {
+    "queued": "待機中",
+    "ready": "準備完了",
+    "running": "実行中",
+    "handoff_received": "Handoff",
+    "auditing": "監査中",
+    "done": "完了",
+    "failed": "失敗",
+    "review": "レビュー",
+    "blocked": "ブロック",
+    "aborted": "中止"
+  },
+  "runStatus": {
+    "queued": "待機中",
+    "running": "実行中",
+    "complete": "完了",
+    "blocked": "ブロック",
+    "failed": "失敗",
+    "aborted": "中止",
+    "review": "レビュー"
+  },
+  "eventType": {
+    "run_started": "Run 開始",
+    "node_ready": "ノード準備完了",
+    "node_started": "ノード開始",
+    "node_handoff": "Handoff 受信",
+    "node_audit": "監査記録",
+    "node_done": "ノード完了",
+    "node_failed": "ノード失敗",
+    "review_requested": "レビュー要求",
+    "review_resolved": "レビュー処理済み",
+    "run_completed": "Run 完了",
+    "run_blocked": "Run ブロック",
+    "run_aborted": "Run 中止"
+  }
+}

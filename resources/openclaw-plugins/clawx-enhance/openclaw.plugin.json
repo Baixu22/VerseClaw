@@ -1,0 +1,25 @@
+{
+  "id": "clawx-enhance",
+  "activation": {
+    "onStartup": true
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "picocontext": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "ClawX Pico ContextEngine 判断参数。压缩本身（LLM 摘要 / 滑动窗口 / pruning）由 OpenClaw runtime 负责；本配置只控制 *何时* 触发。",
+        "properties": {
+          "enable":             { "type": "boolean", "default": true,  "description": "总开关（false=全部 short-circuit）" },
+          "triggerRatio":       { "type": "number",  "default": 0.75,  "minimum": 0.1, "maximum": 0.99, "description": "token 占用率触发阈值" },
+          "freshTailSize":      { "type": "integer", "default": 32,    "minimum": 4,  "maximum": 256,   "description": "滑动窗口保留的最新消息条数（仅用于消息数下限判断）" },
+          "minMessagesToCompress": { "type": "integer", "default": 8, "minimum": 2, "maximum": 100,    "description": "older 部分至少多少条才触发压缩" },
+          "minOlderTokens":     { "type": "integer", "default": 20000, "minimum": 0,                  "description": "older 估算 token 下限" },
+          "debounceMs":         { "type": "integer", "default": 60000, "minimum": 0,                  "description": "两次触发之间最小间隔（ms）" }
+        }
+      }
+    }
+  }
+}

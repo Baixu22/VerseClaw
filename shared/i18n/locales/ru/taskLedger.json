@@ -1,0 +1,87 @@
+{
+  "nav": "Журнал задач",
+  "title": "Журнал задач",
+  "subtitle": "Отслеживайте долгие цели, зависимости, проверки, решения и связи с сессиями.",
+  "search": "Поиск задач, решений, сессий",
+  "empty": "Узлов журнала задач пока нет.",
+  "tabs": {
+    "tree": "Дерево",
+    "dag": "DAG",
+    "history": "История",
+    "review": "Проверка"
+  },
+  "actions": {
+    "refresh": "Обновить",
+    "exportHtml": "Экспорт HTML",
+    "addNode": "Добавить",
+    "linkSession": "Связать сессию",
+    "clearReview": "Снять проверку"
+  },
+  "form": {
+    "titlePlaceholder": "Название узла",
+    "descriptionPlaceholder": "Описание",
+    "parentPlaceholder": "Родительский узел",
+    "noParent": "Без родителя"
+  },
+  "kind": {
+    "goal": "Цель",
+    "milestone": "Этап",
+    "task": "Задача",
+    "check": "Проверка",
+    "decision": "Решение",
+    "risk": "Риск",
+    "deviation": "Отклонение",
+    "review": "Ревью"
+  },
+  "status": {
+    "todo": "Ожидает",
+    "doing": "В работе",
+    "blocked": "Блокировано",
+    "review": "Проверка",
+    "done": "Готово",
+    "dropped": "Отменено"
+  },
+  "edge": {
+    "depends_on": "зависит от",
+    "blocks": "блокирует",
+    "relates_to": "связано с",
+    "derived_from": "получено из",
+    "supersedes": "заменяет",
+    "needs_review": "требует проверки"
+  },
+  "dag": {
+    "empty": "Зависимостей пока нет."
+  },
+  "history": {
+    "empty": "Событий журнала пока нет.",
+    "summary": "В append-only журнале сохранено событий: {{count}}."
+  },
+  "review": {
+    "empty": "Очередь проверки пуста."
+  },
+  "session": {
+    "nodePlaceholder": "Цель сессии",
+    "noNode": "Без узла",
+    "link": "Связь с сессией",
+    "linkedFromChat": "Связано из текущей чат-сессии"
+  },
+  "summary": {
+    "title": "Журнал задач",
+    "loading": "Загрузка журнала",
+    "counts": "{{nodes}} узлов · {{events}} событий",
+    "empty": "Долгие задачи пока не отслеживаются.",
+    "currentGoal": "Текущая цель",
+    "active": "Активные",
+    "blocked": "Блоки",
+    "review": "Проверка",
+    "blockers": "Блокеры",
+    "needsReview": "Нужна проверка",
+    "decisions": "Последние решения",
+    "open": "Открыть журнал"
+  },
+  "toast": {
+    "created": "Узел журнала создан",
+    "sessionLinked": "Сессия связана",
+    "exported": "HTML журнала задач экспортирован"
+  }
+}

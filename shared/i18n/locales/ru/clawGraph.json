@@ -1,0 +1,91 @@
+{
+  "nav": "ClawGraph",
+  "title": "ClawGraph",
+  "subtitle": "Запуск workspace YAML workflows со stateless worker, handoff, audit и review.",
+  "actions": {
+    "refresh": "Обновить",
+    "run": "Запустить workflow",
+    "starting": "Запуск",
+    "abort": "Прервать",
+    "approve": "Одобрить",
+    "reject": "Отклонить"
+  },
+  "workflows": {
+    "label": "Workflow",
+    "placeholder": "Выберите workflow",
+    "empty": "Файл workflow не найден"
+  },
+  "compile": {
+    "label": "Компиляция",
+    "ok": "Готово",
+    "notReady": "Не готово",
+    "nodes": "узлов",
+    "parallel": "максимум параллельно {{count}}",
+    "noDiagnostics": "Диагностики нет."
+  },
+  "run": {
+    "label": "Run",
+    "empty": "Активного run нет.",
+    "attempt": "попытка {{count}}",
+    "noRole": "нет роли"
+  },
+  "tabs": {
+    "dag": "DAG",
+    "events": "События",
+    "review": "Review"
+  },
+  "dag": {
+    "empty": "Запустите workflow, чтобы увидеть состояние узлов.",
+    "dependsOn": "Зависит от {{deps}}"
+  },
+  "events": {
+    "empty": "Событий пока нет."
+  },
+  "review": {
+    "empty": "Открытых review items нет."
+  },
+  "toast": {
+    "runStarted": "ClawGraph run запущен.",
+    "runFailed": "ClawGraph run завершился ошибкой.",
+    "approvalRequired": "Запуск workflow требует подтверждения."
+  },
+  "nodeType": {
+    "agent": "Agent",
+    "audit": "Audit"
+  },
+  "status": {
+    "queued": "В очереди",
+    "ready": "Готово",
+    "running": "Выполняется",
+    "handoff_received": "Handoff",
+    "auditing": "Audit",
+    "done": "Готово",
+    "failed": "Ошибка",
+    "review": "Review",
+    "blocked": "Блокировано",
+    "aborted": "Прервано"
+  },
+  "runStatus": {
+    "queued": "В очереди",
+    "running": "Выполняется",
+    "complete": "Завершено",
+    "blocked": "Блокировано",
+    "failed": "Ошибка",
+    "aborted": "Прервано",
+    "review": "Review"
+  },
+  "eventType": {
+    "run_started": "Run запущен",
+    "node_ready": "Узел готов",
+    "node_started": "Узел запущен",
+    "node_handoff": "Handoff получен",
+    "node_audit": "Audit записан",
+    "node_done": "Узел завершен",
+    "node_failed": "Узел с ошибкой",
+    "review_requested": "Review запрошен",
+    "review_resolved": "Review обработан",
+    "run_completed": "Run завершен",
+    "run_blocked": "Run блокирован",
+    "run_aborted": "Run прерван"
+  }
+}

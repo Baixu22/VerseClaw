@@ -1,0 +1,859 @@
+{
+  "gatewayNotRunning": "Шлюз не запущен",
+  "gatewayRequired": "Для использования чата требуется запущенный шлюз OpenClaw. Он запустится автоматически, или вы можете запустить его в Настройках.",
+  "welcome": {
+    "title": "Чат ClawX",
+    "subtitle": "Чем могу помочь?",
+    "askQuestions": "Задачи",
+    "askQuestionsDesc": "Работа над задачами",
+    "creativeTasks": "Непрерывное выполнение",
+    "creativeTasksDesc": "Выполнение многошаговых задач",
+    "brainstorming": "Параллельные агенты"
+  },
+  "noLogs": "(Журналы ещё недоступны)",
+  "scrollToLatest": "Вернуться вниз",
+  "loadMoreHistory": "Загрузить предыдущие сообщения",
+  "loadingMoreHistory": "Загрузка…",
+  "toolbar": {
+    "refresh": "Обновить чат",
+    "currentAgent": "Общение с {{agent}}",
+    "workspace": "Рабочая область",
+    "saveToKnowledge": "Сохранить в знания"
+  },
+  "markdown": {
+    "codeBlock": "Код",
+    "copyCode": "Скопировать код",
+    "copiedCode": "Скопировано"
+  },
+  "toolUi": {
+    "actions": {
+      "back": "Назад",
+      "next": "Далее",
+      "copyResponse": "Скопировать ответ",
+      "copied": "Скопировано",
+      "insertResponse": "Вставить ответ",
+      "sendResponse": "Отправить ответ"
+    },
+    "plan": {
+      "label": "План",
+      "progress": "Выполнено {{completed}} из {{total}}",
+      "showMore": "Показать еще {{count}}"
+    },
+    "optionList": {
+      "label": "Варианты"
+    },
+    "questionFlow": {
+      "label": "Вопрос",
+      "step": "Шаг {{current}} из {{total}}"
+    },
+    "preferencesPanel": {
+      "label": "Настройки",
+      "on": "Вкл.",
+      "off": "Выкл."
+    },
+    "receipt": {
+      "complete": "Готово",
+      "saved": "Сохранено",
+      "error": "Требует внимания"
+    }
+  },
+  "knowledgeDraft": {
+    "title": "Сохранить в знания",
+    "description": "Проверьте и отредактируйте синтез. Он попадет в черновики знаний, а применение все равно требует подтверждения пользователя.",
+    "titleLabel": "Заголовок",
+    "bodyLabel": "Черновик",
+    "apply": "Создать черновик на проверку",
+    "empty": "Нет видимого содержимого разговора для сохранения.",
+    "invalid": "Добавьте заголовок и текст черновика перед применением.",
+    "applied": "Черновик знаний создан для проверки.",
+    "applyFailed": "Не удалось сохранить черновик знаний.",
+    "proposalReason": "Пользователь попросил сохранить это резюме чата как черновик знаний на проверке."
+  },
+  "generatedFiles": {
+    "title": "Изменения файлов ({{count}})",
+    "created": "Создано",
+    "modified": "Изменено",
+    "openFolder": "Открыть папку",
+    "viewAll": "Все изменения"
+  },
+  "runError": {
+    "title": "Ошибка вызова модели"
+  },
+  "artifactPanel": {
+    "tabs": {
+      "changes": "Изменения",
+      "preview": "Просмотр",
+      "browser": "Рабочая область"
+    },
+    "workspaceTabs": {
+      "files": "Файлы",
+      "terminal": "Терминал",
+      "git": "Git",
+      "web": "Web",
+      "audit": "Аудит"
+    },
+    "actions": {
+      "back": "Назад к списку"
+    },
+    "changes": {
+      "heading": "Изменения файлов ({{count}})",
+      "empty": "В этом разговоре пока нет изменений файлов",
+      "selectFileHint": "Нажмите на карточку файла в чате или «Просмотр изменений», чтобы открыть diff."
+    },
+    "preview": {
+      "emptyTitle": "Файл не выбран",
+      "emptyHint": "Сначала откройте файл через карточку в чате — выбранный файл появится в этом предпросмотре."
+    }
+  },
+  "filePreview": {
+    "tabs": {
+      "source": "Исходник",
+      "preview": "Предпросмотр",
+      "changes": "Изменения",
+      "info": "Информация"
+    },
+    "actions": {
+      "save": "Сохранить",
+      "saving": "Сохранение...",
+      "revert": "Откатить",
+      "openInFinder": "Показать в файловом менеджере",
+      "openDirectly": "Открыть напрямую",
+      "close": "Закрыть"
+    },
+    "info": {
+      "path": "Путь",
+      "size": "Размер",
+      "type": "Тип"
+    },
+    "toast": {
+      "saved": "Сохранено на диск",
+      "saveFailed": "Ошибка сохранения: {{error}}"
+    },
+    "errors": {
+      "outsideSandbox": "Путь вне песочницы — доступ запрещён",
+      "outsideSandboxTitle": "Не удалось прочитать файл",
+      "outsideSandboxHint": "ClawX не удалось прочитать этот путь. Файл мог быть перемещён или удалён, либо у текущей учётной записи нет прав доступа. Его можно показать в файловом менеджере.",
+      "readOnlyRoot": "Файл находится в режиме только для чтения (например, встроенный навык) и не может быть изменён",
+      "tooLarge": "Файл слишком большой ({{size}}); предпросмотр отключён",
+      "binary": "Бинарный файл — текстовый предпросмотр недоступен",
+      "notFound": "Файл не найден",
+      "loadFailed": "Ошибка загрузки: {{error}}",
+      "noPreview": "Для этого файла предпросмотр недоступен",
+      "unsupportedFormatTitle": "Этот формат файла не поддерживает встроенный предпросмотр или diff",
+      "unsupportedFormatHint": "Встроенный предпросмотр и diff сейчас поддерживают только напрямую читаемые текстовые/Markdown-файлы. Откройте файл через файловый менеджер.",
+      "largeBinaryOpenTitle": "Этот файл слишком большой для встроенного предпросмотра",
+      "largeBinaryOpenHint": "Размер файла — {{size}}. ClawX не может показать его встроенно, но вы можете подтвердить открытие в системном приложении по умолчанию.",
+      "openInFinderFailed": "Не удалось показать файл",
+      "openFailed": "Не удалось открыть: {{error}}"
+    },
+    "diff": {
+      "noChanges": "Нет изменений для отображения",
+      "newFile": "Новый файл — нет оригинала для сравнения",
+      "tooLarge": "Файл слишком большой — режим diff отключён, откройте вкладку «Источник» для просмотра содержимого",
+      "unavailable": "В этом чате не удалось зафиксировать точную базовую версию этого файла, поэтому diff недоступен.",
+      "unavailableHint": "Откройте вкладку «Просмотр» для текущего содержимого; точное сравнение — в Git или другой системе."
+    },
+    "confirmOpen": {
+      "title": "Открыть файл",
+      "message": "Открыть «{{fileName}}» в системном приложении по умолчанию?",
+      "detail": "Файл будет открыт системным приложением по умолчанию.",
+      "size": "Размер файла: {{size}}",
+      "cancel": "Отмена"
+    },
+    "pdf": {
+      "loadFailed": "Не удалось загрузить PDF: {{error}}",
+      "prev": "Предыдущая страница",
+      "next": "Следующая страница",
+      "zoomIn": "Увеличить",
+      "zoomOut": "Уменьшить",
+      "zoomReset": "По ширине",
+      "pageInputAria": "Текущая страница",
+      "singlePageHint": "Используйте панель инструментов для переключения между {{total}} страницами"
+    },
+    "sheet": {
+      "loadFailed": "Не удалось загрузить таблицу: {{error}}",
+      "empty": "В файле нет отображаемых листов",
+      "emptySheet": "Текущий лист пуст",
+      "unnamedSheet": "Лист {{idx}}",
+      "rowRange": "Строки {{from}}-{{to}} / {{total}}",
+      "prevPage": "Предыдущие строки",
+      "nextPage": "Следующие строки"
+    }
+  },
+  "workspace": {
+    "title": "Рабочая область",
+    "freshBadge": "Обновлено в этот раз",
+    "pickFile": "Выберите файл слева для предпросмотра",
+    "empty": "Рабочая область пуста или недоступна",
+    "truncated": "Каталог обрезан — показаны первые 5000 узлов",
+    "actions": {
+      "refresh": "Обновить",
+      "openRootInFinder": "Показать корень в файловом менеджере",
+      "toggleHidden": "Скрытые файлы",
+      "showHidden": "Показать скрытые файлы",
+      "hideHidden": "Скрыть скрытые файлы"
+    },
+    "terminal": {
+      "title": "Терминал рабочей области",
+      "noWorkspace": "Рабочая область не выбрана",
+      "permission": {
+        "readOnly": "Только чтение",
+        "acceptEdits": "Разрешить правки",
+        "plan": "План",
+        "fullAccess": "Полный доступ"
+      },
+      "status": {
+        "idle": "Не запущен",
+        "starting": "Запуск",
+        "running": "Работает",
+        "exited": "Завершён",
+        "blocked": "Заблокирован"
+      },
+      "actions": {
+        "start": "Запустить",
+        "interrupt": "Ctrl+C",
+        "close": "Закрыть",
+        "clear": "Очистить",
+        "approve": "Разрешить"
+      },
+      "blocked": {
+        "title": "Интерактивный терминал отключён в этом режиме прав",
+        "body": "Переключитесь на Разрешить правки или Полный доступ перед запуском терминала."
+      },
+      "approval": {
+        "title": "Интерактивный терминал ожидает разрешения"
+      },
+      "toast": {
+        "approvalRequired": "Для интерактивного терминала нужно разрешение",
+        "blocked": "Запуск терминала заблокирован",
+        "approvalFailed": "Не удалось подтвердить"
+      }
+    },
+    "web": {
+      "title": "Web-предпросмотр",
+      "mode": {
+        "static": "Статика",
+        "devServer": "Dev server",
+        "externalUrl": "Внешний URL"
+      },
+      "status": {
+        "idle": "idle"
+      },
+      "fields": {
+        "targetPath": "Путь",
+        "targetPathPlaceholder": "Относительный путь, например index.html",
+        "url": "URL",
+        "detectScriptsFirst": "Сначала найдите скрипты"
+      },
+      "actions": {
+        "detect": "Найти",
+        "start": "Запустить",
+        "stop": "Остановить",
+        "pickComponent": "Выбрать компонент",
+        "picking": "Выбор",
+        "clearSelection": "Сбросить выбор",
+        "sendToComposer": "В поле ввода",
+        "captureAndSend": "Снимок и отправка",
+        "capturing": "Снимок"
+      },
+      "tooltips": {
+        "captureAndSend": "Отправить выбранный компонент вместе со снимком предпросмотра."
+      },
+      "browser": {
+        "placeholder": "Запустите предпросмотр, чтобы загрузить URL",
+        "title": "Предпросмотр рабочей области"
+      },
+      "selection": {
+        "selected": "Выбрано"
+      },
+      "empty": "Предпросмотр {{mode}} появится здесь после запуска.",
+      "toast": {
+        "noScripts": "Package scripts не найдены",
+        "startFailed": "Не удалось запустить предпросмотр",
+        "started": "Web-предпросмотр запущен",
+        "sent": "Отправлено в поле ввода",
+        "screenshotUnavailable": "Снимок недоступен; отправлены только данные компонента",
+        "screenshotFailed": "Снимок не удался; отправлены только данные компонента",
+        "screenshotSent": "Снимок и данные компонента отправлены"
+      },
+      "prompt": {
+        "title": "Пожалуйста, настройте компонент, выбранный в Web-предпросмотре.",
+        "context": "Контекст предпросмотра",
+        "mode": "Режим",
+        "previewUrl": "URL предпросмотра",
+        "targetUrl": "Целевой URL",
+        "workspace": "Рабочая область",
+        "screenshot": "Снимок предпросмотра",
+        "clip": "Область",
+        "selected": "Выбранный компонент",
+        "tag": "Тег",
+        "text": "Текст",
+        "attributes": "Атрибуты",
+        "position": "Позиция",
+        "html": "Фрагмент HTML",
+        "instruction": "Найдите исходный код выбранного компонента и настройте его. Если источник нельзя определить надёжно, объясните, какой контекст нужен.",
+        "instructionWithScreenshot": "Используйте снимок и данные выбранного компонента, чтобы найти источник и настроить UI."
+      }
+    },
+    "git": {
+      "loading": "Загрузка статуса Git",
+      "detached": "Detached HEAD",
+      "summary": "{{count}} изменений · ↑{{ahead}} ↓{{behind}}",
+      "clean": "Рабочее дерево чистое",
+      "empty": {
+        "title": "Нет Git-репозитория",
+        "body": "Активная рабочая область не находится внутри Git-репозитория."
+      },
+      "actions": {
+        "refresh": "Обновить",
+        "stage": "Индексировать",
+        "unstage": "Убрать из индекса",
+        "commit": "Закоммитить индекс",
+        "createBranch": "Создать ветку",
+        "addWorktree": "Добавить worktree",
+        "createPr": "Создать PR"
+      },
+      "diff": {
+        "unstaged": "Не в индексе",
+        "staged": "В индексе",
+        "empty": "Для выбранного файла нет diff."
+      },
+      "commit": {
+        "title": "Коммит",
+        "placeholder": "Сообщение коммита"
+      },
+      "branchWorktree": {
+        "title": "Ветка и worktree",
+        "branchPlaceholder": "Новая ветка",
+        "worktreePlaceholder": "Ветка для worktree"
+      },
+      "github": {
+        "title": "GitHub PR",
+        "noPrs": "Нет открытых PR",
+        "notAuthenticated": "Выполните gh auth login в терминале, чтобы включить PR-действия.",
+        "titlePlaceholder": "Заголовок PR",
+        "bodyPlaceholder": "Описание PR"
+      },
+      "toast": {
+        "blocked": "Требуется подтверждение",
+        "failed": "Операция Git не удалась"
+      }
+    }
+  },
+  "taskPanel": {
+    "eyebrow": "Вид выполнения",
+    "title": "Структура задачи",
+    "emptyTitle": "Пока нет структурированных шагов",
+    "emptyBody": "Когда начнётся выполнение, ClawX покажет размышления, вызовы инструментов и состояния передачи здесь.",
+    "status": {
+      "idle": "Бездействует",
+      "running_one": "1 активный шаг",
+      "running_other": "{{count}} активных шагов"
+    },
+    "stepStatus": {
+      "running": "Выполняется",
+      "completed": "Готово",
+      "error": "Ошибка"
+    }
+  },
+  "executionGraph": {
+    "title": "Граф выполнения",
+    "branchLabel": "ветвь",
+    "thinkingLabel": "Думаю",
+    "errorLabel": "Ошибка модели",
+    "imageGenerateLabel": "Генерация изображения",
+    "agentRun": "Выполнение {{agent}}",
+    "collapsedSummary": "Вызовов инструментов: {{toolCount}} · Промежуточных сообщений: {{processCount}}",
+    "collapseAction": "Свернуть граф выполнения",
+    "viewTrace": "Открыть трассу"
+  },
+  "teamOrchestration": {
+    "title": "Командная оркестрация",
+    "mode": "Режим: {{mode}}",
+    "template": "Шаблон: {{template}}",
+    "pendingVerifier": "Ожидается проверяющий",
+    "collapse": "Свернуть командную оркестрацию",
+    "expand": "Развернуть командную оркестрацию",
+    "verifier": "Проверяющий",
+    "wave": "Волна {{wave}}",
+    "routeReasons": "Сигналы маршрутизации",
+    "showMoreNodes": "Показать еще {{count}} узлов задач",
+    "metrics": {
+      "workers": "Работники",
+      "waves": "Волны",
+      "verifier": "Проверяющий",
+      "signals": "Сигналы"
+    },
+    "alert": {
+      "failure": "Сбой",
+      "repair": "Исправление",
+      "followup": "Продолжение",
+      "reroute": "Перемаршрутизация"
+    },
+    "status": {
+      "running": "Выполняется",
+      "planned": "Запланировано",
+      "completed": "Завершено",
+      "partial": "Частично",
+      "failed": "Сбой",
+      "verified": "Проверено",
+      "refuted": "Отклонено",
+      "error": "Ошибка",
+      "accepted": "Принято",
+      "ready": "Готово",
+      "skipped": "Пропущено"
+    },
+    "phase": {
+      "plan": "План",
+      "architecture": "Архитектура",
+      "worker": "Работник",
+      "implementation": "Реализация",
+      "verification": "Проверка",
+      "review": "Ревью",
+      "security": "Безопасность",
+      "docs": "Документы",
+      "verifier": "Проверяющий",
+      "repair": "Исправление",
+      "redo": "Повтор",
+      "followup": "Продолжение"
+    }
+  },
+  "imageGeneration": {
+    "generating": "Изображение генерируется, подождите…",
+    "previewLoading": "Загрузка предпросмотра изображения…",
+    "previewUnavailable": "Предпросмотр изображения временно недоступен"
+  },
+  "composer": {
+    "attachFiles": "Прикрепить файлы",
+    "pickSkill": "Выбрать Skill",
+    "pickTool": "Выбрать инструмент",
+    "skillButton": "Skills",
+    "toolButton": "Инструменты",
+    "skillPickerTitle": "Быстрый доступ к Skill для {{agent}}",
+    "skillSearchPlaceholder": "Поиск Skill",
+    "toolSearchPlaceholder": "Поиск инструментов, Skill или MCP-сервисов",
+    "skillLoading": "Загрузка Skill...",
+    "skillEmpty": "Подходящие Skill не найдены",
+    "pickAgent": "Выбрать агента",
+    "pickModel": "Выбрать модель",
+    "knowledgeScopeTitle": "Область знаний",
+    "knowledgeScope": {
+      "none": "Без знаний",
+      "memory": "Память",
+      "wiki": "Wiki",
+      "all": "Все знания"
+    },
+    "knowledgeScopeDescription": {
+      "none": "Отправить без памяти и wiki-контекста.",
+      "memory": "Использовать карточки памяти, когда они уместны.",
+      "wiki": "Использовать wiki ClawX с заметками и источниками.",
+      "all": "Разрешить памяти и wiki вместе давать контекст."
+    },
+    "knowledgeQuick": {
+      "enable": "Использовать wiki-знания",
+      "disable": "Отключить wiki-знания"
+    },
+    "modelPickerTitle": "Переключить модель",
+    "modelSwitchFailed": "Не удалось переключить модель: {{error}}",
+    "inputModeTitle": "Режим ввода",
+    "inputModeHint": "Применяется только к этому сообщению",
+    "guideInjected": "Внедрено как руководство в активный запуск",
+    "guideFallback": "Активный запуск завершён; отправлено как новое сообщение",
+    "queueQueued": "В очереди — будет отправлено автоматически после завершения текущей задачи",
+    "queueCount": "{{count}} сообщений в очереди",
+    "clearTarget": "Очистить целевого агента",
+    "targetChip": "@{{agent}}",
+    "agentPickerTitle": "Направить следующее сообщение другому агенту",
+    "gatewayDisconnectedPlaceholder": "Шлюз не подключён...",
+    "send": "Отправить",
+    "stop": "Остановить",
+    "gatewayConnected": "подключён",
+    "gatewayStatus": "шлюз {{state}} | порт: {{port}} {{pid}}",
+    "contextStatusTitle": "Статус контекста и токенов",
+    "messageCount": "{{count}} сообщений",
+    "tokenUsage": "{{tokens}} токенов",
+    "tokenUsageWithLimit": "{{used}} / {{max}} токенов",
+    "contextHidden": "скрыто: {{count}}",
+    "compaction": {
+      "compress": "Сжать текущую сессию",
+      "compressTooltip": "Сжать историю текущей сессии",
+      "dialogTitle": "Сжать текущую сессию",
+      "dialogDescription": "После подтверждения старые сообщения активной сессии будут summarized. Долгосрочное состояние задач остается в ссылках Task Ledger и Context Pack.",
+      "tokenUsage": "Использование токенов",
+      "hiddenMessages": "Скрытые сообщения",
+      "lastCompaction": "Последнее сжатие",
+      "neverCompacted": "Никогда",
+      "expectedEffect": "Следующий запрос к модели должен нести меньшую нагрузку transcript, сохраняя цель, решения, открытые задачи, неудачные попытки, затронутые файлы, ограничения и пункты для проверки.",
+      "instructionsLabel": "Дополнительные инструкции",
+      "instructionsPlaceholder": "Необязательно: укажите, что обязательно сохранить.",
+      "confirm": "Сжать текущую сессию",
+      "cancel": "Отмена",
+      "unknown": "Неизвестно",
+      "unavailable": "Сжатие недоступно",
+      "inProgress": "Сжатие уже выполняется",
+      "activeRun": "Будет доступно после завершения текущего запуска",
+      "toastSuccess": "Сессия сжата",
+      "toastSuccessWithTokens": "Сессия сжата: {{before}} -> {{after}} токенов",
+      "toastNoop": "Сжатие не выполнено: {{reason}}",
+      "toastFailed": "Не удалось сжать сессию",
+      "reason": {
+        "active_run": "Будет доступно после завершения текущего запуска",
+        "already_compacted": "Уже сжато",
+        "session_too_small": "Сессия слишком мала",
+        "no_session": "Нет активной сессии",
+        "no_transcript": "Transcript не найден",
+        "gateway_unavailable": "Gateway недоступен"
+      }
+    },
+    "longTaskControl": {
+      "queued": "{{count}} в очереди",
+      "checkpoint": "{{trigger}} checkpoint",
+      "intervention": "{{mode}} {{status}}",
+      "warnings": "{{count}} предупрежд.",
+      "drainNow": "Отправить очередь сейчас",
+      "drainTooltip": "Отправить отложенное продолжение сейчас",
+      "drainActiveRun": "Очередь можно отправить после завершения текущего запуска",
+      "drainSuccess": "Отправлено из очереди: {{count}}",
+      "drainFailed": "Не удалось отправить очередь",
+      "mode": {
+        "interrupt": "interrupt",
+        "guide": "guide",
+        "queue": "queue",
+        "unknown": "intervention"
+      },
+      "status": {
+        "recorded": "recorded",
+        "queued": "queued",
+        "draining": "draining",
+        "drained": "drained",
+        "steered": "steered",
+        "fallback": "fallback",
+        "checkpointed": "checkpointed",
+        "failed": "failed"
+      },
+      "trigger": {
+        "compaction": "compaction",
+        "interrupt": "interrupt",
+        "run_abort": "abort",
+        "clawgraph_node_handoff": "handoff",
+        "audit_fail": "audit",
+        "manual_review": "review",
+        "session_rotation": "rotation",
+        "queue_drain": "queue",
+        "guide": "guide"
+      },
+      "reason": {
+        "active_run": "Доступно после завершения текущего запуска",
+        "active_run_started_before_queue_drain": "Новый запуск начался до отправки очереди",
+        "empty_queue": "В очереди нет продолжений",
+        "drain_failed": "Не удалось отправить очередь",
+        "gateway_unavailable": "Gateway недоступен"
+      }
+    },
+    "continuity": {
+      "recommended": "Рекомендуется",
+      "tooltip": {
+        "fork": {
+          "default": "Сейчас рекомендуется: ответвить этот transcript в новый диалог"
+        },
+        "handoff": {
+          "default": "Сейчас рекомендуется: подготовить редактируемый черновик продолжения",
+          "gateway_unavailable": "Gateway недоступен; подготовьте черновик продолжения",
+          "high_pressure": "Контекст близок к пределу; подготовьте черновик продолжения",
+          "truncated_context": "Часть истории скрыта; подготовьте черновик продолжения",
+          "compaction_warning": "Состояние контекста требует осторожности; подготовьте черновик продолжения"
+        }
+      },
+      "dialogHint": {
+        "default": "Для текущего состояния сеанса рекомендуется Handoff.",
+        "gateway_unavailable": "Gateway недоступен, поэтому такой Handoff с черновиком не зависит от runtime fork.",
+        "high_pressure": "Контекст близок к пределу, поэтому черновик позволяет проверить следующий шаг до старта нового сеанса.",
+        "truncated_context": "Часть transcript скрыта, поэтому Handoff с черновиком безопаснее копирования ветки.",
+        "compaction_warning": "В состоянии сжатия контекста есть предупреждения, поэтому Handoff с черновиком безопаснее."
+      },
+      "failure": {
+        "action": {
+          "prepareHandoff": "Подготовить Handoff",
+          "tryFork": "Попробовать Fork"
+        },
+        "fork": {
+          "active_run": {
+            "title": "Fork доступен после текущего запуска",
+            "description": "Дождитесь завершения текущего ответа перед созданием ветки диалога."
+          },
+          "gateway_unavailable": {
+            "title": "Для Fork нужен Gateway",
+            "description": "Gateway недоступен, поэтому можно подготовить редактируемый Handoff-черновик."
+          },
+          "parent_too_large": {
+            "title": "Transcript слишком велик для Fork",
+            "description": "Подготовьте Handoff-черновик, чтобы продолжить задачу без копирования полной ветки."
+          },
+          "transcript_unavailable": {
+            "title": "Transcript недоступен",
+            "description": "Можно подготовить Handoff-черновик из доступных сигналов сеанса."
+          },
+          "unknown": {
+            "title": "Fork не удался",
+            "description": "Не удалось создать новую ветку диалога."
+          }
+        },
+        "handoff": {
+          "active_run": {
+            "title": "Handoff доступен после текущего запуска",
+            "description": "Дождитесь завершения текущего ответа перед подготовкой Handoff-черновика."
+          },
+          "gateway_unavailable": {
+            "title": "Не удалось подготовить Handoff",
+            "description": "Gateway недоступен. Повторите после переподключения."
+          },
+          "parent_too_large": {
+            "title": "Не удалось подготовить Handoff",
+            "description": "Текущий контекст слишком велик для надежной подготовки черновика."
+          },
+          "transcript_unavailable": {
+            "title": "Transcript недоступен",
+            "description": "Handoff-черновик не смог прочитать достаточно контекста диалога."
+          },
+          "unknown": {
+            "title": "Не удалось подготовить Handoff",
+            "description": "Не удалось подготовить черновик продолжения."
+          }
+        }
+      }
+    },
+    "fork": {
+      "action": "Fork в новый диалог",
+      "tooltip": "Создать новую ветку диалога из этого transcript",
+      "disabledActiveRun": "Будет доступно после завершения текущего запуска",
+      "toastCreated": "Fork-диалог создан",
+      "toastFailed": "Не удалось создать Fork диалога"
+    },
+    "handoff": {
+      "action": "Передать в новый диалог",
+      "tooltip": "Подготовить черновик продолжения в новой сессии",
+      "disabledActiveRun": "Будет доступно после завершения текущего запуска",
+      "dialogTitle": "Передача в новый диалог",
+      "dialogDescription": "Проверьте и отредактируйте черновик перед созданием новой сессии. Он будет помещен в поле ввода и не отправится автоматически.",
+      "draftLabel": "Черновик передачи",
+      "create": "Создать сессию передачи",
+      "cancel": "Отмена",
+      "toastPrepareFailed": "Не удалось подготовить передачу",
+      "toastCreateFailed": "Не удалось создать сессию передачи",
+      "toastCreated": "Сессия передачи создана",
+      "ledgerSummary": "Сессия передачи создана из {{source}}"
+    },
+    "workspaceActions": "Действия рабочей области",
+    "workspaceActionFailed": "Действие рабочей области не выполнено: {{error}}",
+    "permissionModeTitle": "Режим разрешений",
+    "permissionMode": {
+      "readOnly": "Только чтение",
+      "plan": "План",
+      "acceptEdits": "Принимать правки",
+      "fullAccess": "Полный доступ"
+    },
+    "pickWorkspaceFolder": "Выбрать папку рабочей области",
+    "newWorkspaceSession": "Новая сессия рабочей области",
+    "workspaceAgentTitle": "Агент рабочей области",
+    "retryFailedAttachments": "Повторить неудавшиеся вложения",
+    "folderDropUnsupported": "Не удалось прикрепить эту папку. Перетащите её снова или вставьте путь к папке в сообщение.",
+    "folderAttachment": "Папка",
+    "skillPreviewTooltip": "Предпросмотр SKILL.md",
+    "skillPreviewNotFound": "Skill не найден. Откройте список Skill, чтобы обновить его.",
+    "capability": {
+      "dialogTitle": "Применить изменения возможностей?",
+      "dialogDescription": "ClawX обнаружил в сообщении локальные действия управления Skill или MCP. Проверьте их перед изменением настроек.",
+      "confirm": "Подтвердить и отправить",
+      "cancel": "Отмена",
+      "applied": "Изменения возможностей применены",
+      "failed": "Действие возможности не выполнено: {{error}}",
+      "allFailed": "Изменения возможностей не были применены",
+      "resultSuccess": "Готово",
+      "resultFailed": "Ошибка",
+      "localOnlyHint": "Эта версия только включает найденные локальные Skill и регистрирует MCP JSON, который вы предоставили. Установка из удаленного маркетплейса или шаблонов не запускается автоматически.",
+      "mcpScope": "Область: {{scope}} | Транспорт: {{transport}}",
+      "risk": {
+        "low": "Низкий риск",
+        "medium": "Проверить",
+        "high": "Высокий риск"
+      },
+      "audit": {
+        "title": "Аудит",
+        "blockedHint": "Локальный аудит заблокировал это действие. Измените Skill или конфигурацию MCP перед подтверждением.",
+        "status": {
+          "passed": "Пройден",
+          "warning": "Проверить",
+          "blocked": "Заблокировано",
+          "unknown": "Неизвестно"
+        }
+      },
+      "unsupported": {
+        "generic": "ClawX нужен локальный Skill или MCP JSON, чтобы применить это из чата.",
+        "skillNotFound": "ClawX не нашел этот локальный Skill. Откройте выбор Skill или сначала установите его локально.",
+        "mcpConfigRequired": "Вставьте полную конфигурацию MCP JSON, чтобы зарегистрировать MCP-сервис из чата.",
+        "mcpServerNotFound": "ClawX не нашел зарегистрированный MCP-сервис. Используйте имя или ID MCP-сервиса."
+      }
+    },
+    "effortButton": "Усилие",
+    "effortTitle": "Глубина рассуждений",
+    "effortHelpTooltip": "Более высокое усилие позволяет агенту дольше думать перед ответом.",
+    "effortFaster": "Быстрее",
+    "effortSmarter": "Глубже",
+    "effortStatusAuto": "Авто",
+    "effortStatusMinimal": "Минимум",
+    "effortStatusLow": "Низкая",
+    "effortStatusMedium": "Средняя",
+    "effortStatusHigh": "Высокая",
+    "effortStatusXhigh": "Очень высокая",
+    "effortStatusMax": "Max",
+    "effortSwitchFailed": "Не удалось обновить усилие: {{error}}",
+    "workModeTitle": "Режим работы",
+    "workMode": {
+      "plan": "План",
+      "build": "Сборка",
+      "review": "Ревью",
+      "docsData": "Документы/данные"
+    },
+    "workModeDescription": {
+      "plan": "Уточняет объем, риски и критерии приемки перед выполнением.",
+      "build": "Вносит точечные изменения и проверяет их.",
+      "review": "Проверяет diff и риски, по умолчанию без изменения файлов.",
+      "docsData": "Работает с документами, таблицами, PDF и отчетами."
+    },
+    "workModeRecommendedPermission": "Рекомендуется: {{mode}}"
+  },
+  "historyBuckets": {
+    "today": "Сегодня",
+    "withinWeek": "За последние 7 дней",
+    "withinMonth": "За последние 30 дней",
+    "older": "Ранее"
+  },
+  "sessionFilter": {
+    "all": "Все",
+    "chat": "Чаты",
+    "work": "Задачи"
+  },
+  "questionDirectory": {
+    "title": "Список вопросов",
+    "fallback": "Вопрос {{number}}",
+    "moreHint": "Ещё {{count}} вопросов не показано"
+  },
+  "workModePanel": {
+    "knowledge": "Знания: {{scope}}",
+    "permissionMismatch": "Текущий режим разрешений: {{current}}; для этого режима рекомендуется {{recommended}}.",
+    "summary": {
+      "plan": "Режим планирования фокусируется на предположениях, рисках, затронутых областях и критериях приемки.",
+      "build": "Режим сборки фокусируется на реализации, проверке и кратком описании изменений.",
+      "review": "Режим ревью сначала показывает находки, доказательства, серьезность и пробелы в тестах.",
+      "docsData": "Режим документов/данных фокусируется на документах, таблицах, PDF и отчетах."
+    },
+    "artifacts": "Артефакты: {{types}}",
+    "kitStatus": "{{kit}}: {{status}}",
+    "artifactTypes": {
+      "markdown": "Markdown",
+      "docx": "DOCX",
+      "xlsx": "XLSX",
+      "csv": "CSV",
+      "pptx": "PPTX",
+      "pdf": "PDF",
+      "html": "HTML",
+      "image": "Изображение"
+    },
+    "capability": {
+      "ready": "Готово",
+      "missingSkill": "Нет skill",
+      "disabled": "Отключено",
+      "runtimeUnavailable": "Runtime недоступен",
+      "optionalExternal": "Опционально"
+    },
+    "status": {
+      "plan": {
+        "primary": "Предположения",
+        "secondary": "Риски",
+        "tertiary": "Критерии приемки"
+      },
+      "build": {
+        "primary": "Рабочая область",
+        "secondary": "Разрешения",
+        "tertiary": "Тесты"
+      },
+      "review": {
+        "primary": "Фокус diff",
+        "secondary": "Серьезность",
+        "tertiary": "Пробелы в тестах"
+      },
+      "docsData": {
+        "primary": "Docs зависят от runtime",
+        "secondary": "Sheets зависят от runtime",
+        "tertiary": "PDF/PPTX зависят от runtime"
+      }
+    }
+  },
+  "assistantRender": {
+    "branch": {
+      "previous": "?????????? ?????",
+      "next": "????????? ?????",
+      "count": "{{current}} / {{total}}"
+    },
+    "reasoning": {
+      "title": "?????? ???????????"
+    },
+    "tool": {
+      "running": "???????????",
+      "completed": "??????",
+      "error": "??????"
+    },
+    "usage": {
+      "tokens": "???????"
+    },
+    "status": {
+      "gateway": "????",
+      "run": "??????",
+      "tools": "???????????",
+      "context": "????????",
+      "workspace": "??????? ???????",
+      "permission": "?????"
+    },
+    "quote": {
+      "action": "??????????"
+    },
+    "error": {
+      "title": "?????? ????",
+      "dismiss": "Закрыть ошибку"
+    },
+    "attachment": {
+      "open": "??????? ????",
+      "folder": "?????",
+      "file": "????"
+    }
+  },
+  "turnWork": {
+    "title": "Панель работы",
+    "status": {
+      "idle": "Нет данных о работе",
+      "running": "Выполняется",
+      "completed": "Работа завершена",
+      "blocked": "Заблокировано",
+      "error": "Требует внимания"
+    },
+    "tabs": {
+      "tasks": "Задачи",
+      "reports": "Отчеты",
+      "sources": "Источники"
+    },
+    "task": {
+      "running": "Выполняется",
+      "completed": "Готово",
+      "error": "Ошибка"
+    },
+    "report": {
+      "created": "Создано",
+      "modified": "Изменено"
+    },
+    "empty": {
+      "tasks": "Нет активности задач",
+      "reports": "Нет отчетов или файлов",
+      "sources": "Нет веб-источников"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "clawx-enhance",
+  "version": "1.0.0",
+  "description": "ClawX Enhance — stream guard + skill suggester OpenClaw plugin",
+  "private": true,
+  "license": "MIT",
+  "main": "index.js"
+}

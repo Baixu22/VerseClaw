@@ -1,0 +1,91 @@
+{
+  "nav": "ClawGraph",
+  "title": "ClawGraph",
+  "subtitle": "Run workspace YAML workflows with stateless workers, handoffs, audit, and review.",
+  "actions": {
+    "refresh": "Refresh",
+    "run": "Run workflow",
+    "starting": "Starting",
+    "abort": "Abort",
+    "approve": "Approve",
+    "reject": "Reject"
+  },
+  "workflows": {
+    "label": "Workflow",
+    "placeholder": "Select workflow",
+    "empty": "No workflow file found"
+  },
+  "compile": {
+    "label": "Compile",
+    "ok": "Ready",
+    "notReady": "Not ready",
+    "nodes": "nodes",
+    "parallel": "max parallel {{count}}",
+    "noDiagnostics": "No diagnostics."
+  },
+  "run": {
+    "label": "Run",
+    "empty": "No active run.",
+    "attempt": "attempt {{count}}",
+    "noRole": "no role"
+  },
+  "tabs": {
+    "dag": "DAG",
+    "events": "Events",
+    "review": "Review"
+  },
+  "dag": {
+    "empty": "Run a workflow to see node state.",
+    "dependsOn": "Depends on {{deps}}"
+  },
+  "events": {
+    "empty": "No events yet."
+  },
+  "review": {
+    "empty": "No open review items."
+  },
+  "toast": {
+    "runStarted": "ClawGraph run started.",
+    "runFailed": "ClawGraph run failed.",
+    "approvalRequired": "Workflow run requires approval."
+  },
+  "nodeType": {
+    "agent": "Agent",
+    "audit": "Audit"
+  },
+  "status": {
+    "queued": "Queued",
+    "ready": "Ready",
+    "running": "Running",
+    "handoff_received": "Handoff",
+    "auditing": "Auditing",
+    "done": "Done",
+    "failed": "Failed",
+    "review": "Review",
+    "blocked": "Blocked",
+    "aborted": "Aborted"
+  },
+  "runStatus": {
+    "queued": "Queued",
+    "running": "Running",
+    "complete": "Complete",
+    "blocked": "Blocked",
+    "failed": "Failed",
+    "aborted": "Aborted",
+    "review": "Review"
+  },
+  "eventType": {
+    "run_started": "Run started",
+    "node_ready": "Node ready",
+    "node_started": "Node started",
+    "node_handoff": "Handoff received",
+    "node_audit": "Audit recorded",
+    "node_done": "Node done",
+    "node_failed": "Node failed",
+    "review_requested": "Review requested",
+    "review_resolved": "Review resolved",
+    "run_completed": "Run completed",
+    "run_blocked": "Run blocked",
+    "run_aborted": "Run aborted"
+  }
+}

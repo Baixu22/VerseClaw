@@ -1,0 +1,169 @@
+{
+  "nav": "Knowledge",
+  "title": "Knowledge",
+  "subtitle": "出典付き wiki コンテキスト、レビュー待ちドラフト、ロール管理された知識変更を扱います。",
+  "tabs": {
+    "library": "Library",
+    "inbox": "Inbox",
+    "drafts": "Draft Inbox",
+    "review": "Review",
+    "governance": "Governance"
+  },
+  "actions": {
+    "configure": "Configure",
+    "init": "Initialize",
+    "importFiles": "Import Files",
+    "importFolder": "Import Folder",
+    "validateOkf": "Validate OKF Bundle",
+    "importOkf": "Import OKF Bundle",
+    "compile": "Compile",
+    "lint": "Lint",
+    "openVault": "Open Vault"
+  },
+  "status": {
+    "title": "Vault Status",
+    "ready": "Ready",
+    "missing": "Missing",
+    "vault": "Vault",
+    "mode": "Mode",
+    "render": "Render",
+    "obsidian": "Obsidian CLI",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "nativeSources": "Native sources"
+  },
+  "metrics": {
+    "sources": "Sources",
+    "syntheses": "Syntheses",
+    "entities": "Entities",
+    "warnings": "Warnings"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "wiki の出典と synthesis を検索",
+    "empty": "一致する知識はありません。",
+    "preview": "Preview",
+    "useInDraft": "Use in draft"
+  },
+  "okf": {
+    "title": "OKF Compatibility",
+    "badge": "OKF v0.1",
+    "bundlePath": "Bundle",
+    "concepts": "Concepts",
+    "validConcepts": "Valid",
+    "reservedFiles": "Reserved",
+    "warnings": "Warnings",
+    "errors": "Errors",
+    "typeDistribution": "Types",
+    "selectAll": "有効な concept をすべて選択"
+  },
+  "library": {
+    "title": "Library",
+    "typeHint": "この知識タイプで絞り込んで表示"
+  },
+  "inbox": {
+    "title": "Knowledge Inbox",
+    "pending": "保留中の候補",
+    "empty": "保留中の知識候補はありません。",
+    "noSelection": "Inbox item が選択されていません。",
+    "noSelectionHint": "候補を選択し、出典を確認してから draft に昇格します。",
+    "promote": "Promote to Draft",
+    "dismiss": "Dismiss",
+    "sources": "Sources",
+    "noSources": "出典参照はありません。",
+    "warnings": "Warnings",
+    "noWarnings": "警告はありません。",
+    "kinds": {
+      "chat-session": "Chat",
+      "task-ledger": "Task Ledger",
+      "clawgraph": "ClawGraph",
+      "file": "File",
+      "okf": "OKF",
+      "manual": "Manual",
+      "wiki-result": "Wiki"
+    }
+  },
+  "provenance": {
+    "references": "{{count}} reference",
+    "references_plural": "{{count}} references"
+  },
+  "types": {
+    "source-note": "Source Notes",
+    "synthesis": "Syntheses",
+    "decision": "Decisions",
+    "architecture": "Architecture",
+    "command": "Commands",
+    "troubleshooting": "Troubleshooting",
+    "glossary": "Glossary",
+    "procedure": "Procedures"
+  },
+  "draft": {
+    "title": "Draft Inbox",
+    "titleLabel": "Title",
+    "typeLabel": "Type",
+    "sourcesLabel": "Source IDs",
+    "tagsLabel": "Tags",
+    "bodyLabel": "Body",
+    "apply": "Apply Draft",
+    "create": "Create Draft",
+    "askSteward": "Ask Steward to Review",
+    "empty": "知識ドラフトはまだありません。",
+    "defaultProposalReason": "ユーザー作成の知識ドラフトです。明示的なレビューと apply を待っています。",
+    "status": {
+      "draft": "Draft",
+      "steward_reviewed": "Reviewed",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "applied": "Applied"
+    }
+  },
+  "review": {
+    "title": "Review / Diff",
+    "noDraft": "ドラフトが選択されていません。",
+    "diffTitle": "Change Preview",
+    "noProposal": "proposal が選択されていません。",
+    "confirmationBoundary": "Agent と Knowledge Steward はドラフトまたは proposal だけを準備できます。知識の apply にはユーザーの明示的な確認が必要です。",
+    "approveAndApply": "Approve and Apply",
+    "reject": "Reject"
+  },
+  "governance": {
+    "title": "Governance",
+    "readOnlyBadge": "Agent は既定で読み取り専用",
+    "steward": "Knowledge Steward",
+    "stewardDescription": "分類、出典確認、競合検出、変更提案を行う role-first のスロットです。直接 apply はできません。",
+    "permissions": "Permission Boundary",
+    "permissionsDescription": "Chat の knowledge scope は search/get の読み取りだけを許可します。書き込み、マージ、アーカイブ、削除は draft または proposal とユーザー確認が必要です。",
+    "lastReview": "Latest Steward Review",
+    "noReview": "このセッションではまだ steward review が実行されていません。"
+  },
+  "dialogs": {
+    "pickFiles": "知識ファイルをインポート",
+    "pickFolder": "知識フォルダーをインポート",
+    "pickOkfBundle": "OKF bundle フォルダーを選択"
+  },
+  "toasts": {
+    "configure": "Knowledge configured",
+    "init": "Knowledge vault initialized",
+    "ingest": "Knowledge imported",
+    "validateOkf": "OKF bundle validated",
+    "importOkf": "OKF concepts imported",
+    "compile": "Knowledge compiled",
+    "lint": "Knowledge lint complete",
+    "openVault": "Vault opened",
+    "applyDraft": "Draft applied",
+    "createDraft": "Draft created for review",
+    "promoteInbox": "Inbox item promoted to draft",
+    "dismissInbox": "Inbox item dismissed",
+    "stewardReview": "Steward review updated",
+    "applyReviewedChange": "Reviewed change applied",
+    "rejectDraft": "Draft rejected"
+  },
+  "errors": {
+    "status": "知識ステータスを読み込めませんでした。",
+    "action": "知識操作に失敗しました。",
+    "okfValidation": "OKF validation failed.",
+    "okfImport": "OKF import failed.",
+    "search": "検索に失敗しました。",
+    "get": "知識ページを読み込めませんでした。"
+  }
+}

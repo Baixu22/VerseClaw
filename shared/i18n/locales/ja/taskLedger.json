@@ -1,0 +1,87 @@
+{
+  "nav": "タスク台帳",
+  "title": "タスク台帳",
+  "subtitle": "長期目標、依存関係、レビュー項目、決定、セッションリンクを記録します。",
+  "search": "タスク、決定、セッションを検索",
+  "empty": "タスク台帳ノードはまだありません。",
+  "tabs": {
+    "tree": "ツリー",
+    "dag": "DAG",
+    "history": "履歴",
+    "review": "レビュー"
+  },
+  "actions": {
+    "refresh": "更新",
+    "exportHtml": "HTML 出力",
+    "addNode": "追加",
+    "linkSession": "セッションをリンク",
+    "clearReview": "レビュー解除"
+  },
+  "form": {
+    "titlePlaceholder": "ノードタイトル",
+    "descriptionPlaceholder": "説明",
+    "parentPlaceholder": "親ノード",
+    "noParent": "親なし"
+  },
+  "kind": {
+    "goal": "目標",
+    "milestone": "マイルストーン",
+    "task": "タスク",
+    "check": "チェック",
+    "decision": "決定",
+    "risk": "リスク",
+    "deviation": "逸脱",
+    "review": "レビュー"
+  },
+  "status": {
+    "todo": "未着手",
+    "doing": "進行中",
+    "blocked": "ブロック",
+    "review": "レビュー",
+    "done": "完了",
+    "dropped": "中止"
+  },
+  "edge": {
+    "depends_on": "依存",
+    "blocks": "ブロック",
+    "relates_to": "関連",
+    "derived_from": "派生元",
+    "supersedes": "置換",
+    "needs_review": "レビュー要"
+  },
+  "dag": {
+    "empty": "依存エッジはまだありません。"
+  },
+  "history": {
+    "empty": "台帳イベントはまだありません。",
+    "summary": "append-only 台帳に {{count}} 件のイベントがあります。"
+  },
+  "review": {
+    "empty": "レビューキューは空です。"
+  },
+  "session": {
+    "nodePlaceholder": "セッション対象",
+    "noNode": "ノードなし",
+    "link": "セッションリンク",
+    "linkedFromChat": "現在のチャットセッションからリンク"
+  },
+  "summary": {
+    "title": "タスク台帳",
+    "loading": "台帳を読み込み中",
+    "counts": "{{nodes}} ノード · {{events}} イベント",
+    "empty": "追跡中の長期タスクはまだありません。",
+    "currentGoal": "現在の目標",
+    "active": "進行中",
+    "blocked": "ブロック",
+    "review": "レビュー",
+    "blockers": "ブロック項目",
+    "needsReview": "要レビュー",
+    "decisions": "最近の決定",
+    "open": "台帳を開く"
+  },
+  "toast": {
+    "created": "タスク台帳ノードを作成しました",
+    "sessionLinked": "セッションをリンクしました",
+    "exported": "タスク台帳 HTML を出力しました"
+  }
+}

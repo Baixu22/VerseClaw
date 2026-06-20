@@ -1,0 +1,414 @@
+import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+
+const MAIN_SESSION_KEY = 'agent:main:main';
+const HANDOFF_DRAFT = [
+  '# Handoff: continue this ClawX conversation',
+  '',
+  '## Resume checkpoint',
+  'Objective: implement the handoff MVP.',
+].join('\n');
+
+const handoffHistory = [
+  {
+    id: 'handoff-user-1',
+    role: 'user',
+    content: [{ type: 'text', text: 'Continue the handoff MVP implementation.' }],
+    timestamp: 1711111110000,
+  },
+  {
+    id: 'handoff-assistant-1',
+    role: 'assistant',
+    content: [{ type: 'text', text: 'The next step is verifying continuity UX behavior.' }],
+    timestamp: 1711111111000,
+  },
+];
+
+function stableStringify(value: unknown): string {
+  if (value == null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map((item) => stableStringify(item)).join(',')}]`;
+  const entries = Object.entries(value as Record<string, unknown>)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, entryValue]) => `${JSON.stringify(key)}:${stableStringify(entryValue)}`);
+  return `{${entries.join(',')}}`;
+}
+
+const activeWorkspace = {
+  id: 'workspace-a',
+  name: 'Workspace A',
+  rootPath: 'C:/workspace-a',
+  agentId: 'main',
+  selectedAgentId: 'main',
+  activeSessionKey: MAIN_SESSION_KEY,
+  agentBindings: {
+    main: {
+      workspaceId: 'workspace-a',
+      agentId: 'main',
+      sessionKey: MAIN_SESSION_KEY,
+    },
+  },
+  permissionMode: 'acceptEdits',
+  createdAt: 1,
+  updatedAt: 1,
+  lastOpenedAt: 1,
+  state: {},
+  sessionStates: {},
+};
+
+function baseHostApiMocks() {
+  return {
+    [stableStringify(['gateway', 'status', null])]: {
+      state: 'running',
+      port: 18789,
+      pid: 12345,
+      gatewayReady: true,
+    },
+    [stableStringify(['/api/chat/sessions', 'GET'])]: {
+      ok: true,
+      data: {
+        status: 200,
+        ok: true,
+        json: {
+          success: true,
+          result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+        },
+      },
+    },
+    [stableStringify(['/api/chat/history', 'POST'])]: {
+      ok: true,
+      data: {
+        status: 200,
+        ok: true,
+        json: { success: true, result: { messages: [] } },
+      },
+    },
+    [stableStringify(['/api/agents', 'GET'])]: {
+      ok: true,
+      data: {
+        status: 200,
+        ok: true,
+        json: { success: true, agents: [{ id: 'main', name: 'Main' }] },
+      },
+    },
+    [stableStringify(['/api/workspaces', 'GET'])]: {
+      ok: true,
+      data: {
+        status: 200,
+        ok: true,
+        json: { success: true, workspaces: [activeWorkspace], activeWorkspaceId: 'workspace-a' },
+      },
+    },
+    [stableStringify(['workspaces', 'getActive', null])]: {
+      success: true,
+      activeWorkspaceId: 'workspace-a',
+      activeWorkspace,
+    },
+    [stableStringify(['sessions', 'prepareHandoff', {
+      sessionKey: MAIN_SESSION_KEY,
+      agentId: 'main',
+      workspaceId: 'workspace-a',
+    }])]: {
+      success: true,
+      checkpoint: {
+        trigger: 'session_rotation',
+        sessionKey: MAIN_SESSION_KEY,
+        agentId: 'main',
+        workspaceId: 'workspace-a',
+        objective: 'implement the handoff MVP',
+        filesTouched: ['src/pages/Chat/index.tsx'],
+        testsRun: [],
+        evidenceRefs: [{ type: 'session', ref: MAIN_SESSION_KEY, label: 'Source conversation' }],
+      },
+      draft: HANDOFF_DRAFT,
+      sources: [
+        { id: 'transcript', label: 'Recent transcript', available: true, summary: '2 recent messages' },
+        { id: 'task_ledger', label: 'Task Ledger', available: true, summary: '1 node' },
+        { id: 'git', label: 'Git status', available: true, summary: 'main: clean' },
+        { id: 'observability', label: 'Recent run/trace', available: true, summary: 'No recent trace data.' },
+      ],
+      warnings: [],
+    },
+    [stableStringify(['sessions', 'compactionStatus', {
+      sessionKey: MAIN_SESSION_KEY,
+      agentId: 'main',
+    }])]: {
+      success: true,
+      available: true,
+      canCompact: true,
+      inProgress: false,
+      pressure: 'high',
+      truncatedMessageCount: 0,
+      warnings: [],
+    },
+    [stableStringify(['usage', 'contextRange', {
+      sessionKey: MAIN_SESSION_KEY,
+      modelRef: null,
+      messageCount: 0,
+      usedTokens: null,
+    }])]: {
+      success: true,
+      range: {
+        sessionKey: MAIN_SESSION_KEY,
+        usedTokens: 120000,
+        maxTokens: 128000,
+        truncatedMessageCount: 0,
+        status: 'bestEffort',
+      },
+    },
+    [stableStringify(['usage', 'contextRange', {
+      sessionKey: MAIN_SESSION_KEY,
+      modelRef: null,
+      messageCount: 2,
+      usedTokens: null,
+    }])]: {
+      success: true,
+      range: {
+        sessionKey: MAIN_SESSION_KEY,
+        usedTokens: 120000,
+        maxTokens: 128000,
+        truncatedMessageCount: 0,
+        status: 'bestEffort',
+      },
+    },
+    [stableStringify(['usage', 'live', {
+      sessionKey: MAIN_SESSION_KEY,
+      runId: null,
+      streaming: false,
+    }])]: {
+      success: true,
+      usage: null,
+    },
+    [stableStringify(['taskLedger', 'linkSession', {
+      workspaceId: 'workspace-a',
+      sourceSessionKey: MAIN_SESSION_KEY,
+      targetSessionKey: 'agent:main:session-1711111111111-4fzyo8',
+      relation: 'handoff',
+      summary: 'Handoff session created from agent:main:main',
+      idempotencyKey: 'handoff:agent:main:main:agent:main:session-1711111111111-4fzyo8',
+    }])]: {
+      success: true,
+      nodes: [],
+      edges: [],
+      events: [],
+      warnings: [],
+      sessionLinks: [],
+      recentDecisions: [],
+      blockedNodeIds: [],
+      reviewNodeIds: [],
+      exportedAt: new Date(0).toISOString(),
+      workspaceId: 'workspace-a',
+    },
+  };
+}
+
+test.describe('ClawX chat session handoff', () => {
+  test('previews, edits, and creates a new session with the draft prefilled without auto-send', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: handoffHistory },
+          },
+        },
+        hostApi: baseHostApiMocks(),
+      });
+      await app.evaluate(() => {
+        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+        const originalHostInvoke = (ipcMain as unknown as {
+          _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+        })._invokeHandlers?.get('host:invoke');
+        const calls = { chatSend: 0, workspaceUpdate: [] as unknown[], draftInput: '' };
+        const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
+        const buildWorkspace = (draftInput: string) => {
+          const sessionKey = 'agent:main:session-1711111111111-4fzyo8';
+          return {
+            id: 'workspace-a',
+            name: 'Workspace A',
+            rootPath: 'C:/workspace-a',
+            agentId: 'main',
+            selectedAgentId: 'main',
+            activeSessionKey: sessionKey,
+            agentBindings: { main: { workspaceId: 'workspace-a', agentId: 'main', sessionKey } },
+            permissionMode: 'acceptEdits',
+            createdAt: 1,
+            updatedAt: 1,
+            lastOpenedAt: 1,
+            state: { activeTopicId: null, draftInput },
+            sessionStates: { [sessionKey]: { activeTopicId: null, draftInput } },
+          };
+        };
+
+        Date.now = () => 1711111111111;
+        Math.random = () => 0.123456;
+        ipcMain.removeHandler('host:invoke');
+        ipcMain.handle('host:invoke', async (event: unknown, request: {
+          id?: string;
+          module?: string;
+          action?: string;
+          payload?: Record<string, unknown>;
+        }) => {
+          if (request.module === 'workspaces' && request.action === 'update') {
+            calls.workspaceUpdate.push(request.payload);
+            const state = request.payload?.state;
+            if (state && typeof state === 'object' && typeof (state as Record<string, unknown>).draftInput === 'string') {
+              calls.draftInput = String((state as Record<string, unknown>).draftInput);
+            }
+            const workspace = buildWorkspace(calls.draftInput);
+            return respond(request.id, {
+              success: true,
+              profiles: [workspace],
+              activeWorkspaceId: 'workspace-a',
+              activeWorkspace: workspace,
+            });
+          }
+          if (request.module === 'workspaces' && request.action === 'list' && calls.draftInput) {
+            const workspace = buildWorkspace(calls.draftInput);
+            return respond(request.id, {
+              success: true,
+              profiles: [workspace],
+              activeWorkspaceId: 'workspace-a',
+              activeWorkspace: workspace,
+            });
+          }
+          if (request.module === 'workspaces' && request.action === 'getActive' && calls.draftInput) {
+            const workspace = buildWorkspace(calls.draftInput);
+            return respond(request.id, {
+              success: true,
+              activeWorkspaceId: 'workspace-a',
+              activeWorkspace: workspace,
+            });
+          }
+          if (request.module === 'chat' && request.action === 'sendWithMedia') {
+            calls.chatSend += 1;
+            return respond(request.id, { success: true, result: { runId: 'unexpected' } });
+          }
+          return originalHostInvoke?.(event, request) ?? respond(request.id, {});
+        });
+        (globalThis as typeof globalThis & { __handoffCalls?: typeof calls }).__handoffCalls = calls;
+      });
+
+      const page = await getStableWindow(app);
+      await page.addInitScript(() => {
+        Date.now = () => 1711111111111;
+        Math.random = () => 0.123456;
+      });
+      await page.reload();
+      await page.waitForLoadState('domcontentloaded');
+
+      await expect(page.getByTestId('chat-composer-handoff')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('chat-composer-fork')).toHaveCount(0);
+
+      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await expect(page.getByTestId('chat-session-fork')).toBeVisible();
+      await expect(page.getByTestId('chat-session-handoff')).toBeVisible();
+      await expect(page.getByTestId('chat-session-handoff-recommended')).toBeVisible();
+      await expect(page.getByTestId('chat-session-fork-recommended')).toHaveCount(0);
+      await page.keyboard.press('Escape');
+
+      await page.getByTestId('chat-composer-handoff').click();
+      await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
+      await expect(page.getByTestId('chat-handoff-recommendation-note')).toBeVisible();
+      await expect(page.getByTestId('chat-handoff-dialog').getByText('Recent transcript', { exact: true }))
+        .toBeVisible();
+      await expect(page.getByTestId('chat-handoff-draft'))
+        .toHaveValue(/Handoff: continue this ClawX conversation/);
+
+      const editedDraft = `${HANDOFF_DRAFT}\n\nContinue by running the targeted tests.`;
+      await page.getByTestId('chat-handoff-draft').fill(editedDraft);
+      await page.getByTestId('chat-handoff-create').click();
+
+      await expect(page.getByTestId('chat-handoff-dialog')).toBeHidden();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(editedDraft);
+      await expect.poll(async () => app.evaluate(() => (
+        (globalThis as typeof globalThis & { __handoffCalls?: { chatSend: number } }).__handoffCalls?.chatSend ?? 0
+      ))).toBe(0);
+      const workspaceUpdates = await app.evaluate(() => (
+        (globalThis as typeof globalThis & { __handoffCalls?: { workspaceUpdate: unknown[] } }).__handoffCalls?.workspaceUpdate ?? []
+      ));
+      expect(workspaceUpdates).toContainEqual(expect.objectContaining({
+        id: expect.any(String),
+        activeSessionKey: 'agent:main:session-1711111111111-4fzyo8',
+        sessionKey: 'agent:main:session-1711111111111-4fzyo8',
+        state: { activeTopicId: null, draftInput: editedDraft },
+      }));
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
+  test('disables handoff entry points while a run is active', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+          [stableStringify(['chat.send', null])]: {
+            success: true,
+            result: { runId: 'run-handoff-e2e' },
+          },
+        },
+        hostApi: {
+          ...baseHostApiMocks(),
+          [stableStringify(['/api/chat/send', 'POST'])]: {
+            ok: true,
+            data: {
+              status: 200,
+              ok: true,
+              json: { success: true, result: { runId: 'run-handoff-e2e' } },
+            },
+          },
+        },
+      });
+      await app.evaluate(() => {
+        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+        const originalHostInvoke = (ipcMain as unknown as {
+          _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+        })._invokeHandlers?.get('host:invoke');
+        const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
+        ipcMain.removeHandler('host:invoke');
+        ipcMain.handle('host:invoke', async (event: unknown, request: {
+          id?: string;
+          module?: string;
+          action?: string;
+          payload?: Record<string, unknown>;
+        }) => {
+          if (request.module === 'chat' && request.action === 'sendWithMedia') {
+            return respond(request.id, { success: true, result: { runId: 'run-handoff-e2e' } });
+          }
+          return originalHostInvoke?.(event, request) ?? respond(request.id, {});
+        });
+      });
+
+      const page = await getStableWindow(app);
+      await page.waitForLoadState('domcontentloaded');
+
+      await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
+      await page.getByTestId('chat-composer-input').fill('run long task');
+      await page.getByTestId('chat-composer-send').click();
+      await expect(page.getByTestId('chat-composer-fork')).toBeDisabled();
+      await expect(page.getByTestId('chat-composer-handoff')).toHaveCount(0);
+
+      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await expect(page.getByTestId('chat-session-fork')).toBeDisabled();
+      await expect(page.getByTestId('chat-session-handoff')).toBeDisabled();
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+});

@@ -1,0 +1,41 @@
+---
+id: knowledge-hub-vnext-orchestration
+title: Knowledge Hub vNext orchestration
+scenario: gateway-backend-communication
+taskType: runtime-bridge
+intent: Add a lean Knowledge Inbox and provenance layer so Chat, agents, Task Ledger, ClawGraph, files, and OKF imports can feed governed knowledge without expanding into a new knowledge backend.
+touchedAreas:
+  - shared/host-api/contract.ts
+  - src/lib/host-api.ts
+  - electron/services/knowledge-api.ts
+  - src/pages/Knowledge/**
+  - shared/i18n/locales/*/knowledge.json
+  - tests/unit/knowledge-api.test.ts
+  - tests/unit/knowledge-page.test.tsx
+  - tests/unit/host-api-facade.test.ts
+  - tests/e2e/knowledge-hub.spec.ts
+expectedUserBehavior:
+  - Knowledge Inbox holds user/agent/steward/session/task/file/OKF candidates outside the formal wiki until the user promotes or dismisses them.
+  - Promoting an inbox item creates a normal editable KnowledgeDraft and optional proposal; it still does not call wiki.apply.
+  - Provenance records source refs and read/reference events without mutating formal wiki pages.
+  - Chat knowledge scope remains read-only and only grants search/get intent.
+  - Knowledge Steward can review inbox/draft content and suggest tags/warnings/proposals, but cannot apply directly.
+requiredProfiles:
+  - fast
+  - comms
+requiredTests:
+  - tests/unit/knowledge-api.test.ts
+  - tests/unit/knowledge-page.test.tsx
+  - tests/unit/host-api-facade.test.ts
+  - tests/e2e/knowledge-hub.spec.ts
+acceptance:
+  - Renderer calls inbox/provenance operations through src/lib/host-api.ts and never directly calls Gateway wiki endpoints.
+  - createInboxItem, listInboxItems, updateInboxItem, dismissInboxItem, promoteInboxItemToDraft, recordKnowledgeReference, and getProvenance do not call wiki.apply.
+  - Inbox promotion creates an editable draft with preserved source refs, tags, type, creator, workspace, and warnings.
+  - Provenance metadata is stored under knowledge/provenance and audit events are appended for create/promote/dismiss/reference flows.
+  - The UI surfaces Inbox and provenance as governance metadata, not as a Markdown editor clone or alternate RAG stack.
+docs:
+  required: true
+---
+
+This task is the vNext orchestration layer for Knowledge Hub. It should deepen ClawX ecosystem coupling through governed inbox/provenance state while keeping memory-wiki as the only formal knowledge backend.

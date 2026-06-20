@@ -1,0 +1,311 @@
+import { completeSetup, expect, test } from './fixtures/electron';
+
+test.describe('Role memory panel', () => {
+  test('creates and archives role memory through gateway RPC', async ({ electronApp, page }) => {
+    await electronApp.evaluate(({ ipcMain }) => {
+      const state = {
+        proposeCount: 0,
+        previewCount: 0,
+        archiveCount: 0,
+        retentionProposeCount: 0,
+        reviewBatchCount: 0,
+        simulateCount: 0,
+        proposals: [] as Array<{
+          id: string;
+          operation: string;
+          status: string;
+          decision: string;
+          proposal: { content: string; sensitivity?: string };
+          riskLevel?: string;
+          impactScope?: string;
+          suggestedAction?: string;
+          evidenceStatus?: string;
+          retentionReason?: string;
+        }>,
+        cards: [{
+          id: 'mem-1',
+          type: 'role_experience',
+          status: 'active',
+          content: 'Prefer migration notes before schema changes.',
+          confidence: 0.9,
+          importance: 0.7,
+        }],
+      };
+
+      (globalThis as unknown as { __roleMemoryPanelState: typeof state }).__roleMemoryPanelState = state;
+
+      const originalHostInvoke = (ipcMain as unknown as {
+        _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+      })._invokeHandlers?.get('host:invoke');
+      const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
+
+      ipcMain.removeHandler('host:invoke');
+      ipcMain.handle('host:invoke', async (event, request: {
+        id?: string;
+        module?: string;
+        action?: string;
+        payload?: { method?: string; params?: Record<string, unknown> };
+      }) => {
+        const current = (globalThis as unknown as { __roleMemoryPanelState: typeof state }).__roleMemoryPanelState;
+
+        if (request?.module === 'gateway' && request.action === 'status') {
+          return respond(request.id, { state: 'running', port: 18789 });
+        }
+
+        if (request?.module === 'agents' && request.action === 'list') {
+          return respond(request.id, {
+            success: true,
+            agents: [{
+              id: 'main',
+              name: 'Main',
+              isDefault: true,
+              mainSessionKey: 'agent:main:session',
+            }],
+          });
+        }
+
+        if (request?.module === 'channels' && request.action === 'accounts') {
+          return respond(request.id, { success: true, channels: [] });
+        }
+
+        if (request?.module === 'providers') {
+          if (request.action === 'accounts') return respond(request.id, { success: true, accounts: [] });
+          if (request.action === 'accountKeyInfo') return respond(request.id, { success: true, keyInfo: {} });
+          if (request.action === 'vendors') return respond(request.id, { success: true, vendors: [] });
+          if (request.action === 'getDefaultAccount') return respond(request.id, { success: true, accountId: null });
+        }
+
+        if (request?.module === 'gateway' && request.action === 'rpc') {
+          const method = request.payload?.method;
+          const params = request.payload?.params ?? {};
+
+          if (method === 'roles.list') {
+            return respond(request.id, {
+              roles: [{
+                name: 'architect',
+                displayName: 'Architect',
+                description: 'Designs the system shape.',
+                rolePrompt: 'Designs the system shape.',
+                tools: ['read'],
+                effort: 'high',
+              }],
+            });
+          }
+
+          if (method === 'memory.list') {
+            return respond(request.id, { cards: current.cards.filter((card) => card.status === 'active') });
+          }
+
+          if (method === 'memory.proposals') {
+            return respond(request.id, { proposals: current.proposals });
+          }
+
+          if (method === 'memory.previewProposal') {
+            current.previewCount += 1;
+            const proposal = params.proposal as { content?: string; type?: string; scope?: string; sensitivity?: string } | undefined;
+            return respond(request.id, {
+              preview: {
+                operation: params.operation ?? 'create',
+                proposal,
+                normalized: {
+                  ...proposal,
+                  confidence: 0.85,
+                  importance: 0.55,
+                  applicableRoles: ['architect'],
+                },
+                decision: { action: 'accept', accepted: true, reason: 'Low-risk memory mutation is allowed by policy.' },
+                conflicts: [],
+                evidence: { status: 'verified', summary: 'Manual evidence was provided.' },
+                riskLevel: 'low',
+                impactScope: proposal?.scope ?? 'role',
+                suggestedAction: 'approve',
+                reasonSummary: 'low risk create on role procedure',
+                permissionDecision: 'allow',
+                permissionReason: 'Low-risk memory mutation is allowed by policy.',
+                wouldWrite: false,
+              },
+            });
+          }
+
+          if (method === 'memory.conflicts') {
+            return respond(request.id, { conflicts: [] });
+          }
+
+          if (method === 'memory.explainInjection') {
+            return respond(request.id, { injections: [] });
+          }
+
+          if (method === 'memory.stats') {
+            return respond(request.id, {
+              stats: {
+                active: current.cards.filter((card) => card.status === 'active').length,
+                conflictsOpen: 0,
+                proposalsNeedsReview: 0,
+              },
+            });
+          }
+
+          if (method === 'memory.retentionCandidates') {
+            return respond(request.id, {
+              candidates: current.cards
+                .filter((card) => card.status === 'active')
+                .slice(0, 1)
+                .map((card) => ({
+                  card,
+                  recommendedAction: 'cold',
+                  retentionScore: 0.3,
+                  labels: ['Rarely used'],
+                  reason: 'Low-use active memory should be cooled before archival.',
+                })),
+            });
+          }
+
+          if (method === 'memory.health') {
+            return respond(request.id, { health: { ok: true, checks: [] } });
+          }
+
+          if (method === 'memory.detail') {
+            const id = String(params.id ?? '');
+            const card = current.cards.find((entry) => entry.id === id);
+            return respond(request.id, {
+              card,
+              proposals: [],
+              conflicts: [],
+              versions: card ? [{ id: 'ver-1', cardId: card.id, version: 1, createdAt: '2026-06-16T00:00:00.000Z' }] : [],
+              audit: [],
+              injections: [],
+            });
+          }
+
+          if (method === 'memory.propose') {
+            const proposal = params.proposal as { content?: string } | undefined;
+            current.proposeCount += 1;
+            current.cards.push({
+              id: `mem-${current.cards.length + 1}`,
+              type: 'role_experience',
+              status: 'active',
+              content: proposal?.content ?? '',
+              confidence: 0.85,
+              importance: 0.55,
+            });
+            return respond(request.id, { accepted: true, card: current.cards.at(-1) });
+          }
+
+          if (method === 'memory.retentionPropose') {
+            current.retentionProposeCount += 1;
+            const cardId = String(params.cardId ?? '');
+            const card = current.cards.find((entry) => entry.id === cardId);
+            current.proposals.push({
+              id: `prop-${current.proposals.length + 1}`,
+              operation: 'update',
+              status: 'needs_review',
+              decision: 'needs_review',
+              proposal: { content: card?.content ?? '' },
+              riskLevel: 'low',
+              impactScope: 'role',
+              suggestedAction: 'applyAsCold',
+              evidenceStatus: 'verified',
+              retentionReason: 'Low-use active memory should be cooled before archival.',
+            });
+            return respond(request.id, { runId: 'ret-1', proposals: current.proposals });
+          }
+
+          if (method === 'memory.reviewBatch') {
+            current.reviewBatchCount += 1;
+            const ids = params.ids as string[] | undefined;
+            for (const proposal of current.proposals) {
+              if (ids?.includes(proposal.id)) proposal.status = 'applied';
+            }
+            const card = current.cards.find((entry) => entry.id === 'mem-1');
+            if (card) card.status = 'cold';
+            return respond(request.id, { batchId: 'batch-1', results: (ids ?? []).map((id) => ({ id, ok: true })) });
+          }
+
+          if (method === 'memory.simulateInjection') {
+            current.simulateCount += 1;
+            return respond(request.id, {
+              roleName: 'architect',
+              pack: {
+                policyVersion: 'role-memory-context-v3',
+                candidateExplanations: [{
+                  cardId: 'mem-1',
+                  selected: true,
+                  score: 0.91,
+                  reason: 'Injected as a must role constraint.',
+                  penalties: [],
+                  injectionClass: 'must',
+                }],
+                budget: { total: 200 },
+                estimatedTokens: { total: 40 },
+              },
+              selectedCards: [current.cards[0]],
+            });
+          }
+
+          if (method === 'memory.archive') {
+            current.archiveCount += 1;
+            const id = String(params.id ?? '');
+            const card = current.cards.find((entry) => entry.id === id);
+            if (card) card.status = 'archived';
+            return respond(request.id, { card });
+          }
+        }
+
+        return originalHostInvoke?.(event, request) ?? respond(request?.id, {});
+      });
+    });
+
+    await completeSetup(page);
+    await page.getByTestId('sidebar-nav-agents').click();
+    await expect(page.getByTestId('agents-page')).toBeVisible();
+
+    await page.getByTestId('role-orchestration-toggle').click();
+    await page.getByRole('button', { name: /Architect/ }).click();
+
+    await expect(page.getByTestId('role-memory-panel')).toBeVisible();
+    await expect(page.getByTestId('role-memory-card')).toContainText('Prefer migration notes');
+
+    await page.getByRole('button', { name: /Create proposal/ }).first().click();
+    await page.getByRole('tab', { name: /Review/ }).click();
+    await page.getByLabel('Select proposal').first().check();
+    await page.getByRole('button', { name: /Cold selected/ }).click();
+
+    await page.getByRole('tab', { name: /Injections/ }).click();
+    await page.getByTestId('role-memory-simulate').click();
+    await expect(page.getByTestId('role-memory-simulation-result')).toContainText('mem-1');
+
+    await page.getByRole('tab', { name: /Active/ }).click();
+
+    await page.getByTestId('role-memory-input').fill('Check injection explain logs after orchestration.');
+    await page.getByTestId('role-memory-preview-button').click();
+    await expect(page.getByTestId('role-memory-preview')).toContainText('low risk');
+    await page.getByTestId('role-memory-save').click();
+
+    await expect(page.getByTestId('role-memory-card').filter({ hasText: 'Check injection explain logs' })).toBeVisible();
+
+    await page.getByTestId('role-memory-archive').first().click();
+    await expect(page.getByTestId('role-memory-card').filter({ hasText: 'Prefer migration notes' })).toHaveCount(0);
+
+    const calls = await electronApp.evaluate(() => {
+      const state = (globalThis as unknown as {
+        __roleMemoryPanelState?: {
+          proposeCount: number;
+          previewCount: number;
+          archiveCount: number;
+          retentionProposeCount: number;
+          reviewBatchCount: number;
+          simulateCount: number;
+        };
+      }).__roleMemoryPanelState;
+      return {
+        proposeCount: state?.proposeCount ?? 0,
+        previewCount: state?.previewCount ?? 0,
+        archiveCount: state?.archiveCount ?? 0,
+        retentionProposeCount: state?.retentionProposeCount ?? 0,
+        reviewBatchCount: state?.reviewBatchCount ?? 0,
+        simulateCount: state?.simulateCount ?? 0,
+      };
+    });
+    expect(calls).toEqual({ proposeCount: 1, previewCount: 1, archiveCount: 1, retentionProposeCount: 1, reviewBatchCount: 1, simulateCount: 1 });
+  });
+});

@@ -1,0 +1,859 @@
+{
+  "gatewayNotRunning": "ゲートウェイが停止中",
+  "gatewayRequired": "チャットを利用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
+  "welcome": {
+    "title": "ClawX チャット",
+    "subtitle": "お手伝いできることはありますか？",
+    "askQuestions": "タスク対応",
+    "askQuestionsDesc": "タスク指向の依頼に対応します",
+    "creativeTasks": "連続実行",
+    "creativeTasksDesc": "複数ステップの作業を継続して進めます",
+    "brainstorming": "マルチエージェント並列実行"
+  },
+  "noLogs": "（ログはまだありません）",
+  "scrollToLatest": "最下部に戻る",
+  "loadMoreHistory": "以前のメッセージを読み込む",
+  "loadingMoreHistory": "読み込み中…",
+  "toolbar": {
+    "refresh": "チャットを更新",
+    "currentAgent": "現在の会話相手: {{agent}}",
+    "workspace": "ワークスペース",
+    "saveToKnowledge": "ナレッジに保存"
+  },
+  "markdown": {
+    "codeBlock": "コード",
+    "copyCode": "コードをコピー",
+    "copiedCode": "コピー済み"
+  },
+  "toolUi": {
+    "actions": {
+      "back": "戻る",
+      "next": "次へ",
+      "copyResponse": "回答をコピー",
+      "copied": "コピー済み",
+      "insertResponse": "回答を挿入",
+      "sendResponse": "回答を送信"
+    },
+    "plan": {
+      "label": "計画",
+      "progress": "{{total}} 件中 {{completed}} 件完了",
+      "showMore": "さらに {{count}} 件表示"
+    },
+    "optionList": {
+      "label": "選択肢"
+    },
+    "questionFlow": {
+      "label": "質問",
+      "step": "ステップ {{current}} / {{total}}"
+    },
+    "preferencesPanel": {
+      "label": "設定",
+      "on": "オン",
+      "off": "オフ"
+    },
+    "receipt": {
+      "complete": "完了",
+      "saved": "保存済み",
+      "error": "確認が必要"
+    }
+  },
+  "knowledgeDraft": {
+    "title": "ナレッジに保存",
+    "description": "統合ドラフトを確認して編集します。これはナレッジのドラフト箱に入り、正式な適用にはユーザー確認が必要です。",
+    "titleLabel": "タイトル",
+    "bodyLabel": "ドラフト",
+    "apply": "レビュー用ドラフトを作成",
+    "empty": "保存できる表示中の会話内容がありません。",
+    "invalid": "適用する前にタイトルとドラフト本文を入力してください。",
+    "applied": "レビュー用ナレッジドラフトを作成しました。",
+    "applyFailed": "ナレッジドラフトの保存に失敗しました。",
+    "proposalReason": "ユーザーがこのチャット要約をレビュー待ちのナレッジドラフトとして保存するよう依頼しました。"
+  },
+  "generatedFiles": {
+    "title": "ファイルの変更（{{count}} 件）",
+    "created": "新規",
+    "modified": "更新",
+    "openFolder": "フォルダーを開く",
+    "viewAll": "ファイル変更を見る"
+  },
+  "runError": {
+    "title": "モデル呼び出しに失敗しました"
+  },
+  "artifactPanel": {
+    "tabs": {
+      "changes": "変更",
+      "preview": "プレビュー",
+      "browser": "ワークスペース"
+    },
+    "workspaceTabs": {
+      "files": "ファイル",
+      "terminal": "ターミナル",
+      "git": "Git",
+      "web": "Web",
+      "audit": "監査"
+    },
+    "actions": {
+      "back": "一覧に戻る"
+    },
+    "changes": {
+      "heading": "ファイルの変更（{{count}} 件）",
+      "empty": "この会話にはまだファイルの変更がありません",
+      "selectFileHint": "会話内のファイルカード、または「変更を表示」をクリックして diff を開きます。"
+    },
+    "preview": {
+      "emptyTitle": "ファイルが選択されていません",
+      "emptyHint": "まず会話内のファイルカードをクリックしてファイルを選択すると、ここにプレビューが表示されます。"
+    }
+  },
+  "filePreview": {
+    "tabs": {
+      "source": "ソース",
+      "preview": "プレビュー",
+      "changes": "変更",
+      "info": "情報"
+    },
+    "actions": {
+      "save": "保存",
+      "saving": "保存中...",
+      "revert": "元に戻す",
+      "openInFinder": "ファイルマネージャーで表示",
+      "openDirectly": "直接開く",
+      "close": "閉じる"
+    },
+    "info": {
+      "path": "パス",
+      "size": "サイズ",
+      "type": "種類"
+    },
+    "toast": {
+      "saved": "ディスクに保存しました",
+      "saveFailed": "保存に失敗しました: {{error}}"
+    },
+    "errors": {
+      "outsideSandbox": "サンドボックス外のパスのため拒否しました",
+      "outsideSandboxTitle": "このファイルを読み取れません",
+      "outsideSandboxHint": "ClawX はこのパスを読み取れませんでした。ファイルが移動または削除されたか、現在のアカウントにアクセス権がない可能性があります。ファイルマネージャーで表示できます。",
+      "readOnlyRoot": "このファイルは読み取り専用領域（内蔵スキルなど）にあり、変更できません",
+      "tooLarge": "ファイルが大きすぎます（{{size}}）。プレビューを無効化しました",
+      "binary": "バイナリファイルのためテキストプレビューはできません",
+      "notFound": "ファイルが見つかりません",
+      "loadFailed": "読み込みに失敗しました: {{error}}",
+      "noPreview": "このファイルにはプレビューがありません",
+      "unsupportedFormatTitle": "このファイル形式は内蔵プレビューまたは差分表示に未対応です",
+      "unsupportedFormatHint": "現在、内蔵プレビューと差分表示は直接読み取れるテキスト/Markdown 系ファイルのみ対応しています。ファイルマネージャーで開いてください。",
+      "largeBinaryOpenTitle": "このファイルは大きいため内蔵プレビューできません",
+      "largeBinaryOpenHint": "このファイルは {{size}} です。ClawX では内蔵プレビューできませんが、確認後にシステム既定のアプリで開けます。",
+      "openInFinderFailed": "ファイルマネージャーで表示できません",
+      "openFailed": "開けませんでした: {{error}}"
+    },
+    "diff": {
+      "noChanges": "表示する変更はありません",
+      "newFile": "新規ファイルのため比較対象がありません",
+      "tooLarge": "ファイルが大きすぎるため diff ビューは無効化されました。完全な内容は「ソース」タブで確認してください",
+      "unavailable": "この会話ではこのファイルの正確な変更ベースラインを取得できなかったため、差分を生成できません。",
+      "unavailableHint": "「プレビュー」で現在の内容を確認するか、Git などで正確な差分を参照してください。"
+    },
+    "confirmOpen": {
+      "title": "ファイルを開く",
+      "message": "「{{fileName}}」をシステム既定のアプリで開きますか？",
+      "detail": "このファイルはシステム既定のアプリで開かれます。",
+      "size": "ファイルサイズ: {{size}}",
+      "cancel": "キャンセル"
+    },
+    "pdf": {
+      "loadFailed": "PDF の読み込みに失敗しました: {{error}}",
+      "prev": "前のページ",
+      "next": "次のページ",
+      "zoomIn": "拡大",
+      "zoomOut": "縮小",
+      "zoomReset": "幅に合わせる",
+      "pageInputAria": "現在のページ",
+      "singlePageHint": "ツールバーから {{total}} ページを切り替えできます"
+    },
+    "sheet": {
+      "loadFailed": "スプレッドシートの読み込みに失敗しました: {{error}}",
+      "empty": "表示できるワークシートがありません",
+      "emptySheet": "このワークシートは空です",
+      "unnamedSheet": "シート {{idx}}",
+      "rowRange": "行 {{from}}-{{to}} / {{total}}",
+      "prevPage": "前のページ",
+      "nextPage": "次のページ"
+    }
+  },
+  "workspace": {
+    "title": "ワークスペース",
+    "freshBadge": "今回の実行で更新",
+    "pickFile": "左側のファイルを選択してプレビュー",
+    "empty": "ワークスペースが空、またはアクセスできません",
+    "truncated": "ディレクトリが大きいため、5000 件までで切り詰めました",
+    "actions": {
+      "refresh": "更新",
+      "openRootInFinder": "ルートをファイルマネージャーで表示",
+      "toggleHidden": "隠しファイル表示切替",
+      "showHidden": "隠しファイルを表示",
+      "hideHidden": "隠しファイルを隠す"
+    },
+    "terminal": {
+      "title": "ワークスペース端末",
+      "noWorkspace": "ワークスペース未選択",
+      "permission": {
+        "readOnly": "読み取り専用",
+        "acceptEdits": "編集を許可",
+        "plan": "計画",
+        "fullAccess": "フルアクセス"
+      },
+      "status": {
+        "idle": "未起動",
+        "starting": "起動中",
+        "running": "実行中",
+        "exited": "終了",
+        "blocked": "ブロック"
+      },
+      "actions": {
+        "start": "開始",
+        "interrupt": "Ctrl+C",
+        "close": "閉じる",
+        "clear": "クリア",
+        "approve": "承認"
+      },
+      "blocked": {
+        "title": "この権限モードでは対話型端末を使えません",
+        "body": "実端末を開始する前に、編集を許可またはフルアクセスへ切り替えてください。"
+      },
+      "approval": {
+        "title": "対話型端末は承認待ちです"
+      },
+      "toast": {
+        "approvalRequired": "対話型端末には承認が必要です",
+        "blocked": "端末の起動がブロックされました",
+        "approvalFailed": "承認に失敗しました"
+      }
+    },
+    "web": {
+      "title": "Web プレビュー",
+      "mode": {
+        "static": "静的",
+        "devServer": "開発サーバー",
+        "externalUrl": "外部 URL"
+      },
+      "status": {
+        "idle": "idle"
+      },
+      "fields": {
+        "targetPath": "対象パス",
+        "targetPathPlaceholder": "相対パス、例: index.html",
+        "url": "URL",
+        "detectScriptsFirst": "先にスクリプトを検出"
+      },
+      "actions": {
+        "detect": "検出",
+        "start": "開始",
+        "stop": "停止",
+        "pickComponent": "コンポーネント選択",
+        "picking": "選択中",
+        "clearSelection": "選択解除",
+        "sendToComposer": "入力欄へ送信",
+        "captureAndSend": "撮影して送信",
+        "capturing": "撮影中"
+      },
+      "tooltips": {
+        "captureAndSend": "選択したコンポーネントとプレビュー画像を入力欄へ送ります。"
+      },
+      "browser": {
+        "placeholder": "プレビュー開始後に URL を読み込みます",
+        "title": "ワークスペースプレビュー"
+      },
+      "selection": {
+        "selected": "選択中"
+      },
+      "empty": "{{mode}}プレビューは開始後ここに表示されます。",
+      "toast": {
+        "noScripts": "利用できる package script は検出されませんでした",
+        "startFailed": "プレビューの開始に失敗しました",
+        "started": "Web プレビューを開始しました",
+        "sent": "入力欄へ送信しました",
+        "screenshotUnavailable": "スクリーンショットを使えません。コンポーネント情報のみ送信しました",
+        "screenshotFailed": "スクリーンショットに失敗しました。コンポーネント情報のみ送信しました",
+        "screenshotSent": "スクリーンショットとコンポーネント情報を送信しました"
+      },
+      "prompt": {
+        "title": "Web プレビューで選択したコンポーネントを調整してください。",
+        "context": "プレビューコンテキスト",
+        "mode": "モード",
+        "previewUrl": "プレビュー URL",
+        "targetUrl": "対象 URL",
+        "workspace": "ワークスペース",
+        "screenshot": "プレビュー画像",
+        "clip": "切り抜き",
+        "selected": "選択コンポーネント",
+        "tag": "タグ",
+        "text": "テキスト",
+        "attributes": "属性",
+        "position": "位置",
+        "html": "HTML 断片",
+        "instruction": "この選択コンポーネントのソースを特定して調整してください。確実に特定できない場合は、必要な追加情報を説明してください。",
+        "instructionWithScreenshot": "スクリーンショットと選択情報を使い、ソースを特定して UI を調整してください。"
+      }
+    },
+    "git": {
+      "loading": "Git ステータスを読み込み中",
+      "detached": "Detached HEAD",
+      "summary": "{{count}} 件の変更 · ↑{{ahead}} ↓{{behind}}",
+      "clean": "作業ツリーはクリーンです",
+      "empty": {
+        "title": "Git リポジトリがありません",
+        "body": "現在のワークスペースは Git リポジトリ内にありません。"
+      },
+      "actions": {
+        "refresh": "更新",
+        "stage": "ステージ",
+        "unstage": "ステージ解除",
+        "commit": "ステージ済み変更をコミット",
+        "createBranch": "ブランチ作成",
+        "addWorktree": "worktree を追加",
+        "createPr": "PR 作成"
+      },
+      "diff": {
+        "unstaged": "未ステージ",
+        "staged": "ステージ済み",
+        "empty": "選択したファイルに diff はありません。"
+      },
+      "commit": {
+        "title": "コミット",
+        "placeholder": "コミットメッセージ"
+      },
+      "branchWorktree": {
+        "title": "ブランチと worktree",
+        "branchPlaceholder": "新しいブランチ",
+        "worktreePlaceholder": "worktree 用ブランチ"
+      },
+      "github": {
+        "title": "GitHub PR",
+        "noPrs": "オープンな PR はありません",
+        "notAuthenticated": "PR 操作を有効にするにはターミナルで gh auth login を実行してください。",
+        "titlePlaceholder": "PR タイトル",
+        "bodyPlaceholder": "PR 本文"
+      },
+      "toast": {
+        "blocked": "承認が必要です",
+        "failed": "Git 操作に失敗しました"
+      }
+    }
+  },
+  "taskPanel": {
+    "eyebrow": "実行ビュー",
+    "title": "タスクの流れ",
+    "emptyTitle": "まだ構造化されたステップはありません",
+    "emptyBody": "実行が始まると、ClawX は思考・ツール呼び出し・最終化の状態をここに表示します。",
+    "status": {
+      "idle": "待機中",
+      "running_one": "進行中 1 件",
+      "running_other": "進行中 {{count}} 件"
+    },
+    "stepStatus": {
+      "running": "実行中",
+      "completed": "完了",
+      "error": "エラー"
+    }
+  },
+  "executionGraph": {
+    "title": "実行グラフ",
+    "branchLabel": "branch",
+    "thinkingLabel": "考え中",
+    "errorLabel": "エラー",
+    "imageGenerateLabel": "画像生成",
+    "agentRun": "{{agent}} の実行",
+    "collapsedSummary": "ツール呼び出し {{toolCount}} 件 · プロセスメッセージ {{processCount}} 件",
+    "collapseAction": "実行グラフを折りたたむ",
+    "viewTrace": "トレースを表示"
+  },
+  "teamOrchestration": {
+    "title": "チーム編成",
+    "mode": "モード: {{mode}}",
+    "template": "テンプレート: {{template}}",
+    "pendingVerifier": "検証者を待機中",
+    "collapse": "チーム編成を折りたたむ",
+    "expand": "チーム編成を展開",
+    "verifier": "検証者",
+    "wave": "Wave {{wave}}",
+    "routeReasons": "ルーティング信号",
+    "showMoreNodes": "さらに {{count}} 個のタスクノードを表示",
+    "metrics": {
+      "workers": "ワーカー",
+      "waves": "Wave",
+      "verifier": "検証者",
+      "signals": "信号"
+    },
+    "alert": {
+      "failure": "失敗",
+      "repair": "修復",
+      "followup": "フォローアップ",
+      "reroute": "再ルーティング"
+    },
+    "status": {
+      "running": "実行中",
+      "planned": "計画済み",
+      "completed": "完了",
+      "partial": "一部完了",
+      "failed": "失敗",
+      "verified": "検証済み",
+      "refuted": "却下",
+      "error": "エラー",
+      "accepted": "承認済み",
+      "ready": "準備完了",
+      "skipped": "スキップ"
+    },
+    "phase": {
+      "plan": "計画",
+      "architecture": "設計",
+      "worker": "ワーカー",
+      "implementation": "実装",
+      "verification": "検証",
+      "review": "レビュー",
+      "security": "セキュリティ",
+      "docs": "ドキュメント",
+      "verifier": "検証者",
+      "repair": "修復",
+      "redo": "やり直し",
+      "followup": "フォローアップ"
+    }
+  },
+  "imageGeneration": {
+    "generating": "画像を生成しています。少々お待ちください…",
+    "previewLoading": "画像プレビューを読み込んでいます…",
+    "previewUnavailable": "画像プレビューを一時的に表示できません"
+  },
+  "composer": {
+    "attachFiles": "ファイルを添付",
+    "pickSkill": "Skill を選択",
+    "pickTool": "ツールを選択",
+    "skillButton": "Skills",
+    "toolButton": "ツール",
+    "skillPickerTitle": "{{agent}} のクイック Skill",
+    "skillSearchPlaceholder": "Skill を検索",
+    "toolSearchPlaceholder": "ツール、Skill、MCP サービスを検索",
+    "skillLoading": "Skill を読み込み中...",
+    "skillEmpty": "一致する Skill がありません",
+    "pickAgent": "Agent を選択",
+    "pickModel": "モデルを選択",
+    "knowledgeScopeTitle": "ナレッジ範囲",
+    "knowledgeScope": {
+      "none": "ナレッジなし",
+      "memory": "メモリ",
+      "wiki": "Wiki",
+      "all": "すべて"
+    },
+    "knowledgeScopeDescription": {
+      "none": "メモリや wiki コンテキストなしで送信します。",
+      "memory": "関連する場合にランタイムメモリカードを使います。",
+      "wiki": "ClawX 管理 wiki の出典付きノートを使います。",
+      "all": "メモリと wiki の両方をコンテキストに使います。"
+    },
+    "knowledgeQuick": {
+      "enable": "wiki ナレッジを使う",
+      "disable": "wiki ナレッジを無効化"
+    },
+    "modelPickerTitle": "モデルを切り替え",
+    "modelSwitchFailed": "モデルの切り替えに失敗しました: {{error}}",
+    "inputModeTitle": "入力モード",
+    "inputModeHint": "このメッセージにのみ適用",
+    "guideInjected": "アクティブな実行にガイドとして注入しました",
+    "guideFallback": "アクティブな実行が終了しました。新しいメッセージとして送信しました",
+    "queueQueued": "キューに追加 — 現在のタスク完了後に自動送信されます",
+    "queueCount": "{{count}} 件のメッセージがキューにあります",
+    "clearTarget": "送信先 Agent をクリア",
+    "targetChip": "@{{agent}}",
+    "agentPickerTitle": "次のメッセージを別の Agent に直接送信します",
+    "gatewayDisconnectedPlaceholder": "ゲートウェイ未接続...",
+    "send": "送信",
+    "stop": "停止",
+    "gatewayConnected": "接続済み",
+    "gatewayStatus": "ゲートウェイ {{state}} | ポート: {{port}} {{pid}}",
+    "contextStatusTitle": "コンテキストとトークンの状態",
+    "messageCount": "{{count}} 件のメッセージ",
+    "tokenUsage": "{{tokens}} tokens",
+    "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
+    "contextHidden": "{{count}} 件を非表示",
+    "compaction": {
+      "compress": "現在のセッションを圧縮",
+      "compressTooltip": "現在のセッション履歴を圧縮",
+      "dialogTitle": "現在のセッションを圧縮",
+      "dialogDescription": "確認後、アクティブなセッションの古いチャット履歴を要約します。長期タスクの状態は Task Ledger と Context Pack の参照に残ります。",
+      "tokenUsage": "トークン使用量",
+      "hiddenMessages": "非表示メッセージ",
+      "lastCompaction": "前回の圧縮",
+      "neverCompacted": "未実行",
+      "expectedEffect": "次のモデルリクエストでは transcript の負荷を下げつつ、目的、決定、未完了タスク、失敗した試行、触れたファイル、制約、レビュー項目を保持します。",
+      "instructionsLabel": "追加の圧縮指示",
+      "instructionsPlaceholder": "任意: 必ず残すべき内容を指定します。",
+      "confirm": "現在のセッションを圧縮",
+      "cancel": "キャンセル",
+      "unknown": "不明",
+      "unavailable": "圧縮は利用できません",
+      "inProgress": "圧縮を実行中です",
+      "activeRun": "現在の実行が終了すると利用できます",
+      "toastSuccess": "セッションを圧縮しました",
+      "toastSuccessWithTokens": "セッションを圧縮しました: {{before}} -> {{after}} tokens",
+      "toastNoop": "圧縮しませんでした: {{reason}}",
+      "toastFailed": "セッションの圧縮に失敗しました",
+      "reason": {
+        "active_run": "現在の実行が終了すると利用できます",
+        "already_compacted": "すでに圧縮済みです",
+        "session_too_small": "セッションが短すぎます",
+        "no_session": "アクティブなセッションがありません",
+        "no_transcript": "Transcript が見つかりません",
+        "gateway_unavailable": "Gateway を利用できません"
+      }
+    },
+    "longTaskControl": {
+      "queued": "{{count}} 件キュー済み",
+      "checkpoint": "{{trigger}} checkpoint",
+      "intervention": "{{mode}} {{status}}",
+      "warnings": "{{count}} 件の警告",
+      "drainNow": "キュー済みフォローアップを今送信",
+      "drainTooltip": "キュー済みフォローアップを今送信します",
+      "drainActiveRun": "現在の実行が終わるとキューを送信できます",
+      "drainSuccess": "{{count}} 件のキュー済みフォローアップを送信しました",
+      "drainFailed": "キュー済みフォローアップの送信に失敗しました",
+      "mode": {
+        "interrupt": "interrupt",
+        "guide": "guide",
+        "queue": "queue",
+        "unknown": "intervention"
+      },
+      "status": {
+        "recorded": "記録済み",
+        "queued": "キュー済み",
+        "draining": "送信中",
+        "drained": "送信済み",
+        "steered": "誘導済み",
+        "fallback": "フォールバック",
+        "checkpointed": "保存済み",
+        "failed": "失敗"
+      },
+      "trigger": {
+        "compaction": "圧縮",
+        "interrupt": "割り込み",
+        "run_abort": "中止",
+        "clawgraph_node_handoff": "handoff",
+        "audit_fail": "audit",
+        "manual_review": "review",
+        "session_rotation": "rotation",
+        "queue_drain": "queue",
+        "guide": "guide"
+      },
+      "reason": {
+        "active_run": "現在の実行が終わると利用できます",
+        "active_run_started_before_queue_drain": "キュー送信前に新しい実行が始まりました",
+        "empty_queue": "キュー済みフォローアップはありません",
+        "drain_failed": "キュー送信に失敗しました",
+        "gateway_unavailable": "Gateway を利用できません"
+      }
+    },
+    "continuity": {
+      "recommended": "推奨",
+      "tooltip": {
+        "fork": {
+          "default": "今の推奨: この transcript を新しい会話へ分岐します"
+        },
+        "handoff": {
+          "default": "今の推奨: 編集できる引き継ぎ下書きを用意します",
+          "gateway_unavailable": "Gateway が利用できないため、下書きの準備がおすすめです",
+          "high_pressure": "コンテキスト圧が高いため、引き継ぎ下書きがおすすめです",
+          "truncated_context": "一部の履歴が非表示のため、引き継ぎ下書きがおすすめです",
+          "compaction_warning": "コンテキスト状態に注意が必要なため、引き継ぎ下書きがおすすめです"
+        }
+      },
+      "dialogHint": {
+        "default": "このセッション状態では Handoff がおすすめです。",
+        "gateway_unavailable": "Gateway が利用できないため、この下書き式 Handoff は runtime fork に依存しません。",
+        "high_pressure": "コンテキスト圧が高いため、新しいセッションを始める前に下書きを確認できます。",
+        "truncated_context": "一部の transcript 履歴が非表示のため、分岐コピーより下書き Handoff の方が安全です。",
+        "compaction_warning": "コンテキスト圧縮状態に警告があるため、下書き Handoff がより安全な継続方法です。"
+      },
+      "failure": {
+        "action": {
+          "prepareHandoff": "Handoff を準備",
+          "tryFork": "Fork を試す"
+        },
+        "fork": {
+          "active_run": {
+            "title": "Fork は現在の実行完了後に使えます",
+            "description": "会話分岐を作成する前に、現在の応答が終わるまで待ってください。"
+          },
+          "gateway_unavailable": {
+            "title": "Fork には Gateway が必要です",
+            "description": "Gateway が利用できないため、編集できる Handoff 下書きを準備できます。"
+          },
+          "parent_too_large": {
+            "title": "Transcript が大きすぎて Fork できません",
+            "description": "完全な分岐コピーではなく、現在のタスクを続ける Handoff 下書きを準備できます。"
+          },
+          "transcript_unavailable": {
+            "title": "Transcript を利用できません",
+            "description": "利用可能なセッション情報から Handoff 下書きを準備できます。"
+          },
+          "unknown": {
+            "title": "Fork に失敗しました",
+            "description": "新しい会話分岐を作成できませんでした。"
+          }
+        },
+        "handoff": {
+          "active_run": {
+            "title": "Handoff は現在の実行完了後に使えます",
+            "description": "Handoff 下書きを準備する前に、現在の応答が終わるまで待ってください。"
+          },
+          "gateway_unavailable": {
+            "title": "Handoff の準備に失敗しました",
+            "description": "Gateway が利用できません。再接続後にもう一度試してください。"
+          },
+          "parent_too_large": {
+            "title": "Handoff の準備に失敗しました",
+            "description": "現在のコンテキストが大きすぎるため、安定して下書きを作成できません。"
+          },
+          "transcript_unavailable": {
+            "title": "Transcript を利用できません",
+            "description": "Handoff 下書きに必要な会話コンテキストを十分に読めませんでした。"
+          },
+          "unknown": {
+            "title": "Handoff の準備に失敗しました",
+            "description": "継続用の下書きを準備できませんでした。"
+          }
+        }
+      }
+    },
+    "fork": {
+      "action": "新しい会話へ Fork",
+      "tooltip": "この transcript から新しい会話ブランチを作成します",
+      "disabledActiveRun": "現在の実行が完了すると利用できます",
+      "toastCreated": "Fork 会話を作成しました",
+      "toastFailed": "会話の Fork に失敗しました"
+    },
+    "handoff": {
+      "action": "新しい会話へ Handoff",
+      "tooltip": "新しいセッションに引き継ぎ草稿を準備します",
+      "disabledActiveRun": "現在の実行が完了すると利用できます",
+      "dialogTitle": "新しい会話へ Handoff",
+      "dialogDescription": "新しいセッションを作成する前に、この引き継ぎ草稿を確認・編集できます。草稿はコンポーザーに入り、自動送信されません。",
+      "draftLabel": "Handoff 草稿",
+      "create": "Handoff セッションを作成",
+      "cancel": "キャンセル",
+      "toastPrepareFailed": "Handoff の準備に失敗しました",
+      "toastCreateFailed": "Handoff セッションの作成に失敗しました",
+      "toastCreated": "Handoff セッションを作成しました",
+      "ledgerSummary": "{{source}} から作成した Handoff セッション"
+    },
+    "workspaceActions": "ワークスペース操作",
+    "workspaceActionFailed": "ワークスペース操作に失敗しました: {{error}}",
+    "permissionModeTitle": "権限モード",
+    "permissionMode": {
+      "readOnly": "読み取り専用",
+      "plan": "計画",
+      "acceptEdits": "編集を許可",
+      "fullAccess": "フルアクセス"
+    },
+    "pickWorkspaceFolder": "ワークスペースフォルダーを選択",
+    "newWorkspaceSession": "新しいワークスペースセッション",
+    "workspaceAgentTitle": "ワークスペース Agent",
+    "retryFailedAttachments": "失敗した添付を再試行",
+    "folderDropUnsupported": "このフォルダを添付できませんでした。もう一度ドラッグするか、メッセージにフォルダパスを貼り付けてください。",
+    "folderAttachment": "フォルダ",
+    "skillPreviewTooltip": "SKILL.md をプレビュー",
+    "skillPreviewNotFound": "この Skill が見つかりません。Skill ピッカーを開いて一覧を更新してください。",
+    "capability": {
+      "dialogTitle": "能力の変更を適用しますか？",
+      "dialogDescription": "ClawX はこのメッセージ内でローカル Skill または MCP 管理アクションを検出しました。変更前に確認してください。",
+      "confirm": "確認して送信",
+      "cancel": "キャンセル",
+      "applied": "能力の変更を適用しました",
+      "failed": "能力アクションに失敗しました: {{error}}",
+      "allFailed": "能力の変更は適用されませんでした",
+      "resultSuccess": "完了",
+      "resultFailed": "失敗",
+      "localOnlyHint": "このバージョンでは、検出済みのローカル Skill の有効化と、貼り付けられた MCP JSON の登録のみを行います。リモートマーケットプレイスやテンプレートのインストールは自動実行しません。",
+      "mcpScope": "スコープ: {{scope}} | トランスポート: {{transport}}",
+      "risk": {
+        "low": "低リスク",
+        "medium": "要確認",
+        "high": "高リスク"
+      },
+      "audit": {
+        "title": "監査",
+        "blockedHint": "ローカル監査によりこの操作はブロックされました。Skill または MCP 設定を調整してから確認してください。",
+        "status": {
+          "passed": "合格",
+          "warning": "要確認",
+          "blocked": "ブロック",
+          "unknown": "不明"
+        }
+      },
+      "unsupported": {
+        "generic": "チャットから適用するには、ローカル Skill の一致または MCP JSON が必要です。",
+        "skillNotFound": "このローカル Skill は見つかりませんでした。Skill ピッカーを開くか、先にローカルへインストールしてください。",
+        "mcpConfigRequired": "チャットから MCP サービスを登録するには、完全な MCP JSON 設定を貼り付けてください。",
+        "mcpServerNotFound": "登録済み MCP サービスが見つかりませんでした。MCP サービス名または ID を指定してください。"
+      }
+    },
+    "effortButton": "強度",
+    "effortTitle": "推論強度",
+    "effortHelpTooltip": "強度を上げると、エージェントが回答前により長く考えます。",
+    "effortFaster": "より高速",
+    "effortSmarter": "より深く",
+    "effortStatusAuto": "自動",
+    "effortStatusMinimal": "最小",
+    "effortStatusLow": "低",
+    "effortStatusMedium": "中",
+    "effortStatusHigh": "高",
+    "effortStatusXhigh": "極高",
+    "effortStatusMax": "Max",
+    "effortSwitchFailed": "強度の更新に失敗しました: {{error}}",
+    "workModeTitle": "作業モード",
+    "workMode": {
+      "plan": "計画",
+      "build": "実装",
+      "review": "レビュー",
+      "docsData": "文書/データ"
+    },
+    "workModeDescription": {
+      "plan": "実行前に範囲、リスク、受け入れ条件を整理します。",
+      "build": "焦点を絞って実装し、検証します。",
+      "review": "既定では編集せず、diff とリスクを確認します。",
+      "docsData": "文書、表計算、PDF、レポートを扱います。"
+    },
+    "workModeRecommendedPermission": "推奨: {{mode}}"
+  },
+  "historyBuckets": {
+    "today": "今日",
+    "withinWeek": "過去7日間",
+    "withinMonth": "過去30日間",
+    "older": "それ以前"
+  },
+  "sessionFilter": {
+    "all": "すべて",
+    "chat": "会話",
+    "work": "タスク"
+  },
+  "questionDirectory": {
+    "title": "質問目次",
+    "fallback": "質問 {{number}}",
+    "moreHint": "さらに {{count}} 件の質問は表示されていません"
+  },
+  "workModePanel": {
+    "knowledge": "ナレッジ: {{scope}}",
+    "permissionMismatch": "現在の権限は {{current}} です。このモードの推奨は {{recommended}} です。",
+    "summary": {
+      "plan": "計画モードは前提、リスク、影響範囲、受け入れ条件に集中します。",
+      "build": "実装モードは実装、検証、簡潔な変更要約に集中します。",
+      "review": "レビューモードは指摘、証拠、重大度、テスト不足を優先します。",
+      "docsData": "文書/データモードは文書、表計算、PDF、レポート成果物に集中します。"
+    },
+    "artifacts": "成果物: {{types}}",
+    "kitStatus": "{{kit}}: {{status}}",
+    "artifactTypes": {
+      "markdown": "Markdown",
+      "docx": "DOCX",
+      "xlsx": "XLSX",
+      "csv": "CSV",
+      "pptx": "PPTX",
+      "pdf": "PDF",
+      "html": "HTML",
+      "image": "画像"
+    },
+    "capability": {
+      "ready": "利用可能",
+      "missingSkill": "スキル不足",
+      "disabled": "無効",
+      "runtimeUnavailable": "Runtime 不可",
+      "optionalExternal": "任意"
+    },
+    "status": {
+      "plan": {
+        "primary": "前提",
+        "secondary": "リスク",
+        "tertiary": "受け入れ条件"
+      },
+      "build": {
+        "primary": "ワークスペース",
+        "secondary": "権限",
+        "tertiary": "テスト"
+      },
+      "review": {
+        "primary": "Diff の焦点",
+        "secondary": "重大度",
+        "tertiary": "テスト不足"
+      },
+      "docsData": {
+        "primary": "Docs は runtime 制御",
+        "secondary": "Sheets は runtime 制御",
+        "tertiary": "PDF/PPTX は runtime 制御"
+      }
+    }
+  },
+  "assistantRender": {
+    "branch": {
+      "previous": "????",
+      "next": "????",
+      "count": "{{current}} / {{total}}"
+    },
+    "reasoning": {
+      "title": "??????"
+    },
+    "tool": {
+      "running": "???",
+      "completed": "??",
+      "error": "???"
+    },
+    "usage": {
+      "tokens": "tokens"
+    },
+    "status": {
+      "gateway": "??????",
+      "run": "??",
+      "tools": "???",
+      "context": "??????",
+      "workspace": "???????",
+      "permission": "??"
+    },
+    "quote": {
+      "action": "??"
+    },
+    "error": {
+      "title": "???????",
+      "dismiss": "エラーを閉じる"
+    },
+    "attachment": {
+      "open": "???????",
+      "folder": "?????",
+      "file": "????"
+    }
+  },
+  "turnWork": {
+    "title": "作業パネル",
+    "status": {
+      "idle": "作業記録はありません",
+      "running": "実行中",
+      "completed": "作業完了",
+      "blocked": "ブロック中",
+      "error": "対応が必要"
+    },
+    "tabs": {
+      "tasks": "タスク",
+      "reports": "レポート",
+      "sources": "ソース"
+    },
+    "task": {
+      "running": "実行中",
+      "completed": "完了",
+      "error": "エラー"
+    },
+    "report": {
+      "created": "作成済み",
+      "modified": "変更済み"
+    },
+    "empty": {
+      "tasks": "タスク活動はありません",
+      "reports": "レポートまたはファイル出力はありません",
+      "sources": "Web ソースはありません"
+    }
+  }
+}

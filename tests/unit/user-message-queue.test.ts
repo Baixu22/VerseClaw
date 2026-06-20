@@ -1,0 +1,184 @@
+import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
+import {
+  completeDrainedUserMessages,
+  drainUserMessages,
+  enqueueUserMessage,
+  peekUserMessageCount,
+  restoreDrainingUserMessages,
+} from '../../openclaw_runtime/src/agents/user-message-queue';
+import {
+  listLongTaskCheckpoints,
+  listLongTaskInterventions,
+  recordLongTaskCheckpoint,
+  recordLongTaskInterventionEvent,
+} from '../../openclaw_runtime/src/agents/long-task-control/store';
+import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { resolveOpenClawStateSqlitePath } from '../../openclaw_runtime/src/state/openclaw-state-db.paths';
+
+const ORIGINAL_STATE_DIR = process.env.OPENCLAW_STATE_DIR;
+
+let testStateRoot: string | undefined;
+
+beforeEach(() => {
+  closeOpenClawStateDatabaseForTest();
+  testStateRoot = mkdtempSync(path.join(tmpdir(), 'clawx-long-task-control-'));
+  process.env.OPENCLAW_STATE_DIR = testStateRoot;
+});
+
+afterEach(() => {
+  closeOpenClawStateDatabaseForTest();
+  if (testStateRoot) {
+    rmSync(testStateRoot, { recursive: true, force: true });
+    testStateRoot = undefined;
+  }
+  if (ORIGINAL_STATE_DIR === undefined) {
+    delete process.env.OPENCLAW_STATE_DIR;
+  } else {
+    process.env.OPENCLAW_STATE_DIR = ORIGINAL_STATE_DIR;
+  }
+});
+
+describe('persistent user message queue', () => {
+  it('deduplicates queued messages by idempotency key', () => {
+    const sessionKey = 'agent:main:queue-idempotent';
+
+    enqueueUserMessage(sessionKey, {
+      text: 'first follow-up',
+      source: 'queue',
+      idempotencyKey: 'queue-idem-1',
+    });
+    enqueueUserMessage(sessionKey, {
+      text: 'updated follow-up',
+      source: 'queue',
+      idempotencyKey: 'queue-idem-1',
+    });
+
+    expect(peekUserMessageCount(sessionKey)).toBe(1);
+    expect(drainUserMessages(sessionKey)).toMatchObject([
+      {
+        text: 'updated follow-up',
+        attempts: 1,
+        source: 'queue',
+      },
+    ]);
+  });
+
+  it('keeps pending queue items after the state database is reopened', () => {
+    const sessionKey = 'agent:main:queue-restart';
+
+    enqueueUserMessage(sessionKey, {
+      text: 'continue after gateway restart',
+      agentId: 'main',
+      source: 'queue',
+      idempotencyKey: 'queue-restart-1',
+    });
+
+    expect(existsSync(resolveOpenClawStateSqlitePath(process.env))).toBe(true);
+    closeOpenClawStateDatabaseForTest();
+
+    expect(peekUserMessageCount(sessionKey)).toBe(1);
+    const drained = drainUserMessages(sessionKey);
+
+    expect(drained).toMatchObject([
+      {
+        text: 'continue after gateway restart',
+        agentId: 'main',
+        attempts: 1,
+      },
+    ]);
+    expect(peekUserMessageCount(sessionKey)).toBe(0);
+  });
+
+  it('restores failed drain attempts without losing the queued message', () => {
+    const sessionKey = 'agent:main:queue-restore';
+
+    enqueueUserMessage(sessionKey, {
+      text: 'retry after transient send failure',
+      source: 'queue',
+      idempotencyKey: 'queue-restore-1',
+    });
+
+    const firstAttempt = drainUserMessages(sessionKey);
+    expect(firstAttempt).toMatchObject([{ attempts: 1 }]);
+
+    restoreDrainingUserMessages(firstAttempt, 'gateway unavailable');
+
+    expect(peekUserMessageCount(sessionKey)).toBe(1);
+    const retryAttempt = drainUserMessages(sessionKey);
+    expect(retryAttempt).toMatchObject([
+      {
+        text: 'retry after transient send failure',
+        attempts: 2,
+        lastError: 'gateway unavailable',
+      },
+    ]);
+
+    completeDrainedUserMessages(retryAttempt);
+    expect(peekUserMessageCount(sessionKey)).toBe(0);
+  });
+});
+
+describe('persistent long-task control records', () => {
+  it('upserts checkpoints and intervention events by idempotency key', () => {
+    const sessionKey = 'agent:main:checkpoint-idempotent';
+
+    const firstCheckpoint = recordLongTaskCheckpoint({
+      sessionKey,
+      agentId: 'main',
+      workspaceId: 'workspace',
+      trigger: 'guide',
+      activeTask: 'old steering note',
+      idempotencyKey: 'checkpoint-idem-1',
+    });
+    const updatedCheckpoint = recordLongTaskCheckpoint({
+      sessionKey,
+      agentId: 'main',
+      workspaceId: 'workspace',
+      trigger: 'guide',
+      activeTask: 'updated steering note',
+      nextAction: 'resume with latest guidance',
+      idempotencyKey: 'checkpoint-idem-1',
+    });
+
+    expect(updatedCheckpoint.id).toBe(firstCheckpoint.id);
+    expect(listLongTaskCheckpoints(sessionKey)).toHaveLength(1);
+    expect(listLongTaskCheckpoints(sessionKey)[0]?.checkpoint).toMatchObject({
+      activeTask: 'updated steering note',
+      nextAction: 'resume with latest guidance',
+    });
+
+    recordLongTaskInterventionEvent({
+      sessionKey,
+      agentId: 'main',
+      workspaceId: 'workspace',
+      trigger: 'guide',
+      mode: 'guide',
+      status: 'recorded',
+      payload: { text: 'old guide' },
+      checkpointId: updatedCheckpoint.id,
+      idempotencyKey: 'intervention-idem-1',
+    });
+    recordLongTaskInterventionEvent({
+      sessionKey,
+      agentId: 'main',
+      workspaceId: 'workspace',
+      trigger: 'guide',
+      mode: 'guide',
+      status: 'steered',
+      payload: { text: 'updated guide' },
+      checkpointId: updatedCheckpoint.id,
+      idempotencyKey: 'intervention-idem-1',
+    });
+
+    expect(listLongTaskInterventions(sessionKey)).toMatchObject([
+      {
+        status: 'steered',
+        payload: { text: 'updated guide' },
+      },
+    ]);
+  });
+});
