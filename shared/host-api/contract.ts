@@ -53,6 +53,22 @@ import type {
 } from '../types/workspace';
 import type { WorkModeId, WorkModeKitConfig, WorkModeToolBundleConfig } from '../types/work-mode';
 import type {
+  WorkProviderConfig,
+  WorkProviderRunPayload,
+  WorkProviderRunResult,
+  WorkProviderStatusSnapshot,
+  WorkProviderValidateArtifactPayload,
+  WorkProviderValidateArtifactResult,
+} from '../types/work-provider';
+export type {
+  WorkProviderConfig,
+  WorkProviderRunPayload,
+  WorkProviderRunResult,
+  WorkProviderStatusSnapshot,
+  WorkProviderValidateArtifactPayload,
+  WorkProviderValidateArtifactResult,
+} from '../types/work-provider';
+import type {
   ObservabilityDashboardSnapshot,
   ObservabilityNodeDiagnostics,
   ObservabilityTrace,
@@ -77,6 +93,13 @@ import type {
   TaskLedgerSnapshot,
 } from '../types/task-ledger';
 import type {
+  LongTaskCheckpointRecord,
+  LongTaskControlEvent,
+  LongTaskControlStatus,
+  LongTaskInputMode,
+  ResumeCheckpoint,
+} from '../types/long-task-control';
+export type {
   LongTaskCheckpointRecord,
   LongTaskControlEvent,
   LongTaskControlStatus,
@@ -205,6 +228,7 @@ export type SettingsSnapshot = Partial<{
   cdpRemoteDebuggingPort: number;
   workModeToolBundles: WorkModeToolBundleConfig;
   workModeKits: WorkModeKitConfig;
+  workProviders: WorkProviderConfig;
 }>;
 export type SettingsKey = keyof SettingsSnapshot & string;
 export type SettingsValue = SettingsSnapshot[SettingsKey];
@@ -980,6 +1004,50 @@ export type SessionCompactionPayload = {
 export type SessionCompactionHistoryPayload = SessionCompactionPayload & {
   limit?: number;
 };
+export type CompressionEvidenceRef = {
+  type: 'session' | 'trace' | 'file' | 'tool' | 'task_ledger' | 'clawgraph' | 'manual' | 'other';
+  ref: string;
+  label?: string;
+};
+export type CompressionFact = {
+  text: string;
+  evidenceRefs: CompressionEvidenceRef[];
+};
+export type CompressionArtifactQuality = {
+  score: number;
+  level: 'high' | 'medium' | 'low';
+  fieldCoverage: number;
+  evidenceCoverage: number;
+  artifactTokens: number;
+  projectionTokens: number;
+  warnings: string[];
+};
+export type CompressionArtifact = {
+  schemaVersion: 1;
+  objective: string;
+  constraints: CompressionFact[];
+  currentState: string;
+  done: CompressionFact[];
+  inProgress: CompressionFact[];
+  blocked: CompressionFact[];
+  decisions: CompressionFact[];
+  filesTouched: CompressionFact[];
+  testsRun: CompressionFact[];
+  failedAttempts: CompressionFact[];
+  deviations: CompressionFact[];
+  nextAction: string;
+  reviewNeeded: CompressionFact[];
+  evidenceRefs: CompressionEvidenceRef[];
+  unverifiedClaims: string[];
+  quality: CompressionArtifactQuality;
+};
+export type SessionCompressionArtifactPayload = SessionCompactionPayload & {
+  checkpointId?: string;
+};
+export type SessionRecoveryContextPayload = SessionCompressionArtifactPayload & {
+  budgetTokens?: number;
+  purpose?: string;
+};
 export type SessionLongTaskControlPayload = SessionCompactionPayload;
 export type SessionLongTaskControlHistoryPayload = SessionCompactionPayload & {
   limit?: number;
@@ -1012,6 +1080,12 @@ export type SessionCompactionHistoryEntry = {
   tokensAfter?: number;
   firstKeptEntryId?: string;
   trigger: 'manual' | 'auto-threshold' | 'overflow-retry' | 'timeout-retry';
+  quality?: CompressionArtifactQuality;
+  artifactTokens?: number;
+  projectionTokens?: number;
+  evidenceCoverage?: number;
+  unverifiedCount?: number;
+  warnings?: string[];
 };
 export type SessionCompactionStatus = {
   available: boolean;
@@ -1041,7 +1115,28 @@ export type SessionCompactionResult = HostSuccess & {
   sessionKey?: string;
   sessionId?: string;
   rotatedSessionKey?: string;
+  artifact?: CompressionArtifact;
+  quality?: CompressionArtifactQuality;
+  artifactTokens?: number;
+  projectionTokens?: number;
+  evidenceCoverage?: number;
   warnings?: string[];
+};
+export type SessionCompressionArtifactResult = HostSuccess & {
+  key?: string;
+  checkpointId?: string;
+  artifact?: CompressionArtifact;
+  quality?: CompressionArtifactQuality;
+  warnings: string[];
+};
+export type SessionRecoveryContextResult = HostSuccess & {
+  key?: string;
+  checkpointId?: string;
+  context: string;
+  artifact?: CompressionArtifact;
+  quality?: CompressionArtifactQuality;
+  projectionTokens?: number;
+  warnings: string[];
 };
 export type SessionHandoffPayload = {
   sessionKey: string;
@@ -1049,7 +1144,7 @@ export type SessionHandoffPayload = {
   workspaceId?: string | null;
 };
 export type SessionHandoffSource = {
-  id: 'runtime_checkpoint' | 'transcript' | 'task_ledger' | 'git' | 'observability';
+  id: 'compression_artifact' | 'runtime_checkpoint' | 'transcript' | 'task_ledger' | 'git' | 'observability';
   label: string;
   available: boolean;
   summary?: string;
@@ -1129,6 +1224,7 @@ export type CapabilityOrchestrationStep = {
 export type CapabilityOrchestrationSummary = {
   status: 'success' | 'partial' | 'failed' | 'blocked';
   steps: CapabilityOrchestrationStep[];
+  traceId?: string;
   verified?: boolean;
   reloaded?: boolean;
   heartbeatStatus?: string;
@@ -1174,10 +1270,23 @@ export type ChatSendWithMediaPayload = {
   media?: ChatMediaItem[];
   inputMode?: ChatInputMode;
   knowledgeScope?: WorkspaceKnowledgeScope;
+  knowledgeReferences?: ChatKnowledgeReference[];
   workMode?: WorkModeId;
 };
 export type ChatSendWithMediaResult = HostSuccess & {
   result?: { runId?: string };
+};
+
+export type ChatKnowledgeReference = {
+  id: string;
+  title: string;
+  lookup: string;
+  corpus?: 'wiki' | 'memory' | 'all';
+  pageId?: string;
+  pagePath?: string;
+  sourcePath?: string;
+  snippet?: string;
+  score?: number;
 };
 
 export type KnowledgeConfigurePayload = {
@@ -2070,6 +2179,8 @@ export type HostApiContract = {
     patchThinking: (payload: SessionPatchThinkingPayload) => HostSuccess & { result?: unknown };
     compactionStatus: (payload: SessionCompactionPayload) => SessionCompactionStatusResult;
     compactionHistory: (payload: SessionCompactionHistoryPayload) => SessionCompactionHistoryResult;
+    compressionArtifact: (payload: SessionCompressionArtifactPayload) => SessionCompressionArtifactResult;
+    recoveryContext: (payload: SessionRecoveryContextPayload) => SessionRecoveryContextResult;
     longTaskControlStatus: (payload: SessionLongTaskControlPayload) => SessionLongTaskControlStatusResult;
     longTaskControlHistory: (payload: SessionLongTaskControlHistoryPayload) => SessionLongTaskControlHistoryResult;
     resumeCheckpoints: (payload: SessionLongTaskControlHistoryPayload) => SessionResumeCheckpointsResult;
@@ -2080,6 +2191,11 @@ export type HostApiContract = {
   };
   chat: {
     sendWithMedia: (payload: ChatSendWithMediaPayload) => ChatSendWithMediaResult;
+  };
+  workProviders: {
+    status: () => WorkProviderStatusSnapshot;
+    run: (payload: WorkProviderRunPayload) => WorkProviderRunResult;
+    validateArtifact: (payload: WorkProviderValidateArtifactPayload) => WorkProviderValidateArtifactResult;
   };
   knowledge: {
     status: () => KnowledgeStatusResult;
@@ -2176,6 +2292,7 @@ export type HostApiContract = {
     dashboardSnapshot: () => ObservabilityDashboardSnapshot;
     traces: () => unknown[];
     trace: (payload: { id: string }) => ObservabilityTrace | null;
+    reportTrace: (payload: { trace: ObservabilityTrace }) => HostSuccess & { traceId?: string };
     queryTraces: (payload?: ObservabilityTraceQuery) => ObservabilityTraceQueryResult;
     traceGraph: (payload: { id: string }) => ObservabilityTraceGraphResult | null;
     traceNodeDiagnostics: (payload: { traceId: string; nodeId: string }) => ObservabilityNodeDiagnostics | null;

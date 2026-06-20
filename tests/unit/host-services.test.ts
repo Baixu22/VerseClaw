@@ -1212,4 +1212,88 @@ describe('host services', () => {
       ]),
     });
   });
+
+  it('merges runtime checkpoint handoff with ledger, git, observability, and transcript sources', async () => {
+    const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
+    mkdirSync(sessionsDir, { recursive: true });
+    writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({
+      sessions: [
+        {
+          key: 'agent:main:checkpoint',
+          file: 'checkpoint.jsonl',
+        },
+      ],
+    }));
+    writeFileSync(join(sessionsDir, 'checkpoint.jsonl'), JSON.stringify({
+      type: 'message',
+      message: {
+        role: 'user',
+        content: 'Continue the checkpoint migration.',
+        timestamp: 1000,
+      },
+    }));
+    const rpc = vi.fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        key: 'agent:main:checkpoint',
+        checkpoints: [{
+          id: 'ltcp-1',
+          sessionKey: 'agent:main:checkpoint',
+          agentId: 'main',
+          workspaceId: 'workspace-a',
+          trigger: 'compaction',
+          status: 'ready',
+          checkpoint: {
+            schemaVersion: 1,
+            id: 'ltcp-1',
+            sessionKey: 'agent:main:checkpoint',
+            agentId: 'main',
+            workspaceId: 'workspace-a',
+            trigger: 'compaction',
+            objective: 'Checkpoint-first handoff',
+            activeTask: 'Use the runtime checkpoint first.',
+            openBlockers: ['runtime blocker'],
+            decisions: ['runtime decision'],
+            deviations: [],
+            filesTouched: ['src/pages/Chat/index.tsx'],
+            testsRun: [],
+            nextAction: 'Merge ecosystem sources into the handoff draft.',
+            reviewNeededItems: [],
+            evidenceRefs: [{ type: 'session', ref: 'agent:main:checkpoint' }],
+            createdAt: new Date(0).toISOString(),
+          },
+          createdAt: 1,
+          updatedAt: 1,
+        }],
+      });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
+
+    await expect(sessionsApi.prepareHandoff({
+      sessionKey: 'agent:main:checkpoint',
+      workspaceId: 'workspace-a',
+    })).resolves.toMatchObject({
+      success: true,
+      checkpoint: {
+        trigger: 'compaction',
+        objective: 'Checkpoint-first handoff',
+        metadata: {
+          source: 'clawx-session-handoff-ecosystem',
+          runtimeCheckpoint: true,
+        },
+      },
+      draft: expect.stringContaining('Resume checkpoint'),
+      sources: expect.arrayContaining([
+        expect.objectContaining({ id: 'runtime_checkpoint', available: true }),
+        expect.objectContaining({ id: 'transcript', available: true }),
+        expect.objectContaining({ id: 'task_ledger' }),
+        expect.objectContaining({ id: 'git' }),
+        expect.objectContaining({ id: 'observability' }),
+      ]),
+    });
+    expect(rpc).toHaveBeenNthCalledWith(1, 'sessions.resumeCheckpoints', expect.objectContaining({
+      key: 'agent:main:checkpoint',
+      limit: 1,
+    }), 10_000);
+  });
 });

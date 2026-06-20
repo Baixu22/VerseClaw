@@ -21,7 +21,7 @@ export type ArtifactTab = 'changes' | 'preview' | 'browser';
 
 /** Width clamp (% of the chat container). */
 export const ARTIFACT_PANEL_MIN_WIDTH = 28;
-export const ARTIFACT_PANEL_MAX_WIDTH = 70;
+export const ARTIFACT_PANEL_MAX_WIDTH = 50;
 export const ARTIFACT_PANEL_DEFAULT_WIDTH = 45;
 
 interface ArtifactPanelState {

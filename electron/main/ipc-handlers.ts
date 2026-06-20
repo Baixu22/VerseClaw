@@ -57,6 +57,7 @@ import { createSettingsApi } from '../services/settings-api';
 import { createChannelsApi } from '../services/channels-api';
 import { createAgentsApi } from '../services/agents-api';
 import { createChatApi } from '../services/chat-api';
+import { createWorkProvidersApi } from '../services/work-providers-api';
 import { createKnowledgeApi } from '../services/knowledge-api';
 import { createCronApi } from '../services/cron-api';
 import { createFilesApi } from '../services/files-api';
@@ -184,6 +185,7 @@ function registerTypedHostHandlers(
     media: createMediaApi(),
     sessions: createSessionsApi({ gatewayManager }),
     chat: createChatApi({ gatewayManager }),
+    workProviders: createWorkProvidersApi(),
     knowledge: createKnowledgeApi({ gatewayManager }),
     cron: createCronApi({ gatewayManager }),
     skills: createSkillsApi({ clawHubService, gatewayManager }),
@@ -191,7 +193,9 @@ function registerTypedHostHandlers(
     topics: createTopicsApi(),
     taskLedger: createTaskLedgerApi(),
     clawGraph: createClawGraphApi({ gatewayManager }),
-    observability: createObservabilityApi().observability,
+    observability: createObservabilityApi({
+      onRuntimeEvent: (event) => mainWindow.webContents.send('observability:runtime-event', event),
+    }).observability,
   });
     // Bridge runtime-process traces into the electron observability store.
   // The gateway's `observability.traces` RPC returns role-first traces + scorecards;

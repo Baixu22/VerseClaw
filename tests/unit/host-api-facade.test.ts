@@ -277,6 +277,33 @@ describe('hostApi facade', () => {
     }));
   });
 
+  it('calls work provider APIs through hostInvoke', async () => {
+    hostInvoke
+      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: true, providers: [], capabilities: [], kitCapabilities: [], summary: {} } })
+      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: { success: true, output: { kind: 'csv' } } })
+      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { success: true, valid: true, artifactType: 'csv' } });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await hostApi.workProviders.status();
+    await hostApi.workProviders.run({ capability: 'csv.read', input: { path: 'C:/workspace/data.csv' } });
+    await hostApi.workProviders.validateArtifact({ path: 'C:/workspace/data.csv' });
+
+    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      module: 'workProviders',
+      action: 'status',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      module: 'workProviders',
+      action: 'run',
+      payload: { capability: 'csv.read', input: { path: 'C:/workspace/data.csv' } },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
+      module: 'workProviders',
+      action: 'validateArtifact',
+      payload: { path: 'C:/workspace/data.csv' },
+    }));
+  });
+
   it('calls knowledge APIs through hostInvoke', async () => {
     hostInvoke.mockResolvedValue({ id: 'req', ok: true, data: { success: true } });
     const { hostApi } = await import('@/lib/host-api');
@@ -489,6 +516,40 @@ describe('hostApi facade', () => {
       module: 'observability',
       action: 'queryTraces',
       payload: { hasErrors: true, pageSize: 20 },
+    }));
+  });
+
+  it('calls observability reportTrace through hostInvoke', async () => {
+    hostInvoke.mockResolvedValueOnce({
+      id: 'req',
+      ok: true,
+      data: { success: true, traceId: 'trace_capability_test' },
+    });
+    const { hostApi } = await import('@/lib/host-api');
+    const trace = {
+      id: 'trace_capability_test',
+      name: 'Capability management',
+      status: 'completed' as const,
+      startedAt: 1,
+      endedAt: 2,
+      updatedAt: 2,
+      durationMs: 1,
+      mode: 'capability-management',
+      tokenUsage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, totalTokens: 0, costUsd: 0 },
+      metrics: { actions: 1 },
+      tags: ['capability-management'],
+      spans: [],
+      events: [],
+    };
+
+    await expect(hostApi.observability.reportTrace(trace)).resolves.toEqual({
+      success: true,
+      traceId: 'trace_capability_test',
+    });
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
+      module: 'observability',
+      action: 'reportTrace',
+      payload: { trace },
     }));
   });
 

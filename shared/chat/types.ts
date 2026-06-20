@@ -1,4 +1,5 @@
 import type { ChatRuntimeEvent } from '../chat-runtime-events';
+import type { ChatKnowledgeReference } from '../host-api/contract';
 import type { WorkspaceKnowledgeScope } from '../types/workspace';
 import type { WorkModeId } from '../types/work-mode';
 
@@ -39,6 +40,8 @@ export interface RawMessage {
   error_message?: string;
   /** Local-only: file metadata for user-uploaded attachments (not sent to/from Gateway) */
   _attachedFiles?: AttachedFileMeta[];
+  /** Local-only: knowledge pages explicitly attached to this chat turn. */
+  _knowledgeRefs?: ChatKnowledgeReference[];
   /** Local-only: selected tool results folded back into visible assistant tool-call turns. */
   _toolResults?: Array<{
     toolCallId?: string;
@@ -169,6 +172,7 @@ export interface ChatState {
     knowledgeScope?: WorkspaceKnowledgeScope,
     workMode?: WorkModeId,
     inputMode?: 'interrupt' | 'guide' | 'queue',
+    knowledgeReferences?: ChatKnowledgeReference[],
   ) => Promise<void>;
   abortRun: () => Promise<void>;
   handleChatEvent: (event: Record<string, unknown>) => void;

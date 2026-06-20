@@ -3,6 +3,10 @@ import { render, screen } from '@testing-library/react';
 import { Chat } from '@/pages/Chat';
 
 vi.mock('react-i18next', () => ({
+  initReactI18next: {
+    type: '3rdParty',
+    init: vi.fn(),
+  },
   useTranslation: () => ({
     t: (_key: string, defaultValue?: string) => defaultValue ?? '',
   }),
@@ -51,6 +55,8 @@ vi.mock('@/stores/agents', () => ({
 }));
 
 vi.mock('@/stores/artifact-panel', () => ({
+  ARTIFACT_PANEL_MIN_WIDTH: 28,
+  ARTIFACT_PANEL_MAX_WIDTH: 50,
   useArtifactPanel: (selector: (state: { open: boolean; widthPct: number; openChanges: () => void; openPreview: () => void; close: () => void }) => unknown) => selector({
     open: true,
     widthPct: 34,
@@ -119,8 +125,21 @@ describe('Chat artifact panel layout', () => {
     const panel = await screen.findByTestId('artifact-panel');
     const aside = panel.closest('aside');
 
-    expect(aside).toHaveClass('relative');
-    expect(aside).toHaveClass('z-20');
+    expect(aside).toHaveClass('absolute');
+    expect(aside).toHaveClass('z-30');
+    expect(aside).toHaveClass('xl:relative');
+    expect(aside).toHaveClass('xl:z-20');
     expect(aside).toHaveClass('no-drag');
+  });
+
+  it('hides the chat assistive rail while the artifact panel is open', async () => {
+    window.electron.platform = 'win32';
+
+    render(<Chat />);
+
+    expect(await screen.findByTestId('artifact-panel')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('work-mode-summary-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('task-ledger-summary')).not.toBeInTheDocument();
   });
 });

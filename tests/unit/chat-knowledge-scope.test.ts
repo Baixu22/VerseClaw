@@ -47,6 +47,37 @@ describe('chat knowledge scope metadata', () => {
     expect(payload.message).toContain('Use the project notes');
   });
 
+  it('injects selected knowledge references as read-only metadata', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async () => ({ runId: 'run-selected-knowledge' })),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+
+    await api.sendWithMedia({
+      sessionKey: 'agent:main:main',
+      message: 'Use the attached page',
+      idempotencyKey: 'idem-selected-knowledge',
+      knowledgeScope: 'wiki',
+      knowledgeReferences: [{
+        id: 'decision-page',
+        title: 'Knowledge Hub decision',
+        lookup: 'notes/decision.md',
+        corpus: 'wiki',
+        pagePath: 'notes/decision.md',
+        snippet: 'Keep Obsidian optional.',
+      }],
+    });
+
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string };
+    expect(payload.message).toContain('"selectedKnowledgeReferences":[{"id":"decision-page"');
+    expect(payload.message).toContain('"lookup":"notes/decision.md"');
+    expect(payload.message).toContain('prefer knowledge.get with each lookup');
+    expect(payload.message).toContain('"allowedKnowledgeActions":["search","get"]');
+    expect(payload.message).toContain('"deniedKnowledgeActions":["apply","update","delete","archive","merge"]');
+  });
+
   it('injects work mode metadata when a valid work mode is provided', async () => {
     const gatewayManager = {
       rpc: vi.fn(async () => ({ runId: 'run-plan' })),

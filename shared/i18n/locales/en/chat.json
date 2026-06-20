@@ -18,12 +18,80 @@
     "refresh": "Refresh chat",
     "currentAgent": "Talking to {{agent}}",
     "workspace": "Workspace",
-    "saveToKnowledge": "Save to Knowledge"
+    "saveToKnowledge": "Save to Knowledge",
+    "addWorkspaceDialogTitle": "Choose workspace directory",
+    "addWorkspaceDialogButton": "Set as Workspace"
   },
   "markdown": {
     "codeBlock": "Code",
     "copyCode": "Copy code",
     "copiedCode": "Copied"
+  },
+  "approvals": {
+    "title": "Approvals & Audit",
+    "description": "Permission requests for the current workspace",
+    "empty": "No approvals or high-risk audit records yet",
+    "mode": {
+      "readOnly": "Read only",
+      "acceptEdits": "Accept edits",
+      "plan": "Plan",
+      "fullAccess": "Full access"
+    },
+    "source": {
+      "terminal": "Terminal",
+      "file": "File",
+      "remoteControl": "Remote control"
+    },
+    "risk": {
+      "write": "Write",
+      "dangerous": "High risk"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "denied": "Denied",
+      "expired": "Consumed"
+    }
+  },
+  "gitPanel": {
+    "title": "Git",
+    "summary": "{{staged}} staged, {{unstaged}} unstaged, {{untracked}} untracked",
+    "notRepository": "No Git repository detected",
+    "loading": "Loading Git status...",
+    "empty": "No changed files",
+    "mode": {
+      "unstaged": "Unstaged",
+      "staged": "Staged"
+    }
+  },
+  "topics": {
+    "selector": {
+      "currentTooltip": "Current topic: {{name}}{{description}}",
+      "globalTooltip": "Global mode, using workspace-wide memory",
+      "none": "No topic",
+      "globalTitle": "Global (no topic)",
+      "globalDescription": "Use global memory and workspace context",
+      "empty": "No topics yet",
+      "manage": "Manage topics..."
+    },
+    "manager": {
+      "title": "Manage Topics",
+      "description": "Topics help organize Agent memory and context by project or subject.",
+      "infoTooltip": "After a topic is selected, the Agent automatically loads the project's stack, conventions, and key decisions.",
+      "editTooltip": "Edit the topic name, description, and CONTEXT.md",
+      "deleteConfirm": "Delete topic \"{{name}}\"? CONTEXT.md will be lost.",
+      "deleteTooltip": "Delete topic \"{{name}}\". CONTEXT.md will be permanently lost.",
+      "create": "New Topic",
+      "createTooltip": "Create a new project topic to organize memory",
+      "name": "Name",
+      "namePlaceholder": "For example: auth-refactor",
+      "descriptionOptional": "Description (optional)",
+      "descriptionPlaceholder": "Briefly describe this topic",
+      "createAction": "Create",
+      "editing": "Editing: {{id}}",
+      "descriptionLabel": "Description",
+      "contextLabel": "CONTEXT.md (project context)"
+    }
   },
   "toolUi": {
     "actions": {
@@ -127,7 +195,8 @@
     },
     "toast": {
       "saved": "Saved to disk",
-      "saveFailed": "Save failed: {{error}}"
+      "saveFailed": "Save failed: {{error}}",
+      "approvalRequired": "Writing this file requires permission approval. Handle the request above the input, then try saving again."
     },
     "errors": {
       "outsideSandbox": "Path outside sandbox — access denied",
@@ -185,6 +254,13 @@
     "freshBadge": "Updated this run",
     "pickFile": "Select a file from the left to preview",
     "empty": "Workspace is empty or inaccessible",
+    "recent": "Recent workspaces",
+    "noRecent": "No projects yet",
+    "chooseNew": "Choose new workspace...",
+    "switched": "Workspace switched",
+    "addedAndSwitched": "Workspace added and switched",
+    "switchFailed": "Failed to switch workspace: {{error}}",
+    "permissionModeUpdated": "Permission mode updated",
     "truncated": "Directory truncated — only the first 5000 entries shown",
     "actions": {
       "refresh": "Refresh",
@@ -300,6 +376,17 @@
       "detached": "Detached HEAD",
       "summary": "{{count}} changes · ↑{{ahead}} ↓{{behind}}",
       "clean": "Working tree clean",
+      "state": {
+        "clean": "Clean",
+        "dirty": "Dirty",
+        "conflict": "Conflicts"
+      },
+      "groups": {
+        "conflicted": "Conflicts ({{count}})",
+        "staged": "Staged ({{count}})",
+        "unstaged": "Unstaged ({{count}})",
+        "untracked": "Untracked ({{count}})"
+      },
       "empty": {
         "title": "No Git repository",
         "body": "The active workspace is not inside a Git repository."
@@ -311,21 +398,41 @@
         "commit": "Commit staged changes",
         "createBranch": "Create branch",
         "addWorktree": "Add worktree",
-        "createPr": "Create PR"
+        "removeWorktree": "Remove",
+        "pruneWorktrees": "Prune",
+        "createPr": "Create PR",
+        "approveRetry": "Approve & retry"
+      },
+      "approval": {
+        "title": "{{action}} needs approval"
       },
       "diff": {
         "unstaged": "Unstaged",
         "staged": "Staged",
-        "empty": "No diff for the selected file."
+        "empty": "No diff for the selected file.",
+        "binary": "Binary diff cannot be displayed inline.",
+        "tooLarge": "Diff is too large to display inline."
       },
       "commit": {
         "title": "Commit",
         "placeholder": "Commit message"
       },
+      "branch": {
+        "title": "Branch"
+      },
       "branchWorktree": {
         "title": "Branch & worktree",
         "branchPlaceholder": "New branch",
         "worktreePlaceholder": "Branch for worktree"
+      },
+      "worktrees": {
+        "title": "Worktrees",
+        "newBranch": "New branch",
+        "existingBranch": "Existing",
+        "startPointPlaceholder": "Start point, default HEAD",
+        "selectBranch": "Select branch",
+        "current": "Current",
+        "empty": "No worktrees found"
       },
       "github": {
         "title": "GitHub PRs",
@@ -336,7 +443,8 @@
       },
       "toast": {
         "blocked": "Approval required",
-        "failed": "Git operation failed"
+        "failed": "Git operation failed",
+        "approvalFailed": "Approval failed"
       }
     }
   },
@@ -423,6 +531,11 @@
     "previewLoading": "Loading image preview…",
     "previewUnavailable": "Image preview is temporarily unavailable"
   },
+  "session": {
+    "renameHint": "Double-click to rename session",
+    "renameCurrent": "Rename current session",
+    "renameFailed": "Failed to rename session: {{error}}"
+  },
   "composer": {
     "attachFiles": "Attach files",
     "pickSkill": "Choose skill",
@@ -452,6 +565,18 @@
     "knowledgeQuick": {
       "enable": "Use wiki knowledge",
       "disable": "Disable wiki knowledge"
+    },
+    "knowledgeAttach": {
+      "title": "Attach knowledge",
+      "placeholder": "Search wiki pages",
+      "search": "Search",
+      "empty": "Search and attach specific knowledge pages to this message.",
+      "selected": "{{count}} selected",
+      "remove": "Remove {{title}}",
+      "missingLookup": "This result cannot be attached.",
+      "searchFailed": "Failed to search knowledge.",
+      "defaultPrompt": "Use the selected knowledge references to answer.",
+      "messageRefTitle": "Knowledge reference: {{title}}"
     },
     "clearTarget": "Clear target agent",
     "targetChip": "@{{agent}}",
@@ -492,8 +617,16 @@
       "unavailable": "Compression unavailable",
       "inProgress": "Compression is already in progress",
       "activeRun": "Available after the current run finishes",
-      "toastSuccess": "Session compressed",
-      "toastSuccessWithTokens": "Session compressed: {{before}} -> {{after}} tokens",
+      "quality": "Compression {{level}} {{score}}%",
+      "qualityTitle": "Evidence {{evidence}}% · fields {{fields}}% · recovery {{tokens}} tokens · unverified {{unverified}}",
+      "qualityLevel": {
+        "high": "high",
+        "medium": "medium",
+        "low": "low"
+      },
+      "toastQuality": " · {{level}} {{score}}%",
+      "toastSuccess": "Session compressed{{quality}}",
+      "toastSuccessWithTokens": "Session compressed: {{before}} -> {{after}} tokens{{quality}}",
       "toastNoop": "Nothing compressed: {{reason}}",
       "toastFailed": "Failed to compress session",
       "reason": {
@@ -561,7 +694,8 @@
           "gateway_unavailable": "Gateway is unavailable; prepare a draft instead",
           "high_pressure": "Context is tight; prepare a continuation draft",
           "truncated_context": "Some history is hidden; prepare a continuation draft",
-          "compaction_warning": "Context state needs care; prepare a continuation draft"
+          "compaction_warning": "Context state needs care; prepare a continuation draft",
+          "recovery_checkpoint": "A recovery checkpoint exists; prepare a checkpoint-based draft"
         }
       },
       "dialogHint": {
@@ -569,7 +703,8 @@
         "gateway_unavailable": "Gateway is unavailable, so this draft-based handoff avoids relying on runtime forking.",
         "high_pressure": "Context pressure is high, so this draft keeps the next step reviewable before a fresh session starts.",
         "truncated_context": "Some transcript history is hidden, so a draft handoff is safer than copying the branch.",
-        "compaction_warning": "Context compression state has warnings, so a draft handoff is the safer continuation path."
+        "compaction_warning": "Context compression state has warnings, so a draft handoff is the safer continuation path.",
+        "recovery_checkpoint": "A ResumeCheckpoint is already available, so Handoff can carry Task Ledger, Git, trace, and checkpoint evidence into a reviewable draft."
       },
       "failure": {
         "action": {
@@ -583,15 +718,15 @@
           },
           "gateway_unavailable": {
             "title": "Fork needs Gateway",
-            "description": "Gateway is unavailable, so prepare an editable handoff draft instead."
+            "description": "Gateway is unavailable, so prepare a handoff draft from ResumeCheckpoint, Task Ledger, and available evidence instead."
           },
           "parent_too_large": {
             "title": "Transcript is too large to fork",
-            "description": "Prepare a handoff draft that carries the current task forward without copying the full branch."
+            "description": "Prepare a handoff draft from ResumeCheckpoint, Task Ledger, and evidence instead of copying the full branch."
           },
           "transcript_unavailable": {
             "title": "Transcript is not available",
-            "description": "Prepare a handoff draft from the available session signals instead."
+            "description": "Prepare a handoff draft from ResumeCheckpoint, Task Ledger, and available evidence instead."
           },
           "unknown": {
             "title": "Fork failed",
@@ -733,6 +868,10 @@
     "chat": "Chat",
     "work": "Work"
   },
+  "sessionView": {
+    "project": "Project",
+    "time": "Time"
+  },
   "questionDirectory": {
     "title": "Question directory",
     "fallback": "Question {{number}}",
@@ -749,6 +888,7 @@
     },
     "artifacts": "Artifacts: {{types}}",
     "kitStatus": "{{kit}}: {{status}}",
+    "providerStatus": "Providers: {{ready}} ready, {{missingDependency}} missing deps, {{missingConfig}} missing config, {{externalUnavailable}} external unavailable",
     "artifactTypes": {
       "markdown": "Markdown",
       "docx": "DOCX",

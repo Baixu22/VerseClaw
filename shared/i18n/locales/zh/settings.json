@@ -1,6 +1,25 @@
 {
   "title": "设置",
   "subtitle": "配置您的 ClawX 体验",
+  "navigation": {
+    "back": "返回设置",
+    "general": {
+      "title": "通用",
+      "description": "外观、语言、启动项、更新与应用信息。"
+    },
+    "workModes": {
+      "title": "工作模式",
+      "description": "工作区行为预设与对运行时声明的工作套件。"
+    },
+    "system": {
+      "title": "系统与运行时",
+      "description": "网关状态、自动启动、远程控制与沙盒运行时。"
+    },
+    "developer": {
+      "title": "开发者",
+      "description": "开发者模式、代理、CLI、诊断与本地遥测。"
+    }
+  },
   "appearance": {
     "title": "通用",
     "description": "自定义外观和风格",
@@ -74,7 +93,11 @@
       "save": "保存",
       "customDoc": "查看文档",
       "validate": "验证",
-      "failed": "失败"
+      "failed": "失败",
+      "fetchingModels": "获取中",
+      "fetchModels": "获取模型",
+      "customModel": "手动输入模型",
+      "testConnection": "测试连接"
     },
     "card": {
       "default": "默认",
@@ -104,7 +127,14 @@
       "failedUpdate": "更新提供商失败",
       "invalidKey": "无效的 API 密钥",
       "modelRequired": "需要模型 ID",
-      "minimaxConflict": "不能同时添加 MiniMax 国际站和国内站的服务商。"
+      "minimaxConflict": "不能同时添加 MiniMax 国际站和国内站的服务商。",
+      "connectionOk": "连接成功，延迟 {{ms}} ms",
+      "connectionFailed": "连接失败：{{error}}",
+      "modelsUpdated": "模型列表已更新",
+      "modelsUpdatedWithLatency": "模型列表已更新，延迟 {{ms}} ms",
+      "modelsFetchFailed": "获取模型失败：{{error}}",
+      "noModelsReturned": "服务未返回模型列表",
+      "providerRequired": "请选择提供商"
     },
     "oauth": {
       "loginMode": "OAuth 登录",
@@ -194,6 +224,54 @@
       "cli": "Docker CLI",
       "daemon": "Docker daemon",
       "image": "沙盒镜像"
+    }
+  },
+  "remoteControl": {
+    "title": "Electron 远程调控",
+    "description": "暴露 Electron CDP 调试端口，仅建议绑定本机并在可信环境中使用。保存配置后需要重启 ClawX。",
+    "port": "CDP 端口",
+    "configEndpoint": "配置端点：127.0.0.1:{{port}} /json/version",
+    "currentEndpoint": "当前端点：{{endpoint}}",
+    "envOverride": "当前进程由 CLAWX_REMOTE_DEBUGGING_PORT 环境变量覆盖。",
+    "restartRequired": "配置与当前进程不一致，请重启应用使其生效。",
+    "screenshotAlt": "Electron CDP 截图",
+    "status": {
+      "effective": "当前已生效",
+      "inactive": "当前未生效"
+    },
+    "actions": {
+      "refreshStatus": "刷新状态",
+      "connectDebug": "连接调试",
+      "connecting": "连接中",
+      "pageInfo": "页面信息",
+      "scroll": "滚动页面",
+      "scrollDown": "向下滚动",
+      "click": "点击页面",
+      "clickCenter": "点击中心",
+      "screenshot": "截图",
+      "running": "{{action}}中..."
+    },
+    "inspect": {
+      "result": "连接结果：{{result}}",
+      "success": "成功",
+      "failure": "失败",
+      "targets": "可调试页面"
+    },
+    "toast": {
+      "connected": "已连接 Electron CDP，发现 {{count}} 个页面",
+      "connectFailed": "连接 Electron CDP 失败",
+      "connectFailedWithError": "连接 Electron CDP 失败: {{error}}",
+      "actionFailed": "{{action}}失败: {{error}}",
+      "pageInfoRefreshed": "页面信息已刷新",
+      "pageInfoFailed": "读取页面信息失败",
+      "scrollFailed": "滚动页面失败",
+      "clickedCenter": "已点击页面中心 ({{x}}, {{y}})",
+      "clickFailed": "点击页面失败",
+      "screenshotReady": "截图已生成",
+      "screenshotFailed": "页面截图失败",
+      "invalidPort": "CDP 端口必须是 1-65535 之间的整数",
+      "saved": "远程调控设置已保存，重启后生效",
+      "saveFailed": "保存远程调控设置失败: {{error}}"
     }
   },
   "updates": {
@@ -359,6 +437,44 @@
       "sheets": "??",
       "pdf": "PDF",
       "memory": "??"
+    }
+  },
+  "workProviders": {
+    "title": "工作 Provider",
+    "description": "Work Kits 背后的本地和可选 Provider。Provider 只展示能力状态，不授予工具权限。",
+    "status": {
+      "ready": "可用",
+      "missingDependency": "缺少依赖",
+      "missingConfig": "缺少配置",
+      "disabled": "已禁用",
+      "externalUnavailable": "外部不可用",
+      "runtimeUnavailable": "Runtime 不可用"
+    },
+    "providers": {
+      "officeDocument": "文档",
+      "officeSheet": "表格",
+      "officeSlide": "演示",
+      "pdf": "PDF",
+      "webSearch": "网页搜索",
+      "webRead": "网页读取",
+      "libreOffice": "LibreOffice",
+      "pandoc": "Pandoc",
+      "crawler": "爬虫",
+      "ocr": "OCR",
+      "dataFrame": "数据分析"
+    },
+    "providerDescriptions": {
+      "officeDocument": "使用轻量 JS 库读取和生成 Word 类文档产物。",
+      "officeSheet": "读取和生成表格与 CSV 产物。",
+      "officeSlide": "生成可编辑演示文稿。",
+      "pdf": "校验、预览、拆分和合并 PDF 产物。",
+      "webSearch": "使用用户配置的外部搜索 Provider。",
+      "webRead": "从网页提取可读正文和引用信息。",
+      "libreOffice": "可选的高保真本地 Office 转换 Provider。",
+      "pandoc": "可选的文档转换 Provider。",
+      "crawler": "可选外部爬虫服务。",
+      "ocr": "可选 OCR Provider。",
+      "dataFrame": "可选 Python 或服务型数据分析 Provider。"
     }
   },
   "workHeatGraph": {

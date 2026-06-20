@@ -1,4 +1,4 @@
-import { hostApi, type ChatSendWithMediaResult } from '@/lib/host-api';
+import { hostApi, type ChatKnowledgeReference, type ChatSendWithMediaResult } from '@/lib/host-api';
 import { useAgentsStore } from '@/stores/agents';
 import {
   clearErrorRecoveryTimer,
@@ -16,6 +16,7 @@ import {
 import type { ChatSession, RawMessage } from './types';
 import type { ChatGet, ChatSet, RuntimeActions } from './store-api';
 import type { WorkspaceKnowledgeScope } from '@shared/types/workspace';
+import type { WorkModeId } from '@shared/types/work-mode';
 
 function normalizeAgentId(value: string | undefined | null): string {
   return (value ?? '').trim().toLowerCase() || 'main';
@@ -72,6 +73,9 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
       attachments?: Array<{ fileName: string; mimeType: string; fileSize: number; stagedPath: string; preview: string | null }>,
       targetAgentId?: string | null,
       knowledgeScope?: WorkspaceKnowledgeScope,
+      workMode?: WorkModeId,
+      inputMode?: 'interrupt' | 'guide' | 'queue',
+      knowledgeReferences?: ChatKnowledgeReference[],
     ) => {
       const trimmed = text.trim();
       if (!trimmed && (!attachments || attachments.length === 0)) return;
@@ -129,6 +133,9 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
           filePath: a.stagedPath,
           source: 'user-upload',
         })),
+        ...(knowledgeReferences && knowledgeReferences.length > 0
+          ? { _knowledgeRefs: knowledgeReferences.map((reference) => ({ ...reference })) }
+          : {}),
       };
       rememberPendingOptimisticUserMessage(currentSessionKey, userMsg, nowMs);
       set((s) => ({
@@ -235,6 +242,9 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
             deliver: false,
             idempotencyKey,
             knowledgeScope,
+            workMode,
+            ...(inputMode ? { inputMode } : {}),
+            ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
             media: attachments.map((a) => ({
               filePath: a.stagedPath,
               mimeType: a.mimeType,
@@ -248,6 +258,9 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
             deliver: false,
             idempotencyKey,
             knowledgeScope,
+            workMode,
+            ...(inputMode ? { inputMode } : {}),
+            ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
           });
         }
 

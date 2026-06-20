@@ -606,6 +606,51 @@ export interface LongTaskUserQueue {
   workspace_id: string | null;
 }
 
+export interface MissionEvents {
+  created_at: number;
+  decision: string | null;
+  id: string;
+  mission_id: string;
+  payload_json: string;
+  phase: string;
+  session_key: string;
+  status: string;
+  tick: Generated<number>;
+  type: string;
+}
+
+export interface MissionRuns {
+  acceptance_json: string;
+  agent_id: string | null;
+  blocked_reason: string | null;
+  completed_at: number | null;
+  created_at: number;
+  evidence_refs_json: Generated<string>;
+  last_decision: string | null;
+  last_reason: string | null;
+  last_reviewer_summary: string | null;
+  max_repair_ticks: number;
+  max_ticks: number;
+  metadata_json: Generated<string>;
+  mission_id: string;
+  next_wake_at: number | null;
+  no_progress_hash: string | null;
+  objective: string;
+  phase: string;
+  progress: Generated<number>;
+  remaining_json: Generated<string>;
+  repair_tick_count: Generated<number>;
+  risks_json: Generated<string>;
+  schedule_json: Generated<string>;
+  session_key: string;
+  status: string;
+  task_loop_run_id: string | null;
+  tick_count: Generated<number>;
+  trace_id: string | null;
+  updated_at: number;
+  workspace_id: string | null;
+}
+
 export interface MacosPortGuardianRecords {
   command: string;
   mode: string;
@@ -1037,6 +1082,8 @@ export interface DB {
   media_blobs: MediaBlobs;
   migration_runs: MigrationRuns;
   migration_sources: MigrationSources;
+  mission_events: MissionEvents;
+  mission_runs: MissionRuns;
   model_capability_cache: ModelCapabilityCache;
   native_hook_relay_bridges: NativeHookRelayBridges;
   node_host_config: NodeHostConfig;

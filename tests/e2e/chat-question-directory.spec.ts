@@ -1,6 +1,7 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
+const WORKSPACE_ID = 'workspace-layout';
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -27,6 +28,16 @@ const seededHistory = [
   { role: 'user', content: 'Fourth question: prepare the final action plan.', timestamp: 1006 },
   { role: 'assistant', content: 'Here is the final action plan.', timestamp: 1007 },
 ];
+
+const workspace = {
+  id: WORKSPACE_ID,
+  name: 'Layout Workspace',
+  rootPath: '/workspace/layout',
+  permissionMode: 'readOnly',
+  activeSessionKey: SESSION_KEY,
+  state: {},
+  sessionStates: {},
+};
 
 test.describe('ClawX chat question directory', () => {
   test('shows a toolbar button that opens a clickable in-conversation question directory', async ({ launchElectronApp }) => {
@@ -99,6 +110,110 @@ test.describe('ClawX chat question directory', () => {
 
       await page.getByTestId('chat-question-directory-item-6').click();
       await expect(page.getByTestId('chat-message-6')).toBeInViewport();
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
+  test('hides chat assistive panels when the workspace panel opens', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', {}])]: {
+            success: true,
+            result: {
+              sessions: [{ key: SESSION_KEY, displayName: 'main' }],
+            },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: seededHistory },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 1000, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: seededHistory },
+          },
+        },
+        hostApi: {
+          [stableStringify(['agents', 'list', null])]: {
+            success: true,
+            agents: [{
+              id: 'main',
+              name: 'Main',
+              isDefault: true,
+              workspace: '/workspace/layout',
+              mainSessionKey: SESSION_KEY,
+              channelTypes: [],
+            }],
+            defaultAgentId: 'main',
+            configuredChannelTypes: [],
+            channelOwners: {},
+            channelAccountOwners: {},
+          },
+          [stableStringify(['/api/agents', 'GET'])]: {
+            ok: true,
+            data: {
+              status: 200,
+              ok: true,
+              json: {
+                success: true,
+                agents: [{ id: 'main', name: 'Main', workspace: '/workspace/layout' }],
+              },
+            },
+          },
+          [stableStringify(['workspaces', 'list', null])]: {
+            profiles: [workspace],
+            activeWorkspaceId: WORKSPACE_ID,
+            activeWorkspace: workspace,
+          },
+          [stableStringify(['workspaces', 'getActive', null])]: {
+            activeWorkspaceId: WORKSPACE_ID,
+            activeWorkspace: workspace,
+          },
+        },
+      });
+
+      const page = await getStableWindow(app);
+      await page.setViewportSize({ width: 1366, height: 820 });
+      try {
+        await page.reload();
+      } catch (error) {
+        if (!String(error).includes('ERR_FILE_NOT_FOUND')) {
+          throw error;
+        }
+      }
+
+      await expect(page.getByTestId('main-layout')).toBeVisible();
+      await expect(page.getByTestId('chat-assistive-rail')).toBeVisible();
+      await expect(page.getByTestId('work-mode-summary-panel')).toBeVisible();
+
+      await page.getByTestId('chat-question-directory-toggle').click();
+      await expect(page.getByTestId('chat-question-directory')).toBeVisible();
+
+      await page.getByTestId('chat-workspace-toggle').click();
+
+      const sidePanel = page.getByTestId('artifact-panel-aside');
+      await expect(sidePanel).toBeVisible();
+      await expect(page.getByTestId('chat-question-directory')).toHaveCount(0);
+      await expect(page.getByTestId('chat-assistive-rail')).toHaveCount(0);
+      await expect(page.getByTestId('work-mode-summary-panel')).toHaveCount(0);
+
+      const metrics = await page.evaluate(() => {
+        const scroll = document.querySelector('[data-testid="chat-scroll-container"]')?.getBoundingClientRect();
+        const panel = document.querySelector('[data-testid="artifact-panel-aside"]')?.getBoundingClientRect();
+        const pageRect = document.querySelector('[data-testid="chat-page"]')?.getBoundingClientRect();
+        return {
+          scrollWidth: scroll?.width ?? 0,
+          panelWidth: panel?.width ?? 0,
+          pageWidth: pageRect?.width ?? 0,
+        };
+      });
+
+      expect(metrics.scrollWidth).toBeGreaterThan(480);
+      expect(metrics.panelWidth).toBeLessThanOrEqual(metrics.pageWidth * 0.52);
     } finally {
       await closeElectronApp(app);
     }

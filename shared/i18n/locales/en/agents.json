@@ -72,6 +72,17 @@
         "taskLoopProgress": "Task loop progress",
         "taskLoopPhase": "Round {{iteration}} · {{phase}}",
         "taskLoopSummary": "Task loop {{status}} at {{phase}}",
+        "missionControl": "Mission Control",
+        "missionStarted": "Mission {{status}} at tick {{tick}}",
+        "missionUpdated": "Mission {{status}}",
+        "missionProgress": "Mission Control progress",
+        "missionPhase": "Tick {{tick}} · {{phase}}",
+        "missionSummary": "Mission {{status}} at {{phase}}",
+        "missionTick": "Tick {{tick}}",
+        "missionNextWake": "Next wake: {{time}}",
+        "missionPause": "Pause",
+        "missionResume": "Resume",
+        "missionCancel": "Cancel",
         "lead": "Lead",
         "verifier": "Verifier",
         "approvalTitle": "Orchestration run needs approval",
@@ -213,6 +224,95 @@
         "memoryImpactRuntimeNone": "not injected recently",
         "memoryImpactLifecycle": "Lifecycle",
         "memoryImpactLifecycleKeep": "keep"
+    },
+    "identityTools": {
+        "title": "Agent Identity & Tools",
+        "description": "Agents keep identity, model, default skills, and MCP services. Workspaces only select and override those capabilities.",
+        "defaultSkills": "Default Skills",
+        "noDefaultSkills": "No default skills",
+        "noAgentMcp": "No agent-scoped MCP services",
+        "defaultSkillIds": "Default Skill IDs",
+        "defaultSkillIdsPlaceholder": "One skill id per line. Workspaces can override them.",
+        "defaultMcpIds": "Default MCP Service IDs",
+        "defaultMcpIdsPlaceholder": "One MCP server id per line. Workspaces can override them.",
+        "agentRole": "Agent Role",
+        "bootstrapPathPending": "Runtime path will appear after loading",
+        "saveRole": "Save Role",
+        "structuredTab": "Structured",
+        "advancedTab": "Advanced (Markdown)",
+        "soulPlaceholder": "Describe this Agent's identity, preferences, and working style",
+        "bootstrapFiles": "Bootstrap files ({{files}})",
+        "listSeparator": ", ",
+        "bootstrapDescriptions": {
+            "agents": "Behavior instructions, boundaries, and session-start guide",
+            "tools": "Tool usage guide",
+            "user": "User profile and preferences",
+            "identity": "Identity markers (name, emoji, avatar)",
+            "heartbeat": "Scheduled background behavior"
+        },
+        "toast": {
+            "loadFailed": "Failed to load Agent configuration: {{error}}",
+            "saved": "Agent configuration saved",
+            "saveFailed": "Failed to save Agent configuration: {{error}}"
+        }
+    },
+    "roleProfile": {
+        "roles": {
+            "general": "General Assistant",
+            "coding": "Coding Assistant",
+            "writing": "Writing Partner",
+            "devops": "DevOps",
+            "review": "Code Review",
+            "architecture": "Architecture Design",
+            "analysis": "Data Analysis",
+            "custom": "Custom"
+        },
+        "verbosity": {
+            "concise": "Concise",
+            "balanced": "Balanced",
+            "detailed": "Detailed"
+        },
+        "verbosityHint": {
+            "concise": "Keep replies as short as possible",
+            "balanced": "Use a moderate level of detail",
+            "detailed": "Explain each reply thoroughly"
+        },
+        "tone": {
+            "friendly": "Friendly",
+            "direct": "Direct",
+            "formal": "Formal",
+            "casual": "Casual"
+        },
+        "toneHint": {
+            "friendly": "Warm and approachable",
+            "direct": "Straight to the point",
+            "formal": "Professional and formal",
+            "casual": "Relaxed conversational wording"
+        },
+        "addTag": "Add tag",
+        "removeTag": "Click to remove \"{{tag}}\"",
+        "displayName": "Display Name",
+        "displayNameTooltip": "The display name Agent uses in conversations",
+        "displayNamePlaceholder": "For example: Helper",
+        "role": "Role",
+        "roleTooltip": "Define the Agent's core position and capability scope",
+        "customRole": "Custom Role",
+        "customRolePlaceholder": "For example: Frontend Architecture Advisor",
+        "replyStyle": "Reply Style",
+        "replyStyleTooltip": "Control reply detail, tone, and language preference",
+        "verbosityLabel": "Detail level",
+        "toneLabel": "Tone",
+        "language": "Language preference",
+        "languagePlaceholder": "For example: reason in Chinese, write code in English",
+        "expertise": "Expertise",
+        "expertiseTooltip": "List the Agent's strongest skills and knowledge areas",
+        "expertisePlaceholder": "Press Enter to add, for example: Python, TypeScript",
+        "limitations": "Limitations (honesty statement)",
+        "limitationsTooltip": "State weak areas honestly to avoid bad answers in those domains",
+        "limitationsPlaceholder": "For example: CSS, mobile development",
+        "backstory": "Backstory",
+        "backstoryTooltip": "Optional: describe identity background and special experience to create a richer role",
+        "backstoryPlaceholder": "Optional: describe the Agent's background..."
     },
     "toast": {
         "agentCreated": "Agent created",

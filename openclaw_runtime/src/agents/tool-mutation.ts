@@ -26,6 +26,7 @@ const MUTATING_TOOL_NAMES = new Set([
   "nodes",
   "session_status",
   "task_loop",
+  "mission_loop",
   "create_goal",
   "update_goal",
 ]);
@@ -376,6 +377,10 @@ export function isMutatingToolCall(toolName: string, args: unknown): boolean {
       return action === "kill" || action === "steer";
     case "session_status":
       return typeof record?.model === "string" && record.model.trim().length > 0;
+    case "team_orchestrate":
+    case "task_loop":
+    case "mission_loop":
+      return action == null || !READ_ONLY_ACTIONS.has(action);
     default: {
       if (normalized === "cron" || normalized === "gateway" || normalized === "canvas") {
         return action == null || !READ_ONLY_ACTIONS.has(action);

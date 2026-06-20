@@ -1,14 +1,41 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { GitBranch, GitCommit, GitPullRequest, GitPullRequestCreate, GitMerge, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  GitBranch,
+  GitCommitHorizontal,
+  GitPullRequest,
+  GitPullRequestCreate,
+  GitCompareArrows,
+  HardDrive,
+  Loader2,
+  Plus,
+  RefreshCw,
+  ShieldAlert,
+  Trash2,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
-import type { GitDiffMode, GitFileChange, GitRepositoryStatus, GithubPrSummary } from '@shared/types/git';
+import type {
+  GitBranch as GitBranchInfo,
+  GitChangeBucket,
+  GitDiffMode,
+  GitDiffResult,
+  GitFileChange,
+  GitOperationResult,
+  GitRepositoryStatus,
+  GitWorktree,
+  GithubAuthStatus,
+  GithubPrSummary,
+} from '@shared/types/git';
+import type { PermissionApprovalEvent } from '@shared/types/workspace';
 
 type WorkspaceGitPanelProps = {
   selectedPath?: string | null;
@@ -17,40 +44,49 @@ type WorkspaceGitPanelProps = {
   onDiffModeChange?: (mode: GitDiffMode) => void;
 };
 
-type LoadState = {
-  status: GitRepositoryStatus | null;
-  diff: string;
-  pullRequests: GithubPrSummary[];
-  ghAuthenticated: boolean;
-  loading: boolean;
-  error: string | null;
+type ApprovalRetry = {
+  approval: PermissionApprovalEvent;
+  action: string;
+  retry: (approvalId: string) => Promise<GitOperationResult>;
 };
 
-const initialState: LoadState = {
-  status: null,
-  diff: '',
-  pullRequests: [],
-  ghAuthenticated: false,
-  loading: false,
-  error: null,
-};
+type WorktreeMode = 'new' | 'existing';
 
-function changeTone(change: GitFileChange): string {
-  if (change.conflicted) return 'destructive';
-  if (change.untracked) return 'warning';
-  if (change.staged) return 'success';
-  return 'secondary';
+const CHANGE_GROUPS: GitChangeBucket[] = ['conflicted', 'staged', 'unstaged', 'untracked'];
+
+function basename(path: string): string {
+  const normalized = path.replace(/\\/g, '/').replace(/\/$/, '');
+  return normalized.split('/').pop() || normalized;
 }
 
-function shortStatus(change: GitFileChange): string {
-  if (change.conflicted) return '!';
-  if (change.untracked) return '?';
-  if (change.staged) return '+';
-  return '~';
+function pathEquals(left: string | undefined, right: string | undefined): boolean {
+  if (!left || !right) return false;
+  return left.replace(/\\/g, '/').replace(/\/$/, '').toLowerCase()
+    === right.replace(/\\/g, '/').replace(/\/$/, '').toLowerCase();
 }
 
-function prLabel(pr: GithubPrSummary): string {
-  return `#${pr.number} ${pr.title}`;
+function compactCommit(value: string | undefined): string {
+  return value ? value.slice(0, 7) : 'HEAD';
+}
+
+function changeBadge(change: GitFileChange): { label: string; variant: 'destructive' | 'outline' | 'warning' | 'secondary' } {
+  if (change.conflicted) return { label: change.status || '!!', variant: 'destructive' };
+  if (change.untracked) return { label: '??', variant: 'warning' };
+  if (change.staged && change.unstaged) return { label: change.status || 'MM', variant: 'secondary' };
+  if (change.staged) return { label: change.status || 'S', variant: 'outline' };
+  return { label: change.status || 'M', variant: 'outline' };
+}
+
+function modeForChange(change: GitFileChange): GitDiffMode {
+  return change.staged && !change.unstaged && !change.untracked ? 'staged' : 'unstaged';
+}
+
+function hasApproval(result: GitOperationResult): result is GitOperationResult & { approval: PermissionApprovalEvent } {
+  return Boolean(result.approvalRequired && result.approval);
+}
+
+function operationReason(result: GitOperationResult): string | null {
+  return result.reason || result.stderr || result.stdout || null;
 }
 
 export function WorkspaceGitPanel({
@@ -60,292 +96,652 @@ export function WorkspaceGitPanel({
   onDiffModeChange,
 }: WorkspaceGitPanelProps) {
   const { t } = useTranslation('chat');
-  const [state, setState] = useState<LoadState>(initialState);
+  const [status, setStatus] = useState<GitRepositoryStatus | null>(null);
+  const [branches, setBranches] = useState<GitBranchInfo[]>([]);
+  const [worktrees, setWorktrees] = useState<GitWorktree[]>([]);
+  const [githubAuth, setGithubAuth] = useState<GithubAuthStatus | null>(null);
+  const [pullRequests, setPullRequests] = useState<GithubPrSummary[]>([]);
+  const [diff, setDiff] = useState<GitDiffResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [diffLoading, setDiffLoading] = useState(false);
+  const [operationLoading, setOperationLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [pendingApproval, setPendingApproval] = useState<ApprovalRetry | null>(null);
   const [commitMessage, setCommitMessage] = useState('');
-  const [newBranch, setNewBranch] = useState('');
+  const [branchName, setBranchName] = useState('');
+  const [worktreeMode, setWorktreeMode] = useState<WorktreeMode>('new');
   const [worktreeBranch, setWorktreeBranch] = useState('');
+  const [worktreeStartPoint, setWorktreeStartPoint] = useState('');
   const [prTitle, setPrTitle] = useState('');
   const [prBody, setPrBody] = useState('');
 
-  const selectedChange = useMemo(() => (
-    state.status?.changes.find((change) => change.path === selectedPath) ?? null
-  ), [selectedPath, state.status?.changes]);
+  const changes = useMemo(() => status?.changes ?? [], [status?.changes]);
+  const effectiveSelectedPath = selectedPath || changes[0]?.path || null;
+  const selectedChange = changes.find((change) => change.path === effectiveSelectedPath) ?? null;
+  const currentWorktree = useMemo(
+    () => worktrees.find((worktree) => pathEquals(worktree.path, status?.repoRoot) || pathEquals(worktree.path, status?.workspaceRoot)),
+    [status?.repoRoot, status?.workspaceRoot, worktrees],
+  );
 
-  const load = useCallback(async () => {
-    setState((current) => ({ ...current, loading: true, error: null }));
+  const groupedChanges = useMemo(() => {
+    return CHANGE_GROUPS.map((bucket) => ({
+      bucket,
+      changes: changes.filter((change) => change.bucket === bucket),
+    })).filter((group) => group.changes.length > 0);
+  }, [changes]);
+
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const [statusResult, authResult] = await Promise.all([
+      const [statusResult, branchesResult, worktreesResult, authResult] = await Promise.all([
         hostApi.git.status(),
+        hostApi.git.branches().catch(() => ({ branches: [] })),
+        hostApi.git.worktrees().catch(() => ({ worktrees: [] })),
         hostApi.git.githubAuthStatus().catch(() => null),
       ]);
-      const nextStatus = statusResult.status;
-      const nextSelected = selectedPath && nextStatus.changes.some((change) => change.path === selectedPath)
-        ? selectedPath
-        : nextStatus.changes[0]?.path ?? null;
-      if (nextSelected !== selectedPath) onSelectedPathChange?.(nextSelected);
-      const [diffResult, prsResult] = await Promise.all([
-        nextSelected
-          ? hostApi.git.fileDiff({ path: nextSelected, mode: diffMode }).catch(() => null)
-          : Promise.resolve(null),
-        authResult?.authenticated
-          ? hostApi.git.prList({ state: 'open', limit: 20 }).catch(() => null)
-          : Promise.resolve(null),
-      ]);
-      setState({
-        status: nextStatus,
-        diff: diffResult?.patch ?? '',
-        pullRequests: prsResult?.pullRequests ?? [],
-        ghAuthenticated: authResult?.authenticated === true,
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      setState((current) => ({
-        ...current,
-        loading: false,
-        error: error instanceof Error ? error.message : String(error),
-      }));
+      setStatus(statusResult.status);
+      setBranches(branchesResult.branches ?? []);
+      setWorktrees(worktreesResult.worktrees ?? []);
+      setGithubAuth(authResult);
+
+      if (authResult?.authenticated) {
+        const prs = await hostApi.git.prList({ state: 'open', limit: 8 }).catch(() => ({ pullRequests: [] }));
+        setPullRequests(prs.pullRequests ?? []);
+      } else {
+        setPullRequests([]);
+      }
+    } catch (err) {
+      setStatus(null);
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
     }
-  }, [diffMode, onSelectedPathChange, selectedPath]);
+  }, []);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    void refresh();
+  }, [refresh]);
 
-  const runOperation = async (operation: () => Promise<{ success: boolean; blocked?: boolean; reason?: string; error?: string }>) => {
+  useEffect(() => {
+    if (!selectedPath && changes[0]?.path) {
+      onSelectedPathChange?.(changes[0].path);
+      onDiffModeChange?.(modeForChange(changes[0]));
+    }
+  }, [changes, onDiffModeChange, onSelectedPathChange, selectedPath]);
+
+  useEffect(() => {
+    if (!effectiveSelectedPath || !status?.isRepository) {
+      setDiff(null);
+      return;
+    }
+    let disposed = false;
+    setDiffLoading(true);
+    hostApi.git.fileDiff({ path: effectiveSelectedPath, mode: diffMode })
+      .then((result) => {
+        if (!disposed) setDiff(result);
+      })
+      .catch((err) => {
+        if (!disposed) {
+          setDiff({
+            path: effectiveSelectedPath,
+            mode: diffMode,
+            patch: err instanceof Error ? err.message : String(err),
+          });
+        }
+      })
+      .finally(() => {
+        if (!disposed) setDiffLoading(false);
+      });
+    return () => {
+      disposed = true;
+    };
+  }, [diffMode, effectiveSelectedPath, status?.isRepository]);
+
+  const showBlocked = useCallback((action: string, result: GitOperationResult, retry?: (approvalId: string) => Promise<GitOperationResult>) => {
+    const reason = operationReason(result) ?? t('workspace.git.toast.blocked');
+    setNotice(reason);
+    toast.warning(t('workspace.git.toast.blocked'));
+    if (hasApproval(result) && retry) {
+      setPendingApproval({ approval: result.approval, action, retry });
+    }
+  }, [t]);
+
+  const finishOperation = useCallback(async (
+    key: string,
+    action: string,
+    operation: () => Promise<GitOperationResult>,
+    retry?: (approvalId: string) => Promise<GitOperationResult>,
+  ) => {
+    setOperationLoading(key);
+    setNotice(null);
+    setPendingApproval(null);
     try {
       const result = await operation();
-      if (result.blocked) {
-        toast.warning(result.reason ?? t('workspace.git.toast.blocked', 'Approval required'));
-        return;
+      if (result.success) {
+        await refresh();
+        return result;
       }
-      if (!result.success) {
-        toast.error(result.error ?? t('workspace.git.toast.failed', 'Git operation failed'));
-        return;
+      if (result.blocked || result.approvalRequired) {
+        showBlocked(action, result, retry);
+      } else {
+        const reason = operationReason(result) ?? t('workspace.git.toast.failed');
+        setNotice(reason);
+        toast.error(reason);
       }
-      await load();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      return result;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setNotice(message);
+      toast.error(message);
+      return { success: false, reason: message };
+    } finally {
+      setOperationLoading(null);
     }
+  }, [refresh, showBlocked, t]);
+
+  const approveAndRetry = useCallback(async () => {
+    if (!pendingApproval) return;
+    setOperationLoading('approval');
+    try {
+      const decision = await hostApi.permissions.decideApproval({
+        id: pendingApproval.approval.id,
+        decision: 'approved',
+      });
+      if (!decision.success) {
+        toast.error(t('workspace.git.toast.approvalFailed'));
+        return;
+      }
+      const result = await pendingApproval.retry(pendingApproval.approval.id);
+      if (result.success) {
+        setPendingApproval(null);
+        setNotice(null);
+        await refresh();
+      } else if (result.blocked || result.approvalRequired) {
+        showBlocked(pendingApproval.action, result, pendingApproval.retry);
+      } else {
+        setNotice(operationReason(result) ?? t('workspace.git.toast.failed'));
+      }
+    } catch {
+      toast.error(t('workspace.git.toast.approvalFailed'));
+    } finally {
+      setOperationLoading(null);
+    }
+  }, [pendingApproval, refresh, showBlocked, t]);
+
+  const selectChange = (change: GitFileChange) => {
+    onSelectedPathChange?.(change.path);
+    onDiffModeChange?.(modeForChange(change));
   };
 
   const stageSelected = () => {
-    if (!selectedChange) return;
-    void runOperation(() => hostApi.git.stage({ paths: [selectedChange.path] }));
+    if (!effectiveSelectedPath) return;
+    void finishOperation(
+      'stage',
+      t('workspace.git.actions.stage'),
+      () => hostApi.git.stage({ paths: [effectiveSelectedPath] }),
+      (approvalId) => hostApi.git.stage({ paths: [effectiveSelectedPath], approvalId }),
+    );
   };
 
   const unstageSelected = () => {
-    if (!selectedChange) return;
-    void runOperation(() => hostApi.git.unstage({ paths: [selectedChange.path] }));
+    if (!effectiveSelectedPath) return;
+    void finishOperation(
+      'unstage',
+      t('workspace.git.actions.unstage'),
+      () => hostApi.git.unstage({ paths: [effectiveSelectedPath] }),
+      (approvalId) => hostApi.git.unstage({ paths: [effectiveSelectedPath], approvalId }),
+    );
   };
 
   const commit = () => {
-    if (!commitMessage.trim()) return;
-    void runOperation(async () => {
-      const result = await hostApi.git.commit({ message: commitMessage.trim() });
+    const message = commitMessage.trim();
+    if (!message) return;
+    void finishOperation(
+      'commit',
+      t('workspace.git.actions.commit'),
+      () => hostApi.git.commit({ message }),
+      (approvalId) => hostApi.git.commit({ message, approvalId }),
+    ).then((result) => {
       if (result.success) setCommitMessage('');
-      return result;
     });
   };
 
   const createBranch = () => {
-    if (!newBranch.trim()) return;
-    void runOperation(async () => {
-      const result = await hostApi.git.createBranch({ name: newBranch.trim(), checkout: true });
-      if (result.success) setNewBranch('');
-      return result;
+    const name = branchName.trim();
+    if (!name) return;
+    void finishOperation(
+      'branch',
+      t('workspace.git.actions.createBranch'),
+      () => hostApi.git.createBranch({ name, checkout: true }),
+      (approvalId) => hostApi.git.createBranch({ name, checkout: true, approvalId }),
+    ).then((result) => {
+      if (result.success) setBranchName('');
     });
   };
 
   const addWorktree = () => {
-    if (!worktreeBranch.trim()) return;
-    void runOperation(async () => {
-      const result = await hostApi.git.worktreeAdd({ branch: worktreeBranch.trim() });
-      if (result.success) setWorktreeBranch('');
-      return result;
+    const branch = worktreeBranch.trim();
+    if (!branch) return;
+    const startPoint = worktreeStartPoint.trim();
+    const payload = {
+      branch,
+      checkoutNewBranch: worktreeMode === 'new',
+      ...(worktreeMode === 'new' && startPoint ? { startPoint } : {}),
+    };
+    void finishOperation(
+      'worktreeAdd',
+      t('workspace.git.actions.addWorktree'),
+      () => hostApi.git.worktreeAdd(payload),
+      (approvalId) => hostApi.git.worktreeAdd({ ...payload, approvalId }),
+    ).then((result) => {
+      if (result.success) {
+        setWorktreeBranch('');
+        setWorktreeStartPoint('');
+      }
     });
   };
 
+  const removeWorktree = (worktree: GitWorktree) => {
+    void finishOperation(
+      `remove:${worktree.path}`,
+      t('workspace.git.actions.removeWorktree'),
+      () => hostApi.git.worktreeRemove({ path: worktree.path }),
+      (approvalId) => hostApi.git.worktreeRemove({ path: worktree.path, approvalId }),
+    );
+  };
+
+  const pruneWorktrees = () => {
+    void finishOperation(
+      'prune',
+      t('workspace.git.actions.pruneWorktrees'),
+      () => hostApi.git.worktreePrune(),
+      (approvalId) => hostApi.git.worktreePrune({ approvalId }),
+    );
+  };
+
   const createPr = () => {
-    if (!prTitle.trim()) return;
-    void runOperation(async () => {
-      const result = await hostApi.git.prCreate({ title: prTitle.trim(), body: prBody });
+    const title = prTitle.trim();
+    if (!title) return;
+    const body = prBody.trim();
+    void finishOperation(
+      'prCreate',
+      t('workspace.git.actions.createPr'),
+      () => hostApi.git.prCreate({ title, body }),
+      (approvalId) => hostApi.git.prCreate({ title, body, approvalId }),
+    ).then((result) => {
       if (result.success) {
         setPrTitle('');
         setPrBody('');
       }
-      return result;
     });
   };
 
-  if (state.error) {
+  if (error) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center text-sm text-muted-foreground">
-        <GitBranch className="h-8 w-8" />
-        <p>{state.error}</p>
-        <Button type="button" variant="outline" size="sm" onClick={() => void load()}>
-          <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-          {t('workspace.git.actions.refresh', 'Refresh')}
-        </Button>
+      <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-git-panel">
+        <div className="rounded-md border border-red-500/20 bg-red-500/10 p-3 text-xs text-red-700 dark:text-red-400">
+          {error}
+        </div>
       </div>
     );
   }
 
-  const status = state.status;
   if (status && !status.isRepository) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-sm text-muted-foreground">
-        <GitBranch className="h-8 w-8" />
-        <p className="font-medium text-foreground">{t('workspace.git.empty.title', 'No Git repository')}</p>
-        <p>{t('workspace.git.empty.body', 'The active workspace is not inside a Git repository.')}</p>
+      <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-git-panel">
+        <div className="flex h-full items-center justify-center rounded-md border border-dashed border-black/10 bg-surface-modal px-5 text-center dark:border-white/10">
+          <div className="max-w-xs">
+            <GitBranch className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
+            <p className="text-sm font-medium text-foreground">{t('workspace.git.empty.title')}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t('workspace.git.empty.body')}</p>
+          </div>
+        </div>
       </div>
     );
   }
 
+  const totalChanges = changes.length;
+  const isClean = Boolean(status?.clean);
+  const stateLabel = status?.hasConflicts
+    ? t('workspace.git.state.conflict')
+    : isClean
+      ? t('workspace.git.state.clean')
+      : t('workspace.git.state.dirty');
+  const stateVariant = status?.hasConflicts ? 'destructive' : isClean ? 'success' : 'warning';
+  const canStage = Boolean(effectiveSelectedPath && (!selectedChange || selectedChange.bucket !== 'staged'));
+  const canUnstage = Boolean(effectiveSelectedPath && selectedChange?.staged);
+
   return (
-    <div data-testid="workspace-git-panel" className="flex h-full min-h-0 flex-col">
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-black/5 px-3 py-2 dark:border-white/10">
-        <div className="min-w-0">
-          <div className="flex min-w-0 items-center gap-2">
-            <GitBranch className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <p className="truncate text-sm font-medium text-foreground">
-              {status?.branch ?? t('workspace.git.detached', 'Detached HEAD')}
+    <div className="flex h-full min-h-0 flex-col bg-background" data-testid="workspace-git-panel">
+      <div className="shrink-0 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <span className="inline-flex min-w-0 items-center gap-1.5 text-sm font-semibold text-foreground">
+                <GitBranch className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className="truncate">{status?.detached ? t('workspace.git.detached') : status?.branch || t('workspace.git.loading')}</span>
+              </span>
+              <Badge variant={stateVariant} className="shrink-0">{stateLabel}</Badge>
+              {status?.upstream ? (
+                <span className="truncate rounded border border-black/10 bg-surface-input px-1.5 py-0.5 text-2xs text-muted-foreground dark:border-white/10">
+                  {status.upstream}
+                </span>
+              ) : null}
+            </div>
+            <p className="mt-1 text-2xs text-muted-foreground">
+              {t('workspace.git.summary', { count: totalChanges, ahead: status?.ahead ?? 0, behind: status?.behind ?? 0 })}
             </p>
-            {status?.upstream && <Badge variant="outline">{status.upstream}</Badge>}
           </div>
-          <p className="mt-0.5 text-[11px] text-muted-foreground">
-            {status
-              ? t('workspace.git.summary', '{{count}} changes · ↑{{ahead}} ↓{{behind}}', {
-                count: status.changes.length,
-                ahead: status.ahead,
-                behind: status.behind,
-              })
-              : t('workspace.git.loading', 'Loading Git status')}
-          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-8 shrink-0 gap-1.5 bg-surface-input text-xs"
+            onClick={() => void refresh()}
+            disabled={loading}
+          >
+            <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
+            {t('workspace.git.actions.refresh')}
+          </Button>
         </div>
-        <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => void load()}>
-          <RefreshCw className={cn('h-4 w-4', state.loading && 'animate-spin')} />
-        </Button>
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(180px,34%)_1fr] overflow-hidden">
-        <div className="min-h-0 overflow-y-auto border-r border-black/5 dark:border-white/10">
-          {status?.changes.length ? (
-            <div className="divide-y divide-black/5 dark:divide-white/10">
-              {status.changes.map((change) => (
+      {pendingApproval ? (
+        <div className="mx-3 mt-3 rounded-md border border-amber-500/25 bg-amber-500/10 p-2.5 text-xs text-amber-800 dark:text-amber-300">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="flex items-center gap-1.5 font-medium">
+                <ShieldAlert className="h-3.5 w-3.5" />
+                {t('workspace.git.approval.title', { action: pendingApproval.action })}
+              </p>
+              <p className="mt-1 text-amber-900/80 dark:text-amber-200/80">
+                {pendingApproval.approval.reason || notice}
+              </p>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              className="h-7 shrink-0 text-xs"
+              onClick={() => void approveAndRetry()}
+              disabled={operationLoading === 'approval'}
+            >
+              {operationLoading === 'approval' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : null}
+              {t('workspace.git.actions.approveRetry')}
+            </Button>
+          </div>
+        </div>
+      ) : notice ? (
+        <div className="mx-3 mt-3 rounded-md border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-300">
+          {notice}
+        </div>
+      ) : null}
+
+      <div className="grid min-h-0 flex-1 grid-cols-[minmax(220px,0.38fr)_minmax(320px,0.62fr)] gap-3 overflow-hidden p-3">
+        <section className="min-h-0 overflow-hidden rounded-md border border-black/10 bg-surface-modal dark:border-white/10">
+          <div className="flex items-center justify-between border-b border-black/5 px-3 py-2 dark:border-white/10">
+            <span className="text-xs font-medium text-foreground">{t('artifactPanel.tabs.changes')}</span>
+            <Badge variant="outline" className="text-2xs">{totalChanges}</Badge>
+          </div>
+          <div className="h-full min-h-0 overflow-y-auto pb-10">
+            {loading && changes.length === 0 ? (
+              <div className="flex h-36 items-center justify-center text-xs text-muted-foreground">
+                <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                {t('workspace.git.loading')}
+              </div>
+            ) : changes.length === 0 ? (
+              <div className="flex h-36 items-center justify-center px-4 text-center text-xs text-muted-foreground">
+                <CheckCircle2 className="mr-2 h-3.5 w-3.5 text-green-700 dark:text-green-400" />
+                {t('workspace.git.clean')}
+              </div>
+            ) : (
+              <div className="divide-y divide-black/5 dark:divide-white/10">
+                {groupedChanges.map((group) => (
+                  <div key={group.bucket}>
+                    <div className="sticky top-0 z-10 bg-surface-modal/95 px-3 py-1.5 text-2xs font-medium uppercase tracking-normal text-muted-foreground backdrop-blur">
+                      {t(`workspace.git.groups.${group.bucket}`, { count: group.changes.length })}
+                    </div>
+                    <div className="space-y-0.5 px-1.5 pb-1.5">
+                      {group.changes.map((change) => {
+                        const badge = changeBadge(change);
+                        return (
+                          <button
+                            key={`${change.bucket}:${change.path}`}
+                            type="button"
+                            className={cn(
+                              'flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs hover:bg-black/5 dark:hover:bg-white/10',
+                              effectiveSelectedPath === change.path && 'bg-black/5 dark:bg-white/10',
+                            )}
+                            onClick={() => selectChange(change)}
+                          >
+                            <span className="min-w-0 flex-1 truncate font-mono text-foreground">{change.path}</span>
+                            <Badge variant={badge.variant} className="shrink-0 px-1.5 py-0 text-2xs">{badge.label}</Badge>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="flex min-h-0 flex-col overflow-hidden rounded-md border border-black/10 bg-[#0d1117] text-slate-100 dark:border-white/10">
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-white/10 px-3 py-2">
+            <div className="min-w-0">
+              <p className="truncate font-mono text-xs text-slate-100">{effectiveSelectedPath || t('workspace.git.diff.empty')}</p>
+              <p className="mt-0.5 text-2xs text-slate-400">
+                {diffMode === 'staged' ? t('workspace.git.diff.staged') : t('workspace.git.diff.unstaged')}
+              </p>
+            </div>
+            <div className="inline-flex shrink-0 rounded-md border border-white/10 bg-white/5 p-0.5">
+              {(['unstaged', 'staged'] as const).map((mode) => (
                 <button
-                  key={change.path}
+                  key={mode}
                   type="button"
                   className={cn(
-                    'flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-black/5 dark:hover:bg-white/10',
-                    selectedPath === change.path && 'bg-black/5 dark:bg-white/10',
+                    'rounded px-2 py-1 text-2xs text-slate-400',
+                    diffMode === mode && 'bg-white/10 text-white',
                   )}
-                  onClick={() => onSelectedPathChange?.(change.path)}
+                  onClick={() => onDiffModeChange?.(mode)}
                 >
-                  <Badge variant={changeTone(change) as never} className="h-5 min-w-5 justify-center px-1">
-                    {shortStatus(change)}
-                  </Badge>
-                  <span className="min-w-0 flex-1 truncate font-mono">{change.path}</span>
+                  {t(`workspace.git.diff.${mode}`)}
                 </button>
               ))}
             </div>
-          ) : (
-            <div className="flex h-full items-center justify-center px-4 text-center text-xs text-muted-foreground">
-              {t('workspace.git.clean', 'Working tree clean')}
-            </div>
-          )}
-        </div>
-
-        <div className="flex min-h-0 flex-col overflow-hidden">
-          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-black/5 px-3 py-2 dark:border-white/10">
-            <div className="flex min-w-0 items-center gap-1">
-              <Button type="button" variant={diffMode === 'unstaged' ? 'secondary' : 'ghost'} size="sm" className="h-7" onClick={() => onDiffModeChange?.('unstaged')}>
-                {t('workspace.git.diff.unstaged', 'Unstaged')}
-              </Button>
-              <Button type="button" variant={diffMode === 'staged' ? 'secondary' : 'ghost'} size="sm" className="h-7" onClick={() => onDiffModeChange?.('staged')}>
-                {t('workspace.git.diff.staged', 'Staged')}
-              </Button>
-            </div>
-            <div className="flex items-center gap-1">
-              <Button type="button" variant="outline" size="sm" className="h-7" disabled={!selectedChange} onClick={stageSelected}>
-                {t('workspace.git.actions.stage', 'Stage')}
-              </Button>
-              <Button type="button" variant="outline" size="sm" className="h-7" disabled={!selectedChange} onClick={unstageSelected}>
-                {t('workspace.git.actions.unstage', 'Unstage')}
-              </Button>
-            </div>
           </div>
-          <pre className="min-h-0 flex-1 overflow-auto bg-surface-input p-3 font-mono text-[11px] leading-relaxed text-foreground">
-            {state.diff || t('workspace.git.diff.empty', 'No diff for the selected file.')}
+          <pre className="min-h-0 flex-1 overflow-auto p-3 font-mono text-2xs leading-relaxed">
+            {diffLoading ? (
+              <span className="text-slate-400">{t('workspace.git.loading')}</span>
+            ) : diff?.binary ? (
+              <span className="text-slate-400">{t('workspace.git.diff.binary')}</span>
+            ) : diff?.tooLarge ? (
+              <span className="text-slate-400">{t('workspace.git.diff.tooLarge')}</span>
+            ) : diff?.patch ? (
+              diff.patch
+            ) : (
+              <span className="text-slate-400">{t('workspace.git.diff.empty')}</span>
+            )}
           </pre>
-        </div>
+          <div className="flex shrink-0 items-center gap-2 border-t border-white/10 px-3 py-2">
+            <Button type="button" size="sm" className="h-7 text-xs" onClick={stageSelected} disabled={!canStage || operationLoading === 'stage'}>
+              {operationLoading === 'stage' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <Plus className="mr-1.5 h-3 w-3" />}
+              {t('workspace.git.actions.stage')}
+            </Button>
+            <Button type="button" variant="outline" size="sm" className="h-7 border-white/10 bg-white/5 text-xs text-slate-100 hover:bg-white/10" onClick={unstageSelected} disabled={!canUnstage || operationLoading === 'unstage'}>
+              {t('workspace.git.actions.unstage')}
+            </Button>
+          </div>
+        </section>
       </div>
 
-      <div className="grid shrink-0 grid-cols-3 gap-3 border-t border-black/5 p-3 dark:border-white/10">
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 text-xs font-medium">
-            <GitCommit className="h-3.5 w-3.5" />
-            {t('workspace.git.commit.title', 'Commit')}
+      <div className="shrink-0 border-t border-black/5 bg-surface-modal p-3 dark:border-white/10">
+        <div className="grid max-h-[260px] grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-2 overflow-y-auto pr-1">
+        <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+          <div className="flex items-center justify-between gap-2">
+            <PanelTitle icon={<HardDrive className="h-3.5 w-3.5" />} title={t('workspace.git.worktrees.title')} />
+            <Button type="button" variant="ghost" size="sm" className="h-6 px-1.5 text-2xs" onClick={pruneWorktrees} disabled={operationLoading === 'prune'}>
+              {t('workspace.git.actions.pruneWorktrees')}
+            </Button>
           </div>
+          <div className="mt-2 max-h-28 space-y-1 overflow-y-auto rounded-md border border-black/5 bg-surface-input p-1 dark:border-white/10">
+            {worktrees.length === 0 ? (
+              <p className="px-1 py-1 text-2xs text-muted-foreground">{t('workspace.git.worktrees.empty')}</p>
+            ) : worktrees.map((worktree) => {
+              const current = pathEquals(worktree.path, currentWorktree?.path);
+              return (
+                <div key={worktree.path} className="rounded bg-background px-2 py-1 dark:bg-white/5">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate font-mono text-2xs text-foreground">{basename(worktree.path)}</p>
+                      <p className="truncate text-2xs text-muted-foreground">{worktree.branch || compactCommit(worktree.head)}</p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1">
+                      {current ? <Badge variant="success" className="px-1.5 py-0 text-2xs">{t('workspace.git.worktrees.current')}</Badge> : null}
+                      {worktree.locked ? <AlertTriangle className="h-3 w-3 text-amber-700 dark:text-amber-400" /> : null}
+                      {!current ? (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-1.5 text-2xs text-red-700 hover:text-red-700 dark:text-red-400"
+                          onClick={() => removeWorktree(worktree)}
+                          disabled={operationLoading === `remove:${worktree.path}`}
+                        >
+                          <Trash2 className="mr-1 h-3 w-3" />
+                          {t('workspace.git.actions.removeWorktree')}
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-2 grid grid-cols-2 gap-1 rounded-md bg-surface-input p-0.5">
+            {(['new', 'existing'] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                className={cn(
+                  'rounded px-2 py-1 text-2xs text-muted-foreground',
+                  worktreeMode === mode && 'bg-black/5 text-foreground dark:bg-white/10',
+                )}
+                onClick={() => setWorktreeMode(mode)}
+              >
+                {mode === 'new' ? t('workspace.git.worktrees.newBranch') : t('workspace.git.worktrees.existingBranch')}
+              </button>
+            ))}
+          </div>
+          {worktreeMode === 'existing' ? (
+            <Select value={worktreeBranch} onValueChange={setWorktreeBranch}>
+              <SelectTrigger size="sm" className="mt-2 bg-surface-input text-xs">
+                <SelectValue placeholder={t('workspace.git.worktrees.selectBranch')} />
+              </SelectTrigger>
+              <SelectContent>
+                {branches.map((branch) => (
+                  <SelectItem key={branch.name} value={branch.name}>{branch.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <>
+              <Input
+                value={worktreeBranch}
+                onChange={(event) => setWorktreeBranch(event.target.value)}
+                placeholder={t('workspace.git.branchWorktree.worktreePlaceholder')}
+                className="mt-2 h-8 bg-surface-input text-xs"
+              />
+              <Input
+                value={worktreeStartPoint}
+                onChange={(event) => setWorktreeStartPoint(event.target.value)}
+                placeholder={t('workspace.git.worktrees.startPointPlaceholder')}
+                className="mt-1.5 h-8 bg-surface-input text-xs"
+              />
+            </>
+          )}
+          <Button type="button" size="sm" className="mt-2 h-7 w-full text-xs" onClick={addWorktree} disabled={!worktreeBranch.trim() || operationLoading === 'worktreeAdd'}>
+            {operationLoading === 'worktreeAdd' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <GitCompareArrows className="mr-1.5 h-3 w-3" />}
+            {t('workspace.git.actions.addWorktree')}
+          </Button>
+        </section>
+
+        <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+          <PanelTitle icon={<GitCommitHorizontal className="h-3.5 w-3.5" />} title={t('workspace.git.commit.title')} />
           <Textarea
-            className="min-h-[58px] resize-none text-xs"
             value={commitMessage}
             onChange={(event) => setCommitMessage(event.target.value)}
-            placeholder={t('workspace.git.commit.placeholder', 'Commit message')}
+            placeholder={t('workspace.git.commit.placeholder')}
+            className="mt-2 h-16 resize-none bg-surface-input text-xs"
           />
-          <Button type="button" size="sm" className="h-8 w-full" disabled={!commitMessage.trim()} onClick={commit}>
-            {t('workspace.git.actions.commit', 'Commit staged changes')}
+          <Button type="button" size="sm" className="mt-2 h-7 w-full text-xs" onClick={commit} disabled={!commitMessage.trim() || operationLoading === 'commit'}>
+            {operationLoading === 'commit' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : null}
+            {t('workspace.git.actions.commit')}
           </Button>
-        </div>
+        </section>
 
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 text-xs font-medium">
-            <GitMerge className="h-3.5 w-3.5" />
-            {t('workspace.git.branchWorktree.title', 'Branch & worktree')}
-          </div>
-          <Input className="h-8 text-xs" value={newBranch} onChange={(event) => setNewBranch(event.target.value)} placeholder={t('workspace.git.branchWorktree.branchPlaceholder', 'New branch')} />
-          <Button type="button" size="sm" variant="outline" className="h-8 w-full" disabled={!newBranch.trim()} onClick={createBranch}>
-            {t('workspace.git.actions.createBranch', 'Create branch')}
+        <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+          <PanelTitle icon={<GitBranch className="h-3.5 w-3.5" />} title={t('workspace.git.branch.title')} />
+          <Input
+            value={branchName}
+            onChange={(event) => setBranchName(event.target.value)}
+            placeholder={t('workspace.git.branchWorktree.branchPlaceholder')}
+            className="mt-2 h-8 bg-surface-input text-xs"
+          />
+          <Button type="button" variant="outline" size="sm" className="mt-2 h-7 w-full bg-surface-input text-xs" onClick={createBranch} disabled={!branchName.trim() || operationLoading === 'branch'}>
+            {t('workspace.git.actions.createBranch')}
           </Button>
-          <Input className="h-8 text-xs" value={worktreeBranch} onChange={(event) => setWorktreeBranch(event.target.value)} placeholder={t('workspace.git.branchWorktree.worktreePlaceholder', 'Branch for worktree')} />
-          <Button type="button" size="sm" variant="outline" className="h-8 w-full" disabled={!worktreeBranch.trim()} onClick={addWorktree}>
-            {t('workspace.git.actions.addWorktree', 'Add worktree')}
-          </Button>
-        </div>
+        </section>
 
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 text-xs font-medium">
-            <GitPullRequest className="h-3.5 w-3.5" />
-            {t('workspace.git.github.title', 'GitHub PRs')}
-          </div>
-          {state.ghAuthenticated ? (
-            <div className="max-h-20 overflow-y-auto rounded-md border border-black/10 dark:border-white/10">
-              {state.pullRequests.length ? state.pullRequests.map((pr) => (
-                <button
-                  key={pr.number}
-                  type="button"
-                  className="block w-full truncate px-2 py-1.5 text-left text-[11px] hover:bg-black/5 dark:hover:bg-white/10"
-                  onClick={() => void hostApi.git.openPr({ number: pr.number })}
-                >
-                  {prLabel(pr)}
-                </button>
-              )) : (
-                <p className="px-2 py-3 text-center text-[11px] text-muted-foreground">{t('workspace.git.github.noPrs', 'No open pull requests')}</p>
-              )}
-            </div>
-          ) : (
-            <p className="rounded-md border border-black/10 px-2 py-3 text-[11px] text-muted-foreground dark:border-white/10">
-              {t('workspace.git.github.notAuthenticated', 'Run gh auth login in the terminal to enable PR actions.')}
+        <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+          <PanelTitle icon={<GitPullRequest className="h-3.5 w-3.5" />} title={t('workspace.git.github.title')} />
+          {!githubAuth?.authenticated ? (
+            <p className="mt-2 rounded-md bg-surface-input p-2 text-2xs text-muted-foreground">
+              {t('workspace.git.github.notAuthenticated')}
             </p>
+          ) : (
+            <div className="mt-2 max-h-16 space-y-1 overflow-y-auto">
+              {pullRequests.length === 0 ? (
+                <p className="text-2xs text-muted-foreground">{t('workspace.git.github.noPrs')}</p>
+              ) : pullRequests.map((pr) => (
+                <div key={pr.number} className="truncate rounded bg-surface-input px-2 py-1 text-2xs text-foreground">
+                  #{pr.number} {pr.title}
+                </div>
+              ))}
+            </div>
           )}
-          <Input className="h-8 text-xs" value={prTitle} onChange={(event) => setPrTitle(event.target.value)} placeholder={t('workspace.git.github.titlePlaceholder', 'PR title')} />
-          <Textarea className="min-h-[44px] resize-none text-xs" value={prBody} onChange={(event) => setPrBody(event.target.value)} placeholder={t('workspace.git.github.bodyPlaceholder', 'PR body')} />
-          <Button type="button" size="sm" variant="outline" className="h-8 w-full" disabled={!state.ghAuthenticated || !prTitle.trim()} onClick={createPr}>
-            <GitPullRequestCreate className="mr-1.5 h-3.5 w-3.5" />
-            {t('workspace.git.actions.createPr', 'Create PR')}
+          <Input
+            value={prTitle}
+            onChange={(event) => setPrTitle(event.target.value)}
+            placeholder={t('workspace.git.github.titlePlaceholder')}
+            className="mt-2 h-8 bg-surface-input text-xs"
+            disabled={!githubAuth?.authenticated}
+          />
+          <Textarea
+            value={prBody}
+            onChange={(event) => setPrBody(event.target.value)}
+            placeholder={t('workspace.git.github.bodyPlaceholder')}
+            className="mt-1.5 h-12 resize-none bg-surface-input text-xs"
+            disabled={!githubAuth?.authenticated}
+          />
+          <Button type="button" variant="outline" size="sm" className="mt-2 h-7 w-full bg-surface-input text-xs" onClick={createPr} disabled={!githubAuth?.authenticated || !prTitle.trim() || operationLoading === 'prCreate'}>
+            <GitPullRequestCreate className="mr-1.5 h-3 w-3" />
+            {t('workspace.git.actions.createPr')}
           </Button>
+        </section>
         </div>
       </div>
     </div>
+  );
+}
+
+function PanelTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
+  return (
+    <p className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+      <span className="text-muted-foreground">{icon}</span>
+      {title}
+    </p>
   );
 }

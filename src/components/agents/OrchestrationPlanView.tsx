@@ -85,14 +85,14 @@ export function OrchestrationPlanView({ plan, tt }: OrchestrationPlanViewProps) 
               onClick={() => setReasonsOpen((prev) => !prev)}
               className="inline-flex items-center gap-0.5 text-2xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              {tt('roles.reasons', '推理依据')}
+              {tt('roles.reasons', 'Reasoning')}
               <ChevronDown className={cn('h-3 w-3 transition-transform', reasonsOpen && 'rotate-180')} />
             </button>
           )}
         </div>
         {plan.verifierRole && (
           <span className="text-2xs text-muted-foreground">
-            {tt('roles.verifier', '验证')}: {plan.verifierRole}
+            {tt('roles.verifier', 'Verifier')}: {plan.verifierRole}
           </span>
         )}
       </div>
@@ -108,7 +108,7 @@ export function OrchestrationPlanView({ plan, tt }: OrchestrationPlanViewProps) 
       {/* Lead worker */}
       {leadWorker && (
         <WorkerCard
-          label={tt('roles.lead', '主导')}
+          label={tt('roles.lead', 'Lead')}
           worker={{ ...leadWorker }}
           isVerifier={false}
         />
@@ -120,7 +120,7 @@ export function OrchestrationPlanView({ plan, tt }: OrchestrationPlanViewProps) 
           {restWorkers.map((worker, i) => (
             <WorkerCard
               key={`${worker.roleName}-${i}`}
-              label={tt('roles.worker', '执行')}
+              label={tt('roles.worker', 'Worker')}
               worker={worker}
               isVerifier={false}
             />
@@ -132,8 +132,8 @@ export function OrchestrationPlanView({ plan, tt }: OrchestrationPlanViewProps) 
       {plan.verifierRole && (
         <div className={cn(restWorkers.length === 0 && 'ml-3 border-l-2 border-black/10 dark:border-white/10 pl-3')}>
           <WorkerCard
-            label={tt('roles.verifier', '验证')}
-            worker={{ roleName: plan.verifierRole, task: tt('roles.verifierTask', '验证完成度与质量'), effort: undefined }}
+            label={tt('roles.verifier', 'Verifier')}
+            worker={{ roleName: plan.verifierRole, task: tt('roles.verifierTask', 'Verify completion and quality'), effort: undefined }}
             isVerifier
           />
         </div>

@@ -1,6 +1,25 @@
 {
   "title": "Настройки",
   "subtitle": "Настройте ваш опыт работы с ClawX",
+  "navigation": {
+    "back": "Назад к настройкам",
+    "general": {
+      "title": "Общие",
+      "description": "Внешний вид, язык, автозапуск, обновления и сведения о приложении."
+    },
+    "workModes": {
+      "title": "Режимы работы",
+      "description": "Пресеты поведения рабочей области и рабочие наборы."
+    },
+    "system": {
+      "title": "Система и среда",
+      "description": "Статус Gateway, автозапуск, удаленное управление и sandbox."
+    },
+    "developer": {
+      "title": "Разработчик",
+      "description": "Режим разработчика, прокси, CLI, диагностика и локальная телеметрия."
+    }
+  },
   "appearance": {
     "title": "Общие",
     "description": "Настройте внешний вид",
@@ -74,7 +93,11 @@
       "save": "Сохранить",
       "customDoc": "Документация",
       "validate": "Проверить",
-      "failed": "Ошибка"
+      "failed": "Ошибка",
+      "fetchingModels": "Загрузка",
+      "fetchModels": "Получить модели",
+      "customModel": "Ввести модель вручную",
+      "testConnection": "Проверить подключение"
     },
     "card": {
       "default": "По умолчанию",
@@ -104,7 +127,14 @@
       "failedUpdate": "Не удалось обновить провайдера",
       "invalidKey": "Неверный API-ключ",
       "modelRequired": "Требуется ID модели",
-      "minimaxConflict": "Нельзя добавить оба провайдера MiniMax (Global) и MiniMax (CN)."
+      "minimaxConflict": "Нельзя добавить оба провайдера MiniMax (Global) и MiniMax (CN).",
+      "connectionOk": "Подключено, задержка {{ms}} мс",
+      "connectionFailed": "Ошибка подключения: {{error}}",
+      "modelsUpdated": "Список моделей обновлён",
+      "modelsUpdatedWithLatency": "Список моделей обновлён, задержка {{ms}} мс",
+      "modelsFetchFailed": "Не удалось получить модели: {{error}}",
+      "noModelsReturned": "Сервис не вернул список моделей",
+      "providerRequired": "Выберите провайдера"
     },
     "oauth": {
       "loginMode": "Вход через OAuth",
@@ -194,6 +224,54 @@
       "cli": "Docker CLI",
       "daemon": "Docker daemon",
       "image": "Образ песочницы"
+    }
+  },
+  "remoteControl": {
+    "title": "Удалённое управление Electron",
+    "description": "Открывает отладочный порт Electron CDP. Привязывайте его к localhost и используйте только в доверенной среде. После сохранения перезапустите ClawX.",
+    "port": "Порт CDP",
+    "configEndpoint": "Настроенный endpoint: 127.0.0.1:{{port}} /json/version",
+    "currentEndpoint": "Текущий endpoint: {{endpoint}}",
+    "envOverride": "Текущий процесс переопределён переменной окружения CLAWX_REMOTE_DEBUGGING_PORT.",
+    "restartRequired": "Конфигурация отличается от текущего процесса. Перезапустите приложение, чтобы применить её.",
+    "screenshotAlt": "Скриншот Electron CDP",
+    "status": {
+      "effective": "Сейчас действует",
+      "inactive": "Сейчас не действует"
+    },
+    "actions": {
+      "refreshStatus": "Обновить статус",
+      "connectDebug": "Подключить отладку",
+      "connecting": "Подключение",
+      "pageInfo": "Информация о странице",
+      "scroll": "Прокрутить страницу",
+      "scrollDown": "Прокрутить вниз",
+      "click": "Кликнуть страницу",
+      "clickCenter": "Кликнуть по центру",
+      "screenshot": "Скриншот",
+      "running": "{{action}}..."
+    },
+    "inspect": {
+      "result": "Результат подключения: {{result}}",
+      "success": "успех",
+      "failure": "ошибка",
+      "targets": "Страницы для отладки"
+    },
+    "toast": {
+      "connected": "Подключено к Electron CDP, найдено страниц: {{count}}",
+      "connectFailed": "Не удалось подключиться к Electron CDP",
+      "connectFailedWithError": "Не удалось подключиться к Electron CDP: {{error}}",
+      "actionFailed": "{{action}} не удалось: {{error}}",
+      "pageInfoRefreshed": "Информация о странице обновлена",
+      "pageInfoFailed": "Не удалось прочитать информацию о странице",
+      "scrollFailed": "Не удалось прокрутить страницу",
+      "clickedCenter": "Клик по центру страницы ({{x}}, {{y}})",
+      "clickFailed": "Не удалось кликнуть страницу",
+      "screenshotReady": "Скриншот создан",
+      "screenshotFailed": "Не удалось сделать скриншот страницы",
+      "invalidPort": "Порт CDP должен быть целым числом от 1 до 65535",
+      "saved": "Настройки удалённого управления сохранены. Перезапустите приложение для применения.",
+      "saveFailed": "Не удалось сохранить настройки удалённого управления: {{error}}"
     }
   },
   "updates": {
@@ -359,6 +437,44 @@
       "sheets": "???????",
       "pdf": "PDF",
       "memory": "??????"
+    }
+  },
+  "workProviders": {
+    "title": "Work Providers",
+    "description": "Локальные и опциональные Provider для Work Kits. Они показывают статус возможностей и не выдают права на инструменты.",
+    "status": {
+      "ready": "Готово",
+      "missingDependency": "Нет зависимости",
+      "missingConfig": "Нет настроек",
+      "disabled": "Отключено",
+      "externalUnavailable": "Внешний недоступен",
+      "runtimeUnavailable": "Runtime недоступен"
+    },
+    "providers": {
+      "officeDocument": "Документы",
+      "officeSheet": "Таблицы",
+      "officeSlide": "Презентации",
+      "pdf": "PDF",
+      "webSearch": "Web search",
+      "webRead": "Web reading",
+      "libreOffice": "LibreOffice",
+      "pandoc": "Pandoc",
+      "crawler": "Crawler",
+      "ocr": "OCR",
+      "dataFrame": "Data analysis"
+    },
+    "providerDescriptions": {
+      "officeDocument": "Читает и создает документы Word через легкие JS-библиотеки.",
+      "officeSheet": "Читает и создает таблицы и CSV.",
+      "officeSlide": "Создает редактируемые презентации.",
+      "pdf": "Проверяет, просматривает, разделяет и объединяет PDF.",
+      "webSearch": "Использует внешний поисковый Provider, настроенный пользователем.",
+      "webRead": "Извлекает читаемый текст и ссылки со страниц.",
+      "libreOffice": "Опциональный локальный Provider для точной Office-конвертации.",
+      "pandoc": "Опциональный Provider конвертации документов.",
+      "crawler": "Опциональный внешний crawler-сервис.",
+      "ocr": "Опциональный OCR Provider.",
+      "dataFrame": "Опциональный Python или сервисный Provider анализа данных."
     }
   },
   "workHeatGraph": {

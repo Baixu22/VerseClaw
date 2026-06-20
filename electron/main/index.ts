@@ -56,6 +56,7 @@ import { resolveRemoteDebuggingLaunchPort } from '../utils/remote-control';
 import { appendTaskLedgerEvents } from '../services/task-ledger-service';
 import type { TaskLedgerEventInput, TaskLedgerNodeStatus } from '../../shared/types/task-ledger';
 import type { ClawGraphRunEvent, ClawGraphRunSnapshot } from '../../shared/types/clawgraph';
+import type { MissionLifecycleEvent } from '../../shared/types/mission-control';
 
 const WINDOWS_APP_USER_MODEL_ID = 'app.clawx.desktop';
 const isE2EMode = process.env.CLAWX_E2E === '1';
@@ -119,6 +120,7 @@ const hostApiRegistry = new HostApiRegistry();
 const mainWindowFocusState = createMainWindowFocusState();
 const quitLifecycleState = createQuitLifecycleState();
 const taskLoopLedgerSeen = new Set<string>();
+const missionLedgerSeen = new Set<string>();
 const clawGraphLedgerSeen = new Set<string>();
 
 type TaskLoopLifecyclePayload = {
@@ -340,6 +342,214 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
   }
 
   await appendTaskLedgerEvents(undefined, events, `task-loop:${loopRunId}`);
+}
+
+function missionLedgerStatus(status?: MissionLifecycleEvent['status']): TaskLedgerNodeStatus {
+  if (status === 'complete') return 'done';
+  if (status === 'ask_user') return 'review';
+  if (status === 'blocked' || status === 'error') return 'blocked';
+  if (status === 'cancelled') return 'dropped';
+  return 'doing';
+}
+
+function missionLedgerTimestamp(payload: MissionLifecycleEvent): string {
+  const ts = typeof payload.ts === 'number' && Number.isFinite(payload.ts) ? payload.ts : Date.now();
+  return new Date(ts).toISOString();
+}
+
+async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
+  if (!payload || typeof payload !== 'object') return;
+  const event = payload as MissionLifecycleEvent;
+  const missionId = event.missionId?.trim();
+  if (!missionId) return;
+
+  const createdAt = missionLedgerTimestamp(event);
+  const workspaceId = event.workspaceId?.trim() || undefined;
+  const goalId = `mission:${missionId}:goal`;
+  const taskId = `mission:${missionId}:task`;
+  const checkId = `mission:${missionId}:check`;
+  const reviewId = `mission:${missionId}:review`;
+  const status = missionLedgerStatus(event.status);
+  const evidenceRefs = [
+    ...(event.traceId ? [{ type: 'trace' as const, ref: event.traceId, label: 'Mission trace' }] : []),
+    ...(event.taskLoopRunId ? [{ type: 'tool' as const, ref: event.taskLoopRunId, label: 'Inner task_loop run' }] : []),
+  ];
+  const events: TaskLedgerEventInput[] = [];
+
+  if (!missionLedgerSeen.has(missionId)) {
+    missionLedgerSeen.add(missionId);
+    events.push(
+      {
+        id: `mission:${missionId}:goal-created`,
+        type: 'node_created',
+        actor: 'system',
+        taskId: goalId,
+        sessionId: event.sessionKey,
+        payload: {
+          node: {
+            id: goalId,
+            title: `Mission Control ${missionId}`,
+            kind: 'goal',
+            status: 'doing',
+            owner: 'agent',
+            priority: 'normal',
+            tags: ['mission-control'],
+            description: 'Runtime-controlled long-goal Mission Loop.',
+            evidenceRefs,
+            metadata: { missionId },
+            createdAt,
+            updatedAt: createdAt,
+          },
+        },
+      },
+      {
+        id: `mission:${missionId}:task-created`,
+        type: 'node_created',
+        actor: 'system',
+        taskId,
+        sessionId: event.sessionKey,
+        payload: {
+          node: {
+            id: taskId,
+            title: 'Run Mission Loop ticks',
+            kind: 'task',
+            parentId: goalId,
+            status: 'doing',
+            owner: 'agent',
+            tags: ['mission-control', 'mission-loop'],
+            progress: event.progress ?? 0,
+            evidenceRefs,
+            metadata: { missionId, phase: event.phase, tick: event.tick },
+            createdAt,
+            updatedAt: createdAt,
+          },
+        },
+      },
+      {
+        id: `mission:${missionId}:session-linked`,
+        type: 'session_linked',
+        actor: 'system',
+        taskId,
+        sessionId: event.sessionKey,
+        payload: {
+          sessionLink: {
+            id: `mission:${missionId}:session`,
+            sessionKey: event.sessionKey,
+            nodeId: taskId,
+            agentId: event.agentId ?? null,
+            traceId: event.traceId ?? null,
+            summary: 'Mission Control runtime evidence',
+            createdAt,
+          },
+        },
+      },
+    );
+  }
+
+  events.push(
+    {
+      id: `mission:${missionId}:goal-progress:${event.phase}:${event.tick}:${event.status}`,
+      type: 'progress_changed',
+      actor: 'system',
+      taskId: goalId,
+      sessionId: event.sessionKey,
+      payload: {
+        nodeId: goalId,
+        progress: event.progress ?? (status === 'done' || status === 'blocked' ? 100 : undefined),
+      },
+    },
+    {
+      id: `mission:${missionId}:goal-status:${event.status}`,
+      type: 'status_changed',
+      actor: 'system',
+      taskId: goalId,
+      sessionId: event.sessionKey,
+      payload: { nodeId: goalId, status },
+    },
+    {
+      id: `mission:${missionId}:task-progress:${event.phase}:${event.tick}:${event.status}`,
+      type: 'progress_changed',
+      actor: 'system',
+      taskId,
+      sessionId: event.sessionKey,
+      payload: {
+        nodeId: taskId,
+        progress: event.progress ?? (status === 'done' || status === 'blocked' ? 100 : undefined),
+      },
+    },
+    {
+      id: `mission:${missionId}:task-status:${event.status}`,
+      type: 'status_changed',
+      actor: 'system',
+      taskId,
+      sessionId: event.sessionKey,
+      payload: { nodeId: taskId, status },
+    },
+  );
+
+  if (event.phase === 'checkpoint' || event.phase === 'reflect' || event.reviewerDecision) {
+    events.push({
+      id: `mission:${missionId}:check:${event.tick}:${event.phase}`,
+      type: 'node_created',
+      actor: 'system',
+      taskId: checkId,
+      sessionId: event.sessionKey,
+      payload: {
+        node: {
+          id: checkId,
+          title: 'Collect Mission evidence',
+          kind: 'check',
+          parentId: taskId,
+          status: event.reviewerDecision ? 'done' : 'doing',
+          owner: 'agent',
+          tags: ['mission-control', 'evidence'],
+          evidenceRefs,
+          metadata: {
+            missionId,
+            phase: event.phase,
+            tick: event.tick,
+            reviewerDecision: event.reviewerDecision,
+          },
+          createdAt,
+          updatedAt: createdAt,
+        },
+      },
+    });
+  }
+
+  if (event.reviewerDecision || event.blockedReason || event.error) {
+    events.push({
+      id: `mission:${missionId}:review:${event.tick}:${event.reviewerDecision ?? event.status}`,
+      type: 'node_created',
+      actor: 'system',
+      taskId: reviewId,
+      sessionId: event.sessionKey,
+      payload: {
+        node: {
+          id: reviewId,
+          title: `Mission decision: ${event.reviewerDecision ?? event.status}`,
+          kind: 'review',
+          parentId: taskId,
+          status: event.reviewerDecision === 'complete' ? 'done' : status,
+          owner: 'agent',
+          tags: ['mission-control', 'review'],
+          description: event.blockedReason ?? event.error,
+          evidenceRefs,
+          metadata: {
+            missionId,
+            phase: event.phase,
+            tick: event.tick,
+            reviewerDecision: event.reviewerDecision,
+            nextWakeAt: event.nextWakeAt,
+          },
+          createdAt,
+          updatedAt: createdAt,
+        },
+      },
+    });
+  }
+
+  await appendTaskLedgerEvents(workspaceId, events, `mission:${missionId}`);
 }
 
 type ClawGraphLifecyclePayload = {
@@ -868,6 +1078,15 @@ async function initialize(): Promise<void> {
     sendMainWindowEvent('agent:task-loop-lifecycle', data);
     recordTaskLoopLedgerLifecycle(data).catch((error) => {
       logger.warn('task-loop: failed to write task ledger lifecycle evidence', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    });
+  });
+
+  gatewayManager.on('mission:lifecycle', (data) => {
+    sendMainWindowEvent('agent:mission-lifecycle', data);
+    recordMissionLedgerLifecycle(data).catch((error) => {
+      logger.warn('mission-control: failed to write task ledger lifecycle evidence', {
         error: error instanceof Error ? error.message : String(error),
       });
     });

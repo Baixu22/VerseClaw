@@ -208,7 +208,7 @@ function SkillDetailDialog({ skill, isOpen, onClose, onToggle, onUninstall, onOp
             {skill.baseDir && (
               <div className="space-y-3">
                 <h3 className="text-meta font-bold text-foreground/80">
-                  {t('detail.sections.title', { defaultValue: '内容' })}
+                  {t('detail.sections.title')}
                 </h3>
                 <SkillFileSections
                   baseDir={skill.baseDir}
@@ -412,10 +412,10 @@ export function Skills() {
         <div className="flex flex-col md:flex-row md:items-start justify-between mb-6 shrink-0 gap-4">
           <div>
             <h1 className="text-5xl md:text-6xl font-serif text-foreground mb-3 font-normal tracking-tight">
-              工具
+              {t('title')}
             </h1>
             <p className="text-subtitle text-foreground/70 font-medium">
-              管理技能与 MCP 服务
+              {t('subtitle')}
             </p>
           </div>
 
@@ -461,7 +461,7 @@ export function Skills() {
                   : 'bg-transparent border-transparent text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5',
               )}
             >
-              技能
+              {t('tabs.skills')}
             </Button>
             <Button
               type="button"
@@ -480,7 +480,7 @@ export function Skills() {
                 'bg-transparent border-transparent text-muted-foreground',
               )}
             >
-              {t('tabs.marketplaceLocalOnlyLabel', { defaultValue: '市场 · 本地' })}
+              {t('tabs.marketplaceLocalOnlyLabel')}
             </Button>
             <Button
               type="button"
@@ -494,7 +494,7 @@ export function Skills() {
                   : 'bg-transparent border-transparent text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5',
               )}
             >
-              MCP 服务
+              {t('mcp.tab')}
             </Button>
             {(toolTab === 'skills') && (
               <>
@@ -739,9 +739,9 @@ function normalizeMcpJsonServer(name: string, value: unknown): McpServerJsonPayl
   };
 }
 
-function parseMcpJsonConfigs(value: string): McpServerJsonPayload[] {
+function parseMcpJsonConfigs(value: string, invalidObjectMessage: string): McpServerJsonPayload[] {
   const parsed = JSON.parse(value) as unknown;
-  if (!isRecord(parsed)) throw new Error('MCP JSON 必须是对象');
+  if (!isRecord(parsed)) throw new Error(invalidObjectMessage);
   if (isRecord(parsed.mcpServers)) {
     return Object.entries(parsed.mcpServers).map(([name, config]) => normalizeMcpJsonServer(name, config));
   }
@@ -782,6 +782,7 @@ function getMcpLocalAddress(server: McpServerConfig): string {
 }
 
 function McpServicesPanel() {
+  const { t } = useTranslation('skills');
   const {
     servers,
     loading,
@@ -821,11 +822,11 @@ function McpServicesPanel() {
     setSaving(true);
     setJsonError(null);
     try {
-      const configs = parseMcpJsonConfigs(jsonDraft);
+      const configs = parseMcpJsonConfigs(jsonDraft, t('mcp.errors.jsonObjectRequired'));
       for (const config of configs) {
         await createServer(config);
       }
-      toast.success(configs.length > 1 ? `已注册 ${configs.length} 个 MCP 服务` : 'MCP 服务已注册');
+      toast.success(configs.length > 1 ? t('mcp.toast.registeredMany', { count: configs.length }) : t('mcp.toast.registeredOne'));
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       setJsonError(message);
@@ -840,9 +841,9 @@ function McpServicesPanel() {
     try {
       const result = await testServer(server.id);
       if (result.success) {
-        toast.success(result.message || 'MCP 配置校验通过');
+        toast.success(result.message || t('mcp.toast.configValid'));
       } else {
-        toast.error(result.error || 'MCP 配置校验失败');
+        toast.error(result.error || t('mcp.toast.configInvalid'));
       }
       setHeartbeatById((prev) => ({
         ...prev,
@@ -876,9 +877,9 @@ function McpServicesPanel() {
         },
       }));
       if (result.success) {
-        toast.success(result.latencyMs != null ? `MCP 心跳正常 ${result.latencyMs}ms` : result.message || 'MCP 心跳正常');
+        toast.success(result.latencyMs != null ? t('mcp.toast.heartbeatOkWithLatency', { ms: result.latencyMs }) : result.message || t('mcp.toast.heartbeatOk'));
       } else {
-        toast.error(result.error || 'MCP 心跳失败');
+        toast.error(result.error || t('mcp.toast.heartbeatFailed'));
       }
     } finally {
       setTestingId(null);
@@ -901,7 +902,7 @@ function McpServicesPanel() {
   const handleReloadRuntime = async () => {
     try {
       const result = await reloadRuntime();
-      toast.success(result.message || `已同步 ${result.serverCount} 个 MCP 服务`);
+      toast.success(result.message || t('mcp.toast.synced', { count: result.serverCount }));
     } catch (err) {
       toast.error(String(err));
     }
@@ -912,9 +913,9 @@ function McpServicesPanel() {
     setSaving(true);
     setJsonError(null);
     try {
-      const [config] = parseMcpJsonConfigs(detailJson);
+      const [config] = parseMcpJsonConfigs(detailJson, t('mcp.errors.jsonObjectRequired'));
       await updateServer({ id: selectedServer.id, ...config });
-      toast.success('MCP 服务已保存');
+      toast.success(t('mcp.toast.saved'));
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       setJsonError(message);
@@ -927,9 +928,9 @@ function McpServicesPanel() {
   const handleCopyLocalAddress = async (server: McpServerConfig) => {
     try {
       await navigator.clipboard.writeText(getMcpLocalAddress(server));
-      toast.success('本地地址已复制');
+      toast.success(t('mcp.toast.localAddressCopied'));
     } catch (err) {
-      toast.error('复制本地地址失败: ' + String(err));
+      toast.error(t('mcp.toast.localAddressCopyFailed', { error: String(err) }));
     }
   };
 
@@ -944,8 +945,8 @@ function McpServicesPanel() {
         <div className="mb-4 flex items-center gap-2">
           <Code2 className="h-4 w-4 text-foreground/70" />
           <div>
-            <h2 className="text-base font-semibold text-foreground">通过 JSON 注册 MCP 服务</h2>
-            <p className="text-xs text-muted-foreground">支持单个服务对象，也支持常见的 mcpServers 配置块</p>
+            <h2 className="text-base font-semibold text-foreground">{t('mcp.register.title')}</h2>
+            <p className="text-xs text-muted-foreground">{t('mcp.register.description')}</p>
           </div>
         </div>
         <Textarea
@@ -959,15 +960,15 @@ function McpServicesPanel() {
         )}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" onClick={() => setJsonDraft(defaultMcpJson)} className="h-9 rounded-full px-4">
-            填入示例
+            {t('mcp.actions.fillExample')}
           </Button>
           <Button variant="outline" onClick={() => void handleReloadRuntime()} className="h-9 rounded-full px-4 bg-transparent">
             <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-            同步运行中
+            {t('mcp.actions.syncRuntime')}
           </Button>
           <Button onClick={() => void handleCreate()} disabled={saving || !jsonDraft.trim()} className="h-9 rounded-full px-4">
             {saving ? <LoadingSpinner size="sm" /> : <Plus className="mr-1.5 h-3.5 w-3.5" />}
-            注册服务
+            {t('mcp.actions.register')}
           </Button>
         </div>
       </div>
@@ -978,7 +979,7 @@ function McpServicesPanel() {
         ) : servers.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
             <Server className="mb-3 h-9 w-9 opacity-50" />
-            <p>暂无 MCP 服务</p>
+            <p>{t('mcp.empty')}</p>
           </div>
         ) : (
           servers.map((server) => {
@@ -999,10 +1000,10 @@ function McpServicesPanel() {
                   <p className="truncate text-sm font-semibold text-foreground">{server.name}</p>
                   <Badge variant="outline" className="rounded-full">{server.transport}</Badge>
                   <Badge variant="secondary" className="rounded-full">{server.scope}</Badge>
-                  {!server.enabled && <Badge variant="outline" className="rounded-full">已禁用</Badge>}
+                  {!server.enabled && <Badge variant="outline" className="rounded-full">{t('mcp.status.disabled')}</Badge>}
                   {heartbeat && (
                     <Badge variant={heartbeat.success ? 'secondary' : 'destructive'} className="rounded-full">
-                      {heartbeat.success ? '心跳正常' : '心跳失败'}
+                      {heartbeat.success ? t('mcp.status.heartbeatOk') : t('mcp.status.heartbeatFailed')}
                     </Badge>
                   )}
                 </div>
@@ -1039,7 +1040,7 @@ function McpServicesPanel() {
                     event.stopPropagation();
                     void handleCopyLocalAddress(server);
                   }}
-                  aria-label="复制 MCP 本地地址"
+                  aria-label={t('mcp.actions.copyLocalAddress')}
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
@@ -1091,7 +1092,7 @@ function McpServicesPanel() {
                 </div>
                 <div className="mt-4 rounded-xl bg-black/5 px-3 py-2 dark:bg-white/5">
                   <div className="mb-1 flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-muted-foreground">本地持久地址</span>
+                    <span className="text-xs font-medium text-muted-foreground">{t('mcp.detail.localAddress')}</span>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -1099,7 +1100,7 @@ function McpServicesPanel() {
                       onClick={() => void handleCopyLocalAddress(selectedServer)}
                     >
                       <Copy className="mr-1 h-3.5 w-3.5" />
-                      复制
+                      {t('mcp.actions.copy')}
                     </Button>
                   </div>
                   <p className="truncate font-mono text-xs text-foreground">
@@ -1131,7 +1132,7 @@ function McpServicesPanel() {
                   </div>
                 </div>
                 <div className="mb-3 flex items-center justify-between">
-                  <p className="text-sm font-semibold text-foreground">JSON 配置</p>
+                  <p className="text-sm font-semibold text-foreground">{t('mcp.detail.jsonConfig')}</p>
                   {heartbeatById[selectedServer.id] && (
                     <span className={cn(
                       'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs',
@@ -1140,7 +1141,7 @@ function McpServicesPanel() {
                         : 'bg-red-500/10 text-red-600 dark:text-red-400',
                     )}>
                       <CheckCircle2 className="h-3.5 w-3.5" />
-                      {heartbeatById[selectedServer.id].success ? '连接正常' : '连接异常'}
+                      {heartbeatById[selectedServer.id].success ? t('mcp.status.connectionOk') : t('mcp.status.connectionIssue')}
                     </span>
                   )}
                 </div>
@@ -1153,7 +1154,7 @@ function McpServicesPanel() {
                 {jsonError && <p className="mt-2 text-xs text-destructive">{jsonError}</p>}
                 <div className="mt-5 space-y-3">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-foreground">工具目录</p>
+                    <p className="text-sm font-semibold text-foreground">{t('mcp.detail.toolCatalog')}</p>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -1162,15 +1163,15 @@ function McpServicesPanel() {
                       disabled={loadingToolsId === selectedServer.id}
                     >
                       {loadingToolsId === selectedServer.id ? <LoadingSpinner size="sm" /> : <Activity className="mr-1.5 h-3.5 w-3.5" />}
-                      刷新
+                      {t('common:actions.refresh')}
                     </Button>
                   </div>
                   {toolsById[selectedServer.id] && (
                     <div className="rounded-xl border border-black/5 p-3 dark:border-white/5">
-                      <p className="mb-2 text-xs font-medium text-foreground">工具目录</p>
+                      <p className="mb-2 text-xs font-medium text-foreground">{t('mcp.detail.toolCatalog')}</p>
                       {toolsById[selectedServer.id].tools.length === 0 ? (
                         <p className="text-xs text-muted-foreground">
-                          {toolsById[selectedServer.id].message || '当前运行时没有返回工具'}
+                          {toolsById[selectedServer.id].message || t('mcp.detail.noRuntimeTools')}
                         </p>
                       ) : (
                         <div className="space-y-2">
@@ -1194,13 +1195,13 @@ function McpServicesPanel() {
                     void deleteServer(selectedServer.id)
                       .then(() => {
                         setSelectedServerId(null);
-                        toast.success('MCP 服务已删除');
+                        toast.success(t('mcp.toast.deleted'));
                       })
                       .catch((err) => toast.error(String(err)));
                   }}
                 >
                   <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-                  删除
+                  {t('common:actions.delete')}
                 </Button>
                 <div className="flex gap-2">
                   <Button
@@ -1210,11 +1211,11 @@ function McpServicesPanel() {
                     disabled={testingId === selectedServer.id}
                   >
                     {testingId === selectedServer.id ? <LoadingSpinner size="sm" /> : <Activity className="mr-1.5 h-3.5 w-3.5" />}
-                    心跳检测
+                    {t('mcp.actions.heartbeat')}
                   </Button>
                   <Button className="rounded-full" onClick={() => void handleSaveDetail()} disabled={saving}>
                     {saving ? <LoadingSpinner size="sm" /> : <Save className="mr-1.5 h-3.5 w-3.5" />}
-                    保存
+                    {t('common:actions.save')}
                   </Button>
                 </div>
               </div>

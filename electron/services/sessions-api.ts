@@ -13,9 +13,14 @@ import { buildResumeCheckpoint, renderResumeCheckpointSummary } from '../../shar
 import type {
   LongTaskCheckpointRecord,
   LongTaskControlEvent,
+  LongTaskEvidenceRef,
   ResumeCheckpoint,
 } from '../../shared/types/long-task-control';
-import type { SessionHandoffSource } from '../../shared/host-api/contract';
+import type {
+  CompressionArtifact,
+  CompressionArtifactQuality,
+  SessionHandoffSource,
+} from '../../shared/host-api/contract';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
 import { readCurrentGitStatus } from './git-api';
 import { getObservabilityTraceBuffer } from './observability-service';
@@ -57,6 +62,9 @@ type SessionPayload = {
   customInstructions?: unknown;
   force?: unknown;
   workspaceId?: unknown;
+  checkpointId?: unknown;
+  budgetTokens?: unknown;
+  purpose?: unknown;
 };
 
 const MANUAL_COMPACTION_DEFAULT_INSTRUCTIONS = [
@@ -414,7 +422,10 @@ function renderList(title: string, values: string[]): string[] {
   return [title, ...values.map((value) => `- ${value}`)];
 }
 
-function renderHandoffDraft(checkpoint: ResumeCheckpoint, sources: SessionHandoffSource[]): string {
+function renderHandoffDraft(
+  checkpoint: ResumeCheckpoint,
+  sources: SessionHandoffSource[],
+): string {
   const sections = [
     '# Handoff: continue this ClawX conversation',
     '',
@@ -430,6 +441,19 @@ function renderHandoffDraft(checkpoint: ResumeCheckpoint, sources: SessionHandof
     checkpoint.nextAction || 'Review the checkpoint, inspect the touched files/status, and continue from the current objective.',
   ];
   return sections.join('\n');
+}
+
+function uniqueEvidenceRefs(refs: LongTaskEvidenceRef[]): LongTaskEvidenceRef[] {
+  const seen = new Set<string>();
+  const result: LongTaskEvidenceRef[] = [];
+  for (const ref of refs) {
+    const key = `${ref.type}:${ref.ref}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(ref);
+    if (result.length >= 16) break;
+  }
+  return result;
 }
 
 function getOptionalAgentId(payload: unknown): string | undefined {
@@ -449,11 +473,71 @@ function toNumber(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
 
+function getOptionalCheckpointId(payload: unknown): string | undefined {
+  const value = isRecord(payload) ? (payload as SessionPayload).checkpointId : undefined;
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function getOptionalBudgetTokens(payload: unknown): number | undefined {
+  const value = isRecord(payload) ? (payload as SessionPayload).budgetTokens : undefined;
+  return typeof value === 'number' && Number.isFinite(value) ? Math.max(200, Math.floor(value)) : undefined;
+}
+
+function getOptionalPurpose(payload: unknown): string | undefined {
+  const value = isRecord(payload) ? (payload as SessionPayload).purpose : undefined;
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function mapCompressionQuality(value: unknown): CompressionArtifactQuality | undefined {
+  if (!isRecord(value)) return undefined;
+  const score = toNumber(value.score);
+  const fieldCoverage = toNumber(value.fieldCoverage);
+  const evidenceCoverage = toNumber(value.evidenceCoverage);
+  const artifactTokens = toNumber(value.artifactTokens);
+  const projectionTokens = toNumber(value.projectionTokens);
+  const level = typeof value.level === 'string' && ['high', 'medium', 'low'].includes(value.level)
+    ? value.level as CompressionArtifactQuality['level']
+    : undefined;
+  if (
+    score === undefined ||
+    fieldCoverage === undefined ||
+    evidenceCoverage === undefined ||
+    artifactTokens === undefined ||
+    projectionTokens === undefined ||
+    !level
+  ) {
+    return undefined;
+  }
+  return {
+    score,
+    level,
+    fieldCoverage,
+    evidenceCoverage,
+    artifactTokens,
+    projectionTokens,
+    warnings: Array.isArray(value.warnings)
+      ? value.warnings.filter((item): item is string => typeof item === 'string')
+      : [],
+  };
+}
+
+function mapCompressionArtifact(value: unknown): CompressionArtifact | undefined {
+  if (!isRecord(value) || value.schemaVersion !== 1) return undefined;
+  const quality = mapCompressionQuality(value.quality);
+  if (!quality) return undefined;
+  return {
+    ...(value as unknown as Omit<CompressionArtifact, 'quality'>),
+    schemaVersion: 1,
+    quality,
+  };
+}
+
 function mapCompactionHistoryEntry(entry: unknown) {
   const record = isRecord(entry) ? entry : {};
   const id = typeof record.id === 'string' ? record.id : '';
   const timestamp = toNumber(record.timestamp) ?? Date.now();
   const trigger = typeof record.trigger === 'string' ? record.trigger : 'manual';
+  const quality = mapCompressionQuality(record.quality);
   return {
     id,
     timestamp,
@@ -462,6 +546,14 @@ function mapCompactionHistoryEntry(entry: unknown) {
     ...(toNumber(record.tokensAfter) !== undefined ? { tokensAfter: toNumber(record.tokensAfter) } : {}),
     ...(typeof record.firstKeptEntryId === 'string' ? { firstKeptEntryId: record.firstKeptEntryId } : {}),
     trigger: trigger as 'manual' | 'auto-threshold' | 'overflow-retry' | 'timeout-retry',
+    ...(quality ? { quality } : {}),
+    ...(toNumber(record.artifactTokens) !== undefined ? { artifactTokens: toNumber(record.artifactTokens) } : {}),
+    ...(toNumber(record.projectionTokens) !== undefined ? { projectionTokens: toNumber(record.projectionTokens) } : {}),
+    ...(toNumber(record.evidenceCoverage) !== undefined ? { evidenceCoverage: toNumber(record.evidenceCoverage) } : {}),
+    ...(toNumber(record.unverifiedCount) !== undefined ? { unverifiedCount: toNumber(record.unverifiedCount) } : {}),
+    ...(Array.isArray(record.warnings)
+      ? { warnings: record.warnings.filter((item): item is string => typeof item === 'string') }
+      : {}),
   };
 }
 
@@ -841,6 +933,73 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
         entries: Array.isArray(result.entries) ? result.entries.map(mapCompactionHistoryEntry) : [],
       };
     },
+    compressionArtifact: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      const checkpointId = getOptionalCheckpointId(payload);
+      if (!ctx.gatewayManager) {
+        return {
+          success: false,
+          error: 'Gateway manager unavailable',
+          key: sessionKey,
+          warnings: ['gateway_unavailable'],
+        };
+      }
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.compressionArtifact', {
+        key: sessionKey,
+        ...(agentId ? { agentId } : {}),
+        ...(checkpointId ? { checkpointId } : {}),
+      }, 10_000);
+      const artifact = mapCompressionArtifact(result.artifact);
+      const quality = mapCompressionQuality(result.quality) ?? artifact?.quality;
+      return {
+        success: true,
+        key: typeof result.key === 'string' ? result.key : sessionKey,
+        ...(typeof result.checkpointId === 'string' ? { checkpointId: result.checkpointId } : {}),
+        ...(artifact ? { artifact } : {}),
+        ...(quality ? { quality } : {}),
+        warnings: Array.isArray(result.warnings)
+          ? result.warnings.filter((value): value is string => typeof value === 'string')
+          : [],
+      };
+    },
+    recoveryContext: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      const checkpointId = getOptionalCheckpointId(payload);
+      const budgetTokens = getOptionalBudgetTokens(payload);
+      const purpose = getOptionalPurpose(payload);
+      if (!ctx.gatewayManager) {
+        return {
+          success: false,
+          error: 'Gateway manager unavailable',
+          key: sessionKey,
+          context: '',
+          warnings: ['gateway_unavailable'],
+        };
+      }
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.recoveryContext', {
+        key: sessionKey,
+        ...(agentId ? { agentId } : {}),
+        ...(checkpointId ? { checkpointId } : {}),
+        ...(budgetTokens ? { budgetTokens } : {}),
+        ...(purpose ? { purpose } : {}),
+      }, 10_000);
+      const artifact = mapCompressionArtifact(result.artifact);
+      const quality = mapCompressionQuality(result.quality) ?? artifact?.quality;
+      return {
+        success: true,
+        key: typeof result.key === 'string' ? result.key : sessionKey,
+        ...(typeof result.checkpointId === 'string' ? { checkpointId: result.checkpointId } : {}),
+        context: typeof result.context === 'string' ? result.context : '',
+        ...(artifact ? { artifact } : {}),
+        ...(quality ? { quality } : {}),
+        ...(toNumber(result.projectionTokens) !== undefined ? { projectionTokens: toNumber(result.projectionTokens) } : {}),
+        warnings: Array.isArray(result.warnings)
+          ? result.warnings.filter((value): value is string => typeof value === 'string')
+          : [],
+      };
+    },
     longTaskControlStatus: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const agentId = getOptionalAgentId(payload);
@@ -956,6 +1115,7 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
         force: true,
       }, 120_000);
       const compactResult = isRecord(result.result) ? result.result : {};
+      const compactDetails = isRecord(compactResult.details) ? compactResult.details : {};
       const compacted = result.compacted === true;
       const nextSessionKey = typeof result.key === 'string' ? result.key : sessionKey;
       return {
@@ -970,7 +1130,9 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
         sessionKey: nextSessionKey,
         ...(typeof compactResult.sessionId === 'string' ? { sessionId: compactResult.sessionId } : {}),
         ...(nextSessionKey !== sessionKey ? { rotatedSessionKey: nextSessionKey } : {}),
-        warnings: [],
+        warnings: Array.isArray(compactDetails.warnings)
+          ? compactDetails.warnings.filter((item): item is string => typeof item === 'string')
+          : [],
       };
     },
     prepareHandoff: async (payload) => {
@@ -979,6 +1141,7 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
       const workspaceId = getOptionalWorkspaceId(payload);
       const warnings: string[] = [];
       const sources: SessionHandoffSource[] = [];
+      let runtimeCheckpoint: ResumeCheckpoint | null = null;
 
       if (ctx.gatewayManager) {
         try {
@@ -991,20 +1154,13 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
             ? mapLongTaskCheckpointRecord(result.checkpoints[0])
             : undefined;
           if (latestCheckpoint?.checkpoint) {
-            const checkpoint = latestCheckpoint.checkpoint;
-            const checkpointSources: SessionHandoffSource[] = [{
+            runtimeCheckpoint = latestCheckpoint.checkpoint;
+            sources.push({
               id: 'runtime_checkpoint',
               label: 'Runtime checkpoint',
               available: true,
               summary: `${latestCheckpoint.trigger} checkpoint`,
-            }];
-            return {
-              success: true,
-              checkpoint,
-              draft: renderHandoffDraft(checkpoint, checkpointSources),
-              sources: checkpointSources,
-              warnings,
-            };
+            });
           }
         } catch (error) {
           warnings.push(`Runtime checkpoint unavailable: ${error instanceof Error ? error.message : String(error)}`);
@@ -1107,27 +1263,47 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
         ...renderList('Open Task Ledger items:', ledgerActive),
         ...renderList('Recent implementation/test commands:', transcriptTests),
       ];
+      const sourceEvidenceRefs: LongTaskEvidenceRef[] = [
+        { type: 'session', ref: sessionKey, label: 'Source conversation' },
+        ...(workspaceId ? [{ type: 'task_ledger' as const, ref: workspaceId, label: 'Workspace Task Ledger' }] : []),
+        ...traceEvidence,
+      ];
       const checkpoint = buildResumeCheckpoint({
-        trigger: 'session_rotation',
-        sessionKey,
-        agentId,
-        workspaceId,
-        objective: objective ?? ledgerActive[0] ?? undefined,
-        activeTask: activeTaskParts.join('\n') || undefined,
-        openBlockers: uniqueStrings([...ledgerBlockers, ...gitBlockers, ...transcriptErrors, ...traceErrors], 10),
-        decisions: uniqueStrings([...ledgerDecisions, ...transcriptDecisions], 10),
-        deviations: [],
-        filesTouched: uniqueStrings([...gitFiles, ...transcriptFiles], 16),
-        testsRun: transcriptTests,
-        nextAction: 'Review this handoff draft, inspect the current workspace status, and continue the task in this new session.',
-        reviewNeededItems: uniqueStrings(ledgerReview, 8),
-        evidenceRefs: [
-          { type: 'session', ref: sessionKey, label: 'Source conversation' },
-          ...(workspaceId ? [{ type: 'task_ledger' as const, ref: workspaceId, label: 'Workspace Task Ledger' }] : []),
-          ...traceEvidence,
-        ],
+        trigger: runtimeCheckpoint?.trigger ?? 'session_rotation',
+        id: runtimeCheckpoint?.id,
+        sessionKey: runtimeCheckpoint?.sessionKey ?? sessionKey,
+        agentId: runtimeCheckpoint?.agentId ?? agentId,
+        workspaceId: runtimeCheckpoint?.workspaceId ?? workspaceId,
+        objective: runtimeCheckpoint?.objective ?? objective ?? ledgerActive[0] ?? undefined,
+        activeNodeId: runtimeCheckpoint?.activeNodeId,
+        activeTask: (runtimeCheckpoint?.activeTask ?? activeTaskParts.join('\n')) || undefined,
+        lastConfirmedHandoff: runtimeCheckpoint?.lastConfirmedHandoff,
+        openBlockers: uniqueStrings([
+          ...(runtimeCheckpoint?.openBlockers ?? []),
+          ...ledgerBlockers,
+          ...gitBlockers,
+          ...traceErrors,
+          ...transcriptErrors,
+        ], 10),
+        decisions: uniqueStrings([
+          ...(runtimeCheckpoint?.decisions ?? []),
+          ...ledgerDecisions,
+          ...transcriptDecisions,
+        ], 10),
+        deviations: runtimeCheckpoint?.deviations ?? [],
+        filesTouched: uniqueStrings([
+          ...(runtimeCheckpoint?.filesTouched ?? []),
+          ...gitFiles,
+          ...transcriptFiles,
+        ], 16),
+        testsRun: uniqueStrings([...(runtimeCheckpoint?.testsRun ?? []), ...transcriptTests], 12),
+        nextAction: runtimeCheckpoint?.nextAction ?? 'Review this handoff draft, inspect the current workspace status, and continue the task in this new session.',
+        reviewNeededItems: uniqueStrings([...(runtimeCheckpoint?.reviewNeededItems ?? []), ...ledgerReview], 8),
+        evidenceRefs: uniqueEvidenceRefs([...(runtimeCheckpoint?.evidenceRefs ?? []), ...sourceEvidenceRefs]),
         metadata: {
-          source: 'clawx-session-handoff-mvp',
+          ...(runtimeCheckpoint?.metadata ?? {}),
+          source: runtimeCheckpoint ? 'clawx-session-handoff-ecosystem' : 'clawx-session-handoff-mvp',
+          runtimeCheckpoint: Boolean(runtimeCheckpoint),
           sourceCount: sources.filter((source) => source.available).length,
         },
       });

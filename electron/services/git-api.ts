@@ -153,6 +153,12 @@ function resolveWorkspacePath(ctx: RepoContext, rawPath: string): string {
   return resolve(isAbsolute(rawPath) ? rawPath : join(ctx.workspaceRoot, rawPath));
 }
 
+function isPathInsideRepoSiblingArea(target: string, repoRoot: string): boolean {
+  const parent = dirname(repoRoot);
+  const relativePath = relative(parent, target);
+  return Boolean(relativePath) && !relativePath.startsWith('..') && !isAbsolute(relativePath);
+}
+
 function isConflictStatus(status: string): boolean {
   return ['DD', 'AU', 'UD', 'UA', 'DU', 'AA', 'UU'].includes(status);
 }
@@ -630,15 +636,22 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const ctx = await requireRepoContext();
       const branch = normalizeString(payload.branch);
       if (!branch) throw new Error('branch is required');
+      const startPoint = normalizeString(payload.startPoint);
       const slug = branch.replace(/[^a-z0-9._-]+/gi, '-').replace(/^-|-$/g, '') || 'worktree';
       const target = payload.path
         ? resolveWorkspacePath(ctx, payload.path)
-        : resolve(dirname(ctx.repoRoot), `${ctx.workspace.name}-${slug}`);
-      const outsideWorkspace = !isPathInsideWorkspace(target, ctx.workspaceRoot);
+        : resolve(dirname(ctx.repoRoot), `${ctx.workspace.name || 'workspace'}-${slug}`);
+      const customOutsideSafeArea = Boolean(payload.path)
+        && !isPathInsideWorkspace(target, ctx.workspaceRoot)
+        && !isPathInsideRepoSiblingArea(target, ctx.repoRoot);
       const args = ['worktree', 'add'];
-      if (payload.checkoutNewBranch) args.push('-b');
-      args.push(target, branch);
-      return withGitOperation('worktreeAdd', outsideWorkspace ? 'dangerous' : 'write', args, {
+      if (payload.checkoutNewBranch !== false) {
+        args.push('-b', branch, target);
+        if (startPoint) args.push(startPoint);
+      } else {
+        args.push(target, branch);
+      }
+      return withGitOperation('worktreeAdd', customOutsideSafeArea ? 'dangerous' : 'write', args, {
         approvalId: payload.approvalId,
         paths: [target],
       });

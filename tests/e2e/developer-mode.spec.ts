@@ -6,8 +6,11 @@ test.describe('ClawX developer-mode gated UI', () => {
 
     await page.getByTestId('sidebar-nav-settings').click();
     await expect(page.getByTestId('settings-page')).toBeVisible();
-    await expect(page.getByTestId('settings-developer-section')).toHaveCount(0);
+    await expect(page.getByTestId('settings-nav-developer')).toBeVisible();
+    await page.getByTestId('settings-nav-developer').click();
+    await expect(page.getByTestId('settings-back-button')).toBeVisible();
     await expect(page.getByTestId('settings-dev-mode-switch')).toHaveAttribute('data-state', 'unchecked');
+    await expect(page.getByTestId('settings-developer-gateway-token')).toHaveCount(0);
     await expect(page.getByTestId('sidebar-open-dev-console')).toHaveCount(0);
     await expect(page.getByTestId('sidebar-nav-dreams')).toHaveCount(0);
 
@@ -28,6 +31,7 @@ test.describe('ClawX developer-mode gated UI', () => {
     await expect(page.getByTestId('add-provider-dialog')).toHaveCount(0);
 
     await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-developer').click();
     await page.getByTestId('settings-dev-mode-switch').click();
     await expect(page.getByTestId('settings-dev-mode-switch')).toHaveAttribute('data-state', 'checked');
     await expect(page.getByTestId('settings-developer-section')).toBeVisible();

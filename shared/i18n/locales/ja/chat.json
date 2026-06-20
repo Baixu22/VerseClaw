@@ -18,12 +18,80 @@
     "refresh": "チャットを更新",
     "currentAgent": "現在の会話相手: {{agent}}",
     "workspace": "ワークスペース",
-    "saveToKnowledge": "ナレッジに保存"
+    "saveToKnowledge": "ナレッジに保存",
+    "addWorkspaceDialogTitle": "ワークスペースディレクトリを選択",
+    "addWorkspaceDialogButton": "ワークスペースに設定"
   },
   "markdown": {
     "codeBlock": "コード",
     "copyCode": "コードをコピー",
     "copiedCode": "コピー済み"
+  },
+  "approvals": {
+    "title": "承認と監査",
+    "description": "現在のワークスペースの権限リクエスト履歴",
+    "empty": "承認または高リスク監査の記録はまだありません",
+    "mode": {
+      "readOnly": "読み取り専用",
+      "acceptEdits": "編集を許可",
+      "plan": "計画",
+      "fullAccess": "フルアクセス"
+    },
+    "source": {
+      "terminal": "ターミナル",
+      "file": "ファイル",
+      "remoteControl": "リモート制御"
+    },
+    "risk": {
+      "write": "書き込み",
+      "dangerous": "高リスク"
+    },
+    "status": {
+      "pending": "保留中",
+      "approved": "承認済み",
+      "denied": "拒否済み",
+      "expired": "消費済み"
+    }
+  },
+  "gitPanel": {
+    "title": "Git",
+    "summary": "{{staged}} staged, {{unstaged}} unstaged, {{untracked}} untracked",
+    "notRepository": "Git リポジトリを検出できません",
+    "loading": "Git 状態を読み込み中...",
+    "empty": "変更されたファイルはありません",
+    "mode": {
+      "unstaged": "Unstaged",
+      "staged": "Staged"
+    }
+  },
+  "topics": {
+    "selector": {
+      "currentTooltip": "現在のトピック: {{name}}{{description}}",
+      "globalTooltip": "グローバルモード。ワークスペース全体のメモリを使用します",
+      "none": "トピックなし",
+      "globalTitle": "グローバル（トピックなし）",
+      "globalDescription": "グローバルメモリとワークスペースコンテキストを使用",
+      "empty": "トピックはまだありません",
+      "manage": "トピックを管理..."
+    },
+    "manager": {
+      "title": "トピックを管理",
+      "description": "トピックは Agent のメモリとコンテキストをプロジェクトや内容ごとに整理します。",
+      "infoTooltip": "トピックを選択すると、Agent はそのプロジェクトの技術スタック、規約、重要な決定を自動的に読み込みます。",
+      "editTooltip": "トピック名、説明、CONTEXT.md を編集",
+      "deleteConfirm": "トピック \"{{name}}\" を削除しますか？CONTEXT.md は失われます。",
+      "deleteTooltip": "トピック \"{{name}}\" を削除します。CONTEXT.md は完全に失われます。",
+      "create": "新規トピック",
+      "createTooltip": "メモリを整理する新しいプロジェクトトピックを作成",
+      "name": "名前",
+      "namePlaceholder": "例: auth-refactor",
+      "descriptionOptional": "説明（任意）",
+      "descriptionPlaceholder": "このトピックを簡潔に説明",
+      "createAction": "作成",
+      "editing": "編集中: {{id}}",
+      "descriptionLabel": "説明",
+      "contextLabel": "CONTEXT.md（プロジェクトコンテキスト）"
+    }
   },
   "toolUi": {
     "actions": {
@@ -127,7 +195,8 @@
     },
     "toast": {
       "saved": "ディスクに保存しました",
-      "saveFailed": "保存に失敗しました: {{error}}"
+      "saveFailed": "保存に失敗しました: {{error}}",
+      "approvalRequired": "このファイルへの書き込みには権限承認が必要です。入力欄の上にあるリクエストを処理してから、もう一度保存してください。"
     },
     "errors": {
       "outsideSandbox": "サンドボックス外のパスのため拒否しました",
@@ -185,6 +254,13 @@
     "freshBadge": "今回の実行で更新",
     "pickFile": "左側のファイルを選択してプレビュー",
     "empty": "ワークスペースが空、またはアクセスできません",
+    "recent": "最近のワークスペース",
+    "noRecent": "プロジェクトはまだありません",
+    "chooseNew": "新しいワークスペースを選択...",
+    "switched": "ワークスペースを切り替えました",
+    "addedAndSwitched": "ワークスペースを追加して切り替えました",
+    "switchFailed": "ワークスペースの切り替えに失敗しました: {{error}}",
+    "permissionModeUpdated": "権限モードを更新しました",
     "truncated": "ディレクトリが大きいため、5000 件までで切り詰めました",
     "actions": {
       "refresh": "更新",
@@ -300,6 +376,17 @@
       "detached": "Detached HEAD",
       "summary": "{{count}} 件の変更 · ↑{{ahead}} ↓{{behind}}",
       "clean": "作業ツリーはクリーンです",
+      "state": {
+        "clean": "クリーン",
+        "dirty": "変更あり",
+        "conflict": "競合"
+      },
+      "groups": {
+        "conflicted": "競合（{{count}}）",
+        "staged": "ステージ済み（{{count}}）",
+        "unstaged": "未ステージ（{{count}}）",
+        "untracked": "未追跡（{{count}}）"
+      },
       "empty": {
         "title": "Git リポジトリがありません",
         "body": "現在のワークスペースは Git リポジトリ内にありません。"
@@ -311,21 +398,41 @@
         "commit": "ステージ済み変更をコミット",
         "createBranch": "ブランチ作成",
         "addWorktree": "worktree を追加",
-        "createPr": "PR 作成"
+        "removeWorktree": "削除",
+        "pruneWorktrees": "整理",
+        "createPr": "PR 作成",
+        "approveRetry": "承認して再試行"
+      },
+      "approval": {
+        "title": "{{action}} には承認が必要です"
       },
       "diff": {
         "unstaged": "未ステージ",
         "staged": "ステージ済み",
-        "empty": "選択したファイルに diff はありません。"
+        "empty": "選択したファイルに diff はありません。",
+        "binary": "バイナリ diff はインライン表示できません。",
+        "tooLarge": "diff が大きすぎるためインライン表示できません。"
       },
       "commit": {
         "title": "コミット",
         "placeholder": "コミットメッセージ"
       },
+      "branch": {
+        "title": "ブランチ"
+      },
       "branchWorktree": {
         "title": "ブランチと worktree",
         "branchPlaceholder": "新しいブランチ",
         "worktreePlaceholder": "worktree 用ブランチ"
+      },
+      "worktrees": {
+        "title": "Worktrees",
+        "newBranch": "新規ブランチ",
+        "existingBranch": "既存",
+        "startPointPlaceholder": "開始点、既定は HEAD",
+        "selectBranch": "ブランチを選択",
+        "current": "現在",
+        "empty": "worktree はありません"
       },
       "github": {
         "title": "GitHub PR",
@@ -336,7 +443,8 @@
       },
       "toast": {
         "blocked": "承認が必要です",
-        "failed": "Git 操作に失敗しました"
+        "failed": "Git 操作に失敗しました",
+        "approvalFailed": "承認に失敗しました"
       }
     }
   },
@@ -423,6 +531,11 @@
     "previewLoading": "画像プレビューを読み込んでいます…",
     "previewUnavailable": "画像プレビューを一時的に表示できません"
   },
+  "session": {
+    "renameHint": "ダブルクリックでセッション名を変更",
+    "renameCurrent": "現在のセッション名を変更",
+    "renameFailed": "セッション名の変更に失敗しました: {{error}}"
+  },
   "composer": {
     "attachFiles": "ファイルを添付",
     "pickSkill": "Skill を選択",
@@ -452,6 +565,18 @@
     "knowledgeQuick": {
       "enable": "wiki ナレッジを使う",
       "disable": "wiki ナレッジを無効化"
+    },
+    "knowledgeAttach": {
+      "title": "ナレッジを添付",
+      "placeholder": "Wiki ページを検索",
+      "search": "検索",
+      "empty": "検索して、このメッセージに使うナレッジページを添付します。",
+      "selected": "{{count}} 件選択中",
+      "remove": "{{title}} を削除",
+      "missingLookup": "この結果は添付できません。",
+      "searchFailed": "ナレッジ検索に失敗しました。",
+      "defaultPrompt": "選択したナレッジ参照を使って回答してください。",
+      "messageRefTitle": "ナレッジ参照: {{title}}"
     },
     "modelPickerTitle": "モデルを切り替え",
     "modelSwitchFailed": "モデルの切り替えに失敗しました: {{error}}",
@@ -492,8 +617,16 @@
       "unavailable": "圧縮は利用できません",
       "inProgress": "圧縮を実行中です",
       "activeRun": "現在の実行が終了すると利用できます",
-      "toastSuccess": "セッションを圧縮しました",
-      "toastSuccessWithTokens": "セッションを圧縮しました: {{before}} -> {{after}} tokens",
+      "quality": "圧縮 {{level}} {{score}}%",
+      "qualityTitle": "証拠 {{evidence}}% · フィールド {{fields}}% · 復元 {{tokens}} tokens · 未検証 {{unverified}}",
+      "qualityLevel": {
+        "high": "高",
+        "medium": "中",
+        "low": "低"
+      },
+      "toastQuality": " · {{level}} {{score}}%",
+      "toastSuccess": "セッションを圧縮しました{{quality}}",
+      "toastSuccessWithTokens": "セッションを圧縮しました: {{before}} -> {{after}} tokens{{quality}}",
       "toastNoop": "圧縮しませんでした: {{reason}}",
       "toastFailed": "セッションの圧縮に失敗しました",
       "reason": {
@@ -561,7 +694,8 @@
           "gateway_unavailable": "Gateway が利用できないため、下書きの準備がおすすめです",
           "high_pressure": "コンテキスト圧が高いため、引き継ぎ下書きがおすすめです",
           "truncated_context": "一部の履歴が非表示のため、引き継ぎ下書きがおすすめです",
-          "compaction_warning": "コンテキスト状態に注意が必要なため、引き継ぎ下書きがおすすめです"
+          "compaction_warning": "コンテキスト状態に注意が必要なため、引き継ぎ下書きがおすすめです",
+          "recovery_checkpoint": "復旧 checkpoint があるため、checkpoint ベースの下書きがおすすめです"
         }
       },
       "dialogHint": {
@@ -569,7 +703,8 @@
         "gateway_unavailable": "Gateway が利用できないため、この下書き式 Handoff は runtime fork に依存しません。",
         "high_pressure": "コンテキスト圧が高いため、新しいセッションを始める前に下書きを確認できます。",
         "truncated_context": "一部の transcript 履歴が非表示のため、分岐コピーより下書き Handoff の方が安全です。",
-        "compaction_warning": "コンテキスト圧縮状態に警告があるため、下書き Handoff がより安全な継続方法です。"
+        "compaction_warning": "コンテキスト圧縮状態に警告があるため、下書き Handoff がより安全な継続方法です。",
+        "recovery_checkpoint": "ResumeCheckpoint があるため、Task Ledger、Git、trace、checkpoint 証拠を確認できる下書きに引き継げます。"
       },
       "failure": {
         "action": {
@@ -583,15 +718,15 @@
           },
           "gateway_unavailable": {
             "title": "Fork には Gateway が必要です",
-            "description": "Gateway が利用できないため、編集できる Handoff 下書きを準備できます。"
+            "description": "Gateway が利用できないため、ResumeCheckpoint、Task Ledger、利用可能な証拠から Handoff 下書きを準備できます。"
           },
           "parent_too_large": {
             "title": "Transcript が大きすぎて Fork できません",
-            "description": "完全な分岐コピーではなく、現在のタスクを続ける Handoff 下書きを準備できます。"
+            "description": "完全な分岐コピーではなく、ResumeCheckpoint、Task Ledger、証拠から Handoff 下書きを準備できます。"
           },
           "transcript_unavailable": {
             "title": "Transcript を利用できません",
-            "description": "利用可能なセッション情報から Handoff 下書きを準備できます。"
+            "description": "ResumeCheckpoint、Task Ledger、利用可能な証拠から Handoff 下書きを準備できます。"
           },
           "unknown": {
             "title": "Fork に失敗しました",
@@ -733,6 +868,10 @@
     "chat": "会話",
     "work": "タスク"
   },
+  "sessionView": {
+    "project": "プロジェクト",
+    "time": "時間"
+  },
   "questionDirectory": {
     "title": "質問目次",
     "fallback": "質問 {{number}}",
@@ -749,6 +888,7 @@
     },
     "artifacts": "成果物: {{types}}",
     "kitStatus": "{{kit}}: {{status}}",
+    "providerStatus": "Provider: {{ready}} 利用可能、{{missingDependency}} 依存不足、{{missingConfig}} 設定不足、{{externalUnavailable}} 外部不可",
     "artifactTypes": {
       "markdown": "Markdown",
       "docx": "DOCX",

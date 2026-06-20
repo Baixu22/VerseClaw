@@ -186,6 +186,17 @@
         "taskLoopProgress": "任务循环进度",
         "taskLoopPhase": "第 {{iteration}} 轮 · {{phase}}",
         "taskLoopSummary": "任务循环 {{status}}，阶段 {{phase}}",
+        "missionControl": "Mission Control",
+        "missionStarted": "Mission {{status}}，第 {{tick}} tick",
+        "missionUpdated": "Mission {{status}}",
+        "missionProgress": "Mission Control 进度",
+        "missionPhase": "Tick {{tick}} · {{phase}}",
+        "missionSummary": "Mission {{status}}，阶段 {{phase}}",
+        "missionTick": "Tick {{tick}}",
+        "missionNextWake": "下次唤醒：{{time}}",
+        "missionPause": "暂停",
+        "missionResume": "恢复",
+        "missionCancel": "取消",
         "memoryComposerEditTitle": "记忆提案草稿",
         "memoryType": "类型",
         "memoryScope": "范围",
@@ -213,6 +224,95 @@
         "memoryImpactRuntimeNone": "最近未注入",
         "memoryImpactLifecycle": "生命周期",
         "memoryImpactLifecycleKeep": "保留"
+    },
+    "identityTools": {
+        "title": "Agent 身份与工具",
+        "description": "Agent 保存身份、模型、默认技能和 MCP 服务；工作区只选择并覆盖这些能力。",
+        "defaultSkills": "默认技能",
+        "noDefaultSkills": "暂无默认技能",
+        "noAgentMcp": "暂无 Agent 作用域 MCP 服务",
+        "defaultSkillIds": "默认技能 ID",
+        "defaultSkillIdsPlaceholder": "每行一个 skill id，可由工作区覆盖",
+        "defaultMcpIds": "默认 MCP 服务 ID",
+        "defaultMcpIdsPlaceholder": "每行一个 MCP server id，可由工作区覆盖",
+        "agentRole": "Agent 角色",
+        "bootstrapPathPending": "运行时路径将在加载后显示",
+        "saveRole": "保存角色",
+        "structuredTab": "结构化",
+        "advancedTab": "高级 (Markdown)",
+        "soulPlaceholder": "描述这个 Agent 的身份、偏好和工作方式",
+        "bootstrapFiles": "引导文件 ({{files}})",
+        "listSeparator": "、",
+        "bootstrapDescriptions": {
+            "agents": "行为指令、红线、会话启动指南",
+            "tools": "工具使用指南",
+            "user": "用户画像和偏好",
+            "identity": "身份标识（名称、emoji、头像）",
+            "heartbeat": "定期后台行为"
+        },
+        "toast": {
+            "loadFailed": "加载 Agent 配置失败: {{error}}",
+            "saved": "Agent 配置已保存",
+            "saveFailed": "保存 Agent 配置失败: {{error}}"
+        }
+    },
+    "roleProfile": {
+        "roles": {
+            "general": "通用助手",
+            "coding": "代码助手",
+            "writing": "写作伙伴",
+            "devops": "DevOps",
+            "review": "代码审查",
+            "architecture": "架构设计",
+            "analysis": "数据分析",
+            "custom": "自定义"
+        },
+        "verbosity": {
+            "concise": "简洁",
+            "balanced": "适中",
+            "detailed": "详细"
+        },
+        "verbosityHint": {
+            "concise": "回复内容尽量简短",
+            "balanced": "适度详细",
+            "detailed": "充分解释每个回复"
+        },
+        "tone": {
+            "friendly": "友好",
+            "direct": "直接",
+            "formal": "正式",
+            "casual": "口语化"
+        },
+        "toneHint": {
+            "friendly": "温暖亲切的对话风格",
+            "direct": "直截了当，不说废话",
+            "formal": "专业正式的回复",
+            "casual": "轻松口语化的表达"
+        },
+        "addTag": "添加标签",
+        "removeTag": "点击移除 \"{{tag}}\"",
+        "displayName": "显示名称",
+        "displayNameTooltip": "Agent 在对话中使用的显示名称",
+        "displayNamePlaceholder": "例如: 小助手",
+        "role": "角色",
+        "roleTooltip": "定义 Agent 的核心定位和能力范围",
+        "customRole": "自定义角色",
+        "customRolePlaceholder": "例如: 前端架构顾问",
+        "replyStyle": "回复风格",
+        "replyStyleTooltip": "控制 Agent 回复的详细程度、语气和语言偏好",
+        "verbosityLabel": "详细程度",
+        "toneLabel": "语气",
+        "language": "语言偏好",
+        "languagePlaceholder": "例如: 中文思考，代码用英文",
+        "expertise": "擅长领域",
+        "expertiseTooltip": "列出 Agent 擅长的技能和知识领域",
+        "expertisePlaceholder": "输入后回车添加，例如: Python, TypeScript",
+        "limitations": "不擅长（诚实声明）",
+        "limitationsTooltip": "诚实声明自己不擅长的领域，避免 Agent 在弱项上给出错误答案",
+        "limitationsPlaceholder": "例如: CSS, 移动端开发",
+        "backstory": "背景故事",
+        "backstoryTooltip": "可选: 描述 Agent 的身份背景和特殊经历，帮助建立更丰富的角色形象",
+        "backstoryPlaceholder": "可选: 描述 Agent 的身份背景..."
     },
     "toast": {
         "agentCreated": "Agent 已创建",

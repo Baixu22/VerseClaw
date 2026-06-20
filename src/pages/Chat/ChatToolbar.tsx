@@ -45,6 +45,7 @@ export function ChatToolbar({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              data-testid="chat-workspace-toggle"
               variant="ghost"
               size="icon"
               className={cn(

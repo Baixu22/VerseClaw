@@ -12,6 +12,7 @@ type Props = {
   workspaceId?: string | null;
   compact?: boolean;
   hideWhenEmpty?: boolean;
+  className?: string;
 };
 
 function nodeTone(node: TaskLedgerNode): string {
@@ -34,7 +35,7 @@ function NodeLine({ node, t }: { node: TaskLedgerNode; t: ReturnType<typeof useT
   );
 }
 
-export function TaskLedgerSummaryPanel({ workspaceId, compact = false, hideWhenEmpty = false }: Props) {
+export function TaskLedgerSummaryPanel({ workspaceId, compact = false, hideWhenEmpty = false, className }: Props) {
   const { t } = useTranslation('taskLedger');
   const [snapshot, setSnapshot] = useState<TaskLedgerSnapshot | null>(null);
   const [loading, setLoading] = useState(false);
@@ -73,6 +74,7 @@ export function TaskLedgerSummaryPanel({ workspaceId, compact = false, hideWhenE
       className={cn(
         'w-full shrink-0 lg:w-72 xl:w-80',
         compact && 'lg:w-64 xl:w-72',
+        className,
       )}
       aria-label={t('summary.title')}
     >

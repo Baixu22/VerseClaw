@@ -53,6 +53,9 @@ export function dispatchProtocolEvent(
     case 'task-loop-lifecycle':
       emitter.emit('task-loop:lifecycle', payload);
       break;
+    case 'mission-lifecycle':
+      emitter.emit('mission:lifecycle', payload);
+      break;
     case 'chat.queue-status':
       emitter.emit('chat:queue-status', payload);
       break;

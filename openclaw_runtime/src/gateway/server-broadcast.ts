@@ -51,6 +51,7 @@ const EVENT_SCOPE_GUARDS: Record<string, string[]> = {
   "subagent-lifecycle": [READ_SCOPE],
   "clawgraph-lifecycle": [READ_SCOPE],
   "task-loop-lifecycle": [READ_SCOPE],
+  "mission-lifecycle": [READ_SCOPE],
   "chat.queue-status": [READ_SCOPE],
 };
 

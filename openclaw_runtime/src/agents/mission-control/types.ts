@@ -1,0 +1,199 @@
+import type { AgentModelConfig } from "../../config/types.agents-shared.js";
+import type { TaskLoopRunResult } from "../task-loop-controller.js";
+import type { MissionContextPack } from "./context.js";
+
+export type MissionStatus =
+  | "idle"
+  | "running"
+  | "sleeping"
+  | "paused"
+  | "ask_user"
+  | "complete"
+  | "blocked"
+  | "cancelled"
+  | "error";
+
+export type MissionPhase =
+  | "intake"
+  | "context_pack"
+  | "preflight"
+  | "execute"
+  | "collect_evidence"
+  | "reflect"
+  | "memory_propose"
+  | "checkpoint"
+  | "schedule"
+  | "complete"
+  | "blocked"
+  | "ask_user";
+
+export type MissionDecision = "continue" | "repair" | "sleep" | "ask_user" | "complete" | "blocked";
+
+export type MissionConfig = {
+  enabled?: boolean;
+  maxTicks?: number;
+  maxRepairTicks?: number;
+  innerLoop?: {
+    maxIterations?: number;
+    maxRepairIterations?: number;
+  };
+  tickPolicy?: {
+    mode?: "manual" | "scheduled" | "event";
+    minIntervalMs?: number;
+    quietHours?: string[];
+  };
+  completion?: {
+    minConfidence?: number;
+    requireEvidence?: boolean;
+    requireLedgerClear?: boolean;
+  };
+  memory?: {
+    proposeAfterTick?: boolean;
+    autoApplyLowRisk?: boolean;
+  };
+  reviewer?: {
+    model?: AgentModelConfig;
+    timeoutMs?: number;
+  };
+};
+
+export type MissionEvidenceRef = {
+  type: "session" | "trace" | "file" | "memory" | "tool" | "task_loop" | "clawgraph" | "task_ledger" | "manual" | "other";
+  ref: string;
+  label?: string;
+  summary?: string;
+};
+
+export type MissionMemoryCandidate = {
+  kind: "role_memory" | "knowledge_draft";
+  summary: string;
+  evidenceRefs: string[];
+};
+
+export type MissionReviewerResult = {
+  decision: MissionDecision;
+  confidence: number;
+  reason: string;
+  missingEvidence: string[];
+  verificationGaps: string[];
+  repairBrief?: string;
+  nextTick?: { afterMs?: number; reason?: string };
+  risks: string[];
+  memoryCandidates: MissionMemoryCandidate[];
+  checkpointSummary: string;
+};
+
+export type MissionTickRecord = {
+  tick: number;
+  phase: MissionPhase;
+  status: MissionStatus;
+  decision?: MissionDecision;
+  taskLoopRunId?: string;
+  traceId?: string;
+  evidenceRefs: MissionEvidenceRef[];
+  reviewer?: MissionReviewerResult;
+  createdAt: number;
+  updatedAt: number;
+};
+
+export type MissionRunRecord = {
+  missionId: string;
+  sessionKey: string;
+  agentId?: string;
+  workspaceId?: string | null;
+  objective: string;
+  acceptance: string[];
+  status: MissionStatus;
+  phase: MissionPhase;
+  tick: number;
+  repairTicks: number;
+  maxTicks: number;
+  maxRepairTicks: number;
+  progress: number;
+  lastDecision?: MissionDecision;
+  lastReason?: string;
+  lastReviewerSummary?: string;
+  nextWakeAt?: number;
+  blockedReason?: string;
+  traceId?: string;
+  taskLoopRunId?: string;
+  evidenceRefs: MissionEvidenceRef[];
+  risks: string[];
+  remaining: string[];
+  noProgressHash?: string;
+  metadata?: Record<string, unknown>;
+  createdAt: number;
+  updatedAt: number;
+  completedAt?: number;
+  ticks: MissionTickRecord[];
+};
+
+export type MissionLifecycleEvent = {
+  missionId: string;
+  sessionKey: string;
+  agentId?: string;
+  workspaceId?: string | null;
+  phase: MissionPhase;
+  status: MissionStatus;
+  tick: number;
+  progress: number;
+  reviewerDecision?: MissionDecision;
+  nextWakeAt?: number;
+  blockedReason?: string;
+  taskLoopRunId?: string;
+  traceId?: string;
+  error?: string;
+  ts: number;
+};
+
+export type MissionRunRequest = {
+  missionId?: string;
+  objective: string;
+  sessionKey: string;
+  agentId?: string;
+  workspaceId?: string | null;
+  acceptance?: string[];
+  fileHints?: string[];
+  important?: boolean;
+  templateId?: string;
+  teamTemplateId?: string;
+  leadRole?: string;
+  preferredLeadRole?: string;
+  maxWorkers?: number;
+  includeVerifier?: boolean;
+  taskLedgerSummary?: string;
+  memorySummary?: string;
+  openBlockers?: string[];
+  reviewItems?: string[];
+  repairBrief?: string;
+  enableSchedule?: boolean;
+  maxTicks?: number;
+  maxRepairTicks?: number;
+};
+
+export type MissionTickInput = {
+  missionId: string;
+  reason?: "manual" | "scheduled" | "event" | "approval" | "heartbeat" | "repair";
+  taskLedgerSummary?: string;
+  memorySummary?: string;
+  openBlockers?: string[];
+  reviewItems?: string[];
+  repairBrief?: string;
+};
+
+export type MissionReviewerInput = {
+  contextPack: MissionContextPack;
+  taskLoopResult?: TaskLoopRunResult;
+  failures?: string[];
+  tick: number;
+  repairTicksUsed: number;
+  maxRepairTicks: number;
+  maxTicks: number;
+  reviewer?: MissionConfig["reviewer"];
+  cfg?: unknown;
+  agentId?: string;
+};
+
+export type MissionReviewerDeps = {
+  complete?: (prompt: string, input: MissionReviewerInput) => Promise<string>;
+};

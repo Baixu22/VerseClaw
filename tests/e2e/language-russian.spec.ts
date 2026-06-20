@@ -77,6 +77,7 @@ test.describe('Russian language localization', () => {
       // Navigate to Settings (in English by default after skipSetup)
       await page.getByTestId('sidebar-nav-settings').click();
       await expect(page.getByTestId('settings-page')).toBeVisible();
+      await page.getByTestId('settings-nav-general').click();
       
       // Click Russian language button
       const russianButton = page.locator('button', { hasText: 'Русский' });
@@ -85,6 +86,12 @@ test.describe('Russian language localization', () => {
       // Verify sidebar switched to Russian
       // "Настройки" is Russian-only, English is "Settings"
       await expect(page.getByTestId('sidebar-nav-settings')).toContainText('Настройки');
+
+      await page.getByTestId('sidebar-nav-skills').click();
+      await expect(page.getByTestId('skills-page')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Инструменты' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Навыки' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'MCP-сервисы' })).toBeVisible();
     } finally {
       await closeElectronApp(app);
     }

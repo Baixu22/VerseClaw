@@ -186,6 +186,17 @@
         "taskLoopProgress": "Ход цикла задачи",
         "taskLoopPhase": "Раунд {{iteration}} · {{phase}}",
         "taskLoopSummary": "Цикл задачи {{status}} на этапе {{phase}}",
+        "missionControl": "Mission Control",
+        "missionStarted": "Mission {{status}}, tick {{tick}}",
+        "missionUpdated": "Mission {{status}}",
+        "missionProgress": "Ход Mission Control",
+        "missionPhase": "Tick {{tick}} · {{phase}}",
+        "missionSummary": "Mission {{status}} на этапе {{phase}}",
+        "missionTick": "Tick {{tick}}",
+        "missionNextWake": "Следующее пробуждение: {{time}}",
+        "missionPause": "Пауза",
+        "missionResume": "Возобновить",
+        "missionCancel": "Отменить",
         "memoryComposerEditTitle": "Черновик предложения памяти",
         "memoryType": "Тип",
         "memoryScope": "Область",
@@ -213,6 +224,95 @@
         "memoryImpactRuntimeNone": "недавно не внедрялось",
         "memoryImpactLifecycle": "Жизненный цикл",
         "memoryImpactLifecycleKeep": "оставить"
+    },
+    "identityTools": {
+        "title": "Идентичность и инструменты Agent",
+        "description": "Agent хранит идентичность, модель, навыки по умолчанию и MCP-сервисы. Рабочая область только выбирает и переопределяет эти возможности.",
+        "defaultSkills": "Навыки по умолчанию",
+        "noDefaultSkills": "Навыков по умолчанию нет",
+        "noAgentMcp": "MCP-сервисов в области Agent нет",
+        "defaultSkillIds": "ID навыков по умолчанию",
+        "defaultSkillIdsPlaceholder": "Один skill id на строку. Рабочая область может их переопределить.",
+        "defaultMcpIds": "ID MCP-сервисов по умолчанию",
+        "defaultMcpIdsPlaceholder": "Один MCP server id на строку. Рабочая область может их переопределить.",
+        "agentRole": "Роль Agent",
+        "bootstrapPathPending": "Путь рантайма появится после загрузки",
+        "saveRole": "Сохранить роль",
+        "structuredTab": "Структурировано",
+        "advancedTab": "Расширенно (Markdown)",
+        "soulPlaceholder": "Опишите идентичность, предпочтения и стиль работы этого Agent",
+        "bootstrapFiles": "Файлы bootstrap ({{files}})",
+        "listSeparator": ", ",
+        "bootstrapDescriptions": {
+            "agents": "Инструкции поведения, границы и руководство запуска сессии",
+            "tools": "Руководство по использованию инструментов",
+            "user": "Профиль пользователя и предпочтения",
+            "identity": "Идентичность (имя, emoji, аватар)",
+            "heartbeat": "Периодическое фоновое поведение"
+        },
+        "toast": {
+            "loadFailed": "Не удалось загрузить конфигурацию Agent: {{error}}",
+            "saved": "Конфигурация Agent сохранена",
+            "saveFailed": "Не удалось сохранить конфигурацию Agent: {{error}}"
+        }
+    },
+    "roleProfile": {
+        "roles": {
+            "general": "Универсальный помощник",
+            "coding": "Помощник по коду",
+            "writing": "Партнёр по письму",
+            "devops": "DevOps",
+            "review": "Ревью кода",
+            "architecture": "Архитектура",
+            "analysis": "Анализ данных",
+            "custom": "Своё"
+        },
+        "verbosity": {
+            "concise": "Кратко",
+            "balanced": "Средне",
+            "detailed": "Подробно"
+        },
+        "verbosityHint": {
+            "concise": "Делать ответы как можно короче",
+            "balanced": "Использовать умеренную детализацию",
+            "detailed": "Подробно объяснять каждый ответ"
+        },
+        "tone": {
+            "friendly": "Дружелюбный",
+            "direct": "Прямой",
+            "formal": "Формальный",
+            "casual": "Разговорный"
+        },
+        "toneHint": {
+            "friendly": "Тёплый и открытый стиль общения",
+            "direct": "Говорить прямо и по делу",
+            "formal": "Профессиональные и формальные ответы",
+            "casual": "Лёгкая разговорная манера"
+        },
+        "addTag": "Добавить тег",
+        "removeTag": "Нажмите, чтобы удалить \"{{tag}}\"",
+        "displayName": "Отображаемое имя",
+        "displayNameTooltip": "Имя, которое Agent использует в диалогах",
+        "displayNamePlaceholder": "Например: Помощник",
+        "role": "Роль",
+        "roleTooltip": "Определяет основную позицию и область возможностей Agent",
+        "customRole": "Своя роль",
+        "customRolePlaceholder": "Например: советник по фронтенд-архитектуре",
+        "replyStyle": "Стиль ответа",
+        "replyStyleTooltip": "Управляет подробностью, тоном и языковыми предпочтениями",
+        "verbosityLabel": "Уровень детализации",
+        "toneLabel": "Тон",
+        "language": "Языковые предпочтения",
+        "languagePlaceholder": "Например: рассуждать по-китайски, код писать по-английски",
+        "expertise": "Сильные области",
+        "expertiseTooltip": "Перечислите сильные навыки и области знаний Agent",
+        "expertisePlaceholder": "Нажмите Enter для добавления, например: Python, TypeScript",
+        "limitations": "Ограничения (честное заявление)",
+        "limitationsTooltip": "Честно укажите слабые области, чтобы избежать ошибочных ответов",
+        "limitationsPlaceholder": "Например: CSS, мобильная разработка",
+        "backstory": "Предыстория",
+        "backstoryTooltip": "Необязательно: опишите фон и особый опыт Agent для более богатого образа роли",
+        "backstoryPlaceholder": "Необязательно: опишите фон Agent..."
     },
     "toast": {
         "agentCreated": "Агент создан",

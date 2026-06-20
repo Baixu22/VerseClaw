@@ -11,7 +11,7 @@
 import type { RoleContract } from "./role-contract.js";
 
 /** Filesystem tools known to write/modify files. */
-const FS_WRITE_TOOLS = ["write", "edit", "apply_patch", "team_orchestrate", "task_loop"] as const;
+const FS_WRITE_TOOLS = ["write", "edit", "apply_patch", "team_orchestrate", "task_loop", "mission_loop"] as const;
 
 /** Filesystem tools that only read. */
 const FS_READ_TOOLS = ["read", "glob", "grep"] as const;

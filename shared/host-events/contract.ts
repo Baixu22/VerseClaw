@@ -1,6 +1,7 @@
 import type { UpdateStatusSnapshot } from '../host-api/contract';
 import type { ChatRuntimeEvent } from '../chat-runtime-events';
 import type { ClawGraphRunEvent, ClawGraphRunSnapshot } from '../types/clawgraph';
+import type { MissionLifecycleEvent } from '../types/mission-control';
 import type { ObservabilityRuntimeEvent } from '../types/observability';
 import type { WorkspacePreviewMode, WorkspaceWebPreviewLaunchConfig, WorkspaceWebPreviewStatus } from '../types/workspace';
 
@@ -179,6 +180,9 @@ export type HostEventContract = {
   taskLoop: {
     lifecycle: (payload: TaskLoopLifecycleEvent) => void;
   };
+  missionControl: {
+    lifecycle: (payload: MissionLifecycleEvent) => void;
+  };
   observability: {
     runtimeEvent: (payload: ObservabilityRuntimeEvent) => void;
   };
@@ -249,6 +253,9 @@ export const HOST_EVENT_CHANNELS = {
   },
   taskLoop: {
     lifecycle: 'agent:task-loop-lifecycle',
+  },
+  missionControl: {
+    lifecycle: 'agent:mission-lifecycle',
   },
   observability: {
     runtimeEvent: 'observability:runtime-event',

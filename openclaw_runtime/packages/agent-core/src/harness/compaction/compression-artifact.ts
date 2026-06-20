@@ -1,0 +1,441 @@
+import type { AgentMessage } from "../../types.js";
+
+export type CompressionEvidenceRef = {
+  type: "session" | "trace" | "file" | "tool" | "task_ledger" | "clawgraph" | "manual" | "other";
+  ref: string;
+  label?: string;
+};
+
+export type CompressionFact = {
+  text: string;
+  evidenceRefs: CompressionEvidenceRef[];
+};
+
+export type CompressionArtifactQuality = {
+  score: number;
+  level: "high" | "medium" | "low";
+  fieldCoverage: number;
+  evidenceCoverage: number;
+  artifactTokens: number;
+  projectionTokens: number;
+  warnings: string[];
+};
+
+export type CompressionArtifact = {
+  schemaVersion: 1;
+  objective: string;
+  constraints: CompressionFact[];
+  currentState: string;
+  done: CompressionFact[];
+  inProgress: CompressionFact[];
+  blocked: CompressionFact[];
+  decisions: CompressionFact[];
+  filesTouched: CompressionFact[];
+  testsRun: CompressionFact[];
+  failedAttempts: CompressionFact[];
+  deviations: CompressionFact[];
+  nextAction: string;
+  reviewNeeded: CompressionFact[];
+  evidenceRefs: CompressionEvidenceRef[];
+  unverifiedClaims: string[];
+  quality: CompressionArtifactQuality;
+};
+
+export type CompressionArtifactInput = {
+  messages: AgentMessage[];
+  previousSummary?: string;
+  summary?: string;
+  readFiles?: string[];
+  modifiedFiles?: string[];
+  targetArtifactTokens?: number;
+};
+
+const DEFAULT_TARGET_ARTIFACT_TOKENS = 1800;
+const DEFAULT_PROJECTION_TOKENS = 1400;
+const EVIDENCE_TYPES = new Set<CompressionEvidenceRef["type"]>([
+  "session",
+  "trace",
+  "file",
+  "tool",
+  "task_ledger",
+  "clawgraph",
+  "manual",
+  "other",
+]);
+
+function normalizeText(value: unknown, maxChars = 600): string {
+  if (typeof value !== "string") return "";
+  const compact = value.replace(/\s+/g, " ").trim();
+  if (compact.length <= maxChars) return compact;
+  return `${compact.slice(0, Math.max(0, maxChars - 24)).trim()} [truncated]`;
+}
+
+function textFromContent(content: unknown): string {
+  if (typeof content === "string") return content;
+  if (!Array.isArray(content)) return "";
+  return content
+    .flatMap((block) => {
+      if (!block || typeof block !== "object") return [];
+      const record = block as Record<string, unknown>;
+      if (typeof record.text === "string") return [record.text];
+      if (typeof record.content === "string") return [record.content];
+      return [];
+    })
+    .join("\n");
+}
+
+function messageText(message: AgentMessage): string {
+  return normalizeText(textFromContent((message as { content?: unknown }).content), 1200);
+}
+
+function messageEvidence(message: AgentMessage, index: number): CompressionEvidenceRef {
+  const id = (message as { id?: unknown }).id;
+  return {
+    type: "session",
+    ref: typeof id === "string" && id.trim() ? id.trim() : `message:${index + 1}`,
+    label: `${message.role} message`,
+  };
+}
+
+function fact(text: string, evidenceRefs: CompressionEvidenceRef[]): CompressionFact | undefined {
+  const normalized = normalizeText(text, 500);
+  if (!normalized) return undefined;
+  return { text: normalized, evidenceRefs };
+}
+
+function pushUniqueFact(target: CompressionFact[], item: CompressionFact | undefined): void {
+  if (!item) return;
+  const key = item.text.toLowerCase();
+  if (target.some((existing) => existing.text.toLowerCase() === key)) return;
+  target.push(item);
+}
+
+function estimateTokensFromText(text: string): number {
+  return Math.max(1, Math.ceil(text.length / 4));
+}
+
+function estimateArtifactTokens(artifact: Omit<CompressionArtifact, "quality">): number {
+  return estimateTokensFromText(JSON.stringify(artifact));
+}
+
+function extractListFromSummary(summary: string | undefined, heading: RegExp, maxItems = 6): string[] {
+  const text = summary ?? "";
+  const match = heading.exec(text);
+  if (!match || match.index < 0) return [];
+  const after = text.slice(match.index + match[0].length);
+  const nextHeading = after.search(/\n##\s+/);
+  const section = nextHeading >= 0 ? after.slice(0, nextHeading) : after;
+  return section
+    .split("\n")
+    .map((line) => line.replace(/^\s*(?:[-*]|\d+[.)]|\[[ xX]\])\s*/, "").trim())
+    .filter((line) => line && line !== "(none)" && !line.endsWith(":"))
+    .slice(0, maxItems);
+}
+
+function extractObjective(messages: AgentMessage[], summary?: string): string {
+  const summaryGoal = extractListFromSummary(summary, /\n?##\s*Goal\s*\n/i, 2).join("; ");
+  if (summaryGoal) return normalizeText(summaryGoal, 700);
+  const firstUser = messages.find((message) => message.role === "user");
+  return normalizeText(firstUser ? messageText(firstUser) : "Continue the current task from compressed context.", 700);
+}
+
+function extractNextAction(summary: string | undefined, messages: AgentMessage[]): string {
+  const fromSummary = extractListFromSummary(summary, /\n?##\s*Next Steps\s*\n/i, 1)[0];
+  if (fromSummary) return normalizeText(fromSummary, 500);
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const text = messageText(messages[i]);
+    const match = text.match(/(?:next|todo|follow[- ]?up|remaining|continue)[:\s-]+(.{12,260})/i);
+    if (match?.[1]) return normalizeText(match[1], 500);
+  }
+  return "Continue from the latest retained context and verify work against the evidence refs.";
+}
+
+function extractTests(text: string): string[] {
+  const matches = text.match(/\b(?:pnpm|npm|yarn|vitest|playwright|pytest|cargo|go test|dotnet test|tsc)\b[^\n\r`]*/gi);
+  return (matches ?? []).map((item) => normalizeText(item, 240)).filter(Boolean).slice(0, 8);
+}
+
+function extractFailures(text: string): string[] {
+  const lines = text.split(/\n+/);
+  return lines
+    .filter((line) => /\b(error|failed|failure|exception|blocked|cannot|unable)\b/i.test(line))
+    .map((line) => normalizeText(line, 360))
+    .filter(Boolean)
+    .slice(0, 8);
+}
+
+function extractDecisions(summary: string | undefined): string[] {
+  return extractListFromSummary(summary, /\n?##\s*Key Decisions\s*\n/i, 8)
+    .map((item) => item.replace(/^\*\*|\*\*$/g, "").trim())
+    .filter(Boolean);
+}
+
+function baseEvidence(messages: AgentMessage[]): CompressionEvidenceRef[] {
+  if (messages.length === 0) return [];
+  const first = messageEvidence(messages[0], 0);
+  const last = messageEvidence(messages[messages.length - 1], messages.length - 1);
+  return first.ref === last.ref ? [first] : [first, last];
+}
+
+function trimFacts(items: CompressionFact[], maxItems: number): CompressionFact[] {
+  return items.slice(0, maxItems).map((item) => ({
+    text: normalizeText(item.text, 360),
+    evidenceRefs: item.evidenceRefs.slice(0, 4),
+  }));
+}
+
+function buildQuality(artifact: Omit<CompressionArtifact, "quality">, targetTokens: number): CompressionArtifactQuality {
+  const required: Array<keyof Omit<CompressionArtifact, "quality">> = [
+    "objective",
+    "currentState",
+    "nextAction",
+    "done",
+    "inProgress",
+    "decisions",
+    "evidenceRefs",
+  ];
+  const present = required.filter((key) => {
+    const value = artifact[key];
+    return Array.isArray(value) ? value.length > 0 : typeof value === "string" && value.trim().length > 0;
+  }).length;
+  const factGroups = [
+    artifact.constraints,
+    artifact.done,
+    artifact.inProgress,
+    artifact.blocked,
+    artifact.decisions,
+    artifact.filesTouched,
+    artifact.testsRun,
+    artifact.failedAttempts,
+    artifact.deviations,
+    artifact.reviewNeeded,
+  ];
+  const facts = factGroups.flat();
+  const evidencedFacts = facts.filter((item) => item.evidenceRefs.length > 0).length;
+  const fieldCoverage = present / required.length;
+  const evidenceCoverage = facts.length === 0 ? 1 : evidencedFacts / facts.length;
+  const artifactTokens = estimateArtifactTokens(artifact);
+  const projectionTokens = estimateTokensFromText(renderRecoveryContextProjection({ ...artifact, quality: {
+    score: 0,
+    level: "low",
+    fieldCoverage,
+    evidenceCoverage,
+    artifactTokens,
+    projectionTokens: 0,
+    warnings: [],
+  } }, DEFAULT_PROJECTION_TOKENS));
+  const warnings: string[] = [];
+  if (fieldCoverage < 0.85) warnings.push("missing_recovery_fields");
+  if (evidenceCoverage < 0.7) warnings.push("low_evidence_coverage");
+  if (artifactTokens > targetTokens) warnings.push("artifact_over_token_budget");
+  if (artifact.unverifiedClaims.length > 0) warnings.push("contains_unverified_claims");
+  const score = Math.max(
+    0,
+    Math.min(1, fieldCoverage * 0.45 + evidenceCoverage * 0.35 + (artifactTokens <= targetTokens ? 0.2 : 0.05)),
+  );
+  return {
+    score: Math.round(score * 100) / 100,
+    level: score >= 0.82 ? "high" : score >= 0.6 ? "medium" : "low",
+    fieldCoverage: Math.round(fieldCoverage * 100) / 100,
+    evidenceCoverage: Math.round(evidenceCoverage * 100) / 100,
+    artifactTokens,
+    projectionTokens,
+    warnings,
+  };
+}
+
+export function buildDeterministicCompressionArtifact(input: CompressionArtifactInput): CompressionArtifact {
+  const messages = input.messages;
+  const targetTokens = input.targetArtifactTokens ?? DEFAULT_TARGET_ARTIFACT_TOKENS;
+  const evidence = baseEvidence(messages);
+  const summary = input.summary || input.previousSummary || "";
+  const done: CompressionFact[] = [];
+  const inProgress: CompressionFact[] = [];
+  const blocked: CompressionFact[] = [];
+  const testsRun: CompressionFact[] = [];
+  const failedAttempts: CompressionFact[] = [];
+  const decisions: CompressionFact[] = [];
+
+  for (const item of extractListFromSummary(summary, /\n?###\s*Done\s*\n/i, 8)) {
+    pushUniqueFact(done, fact(item, evidence));
+  }
+  for (const item of extractListFromSummary(summary, /\n?###\s*In Progress\s*\n/i, 5)) {
+    pushUniqueFact(inProgress, fact(item, evidence));
+  }
+  for (const item of extractListFromSummary(summary, /\n?###\s*Blocked\s*\n/i, 5)) {
+    pushUniqueFact(blocked, fact(item, evidence));
+  }
+  for (const item of extractDecisions(summary)) {
+    pushUniqueFact(decisions, fact(item, evidence));
+  }
+
+  messages.forEach((message, index) => {
+    const text = messageText(message);
+    const ref = [messageEvidence(message, index)];
+    for (const item of extractTests(text)) pushUniqueFact(testsRun, fact(item, ref));
+    for (const item of extractFailures(text)) pushUniqueFact(failedAttempts, fact(item, ref));
+    if (message.role === "assistant" && /\b(done|implemented|fixed|updated|added|created)\b/i.test(text)) {
+      pushUniqueFact(done, fact(text, ref));
+    }
+  });
+
+  const fileFacts: CompressionFact[] = [];
+  for (const file of [...(input.modifiedFiles ?? []), ...(input.readFiles ?? [])]) {
+    pushUniqueFact(fileFacts, fact(file, [{ type: "file", ref: file }]));
+  }
+
+  const objective = extractObjective(messages, summary);
+  const nextAction = extractNextAction(summary, messages);
+  if (inProgress.length === 0) {
+    pushUniqueFact(inProgress, fact(nextAction, evidence));
+  }
+
+  const artifactWithoutQuality: Omit<CompressionArtifact, "quality"> = {
+    schemaVersion: 1,
+    objective,
+    constraints: trimFacts(
+      extractListFromSummary(summary, /\n?##\s*Constraints & Preferences\s*\n/i, 8)
+        .map((item) => fact(item, evidence))
+        .filter((item): item is CompressionFact => Boolean(item)),
+      8,
+    ),
+    currentState: normalizeText(done[0]?.text || inProgress[0]?.text || summary || objective, 700),
+    done: trimFacts(done, 8),
+    inProgress: trimFacts(inProgress, 5),
+    blocked: trimFacts(blocked, 5),
+    decisions: trimFacts(decisions, 8),
+    filesTouched: trimFacts(fileFacts, 12),
+    testsRun: trimFacts(testsRun, 8),
+    failedAttempts: trimFacts(failedAttempts, 6),
+    deviations: [],
+    nextAction,
+    reviewNeeded: [],
+    evidenceRefs: [...evidence, ...fileFacts.flatMap((item) => item.evidenceRefs)].slice(0, 24),
+    unverifiedClaims: [],
+  };
+  const quality = buildQuality(artifactWithoutQuality, targetTokens);
+  return { ...artifactWithoutQuality, quality };
+}
+
+function formatFactList(items: CompressionFact[], empty = "- none"): string {
+  if (items.length === 0) return empty;
+  return items.map((item) => `- ${item.text}`).join("\n");
+}
+
+export function renderCompressionArtifactSummary(artifact: CompressionArtifact): string {
+  return [
+    "## Goal",
+    artifact.objective || "Continue the current task.",
+    "",
+    "## Constraints & Preferences",
+    formatFactList(artifact.constraints),
+    "",
+    "## Progress",
+    "### Done",
+    formatFactList(artifact.done),
+    "",
+    "### In Progress",
+    formatFactList(artifact.inProgress),
+    "",
+    "### Blocked",
+    formatFactList(artifact.blocked),
+    "",
+    "## Key Decisions",
+    formatFactList(artifact.decisions),
+    "",
+    "## Next Steps",
+    `1. ${artifact.nextAction}`,
+    "",
+    "## Critical Context",
+    formatFactList([...artifact.filesTouched, ...artifact.testsRun, ...artifact.failedAttempts].slice(0, 12)),
+  ].join("\n");
+}
+
+export function renderRecoveryContextProjection(
+  artifact: CompressionArtifact,
+  budgetTokens = DEFAULT_PROJECTION_TOKENS,
+): string {
+  const sections = [
+    "Recovery Context Projection",
+    `quality: ${artifact.quality.level} score=${artifact.quality.score}`,
+    `objective: ${artifact.objective}`,
+    `currentState: ${artifact.currentState}`,
+    artifact.constraints.length ? `constraints:\n${formatFactList(artifact.constraints.slice(0, 5))}` : "",
+    artifact.inProgress.length ? `active:\n${formatFactList(artifact.inProgress.slice(0, 3))}` : "",
+    artifact.blocked.length ? `blocked:\n${formatFactList(artifact.blocked.slice(0, 3))}` : "",
+    artifact.decisions.length ? `decisions:\n${formatFactList(artifact.decisions.slice(0, 5))}` : "",
+    artifact.filesTouched.length ? `files:\n${formatFactList(artifact.filesTouched.slice(0, 8))}` : "",
+    artifact.testsRun.length ? `tests:\n${formatFactList(artifact.testsRun.slice(0, 5))}` : "",
+    artifact.failedAttempts.length ? `failedAttempts:\n${formatFactList(artifact.failedAttempts.slice(0, 4))}` : "",
+    `nextAction: ${artifact.nextAction}`,
+    artifact.reviewNeeded.length ? `reviewNeeded:\n${formatFactList(artifact.reviewNeeded.slice(0, 4))}` : "",
+    artifact.evidenceRefs.length
+      ? `evidenceRefs:\n${artifact.evidenceRefs.slice(0, 12).map((ref) => `- ${ref.type}:${ref.ref}${ref.label ? ` (${ref.label})` : ""}`).join("\n")}`
+      : "",
+    artifact.unverifiedClaims.length
+      ? `unverifiedClaims:\n${artifact.unverifiedClaims.slice(0, 4).map((item) => `- ${item}`).join("\n")}`
+      : "",
+  ].filter(Boolean);
+  let text = sections.join("\n\n");
+  const maxChars = Math.max(800, Math.floor(budgetTokens * 4));
+  if (text.length > maxChars) {
+    text = `${text.slice(0, Math.max(0, maxChars - 80)).trim()}\n[projection truncated to budget]`;
+  }
+  return text;
+}
+
+export function normalizeCompressionArtifact(value: unknown): CompressionArtifact | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const record = value as Partial<CompressionArtifact>;
+  if (record.schemaVersion !== 1) return undefined;
+  const normalizeEvidence = (refs: unknown): CompressionEvidenceRef[] => (
+    Array.isArray(refs)
+      ? refs.flatMap((item) => {
+          if (!item || typeof item !== "object") return [];
+          const entry = item as Partial<CompressionEvidenceRef>;
+          const ref = normalizeText(entry.ref, 300);
+          if (!ref) return [];
+          const type = typeof entry.type === "string" && EVIDENCE_TYPES.has(entry.type as CompressionEvidenceRef["type"])
+            ? entry.type as CompressionEvidenceRef["type"]
+            : "other";
+          return [{
+            type,
+            ref,
+            ...(entry.label ? { label: normalizeText(entry.label, 120) } : {}),
+          }];
+        })
+      : []
+  );
+  const normalizeFacts = (items: unknown, maxItems: number): CompressionFact[] => (
+    Array.isArray(items)
+      ? items.flatMap((item) => {
+          if (!item || typeof item !== "object") return [];
+          const entry = item as Partial<CompressionFact>;
+          const text = normalizeText(entry.text, 360);
+          if (!text) return [];
+          return [{ text, evidenceRefs: normalizeEvidence(entry.evidenceRefs) }];
+        }).slice(0, maxItems)
+      : []
+  );
+  const artifactWithoutQuality: Omit<CompressionArtifact, "quality"> = {
+    schemaVersion: 1,
+    objective: normalizeText(record.objective, 700) || "Continue the current task from compressed context.",
+    constraints: normalizeFacts(record.constraints, 8),
+    currentState: normalizeText(record.currentState, 700) || "Compressed context is available.",
+    done: normalizeFacts(record.done, 8),
+    inProgress: normalizeFacts(record.inProgress, 5),
+    blocked: normalizeFacts(record.blocked, 5),
+    decisions: normalizeFacts(record.decisions, 8),
+    filesTouched: normalizeFacts(record.filesTouched, 12),
+    testsRun: normalizeFacts(record.testsRun, 8),
+    failedAttempts: normalizeFacts(record.failedAttempts, 6),
+    deviations: normalizeFacts(record.deviations, 6),
+    nextAction: normalizeText(record.nextAction, 500) || "Continue from compressed recovery context.",
+    reviewNeeded: normalizeFacts(record.reviewNeeded, 6),
+    evidenceRefs: normalizeEvidence(record.evidenceRefs).slice(0, 24),
+    unverifiedClaims: Array.isArray(record.unverifiedClaims)
+      ? record.unverifiedClaims.map((item) => normalizeText(item, 300)).filter(Boolean).slice(0, 8)
+      : [],
+  };
+  return { ...artifactWithoutQuality, quality: buildQuality(artifactWithoutQuality, DEFAULT_TARGET_ARTIFACT_TOKENS) };
+}

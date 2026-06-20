@@ -78,6 +78,7 @@ test.describe('ClawX main navigation without setup flow', () => {
       const page = await getStableWindow(app);
 
       await page.getByTestId('sidebar-nav-settings').click();
+      await page.getByTestId('settings-nav-general').click();
       await page.getByRole('button', { name: 'English' }).click();
       await page.getByRole('button', { name: '中文' }).click();
 

@@ -23,9 +23,9 @@ touchedAreas:
   - src/pages/Observability/**
   - shared/i18n/locales
 expectedUserBehavior:
-  - Users can create a Mission from Chat, Agents, or Task Ledger when a goal should survive multiple turns, sessions, or scheduled checks.
+  - Users can create a Mission from the Agents panel, Gateway RPC, or lead-agent mission_loop tool when a goal should survive multiple turns, sessions, or scheduled checks.
   - A Mission can be started manually, resumed from a checkpoint, or awakened by a scheduled/event tick without replaying the full transcript.
-  - ClawX shows Mission phase, tick count, latest reviewer decision, blockers, next wake, linked Task Ledger goal, and trace evidence.
+  - ClawX shows Mission phase, tick count, latest reviewer decision, blockers, next wake, Task Ledger mirrored evidence, and trace evidence.
   - The model can judge whether the Mission should continue, repair, sleep, ask the user, complete, or block based on evidence and acceptance criteria.
   - Memory changes discovered during a Mission become role-memory proposals or Knowledge Hub drafts; they are not silently written as long-term truth.
 requiredProfiles:
@@ -80,8 +80,8 @@ Initial implementation phases:
 
 1. Add shared Mission types, lifecycle event contract, and config defaults.
 2. Add MissionContextPack and MissionReviewer with deterministic fallback decisions.
-3. Add MissionController with in-memory MVP state plus Task Ledger mirroring; persist active Mission state in OpenClaw state SQLite before enabling scheduled resume across restarts.
+3. Add MissionController with OpenClaw state SQLite persistence plus best-effort Task Ledger mirroring.
 4. Add Gateway RPCs and a model-callable mission_loop tool for lead agents only.
 5. Add scheduler integration that creates cron/wake ticks pointing at mission.tick, not free-form chat messages.
-6. Add ClawX UI status surfaces in Agents, Chat/Task Ledger summary, and Observability trace links.
+6. Add ClawX UI status surfaces in Agents and mirror trace/check/review evidence into Task Ledger.
 7. Add unit, harness, comms, and E2E coverage before making Mission Control a public default.

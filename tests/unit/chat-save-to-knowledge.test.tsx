@@ -88,6 +88,8 @@ vi.mock('@/stores/workspaces', () => ({
 }));
 
 vi.mock('@/stores/artifact-panel', () => ({
+  ARTIFACT_PANEL_MIN_WIDTH: 28,
+  ARTIFACT_PANEL_MAX_WIDTH: 50,
   useArtifactPanel: (selector: (state: Record<string, unknown>) => unknown) => selector({
     open: false,
     widthPct: 45,
@@ -105,6 +107,8 @@ vi.mock('@/lib/host-api', () => ({
     topics: { list: vi.fn(async () => ({ topics: [], activeTopicId: null })) },
     files: { writeText: vi.fn(async () => ({ success: true })) },
     workspaces: { saveState: hostApiMock.saveWorkspaceState, update: vi.fn(async () => ({ success: true })) },
+    skills: { local: vi.fn(async () => ({ success: true, skills: [] })) },
+    workProviders: { status: vi.fn(async () => ({ kitCapabilities: [] })) },
     usage: {
       contextRange: vi.fn(async () => ({ range: null })),
       live: vi.fn(async () => ({ usage: null })),
@@ -118,6 +122,13 @@ vi.mock('@/lib/host-api', () => ({
       compactionStatus: vi.fn(async () => ({ success: true, status: null })),
       compactionHistory: vi.fn(async () => ({ success: true, entries: [] })),
       compact: vi.fn(async () => ({ success: true })),
+      longTaskControlStatus: vi.fn(async () => ({
+        success: true,
+        available: false,
+        key: 'agent:main:knowledge-session',
+        queueCount: 0,
+        warnings: [],
+      })),
     },
   },
 }));
@@ -130,6 +141,10 @@ vi.mock('sonner', () => ({
 }));
 
 vi.mock('react-i18next', () => ({
+  initReactI18next: {
+    type: '3rdParty',
+    init: vi.fn(),
+  },
   useTranslation: () => ({
     t: (key: string) => ({
       'toolbar.saveToKnowledge': 'Save to Knowledge',

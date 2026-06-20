@@ -4,7 +4,7 @@
  * Communicates with OpenClaw Gateway through the Main-owned host API.
  */
 import { create } from 'zustand';
-import { hostApi, type ChatSendWithMediaResult, type SessionLabelSummary } from '@/lib/host-api';
+import { hostApi, type ChatKnowledgeReference, type ChatSendWithMediaResult, type SessionLabelSummary } from '@/lib/host-api';
 import { useGatewayStore } from './gateway';
 import { useAgentsStore } from './agents';
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
@@ -340,6 +340,7 @@ function cloneHistoryMessages(messages: RawMessage[]): RawMessage[] {
   return messages.map((message) => ({
     ...message,
     _attachedFiles: message._attachedFiles?.map((file) => ({ ...file })),
+    _knowledgeRefs: message._knowledgeRefs?.map((reference) => ({ ...reference })),
   }));
 }
 
@@ -3461,6 +3462,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     knowledgeScope?: WorkspaceKnowledgeScope,
     workMode?: WorkModeId,
     inputMode?: 'interrupt' | 'guide' | 'queue',
+    knowledgeReferences?: ChatKnowledgeReference[],
   ) => {
     const trimmed = text.trim();
     if (!trimmed && (!attachments || attachments.length === 0)) return;
@@ -3495,6 +3497,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
         preview: a.preview,
         filePath: a.stagedPath,
       })),
+      ...(knowledgeReferences && knowledgeReferences.length > 0
+        ? { _knowledgeRefs: knowledgeReferences.map((reference) => ({ ...reference })) }
+        : {}),
     };
     rememberPendingOptimisticUserMessage(currentSessionKey, userMsg, nowMs);
     set((s) => ({
@@ -3660,6 +3665,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           deliver: false,
           idempotencyKey,
           knowledgeScope,
+          ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
           workMode,
           ...(inputMode ? { inputMode } : {}),
           media: attachments.map((a) => ({
@@ -3675,6 +3681,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           deliver: false,
           idempotencyKey,
           knowledgeScope,
+          ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
           workMode,
           ...(inputMode ? { inputMode } : {}),
         });
