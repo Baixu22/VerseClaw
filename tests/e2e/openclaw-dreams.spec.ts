@@ -29,6 +29,7 @@ function buildDreamingEnabledPatchRaw(enabled: boolean): string {
 async function enableDeveloperMode(page: Page): Promise<void> {
   await page.getByTestId('sidebar-nav-settings').click();
   await expect(page.getByTestId('settings-page')).toBeVisible();
+  await page.getByTestId('settings-nav-developer').click();
   const devModeToggle = page.getByTestId('settings-dev-mode-switch');
   if ((await devModeToggle.getAttribute('data-state')) !== 'checked') {
     await devModeToggle.click();

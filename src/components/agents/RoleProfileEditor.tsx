@@ -3,6 +3,7 @@
  * Uses shadcn-style Select for styled dropdowns.
  */
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Info, X, Plus } from 'lucide-react';
 import {
   Select,
@@ -20,27 +21,27 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import type { AgentRoleProfile } from '@shared/types/agent';
 
 const ROLE_OPTIONS = [
-  { label: '通用助手', value: '通用助手' },
-  { label: '代码助手', value: '代码助手' },
-  { label: '写作伙伴', value: '写作伙伴' },
-  { label: 'DevOps', value: 'DevOps' },
-  { label: '代码审查', value: '代码审查' },
-  { label: '架构设计', value: '架构设计' },
-  { label: '数据分析', value: '数据分析' },
-  { label: '自定义', value: '自定义' },
+  { labelKey: 'roleProfile.roles.general', value: '通用助手' },
+  { labelKey: 'roleProfile.roles.coding', value: '代码助手' },
+  { labelKey: 'roleProfile.roles.writing', value: '写作伙伴' },
+  { labelKey: 'roleProfile.roles.devops', value: 'DevOps' },
+  { labelKey: 'roleProfile.roles.review', value: '代码审查' },
+  { labelKey: 'roleProfile.roles.architecture', value: '架构设计' },
+  { labelKey: 'roleProfile.roles.analysis', value: '数据分析' },
+  { labelKey: 'roleProfile.roles.custom', value: '自定义' },
 ];
 
-const VERBOSITY_OPTIONS: { value: AgentRoleProfile['verbosity']; label: string; hint: string }[] = [
-  { value: 'concise', label: '简洁', hint: '回复内容尽量简短' },
-  { value: 'balanced', label: '适中', hint: '适度详细' },
-  { value: 'detailed', label: '详细', hint: '充分解释每个回复' },
+const VERBOSITY_OPTIONS: { value: AgentRoleProfile['verbosity']; labelKey: string; hintKey: string }[] = [
+  { value: 'concise', labelKey: 'roleProfile.verbosity.concise', hintKey: 'roleProfile.verbosityHint.concise' },
+  { value: 'balanced', labelKey: 'roleProfile.verbosity.balanced', hintKey: 'roleProfile.verbosityHint.balanced' },
+  { value: 'detailed', labelKey: 'roleProfile.verbosity.detailed', hintKey: 'roleProfile.verbosityHint.detailed' },
 ];
 
-const TONE_OPTIONS: { value: AgentRoleProfile['tone']; label: string; hint: string }[] = [
-  { value: 'friendly', label: '友好', hint: '温暖亲切的对话风格' },
-  { value: 'direct', label: '直接', hint: '直截了当，不说废话' },
-  { value: 'formal', label: '正式', hint: '专业正式的回复' },
-  { value: 'casual', label: '口语化', hint: '轻松口语化的表达' },
+const TONE_OPTIONS: { value: AgentRoleProfile['tone']; labelKey: string; hintKey: string }[] = [
+  { value: 'friendly', labelKey: 'roleProfile.tone.friendly', hintKey: 'roleProfile.toneHint.friendly' },
+  { value: 'direct', labelKey: 'roleProfile.tone.direct', hintKey: 'roleProfile.toneHint.direct' },
+  { value: 'formal', labelKey: 'roleProfile.tone.formal', hintKey: 'roleProfile.toneHint.formal' },
+  { value: 'casual', labelKey: 'roleProfile.tone.casual', hintKey: 'roleProfile.toneHint.casual' },
 ];
 
 interface TagInputProps {
@@ -50,6 +51,7 @@ interface TagInputProps {
 }
 
 function TagInput({ tags, onChange, placeholder }: TagInputProps) {
+  const { t } = useTranslation('agents');
   const [input, setInput] = useState('');
 
   const addTag = useCallback(() => {
@@ -74,7 +76,7 @@ function TagInput({ tags, onChange, placeholder }: TagInputProps) {
               <Plus className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>添加标签</TooltipContent>
+          <TooltipContent>{t('roleProfile.addTag')}</TooltipContent>
         </Tooltip>
       </div>
       {tags.length > 0 && (
@@ -88,7 +90,7 @@ function TagInput({ tags, onChange, placeholder }: TagInputProps) {
                   {tag}<X className="h-3 w-3" />
                 </Badge>
               </TooltipTrigger>
-              <TooltipContent>{`点击移除 "${tag}"`}</TooltipContent>
+              <TooltipContent>{t('roleProfile.removeTag', { tag })}</TooltipContent>
             </Tooltip>
           ))}
         </div>
@@ -104,6 +106,7 @@ interface RoleProfileEditorProps {
 }
 
 export function RoleProfileEditor({ profile, onChange, disabled }: RoleProfileEditorProps) {
+  const { t } = useTranslation('agents');
   const update = useCallback((patch: Partial<AgentRoleProfile>) => onChange({ ...profile, ...patch }), [profile, onChange]);
   const currentRoleValue = profile.customRole ? '自定义' : profile.role;
 
@@ -112,22 +115,22 @@ export function RoleProfileEditor({ profile, onChange, disabled }: RoleProfileEd
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <div className="flex items-center gap-1.5">
-            <Label className="text-sm font-medium text-foreground/80">显示名称</Label>
+            <Label className="text-sm font-medium text-foreground/80">{t('roleProfile.displayName')}</Label>
             <Tooltip>
               <TooltipTrigger asChild><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></TooltipTrigger>
-              <TooltipContent>Agent 在对话中使用的显示名称</TooltipContent>
+              <TooltipContent>{t('roleProfile.displayNameTooltip')}</TooltipContent>
             </Tooltip>
           </div>
           <Input value={profile.displayName} onChange={(e) => update({ displayName: e.target.value })}
-            placeholder="例如: 小助手" disabled={disabled}
+            placeholder={t('roleProfile.displayNamePlaceholder')} disabled={disabled}
             className="h-9 rounded-xl bg-black/5 dark:bg-white/5 border-transparent" />
         </div>
         <div className="space-y-2">
           <div className="flex items-center gap-1.5">
-            <Label className="text-sm font-medium text-foreground/80">角色</Label>
+            <Label className="text-sm font-medium text-foreground/80">{t('roleProfile.role')}</Label>
             <Tooltip>
               <TooltipTrigger asChild><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></TooltipTrigger>
-              <TooltipContent>定义 Agent 的核心定位和能力范围</TooltipContent>
+              <TooltipContent>{t('roleProfile.roleTooltip')}</TooltipContent>
             </Tooltip>
           </div>
           <Select
@@ -144,7 +147,7 @@ export function RoleProfileEditor({ profile, onChange, disabled }: RoleProfileEd
             <SelectContent>
               {ROLE_OPTIONS.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
+                  {t(opt.labelKey)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -154,95 +157,95 @@ export function RoleProfileEditor({ profile, onChange, disabled }: RoleProfileEd
 
       {profile.role === '自定义' && (
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-foreground/80">自定义角色</Label>
+          <Label className="text-sm font-medium text-foreground/80">{t('roleProfile.customRole')}</Label>
           <Input value={profile.customRole || ''} onChange={(e) => update({ customRole: e.target.value })}
-            placeholder="例如: 前端架构顾问" disabled={disabled}
+            placeholder={t('roleProfile.customRolePlaceholder')} disabled={disabled}
             className="h-9 rounded-xl bg-black/5 dark:bg-white/5 border-transparent" />
         </div>
       )}
 
       <div className="space-y-3">
         <div className="flex items-center gap-1.5">
-          <Label className="text-sm font-semibold text-foreground/80">回复风格</Label>
+          <Label className="text-sm font-semibold text-foreground/80">{t('roleProfile.replyStyle')}</Label>
           <Tooltip>
             <TooltipTrigger asChild><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></TooltipTrigger>
-            <TooltipContent>控制 Agent 回复的详细程度、语气和语言偏好</TooltipContent>
+            <TooltipContent>{t('roleProfile.replyStyleTooltip')}</TooltipContent>
           </Tooltip>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-xs text-muted-foreground">详细程度</Label>
+            <Label className="text-xs text-muted-foreground">{t('roleProfile.verbosityLabel')}</Label>
             <div className="flex gap-2">
               {VERBOSITY_OPTIONS.map((opt) => (
                 <Tooltip key={opt.value}>
                   <TooltipTrigger asChild>
                     <Button type="button" variant={profile.verbosity === opt.value ? 'secondary' : 'outline'} size="sm"
                       disabled={disabled} className="rounded-full px-3 h-8"
-                      onClick={() => update({ verbosity: opt.value })}>{opt.label}</Button>
+                      onClick={() => update({ verbosity: opt.value })}>{t(opt.labelKey)}</Button>
                   </TooltipTrigger>
-                  <TooltipContent>{opt.hint}</TooltipContent>
+                  <TooltipContent>{t(opt.hintKey)}</TooltipContent>
                 </Tooltip>
               ))}
             </div>
           </div>
           <div className="space-y-2">
-            <Label className="text-xs text-muted-foreground">语气</Label>
+            <Label className="text-xs text-muted-foreground">{t('roleProfile.toneLabel')}</Label>
             <div className="flex gap-2">
               {TONE_OPTIONS.map((opt) => (
                 <Tooltip key={opt.value}>
                   <TooltipTrigger asChild>
                     <Button type="button" variant={profile.tone === opt.value ? 'secondary' : 'outline'} size="sm"
                       disabled={disabled} className="rounded-full px-3 h-8"
-                      onClick={() => update({ tone: opt.value })}>{opt.label}</Button>
+                      onClick={() => update({ tone: opt.value })}>{t(opt.labelKey)}</Button>
                   </TooltipTrigger>
-                  <TooltipContent>{opt.hint}</TooltipContent>
+                  <TooltipContent>{t(opt.hintKey)}</TooltipContent>
                 </Tooltip>
               ))}
             </div>
           </div>
         </div>
         <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">语言偏好</Label>
+          <Label className="text-xs text-muted-foreground">{t('roleProfile.language')}</Label>
           <Input value={profile.language} onChange={(e) => update({ language: e.target.value })}
-            placeholder="例如: 中文思考，代码用英文" disabled={disabled}
+            placeholder={t('roleProfile.languagePlaceholder')} disabled={disabled}
             className="h-9 rounded-xl bg-black/5 dark:bg-white/5 border-transparent" />
         </div>
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center gap-1.5">
-          <Label className="text-sm font-medium text-foreground/80">擅长领域</Label>
+          <Label className="text-sm font-medium text-foreground/80">{t('roleProfile.expertise')}</Label>
           <Tooltip>
             <TooltipTrigger asChild><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></TooltipTrigger>
-            <TooltipContent>列出 Agent 擅长的技能和知识领域</TooltipContent>
+            <TooltipContent>{t('roleProfile.expertiseTooltip')}</TooltipContent>
           </Tooltip>
         </div>
         <TagInput tags={profile.expertise} onChange={(tags) => update({ expertise: tags })}
-          placeholder="输入后回车添加，例如: Python, TypeScript" />
+          placeholder={t('roleProfile.expertisePlaceholder')} />
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center gap-1.5">
-          <Label className="text-sm font-medium text-foreground/80">不擅长（诚实声明）</Label>
+          <Label className="text-sm font-medium text-foreground/80">{t('roleProfile.limitations')}</Label>
           <Tooltip>
             <TooltipTrigger asChild><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></TooltipTrigger>
-            <TooltipContent>诚实声明自己不擅长的领域，避免 Agent 在弱项上给出错误答案</TooltipContent>
+            <TooltipContent>{t('roleProfile.limitationsTooltip')}</TooltipContent>
           </Tooltip>
         </div>
         <TagInput tags={profile.limitations} onChange={(tags) => update({ limitations: tags })}
-          placeholder="例如: CSS, 移动端开发" />
+          placeholder={t('roleProfile.limitationsPlaceholder')} />
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center gap-1.5">
-          <Label className="text-sm font-medium text-foreground/80">背景故事</Label>
+          <Label className="text-sm font-medium text-foreground/80">{t('roleProfile.backstory')}</Label>
           <Tooltip>
             <TooltipTrigger asChild><Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" /></TooltipTrigger>
-            <TooltipContent>可选: 描述 Agent 的身份背景和特殊经历，帮助建立更丰富的角色形象</TooltipContent>
+            <TooltipContent>{t('roleProfile.backstoryTooltip')}</TooltipContent>
           </Tooltip>
         </div>
         <Textarea value={profile.backstory} onChange={(e) => update({ backstory: e.target.value })}
-          placeholder="可选: 描述 Agent 的身份背景..." disabled={disabled} rows={3}
+          placeholder={t('roleProfile.backstoryPlaceholder')} disabled={disabled} rows={3}
           className="rounded-xl bg-black/5 dark:bg-white/5 border-transparent resize-none" />
       </div>
     </div>

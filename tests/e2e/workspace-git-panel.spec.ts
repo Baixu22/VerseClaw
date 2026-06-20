@@ -52,6 +52,27 @@ const gitStatus = {
   }],
 };
 
+const gitBranches = [
+  { name: 'feature/git-panel', current: true, upstream: 'origin/feature/git-panel', commit: 'abc123' },
+  { name: 'main', current: false, upstream: 'origin/main', commit: 'def456' },
+];
+
+const gitWorktrees = [
+  { path: '/workspace/demo', branch: 'feature/git-panel', head: 'abc123' },
+  { path: '/workspace/demo-feature-a', branch: 'feature/a', head: 'aaa111' },
+];
+
+const removeApproval = {
+  id: 'approval-remove-worktree',
+  workspaceId: WORKSPACE_ID,
+  source: 'git',
+  risk: 'dangerous',
+  status: 'pending',
+  mode: 'acceptEdits',
+  requestedAt: 1,
+  reason: 'Removing a worktree requires approval.',
+};
+
 test.describe('Workspace Git panel', () => {
   test('renders status, diff, auth guidance, and approval-blocked write actions', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
@@ -118,6 +139,14 @@ test.describe('Workspace Git panel', () => {
             authenticated: false,
             hosts: [],
           },
+          [stableStringify(['git', 'branches', null])]: {
+            success: true,
+            branches: gitBranches,
+          },
+          [stableStringify(['git', 'worktrees', null])]: {
+            success: true,
+            worktrees: gitWorktrees,
+          },
           [stableStringify(['git', 'fileDiff', { mode: 'unstaged', path: 'src/demo.ts' }])]: {
             ok: true,
             path: 'src/demo.ts',
@@ -133,6 +162,22 @@ test.describe('Workspace Git panel', () => {
             success: false,
             blocked: true,
             reason: 'Commit requires approval',
+          },
+          [stableStringify(['git', 'worktreeAdd', { branch: 'feature/new-worktree', checkoutNewBranch: true }])]: {
+            success: true,
+          },
+          [stableStringify(['git', 'worktreeRemove', { path: '/workspace/demo-feature-a' }])]: {
+            success: false,
+            blocked: true,
+            approvalRequired: true,
+            approval: removeApproval,
+            reason: removeApproval.reason,
+          },
+          [stableStringify(['permissions', 'decideApproval', { id: 'approval-remove-worktree', decision: 'approved' }])]: {
+            success: true,
+          },
+          [stableStringify(['git', 'worktreeRemove', { path: '/workspace/demo-feature-a', approvalId: 'approval-remove-worktree' }])]: {
+            success: true,
           },
         },
       });
@@ -155,9 +200,13 @@ test.describe('Workspace Git panel', () => {
 
       const gitPanel = sidePanel.getByTestId('workspace-git-panel');
       await expect(gitPanel).toBeVisible();
-      await expect(gitPanel.getByText('feature/git-panel', { exact: true })).toBeVisible();
+      await expect(gitPanel.getByText('feature/git-panel', { exact: true }).first()).toBeVisible();
+      await expect(gitPanel.getByText('Unstaged (1)')).toBeVisible();
       await expect(gitPanel.getByRole('button', { name: /src\/demo\.ts/ })).toBeVisible();
       await expect(gitPanel.getByText(/const value = 2/)).toBeVisible();
+      await expect(gitPanel.getByText('Worktrees')).toBeVisible();
+      await expect(gitPanel.getByText('demo-feature-a')).toBeVisible();
+      await expect(gitPanel.getByText('Current')).toBeVisible();
       await expect(gitPanel.getByText(/gh auth login/)).toBeVisible();
 
       await gitPanel.getByRole('button', { name: /^Stage$/ }).click();
@@ -166,6 +215,14 @@ test.describe('Workspace Git panel', () => {
       await gitPanel.getByPlaceholder('Commit message').fill('Update demo');
       await gitPanel.getByRole('button', { name: 'Commit staged changes' }).click();
       await expect(page.getByText('Commit requires approval')).toBeVisible();
+
+      await gitPanel.getByPlaceholder('Branch for worktree').fill('feature/new-worktree');
+      await gitPanel.getByRole('button', { name: 'Add worktree' }).click();
+
+      await gitPanel.getByRole('button', { name: 'Remove' }).click();
+      await expect(gitPanel.getByText('Remove needs approval')).toBeVisible();
+      await expect(gitPanel.getByText('Removing a worktree requires approval.')).toBeVisible();
+      await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
     } finally {
       await closeElectronApp(app);
     }

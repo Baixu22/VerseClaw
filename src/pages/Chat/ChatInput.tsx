@@ -38,7 +38,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { hostApi } from '@/lib/host-api';
+import { hostApi, type ChatKnowledgeReference, type KnowledgeSearchResult } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
@@ -84,7 +84,7 @@ export interface FileAttachment {
 }
 
 interface ChatInputProps {
-  onSend: (text: string, attachments?: FileAttachment[], targetAgentId?: string | null, knowledgeScope?: WorkspaceKnowledgeScope, workMode?: WorkModeId) => void;
+  onSend: (text: string, attachments?: FileAttachment[], targetAgentId?: string | null, knowledgeScope?: WorkspaceKnowledgeScope, workMode?: WorkModeId, knowledgeReferences?: ChatKnowledgeReference[]) => void;
   onStop?: () => void;
   disabled?: boolean;
   sending?: boolean;
@@ -122,15 +122,76 @@ type PendingCapabilitySend = {
   targetAgentId: string | null;
   knowledgeScope: WorkspaceKnowledgeScope;
   workMode: WorkModeId;
+  knowledgeReferences?: ChatKnowledgeReference[];
   plan: ChatCapabilityActionPlan[];
   results: ChatCapabilityActionResult[];
 };
 
 // ── Helpers ──────────────────────────────────────────────────────
 
+type KnowledgeSearchRow = Record<string, unknown>;
+
 const DIRECTORY_MIME_TYPE = 'application/x-directory';
 const WORKSPACE_PERMISSION_MODES: WorkspacePermissionMode[] = ['readOnly', 'plan', 'acceptEdits', 'fullAccess'];
 const KNOWLEDGE_SCOPES: WorkspaceKnowledgeScope[] = ['none', 'memory', 'wiki', 'all'];
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
+
+function getString(record: Record<string, unknown>, keys: string[]): string {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+}
+
+function getNumber(record: Record<string, unknown>, keys: string[]): number | undefined {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+  }
+  return undefined;
+}
+
+function getKnowledgeSearchRows(result: KnowledgeSearchResult | null): KnowledgeSearchRow[] {
+  if (!result) return [];
+  if (Array.isArray(result.results)) return result.results.filter((entry): entry is KnowledgeSearchRow => !!asRecord(entry));
+  for (const key of ['items', 'matches', 'pages']) {
+    const value = (result as Record<string, unknown>)[key];
+    if (Array.isArray(value)) return value.filter((entry): entry is KnowledgeSearchRow => !!asRecord(entry));
+  }
+  return [];
+}
+
+function knowledgeCorpusForScope(scope: WorkspaceKnowledgeScope): 'wiki' | 'memory' | 'all' {
+  if (scope === 'memory') return 'memory';
+  if (scope === 'all') return 'all';
+  return 'wiki';
+}
+
+function knowledgeReferenceFromRow(row: KnowledgeSearchRow, corpus: 'wiki' | 'memory' | 'all'): ChatKnowledgeReference | null {
+  const lookup = getString(row, ['lookup', 'pagePath', 'path', 'relativePath', 'id', 'pageId', 'sourcePath']);
+  if (!lookup) return null;
+  const title = getString(row, ['title', 'pageTitle', 'name', 'pageId', 'pagePath', 'path']) || lookup;
+  const pagePath = getString(row, ['pagePath', 'path', 'relativePath']);
+  const pageId = getString(row, ['pageId', 'id']);
+  const sourcePath = getString(row, ['sourcePath', 'source', 'filePath']);
+  const snippet = getString(row, ['snippet', 'excerpt', 'summary', 'text']);
+  const score = getNumber(row, ['score', 'rank']);
+  return {
+    id: pageId || pagePath || lookup,
+    title,
+    lookup,
+    corpus,
+    ...(pageId ? { pageId } : {}),
+    ...(pagePath ? { pagePath } : {}),
+    ...(sourcePath ? { sourcePath } : {}),
+    ...(snippet ? { snippet } : {}),
+    ...(score !== undefined ? { score } : {}),
+  };
+}
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -337,6 +398,11 @@ export function ChatInput({
   const [skillPickerOpen, setSkillPickerOpen] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
   const [knowledgePickerOpen, setKnowledgePickerOpen] = useState(false);
+  const [knowledgeQuery, setKnowledgeQuery] = useState('');
+  const [knowledgeSearchResult, setKnowledgeSearchResult] = useState<KnowledgeSearchResult | null>(null);
+  const [knowledgeSearching, setKnowledgeSearching] = useState(false);
+  const [knowledgeSearchError, setKnowledgeSearchError] = useState<string | null>(null);
+  const [selectedKnowledgeRefs, setSelectedKnowledgeRefs] = useState<ChatKnowledgeReference[]>([]);
   const [workspaceActionsOpen, setWorkspaceActionsOpen] = useState(false);
   const [skillQuery, setSkillQuery] = useState('');
   const [quickSkills, setQuickSkills] = useState<QuickAccessSkill[]>([]);
@@ -370,6 +436,7 @@ export function ChatInput({
   const providerDefaultAccountId = useProviderStore((s) => s.defaultAccountId);
   const refreshProviderSnapshot = useProviderStore((s) => s.refreshProviderSnapshot);
   const currentAgentId = useChatStore((s) => s.currentAgentId);
+  const currentSessionKey = useChatStore((s) => s.currentSessionKey);
   const currentAgent = useMemo(
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
     [agents, currentAgentId],
@@ -401,6 +468,9 @@ export function ChatInput({
       || skill.sourceLabel.toLowerCase().includes(query),
     );
   }, [quickSkills, skillQuery]);
+  const knowledgeCorpus = knowledgeCorpusForScope(knowledgeScope);
+  const knowledgeRows = useMemo(() => getKnowledgeSearchRows(knowledgeSearchResult), [knowledgeSearchResult]);
+  const selectedKnowledgeIds = useMemo(() => new Set(selectedKnowledgeRefs.map((reference) => reference.id)), [selectedKnowledgeRefs]);
   const showAgentPicker = mentionableAgents.length > 0;
   const showModelPicker = modelOptions.length > 1;
   const showWorkspaceActions = Boolean(
@@ -466,6 +536,7 @@ export function ChatInput({
   }, [compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
   const compactDisabled = Boolean(compactDisabledReason);
   const compactAttention = compactionStatus?.pressure === 'high';
+  const compactionQuality = compactionStatus?.lastCompaction?.quality;
   const queuedFollowupCount = longTaskControlStatus?.queueCount ?? 0;
   const recommendedContinuityAction = continuityRecommendation?.action ?? 'fork';
   const composerContinuityAction = recommendedContinuityAction === 'handoff' && onHandoffSession
@@ -505,6 +576,76 @@ export function ChatInput({
     : '';
   const ComposerContinuityIcon = composerContinuityAction?.icon ?? GitBranchPlus;
   const wikiQuickActive = knowledgeScope === 'wiki';
+
+  const searchKnowledge = useCallback(async () => {
+    const query = knowledgeQuery.trim();
+    if (!query) return;
+    setKnowledgeSearching(true);
+    setKnowledgeSearchError(null);
+    try {
+      const result = await hostApi.knowledge.search({
+        query,
+        maxResults: 8,
+        corpus: knowledgeCorpus,
+      });
+      if (!result.success) throw new Error(result.error || t('composer.knowledgeAttach.searchFailed'));
+      setKnowledgeSearchResult(result);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setKnowledgeSearchError(message);
+      toast.error(message);
+    } finally {
+      setKnowledgeSearching(false);
+    }
+  }, [knowledgeCorpus, knowledgeQuery, t]);
+
+  const addKnowledgeReference = useCallback((row: KnowledgeSearchRow) => {
+    const reference = knowledgeReferenceFromRow(row, knowledgeCorpus);
+    if (!reference) {
+      toast.error(t('composer.knowledgeAttach.missingLookup'));
+      return;
+    }
+    setSelectedKnowledgeRefs((current) => (
+      current.some((item) => item.id === reference.id)
+        ? current
+        : [...current, reference].slice(0, 6)
+    ));
+    if (knowledgeScope === 'none') {
+      void onKnowledgeScopeChange?.('wiki');
+    }
+    textareaRef.current?.focus();
+  }, [knowledgeCorpus, knowledgeScope, onKnowledgeScopeChange, t]);
+
+  const removeKnowledgeReference = useCallback((id: string) => {
+    setSelectedKnowledgeRefs((current) => current.filter((reference) => reference.id !== id));
+  }, []);
+
+  const recordKnowledgeReferences = useCallback((references: ChatKnowledgeReference[]) => {
+    if (references.length === 0) return;
+    for (const reference of references) {
+      void hostApi.knowledge.recordKnowledgeReference({
+        targetId: reference.lookup,
+        targetKind: 'wiki-page',
+        title: reference.title,
+        reference: {
+          kind: 'chat',
+          sessionKey: currentSessionKey,
+          agentId: currentAgentId,
+          lookup: reference.lookup,
+          note: 'Attached from Chat composer',
+        },
+        metadata: {
+          surface: 'chat-composer',
+          corpus: reference.corpus,
+          pageId: reference.pageId,
+          pagePath: reference.pagePath,
+          sourcePath: reference.sourcePath,
+        },
+      }).catch((error) => {
+        console.warn('[knowledge] Failed to record chat reference:', error);
+      });
+    }
+  }, [currentAgentId, currentSessionKey]);
 
   const handleQuickWikiToggle = useCallback(() => {
     if (!onKnowledgeScopeChange) return;
@@ -848,7 +989,7 @@ export function ChatInput({
 
   const allReady = attachments.length === 0 || attachments.every(a => a.status === 'ready');
   const hasFailedAttachments = attachments.some((a) => a.status === 'error');
-  const canSend = (input.trim() || attachments.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
+  const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
   const canStop = sending && !inputDisabled && !!onStop;
 
   const completeSend = useCallback(async (
@@ -857,6 +998,7 @@ export function ChatInput({
     sendTargetAgentId: string | null,
     sendKnowledgeScope: WorkspaceKnowledgeScope,
     sendWorkMode: WorkModeId,
+    sendKnowledgeReferences: ChatKnowledgeReference[] = [],
   ): Promise<boolean> => {
     const safeAttachments = attachmentsToSend && attachmentsToSend.length > 0 ? attachmentsToSend : undefined;
 
@@ -885,15 +1027,22 @@ export function ChatInput({
     setAttachments([]);
     setSelectedSkill(null);
     setSkillQuery('');
+    setSelectedKnowledgeRefs([]);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
-    onSend(textToSend, safeAttachments, sendTargetAgentId, sendKnowledgeScope, sendWorkMode);
+    recordKnowledgeReferences(sendKnowledgeReferences);
+    if (sendKnowledgeReferences.length > 0) {
+      onSend(textToSend, safeAttachments, sendTargetAgentId, sendKnowledgeScope, sendWorkMode, sendKnowledgeReferences);
+    } else {
+      onSend(textToSend, safeAttachments, sendTargetAgentId, sendKnowledgeScope, sendWorkMode);
+    }
     setTargetAgentId(null);
     setPickerOpen(false);
     setSkillPickerOpen(false);
+    setKnowledgePickerOpen(false);
     return true;
-  }, [onSend, updateInput]);
+  }, [onSend, recordKnowledgeReferences, updateInput]);
 
   const handleUnsupportedCapabilityRequest = useCallback((resolution: ChatCapabilityPlanResolution): boolean => {
     if (!resolution.unsupportedReason) return false;
@@ -906,7 +1055,9 @@ export function ChatInput({
   const handleSend = useCallback(async () => {
     if (!canSend) return;
     const readyAttachments = attachments.filter(a => a.status === 'ready');
-    const textToSend = input.trim();
+    const knowledgeReferencesToSend = selectedKnowledgeRefs;
+    const sendKnowledgeScope: WorkspaceKnowledgeScope = knowledgeScope === 'none' && knowledgeReferencesToSend.length > 0 ? 'wiki' : knowledgeScope;
+    const textToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
     const attachmentsToSend = readyAttachments.length > 0 ? readyAttachments : undefined;
 
     if (shouldRunChatCapabilityPreflight(textToSend)) {
@@ -922,8 +1073,9 @@ export function ChatInput({
           text: textToSend,
           attachments: attachmentsToSend,
           targetAgentId,
-          knowledgeScope,
+          knowledgeScope: sendKnowledgeScope,
           workMode,
+          knowledgeReferences: knowledgeReferencesToSend,
           plan: resolution.actions,
           results: [],
         });
@@ -965,14 +1117,21 @@ export function ChatInput({
     setAttachments([]);
     setSelectedSkill(null);
     setSkillQuery('');
+    setSelectedKnowledgeRefs([]);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
-    onSend(textToSend, attachmentsToSend, targetAgentId, knowledgeScope, workMode);
+    recordKnowledgeReferences(knowledgeReferencesToSend);
+    if (knowledgeReferencesToSend.length > 0) {
+      onSend(textToSend, attachmentsToSend, targetAgentId, sendKnowledgeScope, workMode, knowledgeReferencesToSend);
+    } else {
+      onSend(textToSend, attachmentsToSend, targetAgentId, sendKnowledgeScope, workMode);
+    }
     setTargetAgentId(null);
     setPickerOpen(false);
     setSkillPickerOpen(false);
-  }, [input, attachments, canSend, onSend, targetAgentId, updateInput, knowledgeScope, workMode, handleUnsupportedCapabilityRequest]);
+    setKnowledgePickerOpen(false);
+  }, [input, attachments, canSend, onSend, targetAgentId, updateInput, knowledgeScope, workMode, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -1000,6 +1159,7 @@ export function ChatInput({
         pendingCapabilitySend.targetAgentId,
         pendingCapabilitySend.knowledgeScope,
         pendingCapabilitySend.workMode,
+        pendingCapabilitySend.knowledgeReferences ?? [],
       );
       if (sent) {
         toast.success(t('composer.capability.applied'));
@@ -1185,6 +1345,25 @@ export function ChatInput({
           )}
 
           {/* Text Row — flush-left */}
+          {selectedKnowledgeRefs.length > 0 && (
+            <div className="flex flex-wrap gap-2 pb-2" data-testid="chat-knowledge-selected">
+              {selectedKnowledgeRefs.map((reference) => (
+                <button
+                  key={reference.id}
+                  type="button"
+                  onClick={() => removeKnowledgeReference(reference.id)}
+                  className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-meta font-medium text-emerald-700 transition-colors hover:bg-emerald-500/15 dark:text-emerald-400"
+                  title={t('composer.knowledgeAttach.remove', { title: reference.title })}
+                  data-testid="chat-knowledge-selected-item"
+                >
+                  <BookOpen className="h-3 w-3 shrink-0" />
+                  <span className="max-w-[220px] truncate">{reference.title}</span>
+                  <X className="h-3 w-3 shrink-0" />
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="relative min-h-[48px]">
             {skillTokenRanges.length > 0 && (
               <div
@@ -1538,7 +1717,7 @@ export function ChatInput({
               </button>
               {knowledgePickerOpen && (
                 <div
-                  className="absolute left-0 bottom-full z-20 mb-2 w-80 overflow-hidden rounded-2xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
+                  className="absolute left-0 bottom-full z-20 mb-2 w-[360px] overflow-hidden rounded-2xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
                   data-testid="chat-knowledge-scope-menu"
                 >
                   <div className="px-3 py-2 text-tiny font-medium text-muted-foreground/80">
@@ -1566,6 +1745,81 @@ export function ChatInput({
                       {scope === knowledgeScope && <Check className="h-3.5 w-3.5 text-primary" />}
                     </button>
                   ))}
+                  <div className="my-1 h-px bg-border/70" />
+                  <div className="px-3 py-2">
+                    <div className="mb-2 flex items-center justify-between gap-2">
+                      <span className="text-tiny font-medium text-muted-foreground/80">{t('composer.knowledgeAttach.title')}</span>
+                      {selectedKnowledgeRefs.length > 0 && (
+                        <Badge variant="outline" className="rounded-full border-emerald-500/20 bg-emerald-500/10 text-2xs text-emerald-700 dark:text-emerald-400">
+                          {t('composer.knowledgeAttach.selected', { count: selectedKnowledgeRefs.length })}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]">
+                      <Search className="h-3.5 w-3.5 text-muted-foreground" />
+                      <input
+                        value={knowledgeQuery}
+                        onChange={(event) => setKnowledgeQuery(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') {
+                            event.preventDefault();
+                            void searchKnowledge();
+                          }
+                        }}
+                        placeholder={t('composer.knowledgeAttach.placeholder')}
+                        className="w-full bg-transparent text-meta outline-none placeholder:text-muted-foreground/70"
+                        data-testid="chat-knowledge-search-input"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 rounded-lg px-2 text-2xs"
+                        disabled={knowledgeSearching || !knowledgeQuery.trim()}
+                        onClick={() => void searchKnowledge()}
+                        data-testid="chat-knowledge-search-submit"
+                      >
+                        {knowledgeSearching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : t('composer.knowledgeAttach.search')}
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto px-1 pb-1">
+                    {knowledgeSearchError ? (
+                      <div className="rounded-xl px-3 py-3 text-xs text-destructive">
+                        {knowledgeSearchError}
+                      </div>
+                    ) : knowledgeRows.length === 0 ? (
+                      <div className="rounded-xl px-3 py-3 text-xs leading-5 text-muted-foreground">
+                        {t('composer.knowledgeAttach.empty')}
+                      </div>
+                    ) : (
+                      knowledgeRows.map((row, index) => {
+                        const reference = knowledgeReferenceFromRow(row, knowledgeCorpus);
+                        if (!reference) return null;
+                        const selected = selectedKnowledgeIds.has(reference.id);
+                        return (
+                          <button
+                            key={`${reference.id}:${index}`}
+                            type="button"
+                            className={cn(
+                              'flex w-full items-start gap-2 rounded-xl px-3 py-2 text-left transition-colors',
+                              selected ? 'bg-emerald-500/10 text-foreground' : 'hover:bg-black/5 dark:hover:bg-white/5',
+                            )}
+                            onClick={() => addKnowledgeReference(row)}
+                            data-testid="chat-knowledge-search-result"
+                          >
+                            <FileText className={cn('mt-0.5 h-3.5 w-3.5 shrink-0', selected ? 'text-emerald-700 dark:text-emerald-400' : 'text-muted-foreground')} />
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-sm font-medium">{reference.title}</span>
+                              <span className="mt-0.5 block truncate font-mono text-tiny text-muted-foreground">{reference.pagePath || reference.lookup}</span>
+                              {reference.snippet && <span className="mt-1 line-clamp-2 block text-tiny leading-4 text-muted-foreground">{reference.snippet}</span>}
+                            </span>
+                            {selected ? <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-700 dark:text-emerald-400" /> : null}
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -1770,6 +2024,29 @@ export function ChatInput({
                     </Tooltip>
                   )}
                 </>
+              )}
+              {compactionQuality && (
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    'h-6 rounded-md px-2 text-[11px] font-medium',
+                    compactionQuality.level === 'high' && 'border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400',
+                    compactionQuality.level === 'medium' && 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400',
+                    compactionQuality.level === 'low' && 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400',
+                  )}
+                  data-testid="chat-compaction-quality"
+                  title={t('composer.compaction.qualityTitle', {
+                    evidence: Math.round(compactionQuality.evidenceCoverage * 100),
+                    fields: Math.round(compactionQuality.fieldCoverage * 100),
+                    tokens: compactionQuality.projectionTokens,
+                    unverified: compactionStatus?.lastCompaction?.unverifiedCount ?? 0,
+                  })}
+                >
+                  {t('composer.compaction.quality', {
+                    level: t(`composer.compaction.qualityLevel.${compactionQuality.level}`),
+                    score: Math.round(compactionQuality.score * 100),
+                  })}
+                </Badge>
               )}
               {onManualCompact && (
                 <Tooltip>

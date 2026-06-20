@@ -547,7 +547,7 @@ function AgentSettingsModal({
         setHeartbeatMd(result.heartbeatMd ?? '');
       })
       .catch((error) => {
-        if (!cancelled) toast.error(`加载 Agent 配置失败: ${String(error)}`);
+        if (!cancelled) toast.error(t('identityTools.toast.loadFailed', { error: String(error) }));
       })
       .finally(() => {
         if (!cancelled) setLoadingSoul(false);
@@ -557,7 +557,7 @@ function AgentSettingsModal({
     return () => {
       cancelled = true;
     };
-  }, [agent.id, agent.name, fetchMcpServers, fetchSkills]);
+  }, [agent.id, agent.name, fetchMcpServers, fetchSkills, t]);
 
   if (prevOpen !== open) {
     setPrevOpen(open);
@@ -624,9 +624,9 @@ function AgentSettingsModal({
       setBootstrapPath(result.bootstrapPath ?? bootstrapPath);
       setDefaultSkillIdsText((result.defaultSkillIds ?? configuredSkillIds).join('\n'));
       setDefaultMcpServerIdsText((result.defaultMcpServerIds ?? configuredMcpServerIds).join('\n'));
-      toast.success('Agent 配置已保存');
+      toast.success(t('identityTools.toast.saved'));
     } catch (error) {
-      toast.error(`保存 Agent 配置失败: ${String(error)}`);
+      toast.error(t('identityTools.toast.saveFailed', { error: String(error) }));
     } finally {
       setSavingSoul(false);
     }
@@ -730,52 +730,52 @@ function AgentSettingsModal({
           <div className="space-y-4">
             <div>
               <h3 className="text-xl font-serif text-foreground font-normal tracking-tight">
-                Agent 身份与工具
+                {t('identityTools.title')}
               </h3>
               <p className="text-sm text-foreground/70 mt-1">
-                Agent 保存身份、模型、默认技能和 MCP 服务；工作区只选择并覆盖这些能力。
+                {t('identityTools.description')}
               </p>
             </div>
             <div className="grid gap-3 md:grid-cols-2">
               <div className="rounded-2xl bg-black/5 dark:bg-white/5 border border-transparent p-4">
-                <p className="text-tiny uppercase tracking-[0.08em] text-muted-foreground/80 font-medium">默认技能</p>
+                <p className="text-tiny uppercase tracking-[0.08em] text-muted-foreground/80 font-medium">{t('identityTools.defaultSkills')}</p>
                 <p className="mt-2 text-sm text-foreground/80">
                   {configuredSkillIds.length > 0
-                    ? configuredSkillIds.join('、')
+                    ? configuredSkillIds.join(t('identityTools.listSeparator'))
                     : enabledSkillNames.length > 0
-                      ? enabledSkillNames.join('、')
-                      : '暂无默认技能'}
+                      ? enabledSkillNames.join(t('identityTools.listSeparator'))
+                      : t('identityTools.noDefaultSkills')}
                 </p>
               </div>
               <div className="rounded-2xl bg-black/5 dark:bg-white/5 border border-transparent p-4">
                 <p className="text-tiny uppercase tracking-[0.08em] text-muted-foreground/80 font-medium">Agent MCP</p>
                 <p className="mt-2 text-sm text-foreground/80">
                   {configuredMcpServerIds.length > 0
-                    ? configuredMcpServerIds.join('、')
+                    ? configuredMcpServerIds.join(t('identityTools.listSeparator'))
                     : agentMcpServers.length > 0
-                      ? agentMcpServers.map((server) => server.name).join('、')
-                      : '暂无 Agent 作用域 MCP 服务'}
+                      ? agentMcpServers.map((server) => server.name).join(t('identityTools.listSeparator'))
+                      : t('identityTools.noAgentMcp')}
                 </p>
               </div>
             </div>
             <div className="grid gap-3 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="agent-default-skills" className={labelClasses}>默认技能 ID</Label>
+                <Label htmlFor="agent-default-skills" className={labelClasses}>{t('identityTools.defaultSkillIds')}</Label>
                 <Textarea
                   id="agent-default-skills"
                   value={defaultSkillIdsText}
                   onChange={(event) => setDefaultSkillIdsText(event.target.value)}
-                  placeholder="每行一个 skill id，可由工作区覆盖"
+                  placeholder={t('identityTools.defaultSkillIdsPlaceholder')}
                   className="min-h-[88px] resize-y rounded-2xl bg-black/5 dark:bg-white/5 border-transparent font-mono text-xs leading-relaxed"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="agent-default-mcp" className={labelClasses}>默认 MCP 服务 ID</Label>
+                <Label htmlFor="agent-default-mcp" className={labelClasses}>{t('identityTools.defaultMcpIds')}</Label>
                 <Textarea
                   id="agent-default-mcp"
                   value={defaultMcpServerIdsText}
                   onChange={(event) => setDefaultMcpServerIdsText(event.target.value)}
-                  placeholder="每行一个 MCP server id，可由工作区覆盖"
+                  placeholder={t('identityTools.defaultMcpIdsPlaceholder')}
                   className="min-h-[88px] resize-y rounded-2xl bg-black/5 dark:bg-white/5 border-transparent font-mono text-xs leading-relaxed"
                 />
               </div>
@@ -783,9 +783,9 @@ function AgentSettingsModal({
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <Label className={labelClasses}>Agent 角色</Label>
+                  <Label className={labelClasses}>{t('identityTools.agentRole')}</Label>
                   <p className="mt-1 text-xs text-muted-foreground font-mono break-all">
-                    {bootstrapPath || '运行时路径将在加载后显示'}
+                    {bootstrapPath || t('identityTools.bootstrapPathPending')}
                   </p>
                 </div>
                 <Button
@@ -794,14 +794,14 @@ function AgentSettingsModal({
                   disabled={savingSoul || loadingSoul}
                   className="h-9 text-meta font-medium rounded-full px-4 border-black/10 dark:border-white/10 bg-transparent hover:bg-black/5 dark:hover:bg-white/5 shadow-none text-foreground/80 hover:text-foreground"
                 >
-                  {savingSoul ? <RefreshCw className="h-4 w-4 animate-spin" /> : '保存角色'}
+                  {savingSoul ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('identityTools.saveRole')}
                 </Button>
               </div>
 
               <Tabs value={soulEditorTab} onValueChange={(v) => setSoulEditorTab(v as 'structured' | 'advanced')}>
                 <TabsList className="w-full rounded-xl bg-black/5 dark:bg-white/5 p-1">
-                  <TabsTrigger value="structured" className="rounded-lg flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-black/30">结构化</TabsTrigger>
-                  <TabsTrigger value="advanced" className="rounded-lg flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-black/30">高级 (Markdown)</TabsTrigger>
+                  <TabsTrigger value="structured" className="rounded-lg flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-black/30">{t('identityTools.structuredTab')}</TabsTrigger>
+                  <TabsTrigger value="advanced" className="rounded-lg flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-black/30">{t('identityTools.advancedTab')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="structured" className="mt-4">
                   <RoleProfileEditor
@@ -815,7 +815,7 @@ function AgentSettingsModal({
                     id="agent-soul-md"
                     value={soulMd}
                     onChange={(event) => setSoulMd(event.target.value)}
-                    placeholder={loadingSoul ? '正在加载...' : '描述这个 Agent 的身份、偏好和工作方式'}
+                    placeholder={loadingSoul ? t('common:status.loading') : t('identityTools.soulPlaceholder')}
                     className="min-h-[180px] resize-y rounded-2xl bg-black/5 dark:bg-white/5 border-transparent font-mono text-xs leading-relaxed"
                   />
                 </TabsContent>
@@ -830,16 +830,16 @@ function AgentSettingsModal({
                 className="flex items-center gap-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
                 <ChevronDown className={`h-4 w-4 transition-transform ${showBootstrapFiles ? 'rotate-0' : '-rotate-90'}`} />
-                引导文件 ({['AGENTS', 'TOOLS', 'USER', 'IDENTITY', 'HEARTBEAT'].join(', ')})
+                {t('identityTools.bootstrapFiles', { files: ['AGENTS', 'TOOLS', 'USER', 'IDENTITY', 'HEARTBEAT'].join(', ') })}
               </button>
               {showBootstrapFiles && (
                 <div className="space-y-3 pl-1">
                   {([
-                    { label: 'AGENTS.md', desc: '行为指令、红线、会话启动指南', value: agentsMd, setter: setAgentsMd },
-                    { label: 'TOOLS.md', desc: '工具使用指南', value: toolsMd, setter: setToolsMd },
-                    { label: 'USER.md', desc: '用户画像和偏好', value: userMd, setter: setUserMd },
-                    { label: 'IDENTITY.md', desc: '身份标识（名称、emoji、头像）', value: identityMd, setter: setIdentityMd },
-                    { label: 'HEARTBEAT.md', desc: '定期后台行为', value: heartbeatMd, setter: setHeartbeatMd },
+                    { label: 'AGENTS.md', desc: t('identityTools.bootstrapDescriptions.agents'), value: agentsMd, setter: setAgentsMd },
+                    { label: 'TOOLS.md', desc: t('identityTools.bootstrapDescriptions.tools'), value: toolsMd, setter: setToolsMd },
+                    { label: 'USER.md', desc: t('identityTools.bootstrapDescriptions.user'), value: userMd, setter: setUserMd },
+                    { label: 'IDENTITY.md', desc: t('identityTools.bootstrapDescriptions.identity'), value: identityMd, setter: setIdentityMd },
+                    { label: 'HEARTBEAT.md', desc: t('identityTools.bootstrapDescriptions.heartbeat'), value: heartbeatMd, setter: setHeartbeatMd },
                   ] as const).map(({ label, desc, value, setter }) => (
                     <div key={label} className="space-y-1.5">
                       <p className="text-xs font-medium text-foreground/60">{label} — {desc}</p>

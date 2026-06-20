@@ -2,11 +2,16 @@
  * Settings Page
  * Application configuration
  */
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
+  ArrowLeft,
+  Briefcase,
+  ChevronRight,
   Sun,
   Moon,
   Monitor,
+  Palette,
   RefreshCw,
   ExternalLink,
   Copy,
@@ -19,8 +24,11 @@ import {
   ScanSearch,
   Check,
   ShieldCheck,
+  Server,
+  Wrench,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
@@ -68,8 +76,40 @@ type ControlUiInfo = {
   port: number;
 };
 
+type SettingsSectionId = 'overview' | 'general' | 'work-modes' | 'system' | 'developer';
+
+const SETTINGS_SECTION_SEGMENTS: Record<Exclude<SettingsSectionId, 'overview'>, string> = {
+  general: 'general',
+  'work-modes': 'work-modes',
+  system: 'system',
+  developer: 'developer',
+};
+
+function resolveSettingsSection(pathname: string): SettingsSectionId {
+  const normalized = pathname.replace(/\/+$/, '');
+  const segment = normalized.split('/').filter(Boolean)[1];
+  if (!segment) return 'overview';
+
+  const match = Object.entries(SETTINGS_SECTION_SEGMENTS)
+    .find(([, value]) => value === segment);
+  return match ? (match[0] as SettingsSectionId) : 'overview';
+}
+
+function SettingsPageShell({ children }: { children: ReactNode }) {
+  return (
+    <div data-testid="settings-page" className="flex h-[calc(100vh-2.5rem)] -m-6 flex-col overflow-hidden dark:bg-background">
+      <div className="mx-auto flex h-full w-full max-w-5xl flex-col p-10 pt-12">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export function Settings() {
   const { t, i18n } = useTranslation('settings');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentSection = resolveSettingsSection(location.pathname);
   const {
     theme,
     setTheme,
@@ -252,12 +292,12 @@ export function Settings() {
         setRemoteControlTargetId(preferredTarget.id);
       }
       if (result.success) {
-        toast.success(`已连接 Electron CDP，发现 ${result.targets.length} 个页面`);
+        toast.success(t('remoteControl.toast.connected', { count: result.targets.length }));
       } else {
-        toast.error(result.error || '连接 Electron CDP 失败');
+        toast.error(result.error || t('remoteControl.toast.connectFailed'));
       }
     } catch (error) {
-      toast.error(`连接 Electron CDP 失败: ${toUserMessage(error)}`);
+      toast.error(t('remoteControl.toast.connectFailedWithError', { error: toUserMessage(error) }));
     } finally {
       setInspectingCdp(false);
     }
@@ -272,7 +312,7 @@ export function Settings() {
     try {
       return await action();
     } catch (error) {
-      toast.error(`${label}失败: ${toUserMessage(error)}`);
+      toast.error(t('remoteControl.toast.actionFailed', { action: label, error: toUserMessage(error) }));
       return null;
     } finally {
       setRemoteAction(null);
@@ -280,25 +320,25 @@ export function Settings() {
   };
 
   const handleRemotePageInfo = async () => {
-    const result = await runRemoteAction('读取页面信息', () => hostApi.remoteControl.pageInfo(remoteTargetPayload()));
+    const result = await runRemoteAction(t('remoteControl.actions.pageInfo'), () => hostApi.remoteControl.pageInfo(remoteTargetPayload()));
     if (!result) return;
     setRemoteControlPageInfo(result);
     if (result.success) {
-      toast.success('页面信息已刷新');
+      toast.success(t('remoteControl.toast.pageInfoRefreshed'));
     } else {
-      toast.error(result.error || '读取页面信息失败');
+      toast.error(result.error || t('remoteControl.toast.pageInfoFailed'));
     }
   };
 
   const handleRemoteScroll = async (deltaY: number) => {
-    const result = await runRemoteAction('滚动页面', () => hostApi.remoteControl.scroll({
+    const result = await runRemoteAction(t('remoteControl.actions.scroll'), () => hostApi.remoteControl.scroll({
       ...remoteTargetPayload(),
       deltaY,
     }));
     if (result?.success) {
       await handleRemotePageInfo();
     } else if (result) {
-      toast.error(result.error || '滚动页面失败');
+      toast.error(result.error || t('remoteControl.toast.scrollFailed'));
     }
   };
 
@@ -306,20 +346,20 @@ export function Settings() {
     const info = remoteControlPageInfo?.success ? remoteControlPageInfo : await hostApi.remoteControl.pageInfo(remoteTargetPayload());
     const x = Math.round((info.viewport?.width ?? 1000) / 2);
     const y = Math.round((info.viewport?.height ?? 700) / 2);
-    const result = await runRemoteAction('点击页面', () => hostApi.remoteControl.click({
+    const result = await runRemoteAction(t('remoteControl.actions.click'), () => hostApi.remoteControl.click({
       ...remoteTargetPayload(),
       x,
       y,
     }));
     if (result?.success) {
-      toast.success(`已点击页面中心 (${x}, ${y})`);
+      toast.success(t('remoteControl.toast.clickedCenter', { x, y }));
     } else if (result) {
-      toast.error(result.error || '点击页面失败');
+      toast.error(result.error || t('remoteControl.toast.clickFailed'));
     }
   };
 
   const handleRemoteScreenshot = async () => {
-    const result = await runRemoteAction('页面截图', () => hostApi.remoteControl.screenshot({
+    const result = await runRemoteAction(t('remoteControl.actions.screenshot'), () => hostApi.remoteControl.screenshot({
       ...remoteTargetPayload(),
       fullPage: true,
       format: 'png',
@@ -327,9 +367,9 @@ export function Settings() {
     if (!result) return;
     setRemoteControlScreenshot(result);
     if (result.success) {
-      toast.success('截图已生成');
+      toast.success(t('remoteControl.toast.screenshotReady'));
     } else {
-      toast.error(result.error || '页面截图失败');
+      toast.error(result.error || t('remoteControl.toast.screenshotFailed'));
     }
   };
 
@@ -416,16 +456,16 @@ export function Settings() {
     void refreshRemoteControlStatus();
   }, [cdpRemoteControlEnabled, cdpRemoteDebuggingPort]);
 
-  const refreshSandboxStatus = async () => {
+  const refreshSandboxStatus = useCallback(async () => {
     setSandboxLoading(true);
     try {
       setSandboxStatus(await hostApi.sandbox.status());
     } catch (error) {
-      toast.error(`读取沙盒状态失败: ${toUserMessage(error)}`);
+      toast.error(`${t('sandbox.loadFailed')}: ${toUserMessage(error)}`);
     } finally {
       setSandboxLoading(false);
     }
-  };
+  }, [t]);
 
   const updateSandboxProfile = async (patch: {
     providerId?: SandboxProviderId;
@@ -451,7 +491,7 @@ export function Settings() {
   useEffect(() => {
     if (!devModeUnlocked) return;
     void refreshSandboxStatus();
-  }, [devModeUnlocked]);
+  }, [devModeUnlocked, refreshSandboxStatus]);
 
   useEffect(() => {
     setProxyServerDraft(proxyServer);
@@ -533,7 +573,7 @@ export function Settings() {
   const handleSaveCdpSettings = async () => {
     const port = Number(cdpPortDraft);
     if (!Number.isInteger(port) || port <= 0 || port > 65535) {
-      toast.error('CDP 端口必须是 1-65535 之间的整数');
+      toast.error(t('remoteControl.toast.invalidPort'));
       return;
     }
     setSavingCdp(true);
@@ -545,9 +585,9 @@ export function Settings() {
       setCdpRemoteControlEnabled(cdpEnabledDraft);
       setCdpRemoteDebuggingPort(port);
       await refreshRemoteControlStatus();
-      toast.success('远程调控设置已保存，重启后生效');
+      toast.success(t('remoteControl.toast.saved'));
     } catch (error) {
-      toast.error(`保存远程调控设置失败: ${toUserMessage(error)}`);
+      toast.error(t('remoteControl.toast.saveFailed', { error: toUserMessage(error) }));
     } finally {
       setSavingCdp(false);
     }
@@ -559,13 +599,13 @@ export function Settings() {
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <RadioTower className="h-4 w-4 text-foreground/70" />
-            <Label className="text-sm font-medium text-foreground">Electron 远程调控</Label>
+            <Label className="text-sm font-medium text-foreground">{t('remoteControl.title')}</Label>
             <Badge variant={remoteControlStatus?.effectiveEnabled ? 'secondary' : 'outline'} className="rounded-full">
-              {remoteControlStatus?.effectiveEnabled ? '当前已生效' : '当前未生效'}
+              {remoteControlStatus?.effectiveEnabled ? t('remoteControl.status.effective') : t('remoteControl.status.inactive')}
             </Badge>
           </div>
           <p className="mt-1 text-meta text-muted-foreground">
-            暴露 Electron CDP 调试端口，仅建议绑定本机并在可信环境中使用。保存配置后需要重启 ClawX。
+            {t('remoteControl.description')}
           </p>
         </div>
         <Switch
@@ -576,7 +616,7 @@ export function Settings() {
       </div>
       <div className="grid gap-3 md:grid-cols-[180px_1fr]">
         <div className="space-y-2">
-          <Label htmlFor="cdp-port" className="text-meta text-foreground/80">CDP 端口</Label>
+          <Label htmlFor="cdp-port" className="text-meta text-foreground/80">{t('remoteControl.port')}</Label>
           <Input
             id="cdp-port"
             value={cdpPortDraft}
@@ -587,13 +627,13 @@ export function Settings() {
           />
         </div>
         <div className="space-y-2 text-xs text-muted-foreground">
-          <p>配置端点：127.0.0.1:{cdpPortDraft || '9222'} /json/version</p>
-          <p>当前端点：{remoteControlStatus?.endpoint || '-'}</p>
+          <p>{t('remoteControl.configEndpoint', { port: cdpPortDraft || '9222' })}</p>
+          <p>{t('remoteControl.currentEndpoint', { endpoint: remoteControlStatus?.endpoint || '-' })}</p>
           {remoteControlStatus?.envOverride && (
-            <p className="text-amber-600 dark:text-amber-300">当前进程由 CLAWX_REMOTE_DEBUGGING_PORT 环境变量覆盖。</p>
+            <p className="text-amber-600 dark:text-amber-300">{t('remoteControl.envOverride')}</p>
           )}
           {remoteControlStatus?.restartRequired && (
-            <p className="text-amber-600 dark:text-amber-300">配置与当前进程不一致，请重启应用使其生效。</p>
+            <p className="text-amber-600 dark:text-amber-300">{t('remoteControl.restartRequired')}</p>
           )}
         </div>
       </div>
@@ -612,7 +652,7 @@ export function Settings() {
           onClick={() => void refreshRemoteControlStatus()}
           className="rounded-xl h-10 px-4 hover:bg-black/5 dark:hover:bg-white/5"
         >
-          刷新状态
+          {t('remoteControl.actions.refreshStatus')}
         </Button>
         <Button
           variant="ghost"
@@ -622,13 +662,13 @@ export function Settings() {
           className="rounded-xl h-10 px-4 hover:bg-black/5 dark:hover:bg-white/5"
         >
           <RadioTower className={cn('h-4 w-4 mr-2', inspectingCdp && 'animate-pulse')} />
-          {inspectingCdp ? '连接中' : '连接调试'}
+          {inspectingCdp ? t('remoteControl.actions.connecting') : t('remoteControl.actions.connectDebug')}
         </Button>
       </div>
       {remoteControlInspect && (
         <div className="rounded-xl bg-black/5 dark:bg-white/5 p-3 text-xs text-muted-foreground space-y-2">
           <div className="grid gap-1 font-mono">
-            <p>连接结果：{remoteControlInspect.success ? '成功' : '失败'}</p>
+            <p>{t('remoteControl.inspect.result', { result: remoteControlInspect.success ? t('remoteControl.inspect.success') : t('remoteControl.inspect.failure') })}</p>
             <p>Browser：{remoteControlInspect.browser || '-'}</p>
             <p>Protocol：{remoteControlInspect.protocolVersion || '-'}</p>
             <p>WebSocket：{remoteControlInspect.webSocketDebuggerUrl || '-'}</p>
@@ -638,7 +678,7 @@ export function Settings() {
           </div>
           {remoteControlInspect.targets.length > 0 && (
             <div className="space-y-1">
-              <p className="text-foreground/80">可调试页面</p>
+              <p className="text-foreground/80">{t('remoteControl.inspect.targets')}</p>
               {remoteControlInspect.targets.slice(0, 5).map((target) => (
                 <button
                   key={target.id || target.webSocketDebuggerUrl || target.url}
@@ -668,7 +708,7 @@ export function Settings() {
                   className="h-8 rounded-full px-3"
                 >
                   <ScanSearch className="mr-1.5 h-3.5 w-3.5" />
-                  页面信息
+                  {t('remoteControl.actions.pageInfo')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -678,7 +718,7 @@ export function Settings() {
                   className="h-8 rounded-full px-3"
                 >
                   <MoveDown className="mr-1.5 h-3.5 w-3.5" />
-                  向下滚动
+                  {t('remoteControl.actions.scrollDown')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -688,7 +728,7 @@ export function Settings() {
                   className="h-8 rounded-full px-3"
                 >
                   <MousePointerClick className="mr-1.5 h-3.5 w-3.5" />
-                  点击中心
+                  {t('remoteControl.actions.clickCenter')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -699,10 +739,10 @@ export function Settings() {
                   className="h-8 rounded-full px-3"
                 >
                   <Camera className="mr-1.5 h-3.5 w-3.5" />
-                  截图
+                  {t('remoteControl.actions.screenshot')}
                 </Button>
                 {remoteAction && (
-                  <span className="text-xs text-muted-foreground">{remoteAction}中...</span>
+                  <span className="text-xs text-muted-foreground">{t('remoteControl.actions.running', { action: remoteAction })}</span>
                 )}
               </div>
               {remoteControlPageInfo && (
@@ -726,7 +766,7 @@ export function Settings() {
                 <div className="overflow-hidden rounded-xl border border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/5">
                   <img
                     src={remoteControlScreenshot.dataUrl}
-                    alt="Electron CDP 截图"
+                    alt={t('remoteControl.screenshotAlt')}
                     className="max-h-72 w-full object-contain"
                   />
                 </div>
@@ -744,17 +784,17 @@ export function Settings() {
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-foreground/70" />
-            <Label className="text-sm font-medium text-foreground">沙盒与 MCP 运行时</Label>
+            <Label className="text-sm font-medium text-foreground">{t('sandbox.title')}</Label>
             <Badge variant={sandboxStatus?.runtimeLevel === 'strong' ? 'secondary' : 'outline'} className="rounded-full">
               {sandboxStatus?.runtimeLevel === 'strong'
-                ? '强隔离'
+                ? t('sandbox.runtimeLevels.strong')
                 : sandboxStatus?.runtimeLevel === 'light'
-                  ? '轻量隔离'
-                  : '策略兜底'}
+                  ? t('sandbox.runtimeLevels.light')
+                  : t('sandbox.runtimeLevels.policy')}
             </Badge>
           </div>
           <p className="mt-1 text-meta text-muted-foreground">
-            OpenClaw 原生沙盒优先；无 Docker/Podman 时降级为轻量隔离或策略兜底，并明确标注安全等级。
+            {t('sandbox.description')}
           </p>
         </div>
         <Button
@@ -765,17 +805,17 @@ export function Settings() {
           className="rounded-xl h-9 px-4 bg-transparent border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
         >
           <RefreshCw className={cn('h-4 w-4 mr-2', sandboxLoading && 'animate-spin')} />
-          刷新
+          {t('sandbox.refresh')}
         </Button>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.04] p-3">
           <p className="text-tiny text-muted-foreground">Provider</p>
-          <p className="mt-1 truncate text-sm text-foreground">{sandboxStatus?.provider.label ?? '检测中'}</p>
+          <p className="mt-1 truncate text-sm text-foreground">{sandboxStatus?.provider.label ?? t('sandbox.loading')}</p>
         </div>
         <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.04] p-3">
-          <p className="text-tiny text-muted-foreground">权限模式</p>
+          <p className="text-tiny text-muted-foreground">{t('sandbox.permissionMode')}</p>
           <p className="mt-1 font-mono text-sm text-foreground">{sandboxStatus?.permissionMode ?? '-'}</p>
         </div>
         <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.04] p-3">
@@ -785,7 +825,7 @@ export function Settings() {
           </p>
         </div>
         <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.04] p-3">
-          <p className="text-tiny text-muted-foreground">网络策略</p>
+          <p className="text-tiny text-muted-foreground">{t('sandbox.networkPolicy')}</p>
           <p className="mt-1 font-mono text-sm text-foreground">{sandboxStatus?.networkPolicy ?? 'disabled'}</p>
         </div>
       </div>
@@ -804,7 +844,7 @@ export function Settings() {
             <div className="flex items-center justify-between gap-2">
               <p className="truncate text-xs font-medium text-foreground">{provider.label}</p>
               <Badge variant={provider.available ? 'secondary' : 'outline'} className="rounded-full text-2xs">
-                {provider.available ? '可用' : '不可用'}
+                {provider.available ? t('sandbox.available') : t('sandbox.unavailable')}
               </Badge>
             </div>
             <p className="mt-1 line-clamp-2 text-2xs text-muted-foreground">{provider.reason}</p>
@@ -1132,29 +1172,129 @@ export function Settings() {
     }
   };
 
+  const sectionMeta = {
+    general: {
+      title: t('navigation.general.title'),
+      description: t('navigation.general.description'),
+    },
+    'work-modes': {
+      title: t('navigation.workModes.title'),
+      description: t('navigation.workModes.description'),
+    },
+    system: {
+      title: t('navigation.system.title'),
+      description: t('navigation.system.description'),
+    },
+    developer: {
+      title: t('navigation.developer.title'),
+      description: t('navigation.developer.description'),
+    },
+  } satisfies Record<Exclude<SettingsSectionId, 'overview'>, { title: string; description: string }>;
+
+  const settingsSections = [
+    {
+      id: 'general',
+      to: '/settings/general',
+      icon: <Palette className="h-5 w-5" />,
+      ...sectionMeta.general,
+      testId: 'settings-nav-general',
+    },
+    {
+      id: 'work-modes',
+      to: '/settings/work-modes',
+      icon: <Briefcase className="h-5 w-5" />,
+      ...sectionMeta['work-modes'],
+      testId: 'settings-nav-work-modes',
+    },
+    {
+      id: 'system',
+      to: '/settings/system',
+      icon: <Server className="h-5 w-5" />,
+      ...sectionMeta.system,
+      testId: 'settings-nav-system',
+    },
+    {
+      id: 'developer',
+      to: '/settings/developer',
+      icon: <Wrench className="h-5 w-5" />,
+      ...sectionMeta.developer,
+      testId: 'settings-nav-developer',
+    },
+  ] as const;
+
+  const pageTitle = currentSection === 'overview'
+    ? t('title')
+    : sectionMeta[currentSection].title;
+  const pageSubtitle = currentSection === 'overview'
+    ? t('subtitle')
+    : sectionMeta[currentSection].description;
+
   return (
-    <div data-testid="settings-page" className="flex flex-col -m-6 dark:bg-background h-[calc(100vh-2.5rem)] overflow-hidden">
-      <div className="w-full max-w-5xl mx-auto flex flex-col h-full p-10 pt-16">
+    <SettingsPageShell>
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-start justify-between mb-12 shrink-0 gap-4">
+        <div className="mb-10 flex shrink-0 flex-col justify-between gap-4 md:flex-row md:items-start">
           <div>
-            <h1 className="text-5xl md:text-6xl font-serif text-foreground mb-3 font-normal tracking-tight">
-              {t('title')}
+            {currentSection !== 'overview' && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate('/settings')}
+                data-testid="settings-back-button"
+                className="mb-5 h-9 rounded-lg border-black/10 bg-transparent px-3 text-sm dark:border-white/10"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                {t('navigation.back')}
+              </Button>
+            )}
+            <h1 className={cn(
+              'font-serif font-normal tracking-tight text-foreground',
+              currentSection === 'overview' ? 'mb-3 text-5xl md:text-6xl' : 'mb-2 text-4xl md:text-5xl',
+            )}>
+              {pageTitle}
             </h1>
             <p className="text-subtitle text-foreground/70 font-medium">
-              {t('subtitle')}
+              {pageSubtitle}
             </p>
           </div>
         </div>
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2 space-y-12">
-          <Suspense fallback={null}>
-            <WorkHeatGraphLazy />
-          </Suspense>
+          {currentSection === 'overview' && (
+            <>
+              <Suspense fallback={null}>
+                <WorkHeatGraphLazy />
+              </Suspense>
+
+              <div data-testid="settings-overview" className="grid gap-4 md:grid-cols-2">
+                {settingsSections.map((section) => (
+                  <Card
+                    key={section.id}
+                    className="group rounded-lg border-black/10 bg-surface-modal shadow-none transition-colors hover:bg-black/[0.03] dark:border-white/10 dark:hover:bg-white/[0.05]"
+                  >
+                    <Link
+                      to={section.to}
+                      data-testid={section.testId}
+                      className="flex h-full items-start gap-4 p-5"
+                    >
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-black/5 text-foreground/80 dark:bg-white/10">
+                        {section.icon}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-base font-medium text-foreground">{section.title}</span>
+                        <span className="mt-1 block text-sm leading-5 text-muted-foreground">{section.description}</span>
+                      </span>
+                      <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                  </Card>
+                ))}
+              </div>
+            </>
+          )}
 
           {/* Appearance */}
+          {currentSection === 'general' && (
           <div>
             <h2 className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
               {t('appearance.title')}
@@ -1218,7 +1358,10 @@ export function Settings() {
               </div>
             </div>
           </div>
+          )}
 
+          {currentSection === 'work-modes' && (
+            <>
           <Separator className="bg-black/5 dark:bg-white/5" />
 
           {/* Work Modes */}
@@ -1374,7 +1517,11 @@ export function Settings() {
               </div>
             </div>
           </div>
+            </>
+          )}
 
+          {currentSection === 'system' && (
+            <>
           <Separator className="bg-black/5 dark:bg-white/5" />
 
           {/* Gateway */}
@@ -1451,43 +1598,17 @@ export function Settings() {
                 />
               </div>
 
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-sm font-medium text-foreground">{t('advanced.devMode')}</Label>
-                  <p className="text-meta text-muted-foreground mt-1">
-                    {t('advanced.devModeDesc')}
-                  </p>
-                </div>
-                <Switch
-                  checked={devModeUnlocked}
-                  onCheckedChange={setDevModeUnlocked}
-                  data-testid="settings-dev-mode-switch"
-                />
-              </div>
-
               {remoteControlSection}
               {devModeUnlocked && sandboxRuntimeSection}
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-sm font-medium text-foreground">{t('advanced.telemetry')}</Label>
-                  <p className="text-meta text-muted-foreground mt-1">
-                    {t('advanced.telemetryDesc')}
-                  </p>
-                </div>
-                <Switch
-                  checked={telemetryEnabled}
-                  onCheckedChange={setTelemetryEnabled}
-                />
-              </div>
-
             </div>
           </div>
+            </>
+          )}
 
 
           {/* Developer */}
-          {devModeUnlocked && (
+          {currentSection === 'developer' && (
             <>
               <Separator className="bg-black/5 dark:bg-white/5" />
               <div data-testid="settings-developer-section">
@@ -1495,6 +1616,35 @@ export function Settings() {
                   {t('developer.title')}
                 </h2>
                 <div className="space-y-8">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label className="text-sm font-medium text-foreground">{t('advanced.devMode')}</Label>
+                      <p className="text-meta text-muted-foreground mt-1">
+                        {t('advanced.devModeDesc')}
+                      </p>
+                    </div>
+                    <Switch
+                      checked={devModeUnlocked}
+                      onCheckedChange={setDevModeUnlocked}
+                      data-testid="settings-dev-mode-switch"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label className="text-sm font-medium text-foreground">{t('advanced.telemetry')}</Label>
+                      <p className="text-meta text-muted-foreground mt-1">
+                        {t('advanced.telemetryDesc')}
+                      </p>
+                    </div>
+                    <Switch
+                      checked={telemetryEnabled}
+                      onCheckedChange={setTelemetryEnabled}
+                    />
+                  </div>
+
+                  {devModeUnlocked && (
+                    <>
                   {/* Gateway Proxy */}
                   <div className="space-y-4" data-testid="settings-proxy-section">
                     <div className="flex items-center justify-between">
@@ -1842,11 +1992,15 @@ export function Settings() {
                       </div>
                     )}
                   </div>
+                    </>
+                  )}
                 </div>
               </div>
             </>
           )}
 
+          {currentSection === 'general' && (
+            <>
           <Separator className="bg-black/5 dark:bg-white/5" />
 
           {/* Updates */}
@@ -1910,10 +2064,11 @@ export function Settings() {
               </div>
             </div>
           </div>
+            </>
+          )}
 
         </div>
-      </div>
-    </div>
+      </SettingsPageShell>
   );
 }
 

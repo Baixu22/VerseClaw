@@ -17,6 +17,7 @@ import {
   Layers3,
   ListChecks,
   Loader2,
+  PauseCircle,
   Play,
   RefreshCw,
   ShieldAlert,
@@ -39,6 +40,7 @@ import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
 import type { TaskLoopLifecycleEvent } from '@shared/host-events/contract';
+import type { MissionLifecycleEvent, MissionStatus } from '@shared/types/mission-control';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -85,18 +87,45 @@ function unwrapRpc(result: unknown): UnwrapResult {
       const approval = isRecord(result.approval) ? (result.approval as unknown as PermissionApprovalEvent) : undefined;
       return {
         ok: false,
-        message: String(result.error ?? '该操作需要在当前权限模式下批准'),
+        message: String(result.error ?? 'This operation requires approval in the current permission mode'),
         approval,
       };
     }
-    return { ok: false, message: String(result.error ?? 'Gateway 请求被拒绝') };
+    return { ok: false, message: String(result.error ?? 'Gateway request was rejected') };
   }
   return { ok: true, data: result };
+}
+
+function readMissionPanelResult(value: unknown): MissionPanelResult {
+  const record = isRecord(value) ? value : {};
+  return {
+    missionId: String(record.missionId ?? ''),
+    status: String(record.status ?? ''),
+    phase: String(record.phase ?? ''),
+    tick: typeof record.tick === 'number' ? record.tick : 0,
+    reviewerDecision: typeof record.lastDecision === 'string' ? record.lastDecision : undefined,
+    nextWakeAt: typeof record.nextWakeAt === 'number' ? record.nextWakeAt : undefined,
+    blockedReason: typeof record.blockedReason === 'string' ? record.blockedReason : undefined,
+    traceId: typeof record.traceId === 'string' ? record.traceId : undefined,
+    taskLoopRunId: typeof record.taskLoopRunId === 'string' ? record.taskLoopRunId : undefined,
+  };
 }
 
 type RunResult =
   | { kind: 'success'; spawnedRunIds: string[] }
   | { kind: 'failure'; failures: Array<{ roleName: string; error?: string }> };
+
+type MissionPanelResult = {
+  missionId: string;
+  status: MissionStatus | string;
+  phase: string;
+  tick: number;
+  reviewerDecision?: string;
+  nextWakeAt?: number;
+  blockedReason?: string;
+  traceId?: string;
+  taskLoopRunId?: string;
+};
 
 type MemoryCardView = {
   id: string;
@@ -388,6 +417,9 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
   const [taskLoopEvents, setTaskLoopEvents] = useState<Record<string, TaskLoopLifecycleEvent>>({});
   const [taskLoopRunning, setTaskLoopRunning] = useState(false);
   const [taskLoopResult, setTaskLoopResult] = useState<{ loopRunId: string; status: string; phase: string; traceId?: string } | null>(null);
+  const [missionEvents, setMissionEvents] = useState<Record<string, MissionLifecycleEvent>>({});
+  const [missionRunning, setMissionRunning] = useState(false);
+  const [missionResult, setMissionResult] = useState<MissionPanelResult | null>(null);
   const [memoryCards, setMemoryCards] = useState<MemoryCardView[]>([]);
   const [memoryProposals, setMemoryProposals] = useState<MemoryProposalView[]>([]);
   const [memoryConflictItems, setMemoryConflictItems] = useState<MemoryConflictView[]>([]);
@@ -882,9 +914,36 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    if (typeof hostEvents.onMissionControlLifecycle !== 'function') {
+      return;
+    }
+    const unsubscribe = hostEvents.onMissionControlLifecycle((event) => {
+      setMissionEvents((prev) => ({
+        ...prev,
+        [`${event.missionId}:${event.tick}:${event.phase}:${event.status}:${event.ts}`]: event,
+      }));
+      setMissionResult((prev) => {
+        if (prev && prev.missionId !== event.missionId) return prev;
+        return {
+          missionId: event.missionId,
+          status: event.status,
+          phase: event.phase,
+          tick: event.tick,
+          reviewerDecision: event.reviewerDecision,
+          nextWakeAt: event.nextWakeAt,
+          blockedReason: event.blockedReason,
+          traceId: event.traceId,
+          taskLoopRunId: event.taskLoopRunId,
+        };
+      });
+    });
+    return unsubscribe;
+  }, []);
+
   const runPlan = useCallback(async () => {
     if (!task.trim()) {
-      toast.error(tt('roles.taskRequired', '请先输入任务描述'));
+      toast.error(tt('roles.taskRequired', 'Enter a task description first'));
       return;
     }
     setPlanning(true);
@@ -935,7 +994,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
         ? (unwrapped.data.failures as Array<{ roleName: string; error?: string }>)
         : [];
       setRunResult(ids.length > 0 ? { kind: 'success', spawnedRunIds: ids } : { kind: 'failure', failures });
-      toast.success(tt('roles.runStarted', '已启动编排：{{count}} 个子代理', { count: ids.length }));
+      toast.success(tt('roles.runStarted', 'Orchestration started: {{count}} subagents', { count: ids.length }));
       setPendingApproval(null);
       return true;
     },
@@ -944,11 +1003,11 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
 
   const runOrchestration = useCallback(async () => {
     if (!task.trim()) {
-      toast.error(tt('roles.taskRequired', '请先输入任务描述'));
+      toast.error(tt('roles.taskRequired', 'Enter a task description first'));
       return;
     }
     if (!anchorSession) {
-      toast.error(tt('roles.noSession', '没有可用于编排的会话，请先创建或选择一个 Agent'));
+      toast.error(tt('roles.noSession', 'No session available for orchestration. Create or select an Agent first.'));
       return;
     }
     setPendingApproval(null);
@@ -966,11 +1025,11 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
 
   const runTaskLoop = useCallback(async () => {
     if (!task.trim()) {
-      toast.error(tt('roles.taskRequired', '璇峰厛杈撳叆浠诲姟鎻忚堪'));
+      toast.error(tt('roles.taskRequired', 'Enter a task description first'));
       return;
     }
     if (!anchorSession) {
-      toast.error(tt('roles.noSession', '娌℃湁鍙敤浜庣紪鎺掔殑浼氳瘽锛岃鍏堝垱寤烘垨閫夋嫨涓€涓?Agent'));
+      toast.error(tt('roles.noSession', 'No session available for orchestration. Create or select an Agent first.'));
       return;
     }
     setTaskLoopRunning(true);
@@ -1003,6 +1062,63 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     }
   }, [anchorAgentId, anchorSession, selectedRole, task, tt]);
 
+  const runMissionLoop = useCallback(async () => {
+    if (!task.trim() && !missionResult?.missionId) {
+      toast.error(tt('roles.taskRequired', 'Enter a task description first'));
+      return;
+    }
+    if (!anchorSession && !missionResult?.missionId) {
+      toast.error(tt('roles.noSession', 'No session available for orchestration. Create or select an Agent first.'));
+      return;
+    }
+    setMissionRunning(true);
+    try {
+      const result = await hostApi.gateway.rpc('mission.run', {
+        ...(missionResult?.missionId ? { missionId: missionResult.missionId } : {}),
+        ...(task.trim() ? { objective: task.trim() } : {}),
+        sessionKey: anchorSession,
+        agentId: anchorAgentId,
+        ...(selectedRole ? { leadRole: selectedRole } : {}),
+      });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      const next = readMissionPanelResult(unwrapped.data.mission);
+      setMissionResult(next);
+      toast.success(tt('roles.missionStarted', 'Mission {{status}} at tick {{tick}}', {
+        status: next.status || 'unknown',
+        tick: next.tick,
+      }));
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMissionRunning(false);
+    }
+  }, [anchorAgentId, anchorSession, missionResult?.missionId, selectedRole, task, tt]);
+
+  const controlMission = useCallback(async (action: 'pause' | 'resume' | 'cancel') => {
+    const missionId = missionResult?.missionId;
+    if (!missionId) return;
+    setMissionRunning(true);
+    try {
+      const result = await hostApi.gateway.rpc(`mission.${action}`, { missionId });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      const next = readMissionPanelResult(unwrapped.data.mission);
+      setMissionResult(next);
+      toast.success(tt('roles.missionUpdated', 'Mission {{status}}', { status: next.status || 'unknown' }));
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMissionRunning(false);
+    }
+  }, [missionResult?.missionId, tt]);
+
   const approveRun = useCallback(async () => {
     if (!pendingApproval) return;
     setRunning(true);
@@ -1012,7 +1128,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
         decision: 'approved',
       });
       if (!decision.success) {
-        toast.error(decision.error || tt('roles.approveFailed', '审批失败'));
+        toast.error(decision.error || tt('roles.approveFailed', 'Approval failed'));
         return;
       }
       await executeRun(pendingApproval.id);
@@ -1035,12 +1151,12 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bot className="h-5 w-5 text-primary" />
-            <CardTitle className="text-base">{tt('roles.title', '角色与编排')}</CardTitle>
+            <CardTitle className="text-base">{tt('roles.title', 'Roles & Orchestration')}</CardTitle>
           </div>
           <ChevronDown className={cn('h-4 w-4 transition-transform', expanded && 'rotate-180')} />
         </div>
         <CardDescription>
-          {tt('roles.description', '基于角色契约的子代理编排（角色驱动的工具白名单、模型与思考强度）。')}
+          {tt('roles.description', 'Role-contract-driven subagent orchestration (role-driven tool allowlist, model, and thinking effort).')}
         </CardDescription>
       </CardHeader>
 
@@ -1049,7 +1165,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
           {/* Section A: available roles */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{tt('roles.available', '可用角色')}</span>
+              <span className="text-sm font-medium">{tt('roles.available', 'Available roles')}</span>
               <Button variant="ghost" size="sm" onClick={() => void loadRoles()} disabled={loading}>
                 <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
               </Button>
@@ -1724,25 +1840,29 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
 
           {/* Section B: orchestration task */}
           <div className="space-y-3 border-t border-border/60 pt-4">
-            <span className="text-sm font-medium">{tt('roles.orchestrate', '编排任务')}</span>
+            <span className="text-sm font-medium">{tt('roles.orchestrate', 'Orchestrate task')}</span>
             <div className="flex gap-2">
               <Input
                 data-testid="role-orchestration-task-input"
                 value={task}
                 onChange={(event) => setTask(event.target.value)}
-                placeholder={tt('roles.taskPlaceholder', '描述要编排的任务，例如：重构这个模块并补充测试')}
+                placeholder={tt('roles.taskPlaceholder', 'Describe the task to orchestrate, e.g. refactor this module and add tests')}
               />
               <Button variant="outline" onClick={() => void runPlan()} disabled={planning}>
                 <ListChecks className="h-4 w-4 mr-1" />
-                {tt('roles.plan', '规划')}
+                {tt('roles.plan', 'Plan')}
               </Button>
               <Button onClick={() => void runOrchestration()} disabled={running}>
                 <Play className="h-4 w-4 mr-1" />
-                {tt('roles.run', '运行')}
+                {tt('roles.run', 'Run')}
               </Button>
               <Button data-testid="role-task-loop-run" variant="secondary" onClick={() => void runTaskLoop()} disabled={taskLoopRunning}>
                 {taskLoopRunning ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-1" />}
                 {tt('roles.taskLoop', 'Task loop')}
+              </Button>
+              <Button data-testid="role-mission-run" variant="secondary" onClick={() => void runMissionLoop()} disabled={missionRunning}>
+                {missionRunning ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Sparkles className="h-4 w-4 mr-1" />}
+                {tt('roles.missionControl', 'Mission Control')}
               </Button>
             </div>
 
@@ -1751,7 +1871,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
             {/* Real-time orchestration progress (fed by subagent lifecycle events) */}
             {Object.keys(lifecycleEvents).length > 0 && (
               <div data-testid="role-task-loop-progress" className="rounded-xl bg-surface-input p-3 space-y-1">
-                <p className="text-2xs font-medium text-muted-foreground">{tt('roles.progress', '编排进度')}</p>
+                <p className="text-2xs font-medium text-muted-foreground">{tt('roles.progress', 'Orchestration progress')}</p>
                 {Object.entries(lifecycleEvents).map(([roleName, entry]) => {
                   const tone = roleTone(roleName);
                   const dotClasses = toneClasses(tone);
@@ -1775,10 +1895,10 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                           entry.phase === 'error' && 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20',
                         )}
                       >
-                        {entry.phase === 'started' ? tt('roles.phaseStarted', '运行中')
-                          : entry.phase === 'completed' ? tt('roles.phaseCompleted', '完成')
-                          : entry.phase === 'verified' ? tt('roles.phaseVerified', '已验证')
-                          : tt('roles.phaseError', '失败')}
+                        {entry.phase === 'started' ? tt('roles.phaseStarted', 'running')
+                          : entry.phase === 'completed' ? tt('roles.phaseCompleted', 'done')
+                          : entry.phase === 'verified' ? tt('roles.phaseVerified', 'verified')
+                          : tt('roles.phaseError', 'failed')}
                       </Badge>
                       {entry.error && (
                         <span className="text-2xs text-muted-foreground truncate">{entry.error}</span>
@@ -1834,13 +1954,106 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
               </div>
             )}
 
+            {Object.keys(missionEvents).length > 0 && (
+              <div data-testid="role-mission-progress" className="rounded-xl bg-surface-input p-3 space-y-1">
+                <p className="text-2xs font-medium text-muted-foreground">{tt('roles.missionProgress', 'Mission Control progress')}</p>
+                {Object.values(missionEvents).slice(-4).map((event) => (
+                  <div key={`${event.missionId}:${event.tick}:${event.phase}:${event.status}:${event.ts}`} data-testid="role-mission-event" className="flex items-center gap-2">
+                    {event.status === 'running' ? (
+                      <Loader2 className="h-3 w-3 shrink-0 animate-spin text-blue-500" />
+                    ) : event.status === 'complete' ? (
+                      <CheckCircle2 className="h-3 w-3 shrink-0 text-emerald-500" />
+                    ) : event.status === 'sleeping' || event.status === 'paused' ? (
+                      <Clock3 className="h-3 w-3 shrink-0 text-amber-500" />
+                    ) : (
+                      <XCircle className="h-3 w-3 shrink-0 text-red-500" />
+                    )}
+                    <span className="text-2xs font-medium text-foreground truncate">{event.missionId}</span>
+                    <Badge variant="secondary" className="rounded-full text-2xs">
+                      {tt('roles.missionPhase', 'Tick {{tick}} · {{phase}}', { tick: event.tick, phase: event.phase })}
+                    </Badge>
+                    <Badge variant="outline" className="rounded-full text-2xs">{event.status}</Badge>
+                    {event.reviewerDecision && (
+                      <Badge variant="outline" className="rounded-full text-2xs">{event.reviewerDecision}</Badge>
+                    )}
+                    {event.blockedReason && (
+                      <span className="text-2xs text-muted-foreground truncate">{event.blockedReason}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {missionResult && (
+              <div data-testid="role-mission-result" className="rounded-xl border border-border/60 bg-surface-input p-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <CircleDot className="h-4 w-4 text-primary" />
+                  <span className="text-xs font-medium text-foreground">
+                    {tt('roles.missionSummary', 'Mission {{status}} at {{phase}}', {
+                      status: missionResult.status,
+                      phase: missionResult.phase,
+                    })}
+                  </span>
+                  <Badge variant="secondary" className="rounded-full text-2xs">
+                    {tt('roles.missionTick', 'Tick {{tick}}', { tick: missionResult.tick })}
+                  </Badge>
+                  {missionResult.reviewerDecision && (
+                    <Badge variant="outline" className="rounded-full text-2xs">{missionResult.reviewerDecision}</Badge>
+                  )}
+                </div>
+                {missionResult.nextWakeAt && (
+                  <p className="mt-1 pl-6 text-2xs text-muted-foreground">
+                    {tt('roles.missionNextWake', 'Next wake: {{time}}', { time: new Date(missionResult.nextWakeAt).toLocaleString() })}
+                  </p>
+                )}
+                {missionResult.blockedReason && (
+                  <p data-testid="role-mission-blocked" className="mt-1 pl-6 text-2xs text-amber-700 dark:text-amber-400">{missionResult.blockedReason}</p>
+                )}
+                {missionResult.traceId && (
+                  <p data-testid="role-mission-trace" className="mt-1 pl-6 font-mono text-2xs text-muted-foreground">{missionResult.traceId}</p>
+                )}
+                <div className="mt-2 flex flex-wrap gap-2 pl-6">
+                  <Button
+                    data-testid="role-mission-pause"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => void controlMission('pause')}
+                    disabled={missionRunning || ['complete', 'blocked', 'cancelled', 'error', 'paused'].includes(String(missionResult.status))}
+                  >
+                    <PauseCircle className="h-3.5 w-3.5 mr-1" />
+                    {tt('roles.missionPause', 'Pause')}
+                  </Button>
+                  <Button
+                    data-testid="role-mission-resume"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => void controlMission('resume')}
+                    disabled={missionRunning || missionResult.status !== 'paused'}
+                  >
+                    <Play className="h-3.5 w-3.5 mr-1" />
+                    {tt('roles.missionResume', 'Resume')}
+                  </Button>
+                  <Button
+                    data-testid="role-mission-cancel"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => void controlMission('cancel')}
+                    disabled={missionRunning || ['complete', 'blocked', 'cancelled', 'error'].includes(String(missionResult.status))}
+                  >
+                    <XCircle className="h-3.5 w-3.5 mr-1" />
+                    {tt('roles.missionCancel', 'Cancel')}
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {/* Run result feedback bar */}
             {runResult && runResult.kind === 'success' && (
               <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 space-y-1">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span className="text-xs font-medium text-foreground">
-                    {tt('roles.runSummary', '已启动 {{count}} 个子代理', { count: runResult.spawnedRunIds.length })}
+                    {tt('roles.runSummary', 'Started {{count}} subagents', { count: runResult.spawnedRunIds.length })}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1 pl-6">
@@ -1857,7 +2070,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                 <div className="flex items-center gap-2">
                   <XCircle className="h-4 w-4 text-red-600 dark:text-red-400 shrink-0" />
                   <span className="text-xs font-medium text-foreground">
-                    {tt('roles.runFailed', '编排未成功启动子代理')}
+                    {tt('roles.runFailed', 'Orchestration failed to spawn subagents')}
                   </span>
                 </div>
                 <ul className="mt-1 pl-6 space-y-0.5">
@@ -1879,20 +2092,20 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                     <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-foreground">
-                        {tt('roles.approvalTitle', '编排运行需要批准')}
+                        {tt('roles.approvalTitle', 'Orchestration run needs approval')}
                       </p>
                       <p className="text-[11px] text-muted-foreground truncate">
-                        {pendingApproval.reason || tt('roles.approvalHint', '当前权限模式下，生成子代理需先批准')}
+                        {pendingApproval.reason || tt('roles.approvalHint', 'Spawning subagents requires approval under the current permission mode')}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <Button size="sm" variant="ghost" className="h-7 text-xs" disabled={running} onClick={dismissApproval}>
-                      {tt('roles.cancel', '取消')}
+                      {tt('roles.cancel', 'Cancel')}
                     </Button>
                     <Button size="sm" className="h-7 text-xs" disabled={running} onClick={() => void approveRun()}>
                       <Check className="h-3 w-3 mr-1" />
-                      {tt('roles.approve', '批准并运行')}
+                      {tt('roles.approve', 'Approve & run')}
                     </Button>
                   </div>
                 </div>

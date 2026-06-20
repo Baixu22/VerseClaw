@@ -8,6 +8,7 @@ import i18n from '@/i18n';
 import { hostApi } from '@/lib/host-api';
 import { resolveSupportedLanguage } from '@shared/language';
 import type { WorkModeId, WorkModeKit, WorkModeKitConfig, WorkModeToolBundle, WorkModeToolBundleConfig } from '@shared/types/work-mode';
+import type { WorkProviderConfig, WorkProviderId } from '@shared/types/work-provider';
 
 type Theme = 'light' | 'dark' | 'system';
 type UpdateChannel = 'stable' | 'beta' | 'dev';
@@ -42,6 +43,7 @@ interface SettingsState {
   devModeUnlocked: boolean;
   workModeToolBundles: WorkModeToolBundleConfig;
   workModeKits: WorkModeKitConfig;
+  workProviders: WorkProviderConfig;
 
   // Setup
   setupComplete: boolean;
@@ -70,6 +72,7 @@ interface SettingsState {
   setDevModeUnlocked: (value: boolean) => void;
   setWorkModeToolBundles: (mode: WorkModeId, bundles: WorkModeToolBundle[]) => void;
   setWorkModeKits: (mode: WorkModeId, kits: WorkModeKit[]) => void;
+  setWorkProviderEnabled: (providerId: WorkProviderId, enabled: boolean) => void;
   markSetupComplete: () => void;
   resetSettings: () => void;
 }
@@ -97,6 +100,7 @@ const defaultSettings = {
   devModeUnlocked: false,
   workModeToolBundles: {} as WorkModeToolBundleConfig,
   workModeKits: {} as WorkModeKitConfig,
+  workProviders: {} as WorkProviderConfig,
   setupComplete: false,
 };
 
@@ -201,6 +205,19 @@ export const useSettingsStore = create<SettingsState>()(
           };
           void hostApi.settings.set('workModeKits', workModeKits).catch(() => { });
           return { workModeKits };
+        });
+      },
+      setWorkProviderEnabled: (providerId, enabled) => {
+        set((state) => {
+          const workProviders = {
+            ...(state.workProviders ?? {}),
+            [providerId]: {
+              ...(state.workProviders?.[providerId] ?? {}),
+              enabled,
+            },
+          };
+          void hostApi.settings.set('workProviders', workProviders).catch(() => { });
+          return { workProviders };
         });
       },
       markSetupComplete: () => set({ setupComplete: true }),

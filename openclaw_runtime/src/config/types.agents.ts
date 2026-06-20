@@ -145,6 +145,8 @@ export type AgentConfig = {
   runRetries?: AgentDefaultsConfig["runRetries"];
   /** Optional bounded self-checking task-loop overrides. */
   taskLoop?: AgentDefaultsConfig["taskLoop"];
+  /** Optional long-goal Mission Loop overrides. */
+  missionLoop?: AgentDefaultsConfig["missionLoop"];
   /** Optional per-agent embedded OpenClaw overrides. */
   embeddedAgent?: {
     /** Optional per-agent execution contract override. */

@@ -43,9 +43,11 @@
 
 对于需要受控自治执行的复杂任务，Agents 编排面板现在提供有界的 **任务循环**：它会编排角色子 Agent、自检证据、执行限定返工、展示实时状态，并在信心或权限不足时稳定停在 `blocked`。
 
+对于需要跨长对话、检查点、证据复核和显式定时 tick 延续的目标，Agents 面板现在提供 **Mission Control**：它通过 `mission.run` 启动或恢复 Mission，持久化 Mission 状态，基于 ResumeCheckpoint、Task Ledger、记忆和 trace 证据重建有界上下文，每个 tick 运行一次内部 `task_loop`，再由 reviewer 决定继续、修复、休眠、询问、完成或阻塞。
+
 对于需要跨大量 worker 回合稳定拆解的长任务，**ClawGraph Runtime** 提供 workspace YAML 工作流、DAG 执行、无状态角色 worker handoff、审计检查和用户复核能力，避免把完整工作流塞进一个无限增长的 chat transcript。
 
-ClawX 预置了最佳实践的模型供应商配置，原生支持 Windows 平台以及多语言设置。当然，你也可以通过 **设置 → 高级 → 开发者模式** 来进行精细的高级配置。
+ClawX 预置了最佳实践的模型供应商配置，原生支持 Windows 平台以及多语言设置。当然，你也可以通过 **设置 → 开发者 → 开发者模式** 来进行精细的高级配置。
 
 <p align="center"><strong style="font-size:1.1em; text-decoration: underline;">如需完整的企业版、专属服务支持或面向您业务场景的定制化落地辅导，请联系 <a href="mailto:public@valuecell.ai">public@valuecell.ai</a>。</strong></p>
 
@@ -109,19 +111,21 @@ ClawX 直接基于官方 **OpenClaw** 核心构建。无需单独安装，我们
 
 ### 💬 智能聊天界面
 通过现代化的聊天体验与 AI 智能体交互。支持多会话上下文、消息历史记录、Markdown 富文本渲染（包括 GitHub 风格表格以及由 KaTeX 渲染的 LaTeX 数学公式：`$行内$`、`$$块级$$`、`\(行内\)` 和 `\[块级\]`）、用于计划、选项列表、问题流和偏好设置的结构化 Tool UI 卡片，以及在多 Agent 场景下通过主输入框中的 `@agent` 直接路由到目标智能体。
-Settings 中提供工作模式管理：Plan、Build、Review 和 Docs/Data。模式会按 workspace session 保存，并通过面向产物的 Work Kits 管理报告、表格、演示、PDF、调研、网站、设计和日常事务能力。Kit 状态会显示本地 skill 是否可用，并为内置 Office skill 提供显式安装入口；下一条消息只会携带轻量的不可信意图 metadata。工作模式不会自动改变 workspace permission，也不会覆盖 OpenClaw runtime 的工具策略。
+设置 → 工作模式 中提供 Plan、Build、Review 和 Docs/Data 管理。模式会按 workspace session 保存，并通过面向产物的 Work Kits 管理报告、表格、演示、PDF、调研、网站、设计和日常事务能力。Kit 状态会显示本地 skill 可用性、由主进程拥有的轻量 Office/Search Work Provider 状态，并为内置 Office skill 提供显式安装入口；下一条消息只会携带轻量的不可信意图 metadata。Search 在用户显式配置 provider 前保持 `missingConfig`，重型格式转换、爬虫、OCR 和 dataframe runtime 只作为可选接口。工作模式不会自动改变 workspace permission，也不会覆盖 OpenClaw runtime 的工具策略。
 从输入框插入的技能会以 `/技能名` 卡片形式显示；点击卡片可在右侧预览栏打开并阅读该技能的 `SKILL.md`。
 当你使用 `@agent` 选择其他智能体时，ClawX 会直接切换到该智能体自己的对话上下文，而不是经过默认智能体转发。各 Agent 工作区默认彼此分离，但更强的运行时隔离仍取决于 OpenClaw 的 sandbox 配置。
 ClawX 默认使用轻量 `policy-light` 沙盒层，由主进程权限门禁、工作区根目录检查、Gateway RPC 审批和 OpenClaw exec approval 共同生效；Docker 与 SSH 保留为需要显式选择的 `strong` provider，不再是启动必需项。
 Settings、Doctor 和 diagnostics 现在展示同一份 effective sandbox policy，包括请求/生效 provider、runtime level、exec 与 network policy、Docker 可用性和降级原因。
 每个 Agent 还可以单独覆盖自己的 `provider/model` 运行时设置；未覆盖的 Agent 会继续继承全局默认模型。
-输入框的上下文状态现在提供需要确认的“压缩当前会话”操作，可展示 token 压力、已隐藏消息数量和上次压缩时间；长期任务状态仍进入 Task Ledger / Context Pack，而不是依赖无限增长的 transcript。
+输入框的上下文状态现在提供需要确认的“压缩当前会话”操作，可展示 token 压力、已隐藏消息数量、上次压缩时间和压缩质量；长期任务状态仍进入 Task Ledger / Context Pack，而不是依赖无限增长的 transcript。压缩还会保存高密度 recovery artifact，接力到新对话时会优先使用它，再回退到 transcript 证据。
 输入框还会显示长对话的 checkpoint 恢复状态：排队后续、最近一次人工介入/checkpoint、恢复警告，以及在会话空闲时立即发送已持久化排队后续的操作；这些排队消息可在 Gateway 重启后继续恢复。
 
 Agents 编排面板现在也提供有界的 **任务循环** 操作，用于受控自治任务。它通过现有 Gateway RPC 路径启动 `task_loop.run`，编排角色子 Agent，执行自检与限定返工轮次，并在界面中显示实时阶段、轮次、reviewer 结论、终态和 trace 证据，不新增 renderer 直连 Gateway 通道。
 
-Chat 输入区还提供预览优先的 **接力到新对话**：ClawX 会从最近 transcript、Task Ledger、Git 状态和近期 trace/error 状态生成可编辑的确定性接力草稿，然后创建新的 workspace 作用域会话并把草稿预填到输入框，不会自动发送。
-**Fork 到新对话** 是分支式对应功能：当前会话空闲时，ClawX 会请求 runtime 创建一个已继承 active transcript branch 的子会话，立即切换过去，父会话保持不变，并且不会生成或发送 prompt。
+同一面板现在也提供 **Mission Control**，用于更长目标。它通过 `mission.run` 启动或恢复 Mission，把 Mission 状态写入 OpenClaw state DB，从 ResumeCheckpoint、Task Ledger、记忆和 trace 证据重建有界上下文，每个 tick 运行一次内部 `task_loop`，再进行 Mission reviewer 反思、写入 checkpoint、提出记忆候选，并在界面显示 pause/resume/cancel、tick 阶段、decision、next wake、blocked reason 和 trace 证据。定时 tick 需要显式启用；完成判定始终来自证据而不是唤醒触发器。
+
+Chat 输入区还提供预览优先的 **接力到新对话**：ClawX 会从 ResumeCheckpoint、Task Ledger、Git 状态、近期 trace/error 状态和 transcript fallback 证据生成可编辑的确定性接力草稿，然后创建新的 workspace 作用域会话并把草稿预填到输入框，不会自动发送。
+**Fork 到新对话** 是分支式对应功能：当前会话空闲时，ClawX 会请求 runtime 创建一个已继承 active transcript branch 的子会话，立即切换过去，父会话保持不变，并且不会复制 Task Ledger 真相、生成 prompt 或自动发送。
 Composer 只显示当前推荐的连续性动作；会话下拉菜单仍保留 Fork 和接力两项，并用轻量推荐标记提示选择。失败提示只提供显式替代动作，例如“准备接力”，不会自动切换语义。
 
 ### ClawGraph Runtime
@@ -154,7 +158,7 @@ ClawX 现在还内置了腾讯官方个人微信渠道插件，可直接在 Chan
 通过预构建的技能扩展 AI 智能体的能力。集成的 Skills 页面采用“本地优先”方式：会扫描托管目录与 workspace 技能目录，并且无需依赖 Gateway 即可启用或停用技能；在企业扩展接管时，也可以显示扩展提供的 marketplace。
 ClawX 还会内置预装完整的文档处理技能（`pdf`、`xlsx`、`docx`、`pptx`），在启动时自动部署到托管技能目录（默认 `~/.openclaw/skills`），并在首次安装时默认启用。额外预装技能（`find-skills`、`self-improving-agent`、`tavily-search`）也会默认启用；若缺少必需的 API Key，OpenClaw 会在运行时给出配置错误提示。  
 Skills 页面可展示来自多个 OpenClaw 来源的技能（托管目录、workspace、额外技能目录），并显示每个技能的实际路径，便于直接打开真实安装位置。对于 OpenClaw 自带的 bundled skills，社区版现在在打包产物里只保留并展示 `skill-creator`；开发模式和打包版启动时都会直接清理其它 bundled skill，同时把这些已删除 bundled skill 在 `openclaw.json` 中残留的旧配置一并移除。
-在聊天输入框中，本地优先的能力管理请求（例如启用已发现的技能，或注册粘贴的 MCP JSON）会在发送前被识别，并在确认对话框中展示本地审计结果；只有未被审计阻断的动作才会通过 host API 应用变更，执行结果会作为可信 ClawX 元数据注入本次消息。v1 审计是可解释的本地门禁，会检查 Skill 元数据以及 MCP command/URL/env 风险；不会自动下载远程 marketplace 包，也不会执行远程 npm/npx 模板安装。
+在聊天输入框中，本地优先的能力管理请求（例如启用已发现的技能，或注册粘贴的 MCP JSON）会在发送前被识别，并在确认对话框中展示本地审计结果；只有未被审计阻断的动作才会通过 host API 应用变更，执行结果会作为可信 ClawX 元数据注入本次消息。能力编排还会写入一条 `capability-management` Observability trace，记录审计、注册、reload、heartbeat 和工具列表步骤，让安装/注册流程可以和 Agent runtime trace 一起排查。v1 审计是可解释的本地门禁，会检查 Skill 元数据以及 MCP command/URL/env 风险；不会自动下载远程 marketplace 包，也不会执行远程 npm/npx 模板安装。
 
 重点搜索技能所需环境变量：
 - `TAVILY_API_KEY`：用于 `tavily-search`（上游运行时也可能支持 OAuth）
@@ -221,7 +225,7 @@ pnpm dev
 
 ClawX 内置了代理设置，适用于需要通过本地代理客户端访问外网的场景，包括 Electron 本身、OpenClaw Gateway，以及 Telegram 这类频道的联网请求。
 
-打开 **设置 → 网关 → 代理**，配置以下内容：
+打开 **设置 → 开发者 → 代理**，配置以下内容：
 
 - **代理服务器**：所有请求默认使用的代理
 - **绕过规则**：需要直连的主机，使用分号、逗号或换行分隔
@@ -243,7 +247,7 @@ ClawX 内置了代理设置，适用于需要通过本地代理客户端访问�
 - 如果启用了 Telegram，ClawX 还会把代理同步到 OpenClaw 的 Telegram 频道配置中。
 - 当 ClawX 代理处于关闭状态时，Gateway 的常规重启会保留已有的 Telegram 频道代理配置。
 - 如果你要明确清空 OpenClaw 中的 Telegram 代理，请在关闭代理后点一次“保存代理设置”。
-- 在 **设置 → 高级 → 开发者** 中，可以直接运行 **OpenClaw Doctor**，针对与 Gateway 相同的当前运行时执行诊断，并在应用内查看输出。
+- 在 **设置 → 开发者** 中，可以直接运行 **OpenClaw Doctor**，针对与 Gateway 相同的当前运行时执行诊断，并在应用内查看输出。
 - 在 Windows 打包版本中，内置的 `openclaw` CLI/TUI 会通过随包分发的 `node.exe` 和打包的 `openclaw-runtime` 入口运行，以保证终端输入行为稳定。
 
 ---

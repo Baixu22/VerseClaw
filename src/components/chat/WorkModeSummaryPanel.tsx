@@ -12,6 +12,8 @@ import {
   resolveWorkModePreset,
   WORK_MODE_KIT_DEFINITIONS,
 } from '@shared/types/work-mode';
+import type { WorkKitProviderCapability } from '@shared/types/work-provider';
+import { summarizeWorkProviderCapabilities } from '@shared/types/work-provider';
 import { cn } from '@/lib/utils';
 
 type WorkModeSummaryPanelProps = {
@@ -22,7 +24,9 @@ type WorkModeSummaryPanelProps = {
   runtimeAvailable?: boolean;
   toolBundleConfig?: WorkModeToolBundleConfig | null;
   kitConfig?: WorkModeKitConfig | null;
+  providerCapabilities?: WorkKitProviderCapability[];
   compact?: boolean;
+  className?: string;
 };
 
 const ICONS: Record<WorkModeId, typeof PanelsTopLeft> = {
@@ -40,7 +44,9 @@ export function WorkModeSummaryPanel({
   runtimeAvailable = true,
   toolBundleConfig,
   kitConfig,
+  providerCapabilities = [],
   compact = false,
+  className,
 }: WorkModeSummaryPanelProps) {
   const { t } = useTranslation(['chat', 'settings']);
   const preset = resolveWorkModePreset(workMode, undefined, toolBundleConfig, kitConfig);
@@ -48,6 +54,10 @@ export function WorkModeSummaryPanel({
   const permissionMismatch = Boolean(permissionMode && permissionMode !== preset.recommendedPermissionMode);
   const knowledgeScopeLabel = t(`composer.knowledgeScope.${knowledgeScope}`);
   const capabilities = resolveWorkModeKitCapabilities(preset.kits, skills, runtimeAvailable);
+  const selectedProviderCapabilities = providerCapabilities.filter((capability) => preset.kits.includes(capability.kit));
+  const providerSummary = summarizeWorkProviderCapabilities(
+    selectedProviderCapabilities.flatMap((capability) => capability.statuses.map((status) => ({ status }))),
+  );
   const artifactTypes = Array.from(new Set(capabilities.flatMap((capability) => capability.artifactTypes)));
   const knowledgeText = t('workModePanel.knowledge', { scope: knowledgeScopeLabel });
   const permissionText = permissionMode
@@ -63,6 +73,7 @@ export function WorkModeSummaryPanel({
       className={cn(
         'mx-auto mb-3 w-[min(48rem,calc(100%-2rem))] rounded-xl border border-black/10 bg-surface-modal/95 px-3 py-2.5 text-sm shadow-sm dark:border-white/10',
         compact && 'text-xs',
+        className,
       )}
     >
       <div className="flex items-start gap-3">
@@ -83,6 +94,16 @@ export function WorkModeSummaryPanel({
                 types: artifactTypes
                   .map((type) => t(`workModePanel.artifactTypes.${type}`, { defaultValue: type.toUpperCase() }))
                   .join(', '),
+              })}
+            </p>
+          )}
+          {selectedProviderCapabilities.length > 0 && (
+            <p className="mt-1 text-tiny text-muted-foreground">
+              {t('workModePanel.providerStatus', {
+                ready: providerSummary.ready,
+                missingDependency: providerSummary.missingDependency,
+                missingConfig: providerSummary.missingConfig,
+                externalUnavailable: providerSummary.externalUnavailable,
               })}
             </p>
           )}

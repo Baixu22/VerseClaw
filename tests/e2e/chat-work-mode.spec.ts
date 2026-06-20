@@ -165,6 +165,7 @@ test.describe('ClawX chat work mode', () => {
       await expect(page.getByTestId('chat-work-mode-button')).toHaveCount(0);
 
       await page.getByTestId('sidebar-nav-settings').click();
+      await page.getByTestId('settings-nav-work-modes').click();
       await expect(page.getByTestId('settings-work-modes-section')).toBeVisible();
       await page.getByTestId('settings-work-mode-plan').click();
       await page.getByTestId('settings-work-mode-kit-docsData-sheets').click();
@@ -190,6 +191,7 @@ test.describe('ClawX chat work mode', () => {
       await page.keyboard.press('Escape');
 
       await page.getByTestId('sidebar-nav-settings').click();
+      await page.getByTestId('settings-nav-work-modes').click();
       await expect(page.getByTestId('settings-work-modes-section')).toBeVisible();
       await page.getByTestId('settings-work-mode-docsData').click();
       await openChatFromNativeMenu(app);

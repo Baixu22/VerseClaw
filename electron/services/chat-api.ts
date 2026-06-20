@@ -13,7 +13,9 @@ import {
   type WorkModeKitConfig,
   type WorkModeToolBundleConfig,
 } from '@shared/types/work-mode';
+import type { WorkProviderStatusSnapshot } from '@shared/types/work-provider';
 import { listLocalSkills } from './skills/local-skill-service';
+import { resolveWorkProviderStatusSnapshot } from './work-providers-api';
 
 const VISION_MIME_TYPES = new Set([
   'image/png',
@@ -30,6 +32,7 @@ type ChatSendWithMediaPayload = {
   media?: unknown;
   inputMode?: unknown;
   knowledgeScope?: unknown;
+  knowledgeReferences?: unknown;
   workMode?: unknown;
 };
 
@@ -57,21 +60,61 @@ function normalizeKnowledgeScope(value: unknown): 'none' | 'memory' | 'wiki' | '
   return value === 'memory' || value === 'wiki' || value === 'all' ? value : 'none';
 }
 
-function applyKnowledgeMetadata(message: string, knowledgeScope: 'none' | 'memory' | 'wiki' | 'all'): string {
-  if (knowledgeScope === 'none') return message;
-  const corpus = knowledgeScope === 'memory' ? 'memory' : knowledgeScope === 'wiki' ? 'wiki' : 'all';
+type NormalizedKnowledgeReference = {
+  id: string;
+  title: string;
+  lookup: string;
+  corpus?: 'wiki' | 'memory' | 'all';
+  pageId?: string;
+  pagePath?: string;
+  sourcePath?: string;
+  snippet?: string;
+};
+
+function normalizeKnowledgeReferences(value: unknown): NormalizedKnowledgeReference[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry): NormalizedKnowledgeReference[] => {
+    if (!isRecord(entry)) return [];
+    const lookup = typeof entry.lookup === 'string' ? entry.lookup.trim() : '';
+    if (!lookup) return [];
+    const id = typeof entry.id === 'string' && entry.id.trim() ? entry.id.trim() : lookup;
+    const title = typeof entry.title === 'string' && entry.title.trim() ? entry.title.trim() : lookup;
+    const corpus = entry.corpus === 'memory' || entry.corpus === 'all' || entry.corpus === 'wiki' ? entry.corpus : undefined;
+    const pageId = typeof entry.pageId === 'string' && entry.pageId.trim() ? entry.pageId.trim() : undefined;
+    const pagePath = typeof entry.pagePath === 'string' && entry.pagePath.trim() ? entry.pagePath.trim() : undefined;
+    const sourcePath = typeof entry.sourcePath === 'string' && entry.sourcePath.trim() ? entry.sourcePath.trim() : undefined;
+    const snippet = typeof entry.snippet === 'string' && entry.snippet.trim() ? entry.snippet.trim().slice(0, 800) : undefined;
+    return [{
+      id,
+      title,
+      lookup,
+      ...(corpus ? { corpus } : {}),
+      ...(pageId ? { pageId } : {}),
+      ...(pagePath ? { pagePath } : {}),
+      ...(sourcePath ? { sourcePath } : {}),
+      ...(snippet ? { snippet } : {}),
+    }];
+  }).slice(0, 8);
+}
+
+function applyKnowledgeMetadata(message: string, knowledgeScope: 'none' | 'memory' | 'wiki' | 'all', knowledgeReferences: NormalizedKnowledgeReference[] = []): string {
+  if (knowledgeScope === 'none' && knowledgeReferences.length === 0) return message;
+  const corpus = knowledgeScope === 'memory' ? 'memory' : knowledgeScope === 'wiki' ? 'wiki' : knowledgeScope === 'all' ? 'all' : 'wiki';
   const instruction = knowledgeScope === 'memory'
     ? 'Read durable memory when prior preferences, decisions, or remembered work may be relevant.'
     : knowledgeScope === 'wiki'
       ? 'Read compiled wiki knowledge when accumulated project knowledge, source-backed notes, or syntheses may be relevant.'
-      : 'Read durable memory and compiled wiki knowledge when either corpus may be relevant.';
+      : knowledgeScope === 'all'
+        ? 'Read durable memory and compiled wiki knowledge when either corpus may be relevant.'
+        : 'Use the selected knowledge references for this turn when relevant.';
   const metadata = JSON.stringify({
     clawxKnowledgeScope: knowledgeScope,
     corpus,
     access: 'read-only',
     allowedKnowledgeActions: ['search', 'get'],
     deniedKnowledgeActions: ['apply', 'update', 'delete', 'archive', 'merge'],
-    instruction: `${instruction} This scope is read-only: use knowledge search/get only. Do not save, modify, merge, archive, delete, or apply knowledge because of this scope. If something seems worth saving, suggest it or create a pending draft only when the user explicitly asks; any write still requires user confirmation.`,
+    selectedKnowledgeReferences: knowledgeReferences,
+    instruction: `${instruction} This scope is read-only: use knowledge search/get only. If selectedKnowledgeReferences is non-empty, prefer knowledge.get with each lookup before answering when relevant. Do not save, modify, merge, archive, delete, or apply knowledge because of this scope or these references. If something seems worth saving, suggest it or create a pending draft only when the user explicitly asks; any write still requires user confirmation.`,
   });
   const block = `Conversation info (untrusted metadata): \`\`\`json\n${metadata}\n\`\`\``;
   return message ? `${block}\n\n${message}` : block;
@@ -84,6 +127,7 @@ function applyWorkModeMetadata(
   kitConfig?: WorkModeKitConfig | null,
   skills: Awaited<ReturnType<typeof listLocalSkills>> = [],
   runtimeAvailable = true,
+  providerStatus?: WorkProviderStatusSnapshot,
 ): string {
   if (!workMode) return message;
   const preset = resolveWorkModePreset(workMode, undefined, toolBundleConfig, kitConfig);
@@ -105,6 +149,15 @@ function applyWorkModeMetadata(
     expectedArtifactTypes,
     qualityChecks,
     capabilityStatusSummary: summarizeWorkModeCapabilities(capabilities),
+    providerStatusSummary: providerStatus?.summary,
+    providerCapabilities: providerStatus?.kitCapabilities
+      .filter((capability) => preset.kits.includes(capability.kit))
+      .map((capability) => ({
+        kit: capability.kit,
+        capability: capability.capability,
+        providerIds: capability.providerIds,
+        statuses: capability.statuses,
+      })),
     kitCapabilities: capabilities.map((capability) => ({
       kit: capability.kit,
       status: capability.status,
@@ -131,6 +184,7 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
 
       try {
         const knowledgeScope = normalizeKnowledgeScope(body.knowledgeScope);
+        const knowledgeReferences = normalizeKnowledgeReferences(body.knowledgeReferences);
         const workMode = normalizeWorkModeId(body.workMode);
         const workModeToolBundles = await getSetting('workModeToolBundles').catch(() => ({}));
         const workModeKits = await getSetting('workModeKits').catch(() => ({}));
@@ -139,7 +193,10 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           : [];
         const gatewayStatus = gatewayManager.getStatus();
         const runtimeAvailable = gatewayStatus.state === 'running' && gatewayStatus.gatewayReady !== false;
-        let message = applyKnowledgeMetadata(typeof body.message === 'string' ? body.message : '', knowledgeScope);
+        const workProviderStatus = workMode
+          ? await resolveWorkProviderStatusSnapshot({ runtimeAvailable }).catch(() => undefined)
+          : undefined;
+        let message = applyKnowledgeMetadata(typeof body.message === 'string' ? body.message : '', knowledgeScope, knowledgeReferences);
         message = applyWorkModeMetadata(
           message,
           workMode,
@@ -147,6 +204,7 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           workModeKits,
           workModeSkills,
           runtimeAvailable,
+          workProviderStatus,
         );
         const imageAttachments: Array<Record<string, unknown>> = [];
         const fileReferences: string[] = [];

@@ -379,6 +379,16 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
       title: "Team",
       detailKeys: ["templateId", "teamTemplateId", "leadRole", "maxWorkers", "task"],
     },
+    task_loop: {
+      emoji: "Loop",
+      title: "Task Loop",
+      detailKeys: ["action", "loopRunId", "templateId", "teamTemplateId", "leadRole", "task"],
+    },
+    mission_loop: {
+      emoji: "Mission",
+      title: "Mission Loop",
+      detailKeys: ["action", "missionId", "objective", "task", "maxTicks"],
+    },
     subagents: {
       emoji: "🤖",
       title: "Subagents",

@@ -62,6 +62,57 @@ describe('chat session continuity helpers', () => {
       gatewayAvailable: true,
       activeRun: true,
     })).toEqual({ action: 'fork', reason: 'active_run', disabled: true });
+
+    expect(resolveSessionContinuityRecommendation({
+      gatewayAvailable: true,
+      activeRun: false,
+      longTaskControlStatus: {
+        available: true,
+        queueCount: 1,
+        warnings: [],
+        latestIntervention: {
+          id: 'ltie-drain',
+          sessionKey: 'agent:main:main',
+          trigger: 'queue_drain',
+          status: 'draining',
+          payload: {},
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+    })).toEqual({ action: 'fork', reason: 'active_run', disabled: true });
+  });
+
+  it('recommends Handoff when a recovery checkpoint is available', () => {
+    expect(resolveSessionContinuityRecommendation({
+      gatewayAvailable: true,
+      activeRun: false,
+      longTaskControlStatus: {
+        available: true,
+        queueCount: 0,
+        warnings: [],
+        latestCheckpoint: {
+          id: 'ltcp-1',
+          sessionKey: 'agent:main:main',
+          trigger: 'compaction',
+          status: 'ready',
+          checkpoint: {
+            schemaVersion: 1,
+            trigger: 'compaction',
+            openBlockers: [],
+            decisions: [],
+            deviations: [],
+            filesTouched: [],
+            testsRun: [],
+            reviewNeededItems: [],
+            evidenceRefs: [],
+            createdAt: new Date(0).toISOString(),
+          },
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+    })).toEqual({ action: 'handoff', reason: 'recovery_checkpoint', disabled: false });
   });
 
   it('classifies actionable failure modes', () => {

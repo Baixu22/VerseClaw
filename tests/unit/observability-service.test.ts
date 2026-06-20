@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildObservabilityDashboardSnapshot, clearObservabilityTraceBuffer, getObservabilityTraceBuffer, upsertObservabilityTrace } from '../../electron/services/observability-service';
 import { createObservabilityApi } from '../../electron/services/observability-api';
 import { clearObservabilityIndex, resetObservabilityIndexForTests } from '../../electron/services/observability-index';
@@ -97,6 +97,81 @@ describe('observability service in-memory trace buffer', () => {
 
     const api = createObservabilityApi();
     await expect(api.observability.traceGraph({ id: 'missing-trace' })).resolves.toBeNull();
+  });
+
+  it('reports capability management traces into the observability store and runtime stream', async () => {
+    clearObservabilityTraceBuffer();
+    const onRuntimeEvent = vi.fn();
+    const startedAt = Date.parse('2026-06-20T04:00:00.000Z');
+    const api = createObservabilityApi({ onRuntimeEvent });
+
+    const result = await api.observability.reportTrace({
+      trace: {
+        id: 'trace_capability_test',
+        name: 'Capability management',
+        status: 'completed',
+        startedAt,
+        endedAt: startedAt + 25,
+        updatedAt: startedAt + 25,
+        durationMs: 25,
+        mode: 'capability-management',
+        task: 'Chat-driven Skill/MCP capability management',
+        runId: 'trace_capability_test',
+        tokenUsage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, totalTokens: 0, costUsd: 0 },
+        metrics: { actions: 1, successes: 1, failures: 0 },
+        tags: ['capability-management', 'skill-mcp', 'chat-driven'],
+        spans: [
+          {
+            id: 'trace_capability_test:root',
+            traceId: 'trace_capability_test',
+            name: 'Chat capability management',
+            kind: 'orchestrator',
+            status: 'completed',
+            startedAt,
+            endedAt: startedAt + 25,
+            durationMs: 25,
+          },
+          {
+            id: 'trace_capability_test:action:mcp.register-filesystem',
+            traceId: 'trace_capability_test',
+            parentSpanId: 'trace_capability_test:root',
+            name: 'mcp.register: filesystem',
+            kind: 'tool',
+            status: 'completed',
+            startedAt,
+            endedAt: startedAt + 25,
+            durationMs: 25,
+          },
+        ],
+        events: [
+          {
+            id: 'trace_capability_test:event:register',
+            traceId: 'trace_capability_test',
+            spanId: 'trace_capability_test:action:mcp.register-filesystem',
+            type: 'capability.register.success',
+            name: 'MCP server registered',
+            timestamp: startedAt + 5,
+          },
+        ],
+      },
+    });
+
+    expect(result).toEqual({ success: true, traceId: 'trace_capability_test' });
+    expect(onRuntimeEvent).toHaveBeenCalledWith(expect.objectContaining({
+      type: 'trace.completed',
+      trace: expect.objectContaining({ id: 'trace_capability_test' }),
+    }));
+    expect(buildObservabilityDashboardSnapshot().traces).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: 'trace_capability_test',
+        name: 'Capability management',
+        status: 'completed',
+      }),
+    ]));
+    await expect(api.observability.traceGraph({ id: 'trace_capability_test' })).resolves.toEqual(expect.objectContaining({
+      trace: expect.objectContaining({ id: 'trace_capability_test' }),
+      graph: expect.objectContaining({ traceId: 'trace_capability_test' }),
+    }));
   });
 
   it('returns null diagnostics for unknown trace or node ids', async () => {

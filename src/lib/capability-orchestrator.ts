@@ -7,10 +7,12 @@ import type {
   ChatCapabilityActionPlan,
   ChatCapabilityActionResult,
 } from '@shared/host-api/contract';
+import type { ObservabilitySpan, ObservabilityTokenUsage, ObservabilityTrace, ObservabilityTraceEvent } from '@shared/types/observability';
 
 export type CapabilityActionHostApi = {
   skills: Pick<typeof hostApi.skills, 'local' | 'updateConfigs'>;
   mcp: Pick<typeof hostApi.mcp, 'listServers' | 'createServer' | 'testServer' | 'heartbeat' | 'listTools' | 'reloadRuntime'>;
+  observability?: Pick<typeof hostApi.observability, 'reportTrace'>;
 };
 
 export type CapabilityActionExecutionContext = {
@@ -27,6 +29,10 @@ type RegisteredServer = {
 
 function nowIso(): string {
   return new Date().toISOString();
+}
+
+function emptyTokenUsage(): ObservabilityTokenUsage {
+  return { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, totalTokens: 0, costUsd: 0 };
 }
 
 function errorMessage(error: unknown): string {
@@ -69,6 +75,167 @@ function buildSummary(
     steps,
     ...extras,
   };
+}
+
+function parseStepTime(stepEntry: CapabilityOrchestrationStep, fallback: number): number {
+  const parsed = Date.parse(stepEntry.completedAt);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function safeIdPart(value: string): string {
+  return value.replace(/[^a-z0-9_.:-]+/giu, '-').slice(0, 80) || 'capability';
+}
+
+function makeTraceId(results: ChatCapabilityActionResult[]): string {
+  const seed = results.map((result) => `${result.kind}:${result.targetName ?? result.skillId ?? result.serverId ?? result.id}`).join('|');
+  let hash = 0;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = Math.imul(31, hash) + seed.charCodeAt(index) | 0;
+  }
+  return `trace_capability_${Date.now().toString(36)}_${Math.abs(hash).toString(36)}`;
+}
+
+function statusForResult(result: ChatCapabilityActionResult): ObservabilityTrace['status'] {
+  if (result.orchestration?.status === 'blocked') return 'aborted';
+  return result.success ? 'completed' : 'error';
+}
+
+function buildCapabilityTrace(
+  traceId: string,
+  actions: ChatCapabilityActionPlan[],
+  results: ChatCapabilityActionResult[],
+  context: CapabilityActionExecutionContext,
+): ObservabilityTrace {
+  const now = Date.now();
+  const allSteps = results.flatMap((result) => result.orchestration?.steps ?? []);
+  const startedAt = allSteps.length > 0
+    ? Math.min(...allSteps.map((entry) => parseStepTime(entry, now)))
+    : now;
+  const endedAt = Math.max(now, ...allSteps.map((entry) => parseStepTime(entry, now)));
+  const status = results.some((result) => result.orchestration?.status === 'blocked')
+    ? 'aborted'
+    : results.some((result) => !result.success && result.id !== 'mcp.register:reload')
+      ? 'error'
+      : 'completed';
+  const rootSpanId = `${traceId}:root`;
+  const actionSpans: ObservabilitySpan[] = results
+    .filter((result) => result.id !== 'mcp.register:reload')
+    .map((result) => {
+      const steps = result.orchestration?.steps ?? [];
+      const spanStartedAt = steps.length > 0 ? Math.min(...steps.map((entry) => parseStepTime(entry, startedAt))) : startedAt;
+      const spanEndedAt = steps.length > 0 ? Math.max(...steps.map((entry) => parseStepTime(entry, endedAt))) : endedAt;
+      return {
+        id: `${traceId}:action:${safeIdPart(result.id)}`,
+        traceId,
+        parentSpanId: rootSpanId,
+        name: result.targetName ? `${result.kind}: ${result.targetName}` : result.kind,
+        kind: 'tool',
+        status: statusForResult(result),
+        startedAt: spanStartedAt,
+        endedAt: spanEndedAt,
+        durationMs: Math.max(0, spanEndedAt - spanStartedAt),
+        input: result.targetName ?? result.skillId ?? result.serverId,
+        output: result.message,
+        error: result.error,
+        attributes: {
+          actionId: result.id,
+          kind: result.kind,
+          targetName: result.targetName,
+          skillId: result.skillId,
+          serverId: result.serverId,
+          auditStatus: result.auditResult?.status,
+          orchestrationStatus: result.orchestration?.status,
+          toolNames: result.toolNames,
+        },
+      };
+    });
+  const events: ObservabilityTraceEvent[] = results.flatMap((result) => (
+    (result.orchestration?.steps ?? []).map((entry) => ({
+      id: `${traceId}:event:${safeIdPart(entry.id)}`,
+      traceId,
+      spanId: result.id === 'mcp.register:reload'
+        ? rootSpanId
+        : `${traceId}:action:${safeIdPart(result.id)}`,
+      type: `capability.${entry.stage}.${entry.status}`,
+      name: entry.message || entry.error || entry.stage,
+      timestamp: parseStepTime(entry, endedAt),
+      attributes: {
+        actionId: entry.actionId,
+        stage: entry.stage,
+        status: entry.status,
+        error: entry.error,
+        ...entry.details,
+      },
+    }))
+  ));
+  const rootSpan: ObservabilitySpan = {
+    id: rootSpanId,
+    traceId,
+    name: 'Chat capability management',
+    kind: 'orchestrator',
+    status,
+    startedAt,
+    endedAt,
+    durationMs: Math.max(0, endedAt - startedAt),
+    attributes: {
+      workspaceId: context.workspaceId,
+      agentId: context.agentId,
+      actionCount: actions.length,
+      successfulActionCount: results.filter((result) => result.success && result.id !== 'mcp.register:reload').length,
+      blockedActionCount: results.filter((result) => result.orchestration?.status === 'blocked').length,
+    },
+    error: status === 'error' || status === 'aborted'
+      ? results.find((result) => result.error)?.error
+      : undefined,
+  };
+
+  return {
+    id: traceId,
+    name: 'Capability management',
+    runId: traceId,
+    task: 'Chat-driven Skill/MCP capability management',
+    mode: 'capability-management',
+    status,
+    startedAt,
+    endedAt,
+    updatedAt: endedAt,
+    durationMs: Math.max(0, endedAt - startedAt),
+    spans: [rootSpan, ...actionSpans],
+    events,
+    tokenUsage: emptyTokenUsage(),
+    metrics: {
+      actions: actions.length,
+      successes: results.filter((result) => result.success && result.id !== 'mcp.register:reload').length,
+      failures: results.filter((result) => !result.success && result.id !== 'mcp.register:reload').length,
+      warnings: results.filter((result) => result.auditResult?.status === 'warning').length,
+      blocked: results.filter((result) => result.orchestration?.status === 'blocked').length,
+    },
+    tags: ['capability-management', 'skill-mcp', 'chat-driven'],
+    error: status === 'error' || status === 'aborted'
+      ? results.find((result) => result.error)?.error
+      : undefined,
+  };
+}
+
+async function reportCapabilityTrace(
+  actions: ChatCapabilityActionPlan[],
+  results: ChatCapabilityActionResult[],
+  context: CapabilityActionExecutionContext,
+  api: CapabilityActionHostApi,
+): Promise<void> {
+  if (actions.length === 0 || results.length === 0) return;
+  const traceId = makeTraceId(results);
+  for (const result of results) {
+    if (result.orchestration) {
+      result.orchestration.traceId = traceId;
+    }
+  }
+  if (!api.observability?.reportTrace) return;
+  try {
+    await api.observability.reportTrace(buildCapabilityTrace(traceId, actions, results, context));
+  } catch {
+    // Trace capture must never make capability management fail.
+  }
 }
 
 function auditStep(action: ChatCapabilityActionPlan): CapabilityOrchestrationStep {
@@ -435,6 +602,8 @@ export async function executeCapabilityActionPlan(
       }
     }
   }
+
+  await reportCapabilityTrace(actions, results, context, api);
 
   return results;
 }

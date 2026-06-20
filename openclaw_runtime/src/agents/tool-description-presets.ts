@@ -10,6 +10,7 @@ export const SESSIONS_SPAWN_TOOL_DISPLAY_SUMMARY = "Spawn subagent or ACP sessio
 export const SESSIONS_SPAWN_SUBAGENT_TOOL_DISPLAY_SUMMARY = "Spawn subagent session.";
 export const TEAM_ORCHESTRATE_TOOL_DISPLAY_SUMMARY = "Plan and spawn a role-first subagent team.";
 export const TASK_LOOP_TOOL_DISPLAY_SUMMARY = "Run a bounded self-checking task loop.";
+export const MISSION_LOOP_TOOL_DISPLAY_SUMMARY = "Run checkpointed long-goal Mission Loop.";
 export const SESSION_STATUS_TOOL_DISPLAY_SUMMARY = "Show session status/model/usage.";
 export const UPDATE_PLAN_TOOL_DISPLAY_SUMMARY = "Track short work plan.";
 

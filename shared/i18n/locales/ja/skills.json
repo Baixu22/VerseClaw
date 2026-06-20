@@ -1,11 +1,12 @@
 {
-    "title": "スキル",
-    "subtitle": "AI機能の閲覧と管理",
+    "title": "ツール",
+    "subtitle": "スキルと MCP サービスを管理",
     "refresh": "更新",
     "openFolder": "スキルフォルダを開く",
     "gatewayWarning": "ゲートウェイは停止しています。ローカルスキルは利用できますが、ランタイム状態は取得できません。",
     "gatewayStarting": "ゲートウェイを起動しています。ローカルスキルはすでに利用でき、ランタイム状態は準備完了後に反映されます。",
     "tabs": {
+        "skills": "スキル",
         "installed": "インストール済み",
         "marketplace": "マーケットプレイス",
         "marketplaceLocalOnlyLabel": "マーケットプレイス · ローカルのみ",
@@ -114,6 +115,52 @@
         "batchEnabled": "{{count}} 件のスキルを有効化しました。",
         "batchDisabled": "{{count}} 件のスキルを無効化しました。",
         "batchPartial": "{{success}} / {{total}} 件を更新しました。一部失敗しています。"
+    },
+    "mcp": {
+        "tab": "MCP サービス",
+        "empty": "MCP サービスはまだありません",
+        "register": {
+            "title": "JSON で MCP サービスを登録",
+            "description": "単一のサービスオブジェクト、または一般的な mcpServers 設定ブロックに対応します。"
+        },
+        "actions": {
+            "fillExample": "例を入力",
+            "syncRuntime": "ランタイムを同期",
+            "register": "サービスを登録",
+            "copy": "コピー",
+            "copyLocalAddress": "MCP ローカルアドレスをコピー",
+            "heartbeat": "ハートビート"
+        },
+        "status": {
+            "disabled": "無効",
+            "heartbeatOk": "ハートビート正常",
+            "heartbeatFailed": "ハートビート失敗",
+            "connectionOk": "接続正常",
+            "connectionIssue": "接続異常"
+        },
+        "detail": {
+            "localAddress": "ローカル永続アドレス",
+            "jsonConfig": "JSON 設定",
+            "toolCatalog": "ツールカタログ",
+            "noRuntimeTools": "ランタイムからツールが返されませんでした。"
+        },
+        "toast": {
+            "registeredOne": "MCP サービスを登録しました",
+            "registeredMany": "{{count}} 件の MCP サービスを登録しました",
+            "configValid": "MCP 設定の検証に成功しました",
+            "configInvalid": "MCP 設定の検証に失敗しました",
+            "heartbeatOk": "MCP ハートビート正常",
+            "heartbeatOkWithLatency": "MCP ハートビート正常 {{ms}}ms",
+            "heartbeatFailed": "MCP ハートビート失敗",
+            "synced": "{{count}} 件の MCP サービスを同期しました",
+            "saved": "MCP サービスを保存しました",
+            "deleted": "MCP サービスを削除しました",
+            "localAddressCopied": "ローカルアドレスをコピーしました",
+            "localAddressCopyFailed": "ローカルアドレスのコピーに失敗しました: {{error}}"
+        },
+        "errors": {
+            "jsonObjectRequired": "MCP JSON はオブジェクトである必要があります"
+        }
     },
     "marketplace": {
         "title": "マーケットプレイス",

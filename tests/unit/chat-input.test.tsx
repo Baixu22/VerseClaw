@@ -13,6 +13,7 @@ const { agentsState, chatState, gatewayState, providersState, mcpState, artifact
   },
   chatState: {
     currentAgentId: 'main',
+    currentSessionKey: 'agent:main:main',
   },
   gatewayState: {
     status: { state: 'running', port: 18789 },
@@ -116,6 +117,16 @@ vi.mock('@/lib/host-api', () => ({
     gateway: {
       status: () => Promise.resolve({ state: 'running', port: 18789 }),
     },
+    knowledge: {
+      search: (input: unknown) => hostApiFetchMock('/api/knowledge/search', {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+      recordKnowledgeReference: (input: unknown) => hostApiFetchMock('/api/knowledge/reference', {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+    },
   },
 }));
 
@@ -165,6 +176,26 @@ function translate(key: string, vars?: Record<string, unknown>): string {
       return 'Use wiki knowledge';
     case 'composer.knowledgeQuick.disable':
       return 'Disable wiki knowledge';
+    case 'composer.knowledgeAttach.title':
+      return 'Attach knowledge';
+    case 'composer.knowledgeAttach.placeholder':
+      return 'Search wiki pages';
+    case 'composer.knowledgeAttach.search':
+      return 'Search';
+    case 'composer.knowledgeAttach.empty':
+      return 'Search and attach specific knowledge pages to this message.';
+    case 'composer.knowledgeAttach.selected':
+      return `${String(vars?.count ?? '')} selected`;
+    case 'composer.knowledgeAttach.remove':
+      return `Remove ${String(vars?.title ?? '')}`;
+    case 'composer.knowledgeAttach.missingLookup':
+      return 'This result cannot be attached.';
+    case 'composer.knowledgeAttach.searchFailed':
+      return 'Failed to search knowledge.';
+    case 'composer.knowledgeAttach.defaultPrompt':
+      return 'Use the selected knowledge references to answer.';
+    case 'composer.knowledgeAttach.messageRefTitle':
+      return `Knowledge reference: ${String(vars?.title ?? '')}`;
     case 'composer.clearTarget':
       return 'Clear target agent';
     case 'composer.targetChip':
@@ -429,6 +460,65 @@ describe('ChatInput draft persistence', () => {
     fireEvent.click(screen.getByTitle('Send'));
 
     expect(onSend).toHaveBeenCalledWith('Use notes', undefined, null, 'wiki', 'build');
+  });
+
+  it('searches and attaches specific knowledge references before sending', async () => {
+    const onSend = vi.fn();
+    const onKnowledgeScopeChange = vi.fn();
+    hostApiFetchMock.mockImplementation(async (url) => {
+      if (url === '/api/knowledge/search') {
+        return {
+          success: true,
+          results: [{
+            id: 'decision-page',
+            title: 'Knowledge Hub decision',
+            pagePath: 'notes/decision.md',
+            snippet: 'Keep Obsidian optional.',
+          }],
+        };
+      }
+      if (url === '/api/knowledge/reference') {
+        return { success: true };
+      }
+      return { success: true };
+    });
+
+    render(
+      <TooltipProvider>
+        <ChatInput
+          onSend={onSend}
+          knowledgeScope="none"
+          onKnowledgeScopeChange={onKnowledgeScopeChange}
+        />
+      </TooltipProvider>,
+    );
+
+    fireEvent.click(screen.getByTitle('Knowledge scope'));
+    fireEvent.change(screen.getByTestId('chat-knowledge-search-input'), { target: { value: 'decision' } });
+    fireEvent.click(screen.getByTestId('chat-knowledge-search-submit'));
+
+    const result = await screen.findByTestId('chat-knowledge-search-result');
+    expect(result).toHaveTextContent('Knowledge Hub decision');
+    fireEvent.click(result);
+
+    expect(onKnowledgeScopeChange).toHaveBeenCalledWith('wiki');
+    expect(screen.getByTestId('chat-knowledge-selected')).toHaveTextContent('Knowledge Hub decision');
+
+    fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: 'Use this context' } });
+    fireEvent.click(screen.getByTitle('Send'));
+
+    expect(onSend).toHaveBeenCalledWith('Use this context', undefined, null, 'wiki', 'build', [{
+      id: 'decision-page',
+      title: 'Knowledge Hub decision',
+      lookup: 'notes/decision.md',
+      corpus: 'wiki',
+      pageId: 'decision-page',
+      pagePath: 'notes/decision.md',
+      snippet: 'Keep Obsidian optional.',
+    }]);
+    await waitFor(() => expect(hostApiFetchMock).toHaveBeenCalledWith('/api/knowledge/reference', expect.objectContaining({
+      method: 'POST',
+    })));
   });
 
   it('uses the externally selected work mode when sending', () => {
@@ -791,6 +881,38 @@ describe('ChatInput read-only context status', () => {
     await waitFor(() => {
       expect(onManualCompact).toHaveBeenCalledWith('Preserve the migration decision.');
     });
+  });
+
+  it('shows compression quality when the latest compaction has artifact metrics', () => {
+    renderChatInput(vi.fn(), {
+      messageCount: 4,
+      compactionStatus: {
+        available: true,
+        canCompact: true,
+        inProgress: false,
+        pressure: 'low',
+        truncatedMessageCount: 0,
+        lastCompaction: {
+          id: 'cp-1',
+          timestamp: Date.now(),
+          trigger: 'manual',
+          quality: {
+            score: 0.92,
+            level: 'high',
+            fieldCoverage: 1,
+            evidenceCoverage: 0.88,
+            artifactTokens: 1000,
+            projectionTokens: 480,
+            warnings: [],
+          },
+          unverifiedCount: 0,
+        },
+        warnings: [],
+      },
+      onManualCompact: vi.fn(),
+    });
+
+    expect(screen.getByTestId('chat-compaction-quality')).toBeInTheDocument();
   });
 
   it('disables manual compaction while the session is sending', () => {

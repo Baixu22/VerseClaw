@@ -37,8 +37,11 @@ import { useChatStore } from '@/stores/chat';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useWorkspacesStore } from '@/stores/workspaces';
-import { getSessionActivityMs, isSessionVisibleInWorkspace } from './session-buckets';
-import { isCronSessionKey } from '@/stores/chat/cron-session-utils';
+import {
+  buildSidebarTimeSessions,
+  buildSidebarWorkspaceSessionGroups,
+  type SidebarSessionEntry,
+} from './session-buckets';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -121,7 +124,7 @@ export function Sidebar() {
   const loadSessions = useChatStore((s) => s.loadSessions);
   const loadHistory = useChatStore((s) => s.loadHistory);
   const handleNewChat = useNewChatAction();
-  const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
+  const workspaceProfiles = useWorkspacesStore((s) => s.profiles);
 
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
@@ -185,7 +188,7 @@ export function Sidebar() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingSessionKey, setEditingSessionKey] = useState<string | null>(null);
   const [editingLabel, setEditingLabel] = useState('');
-  const [sessionFilter, setSessionFilter] = useState<'all' | 'chat' | 'work'>('all');
+  const [sessionView, setSessionView] = useState<'project' | 'time'>('project');
 
   useEffect(() => {
     void fetchAgents();
@@ -272,27 +275,19 @@ export function Sidebar() {
     [agents],
   );
 
-  const filteredSessions = useMemo(() => {
-    const workspaceSessionKeys = activeWorkspace?.sessionStates
-      ? new Set(Object.keys(activeWorkspace.sessionStates))
-      : null;
-    return sessions
-      .map((session) => ({
-        session,
-        activityMs: getSessionActivityMs(session, sessionLastActivity),
-      }))
-      .filter(({ session }) => {
-        if (!isSessionVisibleInWorkspace({
-          sessionKey: session.key,
-          currentSessionKey,
-          workspaceSessionKeys,
-        })) return false;
-        if (sessionFilter === 'all') return true;
-        const isCron = isCronSessionKey(session.key);
-        return sessionFilter === 'work' ? isCron : !isCron;
-      })
-      .sort((a, b) => b.activityMs - a.activityMs);
-  }, [activeWorkspace?.sessionStates, currentSessionKey, sessions, sessionLastActivity, sessionFilter]);
+  const timeSessions = useMemo(() => buildSidebarTimeSessions({
+    sessions,
+    currentSessionKey,
+    sessionLastActivity,
+    workspaces: workspaceProfiles,
+  }), [currentSessionKey, sessions, sessionLastActivity, workspaceProfiles]);
+
+  const workspaceSessionGroups = useMemo(() => buildSidebarWorkspaceSessionGroups({
+    sessions,
+    currentSessionKey,
+    sessionLastActivity,
+    workspaces: workspaceProfiles,
+  }), [currentSessionKey, sessions, sessionLastActivity, workspaceProfiles]);
 
   const hiddenRoutes = rendererExtensionRegistry.getHiddenRoutes();
   const extraNavItems = rendererExtensionRegistry.getExtraNavItems();
@@ -324,6 +319,102 @@ export function Sidebar() {
       testId: item.testId,
     })),
   ];
+
+  const renderSessionRow = ({ session: s }: SidebarSessionEntry) => {
+    const agentId = getAgentIdFromSessionKey(s.key);
+    const agentName = agentNameById[agentId] || agentId;
+    const isEditing = editingSessionKey === s.key;
+    const sessionLabel = getSessionLabel(s.key, s.displayName, s.label);
+    return (
+      <div key={s.key} className="group relative flex items-center">
+        {isEditing ? (
+          <div className="flex w-full items-center gap-1 px-1.5 py-1">
+            <Input
+              autoFocus
+              value={editingLabel}
+              onChange={(e) => setEditingLabel(e.target.value)}
+              onKeyDown={handleRenameKeyDown}
+              onBlur={() => void handleRenameSubmit()}
+              className="h-7 min-w-0 flex-1 text-meta"
+              aria-label={t('common:sidebar.renameSessionPlaceholder')}
+            />
+            <button
+              aria-label={t('common:sidebar.saveSessionRename')}
+              onMouseDown={(e) => { e.preventDefault(); void handleRenameSubmit(); }}
+              className="flex shrink-0 items-center justify-center rounded p-0.5 text-muted-foreground hover:text-foreground"
+            >
+              <Check className="h-3.5 w-3.5" />
+            </button>
+            <button
+              aria-label={t('common:sidebar.cancelSessionRename')}
+              onMouseDown={(e) => { e.preventDefault(); handleRenameCancel(); }}
+              className="flex shrink-0 items-center justify-center rounded p-0.5 text-muted-foreground hover:text-destructive"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ) : (
+          <>
+            <button
+              onClick={() => {
+                if (currentSessionKey === s.key) {
+                  void loadHistory(false);
+                } else {
+                  switchSession(s.key);
+                }
+                navigate('/');
+              }}
+              onDoubleClick={() => handleStartRename(s.key, sessionLabel)}
+              className={cn(
+                'w-full text-left rounded-lg px-2.5 py-1.5 text-meta transition-colors pr-16',
+                'hover:bg-black/5 dark:hover:bg-white/5',
+                isOnChat && currentSessionKey === s.key
+                  ? 'bg-black/5 dark:bg-white/10 text-foreground font-medium'
+                  : 'text-foreground/75',
+              )}
+            >
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="shrink-0 rounded-full bg-black/[0.04] px-2 py-0.5 text-2xs font-medium text-foreground/70 dark:bg-white/[0.08]">
+                  {agentName}
+                </span>
+                <span className="truncate">{sessionLabel}</span>
+              </div>
+            </button>
+            <div className={cn(
+              'absolute right-1 flex items-center gap-0.5 transition-opacity',
+              'opacity-0 group-hover:opacity-100',
+            )}>
+              <button
+                aria-label={t('common:sidebar.renameSession')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleStartRename(s.key, sessionLabel);
+                }}
+                className="flex items-center justify-center rounded p-0.5 text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+              <button
+                data-testid={`sidebar-session-delete-${s.key}`}
+                aria-label={t('common:sidebar.deleteSession')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSessionToDelete({
+                    key: s.key,
+                    label: sessionLabel,
+                  });
+                  setDeleteDialogOpen(true);
+                }}
+                className="flex items-center justify-center rounded p-0.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
 
   return (
     <aside
@@ -406,122 +497,43 @@ export function Sidebar() {
       {/* Session list — below nav, only when expanded */}
       {!sidebarCollapsed && sessions.length > 0 && (
         <>
-          {/* Session filter toggle */}
+          {/* Session grouping toggle */}
           <div className="mx-2 mt-3 flex rounded-lg bg-black/[0.03] p-0.5 dark:bg-white/[0.04]">
-            {(['all', 'chat', 'work'] as const).map((filter) => (
+            {(['project', 'time'] as const).map((view) => (
               <button
-                key={filter}
+                key={view}
                 type="button"
-                onClick={() => setSessionFilter(filter)}
+                data-testid={`sidebar-session-view-${view}`}
+                onClick={() => setSessionView(view)}
                 className={cn(
                   'flex-1 rounded-md py-1 text-2xs font-medium transition-colors',
-                  sessionFilter === filter
+                  sessionView === view
                     ? 'bg-white text-foreground shadow-sm dark:bg-white/10'
                     : 'text-muted-foreground/60 hover:text-muted-foreground',
                 )}
               >
-                {t(`chat:sessionFilter.${filter}`)}
+                {t(`chat:sessionView.${view}`)}
               </button>
             ))}
           </div>
 
-          {/* Flat session list */}
+          {/* Session list */}
           <div className="mt-1 flex-1 overflow-y-auto overflow-x-hidden px-2 pb-2 space-y-0.5">
-            {filteredSessions.map(({ session: s }) => {
-              const agentId = getAgentIdFromSessionKey(s.key);
-              const agentName = agentNameById[agentId] || agentId;
-              const isEditing = editingSessionKey === s.key;
-              const sessionLabel = getSessionLabel(s.key, s.displayName, s.label);
-              return (
-                <div key={s.key} className="group relative flex items-center">
-                  {isEditing ? (
-                    <div className="flex w-full items-center gap-1 px-1.5 py-1">
-                      <Input
-                        autoFocus
-                        value={editingLabel}
-                        onChange={(e) => setEditingLabel(e.target.value)}
-                        onKeyDown={handleRenameKeyDown}
-                        onBlur={() => void handleRenameSubmit()}
-                        className="h-7 min-w-0 flex-1 text-meta"
-                        aria-label={t('common:sidebar.renameSessionPlaceholder')}
-                      />
-                      <button
-                        aria-label={t('common:sidebar.saveSessionRename')}
-                        onMouseDown={(e) => { e.preventDefault(); void handleRenameSubmit(); }}
-                        className="flex shrink-0 items-center justify-center rounded p-0.5 text-muted-foreground hover:text-foreground"
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                      </button>
-                      <button
-                        aria-label={t('common:sidebar.cancelSessionRename')}
-                        onMouseDown={(e) => { e.preventDefault(); handleRenameCancel(); }}
-                        className="flex shrink-0 items-center justify-center rounded p-0.5 text-muted-foreground hover:text-destructive"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => {
-                          if (currentSessionKey === s.key) {
-                            void loadHistory(false);
-                          } else {
-                            switchSession(s.key);
-                          }
-                          navigate('/');
-                        }}
-                        onDoubleClick={() => handleStartRename(s.key, sessionLabel)}
-                        className={cn(
-                          'w-full text-left rounded-lg px-2.5 py-1.5 text-meta transition-colors pr-16',
-                          'hover:bg-black/5 dark:hover:bg-white/5',
-                          isOnChat && currentSessionKey === s.key
-                            ? 'bg-black/5 dark:bg-white/10 text-foreground font-medium'
-                            : 'text-foreground/75',
-                        )}
-                      >
-                        <div className="flex min-w-0 items-center gap-2">
-                          <span className="shrink-0 rounded-full bg-black/[0.04] px-2 py-0.5 text-2xs font-medium text-foreground/70 dark:bg-white/[0.08]">
-                            {agentName}
-                          </span>
-                          <span className="truncate">{sessionLabel}</span>
-                        </div>
-                      </button>
-                      <div className={cn(
-                        'absolute right-1 flex items-center gap-0.5 transition-opacity',
-                        'opacity-0 group-hover:opacity-100',
-                      )}>
-                        <button
-                          aria-label={t('common:sidebar.renameSession')}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleStartRename(s.key, sessionLabel);
-                          }}
-                          className="flex items-center justify-center rounded p-0.5 text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10"
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          data-testid={`sidebar-session-delete-${s.key}`}
-                          aria-label={t('common:sidebar.deleteSession')}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSessionToDelete({
-                              key: s.key,
-                              label: sessionLabel,
-                            });
-                            setDeleteDialogOpen(true);
-                          }}
-                          className="flex items-center justify-center rounded p-0.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </>
-                  )}
+            {sessionView === 'project'
+              ? workspaceSessionGroups.map((group) => (
+                <div key={group.workspace.id} data-testid={`sidebar-session-project-${group.workspace.id}`} className="space-y-0.5">
+                  <div className="px-2.5 pb-1 pt-2">
+                    <p className="truncate text-2xs font-semibold tracking-normal text-muted-foreground">
+                      {group.workspace.name}
+                    </p>
+                    <p className="truncate font-mono text-[10px] text-muted-foreground/70">
+                      {group.workspace.rootPath}
+                    </p>
+                  </div>
+                  {group.sessions.map(renderSessionRow)}
                 </div>
-              );
-            })}
+              ))
+              : timeSessions.map(renderSessionRow)}
           </div>
         </>
       )}

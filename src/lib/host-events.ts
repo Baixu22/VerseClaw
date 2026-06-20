@@ -55,6 +55,11 @@ const onTaskLoopEvent = <E extends HostEventName<'taskLoop'>>(
   handler: HostEventHandler<'taskLoop', E>,
 ) => onIpc(HOST_EVENT_CHANNELS.taskLoop[event], handler);
 
+const onMissionControlEvent = <E extends HostEventName<'missionControl'>>(
+  event: E,
+  handler: HostEventHandler<'missionControl', E>,
+) => onIpc(HOST_EVENT_CHANNELS.missionControl[event], handler);
+
 const onObservabilityEvent = <E extends HostEventName<'observability'>>(
   event: E,
   handler: HostEventHandler<'observability', E>,
@@ -133,6 +138,9 @@ export const hostEvents = {
   ),
   onTaskLoopLifecycle: (handler: HostEventHandler<'taskLoop', 'lifecycle'>) => (
     onTaskLoopEvent('lifecycle', handler)
+  ),
+  onMissionControlLifecycle: (handler: HostEventHandler<'missionControl', 'lifecycle'>) => (
+    onMissionControlEvent('lifecycle', handler)
   ),
   onObservabilityRuntimeEvent: (handler: HostEventHandler<'observability', 'runtimeEvent'>) => (
     onObservabilityEvent('runtimeEvent', handler)

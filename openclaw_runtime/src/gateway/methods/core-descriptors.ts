@@ -108,6 +108,16 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "teams.list", scope: "operator.read" },
   { name: "orchestrator.plan", scope: "operator.read" },
   { name: "orchestrator.run", scope: "operator.write" },
+  { name: "task_loop.run", scope: "operator.write" },
+  { name: "task_loop.status", scope: "operator.read" },
+  // Mission Control: long-goal outer loop above bounded task_loop.
+  { name: "mission.create", scope: "operator.write" },
+  { name: "mission.run", scope: "operator.write" },
+  { name: "mission.tick", scope: "operator.write" },
+  { name: "mission.status", scope: "operator.read" },
+  { name: "mission.pause", scope: "operator.write" },
+  { name: "mission.resume", scope: "operator.write" },
+  { name: "mission.cancel", scope: "operator.write" },
   // ClawGraph Runtime: workspace YAML compile/read methods plus controlled DAG execution.
   { name: "clawgraph.listWorkflows", scope: "operator.read" },
   { name: "clawgraph.compile", scope: "operator.read" },

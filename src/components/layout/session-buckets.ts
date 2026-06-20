@@ -1,4 +1,5 @@
 import type { ChatSession } from '@/stores/chat';
+import type { WorkspaceProfile } from '@shared/types/workspace';
 
 function getAgentIdFromSessionKey(sessionKey: string): string {
   if (!sessionKey.startsWith('agent:')) return 'main';
@@ -41,4 +42,108 @@ export function isSessionVisibleInWorkspace(params: {
     ? params.workspaceSessionKeys
     : new Set(params.workspaceSessionKeys);
   return workspaceSessionKeys.has(params.sessionKey) || params.sessionKey === params.currentSessionKey;
+}
+
+export type SidebarSessionEntry = {
+  session: ChatSession;
+  activityMs: number;
+};
+
+export type SidebarWorkspaceSessionGroup = {
+  workspace: WorkspaceProfile;
+  activityMs: number;
+  sessions: SidebarSessionEntry[];
+};
+
+function compareActivityDesc(left: { activityMs: number }, right: { activityMs: number }): number {
+  return right.activityMs - left.activityMs;
+}
+
+function getWorkspaceActivityMs(workspace: WorkspaceProfile, sessions: SidebarSessionEntry[]): number {
+  const sessionActivityMs = sessions[0]?.activityMs ?? 0;
+  return Math.max(
+    sessionActivityMs,
+    workspace.lastOpenedAt ?? 0,
+    workspace.updatedAt ?? 0,
+    workspace.createdAt ?? 0,
+  );
+}
+
+export function getWorkspaceSessionKeys(workspaces: WorkspaceProfile[]): Set<string> | null {
+  if (workspaces.length === 0) return null;
+  const keys = new Set<string>();
+  for (const workspace of workspaces) {
+    for (const sessionKey of Object.keys(workspace.sessionStates ?? {})) {
+      keys.add(sessionKey);
+    }
+    if (workspace.activeSessionKey) {
+      keys.add(workspace.activeSessionKey);
+    }
+    for (const binding of Object.values(workspace.agentBindings ?? {})) {
+      if (binding.sessionKey) keys.add(binding.sessionKey);
+    }
+  }
+  return keys;
+}
+
+export function buildSidebarTimeSessions(params: {
+  sessions: ChatSession[];
+  currentSessionKey: string;
+  sessionLastActivity: Record<string, number>;
+  workspaces: WorkspaceProfile[];
+}): SidebarSessionEntry[] {
+  const currentAgentId = getAgentIdFromSessionKey(params.currentSessionKey);
+  const workspaceSessionKeys = getWorkspaceSessionKeys(params.workspaces);
+  return params.sessions
+    .filter((session) => getAgentIdFromSessionKey(session.key) === currentAgentId)
+    .filter((session) => !workspaceSessionKeys || workspaceSessionKeys.has(session.key) || session.key === params.currentSessionKey)
+    .map((session) => ({
+      session,
+      activityMs: getSessionActivityMs(session, params.sessionLastActivity),
+    }))
+    .sort(compareActivityDesc);
+}
+
+export function buildSidebarWorkspaceSessionGroups(params: {
+  sessions: ChatSession[];
+  currentSessionKey: string;
+  sessionLastActivity: Record<string, number>;
+  workspaces: WorkspaceProfile[];
+}): SidebarWorkspaceSessionGroup[] {
+  const currentAgentId = getAgentIdFromSessionKey(params.currentSessionKey);
+  const sessionsByKey = new Map(params.sessions.map((session) => [session.key, session]));
+
+  return params.workspaces
+    .map((workspace) => {
+      const sessionKeys = new Set<string>([
+        ...Object.keys(workspace.sessionStates ?? {}),
+        workspace.activeSessionKey,
+        ...Object.values(workspace.agentBindings ?? {}).map((binding) => binding.sessionKey),
+      ].filter(Boolean));
+      if (workspace.id === params.workspaces.find((candidate) => (
+        candidate.sessionStates?.[params.currentSessionKey]
+        || candidate.activeSessionKey === params.currentSessionKey
+        || Object.values(candidate.agentBindings ?? {}).some((binding) => binding.sessionKey === params.currentSessionKey)
+      ))?.id) {
+        sessionKeys.add(params.currentSessionKey);
+      }
+      const sessions = Array.from(sessionKeys)
+        .map((sessionKey) => sessionsByKey.get(sessionKey) ?? (sessionKey === params.currentSessionKey
+          ? { key: sessionKey, displayName: sessionKey }
+          : null))
+        .filter((session): session is ChatSession => Boolean(session))
+        .filter((session) => getAgentIdFromSessionKey(session.key) === currentAgentId)
+        .map((session) => ({
+          session,
+          activityMs: getSessionActivityMs(session, params.sessionLastActivity),
+        }))
+        .sort(compareActivityDesc);
+      return {
+        workspace,
+        sessions,
+        activityMs: getWorkspaceActivityMs(workspace, sessions),
+      };
+    })
+    .filter((group) => group.sessions.length > 0)
+    .sort(compareActivityDesc);
 }

@@ -167,6 +167,11 @@ import type {
   SessionPatchThinkingPayload,
   SessionQueueDrainResult,
   SessionResumeCheckpointsResult,
+  WorkProviderRunPayload,
+  WorkProviderRunResult,
+  WorkProviderStatusSnapshot,
+  WorkProviderValidateArtifactPayload,
+  WorkProviderValidateArtifactResult,
   WorkspaceCreatePayload,
   WorkspaceSaveStatePayload,
   WorkspaceTerminalOpenPayload,
@@ -191,6 +196,8 @@ import type {
   ObservabilityTraceQueryResult,
 } from '@shared/types/observability';
 import { invokeHost } from './host-api-client';
+
+export type { ChatKnowledgeReference } from '@shared/host-api/contract';
 
 export type {
   ChannelAccountsResult,
@@ -667,6 +674,15 @@ export const hostApi = {
   chat: {
     sendWithMedia: (input: ChatSendWithMediaPayload) => invokeHost('chat', 'sendWithMedia', input),
   },
+  workProviders: {
+    status: (): Promise<WorkProviderStatusSnapshot> => invokeHost('workProviders', 'status'),
+    run: (input: WorkProviderRunPayload): Promise<WorkProviderRunResult> => (
+      invokeHost('workProviders', 'run', input)
+    ),
+    validateArtifact: (input: WorkProviderValidateArtifactPayload): Promise<WorkProviderValidateArtifactResult> => (
+      invokeHost('workProviders', 'validateArtifact', input)
+    ),
+  },
   knowledge: {
     status: (): Promise<KnowledgeStatusResult> => invokeHost('knowledge', 'status'),
     init: (): Promise<KnowledgeInitResult> => invokeHost('knowledge', 'init'),
@@ -828,6 +844,8 @@ export const hostApi = {
     dashboardSnapshot: (): Promise<ObservabilityDashboardSnapshot> => invokeHost('observability', 'dashboardSnapshot'),
     traces: (): Promise<unknown[]> => invokeHost('observability', 'traces'),
     trace: (id: string): Promise<ObservabilityTrace | null> => invokeHost('observability', 'trace', { id }),
+    reportTrace: (trace: ObservabilityTrace): Promise<{ success: boolean; traceId?: string; error?: string }> =>
+      invokeHost('observability', 'reportTrace', { trace }),
     queryTraces: (payload?: ObservabilityTraceQuery): Promise<ObservabilityTraceQueryResult> =>
       invokeHost('observability', 'queryTraces', payload),
     traceGraph: (id: string): Promise<ObservabilityTraceGraphResult | null> => invokeHost('observability', 'traceGraph', { id }),

@@ -4,6 +4,10 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { Chat } from '@/pages/Chat';
 
 vi.mock('react-i18next', () => ({
+  initReactI18next: {
+    type: '3rdParty',
+    init: vi.fn(),
+  },
   useTranslation: () => ({
     t: (key: string, options?: string | Record<string, unknown>) => {
       if (typeof options === 'string') return options;
@@ -63,6 +67,8 @@ vi.mock('@/stores/agents', () => ({
 }));
 
 vi.mock('@/stores/artifact-panel', () => ({
+  ARTIFACT_PANEL_MIN_WIDTH: 28,
+  ARTIFACT_PANEL_MAX_WIDTH: 50,
   useArtifactPanel: (selector: (state: { open: boolean; widthPct: number; openChanges: () => void; openPreview: () => void; close: () => void; openBrowser: () => void; tab: string }) => unknown) => selector({
     open: false,
     widthPct: 34,

@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Settings } from '@/pages/Settings';
 
@@ -167,6 +168,14 @@ vi.mock('sonner', () => ({
   },
 }));
 
+function renderSettings(path = '/settings/system') {
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <Settings />
+    </MemoryRouter>,
+  );
+}
+
 describe('Settings remote control section', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -279,7 +288,7 @@ describe('Settings remote control section', () => {
   });
 
   it('shows CDP remote control outside developer mode and can inspect the endpoint', async () => {
-    render(<Settings />);
+    renderSettings('/settings/system');
 
     expect(screen.getByTestId('settings-remote-control-section')).toBeInTheDocument();
     expect(screen.queryByTestId('settings-developer-section')).not.toBeInTheDocument();
@@ -294,12 +303,12 @@ describe('Settings remote control section', () => {
   });
 
   it('can trigger CDP page actions from settings', async () => {
-    render(<Settings />);
+    renderSettings('/settings/system');
 
     fireEvent.click(screen.getByTestId('settings-cdp-inspect'));
-    await screen.findByText('可调试页面');
+    await screen.findByText('remoteControl.inspect.targets');
 
-    fireEvent.click(screen.getByText('页面信息'));
+    fireEvent.click(screen.getByText('remoteControl.actions.pageInfo'));
     await waitFor(() => {
       expect(remoteControlPageInfoMock).toHaveBeenCalledWith({ targetId: 'page-1' });
       expect(screen.getByText('viewport 1200x800 / scroll 0/1800')).toBeInTheDocument();
@@ -312,12 +321,12 @@ describe('Settings remote control section', () => {
         fullPage: true,
         format: 'png',
       });
-      expect(screen.getByAltText('Electron CDP 截图')).toBeInTheDocument();
+      expect(screen.getByAltText('remoteControl.screenshotAlt')).toBeInTheDocument();
     });
   });
 
   it('moves work mode selection into settings and customizes tool bundles', async () => {
-    render(<Settings />);
+    renderSettings('/settings/work-modes');
 
     expect(screen.getByTestId('settings-work-modes-section')).toBeInTheDocument();
     expect(screen.getByTestId('settings-work-mode-build')).toBeInTheDocument();

@@ -143,6 +143,39 @@ export type AgentTaskLoopConfig = {
   };
 };
 
+export type AgentMissionLoopConfig = {
+  /** Enable the outer long-goal Mission Loop. Default: true. */
+  enabled?: boolean;
+  /** Maximum mission ticks before blocking. Default: 8. */
+  maxTicks?: number;
+  /** Maximum repair ticks before blocking. Default: 3. */
+  maxRepairTicks?: number;
+  /** Optional defaults forwarded to the inner bounded task loop. */
+  innerLoop?: {
+    maxIterations?: number;
+    maxRepairIterations?: number;
+  };
+  /** Tick scheduling policy. Scheduled/event ticks require explicit user configuration. */
+  tickPolicy?: {
+    mode?: "manual" | "scheduled" | "event";
+    minIntervalMs?: number;
+    quietHours?: string[];
+  };
+  completion?: {
+    minConfidence?: number;
+    requireEvidence?: boolean;
+    requireLedgerClear?: boolean;
+  };
+  memory?: {
+    proposeAfterTick?: boolean;
+    autoApplyLowRisk?: boolean;
+  };
+  reviewer?: {
+    model?: AgentModelConfig;
+    timeoutMs?: number;
+  };
+};
+
 export type CliBackendConfig = {
   /** CLI command to execute (absolute path or on PATH). */
   command: string;
@@ -350,6 +383,8 @@ export type AgentDefaultsConfig = {
   runRetries?: AgentRunRetriesConfig;
   /** Bounded self-checking task-loop defaults. */
   taskLoop?: AgentTaskLoopConfig;
+  /** Long-goal Mission Loop defaults. */
+  missionLoop?: AgentMissionLoopConfig;
   /** Embedded OpenClaw runner hardening and compatibility controls. */
   embeddedAgent?: {
     /**

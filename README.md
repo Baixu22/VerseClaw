@@ -43,9 +43,11 @@ Whether you're automating workflows, managing AI-powered channels, or scheduling
 
 For controlled autonomous execution, the Agents orchestration panel now includes a bounded **Task loop** that coordinates role subagents, self-checks evidence, runs scoped repairs, surfaces live status, and stops as `blocked` when confidence or permissions are insufficient.
 
+For goals that need to survive long conversations, checkpoints, evidence review, and explicit scheduled ticks, the Agents panel now includes **Mission Control**. It starts or resumes a Mission through `mission.run`, persists Mission state, rebuilds bounded context from ResumeCheckpoint, Task Ledger, memory, and trace evidence, runs one inner `task_loop` per tick, then lets the reviewer decide continue, repair, sleep, ask the user, complete, or block.
+
 For long tasks that need stable decomposition across many worker turns, **ClawGraph Runtime** adds workspace YAML workflows, DAG execution, stateless role-worker handoffs, audit checks, and user review without stuffing the whole workflow into one chat transcript.
 
-ClawX comes pre-configured with best-practice model providers and natively supports Windows as well as multi-language settings. Of course, you can also fine-tune advanced configurations via **Settings → Advanced → Developer Mode**.
+ClawX comes pre-configured with best-practice model providers and natively supports Windows as well as multi-language settings. Of course, you can also fine-tune advanced configurations via **Settings → Developer → Developer Mode**.
 
 <p align="center"><strong style="font-size:1.1em; text-decoration: underline;">For a full enterprise edition, dedicated service support, or tailored deployment guidance for your business scenario, contact us at <a href="mailto:public@valuecell.ai">public@valuecell.ai</a>.</strong></p>
 
@@ -108,19 +110,21 @@ Complete the entire setup—from installation to your first AI interaction—thr
 
 ### 💬 Intelligent Chat Interface
 Communicate with AI agents through a modern chat experience. Support for multiple conversation contexts, message history, rich content rendering with Markdown (including GitHub-flavored tables and KaTeX-powered LaTeX math: `$inline$`, `$$block$$`, `\(inline\)`, and `\[block\]`), structured Tool UI cards for plans, option lists, question flows, and preferences, and direct `@agent` routing in the main composer for multi-agent setups.
-Settings includes Work Modes for Plan, Build, Review, and Docs/Data. Modes are saved per workspace session and now use artifact-focused Work Kits for reports, sheets, slides, PDFs, research, websites, design, and ops. Kit status shows local skill readiness and optional install actions for built-in Office skills, while the next message only carries lightweight untrusted intent metadata. Work Modes do not change workspace permission automatically or override OpenClaw runtime tool policy.
+Settings → Work Modes includes Plan, Build, Review, and Docs/Data. Modes are saved per workspace session and now use artifact-focused Work Kits for reports, sheets, slides, PDFs, research, websites, design, and ops. Kit status shows local skill readiness, Main-owned Work Provider status for lightweight Office/Search capabilities, and optional install actions for built-in Office skills, while the next message only carries lightweight untrusted intent metadata. Search remains missing-config until the user explicitly configures a provider, and heavy converters, crawlers, OCR, and dataframe runtimes stay optional interfaces. Work Modes do not change workspace permission automatically or override OpenClaw runtime tool policy.
 Skills you insert from the composer appear as `/skill-name` chips; click a chip to open the preview sidebar and read that skill's `SKILL.md`.
 When you target another agent with `@agent`, ClawX switches into that agent's own conversation context directly instead of relaying through the default agent. Agent workspaces stay separate by default, and stronger isolation depends on OpenClaw sandbox settings.
 By default, ClawX uses a lightweight `policy-light` sandbox layer backed by Main-process permission gates, workspace-root checks, Gateway RPC approval, and OpenClaw exec approval; Docker and SSH remain optional explicit `strong` providers rather than startup requirements.
 Settings, Doctor, and diagnostics now show the same effective sandbox policy, including requested/effective provider, runtime level, exec and network policy, Docker availability, and degraded fallback reason.
 Each agent can also override its own `provider/model` runtime setting; agents without overrides continue inheriting the global default model.
-The composer context indicator includes a confirmed manual compression action for the current session, surfacing token pressure, hidden-message counts, and the last compaction while keeping long-task state in Task Ledger / Context Pack instead of relying on a huge transcript.
+The composer context indicator includes a confirmed manual compression action for the current session, surfacing token pressure, hidden-message counts, last compaction, and compression quality while keeping long-task state in Task Ledger / Context Pack instead of relying on a huge transcript. Compaction also stores a token-dense recovery artifact that handoff can use before falling back to transcript evidence.
 It also surfaces checkpointed recovery state for long conversations: queued follow-ups, latest intervention/checkpoint signals, recovery warnings, and an idle-session action to drain queued follow-up messages that survived a Gateway restart.
-It also includes preview-first **Handoff to new conversation**: ClawX prepares an editable deterministic continuation draft from the recent transcript, Task Ledger, Git status, and recent trace/error state, then creates a fresh workspace-scoped session with that draft prefilled without auto-sending.
-**Fork to new conversation** is the branch-style counterpart: when the current session is idle, ClawX asks the runtime to create a child conversation with the active transcript branch already present, switches to it immediately, keeps the parent unchanged, and does not generate or send a prompt.
+It also includes preview-first **Handoff to new conversation**: ClawX prepares an editable deterministic continuation draft from ResumeCheckpoint, Task Ledger, Git status, recent trace/error state, and transcript fallback evidence, then creates a fresh workspace-scoped session with that draft prefilled without auto-sending.
+**Fork to new conversation** is the branch-style counterpart: when the current session is idle, ClawX asks the runtime to create a child conversation with the active transcript branch already present, switches to it immediately, keeps the parent unchanged, and does not copy Task Ledger truth, generate a prompt, or auto-send.
 The composer shows only the recommended continuity action, while the session dropdown keeps both Fork and Handoff with a small Recommended marker; failure prompts offer explicit alternatives such as Prepare handoff without automatically switching semantics.
 
 The Agents orchestration panel also includes a bounded **Task loop** action for controlled autonomous work. It starts `task_loop.run` through the existing Gateway RPC path, coordinates role subagents, runs self-check and scoped repair rounds, and shows live phase, iteration, reviewer decision, terminal status, and trace evidence without adding renderer-direct Gateway transport.
+
+The same panel now exposes **Mission Control** for longer goals. It starts or resumes `mission.run`, stores Mission state in the OpenClaw state DB, rebuilds bounded context from ResumeCheckpoint, Task Ledger, memory, and trace evidence, runs an inner `task_loop` tick, reflects with the Mission reviewer, writes checkpoints, proposes memory, and surfaces pause/resume/cancel plus live tick phase, decision, next wake, blocked reason, and trace evidence. Scheduled Mission ticks are opt-in; completion is always decided from evidence, not from the wake trigger.
 
 ### ClawGraph Runtime
 The ClawGraph page lists `.clawx/clawgraph/*.yaml` workflows from the active workspace, compiles them into a checked DAG, starts controlled runs, and shows node status, read-only DAG structure, append-only events, and review items. Workers run as bounded role subagents and return structured `clawgraph_handoff` JSON; audit failures or uncertain graph changes freeze for user review instead of being accepted as truth. ClawGraph records execution state, while Task Ledger remains the long-term goal and review ledger.
@@ -152,7 +156,7 @@ The Cron page now lets you configure external delivery directly in the task form
 Extend your AI agents with pre-built skills. The integrated Skills page is local-first: it scans managed/workspace skill directories, lets you enable or disable skills without depending on the Gateway, and can optionally expose an extension-provided marketplace in enterprise builds.
 ClawX also pre-bundles full document-processing skills (`pdf`, `xlsx`, `docx`, `pptx`), deploys them automatically to the managed skills directory (default `~/.openclaw/skills`) on startup, and enables them by default on first install. Additional bundled skills (`find-skills`, `self-improving-agent`, `tavily-search`) are also enabled by default; if required API keys are missing, OpenClaw will surface configuration errors in runtime.  
 The Skills page can display skills discovered from multiple OpenClaw sources (managed dir, workspace, and extra skill dirs), and now shows each skill's actual location so you can open the real folder directly. For bundled OpenClaw skills, community builds now ship and expose only `skill-creator`; non-allowlisted bundled skills are physically trimmed in both dev and packaged startup, and any stale `openclaw.json` entries left behind for those removed bundled skills are pruned.
-From the chat composer, local-first capability requests such as enabling a discovered skill or registering pasted MCP JSON are detected before send, shown in a confirmation dialog with a local audit result, applied through the host API only when not blocked, and then summarized back into the message as trusted ClawX metadata. The v1 audit is an explainable local gate for Skill metadata and MCP command/URL/env risk; it does not auto-download marketplace packages or run remote npm/npx templates.
+From the chat composer, local-first capability requests such as enabling a discovered skill or registering pasted MCP JSON are detected before send, shown in a confirmation dialog with a local audit result, applied through the host API only when not blocked, and then summarized back into the message as trusted ClawX metadata. The capability orchestration also emits a `capability-management` Observability trace with audit, register, reload, heartbeat, and tool-list steps so install/registration flows can be inspected alongside agent runtime traces. The v1 audit is an explainable local gate for Skill metadata and MCP command/URL/env risk; it does not auto-download marketplace packages or run remote npm/npx templates.
 
 Environment variables for bundled search skills:
 - `TAVILY_API_KEY` for `tavily-search` (OAuth may also be supported by upstream skill runtime)
@@ -220,7 +224,7 @@ The wizard preselects your system language when it is supported, and falls back 
 
 ClawX includes built-in proxy settings for environments where Electron, the OpenClaw Gateway, or channels such as Telegram need to reach the internet through a local proxy client.
 
-Open **Settings → Gateway → Proxy** and configure:
+Open **Settings → Developer → Proxy** and configure:
 
 - **Proxy Server**: the default proxy for all requests
 - **Bypass Rules**: hosts that should connect directly, separated by semicolons, commas, or new lines
@@ -242,7 +246,7 @@ Notes:
 - ClawX also syncs the proxy to OpenClaw's Telegram channel config when Telegram is enabled.
 - Gateway restarts preserve an existing Telegram channel proxy if ClawX proxy is currently disabled.
 - To explicitly clear Telegram channel proxy from OpenClaw config, save proxy settings with proxy disabled.
-- In **Settings → Advanced → Developer**, you can run **OpenClaw Doctor** against the same selected runtime used by the Gateway and inspect the diagnostic output without leaving the app.
+- In **Settings → Developer**, you can run **OpenClaw Doctor** against the same selected runtime used by the Gateway and inspect the diagnostic output without leaving the app.
 - On packaged Windows builds, the bundled `openclaw` CLI/TUI runs through the shipped `node.exe` entrypoint and the packaged `openclaw-runtime` entry to keep terminal input behavior stable.
 
 ---

@@ -1,6 +1,25 @@
 {
   "title": "設定",
   "subtitle": "ClawX の体験をカスタマイズ",
+  "navigation": {
+    "back": "設定に戻る",
+    "general": {
+      "title": "一般",
+      "description": "外観、言語、起動、更新、アプリ情報。"
+    },
+    "workModes": {
+      "title": "作業モード",
+      "description": "ワークスペースの動作プリセットと作業キット。"
+    },
+    "system": {
+      "title": "システムとランタイム",
+      "description": "ゲートウェイ状態、自動起動、リモート制御、サンドボックス。"
+    },
+    "developer": {
+      "title": "開発者",
+      "description": "開発者モード、プロキシ、CLI、診断、ローカルテレメトリ。"
+    }
+  },
   "appearance": {
     "title": "通用",
     "description": "外観とスタイルをカスタマイズ",
@@ -74,7 +93,11 @@
       "save": "保存",
       "customDoc": "ドキュメント",
       "validate": "検証",
-      "failed": "失敗"
+      "failed": "失敗",
+      "fetchingModels": "取得中",
+      "fetchModels": "モデルを取得",
+      "customModel": "モデルを手動入力",
+      "testConnection": "接続をテスト"
     },
     "card": {
       "default": "デフォルト",
@@ -104,7 +127,14 @@
       "failedUpdate": "プロバイダーの更新に失敗しました",
       "invalidKey": "無効な API キー",
       "modelRequired": "モデル ID が必要です",
-      "minimaxConflict": "MiniMax (Global) と MiniMax (CN) は同時に追加できません。"
+      "minimaxConflict": "MiniMax (Global) と MiniMax (CN) は同時に追加できません。",
+      "connectionOk": "接続しました。遅延 {{ms}} ms",
+      "connectionFailed": "接続に失敗しました: {{error}}",
+      "modelsUpdated": "モデルリストを更新しました",
+      "modelsUpdatedWithLatency": "モデルリストを更新しました。遅延 {{ms}} ms",
+      "modelsFetchFailed": "モデルの取得に失敗しました: {{error}}",
+      "noModelsReturned": "サービスからモデルリストが返されませんでした",
+      "providerRequired": "プロバイダーを選択してください"
     },
     "oauth": {
       "loginMode": "OAuthログイン",
@@ -194,6 +224,54 @@
       "cli": "Docker CLI",
       "daemon": "Docker daemon",
       "image": "サンドボックスイメージ"
+    }
+  },
+  "remoteControl": {
+    "title": "Electron リモート制御",
+    "description": "Electron CDP デバッグポートを公開します。localhost にバインドし、信頼できる環境でのみ使用してください。保存後は ClawX の再起動が必要です。",
+    "port": "CDP ポート",
+    "configEndpoint": "設定済みエンドポイント: 127.0.0.1:{{port}} /json/version",
+    "currentEndpoint": "現在のエンドポイント: {{endpoint}}",
+    "envOverride": "現在のプロセスは CLAWX_REMOTE_DEBUGGING_PORT 環境変数で上書きされています。",
+    "restartRequired": "設定が現在のプロセスと一致しません。適用するにはアプリを再起動してください。",
+    "screenshotAlt": "Electron CDP スクリーンショット",
+    "status": {
+      "effective": "現在有効",
+      "inactive": "現在無効"
+    },
+    "actions": {
+      "refreshStatus": "状態を更新",
+      "connectDebug": "デバッガーに接続",
+      "connecting": "接続中",
+      "pageInfo": "ページ情報",
+      "scroll": "ページをスクロール",
+      "scrollDown": "下にスクロール",
+      "click": "ページをクリック",
+      "clickCenter": "中央をクリック",
+      "screenshot": "スクリーンショット",
+      "running": "{{action}}中..."
+    },
+    "inspect": {
+      "result": "接続結果: {{result}}",
+      "success": "成功",
+      "failure": "失敗",
+      "targets": "デバッグ可能なページ"
+    },
+    "toast": {
+      "connected": "Electron CDP に接続しました。{{count}} 件のページを検出しました",
+      "connectFailed": "Electron CDP への接続に失敗しました",
+      "connectFailedWithError": "Electron CDP への接続に失敗しました: {{error}}",
+      "actionFailed": "{{action}}に失敗しました: {{error}}",
+      "pageInfoRefreshed": "ページ情報を更新しました",
+      "pageInfoFailed": "ページ情報の読み取りに失敗しました",
+      "scrollFailed": "ページのスクロールに失敗しました",
+      "clickedCenter": "ページ中央をクリックしました ({{x}}, {{y}})",
+      "clickFailed": "ページのクリックに失敗しました",
+      "screenshotReady": "スクリーンショットを生成しました",
+      "screenshotFailed": "ページのスクリーンショット取得に失敗しました",
+      "invalidPort": "CDP ポートは 1-65535 の整数である必要があります",
+      "saved": "リモート制御設定を保存しました。再起動後に有効になります。",
+      "saveFailed": "リモート制御設定の保存に失敗しました: {{error}}"
     }
   },
   "updates": {
@@ -359,6 +437,44 @@
       "sheets": "???",
       "pdf": "PDF",
       "memory": "???"
+    }
+  },
+  "workProviders": {
+    "title": "Work Provider",
+    "description": "Work Kits の背後にあるローカル/任意 Provider。状態を表示するだけでツール権限は付与しません。",
+    "status": {
+      "ready": "利用可能",
+      "missingDependency": "依存不足",
+      "missingConfig": "設定不足",
+      "disabled": "無効",
+      "externalUnavailable": "外部不可",
+      "runtimeUnavailable": "Runtime 不可"
+    },
+    "providers": {
+      "officeDocument": "文書",
+      "officeSheet": "表計算",
+      "officeSlide": "スライド",
+      "pdf": "PDF",
+      "webSearch": "Web 検索",
+      "webRead": "Web 読み取り",
+      "libreOffice": "LibreOffice",
+      "pandoc": "Pandoc",
+      "crawler": "クローラー",
+      "ocr": "OCR",
+      "dataFrame": "データ分析"
+    },
+    "providerDescriptions": {
+      "officeDocument": "軽量 JS ライブラリで Word 系文書成果物を読み書きします。",
+      "officeSheet": "表計算と CSV 成果物を読み書きします。",
+      "officeSlide": "編集可能なプレゼン資料を生成します。",
+      "pdf": "PDF 成果物を検証、プレビュー、分割、結合します。",
+      "webSearch": "ユーザー設定済みの外部検索 Provider を使います。",
+      "webRead": "Web ページから読みやすい本文と引用情報を抽出します。",
+      "libreOffice": "任意の高忠実度ローカル Office 変換 Provider。",
+      "pandoc": "任意の文書変換 Provider。",
+      "crawler": "任意の外部クローラーサービス。",
+      "ocr": "任意の OCR Provider。",
+      "dataFrame": "任意の Python またはサービス型データ分析 Provider。"
     }
   },
   "workHeatGraph": {

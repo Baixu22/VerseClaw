@@ -351,7 +351,7 @@ export function FilePreviewBody({
       const res = await writeTextFile(file.filePath, draft);
       if (!res.ok) {
         if (res.approvalRequired || res.error === 'approvalRequired') {
-          toast.warning('该文件写入需要权限批准，请在输入框上方处理请求后重试保存');
+          toast.warning(t('filePreview.toast.approvalRequired'));
           return;
         }
         throw new Error(res.error ?? 'unknown');

@@ -1,11 +1,12 @@
 {
-    "title": "Навыки",
-    "subtitle": "Просмотр и управление AI-возможностями",
+    "title": "Инструменты",
+    "subtitle": "Управление навыками и MCP-сервисами",
     "refresh": "Обновить",
     "openFolder": "Открыть папку навыков",
     "gatewayWarning": "Шлюз не запущен. Локальные навыки по-прежнему доступны, но статус рантайма недоступен.",
     "gatewayStarting": "Шлюз запускается. Локальные навыки уже доступны, а статус рантайма появится после готовности шлюза.",
     "tabs": {
+        "skills": "Навыки",
         "installed": "Установленные",
         "marketplace": "Маркетплейс",
         "marketplaceLocalOnlyLabel": "Маркетплейс · Только локально",
@@ -114,6 +115,52 @@
         "batchEnabled": "{{count}} навыков включено.",
         "batchDisabled": "{{count}} навыков выключено.",
         "batchPartial": "Обновлено {{success}} / {{total}} навыков. Некоторые элементы не удались."
+    },
+    "mcp": {
+        "tab": "MCP-сервисы",
+        "empty": "MCP-сервисов пока нет",
+        "register": {
+            "title": "Зарегистрировать MCP-сервисы через JSON",
+            "description": "Поддерживается один объект сервиса или стандартный блок настройки mcpServers."
+        },
+        "actions": {
+            "fillExample": "Вставить пример",
+            "syncRuntime": "Синхронизировать рантайм",
+            "register": "Зарегистрировать сервис",
+            "copy": "Копировать",
+            "copyLocalAddress": "Копировать локальный MCP-адрес",
+            "heartbeat": "Проверка heartbeat"
+        },
+        "status": {
+            "disabled": "Отключено",
+            "heartbeatOk": "Heartbeat OK",
+            "heartbeatFailed": "Heartbeat не прошёл",
+            "connectionOk": "Подключено",
+            "connectionIssue": "Проблема подключения"
+        },
+        "detail": {
+            "localAddress": "Локальный постоянный адрес",
+            "jsonConfig": "JSON-конфигурация",
+            "toolCatalog": "Каталог инструментов",
+            "noRuntimeTools": "Рантайм не вернул инструменты."
+        },
+        "toast": {
+            "registeredOne": "MCP-сервис зарегистрирован",
+            "registeredMany": "Зарегистрировано MCP-сервисов: {{count}}",
+            "configValid": "MCP-конфигурация корректна",
+            "configInvalid": "Проверка MCP-конфигурации не пройдена",
+            "heartbeatOk": "MCP heartbeat OK",
+            "heartbeatOkWithLatency": "MCP heartbeat OK {{ms}}ms",
+            "heartbeatFailed": "MCP heartbeat не прошёл",
+            "synced": "Синхронизировано MCP-сервисов: {{count}}",
+            "saved": "MCP-сервис сохранён",
+            "deleted": "MCP-сервис удалён",
+            "localAddressCopied": "Локальный адрес скопирован",
+            "localAddressCopyFailed": "Не удалось скопировать локальный адрес: {{error}}"
+        },
+        "errors": {
+            "jsonObjectRequired": "MCP JSON должен быть объектом"
+        }
     },
     "marketplace": {
         "title": "Маркетплейс",

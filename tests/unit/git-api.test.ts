@@ -183,4 +183,74 @@ describe('git api', () => {
       approvalRequired: true,
     });
   });
+
+  it('adds a worktree by creating a new branch with the correct argument order', async () => {
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'worktree' && args[1] === 'add') return { stdout: 'prepared worktree\n' };
+      if (args[0] === 'status') return { stdout: '# branch.head main\0' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    await expect(createGitApi().worktreeAdd({
+      branch: 'feature/demo',
+      startPoint: 'main',
+      checkoutNewBranch: true,
+    })).resolves.toMatchObject({ success: true });
+
+    expect(calls).toContainEqual([
+      'worktree',
+      'add',
+      '-b',
+      'feature/demo',
+      resolve(process.cwd(), '..', 'Project-feature-demo'),
+      'main',
+    ]);
+  });
+
+  it('adds a worktree for an existing branch without -b', async () => {
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'worktree' && args[1] === 'add') return { stdout: 'prepared worktree\n' };
+      if (args[0] === 'status') return { stdout: '# branch.head main\0' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    await expect(createGitApi().worktreeAdd({
+      branch: 'release',
+      checkoutNewBranch: false,
+    })).resolves.toMatchObject({ success: true });
+
+    expect(calls).toContainEqual([
+      'worktree',
+      'add',
+      resolve(process.cwd(), '..', 'Project-release'),
+      'release',
+    ]);
+  });
+
+  it('requires dangerous approval for custom worktree paths outside the workspace and repo sibling area', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    await expect(createGitApi().worktreeAdd({
+      branch: 'feature/risky',
+      path: resolve(process.cwd(), '..', '..', 'outside-worktree'),
+      checkoutNewBranch: true,
+    })).resolves.toMatchObject({
+      success: false,
+      blocked: true,
+      approvalRequired: true,
+    });
+    expect(execFileMock).not.toHaveBeenCalledWith('git', expect.arrayContaining(['add', '-b']), expect.anything(), expect.anything());
+  });
 });

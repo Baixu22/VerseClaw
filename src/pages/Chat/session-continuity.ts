@@ -1,4 +1,5 @@
 import type { SessionCompactionStatus } from '@shared/host-api/contract';
+import type { LongTaskControlStatus } from '@shared/types/long-task-control';
 import type { LiveTokenUsage, WorkspaceContextRange } from '@shared/types/workspace';
 
 export type SessionContinuityAction = 'fork' | 'handoff';
@@ -9,6 +10,7 @@ export type SessionContinuityReason =
   | 'high_pressure'
   | 'truncated_context'
   | 'compaction_warning'
+  | 'recovery_checkpoint'
   | 'active_run';
 
 export type SessionContinuityRecommendation = {
@@ -32,8 +34,9 @@ export function resolveSessionContinuityRecommendation(input: {
   contextRange?: WorkspaceContextRange | null;
   liveUsage?: LiveTokenUsage | null;
   compactionStatus?: SessionCompactionStatus | null;
+  longTaskControlStatus?: LongTaskControlStatus | null;
 }): SessionContinuityRecommendation {
-  if (input.activeRun) {
+  if (input.activeRun || input.longTaskControlStatus?.latestIntervention?.status === 'draining') {
     return { action: 'fork', reason: 'active_run', disabled: true };
   }
 
@@ -51,6 +54,17 @@ export function resolveSessionContinuityRecommendation(input: {
 
   if ((input.compactionStatus?.warnings?.length ?? 0) > 0 || input.compactionStatus?.canCompact === false) {
     return { action: 'handoff', reason: 'compaction_warning', disabled: false };
+  }
+
+  const checkpointTrigger = input.longTaskControlStatus?.latestCheckpoint?.trigger;
+  if (
+    checkpointTrigger === 'compaction'
+    || checkpointTrigger === 'interrupt'
+    || checkpointTrigger === 'run_abort'
+    || checkpointTrigger === 'manual_review'
+    || checkpointTrigger === 'session_rotation'
+  ) {
+    return { action: 'handoff', reason: 'recovery_checkpoint', disabled: false };
   }
 
   if (input.compactionStatus?.pressure === 'high') {

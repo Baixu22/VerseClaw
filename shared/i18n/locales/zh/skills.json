@@ -1,11 +1,12 @@
 {
-    "title": "技能",
-    "subtitle": "浏览和管理 AI 能力",
+    "title": "工具",
+    "subtitle": "管理技能与 MCP 服务",
     "refresh": "刷新",
     "openFolder": "打开技能文件夹",
     "gatewayWarning": "网关未运行。你仍可查看本地技能，但运行时状态暂不可用。",
     "gatewayStarting": "网关正在启动。本地技能已可用，运行时状态会在就绪后自动补充。",
     "tabs": {
+        "skills": "技能",
         "installed": "已安装",
         "marketplace": "市场",
         "marketplaceLocalOnlyLabel": "市场 · 仅本地",
@@ -114,6 +115,52 @@
         "batchEnabled": "已启用 {{count}} 个技能。",
         "batchDisabled": "已禁用 {{count}} 个技能。",
         "batchPartial": "已更新 {{success}} / {{total}} 个技能，部分操作失败。"
+    },
+    "mcp": {
+        "tab": "MCP 服务",
+        "empty": "暂无 MCP 服务",
+        "register": {
+            "title": "通过 JSON 注册 MCP 服务",
+            "description": "支持单个服务对象，也支持常见的 mcpServers 配置块。"
+        },
+        "actions": {
+            "fillExample": "填入示例",
+            "syncRuntime": "同步运行时",
+            "register": "注册服务",
+            "copy": "复制",
+            "copyLocalAddress": "复制 MCP 本地地址",
+            "heartbeat": "心跳检测"
+        },
+        "status": {
+            "disabled": "已禁用",
+            "heartbeatOk": "心跳正常",
+            "heartbeatFailed": "心跳失败",
+            "connectionOk": "连接正常",
+            "connectionIssue": "连接异常"
+        },
+        "detail": {
+            "localAddress": "本地持久地址",
+            "jsonConfig": "JSON 配置",
+            "toolCatalog": "工具目录",
+            "noRuntimeTools": "当前运行时没有返回工具。"
+        },
+        "toast": {
+            "registeredOne": "MCP 服务已注册",
+            "registeredMany": "已注册 {{count}} 个 MCP 服务",
+            "configValid": "MCP 配置校验通过",
+            "configInvalid": "MCP 配置校验失败",
+            "heartbeatOk": "MCP 心跳正常",
+            "heartbeatOkWithLatency": "MCP 心跳正常 {{ms}}ms",
+            "heartbeatFailed": "MCP 心跳失败",
+            "synced": "已同步 {{count}} 个 MCP 服务",
+            "saved": "MCP 服务已保存",
+            "deleted": "MCP 服务已删除",
+            "localAddressCopied": "本地地址已复制",
+            "localAddressCopyFailed": "复制本地地址失败: {{error}}"
+        },
+        "errors": {
+            "jsonObjectRequired": "MCP JSON 必须是对象"
+        }
     },
     "marketplace": {
         "title": "市场",

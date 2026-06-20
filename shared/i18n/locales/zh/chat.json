@@ -18,12 +18,80 @@
     "refresh": "刷新聊天",
     "currentAgent": "当前对话对象：{{agent}}",
     "workspace": "工作空间",
-    "saveToKnowledge": "保存到知识库"
+    "saveToKnowledge": "保存到知识库",
+    "addWorkspaceDialogTitle": "选择工作区目录",
+    "addWorkspaceDialogButton": "设为工作区"
   },
   "markdown": {
     "codeBlock": "代码",
     "copyCode": "复制代码",
     "copiedCode": "已复制"
+  },
+  "approvals": {
+    "title": "审批与审计",
+    "description": "当前工作区的权限请求记录",
+    "empty": "暂无审批或高风险审计记录",
+    "mode": {
+      "readOnly": "只读",
+      "acceptEdits": "接受修改",
+      "plan": "计划",
+      "fullAccess": "完全访问"
+    },
+    "source": {
+      "terminal": "终端",
+      "file": "文件",
+      "remoteControl": "远程控制"
+    },
+    "risk": {
+      "write": "写入",
+      "dangerous": "高风险"
+    },
+    "status": {
+      "pending": "待处理",
+      "approved": "已批准",
+      "denied": "已拒绝",
+      "expired": "已消费"
+    }
+  },
+  "gitPanel": {
+    "title": "Git",
+    "summary": "{{staged}} 个已暂存，{{unstaged}} 个未暂存，{{untracked}} 个未跟踪",
+    "notRepository": "未检测到 Git 仓库",
+    "loading": "正在加载 Git 状态...",
+    "empty": "没有变更文件",
+    "mode": {
+      "unstaged": "未暂存",
+      "staged": "已暂存"
+    }
+  },
+  "topics": {
+    "selector": {
+      "currentTooltip": "当前主题: {{name}}{{description}}",
+      "globalTooltip": "全局模式，使用工作区全局记忆",
+      "none": "无主题",
+      "globalTitle": "全局（无主题）",
+      "globalDescription": "使用全局记忆和工作区上下文",
+      "empty": "暂无主题",
+      "manage": "管理主题..."
+    },
+    "manager": {
+      "title": "管理主题",
+      "description": "主题帮助你按项目或内容分类管理 Agent 的记忆和上下文。",
+      "infoTooltip": "选择主题后，Agent 会自动加载该项目的技术栈、约定和关键决策。",
+      "editTooltip": "编辑主题名称、描述和 CONTEXT.md",
+      "deleteConfirm": "删除主题 \"{{name}}\"? CONTEXT.md 将丢失。",
+      "deleteTooltip": "删除主题 \"{{name}}\"。CONTEXT.md 将永久丢失。",
+      "create": "新建主题",
+      "createTooltip": "创建一个新的项目主题来组织记忆",
+      "name": "名称",
+      "namePlaceholder": "例如: auth-refactor",
+      "descriptionOptional": "描述（可选）",
+      "descriptionPlaceholder": "简短描述这个主题",
+      "createAction": "创建",
+      "editing": "编辑: {{id}}",
+      "descriptionLabel": "描述",
+      "contextLabel": "CONTEXT.md（项目上下文）"
+    }
   },
   "toolUi": {
     "actions": {
@@ -127,7 +195,8 @@
     },
     "toast": {
       "saved": "已保存到磁盘",
-      "saveFailed": "保存失败：{{error}}"
+      "saveFailed": "保存失败：{{error}}",
+      "approvalRequired": "该文件写入需要权限批准，请在输入框上方处理请求后重试保存"
     },
     "errors": {
       "outsideSandbox": "路径越界，已拒绝访问",
@@ -185,6 +254,13 @@
     "freshBadge": "本轮新增",
     "pickFile": "从左侧选择一个文件预览",
     "empty": "工作空间为空或无法访问",
+    "recent": "最近工作区",
+    "noRecent": "暂无项目",
+    "chooseNew": "选择新的工作区...",
+    "switched": "已切换工作区",
+    "addedAndSwitched": "工作区已添加并切换",
+    "switchFailed": "切换工作区失败：{{error}}",
+    "permissionModeUpdated": "权限模式已更新",
     "truncated": "目录过大，已截断显示前 5000 个节点",
     "actions": {
       "refresh": "刷新",
@@ -300,6 +376,17 @@
       "detached": "Detached HEAD",
       "summary": "{{count}} 个变更 · ↑{{ahead}} ↓{{behind}}",
       "clean": "工作区干净",
+      "state": {
+        "clean": "干净",
+        "dirty": "有变更",
+        "conflict": "有冲突"
+      },
+      "groups": {
+        "conflicted": "冲突（{{count}}）",
+        "staged": "已暂存（{{count}}）",
+        "unstaged": "未暂存（{{count}}）",
+        "untracked": "未跟踪（{{count}}）"
+      },
       "empty": {
         "title": "没有 Git 仓库",
         "body": "当前工作区不在 Git 仓库中。"
@@ -311,21 +398,41 @@
         "commit": "提交已暂存变更",
         "createBranch": "创建分支",
         "addWorktree": "添加 worktree",
-        "createPr": "创建 PR"
+        "removeWorktree": "移除",
+        "pruneWorktrees": "清理",
+        "createPr": "创建 PR",
+        "approveRetry": "批准并重试"
+      },
+      "approval": {
+        "title": "{{action}} 需要审批"
       },
       "diff": {
         "unstaged": "未暂存",
         "staged": "已暂存",
-        "empty": "所选文件没有 diff。"
+        "empty": "所选文件没有 diff。",
+        "binary": "二进制 diff 无法内联显示。",
+        "tooLarge": "diff 过大，无法内联显示。"
       },
       "commit": {
         "title": "提交",
         "placeholder": "提交信息"
       },
+      "branch": {
+        "title": "分支"
+      },
       "branchWorktree": {
         "title": "分支和 worktree",
         "branchPlaceholder": "新分支",
         "worktreePlaceholder": "worktree 分支"
+      },
+      "worktrees": {
+        "title": "Worktrees",
+        "newBranch": "新分支",
+        "existingBranch": "已有分支",
+        "startPointPlaceholder": "起点，默认 HEAD",
+        "selectBranch": "选择分支",
+        "current": "当前",
+        "empty": "没有 worktree"
       },
       "github": {
         "title": "GitHub PR",
@@ -336,7 +443,8 @@
       },
       "toast": {
         "blocked": "需要审批",
-        "failed": "Git 操作失败"
+        "failed": "Git 操作失败",
+        "approvalFailed": "审批失败"
       }
     }
   },
@@ -423,6 +531,11 @@
     "previewLoading": "正在载入图片预览…",
     "previewUnavailable": "图片预览暂时不可用"
   },
+  "session": {
+    "renameHint": "双击重命名会话",
+    "renameCurrent": "重命名当前会话",
+    "renameFailed": "重命名会话失败：{{error}}"
+  },
   "composer": {
     "attachFiles": "添加文件",
     "pickSkill": "选择技能",
@@ -452,6 +565,18 @@
     "knowledgeQuick": {
       "enable": "使用 wiki 知识",
       "disable": "关闭 wiki 知识"
+    },
+    "knowledgeAttach": {
+      "title": "附加知识",
+      "placeholder": "搜索 Wiki 页面",
+      "search": "搜索",
+      "empty": "搜索并把具体知识页附加到这条消息。",
+      "selected": "已选 {{count}} 条",
+      "remove": "移除 {{title}}",
+      "missingLookup": "这个结果不能附加。",
+      "searchFailed": "搜索知识失败。",
+      "defaultPrompt": "请基于选中的知识引用回答。",
+      "messageRefTitle": "知识引用：{{title}}"
     },
     "modelPickerTitle": "切换当前 Agent 模型",
     "modelSwitchFailed": "模型切换失败：{{error}}",
@@ -492,8 +617,16 @@
       "unavailable": "当前不可压缩",
       "inProgress": "压缩正在进行",
       "activeRun": "当前运行结束后可用",
-      "toastSuccess": "会话已压缩",
-      "toastSuccessWithTokens": "会话已压缩：{{before}} -> {{after}} tokens",
+      "quality": "压缩 {{level}} {{score}}%",
+      "qualityTitle": "证据 {{evidence}}% · 字段 {{fields}}% · 恢复 {{tokens}} tokens · 未验证 {{unverified}}",
+      "qualityLevel": {
+        "high": "高",
+        "medium": "中",
+        "low": "低"
+      },
+      "toastQuality": " · {{level}} {{score}}%",
+      "toastSuccess": "会话已压缩{{quality}}",
+      "toastSuccessWithTokens": "会话已压缩：{{before}} -> {{after}} tokens{{quality}}",
       "toastNoop": "未执行压缩：{{reason}}",
       "toastFailed": "压缩会话失败",
       "reason": {
@@ -561,7 +694,8 @@
           "gateway_unavailable": "Gateway 不可用；建议先准备接力草稿",
           "high_pressure": "上下文压力较高；建议准备接力草稿",
           "truncated_context": "部分历史已隐藏；建议准备接力草稿",
-          "compaction_warning": "上下文状态需要谨慎；建议准备接力草稿"
+          "compaction_warning": "上下文状态需要谨慎；建议准备接力草稿",
+          "recovery_checkpoint": "已有恢复 checkpoint；建议准备基于 checkpoint 的接力草稿"
         }
       },
       "dialogHint": {
@@ -569,7 +703,8 @@
         "gateway_unavailable": "Gateway 不可用，因此草稿式接力不依赖 runtime fork。",
         "high_pressure": "上下文压力较高，接力草稿能让下一步在新会话开始前先被确认。",
         "truncated_context": "部分 transcript 历史已隐藏，草稿接力比复制分支更稳妥。",
-        "compaction_warning": "上下文压缩状态存在提示，草稿接力是更稳妥的延续方式。"
+        "compaction_warning": "上下文压缩状态存在提示，草稿接力是更稳妥的延续方式。",
+        "recovery_checkpoint": "已有 ResumeCheckpoint，因此接力可以把 Task Ledger、Git、trace 和 checkpoint 证据带入可审阅草稿。"
       },
       "failure": {
         "action": {
@@ -583,15 +718,15 @@
           },
           "gateway_unavailable": {
             "title": "Fork 需要 Gateway",
-            "description": "Gateway 当前不可用，可以改为准备可编辑的接力草稿。"
+            "description": "Gateway 当前不可用，可以改为基于 ResumeCheckpoint、Task Ledger 和可用证据准备接力草稿。"
           },
           "parent_too_large": {
             "title": "Transcript 太大，无法 Fork",
-            "description": "可以准备接力草稿，在不复制完整分支的情况下延续当前任务。"
+            "description": "可以改为基于 ResumeCheckpoint、Task Ledger 和证据准备接力草稿，而不是复制完整分支。"
           },
           "transcript_unavailable": {
             "title": "Transcript 不可用",
-            "description": "可以改用已有会话信号准备接力草稿。"
+            "description": "可以改为基于 ResumeCheckpoint、Task Ledger 和可用证据准备接力草稿。"
           },
           "unknown": {
             "title": "Fork 失败",
@@ -733,6 +868,10 @@
     "chat": "对话",
     "work": "任务"
   },
+  "sessionView": {
+    "project": "项目",
+    "time": "时间"
+  },
   "questionDirectory": {
     "title": "问题目录",
     "fallback": "问题 {{number}}",
@@ -749,6 +888,7 @@
     },
     "artifacts": "产物：{{types}}",
     "kitStatus": "{{kit}}：{{status}}",
+    "providerStatus": "Provider：{{ready}} 可用，{{missingDependency}} 缺依赖，{{missingConfig}} 缺配置，{{externalUnavailable}} 外部不可用",
     "artifactTypes": {
       "markdown": "Markdown",
       "docx": "DOCX",

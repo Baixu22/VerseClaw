@@ -6,9 +6,7 @@
  */
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDownToLine, Check, ChevronDown, FileText, FolderPlus, GitBranchPlus, Laptop, Loader2, Pencil, Sparkles } from 'lucide-react';
-import { TopicSelector } from '@/components/topics/TopicSelector';
-import { TopicManager } from '@/components/topics/TopicManager';
-import type { SessionHandoffResult, SessionCompactionStatus, TopicEntry } from '@shared/host-api/contract';
+import type { SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
 import { useChatStore, type ChatRuntimeRunState, type RawMessage } from '@/stores/chat';
 import { isInternalMessage } from '@/stores/chat/helpers';
@@ -19,8 +17,12 @@ import { useProviderStore } from '@/stores/providers';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { useSettingsStore } from '@/stores/settings';
 import { useSkillsStore } from '@/stores/skills';
-import { useArtifactPanel } from '@/stores/artifact-panel';
-import { hostApi } from '@/lib/host-api';
+import {
+  ARTIFACT_PANEL_MAX_WIDTH,
+  ARTIFACT_PANEL_MIN_WIDTH,
+  useArtifactPanel,
+} from '@/stores/artifact-panel';
+import { hostApi, type ChatKnowledgeReference } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ChatMessage } from './ChatMessage';
@@ -89,6 +91,7 @@ import type {
 } from '@shared/types/workspace';
 import type { WorkModeId } from '@shared/types/work-mode';
 import { resolveDefaultWorkMode } from '@shared/types/work-mode';
+import type { WorkProviderStatusSnapshot } from '@shared/types/work-provider';
 import type { ChatSession } from '@/stores/chat/types';
 import { toast } from 'sonner';
 
@@ -418,7 +421,7 @@ function ProjectSessionHeader({
       await renameSession(currentSessionKey, nextLabel);
       setEditingSession(false);
     } catch (error) {
-      toast.error(`重命名会话失败：${error instanceof Error ? error.message : String(error)}`);
+      toast.error(t('session.renameFailed', { error: error instanceof Error ? error.message : String(error) }));
     } finally {
       setRenaming(false);
     }
@@ -439,7 +442,7 @@ function ProjectSessionHeader({
         </button>
         {open === 'workspace' && (
           <div className="absolute left-0 top-full z-30 mt-1 w-72 overflow-hidden rounded-xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10">
-            <div className="px-3 py-1.5 text-[11px] font-medium text-muted-foreground">最近工作区</div>
+            <div className="px-3 py-1.5 text-[11px] font-medium text-muted-foreground">{t('workspace.recent')}</div>
             {sortedWorkspaces.map((workspace) => (
               <button
                 key={workspace.id}
@@ -455,7 +458,7 @@ function ProjectSessionHeader({
               </button>
             ))}
             {sortedWorkspaces.length === 0 && (
-              <div className="px-3 py-2 text-xs text-muted-foreground">暂无项目</div>
+              <div className="px-3 py-2 text-xs text-muted-foreground">{t('workspace.noRecent')}</div>
             )}
             <div className="mt-1 border-t border-black/5 pt-1 dark:border-white/5">
               <button
@@ -467,7 +470,7 @@ function ProjectSessionHeader({
                 }}
               >
                 <FolderPlus className="h-3.5 w-3.5" />
-                选择新的工作区...
+                {t('workspace.chooseNew')}
               </button>
             </div>
           </div>
@@ -503,7 +506,7 @@ function ProjectSessionHeader({
               event.preventDefault();
               startRenameSession();
             }}
-            title="双击重命名会话"
+            title={t('session.renameHint')}
           >
             <span className="truncate">{sessionName}</span>
             <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
@@ -517,7 +520,7 @@ function ProjectSessionHeader({
               onClick={startRenameSession}
             >
               <Pencil className="h-3.5 w-3.5" />
-              重命名当前会话
+              {t('session.renameCurrent')}
             </button>
             <button
               type="button"
@@ -596,6 +599,7 @@ export function Chat() {
   const workModeRuntimeAvailable = isGatewayRunning && gatewayStatus.gatewayReady !== false;
   const workModeToolBundles = useSettingsStore((s) => s.workModeToolBundles);
   const workModeKits = useSettingsStore((s) => s.workModeKits);
+  const workProviders = useSettingsStore((s) => s.workProviders);
   const workModeSkills = useSkillsStore((s) => s.skills);
   const fetchWorkModeSkills = useSkillsStore((s) => s.fetchSkills);
 
@@ -637,51 +641,35 @@ export function Chat() {
   const saveWorkspaceState = useWorkspacesStore((s) => s.saveWorkspaceState);
   const setPermissionMode = useWorkspacesStore((s) => s.setPermissionMode);
 
-  // Topic state
-  const [topics, setTopics] = useState<TopicEntry[]>([]);
-  const [activeTopicId, setActiveTopicId] = useState<string | null>(null);
   const [knowledgeScope, setKnowledgeScope] = useState<WorkspaceKnowledgeScope>('none');
   const [workMode, setWorkMode] = useState<WorkModeId>('build');
   const [knowledgeDraftOpen, setKnowledgeDraftOpen] = useState(false);
   const [knowledgeDraftTitle, setKnowledgeDraftTitle] = useState('');
   const [knowledgeDraftBody, setKnowledgeDraftBody] = useState('');
   const [knowledgeDraftApplying, setKnowledgeDraftApplying] = useState(false);
-  const [showTopicManager, setShowTopicManager] = useState(false);
+  const [workProviderStatus, setWorkProviderStatus] = useState<WorkProviderStatusSnapshot | null>(null);
   useEffect(() => {
     void fetchWorkModeSkills();
   }, [fetchWorkModeSkills]);
 
-  const fetchTopics = useCallback(async () => {
-    try {
-      const result = await hostApi.topics.list({
-        agentId: currentAgentId,
-        workspacePath: activeWorkspace?.rootPath,
+  useEffect(() => {
+    let cancelled = false;
+    void hostApi.workProviders.status()
+      .then((status) => {
+        if (!cancelled) setWorkProviderStatus(status);
+      })
+      .catch(() => {
+        if (!cancelled) setWorkProviderStatus(null);
       });
-      setTopics(result.topics ?? []);
-    } catch { /* silently ignore */ }
-  }, [activeWorkspace?.rootPath, currentAgentId]);
-  useEffect(() => { void fetchTopics(); }, [fetchTopics]);
-  const syncActiveTopicMarker = useCallback(async (rootPath: string | undefined, topicId: string | null) => {
+    return () => { cancelled = true; };
+  }, [workModeRuntimeAvailable, workProviders]);
+
+  const clearActiveTopicMarker = useCallback(async (rootPath: string | undefined) => {
     if (!rootPath) return;
     try {
-      await hostApi.files.writeText(`${rootPath}/.clawx-active-topic`, topicId || '');
+      await hostApi.files.writeText(`${rootPath}/.clawx-active-topic`, '');
     } catch { /* best-effort */ }
   }, []);
-  const handleSelectTopic = useCallback(async (topicId: string | null) => {
-    setActiveTopicId(topicId);
-    // Persist active topic to workspace state
-    if (activeWorkspace) {
-      try {
-        await hostApi.workspaces.saveState({
-          id: activeWorkspace.id,
-          sessionKey: currentSessionKey,
-          activeSessionKey: currentSessionKey,
-          state: { activeTopicId: topicId },
-        });
-      } catch { /* best-effort */ }
-    }
-    await syncActiveTopicMarker(activeWorkspace?.rootPath, topicId);
-  }, [activeWorkspace, currentSessionKey, syncActiveTopicMarker]);
 
   const cleanupEmptySession = useChatStore((s) => s.cleanupEmptySession);
   const loadHistory = useChatStore((s) => s.loadHistory);
@@ -741,7 +729,7 @@ export function Chat() {
     const previousArtifactPanel = getWorkspaceSessionState(activeWorkspace, currentSessionKey).artifactPanel ?? {};
     return {
       draftInput: draft,
-      activeTopicId,
+      activeTopicId: null,
       knowledgeScope,
       workMode,
       artifactPanel: {
@@ -751,7 +739,7 @@ export function Chat() {
       },
       graphExpanded: graphExpandedOverrides,
     };
-  }, [activeTopicId, activeWorkspace, artifactTab, composerDraft, currentSessionKey, graphExpandedOverrides, knowledgeScope, panelOpen, workMode]);
+  }, [activeWorkspace, artifactTab, composerDraft, currentSessionKey, graphExpandedOverrides, knowledgeScope, panelOpen, workMode]);
 
   const persistCurrentWorkspaceSessionState = useCallback(async (options?: {
     activeSessionKey?: string;
@@ -787,7 +775,6 @@ export function Chat() {
       setGraphExpandedOverrides({});
       setContextRange(null);
       setLiveUsage(null);
-      setActiveTopicId(null);
       setKnowledgeScope('none');
       setWorkMode(resolveDefaultWorkMode(nextWorkspace?.permissionMode ?? targetWorkspace.permissionMode));
       resetSessionView(target.sessionKey);
@@ -814,7 +801,6 @@ export function Chat() {
       setGraphExpandedOverrides({});
       setContextRange(null);
       setLiveUsage(null);
-      setActiveTopicId(null);
       setKnowledgeScope('none');
       setWorkMode(resolveDefaultWorkMode(nextWorkspace.permissionMode));
       resetSessionView(target.sessionKey);
@@ -856,10 +842,9 @@ export function Chat() {
     if (target.isFresh) {
       setComposerDraft('');
       setGraphExpandedOverrides({});
-      setActiveTopicId(null);
       setKnowledgeScope('none');
       setWorkMode(resolveDefaultWorkMode(activeWorkspace.permissionMode));
-      void syncActiveTopicMarker(activeWorkspace.rootPath, null);
+      void clearActiveTopicMarker(activeWorkspace.rootPath);
     }
   }, [
     activeWorkspace,
@@ -868,7 +853,7 @@ export function Chat() {
     fetchWorkspaces,
     persistCurrentWorkspaceSessionState,
     resetSessionView,
-    syncActiveTopicMarker,
+    clearActiveTopicMarker,
   ]);
 
   const handleCreateNewSession = useCallback(async () => {
@@ -886,7 +871,6 @@ export function Chat() {
     setGraphExpandedOverrides({});
     setContextRange(null);
     setLiveUsage(null);
-    setActiveTopicId(null);
     setKnowledgeScope('none');
     setWorkMode(resolveDefaultWorkMode(activeWorkspace?.permissionMode));
   }, [activeWorkspace?.id, activeWorkspace?.permissionMode, currentSessionKey, persistCurrentWorkspaceSessionState]);
@@ -913,8 +897,8 @@ export function Chat() {
 
   const handlePickWorkspaceFolder = useCallback(async () => {
     const result = await hostApi.dialog.open({
-      title: t('toolbar.addWorkspaceDialogTitle', { defaultValue: '选择工作区目录' }),
-      buttonLabel: t('toolbar.addWorkspaceDialogButton', { defaultValue: '设为工作区' }),
+      title: t('toolbar.addWorkspaceDialogTitle'),
+      buttonLabel: t('toolbar.addWorkspaceDialogButton'),
       properties: ['openDirectory', 'createDirectory'],
     });
     if (result.canceled || !result.filePaths[0]) return;
@@ -928,7 +912,7 @@ export function Chat() {
       });
       if (existing) {
         await handleSwitchWorkspace(existing.id);
-        toast.success('已切换工作区');
+        toast.success(t('workspace.switched'));
       } else {
         const nextSessionKey = createFreshWorkspaceSessionKey(currentAgentId);
         const nextWorkspace = await createWorkspace({
@@ -947,12 +931,11 @@ export function Chat() {
         setGraphExpandedOverrides({});
         setContextRange(null);
         setLiveUsage(null);
-        setActiveTopicId(null);
         resetSessionView(nextSessionKey);
-        toast.success('工作区已添加并切换');
+        toast.success(t('workspace.addedAndSwitched'));
       }
     } catch (error) {
-      toast.error(`切换工作区失败：${error instanceof Error ? error.message : String(error)}`);
+      toast.error(t('workspace.switchFailed', { error: error instanceof Error ? error.message : String(error) }));
     }
   }, [createWorkspace, currentAgentId, currentSessionKey, handleSwitchWorkspace, persistCurrentWorkspaceSessionState, resetSessionView, t, workspaceProfiles]);
   useEffect(() => {
@@ -1013,13 +996,11 @@ export function Chat() {
     };
     setComposerDraft(sessionState.draftInput ?? '');
     setGraphExpandedOverrides(sessionState.graphExpanded ?? {});
-    const nextTopicId = sessionState.activeTopicId ?? null;
-    setActiveTopicId(nextTopicId);
     setKnowledgeScope(sessionState.knowledgeScope ?? 'none');
     setWorkMode(sessionState.workMode ?? resolveDefaultWorkMode(activeWorkspace.permissionMode));
-    void syncActiveTopicMarker(activeWorkspace.rootPath, nextTopicId);
+    void clearActiveTopicMarker(activeWorkspace.rootPath);
     restoreArtifactPanelState(sessionState.artifactPanel ?? { open: false });
-  }, [activeWorkspace, currentSessionKey, restoreArtifactPanelState, syncActiveTopicMarker]);
+  }, [activeWorkspace, clearActiveTopicMarker, currentSessionKey, restoreArtifactPanelState]);
 
   useEffect(() => {
     if (!activeWorkspace?.id || activeWorkspace.activeSessionKey === currentSessionKey) return;
@@ -1068,8 +1049,9 @@ export function Chat() {
     targetAgentId?: string | null,
     scope?: WorkspaceKnowledgeScope,
     selectedWorkMode?: WorkModeId,
+    knowledgeReferences?: ChatKnowledgeReference[],
   ) => {
-    return sendMessage(text, attachments, targetAgentId, scope, selectedWorkMode ?? workMode);
+    return sendMessage(text, attachments, targetAgentId, scope, selectedWorkMode ?? workMode, undefined, knowledgeReferences);
   }, [sendMessage, workMode]);
 
   const handleOpenKnowledgeDraft = useCallback(() => {
@@ -1532,7 +1514,6 @@ export function Chat() {
       setGraphExpandedOverrides({});
       setContextRange(null);
       setLiveUsage(null);
-      setActiveTopicId(null);
       setKnowledgeScope('none');
       setWorkMode(resolveDefaultWorkMode(activeWorkspace?.permissionMode));
       setHandoffDialogOpen(false);
@@ -1542,6 +1523,8 @@ export function Chat() {
           workspaceId: activeWorkspace.id,
           sessionKey: nextSessionKey,
           agentId: currentAgentId,
+          relation: 'handoff_from',
+          sourceSessionKey,
           summary: t('composer.handoff.ledgerSummary', { source: sourceSessionKey }),
           idempotencyKey: `handoff:${sourceSessionKey}:${nextSessionKey}`,
         }).catch((error) => {
@@ -1568,9 +1551,9 @@ export function Chat() {
   const handlePermissionModeChange = useCallback((mode: WorkspacePermissionMode) => {
     if (!activeWorkspace?.id) return;
     void setPermissionMode(activeWorkspace.id, mode)
-      .then(() => toast.success('权限模式已更新'))
+      .then(() => toast.success(t('workspace.permissionModeUpdated')))
       .catch((error) => toast.error(error instanceof Error ? error.message : String(error)));
-  }, [activeWorkspace?.id, setPermissionMode]);
+  }, [activeWorkspace?.id, setPermissionMode, t]);
 
   useEffect(() => {
     const completions = messages
@@ -1711,7 +1694,13 @@ export function Chat() {
     return items;
   }, [messages, subagentCompletionInfos, t]);
 
-  const questionDirectoryVisible = questionDirectoryOpenSessionKey === currentSessionKey && questionDirectoryItems.length > 1;
+  const questionDirectoryRequested = questionDirectoryOpenSessionKey === currentSessionKey && questionDirectoryItems.length > 1;
+  const chatAssistiveRailVisible = !panelOpen;
+  const questionDirectoryVisible = chatAssistiveRailVisible && questionDirectoryRequested;
+  const boundedPanelWidthPct = Math.min(
+    ARTIFACT_PANEL_MAX_WIDTH,
+    Math.max(ARTIFACT_PANEL_MIN_WIDTH, panelWidthPct),
+  );
 
   const isRunTrigger = useCallback(
     (message: RawMessage, index: number) => isRealUserMessage(message) && !subagentCompletionInfos[index],
@@ -2251,22 +2240,8 @@ export function Chat() {
                 handoffBusy={handoffBusy}
                 continuityRecommendation={continuityRecommendation}
               />
-              <span className="text-foreground/35">/</span>
-              <TopicSelector
-                topics={topics}
-                activeTopicId={activeTopicId}
-                onSelectTopic={handleSelectTopic}
-                onManageTopics={() => setShowTopicManager(true)}
-              />
             </div>
           )}
-          <TopicManager
-            open={showTopicManager}
-            agentId={currentAgentId}
-            workspacePath={activeWorkspace?.rootPath}
-            onChanged={() => void fetchTopics()}
-            onClose={() => setShowTopicManager(false)}
-          />
         </div>
         <div data-testid="chat-toolbar-actions" className="no-drag relative z-10">
           <ChatToolbar
@@ -2285,7 +2260,13 @@ export function Chat() {
       {/* Messages Area */}
       <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-4">
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
-        <div className="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col gap-4 lg:flex-row lg:items-stretch">
+        <div
+          className={cn(
+            'mx-auto flex h-full min-h-0 w-full flex-col gap-4 xl:items-stretch',
+            chatAssistiveRailVisible ? 'max-w-7xl xl:flex-row' : 'max-w-5xl',
+          )}
+          data-testid="chat-message-layout"
+        >
           <div ref={scrollRef} className="min-h-0 min-w-0 flex-1 overflow-y-auto" data-testid="chat-scroll-container">
             <div
               ref={contentRef}
@@ -2481,11 +2462,14 @@ export function Chat() {
             </button>
           )}
 
-          {!isEmpty && questionDirectoryVisible && (
+          {chatAssistiveRailVisible && !isEmpty && questionDirectoryVisible && (
             <QuestionDirectory items={questionDirectoryItems} />
           )}
-          {!questionDirectoryVisible && (
-            <>
+          {chatAssistiveRailVisible && !questionDirectoryVisible && (
+            <aside
+              data-testid="chat-assistive-rail"
+              className="flex w-full shrink-0 flex-col gap-3 xl:w-72"
+            >
               <WorkModeSummaryPanel
                 workMode={workMode}
                 permissionMode={activeWorkspace?.permissionMode}
@@ -2494,10 +2478,17 @@ export function Chat() {
                 runtimeAvailable={workModeRuntimeAvailable}
                 toolBundleConfig={workModeToolBundles}
                 kitConfig={workModeKits}
+                providerCapabilities={workProviderStatus?.kitCapabilities}
                 compact
+                className="mx-0 mb-0 w-full"
               />
-              <TaskLedgerSummaryPanel workspaceId={activeWorkspace?.id} compact hideWhenEmpty />
-            </>
+              <TaskLedgerSummaryPanel
+                workspaceId={activeWorkspace?.id}
+                compact
+                hideWhenEmpty
+                className="w-full lg:w-full xl:w-full"
+              />
+            </aside>
           )}
 
         </div>
@@ -2649,10 +2640,10 @@ export function Chat() {
           <aside
             data-testid="artifact-panel-aside"
             className={cn(
-              'relative z-20 hidden shrink-0 border-l border-black/5 dark:border-white/10 lg:flex lg:flex-col',
+              'absolute inset-y-0 right-0 z-30 flex shrink-0 flex-col border-l border-black/5 shadow-2xl dark:border-white/10 xl:relative xl:z-20 xl:shadow-none',
               isMac && 'no-drag',
             )}
-            style={{ width: `${panelWidthPct}%` }}
+            style={{ width: `min(100%, clamp(22rem, ${boundedPanelWidthPct}%, 44rem))` }}
           >
             <Suspense
               fallback={

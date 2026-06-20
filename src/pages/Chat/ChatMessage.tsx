@@ -6,7 +6,7 @@
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
 import { useState, useCallback, useEffect, memo } from 'react';
-import { Sparkles, Copy, Check, Wrench, FileText, Film, Music, FileArchive, File, X, FolderOpen, ZoomIn, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Sparkles, Copy, Check, Wrench, FileText, Film, Music, FileArchive, File, X, FolderOpen, ZoomIn, Loader2, CheckCircle2, AlertCircle, BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { TextMessagePartProvider } from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
@@ -251,6 +251,7 @@ export const ChatMessage = memo(function ChatMessage({
   onDraftInteractionResponse,
   canSubmitInteractionResponse = true,
 }: ChatMessageProps) {
+  const { t } = useTranslation('chat');
   const isUser = message.role === 'user';
   const role = typeof message.role === 'string' ? message.role.toLowerCase() : '';
   const isToolResult = role === 'toolresult' || role === 'tool_result';
@@ -276,6 +277,7 @@ export const ChatMessage = memo(function ChatMessage({
     : toolUiContent.interactions;
   const [validatedPaths, setValidatedPaths] = useState<Record<string, boolean>>({});
   const rawAttachedFiles = message._attachedFiles || [];
+  const knowledgeRefs = message._knowledgeRefs || [];
   const textPreviewFiles = isUser ? [] : extractPreviewDocumentPaths(text);
   const rawAttachedPaths = new Set(rawAttachedFiles.map((file) => file.filePath).filter(Boolean));
   const derivedAttachedFiles = [
@@ -356,7 +358,7 @@ export const ChatMessage = memo(function ChatMessage({
   if (isToolResult) return null;
 
   const hasStreamingToolStatus = isStreaming && streamingTools.length > 0;
-  if (!hasText && resolvableContentImages.length === 0 && visibleTools.length === 0 && toolUiInteractions.length === 0 && attachedFiles.length === 0 && reasoning.length === 0 && toolFallbacks.length === 0 && !hasStreamingToolStatus) return null;
+  if (!hasText && resolvableContentImages.length === 0 && visibleTools.length === 0 && toolUiInteractions.length === 0 && attachedFiles.length === 0 && knowledgeRefs.length === 0 && reasoning.length === 0 && toolFallbacks.length === 0 && !hasStreamingToolStatus) return null;
 
   return (
     <div
@@ -447,6 +449,21 @@ export const ChatMessage = memo(function ChatMessage({
               // Non-image files → file card
               return <FileCard key={`local-${i}`} file={file} onOpen={onOpenFile} />;
             })}
+          </div>
+        )}
+
+        {isUser && knowledgeRefs.length > 0 && (
+          <div className="flex flex-wrap justify-end gap-1.5" data-testid="chat-message-knowledge-refs">
+            {knowledgeRefs.map((reference) => (
+              <span
+                key={reference.id}
+                className="inline-flex max-w-[260px] items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-meta font-medium text-emerald-700 dark:text-emerald-400"
+                title={t('composer.knowledgeAttach.messageRefTitle', { title: reference.title })}
+              >
+                <BookOpen className="h-3 w-3 shrink-0" />
+                <span className="truncate">{reference.title}</span>
+              </span>
+            ))}
           </div>
         )}
 
@@ -1011,6 +1028,7 @@ function ImageLightbox({
   onClose: () => void;
 }) {
   void src; void base64; void mimeType; void fileName;
+  const { t } = useTranslation('chat');
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -1050,7 +1068,7 @@ function ImageLightbox({
               size="icon"
               className="h-8 w-8 bg-white/10 hover:bg-white/20 text-white"
               onClick={handleShowInFolder}
-              title="在文件夹中显示"
+              title={t('filePreview.actions.openInFinder')}
             >
               <FolderOpen className="h-4 w-4" />
             </Button>
@@ -1060,7 +1078,7 @@ function ImageLightbox({
             size="icon"
             className="h-8 w-8 bg-white/10 hover:bg-white/20 text-white"
             onClick={onClose}
-            title="关闭"
+            title={t('filePreview.actions.close')}
           >
             <X className="h-4 w-4" />
           </Button>

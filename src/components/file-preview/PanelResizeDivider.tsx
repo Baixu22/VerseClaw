@@ -85,7 +85,7 @@ export function PanelResizeDivider({ containerRef, className }: PanelResizeDivid
       aria-valuemax={ARTIFACT_PANEL_MAX_WIDTH}
       onPointerDown={handlePointerDown}
       className={cn(
-        'group relative z-10 hidden w-1.5 shrink-0 cursor-col-resize select-none lg:block',
+        'group relative z-10 hidden w-1.5 shrink-0 cursor-col-resize select-none xl:block',
         className,
       )}
       title="Drag to resize width"

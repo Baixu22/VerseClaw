@@ -18,6 +18,7 @@ import {
 import { readTrajectoryEventsForTrace } from './observability-trajectory';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type {
+  ObservabilityRuntimeEvent,
   ObservabilityScorecard,
   ObservabilityTrace,
   ObservabilityTraceQuery,
@@ -26,6 +27,9 @@ import type {
 /** Optional fetcher that pulls runtime-process traces + scorecards via Gateway RPC. */
 type RuntimeTraceFetcher = () => Promise<{ traces: Array<Record<string, unknown>>; scorecards?: Array<Record<string, unknown>> }>;
 let runtimeTraceFetcher: RuntimeTraceFetcher | undefined;
+type ObservabilityApiContext = {
+  onRuntimeEvent?: (event: ObservabilityRuntimeEvent) => void;
+};
 
 export function setRuntimeTraceFetcher(fetcher: RuntimeTraceFetcher): void {
   runtimeTraceFetcher = fetcher;
@@ -57,7 +61,7 @@ async function refreshTraceIndex(): Promise<void> {
   }
 }
 
-export function createObservabilityApi(): Pick<CompleteHostServiceRegistry, 'observability'> {
+export function createObservabilityApi(ctx: ObservabilityApiContext = {}): Pick<CompleteHostServiceRegistry, 'observability'> {
   return {
     observability: {
       dashboardSnapshot: async () => {
@@ -73,6 +77,17 @@ export function createObservabilityApi(): Pick<CompleteHostServiceRegistry, 'obs
       trace: async ({ id }: { id: string }) => {
         await ingestRuntimeTraces();
         return getObservabilityTrace(id) ?? (await getIndexedObservabilityTrace(id))?.trace ?? null;
+      },
+      reportTrace: async ({ trace }: { trace: ObservabilityTrace }) => {
+        if (!trace || typeof trace !== 'object' || typeof trace.id !== 'string' || !trace.id.trim()) {
+          return { success: false, error: 'observability.reportTrace requires a trace with an id' };
+        }
+        upsertObservabilityTrace(trace);
+        ctx.onRuntimeEvent?.({
+          type: trace.status === 'running' ? 'trace.updated' : 'trace.completed',
+          trace,
+        });
+        return { success: true, traceId: trace.id };
       },
       queryTraces: async (payload?: ObservabilityTraceQuery) => {
         await ingestRuntimeTraces();

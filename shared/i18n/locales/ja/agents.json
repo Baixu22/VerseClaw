@@ -186,6 +186,17 @@
         "taskLoopProgress": "タスクループ進行状況",
         "taskLoopPhase": "{{iteration}} 回目 · {{phase}}",
         "taskLoopSummary": "タスクループ {{status}} / {{phase}}",
+        "missionControl": "Mission Control",
+        "missionStarted": "Mission {{status}}、tick {{tick}}",
+        "missionUpdated": "Mission {{status}}",
+        "missionProgress": "Mission Control 進行状況",
+        "missionPhase": "Tick {{tick}} · {{phase}}",
+        "missionSummary": "Mission {{status}} / {{phase}}",
+        "missionTick": "Tick {{tick}}",
+        "missionNextWake": "次の起床: {{time}}",
+        "missionPause": "一時停止",
+        "missionResume": "再開",
+        "missionCancel": "キャンセル",
         "memoryComposerEditTitle": "メモリ提案ドラフト",
         "memoryType": "タイプ",
         "memoryScope": "スコープ",
@@ -213,6 +224,95 @@
         "memoryImpactRuntimeNone": "最近は注入なし",
         "memoryImpactLifecycle": "ライフサイクル",
         "memoryImpactLifecycleKeep": "保持"
+    },
+    "identityTools": {
+        "title": "Agent のアイデンティティとツール",
+        "description": "Agent はアイデンティティ、モデル、既定スキル、MCP サービスを保持します。ワークスペースはこれらの能力を選択して上書きします。",
+        "defaultSkills": "既定スキル",
+        "noDefaultSkills": "既定スキルはありません",
+        "noAgentMcp": "Agent スコープの MCP サービスはありません",
+        "defaultSkillIds": "既定スキル ID",
+        "defaultSkillIdsPlaceholder": "1 行に 1 つの skill id。ワークスペースで上書きできます。",
+        "defaultMcpIds": "既定 MCP サービス ID",
+        "defaultMcpIdsPlaceholder": "1 行に 1 つの MCP server id。ワークスペースで上書きできます。",
+        "agentRole": "Agent の役割",
+        "bootstrapPathPending": "読み込み後にランタイムパスが表示されます",
+        "saveRole": "役割を保存",
+        "structuredTab": "構造化",
+        "advancedTab": "高度 (Markdown)",
+        "soulPlaceholder": "この Agent のアイデンティティ、好み、作業スタイルを説明します",
+        "bootstrapFiles": "ブートストラップファイル ({{files}})",
+        "listSeparator": "、",
+        "bootstrapDescriptions": {
+            "agents": "行動指示、境界、セッション開始ガイド",
+            "tools": "ツール使用ガイド",
+            "user": "ユーザープロファイルと好み",
+            "identity": "アイデンティティ情報（名前、emoji、アバター）",
+            "heartbeat": "定期的なバックグラウンド動作"
+        },
+        "toast": {
+            "loadFailed": "Agent 設定の読み込みに失敗しました: {{error}}",
+            "saved": "Agent 設定を保存しました",
+            "saveFailed": "Agent 設定の保存に失敗しました: {{error}}"
+        }
+    },
+    "roleProfile": {
+        "roles": {
+            "general": "汎用アシスタント",
+            "coding": "コードアシスタント",
+            "writing": "文章パートナー",
+            "devops": "DevOps",
+            "review": "コードレビュー",
+            "architecture": "アーキテクチャ設計",
+            "analysis": "データ分析",
+            "custom": "カスタム"
+        },
+        "verbosity": {
+            "concise": "簡潔",
+            "balanced": "標準",
+            "detailed": "詳細"
+        },
+        "verbosityHint": {
+            "concise": "返信をできるだけ短くします",
+            "balanced": "適度な詳しさで返信します",
+            "detailed": "各返信を十分に説明します"
+        },
+        "tone": {
+            "friendly": "親しみやすい",
+            "direct": "率直",
+            "formal": "フォーマル",
+            "casual": "カジュアル"
+        },
+        "toneHint": {
+            "friendly": "温かく親しみやすい会話スタイル",
+            "direct": "要点を率直に伝えます",
+            "formal": "専門的でフォーマルな返信",
+            "casual": "気軽な会話調の表現"
+        },
+        "addTag": "タグを追加",
+        "removeTag": "\"{{tag}}\" をクリックして削除",
+        "displayName": "表示名",
+        "displayNameTooltip": "会話内で Agent が使用する表示名",
+        "displayNamePlaceholder": "例: ヘルパー",
+        "role": "役割",
+        "roleTooltip": "Agent の中核的な立ち位置と能力範囲を定義します",
+        "customRole": "カスタム役割",
+        "customRolePlaceholder": "例: フロントエンドアーキテクチャアドバイザー",
+        "replyStyle": "返信スタイル",
+        "replyStyleTooltip": "返信の詳しさ、トーン、言語設定を制御します",
+        "verbosityLabel": "詳しさ",
+        "toneLabel": "トーン",
+        "language": "言語設定",
+        "languagePlaceholder": "例: 中国語で思考し、コードは英語で書く",
+        "expertise": "得意分野",
+        "expertiseTooltip": "Agent が得意なスキルや知識領域を列挙します",
+        "expertisePlaceholder": "Enter で追加。例: Python, TypeScript",
+        "limitations": "不得意分野（正直な宣言）",
+        "limitationsTooltip": "弱い領域を正直に示し、その分野で誤答を避けます",
+        "limitationsPlaceholder": "例: CSS, モバイル開発",
+        "backstory": "背景ストーリー",
+        "backstoryTooltip": "任意: Agent の背景や特別な経験を説明し、より豊かな役割像を作ります",
+        "backstoryPlaceholder": "任意: Agent の背景を説明..."
     },
     "toast": {
         "agentCreated": "Agent を作成しました",

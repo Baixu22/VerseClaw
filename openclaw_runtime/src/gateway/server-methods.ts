@@ -69,6 +69,10 @@ const loadRoleOrchestrationHandlers = lazyHandlerModule(
   () => import("./server-methods/role-orchestration-methods.js"),
   (module) => module.roleOrchestrationHandlers,
 );
+const loadMissionControlHandlers = lazyHandlerModule(
+  () => import("./server-methods/mission-control-methods.js"),
+  (module) => module.missionControlHandlers,
+);
 const loadClawGraphHandlers = lazyHandlerModule(
   () => import("./server-methods/clawgraph-methods.js"),
   (module) => module.clawGraphHandlers,
@@ -598,6 +602,8 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "teams.list",
       "orchestrator.plan",
       "orchestrator.run",
+      "task_loop.run",
+      "task_loop.status",
       "observability.reportTrace",
       "observability.traces",
       "memory.list",
@@ -629,6 +635,18 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "memory.resolveConflict",
     ],
     loadHandlers: loadRoleOrchestrationHandlers,
+  }),
+  ...createLazyCoreHandlers({
+    methods: [
+      "mission.create",
+      "mission.run",
+      "mission.tick",
+      "mission.status",
+      "mission.pause",
+      "mission.resume",
+      "mission.cancel",
+    ],
+    loadHandlers: loadMissionControlHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: [

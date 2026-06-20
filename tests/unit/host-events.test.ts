@@ -59,6 +59,18 @@ describe('hostEvents', () => {
     expect(handler).toHaveBeenCalledWith({ runId: 'run-1', status: 'started' });
   });
 
+  it('subscribes to mission lifecycle events over IPC', async () => {
+    const { hostEvents } = await import('@/lib/host-events');
+    const handler = vi.fn();
+
+    hostEvents.onMissionControlLifecycle(handler);
+    const callback = on.mock.calls[0]?.[1] as ((payload: unknown) => void) | undefined;
+    callback?.({ missionId: 'mission-1', sessionKey: 'agent:main:session', phase: 'reflect', status: 'running', tick: 1, progress: 72, ts: 1 });
+
+    expect(on).toHaveBeenCalledWith('agent:mission-lifecycle', expect.any(Function));
+    expect(handler).toHaveBeenCalledWith({ missionId: 'mission-1', sessionKey: 'agent:main:session', phase: 'reflect', status: 'running', tick: 1, progress: 72, ts: 1 });
+  });
+
   it('subscribes to observability runtime events over IPC', async () => {
     const { hostEvents } = await import('@/lib/host-events');
     const handler = vi.fn();

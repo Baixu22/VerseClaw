@@ -1,11 +1,12 @@
 {
-    "title": "Skills",
-    "subtitle": "Browse and manage AI capabilities",
+    "title": "Tools",
+    "subtitle": "Manage skills and MCP services",
     "refresh": "Refresh",
     "openFolder": "Open Skills Folder",
     "gatewayWarning": "Gateway is not running. Local skills are still available, but runtime status is unavailable.",
     "gatewayStarting": "Gateway is starting. Local skills are available now; runtime status will appear once it is ready.",
     "tabs": {
+        "skills": "Skills",
         "installed": "Installed",
         "marketplace": "Marketplace",
         "marketplaceLocalOnlyLabel": "Marketplace · Local only",
@@ -114,6 +115,52 @@
         "batchEnabled": "{{count}} skills enabled.",
         "batchDisabled": "{{count}} skills disabled.",
         "batchPartial": "Updated {{success}} / {{total}} skills. Some items failed."
+    },
+    "mcp": {
+        "tab": "MCP Services",
+        "empty": "No MCP services yet",
+        "register": {
+            "title": "Register MCP services with JSON",
+            "description": "Supports a single service object or a common mcpServers configuration block."
+        },
+        "actions": {
+            "fillExample": "Use Example",
+            "syncRuntime": "Sync Runtime",
+            "register": "Register Service",
+            "copy": "Copy",
+            "copyLocalAddress": "Copy MCP local address",
+            "heartbeat": "Heartbeat"
+        },
+        "status": {
+            "disabled": "Disabled",
+            "heartbeatOk": "Heartbeat OK",
+            "heartbeatFailed": "Heartbeat Failed",
+            "connectionOk": "Connected",
+            "connectionIssue": "Connection Issue"
+        },
+        "detail": {
+            "localAddress": "Local persistent address",
+            "jsonConfig": "JSON Config",
+            "toolCatalog": "Tool Catalog",
+            "noRuntimeTools": "The runtime did not return any tools."
+        },
+        "toast": {
+            "registeredOne": "MCP service registered",
+            "registeredMany": "{{count}} MCP services registered",
+            "configValid": "MCP configuration is valid",
+            "configInvalid": "MCP configuration validation failed",
+            "heartbeatOk": "MCP heartbeat OK",
+            "heartbeatOkWithLatency": "MCP heartbeat OK {{ms}}ms",
+            "heartbeatFailed": "MCP heartbeat failed",
+            "synced": "Synced {{count}} MCP services",
+            "saved": "MCP service saved",
+            "deleted": "MCP service deleted",
+            "localAddressCopied": "Local address copied",
+            "localAddressCopyFailed": "Failed to copy local address: {{error}}"
+        },
+        "errors": {
+            "jsonObjectRequired": "MCP JSON must be an object"
+        }
     },
     "marketplace": {
         "title": "Marketplace",

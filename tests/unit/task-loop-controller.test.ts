@@ -307,6 +307,14 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_failure`,
         runObserved: (async (request) => fakeResult(request.templateId, [{ roleName: 'reviewer', status: 'error', error: 'verifier refuted evidence' }])) as never,
+        selfCheck: (async () => ({
+          decision: 'blocked',
+          confidence: 0.4,
+          missingEvidence: ['verifier refuted evidence'],
+          verificationGaps: ['verifier refuted evidence'],
+          risks: [],
+          contextSummary: 'blocked by verifier',
+        })) as never,
         storeTrace: vi.fn() as never,
       },
     );
@@ -317,7 +325,7 @@ describe('runTaskLoop', () => {
 });
 
 describe('subagent tool policy', () => {
-  it('denies task_loop and team_orchestrate for read-only leaf roles', () => {
+  it('denies mission_loop, task_loop, and team_orchestrate for read-only leaf roles', () => {
     const deny = buildRolePermissionDenyList({
       name: 'leaf-reviewer',
       displayName: 'Leaf reviewer',
@@ -331,6 +339,7 @@ describe('subagent tool policy', () => {
       },
     } as never);
     expect(deny).toContain('task_loop');
+    expect(deny).toContain('mission_loop');
     expect(deny).toContain('team_orchestrate');
   });
 });

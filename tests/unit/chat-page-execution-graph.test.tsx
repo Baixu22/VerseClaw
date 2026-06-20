@@ -30,6 +30,8 @@ vi.mock('@/stores/artifact-panel', () => {
     close: vi.fn(),
   };
   return {
+    ARTIFACT_PANEL_MIN_WIDTH: 28,
+    ARTIFACT_PANEL_MAX_WIDTH: 50,
     useArtifactPanel: (selector: (value: typeof state) => unknown) => selector(state),
   };
 });
@@ -78,6 +80,9 @@ vi.mock('@/lib/host-api', () => ({
     },
     skills: {
       local: vi.fn(async () => ({ success: true, skills: [] })),
+    },
+    workProviders: {
+      status: vi.fn(async () => ({ kitCapabilities: [] })),
     },
   },
 }));

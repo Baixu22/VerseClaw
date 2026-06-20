@@ -120,6 +120,7 @@ function baseHostApiMocks() {
       },
       draft: HANDOFF_DRAFT,
       sources: [
+        { id: 'runtime_checkpoint', label: 'Runtime checkpoint', available: true, summary: 'session_rotation checkpoint' },
         { id: 'transcript', label: 'Recent transcript', available: true, summary: '2 recent messages' },
         { id: 'task_ledger', label: 'Task Ledger', available: true, summary: '1 node' },
         { id: 'git', label: 'Git status', available: true, summary: 'main: clean' },
@@ -179,9 +180,10 @@ function baseHostApiMocks() {
     },
     [stableStringify(['taskLedger', 'linkSession', {
       workspaceId: 'workspace-a',
+      sessionKey: 'agent:main:session-1711111111111-4fzyo8',
+      agentId: 'main',
+      relation: 'handoff_from',
       sourceSessionKey: MAIN_SESSION_KEY,
-      targetSessionKey: 'agent:main:session-1711111111111-4fzyo8',
-      relation: 'handoff',
       summary: 'Handoff session created from agent:main:main',
       idempotencyKey: 'handoff:agent:main:main:agent:main:session-1711111111111-4fzyo8',
     }])]: {
@@ -224,7 +226,7 @@ test.describe('ClawX chat session handoff', () => {
         const originalHostInvoke = (ipcMain as unknown as {
           _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
         })._invokeHandlers?.get('host:invoke');
-        const calls = { chatSend: 0, workspaceUpdate: [] as unknown[], draftInput: '' };
+        const calls = { chatSend: 0, taskLedgerLink: [] as unknown[], workspaceUpdate: [] as unknown[], draftInput: '' };
         const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
         const buildWorkspace = (draftInput: string) => {
           const sessionKey = 'agent:main:session-1711111111111-4fzyo8';
@@ -289,6 +291,9 @@ test.describe('ClawX chat session handoff', () => {
             calls.chatSend += 1;
             return respond(request.id, { success: true, result: { runId: 'unexpected' } });
           }
+          if (request.module === 'taskLedger' && request.action === 'linkSession') {
+            calls.taskLedgerLink.push(request.payload);
+          }
           return originalHostInvoke?.(event, request) ?? respond(request.id, {});
         });
         (globalThis as typeof globalThis & { __handoffCalls?: typeof calls }).__handoffCalls = calls;
@@ -315,7 +320,11 @@ test.describe('ClawX chat session handoff', () => {
       await page.getByTestId('chat-composer-handoff').click();
       await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
       await expect(page.getByTestId('chat-handoff-recommendation-note')).toBeVisible();
+      await expect(page.getByTestId('chat-handoff-dialog').getByText('Runtime checkpoint', { exact: true }))
+        .toBeVisible();
       await expect(page.getByTestId('chat-handoff-dialog').getByText('Recent transcript', { exact: true }))
+        .toBeVisible();
+      await expect(page.getByTestId('chat-handoff-dialog').getByText('Task Ledger', { exact: true }))
         .toBeVisible();
       await expect(page.getByTestId('chat-handoff-draft'))
         .toHaveValue(/Handoff: continue this ClawX conversation/);
@@ -337,6 +346,14 @@ test.describe('ClawX chat session handoff', () => {
         activeSessionKey: 'agent:main:session-1711111111111-4fzyo8',
         sessionKey: 'agent:main:session-1711111111111-4fzyo8',
         state: { activeTopicId: null, draftInput: editedDraft },
+      }));
+      const taskLedgerLinks = await app.evaluate(() => (
+        (globalThis as typeof globalThis & { __handoffCalls?: { taskLedgerLink: unknown[] } }).__handoffCalls?.taskLedgerLink ?? []
+      ));
+      expect(taskLedgerLinks).toContainEqual(expect.objectContaining({
+        sessionKey: 'agent:main:session-1711111111111-4fzyo8',
+        sourceSessionKey: MAIN_SESSION_KEY,
+        relation: 'handoff_from',
       }));
     } finally {
       await closeElectronApp(app);

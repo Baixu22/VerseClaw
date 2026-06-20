@@ -154,13 +154,13 @@ export function RoleCard({ role, selected, onSelect, tt }: RoleCardProps) {
             disabled={soulLoading}
           >
             <ShieldCheck className="h-3 w-3 mr-1" />
-            {tt('roles.viewContract', '查看角色契约')}
+            {tt('roles.viewContract', 'View contract')}
             <ChevronDown className={cn('h-3 w-3 ml-0.5 transition-transform', soulOpen && 'rotate-180')} />
           </Button>
 
           {soulOpen && soulText !== null && (
             <pre className="font-mono text-2xs text-muted-foreground bg-surface-input rounded-xl p-3 max-h-48 overflow-y-auto whitespace-pre-wrap break-words">
-              {soulText || tt('roles.soulEmpty', '（无编译输出）')}
+              {soulText || tt('roles.soulEmpty', '(no compiled output)')}
             </pre>
           )}
         </div>

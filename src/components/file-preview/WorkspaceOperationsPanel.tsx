@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -20,47 +21,49 @@ type WorkspaceOperationsPanelProps = {
   onGitDiffModeChange?: (mode: GitDiffMode) => void;
 };
 
-function modeLabel(mode: string | undefined): string {
+type T = ReturnType<typeof useTranslation>['t'];
+
+function modeLabel(mode: string | undefined, t: T): string {
   switch (mode) {
-    case 'readOnly': return '只读';
-    case 'acceptEdits': return '接受修改';
-    case 'plan': return '计划';
-    case 'fullAccess': return '完全访问';
-    default: return '接受修改';
+    case 'readOnly': return t('approvals.mode.readOnly');
+    case 'acceptEdits': return t('approvals.mode.acceptEdits');
+    case 'plan': return t('approvals.mode.plan');
+    case 'fullAccess': return t('approvals.mode.fullAccess');
+    default: return t('approvals.mode.acceptEdits');
   }
 }
 
-function sourceLabel(source: PermissionApprovalEvent['source']): string {
+function sourceLabel(source: PermissionApprovalEvent['source'], t: T): string {
   switch (source) {
-    case 'terminal': return '终端';
+    case 'terminal': return t('approvals.source.terminal');
     case 'gateway': return 'Gateway';
     case 'mcp': return 'MCP';
-    case 'file': return '文件';
-    case 'remoteControl': return '远程控制';
+    case 'file': return t('approvals.source.file');
+    case 'remoteControl': return t('approvals.source.remoteControl');
     default: return source;
   }
 }
 
-function riskLabel(risk: PermissionApprovalEvent['risk']): string {
+function riskLabel(risk: PermissionApprovalEvent['risk'], t: T): string {
   switch (risk) {
-    case 'write': return '写入';
-    case 'dangerous': return '高风险';
+    case 'write': return t('approvals.risk.write');
+    case 'dangerous': return t('approvals.risk.dangerous');
     default: return risk;
   }
 }
 
-function statusLabel(status: PermissionApprovalEvent['status']): string {
+function statusLabel(status: PermissionApprovalEvent['status'], t: T): string {
   switch (status) {
-    case 'pending': return '待处理';
-    case 'approved': return '已批准';
-    case 'denied': return '已拒绝';
-    case 'expired': return '已消费';
+    case 'pending': return t('approvals.status.pending');
+    case 'approved': return t('approvals.status.approved');
+    case 'denied': return t('approvals.status.denied');
+    case 'expired': return t('approvals.status.expired');
     default: return status;
   }
 }
 
 function formatApprovalTime(value: number): string {
-  return new Date(value).toLocaleString('zh-CN', {
+  return new Date(value).toLocaleString(undefined, {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
@@ -77,6 +80,7 @@ export function WorkspaceOperationsPanel({
   onGitSelectedPathChange,
   onGitDiffModeChange,
 }: WorkspaceOperationsPanelProps) {
+  const { t } = useTranslation('chat');
   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
   const workspaceId = activeWorkspace?.id;
   const [approvals, setApprovals] = useState<PermissionApprovalEvent[]>([]);
@@ -128,32 +132,32 @@ export function WorkspaceOperationsPanel({
     <div className="flex h-full min-h-0 flex-col p-3">
       <div className="mb-3 flex items-center justify-between">
         <div>
-          <p className="text-sm font-semibold text-foreground">审批与审计</p>
-          <p className="text-xs text-muted-foreground">当前工作区的权限请求记录</p>
+          <p className="text-sm font-semibold text-foreground">{t('approvals.title')}</p>
+          <p className="text-xs text-muted-foreground">{t('approvals.description')}</p>
         </div>
         <Button type="button" variant="outline" size="sm" className="h-8" onClick={() => void refreshApprovals()}>
           <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-          刷新
+          {t('common:actions.refresh')}
         </Button>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto rounded-md border border-black/10 dark:border-white/10">
         {approvals.length === 0 ? (
           <div className="flex h-full items-center justify-center px-4 text-center text-xs text-muted-foreground">
-            暂无审批或高风险审计记录
+            {t('approvals.empty')}
           </div>
         ) : (
           <div className="divide-y divide-black/5 dark:divide-white/10">
             {approvals.map((approval) => (
               <div key={approval.id} className="p-3 text-xs">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-medium text-foreground">{sourceLabel(approval.source)}</span>
-                  <Badge variant={approval.status === 'pending' ? 'warning' : 'outline'}>{statusLabel(approval.status)}</Badge>
+                  <span className="font-medium text-foreground">{sourceLabel(approval.source, t)}</span>
+                  <Badge variant={approval.status === 'pending' ? 'warning' : 'outline'}>{statusLabel(approval.status, t)}</Badge>
                 </div>
                 <p className="mt-1 truncate font-mono text-[11px] text-muted-foreground">
                   {approval.command || approval.paths?.join(', ') || approval.reason || approval.id}
                 </p>
                 <p className="mt-1 text-[11px] text-muted-foreground">
-                  {formatApprovalTime(approval.requestedAt)} · {riskLabel(approval.risk)} · {modeLabel(approval.mode)}
+                  {formatApprovalTime(approval.requestedAt)} · {riskLabel(approval.risk, t)} · {modeLabel(approval.mode, t)}
                 </p>
               </div>
             ))}

@@ -18,12 +18,80 @@
     "refresh": "Обновить чат",
     "currentAgent": "Общение с {{agent}}",
     "workspace": "Рабочая область",
-    "saveToKnowledge": "Сохранить в знания"
+    "saveToKnowledge": "Сохранить в знания",
+    "addWorkspaceDialogTitle": "Выберите каталог рабочей области",
+    "addWorkspaceDialogButton": "Сделать рабочей областью"
   },
   "markdown": {
     "codeBlock": "Код",
     "copyCode": "Скопировать код",
     "copiedCode": "Скопировано"
+  },
+  "approvals": {
+    "title": "Одобрения и аудит",
+    "description": "Запросы разрешений для текущей рабочей области",
+    "empty": "Записей одобрений или аудита высокого риска пока нет",
+    "mode": {
+      "readOnly": "Только чтение",
+      "acceptEdits": "Принимать правки",
+      "plan": "План",
+      "fullAccess": "Полный доступ"
+    },
+    "source": {
+      "terminal": "Терминал",
+      "file": "Файл",
+      "remoteControl": "Удалённое управление"
+    },
+    "risk": {
+      "write": "Запись",
+      "dangerous": "Высокий риск"
+    },
+    "status": {
+      "pending": "Ожидает",
+      "approved": "Одобрено",
+      "denied": "Отклонено",
+      "expired": "Использовано"
+    }
+  },
+  "gitPanel": {
+    "title": "Git",
+    "summary": "{{staged}} staged, {{unstaged}} unstaged, {{untracked}} untracked",
+    "notRepository": "Git-репозиторий не найден",
+    "loading": "Загрузка статуса Git...",
+    "empty": "Нет измененных файлов",
+    "mode": {
+      "unstaged": "Unstaged",
+      "staged": "Staged"
+    }
+  },
+  "topics": {
+    "selector": {
+      "currentTooltip": "Текущая тема: {{name}}{{description}}",
+      "globalTooltip": "Глобальный режим, используется память всей рабочей области",
+      "none": "Без темы",
+      "globalTitle": "Глобально (без темы)",
+      "globalDescription": "Использовать глобальную память и контекст рабочей области",
+      "empty": "Тем пока нет",
+      "manage": "Управлять темами..."
+    },
+    "manager": {
+      "title": "Управление темами",
+      "description": "Темы помогают организовать память и контекст Agent по проектам или областям.",
+      "infoTooltip": "После выбора темы Agent автоматически загружает стек, соглашения и ключевые решения проекта.",
+      "editTooltip": "Изменить название темы, описание и CONTEXT.md",
+      "deleteConfirm": "Удалить тему \"{{name}}\"? CONTEXT.md будет потерян.",
+      "deleteTooltip": "Удалить тему \"{{name}}\". CONTEXT.md будет потерян навсегда.",
+      "create": "Новая тема",
+      "createTooltip": "Создать новую тему проекта для организации памяти",
+      "name": "Название",
+      "namePlaceholder": "Например: auth-refactor",
+      "descriptionOptional": "Описание (необязательно)",
+      "descriptionPlaceholder": "Кратко опишите эту тему",
+      "createAction": "Создать",
+      "editing": "Редактирование: {{id}}",
+      "descriptionLabel": "Описание",
+      "contextLabel": "CONTEXT.md (контекст проекта)"
+    }
   },
   "toolUi": {
     "actions": {
@@ -127,7 +195,8 @@
     },
     "toast": {
       "saved": "Сохранено на диск",
-      "saveFailed": "Ошибка сохранения: {{error}}"
+      "saveFailed": "Ошибка сохранения: {{error}}",
+      "approvalRequired": "Для записи этого файла требуется одобрение разрешения. Обработайте запрос над полем ввода, затем повторите сохранение."
     },
     "errors": {
       "outsideSandbox": "Путь вне песочницы — доступ запрещён",
@@ -185,6 +254,13 @@
     "freshBadge": "Обновлено в этот раз",
     "pickFile": "Выберите файл слева для предпросмотра",
     "empty": "Рабочая область пуста или недоступна",
+    "recent": "Недавние рабочие области",
+    "noRecent": "Проектов пока нет",
+    "chooseNew": "Выбрать новую рабочую область...",
+    "switched": "Рабочая область переключена",
+    "addedAndSwitched": "Рабочая область добавлена и выбрана",
+    "switchFailed": "Не удалось переключить рабочую область: {{error}}",
+    "permissionModeUpdated": "Режим разрешений обновлён",
     "truncated": "Каталог обрезан — показаны первые 5000 узлов",
     "actions": {
       "refresh": "Обновить",
@@ -300,6 +376,17 @@
       "detached": "Detached HEAD",
       "summary": "{{count}} изменений · ↑{{ahead}} ↓{{behind}}",
       "clean": "Рабочее дерево чистое",
+      "state": {
+        "clean": "Чисто",
+        "dirty": "Есть изменения",
+        "conflict": "Конфликты"
+      },
+      "groups": {
+        "conflicted": "Конфликты ({{count}})",
+        "staged": "В индексе ({{count}})",
+        "unstaged": "Не в индексе ({{count}})",
+        "untracked": "Не отслеживаются ({{count}})"
+      },
       "empty": {
         "title": "Нет Git-репозитория",
         "body": "Активная рабочая область не находится внутри Git-репозитория."
@@ -311,21 +398,41 @@
         "commit": "Закоммитить индекс",
         "createBranch": "Создать ветку",
         "addWorktree": "Добавить worktree",
-        "createPr": "Создать PR"
+        "removeWorktree": "Удалить",
+        "pruneWorktrees": "Очистить",
+        "createPr": "Создать PR",
+        "approveRetry": "Разрешить и повторить"
+      },
+      "approval": {
+        "title": "{{action}} требует подтверждения"
       },
       "diff": {
         "unstaged": "Не в индексе",
         "staged": "В индексе",
-        "empty": "Для выбранного файла нет diff."
+        "empty": "Для выбранного файла нет diff.",
+        "binary": "Бинарный diff нельзя показать встроенно.",
+        "tooLarge": "Diff слишком большой для встроенного просмотра."
       },
       "commit": {
         "title": "Коммит",
         "placeholder": "Сообщение коммита"
       },
+      "branch": {
+        "title": "Ветка"
+      },
       "branchWorktree": {
         "title": "Ветка и worktree",
         "branchPlaceholder": "Новая ветка",
         "worktreePlaceholder": "Ветка для worktree"
+      },
+      "worktrees": {
+        "title": "Worktrees",
+        "newBranch": "Новая ветка",
+        "existingBranch": "Существующая",
+        "startPointPlaceholder": "Начальная точка, по умолчанию HEAD",
+        "selectBranch": "Выберите ветку",
+        "current": "Текущая",
+        "empty": "Worktree не найдены"
       },
       "github": {
         "title": "GitHub PR",
@@ -336,7 +443,8 @@
       },
       "toast": {
         "blocked": "Требуется подтверждение",
-        "failed": "Операция Git не удалась"
+        "failed": "Операция Git не удалась",
+        "approvalFailed": "Не удалось подтвердить"
       }
     }
   },
@@ -423,6 +531,11 @@
     "previewLoading": "Загрузка предпросмотра изображения…",
     "previewUnavailable": "Предпросмотр изображения временно недоступен"
   },
+  "session": {
+    "renameHint": "Дважды щёлкните, чтобы переименовать сессию",
+    "renameCurrent": "Переименовать текущую сессию",
+    "renameFailed": "Не удалось переименовать сессию: {{error}}"
+  },
   "composer": {
     "attachFiles": "Прикрепить файлы",
     "pickSkill": "Выбрать Skill",
@@ -452,6 +565,18 @@
     "knowledgeQuick": {
       "enable": "Использовать wiki-знания",
       "disable": "Отключить wiki-знания"
+    },
+    "knowledgeAttach": {
+      "title": "Прикрепить знания",
+      "placeholder": "Поиск wiki-страниц",
+      "search": "Поиск",
+      "empty": "Найдите и прикрепите конкретные страницы знаний к этому сообщению.",
+      "selected": "Выбрано: {{count}}",
+      "remove": "Убрать {{title}}",
+      "missingLookup": "Этот результат нельзя прикрепить.",
+      "searchFailed": "Не удалось выполнить поиск знаний.",
+      "defaultPrompt": "Ответь, используя выбранные ссылки на знания.",
+      "messageRefTitle": "Ссылка на знания: {{title}}"
     },
     "modelPickerTitle": "Переключить модель",
     "modelSwitchFailed": "Не удалось переключить модель: {{error}}",
@@ -492,8 +617,16 @@
       "unavailable": "Сжатие недоступно",
       "inProgress": "Сжатие уже выполняется",
       "activeRun": "Будет доступно после завершения текущего запуска",
-      "toastSuccess": "Сессия сжата",
-      "toastSuccessWithTokens": "Сессия сжата: {{before}} -> {{after}} токенов",
+      "quality": "Сжатие {{level}} {{score}}%",
+      "qualityTitle": "Доказательства {{evidence}}% · поля {{fields}}% · восстановление {{tokens}} токенов · непроверено {{unverified}}",
+      "qualityLevel": {
+        "high": "высокое",
+        "medium": "среднее",
+        "low": "низкое"
+      },
+      "toastQuality": " · {{level}} {{score}}%",
+      "toastSuccess": "Сессия сжата{{quality}}",
+      "toastSuccessWithTokens": "Сессия сжата: {{before}} -> {{after}} токенов{{quality}}",
       "toastNoop": "Сжатие не выполнено: {{reason}}",
       "toastFailed": "Не удалось сжать сессию",
       "reason": {
@@ -561,7 +694,8 @@
           "gateway_unavailable": "Gateway недоступен; подготовьте черновик продолжения",
           "high_pressure": "Контекст близок к пределу; подготовьте черновик продолжения",
           "truncated_context": "Часть истории скрыта; подготовьте черновик продолжения",
-          "compaction_warning": "Состояние контекста требует осторожности; подготовьте черновик продолжения"
+          "compaction_warning": "Состояние контекста требует осторожности; подготовьте черновик продолжения",
+          "recovery_checkpoint": "Есть recovery checkpoint; подготовьте черновик на основе checkpoint"
         }
       },
       "dialogHint": {
@@ -569,7 +703,8 @@
         "gateway_unavailable": "Gateway недоступен, поэтому такой Handoff с черновиком не зависит от runtime fork.",
         "high_pressure": "Контекст близок к пределу, поэтому черновик позволяет проверить следующий шаг до старта нового сеанса.",
         "truncated_context": "Часть transcript скрыта, поэтому Handoff с черновиком безопаснее копирования ветки.",
-        "compaction_warning": "В состоянии сжатия контекста есть предупреждения, поэтому Handoff с черновиком безопаснее."
+        "compaction_warning": "В состоянии сжатия контекста есть предупреждения, поэтому Handoff с черновиком безопаснее.",
+        "recovery_checkpoint": "ResumeCheckpoint уже доступен, поэтому Handoff может перенести Task Ledger, Git, trace и checkpoint evidence в проверяемый черновик."
       },
       "failure": {
         "action": {
@@ -583,15 +718,15 @@
           },
           "gateway_unavailable": {
             "title": "Для Fork нужен Gateway",
-            "description": "Gateway недоступен, поэтому можно подготовить редактируемый Handoff-черновик."
+            "description": "Gateway недоступен, поэтому можно подготовить Handoff-черновик из ResumeCheckpoint, Task Ledger и доступных evidence."
           },
           "parent_too_large": {
             "title": "Transcript слишком велик для Fork",
-            "description": "Подготовьте Handoff-черновик, чтобы продолжить задачу без копирования полной ветки."
+            "description": "Подготовьте Handoff-черновик из ResumeCheckpoint, Task Ledger и evidence вместо копирования полной ветки."
           },
           "transcript_unavailable": {
             "title": "Transcript недоступен",
-            "description": "Можно подготовить Handoff-черновик из доступных сигналов сеанса."
+            "description": "Можно подготовить Handoff-черновик из ResumeCheckpoint, Task Ledger и доступных evidence."
           },
           "unknown": {
             "title": "Fork не удался",
@@ -733,6 +868,10 @@
     "chat": "Чаты",
     "work": "Задачи"
   },
+  "sessionView": {
+    "project": "Проекты",
+    "time": "Время"
+  },
   "questionDirectory": {
     "title": "Список вопросов",
     "fallback": "Вопрос {{number}}",
@@ -749,6 +888,7 @@
     },
     "artifacts": "Артефакты: {{types}}",
     "kitStatus": "{{kit}}: {{status}}",
+    "providerStatus": "Provider: готово {{ready}}, нет зависимостей {{missingDependency}}, нет настроек {{missingConfig}}, внешние недоступны {{externalUnavailable}}",
     "artifactTypes": {
       "markdown": "Markdown",
       "docx": "DOCX",

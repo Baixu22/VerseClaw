@@ -1,6 +1,25 @@
 {
   "title": "Settings",
   "subtitle": "Configure your ClawX experience",
+  "navigation": {
+    "back": "Back to Settings",
+    "general": {
+      "title": "General",
+      "description": "Appearance, language, startup, updates, and app details."
+    },
+    "workModes": {
+      "title": "Work Modes",
+      "description": "Workspace behavior presets and advertised work kits."
+    },
+    "system": {
+      "title": "System & Runtime",
+      "description": "Gateway status, auto-start, remote control, and sandbox runtime."
+    },
+    "developer": {
+      "title": "Developer",
+      "description": "Developer mode, proxy, CLI, diagnostics, and local telemetry."
+    }
+  },
   "appearance": {
     "title": "General",
     "description": "Customize the look and feel",
@@ -74,7 +93,11 @@
       "save": "Save",
       "customDoc": "Documentation",
       "validate": "Validate",
-      "failed": "Failed"
+      "failed": "Failed",
+      "fetchingModels": "Fetching",
+      "fetchModels": "Fetch Models",
+      "customModel": "Enter model manually",
+      "testConnection": "Test Connection"
     },
     "card": {
       "default": "Default",
@@ -104,7 +127,14 @@
       "failedUpdate": "Failed to update provider",
       "invalidKey": "Invalid API key",
       "modelRequired": "Model ID is required",
-      "minimaxConflict": "Cannot add both MiniMax (Global) and MiniMax (CN) providers."
+      "minimaxConflict": "Cannot add both MiniMax (Global) and MiniMax (CN) providers.",
+      "connectionOk": "Connected, latency {{ms}} ms",
+      "connectionFailed": "Connection failed: {{error}}",
+      "modelsUpdated": "Model list updated",
+      "modelsUpdatedWithLatency": "Model list updated, latency {{ms}} ms",
+      "modelsFetchFailed": "Failed to fetch models: {{error}}",
+      "noModelsReturned": "Service did not return a model list",
+      "providerRequired": "Select a provider"
     },
     "oauth": {
       "loginMode": "OAuth Login",
@@ -194,6 +224,54 @@
       "cli": "Docker CLI",
       "daemon": "Docker daemon",
       "image": "Sandbox image"
+    }
+  },
+  "remoteControl": {
+    "title": "Electron Remote Control",
+    "description": "Expose the Electron CDP debugging port. Bind it to localhost and use it only in trusted environments. Restart ClawX after saving.",
+    "port": "CDP Port",
+    "configEndpoint": "Configured endpoint: 127.0.0.1:{{port}} /json/version",
+    "currentEndpoint": "Current endpoint: {{endpoint}}",
+    "envOverride": "The current process is overridden by the CLAWX_REMOTE_DEBUGGING_PORT environment variable.",
+    "restartRequired": "Configuration differs from the current process. Restart the app to apply it.",
+    "screenshotAlt": "Electron CDP screenshot",
+    "status": {
+      "effective": "Currently effective",
+      "inactive": "Not effective"
+    },
+    "actions": {
+      "refreshStatus": "Refresh Status",
+      "connectDebug": "Connect Debugger",
+      "connecting": "Connecting",
+      "pageInfo": "Page Info",
+      "scroll": "Scroll Page",
+      "scrollDown": "Scroll Down",
+      "click": "Click Page",
+      "clickCenter": "Click Center",
+      "screenshot": "Screenshot",
+      "running": "{{action}}..."
+    },
+    "inspect": {
+      "result": "Connection result: {{result}}",
+      "success": "Success",
+      "failure": "Failure",
+      "targets": "Debuggable pages"
+    },
+    "toast": {
+      "connected": "Connected to Electron CDP, found {{count}} pages",
+      "connectFailed": "Failed to connect to Electron CDP",
+      "connectFailedWithError": "Failed to connect to Electron CDP: {{error}}",
+      "actionFailed": "{{action}} failed: {{error}}",
+      "pageInfoRefreshed": "Page info refreshed",
+      "pageInfoFailed": "Failed to read page info",
+      "scrollFailed": "Failed to scroll page",
+      "clickedCenter": "Clicked page center ({{x}}, {{y}})",
+      "clickFailed": "Failed to click page",
+      "screenshotReady": "Screenshot generated",
+      "screenshotFailed": "Failed to capture page screenshot",
+      "invalidPort": "CDP port must be an integer between 1 and 65535",
+      "saved": "Remote control settings saved. Restart to apply.",
+      "saveFailed": "Failed to save remote control settings: {{error}}"
     }
   },
   "updates": {
@@ -359,6 +437,44 @@
       "sheets": "Sheets",
       "pdf": "PDF",
       "memory": "Memory"
+    }
+  },
+  "workProviders": {
+    "title": "Work Providers",
+    "description": "Local and optional providers behind Work Kits. Providers expose capability status only and do not grant tools.",
+    "status": {
+      "ready": "Ready",
+      "missingDependency": "Missing dependency",
+      "missingConfig": "Missing config",
+      "disabled": "Disabled",
+      "externalUnavailable": "External unavailable",
+      "runtimeUnavailable": "Runtime unavailable"
+    },
+    "providers": {
+      "officeDocument": "Documents",
+      "officeSheet": "Sheets",
+      "officeSlide": "Slides",
+      "pdf": "PDF",
+      "webSearch": "Web search",
+      "webRead": "Web reading",
+      "libreOffice": "LibreOffice",
+      "pandoc": "Pandoc",
+      "crawler": "Crawler",
+      "ocr": "OCR",
+      "dataFrame": "Data analysis"
+    },
+    "providerDescriptions": {
+      "officeDocument": "Read and write Word-style document artifacts with lightweight JS libraries.",
+      "officeSheet": "Read and write spreadsheet and CSV artifacts.",
+      "officeSlide": "Generate editable presentation decks.",
+      "pdf": "Validate, preview, split, and merge PDF artifacts.",
+      "webSearch": "Use a user-configured external search provider.",
+      "webRead": "Extract readable source text and citations from web pages.",
+      "libreOffice": "Optional high-fidelity local Office conversion provider.",
+      "pandoc": "Optional document conversion provider.",
+      "crawler": "Optional external crawler service.",
+      "ocr": "Optional OCR provider.",
+      "dataFrame": "Optional Python or service-backed data analysis provider."
     }
   },
   "workHeatGraph": {

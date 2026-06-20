@@ -1,14 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
-vi.mock('@/components/topics/TopicSelector', () => ({
-  TopicSelector: () => null,
-}));
-
-vi.mock('@/components/topics/TopicManager', () => ({
-  TopicManager: () => null,
-}));
-
 function workspace(overrides: Partial<WorkspaceProfile> = {}): WorkspaceProfile {
   return {
     id: 'workspace-a',

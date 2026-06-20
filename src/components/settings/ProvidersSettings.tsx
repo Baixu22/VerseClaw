@@ -183,6 +183,7 @@ function ModelPicker({
   onChange: (value: string) => void;
   onFetch: () => Promise<{ success: boolean; models: string[]; error?: string; durationMs?: number }>;
 }) {
+  const { t } = useTranslation('settings');
   const [remoteModels, setRemoteModels] = useState<string[]>([]);
   const [fetching, setFetching] = useState(false);
   const models = useMemo(
@@ -201,10 +202,10 @@ function ModelPicker({
           onChange(result.models[0]);
         }
         toast.success(result.durationMs !== undefined
-          ? `模型列表已更新，延迟 ${Math.round(result.durationMs)} ms`
-          : '模型列表已更新');
+          ? t('aiProviders.toast.modelsUpdatedWithLatency', { ms: Math.round(result.durationMs) })
+          : t('aiProviders.toast.modelsUpdated'));
       } else {
-        toast.error(`获取模型失败：${result.error || '服务未返回模型列表'}`);
+        toast.error(t('aiProviders.toast.modelsFetchFailed', { error: result.error || t('aiProviders.toast.noModelsReturned') }));
       }
     } finally {
       setFetching(false);
@@ -349,9 +350,9 @@ export function ProvidersSettings() {
         apiProtocol: options?.apiProtocol,
       });
       if (testResult.valid) {
-        toast.success(t('aiProviders.toast.connectionOk', '连接成功，延迟 {{ms}} ms', { ms: Math.round(testResult.durationMs ?? 0) }));
+        toast.success(t('aiProviders.toast.connectionOk', { ms: Math.round(testResult.durationMs ?? 0) }));
       } else {
-        toast.error(t('aiProviders.toast.connectionFailed', '连接失败：{{error}}', { error: testResult.error || t('aiProviders.toast.invalidKey') }));
+        toast.error(t('aiProviders.toast.connectionFailed', { error: testResult.error || t('aiProviders.toast.invalidKey') }));
       }
     } catch (error) {
       toast.error(`${t('aiProviders.toast.failedAdd')}: ${error}`);
@@ -649,9 +650,9 @@ function ProviderCard({
         apiProtocol: (account.vendorId === 'custom' || account.vendorId === 'ollama') ? apiProtocol : undefined,
       });
       if (testResult.valid) {
-        toast.success(t('aiProviders.toast.connectionOk', '连接成功，延迟 {{ms}} ms', { ms: Math.round(testResult.durationMs ?? 0) }));
+        toast.success(t('aiProviders.toast.connectionOk', { ms: Math.round(testResult.durationMs ?? 0) }));
       } else {
-        toast.error(t('aiProviders.toast.connectionFailed', '连接失败：{{error}}', { error: testResult.error || t('aiProviders.toast.invalidKey') }));
+        toast.error(t('aiProviders.toast.connectionFailed', { error: testResult.error || t('aiProviders.toast.invalidKey') }));
       }
       onCancelEdit();
     } catch (error) {
@@ -672,10 +673,10 @@ function ProviderCard({
         apiProtocol: (account.vendorId === 'custom' || account.vendorId === 'ollama') ? apiProtocol : undefined,
       });
       if (result.valid) {
-        toast.success(t('aiProviders.toast.connectionOk', '连接成功，延迟 {{ms}} ms', { ms: Math.round(result.durationMs ?? 0) }));
+        toast.success(t('aiProviders.toast.connectionOk', { ms: Math.round(result.durationMs ?? 0) }));
       } else {
         setValidationError(result.error || t('aiProviders.toast.invalidKey'));
-        toast.error(t('aiProviders.toast.connectionFailed', '连接失败：{{error}}', { error: result.error || t('aiProviders.toast.invalidKey') }));
+        toast.error(t('aiProviders.toast.connectionFailed', { error: result.error || t('aiProviders.toast.invalidKey') }));
       }
     } finally {
       setTestingConnection(false);
@@ -829,7 +830,7 @@ function ProviderCard({
                     inputClassName={currentInputClasses}
                     labelClassName={currentLabelClasses}
                     initialModels={modelOptions}
-                    fetchingLabel={t('aiProviders.dialog.fetchingModels', '获取中')}
+                    fetchingLabel={t('aiProviders.dialog.fetchingModels')}
                     fetchLabel={t('aiProviders.dialog.fetchModels')}
                     customLabel={t('aiProviders.dialog.customModel')}
                     onChange={(value) => {
@@ -1491,10 +1492,10 @@ function AddProviderDialog({
         apiProtocol: (selectedType === 'custom' || selectedType === 'ollama') ? apiProtocol : undefined,
       });
       if (result.valid) {
-        toast.success(t('aiProviders.toast.connectionOk', '连接成功，延迟 {{ms}} ms', { ms: Math.round(result.durationMs ?? 0) }));
+        toast.success(t('aiProviders.toast.connectionOk', { ms: Math.round(result.durationMs ?? 0) }));
       } else {
         setValidationError(result.error || t('aiProviders.toast.invalidKey'));
-        toast.error(t('aiProviders.toast.connectionFailed', '连接失败：{{error}}', { error: result.error || t('aiProviders.toast.invalidKey') }));
+        toast.error(t('aiProviders.toast.connectionFailed', { error: result.error || t('aiProviders.toast.invalidKey') }));
       }
     } finally {
       setTestingConnection(false);
@@ -1705,16 +1706,16 @@ function AddProviderDialog({
                       inputClassName={inputClasses}
                       labelClassName={labelClasses}
                       initialModels={addDialogModelOptions}
-                      fetchingLabel={t('aiProviders.dialog.fetchingModels', '获取中')}
-                      fetchLabel={t('aiProviders.dialog.fetchModels', '获取模型')}
-                      customLabel={t('aiProviders.dialog.customModel', '手动输入模型')}
+                      fetchingLabel={t('aiProviders.dialog.fetchingModels')}
+                      fetchLabel={t('aiProviders.dialog.fetchModels')}
+                      customLabel={t('aiProviders.dialog.customModel')}
                       onChange={(value) => {
                         setModelId(value);
                         setValidationError(null);
                       }}
                       onFetch={async () => {
                         if (!selectedType) {
-                          return { success: false, models: [], error: '请选择提供商' };
+                          return { success: false, models: [], error: t('aiProviders.toast.providerRequired') };
                         }
                         return onListModels(selectedType, normalizeProviderApiKeyInput(apiKey) || undefined, {
                           baseUrl: baseUrl.trim() || undefined,
@@ -1988,7 +1989,7 @@ function AddProviderDialog({
                     ) : (
                       <Wifi className="h-4 w-4 mr-2" />
                     )}
-                    {t('aiProviders.dialog.testConnection', '测试连接')}
+                    {t('aiProviders.dialog.testConnection')}
                   </Button>
                 )}
               </div>

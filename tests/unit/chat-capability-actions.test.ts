@@ -39,6 +39,9 @@ function createApi(overrides: Record<string, unknown> = {}) {
       listTools: vi.fn(async () => ({ success: true, serverId: 'filesystem', status: 'connected', tools: [{ name: 'read_file' }] })),
       reloadRuntime: vi.fn(async () => ({ success: true, serverCount: 2, hotReloaded: true, restartRequired: false, message: 'reloaded' })),
     },
+    observability: {
+      reportTrace: vi.fn(async () => ({ success: true })),
+    },
     ...overrides,
   };
   return api;
@@ -102,6 +105,21 @@ describe('chat capability actions', () => {
     expect(api.mcp.reloadRuntime).toHaveBeenCalledWith({ workspaceId: 'w1', agentId: 'main' });
     expect(api.mcp.heartbeat).toHaveBeenCalledWith({ serverId: 'filesystem' });
     expect(api.mcp.listTools).toHaveBeenCalledWith({ serverId: 'filesystem' });
+    expect(api.observability.reportTrace).toHaveBeenCalledWith(expect.objectContaining({
+      name: 'Capability management',
+      mode: 'capability-management',
+      tags: expect.arrayContaining(['capability-management', 'skill-mcp']),
+      spans: expect.arrayContaining([
+        expect.objectContaining({ name: 'Chat capability management', kind: 'orchestrator' }),
+        expect.objectContaining({ name: 'mcp.register: filesystem', kind: 'tool' }),
+      ]),
+      events: expect.arrayContaining([
+        expect.objectContaining({ type: 'capability.register.success' }),
+        expect.objectContaining({ type: 'capability.runtimeReload.success' }),
+        expect.objectContaining({ type: 'capability.heartbeat.success' }),
+        expect.objectContaining({ type: 'capability.listTools.success' }),
+      ]),
+    }));
     expect(results).toEqual(expect.arrayContaining([
       expect.objectContaining({
         kind: 'mcp.register',
@@ -110,6 +128,7 @@ describe('chat capability actions', () => {
         toolNames: ['read_file'],
         orchestration: expect.objectContaining({
           status: 'partial',
+          traceId: expect.stringMatching(/^trace_capability_/),
           reloaded: true,
           verified: true,
           heartbeatStatus: 'connected',
@@ -276,6 +295,17 @@ describe('chat capability actions', () => {
 
     expect(message).toContain('"auditResult"');
     expect(message).toContain('"mcp.unpinned-package"');
+  });
+
+  it('includes capability trace ids in trusted metadata', async () => {
+    const api = createApi();
+    const plan = await resolveChatCapabilityActions('use xlsx skill', api);
+    const results = await executeChatCapabilityActions(plan.actions, {}, api);
+    const message = buildCapabilityActionMessage('now use it', results);
+
+    expect(api.observability.reportTrace).toHaveBeenCalled();
+    expect(message).toContain('"traceId": "trace_capability_');
+    expect(message).toContain('"stage": "audit"');
   });
 
   it('reports all-failed results so callers can avoid sending to chat', () => {

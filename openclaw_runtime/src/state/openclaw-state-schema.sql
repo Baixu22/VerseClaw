@@ -1091,6 +1091,63 @@ CREATE INDEX IF NOT EXISTS idx_long_task_user_queue_session
 CREATE INDEX IF NOT EXISTS idx_long_task_user_queue_pending
   ON long_task_user_queue(status, created_at, id);
 
+CREATE TABLE IF NOT EXISTS mission_runs (
+  mission_id TEXT NOT NULL PRIMARY KEY,
+  session_key TEXT NOT NULL,
+  agent_id TEXT,
+  workspace_id TEXT,
+  objective TEXT NOT NULL,
+  acceptance_json TEXT NOT NULL,
+  status TEXT NOT NULL,
+  phase TEXT NOT NULL,
+  tick_count INTEGER NOT NULL DEFAULT 0,
+  repair_tick_count INTEGER NOT NULL DEFAULT 0,
+  max_ticks INTEGER NOT NULL,
+  max_repair_ticks INTEGER NOT NULL,
+  progress INTEGER NOT NULL DEFAULT 0,
+  last_decision TEXT,
+  last_reason TEXT,
+  last_reviewer_summary TEXT,
+  next_wake_at INTEGER,
+  blocked_reason TEXT,
+  trace_id TEXT,
+  task_loop_run_id TEXT,
+  evidence_refs_json TEXT NOT NULL DEFAULT '[]',
+  risks_json TEXT NOT NULL DEFAULT '[]',
+  remaining_json TEXT NOT NULL DEFAULT '[]',
+  no_progress_hash TEXT,
+  schedule_json TEXT NOT NULL DEFAULT '{}',
+  metadata_json TEXT NOT NULL DEFAULT '{}',
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  completed_at INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_mission_runs_session
+  ON mission_runs(session_key, updated_at DESC, mission_id);
+
+CREATE INDEX IF NOT EXISTS idx_mission_runs_status
+  ON mission_runs(status, updated_at DESC, mission_id);
+
+CREATE TABLE IF NOT EXISTS mission_events (
+  id TEXT NOT NULL PRIMARY KEY,
+  mission_id TEXT NOT NULL,
+  session_key TEXT NOT NULL,
+  type TEXT NOT NULL,
+  phase TEXT NOT NULL,
+  status TEXT NOT NULL,
+  tick INTEGER NOT NULL DEFAULT 0,
+  decision TEXT,
+  payload_json TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_mission_events_mission
+  ON mission_events(mission_id, created_at, id);
+
+CREATE INDEX IF NOT EXISTS idx_mission_events_session
+  ON mission_events(session_key, created_at DESC, id);
+
 CREATE TABLE IF NOT EXISTS subagent_runs (
   run_id TEXT NOT NULL PRIMARY KEY,
   child_session_key TEXT NOT NULL,

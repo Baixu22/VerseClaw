@@ -7,6 +7,7 @@ import { randomBytes } from 'crypto';
 import { app } from 'electron';
 import { resolveSupportedLanguage } from '@shared/language';
 import type { WorkModeKitConfig, WorkModeToolBundleConfig } from '@shared/types/work-mode';
+import type { WorkProviderConfig } from '@shared/types/work-provider';
 
 // Lazy-load electron-store (ESM module)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,6 +62,7 @@ export interface AppSettings {
   disabledSkills: string[];
   workModeToolBundles: WorkModeToolBundleConfig;
   workModeKits: WorkModeKitConfig;
+  workProviders: WorkProviderConfig;
 }
 
 /**
@@ -116,6 +118,7 @@ function createDefaultSettings(): AppSettings {
     disabledSkills: [],
     workModeToolBundles: {},
     workModeKits: {},
+    workProviders: {},
   };
 }
 

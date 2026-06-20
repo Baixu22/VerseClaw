@@ -496,6 +496,7 @@ function buildMessagingSection(params: {
   }
   const messageToolOnly = params.sourceReplyDeliveryMode === "message_tool_only";
   const showGenericInlineButtonHint = params.runtimeChannel !== "slack";
+  const hasMissionLoop = params.availableTools.has("mission_loop");
   const hasTaskLoop = params.availableTools.has("task_loop");
   const hasTeamOrchestrate = params.availableTools.has("team_orchestrate");
   const hasSessionsSpawn = params.availableTools.has("sessions_spawn");
@@ -505,8 +506,16 @@ function buildMessagingSection(params: {
   const completionEventGuidance = suppressSilentTokenGuidance
     ? "- Runtime-generated completion events may ask for a user update. Rewrite those in your normal assistant voice and send the update (do not forward raw internal metadata or default to a silent placeholder)."
     : `- Runtime-generated completion events may ask for a user update. Rewrite those in your normal assistant voice and send the update (do not forward raw internal metadata or default to ${SILENT_REPLY_TOKEN}).`;
+  const missionLoopGuidance = hasMissionLoop
+    ? "- Mission Loop -> use `mission_loop(action=\"run\"|\"tick\"|\"status\",...)` for long goals that must survive multiple ticks, checkpoints, evidence reviews, sleeps, or user asks. It calls bounded task_loop internally; do not use it for a simple one-shot task.\n"
+    : "";
+  const taskLoopGuidance = hasTaskLoop
+    ? "- Controlled task loop -> use `task_loop(task,...)` when the request needs one bounded self-checking execution pulse with verifier evidence and scoped repair before final synthesis.\n"
+    : "";
   const subagentOrchestrationGuidance = hasTeamOrchestrate
-    ? `${hasTaskLoop ? "- Controlled task loop -> use \\`task_loop(task,...)\\` when the request needs bounded self-check, verifier evidence, and scoped repair before final synthesis.\n" : ""}- Team orchestration -> use \`team_orchestrate(task,...)\` for role-first multi-agent work; after accepted children, ${hasSessionsYield ? "call `sessions_yield` to wait for push-based completions" : "wait for push-based completion events"} and synthesize results as the lead. Do not poll \`subagents\`/\`sessions_list\` in a loop.`
+    ? `${missionLoopGuidance}${taskLoopGuidance}- Team orchestration -> use \`team_orchestrate(task,...)\` for role-first multi-agent work; after accepted children, ${hasSessionsYield ? "call `sessions_yield` to wait for push-based completions" : "wait for push-based completion events"} and synthesize results as the lead. Do not poll \`subagents\`/\`sessions_list\` in a loop.`
+    : hasMissionLoop || hasTaskLoop
+      ? `${missionLoopGuidance}${taskLoopGuidance}`.trimEnd()
     : hasSessionsSpawn
     ? hasSubagents
       ? `- Sub-agent orchestration → use \`sessions_spawn(...)\` to start delegated work; include a clear objective/output/write-scope/verification brief and \`taskName\` when a stable handle helps; omit \`context\` for isolated children, set \`context:"fork"\` only when the child needs the current transcript; ${hasSessionsYield ? "use `sessions_yield` to wait for completion events; " : ""}use \`subagents(action=list)\` only for on-demand status/debugging visibility.`
@@ -758,6 +767,8 @@ export function buildAgentSystemPrompt(params: {
     sessions_list: "List other sessions (incl. sub-agents) with filters/last",
     sessions_history: "Fetch history for another session/sub-agent",
     sessions_send: "Send a message to another session/sub-agent",
+    mission_loop:
+      "Run or inspect a checkpointed long-goal Mission Loop; each tick rebuilds compact context and calls task_loop internally",
     task_loop:
       "Run a bounded self-checking task loop with role-first subagents, verifier evidence, and scoped repair",
     team_orchestrate:
@@ -798,6 +809,7 @@ export function buildAgentSystemPrompt(params: {
     "sessions_list",
     "sessions_history",
     "sessions_send",
+    "mission_loop",
     "task_loop",
     "team_orchestrate",
     "sessions_spawn",
