@@ -1,0 +1,160 @@
+import type {
+  GatewayDiagnosticsSnapshot,
+  GatewayHealthSummary,
+  GatewayStatus,
+} from './manager';
+import type { GatewayRuntimePayload } from '@shared/types/gateway';
+
+export type GatewayCapabilityName = 'openclawHealth' | 'openclawStatus' | 'channels' | 'memory';
+
+export interface GatewayRuntimeHandshakeSnapshot {
+  methods?: string[];
+  events?: string[];
+  protocol?: number;
+  serverVersion?: string;
+}
+
+export interface GatewayCapabilityProbe {
+  state: 'unknown' | 'healthy' | 'degraded';
+  checkedAt?: number;
+  durationMs?: number;
+  error?: string;
+  payload?: GatewayRuntimePayload;
+}
+
+export interface GatewayCoreProbe {
+  ok: boolean;
+  checkedAt: number;
+  durationMs?: number;
+  error?: string;
+}
+
+export interface GatewayCapabilitySnapshot {
+  core: {
+    process: GatewayStatus['state'];
+    transport: 'connected' | 'disconnected';
+    rpcRouter: 'unknown' | 'ready' | 'blocked';
+    lastProbe?: GatewayCoreProbe;
+  };
+  openclawHealth: GatewayCapabilityProbe;
+  openclawStatus: GatewayCapabilityProbe;
+  presence: GatewayCapabilityProbe;
+  channels: GatewayCapabilityProbe;
+  memory: GatewayCapabilityProbe;
+  runtimeHandshake: GatewayRuntimeHandshakeSnapshot;
+  diagnostics: GatewayDiagnosticsSnapshot;
+  summary?: GatewayHealthSummary;
+}
+
+function formatError(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function capabilityFromPayload(payload: GatewayRuntimePayload, checkedAt = Date.now()): GatewayCapabilityProbe {
+  return {
+    state: 'healthy',
+    checkedAt,
+    payload,
+  };
+}
+
+function capabilityFromError(error: unknown, checkedAt = Date.now()): GatewayCapabilityProbe {
+  return {
+    state: 'degraded',
+    checkedAt,
+    error: formatError(error),
+  };
+}
+
+const UNKNOWN_CAPABILITY: GatewayCapabilityProbe = { state: 'unknown' };
+
+export class GatewayCapabilityMonitor {
+  private openclawHealth: GatewayCapabilityProbe = UNKNOWN_CAPABILITY;
+  private openclawStatus: GatewayCapabilityProbe = UNKNOWN_CAPABILITY;
+  private presence: GatewayCapabilityProbe = UNKNOWN_CAPABILITY;
+  private channels: GatewayCapabilityProbe = UNKNOWN_CAPABILITY;
+  private memory: GatewayCapabilityProbe = UNKNOWN_CAPABILITY;
+  private runtimeHandshake: GatewayRuntimeHandshakeSnapshot = {};
+  private lastCoreProbe: GatewayCoreProbe | undefined;
+
+  recordOpenClawHealth(payload: GatewayRuntimePayload): void {
+    this.openclawHealth = capabilityFromPayload(payload);
+  }
+
+  recordOpenClawStatus(payload: GatewayRuntimePayload): void {
+    this.openclawStatus = capabilityFromPayload(payload);
+  }
+
+  recordPresence(payload: GatewayRuntimePayload): void {
+    this.presence = capabilityFromPayload(payload);
+  }
+
+  recordCoreProbe(probe: GatewayCoreProbe): void {
+    this.lastCoreProbe = probe;
+  }
+
+  recordRuntimeHandshake(snapshot: GatewayRuntimeHandshakeSnapshot): void {
+    this.runtimeHandshake = {
+      methods: snapshot.methods ? [...snapshot.methods] : undefined,
+      events: snapshot.events ? [...snapshot.events] : undefined,
+      protocol: snapshot.protocol,
+      serverVersion: snapshot.serverVersion,
+    };
+  }
+
+  recordCapabilitySuccess(name: GatewayCapabilityName, payload: GatewayRuntimePayload, durationMs?: number): void {
+    const probe: GatewayCapabilityProbe = {
+      state: 'healthy',
+      checkedAt: Date.now(),
+      durationMs,
+      payload,
+    };
+    this.setCapability(name, probe);
+  }
+
+  recordCapabilityFailure(name: GatewayCapabilityName, error: unknown, durationMs?: number): void {
+    const probe = capabilityFromError(error);
+    probe.durationMs = durationMs;
+    this.setCapability(name, probe);
+  }
+
+  buildSnapshot(params: {
+    status: GatewayStatus;
+    transportConnected: boolean;
+    diagnostics: GatewayDiagnosticsSnapshot;
+    summary?: GatewayHealthSummary;
+  }): GatewayCapabilitySnapshot {
+    return {
+      core: {
+        process: params.status.state,
+        transport: params.transportConnected ? 'connected' : 'disconnected',
+        rpcRouter: this.lastCoreProbe?.ok === false
+          ? 'blocked'
+          : params.status.gatewayReady === true || this.lastCoreProbe?.ok === true
+            ? 'ready'
+            : 'unknown',
+        lastProbe: this.lastCoreProbe,
+      },
+      openclawHealth: this.openclawHealth,
+      openclawStatus: this.openclawStatus,
+      presence: this.presence,
+      channels: this.channels,
+      memory: this.memory,
+      runtimeHandshake: this.runtimeHandshake,
+      diagnostics: params.diagnostics,
+      summary: params.summary,
+    };
+  }
+
+  private setCapability(name: GatewayCapabilityName, probe: GatewayCapabilityProbe): void {
+    if (name === 'openclawHealth') {
+      this.openclawHealth = probe;
+    } else if (name === 'openclawStatus') {
+      this.openclawStatus = probe;
+    } else if (name === 'channels') {
+      this.channels = probe;
+    } else if (name === 'memory') {
+      this.memory = probe;
+    }
+  }
+}

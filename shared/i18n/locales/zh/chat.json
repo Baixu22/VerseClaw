@@ -1,0 +1,859 @@
+{
+  "gatewayNotRunning": "网关未运行",
+  "gatewayRequired": "OpenClaw 网关需要运行才能使用聊天。它将自动启动，或者您可以从设置中启动。",
+  "welcome": {
+    "title": "ClawX 聊天",
+    "subtitle": "我能为你做些什么？",
+    "askQuestions": "处理任务",
+    "askQuestionsDesc": "处理面向任务的请求",
+    "creativeTasks": "持续执行",
+    "creativeTasksDesc": "持续推进多步骤工作",
+    "brainstorming": "多智能体并行"
+  },
+  "noLogs": "（暂无日志）",
+  "scrollToLatest": "回到底部",
+  "loadMoreHistory": "加载更早的消息",
+  "loadingMoreHistory": "加载更多中…",
+  "toolbar": {
+    "refresh": "刷新聊天",
+    "currentAgent": "当前对话对象：{{agent}}",
+    "workspace": "工作空间",
+    "saveToKnowledge": "保存到知识库"
+  },
+  "markdown": {
+    "codeBlock": "代码",
+    "copyCode": "复制代码",
+    "copiedCode": "已复制"
+  },
+  "toolUi": {
+    "actions": {
+      "back": "返回",
+      "next": "下一步",
+      "copyResponse": "复制答复",
+      "copied": "已复制",
+      "insertResponse": "插入答复",
+      "sendResponse": "发送答复"
+    },
+    "plan": {
+      "label": "计划",
+      "progress": "已完成 {{completed}} / {{total}}",
+      "showMore": "再显示 {{count}} 项"
+    },
+    "optionList": {
+      "label": "选项"
+    },
+    "questionFlow": {
+      "label": "问题",
+      "step": "第 {{current}} / {{total}} 步"
+    },
+    "preferencesPanel": {
+      "label": "偏好",
+      "on": "开启",
+      "off": "关闭"
+    },
+    "receipt": {
+      "complete": "已完成",
+      "saved": "已保存",
+      "error": "需要处理"
+    }
+  },
+  "knowledgeDraft": {
+    "title": "保存到知识库",
+    "description": "先审阅并编辑这份综合草稿，它会进入知识草稿箱；正式写入仍需要用户确认。",
+    "titleLabel": "标题",
+    "bodyLabel": "草稿",
+    "apply": "创建待审草稿",
+    "empty": "没有可保存的可见对话内容。",
+    "invalid": "请先填写标题和草稿内容。",
+    "applied": "已创建待审知识草稿。",
+    "applyFailed": "保存知识草稿失败。",
+    "proposalReason": "用户要求将本次对话总结保存为待审知识草稿。"
+  },
+  "generatedFiles": {
+    "title": "文件变更（{{count}} 个）",
+    "created": "新增",
+    "modified": "修改",
+    "openFolder": "打开文件夹",
+    "viewAll": "查看文件变更"
+  },
+  "runError": {
+    "title": "模型调用失败"
+  },
+  "artifactPanel": {
+    "tabs": {
+      "changes": "变更",
+      "preview": "预览",
+      "browser": "工作空间"
+    },
+    "workspaceTabs": {
+      "files": "文件",
+      "terminal": "终端",
+      "git": "Git",
+      "web": "Web",
+      "audit": "审计"
+    },
+    "actions": {
+      "back": "返回列表"
+    },
+    "changes": {
+      "heading": "文件变更（{{count}} 个）",
+      "empty": "本会话尚无文件变更",
+      "selectFileHint": "请点击对话中的文件卡片，或「查看文件变更」打开 diff。"
+    },
+    "preview": {
+      "emptyTitle": "尚未选择文件",
+      "emptyHint": "请先点击对话里的文件卡片，侧栏会选中该文件后在此预览。"
+    }
+  },
+  "filePreview": {
+    "tabs": {
+      "source": "源码",
+      "preview": "预览",
+      "changes": "变更",
+      "info": "信息"
+    },
+    "actions": {
+      "save": "保存",
+      "saving": "保存中...",
+      "revert": "撤销",
+      "openInFinder": "在文件管理器中显示",
+      "openDirectly": "直接打开",
+      "close": "关闭"
+    },
+    "info": {
+      "path": "路径",
+      "size": "大小",
+      "type": "类型"
+    },
+    "toast": {
+      "saved": "已保存到磁盘",
+      "saveFailed": "保存失败：{{error}}"
+    },
+    "errors": {
+      "outsideSandbox": "路径越界，已拒绝访问",
+      "outsideSandboxTitle": "无法读取此文件",
+      "outsideSandboxHint": "ClawX 无法读取这个路径。文件可能已被移动、删除，或当前账户没有访问权限。可在文件管理器中查看。",
+      "readOnlyRoot": "该文件位于只读位置（如内置技能），无法修改",
+      "tooLarge": "文件过大（{{size}}），已禁用预览",
+      "binary": "二进制文件不支持文本预览",
+      "notFound": "文件不存在",
+      "loadFailed": "加载失败：{{error}}",
+      "noPreview": "该文件没有预览",
+      "unsupportedFormatTitle": "此文件格式暂不支持内置预览或变更",
+      "unsupportedFormatHint": "当前仅支持文本/Markdown 等可直接读取的文件进行内置预览与变更对比。请在文件管理器中打开该文件。",
+      "largeBinaryOpenTitle": "该文件较大，暂不支持内置预览",
+      "largeBinaryOpenHint": "当前文件为 {{size}}，ClawX 不提供内置预览。你可以确认后直接使用系统默认应用打开。",
+      "openInFinderFailed": "无法在文件管理器中显示",
+      "openFailed": "打开失败：{{error}}"
+    },
+    "diff": {
+      "noChanges": "没有可显示的变更",
+      "newFile": "这是新增文件，无对比内容",
+      "tooLarge": "文件过大，已禁用 diff 视图，请到「源码」标签查看完整内容",
+      "unavailable": "本会话没有抓到这个文件的精确变更基线，无法生成 diff。",
+      "unavailableHint": "可点击顶部「预览」查看当前文件内容；若需精确差异，请在 Git 等工具中对比版本。"
+    },
+    "confirmOpen": {
+      "title": "打开文件",
+      "message": "确认直接打开「{{fileName}}」？",
+      "detail": "该文件将使用系统默认应用打开。",
+      "size": "文件大小：{{size}}",
+      "cancel": "取消"
+    },
+    "pdf": {
+      "loadFailed": "PDF 加载失败：{{error}}",
+      "prev": "上一页",
+      "next": "下一页",
+      "zoomIn": "放大",
+      "zoomOut": "缩小",
+      "zoomReset": "适配宽度",
+      "pageInputAria": "当前页",
+      "singlePageHint": "使用工具栏在 {{total}} 页之间切换"
+    },
+    "sheet": {
+      "loadFailed": "表格加载失败：{{error}}",
+      "empty": "该文件没有可展示的工作表",
+      "emptySheet": "当前工作表为空",
+      "unnamedSheet": "工作表 {{idx}}",
+      "rowRange": "行 {{from}}-{{to}} / {{total}}",
+      "prevPage": "上一页",
+      "nextPage": "下一页"
+    }
+  },
+  "workspace": {
+    "title": "工作空间",
+    "freshBadge": "本轮新增",
+    "pickFile": "从左侧选择一个文件预览",
+    "empty": "工作空间为空或无法访问",
+    "truncated": "目录过大，已截断显示前 5000 个节点",
+    "actions": {
+      "refresh": "刷新",
+      "openRootInFinder": "在文件管理器中显示根目录",
+      "toggleHidden": "显示/隐藏隐藏文件",
+      "showHidden": "显示隐藏文件",
+      "hideHidden": "隐藏隐藏文件"
+    },
+    "terminal": {
+      "title": "工作区终端",
+      "noWorkspace": "未选择工作区",
+      "permission": {
+        "readOnly": "只读",
+        "acceptEdits": "接受修改",
+        "plan": "计划",
+        "fullAccess": "完全访问"
+      },
+      "status": {
+        "idle": "未启动",
+        "starting": "启动中",
+        "running": "运行中",
+        "exited": "已退出",
+        "blocked": "已阻止"
+      },
+      "actions": {
+        "start": "启动",
+        "interrupt": "Ctrl+C",
+        "close": "关闭",
+        "clear": "清屏",
+        "approve": "批准"
+      },
+      "blocked": {
+        "title": "当前权限模式不允许交互式终端",
+        "body": "请切换到接受修改或完全访问后再启动真实终端。"
+      },
+      "approval": {
+        "title": "交互式终端等待审批"
+      },
+      "toast": {
+        "approvalRequired": "启动交互式终端需要批准",
+        "blocked": "终端启动被阻止",
+        "approvalFailed": "审批失败"
+      }
+    },
+    "web": {
+      "title": "Web 预览",
+      "mode": {
+        "static": "静态",
+        "devServer": "开发服务",
+        "externalUrl": "外部 URL"
+      },
+      "status": {
+        "idle": "idle"
+      },
+      "fields": {
+        "targetPath": "目标路径",
+        "targetPathPlaceholder": "相对路径，例如 index.html",
+        "url": "URL",
+        "detectScriptsFirst": "先检测启动脚本"
+      },
+      "actions": {
+        "detect": "检测",
+        "start": "启动",
+        "stop": "停止",
+        "pickComponent": "选择组件",
+        "picking": "选择中",
+        "clearSelection": "清除选择",
+        "sendToComposer": "发送到对话框",
+        "captureAndSend": "截图并发送",
+        "capturing": "截图中"
+      },
+      "tooltips": {
+        "captureAndSend": "把选中组件和预览截图发送到对话框。"
+      },
+      "browser": {
+        "placeholder": "启动预览后会加载 URL",
+        "title": "Workspace 预览"
+      },
+      "selection": {
+        "selected": "已选择"
+      },
+      "empty": "{{mode}}预览启动后会显示在这里",
+      "toast": {
+        "noScripts": "未检测到可用的 package script",
+        "startFailed": "启动预览失败",
+        "started": "Web 预览已启动",
+        "sent": "已发送到对话框",
+        "screenshotUnavailable": "截图不可用，已仅发送组件信息",
+        "screenshotFailed": "截图失败，已仅发送组件信息",
+        "screenshotSent": "截图与组件信息已发送"
+      },
+      "prompt": {
+        "title": "请基于 Web 预览中选中的组件做适应性调整。",
+        "context": "预览上下文",
+        "mode": "模式",
+        "previewUrl": "预览 URL",
+        "targetUrl": "目标 URL",
+        "workspace": "工作区",
+        "screenshot": "预览截图",
+        "clip": "截图区域",
+        "selected": "选中组件",
+        "tag": "标签",
+        "text": "文本",
+        "attributes": "属性",
+        "position": "位置",
+        "html": "HTML 片段",
+        "instruction": "请定位对应源码并调整该组件。若无法从选择信息可靠定位源码，请先说明还需要我补充什么。",
+        "instructionWithScreenshot": "请基于截图与选中组件信息，定位对应源码并调整该组件的 UI。"
+      }
+    },
+    "git": {
+      "loading": "正在加载 Git 状态",
+      "detached": "Detached HEAD",
+      "summary": "{{count}} 个变更 · ↑{{ahead}} ↓{{behind}}",
+      "clean": "工作区干净",
+      "empty": {
+        "title": "没有 Git 仓库",
+        "body": "当前工作区不在 Git 仓库中。"
+      },
+      "actions": {
+        "refresh": "刷新",
+        "stage": "暂存",
+        "unstage": "取消暂存",
+        "commit": "提交已暂存变更",
+        "createBranch": "创建分支",
+        "addWorktree": "添加 worktree",
+        "createPr": "创建 PR"
+      },
+      "diff": {
+        "unstaged": "未暂存",
+        "staged": "已暂存",
+        "empty": "所选文件没有 diff。"
+      },
+      "commit": {
+        "title": "提交",
+        "placeholder": "提交信息"
+      },
+      "branchWorktree": {
+        "title": "分支和 worktree",
+        "branchPlaceholder": "新分支",
+        "worktreePlaceholder": "worktree 分支"
+      },
+      "github": {
+        "title": "GitHub PR",
+        "noPrs": "没有打开的 PR",
+        "notAuthenticated": "在终端运行 gh auth login 后启用 PR 操作。",
+        "titlePlaceholder": "PR 标题",
+        "bodyPlaceholder": "PR 正文"
+      },
+      "toast": {
+        "blocked": "需要审批",
+        "failed": "Git 操作失败"
+      }
+    }
+  },
+  "taskPanel": {
+    "eyebrow": "运行视图",
+    "title": "任务脉络",
+    "emptyTitle": "还没有结构化步骤",
+    "emptyBody": "当一次运行开始后，ClawX 会在这里展示思考、工具调用和收尾状态。",
+    "status": {
+      "idle": "空闲",
+      "running_one": "1 个活动步骤",
+      "running_other": "{{count}} 个活动步骤"
+    },
+    "stepStatus": {
+      "running": "进行中",
+      "completed": "完成",
+      "error": "错误"
+    }
+  },
+  "executionGraph": {
+    "title": "执行关系图",
+    "branchLabel": "分支",
+    "thinkingLabel": "思考中",
+    "errorLabel": "模型调用失败",
+    "imageGenerateLabel": "图片生成",
+    "agentRun": "{{agent}} 执行",
+    "collapsedSummary": "{{toolCount}} 个工具调用，{{processCount}} 条过程消息",
+    "collapseAction": "收起执行关系图",
+    "viewTrace": "查看 Trace"
+  },
+  "teamOrchestration": {
+    "title": "团队编排",
+    "mode": "模式：{{mode}}",
+    "template": "模板：{{template}}",
+    "pendingVerifier": "验证者待启动",
+    "collapse": "收起团队编排",
+    "expand": "展开团队编排",
+    "verifier": "验证者",
+    "wave": "第 {{wave}} 波",
+    "routeReasons": "路由信号",
+    "showMoreNodes": "显示另外 {{count}} 个任务节点",
+    "metrics": {
+      "workers": "执行者",
+      "waves": "波次",
+      "verifier": "验证者",
+      "signals": "信号"
+    },
+    "alert": {
+      "failure": "失败",
+      "repair": "修复",
+      "followup": "后续",
+      "reroute": "重路由"
+    },
+    "status": {
+      "running": "运行中",
+      "planned": "已规划",
+      "completed": "已完成",
+      "partial": "部分完成",
+      "failed": "失败",
+      "verified": "已验证",
+      "refuted": "已驳回",
+      "error": "错误",
+      "accepted": "已接受",
+      "ready": "就绪",
+      "skipped": "已跳过"
+    },
+    "phase": {
+      "plan": "规划",
+      "architecture": "架构",
+      "worker": "执行",
+      "implementation": "实现",
+      "verification": "验证",
+      "review": "评审",
+      "security": "安全",
+      "docs": "文档",
+      "verifier": "验证者",
+      "repair": "修复",
+      "redo": "重做",
+      "followup": "后续"
+    }
+  },
+  "imageGeneration": {
+    "generating": "图片生成中，请稍候…",
+    "previewLoading": "正在载入图片预览…",
+    "previewUnavailable": "图片预览暂时不可用"
+  },
+  "composer": {
+    "attachFiles": "添加文件",
+    "pickSkill": "选择技能",
+    "pickTool": "选择工具",
+    "skillButton": "技能",
+    "toolButton": "工具",
+    "skillPickerTitle": "{{agent}} 的快捷技能",
+    "skillSearchPlaceholder": "搜索技能",
+    "toolSearchPlaceholder": "搜索工具、技能或 MCP 服务",
+    "skillLoading": "正在加载技能...",
+    "skillEmpty": "未找到匹配的技能",
+    "pickAgent": "选择 Agent",
+    "pickModel": "选择模型",
+    "knowledgeScopeTitle": "知识范围",
+    "knowledgeScope": {
+      "none": "不使用知识",
+      "memory": "记忆",
+      "wiki": "Wiki",
+      "all": "全部知识"
+    },
+    "knowledgeScopeDescription": {
+      "none": "发送时不附加记忆或 wiki 上下文。",
+      "memory": "在相关时使用运行时记忆卡片。",
+      "wiki": "使用 ClawX 托管的 wiki 知识和来源笔记。",
+      "all": "允许记忆和 wiki 一起提供上下文。"
+    },
+    "knowledgeQuick": {
+      "enable": "使用 wiki 知识",
+      "disable": "关闭 wiki 知识"
+    },
+    "modelPickerTitle": "切换当前 Agent 模型",
+    "modelSwitchFailed": "模型切换失败：{{error}}",
+    "inputModeTitle": "输入模式",
+    "inputModeHint": "仅对本次消息生效",
+    "guideInjected": "已作为引导注入活跃运行",
+    "guideFallback": "活跃运行已结束，已作为新消息发送",
+    "queueQueued": "已排队，将在当前任务完成后自动发送",
+    "queueCount": "{{count}} 条消息已排队",
+    "clearTarget": "清除目标 Agent",
+    "targetChip": "@{{agent}}",
+    "agentPickerTitle": "将下一条消息直接发送给其他 Agent",
+    "gatewayDisconnectedPlaceholder": "网关未连接...",
+    "send": "发送",
+    "stop": "停止",
+    "gatewayConnected": "已连接",
+    "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
+    "contextStatusTitle": "上下文和 token 状态",
+    "messageCount": "{{count}} 条消息",
+    "tokenUsage": "{{tokens}} tokens",
+    "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
+    "contextHidden": "已隐藏 {{count}} 条",
+    "compaction": {
+      "compress": "压缩当前会话",
+      "compressTooltip": "压缩当前会话历史",
+      "dialogTitle": "压缩当前会话",
+      "dialogDescription": "确认后会总结当前会话中较早的聊天历史。长期任务状态仍由 Task Ledger 和 Context Pack 引用承载。",
+      "tokenUsage": "Token 使用量",
+      "hiddenMessages": "已隐藏消息",
+      "lastCompaction": "上次压缩",
+      "neverCompacted": "从未压缩",
+      "expectedEffect": "下一次模型请求会承载更少的 transcript 压力，同时保留目标、决策、开放任务、失败尝试、改动文件、约束和待复核项。",
+      "instructionsLabel": "额外压缩说明",
+      "instructionsPlaceholder": "可选：告诉总结器必须保留哪些内容。",
+      "confirm": "压缩当前会话",
+      "cancel": "取消",
+      "unknown": "未知",
+      "unavailable": "当前不可压缩",
+      "inProgress": "压缩正在进行",
+      "activeRun": "当前运行结束后可用",
+      "toastSuccess": "会话已压缩",
+      "toastSuccessWithTokens": "会话已压缩：{{before}} -> {{after}} tokens",
+      "toastNoop": "未执行压缩：{{reason}}",
+      "toastFailed": "压缩会话失败",
+      "reason": {
+        "active_run": "当前运行结束后可用",
+        "already_compacted": "已经压缩过",
+        "session_too_small": "会话太短",
+        "no_session": "没有活动会话",
+        "no_transcript": "未找到 transcript",
+        "gateway_unavailable": "Gateway 不可用"
+      }
+    },
+    "longTaskControl": {
+      "queued": "已排队 {{count}}",
+      "checkpoint": "{{trigger}} checkpoint",
+      "intervention": "{{mode}} {{status}}",
+      "warnings": "{{count}} 个警告",
+      "drainNow": "立即发送排队后续",
+      "drainTooltip": "现在发送排队的后续输入",
+      "drainActiveRun": "当前运行结束后才能发送排队后续",
+      "drainSuccess": "已发送 {{count}} 条排队后续",
+      "drainFailed": "发送排队后续失败",
+      "mode": {
+        "interrupt": "打断",
+        "guide": "引导",
+        "queue": "队列",
+        "unknown": "介入"
+      },
+      "status": {
+        "recorded": "已记录",
+        "queued": "已排队",
+        "draining": "发送中",
+        "drained": "已发送",
+        "steered": "已引导",
+        "fallback": "已回退",
+        "checkpointed": "已保存",
+        "failed": "失败"
+      },
+      "trigger": {
+        "compaction": "压缩",
+        "interrupt": "打断",
+        "run_abort": "中止",
+        "clawgraph_node_handoff": "交接",
+        "audit_fail": "审计",
+        "manual_review": "复核",
+        "session_rotation": "轮转",
+        "queue_drain": "队列",
+        "guide": "引导"
+      },
+      "reason": {
+        "active_run": "当前运行结束后可用",
+        "active_run_started_before_queue_drain": "发送前已有新运行开始",
+        "empty_queue": "没有排队后续",
+        "drain_failed": "队列发送失败",
+        "gateway_unavailable": "Gateway 不可用"
+      }
+    },
+    "continuity": {
+      "recommended": "推荐",
+      "tooltip": {
+        "fork": {
+          "default": "当前推荐：把这段 transcript 分叉成新对话"
+        },
+        "handoff": {
+          "default": "当前推荐：准备可编辑的接力草稿",
+          "gateway_unavailable": "Gateway 不可用；建议先准备接力草稿",
+          "high_pressure": "上下文压力较高；建议准备接力草稿",
+          "truncated_context": "部分历史已隐藏；建议准备接力草稿",
+          "compaction_warning": "上下文状态需要谨慎；建议准备接力草稿"
+        }
+      },
+      "dialogHint": {
+        "default": "当前会话状态更适合使用接力。",
+        "gateway_unavailable": "Gateway 不可用，因此草稿式接力不依赖 runtime fork。",
+        "high_pressure": "上下文压力较高，接力草稿能让下一步在新会话开始前先被确认。",
+        "truncated_context": "部分 transcript 历史已隐藏，草稿接力比复制分支更稳妥。",
+        "compaction_warning": "上下文压缩状态存在提示，草稿接力是更稳妥的延续方式。"
+      },
+      "failure": {
+        "action": {
+          "prepareHandoff": "准备接力",
+          "tryFork": "尝试 Fork"
+        },
+        "fork": {
+          "active_run": {
+            "title": "Fork 需要等待当前运行结束",
+            "description": "等当前回复完成后再创建对话分支。"
+          },
+          "gateway_unavailable": {
+            "title": "Fork 需要 Gateway",
+            "description": "Gateway 当前不可用，可以改为准备可编辑的接力草稿。"
+          },
+          "parent_too_large": {
+            "title": "Transcript 太大，无法 Fork",
+            "description": "可以准备接力草稿，在不复制完整分支的情况下延续当前任务。"
+          },
+          "transcript_unavailable": {
+            "title": "Transcript 不可用",
+            "description": "可以改用已有会话信号准备接力草稿。"
+          },
+          "unknown": {
+            "title": "Fork 失败",
+            "description": "无法创建新的对话分支。"
+          }
+        },
+        "handoff": {
+          "active_run": {
+            "title": "接力需要等待当前运行结束",
+            "description": "等当前回复完成后再准备接力草稿。"
+          },
+          "gateway_unavailable": {
+            "title": "接力准备失败",
+            "description": "Gateway 当前不可用，请在重连后重试。"
+          },
+          "parent_too_large": {
+            "title": "接力准备失败",
+            "description": "当前上下文过大，无法稳定准备草稿。"
+          },
+          "transcript_unavailable": {
+            "title": "Transcript 不可用",
+            "description": "接力草稿无法读取足够的对话上下文。"
+          },
+          "unknown": {
+            "title": "接力准备失败",
+            "description": "无法准备延续草稿。"
+          }
+        }
+      }
+    },
+    "fork": {
+      "action": "Fork 到新对话",
+      "tooltip": "从当前 transcript 创建新的对话分支",
+      "disabledActiveRun": "当前运行结束后可用",
+      "toastCreated": "已创建 Fork 对话",
+      "toastFailed": "Fork 对话失败"
+    },
+    "handoff": {
+      "action": "接力到新对话",
+      "tooltip": "在新会话中准备继续工作的草稿",
+      "disabledActiveRun": "当前运行结束后可用",
+      "dialogTitle": "接力到新对话",
+      "dialogDescription": "创建新会话前可先检查和编辑这份接力草稿。它只会放入输入框，不会自动发送。",
+      "draftLabel": "接力草稿",
+      "create": "创建接力会话",
+      "cancel": "取消",
+      "toastPrepareFailed": "接力准备失败",
+      "toastCreateFailed": "创建接力会话失败",
+      "toastCreated": "已创建接力会话",
+      "ledgerSummary": "从 {{source}} 创建的接力会话"
+    },
+    "workspaceActions": "工作区操作",
+    "workspaceActionFailed": "工作区操作失败：{{error}}",
+    "permissionModeTitle": "权限模式",
+    "permissionMode": {
+      "readOnly": "只读",
+      "plan": "计划",
+      "acceptEdits": "接受修改",
+      "fullAccess": "完全访问"
+    },
+    "pickWorkspaceFolder": "选择工作区文件夹",
+    "newWorkspaceSession": "新建工作区会话",
+    "workspaceAgentTitle": "工作区 Agent",
+    "retryFailedAttachments": "重试失败的附件",
+    "folderDropUnsupported": "无法添加此文件夹。请重新拖入，或在消息中粘贴文件夹路径。",
+    "folderAttachment": "文件夹",
+    "skillPreviewTooltip": "预览 SKILL.md",
+    "skillPreviewNotFound": "找不到该技能。请打开技能列表以刷新。",
+    "capability": {
+      "dialogTitle": "应用能力变更？",
+      "dialogDescription": "ClawX 在这条消息中检测到本地 Skill 或 MCP 管理动作。执行前请先确认。",
+      "confirm": "确认并发送",
+      "cancel": "取消",
+      "applied": "能力变更已应用",
+      "failed": "能力动作失败：{{error}}",
+      "allFailed": "没有能力变更被应用",
+      "resultSuccess": "已完成",
+      "resultFailed": "失败",
+      "localOnlyHint": "此版本只会启用已发现的本地技能，并注册你提供的 MCP JSON。不会自动执行远程市场或模板安装。",
+      "mcpScope": "作用域：{{scope}} | 传输：{{transport}}",
+      "risk": {
+        "low": "低风险",
+        "medium": "需确认",
+        "high": "高风险"
+      },
+      "audit": {
+        "title": "审计",
+        "blockedHint": "本地审计已阻断此操作。请调整 Skill 或 MCP 配置后再确认。",
+        "status": {
+          "passed": "通过",
+          "warning": "需确认",
+          "blocked": "已阻断",
+          "unknown": "未知"
+        }
+      },
+      "unsupported": {
+        "generic": "ClawX 需要匹配到本地技能或 MCP JSON，才能从聊天中应用该动作。",
+        "skillNotFound": "ClawX 找不到这个本地技能。请打开技能选择器，或先在本地安装该技能。",
+        "mcpConfigRequired": "请粘贴完整 MCP JSON 配置，才能从聊天中注册 MCP 服务。",
+        "mcpServerNotFound": "ClawX 找不到这个已注册 MCP 服务。请使用 MCP 服务名称或 ID。"
+      }
+    },
+    "effortButton": "强度",
+    "effortTitle": "思考强度",
+    "effortHelpTooltip": "更高的强度会让 Agent 在回答前思考更久。",
+    "effortFaster": "更快速",
+    "effortSmarter": "更深入",
+    "effortStatusAuto": "自动",
+    "effortStatusMinimal": "极简",
+    "effortStatusLow": "低",
+    "effortStatusMedium": "中",
+    "effortStatusHigh": "高",
+    "effortStatusXhigh": "极高",
+    "effortStatusMax": "Max",
+    "effortSwitchFailed": "强度更新失败：{{error}}",
+    "workModeTitle": "工作模式",
+    "workMode": {
+      "plan": "规划",
+      "build": "构建",
+      "review": "审查",
+      "docsData": "文档/数据"
+    },
+    "workModeDescription": {
+      "plan": "先明确范围、风险和验收标准。",
+      "build": "实现聚焦改动并完成验证。",
+      "review": "默认不改文件，专注检查 diff 和风险。",
+      "docsData": "处理文档、表格、PDF 和报告。"
+    },
+    "workModeRecommendedPermission": "建议：{{mode}}"
+  },
+  "historyBuckets": {
+    "today": "今天",
+    "withinWeek": "一周内",
+    "withinMonth": "一月内",
+    "older": "更早"
+  },
+  "sessionFilter": {
+    "all": "全部",
+    "chat": "对话",
+    "work": "任务"
+  },
+  "questionDirectory": {
+    "title": "问题目录",
+    "fallback": "问题 {{number}}",
+    "moreHint": "还有 {{count}} 个问题未显示"
+  },
+  "workModePanel": {
+    "knowledge": "知识：{{scope}}",
+    "permissionMismatch": "当前权限为 {{current}}；此模式建议使用 {{recommended}}。",
+    "summary": {
+      "plan": "规划模式关注假设、风险、影响范围和验收标准。",
+      "build": "构建模式关注实现、验证和简洁的变更摘要。",
+      "review": "审查模式优先输出发现、证据、严重程度和测试缺口。",
+      "docsData": "文档/数据模式关注文档、表格、PDF 和报告产物。"
+    },
+    "artifacts": "产物：{{types}}",
+    "kitStatus": "{{kit}}：{{status}}",
+    "artifactTypes": {
+      "markdown": "Markdown",
+      "docx": "DOCX",
+      "xlsx": "XLSX",
+      "csv": "CSV",
+      "pptx": "PPTX",
+      "pdf": "PDF",
+      "html": "HTML",
+      "image": "图片"
+    },
+    "capability": {
+      "ready": "可用",
+      "missingSkill": "缺少技能",
+      "disabled": "已禁用",
+      "runtimeUnavailable": "Runtime 不可用",
+      "optionalExternal": "可选"
+    },
+    "status": {
+      "plan": {
+        "primary": "假设",
+        "secondary": "风险",
+        "tertiary": "验收标准"
+      },
+      "build": {
+        "primary": "工作区",
+        "secondary": "权限",
+        "tertiary": "测试"
+      },
+      "review": {
+        "primary": "Diff 重点",
+        "secondary": "严重程度",
+        "tertiary": "测试缺口"
+      },
+      "docsData": {
+        "primary": "文档能力由运行时决定",
+        "secondary": "表格能力由运行时决定",
+        "tertiary": "PDF/PPTX 由运行时决定"
+      }
+    }
+  },
+  "assistantRender": {
+    "branch": {
+      "previous": "?????",
+      "next": "?????",
+      "count": "{{current}} / {{total}}"
+    },
+    "reasoning": {
+      "title": "????"
+    },
+    "tool": {
+      "running": "???",
+      "completed": "??",
+      "error": "??"
+    },
+    "usage": {
+      "tokens": "tokens"
+    },
+    "status": {
+      "gateway": "??",
+      "run": "??",
+      "tools": "??",
+      "context": "???",
+      "workspace": "???",
+      "permission": "??"
+    },
+    "quote": {
+      "action": "??"
+    },
+    "error": {
+      "title": "????",
+      "dismiss": "关闭错误"
+    },
+    "attachment": {
+      "open": "????",
+      "folder": "???",
+      "file": "??"
+    }
+  },
+  "turnWork": {
+    "title": "工作面板",
+    "status": {
+      "idle": "暂无工作记录",
+      "running": "正在执行",
+      "completed": "工作已完成",
+      "blocked": "已阻塞",
+      "error": "需要处理"
+    },
+    "tabs": {
+      "tasks": "任务",
+      "reports": "报告",
+      "sources": "来源"
+    },
+    "task": {
+      "running": "执行中",
+      "completed": "完成",
+      "error": "错误"
+    },
+    "report": {
+      "created": "已创建",
+      "modified": "已修改"
+    },
+    "empty": {
+      "tasks": "暂无任务活动",
+      "reports": "暂无报告或文件产物",
+      "sources": "暂无网站来源"
+    }
+  }
+}

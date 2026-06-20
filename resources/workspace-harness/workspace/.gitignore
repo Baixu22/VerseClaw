@@ -1,0 +1,4 @@
+journal-*.md
+*/journal-*.md
+private/
+*.local.md

@@ -1,0 +1,87 @@
+{
+  "nav": "任务账本",
+  "title": "任务账本",
+  "subtitle": "记录长期目标、依赖、复核点、决策和会话链接。",
+  "search": "搜索任务、决策、会话",
+  "empty": "还没有任务账本节点。",
+  "tabs": {
+    "tree": "树视图",
+    "dag": "DAG",
+    "history": "历史",
+    "review": "复核"
+  },
+  "actions": {
+    "refresh": "刷新",
+    "exportHtml": "导出 HTML",
+    "addNode": "添加",
+    "linkSession": "关联会话",
+    "clearReview": "清除复核"
+  },
+  "form": {
+    "titlePlaceholder": "节点标题",
+    "descriptionPlaceholder": "描述",
+    "parentPlaceholder": "父节点",
+    "noParent": "无父节点"
+  },
+  "kind": {
+    "goal": "目标",
+    "milestone": "里程碑",
+    "task": "任务",
+    "check": "检查项",
+    "decision": "决策",
+    "risk": "风险",
+    "deviation": "偏差",
+    "review": "复核"
+  },
+  "status": {
+    "todo": "待办",
+    "doing": "进行中",
+    "blocked": "阻塞",
+    "review": "复核",
+    "done": "完成",
+    "dropped": "放弃"
+  },
+  "edge": {
+    "depends_on": "依赖",
+    "blocks": "阻塞",
+    "relates_to": "相关",
+    "derived_from": "派生自",
+    "supersedes": "取代",
+    "needs_review": "需要复核"
+  },
+  "dag": {
+    "empty": "还没有依赖边。"
+  },
+  "history": {
+    "empty": "还没有账本事件。",
+    "summary": "append-only 账本中保存了 {{count}} 条事件。"
+  },
+  "review": {
+    "empty": "复核队列已清空。"
+  },
+  "session": {
+    "nodePlaceholder": "会话目标",
+    "noNode": "不关联节点",
+    "link": "会话链接",
+    "linkedFromChat": "从当前聊天会话关联"
+  },
+  "summary": {
+    "title": "任务账本",
+    "loading": "正在加载账本",
+    "counts": "{{nodes}} 个节点 · {{events}} 条事件",
+    "empty": "还没有跟踪长期任务。",
+    "currentGoal": "当前目标",
+    "active": "进行中",
+    "blocked": "阻塞",
+    "review": "复核",
+    "blockers": "阻塞项",
+    "needsReview": "待复核",
+    "decisions": "最近决策",
+    "open": "打开账本"
+  },
+  "toast": {
+    "created": "已创建任务账本节点",
+    "sessionLinked": "已关联会话",
+    "exported": "任务账本 HTML 已导出"
+  }
+}

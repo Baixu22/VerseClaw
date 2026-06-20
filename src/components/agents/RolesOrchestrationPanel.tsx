@@ -1,0 +1,2110 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  AlertTriangle,
+  Archive,
+  BookOpen,
+  Bot,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  CircleDot,
+  Clock3,
+  Eye,
+  FileText,
+  GitMerge,
+  History,
+  Info,
+  Layers3,
+  ListChecks,
+  Loader2,
+  Play,
+  RefreshCw,
+  ShieldAlert,
+  SlidersHorizontal,
+  Sparkles,
+  XCircle,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { hostApi } from '@/lib/host-api';
+import { hostEvents } from '@/lib/host-events';
+import type { PermissionApprovalEvent } from '@shared/types/workspace';
+import type { TaskLoopLifecycleEvent } from '@shared/host-events/contract';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { roleTone, toneClasses } from '@/lib/role-visuals';
+import { RoleCard, type RoleCardData } from './RoleCard';
+import { OrchestrationPlanView, type PlanView } from './OrchestrationPlanView';
+
+/**
+ * Role-first runtime panel: browse role contracts (roles.list / roles.get),
+ * preview an orchestration plan (orchestrator.plan), and launch an orchestration
+ * run (orchestrator.run) anchored on an agent's main session.
+ *
+ * All data flows through the generic gateway RPC proxy (hostApi.gateway.rpc),
+ * so no dedicated host-api module is required. orchestrator.run is gated as a
+ * mutating request and may return an approval-required response, which is
+ * surfaced via an inline approve/reject control rather than silently failing.
+ */
+
+type AgentLike = {
+  id: string;
+  name: string;
+  isDefault: boolean;
+  mainSessionKey: string;
+};
+
+type LifecyclePhase = 'started' | 'completed' | 'error' | 'verified';
+type LifecycleEntry = { phase: LifecyclePhase; ts: number; error?: string; task?: string };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+type UnwrapResult =
+  | { ok: true; data: Record<string, unknown> }
+  | { ok: false; message: string; approval?: PermissionApprovalEvent };
+
+/** Surfaces a permission-block / approval-required gateway response, else returns the payload. */
+function unwrapRpc(result: unknown): UnwrapResult {
+  if (!isRecord(result)) {
+    return { ok: false, message: 'Empty gateway response' };
+  }
+  if (result.success === false) {
+    if (result.approvalRequired) {
+      const approval = isRecord(result.approval) ? (result.approval as unknown as PermissionApprovalEvent) : undefined;
+      return {
+        ok: false,
+        message: String(result.error ?? '该操作需要在当前权限模式下批准'),
+        approval,
+      };
+    }
+    return { ok: false, message: String(result.error ?? 'Gateway 请求被拒绝') };
+  }
+  return { ok: true, data: result };
+}
+
+type RunResult =
+  | { kind: 'success'; spawnedRunIds: string[] }
+  | { kind: 'failure'; failures: Array<{ roleName: string; error?: string }> };
+
+type MemoryCardView = {
+  id: string;
+  type: string;
+  scope?: string;
+  sensitivity?: string;
+  status: string;
+  content: string;
+  roleTags?: string[];
+  ownerRole?: string | null;
+  sourceRole?: string | null;
+  applicableRoles?: string[];
+  allowedMutators?: string[];
+  phaseTags?: string[];
+  retentionLabels?: string[];
+  confidence?: number;
+  importance?: number;
+  evidenceRefs?: Array<{ type?: string; ref?: string; excerpt?: string }>;
+  updatedAt?: string;
+  expiresAt?: string | null;
+};
+
+type MemoryProposalView = {
+  id: string;
+  operation: string;
+  status: string;
+  decision: string;
+  reviewReason?: string | null;
+  conflictIds?: string[];
+  riskLevel?: string;
+  impactScope?: string;
+  suggestedAction?: string;
+  reasonSummary?: string;
+  permissionDecision?: string;
+  permissionReason?: string;
+  batchId?: string | null;
+  evidenceStatus?: string;
+  retentionReason?: string | null;
+  proposal?: { content?: string; roleTags?: string[]; sensitivity?: string; confidence?: number; importance?: number; applicableRoles?: string[] };
+};
+
+type MemoryDraftState = {
+  type: string;
+  scope: string;
+  sensitivity: string;
+  content: string;
+  confidence: number;
+  importance: number;
+  ownerRole: string;
+  sourceRole: string;
+  applicableRoles: string;
+  allowedMutators: string;
+  phaseTags: string;
+  expiresAt: string;
+  evidenceRef: string;
+  evidenceExcerpt: string;
+};
+
+type MemoryProposalPreviewView = {
+  operation?: string;
+  targetId?: string | null;
+  normalized?: {
+    type?: string;
+    scope?: string;
+    sensitivity?: string;
+    content?: string;
+    confidence?: number;
+    importance?: number;
+    applicableRoles?: string[];
+  };
+  decision?: {
+    action?: string;
+    accepted?: boolean;
+    reason?: string;
+  };
+  conflicts?: MemoryConflictView[];
+  evidence?: MemoryEvidenceCheckView;
+  riskLevel?: string;
+  impactScope?: string;
+  suggestedAction?: string;
+  reasonSummary?: string;
+  permissionDecision?: string;
+  permissionReason?: string;
+  wouldWrite?: boolean;
+};
+
+type MemoryConflictView = {
+  id: string;
+  type: string;
+  status: string;
+  reason: string;
+  cardIds?: string[];
+};
+
+type MemoryInjectionView = {
+  id: string;
+  roleName: string;
+  createdAt: string;
+  truncated?: boolean;
+  policyVersion?: string;
+  candidateExplanations?: Array<{
+    cardId: string;
+    score: number;
+    selected: boolean;
+    bucket?: string;
+    reason: string;
+    penalties?: string[];
+    truncatedReason?: string;
+    injectionClass?: string;
+    whatWouldSelect?: string;
+  }>;
+};
+
+type MemoryInjectionCandidateView = NonNullable<MemoryInjectionView['candidateExplanations']>[number];
+const MEMORY_INJECTION_CLASSES = ['must', 'should', 'may', 'never'] as const;
+type MemoryInjectionClassView = (typeof MEMORY_INJECTION_CLASSES)[number];
+
+type MemoryRetentionView = {
+  card: MemoryCardView;
+  recommendedAction: string;
+  retentionScore: number;
+  labels: string[];
+  reason: string;
+};
+
+type MemoryEvidenceCheckView = {
+  status: string;
+  summary: string;
+  refs?: Array<{ status: string; reason: string; ref: { type?: string; ref?: string; excerpt?: string } }>;
+};
+
+type MemoryConflictDetailView = {
+  conflict?: MemoryConflictView;
+  cards?: MemoryCardView[];
+  proposals?: MemoryProposalView[];
+  evidence?: MemoryEvidenceCheckView[];
+  suggestedAction?: string;
+  reasonSummary?: string;
+};
+
+type MemorySimulationView = {
+  pack?: {
+    policyVersion?: string;
+    truncated?: boolean;
+    budget?: { total?: number };
+    estimatedTokens?: { total?: number };
+    candidateExplanations?: MemoryInjectionView['candidateExplanations'];
+  };
+  selectedCards?: MemoryCardView[];
+};
+
+type MemoryHealthView = {
+  ok?: boolean;
+  checks?: Array<{ name: string; status: string; message: string; count?: number }>;
+};
+
+type MemoryDetailView = {
+  card?: MemoryCardView;
+  proposal?: MemoryProposalView;
+  conflict?: MemoryConflictView;
+  injection?: MemoryInjectionView;
+  conflictDetail?: MemoryConflictDetailView;
+  evidence?: MemoryEvidenceCheckView;
+  retention?: MemoryRetentionView;
+  proposals?: MemoryProposalView[];
+  conflicts?: MemoryConflictView[];
+  versions?: Array<{ id: string; version: number; reason?: string | null; createdAt: string }>;
+  audit?: Array<{ id: string; action: string; reason?: string | null; createdAt: string }>;
+  injections?: MemoryInjectionView[];
+};
+
+function scoreToPercent(value?: number): number {
+  if (typeof value !== 'number' || Number.isNaN(value)) return 0;
+  return Math.max(0, Math.min(100, Math.round(value * 100)));
+}
+
+function memoryStatusClasses(status?: string): string {
+  if (status === 'active') return 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400';
+  if (status === 'cold') return 'border-blue-500/25 bg-blue-500/10 text-blue-700 dark:text-blue-400';
+  if (status === 'archived') return 'border-zinc-500/25 bg-zinc-500/10 text-zinc-700 dark:text-zinc-400';
+  if (status === 'tombstone') return 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-400';
+  return 'border-border bg-surface-input text-muted-foreground';
+}
+
+function memorySensitivityClasses(sensitivity?: string): string {
+  if (sensitivity === 'secret' || sensitivity === 'secret_adjacent') return 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-400';
+  if (sensitivity === 'sensitive') return 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400';
+  return 'border-border bg-black/5 text-muted-foreground dark:bg-white/10';
+}
+
+function formatMemoryDate(value?: string): string {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleString();
+}
+
+const MEMORY_TYPE_OPTIONS = ['fact', 'constraint', 'preference', 'procedure', 'risk', 'decision', 'episode', 'handoff', 'artifact_ref'] as const;
+const MEMORY_SCOPE_OPTIONS = ['role', 'task', 'session', 'project', 'workspace', 'user', 'team', 'agent', 'global'] as const;
+const MEMORY_SENSITIVITY_OPTIONS = ['normal', 'sensitive', 'secret_adjacent', 'secret'] as const;
+function splitMemoryList(value: string): string[] {
+  return value.split(',').map((entry) => entry.trim()).filter(Boolean);
+}
+
+function joinMemoryList(value?: string[]): string {
+  return (value ?? []).join(', ');
+}
+
+function defaultMemoryDraft(roleName?: string | null): MemoryDraftState {
+  return {
+    type: 'procedure',
+    scope: 'role',
+    sensitivity: 'normal',
+    content: '',
+    confidence: 0.85,
+    importance: 0.55,
+    ownerRole: roleName ?? '',
+    sourceRole: '',
+    applicableRoles: roleName ?? '',
+    allowedMutators: 'ownerRole, operator',
+    phaseTags: '',
+    expiresAt: '',
+    evidenceRef: 'clawx-role-memory-ui',
+    evidenceExcerpt: '',
+  };
+}
+
+function draftFromCard(card: MemoryCardView, roleName?: string | null): MemoryDraftState {
+  const evidence = card.evidenceRefs?.[0];
+  return {
+    ...defaultMemoryDraft(roleName),
+    type: card.type || 'procedure',
+    scope: card.scope || 'role',
+    sensitivity: card.sensitivity || 'normal',
+    content: card.content,
+    confidence: typeof card.confidence === 'number' ? card.confidence : 0.85,
+    importance: typeof card.importance === 'number' ? card.importance : 0.55,
+    ownerRole: card.ownerRole || roleName || '',
+    sourceRole: card.sourceRole || '',
+    applicableRoles: joinMemoryList(card.applicableRoles ?? card.roleTags) || roleName || '',
+    allowedMutators: joinMemoryList(card.allowedMutators) || 'ownerRole, operator',
+    phaseTags: joinMemoryList((card as { phaseTags?: string[] }).phaseTags),
+    expiresAt: (card as { expiresAt?: string | null }).expiresAt?.slice(0, 10) ?? '',
+    evidenceRef: evidence?.ref || 'clawx-role-memory-ui',
+    evidenceExcerpt: evidence?.excerpt || '',
+  };
+}
+
+function draftFromProposal(proposal: Record<string, unknown>, roleName?: string | null): MemoryDraftState {
+  const evidenceRefs = Array.isArray(proposal.evidenceRefs) ? proposal.evidenceRefs as Array<{ ref?: string; excerpt?: string }> : [];
+  return {
+    ...defaultMemoryDraft(roleName),
+    type: typeof proposal.type === 'string' ? proposal.type : 'procedure',
+    scope: typeof proposal.scope === 'string' ? proposal.scope : 'role',
+    sensitivity: typeof proposal.sensitivity === 'string' ? proposal.sensitivity : 'normal',
+    content: typeof proposal.content === 'string' ? proposal.content : '',
+    confidence: typeof proposal.confidence === 'number' ? proposal.confidence : 0.85,
+    importance: typeof proposal.importance === 'number' ? proposal.importance : 0.55,
+    ownerRole: typeof proposal.ownerRole === 'string' ? proposal.ownerRole : roleName ?? '',
+    sourceRole: typeof proposal.sourceRole === 'string' ? proposal.sourceRole : '',
+    applicableRoles: Array.isArray(proposal.applicableRoles) ? joinMemoryList(proposal.applicableRoles as string[]) : roleName ?? '',
+    allowedMutators: Array.isArray(proposal.allowedMutators) ? joinMemoryList(proposal.allowedMutators as string[]) : 'ownerRole, operator',
+    phaseTags: Array.isArray(proposal.phaseTags) ? joinMemoryList(proposal.phaseTags as string[]) : '',
+    expiresAt: typeof proposal.expiresAt === 'string' ? proposal.expiresAt.slice(0, 10) : '',
+    evidenceRef: evidenceRefs[0]?.ref || 'clawx-role-memory-ui',
+    evidenceExcerpt: evidenceRefs[0]?.excerpt || '',
+  };
+}
+
+export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[] }) {
+  const { t } = useTranslation('agents');
+  const tt = useCallback(
+    (key: string, defaultValue: string, vars?: Record<string, unknown>) =>
+      t(key, { defaultValue, ...(vars ?? {}) }),
+    [t],
+  );
+
+  const [roles, setRoles] = useState<RoleCardData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [task, setTask] = useState('');
+  const [plan, setPlan] = useState<PlanView | null>(null);
+  const [planning, setPlanning] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [pendingApproval, setPendingApproval] = useState<PermissionApprovalEvent | null>(null);
+  const [runResult, setRunResult] = useState<RunResult | null>(null);
+  const [lifecycleEvents, setLifecycleEvents] = useState<Record<string, LifecycleEntry>>({});
+  const [taskLoopEvents, setTaskLoopEvents] = useState<Record<string, TaskLoopLifecycleEvent>>({});
+  const [taskLoopRunning, setTaskLoopRunning] = useState(false);
+  const [taskLoopResult, setTaskLoopResult] = useState<{ loopRunId: string; status: string; phase: string; traceId?: string } | null>(null);
+  const [memoryCards, setMemoryCards] = useState<MemoryCardView[]>([]);
+  const [memoryProposals, setMemoryProposals] = useState<MemoryProposalView[]>([]);
+  const [memoryConflictItems, setMemoryConflictItems] = useState<MemoryConflictView[]>([]);
+  const [memoryInjections, setMemoryInjections] = useState<MemoryInjectionView[]>([]);
+  const [memoryRetention, setMemoryRetention] = useState<MemoryRetentionView[]>([]);
+  const [memoryStats, setMemoryStats] = useState<Record<string, number>>({});
+  const [memoryConflicts, setMemoryConflicts] = useState(0);
+  const [memoryLoading, setMemoryLoading] = useState(false);
+  const [memoryDraft, setMemoryDraft] = useState<MemoryDraftState>(() => defaultMemoryDraft(null));
+  const [memoryDraftTarget, setMemoryDraftTarget] = useState<{ id: string; mode: 'update' | 'supersede' } | null>(null);
+  const [memoryAdvancedOpen, setMemoryAdvancedOpen] = useState(false);
+  const [memoryPreview, setMemoryPreview] = useState<MemoryProposalPreviewView | null>(null);
+  const [memoryPreviewLoading, setMemoryPreviewLoading] = useState(false);
+  const [selectedReviewIds, setSelectedReviewIds] = useState<string[]>([]);
+  const [memorySimulation, setMemorySimulation] = useState<MemorySimulationView | null>(null);
+  const [memoryHealth, setMemoryHealth] = useState<MemoryHealthView | null>(null);
+  const [memoryDetailOpen, setMemoryDetailOpen] = useState(false);
+  const [memoryDetail, setMemoryDetail] = useState<MemoryDetailView | null>(null);
+  const [memoryDetailLoading, setMemoryDetailLoading] = useState(false);
+
+  const activeMemoryCards = useMemo(
+    () => memoryCards.filter((card) => card.status === 'active' || card.status === 'cold'),
+    [memoryCards],
+  );
+  const reviewMemoryProposals = useMemo(
+    () => {
+      const riskRank: Record<string, number> = { critical: 4, high: 3, medium: 2, low: 1 };
+      const scopeRank: Record<string, number> = { user: 5, workspace: 4, project: 3, agent: 2, team: 2, role: 1, session: 0, task: 0, global: 5 };
+      const evidenceRank: Record<string, number> = { missing: 4, contradicted: 4, stale: 3, weak: 2, unchecked: 1, verified: 0 };
+      return memoryProposals
+        .filter((proposal) => proposal.status === 'needs_review' || proposal.status === 'pending')
+        .sort((a, b) =>
+          (riskRank[b.riskLevel ?? ''] ?? 0) - (riskRank[a.riskLevel ?? ''] ?? 0) ||
+          (scopeRank[b.impactScope ?? ''] ?? 0) - (scopeRank[a.impactScope ?? ''] ?? 0) ||
+          (b.conflictIds?.length ?? 0) - (a.conflictIds?.length ?? 0) ||
+          (evidenceRank[b.evidenceStatus ?? ''] ?? 0) - (evidenceRank[a.evidenceStatus ?? ''] ?? 0),
+        );
+    },
+    [memoryProposals],
+  );
+  const latestInjection = memoryInjections[0];
+  const selectedInjectionCandidates = latestInjection?.candidateExplanations?.filter((candidate) => candidate.selected).length ?? 0;
+  const skippedInjectionCandidates = latestInjection?.candidateExplanations?.filter((candidate) => !candidate.selected).length ?? 0;
+  const simulationBudgetPercent = useMemo(() => {
+    const total = memorySimulation?.pack?.budget?.total ?? 0;
+    const used = memorySimulation?.pack?.estimatedTokens?.total ?? 0;
+    if (total <= 0 || used <= 0) return 0;
+    return Math.min(100, Math.round((used / total) * 100));
+  }, [memorySimulation]);
+  const simulationCandidatesByClass = useMemo(() => {
+    const groups: Record<MemoryInjectionClassView, MemoryInjectionCandidateView[]> = {
+      must: [],
+      should: [],
+      may: [],
+      never: [],
+    };
+    for (const candidate of memorySimulation?.pack?.candidateExplanations ?? []) {
+      const injectionClass = MEMORY_INJECTION_CLASSES.includes(candidate.injectionClass as MemoryInjectionClassView)
+        ? candidate.injectionClass as MemoryInjectionClassView
+        : 'may';
+      groups[injectionClass].push(candidate);
+    }
+    return groups;
+  }, [memorySimulation]);
+  const activeMemoryCount = memoryStats.active ?? activeMemoryCards.length;
+  const reviewMemoryCount = memoryStats.proposalsNeedsReview ?? reviewMemoryProposals.length;
+  const conflictMemoryCount = memoryStats.conflictsOpen ?? memoryConflictItems.length;
+  const retentionMemoryCount = memoryRetention.length;
+  const healthWarningCount = memoryHealth?.checks?.filter((check) => check.status !== 'ok').length ?? 0;
+
+  const anchorSession = useMemo(() => {
+    const def = agents.find((agent) => agent.isDefault) ?? agents[0];
+    return def?.mainSessionKey ?? '';
+  }, [agents]);
+  const anchorAgentId = useMemo(() => {
+    const def = agents.find((agent) => agent.isDefault) ?? agents[0];
+    return def?.id ?? '';
+  }, [agents]);
+
+  const loadRoles = useCallback(async () => {
+    setLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('roles.list');
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      const list = Array.isArray(unwrapped.data.roles) ? (unwrapped.data.roles as RoleCardData[]) : [];
+      setRoles(list);
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (expanded && roles.length === 0 && !loading) {
+      void loadRoles();
+    }
+  }, [expanded, roles.length, loading, loadRoles]);
+
+  const loadRoleMemory = useCallback(async () => {
+    if (!selectedRole) return;
+    setMemoryLoading(true);
+    try {
+      const listResult = await hostApi.gateway.rpc('memory.list', { roleName: selectedRole, status: 'all' });
+      const listUnwrapped = unwrapRpc(listResult);
+      if (listUnwrapped.ok) {
+        setMemoryCards(Array.isArray(listUnwrapped.data.cards) ? (listUnwrapped.data.cards as MemoryCardView[]) : []);
+      }
+      setMemoryLoading(false);
+
+      const [proposalsSettled, conflictsSettled, injectionsSettled, statsSettled, retentionSettled, healthSettled] = await Promise.allSettled([
+        hostApi.gateway.rpc('memory.proposals', { roleName: selectedRole, limit: 50 }),
+        hostApi.gateway.rpc('memory.conflicts', { status: 'open' }),
+        hostApi.gateway.rpc('memory.explainInjection', { roleName: selectedRole, limit: 10 }),
+        hostApi.gateway.rpc('memory.stats'),
+        hostApi.gateway.rpc('memory.retentionCandidates', { roleName: selectedRole, limit: 8 }),
+        hostApi.gateway.rpc('memory.health'),
+      ]);
+      const proposalsResult = proposalsSettled.status === 'fulfilled' ? proposalsSettled.value : undefined;
+      const conflictsResult = conflictsSettled.status === 'fulfilled' ? conflictsSettled.value : undefined;
+      const injectionsResult = injectionsSettled.status === 'fulfilled' ? injectionsSettled.value : undefined;
+      const statsResult = statsSettled.status === 'fulfilled' ? statsSettled.value : undefined;
+      const retentionResult = retentionSettled.status === 'fulfilled' ? retentionSettled.value : undefined;
+      const healthResult = healthSettled.status === 'fulfilled' ? healthSettled.value : undefined;
+      const conflictsUnwrapped = unwrapRpc(conflictsResult);
+      if (conflictsUnwrapped.ok) {
+        const conflicts = Array.isArray(conflictsUnwrapped.data.conflicts) ? conflictsUnwrapped.data.conflicts : [];
+        setMemoryConflictItems(conflicts as MemoryConflictView[]);
+        setMemoryConflicts(conflicts.length);
+      }
+      const proposalsUnwrapped = unwrapRpc(proposalsResult);
+      if (proposalsUnwrapped.ok) {
+        setMemoryProposals(Array.isArray(proposalsUnwrapped.data.proposals) ? (proposalsUnwrapped.data.proposals as MemoryProposalView[]) : []);
+      }
+      const injectionsUnwrapped = unwrapRpc(injectionsResult);
+      if (injectionsUnwrapped.ok) {
+        setMemoryInjections(Array.isArray(injectionsUnwrapped.data.injections) ? (injectionsUnwrapped.data.injections as MemoryInjectionView[]) : []);
+      }
+      const statsUnwrapped = unwrapRpc(statsResult);
+      if (statsUnwrapped.ok && isRecord(statsUnwrapped.data.stats)) {
+        setMemoryStats(statsUnwrapped.data.stats as Record<string, number>);
+      }
+      const retentionUnwrapped = unwrapRpc(retentionResult);
+      if (retentionUnwrapped.ok) {
+        setMemoryRetention(Array.isArray(retentionUnwrapped.data.candidates) ? (retentionUnwrapped.data.candidates as MemoryRetentionView[]) : []);
+      }
+      const healthUnwrapped = unwrapRpc(healthResult);
+      if (healthUnwrapped.ok && isRecord(healthUnwrapped.data.health)) {
+        setMemoryHealth(healthUnwrapped.data.health as MemoryHealthView);
+      }
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryLoading(false);
+    }
+  }, [selectedRole]);
+
+  useEffect(() => {
+    if (expanded && selectedRole) {
+      void loadRoleMemory();
+    } else {
+      setMemoryCards([]);
+      setMemoryProposals([]);
+      setMemoryConflictItems([]);
+      setMemoryInjections([]);
+      setMemoryRetention([]);
+      setMemoryHealth(null);
+      setMemoryStats({});
+      setMemoryConflicts(0);
+    }
+  }, [expanded, selectedRole, loadRoleMemory]);
+
+  useEffect(() => {
+    setMemoryDraft(defaultMemoryDraft(selectedRole));
+    setMemoryDraftTarget(null);
+    setMemoryPreview(null);
+    setMemoryAdvancedOpen(false);
+  }, [selectedRole]);
+
+  const updateMemoryDraft = useCallback((patch: Partial<MemoryDraftState>) => {
+    setMemoryDraft((prev) => ({ ...prev, ...patch }));
+    setMemoryPreview(null);
+  }, []);
+
+  const buildMemoryProposal = useCallback(() => {
+    const applicableRoles = splitMemoryList(memoryDraft.applicableRoles);
+    const allowedMutators = splitMemoryList(memoryDraft.allowedMutators);
+    const phaseTags = splitMemoryList(memoryDraft.phaseTags);
+    return {
+      type: memoryDraft.type,
+      scope: memoryDraft.scope,
+      roleTags: selectedRole ? [selectedRole] : applicableRoles,
+      ownerRole: memoryDraft.ownerRole.trim() || selectedRole || undefined,
+      sourceRole: memoryDraft.sourceRole.trim() || undefined,
+      applicableRoles: applicableRoles.length ? applicableRoles : selectedRole ? [selectedRole] : [],
+      allowedMutators,
+      phaseTags,
+      content: memoryDraft.content.trim(),
+      confidence: memoryDraft.confidence,
+      importance: memoryDraft.importance,
+      sensitivity: memoryDraft.sensitivity,
+      source: 'user',
+      evidenceRefs: [{
+        type: 'manual',
+        ref: memoryDraft.evidenceRef.trim() || 'clawx-role-memory-ui',
+        ...(memoryDraft.evidenceExcerpt.trim() ? { excerpt: memoryDraft.evidenceExcerpt.trim() } : {}),
+      }],
+      ...(memoryDraft.expiresAt ? { expiresAt: memoryDraft.expiresAt } : {}),
+    };
+  }, [memoryDraft, selectedRole]);
+
+  const previewRoleMemory = useCallback(async () => {
+    if (!selectedRole || !memoryDraft.content.trim()) return;
+    setMemoryPreviewLoading(true);
+    try {
+      const operation = memoryDraftTarget?.mode === 'supersede'
+        ? 'supersede'
+        : memoryDraftTarget?.mode === 'update'
+          ? 'update'
+          : 'create';
+      const result = await hostApi.gateway.rpc('memory.previewProposal', {
+        proposal: buildMemoryProposal(),
+        operation,
+        ...(memoryDraftTarget ? { targetId: memoryDraftTarget.id } : {}),
+      });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      setMemoryPreview(isRecord(unwrapped.data.preview) ? (unwrapped.data.preview as MemoryProposalPreviewView) : null);
+      toast.message(tt('roles.memoryPreviewReady', 'Preview updated'));
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryPreviewLoading(false);
+    }
+  }, [buildMemoryProposal, memoryDraft.content, memoryDraftTarget, selectedRole, tt]);
+
+  const proposeRoleMemory = useCallback(async () => {
+    if (!selectedRole || !memoryDraft.content.trim()) return;
+    setMemoryLoading(true);
+    try {
+      const proposal = buildMemoryProposal();
+      const result = memoryDraftTarget?.mode === 'update'
+        ? await hostApi.gateway.rpc('memory.update', { id: memoryDraftTarget.id, patch: proposal })
+        : memoryDraftTarget?.mode === 'supersede'
+          ? await hostApi.gateway.rpc('memory.supersede', { id: memoryDraftTarget.id, proposal })
+          : await hostApi.gateway.rpc('memory.propose', { proposal });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      const accepted = unwrapped.data.accepted === true;
+      toast[accepted ? 'success' : 'message'](
+        accepted
+          ? tt('roles.memorySaved', 'Role memory saved')
+        : String(unwrapped.data.reason ?? tt('roles.memoryNeedsReview', 'Memory needs review')),
+      );
+      setMemoryDraft(defaultMemoryDraft(selectedRole));
+      setMemoryDraftTarget(null);
+      setMemoryPreview(null);
+      await loadRoleMemory();
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryLoading(false);
+    }
+  }, [buildMemoryProposal, loadRoleMemory, memoryDraft.content, memoryDraftTarget, selectedRole, tt]);
+
+  const archiveRoleMemory = useCallback(async (id: string) => {
+    setMemoryLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('memory.archive', { id });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      toast.success(tt('roles.memoryArchived', 'Role memory archived'));
+      await loadRoleMemory();
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryLoading(false);
+    }
+  }, [loadRoleMemory, tt]);
+
+  const reviewRoleMemory = useCallback(async (id: string, action: 'approve' | 'reject' | 'applyAsCold') => {
+    setMemoryLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('memory.review', { id, action });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      toast.success(tt('roles.memoryReviewed', 'Memory review updated'));
+      await loadRoleMemory();
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryLoading(false);
+    }
+  }, [loadRoleMemory, tt]);
+
+  const reviewSelectedRoleMemory = useCallback(async (action: 'approve' | 'reject' | 'applyAsCold') => {
+    if (selectedReviewIds.length === 0) return;
+    setMemoryLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('memory.reviewBatch', { ids: selectedReviewIds, action });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      setSelectedReviewIds([]);
+      toast.success(tt('roles.memoryBatchReviewed', 'Batch review updated'));
+      await loadRoleMemory();
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryLoading(false);
+    }
+  }, [loadRoleMemory, selectedReviewIds, tt]);
+
+  const proposeRetention = useCallback(async (cardId: string, action?: string) => {
+    setMemoryLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('memory.retentionPropose', { cardId, action });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      toast.success(tt('roles.memoryRetentionProposed', 'Lifecycle proposal created'));
+      await loadRoleMemory();
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryLoading(false);
+    }
+  }, [loadRoleMemory, tt]);
+
+  const restoreRoleMemory = useCallback(async (id: string) => {
+    setMemoryLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('memory.restore', { id });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      toast.success(tt('roles.memoryRestoreProposed', 'Restore proposal created'));
+      await loadRoleMemory();
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryLoading(false);
+    }
+  }, [loadRoleMemory, tt]);
+
+  const tombstoneRoleMemory = useCallback(async (id: string) => {
+    setMemoryLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('memory.archive', { id, tombstone: true });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      toast.success(tt('roles.memoryTombstoneProposed', 'Tombstone proposal created'));
+      await loadRoleMemory();
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryLoading(false);
+    }
+  }, [loadRoleMemory, tt]);
+
+  const prepareMemoryDraft = useCallback((card: MemoryCardView, mode: 'update' | 'supersede') => {
+    setMemoryDraftTarget({ id: card.id, mode });
+    setMemoryDraft(draftFromCard(card, selectedRole));
+    setMemoryPreview(null);
+    setMemoryDetailOpen(false);
+    toast.message(mode === 'supersede' ? tt('roles.memorySupersedeDraftReady', 'Supersede draft loaded') : tt('roles.memoryEditDraftReady', 'Edit draft loaded'));
+  }, [selectedRole, tt]);
+
+  const prepareMergeDraft = useCallback(async (cardIds?: string[], proposalIds?: string[]) => {
+    setMemoryLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('memory.mergeDraft', { cardIds, proposalIds });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      const draft = isRecord(unwrapped.data.draft) ? unwrapped.data.draft : undefined;
+      if (draft) setMemoryDraft(draftFromProposal(draft, selectedRole));
+      setMemoryPreview(null);
+      setMemoryDetailOpen(false);
+      toast.message(tt('roles.memoryMergeDraftReady', 'Merge draft loaded'));
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryLoading(false);
+    }
+  }, [selectedRole, tt]);
+
+  const simulateRoleMemoryInjection = useCallback(async () => {
+    if (!selectedRole) return;
+    setMemoryLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('memory.simulateInjection', { roleName: selectedRole, task });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      setMemorySimulation(unwrapped.data as MemorySimulationView);
+      toast.success(tt('roles.memorySimulationReady', 'Injection simulation updated'));
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryLoading(false);
+    }
+  }, [selectedRole, task, tt]);
+
+  const openMemoryDetail = useCallback(async (id: string, kind: 'card' | 'proposal' | 'conflict' | 'injection' = 'card') => {
+    setMemoryDetailOpen(true);
+    setMemoryDetailLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('memory.detail', { id, kind });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      const nextDetail = unwrapped.data as MemoryDetailView;
+      if (kind === 'conflict') {
+        const conflictResult = await hostApi.gateway.rpc('memory.conflictDetail', { id });
+        const conflictUnwrapped = unwrapRpc(conflictResult);
+        if (conflictUnwrapped.ok) {
+          nextDetail.conflictDetail = conflictUnwrapped.data as MemoryConflictDetailView;
+        }
+      }
+      setMemoryDetail(nextDetail);
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryDetailLoading(false);
+    }
+  }, []);
+
+  // Subscribe to subagent lifecycle events for real-time orchestration progress.
+  // Events arrive via the gateway broadcast → main relay → hostEvents pipeline.
+  useEffect(() => {
+    if (typeof hostEvents.onSubagentLifecycle !== 'function') {
+      return;
+    }
+    const unsubscribe = hostEvents.onSubagentLifecycle((event) => {
+      const roleName = event.roleName;
+      if (!roleName) return;
+      setLifecycleEvents((prev) => ({
+        ...prev,
+        [roleName]: {
+          phase: event.status as LifecyclePhase,
+          ts: event.ts ?? Date.now(),
+          error: event.error,
+          task: event.task,
+        },
+      }));
+    });
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    if (typeof hostEvents.onTaskLoopLifecycle !== 'function') {
+      return;
+    }
+    const unsubscribe = hostEvents.onTaskLoopLifecycle((event) => {
+      setTaskLoopEvents((prev) => ({
+        ...prev,
+        [event.loopRunId]: event,
+      }));
+    });
+    return unsubscribe;
+  }, []);
+
+  const runPlan = useCallback(async () => {
+    if (!task.trim()) {
+      toast.error(tt('roles.taskRequired', '请先输入任务描述'));
+      return;
+    }
+    setPlanning(true);
+    setPlan(null);
+    try {
+      const result = await hostApi.gateway.rpc('orchestrator.plan', {
+        task: task.trim(),
+        ...(selectedRole ? { leadRole: selectedRole } : {}),
+      });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      const nextPlan = isRecord(unwrapped.data.plan) ? (unwrapped.data.plan as unknown as PlanView) : null;
+      setPlan(nextPlan);
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setPlanning(false);
+    }
+  }, [task, selectedRole, tt]);
+
+  const executeRun = useCallback(
+    async (approvalId?: string) => {
+      const result = await hostApi.gateway.rpc(
+        'orchestrator.run',
+        {
+          task: task.trim(),
+          sessionKey: anchorSession,
+          agentId: anchorAgentId,
+          ...(selectedRole ? { leadRole: selectedRole } : {}),
+        },
+        undefined,
+        approvalId,
+      );
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        if (unwrapped.approval) {
+          setPendingApproval(unwrapped.approval);
+        } else {
+          toast.error(unwrapped.message);
+        }
+        return false;
+      }
+      const ids = Array.isArray(unwrapped.data.spawnedRunIds) ? (unwrapped.data.spawnedRunIds as string[]) : [];
+      const failures = Array.isArray(unwrapped.data.failures)
+        ? (unwrapped.data.failures as Array<{ roleName: string; error?: string }>)
+        : [];
+      setRunResult(ids.length > 0 ? { kind: 'success', spawnedRunIds: ids } : { kind: 'failure', failures });
+      toast.success(tt('roles.runStarted', '已启动编排：{{count}} 个子代理', { count: ids.length }));
+      setPendingApproval(null);
+      return true;
+    },
+    [task, anchorSession, anchorAgentId, selectedRole, tt],
+  );
+
+  const runOrchestration = useCallback(async () => {
+    if (!task.trim()) {
+      toast.error(tt('roles.taskRequired', '请先输入任务描述'));
+      return;
+    }
+    if (!anchorSession) {
+      toast.error(tt('roles.noSession', '没有可用于编排的会话，请先创建或选择一个 Agent'));
+      return;
+    }
+    setPendingApproval(null);
+    setRunResult(null);
+    setLifecycleEvents({});
+    setRunning(true);
+    try {
+      await executeRun();
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setRunning(false);
+    }
+  }, [task, anchorSession, tt, executeRun]);
+
+  const runTaskLoop = useCallback(async () => {
+    if (!task.trim()) {
+      toast.error(tt('roles.taskRequired', '璇峰厛杈撳叆浠诲姟鎻忚堪'));
+      return;
+    }
+    if (!anchorSession) {
+      toast.error(tt('roles.noSession', '娌℃湁鍙敤浜庣紪鎺掔殑浼氳瘽锛岃鍏堝垱寤烘垨閫夋嫨涓€涓?Agent'));
+      return;
+    }
+    setTaskLoopRunning(true);
+    setTaskLoopResult(null);
+    try {
+      const result = await hostApi.gateway.rpc('task_loop.run', {
+        task: task.trim(),
+        sessionKey: anchorSession,
+        agentId: anchorAgentId,
+        ...(selectedRole ? { leadRole: selectedRole } : {}),
+      });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      const loop = isRecord(unwrapped.data.loop) ? unwrapped.data.loop : {};
+      const next = {
+        loopRunId: String(loop.loopRunId ?? ''),
+        status: String(loop.status ?? ''),
+        phase: String(loop.phase ?? ''),
+        traceId: typeof loop.traceId === 'string' ? loop.traceId : undefined,
+      };
+      setTaskLoopResult(next);
+      toast.success(tt('roles.taskLoopStarted', 'Task loop finished: {{status}}', { status: next.status || 'unknown' }));
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setTaskLoopRunning(false);
+    }
+  }, [anchorAgentId, anchorSession, selectedRole, task, tt]);
+
+  const approveRun = useCallback(async () => {
+    if (!pendingApproval) return;
+    setRunning(true);
+    try {
+      const decision = await hostApi.permissions.decideApproval({
+        id: pendingApproval.id,
+        decision: 'approved',
+      });
+      if (!decision.success) {
+        toast.error(decision.error || tt('roles.approveFailed', '审批失败'));
+        return;
+      }
+      await executeRun(pendingApproval.id);
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setRunning(false);
+    }
+  }, [pendingApproval, tt, executeRun]);
+
+  const dismissApproval = useCallback(() => setPendingApproval(null), []);
+
+  return (
+    <Card className="mt-8 border-border/60">
+      <CardHeader
+        data-testid="role-orchestration-toggle"
+        className="cursor-pointer select-none"
+        onClick={() => setExpanded((prev) => !prev)}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Bot className="h-5 w-5 text-primary" />
+            <CardTitle className="text-base">{tt('roles.title', '角色与编排')}</CardTitle>
+          </div>
+          <ChevronDown className={cn('h-4 w-4 transition-transform', expanded && 'rotate-180')} />
+        </div>
+        <CardDescription>
+          {tt('roles.description', '基于角色契约的子代理编排（角色驱动的工具白名单、模型与思考强度）。')}
+        </CardDescription>
+      </CardHeader>
+
+      {expanded && (
+        <CardContent className="space-y-6">
+          {/* Section A: available roles */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">{tt('roles.available', '可用角色')}</span>
+              <Button variant="ghost" size="sm" onClick={() => void loadRoles()} disabled={loading}>
+                <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+              </Button>
+            </div>
+            {loading && roles.length === 0 ? (
+              <div className="flex justify-center py-4"><LoadingSpinner /></div>
+            ) : (
+              <div className="grid gap-2 md:grid-cols-2">
+                {roles.map((role) => (
+                  <RoleCard
+                    key={role.name}
+                    role={role}
+                    selected={selectedRole === role.name}
+                    onSelect={() => setSelectedRole((prev) => (prev === role.name ? null : role.name))}
+                    tt={tt}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <TooltipProvider>
+            <div className="space-y-4 border-t border-border/60 pt-4" data-testid="role-memory-panel">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div className="min-w-0 space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium">{tt('roles.memoryTitle', 'Role Memory')}</span>
+                    {selectedRole && <Badge variant="secondary" className="rounded-full">{selectedRole}</Badge>}
+                    {memoryConflicts > 0 && (
+                      <Badge variant="outline" className="rounded-full border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400">
+                        <AlertTriangle className="mr-1 h-3 w-3" />
+                        {tt('roles.memoryConflictCount', '{{count}} conflicts', { count: memoryConflicts })}
+                      </Badge>
+                    )}
+                    {retentionMemoryCount > 0 && (
+                      <Badge variant="outline" className="rounded-full border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-400">
+                        <History className="mr-1 h-3 w-3" />
+                        {tt('roles.memoryRetentionCount', '{{count}} suggestions', { count: retentionMemoryCount })}
+                      </Badge>
+                    )}
+                    {healthWarningCount > 0 && (
+                      <Badge variant="outline" className="rounded-full border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400">
+                        <ShieldAlert className="mr-1 h-3 w-3" />
+                        {tt('roles.memoryHealthWarnings', '{{count}} health warnings', { count: healthWarningCount })}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="max-w-2xl text-xs text-muted-foreground">
+                    {tt('roles.memoryGovernanceHint', 'Review what this role will remember, why changes are blocked, and what context was injected into recent runs.')}
+                  </p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => void loadRoleMemory()} disabled={!selectedRole || memoryLoading}>
+                  <RefreshCw className={cn('h-4 w-4', memoryLoading && 'animate-spin')} />
+                </Button>
+              </div>
+
+              {!selectedRole ? (
+                <div className="flex items-center gap-3 rounded-md border border-dashed border-border/70 bg-surface-input px-3 py-4">
+                  <CircleDot className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-xs text-muted-foreground">{tt('roles.memorySelectRole', 'Select a role to manage its active memory.')}</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+                    {[
+                      { icon: Layers3, label: tt('roles.memoryMetricActive', 'Usable'), value: activeMemoryCount, tone: 'text-emerald-700 dark:text-emerald-400' },
+                      { icon: Clock3, label: tt('roles.memoryMetricReview', 'Review'), value: reviewMemoryCount, tone: 'text-amber-700 dark:text-amber-400' },
+                      { icon: GitMerge, label: tt('roles.memoryMetricConflicts', 'Conflicts'), value: conflictMemoryCount, tone: 'text-red-700 dark:text-red-400' },
+                      { icon: History, label: tt('roles.memoryMetricInjections', 'Runs'), value: memoryInjections.length, tone: 'text-blue-700 dark:text-blue-400' },
+                    ].map((item) => (
+                      <div key={item.label} className="flex items-center justify-between rounded-md border border-border/60 bg-surface-input px-3 py-2">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <item.icon className={cn('h-4 w-4 shrink-0', item.tone)} />
+                          <span className="truncate text-xs text-muted-foreground">{item.label}</span>
+                        </div>
+                        <span className="text-sm font-medium text-foreground">{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="rounded-md border border-border/60 bg-surface-input p-3">
+                    <div className="mb-2 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-primary" />
+                        <span className="text-xs font-medium">
+                          {memoryDraftTarget
+                            ? tt('roles.memoryComposerEditTitle', 'Memory proposal draft')
+                            : tt('roles.memoryComposerTitle', 'New memory proposal')}
+                        </span>
+                      </div>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs text-xs">
+                          {tt('roles.memoryComposerHint', 'Low-risk proposals become active automatically; conflicts and sensitive changes wait for review.')}
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    {memoryDraftTarget && (
+                      <div className="mb-2 flex items-center justify-between gap-2 rounded-md border border-blue-500/20 bg-blue-500/5 px-2.5 py-2">
+                        <span className="text-2xs text-blue-700 dark:text-blue-400">
+                          {memoryDraftTarget.mode === 'supersede'
+                            ? tt('roles.memorySupersedeDraft', 'Supersede proposal draft')
+                            : tt('roles.memoryEditDraft', 'Edit proposal draft')}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2 text-2xs"
+                          onClick={() => {
+                            setMemoryDraftTarget(null);
+                            setMemoryDraft(defaultMemoryDraft(selectedRole));
+                            setMemoryPreview(null);
+                          }}
+                        >
+                          {tt('roles.memoryCancelDraft', 'Cancel draft')}
+                        </Button>
+                      </div>
+                    )}
+                    <div className="grid gap-2 lg:grid-cols-[1fr_220px]">
+                      <Textarea
+                        data-testid="role-memory-input"
+                        value={memoryDraft.content}
+                        onChange={(event) => updateMemoryDraft({ content: event.target.value })}
+                        placeholder={tt('roles.memoryPlaceholder', 'Add a role-specific memory for future runs')}
+                        className="min-h-[116px] resize-none bg-background text-sm"
+                      />
+                      <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1">
+                        <div className="space-y-1.5">
+                          <span className="text-2xs font-medium text-muted-foreground">{tt('roles.memoryType', 'Type')}</span>
+                          <Select value={memoryDraft.type} onValueChange={(value) => updateMemoryDraft({ type: value })}>
+                            <SelectTrigger size="sm" data-testid="role-memory-type"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {MEMORY_TYPE_OPTIONS.map((type) => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-1.5">
+                          <span className="text-2xs font-medium text-muted-foreground">{tt('roles.memoryScope', 'Scope')}</span>
+                          <Select value={memoryDraft.scope} onValueChange={(value) => updateMemoryDraft({ scope: value })}>
+                            <SelectTrigger size="sm" data-testid="role-memory-scope"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {MEMORY_SCOPE_OPTIONS.map((scope) => <SelectItem key={scope} value={scope}>{scope}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-1.5">
+                          <span className="text-2xs font-medium text-muted-foreground">{tt('roles.memorySensitivity', 'Sensitivity')}</span>
+                          <Select value={memoryDraft.sensitivity} onValueChange={(value) => updateMemoryDraft({ sensitivity: value })}>
+                            <SelectTrigger size="sm" data-testid="role-memory-sensitivity"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {MEMORY_SENSITIVITY_OPTIONS.map((sensitivity) => <SelectItem key={sensitivity} value={sensitivity}>{sensitivity}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <div className="rounded-md border border-border/60 bg-background/70 px-2.5 py-2">
+                        <div className="flex items-center justify-between text-2xs text-muted-foreground">
+                          <span>{tt('roles.memoryConfidence', 'Confidence')}</span>
+                          <span>{scoreToPercent(memoryDraft.confidence)}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min={0}
+                          max={1}
+                          step={0.05}
+                          value={memoryDraft.confidence}
+                          onChange={(event) => updateMemoryDraft({ confidence: Number(event.target.value) })}
+                          className="mt-2 h-1.5 w-full accent-primary"
+                        />
+                      </div>
+                      <div className="rounded-md border border-border/60 bg-background/70 px-2.5 py-2">
+                        <div className="flex items-center justify-between text-2xs text-muted-foreground">
+                          <span>{tt('roles.memoryImportance', 'Importance')}</span>
+                          <span>{scoreToPercent(memoryDraft.importance)}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min={0}
+                          max={1}
+                          step={0.05}
+                          value={memoryDraft.importance}
+                          onChange={(event) => updateMemoryDraft({ importance: Number(event.target.value) })}
+                          className="mt-2 h-1.5 w-full accent-primary"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-2xs"
+                        onClick={() => setMemoryAdvancedOpen((prev) => !prev)}
+                      >
+                        <SlidersHorizontal className="mr-1 h-3.5 w-3.5" />
+                        {memoryAdvancedOpen ? tt('roles.memoryHideAdvanced', 'Hide governance fields') : tt('roles.memoryShowAdvanced', 'Governance fields')}
+                      </Button>
+                      {memoryAdvancedOpen && (
+                        <div className="mt-2 grid gap-2 rounded-md border border-border/60 bg-background/70 p-2.5 md:grid-cols-2">
+                          <Input value={memoryDraft.ownerRole} onChange={(event) => updateMemoryDraft({ ownerRole: event.target.value })} placeholder={tt('roles.memoryOwnerRole', 'Owner')} className="h-8 text-xs" />
+                          <Input value={memoryDraft.sourceRole} onChange={(event) => updateMemoryDraft({ sourceRole: event.target.value })} placeholder={tt('roles.memorySourceRole', 'Source role')} className="h-8 text-xs" />
+                          <Input value={memoryDraft.applicableRoles} onChange={(event) => updateMemoryDraft({ applicableRoles: event.target.value })} placeholder={tt('roles.memoryApplicableRoles', 'Applies to')} className="h-8 text-xs" />
+                          <Input value={memoryDraft.allowedMutators} onChange={(event) => updateMemoryDraft({ allowedMutators: event.target.value })} placeholder={tt('roles.memoryAllowedMutators', 'Can propose changes')} className="h-8 text-xs" />
+                          <Input value={memoryDraft.phaseTags} onChange={(event) => updateMemoryDraft({ phaseTags: event.target.value })} placeholder={tt('roles.memoryPhaseTags', 'Phases, comma separated')} className="h-8 text-xs" />
+                          <Input type="date" value={memoryDraft.expiresAt} onChange={(event) => updateMemoryDraft({ expiresAt: event.target.value })} className="h-8 text-xs" />
+                          <Input value={memoryDraft.evidenceRef} onChange={(event) => updateMemoryDraft({ evidenceRef: event.target.value })} placeholder={tt('roles.memoryEvidenceRef', 'Evidence reference')} className="h-8 text-xs md:col-span-2" />
+                          <Textarea value={memoryDraft.evidenceExcerpt} onChange={(event) => updateMemoryDraft({ evidenceExcerpt: event.target.value })} placeholder={tt('roles.memoryEvidenceExcerpt', 'Evidence excerpt')} className="min-h-[58px] resize-none text-xs md:col-span-2" />
+                        </div>
+                      )}
+                    </div>
+                    {memoryPreview && (
+                      <div data-testid="role-memory-preview" className="mt-3 rounded-md border border-blue-500/20 bg-blue-500/5 p-3">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <Badge variant="outline" className={cn('rounded-full text-2xs', memoryPreview.decision?.accepted ? 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400')}>
+                            {memoryPreview.decision?.action ?? tt('roles.memoryPreviewUnknown', 'preview')}
+                          </Badge>
+                          {memoryPreview.riskLevel && <Badge variant="outline" className="rounded-full text-2xs">{memoryPreview.riskLevel}</Badge>}
+                          {memoryPreview.impactScope && <Badge variant="outline" className="rounded-full text-2xs">{memoryPreview.impactScope}</Badge>}
+                          {memoryPreview.permissionDecision && <Badge variant="secondary" className="rounded-full text-2xs">{memoryPreview.permissionDecision}</Badge>}
+                          {memoryPreview.evidence?.status && <Badge variant="outline" className="rounded-full text-2xs">{memoryPreview.evidence.status}</Badge>}
+                          <Badge variant="outline" className="rounded-full text-2xs">{tt('roles.memoryPreviewReadOnly', 'read-only')}</Badge>
+                        </div>
+                        <p className="mt-2 text-xs text-foreground">{memoryPreview.reasonSummary || memoryPreview.decision?.reason || tt('roles.memoryNoReason', 'No reason provided')}</p>
+                        {memoryPreview.permissionReason && <p className="mt-1 text-2xs text-muted-foreground">{memoryPreview.permissionReason}</p>}
+                        {memoryPreview.conflicts?.length ? (
+                          <p className="mt-1 text-2xs text-amber-700 dark:text-amber-400">{tt('roles.memoryPreviewConflicts', '{{count}} possible conflicts', { count: memoryPreview.conflicts.length })}</p>
+                        ) : null}
+                      </div>
+                    )}
+                    <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8"
+                        disabled={!memoryDraft.content.trim() || memoryPreviewLoading}
+                        onClick={() => void previewRoleMemory()}
+                        data-testid="role-memory-preview-button"
+                      >
+                        {memoryPreviewLoading ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Eye className="mr-1 h-3.5 w-3.5" />}
+                        {tt('roles.memoryPreviewImpact', 'Preview impact')}
+                      </Button>
+                      <Button
+                        data-testid="role-memory-save"
+                        className="h-8"
+                        disabled={!memoryDraft.content.trim() || memoryLoading}
+                        onClick={() => void proposeRoleMemory()}
+                      >
+                        <Check className="mr-1 h-4 w-4" />
+                        {memoryDraftTarget ? tt('roles.memorySubmitProposal', 'Submit proposal') : tt('roles.memorySave', 'Save')}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {memoryRetention.length > 0 && (
+                    <div className="rounded-md border border-blue-500/20 bg-blue-500/5 p-3">
+                      <div className="mb-2 flex items-center gap-2">
+                        <History className="h-4 w-4 text-blue-700 dark:text-blue-400" />
+                        <span className="text-xs font-medium">{tt('roles.memoryRetentionTitle', 'Lifecycle suggestions')}</span>
+                      </div>
+                      <div className="grid gap-2 md:grid-cols-2">
+                        {memoryRetention.slice(0, 4).map((candidate) => (
+                          <div
+                            key={candidate.card.id}
+                            className="rounded-md bg-background/70 px-2.5 py-2"
+                          >
+                            <button
+                              type="button"
+                              className="w-full text-left"
+                              onClick={() => void openMemoryDetail(candidate.card.id, 'card')}
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <Badge variant="outline" className="rounded-full text-2xs">{candidate.recommendedAction}</Badge>
+                                <span className="text-2xs text-muted-foreground">{Math.round(candidate.retentionScore * 100)}%</span>
+                              </div>
+                              <p className="mt-1 line-clamp-1 text-xs text-foreground">{candidate.card.content}</p>
+                              <p className="mt-1 text-2xs text-muted-foreground">{candidate.reason}</p>
+                            </button>
+                            <div className="mt-2 flex justify-end">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-7 text-2xs"
+                                disabled={memoryLoading}
+                                onClick={() => void proposeRetention(candidate.card.id, candidate.recommendedAction)}
+                              >
+                                <Clock3 className="mr-1 h-3 w-3" />
+                                {tt('roles.memoryCreateProposal', 'Create proposal')}
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <Tabs defaultValue="active" className="space-y-3">
+                    <TabsList className="grid h-auto w-full grid-cols-2 gap-1 bg-surface-input p-1 md:grid-cols-4">
+                      <TabsTrigger value="active" className="gap-1.5 text-xs">
+                        <Layers3 className="h-3.5 w-3.5" />
+                        {tt('roles.memoryTabActive', 'Active')}
+                      </TabsTrigger>
+                      <TabsTrigger value="review" className="gap-1.5 text-xs">
+                        <Clock3 className="h-3.5 w-3.5" />
+                        {tt('roles.memoryTabReview', 'Review')} {reviewMemoryProposals.length ? `(${reviewMemoryProposals.length})` : ''}
+                      </TabsTrigger>
+                      <TabsTrigger value="conflicts" className="gap-1.5 text-xs">
+                        <GitMerge className="h-3.5 w-3.5" />
+                        {tt('roles.memoryTabConflicts', 'Conflicts')} {memoryConflicts ? `(${memoryConflicts})` : ''}
+                      </TabsTrigger>
+                      <TabsTrigger value="injections" className="gap-1.5 text-xs">
+                        <Sparkles className="h-3.5 w-3.5" />
+                        {tt('roles.memoryTabInjections', 'Injections')}
+                      </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="active" className="space-y-2">
+                      {activeMemoryCards.length === 0 ? (
+                        <div className="rounded-md border border-dashed border-border/70 bg-surface-input px-3 py-4">
+                          <p className="text-xs font-medium text-foreground">{tt('roles.memoryEmptyTitle', 'No usable role memory')}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">{tt('roles.memoryEmpty', 'No active memory for this role yet.')}</p>
+                        </div>
+                      ) : activeMemoryCards.slice(0, 8).map((card) => (
+                        <div
+                          key={card.id}
+                          className="cursor-pointer rounded-md border border-l-2 border-border/60 border-l-emerald-500/60 bg-surface-input px-3 py-3 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                          data-testid="role-memory-card"
+                          onClick={() => void openMemoryDetail(card.id, 'card')}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1 space-y-2">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <Badge variant="outline" className={cn('rounded-full text-2xs', memoryStatusClasses(card.status))}>{card.status}</Badge>
+                                <Badge variant="secondary" className="rounded-full text-2xs">{card.type}</Badge>
+                                {card.scope && <Badge variant="outline" className="rounded-full text-2xs">{card.scope}</Badge>}
+                                {card.sensitivity && (
+                                  <Badge variant="outline" className={cn('rounded-full text-2xs', memorySensitivityClasses(card.sensitivity))}>{card.sensitivity}</Badge>
+                                )}
+                              </div>
+                              <p className="line-clamp-3 text-sm leading-5 text-foreground">{card.content}</p>
+                              <div className="grid gap-2 md:grid-cols-2">
+                                <div className="space-y-1">
+                                  <div className="flex justify-between text-2xs text-muted-foreground">
+                                    <span>{tt('roles.memoryConfidence', 'Confidence')}</span>
+                                    <span>{scoreToPercent(card.confidence)}%</span>
+                                  </div>
+                                  <Progress value={scoreToPercent(card.confidence)} className="h-1.5 bg-black/10 dark:bg-white/10" />
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="flex justify-between text-2xs text-muted-foreground">
+                                    <span>{tt('roles.memoryImportance', 'Importance')}</span>
+                                    <span>{scoreToPercent(card.importance)}%</span>
+                                  </div>
+                                  <Progress value={scoreToPercent(card.importance)} className="h-1.5 bg-black/10 dark:bg-white/10" />
+                                </div>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-2xs text-muted-foreground">
+                                {card.evidenceRefs?.length ? <span>{tt('roles.memoryEvidence', '{{count}} evidence refs', { count: card.evidenceRefs.length })}</span> : null}
+                                {formatMemoryDate(card.updatedAt) && <span>{formatMemoryDate(card.updatedAt)}</span>}
+                              </div>
+                            </div>
+                            {card.status !== 'archived' && card.status !== 'tombstone' && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 shrink-0"
+                                    disabled={memoryLoading}
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      void archiveRoleMemory(card.id);
+                                    }}
+                                    data-testid="role-memory-archive"
+                                  >
+                                    <Archive className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>{tt('roles.memoryArchive', 'Archive')}</TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </TabsContent>
+
+                    <TabsContent value="review" className="space-y-2">
+                      {reviewMemoryProposals.length === 0 ? (
+                        <div className="rounded-md border border-dashed border-border/70 bg-surface-input px-3 py-4">
+                          <p className="text-xs font-medium text-foreground">{tt('roles.memoryReviewEmptyTitle', 'Review queue is clear')}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">{tt('roles.memoryReviewEmpty', 'No memory proposals need review.')}</p>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/60 bg-surface-input px-3 py-2">
+                            <span className="text-xs text-muted-foreground">
+                              {tt('roles.memorySelectedCount', '{{count}} selected', { count: selectedReviewIds.length })}
+                            </span>
+                            <div className="flex flex-wrap gap-1.5">
+                              <Button size="sm" className="h-7 text-2xs" disabled={memoryLoading || selectedReviewIds.length === 0} onClick={() => void reviewSelectedRoleMemory('approve')}>
+                                {tt('roles.memoryApproveSelected', 'Approve selected')}
+                              </Button>
+                              <Button size="sm" variant="outline" className="h-7 text-2xs" disabled={memoryLoading || selectedReviewIds.length === 0} onClick={() => void reviewSelectedRoleMemory('applyAsCold')}>
+                                {tt('roles.memoryColdSelected', 'Cold selected')}
+                              </Button>
+                              <Button size="sm" variant="ghost" className="h-7 text-2xs text-red-700 dark:text-red-400" disabled={memoryLoading || selectedReviewIds.length === 0} onClick={() => void reviewSelectedRoleMemory('reject')}>
+                                {tt('roles.memoryRejectSelected', 'Reject selected')}
+                              </Button>
+                            </div>
+                          </div>
+                          {reviewMemoryProposals.slice(0, 8).map((proposal) => (
+                        <div
+                          key={proposal.id}
+                          className="cursor-pointer rounded-md border border-l-2 border-amber-500/20 border-l-amber-500/70 bg-amber-500/5 px-3 py-3 transition-colors hover:bg-amber-500/10"
+                          onClick={() => void openMemoryDetail(proposal.id, 'proposal')}
+                        >
+                          <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                            <div className="min-w-0 flex-1 space-y-2">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <input
+                                  type="checkbox"
+                                  className="h-3.5 w-3.5"
+                                  checked={selectedReviewIds.includes(proposal.id)}
+                                  onChange={(event) => {
+                                    event.stopPropagation();
+                                    setSelectedReviewIds((prev) => event.target.checked ? [...prev, proposal.id] : prev.filter((id) => id !== proposal.id));
+                                  }}
+                                  onClick={(event) => event.stopPropagation()}
+                                  aria-label={tt('roles.memorySelectProposal', 'Select proposal')}
+                                />
+                                <Badge variant="outline" className="rounded-full border-amber-500/25 bg-amber-500/10 text-2xs text-amber-700 dark:text-amber-400">{proposal.operation}</Badge>
+                                <Badge variant="secondary" className="rounded-full text-2xs">{proposal.status}</Badge>
+                                {proposal.riskLevel && <Badge variant="outline" className="rounded-full text-2xs">{proposal.riskLevel}</Badge>}
+                                {proposal.impactScope && <Badge variant="outline" className="rounded-full text-2xs">{proposal.impactScope}</Badge>}
+                                {proposal.evidenceStatus && <Badge variant="outline" className="rounded-full text-2xs">{proposal.evidenceStatus}</Badge>}
+                                {proposal.proposal?.sensitivity && (
+                                  <Badge variant="outline" className={cn('rounded-full text-2xs', memorySensitivityClasses(proposal.proposal.sensitivity))}>{proposal.proposal.sensitivity}</Badge>
+                                )}
+                              </div>
+                              <p className="line-clamp-3 text-sm leading-5 text-foreground">{proposal.proposal?.content}</p>
+                              <div className="rounded-md bg-background/70 px-2.5 py-2">
+                                <p className="text-2xs font-medium text-muted-foreground">{tt('roles.memoryReviewReason', 'Gatekeeper reason')}</p>
+                                <p className="mt-1 text-xs text-foreground">{proposal.reasonSummary || proposal.reviewReason || tt('roles.memoryNoReason', 'No reason provided')}</p>
+                                {proposal.suggestedAction && (
+                                  <p className="mt-1 text-2xs text-muted-foreground">
+                                    {tt('roles.memorySuggestedAction', 'Suggested')}: {proposal.suggestedAction}
+                                  </p>
+                                )}
+                              </div>
+                              {proposal.conflictIds?.length ? (
+                                <p className="text-2xs text-muted-foreground">{tt('roles.memoryConflictRefs', '{{count}} related conflicts', { count: proposal.conflictIds.length })}</p>
+                              ) : null}
+                              {proposal.retentionReason ? (
+                                <p className="text-2xs text-blue-700 dark:text-blue-400">{proposal.retentionReason}</p>
+                              ) : null}
+                            </div>
+                            <div className="flex shrink-0 flex-wrap gap-1.5 md:justify-end">
+                              <Button size="sm" className="h-8" disabled={memoryLoading} onClick={(event) => { event.stopPropagation(); void reviewRoleMemory(proposal.id, 'approve'); }}>
+                                <Check className="mr-1 h-3.5 w-3.5" />
+                                {tt('roles.memoryApprove', 'Approve')}
+                              </Button>
+                              <Button size="sm" variant="outline" className="h-8" disabled={memoryLoading} onClick={(event) => { event.stopPropagation(); void reviewRoleMemory(proposal.id, 'applyAsCold'); }}>{tt('roles.memoryApplyCold', 'Cold')}</Button>
+                              <Button size="sm" variant="ghost" className="h-8 text-red-700 dark:text-red-400" disabled={memoryLoading} onClick={(event) => { event.stopPropagation(); void reviewRoleMemory(proposal.id, 'reject'); }}>{tt('roles.memoryReject', 'Reject')}</Button>
+                            </div>
+                          </div>
+                        </div>
+                          ))}
+                        </>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="conflicts" className="space-y-2">
+                      {memoryConflictItems.length === 0 ? (
+                        <div className="rounded-md border border-dashed border-border/70 bg-surface-input px-3 py-4">
+                          <p className="text-xs font-medium text-foreground">{tt('roles.memoryConflictEmptyTitle', 'No open conflicts')}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">{tt('roles.memoryConflictEmpty', 'No open memory conflicts.')}</p>
+                        </div>
+                      ) : memoryConflictItems.slice(0, 8).map((conflict) => (
+                        <div
+                          key={conflict.id}
+                          className="cursor-pointer rounded-md border border-l-2 border-red-500/20 border-l-red-500/70 bg-red-500/5 px-3 py-3 transition-colors hover:bg-red-500/10"
+                          onClick={() => void openMemoryDetail(conflict.id, 'conflict')}
+                        >
+                          <div className="flex items-start gap-3">
+                            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-700 dark:text-red-400" />
+                            <div className="min-w-0 flex-1 space-y-1.5">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <Badge variant="outline" className="rounded-full border-red-500/25 bg-red-500/10 text-2xs text-red-700 dark:text-red-400">{conflict.type}</Badge>
+                                <Badge variant="secondary" className="rounded-full text-2xs">{conflict.status}</Badge>
+                                {conflict.cardIds?.length ? <span className="text-2xs text-muted-foreground">{tt('roles.memoryConflictCards', '{{count}} cards', { count: conflict.cardIds.length })}</span> : null}
+                              </div>
+                              <p className="text-sm leading-5 text-foreground">{conflict.reason}</p>
+                              <div className="flex justify-end">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-7 text-2xs"
+                                  disabled={memoryLoading || !conflict.cardIds?.length}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    void prepareMergeDraft(conflict.cardIds);
+                                  }}
+                                >
+                                  <GitMerge className="mr-1 h-3 w-3" />
+                                  {tt('roles.memoryMergeDraft', 'Merge draft')}
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </TabsContent>
+
+                    <TabsContent value="injections" className="space-y-2">
+                      <div className="rounded-md border border-border/60 bg-surface-input px-3 py-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div>
+                            <p className="text-xs font-medium text-foreground">{tt('roles.memorySimulationTitle', 'Injection simulation')}</p>
+                            <p className="mt-1 text-2xs text-muted-foreground">{tt('roles.memorySimulationHint', 'Preview how the current task would select role memory.')}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8"
+                            disabled={memoryLoading || !selectedRole}
+                            onClick={() => void simulateRoleMemoryInjection()}
+                            data-testid="role-memory-simulate"
+                          >
+                            <Sparkles className="mr-1 h-3.5 w-3.5" />
+                            {tt('roles.memorySimulate', 'Simulate')}
+                          </Button>
+                        </div>
+                        {memorySimulation?.pack?.candidateExplanations?.length ? (
+                          <div className="mt-3 space-y-3" data-testid="role-memory-simulation-result">
+                            <div className="rounded-md bg-background/70 px-2.5 py-2">
+                              <div className="flex items-center justify-between text-2xs text-muted-foreground">
+                                <span>{tt('roles.memoryContextBudget', 'Context budget')}</span>
+                                <span>{memorySimulation.pack.estimatedTokens?.total ?? 0} / {memorySimulation.pack.budget?.total ?? 0}</span>
+                              </div>
+                              <Progress value={simulationBudgetPercent} className="mt-2 h-1.5 bg-black/10 dark:bg-white/10" />
+                            </div>
+                            {MEMORY_INJECTION_CLASSES.map((injectionClass) => {
+                              const candidates = simulationCandidatesByClass[injectionClass];
+                              if (candidates.length === 0) return null;
+                              return (
+                                <div key={injectionClass} className="rounded-md border border-border/60 bg-background/70 px-2.5 py-2" data-testid={`role-memory-simulation-${injectionClass}`}>
+                                  <div className="mb-2 flex items-center justify-between">
+                                    <Badge variant="outline" className="rounded-full text-2xs">{injectionClass}</Badge>
+                                    <span className="text-2xs text-muted-foreground">{tt('roles.memoryCandidateCount', '{{count}} candidates', { count: candidates.length })}</span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {candidates.slice(0, 3).map((candidate) => (
+                                      <div key={candidate.cardId} className="rounded-md bg-surface-input px-2.5 py-2">
+                                        <div className="flex items-center justify-between gap-2">
+                                          <div className="flex min-w-0 items-center gap-1.5">
+                                            <Badge
+                                              variant="outline"
+                                              className={cn(
+                                                'rounded-full text-2xs',
+                                                candidate.selected
+                                                  ? 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                                                  : 'border-zinc-500/25 bg-zinc-500/10 text-zinc-700 dark:text-zinc-400',
+                                              )}
+                                            >
+                                              {candidate.selected ? tt('roles.memorySelected', 'selected') : tt('roles.memorySkipped', 'skipped')}
+                                            </Badge>
+                                            <span className="truncate font-mono text-2xs text-muted-foreground">{candidate.cardId}</span>
+                                          </div>
+                                          <span className="text-2xs text-muted-foreground">{candidate.score.toFixed(2)}</span>
+                                        </div>
+                                        <p className="mt-1 line-clamp-2 text-2xs text-muted-foreground">{candidate.whatWouldSelect || candidate.reason}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : null}
+                      </div>
+                      {memoryInjections.length === 0 ? (
+                        <div className="rounded-md border border-dashed border-border/70 bg-surface-input px-3 py-4">
+                          <p className="text-xs font-medium text-foreground">{tt('roles.memoryInjectionEmptyTitle', 'No injection history')}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">{tt('roles.memoryInjectionEmpty', 'No injection logs for this role yet.')}</p>
+                        </div>
+                      ) : memoryInjections.slice(0, 6).map((injection) => {
+                        const candidates = injection.candidateExplanations ?? [];
+                        return (
+                          <div
+                            key={injection.id}
+                            className="cursor-pointer rounded-md border border-border/60 bg-surface-input px-3 py-3 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                            onClick={() => void openMemoryDetail(injection.id, 'injection')}
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <Badge variant="secondary" className="rounded-full text-2xs">{injection.policyVersion ?? 'v1'}</Badge>
+                                <span className="text-2xs text-muted-foreground">{formatMemoryDate(injection.createdAt)}</span>
+                                {injection.truncated && <Badge variant="outline" className="rounded-full text-2xs">{tt('roles.memoryTruncated', 'truncated')}</Badge>}
+                              </div>
+                              <span className="text-2xs text-muted-foreground">
+                                {tt('roles.memoryCandidatesSummary', '{{selected}} selected / {{skipped}} skipped', {
+                                  selected: candidates.filter((candidate) => candidate.selected).length,
+                                  skipped: candidates.filter((candidate) => !candidate.selected).length,
+                                })}
+                              </span>
+                            </div>
+                            <div className="mt-3 space-y-2">
+                              {candidates.slice(0, 4).map((candidate) => (
+                                <div
+                                  key={candidate.cardId}
+                                  className="rounded-md bg-background/70 px-2.5 py-2"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    void openMemoryDetail(candidate.cardId, 'card');
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className="flex min-w-0 items-center gap-1.5">
+                                      <Badge
+                                        variant="outline"
+                                        className={cn(
+                                          'rounded-full text-2xs',
+                                          candidate.selected
+                                            ? 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                                            : 'border-zinc-500/25 bg-zinc-500/10 text-zinc-700 dark:text-zinc-400',
+                                        )}
+                                      >
+                                        {candidate.selected ? tt('roles.memorySelected', 'selected') : tt('roles.memorySkipped', 'skipped')}
+                                      </Badge>
+                                      <span className="truncate font-mono text-2xs text-muted-foreground">{candidate.cardId}</span>
+                                    </div>
+                                    <span className="text-2xs text-muted-foreground">
+                                      {candidate.injectionClass ? `${candidate.injectionClass} · ` : ''}{tt('roles.memoryScore', 'Score')} {candidate.score.toFixed(2)}
+                                    </span>
+                                  </div>
+                                  <Progress value={scoreToPercent(candidate.score)} className="mt-2 h-1.5 bg-black/10 dark:bg-white/10" />
+                                  <p className="mt-1 line-clamp-2 text-2xs text-muted-foreground">
+                                    {candidate.bucket ?? candidate.truncatedReason ?? tt('roles.memoryNoBucket', 'not injected')} · {candidate.reason}
+                                  </p>
+                                  {candidate.penalties?.length ? (
+                                    <p className="mt-1 text-2xs text-amber-700 dark:text-amber-400">
+                                      {tt('roles.memoryPenalties', 'Penalties')}: {candidate.penalties.join(', ')}
+                                    </p>
+                                  ) : null}
+                                  {candidate.whatWouldSelect ? (
+                                    <p className="mt-1 text-2xs text-blue-700 dark:text-blue-400">{candidate.whatWouldSelect}</p>
+                                  ) : null}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {latestInjection && (
+                        <p className="text-2xs text-muted-foreground">
+                          {tt('roles.memoryLatestInjectionSummary', 'Latest run: {{selected}} selected, {{skipped}} skipped', {
+                            selected: selectedInjectionCandidates,
+                            skipped: skippedInjectionCandidates,
+                          })}
+                        </p>
+                      )}
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              )}
+            </div>
+          </TooltipProvider>
+
+          {/* Section B: orchestration task */}
+          <div className="space-y-3 border-t border-border/60 pt-4">
+            <span className="text-sm font-medium">{tt('roles.orchestrate', '编排任务')}</span>
+            <div className="flex gap-2">
+              <Input
+                data-testid="role-orchestration-task-input"
+                value={task}
+                onChange={(event) => setTask(event.target.value)}
+                placeholder={tt('roles.taskPlaceholder', '描述要编排的任务，例如：重构这个模块并补充测试')}
+              />
+              <Button variant="outline" onClick={() => void runPlan()} disabled={planning}>
+                <ListChecks className="h-4 w-4 mr-1" />
+                {tt('roles.plan', '规划')}
+              </Button>
+              <Button onClick={() => void runOrchestration()} disabled={running}>
+                <Play className="h-4 w-4 mr-1" />
+                {tt('roles.run', '运行')}
+              </Button>
+              <Button data-testid="role-task-loop-run" variant="secondary" onClick={() => void runTaskLoop()} disabled={taskLoopRunning}>
+                {taskLoopRunning ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-1" />}
+                {tt('roles.taskLoop', 'Task loop')}
+              </Button>
+            </div>
+
+            {plan && <OrchestrationPlanView plan={plan} tt={tt} />}
+
+            {/* Real-time orchestration progress (fed by subagent lifecycle events) */}
+            {Object.keys(lifecycleEvents).length > 0 && (
+              <div data-testid="role-task-loop-progress" className="rounded-xl bg-surface-input p-3 space-y-1">
+                <p className="text-2xs font-medium text-muted-foreground">{tt('roles.progress', '编排进度')}</p>
+                {Object.entries(lifecycleEvents).map(([roleName, entry]) => {
+                  const tone = roleTone(roleName);
+                  const dotClasses = toneClasses(tone);
+                  return (
+                    <div key={roleName} className="flex items-center gap-2">
+                      {entry.phase === 'started' ? (
+                        <Loader2 className={cn('h-3 w-3 shrink-0 animate-spin', dotClasses.text)} />
+                      ) : entry.phase === 'completed' || entry.phase === 'verified' ? (
+                        <CheckCircle2 className="h-3 w-3 shrink-0 text-emerald-500" />
+                      ) : (
+                        <XCircle className="h-3 w-3 shrink-0 text-red-500" />
+                      )}
+                      <span className="text-2xs font-medium text-foreground truncate">{roleName}</span>
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          'text-2xs rounded-full border shrink-0',
+                          entry.phase === 'started' && 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20',
+                          entry.phase === 'completed' && 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
+                          entry.phase === 'verified' && 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20',
+                          entry.phase === 'error' && 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20',
+                        )}
+                      >
+                        {entry.phase === 'started' ? tt('roles.phaseStarted', '运行中')
+                          : entry.phase === 'completed' ? tt('roles.phaseCompleted', '完成')
+                          : entry.phase === 'verified' ? tt('roles.phaseVerified', '已验证')
+                          : tt('roles.phaseError', '失败')}
+                      </Badge>
+                      {entry.error && (
+                        <span className="text-2xs text-muted-foreground truncate">{entry.error}</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {Object.keys(taskLoopEvents).length > 0 && (
+              <div className="rounded-xl bg-surface-input p-3 space-y-1">
+                <p className="text-2xs font-medium text-muted-foreground">{tt('roles.taskLoopProgress', 'Task loop progress')}</p>
+                {Object.values(taskLoopEvents).slice(-3).map((event) => (
+                  <div key={event.loopRunId} data-testid="role-task-loop-event" className="flex items-center gap-2">
+                    {event.status === 'running' ? (
+                      <Loader2 className="h-3 w-3 shrink-0 animate-spin text-blue-500" />
+                    ) : event.status === 'complete' ? (
+                      <CheckCircle2 className="h-3 w-3 shrink-0 text-emerald-500" />
+                    ) : (
+                      <XCircle className="h-3 w-3 shrink-0 text-amber-500" />
+                    )}
+                    <span className="text-2xs font-medium text-foreground truncate">{event.loopRunId}</span>
+                    <Badge variant="secondary" className="rounded-full text-2xs">
+                      {tt('roles.taskLoopPhase', 'Round {{iteration}} · {{phase}}', { iteration: event.iteration, phase: event.phase })}
+                    </Badge>
+                    <Badge variant="outline" className="rounded-full text-2xs">{event.status}</Badge>
+                    {event.selfCheckDecision && (
+                      <Badge variant="outline" className="rounded-full text-2xs">{event.selfCheckDecision}</Badge>
+                    )}
+                    {event.error && (
+                      <span className="text-2xs text-muted-foreground truncate">{event.error}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {taskLoopResult && (
+              <div data-testid="role-task-loop-result" className="rounded-xl border border-border/60 bg-surface-input p-3">
+                <div className="flex items-center gap-2">
+                  <CircleDot className="h-4 w-4 text-primary" />
+                  <span className="text-xs font-medium text-foreground">
+                    {tt('roles.taskLoopSummary', 'Task loop {{status}} at {{phase}}', {
+                      status: taskLoopResult.status,
+                      phase: taskLoopResult.phase,
+                    })}
+                  </span>
+                </div>
+                {taskLoopResult.traceId && (
+                  <p data-testid="role-task-loop-trace" className="mt-1 pl-6 font-mono text-2xs text-muted-foreground">{taskLoopResult.traceId}</p>
+                )}
+              </div>
+            )}
+
+            {/* Run result feedback bar */}
+            {runResult && runResult.kind === 'success' && (
+              <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 space-y-1">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span className="text-xs font-medium text-foreground">
+                    {tt('roles.runSummary', '已启动 {{count}} 个子代理', { count: runResult.spawnedRunIds.length })}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-1 pl-6">
+                  {runResult.spawnedRunIds.map((id) => (
+                    <span key={id} className="text-2xs font-mono text-muted-foreground bg-surface-input rounded-md px-1.5 py-0.5">
+                      {id.slice(0, 8)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {runResult && runResult.kind === 'failure' && (
+              <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-3">
+                <div className="flex items-center gap-2">
+                  <XCircle className="h-4 w-4 text-red-600 dark:text-red-400 shrink-0" />
+                  <span className="text-xs font-medium text-foreground">
+                    {tt('roles.runFailed', '编排未成功启动子代理')}
+                  </span>
+                </div>
+                <ul className="mt-1 pl-6 space-y-0.5">
+                  {runResult.failures.map((f, i) => (
+                    <li key={i} className="text-2xs text-muted-foreground">
+                      <span className="font-mono">{f.roleName}</span>
+                      {f.error ? ` — ${f.error}` : ''}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Approval round-trip */}
+            {pendingApproval && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-2 min-w-0">
+                    <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-foreground">
+                        {tt('roles.approvalTitle', '编排运行需要批准')}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {pendingApproval.reason || tt('roles.approvalHint', '当前权限模式下，生成子代理需先批准')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Button size="sm" variant="ghost" className="h-7 text-xs" disabled={running} onClick={dismissApproval}>
+                      {tt('roles.cancel', '取消')}
+                    </Button>
+                    <Button size="sm" className="h-7 text-xs" disabled={running} onClick={() => void approveRun()}>
+                      <Check className="h-3 w-3 mr-1" />
+                      {tt('roles.approve', '批准并运行')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      )}
+      <Sheet open={memoryDetailOpen} onOpenChange={setMemoryDetailOpen}>
+        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-xl">
+          <SheetHeader>
+            <SheetTitle>{tt('roles.memoryDetailTitle', 'Memory governance detail')}</SheetTitle>
+            <SheetDescription>
+              {tt('roles.memoryDetailDescription', 'Inspect ownership, review policy, evidence, history, and runtime impact.')}
+            </SheetDescription>
+          </SheetHeader>
+          {memoryDetailLoading ? (
+            <div className="flex justify-center py-8"><LoadingSpinner /></div>
+          ) : (
+            <div className="mt-5 space-y-4">
+              {memoryDetail?.card && (
+                <div className="rounded-md border border-border/60 bg-surface-input p-3">
+                  <p className="text-xs font-medium">{tt('roles.memoryDetailOverview', 'Overview')}</p>
+                  <p className="mt-2 text-sm leading-5 text-foreground">{memoryDetail.card.content}</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    <Badge variant="outline" className={cn('rounded-full text-2xs', memoryStatusClasses(memoryDetail.card.status))}>{memoryDetail.card.status}</Badge>
+                    <Badge variant="secondary" className="rounded-full text-2xs">{memoryDetail.card.type}</Badge>
+                    {memoryDetail.card.scope && <Badge variant="outline" className="rounded-full text-2xs">{memoryDetail.card.scope}</Badge>}
+                    {memoryDetail.card.sensitivity && <Badge variant="outline" className={cn('rounded-full text-2xs', memorySensitivityClasses(memoryDetail.card.sensitivity))}>{memoryDetail.card.sensitivity}</Badge>}
+                  </div>
+                  <div className="mt-3 grid gap-2 text-xs text-muted-foreground">
+                    <span>{tt('roles.memoryOwnerRole', 'Owner')}: {memoryDetail.card.ownerRole || '-'}</span>
+                    <span>{tt('roles.memorySourceRole', 'Source role')}: {memoryDetail.card.sourceRole || '-'}</span>
+                    <span>{tt('roles.memoryApplicableRoles', 'Applies to')}: {(memoryDetail.card.applicableRoles ?? memoryDetail.card.roleTags ?? []).join(', ') || '-'}</span>
+                    <span>{tt('roles.memoryAllowedMutators', 'Can propose changes')}: {(memoryDetail.card.allowedMutators ?? []).join(', ') || '-'}</span>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    <Button size="sm" variant="outline" className="h-8 text-2xs" onClick={() => memoryDetail.card && prepareMemoryDraft(memoryDetail.card, 'update')}>
+                      <FileText className="mr-1 h-3.5 w-3.5" />
+                      {tt('roles.memoryEditAsProposal', 'Edit as proposal')}
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-8 text-2xs" onClick={() => memoryDetail.card && prepareMemoryDraft(memoryDetail.card, 'supersede')}>
+                      <GitMerge className="mr-1 h-3.5 w-3.5" />
+                      {tt('roles.memorySupersede', 'Supersede')}
+                    </Button>
+                    {(memoryDetail.card.status === 'archived' || memoryDetail.card.status === 'tombstone') && (
+                      <Button size="sm" variant="outline" className="h-8 text-2xs" onClick={() => memoryDetail.card && void restoreRoleMemory(memoryDetail.card.id)}>
+                        <History className="mr-1 h-3.5 w-3.5" />
+                        {tt('roles.memoryRestore', 'Restore')}
+                      </Button>
+                    )}
+                    {memoryDetail.retention?.recommendedAction && memoryDetail.retention.recommendedAction !== 'keep' && (
+                      <Button size="sm" variant="outline" className="h-8 text-2xs" onClick={() => memoryDetail.card && void proposeRetention(memoryDetail.card.id, memoryDetail.retention?.recommendedAction)}>
+                        <Clock3 className="mr-1 h-3.5 w-3.5" />
+                        {tt('roles.memoryApplyRetention', 'Apply suggestion')}
+                      </Button>
+                    )}
+                    {memoryDetail.card.status !== 'tombstone' && (
+                      <Button size="sm" variant="ghost" className="h-8 text-2xs text-red-700 dark:text-red-400" onClick={() => memoryDetail.card && void tombstoneRoleMemory(memoryDetail.card.id)}>
+                        {tt('roles.memoryTombstone', 'Tombstone')}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {memoryDetail?.proposal && (
+                <div className="rounded-md border border-amber-500/20 bg-amber-500/5 p-3">
+                  <p className="text-xs font-medium">{tt('roles.memoryDetailGovernance', 'Governance')}</p>
+                  <p className="mt-2 text-sm leading-5 text-foreground">{memoryDetail.proposal.proposal?.content}</p>
+                  <div className="mt-3 grid gap-1 text-xs text-muted-foreground">
+                    <span>{tt('roles.memoryRiskLevel', 'Risk')}: {memoryDetail.proposal.riskLevel || '-'}</span>
+                    <span>{tt('roles.memoryImpactScope', 'Impact scope')}: {memoryDetail.proposal.impactScope || '-'}</span>
+                    <span>{tt('roles.memoryPermissionDecision', 'Permission')}: {memoryDetail.proposal.permissionDecision || '-'}</span>
+                    <span>{tt('roles.memorySuggestedAction', 'Suggested')}: {memoryDetail.proposal.suggestedAction || '-'}</span>
+                    <span>{tt('roles.memoryReviewReason', 'Gatekeeper reason')}: {memoryDetail.proposal.reasonSummary || memoryDetail.proposal.reviewReason || '-'}</span>
+                  </div>
+                </div>
+              )}
+
+              {memoryDetail?.conflicts?.length ? (
+                <div className="rounded-md border border-red-500/20 bg-red-500/5 p-3">
+                  <p className="text-xs font-medium">{tt('roles.memoryDetailConflicts', 'Conflicts')}</p>
+                  <div className="mt-2 space-y-2">
+                    {memoryDetail.conflicts.slice(0, 4).map((conflict) => (
+                      <div key={conflict.id} className="rounded-md bg-background/70 px-2.5 py-2">
+                        <Badge variant="outline" className="rounded-full text-2xs">{conflict.type}</Badge>
+                        <p className="mt-1 text-xs text-foreground">{conflict.reason}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {memoryDetail.conflictDetail?.cards?.length ? (
+                    <div className="mt-3 grid gap-2">
+                      <p className="text-2xs font-medium text-muted-foreground">{memoryDetail.conflictDetail.reasonSummary}</p>
+                      {memoryDetail.conflictDetail.cards.slice(0, 3).map((card) => (
+                        <div key={card.id} className="rounded-md bg-background/70 px-2.5 py-2">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <Badge variant="outline" className="rounded-full text-2xs">{card.scope}</Badge>
+                            <Badge variant="secondary" className="rounded-full text-2xs">{card.status}</Badge>
+                          </div>
+                          <p className="mt-1 line-clamp-2 text-xs text-foreground">{card.content}</p>
+                        </div>
+                      ))}
+                      <div className="flex justify-end">
+                        <Button size="sm" variant="outline" className="h-8 text-2xs" onClick={() => void prepareMergeDraft(memoryDetail.conflictDetail?.cards?.map((card) => card.id))}>
+                          <GitMerge className="mr-1 h-3.5 w-3.5" />
+                          {tt('roles.memoryMergeDraft', 'Merge draft')}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {(memoryDetail?.card?.evidenceRefs?.length || memoryDetail?.evidence) ? (
+                <div className="rounded-md border border-border/60 bg-surface-input p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-xs font-medium">{tt('roles.memoryDetailEvidence', 'Evidence')}</p>
+                    {memoryDetail.evidence?.status && <Badge variant="outline" className="rounded-full text-2xs">{memoryDetail.evidence.status}</Badge>}
+                  </div>
+                  {memoryDetail.evidence?.summary && <p className="mt-1 text-2xs text-muted-foreground">{memoryDetail.evidence.summary}</p>}
+                  <div className="mt-2 space-y-2">
+                    {(memoryDetail.card?.evidenceRefs ?? []).slice(0, 6).map((ref, index) => (
+                      <div key={`${ref.type}-${ref.ref}-${index}`} className="rounded-md bg-background/70 px-2.5 py-2">
+                        <p className="text-2xs text-muted-foreground">{ref.type}: {ref.ref}</p>
+                        {ref.excerpt && <p className="mt-1 line-clamp-2 text-xs text-foreground">{ref.excerpt}</p>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="rounded-md border border-border/60 bg-surface-input p-3" data-testid="role-memory-impact-path">
+                <p className="text-xs font-medium">{tt('roles.memoryImpactPath', 'Impact path')}</p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {[
+                    {
+                      label: tt('roles.memoryImpactProposal', 'Proposal'),
+                      value: memoryDetail?.proposal?.status ?? ((memoryDetail?.proposals?.length ?? 0) > 0 ? tt('roles.memoryImpactProposalCount', '{{count}} linked', { count: memoryDetail?.proposals?.length ?? 0 }) : tt('roles.memoryImpactNoProposal', 'none')),
+                      tone: 'border-blue-500/20 bg-blue-500/5 text-blue-700 dark:text-blue-400',
+                    },
+                    {
+                      label: tt('roles.memoryImpactGovernance', 'Governance'),
+                      value: memoryDetail?.proposal?.reasonSummary ?? memoryDetail?.card?.status ?? tt('roles.memoryImpactNoGovernance', 'no active decision'),
+                      tone: 'border-amber-500/20 bg-amber-500/5 text-amber-700 dark:text-amber-400',
+                    },
+                    {
+                      label: tt('roles.memoryImpactRuntime', 'Runtime'),
+                      value: (memoryDetail?.injections?.length ?? 0) > 0
+                        ? tt('roles.memoryImpactRuntimeCount', '{{count}} recent runs', { count: memoryDetail?.injections?.length ?? 0 })
+                        : tt('roles.memoryImpactRuntimeNone', 'not injected recently'),
+                      tone: 'border-emerald-500/20 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400',
+                    },
+                    {
+                      label: tt('roles.memoryImpactLifecycle', 'Lifecycle'),
+                      value: memoryDetail?.retention?.recommendedAction ?? tt('roles.memoryImpactLifecycleKeep', 'keep'),
+                      tone: 'border-zinc-500/20 bg-zinc-500/5 text-zinc-700 dark:text-zinc-400',
+                    },
+                  ].map((item) => (
+                    <div key={item.label} className={cn('min-w-0 rounded-md border px-2.5 py-2', item.tone)}>
+                      <p className="text-2xs font-medium">{item.label}</p>
+                      <p className="mt-1 truncate text-xs text-foreground">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-md border border-border/60 bg-surface-input p-3">
+                <p className="text-xs font-medium">{tt('roles.memoryDetailHistory', 'History')}</p>
+                <div className="mt-2 grid gap-2">
+                  {(memoryDetail?.versions ?? []).slice(0, 4).map((version) => (
+                    <div key={version.id} className="flex items-center justify-between rounded-md bg-background/70 px-2.5 py-2 text-xs">
+                      <span>v{version.version}</span>
+                      <span className="text-muted-foreground">{formatMemoryDate(version.createdAt)}</span>
+                    </div>
+                  ))}
+                  {(memoryDetail?.audit ?? []).slice(0, 4).map((event) => (
+                    <div key={event.id} className="flex items-center justify-between rounded-md bg-background/70 px-2.5 py-2 text-xs">
+                      <span>{event.action}</span>
+                      <span className="text-muted-foreground">{formatMemoryDate(event.createdAt)}</span>
+                    </div>
+                  ))}
+                  {(memoryDetail?.versions?.length ?? 0) === 0 && (memoryDetail?.audit?.length ?? 0) === 0 && (
+                    <p className="text-xs text-muted-foreground">{tt('roles.memoryNoHistory', 'No history recorded yet.')}</p>
+                  )}
+                </div>
+              </div>
+
+              {memoryDetail?.injections?.length ? (
+                <div className="rounded-md border border-border/60 bg-surface-input p-3">
+                  <p className="text-xs font-medium">{tt('roles.memoryDetailRuntimeImpact', 'Runtime impact')}</p>
+                  <div className="mt-2 space-y-2">
+                    {memoryDetail.injections.slice(0, 3).map((injection) => (
+                      <div key={injection.id} className="rounded-md bg-background/70 px-2.5 py-2">
+                        <div className="flex items-center justify-between text-2xs text-muted-foreground">
+                          <span>{injection.policyVersion ?? 'v1'}</span>
+                          <span>{formatMemoryDate(injection.createdAt)}</span>
+                        </div>
+                        {(injection.candidateExplanations ?? []).slice(0, 2).map((candidate) => (
+                          <p key={candidate.cardId} className="mt-1 text-2xs text-muted-foreground">
+                            {candidate.injectionClass ? `${candidate.injectionClass} · ` : ''}{candidate.selected ? tt('roles.memorySelected', 'selected') : tt('roles.memorySkipped', 'skipped')} · {candidate.score.toFixed(2)}
+                          </p>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+    </Card>
+  );
+}

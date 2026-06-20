@@ -1,0 +1,26 @@
+packages:
+  - .
+  - extensions/*
+  - packages/*
+
+allowBuilds:
+  '@google/genai': false
+  '@matrix-org/matrix-sdk-crypto-nodejs': false
+  '@tloncorp/tlon-skill': false
+  baileys: false
+  esbuild: false
+  openclaw: false
+  protobufjs: false
+  sharp: false
+  tree-sitter-bash: false
+
+ignoredBuiltDependencies:
+  - '@google/genai'
+  - '@matrix-org/matrix-sdk-crypto-nodejs'
+  - '@tloncorp/tlon-skill'
+  - baileys
+  - esbuild
+  - openclaw
+  - protobufjs
+  - sharp
+  - tree-sitter-bash

@@ -1,0 +1,169 @@
+{
+  "nav": "知识",
+  "title": "知识",
+  "subtitle": "管理有来源支撑的 wiki 上下文、待审草稿和按角色治理的知识变更。",
+  "tabs": {
+    "library": "知识库",
+    "inbox": "收件箱",
+    "drafts": "草稿箱",
+    "review": "审查",
+    "governance": "治理"
+  },
+  "actions": {
+    "configure": "配置",
+    "init": "初始化",
+    "importFiles": "导入文件",
+    "importFolder": "导入文件夹",
+    "validateOkf": "验证 OKF Bundle",
+    "importOkf": "导入 OKF Bundle",
+    "compile": "编译",
+    "lint": "检查",
+    "openVault": "打开知识库"
+  },
+  "status": {
+    "title": "知识库状态",
+    "ready": "就绪",
+    "missing": "缺失",
+    "vault": "知识库",
+    "mode": "模式",
+    "render": "渲染",
+    "obsidian": "Obsidian CLI",
+    "available": "可用",
+    "unavailable": "不可用",
+    "nativeSources": "本地来源"
+  },
+  "metrics": {
+    "sources": "来源",
+    "syntheses": "综合",
+    "entities": "实体",
+    "warnings": "警告"
+  },
+  "search": {
+    "title": "搜索",
+    "placeholder": "搜索 wiki 来源和综合页",
+    "empty": "没有匹配的知识。",
+    "preview": "预览",
+    "useInDraft": "放入草稿"
+  },
+  "okf": {
+    "title": "OKF 兼容",
+    "badge": "OKF v0.1",
+    "bundlePath": "Bundle",
+    "concepts": "Concept",
+    "validConcepts": "有效",
+    "reservedFiles": "保留文件",
+    "warnings": "警告",
+    "errors": "错误",
+    "typeDistribution": "类型",
+    "selectAll": "选择全部有效 concept"
+  },
+  "library": {
+    "title": "知识库",
+    "typeHint": "筛选并浏览此类知识"
+  },
+  "inbox": {
+    "title": "知识收件箱",
+    "pending": "待处理候选",
+    "empty": "没有待处理的知识候选。",
+    "noSelection": "未选择收件箱条目。",
+    "noSelectionHint": "选择一个候选项，先查看来源再提升为草稿。",
+    "promote": "提升为草稿",
+    "dismiss": "忽略",
+    "sources": "来源",
+    "noSources": "未附加来源引用。",
+    "warnings": "警告",
+    "noWarnings": "没有警告。",
+    "kinds": {
+      "chat-session": "对话",
+      "task-ledger": "任务账本",
+      "clawgraph": "ClawGraph",
+      "file": "文件",
+      "okf": "OKF",
+      "manual": "手动",
+      "wiki-result": "Wiki"
+    }
+  },
+  "provenance": {
+    "references": "{{count}} 次引用",
+    "references_plural": "{{count}} 次引用"
+  },
+  "types": {
+    "source-note": "来源笔记",
+    "synthesis": "综合",
+    "decision": "决策",
+    "architecture": "架构",
+    "command": "命令",
+    "troubleshooting": "故障处理",
+    "glossary": "术语表",
+    "procedure": "流程"
+  },
+  "draft": {
+    "title": "草稿箱",
+    "titleLabel": "标题",
+    "typeLabel": "类型",
+    "sourcesLabel": "来源 ID",
+    "tagsLabel": "标签",
+    "bodyLabel": "正文",
+    "apply": "应用草稿",
+    "create": "创建草稿",
+    "askSteward": "请知识管理员审查",
+    "empty": "还没有知识草稿。",
+    "defaultProposalReason": "用户创建的知识草稿，等待明确审查和应用。",
+    "status": {
+      "draft": "草稿",
+      "steward_reviewed": "已审查",
+      "approved": "已批准",
+      "rejected": "已拒绝",
+      "applied": "已应用"
+    }
+  },
+  "review": {
+    "title": "审查 / Diff",
+    "noDraft": "未选择草稿。",
+    "diffTitle": "变更预览",
+    "noProposal": "未选择 proposal。",
+    "confirmationBoundary": "Agent 和知识管理员只能准备草稿或 proposal。写入知识库必须由用户在这里明确确认。",
+    "approveAndApply": "批准并应用",
+    "reject": "拒绝"
+  },
+  "governance": {
+    "title": "治理",
+    "readOnlyBadge": "Agent 默认只读",
+    "steward": "知识管理员",
+    "stewardDescription": "一个 role-first 角色槽位，用于分类、检查来源、发现冲突并提出变更建议，但不能直接应用。",
+    "permissions": "权限边界",
+    "permissionsDescription": "对话中的知识范围只授予 search/get 读取能力。写入、合并、归档和删除都必须进入草稿或 proposal，并由用户确认。",
+    "lastReview": "最近一次管理员审查",
+    "noReview": "本会话还没有执行知识管理员审查。"
+  },
+  "dialogs": {
+    "pickFiles": "导入知识文件",
+    "pickFolder": "导入知识文件夹",
+    "pickOkfBundle": "选择 OKF bundle 文件夹"
+  },
+  "toasts": {
+    "configure": "知识配置已更新",
+    "init": "知识库已初始化",
+    "ingest": "知识已导入",
+    "validateOkf": "OKF bundle 已验证",
+    "importOkf": "OKF concept 已导入",
+    "compile": "知识已编译",
+    "lint": "知识检查完成",
+    "openVault": "知识库已打开",
+    "applyDraft": "草稿已应用",
+    "createDraft": "草稿已创建，等待审查",
+    "promoteInbox": "收件箱条目已提升为草稿",
+    "dismissInbox": "收件箱条目已忽略",
+    "stewardReview": "知识管理员审查已更新",
+    "applyReviewedChange": "已应用审查后的变更",
+    "rejectDraft": "草稿已拒绝"
+  },
+  "errors": {
+    "status": "无法加载知识状态。",
+    "action": "知识操作失败。",
+    "okfValidation": "OKF 验证失败。",
+    "okfImport": "OKF 导入失败。",
+    "search": "搜索失败。",
+    "get": "无法加载知识页面。"
+  }
+}

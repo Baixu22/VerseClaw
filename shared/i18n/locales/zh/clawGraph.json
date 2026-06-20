@@ -1,0 +1,91 @@
+{
+  "nav": "ClawGraph",
+  "title": "ClawGraph",
+  "subtitle": "用 workspace YAML 编排无状态 worker、handoff、审计和复核。",
+  "actions": {
+    "refresh": "刷新",
+    "run": "运行工作流",
+    "starting": "启动中",
+    "abort": "中止",
+    "approve": "批准",
+    "reject": "拒绝"
+  },
+  "workflows": {
+    "label": "工作流",
+    "placeholder": "选择工作流",
+    "empty": "未找到工作流文件"
+  },
+  "compile": {
+    "label": "编译",
+    "ok": "可运行",
+    "notReady": "未就绪",
+    "nodes": "个节点",
+    "parallel": "最大并发 {{count}}",
+    "noDiagnostics": "暂无诊断。"
+  },
+  "run": {
+    "label": "运行",
+    "empty": "暂无活动运行。",
+    "attempt": "第 {{count}} 次尝试",
+    "noRole": "无角色"
+  },
+  "tabs": {
+    "dag": "DAG",
+    "events": "事件",
+    "review": "复核"
+  },
+  "dag": {
+    "empty": "运行工作流后查看节点状态。",
+    "dependsOn": "依赖 {{deps}}"
+  },
+  "events": {
+    "empty": "暂无事件。"
+  },
+  "review": {
+    "empty": "暂无待复核项。"
+  },
+  "toast": {
+    "runStarted": "ClawGraph 运行已启动。",
+    "runFailed": "ClawGraph 运行失败。",
+    "approvalRequired": "运行工作流需要审批。"
+  },
+  "nodeType": {
+    "agent": "Agent",
+    "audit": "审计"
+  },
+  "status": {
+    "queued": "排队中",
+    "ready": "就绪",
+    "running": "运行中",
+    "handoff_received": "已交接",
+    "auditing": "审计中",
+    "done": "完成",
+    "failed": "失败",
+    "review": "复核",
+    "blocked": "阻塞",
+    "aborted": "已中止"
+  },
+  "runStatus": {
+    "queued": "排队中",
+    "running": "运行中",
+    "complete": "完成",
+    "blocked": "阻塞",
+    "failed": "失败",
+    "aborted": "已中止",
+    "review": "复核"
+  },
+  "eventType": {
+    "run_started": "运行已启动",
+    "node_ready": "节点就绪",
+    "node_started": "节点已启动",
+    "node_handoff": "收到交接",
+    "node_audit": "审计已记录",
+    "node_done": "节点完成",
+    "node_failed": "节点失败",
+    "review_requested": "请求复核",
+    "review_resolved": "复核已处理",
+    "run_completed": "运行完成",
+    "run_blocked": "运行阻塞",
+    "run_aborted": "运行已中止"
+  }
+}

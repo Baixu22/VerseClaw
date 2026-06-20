@@ -1,0 +1,40 @@
+{
+  "rules": [
+    {
+      "name": "no-rm-rf-root",
+      "pattern": "\\brm\\s+-rf\\s+(?:/(?!\\w+/)|/etc|/var|/usr|/boot|/home(?!/\\w+/))",
+      "message": "DANGER: Recursive delete targeting system directory.",
+      "severity": "critical"
+    },
+    {
+      "name": "no-sudo-dangerous",
+      "pattern": "sudo\\s+.*(?:rm\\s+-rf|dd\\s+if=|mkfs\\.)",
+      "message": "DANGER: Destructive sudo command detected.",
+      "severity": "critical"
+    },
+    {
+      "name": "no-hardcoded-secret",
+      "pattern": "(?:api[_-]?key|secret|password|token|auth)\\s*[:=]\\s*[\"'][A-Za-z0-9+/=_-]{20,}[\"']",
+      "message": "Potential hardcoded secret. Use environment variables instead.",
+      "severity": "warning"
+    },
+    {
+      "name": "no-force-push-main",
+      "pattern": "git\\s+push\\s+(?:--force|-f)\\s+origin\\s+(?:main|master)",
+      "message": "Force push to main/master detected.",
+      "severity": "critical"
+    },
+    {
+      "name": "no-drop-table",
+      "pattern": "(?i)DROP\\s+(?:TABLE|DATABASE)\\s+\\w+",
+      "message": "SQL DROP statement detected. Verify before executing.",
+      "severity": "warning"
+    },
+    {
+      "name": "no-curl-bash",
+      "pattern": "curl\\s+.*\\|\\s*(?:bash|sh)",
+      "message": "curl-to-bash pipe detected. Review the URL before executing.",
+      "severity": "warning"
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "nav": "Knowledge",
+  "title": "Knowledge",
+  "subtitle": "Manage source-backed wiki context, reviewed drafts, and role-governed knowledge changes.",
+  "tabs": {
+    "library": "Library",
+    "inbox": "Inbox",
+    "drafts": "Draft Inbox",
+    "review": "Review",
+    "governance": "Governance"
+  },
+  "actions": {
+    "configure": "Configure",
+    "init": "Initialize",
+    "importFiles": "Import Files",
+    "importFolder": "Import Folder",
+    "validateOkf": "Validate OKF Bundle",
+    "importOkf": "Import OKF Bundle",
+    "compile": "Compile",
+    "lint": "Lint",
+    "openVault": "Open Vault"
+  },
+  "status": {
+    "title": "Vault Status",
+    "ready": "Ready",
+    "missing": "Missing",
+    "vault": "Vault",
+    "mode": "Mode",
+    "render": "Render",
+    "obsidian": "Obsidian CLI",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "nativeSources": "Native sources"
+  },
+  "metrics": {
+    "sources": "Sources",
+    "syntheses": "Syntheses",
+    "entities": "Entities",
+    "warnings": "Warnings"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search wiki sources and syntheses",
+    "empty": "No matching knowledge found.",
+    "preview": "Preview",
+    "useInDraft": "Use in draft"
+  },
+  "okf": {
+    "title": "OKF Compatibility",
+    "badge": "OKF v0.1",
+    "bundlePath": "Bundle",
+    "concepts": "Concepts",
+    "validConcepts": "Valid",
+    "reservedFiles": "Reserved",
+    "warnings": "Warnings",
+    "errors": "Errors",
+    "typeDistribution": "Types",
+    "selectAll": "Select all valid concepts"
+  },
+  "library": {
+    "title": "Library",
+    "typeHint": "Filter and browse this knowledge type"
+  },
+  "inbox": {
+    "title": "Knowledge Inbox",
+    "pending": "Pending candidates",
+    "empty": "No pending knowledge candidates.",
+    "noSelection": "No inbox item selected.",
+    "noSelectionHint": "Select a candidate to inspect provenance before promoting it.",
+    "promote": "Promote to Draft",
+    "dismiss": "Dismiss",
+    "sources": "Sources",
+    "noSources": "No source references attached.",
+    "warnings": "Warnings",
+    "noWarnings": "No warnings.",
+    "kinds": {
+      "chat-session": "Chat",
+      "task-ledger": "Task Ledger",
+      "clawgraph": "ClawGraph",
+      "file": "File",
+      "okf": "OKF",
+      "manual": "Manual",
+      "wiki-result": "Wiki"
+    }
+  },
+  "provenance": {
+    "references": "{{count}} reference",
+    "references_plural": "{{count}} references"
+  },
+  "types": {
+    "source-note": "Source Notes",
+    "synthesis": "Syntheses",
+    "decision": "Decisions",
+    "architecture": "Architecture",
+    "command": "Commands",
+    "troubleshooting": "Troubleshooting",
+    "glossary": "Glossary",
+    "procedure": "Procedures"
+  },
+  "draft": {
+    "title": "Draft Inbox",
+    "titleLabel": "Title",
+    "typeLabel": "Type",
+    "sourcesLabel": "Source IDs",
+    "tagsLabel": "Tags",
+    "bodyLabel": "Body",
+    "apply": "Apply Draft",
+    "create": "Create Draft",
+    "askSteward": "Ask Steward to Review",
+    "empty": "No knowledge drafts yet.",
+    "defaultProposalReason": "User-created knowledge draft awaiting explicit review and apply.",
+    "status": {
+      "draft": "Draft",
+      "steward_reviewed": "Reviewed",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "applied": "Applied"
+    }
+  },
+  "review": {
+    "title": "Review / Diff",
+    "noDraft": "No draft selected.",
+    "diffTitle": "Change Preview",
+    "noProposal": "No proposal selected.",
+    "confirmationBoundary": "Agents and the Knowledge Steward can only prepare drafts or proposals. Applying knowledge requires this explicit user confirmation.",
+    "approveAndApply": "Approve and Apply",
+    "reject": "Reject"
+  },
+  "governance": {
+    "title": "Governance",
+    "readOnlyBadge": "Agent read-only by default",
+    "steward": "Knowledge Steward",
+    "stewardDescription": "A role-first slot that classifies, checks sources, finds conflicts, and proposes changes without applying them directly.",
+    "permissions": "Permission Boundary",
+    "permissionsDescription": "Chat knowledge scope only grants search/get access. Writes, merges, archives, and deletes must pass through draft or proposal review and user confirmation.",
+    "lastReview": "Latest Steward Review",
+    "noReview": "No steward review has run in this session."
+  },
+  "dialogs": {
+    "pickFiles": "Import knowledge files",
+    "pickFolder": "Import a knowledge folder",
+    "pickOkfBundle": "Select an OKF bundle folder"
+  },
+  "toasts": {
+    "configure": "Knowledge configured",
+    "init": "Knowledge vault initialized",
+    "ingest": "Knowledge imported",
+    "validateOkf": "OKF bundle validated",
+    "importOkf": "OKF concepts imported",
+    "compile": "Knowledge compiled",
+    "lint": "Knowledge lint complete",
+    "openVault": "Vault opened",
+    "applyDraft": "Draft applied",
+    "createDraft": "Draft created for review",
+    "promoteInbox": "Inbox item promoted to draft",
+    "dismissInbox": "Inbox item dismissed",
+    "stewardReview": "Steward review updated",
+    "applyReviewedChange": "Reviewed change applied",
+    "rejectDraft": "Draft rejected"
+  },
+  "errors": {
+    "status": "Failed to load knowledge status.",
+    "action": "Knowledge action failed.",
+    "okfValidation": "OKF validation failed.",
+    "okfImport": "OKF import failed.",
+    "search": "Search failed.",
+    "get": "Failed to load knowledge page."
+  }
+}
