@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, BookOpen, Check, Database, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Loader2, RefreshCw, Search, ShieldCheck, Sparkles, Upload, Wrench, X } from 'lucide-react';
+import { AlertTriangle, ArrowRight, BookOpen, Check, Database, Edit3, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, ListTodo, Loader2, Puzzle, RefreshCw, Ruler, Search, ShieldCheck, Sparkles, Upload, Wrench, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -27,10 +27,41 @@ import { cn } from '@/lib/utils';
 type SearchRow = Record<string, unknown>;
 type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'review' | 'governance';
 
-const PANEL_CLASS = 'rounded-xl border-black/10 bg-surface-modal shadow-sm dark:border-white/10';
-const QUIET_BUTTON_CLASS = 'h-9 rounded-lg border-black/10 bg-transparent px-3 text-meta font-medium text-foreground/80 shadow-none transition-colors hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5';
+const PANEL_CLASS = 'rounded-xl border border-black/10 bg-surface-modal shadow-sm dark:border-white/10';
+const QUIET_BUTTON_CLASS = 'h-9 rounded-lg border border-black/10 bg-transparent px-3 text-meta font-medium text-foreground/80 shadow-none transition-colors hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5';
 const ROW_CLASS = 'flex items-center justify-between gap-4 rounded-lg bg-surface-input px-3 py-2';
 const KNOWLEDGE_TYPES: KnowledgeDraftType[] = ['decision', 'architecture', 'command', 'troubleshooting', 'glossary', 'source-note', 'synthesis', 'procedure'];
+const WORKBENCH_TABS: WorkbenchTab[] = ['library', 'inbox', 'drafts', 'review', 'governance'];
+
+const TAB_ICONS: Record<WorkbenchTab, React.ComponentType<{ className?: string }>> = {
+  library: Layers,
+  inbox: Inbox,
+  drafts: Edit3,
+  review: ShieldCheck,
+  governance: Database,
+};
+
+const TYPE_ICONS: Record<KnowledgeDraftType, React.ComponentType<{ className?: string }>> = {
+  decision: Ruler,
+  architecture: Puzzle,
+  command: ArrowRight,
+  troubleshooting: Search,
+  glossary: BookOpen,
+  'source-note': FileText,
+  synthesis: Lightbulb,
+  procedure: ListTodo,
+};
+
+const TYPE_COLOR = {
+  decision: 'border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-400',
+  architecture: 'border-violet-500/30 bg-violet-500/5 text-violet-700 dark:text-violet-400',
+  command: 'border-rose-500/30 bg-rose-500/5 text-rose-700 dark:text-rose-400',
+  troubleshooting: 'border-orange-500/30 bg-orange-500/5 text-orange-700 dark:text-orange-400',
+  glossary: 'border-sky-500/30 bg-sky-500/5 text-sky-700 dark:text-sky-400',
+  'source-note': 'border-slate-500/30 bg-slate-500/5 text-slate-700 dark:text-slate-400',
+  synthesis: 'border-emerald-500/30 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400',
+  procedure: 'border-cyan-500/30 bg-cyan-500/5 text-cyan-700 dark:text-cyan-400',
+} as const;
 
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : null;
@@ -655,18 +686,20 @@ export function Knowledge() {
           </Card>
         )}
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-4" data-testid="knowledge-metrics">
           {metrics.map((metric) => {
             const Icon = metric.icon;
             return (
-            <Card key={metric.label} className={PANEL_CLASS}>
+            <Card key={metric.label} className={cn(PANEL_CLASS, 'cursor-default transition-shadow hover:shadow-md')}>
               <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="text-2xl font-semibold tabular-nums">{metric.value}</div>
-                    <div className="mt-1 truncate text-xs text-muted-foreground">{metric.label}</div>
+                    <div className="text-2xl font-semibold tabular-nums tracking-tight">{metric.value}</div>
+                    <div className="mt-1 truncate text-xs font-medium text-muted-foreground">{metric.label}</div>
                   </div>
-                  <Icon className={cn('mt-1 h-4 w-4 shrink-0', metric.tone)} />
+                  <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border', metric.tone.replace('text-', 'border-'), metric.tone.replace('text-', 'bg-'), '/10')}>
+                    <Icon className={cn('h-4 w-4', metric.tone)} />
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -675,20 +708,27 @@ export function Knowledge() {
         </div>
 
         <div className="mt-4 grid gap-2 md:grid-cols-5" data-testid="knowledge-workbench-tabs">
-          {(['library', 'inbox', 'drafts', 'review', 'governance'] as const).map((tab) => (
+          {WORKBENCH_TABS.map((tab) => {
+            const TabIcon = TAB_ICONS[tab];
+            const isActive = workbenchTab === tab;
+            return (
             <button
               key={tab}
               type="button"
               className={cn(
-                'rounded-lg border border-black/10 bg-surface-modal px-3 py-2 text-left text-sm font-medium transition-colors dark:border-white/10',
-                workbenchTab === tab ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+                'flex items-center gap-2.5 rounded-lg border border-black/10 bg-surface-modal px-3 py-2.5 text-left text-sm font-medium transition-all duration-200 dark:border-white/10',
+                isActive
+                  ? 'border-primary/30 bg-primary/5 text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-black/5 hover:text-foreground hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
               )}
               onClick={() => setWorkbenchTab(tab)}
               data-testid={`knowledge-tab-${tab}`}
             >
+              {TabIcon && <TabIcon className={cn('h-4 w-4 shrink-0', isActive ? 'text-primary' : 'text-muted-foreground/60')} />}
               {t(`tabs.${tab}`)}
             </button>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(360px,1.05fr)]">
@@ -720,9 +760,13 @@ export function Knowledge() {
             </CardHeader>
             <CardContent className="space-y-4 p-4 pt-0">
               <div className="flex gap-2">
-                <Input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchWiki(); }} placeholder={t('search.placeholder')} data-testid="knowledge-search-input" />
-                <Button onClick={() => void searchWiki()} disabled={busy || !query.trim()} data-testid="knowledge-search-submit">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+                  <Input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchWiki(); }} placeholder={t('search.placeholder')} data-testid="knowledge-search-input" className="pl-9" />
+                </div>
+                <Button onClick={() => void searchWiki()} disabled={busy || !query.trim()} data-testid="knowledge-search-submit" size="sm">
                   {running === 'search' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                  <span className="ml-1.5 hidden sm:inline">{t('search.button')}</span>
                 </Button>
               </div>
               <div className="grid gap-2">
@@ -734,15 +778,18 @@ export function Knowledge() {
                       key={`${lookup || index}`}
                       type="button"
                       className={cn(
-                        'rounded-lg border border-black/10 p-3 text-left transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5',
-                        lookup && lookup === selectedLookup && 'bg-black/5 text-foreground dark:bg-white/10',
+                        'w-full rounded-lg border border-black/10 p-3 text-left transition-all duration-200 hover:shadow-sm dark:border-white/10',
+                        lookup && lookup === selectedLookup
+                          ? 'border-primary/30 bg-primary/5 shadow-sm'
+                          : 'hover:bg-black/5 hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
                       )}
                       data-testid="knowledge-search-result"
                       onClick={() => void openResult(row)}
                     >
                       <div className="flex items-center justify-between gap-3">
-                        <span className="truncate text-sm font-medium">{getTitle(row)}</span>
-                        {running === `get:${lookup}` && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                        <span className="truncate text-sm font-semibold">{getTitle(row)}</span>
+                        {running === `get:${lookup}` && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+                        {lookup && lookup === selectedLookup && !running && <Check className="h-3.5 w-3.5 text-primary" />}
                       </div>
                       {okfBadges.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1">
@@ -803,64 +850,92 @@ export function Knowledge() {
           </CardHeader>
           <CardContent className="p-4 pt-0">
             {workbenchTab === 'library' && (
-              <div className="grid gap-3 md:grid-cols-4" data-testid="knowledge-library">
-                {KNOWLEDGE_TYPES.map((type) => (
+              <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4" data-testid="knowledge-library">
+                {KNOWLEDGE_TYPES.map((type) => {
+                  const TypeIcon = TYPE_ICONS[type];
+                  const accent = TYPE_COLOR[type];
+                  return (
                   <button
                     key={type}
                     type="button"
-                    className="rounded-lg border border-black/10 bg-surface-input p-3 text-left transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5"
+                    className={cn(
+                      'group flex flex-col gap-3 rounded-lg border p-4 text-left transition-all duration-200 hover:shadow-md',
+                      accent,
+                    )}
                     onClick={() => {
                       setQuery(type);
                       setWorkbenchTab('library');
                     }}
+                    data-testid={`knowledge-type-${type}`}
                   >
-                    <div className="text-sm font-medium text-foreground">{t(`types.${type}`)}</div>
-                    <div className="mt-1 text-xs text-muted-foreground">{t('library.typeHint')}</div>
+                    <div className="flex items-center justify-between">
+                      <div className={cn('flex h-8 w-8 items-center justify-center rounded-lg border', accent)}>
+                        <TypeIcon className="h-4 w-4" />
+                      </div>
+                      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">{t(`types.${type}`)}</div>
+                      <div className="mt-0.5 text-xs leading-4 text-muted-foreground">{t('library.typeHint')}</div>
+                    </div>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             )}
 
             {workbenchTab === 'inbox' && (
-              <div className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)]" data-testid="knowledge-inbox">
+              <div className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)]" data-testid="knowledge-inbox">
                 <div className="space-y-3">
-                  <div className="rounded-lg bg-surface-input p-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <div className="text-lg font-semibold tabular-nums">{inboxItems.length}</div>
-                        <div className="text-[11px] text-muted-foreground">{t('inbox.pending')}</div>
-                      </div>
-                      <Inbox className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
+                  <div className="flex items-center gap-3 rounded-lg bg-surface-input p-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
+                      <Inbox className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
+                    </div>
+                    <div>
+                      <div className="text-xl font-semibold tabular-nums tracking-tight">{inboxItems.length}</div>
+                      <div className="text-[11px] text-muted-foreground">{t('inbox.pending')}</div>
                     </div>
                   </div>
-                  <div className="max-h-80 space-y-2 overflow-auto">
-                    {inboxItems.length === 0 && <p className="text-sm text-muted-foreground">{t('inbox.empty')}</p>}
-                    {inboxItems.map((item) => (
+                  <div className="max-h-80 space-y-1.5 overflow-auto">
+                    {inboxItems.length === 0 && <p className="py-6 text-center text-sm text-muted-foreground">{t('inbox.empty')}</p>}
+                    {inboxItems.map((item) => {
+                      const isSelected = selectedInboxItem?.id === item.id;
+                      return (
                       <button
                         key={item.id}
                         type="button"
                         className={cn(
-                          'w-full rounded-lg border border-black/10 p-3 text-left transition-colors dark:border-white/10',
-                          selectedInboxItem?.id === item.id ? 'bg-black/5 dark:bg-white/10' : 'hover:bg-black/5 dark:hover:bg-white/5',
+                          'w-full rounded-lg border border-black/10 p-3 text-left transition-all duration-200 dark:border-white/10',
+                          isSelected
+                            ? 'border-primary/30 bg-primary/5 shadow-sm'
+                            : 'hover:bg-black/5 hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
                         )}
                         onClick={() => setSelectedInboxId(item.id)}
                         data-testid="knowledge-inbox-row"
                       >
-                        <div className="truncate text-sm font-medium">{item.title}</div>
-                        <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1 text-[11px] text-muted-foreground">
-                          <Badge variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{t(`inbox.kinds.${item.kind}`)}</Badge>
-                          <span>{t(`types.${item.type}`)}</span>
-                          {item.warnings && item.warnings.length > 0 && <span className="text-yellow-700 dark:text-yellow-400">{item.warnings.length}</span>}
+                        <div className="flex items-center gap-2">
+                          {item.warnings && item.warnings.length > 0 && (
+                            <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-yellow-600 dark:text-yellow-400" />
+                          )}
+                          <span className="truncate text-sm font-semibold">{item.title}</span>
+                        </div>
+                        <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
+                          <Badge variant="outline" className="border-black/10 bg-transparent text-[10px] font-medium dark:border-white/10">{t(`inbox.kinds.${item.kind}`)}</Badge>
+                          <span className="font-medium">{t(`types.${item.type}`)}</span>
+                          {item.warnings && item.warnings.length > 0 && (
+                            <span className="text-yellow-600 dark:text-yellow-400 font-medium">{t('inbox.warningCount', { count: item.warnings.length })}</span>
+                          )}
                         </div>
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <h3 className="truncate text-sm font-medium">{selectedInboxItem?.title ?? t('inbox.noSelection')}</h3>
+                        <h3 className="truncate text-sm font-semibold">{selectedInboxItem?.title ?? t('inbox.noSelection')}</h3>
                         <p className="mt-1 text-xs text-muted-foreground">
                           {selectedInboxItem ? `${t(`inbox.kinds.${selectedInboxItem.kind}`)} · ${t(`types.${selectedInboxItem.type}`)}` : t('inbox.noSelectionHint')}
                         </p>
@@ -926,25 +1001,31 @@ export function Knowledge() {
             )}
 
             {workbenchTab === 'drafts' && (
-              <div className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)]" data-testid="knowledge-draft-inbox">
+              <div className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)]" data-testid="knowledge-draft-inbox">
                 <div className="space-y-3">
                   <div className="grid grid-cols-3 gap-2">
-                    {['draft', 'steward_reviewed', 'approved'].map((statusKey) => (
-                      <div key={statusKey} className="rounded-lg bg-surface-input p-2">
-                        <div className="text-lg font-semibold tabular-nums">{draftCounts[statusKey] ?? 0}</div>
-                        <div className="truncate text-[11px] text-muted-foreground">{t(`draft.status.${statusKey}`)}</div>
+                    {(['draft', 'steward_reviewed', 'approved'] as const).map((statusKey) => (
+                      <div key={statusKey} className="rounded-lg bg-surface-input p-3">
+                        <div className="text-xl font-semibold tabular-nums tracking-tight">{draftCounts[statusKey] ?? 0}</div>
+                        <div className="mt-0.5 truncate text-[11px] font-medium text-muted-foreground">{t(`draft.status.${statusKey}`)}</div>
                       </div>
                     ))}
                   </div>
-                  <div className="max-h-72 space-y-2 overflow-auto">
-                    {drafts.length === 0 && <p className="text-sm text-muted-foreground">{t('draft.empty')}</p>}
-                    {drafts.map((draft) => (
+                  <div className="max-h-72 space-y-1.5 overflow-auto">
+                    {drafts.length === 0 && <p className="py-6 text-center text-sm text-muted-foreground">{t('draft.empty')}</p>}
+                    {drafts.map((draft) => {
+                      const isSelected = selectedDraft?.id === draft.id;
+                      const TypeIcon = TYPE_ICONS[draft.type];
+                      const accent = TYPE_COLOR[draft.type];
+                      return (
                       <button
                         key={draft.id}
                         type="button"
                         className={cn(
-                          'w-full rounded-lg border border-black/10 p-3 text-left transition-colors dark:border-white/10',
-                          selectedDraft?.id === draft.id ? 'bg-black/5 dark:bg-white/10' : 'hover:bg-black/5 dark:hover:bg-white/5',
+                          'w-full rounded-lg border border-black/10 p-3 text-left transition-all duration-200 dark:border-white/10',
+                          isSelected
+                            ? 'border-primary/30 bg-primary/5 shadow-sm'
+                            : 'hover:bg-black/5 hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
                         )}
                         onClick={() => {
                           setSelectedDraftId(draft.id);
@@ -952,13 +1033,18 @@ export function Knowledge() {
                         }}
                         data-testid="knowledge-draft-row"
                       >
-                        <div className="truncate text-sm font-medium">{draft.title}</div>
-                        <div className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
-                          <span>{t(`types.${draft.type}`)}</span>
+                        <div className="flex items-center gap-2">
+                          <TypeIcon className={cn('h-3.5 w-3.5 shrink-0', accent)} />
+                          <span className="truncate text-sm font-semibold">{draft.title}</span>
+                        </div>
+                        <div className="mt-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
+                          <span className="font-medium">{t(`types.${draft.type}`)}</span>
+                          <span className="text-muted-foreground/50">·</span>
                           <span>{t(`draft.status.${draft.status}`)}</span>
                         </div>
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
                 <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
@@ -1006,20 +1092,25 @@ export function Knowledge() {
             {workbenchTab === 'review' && (
               <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]" data-testid="knowledge-review">
                 <div className="space-y-3">
-                  <div className="rounded-lg bg-surface-input p-3">
-                    <div className="text-sm font-medium">{selectedDraft?.title ?? t('review.noDraft')}</div>
-                    <div className="mt-1 text-xs text-muted-foreground">{selectedDraft ? t(`draft.status.${selectedDraft.status}`) : '-'}</div>
+                  <div className="flex items-center gap-3 rounded-lg bg-surface-input p-3">
+                    <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border', TYPE_COLOR[selectedDraft?.type ?? 'synthesis'])}>
+                      {(() => { const TI = TYPE_ICONS[selectedDraft?.type ?? 'synthesis']; return <TI className="h-5 w-5" />; })()}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-semibold">{selectedDraft?.title ?? t('review.noDraft')}</div>
+                      <div className="mt-0.5 text-xs text-muted-foreground">{selectedDraft ? `${t(`types.${selectedDraft.type}`)} · ${t(`draft.status.${selectedDraft.status}`)}` : '-'}</div>
+                    </div>
                   </div>
-                  <div className="max-h-80 overflow-auto rounded-lg border border-black/10 bg-surface-input p-3 font-mono text-xs dark:border-white/10">
+                  <div className="max-h-80 overflow-auto rounded-lg border border-black/10 bg-surface-input p-3 font-mono text-xs leading-relaxed dark:border-white/10">
                     {selectedDraft?.body ?? t('review.noDraft')}
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
-                    <div className="text-sm font-medium">{t('review.diffTitle')}</div>
-                    <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap text-xs text-muted-foreground">{selectedProposal?.diff ?? selectedDraft?.body ?? t('review.noProposal')}</pre>
+                    <div className="text-sm font-semibold">{t('review.diffTitle')}</div>
+                    <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded-md bg-background/60 p-2 text-xs leading-relaxed text-muted-foreground">{selectedProposal?.diff ?? selectedDraft?.body ?? t('review.noProposal')}</pre>
                   </div>
-                  <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs text-yellow-700 dark:text-yellow-400">
+                  <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs leading-relaxed text-yellow-700 dark:text-yellow-400">
                     {t('review.confirmationBoundary')}
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -1040,20 +1131,28 @@ export function Knowledge() {
 
             {workbenchTab === 'governance' && (
               <div className="grid gap-4 md:grid-cols-3" data-testid="knowledge-governance">
-                <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
-                  <ShieldCheck className="h-5 w-5 text-green-700 dark:text-green-400" />
-                  <h3 className="mt-3 text-sm font-medium">{t('governance.steward')}</h3>
-                  <p className="mt-2 text-xs leading-5 text-muted-foreground">{t('governance.stewardDescription')}</p>
+                <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10 hover:shadow-sm transition-shadow">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-green-500/20 bg-green-500/10">
+                    <ShieldCheck className="h-5 w-5 text-green-700 dark:text-green-400" />
+                  </div>
+                  <h3 className="mt-3 text-sm font-semibold">{t('governance.steward')}</h3>
+                  <p className="mt-1.5 text-xs leading-5 text-muted-foreground">{t('governance.stewardDescription')}</p>
                 </div>
-                <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
-                  <h3 className="text-sm font-medium">{t('governance.permissions')}</h3>
-                  <p className="mt-2 text-xs leading-5 text-muted-foreground">{t('governance.permissionsDescription')}</p>
+                <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10 hover:shadow-sm transition-shadow">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10">
+                    <ShieldCheck className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                  </div>
+                  <h3 className="mt-3 text-sm font-semibold">{t('governance.permissions')}</h3>
+                  <p className="mt-1.5 text-xs leading-5 text-muted-foreground">{t('governance.permissionsDescription')}</p>
                 </div>
-                <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
-                  <h3 className="text-sm font-medium">{t('governance.lastReview')}</h3>
-                  <p className="mt-2 text-xs leading-5 text-muted-foreground">{stewardReview?.notes ?? t('governance.noReview')}</p>
+                <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10 hover:shadow-sm transition-shadow">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-violet-500/20 bg-violet-500/10">
+                    <History className="h-5 w-5 text-violet-700 dark:text-violet-400" />
+                  </div>
+                  <h3 className="mt-3 text-sm font-semibold">{t('governance.lastReview')}</h3>
+                  <p className="mt-1.5 text-xs leading-5 text-muted-foreground">{stewardReview?.notes ?? t('governance.noReview')}</p>
                   {stewardReview?.warnings?.map((warning) => (
-                    <p key={warning} className="mt-2 text-xs text-yellow-700 dark:text-yellow-400">{warning}</p>
+                    <p key={warning} className="mt-2 rounded-md bg-yellow-500/10 px-2 py-1 text-xs text-yellow-700 dark:text-yellow-400">{warning}</p>
                   ))}
                 </div>
               </div>

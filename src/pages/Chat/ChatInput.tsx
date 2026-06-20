@@ -1677,15 +1677,15 @@ export function ChatInput({
                   type="button"
                   data-testid="chat-knowledge-quick-toggle"
                   className={cn(
-                    'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-white/10',
-                    wikiQuickActive && 'bg-black/5 text-foreground dark:bg-white/10',
+                    'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-white/10',
+                    wikiQuickActive && 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 dark:bg-emerald-500/15',
                   )}
                   onClick={handleQuickWikiToggle}
                   disabled={inputDisabled || sending || !onKnowledgeScopeChange}
                   title={t(wikiQuickActive ? 'composer.knowledgeQuick.disable' : 'composer.knowledgeQuick.enable')}
                   aria-label={t(wikiQuickActive ? 'composer.knowledgeQuick.disable' : 'composer.knowledgeQuick.enable')}
                 >
-                  <BookOpen className="h-3.5 w-3.5" />
+                  <BookOpen className={cn('h-3.5 w-3.5 transition-transform', wikiQuickActive && 'scale-110')} />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-xs text-xs">
@@ -1698,8 +1698,9 @@ export function ChatInput({
                 type="button"
                 data-testid="chat-knowledge-scope-button"
                 className={cn(
-                  'inline-flex h-8 items-center gap-1 rounded-lg px-1.5 text-meta font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground focus-visible:outline-none focus-visible:ring-0 disabled:pointer-events-none disabled:opacity-50',
+                  'inline-flex h-8 items-center gap-1.5 rounded-lg px-1.5 text-meta font-medium text-muted-foreground transition-all duration-200 hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-0 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-white/5',
                   (knowledgePickerOpen || knowledgeScope !== 'none') && 'text-foreground',
+                  knowledgeScope !== 'none' && knowledgeScope !== 'memory' && 'bg-emerald-500/5',
                 )}
                 onClick={() => {
                   setPickerOpen(false);
@@ -1711,9 +1712,9 @@ export function ChatInput({
                 disabled={inputDisabled || sending || !onKnowledgeScopeChange}
                 title={t('composer.knowledgeScopeTitle')}
               >
-                <BookOpen className="h-3.5 w-3.5" />
+                <BookOpen className={cn('h-3.5 w-3.5', knowledgeScope !== 'none' && knowledgeScope !== 'memory' && 'text-emerald-700 dark:text-emerald-400')} />
                 <span>{t(`composer.knowledgeScope.${knowledgeScope}`)}</span>
-                <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', knowledgePickerOpen && 'rotate-180')} />
+                <ChevronDown className={cn('h-3.5 w-3.5 transition-transform duration-200', knowledgePickerOpen && 'rotate-180')} />
               </button>
               {knowledgePickerOpen && (
                 <div
@@ -1723,13 +1724,17 @@ export function ChatInput({
                   <div className="px-3 py-2 text-tiny font-medium text-muted-foreground/80">
                     {t('composer.knowledgeScopeTitle')}
                   </div>
-                  {KNOWLEDGE_SCOPES.map((scope) => (
+                  {KNOWLEDGE_SCOPES.map((scope) => {
+                    const isActive = scope === knowledgeScope;
+                    return (
                     <button
                       key={scope}
                       type="button"
                       className={cn(
-                        'flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors',
-                        scope === knowledgeScope ? 'bg-black/5 text-foreground dark:bg-white/10' : 'hover:bg-black/5 dark:hover:bg-white/5',
+                        'flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all duration-200',
+                        isActive
+                          ? 'bg-primary/5 text-foreground font-medium'
+                          : 'hover:bg-black/5 dark:hover:bg-white/5',
                       )}
                       data-testid={`chat-knowledge-scope-${scope}`}
                       onClick={() => {
@@ -1740,23 +1745,24 @@ export function ChatInput({
                     >
                       <span className="min-w-0">
                         <span className="block font-medium">{t(`composer.knowledgeScope.${scope}`)}</span>
-                        <span className="mt-0.5 block text-tiny text-muted-foreground">{t(`composer.knowledgeScopeDescription.${scope}`)}</span>
+                        <span className="mt-0.5 block text-tiny leading-4 text-muted-foreground">{t(`composer.knowledgeScopeDescription.${scope}`)}</span>
                       </span>
-                      {scope === knowledgeScope && <Check className="h-3.5 w-3.5 text-primary" />}
+                      {isActive && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
                     </button>
-                  ))}
-                  <div className="my-1 h-px bg-border/70" />
+                    );
+                  })}
+                  <div className="my-1.5 h-px bg-border/70" />
                   <div className="px-3 py-2">
                     <div className="mb-2 flex items-center justify-between gap-2">
                       <span className="text-tiny font-medium text-muted-foreground/80">{t('composer.knowledgeAttach.title')}</span>
                       {selectedKnowledgeRefs.length > 0 && (
-                        <Badge variant="outline" className="rounded-full border-emerald-500/20 bg-emerald-500/10 text-2xs text-emerald-700 dark:text-emerald-400">
-                          {t('composer.knowledgeAttach.selected', { count: selectedKnowledgeRefs.length })}
+                        <Badge variant="outline" className="rounded-full border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-2xs font-semibold text-emerald-700 dark:text-emerald-400">
+                          {selectedKnowledgeRefs.length}
                         </Badge>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]">
-                      <Search className="h-3.5 w-3.5 text-muted-foreground" />
+                    <div className="flex items-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-3 py-2 dark:border-white/10 dark:bg-white/[0.04] focus-within:border-primary/30 focus-within:ring-1 focus-within:ring-primary/20 transition-all duration-200">
+                      <Search className="h-3.5 w-3.5 text-muted-foreground/60" />
                       <input
                         value={knowledgeQuery}
                         onChange={(event) => setKnowledgeQuery(event.target.value)}

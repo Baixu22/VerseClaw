@@ -41,6 +41,7 @@
   "search": {
     "title": "Search",
     "placeholder": "Search wiki sources and syntheses",
+    "button": "Search",
     "empty": "No matching knowledge found.",
     "preview": "Preview",
     "useInDraft": "Use in draft"
@@ -73,6 +74,8 @@
     "noSources": "No source references attached.",
     "warnings": "Warnings",
     "noWarnings": "No warnings.",
+    "warningCount": "{{count}} warning",
+    "warningCount_plural": "{{count}} warnings",
     "kinds": {
       "chat-session": "Chat",
       "task-ledger": "Task Ledger",
