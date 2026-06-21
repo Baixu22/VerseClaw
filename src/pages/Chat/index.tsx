@@ -5,6 +5,7 @@
  * are in the toolbar; messages render with markdown + streaming.
  */
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useShallow } from 'zustand/shallow';
 import { ArrowDownToLine, Check, ChevronDown, FileText, FolderPlus, GitBranchPlus, Laptop, Loader2, Pencil, Sparkles } from 'lucide-react';
 import type { SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
@@ -137,6 +138,17 @@ type UserRunCard = {
   suppressThinking: boolean;
 };
 
+type ChatMessageRenderRow = {
+  index: number;
+  key: string;
+  message: RawMessage;
+  hidden: boolean;
+  suppressAssistantText: boolean;
+  suppressToolCards: boolean;
+  textOverride?: string;
+  runCards: UserRunCard[];
+};
+
 function formatTokenCountForToast(value: number): string {
   if (!Number.isFinite(value)) return '0';
   const absolute = Math.abs(value);
@@ -251,7 +263,14 @@ function hasRunningRuntimeTool(run: ChatRuntimeRunState | null): boolean {
 // Keep the last non-empty execution-graph snapshot per session/run outside
 // React state so `loadHistory` refreshes can still fall back to the previous
 // steps without tripping React's set-state-in-effect lint rule.
+const _GRAPH_STEP_CACHE_MAX = 50;
 const graphStepCacheStore = new Map<string, Record<string, GraphStepCacheEntry>>();
+
+function gcGraphStepCache(): void {
+  if (graphStepCacheStore.size <= _GRAPH_STEP_CACHE_MAX) return;
+  const keys = Array.from(graphStepCacheStore.keys()).slice(0, graphStepCacheStore.size - _GRAPH_STEP_CACHE_MAX);
+  for (const key of keys) graphStepCacheStore.delete(key);
+}
 const streamingTimestampStore = new Map<string, number>();
 
 function getWorkspaceSessionState(
@@ -603,29 +622,35 @@ export function Chat() {
   const workModeSkills = useSkillsStore((s) => s.skills);
   const fetchWorkModeSkills = useSkillsStore((s) => s.fetchSkills);
 
-  const messages = useChatStore((s) => s.messages);
-  const currentSessionKey = useChatStore((s) => s.currentSessionKey);
-  const currentAgentId = useChatStore((s) => s.currentAgentId);
-  const sessions = useChatStore((s) => s.sessions ?? []);
+  const { messages, currentSessionKey, currentAgentId, sessions, sessionLabels, loading, loadingMoreHistory, hasMoreHistory, sending, error, runError, streamingMessage, streamingTools, pendingFinal, activeRunId, runtimeRuns, lastUserMessageAt } = useChatStore(useShallow((s) => ({
+    messages: s.messages,
+    currentSessionKey: s.currentSessionKey,
+    currentAgentId: s.currentAgentId,
+    sessions: s.sessions ?? [],
+    sessionLabels: s.sessionLabels,
+    loading: s.loading,
+    loadingMoreHistory: s.loadingMoreHistory,
+    hasMoreHistory: s.hasMoreHistory,
+    sending: s.sending,
+    error: s.error,
+    runError: s.runError,
+    streamingMessage: s.streamingMessage,
+    streamingTools: s.streamingTools,
+    pendingFinal: s.pendingFinal,
+    activeRunId: s.activeRunId,
+    runtimeRuns: s.runtimeRuns ?? {},
+    lastUserMessageAt: s.lastUserMessageAt,
+  })));
   const switchSession = useChatStore((s) => s.switchSession);
   const resetSessionView = useChatStore((s) => s.resetSessionView);
   const renameSession = useChatStore((s) => s.renameSession);
-  const sessionLabels = useChatStore((s) => s.sessionLabels);
-  const loading = useChatStore((s) => s.loading);
-  const loadingMoreHistory = useChatStore((s) => s.loadingMoreHistory);
-  const hasMoreHistory = useChatStore((s) => s.hasMoreHistory);
   const loadMoreHistory = useChatStore((s) => s.loadMoreHistory);
-  const sending = useChatStore((s) => s.sending);
-  const error = useChatStore((s) => s.error);
-  const runError = useChatStore((s) => s.runError);
-  const streamingMessage = useChatStore((s) => s.streamingMessage);
-  const streamingTools = useChatStore((s) => s.streamingTools);
-  const pendingFinal = useChatStore((s) => s.pendingFinal);
-  const activeRunId = useChatStore((s) => s.activeRunId);
-  const runtimeRuns = useChatStore((s) => s.runtimeRuns ?? {});
   const sendMessage = useChatStore((s) => s.sendMessage);
   const abortRun = useChatStore((s) => s.abortRun);
   const clearError = useChatStore((s) => s.clearError);
+  const cleanupEmptySession = useChatStore((s) => s.cleanupEmptySession);
+  const loadHistory = useChatStore((s) => s.loadHistory);
+  const loadSessions = useChatStore((s) => s.loadSessions);
   const fetchAgents = useAgentsStore((s) => s.fetchAgents);
   const agents = useAgentsStore((s) => s.agents);
   const defaultModelRef = useAgentsStore((s) => s.defaultModelRef);
@@ -1054,6 +1079,10 @@ export function Chat() {
     return sendMessage(text, attachments, targetAgentId, scope, selectedWorkMode ?? workMode, undefined, knowledgeReferences);
   }, [sendMessage, workMode]);
 
+  const handleSubmitInteractionResponse = useCallback((responseText: string) => {
+    void handleSendMessage(responseText);
+  }, [handleSendMessage]);
+
   const handleOpenKnowledgeDraft = useCallback(() => {
     const body = buildKnowledgeDraftBody(messages);
     if (!body.trim()) {
@@ -1156,36 +1185,51 @@ export function Chat() {
     if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-    void hostApi.usage.contextRange({
-      sessionKey: currentSessionKey,
-      modelRef: currentModelRef,
-      messageCount: messages.length,
-      usedTokens: liveUsage?.totalTokens ?? null,
-    })
-      .then((result) => {
-        if (!cancelled) setContextRange(result.range);
-      })
-      .catch(() => {
-        if (!cancelled) setContextRange(null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [currentModelRef, currentSessionKey, liveUsage?.totalTokens, messages.length]);
+  const contextRangeRef = useRef(contextRange);
+  contextRangeRef.current = contextRange;
+  const liveUsageRef = useRef(liveUsage);
+  liveUsageRef.current = liveUsage;
+  const compactionStatusRef = useRef(compactionStatus);
+  compactionStatusRef.current = compactionStatus;
+  const longTaskControlStatusRef = useRef(longTaskControlStatus);
+  longTaskControlStatusRef.current = longTaskControlStatus;
 
   useEffect(() => {
     let cancelled = false;
-    void hostApi.usage.live(currentSessionKey, activeRunId, sending || pendingFinal || Boolean(streamingMessage))
-      .then((result) => {
-        if (!cancelled) setLiveUsage(result.usage);
+    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+      void hostApi.usage.contextRange({
+        sessionKey: currentSessionKey,
+        modelRef: currentModelRef,
+        messageCount: messages.length,
+        usedTokens: liveUsageRef.current?.totalTokens ?? null,
       })
-      .catch(() => {
-        if (!cancelled) setLiveUsage(null);
-      });
+        .then((result) => {
+          if (!cancelled) setContextRange(result.range);
+        })
+        .catch(() => {
+          if (!cancelled) setContextRange(null);
+        });
+    }, 500);
     return () => {
       cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [currentModelRef, currentSessionKey, messages.length]);
+
+  useEffect(() => {
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+      void hostApi.usage.live(currentSessionKey, activeRunId, sending || pendingFinal || Boolean(streamingMessage))
+        .then((result) => {
+          if (!cancelled) setLiveUsage(result.usage);
+        })
+        .catch(() => {
+          if (!cancelled) setLiveUsage(null);
+        });
+    }, 500);
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
     };
   }, [currentSessionKey, activeRunId, sending, pendingFinal, streamingMessage]);
 
@@ -1215,37 +1259,43 @@ export function Chat() {
 
   useEffect(() => {
     let cancelled = false;
-    void hostApi.sessions.compactionStatus({
-      sessionKey: currentSessionKey,
-      agentId: currentAgentId,
-    })
-      .then((result) => {
-        if (!cancelled) setCompactionStatus(result.success ? result : null);
+    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+      void hostApi.sessions.compactionStatus({
+        sessionKey: currentSessionKey,
+        agentId: currentAgentId,
       })
-      .catch(() => {
-        if (!cancelled) setCompactionStatus(null);
-      });
+        .then((result) => {
+          if (!cancelled) setCompactionStatus(result.success ? result : null);
+        })
+        .catch(() => {
+          if (!cancelled) setCompactionStatus(null);
+        });
+    }, 500);
     return () => {
       cancelled = true;
+      if (timer) clearTimeout(timer);
     };
-  }, [currentAgentId, currentSessionKey, contextRange?.usedTokens, liveUsage?.totalTokens, messages.length, sending, pendingFinal, streamingMessage]);
+  }, [currentAgentId, currentSessionKey, messages.length]);
 
   useEffect(() => {
     let cancelled = false;
-    void hostApi.sessions.longTaskControlStatus({
-      sessionKey: currentSessionKey,
-      agentId: currentAgentId,
-    })
-      .then((result) => {
-        if (!cancelled) setLongTaskControlStatus(result.success ? result : null);
+    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+      void hostApi.sessions.longTaskControlStatus({
+        sessionKey: currentSessionKey,
+        agentId: currentAgentId,
       })
-      .catch(() => {
-        if (!cancelled) setLongTaskControlStatus(null);
-      });
+        .then((result) => {
+          if (!cancelled) setLongTaskControlStatus(result.success ? result : null);
+        })
+        .catch(() => {
+          if (!cancelled) setLongTaskControlStatus(null);
+        });
+    }, 500);
     return () => {
       cancelled = true;
+      if (timer) clearTimeout(timer);
     };
-  }, [currentAgentId, currentSessionKey, messages.length, sending, pendingFinal, streamingMessage]);
+  }, [currentAgentId, currentSessionKey, messages.length]);
 
   useEffect(() => {
     const unsubscribe = hostEvents.onChatQueueStatus((payload) => {
@@ -1712,12 +1762,12 @@ export function Chat() {
     [messages, nextUserMessageIndexes, isRunTrigger],
   );
 
-  // Indices of intermediate assistant process messages that are represented
-  // in the ExecutionGraphCard (narration text and/or thinking). We suppress
-  // them from the chat stream so they don't appear duplicated below the graph.
-  const foldedNarrationIndices = new Set<number>();
-
-  const userRunCards = useMemo<UserRunCard[]>(() => messages.flatMap<UserRunCard>((message, idx) => {
+  const runCardModel = useMemo<{ cards: UserRunCard[]; foldedNarrationIndices: Set<number> }>(() => {
+    // Indices of intermediate assistant process messages that are represented
+    // in the ExecutionGraphCard (narration text and/or thinking). We suppress
+    // them from the chat stream so they don't appear duplicated below the graph.
+    const foldedNarrationIndices = new Set<number>();
+    const cards = messages.flatMap<UserRunCard>((message, idx) => {
     if (!isRealUserMessage(message) || subagentCompletionInfos[idx]) return [];
 
     const runKey = message.id
@@ -2006,7 +2056,11 @@ export function Chat() {
       traceId,
       suppressThinking,
     }];
-  }), [messages, subagentCompletionInfos, currentSessionKey, streamingMessage, streamingTools, pendingFinal, sending, hasAnyStreamContent, hasStreamText, hasStreamThinking, hasStreamImages, streamText, streamTools.length, hasRunningStreamToolStatus, hasHistoryCompletionBlockingStream, childTranscripts, currentAgentId, agents, sessionLabels, graphStepCache, runError, isRunTrigger, activeRunId, runtimeRuns]);
+    });
+    return { cards, foldedNarrationIndices };
+  }, [messages, subagentCompletionInfos, currentSessionKey, streamingMessage, streamingTools, pendingFinal, sending, hasAnyStreamContent, hasStreamText, hasStreamThinking, hasStreamImages, streamText, streamTools.length, hasRunningStreamToolStatus, hasHistoryCompletionBlockingStream, childTranscripts, currentAgentId, agents, sessionLabels, graphStepCache, runError, isRunTrigger, activeRunId, runtimeRuns]);
+  const userRunCards = runCardModel.cards;
+  const foldedNarrationIndices = runCardModel.foldedNarrationIndices;
   const hasActiveExecutionGraph = userRunCards.some((card) => card.active);
   let latestRunSegmentCompletion = { hasFinalReply: false, hasToolActivity: false };
   let pendingImageGeneration = false;
@@ -2077,6 +2131,58 @@ export function Chat() {
     return map;
   }, [userRunCards, messages]);
   const streamingReplyText = userRunCards.find((card) => card.streamingReplyText != null)?.streamingReplyText ?? null;
+  const userRunCardsByTriggerIndex = useMemo(() => {
+    const map = new Map<number, UserRunCard[]>();
+    for (const card of userRunCards) {
+      const existing = map.get(card.triggerIndex);
+      if (existing) {
+        existing.push(card);
+      } else {
+        map.set(card.triggerIndex, [card]);
+      }
+    }
+    return map;
+  }, [userRunCards]);
+
+  const messageRenderRows = useMemo<ChatMessageRenderRow[]>(() => messages.map((msg, idx) => {
+    const hasUserFacingImages = hasUserFacingImageAttachments(msg);
+    const suppressAssistantText = foldedNarrationIndices.has(idx);
+    const suppressToolCards = runSegmentMessageIndices.has(idx);
+    let hidden = false;
+
+    if (isInternalMessage(msg) && !hasUserFacingImages) {
+      hidden = true;
+    } else if (suppressAssistantText && !hasUserFacingImages) {
+      hidden = true;
+    } else {
+      const isToolOnlyAssistant = normalizeMessageRole(msg.role) === 'assistant'
+        && extractToolUse(msg).length > 0
+        && extractText(msg).trim().length === 0
+        && !extractThinking(msg);
+      hidden = suppressToolCards && isToolOnlyAssistant && !(msg._attachedFiles?.length);
+    }
+
+    return {
+      index: idx,
+      key: msg.id || `msg-${idx}`,
+      message: msg,
+      hidden,
+      suppressAssistantText,
+      suppressToolCards,
+      textOverride: replyTextOverrides.get(idx),
+      runCards: userRunCardsByTriggerIndex.get(idx) ?? [],
+    };
+  }), [
+    foldedNarrationIndices,
+    messages,
+    replyTextOverrides,
+    runSegmentMessageIndices,
+    userRunCardsByTriggerIndex,
+  ]);
+  const streamingToolsForMessage = useMemo(
+    () => (streamingReplyText != null || hasActiveExecutionGraph ? [] : streamingTools),
+    [hasActiveExecutionGraph, streamingReplyText, streamingTools],
+  );
 
   // Derive the set of run keys that should be auto-collapsed (run finished
   // streaming or has a reply override) during render instead of in an effect,
@@ -2178,6 +2284,7 @@ export function Chat() {
     }
     if (changed) {
       graphStepCacheStore.set(currentSessionKey, next);
+      gcGraphStepCache();
     }
   }, [userRunCards, messages, currentSessionKey]);
 
@@ -2293,39 +2400,28 @@ export function Chat() {
                       </button>
                     </div>
                   )}
-                  {messages.map((msg, idx) => {
-                    if (isInternalMessage(msg) && !hasUserFacingImageAttachments(msg)) return null;
-                    const isFoldedNarration = foldedNarrationIndices.has(idx);
-                    if (isFoldedNarration && !hasUserFacingImageAttachments(msg)) return null;
-                    const suppressToolCards = runSegmentMessageIndices.has(idx);
-                    const isToolOnlyAssistant = normalizeMessageRole(msg.role) === 'assistant'
-                      && extractToolUse(msg).length > 0
-                      && extractText(msg).trim().length === 0
-                      && !extractThinking(msg);
-                    if (suppressToolCards && isToolOnlyAssistant && !(msg._attachedFiles?.length)) {
-                      return null;
-                    }
+                  {messageRenderRows.map((row) => {
+                    if (row.hidden) return null;
                     return (
                     <div
-                      key={msg.id || `msg-${idx}`}
+                      key={row.key}
                       className="space-y-3"
-                      id={`chat-message-${idx}`}
-                      data-testid={`chat-message-${idx}`}
+                      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 200px' }}
+                      id={`chat-message-${row.index}`}
+                      data-testid={`chat-message-${row.index}`}
                     >
                       <ChatMessage
-                        message={msg}
-                        textOverride={replyTextOverrides.get(idx)}
-                        suppressAssistantText={isFoldedNarration}
-                        suppressToolCards={suppressToolCards}
-                        suppressProcessAttachments={suppressToolCards}
+                        message={row.message}
+                        textOverride={row.textOverride}
+                        suppressAssistantText={row.suppressAssistantText}
+                        suppressToolCards={row.suppressToolCards}
+                        suppressProcessAttachments={row.suppressToolCards}
                         onOpenFile={handleOpenAttachedFile}
                         canSubmitInteractionResponse={isGatewayRunning && !inputRunActive}
-                        onSubmitInteractionResponse={(responseText) => void handleSendMessage(responseText)}
+                        onSubmitInteractionResponse={handleSubmitInteractionResponse}
                         onDraftInteractionResponse={handleAppendComposerDraft}
                       />
-                      {userRunCards
-                        .filter((card) => card.triggerIndex === idx)
-                        .map((card) => {
+                      {row.runCards.map((card) => {
                           const triggerMsg = messages[card.triggerIndex];
                           const runKey = triggerMsg?.id
                             ? `msg-${triggerMsg.id}`
@@ -2423,10 +2519,10 @@ export function Chat() {
                       })()}
                       textOverride={streamingReplyText ?? undefined}
                       isStreaming
-                      streamingTools={streamingReplyText != null || hasActiveExecutionGraph ? [] : streamingTools}
+                      streamingTools={streamingToolsForMessage}
                       onOpenFile={handleOpenAttachedFile}
                       canSubmitInteractionResponse={false}
-                      onSubmitInteractionResponse={(responseText) => void handleSendMessage(responseText)}
+                      onSubmitInteractionResponse={handleSubmitInteractionResponse}
                       onDraftInteractionResponse={handleAppendComposerDraft}
                     />
                   )}

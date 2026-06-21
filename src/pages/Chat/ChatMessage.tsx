@@ -5,7 +5,7 @@
  * streaming runs may show a compact ToolStatusBar. Thinking output is
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
-import { useState, useCallback, useEffect, memo } from 'react';
+import { useState, useCallback, useEffect, memo, useMemo } from 'react';
 import { Sparkles, Copy, Check, Wrench, FileText, Film, Music, FileArchive, File, X, FolderOpen, ZoomIn, Loader2, CheckCircle2, AlertCircle, BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { TextMessagePartProvider } from '@assistant-ui/react';
@@ -255,102 +255,163 @@ export const ChatMessage = memo(function ChatMessage({
   const isUser = message.role === 'user';
   const role = typeof message.role === 'string' ? message.role.toLowerCase() : '';
   const isToolResult = role === 'toolresult' || role === 'tool_result';
-  const rawText = textOverride ?? extractText(message);
-  const toolUiContent = !isUser ? parseToolUiContent(rawText) : { displayText: rawText, interactions: [] };
-  const branches = !isUser ? extractAssistantBranches(message) : [];
+  const rawText = useMemo(() => textOverride ?? extractText(message), [message, textOverride]);
+  const toolUiContent = useMemo(
+    () => (!isUser ? parseToolUiContent(rawText) : { displayText: rawText, interactions: [] }),
+    [isUser, rawText],
+  );
+  const branches = useMemo(
+    () => (!isUser ? extractAssistantBranches(message) : []),
+    [isUser, message],
+  );
   const [selectedBranchText, setSelectedBranchText] = useState<string | null>(null);
   const text = selectedBranchText ?? toolUiContent.displayText;
-  const reasoning = !isUser ? extractAssistantReasoning(message) : [];
-  const toolFallbacks = !isUser && !suppressToolCards ? extractAssistantToolFallbacks(message) : [];
+  const reasoning = useMemo(
+    () => (!isUser ? extractAssistantReasoning(message) : []),
+    [isUser, message],
+  );
+  const toolFallbacks = useMemo(
+    () => (!isUser && !suppressToolCards ? extractAssistantToolFallbacks(message) : []),
+    [isUser, message, suppressToolCards],
+  );
   // When text is folded into an ExecutionGraphCard, treat the message as
   // having no text for rendering purposes. Keeping this behind a flag (vs
   // blanking `text` outright) lets future hover affordances still read the
   // original content without surfacing the bubble.
   const hideAssistantText = suppressAssistantText && !isUser;
   const hasText = !hideAssistantText && text.trim().length > 0;
-  const images = extractImages(message);
-  const resolvableContentImages = images.filter((img) => imageSrc(img) != null);
-  const tools = extractToolUse(message);
-  const visibleTools = suppressToolCards ? [] : tools;
-  const toolUiInteractions = !isUser && !suppressToolCards
-    ? [...toolUiContent.interactions, ...parseToolUiToolUses(visibleTools)]
-    : toolUiContent.interactions;
+  const images = useMemo(() => extractImages(message), [message]);
+  const resolvableContentImages = useMemo(
+    () => images.filter((img) => imageSrc(img) != null),
+    [images],
+  );
+  const tools = useMemo(() => extractToolUse(message), [message]);
+  const visibleTools = useMemo(
+    () => (suppressToolCards ? [] : tools),
+    [suppressToolCards, tools],
+  );
+  const toolUiInteractions = useMemo(
+    () => (!isUser && !suppressToolCards
+      ? [...toolUiContent.interactions, ...parseToolUiToolUses(visibleTools)]
+      : toolUiContent.interactions),
+    [isUser, suppressToolCards, toolUiContent.interactions, visibleTools],
+  );
   const [validatedPaths, setValidatedPaths] = useState<Record<string, boolean>>({});
-  const rawAttachedFiles = message._attachedFiles || [];
-  const knowledgeRefs = message._knowledgeRefs || [];
-  const textPreviewFiles = isUser ? [] : extractPreviewDocumentPaths(text);
-  const rawAttachedPaths = new Set(rawAttachedFiles.map((file) => file.filePath).filter(Boolean));
-  const derivedAttachedFiles = [
-    ...rawAttachedFiles,
-    ...textPreviewFiles.filter((file) => !file.filePath || !rawAttachedPaths.has(file.filePath)),
-  ];
-  const validationTargets = derivedAttachedFiles
-    .map((file) => {
-      const kind = validationKindForAttachment(file);
-      return kind && file.filePath ? { filePath: file.filePath, kind } : null;
-    })
-    .filter((target): target is { filePath: string; kind: 'file' | 'dir' } => !!target);
-  const validationKey = validationTargets
-    .map((target) => `${target.kind}:${target.filePath}`)
-    .sort()
-    .join('\n');
+  const rawAttachedFiles = useMemo(() => message._attachedFiles || [], [message._attachedFiles]);
+  const knowledgeRefs = useMemo(() => message._knowledgeRefs || [], [message._knowledgeRefs]);
+  const textPreviewFiles = useMemo(
+    () => (isUser ? [] : extractPreviewDocumentPaths(text)),
+    [isUser, text],
+  );
+  const rawAttachedPaths = useMemo(
+    () => new Set(rawAttachedFiles.map((file) => file.filePath).filter(Boolean)),
+    [rawAttachedFiles],
+  );
+  const derivedAttachedFiles = useMemo(
+    () => [
+      ...rawAttachedFiles,
+      ...textPreviewFiles.filter((file) => !file.filePath || !rawAttachedPaths.has(file.filePath)),
+    ],
+    [rawAttachedFiles, rawAttachedPaths, textPreviewFiles],
+  );
+  const validationTargets = useMemo(
+    () => derivedAttachedFiles
+      .map((file) => {
+        const kind = validationKindForAttachment(file);
+        return kind && file.filePath ? { filePath: file.filePath, kind } : null;
+      })
+      .filter((target): target is { filePath: string; kind: 'file' | 'dir' } => !!target),
+    [derivedAttachedFiles],
+  );
+  const validationKey = useMemo(
+    () => validationTargets
+      .map((target) => `${target.kind}:${target.filePath}`)
+      .sort()
+      .join('\n'),
+    [validationTargets],
+  );
   useEffect(() => {
     if (!validationKey) return;
     const pendingTargets = validationTargets.filter((target) => validatedPaths[target.filePath] === undefined);
     if (pendingTargets.length === 0) return;
 
     let cancelled = false;
-    void Promise.all(
-      pendingTargets.map(async (target) => {
-        try {
-          const stat = await statFile(target.filePath);
-          return {
-            filePath: target.filePath,
-            exists: !!stat.ok && (target.kind === 'dir' ? !!stat.isDir : !!stat.isFile),
-          };
-        } catch {
-          return { filePath: target.filePath, exists: false };
-        }
-      }),
-    ).then((results) => {
-      if (cancelled) return;
-      setValidatedPaths((current) => {
-        const next = { ...current };
-        for (const result of results) next[result.filePath] = result.exists;
-        return next;
+    const timer = window.setTimeout(() => {
+      void Promise.all(
+        pendingTargets.map(async (target) => {
+          try {
+            const stat = await statFile(target.filePath);
+            return {
+              filePath: target.filePath,
+              exists: !!stat.ok && (target.kind === 'dir' ? !!stat.isDir : !!stat.isFile),
+            };
+          } catch {
+            return { filePath: target.filePath, exists: false };
+          }
+        }),
+      ).then((results) => {
+        if (cancelled) return;
+        setValidatedPaths((current) => {
+          const next = { ...current };
+          for (const result of results) next[result.filePath] = result.exists;
+          return next;
+        });
       });
-    });
+    }, 100);
 
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
     };
   }, [validationKey, validationTargets, validatedPaths]);
-  const existingDerivedAttachedFiles = derivedAttachedFiles.filter((file) => {
-    const kind = validationKindForAttachment(file);
-    if (!kind || !file.filePath) return true;
-    return validatedPaths[file.filePath] === true;
-  });
-  const filteredProcessAttachments = derivedAttachedFiles.filter((file) => {
-    if (file.source !== 'tool-result' && file.source !== 'message-ref') return true;
-    // Runtime-produced user-facing artifacts (images, HTML/Markdown/PDF/XLSX,
-    // skill directories, ...) must remain visible in the reply bubble even
-    // when generic process attachments are folded into the execution graph.
-    // The graph card itself does not render `_attachedFiles`, so dropping
-    // them here would leave the user with no way to open previews from chat.
-    return isUserFacingAttachmentWhenFolded(file);
-  });
+  const existingDerivedAttachedFiles = useMemo(
+    () => derivedAttachedFiles.filter((file) => {
+      const kind = validationKindForAttachment(file);
+      if (!kind || !file.filePath) return true;
+      return validatedPaths[file.filePath] === true;
+    }),
+    [derivedAttachedFiles, validatedPaths],
+  );
+  const filteredProcessAttachments = useMemo(
+    () => derivedAttachedFiles.filter((file) => {
+      if (file.source !== 'tool-result' && file.source !== 'message-ref') return true;
+      // Runtime-produced user-facing artifacts (images, HTML/Markdown/PDF/XLSX,
+      // skill directories, ...) must remain visible in the reply bubble even
+      // when generic process attachments are folded into the execution graph.
+      // The graph card itself does not render `_attachedFiles`, so dropping
+      // them here would leave the user with no way to open previews from chat.
+      return isUserFacingAttachmentWhenFolded(file);
+    }),
+    [derivedAttachedFiles],
+  );
   // When a message is attachment-only, keep those attachments visible even if
   // process attachments are generally suppressed for this run segment —
   // otherwise the reply disappears entirely.
-  const processVisibleAttachments = filteredProcessAttachments.filter((file) => {
-    const kind = validationKindForAttachment(file);
-    if (!kind || !file.filePath) return true;
-    return validatedPaths[file.filePath] === true;
-  });
-  const attachedFiles = suppressProcessAttachments && (hasText || resolvableContentImages.length > 0 || visibleTools.length > 0)
-    ? processVisibleAttachments
-    : existingDerivedAttachedFiles;
-  const imageCopyTarget = resolvePrimaryImageCopyTarget(resolvableContentImages, attachedFiles);
+  const processVisibleAttachments = useMemo(
+    () => filteredProcessAttachments.filter((file) => {
+      const kind = validationKindForAttachment(file);
+      if (!kind || !file.filePath) return true;
+      return validatedPaths[file.filePath] === true;
+    }),
+    [filteredProcessAttachments, validatedPaths],
+  );
+  const attachedFiles = useMemo(
+    () => (suppressProcessAttachments && (hasText || resolvableContentImages.length > 0 || visibleTools.length > 0)
+      ? processVisibleAttachments
+      : existingDerivedAttachedFiles),
+    [
+      existingDerivedAttachedFiles,
+      hasText,
+      processVisibleAttachments,
+      resolvableContentImages.length,
+      suppressProcessAttachments,
+      visibleTools.length,
+    ],
+  );
+  const imageCopyTarget = useMemo(
+    () => resolvePrimaryImageCopyTarget(resolvableContentImages, attachedFiles),
+    [attachedFiles, resolvableContentImages],
+  );
   const showAssistantHoverBar = !isUser && (hasText || imageCopyTarget != null);
   const [lightboxImg, setLightboxImg] = useState<{ src: string; fileName: string; filePath?: string; base64?: string; mimeType?: string } | null>(null);
 
