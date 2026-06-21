@@ -94,11 +94,38 @@ let _historyPollTimer: ReturnType<typeof setTimeout> | null = null;
 let _errorRecoveryTimer: ReturnType<typeof setTimeout> | null = null;
 let _loadSessionsInFlight: Promise<void> | null = null;
 let _lastLoadSessionsAt = 0;
+/** Simple LRU map with O(1) get/set and bounded size. Evicts least-recently used entries. */
+class LruMap<K, V> {
+  private _map = new Map<K, V>();
+  constructor(private _max: number) {}
+  get(key: K): V | undefined {
+    if (!this._map.has(key)) return undefined;
+    const v = this._map.get(key)!;
+    this._map.delete(key);
+    this._map.set(key, v);
+    return v;
+  }
+  set(key: K, value: V): this {
+    if (this._map.has(key)) this._map.delete(key);
+    else if (this._map.size >= this._max) {
+      const first = this._map.keys().next().value as K;
+      this._map.delete(first);
+    }
+    this._map.set(key, value);
+    return this;
+  }
+  has(key: K): boolean { return this._map.has(key); }
+  delete(key: K): boolean { return this._map.delete(key); }
+  clear(): void { this._map.clear(); }
+  get size(): number { return this._map.size; }
+}
+
 const _historyLoadInFlight = new Map<string, Promise<void>>();
 const _lastHistoryLoadAtBySession = new Map<string, number>();
 const _forceNextHistoryLoadBySession = new Set<string>();
 const _foregroundHistoryLoadSeen = new Set<string>();
-const _sessionHistoryCache = new Map<string, { messages: RawMessage[]; thinkingLevel: string | null }>();
+const _SESSION_CACHE_MAX = 20;
+const _sessionHistoryCache = new LruMap<string, { messages: RawMessage[]; thinkingLevel: string | null }>(_SESSION_CACHE_MAX);
 
 type SessionRunState = Pick<
   ChatState,
@@ -123,14 +150,14 @@ const DEFAULT_SESSION_RUN_STATE: SessionRunState = {
   pendingToolImages: [],
 };
 
-const _sessionRunStateCache = new Map<string, SessionRunState>();
+const _sessionRunStateCache = new LruMap<string, SessionRunState>(_SESSION_CACHE_MAX);
 let _sendGenerationCounter = 0;
 const _activeSendGenerationBySession = new Map<string, number>();
 const SESSION_LOAD_MIN_INTERVAL_MS = 1_200;
 const HISTORY_LOAD_MIN_INTERVAL_MS = 800;
 const CHAT_EVENT_DEDUPE_TTL_MS = 30_000;
 const HISTORY_PAGE_SIZE = 200;
-const HISTORY_MAX_RENDERED_MESSAGES = 1_000;
+const HISTORY_MAX_RENDERED_MESSAGES = 300;
 const _chatEventDedupe = new Map<string, number>();
 const OPTIMISTIC_USER_MESSAGE_TTL_MS = 30 * 60 * 1000;
 /** Max skew between the renderer optimistic send time and Gateway transcript timestamps. */
