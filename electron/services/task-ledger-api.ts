@@ -47,6 +47,8 @@ function normalizeNodeInput(payload: TaskLedgerCreateNodePayload): TaskLedgerNod
     priority: input.priority ?? 'normal',
     tags: Array.isArray(input.tags) ? input.tags : [],
     description: input.description,
+    evidenceRefs: Array.isArray(input.evidenceRefs) ? input.evidenceRefs : undefined,
+    metadata: input.metadata,
     createdAt,
     updatedAt: createdAt,
     completedAt: input.status === 'done' ? createdAt : null,

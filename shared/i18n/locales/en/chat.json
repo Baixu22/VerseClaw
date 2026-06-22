@@ -151,7 +151,8 @@
     "tabs": {
       "changes": "Changes",
       "preview": "Preview",
-      "browser": "Workspace"
+      "browser": "Workspace",
+      "artifact": "Artifacts"
     },
     "workspaceTabs": {
       "files": "Files",
@@ -578,6 +579,141 @@
       "defaultPrompt": "Use the selected knowledge references to answer.",
       "messageRefTitle": "Knowledge reference: {{title}}"
     },
+    "slashCommands": {
+      "menuLabel": "Slash commands",
+      "title": "Quick actions",
+      "subtitle": "Pick an action for this message or session. Each action explains what it will do before it runs.",
+      "contextButton": "Open context palette",
+      "contextButtonShort": "Context",
+      "contextButtonTooltip": "Type / to attach knowledge, set scope, or run a session action.",
+      "promptArgs": "Scope: {{args}}",
+      "unknownTitle": "Unknown command",
+      "unknownDescription": "{{command}} is not a ClawX quick action. Press Escape to keep editing.",
+      "unknownToast": "Unknown slash command: {{command}}",
+      "ledgerNodeDescription": "Created from the Chat slash command.",
+      "ledgerSessionSummary": "Linked from Chat slash command: {{title}}",
+      "groups": {
+        "knowledge": "Knowledge",
+        "coding": "Coding",
+        "workflow": "Workflow",
+        "session": "Session"
+      },
+      "commands": {
+        "wiki": {
+          "label": "Search wiki",
+          "description": "Find source-backed wiki pages and attach them as read-only context.",
+          "argumentHint": "[query]"
+        },
+        "memory": {
+          "label": "Use memory",
+          "description": "Set this message to read from runtime memory only.",
+          "argumentHint": ""
+        },
+        "all": {
+          "label": "Use all knowledge",
+          "description": "Allow memory and wiki reads for this message.",
+          "argumentHint": ""
+        },
+        "none": {
+          "label": "No knowledge",
+          "description": "Send without memory or wiki context.",
+          "argumentHint": ""
+        },
+        "scope": {
+          "label": "Set knowledge scope",
+          "description": "Choose None, Memory, Wiki, or All without leaving the composer.",
+          "argumentHint": "[scope]"
+        },
+        "save": {
+          "label": "Draft knowledge",
+          "description": "Ask for an editable knowledge draft; it will not be applied automatically.",
+          "argumentHint": "[topic]"
+        },
+        "steward": {
+          "label": "Ask steward",
+          "description": "Ask the Knowledge Steward to review, classify, or find conflicts.",
+          "argumentHint": "[topic]"
+        },
+        "review": {
+          "label": "Review changes",
+          "description": "Ask for a focused code review of the current diff.",
+          "argumentHint": "[scope]"
+        },
+        "fix-ci": {
+          "label": "Fix CI",
+          "description": "Ask the agent to inspect failing checks and propose repairs.",
+          "argumentHint": "[failure]"
+        },
+        "write-tests": {
+          "label": "Write tests",
+          "description": "Ask for targeted tests around the current change.",
+          "argumentHint": "[area]"
+        },
+        "explain-diff": {
+          "label": "Explain diff",
+          "description": "Summarize what changed and why it matters.",
+          "argumentHint": "[focus]"
+        },
+        "commit": {
+          "label": "Prepare commit",
+          "description": "Ask for a commit-ready summary without running Git.",
+          "argumentHint": "[scope]"
+        },
+        "pr-summary": {
+          "label": "PR summary",
+          "description": "Draft a pull request summary and validation notes.",
+          "argumentHint": "[audience]"
+        },
+        "mission": {
+          "label": "Mission Control",
+          "description": "Open or guide a long-goal Mission Control flow.",
+          "argumentHint": "[goal]"
+        },
+        "ledger": {
+          "label": "Task Ledger",
+          "description": "Open Task Ledger or create a task node.",
+          "argumentHint": "[task title]"
+        },
+        "compact": {
+          "label": "Compact session",
+          "description": "Open the current-session compression dialog.",
+          "argumentHint": ""
+        },
+        "fork": {
+          "label": "Fork session",
+          "description": "Branch the current chat through the existing fork flow.",
+          "argumentHint": ""
+        },
+        "handoff": {
+          "label": "Handoff session",
+          "description": "Prepare an editable continuation draft in a new session.",
+          "argumentHint": ""
+        }
+      },
+      "prompts": {
+        "review": "Review the current changes as a code reviewer. Focus on bugs, regressions, risks, and missing tests.\n{{argsDetail}}",
+        "fix-ci": "Help fix the current CI failure.\n{{argsDetail}}",
+        "write-tests": "Write focused tests for the current change.\n{{argsDetail}}",
+        "explain-diff": "Explain the current diff clearly.\n{{argsDetail}}",
+        "commit": "Prepare a commit-ready summary.\n{{argsDetail}}",
+        "pr-summary": "Draft a pull request summary.\n{{argsDetail}}",
+        "mission": "Guide this goal into Mission Control.\n{{argsDetail}}",
+        "save": "Create an editable Knowledge Draft for the relevant content.\n{{argsDetail}}",
+        "steward": "Act as the Knowledge Steward for this request.\n{{argsDetail}}"
+      },
+      "toasts": {
+        "sendUnavailable": "This command can run after the current send is available.",
+        "wikiOpened": "Wiki search opened. Pick pages to attach as read-only context.",
+        "scopeOpened": "Knowledge scope picker opened.",
+        "scopeChanged": "Knowledge scope set to {{scope}}.",
+        "typeSlash": "Type / at the start of an empty composer to open the context palette.",
+        "ledgerOpened": "Opened Task Ledger",
+        "ledgerCreated": "Created ledger task: {{title}}",
+        "ledgerFailed": "Could not create ledger task: {{error}}",
+        "missionOpened": "Opened Agents for Mission Control",
+        "forkUnavailable": "Fork is available after the current run finishes."
+      }
+    },
     "clearTarget": "Clear target agent",
     "targetChip": "@{{agent}}",
     "agentPickerTitle": "Route the next message to another agent",
@@ -954,6 +1090,13 @@
       "workspace": "Workspace",
       "permission": "Permission"
     },
+    "statusIndicator": {
+      "label": "Assistant status"
+    },
+    "activity": {
+      "thinking": "Thinking",
+      "processingToolResults": "Processing tool results"
+    },
     "quote": {
       "action": "Quote"
     },
@@ -966,6 +1109,14 @@
       "folder": "Folder",
       "file": "File"
     }
+  },
+  "sessionStatus": {
+    "running": "Running",
+    "waiting": "Waiting for input",
+    "completed": "Completed",
+    "error": "Needs attention",
+    "aborted": "Stopped",
+    "dismissCompleted": "Hide completed status"
   },
   "turnWork": {
     "title": "Work panel",
@@ -994,6 +1145,29 @@
       "tasks": "No task activity",
       "reports": "No reports or file outputs",
       "sources": "No web sources"
+    }
+  },
+  "githubCard": {
+    "type": {
+      "repo": "Repository",
+      "issue": "Issue",
+      "pr": "Pull Request",
+      "commit": "Commit",
+      "profile": "Profile",
+      "other": "GitHub Link"
+    }
+  },
+  "artifactView": {
+    "title": "Artifacts",
+    "empty": "No artifacts generated yet",
+    "generating": "Generating...",
+    "selectHint": "Select an artifact to preview",
+    "status": {
+      "generating": "Generating...",
+      "ready": "Ready",
+      "invalid": "Invalid",
+      "validationError": "Validation Error",
+      "error": "Error"
     }
   }
 }

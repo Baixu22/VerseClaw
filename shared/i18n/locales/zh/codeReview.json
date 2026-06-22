@@ -1,0 +1,55 @@
+{
+  "nav": "Review Center",
+  "title": "Review Center",
+  "subtitle": "对 Git 改动运行只读 AI 审查，结构化 findings，并把复核项写入 Task Ledger。",
+  "readonly": "只读审查",
+  "yes": "是",
+  "no": "否",
+  "empty": "选择审查目标，按需填写 focus，然后运行审查。",
+  "running": "正在审查改动...",
+  "target": {
+    "label": "审查目标",
+    "uncommitted": "未提交改动",
+    "baseBranch": "对比基准分支",
+    "commit": "指定提交",
+    "baseBranchInput": "基准分支",
+    "baseBranchPlaceholder": "origin/main",
+    "commitInput": "提交",
+    "commitPlaceholder": "abc1234"
+  },
+  "focus": {
+    "label": "审查重点",
+    "placeholder": "例如：重点看回归、测试、安全，或 renderer/Main 边界。"
+  },
+  "actions": {
+    "run": "Review changes",
+    "running": "审查中",
+    "createFindingNode": "创建 review node",
+    "createReviewNode": "创建本次 review node",
+    "nodeCreated": "已创建"
+  },
+  "results": {
+    "title": "Findings",
+    "target": "目标",
+    "files": "文件",
+    "findings": "Findings",
+    "readonly": "只读",
+    "noFindings": "该目标没有返回 finding。"
+  },
+  "finding": {
+    "suggestedFix": "建议修复"
+  },
+  "severity": {
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "info": "Info"
+  },
+  "errors": {
+    "baseBranchRequired": "请先填写基准分支。",
+    "commitRequired": "请先填写提交。",
+    "reviewFailed": "审查失败。",
+    "ledgerFailed": "无法创建 Task Ledger review node。"
+  }
+}

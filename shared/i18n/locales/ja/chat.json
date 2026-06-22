@@ -151,7 +151,8 @@
     "tabs": {
       "changes": "変更",
       "preview": "プレビュー",
-      "browser": "ワークスペース"
+      "browser": "ワークスペース",
+      "artifact": "アーティファクト"
     },
     "workspaceTabs": {
       "files": "ファイル",
@@ -578,6 +579,141 @@
       "defaultPrompt": "選択したナレッジ参照を使って回答してください。",
       "messageRefTitle": "ナレッジ参照: {{title}}"
     },
+    "slashCommands": {
+      "menuLabel": "スラッシュコマンド",
+      "title": "クイックアクション",
+      "subtitle": "このメッセージまたはセッションに使う操作を選びます。各操作は実行前に内容を説明します。",
+      "contextButton": "コンテキストパレットを開く",
+      "contextButtonShort": "Context",
+      "contextButtonTooltip": "/ を入力すると、ナレッジ添付、スコープ設定、セッション操作を選べます。",
+      "promptArgs": "範囲: {{args}}",
+      "unknownTitle": "不明なコマンド",
+      "unknownDescription": "{{command}} は ClawX のクイックアクションではありません。Escape で編集に戻れます。",
+      "unknownToast": "不明なスラッシュコマンド: {{command}}",
+      "ledgerNodeDescription": "Chat のスラッシュコマンドから作成されました。",
+      "ledgerSessionSummary": "Chat のスラッシュコマンドからリンク: {{title}}",
+      "groups": {
+        "knowledge": "ナレッジ",
+        "coding": "コーディング",
+        "workflow": "ワークフロー",
+        "session": "セッション"
+      },
+      "commands": {
+        "wiki": {
+          "label": "Wiki を検索",
+          "description": "出典付き Wiki ページを探し、読み取り専用コンテキストとして添付します。",
+          "argumentHint": "[query]"
+        },
+        "memory": {
+          "label": "メモリを使う",
+          "description": "このメッセージではランタイムメモリだけを読み取ります。",
+          "argumentHint": ""
+        },
+        "all": {
+          "label": "すべてのナレッジを使う",
+          "description": "このメッセージでメモリと Wiki の両方を読み取れるようにします。",
+          "argumentHint": ""
+        },
+        "none": {
+          "label": "ナレッジなし",
+          "description": "メモリや Wiki コンテキストなしで送信します。",
+          "argumentHint": ""
+        },
+        "scope": {
+          "label": "ナレッジ範囲を設定",
+          "description": "入力欄を離れずに None、Memory、Wiki、All を選びます。",
+          "argumentHint": "[scope]"
+        },
+        "save": {
+          "label": "ナレッジ下書き",
+          "description": "編集可能なナレッジ下書きを依頼します。自動適用はしません。",
+          "argumentHint": "[topic]"
+        },
+        "steward": {
+          "label": "Steward に依頼",
+          "description": "Knowledge Steward にレビュー、分類、競合確認を依頼します。",
+          "argumentHint": "[topic]"
+        },
+        "review": {
+          "label": "変更をレビュー",
+          "description": "現在の diff に対する focused code review を依頼します。",
+          "argumentHint": "[scope]"
+        },
+        "fix-ci": {
+          "label": "CI を修正",
+          "description": "失敗したチェックを調べ、修正案を出すよう依頼します。",
+          "argumentHint": "[failure]"
+        },
+        "write-tests": {
+          "label": "テストを書く",
+          "description": "現在の変更に合わせた targeted tests を依頼します。",
+          "argumentHint": "[area]"
+        },
+        "explain-diff": {
+          "label": "diff を説明",
+          "description": "何が変わり、なぜ重要かを要約します。",
+          "argumentHint": "[focus]"
+        },
+        "commit": {
+          "label": "コミット準備",
+          "description": "Git は実行せず、コミット用の要約を作ります。",
+          "argumentHint": "[scope]"
+        },
+        "pr-summary": {
+          "label": "PR サマリー",
+          "description": "Pull Request の説明と検証メモを下書きします。",
+          "argumentHint": "[audience]"
+        },
+        "mission": {
+          "label": "Mission Control",
+          "description": "長期目標の Mission Control フローを開く、または案内します。",
+          "argumentHint": "[goal]"
+        },
+        "ledger": {
+          "label": "Task Ledger",
+          "description": "Task Ledger を開く、またはタスクノードを作成します。",
+          "argumentHint": "[task title]"
+        },
+        "compact": {
+          "label": "セッション圧縮",
+          "description": "現在セッションの圧縮ダイアログを開きます。",
+          "argumentHint": ""
+        },
+        "fork": {
+          "label": "セッションを Fork",
+          "description": "既存の Fork フローで現在のチャットを新しい会話に分岐します。",
+          "argumentHint": ""
+        },
+        "handoff": {
+          "label": "セッションを Handoff",
+          "description": "新しいセッションに編集可能な継続下書きを準備します。",
+          "argumentHint": ""
+        }
+      },
+      "prompts": {
+        "review": "コードレビュー担当として現在の変更をレビューしてください。バグ、回帰リスク、不足しているテストを重視してください。\n{{argsDetail}}",
+        "fix-ci": "現在の CI 失敗の修正を手伝ってください。\n{{argsDetail}}",
+        "write-tests": "現在の変更に対する focused tests を書いてください。\n{{argsDetail}}",
+        "explain-diff": "現在の diff を明確に説明してください。\n{{argsDetail}}",
+        "commit": "コミットに使える要約を準備してください。\n{{argsDetail}}",
+        "pr-summary": "Pull Request の要約と検証メモを下書きしてください。\n{{argsDetail}}",
+        "mission": "この目標を Mission Control に整理してください。\n{{argsDetail}}",
+        "save": "関連内容の編集可能な Knowledge Draft を作成してください。\n{{argsDetail}}",
+        "steward": "この依頼を Knowledge Steward として扱ってください。\n{{argsDetail}}"
+      },
+      "toasts": {
+        "sendUnavailable": "現在の送信が利用可能になってから実行できます。",
+        "wikiOpened": "Wiki 検索を開きました。読み取り専用コンテキストとして添付するページを選んでください。",
+        "scopeOpened": "ナレッジ範囲ピッカーを開きました。",
+        "scopeChanged": "ナレッジ範囲を {{scope}} に設定しました。",
+        "typeSlash": "空の入力欄の先頭に / を入力するとコンテキストパレットを開けます。",
+        "ledgerOpened": "Task Ledger を開きました",
+        "ledgerCreated": "Ledger タスクを作成しました: {{title}}",
+        "ledgerFailed": "Ledger タスクを作成できませんでした: {{error}}",
+        "missionOpened": "Agents の Mission Control を開きました",
+        "forkUnavailable": "Fork は現在の実行が終わってから利用できます。"
+      }
+    },
     "modelPickerTitle": "モデルを切り替え",
     "modelSwitchFailed": "モデルの切り替えに失敗しました: {{error}}",
     "inputModeTitle": "入力モード",
@@ -954,6 +1090,13 @@
       "workspace": "???????",
       "permission": "??"
     },
+    "statusIndicator": {
+      "label": "\u30a2\u30b7\u30b9\u30bf\u30f3\u30c8\u72b6\u614b"
+    },
+    "activity": {
+      "thinking": "\u601d\u8003\u4e2d",
+      "processingToolResults": "\u30c4\u30fc\u30eb\u7d50\u679c\u3092\u51e6\u7406\u4e2d"
+    },
     "quote": {
       "action": "??"
     },
@@ -966,6 +1109,14 @@
       "folder": "?????",
       "file": "????"
     }
+  },
+  "sessionStatus": {
+    "running": "\u5b9f\u884c\u4e2d",
+    "waiting": "\u5165\u529b\u5f85\u3061",
+    "completed": "\u5b8c\u4e86",
+    "error": "\u78ba\u8a8d\u304c\u5fc5\u8981",
+    "aborted": "\u505c\u6b62\u3057\u307e\u3057\u305f",
+    "dismissCompleted": "\u5b8c\u4e86\u72b6\u614b\u3092\u975e\u8868\u793a"
   },
   "turnWork": {
     "title": "作業パネル",
@@ -994,6 +1145,29 @@
       "tasks": "タスク活動はありません",
       "reports": "レポートまたはファイル出力はありません",
       "sources": "Web ソースはありません"
+    }
+  },
+  "githubCard": {
+    "type": {
+      "repo": "リポジトリ",
+      "issue": "Issue",
+      "pr": "PR",
+      "commit": "コミット",
+      "profile": "プロフィール",
+      "other": "GitHub リンク"
+    }
+  },
+  "artifactView": {
+    "title": "アーティファクト",
+    "empty": "まだ生成されていません",
+    "generating": "生成中...",
+    "selectHint": "プレビューするアーティファクトを選択",
+    "status": {
+      "generating": "生成中...",
+      "ready": "準備完了",
+      "invalid": "無効",
+      "validationError": "検証エラー",
+      "error": "エラー"
     }
   }
 }

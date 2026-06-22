@@ -1,0 +1,55 @@
+{
+  "nav": "Review Center",
+  "title": "Review Center",
+  "subtitle": "Run a read-only AI review over Git changes, normalize findings, and send review items to Task Ledger.",
+  "readonly": "Read-only review",
+  "yes": "Yes",
+  "no": "No",
+  "empty": "Choose a review target, add an optional focus, then run review.",
+  "running": "Reviewing changes...",
+  "target": {
+    "label": "Review target",
+    "uncommitted": "Uncommitted changes",
+    "baseBranch": "Against base branch",
+    "commit": "Selected commit",
+    "baseBranchInput": "Base branch",
+    "baseBranchPlaceholder": "origin/main",
+    "commitInput": "Commit",
+    "commitPlaceholder": "abc1234"
+  },
+  "focus": {
+    "label": "Review focus",
+    "placeholder": "Example: focus on regressions, tests, security, or renderer/Main boundaries."
+  },
+  "actions": {
+    "run": "Review changes",
+    "running": "Reviewing",
+    "createFindingNode": "Create review node",
+    "createReviewNode": "Create run node",
+    "nodeCreated": "Node created"
+  },
+  "results": {
+    "title": "Findings",
+    "target": "Target",
+    "files": "Files",
+    "findings": "Findings",
+    "readonly": "Read-only",
+    "noFindings": "No findings were returned for this target."
+  },
+  "finding": {
+    "suggestedFix": "Suggested fix"
+  },
+  "severity": {
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "info": "Info"
+  },
+  "errors": {
+    "baseBranchRequired": "Enter a base branch before running review.",
+    "commitRequired": "Enter a commit before running review.",
+    "reviewFailed": "Review failed.",
+    "ledgerFailed": "Could not create the Task Ledger review node."
+  }
+}

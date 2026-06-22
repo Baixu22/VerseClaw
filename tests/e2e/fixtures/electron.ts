@@ -146,6 +146,7 @@ async function launchClawXElectron(
 ): Promise<ElectronApplication> {
   await seedE2eSettings(userDataDir);
   const hostApiPort = await allocatePort();
+  const cdpPort = await allocatePort();
   const electronEnv = process.platform === 'linux'
     ? {
       ELECTRON_DISABLE_SANDBOX: '1',
@@ -170,6 +171,7 @@ async function launchClawXElectron(
       CLAWX_USER_DATA_DIR: userDataDir,
       ...(options.skipSetup ? { CLAWX_E2E_SKIP_SETUP: '1' } : {}),
       CLAWX_PORT_CLAWX_HOST_API: String(hostApiPort),
+      CLAWX_REMOTE_DEBUGGING_PORT: String(cdpPort),
     },
     timeout: 90_000,
   });
@@ -298,6 +300,7 @@ export async function installIpcMocks(
         const current = getInvokeHandler(channel);
         return current && current !== original ? current : null;
       };
+      (globalThis as unknown as { __clawxE2eHostCalls?: unknown[] }).__clawxE2eHostCalls = [];
 
       const legacyPathForHostRequest = (request: {
         module?: string;
@@ -366,6 +369,12 @@ export async function installIpcMocks(
           action?: string;
           payload?: Record<string, unknown>;
         }) => {
+          (globalThis as unknown as { __clawxE2eHostCalls?: unknown[] }).__clawxE2eHostCalls?.push({
+            module: request?.module,
+            action: request?.action,
+            payload: request?.payload ?? null,
+          });
+
           if (mockConfig.gatewayStatus && request?.module === 'gateway' && request.action === 'status') {
             return respond(request.id, mockConfig.gatewayStatus);
           }

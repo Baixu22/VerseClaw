@@ -65,10 +65,30 @@ describe('hostEvents', () => {
 
     hostEvents.onMissionControlLifecycle(handler);
     const callback = on.mock.calls[0]?.[1] as ((payload: unknown) => void) | undefined;
-    callback?.({ missionId: 'mission-1', sessionKey: 'agent:main:session', phase: 'reflect', status: 'running', tick: 1, progress: 72, ts: 1 });
+    callback?.({
+      missionId: 'mission-1',
+      sessionKey: 'agent:main:session',
+      phase: 'reflect',
+      status: 'running',
+      tick: 1,
+      progress: 72,
+      controlSignals: [{ kind: 'validation_missing', severity: 'warning', message: 'tests not run' }],
+      validationState: { status: 'missing', checks: ['unit tests'], evidenceRefs: [] },
+      ts: 1,
+    });
 
     expect(on).toHaveBeenCalledWith('agent:mission-lifecycle', expect.any(Function));
-    expect(handler).toHaveBeenCalledWith({ missionId: 'mission-1', sessionKey: 'agent:main:session', phase: 'reflect', status: 'running', tick: 1, progress: 72, ts: 1 });
+    expect(handler).toHaveBeenCalledWith({
+      missionId: 'mission-1',
+      sessionKey: 'agent:main:session',
+      phase: 'reflect',
+      status: 'running',
+      tick: 1,
+      progress: 72,
+      controlSignals: [{ kind: 'validation_missing', severity: 'warning', message: 'tests not run' }],
+      validationState: { status: 'missing', checks: ['unit tests'], evidenceRefs: [] },
+      ts: 1,
+    });
   });
 
   it('subscribes to observability runtime events over IPC', async () => {

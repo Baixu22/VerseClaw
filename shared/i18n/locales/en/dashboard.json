@@ -110,5 +110,64 @@
             "relayModelRequired": "Model name is required",
             "relayModelInvalid": "Enter only the model name, for example gpt-image-2. Do not include provider/model."
         }
+    },
+    "billing": {
+        "title": "Billing",
+        "subtitle": "Track token spend, model activity, and usage rhythm without crowding the Models page.",
+        "backToModels": "Back to Models",
+        "loading": "Loading billing history...",
+        "empty": "No token usage yet",
+        "gatewayLive": "Gateway live",
+        "gatewayOffline": "Gateway offline",
+        "tokensSuffix": "tokens",
+        "window": {
+            "7d": "7 days",
+            "30d": "30 days",
+            "all": "All"
+        },
+        "kpi": {
+            "tokens": "Total tokens",
+            "cost": "Estimated cost",
+            "models": "Active models",
+            "averageCost": "Average cost",
+            "records": "{{count}} records",
+            "estimated": "Estimated from provider usage",
+            "activeModels": "In the selected window",
+            "perRecord": "Per usage record",
+            "recordsWithUsage": "{{count}} billable records"
+        },
+        "chart": {
+            "title": "Daily token usage stays complete",
+            "description": "Every day in the selected window has a stable bucket, with input, output, and cache tokens stacked together.",
+            "peakDay": "Peak {{day}} - {{tokens}} tokens"
+        },
+        "modelChart": {
+            "title": "Model concentration",
+            "description": "Models are ranked by total tokens in the selected window."
+        },
+        "heatmap": {
+            "title": "Usage rhythm",
+            "description": "Each square is a day, shaded by total token volume."
+        },
+        "recent": {
+            "title": "Recent billing records",
+            "description": "Raw transcript usage rows, including unavailable or parse-error records."
+        },
+        "transcriptSource": "Transcript history",
+        "refreshing": "Refreshing",
+        "dataQuality": {
+            "scanned": "Records scanned",
+            "billable": "Billable records",
+            "unavailable": "Unavailable records",
+            "unavailableWithErrors": "{{unavailable}} unavailable, {{errors}} errors",
+            "latest": "Latest record"
+        },
+        "status": {
+            "available": "Available",
+            "missing": "No usage",
+            "error": "Parse error"
+        },
+        "noData": "No usage data yet. Billing history becomes available after agents begin processing sessions — no API keys or configuration needed.",
+        "noDataHint": "The data comes from transcript files that OpenClaw writes locally during agent sessions."
     }
 }

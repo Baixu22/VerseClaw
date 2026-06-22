@@ -84,7 +84,12 @@ import type {
   ClawGraphWorkflowFile,
 } from '../types/clawgraph';
 import type {
+  CodeReviewRun,
+  CodeReviewTarget,
+} from '../types/code-review';
+import type {
   TaskLedgerEdge,
+  TaskLedgerEvidenceRef,
   TaskLedgerEventInput,
   TaskLedgerNode,
   TaskLedgerNodeKind,
@@ -384,6 +389,72 @@ export type PermissionApprovalDecisionPayload = {
 };
 export type PermissionApprovalDecisionResult = HostSuccess & {
   approval?: PermissionApprovalEvent;
+};
+
+export type ProjectRulesFileStatus = 'missing' | 'present' | 'empty' | 'tooLarge' | 'unreadable';
+export type ProjectRulesIssueSeverity = 'info' | 'warning' | 'error';
+export type ProjectRulesIssueSource = 'agents' | 'ruleFile' | 'contextPreview';
+export type ProjectRulesIssue = {
+  id: string;
+  severity: ProjectRulesIssueSeverity;
+  source: ProjectRulesIssueSource;
+  path?: string;
+  relatedPaths?: string[];
+  params?: JsonRecord;
+};
+export type ProjectRulesAgentsFile = {
+  path: string;
+  relativePath: 'AGENTS.md';
+  status: ProjectRulesFileStatus;
+  exists: boolean;
+  size: number;
+  modifiedAt?: string;
+  content?: string;
+  truncated?: boolean;
+  error?: string;
+};
+export type ProjectRulesRuleFile = {
+  name: string;
+  path: string;
+  relativePath: string;
+  status: Exclude<ProjectRulesFileStatus, 'missing'>;
+  size: number;
+  modifiedAt?: string;
+  error?: string;
+};
+export type ProjectRulesContextPreviewItem = {
+  id: 'agents' | 'harnessSpecs' | 'clawxRules';
+  status: 'included' | 'available' | 'referenceOnly' | 'missing';
+  fileCount?: number;
+};
+export type ProjectRulesSnapshot = {
+  workspace: Pick<WorkspaceProfile, 'id' | 'name' | 'rootPath'> | null;
+  agentsFile: ProjectRulesAgentsFile | null;
+  ruleFiles: ProjectRulesRuleFile[];
+  issues: ProjectRulesIssue[];
+  contextPreview: {
+    items: ProjectRulesContextPreviewItem[];
+  };
+  generatedAt: string;
+};
+export type ProjectRulesSnapshotResult = HostSuccess & ProjectRulesSnapshot & {
+  templateCreated?: boolean;
+};
+
+export type CodeReviewRunPayload = {
+  target: CodeReviewTarget;
+  focus?: string;
+  timeoutMs?: number;
+};
+export type CodeReviewRunResult = HostSuccess & {
+  review: CodeReviewRun;
+};
+export type CodeReviewCreateTaskLedgerNodePayload = TaskLedgerWorkspacePayload & {
+  runId: string;
+  findingId?: string | null;
+};
+export type CodeReviewCreateTaskLedgerNodeResult = TaskLedgerSnapshotResult & {
+  nodeId: string;
 };
 
 export type GatewayControlUiPayload = { view?: 'dreams' };
@@ -1727,6 +1798,8 @@ export type TaskLedgerNodeInput = {
   priority?: TaskLedgerNode['priority'];
   tags?: string[];
   description?: string;
+  evidenceRefs?: TaskLedgerEvidenceRef[];
+  metadata?: Record<string, unknown>;
 };
 export type TaskLedgerCreateNodePayload = TaskLedgerWorkspacePayload & {
   node: TaskLedgerNodeInput;
@@ -1999,6 +2072,14 @@ export type HostApiContract = {
     switch: (payload: WorkspaceSwitchPayload) => WorkspaceActiveResult;
     saveState: (payload: WorkspaceSaveStatePayload) => HostSuccess;
   };
+  projectRules: {
+    snapshot: () => ProjectRulesSnapshotResult;
+    createAgentsTemplate: () => ProjectRulesSnapshotResult;
+  };
+  codeReview: {
+    run: (payload: CodeReviewRunPayload) => CodeReviewRunResult;
+    createTaskLedgerNode: (payload: CodeReviewCreateTaskLedgerNodePayload) => CodeReviewCreateTaskLedgerNodeResult;
+  };
   terminal: {
     run: (payload: WorkspaceTerminalRunPayload) => WorkspaceTerminalRunResult;
     open: (payload?: WorkspaceTerminalOpenPayload) => WorkspaceTerminalSessionResult;
@@ -2015,6 +2096,7 @@ export type HostApiContract = {
     fileDiff: (payload: GitFileDiffPayload) => GitFileDiffResult;
     stage: (payload: GitPathsPayload) => GitOperationResult;
     unstage: (payload: GitPathsPayload) => GitOperationResult;
+    revertFile: (payload: GitPathPayload) => GitOperationResult;
     commit: (payload: GitCommitPayload) => GitCommitResult;
     branches: () => GitBranchListResult;
     checkoutBranch: (payload: GitBranchCheckoutPayload) => GitOperationResult;

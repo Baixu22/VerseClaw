@@ -1,8 +1,8 @@
-# ClawX × openclaw_runtime Design Overview
+﻿# ClawX 脳 openclaw_runtime Design Overview
 
 > Scope: A complete walk-through of the ClawX desktop app and the OpenClaw runtime it ships with, as of 2026-06-18.
 > Sandbox update: section 7.1 documents the ClawX lightweight layered sandbox control model implemented on 2026-06-17.
-> Basis: codegraph index (10,026 files / 158,358 nodes / 470,892 edges) + source review of `electron/`, `src/`, `shared/`, `openclaw_runtime/src/`, and `openclaw_runtime/extensions/`. Updated with role-first runtime architecture (§11), ClawGraph Runtime v1 (§11.15), the long-task stability stack (§8.5.3), Human Intervention / Resume Control (§8.5.4), Mission Control / Mission Loop MVP+ (§8.5.5), Knowledge Hub role-first governance (§8.6), Chat Work Mode v2 Office Artifact kits (§8.7), and Work Provider v1 Office/Search orchestration (§8.7).
+> Basis: codegraph index (10,026 files / 158,358 nodes / 470,892 edges) + source review of `electron/`, `src/`, `shared/`, `openclaw_runtime/src/`, and `openclaw_runtime/extensions/`. Updated with role-first runtime architecture (搂11), Lightweight Subagent Runner (搂11.2 / 搂11.13), ClawGraph Runtime v1 (搂11.15), the long-task stability stack (搂8.5.3), Human Intervention / Resume Control (搂8.5.4), Mission Control / Mission Loop MVP+ (搂8.5.5), Knowledge Hub role-first governance (搂8.6), Chat Work Mode v2 Office Artifact kits (搂8.7), and Work Provider v1 Office/Search orchestration (搂8.7).
 
 ---
 
@@ -15,6 +15,8 @@ ClawX is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript
 - **ClawX** owns the desktop shell, OS integration, UI, settings, theming, and per-machine engineering concerns.
 - **openclaw_runtime** is a headless Node gateway that owns AI business logic: agents, channels, model providers, memory, skills, cron, observability, and a 136-extension plugin ecosystem.
 - The runtime also owns the bounded **task loop** control layer: `task_loop.run/status`, role subagent orchestration, self-check review, scoped repair rounds, context packing, lifecycle broadcasts, observability trace evidence, and best-effort Task Ledger persistence.
+- **Engineering Control Signals** are the internal long-conversation constraint contract shared by ResumeCheckpoint, Task Loop, Mission Loop, Task Ledger metadata, and Work Mode metadata. They make `evidence_gap`, `validation_missing`, `scope_drift`, `unverified_claim`, and `replan_required` explicit without adding a new prompt system, rule directory, or parallel progress source.
+- **Lightweight Subagent Runner** is a ClawX UI wrapper over role-first orchestration for common no-YAML workflows. It lets users launch Explorer, Reviewer, Tester, and Compare 3 approaches presets from Agents -> Roles & Orchestration, using explicit role workers through the existing Gateway permission path, then displays goal, roles, live status, failures, summary, and Observability trace evidence.
 - **ClawX Mission Control / Mission Loop** is the MVP+ outer long-goal control layer above the bounded task loop. It binds user goals to persisted Mission state, Task Ledger evidence, ResumeCheckpoint continuation, Context Pack budgets, reviewer decisions, lifecycle events, observability traces, and governed memory proposals. Manual Missions start from the Agents panel, `mission.*` Gateway RPCs, or the lead-only `mission_loop` tool; scheduled ticks are explicit opt-in triggers, not completion truth.
 - **ClawGraph Runtime** is the workspace YAML orchestration layer for long tasks that should not live inside one giant chat transcript. It compiles `.clawx/clawgraph/*.yaml` workflow specs into an IR, schedules stateless role workers as DAG nodes, requires structured handoffs, audits evidence, and freezes uncertain results for review.
 - **Task Ledger** is a ClawX-owned, workspace-scoped control layer for long-running work state. It records goals, subtasks, dependencies, blockers, review nodes, decisions, deviations, and session links without replacing runtime memory, observability traces, or chat transcripts.
@@ -37,44 +39,44 @@ ClawX is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript
 
 ```
 .
-├── electron/                 # ClawX main process + services + native bridge
-│   ├── main/                 # window, menu, tray, updater, traffic-light, ipc-handlers
-│   ├── preload/              # contextBridge surface exposed as window.electronAPI
-│   ├── services/             # 34 host-api service modules (gateway-api, agents-api, knowledge-api, task-ledger-api, clawgraph-api, …)
-│   ├── gateway/              # 29 files: runtime child-process manager (WS/HTTP/IPC fallback)
-│   ├── extensions/           # Main-process extension registry
-│   ├── utils/                # store, logger, telemetry, secure-storage, token-usage, …
-│   └── utils/                # native bindings (keychain, browser, etc.)
-│
-├── src/                      # ClawX renderer (React 19 + Vite)
-│   ├── pages/                # /chat, /knowledge, /agents, /channels, /skills, /cron, /models, /task-ledger, /dreams, /observability, /image-generation, /settings, /setup
-│   ├── components/           # layout, file-preview, agents, channels, settings, topics, ui, update
-│   ├── stores/               # zustand stores (chat, agents, gateway, mcp, providers, skills, …)
-│   ├── lib/                  # host-api.ts (renderer entry), api-client, host-events, helpers
-│   ├── extensions/           # Renderer-side extension framework
-│   ├── styles/globals.css    # design tokens + component conventions
-│   ├── i18n/                 # react-i18next bootstrap
-│   └── App.tsx / main.tsx    # HashRouter root
-│
-├── shared/                   # Type contracts shared between main and renderer
-│   ├── host-api/             # host-api contract (modules + actions)
-│   ├── host-events/          # push-event contract
-│   ├── types/                # Agent, Channel, Cron, Gateway, MCP, Sandbox, Skill, Workspace, Team, Memory, Knowledge, Observability, TaskLedger
-│   ├── chat/                 # RawMessage
-│   ├── i18n/locales/         # en, zh, ja, ru
-│   └── …
-│
-├── openclaw_runtime/         # The AI gateway
-│   ├── src/                  # 4,333 files, 60+ sub-domains
-│   ├── extensions/           # 136 bundled extensions (channels, providers, TTS, image, search, …)
-│   ├── docs/                 # template bundles
-│   └── package.json
-│
-├── scripts/                  # bundled-uv download, build helpers
-├── harness/                  # task spec validation (pnpm harness …)
-├── docs/                     # design / plan documents (this file lives here)
-├── package.json              # pnpm@10.33.4, scripts: dev, build:vite, lint, typecheck, test, test:e2e, comms:*
-└── AGENTS.md                 # workspace rules (this is also a hard contract)
+鈹溾攢鈹€ electron/                 # ClawX main process + services + native bridge
+鈹?  鈹溾攢鈹€ main/                 # window, menu, tray, updater, traffic-light, ipc-handlers
+鈹?  鈹溾攢鈹€ preload/              # contextBridge surface exposed as window.electronAPI
+鈹?  鈹溾攢鈹€ services/             # 34 host-api service modules (gateway-api, agents-api, knowledge-api, task-ledger-api, clawgraph-api, 鈥?
+鈹?  鈹溾攢鈹€ gateway/              # 29 files: runtime child-process manager (WS/HTTP/IPC fallback)
+鈹?  鈹溾攢鈹€ extensions/           # Main-process extension registry
+鈹?  鈹溾攢鈹€ utils/                # store, logger, telemetry, secure-storage, token-usage, 鈥?
+鈹?  鈹斺攢鈹€ utils/                # native bindings (keychain, browser, etc.)
+鈹?
+鈹溾攢鈹€ src/                      # ClawX renderer (React 19 + Vite)
+鈹?  鈹溾攢鈹€ pages/                # /chat, /knowledge, /agents, /channels, /skills, /cron, /models, /task-ledger, /dreams, /observability, /image-generation, /settings, /setup
+鈹?  鈹溾攢鈹€ components/           # layout, file-preview, agents, channels, settings, topics, ui, update
+鈹?  鈹溾攢鈹€ stores/               # zustand stores (chat, agents, gateway, mcp, providers, skills, 鈥?
+鈹?  鈹溾攢鈹€ lib/                  # host-api.ts (renderer entry), api-client, host-events, helpers
+鈹?  鈹溾攢鈹€ extensions/           # Renderer-side extension framework
+鈹?  鈹溾攢鈹€ styles/globals.css    # design tokens + component conventions
+鈹?  鈹溾攢鈹€ i18n/                 # react-i18next bootstrap
+鈹?  鈹斺攢鈹€ App.tsx / main.tsx    # HashRouter root
+鈹?
+鈹溾攢鈹€ shared/                   # Type contracts shared between main and renderer
+鈹?  鈹溾攢鈹€ host-api/             # host-api contract (modules + actions)
+鈹?  鈹溾攢鈹€ host-events/          # push-event contract
+鈹?  鈹溾攢鈹€ types/                # Agent, Channel, Cron, Gateway, MCP, Sandbox, Skill, Workspace, Team, Memory, Knowledge, Observability, TaskLedger
+鈹?  鈹溾攢鈹€ chat/                 # RawMessage
+鈹?  鈹溾攢鈹€ i18n/locales/         # en, zh, ja, ru
+鈹?  鈹斺攢鈹€ 鈥?
+鈹?
+鈹溾攢鈹€ openclaw_runtime/         # The AI gateway
+鈹?  鈹溾攢鈹€ src/                  # 4,333 files, 60+ sub-domains
+鈹?  鈹溾攢鈹€ extensions/           # 136 bundled extensions (channels, providers, TTS, image, search, 鈥?
+鈹?  鈹溾攢鈹€ docs/                 # template bundles
+鈹?  鈹斺攢鈹€ package.json
+鈹?
+鈹溾攢鈹€ scripts/                  # bundled-uv download, build helpers
+鈹溾攢鈹€ harness/                  # task spec validation (pnpm harness 鈥?
+鈹溾攢鈹€ docs/                     # design / plan documents (this file lives here)
+鈹溾攢鈹€ package.json              # pnpm@10.33.4, scripts: dev, build:vite, lint, typecheck, test, test:e2e, comms:*
+鈹斺攢鈹€ AGENTS.md                 # workspace rules (this is also a hard contract)
 ```
 
 ---
@@ -82,42 +84,42 @@ ClawX is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript
 ## 3. Layered Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│  ClawX Renderer (React 19, HashRouter)                               │
-│  ─ pages, components, zustand stores, host-api-client                │
-└───────────────┬──────────────────────────────────────────────────────┘
-                │  hostApi.<module>.<action>(payload)                  │
-                ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  Preload (contextBridge)                                             │
-│  ─ window.electronAPI.ipcRenderer.invoke('hostapi:invoke', …)        │
-└───────────────┬──────────────────────────────────────────────────────┘
-                │  IPC (typed channels only)
-                ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  Main Process (electron/main)                                        │
-│  ─ ipc-handlers → host-service-registry → service modules            │
-│  ─ services/* (34 host-api services) + extensions/registry           │
-│  ─ gateway/manager (WS client + reconnect + capability monitor)     │
-│  ─ utils/store (electron-store), secure-storage, telemetry           │
-└───────────────┬──────────────────────────────────────────────────────┘
-                │  child_process.spawn  +  WS / HTTP / IPC fallback
-                ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  openclaw_runtime (Node, port 18789)                                 │
-│  ─ gateway/server.ts (WS + HTTP + JSON-RPC dispatcher)               │
-│  ─ 60+ sub-domains: agents, channels, mcp, skills, memory, talk, …   │
-│  ─ plugin-sdk + plugins/ loader                                      │
-│  ─ 136 bundled extensions                                            │
-│  ─ SQLite via state/ + per-agent openclaw-agent.sqlite               │
-└──────────────────────────────────────────────────────────────────────┘
+鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹? ClawX Renderer (React 19, HashRouter)                               鈹?
+鈹? 鈹€ pages, components, zustand stores, host-api-client                鈹?
+鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+                鈹? hostApi.<module>.<action>(payload)                  鈹?
+                鈻?
+鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹? Preload (contextBridge)                                             鈹?
+鈹? 鈹€ window.electronAPI.ipcRenderer.invoke('hostapi:invoke', 鈥?        鈹?
+鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+                鈹? IPC (typed channels only)
+                鈻?
+鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹? Main Process (electron/main)                                        鈹?
+鈹? 鈹€ ipc-handlers 鈫?host-service-registry 鈫?service modules            鈹?
+鈹? 鈹€ services/* (34 host-api services) + extensions/registry           鈹?
+鈹? 鈹€ gateway/manager (WS client + reconnect + capability monitor)     鈹?
+鈹? 鈹€ utils/store (electron-store), secure-storage, telemetry           鈹?
+鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+                鈹? child_process.spawn  +  WS / HTTP / IPC fallback
+                鈻?
+鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹? openclaw_runtime (Node, port 18789)                                 鈹?
+鈹? 鈹€ gateway/server.ts (WS + HTTP + JSON-RPC dispatcher)               鈹?
+鈹? 鈹€ 60+ sub-domains: agents, channels, mcp, skills, memory, talk, 鈥?  鈹?
+鈹? 鈹€ plugin-sdk + plugins/ loader                                      鈹?
+鈹? 鈹€ 136 bundled extensions                                            鈹?
+鈹? 鈹€ SQLite via state/ + per-agent openclaw-agent.sqlite               鈹?
+鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
 ```
 
 ### 3.1 Hard rules (enforced by AGENTS.md)
 
 - Renderer must go through `src/lib/host-api.ts` or `src/lib/api-client.ts`. **No direct** `window.electron.ipcRenderer.invoke(...)` in pages or components.
 - Renderer must not call `http://127.0.0.1:18789/...` directly. Use the main-process proxy channels (`hostapi:fetch`, `gateway:httpProxy`).
-- Transport policy is main-owned and fixed at **WS → HTTP → IPC fallback**. Renderer must not implement protocol switching.
+- Transport policy is main-owned and fixed at **WS 鈫?HTTP 鈫?IPC fallback**. Renderer must not implement protocol switching.
 - All user-facing strings go through `react-i18next` with full coverage in `en` / `zh` / `ja` / `ru`.
 - Any user-visible UI change must include or update a Playwright E2E spec in the same PR.
 
@@ -144,14 +146,14 @@ ClawX is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript
 | Built-in downloads | `scripts/download-bundled-uv.mjs` etc. | uv, agent-browser, win node |
 | ClawHub | `electron/gateway/clawhub.ts` | search / install / uninstall / open |
 
-### 4.2 Service registry (34 modules)
+### 4.2 Service registry (35 modules)
 
-The 34 host-api modules under `electron/services/` implement every host-api action declared in `shared/host-api/contract.ts`. They are loaded by `electron/main/ipc-handlers.ts` into a typed `HostServiceRegistry` whose shape is `Record<Module, Record<Action, Function>>`. Each module keeps its boundary narrow and can call runtime JSON-RPC, local persistence, OS APIs, or ClawX-owned helpers as needed:
+The 35 host-api modules under `electron/services/` implement every host-api action declared in `shared/host-api/contract.ts`. They are loaded by `electron/main/ipc-handlers.ts` into a typed `HostServiceRegistry` whose shape is `Record<Module, Record<Action, Function>>`. Each module keeps its boundary narrow and can call runtime JSON-RPC, local persistence, OS APIs, or ClawX-owned helpers as needed:
 
 | Module group | Modules |
 |---|---|
 | Desktop / OS | `app`, `shell`, `dialog`, `window`, `updates`, `uv` |
-| Persistence / config | `settings`, `workspaces`, `files`, `git` |
+| Persistence / config | `settings`, `workspaces`, `files`, `git`, `projectRules` |
 | Runtime control | `gateway`, `openclaw`, `logs`, `diagnostics`, `clawGraph` |
 | Communication | `channels`, `agents`, `chat`, `sessions`, `topics`, `media`, `cron`, `mcp` |
 | AI integration | `providers`, `skills`, `usage`, `observability`, `permissions`, `knowledge` |
@@ -161,22 +163,22 @@ The 34 host-api modules under `electron/services/` implement every host-api acti
 
 Located under `electron/gateway/`, this is a full-featured process supervisor:
 
-- `manager.ts` — top-level `GatewayManager` (singleton), `EventEmitter` for state changes.
-- `process-launcher.ts` — `spawn` openclaw child process, environment, `OPENCLAW_*` flags.
-- `supervisor.ts` — find existing process, doctor repair, port-free wait, launchctl cleanup, Python sidecar warmup.
-- `ws-client.ts` — connect WS, exponential backoff, frame codec.
-- `request-store.ts` — pending request id → resolver, with timeout and reject-on-disconnect.
-- `event-dispatch.ts` — maps `GATEWAY_EVENTS` to renderer push channels.
-- `state.ts` / `lifecycle-controller.ts` / `restart-controller.ts` / `restart-governor.ts` — state machine and restart policy.
-- `connection-monitor.ts` — heartbeat, last-RPC-success, channel-status freshness.
-- `capability-monitor.ts` — runtime capability snapshot (which gateway methods are available right now).
-- `startup-stderr.ts` — classify stderr lines for actionable error messages.
-- `startup-orchestrator.ts` — composes the whole startup sequence.
-- `reload-policy.ts` / `process-policy.ts` — reload and reconnect policies.
-- `config-sync.ts` — writes ClawX-managed config keys into runtime config dir.
-- `ws-trace.ts` — optional frame tracing for debugging.
+- `manager.ts` 鈥?top-level `GatewayManager` (singleton), `EventEmitter` for state changes.
+- `process-launcher.ts` 鈥?`spawn` openclaw child process, environment, `OPENCLAW_*` flags.
+- `supervisor.ts` 鈥?find existing process, doctor repair, port-free wait, launchctl cleanup, Python sidecar warmup.
+- `ws-client.ts` 鈥?connect WS, exponential backoff, frame codec.
+- `request-store.ts` 鈥?pending request id 鈫?resolver, with timeout and reject-on-disconnect.
+- `event-dispatch.ts` 鈥?maps `GATEWAY_EVENTS` to renderer push channels.
+- `state.ts` / `lifecycle-controller.ts` / `restart-controller.ts` / `restart-governor.ts` 鈥?state machine and restart policy.
+- `connection-monitor.ts` 鈥?heartbeat, last-RPC-success, channel-status freshness.
+- `capability-monitor.ts` 鈥?runtime capability snapshot (which gateway methods are available right now).
+- `startup-stderr.ts` 鈥?classify stderr lines for actionable error messages.
+- `startup-orchestrator.ts` 鈥?composes the whole startup sequence.
+- `reload-policy.ts` / `process-policy.ts` 鈥?reload and reconnect policies.
+- `config-sync.ts` 鈥?writes ClawX-managed config keys into runtime config dir.
+- `ws-trace.ts` 鈥?optional frame tracing for debugging.
 
-The transport is **fixed** at `WS → HTTP → IPC fallback`. Renderer does not select.
+The transport is **fixed** at `WS 鈫?HTTP 鈫?IPC fallback`. Renderer does not select.
 
 ### 4.4 Preload bridge
 
@@ -188,13 +190,13 @@ The transport is **fixed** at `WS → HTTP → IPC fallback`. Renderer does not 
 - **State**: per-domain zustand stores under `src/stores/`. `src/stores/chat` is split into 20 sub-modules (`runtime-actions`, `history-transcript-merge`, `session-actions`, etc.) to keep the main chat slice manageable.
 - **Layout**: `src/components/layout/MainLayout.tsx` with sidebar, top-bar, content; `TitleBar.tsx` integrates with custom title bar; `use-new-chat-action.ts` for global hotkey.
 - **File preview**: `src/components/file-preview/*` supports Markdown, Monaco editor/diff, image, PDF, Sheet, HTML preview, and a "workspace browser" body that ties terminal + web preview + file tree together.
-- **Settings**: page-driven, with a dedicated `ProvidersSettings`, `ImageGenerationSettings`, `UpdateSettings`.
+- **Settings**: page-driven, with a dedicated `ProvidersSettings`, `ImageGenerationSettings`, `UpdateSettings`; System & Runtime includes Project Rules Center for inspecting active-workspace `AGENTS.md`, `.clawx/rules/*.md`, deterministic rule lint, and conservative missing-template creation through `hostApi.projectRules` without adding a new source of truth.
 - **Agents / Channels / Cron / Skills / Models / Knowledge / TaskLedger / ClawGraph / Dreams / Observability / ImageGeneration**: each is a first-class page backed by a zustand store or typed host-api snapshot.
-- **Knowledge**: `/knowledge` wraps `hostApi.knowledge.*` for wiki status, initialization, bounded file/folder import, search, inspect, compile, lint, vault open, and editable draft apply.
+- **Knowledge**: `/knowledge` wraps `hostApi.knowledge.*` for wiki status, initialization, bounded file/folder import, OKF validation/import, search, inspect, compile, lint, vault open, and governed draft/proposal review. In Chat, users get wiki context through a Codex-style Context Palette (triggered by a `/` button or typing `/` at a blank composer): `/wiki <query>` searches wiki pages and attaches explicit references as visible chips, while `/memory`, `/all`, `/none`, and `/scope` adjust read-only knowledge scope. Selected references are sent as read-only `knowledgeReferences` in the chat payload; no write or apply capability is granted through these commands.
 - **ClawGraph**: `/clawgraph` wraps `hostApi.clawGraph.*` for workspace workflow listing, compile diagnostics, run/status/events, abort, and review decisions. Renderer code never reads `.clawx/clawgraph/*.yaml` directly.
 - **Topics**: `TopicManager` + `TopicSelector` for per-session topic memory.
 - **Task Ledger summary**: `src/components/task-ledger/TaskLedgerSummaryPanel.tsx` shows current goal, active work, blockers, review queue, and recent decisions beside Chat when the workspace has tracked long-running tasks.
-- **UI primitives**: `src/components/ui/*` (button, card, dialog, sheet, tabs, tooltip, …) styled to the design tokens in `src/styles/globals.css`.
+- **UI primitives**: `src/components/ui/*` (button, card, dialog, sheet, tabs, tooltip, 鈥? styled to the design tokens in `src/styles/globals.css`.
 - **i18n**: `src/i18n/index.ts` boots `react-i18next` against `shared/i18n/locales/{en,zh,ja,ru}/*`.
 
 ### 4.6 Design system
@@ -219,9 +221,9 @@ The transport is **fixed** at `WS → HTTP → IPC fallback`. Renderer does not 
 
 `electron/extensions/registry.ts` plus `electron/extensions/types.ts` define three extension kinds:
 
-- `MarketplaceProviderExtension` — search / install skills (ClawHub-compatible).
-- `HostApiProviderExtension` — contributes host-api modules / actions to the registry.
-- `AuthProviderExtension` — provider-level auth flow (status, startup hook).
+- `MarketplaceProviderExtension` 鈥?search / install skills (ClawHub-compatible).
+- `HostApiProviderExtension` 鈥?contributes host-api modules / actions to the registry.
+- `AuthProviderExtension` 鈥?provider-level auth flow (status, startup hook).
 
 Extensions are loaded on app boot and may register/unregister contributions at runtime.
 
@@ -241,8 +243,8 @@ Hard-delete behavior: `Delete conversation` unlinks `<id>.jsonl`, `<id>.deleted.
 
 ### 5.1 Process and entry
 
-- CLI: `openclaw_runtime/src/entry.ts` — `startGatewayServer(port, { bind, auth, deferStartupSidecars })`. Default `127.0.0.1:18789`, supports `loopback` / `LAN` binds.
-- Library: `openclaw_runtime/src/library.ts` exports embedding helpers (`getReplyFromConfig`, `runExec`, `runCommandWithTimeout`, `monitorWebChannel`, `ensureBinary`, `loadConfig`, `applyTemplate`, session helpers, …). ClawX itself embeds the runtime both as a subprocess and as a library.
+- CLI: `openclaw_runtime/src/entry.ts` 鈥?`startGatewayServer(port, { bind, auth, deferStartupSidecars })`. Default `127.0.0.1:18789`, supports `loopback` / `LAN` binds.
+- Library: `openclaw_runtime/src/library.ts` exports embedding helpers (`getReplyFromConfig`, `runExec`, `runCommandWithTimeout`, `monitorWebChannel`, `ensureBinary`, `loadConfig`, `applyTemplate`, session helpers, 鈥?. ClawX itself embeds the runtime both as a subprocess and as a library.
 - Legacy surface: `openclaw/extension-api` (deprecated, redirects to `openclaw/plugin-sdk/*`).
 
 ### 5.2 Sub-domains (`openclaw_runtime/src/*`)
@@ -267,7 +269,7 @@ Hard-delete behavior: `Delete conversation` unlinks `<id>.jsonl`, `<id>.deleted.
 | `web/`, `web-fetch/`, `web-search/` | Built-in HTTP proxy, content fetch, search abstraction |
 | `config/`, `secrets/`, `security/` | Config I/O, secret application, security audit finding types |
 | `state/` | Global SQLite (`openclaw.sqlite`) + per-agent `agents/<id>/agent/openclaw-agent.sqlite` |
-| `observability/` | Observability — trace writer/reader, dashboard data |
+| `observability/` | Observability 鈥?trace writer/reader, dashboard data |
 | `tasks/`, `commitments/`, `routing/`, `bindings/` | Tasks / commitments / routing / bindings |
 | `bootstrap/`, `daemon/`, `hooks/` | Startup / daemon / hook loader |
 | `proxy-capture/`, `node-host/`, `plugin-sdk/`, `plugins/`, `plugin-state/` | Plugin and host plumbing |
@@ -310,7 +312,7 @@ Methods live in `openclaw_runtime/src/gateway/methods/core-descriptors.ts` + `se
 - Push (`push.test`, `push.web.*`)
 - Hidden / internal (`poll`, `sessions.steer`, `connect`, `nativeHook.invoke`, `web.login.start/wait`)
 
-Events broadcast in-process (consumed by ClawX and any other client): `connect.challenge`, `agent`, `chat`, `session.message`, `session.operation`, `session.tool`, `sessions.changed`, `presence`, `tick`, `talk.mode`, `talk.event`, `shutdown`, `health`, `heartbeat`, `cron`, `clawgraph-lifecycle`, `node.pair.*`, `device.pair.*`, `voicewake.*`, `exec.approval.*`, `plugin.approval.*`, `update.available`, ….
+Events broadcast in-process (consumed by ClawX and any other client): `connect.challenge`, `agent`, `chat`, `session.message`, `session.operation`, `session.tool`, `sessions.changed`, `presence`, `tick`, `talk.mode`, `talk.event`, `shutdown`, `health`, `heartbeat`, `cron`, `clawgraph-lifecycle`, `node.pair.*`, `device.pair.*`, `voicewake.*`, `exec.approval.*`, `plugin.approval.*`, `update.available`, 鈥?
 
 ### 5.4 Plugin SDK
 
@@ -333,7 +335,7 @@ A new subpath barrel exists for narrow consumers (`openclaw/plugin-sdk/core`, `o
 By family (representative):
 
 - **Channels (30+)**: `whatsapp`, `telegram`, `discord`, `feishu`, `slack`, `line`, `msteams`, `googlechat`, `google-meet`, `imessage`, `irc`, `matrix`, `mattermost`, `nextcloud-talk`, `signal`, `synology-chat`, `tlon`, `twitch`, `wechat`, `wecom`, `zalo`, `zalouser`, `qqbot`, `nostr`, `sms`, `voice-call`, `phone-control`, `webhooks`.
-- **LLM / model providers (50+)**: `openai`, `anthropic`, `google`, `google-vertex`, `amazon-bedrock`, `azure-*`, `deepseek`, `qwen`, `moonshot`, `kimi-coding`, `mistral`, `ollama`, `litellm`, `lmstudio`, `openrouter`, `xai`, `groq`, `cerebras`, `chutes`, `byteplus`, `volcengine`, `alibaba`, `stepfun`, `gmi`, `huggingface`, `fireworks`, `fal`, `kilocode`, `arcee`, `sglang`, `vllm`, `novita`, `nvidia`, `opencode(-go)`, `copilot(-proxy)`, `github-copilot`, `codex(-supervisor)`, `minimax`, `venice`, `vercel-ai-gateway`, `cloudflare-ai-gateway`, `perplexity`, `voyage`, `xiaomi`, `zai`, `tencent`, `qianfan`, `clickclack`, `lobster`, `parallel`, `voyage`, …
+- **LLM / model providers (50+)**: `openai`, `anthropic`, `google`, `google-vertex`, `amazon-bedrock`, `azure-*`, `deepseek`, `qwen`, `moonshot`, `kimi-coding`, `mistral`, `ollama`, `litellm`, `lmstudio`, `openrouter`, `xai`, `groq`, `cerebras`, `chutes`, `byteplus`, `volcengine`, `alibaba`, `stepfun`, `gmi`, `huggingface`, `fireworks`, `fal`, `kilocode`, `arcee`, `sglang`, `vllm`, `novita`, `nvidia`, `opencode(-go)`, `copilot(-proxy)`, `github-copilot`, `codex(-supervisor)`, `minimax`, `venice`, `vercel-ai-gateway`, `cloudflare-ai-gateway`, `perplexity`, `voyage`, `xiaomi`, `zai`, `tencent`, `qianfan`, `clickclack`, `lobster`, `parallel`, `voyage`, 鈥?
 - **Speech / TTS / ASR**: `elevenlabs`, `azure-speech`, `deepgram`, `gradium`, `inworld`, `senseaudio`, `talk-voice`, `tts-local-cli`, `microsoft(-foundry)`.
 - **Image / video / music generation**: `image-generation-core`, `comfy`, `runway`, `fal`, `pixverse`, `video-generation-core`, music subsystems.
 - **Search / fetch**: `brave`, `duckduckgo`, `exa`, `firecrawl`, `searxng`, `tavily`, `web-readability`, `document-extract`.
@@ -352,7 +354,7 @@ By family (representative):
 
 ### 5.7 Doctor / self-repair
 
-`openclaw doctor --json` and `openclaw doctor --fix --yes --non-interactive` are exposed to the renderer through `app.openClawDoctor` (ClawX Settings → Advanced → Developer). The renderer never spawns the CLI directly.
+`openclaw doctor --json` and `openclaw doctor --fix --yes --non-interactive` are exposed to the renderer through `app.openClawDoctor` (ClawX Settings 鈫?Advanced 鈫?Developer). The renderer never spawns the CLI directly.
 
 ---
 
@@ -362,27 +364,27 @@ By family (representative):
 
 ```
 Renderer
-  hostApi.gateway.rpc('sessions.list', { … }, 10_000)
-        │
-        ▼
-src/lib/host-api.ts → src/lib/api-client.ts
-        │  window.electronAPI.ipcRenderer.invoke('hostapi:invoke', { id, module: 'gateway', action: 'rpc', payload })
-        ▼
+  hostApi.gateway.rpc('sessions.list', { 鈥?}, 10_000)
+        鈹?
+        鈻?
+src/lib/host-api.ts 鈫?src/lib/api-client.ts
+        鈹? window.electronAPI.ipcRenderer.invoke('hostapi:invoke', { id, module: 'gateway', action: 'rpc', payload })
+        鈻?
 electron/preload/index.ts (whitelisted channel)
-        │  ipcMain.handle('hostapi:invoke', …)
-        ▼
-electron/main/ipc-handlers.ts → host-service-registry
-        │  services/gateway-api.ts
-        ▼
+        鈹? ipcMain.handle('hostapi:invoke', 鈥?
+        鈻?
+electron/main/ipc-handlers.ts 鈫?host-service-registry
+        鈹? services/gateway-api.ts
+        鈻?
 electron/gateway/manager.ts (WS send)
-        │  JSON-RPC over WS
-        ▼
+        鈹? JSON-RPC over WS
+        鈻?
 openclaw_runtime gateway/server.ts dispatcher
 ```
 
 ### 6.2 host-events: push
 
-Runtime broadcast events → `dispatchJsonRpcNotification` / `dispatchProtocolEvent` in `electron/gateway/event-dispatch.ts` → `ipcMain.emit` → preload whitelisted `on(...)` → `window.electronAPI.ipcRenderer.on('host-event:<name>', …)` → `src/lib/host-events.ts` → zustand stores.
+Runtime broadcast events 鈫?`dispatchJsonRpcNotification` / `dispatchProtocolEvent` in `electron/gateway/event-dispatch.ts` 鈫?`ipcMain.emit` 鈫?preload whitelisted `on(...)` 鈫?`window.electronAPI.ipcRenderer.on('host-event:<name>', 鈥?` 鈫?`src/lib/host-events.ts` 鈫?zustand stores.
 
 ### 6.3 HTTP proxy
 
@@ -395,11 +397,11 @@ Knowledge Hub follows the same renderer/Main/runtime boundary as the rest of Cla
 ```
 /knowledge page or Chat draft action
   hostApi.knowledge.<action>(payload)
-        │
-        ▼
+        鈹?
+        鈻?
 electron/services/knowledge-api.ts
-        │  gatewayManager.rpc('wiki.*', ...)
-        ▼
+        鈹? gatewayManager.rpc('wiki.*', ...)
+        鈻?
 openclaw_runtime memory-wiki / memory-core
 ```
 
@@ -415,17 +417,17 @@ Work Mode follows the same renderer/Main/runtime boundary and deliberately stops
 ```
 Settings work-mode controls
   workspace session UI state (`workMode`)
-        │
-        ▼
+        鈹?
+        鈻?
 src/stores/chat.ts sendMessage(..., workMode)
-        │
-        ▼
+        鈹?
+        鈻?
 hostApi.chat.sendWithMedia({ workMode, knowledgeScope, ... })
-        │
-        ▼
+        鈹?
+        鈻?
 electron/services/chat-api.ts
-        │
-        ▼
+        鈹?
+        鈻?
 Gateway chat.send with untrusted metadata block
 ```
 
@@ -454,7 +456,7 @@ Gateway chat.send with untrusted metadata block
 | Work mode metadata | `workMode`, Work Kits, artifact hints, quality checks, and capability summaries are normalized in Main and injected only as untrusted intent metadata; they cannot grant tools, bypass approvals, install skills automatically, or change workspace permission mode |
 | Work providers | `electron/services/work-providers-api.ts` validates workspace paths before Office/PDF/WebRead runs, keeps Search missing-config until explicitly configured, and leaves heavy converters/crawlers/OCR/dataframe providers optional |
 | Telemetry | Opt-in, secret-scrubbing |
-| Renderer → runtime | Never direct; always through main |
+| Renderer 鈫?runtime | Never direct; always through main |
 
 ---
 
@@ -510,7 +512,7 @@ Legacy provider ids are normalized for compatibility: `openclaw-native` and `con
 - **Renderer**: `/observability` page reads `hostapi:observability.*` through `src/lib/host-api.ts` (dashboard snapshot, indexed trace query, trace graph, node diagnostics, trace detail, clear traces). The workbench combines a query-driven trace list, issue chips, source freshness, SVG/HTML agent-chain graph, node diagnostics drawer, synchronized timeline, and the legacy waterfall in `src/pages/Observability/TraceWaterfall.tsx`.
 - **Gateway**: connection monitor tracks heartbeat, last-RPC success, channel-status freshness, exposes `diagnostics.gatewaySnapshot` to the renderer for one-shot health capture.
 - **Runtime**: `observability.reportTrace` / `observability.traces` write/read the runtime trace store; Electron maps runtime spans, chat runtime events, and trajectory JSONL sidecars into `ObservabilityTraceGraph`, issue summaries, correlations, and redacted `traceNodeDiagnostics` payloads without adding a database. A ClawX-owned local JSON/JSONL index persists sanitized trace envelopes for recent-history queries and rehydration; `clearTraces()` clears only this observability index/cache, not transcript or trajectory source files.
-- **Doctor**: `openclaw doctor` exposed as a button in Settings → Advanced → Developer.
+- **Doctor**: `openclaw doctor` exposed as a button in Settings 鈫?Advanced 鈫?Developer.
 
 ---
 
@@ -611,7 +613,7 @@ Recommended mapping for future agent work:
 - **`interrupt` semantics**: writes checkpoint/deviation evidence before aborting the active run through `abortChatRunsForSessionKeyWithPartials`, keeps partial evidence, and lets the inbound message start a fresh run. For ClawGraph active nodes it requires explicit confirmation and records a deviation/abort checkpoint.
 - **ClawGraph alignment**: active nodes default to `guide` or `queue`; interrupt marks the current node/run path as interrupted/deviated and resumes from checkpoint. Audit/review-stage human input is treated as a review decision or review evidence, not as a handoff rewrite.
 
-`ResumeCheckpoint` is the minimum continuation contract. It is intentionally smaller than a full node snapshot and larger than a free-form compaction summary. It preserves the current objective, active node/task, last confirmed handoff, blockers, decisions, deviations, files touched, tests run, next action, review-needed items, and evidence refs. Runtime stores checkpoints, intervention events, and queued follow-ups in the OpenClaw state SQLite tables `long_task_checkpoints`, `long_task_intervention_events`, and `long_task_user_queue`; no JSON/JSONL sidecar is introduced. New runs should reconstruct context from checkpoint + Task Ledger summary + ClawGraph snapshot + Context Pack rather than asking the model to reread the full transcript.
+`ResumeCheckpoint` is the minimum continuation contract. It is intentionally smaller than a full node snapshot and larger than a free-form compaction summary. It preserves the current objective, active node/task, last confirmed handoff, blockers, decisions, deviations, files touched, tests run, next action, review-needed items, evidence refs, and bounded Engineering Control Signals (`controlSignals`, `validationState`, and `acceptanceStatus`). Runtime stores checkpoints, intervention events, and queued follow-ups in the OpenClaw state SQLite tables `long_task_checkpoints`, `long_task_intervention_events`, and `long_task_user_queue`; no JSON/JSONL sidecar is introduced. New runs should reconstruct context from checkpoint + Task Ledger summary + ClawGraph snapshot + Context Pack rather than asking the model to reread the full transcript.
 
 ClawX exposes a formal recovery query surface:
 
@@ -700,6 +702,7 @@ Each `mission.tick` should follow a fixed control path:
 - recent trace/test/tool evidence summaries
 - open blockers, approvals, review items, risks, and deviations
 - repair brief or next tick reason
+- bounded control-signal, validation, acceptance, and scope-summary sections
 
 `MissionReviewer` returns only structured JSON:
 
@@ -713,12 +716,21 @@ Each `mission.tick` should follow a fixed control path:
   repairBrief?: string;
   nextTick?: { afterMs?: number; reason?: string };
   risks: string[];
+  controlSignals: Array<{
+    kind: "evidence_gap" | "validation_missing" | "scope_drift" | "unverified_claim" | "replan_required" | "permission_wait" | "blocked_dependency" | "risk" | "recovery_gap";
+    severity: "info" | "warning" | "blocking";
+    message: string;
+    suggestedAction?: "continue" | "repair" | "replan" | "ask_user" | "block" | "sleep" | "verify";
+  }>;
+  validationState: { status: "unknown" | "not_run" | "passed" | "failed" | "partial" | "missing"; checks: string[]; evidenceRefs: unknown[] };
+  acceptanceStatus: { status: "unknown" | "satisfied" | "partial" | "missing" | "changed"; criteria: string[]; gaps: string[] };
+  quality: Array<{ dimension: "scope" | "evidence" | "validation" | "risk" | "recovery" | "security"; status: "pass" | "gap" | "fail" | "unknown" }>;
   memoryCandidates: Array<{ kind: "role_memory" | "knowledge_draft"; summary: string; evidenceRefs: string[] }>;
   checkpointSummary: string;
 }
 ```
 
-Completion requires evidence, not model confidence alone. A Mission can become `completed` only when acceptance criteria are satisfied, required Task Ledger checks are done, no blocking review nodes remain, verifier/reviewer evidence supports the result, and the final checkpoint explains the outcome. Missing evidence, repeated no-progress hashes, exhausted tick/repair budgets, permission waits, unsafe requests, or unresolved external truth claims become `blocked` or `ask_user`.
+Completion requires evidence, not model confidence alone. A Mission can become `completed` only when acceptance criteria are satisfied, required Task Ledger checks are done, no blocking review nodes remain, verifier/reviewer evidence supports the result, no blocking Engineering Control Signal remains, and the final checkpoint explains the outcome. Missing evidence, validation gaps, scope drift, unverified completion claims, repeated no-progress hashes, exhausted tick/repair budgets, permission waits, unsafe requests, or unresolved external truth claims become `repair`, `blocked`, or `ask_user`; an inner `task_loop` complete state or Observability trace can never upgrade a long-term goal by itself.
 
 Trigger modes:
 
@@ -770,12 +782,12 @@ Knowledge Hub is the product-level answer to reusable project knowledge. It is i
 - **Import model**: users explicitly import files or folders. Directory import enumerates bounded text-like files in Main and calls `wiki.ingest` per file, preserving provenance without granting broad local-vault access.
 - **OKF compatibility**: `knowledge.validateOkfBundle` and `knowledge.importOkfBundle` support Open Knowledge Format v0.1 local folders as a thin adapter. The MVP validates Markdown files with YAML frontmatter, treats `index.md` and `log.md` as reserved, preserves unknown frontmatter fields, warns on unknown types or broken internal links, and imports selected valid concepts through `wiki.ingest`. It does not support zip/tar, Git URLs, export, Google Cloud services, or a separate graph/vector store.
 - **Search and inspection**: `/knowledge` calls `wiki.search` and `wiki.get`, showing page/source/provenance so results remain auditable instead of becoming opaque chat context.
-- **Role-first governance**: Knowledge Hub introduces a configurable `Knowledge Steward` role slot (`知识管理员`) for classification, tagging, duplicate/conflict/staleness checks, and change proposals. It is not a superuser: its default `canApplyDirectly` capability is always false.
+- **Role-first governance**: Knowledge Hub introduces a configurable `Knowledge Steward` role slot (`鐭ヨ瘑绠＄悊鍛榒) for classification, tagging, duplicate/conflict/staleness checks, and change proposals. It is not a superuser: its default `canApplyDirectly` capability is always false.
 - **Knowledge Inbox and provenance**: ClawX Main owns a lightweight inbox/provenance layer for candidate knowledge and usage metadata. Chat/session/task/file/OKF/ClawGraph candidates can enter the inbox first; provenance records source refs and read/reference events without mutating formal wiki pages.
 - **Draft/proposal/audit state**: ClawX Main owns UI review state under `<openclawConfig>/knowledge/drafts`, `<openclawConfig>/knowledge/proposals`, and `<openclawConfig>/knowledge/audit.jsonl`. Formal knowledge still lives in `memory-wiki`; local draft/proposal state is the confirmation buffer.
 - **Draft governance**: AI-generated, steward-generated, or session-derived knowledge is never written directly. Chat's `Save to Knowledge` action and the Knowledge page draft inbox create editable drafts/proposals; `wiki.apply` is reached only through an approved draft plus explicit user apply.
 - **Change boundaries**: create/update/merge/archive/delete all travel as proposals. Updates and merges must show a diff; archive/delete must show targets and reason; users remain the only final confirmer.
-- **Chat integration**: ChatInput exposes `None / Memory / Wiki / All` as `knowledgeScope`, persisted in workspace UI state. Main injects hidden runtime metadata for tool use while renderer cleanup keeps those instructions invisible in chat transcripts. `knowledgeScope=wiki/all` is read-only and only permits knowledge search/get; it never grants write, update, archive, delete, merge, or apply authority.
+- **Chat integration**: ChatInput exposes knowledge through a Codex-style Context Palette instead of making the composer a permanent knowledge workspace. Typing `/wiki <query>` searches source-backed wiki pages, lets the user attach explicit references as visible chips, and sends those references as read-only `knowledgeReferences`; `/memory`, `/all`, `/none`, and `/scope` adjust `knowledgeScope` without granting write authority. Main injects hidden runtime metadata for tool use while renderer cleanup keeps those instructions invisible in chat transcripts. `knowledgeScope=wiki/all` and selected references are read-only and only permit knowledge search/get; they never grant write, update, archive, delete, merge, or apply authority.
 - **Obsidian boundary**: Obsidian is optional. ClawX may expose `renderMode: "obsidian"` and open/search helpers when a user configures a vault or CLI is detected, but setup, ingestion, search, and draft apply do not depend on Obsidian.
 - **Boundary with Role Memory**: role-first memory remains the structured, gatekeeper-governed memory card system for agent roles. Knowledge Hub is a wiki workbench for source-backed notes and syntheses; the two can reference each other but neither silently mutates the other.
 - **Boundary with Task Ledger**: Task Ledger tracks current work shape and review state. Knowledge Hub stores reusable knowledge and decisions after user confirmation.
@@ -856,7 +868,7 @@ The `/knowledge` page is organized as a workbench rather than an Obsidian clone:
 - **Review / Diff** shows new content, diffs, merge participants, or archive/delete targets before confirmation.
 - **Governance** shows the Knowledge Steward role slot, default read-only agent boundary, and warning surfaces for missing sources, low confidence, conflicts, duplicates, or stale material.
 
-Chat keeps a quick `Use Wiki` affordance and the `None / Memory / Wiki / All` picker, but these remain read controls. Session-level "Save to Knowledge" creates a review draft and proposal; it does not write directly. When wiki context is used in an answer, the intended UX is to surface page/source references so the user can inspect what influenced the response.
+Chat uses the `/` Context Palette as the primary knowledge entry point: `/wiki` searches and attaches wiki pages as visible chips, while `/memory`, `/all`, `/none`, and `/scope` change only read scope. Legacy quick controls may remain as compatibility affordances, but the intended UX keeps the composer clean until the user explicitly summons context. Session-level "Save to Knowledge" creates a review draft and proposal; it does not write directly. When wiki context is used in an answer, the intended UX is to surface page/source references so the user can inspect what influenced the response.
 
 ### 8.6.5 OKF Compatibility
 
@@ -898,9 +910,9 @@ Work Provider v1 is the Main-owned capability layer underneath those kits. `shar
 - **Preset resolver**: `shared/types/work-mode.ts` is the shared source for mode ids, i18n keys, recommended permission, default knowledge scope, response style, state widgets, legacy tool bundle labels, Work Kit definitions, user Work Kit overrides, capability aggregation, and fallback behavior.
 - **UI state**: `WorkspaceUiState.workMode` stores the selected mode with the workspace/session UI state, next to knowledge scope, draft, and artifact panel state.
 - **Settings UI**: Settings exposes the mode selector and per-mode Work Kit toggles, shows capability status from local skills/Gateway readiness, and offers explicit install buttons for built-in catalog slugs only.
-- **Send path**: `src/stores/chat.ts` forwards `workMode` through `hostApi.chat.sendWithMedia`; `electron/services/chat-api.ts` normalizes it and injects a hidden untrusted metadata block into the outgoing runtime message with kits, expected artifact types, quality checks, and capability summaries.
+- **Send path**: `src/stores/chat.ts` forwards `workMode` through `hostApi.chat.sendWithMedia`; `electron/services/chat-api.ts` normalizes it and injects a hidden untrusted metadata block into the outgoing runtime message with kits, expected artifact types, quality checks, capability summaries, and the mode's Engineering Control contract.
 - **Panel**: `WorkModeSummaryPanel` is a lightweight status surface near the Task Ledger summary. It explains the current mode, highlights permission mismatch, and shows enabled kits, output artifact types, kit status (`ready`, `missingSkill`, `disabled`, `runtimeUnavailable`, or `optionalExternal`), and Work Provider capability counts without creating a new task data model.
-- **Boundary**: Work Mode may influence the assistant's response posture, artifact intent, and capability hints, but workspace permission mode, MCP/runtime tool availability, approval gates, sandbox policy, explicit skill installation, and OpenClaw role/tool enforcement remain the sources of authority.
+- **Boundary**: Work Mode may influence the assistant's response posture, artifact intent, and capability hints, but workspace permission mode, MCP/runtime tool availability, approval gates, sandbox policy, explicit skill installation, and OpenClaw role/tool enforcement remain the sources of authority. Plan, Build, Review, and Docs/Data carry different control contracts, but those contracts are untrusted intent metadata and cannot grant tools or mark work complete.
 
 ---
 
@@ -941,7 +953,7 @@ After any functional or architecture change, review `README.md`, `README.zh-CN.m
 
 ## 11. Role-First Runtime Architecture
 
-ClawX implements a **role-first agent runtime** — users don't just "pick a model," they compose and orchestrate a team of role-driven agents. This section documents the complete architecture as implemented.
+ClawX implements a **role-first agent runtime** 鈥?users don't just "pick a model," they compose and orchestrate a team of role-driven agents. This section documents the complete architecture as implemented.
 
 ### 11.1 Role Contracts
 
@@ -958,23 +970,25 @@ ClawX implements a **role-first agent runtime** — users don't just "pick a mod
 | `docs-writer` | medium | Documentation generation |
 | `skeptic` | high | Adversarial challenge, false-positive elimination |
 
-Each role is a **task contract**, not a persona — the `rolePrompt` defines responsibilities, boundaries, and output format, not "you are a top expert with 20 years of experience."
+Each role is a **task contract**, not a persona 鈥?the `rolePrompt` defines responsibilities, boundaries, and output format, not "you are a top expert with 20 years of experience."
 
 **Role contract fields**: `name`, `displayName`, `rolePrompt`, `tools[]`, `capabilities[]`, `toolRequirements[]`, `riskProfile`, `canModifyScope`, `permissions{filesystem,network,commands}`, `effort`, `model{default,fallback,provider}`, `outputSchema{format,sections}`, `handoff{to,from,requiresReview}`, `version`, `tags`.
 
-**Custom roles** via config: `cfg.agents.roles[]` — snake_case or camelCase, validated by `validateRoleContract`, merged over built-ins by name (config wins on collision).
+**Custom roles** via config: `cfg.agents.roles[]` 鈥?snake_case or camelCase, validated by `validateRoleContract`, merged over built-ins by name (config wins on collision).
 
 ### 11.2 Three Orchestration Modes
 
 | Mode | Trigger | Behavior |
 |---|---|---|
-| **Router** | Simple tasks (no "important" flag, ≤2 file hints) | Main agent picks one role; single worker |
+| **Router** | Simple tasks (no "important" flag, 鈮? file hints) | Main agent picks one role; single worker |
 | **Lead + Workers** | Complex tasks (multiple file hints, "important") | Lead decomposes; workers spawn **in parallel** (`Promise.allSettled`); lead synthesizes |
 | **Adversarial Review** | Security/audit tasks | Workers run under security/review roles; verifier is gated until worker results are terminal; skeptic challenges evidence |
 
 Mode selection is keyword + file-hint driven (`role-router.ts`). `preferredLeadRole` override lets the caller pin a specific lead.
 
 `team_orchestrate` is the model-callable runtime entrypoint for these modes. A lead-capable main session calls it with `task` plus optional `templateId`/`teamTemplateId`, `fileHints`, `important`, `leadRole`, `includeVerifier`, `maxWorkers`, `qualityPolicy`, `repairPolicy`, `workerCommunication`, and `allowFollowupPlanning`. The tool returns a stable `orchestrationRunId`, the computed plan, child handles, attempts, failures, route diagnostics, and `nextAction`. `nextAction` is either `yield_for_results` or `synthesize_now`; leads must use push-based completion (`sessions_yield` when available) instead of polling `subagents` or `sessions_list`.
+
+Operator UI wrappers can also call `orchestrator.plan` / `orchestrator.run` with an explicit `workers[]` array: `{ roleName, task, label?, modelRef? }[]`. The gateway validates each role against the role registry, accepts duplicate roles as separate worker instances, builds a `lead-workers` task graph without requiring ClawGraph YAML, and still launches through `runOrchestrationObserved` / `spawnSubagentDirect` so permission mode, lifecycle events, audit logging, and trace recording stay on the existing communication path.
 
 Each spawned role prompt includes the original task, role responsibility, allowed scope/tools, expected output shape, a blocking/non-blocking marker, acceptance criteria, and explicit `Follow-up Candidates` / `Memory Candidates` sections. Workers may propose follow-up work or memory candidates, but leaf workers do not automatically spawn more agents or directly write long-term memory.
 
@@ -992,11 +1006,11 @@ Team Result Bundle is the runtime event Lead agents synthesize from. Its stable 
 
 | Template | Mode | Composition |
 |---|---|---|
-| `quick-development` | lead-workers | planner → implementer + tester → reviewer |
-| `security-audit` | adversarial-review | security-reviewer + threat-modeler → skeptic |
-| `refactor` | lead-workers | architect → refactorer + regression-tester → code-reviewer |
+| `quick-development` | lead-workers | planner 鈫?implementer + tester 鈫?reviewer |
+| `security-audit` | adversarial-review | security-reviewer + threat-modeler 鈫?skeptic |
+| `refactor` | lead-workers | architect 鈫?refactorer + regression-tester 鈫?code-reviewer |
 
-Custom teams via `cfg.agents.teams[]` — config overrides built-ins by id. `normalizeTeamTemplate` accepts both snake_case and camelCase.
+Custom teams via `cfg.agents.teams[]` 鈥?config overrides built-ins by id. `normalizeTeamTemplate` accepts both snake_case and camelCase.
 
 When `templateId`/`teamTemplateId` is provided, orchestration strictly uses that template's `roles`, `defaultLeadRole`, `verifierRole`, and role-level `modelRef`. Unknown template ids fail as invalid input. When no template is provided, the existing role router remains the source of truth for mode and role selection.
 
@@ -1013,11 +1027,11 @@ Role permissions are **hard-enforced** (tools filtered before the model sees the
 | `commands: []` + read-only fs | Deny shell |
 | `commands: ["npm"]` + read-only fs | Deny shell (tool-level; command-argument filtering is future) |
 
-The `role.tools[]` list is a **true allowlist** — any tool not listed is denied, even if the deny list doesn't explicitly include it.
+The `role.tools[]` list is a **true allowlist** 鈥?any tool not listed is denied, even if the deny list doesn't explicitly include it.
 
 ### 11.5 Effort Levels
 
-7-level effort → thinking mapping: `auto→adaptive`, `minimal→minimal`, `low→low`, `medium→medium`, `high→high`, `xhigh→xhigh`, `max→max`.
+7-level effort 鈫?thinking mapping: `auto鈫抋daptive`, `minimal鈫抦inimal`, `low鈫抣ow`, `medium鈫抦edium`, `high鈫抙igh`, `xhigh鈫抶high`, `max鈫抦ax`.
 
 ### 11.6 Role-First Memory System
 
@@ -1042,7 +1056,7 @@ ClawX treats role memory as a **control plane** layered above the native OpenCla
 
 **Four memory states**: `active` (injectable), `cold` (not auto-injected), `archived` (historical only), `tombstone` (logical delete).
 
-**Gatekeeper pipeline**: `propose → normalize → classify → evidence check → conflict detect → decision → commit/review`. Decisions are fixed as `accept`, `reject`, `merge`, `supersede`, or `needs_review`; agents cannot write long-term memory directly.
+**Gatekeeper pipeline**: `propose 鈫?normalize 鈫?classify 鈫?evidence check 鈫?conflict detect 鈫?decision 鈫?commit/review`. Decisions are fixed as `accept`, `reject`, `merge`, `supersede`, or `needs_review`; agents cannot write long-term memory directly.
 
 **Persistence**: SQLite at `<stateDir>/role-memory.sqlite` with tables for cards, versions, conflicts, audit events, and injection explain records. The old `<stateDir>/memory-cards.json` MVP file is not migrated, read, or deleted.
 
@@ -1050,7 +1064,7 @@ ClawX treats role memory as a **control plane** layered above the native OpenCla
 
 **Role-aware injection**: At spawn time, `resolveRoleMemoryCards` filters active injectable cards by role, builds a conflict-aware `Context Pack`, renders a structured `## Memory Context` section, and records a `memory.explainInjection` entry.
 
-**Context Pack** (`buildContextPack`): Token-budgeted context injection with 7 buckets: hard constraints, role playbook, project facts, team handoffs, recent episodes, open conflicts, and task state — total budget ~3000 tokens, overflow truncated.
+**Context Pack** (`buildContextPack`): Token-budgeted context injection with 7 buckets: hard constraints, role playbook, project facts, team handoffs, recent episodes, open conflicts, and task state 鈥?total budget ~3000 tokens, overflow truncated.
 
 **Context Pack v2 scoring**: `selectMemoryForContextPack` scores candidates by scope precedence, role/phase/task match, importance, confidence, recency, access frequency, and sensitivity/conflict/staleness penalties. Injection explain records include `role-memory-context-v2`, selected/skipped candidate scores, bucket placement, and truncation reasons.
 
@@ -1093,16 +1107,16 @@ ClawX treats role memory as a **control plane** layered above the native OpenCla
 | Mode | Behavior | Implementation |
 |---|---|---|
 | **Interrupt** | Abort current run, restart with new message | `abortChatRunsForSessionKeyWithPartials` + fresh dispatch |
-| **Guide** | Inject hint without interrupting | `queueEmbeddedAgentMessageWithOutcomeAsync` — non-disruptive steering into the active run's LLM loop |
-| **Queue** | Hold message until run completes, then deliver | `user-message-queue.ts` FIFO + `triggerQueueDrain` on `clearActiveEmbeddedRun` — auto-delivers as a follow-up run |
+| **Guide** | Inject hint without interrupting | `queueEmbeddedAgentMessageWithOutcomeAsync` 鈥?non-disruptive steering into the active run's LLM loop |
+| **Queue** | Hold message until run completes, then deliver | `user-message-queue.ts` FIFO + `triggerQueueDrain` on `clearActiveEmbeddedRun` 鈥?auto-delivers as a follow-up run |
 
 All three modes are triggered via the ChatInput input-mode selector (mirrors the permission picker pattern). Explicit `inputMode` from the UI overrides the regex classifier.
 
-**Queue lifecycle**: enqueue → `chat.queue-status` broadcast (UI shows amber "queued" badge + count) → run ends → `clearActiveEmbeddedRun` calls `triggerQueueDrain` → drain callback combines queued messages → re-dispatches as a new `chat.send` → `run.started` event re-arms UI.
+**Queue lifecycle**: enqueue 鈫?`chat.queue-status` broadcast (UI shows amber "queued" badge + count) 鈫?run ends 鈫?`clearActiveEmbeddedRun` calls `triggerQueueDrain` 鈫?drain callback combines queued messages 鈫?re-dispatches as a new `chat.send` 鈫?`run.started` event re-arms UI.
 
 ### 11.8 Smart Routing
 
-`role-router.ts` scores roles by: bilingual keyword match (EN + 中文), file-hint regex (test/docs/security), role tags, and a default implementer bias. `preferredLeadRole` override honored when the role exists in the pool.
+`role-router.ts` scores roles by: bilingual keyword match (EN + 涓枃), file-hint regex (test/docs/security), role tags, and a default implementer bias. `preferredLeadRole` override honored when the role exists in the pool.
 
 V3 routing adds deterministic-first diagnostics on top of the existing router. The planner infers required capabilities from task text, file hints, security/importance markers, and template selection, then emits `routeDiagnostics{difficulty,confidence,reasons,selectedRoles,rejectedRoles,requiredCapabilities,capabilityGaps}`. Model classification can be added later as advisory input, but the current runtime does not depend on a model-only difficulty judgment.
 
@@ -1112,23 +1126,23 @@ Capability-aware routing preserves role-first semantics: role responsibilities d
 
 **Span taxonomy** (12 kinds): `orchestrator`, `role-router`, `team`, `subagent`, `model`, `tool`, `memory`, `context-pack`, `gatekeeper`, `verifier`, `input-mode`, `custom`.
 
-**Trace recording**: `runOrchestrationObserved` wraps plan + initial worker spawn in recorder spans → `storeRuntimeTrace(trace, scorecard)` → trace buffer (cap 100, in-memory). Deferred verifier execution is correlated through `orchestrationRunId` and child-run metadata.
+**Trace recording**: `runOrchestrationObserved` wraps plan + initial worker spawn in recorder spans 鈫?`storeRuntimeTrace(trace, scorecard)` 鈫?trace buffer (cap 100, in-memory). Deferred verifier execution is correlated through `orchestrationRunId` and child-run metadata.
 
 **Trace index**: Electron Main maintains a ClawX-owned local JSON/JSONL observability index with sanitized trace envelopes, query rows, issue summaries, correlation keys, and update timestamps. Retention defaults to 30 days or 1000 traces; index rehydration can rebuild graph data from persisted summaries plus trajectory sidecars without introducing SQLite or another database.
 
 **Diagnostics**: `buildObservabilityTraceGraph` and `traceNodeDiagnostics` share a redaction pipeline and issue detector. The detector marks root-cause errors, aborted/stalled running traces, slow/token/cost hotspots, retries, approval waits, artifacts, command failures, missing verifier coverage, orphan trajectory events, and missing final output while keeping raw prompt/output/tool args/tool output out of graph, index, query, and diagnostics payloads.
 
-**Scorecards**: `buildTraceScorecard` computes per-trace quality grades (reliability, efficiency, coverage) → stored alongside traces → surfaced in the Observability dashboard via `observability.traces` RPC.
+**Scorecards**: `buildTraceScorecard` computes per-trace quality grades (reliability, efficiency, coverage) 鈫?stored alongside traces 鈫?surfaced in the Observability dashboard via `observability.traces` RPC.
 
-**Real-time lifecycle events**: Each worker spawn emits `subagent-lifecycle` broadcast → `event-dispatch` → `main/index.ts` relay → renderer `hostEvents.onSubagentLifecycle` → RolesOrchestrationPanel progress panel (per-worker status: started/completed/verified/error with role-tone colors).
+**Real-time lifecycle events**: Each worker spawn emits `subagent-lifecycle` broadcast 鈫?`event-dispatch` 鈫?`main/index.ts` relay 鈫?renderer `hostEvents.onSubagentLifecycle` 鈫?RolesOrchestrationPanel progress panel (per-worker status: started/completed/verified/error with role-tone colors).
 
-**Trace status correctness**: `failures.length > 0 → status: "error"` (not always "completed") + error summary passed to `completeObservedRun`.
+**Trace status correctness**: `failures.length > 0 鈫?status: "error"` (not always "completed") + error summary passed to `completeObservedRun`.
 
 **Worker quality**: Team Result Bundles include deterministic worker quality signals (`schemaCompliance`, `evidenceCoverage`, `scopeDiscipline`, `actionability`, `verificationSignal`, `verifierVerdict`, `runtimeHealth`). Poor attempts are used as demotion/repair evidence; the runtime does not delete role contracts at run time.
 
 ### 11.10 Orchestration Reliability
 
-- **Per-worker timeout** (120s): `Promise.race` wrapper — hung worker recorded as failure, doesn't block the run
+- **Per-worker timeout** (120s): `Promise.race` wrapper 鈥?hung worker recorded as failure, doesn't block the run
 - **Task graph execution**: v4 computes dependency-aware execution waves; ready nodes in the same wave run with `Promise.allSettled`
 - **Verifier dependency** (adversarial): verifier is not part of the initial spawn batch; runtime starts it after expected workers are terminal
 - **Error recovery**: Worker failure doesn't abort remaining workers (failures collected, not thrown)
@@ -1156,9 +1170,10 @@ Runtime supports `codex`, `claude`, `gemini`, `opencode`, `droid` as ACP harness
 | Component | File | Purpose |
 |---|---|---|
 | `RolesOrchestrationPanel` | `src/components/agents/RolesOrchestrationPanel.tsx` | Role browsing, plan preview, orchestration launch, approval round-trip, run result feedback, real-time progress panel |
+| `SubagentRunnerPanel` | `src/components/agents/SubagentRunnerPanel.tsx` | Preset-based Explorer / Reviewer / Tester / Compare launcher with goal input, per-child lifecycle status, failures, summary, and Observability trace link |
 | `RoleCard` | `src/components/agents/RoleCard.tsx` | Role card with effort tone, tool grid, permission trio, SOUL preview |
-| `OrchestrationPlanView` | `src/components/agents/OrchestrationPlanView.tsx` | Layered card flow (Lead → Workers → Verifier) with connectors |
-| `role-visuals.ts` | `src/lib/role-visuals.ts` | Shared role→tone / effort→tone / span-kind→tone mapping |
+| `OrchestrationPlanView` | `src/components/agents/OrchestrationPlanView.tsx` | Layered card flow (Lead 鈫?Workers 鈫?Verifier) with connectors |
+| `role-visuals.ts` | `src/lib/role-visuals.ts` | Shared role鈫抰one / effort鈫抰one / span-kind鈫抰one mapping |
 | `Observability` | `src/pages/Observability/` | Dashboard with metric cards, lead-role column, span-kind waterfall, scorecards |
 | `TaskLedger` | `src/pages/TaskLedger/` + `src/components/task-ledger/` | Workspace-scoped long-task ledger with Tree/DAG/History/Review tabs and Chat summary panel |
 | `ChatInput` | `src/pages/Chat/ChatInput.tsx` | Input-mode selector (auto/interrupt/guide/queue) + feedback badges + queue count |
@@ -1174,8 +1189,8 @@ The model-callable `team_orchestrate` tool is not a separate transport. It reuse
 | `roles.list` | read | List builtin + config roles |
 | `roles.get` | read | Get single role contract + compiled SOUL |
 | `teams.list` | read | List builtin + config team templates |
-| `orchestrator.plan` | read | Preview orchestration plan (no spawn); accepts optional `templateId`/`teamTemplateId`, `maxWorkers`, `graphMode`, quality/repair/communication policy fields, and returns `taskGraph`, `executionWaves`, `routeDiagnostics`, and capability gaps |
-| `orchestrator.run` | write | Execute orchestration (spawns subagents, records trace, emits lifecycle events, logs audit); accepts optional `templateId`/`teamTemplateId`, `maxWorkers`, `graphMode`, quality/repair/communication policy fields, and returns `orchestrationRunId`, `taskGraph`, `executionWaves`, `expectedChildren`, `pendingVerifier`, `attempts`, `repairNodes`, `rerouteRecommendations`, and `routeDiagnostics` |
+| `orchestrator.plan` | read | Preview orchestration plan (no spawn); accepts optional explicit `workers[]`, `templateId`/`teamTemplateId`, `maxWorkers`, `graphMode`, quality/repair/communication policy fields, and returns `taskGraph`, `executionWaves`, `routeDiagnostics`, and capability gaps |
+| `orchestrator.run` | write | Execute orchestration (spawns subagents, records trace, emits lifecycle events, logs audit); accepts optional explicit `workers[]`, `templateId`/`teamTemplateId`, `maxWorkers`, `graphMode`, quality/repair/communication policy fields, and returns `orchestrationRunId`, `taskGraph`, `executionWaves`, `expectedChildren`, `pendingVerifier`, `attempts`, `repairNodes`, `rerouteRecommendations`, and `routeDiagnostics` |
 | `observability.reportTrace` | write | Store a trace |
 | `observability.traces` | read | Get trace buffer + scorecards |
 | `memory.list` | read | List role-memory cards by scope, role, status, type, conflict state, and sensitivity |
@@ -1246,7 +1261,7 @@ ClawGraph sits above the role-first runtime as a durable long-task execution lay
 - E2E harness (Playwright) + unit harness (Vitest) + comms replay/baseline/compare
 - Token usage dashboard reading from runtime `.jsonl` transcripts
 - ClawHub integration in ClawX (search / install / uninstall / open)
-- OpenClaw Doctor button in ClawX Settings → Advanced → Developer
+- OpenClaw Doctor button in ClawX Settings 鈫?Advanced 鈫?Developer
 - Auto-update (electron-updater) with multi-channel
 - Workspace browser (file tree + terminal + web preview + artifact panel)
 - Workspace permission and sandbox control: `policy-light` default, optional `docker-strong` / `ssh-strong`, shared effective sandbox policy resolver, OpenClaw `sandbox.mode=off` lightweight mapping, Docker degraded fallback, and command/RPC risk gates
@@ -1255,15 +1270,15 @@ ClawGraph sits above the role-first runtime as a durable long-task execution lay
 - Long-task stability stack: Chat transcript for conversation, Chat Input Mode for human intervention, manual compaction for pressure relief, Resume Checkpoint for continuation, Context Pack for bounded injection, ClawGraph for execution, Task Ledger for durable work truth, Observability for evidence, Knowledge Hub for reusable knowledge
 - Knowledge Hub (ClawX-managed native wiki by default, bounded local import, search/inspect, compile/lint, draft/proposal review, Knowledge Steward governance, user-confirmed apply, optional Obsidian render mode)
 - Chat Work Mode v2 (Plan/Build/Review/Docs/Data Settings controls, per-session persistence, configurable Work Kits, legacy tool-bundle compatibility, Main-injected untrusted metadata with artifact and capability hints, mode summary panel, full i18n, unit/E2E coverage)
-- **Role-first runtime** (see §11 for full detail):
+- **Role-first runtime** (see 搂11 for full detail):
   - 8 built-in roles + config-defined custom roles with validation
   - 3 orchestration modes (router / lead-workers / adversarial-review) with parallel worker spawn and deferred verifier gating
   - 3 built-in team templates + config-defined custom teams
   - Model-callable `team_orchestrate` for role-first subagent planning, spawn, push-based completion, and lead synthesis
   - Completion-aware orchestration closure: deferred verifier gating + Team Result Bundle aggregation
-  - Hard tool enforcement (filesystem/network/commands → deny lists, expanded NETWORK_TOOLS)
+  - Hard tool enforcement (filesystem/network/commands 鈫?deny lists, expanded NETWORK_TOOLS)
   - Memory system: role-first SQLite store, ownership/applicable-role governance, semantic memory types, proposal-first policy gatekeeper, review queue, audit/version chains, conflict governance, deterministic extraction drafts, v3 must/should/may/never context injection, retention suggestions, detail drawer, and injection explain logs
-  - Input control layer: interrupt ✅ + guide ✅ + queue ✅ (all 3 modes complete with UI feedback)
+  - Input control layer: interrupt 鉁?+ guide 鉁?+ queue 鉁?(all 3 modes complete with UI feedback)
   - Smart routing (bilingual keywords + file hints + preferredLeadRole override)
 - Observability: 12 span kinds, trace recording + scorecards, real-time lifecycle events, correct failure status
 - Orchestration reliability: per-worker timeout, parallel workers, deferred verifier gating, error recovery
@@ -1280,11 +1295,99 @@ ClawGraph sits above the role-first runtime as a durable long-task execution lay
 - `diffs` extension is on the runtime side; the Monaco diff viewer in the renderer is wired but not all runtime methods have UI affordances yet.
 - The `device.token.rotate` / `device.token.revoke` and other pairing flows are exposed on the runtime side, but the renderer UI for full device lifecycle is partial.
 
+### 12.3 Codex / Claude Code Parity Roadmap
+
+This roadmap turns the existing long-task, Git, plugin, rules, diff, and evidence foundations into product entry points that feel familiar to Codex and Claude Code users. It is a product/spec alignment layer, not a new architecture layer. Future implementation work must continue to use `harness/specs/**` as the durable source of truth and must not introduce `.trellis` or another parallel agent framework.
+
+#### Codex / Claude Code Parity Matrix
+
+| Capability | Codex / Claude Code expectation | Existing ClawX foundation | Product entry gap | vNext slice | Priority |
+|---|---|---|---|---|---|
+| Code review | Findings-first review, severity ordering, file/line evidence, test gaps, and no accidental edits | Chat Review work mode, Observability trace graph, Task Ledger review nodes, role-first verifier/reviewer roles | No unified review inbox that joins code diff, runtime evidence, ledger review items, and actionable findings | Code Review Center | P0 |
+| Diff inspection | Fast before/after inspection, staged/unstaged views, generated patch review, and safe apply/reject flow | Workspace Git panel, `shared/types/git.ts`, Monaco diff preview, runtime `diffs` extension | Diff surfaces are split across file preview, Git, runtime diffs, and Knowledge proposal diffs | Diff Workbench | P0 |
+| Project rules | Agent behavior should be grounded in visible project rules, task specs, and local instructions | `AGENTS.md`, `harness/specs/**`, Project Rules Center MVP work, renderer/Main boundary rules | No consolidated product view for active rules, selected task context, validation commands, and rule drift | Project Rules Center | P0 |
+| Developer commands | Discoverable, repeatable commands for typecheck, test, e2e, harness, doctor, and diagnostics | `package.json` scripts, Doctor buttons, terminal, harness CLI, diagnostics APIs | Commands are discoverable only through docs/terminal, not a typed command palette/status surface | Developer Command Surface | P1 |
+| Git / worktree / PR | Structured branch, worktree, staging, commit, and PR workflows with reviewable intent | `git-github-worktree-agent-tools` task spec, Git host-api types/services, workspace permission gates | Git capabilities need a cohesive workspace/agent flow and PR-ready review checkpoints | Git / Worktree / PR Workflow | P1 |
+| Hooks / skills / plugins | Install, package, validate, and debug agent capabilities without breaking runtime startup | Plugin SDK, Skills page, ClawHub, hook loader, plugin lifecycle specs, `decouple-skills-page-from-gateway` | Packaging and hook behavior need clearer user-facing lifecycle, diagnostics, and recovery entry points | Hook / Skill / Plugin Packaging | P2 |
+| Review evidence | Completion and risk decisions should be backed by trace, diff, test, and ledger evidence | Observability, Task Ledger, ClawGraph review items, Knowledge proposals, Mission reviewer plan | Evidence exists in several surfaces but lacks a single review narrative for coding tasks | Review & Evidence UX | P0 |
+
+#### Priority Matrix
+
+| Priority | Slices | Reason |
+|---|---|---|
+| P0 | Code Review Center, Diff Workbench, Project Rules Center | These turn existing foundations into daily coding surfaces and close the largest parity gaps. |
+| P1 | Developer Command Surface, Git / Worktree / PR Workflow | These make implementation and handoff workflows repeatable once review/diff/rules are visible. |
+| P2 | Hook / Skill / Plugin Packaging | The runtime and plugin foundations already exist; vNext should polish packaging, diagnostics, and recovery UX. |
+
+#### Developer Command Surface
+
+- **Goal**: Provide a typed, discoverable developer command surface for project-local commands such as typecheck, tests, E2E, harness context/validate/run, Doctor, diagnostics, and common Git checks.
+- **Non-goals**: Do not replace the integrated terminal, invent a new task runner, bypass workspace permission mode, or let renderer code spawn commands directly.
+- **Existing foundation**: `package.json` scripts, terminal/web preview workspace shell, `openclaw doctor` host route, diagnostics services, harness CLI, and workspace permission gates.
+- **Product entry gaps**: Commands are scattered across docs and terminal history; users cannot see last run status, recommended validation for the selected task spec, or safe command presets in one place.
+- **Acceptance criteria**: Commands resolve from project metadata and harness context; runs use Main-owned execution and permission checks; UI shows command intent, cwd, last status, logs, and retry; all user-visible text has full i18n; E2E covers command discovery and a safe read-only command.
+- **Testing suggestions**: Unit test command resolution and workspace containment; E2E test the command surface with mocked command results; run `pnpm run typecheck` and relevant harness validation for touched specs.
+
+#### Git / Worktree / PR Workflow
+
+- **Goal**: Make branch, worktree, staged diff, commit, and PR preparation a first-class workspace workflow that agents and users can review before mutation.
+- **Non-goals**: Do not replace the terminal, bundle Git/GitHub CLI, auto-merge PRs, or let renderer call shell/Gateway endpoints directly.
+- **Existing foundation**: `git-github-worktree-agent-tools` task spec, Git host-api contracts, workspace Git panel work, permission approvals, and Task Ledger session links.
+- **Product entry gaps**: Git actions need one cohesive workflow that connects intent, diff review, test evidence, commit metadata, branch/worktree state, and PR creation readiness.
+- **Acceptance criteria**: Git actions are host-api backed; write operations are reviewable and permission gated; worktree paths stay workspace-contained; PR creation is blocked until required review/test evidence is visible or explicitly waived.
+- **Testing suggestions**: Unit test Git service argument-array execution and path checks; E2E test status/diff/stage/commit/PR readiness with fixtures; run comms replay/compare if host-api or Gateway paths change.
+
+#### Hook / Skill / Plugin Packaging
+
+- **Goal**: Give developers a clear lifecycle for packaging, validating, installing, updating, disabling, and recovering hooks, skills, and plugins.
+- **Non-goals**: Do not add a second marketplace, silently install dependencies, bypass plugin ownership resolution, or let invalid packages enter active runtime config.
+- **Existing foundation**: Plugin SDK, bundled extensions, hook loader, Skills page, ClawHub install/search, plugin lifecycle management scenario, validation/recovery specs, and Gateway startup diagnostics.
+- **Product entry gaps**: Packaging and hook diagnostics are mostly runtime/developer surfaces; users lack a guided packaging checklist, validation results, startup-impact warnings, and rollback/recovery actions in one product flow.
+- **Acceptance criteria**: Packaging UX references existing plugin lifecycle rules; validation blocks unsafe activation; diagnostics identify owner conflicts, missing deps, stale symlinks, and startup impact; recovery preserves user config and leaves actionable messages.
+- **Testing suggestions**: Reuse plugin lifecycle unit tests; add E2E for visible install/validation/recovery states when UI is implemented; run plugin lifecycle harness validate for affected specs.
+
+#### Review & Evidence UX
+
+- **Goal**: Present coding-task evidence as one review narrative: changed files, diffs, tests run, trace summaries, ledger review items, risks, and unresolved claims.
+- **Non-goals**: Do not treat observability as task truth, do not auto-complete ledger goals, and do not expose raw prompts or sensitive outputs in review summaries.
+- **Existing foundation**: Observability trace graph/node diagnostics, Task Ledger review nodes, ClawGraph review items, Knowledge proposal diffs, Chat Review mode, and Mission reviewer plan.
+- **Product entry gaps**: Evidence is distributed across Observability, Task Ledger, Chat, Git, and Knowledge; there is no task-scoped review view that tells the user what is proven, missing, risky, or ready to accept.
+- **Acceptance criteria**: Review summaries cite evidence refs; missing evidence is explicit; file/test/trace links are navigable; redaction and truncation rules apply; unresolved claims remain review items instead of being treated as completion.
+- **Testing suggestions**: Unit test evidence aggregation and redaction; E2E test a mocked review bundle with missing evidence and linked traces; run `pnpm run comms:replay` and `pnpm run comms:compare` for communication-path changes.
+
+#### Code Review Center
+
+- **Goal**: Build a P0 review inbox for code changes that leads with findings, severity, evidence refs, file/line anchors, test gaps, and recommended next actions.
+- **Non-goals**: Do not auto-edit code during review, do not merge PRs, and do not replace Chat Review mode or Observability.
+- **Existing foundation**: Chat Review work mode, role-first reviewer/verifier roles, Observability, Task Ledger review queue, Git diff types, and ClawGraph audit/review flow.
+- **Product entry gaps**: Review data is not centralized; findings are not normalized across Chat, Git, traces, ledger items, and runtime audit outcomes.
+- **MVP path**: `/code-review` exposes a read-only Review Center backed by `hostApi.codeReview`. Main process collects Git diffs for uncommitted changes, base branch comparison, or a selected commit; runs a model-only/no-tool review through the Gateway; normalizes findings to severity/file/line/reason/suggested fix; records a sanitized Observability trace; and can create Task Ledger `review` nodes without touching the working tree.
+- **Acceptance criteria**: Users can open the Review Center, choose uncommitted/base-branch/commit targets, add a custom focus, inspect severity-sorted findings with file/line/reason/suggested-fix fields, and create Task Ledger `review` nodes without staging, committing, or editing files.
+- **Testing suggestions**: Add `tests/e2e/code-review-center.spec.ts` for visible review flows; unit test review aggregation and redaction; validate `harness/specs/tasks/code-review-center-vnext.md`.
+
+#### Diff Workbench
+
+- **Goal**: Build a P0 diff workbench that unifies Git staged/unstaged diffs, file preview diffs, runtime `diffs` artifacts, and proposal diffs into one inspectable surface.
+- **Non-goals**: Do not invent a new VCS layer, do not apply patches without explicit confirmation, and do not move runtime `diffs` storage into renderer state.
+- **Existing foundation**: Workspace Git panel, Monaco diff preview, `shared/types/git.ts`, runtime `diffs` extension, Knowledge proposal diff fields, and file preview infrastructure.
+- **Product entry gaps**: Diff viewers are fragmented and do not share filtering, evidence links, staged state, or review disposition.
+- **Acceptance criteria**: Users can filter by source/status/file, inspect before/after hunks, link diffs to review findings and tests, and apply/reject only through Main-owned confirmed actions when mutation is supported.
+- **Testing suggestions**: Add `tests/e2e/diff-workbench.spec.ts`; unit test diff source aggregation and path containment; validate `harness/specs/tasks/diff-workbench-vnext.md`.
+
+#### Project Rules Center
+
+- **Goal**: Build a P0 rules center that shows active project instructions, selected harness task context, required rules, validation commands, and drift/missing-spec warnings.
+- **Non-goals**: Do not replace `AGENTS.md`, move durable policy out of `harness/specs/**`, or create another rules directory.
+- **Existing foundation**: `AGENTS.md`, `harness/specs/rules/scenarios/tasks/guides/layers`, harness context/validate CLI, Project Rules Center MVP work, and renderer/Main boundary specs.
+- **Product entry gaps**: Rules are inspectable only by reading files or CLI output; users cannot see which rules apply to the active task, which validations are required, or whether new lessons belong in rules, guides, layers, or tasks.
+- **Acceptance criteria**: Users can select a task spec, see read order and required rules, run or copy validation commands through the Developer Command Surface, and create/update only harness-backed specs without introducing parallel truth.
+- **Testing suggestions**: Add `tests/e2e/project-rules-center.spec.ts`; unit test harness context parsing and displayed validation commands; validate `harness/specs/tasks/project-rules-center-vnext.md`.
+
 ---
 
 ## 13. Appendix A: host-api Module Index
 
-Generated from `src/lib/host-api.ts` (34 modules):
+Generated from `src/lib/host-api.ts` (37 modules):
 
 Knowledge module: `knowledge` (`status`, `init`, `configure`, `ingestFiles`, `validateOkfBundle`, `importOkfBundle`, `search`, `get`, `compile`, `lint`, `applyDraft`, `openVault`, `createInboxItem`, `listInboxItems`, `updateInboxItem`, `dismissInboxItem`, `promoteInboxItemToDraft`, `createDraft`, `listDrafts`, `getDraft`, `updateDraft`, `reviewDraft`, `proposeChange`, `listProposals`, `previewChange`, `applyReviewedChange`, `stewardReview`, `recordKnowledgeReference`, `getProvenance`).
 
@@ -1292,11 +1395,13 @@ Task Ledger module: `taskLedger` (`snapshot`, `appendEvents`, `createNode`, `upd
 
 ClawGraph module: `clawGraph` (`listWorkflows`, `compile`, `run`, `status`, `events`, `abort`, `review`).
 
-`app` · `openclaw` · `shell` · `dialog` · `window` · `updates` · `uv` · `settings` · `workspaces` · `terminal` · `git` · `permissions` · `webPreview` · `gateway` · `remoteControl` · `mcp` · `sandbox` · `logs` · `channels` · `agents` · `diagnostics` · `providers` · `files` · `media` · `sessions` · `chat` · `workProviders` · `knowledge` · `cron` · `taskLedger` · `clawGraph` · `skills` · `usage` · `topics` · `observability`
+Code Review module: `codeReview` (`run`, `createTaskLedgerNode`).
+
+`app` 路 `openclaw` 路 `shell` 路 `dialog` 路 `window` 路 `updates` 路 `uv` 路 `settings` 路 `workspaces` 路 `terminal` 路 `git` 路 `projectRules` 路 `permissions` 路 `webPreview` 路 `gateway` 路 `remoteControl` 路 `mcp` 路 `sandbox` 路 `logs` 路 `channels` 路 `agents` 路 `diagnostics` 路 `providers` 路 `files` 路 `media` 路 `sessions` 路 `chat` 路 `codeReview` 路 `workProviders` 路 `knowledge` 路 `cron` 路 `taskLedger` 路 `clawGraph` 路 `skills` 路 `usage` 路 `topics` 路 `observability`
 
 ## 14. Appendix B: Runtime Top-level Modules
 
-60+ sub-domains, full list (alphabetical): `acp` · `agents` · `auto-reply` · `bindings` · `bootstrap` · `channels` · `chat` · `cli` · `commitments` · `compat` · `config` · `context-engine` · `cron` · `daemon` · `gateway` · `hooks` · `image-generation` · `infra` · `interactive` · `link-understanding` · `llm` · `logging` · `mcp` · `media` · `media-generation` · `media-understanding` · `memory` · `memory-host-sdk` · `model-catalog` · `music-generation` · `node-host` · `observability` · `pairing` · `plugin-sdk` · `plugins` · `plugin-state` · `process` · `provider-runtime` · `proxy-capture` · `realtime-transcription` · `routing` · `secrets` · `security` · `sessions` · `shared` · `skills` · `state` · `status` · `talk` · `tasks` · `tools` · `trajectory` · `transcripts` · `tts` · `types` · `utils` · `video-generation` · `web` · `web-fetch` · `web-search`
+60+ sub-domains, full list (alphabetical): `acp` 路 `agents` 路 `auto-reply` 路 `bindings` 路 `bootstrap` 路 `channels` 路 `chat` 路 `cli` 路 `commitments` 路 `compat` 路 `config` 路 `context-engine` 路 `cron` 路 `daemon` 路 `gateway` 路 `hooks` 路 `image-generation` 路 `infra` 路 `interactive` 路 `link-understanding` 路 `llm` 路 `logging` 路 `mcp` 路 `media` 路 `media-generation` 路 `media-understanding` 路 `memory` 路 `memory-host-sdk` 路 `model-catalog` 路 `music-generation` 路 `node-host` 路 `observability` 路 `pairing` 路 `plugin-sdk` 路 `plugins` 路 `plugin-state` 路 `process` 路 `provider-runtime` 路 `proxy-capture` 路 `realtime-transcription` 路 `routing` 路 `secrets` 路 `security` 路 `sessions` 路 `shared` 路 `skills` 路 `state` 路 `status` 路 `talk` 路 `tasks` 路 `tools` 路 `trajectory` 路 `transcripts` 路 `tts` 路 `types` 路 `utils` 路 `video-generation` 路 `web` 路 `web-fetch` 路 `web-search`
 
 ## 15. Appendix C: Glossary
 
@@ -1314,6 +1419,7 @@ ClawGraph module: `clawGraph` (`listWorkflows`, `compile`, `run`, `status`, `eve
 - **Work Kit**: an artifact-focused Work Mode capability declaration such as `reports`, `sheets`, `slides`, `pdf`, `research`, `website`, `design`, or `ops`. Kits describe expected output types, required skill slugs, optional external-provider hints, and quality checks; they do not grant tools.
 - **Work Provider**: a Main-owned Office/Search capability adapter behind Work Kits. Providers expose status, controlled runs, and artifact validation through `hostApi.workProviders`; they are not model providers and do not bypass workspace sandbox, approval, or runtime tool policy.
 - **Work Mode Preset**: the shared ClawX preset record (`shared/types/work-mode.ts`) containing label keys, recommended permission, default knowledge scope, response style, state widgets, legacy tool bundle labels, Work Kits, and runtime intent instruction.
+- **Engineering Control Signals**: the internal long-conversation constraint fields (`controlSignals`, `validationState`, `acceptanceStatus`, and quality dimensions) used by ResumeCheckpoint, Task Loop, Mission Loop, Work Mode metadata, and Task Ledger metadata to express evidence gaps, missing validation, scope drift, unverified claims, and replan requirements without creating a second task fact source.
 - **Mission Control**: the planned ClawX product layer for long-goal autonomy. It binds user objectives to Task Ledger state, wakes on manual/scheduled/event ticks, rebuilds bounded context from checkpoints and evidence, and decides whether a Mission should continue, repair, sleep, ask the user, complete, or block.
 - **Mission Loop**: the planned runtime primitive behind Mission Control. It is an outer policy loop above `task_loop`, ClawGraph, cron/wake, observability, and governed memory proposal flows.
 - **Wiki Vault**: the `memory-wiki` storage surface. The default vault is ClawX-managed and isolated; Obsidian-backed rendering is optional.
@@ -1327,20 +1433,20 @@ ClawGraph module: `clawGraph` (`listWorkflows`, `compile`, `run`, `status`, `eve
 - **Resume Checkpoint**: the minimal structured continuation record used after compaction, interrupt, abort, ClawGraph handoff, audit failure, review, or session rotation; it lets a new run resume without replaying the full transcript.
 - **Chat Session Fork**: a runtime-backed child conversation that inherits the source session's active transcript branch and non-running UI state without generating a handoff draft, auto-sending, or creating a Git branch/worktree.
 
-- **Workspace** — a user-managed working path (folder) used to scope terminals, file previews, and web preview.
-- **Agent** — a configured AI persona with its own model, channel bindings, and per-agent SQLite.
-- **Channel** — a messaging platform (WhatsApp / Telegram / Discord / …).
-- **Skill** — a runtime-loadable capability the agent can invoke.
-- **Provider** — a model or multimodal vendor.
-- **Talk** — realtime voice sessions (provider + bridge).
-- **Approval** — exec / plugin approval events that the ClawX permission panel decides on.
-- **Capability** — a method the runtime has advertised as available *right now* (used to gate UI buttons during cold start).
-- **Host event** — a push event from the main process to the renderer (mirrors a runtime broadcast event).
-- **Role Contract** — a task contract defining an agent's responsibilities, tools, permissions, effort, and output schema (not a persona).
-- **Orchestration** — the process of decomposing a task, spawning role-driven subagents, and synthesizing results.
-- **Team Template** — a reusable composition of roles with a lead, workers, and verifier for a specific workflow type.
-- **Memory Card** — a structured, gatekeeper-validated knowledge entry with scope, roleTags, confidence, and lifecycle status.
-- **Context Pack** — a token-budgeted assembly of memory cards, task state, and procedural notes injected into a subagent's SOUL.
-- **Input Mode** — the classification of a user message during an active run: interrupt (abort+restart), guide (non-disruptive steering), or queue (deferred delivery). For long tasks, this is the human intervention control layer rather than a compaction mechanism.
-- **Span** — a unit of observability tracing representing a discrete operation (orchestrator, subagent, tool call, etc.).
-- **Scorecard** — a quality assessment of a completed trace (reliability, efficiency, coverage grades).
+- **Workspace** 鈥?a user-managed working path (folder) used to scope terminals, file previews, and web preview.
+- **Agent** 鈥?a configured AI persona with its own model, channel bindings, and per-agent SQLite.
+- **Channel** 鈥?a messaging platform (WhatsApp / Telegram / Discord / 鈥?.
+- **Skill** 鈥?a runtime-loadable capability the agent can invoke.
+- **Provider** 鈥?a model or multimodal vendor.
+- **Talk** 鈥?realtime voice sessions (provider + bridge).
+- **Approval** 鈥?exec / plugin approval events that the ClawX permission panel decides on.
+- **Capability** 鈥?a method the runtime has advertised as available *right now* (used to gate UI buttons during cold start).
+- **Host event** 鈥?a push event from the main process to the renderer (mirrors a runtime broadcast event).
+- **Role Contract** 鈥?a task contract defining an agent's responsibilities, tools, permissions, effort, and output schema (not a persona).
+- **Orchestration** 鈥?the process of decomposing a task, spawning role-driven subagents, and synthesizing results.
+- **Team Template** 鈥?a reusable composition of roles with a lead, workers, and verifier for a specific workflow type.
+- **Memory Card** 鈥?a structured, gatekeeper-validated knowledge entry with scope, roleTags, confidence, and lifecycle status.
+- **Context Pack** 鈥?a token-budgeted assembly of memory cards, task state, and procedural notes injected into a subagent's SOUL.
+- **Input Mode** 鈥?the classification of a user message during an active run: interrupt (abort+restart), guide (non-disruptive steering), or queue (deferred delivery). For long tasks, this is the human intervention control layer rather than a compaction mechanism.
+- **Span** 鈥?a unit of observability tracing representing a discrete operation (orchestrator, subagent, tool call, etc.).
+- **Scorecard** 鈥?a quality assessment of a completed trace (reliability, efficiency, coverage grades).

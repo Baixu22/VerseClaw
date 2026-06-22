@@ -152,6 +152,54 @@ describe('task ledger service', () => {
     expect(snapshot.edges).toEqual([]);
   });
 
+  it('preserves long conversation control metadata and review tags without auto-clearing review state', () => {
+    const events: TaskLedgerEvent[] = [
+      event({
+        id: 'create-review',
+        type: 'node_created',
+        payload: {
+          node: {
+            id: 'review-1',
+            title: 'Review missing validation',
+            kind: 'review',
+            status: 'review',
+            tags: ['mission-control', 'validation-missing', 'evidence-gap'],
+            metadata: {
+              longConversationControl: {
+                controlSignals: [{ kind: 'validation_missing', severity: 'blocking', message: 'tests not run' }],
+                validationState: { status: 'missing', checks: ['unit tests'], evidenceRefs: [] },
+              },
+            },
+            createdAt: baseTime,
+            updatedAt: baseTime,
+          },
+        },
+      }),
+      event({
+        id: 'request-review',
+        type: 'review_requested',
+        taskId: 'review-1',
+        payload: { nodeId: 'review-1', reviewReason: 'Evidence gap remains open' },
+      }),
+    ];
+
+    const snapshot = projectTaskLedgerSnapshot(workspaceId, events);
+    const review = snapshot.nodes.find((node) => node.id === 'review-1');
+
+    expect(review).toMatchObject({
+      status: 'review',
+      tags: ['mission-control', 'validation-missing', 'evidence-gap'],
+      metadata: {
+        reviewReason: 'Evidence gap remains open',
+        longConversationControl: {
+          controlSignals: [{ kind: 'validation_missing', severity: 'blocking', message: 'tests not run' }],
+          validationState: { status: 'missing', checks: ['unit tests'], evidenceRefs: [] },
+        },
+      },
+    });
+    expect(snapshot.reviewNodeIds).toContain('review-1');
+  });
+
   it('keeps valid JSONL events and reports damaged lines', () => {
     const valid = event({
       id: 'create',

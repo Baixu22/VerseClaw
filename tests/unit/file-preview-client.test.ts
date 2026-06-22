@@ -55,7 +55,7 @@ describe('file-preview-client', () => {
 
     expect(hostApiMock.files.readText).toHaveBeenCalledWith('/tmp/a.txt');
     expect(hostApiMock.files.readBinary).toHaveBeenCalledWith('/tmp/b.png', { maxBytes: 32 });
-    expect(hostApiMock.files.writeText).toHaveBeenCalledWith('/tmp/a.txt', 'updated');
+    expect(hostApiMock.files.writeText).toHaveBeenCalledWith('/tmp/a.txt', 'updated', undefined);
     expect(hostApiMock.files.stat).toHaveBeenCalledWith('/tmp/a.txt');
     expect(hostApiMock.files.listDir).toHaveBeenCalledWith('/tmp');
     expect(hostApiMock.files.listTree).toHaveBeenCalledWith('/tmp', { maxDepth: 2 });

@@ -83,6 +83,47 @@
         "missionPause": "Pause",
         "missionResume": "Resume",
         "missionCancel": "Cancel",
+        "runnerTitle": "Lightweight Subagent Runner",
+        "runnerHint": "Launch common role-first workflows without writing ClawGraph YAML.",
+        "runnerNoMerge": "no auto-merge",
+        "runnerGoalPlaceholder": "Describe what the subagents should investigate",
+        "runnerGoalRequired": "Enter a goal first",
+        "runnerStart": "Start",
+        "runnerStarted": "{{preset}} finished: {{count}} workers",
+        "runnerFailed": "{{preset}} failed: {{reason}}",
+        "runnerNoDiff": "No staged or unstaged diff is available to review.",
+        "runnerSummary": "{{preset}} {{status}} for {{goal}}",
+        "runnerWorkerCount": "{{count}} roles",
+        "runnerTrace": "View trace",
+        "runnerStatus": {
+            "idle": "idle",
+            "running": "running",
+            "complete": "complete",
+            "error": "failed"
+        },
+        "runnerEventStatus": {
+            "started": "started",
+            "completed": "completed",
+            "verified": "verified",
+            "aborted": "aborted",
+            "error": "failed"
+        },
+        "runnerPreset": {
+            "explorer": "Explorer",
+            "reviewer": "Reviewer",
+            "tester": "Tester",
+            "compare": "Compare 3 approaches"
+        },
+        "runnerLabel": {
+            "diffReview": "Diff review",
+            "testGaps": "Test gaps",
+            "coverageReview": "Coverage review",
+            "conservative": "Conservative",
+            "modular": "Modular",
+            "integrationFirst": "Integration-first",
+            "options": "Options",
+            "architecture": "Architecture"
+        },
         "lead": "Lead",
         "verifier": "Verifier",
         "approvalTitle": "Orchestration run needs approval",

@@ -259,7 +259,10 @@ test.describe('ClawX assistant-style rendering layer', () => {
       await expect(page.getByTestId('assistant-tool-fallback')).toContainText('very_long_unknown_tool_name');
       await expect(page.getByTestId('assistant-attachment-card')).toContainText('assistant-rendering-output');
       await expect(page.getByTestId('assistant-token-usage-roll')).toContainText('1.6k');
+      await expect(page.getByTestId('assistant-status-dot-matrix')).toBeVisible();
+      await page.getByTestId('assistant-status-dot-matrix').hover();
       await expect(page.getByTestId('assistant-dot-matrix-status')).toBeVisible();
+      await page.mouse.move(0, 0);
 
       await page.setViewportSize({ width: 1280, height: 900 });
       await expect(scrollContainer).toHaveScreenshot('assistant-render-chat-desktop-light.png', {
@@ -274,11 +277,12 @@ test.describe('ClawX assistant-style rendering layer', () => {
         animations: 'disabled',
         caret: 'hide',
       });
-      await page.setViewportSize({ width: 390, height: 844 });
+      await page.setViewportSize({ width: 800, height: 844 });
       await page.evaluate(() => {
         document.documentElement.classList.remove('dark');
         document.documentElement.classList.add('light');
       });
+      await expect(scrollContainer).toBeVisible();
       await expect(scrollContainer).toHaveScreenshot('assistant-render-chat-narrow-light.png', {
         animations: 'disabled',
         caret: 'hide',

@@ -1,487 +1,619 @@
 {
-  "title": "Settings",
-  "subtitle": "Configure your ClawX experience",
-  "navigation": {
-    "back": "Back to Settings",
-    "general": {
-      "title": "General",
-      "description": "Appearance, language, startup, updates, and app details."
+    "title": "Settings",
+    "subtitle": "Configure your ClawX experience",
+    "navigation": {
+        "back": "Back to Settings",
+        "general": {
+            "title": "General",
+            "description": "Appearance, language, startup, updates, and app details."
+        },
+        "workModes": {
+            "title": "Work Modes",
+            "description": "Workspace behavior presets and advertised work kits."
+        },
+        "system": {
+            "title": "System & Runtime",
+            "description": "Gateway status, auto-start, remote control, and sandbox runtime."
+        },
+        "developer": {
+            "title": "Developer",
+            "description": "Developer mode, proxy, CLI, diagnostics, and local telemetry."
+        },
+        "billing": {
+            "title": "Billing",
+            "description": "Token usage history, cost estimates, and usage activity charts."
+        }
     },
-    "workModes": {
-      "title": "Work Modes",
-      "description": "Workspace behavior presets and advertised work kits."
+    "appearance": {
+        "title": "General",
+        "description": "Customize the look and feel",
+        "theme": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System",
+        "language": "Language",
+        "menuLanguageUpdated": "Menu language updated",
+        "launchAtStartup": "Launch at system startup",
+        "launchAtStartupDesc": "Automatically launch ClawX when you log in"
     },
-    "system": {
-      "title": "System & Runtime",
-      "description": "Gateway status, auto-start, remote control, and sandbox runtime."
+    "aiProviders": {
+        "title": "AI Providers",
+        "description": "Configure your AI model providers and API keys",
+        "overview": {
+            "title": "Provider Accounts",
+            "description": "A summary of the provider accounts and models currently configured.",
+            "noModelSelected": "No model selected",
+            "multiAccountReady": "Multi-account ready",
+            "singletonVendor": "Single-account vendor"
+        },
+        "authModes": {
+            "apiKey": "API Key",
+            "oauthDevice": "OAuth Device",
+            "oauthBrowser": "OAuth Browser",
+            "local": "Local"
+        },
+        "sections": {
+            "model": "Model Settings",
+            "fallback": "Fallback Settings"
+        },
+        "add": "Add Provider",
+        "custom": "Custom",
+        "notRequired": "Not required",
+        "empty": {
+            "title": "No providers configured",
+            "desc": "Add an AI provider to start using ClawX",
+            "cta": "Add Your First Provider"
+        },
+        "dialog": {
+            "title": "Add AI Provider",
+            "desc": "Configure a new AI model provider",
+            "displayName": "Display Name",
+            "apiKey": "API Key",
+            "apiKeyConfigured": "An API key is already stored for this provider.",
+            "apiKeyMissing": "No API key is stored for this provider yet.",
+            "apiKeyStored": "Your API key is stored locally on your machine.",
+            "replaceApiKey": "Replace API Key",
+            "replaceApiKeyHelp": "Leave this field empty if you want to keep the currently stored API key.",
+            "baseUrl": "Base URL",
+            "modelId": "Model ID",
+            "codePlanPreset": "Code Plan Preset",
+            "codePlanMode": "Code Plan",
+            "useCodePlanPreset": "Use Ark Code Plan Preset",
+            "codePlanPresetDesc": "Code Plan uses https://ark.cn-beijing.volces.com/api/coding/v3 and model ark-code-latest. Do not use /api/v3 for Code Plan traffic.",
+            "codePlanDoc": "Code Plan docs",
+            "protocol": "Protocol",
+            "advancedConfig": "Advanced configuration",
+            "userAgent": "User-Agent",
+            "userAgentPlaceholder": "ClawX/1.0",
+            "fallbackModels": "Fallback Models",
+            "fallbackProviders": "Fallback Providers",
+            "fallbackModelIds": "Fallback Model IDs",
+            "fallbackModelIdsPlaceholder": "gpt-4.1-mini\nanother-model-id",
+            "fallbackModelIdsHelp": "One model ID per line. These models use the current provider config before falling back to other providers.",
+            "noFallbackOptions": "Add another provider first to use it as a fallback target.",
+            "cancel": "Cancel",
+            "change": "Change provider",
+            "add": "Add Provider",
+            "save": "Save",
+            "customDoc": "Documentation",
+            "validate": "Validate",
+            "failed": "Failed",
+            "fetchingModels": "Fetching",
+            "fetchModels": "Fetch Models",
+            "customModel": "Enter model manually",
+            "testConnection": "Test Connection"
+        },
+        "card": {
+            "default": "Default",
+            "configured": "Configured",
+            "noKey": "No API key set",
+            "none": "None",
+            "fallbacks_one": "Fallback: {{names}}",
+            "fallbacks_other": "Fallbacks ({{count}}): {{names}}",
+            "setDefault": "Set as default",
+            "editKey": "Edit API key",
+            "delete": "Delete provider"
+        },
+        "protocols": {
+            "openai": "OpenAI Compatible",
+            "openaiCompletions": "OpenAI Completions",
+            "openaiResponses": "OpenAI Responses",
+            "anthropic": "Anthropic Compatible"
+        },
+        "toast": {
+            "added": "Provider added successfully",
+            "failedAdd": "Failed to add provider",
+            "deleted": "Provider deleted",
+            "failedDelete": "Failed to delete provider",
+            "defaultUpdated": "Default provider updated",
+            "failedDefault": "Failed to set default",
+            "updated": "Provider updated",
+            "failedUpdate": "Failed to update provider",
+            "invalidKey": "Invalid API key",
+            "modelRequired": "Model ID is required",
+            "minimaxConflict": "Cannot add both MiniMax (Global) and MiniMax (CN) providers.",
+            "connectionOk": "Connected, latency {{ms}} ms",
+            "connectionFailed": "Connection failed: {{error}}",
+            "modelsUpdated": "Model list updated",
+            "modelsUpdatedWithLatency": "Model list updated, latency {{ms}} ms",
+            "modelsFetchFailed": "Failed to fetch models: {{error}}",
+            "noModelsReturned": "Service did not return a model list",
+            "providerRequired": "Select a provider"
+        },
+        "oauth": {
+            "loginMode": "OAuth Login",
+            "apikeyMode": "API Key",
+            "loginPrompt": "This provider requires signing in via your browser.",
+            "loginButton": "Login with Browser",
+            "getApiKey": "Get API Key",
+            "waiting": "Waiting...",
+            "openLoginPage": "Open Login Page",
+            "waitingApproval": "Waiting for approval in browser...",
+            "cancel": "Cancel",
+            "codeCopied": "Code copied to clipboard",
+            "authFailed": "Authentication Failed",
+            "browserFlowUnavailable": "Browser OAuth is not wired for this provider yet.",
+            "tryAgain": "Try Again",
+            "approveLogin": "Approve Login",
+            "step1": "Copy the authorization code below.",
+            "step2": "Open the login page in your browser.",
+            "step3": "Paste the code to approve access.",
+            "requestingCode": "Requesting secure login code..."
+        }
+    },
+    "gateway": {
+        "title": "Gateway",
+        "description": "OpenClaw Gateway settings",
+        "status": "Status",
+        "port": "Port",
+        "logs": "Logs",
+        "appLogs": "Application Logs",
+        "openFolder": "Open Folder",
+        "autoStart": "Auto-start Gateway",
+        "autoStartDesc": "Start Gateway when ClawX launches",
+        "proxyTitle": "Proxy",
+        "proxyDesc": "Route Electron and Gateway traffic through your local proxy client.",
+        "proxyServer": "Proxy Server",
+        "proxyServerHelp": "The default proxy for all requests. Bare host:port values default to HTTP.",
+        "proxyHttpServer": "HTTP Proxy",
+        "proxyHttpServerHelp": "Advanced override for HTTP requests. Leave blank to use Proxy Server.",
+        "proxyHttpsServer": "HTTPS Proxy",
+        "proxyHttpsServerHelp": "Advanced override for HTTPS requests. Leave blank to use Proxy Server.",
+        "proxyAllServer": "ALL_PROXY / SOCKS",
+        "proxyAllServerHelp": "Advanced fallback for SOCKS-capable clients and protocols such as Telegram. Leave blank to use Proxy Server.",
+        "showAdvancedProxy": "Show advanced proxy fields",
+        "hideAdvancedProxy": "Hide advanced proxy fields",
+        "proxyBypass": "Bypass Rules",
+        "proxyBypassHelp": "Semicolon, comma, or newline separated hosts that should connect directly.",
+        "proxyRestartNote": "Saving reapplies Electron networking and restarts the Gateway immediately. Regular Gateway restarts keep existing Telegram channel proxy values when proxy is disabled; save while disabled to clear them.",
+        "proxySaved": "Proxy settings saved",
+        "proxySaveFailed": "Failed to save proxy settings"
+    },
+    "sandbox": {
+        "title": "Sandbox Control",
+        "description": "ClawX uses policy-light by default. Docker and SSH remain explicit strong-isolation providers, and missing Docker never blocks the default Gateway path.",
+        "defaultProfileName": "Default sandbox",
+        "loadFailed": "Failed to load sandbox status",
+        "saveFailed": "Failed to save sandbox profile",
+        "profileSaved": "Sandbox profile updated",
+        "refresh": "Refresh",
+        "loading": "Loading",
+        "degraded": "Degraded",
+        "fallbackToPolicy": "Use policy-light",
+        "requestedProvider": "Requested provider",
+        "effectiveProvider": "Effective provider",
+        "permissionMode": "Permission mode",
+        "workspaceAccess": "Workspace access",
+        "execPolicy": "Exec policy",
+        "networkPolicy": "Network policy",
+        "openClawMode": "OpenClaw mode",
+        "updatedAt": "Updated",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "dockerChecks": "Docker strong checks",
+        "ok": "OK",
+        "missing": "Missing",
+        "runtimeLevels": {
+            "policy": "Policy",
+            "light": "Light",
+            "strong": "Strong",
+            "unavailable": "Unavailable"
+        },
+        "networkPolicies": {
+            "disabled": "Disabled",
+            "approvalRequired": "Approval required",
+            "enabled": "Enabled"
+        },
+        "docker": {
+            "cli": "Docker CLI",
+            "daemon": "Docker daemon",
+            "image": "Sandbox image"
+        }
+    },
+    "remoteControl": {
+        "title": "Electron Remote Control",
+        "description": "Expose the Electron CDP debugging port. Bind it to localhost and use it only in trusted environments. Restart ClawX after saving.",
+        "port": "CDP Port",
+        "configEndpoint": "Configured endpoint: 127.0.0.1:{{port}} /json/version",
+        "currentEndpoint": "Current endpoint: {{endpoint}}",
+        "envOverride": "The current process is overridden by the CLAWX_REMOTE_DEBUGGING_PORT environment variable.",
+        "restartRequired": "Configuration differs from the current process. Restart the app to apply it.",
+        "screenshotAlt": "Electron CDP screenshot",
+        "status": {
+            "effective": "Currently effective",
+            "inactive": "Not effective"
+        },
+        "actions": {
+            "refreshStatus": "Refresh Status",
+            "connectDebug": "Connect Debugger",
+            "connecting": "Connecting",
+            "pageInfo": "Page Info",
+            "scroll": "Scroll Page",
+            "scrollDown": "Scroll Down",
+            "click": "Click Page",
+            "clickCenter": "Click Center",
+            "screenshot": "Screenshot",
+            "running": "{{action}}..."
+        },
+        "inspect": {
+            "result": "Connection result: {{result}}",
+            "success": "Success",
+            "failure": "Failure",
+            "targets": "Debuggable pages"
+        },
+        "toast": {
+            "connected": "Connected to Electron CDP, found {{count}} pages",
+            "connectFailed": "Failed to connect to Electron CDP",
+            "connectFailedWithError": "Failed to connect to Electron CDP: {{error}}",
+            "actionFailed": "{{action}} failed: {{error}}",
+            "pageInfoRefreshed": "Page info refreshed",
+            "pageInfoFailed": "Failed to read page info",
+            "scrollFailed": "Failed to scroll page",
+            "clickedCenter": "Clicked page center ({{x}}, {{y}})",
+            "clickFailed": "Failed to click page",
+            "screenshotReady": "Screenshot generated",
+            "screenshotFailed": "Failed to capture page screenshot",
+            "invalidPort": "CDP port must be an integer between 1 and 65535",
+            "saved": "Remote control settings saved. Restart to apply.",
+            "saveFailed": "Failed to save remote control settings: {{error}}"
+        }
+    },
+    "updates": {
+        "title": "Updates",
+        "description": "Keep ClawX up to date",
+        "autoCheck": "Auto-check for updates",
+        "autoCheckDesc": "Check for updates on startup",
+        "autoDownload": "Update prompts",
+        "autoDownloadDesc": "Show a notification when a new version is available; download only after you choose to update",
+        "status": {
+            "checking": "Checking for updates...",
+            "downloading": "Downloading update...",
+            "available": "Update available: v{{version}}",
+            "downloaded": "Ready to install: v{{version}}",
+            "autoInstalling": "Restarting to install update in {{seconds}}s...",
+            "failed": "Update check failed",
+            "latest": "You have the latest version",
+            "check": "Check for updates to get the latest features"
+        },
+        "action": {
+            "checking": "Checking...",
+            "downloading": "Downloading...",
+            "download": "Download Update",
+            "install": "Install & Restart",
+            "cancelAutoInstall": "Cancel",
+            "later": "Later",
+            "retry": "Retry",
+            "check": "Check for Updates"
+        },
+        "currentVersion": "Current Version",
+        "whatsNew": "What's New:",
+        "errorDetails": "Error Details:",
+        "toast": {
+            "availableTitle": "ClawX update available",
+            "availableDescription": "Version v{{version}} is available. Download it when you're ready.",
+            "downloadedTitle": "ClawX update ready",
+            "downloadedDescription": "Version v{{version}} has been downloaded. Restart to install it.",
+            "unknownVersion": "new"
+        },
+        "help": "ClawX checks for updates automatically and prompts you before downloading or installing."
+    },
+    "advanced": {
+        "title": "Advanced",
+        "description": "Power-user options",
+        "devMode": "Developer Mode",
+        "devModeDesc": "Show developer tools and shortcuts",
+        "telemetry": "Anonymous Usage Data",
+        "telemetryDesc": "Allow providing anonymous basic usage data to improve ClawX"
     },
     "developer": {
-      "title": "Developer",
-      "description": "Developer mode, proxy, CLI, diagnostics, and local telemetry."
+        "title": "Developer",
+        "description": "Advanced options for developers",
+        "console": "OpenClaw Console",
+        "consoleDesc": "Access the native OpenClaw management interface",
+        "openConsole": "Open Developer Console",
+        "consoleNote": "Opens the Control UI with gateway token injected",
+        "gatewayToken": "Gateway Token",
+        "gatewayTokenDesc": "Paste this into Control UI settings if prompted",
+        "tokenUnavailable": "Token unavailable",
+        "tokenCopied": "Gateway token copied",
+        "cli": "OpenClaw CLI",
+        "cliDesc": "Copy a command to run OpenClaw without modifying PATH.",
+        "cliPowershell": "PowerShell command.",
+        "cmdUnavailable": "Command unavailable",
+        "cmdCopied": "CLI command copied",
+        "doctor": "OpenClaw Doctor",
+        "doctorDesc": "Run `openclaw doctor` and inspect the raw diagnostic output.",
+        "runDoctor": "Run Doctor",
+        "runDoctorFix": "Run Doctor Fix",
+        "doctorSucceeded": "OpenClaw doctor completed",
+        "doctorFailed": "OpenClaw doctor reported issues",
+        "doctorRunFailed": "Failed to run OpenClaw doctor",
+        "doctorFixSucceeded": "OpenClaw doctor fix completed",
+        "doctorFixFailed": "OpenClaw doctor fix reported issues",
+        "doctorFixRunFailed": "Failed to run OpenClaw doctor fix",
+        "doctorCopied": "Doctor output copied",
+        "doctorOk": "Healthy",
+        "doctorIssue": "Issues Found",
+        "doctorFixOk": "Fixed",
+        "doctorFixIssue": "Fix Failed",
+        "doctorExitCode": "Exit code",
+        "doctorDuration": "Duration",
+        "doctorCommand": "Command",
+        "doctorWorkingDir": "Working dir",
+        "doctorError": "Error",
+        "doctorStdout": "Stdout",
+        "doctorStderr": "Stderr",
+        "doctorOutputEmpty": "(empty)",
+        "telemetryViewer": "Telemetry Viewer",
+        "telemetryViewerDesc": "Local-only UX/performance telemetry, latest 200 entries.",
+        "telemetryAggregated": "Top Events",
+        "telemetryTotal": "Total",
+        "telemetryErrors": "Errors",
+        "telemetrySlow": "Slow (>=800ms)",
+        "telemetryEmpty": "No telemetry yet",
+        "telemetryCopied": "Telemetry copied",
+        "telemetryCleared": "Telemetry cleared",
+        "installCmd": "Install \"openclaw\" Command",
+        "installCmdDesc": "Installs ~/.local/bin/openclaw (no admin required)",
+        "installTitle": "Install OpenClaw Command",
+        "installMessage": "Install the \"openclaw\" command?",
+        "installDetail": "This will create ~/.local/bin/openclaw. Ensure ~/.local/bin is on your PATH if you want to run it globally."
+    },
+    "about": {
+        "title": "About",
+        "appName": "ClawX",
+        "tagline": "Graphical AI Assistant",
+        "basedOn": "Based on OpenClaw",
+        "version": "Version {{version}}",
+        "docs": "Website",
+        "github": "GitHub",
+        "faq": "FAQ"
+    },
+    "workModes": {
+        "title": "Work Modes",
+        "currentMode": "Current workspace mode",
+        "currentModeDesc": "Choose the behavior preset for the active workspace session. This does not change permissions or grant tools.",
+        "noWorkspace": "Choose a workspace before changing the work mode.",
+        "noWorkspaceBadge": "No workspace",
+        "modeSaved": "Work mode updated",
+        "kitsTitle": "Work Kits",
+        "kitsDesc": "Choose the artifact-focused kits each mode advertises to the runtime. These are capability hints only; runtime policy still decides actual tools.",
+        "installSkill": "Install {{slug}}",
+        "installingSkill": "Installing {{slug}}",
+        "skillInstalled": "{{slug}} installed",
+        "skillInstallFailed": "Skill install failed: {{error}}",
+        "selectedCount": "{{count}} selected",
+        "capability": {
+            "ready": "Ready",
+            "missingSkill": "Missing skill",
+            "disabled": "Disabled",
+            "runtimeUnavailable": "Runtime unavailable",
+            "optionalExternal": "Optional"
+        },
+        "kits": {
+            "reports": "Reports",
+            "sheets": "Sheets",
+            "slides": "Slides",
+            "pdf": "PDF",
+            "research": "Research",
+            "website": "Website",
+            "design": "Design",
+            "ops": "Ops"
+        },
+        "kitDescriptions": {
+            "reports": "Draft, structure, and export reports and Word-style documents.",
+            "sheets": "Read, clean, calculate, and summarize spreadsheets or CSV data.",
+            "slides": "Create presentation outlines and editable PPTX decks.",
+            "pdf": "Extract, summarize, preview, and package PDF artifacts.",
+            "research": "Collect web/source material with citations and readable summaries.",
+            "website": "Build and verify HTML/web artifacts with browser previews.",
+            "design": "Shape visual artifacts, dashboards, and polished layouts.",
+            "ops": "Handle lightweight daily writing, action items, and personal operations."
+        },
+        "toolBundlesTitle": "Tool bundle intent",
+        "toolBundlesDesc": "Choose which tool bundle labels each mode advertises to the runtime. These labels express intent only; runtime policy still decides actual tools.",
+        "toolBundles": {
+            "code": "Code",
+            "git": "Git",
+            "terminal": "Terminal",
+            "browser": "Browser",
+            "docs": "Docs",
+            "sheets": "Sheets",
+            "pdf": "PDF",
+            "memory": "Memory"
+        }
+    },
+    "workProviders": {
+        "title": "Work Providers",
+        "description": "Local and optional providers behind Work Kits. Providers expose capability status only and do not grant tools.",
+        "status": {
+            "ready": "Ready",
+            "missingDependency": "Missing dependency",
+            "missingConfig": "Missing config",
+            "disabled": "Disabled",
+            "externalUnavailable": "External unavailable",
+            "runtimeUnavailable": "Runtime unavailable"
+        },
+        "providers": {
+            "officeDocument": "Documents",
+            "officeSheet": "Sheets",
+            "officeSlide": "Slides",
+            "pdf": "PDF",
+            "webSearch": "Web search",
+            "webRead": "Web reading",
+            "libreOffice": "LibreOffice",
+            "pandoc": "Pandoc",
+            "crawler": "Crawler",
+            "ocr": "OCR",
+            "dataFrame": "Data analysis"
+        },
+        "providerDescriptions": {
+            "officeDocument": "Read and write Word-style document artifacts with lightweight JS libraries.",
+            "officeSheet": "Read and write spreadsheet and CSV artifacts.",
+            "officeSlide": "Generate editable presentation decks.",
+            "pdf": "Validate, preview, split, and merge PDF artifacts.",
+            "webSearch": "Use a user-configured external search provider.",
+            "webRead": "Extract readable source text and citations from web pages.",
+            "libreOffice": "Optional high-fidelity local Office conversion provider.",
+            "pandoc": "Optional document conversion provider.",
+            "crawler": "Optional external crawler service.",
+            "ocr": "Optional OCR provider.",
+            "dataFrame": "Optional Python or service-backed data analysis provider."
+        }
+    },
+    "projectRules": {
+        "title": "Project Rules Center",
+        "description": "Inspect the active workspace rule entry, local rule notes, and deterministic guidance checks.",
+        "noWorkspace": "No active workspace",
+        "agentsFile": "AGENTS.md",
+        "ruleFileCount": ".clawx/rules files",
+        "validation": "Validation",
+        "issueSummary": "{{errors}} errors / {{warnings}} warnings / {{info}} info",
+        "missingAgents": "This workspace does not have AGENTS.md yet. Create the conservative template to add a project rule entry without overwriting other files.",
+        "previewTitle": "AGENTS.md preview",
+        "emptyPreview": "(empty file)",
+        "localRulesTitle": "Local .clawx/rules/*.md",
+        "noLocalRules": "No local rule note files found.",
+        "contextPreviewTitle": "Agent context preview",
+        "issuesTitle": "Validation results",
+        "noIssues": "No validation issues found.",
+        "actions": {
+            "refresh": "Refresh",
+            "createAgents": "Create AGENTS.md",
+            "creating": "Creating..."
+        },
+        "toast": {
+            "loadFailed": "Failed to load project rules: {{error}}",
+            "createFailed": "Failed to create AGENTS.md: {{error}}",
+            "created": "AGENTS.md template created",
+            "alreadyPresent": "AGENTS.md already exists"
+        },
+        "health": {
+            "ready": "Ready",
+            "warnings": "{{count}} warning",
+            "warnings_plural": "{{count}} warnings",
+            "errors": "{{count}} error",
+            "errors_plural": "{{count}} errors"
+        },
+        "status": {
+            "missing": "Missing",
+            "present": "Present",
+            "empty": "Empty",
+            "tooLarge": "Too large",
+            "unreadable": "Unreadable",
+            "included": "Included",
+            "available": "Available",
+            "referenceOnly": "Reference only"
+        },
+        "contextStatus": {
+            "included": "Included",
+            "available": "Available",
+            "referenceOnly": "Reference only",
+            "missing": "Missing"
+        },
+        "context": {
+            "agents": {
+                "title": "AGENTS.md",
+                "description": "The active workspace entry file is the first project rule source expected to enter agent context."
+            },
+            "harnessSpecs": {
+                "title": "harness/specs/**",
+                "description": "Durable rules, scenarios, tasks, guides, and layers remain the project source of truth when referenced by AGENTS.md or task specs."
+            },
+            "clawxRules": {
+                "title": ".clawx/rules/*.md",
+                "description": "{{count}} local supplemental file found. These are visible here but are not a new source of truth unless AGENTS.md or a Context Pack recipe references them.",
+                "description_plural": "{{count}} local supplemental files found. These are visible here but are not a new source of truth unless AGENTS.md or a Context Pack recipe references them."
+            }
+        },
+        "issues": {
+            "workspace.missing": {
+                "title": "No active workspace",
+                "description": "Choose or create a workspace before inspecting project rules."
+            },
+            "agents.missing": {
+                "title": "AGENTS.md is missing",
+                "description": "{{path}} is the expected project rule entry file."
+            },
+            "agents.empty": {
+                "title": "AGENTS.md is empty",
+                "description": "{{path}} exists but has no rule content yet."
+            },
+            "agents.tooLarge": {
+                "title": "AGENTS.md is too large to preview",
+                "description": "{{path}} is {{size}} bytes; the preview limit is {{maxBytes}} bytes."
+            },
+            "agents.unreadable": {
+                "title": "AGENTS.md cannot be read",
+                "description": "{{path}} could not be inspected: {{reason}}"
+            },
+            "ruleFile.empty": {
+                "title": "Empty local rule file",
+                "description": "{{path}} is listed but has no content."
+            },
+            "ruleFile.tooLarge": {
+                "title": "Local rule file is too large",
+                "description": "{{path}} is {{size}} bytes; the lint limit is {{maxBytes}} bytes."
+            },
+            "ruleFile.unreadable": {
+                "title": "Local rule file cannot be read",
+                "description": "{{path}} could not be inspected: {{reason}}"
+            },
+            "rules.duplicateTitle": {
+                "title": "Duplicate rule title",
+                "description": "The title \"{{title}}\" appears in multiple files: {{relatedPaths}}."
+            },
+            "rules.duplicateLine": {
+                "title": "Duplicate rule line",
+                "description": "The same rule line appears in multiple files: {{relatedPaths}}."
+            },
+            "renderer.hostApiGuidanceMissing": {
+                "title": "Renderer host-api guidance is missing",
+                "description": "Add guidance that renderer backend calls go through host-api or api-client."
+            },
+            "renderer.ipcBanMissing": {
+                "title": "Direct renderer IPC warning is missing",
+                "description": "Add a deterministic rule against direct window.electron.ipcRenderer.invoke calls in renderer pages/components."
+            },
+            "renderer.gatewayFetchBanMissing": {
+                "title": "Direct Gateway fetch warning is missing",
+                "description": "Add a deterministic rule against renderer fetch/WebSocket calls to 127.0.0.1:18789 or localhost:18789."
+            },
+            "renderer.ipcConflict": {
+                "title": "Potential direct IPC conflict",
+                "description": "The rule text appears to both allow and forbid direct renderer IPC. Review the wording."
+            },
+            "renderer.gatewayFetchConflict": {
+                "title": "Potential direct Gateway fetch conflict",
+                "description": "The rule text appears to both allow and forbid direct renderer Gateway calls. Review the wording."
+            }
+        }
+    },
+    "workHeatGraph": {
+        "title": "Work heatmap",
+        "description": "Local activity from recent session usage.",
+        "runs": "{{count}} runs",
+        "tokens": "{{count}} tokens",
+        "dayTitle": "{{date}}: {{count}} runs, {{tokens}} tokens"
     }
-  },
-  "appearance": {
-    "title": "General",
-    "description": "Customize the look and feel",
-    "theme": "Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System",
-    "language": "Language",
-    "menuLanguageUpdated": "Menu language updated",
-    "launchAtStartup": "Launch at system startup",
-    "launchAtStartupDesc": "Automatically launch ClawX when you log in"
-  },
-  "aiProviders": {
-    "title": "AI Providers",
-    "description": "Configure your AI model providers and API keys",
-    "overview": {
-      "title": "Provider Accounts",
-      "description": "A summary of the provider accounts and models currently configured.",
-      "noModelSelected": "No model selected",
-      "multiAccountReady": "Multi-account ready",
-      "singletonVendor": "Single-account vendor"
-    },
-    "authModes": {
-      "apiKey": "API Key",
-      "oauthDevice": "OAuth Device",
-      "oauthBrowser": "OAuth Browser",
-      "local": "Local"
-    },
-    "sections": {
-      "model": "Model Settings",
-      "fallback": "Fallback Settings"
-    },
-    "add": "Add Provider",
-    "custom": "Custom",
-    "notRequired": "Not required",
-    "empty": {
-      "title": "No providers configured",
-      "desc": "Add an AI provider to start using ClawX",
-      "cta": "Add Your First Provider"
-    },
-    "dialog": {
-      "title": "Add AI Provider",
-      "desc": "Configure a new AI model provider",
-      "displayName": "Display Name",
-      "apiKey": "API Key",
-      "apiKeyConfigured": "An API key is already stored for this provider.",
-      "apiKeyMissing": "No API key is stored for this provider yet.",
-      "apiKeyStored": "Your API key is stored locally on your machine.",
-      "replaceApiKey": "Replace API Key",
-      "replaceApiKeyHelp": "Leave this field empty if you want to keep the currently stored API key.",
-      "baseUrl": "Base URL",
-      "modelId": "Model ID",
-      "codePlanPreset": "Code Plan Preset",
-      "codePlanMode": "Code Plan",
-      "useCodePlanPreset": "Use Ark Code Plan Preset",
-      "codePlanPresetDesc": "Code Plan uses https://ark.cn-beijing.volces.com/api/coding/v3 and model ark-code-latest. Do not use /api/v3 for Code Plan traffic.",
-      "codePlanDoc": "Code Plan docs",
-      "protocol": "Protocol",
-      "advancedConfig": "Advanced configuration",
-      "userAgent": "User-Agent",
-      "userAgentPlaceholder": "ClawX/1.0",
-      "fallbackModels": "Fallback Models",
-      "fallbackProviders": "Fallback Providers",
-      "fallbackModelIds": "Fallback Model IDs",
-      "fallbackModelIdsPlaceholder": "gpt-4.1-mini\nanother-model-id",
-      "fallbackModelIdsHelp": "One model ID per line. These models use the current provider config before falling back to other providers.",
-      "noFallbackOptions": "Add another provider first to use it as a fallback target.",
-      "cancel": "Cancel",
-      "change": "Change provider",
-      "add": "Add Provider",
-      "save": "Save",
-      "customDoc": "Documentation",
-      "validate": "Validate",
-      "failed": "Failed",
-      "fetchingModels": "Fetching",
-      "fetchModels": "Fetch Models",
-      "customModel": "Enter model manually",
-      "testConnection": "Test Connection"
-    },
-    "card": {
-      "default": "Default",
-      "configured": "Configured",
-      "noKey": "No API key set",
-      "none": "None",
-      "fallbacks_one": "Fallback: {{names}}",
-      "fallbacks_other": "Fallbacks ({{count}}): {{names}}",
-      "setDefault": "Set as default",
-      "editKey": "Edit API key",
-      "delete": "Delete provider"
-    },
-    "protocols": {
-      "openai": "OpenAI Compatible",
-      "openaiCompletions": "OpenAI Completions",
-      "openaiResponses": "OpenAI Responses",
-      "anthropic": "Anthropic Compatible"
-    },
-    "toast": {
-      "added": "Provider added successfully",
-      "failedAdd": "Failed to add provider",
-      "deleted": "Provider deleted",
-      "failedDelete": "Failed to delete provider",
-      "defaultUpdated": "Default provider updated",
-      "failedDefault": "Failed to set default",
-      "updated": "Provider updated",
-      "failedUpdate": "Failed to update provider",
-      "invalidKey": "Invalid API key",
-      "modelRequired": "Model ID is required",
-      "minimaxConflict": "Cannot add both MiniMax (Global) and MiniMax (CN) providers.",
-      "connectionOk": "Connected, latency {{ms}} ms",
-      "connectionFailed": "Connection failed: {{error}}",
-      "modelsUpdated": "Model list updated",
-      "modelsUpdatedWithLatency": "Model list updated, latency {{ms}} ms",
-      "modelsFetchFailed": "Failed to fetch models: {{error}}",
-      "noModelsReturned": "Service did not return a model list",
-      "providerRequired": "Select a provider"
-    },
-    "oauth": {
-      "loginMode": "OAuth Login",
-      "apikeyMode": "API Key",
-      "loginPrompt": "This provider requires signing in via your browser.",
-      "loginButton": "Login with Browser",
-      "getApiKey": "Get API Key",
-      "waiting": "Waiting...",
-      "openLoginPage": "Open Login Page",
-      "waitingApproval": "Waiting for approval in browser...",
-      "cancel": "Cancel",
-      "codeCopied": "Code copied to clipboard",
-      "authFailed": "Authentication Failed",
-      "browserFlowUnavailable": "Browser OAuth is not wired for this provider yet.",
-      "tryAgain": "Try Again",
-      "approveLogin": "Approve Login",
-      "step1": "Copy the authorization code below.",
-      "step2": "Open the login page in your browser.",
-      "step3": "Paste the code to approve access.",
-      "requestingCode": "Requesting secure login code..."
-    }
-  },
-  "gateway": {
-    "title": "Gateway",
-    "description": "OpenClaw Gateway settings",
-    "status": "Status",
-    "port": "Port",
-    "logs": "Logs",
-    "appLogs": "Application Logs",
-    "openFolder": "Open Folder",
-    "autoStart": "Auto-start Gateway",
-    "autoStartDesc": "Start Gateway when ClawX launches",
-    "proxyTitle": "Proxy",
-    "proxyDesc": "Route Electron and Gateway traffic through your local proxy client.",
-    "proxyServer": "Proxy Server",
-    "proxyServerHelp": "The default proxy for all requests. Bare host:port values default to HTTP.",
-    "proxyHttpServer": "HTTP Proxy",
-    "proxyHttpServerHelp": "Advanced override for HTTP requests. Leave blank to use Proxy Server.",
-    "proxyHttpsServer": "HTTPS Proxy",
-    "proxyHttpsServerHelp": "Advanced override for HTTPS requests. Leave blank to use Proxy Server.",
-    "proxyAllServer": "ALL_PROXY / SOCKS",
-    "proxyAllServerHelp": "Advanced fallback for SOCKS-capable clients and protocols such as Telegram. Leave blank to use Proxy Server.",
-    "showAdvancedProxy": "Show advanced proxy fields",
-    "hideAdvancedProxy": "Hide advanced proxy fields",
-    "proxyBypass": "Bypass Rules",
-    "proxyBypassHelp": "Semicolon, comma, or newline separated hosts that should connect directly.",
-    "proxyRestartNote": "Saving reapplies Electron networking and restarts the Gateway immediately. Regular Gateway restarts keep existing Telegram channel proxy values when proxy is disabled; save while disabled to clear them.",
-    "proxySaved": "Proxy settings saved",
-    "proxySaveFailed": "Failed to save proxy settings"
-  },
-  "sandbox": {
-    "title": "Sandbox Control",
-    "description": "ClawX uses policy-light by default. Docker and SSH remain explicit strong-isolation providers, and missing Docker never blocks the default Gateway path.",
-    "defaultProfileName": "Default sandbox",
-    "loadFailed": "Failed to load sandbox status",
-    "saveFailed": "Failed to save sandbox profile",
-    "profileSaved": "Sandbox profile updated",
-    "refresh": "Refresh",
-    "loading": "Loading",
-    "degraded": "Degraded",
-    "fallbackToPolicy": "Use policy-light",
-    "requestedProvider": "Requested provider",
-    "effectiveProvider": "Effective provider",
-    "permissionMode": "Permission mode",
-    "workspaceAccess": "Workspace access",
-    "execPolicy": "Exec policy",
-    "networkPolicy": "Network policy",
-    "openClawMode": "OpenClaw mode",
-    "updatedAt": "Updated",
-    "available": "Available",
-    "unavailable": "Unavailable",
-    "dockerChecks": "Docker strong checks",
-    "ok": "OK",
-    "missing": "Missing",
-    "runtimeLevels": {
-      "policy": "Policy",
-      "light": "Light",
-      "strong": "Strong",
-      "unavailable": "Unavailable"
-    },
-    "networkPolicies": {
-      "disabled": "Disabled",
-      "approvalRequired": "Approval required",
-      "enabled": "Enabled"
-    },
-    "docker": {
-      "cli": "Docker CLI",
-      "daemon": "Docker daemon",
-      "image": "Sandbox image"
-    }
-  },
-  "remoteControl": {
-    "title": "Electron Remote Control",
-    "description": "Expose the Electron CDP debugging port. Bind it to localhost and use it only in trusted environments. Restart ClawX after saving.",
-    "port": "CDP Port",
-    "configEndpoint": "Configured endpoint: 127.0.0.1:{{port}} /json/version",
-    "currentEndpoint": "Current endpoint: {{endpoint}}",
-    "envOverride": "The current process is overridden by the CLAWX_REMOTE_DEBUGGING_PORT environment variable.",
-    "restartRequired": "Configuration differs from the current process. Restart the app to apply it.",
-    "screenshotAlt": "Electron CDP screenshot",
-    "status": {
-      "effective": "Currently effective",
-      "inactive": "Not effective"
-    },
-    "actions": {
-      "refreshStatus": "Refresh Status",
-      "connectDebug": "Connect Debugger",
-      "connecting": "Connecting",
-      "pageInfo": "Page Info",
-      "scroll": "Scroll Page",
-      "scrollDown": "Scroll Down",
-      "click": "Click Page",
-      "clickCenter": "Click Center",
-      "screenshot": "Screenshot",
-      "running": "{{action}}..."
-    },
-    "inspect": {
-      "result": "Connection result: {{result}}",
-      "success": "Success",
-      "failure": "Failure",
-      "targets": "Debuggable pages"
-    },
-    "toast": {
-      "connected": "Connected to Electron CDP, found {{count}} pages",
-      "connectFailed": "Failed to connect to Electron CDP",
-      "connectFailedWithError": "Failed to connect to Electron CDP: {{error}}",
-      "actionFailed": "{{action}} failed: {{error}}",
-      "pageInfoRefreshed": "Page info refreshed",
-      "pageInfoFailed": "Failed to read page info",
-      "scrollFailed": "Failed to scroll page",
-      "clickedCenter": "Clicked page center ({{x}}, {{y}})",
-      "clickFailed": "Failed to click page",
-      "screenshotReady": "Screenshot generated",
-      "screenshotFailed": "Failed to capture page screenshot",
-      "invalidPort": "CDP port must be an integer between 1 and 65535",
-      "saved": "Remote control settings saved. Restart to apply.",
-      "saveFailed": "Failed to save remote control settings: {{error}}"
-    }
-  },
-  "updates": {
-    "title": "Updates",
-    "description": "Keep ClawX up to date",
-    "autoCheck": "Auto-check for updates",
-    "autoCheckDesc": "Check for updates on startup",
-    "autoDownload": "Update prompts",
-    "autoDownloadDesc": "Show a notification when a new version is available; download only after you choose to update",
-    "status": {
-      "checking": "Checking for updates...",
-      "downloading": "Downloading update...",
-      "available": "Update available: v{{version}}",
-      "downloaded": "Ready to install: v{{version}}",
-      "autoInstalling": "Restarting to install update in {{seconds}}s...",
-      "failed": "Update check failed",
-      "latest": "You have the latest version",
-      "check": "Check for updates to get the latest features"
-    },
-    "action": {
-      "checking": "Checking...",
-      "downloading": "Downloading...",
-      "download": "Download Update",
-      "install": "Install & Restart",
-      "cancelAutoInstall": "Cancel",
-      "later": "Later",
-      "retry": "Retry",
-      "check": "Check for Updates"
-    },
-    "currentVersion": "Current Version",
-    "whatsNew": "What's New:",
-    "errorDetails": "Error Details:",
-    "toast": {
-      "availableTitle": "ClawX update available",
-      "availableDescription": "Version v{{version}} is available. Download it when you're ready.",
-      "downloadedTitle": "ClawX update ready",
-      "downloadedDescription": "Version v{{version}} has been downloaded. Restart to install it.",
-      "unknownVersion": "new"
-    },
-    "help": "ClawX checks for updates automatically and prompts you before downloading or installing."
-  },
-  "advanced": {
-    "title": "Advanced",
-    "description": "Power-user options",
-    "devMode": "Developer Mode",
-    "devModeDesc": "Show developer tools and shortcuts",
-    "telemetry": "Anonymous Usage Data",
-    "telemetryDesc": "Allow providing anonymous basic usage data to improve ClawX"
-  },
-  "developer": {
-    "title": "Developer",
-    "description": "Advanced options for developers",
-    "console": "OpenClaw Console",
-    "consoleDesc": "Access the native OpenClaw management interface",
-    "openConsole": "Open Developer Console",
-    "consoleNote": "Opens the Control UI with gateway token injected",
-    "gatewayToken": "Gateway Token",
-    "gatewayTokenDesc": "Paste this into Control UI settings if prompted",
-    "tokenUnavailable": "Token unavailable",
-    "tokenCopied": "Gateway token copied",
-    "cli": "OpenClaw CLI",
-    "cliDesc": "Copy a command to run OpenClaw without modifying PATH.",
-    "cliPowershell": "PowerShell command.",
-    "cmdUnavailable": "Command unavailable",
-    "cmdCopied": "CLI command copied",
-    "doctor": "OpenClaw Doctor",
-    "doctorDesc": "Run `openclaw doctor` and inspect the raw diagnostic output.",
-    "runDoctor": "Run Doctor",
-    "runDoctorFix": "Run Doctor Fix",
-    "doctorSucceeded": "OpenClaw doctor completed",
-    "doctorFailed": "OpenClaw doctor reported issues",
-    "doctorRunFailed": "Failed to run OpenClaw doctor",
-    "doctorFixSucceeded": "OpenClaw doctor fix completed",
-    "doctorFixFailed": "OpenClaw doctor fix reported issues",
-    "doctorFixRunFailed": "Failed to run OpenClaw doctor fix",
-    "doctorCopied": "Doctor output copied",
-    "doctorOk": "Healthy",
-    "doctorIssue": "Issues Found",
-    "doctorFixOk": "Fixed",
-    "doctorFixIssue": "Fix Failed",
-    "doctorExitCode": "Exit code",
-    "doctorDuration": "Duration",
-    "doctorCommand": "Command",
-    "doctorWorkingDir": "Working dir",
-    "doctorError": "Error",
-    "doctorStdout": "Stdout",
-    "doctorStderr": "Stderr",
-    "doctorOutputEmpty": "(empty)",
-    "telemetryViewer": "Telemetry Viewer",
-    "telemetryViewerDesc": "Local-only UX/performance telemetry, latest 200 entries.",
-    "telemetryAggregated": "Top Events",
-    "telemetryTotal": "Total",
-    "telemetryErrors": "Errors",
-    "telemetrySlow": "Slow (>=800ms)",
-    "telemetryEmpty": "No telemetry yet",
-    "telemetryCopied": "Telemetry copied",
-    "telemetryCleared": "Telemetry cleared",
-    "installCmd": "Install \"openclaw\" Command",
-    "installCmdDesc": "Installs ~/.local/bin/openclaw (no admin required)",
-    "installTitle": "Install OpenClaw Command",
-    "installMessage": "Install the \"openclaw\" command?",
-    "installDetail": "This will create ~/.local/bin/openclaw. Ensure ~/.local/bin is on your PATH if you want to run it globally."
-  },
-  "about": {
-    "title": "About",
-    "appName": "ClawX",
-    "tagline": "Graphical AI Assistant",
-    "basedOn": "Based on OpenClaw",
-    "version": "Version {{version}}",
-    "docs": "Website",
-    "github": "GitHub",
-    "faq": "FAQ"
-  },
-  "workModes": {
-    "title": "Work Modes",
-    "currentMode": "Current workspace mode",
-    "currentModeDesc": "Choose the behavior preset for the active workspace session. This does not change permissions or grant tools.",
-    "noWorkspace": "Choose a workspace before changing the work mode.",
-    "noWorkspaceBadge": "No workspace",
-    "modeSaved": "Work mode updated",
-    "kitsTitle": "Work Kits",
-    "kitsDesc": "Choose the artifact-focused kits each mode advertises to the runtime. These are capability hints only; runtime policy still decides actual tools.",
-    "installSkill": "Install {{slug}}",
-    "installingSkill": "Installing {{slug}}",
-    "skillInstalled": "{{slug}} installed",
-    "skillInstallFailed": "Skill install failed: {{error}}",
-    "selectedCount": "{{count}} selected",
-    "capability": {
-      "ready": "Ready",
-      "missingSkill": "Missing skill",
-      "disabled": "Disabled",
-      "runtimeUnavailable": "Runtime unavailable",
-      "optionalExternal": "Optional"
-    },
-    "kits": {
-      "reports": "Reports",
-      "sheets": "Sheets",
-      "slides": "Slides",
-      "pdf": "PDF",
-      "research": "Research",
-      "website": "Website",
-      "design": "Design",
-      "ops": "Ops"
-    },
-    "kitDescriptions": {
-      "reports": "Draft, structure, and export reports and Word-style documents.",
-      "sheets": "Read, clean, calculate, and summarize spreadsheets or CSV data.",
-      "slides": "Create presentation outlines and editable PPTX decks.",
-      "pdf": "Extract, summarize, preview, and package PDF artifacts.",
-      "research": "Collect web/source material with citations and readable summaries.",
-      "website": "Build and verify HTML/web artifacts with browser previews.",
-      "design": "Shape visual artifacts, dashboards, and polished layouts.",
-      "ops": "Handle lightweight daily writing, action items, and personal operations."
-    },
-    "toolBundlesTitle": "Tool bundle intent",
-    "toolBundlesDesc": "Choose which tool bundle labels each mode advertises to the runtime. These labels express intent only; runtime policy still decides actual tools.",
-    "toolBundles": {
-      "code": "Code",
-      "git": "Git",
-      "terminal": "Terminal",
-      "browser": "Browser",
-      "docs": "Docs",
-      "sheets": "Sheets",
-      "pdf": "PDF",
-      "memory": "Memory"
-    }
-  },
-  "workProviders": {
-    "title": "Work Providers",
-    "description": "Local and optional providers behind Work Kits. Providers expose capability status only and do not grant tools.",
-    "status": {
-      "ready": "Ready",
-      "missingDependency": "Missing dependency",
-      "missingConfig": "Missing config",
-      "disabled": "Disabled",
-      "externalUnavailable": "External unavailable",
-      "runtimeUnavailable": "Runtime unavailable"
-    },
-    "providers": {
-      "officeDocument": "Documents",
-      "officeSheet": "Sheets",
-      "officeSlide": "Slides",
-      "pdf": "PDF",
-      "webSearch": "Web search",
-      "webRead": "Web reading",
-      "libreOffice": "LibreOffice",
-      "pandoc": "Pandoc",
-      "crawler": "Crawler",
-      "ocr": "OCR",
-      "dataFrame": "Data analysis"
-    },
-    "providerDescriptions": {
-      "officeDocument": "Read and write Word-style document artifacts with lightweight JS libraries.",
-      "officeSheet": "Read and write spreadsheet and CSV artifacts.",
-      "officeSlide": "Generate editable presentation decks.",
-      "pdf": "Validate, preview, split, and merge PDF artifacts.",
-      "webSearch": "Use a user-configured external search provider.",
-      "webRead": "Extract readable source text and citations from web pages.",
-      "libreOffice": "Optional high-fidelity local Office conversion provider.",
-      "pandoc": "Optional document conversion provider.",
-      "crawler": "Optional external crawler service.",
-      "ocr": "Optional OCR provider.",
-      "dataFrame": "Optional Python or service-backed data analysis provider."
-    }
-  },
-  "workHeatGraph": {
-    "title": "Work heatmap",
-    "description": "Local activity from recent session usage.",
-    "runs": "{{count}} runs",
-    "tokens": "{{count}} tokens",
-    "dayTitle": "{{date}}: {{count}} runs, {{tokens}} tokens"
-  }
 }

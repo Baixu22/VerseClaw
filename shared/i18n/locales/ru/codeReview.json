@@ -1,0 +1,55 @@
+{
+  "nav": "Review Center",
+  "title": "Review Center",
+  "subtitle": "Запускайте read-only AI review для Git-изменений, получайте структурированные findings и отправляйте review items в Task Ledger.",
+  "readonly": "Read-only review",
+  "yes": "Да",
+  "no": "Нет",
+  "empty": "Выберите цель review, при необходимости добавьте focus и запустите проверку.",
+  "running": "Проверяем изменения...",
+  "target": {
+    "label": "Цель review",
+    "uncommitted": "Незакоммиченные изменения",
+    "baseBranch": "Относительно base branch",
+    "commit": "Выбранный commit",
+    "baseBranchInput": "Base branch",
+    "baseBranchPlaceholder": "origin/main",
+    "commitInput": "Commit",
+    "commitPlaceholder": "abc1234"
+  },
+  "focus": {
+    "label": "Review focus",
+    "placeholder": "Например: регрессии, тесты, безопасность или границы renderer/Main."
+  },
+  "actions": {
+    "run": "Review changes",
+    "running": "Reviewing",
+    "createFindingNode": "Create review node",
+    "createReviewNode": "Create run node",
+    "nodeCreated": "Node created"
+  },
+  "results": {
+    "title": "Findings",
+    "target": "Цель",
+    "files": "Файлы",
+    "findings": "Findings",
+    "readonly": "Read-only",
+    "noFindings": "Для этой цели findings не найдены."
+  },
+  "finding": {
+    "suggestedFix": "Suggested fix"
+  },
+  "severity": {
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "info": "Info"
+  },
+  "errors": {
+    "baseBranchRequired": "Введите base branch перед запуском review.",
+    "commitRequired": "Введите commit перед запуском review.",
+    "reviewFailed": "Review failed.",
+    "ledgerFailed": "Не удалось создать Task Ledger review node."
+  }
+}

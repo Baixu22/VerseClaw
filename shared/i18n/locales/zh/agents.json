@@ -197,6 +197,47 @@
         "missionPause": "暂停",
         "missionResume": "恢复",
         "missionCancel": "取消",
+        "runnerTitle": "轻量子代理 Runner",
+        "runnerHint": "无需编写 ClawGraph YAML，即可启动常见 role-first 工作流。",
+        "runnerNoMerge": "不自动合并",
+        "runnerGoalPlaceholder": "描述希望子代理调查的目标",
+        "runnerGoalRequired": "请先输入目标",
+        "runnerStart": "启动",
+        "runnerStarted": "{{preset}} 已完成：{{count}} 个 worker",
+        "runnerFailed": "{{preset}} 失败：{{reason}}",
+        "runnerNoDiff": "没有可审查的暂存或未暂存 diff。",
+        "runnerSummary": "{{preset}} {{status}}：{{goal}}",
+        "runnerWorkerCount": "{{count}} 个角色",
+        "runnerTrace": "查看 trace",
+        "runnerStatus": {
+            "idle": "空闲",
+            "running": "运行中",
+            "complete": "已完成",
+            "error": "失败"
+        },
+        "runnerEventStatus": {
+            "started": "已启动",
+            "completed": "已完成",
+            "verified": "已验证",
+            "aborted": "已中止",
+            "error": "失败"
+        },
+        "runnerPreset": {
+            "explorer": "Explorer",
+            "reviewer": "Reviewer",
+            "tester": "Tester",
+            "compare": "Compare 3 approaches"
+        },
+        "runnerLabel": {
+            "diffReview": "Diff 审查",
+            "testGaps": "测试缺口",
+            "coverageReview": "覆盖率审查",
+            "conservative": "保守方案",
+            "modular": "模块化方案",
+            "integrationFirst": "集成优先",
+            "options": "方案",
+            "architecture": "架构"
+        },
         "memoryComposerEditTitle": "记忆提案草稿",
         "memoryType": "类型",
         "memoryScope": "范围",

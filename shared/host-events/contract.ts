@@ -1,6 +1,10 @@
 import type { UpdateStatusSnapshot } from '../host-api/contract';
 import type { ChatRuntimeEvent } from '../chat-runtime-events';
 import type { ClawGraphRunEvent, ClawGraphRunSnapshot } from '../types/clawgraph';
+import type {
+  LongConversationControlSignal,
+  LongConversationValidationState,
+} from '../types/long-task-control';
 import type { MissionLifecycleEvent } from '../types/mission-control';
 import type { ObservabilityRuntimeEvent } from '../types/observability';
 import type { WorkspacePreviewMode, WorkspaceWebPreviewLaunchConfig, WorkspaceWebPreviewStatus } from '../types/workspace';
@@ -146,6 +150,8 @@ export type TaskLoopLifecycleEvent = {
   orchestrationRunId?: string;
   activeRoles?: string[];
   selfCheckDecision?: 'complete' | 'repair' | 'blocked';
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
   error?: string;
   ts: number;
 };

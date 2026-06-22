@@ -57,6 +57,77 @@ describe('hostApi facade', () => {
     }));
   });
 
+  it('routes project rules methods through hostInvoke', async () => {
+    hostInvoke
+      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: true, ruleFiles: [] } })
+      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: { success: true, templateCreated: true, ruleFiles: [] } });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(hostApi.projectRules.snapshot()).resolves.toEqual({ success: true, ruleFiles: [] });
+    await expect(hostApi.projectRules.createAgentsTemplate()).resolves.toEqual({
+      success: true,
+      templateCreated: true,
+      ruleFiles: [],
+    });
+    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      module: 'projectRules',
+      action: 'snapshot',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      module: 'projectRules',
+      action: 'createAgentsTemplate',
+    }));
+  });
+
+  it('routes code review methods through hostInvoke', async () => {
+    hostInvoke
+      .mockResolvedValueOnce({
+        id: 'req-1',
+        ok: true,
+        data: {
+          success: true,
+          review: {
+            runId: 'review-1',
+            readonly: true,
+            status: 'completed',
+            target: { kind: 'uncommitted', label: 'Uncommitted changes' },
+            summary: 'ok',
+            diffStats: { files: 1, additions: 1, deletions: 0, patchBytes: 10, truncated: false },
+            findings: [],
+            evidenceRefs: [],
+            startedAt: '2026-01-01T00:00:00.000Z',
+            endedAt: '2026-01-01T00:00:01.000Z',
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        id: 'req-2',
+        ok: true,
+        data: { success: true, nodeId: 'node-1', snapshot: { nodes: [] } },
+      });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(hostApi.codeReview.run({
+      target: { kind: 'uncommitted' },
+      focus: 'tests',
+    })).resolves.toMatchObject({ success: true, review: { readonly: true } });
+    await expect(hostApi.codeReview.createTaskLedgerNode({
+      runId: 'review-1',
+      findingId: 'finding-1',
+    })).resolves.toMatchObject({ success: true, nodeId: 'node-1' });
+
+    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      module: 'codeReview',
+      action: 'run',
+      payload: { target: { kind: 'uncommitted' }, focus: 'tests' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      module: 'codeReview',
+      action: 'createTaskLedgerNode',
+      payload: { runId: 'review-1', findingId: 'finding-1' },
+    }));
+  });
+
   it('routes openclaw, shell, dialog, window, and updates methods through hostInvoke', async () => {
     hostInvoke
       .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { packageExists: true, isBuilt: true, entryPath: '/openclaw/openclaw.mjs', dir: '/openclaw' } })
@@ -111,12 +182,14 @@ describe('hostApi facade', () => {
     hostInvoke
       .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: true, status: { isRepository: true, changes: [] } } })
       .mockResolvedValueOnce({ id: 'req-2', ok: true, data: { success: true, path: 'src/app.ts', mode: 'unstaged', patch: 'diff' } })
-      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { success: true } });
+      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { success: true } })
+      .mockResolvedValueOnce({ id: 'req-4', ok: true, data: { success: true } });
     const { hostApi } = await import('@/lib/host-api');
 
     await hostApi.git.status();
     await hostApi.git.fileDiff({ path: 'src/app.ts', mode: 'unstaged' });
     await hostApi.git.stage({ paths: ['src/app.ts'] });
+    await hostApi.git.revertFile({ path: 'src/app.ts' });
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
       module: 'git',
@@ -131,6 +204,11 @@ describe('hostApi facade', () => {
       module: 'git',
       action: 'stage',
       payload: { paths: ['src/app.ts'] },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
+      module: 'git',
+      action: 'revertFile',
+      payload: { path: 'src/app.ts' },
     }));
   });
 

@@ -32,24 +32,65 @@ const gitStatus = {
   behind: 0,
   clean: false,
   detached: false,
-  hasConflicts: false,
-  stagedCount: 0,
+  hasConflicts: true,
+  stagedCount: 1,
   unstagedCount: 1,
-  untrackedCount: 0,
-  conflictedCount: 0,
-  changes: [{
-    path: 'src/demo.ts',
-    absolutePath: '/workspace/demo/src/demo.ts',
-    status: 'M',
-    staged: false,
-    unstaged: true,
-    untracked: false,
-    conflicted: false,
-    bucket: 'unstaged',
-    additions: 2,
-    deletions: 1,
-    binary: false,
-  }],
+  untrackedCount: 1,
+  conflictedCount: 1,
+  changes: [
+    {
+      path: 'src/demo.ts',
+      absolutePath: '/workspace/demo/src/demo.ts',
+      status: 'M',
+      staged: false,
+      unstaged: true,
+      untracked: false,
+      conflicted: false,
+      bucket: 'unstaged',
+      additions: 2,
+      deletions: 1,
+      binary: false,
+    },
+    {
+      path: 'src/staged.ts',
+      absolutePath: '/workspace/demo/src/staged.ts',
+      status: 'M',
+      staged: true,
+      unstaged: false,
+      untracked: false,
+      conflicted: false,
+      bucket: 'staged',
+      additions: 1,
+      deletions: 1,
+      binary: false,
+    },
+    {
+      path: 'src/new.ts',
+      absolutePath: '/workspace/demo/src/new.ts',
+      status: '??',
+      staged: false,
+      unstaged: false,
+      untracked: true,
+      conflicted: false,
+      bucket: 'untracked',
+      additions: 1,
+      deletions: 0,
+      binary: false,
+    },
+    {
+      path: 'src/conflict.ts',
+      absolutePath: '/workspace/demo/src/conflict.ts',
+      status: 'UU',
+      staged: false,
+      unstaged: false,
+      untracked: false,
+      conflicted: true,
+      bucket: 'conflicted',
+      additions: null,
+      deletions: null,
+      binary: false,
+    },
+  ],
 };
 
 const gitBranches = [
@@ -71,6 +112,17 @@ const removeApproval = {
   mode: 'acceptEdits',
   requestedAt: 1,
   reason: 'Removing a worktree requires approval.',
+};
+
+const revertApproval = {
+  id: 'approval-revert-file',
+  workspaceId: WORKSPACE_ID,
+  source: 'git',
+  risk: 'dangerous',
+  status: 'pending',
+  mode: 'acceptEdits',
+  requestedAt: 2,
+  reason: 'Reverting a file requires approval.',
 };
 
 test.describe('Workspace Git panel', () => {
@@ -129,6 +181,7 @@ test.describe('Workspace Git panel', () => {
             sessionKey: SESSION_KEY,
             state: { artifactPanel: { gitSelectedPath: 'src/demo.ts' } },
           }])]: { success: true },
+          [stableStringify(['workspaces', 'saveState', null])]: { success: true },
           [stableStringify(['git', 'status', null])]: {
             ok: true,
             status: gitStatus,
@@ -152,11 +205,48 @@ test.describe('Workspace Git panel', () => {
             path: 'src/demo.ts',
             mode: 'unstaged',
             patch: 'diff --git a/src/demo.ts b/src/demo.ts\n-const value = 1;\n+const value = 2;\n',
+            original: 'const value = 1;\n',
+            modified: 'const value = 2;\n',
+          },
+          [stableStringify(['git', 'fileDiff', { mode: 'staged', path: 'src/staged.ts' }])]: {
+            ok: true,
+            path: 'src/staged.ts',
+            mode: 'staged',
+            patch: 'diff --git a/src/staged.ts b/src/staged.ts\n-const staged = false;\n+const staged = true;\n',
+            original: 'const staged = false;\n',
+            modified: 'const staged = true;\n',
+          },
+          [stableStringify(['git', 'fileDiff', { mode: 'unstaged', path: 'src/new.ts' }])]: {
+            ok: true,
+            path: 'src/new.ts',
+            mode: 'unstaged',
+            patch: 'diff --git a/src/new.ts b/src/new.ts\n+export const fresh = true;\n',
+            original: '',
+            modified: 'export const fresh = true;\n',
+          },
+          [stableStringify(['git', 'fileDiff', { mode: 'unstaged', path: 'src/conflict.ts' }])]: {
+            ok: true,
+            path: 'src/conflict.ts',
+            mode: 'unstaged',
+            patch: 'diff --git a/src/conflict.ts b/src/conflict.ts\n<<<<<<< HEAD\n=======\n>>>>>>> feature\n',
           },
           [stableStringify(['git', 'stage', { paths: ['src/demo.ts'] }])]: {
             success: false,
             blocked: true,
             reason: 'Stage requires approval',
+          },
+          [stableStringify(['git', 'unstage', { paths: ['src/staged.ts'] }])]: {
+            success: true,
+          },
+          [stableStringify(['git', 'revertFile', { path: 'src/staged.ts' }])]: {
+            success: false,
+            blocked: true,
+            approvalRequired: true,
+            approval: revertApproval,
+            reason: revertApproval.reason,
+          },
+          [stableStringify(['git', 'revertFile', { path: 'src/staged.ts', approvalId: 'approval-revert-file' }])]: {
+            success: true,
           },
           [stableStringify(['git', 'commit', { message: 'Update demo' }])]: {
             success: false,
@@ -174,6 +264,9 @@ test.describe('Workspace Git panel', () => {
             reason: removeApproval.reason,
           },
           [stableStringify(['permissions', 'decideApproval', { id: 'approval-remove-worktree', decision: 'approved' }])]: {
+            success: true,
+          },
+          [stableStringify(['permissions', 'decideApproval', { id: 'approval-revert-file', decision: 'approved' }])]: {
             success: true,
           },
           [stableStringify(['git', 'worktreeRemove', { path: '/workspace/demo-feature-a', approvalId: 'approval-remove-worktree' }])]: {
@@ -201,16 +294,47 @@ test.describe('Workspace Git panel', () => {
       const gitPanel = sidePanel.getByTestId('workspace-git-panel');
       await expect(gitPanel).toBeVisible();
       await expect(gitPanel.getByText('feature/git-panel', { exact: true }).first()).toBeVisible();
-      await expect(gitPanel.getByText('Unstaged (1)')).toBeVisible();
+      await expect(gitPanel.getByText('Conflicts (1)', { exact: true })).toBeVisible();
+      await expect(gitPanel.getByText('Staged (1)', { exact: true })).toBeVisible();
+      await expect(gitPanel.getByText('Unstaged (1)', { exact: true })).toBeVisible();
+      await expect(gitPanel.getByText('Untracked (1)', { exact: true })).toBeVisible();
       await expect(gitPanel.getByRole('button', { name: /src\/demo\.ts/ })).toBeVisible();
-      await expect(gitPanel.getByText(/const value = 2/)).toBeVisible();
+      await expect(gitPanel.getByTestId('monaco-diff-viewer')).toBeVisible();
+      await expect(gitPanel.locator('.monaco-editor-background').first()).toBeVisible();
+      await page.setViewportSize({ width: 760, height: 720 });
+      await expect(gitPanel.getByTestId('monaco-diff-viewer')).toBeVisible();
+      await page.setViewportSize({ width: 1280, height: 800 });
       await expect(gitPanel.getByText('Worktrees')).toBeVisible();
       await expect(gitPanel.getByText('demo-feature-a')).toBeVisible();
       await expect(gitPanel.getByText('Current')).toBeVisible();
       await expect(gitPanel.getByText(/gh auth login/)).toBeVisible();
+      await expect(gitPanel.getByText('Last validation')).toBeVisible();
+
+      await page.evaluate(() => {
+        Object.defineProperty(navigator, 'clipboard', {
+          configurable: true,
+          value: {
+            writeText: async (value: string) => {
+              (window as typeof window & { __copiedPatch?: string }).__copiedPatch = value;
+            },
+          },
+        });
+      });
+      await gitPanel.getByRole('button', { name: 'Copy patch' }).click();
+      await expect.poll(async () => page.evaluate(() => (window as typeof window & { __copiedPatch?: string }).__copiedPatch ?? '')).toContain('src/demo.ts');
 
       await gitPanel.getByRole('button', { name: /^Stage$/ }).click();
       await expect(page.getByText('Stage requires approval')).toBeVisible();
+
+      await gitPanel.getByRole('button', { name: /src\/staged\.ts/ }).click();
+      await gitPanel.getByRole('button', { name: /^Unstage$/ }).click();
+
+      await gitPanel.getByRole('button', { name: /^Revert$/ }).click();
+      await expect(page.getByText('Revert selected file?')).toBeVisible();
+      await page.getByTestId('confirm-dialog-confirm-button').click();
+      await expect(gitPanel.getByText('Revert needs approval')).toBeVisible();
+      await expect(gitPanel.getByText('Reverting a file requires approval.')).toBeVisible();
+      await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
 
       await gitPanel.getByPlaceholder('Commit message').fill('Update demo');
       await gitPanel.getByRole('button', { name: 'Commit staged changes' }).click();

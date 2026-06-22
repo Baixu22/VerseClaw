@@ -82,6 +82,15 @@ test.describe('ClawX chat workspace header', () => {
               ],
             },
           },
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: {
+              sessions: [
+                { key: SESSION_KEY, displayName: 'main', updatedAt: 1773281732000 },
+                { key: OTHER_SESSION_KEY, displayName: 'Other project', updatedAt: 1773281733000 },
+              ],
+            },
+          },
           [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
             result: { messages: MAIN_HISTORY },
@@ -135,6 +144,45 @@ test.describe('ClawX chat workspace header', () => {
       await expect(page.getByTestId('sidebar-session-view-time')).toBeVisible();
       await expect(page.getByTestId('sidebar-session-project-workspace-1')).toContainText('Demo Workspace');
       await expect(page.getByTestId('sidebar-session-project-workspace-2')).toContainText('Other Workspace');
+      await expect(page.getByText('/tmp/demo-workspace')).toHaveCount(0);
+      await expect(page.getByText('/tmp/other-workspace')).toHaveCount(0);
+
+      await expect(page.getByTestId('sidebar-session-project-toggle-workspace-1')).toHaveAttribute('aria-expanded', 'true');
+      await expect(page.getByTestId(`sidebar-session-${SESSION_KEY}`)).toBeVisible();
+
+      await app.evaluate(({ BrowserWindow }, sessionKey) => {
+        for (const win of BrowserWindow.getAllWindows()) {
+          win.webContents.send('chat:runtime-event', {
+            type: 'run.started',
+            runId: 'sidebar-status-run',
+            sessionKey,
+            startedAt: Date.now(),
+          });
+        }
+      }, SESSION_KEY);
+      await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveAttribute('data-state', 'running');
+
+      await app.evaluate(({ BrowserWindow }, sessionKey) => {
+        for (const win of BrowserWindow.getAllWindows()) {
+          win.webContents.send('chat:runtime-event', {
+            type: 'run.ended',
+            runId: 'sidebar-status-run',
+            sessionKey,
+            status: 'completed',
+            endedAt: Date.now(),
+          });
+        }
+      }, SESSION_KEY);
+      await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveAttribute('data-state', 'completed');
+      await page.getByTestId(`sidebar-session-status-${SESSION_KEY}`).click();
+      await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveCount(0);
+
+      await page.getByTestId('sidebar-session-project-toggle-workspace-1').click();
+      await expect(page.getByTestId('sidebar-session-project-workspace-1')).toHaveAttribute('data-state', 'collapsed');
+      await expect(page.getByTestId('sidebar-session-project-toggle-workspace-1')).toHaveAttribute('aria-expanded', 'false');
+      await expect(page.getByTestId(`sidebar-session-${SESSION_KEY}`)).toHaveCount(0);
+      await page.getByTestId('sidebar-session-project-toggle-workspace-1').click();
+      await expect(page.getByTestId(`sidebar-session-${SESSION_KEY}`)).toBeVisible();
 
       await page.getByTestId('sidebar-session-view-time').click();
       await expect(page.getByTestId('sidebar-session-project-workspace-1')).toHaveCount(0);
@@ -152,6 +200,15 @@ test.describe('ClawX chat workspace header', () => {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
         gatewayRpc: {
           [stableStringify(['sessions.list', {}])]: {
+            success: true,
+            result: {
+              sessions: [
+                { key: SESSION_KEY, displayName: 'main', updatedAt: 1773281732000 },
+                { key: OTHER_SESSION_KEY, displayName: 'Other project', updatedAt: 1773281733000 },
+              ],
+            },
+          },
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
             result: {
               sessions: [

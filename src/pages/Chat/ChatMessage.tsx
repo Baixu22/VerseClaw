@@ -6,7 +6,7 @@
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
 import { useState, useCallback, useEffect, memo, useMemo } from 'react';
-import { Sparkles, Copy, Check, Wrench, FileText, Film, Music, FileArchive, File, X, FolderOpen, ZoomIn, Loader2, CheckCircle2, AlertCircle, BookOpen } from 'lucide-react';
+import { Sparkles, Copy, Check, Wrench, FileText, Film, Music, FileArchive, File, X, FolderOpen, ZoomIn, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { TextMessagePartProvider } from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
@@ -23,6 +23,10 @@ import type { RawMessage, AttachedFileMeta } from '@/stores/chat';
 import { AgentInteractionRenderer, parseToolUiContent, parseToolUiToolUses } from '@/components/tool-ui/agent-interactions';
 import { BranchPicker, ReasoningPanel, ToolFallbackCard } from '@/components/assistant-render/AssistantRender';
 import { extractAssistantBranches, extractAssistantReasoning, extractAssistantToolFallbacks } from '@/components/assistant-render/model';
+import { KnowledgeDirectiveChip } from '@/components/assistant-render/KnowledgeDirectiveChip';
+import { GitHubCard, isGitHubUrl } from '@/components/assistant-render/GitHubCard';
+import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
+
 import { extractText, extractImages, extractToolUse, formatTimestamp, isUnresolvableImageUrl } from './message-utils';
 import { copyImageToClipboard, type ImageCopyTarget } from './copy-image';
 
@@ -251,7 +255,7 @@ export const ChatMessage = memo(function ChatMessage({
   onDraftInteractionResponse,
   canSubmitInteractionResponse = true,
 }: ChatMessageProps) {
-  const { t } = useTranslation('chat');
+  // // const { t } = useTranslation('chat');  // unused since KnowledgeDirectiveChip
   const isUser = message.role === 'user';
   const role = typeof message.role === 'string' ? message.role.toLowerCase() : '';
   const isToolResult = role === 'toolresult' || role === 'tool_result';
@@ -516,15 +520,8 @@ export const ChatMessage = memo(function ChatMessage({
         {isUser && knowledgeRefs.length > 0 && (
           <div className="flex flex-wrap justify-end gap-1.5" data-testid="chat-message-knowledge-refs">
             {knowledgeRefs.map((reference) => (
-              <span
-                key={reference.id}
-                className="inline-flex max-w-[260px] items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-meta font-medium text-emerald-700 dark:text-emerald-400"
-                title={t('composer.knowledgeAttach.messageRefTitle', { title: reference.title })}
-              >
-                <BookOpen className="h-3 w-3 shrink-0" />
-                <span className="truncate">{reference.title}</span>
-              </span>
-            ))}
+                <KnowledgeDirectiveChip key={reference.id} reference={reference} />
+              ))}
           </div>
         )}
 
@@ -658,9 +655,9 @@ function ToolStatusBar({
               isError && 'border-destructive/30 bg-destructive/5 text-destructive',
             )}
           >
-            {isRunning && <Loader2 className="h-3.5 w-3.5 animate-spin text-primary shrink-0" />}
-            {!isRunning && !isError && <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />}
-            {isError && <AlertCircle className="h-3.5 w-3.5 text-destructive shrink-0" />}
+            {isRunning && <DotMatrix state="syncing" label={tool.name} className="size-3.5 text-primary" />}
+            {!isRunning && !isError && <DotMatrix state="success" label={tool.name} className="size-3.5" />}
+            {isError && <DotMatrix state="error" label={tool.name} className="size-3.5" />}
             <Wrench className="h-3 w-3 shrink-0 opacity-60" />
             <span className="font-mono text-xs font-medium">{tool.name}</span>
             {duration && <span className="text-tiny opacity-60">{tool.summary ? `(${duration})` : duration}</span>}
@@ -811,7 +808,13 @@ function AssistantMarkdown({
           remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[[rehypeKatex, { strict: false, throwOnError: false, output: 'html' }]]}
           components={{
-            code({ className, children, ...props }) {
+              a({ href, children, ...props }) {
+                if (href && isGitHubUrl(href)) {
+                  return <GitHubCard url={href} />;
+                }
+                return <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary underline decoration-primary/30 hover:decoration-primary transition-colors" {...props}>{children}</a>;
+              },
+              code({ className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '');
               const isInline = !match && !className;
               if (isInline) {
@@ -843,13 +846,6 @@ function AssistantMarkdown({
                 >
                   {children}
                 </pre>
-              );
-            },
-            a({ href, children }) {
-              return (
-                <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-words break-all">
-                  {children}
-                </a>
               );
             },
             img({ src, alt }) {
@@ -1002,7 +998,7 @@ function ImagePreviewPlaceholder({ file }: { file: AttachedFileMeta }) {
       {unavailable ? (
         <AlertCircle className="h-5 w-5 shrink-0" />
       ) : (
-        <Loader2 className="h-5 w-5 shrink-0 animate-spin text-primary" />
+        <DotMatrix state="loading" label={label} className="size-5 text-primary" />
       )}
       <span className="text-xs leading-4">{label}</span>
     </div>
