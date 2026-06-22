@@ -135,6 +135,75 @@ const DIRECTORY_MIME_TYPE = 'application/x-directory';
 const WORKSPACE_PERMISSION_MODES: WorkspacePermissionMode[] = ['readOnly', 'plan', 'acceptEdits', 'fullAccess'];
 const KNOWLEDGE_SCOPES: WorkspaceKnowledgeScope[] = ['none', 'memory', 'wiki', 'all'];
 
+const SLASH_COMMANDS = [
+  { id: 'wiki', group: 'knowledge', kind: 'wikiSearch', aliases: ['knowledge', 'kb'] },
+  { id: 'memory', group: 'knowledge', kind: 'scope', scope: 'memory', aliases: ['mem'] },
+  { id: 'all', group: 'knowledge', kind: 'scope', scope: 'all' },
+  { id: 'none', group: 'knowledge', kind: 'scope', scope: 'none', aliases: ['no-knowledge'] },
+  { id: 'scope', group: 'knowledge', kind: 'scopePicker' },
+  { id: 'save', group: 'knowledge', kind: 'prompt', aliases: ['draft-knowledge'] },
+  { id: 'steward', group: 'knowledge', kind: 'prompt', aliases: ['knowledge-steward'] },
+  { id: 'review', group: 'coding', kind: 'prompt', aliases: ['code-review'] },
+  { id: 'fix-ci', group: 'coding', kind: 'prompt', aliases: ['ci'] },
+  { id: 'write-tests', group: 'coding', kind: 'prompt', aliases: ['tests', 'test'] },
+  { id: 'explain-diff', group: 'coding', kind: 'prompt', aliases: ['diff'] },
+  { id: 'commit', group: 'coding', kind: 'prompt', aliases: ['commit-summary'] },
+  { id: 'pr-summary', group: 'coding', kind: 'prompt', aliases: ['pr'] },
+  { id: 'mission', group: 'workflow', kind: 'mission' },
+  { id: 'ledger', group: 'workflow', kind: 'ledger', aliases: ['task'] },
+  { id: 'compact', group: 'session', kind: 'compact', aliases: ['compress'] },
+  { id: 'fork', group: 'session', kind: 'fork' },
+  { id: 'handoff', group: 'session', kind: 'handoff' },
+] as const;
+
+type SlashCommand = (typeof SLASH_COMMANDS)[number];
+type SlashCommandGroup = SlashCommand['group'];
+
+const SLASH_COMMAND_GROUP_ORDER: SlashCommandGroup[] = ['knowledge', 'coding', 'workflow', 'session'];
+
+type SlashInputState = {
+  active: boolean;
+  commandText: string;
+  args: string;
+};
+
+function parseSlashInput(value: string): SlashInputState {
+  if (!/^\s*\//u.test(value)) {
+    return { active: false, commandText: '', args: '' };
+  }
+  const body = value.trimStart().slice(1);
+  if (/^[^\s]+\s{2}/u.test(body)) {
+    return { active: false, commandText: '', args: '' };
+  }
+  const separator = body.search(/\s/u);
+  if (separator === -1) {
+    return { active: true, commandText: body.trim().toLowerCase(), args: '' };
+  }
+  return {
+    active: true,
+    commandText: body.slice(0, separator).trim().toLowerCase(),
+    args: body.slice(separator + 1).trim(),
+  };
+}
+
+function slashCommandNames(command: SlashCommand): string[] {
+  return [command.id, ...('aliases' in command ? command.aliases : [])];
+}
+
+function findExactSlashCommand(commandText: string): SlashCommand | null {
+  const normalized = commandText.trim().toLowerCase();
+  if (!normalized) return null;
+  return SLASH_COMMANDS.find((command) => slashCommandNames(command).includes(normalized)) ?? null;
+}
+
+function resolveSlashScope(value: string): WorkspaceKnowledgeScope | null {
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'none' || normalized === 'memory' || normalized === 'wiki' || normalized === 'all') {
+    return normalized;
+  }
+  return null;
+}
+
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
@@ -409,6 +478,8 @@ export function ChatInput({
   const [skillsLoading, setSkillsLoading] = useState(false);
   const [skillsError, setSkillsError] = useState<string | null>(null);
   const [selectedSkill, setSelectedSkill] = useState<QuickAccessSkill | null>(null);
+  const [slashMenuDismissed, setSlashMenuDismissed] = useState(false);
+  const [slashSelectedIndex, setSlashSelectedIndex] = useState(0);
   const [switchingModelRef, setSwitchingModelRef] = useState<string | null>(null);
   const [optimisticModelRef, setOptimisticModelRef] = useState<string | null>(null);
   const [compactionDialogOpen, setCompactionDialogOpen] = useState(false);
@@ -576,9 +647,43 @@ export function ChatInput({
     : '';
   const ComposerContinuityIcon = composerContinuityAction?.icon ?? GitBranchPlus;
   const wikiQuickActive = knowledgeScope === 'wiki';
+  const slashInput = useMemo(() => parseSlashInput(input), [input]);
+  const slashCommands = useMemo(() => {
+    if (!slashInput.active) return [];
+    const query = slashInput.commandText;
+    const commands = !query
+      ? [...SLASH_COMMANDS]
+      : SLASH_COMMANDS.filter((command) => {
+        const label = t(`composer.slashCommands.commands.${command.id}.label`).toLowerCase();
+        const description = t(`composer.slashCommands.commands.${command.id}.description`).toLowerCase();
+        return slashCommandNames(command).some((name) => name.startsWith(query))
+          || label.includes(query)
+          || description.includes(query);
+      });
+    return [...commands].sort((left: SlashCommand, right: SlashCommand) => {
+      if (query) {
+        const leftExact = slashCommandNames(left).includes(query);
+        const rightExact = slashCommandNames(right).includes(query);
+        if (leftExact !== rightExact) return leftExact ? -1 : 1;
+        const leftPrefix = slashCommandNames(left).some((name) => name.startsWith(query));
+        const rightPrefix = slashCommandNames(right).some((name) => name.startsWith(query));
+        if (leftPrefix !== rightPrefix) return leftPrefix ? -1 : 1;
+      }
+      return SLASH_COMMAND_GROUP_ORDER.indexOf(left.group) - SLASH_COMMAND_GROUP_ORDER.indexOf(right.group);
+    });
+  }, [slashInput.active, slashInput.commandText, t]);
+  const slashMenuOpen = slashInput.active && !slashMenuDismissed;
+  const selectedSlashCommand = slashCommands[Math.min(slashSelectedIndex, Math.max(0, slashCommands.length - 1))] ?? null;
 
-  const searchKnowledge = useCallback(async () => {
-    const query = knowledgeQuery.trim();
+  useEffect(() => {
+    setSlashSelectedIndex(0);
+  }, [slashInput.commandText, slashCommands.length]);
+
+  const runKnowledgeSearch = useCallback(async (
+    rawQuery: string,
+    corpus: 'wiki' | 'memory' | 'all' = knowledgeCorpus,
+  ) => {
+    const query = rawQuery.trim();
     if (!query) return;
     setKnowledgeSearching(true);
     setKnowledgeSearchError(null);
@@ -586,7 +691,7 @@ export function ChatInput({
       const result = await hostApi.knowledge.search({
         query,
         maxResults: 8,
-        corpus: knowledgeCorpus,
+        corpus,
       });
       if (!result.success) throw new Error(result.error || t('composer.knowledgeAttach.searchFailed'));
       setKnowledgeSearchResult(result);
@@ -597,7 +702,11 @@ export function ChatInput({
     } finally {
       setKnowledgeSearching(false);
     }
-  }, [knowledgeCorpus, knowledgeQuery, t]);
+  }, [knowledgeCorpus, t]);
+
+  const searchKnowledge = useCallback(async () => {
+    await runKnowledgeSearch(knowledgeQuery);
+  }, [knowledgeQuery, runKnowledgeSearch]);
 
   const addKnowledgeReference = useCallback((row: KnowledgeSearchRow) => {
     const reference = knowledgeReferenceFromRow(row, knowledgeCorpus);
@@ -657,6 +766,24 @@ export function ChatInput({
     setModelPickerOpen(false);
     textareaRef.current?.focus();
   }, [onKnowledgeScopeChange, wikiQuickActive]);
+
+  const handleOpenSlashPalette = useCallback(() => {
+    if (input.trim().length > 0 && !slashInput.active) {
+      toast.message(t('composer.slashCommands.toasts.typeSlash'));
+      textareaRef.current?.focus();
+      return;
+    }
+    if (!slashInput.active) {
+      updateInput('/');
+    }
+    setSlashMenuDismissed(false);
+    setPickerOpen(false);
+    setSkillPickerOpen(false);
+    setModelPickerOpen(false);
+    setWorkspaceActionsOpen(false);
+    setKnowledgePickerOpen(false);
+    requestAnimationFrame(() => textareaRef.current?.focus());
+  }, [input, slashInput.active, t, updateInput]);
 
   const handleConfirmCompaction = useCallback(async () => {
     if (!onManualCompact || compactDisabled) return;
@@ -769,6 +896,14 @@ export function ChatInput({
 
   const handleInputChange = useCallback((value: string) => {
     updateInput(value);
+    setSlashMenuDismissed(false);
+    if (parseSlashInput(value).active) {
+      setPickerOpen(false);
+      setSkillPickerOpen(false);
+      setModelPickerOpen(false);
+      setWorkspaceActionsOpen(false);
+      setKnowledgePickerOpen(false);
+    }
   }, [updateInput]);
 
   const moveCaretTo = useCallback((position: number) => {
@@ -1044,6 +1179,222 @@ export function ChatInput({
     return true;
   }, [onSend, recordKnowledgeReferences, updateInput]);
 
+  const executeSlashCommand = useCallback(async (command: SlashCommand, args: string) => {
+    const trimmedArgs = args.trim();
+    const closeSlashMenu = () => {
+      setSlashMenuDismissed(true);
+      setSlashSelectedIndex(0);
+    };
+    const clearComposer = () => {
+      updateInput('');
+      closeSlashMenu();
+    };
+    const promptArgs = trimmedArgs
+      ? t('composer.slashCommands.promptArgs', { args: trimmedArgs })
+      : '';
+
+    if (command.kind === 'wikiSearch') {
+      clearComposer();
+      setKnowledgeQuery(trimmedArgs);
+      setKnowledgeSearchResult(null);
+      setKnowledgeSearchError(null);
+      setKnowledgePickerOpen(true);
+      setPickerOpen(false);
+      setSkillPickerOpen(false);
+      setModelPickerOpen(false);
+      setWorkspaceActionsOpen(false);
+      if (onKnowledgeScopeChange) {
+        await onKnowledgeScopeChange('wiki');
+      }
+      toast.success(t('composer.slashCommands.toasts.wikiOpened'));
+      if (trimmedArgs) {
+        await runKnowledgeSearch(trimmedArgs, 'wiki');
+      }
+      requestAnimationFrame(() => textareaRef.current?.focus());
+      return;
+    }
+
+    if (command.kind === 'scope') {
+      if (!onKnowledgeScopeChange) return;
+      clearComposer();
+      await onKnowledgeScopeChange(command.scope);
+      toast.success(t('composer.slashCommands.toasts.scopeChanged', {
+        scope: t(`composer.knowledgeScope.${command.scope}`),
+      }));
+      requestAnimationFrame(() => textareaRef.current?.focus());
+      return;
+    }
+
+    if (command.kind === 'scopePicker') {
+      const scope = resolveSlashScope(trimmedArgs);
+      if (scope && onKnowledgeScopeChange) {
+        clearComposer();
+        await onKnowledgeScopeChange(scope);
+        toast.success(t('composer.slashCommands.toasts.scopeChanged', {
+          scope: t(`composer.knowledgeScope.${scope}`),
+        }));
+        requestAnimationFrame(() => textareaRef.current?.focus());
+        return;
+      }
+      clearComposer();
+      setKnowledgePickerOpen(true);
+      setPickerOpen(false);
+      setSkillPickerOpen(false);
+      setModelPickerOpen(false);
+      setWorkspaceActionsOpen(false);
+      toast.message(t('composer.slashCommands.toasts.scopeOpened'));
+      requestAnimationFrame(() => textareaRef.current?.focus());
+      return;
+    }
+
+    if (command.kind === 'prompt') {
+      if (inputDisabled || sending || capabilityExecuting || !allReady) {
+        toast.message(t('composer.slashCommands.toasts.sendUnavailable'));
+        return;
+      }
+      const prompt = t(`composer.slashCommands.prompts.${command.id}`, { argsDetail: promptArgs }).trim();
+      const readyAttachments = attachments.filter((attachment) => attachment.status === 'ready');
+      const knowledgeReferencesToSend = selectedKnowledgeRefs;
+      const sendKnowledgeScope: WorkspaceKnowledgeScope = knowledgeScope === 'none' && knowledgeReferencesToSend.length > 0 ? 'wiki' : knowledgeScope;
+      await completeSend(
+        prompt,
+        readyAttachments.length > 0 ? readyAttachments : undefined,
+        targetAgentId,
+        sendKnowledgeScope,
+        workMode,
+        knowledgeReferencesToSend,
+      );
+      closeSlashMenu();
+      return;
+    }
+
+    if (command.kind === 'mission') {
+      if (trimmedArgs) {
+        if (inputDisabled || sending || capabilityExecuting || !allReady) {
+          toast.message(t('composer.slashCommands.toasts.sendUnavailable'));
+          return;
+        }
+        const prompt = t('composer.slashCommands.prompts.mission', { argsDetail: promptArgs }).trim();
+        await completeSend(prompt, undefined, targetAgentId, knowledgeScope, workMode);
+        closeSlashMenu();
+        return;
+      }
+      clearComposer();
+      window.location.hash = '#/agents';
+      toast.success(t('composer.slashCommands.toasts.missionOpened'));
+      return;
+    }
+
+    if (command.kind === 'ledger') {
+      if (!trimmedArgs) {
+        clearComposer();
+        window.location.hash = '#/task-ledger';
+        toast.success(t('composer.slashCommands.toasts.ledgerOpened'));
+        return;
+      }
+      if (!workspace?.id) {
+        toast.error(t('composer.slashCommands.toasts.ledgerFailed', {
+          error: t('composer.workspaceUnavailable', 'No active workspace'),
+        }));
+        return;
+      }
+      try {
+        const result = await hostApi.taskLedger.createNode({
+          workspaceId: workspace.id,
+          node: {
+            title: trimmedArgs,
+            kind: 'task',
+            status: 'todo',
+            description: t('composer.slashCommands.ledgerNodeDescription'),
+          },
+          idempotencyKey: `chat-slash-ledger:${currentSessionKey}:${trimmedArgs}:${Date.now()}`,
+        });
+        if (!result?.success) {
+          throw new Error('success' in result && typeof result.error === 'string' ? result.error : 'create failed');
+        }
+        const nodes = Array.isArray(result.snapshot?.nodes) ? result.snapshot.nodes : [];
+        const createdNode = [...nodes]
+          .reverse()
+          .find((node: { title?: string }) => node.title === trimmedArgs) ?? nodes[nodes.length - 1];
+        const nodeId = typeof createdNode?.id === 'string' ? createdNode.id : null;
+        if (nodeId) {
+          void hostApi.taskLedger.linkSession({
+            workspaceId: workspace.id,
+            sessionKey: currentSessionKey,
+            agentId: currentAgentId ?? undefined,
+            nodeId,
+            relation: 'related',
+            summary: t('composer.slashCommands.ledgerSessionSummary', { title: trimmedArgs }),
+            idempotencyKey: `chat-slash-ledger-link:${currentSessionKey}:${nodeId}`,
+          }).catch((error) => {
+            console.warn('[chat:slash] failed to link task ledger session', error);
+          });
+        }
+        clearComposer();
+        window.location.hash = '#/task-ledger';
+        toast.success(t('composer.slashCommands.toasts.ledgerCreated', { title: trimmedArgs }));
+      } catch (error) {
+        toast.error(t('composer.slashCommands.toasts.ledgerFailed', { error: String(error) }));
+      }
+      return;
+    }
+
+    if (command.kind === 'compact') {
+      if (compactDisabled) {
+        toast.message(compactDisabledReason ?? t('composer.compaction.unavailable'));
+        return;
+      }
+      clearComposer();
+      setCompactionDialogOpen(true);
+      return;
+    }
+
+    if (command.kind === 'fork') {
+      if (!onForkSession || forkDisabled || forkBusy) {
+        toast.message(t('composer.slashCommands.toasts.forkUnavailable'));
+        return;
+      }
+      clearComposer();
+      await onForkSession();
+      return;
+    }
+
+    if (command.kind === 'handoff') {
+      if (!onHandoffSession || handoffDisabled || handoffBusy) {
+        toast.message(t('composer.handoff.disabledActiveRun'));
+        return;
+      }
+      clearComposer();
+      await onHandoffSession();
+    }
+  }, [
+    allReady,
+    attachments,
+    capabilityExecuting,
+    compactDisabled,
+    compactDisabledReason,
+    completeSend,
+    currentAgentId,
+    currentSessionKey,
+    forkBusy,
+    forkDisabled,
+    handoffBusy,
+    handoffDisabled,
+    inputDisabled,
+    knowledgeScope,
+    onForkSession,
+    onHandoffSession,
+    onKnowledgeScopeChange,
+    runKnowledgeSearch,
+    selectedKnowledgeRefs,
+    sending,
+    t,
+    targetAgentId,
+    updateInput,
+    workMode,
+    workspace?.id,
+  ]);
+
   const handleUnsupportedCapabilityRequest = useCallback((resolution: ChatCapabilityPlanResolution): boolean => {
     if (!resolution.unsupportedReason) return false;
     toast.message(t(`composer.capability.unsupported.${resolution.unsupportedReason}`, {
@@ -1053,6 +1404,16 @@ export function ChatInput({
   }, [t]);
 
   const handleSend = useCallback(async () => {
+    if (slashInput.active) {
+      const exactCommand = findExactSlashCommand(slashInput.commandText);
+      if (!exactCommand) {
+        toast.message(t('composer.slashCommands.unknownToast', { command: `/${slashInput.commandText}` }));
+        return;
+      }
+      await executeSlashCommand(exactCommand, slashInput.args);
+      return;
+    }
+
     if (!canSend) return;
     const readyAttachments = attachments.filter(a => a.status === 'ready');
     const knowledgeReferencesToSend = selectedKnowledgeRefs;
@@ -1131,7 +1492,7 @@ export function ChatInput({
     setPickerOpen(false);
     setSkillPickerOpen(false);
     setKnowledgePickerOpen(false);
-  }, [input, attachments, canSend, onSend, targetAgentId, updateInput, knowledgeScope, workMode, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest]);
+  }, [input, attachments, canSend, onSend, targetAgentId, updateInput, knowledgeScope, workMode, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, executeSlashCommand, slashInput]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -1179,6 +1540,53 @@ export function ChatInput({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      if (slashMenuOpen) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          setSlashSelectedIndex((index) => Math.min(index + 1, Math.max(0, slashCommands.length - 1)));
+          return;
+        }
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          setSlashSelectedIndex((index) => Math.max(0, index - 1));
+          return;
+        }
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          setSlashMenuDismissed(true);
+          return;
+        }
+        if (e.key === 'Enter' && !e.shiftKey) {
+          const nativeEvent = e.nativeEvent as KeyboardEvent;
+          if (isComposingRef.current || nativeEvent.isComposing || nativeEvent.keyCode === 229) {
+            return;
+          }
+          e.preventDefault();
+          const commandToRun = findExactSlashCommand(slashInput.commandText) ?? selectedSlashCommand;
+          if (!commandToRun) {
+            toast.message(t('composer.slashCommands.unknownToast', { command: `/${slashInput.commandText}` }));
+            return;
+          }
+          void executeSlashCommand(commandToRun, slashInput.args);
+          return;
+        }
+      }
+
+      if (slashInput.active && e.key === 'Enter' && !e.shiftKey) {
+        const nativeEvent = e.nativeEvent as KeyboardEvent;
+        if (isComposingRef.current || nativeEvent.isComposing || nativeEvent.keyCode === 229) {
+          return;
+        }
+        e.preventDefault();
+        const exactCommand = findExactSlashCommand(slashInput.commandText);
+        if (!exactCommand) {
+          toast.message(t('composer.slashCommands.unknownToast', { command: `/${slashInput.commandText}` }));
+          return;
+        }
+        void executeSlashCommand(exactCommand, slashInput.args);
+        return;
+      }
+
       if (e.key === 'Backspace') {
         const textarea = textareaRef.current;
         const selectionStart = textarea?.selectionStart ?? 0;
@@ -1248,7 +1656,20 @@ export function ChatInput({
         handleSend();
       }
     },
-    [handleSend, input, moveCaretTo, selectedSkill, skillTokenRanges, updateInput],
+    [
+      executeSlashCommand,
+      handleSend,
+      input,
+      moveCaretTo,
+      selectedSkill,
+      selectedSlashCommand,
+      skillTokenRanges,
+      slashCommands.length,
+      slashInput,
+      slashMenuOpen,
+      t,
+      updateInput,
+    ],
   );
 
   // Handle paste (Ctrl/Cmd+V with files)
@@ -1330,6 +1751,96 @@ export function ChatInput({
 
         {/* Input Container */}
         <div className={`relative bg-surface-modal rounded-2xl shadow-sm border px-3 pt-2.5 pb-1.5 transition-all ${dragOver ? 'border-primary ring-1 ring-primary' : 'border-black/10 dark:border-white/10'}`}>
+          {slashMenuOpen && (
+            <div
+              role="listbox"
+              aria-label={t('composer.slashCommands.menuLabel')}
+              data-testid="chat-slash-command-menu"
+              className="absolute bottom-full left-0 right-0 z-30 mb-2 max-h-[min(460px,calc(100vh-190px))] overflow-hidden rounded-xl border border-black/10 bg-surface-modal shadow-xl dark:border-white/10 sm:right-auto sm:w-[560px]"
+            >
+              <div className="border-b border-black/5 px-3 py-2.5 dark:border-white/10">
+                <div className="flex items-center gap-2">
+                  <Wrench className="h-3.5 w-3.5 text-primary" />
+                  <p className="text-xs font-semibold text-foreground">{t('composer.slashCommands.title')}</p>
+                </div>
+                <p className="mt-1 text-tiny leading-4 text-muted-foreground">
+                  {t('composer.slashCommands.subtitle')}
+                </p>
+              </div>
+
+              {slashCommands.length === 0 ? (
+                <div className="px-3 py-4" data-testid="chat-slash-command-empty">
+                  <p className="text-sm font-medium text-foreground">{t('composer.slashCommands.unknownTitle')}</p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                    {t('composer.slashCommands.unknownDescription', { command: `/${slashInput.commandText}` })}
+                  </p>
+                </div>
+              ) : (
+                <div className="max-h-[360px] overflow-y-auto p-1.5">
+                  {slashCommands.map((command, index) => {
+                    const previous = slashCommands[index - 1];
+                    const showGroup = !previous || previous.group !== command.group;
+                    const selected = index === slashSelectedIndex;
+                    const icon = command.group === 'knowledge'
+                      ? <BookOpen className="h-3.5 w-3.5" />
+                      : command.group === 'coding'
+                        ? <Wrench className="h-3.5 w-3.5" />
+                        : command.group === 'workflow'
+                          ? <Briefcase className="h-3.5 w-3.5" />
+                          : <MessageSquarePlus className="h-3.5 w-3.5" />;
+                    return (
+                      <div key={command.id}>
+                        {showGroup && (
+                          <div className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-normal text-muted-foreground/75">
+                            {t(`composer.slashCommands.groups.${command.group}`)}
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={selected}
+                          data-testid={`chat-slash-command-option-${command.id}`}
+                          className={cn(
+                            'flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left transition-colors',
+                            selected ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-foreground hover:bg-black/5 dark:hover:bg-white/5',
+                          )}
+                          onMouseEnter={() => setSlashSelectedIndex(index)}
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => void executeSlashCommand(command, slashInput.args)}
+                        >
+                          <span className={cn(
+                            'mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-black/10 text-muted-foreground dark:border-white/10',
+                            selected && 'text-primary',
+                          )}>
+                            {icon}
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                              <code className="rounded-md bg-black/[0.04] px-1.5 py-0.5 font-mono text-[11px] text-foreground dark:bg-white/[0.08]">
+                                /{command.id}
+                              </code>
+                              <span className="text-sm font-medium text-foreground">
+                                {t(`composer.slashCommands.commands.${command.id}.label`)}
+                              </span>
+                              {t(`composer.slashCommands.commands.${command.id}.argumentHint`) && (
+                                <span className="font-mono text-[11px] text-muted-foreground">
+                                  {t(`composer.slashCommands.commands.${command.id}.argumentHint`)}
+                                </span>
+                              )}
+                            </span>
+                            <span className="mt-1 block text-xs leading-5 text-muted-foreground">
+                              {t(`composer.slashCommands.commands.${command.id}.description`)}
+                            </span>
+                          </span>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
           {selectedTarget && (
             <div className="flex flex-wrap gap-2 pb-1.5">
               <button
@@ -1416,6 +1927,29 @@ export function ChatInput({
             >
               <Paperclip className="h-3.5 w-3.5" />
             </Button>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  data-testid="chat-slash-command-trigger"
+                  className={cn(
+                    'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2 text-meta font-medium text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-white/10',
+                    slashMenuOpen && 'bg-black/5 text-foreground dark:bg-white/10',
+                  )}
+                  onClick={handleOpenSlashPalette}
+                  disabled={inputDisabled || sending}
+                  title={t('composer.slashCommands.contextButton')}
+                  aria-label={t('composer.slashCommands.contextButton')}
+                >
+                  <Wrench className="h-3.5 w-3.5" />
+                  <span>{t('composer.slashCommands.contextButtonShort')}</span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs text-xs">
+                {t('composer.slashCommands.contextButtonTooltip')}
+              </TooltipContent>
+            </Tooltip>
 
             {showWorkspaceActions && (
               <div ref={workspaceActionsRef} className="relative shrink-0">

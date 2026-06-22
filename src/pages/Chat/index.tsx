@@ -68,8 +68,9 @@ import {
 import { useStickToBottomInstant } from '@/hooks/use-stick-to-bottom-instant';
 import { useMinLoading } from '@/hooks/use-min-loading';
 import { extractGeneratedFiles, generatedFileHasDiffPayload, isHtmlPreviewExt, type GeneratedFile } from '@/lib/generated-files';
-import { AssistantErrorCard, DotMatrixStatus, SelectionQuoteToolbar, TokenUsageRoll } from '@/components/assistant-render/AssistantRender';
+import { AssistantErrorCard, AssistantStatusIndicator, SelectionQuoteToolbar, TokenUsageRoll } from '@/components/assistant-render/AssistantRender';
 import { buildStatusDimensions, buildUsageModel } from '@/components/assistant-render/model';
+import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
 import { TurnWorkPanel } from '@/components/assistant-render/TurnWorkPanel';
 import { buildTurnWorkModel } from '@/components/assistant-render/turn-work-model';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -93,6 +94,7 @@ import type {
 import type { WorkModeId } from '@shared/types/work-mode';
 import { resolveDefaultWorkMode } from '@shared/types/work-mode';
 import type { WorkProviderStatusSnapshot } from '@shared/types/work-provider';
+import type { WorkArtifact } from '@shared/types/work-artifact';
 import type { ChatSession } from '@/stores/chat/types';
 import { toast } from 'sonner';
 
@@ -696,10 +698,6 @@ export function Chat() {
     } catch { /* best-effort */ }
   }, []);
 
-  const cleanupEmptySession = useChatStore((s) => s.cleanupEmptySession);
-  const loadHistory = useChatStore((s) => s.loadHistory);
-  const loadSessions = useChatStore((s) => s.loadSessions);
-  const lastUserMessageAt = useChatStore((s) => s.lastUserMessageAt);
   const agentsList = useAgentsStore((s) => s.agents);
   const currentAgent = useMemo(
     () => (agentsList ?? []).find((a) => a.id === currentAgentId) ?? null,
@@ -2148,19 +2146,17 @@ export function Chat() {
     const hasUserFacingImages = hasUserFacingImageAttachments(msg);
     const suppressAssistantText = foldedNarrationIndices.has(idx);
     const suppressToolCards = runSegmentMessageIndices.has(idx);
-    let hidden = false;
-
-    if (isInternalMessage(msg) && !hasUserFacingImages) {
-      hidden = true;
-    } else if (suppressAssistantText && !hasUserFacingImages) {
-      hidden = true;
-    } else {
+    const hidden = isInternalMessage(msg) && !hasUserFacingImages
+      ? true
+      : suppressAssistantText && !hasUserFacingImages
+        ? true
+        : (() => {
       const isToolOnlyAssistant = normalizeMessageRole(msg.role) === 'assistant'
         && extractToolUse(msg).length > 0
         && extractText(msg).trim().length === 0
         && !extractThinking(msg);
-      hidden = suppressToolCards && isToolOnlyAssistant && !(msg._attachedFiles?.length);
-    }
+      return suppressToolCards && isToolOnlyAssistant && !(msg._attachedFiles?.length);
+    })();
 
     return {
       index: idx,
@@ -2214,6 +2210,40 @@ export function Chat() {
     for (const files of filesByRun.values()) all.push(...files);
     return all;
   }, [filesByRun]);
+
+  // Derive WorkArtifacts from generated files (docx/xlsx/pdf/html/csv/md)
+  const artifacts = useMemo(() => {
+    return allGeneratedFiles
+      .filter((f) => {
+        const ext = f.ext.toLowerCase();
+        return ['.docx','.xlsx','.xls','.pdf','.html','.htm','.csv','.md','.pptx','.txt'].includes(ext);
+      })
+      .map((f, idx) => {
+        const ext = f.ext.toLowerCase();
+        const kind = ext === '.docx' ? 'document.write'
+          : ext === '.xlsx' || ext === '.xls' ? 'sheet.write'
+          : ext === '.pdf' ? 'pdf.validate'
+          : ext === '.html' || ext === '.htm' ? 'html.generate'
+          : ext === '.csv' ? 'csv.read'
+          : ext === '.pptx' ? 'slide.write'
+          : 'document.write';
+        return {
+          id: `artifact-${idx}`,
+          kind,
+          title: f.fileName,
+          filePath: f.filePath,
+          fileName: f.fileName,
+          ext: f.ext,
+          mimeType: f.mimeType,
+          status: 'ready' as const,
+          createdAt: Date.now(),
+          size: f.size,
+          htmlContent: (ext === '.html' || ext === '.htm' || ext === '.md') ? f.fullContent : undefined,
+        } satisfies WorkArtifact;
+      });
+  }, [allGeneratedFiles]);
+
+  const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null);
 
   const refreshSignal = useMemo(() => {
     if (sending) return undefined;
@@ -2612,7 +2642,7 @@ export function Chat() {
         <div className="px-4 pb-2" data-testid="assistant-chat-status-footer">
           <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2">
             <TokenUsageRoll usage={assistantUsageModel} />
-            <DotMatrixStatus dimensions={assistantStatusDimensions} />
+            <AssistantStatusIndicator dimensions={assistantStatusDimensions} />
           </div>
         </div>
       )}
@@ -2757,6 +2787,19 @@ export function Chat() {
                 onSessionStateChange={handleArtifactSessionStateChange}
                 onOpenWorkspaceWebView={handleOpenWorkspaceWebView}
                 onAppendComposerDraft={handleAppendComposerDraft}
+                artifacts={artifacts}
+                selectedArtifactId={selectedArtifactId}
+                onArtifactSelect={setSelectedArtifactId}
+                onArtifactValidate={async (id) => {
+                  const artifact = artifacts.find((a) => a.id === id);
+                  if (!artifact) return;
+                  setSelectedArtifactId(id);
+                  try {
+                    await hostApi.workProviders.validateArtifact({ path: artifact.filePath });
+                  } catch {
+                    // validateArtifact best-effort
+                  }
+                }}
               />
             </Suspense>
           </aside>
@@ -2930,16 +2973,16 @@ function WelcomeScreen() {
 // ── Typing Indicator ────────────────────────────────────────────
 
 function TypingIndicator() {
+  const { t } = useTranslation('chat');
   return (
     <div className="flex gap-3" data-testid="chat-typing-indicator">
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full mt-1 bg-black/5 dark:bg-white/5 text-foreground">
         <Sparkles className="h-4 w-4" />
       </div>
       <div className="bg-black/5 dark:bg-white/5 text-foreground rounded-2xl px-4 py-3">
-        <div className="flex gap-1">
-          <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-          <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-          <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <DotMatrix state="thinking" label={t('assistantRender.activity.thinking')} className="size-4 text-primary" />
+          <span>{t('assistantRender.activity.thinking')}</span>
         </div>
       </div>
     </div>
@@ -2949,6 +2992,7 @@ function TypingIndicator() {
 // ── Activity Indicator (shown between tool cycles) ─────────────
 
 function ActivityIndicator({ phase }: { phase: 'tool_processing' }) {
+  const { t } = useTranslation('chat');
   void phase;
   return (
     <div className="flex gap-3" data-testid="chat-activity-indicator">
@@ -2957,8 +3001,8 @@ function ActivityIndicator({ phase }: { phase: 'tool_processing' }) {
       </div>
       <div className="bg-black/5 dark:bg-white/5 text-foreground rounded-2xl px-4 py-3">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-          <span>Processing tool results…</span>
+          <DotMatrix state="syncing" label={t('assistantRender.activity.processingToolResults')} className="size-4 text-primary" />
+          <span>{t('assistantRender.activity.processingToolResults')}</span>
         </div>
       </div>
     </div>
@@ -2974,7 +3018,7 @@ function ImageGeneratingIndicator() {
       </div>
       <div className="bg-black/5 dark:bg-white/5 text-foreground rounded-2xl px-4 py-3">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+          <DotMatrix state="loading" label={t('imageGeneration.generating')} className="size-4 text-primary" />
           <span>{t('imageGeneration.generating')}</span>
         </div>
       </div>
