@@ -40,6 +40,72 @@ const workspace = {
 };
 
 test.describe('ClawX chat question directory', () => {
+  test('keeps assistive panels hidden on a fresh empty chat', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', {}])]: {
+            success: true,
+            result: {
+              sessions: [{ key: SESSION_KEY, displayName: 'main' }],
+            },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 1000, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+        },
+        hostApi: {
+          [stableStringify(['/api/agents', 'GET'])]: {
+            ok: true,
+            data: {
+              status: 200,
+              ok: true,
+              json: {
+                success: true,
+                agents: [{ id: 'main', name: 'Main', workspace: '/workspace/layout' }],
+              },
+            },
+          },
+          [stableStringify(['workspaces', 'list', null])]: {
+            profiles: [],
+            activeWorkspaceId: null,
+            activeWorkspace: null,
+          },
+          [stableStringify(['workspaces', 'getActive', null])]: {
+            activeWorkspaceId: null,
+            activeWorkspace: null,
+          },
+        },
+      });
+
+      const page = await getStableWindow(app);
+      await page.setViewportSize({ width: 1366, height: 820 });
+      try {
+        await page.reload();
+      } catch (error) {
+        if (!String(error).includes('ERR_FILE_NOT_FOUND')) {
+          throw error;
+        }
+      }
+
+      await expect(page.getByTestId('main-layout')).toBeVisible();
+      await expect(page.getByTestId('chat-page')).toBeVisible();
+      await expect(page.getByTestId('chat-assistive-rail')).toHaveCount(0);
+      await expect(page.getByTestId('work-mode-summary-panel')).toHaveCount(0);
+      await expect(page.getByTestId('task-ledger-summary')).toHaveCount(0);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
   test('shows a toolbar button that opens a clickable in-conversation question directory', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

@@ -432,4 +432,62 @@ test.describe('Knowledge Hub MVP', () => {
       (globalThis as unknown as { __clawxKnowledgeChatPayload?: { knowledgeScope?: string } }).__clawxKnowledgeChatPayload?.knowledgeScope
     ))).toBe('wiki');
   });
+
+  test('attaches wiki context through slash palette before sending', async ({ electronApp, page }) => {
+    await installIpcMocks(electronApp, {
+      gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+      gatewayRpc: {
+        [stableStringify(['sessions.list', {}])]: {
+          success: true,
+          result: { sessions: [] },
+        },
+      },
+      hostApi: {
+        [typed('knowledge', 'search', { query: 'context palette', maxResults: 8, corpus: 'wiki' })]: {
+          success: true,
+          results: [{
+            id: 'context-palette-page',
+            title: 'Context Palette Notes',
+            pagePath: 'knowledge/context-palette.md',
+            snippet: 'Use slash commands to keep the composer clean.',
+          }],
+        },
+        [typed('knowledge', 'recordKnowledgeReference', null)]: {
+          success: true,
+        },
+      },
+    });
+    await installKnowledgeInvokeRecorder(electronApp);
+
+    await completeSetup(page);
+    const input = page.getByTestId('chat-composer-input');
+    await expect(input).toBeVisible();
+
+    await input.fill('/wiki context palette');
+    await input.press('Enter');
+
+    await expect(page.getByTestId('chat-knowledge-search-input')).toHaveValue('context palette');
+    await expect(page.getByTestId('chat-knowledge-search-result')).toContainText('Context Palette Notes');
+    await page.getByTestId('chat-knowledge-search-result').click();
+    await expect(page.getByTestId('chat-knowledge-selected')).toContainText('Context Palette Notes');
+
+    await page.getByTitle('Send').click();
+
+    await expect.poll(async () => await electronApp.evaluate(() => (
+      (globalThis as unknown as {
+        __clawxKnowledgeChatPayload?: {
+          knowledgeScope?: string;
+          knowledgeReferences?: Array<{ id?: string; title?: string; lookup?: string; corpus?: string }>;
+        };
+      }).__clawxKnowledgeChatPayload
+    ))).toMatchObject({
+      knowledgeScope: 'wiki',
+      knowledgeReferences: [{
+        id: 'context-palette-page',
+        title: 'Context Palette Notes',
+        lookup: 'knowledge/context-palette.md',
+        corpus: 'wiki',
+      }],
+    });
+  });
 });

@@ -197,6 +197,47 @@
         "missionPause": "Пауза",
         "missionResume": "Возобновить",
         "missionCancel": "Отменить",
+        "runnerTitle": "Легкий Subagent Runner",
+        "runnerHint": "Запускайте типовые role-first workflows без ClawGraph YAML.",
+        "runnerNoMerge": "без автомерджа",
+        "runnerGoalPlaceholder": "Опишите, что должны исследовать субагенты",
+        "runnerGoalRequired": "Сначала введите цель",
+        "runnerStart": "Запустить",
+        "runnerStarted": "{{preset}} завершен: {{count}} workers",
+        "runnerFailed": "{{preset}} завершился ошибкой: {{reason}}",
+        "runnerNoDiff": "Нет staged или unstaged diff для ревью.",
+        "runnerSummary": "{{preset}} {{status}} для {{goal}}",
+        "runnerWorkerCount": "{{count}} ролей",
+        "runnerTrace": "Открыть trace",
+        "runnerStatus": {
+            "idle": "ожидание",
+            "running": "выполняется",
+            "complete": "завершено",
+            "error": "ошибка"
+        },
+        "runnerEventStatus": {
+            "started": "запущено",
+            "completed": "завершено",
+            "verified": "проверено",
+            "aborted": "прервано",
+            "error": "ошибка"
+        },
+        "runnerPreset": {
+            "explorer": "Explorer",
+            "reviewer": "Reviewer",
+            "tester": "Tester",
+            "compare": "Compare 3 approaches"
+        },
+        "runnerLabel": {
+            "diffReview": "Ревью diff",
+            "testGaps": "Пробелы в тестах",
+            "coverageReview": "Ревью покрытия",
+            "conservative": "Консервативный",
+            "modular": "Модульный",
+            "integrationFirst": "Интеграция сначала",
+            "options": "Варианты",
+            "architecture": "Архитектура"
+        },
         "memoryComposerEditTitle": "Черновик предложения памяти",
         "memoryType": "Тип",
         "memoryScope": "Область",

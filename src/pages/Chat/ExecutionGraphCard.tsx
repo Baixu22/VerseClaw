@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Activity, CheckCircle2, ChevronDown, ChevronRight, CircleDashed, GitBranch, Link as LinkIcon, MessageSquare, Wrench, XCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
+import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
 import type { TaskStep } from './task-visualization';
 
 interface ExecutionGraphCardProps {
@@ -21,16 +22,6 @@ interface ExecutionGraphCardProps {
 }
 
 const TOOL_ROW_EXTRA_INDENT_PX = 8;
-
-function AnimatedDots({ className }: { className?: string }) {
-  return (
-    <span className={cn('flex items-center gap-0.5 leading-none text-muted-foreground', className)} aria-hidden="true">
-      <span className="inline-block animate-bounce [animation-delay:0ms]">.</span>
-      <span className="inline-block animate-bounce [animation-delay:150ms]">.</span>
-      <span className="inline-block animate-bounce [animation-delay:300ms]">.</span>
-    </span>
-  );
-}
 
 function GraphStatusIcon({ status }: { status: TaskStep['status'] }) {
   if (status === 'completed') return <CheckCircle2 className="h-4 w-4" />;
@@ -110,7 +101,7 @@ function StepDetailCard({ step }: { step: TaskStep }) {
                 </span>
               )}
               {showRunningDots && (
-                <AnimatedDots className="text-sm" />
+                <DotMatrix state={isTool ? 'syncing' : 'thinking'} label={displayLabel} className="size-3.5 text-primary" />
               )}
               {step.depth > 1 && (
                 <span className="shrink-0 whitespace-nowrap rounded-full bg-black/5 px-2 py-0.5 text-2xs font-medium uppercase tracking-wide text-muted-foreground dark:bg-white/10">
@@ -339,7 +330,7 @@ export function ExecutionGraphCard({
               <div className="w-6 shrink-0" />
               <div className="min-w-0 flex-1 text-sm text-muted-foreground">
                 <span className="font-medium">{t('executionGraph.thinkingLabel')}</span>
-                <AnimatedDots className="ml-1 inline-flex text-sm" />
+                <DotMatrix state="thinking" label={t('executionGraph.thinkingLabel')} className="ml-1 inline-flex size-3.5 text-primary align-[-2px]" />
               </div>
             </div>
           </div>

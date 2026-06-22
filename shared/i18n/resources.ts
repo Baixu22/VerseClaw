@@ -16,6 +16,7 @@ import enMenu from './locales/en/menu.json';
 import enTaskLedger from './locales/en/taskLedger.json';
 import enClawGraph from './locales/en/clawGraph.json';
 import enKnowledge from './locales/en/knowledge.json';
+import enCodeReview from './locales/en/codeReview.json';
 
 // ZH
 import zhCommon from './locales/zh/common.json';
@@ -33,6 +34,7 @@ import zhMenu from './locales/zh/menu.json';
 import zhTaskLedger from './locales/zh/taskLedger.json';
 import zhClawGraph from './locales/zh/clawGraph.json';
 import zhKnowledge from './locales/zh/knowledge.json';
+import zhCodeReview from './locales/zh/codeReview.json';
 
 // JA
 import jaCommon from './locales/ja/common.json';
@@ -50,6 +52,7 @@ import jaMenu from './locales/ja/menu.json';
 import jaTaskLedger from './locales/ja/taskLedger.json';
 import jaClawGraph from './locales/ja/clawGraph.json';
 import jaKnowledge from './locales/ja/knowledge.json';
+import jaCodeReview from './locales/ja/codeReview.json';
 
 // RU
 import ruCommon from './locales/ru/common.json';
@@ -67,6 +70,7 @@ import ruMenu from './locales/ru/menu.json';
 import ruTaskLedger from './locales/ru/taskLedger.json';
 import ruClawGraph from './locales/ru/clawGraph.json';
 import ruKnowledge from './locales/ru/knowledge.json';
+import ruCodeReview from './locales/ru/codeReview.json';
 
 export const I18N_NAMESPACES = [
   'common',
@@ -84,6 +88,7 @@ export const I18N_NAMESPACES = [
   'taskLedger',
   'clawGraph',
   'knowledge',
+  'codeReview',
 ] as const;
 
 export const I18N_RESOURCES = {
@@ -103,6 +108,7 @@ export const I18N_RESOURCES = {
     taskLedger: enTaskLedger,
     clawGraph: enClawGraph,
     knowledge: enKnowledge,
+    codeReview: enCodeReview,
   },
   zh: {
     common: zhCommon,
@@ -120,6 +126,7 @@ export const I18N_RESOURCES = {
     taskLedger: zhTaskLedger,
     clawGraph: zhClawGraph,
     knowledge: zhKnowledge,
+    codeReview: zhCodeReview,
   },
   ja: {
     common: jaCommon,
@@ -137,6 +144,7 @@ export const I18N_RESOURCES = {
     taskLedger: jaTaskLedger,
     clawGraph: jaClawGraph,
     knowledge: jaKnowledge,
+    codeReview: jaCodeReview,
   },
   ru: {
     common: ruCommon,
@@ -154,6 +162,7 @@ export const I18N_RESOURCES = {
     taskLedger: ruTaskLedger,
     clawGraph: ruClawGraph,
     knowledge: ruKnowledge,
+    codeReview: ruCodeReview,
   },
 } as const;
 

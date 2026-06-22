@@ -52,6 +52,8 @@ export type GitDiffResult = {
   path?: string;
   mode: GitDiffMode;
   patch: string;
+  original?: string;
+  modified?: string;
   tooLarge?: boolean;
   binary?: boolean;
 };

@@ -110,5 +110,64 @@
             "relayModelRequired": "请填写模型名",
             "relayModelInvalid": "请只填写模型名，例如 gpt-image-2；不要填写 provider/model。"
         }
+    },
+    "billing": {
+        "title": "计费",
+        "subtitle": "集中查看 Token 消耗、模型活跃度和使用节奏，避免模型页面过载。",
+        "backToModels": "返回模型",
+        "loading": "正在加载计费历史...",
+        "empty": "暂无 Token 用量",
+        "gatewayLive": "网关在线",
+        "gatewayOffline": "网关离线",
+        "tokensSuffix": "Token",
+        "window": {
+            "7d": "7 天",
+            "30d": "30 天",
+            "all": "全部"
+        },
+        "kpi": {
+            "tokens": "总 Token",
+            "cost": "预估费用",
+            "models": "活跃模型",
+            "averageCost": "平均费用",
+            "records": "{{count}} 条记录",
+            "estimated": "按提供方用量估算",
+            "activeModels": "选中时间范围内",
+            "perRecord": "每条用量记录",
+            "recordsWithUsage": "{{count}} 条可计费记录"
+        },
+        "chart": {
+            "title": "每日 Token 消耗保持完整",
+            "description": "选中时间范围内每天都有稳定桶位，并按输入、输出和缓存堆叠展示。",
+            "peakDay": "峰值 {{day}} - {{tokens}} Token"
+        },
+        "modelChart": {
+            "title": "模型消耗排行",
+            "description": "按选中时间范围内的总 Token 对模型排序。"
+        },
+        "heatmap": {
+            "title": "使用热力图",
+            "description": "每个格子代表一天，颜色深浅表示当天 Token 总量。"
+        },
+        "recent": {
+            "title": "最近计费记录",
+            "description": "来自 transcript 的原始用量记录，包括不可用或解析失败的记录。"
+        },
+        "transcriptSource": "Transcript 历史",
+        "refreshing": "刷新中",
+        "dataQuality": {
+            "scanned": "已扫描记录",
+            "billable": "可计费记录",
+            "unavailable": "不可用记录",
+            "unavailableWithErrors": "{{unavailable}} 条不可用，{{errors}} 条错误",
+            "latest": "最新记录"
+        },
+        "status": {
+            "available": "可用",
+            "missing": "无用量",
+            "error": "解析错误"
+        },
+        "noData": "暂无使用数据。当 Agent 开始处理对话后，账单记录会自动生成，无需额外配置。",
+        "noDataHint": "数据来源为 OpenClaw 在 Agent 会话过程中本地写入的转录文件。"
     }
 }

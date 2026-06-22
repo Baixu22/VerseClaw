@@ -19,6 +19,7 @@ import { loadExternalRendererExtensions } from './extensions/_ext-bridge.generat
 import { UpdateNotifier } from './components/update/UpdateNotifier';
 import { useNewChatAction } from './components/layout/use-new-chat-action';
 import { hostEvents } from './lib/host-events';
+import { recoverFromDynamicImportLoadError } from './lib/dynamic-import-recovery';
 
 const Models = lazy(() => import('./pages/Models').then((m) => ({ default: m.Models })));
 const Chat = lazy(() => import('./pages/Chat').then((m) => ({ default: m.Chat })));
@@ -31,6 +32,7 @@ const ImageGenerationPage = lazy(() => import('./pages/ImageGeneration').then((m
 const ObservabilityDashboard = lazy(() => import('./pages/Observability').then((m) => ({ default: m.ObservabilityDashboard })));
 const TaskLedgerPage = lazy(() => import('./pages/TaskLedger'));
 const ClawGraphPage = lazy(() => import('./pages/ClawGraph'));
+const CodeReviewPage = lazy(() => import('./pages/CodeReview'));
 const Knowledge = lazy(() => import('./pages/Knowledge').then((m) => ({ default: m.Knowledge })));
 const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.Settings })));
 const Setup = lazy(() => import('./pages/Setup').then((m) => ({ default: m.Setup })));
@@ -60,6 +62,11 @@ class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
+    if (recoverFromDynamicImportLoadError(error)) {
+      console.warn('Recovering from stale renderer chunk; reloading app shell.', error);
+      return;
+    }
+
     console.error('React Error Boundary caught error:', error, info);
   }
 
@@ -226,6 +233,7 @@ function App() {
               <Route path="/cron" element={<Cron />} />
               <Route path="/task-ledger" element={<TaskLedgerPage />} />
               <Route path="/clawgraph" element={<ClawGraphPage />} />
+              <Route path="/code-review" element={<CodeReviewPage />} />
               <Route path="/knowledge" element={<Knowledge />} />
               <Route path="/image-generation" element={devModeUnlocked ? <ImageGenerationPage /> : <Navigate to="/" replace />} />
               <Route path="/dreams" element={devModeUnlocked ? <Dreams /> : <Navigate to="/" replace />} />

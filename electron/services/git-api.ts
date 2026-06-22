@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { shell } from 'electron';
@@ -117,6 +117,38 @@ async function git(args: string[], cwd: string): Promise<ExecResult> {
 
 async function gh(args: string[], cwd: string): Promise<ExecResult> {
   return execBinary('gh', args, cwd);
+}
+
+async function gitTextAt(ctx: RepoContext, ref: 'HEAD' | ':' | 'INDEX', gitPath: string): Promise<string> {
+  const spec = ref === 'INDEX' || ref === ':' ? `:${gitPath}` : `${ref}:${gitPath}`;
+  const result = await git(['show', spec], ctx.workspaceRoot);
+  return result.exitCode === 0 ? result.stdout : '';
+}
+
+async function workingTreeText(absolutePath: string): Promise<string> {
+  try {
+    return await readFile(absolutePath, 'utf8');
+  } catch {
+    return '';
+  }
+}
+
+function diffContent(value: string, tooLarge: boolean): string | undefined {
+  if (tooLarge || value.length > MAX_PATCH_CHARS) return undefined;
+  return value;
+}
+
+function untrackedPatch(gitPath: string, modified: string): string {
+  const lines = modified.length > 0 ? modified.split(/\r?\n/) : [];
+  const body = lines.map((line) => `+${line}`).join('\n');
+  return [
+    `diff --git a/${gitPath} b/${gitPath}`,
+    'new file mode 100644',
+    '--- /dev/null',
+    `+++ b/${gitPath}`,
+    `@@ -0,0 +1,${Math.max(lines.length, 1)} @@`,
+    body,
+  ].filter((line, index) => index < 5 || line.length > 0).join('\n');
 }
 
 async function requireRepoContext(): Promise<RepoContext> {
@@ -523,18 +555,47 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const ctx = await requireRepoContext();
       const path = resolveGitPath(ctx, payload.path);
       const mode: GitDiffMode = payload.mode === 'staged' ? 'staged' : 'unstaged';
+      const status = await readCurrentGitStatus().catch(() => null);
+      const change = status?.changes.find((entry) => entry.path === path.gitPath);
+      const isUntracked = mode === 'unstaged' && change?.untracked === true;
+
+      if (isUntracked) {
+        const modified = await workingTreeText(path.absolutePath);
+        const patch = untrackedPatch(path.gitPath, modified);
+        const tooLarge = patch.length > MAX_PATCH_CHARS || modified.length > MAX_PATCH_CHARS;
+        return {
+          success: true,
+          path: path.gitPath,
+          mode,
+          patch: trimOutput(patch, MAX_PATCH_CHARS),
+          original: '',
+          modified: diffContent(modified, tooLarge),
+          tooLarge,
+          binary: false,
+        };
+      }
+
       const args = mode === 'staged'
         ? ['diff', '--cached', '--', path.gitPath]
         : ['diff', '--', path.gitPath];
       const result = await git(args, ctx.workspaceRoot);
       const tooLarge = result.stdout.length > MAX_PATCH_CHARS;
+      const binary = /Binary files .* differ/.test(result.stdout);
+      const original = mode === 'staged'
+        ? await gitTextAt(ctx, 'HEAD', path.gitPath)
+        : await gitTextAt(ctx, 'INDEX', path.gitPath);
+      const modified = mode === 'staged'
+        ? await gitTextAt(ctx, 'INDEX', path.gitPath)
+        : await workingTreeText(path.absolutePath);
       return {
         success: result.exitCode === 0,
         path: path.gitPath,
         mode,
         patch: trimOutput(result.stdout, MAX_PATCH_CHARS),
+        original: binary ? undefined : diffContent(original, tooLarge),
+        modified: binary ? undefined : diffContent(modified, tooLarge),
         tooLarge,
-        binary: /Binary files .* differ/.test(result.stdout),
+        binary,
         error: result.exitCode === 0 ? undefined : result.stderr,
       };
     },
@@ -549,6 +610,21 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const paths = normalizePaths(payload.paths).map((entry) => resolveGitPath(ctx, entry).gitPath);
       if (paths.length === 0) throw new Error('paths are required');
       return withGitOperation('unstage', 'write', ['restore', '--staged', '--', ...paths], { approvalId: payload.approvalId, paths });
+    },
+    revertFile: async (payload: GitPathPayload) => {
+      const ctx = await requireRepoContext();
+      const rawPath = normalizeString(payload.path);
+      if (!rawPath) throw new Error('path is required');
+      const path = resolveGitPath(ctx, rawPath);
+      const status = await readCurrentGitStatus().catch(() => null);
+      const change = status?.changes.find((entry) => entry.path === path.gitPath);
+      const args = change?.untracked
+        ? ['clean', '-f', '--', path.gitPath]
+        : ['restore', '--source=HEAD', '--staged', '--worktree', '--', path.gitPath];
+      return withGitOperation('revertFile', 'dangerous', args, {
+        approvalId: payload.approvalId,
+        paths: [path.gitPath],
+      });
     },
     commit: async (payload: GitCommitPayload) => {
       const ctx = await requireRepoContext();

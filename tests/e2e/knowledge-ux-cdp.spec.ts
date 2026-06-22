@@ -365,3 +365,141 @@ test.describe('Chat Knowledge Attachment UX', () => {
     await expect(scopeBtn.locator('svg.lucide-book-open')).toBeVisible();
   });
 });
+
+test.describe('CDP Remote Control Developer API Dogfooding', () => {
+  test.beforeEach(async ({ electronApp, page }) => {
+    await installIpcMocks(electronApp, {
+      gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+      gatewayRpc: {
+        [stableStringify(['sessions.list', {}])]: {
+          success: true,
+          result: { sessions: [] },
+        },
+      },
+      hostApi: {
+        [typed('knowledge', 'status')]: {
+          success: true,
+          status: {
+            vaultExists: true,
+            vaultPath: 'C:/clawx/wiki',
+            vaultMode: 'isolated',
+            renderMode: 'native',
+            pageCounts: { source: 42, synthesis: 15, entity: 8, concept: 12 },
+            sourceCounts: { native: 42 },
+            warnings: [],
+            obsidianCli: { available: false },
+          },
+        },
+        [typed('knowledge', 'listInboxItems', { status: 'pending', limit: 100 })]: {
+          success: true,
+          items: [],
+        },
+        [typed('knowledge', 'listDrafts', { status: 'all', limit: 100 })]: {
+          success: true,
+          drafts: [],
+        },
+        [typed('knowledge', 'listProposals', { status: 'all', limit: 100 })]: {
+          success: true,
+          proposals: [],
+        },
+      },
+    });
+    await completeSetup(page);
+  });
+
+  test('CDP status and inspect returns active debugging state', async ({ page }) => {
+    const status = await page.evaluate(async () => {
+      const res = await (window as any).clawx.hostInvoke({ id: 'test-status', module: 'remoteControl', action: 'status' });
+      return res;
+    });
+    console.log("CDP STATUS RESULT:", status);
+    expect(status.ok).toBe(true);
+    expect(status.data.success).toBe(true);
+    expect(status.data.effectiveEnabled).toBe(true);
+    expect(status.data.effectivePort).toBeGreaterThan(0);
+
+    const inspect = await page.evaluate(async () => {
+      const res = await (window as any).clawx.hostInvoke({ id: 'test-inspect', module: 'remoteControl', action: 'inspect' });
+      return res;
+    });
+    console.log("CDP INSPECT RESULT:", inspect);
+    expect(inspect.ok).toBe(true);
+    expect(inspect.data.success).toBe(true);
+    expect(inspect.data.targets.length).toBeGreaterThan(0);
+  });
+
+  test('CDP click drives UI navigation on the knowledge page', async ({ page }) => {
+    // Navigate to knowledge page via CDP click
+    const navClick = await page.evaluate(async () => {
+      const res = await (window as any).clawx.hostInvoke({
+        id: 'test-navclick',
+        module: 'remoteControl',
+        action: 'click',
+        payload: { selector: '[data-testid="sidebar-nav-knowledge"]' },
+      });
+      return res;
+    });
+    console.log("CDP NAVCLICK RESULT:", navClick);
+    expect(navClick.ok).toBe(true);
+    expect(navClick.data.success).toBe(true);
+    await expect(page.getByTestId('knowledge-page')).toBeVisible();
+
+    // Click tabs via CDP click
+    for (const tab of ['inbox', 'drafts', 'review', 'governance', 'library']) {
+      const tabClick = await page.evaluate(async (tabName) => {
+        const res = await (window as any).clawx.hostInvoke({
+          id: `test-tabclick-${tabName}`,
+          module: 'remoteControl',
+          action: 'click',
+          payload: { selector: `[data-testid="knowledge-tab-${tabName}"]` },
+        });
+        return res;
+      }, tab);
+      expect(tabClick.ok).toBe(true);
+      expect(tabClick.data.success).toBe(true);
+      const activeTab = page.getByTestId(`knowledge-tab-${tab}`);
+      await expect(activeTab).toHaveClass(/border-primary/);
+    }
+  });
+
+  test('CDP pageInfo and screenshot retrieves live DOM state', async ({ page }) => {
+    // Navigate to knowledge page
+    await page.evaluate(async () => {
+      await (window as any).clawx.hostInvoke({
+        id: 'test-navclick-2',
+        module: 'remoteControl',
+        action: 'click',
+        payload: { selector: '[data-testid="sidebar-nav-knowledge"]' },
+      });
+    });
+    await expect(page.getByTestId('knowledge-page')).toBeVisible();
+
+    // Retrieve page info via CDP pageInfo
+    const pageInfo = await page.evaluate(async () => {
+      const res = await (window as any).clawx.hostInvoke({
+        id: 'test-pageinfo',
+        module: 'remoteControl',
+        action: 'pageInfo',
+      });
+      return res;
+    });
+    expect(pageInfo.ok).toBe(true);
+    expect(pageInfo.data.success).toBe(true);
+    expect(pageInfo.data.url).toMatch(/app:\/\/|file:\/\//);
+    expect(pageInfo.data.textSample).toContain('Vault');
+
+    // Take screenshot via CDP screenshot
+    const screenshot = await page.evaluate(async () => {
+      const res = await (window as any).clawx.hostInvoke({
+        id: 'test-screenshot',
+        module: 'remoteControl',
+        action: 'screenshot',
+        payload: { fullPage: false },
+      });
+      return res;
+    });
+    expect(screenshot.ok).toBe(true);
+    expect(screenshot.data.success).toBe(true);
+    expect(screenshot.data.dataUrl).toContain('data:image/png;base64,');
+  });
+});

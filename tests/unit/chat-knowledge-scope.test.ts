@@ -101,6 +101,9 @@ describe('chat knowledge scope metadata', () => {
     expect(payload.message).toContain('"stateWidgets":["planning"]');
     expect(payload.message).toContain('"kits":["reports","research","ops"]');
     expect(payload.message).toContain('"expectedArtifactTypes":["markdown","docx","pdf","html","csv"]');
+    expect(payload.message).toContain('"controlContract"');
+    expect(payload.message).toContain('"phase":"plan"');
+    expect(payload.message).toContain('"clarify objective"');
     expect(payload.message).toContain('"capabilityStatusSummary":{"ready":1,"missingSkill":0,"disabled":0,"runtimeUnavailable":0,"optionalExternal":2}');
     expect(payload.message).toContain('Sketch the rollout');
   });

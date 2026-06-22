@@ -151,7 +151,8 @@
     "tabs": {
       "changes": "Изменения",
       "preview": "Просмотр",
-      "browser": "Рабочая область"
+      "browser": "Рабочая область",
+      "artifact": "Артефакты"
     },
     "workspaceTabs": {
       "files": "Файлы",
@@ -578,6 +579,141 @@
       "defaultPrompt": "Ответь, используя выбранные ссылки на знания.",
       "messageRefTitle": "Ссылка на знания: {{title}}"
     },
+    "slashCommands": {
+      "menuLabel": "Slash-команды",
+      "title": "Быстрые действия",
+      "subtitle": "Выберите действие для этого сообщения или сеанса. Каждое действие заранее объясняет, что оно сделает.",
+      "contextButton": "Открыть палитру контекста",
+      "contextButtonShort": "Context",
+      "contextButtonTooltip": "Введите /, чтобы прикрепить знания, задать область или выполнить действие сеанса.",
+      "promptArgs": "Область: {{args}}",
+      "unknownTitle": "Неизвестная команда",
+      "unknownDescription": "{{command}} не является быстрым действием ClawX. Нажмите Escape, чтобы продолжить редактирование.",
+      "unknownToast": "Неизвестная slash-команда: {{command}}",
+      "ledgerNodeDescription": "Создано из slash-команды Chat.",
+      "ledgerSessionSummary": "Связано из slash-команды Chat: {{title}}",
+      "groups": {
+        "knowledge": "Знания",
+        "coding": "Код",
+        "workflow": "Рабочий процесс",
+        "session": "Сеанс"
+      },
+      "commands": {
+        "wiki": {
+          "label": "Искать в Wiki",
+          "description": "Найти wiki-страницы с источниками и прикрепить их как read-only контекст.",
+          "argumentHint": "[query]"
+        },
+        "memory": {
+          "label": "Использовать память",
+          "description": "Для этого сообщения читать только runtime memory.",
+          "argumentHint": ""
+        },
+        "all": {
+          "label": "Все знания",
+          "description": "Разрешить чтение memory и wiki для этого сообщения.",
+          "argumentHint": ""
+        },
+        "none": {
+          "label": "Без знаний",
+          "description": "Отправить без memory или wiki-контекста.",
+          "argumentHint": ""
+        },
+        "scope": {
+          "label": "Задать область знаний",
+          "description": "Выбрать None, Memory, Wiki или All, не покидая composer.",
+          "argumentHint": "[scope]"
+        },
+        "save": {
+          "label": "Черновик знания",
+          "description": "Попросить создать редактируемый черновик знания; он не будет применен автоматически.",
+          "argumentHint": "[topic]"
+        },
+        "steward": {
+          "label": "Спросить Steward",
+          "description": "Попросить Knowledge Steward проверить, классифицировать или найти конфликты.",
+          "argumentHint": "[topic]"
+        },
+        "review": {
+          "label": "Review изменений",
+          "description": "Запросить сфокусированный code review текущего diff.",
+          "argumentHint": "[scope]"
+        },
+        "fix-ci": {
+          "label": "Исправить CI",
+          "description": "Попросить агента изучить failing checks и предложить исправления.",
+          "argumentHint": "[failure]"
+        },
+        "write-tests": {
+          "label": "Написать тесты",
+          "description": "Попросить targeted tests для текущего изменения.",
+          "argumentHint": "[area]"
+        },
+        "explain-diff": {
+          "label": "Объяснить diff",
+          "description": "Суммировать, что изменилось и почему это важно.",
+          "argumentHint": "[focus]"
+        },
+        "commit": {
+          "label": "Подготовить commit",
+          "description": "Подготовить commit-ready summary без запуска Git.",
+          "argumentHint": "[scope]"
+        },
+        "pr-summary": {
+          "label": "PR summary",
+          "description": "Составить черновик PR summary и notes по проверке.",
+          "argumentHint": "[audience]"
+        },
+        "mission": {
+          "label": "Mission Control",
+          "description": "Открыть или направить long-goal Mission Control flow.",
+          "argumentHint": "[goal]"
+        },
+        "ledger": {
+          "label": "Task Ledger",
+          "description": "Открыть Task Ledger или создать task node.",
+          "argumentHint": "[task title]"
+        },
+        "compact": {
+          "label": "Сжать сеанс",
+          "description": "Открыть диалог compression для текущего сеанса.",
+          "argumentHint": ""
+        },
+        "fork": {
+          "label": "Fork сеанса",
+          "description": "Создать ветку текущего чата через существующий fork flow.",
+          "argumentHint": ""
+        },
+        "handoff": {
+          "label": "Handoff сеанса",
+          "description": "Подготовить редактируемый continuation draft в новом сеансе.",
+          "argumentHint": ""
+        }
+      },
+      "prompts": {
+        "review": "Проверь текущие изменения как code reviewer. Сфокусируйся на bugs, regressions, risks и missing tests.\n{{argsDetail}}",
+        "fix-ci": "Помоги исправить текущий CI failure.\n{{argsDetail}}",
+        "write-tests": "Напиши focused tests для текущего изменения.\n{{argsDetail}}",
+        "explain-diff": "Четко объясни текущий diff.\n{{argsDetail}}",
+        "commit": "Подготовь commit-ready summary.\n{{argsDetail}}",
+        "pr-summary": "Составь черновик pull request summary и validation notes.\n{{argsDetail}}",
+        "mission": "Помоги оформить эту цель в Mission Control.\n{{argsDetail}}",
+        "save": "Создай редактируемый Knowledge Draft для релевантного содержимого.\n{{argsDetail}}",
+        "steward": "Выступи как Knowledge Steward для этого запроса.\n{{argsDetail}}"
+      },
+      "toasts": {
+        "sendUnavailable": "Эта команда сможет выполниться, когда текущая отправка станет доступна.",
+        "wikiOpened": "Wiki-поиск открыт. Выберите страницы, чтобы прикрепить их как read-only контекст.",
+        "scopeOpened": "Открыт выбор области знаний.",
+        "scopeChanged": "Область знаний установлена: {{scope}}.",
+        "typeSlash": "Введите / в начале пустого composer, чтобы открыть палитру контекста.",
+        "ledgerOpened": "Task Ledger открыт",
+        "ledgerCreated": "Ledger task создан: {{title}}",
+        "ledgerFailed": "Не удалось создать ledger task: {{error}}",
+        "missionOpened": "Открыт Mission Control в Agents",
+        "forkUnavailable": "Fork доступен после завершения текущего запуска."
+      }
+    },
     "modelPickerTitle": "Переключить модель",
     "modelSwitchFailed": "Не удалось переключить модель: {{error}}",
     "inputModeTitle": "Режим ввода",
@@ -954,6 +1090,13 @@
       "workspace": "??????? ???????",
       "permission": "?????"
     },
+    "statusIndicator": {
+      "label": "\u0421\u0442\u0430\u0442\u0443\u0441 \u0430\u0441\u0441\u0438\u0441\u0442\u0435\u043d\u0442\u0430"
+    },
+    "activity": {
+      "thinking": "\u0410\u0441\u0441\u0438\u0441\u0442\u0435\u043d\u0442 \u0434\u0443\u043c\u0430\u0435\u0442",
+      "processingToolResults": "\u041e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0430 \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u043e\u0432 \u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u043e\u0432"
+    },
     "quote": {
       "action": "??????????"
     },
@@ -966,6 +1109,14 @@
       "folder": "?????",
       "file": "????"
     }
+  },
+  "sessionStatus": {
+    "running": "\u0412\u044b\u043f\u043e\u043b\u043d\u044f\u0435\u0442\u0441\u044f",
+    "waiting": "\u041e\u0436\u0438\u0434\u0430\u0435\u0442 \u0432\u0432\u043e\u0434\u0430",
+    "completed": "\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043e",
+    "error": "\u0422\u0440\u0435\u0431\u0443\u0435\u0442 \u0432\u043d\u0438\u043c\u0430\u043d\u0438\u044f",
+    "aborted": "\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u043e",
+    "dismissCompleted": "\u0421\u043a\u0440\u044b\u0442\u044c \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043d\u044b\u0439 \u0441\u0442\u0430\u0442\u0443\u0441"
   },
   "turnWork": {
     "title": "Панель работы",
@@ -994,6 +1145,29 @@
       "tasks": "Нет активности задач",
       "reports": "Нет отчетов или файлов",
       "sources": "Нет веб-источников"
+    }
+  },
+  "githubCard": {
+    "type": {
+      "repo": "Репозиторий",
+      "issue": "Задача",
+      "pr": "PR",
+      "commit": "Коммит",
+      "profile": "Профиль",
+      "other": "GitHub ссылка"
+    }
+  },
+  "artifactView": {
+    "title": "Артефакты",
+    "empty": "Еще нет артефактов",
+    "generating": "Генерация...",
+    "selectHint": "Выберите артефакт для предпросмотра",
+    "status": {
+      "generating": "Генерация...",
+      "ready": "Готово",
+      "invalid": "Недействителен",
+      "validationError": "Ошибка проверки",
+      "error": "Ошибка"
     }
   }
 }

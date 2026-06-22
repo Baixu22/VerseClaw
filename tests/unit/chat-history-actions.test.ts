@@ -83,6 +83,7 @@ vi.mock('@/stores/gateway', () => ({
 }));
 
 vi.mock('@/stores/chat/helpers', () => ({
+  enrichWithTeamOrchestrationToolResults: (messages: unknown[]) => messages as never,
   clearHistoryPoll: (...args: unknown[]) => clearHistoryPoll(...args),
   enrichWithCachedImages: (...args: unknown[]) => enrichWithCachedImages(...args),
   enrichWithToolResultFiles: (...args: unknown[]) => enrichWithToolResultFiles(...args),

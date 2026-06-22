@@ -19,6 +19,10 @@ import type {
   ClawGraphStatusResult,
   ClawGraphWorkspacePayload,
   ClawHubSearchPayload,
+  CodeReviewCreateTaskLedgerNodePayload,
+  CodeReviewCreateTaskLedgerNodeResult,
+  CodeReviewRunPayload,
+  CodeReviewRunResult,
   CronSessionHistoryPayload,
   DialogMessagePayload,
   DialogOpenPayload,
@@ -213,6 +217,8 @@ export type {
   ClawGraphListWorkflowsResult,
   ClawGraphRunResult,
   ClawGraphStatusResult,
+  CodeReviewCreateTaskLedgerNodeResult,
+  CodeReviewRunResult,
   ClawHubInstalledSkill,
   ClawHubListResult,
   ClawHubSearchResult,
@@ -379,6 +385,10 @@ export const hostApi = {
     switch: (id: string) => invokeHost('workspaces', 'switch', { id }),
     saveState: (input: WorkspaceSaveStatePayload) => invokeHost('workspaces', 'saveState', input),
   },
+  projectRules: {
+    snapshot: () => invokeHost('projectRules', 'snapshot'),
+    createAgentsTemplate: () => invokeHost('projectRules', 'createAgentsTemplate'),
+  },
   terminal: {
     run: (input: WorkspaceTerminalRunPayload) => invokeHost('terminal', 'run', input),
     open: (input?: WorkspaceTerminalOpenPayload) => invokeHost('terminal', 'open', input),
@@ -395,6 +405,7 @@ export const hostApi = {
     fileDiff: (input: GitFileDiffPayload): Promise<GitFileDiffResult> => invokeHost('git', 'fileDiff', input),
     stage: (input: GitPathsPayload): Promise<GitOperationResult> => invokeHost('git', 'stage', input),
     unstage: (input: GitPathsPayload): Promise<GitOperationResult> => invokeHost('git', 'unstage', input),
+    revertFile: (input: GitPathPayload): Promise<GitOperationResult> => invokeHost('git', 'revertFile', input),
     commit: (input: GitCommitPayload): Promise<GitCommitResult> => invokeHost('git', 'commit', input),
     branches: (): Promise<GitBranchListResult> => invokeHost('git', 'branches'),
     checkoutBranch: (input: GitBranchCheckoutPayload): Promise<GitOperationResult> => invokeHost('git', 'checkoutBranch', input),
@@ -673,6 +684,16 @@ export const hostApi = {
   },
   chat: {
     sendWithMedia: (input: ChatSendWithMediaPayload) => invokeHost('chat', 'sendWithMedia', input),
+  },
+  codeReview: {
+    run: (input: CodeReviewRunPayload): Promise<CodeReviewRunResult> => (
+      invokeHost('codeReview', 'run', input)
+    ),
+    createTaskLedgerNode: (
+      input: CodeReviewCreateTaskLedgerNodePayload,
+    ): Promise<CodeReviewCreateTaskLedgerNodeResult> => (
+      invokeHost('codeReview', 'createTaskLedgerNode', input)
+    ),
   },
   workProviders: {
     status: (): Promise<WorkProviderStatusSnapshot> => invokeHost('workProviders', 'status'),

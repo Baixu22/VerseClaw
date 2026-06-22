@@ -1,0 +1,55 @@
+{
+  "nav": "Review Center",
+  "title": "Review Center",
+  "subtitle": "Git 変更に対して読み取り専用の AI レビューを実行し、findings を構造化して Task Ledger に送れます。",
+  "readonly": "読み取り専用レビュー",
+  "yes": "はい",
+  "no": "いいえ",
+  "empty": "レビュー対象を選び、必要なら focus を入力してからレビューを実行します。",
+  "running": "変更をレビューしています...",
+  "target": {
+    "label": "レビュー対象",
+    "uncommitted": "未コミット変更",
+    "baseBranch": "ベースブランチとの差分",
+    "commit": "指定コミット",
+    "baseBranchInput": "ベースブランチ",
+    "baseBranchPlaceholder": "origin/main",
+    "commitInput": "コミット",
+    "commitPlaceholder": "abc1234"
+  },
+  "focus": {
+    "label": "レビュー focus",
+    "placeholder": "例: 回帰、テスト、セキュリティ、renderer/Main 境界を重点確認。"
+  },
+  "actions": {
+    "run": "Review changes",
+    "running": "レビュー中",
+    "createFindingNode": "review node を作成",
+    "createReviewNode": "この review node を作成",
+    "nodeCreated": "作成済み"
+  },
+  "results": {
+    "title": "Findings",
+    "target": "対象",
+    "files": "ファイル",
+    "findings": "Findings",
+    "readonly": "読み取り専用",
+    "noFindings": "この対象には finding がありません。"
+  },
+  "finding": {
+    "suggestedFix": "修正案"
+  },
+  "severity": {
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "info": "Info"
+  },
+  "errors": {
+    "baseBranchRequired": "レビュー前にベースブランチを入力してください。",
+    "commitRequired": "レビュー前にコミットを入力してください。",
+    "reviewFailed": "レビューに失敗しました。",
+    "ledgerFailed": "Task Ledger review node を作成できませんでした。"
+  }
+}

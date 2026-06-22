@@ -115,6 +115,37 @@ describe('git api', () => {
     });
   });
 
+  it('returns side-by-side content with staged file diffs', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'status') {
+        return {
+          stdout: [
+            '# branch.head main',
+            '1 M. N... 100644 100644 100644 abc def src/app.ts',
+            '',
+          ].join('\0'),
+        };
+      }
+      if (args[0] === 'diff' && args[1] === '--cached') {
+        return { stdout: 'diff --git a/src/app.ts b/src/app.ts\n-old\n+new\n' };
+      }
+      if (args[0] === 'show' && args[1] === 'HEAD:src/app.ts') return { stdout: 'old\n' };
+      if (args[0] === 'show' && args[1] === ':src/app.ts') return { stdout: 'new\n' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    await expect(createGitApi().fileDiff({ path: 'src/app.ts', mode: 'staged' })).resolves.toMatchObject({
+      success: true,
+      path: 'src/app.ts',
+      mode: 'staged',
+      patch: expect.stringContaining('+new'),
+      original: 'old\n',
+      modified: 'new\n',
+    });
+  });
+
   it('blocks normal writes in read-only mode before git add', async () => {
     activeWorkspace.profile = workspace('readOnly');
     mockExec((_command, args) => {
@@ -150,6 +181,71 @@ describe('git api', () => {
       success: true,
       stdout: 'pushed\n',
     });
+  });
+
+  it('requires approval before reverting a tracked file and restores index plus worktree after approval', async () => {
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'status') {
+        return {
+          stdout: [
+            '# branch.head main',
+            '1 .M N... 100644 100644 100644 abc abc src/app.ts',
+            '',
+          ].join('\0'),
+        };
+      }
+      if (args[0] === 'restore') return { stdout: 'restored\n' };
+      return { stdout: '' };
+    });
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createGitApi } = await import('@electron/services/git-api');
+    const gitApi = createGitApi();
+
+    const first = await gitApi.revertFile({ path: 'src/app.ts' });
+    expect(first).toMatchObject({ success: false, blocked: true, approvalRequired: true });
+    expect(calls).not.toContainEqual(['restore', '--source=HEAD', '--staged', '--worktree', '--', 'src/app.ts']);
+
+    await createPermissionsApi().decideApproval({ id: first.approval?.id ?? '', decision: 'approved' });
+    await expect(gitApi.revertFile({ path: 'src/app.ts', approvalId: first.approval?.id })).resolves.toMatchObject({
+      success: true,
+      stdout: 'restored\n',
+    });
+    expect(calls).toContainEqual(['restore', '--source=HEAD', '--staged', '--worktree', '--', 'src/app.ts']);
+  });
+
+  it('uses git clean for approved untracked file reverts', async () => {
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'status') {
+        return {
+          stdout: [
+            '# branch.head main',
+            '? src/new.ts',
+            '',
+          ].join('\0'),
+        };
+      }
+      if (args[0] === 'clean') return { stdout: 'Removing src/new.ts\n' };
+      return { stdout: '' };
+    });
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createGitApi } = await import('@electron/services/git-api');
+    const gitApi = createGitApi();
+
+    const first = await gitApi.revertFile({ path: 'src/new.ts' });
+    expect(first).toMatchObject({ success: false, blocked: true, approvalRequired: true });
+
+    await createPermissionsApi().decideApproval({ id: first.approval?.id ?? '', decision: 'approved' });
+    await expect(gitApi.revertFile({ path: 'src/new.ts', approvalId: first.approval?.id })).resolves.toMatchObject({
+      success: true,
+      stdout: 'Removing src/new.ts\n',
+    });
+    expect(calls).toContainEqual(['clean', '-f', '--', 'src/new.ts']);
   });
 
   it('only allows worktree remove for paths registered with the repository', async () => {

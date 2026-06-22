@@ -5,7 +5,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import type { ComponentProps } from 'react';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 const hostApiFetchMock = vi.hoisted(() => vi.fn());
-const { agentsState, chatState, gatewayState, providersState, mcpState, artifactPanelMocks, permissionMocks } = vi.hoisted(() => ({
+const { agentsState, chatState, gatewayState, providersState, mcpState, artifactPanelMocks, permissionMocks, taskLedgerMocks } = vi.hoisted(() => ({
   agentsState: {
     agents: [] as Array<Record<string, unknown>>,
     defaultModelRef: null as string | null,
@@ -36,6 +36,10 @@ const { agentsState, chatState, gatewayState, providersState, mcpState, artifact
   permissionMocks: {
     approvals: vi.fn(),
     decideApproval: vi.fn(),
+  },
+  taskLedgerMocks: {
+    createNode: vi.fn(),
+    linkSession: vi.fn(),
   },
 }));
 
@@ -114,6 +118,10 @@ vi.mock('@/lib/host-api', () => ({
       approvals: permissionMocks.approvals,
       decideApproval: permissionMocks.decideApproval,
     },
+    taskLedger: {
+      createNode: taskLedgerMocks.createNode,
+      linkSession: taskLedgerMocks.linkSession,
+    },
     gateway: {
       status: () => Promise.resolve({ state: 'running', port: 18789 }),
     },
@@ -130,7 +138,106 @@ vi.mock('@/lib/host-api', () => ({
   },
 }));
 
+const slashCommandTranslations: Record<string, string> = {
+  'composer.slashCommands.menuLabel': 'Slash commands',
+  'composer.slashCommands.title': 'Quick actions',
+  'composer.slashCommands.subtitle': 'Pick an action for this message or session.',
+  'composer.slashCommands.contextButton': 'Open context palette',
+  'composer.slashCommands.contextButtonShort': 'Context',
+  'composer.slashCommands.contextButtonTooltip': 'Type / to attach knowledge, set scope, or run a session action.',
+  'composer.slashCommands.promptArgs': 'Scope: {{args}}',
+  'composer.slashCommands.unknownTitle': 'Unknown command',
+  'composer.slashCommands.unknownDescription': '{{command}} is not a ClawX quick action. Press Escape to keep editing.',
+  'composer.slashCommands.unknownToast': 'Unknown slash command: {{command}}',
+  'composer.slashCommands.ledgerNodeDescription': 'Created from the Chat slash command.',
+  'composer.slashCommands.ledgerSessionSummary': 'Linked from Chat slash command: {{title}}',
+  'composer.slashCommands.groups.knowledge': 'Knowledge',
+  'composer.slashCommands.groups.coding': 'Coding',
+  'composer.slashCommands.groups.workflow': 'Workflow',
+  'composer.slashCommands.groups.session': 'Session',
+  'composer.slashCommands.commands.wiki.label': 'Search wiki',
+  'composer.slashCommands.commands.wiki.description': 'Find source-backed wiki pages and attach them as read-only context.',
+  'composer.slashCommands.commands.wiki.argumentHint': '[query]',
+  'composer.slashCommands.commands.memory.label': 'Use memory',
+  'composer.slashCommands.commands.memory.description': 'Set this message to read from runtime memory only.',
+  'composer.slashCommands.commands.memory.argumentHint': '',
+  'composer.slashCommands.commands.all.label': 'Use all knowledge',
+  'composer.slashCommands.commands.all.description': 'Allow memory and wiki reads for this message.',
+  'composer.slashCommands.commands.all.argumentHint': '',
+  'composer.slashCommands.commands.none.label': 'No knowledge',
+  'composer.slashCommands.commands.none.description': 'Send without memory or wiki context.',
+  'composer.slashCommands.commands.none.argumentHint': '',
+  'composer.slashCommands.commands.scope.label': 'Set knowledge scope',
+  'composer.slashCommands.commands.scope.description': 'Choose None, Memory, Wiki, or All without leaving the composer.',
+  'composer.slashCommands.commands.scope.argumentHint': '[scope]',
+  'composer.slashCommands.commands.save.label': 'Draft knowledge',
+  'composer.slashCommands.commands.save.description': 'Ask for an editable knowledge draft; it will not be applied automatically.',
+  'composer.slashCommands.commands.save.argumentHint': '[topic]',
+  'composer.slashCommands.commands.steward.label': 'Ask steward',
+  'composer.slashCommands.commands.steward.description': 'Ask the Knowledge Steward to review, classify, or find conflicts.',
+  'composer.slashCommands.commands.steward.argumentHint': '[topic]',
+  'composer.slashCommands.commands.review.label': 'Review changes',
+  'composer.slashCommands.commands.review.description': 'Ask for a focused code review of the current diff.',
+  'composer.slashCommands.commands.review.argumentHint': '[scope]',
+  'composer.slashCommands.commands.fix-ci.label': 'Fix CI',
+  'composer.slashCommands.commands.fix-ci.description': 'Ask the agent to inspect failing checks and propose repairs.',
+  'composer.slashCommands.commands.fix-ci.argumentHint': '[failure]',
+  'composer.slashCommands.commands.write-tests.label': 'Write tests',
+  'composer.slashCommands.commands.write-tests.description': 'Ask for targeted tests around the current change.',
+  'composer.slashCommands.commands.write-tests.argumentHint': '[area]',
+  'composer.slashCommands.commands.explain-diff.label': 'Explain diff',
+  'composer.slashCommands.commands.explain-diff.description': 'Summarize what changed and why it matters.',
+  'composer.slashCommands.commands.explain-diff.argumentHint': '[focus]',
+  'composer.slashCommands.commands.commit.label': 'Prepare commit',
+  'composer.slashCommands.commands.commit.description': 'Ask for a commit-ready summary without running Git.',
+  'composer.slashCommands.commands.commit.argumentHint': '[scope]',
+  'composer.slashCommands.commands.pr-summary.label': 'PR summary',
+  'composer.slashCommands.commands.pr-summary.description': 'Draft a pull request summary and validation notes.',
+  'composer.slashCommands.commands.pr-summary.argumentHint': '[audience]',
+  'composer.slashCommands.commands.mission.label': 'Mission Control',
+  'composer.slashCommands.commands.mission.description': 'Open or guide a long-goal Mission Control flow.',
+  'composer.slashCommands.commands.mission.argumentHint': '[goal]',
+  'composer.slashCommands.commands.ledger.label': 'Task Ledger',
+  'composer.slashCommands.commands.ledger.description': 'Open Task Ledger or create a task node.',
+  'composer.slashCommands.commands.ledger.argumentHint': '[task title]',
+  'composer.slashCommands.commands.compact.label': 'Compact session',
+  'composer.slashCommands.commands.compact.description': 'Open the current-session compression dialog.',
+  'composer.slashCommands.commands.compact.argumentHint': '',
+  'composer.slashCommands.commands.fork.label': 'Fork session',
+  'composer.slashCommands.commands.fork.description': 'Branch the current chat through the existing fork flow.',
+  'composer.slashCommands.commands.fork.argumentHint': '',
+  'composer.slashCommands.commands.handoff.label': 'Handoff session',
+  'composer.slashCommands.commands.handoff.description': 'Prepare an editable continuation draft in a new session.',
+  'composer.slashCommands.commands.handoff.argumentHint': '',
+  'composer.slashCommands.prompts.review': 'Review the current changes as a code reviewer. Focus on bugs, regressions, risks, and missing tests.\n{{argsDetail}}',
+  'composer.slashCommands.prompts.fix-ci': 'Help fix the current CI failure.\n{{argsDetail}}',
+  'composer.slashCommands.prompts.write-tests': 'Write focused tests for the current change.\n{{argsDetail}}',
+  'composer.slashCommands.prompts.explain-diff': 'Explain the current diff clearly.\n{{argsDetail}}',
+  'composer.slashCommands.prompts.commit': 'Prepare a commit-ready summary.\n{{argsDetail}}',
+  'composer.slashCommands.prompts.pr-summary': 'Draft a pull request summary.\n{{argsDetail}}',
+  'composer.slashCommands.prompts.mission': 'Guide this goal into Mission Control.\n{{argsDetail}}',
+  'composer.slashCommands.prompts.save': 'Create an editable Knowledge Draft for the relevant content.\n{{argsDetail}}',
+  'composer.slashCommands.prompts.steward': 'Act as the Knowledge Steward for this request.\n{{argsDetail}}',
+  'composer.slashCommands.toasts.sendUnavailable': 'This command can run after the current send is available.',
+  'composer.slashCommands.toasts.wikiOpened': 'Wiki search opened. Pick pages to attach as read-only context.',
+  'composer.slashCommands.toasts.scopeOpened': 'Knowledge scope picker opened.',
+  'composer.slashCommands.toasts.scopeChanged': 'Knowledge scope set to {{scope}}.',
+  'composer.slashCommands.toasts.typeSlash': 'Type / at the start of an empty composer to open the context palette.',
+  'composer.slashCommands.toasts.ledgerOpened': 'Opened Task Ledger',
+  'composer.slashCommands.toasts.ledgerCreated': 'Created ledger task: {{title}}',
+  'composer.slashCommands.toasts.ledgerFailed': 'Could not create ledger task: {{error}}',
+  'composer.slashCommands.toasts.missionOpened': 'Opened Agents for Mission Control',
+  'composer.slashCommands.toasts.forkUnavailable': 'Fork is available after the current run finishes.',
+};
+
+function interpolate(template: string, vars?: Record<string, unknown>): string {
+  return template.replace(/\{\{\s*([^}\s]+)\s*\}\}/g, (_, name: string) => String(vars?.[name] ?? ''));
+}
+
 function translate(key: string, vars?: Record<string, unknown>): string {
+  if (slashCommandTranslations[key]) {
+    return interpolate(slashCommandTranslations[key], vars);
+  }
   switch (key) {
     case 'composer.attachFiles':
       return 'Attach files';
@@ -383,6 +490,20 @@ describe('ChatInput draft persistence', () => {
     permissionMocks.decideApproval.mockReset();
     permissionMocks.decideApproval.mockResolvedValue({ success: true });
     artifactPanelMocks.openPreview.mockReset();
+    window.location.hash = '#/';
+    taskLedgerMocks.createNode.mockReset();
+    taskLedgerMocks.createNode.mockResolvedValue({
+      success: true,
+      snapshot: {
+        nodes: [{
+          id: 'ledger-node-1',
+          title: 'Add release tests',
+          updatedAt: '2026-06-21T00:00:00.000Z',
+        }],
+      },
+    });
+    taskLedgerMocks.linkSession.mockReset();
+    taskLedgerMocks.linkSession.mockResolvedValue({ success: true, snapshot: { nodes: [] } });
   });
 
   it('hydrates the composer from draftValue and reports draft edits', () => {
@@ -538,6 +659,260 @@ describe('ChatInput draft persistence', () => {
     fireEvent.click(screen.getByTitle('Send'));
 
     expect(onSend).toHaveBeenCalledWith('Sketch the rollout', undefined, null, 'none', 'plan');
+  });
+});
+
+describe('ChatInput slash commands', () => {
+  it('opens the slash menu, filters commands, and selects with Enter', async () => {
+    const onSend = vi.fn();
+    renderChatInput(onSend);
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/' } });
+
+    expect(screen.getByTestId('chat-slash-command-menu')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-slash-command-menu')).toHaveTextContent('Pick an action for this message or session.');
+    expect(screen.getByTestId('chat-slash-command-option-wiki')).toHaveTextContent('/wiki');
+    expect(screen.getByTestId('chat-slash-command-option-wiki')).toHaveTextContent('Find source-backed wiki pages');
+    expect(screen.getByTestId('chat-slash-command-option-wiki')).toHaveAttribute('aria-selected', 'true');
+
+    fireEvent.keyDown(textbox, { key: 'ArrowDown' });
+    expect(screen.getByTestId('chat-slash-command-option-memory')).toHaveAttribute('aria-selected', 'true');
+
+    fireEvent.keyDown(textbox, { key: 'ArrowUp' });
+    expect(screen.getByTestId('chat-slash-command-option-wiki')).toHaveAttribute('aria-selected', 'true');
+
+    fireEvent.change(textbox, { target: { value: '/wri' } });
+    expect(screen.getByTestId('chat-slash-command-option-write-tests')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-slash-command-option-review')).not.toBeInTheDocument();
+
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith(
+        expect.stringContaining('Write focused tests for the current change.'),
+        undefined,
+        null,
+        'none',
+        'build',
+      );
+    });
+  });
+
+  it('closes the slash menu with Escape', () => {
+    renderChatInput();
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/' } });
+    expect(screen.getByTestId('chat-slash-command-menu')).toBeInTheDocument();
+
+    fireEvent.keyDown(textbox, { key: 'Escape' });
+
+    expect(screen.queryByTestId('chat-slash-command-menu')).not.toBeInTheDocument();
+    expect(textbox).toHaveValue('/');
+  });
+
+  it('keeps unknown slash commands in the composer instead of sending', () => {
+    const onSend = vi.fn();
+    renderChatInput(onSend);
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/not-real' } });
+
+    expect(screen.getByTestId('chat-slash-command-empty')).toHaveTextContent('Unknown command');
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    expect(onSend).not.toHaveBeenCalled();
+    expect(textbox).toHaveValue('/not-real');
+  });
+
+  it('opens wiki search from slash command and attaches selected context', async () => {
+    const onSend = vi.fn();
+    const onKnowledgeScopeChange = vi.fn();
+    hostApiFetchMock.mockImplementation(async (url) => {
+      if (url === '/api/knowledge/search') {
+        return {
+          success: true,
+          results: [{
+            id: 'wiki-context-page',
+            title: 'Context Palette Notes',
+            pagePath: 'knowledge/context-palette.md',
+            snippet: 'Use slash commands to keep the composer clean.',
+          }],
+        };
+      }
+      if (url === '/api/knowledge/reference') {
+        return { success: true };
+      }
+      return { success: true };
+    });
+
+    render(
+      <TooltipProvider>
+        <ChatInput
+          onSend={onSend}
+          knowledgeScope="none"
+          onKnowledgeScopeChange={onKnowledgeScopeChange}
+        />
+      </TooltipProvider>,
+    );
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/wiki context palette' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => expect(onKnowledgeScopeChange).toHaveBeenCalledWith('wiki'));
+    expect(screen.getByTestId('chat-knowledge-search-input')).toHaveValue('context palette');
+
+    const result = await screen.findByTestId('chat-knowledge-search-result');
+    expect(result).toHaveTextContent('Context Palette Notes');
+    fireEvent.click(result);
+
+    expect(screen.getByTestId('chat-knowledge-selected')).toHaveTextContent('Context Palette Notes');
+    fireEvent.click(screen.getByTitle('Send'));
+
+    expect(onSend).toHaveBeenCalledWith('Use the selected knowledge references to answer.', undefined, null, 'wiki', 'build', [{
+      id: 'wiki-context-page',
+      title: 'Context Palette Notes',
+      lookup: 'knowledge/context-palette.md',
+      corpus: 'wiki',
+      pageId: 'wiki-context-page',
+      pagePath: 'knowledge/context-palette.md',
+      snippet: 'Use slash commands to keep the composer clean.',
+    }]);
+  });
+
+  it('changes knowledge scope from slash commands without sending', async () => {
+    const onSend = vi.fn();
+    const onKnowledgeScopeChange = vi.fn();
+    render(
+      <TooltipProvider>
+        <ChatInput
+          onSend={onSend}
+          knowledgeScope="none"
+          onKnowledgeScopeChange={onKnowledgeScopeChange}
+        />
+      </TooltipProvider>,
+    );
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/memory' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => expect(onKnowledgeScopeChange).toHaveBeenCalledWith('memory'));
+    expect(onSend).not.toHaveBeenCalled();
+    expect(textbox).toHaveValue('');
+  });
+
+  it('falls back to a review prompt when no code review hook is provided', async () => {
+    const onSend = vi.fn();
+    renderChatInput(onSend);
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/review auth changes' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith(
+        expect.stringContaining('Review the current changes as a code reviewer.'),
+        undefined,
+        null,
+        'none',
+        'build',
+      );
+    });
+    expect(onSend.mock.calls[0][0]).toContain('Scope: auth changes');
+  });
+
+  it('creates a ledger node and best-effort links the current session', async () => {
+    window.location.hash = '#/';
+    taskLedgerMocks.createNode.mockResolvedValueOnce({
+      success: true,
+      snapshot: {
+        nodes: [{
+          id: 'ledger-node-1',
+          title: 'Add release tests',
+          updatedAt: '2026-06-21T00:00:00.000Z',
+        }],
+      },
+    });
+    renderChatInput(vi.fn(), {
+      workspace: workspace(),
+    });
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/ledger Add release tests' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(taskLedgerMocks.createNode).toHaveBeenCalledWith(expect.objectContaining({
+        workspaceId: 'workspace-1',
+        node: expect.objectContaining({
+          title: 'Add release tests',
+          kind: 'task',
+          status: 'todo',
+        }),
+      }));
+    });
+    await waitFor(() => {
+      expect(taskLedgerMocks.linkSession).toHaveBeenCalledWith(expect.objectContaining({
+        workspaceId: 'workspace-1',
+        sessionKey: 'agent:main:main',
+        agentId: 'main',
+        nodeId: 'ledger-node-1',
+      }));
+    });
+    expect(window.location.hash).toBe('#/task-ledger');
+    expect(textbox).toHaveValue('');
+  });
+
+  it('opens Mission Control guidance through the Agents route', () => {
+    window.location.hash = '#/';
+    renderChatInput();
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/mission' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    expect(window.location.hash).toBe('#/agents');
+    expect(textbox).toHaveValue('');
+  });
+
+  it('opens the compaction dialog from /compact', () => {
+    renderChatInput(vi.fn(), {
+      messageCount: 4,
+      compactionStatus: {
+        available: true,
+        canCompact: true,
+        inProgress: false,
+        pressure: 'high',
+        truncatedMessageCount: 2,
+        warnings: [],
+      },
+      onManualCompact: vi.fn(),
+    });
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/compact' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    expect(screen.getByTestId('chat-compaction-dialog')).toBeInTheDocument();
+  });
+
+  it('runs the existing fork callback from /fork', async () => {
+    const onForkSession = vi.fn().mockResolvedValue(undefined);
+    renderChatInput(vi.fn(), {
+      onForkSession,
+    });
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/fork' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(onForkSession).toHaveBeenCalledTimes(1);
+    });
+    expect(textbox).toHaveValue('');
   });
 });
 
@@ -1280,6 +1655,53 @@ describe('ChatInput agent targeting', () => {
         body: expect.any(String),
       }),
     );
+  });
+
+  it('keeps a leading selected skill token on the normal send path', async () => {
+    const onSend = vi.fn();
+    agentsState.agents = [
+      {
+        id: 'main',
+        name: 'Main',
+        isDefault: true,
+        modelDisplay: 'MiniMax',
+        inheritedModel: true,
+        workspace: '~/.openclaw/workspace',
+        agentDir: '~/.openclaw/agents/main/agent',
+        mainSessionKey: 'agent:main:main',
+        channelTypes: [],
+      },
+    ];
+    vi.mocked(hostApiFetchMock).mockResolvedValue({
+      success: true,
+      skills: [
+        {
+          name: 'create-skill',
+          description: 'Create and refine reusable skills.',
+          source: 'workspace',
+          sourceLabel: 'Workspace',
+          manifestPath: '/tmp/workspace/skill/create-skill/SKILL.md',
+          baseDir: '/tmp/workspace/skill/create-skill',
+        },
+      ],
+    });
+
+    renderChatInput(onSend);
+
+    const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: 'Draft a new helper' } });
+    textbox.focus();
+    textbox.setSelectionRange(0, 0);
+
+    fireEvent.click(screen.getByTitle('Choose skill'));
+    fireEvent.click(await screen.findByText('/create-skill'));
+
+    expect(textbox).toHaveValue('/create-skill  Draft a new helper');
+    expect(screen.queryByTestId('chat-slash-command-menu')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTitle('Send'));
+
+    expect(onSend).toHaveBeenCalledWith('/create-skill  Draft a new helper', undefined, null, 'none', 'build');
   });
 
   it('removes the full inline skill token with one backspace', async () => {

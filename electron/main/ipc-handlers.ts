@@ -57,6 +57,7 @@ import { createSettingsApi } from '../services/settings-api';
 import { createChannelsApi } from '../services/channels-api';
 import { createAgentsApi } from '../services/agents-api';
 import { createChatApi } from '../services/chat-api';
+import { createCodeReviewApi } from '../services/code-review-api';
 import { createWorkProvidersApi } from '../services/work-providers-api';
 import { createKnowledgeApi } from '../services/knowledge-api';
 import { createCronApi } from '../services/cron-api';
@@ -73,6 +74,7 @@ import { createTerminalSessionManager } from '../services/terminal-session-manag
 import { createWebPreviewApi } from '../services/web-preview-api';
 import { createWebPreviewManager } from '../services/web-preview-manager';
 import { createWorkspacesApi } from '../services/workspaces-api';
+import { createProjectRulesApi } from '../services/project-rules-api';
 import { createRemoteControlApi } from '../services/remote-control-api';
 import { createMcpApiWithContext } from '../services/mcp-api';
 import { createSandboxApi } from '../services/sandbox-api';
@@ -168,6 +170,7 @@ function registerTypedHostHandlers(
     updates: createUpdatesApi(appUpdater),
     uv: createUvApi(),
     workspaces: createWorkspacesApi({ gatewayManager, terminalManager, webPreviewManager }),
+    projectRules: createProjectRulesApi(),
     terminal: createTerminalApi({ gatewayManager, terminalManager }),
     git: createGitApi(),
     permissions: createPermissionsApi(),
@@ -185,6 +188,7 @@ function registerTypedHostHandlers(
     media: createMediaApi(),
     sessions: createSessionsApi({ gatewayManager }),
     chat: createChatApi({ gatewayManager }),
+    codeReview: createCodeReviewApi({ gatewayManager }),
     workProviders: createWorkProvidersApi(),
     knowledge: createKnowledgeApi({ gatewayManager }),
     cron: createCronApi({ gatewayManager }),
