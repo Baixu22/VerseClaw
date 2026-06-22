@@ -4,7 +4,10 @@ import {
   getTaskLoopRun,
   runTaskLoop,
 } from '../../openclaw_runtime/src/agents/task-loop-controller';
-import { buildTaskLoopContextPack } from '../../openclaw_runtime/src/agents/task-loop-context';
+import {
+  buildTaskLoopContextPack,
+  formatTaskLoopContextPackForReviewer,
+} from '../../openclaw_runtime/src/agents/task-loop-context';
 import {
   parseTaskLoopSelfCheckResponse,
   runTaskLoopSelfCheck,
@@ -64,6 +67,29 @@ describe('task-loop context and self-check', () => {
       repairBrief: 'add tests',
       verificationGaps: ['unit test'],
       risks: ['regression'],
+      controlSignals: [{
+        kind: 'validation_missing',
+        severity: 'warning',
+        message: 'unit test missing',
+        suggestedAction: 'verify',
+        source: 'task_loop.self_check',
+      }],
+      validationState: {
+        status: 'missing',
+        checks: ['unit test'],
+        evidenceRefs: [],
+        summary: 'tests not run',
+      },
+      acceptanceStatus: {
+        status: 'partial',
+        criteria: ['tests pass'],
+        gaps: ['unit test'],
+      },
+      quality: [{
+        dimension: 'validation',
+        status: 'gap',
+        signalKinds: ['validation_missing'],
+      }],
       contextSummary: 'needs tests',
     }));
     expect(parsed).toMatchObject({
@@ -71,6 +97,11 @@ describe('task-loop context and self-check', () => {
       confidence: 0.8,
       repairBrief: 'add tests',
     });
+    expect(parsed?.controlSignals?.map((signal) => signal.kind)).toContain('validation_missing');
+    expect(parsed?.controlSignals?.map((signal) => signal.kind)).toContain('evidence_gap');
+    expect(parsed?.validationState).toMatchObject({ status: 'missing', checks: ['unit test'] });
+    expect(parsed?.acceptanceStatus).toMatchObject({ status: 'partial', gaps: ['unit test'] });
+    expect(parsed?.quality?.[0]).toMatchObject({ dimension: 'validation', status: 'gap' });
   });
 
   it('falls back conservatively when reviewer JSON is invalid', async () => {
@@ -96,6 +127,43 @@ describe('task-loop context and self-check', () => {
     expect(contextPack.objective.length).toBeLessThanOrEqual(2_100);
     expect(contextPack.evidenceText).toContain('Untrusted task-loop evidence');
     expect(contextPack.evidenceText.length).toBeLessThanOrEqual(12_100);
+  });
+
+  it('includes bounded control state in the reviewer context pack', () => {
+    const contextPack = buildTaskLoopContextPack({
+      objective: 'ship feature',
+      iteration: 1,
+      scopeSummary: 'only runtime files',
+      evidenceRefs: [{ type: 'trace', ref: 'trace_1', summary: 'fresh evidence' }],
+      controlSignals: [{
+        kind: 'replan_required',
+        severity: 'warning',
+        message: 'plan drifted',
+        suggestedAction: 'replan',
+        source: 'task_loop.self_check',
+      }],
+      validationState: {
+        status: 'partial',
+        checks: ['unit tests missing'],
+        evidenceRefs: [{ type: 'trace', ref: 'trace_1' }],
+        summary: 'some checks missing',
+      },
+      acceptanceStatus: {
+        status: 'partial',
+        criteria: ['tests pass'],
+        gaps: ['manual verification'],
+      },
+    });
+
+    expect(contextPack.scopeSummary).toBe('only runtime files');
+    expect(contextPack.controlSignals).toHaveLength(1);
+    expect(contextPack.validationState).toMatchObject({ status: 'partial' });
+    expect(contextPack.acceptanceStatus).toMatchObject({ status: 'partial' });
+    const formatted = formatTaskLoopContextPackForReviewer(contextPack);
+    expect(formatted).toContain('scopeSummary:');
+    expect(formatted).toContain('controlSignals:');
+    expect(formatted).toContain('validationState:');
+    expect(formatted).toContain('acceptanceStatus:');
   });
 
   it('keeps previous context summary as the compact history source', () => {
@@ -156,6 +224,33 @@ describe('task-loop context and self-check', () => {
     expect(result.decision).toBe('repair');
     expect(result.risks.join(' ')).toContain('unavailable');
     expect(result.missingEvidence).toContain('verifier timed out');
+  });
+
+  it('downgrades complete when validation signals remain open', async () => {
+    const contextPack = buildTaskLoopContextPack({
+      objective: 'ship feature',
+      iteration: 1,
+      evidenceRefs: [{ type: 'trace', ref: 'trace_1', summary: 'fresh evidence' }],
+    });
+    const result = await runTaskLoopSelfCheck(
+      { contextPack, failures: [], repairIterationsUsed: 0, maxRepairIterations: 2 },
+      {
+        complete: async () => JSON.stringify({
+          decision: 'complete',
+          confidence: 0.95,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'missing', checks: [], evidenceRefs: [], summary: 'not run' },
+          contextSummary: 'claimed complete',
+        }),
+      },
+    );
+
+    expect(result.decision).toBe('repair');
+    expect(result.validationState?.status).toBe('missing');
+    expect(result.controlSignals?.map((signal) => signal.kind)).toContain('evidence_gap');
+    expect(result.repairBrief).toContain('Resolve task-loop completion gaps');
   });
 });
 
@@ -321,6 +416,31 @@ describe('runTaskLoop', () => {
     expect(result.status).toBe('blocked');
     expect(result.remaining.join(' ')).toContain('verifier refuted evidence');
     expect(result.iterations.at(-1)?.selfCheck?.decision).toBe('blocked');
+  });
+
+  it('does not complete when an injected self-check leaves validation missing', async () => {
+    const result = await runTaskLoop(
+      { task: 'ship feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_gate`,
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.95,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'missing', checks: [], evidenceRefs: [], summary: 'not run' },
+          contextSummary: 'claimed complete',
+        })) as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('blocked');
+    expect(result.iterations[0]?.selfCheck?.decision).toBe('repair');
+    expect(result.remaining).toContain('Task-loop validation or acceptance evidence is missing.');
   });
 });
 

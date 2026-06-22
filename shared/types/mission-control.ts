@@ -1,3 +1,10 @@
+import type {
+  LongConversationAcceptanceStatus,
+  LongConversationControlSignal,
+  LongConversationQualityAssessment,
+  LongConversationValidationState,
+} from './long-task-control';
+
 export type MissionStatus =
   | 'idle'
   | 'running'
@@ -47,6 +54,10 @@ export type MissionReviewerResult = {
   repairBrief?: string;
   nextTick?: { afterMs?: number; reason?: string };
   risks: string[];
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
+  quality?: LongConversationQualityAssessment[];
   memoryCandidates: MissionMemoryCandidate[];
   checkpointSummary: string;
 };
@@ -64,6 +75,10 @@ export type MissionContextPack = {
   openBlockers: string[];
   reviewItems: string[];
   repairBrief: string;
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
+  scopeSummary?: string;
   hash: string;
 };
 
@@ -76,6 +91,8 @@ export type MissionTickRecord = {
   traceId?: string;
   evidenceRefs: MissionEvidenceRef[];
   reviewer?: MissionReviewerResult;
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
   createdAt: number;
   updatedAt: number;
 };
@@ -104,6 +121,9 @@ export type MissionRunRecord = {
   evidenceRefs: MissionEvidenceRef[];
   risks: string[];
   remaining: string[];
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
   createdAt: number;
   updatedAt: number;
   completedAt?: number;
@@ -124,6 +144,8 @@ export type MissionLifecycleEvent = {
   blockedReason?: string;
   taskLoopRunId?: string;
   traceId?: string;
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
   error?: string;
   ts: number;
 };

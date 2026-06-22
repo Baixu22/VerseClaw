@@ -1,4 +1,16 @@
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import {
+  defaultQualityAssessments,
+  deriveAcceptanceStatus,
+  deriveValidationState,
+  hasBlockingControlSignal,
+  normalizeAcceptanceStatus,
+  normalizeControlSignals,
+  normalizeQualityAssessments,
+  normalizeValidationState,
+  signalsFromGaps,
+  type LongConversationControlSignal,
+} from "../long-conversation-control-signals.js";
 import { formatMissionContextPackForReviewer } from "./context.js";
 import type {
   MissionDecision,
@@ -61,12 +73,26 @@ export function parseMissionReviewerResponse(text: string): MissionReviewerResul
       ? Math.max(0, Math.min(1, record.confidence))
       : 0;
     const nextTick = asRecord(record.nextTick);
+    const missingEvidence = stringArray(record.missingEvidence);
+    const verificationGaps = stringArray(record.verificationGaps);
+    const risks = stringArray(record.risks);
+    const controlSignals = [
+      ...normalizeControlSignals(record.controlSignals),
+      ...signalsFromGaps({
+        missingEvidence,
+        verificationGaps,
+        risks,
+        source: "mission.reviewer",
+        repairable: decision !== "blocked",
+      }),
+    ];
+    const validationState = normalizeValidationState(record.validationState);
     return {
       decision,
       confidence,
       reason: typeof record.reason === "string" ? record.reason.trim().slice(0, 1_000) : "",
-      missingEvidence: stringArray(record.missingEvidence),
-      verificationGaps: stringArray(record.verificationGaps),
+      missingEvidence,
+      verificationGaps,
       repairBrief: typeof record.repairBrief === "string" && record.repairBrief.trim()
         ? record.repairBrief.trim().slice(0, 4_000)
         : undefined,
@@ -78,9 +104,13 @@ export function parseMissionReviewerResponse(text: string): MissionReviewerResul
             ...(typeof nextTick.reason === "string" && nextTick.reason.trim()
               ? { reason: nextTick.reason.trim().slice(0, 500) }
               : {}),
-          }
+        }
         : undefined,
-      risks: stringArray(record.risks),
+      risks,
+      controlSignals,
+      validationState,
+      acceptanceStatus: normalizeAcceptanceStatus(record.acceptanceStatus),
+      quality: normalizeQualityAssessments(record.quality),
       memoryCandidates: normalizeMemoryCandidates(record.memoryCandidates),
       checkpointSummary: typeof record.checkpointSummary === "string"
         ? record.checkpointSummary.trim().slice(0, 4_000)
@@ -94,16 +124,72 @@ export function parseMissionReviewerResponse(text: string): MissionReviewerResul
 function heuristicReviewer(input: MissionReviewerInput, reason: string): MissionReviewerResult {
   const taskLoop = input.taskLoopResult;
   const canRepair = input.repairTicksUsed < input.maxRepairTicks && input.tick < input.maxTicks;
+  const evidenceAvailable = !input.contextPack.evidenceText.includes("No evidence has been collected yet.");
+  const acceptanceGaps = input.contextPack.acceptance.length ? [] : ["Mission acceptance criteria were not provided."];
   if (taskLoop?.status === "complete") {
+    const missingEvidence = evidenceAvailable ? [] : ["No mission evidence was collected."];
+    const verificationGaps = [
+      ...acceptanceGaps,
+      ...(taskLoop.remaining ?? []),
+    ].filter(Boolean);
+    if (missingEvidence.length === 0 && verificationGaps.length === 0 && !reason) {
+      const validationState = deriveValidationState({
+        status: "passed",
+        checks: ["inner task_loop completed", "Mission reviewer fallback saw no remaining gaps"],
+      });
+      const controlSignals: LongConversationControlSignal[] = [];
+      return {
+        decision: "complete",
+        confidence: 0.82,
+        reason: "Inner task loop completed and Mission evidence satisfied the available acceptance criteria.",
+        missingEvidence: [],
+        verificationGaps: [],
+        risks: taskLoop.risks ?? [],
+        controlSignals,
+        validationState,
+        acceptanceStatus: deriveAcceptanceStatus({
+          acceptance: input.contextPack.acceptance,
+          satisfied: true,
+          summary: "Acceptance criteria were satisfied by collected evidence.",
+        }),
+        quality: defaultQualityAssessments({ signals: controlSignals, validationState }),
+        memoryCandidates: [],
+        checkpointSummary: taskLoop.finalSummary || `Mission tick ${input.tick} completed through task_loop.`,
+      };
+    }
+    const controlSignals = signalsFromGaps({
+      missingEvidence,
+      verificationGaps,
+      risks: [...(taskLoop.risks ?? []), ...(reason ? [reason] : [])],
+      source: "mission.reviewer",
+      repairable: canRepair,
+    });
+    const validationState = deriveValidationState({
+      status: "missing",
+      gaps: verificationGaps,
+      summary: reason || "Mission completion lacks acceptance or validation evidence.",
+    });
     return {
-      decision: "complete",
-      confidence: 0.82,
-      reason: reason || "Inner task loop completed with evidence.",
-      missingEvidence: [],
-      verificationGaps: [],
+      decision: canRepair ? "repair" : "blocked",
+      confidence: canRepair ? 0.55 : 0.4,
+      reason: reason || (canRepair
+        ? "Mission needs scoped repair before it can be treated as complete."
+        : "Mission cannot prove completion within the remaining budget."),
+      missingEvidence,
+      verificationGaps,
+      repairBrief: canRepair
+        ? `Repair Mission tick ${input.tick}: ${[...missingEvidence, ...verificationGaps].join("; ") || "collect missing acceptance and validation evidence."}`
+        : undefined,
       risks: taskLoop.risks ?? [],
+      controlSignals,
+      validationState,
+      acceptanceStatus: deriveAcceptanceStatus({
+        acceptance: input.contextPack.acceptance,
+        gaps: verificationGaps,
+      }),
+      quality: defaultQualityAssessments({ signals: controlSignals, validationState }),
       memoryCandidates: [],
-      checkpointSummary: taskLoop.finalSummary || `Mission tick ${input.tick} completed through task_loop.`,
+      checkpointSummary: `Mission tick ${input.tick} did not prove final completion.${[...missingEvidence, ...verificationGaps].length ? ` Gaps: ${[...missingEvidence, ...verificationGaps].join("; ")}` : ""}`,
     };
   }
 
@@ -112,18 +198,115 @@ function heuristicReviewer(input: MissionReviewerInput, reason: string): Mission
     ...(taskLoop?.remaining ?? []),
     taskLoop?.error ?? "",
   ].filter(Boolean);
+  const verificationGaps = taskLoop?.remaining ?? [];
+  const controlSignals = signalsFromGaps({
+    missingEvidence: failures.length ? failures : ["No complete evidence was produced."],
+    verificationGaps,
+    risks: taskLoop?.risks ?? [],
+    source: "mission.reviewer",
+    repairable: canRepair,
+  });
+  const validationState = deriveValidationState({
+    status: "missing",
+    gaps: verificationGaps.length ? verificationGaps : failures,
+    summary: reason,
+  });
   return {
     decision: canRepair ? "repair" : "blocked",
     confidence: canRepair ? 0.55 : 0.4,
     reason: reason || (canRepair ? "Mission needs scoped repair." : "Mission cannot progress within repair budget."),
     missingEvidence: failures.length ? failures : ["No complete evidence was produced."],
-    verificationGaps: taskLoop?.remaining ?? [],
+    verificationGaps,
     repairBrief: canRepair
       ? `Repair Mission tick ${input.tick}: ${failures.join("; ") || "collect missing evidence and retry."}`
       : undefined,
     risks: taskLoop?.risks ?? [],
+    controlSignals,
+    validationState,
+    acceptanceStatus: deriveAcceptanceStatus({
+      acceptance: input.contextPack.acceptance,
+      gaps: failures,
+    }),
+    quality: defaultQualityAssessments({ signals: controlSignals, validationState }),
     memoryCandidates: [],
     checkpointSummary: `Mission tick ${input.tick} did not prove completion.${failures.length ? ` Gaps: ${failures.join("; ")}` : ""}`,
+  };
+}
+
+function requiresUserConfirmation(signals: readonly LongConversationControlSignal[] | undefined): boolean {
+  return (signals ?? []).some((signal) =>
+    signal.suggestedAction === "ask_user"
+      || signal.suggestedAction === "replan"
+      || signal.kind === "scope_drift"
+      || signal.kind === "replan_required"
+      || signal.kind === "permission_wait",
+  );
+}
+
+function enforceMissionDecision(
+  result: MissionReviewerResult,
+  input: MissionReviewerInput,
+): MissionReviewerResult {
+  const explicitGaps = result.missingEvidence.length > 0
+    || result.verificationGaps.length > 0
+    || hasBlockingControlSignal(result.controlSignals)
+    || result.validationState?.status === "failed"
+    || result.validationState?.status === "missing"
+    || result.acceptanceStatus?.status === "missing"
+    || result.acceptanceStatus?.status === "changed";
+  const signals = result.controlSignals ?? signalsFromGaps({
+    missingEvidence: result.missingEvidence,
+    verificationGaps: result.verificationGaps,
+    risks: result.risks,
+    source: "mission.reviewer",
+    repairable: result.decision !== "blocked",
+  });
+  if (result.decision !== "complete" || !explicitGaps) {
+    return {
+      ...result,
+      controlSignals: signals,
+      quality: result.quality?.length ? result.quality : defaultQualityAssessments({
+        signals,
+        validationState: result.validationState,
+      }),
+    };
+  }
+  const canRepair = input.repairTicksUsed < input.maxRepairTicks && input.tick < input.maxTicks;
+  const missingEvidence = result.missingEvidence.length ? result.missingEvidence : ["Mission completion had unresolved control signals."];
+  const verificationGaps = result.verificationGaps.length ? result.verificationGaps : ["Mission validation or acceptance evidence is missing."];
+  const controlSignals = normalizeControlSignals([
+    ...signals,
+    ...signalsFromGaps({
+      missingEvidence,
+      verificationGaps,
+      risks: result.risks,
+      source: "mission.reviewer",
+      repairable: canRepair,
+    }),
+  ]);
+  const validationState = result.validationState ?? deriveValidationState({
+    status: "missing",
+    gaps: verificationGaps,
+  });
+  const nextDecision: MissionDecision = requiresUserConfirmation(controlSignals)
+    ? "ask_user"
+    : canRepair
+      ? "repair"
+      : "blocked";
+  return {
+    ...result,
+    decision: nextDecision,
+    confidence: Math.min(result.confidence, nextDecision === "repair" ? 0.55 : 0.4),
+    reason: result.reason || "Mission completion was downgraded because required evidence, validation, or acceptance signals were unresolved.",
+    missingEvidence,
+    verificationGaps,
+    repairBrief: nextDecision === "repair"
+      ? result.repairBrief ?? `Resolve Mission completion gaps: ${[...missingEvidence, ...verificationGaps].join("; ")}`
+      : result.repairBrief,
+    controlSignals,
+    validationState,
+    quality: defaultQualityAssessments({ signals: controlSignals, validationState }),
+    checkpointSummary: result.checkpointSummary || "Mission completion was downgraded because control signals remained open.",
   };
 }
 
@@ -131,8 +314,9 @@ function buildReviewerPrompt(input: MissionReviewerInput): string {
   return [
     "You are the OpenClaw Mission Loop reviewer.",
     "Return only JSON with this exact shape:",
-    '{"decision":"continue|repair|sleep|ask_user|complete|blocked","confidence":0.0,"reason":"","missingEvidence":[],"verificationGaps":[],"repairBrief":"optional","nextTick":{"afterMs":0,"reason":"optional"},"risks":[],"memoryCandidates":[{"kind":"role_memory|knowledge_draft","summary":"","evidenceRefs":[]}],"checkpointSummary":"short state summary"}',
+    '{"decision":"continue|repair|sleep|ask_user|complete|blocked","confidence":0.0,"reason":"","missingEvidence":[],"verificationGaps":[],"repairBrief":"optional","nextTick":{"afterMs":0,"reason":"optional"},"risks":[],"controlSignals":[{"kind":"evidence_gap|validation_missing|scope_drift|unverified_claim|replan_required|permission_wait|blocked_dependency|risk|recovery_gap","severity":"info|warning|blocking","message":"","suggestedAction":"continue|repair|replan|ask_user|block|sleep|verify","source":"mission.reviewer"}],"validationState":{"status":"unknown|not_run|passed|failed|partial|missing","checks":[],"evidenceRefs":[],"summary":""},"acceptanceStatus":{"status":"unknown|satisfied|partial|missing|changed","criteria":[],"gaps":[],"summary":""},"quality":[{"dimension":"scope|evidence|validation|risk|recovery|security","status":"pass|gap|fail|unknown","summary":"","signalKinds":[]}],"memoryCandidates":[{"kind":"role_memory|knowledge_draft","summary":"","evidenceRefs":[]}],"checkpointSummary":"short state summary"}',
     "Choose complete only when acceptance appears satisfied by evidence.",
+    "Do not choose complete if acceptance is missing, validation is missing, evidence is unverified, a blocking review item remains, or scope has drifted.",
     "Choose repair only when a scoped follow-up can address the gaps within budget.",
     "Choose sleep when scheduled/event evidence is needed later and no immediate work is useful.",
     "Choose ask_user when user input or approval is required.",
@@ -201,7 +385,7 @@ export async function runMissionReviewer(
   try {
     const text = await (deps.complete ?? modelComplete)(prompt, input);
     const parsed = parseMissionReviewerResponse(text);
-    if (parsed) return parsed;
+    if (parsed) return enforceMissionDecision(parsed, input);
     return heuristicReviewer(input, "mission reviewer returned no parseable JSON");
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

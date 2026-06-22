@@ -22,6 +22,8 @@ export type OrchestratorRequest = {
   fileHints?: string[];
   important?: boolean;
   roles?: readonly RoleContract[];
+  /** Optional explicit worker plan supplied by operator UI wrappers. */
+  workers?: readonly OrchestratorWorkerPlan[];
   /** Optional caller-pinned lead role; when set and present in availableRoles, used as leadRole. */
   preferredLeadRole?: string;
   /** Optional team template id. `teamTemplateId` is accepted by gateway/tool callers as an alias. */
@@ -42,6 +44,7 @@ export type OrchestratorRequest = {
 export type OrchestratorWorkerPlan = {
   roleName: string;
   task: string;
+  label?: string;
   modelRef?: string | null;
 };
 
@@ -123,12 +126,70 @@ function buildPlanGraph(params: {
     repairPolicy,
   });
   const executionWaves = buildExecutionWaves(taskGraph, normalizeMaxWorkers(params.request.maxWorkers));
-  const projectedWorkers = taskGraphWorkerNodes(taskGraph).map((node) => ({
-    roleName: node.roleName,
-    task: node.task,
-    modelRef: node.modelRef,
-  }));
+  const projectedWorkers = taskGraphWorkerNodes(taskGraph).map((node, index) => {
+    const source = params.workers[index];
+    return {
+      roleName: node.roleName,
+      task: node.task,
+      label: source?.label,
+      modelRef: node.modelRef,
+    };
+  });
   return { taskGraph, executionWaves, estimatedRepairPolicy: repairPolicy, projectedWorkers };
+}
+
+function createExplicitWorkersPlan(request: OrchestratorRequest): OrchestratorPlan | null {
+  const requestedWorkers = request.workers?.filter((worker) => worker.roleName.trim() && worker.task.trim()) ?? [];
+  if (requestedWorkers.length === 0) {
+    return null;
+  }
+  const availableRoles = request.roles ?? BUILT_IN_ROLE_CONTRACTS;
+  const preferredLeadRole = request.preferredLeadRole?.trim();
+  const preferredLeadKnown =
+    preferredLeadRole && availableRoles.some((role) => role.name === preferredLeadRole);
+  const leadRole = preferredLeadKnown ? preferredLeadRole! : requestedWorkers[0]!.roleName;
+  const maxWorkers = normalizeMaxWorkers(request.maxWorkers);
+  const allWorkers = requestedWorkers.map((worker) => ({
+    roleName: worker.roleName,
+    task: worker.task,
+    label: worker.label,
+    modelRef: worker.modelRef ?? null,
+  }));
+  const workers = capWorkers(allWorkers, maxWorkers);
+  const reasons = [
+    "explicit-workers",
+    `lead:${leadRole}`,
+    ...(preferredLeadKnown ? [`preferred-lead:${preferredLeadRole}`] : []),
+    ...(maxWorkers !== undefined ? [`max-workers:${maxWorkers}`] : []),
+  ];
+  const routeDiagnostics = buildRouteDiagnostics({
+    task: request.task,
+    fileHints: request.fileHints,
+    important: request.important,
+    mode: "lead-workers",
+    selectedRoleNames: [leadRole, ...workers.map((worker) => worker.roleName)],
+    reasons,
+    roles: availableRoles,
+  });
+  const graph = buildPlanGraph({
+    request,
+    mode: "lead-workers",
+    workers: allWorkers,
+    routeDiagnostics,
+    graphRunId: "explicit-workers",
+  });
+  return {
+    mode: "lead-workers",
+    leadRole,
+    workers: graph.projectedWorkers,
+    reasons,
+    routeDiagnostics,
+    taskGraph: graph.taskGraph,
+    graphStatus: graph.taskGraph.status,
+    executionWaves: graph.executionWaves,
+    capabilityGaps: routeDiagnostics.capabilityGaps,
+    estimatedRepairPolicy: graph.estimatedRepairPolicy,
+  };
 }
 
 function templateRoleKnown(template: TeamTemplate, roleName: string | undefined): roleName is string {
@@ -212,6 +273,10 @@ function createTemplatePlan(
 
 export function createOrchestratorPlan(request: OrchestratorRequest): OrchestratorPlan {
   const availableRoles = request.roles ?? BUILT_IN_ROLE_CONTRACTS;
+  const explicitPlan = createExplicitWorkersPlan(request);
+  if (explicitPlan) {
+    return explicitPlan;
+  }
   const templateId = request.templateId?.trim() || request.teamTemplateId?.trim();
   const template = resolveTeamTemplate(templateId, request.cfg);
   if (template) {

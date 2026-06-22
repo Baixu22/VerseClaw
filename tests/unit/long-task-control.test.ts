@@ -3,6 +3,9 @@ import { describe, expect, it } from 'vitest';
 import {
   buildResumeCheckpoint,
   interventionPolicyForInputMode,
+  normalizeLongConversationAcceptanceStatus,
+  normalizeLongConversationControlSignals,
+  normalizeLongConversationValidationState,
   renderResumeCheckpointSummary,
 } from '../../shared/types/long-task-control';
 
@@ -75,6 +78,27 @@ describe('long-task intervention control', () => {
       testsRun: ['pnpm run typecheck'],
       nextAction: 'resume audit from checkpoint',
       reviewNeededItems: ['confirm interrupted audit state'],
+      controlSignals: [
+        {
+          kind: 'evidence_gap',
+          severity: 'blocking',
+          message: 'missing trace evidence',
+          suggestedAction: 'verify',
+          source: 'test',
+        },
+      ],
+      validationState: {
+        status: 'missing',
+        checks: ['typecheck'],
+        evidenceRefs: [{ type: 'trace', ref: 'trace_1' }],
+        summary: 'validation evidence not enough',
+      },
+      acceptanceStatus: {
+        status: 'partial',
+        criteria: ['tests pass'],
+        gaps: ['manual review'],
+        summary: 'acceptance partly proven',
+      },
       evidenceRefs: [
         { type: 'clawgraph', ref: 'clawgraph_run_1' },
         { type: 'session', ref: 'agent:main:session' },
@@ -90,6 +114,9 @@ describe('long-task intervention control', () => {
       openBlockers: ['missing trace evidence', 'needs user confirmation'],
       decisions: ['guide-first default'],
       deviations: ['user interrupted active audit'],
+      controlSignals: [{ kind: 'evidence_gap', severity: 'blocking', message: 'missing trace evidence' }],
+      validationState: { status: 'missing', checks: ['typecheck'] },
+      acceptanceStatus: { status: 'partial', criteria: ['tests pass'], gaps: ['manual review'] },
       evidenceRefs: [
         { type: 'clawgraph', ref: 'clawgraph_run_1' },
         { type: 'session', ref: 'agent:main:session' },
@@ -97,6 +124,49 @@ describe('long-task intervention control', () => {
     });
     expect(checkpoint.createdAt).toBe('2023-11-14T22:13:20.000Z');
     expect(renderResumeCheckpointSummary(checkpoint)).toContain('Next action: resume audit from checkpoint');
+    expect(renderResumeCheckpointSummary(checkpoint)).toContain('Control signals: blocking:evidence_gap:missing trace evidence');
+    expect(renderResumeCheckpointSummary(checkpoint)).toContain('Validation: missing (typecheck)');
+    expect(renderResumeCheckpointSummary(checkpoint)).toContain('Acceptance: partial (manual review)');
     expect(renderResumeCheckpointSummary(checkpoint)).not.toContain('transcript');
+  });
+
+  it('normalizes control signals, validation state, and acceptance status within bounded recovery fields', () => {
+    const signals = normalizeLongConversationControlSignals([
+      {
+        kind: 'validation_missing',
+        severity: 'invalid',
+        message: 'x'.repeat(1_200),
+        suggestedAction: 'verify',
+        source: 'mission.reviewer',
+        refs: ['trace-1', '', 'trace-2'],
+        evidenceRefs: [{ type: 'trace', ref: 'trace-1', label: 'trace' }],
+      },
+      { kind: 'unknown', severity: 'blocking', message: 'drop me' },
+      ...Array.from({ length: 55 }, (_, index) => ({
+        kind: 'evidence_gap',
+        severity: 'warning',
+        message: `gap ${index}`,
+      })),
+    ]);
+
+    expect(signals).toHaveLength(50);
+    expect(signals[0]).toMatchObject({
+      kind: 'validation_missing',
+      severity: 'warning',
+      suggestedAction: 'verify',
+      refs: ['trace-1', 'trace-2'],
+    });
+    expect(signals[0]?.message).toHaveLength(1_000);
+    expect(normalizeLongConversationValidationState({
+      status: 'partial',
+      checks: ['unit', ''],
+      evidenceRefs: [{ type: 'trace', ref: 'trace-1' }],
+      summary: 'ok',
+    })).toMatchObject({ status: 'partial', checks: ['unit'] });
+    expect(normalizeLongConversationAcceptanceStatus({
+      status: 'changed',
+      criteria: ['original scope'],
+      gaps: ['new acceptance requested'],
+    })).toMatchObject({ status: 'changed', gaps: ['new acceptance requested'] });
   });
 });
