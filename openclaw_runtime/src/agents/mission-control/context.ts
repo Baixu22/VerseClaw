@@ -1,4 +1,12 @@
 import { createHash } from "node:crypto";
+import {
+  normalizeAcceptanceStatus,
+  normalizeControlSignals,
+  normalizeValidationState,
+  type LongConversationAcceptanceStatus,
+  type LongConversationControlSignal,
+  type LongConversationValidationState,
+} from "../long-conversation-control-signals.js";
 import { sanitizeForPromptLiteral, wrapPromptDataBlock } from "../sanitize-for-prompt.js";
 import type { MissionEvidenceRef } from "./types.js";
 
@@ -23,6 +31,10 @@ export type MissionContextPackInput = {
   openBlockers?: string[];
   reviewItems?: string[];
   repairBrief?: string;
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
+  scopeSummary?: string;
 };
 
 export type MissionContextPack = {
@@ -38,6 +50,10 @@ export type MissionContextPack = {
   openBlockers: string[];
   reviewItems: string[];
   repairBrief: string;
+  controlSignals: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
+  scopeSummary: string;
   hash: string;
 };
 
@@ -66,6 +82,10 @@ function formatEvidence(refs: readonly MissionEvidenceRef[] | undefined): string
   return truncate(lines.join("\n\n"), MISSION_EVIDENCE_MAX_CHARS);
 }
 
+function formatJsonSection(value: unknown): string {
+  return value === undefined ? "Not available" : JSON.stringify(value, null, 2);
+}
+
 function digestPack(pack: Omit<MissionContextPack, "hash">): string {
   return createHash("sha256").update(JSON.stringify(pack)).digest("hex");
 }
@@ -84,6 +104,10 @@ export function buildMissionContextPack(input: MissionContextPackInput): Mission
     openBlockers: truncateList(input.openBlockers, 1_000),
     reviewItems: truncateList(input.reviewItems, 1_000),
     repairBrief: truncate(input.repairBrief, MISSION_REPAIR_BRIEF_MAX_CHARS),
+    controlSignals: normalizeControlSignals(input.controlSignals),
+    validationState: normalizeValidationState(input.validationState),
+    acceptanceStatus: normalizeAcceptanceStatus(input.acceptanceStatus),
+    scopeSummary: truncate(input.scopeSummary, MISSION_REVIEWER_SUMMARY_MAX_CHARS),
   };
   return { ...pack, hash: digestPack(pack) };
 }
@@ -117,6 +141,18 @@ export function formatMissionContextPackForReviewer(pack: MissionContextPack): s
     "",
     "reviewItems:",
     pack.reviewItems.length ? pack.reviewItems.map((item) => `- ${item}`).join("\n") : "- none",
+    "",
+    "scopeSummary:",
+    pack.scopeSummary || "Not available",
+    "",
+    "acceptanceStatus:",
+    formatJsonSection(pack.acceptanceStatus),
+    "",
+    "validationState:",
+    formatJsonSection(pack.validationState),
+    "",
+    "controlSignals:",
+    formatJsonSection(pack.controlSignals),
     "",
     "repairBrief:",
     pack.repairBrief || "Not requested",

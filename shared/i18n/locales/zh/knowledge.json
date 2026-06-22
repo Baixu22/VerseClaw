@@ -41,6 +41,7 @@
   "search": {
     "title": "搜索",
     "placeholder": "搜索 wiki 来源和综合页",
+    "button": "搜索",
     "empty": "没有匹配的知识。",
     "preview": "预览",
     "useInDraft": "放入草稿"
@@ -73,6 +74,8 @@
     "noSources": "未附加来源引用。",
     "warnings": "警告",
     "noWarnings": "没有警告。",
+    "warningCount": "{{count}} 条警告",
+    "warningCount_plural": "{{count}} 条警告",
     "kinds": {
       "chat-session": "对话",
       "task-ledger": "任务账本",

@@ -110,5 +110,64 @@
             "relayModelRequired": "モデル名が必要です",
             "relayModelInvalid": "gpt-image-2 のようなモデル名のみを入力してください。provider/model は入力しないでください。"
         }
+    },
+    "billing": {
+        "title": "課金",
+        "subtitle": "トークン消費、モデルの利用状況、使用リズムを整理して確認できます。",
+        "backToModels": "モデルへ戻る",
+        "loading": "課金履歴を読み込み中...",
+        "empty": "トークン使用履歴はまだありません",
+        "gatewayLive": "ゲートウェイ接続中",
+        "gatewayOffline": "ゲートウェイ未接続",
+        "tokensSuffix": "tokens",
+        "window": {
+            "7d": "7日",
+            "30d": "30日",
+            "all": "すべて"
+        },
+        "kpi": {
+            "tokens": "合計トークン",
+            "cost": "推定コスト",
+            "models": "利用モデル",
+            "averageCost": "平均コスト",
+            "records": "{{count}} 件",
+            "estimated": "プロバイダーの使用量から推定",
+            "activeModels": "選択期間内",
+            "perRecord": "使用記録あたり",
+            "recordsWithUsage": "{{count}} 件の課金対象記録"
+        },
+        "chart": {
+            "title": "日別トークン使用量を欠けなく表示",
+            "description": "選択期間の各日に固定の枠を用意し、入力・出力・キャッシュを積み上げて表示します。",
+            "peakDay": "ピーク {{day}} - {{tokens}} tokens"
+        },
+        "modelChart": {
+            "title": "モデル別の集中度",
+            "description": "選択期間の合計トークン数でモデルを並べます。"
+        },
+        "heatmap": {
+            "title": "使用リズム",
+            "description": "各マスは1日を表し、色の濃さがトークン総量を示します。"
+        },
+        "recent": {
+            "title": "最近の課金記録",
+            "description": "Transcript 由来の使用量行です。利用不可や解析エラーの記録も含みます。"
+        },
+        "transcriptSource": "Transcript 履歴",
+        "refreshing": "更新中",
+        "dataQuality": {
+            "scanned": "スキャン済み記録",
+            "billable": "課金対象記録",
+            "unavailable": "利用不可の記録",
+            "unavailableWithErrors": "{{unavailable}} 件利用不可、{{errors}} 件エラー",
+            "latest": "最新記録"
+        },
+        "status": {
+            "available": "利用可能",
+            "missing": "使用量なし",
+            "error": "解析エラー"
+        },
+        "noData": "まだ使用データがありません。Agent がセッションを処理すると請求履歴が自動的に生成されます。",
+        "noDataHint": "データは OpenClaw がエージェントセッション中にローカルに書き込むトランスクリプトファイルから取得されます。"
     }
 }

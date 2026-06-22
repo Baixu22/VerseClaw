@@ -47,6 +47,7 @@ import { cn } from '@/lib/utils';
 import { roleTone, toneClasses } from '@/lib/role-visuals';
 import { RoleCard, type RoleCardData } from './RoleCard';
 import { OrchestrationPlanView, type PlanView } from './OrchestrationPlanView';
+import { SubagentRunnerPanel } from './SubagentRunnerPanel';
 
 /**
  * Role-first runtime panel: browse role contracts (roles.list / roles.get),
@@ -1865,6 +1866,8 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                 {tt('roles.missionControl', 'Mission Control')}
               </Button>
             </div>
+
+            <SubagentRunnerPanel anchorSession={anchorSession} anchorAgentId={anchorAgentId} />
 
             {plan && <OrchestrationPlanView plan={plan} tt={tt} />}
 

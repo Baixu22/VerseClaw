@@ -8,6 +8,7 @@ import {
   ArrowLeft,
   Briefcase,
   ChevronRight,
+  ReceiptText,
   Sun,
   Moon,
   Monitor,
@@ -41,6 +42,7 @@ import { useGatewayStore } from '@/stores/gateway';
 import { useUpdateStore } from '@/stores/update';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { UpdateSettings } from '@/components/settings/UpdateSettings';
+import { ProjectRulesCenter } from '@/components/settings/ProjectRulesCenter';
 import { toUserMessage } from '@/lib/error-message';
 import {
   clearUiTelemetry,
@@ -70,19 +72,21 @@ import {
 const WorkHeatGraphLazy = lazy(() =>
   import('@/components/assistant-render/WorkHeatGraph').then((m) => ({ default: m.WorkHeatGraph })),
 );
+const SettingsBillingLazy = lazy(() => import('@/pages/Billing').then((m) => ({ default: m.Billing })));
 type ControlUiInfo = {
   url: string;
   token: string;
   port: number;
 };
 
-type SettingsSectionId = 'overview' | 'general' | 'work-modes' | 'system' | 'developer';
+type SettingsSectionId = 'overview' | 'general' | 'work-modes' | 'system' | 'developer' | 'billing';
 
 const SETTINGS_SECTION_SEGMENTS: Record<Exclude<SettingsSectionId, 'overview'>, string> = {
   general: 'general',
   'work-modes': 'work-modes',
   system: 'system',
   developer: 'developer',
+  billing: 'billing',
 };
 
 function resolveSettingsSection(pathname: string): SettingsSectionId {
@@ -1189,6 +1193,10 @@ export function Settings() {
       title: t('navigation.developer.title'),
       description: t('navigation.developer.description'),
     },
+    billing: {
+      title: t('navigation.billing.title'),
+      description: t('navigation.billing.description'),
+    },
   } satisfies Record<Exclude<SettingsSectionId, 'overview'>, { title: string; description: string }>;
 
   const settingsSections = [
@@ -1219,6 +1227,13 @@ export function Settings() {
       icon: <Wrench className="h-5 w-5" />,
       ...sectionMeta.developer,
       testId: 'settings-nav-developer',
+    },
+    {
+      id: 'billing',
+      to: '/settings/billing',
+      icon: <ReceiptText className="h-5 w-5" />,
+      ...sectionMeta.billing,
+      testId: 'settings-nav-billing',
     },
   ] as const;
 
@@ -1599,6 +1614,7 @@ export function Settings() {
               </div>
 
               {remoteControlSection}
+              <ProjectRulesCenter />
               {devModeUnlocked && sandboxRuntimeSection}
 
             </div>
@@ -1608,6 +1624,10 @@ export function Settings() {
 
 
           {/* Developer */}
+          {currentSection === 'billing' && (
+            <SettingsBillingLazy embedded />
+          )}
+
           {currentSection === 'developer' && (
             <>
               <Separator className="bg-black/5 dark:bg-white/5" />

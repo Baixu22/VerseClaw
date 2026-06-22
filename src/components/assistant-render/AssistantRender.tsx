@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
+import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
 import type {
   AssistantBranch,
   AssistantReasoning,
@@ -212,6 +213,47 @@ export function DotMatrixStatus({ dimensions }: { dimensions: AssistantStatusDim
           title={t(`assistantRender.status.${item.id}`, { defaultValue: item.label })}
         />
       ))}
+    </div>
+  );
+}
+
+function resolveAssistantStatusMatrixState(dimensions: AssistantStatusDimension[]): DotMatrixState {
+  const byId = new Map(dimensions.map((dimension) => [dimension.id, dimension]));
+  if (dimensions.some((dimension) => dimension.state === 'error')) return 'error';
+  if (byId.get('tools')?.state === 'active') return 'syncing';
+  if (byId.get('run')?.state === 'active') return 'streaming';
+  if (byId.get('gateway')?.state === 'warning') return 'connecting';
+  if (dimensions.some((dimension) => dimension.state === 'warning')) return 'warning';
+  if (dimensions.some((dimension) => dimension.state === 'ok')) return 'success';
+  return 'idle';
+}
+
+export function AssistantStatusIndicator({ dimensions }: { dimensions: AssistantStatusDimension[] }) {
+  const { t } = useTranslation('chat');
+  const state = resolveAssistantStatusMatrixState(dimensions);
+  return (
+    <div
+      tabIndex={0}
+      className="group/status relative inline-flex items-center"
+      data-testid="assistant-status-indicator"
+      aria-label={t('assistantRender.statusIndicator.label')}
+      title={t('assistantRender.statusIndicator.label')}
+    >
+      <DotMatrix
+        state={state}
+        label={t('assistantRender.statusIndicator.label')}
+        className="size-4 text-foreground/75"
+        data-testid="assistant-status-dot-matrix"
+      />
+      <div
+        className={cn(
+          'pointer-events-none absolute bottom-full right-0 z-30 mb-2 translate-y-1 opacity-0',
+          'transition-all duration-150 group-hover/status:translate-y-0 group-hover/status:opacity-100',
+          'group-focus-within/status:translate-y-0 group-focus-within/status:opacity-100',
+        )}
+      >
+        <DotMatrixStatus dimensions={dimensions} />
+      </div>
     </div>
   );
 }

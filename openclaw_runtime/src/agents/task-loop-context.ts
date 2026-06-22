@@ -1,4 +1,12 @@
 import { createHash } from "node:crypto";
+import {
+  normalizeAcceptanceStatus,
+  normalizeControlSignals,
+  normalizeValidationState,
+  type LongConversationAcceptanceStatus,
+  type LongConversationControlSignal,
+  type LongConversationValidationState,
+} from "./long-conversation-control-signals.js";
 import { sanitizeForPromptLiteral, wrapPromptDataBlock } from "./sanitize-for-prompt.js";
 
 export const TASK_LOOP_OBJECTIVE_MAX_CHARS = 2_000;
@@ -22,6 +30,10 @@ export type TaskLoopContextPackInput = {
   acceptance?: string[];
   evidenceRefs?: TaskLoopEvidenceRef[];
   failures?: string[];
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
+  scopeSummary?: string;
 };
 
 export type TaskLoopContextPack = {
@@ -33,6 +45,10 @@ export type TaskLoopContextPack = {
   acceptance: string[];
   evidenceText: string;
   failures: string[];
+  controlSignals: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
+  scopeSummary: string;
   hash: string;
 };
 
@@ -57,6 +73,10 @@ function formatEvidence(refs: readonly TaskLoopEvidenceRef[] | undefined): strin
   return truncate(lines.join("\n\n"), TASK_LOOP_EVIDENCE_MAX_CHARS);
 }
 
+function formatJsonSection(value: unknown): string {
+  return value === undefined ? "Not available" : JSON.stringify(value, null, 2);
+}
+
 function digestPack(pack: Omit<TaskLoopContextPack, "hash">): string {
   return createHash("sha256")
     .update(JSON.stringify(pack))
@@ -76,6 +96,10 @@ export function buildTaskLoopContextPack(input: TaskLoopContextPackInput): TaskL
     acceptance: (input.acceptance ?? []).map((item) => truncate(item, 500)).filter(Boolean),
     evidenceText: formatEvidence(input.evidenceRefs),
     failures: (input.failures ?? []).map((item) => truncate(item, 1_000)).filter(Boolean),
+    controlSignals: normalizeControlSignals(input.controlSignals),
+    validationState: normalizeValidationState(input.validationState),
+    acceptanceStatus: normalizeAcceptanceStatus(input.acceptanceStatus),
+    scopeSummary: truncate(input.scopeSummary, TASK_LOOP_CONTEXT_SUMMARY_MAX_CHARS),
   };
   return { ...pack, hash: digestPack(pack) };
 }
@@ -99,6 +123,18 @@ export function formatTaskLoopContextPackForReviewer(pack: TaskLoopContextPack):
     "",
     "repairBrief:",
     pack.repairBrief || "Not requested",
+    "",
+    "scopeSummary:",
+    pack.scopeSummary || "Not available",
+    "",
+    "acceptanceStatus:",
+    formatJsonSection(pack.acceptanceStatus),
+    "",
+    "validationState:",
+    formatJsonSection(pack.validationState),
+    "",
+    "controlSignals:",
+    formatJsonSection(pack.controlSignals),
     "",
     "failures:",
     pack.failures.length ? pack.failures.map((item) => `- ${item}`).join("\n") : "- none",

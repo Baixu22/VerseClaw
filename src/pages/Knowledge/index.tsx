@@ -53,14 +53,14 @@ const TYPE_ICONS: Record<KnowledgeDraftType, React.ComponentType<{ className?: s
 };
 
 const TYPE_COLOR = {
-  decision: 'border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-400',
-  architecture: 'border-violet-500/30 bg-violet-500/5 text-violet-700 dark:text-violet-400',
-  command: 'border-rose-500/30 bg-rose-500/5 text-rose-700 dark:text-rose-400',
-  troubleshooting: 'border-orange-500/30 bg-orange-500/5 text-orange-700 dark:text-orange-400',
-  glossary: 'border-sky-500/30 bg-sky-500/5 text-sky-700 dark:text-sky-400',
-  'source-note': 'border-slate-500/30 bg-slate-500/5 text-slate-700 dark:text-slate-400',
-  synthesis: 'border-emerald-500/30 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400',
-  procedure: 'border-cyan-500/30 bg-cyan-500/5 text-cyan-700 dark:text-cyan-400',
+  decision: 'border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-400 hover:border-amber-500/50 hover:bg-amber-500/10',
+  architecture: 'border-violet-500/30 bg-violet-500/5 text-violet-700 dark:text-violet-400 hover:border-violet-500/50 hover:bg-violet-500/10',
+  command: 'border-rose-500/30 bg-rose-500/5 text-rose-700 dark:text-rose-400 hover:border-rose-500/50 hover:bg-rose-500/10',
+  troubleshooting: 'border-orange-500/30 bg-orange-500/5 text-orange-700 dark:text-orange-400 hover:border-orange-500/50 hover:bg-orange-500/10',
+  glossary: 'border-sky-500/30 bg-sky-500/5 text-sky-700 dark:text-sky-400 hover:border-sky-500/50 hover:bg-sky-500/10',
+  'source-note': 'border-slate-500/30 bg-slate-500/5 text-slate-700 dark:text-slate-400 hover:border-slate-500/50 hover:bg-slate-500/10',
+  synthesis: 'border-emerald-500/30 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400 hover:border-emerald-500/50 hover:bg-emerald-500/10',
+  procedure: 'border-cyan-500/30 bg-cyan-500/5 text-cyan-700 dark:text-cyan-400 hover:border-cyan-500/50 hover:bg-cyan-500/10',
 } as const;
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -690,7 +690,7 @@ export function Knowledge() {
           {metrics.map((metric) => {
             const Icon = metric.icon;
             return (
-            <Card key={metric.label} className={cn(PANEL_CLASS, 'cursor-default transition-shadow hover:shadow-md')}>
+            <Card key={metric.label} className={cn(PANEL_CLASS, 'cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-black/20 dark:hover:border-white/20')}>
               <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -716,7 +716,7 @@ export function Knowledge() {
               key={tab}
               type="button"
               className={cn(
-                'flex items-center gap-2.5 rounded-lg border border-black/10 bg-surface-modal px-3 py-2.5 text-left text-sm font-medium transition-all duration-200 dark:border-white/10',
+                'flex items-center gap-2.5 rounded-lg border border-black/10 bg-surface-modal px-3 py-2.5 text-left text-sm font-medium transition-all duration-200 dark:border-white/10 cursor-pointer',
                 isActive
                   ? 'border-primary/30 bg-primary/5 text-foreground shadow-sm'
                   : 'text-muted-foreground hover:bg-black/5 hover:text-foreground hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
@@ -859,7 +859,7 @@ export function Knowledge() {
                     key={type}
                     type="button"
                     className={cn(
-                      'group flex flex-col gap-3 rounded-lg border p-4 text-left transition-all duration-200 hover:shadow-md',
+                      'group flex flex-col gap-3 rounded-lg border p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg cursor-pointer',
                       accent,
                     )}
                     onClick={() => {
@@ -1055,7 +1055,7 @@ export function Knowledge() {
                     </div>
                     <div className="space-y-2">
                       <Label>{t('draft.typeLabel')}</Label>
-                      <select value={draftType} onChange={(event) => setDraftType(event.target.value as KnowledgeDraftType)} className="h-9 w-full rounded-lg border border-black/10 bg-surface-input px-3 text-sm dark:border-white/10" data-testid="knowledge-draft-type">
+                      <select value={draftType} onChange={(event) => setDraftType(event.target.value as KnowledgeDraftType)} className="h-9 w-full rounded-lg border border-black/10 bg-surface-input px-3 text-sm transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40 dark:border-white/10 cursor-pointer" data-testid="knowledge-draft-type">
                         {KNOWLEDGE_TYPES.map((type) => <option key={type} value={type}>{t(`types.${type}`)}</option>)}
                       </select>
                     </div>

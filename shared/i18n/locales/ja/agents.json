@@ -197,6 +197,47 @@
         "missionPause": "一時停止",
         "missionResume": "再開",
         "missionCancel": "キャンセル",
+        "runnerTitle": "軽量サブエージェント Runner",
+        "runnerHint": "ClawGraph YAML を書かずに、よく使う role-first ワークフローを開始します。",
+        "runnerNoMerge": "自動マージなし",
+        "runnerGoalPlaceholder": "サブエージェントに調査させる目標を説明してください",
+        "runnerGoalRequired": "先に目標を入力してください",
+        "runnerStart": "開始",
+        "runnerStarted": "{{preset}} 完了: {{count}} worker",
+        "runnerFailed": "{{preset}} 失敗: {{reason}}",
+        "runnerNoDiff": "レビューできる staged / unstaged diff がありません。",
+        "runnerSummary": "{{preset}} {{status}}: {{goal}}",
+        "runnerWorkerCount": "{{count}} ロール",
+        "runnerTrace": "trace を表示",
+        "runnerStatus": {
+            "idle": "待機中",
+            "running": "実行中",
+            "complete": "完了",
+            "error": "失敗"
+        },
+        "runnerEventStatus": {
+            "started": "開始済み",
+            "completed": "完了",
+            "verified": "検証済み",
+            "aborted": "中止",
+            "error": "失敗"
+        },
+        "runnerPreset": {
+            "explorer": "Explorer",
+            "reviewer": "Reviewer",
+            "tester": "Tester",
+            "compare": "Compare 3 approaches"
+        },
+        "runnerLabel": {
+            "diffReview": "Diff レビュー",
+            "testGaps": "テスト不足",
+            "coverageReview": "カバレッジレビュー",
+            "conservative": "保守的",
+            "modular": "モジュール化",
+            "integrationFirst": "統合優先",
+            "options": "選択肢",
+            "architecture": "アーキテクチャ"
+        },
         "memoryComposerEditTitle": "メモリ提案ドラフト",
         "memoryType": "タイプ",
         "memoryScope": "スコープ",

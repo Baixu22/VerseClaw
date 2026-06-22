@@ -6,6 +6,11 @@ import {
   openOpenClawStateDatabase,
   runOpenClawStateWriteTransaction,
 } from "../../state/openclaw-state-db.js";
+import {
+  normalizeAcceptanceStatus,
+  normalizeControlSignals,
+  normalizeValidationState,
+} from "../long-conversation-control-signals.js";
 import type {
   MissionDecision,
   MissionEvidenceRef,
@@ -60,12 +65,20 @@ function jsonRecord(raw: string | null | undefined): Record<string, unknown> {
   }
 }
 
+function recordFromUnknown(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+}
+
 function nonEmpty(value: string | undefined | null): string | null {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
 }
 
 function rowToMission(row: MissionRunRow): MissionRunRecord {
+  const metadata = jsonRecord(row.metadata_json);
+  const control = recordFromUnknown(metadata.longConversationControl);
   return {
     missionId: row.mission_id,
     sessionKey: row.session_key,
@@ -90,8 +103,17 @@ function rowToMission(row: MissionRunRow): MissionRunRecord {
     evidenceRefs: jsonArray<MissionEvidenceRef>(row.evidence_refs_json),
     risks: jsonArray<string>(row.risks_json),
     remaining: jsonArray<string>(row.remaining_json),
+    ...(normalizeControlSignals(control.controlSignals).length
+      ? { controlSignals: normalizeControlSignals(control.controlSignals) }
+      : {}),
+    ...(normalizeValidationState(control.validationState)
+      ? { validationState: normalizeValidationState(control.validationState) }
+      : {}),
+    ...(normalizeAcceptanceStatus(control.acceptanceStatus)
+      ? { acceptanceStatus: normalizeAcceptanceStatus(control.acceptanceStatus) }
+      : {}),
     ...(row.no_progress_hash ? { noProgressHash: row.no_progress_hash } : {}),
-    metadata: jsonRecord(row.metadata_json),
+    metadata,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     ...(typeof row.completed_at === "number" ? { completedAt: row.completed_at } : {}),
@@ -132,6 +154,14 @@ function updateFromValues(values: MissionRunInsert): MissionRunUpdate {
 }
 
 export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
+  const metadata = {
+    ...(record.metadata ?? {}),
+    longConversationControl: {
+      controlSignals: record.controlSignals ?? [],
+      ...(record.validationState ? { validationState: record.validationState } : {}),
+      ...(record.acceptanceStatus ? { acceptanceStatus: record.acceptanceStatus } : {}),
+    },
+  };
   const values: MissionRunInsert = {
     mission_id: record.missionId,
     session_key: record.sessionKey,
@@ -158,7 +188,7 @@ export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
     remaining_json: JSON.stringify(record.remaining),
     no_progress_hash: record.noProgressHash ?? null,
     schedule_json: "{}",
-    metadata_json: JSON.stringify(record.metadata ?? {}),
+    metadata_json: JSON.stringify(metadata),
     created_at: record.createdAt,
     updated_at: record.updatedAt,
     completed_at: record.completedAt ?? null,

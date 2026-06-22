@@ -151,7 +151,8 @@
     "tabs": {
       "changes": "变更",
       "preview": "预览",
-      "browser": "工作空间"
+      "browser": "工作空间",
+      "artifact": "产物"
     },
     "workspaceTabs": {
       "files": "文件",
@@ -578,6 +579,141 @@
       "defaultPrompt": "请基于选中的知识引用回答。",
       "messageRefTitle": "知识引用：{{title}}"
     },
+    "slashCommands": {
+      "menuLabel": "斜杠命令",
+      "title": "快捷动作",
+      "subtitle": "为这条消息或当前会话选择动作。每个动作都会先说明它会做什么。",
+      "contextButton": "打开上下文面板",
+      "contextButtonShort": "上下文",
+      "contextButtonTooltip": "输入 / 可以附加知识、设置范围或运行会话动作。",
+      "promptArgs": "范围：{{args}}",
+      "unknownTitle": "未知命令",
+      "unknownDescription": "{{command}} 不是 ClawX 快捷动作。按 Escape 可继续编辑。",
+      "unknownToast": "未知斜杠命令：{{command}}",
+      "ledgerNodeDescription": "由 Chat 斜杠命令创建。",
+      "ledgerSessionSummary": "由 Chat 斜杠命令关联：{{title}}",
+      "groups": {
+        "knowledge": "知识",
+        "coding": "编码",
+        "workflow": "工作流",
+        "session": "会话"
+      },
+      "commands": {
+        "wiki": {
+          "label": "搜索 Wiki",
+          "description": "查找带来源的 Wiki 页面，并作为只读上下文附加。",
+          "argumentHint": "[查询]"
+        },
+        "memory": {
+          "label": "使用记忆",
+          "description": "本条消息只读取运行时记忆。",
+          "argumentHint": ""
+        },
+        "all": {
+          "label": "使用全部知识",
+          "description": "允许本条消息同时读取记忆和 Wiki。",
+          "argumentHint": ""
+        },
+        "none": {
+          "label": "不使用知识",
+          "description": "发送时不附加记忆或 Wiki 上下文。",
+          "argumentHint": ""
+        },
+        "scope": {
+          "label": "设置知识范围",
+          "description": "不离开输入框即可选择无、记忆、Wiki 或全部。",
+          "argumentHint": "[范围]"
+        },
+        "save": {
+          "label": "起草知识",
+          "description": "请助手准备可编辑的知识草稿，不会自动应用。",
+          "argumentHint": "[主题]"
+        },
+        "steward": {
+          "label": "请求知识管理员",
+          "description": "请 Knowledge Steward 复核、分类或查找冲突。",
+          "argumentHint": "[主题]"
+        },
+        "review": {
+          "label": "审查改动",
+          "description": "针对当前 diff 发起聚焦的代码审查。",
+          "argumentHint": "[范围]"
+        },
+        "fix-ci": {
+          "label": "修复 CI",
+          "description": "请助手检查失败的检查项并提出修复。",
+          "argumentHint": "[失败信息]"
+        },
+        "write-tests": {
+          "label": "编写测试",
+          "description": "围绕当前改动补充有针对性的测试。",
+          "argumentHint": "[区域]"
+        },
+        "explain-diff": {
+          "label": "解释 diff",
+          "description": "说明改了什么，以及为什么重要。",
+          "argumentHint": "[重点]"
+        },
+        "commit": {
+          "label": "准备提交",
+          "description": "生成可用于提交的摘要，不直接运行 Git。",
+          "argumentHint": "[范围]"
+        },
+        "pr-summary": {
+          "label": "PR 摘要",
+          "description": "起草 PR 说明和验证记录。",
+          "argumentHint": "[受众]"
+        },
+        "mission": {
+          "label": "Mission Control",
+          "description": "打开或引导一个长期目标流程。",
+          "argumentHint": "[目标]"
+        },
+        "ledger": {
+          "label": "Task Ledger",
+          "description": "打开 Task Ledger，或创建一个任务节点。",
+          "argumentHint": "[任务标题]"
+        },
+        "compact": {
+          "label": "压缩会话",
+          "description": "打开当前会话的压缩确认对话框。",
+          "argumentHint": ""
+        },
+        "fork": {
+          "label": "Fork 会话",
+          "description": "通过现有 Fork 流程把当前聊天分支到新会话。",
+          "argumentHint": ""
+        },
+        "handoff": {
+          "label": "Handoff 会话",
+          "description": "在新会话中准备可编辑的接力草稿。",
+          "argumentHint": ""
+        }
+      },
+      "prompts": {
+        "review": "请作为代码审查者审查当前改动，重点关注 bug、回归风险和缺失测试。\n{{argsDetail}}",
+        "fix-ci": "请帮助修复当前 CI 失败。\n{{argsDetail}}",
+        "write-tests": "请为当前改动编写聚焦测试。\n{{argsDetail}}",
+        "explain-diff": "请清晰解释当前 diff。\n{{argsDetail}}",
+        "commit": "请准备一份可用于提交的摘要。\n{{argsDetail}}",
+        "pr-summary": "请起草 PR 摘要和验证记录。\n{{argsDetail}}",
+        "mission": "请把这个目标引导进入 Mission Control。\n{{argsDetail}}",
+        "save": "请为相关内容创建一份可编辑的 Knowledge Draft。\n{{argsDetail}}",
+        "steward": "请以 Knowledge Steward 身份处理这个请求。\n{{argsDetail}}"
+      },
+      "toasts": {
+        "sendUnavailable": "当前发送可用后才能运行这个命令。",
+        "wikiOpened": "已打开 Wiki 搜索。请选择要作为只读上下文附加的页面。",
+        "scopeOpened": "已打开知识范围选择器。",
+        "scopeChanged": "知识范围已设为 {{scope}}。",
+        "typeSlash": "在空输入框开头输入 / 可打开上下文面板。",
+        "ledgerOpened": "已打开 Task Ledger",
+        "ledgerCreated": "已创建任务：{{title}}",
+        "ledgerFailed": "无法创建任务：{{error}}",
+        "missionOpened": "已打开 Agents 的 Mission Control",
+        "forkUnavailable": "当前运行结束后才能 Fork。"
+      }
+    },
     "modelPickerTitle": "切换当前 Agent 模型",
     "modelSwitchFailed": "模型切换失败：{{error}}",
     "inputModeTitle": "输入模式",
@@ -954,6 +1090,13 @@
       "workspace": "???",
       "permission": "??"
     },
+    "statusIndicator": {
+      "label": "\u52a9\u624b\u72b6\u6001"
+    },
+    "activity": {
+      "thinking": "\u6b63\u5728\u601d\u8003",
+      "processingToolResults": "\u6b63\u5728\u5904\u7406\u5de5\u5177\u7ed3\u679c"
+    },
     "quote": {
       "action": "??"
     },
@@ -966,6 +1109,14 @@
       "folder": "???",
       "file": "??"
     }
+  },
+  "sessionStatus": {
+    "running": "\u6b63\u5728\u8fd0\u884c",
+    "waiting": "\u7b49\u5f85\u8f93\u5165",
+    "completed": "\u5df2\u5b8c\u6210",
+    "error": "\u9700\u8981\u6ce8\u610f",
+    "aborted": "\u5df2\u505c\u6b62",
+    "dismissCompleted": "\u9690\u85cf\u5df2\u5b8c\u6210\u72b6\u6001"
   },
   "turnWork": {
     "title": "工作面板",
@@ -994,6 +1145,29 @@
       "tasks": "暂无任务活动",
       "reports": "暂无报告或文件产物",
       "sources": "暂无网站来源"
+    }
+  },
+  "githubCard": {
+    "type": {
+      "repo": "仓库",
+      "issue": "议题",
+      "pr": "拉取请求",
+      "commit": "提交",
+      "profile": "个人主页",
+      "other": "GitHub 链接"
+    }
+  },
+  "artifactView": {
+    "title": "产物",
+    "empty": "尚未生成产物",
+    "generating": "生成中...",
+    "selectHint": "选择一个产物进行预览",
+    "status": {
+      "generating": "生成中...",
+      "ready": "已就绪",
+      "invalid": "无效",
+      "validationError": "验证错误",
+      "error": "错误"
     }
   }
 }

@@ -41,6 +41,7 @@
   "search": {
     "title": "Search",
     "placeholder": "wiki の出典と synthesis を検索",
+    "button": "検索",
     "empty": "一致する知識はありません。",
     "preview": "Preview",
     "useInDraft": "Use in draft"
@@ -73,6 +74,8 @@
     "noSources": "出典参照はありません。",
     "warnings": "Warnings",
     "noWarnings": "警告はありません。",
+    "warningCount": "{{count}} 件の警告",
+    "warningCount_plural": "{{count}} 件の警告",
     "kinds": {
       "chat-session": "Chat",
       "task-ledger": "Task Ledger",

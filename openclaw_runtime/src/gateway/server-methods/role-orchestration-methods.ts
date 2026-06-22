@@ -12,7 +12,7 @@ import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/i
 import { compileRoleContractToSoul } from "../../agents/role-contract.js";
 import { listRoleContracts, resolveRoleContract } from "../../agents/role-registry.js";
 import { getTeamTemplateSnapshot, resolveTeamTemplate } from "../../agents/team-template.js";
-import { createOrchestratorPlan } from "../../agents/orchestrator.js";
+import { createOrchestratorPlan, type OrchestratorWorkerPlan } from "../../agents/orchestrator.js";
 import { runOrchestrationObserved, type OrchestrationLifecycleEvent } from "../../agents/orchestrator-run-observed.js";
 import {
   normalizeQualityPolicy,
@@ -78,6 +78,10 @@ function readBoolean(value: unknown): boolean | undefined {
   return typeof value === "boolean" ? value : undefined;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
+
 function readPositiveInteger(value: unknown): number | undefined {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return undefined;
@@ -134,6 +138,44 @@ function readWorkerCommunication(value: unknown): "none" | "lead_mediated" {
   return requested === "bounded_a2a" ? "none" : requested;
 }
 
+function readExplicitWorkers(
+  params: Record<string, unknown>,
+  respond: RespondFn,
+  cfg: OpenClawConfig,
+): OrchestratorWorkerPlan[] | undefined {
+  if (!Object.prototype.hasOwnProperty.call(params, "workers")) {
+    return undefined;
+  }
+  if (!Array.isArray(params.workers) || params.workers.length === 0) {
+    respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'orchestrator workers must be a non-empty array'));
+    return undefined;
+  }
+  const workers: OrchestratorWorkerPlan[] = [];
+  for (const [index, rawWorker] of params.workers.entries()) {
+    if (!isRecord(rawWorker)) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `orchestrator worker ${index + 1} must be an object`));
+      return undefined;
+    }
+    const roleName = readString(rawWorker.roleName);
+    const task = readString(rawWorker.task);
+    if (!roleName || !task) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `orchestrator worker ${index + 1} requires roleName and task`));
+      return undefined;
+    }
+    if (!resolveRoleContract(roleName, rolesConfig(cfg))) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `unknown role "${roleName}"`));
+      return undefined;
+    }
+    workers.push({
+      roleName,
+      task,
+      ...(readString(rawWorker.label) ? { label: readString(rawWorker.label) } : {}),
+      ...(readString(rawWorker.modelRef) ? { modelRef: readString(rawWorker.modelRef) } : {}),
+    });
+  }
+  return workers;
+}
+
 export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   "roles.list": async ({ respond, context }) => {
     const cfg = context.getRuntimeConfig();
@@ -176,10 +218,15 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     if (!validateTemplateId(respond, cfg, templateId)) {
       return;
     }
+    const workers = readExplicitWorkers(params, respond, cfg);
+    if (Object.prototype.hasOwnProperty.call(params, "workers") && !workers) {
+      return;
+    }
     const plan = createOrchestratorPlan({
       task,
       fileHints: readStringArray(params.fileHints),
       important: readBoolean(params.important) ?? false,
+      workers,
       templateId,
       maxWorkers: resolveMaxWorkers(params, cfg),
       graphMode: normalizeGraphMode(params.graphMode),
@@ -225,6 +272,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     if (!validateTemplateId(respond, cfg, templateId)) {
       return;
     }
+    const workers = readExplicitWorkers(params, respond, cfg);
+    if (Object.prototype.hasOwnProperty.call(params, "workers") && !workers) {
+      return;
+    }
     const orchestrationRunId = `orch_${crypto.randomUUID()}`;
     // Capture actor identity for the audit log (enterprise: who/which/when).
     const actor = resolveControlPlaneActor(client ?? null);
@@ -244,6 +295,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           important: readBoolean(params.important) ?? false,
           includeVerifier: readBoolean(params.includeVerifier) ?? true,
           agentId: readString(params.agentId),
+          workers,
           templateId,
           maxWorkers: resolveMaxWorkers(params, cfg),
           graphMode: normalizeGraphMode(params.graphMode),

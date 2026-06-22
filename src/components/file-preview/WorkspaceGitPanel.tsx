@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   AlertTriangle,
   CheckCircle2,
+  ClipboardCopy,
   GitBranch,
   GitCommitHorizontal,
   GitPullRequest,
@@ -13,6 +14,7 @@ import {
   Loader2,
   Plus,
   RefreshCw,
+  RotateCcw,
   ShieldAlert,
   Trash2,
 } from 'lucide-react';
@@ -21,6 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
 import type {
@@ -36,6 +39,8 @@ import type {
   GithubPrSummary,
 } from '@shared/types/git';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
+
+const MonacoDiffViewerLazy = lazy(() => import('./MonacoDiffViewer'));
 
 type WorkspaceGitPanelProps = {
   selectedPath?: string | null;
@@ -115,6 +120,7 @@ export function WorkspaceGitPanel({
   const [worktreeStartPoint, setWorktreeStartPoint] = useState('');
   const [prTitle, setPrTitle] = useState('');
   const [prBody, setPrBody] = useState('');
+  const [revertPath, setRevertPath] = useState<string | null>(null);
 
   const changes = useMemo(() => status?.changes ?? [], [status?.changes]);
   const effectiveSelectedPath = selectedPath || changes[0]?.path || null;
@@ -128,7 +134,7 @@ export function WorkspaceGitPanel({
     return CHANGE_GROUPS.map((bucket) => ({
       bucket,
       changes: changes.filter((change) => change.bucket === bucket),
-    })).filter((group) => group.changes.length > 0);
+    }));
   }, [changes]);
 
   const refresh = useCallback(async () => {
@@ -295,6 +301,25 @@ export function WorkspaceGitPanel({
     );
   };
 
+  const revertSelected = useCallback((path: string) => {
+    void finishOperation(
+      'revert',
+      t('workspace.git.actions.revert'),
+      () => hostApi.git.revertFile({ path }),
+      (approvalId) => hostApi.git.revertFile({ path, approvalId }),
+    );
+  }, [finishOperation, t]);
+
+  const copyPatch = useCallback(async () => {
+    if (!diff?.patch) return;
+    try {
+      await navigator.clipboard.writeText(diff.patch);
+      toast.success(t('workspace.git.toast.patchCopied'));
+    } catch (err) {
+      toast.error(t('workspace.git.toast.patchCopyFailed', { error: err instanceof Error ? err.message : String(err) }));
+    }
+  }, [diff?.patch, t]);
+
   const commit = () => {
     const message = commitMessage.trim();
     if (!message) return;
@@ -412,8 +437,20 @@ export function WorkspaceGitPanel({
   const stateVariant = status?.hasConflicts ? 'destructive' : isClean ? 'success' : 'warning';
   const canStage = Boolean(effectiveSelectedPath && (!selectedChange || selectedChange.bucket !== 'staged'));
   const canUnstage = Boolean(effectiveSelectedPath && selectedChange?.staged);
+  const canRevert = Boolean(effectiveSelectedPath && selectedChange);
+  const canCopyPatch = Boolean(diff?.patch && !diffLoading);
+  const canRenderMonacoDiff = Boolean(
+    diff
+    && !diffLoading
+    && !diff.binary
+    && !diff.tooLarge
+    && typeof diff.original === 'string'
+    && typeof diff.modified === 'string'
+    && (diff.patch || diff.original !== diff.modified),
+  );
 
   return (
+    <>
     <div className="flex h-full min-h-0 flex-col bg-background" data-testid="workspace-git-panel">
       <div className="shrink-0 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
         <div className="flex items-center justify-between gap-3">
@@ -478,7 +515,7 @@ export function WorkspaceGitPanel({
         </div>
       ) : null}
 
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(220px,0.38fr)_minmax(320px,0.62fr)] gap-3 overflow-hidden p-3">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-hidden p-3 min-[980px]:grid-cols-[minmax(220px,0.38fr)_minmax(360px,0.62fr)]">
         <section className="min-h-0 overflow-hidden rounded-md border border-black/10 bg-surface-modal dark:border-white/10">
           <div className="flex items-center justify-between border-b border-black/5 px-3 py-2 dark:border-white/10">
             <span className="text-xs font-medium text-foreground">{t('artifactPanel.tabs.changes')}</span>
@@ -503,7 +540,11 @@ export function WorkspaceGitPanel({
                       {t(`workspace.git.groups.${group.bucket}`, { count: group.changes.length })}
                     </div>
                     <div className="space-y-0.5 px-1.5 pb-1.5">
-                      {group.changes.map((change) => {
+                      {group.changes.length === 0 ? (
+                        <p className="px-2 py-1.5 text-2xs text-muted-foreground">
+                          {t('workspace.git.groups.empty')}
+                        </p>
+                      ) : group.changes.map((change) => {
                         const badge = changeBadge(change);
                         return (
                           <button
@@ -528,7 +569,7 @@ export function WorkspaceGitPanel({
           </div>
         </section>
 
-        <section className="flex min-h-0 flex-col overflow-hidden rounded-md border border-black/10 bg-[#0d1117] text-slate-100 dark:border-white/10">
+        <section className="flex min-h-[360px] min-w-0 flex-col overflow-hidden rounded-md border border-black/10 bg-[#0d1117] text-slate-100 dark:border-white/10">
           <div className="flex shrink-0 items-center justify-between gap-2 border-b border-white/10 px-3 py-2">
             <div className="min-w-0">
               <p className="truncate font-mono text-xs text-slate-100">{effectiveSelectedPath || t('workspace.git.diff.empty')}</p>
@@ -552,20 +593,33 @@ export function WorkspaceGitPanel({
               ))}
             </div>
           </div>
-          <pre className="min-h-0 flex-1 overflow-auto p-3 font-mono text-2xs leading-relaxed">
-            {diffLoading ? (
-              <span className="text-slate-400">{t('workspace.git.loading')}</span>
-            ) : diff?.binary ? (
-              <span className="text-slate-400">{t('workspace.git.diff.binary')}</span>
-            ) : diff?.tooLarge ? (
-              <span className="text-slate-400">{t('workspace.git.diff.tooLarge')}</span>
-            ) : diff?.patch ? (
-              diff.patch
+          <div className="min-h-0 flex-1 overflow-hidden">
+            {canRenderMonacoDiff && effectiveSelectedPath ? (
+              <Suspense fallback={<div className="flex h-full items-center justify-center text-xs text-slate-400">{t('workspace.git.loading')}</div>}>
+                <MonacoDiffViewerLazy
+                  filePath={effectiveSelectedPath}
+                  original={diff?.original}
+                  modified={diff?.modified ?? ''}
+                  className="min-h-[260px]"
+                />
+              </Suspense>
             ) : (
-              <span className="text-slate-400">{t('workspace.git.diff.empty')}</span>
+              <pre className="h-full min-h-0 overflow-auto p-3 font-mono text-2xs leading-relaxed">
+                {diffLoading ? (
+                  <span className="text-slate-400">{t('workspace.git.loading')}</span>
+                ) : diff?.binary ? (
+                  <span className="text-slate-400">{t('workspace.git.diff.binary')}</span>
+                ) : diff?.tooLarge ? (
+                  <span className="text-slate-400">{t('workspace.git.diff.tooLarge')}</span>
+                ) : diff?.patch ? (
+                  diff.patch
+                ) : (
+                  <span className="text-slate-400">{t('workspace.git.diff.empty')}</span>
+                )}
+              </pre>
             )}
-          </pre>
-          <div className="flex shrink-0 items-center gap-2 border-t border-white/10 px-3 py-2">
+          </div>
+          <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-white/10 px-3 py-2">
             <Button type="button" size="sm" className="h-7 text-xs" onClick={stageSelected} disabled={!canStage || operationLoading === 'stage'}>
               {operationLoading === 'stage' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <Plus className="mr-1.5 h-3 w-3" />}
               {t('workspace.git.actions.stage')}
@@ -573,6 +627,23 @@ export function WorkspaceGitPanel({
             <Button type="button" variant="outline" size="sm" className="h-7 border-white/10 bg-white/5 text-xs text-slate-100 hover:bg-white/10" onClick={unstageSelected} disabled={!canUnstage || operationLoading === 'unstage'}>
               {t('workspace.git.actions.unstage')}
             </Button>
+            <Button type="button" variant="outline" size="sm" className="h-7 border-white/10 bg-white/5 text-xs text-slate-100 hover:bg-white/10" onClick={() => void copyPatch()} disabled={!canCopyPatch}>
+              <ClipboardCopy className="mr-1.5 h-3 w-3" />
+              {t('workspace.git.actions.copyPatch')}
+            </Button>
+            <Button type="button" variant="destructive" size="sm" className="h-7 text-xs" onClick={() => setRevertPath(effectiveSelectedPath)} disabled={!canRevert || operationLoading === 'revert'}>
+              {operationLoading === 'revert' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <RotateCcw className="mr-1.5 h-3 w-3" />}
+              {t('workspace.git.actions.revert')}
+            </Button>
+          </div>
+          <div className="shrink-0 border-t border-white/10 px-3 py-2">
+            <div className="flex min-w-0 items-center justify-between gap-3 rounded-md border border-white/10 bg-white/5 px-2.5 py-2">
+              <div className="min-w-0">
+                <p className="text-2xs font-medium uppercase tracking-normal text-slate-400">{t('workspace.git.validation.title')}</p>
+                <p className="truncate text-xs text-slate-200">{t('workspace.git.validation.empty')}</p>
+              </div>
+              <Badge variant="outline" className="shrink-0 border-white/10 text-2xs text-slate-300">{t('workspace.git.validation.status')}</Badge>
+            </div>
           </div>
         </section>
       </div>
@@ -734,6 +805,21 @@ export function WorkspaceGitPanel({
         </div>
       </div>
     </div>
+    <ConfirmDialog
+      open={Boolean(revertPath)}
+      title={t('workspace.git.revertConfirm.title')}
+      message={t('workspace.git.revertConfirm.message', { path: revertPath ?? '' })}
+      confirmLabel={t('workspace.git.revertConfirm.confirm')}
+      cancelLabel={t('workspace.git.revertConfirm.cancel')}
+      variant="destructive"
+      onConfirm={() => {
+        const path = revertPath;
+        setRevertPath(null);
+        if (path) revertSelected(path);
+      }}
+      onCancel={() => setRevertPath(null)}
+    />
+    </>
   );
 }
 

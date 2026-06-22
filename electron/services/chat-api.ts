@@ -149,6 +149,7 @@ function applyWorkModeMetadata(
     expectedArtifactTypes,
     qualityChecks,
     capabilityStatusSummary: summarizeWorkModeCapabilities(capabilities),
+    controlContract: preset.controlContract,
     providerStatusSummary: providerStatus?.summary,
     providerCapabilities: providerStatus?.kitCapabilities
       .filter((capability) => preset.kits.includes(capability.kit))
@@ -183,6 +184,17 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
       }
 
       try {
+        const earlyMockResult = handleMockChatSend({
+          sessionKey,
+          message: typeof body.message === 'string' ? body.message : '',
+          deliver: body.deliver ?? false,
+          idempotencyKey,
+        });
+        if (earlyMockResult) {
+          logger.info('[chat:sendWithMedia] Mock provider response');
+          return { success: true, result: earlyMockResult };
+        }
+
         const knowledgeScope = normalizeKnowledgeScope(body.knowledgeScope);
         const knowledgeReferences = normalizeKnowledgeReferences(body.knowledgeReferences);
         const workMode = normalizeWorkModeId(body.workMode);
@@ -256,11 +268,6 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         logger.info(
           `[chat:sendWithMedia] Sending: message="${message.substring(0, 100)}", attachments=${imageAttachments.length}, fileRefs=${fileReferences.length}`,
         );
-        const mockResult = handleMockChatSend(rpcParams);
-        if (mockResult) {
-          logger.info('[chat:sendWithMedia] Mock provider response');
-          return { success: true, result: mockResult };
-        }
         const result = await gatewayManager.rpc('chat.send', rpcParams, 120000);
         logger.info(`[chat:sendWithMedia] RPC result: ${JSON.stringify(result)}`);
         const response = isRecord(result) && typeof result.runId === 'string'

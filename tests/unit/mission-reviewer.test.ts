@@ -25,6 +25,30 @@ describe('mission reviewer', () => {
       repairBrief: 'ask user',
       nextTick: { afterMs: 1000, reason: 'wait' },
       risks: ['ambiguous acceptance'],
+      controlSignals: [{
+        kind: 'scope_drift',
+        severity: 'warning',
+        message: 'scope changed',
+        suggestedAction: 'ask_user',
+        source: 'mission.reviewer',
+      }],
+      validationState: {
+        status: 'partial',
+        checks: ['unit test missing'],
+        evidenceRefs: [{ type: 'trace', ref: 'trace-1' }],
+        summary: 'validation incomplete',
+      },
+      acceptanceStatus: {
+        status: 'changed',
+        criteria: ['original acceptance'],
+        gaps: ['new acceptance needed'],
+      },
+      quality: [{
+        dimension: 'scope',
+        status: 'gap',
+        summary: 'scope changed',
+        signalKinds: ['scope_drift'],
+      }],
       memoryCandidates: [{ kind: 'role_memory', summary: 'Remember this workflow', evidenceRefs: ['trace-1'] }],
       checkpointSummary: 'waiting for user',
     }));
@@ -36,6 +60,12 @@ describe('mission reviewer', () => {
       nextTick: { afterMs: 1000, reason: 'wait' },
       memoryCandidates: [{ kind: 'role_memory' }],
     });
+    expect(parsed?.controlSignals?.map((signal) => signal.kind)).toContain('scope_drift');
+    expect(parsed?.controlSignals?.map((signal) => signal.kind)).toContain('evidence_gap');
+    expect(parsed?.controlSignals?.map((signal) => signal.kind)).toContain('validation_missing');
+    expect(parsed?.validationState).toMatchObject({ status: 'partial', checks: ['unit test missing'] });
+    expect(parsed?.acceptanceStatus).toMatchObject({ status: 'changed', gaps: ['new acceptance needed'] });
+    expect(parsed?.quality?.[0]).toMatchObject({ dimension: 'scope', status: 'gap' });
   });
 
   it('falls back conservatively on invalid JSON', async () => {
@@ -106,5 +136,54 @@ describe('mission reviewer', () => {
 
     expect(result.decision).toBe('blocked');
     expect(result.missingEvidence).toContain('no verifier output');
+  });
+
+  it('downgrades model complete when acceptance or validation evidence is missing', async () => {
+    const result = await runMissionReviewer(
+      {
+        contextPack: contextPack(),
+        taskLoopResult: {
+          loopRunId: 'loop-3',
+          sessionKey: 'agent:main:session',
+          task: 'ship',
+          status: 'complete',
+          phase: 'complete',
+          iteration: 1,
+          maxIterations: 3,
+          maxRepairIterations: 2,
+          orchestrationRunIds: [],
+          evidenceRefs: [{ type: 'trace', ref: 'trace-1', summary: 'trace exists' }],
+          risks: [],
+          remaining: [],
+          finalSummary: 'inner loop complete',
+          nextActions: [],
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          iterations: [],
+        },
+        tick: 1,
+        repairTicksUsed: 0,
+        maxRepairTicks: 3,
+        maxTicks: 8,
+      },
+      {
+        complete: async () => JSON.stringify({
+          decision: 'complete',
+          confidence: 0.95,
+          reason: 'looks done',
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'missing', checks: [], evidenceRefs: [], summary: 'not run' },
+          acceptanceStatus: { status: 'missing', criteria: [], gaps: ['acceptance not confirmed'] },
+          checkpointSummary: 'claimed complete',
+        }),
+      },
+    );
+
+    expect(result.decision).toBe('repair');
+    expect(result.controlSignals?.map((signal) => signal.kind)).toContain('evidence_gap');
+    expect(result.validationState?.status).toBe('missing');
+    expect(result.repairBrief).toContain('Resolve Mission completion gaps');
   });
 });

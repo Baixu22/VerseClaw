@@ -6,15 +6,21 @@ taskType: runtime-bridge
 intent: Persist human-intervention queue state and resume checkpoints so long Chat runs can recover after compaction, interruption, abort, or Gateway restart without relying on the full transcript.
 touchedAreas:
   - shared/types/long-task-control.ts
+  - shared/types/mission-control.ts
+  - shared/types/work-mode.ts
   - shared/host-api/contract.ts
   - shared/host-events/contract.ts
   - electron/services/sessions-api.ts
+  - electron/services/chat-api.ts
   - src/lib/host-api.ts
   - src/lib/host-events.ts
   - src/pages/Chat/**
   - shared/i18n/locales
   - openclaw_runtime/src/agents/user-message-queue.ts
   - openclaw_runtime/src/agents/long-task-control/**
+  - openclaw_runtime/src/agents/long-conversation-control-signals.ts
+  - openclaw_runtime/src/agents/task-loop-*.ts
+  - openclaw_runtime/src/agents/mission-control/**
   - openclaw_runtime/src/gateway/server-methods/**
   - openclaw_runtime/src/state/**
 expectedUserBehavior:
@@ -24,6 +30,9 @@ expectedUserBehavior:
   - Interrupt input mode records a checkpoint/deviation before aborting and starting a fresh run.
   - Idle sessions can manually drain queued follow-ups through Host API.
   - Manual compaction remains disabled during active runs and does not mutate Task Ledger.
+  - Mission Loop and Task Loop reviewers emit bounded Engineering Control Signals for evidence gaps, missing validation, scope drift, unverified claims, and replan needs.
+  - Complete decisions are downgraded when blocking control signals, missing validation, or missing acceptance remain.
+  - Work Mode metadata carries a phase-specific control contract as untrusted intent metadata without changing permissions.
 requiredProfiles:
   - fast
   - comms
@@ -36,7 +45,8 @@ requiredRules:
   - docs-sync
 requiredTests:
   - pnpm run typecheck
-  - pnpm exec vitest run tests/unit/long-task-control.test.ts tests/unit/user-message-queue.test.ts tests/unit/host-api-facade.test.ts tests/unit/host-services.test.ts tests/unit/chat-input.test.tsx
+  - pnpm exec vitest run tests/unit/long-task-control.test.ts tests/unit/mission-reviewer.test.ts tests/unit/mission-context-pack.test.ts tests/unit/mission-control-loop.test.ts tests/unit/task-loop-controller.test.ts tests/unit/work-mode.test.ts tests/unit/task-ledger-service.test.ts tests/unit/host-events.test.ts tests/unit/chat-knowledge-scope.test.ts
+  - pnpm exec vitest run tests/unit/user-message-queue.test.ts tests/unit/host-api-facade.test.ts tests/unit/host-services.test.ts tests/unit/chat-input.test.tsx
   - pnpm exec playwright test tests/e2e/chat-long-task-control.spec.ts tests/e2e/chat-manual-compaction.spec.ts tests/e2e/chat-run-state-events.spec.ts
   - pnpm run comms:replay
   - pnpm run comms:compare
@@ -46,6 +56,10 @@ acceptance:
   - Gateway unavailable responses include stable diagnostics instead of silent fallback.
   - Queue drain is idempotent and does not lose pending messages on failure.
   - Resume checkpoints are queryable and can seed session handoff.
+  - Resume checkpoints store only bounded recovery state plus `controlSignals`, `validationState`, and `acceptanceStatus`; they never replay the full transcript.
+  - `evidence_gap`, `validation_missing`, `scope_drift`, `unverified_claim`, and `replan_required` can be represented in reviewer output, context packs, lifecycle events, and Task Ledger node metadata.
+  - Observability traces and inner `task_loop` complete results are evidence only; they cannot by themselves complete a Mission or Task Ledger goal.
+  - Task Ledger review/check nodes may receive `longConversationControl` metadata and evidence-gap/scope-drift/validation-missing tags, but review clearing remains explicit.
 docs:
   required: true
   files:
@@ -55,4 +69,6 @@ docs:
     - README.ja-JP.md
 ---
 
-This hardening layer does not prove task completion and does not replace Task Ledger, ClawGraph, memory, or observability. It preserves the minimum continuation state needed for a new run to continue safely after conversation pressure or lifecycle disruption.
+This hardening layer does not prove task completion and does not replace Task Ledger, ClawGraph, memory, Mission state, Work Mode, or observability. It preserves the minimum continuation state needed for a new run to continue safely after conversation pressure or lifecycle disruption.
+
+Engineering Control Signals are an internal contract, not a new prompt system or progress source. Existing long-conversation loops should use them to make evidence gaps, missing validation, scope drift, unverified claims, and replan requirements explicit during plan/build/review/recovery decisions.

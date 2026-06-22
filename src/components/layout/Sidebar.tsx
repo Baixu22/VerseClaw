@@ -3,7 +3,7 @@
  * Navigation sidebar with menu items.
  * No longer fixed - sits inside the flex layout below the title bar.
  */
-import { Suspense, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -11,10 +11,13 @@ import {
   Bot,
   Puzzle,
   Clock,
+  ChevronDown,
+  ChevronRight,
   Settings as SettingsIcon,
   PanelLeftClose,
   PanelLeft,
   Plus,
+  Folder,
   Terminal,
   ExternalLink,
   Trash2,
@@ -32,10 +35,11 @@ import {
   GitCompare,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
 import { isGatewayRestarting } from '@/lib/gateway-status';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { useSettingsStore } from '@/stores/settings';
-import { useChatStore, type ChatSession } from '@/stores/chat';
+import { useChatStore, type ChatRuntimeRunState, type ChatSession } from '@/stores/chat';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useWorkspacesStore } from '@/stores/workspaces';
@@ -105,6 +109,7 @@ interface SessionRowProps {
   agentName: string;
   isEditing: boolean;
   sessionLabel: string;
+  sessionStatus?: SidebarSessionStatus | null;
   editingLabel: string;
   currentSessionKey: string;
   isOnChat: boolean;
@@ -117,6 +122,113 @@ interface SessionRowProps {
   onLoadHistory: (force: boolean) => Promise<void>;
   navigate: (to: string) => void;
   onDeleteClick: (key: string, label: string) => void;
+  onDismissSessionStatus: (key: string, signature: string) => void;
+}
+
+type SidebarSessionStatusKind = 'running' | 'waiting' | 'completed' | 'error' | 'aborted';
+
+type SidebarSessionStatus = {
+  kind: SidebarSessionStatusKind;
+  matrixState: DotMatrixState;
+  labelKey: string;
+  signature: string;
+  dismissible: boolean;
+};
+
+const COMPLETED_SESSION_STATUSES = new Set(['completed', 'success', 'done', 'finished']);
+const ERROR_SESSION_STATUSES = new Set(['failed', 'error', 'killed', 'timeout']);
+const ABORTED_SESSION_STATUSES = new Set(['aborted', 'cancelled', 'canceled']);
+
+function getRuntimeRunActivityMs(run: ChatRuntimeRunState): number {
+  const lastEventTs = run.events.reduce((latest, event) => {
+    const ts = typeof event.ts === 'number' && Number.isFinite(event.ts) ? event.ts : 0;
+    return Math.max(latest, ts);
+  }, 0);
+  return Math.max(run.endedAt ?? 0, run.startedAt ?? 0, lastEventTs);
+}
+
+function getLatestRuntimeRunForSession(
+  runtimeRuns: Record<string, ChatRuntimeRunState>,
+  sessionKey: string,
+): ChatRuntimeRunState | null {
+  let latest: ChatRuntimeRunState | null = null;
+  let latestActivity = -1;
+  for (const run of Object.values(runtimeRuns)) {
+    if (run.sessionKey !== sessionKey) continue;
+    const activity = getRuntimeRunActivityMs(run);
+    if (activity >= latestActivity) {
+      latest = run;
+      latestActivity = activity;
+    }
+  }
+  return latest;
+}
+
+function runHasWaitingApproval(run: ChatRuntimeRunState | null): boolean {
+  if (!run) return false;
+  const latestApproval = [...run.events].reverse().find((event) => event.type === 'approval.updated');
+  if (!latestApproval || latestApproval.type !== 'approval.updated') return false;
+  const status = `${latestApproval.status ?? ''} ${latestApproval.phase ?? ''}`.toLowerCase();
+  return /\b(wait|waiting|pending|approval|input|confirm)\b/.test(status);
+}
+
+function buildSidebarSessionStatus(input: {
+  session: ChatSession;
+  runtimeRuns: Record<string, ChatRuntimeRunState>;
+  currentSessionKey: string;
+  activeRunId: string | null;
+  sending: boolean;
+  pendingFinal: boolean;
+  runError: string | null;
+  dismissedCompletedSignature?: string;
+}): SidebarSessionStatus | null {
+  const latestRun = getLatestRuntimeRunForSession(input.runtimeRuns, input.session.key);
+  const isCurrentSession = input.session.key === input.currentSessionKey;
+  const currentRunActive = isCurrentSession && (input.sending || input.pendingFinal || input.activeRunId != null);
+  const sessionStatus = input.session.status?.toLowerCase();
+  const latestRunStatus = latestRun?.status?.toLowerCase();
+
+  let kind: SidebarSessionStatusKind | null = null;
+  if (isCurrentSession && input.runError) {
+    kind = 'error';
+  } else if (currentRunActive || input.session.hasActiveRun === true || sessionStatus === 'running' || latestRunStatus === 'running') {
+    kind = (isCurrentSession && input.pendingFinal) || runHasWaitingApproval(latestRun) ? 'waiting' : 'running';
+  } else if (COMPLETED_SESSION_STATUSES.has(latestRunStatus ?? '') || COMPLETED_SESSION_STATUSES.has(sessionStatus ?? '')) {
+    kind = 'completed';
+  } else if (ERROR_SESSION_STATUSES.has(latestRunStatus ?? '') || ERROR_SESSION_STATUSES.has(sessionStatus ?? '')) {
+    kind = 'error';
+  } else if (ABORTED_SESSION_STATUSES.has(latestRunStatus ?? '') || ABORTED_SESSION_STATUSES.has(sessionStatus ?? '')) {
+    kind = 'aborted';
+  }
+
+  if (!kind) return null;
+
+  const signature = [
+    kind,
+    input.session.key,
+    latestRun?.runId ?? 'session',
+    latestRun?.endedAt ?? latestRun?.startedAt ?? input.session.updatedAt ?? 0,
+  ].join(':');
+
+  if (kind === 'completed' && input.dismissedCompletedSignature === signature) {
+    return null;
+  }
+
+  const matrixStateByKind: Record<SidebarSessionStatusKind, DotMatrixState> = {
+    running: 'streaming',
+    waiting: 'waiting',
+    completed: 'success',
+    error: 'error',
+    aborted: 'stopped',
+  };
+
+  return {
+    kind,
+    matrixState: matrixStateByKind[kind],
+    labelKey: `sessionStatus.${kind}`,
+    signature,
+    dismissible: kind === 'completed',
+  };
 }
 
 const SessionRowMemo = memo(function SessionRow({
@@ -124,6 +236,7 @@ const SessionRowMemo = memo(function SessionRow({
   agentName,
   isEditing,
   sessionLabel,
+  sessionStatus,
   editingLabel,
   currentSessionKey,
   isOnChat,
@@ -136,8 +249,10 @@ const SessionRowMemo = memo(function SessionRow({
   onLoadHistory,
   navigate,
   onDeleteClick,
+  onDismissSessionStatus,
 }: SessionRowProps) {
   const { t } = useTranslation(['common', 'chat']);
+  const sessionStatusLabel = sessionStatus ? t(`chat:${sessionStatus.labelKey}`) : '';
   return (
     <div className="group relative flex items-center">
       {isEditing ? (
@@ -169,6 +284,7 @@ const SessionRowMemo = memo(function SessionRow({
       ) : (
         <>
           <button
+            data-testid={`sidebar-session-${s.key}`}
             onClick={() => {
               if (currentSessionKey === s.key) {
                 void onLoadHistory(false);
@@ -179,7 +295,8 @@ const SessionRowMemo = memo(function SessionRow({
             }}
             onDoubleClick={() => onStartRename(s.key, sessionLabel)}
             className={cn(
-              'w-full text-left rounded-lg px-2.5 py-1.5 text-meta transition-colors pr-16',
+              'w-full text-left rounded-lg px-2.5 py-1.5 text-meta transition-colors',
+              sessionStatus ? 'pr-20' : 'pr-16',
               'hover:bg-black/5 dark:hover:bg-white/5',
               isOnChat && currentSessionKey === s.key
                 ? 'bg-black/5 dark:bg-white/10 text-foreground font-medium'
@@ -193,6 +310,41 @@ const SessionRowMemo = memo(function SessionRow({
               <span className="truncate">{sessionLabel}</span>
             </div>
           </button>
+          {sessionStatus && (
+            <button
+              type="button"
+              data-testid={`sidebar-session-status-${s.key}`}
+              data-state={sessionStatus.kind}
+              aria-label={sessionStatus.dismissible
+                ? t('chat:sessionStatus.dismissCompleted')
+                : sessionStatusLabel}
+              title={sessionStatus.dismissible
+                ? t('chat:sessionStatus.dismissCompleted')
+                : sessionStatusLabel}
+              onClick={(event) => {
+                event.stopPropagation();
+                if (sessionStatus.dismissible) {
+                  onDismissSessionStatus(s.key, sessionStatus.signature);
+                  return;
+                }
+                if (currentSessionKey === s.key) {
+                  void onLoadHistory(false);
+                } else {
+                  onSwitch(s.key);
+                }
+                navigate('/');
+              }}
+              className={cn(
+                'absolute right-11 top-1/2 flex -translate-y-1/2 items-center justify-center rounded p-0.5',
+                'text-muted-foreground transition-colors',
+                sessionStatus.dismissible
+                  ? 'hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10'
+                  : 'cursor-default',
+              )}
+            >
+              <DotMatrix state={sessionStatus.matrixState} label={sessionStatusLabel} className="size-3.5" />
+            </button>
+          )}
           <div className={cn(
             'absolute right-1 flex items-center gap-0.5 transition-opacity',
             'opacity-0 group-hover:opacity-100',
@@ -243,11 +395,16 @@ export function Sidebar() {
   const [isResizing, setIsResizing] = useState(false);
   const stopResizeRef = useRef<(() => void) | null>(null);
 
-  const { sessions, currentSessionKey, sessionLabels, sessionLastActivity } = useChatStore(useShallow((s) => ({
+  const { sessions, currentSessionKey, sessionLabels, sessionLastActivity, runtimeRuns, activeRunId, sending, pendingFinal, runError } = useChatStore(useShallow((s) => ({
     sessions: s.sessions,
     currentSessionKey: s.currentSessionKey,
     sessionLabels: s.sessionLabels,
     sessionLastActivity: s.sessionLastActivity,
+    runtimeRuns: s.runtimeRuns,
+    activeRunId: s.activeRunId,
+    sending: s.sending,
+    pendingFinal: s.pendingFinal,
+    runError: s.runError,
   })));
   const switchSession = useChatStore((s) => s.switchSession);
   const deleteSession = useChatStore((s) => s.deleteSession);
@@ -256,6 +413,7 @@ export function Sidebar() {
   const loadHistory = useChatStore((s) => s.loadHistory);
   const handleNewChat = useNewChatAction();
   const workspaceProfiles = useWorkspacesStore((s) => s.profiles);
+  const [dismissedCompletedStatuses, setDismissedCompletedStatuses] = useState<Record<string, string>>({});
 
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
@@ -294,9 +452,6 @@ export function Sidebar() {
   const navigate = useNavigate();
   const isOnChat = useLocation().pathname === '/';
 
-  const getSessionLabel = (key: string, displayName?: string, label?: string) =>
-    sessionLabels[key] ?? label ?? displayName ?? key;
-
   const openControlUi = async (view?: 'dreams', label = 'OpenClaw Page') => {
     try {
       const result = await hostApi.gateway.controlUi(view);
@@ -320,6 +475,7 @@ export function Sidebar() {
   const [editingSessionKey, setEditingSessionKey] = useState<string | null>(null);
   const [editingLabel, setEditingLabel] = useState('');
   const [sessionView, setSessionView] = useState<'project' | 'time'>('project');
+  const [collapsedWorkspaceIds, setCollapsedWorkspaceIds] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     void fetchAgents();
@@ -352,6 +508,13 @@ export function Sidebar() {
   const handleRenameCancel = () => {
     setEditingSessionKey(null);
   };
+
+  const toggleWorkspaceGroup = useCallback((workspaceId: string) => {
+    setCollapsedWorkspaceIds((current) => ({
+      ...current,
+      [workspaceId]: !current[workspaceId],
+    }));
+  }, []);
 
   const handleRenameKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -452,6 +615,41 @@ export function Sidebar() {
     })),
   ];
 
+  const sessionStatuses = useMemo(() => {
+    const entries = sessions
+      .map((session) => [
+        session.key,
+        buildSidebarSessionStatus({
+          session,
+          runtimeRuns,
+          currentSessionKey,
+          activeRunId,
+          sending,
+          pendingFinal,
+          runError,
+          dismissedCompletedSignature: dismissedCompletedStatuses[session.key],
+        }),
+      ] as const)
+      .filter((entry): entry is readonly [string, SidebarSessionStatus] => entry[1] != null);
+    return Object.fromEntries(entries);
+  }, [
+    activeRunId,
+    currentSessionKey,
+    dismissedCompletedStatuses,
+    pendingFinal,
+    runError,
+    runtimeRuns,
+    sending,
+    sessions,
+  ]);
+
+  const handleDismissSessionStatus = useCallback((key: string, signature: string) => {
+    setDismissedCompletedStatuses((current) => ({
+      ...current,
+      [key]: signature,
+    }));
+  }, []);
+
   const renderSessionRow = useCallback(({ session: s }: SidebarSessionEntry) => {
     return <SessionRowMemo
       key={s.key}
@@ -459,6 +657,7 @@ export function Sidebar() {
       agentName={agentNameById[getAgentIdFromSessionKey(s.key)] || getAgentIdFromSessionKey(s.key)}
       isEditing={editingSessionKey === s.key}
       sessionLabel={sessionLabels[s.key] ?? s.label ?? s.displayName ?? s.key}
+      sessionStatus={sessionStatuses[s.key] ?? null}
       editingLabel={editingLabel}
       currentSessionKey={currentSessionKey}
       isOnChat={isOnChat}
@@ -474,19 +673,14 @@ export function Sidebar() {
         setSessionToDelete({ key, label });
         setDeleteDialogOpen(true);
       }}
+      onDismissSessionStatus={handleDismissSessionStatus}
     />;
   }, [
-    agentNameById, editingSessionKey, editingLabel, sessionLabels,
+    agentNameById, editingSessionKey, editingLabel, sessionLabels, sessionStatuses,
     currentSessionKey, isOnChat, switchSession, loadHistory, navigate,
     handleStartRename, handleRenameSubmit, handleRenameCancel, handleRenameKeyDown,
+    handleDismissSessionStatus,
   ]);
-
-  const sessionRows = useMemo(() => {
-    const entries = sessionView === 'project'
-      ? workspaceSessionGroups.flatMap((g) => g.sessions)
-      : timeSessions;
-    return entries.map((entry) => renderSessionRow(entry));
-  }, [sessionView, workspaceSessionGroups, timeSessions, renderSessionRow]);
 
   return (
     <aside
@@ -566,7 +760,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Session list — below nav, only when expanded */}
+      {/* Session list below nav, only when expanded */}
       {!sidebarCollapsed && sessions.length > 0 && (
         <>
           {/* Session grouping toggle */}
@@ -592,19 +786,37 @@ export function Sidebar() {
           {/* Session list */}
           <div className="mt-1 flex-1 overflow-y-auto overflow-x-hidden px-2 pb-2 space-y-0.5" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 36px' }}>
             {sessionView === 'project'
-              ? workspaceSessionGroups.map((group) => (
-                <div key={group.workspace.id} data-testid={`sidebar-session-project-${group.workspace.id}`} className="space-y-0.5">
-                  <div className="px-2.5 pb-1 pt-2">
-                    <p className="truncate text-2xs font-semibold tracking-normal text-muted-foreground">
-                      {group.workspace.name}
-                    </p>
-                    <p className="truncate font-mono text-[10px] text-muted-foreground/70">
-                      {group.workspace.rootPath}
-                    </p>
+              ? workspaceSessionGroups.map((group) => {
+                const collapsed = collapsedWorkspaceIds[group.workspace.id] ?? false;
+                return (
+                  <div
+                    key={group.workspace.id}
+                    data-testid={`sidebar-session-project-${group.workspace.id}`}
+                    data-state={collapsed ? 'collapsed' : 'expanded'}
+                    className="space-y-0.5"
+                  >
+                    <button
+                      type="button"
+                      data-testid={`sidebar-session-project-toggle-${group.workspace.id}`}
+                      aria-expanded={!collapsed}
+                      onClick={() => toggleWorkspaceGroup(group.workspace.id)}
+                      className={cn(
+                        'flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left transition-colors',
+                        'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+                      )}
+                    >
+                      <Folder className="h-4 w-4 shrink-0" />
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium tracking-normal">
+                        {group.workspace.name}
+                      </span>
+                      {collapsed
+                        ? <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+                        : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
+                    </button>
+                    {!collapsed && group.sessions.map((entry) => renderSessionRow(entry))}
                   </div>
-                  {group.sessions.map((entry) => renderSessionRow(entry))}
-                </div>
-              ))
+                );
+              })
               : timeSessions.map((entry) => renderSessionRow(entry))}
           </div>
         </>

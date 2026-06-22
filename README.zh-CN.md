@@ -43,7 +43,10 @@
 
 对于需要受控自治执行的复杂任务，Agents 编排面板现在提供有界的 **任务循环**：它会编排角色子 Agent、自检证据、执行限定返工、展示实时状态，并在信心或权限不足时稳定停在 `blocked`。
 
+同一个 Agents -> Roles & Orchestration 界面现在还提供 **Lightweight Subagent Runner**，用于无需编写 ClawGraph YAML 的常见工作流。用户可以选择 Explorer、Reviewer、Tester 或 Compare 3 approaches，输入目标后通过现有 Gateway 权限路径启动显式角色 worker，并在 ClawX 中查看实时 worker 状态、摘要、失败原因和 Observability trace 链接。
+
 对于需要跨长对话、检查点、证据复核和显式定时 tick 延续的目标，Agents 面板现在提供 **Mission Control**：它通过 `mission.run` 启动或恢复 Mission，持久化 Mission 状态，基于 ResumeCheckpoint、Task Ledger、记忆和 trace 证据重建有界上下文，每个 tick 运行一次内部 `task_loop`，再由 reviewer 决定继续、修复、休眠、询问、完成或阻塞。
+Mission 和 Task loop 现在会携带内部 Engineering Control Signals，例如 `evidence_gap`、`validation_missing`、`scope_drift`、`unverified_claim` 和 `replan_required`；这些信号会保存在 checkpoint、生命周期事件和 Task Ledger metadata 中，并阻止只凭 trace 或内部 loop 完成状态就把长期目标当作已完成事实。
 
 对于需要跨大量 worker 回合稳定拆解的长任务，**ClawGraph Runtime** 提供 workspace YAML 工作流、DAG 执行、无状态角色 worker handoff、审计检查和用户复核能力，避免把完整工作流塞进一个无限增长的 chat transcript。
 
@@ -113,16 +116,21 @@ ClawX 直接基于官方 **OpenClaw** 核心构建。无需单独安装，我们
 通过现代化的聊天体验与 AI 智能体交互。支持多会话上下文、消息历史记录、Markdown 富文本渲染（包括 GitHub 风格表格以及由 KaTeX 渲染的 LaTeX 数学公式：`$行内$`、`$$块级$$`、`\(行内\)` 和 `\[块级\]`）、用于计划、选项列表、问题流和偏好设置的结构化 Tool UI 卡片，以及在多 Agent 场景下通过主输入框中的 `@agent` 直接路由到目标智能体。
 设置 → 工作模式 中提供 Plan、Build、Review 和 Docs/Data 管理。模式会按 workspace session 保存，并通过面向产物的 Work Kits 管理报告、表格、演示、PDF、调研、网站、设计和日常事务能力。Kit 状态会显示本地 skill 可用性、由主进程拥有的轻量 Office/Search Work Provider 状态，并为内置 Office skill 提供显式安装入口；下一条消息只会携带轻量的不可信意图 metadata。Search 在用户显式配置 provider 前保持 `missingConfig`，重型格式转换、爬虫、OCR 和 dataframe runtime 只作为可选接口。工作模式不会自动改变 workspace permission，也不会覆盖 OpenClaw runtime 的工具策略。
 从输入框插入的技能会以 `/技能名` 卡片形式显示；点击卡片可在右侧预览栏打开并阅读该技能的 `SKILL.md`。
+在输入框输入 `/` 会打开 Context Palette，可发现 Wiki 搜索、只读知识范围切换、审查、修复 CI、补测试、解释 diff、Task Ledger、Mission Control、压缩和会话 fork；这些动作都会复用现有 Chat 和 Session 流程。
 当你使用 `@agent` 选择其他智能体时，ClawX 会直接切换到该智能体自己的对话上下文，而不是经过默认智能体转发。各 Agent 工作区默认彼此分离，但更强的运行时隔离仍取决于 OpenClaw 的 sandbox 配置。
 ClawX 默认使用轻量 `policy-light` 沙盒层，由主进程权限门禁、工作区根目录检查、Gateway RPC 审批和 OpenClaw exec approval 共同生效；Docker 与 SSH 保留为需要显式选择的 `strong` provider，不再是启动必需项。
 Settings、Doctor 和 diagnostics 现在展示同一份 effective sandbox policy，包括请求/生效 provider、runtime level、exec 与 network policy、Docker 可用性和降级原因。
+Settings → System & Runtime 还提供 Project Rules Center，可检查当前 workspace 的 `AGENTS.md`，列出 `.clawx/rules/*.md`，展示确定性校验 warning，并在缺失时创建保守的 `AGENTS.md` 模板，而不会引入新的规则真相源。
 每个 Agent 还可以单独覆盖自己的 `provider/model` 运行时设置；未覆盖的 Agent 会继续继承全局默认模型。
 输入框的上下文状态现在提供需要确认的“压缩当前会话”操作，可展示 token 压力、已隐藏消息数量、上次压缩时间和压缩质量；长期任务状态仍进入 Task Ledger / Context Pack，而不是依赖无限增长的 transcript。压缩还会保存高密度 recovery artifact，接力到新对话时会优先使用它，再回退到 transcript 证据。
 输入框还会显示长对话的 checkpoint 恢复状态：排队后续、最近一次人工介入/checkpoint、恢复警告，以及在会话空闲时立即发送已持久化排队后续的操作；这些排队消息可在 Gateway 重启后继续恢复。
 
 Agents 编排面板现在也提供有界的 **任务循环** 操作，用于受控自治任务。它通过现有 Gateway RPC 路径启动 `task_loop.run`，编排角色子 Agent，执行自检与限定返工轮次，并在界面中显示实时阶段、轮次、reviewer 结论、终态和 trace 证据，不新增 renderer 直连 Gateway 通道。
 
+同一面板现在也提供 **Lightweight Subagent Runner**，用于无需 ClawGraph YAML 的预设并行流程。Explorer 会启动 planner 与 architect worker 查找方案，Reviewer 会审查当前 staged 与 unstaged Git diff，Tester 会让 tester 与 reviewer 查找测试缺口，Compare 3 approaches 会启动三个带标签的 architect worker。Runner 不会自动合并代码，并会把完成的运行链接到 Observability trace。
+
 同一面板现在也提供 **Mission Control**，用于更长目标。它通过 `mission.run` 启动或恢复 Mission，把 Mission 状态写入 OpenClaw state DB，从 ResumeCheckpoint、Task Ledger、记忆和 trace 证据重建有界上下文，每个 tick 运行一次内部 `task_loop`，再进行 Mission reviewer 反思、写入 checkpoint、提出记忆候选，并在界面显示 pause/resume/cancel、tick 阶段、decision、next wake、blocked reason 和 trace 证据。定时 tick 需要显式启用；完成判定始终来自证据而不是唤醒触发器。
+Engineering Control Signals 会把 evidence gap、scope drift、validation missing 和 unverified claim 明确写入现有 checkpoint、Mission/Task reviewer、HostEvent 与 Task Ledger metadata 路径；ClawX 不会创建第二套进度文件，也不会把 Observability trace 自动当作完成事实。
 
 Chat 输入区还提供预览优先的 **接力到新对话**：ClawX 会从 ResumeCheckpoint、Task Ledger、Git 状态、近期 trace/error 状态和 transcript fallback 证据生成可编辑的确定性接力草稿，然后创建新的 workspace 作用域会话并把草稿预填到输入框，不会自动发送。
 **Fork 到新对话** 是分支式对应功能：当前会话空闲时，ClawX 会请求 runtime 创建一个已继承 active transcript branch 的子会话，立即切换过去，父会话保持不变，并且不会复制 Task Ledger 真相、生成 prompt 或自动发送。
@@ -137,11 +145,14 @@ Observability 页面会维护 ClawX 自有的本地 JSON/JSONL trace 索引，�
 ### 任务账本
 Task Ledger 页面为长期任务维护 workspace 级、Agent 中立的结构化记录：长期目标、子任务、依赖、阻塞、待复核节点、决策、偏差和会话链接。它在本地 OpenClaw 配置目录中保存 append-only JSONL 事件，在 Chat 旁展示紧凑摘要，并可导出单文件离线 HTML，包含树视图、DAG、历史和复核视图。
 
+### Code Review Center
+Review Center 可以对未提交改动、相对基准分支的 diff 或指定 commit 运行只读 AI 审查。它会按 severity 结构化 findings，保留 file/line 锚点，写入脱敏 review trace，并可把单条 finding 或整次 review 转成 Task Ledger review node，不会暂存、提交或编辑文件。
+
 ### Knowledge Hub
-Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上下文。默认使用 ClawX 托管的隔离 native vault，可在不切换到 unsafe local-vault 模式的情况下导入受限的文本文件或文件夹，也可以验证并导入本地 OKF v0.1 Markdown bundle，作为覆盖在 `wiki.ingest` 之上的轻量兼容适配层。它提供状态、搜索、查看、compile、lint、Knowledge Inbox、draft/proposal 审查、provenance 和治理流程。Inbox 会把 Chat、任务账本、文件、OKF、ClawGraph 或 agent 提出的候选知识暂存在正式 wiki 之外，直到用户选择提升为草稿或忽略；provenance 只记录来源引用和读取/引用事件，不修改 wiki 页面。Chat 的知识范围（`None`、`Memory`、`Wiki` 或 `All`）只代表读取范围：agent 可以 search/get 上下文，但不能因为启用 scope 就写入、修改、归档、删除、合并或 apply 知识。会话知识以及 agent/知识管理员建议都会先进入可编辑 draft/proposal，只有用户明确确认后才写入 wiki。Obsidian 是可选增强，不是必需依赖。
+Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上下文。默认使用 ClawX 托管的隔离 native vault，可在不切换到 unsafe local-vault 模式的情况下导入受限的文本文件或文件夹，也可以验证并导入本地 OKF v0.1 Markdown bundle，作为覆盖在 `wiki.ingest` 之上的轻量兼容适配层。它提供状态、搜索、查看、compile、lint、Knowledge Inbox、draft/proposal 审查、provenance 和治理流程。Inbox 会把 Chat、任务账本、文件、OKF、ClawGraph 或 agent 提出的候选知识暂存在正式 wiki 之外，直到用户选择提升为草稿或忽略；provenance 只记录来源引用和读取/引用事件，不修改 wiki 页面。Chat 的知识范围（`None`、`Memory`、`Wiki` 或 `All`）只代表读取范围：agent 可以 search/get 上下文，但不能因为启用 scope 就写入、修改、归档、删除、合并或 apply 知识。在 Chat 中，`/wiki` 会搜索并以可见 chip 挂载明确的 wiki 引用后再发送，`/memory`、`/all`、`/none` 和 `/scope` 只调整读取范围，不会变成写权限。会话知识以及 agent/知识管理员建议都会先进入可编辑 draft/proposal，只有用户明确确认后才写入 wiki。Obsidian 是可选增强，不是必需依赖。
 
 ### Workspace Git 控制
-Workspace 侧栏新增 Git 视图，可查看仓库状态、文件 diff、暂存、提交、分支、stash、worktree 和 GitHub Pull Request。同一套 Main 进程 Git service 也驱动内置 `clawx-git` MCP server，让 Agent 通过 ClawX 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令。
+Workspace 侧栏提供 Git 工作台，可查看仓库状态、side-by-side 文件 diff、暂存、复制 patch、带审批的文件还原、提交、分支、stash、worktree 和 GitHub Pull Request。同一套 Main 进程 Git service 也驱动内置 `clawx-git` MCP server，让 Agent 通过 ClawX 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令。
 
 ### 📡 多频道管理
 同时配置和监控多个 AI 频道。每个频道独立运行，允许你为不同任务运行专门的智能体。
@@ -369,7 +380,7 @@ ClawX 采用 **双进程 + Host API 统一接入架构**。渲染进程只调用
 │   ├── lib/                 # 前端统一 API 与错误模型
 │   ├── stores/              # Zustand 状态仓库（settings/chat/gateway）
 │   ├── components/          # 可复用 UI 组件
-│   ├── pages/               # Setup/Dashboard/Chat/Channels/Skills/Cron/Settings
+│   ├── pages/               # Setup/Dashboard/Chat/Billing/Channels/Skills/Cron/Settings
 │   ├── i18n/                # 国际化资源
 │   └── types/               # TypeScript 类型定义
 ├── tests/

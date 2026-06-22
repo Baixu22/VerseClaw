@@ -85,4 +85,30 @@ describe('work mode presets', () => {
     expect(WORK_MODE_PRESETS.docsData.toolBundles).toEqual(['docs', 'sheets', 'pdf', 'memory']);
     expect(WORK_MODE_PRESETS.docsData.kits).toEqual(['reports', 'sheets', 'slides', 'pdf']);
   });
+
+  it('attaches phase-specific engineering control contracts without changing permissions', () => {
+    expect(WORK_MODE_PRESETS.plan.controlContract).toMatchObject({
+      phase: 'plan',
+      must: expect.arrayContaining(['clarify objective', 'define scope', 'identify acceptance criteria']),
+      mustNot: expect.arrayContaining(['claim implementation happened']),
+    });
+    expect(WORK_MODE_PRESETS.build.controlContract).toMatchObject({
+      phase: 'build',
+      must: expect.arrayContaining(['keep changes scoped', 'record evidence', 'run or name validation']),
+      mustNot: expect.arrayContaining(['mark unverified work complete']),
+    });
+    expect(WORK_MODE_PRESETS.review.controlContract).toMatchObject({
+      phase: 'review',
+      must: expect.arrayContaining(['lead with findings', 'cite evidence', 'name missing validation']),
+      mustNot: expect.arrayContaining(['edit unless explicitly asked']),
+    });
+    expect(WORK_MODE_PRESETS.docsData.controlContract).toMatchObject({
+      phase: 'docsData',
+      evidence: expect.arrayContaining(['preview check', 'export check', 'readability/citation/formula validation']),
+    });
+    expect(resolveWorkModePreset('review')).toMatchObject({
+      recommendedPermissionMode: 'readOnly',
+      controlContract: expect.objectContaining({ phase: 'review' }),
+    });
+  });
 });

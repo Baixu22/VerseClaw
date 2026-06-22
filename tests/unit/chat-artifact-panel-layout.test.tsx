@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Chat } from '@/pages/Chat';
 
@@ -43,6 +43,14 @@ const chatState = {
   lastUserMessageAt: null,
 };
 
+const artifactPanelState = vi.hoisted(() => ({
+  open: true,
+  widthPct: 34,
+  openChanges: vi.fn(),
+  openPreview: vi.fn(),
+  close: vi.fn(),
+}));
+
 vi.mock('@/stores/chat', () => ({
   useChatStore: (selector: (state: typeof chatState) => unknown) => selector(chatState),
 }));
@@ -57,13 +65,7 @@ vi.mock('@/stores/agents', () => ({
 vi.mock('@/stores/artifact-panel', () => ({
   ARTIFACT_PANEL_MIN_WIDTH: 28,
   ARTIFACT_PANEL_MAX_WIDTH: 50,
-  useArtifactPanel: (selector: (state: { open: boolean; widthPct: number; openChanges: () => void; openPreview: () => void; close: () => void }) => unknown) => selector({
-    open: true,
-    widthPct: 34,
-    openChanges: vi.fn(),
-    openPreview: vi.fn(),
-    close: vi.fn(),
-  }),
+  useArtifactPanel: (selector: (state: typeof artifactPanelState) => unknown) => selector(artifactPanelState),
 }));
 
 vi.mock('@/components/file-preview/ArtifactPanel', () => ({
@@ -96,6 +98,10 @@ vi.mock('@/pages/Chat/ChatToolbar', () => ({
 }));
 
 describe('Chat artifact panel layout', () => {
+  beforeEach(() => {
+    artifactPanelState.open = true;
+  });
+
   it('keeps the chat toolbar background draggable while actions remain clickable', async () => {
     window.electron.platform = 'darwin';
 
@@ -138,6 +144,18 @@ describe('Chat artifact panel layout', () => {
     render(<Chat />);
 
     expect(await screen.findByTestId('artifact-panel')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('work-mode-summary-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('task-ledger-summary')).not.toBeInTheDocument();
+  });
+
+  it('does not show the chat assistive rail before work starts', async () => {
+    window.electron.platform = 'win32';
+    artifactPanelState.open = false;
+
+    render(<Chat />);
+
+    expect(await screen.findByTestId('chat-page')).toBeInTheDocument();
     expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();
     expect(screen.queryByTestId('work-mode-summary-panel')).not.toBeInTheDocument();
     expect(screen.queryByTestId('task-ledger-summary')).not.toBeInTheDocument();

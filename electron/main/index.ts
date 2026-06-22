@@ -56,6 +56,10 @@ import { resolveRemoteDebuggingLaunchPort } from '../utils/remote-control';
 import { appendTaskLedgerEvents } from '../services/task-ledger-service';
 import type { TaskLedgerEventInput, TaskLedgerNodeStatus } from '../../shared/types/task-ledger';
 import type { ClawGraphRunEvent, ClawGraphRunSnapshot } from '../../shared/types/clawgraph';
+import type {
+  LongConversationControlSignal,
+  LongConversationValidationState,
+} from '../../shared/types/long-task-control';
 import type { MissionLifecycleEvent } from '../../shared/types/mission-control';
 
 const WINDOWS_APP_USER_MODEL_ID = 'app.clawx.desktop';
@@ -132,9 +136,29 @@ type TaskLoopLifecyclePayload = {
   progress?: number;
   orchestrationRunId?: string;
   selfCheckDecision?: string;
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
   error?: string;
   ts?: number;
 };
+
+function controlSignalTags(signals?: readonly LongConversationControlSignal[]): string[] {
+  return [...new Set((signals ?? []).map((signal) => signal.kind.replace(/_/g, '-')))];
+}
+
+function hasBlockingControlSignal(signals?: readonly LongConversationControlSignal[]): boolean {
+  return (signals ?? []).some((signal) => signal.severity === 'blocking');
+}
+
+function longConversationControlMetadata(input: {
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+}): Record<string, unknown> {
+  return {
+    controlSignals: input.controlSignals ?? [],
+    ...(input.validationState ? { validationState: input.validationState } : {}),
+  };
+}
 
 function taskLoopLedgerStatus(status?: string): TaskLedgerNodeStatus {
   if (status === 'complete') return 'done';
@@ -295,13 +319,14 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
           parentId: taskId,
           status: event.selfCheckDecision ? 'done' : 'doing',
           owner: 'agent',
-          tags: ['task-loop', 'self-check'],
+          tags: ['task-loop', 'self-check', ...controlSignalTags(event.controlSignals)],
           evidenceRefs,
           metadata: {
             loopRunId,
             iteration: event.iteration,
             phase: event.phase,
             selfCheckDecision: event.selfCheckDecision,
+            longConversationControl: longConversationControlMetadata(event),
           },
           createdAt,
           updatedAt: createdAt,
@@ -323,9 +348,13 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
           title: `Self-check decision: ${event.selfCheckDecision}`,
           kind: 'review',
           parentId: taskId,
-          status: event.selfCheckDecision === 'complete' ? 'done' : event.selfCheckDecision === 'blocked' ? 'blocked' : 'review',
+          status: event.selfCheckDecision === 'complete' && !hasBlockingControlSignal(event.controlSignals)
+            ? 'done'
+            : event.selfCheckDecision === 'blocked'
+              ? 'blocked'
+              : 'review',
           owner: 'agent',
-          tags: ['task-loop', 'self-check'],
+          tags: ['task-loop', 'self-check', ...controlSignalTags(event.controlSignals)],
           description: event.error,
           evidenceRefs,
           metadata: {
@@ -333,6 +362,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
             phase: event.phase,
             iteration: event.iteration,
             selfCheckDecision: event.selfCheckDecision,
+            longConversationControl: longConversationControlMetadata(event),
           },
           createdAt,
           updatedAt: createdAt,
@@ -502,13 +532,14 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
           parentId: taskId,
           status: event.reviewerDecision ? 'done' : 'doing',
           owner: 'agent',
-          tags: ['mission-control', 'evidence'],
+          tags: ['mission-control', 'evidence', ...controlSignalTags(event.controlSignals)],
           evidenceRefs,
           metadata: {
             missionId,
             phase: event.phase,
             tick: event.tick,
             reviewerDecision: event.reviewerDecision,
+            longConversationControl: longConversationControlMetadata(event),
           },
           createdAt,
           updatedAt: createdAt,
@@ -530,9 +561,11 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
           title: `Mission decision: ${event.reviewerDecision ?? event.status}`,
           kind: 'review',
           parentId: taskId,
-          status: event.reviewerDecision === 'complete' ? 'done' : status,
+          status: event.reviewerDecision === 'complete' && !hasBlockingControlSignal(event.controlSignals)
+            ? 'done'
+            : status,
           owner: 'agent',
-          tags: ['mission-control', 'review'],
+          tags: ['mission-control', 'review', ...controlSignalTags(event.controlSignals)],
           description: event.blockedReason ?? event.error,
           evidenceRefs,
           metadata: {
@@ -541,6 +574,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
             tick: event.tick,
             reviewerDecision: event.reviewerDecision,
             nextWakeAt: event.nextWakeAt,
+            longConversationControl: longConversationControlMetadata(event),
           },
           createdAt,
           updatedAt: createdAt,
