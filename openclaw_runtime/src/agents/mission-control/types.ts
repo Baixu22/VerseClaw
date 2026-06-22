@@ -1,4 +1,10 @@
 import type { AgentModelConfig } from "../../config/types.agents-shared.js";
+import type {
+  LongConversationAcceptanceStatus,
+  LongConversationControlSignal,
+  LongConversationQualityAssessment,
+  LongConversationValidationState,
+} from "../long-conversation-control-signals.js";
 import type { TaskLoopRunResult } from "../task-loop-controller.js";
 import type { MissionContextPack } from "./context.js";
 
@@ -79,6 +85,10 @@ export type MissionReviewerResult = {
   repairBrief?: string;
   nextTick?: { afterMs?: number; reason?: string };
   risks: string[];
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
+  quality?: LongConversationQualityAssessment[];
   memoryCandidates: MissionMemoryCandidate[];
   checkpointSummary: string;
 };
@@ -92,6 +102,8 @@ export type MissionTickRecord = {
   traceId?: string;
   evidenceRefs: MissionEvidenceRef[];
   reviewer?: MissionReviewerResult;
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
   createdAt: number;
   updatedAt: number;
 };
@@ -120,6 +132,9 @@ export type MissionRunRecord = {
   evidenceRefs: MissionEvidenceRef[];
   risks: string[];
   remaining: string[];
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
   noProgressHash?: string;
   metadata?: Record<string, unknown>;
   createdAt: number;
@@ -142,6 +157,8 @@ export type MissionLifecycleEvent = {
   blockedReason?: string;
   taskLoopRunId?: string;
   traceId?: string;
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
   error?: string;
   ts: number;
 };

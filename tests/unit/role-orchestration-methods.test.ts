@@ -17,11 +17,10 @@ import { createTeamOrchestrateTool } from '../../openclaw_runtime/src/agents/too
 import { isToolAllowedByPolicyName } from '../../openclaw_runtime/src/agents/tool-policy-match';
 import { getBuiltInRoleContract } from '../../openclaw_runtime/src/agents/role-contract';
 import { buildRoleSpawnContext } from '../../openclaw_runtime/src/agents/role-spawn';
-import { storeRuntimeTrace, getRuntimeTraceBuffer, clearRuntimeTraceBuffer } from '../../openclaw_runtime/src/observability/trace-buffer';
-import { clearMemoryCards, getMemoryCards, storeMemoryCard, setMemoryStorePath } from '../../openclaw_runtime/src/memory/memory-store';
+import { getRuntimeTraceBuffer, clearRuntimeTraceBuffer } from '../../openclaw_runtime/src/observability/trace-buffer';
+import { clearMemoryCards, setMemoryStorePath } from '../../openclaw_runtime/src/memory/memory-store';
 import {
   buildHandlerArgs,
-  captureRespond,
   configWithRoles,
   emptyConfig,
   type CapturedRespond,
@@ -171,6 +170,46 @@ describe('orchestrator.plan handler', () => {
     expect(plan.verifierRole).toBe('skeptic');
     expect(plan.workers.map((worker) => worker.roleName)).toEqual(['security-reviewer', 'reviewer', 'tester']);
     expect(payload.executionWaves.every((wave) => wave.roles.length <= 2)).toBe(true);
+  });
+
+  it('accepts explicit duplicate workers and preserves labels', async () => {
+    const res = await callHandler('orchestrator.plan', {
+      task: 'compare implementation approaches',
+      workers: [
+        { roleName: 'architect', label: 'Conservative', task: 'Compare a conservative path' },
+        { roleName: 'architect', label: 'Modular', task: 'Compare a modular path' },
+        { roleName: 'architect', label: 'Integration-first', task: 'Compare an integration-first path' },
+      ],
+    });
+    expect(res?.ok).toBe(true);
+    const plan = (res?.payload as { plan: { mode: string; leadRole: string; workers: Array<{ roleName: string; label?: string; task: string }> } }).plan;
+    expect(plan.mode).toBe('lead-workers');
+    expect(plan.leadRole).toBe('architect');
+    expect(plan.workers.map((worker) => worker.roleName)).toEqual(['architect', 'architect', 'architect']);
+    expect(plan.workers.map((worker) => worker.label)).toEqual(['Conservative', 'Modular', 'Integration-first']);
+    expect(plan.workers.map((worker) => worker.task)).toEqual([
+      'Compare a conservative path',
+      'Compare a modular path',
+      'Compare an integration-first path',
+    ]);
+  });
+
+  it('errors when explicit workers are empty', async () => {
+    const res = await callHandler('orchestrator.plan', {
+      task: 'compare implementation approaches',
+      workers: [],
+    });
+    expect(res?.ok).toBe(false);
+    expect(res?.error?.message).toMatch(/workers.*non-empty array/);
+  });
+
+  it('errors when explicit workers include an unknown role', async () => {
+    const res = await callHandler('orchestrator.plan', {
+      task: 'compare implementation approaches',
+      workers: [{ roleName: 'ghost-role', task: 'Do impossible work' }],
+    });
+    expect(res?.ok).toBe(false);
+    expect(res?.error?.message).toMatch(/unknown role/);
   });
 });
 

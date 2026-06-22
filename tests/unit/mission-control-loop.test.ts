@@ -27,6 +27,9 @@ vi.mock('../../openclaw_runtime/src/agents/long-task-control/store', () => ({
     testsRun: [],
     reviewNeededItems: input.reviewNeededItems ?? [],
     evidenceRefs: input.evidenceRefs ?? [],
+    controlSignals: input.controlSignals,
+    validationState: input.validationState,
+    acceptanceStatus: input.acceptanceStatus,
     metadata: input.metadata,
     createdAt: new Date(input.createdAt as number).toISOString(),
   })),
@@ -88,6 +91,7 @@ function createDeps(params?: {
   let id = 0;
   let now = 1_000;
   const lifecycle: string[] = [];
+  const lifecycleEvents: Array<Record<string, unknown>> = [];
   const deps: MissionControllerDeps = {
     idFactory: (prefix) => `${prefix}-${++id}`,
     now: () => now++,
@@ -102,9 +106,12 @@ function createDeps(params?: {
     reviewer: params?.reviewer ?? (async () => review(params?.reviewerDecision ?? 'complete')),
     storeTrace: vi.fn() as never,
     proposeMemory: vi.fn() as never,
-    lifecycle: (event) => lifecycle.push(`${event.phase}:${event.status}:${event.reviewerDecision ?? ''}`),
+    lifecycle: (event) => {
+      lifecycle.push(`${event.phase}:${event.status}:${event.reviewerDecision ?? ''}`);
+      lifecycleEvents.push(JSON.parse(JSON.stringify(event)) as Record<string, unknown>);
+    },
   };
-  return { deps, store, lifecycle };
+  return { deps, store, lifecycle, lifecycleEvents };
 }
 
 describe('Mission Control controller', () => {
@@ -178,6 +185,88 @@ describe('Mission Control controller', () => {
 
     expect(blocked.status).toBe('blocked');
     expect(blocked.blockedReason).toMatch(/maximum tick/i);
+  });
+
+  it('persists reviewer control signals through mission state, lifecycle, and checkpoint records', async () => {
+    const { recordLongTaskCheckpoint } = await import('../../openclaw_runtime/src/agents/long-task-control/store');
+    const { deps, lifecycleEvents } = createDeps({
+      reviewer: async () => review('repair', {
+        missingEvidence: ['missing test evidence'],
+        verificationGaps: ['unit test not run'],
+        repairBrief: 'run tests',
+        controlSignals: [{
+          kind: 'validation_missing',
+          severity: 'warning',
+          message: 'unit test not run',
+          suggestedAction: 'verify',
+          source: 'mission.reviewer',
+        }],
+        validationState: {
+          status: 'missing',
+          checks: ['unit test not run'],
+          evidenceRefs: [],
+        },
+        acceptanceStatus: {
+          status: 'partial',
+          criteria: ['tests pass'],
+          gaps: ['unit test not run'],
+        },
+      }),
+    });
+
+    const created = createMission(
+      {
+        objective: 'Fix the flow',
+        sessionKey: 'agent:main:session',
+        acceptance: ['tests pass'],
+      },
+      {},
+      deps,
+    );
+    const ticked = await tickMission({ missionId: created.missionId }, {}, deps);
+
+    expect(ticked.controlSignals?.[0]).toMatchObject({ kind: 'validation_missing' });
+    expect(ticked.validationState).toMatchObject({ status: 'missing' });
+    expect(ticked.acceptanceStatus).toMatchObject({ status: 'partial' });
+    expect(ticked.ticks[0]?.controlSignals?.[0]).toMatchObject({ kind: 'validation_missing' });
+    expect(lifecycleEvents.some((event) => Array.isArray(event.controlSignals))).toBe(true);
+    expect(recordLongTaskCheckpoint).toHaveBeenCalledWith(expect.objectContaining({
+      controlSignals: expect.arrayContaining([expect.objectContaining({ kind: 'validation_missing' })]),
+      validationState: expect.objectContaining({ status: 'missing' }),
+      acceptanceStatus: expect.objectContaining({ status: 'partial' }),
+    }));
+  });
+
+  it('does not complete when an injected reviewer leaves validation missing', async () => {
+    const { deps } = createDeps({
+      reviewer: async () => review('complete', {
+        controlSignals: [{
+          kind: 'validation_missing',
+          severity: 'blocking',
+          message: 'validation did not run',
+          suggestedAction: 'verify',
+          source: 'mission.reviewer',
+        }],
+        validationState: {
+          status: 'missing',
+          checks: [],
+          evidenceRefs: [],
+        },
+      }),
+    });
+    const mission = await runMission(
+      {
+        objective: 'Ship Mission Control',
+        sessionKey: 'agent:main:session',
+        acceptance: ['tests pass'],
+      },
+      {},
+      deps,
+    );
+
+    expect(mission.status).not.toBe('complete');
+    expect(mission.lastDecision).toBe('repair');
+    expect(mission.remaining).toContain('Mission validation or acceptance evidence is missing.');
   });
 
   it('pauses, resumes, and cancels non-terminal missions', () => {

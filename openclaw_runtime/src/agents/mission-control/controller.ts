@@ -10,6 +10,14 @@ import {
   recordLongTaskCheckpoint,
 } from "../long-task-control/store.js";
 import {
+  defaultQualityAssessments,
+  deriveValidationState,
+  hasBlockingControlSignal,
+  normalizeControlSignals,
+  signalsFromGaps,
+  type LongConversationControlSignal,
+} from "../long-conversation-control-signals.js";
+import {
   runTaskLoop,
   type TaskLoopControllerDeps,
   type TaskLoopRunRequest,
@@ -32,6 +40,7 @@ import type {
   MissionLifecycleEvent,
   MissionMemoryCandidate,
   MissionPhase,
+  MissionReviewerResult,
   MissionReviewerDeps,
   MissionRunRecord,
   MissionRunRequest,
@@ -102,10 +111,20 @@ function clone(record: MissionRunRecord): MissionRunRecord {
     evidenceRefs: [...record.evidenceRefs],
     risks: [...record.risks],
     remaining: [...record.remaining],
+    controlSignals: record.controlSignals ? [...record.controlSignals] : undefined,
+    validationState: record.validationState ? { ...record.validationState } : undefined,
+    acceptanceStatus: record.acceptanceStatus ? { ...record.acceptanceStatus } : undefined,
     ticks: record.ticks.map((tick) => ({
       ...tick,
       evidenceRefs: [...tick.evidenceRefs],
-      reviewer: tick.reviewer ? { ...tick.reviewer } : undefined,
+      controlSignals: tick.controlSignals ? [...tick.controlSignals] : undefined,
+      validationState: tick.validationState ? { ...tick.validationState } : undefined,
+      reviewer: tick.reviewer ? {
+        ...tick.reviewer,
+        controlSignals: tick.reviewer.controlSignals ? [...tick.reviewer.controlSignals] : undefined,
+        validationState: tick.reviewer.validationState ? { ...tick.reviewer.validationState } : undefined,
+        acceptanceStatus: tick.reviewer.acceptanceStatus ? { ...tick.reviewer.acceptanceStatus } : undefined,
+      } : undefined,
     })),
     metadata: { ...(record.metadata ?? {}) },
   };
@@ -130,6 +149,8 @@ function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Part
       blockedReason: record.blockedReason,
       taskLoopRunId: record.taskLoopRunId,
       traceId: record.traceId,
+      controlSignals: record.controlSignals,
+      validationState: record.validationState,
       ...patch,
     },
     createdAt: now,
@@ -148,6 +169,8 @@ function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Part
     blockedReason: record.blockedReason,
     taskLoopRunId: record.taskLoopRunId,
     traceId: record.traceId,
+    controlSignals: record.controlSignals,
+    validationState: record.validationState,
     ts: now,
     ...patch,
   });
@@ -202,6 +225,79 @@ function buildNoProgressHash(decision: MissionDecision, repairBrief: string | un
       evidence: evidence.map((ref) => [ref.type, ref.ref, ref.summary ?? ""]),
     }))
     .digest("hex");
+}
+
+function missionHasOpenControlSignals(reviewer: MissionReviewerResult): boolean {
+  return reviewer.missingEvidence.length > 0
+    || reviewer.verificationGaps.length > 0
+    || hasBlockingControlSignal(reviewer.controlSignals)
+    || reviewer.validationState?.status === "failed"
+    || reviewer.validationState?.status === "missing"
+    || reviewer.validationState?.status === "partial"
+    || reviewer.validationState?.status === "not_run"
+    || reviewer.acceptanceStatus?.status === "missing"
+    || reviewer.acceptanceStatus?.status === "partial"
+    || reviewer.acceptanceStatus?.status === "changed";
+}
+
+function missionNeedsUserConfirmation(signals: readonly LongConversationControlSignal[] | undefined): boolean {
+  return (signals ?? []).some((signal) =>
+    signal.suggestedAction === "ask_user"
+      || signal.suggestedAction === "replan"
+      || signal.kind === "scope_drift"
+      || signal.kind === "replan_required"
+      || signal.kind === "permission_wait",
+  );
+}
+
+function gateMissionReviewerCompletion(
+  reviewer: MissionReviewerResult,
+  record: MissionRunRecord,
+): MissionReviewerResult {
+  if (reviewer.decision !== "complete" || !missionHasOpenControlSignals(reviewer)) {
+    return reviewer;
+  }
+  const canRepair = record.repairTicks < record.maxRepairTicks && record.tick < record.maxTicks;
+  const missingEvidence = reviewer.missingEvidence.length
+    ? reviewer.missingEvidence
+    : ["Mission completion had unresolved control signals."];
+  const verificationGaps = reviewer.verificationGaps.length
+    ? reviewer.verificationGaps
+    : ["Mission validation or acceptance evidence is missing."];
+  const controlSignals = normalizeControlSignals([
+    ...(reviewer.controlSignals ?? []),
+    ...signalsFromGaps({
+      missingEvidence,
+      verificationGaps,
+      risks: reviewer.risks,
+      source: "mission.controller",
+      repairable: canRepair,
+    }),
+  ]);
+  const validationState = reviewer.validationState ?? deriveValidationState({
+    status: "missing",
+    gaps: verificationGaps,
+  });
+  const decision: MissionDecision = missionNeedsUserConfirmation(controlSignals)
+    ? "ask_user"
+    : canRepair
+      ? "repair"
+      : "blocked";
+  return {
+    ...reviewer,
+    decision,
+    confidence: Math.min(reviewer.confidence, decision === "repair" ? 0.55 : 0.4),
+    reason: reviewer.reason || "Mission completion was downgraded because control signals remained open.",
+    missingEvidence,
+    verificationGaps,
+    repairBrief: decision === "repair"
+      ? reviewer.repairBrief ?? `Resolve Mission completion gaps: ${[...missingEvidence, ...verificationGaps].join("; ")}`
+      : reviewer.repairBrief,
+    controlSignals,
+    validationState,
+    quality: defaultQualityAssessments({ signals: controlSignals, validationState }),
+    checkpointSummary: reviewer.checkpointSummary || "Mission completion was downgraded because control signals remained open.",
+  };
 }
 
 function withInnerTaskLoopConfig(cfg: OpenClawConfig | undefined, missionConfig: MissionConfig): OpenClawConfig | undefined {
@@ -384,6 +480,10 @@ export async function tickMission(
       openBlockers: input.openBlockers,
       reviewItems: input.reviewItems,
       repairBrief: input.repairBrief,
+      controlSignals: record.controlSignals,
+      validationState: record.validationState,
+      acceptanceStatus: record.acceptanceStatus,
+      scopeSummary: record.lastReason,
     });
     recorder.recordEvent("mission.context_pack", contextPack.hash, {
       attributes: { missionId: record.missionId, tick: record.tick },
@@ -423,7 +523,7 @@ export async function tickMission(
 
     record.phase = "reflect";
     emit(record, deps);
-    const reviewer = await (deps.reviewer ?? runMissionReviewer)({
+    const rawReviewer = await (deps.reviewer ?? runMissionReviewer)({
       cfg,
       agentId: record.agentId,
       reviewer: config.reviewer,
@@ -440,6 +540,10 @@ export async function tickMission(
         openBlockers: input.openBlockers,
         reviewItems: input.reviewItems,
         repairBrief: input.repairBrief,
+        controlSignals: record.controlSignals,
+        validationState: record.validationState,
+        acceptanceStatus: record.acceptanceStatus,
+        scopeSummary: record.lastReason,
       }),
       taskLoopResult,
       failures: taskLoopResult.status === "error" ? [taskLoopResult.error ?? "task_loop error"] : [],
@@ -448,6 +552,7 @@ export async function tickMission(
       maxRepairTicks: record.maxRepairTicks,
       maxTicks: record.maxTicks,
     }, deps.reviewerDeps);
+    const reviewer = gateMissionReviewerCompletion(rawReviewer, record);
 
     const noProgressHash = buildNoProgressHash(reviewer.decision, reviewer.repairBrief, record.evidenceRefs);
     const repeatedRepair = reviewer.decision === "repair" && record.noProgressHash === noProgressHash;
@@ -457,9 +562,16 @@ export async function tickMission(
     record.lastReviewerSummary = reviewer.checkpointSummary;
     record.risks = reviewer.risks;
     record.remaining = [...reviewer.missingEvidence, ...reviewer.verificationGaps];
+    record.controlSignals = reviewer.controlSignals;
+    record.validationState = reviewer.validationState;
+    record.acceptanceStatus = reviewer.acceptanceStatus;
 
     record.phase = "memory_propose";
-    emit(record, deps, { reviewerDecision: reviewer.decision });
+    emit(record, deps, {
+      reviewerDecision: reviewer.decision,
+      controlSignals: reviewer.controlSignals,
+      validationState: reviewer.validationState,
+    });
     const proposedMemory = config.memory?.proposeAfterTick === false
       ? 0
       : proposeMemoryCandidates(record, reviewer.memoryCandidates, deps);
@@ -468,7 +580,11 @@ export async function tickMission(
     });
 
     record.phase = "checkpoint";
-    emit(record, deps, { reviewerDecision: reviewer.decision });
+    emit(record, deps, {
+      reviewerDecision: reviewer.decision,
+      controlSignals: reviewer.controlSignals,
+      validationState: reviewer.validationState,
+    });
     const checkpoint = buildRuntimeResumeCheckpoint({
       id: `mission:${record.missionId}:tick:${record.tick}`,
       sessionKey: record.sessionKey,
@@ -479,6 +595,9 @@ export async function tickMission(
       nextAction: reviewer.decision,
       reviewNeededItems: reviewer.decision === "ask_user" ? reviewer.missingEvidence : [],
       evidenceRefs: record.evidenceRefs.map((ref) => ({ type: ref.type, ref: ref.ref, label: ref.label })),
+      controlSignals: reviewer.controlSignals,
+      validationState: reviewer.validationState,
+      acceptanceStatus: reviewer.acceptanceStatus,
       metadata: {
         missionId: record.missionId,
         tick: record.tick,
@@ -497,6 +616,9 @@ export async function tickMission(
       trigger: checkpoint.trigger,
       status: reviewer.decision,
       checkpoint,
+      controlSignals: reviewer.controlSignals,
+      validationState: reviewer.validationState,
+      acceptanceStatus: reviewer.acceptanceStatus,
     });
 
     if (repeatedRepair) {
@@ -550,10 +672,16 @@ export async function tickMission(
       traceId: record.traceId,
       evidenceRefs: [...record.evidenceRefs],
       reviewer,
+      controlSignals: reviewer.controlSignals,
+      validationState: reviewer.validationState,
       createdAt: now(),
       updatedAt: now(),
     });
-    emit(record, deps, { reviewerDecision: record.lastDecision });
+    emit(record, deps, {
+      reviewerDecision: record.lastDecision,
+      controlSignals: record.controlSignals,
+      validationState: record.validationState,
+    });
 
     recorder.recordEvent("mission.reflect", reviewer.decision, {
       attributes: { missionId: record.missionId, confidence: reviewer.confidence, risks: reviewer.risks },
@@ -566,7 +694,12 @@ export async function tickMission(
     record.traceId = trace.id;
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
     saveMission(record);
-    emit(record, deps, { traceId: record.traceId, reviewerDecision: record.lastDecision });
+    emit(record, deps, {
+      traceId: record.traceId,
+      reviewerDecision: record.lastDecision,
+      controlSignals: record.controlSignals,
+      validationState: record.validationState,
+    });
     return clone(record);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

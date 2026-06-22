@@ -89,6 +89,13 @@ export interface WorkModeKitCapability {
 
 export type WorkModeCapabilitySummary = Record<WorkModeCapabilityStatus, number>;
 
+export interface WorkModeControlContract {
+  phase: WorkModeId;
+  must: string[];
+  mustNot: string[];
+  evidence: string[];
+}
+
 export interface WorkModePreset {
   id: WorkModeId;
   labelKey: string;
@@ -100,6 +107,7 @@ export interface WorkModePreset {
   toolBundles: WorkModeToolBundle[];
   kits: WorkModeKit[];
   instruction: string;
+  controlContract: WorkModeControlContract;
 }
 
 export const WORK_MODE_IDS: WorkModeId[] = ['plan', 'build', 'review', 'docsData'];
@@ -230,6 +238,12 @@ export const WORK_MODE_PRESETS: Record<WorkModeId, WorkModePreset> = {
     toolBundles: ['code', 'docs', 'memory'],
     kits: ['reports', 'research', 'ops'],
     instruction: 'Plan first. Clarify assumptions, risks, affected areas, and acceptance criteria. Do not imply that implementation has happened.',
+    controlContract: {
+      phase: 'plan',
+      must: ['clarify objective', 'define scope', 'identify acceptance criteria', 'name evidence plan'],
+      mustNot: ['claim implementation happened', 'treat unverified assumptions as fact'],
+      evidence: ['scope summary', 'acceptance criteria', 'risk list'],
+    },
   },
   build: {
     id: 'build',
@@ -242,6 +256,12 @@ export const WORK_MODE_PRESETS: Record<WorkModeId, WorkModePreset> = {
     toolBundles: ['code', 'git', 'terminal', 'browser'],
     kits: ['website', 'design'],
     instruction: 'Implement directly when the request is clear. Keep changes focused, verify them, and summarize what changed.',
+    controlContract: {
+      phase: 'build',
+      must: ['keep changes scoped', 'record evidence', 'run or name validation', 'surface scope drift'],
+      mustNot: ['broaden permissions', 'hide failed validation', 'mark unverified work complete'],
+      evidence: ['changed files', 'test or verification output', 'remaining gaps'],
+    },
   },
   review: {
     id: 'review',
@@ -254,6 +274,12 @@ export const WORK_MODE_PRESETS: Record<WorkModeId, WorkModePreset> = {
     toolBundles: ['code', 'git', 'terminal'],
     kits: ['research', 'pdf'],
     instruction: 'Review first. Lead with findings ordered by severity, include concrete evidence, and avoid editing unless explicitly asked.',
+    controlContract: {
+      phase: 'review',
+      must: ['lead with findings', 'cite evidence', 'name missing validation', 'separate risk from fact'],
+      mustNot: ['edit unless explicitly asked', 'clear review automatically', 'accept trace as completion truth'],
+      evidence: ['file or trace refs', 'test gaps', 'unverified claims'],
+    },
   },
   docsData: {
     id: 'docsData',
@@ -266,6 +292,12 @@ export const WORK_MODE_PRESETS: Record<WorkModeId, WorkModePreset> = {
     toolBundles: ['docs', 'sheets', 'pdf', 'memory'],
     kits: ['reports', 'sheets', 'slides', 'pdf'],
     instruction: 'Prioritize documents, spreadsheets, PDFs, reports, structured summaries, and exportable artifacts.',
+    controlContract: {
+      phase: 'docsData',
+      must: ['produce inspectable artifacts', 'record preview or export checks', 'track citations or formula checks when relevant'],
+      mustNot: ['treat draft artifacts as reviewed', 'write memory without proposal or user confirmation'],
+      evidence: ['preview check', 'export check', 'readability/citation/formula validation'],
+    },
   },
 };
 

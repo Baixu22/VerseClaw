@@ -6,6 +6,14 @@ import {
   openOpenClawStateDatabase,
   runOpenClawStateWriteTransaction,
 } from "../../state/openclaw-state-db.js";
+import {
+  normalizeAcceptanceStatus,
+  normalizeControlSignals,
+  normalizeValidationState,
+  type LongConversationAcceptanceStatus,
+  type LongConversationControlSignal,
+  type LongConversationValidationState,
+} from "../long-conversation-control-signals.js";
 
 export type LongTaskInputMode = "interrupt" | "guide" | "queue";
 export type ResumeCheckpointTrigger =
@@ -49,6 +57,9 @@ export type RuntimeResumeCheckpoint = {
   nextAction?: string;
   reviewNeededItems: string[];
   evidenceRefs: Array<{ type: string; ref: string; label?: string }>;
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
   createdAt: string;
   metadata?: Record<string, unknown>;
 };
@@ -171,6 +182,15 @@ function parseCheckpoint(raw: string | null): RuntimeResumeCheckpoint {
             : [];
         })
       : [],
+    ...(normalizeControlSignals(parsed.controlSignals).length
+      ? { controlSignals: normalizeControlSignals(parsed.controlSignals) }
+      : {}),
+    ...(normalizeValidationState(parsed.validationState)
+      ? { validationState: normalizeValidationState(parsed.validationState) }
+      : {}),
+    ...(normalizeAcceptanceStatus(parsed.acceptanceStatus)
+      ? { acceptanceStatus: normalizeAcceptanceStatus(parsed.acceptanceStatus) }
+      : {}),
     createdAt: typeof parsed.createdAt === "string" ? parsed.createdAt : new Date().toISOString(),
     ...(typeof parsed.id === "string" ? { id: parsed.id } : {}),
     ...(typeof parsed.workspaceId === "string" || parsed.workspaceId === null
@@ -290,6 +310,9 @@ export function buildRuntimeResumeCheckpoint(input: {
   nextAction?: string;
   reviewNeededItems?: string[];
   evidenceRefs?: RuntimeResumeCheckpoint["evidenceRefs"];
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
   metadata?: Record<string, unknown>;
   createdAt?: number;
 }): RuntimeResumeCheckpoint {
@@ -310,6 +333,15 @@ export function buildRuntimeResumeCheckpoint(input: {
     ...(input.nextAction ? { nextAction: input.nextAction } : {}),
     reviewNeededItems: input.reviewNeededItems?.filter(Boolean) ?? [],
     evidenceRefs: input.evidenceRefs ?? [{ type: "session", ref: input.sessionKey }],
+    ...(normalizeControlSignals(input.controlSignals).length
+      ? { controlSignals: normalizeControlSignals(input.controlSignals) }
+      : {}),
+    ...(normalizeValidationState(input.validationState)
+      ? { validationState: normalizeValidationState(input.validationState) }
+      : {}),
+    ...(normalizeAcceptanceStatus(input.acceptanceStatus)
+      ? { acceptanceStatus: normalizeAcceptanceStatus(input.acceptanceStatus) }
+      : {}),
     createdAt,
     ...(input.metadata ? { metadata: input.metadata } : {}),
   };
@@ -332,6 +364,9 @@ export function recordLongTaskCheckpoint(input: {
   nextAction?: string;
   reviewNeededItems?: string[];
   evidenceRefs?: RuntimeResumeCheckpoint["evidenceRefs"];
+  controlSignals?: LongConversationControlSignal[];
+  validationState?: LongConversationValidationState;
+  acceptanceStatus?: LongConversationAcceptanceStatus;
   metadata?: Record<string, unknown>;
 }): LongTaskCheckpointRecord {
   const now = Date.now();
@@ -349,6 +384,9 @@ export function recordLongTaskCheckpoint(input: {
       nextAction: input.nextAction,
       reviewNeededItems: input.reviewNeededItems,
       evidenceRefs: input.evidenceRefs,
+      controlSignals: input.controlSignals,
+      validationState: input.validationState,
+      acceptanceStatus: input.acceptanceStatus,
       metadata: input.metadata,
       createdAt: now,
     });

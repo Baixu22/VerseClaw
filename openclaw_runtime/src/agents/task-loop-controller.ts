@@ -14,6 +14,13 @@ import { listRoleContracts } from "./role-registry.js";
 import type { RoleSpawnContext, SpawnFn } from "./role-spawn.js";
 import { buildTaskLoopContextPack, type TaskLoopEvidenceRef } from "./task-loop-context.js";
 import {
+  defaultQualityAssessments,
+  deriveValidationState,
+  hasBlockingControlSignal,
+  normalizeControlSignals,
+  signalsFromGaps,
+} from "./long-conversation-control-signals.js";
+import {
   hashTaskLoopRepairInput,
   runTaskLoopSelfCheck,
   type TaskLoopReviewerConfig,
@@ -69,6 +76,8 @@ export type TaskLoopLifecycleEvent = {
   orchestrationRunId?: string;
   activeRoles?: string[];
   selfCheckDecision?: TaskLoopSelfCheckResult["decision"];
+  controlSignals?: TaskLoopSelfCheckResult["controlSignals"];
+  validationState?: TaskLoopSelfCheckResult["validationState"];
   error?: string;
   ts: number;
 };
@@ -82,6 +91,8 @@ export type TaskLoopIterationSnapshot = {
   risks: string[];
   remaining: string[];
   nextActions: string[];
+  controlSignals?: TaskLoopSelfCheckResult["controlSignals"];
+  validationState?: TaskLoopSelfCheckResult["validationState"];
   selfCheck?: TaskLoopSelfCheckResult;
 };
 
@@ -99,6 +110,8 @@ export type TaskLoopRunRecord = {
   risks: string[];
   remaining: string[];
   nextActions: string[];
+  controlSignals?: TaskLoopSelfCheckResult["controlSignals"];
+  validationState?: TaskLoopSelfCheckResult["validationState"];
   finalSummary?: string;
   traceId?: string;
   error?: string;
@@ -238,6 +251,8 @@ function emit(
     status: record.status,
     iteration: record.iteration,
     progress: progressForPhase(record.phase, Math.max(1, record.iteration), record.maxIterations),
+    controlSignals: record.controlSignals,
+    validationState: record.validationState,
     ts: record.updatedAt,
     ...patch,
   });
@@ -253,6 +268,8 @@ function snapshot(record: TaskLoopRunRecord, selfCheck?: TaskLoopSelfCheckResult
     risks: [...record.risks],
     remaining: [...record.remaining],
     nextActions: [...record.nextActions],
+    ...(record.controlSignals ? { controlSignals: [...record.controlSignals] } : {}),
+    ...(record.validationState ? { validationState: record.validationState } : {}),
     ...(selfCheck ? { selfCheck } : {}),
   });
 }
@@ -265,6 +282,64 @@ function buildRepairTask(originalTask: string, selfCheck: TaskLoopSelfCheckResul
     selfCheck.missingEvidence.length ? `Missing evidence: ${selfCheck.missingEvidence.join("; ")}` : "",
     selfCheck.verificationGaps.length ? `Verification gaps: ${selfCheck.verificationGaps.join("; ")}` : "",
   ].filter(Boolean).join("\n");
+}
+
+function selfCheckHasOpenControlSignals(selfCheck: TaskLoopSelfCheckResult): boolean {
+  return selfCheck.missingEvidence.length > 0
+    || selfCheck.verificationGaps.length > 0
+    || hasBlockingControlSignal(selfCheck.controlSignals)
+    || selfCheck.validationState?.status === "failed"
+    || selfCheck.validationState?.status === "missing"
+    || selfCheck.validationState?.status === "partial"
+    || selfCheck.validationState?.status === "not_run"
+    || selfCheck.acceptanceStatus?.status === "missing"
+    || selfCheck.acceptanceStatus?.status === "partial"
+    || selfCheck.acceptanceStatus?.status === "changed";
+}
+
+function gateTaskLoopSelfCheckCompletion(
+  selfCheck: TaskLoopSelfCheckResult,
+  repairIterations: number,
+  maxRepairIterations: number,
+): TaskLoopSelfCheckResult {
+  if (selfCheck.decision !== "complete" || !selfCheckHasOpenControlSignals(selfCheck)) {
+    return selfCheck;
+  }
+  const canRepair = repairIterations < maxRepairIterations;
+  const missingEvidence = selfCheck.missingEvidence.length
+    ? selfCheck.missingEvidence
+    : ["Task-loop completion had unresolved control signals."];
+  const verificationGaps = selfCheck.verificationGaps.length
+    ? selfCheck.verificationGaps
+    : ["Task-loop validation or acceptance evidence is missing."];
+  const controlSignals = normalizeControlSignals([
+    ...(selfCheck.controlSignals ?? []),
+    ...signalsFromGaps({
+      missingEvidence,
+      verificationGaps,
+      risks: selfCheck.risks,
+      source: "task_loop.controller",
+      repairable: canRepair,
+    }),
+  ]);
+  const validationState = selfCheck.validationState ?? deriveValidationState({
+    status: "missing",
+    gaps: verificationGaps,
+  });
+  return {
+    ...selfCheck,
+    decision: canRepair ? "repair" : "blocked",
+    confidence: Math.min(selfCheck.confidence, canRepair ? 0.55 : 0.4),
+    missingEvidence,
+    verificationGaps,
+    repairBrief: canRepair
+      ? selfCheck.repairBrief ?? `Resolve task-loop completion gaps: ${[...missingEvidence, ...verificationGaps].join("; ")}`
+      : undefined,
+    controlSignals,
+    validationState,
+    quality: defaultQualityAssessments({ signals: controlSignals, validationState }),
+    contextSummary: selfCheck.contextSummary || "Task-loop completion was downgraded because control signals remained open.",
+  };
 }
 
 export function getTaskLoopRun(loopRunId: string): TaskLoopRunRecord | null {
@@ -407,8 +482,10 @@ export async function runTaskLoop(
         acceptance: request.acceptance,
         evidenceRefs: record.evidenceRefs,
         failures,
+        controlSignals: record.controlSignals,
+        validationState: record.validationState,
       });
-      const selfCheck = await (deps.selfCheck ?? runTaskLoopSelfCheck)({
+      const rawSelfCheck = await (deps.selfCheck ?? runTaskLoopSelfCheck)({
         cfg,
         agentId: request.agentId,
         reviewer: config.reviewer,
@@ -417,11 +494,19 @@ export async function runTaskLoop(
         repairIterationsUsed: repairIterations,
         maxRepairIterations,
       }, deps.selfCheckDeps);
+      const selfCheck = gateTaskLoopSelfCheckCompletion(rawSelfCheck, repairIterations, maxRepairIterations);
       previousContextSummary = selfCheck.contextSummary;
       record.risks = selfCheck.risks;
       record.remaining = [...selfCheck.missingEvidence, ...selfCheck.verificationGaps];
+      record.controlSignals = selfCheck.controlSignals;
+      record.validationState = selfCheck.validationState;
       record.nextActions = [];
-      emit(record, deps, { orchestrationRunId, selfCheckDecision: selfCheck.decision });
+      emit(record, deps, {
+        orchestrationRunId,
+        selfCheckDecision: selfCheck.decision,
+        controlSignals: selfCheck.controlSignals,
+        validationState: selfCheck.validationState,
+      });
       recorder.recordEvent("task_loop.self_check", selfCheck.decision, {
         attributes: { loopRunId, iteration, confidence: selfCheck.confidence, risks: selfCheck.risks },
       });
