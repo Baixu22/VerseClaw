@@ -11,13 +11,13 @@
 - Test paths touched:
   - `tests/unit/runtime-resume-shadow.test.ts`
 - Commands run:
-  - `rtk node harness/src/cli.mjs context --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md`
-  - `rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-resume-shadow.test.ts`
-  - Git Bash expansion: `rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-core-contracts.test.ts tests/unit/runtime-event-log*.test.ts tests/unit/runtime-state-reducer*.test.ts tests/unit/runtime-checkpoint-serializer*.test.ts tests/unit/runtime-resume-shadow*.test.ts`
-  - `rtk node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false`
-  - `rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md --no-diff`
-  - `rtk rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|gateway:httpProxy|hostapi:fetch' src electron shared tests --glob '!**/*.md'`
-  - Git Bash expansion: `rtk rg -n 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|127\.0\.0\.1:18789|localhost:18789' openclaw_runtime/src/runtime-core openclaw_runtime/src/agents/long-task-control openclaw_runtime/src/agents/task-loop-controller.ts openclaw_runtime/src/agents/tools/task-loop-tool.ts tests/unit/runtime-resume-shadow*.test.ts`
+  - `rtk node harness/src/cli.mjs context --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md` attempted; `rtk` was not available on PATH in this shell.
+  - `node harness/src/cli.mjs context --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md`
+  - `node node_modules/vitest/vitest.mjs run tests/unit/runtime-core-contracts.test.ts tests/unit/runtime-event-log-store.test.ts tests/unit/runtime-state-reducer.test.ts tests/unit/runtime-checkpoint-serializer.test.ts tests/unit/runtime-resume-shadow.test.ts`
+  - `node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false`
+  - `node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md --no-diff`
+  - `rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|gateway:httpProxy|hostapi:fetch' src electron shared tests --glob '!**/*.md'`
+  - `rg -n 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|127\.0\.0\.1:18789|localhost:18789' openclaw_runtime/src/runtime-core openclaw_runtime/src/agents/long-task-control openclaw_runtime/src/agents/task-loop-controller.ts openclaw_runtime/src/agents/tools/task-loop-tool.ts tests/unit/runtime-resume-shadow.test.ts`
 - Required reading completed: yes
 
 ## Executive Summary
@@ -49,10 +49,10 @@
 | Ambiguous mutating result is diagnosed | test | `tests/unit/runtime-resume-shadow.test.ts` | lines 247-285 | Duplicate idempotency key history returns ambiguous diagnostic. |
 | Completed/blocked/failed comparison covered | test | `tests/unit/runtime-resume-shadow.test.ts` | lines 287-312 | Table-driven terminal state parity. |
 | Legacy checkpoint remains authoritative on mismatch | test | `tests/unit/runtime-resume-shadow.test.ts` | lines 314-348 | Replay completed vs legacy failed produces mismatch while keeping `legacyAuthoritative: true`. |
-| Focused required unit slice passed | command | Git Bash expanded required Vitest command | 5 files / 34 tests passed | Runtime contracts, Lane A, Lane C, and Lane D tests. |
-| TypeScript validation passed | command | `rtk node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false` | exit 0 | Required node typecheck. |
-| Harness validation passed | command | `rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md --no-diff` | pass | Spec structural validation. |
-| No second runtime service introduced | missing-after-search | required service/listener `rtk rg` scan | no matches; `rg` exit 1 | Scanned runtime-core, long-task-control, TaskLoop, task-loop tool, and resume-shadow tests. |
+| Focused required unit slice passed | command | `node node_modules/vitest/vitest.mjs run tests/unit/runtime-core-contracts.test.ts tests/unit/runtime-event-log-store.test.ts tests/unit/runtime-state-reducer.test.ts tests/unit/runtime-checkpoint-serializer.test.ts tests/unit/runtime-resume-shadow.test.ts` | 5 files / 34 tests passed | Runtime contracts, Lane A, Lane C, and Lane D tests. |
+| TypeScript validation passed | command | `node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false` | exit 0 | Required node typecheck; direct Node used because `rtk` was unavailable on PATH. |
+| Harness validation passed | command | `node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md --no-diff` | pass | Spec structural validation; direct Node used because `rtk` was unavailable on PATH. |
+| No second runtime service introduced | missing-after-search | required service/listener `rg` scan | no matches; `rg` exit 1 | Scanned runtime-core, long-task-control, TaskLoop, task-loop tool, and resume-shadow tests. |
 
 ## Implementation Summary
 
@@ -117,13 +117,13 @@ Harness/spec changes:
 
 | Check | Command / File | Result | Covers | Gap |
 |---|---|---|---|---|
-| Harness context | `rtk node harness/src/cli.mjs context --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md` | pass | Required pre-implementation context/read order. | None. |
-| Focused Lane D tests | `rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-resume-shadow.test.ts` | pass, 1 file / 8 tests | Resume shadow/idempotency behavior. | None. |
-| Required unit slice | Git Bash expanded required Vitest command | pass, 5 files / 34 tests | Runtime contracts, Lane A event log, Lane C reducer/serializer, Lane D resume shadow. | None. |
-| TypeScript | `rtk node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false` | pass | Node/runtime typecheck. | None. |
-| Harness validate | `rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md --no-diff` | pass | Phase-4 task spec validation. | `--no-diff` per required validation. |
-| Renderer/Main boundary scan | `rtk rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|gateway:httpProxy|hostapi:fetch' src electron shared tests --glob '!**/*.md'` | reviewed/pass | No new renderer direct IPC/Gateway bypass from this lane. | Existing unrelated matches are tests, preload/Main, i18n/rule text/comment/url-helper cases. |
-| Service boundary scan | Git Bash expanded required service/listener/Gateway scan | pass/no matches (`rg` exit 1) | No second runtime service/listener/Gateway endpoint in lane paths. | None. |
+| Harness context | `node harness/src/cli.mjs context --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md` | pass | Required pre-implementation context/read order. | `rtk` was attempted first but unavailable on PATH, so direct Node was used. |
+| Focused Lane D tests | covered by required unit slice | pass, 5 files / 34 tests | Resume shadow/idempotency behavior plus related runtime-core contracts. | None. |
+| Required unit slice | `node node_modules/vitest/vitest.mjs run tests/unit/runtime-core-contracts.test.ts tests/unit/runtime-event-log-store.test.ts tests/unit/runtime-state-reducer.test.ts tests/unit/runtime-checkpoint-serializer.test.ts tests/unit/runtime-resume-shadow.test.ts` | pass, 5 files / 34 tests | Runtime contracts, Lane A event log, Lane C reducer/serializer, Lane D resume shadow. | Explicit file paths were used because PowerShell wildcard forwarding only ran one effective file. |
+| TypeScript | `node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false` | pass | Node/runtime typecheck. | Direct Node used because `rtk` was unavailable on PATH. |
+| Harness validate | `node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md --no-diff` | pass | Phase-4 task spec validation. | `--no-diff` per required validation. |
+| Renderer/Main boundary scan | `rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|gateway:httpProxy|hostapi:fetch' src electron shared tests --glob '!**/*.md'` | reviewed/pass | No new renderer direct IPC/Gateway bypass from this lane. | Existing unrelated matches are tests, preload/Main, i18n/rule text/comment/url-helper cases. |
+| Service boundary scan | `rg -n 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|127\.0\.0\.1:18789|localhost:18789' openclaw_runtime/src/runtime-core openclaw_runtime/src/agents/long-task-control openclaw_runtime/src/agents/task-loop-controller.ts openclaw_runtime/src/agents/tools/task-loop-tool.ts tests/unit/runtime-resume-shadow.test.ts` | pass/no matches (`rg` exit 1) | No second runtime service/listener/Gateway endpoint in lane paths. | Explicit test file path used because Windows `rg` rejected the wildcard path. |
 | Comms replay | `pnpm run comms:replay` / `scripts/comms/replay.mjs` | not-run | Main/Gateway communication regression. | Not applicable: lane touched only runtime-core/test paths, no Main/Gateway communication path. |
 | Comms compare | `pnpm run comms:compare` / `scripts/comms/compare.mjs` | not-run | Main/Gateway communication regression. | Not applicable: lane touched only runtime-core/test paths, no Main/Gateway communication path. |
 | README docs sync | Manual scope review | not-run | User-visible docs. | Not required: default-off internal runtime-core helper only; no user-visible flow/interface changed. |
