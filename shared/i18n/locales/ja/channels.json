@@ -69,6 +69,26 @@
         "accountIdPrompt": "このチャンネルの新しいアカウント ID を入力してください",
         "accountIdExists": "アカウント ID {{accountId}} はすでに存在します"
     },
+    "permissions": {
+        "scope": {
+            "dm": "DM",
+            "group": "グループ",
+            "approval": "承認"
+        },
+        "mode": {
+            "open": "オープン",
+            "allowlist": "許可リスト",
+            "pairing": "ペアリング",
+            "disabled": "無効",
+            "unknown": "不明"
+        },
+        "approval": {
+            "auto": "自動",
+            "enabled": "オン",
+            "disabled": "オフ"
+        },
+        "allowlistCount": "{{count}} 件許可"
+    },
     "dialog": {
         "updateTitle": "{{name}} を更新",
         "configureTitle": "{{name}} を設定",
@@ -189,7 +209,7 @@
             "description": "Tencent 公式の OpenClaw プラグインを使い、QRコードをスキャンして個人 WeChat に接続します",
             "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/GHYZwuPCriF0gWkXwkFcJ9zon3b",
             "instructions": [
-                "QRコードを生成すると、ClawX が OpenClaw に公式 WeChat プラグインをインストールして有効化します",
+                "QRコードを生成すると、Verse Claw が OpenClaw に公式 WeChat プラグインをインストールして有効化します",
                 "以下の QR コードを WeChat でスキャンし、スマートフォン側で接続を確認します",
                 "接続が完了すると、WeChat に新しい「WeChat ClawBot」チャットが自動で表示されます",
                 "後から同じ QR フローを使って、別の WeChat アカウントを追加したり既存アカウントを再接続したりできます"

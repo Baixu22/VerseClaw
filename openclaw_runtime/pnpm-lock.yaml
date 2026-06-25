@@ -469,6 +469,46 @@ importers:
         specifier: workspace:*
         version: link:../../packages/plugin-sdk
 
+  extensions/codegraph:
+    dependencies:
+      '@clack/prompts':
+        specifier: ^1.3.0
+        version: 1.4.0
+      commander:
+        specifier: ^14.0.2
+        version: 14.0.3
+      fast-string-width:
+        specifier: ^3.0.2
+        version: 3.0.2
+      fast-wrap-ansi:
+        specifier: ^0.2.0
+        version: 0.2.2
+      ignore:
+        specifier: ^7.0.5
+        version: 7.0.5
+      jsonc-parser:
+        specifier: ^3.3.1
+        version: 3.3.1
+      picomatch:
+        specifier: ^4.0.3
+        version: 4.0.4
+      sisteransi:
+        specifier: ^1.0.5
+        version: 1.0.5
+      tree-sitter-wasms:
+        specifier: 0.1.13
+        version: 0.1.13
+      typebox:
+        specifier: 1.1.39
+        version: 1.1.39
+      web-tree-sitter:
+        specifier: 0.25.10
+        version: 0.25.10
+    devDependencies:
+      '@openclaw/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../packages/plugin-sdk
+
   extensions/codex:
     dependencies:
       '@openai/codex':
@@ -6908,6 +6948,12 @@ packages:
       tree-sitter:
         optional: true
 
+  tree-sitter-wasms@0.1.11:
+    resolution: {integrity: sha512-26sE4+qoTi1CbzHdo9sHs9pRE/jXVFVRigSG/5TNAbwhSMVjHfMAg4UjmOhAFAIx5UxgoQuaURwqhm0SRNrpWA==}
+
+  tree-sitter-wasms@0.1.13:
+    resolution: {integrity: sha512-wT+cR6DwaIz80/vho3AvSF0N4txuNx/5bcRKoXouOfClpxh/qqrF4URNLQXbbt8MaAxeksZcZd1j8gcGjc+QxQ==}
+
   trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
 
@@ -7185,6 +7231,17 @@ packages:
   web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
+
+  web-tree-sitter@0.24.6:
+    resolution: {integrity: sha512-NVG40wwFerkvOSsrY2NE56nKpzwCpn8VT51gqZZaIfkBCMu+0JZLFVwJlZLPO01Ewfq3+Xg+NY4Bot5GD0L03g==}
+
+  web-tree-sitter@0.25.10:
+    resolution: {integrity: sha512-Y09sF44/13XvgVKgO2cNDw5rGk6s26MgoZPXLESvMXeefBf7i6/73eFurre0IsTW6E14Y0ArIzhUMmjoc7xyzA==}
+    peerDependencies:
+      '@types/emscripten': ^1.40.0
+    peerDependenciesMeta:
+      '@types/emscripten':
+        optional: true
 
   web-tree-sitter@0.26.9:
     resolution: {integrity: sha512-YJwSHANl6XFgeEjB8nitgj0qZYt5gkIesJ4w2srS2wcLB4GUa4xcOkM0YaMsU6WNR53YVIkDSY7Ej4pf3IXtCA==}
@@ -12999,6 +13056,12 @@ snapshots:
       node-addon-api: 8.8.0
       node-gyp-build: 4.8.4
 
+  tree-sitter-wasms@0.1.11: {}
+
+  tree-sitter-wasms@0.1.13:
+    dependencies:
+      tree-sitter-wasms: 0.1.13
+
   trim-lines@3.0.1: {}
 
   trough@2.2.0: {}
@@ -13208,6 +13271,10 @@ snapshots:
       - supports-color
 
   web-streams-polyfill@3.3.3: {}
+
+  web-tree-sitter@0.24.6: {}
+
+  web-tree-sitter@0.25.10: {}
 
   web-tree-sitter@0.26.9: {}
 

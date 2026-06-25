@@ -42,7 +42,7 @@ export function createFileFetchTool(): AnyAgentTool {
 
       // Type-checks, NOT truthy-checks: an empty file legitimately has
       // size=0 and base64="". Rejecting falsy values would block zero-byte
-      // round-trips through file_fetch â†’ file_write.
+      // round-trips through file_fetch â†?file_write.
       const canonicalPath = typeof payload.path === "string" ? payload.path : "";
       const size = typeof payload.size === "number" ? payload.size : -1;
       const mimeType = typeof payload.mimeType === "string" ? payload.mimeType : "";

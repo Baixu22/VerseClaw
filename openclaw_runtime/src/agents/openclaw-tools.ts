@@ -40,6 +40,10 @@ import type { SpawnedToolContext } from "./spawned-context.js";
 import type { ToolFsPolicy } from "./tool-fs-policy.js";
 import { resolveToolLoopDetectionConfig } from "./tool-loop-detection-config.js";
 import { createAgentsListTool } from "./tools/agents-list-tool.js";
+import {
+  createAgentBrowserTool,
+  type AgentBrowserInvoker,
+} from "./tools/agent-browser-tool.js";
 import type { AnyAgentTool } from "./tools/common.js";
 import { createCronTool } from "./tools/cron-tool.js";
 import { createEmbeddedCallGateway } from "./tools/embedded-gateway-stub.js";
@@ -84,6 +88,21 @@ const defaultOpenClawToolsDeps: OpenClawToolsDeps = {
 };
 
 let openClawToolsDeps: OpenClawToolsDeps = defaultOpenClawToolsDeps;
+
+function createDefaultAgentBrowserInvoker(params: {
+  config?: OpenClawConfig;
+}): AgentBrowserInvoker | undefined {
+  if (process.env.CLAWX_AGENT_BROWSER_BRIDGE !== "1") {
+    return undefined;
+  }
+  return async (action, payload) =>
+    await openClawToolsDeps.callGateway({
+      config: params.config,
+      method: "agentBrowser.invoke",
+      params: { action, payload },
+      timeoutMs: 120_000,
+    });
+}
 
 export function createOpenClawTools(
   options?: {
@@ -176,6 +195,8 @@ export function createOpenClawTools(
     spawnWorkspaceDir?: string;
     /** Callback invoked when sessions_yield tool is called. */
     onYield?: (message: string) => Promise<void> | void;
+    /** Optional Electron-owned internal browser bridge for desktop agent automation. */
+    agentBrowserInvoker?: AgentBrowserInvoker;
     /** Allow plugin tools for this tool set to late-bind the gateway subagent. */
     allowGatewaySubagentBinding?: boolean;
   } & SpawnedToolContext,
@@ -331,6 +352,12 @@ export function createOpenClawTools(
     lateBindRuntimeConfig: true,
   });
   options?.recordToolPrepStage?.("openclaw-tools:web-fetch-tool");
+  const agentBrowserInvoker =
+    options?.agentBrowserInvoker ?? createDefaultAgentBrowserInvoker({ config: resolvedConfig });
+  const agentBrowserTool = createAgentBrowserTool({
+    invoke: agentBrowserInvoker,
+  });
+  options?.recordToolPrepStage?.("openclaw-tools:agent-browser-tool");
   const messageTool = options?.disableMessageTool
     ? null
     : createMessageTool({
@@ -575,7 +602,13 @@ export function createOpenClawTools(
         threadId: options?.currentThreadTs ?? options?.agentThreadId,
       },
     }),
-    ...collectPresentOpenClawTools([webSearchTool, webFetchTool, imageTool, pdfTool]),
+    ...collectPresentOpenClawTools([
+      webSearchTool,
+      webFetchTool,
+      agentBrowserTool,
+      imageTool,
+      pdfTool,
+    ]),
   ];
   options?.recordToolPrepStage?.("openclaw-tools:core-tool-list");
   let allTools = tools;

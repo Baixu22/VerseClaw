@@ -564,6 +564,7 @@ export interface LongTaskCheckpoints {
   run_id: string | null;
   session_key: string;
   status: string;
+  task_ledger_root_id: string | null;
   trace_id: string | null;
   trigger: string;
   updated_at: number;
@@ -582,6 +583,7 @@ export interface LongTaskInterventionEvents {
   run_id: string | null;
   session_key: string;
   status: string;
+  task_ledger_root_id: string | null;
   trace_id: string | null;
   trigger: string;
   updated_at: number;
@@ -601,6 +603,7 @@ export interface LongTaskUserQueue {
   session_key: string;
   source: string;
   status: string;
+  task_ledger_root_id: string | null;
   text: string;
   updated_at: number;
   workspace_id: string | null;

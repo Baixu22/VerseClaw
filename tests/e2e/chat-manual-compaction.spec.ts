@@ -11,7 +11,7 @@ function stableStringify(value: unknown): string {
   return `{${entries.join(',')}}`;
 }
 
-test.describe('ClawX chat manual compaction', () => {
+test.describe('Verse Claw chat manual compaction', () => {
   test('opens confirmation dialog and calls the session compaction Host API', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

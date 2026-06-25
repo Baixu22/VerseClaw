@@ -207,7 +207,7 @@ export const stateMigrations: PluginDoctorStateMigration[] = [
       }
       return {
         preview: [
-          `- Workboard: ${count} legacy .28 plugin-state KV ${count === 1 ? "entry" : "entries"} â†’ ${resolveWorkboardSqlitePath(env)}`,
+          `- Workboard: ${count} legacy .28 plugin-state KV ${count === 1 ? "entry" : "entries"} â†?${resolveWorkboardSqlitePath(env)}`,
         ],
       };
     },
@@ -271,7 +271,7 @@ export const stateMigrations: PluginDoctorStateMigration[] = [
           changes:
             imported > 0
               ? [
-                  `Migrated ${imported} Workboard .28 plugin-state KV ${imported === 1 ? "entry" : "entries"} â†’ relational SQLite`,
+                  `Migrated ${imported} Workboard .28 plugin-state KV ${imported === 1 ? "entry" : "entries"} â†?relational SQLite`,
                 ]
               : [],
           warnings: [

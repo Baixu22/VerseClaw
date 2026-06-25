@@ -109,6 +109,17 @@ const traceGraph = {
         tokenUsage: { input: 100, output: 50, cacheRead: 0, cacheWrite: 0, totalTokens: 150, costUsd: 0.003 },
       },
       {
+        id: 'event:heartbeat',
+        traceId: 'trace-run-1',
+        kind: 'event',
+        label: 'runtime.tick',
+        subtitle: 'runtime event',
+        status: 'completed',
+        phase: 'event',
+        startedAt: startedAt + 500,
+        parentId: 'span:router',
+      },
+      {
         id: 'span:tool',
         traceId: 'trace-run-1',
         kind: 'tool',
@@ -141,6 +152,7 @@ const traceGraph = {
     edges: [
       { id: 'edge:root-router', traceId: 'trace-run-1', from: 'trace:trace-run-1', to: 'span:router', status: 'completed', kind: 'parent-child', critical: true },
       { id: 'edge:router-model', traceId: 'trace-run-1', from: 'span:router', to: 'span:model', status: 'completed', kind: 'parent-child' },
+      { id: 'edge:router-event', traceId: 'trace-run-1', from: 'span:router', to: 'event:heartbeat', status: 'completed', kind: 'causal' },
       { id: 'edge:router-tool', traceId: 'trace-run-1', from: 'span:router', to: 'span:tool', status: 'error', kind: 'parent-child', critical: true },
       { id: 'edge:tool-file', traceId: 'trace-run-1', from: 'span:tool', to: 'trajectory:trace-run-1:patch.completed', status: 'completed', kind: 'artifact' },
     ],
@@ -154,10 +166,10 @@ const traceGraph = {
       staleRunningNodeIds: [],
       coverage: {
         spanCount: 3,
-        eventCount: 0,
+        eventCount: 1,
         trajectoryEventCount: 1,
-        graphNodeCount: 5,
-        graphEdgeCount: 4,
+        graphNodeCount: 6,
+        graphEdgeCount: 5,
         hasRuntimeSpans: true,
         hasTrajectory: true,
         redacted: true,
@@ -180,6 +192,7 @@ const traceGraph = {
   timeline: [
     { id: 'timeline-start', traceId: 'trace-run-1', nodeId: 'trace:trace-run-1', type: 'trace.started', label: 'Agent trace workbench', timestamp: startedAt, status: 'error' },
     { id: 'timeline-router', traceId: 'trace-run-1', nodeId: 'span:router', spanId: 'router', type: 'span.completed', label: 'implementer', timestamp: startedAt, status: 'completed' },
+    { id: 'timeline-event', traceId: 'trace-run-1', nodeId: 'event:heartbeat', type: 'runtime.event', label: 'runtime.tick', timestamp: startedAt + 500, status: 'completed', summary: 'low signal event' },
     { id: 'timeline-tool', traceId: 'trace-run-1', nodeId: 'span:tool', spanId: 'tool', type: 'span.error', label: 'shell_command', timestamp: startedAt + 1200, status: 'error', summary: 'Command failed' },
     { id: 'timeline-file', traceId: 'trace-run-1', nodeId: 'trajectory:trace-run-1:patch.completed', type: 'patch.completed', label: 'src/App.tsx', timestamp: startedAt + 1400, status: 'completed', summary: '1 file changed' },
   ],
@@ -225,10 +238,34 @@ const traceIndexEntry = {
   },
 };
 
+const compareTraceIndexEntry = {
+  ...traceIndexEntry,
+  id: 'trace-run-2',
+  name: 'Agent trace baseline',
+  status: 'completed',
+  durationMs: 1800,
+  updatedAt: startedAt + 1800,
+  costUsd: 0.001,
+  tokenCount: 90,
+  errorCount: 0,
+  artifactCount: 0,
+  warningCount: 0,
+  retryCount: 0,
+  approvalCount: 0,
+  issueCount: 0,
+  firstError: undefined,
+  issues: [],
+  correlation: {
+    traceId: 'trace-run-2',
+    runId: 'run-2',
+    sessionKey: 'agent:main:baseline',
+  },
+};
+
 const traceQueryResult = {
   generatedAt: startedAt + 5000,
-  items: [traceIndexEntry],
-  total: 1,
+  items: [traceIndexEntry, compareTraceIndexEntry],
+  total: 2,
   page: 1,
   pageSize: 100,
   facets: {
@@ -293,9 +330,10 @@ test.describe('Observability trace graph workbench', () => {
           ],
           scorecards: [],
           alerts: ['1 trace contains an error'],
-          traces: [{
-            ...traceIndexEntry,
-          }],
+          traces: [
+            { ...traceIndexEntry },
+            { ...compareTraceIndexEntry },
+          ],
         },
         [stableStringify(['observability', 'queryTraces', null])]: traceQueryResult,
         [stableStringify(['observability', 'traceGraph', { id: 'trace-run-1' }])]: traceGraph,
@@ -313,26 +351,60 @@ test.describe('Observability trace graph workbench', () => {
     });
     await expect(page.getByTestId('observability-page')).toBeVisible();
 
-    await page.getByTestId('observability-trace-row').click();
+    await page.getByTestId('observability-trace-row').first().click();
     await expect(page.getByTestId('observability-trace-graph')).toBeVisible();
+    await expect(page.getByTestId('observability-summary-header')).toContainText('Root cause');
+    await expect(page.getByTestId('observability-summary-header')).toContainText('150');
     await expect(page.getByTestId('trace-graph-node-root')).toContainText('Agent trace workbench');
     await expect(page.getByTestId('trace-graph-node-router')).toContainText('implementer');
     await expect(page.getByTestId('trace-graph-node-model')).toContainText('model.call');
     await expect(page.getByTestId('trace-graph-node-tool')).toContainText('shell_command');
+    await expect(page.getByTestId('trace-graph-node-event')).toHaveCount(0);
+    await expect(page.getByTestId('observability-trace-graph')).toContainText('5/6');
+    // Drawer auto-opens from persisted selectedNodeId; close it so overlay does not block toolbar clicks
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('observability-detail-panel')).toBeHidden();
+    await page.getByTestId('trace-graph-density-full').click();
+    await expect(page.getByTestId('trace-graph-node-event')).toContainText('runtime.tick');
+    await expect(page.getByTestId('observability-trace-graph')).toContainText('6/6');
     await expect(page.getByTestId('trace-graph-minimap')).toBeVisible();
-    await expect(page.getByTestId('observability-detail-panel')).toContainText('trace-run-1');
+    // Node may be obscured by minimap; dispatch a native click via evaluate
+    await page.getByTestId('trace-graph-node-tool').dispatchEvent('click');
+    await expect(page.getByTestId('observability-detail-panel')).toBeVisible();
+    await expect(page.getByTestId('observability-detail-panel')).toContainText('shell_command');
     await expect(page.getByTestId('observability-detail-panel')).toContainText('Command failed');
     await expect(page.getByTestId('observability-trace-list')).toContainText('Root cause');
+
+    // Close drawer before switching view modes (overlay blocks toolbar)
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('observability-detail-panel')).toBeHidden();
+    await page.getByTestId('observability-view-tree').click();
+    await expect(page.getByTestId('observability-run-tree')).toContainText('shell_command');
+    await page.getByTestId('observability-view-swimlane').click();
+    await expect(page.getByTestId('observability-swimlane')).toContainText('model.call');
+    await page.getByTestId('observability-view-graph').click();
 
     await page.getByPlaceholder('Search nodes').fill('shell_command');
     await expect(page.getByTestId('trace-graph-node-tool')).toBeVisible();
     await expect(page.getByTestId('trace-graph-node-model')).toHaveCount(0);
     await page.getByPlaceholder('Search nodes').fill('');
 
+    // Reopen drawer to test tab navigation
+    await page.getByTestId('trace-graph-node-tool').dispatchEvent('click');
+    await expect(page.getByTestId('observability-detail-panel')).toBeVisible();
     await page.getByRole('tab', { name: 'Events' }).click();
     await expect(page.getByTestId('observability-diagnostics-events')).toContainText('shell_command');
     await page.getByRole('tab', { name: 'Artifacts' }).click();
     await expect(page.getByTestId('observability-diagnostics-artifacts')).toContainText('src/App.tsx');
+    await page.getByRole('tab', { name: 'Compare' }).click();
+    await expect(page.getByTestId('observability-compare-panel')).toContainText('Trace compare');
+    await page.getByTestId('observability-compare-panel').getByRole('combobox').click();
+    await page.getByRole('option', { name: 'Agent trace baseline' }).click();
+    await expect(page.getByTestId('observability-compare-panel')).toContainText('$0.00100');
+    await page.getByRole('tab', { name: 'Notes' }).click();
+    await page.getByPlaceholder('Add a short diagnosis or follow-up...').fill('Needs command exit-code triage');
+    await page.getByRole('button', { name: 'Save note' }).click();
+    await expect(page.getByTestId('observability-trace-list')).toContainText('Open');
     await page.getByRole('tab', { name: 'Issues' }).click();
     await expect(page.getByTestId('observability-diagnostics-issues')).toContainText('Root cause');
     await page.getByRole('tab', { name: 'Attributes' }).click();

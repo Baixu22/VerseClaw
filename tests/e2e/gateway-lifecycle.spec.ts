@@ -14,7 +14,7 @@ const SESSIONS_LIST_PAYLOAD = {
   includeLastMessage: true,
 };
 
-test.describe('ClawX gateway lifecycle resilience', () => {
+test.describe('Verse Claw gateway lifecycle resilience', () => {
   test('app remains fully navigable while gateway is disconnected', async ({ page }) => {
     // In E2E mode, gateway auto-start is skipped, so the app starts
     // with gateway in "stopped" state — simulating the disconnected scenario.
@@ -22,13 +22,16 @@ test.describe('ClawX gateway lifecycle resilience', () => {
 
     // Navigate through all major pages to verify nothing crashes
     // when the gateway is not running.
-    await page.getByTestId('sidebar-nav-models').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId('models-page')).toBeVisible();
 
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
     await expect(page.getByTestId('agents-page')).toBeVisible();
 
-    await page.getByTestId('sidebar-nav-channels').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-channels').click();
     await expect(page.getByTestId('channels-page')).toBeVisible();
 
     await page.getByTestId('sidebar-nav-settings').click();
@@ -75,7 +78,8 @@ test.describe('ClawX gateway lifecycle resilience', () => {
     await page.waitForTimeout(500);
 
     // Verify navigation still works after status transitions
-    await page.getByTestId('sidebar-nav-models').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId('models-page')).toBeVisible();
 
     // Transition 3: running → error (simulates the bug scenario where
@@ -91,7 +95,8 @@ test.describe('ClawX gateway lifecycle resilience', () => {
     await page.waitForTimeout(500);
 
     // App should still be functional in error state
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
     await expect(page.getByTestId('agents-page')).toBeVisible();
 
     // Transition 4: error → reconnecting → running (the recovery path)
@@ -182,11 +187,13 @@ test.describe('ClawX gateway lifecycle resilience', () => {
 
     const oldWarningCopy = /Gateway service is not running|Gateway is not running\.|Gateway 服务未运行|Agent 或频道变更|网关未运行。|没有活跃的网关|Scheduled tasks cannot be managed|无法管理定时任务|Channels cannot connect|无法管理频道/i;
 
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
     await expect(page.getByTestId('agents-page')).toBeVisible();
     await expect(page.getByText(oldWarningCopy)).toHaveCount(0);
 
-    await page.getByTestId('sidebar-nav-channels').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-channels').click();
     await expect(page.getByTestId('channels-page')).toBeVisible();
     await expect(page.getByText(oldWarningCopy)).toHaveCount(0);
 
@@ -194,7 +201,8 @@ test.describe('ClawX gateway lifecycle resilience', () => {
     await expect(page.getByTestId('cron-page')).toBeVisible();
     await expect(page.getByText(oldWarningCopy)).toHaveCount(0);
 
-    await page.getByTestId('sidebar-nav-skills').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-skills').click();
     await expect(page.getByTestId('skills-page')).toBeVisible();
     await expect(page.getByTestId('skills-gateway-banner')).toHaveCount(0);
 

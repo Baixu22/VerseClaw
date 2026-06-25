@@ -107,7 +107,7 @@ const seededHistory = [
   },
 ];
 
-test.describe('ClawX Tool UI interaction rendering', () => {
+test.describe('Verse Claw Tool UI interaction rendering', () => {
   test('renders plan, options, question flow, and preferences cards from assistant payloads', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

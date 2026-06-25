@@ -4,12 +4,10 @@
  * No longer fixed - sits inside the flex layout below the title bar.
  */
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useShallow } from 'zustand/shallow';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Network,
-  Bot,
-  Puzzle,
   Clock,
   ChevronDown,
   ChevronRight,
@@ -24,7 +22,6 @@ import {
   Pencil,
   Check,
   X,
-  Cpu,
   ImagePlus,
   Moon,
   Loader2,
@@ -33,6 +30,8 @@ import {
   CheckSquare,
   Workflow,
   GitCompare,
+  Inbox,
+  Search,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
@@ -48,6 +47,7 @@ import {
   buildSidebarWorkspaceSessionGroups,
   type SidebarSessionEntry,
 } from './session-buckets';
+import { SessionSearchModal, SESSION_SEARCH_LAYOUT_ID } from './SessionSearchModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -55,7 +55,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { hostApi } from '@/lib/host-api';
 import { SIDEBAR_COLLAPSED_WIDTH, MAC_SIDEBAR_CHROME_HEIGHT } from '@shared/sidebar-layout';
 import { useTranslation } from 'react-i18next';
-import logoSvg from '@/assets/logo.svg';
+import logoSvg from '@/assets/logo.png';
 import { useNewChatAction } from './use-new-chat-action';
 
 interface NavItemProps {
@@ -296,7 +296,7 @@ const SessionRowMemo = memo(function SessionRow({
             onDoubleClick={() => onStartRename(s.key, sessionLabel)}
             className={cn(
               'w-full text-left rounded-lg px-2.5 py-1.5 text-meta transition-colors',
-              sessionStatus ? 'pr-20' : 'pr-16',
+              'pr-16',
               'hover:bg-black/5 dark:hover:bg-white/5',
               isOnChat && currentSessionKey === s.key
                 ? 'bg-black/5 dark:bg-white/10 text-foreground font-medium'
@@ -304,47 +304,39 @@ const SessionRowMemo = memo(function SessionRow({
             )}
           >
             <div className="flex min-w-0 items-center gap-2">
+              {sessionStatus ? (
+                <span
+                  data-testid={`sidebar-session-status-${s.key}`}
+                  data-state={sessionStatus.kind}
+                  role="status"
+                  aria-label={sessionStatusLabel}
+                  title={sessionStatus.dismissible
+                    ? t('chat:sessionStatus.dismissCompleted')
+                    : sessionStatusLabel}
+                  onClick={(event) => {
+                    if (!sessionStatus.dismissible) return;
+                    event.stopPropagation();
+                    event.preventDefault();
+                    onDismissSessionStatus(s.key, sessionStatus.signature);
+                  }}
+                  className={cn(
+                    'flex shrink-0 items-center justify-center',
+                    sessionStatus.dismissible
+                      ? 'cursor-pointer rounded p-0.5 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10'
+                      : 'cursor-default',
+                  )}
+                >
+                  <DotMatrix state={sessionStatus.matrixState} label={sessionStatusLabel} className="size-3.5" />
+                </span>
+              ) : (
+                <span className="size-3.5 shrink-0" aria-hidden="true" />
+              )}
               <span className="shrink-0 rounded-full bg-black/[0.04] px-2 py-0.5 text-2xs font-medium text-foreground/70 dark:bg-white/[0.08]">
                 {agentName}
               </span>
               <span className="truncate">{sessionLabel}</span>
             </div>
           </button>
-          {sessionStatus && (
-            <button
-              type="button"
-              data-testid={`sidebar-session-status-${s.key}`}
-              data-state={sessionStatus.kind}
-              aria-label={sessionStatus.dismissible
-                ? t('chat:sessionStatus.dismissCompleted')
-                : sessionStatusLabel}
-              title={sessionStatus.dismissible
-                ? t('chat:sessionStatus.dismissCompleted')
-                : sessionStatusLabel}
-              onClick={(event) => {
-                event.stopPropagation();
-                if (sessionStatus.dismissible) {
-                  onDismissSessionStatus(s.key, sessionStatus.signature);
-                  return;
-                }
-                if (currentSessionKey === s.key) {
-                  void onLoadHistory(false);
-                } else {
-                  onSwitch(s.key);
-                }
-                navigate('/');
-              }}
-              className={cn(
-                'absolute right-11 top-1/2 flex -translate-y-1/2 items-center justify-center rounded p-0.5',
-                'text-muted-foreground transition-colors',
-                sessionStatus.dismissible
-                  ? 'hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10'
-                  : 'cursor-default',
-              )}
-            >
-              <DotMatrix state={sessionStatus.matrixState} label={sessionStatusLabel} className="size-3.5" />
-            </button>
-          )}
           <div className={cn(
             'absolute right-1 flex items-center gap-0.5 transition-opacity',
             'opacity-0 group-hover:opacity-100',
@@ -476,6 +468,7 @@ export function Sidebar() {
   const [editingLabel, setEditingLabel] = useState('');
   const [sessionView, setSessionView] = useState<'project' | 'time'>('project');
   const [collapsedWorkspaceIds, setCollapsedWorkspaceIds] = useState<Record<string, boolean>>({});
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   useEffect(() => {
     void fetchAgents();
@@ -587,11 +580,8 @@ export function Sidebar() {
   const extraNavItems = rendererExtensionRegistry.getExtraNavItems();
 
   const coreNavItems = [
-    { to: '/models', icon: <Cpu className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.models'), testId: 'sidebar-nav-models' },
-    { to: '/agents', icon: <Bot className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.agents'), testId: 'sidebar-nav-agents' },
-    { to: '/channels', icon: <Network className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.channels'), testId: 'sidebar-nav-channels' },
-    { to: '/skills', icon: <Puzzle className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.skills'), testId: 'sidebar-nav-skills' },
     { to: '/cron', icon: <Clock className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.cronTasks'), testId: 'sidebar-nav-cron' },
+    { to: '/remote-tasks', icon: <Inbox className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.remoteTasks'), testId: 'sidebar-nav-remote-tasks' },
     { to: '/task-ledger', icon: <CheckSquare className="h-4 w-4" strokeWidth={2} />, label: t('taskLedger:nav'), testId: 'sidebar-nav-task-ledger' },
     { to: '/clawgraph', icon: <Workflow className="h-4 w-4" strokeWidth={2} />, label: t('clawGraph:nav'), testId: 'sidebar-nav-clawgraph' },
     { to: '/code-review', icon: <GitCompare className="h-4 w-4" strokeWidth={2} />, label: t('codeReview:nav'), testId: 'sidebar-nav-code-review' },
@@ -709,9 +699,9 @@ export function Sidebar() {
       >
         {!sidebarCollapsed && (
           <div className="flex items-center gap-2 px-2 overflow-hidden">
-            <img src={logoSvg} alt="ClawX" className="h-5 w-auto shrink-0" />
+            <img src={logoSvg} alt="Verse" className="h-5 w-auto shrink-0" />
             <span className="text-sm font-semibold truncate whitespace-nowrap text-foreground/90">
-              ClawX
+              Verse
             </span>
           </div>
         )}
@@ -782,6 +772,24 @@ export function Sidebar() {
               </button>
             ))}
           </div>
+
+          {/* Session search trigger — opens spotlight modal */}
+          <motion.button
+            layoutId={SESSION_SEARCH_LAYOUT_ID}
+            type="button"
+            data-testid="sidebar-session-search"
+            aria-label={t('chat:sidebar.searchSessions')}
+            onClick={() => setSearchModalOpen(true)}
+            className="mx-2 mt-2 flex w-[calc(100%-1rem)] items-center gap-2 rounded-md border border-black/10 bg-surface-input/50 px-2 py-1.5 text-2xs text-muted-foreground/80 transition-colors hover:border-primary/40 hover:bg-surface-input dark:border-white/10"
+          >
+            <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
+            <span className="flex-1 truncate text-left">
+              {t('chat:sidebar.searchSessions')}
+            </span>
+            <kbd className="rounded bg-black/5 px-1 py-0.5 font-mono text-2xs text-muted-foreground/60 dark:bg-white/10">
+              /
+            </kbd>
+          </motion.button>
 
           {/* Session list */}
           <div className="mt-1 flex-1 overflow-y-auto overflow-x-hidden px-2 pb-2 space-y-0.5" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 36px' }}>
@@ -930,6 +938,23 @@ export function Sidebar() {
           setDeleteDialogOpen(false);
         }}
         onCancel={() => setDeleteDialogOpen(false)}
+      />
+
+      <SessionSearchModal
+        key={`session-search-${searchModalOpen ? 'open' : 'closed'}`}
+        open={searchModalOpen}
+        onClose={() => setSearchModalOpen(false)}
+        sessions={sessions}
+        currentSessionKey={currentSessionKey}
+        sessionLabels={sessionLabels}
+        sessionLastActivity={sessionLastActivity}
+        workspaces={workspaceProfiles}
+        agentNameById={agentNameById}
+        onSwitch={(key) => {
+          void switchSession(key);
+          void loadHistory(false);
+          if (!isOnChat) navigate('/');
+        }}
       />
     </aside>
   );

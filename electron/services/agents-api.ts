@@ -22,7 +22,7 @@ import {
   writeAgentSoul,
 } from '../utils/agent-config';
 import { deleteChannelAccountConfig } from '../utils/channel-config';
-import { ensureClawXContext } from '../utils/openclaw-workspace';
+import { ensureVerseClawContext } from '../utils/openclaw-workspace';
 import { isRecord } from './payload-utils';
 import { syncAgentModelOverrideToRuntime, syncAllProviderAuthToRuntime } from './providers/provider-runtime-sync';
 
@@ -103,8 +103,8 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
         console.warn('[agents] Failed to sync provider auth after agent creation:', err);
       });
       scheduleGatewayReload(ctx, 'create-agent');
-      void ensureClawXContext({ waitForAllConfiguredWorkspaces: true }).catch((err) => {
-        console.warn('[agents] Failed to ensure ClawX context after agent creation:', err);
+      void ensureVerseClawContext({ waitForAllConfiguredWorkspaces: true }).catch((err) => {
+        console.warn('[agents] Failed to ensure Verse Claw context after agent creation:', err);
       });
       return { success: true, ...snapshot };
     },
@@ -172,7 +172,7 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
       const agentId = requireString(payload, 'id');
       const body = (isRecord(payload) ? payload : {}) as AgentBootstrapUpdateBody;
 
-      // Handle role profile â†’ compiles to SOUL.md
+      // Handle role profile â†?compiles to SOUL.md
       const hasRoleProfile = body.roleProfile && typeof body.roleProfile === 'object';
       const hasRawSoulMd = typeof body.soulMd === 'string';
 

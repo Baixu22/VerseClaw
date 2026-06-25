@@ -40,11 +40,11 @@ function compactDetail(value: string, maxChars: number): string {
     return normalized;
   }
   if (maxChars <= 1) {
-    return "â€¦";
+    return "â€?;
   }
   const keepStart = Math.max(1, Math.ceil((maxChars - 1) * 0.45));
   const keepEnd = Math.max(1, maxChars - keepStart - 1);
-  return `${chars.slice(0, keepStart).join("").trimEnd()}â€¦${chars
+  return `${chars.slice(0, keepStart).join("").trimEnd()}â€?{chars
     .slice(-keepEnd)
     .join("")
     .trimStart()}`;
@@ -65,12 +65,12 @@ function lineDetailParts(line: ChannelProgressDraftLine): string[] {
 }
 
 function legacyLineTitle(line: ChannelProgressDraftLine): string {
-  return `${line.icon ?? "â€¢"} *${escapeSlackMrkdwn(line.label)}*`;
+  return `${line.icon ?? "â€?} *${escapeSlackMrkdwn(line.label)}*`;
 }
 
 function legacyLineDetail(line: ChannelProgressDraftLine, maxChars: number): string {
   const detail = lineDetailParts(line).join(" Â· ");
-  return detail ? escapeSlackMrkdwn(compactDetail(detail, maxChars)) : "â€”";
+  return detail ? escapeSlackMrkdwn(compactDetail(detail, maxChars)) : "â€?;
 }
 
 function lineTaskTitle(line: ChannelProgressDraftLine, maxLineChars: number): string {
@@ -78,7 +78,7 @@ function lineTaskTitle(line: ChannelProgressDraftLine, maxLineChars: number): st
   const detail = lineDetailParts(line).join(" Â· ");
   const fallback = line.text.replace(/\s+/g, " ").trim();
   if (detail) {
-    return compactTitle(`${label} â€” ${compactDetail(detail, maxLineChars)}`);
+    return compactTitle(`${label} â€?${compactDetail(detail, maxLineChars)}`);
   }
   if (fallback && fallback !== label) {
     return compactTitle(fallback);

@@ -24,7 +24,7 @@ function createApi(overrides: Record<string, unknown> = {}) {
       listServers: vi.fn(async () => ({
         success: true,
         servers: [
-          { id: 'clawx-git', name: 'ClawX Git', transport: 'stdio', enabled: true, scope: 'workspace', createdAt: 1, updatedAt: 1 },
+          { id: 'clawx-git', name: 'Verse Claw Git', transport: 'stdio', enabled: true, scope: 'workspace', createdAt: 1, updatedAt: 1 },
           { id: 'filesystem', name: 'Filesystem', transport: 'stdio', command: 'npx', enabled: true, scope: 'global', createdAt: 2, updatedAt: 2 },
         ],
       })),
@@ -271,7 +271,7 @@ describe('chat capability actions', () => {
       { id: 'skill.enable:1', kind: 'skill.enable', success: true, skillId: 'create-skill' },
     ]);
 
-    expect(message).toContain('Conversation info (trusted ClawX capability action results)');
+    expect(message).toContain('Conversation info (trusted Verse Claw capability action results)');
     expect(message).toContain('"skillId": "create-skill"');
     expect(message.endsWith('now use it')).toBe(true);
   });

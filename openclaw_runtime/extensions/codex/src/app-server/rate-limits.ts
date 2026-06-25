@@ -391,7 +391,7 @@ function formatRateLimitWindowDetails(window: RateLimitReset, nowMs: number): st
       ? "usage unknown"
       : `${Math.max(0, 100 - Math.round(window.usedPercent))}% left`;
   const reset =
-    window.resetsAtMs > nowMs ? ` ‚è±${formatResetDuration(window.resetsAtMs, nowMs)}` : "";
+    window.resetsAtMs > nowMs ? ` ‚è?{formatResetDuration(window.resetsAtMs, nowMs)}` : "";
   return `${remainingPercent}${reset}`;
 }
 

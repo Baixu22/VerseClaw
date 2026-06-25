@@ -29,9 +29,9 @@ export function buildSlackThreadingToolContext(params: {
     transportThreadTs != null ||
     (replyToThreadTs != null && currentMessageTs != null && replyToThreadTs !== currentMessageTs);
   const effectiveReplyToMode = hasExplicitThreadTarget ? "all" : configuredReplyToMode;
-  // For channel messages, To is "channel:Câ€¦" â€” extract the bare ID.
-  // For DMs, To is "user:Uâ€¦" which can't be used for reactions; fall back
-  // to NativeChannelId (the raw Slack channel id, e.g. "Dâ€¦").
+  // For channel messages, To is "channel:Câ€? â€?extract the bare ID.
+  // For DMs, To is "user:Uâ€? which can't be used for reactions; fall back
+  // to NativeChannelId (the raw Slack channel id, e.g. "Dâ€?).
   const currentChannelId = params.context.To?.startsWith("channel:")
     ? params.context.To.slice("channel:".length)
     : normalizeOptionalString(params.context.NativeChannelId);

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   classifySessionContinuityError,
+  resolveSessionContinuityPreflight,
   resolveSessionContinuityRecommendation,
 } from '../../src/pages/Chat/session-continuity';
 
@@ -27,6 +28,37 @@ describe('chat session continuity helpers', () => {
       gatewayAvailable: false,
       activeRun: false,
     })).toEqual({ action: 'handoff', reason: 'gateway_unavailable', disabled: false });
+
+    expect(resolveSessionContinuityPreflight({
+      gatewayAvailable: false,
+      activeRun: false,
+    })).toMatchObject({
+      fork: { disabled: true, reasons: ['gateway_unavailable'] },
+      handoff: { disabled: false, reasons: ['gateway_unavailable'] },
+      recommendation: { action: 'handoff', reason: 'gateway_unavailable', disabled: false },
+      health: { status: 'risky', reasons: ['gateway_unavailable'] },
+    });
+  });
+
+  it('reports continuity health as healthy, risky, or blocked', () => {
+    expect(resolveSessionContinuityPreflight({
+      gatewayAvailable: true,
+      activeRun: false,
+    }).health).toEqual({ status: 'healthy', reasons: [] });
+
+    expect(resolveSessionContinuityPreflight({
+      gatewayAvailable: true,
+      activeRun: false,
+      contextRange: { sessionKey: 'agent:main:main', usedTokens: 90, maxTokens: 100, truncatedMessageCount: 1 },
+    }).health).toMatchObject({
+      status: 'risky',
+      reasons: expect.arrayContaining(['high_pressure', 'truncated_context']),
+    });
+
+    expect(resolveSessionContinuityPreflight({
+      gatewayAvailable: true,
+      activeRun: true,
+    }).health).toEqual({ status: 'blocked', reasons: ['active_run'] });
   });
 
   it('recommends Handoff for high context pressure or truncated context', () => {
@@ -113,6 +145,18 @@ describe('chat session continuity helpers', () => {
         },
       },
     })).toEqual({ action: 'handoff', reason: 'recovery_checkpoint', disabled: false });
+  });
+
+  it('recommends Handoff when recovery context warnings are present', () => {
+    expect(resolveSessionContinuityRecommendation({
+      gatewayAvailable: true,
+      activeRun: false,
+      longTaskControlStatus: {
+        available: true,
+        queueCount: 0,
+        warnings: ['recovery_context_available'],
+      },
+    })).toEqual({ action: 'handoff', reason: 'recovery_context', disabled: false });
   });
 
   it('classifies actionable failure modes', () => {

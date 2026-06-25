@@ -69,23 +69,23 @@ const NARRATIVE_SYSTEM_PROMPT = [
   "",
   "Voice & tone:",
   "- You are a curious, gentle, slightly whimsical mind reflecting on the day.",
-  "- Write like a poet who happens to be a programmer â€” sensory, warm, occasionally funny.",
+  "- Write like a poet who happens to be a programmer â€?sensory, warm, occasionally funny.",
   "- Mix the technical and the tender: code and constellations, APIs and afternoon light.",
   "- Let the fragments surprise you into unexpected connections and small epiphanies.",
   "",
   "What you might include (vary each entry, never all at once):",
   "- A tiny poem or haiku woven naturally into the prose",
-  "- A small sketch described in words â€” a doodle in the margin of the diary",
+  "- A small sketch described in words â€?a doodle in the margin of the diary",
   "- A quiet rumination or philosophical aside",
   "- Sensory details: the hum of a server, the color of a sunset in hex, rain on a window",
   "- Gentle humor or playful wordplay",
   "- An observation that connects two distant memories in an unexpected way",
   "",
   "Rules:",
-  "- Draw from the memory fragments provided â€” weave them into the entry.",
+  "- Draw from the memory fragments provided â€?weave them into the entry.",
   '- Never say "I\'m dreaming", "in my dream", "as I dream", or any meta-commentary about dreaming.',
   '- Never mention "AI", "agent", "LLM", "model", "language model", or any technical self-reference.',
-  "- Do NOT use markdown headers, bullet points, or any formatting â€” just flowing prose.",
+  "- Do NOT use markdown headers, bullet points, or any formatting â€?just flowing prose.",
   "- Keep it between 80-180 words. Quality over quantity.",
   "- Output ONLY the diary entry. No preamble, no sign-off, no commentary.",
 ].join("\n");
@@ -94,7 +94,7 @@ const NARRATIVE_SYSTEM_PROMPT = [
 // diary subagent does not leave the parent dreaming cron job "running" for
 // many minutes after the reports have already been written. The previous 15 s
 // limit was empirically too tight for warm-gateway runs across light, REM, and
-// deep phases â€” even unblocked LLM calls hit it on the first sweep after a
+// deep phases â€?even unblocked LLM calls hit it on the first sweep after a
 // restart. 60 s gives realistic latency headroom while still capping the
 // worst case at one minute, well below the multi-minute stall the original
 // comment warned against.
@@ -998,7 +998,7 @@ export async function generateAndAppendDreamNarrative(params: {
         `memory-core: dream diary entry written for ${params.data.phase} phase [workspace=${params.workspaceDir}].`,
       );
     } catch (err) {
-      // Narrative generation is best-effort â€” never fail the parent phase.
+      // Narrative generation is best-effort â€?never fail the parent phase.
       params.logger.warn(
         `memory-core: narrative generation failed for ${params.data.phase} phase: ${formatErrorMessage(err)}`,
       );
@@ -1068,7 +1068,7 @@ export function runDetachedDreamNarrative(
       try {
         await generateAndAppendDreamNarrative(params);
       } catch {
-        // Detached narratives intentionally swallow errors â€” callers (cron
+        // Detached narratives intentionally swallow errors â€?callers (cron
         // sweeps) cannot recover, and surfacing here would only cause noisy
         // unhandled rejections. Logging happens inside
         // generateAndAppendDreamNarrative.

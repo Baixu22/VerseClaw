@@ -313,7 +313,7 @@ export type GroupToolPolicyBySenderConfig = Record<string, GroupToolPolicyConfig
 
 export type ExecToolConfig = {
   /** Exec host routing (default: auto). */
-  host?: "auto" | "sandbox" | "gateway" | "node";
+  host?: "auto" | "sandbox" | "gateway" | "node" | "verseshell";
   /** Normalized exec policy mode. Prefer this over raw security/ask knobs. */
   mode?: "deny" | "allowlist" | "ask" | "auto" | "full";
   /** Exec security mode (default: full; sandbox host defaults to deny). */

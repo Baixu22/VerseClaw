@@ -10,6 +10,25 @@
         "paused": "Приостановлено",
         "failed": "Ошибка"
     },
+    "assurance": {
+        "scheduler": "Планировщик",
+        "wake": "Пробуждение",
+        "source": "Источник",
+        "delivery": "Доставка",
+        "gatewayConnected": "Gateway подключен",
+        "gatewayOffline": "Gateway офлайн",
+        "readOnlyFallback": "Конфиг только для чтения",
+        "gatewaySnapshot": "Снимок Gateway",
+        "fallbackCount": "{{count}} из конфига",
+        "sourceGateway": "Gateway",
+        "sourceFallback": "Конфиг",
+        "isolatedRun": "Изолированный запуск агента",
+        "nextHeartbeat": "Следующий heartbeat",
+        "externalDelivery": "Внешняя доставка",
+        "inAppResult": "Результат в приложении",
+        "deliverySummary": "{{external}} внешних / {{local}} в приложении",
+        "unknown": "Неизвестно"
+    },
     "empty": {
         "title": "Нет запланированных задач",
         "description": "Создайте запланированные задачи для автоматизации AI-процессов. Задачи могут отправлять сообщения, выполнять запросы или выполнять действия в указанное время.",
@@ -18,8 +37,10 @@
     "card": {
         "runNow": "Запустить сейчас",
         "deleteConfirm": "Вы уверены, что хотите удалить эту задачу?",
+        "browserAutomation": "Браузер",
         "last": "Последний",
-        "next": "Следующий"
+        "next": "Следующий",
+        "runDetails": "Run Details"
     },
     "dialog": {
         "createTitle": "Создать задачу",
@@ -27,16 +48,62 @@
         "description": "Запланируйте автоматическую AI-задачу",
         "taskName": "Название задачи",
         "taskNamePlaceholder": "напр., Утренняя сводка",
+        "taskType": "Тип задачи",
+        "taskTypeAgent": "AI-задача",
+        "taskTypeAgentDesc": "Запускает обычный запланированный промпт агента.",
+        "taskTypeBrowser": "Автоматизация браузера",
+        "taskTypeBrowserDesc": "Использует Agent Browser для действий в вебе.",
         "message": "Сообщение / Промпт",
         "messagePlaceholder": "Что должен сделать AI? напр., Дай мне сводку новостей и погоды на сегодня",
+        "browserUrl": "URL",
+        "browserUrlPlaceholder": "https://example.com/check-in",
+        "browserObjective": "Цель браузера",
+        "browserObjectivePlaceholder": "напр., Выполнить check-in при необходимости и сообщить результат",
+        "browserTemplate": "Шаблон",
+        "browserTemplates": {
+            "checkIn": "Check-in",
+            "monitor": "Мониторинг страницы",
+            "publishDraft": "Черновик публикации/отправки",
+            "custom": "Свой"
+        },
+        "browserMode": "Режим браузера",
+        "browserModes": {
+            "headless": "Headless",
+            "visible": "Видимый"
+        },
+        "browserProfile": "Profile",
+        "browserProfilePlaceholder": "default",
+        "browserAuthStateName": "Состояние входа",
+        "browserAuthStateNamePlaceholder": "По умолчанию используется имя Profile",
+        "browserAuthPersistence": "Сохранение входа",
+        "browserAuthPersistenceModes": {
+            "sessionName": "Session name",
+            "profile": "Profile",
+            "off": "Выкл."
+        },
+        "browserSensitiveActionPolicy": "Чувствительные действия",
+        "browserSensitivePolicies": {
+            "draftOnly": "Только черновик/проверка",
+            "autoSubmit": "Разрешить auto-submit"
+        },
+        "browserAllowedDomains": "Разрешенные домены",
+        "browserAllowedDomainsPlaceholder": "example.com, auth.example.com",
+        "browserDiagnostics": "Диагностика",
+        "browserDiagnosticOptions": {
+            "snapshot": "Snapshot",
+            "console": "Console",
+            "errors": "Errors",
+            "network": "Network",
+            "screenshot": "Screenshot"
+        },
         "agent": "Агент",
         "schedule": "Расписание",
         "cronPlaceholder": "Cron-выражение (напр., 0 9 * * *)",
         "usePresets": "Использовать пресеты",
         "useCustomCron": "Использовать свой cron",
         "deliveryTitle": "Доставка",
-        "deliveryDescription": "Выберите, остаётся ли эта задача в ClawX или отправляется на внешний канал.",
-        "deliveryModeNone": "Только в ClawX",
+        "deliveryDescription": "Выберите, остаётся ли эта задача в Verse Claw или отправляется на внешний канал.",
+        "deliveryModeNone": "Только в Verse Claw",
         "deliveryModeNoneDesc": "Выполнить задачу и сохранить результат в приложении.",
         "deliveryModeAnnounce": "Внешний канал",
         "deliveryModeAnnounceDesc": "Отправить конечный результат через настроенный канал.",
@@ -74,7 +141,30 @@
         "discordChannelIdDesc": "Правый клик по каналу Discord → Копировать ID канала",
         "enableImmediately": "Включить немедленно",
         "enableImmediatelyDesc": "Начать выполнение этой задачи после создания",
-        "saveChanges": "Сохранить изменения"
+        "saveChanges": "Сохранить изменения",
+        "browserSavedProfiles": "Saved profiles",
+        "loadingProfiles": "Loading profiles...",
+        "noSavedProfiles": "No saved profiles",
+        "profileManager": "Profile Manager",
+        "profileManagerDescription": "Save and reuse Agent Browser login state references for scheduled browser tasks.",
+        "profileLabel": "Profile label",
+        "profileDescription": "Description",
+        "profileDescriptionPlaceholder": "e.g., Work Gmail session",
+        "saveProfile": "Save Profile",
+        "activeSessions": "{{count}} active",
+        "browserValidateTitle": "Validate once",
+        "browserValidateDescription": "Open the page with this profile, check domain safety, and collect selected diagnostics.",
+        "validateBrowserOnce": "Validate Once",
+        "validatingBrowser": "Validating...",
+        "validationPassed": "Validation passed",
+        "validationFailed": "Validation failed",
+        "validationScreenshotAlt": "Browser validation screenshot",
+        "browserSuccessCondition": "Условие успеха",
+        "browserSuccessConditionPlaceholder": "Напр., на странице есть «Checked in» или дневная награда получена",
+        "browserFailureCondition": "Условие ошибки",
+        "browserFailureConditionPlaceholder": "Напр., нужен вход, показана captcha или нет текста успеха",
+        "browserRetryOnTransientFailure": "Повторить безопасный временный сбой один раз",
+        "browserRetryOnTransientFailureDesc": "Повторяет только безопасные шаги open/navigate/wait до финальных чувствительных действий."
     },
     "presets": {
         "everyMinute": "Каждую минуту",
@@ -98,6 +188,9 @@
         "failedDelete": "Не удалось удалить задачу",
         "nameRequired": "Пожалуйста, введите название задачи",
         "messageRequired": "Пожалуйста, введите сообщение",
+        "browserUrlRequired": "Пожалуйста, введите URL браузера",
+        "browserUrlInvalid": "URL браузера должен начинаться с http:// или https://",
+        "browserObjectiveRequired": "Пожалуйста, введите цель браузера",
         "channelRequired": "Пожалуйста, выберите канал",
         "deliveryChannelUnsupported": "{{channel}} пока не поддерживает запланированную доставку",
         "deliveryTargetRequired": "Пожалуйста, введите цель доставки",
@@ -105,7 +198,12 @@
         "failedLoadDeliveryTargets": "Не удалось загрузить цели доставки",
         "failedResolveDeliveryTarget": "Не удалось разрешить цель доставки по умолчанию",
         "discordIdRequired": "Пожалуйста, введите ID канала Discord",
-        "scheduleRequired": "Пожалуйста, выберите или введите расписание"
+        "scheduleRequired": "Пожалуйста, выберите или введите расписание",
+        "browserProfileRequired": "Please enter a browser profile",
+        "browserProfileSaved": "Browser profile saved",
+        "browserProfileSaveFailed": "Failed to save browser profile: {{error}}",
+        "browserValidationPassed": "Browser validation passed",
+        "browserValidationFailed": "Browser validation failed: {{error}}"
     },
     "schedule": {
         "everySeconds": "Каждые {{count}} сек",
@@ -117,5 +215,30 @@
         "monthlyAtDay": "Ежемесячно {{day}}-го в {{time}}",
         "dailyAt": "Ежедневно в {{time}}",
         "unknown": "Неизвестно"
+    },
+    "details": {
+        "title": "Run Details",
+        "description": "Recent run evidence for {{name}}",
+        "url": "URL",
+        "profile": "Profile",
+        "template": "Template",
+        "lastRun": "Last run",
+        "success": "Success",
+        "failed": "Failed",
+        "loading": "Loading run details...",
+        "empty": "No run details are available yet.",
+        "structuredResult": "Structured result",
+        "loginState": "Login state",
+        "finalUrl": "Final URL",
+        "artifacts": "Artifacts",
+        "steps": "Steps",
+        "diagnosticEvidence": "Диагностические данные",
+        "diagnosticKinds": {
+            "screenshot": "Скриншот",
+            "snapshot": "Снимок страницы",
+            "console": "Консоль",
+            "errors": "Ошибки",
+            "network": "Сеть"
+        }
     }
 }

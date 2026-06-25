@@ -4,7 +4,7 @@ import { getOptionalMatrixRuntime } from "./runtime.js";
 
 const MATRIX_APPROVAL_REACTION_META = {
   "allow-once": {
-    emoji: "‚úÖ",
+    emoji: "‚ú?,
     label: "Allow once",
   },
   "allow-always": {
@@ -12,7 +12,7 @@ const MATRIX_APPROVAL_REACTION_META = {
     label: "Allow always",
   },
   deny: {
-    emoji: "‚ùå",
+    emoji: "‚ù?,
     label: "Deny",
   },
 } satisfies Record<ExecApprovalReplyDecision, { emoji: string; label: string }>;

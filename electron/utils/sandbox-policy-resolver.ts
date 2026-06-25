@@ -99,7 +99,7 @@ export function resolveSandboxEffectivePolicy(input: ResolveSandboxPolicyInput):
   const runtimeLevel = runtimeLevelFor(resolvedProvider.effectiveProviderId);
   const warnings: string[] = [];
   if (runtimeLevel === 'policy') {
-    warnings.push('Policy-light mode relies on ClawX/Main permissions and approvals; it is not a container or VM sandbox.');
+    warnings.push('Policy-light mode relies on Verse Claw/Main permissions and approvals; it is not a container or VM sandbox.');
   }
   if (runtimeLevel === 'light') {
     warnings.push('Windows-light mode adds lightweight process constraints where available; it is not equivalent to Docker, gVisor, or a VM.');

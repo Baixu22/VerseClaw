@@ -26,6 +26,9 @@ const hostApiMock = vi.hoisted(() => ({
   chat: {
     sendWithMedia: vi.fn(),
   },
+  taskLedger: {
+    appendEvents: vi.fn(),
+  },
 }));
 const hostEventSubscriptionMock = vi.fn();
 
@@ -66,6 +69,7 @@ describe('gateway store event wiring', () => {
     vi.clearAllMocks();
     hostApiMock.gateway.status.mockResolvedValue({ state: 'running', port: 18789 });
     hostApiMock.chat.sendWithMedia.mockResolvedValue({ success: true, result: { runId: 'run-default' } });
+    hostApiMock.taskLedger.appendEvents.mockResolvedValue({ success: true, snapshot: { nodes: [] } });
   });
 
   it('subscribes to typed host events on init', async () => {
@@ -117,6 +121,55 @@ describe('gateway store event wiring', () => {
     // Simulate gateway.ready event setting gatewayReady=true
     handlers.get('gateway:status')?.({ state: 'running', port: 18789, gatewayReady: true });
     expect(useGatewayStore.getState().status.gatewayReady).toBe(true);
+  });
+
+  it('allows explicit intervention sends while preserving normal active-run double-submit guard', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({ activeWorkspaceId: 'workspace-1' });
+    useChatStore.setState({
+      currentSessionKey: 'agent:main:main',
+      currentAgentId: 'main',
+      sessions: [{ key: 'agent:main:main' }],
+      messages: [],
+      sending: true,
+      activeRunId: 'run-active',
+      pendingFinal: false,
+      lastUserMessageAt: 1,
+      streamingText: '',
+      streamingMessage: null,
+      streamingTools: [],
+      pendingToolImages: [],
+      error: null,
+    });
+
+    await useChatStore.getState().sendMessage('normal follow-up');
+    expect(hostApiMock.chat.sendWithMedia).not.toHaveBeenCalled();
+
+    await useChatStore.getState().sendMessage(
+      'keep the validation evidence',
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      'guide',
+    );
+
+    expect(hostApiMock.chat.sendWithMedia).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'keep the validation evidence',
+      inputMode: 'guide',
+    }));
+    expect(hostApiMock.taskLedger.appendEvents).toHaveBeenCalledWith(expect.objectContaining({
+      events: [expect.objectContaining({
+        type: 'decision_recorded',
+        actor: 'user',
+        sessionId: 'agent:main:main',
+        payload: expect.objectContaining({
+          decision: 'keep the validation evidence',
+        }),
+      })],
+    }));
   });
 
   it('treats undefined gatewayReady as ready for backwards compatibility', async () => {

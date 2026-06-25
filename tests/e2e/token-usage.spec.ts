@@ -99,7 +99,7 @@ async function seedTokenUsageTranscripts(homeDir: string): Promise<void> {
   );
 }
 
-test.describe('ClawX token usage history', () => {
+test.describe('Verse Claw token usage history', () => {
 
   async function validateUsageHistory(page: Page): Promise<void> {
     const usageHistory = await page.evaluate(async () => {
@@ -150,7 +150,8 @@ test.describe('ClawX token usage history', () => {
     await completeSetup(page);
     await validateUsageHistory(page);
 
-    await page.getByTestId('sidebar-nav-models').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId('models-page')).toBeVisible();
 
     const usageEntryRows = page.getByTestId('token-usage-entry');

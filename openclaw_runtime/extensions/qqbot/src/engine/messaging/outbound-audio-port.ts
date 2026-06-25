@@ -13,7 +13,7 @@ export function setOutboundAudioPort(port: OutboundAudioPort): void {
 
 function getAudio(): OutboundAudioPort {
   if (!outboundAudioPort) {
-    throw new Error("OutboundAudioPort not initialized â€” call setOutboundAudioPort first");
+    throw new Error("OutboundAudioPort not initialized â€?call setOutboundAudioPort first");
   }
   return outboundAudioPort;
 }

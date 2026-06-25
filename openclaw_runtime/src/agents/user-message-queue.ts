@@ -14,6 +14,8 @@ export type QueuedUserMessage = {
   text: string;
   sessionKey: string;
   agentId?: string;
+  workspaceId?: string;
+  taskLedgerRootId?: string;
   enqueuedAt: number;
   source: string;
   attempts?: number;
@@ -29,6 +31,8 @@ function toQueuedUserMessage(entry: LongTaskQueuedUserMessage): QueuedUserMessag
     text: entry.text,
     sessionKey: entry.sessionKey,
     ...(entry.agentId ? { agentId: entry.agentId } : {}),
+    ...(entry.workspaceId ? { workspaceId: entry.workspaceId } : {}),
+    ...(entry.taskLedgerRootId ? { taskLedgerRootId: entry.taskLedgerRootId } : {}),
     enqueuedAt: entry.enqueuedAt,
     source: entry.source,
     attempts: entry.attempts,
@@ -51,13 +55,22 @@ export function triggerQueueDrain(sessionKey: string | undefined): void {
 
 export function enqueueUserMessage(
   sessionKey: string,
-  msg: { text: string; agentId?: string; source?: string; idempotencyKey?: string },
+  msg: {
+    text: string;
+    agentId?: string;
+    workspaceId?: string;
+    taskLedgerRootId?: string;
+    source?: string;
+    idempotencyKey?: string;
+  },
 ): QueuedUserMessage {
   return toQueuedUserMessage(
     enqueueLongTaskUserMessage({
       sessionKey,
       text: msg.text,
       agentId: msg.agentId,
+      workspaceId: msg.workspaceId,
+      taskLedgerRootId: msg.taskLedgerRootId,
       source: msg.source,
       idempotencyKey: msg.idempotencyKey,
     }),

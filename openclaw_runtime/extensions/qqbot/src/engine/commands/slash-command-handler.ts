@@ -1,5 +1,5 @@
 /**
- * Slash command handler â€” intercept slash commands before message queue.
+ * Slash command handler â€?intercept slash commands before message queue.
  *
  * Extracted from gateway.ts to keep the gateway connection logic thin.
  * Handles urgent commands, normal slash commands, and file delivery.
@@ -58,7 +58,7 @@ export async function trySlashCommand(
     return "enqueue";
   }
 
-  // Urgent command detection â€” bypass queue and execute immediately.
+  // Urgent command detection â€?bypass queue and execute immediately.
   const contentLower = content.toLowerCase();
   const isUrgentCommand = URGENT_COMMANDS.some(
     (cmd) => contentLower === cmd.toLowerCase() || contentLower.startsWith(cmd.toLowerCase() + " "),
@@ -68,7 +68,7 @@ export async function trySlashCommand(
     return "urgent";
   }
 
-  // Normal slash command â€” try to match and execute.
+  // Normal slash command â€?try to match and execute.
   const receivedAt = Date.now();
   const peerId = ctx.getMessagePeerId(msg);
   const isGroup = msg.type === "group" || msg.type === "guild";

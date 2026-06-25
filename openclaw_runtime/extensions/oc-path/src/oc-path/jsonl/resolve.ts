@@ -3,13 +3,13 @@
  *
  * Convention for JSONL OcPaths:
  *
- *   oc://session-events/L42                  â†’ entire line 42 value
- *   oc://session-events/L42/result           â†’ field on line 42's value
- *   oc://session-events/L42/result.detail    â†’ dotted descent
- *   oc://session-events/$last                â†’ final non-blank value
+ *   oc://session-events/L42                  â†?entire line 42 value
+ *   oc://session-events/L42/result           â†?field on line 42's value
+ *   oc://session-events/L42/result.detail    â†?dotted descent
+ *   oc://session-events/$last                â†?final non-blank value
  *
  * `Lnnn` (line address) and `$last` are the addressing primitives
- * unique to JSONL â€” they're how forensics / replay refers to a
+ * unique to JSONL â€?they're how forensics / replay refers to a
  * specific entry without committing to a content key.
  *
  * @module @openclaw/oc-path/jsonl/resolve
@@ -55,7 +55,7 @@ export function resolveJsonlOcPath(ast: JsonlAst, path: OcPath): JsonlOcPathMatc
     return null;
   }
 
-  // No further descent â€” return the line entry itself.
+  // No further descent â€?return the line entry itself.
   if (path.item === undefined && path.field === undefined) {
     return { kind: "line", node: lineEntry };
   }

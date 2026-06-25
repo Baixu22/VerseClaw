@@ -557,7 +557,7 @@ function wrapTelegramChatNotFoundError(err: unknown, params: { chatId: string; i
   return new Error(
     [
       `Telegram send failed: chat not found (chat_id=${params.chatId}).`,
-      "Likely: bot not started in DM, bot removed from group/channel, group migrated (new -100â€¦ id), or wrong bot token.",
+      "Likely: bot not started in DM, bot removed from group/channel, group migrated (new -100â€?id), or wrong bot token.",
       `Input was: ${JSON.stringify(params.input)}.`,
     ].join(" "),
   );
@@ -1432,9 +1432,9 @@ export async function editMessageTelegram(
   const plainText = textMode === "html" ? telegramHtmlToPlainTextFallback(htmlText) : text;
 
   // Reply markup semantics:
-  // - buttons === undefined â†’ don't send reply_markup (keep existing)
-  // - buttons is [] (or filters to empty) â†’ send { inline_keyboard: [] } (remove)
-  // - otherwise â†’ send built inline keyboard
+  // - buttons === undefined â†?don't send reply_markup (keep existing)
+  // - buttons is [] (or filters to empty) â†?send { inline_keyboard: [] } (remove)
+  // - otherwise â†?send built inline keyboard
   const shouldTouchButtons = opts.buttons !== undefined;
   const builtKeyboard = shouldTouchButtons ? buildInlineKeyboard(opts.buttons) : undefined;
   const replyMarkup = shouldTouchButtons ? (builtKeyboard ?? { inline_keyboard: [] }) : undefined;

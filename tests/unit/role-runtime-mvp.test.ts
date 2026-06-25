@@ -163,7 +163,7 @@ describe('role-first runtime MVP memory and context pack', () => {
     const accepted = commitMemoryProposal({
       type: 'project_fact',
       scope: 'project',
-      content: 'ClawX stores role contracts as structured YAML.',
+      content: 'Verse Claw stores role contracts as structured YAML.',
       evidence: ['reports/role-first-runtime-implementation-analysis.md'],
       confidence: 0.9,
       importance: 0.7,

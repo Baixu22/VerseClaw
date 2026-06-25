@@ -93,7 +93,6 @@ function cloneForkableWorkspaceState(state: WorkspaceUiState | undefined): Works
     selectedModelRef: state?.selectedModelRef,
     activeTopicId: state?.activeTopicId ?? null,
     knowledgeScope: state?.knowledgeScope,
-    workMode: state?.workMode,
     artifactPanel: state?.artifactPanel ? { ...state.artifactPanel } : undefined,
     recentFiles: state?.recentFiles ? [...state.recentFiles] : undefined,
   };

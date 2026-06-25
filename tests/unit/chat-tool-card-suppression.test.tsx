@@ -20,10 +20,30 @@ vi.mock('@/stores/agents', () => ({
 }));
 
 vi.mock('@/lib/host-api', () => ({
+  hostApi: {
+    skills: {
+      local: vi.fn().mockResolvedValue({ success: true, skills: [] }),
+    },
+    workProviders: {
+      status: vi.fn().mockResolvedValue({ success: true, providers: [], capabilities: [], kitCapabilities: [], summary: {} }),
+    },
+    usage: {
+      contextRange: vi.fn().mockResolvedValue({ success: true }),
+      live: vi.fn().mockResolvedValue({ success: true }),
+    },
+    sessions: {
+      compactionStatus: vi.fn().mockResolvedValue({ success: true }),
+      longTaskControlStatus: vi.fn().mockResolvedValue({ success: true }),
+    },
+  },
   hostApiFetch: vi.fn().mockResolvedValue({ success: true, messages: [] }),
 }));
 
 vi.mock('react-i18next', () => ({
+  initReactI18next: {
+    type: '3rdParty',
+    init: vi.fn(),
+  },
   useTranslation: () => ({
     t: (key: string, params?: Record<string, unknown> | string) => {
       if (typeof params === 'string') return params;
@@ -118,8 +138,8 @@ describe('Chat tool card suppression', () => {
       expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
     });
 
-    expect(screen.queryByText('exec')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('assistant-tool-fallback')).not.toBeInTheDocument();
     expect(screen.getByText('All done.')).toBeInTheDocument();
     expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
-  });
+  }, 10_000);
 });

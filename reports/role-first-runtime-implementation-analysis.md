@@ -33,7 +33,7 @@ The seams are clean: `spawnSubagentDirect()` already accepts `model`, `thinking`
 
 ClawX launches the gateway as an Electron `utilityProcess.fork` (`electron/gateway/process-launcher.ts:165`). The entry is chosen in `electron/gateway/config-sync.ts:786 prepareGatewayLaunchContext()`:
 
-- Runtime mode is `source` whenever the vendored tree is present (`electron/utils/paths.ts:148 isOpenClawRuntimeEnabled`, env `CLAWX_OPENCLAW_RUNTIME=source|npm`).
+- Runtime mode is `source` whenever the vendored tree is present (`electron/utils/paths.ts:148 isOpenClawRuntimeEnabled`, env `VERSE_CLAW_OPENCLAW_RUNTIME=source|npm`).
 - **Critical:** `getOpenClawRuntimeEntryPath()` (`paths.ts:196`) returns `openclaw_runtime/dist/entry.js` **if it exists**, else `src/entry.ts` via tsx. A `dist/` exists, and the comment notes tsx is unreliable on Windows. **Therefore edits to `openclaw_runtime/src/*.ts` only take effect after `pnpm run build:runtime`.**
 - `pnpm run build:runtime` → `scripts/build-openclaw-runtime.mjs`: esbuild bundles `src/entry.ts` (+ 3 workers) into `dist/`, following relative + `@openclaw/*`/`openclaw/*` alias imports, keeping `node_modules` external. **Any new module must be reachable from `entry.ts` via imports to be bundled** — satisfied automatically because we wire into RPC handlers and `subagent-spawn`.
 - `predev` runs `build-openclaw-runtime.mjs`; `dev` is `vite`.

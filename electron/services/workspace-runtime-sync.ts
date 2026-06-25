@@ -17,7 +17,7 @@ export async function syncActiveWorkspacePermissionToRuntime(
   );
   if (!modified) return;
   // Keep OpenClaw's persisted exec policy aligned for the next Gateway start.
-  // Live permission decisions are enforced by ClawX Main services, so changing
+  // Live permission decisions are enforced by Verse Claw Main services, so changing
   // the workspace mode must not interrupt the active Gateway session.
   await writeOpenClawConfig(config);
 }

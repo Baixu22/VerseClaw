@@ -35,7 +35,7 @@ function removeInsideRoot(rootPath: string, candidatePath: string): void {
 function httpGet(url: string): Promise<{ statusCode: number; data: Buffer }> {
   return new Promise((resolve, reject) => {
     https
-      .get(url, { headers: { "User-Agent": "ClawX-Skill-Installer/1.0" } }, (res) => {
+      .get(url, { headers: { "User-Agent": "Verse Claw-Skill-Installer/1.0" } }, (res) => {
         if (res.statusCode === 301 || res.statusCode === 302) {
           const redirect = res.headers.location;
           if (redirect) {

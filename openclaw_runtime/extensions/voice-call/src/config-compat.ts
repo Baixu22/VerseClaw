@@ -223,36 +223,36 @@ export function migrateVoiceCallLegacyConfigInput(params: {
 
   const changes: string[] = [];
   if (raw.provider === "log") {
-    changes.push(`Moved ${configPathPrefix}.provider "log" â†’ "mock".`);
+    changes.push(`Moved ${configPathPrefix}.provider "log" â†?"mock".`);
   }
   if (typeof twilio?.from === "string" && typeof raw.fromNumber !== "string") {
-    changes.push(`Moved ${configPathPrefix}.twilio.from â†’ ${configPathPrefix}.fromNumber.`);
+    changes.push(`Moved ${configPathPrefix}.twilio.from â†?${configPathPrefix}.fromNumber.`);
   }
   if (typeof streaming?.sttProvider === "string") {
     changes.push(
-      `Moved ${configPathPrefix}.streaming.sttProvider â†’ ${configPathPrefix}.streaming.provider.`,
+      `Moved ${configPathPrefix}.streaming.sttProvider â†?${configPathPrefix}.streaming.provider.`,
     );
   }
   if (typeof streaming?.openaiApiKey === "string") {
     changes.push(
-      `Moved ${configPathPrefix}.streaming.openaiApiKey â†’ ${configPathPrefix}.streaming.providers.openai.apiKey.`,
+      `Moved ${configPathPrefix}.streaming.openaiApiKey â†?${configPathPrefix}.streaming.providers.openai.apiKey.`,
     );
   }
   if (typeof streaming?.sttModel === "string") {
     changes.push(
-      `Moved ${configPathPrefix}.streaming.sttModel â†’ ${configPathPrefix}.streaming.providers.openai.model.`,
+      `Moved ${configPathPrefix}.streaming.sttModel â†?${configPathPrefix}.streaming.providers.openai.model.`,
     );
   }
   if (getNumber(streaming, "silenceDurationMs") !== undefined) {
     changes.push(
-      `Moved ${configPathPrefix}.streaming.silenceDurationMs â†’ ${configPathPrefix}.streaming.providers.openai.silenceDurationMs.`,
+      `Moved ${configPathPrefix}.streaming.silenceDurationMs â†?${configPathPrefix}.streaming.providers.openai.silenceDurationMs.`,
     );
   } else if (typeof streaming?.silenceDurationMs === "number") {
     changes.push(`Removed invalid ${configPathPrefix}.streaming.silenceDurationMs.`);
   }
   if (getNumber(streaming, "vadThreshold") !== undefined) {
     changes.push(
-      `Moved ${configPathPrefix}.streaming.vadThreshold â†’ ${configPathPrefix}.streaming.providers.openai.vadThreshold.`,
+      `Moved ${configPathPrefix}.streaming.vadThreshold â†?${configPathPrefix}.streaming.providers.openai.vadThreshold.`,
     );
   } else if (typeof streaming?.vadThreshold === "number") {
     changes.push(`Removed invalid ${configPathPrefix}.streaming.vadThreshold.`);

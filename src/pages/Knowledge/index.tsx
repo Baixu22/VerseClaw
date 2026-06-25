@@ -146,11 +146,18 @@ export function Knowledge() {
   const [selectedInboxId, setSelectedInboxId] = useState<string | null>(null);
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
   const [selectedProposalId, setSelectedProposalId] = useState<string | null>(null);
-  const [stewardReview, setStewardReview] = useState<KnowledgeStewardReviewResult | null>(null);
+  const [stewardReview, setStewardReview] = useState<KnowledgeStewardReviewResult | null>(null); void stewardReview;
   const [selectedProvenance, setSelectedProvenance] = useState<KnowledgeProvenanceRecord | null>(null);
   const [okfPath, setOkfPath] = useState('');
   const [okfValidation, setOkfValidation] = useState<KnowledgeOkfValidationResult | null>(null);
   const [selectedOkfConceptIds, setSelectedOkfConceptIds] = useState<Set<string>>(() => new Set());
+  const [governanceRunning, setGovernanceRunning] = useState(false);
+  const [governanceIssues, setGovernanceIssues] = useState<any[]>([]);
+  const [governanceContradictions, setGovernanceContradictions] = useState(0);
+  const [governanceStale, setGovernanceStale] = useState(0);
+  const [governanceDangling, setGovernanceDangling] = useState(0);
+  const [governanceLastChecked, setGovernanceLastChecked] = useState<string | null>(null);
+  const [, setDismissedIssueIds] = useState<Set<string>>(() => new Set());
 
   const rows = useMemo(() => getSearchRows(searchResult), [searchResult]);
   const pageCounts = status?.pageCounts ?? {};
@@ -211,6 +218,69 @@ export function Knowledge() {
   useEffect(() => {
     void refreshGovernance();
   }, [refreshGovernance]);
+
+  const runGovernanceChecks = useCallback(async () => {
+    setGovernanceRunning(true);
+    try {
+      const result = await hostApi.knowledge.governanceAudit();
+      if (result.success && 'issues' in result) {
+        const issues = (result as any).issues ?? [];
+        const summaries = (result as any).summaries ?? { contradictions: 0, stale: 0, dangling: 0, duplicates: 0, provenanceGaps: 0 };
+        setGovernanceIssues(issues);
+        setGovernanceContradictions(summaries.contradictions ?? 0);
+        setGovernanceStale(summaries.stale ?? 0);
+        setGovernanceDangling(summaries.dangling ?? 0);
+        setGovernanceLastChecked((result as any).runAt ?? null);
+      }
+    } catch (err) {
+      toast.error(t('errors.action'));
+    } finally {
+      setGovernanceRunning(false);
+    }
+  }, [t]);
+
+  const runLint = useCallback(async () => {
+    setGovernanceRunning(true);
+    try {
+      const result = await hostApi.knowledge.lint();
+      if (result.success) {
+        toast.success(t('governance.lintComplete'));
+        if (governanceIssues.length > 0) {
+          await runGovernanceChecks();
+        }
+      }
+    } catch {
+      toast.error(t('errors.action'));
+    } finally {
+      setGovernanceRunning(false);
+    }
+  }, [t, governanceIssues.length, runGovernanceChecks]);
+
+  const runCompile = useCallback(async () => {
+    setGovernanceRunning(true);
+    try {
+      const result = await hostApi.knowledge.compile();
+      if (result.success) {
+        toast.success(t('governance.compileComplete'));
+        if (governanceIssues.length > 0) {
+          await runGovernanceChecks();
+        }
+      }
+    } catch {
+      toast.error(t('errors.action'));
+    } finally {
+      setGovernanceRunning(false);
+    }
+  }, [t, governanceIssues.length, runGovernanceChecks]);
+
+  const dismissGovernanceIssue = useCallback((issueId: string) => {
+    setDismissedIssueIds(prev => {
+      const next = new Set(prev);
+      next.add(issueId);
+      return next;
+    });
+    setGovernanceIssues(prev => prev.filter(i => i.id !== issueId));
+  }, []);
 
   const runAction = useCallback(async (key: string, action: () => Promise<{ success?: boolean; error?: string }>) => {
     setRunning(key);
@@ -1130,33 +1200,273 @@ export function Knowledge() {
             )}
 
             {workbenchTab === 'governance' && (
-              <div className="grid gap-4 md:grid-cols-3" data-testid="knowledge-governance">
-                <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10 hover:shadow-sm transition-shadow">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-green-500/20 bg-green-500/10">
-                    <ShieldCheck className="h-5 w-5 text-green-700 dark:text-green-400" />
-                  </div>
-                  <h3 className="mt-3 text-sm font-semibold">{t('governance.steward')}</h3>
-                  <p className="mt-1.5 text-xs leading-5 text-muted-foreground">{t('governance.stewardDescription')}</p>
+              <div className="space-y-4" data-testid="knowledge-governance">
+                {/* Run buttons */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    onClick={() => void runGovernanceChecks()}
+                    disabled={governanceRunning}
+                    variant="default"
+                    size="sm"
+                    className="h-8 gap-1.5 rounded-lg px-3 text-xs font-medium"
+                    data-testid="knowledge-governance-run"
+                  >
+                    {governanceRunning ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+                    {t('governance.runHealthCheck')}
+                  </Button>
+                  <Button
+                    onClick={() => void runLint()}
+                    disabled={governanceRunning}
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1.5 rounded-lg border-black/10 px-3 text-xs font-medium text-foreground/80 shadow-none hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5"
+                  >
+                    <Wrench className="h-3.5 w-3.5" />
+                    {t('governance.runLint')}
+                  </Button>
+                  <Button
+                    onClick={() => void runCompile()}
+                    disabled={governanceRunning}
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1.5 rounded-lg border-black/10 px-3 text-xs font-medium text-foreground/80 shadow-none hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    {t('governance.runCompile')}
+                  </Button>
+                  {governanceRunning && (
+                    <span className="text-xs text-muted-foreground">{t('governance.checking')}</span>
+                  )}
                 </div>
-                <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10 hover:shadow-sm transition-shadow">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10">
-                    <ShieldCheck className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+
+                {/* Health summary cards */}
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div className={cn(
+                    'rounded-lg border p-4 transition-shadow',
+                    governanceContradictions > 0
+                      ? 'border-red-500/30 bg-red-500/5'
+                      : 'border-black/10 bg-surface-input dark:border-white/10'
+                  )}>
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-lg border',
+                        governanceContradictions > 0
+                          ? 'border-red-500/20 bg-red-500/10'
+                          : 'border-green-500/20 bg-green-500/10'
+                      )}>
+                        <AlertTriangle className={cn(
+                          'h-5 w-5',
+                          governanceContradictions > 0 ? 'text-red-700 dark:text-red-400' : 'text-green-700 dark:text-green-400'
+                        )} />
+                      </div>
+                      <div>
+                        <div className="text-xl font-semibold tabular-nums tracking-tight">{governanceContradictions}</div>
+                        <div className="text-[11px] text-muted-foreground">{t('governance.contradictions')}</div>
+                      </div>
+                    </div>
+                    {governanceContradictions > 0 && governanceIssues.length > 0 && (
+                      <div className="mt-3 space-y-1">
+                        {governanceIssues.filter(i => i.category === 'contradiction').slice(0, 3).map(issue => (
+                          <button
+                            key={issue.id}
+                            type="button"
+                            className="flex w-full items-center justify-between gap-2 rounded-md bg-red-500/5 px-2 py-1.5 text-left text-xs hover:bg-red-500/10"
+                            onClick={() => dismissGovernanceIssue(issue.id)}
+                            data-testid={`governance-issue-${issue.id}`}
+                          >
+                            <span className="truncate text-red-700 dark:text-red-400">{issue.title}</span>
+                            <X className="h-3 w-3 shrink-0 text-red-500/60 hover:text-red-500" />
+                          </button>
+                        ))}
+                        {governanceIssues.filter(i => i.category === 'contradiction').length > 3 && (
+                          <div className="text-xs text-muted-foreground px-2">
+                            +{governanceIssues.filter(i => i.category === 'contradiction').length - 3} more
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {governanceContradictions === 0 && (
+                      <p className="mt-2 text-[11px] text-muted-foreground">{t('governance.noIssues')}</p>
+                    )}
                   </div>
-                  <h3 className="mt-3 text-sm font-semibold">{t('governance.permissions')}</h3>
-                  <p className="mt-1.5 text-xs leading-5 text-muted-foreground">{t('governance.permissionsDescription')}</p>
-                </div>
-                <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10 hover:shadow-sm transition-shadow">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-violet-500/20 bg-violet-500/10">
-                    <History className="h-5 w-5 text-violet-700 dark:text-violet-400" />
+
+                  <div className={cn(
+                    'rounded-lg border p-4 transition-shadow',
+                    governanceStale > 0
+                      ? 'border-yellow-500/30 bg-yellow-500/5'
+                      : 'border-black/10 bg-surface-input dark:border-white/10'
+                  )}>
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-lg border',
+                        governanceStale > 0
+                          ? 'border-yellow-500/20 bg-yellow-500/10'
+                          : 'border-sky-500/20 bg-sky-500/10'
+                      )}>
+                        <History className={cn(
+                          'h-5 w-5',
+                          governanceStale > 0 ? 'text-yellow-700 dark:text-yellow-400' : 'text-sky-700 dark:text-sky-400'
+                        )} />
+                      </div>
+                      <div>
+                        <div className="text-xl font-semibold tabular-nums tracking-tight">{governanceStale}</div>
+                        <div className="text-[11px] text-muted-foreground">{t('governance.stale')}</div>
+                      </div>
+                    </div>
+                    {governanceStale > 0 && governanceIssues.length > 0 && (
+                      <div className="mt-3 space-y-1">
+                        {governanceIssues.filter(i => i.category === 'stale').slice(0, 3).map(issue => (
+                          <button
+                            key={issue.id}
+                            type="button"
+                            className="flex w-full items-center justify-between gap-2 rounded-md bg-yellow-500/5 px-2 py-1.5 text-left text-xs hover:bg-yellow-500/10"
+                            onClick={() => dismissGovernanceIssue(issue.id)}
+                            data-testid={`governance-issue-${issue.id}`}
+                          >
+                            <span className="truncate text-yellow-700 dark:text-yellow-400">{issue.title}</span>
+                            <X className="h-3 w-3 shrink-0 text-yellow-500/60 hover:text-yellow-500" />
+                          </button>
+                        ))}
+                        {governanceIssues.filter(i => i.category === 'stale').length > 3 && (
+                          <div className="text-xs text-muted-foreground px-2">
+                            +{governanceIssues.filter(i => i.category === 'stale').length - 3} more
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {governanceStale === 0 && (
+                      <p className="mt-2 text-[11px] text-muted-foreground">{t('governance.noIssues')}</p>
+                    )}
                   </div>
-                  <h3 className="mt-3 text-sm font-semibold">{t('governance.lastReview')}</h3>
-                  <p className="mt-1.5 text-xs leading-5 text-muted-foreground">{stewardReview?.notes ?? t('governance.noReview')}</p>
-                  {stewardReview?.warnings?.map((warning) => (
-                    <p key={warning} className="mt-2 rounded-md bg-yellow-500/10 px-2 py-1 text-xs text-yellow-700 dark:text-yellow-400">{warning}</p>
-                  ))}
+
+                  <div className={cn(
+                    'rounded-lg border p-4 transition-shadow',
+                    governanceDangling > 0
+                      ? 'border-yellow-500/30 bg-yellow-500/5'
+                      : 'border-black/10 bg-surface-input dark:border-white/10'
+                  )}>
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-lg border',
+                        governanceDangling > 0
+                          ? 'border-yellow-500/20 bg-yellow-500/10'
+                          : 'border-violet-500/20 bg-violet-500/10'
+                      )}>
+                        <Layers className={cn(
+                          'h-5 w-5',
+                          governanceDangling > 0 ? 'text-yellow-700 dark:text-yellow-400' : 'text-violet-700 dark:text-violet-400'
+                        )} />
+                      </div>
+                      <div>
+                        <div className="text-xl font-semibold tabular-nums tracking-tight">{governanceDangling}</div>
+                        <div className="text-[11px] text-muted-foreground">{t('governance.dangling')}</div>
+                      </div>
+                    </div>
+                    {governanceDangling > 0 && governanceIssues.length > 0 && (
+                      <div className="mt-3 space-y-1">
+                        {governanceIssues.filter(i => i.category === 'dangling').slice(0, 3).map(issue => (
+                          <button
+                            key={issue.id}
+                            type="button"
+                            className="flex w-full items-center justify-between gap-2 rounded-md bg-yellow-500/5 px-2 py-1.5 text-left text-xs hover:bg-yellow-500/10"
+                            onClick={() => dismissGovernanceIssue(issue.id)}
+                            data-testid={`governance-issue-${issue.id}`}
+                          >
+                            <span className="truncate text-yellow-700 dark:text-yellow-400">{issue.title}</span>
+                            <X className="h-3 w-3 shrink-0 text-yellow-500/60 hover:text-yellow-500" />
+                          </button>
+                        ))}
+                        {governanceIssues.filter(i => i.category === 'dangling').length > 3 && (
+                          <div className="text-xs text-muted-foreground px-2">
+                            +{governanceIssues.filter(i => i.category === 'dangling').length - 3} more
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {governanceDangling === 0 && (
+                      <p className="mt-2 text-[11px] text-muted-foreground">{t('governance.noIssues')}</p>
+                    )}
+                  </div>
                 </div>
+
+                {/* Action list */}
+                {governanceIssues.length > 0 && (
+                  <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
+                    <h4 className="mb-3 text-sm font-semibold">{t('governance.suggestions')}</h4>
+                    <div className="space-y-1.5">
+                      {governanceIssues.map(issue => (
+                        <div
+                          key={issue.id}
+                          className={cn(
+                            'flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm',
+                            issue.severity === 'error' ? 'bg-red-500/5' :
+                            issue.severity === 'warning' ? 'bg-yellow-500/5' :
+                            'bg-surface-modal'
+                          )}
+                          data-testid={`governance-action-${issue.id}`}
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <span className={cn(
+                              'shrink-0 text-xs font-semibold uppercase tracking-wider',
+                              issue.severity === 'error' ? 'text-red-600 dark:text-red-400' :
+                              issue.severity === 'warning' ? 'text-yellow-600 dark:text-yellow-400' :
+                              'text-muted-foreground'
+                            )}>
+                              {issue.severity === 'error' ? '!' : issue.severity === 'warning' ? '~' : 'i'}
+                            </span>
+                            <div className="min-w-0">
+                              <div className="truncate text-xs font-semibold text-foreground">{issue.title}</div>
+                              <div className="truncate text-[11px] text-muted-foreground">{issue.description}</div>
+                              {issue.affectedPageIds.length > 0 && (
+                                <div className="mt-1 text-[10px] text-muted-foreground/60">
+                                  {issue.category} — {issue.affectedPageIds.length} page(s)
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex shrink-0 gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 gap-1 rounded-md px-2 text-[11px] font-medium text-foreground/60 hover:text-foreground"
+                              onClick={() => dismissGovernanceIssue(issue.id)}
+                              data-testid={`governance-dismiss-${issue.id}`}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 flex items-center justify-between border-t border-black/5 pt-3 dark:border-white/5">
+                      <span className="text-[11px] text-muted-foreground">{t('governance.lastCheck', { time: governanceLastChecked ? new Date(governanceLastChecked).toLocaleString() : '-' })}</span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 gap-1 rounded-md border-black/10 px-2 text-[11px] font-medium shadow-none dark:border-white/10"
+                        onClick={() => setGovernanceIssues([])}
+                        data-testid="knowledge-governance-dismiss-all"
+                      >
+                        <X className="h-3 w-3" />
+                        {t('governance.dismissAll')}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Empty state */}
+                {governanceIssues.length === 0 && !governanceRunning && (
+                  <div className="flex flex-col items-center gap-3 rounded-lg border border-black/10 bg-surface-input p-8 dark:border-white/10">
+                    <ShieldCheck className="h-10 w-10 text-muted-foreground/40" />
+                    <div className="text-center">
+                      <p className="text-sm font-semibold text-foreground/80">{t('governance.allClear')}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{t('governance.allClearHint')}</p>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
+
           </CardContent>
         </Card>
       </main>

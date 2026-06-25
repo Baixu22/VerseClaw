@@ -3,7 +3,7 @@
  * 1. When loaded via `register()` from `node:module`, resolves `electron-store`
  *    imports to itself so the smoke test controls where the config store lives.
  * 2. When loaded as the `electron-store` replacement, wraps `conf` and writes to
- *    `process.env.CLAWX_USER_DATA_DIR`.
+ *    `process.env.VERSE_CLAW_USER_DATA_DIR`.
  */
 import path from 'node:path';
 import { homedir } from 'node:os';
@@ -22,7 +22,7 @@ export async function resolve(specifier, context, nextResolve) {
 }
 
 // ── electron-store replacement ────────────────────────────────────────
-const storeCwd = process.env.CLAWX_USER_DATA_DIR?.trim() || path.join(homedir(), '.clawx');
+const storeCwd = process.env.VERSE_CLAW_USER_DATA_DIR?.trim() || path.join(homedir(), '.verse-claw');
 
 export default class ElectronStore extends Conf {
   /**

@@ -14,6 +14,11 @@
   "spanUnit": "跨度",
   "noSpans": "此追踪暂无跨度记录。",
   "viewRoles": "查看角色与编排",
+  "drawer": {
+    "close": "关闭",
+    "locateInGraph": "在图中定位",
+    "empty": "选择节点以查看运行详情。"
+  },
   "status": {
     "running": "运行中",
     "completed": "已完成",
@@ -41,9 +46,30 @@
     "openErrorPath": "打开错误路径",
     "slowest": "最慢节点"
   },
+  "savedViews": {
+    "all": "全部 Trace",
+    "recentErrors": "最近错误",
+    "artifactRuns": "文件变更",
+    "approvalRuns": "审批",
+    "retryWarnings": "重试与告警",
+    "custom": "已保存视图",
+    "saveCurrent": "保存当前视图"
+  },
+  "views": {
+    "label": "视图",
+    "graph": "图谱",
+    "tree": "运行树",
+    "swimlane": "泳道"
+  },
+  "summaryHeader": {
+    "rootCause": "根因",
+    "selected": "已选",
+    "noIssue": "此 Trace 未检测到高严重度问题。"
+  },
   "graph": {
     "title": "Agent 链路",
     "nodes": "节点",
+    "hidden": "已隐藏 {{count}} 个",
     "errorNodes": "错误",
     "zoomIn": "放大",
     "zoomOut": "缩小",
@@ -63,6 +89,18 @@
     "focusTools": "仅工具",
     "focusArtifacts": "仅产物",
     "focusCost": "成本",
+    "density": "密度",
+    "densityHint": "控制低信号事件的显示数量。",
+    "densityModes": {
+      "focused": "聚焦",
+      "balanced": "均衡",
+      "full": "完整"
+    },
+    "nodeMetrics": {
+      "events": "{{count}} 事件",
+      "artifacts": "{{count}} 产物",
+      "retries": "{{count}} 重试"
+    },
     "compactOn": "紧凑",
     "compactOff": "展开",
     "expand": "展开",
@@ -78,9 +116,49 @@
     "events": "事件",
     "io": "输入/输出",
     "artifacts": "产物",
+    "compare": "对比",
+    "annotation": "备注",
     "attributes": "属性",
     "timeline": "时间线",
     "score": "评分"
+  },
+  "runTree": {
+    "title": "运行树"
+  },
+  "swimlane": {
+    "title": "阶段泳道"
+  },
+  "evidence": {
+    "title": "诊断证据",
+    "issueMeta": "{{category}} / {{severity}}",
+    "why": "为什么重要",
+    "evidence": "证据",
+    "nextStep": "建议下一步",
+    "noIssue": "此节点未关联问题。"
+  },
+  "compare": {
+    "title": "Trace 对比",
+    "subtitle": "在工作台内将当前 Trace 与另一条运行进行对比。",
+    "selectTrace": "选择 Trace",
+    "none": "不对比",
+    "empty": "选择另一条 Trace 来对比耗时、Token、成本和问题数。",
+    "delta": "差值 {{value}}"
+  },
+  "annotations": {
+    "title": "Trace 备注",
+    "subtitle": "当前 Trace 的本地复盘备注和标签。",
+    "statusLabel": "复盘状态",
+    "tags": "标签",
+    "tagsPlaceholder": "triage, regression, tool",
+    "note": "备注",
+    "notePlaceholder": "补充简短诊断或后续动作...",
+    "save": "保存备注",
+    "updatedAt": "更新于 {{time}}",
+    "status": {
+      "open": "待处理",
+      "reviewed": "已复盘",
+      "ignored": "已忽略"
+    }
   },
   "details": {
     "empty": "选择一个节点查看运行详情。",

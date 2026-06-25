@@ -1,5 +1,5 @@
-import { mkdtempSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
@@ -9,7 +9,9 @@ import {
   getMemoryConflictDetail,
   getMemoryCards,
   getMemoryHealthReport,
+  getMemoryUtilityReport,
   getRoleMemoryPolicy,
+  listMemoryFeedback,
   listMemoryAuditEvents,
   listMemoryConflicts,
   listMemoryProposals,
@@ -18,6 +20,8 @@ import {
   previewMemoryProposal,
   proposeMemoryRetention,
   proposeMemoryCard,
+  recordMemoryInjection,
+  recordMemoryFeedback,
   reviewMemoryProposalBatch,
   reviewMemoryProposalRecord,
   setMemoryStorePath,
@@ -230,6 +234,58 @@ describe('role memory v2 governance', () => {
     expect(getMemoryCards({ status: 'all' })).toHaveLength(0);
   });
 
+  it('keeps automatic Role Memory candidates as proposals without applying cards', () => {
+    const decision = proposeMemoryCard({
+      type: 'procedure',
+      scope: 'role',
+      roleTags: ['architect'],
+      content: 'Architect should capture failed migration assumptions only after review.',
+      confidence: 0.88,
+      importance: 0.62,
+      source: 'trace',
+      evidenceRefs: [{ type: 'trace', ref: 'trace-auto-1' }],
+    });
+
+    expect(decision.accepted).toBe(false);
+    expect(decision.action).toBe('needs_review');
+    expect(decision.reason).toContain('proposal-only');
+    expect(decision.proposal?.status).toBe('needs_review');
+    expect(getMemoryCards({ status: 'all' })).toHaveLength(0);
+    expect(listMemoryProposals()).toHaveLength(1);
+  });
+
+  it('does not write Project Rules from automatic Role Memory proposals', () => {
+    const guardedFiles = [
+      join(tempDir, 'AGENTS.md'),
+      join(tempDir, 'harness', 'specs', 'tasks', 'auto-memory.md'),
+      join(tempDir, '.clawx', 'rules', 'auto-memory.md'),
+    ];
+    for (const file of guardedFiles) {
+      mkdirSync(dirname(file), { recursive: true });
+      writeFileSync(file, `unchanged:${file}`);
+    }
+    const before = new Map(guardedFiles.map((file) => [file, readFileSync(file, 'utf8')]));
+
+    const decision = proposeMemoryCard({
+      type: 'constraint',
+      scope: 'project',
+      roleTags: ['architect'],
+      content: 'Project Rules should not be rewritten by automatic role memory.',
+      confidence: 0.92,
+      importance: 0.8,
+      source: 'role',
+      evidenceRefs: guardedFiles.map((file) => ({ type: 'file' as const, ref: file })),
+    });
+
+    expect(decision.accepted).toBe(false);
+    expect(decision.action).toBe('needs_review');
+    expect(decision.proposal?.status).toBe('needs_review');
+    expect(getMemoryCards({ status: 'all' })).toHaveLength(0);
+    for (const file of guardedFiles) {
+      expect(readFileSync(file, 'utf8')).toBe(before.get(file));
+    }
+  });
+
   it('exposes policy and retention candidates without mutating cards', () => {
     const decision = proposeMemoryCard({
       type: 'episode',
@@ -361,5 +417,48 @@ describe('role memory v2 governance', () => {
 
     const health = getMemoryHealthReport();
     expect(health.ok).toBe(true);
+  });
+
+  it('records real feedback and reports utility without inventing task success delta', () => {
+    const decision = proposeMemoryCard({
+      type: 'procedure',
+      scope: 'role',
+      roleTags: ['architect'],
+      content: 'Architect should inspect role memory quality before expanding automatic extraction.',
+      confidence: 0.92,
+      importance: 0.7,
+      source: 'user',
+      evidenceRefs: [{ type: 'manual', ref: 'test' }],
+    });
+    const cards = getMemoryCards({ roleName: 'architect', status: 'all' });
+    const pack = buildContextPack({
+      memories: cards,
+      roleName: 'architect',
+      taskState: 'inspect role memory quality',
+    });
+    const injection = recordMemoryInjection({
+      roleName: 'architect',
+      task: 'inspect role memory quality',
+      cards: decision.card ? [decision.card] : [],
+      pack,
+    });
+    const feedback = recordMemoryFeedback({
+      injectionId: injection.id,
+      cardId: decision.card!.id,
+      roleName: 'architect',
+      outcome: 'helpful',
+      taskSuccess: 'unknown',
+    });
+
+    expect(feedback.outcome).toBe('helpful');
+    expect(listMemoryFeedback({ roleName: 'architect' })).toHaveLength(1);
+
+    const report = getMemoryUtilityReport({ roleName: 'architect' });
+    expect(report.dataQuality).toBe('partial');
+    expect(report.sample.feedback).toBe(1);
+    expect(report.aggregate.helpfulnessRate).toBe(1);
+    expect(report.aggregate.taskSuccessDelta).toBeNull();
+    expect(report.missingEvidence).toContain('No memory-on/off evaluation pairs are available, so task success delta is not computed.');
+    expect(report.cards.find((card) => card.cardId === decision.card!.id)?.utilityScore).not.toBeNull();
   });
 });

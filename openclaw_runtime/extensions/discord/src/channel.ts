@@ -142,7 +142,7 @@ function startDiscordStartupProbe(params: {
       const messageContent = probe.application?.intents?.messageContent;
       if (messageContent === "disabled") {
         params.log?.warn?.(
-          `[${params.accountId}] Discord Message Content Intent is disabled; bot may not respond to channel messages. Enable it in Discord Dev Portal (Bot â†’ Privileged Gateway Intents) or require mentions.`,
+          `[${params.accountId}] Discord Message Content Intent is disabled; bot may not respond to channel messages. Enable it in Discord Dev Portal (Bot â†?Privileged Gateway Intents) or require mentions.`,
         );
       } else if (messageContent === "limited") {
         params.log?.info?.(

@@ -345,7 +345,7 @@ function isCircuitBreakerOpen(key: string, maxTimeouts: number, cooldownMs: numb
     return false;
   }
   if (Date.now() - entry.lastTimeoutAt >= cooldownMs) {
-    // Cooldown expired â€” reset and allow one attempt through.
+    // Cooldown expired â€?reset and allow one attempt through.
     timeoutCircuitBreaker.delete(key);
     return false;
   }
@@ -1230,7 +1230,7 @@ function resolveConversationId(ctx: {
   }
   const restParts = parsed.rest.split(":").filter(Boolean);
   if (restParts.length < 2) {
-    // `agent:<agentId>:<mainKey>` (dmScope=main) lands here â€” there is
+    // `agent:<agentId>:<mainKey>` (dmScope=main) lands here â€?there is
     // no embedded peer id to filter against.
     return undefined;
   }
@@ -2886,7 +2886,7 @@ export default definePluginEntry({
       if (hasDeprecatedModelFallbackPolicy(pluginConfig)) {
         // Wording matters here: the previous text ("set config.modelFallback
         // explicitly if you want a fallback model") read naturally as runtime
-        // failover (model A errors â†’ switch to model B), but `getModelRef`
+        // failover (model A errors â†?switch to model B), but `getModelRef`
         // only consults `modelFallback` as the *last candidate* in the
         // resolution chain after `config.model`, the current run's model,
         // and the agent's configured default have all resolved to nothing.
@@ -2895,7 +2895,7 @@ export default definePluginEntry({
         api.logger.warn?.(
           "active-memory: config.modelFallbackPolicy is deprecated and no longer changes runtime behavior. " +
             "config.modelFallback is a chain-resolution last-resort (consulted only when config.model, " +
-            "the current run's model, and the agent's configured default all resolve to nothing) â€” " +
+            "the current run's model, and the agent's configured default all resolve to nothing) â€?" +
             "it is NOT a runtime failover that substitutes a different model when the resolved model errors out.",
         );
       }

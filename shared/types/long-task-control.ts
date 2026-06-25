@@ -1,8 +1,9 @@
-export type LongTaskInputMode = 'interrupt' | 'guide' | 'queue';
+export type LongTaskInputMode = 'interrupt' | 'guide' | 'queue' | 'revise-goal';
 
 export type ResumeCheckpointTrigger =
   | 'compaction'
   | 'interrupt'
+  | 'revise_goal'
   | 'run_abort'
   | 'clawgraph_node_handoff'
   | 'audit_fail'
@@ -87,6 +88,7 @@ export type ResumeCheckpoint = {
   workspaceId?: string | null;
   sessionKey?: string | null;
   agentId?: string | null;
+  taskLedgerRootId?: string | null;
   trigger: ResumeCheckpointTrigger;
   objective?: string;
   activeNodeId?: string | null;
@@ -113,6 +115,7 @@ export type LongTaskCheckpointRecord = {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  taskLedgerRootId?: string;
   runId?: string;
   traceId?: string;
   clawGraphRunId?: string;
@@ -129,6 +132,7 @@ export type LongTaskControlEvent = {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  taskLedgerRootId?: string;
   runId?: string;
   traceId?: string;
   clawGraphRunId?: string;
@@ -148,6 +152,7 @@ export type LongTaskQueueItem = {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  taskLedgerRootId?: string;
   status: 'pending' | 'draining' | 'drained' | 'failed';
   attempts: number;
   lastAttemptAt?: number;
@@ -359,6 +364,7 @@ export function buildResumeCheckpoint(input: ResumeCheckpointInput): ResumeCheck
     ...(input.workspaceId !== undefined ? { workspaceId: input.workspaceId } : {}),
     ...(input.sessionKey !== undefined ? { sessionKey: input.sessionKey } : {}),
     ...(input.agentId !== undefined ? { agentId: input.agentId } : {}),
+    ...(input.taskLedgerRootId !== undefined ? { taskLedgerRootId: input.taskLedgerRootId } : {}),
     trigger: input.trigger,
     ...(input.objective ? { objective: input.objective } : {}),
     ...(input.activeNodeId !== undefined ? { activeNodeId: input.activeNodeId } : {}),
@@ -390,6 +396,23 @@ export function interventionPolicyForInputMode(
   mode: LongTaskInputMode,
   options: LongTaskInterventionOptions = {},
 ): LongTaskInterventionPolicy {
+  if (mode === 'revise-goal') {
+    return {
+      mode,
+      delivery: 'restart_now',
+      mutatesCompletionState: false,
+      shouldAbortActiveRun: true,
+      checkpointRequired: true,
+      recordsSteeringEvidence: false,
+      recordsDeviation: true,
+      reviewRequired: true,
+      confirmationRequired: Boolean(options.clawGraphNodeActive),
+      resumeTrigger: 'revise_goal',
+      taskLedgerEffect: 'deviation',
+      description: 'Checkpoint the active run, record a goal-revision deviation, and restart from the revised user goal.',
+    };
+  }
+
   if (mode === 'interrupt') {
     return {
       mode,

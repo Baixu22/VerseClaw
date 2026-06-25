@@ -26,7 +26,7 @@ const TAR_UNPACK_TIMEOUT_MS = 60_000;
 
 // Cap on number of entries pre-validated. The compressed tar is already
 // capped at DIR_FETCH_HARD_MAX_BYTES upstream, and we walk the unpacked
-// tree to compute hashes â€” TAR_UNPACK_MAX_ENTRIES bounds how much work
+// tree to compute hashes â€?TAR_UNPACK_MAX_ENTRIES bounds how much work
 // that walk can do.
 const TAR_UNPACK_MAX_ENTRIES = 5000;
 const TAR_LIST_OUTPUT_MAX_CHARS = 32 * 1024 * 1024;
@@ -147,7 +147,7 @@ async function listTarOutputLines<T>(input: {
 async function computeFileSha256(filePath: string): Promise<string> {
   // Stream the hash so we never pull a whole large file into memory.
   // file_fetch caps single files at 16MB, but unpacked dir_fetch entries
-  // share the 64MB uncompressed budget â€” better to stream regardless.
+  // share the 64MB uncompressed budget â€?better to stream regardless.
   const hash = crypto.createHash("sha256");
   const handle = await fs.open(filePath, "r");
   try {
@@ -176,12 +176,12 @@ async function computeFileSha256(filePath: string): Promise<string> {
  *      Used ONLY to detect symlinks / hardlinks / non-regular entries via
  *      the FIRST CHARACTER of each line, never the path column.
  *
- * Size limits are enforced at the *extraction* step instead â€” the tar
+ * Size limits are enforced at the *extraction* step instead â€?the tar
  * unpack process is bounded by the maxBytes we already pass through, and
  * the post-extract walkDir is hard-capped by TAR_UNPACK_MAX_ENTRIES.
  * Trying to parse uncompressed sizes from `tar -tvf` output is fragile
  * (filenames with whitespace shift the columns) and Aisle flagged that
- * shape as a bypass primitive â€” drop it.
+ * shape as a bypass primitive â€?drop it.
  */
 async function listTarPaths(
   tarBuffer: Buffer,
@@ -255,7 +255,7 @@ async function preValidateTarball(
     if (norm === ".." || norm.startsWith("../") || norm.includes("/../")) {
       return { ok: false, reason: `archive contains '..' traversal: ${entryPath}` };
     }
-    // Reject backslash-containing names too â€” refuses Windows-style
+    // Reject backslash-containing names too â€?refuses Windows-style
     // traversal in archives produced by an attacker on a Windows node.
     if (entryPath.includes("\\")) {
       return { ok: false, reason: `archive contains backslash in path: ${entryPath}` };
@@ -353,7 +353,7 @@ type UnpackedFileEntry = {
 
 /**
  * Unpack a gzipped tarball into a target directory via `tar -xzf -`.
- * Caller MUST have run `preValidateTarball` first â€” this function trusts
+ * Caller MUST have run `preValidateTarball` first â€?this function trusts
  * that the archive contains only regular files / dirs with relative,
  * non-traversing paths. Without that pre-validation, raw `tar -xzf` is
  * unsafe (tarbomb, symlink-then-write tricks, decompression bomb).
@@ -436,7 +436,7 @@ async function unpackTar(tarBuffer: Buffer, destDir: string): Promise<void> {
 
 /**
  * Walk a directory recursively, collecting file entries (skips directories).
- * Skips symlinks â€” we don't want to follow links the archive might have
+ * Skips symlinks â€?we don't want to follow links the archive might have
  * carried in. Files only.
  */
 async function walkDir(
@@ -622,7 +622,7 @@ export function createDirFetchTool(): AnyAgentTool {
       const mediaNote = droppedFromMedia
         ? ` (channel attaches first ${MEDIA_URL_CAP}; ${droppedFromMedia} more in details.files)`
         : "";
-      const summaryText = `Fetched ${fileCount} files from ${canonicalPath} (${humanSize(tarBytes)} compressed, sha256:${shortHash}) â€” saved on the gateway under ${rootDir}/${mediaNote}`;
+      const summaryText = `Fetched ${fileCount} files from ${canonicalPath} (${humanSize(tarBytes)} compressed, sha256:${shortHash}) â€?saved on the gateway under ${rootDir}/${mediaNote}`;
 
       await appendFileTransferAudit({
         op: "dir.fetch",

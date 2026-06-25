@@ -206,7 +206,7 @@ export async function pollAppRegistration(params: {
         ...(tp ? { tp } : {}),
       });
     } catch {
-      // Transient network error â€” keep polling.
+      // Transient network error â€?keep polling.
       await sleepRegistrationPollInterval(currentInterval);
       continue;
     }

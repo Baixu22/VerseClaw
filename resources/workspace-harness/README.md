@@ -1,8 +1,8 @@
-# ClawX Agent Harness
+# Verse Claw Agent Harness
 
 This directory is the workspace-local home for project instructions, task specs, and Task Ledger-aligned context routing.
 
-ClawX uses this layout instead of `.trellis/` so project docs plug into the existing ClawX long-conversation stack instead of creating another task system:
+Verse Claw uses this layout instead of `.trellis/` so project docs plug into the existing Verse Claw long-conversation stack instead of creating another task system:
 
 - `specs/rules/` - hard rules that should be checked whenever practical.
 - `specs/scenarios/` - user-visible or cross-layer workflows.
@@ -15,14 +15,14 @@ Keep `AGENTS.md` as the short entry point. Put durable project knowledge here, a
 
 ## Alignment With Long Conversation State
 
-ClawX already has first-class owners for long work:
+Verse Claw already has first-class owners for long work:
 
 - **Task Ledger** owns durable task state: goals, dependencies, blockers, review state, decisions, deviations, and session links.
 - **ClawGraph** owns long-task execution state: DAG runs, node handoffs, audit results, and review items.
 - **Context Pack** owns token-budgeted context injection for a run. It is not a durable source of truth.
 - **This harness** owns project specs, task contracts, context-pack recipes, and human-readable bridge docs.
 
-The workspace docs may mirror or bootstrap task information, but they must not silently compete with Task Ledger. If ClawX Task Ledger is available, update it first and use these files as references, exports, or review aids.
+The workspace docs may mirror or bootstrap task information, but they must not silently compete with Task Ledger. If Verse Claw Task Ledger is available, update it first and use these files as references, exports, or review aids.
 
 ## Task Dimensions
 

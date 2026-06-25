@@ -168,19 +168,19 @@ function migrateLegacyTtsConfig(
   }
   let changed = false;
   if (mergeLegacyTtsProviderConfig(tts, "openai", "openai")) {
-    changes.push(`Moved ${pathLabel}.openai â†’ ${pathLabel}.providers.openai.`);
+    changes.push(`Moved ${pathLabel}.openai â†?${pathLabel}.providers.openai.`);
     changed = true;
   }
   if (mergeLegacyTtsProviderConfig(tts, "elevenlabs", "elevenlabs")) {
-    changes.push(`Moved ${pathLabel}.elevenlabs â†’ ${pathLabel}.providers.elevenlabs.`);
+    changes.push(`Moved ${pathLabel}.elevenlabs â†?${pathLabel}.providers.elevenlabs.`);
     changed = true;
   }
   if (mergeLegacyTtsProviderConfig(tts, "microsoft", "microsoft")) {
-    changes.push(`Moved ${pathLabel}.microsoft â†’ ${pathLabel}.providers.microsoft.`);
+    changes.push(`Moved ${pathLabel}.microsoft â†?${pathLabel}.providers.microsoft.`);
     changed = true;
   }
   if (mergeLegacyTtsProviderConfig(tts, "edge", "microsoft")) {
-    changes.push(`Moved ${pathLabel}.edge â†’ ${pathLabel}.providers.microsoft.`);
+    changes.push(`Moved ${pathLabel}.edge â†?${pathLabel}.providers.microsoft.`);
     changed = true;
   }
   return changed;
@@ -292,7 +292,7 @@ function normalizeDiscordGuildChannelAllowAliases(params: {
       if (nextChannel.enabled === undefined) {
         nextChannel.enabled = channel.allow;
         params.changes.push(
-          `Moved ${params.pathPrefix}.guilds.${guildId}.channels.${channelId}.allow â†’ ${params.pathPrefix}.guilds.${guildId}.channels.${channelId}.enabled.`,
+          `Moved ${params.pathPrefix}.guilds.${guildId}.channels.${channelId}.allow â†?${params.pathPrefix}.guilds.${guildId}.channels.${channelId}.enabled.`,
         );
       } else {
         params.changes.push(
@@ -402,7 +402,7 @@ function normalizeDiscordGuildChannelAgentIds(params: {
         match: bindingMatch,
       });
       params.changes.push(
-        `Moved ${path} â†’ top-level bindings[] route for Discord channel ${channelId}.`,
+        `Moved ${path} â†?top-level bindings[] route for Discord channel ${channelId}.`,
       );
     }
     if (!channelsChanged) {

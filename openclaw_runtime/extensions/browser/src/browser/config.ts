@@ -528,7 +528,7 @@ export function resolveProfile(
       cdpPort = parsed.port;
       cdpUrl = parsed.normalizedWithPort;
     } else if (cdpPort) {
-      // URL omitted the port but we have an explicit cdpPort â€” inject it while
+      // URL omitted the port but we have an explicit cdpPort â€?inject it while
       // preserving the rest of the URL (path, query, credentials, etc.).
       const rebuilt = new URL(rawProfileUrl);
       rebuilt.port = String(cdpPort);

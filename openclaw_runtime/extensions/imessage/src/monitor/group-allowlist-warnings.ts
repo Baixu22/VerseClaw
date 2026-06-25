@@ -65,7 +65,7 @@ export function warnGroupAllowlistDropPerChatOnce(params: {
   }
   perChatWarned.add(key);
   params.log(
-    `imessage: dropping group message from chat_id=${chat} (account "${params.accountId}") â€” ` +
+    `imessage: dropping group message from chat_id=${chat} (account "${params.accountId}") â€?` +
       `not in channels.imessage.groups allowlist. ` +
       `Add channels.imessage.groups["${chat}"] or channels.imessage.groups["*"] to allow it.`,
   );

@@ -20,7 +20,7 @@ touchedAreas:
 expectedUserBehavior:
   - Lead agents can call task_loop to run a bounded self-checking orchestration loop.
   - Operators can start task_loop.run through the existing Gateway RPC path and inspect task_loop.status.
-  - ClawX receives task-loop lifecycle events through HostEvents without renderer direct Gateway transport.
+  - Verse Claw receives task-loop lifecycle events through HostEvents without renderer direct Gateway transport.
   - The Roles panel shows task-loop phase, iteration, self-check decision, and terminal status.
 requiredProfiles:
   - fast

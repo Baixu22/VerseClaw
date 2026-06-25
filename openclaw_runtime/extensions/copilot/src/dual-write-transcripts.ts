@@ -7,7 +7,7 @@
  * writes the user prompt and the terminal assistant text into the
  * transcript at the end of each attempt. That is the bare minimum to
  * keep `/history` working. It does NOT capture tool calls, tool
- * results, or intermediate assistant turns â€” those live only in the
+ * results, or intermediate assistant turns â€?those live only in the
  * SDK's own session file.
  *
  * For audit/compliance and for the codex-parity guarantees we promised

@@ -37,9 +37,9 @@ vi.mock('electron', () => ({
 
 vi.mock('@electron/utils/paths', () => ({
   getActiveOpenClawDir: () => '/tmp/openclaw',
-  getActiveOpenClawEntryPath: () => 'C:\\Program Files\\ClawX\\resources\\openclaw-runtime\\dist\\entry.js',
+  getActiveOpenClawEntryPath: () => 'C:\\Program Files\\Verse Claw\\resources\\openclaw-runtime\\dist\\entry.js',
   getOpenClawDir: () => '/tmp/openclaw',
-  getOpenClawEntryPath: () => 'C:\\Program Files\\ClawX\\resources\\openclaw\\openclaw.mjs',
+  getOpenClawEntryPath: () => 'C:\\Program Files\\Verse Claw\\resources\\openclaw\\openclaw.mjs',
   isOpenClawRuntimeEnabled: () => true,
 }));
 
@@ -50,7 +50,7 @@ describe('getOpenClawCliCommand (Windows packaged)', () => {
     setPlatform('win32');
     mockIsPackagedGetter.value = true;
     Object.defineProperty(process, 'resourcesPath', {
-      value: 'C:\\Program Files\\ClawX\\resources',
+      value: 'C:\\Program Files\\Verse Claw\\resources',
       configurable: true,
       writable: true,
     });
@@ -69,7 +69,7 @@ describe('getOpenClawCliCommand (Windows packaged)', () => {
     mockExistsSync.mockImplementation((p: string) => /[\\/]cli[\\/]openclaw\.cmd$/i.test(p) || /[\\/]bin[\\/]node\.exe$/i.test(p));
     const { getOpenClawCliCommand } = await import('@electron/utils/openclaw-cli');
     expect(getOpenClawCliCommand()).toBe(
-      "& 'C:\\Program Files\\ClawX\\resources\\cli\\openclaw.cmd'",
+      "& 'C:\\Program Files\\Verse Claw\\resources\\cli\\openclaw.cmd'",
     );
   });
 
@@ -77,7 +77,7 @@ describe('getOpenClawCliCommand (Windows packaged)', () => {
     mockExistsSync.mockImplementation((p: string) => /[\\/]bin[\\/]node\.exe$/i.test(p));
     const { getOpenClawCliCommand } = await import('@electron/utils/openclaw-cli');
     expect(getOpenClawCliCommand()).toBe(
-      "& 'C:\\Program Files\\ClawX\\resources\\bin\\node.exe' 'C:\\Program Files\\ClawX\\resources\\openclaw-runtime\\dist\\entry.js'",
+      "& 'C:\\Program Files\\Verse Claw\\resources\\bin\\node.exe' 'C:\\Program Files\\Verse Claw\\resources\\openclaw-runtime\\dist\\entry.js'",
     );
   });
 
@@ -86,6 +86,6 @@ describe('getOpenClawCliCommand (Windows packaged)', () => {
     const { getOpenClawCliCommand } = await import('@electron/utils/openclaw-cli');
     const command = getOpenClawCliCommand();
     expect(command.startsWith('$env:ELECTRON_RUN_AS_NODE=1; & ')).toBe(true);
-    expect(command.endsWith("'C:\\Program Files\\ClawX\\resources\\openclaw-runtime\\dist\\entry.js'")).toBe(true);
+    expect(command.endsWith("'C:\\Program Files\\Verse Claw\\resources\\openclaw-runtime\\dist\\entry.js'")).toBe(true);
   });
 });

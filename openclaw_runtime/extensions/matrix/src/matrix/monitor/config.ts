@@ -429,7 +429,7 @@ async function resolveMatrixMonitorRoomsConfig(params: {
         nextRooms[cleaned] = roomConfig;
       }
       if (cleaned !== input) {
-        mapping.push(`${input}â†’${cleaned}`);
+        mapping.push(`${input}â†?{cleaned}`);
       }
       continue;
     }
@@ -458,7 +458,7 @@ async function resolveMatrixMonitorRoomsConfig(params: {
         if (!nextRooms[roomKey]) {
           nextRooms[roomKey] = source.config;
         }
-        mapping.push(`${source.input}â†’${roomKey}`);
+        mapping.push(`${source.input}â†?{roomKey}`);
       } else {
         unresolved.push(source.input);
       }

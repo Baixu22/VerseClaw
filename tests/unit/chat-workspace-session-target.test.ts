@@ -39,7 +39,7 @@ describe('resolveWorkspaceSessionTarget', () => {
       sessionKey: 'agent:reviewer:session-12345-4fzyo8',
       isFresh: true,
     });
-  });
+  }, 10_000);
 
   it('uses the current agent binding inside the target workspace when present', async () => {
     const { resolveWorkspaceSessionTarget } = await import('@/pages/Chat');

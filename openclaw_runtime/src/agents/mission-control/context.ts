@@ -7,6 +7,14 @@ import {
   type LongConversationControlSignal,
   type LongConversationValidationState,
 } from "../long-conversation-control-signals.js";
+import {
+  buildLoopContextPack,
+  formatLoopContextPackForPrompt,
+  getLoopContextSection,
+  type LoopContextPack,
+  type LoopContextPackInput,
+  type LoopContextSectionId,
+} from "../loop-context-pack.js";
 import { sanitizeForPromptLiteral, wrapPromptDataBlock } from "../sanitize-for-prompt.js";
 import type { MissionEvidenceRef } from "./types.js";
 
@@ -35,6 +43,7 @@ export type MissionContextPackInput = {
   validationState?: LongConversationValidationState;
   acceptanceStatus?: LongConversationAcceptanceStatus;
   scopeSummary?: string;
+  loopContext?: Omit<LoopContextPackInput, "currentTask">;
 };
 
 export type MissionContextPack = {
@@ -54,6 +63,7 @@ export type MissionContextPack = {
   validationState?: LongConversationValidationState;
   acceptanceStatus?: LongConversationAcceptanceStatus;
   scopeSummary: string;
+  loopContextPack: LoopContextPack;
   hash: string;
 };
 
@@ -86,11 +96,49 @@ function formatJsonSection(value: unknown): string {
   return value === undefined ? "Not available" : JSON.stringify(value, null, 2);
 }
 
+function formatLoopContextSectionForCompatibility(
+  pack: LoopContextPack,
+  sectionId: LoopContextSectionId,
+): string {
+  const section = getLoopContextSection(pack, sectionId);
+  if (section.items.length === 0) return "Not available";
+  return section.items.map((item) => {
+    const metadata = [
+      item.priority,
+      item.source,
+      item.supersedes ? `supersedes=${item.supersedes}` : "",
+      item.createdAt ? `createdAt=${item.createdAt}` : "",
+    ].filter(Boolean).join("; ");
+    return `- [${metadata}] ${item.text}`;
+  }).join("\n");
+}
+
 function digestPack(pack: Omit<MissionContextPack, "hash">): string {
   return createHash("sha256").update(JSON.stringify(pack)).digest("hex");
 }
 
 export function buildMissionContextPack(input: MissionContextPackInput): MissionContextPack {
+  const loopContextPack = buildLoopContextPack({
+    ...input.loopContext,
+    loopId: input.loopContext?.loopId ?? input.missionId,
+    currentTask: {
+      goal: input.objective,
+      acceptance: input.acceptance,
+    },
+    taskLedgerState: [
+      ...(input.loopContext?.taskLedgerState ?? []),
+      ...(input.taskLedgerSummary ? [input.taskLedgerSummary] : []),
+    ],
+    resumeCheckpoint: input.loopContext?.resumeCheckpoint ?? input.checkpointSummary,
+    roleMemory: [
+      ...(input.loopContext?.roleMemory ?? []),
+      ...(input.memorySummary ? [input.memorySummary] : []),
+    ],
+    transcriptSummary: [
+      ...(input.loopContext?.transcriptSummary ?? []),
+      ...(input.previousReviewerSummary ? [input.previousReviewerSummary] : []),
+    ],
+  });
   const pack = {
     missionId: input.missionId,
     objective: truncate(input.objective, MISSION_OBJECTIVE_MAX_CHARS),
@@ -108,6 +156,7 @@ export function buildMissionContextPack(input: MissionContextPackInput): Mission
     validationState: normalizeValidationState(input.validationState),
     acceptanceStatus: normalizeAcceptanceStatus(input.acceptanceStatus),
     scopeSummary: truncate(input.scopeSummary, MISSION_REVIEWER_SUMMARY_MAX_CHARS),
+    loopContextPack,
   };
   return { ...pack, hash: digestPack(pack) };
 }
@@ -124,17 +173,23 @@ export function formatMissionContextPackForReviewer(pack: MissionContextPack): s
     "acceptance:",
     pack.acceptance.length ? pack.acceptance.map((item) => `- ${item}`).join("\n") : "- Not provided",
     "",
+    "loopContextPack:",
+    formatLoopContextPackForPrompt(pack.loopContextPack),
+    "",
+    "legacyCompatibility:",
+    "The legacy reviewer headings below are formatted from LoopContextPack sections only; they are not independent recovery-context sources.",
+    "",
     "taskLedgerSummary:",
-    pack.taskLedgerSummary || "Not available",
+    formatLoopContextSectionForCompatibility(pack.loopContextPack, "taskLedgerCurrentState"),
     "",
     "checkpointSummary:",
-    pack.checkpointSummary || "Not available",
+    formatLoopContextSectionForCompatibility(pack.loopContextPack, "resumeCheckpoint"),
     "",
     "previousReviewerSummary:",
-    pack.previousReviewerSummary || "Not available",
+    formatLoopContextSectionForCompatibility(pack.loopContextPack, "transcriptSummary"),
     "",
     "memorySummary:",
-    pack.memorySummary || "Not available",
+    formatLoopContextSectionForCompatibility(pack.loopContextPack, "roleMemory"),
     "",
     "openBlockers:",
     pack.openBlockers.length ? pack.openBlockers.map((item) => `- ${item}`).join("\n") : "- none",
@@ -155,7 +210,7 @@ export function formatMissionContextPackForReviewer(pack: MissionContextPack): s
     formatJsonSection(pack.controlSignals),
     "",
     "repairBrief:",
-    pack.repairBrief || "Not requested",
+    formatLoopContextSectionForCompatibility(pack.loopContextPack, "initialConstraints"),
     "",
     "evidence:",
     pack.evidenceText,

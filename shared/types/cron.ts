@@ -6,6 +6,14 @@
 import type { ChannelType } from './channel';
 
 export type CronJobDeliveryMode = 'none' | 'announce';
+export type CronJobSource = 'gateway' | 'config-fallback';
+
+export interface CronJobRuntimeGuarantee {
+  source: CronJobSource;
+  sessionTarget: 'isolated' | 'thread' | string;
+  wakeMode: 'next-heartbeat' | string;
+  payloadKind: string;
+}
 
 export interface CronJobDelivery {
   mode: CronJobDeliveryMode;
@@ -34,6 +42,36 @@ export interface CronJobLastRun {
   duration?: number;
 }
 
+export type CronJobTaskKind = 'agentTurn' | 'browserAutomation';
+export type CronBrowserAutomationTemplate = 'checkIn' | 'monitor' | 'publishDraft' | 'custom';
+export type CronBrowserAutomationAuthPersistence = 'session-name' | 'profile' | 'off';
+export type CronBrowserAutomationMode = 'headless' | 'visible';
+export type CronBrowserAutomationSensitiveActionPolicy = 'draft-only' | 'auto-submit';
+
+export interface CronBrowserAutomationDiagnostics {
+  snapshot?: boolean;
+  console?: boolean;
+  errors?: boolean;
+  network?: boolean;
+  screenshot?: boolean;
+}
+
+export interface CronBrowserAutomationConfig {
+  url: string;
+  objective: string;
+  successCondition?: string;
+  failureCondition?: string;
+  template?: CronBrowserAutomationTemplate;
+  profile?: string;
+  authStateName?: string;
+  authPersistence?: CronBrowserAutomationAuthPersistence;
+  mode?: CronBrowserAutomationMode;
+  allowedDomains?: string[];
+  sensitiveActionPolicy?: CronBrowserAutomationSensitiveActionPolicy;
+  retryOnTransientFailure?: boolean;
+  diagnostics?: CronBrowserAutomationDiagnostics;
+}
+
 /**
  * Gateway CronSchedule object format
  */
@@ -50,7 +88,12 @@ export interface CronJob {
   id: string;
   name: string;
   message: string;
+  taskKind?: CronJobTaskKind;
+  browserAutomation?: CronBrowserAutomationConfig;
+  toolsAllow?: string[];
   schedule: string | CronSchedule;
+  source?: CronJobSource;
+  runtime?: CronJobRuntimeGuarantee;
   delivery?: CronJobDelivery;
   target?: CronJobTarget;
   enabled: boolean;
@@ -67,6 +110,9 @@ export interface CronJob {
 export interface CronJobCreateInput {
   name: string;
   message: string;
+  taskKind?: CronJobTaskKind;
+  browserAutomation?: CronBrowserAutomationConfig;
+  toolsAllow?: string[];
   schedule: string;
   delivery?: CronJobDelivery;
   enabled?: boolean;
@@ -79,6 +125,9 @@ export interface CronJobCreateInput {
 export interface CronJobUpdateInput {
   name?: string;
   message?: string;
+  taskKind?: CronJobTaskKind;
+  browserAutomation?: CronBrowserAutomationConfig;
+  toolsAllow?: string[];
   schedule?: string;
   delivery?: CronJobDelivery;
   enabled?: boolean;

@@ -14,16 +14,11 @@ import {
   Briefcase,
   Check,
   ChevronDown,
-  File,
-  FileArchive,
   FileText,
-  Film,
-  FolderOpen,
   FolderPlus,
   GitBranchPlus,
   Loader2,
   MessageSquarePlus,
-  Music,
   Paperclip,
   Search,
   SendHorizontal,
@@ -38,13 +33,15 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { hostApi, type ChatKnowledgeReference, type KnowledgeSearchResult } from '@/lib/host-api';
+import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, type KnowledgeSearchResult } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
 import { useArtifactPanel } from '@/stores/artifact-panel';
+import { TaskNodeSelector } from '@/components/task-ledger/TaskNodeSelector';
 import { buildPreviewTarget } from '@/components/file-preview/build-preview-target';
+import { AttachmentName, AttachmentRemove, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
 import { useProviderStore } from '@/stores/providers';
 import { buildConfiguredModelOptions, formatModelRefLabel } from '@/lib/model-options';
 import type { AgentSummary } from '@/types/agent';
@@ -64,11 +61,10 @@ import {
   type ChatCapabilityPlanResolution,
 } from '@/lib/chat-capability-actions';
 import { isCapabilityAuditBlocked } from '@/lib/capability-audit';
-import type { LiveTokenUsage, WorkspaceContextRange, WorkspaceKnowledgeScope, WorkspacePermissionMode, WorkspaceProfile } from '@shared/types/workspace';
-import type { WorkModeId } from '@shared/types/work-mode';
+import type { KnowledgeInvocationMode, LiveTokenUsage, WorkspaceContextRange, WorkspaceKnowledgeScope, WorkspacePermissionMode, WorkspaceProfile } from '@shared/types/workspace';
 import type { ChatCapabilityActionPlan, ChatCapabilityActionResult, SessionCompactionStatus } from '@shared/host-api/contract';
-import type { LongTaskControlStatus } from '@shared/types/long-task-control';
-import type { SessionContinuityRecommendation } from './session-continuity';
+import type { LongTaskControlStatus, LongTaskInputMode } from '@shared/types/long-task-control';
+import type { SessionContinuityPreflight, SessionContinuityRecommendation } from './session-continuity';
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -84,7 +80,7 @@ export interface FileAttachment {
 }
 
 interface ChatInputProps {
-  onSend: (text: string, attachments?: FileAttachment[], targetAgentId?: string | null, knowledgeScope?: WorkspaceKnowledgeScope, workMode?: WorkModeId, knowledgeReferences?: ChatKnowledgeReference[]) => void;
+  onSend: (text: string, attachments?: FileAttachment[], targetAgentId?: string | null, knowledgeScope?: WorkspaceKnowledgeScope, knowledgeMode?: KnowledgeInvocationMode, knowledgeReferences?: ChatKnowledgeReference[], activeTaskNodeId?: string | null, inputMode?: LongTaskInputMode) => void;
   onStop?: () => void;
   disabled?: boolean;
   sending?: boolean;
@@ -101,13 +97,15 @@ interface ChatInputProps {
   onForkSession?: () => void | Promise<void>;
   onHandoffSession?: () => void | Promise<void>;
   continuityRecommendation?: SessionContinuityRecommendation;
+  continuityPreflight?: SessionContinuityPreflight;
   forkDisabled?: boolean;
   forkBusy?: boolean;
   handoffDisabled?: boolean;
   handoffBusy?: boolean;
   knowledgeScope?: WorkspaceKnowledgeScope;
   onKnowledgeScopeChange?: (scope: WorkspaceKnowledgeScope) => void | Promise<void>;
-  workMode?: WorkModeId;
+  knowledgeMode?: KnowledgeInvocationMode;
+  onKnowledgeModeChange?: (mode: KnowledgeInvocationMode) => void | Promise<void>;
   compactionStatus?: SessionCompactionStatus | null;
   compactionBusy?: boolean;
   onManualCompact?: (customInstructions?: string) => Promise<void>;
@@ -121,7 +119,8 @@ type PendingCapabilitySend = {
   attachments?: FileAttachment[];
   targetAgentId: string | null;
   knowledgeScope: WorkspaceKnowledgeScope;
-  workMode: WorkModeId;
+  knowledgeMode: KnowledgeInvocationMode;
+  inputMode?: LongTaskInputMode;
   knowledgeReferences?: ChatKnowledgeReference[];
   plan: ChatCapabilityActionPlan[];
   results: ChatCapabilityActionResult[];
@@ -131,9 +130,9 @@ type PendingCapabilitySend = {
 
 type KnowledgeSearchRow = Record<string, unknown>;
 
-const DIRECTORY_MIME_TYPE = 'application/x-directory';
 const WORKSPACE_PERMISSION_MODES: WorkspacePermissionMode[] = ['readOnly', 'plan', 'acceptEdits', 'fullAccess'];
 const KNOWLEDGE_SCOPES: WorkspaceKnowledgeScope[] = ['none', 'memory', 'wiki', 'all'];
+const KNOWLEDGE_MODES: KnowledgeInvocationMode[] = ['manual', 'suggest', 'auto-read'];
 
 const SLASH_COMMANDS = [
   { id: 'wiki', group: 'knowledge', kind: 'wikiSearch', aliases: ['knowledge', 'kb'] },
@@ -141,8 +140,10 @@ const SLASH_COMMANDS = [
   { id: 'all', group: 'knowledge', kind: 'scope', scope: 'all' },
   { id: 'none', group: 'knowledge', kind: 'scope', scope: 'none', aliases: ['no-knowledge'] },
   { id: 'scope', group: 'knowledge', kind: 'scopePicker' },
+  { id: 'knowledge-mode', group: 'knowledge', kind: 'knowledgeMode', aliases: ['kmode'] },
   { id: 'save', group: 'knowledge', kind: 'prompt', aliases: ['draft-knowledge'] },
   { id: 'steward', group: 'knowledge', kind: 'prompt', aliases: ['knowledge-steward'] },
+  { id: 'steward-audit', group: 'knowledge', kind: 'stewardAudit', aliases: ['audit-knowledge'] },
   { id: 'review', group: 'coding', kind: 'prompt', aliases: ['code-review'] },
   { id: 'fix-ci', group: 'coding', kind: 'prompt', aliases: ['ci'] },
   { id: 'write-tests', group: 'coding', kind: 'prompt', aliases: ['tests', 'test'] },
@@ -204,6 +205,14 @@ function resolveSlashScope(value: string): WorkspaceKnowledgeScope | null {
   return null;
 }
 
+function resolveSlashKnowledgeMode(value: string): KnowledgeInvocationMode | null {
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'manual' || normalized === 'off') return 'manual';
+  if (normalized === 'suggest' || normalized === 'suggestions') return 'suggest';
+  if (normalized === 'auto' || normalized === 'auto-read' || normalized === 'autoread') return 'auto-read';
+  return null;
+}
+
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
@@ -260,13 +269,6 @@ function knowledgeReferenceFromRow(row: KnowledgeSearchRow, corpus: 'wiki' | 'me
     ...(snippet ? { snippet } : {}),
     ...(score !== undefined ? { score } : {}),
   };
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
 
 function formatCompactNumber(value: number): string {
@@ -391,15 +393,6 @@ function renderHighlightedComposerText(
   return <>{chunks}</>;
 }
 
-function FileIcon({ mimeType, className }: { mimeType: string; className?: string }) {
-  if (mimeType === DIRECTORY_MIME_TYPE) return <FolderOpen className={className} />;
-  if (mimeType.startsWith('video/')) return <Film className={className} />;
-  if (mimeType.startsWith('audio/')) return <Music className={className} />;
-  if (mimeType.startsWith('text/') || mimeType === 'application/json' || mimeType === 'application/xml') return <FileText className={className} />;
-  if (mimeType.includes('zip') || mimeType.includes('compressed') || mimeType.includes('archive') || mimeType.includes('tar') || mimeType.includes('rar') || mimeType.includes('7z')) return <FileArchive className={className} />;
-  if (mimeType === 'application/pdf') return <FileText className={className} />;
-  return <File className={className} />;
-}
 
 /**
  * Read a browser File object as base64 string (without the data URL prefix).
@@ -445,13 +438,15 @@ export function ChatInput({
   onForkSession,
   onHandoffSession,
   continuityRecommendation,
+  continuityPreflight,
   forkDisabled = false,
   forkBusy = false,
   handoffDisabled = false,
   handoffBusy = false,
   knowledgeScope = 'none',
   onKnowledgeScopeChange,
-  workMode = 'build',
+  knowledgeMode = 'suggest',
+  onKnowledgeModeChange,
   compactionStatus,
   compactionBusy = false,
   onManualCompact,
@@ -472,6 +467,9 @@ export function ChatInput({
   const [knowledgeSearching, setKnowledgeSearching] = useState(false);
   const [knowledgeSearchError, setKnowledgeSearchError] = useState<string | null>(null);
   const [selectedKnowledgeRefs, setSelectedKnowledgeRefs] = useState<ChatKnowledgeReference[]>([]);
+  const [suggestedKnowledgeRefs, setSuggestedKnowledgeRefs] = useState<KnowledgeRouteCandidate[]>([]);
+  const [knowledgeRoutingBusy, setKnowledgeRoutingBusy] = useState(false);
+  const dismissedRouteKeysRef = useRef<Map<string, number>>(new Map());
   const [workspaceActionsOpen, setWorkspaceActionsOpen] = useState(false);
   const [skillQuery, setSkillQuery] = useState('');
   const [quickSkills, setQuickSkills] = useState<QuickAccessSkill[]>([]);
@@ -484,12 +482,17 @@ export function ChatInput({
   const [optimisticModelRef, setOptimisticModelRef] = useState<string | null>(null);
   const [compactionDialogOpen, setCompactionDialogOpen] = useState(false);
   const [compactionInstructions, setCompactionInstructions] = useState('');
+  const [activeTaskNodeId, setActiveTaskNodeIdState] = useState<string | null>(null);
   const [pendingCapabilitySend, setPendingCapabilitySend] = useState<PendingCapabilitySend | null>(null);
   const [capabilityExecuting, setCapabilityExecuting] = useState(false);
   const pendingCapabilityAuditBlocked = useMemo(
     () => pendingCapabilitySend?.plan.some((action) => isCapabilityAuditBlocked(action.auditResult)) ?? false,
     [pendingCapabilitySend],
   );
+  const setActiveTaskNodeId = useCallback((nodeId: string | null) => {
+    setActiveTaskNodeIdState(nodeId);
+    useChatStore.setState({ activeTaskNodeId: nodeId });
+  }, []);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
   const skillPickerRef = useRef<HTMLDivElement>(null);
@@ -609,7 +612,9 @@ export function ChatInput({
   const compactAttention = compactionStatus?.pressure === 'high';
   const compactionQuality = compactionStatus?.lastCompaction?.quality;
   const queuedFollowupCount = longTaskControlStatus?.queueCount ?? 0;
-  const recommendedContinuityAction = continuityRecommendation?.action ?? 'fork';
+  const effectiveContinuityRecommendation = continuityPreflight?.recommendation ?? continuityRecommendation;
+  const continuityHealth = continuityPreflight?.health;
+  const recommendedContinuityAction = effectiveContinuityRecommendation?.action ?? 'fork';
   const composerContinuityAction = recommendedContinuityAction === 'handoff' && onHandoffSession
     ? {
       id: 'handoff' as const,
@@ -641,9 +646,16 @@ export function ChatInput({
   const composerContinuityTooltip = composerContinuityAction
     ? composerContinuityAction.disabled
       ? t(`composer.${composerContinuityAction.id}.disabledActiveRun`)
-      : t(`composer.continuity.tooltip.${composerContinuityAction.id}.${continuityRecommendation?.reason ?? 'default'}`, {
-        defaultValue: t(`composer.${composerContinuityAction.id}.tooltip`),
-      })
+      : [
+        continuityHealth
+          ? t(`composer.continuity.health.${continuityHealth.status}`, {
+            defaultValue: t('composer.continuity.health.healthy'),
+          })
+          : '',
+        t(`composer.continuity.tooltip.${composerContinuityAction.id}.${effectiveContinuityRecommendation?.reason ?? 'default'}`, {
+          defaultValue: t(`composer.${composerContinuityAction.id}.tooltip`),
+        }),
+      ].filter(Boolean).join(' - ')
     : '';
   const ComposerContinuityIcon = composerContinuityAction?.icon ?? GitBranchPlus;
   const wikiQuickActive = knowledgeScope === 'wiki';
@@ -756,6 +768,67 @@ export function ChatInput({
     }
   }, [currentAgentId, currentSessionKey]);
 
+  const routeKnowledgeForMessage = useCallback(async (
+    message: string,
+    mode: KnowledgeInvocationMode = knowledgeMode,
+  ): Promise<KnowledgeRouteCandidate[]> => {
+    if (knowledgeScope === 'none' || mode === 'manual' || selectedKnowledgeRefs.length > 0 || message.trim().startsWith('/')) {
+      setSuggestedKnowledgeRefs([]);
+      return [];
+    }
+    const routeKey = `${currentSessionKey}:${knowledgeScope}:${message.trim().slice(0, 120).toLowerCase()}`;
+    const dismissedAt = dismissedRouteKeysRef.current.get(routeKey);
+    if (dismissedAt && Date.now() - dismissedAt < 10 * 60 * 1000) return [];
+
+    setKnowledgeRoutingBusy(true);
+    try {
+      const result = await hostApi.knowledge.routeContext({
+        message,
+        scope: knowledgeScope,
+        mode,
+        selectedReferences: selectedKnowledgeRefs,
+        sessionKey: currentSessionKey,
+        workspaceId: workspace?.id ?? null,
+      });
+      if (!result.success) return [];
+      if (result.decision === 'suggest') {
+        setSuggestedKnowledgeRefs(result.candidates);
+        return [];
+      }
+      if (result.decision === 'auto_attach') {
+        setSuggestedKnowledgeRefs([]);
+        return result.candidates;
+      }
+      setSuggestedKnowledgeRefs([]);
+      return [];
+    } catch (error) {
+      console.warn('[knowledge] routeContext failed:', error);
+      return [];
+    } finally {
+      setKnowledgeRoutingBusy(false);
+    }
+  }, [currentSessionKey, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, workspace?.id]);
+
+  const attachSuggestedKnowledge = useCallback(() => {
+    if (suggestedKnowledgeRefs.length === 0) return;
+    setSelectedKnowledgeRefs((current) => {
+      const existing = new Set(current.map((reference) => reference.id));
+      const next = [...current];
+      for (const reference of suggestedKnowledgeRefs) {
+        if (!existing.has(reference.id)) next.push(reference);
+      }
+      return next.slice(0, 6);
+    });
+    setSuggestedKnowledgeRefs([]);
+    if (knowledgeScope === 'none') void onKnowledgeScopeChange?.('wiki');
+  }, [knowledgeScope, onKnowledgeScopeChange, suggestedKnowledgeRefs]);
+
+  const dismissSuggestedKnowledge = useCallback(() => {
+    const routeKey = `${currentSessionKey}:${knowledgeScope}:${input.trim().slice(0, 120).toLowerCase()}`;
+    dismissedRouteKeysRef.current.set(routeKey, Date.now());
+    setSuggestedKnowledgeRefs([]);
+  }, [currentSessionKey, input, knowledgeScope]);
+
   const handleQuickWikiToggle = useCallback(() => {
     if (!onKnowledgeScopeChange) return;
     void onKnowledgeScopeChange(wikiQuickActive ? 'none' : 'wiki');
@@ -797,6 +870,22 @@ export function ChatInput({
     lastDraftValueRef.current = draftValue;
     setInput(draftValue ?? '');
   }, [draftValue]);
+
+  useEffect(() => {
+    if (knowledgeMode !== 'suggest' || knowledgeScope === 'none' || selectedKnowledgeRefs.length > 0 || slashInput.active) {
+      setSuggestedKnowledgeRefs([]);
+      return;
+    }
+    const text = input.trim();
+    if (text.length < 18) {
+      setSuggestedKnowledgeRefs([]);
+      return;
+    }
+    const timer = setTimeout(() => {
+      void routeKnowledgeForMessage(text, 'suggest');
+    }, 650);
+    return () => clearTimeout(timer);
+  }, [input, knowledgeMode, knowledgeScope, routeKnowledgeForMessage, selectedKnowledgeRefs.length, slashInput.active]);
 
   useEffect(() => {
     void refreshProviderSnapshot();
@@ -1126,14 +1215,16 @@ export function ChatInput({
   const hasFailedAttachments = attachments.some((a) => a.status === 'error');
   const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
   const canStop = sending && !inputDisabled && !!onStop;
+  const canIntervene = sending && (input.trim() || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !hasFailedAttachments && !capabilityExecuting;
 
   const completeSend = useCallback(async (
     textToSend: string,
     attachmentsToSend: FileAttachment[] | undefined,
     sendTargetAgentId: string | null,
     sendKnowledgeScope: WorkspaceKnowledgeScope,
-    sendWorkMode: WorkModeId,
+    sendKnowledgeMode: KnowledgeInvocationMode,
     sendKnowledgeReferences: ChatKnowledgeReference[] = [],
+    inputMode?: LongTaskInputMode,
   ): Promise<boolean> => {
     const safeAttachments = attachmentsToSend && attachmentsToSend.length > 0 ? attachmentsToSend : undefined;
 
@@ -1163,21 +1254,70 @@ export function ChatInput({
     setSelectedSkill(null);
     setSkillQuery('');
     setSelectedKnowledgeRefs([]);
+    setSuggestedKnowledgeRefs([]);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
     recordKnowledgeReferences(sendKnowledgeReferences);
-    if (sendKnowledgeReferences.length > 0) {
-      onSend(textToSend, safeAttachments, sendTargetAgentId, sendKnowledgeScope, sendWorkMode, sendKnowledgeReferences);
+    if (inputMode) {
+      onSend(
+        textToSend,
+        safeAttachments,
+        sendTargetAgentId,
+        sendKnowledgeScope,
+        sendKnowledgeMode,
+        sendKnowledgeReferences.length > 0 ? sendKnowledgeReferences : undefined,
+        activeTaskNodeId,
+        inputMode,
+      );
     } else {
-      onSend(textToSend, safeAttachments, sendTargetAgentId, sendKnowledgeScope, sendWorkMode);
+      onSend(
+        textToSend,
+        safeAttachments,
+        sendTargetAgentId,
+        sendKnowledgeScope,
+        sendKnowledgeMode,
+        sendKnowledgeReferences.length > 0 ? sendKnowledgeReferences : undefined,
+        activeTaskNodeId,
+      );
     }
     setTargetAgentId(null);
     setPickerOpen(false);
     setSkillPickerOpen(false);
     setKnowledgePickerOpen(false);
     return true;
-  }, [onSend, recordKnowledgeReferences, updateInput]);
+  }, [activeTaskNodeId, onSend, recordKnowledgeReferences, updateInput]);
+
+  const handleInterventionSend = useCallback(async (inputMode: LongTaskInputMode) => {
+    if (!sending) return;
+    const readyAttachments = attachments.filter(a => a.status === 'ready');
+    const knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
+    const textToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
+    if (!textToSend || !allReady || hasFailedAttachments || capabilityExecuting) return;
+
+    const sendKnowledgeScope: WorkspaceKnowledgeScope = knowledgeScope === 'none' && knowledgeReferencesToSend.length > 0 ? 'wiki' : knowledgeScope;
+    await completeSend(
+      textToSend,
+      readyAttachments.length > 0 ? readyAttachments : undefined,
+      targetAgentId,
+      sendKnowledgeScope,
+      knowledgeMode,
+      knowledgeReferencesToSend,
+      inputMode,
+    );
+  }, [
+    allReady,
+    attachments,
+    capabilityExecuting,
+    completeSend,
+    hasFailedAttachments,
+    input,
+    knowledgeMode,
+    knowledgeScope,
+    selectedKnowledgeRefs,
+    t,
+    targetAgentId,
+  ]);
 
   const executeSlashCommand = useCallback(async (command: SlashCommand, args: string) => {
     const trimmedArgs = args.trim();
@@ -1247,6 +1387,33 @@ export function ChatInput({
       return;
     }
 
+    if (command.kind === 'knowledgeMode') {
+      const mode = resolveSlashKnowledgeMode(trimmedArgs);
+      clearComposer();
+      if (mode && onKnowledgeModeChange) {
+        await onKnowledgeModeChange(mode);
+        toast.success(t('composer.slashCommands.toasts.knowledgeModeChanged', {
+          mode: t(`composer.knowledgeMode.${mode}`),
+        }));
+      } else {
+        toast.message(t('composer.slashCommands.toasts.knowledgeModeOpened'));
+      }
+      requestAnimationFrame(() => textareaRef.current?.focus());
+      return;
+    }
+
+    if (command.kind === 'stewardAudit') {
+      clearComposer();
+      try {
+        await hostApi.knowledge.governanceAudit();
+        toast.success(t('composer.slashCommands.toasts.stewardAuditStarted'));
+      } catch (error) {
+        toast.error(String(error));
+      }
+      window.location.hash = '#/knowledge?tab=governance';
+      return;
+    }
+
     if (command.kind === 'prompt') {
       if (inputDisabled || sending || capabilityExecuting || !allReady) {
         toast.message(t('composer.slashCommands.toasts.sendUnavailable'));
@@ -1261,7 +1428,7 @@ export function ChatInput({
         readyAttachments.length > 0 ? readyAttachments : undefined,
         targetAgentId,
         sendKnowledgeScope,
-        workMode,
+        knowledgeMode,
         knowledgeReferencesToSend,
       );
       closeSlashMenu();
@@ -1275,12 +1442,12 @@ export function ChatInput({
           return;
         }
         const prompt = t('composer.slashCommands.prompts.mission', { argsDetail: promptArgs }).trim();
-        await completeSend(prompt, undefined, targetAgentId, knowledgeScope, workMode);
+        await completeSend(prompt, undefined, targetAgentId, knowledgeScope, knowledgeMode);
         closeSlashMenu();
         return;
       }
       clearComposer();
-      window.location.hash = '#/agents';
+      window.location.hash = '#/settings/agents';
       toast.success(t('composer.slashCommands.toasts.missionOpened'));
       return;
     }
@@ -1381,9 +1548,11 @@ export function ChatInput({
     handoffBusy,
     handoffDisabled,
     inputDisabled,
+    knowledgeMode,
     knowledgeScope,
     onForkSession,
     onHandoffSession,
+    onKnowledgeModeChange,
     onKnowledgeScopeChange,
     runKnowledgeSearch,
     selectedKnowledgeRefs,
@@ -1391,7 +1560,6 @@ export function ChatInput({
     t,
     targetAgentId,
     updateInput,
-    workMode,
     workspace?.id,
   ]);
 
@@ -1416,9 +1584,16 @@ export function ChatInput({
 
     if (!canSend) return;
     const readyAttachments = attachments.filter(a => a.status === 'ready');
-    const knowledgeReferencesToSend = selectedKnowledgeRefs;
+    let knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
+    const baseTextToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
+    if (knowledgeMode === 'auto-read' && knowledgeReferencesToSend.length === 0 && baseTextToSend) {
+      const routedReferences = await routeKnowledgeForMessage(baseTextToSend, 'auto-read');
+      if (routedReferences.length > 0) {
+        knowledgeReferencesToSend = routedReferences;
+      }
+    }
     const sendKnowledgeScope: WorkspaceKnowledgeScope = knowledgeScope === 'none' && knowledgeReferencesToSend.length > 0 ? 'wiki' : knowledgeScope;
-    const textToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
+    const textToSend = baseTextToSend;
     const attachmentsToSend = readyAttachments.length > 0 ? readyAttachments : undefined;
 
     if (shouldRunChatCapabilityPreflight(textToSend)) {
@@ -1435,7 +1610,8 @@ export function ChatInput({
           attachments: attachmentsToSend,
           targetAgentId,
           knowledgeScope: sendKnowledgeScope,
-          workMode,
+          knowledgeMode,
+          inputMode: undefined,
           knowledgeReferences: knowledgeReferencesToSend,
           plan: resolution.actions,
           results: [],
@@ -1483,16 +1659,20 @@ export function ChatInput({
       textareaRef.current.style.height = 'auto';
     }
     recordKnowledgeReferences(knowledgeReferencesToSend);
-    if (knowledgeReferencesToSend.length > 0) {
-      onSend(textToSend, attachmentsToSend, targetAgentId, sendKnowledgeScope, workMode, knowledgeReferencesToSend);
-    } else {
-      onSend(textToSend, attachmentsToSend, targetAgentId, sendKnowledgeScope, workMode);
-    }
+    onSend(
+      textToSend,
+      attachmentsToSend,
+      targetAgentId,
+      sendKnowledgeScope,
+      knowledgeMode,
+      knowledgeReferencesToSend.length > 0 ? knowledgeReferencesToSend : undefined,
+      activeTaskNodeId,
+    );
     setTargetAgentId(null);
     setPickerOpen(false);
     setSkillPickerOpen(false);
     setKnowledgePickerOpen(false);
-  }, [input, attachments, canSend, onSend, targetAgentId, updateInput, knowledgeScope, workMode, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, executeSlashCommand, slashInput]);
+  }, [input, attachments, canSend, onSend, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, executeSlashCommand, slashInput, activeTaskNodeId, routeKnowledgeForMessage]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -1519,8 +1699,9 @@ export function ChatInput({
         pendingCapabilitySend.attachments,
         pendingCapabilitySend.targetAgentId,
         pendingCapabilitySend.knowledgeScope,
-        pendingCapabilitySend.workMode,
+        pendingCapabilitySend.knowledgeMode,
         pendingCapabilitySend.knowledgeReferences ?? [],
+        pendingCapabilitySend.inputMode,
       );
       if (sent) {
         toast.success(t('composer.capability.applied'));
@@ -1756,27 +1937,27 @@ export function ChatInput({
               role="listbox"
               aria-label={t('composer.slashCommands.menuLabel')}
               data-testid="chat-slash-command-menu"
-              className="absolute bottom-full left-0 right-0 z-30 mb-2 max-h-[min(460px,calc(100vh-190px))] overflow-hidden rounded-xl border border-black/10 bg-surface-modal shadow-xl dark:border-white/10 sm:right-auto sm:w-[560px]"
+              className="absolute bottom-full left-0 right-0 z-30 mb-2 max-h-[min(420px,calc(100vh-190px))] overflow-hidden rounded-lg border border-black/10 bg-surface-modal shadow-md dark:border-white/10 sm:right-auto sm:w-[520px]"
             >
-              <div className="border-b border-black/5 px-3 py-2.5 dark:border-white/10">
+              <div className="border-b border-black/5 px-3 py-2 dark:border-white/10">
                 <div className="flex items-center gap-2">
                   <Wrench className="h-3.5 w-3.5 text-primary" />
-                  <p className="text-xs font-semibold text-foreground">{t('composer.slashCommands.title')}</p>
+                  <p className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">{t('composer.slashCommands.title')}</p>
                 </div>
-                <p className="mt-1 text-tiny leading-4 text-muted-foreground">
+                <p className="mt-0.5 text-2xs leading-4 text-muted-foreground/70">
                   {t('composer.slashCommands.subtitle')}
                 </p>
               </div>
 
               {slashCommands.length === 0 ? (
-                <div className="px-3 py-4" data-testid="chat-slash-command-empty">
-                  <p className="text-sm font-medium text-foreground">{t('composer.slashCommands.unknownTitle')}</p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                <div className="px-3 py-3" data-testid="chat-slash-command-empty">
+                  <p className="text-xs font-medium text-foreground">{t('composer.slashCommands.unknownTitle')}</p>
+                  <p className="mt-0.5 text-2xs leading-4 text-muted-foreground">
                     {t('composer.slashCommands.unknownDescription', { command: `/${slashInput.commandText}` })}
                   </p>
                 </div>
               ) : (
-                <div className="max-h-[360px] overflow-y-auto p-1.5">
+                <div className="max-h-[340px] overflow-y-auto p-1">
                   {slashCommands.map((command, index) => {
                     const previous = slashCommands[index - 1];
                     const showGroup = !previous || previous.group !== command.group;
@@ -1791,7 +1972,7 @@ export function ChatInput({
                     return (
                       <div key={command.id}>
                         {showGroup && (
-                          <div className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-normal text-muted-foreground/75">
+                          <div className="px-2 pb-0.5 pt-1.5 text-2xs font-medium uppercase tracking-wide text-muted-foreground/60">
                             {t(`composer.slashCommands.groups.${command.group}`)}
                           </div>
                         )}
@@ -1801,7 +1982,7 @@ export function ChatInput({
                           aria-selected={selected}
                           data-testid={`chat-slash-command-option-${command.id}`}
                           className={cn(
-                            'flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left transition-colors',
+                            'flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors',
                             selected ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-foreground hover:bg-black/5 dark:hover:bg-white/5',
                           )}
                           onMouseEnter={() => setSlashSelectedIndex(index)}
@@ -1809,26 +1990,26 @@ export function ChatInput({
                           onClick={() => void executeSlashCommand(command, slashInput.args)}
                         >
                           <span className={cn(
-                            'mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-black/10 text-muted-foreground dark:border-white/10',
+                            'flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-surface-input text-muted-foreground',
                             selected && 'text-primary',
                           )}>
                             {icon}
                           </span>
                           <span className="min-w-0 flex-1">
-                            <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                              <code className="rounded-md bg-black/[0.04] px-1.5 py-0.5 font-mono text-[11px] text-foreground dark:bg-white/[0.08]">
+                            <span className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                              <code className="rounded bg-surface-input px-1 py-0.5 font-mono text-2xs text-foreground">
                                 /{command.id}
                               </code>
-                              <span className="text-sm font-medium text-foreground">
+                              <span className="text-xs font-medium text-foreground">
                                 {t(`composer.slashCommands.commands.${command.id}.label`)}
                               </span>
                               {t(`composer.slashCommands.commands.${command.id}.argumentHint`) && (
-                                <span className="font-mono text-[11px] text-muted-foreground">
+                                <span className="font-mono text-2xs text-muted-foreground">
                                   {t(`composer.slashCommands.commands.${command.id}.argumentHint`)}
                                 </span>
                               )}
                             </span>
-                            <span className="mt-1 block text-xs leading-5 text-muted-foreground">
+                            <span className="mt-0.5 block text-2xs leading-4 text-muted-foreground">
                               {t(`composer.slashCommands.commands.${command.id}.description`)}
                             </span>
                           </span>
@@ -1872,6 +2053,44 @@ export function ChatInput({
                   <X className="h-3 w-3 shrink-0" />
                 </button>
               ))}
+            </div>
+          )}
+
+          {suggestedKnowledgeRefs.length > 0 && selectedKnowledgeRefs.length === 0 && (
+            <div className="mb-2 flex flex-wrap items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-2 text-meta text-emerald-700 dark:text-emerald-400" data-testid="chat-knowledge-suggestion">
+              <BookOpen className="h-3.5 w-3.5 shrink-0" />
+              <span className="min-w-0 flex-1 truncate">
+                {t('composer.knowledgeRoute.suggestion', { count: suggestedKnowledgeRefs.length })}
+              </span>
+              {knowledgeRoutingBusy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+              <button
+                type="button"
+                className="rounded-md px-2 py-1 text-tiny font-semibold hover:bg-emerald-500/10"
+                onClick={attachSuggestedKnowledge}
+                data-testid="chat-knowledge-suggestion-attach"
+              >
+                {t('composer.knowledgeRoute.attach')}
+              </button>
+              <button
+                type="button"
+                className="rounded-md px-2 py-1 text-tiny font-semibold hover:bg-emerald-500/10"
+                onClick={() => {
+                  setKnowledgePickerOpen(true);
+                  setKnowledgeSearchResult({ success: true, results: suggestedKnowledgeRefs } as KnowledgeSearchResult);
+                }}
+                data-testid="chat-knowledge-suggestion-open"
+              >
+                {t('composer.knowledgeRoute.open')}
+              </button>
+              <button
+                type="button"
+                className="rounded-md p-1 hover:bg-emerald-500/10"
+                onClick={dismissSuggestedKnowledge}
+                data-testid="chat-knowledge-suggestion-dismiss"
+                aria-label={t('composer.knowledgeRoute.dismiss')}
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
             </div>
           )}
 
@@ -1934,7 +2153,7 @@ export function ChatInput({
                   type="button"
                   data-testid="chat-slash-command-trigger"
                   className={cn(
-                    'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2 text-meta font-medium text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-white/10',
+                    'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md px-2 text-2xs font-medium text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-white/10',
                     slashMenuOpen && 'bg-black/5 text-foreground dark:bg-white/10',
                   )}
                   onClick={handleOpenSlashPalette}
@@ -2285,6 +2504,35 @@ export function ChatInput({
                     </button>
                     );
                   })}
+                  <div className="mx-3 my-2 rounded-xl border border-black/10 bg-surface-input p-1 dark:border-white/10">
+                    <div className="px-2 pb-1 text-tiny font-medium text-muted-foreground/80">
+                      {t('composer.knowledgeModeTitle')}
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      {KNOWLEDGE_MODES.map((mode) => {
+                        const isActive = mode === knowledgeMode;
+                        return (
+                          <button
+                            key={mode}
+                            type="button"
+                            className={cn(
+                              'h-8 rounded-lg px-2 text-tiny font-medium transition-colors',
+                              isActive
+                                ? 'bg-black/5 text-foreground dark:bg-white/10'
+                                : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+                            )}
+                            data-testid={`chat-knowledge-mode-${mode}`}
+                            onClick={() => {
+                              void onKnowledgeModeChange?.(mode);
+                              textareaRef.current?.focus();
+                            }}
+                          >
+                            {t(`composer.knowledgeMode.${mode}`)}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                   <div className="my-1.5 h-px bg-border/70" />
                   <div className="px-3 py-2">
                     <div className="mb-2 flex items-center justify-between gap-2">
@@ -2431,6 +2679,43 @@ export function ChatInput({
             )}
 
             {/* Send Button — pushed to the right */}
+            {sending && (
+              <div
+                className="ml-auto flex shrink-0 items-center gap-1"
+                data-testid="chat-intervention-controls"
+              >
+                {(['guide', 'queue', 'interrupt'] as const).map((mode) => (
+                  <Tooltip key={mode}>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          data-testid={`chat-intervention-${mode}`}
+                          disabled={!canIntervene}
+                          onClick={() => void handleInterventionSend(mode)}
+                          className={cn(
+                            'h-7 rounded-md px-2 text-[11px] font-medium',
+                            mode === 'interrupt'
+                              ? 'text-red-700 hover:bg-red-500/10 hover:text-red-700 dark:text-red-400 dark:hover:text-red-400'
+                              : mode === 'queue'
+                                ? 'text-amber-700 hover:bg-amber-500/10 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-400'
+                                : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
+                          )}
+                        >
+                          {t(`composer.intervention.${mode}`)}
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs text-xs">
+                      {t(`composer.intervention.${mode}Tooltip`)}
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </div>
+            )}
+
             <Button
               onClick={sending ? handleStop : handleSend}
               disabled={sending ? !canStop : !canSend}
@@ -2647,6 +2932,10 @@ export function ChatInput({
               )}
             </div>
           )}
+          <TaskNodeSelector
+            selectedTaskNodeId={activeTaskNodeId}
+            onSelect={setActiveTaskNodeId}
+          />
           {hasFailedAttachments && (
             <Button
               variant="link"
@@ -2890,31 +3179,25 @@ function AttachmentPreview({
   const { t } = useTranslation('chat');
   const isImage = attachment.mimeType.startsWith('image/') && attachment.preview;
 
+  const sublabel =
+    attachment.mimeType === DIRECTORY_MIME_TYPE
+      ? t('composer.folderAttachment')
+      : attachment.fileSize > 0
+        ? formatFileSize(attachment.fileSize)
+        : '...';
+
   return (
-    <div className="relative group rounded-lg overflow-hidden border border-border">
+    <AttachmentRoot className="rounded-lg overflow-hidden border border-border">
       {isImage ? (
-        // Image thumbnail
-        <div className="w-16 h-16">
-          <img
-            src={attachment.preview!}
-            alt={attachment.fileName}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <AttachmentThumb
+          src={attachment.preview!}
+          alt={attachment.fileName}
+          className="w-16 h-16"
+        />
       ) : (
-        // Generic file card
         <div className="flex items-center gap-2 px-3 py-2 bg-surface-input/50 max-w-[200px]">
           <FileIcon mimeType={attachment.mimeType} className="h-5 w-5 shrink-0 text-muted-foreground" />
-          <div className="min-w-0 overflow-hidden">
-            <p className="text-xs font-medium truncate">{attachment.fileName}</p>
-            <p className="text-2xs text-muted-foreground">
-              {attachment.mimeType === DIRECTORY_MIME_TYPE
-                ? t('composer.folderAttachment')
-                : attachment.fileSize > 0
-                  ? formatFileSize(attachment.fileSize)
-                  : '...'}
-            </p>
-          </div>
+          <AttachmentName name={attachment.fileName} sublabel={sublabel} />
         </div>
       )}
 
@@ -2932,14 +3215,8 @@ function AttachmentPreview({
         </div>
       )}
 
-      {/* Remove button */}
-      <button
-        onClick={onRemove}
-        className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        <X className="h-3 w-3" />
-      </button>
-    </div>
+      <AttachmentRemove onRemove={onRemove} />
+    </AttachmentRoot>
   );
 }
 

@@ -8,7 +8,7 @@ beforeEach(() => {
   hostInvoke.mockReset();
   vi.resetModules();
   vi.stubGlobal('window', {
-    clawx: { hostInvoke },
+    verseClaw: { hostInvoke },
   });
 });
 
@@ -76,6 +76,84 @@ describe('hostApi facade', () => {
     expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
       module: 'projectRules',
       action: 'createAgentsTemplate',
+    }));
+  });
+
+  it('routes agent browser methods through hostInvoke', async () => {
+    hostInvoke
+      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: true, session: { id: 'browser-1' } } })
+      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: { success: true, profiles: [{ profile: 'default' }] } })
+      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { success: true, profile: { profile: 'work' } } })
+      .mockResolvedValueOnce({ id: 'req-4', ok: true, data: { success: true, ok: true, title: 'Ready' } })
+      .mockResolvedValueOnce({ id: 'req-5', ok: true, data: { success: true, session: { id: 'browser-1' } } })
+      .mockResolvedValueOnce({
+        id: 'req-6',
+        ok: true,
+        data: {
+          success: true,
+          session: { id: 'browser-1' },
+          data: { logs: [] },
+          stdout: '{"success":true,"data":{"logs":[]}}',
+          stderr: '',
+          command: ['--json', 'console'],
+        },
+      });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(hostApi.agentBrowser.open({ url: 'https://example.com' })).resolves.toMatchObject({
+      success: true,
+      session: { id: 'browser-1' },
+    });
+    await expect(hostApi.agentBrowser.profiles()).resolves.toMatchObject({
+      success: true,
+      profiles: [{ profile: 'default' }],
+    });
+    await expect(hostApi.agentBrowser.saveProfile({ profile: 'Work' })).resolves.toMatchObject({
+      success: true,
+      profile: { profile: 'work' },
+    });
+    await expect(hostApi.agentBrowser.validate({ url: 'https://example.com' })).resolves.toMatchObject({
+      success: true,
+      ok: true,
+      title: 'Ready',
+    });
+    await expect(hostApi.agentBrowser.click({
+      sessionId: 'browser-1',
+      selector: '#publish',
+    })).resolves.toMatchObject({ success: true });
+    await expect(hostApi.agentBrowser.command({
+      sessionId: 'browser-1',
+      args: ['console'],
+    })).resolves.toMatchObject({ success: true, data: { logs: [] } });
+
+    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      module: 'agentBrowser',
+      action: 'open',
+      payload: { url: 'https://example.com' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      module: 'agentBrowser',
+      action: 'profiles',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
+      module: 'agentBrowser',
+      action: 'saveProfile',
+      payload: { profile: 'Work' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
+      module: 'agentBrowser',
+      action: 'validate',
+      payload: { url: 'https://example.com' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
+      module: 'agentBrowser',
+      action: 'click',
+      payload: { sessionId: 'browser-1', selector: '#publish' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(6, expect.objectContaining({
+      module: 'agentBrowser',
+      action: 'command',
+      payload: { sessionId: 'browser-1', args: ['console'] },
     }));
   });
 
@@ -216,11 +294,11 @@ describe('hostApi facade', () => {
     hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: { content: 'tail' } });
     const { hostApi } = await import('@/lib/host-api');
 
-    await expect(hostApi.logs.readFile('/tmp/clawx.log', 50)).resolves.toEqual({ content: 'tail' });
+    await expect(hostApi.logs.readFile('/tmp/verse-claw.log', 50)).resolves.toEqual({ content: 'tail' });
     expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
       module: 'logs',
       action: 'readFile',
-      payload: { path: '/tmp/clawx.log', tailLines: 50 },
+      payload: { path: '/tmp/verse-claw.log', tailLines: 50 },
     }));
   });
 
@@ -521,7 +599,7 @@ describe('hostApi facade', () => {
     const { hostApi } = await import('@/lib/host-api');
 
     await hostApi.clawGraph.listWorkflows({ workspaceId: 'workspace' });
-    await hostApi.clawGraph.compile({ workspaceId: 'workspace', sourcePath: '/workspace/.clawx/clawgraph/a.yaml' });
+    await hostApi.clawGraph.compile({ workspaceId: 'workspace', sourcePath: '/workspace/.verse-claw/clawgraph/a.yaml' });
     await hostApi.clawGraph.status({ runId: 'clawgraph_1' });
     await hostApi.clawGraph.events({ runId: 'clawgraph_1', limit: 20 });
 
@@ -533,7 +611,7 @@ describe('hostApi facade', () => {
     expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
       module: 'clawGraph',
       action: 'compile',
-      payload: { workspaceId: 'workspace', sourcePath: '/workspace/.clawx/clawgraph/a.yaml' },
+      payload: { workspaceId: 'workspace', sourcePath: '/workspace/.verse-claw/clawgraph/a.yaml' },
     }));
     expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
       module: 'clawGraph',

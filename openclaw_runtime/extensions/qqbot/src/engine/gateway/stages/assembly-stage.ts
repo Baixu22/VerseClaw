@@ -1,5 +1,5 @@
 /**
- * Assembly stage â€” build the user-turn string the AI sees.
+ * Assembly stage â€?build the user-turn string the AI sees.
  *
  * Responsible for:
  *   - Rendering merged turns (preceding messages in a begin/end block

@@ -44,7 +44,7 @@ export function createWhatsAppLoginTool(): ChannelAgentTool {
         const text = [
           params.message,
           "",
-          "Open WhatsApp â†’ Linked Devices and scan:",
+          "Open WhatsApp â†?Linked Devices and scan:",
           "",
           `![whatsapp-qr](${params.qrDataUrl})`,
         ].join("\n");

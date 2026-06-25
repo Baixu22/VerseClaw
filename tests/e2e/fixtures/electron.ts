@@ -139,7 +139,7 @@ async function cleanupTempDir(path: string): Promise<void> {
   }
 }
 
-async function launchClawXElectron(
+async function launchVerseClawElectron(
   homeDir: string,
   userDataDir: string,
   options: LaunchElectronOptions = {},
@@ -167,11 +167,11 @@ async function launchClawXElectron(
       LANG: 'en_US.UTF-8',
       LC_ALL: 'en_US.UTF-8',
       LANGUAGE: 'en',
-      CLAWX_E2E: '1',
-      CLAWX_USER_DATA_DIR: userDataDir,
-      ...(options.skipSetup ? { CLAWX_E2E_SKIP_SETUP: '1' } : {}),
-      CLAWX_PORT_CLAWX_HOST_API: String(hostApiPort),
-      CLAWX_REMOTE_DEBUGGING_PORT: String(cdpPort),
+      VERSE_CLAW_E2E: '1',
+      VERSE_CLAW_USER_DATA_DIR: userDataDir,
+      ...(options.skipSetup ? { VERSE_CLAW_E2E_SKIP_SETUP: '1' } : {}),
+      VERSE_CLAW_PORT_CLAWX_HOST_API: String(hostApiPort),
+      VERSE_CLAW_REMOTE_DEBUGGING_PORT: String(cdpPort),
     },
     timeout: 90_000,
   });
@@ -179,7 +179,7 @@ async function launchClawXElectron(
 
 export const test = base.extend<ElectronFixtures>({
   homeDir: async ({ browserName: _browserName }, provideHomeDir) => {
-    const homeDir = await mkdtemp(join(tmpdir(), 'clawx-e2e-home-'));
+    const homeDir = await mkdtemp(join(tmpdir(), 'verse-claw-e2e-home-'));
     await mkdir(join(homeDir, '.config'), { recursive: true });
     await mkdir(join(homeDir, 'AppData', 'Local'), { recursive: true });
     await mkdir(join(homeDir, 'AppData', 'Roaming'), { recursive: true });
@@ -191,7 +191,7 @@ export const test = base.extend<ElectronFixtures>({
   },
 
   userDataDir: async ({ browserName: _browserName }, provideUserDataDir) => {
-    const userDataDir = await mkdtemp(join(tmpdir(), 'clawx-e2e-user-data-'));
+    const userDataDir = await mkdtemp(join(tmpdir(), 'verse-claw-e2e-user-data-'));
     try {
       await provideUserDataDir(userDataDir);
     } finally {
@@ -200,7 +200,7 @@ export const test = base.extend<ElectronFixtures>({
   },
 
   launchElectronApp: async ({ homeDir, userDataDir }, provideLauncher) => {
-    await provideLauncher(async (options?: LaunchElectronOptions) => await launchClawXElectron(homeDir, userDataDir, options));
+    await provideLauncher(async (options?: LaunchElectronOptions) => await launchVerseClawElectron(homeDir, userDataDir, options));
   },
 
   electronApp: async ({ launchElectronApp }, provideElectronApp) => {
@@ -300,7 +300,7 @@ export async function installIpcMocks(
         const current = getInvokeHandler(channel);
         return current && current !== original ? current : null;
       };
-      (globalThis as unknown as { __clawxE2eHostCalls?: unknown[] }).__clawxE2eHostCalls = [];
+      (globalThis as unknown as { __verseClawE2eHostCalls?: unknown[] }).__verseClawE2eHostCalls = [];
 
       const legacyPathForHostRequest = (request: {
         module?: string;
@@ -369,7 +369,7 @@ export async function installIpcMocks(
           action?: string;
           payload?: Record<string, unknown>;
         }) => {
-          (globalThis as unknown as { __clawxE2eHostCalls?: unknown[] }).__clawxE2eHostCalls?.push({
+          (globalThis as unknown as { __verseClawE2eHostCalls?: unknown[] }).__verseClawE2eHostCalls?.push({
             module: request?.module,
             action: request?.action,
             payload: request?.payload ?? null,

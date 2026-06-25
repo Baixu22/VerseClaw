@@ -55,6 +55,7 @@ import {
   setQueueDrainCallback,
 } from "../../agents/user-message-queue.js";
 import {
+  getLatestLongTaskLedgerRootId,
   recordLongTaskCheckpoint,
   recordLongTaskInterventionEvent,
 } from "../../agents/long-task-control/store.js";
@@ -2710,9 +2711,11 @@ export async function drainQueuedUserMessagesForSession(
     };
   }
 
-  const combinedText = messages.map((message) => message.text).join("\n\n");
-  const firstAgentId = messages[0]?.agentId;
-  const queueItemIds = messages.map((message) => message.id);
+  const combinedText = messages.map((message) => message.text).join("\n\n"); 
+  const firstAgentId = messages[0]?.agentId; 
+  const firstWorkspaceId = messages[0]?.workspaceId;
+  const firstTaskLedgerRootId = messages[0]?.taskLedgerRootId;
+  const queueItemIds = messages.map((message) => message.id); 
   const syntheticIdempotencyKey = `queue_drain_${sessionKey}_${Date.now()}`;
 
   try {
@@ -2746,9 +2749,11 @@ export async function drainQueuedUserMessagesForSession(
 
   const checkpoint = recordLongTaskCheckpoint({
     idempotencyKey: `${syntheticIdempotencyKey}:checkpoint`,
-    sessionKey,
-    agentId: firstAgentId,
-    trigger: "queue_drain",
+    sessionKey, 
+    agentId: firstAgentId, 
+    workspaceId: firstWorkspaceId,
+    taskLedgerRootId: firstTaskLedgerRootId,
+    trigger: "queue_drain", 
     activeTask: "Draining queued user follow-up after the active run became idle.",
     nextAction: "Deliver queued follow-up as a fresh chat run.",
     evidenceRefs: [{ type: "session", ref: sessionKey }],
@@ -2756,9 +2761,11 @@ export async function drainQueuedUserMessagesForSession(
   });
   recordLongTaskInterventionEvent({
     idempotencyKey: `${syntheticIdempotencyKey}:event`,
-    sessionKey,
-    agentId: firstAgentId,
-    checkpointId: checkpoint.id,
+    sessionKey, 
+    agentId: firstAgentId, 
+    workspaceId: firstWorkspaceId,
+    taskLedgerRootId: firstTaskLedgerRootId,
+    checkpointId: checkpoint.id, 
     mode: "queue",
     trigger: "queue_drain",
     status: "draining",
@@ -2771,9 +2778,10 @@ export async function drainQueuedUserMessagesForSession(
         sessionKey,
         message: combinedText,
         deliver: false,
-        idempotencyKey: syntheticIdempotencyKey,
-        ...(firstAgentId ? { agentId: firstAgentId } : {}),
-      },
+        idempotencyKey: syntheticIdempotencyKey, 
+        ...(firstAgentId ? { agentId: firstAgentId } : {}), 
+        ...(firstWorkspaceId ? { workspaceId: firstWorkspaceId } : {}),
+      }, 
       respond: () => {
         // Background drain responses are observable through events/status.
       },
@@ -2784,9 +2792,11 @@ export async function drainQueuedUserMessagesForSession(
     completeDrainedUserMessages(messages);
     recordLongTaskInterventionEvent({
       idempotencyKey: `${syntheticIdempotencyKey}:drained`,
-      sessionKey,
-      agentId: firstAgentId,
-      checkpointId: checkpoint.id,
+      sessionKey, 
+      agentId: firstAgentId, 
+      workspaceId: firstWorkspaceId,
+      taskLedgerRootId: firstTaskLedgerRootId,
+      checkpointId: checkpoint.id, 
       mode: "queue",
       trigger: "queue_drain",
       status: "drained",
@@ -2802,9 +2812,11 @@ export async function drainQueuedUserMessagesForSession(
     restoreDrainingUserMessages(messages, message);
     recordLongTaskInterventionEvent({
       idempotencyKey: `${syntheticIdempotencyKey}:failed`,
-      sessionKey,
-      agentId: firstAgentId,
-      checkpointId: checkpoint.id,
+      sessionKey, 
+      agentId: firstAgentId, 
+      workspaceId: firstWorkspaceId,
+      taskLedgerRootId: firstTaskLedgerRootId,
+      checkpointId: checkpoint.id, 
       mode: "queue",
       trigger: "queue_drain",
       status: "failed",
@@ -3205,6 +3217,7 @@ export const chatHandlers: GatewayRequestHandlers = {
     const rawSessionKey = p.sessionKey;
     const agentIdOverride = normalizeOptionalText(p.agentId);
     const clientRunId = p.idempotencyKey;
+    const workspaceId = normalizeOptionalText((params as { workspaceId?: unknown }).workspaceId);
     const requestedAgentId = resolveRequestedChatAgentId({
       cfg: (context as { getRuntimeConfig?: () => OpenClawConfig }).getRuntimeConfig?.(),
       requestedSessionKey: rawSessionKey,
@@ -3331,37 +3344,62 @@ export const chatHandlers: GatewayRequestHandlers = {
       // Honor an explicit inputMode from the caller (UI) when it is a valid mode.
       // Without this the classifier regex alone decides, silently dropping the
       // user's explicit "guide"/"queue"/"interrupt" choice.
-      const explicitInputMode = typeof params.inputMode === "string"
-        && ["interrupt", "guide", "queue"].includes(params.inputMode)
-        ? (params.inputMode as "interrupt" | "guide" | "queue")
-        : undefined;
+      const explicitInputMode = typeof params.inputMode === "string" 
+        && ["interrupt", "guide", "queue", "revise-goal"].includes(params.inputMode) 
+        ? (params.inputMode as "interrupt" | "guide" | "queue" | "revise-goal") 
+        : undefined; 
       const action = createInputModeAction(inboundMessage, explicitInputMode);
-      if (action.mode === "interrupt") {
+      const taskLedgerRootId = getLatestLongTaskLedgerRootId(sessionKey);
+      if (!taskLedgerRootId && explicitInputMode) {
+        respond(
+          false,
+          {
+            runId: clientRunId,
+            status: "error" as const,
+            summary: "inputMode requires an active /loop Task Ledger root",
+          },
+          errorShape(
+            ErrorCodes.INVALID_REQUEST,
+            "inputMode requires an active /loop Task Ledger root; ordinary Chat cannot enter long-task checkpoint/intervention state",
+          ),
+        );
+        return;
+      }
+      if (taskLedgerRootId && (action.mode === "interrupt" || action.mode === "revise-goal")) { 
         // Recovery invariant: persist before aborting so partial work can be
         // resumed even if the fresh run fails to start.
         const checkpoint = recordLongTaskCheckpoint({
-          idempotencyKey: `chat:${clientRunId}:interrupt:checkpoint`,
+          idempotencyKey: `chat:${clientRunId}:${action.mode}:checkpoint`,
           sessionKey,
-          agentId: selectedAgent.agentId,
-          runId: activeEntryForSession.runId,
-          trigger: "interrupt",
-          activeTask: "Active chat run interrupted by user input.",
-          deviations: ["User interrupted the active run."],
-          nextAction: "Start a fresh run from the interrupting user message.",
-          evidenceRefs: [{ type: "session", ref: sessionKey }],
-          metadata: { inputMode: action.mode },
-        });
-        recordLongTaskInterventionEvent({
-          idempotencyKey: `chat:${clientRunId}:interrupt:event`,
-          sessionKey,
-          agentId: selectedAgent.agentId,
-          runId: activeEntryForSession.runId,
-          checkpointId: checkpoint.id,
-          mode: "interrupt",
-          trigger: "interrupt",
-          status: "checkpointed",
-          payload: { message: inboundMessage },
-        });
+          agentId: selectedAgent.agentId, 
+          workspaceId,
+          taskLedgerRootId,
+          runId: activeEntryForSession.runId, 
+          trigger: action.mode === "revise-goal" ? "revise_goal" : "interrupt", 
+          activeTask: action.mode === "revise-goal"
+            ? "Active chat run checkpointed because the user revised the goal."
+            : "Active chat run interrupted by user input.", 
+          deviations: [action.mode === "revise-goal" ? "User revised the active goal." : "User interrupted the active run."], 
+          ...(action.mode === "revise-goal" ? { decisions: ["Restart from the revised user goal."] } : {}),
+          nextAction: action.mode === "revise-goal"
+            ? "Start a fresh run from the revised user goal."
+            : "Start a fresh run from the interrupting user message.", 
+          evidenceRefs: [{ type: "session", ref: sessionKey }], 
+          metadata: { inputMode: action.mode }, 
+        }); 
+        recordLongTaskInterventionEvent({ 
+          idempotencyKey: `chat:${clientRunId}:${action.mode}:event`, 
+          sessionKey, 
+          agentId: selectedAgent.agentId, 
+          workspaceId,
+          taskLedgerRootId,
+          runId: activeEntryForSession.runId, 
+          checkpointId: checkpoint.id, 
+          mode: action.mode, 
+          trigger: action.mode === "revise-goal" ? "revise_goal" : "interrupt", 
+          status: "checkpointed", 
+          payload: { message: inboundMessage }, 
+        }); 
         // Abort the active run via the existing session-scoped abort path, then
         // fall through so the inbound message starts a fresh run.
         await abortChatRunsForSessionKeyWithPartials({
@@ -3380,7 +3418,7 @@ export const chatHandlers: GatewayRequestHandlers = {
         // Clear dedupe so the fresh run below does not see a stale cached match.
         context.dedupe.delete(`chat:${clientRunId}`);
         // Fall through — the inbound text starts as a new run below.
-      } else if (action.mode === "queue") {
+      } else if (taskLedgerRootId && action.mode === "queue") {
         // Queue mode: hold the message until the active run completes, then
         // deliver it as a follow-up run. This is the third input-mode path
         // (alongside interrupt and guide) for non-disruptive user input.
@@ -3388,6 +3426,8 @@ export const chatHandlers: GatewayRequestHandlers = {
           idempotencyKey: `chat:${clientRunId}:queue:checkpoint`,
           sessionKey,
           agentId: selectedAgent.agentId,
+          workspaceId,
+          taskLedgerRootId,
           runId: activeEntryForSession.runId,
           trigger: "queue_drain",
           activeTask: "Queued user follow-up while an active run continued.",
@@ -3398,6 +3438,8 @@ export const chatHandlers: GatewayRequestHandlers = {
         const queuedMsg = enqueueUserMessage(sessionKey, {
           text: inboundMessage,
           agentId: selectedAgent.agentId,
+          workspaceId,
+          taskLedgerRootId,
           source: "queue",
           idempotencyKey: `chat:${clientRunId}:queue:item`,
         });
@@ -3405,6 +3447,8 @@ export const chatHandlers: GatewayRequestHandlers = {
           idempotencyKey: `chat:${clientRunId}:queue:event`,
           sessionKey,
           agentId: selectedAgent.agentId,
+          workspaceId,
+          taskLedgerRootId,
           runId: activeEntryForSession.runId,
           checkpointId: checkpoint.id,
           mode: "queue",
@@ -3427,9 +3471,11 @@ export const chatHandlers: GatewayRequestHandlers = {
         setQueueDrainCallback(async (drainSessionKey: string) => {
           const messages = drainUserMessages(drainSessionKey);
           if (messages.length === 0) return;
-          // Combine multiple queued messages into one follow-up turn.
-          const combinedText = messages.map((m) => m.text).join("\n\n");
-          const firstAgentId = messages[0]?.agentId;
+          // Combine multiple queued messages into one follow-up turn. 
+          const combinedText = messages.map((m) => m.text).join("\n\n"); 
+          const firstAgentId = messages[0]?.agentId; 
+          const firstWorkspaceId = messages[0]?.workspaceId;
+          const firstTaskLedgerRootId = messages[0]?.taskLedgerRootId;
           try {
             context.broadcast("chat.queue-status", {
               sessionKey: drainSessionKey,
@@ -3445,9 +3491,10 @@ export const chatHandlers: GatewayRequestHandlers = {
             sessionKey: drainSessionKey,
             message: combinedText,
             deliver: false,
-            idempotencyKey: `queue_drain_${drainSessionKey}_${Date.now()}`,
-            ...(firstAgentId ? { agentId: firstAgentId } : {}),
-          };
+            idempotencyKey: `queue_drain_${drainSessionKey}_${Date.now()}`, 
+            ...(firstAgentId ? { agentId: firstAgentId } : {}), 
+            ...(firstWorkspaceId ? { workspaceId: firstWorkspaceId } : {}),
+          }; 
           const { resolveActiveEmbeddedRunSessionId } = await import("../../agents/embedded-agent-runner/runs.js");
           // Wait a tick to ensure the run-clear is fully committed.
           await new Promise((resolve) => setImmediate(resolve));
@@ -3460,9 +3507,11 @@ export const chatHandlers: GatewayRequestHandlers = {
           }
           recordLongTaskInterventionEvent({
             idempotencyKey: `${syntheticParams.idempotencyKey}:event`,
-            sessionKey: drainSessionKey,
-            agentId: firstAgentId,
-            mode: "queue",
+            sessionKey: drainSessionKey, 
+            agentId: firstAgentId, 
+            workspaceId: firstWorkspaceId,
+            taskLedgerRootId: firstTaskLedgerRootId,
+            mode: "queue", 
             trigger: "queue_drain",
             status: "draining",
             payload: { messageCount: messages.length, queueItemIds: messages.map((m) => m.id) },
@@ -3479,9 +3528,11 @@ export const chatHandlers: GatewayRequestHandlers = {
             completeDrainedUserMessages(messages);
             recordLongTaskInterventionEvent({
               idempotencyKey: `${syntheticParams.idempotencyKey}:drained`,
-              sessionKey: drainSessionKey,
-              agentId: firstAgentId,
-              mode: "queue",
+              sessionKey: drainSessionKey, 
+              agentId: firstAgentId, 
+              workspaceId: firstWorkspaceId,
+              taskLedgerRootId: firstTaskLedgerRootId,
+              mode: "queue", 
               trigger: "queue_drain",
               status: "drained",
               payload: { messageCount: messages.length, queueItemIds: messages.map((m) => m.id) },
@@ -3491,9 +3542,11 @@ export const chatHandlers: GatewayRequestHandlers = {
             restoreDrainingUserMessages(messages, message);
             recordLongTaskInterventionEvent({
               idempotencyKey: `${syntheticParams.idempotencyKey}:failed`,
-              sessionKey: drainSessionKey,
-              agentId: firstAgentId,
-              mode: "queue",
+              sessionKey: drainSessionKey, 
+              agentId: firstAgentId, 
+              workspaceId: firstWorkspaceId,
+              taskLedgerRootId: firstTaskLedgerRootId,
+              mode: "queue", 
               trigger: "queue_drain",
               status: "failed",
               payload: { message, queueItemIds: messages.map((m) => m.id) },
@@ -3507,7 +3560,7 @@ export const chatHandlers: GatewayRequestHandlers = {
           undefined,
         );
         return;
-      } else {
+      } else if (taskLedgerRootId) {
         // guide: inject non-disruptive steering into the active run via the
         // real embedded-agent queue (same path as the /steer command). This
         // appends to the agent's steering queue and is read by the LLM loop
@@ -3527,6 +3580,8 @@ export const chatHandlers: GatewayRequestHandlers = {
                 idempotencyKey: `chat:${clientRunId}:guide:checkpoint`,
                 sessionKey,
                 agentId: selectedAgent.agentId,
+                workspaceId,
+                taskLedgerRootId,
                 runId: activeEntryForSession.runId,
                 trigger: "guide",
                 activeTask: "User guidance injected into the active run.",
@@ -3538,6 +3593,8 @@ export const chatHandlers: GatewayRequestHandlers = {
                 idempotencyKey: `chat:${clientRunId}:guide:event`,
                 sessionKey,
                 agentId: selectedAgent.agentId,
+                workspaceId,
+                taskLedgerRootId,
                 runId: activeEntryForSession.runId,
                 checkpointId: checkpoint.id,
                 mode: "guide",
@@ -3558,6 +3615,8 @@ export const chatHandlers: GatewayRequestHandlers = {
               idempotencyKey: `chat:${clientRunId}:guide:fallback`,
               sessionKey,
               agentId: selectedAgent.agentId,
+              workspaceId,
+              taskLedgerRootId,
               runId: activeEntryForSession.runId,
               mode: "guide",
               trigger: "guide",
@@ -4196,6 +4255,7 @@ export const chatHandlers: GatewayRequestHandlers = {
               imageOrder: imageOrder.length > 0 ? imageOrder : undefined,
               thinkingLevelOverride: p.thinking,
               fastModeOverride: p.fastMode,
+              promptModeOverride: p.promptMode,
               userTurnTranscriptRecorder: userTurnRecorder,
               onAgentRunStart: (runId) => {
                 agentRunStarted = true;

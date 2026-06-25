@@ -77,9 +77,10 @@ export type ChatMessageGetResult = Static<typeof ChatMessageGetResultSchema>;
 /** User-to-agent send request; idempotency key lets clients safely retry transport failures. */
 export const ChatSendParamsSchema = Type.Object(
   {
-    sessionKey: ChatSendSessionKeyString,
-    agentId: Type.Optional(NonEmptyString),
-    sessionId: Type.Optional(NonEmptyString),
+    sessionKey: ChatSendSessionKeyString, 
+    agentId: Type.Optional(NonEmptyString), 
+    workspaceId: Type.Optional(Type.String()),
+    sessionId: Type.Optional(NonEmptyString), 
     message: Type.String(),
     thinking: Type.Optional(Type.String()),
     fastMode: Type.Optional(Type.Boolean()),
@@ -92,8 +93,19 @@ export const ChatSendParamsSchema = Type.Object(
     timeoutMs: Type.Optional(Type.Integer({ minimum: 0 })),
     systemInputProvenance: Type.Optional(InputProvenanceSchema),
     systemProvenanceReceipt: Type.Optional(Type.String()),
-    suppressCommandInterpretation: Type.Optional(Type.Boolean()),
-    idempotencyKey: NonEmptyString,
+    suppressCommandInterpretation: Type.Optional(Type.Boolean()), 
+    inputMode: Type.Optional(Type.Union([
+      Type.Literal('interrupt'),
+      Type.Literal('guide'),
+      Type.Literal('queue'),
+      Type.Literal('revise-goal'),
+    ])),
+    idempotencyKey: NonEmptyString, 
+    promptMode: Type.Optional(Type.Union([
+      Type.Literal('full'),
+      Type.Literal('minimal'),
+      Type.Literal('none'),
+    ])),
   },
   { additionalProperties: false },
 );

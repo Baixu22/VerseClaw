@@ -6,18 +6,23 @@
 import { randomBytes } from 'crypto';
 import { app } from 'electron';
 import { resolveSupportedLanguage } from '@shared/language';
-import type { WorkModeKitConfig, WorkModeToolBundleConfig } from '@shared/types/work-mode';
 import type { WorkProviderConfig } from '@shared/types/work-provider';
 
 // Lazy-load electron-store (ESM module)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let settingsStoreInstance: any = null;
 
+const LEGACY_WORK_MODE_SETTING_KEYS = [
+  'workModeToolBundles',
+  'workModeKits',
+  'workModePromptModeOverrides',
+] as const;
+
 /**
  * Generate a random token for gateway authentication
  */
 function generateToken(): string {
-  return `clawx-${randomBytes(16).toString('hex')}`;
+  return `verse-claw-${randomBytes(16).toString('hex')}`;
 }
 
 /**
@@ -36,6 +41,7 @@ export interface AppSettings {
   // Gateway
   gatewayAutoStart: boolean;
   gatewayPort: number;
+  roleMemoryEnabled: boolean;
   gatewayToken: string;
   cdpRemoteControlEnabled: boolean;
   cdpRemoteDebuggingPort: number;
@@ -60,8 +66,6 @@ export interface AppSettings {
   selectedBundles: string[];
   enabledSkills: string[];
   disabledSkills: string[];
-  workModeToolBundles: WorkModeToolBundleConfig;
-  workModeKits: WorkModeKitConfig;
   workProviders: WorkProviderConfig;
 }
 
@@ -92,6 +96,7 @@ function createDefaultSettings(): AppSettings {
     // Gateway
     gatewayAutoStart: true,
     gatewayPort: 18789,
+    roleMemoryEnabled: true,
     gatewayToken: generateToken(),
     cdpRemoteControlEnabled: false,
     cdpRemoteDebuggingPort: 9222,
@@ -104,7 +109,7 @@ function createDefaultSettings(): AppSettings {
 
     // Update
     updateChannel: 'stable',
-    autoCheckUpdate: true,
+    autoCheckUpdate: false,
     autoDownloadUpdate: false,
     skippedVersions: [],
 
@@ -116,10 +121,16 @@ function createDefaultSettings(): AppSettings {
     selectedBundles: ['productivity', 'developer'],
     enabledSkills: [],
     disabledSkills: [],
-    workModeToolBundles: {},
-    workModeKits: {},
     workProviders: {},
   };
+}
+
+function omitLegacyWorkModeSettings(settings: Record<string, unknown>): AppSettings {
+  const sanitized = { ...settings };
+  for (const key of LEGACY_WORK_MODE_SETTING_KEYS) {
+    delete sanitized[key];
+  }
+  return sanitized as unknown as AppSettings;
 }
 
 /**
@@ -160,7 +171,7 @@ export async function setSetting<K extends keyof AppSettings>(
  */
 export async function getAllSettings(): Promise<AppSettings> {
   const store = await getSettingsStore();
-  return store.store;
+  return omitLegacyWorkModeSettings(store.store);
 }
 
 /**
@@ -176,7 +187,7 @@ export async function resetSettings(): Promise<void> {
  */
 export async function exportSettings(): Promise<string> {
   const store = await getSettingsStore();
-  return JSON.stringify(store.store, null, 2);
+  return JSON.stringify(omitLegacyWorkModeSettings(store.store), null, 2);
 }
 
 /**
@@ -186,7 +197,7 @@ export async function importSettings(json: string): Promise<void> {
   try {
     const settings = JSON.parse(json);
     const store = await getSettingsStore();
-    store.set(settings);
+    store.set(omitLegacyWorkModeSettings(settings));
   } catch {
     throw new Error('Invalid settings JSON');
   }

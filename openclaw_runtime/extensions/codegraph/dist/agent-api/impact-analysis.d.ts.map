@@ -1,0 +1,1 @@
+{"version":3,"file":"impact-analysis.d.ts","sourceRoot":"","sources":["../../src/agent-api/impact-analysis.ts"],"names":[],"mappings":"AAAA;;;;;GAKG;AAEH,OAAO,EAAE,mBAAmB,EAAE,oBAAoB,EAAE,MAAM,UAAU,CAAC;AACrE,OAAO,EAAE,cAAc,EAAE,MAAM,6BAA6B,CAAC;AAE7D,wBAAgB,aAAa,CAC3B,cAAc,EAAE,cAAc,EAC9B,KAAK,EAAE,mBAAmB,GACzB,oBAAoB,GAAG,IAAI,CAiB7B"}

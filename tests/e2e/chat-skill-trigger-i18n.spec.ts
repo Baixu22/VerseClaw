@@ -38,7 +38,7 @@ function stableStringify(value: unknown): string {
   return `{${entries.join(',')}}`;
 }
 
-test.describe('ClawX chat skill trigger', () => {
+test.describe('Verse Claw chat skill trigger', () => {
   test('renders the localized Chinese skill label after the @ trigger', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

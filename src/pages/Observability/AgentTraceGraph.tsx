@@ -3,7 +3,6 @@ import {
   AlertTriangle,
   Bot,
   BrainCircuit,
-  CheckCircle2,
   CircleDot,
   Clock,
   FileCode2,
@@ -17,7 +16,7 @@ import {
   Search,
   ShieldCheck,
   Terminal,
-  XCircle,
+  Zap,
   ZoomIn,
   ZoomOut,
 } from 'lucide-react';
@@ -30,19 +29,13 @@ import { cn } from '@/lib/utils';
 import { roleTone, spanKindTone, toneClasses } from '@/lib/role-visuals';
 import { useTranslation } from 'react-i18next';
 
-const NODE_WIDTH = 208;
-const NODE_HEIGHT = 92;
-const X_GAP = 92;
-const Y_GAP = 30;
+const NODE_WIDTH = 168;
+const NODE_HEIGHT = 40;
+const X_GAP = 56;
+const Y_GAP = 14;
 const PADDING = 28;
 const MIN_ZOOM = 0.55;
 const MAX_ZOOM = 1.65;
-
-function formatDuration(ms?: number): string {
-  if (ms == null) return '-';
-  if (ms < 1000) return `${Math.round(ms)}ms`;
-  return `${(ms / 1000).toFixed(1)}s`;
-}
 
 function nodeIcon(kind: ObservabilityGraphNode['kind']) {
   switch (kind) {
@@ -85,16 +78,16 @@ function nodeTone(node: ObservabilityGraphNode) {
   return spanKindTone('custom');
 }
 
-function statusIcon(status: ObservabilityGraphNode['status']) {
+function statusDotClass(status: ObservabilityGraphNode['status'], stale: boolean): string {
   switch (status) {
     case 'completed':
-      return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />;
+      return 'bg-emerald-500';
     case 'error':
-      return <XCircle className="h-3.5 w-3.5 text-red-500" />;
+      return 'bg-red-500';
     case 'aborted':
-      return <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />;
+      return 'bg-amber-500';
     default:
-      return <Clock className="h-3.5 w-3.5 text-blue-500" />;
+      return stale ? 'bg-amber-500 animate-pulse' : 'bg-blue-500 animate-pulse';
   }
 }
 
@@ -102,6 +95,8 @@ type PositionedNode = ObservabilityGraphNode & {
   x: number;
   y: number;
 };
+
+type DensityMode = 'focused' | 'balanced' | 'full';
 
 function layoutGraph(graph: ObservabilityTraceGraph): { nodes: PositionedNode[]; width: number; height: number } {
   const byId = new Map(graph.nodes.map((node) => [node.id, node]));
@@ -147,25 +142,6 @@ function layoutGraph(graph: ObservabilityTraceGraph): { nodes: PositionedNode[];
   };
 }
 
-function descendantIds(graph: ObservabilityTraceGraph, rootIds: Set<string>): Set<string> {
-  const byParent = new Map<string, string[]>();
-  for (const node of graph.nodes) {
-    if (node.parentId) byParent.set(node.parentId, [...(byParent.get(node.parentId) ?? []), node.id]);
-  }
-  const result = new Set<string>();
-  const stack = [...rootIds];
-  while (stack.length) {
-    const id = stack.pop();
-    if (!id) continue;
-    for (const childId of byParent.get(id) ?? []) {
-      if (result.has(childId)) continue;
-      result.add(childId);
-      stack.push(childId);
-    }
-  }
-  return result;
-}
-
 function relatedNodeIds(graph: ObservabilityTraceGraph, selectedNodeId: string | null): Set<string> {
   if (!selectedNodeId) return new Set();
   const related = new Set<string>([selectedNodeId]);
@@ -184,6 +160,20 @@ function relatedNodeIds(graph: ObservabilityTraceGraph, selectedNodeId: string |
     }
   }
   return related;
+}
+
+function isLowSignalEvent(node: ObservabilityGraphNode): boolean {
+  return node.kind === 'event'
+    && !node.critical
+    && node.status === 'completed'
+    && !node.error
+    && !node.warningCount
+    && !node.artifactCount
+    && !node.retryCount
+    && node.phase !== 'error'
+    && node.phase !== 'warning'
+    && node.phase !== 'approval'
+    && node.phase !== 'artifact';
 }
 
 export function AgentTraceGraph({
@@ -205,15 +195,15 @@ export function AgentTraceGraph({
   const [kindFilter, setKindFilter] = useState('all');
   const [phaseFilter, setPhaseFilter] = useState('all');
   const [focusMode, setFocusMode] = useState<'all' | 'root-cause' | 'critical' | 'tools' | 'artifacts' | 'cost'>('all');
-  const [compactMode, setCompactMode] = useState(true);
-  const [collapsedNodeIds, setCollapsedNodeIds] = useState<Set<string>>(new Set());
+  const [densityMode, setDensityMode] = useState<DensityMode>('focused');
 
   const layout = useMemo(() => layoutGraph(graph), [graph]);
   const nodesById = useMemo(() => new Map(layout.nodes.map((node) => [node.id, node])), [layout.nodes]);
   const selectedRelated = useMemo(() => relatedNodeIds(graph, selectedNodeId), [graph, selectedNodeId]);
-  const hiddenDescendants = useMemo(() => descendantIds(graph, collapsedNodeIds), [graph, collapsedNodeIds]);
   const criticalIds = useMemo(() => new Set(graph.summary?.criticalPathNodeIds ?? []), [graph.summary?.criticalPathNodeIds]);
   const artifactIds = useMemo(() => new Set(graph.summary?.artifactNodeIds ?? []), [graph.summary?.artifactNodeIds]);
+  const slowIds = useMemo(() => new Set(graph.summary?.slowNodeIds ?? []), [graph.summary?.slowNodeIds]);
+  const staleRunningIds = useMemo(() => new Set(graph.summary?.staleRunningNodeIds ?? []), [graph.summary?.staleRunningNodeIds]);
   const rootCauseIds = useMemo(() => new Set([
     ...(graph.summary?.issues ?? [])
       .filter((issue) => issue.nodeId && (issue.severity === 'critical' || issue.severity === 'error'))
@@ -222,17 +212,31 @@ export function AgentTraceGraph({
   ]), [graph.summary?.errorNodeIds, graph.summary?.issues]);
   const costIds = useMemo(() => new Set(graph.summary?.tokenHotspotNodeIds ?? []), [graph.summary?.tokenHotspotNodeIds]);
 
+  const densityHiddenNodeIds = useMemo(() => {
+    if (densityMode === 'full') return new Set<string>();
+    const hidden = new Set<string>();
+    const perParentCount = new Map<string, number>();
+
+    for (const node of layout.nodes) {
+      if (!isLowSignalEvent(node)) continue;
+      if (densityMode === 'focused') {
+        hidden.add(node.id);
+        continue;
+      }
+
+      const parentId = node.parentId ?? 'root';
+      const count = perParentCount.get(parentId) ?? 0;
+      perParentCount.set(parentId, count + 1);
+      if (count >= 4) hidden.add(node.id);
+    }
+
+    return hidden;
+  }, [densityMode, layout.nodes]);
+
   const filteredNodes = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    const perParentCount = new Map<string, number>();
     return layout.nodes.filter((node) => {
-      if (hiddenDescendants.has(node.id)) return false;
-      if (compactMode && node.kind === 'event' && !node.critical) {
-        const parentId = node.parentId ?? 'root';
-        const count = perParentCount.get(parentId) ?? 0;
-        perParentCount.set(parentId, count + 1);
-        if (count >= 4) return false;
-      }
+      if (densityHiddenNodeIds.has(node.id)) return false;
       if (statusFilter !== 'all' && node.status !== statusFilter) return false;
       if (kindFilter !== 'all' && node.kind !== kindFilter) return false;
       if (phaseFilter !== 'all' && node.phase !== phaseFilter) return false;
@@ -252,7 +256,7 @@ export function AgentTraceGraph({
         node.diagnosticPreview,
       ].some((value) => value?.toLowerCase().includes(needle));
     });
-  }, [artifactIds, compactMode, costIds, criticalIds, focusMode, hiddenDescendants, kindFilter, layout.nodes, phaseFilter, query, rootCauseIds, statusFilter]);
+  }, [artifactIds, costIds, criticalIds, densityHiddenNodeIds, focusMode, kindFilter, layout.nodes, phaseFilter, query, rootCauseIds, statusFilter]);
 
   const visibleNodeIds = useMemo(() => new Set(filteredNodes.map((node) => node.id)), [filteredNodes]);
   const visibleEdges = useMemo(() => graph.edges.filter((edge) => visibleNodeIds.has(edge.from) && visibleNodeIds.has(edge.to)), [graph.edges, visibleNodeIds]);
@@ -299,15 +303,6 @@ export function AgentTraceGraph({
     dragRef.current = null;
   };
 
-  const toggleCollapse = (nodeId: string) => {
-    setCollapsedNodeIds((current) => {
-      const next = new Set(current);
-      if (next.has(nodeId)) next.delete(nodeId);
-      else next.add(nodeId);
-      return next;
-    });
-  };
-
   return (
     <div className="flex h-full min-h-[520px] flex-col rounded-md border border-black/10 dark:border-white/10 bg-background" data-testid="observability-trace-graph">
       <div className="space-y-2 border-b border-black/10 dark:border-white/10 px-3 py-2">
@@ -318,6 +313,11 @@ export function AgentTraceGraph({
             <Badge variant="secondary" className="rounded-full text-2xs">
               {filteredNodes.length}/{graph.nodes.length} {t('graph.nodes')}
             </Badge>
+            {densityHiddenNodeIds.size > 0 && (
+              <Badge variant="outline" className="rounded-full text-2xs text-muted-foreground">
+                {t('graph.hidden', { count: densityHiddenNodeIds.size })}
+              </Badge>
+            )}
             {(graph.summary?.errorNodeIds.length ?? 0) > 0 && (
               <Badge variant="outline" className="rounded-full border-red-500/30 text-2xs text-red-700 dark:text-red-400">
                 {graph.summary?.errorNodeIds.length} {t('graph.errorNodes')}
@@ -341,7 +341,7 @@ export function AgentTraceGraph({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-2 2xl:grid-cols-[minmax(160px,1fr)_repeat(4,130px)_auto]">
+        <div className="grid grid-cols-1 gap-2 2xl:grid-cols-[minmax(160px,1fr)_repeat(4,130px)_minmax(210px,auto)]">
           <div className="flex items-center gap-2 rounded-md border bg-surface-input px-2">
             <Search className="h-3.5 w-3.5 text-muted-foreground" />
             <Input
@@ -390,15 +390,26 @@ export function AgentTraceGraph({
               <SelectItem value="cost">{t('graph.focusCost')}</SelectItem>
             </SelectContent>
           </Select>
-          <Button
-            type="button"
-            variant={compactMode ? 'secondary' : 'outline'}
-            className="h-8 rounded-md px-3 text-xs"
-            onClick={() => setCompactMode((value) => !value)}
-          >
-            <Filter className="mr-1.5 h-3.5 w-3.5" />
-            {compactMode ? t('graph.compactOn') : t('graph.compactOff')}
-          </Button>
+          <div className="flex h-8 items-center overflow-hidden rounded-md border border-black/10 bg-surface-input/50 dark:border-white/10" title={t('graph.densityHint')}>
+            <div className="flex items-center gap-1 px-2 text-2xs text-muted-foreground">
+              <Filter className="h-3.5 w-3.5" />
+              {t('graph.density')}
+            </div>
+            {(['focused', 'balanced', 'full'] as DensityMode[]).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setDensityMode(mode)}
+                className={cn(
+                  'h-full px-2.5 text-xs transition hover:bg-black/5 dark:hover:bg-white/10',
+                  densityMode === mode && 'bg-black/5 font-medium text-foreground dark:bg-white/10',
+                )}
+                data-testid={`trace-graph-density-${mode}`}
+              >
+                {t(`graph.densityModes.${mode}`)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -460,8 +471,9 @@ export function AgentTraceGraph({
             const tone = toneClasses(nodeTone(node));
             const selected = selectedNodeId === node.id;
             const connected = selectedRelated.size === 0 || selectedRelated.has(node.id);
-            const canCollapse = (node.collapsedChildrenCount ?? 0) > 0 || graph.nodes.some((candidate) => candidate.parentId === node.id);
-            const collapsed = collapsedNodeIds.has(node.id);
+            const isSlow = slowIds.has(node.id);
+            const isHotspot = costIds.has(node.id);
+            const isStaleRunning = staleRunningIds.has(node.id);
             return (
               <div
                 key={node.id}
@@ -473,7 +485,7 @@ export function AgentTraceGraph({
                   if (event.key === 'Enter' || event.key === ' ') onSelectNode(node.id);
                 }}
                 className={cn(
-                  'absolute flex h-[92px] w-[208px] flex-col justify-between rounded-md border bg-background p-3 text-left shadow-sm transition',
+                  'absolute flex h-[40px] w-[168px] items-center gap-2 rounded-md border bg-background px-2.5 text-left shadow-sm transition',
                   selected ? 'ring-2 ring-primary/45' : 'hover:bg-black/[0.02] dark:hover:bg-white/[0.04]',
                   node.critical && 'border-primary/35',
                   node.status === 'error' && 'border-red-500/45 bg-red-500/5',
@@ -483,39 +495,26 @@ export function AgentTraceGraph({
                 style={{ left: node.x, top: node.y }}
                 data-testid={`trace-graph-node-${node.kind}`}
               >
-                <div className="flex min-w-0 items-start gap-2">
-                  <span className={cn('mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border', tone.tint)}>
-                    <Icon className="h-3.5 w-3.5" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-xs font-medium text-foreground">{node.label}</span>
-                    <span className="block truncate text-2xs text-muted-foreground">{node.subtitle ?? t(`nodeKinds.${node.kind}`)}</span>
-                  </span>
-                  {statusIcon(node.status)}
-                </div>
-                <div className="flex items-center justify-between gap-2 text-2xs text-muted-foreground">
-                  <span className="truncate">{node.phase ? t(`phases.${node.phase}`) : t(`nodeKinds.${node.kind}`)}</span>
-                  <span className="font-mono">{formatDuration(node.durationMs)}</span>
-                </div>
-                <div className="flex items-center justify-between gap-1">
-                  <div className="flex min-w-0 items-center gap-1">
-                    {node.eventCount ? <Badge variant="outline" className="rounded-full px-1.5 text-[10px]">{node.eventCount}e</Badge> : null}
-                    {node.artifactCount ? <Badge variant="secondary" className="rounded-full px-1.5 text-[10px]">{node.artifactCount}a</Badge> : null}
-                    {node.retryCount ? <Badge variant="outline" className="rounded-full border-amber-500/30 px-1.5 text-[10px] text-amber-700 dark:text-amber-400">{node.retryCount}r</Badge> : null}
-                  </div>
-                  {canCollapse && (
-                    <button
-                      type="button"
-                      className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        toggleCollapse(node.id);
-                      }}
-                    >
-                      {collapsed ? t('graph.expand') : t('graph.collapse')}
-                    </button>
+                <span className={cn('relative flex h-6 w-6 shrink-0 items-center justify-center rounded border', tone.tint)}>
+                  <Icon className="h-3.5 w-3.5" />
+                  {isSlow && (
+                    <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-amber-500 text-white">
+                      <Clock className="h-2 w-2" />
+                    </span>
                   )}
-                </div>
+                  {isHotspot && !isSlow && (
+                    <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-orange-500 text-white">
+                      <Zap className="h-2 w-2" />
+                    </span>
+                  )}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-xs font-medium text-foreground">{node.label}</span>
+                </span>
+                <span
+                  className={cn('h-2 w-2 shrink-0 rounded-full', statusDotClass(node.status, isStaleRunning))}
+                  title={t(`status.${node.status}`)}
+                />
               </div>
             );
           })}

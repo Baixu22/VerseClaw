@@ -23,6 +23,94 @@ import {
 } from './helpers';
 import type { AttachedFileMeta, RawMessage } from './types';
 import type { ChatGet, ChatSet } from './store-api';
+import { hostApi } from '@/lib/host-api';
+import { useWorkspacesStore } from '../workspaces';
+import { extractTurnSummary, buildTurnLedgerEvents } from './turn-ledger-recorder';
+import type { ChatRuntimeEvent } from '../../../shared/chat-runtime-events';
+
+function findLastUserMessage(messages: RawMessage[]): RawMessage | undefined {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === 'user') return messages[i];
+  }
+  return undefined;
+}
+
+function findPostUserAssistantMessages(messages: RawMessage[]): RawMessage[] {
+  const result: RawMessage[] = [];
+  let foundUser = false;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === 'user') {
+      foundUser = true;
+      break;
+    }
+    result.unshift(messages[i]);
+  }
+  return foundUser ? result : [];
+}
+
+async function recordTurnToTaskLedger(
+  sessionKey: string,
+  messages: RawMessage[],
+  activeTaskNodeId: string | null,
+  error?: string | null,
+  runtimeEvents: ChatRuntimeEvent[] = [],
+): Promise<void> {
+  const wsId = useWorkspacesStore.getState().activeWorkspaceId;
+  if (!wsId) return;
+  const userMsg = findLastUserMessage(messages);
+  const assistantMsgs = findPostUserAssistantMessages(messages);
+  if (!userMsg || assistantMsgs.length === 0) return;
+
+  const summary = extractTurnSummary(userMsg, assistantMsgs, error, runtimeEvents);
+  const events = buildTurnLedgerEvents(wsId, sessionKey, summary, activeTaskNodeId);
+
+  try {
+    await hostApi.taskLedger.appendEvents({
+      workspaceId: wsId,
+      events,
+      idempotencyKey: `turn:${sessionKey}:${Date.now()}`,
+    });
+  } catch {
+    // Silent — Task Ledger writes are best-effort.
+  }
+}
+
+function normalizeRawRuntimeEvent(event: Record<string, unknown>, runId: string): ChatRuntimeEvent[] {
+  const sessionKey = typeof event.sessionKey === 'string' ? event.sessionKey : undefined;
+  const base = { runId, ...(sessionKey ? { sessionKey } : {}) };
+  const eventType = typeof event.type === 'string' ? event.type : '';
+  if (eventType === 'tool.started' || eventType === 'tool.updated' || eventType === 'tool.completed'
+    || eventType === 'command.output' || eventType === 'patch.completed' || eventType === 'approval.updated') {
+    return [{ ...base, ...event, runId } as ChatRuntimeEvent];
+  }
+
+  const message = event.message && typeof event.message === 'object'
+    ? event.message as Record<string, unknown>
+    : null;
+  const content = message?.content;
+  if (!Array.isArray(content)) return [];
+
+  const events: ChatRuntimeEvent[] = [];
+  for (const block of content) {
+    if (!block || typeof block !== 'object') continue;
+    const record = block as Record<string, unknown>;
+    if ((record.type === 'tool_use' || record.type === 'toolCall') && typeof record.name === 'string') {
+      const toolCallId = typeof record.id === 'string'
+        ? record.id
+        : typeof record.toolCallId === 'string'
+          ? record.toolCallId
+          : `${runId}:tool:${events.length + 1}`;
+      events.push({
+        type: 'tool.started',
+        ...base,
+        toolCallId,
+        name: record.name,
+        args: record.input ?? record.args,
+      });
+    }
+  }
+  return events;
+}
 
 export function handleRuntimeEventState(
   set: ChatSet,
@@ -267,6 +355,14 @@ export function handleRuntimeEventState(
               clearHistoryPoll();
               void get().loadHistory(true);
             }
+            // Fire-and-forget: record this turn to the Task Ledger
+            void recordTurnToTaskLedger(
+              get().currentSessionKey,
+              get().messages,
+              get().activeTaskNodeId,
+              undefined,
+              normalizeRawRuntimeEvent(event, runId),
+            );
           } else {
             // No message in final event - reload history to get complete data
             set({ streamingText: '', streamingMessage: null, pendingFinal: true });
@@ -315,6 +411,14 @@ export function handleRuntimeEventState(
             if (wasSending) {
               void get().loadHistory(true);
             }
+            // Fire-and-forget: record error turn to the Task Ledger
+            void recordTurnToTaskLedger(
+              sessionKeyAtError,
+              get().messages,
+              get().activeTaskNodeId,
+              errorMsg,
+              normalizeRawRuntimeEvent(event, runId),
+            );
           };
 
           if (recoverable) {

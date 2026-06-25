@@ -1,5 +1,5 @@
 {
-  "id": "clawx-enhance",
+  "id": "verse-claw-enhance",
   "activation": {
     "onStartup": true
   },
@@ -10,7 +10,7 @@
       "picocontext": {
         "type": "object",
         "additionalProperties": false,
-        "description": "ClawX Pico ContextEngine 判断参数。压缩本身（LLM 摘要 / 滑动窗口 / pruning）由 OpenClaw runtime 负责；本配置只控制 *何时* 触发。",
+        "description": "Verse Claw Pico ContextEngine 判断参数。压缩本身（LLM 摘要 / 滑动窗口 / pruning）由 OpenClaw runtime 负责；本配置只控制 *何时* 触发。",
         "properties": {
           "enable":             { "type": "boolean", "default": true,  "description": "总开关（false=全部 short-circuit）" },
           "triggerRatio":       { "type": "number",  "default": 0.75,  "minimum": 0.1, "maximum": 0.99, "description": "token 占用率触发阈值" },

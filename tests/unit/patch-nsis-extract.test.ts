@@ -1,14 +1,23 @@
 // @vitest-environment node
 import { readFileSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { afterEach, describe, expect, it } from 'vitest';
-import {
-  patchNsisExtractTemplate,
-  restoreExtractAppPackageTemplate,
-} from '../../scripts/patch-nsis-extract.mjs';
-import { patchNsisUninstallTemplate } from '../../scripts/patch-nsis-uninstall.mjs';
+import { join, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+
+let patchNsisExtractTemplate: (targetPath?: string) => boolean;
+let restoreExtractAppPackageTemplate: (content: string) => string;
+let patchNsisUninstallTemplate: (targetPath?: string) => boolean;
+
+beforeAll(async () => {
+  const extractModulePath = pathToFileURL(resolve('scripts/patch-nsis-extract.mjs')).href;
+  const uninstallModulePath = pathToFileURL(resolve('scripts/patch-nsis-uninstall.mjs')).href;
+  const extractModule = await import(/* @vite-ignore */ extractModulePath) as typeof import('../../scripts/patch-nsis-extract.mjs');
+  const uninstallModule = await import(/* @vite-ignore */ uninstallModulePath) as typeof import('../../scripts/patch-nsis-uninstall.mjs');
+  patchNsisExtractTemplate = extractModule.patchNsisExtractTemplate;
+  restoreExtractAppPackageTemplate = extractModule.restoreExtractAppPackageTemplate;
+  patchNsisUninstallTemplate = uninstallModule.patchNsisUninstallTemplate;
+});
 
 const FIXTURES = join(fileURLToPath(new URL('.', import.meta.url)), '../fixtures');
 
@@ -55,18 +64,18 @@ describe('patch-nsis-extract', () => {
     expect(patchNsisExtractTemplate(target)).toBe(true);
 
     const result = readFileSync(target, 'utf8');
-    expect(result).toContain('ClawX-patched-v2');
+    expect(result).toContain('Verse Claw-patched-v2');
     expect(result).not.toContain('CopyFiles /SILENT');
     expect(result).not.toContain('$(appCannotBeClosed)');
     expect(result).toContain('$(decompressionFailed)');
     expect(result).toContain('Quit');
     expect(result).toContain('SetErrorLevel 2');
-    expect(result).toContain('Restoring previous ClawX installation after failed update');
+    expect(result).toContain('Restoring previous Verse Claw installation after failed update');
     expect(result).not.toContain('continuing overwrite install anyway');
     expect(patchNsisExtractTemplate(target)).toBe(true);
   });
 
-  it('upgrades stale ClawX extract patches that used to continue after extract failure', () => {
+  it('upgrades stale Verse Claw extract patches that used to continue after extract failure', () => {
     tempDir = mkdtempSync(join(tmpdir(), 'clawx-patch-nsis-'));
     const target = join(tempDir, 'extractAppPackage.nsh');
     writeFileSync(
@@ -74,7 +83,7 @@ describe('patch-nsis-extract', () => {
       SAMPLE_FILE.replace(
         SAMPLE_EXTRACT_MACRO,
         `!macro extractUsing7za FILE
-  ; ClawX-patched: extract directly to $INSTDIR.
+  ; Verse Claw-patched: extract directly to $INSTDIR.
   ClearErrors
   Nsis7z::Extract "\${FILE}"
   DetailPrint "Extract reported file locks; continuing overwrite install anyway..."
@@ -86,12 +95,12 @@ describe('patch-nsis-extract', () => {
     expect(patchNsisExtractTemplate(target)).toBe(true);
 
     const result = readFileSync(target, 'utf8');
-    expect(result).toContain('ClawX-patched-v2');
-    expect(result).toContain('Failed to extract ClawX files after multiple attempts.');
+    expect(result).toContain('Verse Claw-patched-v2');
+    expect(result).toContain('Failed to extract Verse Claw files after multiple attempts.');
     expect(result).toContain('$(decompressionFailed)');
     expect(result).toContain('Quit');
     expect(result).toContain('SetErrorLevel 2');
-    expect(result).toContain('Restoring previous ClawX installation after failed update');
+    expect(result).toContain('Restoring previous Verse Claw installation after failed update');
     expect(result).not.toContain('continuing overwrite install anyway');
   });
 

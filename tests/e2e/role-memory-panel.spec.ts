@@ -10,6 +10,7 @@ test.describe('Role memory panel', () => {
         retentionProposeCount: 0,
         reviewBatchCount: 0,
         simulateCount: 0,
+        feedbackCount: 0,
         proposals: [] as Array<{
           id: string;
           operation: string;
@@ -132,7 +133,24 @@ test.describe('Role memory panel', () => {
           }
 
           if (method === 'memory.explainInjection') {
-            return respond(request.id, { injections: [] });
+            return respond(request.id, {
+              injections: [{
+                id: 'inj-1',
+                roleName: 'architect',
+                createdAt: '2026-06-16T00:00:00.000Z',
+                truncated: false,
+                policyVersion: 'role-memory-context-v3',
+                cardIds: ['mem-1'],
+                candidateExplanations: [{
+                  cardId: 'mem-1',
+                  selected: true,
+                  score: 0.91,
+                  reason: 'Injected as a must role constraint.',
+                  penalties: [],
+                  injectionClass: 'must',
+                }],
+              }],
+            });
           }
 
           if (method === 'memory.stats') {
@@ -162,6 +180,56 @@ test.describe('Role memory panel', () => {
 
           if (method === 'memory.health') {
             return respond(request.id, { health: { ok: true, checks: [] } });
+          }
+
+          if (method === 'memory.utilityReport') {
+            return respond(request.id, {
+              report: {
+                roleName: 'architect',
+                generatedAt: '2026-06-16T00:00:00.000Z',
+                dataQuality: current.feedbackCount > 0 ? 'partial' : 'insufficient',
+                missingEvidence: current.feedbackCount > 0
+                  ? ['No memory-on/off evaluation pairs are available, so task success delta is not computed.']
+                  : [
+                    'No user/reviewer utility feedback has been recorded yet.',
+                    'No memory-on/off evaluation pairs are available, so task success delta is not computed.',
+                  ],
+                sample: {
+                  cards: current.cards.length,
+                  injections: 1,
+                  feedback: current.feedbackCount,
+                  proposals: current.proposals.length,
+                  conflicts: 0,
+                },
+                aggregate: {
+                  contextPrecisionAtK: current.feedbackCount > 0 ? 1 : null,
+                  helpfulnessRate: current.feedbackCount > 0 ? 1 : null,
+                  harmRate: current.feedbackCount > 0 ? 0 : null,
+                  staleRate: 0.5,
+                  conflictRate: 0,
+                  reviewAcceptanceRate: null,
+                  tokenOverheadPerRun: 40,
+                  taskSuccessDelta: null,
+                },
+                cards: current.cards.map((card) => ({
+                  cardId: card.id,
+                  card,
+                  selectedCount: 1,
+                  skippedCount: 0,
+                  feedbackCount: current.feedbackCount,
+                  helpfulCount: current.feedbackCount,
+                  neutralCount: 0,
+                  harmfulCount: 0,
+                  missingNeededCount: 0,
+                  userCorrectedCount: 0,
+                  conflictCount: 0,
+                  retentionAction: card.status === 'active' ? 'cold' : 'keep',
+                  utilityScore: current.feedbackCount > 0 ? 1 : null,
+                  dataQuality: current.feedbackCount > 0 ? 'partial' : 'insufficient',
+                  reasonSummary: current.feedbackCount > 0 ? '1 helpful feedback record.' : 'Insufficient direct feedback for a utility score.',
+                })),
+              },
+            });
           }
 
           if (method === 'memory.detail') {
@@ -242,6 +310,21 @@ test.describe('Role memory panel', () => {
             });
           }
 
+          if (method === 'memory.feedback') {
+            current.feedbackCount += 1;
+            return respond(request.id, {
+              feedback: {
+                id: `fb-${current.feedbackCount}`,
+                cardId: params.cardId,
+                injectionId: params.injectionId,
+                roleName: params.roleName,
+                outcome: params.outcome,
+                taskSuccess: params.taskSuccess ?? 'unknown',
+                createdAt: '2026-06-16T00:00:00.000Z',
+              },
+            });
+          }
+
           if (method === 'memory.archive') {
             current.archiveCount += 1;
             const id = String(params.id ?? '');
@@ -256,7 +339,8 @@ test.describe('Role memory panel', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
     await expect(page.getByTestId('agents-page')).toBeVisible();
 
     await page.getByTestId('role-orchestration-toggle').click();
@@ -273,6 +357,11 @@ test.describe('Role memory panel', () => {
     await page.getByRole('tab', { name: /Injections/ }).click();
     await page.getByTestId('role-memory-simulate').click();
     await expect(page.getByTestId('role-memory-simulation-result')).toContainText('mem-1');
+    await page.getByRole('button', { name: /Helpful/ }).first().click();
+
+    await page.getByRole('tab', { name: /Quality/ }).click();
+    await expect(page.getByTestId('role-memory-quality')).toContainText('partial');
+    await expect(page.getByTestId('role-memory-quality')).toContainText('100%');
 
     await page.getByRole('tab', { name: /Active/ }).click();
 
@@ -295,6 +384,7 @@ test.describe('Role memory panel', () => {
           retentionProposeCount: number;
           reviewBatchCount: number;
           simulateCount: number;
+          feedbackCount: number;
         };
       }).__roleMemoryPanelState;
       return {
@@ -304,8 +394,9 @@ test.describe('Role memory panel', () => {
         retentionProposeCount: state?.retentionProposeCount ?? 0,
         reviewBatchCount: state?.reviewBatchCount ?? 0,
         simulateCount: state?.simulateCount ?? 0,
+        feedbackCount: state?.feedbackCount ?? 0,
       };
     });
-    expect(calls).toEqual({ proposeCount: 1, previewCount: 1, archiveCount: 1, retentionProposeCount: 1, reviewBatchCount: 1, simulateCount: 1 });
+    expect(calls).toEqual({ proposeCount: 1, previewCount: 1, archiveCount: 1, retentionProposeCount: 1, reviewBatchCount: 1, simulateCount: 1, feedbackCount: 1 });
   });
 });

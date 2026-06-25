@@ -271,7 +271,7 @@ const teamOrchestrationHistory = [
   },
 ];
 
-test.describe('ClawX chat execution graph', () => {
+test.describe('Verse Claw chat execution graph', () => {
   test('renders team orchestration task graph details from mocked history', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

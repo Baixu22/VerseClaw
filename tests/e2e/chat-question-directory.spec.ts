@@ -39,7 +39,7 @@ const workspace = {
   sessionStates: {},
 };
 
-test.describe('ClawX chat question directory', () => {
+test.describe('Verse Claw chat question directory', () => {
   test('keeps assistive panels hidden on a fresh empty chat', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -239,6 +239,18 @@ test.describe('ClawX chat question directory', () => {
             activeWorkspaceId: WORKSPACE_ID,
             activeWorkspace: workspace,
           },
+          [stableStringify(['taskLedger', 'snapshot', { workspaceId: WORKSPACE_ID }])]: {
+            snapshot: {
+              workspaceId: WORKSPACE_ID,
+              nodes: [],
+              edges: [],
+              eventsCount: 0,
+              activeNodeIds: [],
+              blockedNodeIds: [],
+              reviewNodeIds: [],
+              recentDecisions: [],
+            },
+          },
         },
       });
 
@@ -253,8 +265,7 @@ test.describe('ClawX chat question directory', () => {
       }
 
       await expect(page.getByTestId('main-layout')).toBeVisible();
-      await expect(page.getByTestId('chat-assistive-rail')).toBeVisible();
-      await expect(page.getByTestId('work-mode-summary-panel')).toBeVisible();
+      await expect(page.getByTestId('work-mode-summary-panel')).toHaveCount(0);
 
       await page.getByTestId('chat-question-directory-toggle').click();
       await expect(page.getByTestId('chat-question-directory')).toBeVisible();

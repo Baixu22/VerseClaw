@@ -65,7 +65,7 @@ const MAIN_HISTORY = [
   { role: 'assistant', content: 'Workspace header is visible.', timestamp: 1773281732 },
 ];
 
-test.describe('ClawX chat workspace header', () => {
+test.describe('Verse Claw chat workspace header', () => {
   test('shows workspace and conversation without the legacy topic selector', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

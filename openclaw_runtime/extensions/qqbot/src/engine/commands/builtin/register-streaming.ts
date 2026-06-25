@@ -30,7 +30,7 @@ function isStreamingConfigEnabled(streaming: unknown): boolean {
 export function registerStreamingCommands(registry: SlashCommandRegistry): void {
   registry.register({
     name: "bot-streaming",
-    description: "一键开关流式消息",
+    description: "一键开关流式消�?,
     requireAuth: true,
     c2cOnly: true,
     usage: [
@@ -47,7 +47,7 @@ export function registerStreamingCommands(registry: SlashCommandRegistry): void 
 
       if (!arg) {
         return [
-          `📡 流式消息状态：${currentOn ? "✅ 已开启" : "❌ 已关闭"}`,
+          `📡 流式消息状态：${currentOn ? "�?已开�? : "�?已关�?}`,
           ``,
           `使用 <qqbot-cmd-input text="/bot-streaming on" show="/bot-streaming on"/> 开启`,
           `使用 <qqbot-cmd-input text="/bot-streaming off" show="/bot-streaming off"/> 关闭`,
@@ -55,12 +55,12 @@ export function registerStreamingCommands(registry: SlashCommandRegistry): void 
       }
 
       if (arg !== "on" && arg !== "off") {
-        return `❌ 参数错误，请使用 on 或 off\n\n示例：/bot-streaming on`;
+        return `�?参数错误，请使用 on �?off\n\n示例�?bot-streaming on`;
       }
 
       const wantOn = arg === "on";
       if (wantOn === currentOn) {
-        return `📡 流式消息已经是${wantOn ? "开启" : "关闭"}状态，无需操作`;
+        return `📡 流式消息已经�?{wantOn ? "开�? : "关闭"}状态，无需操作`;
       }
 
       let runtime: ReturnType<NonNullable<ApproveRuntimeGetter>>;
@@ -74,9 +74,9 @@ export function registerStreamingCommands(registry: SlashCommandRegistry): void 
         const fwVer = resolveRuntimeServiceVersion();
         const ver = getPluginVersionString();
         return [
-          `❌ 当前版本不支持该指令`,
+          `�?当前版本不支持该指令`,
           ``,
-          `🦞框架版本：${fwVer}`,
+          `🦞框架版本�?{fwVer}`,
           `🤖QQBot 插件版本：v${ver}`,
           ``,
           `可通过以下命令手动开启流式消息：`,
@@ -99,7 +99,7 @@ export function registerStreamingCommands(registry: SlashCommandRegistry): void 
           | undefined;
 
         if (!qqbot) {
-          return `❌ 配置文件中未找到 qqbot 通道配置`;
+          return `�?配置文件中未找到 qqbot 通道配置`;
         }
 
         const accountId = ctx.accountId;
@@ -127,12 +127,12 @@ export function registerStreamingCommands(registry: SlashCommandRegistry): void 
         await configApi.replaceConfigFile({ nextConfig: currentCfg, afterWrite: { mode: "auto" } });
 
         return [
-          `✅ 流式消息已${wantOn ? "开启" : "关闭"}`,
+          `�?流式消息�?{wantOn ? "开�? : "关闭"}`,
           ``,
           wantOn ? `AI 的回复将以流式形式逐步显示（仅私聊生效）。` : `AI 的回复将恢复为完整发送。`,
         ].join("\n");
       } catch (err: unknown) {
-        return `❌ 配置写入失败: ${err instanceof Error ? err.message : String(err)}`;
+        return `�?配置写入失败: ${err instanceof Error ? err.message : String(err)}`;
       }
     },
   });

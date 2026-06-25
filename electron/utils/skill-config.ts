@@ -1,6 +1,6 @@
 /**
  * Skill Config Utilities
- * Direct read/write access to ClawX-owned skill configuration.
+ * Direct read/write access to Verse Claw-owned skill configuration.
  * This bypasses the Gateway RPC for faster and more reliable config updates.
  *
  * All file I/O uses async fs/promises to avoid blocking the main thread.
@@ -47,7 +47,7 @@ interface PreinstalledLockFile {
 }
 
 interface PreinstalledMarker {
-    source: 'clawx-preinstalled';
+    source: 'verse-claw-preinstalled';
     slug: string;
     version: string;
     installedAt: string;
@@ -60,8 +60,8 @@ async function getSkillStore() {
     if (!skillStoreInstance) {
         const Store = (await import('electron-store')).default;
         const options = {
-            name: 'clawx-skills',
-            projectName: 'ClawX',
+            name: 'verse-claw-skills',
+            projectName: 'Verse Claw',
             cwd: getDataDir(),
             defaults: {
                 entries: {},
@@ -82,7 +82,7 @@ async function readSkillEntries(): Promise<Record<string, SkillEntry>> {
         const store = await getSkillStore();
         return { ...(store.get('entries') || {}) };
     } catch (err) {
-        console.error('Failed to read ClawX skill config:', err);
+        console.error('Failed to read Verse Claw skill config:', err);
         return {};
     }
 }
@@ -298,14 +298,14 @@ export async function trimBundledOpenClawSkillsAndConfigs(
 }
 
 /**
- * Built-in skills bundled with ClawX that should be pre-deployed to
- * the ClawX-managed skills directory on first launch. These come from the openclaw package's
+ * Built-in skills bundled with Verse Claw that should be pre-deployed to
+ * the Verse Claw-managed skills directory on first launch. These come from the openclaw package's
  * extensions directory and are available in both dev and packaged builds.
  */
 const BUILTIN_SKILLS = [] as const;
 
 /**
- * Ensure built-in skills are deployed to the ClawX-managed skills directory.
+ * Ensure built-in skills are deployed to the Verse Claw-managed skills directory.
  * Skips any skill that already has a SKILL.md present (idempotent).
  * Runs at app startup; all errors are logged and swallowed so they never
  * block the normal startup flow.
@@ -340,7 +340,7 @@ export async function ensureBuiltinSkillsInstalled(): Promise<void> {
 }
 
 const PREINSTALLED_MANIFEST_NAME = 'preinstalled-manifest.json';
-const PREINSTALLED_MARKER_NAME = '.clawx-preinstalled.json';
+const PREINSTALLED_MARKER_NAME = '.verse-claw-preinstalled.json';
 
 async function readPreinstalledManifest(): Promise<PreinstalledSkillSpec[]> {
     const candidates = [
@@ -418,7 +418,7 @@ async function tryReadMarker(markerPath: string): Promise<PreinstalledMarker | n
 
 /**
  * Ensure third-party preinstalled skills (bundled in app resources) are
- * deployed to the ClawX-managed skills directory as full directories.
+ * deployed to the Verse Claw-managed skills directory as full directories.
  *
  * Policy:
  * - If skill is missing locally, install it.
@@ -475,7 +475,7 @@ export async function ensurePreinstalledSkillsInstalled(): Promise<void> {
             await mkdir(targetDir, { recursive: true });
             await cpAsyncSafe(sourceDir, targetDir);
             const markerPayload: PreinstalledMarker = {
-                source: 'clawx-preinstalled',
+                source: 'verse-claw-preinstalled',
                 slug: spec.slug,
                 version: desiredVersion,
                 installedAt: new Date().toISOString(),

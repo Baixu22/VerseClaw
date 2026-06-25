@@ -101,24 +101,24 @@ const UNICODE_TO_SLACK: Record<string, string> = {
   "👀": "eyes",
   "🤔": "thinking_face",
   "🔥": "fire",
-  "👨‍💻": "male-technologist",
+  "👨‍�?: "male-technologist",
   "👨💻": "male-technologist",
-  "👩‍💻": "female-technologist",
-  "⚡": "zap",
+  "👩‍�?: "female-technologist",
+  "�?: "zap",
   "🌐": "globe_with_meridians",
-  "✅": "white_check_mark",
+  "�?: "white_check_mark",
   "👍": "thumbsup",
-  "❌": "x",
+  "�?: "x",
   "😱": "scream",
   "🥱": "yawning_face",
   "😨": "fearful",
-  "⏳": "hourglass_flowing_sand",
+  "�?: "hourglass_flowing_sand",
   "⚠️": "warning",
-  "✍": "writing_hand",
-  "🗜️": "compression",
+  "�?: "writing_hand",
+  "🗜�?: "compression",
   "🗜": "compression",
   "🧠": "brain",
-  "🛠️": "hammer_and_wrench",
+  "🛠�?: "hammer_and_wrench",
   "💻": "computer",
 };
 const SLACK_REASONING_TAG_RE = /<\s*(\/?)\s*(?:think(?:ing)?|thought|antthinking)\b[^<>]*>/gi;
@@ -417,7 +417,7 @@ function shouldUseStreaming(params: {
     return false;
   }
   if (!params.threadTs) {
-    logVerbose("slack-stream: streaming disabled — no reply thread target available");
+    logVerbose("slack-stream: streaming disabled �?no reply thread target available");
     return false;
   }
   return true;

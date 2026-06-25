@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+﻿import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
@@ -7,7 +7,7 @@ import { existsSync, readFileSync } from 'fs';
 
 function getExtensionPackages(): Set<string> {
   try {
-    const manifestPath = resolve(__dirname, 'clawx-extensions.json');
+    const manifestPath = resolve(__dirname, 'verse-claw-extensions.json');
     if (!existsSync(manifestPath)) return new Set();
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
     const allIds: string[] = [

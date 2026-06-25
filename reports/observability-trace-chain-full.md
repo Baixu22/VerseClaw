@@ -1,14 +1,14 @@
-# ClawX Observability Trace 链路 — 完整实现报告
+# Verse Claw Observability Trace 链路 — 完整实现报告
 
 > **日期**: 2026-06-13
 > **范围**: 全链路功能总结 + 架构设计文档
-> **工作目录**: `C:\Users\27933\Desktop\clawx\ClawX`
+> **工作目录**: `C:\Users\27933\Desktop\clawx\Verse Claw`
 
 ---
 
 ## 0. 功能概览
 
-Observability 模块为 ClawX 提供了**全链路 agent 运行时追踪**能力，覆盖：
+Observability 模块为 Verse Claw 提供了**全链路 agent 运行时追踪**能力，覆盖：
 
 | 能力 | 状态 |
 |------|------|

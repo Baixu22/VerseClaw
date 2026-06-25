@@ -11,7 +11,7 @@ import {
 
 // Filenames the Copilot SDK already loads natively from the working
 // directory / instructionDirectories (per
-// `@github/copilot-sdk/dist/types.d.ts:1036,1155` â€”
+// `@github/copilot-sdk/dist/types.d.ts:1036,1155` â€?
 // "custom instruction files (.github/copilot-instructions.md,
 // AGENTS.md, etc.) are always loaded from the working directory").
 // Filtering them out of the OpenClaw bootstrap injection avoids
@@ -54,9 +54,9 @@ export type CopilotWorkspaceBootstrapResult = {
  * Mirrors codex's `buildCodexWorkspaceBootstrapContext` /
  * `renderCodexWorkspaceBootstrapInstructions` pair
  * (`extensions/codex/src/app-server/run-attempt.ts:2877,3047`). The
- * shape divergence â€” codex returns instructions inside the same object
+ * shape divergence â€?codex returns instructions inside the same object
  * as bootstrapFiles+contextFiles for its developerInstructions field;
- * copilot exposes the rendered string for SDK `systemMessage` â€” is the
+ * copilot exposes the rendered string for SDK `systemMessage` â€?is the
  * intended difference between the two runtimes' system-prompt
  * surfaces.
  */

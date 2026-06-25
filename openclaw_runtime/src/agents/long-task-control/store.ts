@@ -1,6 +1,13 @@
 import { randomUUID } from "node:crypto";
 import type { Insertable, Selectable, Updateable } from "kysely";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../../infra/kysely-sync.js";
+import {
+  EVIDENCE_REF_TYPES,
+  type Checkpoint,
+  type EvidenceRef,
+  type EvidenceRefType,
+  type RuntimeTaskStatus,
+} from "../../runtime-core/index.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../../state/openclaw-state-db.generated.js";
 import {
   openOpenClawStateDatabase,
@@ -14,11 +21,16 @@ import {
   type LongConversationControlSignal,
   type LongConversationValidationState,
 } from "../long-conversation-control-signals.js";
+import {
+  recordCheckpointInLongTaskLedger,
+  recordInterventionInLongTaskLedger,
+} from "./task-ledger.js";
 
-export type LongTaskInputMode = "interrupt" | "guide" | "queue";
+export type LongTaskInputMode = "interrupt" | "guide" | "queue" | "revise-goal";
 export type ResumeCheckpointTrigger =
   | "compaction"
   | "interrupt"
+  | "revise_goal"
   | "run_abort"
   | "clawgraph_node_handoff"
   | "audit_fail"
@@ -44,6 +56,7 @@ export type RuntimeResumeCheckpoint = {
   workspaceId?: string | null;
   sessionKey?: string | null;
   agentId?: string | null;
+  taskLedgerRootId?: string | null;
   trigger: ResumeCheckpointTrigger;
   objective?: string;
   activeNodeId?: string | null;
@@ -70,6 +83,7 @@ export type LongTaskCheckpointRecord = {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  taskLedgerRootId?: string;
   runId?: string;
   traceId?: string;
   clawGraphRunId?: string;
@@ -86,6 +100,7 @@ export type LongTaskInterventionEventRecord = {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  taskLedgerRootId?: string;
   runId?: string;
   traceId?: string;
   clawGraphRunId?: string;
@@ -105,6 +120,7 @@ export type LongTaskQueuedUserMessage = {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  taskLedgerRootId?: string;
   status: LongTaskQueueStatus;
   attempts: number;
   lastAttemptAt?: number;
@@ -202,6 +218,9 @@ function parseCheckpoint(raw: string | null): RuntimeResumeCheckpoint {
     ...(typeof parsed.agentId === "string" || parsed.agentId === null
       ? { agentId: parsed.agentId as string | null }
       : {}),
+    ...(typeof parsed.taskLedgerRootId === "string" || parsed.taskLedgerRootId === null
+      ? { taskLedgerRootId: parsed.taskLedgerRootId as string | null }
+      : {}),
     ...(typeof parsed.objective === "string" ? { objective: parsed.objective } : {}),
     ...(typeof parsed.activeNodeId === "string" || parsed.activeNodeId === null
       ? { activeNodeId: parsed.activeNodeId as string | null }
@@ -226,6 +245,60 @@ function nonEmpty(value: string | undefined): string | undefined {
   return trimmed ? trimmed : undefined;
 }
 
+const runtimeEvidenceRefTypeSet = new Set<string>(EVIDENCE_REF_TYPES);
+
+function runtimeEvidenceRefType(value: string | undefined): EvidenceRefType {
+  return value && runtimeEvidenceRefTypeSet.has(value) ? value as EvidenceRefType : "other";
+}
+
+export function runtimeEvidenceRefsFromResumeCheckpoint(
+  checkpoint: RuntimeResumeCheckpoint,
+  checkpointId = checkpoint.id,
+): EvidenceRef[] {
+  const refs = checkpoint.evidenceRefs.flatMap((ref) => {
+    const evidenceRef = ref.ref.trim();
+    return evidenceRef
+      ? [{
+          type: runtimeEvidenceRefType(ref.type),
+          ref: evidenceRef,
+          ...(ref.label ? { label: ref.label } : {}),
+        }]
+      : [];
+  });
+  if (checkpointId && !refs.some((ref) => ref.type === "checkpoint" && ref.ref === checkpointId)) {
+    refs.unshift({ type: "checkpoint", ref: checkpointId, label: "Runtime checkpoint" });
+  }
+  return refs;
+}
+
+export function buildRuntimeCoreCheckpointFromResumeCheckpoint(input: {
+  checkpointId: string;
+  taskId: string;
+  state: RuntimeTaskStatus;
+  checkpoint: RuntimeResumeCheckpoint;
+  openObligations?: string[];
+  contextSummary?: string;
+}): Checkpoint {
+  return {
+    checkpointId: input.checkpointId,
+    taskId: input.taskId,
+    state: input.state,
+    openObligations: [
+      ...(input.openObligations ?? []),
+      ...input.checkpoint.openBlockers,
+      ...input.checkpoint.reviewNeededItems,
+    ].filter(Boolean),
+    contextSummary: input.contextSummary
+      ?? input.checkpoint.nextAction
+      ?? input.checkpoint.activeTask
+      ?? "",
+    toolResults: [],
+    fileHashes: {},
+    evidenceRefs: runtimeEvidenceRefsFromResumeCheckpoint(input.checkpoint, input.checkpointId),
+    schemaVersion: 1,
+  };
+}
+
 function checkpointRowToRecord(row: LongTaskCheckpointRow): LongTaskCheckpointRecord {
   return {
     id: row.id,
@@ -233,6 +306,7 @@ function checkpointRowToRecord(row: LongTaskCheckpointRow): LongTaskCheckpointRe
     sessionKey: row.session_key,
     ...(row.agent_id ? { agentId: row.agent_id } : {}),
     ...(row.workspace_id ? { workspaceId: row.workspace_id } : {}),
+    ...(row.task_ledger_root_id ? { taskLedgerRootId: row.task_ledger_root_id } : {}),
     ...(row.run_id ? { runId: row.run_id } : {}),
     ...(row.trace_id ? { traceId: row.trace_id } : {}),
     ...(row.clawgraph_run_id ? { clawGraphRunId: row.clawgraph_run_id } : {}),
@@ -251,6 +325,7 @@ function interventionRowToRecord(row: LongTaskInterventionRow): LongTaskInterven
     sessionKey: row.session_key,
     ...(row.agent_id ? { agentId: row.agent_id } : {}),
     ...(row.workspace_id ? { workspaceId: row.workspace_id } : {}),
+    ...(row.task_ledger_root_id ? { taskLedgerRootId: row.task_ledger_root_id } : {}),
     ...(row.run_id ? { runId: row.run_id } : {}),
     ...(row.trace_id ? { traceId: row.trace_id } : {}),
     ...(row.clawgraph_run_id ? { clawGraphRunId: row.clawgraph_run_id } : {}),
@@ -272,6 +347,7 @@ function queueRowToRecord(row: LongTaskQueueRow): LongTaskQueuedUserMessage {
     sessionKey: row.session_key,
     ...(row.agent_id ? { agentId: row.agent_id } : {}),
     ...(row.workspace_id ? { workspaceId: row.workspace_id } : {}),
+    ...(row.task_ledger_root_id ? { taskLedgerRootId: row.task_ledger_root_id } : {}),
     status: row.status as LongTaskQueueStatus,
     attempts: row.attempts,
     ...(row.last_attempt_at !== null ? { lastAttemptAt: row.last_attempt_at } : {}),
@@ -304,9 +380,13 @@ export function buildRuntimeResumeCheckpoint(input: {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  taskLedgerRootId?: string;
   trigger: ResumeCheckpointTrigger;
   activeTask?: string;
+  decisions?: string[];
   deviations?: string[];
+  filesTouched?: string[];
+  testsRun?: string[];
   nextAction?: string;
   reviewNeededItems?: string[];
   evidenceRefs?: RuntimeResumeCheckpoint["evidenceRefs"];
@@ -323,13 +403,14 @@ export function buildRuntimeResumeCheckpoint(input: {
     sessionKey: input.sessionKey,
     ...(input.agentId ? { agentId: input.agentId } : {}),
     ...(input.workspaceId ? { workspaceId: input.workspaceId } : {}),
+    ...(input.taskLedgerRootId ? { taskLedgerRootId: input.taskLedgerRootId } : {}),
     trigger: input.trigger,
     ...(input.activeTask ? { activeTask: input.activeTask } : {}),
     openBlockers: [],
-    decisions: [],
+    decisions: input.decisions?.filter(Boolean) ?? [],
     deviations: input.deviations?.filter(Boolean) ?? [],
-    filesTouched: [],
-    testsRun: [],
+    filesTouched: input.filesTouched?.filter(Boolean) ?? [],
+    testsRun: input.testsRun?.filter(Boolean) ?? [],
     ...(input.nextAction ? { nextAction: input.nextAction } : {}),
     reviewNeededItems: input.reviewNeededItems?.filter(Boolean) ?? [],
     evidenceRefs: input.evidenceRefs ?? [{ type: "session", ref: input.sessionKey }],
@@ -353,6 +434,7 @@ export function recordLongTaskCheckpoint(input: {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  taskLedgerRootId?: string;
   runId?: string;
   traceId?: string;
   clawGraphRunId?: string;
@@ -360,7 +442,10 @@ export function recordLongTaskCheckpoint(input: {
   status?: string;
   checkpoint?: RuntimeResumeCheckpoint;
   activeTask?: string;
+  decisions?: string[];
   deviations?: string[];
+  filesTouched?: string[];
+  testsRun?: string[];
   nextAction?: string;
   reviewNeededItems?: string[];
   evidenceRefs?: RuntimeResumeCheckpoint["evidenceRefs"];
@@ -371,6 +456,13 @@ export function recordLongTaskCheckpoint(input: {
 }): LongTaskCheckpointRecord {
   const now = Date.now();
   const id = input.id ?? `ltcp_${randomUUID()}`;
+  const taskLedgerRootId = nonEmpty(input.taskLedgerRootId)
+    ?? nonEmpty(input.checkpoint?.taskLedgerRootId ?? undefined)
+    ?? nonEmpty(
+      input.metadata && typeof input.metadata.taskLedgerRootId === "string"
+        ? input.metadata.taskLedgerRootId
+        : undefined,
+    );
   const checkpoint =
     input.checkpoint ??
     buildRuntimeResumeCheckpoint({
@@ -378,9 +470,13 @@ export function recordLongTaskCheckpoint(input: {
       sessionKey: input.sessionKey,
       agentId: input.agentId,
       workspaceId: input.workspaceId,
+      taskLedgerRootId,
       trigger: input.trigger,
       activeTask: input.activeTask,
+      decisions: input.decisions,
       deviations: input.deviations,
+      filesTouched: input.filesTouched,
+      testsRun: input.testsRun,
       nextAction: input.nextAction,
       reviewNeededItems: input.reviewNeededItems,
       evidenceRefs: input.evidenceRefs,
@@ -391,12 +487,23 @@ export function recordLongTaskCheckpoint(input: {
       createdAt: now,
     });
   checkpoint.id ??= id;
+  if (taskLedgerRootId) {
+    checkpoint.taskLedgerRootId = taskLedgerRootId;
+    checkpoint.evidenceRefs = [
+      ...checkpoint.evidenceRefs,
+      ...(checkpoint.evidenceRefs.some((ref) => ref.type === "task_ledger" && ref.ref === taskLedgerRootId)
+        ? []
+        : [{ type: "task_ledger", ref: taskLedgerRootId, label: "Task Ledger root" }]),
+    ];
+    checkpoint.metadata = { ...(checkpoint.metadata ?? {}), taskLedgerRootId };
+  }
   const values: LongTaskCheckpointInsert = {
     id,
     idempotency_key: nonEmpty(input.idempotencyKey) ?? null,
     session_key: input.sessionKey,
     agent_id: nonEmpty(input.agentId) ?? null,
     workspace_id: nonEmpty(input.workspaceId) ?? null,
+    task_ledger_root_id: taskLedgerRootId ?? null,
     run_id: nonEmpty(input.runId) ?? null,
     trace_id: nonEmpty(input.traceId) ?? null,
     clawgraph_run_id: nonEmpty(input.clawGraphRunId) ?? null,
@@ -418,7 +525,23 @@ export function recordLongTaskCheckpoint(input: {
         : insert.onConflict((conflict) => conflict.column("id").doUpdateSet(checkpointUpdate(values))),
     );
   });
-  return getLongTaskCheckpointById(values.id) ?? getLatestLongTaskCheckpoint(input.sessionKey)!;
+  const record = getLongTaskCheckpointById(values.id) ?? getLatestLongTaskCheckpoint(input.sessionKey)!;
+  try {
+    recordCheckpointInLongTaskLedger({
+      taskLedgerRootId,
+      workspaceId: input.workspaceId,
+      sessionKey: input.sessionKey,
+      agentId: input.agentId,
+      runId: input.runId,
+      traceId: input.traceId,
+      checkpointId: record.id,
+      status: record.status,
+      checkpoint: record.checkpoint,
+    });
+  } catch {
+    // Task Ledger projection is best-effort; SQLite recovery state remains durable.
+  }
+  return record;
 }
 
 export function recordLongTaskInterventionEvent(input: {
@@ -427,6 +550,7 @@ export function recordLongTaskInterventionEvent(input: {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  taskLedgerRootId?: string;
   runId?: string;
   traceId?: string;
   clawGraphRunId?: string;
@@ -437,12 +561,19 @@ export function recordLongTaskInterventionEvent(input: {
   payload?: Record<string, unknown>;
 }): LongTaskInterventionEventRecord {
   const now = Date.now();
+  const taskLedgerRootId = nonEmpty(input.taskLedgerRootId)
+    ?? nonEmpty(
+      input.payload && typeof input.payload.taskLedgerRootId === "string"
+        ? input.payload.taskLedgerRootId
+        : undefined,
+    );
   const values: LongTaskInterventionInsert = {
     id: input.id ?? `ltie_${randomUUID()}`,
     idempotency_key: nonEmpty(input.idempotencyKey) ?? null,
     session_key: input.sessionKey,
     agent_id: nonEmpty(input.agentId) ?? null,
     workspace_id: nonEmpty(input.workspaceId) ?? null,
+    task_ledger_root_id: taskLedgerRootId ?? null,
     run_id: nonEmpty(input.runId) ?? null,
     trace_id: nonEmpty(input.traceId) ?? null,
     clawgraph_run_id: nonEmpty(input.clawGraphRunId) ?? null,
@@ -450,7 +581,10 @@ export function recordLongTaskInterventionEvent(input: {
     mode: input.mode ?? null,
     trigger: input.trigger,
     status: input.status,
-    payload_json: JSON.stringify(input.payload ?? {}),
+    payload_json: JSON.stringify({
+      ...(input.payload ?? {}),
+      ...(taskLedgerRootId ? { taskLedgerRootId } : {}),
+    }),
     created_at: now,
     updated_at: now,
   };
@@ -468,7 +602,17 @@ export function recordLongTaskInterventionEvent(input: {
           ),
     );
   });
-  return getLongTaskInterventionById(values.id) ?? getLatestLongTaskIntervention(input.sessionKey)!;
+  const record = getLongTaskInterventionById(values.id) ?? getLatestLongTaskIntervention(input.sessionKey)!;
+  try {
+    recordInterventionInLongTaskLedger({
+      taskLedgerRootId,
+      workspaceId: input.workspaceId,
+      event: record,
+    });
+  } catch {
+    // Task Ledger projection is best-effort; SQLite recovery state remains durable.
+  }
+  return record;
 }
 
 export function enqueueLongTaskUserMessage(input: {
@@ -477,17 +621,25 @@ export function enqueueLongTaskUserMessage(input: {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  taskLedgerRootId?: string;
   text: string;
   source?: string;
   payload?: Record<string, unknown>;
 }): LongTaskQueuedUserMessage {
   const now = Date.now();
+  const taskLedgerRootId = nonEmpty(input.taskLedgerRootId)
+    ?? nonEmpty(
+      input.payload && typeof input.payload.taskLedgerRootId === "string"
+        ? input.payload.taskLedgerRootId
+        : undefined,
+    );
   const values: LongTaskQueueInsert = {
     id: input.id ?? `qmsg_${randomUUID()}`,
     idempotency_key: nonEmpty(input.idempotencyKey) ?? null,
     session_key: input.sessionKey,
     agent_id: nonEmpty(input.agentId) ?? null,
     workspace_id: nonEmpty(input.workspaceId) ?? null,
+    task_ledger_root_id: taskLedgerRootId ?? null,
     status: "pending",
     text: input.text,
     source: input.source ?? "queue",
@@ -495,7 +647,10 @@ export function enqueueLongTaskUserMessage(input: {
     last_attempt_at: null,
     last_error: null,
     drained_at: null,
-    payload_json: JSON.stringify(input.payload ?? {}),
+    payload_json: JSON.stringify({
+      ...(input.payload ?? {}),
+      ...(taskLedgerRootId ? { taskLedgerRootId } : {}),
+    }),
     created_at: now,
     updated_at: now,
   };
@@ -512,6 +667,22 @@ export function enqueueLongTaskUserMessage(input: {
     );
   });
   return getLongTaskQueueItemById(values.id) ?? listLongTaskQueuedMessages(input.sessionKey)[0]!;
+}
+
+export function getLatestLongTaskLedgerRootId(sessionKey: string): string | undefined {
+  const { db, query } = stateDb();
+  const row = executeSqliteQuerySync(
+    db,
+    query
+      .selectFrom("long_task_checkpoints")
+      .select(["task_ledger_root_id"])
+      .where("session_key", "=", sessionKey)
+      .where("task_ledger_root_id", "is not", null)
+      .orderBy("created_at", "desc")
+      .orderBy("id", "desc")
+      .limit(1),
+  ).rows[0] as { task_ledger_root_id?: string | null } | undefined;
+  return row?.task_ledger_root_id ?? undefined;
 }
 
 export function claimPendingLongTaskUserMessages(

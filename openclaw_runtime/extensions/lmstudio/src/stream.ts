@@ -27,7 +27,7 @@ const preloadInFlight = new Map<string, Promise<void>>();
  * hundreds of `LM Studio inference preload failed` WARN lines per hour without
  * actually helping the user. The cooldown applies an exponential backoff per
  * preloadKey and, while the cooldown is active, the wrapper skips the preload
- * step entirely and proceeds directly to streaming â€” the model is often
+ * step entirely and proceeds directly to streaming â€?the model is often
  * already loaded from the user's LM Studio UI, so inference can succeed even
  * when preload keeps being rejected.
  */

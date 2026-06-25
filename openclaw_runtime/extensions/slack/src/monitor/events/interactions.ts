@@ -41,7 +41,7 @@ function sanitizeSlackInteractionPayloadValue(value: unknown, key?: string): unk
       .map((entry) => sanitizeSlackInteractionPayloadValue(entry))
       .filter((entry) => entry !== undefined);
     if (value.length > SLACK_INTERACTION_ARRAY_MAX_ITEMS) {
-      sanitized.push(`â€¦+${value.length - SLACK_INTERACTION_ARRAY_MAX_ITEMS} more`);
+      sanitized.push(`â€?${value.length - SLACK_INTERACTION_ARRAY_MAX_ITEMS} more`);
     }
     return sanitized;
   }

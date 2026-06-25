@@ -13,6 +13,7 @@ type Props = {
   compact?: boolean;
   hideWhenEmpty?: boolean;
   className?: string;
+  onVisibilityChange?: (visible: boolean) => void;
 };
 
 function nodeTone(node: TaskLedgerNode): string {
@@ -35,19 +36,28 @@ function NodeLine({ node, t }: { node: TaskLedgerNode; t: ReturnType<typeof useT
   );
 }
 
-export function TaskLedgerSummaryPanel({ workspaceId, compact = false, hideWhenEmpty = false, className }: Props) {
+export function TaskLedgerSummaryPanel({
+  workspaceId,
+  compact = false,
+  hideWhenEmpty = false,
+  className,
+  onVisibilityChange,
+}: Props) {
   const { t } = useTranslation('taskLedger');
   const [snapshot, setSnapshot] = useState<TaskLedgerSnapshot | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
+    setLoaded(false);
     try {
-      const result = await hostApi.taskLedger.snapshot({ workspaceId });
+      const result = await hostApi.taskLedger.snapshot(workspaceId ? { workspaceId } : undefined);
       setSnapshot(result.snapshot);
     } catch {
       setSnapshot(null);
     } finally {
+      setLoaded(true);
       setLoading(false);
     }
   }, [workspaceId]);
@@ -66,7 +76,11 @@ export function TaskLedgerSummaryPanel({ workspaceId, compact = false, hideWhenE
   }, [snapshot]);
 
   const hasContent = !!snapshot && snapshot.nodes.length > 0;
-  if (hideWhenEmpty && !hasContent) return null;
+  const visible = !hideWhenEmpty || !loaded || loading || hasContent;
+  useEffect(() => {
+    onVisibilityChange?.(visible);
+  }, [onVisibilityChange, visible]);
+  if (!visible) return null;
 
   return (
     <aside

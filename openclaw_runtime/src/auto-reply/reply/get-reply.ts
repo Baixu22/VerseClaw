@@ -687,6 +687,7 @@ export async function getReplyFromConfig(
         ),
         defaultActivation: "always",
         resolvedThinkLevel: undefined,
+        resolvedPromptMode: undefined,
         resolvedVerboseLevel: normalizeVerboseLevel(agentCfg?.verboseDefault),
         resolvedReasoningLevel: "off",
         resolvedElevatedLevel: "off",
@@ -841,6 +842,7 @@ export async function getReplyFromConfig(
       elevatedFailures,
       defaultActivation: () => defaultActivation,
       resolvedThinkLevel,
+      resolvedPromptMode,
       resolvedVerboseLevel,
       resolvedReasoningLevel,
       resolvedElevatedLevel,
@@ -989,6 +991,7 @@ export async function getReplyFromConfig(
       directives,
       defaultActivation,
       resolvedThinkLevel,
+      resolvedPromptMode,
       resolvedVerboseLevel,
       resolvedReasoningLevel,
       resolvedElevatedLevel,
@@ -1023,3 +1026,4 @@ export async function getReplyFromConfig(
   logResolverTiming("completed", "prepared_reply");
   return replyResult;
 }
+  let { directives, cleanedBody, resolvedThinkLevel, resolvedPromptMode, resolvedReasoningLevel } =

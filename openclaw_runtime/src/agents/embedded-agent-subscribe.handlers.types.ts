@@ -18,6 +18,7 @@ import type {
 } from "./embedded-agent-messaging.types.js";
 import type { BlockReplyPayload } from "./embedded-agent-payloads.js";
 import type { EmbeddedRunReplayState } from "./embedded-agent-runner/replay-state.js";
+import type { AgentBrowserAutomationEvent } from "./tools/agent-browser-automation-event.js";
 import type { EmbeddedRunLivenessState } from "./embedded-agent-runner/types.js";
 import type {
   BlockReplyChunking,
@@ -73,6 +74,7 @@ export type EmbeddedAgentSubscribeState = {
     asyncTaskRunId?: string;
     asyncTaskId?: string;
   }>;
+  browserAutomationEvents: AgentBrowserAutomationEvent[];
   acceptedSessionSpawns: AcceptedSessionSpawn[];
   toolMetaById: Map<string, ToolCallSummary>;
   toolSummaryById: Set<string>;

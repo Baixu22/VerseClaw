@@ -73,7 +73,7 @@ export async function resolveTeamGroupId(
     const team = await fetchGraphJson<{ id?: string }>({ token, path });
     const groupId = team.id ?? conversationTeamId;
 
-    // Only cache when the Graph lookup succeeds â€” caching a fallback raw ID
+    // Only cache when the Graph lookup succeeds â€?caching a fallback raw ID
     // can cause silent failures for the entire TTL if the ID is not a valid
     // Graph team GUID (e.g. Bot Framework conversation key).
     const expiresAt = resolveTeamGroupIdCacheExpiresAt();
@@ -116,7 +116,7 @@ export async function fetchChannelMessage(
  * **Limitation:** The Graph API replies endpoint (`/messages/{id}/replies`) does not
  * support `$orderby`, so results are always returned in ascending (oldest-first) order.
  * Combined with the `$top` cap of 50, this means only the **oldest 50 replies** are
- * returned for long threads â€” newer replies are silently omitted. There is currently no
+ * returned for long threads â€?newer replies are silently omitted. There is currently no
  * Graph API workaround for this; pagination via `@odata.nextLink` can retrieve more
  * replies but still in ascending order only.
  */

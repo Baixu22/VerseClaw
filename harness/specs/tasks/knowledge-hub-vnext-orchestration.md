@@ -38,4 +38,13 @@ docs:
   required: true
 ---
 
-This task is the vNext orchestration layer for Knowledge Hub. It should deepen ClawX ecosystem coupling through governed inbox/provenance state while keeping memory-wiki as the only formal knowledge backend.
+This task is the vNext orchestration layer for Knowledge Hub. It should deepen Verse Claw ecosystem coupling through governed inbox/provenance state while keeping memory-wiki as the only formal knowledge backend.
+
+## Control-plane boundaries
+
+- Rules are hard constraints owned by `AGENTS.md` and `harness/specs/**`; automatic memory or knowledge capture must never write Rules, including `AGENTS.md`, `harness/specs/**`, or `.clawx/rules/*.md`.
+- Knowledge stores project facts, architecture rationale, failure lessons, and workflow lessons. Automatic candidates from chat, agents, files, Task Ledger, ClawGraph, or user corrections must land in Knowledge Inbox with `status: pending`, not as formal wiki pages or applied Knowledge proposals.
+- Role Memory stores role experience, role preferences, and role-specific failure lessons through the runtime `memory.*` proposal flow. It must not be used as Project Rules.
+- Task Ledger stores current long-task state, decisions, blockers, review nodes, and evidence. It can feed Knowledge Inbox candidates, but it is not a formal Knowledge or Rules writer.
+
+Automatic capture may create Inbox items or Role Memory proposals only. Formal Knowledge writes require explicit user review/apply, and Rules changes require the project rules/harness workflow.

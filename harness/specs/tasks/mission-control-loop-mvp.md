@@ -1,9 +1,9 @@
 ---
 id: mission-control-loop-mvp
-title: ClawX Mission Control long-goal loop MVP
+title: Verse Claw Mission Control long-goal loop MVP
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Add Mission Control as the outer long-goal control loop above bounded task_loop, so ClawX can run checkpointed, scheduled, evidence-driven missions without relying on a giant chat transcript.
+intent: Add Mission Control as the outer long-goal control loop above bounded task_loop, so Verse Claw can run checkpointed, scheduled, evidence-driven missions without relying on a giant chat transcript.
 touchedAreas:
   - harness/specs/tasks/mission-control-loop-mvp.md
   - docs/clawx-design-overview.md
@@ -25,7 +25,7 @@ touchedAreas:
 expectedUserBehavior:
   - Users can create a Mission from the Agents panel, Gateway RPC, or lead-agent mission_loop tool when a goal should survive multiple turns, sessions, or scheduled checks.
   - A Mission can be started manually, resumed from a checkpoint, or awakened by a scheduled/event tick without replaying the full transcript.
-  - ClawX shows Mission phase, tick count, latest reviewer decision, blockers, next wake, Task Ledger mirrored evidence, and trace evidence.
+  - Verse Claw shows Mission phase, tick count, latest reviewer decision, blockers, next wake, Task Ledger mirrored evidence, and trace evidence.
   - The model can judge whether the Mission should continue, repair, sleep, ask the user, complete, or block based on evidence and acceptance criteria.
   - Memory changes discovered during a Mission become role-memory proposals or Knowledge Hub drafts; they are not silently written as long-term truth.
 requiredProfiles:
@@ -68,7 +68,7 @@ docs:
     - README.ja-JP.md
 ---
 
-Mission Control is the ClawX long-goal layer. It is intentionally above task_loop:
+Mission Control is the Verse Claw long-goal layer. It is intentionally above task_loop:
 
 - task_loop owns one bounded execution attempt with self-check and scoped repair.
 - ClawGraph owns explicit DAG execution state for structured workflows.
@@ -83,5 +83,5 @@ Initial implementation phases:
 3. Add MissionController with OpenClaw state SQLite persistence plus best-effort Task Ledger mirroring.
 4. Add Gateway RPCs and a model-callable mission_loop tool for lead agents only.
 5. Add scheduler integration that creates cron/wake ticks pointing at mission.tick, not free-form chat messages.
-6. Add ClawX UI status surfaces in Agents and mirror trace/check/review evidence into Task Ledger.
+6. Add Verse Claw UI status surfaces in Agents and mirror trace/check/review evidence into Task Ledger.
 7. Add unit, harness, comms, and E2E coverage before making Mission Control a public default.

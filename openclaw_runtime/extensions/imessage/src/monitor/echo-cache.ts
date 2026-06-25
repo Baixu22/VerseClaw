@@ -22,7 +22,7 @@ export type SentMessageCache = {
 
 // Echo arrival observed at ~2.2s on M4 Mac Mini (SQLite poll interval is the bottleneck).
 // 4s provides ~80% margin. If echoes arrive after TTL expiry, the system degrades to
-// duplicate delivery (noisy but not lossy) â€” never message loss.
+// duplicate delivery (noisy but not lossy) â€?never message loss.
 const SENT_MESSAGE_TEXT_TTL_MS = 4_000;
 const SENT_MESSAGE_ID_TTL_MS = 60_000;
 const LEADING_ATTRIBUTED_BODY_CORRUPTION_MARKERS = /^[\uFEFF\uFFFD\uFFFE\uFFFF]+/u;

@@ -1,4 +1,5 @@
 const DYNAMIC_IMPORT_RECOVERY_KEY = 'clawx:dynamic-import-recovery';
+const DYNAMIC_IMPORT_RECOVERY_PARAM = 'verse-clawReload';
 const DYNAMIC_IMPORT_RECOVERY_WINDOW_MS = 30_000;
 
 const DYNAMIC_IMPORT_ERROR_PATTERNS = [
@@ -31,6 +32,7 @@ export function isDynamicImportLoadError(error: unknown): boolean {
 function currentRouteKey(url: URL): string {
   const normalized = new URL(url.toString());
   normalized.searchParams.delete('clawxReload');
+  normalized.searchParams.delete(DYNAMIC_IMPORT_RECOVERY_PARAM);
   return `${normalized.pathname}${normalized.search}${normalized.hash}`;
 }
 
@@ -86,7 +88,8 @@ export function recoverFromDynamicImportLoadError(
   }
 
   writeLastRecovery(storage, routeKey, now);
-  currentUrl.searchParams.set('clawxReload', String(now));
+  currentUrl.searchParams.delete('clawxReload');
+  currentUrl.searchParams.set(DYNAMIC_IMPORT_RECOVERY_PARAM, String(now));
   reload(currentUrl.toString());
   return true;
 }

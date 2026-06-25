@@ -12,6 +12,8 @@ export type ObservabilitySpanKind =
   | "context-pack"
   | "gatekeeper"
   | "verifier"
+  | "security-intercept"
+  | "verification"
   | "input-mode"
   | "custom";
 

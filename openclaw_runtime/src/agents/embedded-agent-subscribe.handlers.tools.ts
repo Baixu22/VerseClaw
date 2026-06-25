@@ -34,6 +34,7 @@ import type { PluginHookAfterToolCallEvent } from "../plugins/types.js";
 import { createLazyImportLoader } from "../shared/lazy-promise.js";
 import { truncateUtf16Safe } from "../utils.js";
 import { normalizeAcceptedSessionSpawnResult } from "./accepted-session-spawn.js";
+import { readAgentBrowserAutomationEvents } from "./tools/agent-browser-automation-event.js";
 import { REQUIRED_PARAM_GROUPS, type RequiredParamGroup } from "./agent-tools.params.js";
 import type { ApplyPatchSummary } from "./apply-patch.js";
 import type { ExecToolDetails } from "./bash-tools.exec-types.js";
@@ -1242,6 +1243,19 @@ export async function handleToolExecutionEnd(
     startData?.args && typeof startData.args === "object"
       ? (startData.args as Record<string, unknown>)
       : {};
+  if (toolName === "agent_browser") {
+    const events = readAgentBrowserAutomationEvents(
+      eventResult && typeof eventResult === "object" && !Array.isArray(eventResult)
+        ? (eventResult as Record<string, unknown>).details
+        : undefined,
+    );
+    for (const event of events) {
+      ctx.state.browserAutomationEvents.push({
+        ...event,
+        ...(event.sessionId ? {} : typeof startArgs.sessionId === "string" ? { sessionId: startArgs.sessionId } : {}),
+      });
+    }
+  }
   const isMessagingSend =
     pendingMediaUrls.length > 0 ||
     (isMessagingTool(toolName) && isMessagingToolSendAction(toolName, startArgs));

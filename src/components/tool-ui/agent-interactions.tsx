@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useCallback, useMemo, useState } from 'react';
-import { Check, CheckCircle2, ChevronLeft, Circle, Clipboard, Copy, HelpCircle, ListChecks, Loader2, SlidersHorizontal, XCircle } from 'lucide-react';
+import { Check, CheckCircle2, ChevronLeft, Clipboard, Copy, HelpCircle, ListChecks, SlidersHorizontal, Table as TableIcon, CloudSun, Info, AlertTriangle, BookOpen, Loader2, LayoutGrid, KeyRound, BarChart3, Image as ImageIcon, Code2, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -8,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
+import { ToolUiPlanView, type ToolUiPlanTodoStatus } from './plan-view';
 
-type PlanTodoStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
+type PlanTodoStatus = ToolUiPlanTodoStatus;
 
 type PlanInteraction = {
   type: 'plan';
@@ -112,11 +113,130 @@ type PreferencesPanelInteraction = {
   error?: Record<string, string>;
 };
 
+type TableInteraction = {
+  type: 'table';
+  id: string;
+  title?: string;
+  description?: string;
+  columns: Array<{ key: string; label?: string; align?: 'left' | 'right' | 'center' }>;
+  rows: Array<Record<string, unknown>>;
+};
+
+type WeatherInteraction = {
+  type: 'weather';
+  id: string;
+  location: string;
+  temperature?: number;
+  unit?: 'c' | 'f';
+  condition?: string;
+  icon?: string;
+  humidity?: number;
+  windSpeed?: number;
+  forecast?: Array<{ day: string; condition: string; high: number; low: number }>;
+};
+
+type DirectiveTextInteraction = {
+  type: 'directive-text';
+  id: string;
+  variant: 'info' | 'warning' | 'success' | 'danger' | 'neutral';
+  title?: string;
+  text: string;
+  icon?: string;
+};
+
+type SourceInteraction = {
+  type: 'source';
+  id: string;
+  sources: Array<{
+    id: string;
+    title: string;
+    url?: string;
+    snippet?: string;
+    author?: string;
+    publishedAt?: string;
+  }>;
+};
+
+type ProgressInteraction = {
+  type: 'progress';
+  id: string;
+  label?: string;
+  value: number;
+  max?: number;
+  unit?: string;
+  status?: 'active' | 'completed' | 'error' | 'paused';
+};
+
+type StatusGridInteraction = {
+  type: 'status-grid';
+  id: string;
+  title?: string;
+  items: Array<{
+    id: string;
+    label: string;
+    value: string | number;
+    status?: 'ok' | 'warning' | 'error' | 'idle';
+    icon?: string;
+  }>;
+};
+
+type AlertInteraction = {
+  type: 'alert';
+  id: string;
+  variant: 'info' | 'warning' | 'error' | 'success';
+  title?: string;
+  message: string;
+  dismissible?: boolean;
+};
+
+type KeyValueInteraction = {
+  type: 'key-value';
+  id: string;
+  title?: string;
+  entries: Array<{ key: string; value: string; mono?: boolean }>;
+};
+
+type ChartInteraction = {
+  type: 'chart';
+  id: string;
+  title?: string;
+  chartType: 'bar' | 'line' | 'pie' | 'area';
+  labels: string[];
+  series: Array<{ name?: string; data: number[] }>;
+};
+
+type ImageGalleryInteraction = {
+  type: 'image-gallery';
+  id: string;
+  title?: string;
+  images: Array<{ url: string; alt?: string; caption?: string }>;
+};
+
+type CodeBlockInteraction = {
+  type: 'code-block';
+  id: string;
+  language?: string;
+  filename?: string;
+  code: string;
+  runnable?: boolean;
+};
+
 export type ToolUiInteraction =
   | PlanInteraction
   | OptionListInteraction
   | QuestionFlowInteraction
-  | PreferencesPanelInteraction;
+  | PreferencesPanelInteraction
+  | TableInteraction
+  | WeatherInteraction
+  | DirectiveTextInteraction
+  | SourceInteraction
+  | ProgressInteraction
+  | StatusGridInteraction
+  | AlertInteraction
+  | KeyValueInteraction
+  | ChartInteraction
+  | ImageGalleryInteraction
+  | CodeBlockInteraction;
 
 type ToolUseLike = {
   id?: string;
@@ -213,10 +333,32 @@ function normalizeInteractionType(value: unknown, payload: Record<string, unknow
   if (normalized === 'option-list' || normalized === 'options' || normalized === 'option-list-tool' || normalized === 'choice-list') return 'option-list';
   if (normalized === 'question-flow' || normalized === 'question' || normalized === 'question-flow-tool' || normalized === 'questionnaire') return 'question-flow';
   if (normalized === 'preferences-panel' || normalized === 'preferences' || normalized === 'preference-panel' || normalized === 'settings-panel') return 'preferences-panel';
+  if (normalized === 'table' || normalized === 'data-table' || normalized === 'grid-table') return 'table';
+  if (normalized === 'weather' || normalized === 'weather-card' || normalized === 'weather-info') return 'weather';
+  if (normalized === 'directive-text' || normalized === 'directive' || normalized === 'callout' || normalized === 'notice') return 'directive-text';
+  if (normalized === 'source' || normalized === 'sources' || normalized === 'citations' || normalized === 'references') return 'source';
+  if (normalized === 'progress' || normalized === 'progress-bar' || normalized === 'progress-indicator') return 'progress';
+  if (normalized === 'status-grid' || normalized === 'status-cards' || normalized === 'metrics-grid' || normalized === 'stats-grid') return 'status-grid';
+  if (normalized === 'alert' || normalized === 'alert-banner' || normalized === 'notification') return 'alert';
+  if (normalized === 'key-value' || normalized === 'keyvalue' || normalized === 'definition-list' || normalized === 'details-list') return 'key-value';
+  if (normalized === 'chart' || normalized === 'chart-card' || normalized === 'graph') return 'chart';
+  if (normalized === 'image-gallery' || normalized === 'gallery' || normalized === 'image-grid') return 'image-gallery';
+  if (normalized === 'code-block' || normalized === 'code-snippet' || normalized === 'code') return 'code-block';
+  // Shape-based fallbacks
   if (Array.isArray(payload.todos) || Array.isArray(payload.tasks)) return 'plan';
   if (Array.isArray(payload.sections) || Array.isArray(payload.preferences)) return 'preferences-panel';
   if (Array.isArray(payload.steps) || (Array.isArray(payload.options) && payload.step !== undefined)) return 'question-flow';
   if (Array.isArray(payload.options)) return 'option-list';
+  if (Array.isArray(payload.columns) && Array.isArray(payload.rows)) return 'table';
+  if (typeof payload.temperature === 'number' || (typeof payload.location === 'string' && typeof payload.condition === 'string')) return 'weather';
+  if (Array.isArray(payload.sources) || Array.isArray(payload.citations)) return 'source';
+  if (typeof payload.value === 'number' && (typeof payload.max === 'number' || typeof payload.label === 'string')) return 'progress';
+  if (Array.isArray(payload.entries) && payload.entries.length > 0) return 'key-value';
+  if (Array.isArray(payload.images)) return 'image-gallery';
+  if (typeof payload.code === 'string') return 'code-block';
+  if (Array.isArray(payload.labels) && Array.isArray(payload.series)) return 'chart';
+  if (Array.isArray(payload.items) && payload.items.length > 0 && typeof payload.items[0] === 'object') return 'status-grid';
+  if (typeof payload.message === 'string' && typeof payload.variant === 'string') return 'alert';
   return null;
 }
 
@@ -511,6 +653,232 @@ function unwrapCandidate(candidate: unknown): Record<string, unknown> | null {
   return candidate;
 }
 
+function parseTable(payload: Record<string, unknown>, fallbackId: string): TableInteraction | null {
+  const rawColumns = Array.isArray(payload.columns) ? payload.columns : [];
+  const columns: TableInteraction['columns'] = rawColumns
+    .map((col, i): TableInteraction['columns'][number] | null => {
+      if (typeof col === 'string') return { key: col, label: col };
+      if (isRecord(col)) {
+        const key = asString(col.key) ?? asString(col.field) ?? asString(col.name) ?? `col-${i + 1}`;
+        if (!key) return null;
+        const align = (() => {
+          const a = normalizeType(col.align);
+          if (a === 'right' || a === 'center') return a;
+          return 'left';
+        })();
+        return { key, label: asString(col.label) ?? asString(col.title) ?? key, align };
+      }
+      return null;
+    })
+    .filter((c): c is TableInteraction['columns'][number] => c != null);
+  if (columns.length === 0) return null;
+  const rows: Array<Record<string, unknown>> = (Array.isArray(payload.rows) ? payload.rows : [])
+    .filter(isRecord)
+    .map((row) => {
+      const out: Record<string, unknown> = {};
+      for (const col of columns) out[col.key] = row[col.key] ?? row[`col_${col.key}`] ?? '';
+      return out;
+    });
+  return {
+    type: 'table',
+    id: asString(payload.id) ?? fallbackId,
+    title: asString(payload.title),
+    description: asString(payload.description),
+    columns,
+    rows,
+  };
+}
+
+function parseWeather(payload: Record<string, unknown>, fallbackId: string): WeatherInteraction | null {
+  const location = asString(payload.location) ?? asString(payload.city) ?? asString(payload.place);
+  if (!location) return null;
+  const unit = normalizeType(payload.unit) === 'f' ? 'f' : 'c';
+  const forecast = Array.isArray(payload.forecast)
+    ? payload.forecast
+      .filter(isRecord)
+      .map((f) => ({
+        day: asString(f.day) ?? '',
+        condition: asString(f.condition) ?? asString(f.text) ?? '',
+        high: asNumber(f.high) ?? asNumber(f.tempMax) ?? 0,
+        low: asNumber(f.low) ?? asNumber(f.tempMin) ?? 0,
+      }))
+    : undefined;
+  return {
+    type: 'weather',
+    id: asString(payload.id) ?? fallbackId,
+    location,
+    temperature: asNumber(payload.temperature) ?? asNumber(payload.temp),
+    unit,
+    condition: asString(payload.condition) ?? asString(payload.summary),
+    icon: asString(payload.icon) ?? asString(payload.weatherIcon),
+    humidity: asNumber(payload.humidity),
+    windSpeed: asNumber(payload.windSpeed) ?? asNumber(payload.wind_speed),
+    forecast,
+  };
+}
+
+function parseDirectiveText(payload: Record<string, unknown>, fallbackId: string): DirectiveTextInteraction | null {
+  const text = asString(payload.text) ?? asString(payload.message) ?? asString(payload.content);
+  if (!text) return null;
+  const variantRaw = normalizeType(payload.variant);
+  const variant: DirectiveTextInteraction['variant'] =
+    variantRaw === 'warning' ? 'warning'
+    : variantRaw === 'success' ? 'success'
+    : variantRaw === 'danger' || variantRaw === 'error' ? 'danger'
+    : variantRaw === 'neutral' ? 'neutral'
+    : 'info';
+  return {
+    type: 'directive-text',
+    id: asString(payload.id) ?? fallbackId,
+    variant,
+    title: asString(payload.title),
+    text,
+    icon: asString(payload.icon),
+  };
+}
+
+function parseSource(payload: Record<string, unknown>, fallbackId: string): SourceInteraction | null {
+  const rawSources = Array.isArray(payload.sources) ? payload.sources : Array.isArray(payload.citations) ? payload.citations : Array.isArray(payload.references) ? payload.references : [];
+  const sources: SourceInteraction['sources'] = rawSources
+    .filter(isRecord)
+    .map((s, i) => ({
+      id: asString(s.id) ?? `source-${i + 1}`,
+      title: asString(s.title) ?? asString(s.name) ?? asString(s.label) ?? `Source ${i + 1}`,
+      url: asString(s.url) ?? asString(s.link) ?? asString(s.href),
+      snippet: asString(s.snippet) ?? asString(s.description) ?? asString(s.summary),
+      author: asString(s.author) ?? asString(s.publisher),
+      publishedAt: asString(s.publishedAt) ?? asString(s.published_at) ?? asString(s.date),
+    }));
+  if (sources.length === 0) return null;
+  return { type: 'source', id: asString(payload.id) ?? fallbackId, sources };
+}
+
+function parseProgress(payload: Record<string, unknown>, fallbackId: string): ProgressInteraction | null {
+  const value = asNumber(payload.value) ?? asNumber(payload.current) ?? asNumber(payload.progress);
+  if (value == null) return null;
+  const statusRaw = normalizeType(payload.status);
+  const status: ProgressInteraction['status'] =
+    statusRaw === 'completed' || statusRaw === 'done' ? 'completed'
+    : statusRaw === 'error' || statusRaw === 'failed' ? 'error'
+    : statusRaw === 'paused' ? 'paused'
+    : 'active';
+  return {
+    type: 'progress',
+    id: asString(payload.id) ?? fallbackId,
+    label: asString(payload.label) ?? asString(payload.title),
+    value,
+    max: asNumber(payload.max) ?? asNumber(payload.total) ?? 100,
+    unit: asString(payload.unit),
+    status,
+  };
+}
+
+function parseStatusGrid(payload: Record<string, unknown>, fallbackId: string): StatusGridInteraction | null {
+  const rawItems = Array.isArray(payload.items) ? payload.items : [];
+  const items: StatusGridInteraction['items'] = rawItems
+    .filter(isRecord)
+    .map((it, i): StatusGridInteraction['items'][number] | null => {
+      const label = asString(it.label) ?? asString(it.name) ?? asString(it.title);
+      if (!label) return null;
+      const statusRaw = normalizeType(it.status);
+      const status: StatusGridInteraction['items'][number]['status'] =
+        statusRaw === 'ok' || statusRaw === 'success' || statusRaw === 'healthy' ? 'ok'
+        : statusRaw === 'warning' || statusRaw === 'warn' ? 'warning'
+        : statusRaw === 'error' || statusRaw === 'fail' || statusRaw === 'critical' ? 'error'
+        : 'idle';
+      return {
+        id: asString(it.id) ?? `item-${i + 1}`,
+        label,
+        value: typeof it.value === 'string' ? it.value : (typeof it.value === 'number' ? it.value : String(it.value ?? '')),
+        status,
+        icon: asString(it.icon),
+      };
+    })
+    .filter((it): it is StatusGridInteraction['items'][number] => it != null);
+  if (items.length === 0) return null;
+  return { type: 'status-grid', id: asString(payload.id) ?? fallbackId, title: asString(payload.title), items };
+}
+
+function parseAlert(payload: Record<string, unknown>, fallbackId: string): AlertInteraction | null {
+  const message = asString(payload.message) ?? asString(payload.text);
+  if (!message) return null;
+  const variantRaw = normalizeType(payload.variant);
+  const variant: AlertInteraction['variant'] =
+    variantRaw === 'warning' ? 'warning'
+    : variantRaw === 'error' || variantRaw === 'danger' ? 'error'
+    : variantRaw === 'success' ? 'success'
+    : 'info';
+  return {
+    type: 'alert',
+    id: asString(payload.id) ?? fallbackId,
+    variant,
+    title: asString(payload.title),
+    message,
+    dismissible: asBoolean(payload.dismissible) ?? true,
+  };
+}
+
+function parseKeyValue(payload: Record<string, unknown>, fallbackId: string): KeyValueInteraction | null {
+  const rawEntries = Array.isArray(payload.entries) ? payload.entries : [];
+  const entries: KeyValueInteraction['entries'] = rawEntries
+    .filter(isRecord)
+    .map((e): KeyValueInteraction['entries'][number] | null => {
+      const key = asString(e.key) ?? asString(e.label) ?? asString(e.name);
+      const value = asString(e.value) ?? (e.value != null ? String(e.value) : '');
+      if (!key) return null;
+      return { key, value, mono: asBoolean(e.mono) ?? false };
+    })
+    .filter((e): e is KeyValueInteraction['entries'][number] => e != null);
+  if (entries.length === 0) return null;
+  return { type: 'key-value', id: asString(payload.id) ?? fallbackId, title: asString(payload.title), entries };
+}
+
+function parseChart(payload: Record<string, unknown>, fallbackId: string): ChartInteraction | null {
+  const labels = Array.isArray(payload.labels) ? payload.labels.filter((l): l is string => typeof l === 'string') : [];
+  const seriesRaw = Array.isArray(payload.series) ? payload.series : [];
+  const series: ChartInteraction['series'] = seriesRaw
+    .filter(isRecord)
+    .map((s) => ({
+      name: asString(s.name) ?? asString(s.label),
+      data: Array.isArray(s.data) ? s.data.filter((d): d is number => typeof d === 'number') : [],
+    }));
+  if (labels.length === 0 || series.length === 0) return null;
+  const chartTypeRaw = normalizeType(payload.chartType) ?? normalizeType(payload.chart_type) ?? normalizeType(payload.type);
+  const chartType: ChartInteraction['chartType'] =
+    chartTypeRaw === 'line' ? 'line'
+    : chartTypeRaw === 'pie' ? 'pie'
+    : chartTypeRaw === 'area' ? 'area'
+    : 'bar';
+  return { type: 'chart', id: asString(payload.id) ?? fallbackId, title: asString(payload.title), chartType, labels, series };
+}
+
+function parseImageGallery(payload: Record<string, unknown>, fallbackId: string): ImageGalleryInteraction | null {
+  const rawImages = Array.isArray(payload.images) ? payload.images : [];
+  const images: ImageGalleryInteraction['images'] = rawImages
+    .filter(isRecord)
+    .map((img): ImageGalleryInteraction['images'][number] | null => {
+      const url = asString(img.url) ?? asString(img.src);
+      if (!url) return null;
+      return { url, alt: asString(img.alt), caption: asString(img.caption) };
+    })
+    .filter((img): img is ImageGalleryInteraction['images'][number] => img != null);
+  if (images.length === 0) return null;
+  return { type: 'image-gallery', id: asString(payload.id) ?? fallbackId, title: asString(payload.title), images };
+}
+
+function parseCodeBlock(payload: Record<string, unknown>, fallbackId: string): CodeBlockInteraction | null {
+  const code = asString(payload.code) ?? asString(payload.content) ?? asString(payload.source);
+  if (!code) return null;
+  return {
+    type: 'code-block',
+    id: asString(payload.id) ?? fallbackId,
+    language: asString(payload.language) ?? asString(payload.lang),
+    filename: asString(payload.filename) ?? asString(payload.file),
+    code,
+    runnable: asBoolean(payload.runnable) ?? false,
+  };
+}
+
 export function parseToolUiInteraction(candidate: unknown, fallbackId = 'tool-ui'): ToolUiInteraction | null {
   const payload = unwrapCandidate(candidate);
   if (!payload) return null;
@@ -519,6 +887,17 @@ export function parseToolUiInteraction(candidate: unknown, fallbackId = 'tool-ui
   if (type === 'option-list') return parseOptionList(payload, fallbackId);
   if (type === 'question-flow') return parseQuestionFlow(payload, fallbackId);
   if (type === 'preferences-panel') return parsePreferencesPanel(payload, fallbackId);
+  if (type === 'table') return parseTable(payload, fallbackId);
+  if (type === 'weather') return parseWeather(payload, fallbackId);
+  if (type === 'directive-text') return parseDirectiveText(payload, fallbackId);
+  if (type === 'source') return parseSource(payload, fallbackId);
+  if (type === 'progress') return parseProgress(payload, fallbackId);
+  if (type === 'status-grid') return parseStatusGrid(payload, fallbackId);
+  if (type === 'alert') return parseAlert(payload, fallbackId);
+  if (type === 'key-value') return parseKeyValue(payload, fallbackId);
+  if (type === 'chart') return parseChart(payload, fallbackId);
+  if (type === 'image-gallery') return parseImageGallery(payload, fallbackId);
+  if (type === 'code-block') return parseCodeBlock(payload, fallbackId);
   return null;
 }
 
@@ -1301,10 +1680,10 @@ function ToolUiShell({
 }) {
   return (
     <section
-      className="w-full max-w-xl rounded-lg border border-black/10 bg-surface-modal/80 p-4 shadow-sm dark:border-white/10"
+      className="w-full rounded-lg border border-black/10 bg-surface-modal/80 px-4 py-3 shadow-sm dark:border-white/10"
       data-testid="chat-tool-ui-card"
     >
-      <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase text-muted-foreground">
+      <div className="mb-2 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/70">
         {icon}
         <span>{label}</span>
       </div>
@@ -1315,61 +1694,17 @@ function ToolUiShell({
 
 function PlanCard({ interaction }: { interaction: PlanInteraction }) {
   const { t } = useTranslation('chat');
-  const visibleLimit = interaction.maxVisibleTodos ?? 8;
-  const [expanded, setExpanded] = useState(false);
-  const completed = interaction.todos.filter((todo) => todo.status === 'completed').length;
-  const progress = Math.round((completed / interaction.todos.length) * 100);
-  const visibleTodos = expanded ? interaction.todos : interaction.todos.slice(0, visibleLimit);
-  const hiddenCount = Math.max(0, interaction.todos.length - visibleTodos.length);
 
   return (
     <ToolUiShell icon={<ListChecks className="h-3.5 w-3.5" />} label={t('toolUi.plan.label')}>
-      <div className="space-y-3" data-testid="chat-tool-ui-plan">
-        <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-foreground">{interaction.title}</h3>
-          {interaction.description && <p className="text-sm text-muted-foreground">{interaction.description}</p>}
-        </div>
-        <div className="space-y-2 rounded-lg bg-surface-input/70 p-3">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>{t('toolUi.plan.progress', { completed, total: interaction.todos.length })}</span>
-            <span>{progress}%</span>
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
-            <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progress}%` }} />
-          </div>
-          <ul className="space-y-1.5">
-            {visibleTodos.map((todo) => (
-              <li key={todo.id} className="flex items-start gap-2">
-                <PlanStatusIcon status={todo.status} />
-                <div className="min-w-0 flex-1">
-                  <p className={cn('text-sm leading-5', todo.status === 'pending' && 'text-muted-foreground')}>
-                    {todo.label}
-                  </p>
-                  {todo.description && <p className="text-xs leading-5 text-muted-foreground">{todo.description}</p>}
-                </div>
-              </li>
-            ))}
-          </ul>
-          {hiddenCount > 0 && (
-            <button
-              type="button"
-              className="text-xs font-medium text-primary hover:underline"
-              onClick={() => setExpanded(true)}
-            >
-              {t('toolUi.plan.showMore', { count: hiddenCount })}
-            </button>
-          )}
-        </div>
-      </div>
+      <ToolUiPlanView
+        title={interaction.title}
+        description={interaction.description}
+        todos={interaction.todos}
+        maxVisibleTodos={interaction.maxVisibleTodos}
+      />
     </ToolUiShell>
   );
-}
-
-function PlanStatusIcon({ status }: { status: PlanTodoStatus }) {
-  if (status === 'completed') return <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-600 dark:text-green-400" />;
-  if (status === 'in_progress') return <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-primary" />;
-  if (status === 'cancelled') return <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />;
-  return <Circle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/70" />;
 }
 
 function OptionListCard(props: {
@@ -1783,6 +2118,393 @@ function displayPreferenceValue(
   return options.find((option) => option.value === stringValue)?.label ?? stringValue;
 }
 
+/* ---------- New Tool UI card renderers ---------- */
+
+function TableCard({ interaction }: { interaction: TableInteraction }) {
+  const { t } = useTranslation('chat');
+  return (
+    <ToolUiShell icon={<TableIcon className="h-3.5 w-3.5" />} label={interaction.title ?? t('toolUi.table.label', 'Table')}>
+      {interaction.description && <p className="mb-2 text-xs text-muted-foreground">{interaction.description}</p>}
+      <div className="overflow-x-auto rounded-md border border-black/5 dark:border-white/5">
+        <table className="w-full text-xs">
+          <thead className="bg-black/[0.03] dark:bg-white/[0.04]">
+            <tr>
+              {interaction.columns.map((col) => (
+                <th
+                  key={col.key}
+                  className={cn(
+                    'px-3 py-2 font-medium text-foreground/80 whitespace-nowrap',
+                    col.align === 'right' && 'text-right',
+                    col.align === 'center' && 'text-center',
+                    col.align !== 'right' && col.align !== 'center' && 'text-left',
+                  )}
+                >
+                  {col.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {interaction.rows.map((row, i) => (
+              <tr key={i} className="border-t border-black/5 dark:border-white/5">
+                {interaction.columns.map((col) => (
+                  <td
+                    key={col.key}
+                    className={cn(
+                      'px-3 py-2 text-muted-foreground',
+                      col.align === 'right' && 'text-right',
+                      col.align === 'center' && 'text-center',
+                    )}
+                  >
+                    {String(row[col.key] ?? '')}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </ToolUiShell>
+  );
+}
+
+function WeatherCard({ interaction }: { interaction: WeatherInteraction }) {
+  const { t } = useTranslation('chat');
+  const tempDisplay = interaction.temperature != null
+    ? `${Math.round(interaction.temperature)}°${interaction.unit === 'f' ? 'F' : 'C'}`
+    : '--';
+  return (
+    <ToolUiShell icon={<CloudSun className="h-3.5 w-3.5" />} label={t('toolUi.weather.label', 'Weather')}>
+      <div className="flex items-center gap-4">
+        <div className="text-3xl font-light text-foreground tabular-nums">{tempDisplay}</div>
+        <div className="space-y-0.5">
+          <p className="text-sm font-medium text-foreground">{interaction.location}</p>
+          {interaction.condition && <p className="text-xs text-muted-foreground">{interaction.condition}</p>}
+          <div className="flex gap-3 text-meta text-muted-foreground/70">
+            {interaction.humidity != null && <span>{t('toolUi.weather.humidity', 'Humidity')}: {interaction.humidity}%</span>}
+            {interaction.windSpeed != null && <span>{t('toolUi.weather.wind', 'Wind')}: {interaction.windSpeed} km/h</span>}
+          </div>
+        </div>
+      </div>
+      {interaction.forecast && interaction.forecast.length > 0 && (
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
+          {interaction.forecast.map((f, i) => (
+            <div key={i} className="rounded-md bg-black/[0.03] p-2 text-center dark:bg-white/[0.04]">
+              <p className="text-meta font-medium text-foreground/70">{f.day}</p>
+              <p className="text-xs text-muted-foreground">{f.condition}</p>
+              <p className="text-xs text-foreground tabular-nums">{Math.round(f.high)}° / {Math.round(f.low)}°</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </ToolUiShell>
+  );
+}
+
+const DIRECTIVE_VARIANT_STYLES: Record<DirectiveTextInteraction['variant'], { icon: React.ReactNode; className: string }> = {
+  info: { icon: <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />, className: 'border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20' },
+  warning: { icon: <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />, className: 'border-amber-200 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/20' },
+  success: { icon: <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />, className: 'border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/50 dark:bg-emerald-950/20' },
+  danger: { icon: <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />, className: 'border-red-200 bg-red-50/50 dark:border-red-900/50 dark:bg-red-950/20' },
+  neutral: { icon: <Info className="h-4 w-4 text-muted-foreground" />, className: 'border-border bg-black/[0.02] dark:bg-white/[0.03]' },
+};
+
+function DirectiveTextCard({ interaction }: { interaction: DirectiveTextInteraction }) {
+  const { t } = useTranslation('chat');
+  const style = DIRECTIVE_VARIANT_STYLES[interaction.variant];
+  return (
+    <ToolUiShell icon={style.icon} label={t('toolUi.directiveText.label', 'Notice')}>
+      <div className={cn('rounded-md border p-3', style.className)}>
+        {interaction.title && <p className="mb-1 text-sm font-semibold text-foreground">{interaction.title}</p>}
+        <p className="text-sm text-foreground/80 whitespace-pre-wrap">{interaction.text}</p>
+      </div>
+    </ToolUiShell>
+  );
+}
+
+function SourceCard({ interaction }: { interaction: SourceInteraction }) {
+  const { t } = useTranslation('chat');
+  return (
+    <ToolUiShell icon={<BookOpen className="h-3.5 w-3.5" />} label={t('toolUi.source.label', 'Sources')}>
+      <ol className="space-y-2">
+        {interaction.sources.map((src, i) => (
+          <li key={src.id} className="rounded-md border border-black/5 p-2 dark:border-white/5">
+            <div className="flex items-start gap-2">
+              <span className="mt-0.5 text-meta font-medium text-muted-foreground tabular-nums">[{i + 1}]</span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  <p className="truncate text-sm font-medium text-foreground">{src.title}</p>
+                  {src.url && (
+                    <a
+                      href={src.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex shrink-0 items-center text-muted-foreground hover:text-foreground"
+                      aria-label={t('toolUi.source.open', 'Open source')}
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+                {src.snippet && <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">{src.snippet}</p>}
+                {(src.author || src.publishedAt) && (
+                  <p className="mt-0.5 text-meta text-muted-foreground/60">
+                    {src.author}
+                    {src.author && src.publishedAt && ' · '}
+                    {src.publishedAt}
+                  </p>
+                )}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </ToolUiShell>
+  );
+}
+
+const PROGRESS_STATUS_STYLES: Record<NonNullable<ProgressInteraction['status']>, string> = {
+  active: 'bg-blue-500',
+  completed: 'bg-emerald-500',
+  error: 'bg-red-500',
+  paused: 'bg-amber-500',
+};
+
+function ProgressCard({ interaction }: { interaction: ProgressInteraction }) {
+  const { t } = useTranslation('chat');
+  const max = interaction.max ?? 100;
+  const pct = Math.min(100, Math.max(0, Math.round((interaction.value / max) * 100)));
+  return (
+    <ToolUiShell icon={<Loader2 className="h-3.5 w-3.5" />} label={interaction.label ?? t('toolUi.progress.label', 'Progress')}>
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-muted-foreground">{interaction.status === 'completed' ? t('toolUi.progress.done', 'Done') : t('toolUi.progress.inProgress', 'In progress')}</span>
+          <span className="font-medium text-foreground tabular-nums">{pct}%</span>
+        </div>
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
+          <div
+            className={cn('h-full rounded-full transition-all duration-500', PROGRESS_STATUS_STYLES[interaction.status ?? 'active'])}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        {interaction.unit && (
+          <p className="text-meta text-muted-foreground/60 tabular-nums">
+            {interaction.value} / {max} {interaction.unit}
+          </p>
+        )}
+      </div>
+    </ToolUiShell>
+  );
+}
+
+const STATUS_GRID_DOT_STYLES: Record<NonNullable<StatusGridInteraction['items'][number]['status']>, string> = {
+  ok: 'bg-emerald-500',
+  warning: 'bg-amber-500',
+  error: 'bg-red-500',
+  idle: 'bg-muted-foreground/30',
+};
+
+function StatusGridCard({ interaction }: { interaction: StatusGridInteraction }) {
+  const { t } = useTranslation('chat');
+  return (
+    <ToolUiShell icon={<LayoutGrid className="h-3.5 w-3.5" />} label={interaction.title ?? t('toolUi.statusGrid.label', 'Status')}>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {interaction.items.map((item) => (
+          <div key={item.id} className="rounded-md border border-black/5 p-2 dark:border-white/5">
+            <div className="flex items-center gap-1.5">
+              <span className={cn('h-1.5 w-1.5 rounded-full', STATUS_GRID_DOT_STYLES[item.status ?? 'idle'])} />
+              <p className="truncate text-meta text-muted-foreground">{item.label}</p>
+            </div>
+            <p className="mt-0.5 text-sm font-medium text-foreground tabular-nums">{item.value}</p>
+          </div>
+        ))}
+      </div>
+    </ToolUiShell>
+  );
+}
+
+const ALERT_VARIANT_STYLES: Record<AlertInteraction['variant'], { icon: React.ReactNode; className: string }> = {
+  info: { icon: <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />, className: 'border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20' },
+  warning: { icon: <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />, className: 'border-amber-200 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/20' },
+  error: { icon: <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />, className: 'border-red-200 bg-red-50/50 dark:border-red-900/50 dark:bg-red-950/20' },
+  success: { icon: <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />, className: 'border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/50 dark:bg-emerald-950/20' },
+};
+
+function AlertCard({ interaction }: { interaction: AlertInteraction }) {
+  const { t } = useTranslation('chat');
+  const [dismissed, setDismissed] = useState(false);
+  const style = ALERT_VARIANT_STYLES[interaction.variant];
+  if (dismissed) return null;
+  return (
+    <ToolUiShell icon={style.icon} label={t('toolUi.alert.label', 'Alert')}>
+      <div className={cn('flex items-start justify-between gap-2 rounded-md border p-3', style.className)}>
+        <div className="min-w-0">
+          {interaction.title && <p className="mb-0.5 text-sm font-semibold text-foreground">{interaction.title}</p>}
+          <p className="text-sm text-foreground/80">{interaction.message}</p>
+        </div>
+        {interaction.dismissible && (
+          <button
+            type="button"
+            onClick={() => setDismissed(true)}
+            className="shrink-0 text-muted-foreground hover:text-foreground"
+            aria-label={t('toolUi.alert.dismiss', 'Dismiss')}
+          >
+            <HelpCircle className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
+    </ToolUiShell>
+  );
+}
+
+function KeyValueCard({ interaction }: { interaction: KeyValueInteraction }) {
+  const { t } = useTranslation('chat');
+  return (
+    <ToolUiShell icon={<KeyRound className="h-3.5 w-3.5" />} label={interaction.title ?? t('toolUi.keyValue.label', 'Details')}>
+      <dl className="divide-y divide-black/5 dark:divide-white/5">
+        {interaction.entries.map((entry, i) => (
+          <div key={i} className="flex items-center justify-between gap-3 py-1.5">
+            <dt className="text-xs text-muted-foreground">{entry.key}</dt>
+            <dd className={cn('text-xs text-foreground', entry.mono && 'font-mono')}>{entry.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </ToolUiShell>
+  );
+}
+
+const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+
+function ChartCard({ interaction }: { interaction: ChartInteraction }) {
+  const { t } = useTranslation('chat');
+  const maxVal = Math.max(1, ...interaction.series.flatMap((s) => s.data));
+  return (
+    <ToolUiShell icon={<BarChart3 className="h-3.5 w-3.5" />} label={interaction.title ?? t('toolUi.chart.label', 'Chart')}>
+      {interaction.chartType === 'pie' ? (
+        <div className="flex items-center gap-4">
+          <div className="relative h-24 w-24">
+            <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
+              {(() => {
+                const total = interaction.series[0]?.data.reduce((a, b) => a + b, 0) ?? 1;
+                let offset = 0;
+                return interaction.series[0]?.data.map((val, i) => {
+                  const pct = val / total;
+                  const dash = `${pct * 100} ${100 - pct * 100}`;
+                  const circle = (
+                    <circle
+                      key={i}
+                      cx="18"
+                      cy="18"
+                      r="15.915"
+                      fill="none"
+                      stroke={CHART_COLORS[i % CHART_COLORS.length]}
+                      strokeWidth="3.5"
+                      strokeDasharray={dash}
+                      strokeDashoffset={-offset}
+                    />
+                  );
+                  offset += pct * 100;
+                  return circle;
+                });
+              })()}
+            </svg>
+          </div>
+          <ul className="space-y-1 text-xs">
+            {interaction.labels.map((label, i) => (
+              <li key={i} className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                <span className="text-muted-foreground">{label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <div className="flex items-end gap-2 h-32">
+            {interaction.labels.map((label, i) => (
+              <div key={i} className="flex flex-1 flex-col items-center gap-1">
+                <div className="flex w-full items-end justify-center gap-0.5 h-full">
+                  {interaction.series.map((s, si) => {
+                    const val = s.data[i] ?? 0;
+                    const h = Math.max(2, (val / maxVal) * 100);
+                    return (
+                      <div
+                        key={si}
+                        className="w-full max-w-[20px] rounded-t-sm transition-all"
+                        style={{ height: `${h}%`, backgroundColor: CHART_COLORS[si % CHART_COLORS.length] }}
+                        title={`${s.name ?? ''}: ${val}`}
+                      />
+                    );
+                  })}
+                </div>
+                <span className="text-meta text-muted-foreground/60 truncate" title={label}>{label}</span>
+              </div>
+            ))}
+          </div>
+          {interaction.series.length > 1 && (
+            <ul className="flex flex-wrap gap-3 text-meta">
+              {interaction.series.map((s, i) => (
+                <li key={i} className="flex items-center gap-1">
+                  <span className="h-2 w-2 rounded-sm" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                  <span className="text-muted-foreground">{s.name ?? `Series ${i + 1}`}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </ToolUiShell>
+  );
+}
+
+function ImageGalleryCard({ interaction }: { interaction: ImageGalleryInteraction }) {
+  const { t } = useTranslation('chat');
+  return (
+    <ToolUiShell icon={<ImageIcon className="h-3.5 w-3.5" />} label={interaction.title ?? t('toolUi.imageGallery.label', 'Images')}>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {interaction.images.map((img, i) => (
+          <figure key={i} className="overflow-hidden rounded-md border border-black/5 dark:border-white/5">
+            <img src={img.url} alt={img.alt ?? ''} className="h-24 w-full object-cover" loading="lazy" />
+            {img.caption && <figcaption className="px-2 py-1 text-meta text-muted-foreground truncate">{img.caption}</figcaption>}
+          </figure>
+        ))}
+      </div>
+    </ToolUiShell>
+  );
+}
+
+function CodeBlockCard({ interaction }: { interaction: CodeBlockInteraction }) {
+  const { t } = useTranslation('chat');
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(() => {
+    void navigator.clipboard.writeText(interaction.code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }, [interaction.code]);
+  return (
+    <ToolUiShell icon={<Code2 className="h-3.5 w-3.5" />} label={interaction.filename ?? t('toolUi.codeBlock.label', 'Code')}>
+      <div className="relative">
+        <div className="flex items-center justify-between rounded-t-md border border-b-0 border-black/10 bg-black/[0.03] px-3 py-1 dark:border-white/10 dark:bg-white/[0.04]">
+          <span className="text-meta font-mono text-muted-foreground">{interaction.language ?? 'text'}</span>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="inline-flex items-center gap-1 text-meta text-muted-foreground hover:text-foreground"
+            aria-label={t('toolUi.codeBlock.copy', 'Copy code')}
+          >
+            {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+            {copied ? t('toolUi.codeBlock.copied', 'Copied') : t('toolUi.codeBlock.copy', 'Copy')}
+          </button>
+        </div>
+        <pre className="overflow-x-auto rounded-b-md border border-black/10 bg-surface-input p-3 text-xs font-mono dark:border-white/10">
+          <code>{interaction.code}</code>
+        </pre>
+      </div>
+    </ToolUiShell>
+  );
+}
+
 export function AgentInteractionRenderer({
   interactions,
   canSubmit,
@@ -1795,38 +2517,64 @@ export function AgentInteractionRenderer({
     <div className="w-full space-y-3" data-testid="chat-tool-ui-interactions">
       {interactions.map((interaction, index) => {
         const key = `${interaction.type}-${interaction.id}-${index}`;
-        if (interaction.type === 'plan') return <PlanCard key={key} interaction={interaction} />;
-        if (interaction.type === 'option-list') {
-          return (
-            <OptionListCard
-              key={key}
-              interaction={interaction}
-              canSubmit={canSubmit}
-              onSubmitResponse={onSubmitResponse}
-              onDraftResponse={onDraftResponse}
-            />
-          );
+        switch (interaction.type) {
+          case 'plan':
+            return <PlanCard key={key} interaction={interaction} />;
+          case 'option-list':
+            return (
+              <OptionListCard
+                key={key}
+                interaction={interaction}
+                canSubmit={canSubmit}
+                onSubmitResponse={onSubmitResponse}
+                onDraftResponse={onDraftResponse}
+              />
+            );
+          case 'question-flow':
+            return (
+              <QuestionFlowCard
+                key={key}
+                interaction={interaction}
+                canSubmit={canSubmit}
+                onSubmitResponse={onSubmitResponse}
+                onDraftResponse={onDraftResponse}
+              />
+            );
+          case 'preferences-panel':
+            return (
+              <PreferencesPanelCard
+                key={key}
+                interaction={interaction}
+                canSubmit={canSubmit}
+                onSubmitResponse={onSubmitResponse}
+                onDraftResponse={onDraftResponse}
+              />
+            );
+          case 'table':
+            return <TableCard key={key} interaction={interaction} />;
+          case 'weather':
+            return <WeatherCard key={key} interaction={interaction} />;
+          case 'directive-text':
+            return <DirectiveTextCard key={key} interaction={interaction} />;
+          case 'source':
+            return <SourceCard key={key} interaction={interaction} />;
+          case 'progress':
+            return <ProgressCard key={key} interaction={interaction} />;
+          case 'status-grid':
+            return <StatusGridCard key={key} interaction={interaction} />;
+          case 'alert':
+            return <AlertCard key={key} interaction={interaction} />;
+          case 'key-value':
+            return <KeyValueCard key={key} interaction={interaction} />;
+          case 'chart':
+            return <ChartCard key={key} interaction={interaction} />;
+          case 'image-gallery':
+            return <ImageGalleryCard key={key} interaction={interaction} />;
+          case 'code-block':
+            return <CodeBlockCard key={key} interaction={interaction} />;
+          default:
+            return null;
         }
-        if (interaction.type === 'question-flow') {
-          return (
-            <QuestionFlowCard
-              key={key}
-              interaction={interaction}
-              canSubmit={canSubmit}
-              onSubmitResponse={onSubmitResponse}
-              onDraftResponse={onDraftResponse}
-            />
-          );
-        }
-        return (
-          <PreferencesPanelCard
-            key={key}
-            interaction={interaction}
-            canSubmit={canSubmit}
-            onSubmitResponse={onSubmitResponse}
-            onDraftResponse={onDraftResponse}
-          />
-        );
       })}
     </div>
   );

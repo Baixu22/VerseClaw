@@ -3309,6 +3309,7 @@ export async function runEmbeddedAttempt(
       const {
         assistantTexts,
         toolMetas,
+        getBrowserAutomationEvents,
         getAcceptedSessionSpawns,
         runToolLifecycle,
         unsubscribe,
@@ -5042,6 +5043,7 @@ export async function runEmbeddedAttempt(
       }
 
       const acceptedSessionSpawns = getAcceptedSessionSpawns();
+      const browserAutomationEvents = getBrowserAutomationEvents();
       const observedReplayMetadata = buildAttemptReplayMetadata({
         toolMetas: toolMetasNormalized,
         didSendViaMessagingTool: didSendViaMessagingTool(),
@@ -5228,6 +5230,7 @@ export async function runEmbeddedAttempt(
         ...(beforeAgentFinalizeRevisionReason ? { beforeAgentFinalizeRevisionReason } : {}),
         assistantTexts,
         toolMetas: toolMetasNormalized,
+        browserAutomationEvents,
         acceptedSessionSpawns,
         lastAssistant,
         currentAttemptAssistant,

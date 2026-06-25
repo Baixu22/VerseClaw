@@ -1,5 +1,5 @@
 /**
- * Gateway entry point â€” thin bridge shell that constructs
+ * Gateway entry point â€?thin bridge shell that constructs
  * {@link EngineAdapters} and passes them to the engine's
  * `startGateway`.
  *
@@ -70,7 +70,7 @@ export interface GatewayContext {
 /**
  * Create the full set of engine adapters from the bridge layer.
  *
- * This is the **single assembly point** â€” all SDK â†’ engine binding
+ * This is the **single assembly point** â€?all SDK â†?engine binding
  * happens here. The engine receives a fully-populated
  * {@link EngineAdapters} object with zero global singletons.
  */
@@ -115,7 +115,7 @@ export async function startGateway(ctx: GatewayContext): Promise<void> {
   const runtime = getQQBotRuntimeForEngine();
   const accountLogger = createAccountLogger(ctx.log, ctx.account.accountId);
 
-  // Per-account registration (still global â€” sender is a leaf utility).
+  // Per-account registration (still global â€?sender is a leaf utility).
   registerAccount(ctx.account.appId, {
     logger: accountLogger,
     markdownSupport: ctx.account.markdownSupport,
@@ -133,7 +133,7 @@ export async function startGateway(ctx: GatewayContext): Promise<void> {
     });
     accountLogger.info(`approval.native context registered (lease=${Boolean(lease)})`);
   } else {
-    accountLogger.info("No channelRuntime â€” skipping approval.native registration");
+    accountLogger.info("No channelRuntime â€?skipping approval.native registration");
   }
 
   const coreCtx: CoreGatewayContext = {

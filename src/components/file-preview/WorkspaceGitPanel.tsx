@@ -3,8 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   AlertTriangle,
+  Archive,
   CheckCircle2,
   ClipboardCopy,
+  Download,
+  FolderOpen,
   GitBranch,
   GitCommitHorizontal,
   GitPullRequest,
@@ -12,20 +15,24 @@ import {
   GitCompareArrows,
   HardDrive,
   Loader2,
+  PanelRightOpen,
   Plus,
   RefreshCw,
   RotateCcw,
   ShieldAlert,
   Trash2,
+  Upload,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
+import { useWorkspacesStore } from '@/stores/workspaces';
 import type {
   GitBranch as GitBranchInfo,
   GitChangeBucket,
@@ -34,8 +41,10 @@ import type {
   GitFileChange,
   GitOperationResult,
   GitRepositoryStatus,
+  GitStashEntry,
   GitWorktree,
   GithubAuthStatus,
+  GithubRepository,
   GithubPrSummary,
 } from '@shared/types/git';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
@@ -56,12 +65,30 @@ type ApprovalRetry = {
 };
 
 type WorktreeMode = 'new' | 'existing';
-
+type ToolPanel = 'worktrees' | 'commit' | 'branch' | 'stash' | 'github';
 const CHANGE_GROUPS: GitChangeBucket[] = ['conflicted', 'staged', 'unstaged', 'untracked'];
 
 function basename(path: string): string {
   const normalized = path.replace(/\\/g, '/').replace(/\/$/, '');
   return normalized.split('/').pop() || normalized;
+}
+
+function parentDir(path: string): string {
+  const normalized = path.replace(/\\/g, '/').replace(/\/$/, '');
+  const index = normalized.lastIndexOf('/');
+  return index > 0 ? normalized.slice(0, index) : '';
+}
+
+function worktreeBranchSlug(branch: string): string {
+  return branch.trim().replace(/[^a-z0-9._-]+/gi, '-').replace(/^-|-$/g, '') || 'worktree';
+}
+
+function defaultWorktreeTargetPath(repoRoot: string | undefined, branch: string): string | null {
+  const name = branch.trim();
+  if (!repoRoot || !name) return null;
+  const repoFolder = basename(repoRoot) || 'workspace';
+  const parent = parentDir(repoRoot);
+  return parent ? `${parent}/${repoFolder}-${worktreeBranchSlug(name)}` : `${repoFolder}-${worktreeBranchSlug(name)}`;
 }
 
 function pathEquals(left: string | undefined, right: string | undefined): boolean {
@@ -94,6 +121,20 @@ function operationReason(result: GitOperationResult): string | null {
   return result.reason || result.stderr || result.stdout || null;
 }
 
+function formatChangeStats(change: GitFileChange): string | null {
+  if (change.binary) return null;
+  if (typeof change.additions !== 'number' && typeof change.deletions !== 'number') return null;
+  const additions = typeof change.additions === 'number' ? change.additions : 0;
+  const deletions = typeof change.deletions === 'number' ? change.deletions : 0;
+  return `+${additions} -${deletions}`;
+}
+
+function sumKnownStats(changes: GitFileChange[], key: 'additions' | 'deletions'): number {
+  return changes.reduce((total, change) => (
+    typeof change[key] === 'number' ? total + change[key] : total
+  ), 0);
+}
+
 export function WorkspaceGitPanel({
   selectedPath,
   diffMode = 'unstaged',
@@ -104,7 +145,9 @@ export function WorkspaceGitPanel({
   const [status, setStatus] = useState<GitRepositoryStatus | null>(null);
   const [branches, setBranches] = useState<GitBranchInfo[]>([]);
   const [worktrees, setWorktrees] = useState<GitWorktree[]>([]);
+  const [stashes, setStashes] = useState<GitStashEntry[]>([]);
   const [githubAuth, setGithubAuth] = useState<GithubAuthStatus | null>(null);
+  const [githubRepo, setGithubRepo] = useState<GithubRepository | null>(null);
   const [pullRequests, setPullRequests] = useState<GithubPrSummary[]>([]);
   const [diff, setDiff] = useState<GitDiffResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -115,12 +158,21 @@ export function WorkspaceGitPanel({
   const [pendingApproval, setPendingApproval] = useState<ApprovalRetry | null>(null);
   const [commitMessage, setCommitMessage] = useState('');
   const [branchName, setBranchName] = useState('');
+  const [checkoutBranchName, setCheckoutBranchName] = useState('');
   const [worktreeMode, setWorktreeMode] = useState<WorktreeMode>('new');
   const [worktreeBranch, setWorktreeBranch] = useState('');
   const [worktreeStartPoint, setWorktreeStartPoint] = useState('');
+  const [stashMessage, setStashMessage] = useState('');
+  const [stashIncludeUntracked, setStashIncludeUntracked] = useState(false);
+  const [activeToolPanel, setActiveToolPanel] = useState<ToolPanel>('worktrees');
   const [prTitle, setPrTitle] = useState('');
   const [prBody, setPrBody] = useState('');
+  const [prBase, setPrBase] = useState('');
+  const [prHead, setPrHead] = useState('');
+  const [prDraft, setPrDraft] = useState(false);
   const [revertPath, setRevertPath] = useState<string | null>(null);
+  const createWorkspace = useWorkspacesStore((state) => state.createWorkspace);
+  const switchWorkspace = useWorkspacesStore((state) => state.switchWorkspace);
 
   const changes = useMemo(() => status?.changes ?? [], [status?.changes]);
   const effectiveSelectedPath = selectedPath || changes[0]?.path || null;
@@ -141,21 +193,28 @@ export function WorkspaceGitPanel({
     setLoading(true);
     setError(null);
     try {
-      const [statusResult, branchesResult, worktreesResult, authResult] = await Promise.all([
+      const [statusResult, branchesResult, worktreesResult, stashesResult, authResult] = await Promise.all([
         hostApi.git.status(),
         hostApi.git.branches().catch(() => ({ branches: [] })),
         hostApi.git.worktrees().catch(() => ({ worktrees: [] })),
+        hostApi.git.stashList().catch(() => ({ stashes: [] })),
         hostApi.git.githubAuthStatus().catch(() => null),
       ]);
       setStatus(statusResult.status);
       setBranches(branchesResult.branches ?? []);
       setWorktrees(worktreesResult.worktrees ?? []);
+      setStashes(stashesResult.stashes ?? []);
       setGithubAuth(authResult);
 
       if (authResult?.authenticated) {
-        const prs = await hostApi.git.prList({ state: 'open', limit: 8 }).catch(() => ({ pullRequests: [] }));
+        const [repo, prs] = await Promise.all([
+          hostApi.git.githubRepo().catch(() => ({ repository: null })),
+          hostApi.git.prList({ state: 'open', limit: 8 }).catch(() => ({ pullRequests: [] })),
+        ]);
+        setGithubRepo(repo.repository ?? null);
         setPullRequests(prs.pullRequests ?? []);
       } else {
+        setGithubRepo(null);
         setPullRequests([]);
       }
     } catch (err) {
@@ -204,6 +263,15 @@ export function WorkspaceGitPanel({
       disposed = true;
     };
   }, [diffMode, effectiveSelectedPath, status?.isRepository]);
+
+  useEffect(() => {
+    if (!prBase && githubRepo?.defaultBranch) {
+      setPrBase(githubRepo.defaultBranch);
+    }
+    if (!prHead && status?.branch && !status.detached) {
+      setPrHead(status.branch);
+    }
+  }, [githubRepo?.defaultBranch, prBase, prHead, status?.branch, status?.detached]);
 
   const showBlocked = useCallback((action: string, result: GitOperationResult, retry?: (approvalId: string) => Promise<GitOperationResult>) => {
     const reason = operationReason(result) ?? t('workspace.git.toast.blocked');
@@ -346,6 +414,46 @@ export function WorkspaceGitPanel({
     });
   };
 
+  const checkoutSelectedBranch = () => {
+    const name = checkoutBranchName.trim();
+    if (!name) return;
+    void finishOperation(
+      'checkoutBranch',
+      t('workspace.git.actions.checkoutBranch'),
+      () => hostApi.git.checkoutBranch({ name }),
+      (approvalId) => hostApi.git.checkoutBranch({ name, approvalId }),
+    ).then((result) => {
+      if (result.success) setCheckoutBranchName('');
+    });
+  };
+
+  const fetchRepository = () => {
+    void finishOperation(
+      'fetch',
+      t('workspace.git.actions.fetch'),
+      () => hostApi.git.fetch(),
+      (approvalId) => hostApi.git.fetch({ approvalId }),
+    );
+  };
+
+  const pullRepository = () => {
+    void finishOperation(
+      'pull',
+      t('workspace.git.actions.pull'),
+      () => hostApi.git.pull(),
+      (approvalId) => hostApi.git.pull({ approvalId }),
+    );
+  };
+
+  const pushRepository = () => {
+    void finishOperation(
+      'push',
+      t('workspace.git.actions.push'),
+      () => hostApi.git.push(),
+      (approvalId) => hostApi.git.push({ approvalId }),
+    );
+  };
+
   const addWorktree = () => {
     const branch = worktreeBranch.trim();
     if (!branch) return;
@@ -377,6 +485,40 @@ export function WorkspaceGitPanel({
     );
   };
 
+  const openWorktree = async (worktree: GitWorktree) => {
+    try {
+      await hostApi.shell.openPath(worktree.path);
+      toast.success(t('workspace.git.toast.worktreeOpened'));
+    } catch (err) {
+      toast.error(t('workspace.git.toast.worktreeOpenFailed', { error: err instanceof Error ? err.message : String(err) }));
+    }
+  };
+
+  const switchWorktreeWorkspace = async (worktree: GitWorktree) => {
+    const key = `switch:${worktree.path}`;
+    setOperationLoading(key);
+    setNotice(null);
+    try {
+      const snapshot = await hostApi.workspaces.list();
+      const existingWorkspace = (snapshot.profiles ?? []).find((profile) => pathEquals(profile.rootPath, worktree.path));
+      const detail = existingWorkspace
+        ? t('workspace.git.toast.worktreeWorkspaceSwitched')
+        : t('workspace.git.toast.worktreeWorkspaceCreated');
+      if (existingWorkspace) {
+        await switchWorkspace(existingWorkspace.id);
+      } else {
+        await createWorkspace({ name: basename(worktree.path), rootPath: worktree.path });
+      }
+      toast.success(detail);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setNotice(message);
+      toast.error(t('workspace.git.toast.worktreeWorkspaceSwitchFailed', { error: message }));
+    } finally {
+      setOperationLoading(null);
+    }
+  };
+
   const pruneWorktrees = () => {
     void finishOperation(
       'prune',
@@ -386,15 +528,55 @@ export function WorkspaceGitPanel({
     );
   };
 
+  const stashChanges = () => {
+    const message = stashMessage.trim();
+    const payload = {
+      ...(message ? { message } : {}),
+      ...(stashIncludeUntracked ? { includeUntracked: true } : {}),
+    };
+    void finishOperation(
+      'stashPush',
+      t('workspace.git.actions.stashPush'),
+      () => hostApi.git.stashPush(payload),
+      (approvalId) => hostApi.git.stashPush({ ...payload, approvalId }),
+    ).then((result) => {
+      if (result.success) {
+        setStashMessage('');
+        setStashIncludeUntracked(false);
+      }
+    });
+  };
+
+  const applyStash = (stash: GitStashEntry) => {
+    void finishOperation(
+      `stashApply:${stash.selector}`,
+      t('workspace.git.actions.stashApply'),
+      () => hostApi.git.stashApply({ selector: stash.selector }),
+      (approvalId) => hostApi.git.stashApply({ selector: stash.selector, approvalId }),
+    );
+  };
+
+  const popStash = (stash: GitStashEntry) => {
+    void finishOperation(
+      `stashPop:${stash.selector}`,
+      t('workspace.git.actions.stashPop'),
+      () => hostApi.git.stashPop({ selector: stash.selector }),
+      (approvalId) => hostApi.git.stashPop({ selector: stash.selector, approvalId }),
+    );
+  };
+
   const createPr = () => {
     const title = prTitle.trim();
-    if (!title) return;
+    const base = prBase.trim();
+    const head = prHead.trim();
+    if (!title || !base || !head) return;
     const body = prBody.trim();
+    const payload = { title, body, base, head, draft: prDraft };
     void finishOperation(
       'prCreate',
       t('workspace.git.actions.createPr'),
-      () => hostApi.git.prCreate({ title, body }),
-      (approvalId) => hostApi.git.prCreate({ title, body, approvalId }),
+      () => hostApi.git.prCreate(payload),
+      (approvalId) => hostApi.git.prCreate({ ...payload, approvalId }),
     ).then((result) => {
       if (result.success) {
         setPrTitle('');
@@ -428,6 +610,9 @@ export function WorkspaceGitPanel({
   }
 
   const totalChanges = changes.length;
+  const totalAdditions = sumKnownStats(changes, 'additions');
+  const totalDeletions = sumKnownStats(changes, 'deletions');
+  const hasKnownStats = changes.some((change) => typeof change.additions === 'number' || typeof change.deletions === 'number');
   const isClean = Boolean(status?.clean);
   const stateLabel = status?.hasConflicts
     ? t('workspace.git.state.conflict')
@@ -448,39 +633,75 @@ export function WorkspaceGitPanel({
     && typeof diff.modified === 'string'
     && (diff.patch || diff.original !== diff.modified),
   );
-
+  const githubReady = Boolean(githubAuth?.authenticated);
+  const worktreeTargetPreview = defaultWorktreeTargetPath(status?.repoRoot || status?.workspaceRoot, worktreeBranch);
+  const normalizedWorktreeBranch = worktreeBranch.trim();
+  const selectedWorktreeBranch = normalizedWorktreeBranch
+    ? worktrees.find((worktree) => worktree.branch === normalizedWorktreeBranch)
+    : undefined;
+  const newWorktreeBranchExists = worktreeMode === 'new'
+    && Boolean(normalizedWorktreeBranch)
+    && branches.some((branch) => branch.name === normalizedWorktreeBranch);
+  const worktreeBlockedReason = newWorktreeBranchExists
+    ? t('workspace.git.worktrees.branchExists')
+    : selectedWorktreeBranch
+      ? t('workspace.git.worktrees.branchCheckedOut', { path: selectedWorktreeBranch.path })
+      : null;
+  const canAddWorktree = Boolean(normalizedWorktreeBranch)
+    && !worktreeBlockedReason
+    && operationLoading !== 'worktreeAdd';
+  const canStashChanges = totalChanges > 0 && operationLoading !== 'stashPush';
+  const canCreatePr = Boolean(githubAuth?.authenticated)
+    && Boolean(prTitle.trim())
+    && Boolean(prBase.trim())
+    && Boolean(prHead.trim())
+    && operationLoading !== 'prCreate';
+  const toolTabs: Array<{ id: ToolPanel; label: string }> = [
+    { id: 'worktrees', label: t('workspace.git.toolTabs.worktrees') },
+    { id: 'commit', label: t('workspace.git.toolTabs.commit') },
+    { id: 'branch', label: t('workspace.git.toolTabs.branch') },
+    { id: 'stash', label: t('workspace.git.toolTabs.stash') },
+    { id: 'github', label: t('workspace.git.toolTabs.github') },
+  ];
   return (
     <>
     <div className="flex h-full min-h-0 flex-col bg-background" data-testid="workspace-git-panel">
+      {/* Single slim header — branch + key stats inline */}
       <div className="shrink-0 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
         <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex min-w-0 flex-wrap items-center gap-2">
-              <span className="inline-flex min-w-0 items-center gap-1.5 text-sm font-semibold text-foreground">
-                <GitBranch className="h-4 w-4 shrink-0 text-muted-foreground" />
-                <span className="truncate">{status?.detached ? t('workspace.git.detached') : status?.branch || t('workspace.git.loading')}</span>
+          <div className="flex min-w-0 items-center gap-2">
+            <GitBranch className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <span className="truncate text-sm font-medium text-foreground">
+              {status?.detached ? t('workspace.git.detached') : status?.branch || t('workspace.git.loading')}
+            </span>
+            <Badge variant={stateVariant} className="shrink-0 px-1.5 py-0 text-2xs">{stateLabel}</Badge>
+            {totalChanges > 0 && (
+              <span className="shrink-0 text-2xs text-muted-foreground">
+                {totalChanges} {t('artifactPanel.tabs.changes')}
               </span>
-              <Badge variant={stateVariant} className="shrink-0">{stateLabel}</Badge>
-              {status?.upstream ? (
-                <span className="truncate rounded border border-black/10 bg-surface-input px-1.5 py-0.5 text-2xs text-muted-foreground dark:border-white/10">
-                  {status.upstream}
-                </span>
-              ) : null}
-            </div>
-            <p className="mt-1 text-2xs text-muted-foreground">
-              {t('workspace.git.summary', { count: totalChanges, ahead: status?.ahead ?? 0, behind: status?.behind ?? 0 })}
-            </p>
+            )}
+            {hasKnownStats && (
+              <span className="shrink-0 font-mono text-2xs">
+                <span className="text-green-700 dark:text-green-400">+{totalAdditions}</span>
+                <span className="ml-1 text-red-700 dark:text-red-400">-{totalDeletions}</span>
+              </span>
+            )}
+            {(status?.ahead ?? 0) > 0 || (status?.behind ?? 0) > 0 ? (
+              <span className="shrink-0 text-2xs text-muted-foreground">
+                ↑{status?.ahead ?? 0} ↓{status?.behind ?? 0}
+              </span>
+            ) : null}
           </div>
           <Button
             type="button"
-            variant="outline"
-            size="sm"
-            className="h-8 shrink-0 gap-1.5 bg-surface-input text-xs"
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 shrink-0"
             onClick={() => void refresh()}
             disabled={loading}
+            title={t('workspace.git.actions.refresh')}
           >
             <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
-            {t('workspace.git.actions.refresh')}
           </Button>
         </div>
       </div>
@@ -515,11 +736,11 @@ export function WorkspaceGitPanel({
         </div>
       ) : null}
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-hidden p-3 min-[980px]:grid-cols-[minmax(220px,0.38fr)_minmax(360px,0.62fr)]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 overflow-hidden p-2 min-[980px]:grid-cols-[minmax(220px,0.38fr)_minmax(360px,0.62fr)]">
         <section className="min-h-0 overflow-hidden rounded-md border border-black/10 bg-surface-modal dark:border-white/10">
-          <div className="flex items-center justify-between border-b border-black/5 px-3 py-2 dark:border-white/10">
-            <span className="text-xs font-medium text-foreground">{t('artifactPanel.tabs.changes')}</span>
-            <Badge variant="outline" className="text-2xs">{totalChanges}</Badge>
+          <div className="flex items-center justify-between border-b border-black/5 px-3 py-1.5 dark:border-white/10">
+            <span className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">{t('artifactPanel.tabs.changes')}</span>
+            <Badge variant="outline" className="px-1.5 py-0 text-2xs">{totalChanges}</Badge>
           </div>
           <div className="h-full min-h-0 overflow-y-auto pb-10">
             {loading && changes.length === 0 ? (
@@ -536,7 +757,7 @@ export function WorkspaceGitPanel({
               <div className="divide-y divide-black/5 dark:divide-white/10">
                 {groupedChanges.map((group) => (
                   <div key={group.bucket}>
-                    <div className="sticky top-0 z-10 bg-surface-modal/95 px-3 py-1.5 text-2xs font-medium uppercase tracking-normal text-muted-foreground backdrop-blur">
+                    <div className="sticky top-0 z-10 bg-surface-modal/95 px-3 py-1 text-2xs font-medium uppercase tracking-wide text-muted-foreground/70 backdrop-blur">
                       {t(`workspace.git.groups.${group.bucket}`, { count: group.changes.length })}
                     </div>
                     <div className="space-y-0.5 px-1.5 pb-1.5">
@@ -546,6 +767,7 @@ export function WorkspaceGitPanel({
                         </p>
                       ) : group.changes.map((change) => {
                         const badge = changeBadge(change);
+                        const changeStats = formatChangeStats(change);
                         return (
                           <button
                             key={`${change.bucket}:${change.path}`}
@@ -557,6 +779,9 @@ export function WorkspaceGitPanel({
                             onClick={() => selectChange(change)}
                           >
                             <span className="min-w-0 flex-1 truncate font-mono text-foreground">{change.path}</span>
+                            {changeStats ? (
+                              <span className="shrink-0 font-mono text-2xs text-muted-foreground">{changeStats}</span>
+                            ) : null}
                             <Badge variant={badge.variant} className="shrink-0 px-1.5 py-0 text-2xs">{badge.label}</Badge>
                           </button>
                         );
@@ -619,190 +844,425 @@ export function WorkspaceGitPanel({
               </pre>
             )}
           </div>
-          <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-white/10 px-3 py-2">
-            <Button type="button" size="sm" className="h-7 text-xs" onClick={stageSelected} disabled={!canStage || operationLoading === 'stage'}>
-              {operationLoading === 'stage' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <Plus className="mr-1.5 h-3 w-3" />}
+          <div className="flex shrink-0 flex-wrap items-center gap-1.5 border-t border-white/10 px-3 py-1.5">
+            <Button type="button" size="sm" className="h-7 text-2xs" onClick={stageSelected} disabled={!canStage || operationLoading === 'stage'}>
+              {operationLoading === 'stage' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Plus className="mr-1 h-3 w-3" />}
               {t('workspace.git.actions.stage')}
             </Button>
-            <Button type="button" variant="outline" size="sm" className="h-7 border-white/10 bg-white/5 text-xs text-slate-100 hover:bg-white/10" onClick={unstageSelected} disabled={!canUnstage || operationLoading === 'unstage'}>
+            <Button type="button" variant="outline" size="sm" className="h-7 border-white/10 bg-white/5 text-2xs text-slate-100 hover:bg-white/10" onClick={unstageSelected} disabled={!canUnstage || operationLoading === 'unstage'}>
               {t('workspace.git.actions.unstage')}
             </Button>
-            <Button type="button" variant="outline" size="sm" className="h-7 border-white/10 bg-white/5 text-xs text-slate-100 hover:bg-white/10" onClick={() => void copyPatch()} disabled={!canCopyPatch}>
-              <ClipboardCopy className="mr-1.5 h-3 w-3" />
+            <Button type="button" variant="outline" size="sm" className="h-7 border-white/10 bg-white/5 text-2xs text-slate-100 hover:bg-white/10" onClick={() => void copyPatch()} disabled={!canCopyPatch}>
+              <ClipboardCopy className="mr-1 h-3 w-3" />
               {t('workspace.git.actions.copyPatch')}
             </Button>
-            <Button type="button" variant="destructive" size="sm" className="h-7 text-xs" onClick={() => setRevertPath(effectiveSelectedPath)} disabled={!canRevert || operationLoading === 'revert'}>
-              {operationLoading === 'revert' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <RotateCcw className="mr-1.5 h-3 w-3" />}
+            <Button type="button" variant="destructive" size="sm" className="h-7 text-2xs" onClick={() => setRevertPath(effectiveSelectedPath)} disabled={!canRevert || operationLoading === 'revert'}>
+              {operationLoading === 'revert' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <RotateCcw className="mr-1 h-3 w-3" />}
               {t('workspace.git.actions.revert')}
             </Button>
-          </div>
-          <div className="shrink-0 border-t border-white/10 px-3 py-2">
-            <div className="flex min-w-0 items-center justify-between gap-3 rounded-md border border-white/10 bg-white/5 px-2.5 py-2">
-              <div className="min-w-0">
-                <p className="text-2xs font-medium uppercase tracking-normal text-slate-400">{t('workspace.git.validation.title')}</p>
-                <p className="truncate text-xs text-slate-200">{t('workspace.git.validation.empty')}</p>
-              </div>
-              <Badge variant="outline" className="shrink-0 border-white/10 text-2xs text-slate-300">{t('workspace.git.validation.status')}</Badge>
-            </div>
           </div>
         </section>
       </div>
 
-      <div className="shrink-0 border-t border-black/5 bg-surface-modal p-3 dark:border-white/10">
-        <div className="grid max-h-[260px] grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-2 overflow-y-auto pr-1">
-        <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
-          <div className="flex items-center justify-between gap-2">
-            <PanelTitle icon={<HardDrive className="h-3.5 w-3.5" />} title={t('workspace.git.worktrees.title')} />
-            <Button type="button" variant="ghost" size="sm" className="h-6 px-1.5 text-2xs" onClick={pruneWorktrees} disabled={operationLoading === 'prune'}>
-              {t('workspace.git.actions.pruneWorktrees')}
-            </Button>
-          </div>
-          <div className="mt-2 max-h-28 space-y-1 overflow-y-auto rounded-md border border-black/5 bg-surface-input p-1 dark:border-white/10">
-            {worktrees.length === 0 ? (
-              <p className="px-1 py-1 text-2xs text-muted-foreground">{t('workspace.git.worktrees.empty')}</p>
-            ) : worktrees.map((worktree) => {
-              const current = pathEquals(worktree.path, currentWorktree?.path);
-              return (
-                <div key={worktree.path} className="rounded bg-background px-2 py-1 dark:bg-white/5">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate font-mono text-2xs text-foreground">{basename(worktree.path)}</p>
-                      <p className="truncate text-2xs text-muted-foreground">{worktree.branch || compactCommit(worktree.head)}</p>
+      {/* Collapsible tool drawer — collapsed by default to avoid clutter */}
+      <div className="shrink-0 border-t border-black/5 bg-surface-modal dark:border-white/10">
+        <details className="group" data-testid="workspace-git-tool-drawer">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2">
+            <div className="flex min-w-0 items-center gap-2">
+              <PanelRightOpen className="h-3.5 w-3.5 text-muted-foreground transition-transform group-open:rotate-90" />
+              <span className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">{t('workspace.git.toolTabs.worktrees')}</span>
+            </div>
+            <div className="flex shrink-0 items-center gap-1.5">
+              {worktrees.length > 0 && <Badge variant="outline" className="px-1.5 py-0 text-2xs">{worktrees.length}</Badge>}
+              {stashes.length > 0 && <Badge variant="outline" className="px-1.5 py-0 text-2xs">{stashes.length}</Badge>}
+              {githubReady && <Badge variant="success" className="px-1.5 py-0 text-2xs">GH</Badge>}
+            </div>
+          </summary>
+          <div className="border-t border-black/5 p-2 dark:border-white/10">
+            <div className="flex min-w-0 items-center gap-0.5 rounded-md bg-surface-input p-0.5" data-testid="workspace-git-tool-tabs">
+              {toolTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  className={cn(
+                    'h-6 shrink-0 rounded px-2.5 text-2xs text-muted-foreground',
+                    activeToolPanel === tab.id && 'bg-background text-foreground shadow-sm dark:bg-white/10',
+                  )}
+                  onClick={() => setActiveToolPanel(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <div className="mt-2 max-h-[220px] overflow-y-auto pr-1">
+          {activeToolPanel === 'worktrees' ? (
+            <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+              <div className="flex items-center justify-between gap-2">
+                <PanelTitle icon={<HardDrive className="h-3.5 w-3.5" />} title={t('workspace.git.worktrees.title')} />
+                <Button type="button" variant="ghost" size="sm" className="h-6 px-1.5 text-2xs" onClick={pruneWorktrees} disabled={operationLoading === 'prune'}>
+                  {t('workspace.git.actions.pruneWorktrees')}
+                </Button>
+              </div>
+              <div className="mt-2 max-h-28 space-y-1 overflow-y-auto rounded-md border border-black/5 bg-surface-input p-1 dark:border-white/10">
+                {worktrees.length === 0 ? (
+                  <p className="px-1 py-1 text-2xs text-muted-foreground">{t('workspace.git.worktrees.empty')}</p>
+                ) : worktrees.map((worktree) => {
+                  const current = pathEquals(worktree.path, currentWorktree?.path);
+                  return (
+                    <div key={worktree.path} className="rounded bg-background px-2 py-1 dark:bg-white/5">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="min-w-[120px] flex-1">
+                          <p className="truncate font-mono text-2xs text-foreground">{basename(worktree.path)}</p>
+                          <p className="truncate text-2xs text-muted-foreground">{worktree.branch || compactCommit(worktree.head)}</p>
+                        </div>
+                        <div className="flex shrink-0 flex-wrap items-center justify-end gap-1">
+                          {current ? <Badge variant="success" className="px-1.5 py-0 text-2xs">{t('workspace.git.worktrees.current')}</Badge> : null}
+                          {worktree.locked ? (
+                            <Badge variant="warning" className="gap-1 px-1.5 py-0 text-2xs">
+                              <AlertTriangle className="h-3 w-3" />
+                              {t('workspace.git.worktrees.locked')}
+                            </Badge>
+                          ) : null}
+                          {worktree.prunable ? <Badge variant="outline" className="px-1.5 py-0 text-2xs">{t('workspace.git.worktrees.prunable')}</Badge> : null}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 px-1.5 text-2xs"
+                            onClick={() => void openWorktree(worktree)}
+                          >
+                            <FolderOpen className="mr-1 h-3 w-3" />
+                            {t('workspace.git.actions.openWorktree')}
+                          </Button>
+                          {!current ? (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 px-1.5 text-2xs"
+                              onClick={() => void switchWorktreeWorkspace(worktree)}
+                              disabled={operationLoading === `switch:${worktree.path}`}
+                            >
+                              {operationLoading === `switch:${worktree.path}` ? (
+                                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                              ) : (
+                                <PanelRightOpen className="mr-1 h-3 w-3" />
+                              )}
+                              {t('workspace.git.actions.switchWorktree')}
+                            </Button>
+                          ) : null}
+                          {!current ? (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 px-1.5 text-2xs text-red-700 hover:text-red-700 dark:text-red-400"
+                              onClick={() => removeWorktree(worktree)}
+                              disabled={operationLoading === `remove:${worktree.path}`}
+                            >
+                              <Trash2 className="mr-1 h-3 w-3" />
+                              {t('workspace.git.actions.removeWorktree')}
+                            </Button>
+                          ) : null}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex shrink-0 items-center gap-1">
-                      {current ? <Badge variant="success" className="px-1.5 py-0 text-2xs">{t('workspace.git.worktrees.current')}</Badge> : null}
-                      {worktree.locked ? <AlertTriangle className="h-3 w-3 text-amber-700 dark:text-amber-400" /> : null}
-                      {!current ? (
+                  );
+                })}
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-1 rounded-md bg-surface-input p-0.5">
+                {(['new', 'existing'] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    className={cn(
+                      'rounded px-2 py-1 text-2xs text-muted-foreground',
+                      worktreeMode === mode && 'bg-black/5 text-foreground dark:bg-white/10',
+                    )}
+                    onClick={() => setWorktreeMode(mode)}
+                  >
+                    {mode === 'new' ? t('workspace.git.worktrees.newBranch') : t('workspace.git.worktrees.existingBranch')}
+                  </button>
+                ))}
+              </div>
+              {worktreeMode === 'existing' ? (
+                <Select value={worktreeBranch} onValueChange={setWorktreeBranch}>
+                  <SelectTrigger size="sm" className="mt-2 bg-surface-input text-xs">
+                    <SelectValue placeholder={t('workspace.git.worktrees.selectBranch')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {branches.map((branch) => (
+                      <SelectItem key={branch.name} value={branch.name}>{branch.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <>
+                  <Input
+                    value={worktreeBranch}
+                    onChange={(event) => setWorktreeBranch(event.target.value)}
+                    placeholder={t('workspace.git.branchWorktree.worktreePlaceholder')}
+                    className="mt-2 h-8 bg-surface-input text-xs"
+                  />
+                  <Input
+                    value={worktreeStartPoint}
+                    onChange={(event) => setWorktreeStartPoint(event.target.value)}
+                    placeholder={t('workspace.git.worktrees.startPointPlaceholder')}
+                    className="mt-1.5 h-8 bg-surface-input text-xs"
+                  />
+                </>
+              )}
+              <div className="mt-2 rounded-md border border-black/5 bg-surface-input px-2 py-1.5 text-2xs dark:border-white/10" data-testid="workspace-git-worktree-target">
+                <p className="font-medium text-muted-foreground">{t('workspace.git.worktrees.defaultPath')}</p>
+                <p className="mt-0.5 truncate font-mono text-foreground">
+                  {worktreeTargetPreview || t('workspace.git.worktrees.defaultPathUnavailable')}
+                </p>
+              </div>
+              {worktreeBlockedReason ? (
+                <p className="mt-2 rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-1.5 text-2xs text-amber-800 dark:text-amber-300">
+                  {worktreeBlockedReason}
+                </p>
+              ) : null}
+              <Button type="button" size="sm" className="mt-2 h-7 w-full text-xs" onClick={addWorktree} disabled={!canAddWorktree}>
+                {operationLoading === 'worktreeAdd' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <GitCompareArrows className="mr-1.5 h-3 w-3" />}
+                {t('workspace.git.actions.addWorktree')}
+              </Button>
+            </section>
+          ) : null}
+
+          {activeToolPanel === 'commit' ? (
+            <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+              <PanelTitle icon={<GitCommitHorizontal className="h-3.5 w-3.5" />} title={t('workspace.git.commit.title')} />
+              <Textarea
+                value={commitMessage}
+                onChange={(event) => setCommitMessage(event.target.value)}
+                placeholder={t('workspace.git.commit.placeholder')}
+                className="mt-2 h-16 resize-none bg-surface-input text-xs"
+              />
+              <Button type="button" size="sm" className="mt-2 h-7 w-full text-xs" onClick={commit} disabled={!commitMessage.trim() || operationLoading === 'commit'}>
+                {operationLoading === 'commit' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : null}
+                {t('workspace.git.actions.commit')}
+              </Button>
+            </section>
+          ) : null}
+
+          {activeToolPanel === 'branch' ? (
+            <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+              <PanelTitle icon={<GitBranch className="h-3.5 w-3.5" />} title={t('workspace.git.branch.title')} />
+              <div className="mt-2 rounded-md border border-black/5 bg-surface-input p-2 dark:border-white/10">
+                <p className="text-2xs font-medium uppercase tracking-normal text-muted-foreground">
+                  {t('workspace.git.branch.checkoutTitle')}
+                </p>
+                <div className="mt-1.5 flex min-w-0 gap-2">
+                  <Select value={checkoutBranchName} onValueChange={setCheckoutBranchName}>
+                    <SelectTrigger size="sm" aria-label={t('workspace.git.branch.checkoutSelect')} className="min-w-0 flex-1 bg-background text-xs dark:bg-white/5">
+                      <SelectValue placeholder={t('workspace.git.branch.checkoutSelect')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {branches.map((branch) => (
+                        <SelectItem key={branch.name} value={branch.name}>
+                          {branch.current ? `${branch.name} (${t('workspace.git.branch.current')})` : branch.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="h-8 shrink-0 text-xs"
+                    onClick={checkoutSelectedBranch}
+                    disabled={!checkoutBranchName.trim() || operationLoading === 'checkoutBranch'}
+                  >
+                    {operationLoading === 'checkoutBranch' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : null}
+                    {t('workspace.git.actions.checkoutBranch')}
+                  </Button>
+                </div>
+              </div>
+              <div className="mt-2 grid grid-cols-3 gap-1.5">
+                <Button type="button" variant="outline" size="sm" className="h-7 bg-surface-input text-xs" onClick={fetchRepository} disabled={operationLoading === 'fetch'}>
+                  {operationLoading === 'fetch' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <RefreshCw className="mr-1 h-3 w-3" />}
+                  {t('workspace.git.actions.fetch')}
+                </Button>
+                <Button type="button" variant="outline" size="sm" className="h-7 bg-surface-input text-xs" onClick={pullRepository} disabled={operationLoading === 'pull'}>
+                  {operationLoading === 'pull' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Download className="mr-1 h-3 w-3" />}
+                  {t('workspace.git.actions.pull')}
+                </Button>
+                <Button type="button" variant="outline" size="sm" className="h-7 bg-surface-input text-xs" onClick={pushRepository} disabled={operationLoading === 'push'}>
+                  {operationLoading === 'push' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Upload className="mr-1 h-3 w-3" />}
+                  {t('workspace.git.actions.push')}
+                </Button>
+              </div>
+              <div className="mt-2 rounded-md border border-black/5 bg-surface-input p-2 dark:border-white/10">
+                <p className="text-2xs font-medium uppercase tracking-normal text-muted-foreground">
+                  {t('workspace.git.branch.createTitle')}
+                </p>
+              <Input
+                value={branchName}
+                onChange={(event) => setBranchName(event.target.value)}
+                placeholder={t('workspace.git.branchWorktree.branchPlaceholder')}
+                  className="mt-1.5 h-8 bg-background text-xs dark:bg-white/5"
+              />
+              <Button type="button" variant="outline" size="sm" className="mt-2 h-7 w-full bg-surface-input text-xs" onClick={createBranch} disabled={!branchName.trim() || operationLoading === 'branch'}>
+                {t('workspace.git.actions.createBranch')}
+              </Button>
+              </div>
+            </section>
+          ) : null}
+
+          {activeToolPanel === 'stash' ? (
+            <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10" data-testid="workspace-git-stash-panel">
+              <div className="flex items-center justify-between gap-2">
+                <PanelTitle icon={<Archive className="h-3.5 w-3.5" />} title={t('workspace.git.stash.title')} />
+                <Badge variant="outline" className="text-2xs">
+                  {t('workspace.git.stash.count', { count: stashes.length })}
+                </Badge>
+              </div>
+              <div className="mt-2 max-h-24 space-y-1 overflow-y-auto rounded-md border border-black/5 bg-surface-input p-1 dark:border-white/10">
+                {stashes.length === 0 ? (
+                  <p className="px-1 py-1 text-2xs text-muted-foreground">{t('workspace.git.stash.empty')}</p>
+                ) : stashes.map((stash) => (
+                  <div key={stash.selector} className="rounded bg-background px-2 py-1 dark:bg-white/5">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="min-w-[140px] flex-1">
+                        <p className="truncate text-2xs font-medium text-foreground">{stash.message}</p>
+                        <p className="truncate font-mono text-2xs text-muted-foreground">
+                          {stash.selector}
+                          {stash.branch ? ` - ${stash.branch}` : ''}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-1">
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="h-6 px-1.5 text-2xs text-red-700 hover:text-red-700 dark:text-red-400"
-                          onClick={() => removeWorktree(worktree)}
-                          disabled={operationLoading === `remove:${worktree.path}`}
+                          className="h-6 px-1.5 text-2xs"
+                          aria-label={t('workspace.git.stash.applyLabel', { selector: stash.selector })}
+                          onClick={() => applyStash(stash)}
+                          disabled={operationLoading === `stashApply:${stash.selector}`}
                         >
-                          <Trash2 className="mr-1 h-3 w-3" />
-                          {t('workspace.git.actions.removeWorktree')}
+                          {operationLoading === `stashApply:${stash.selector}` ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : null}
+                          {t('workspace.git.actions.stashApply')}
                         </Button>
-                      ) : null}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-1.5 text-2xs text-amber-700 hover:text-amber-700 dark:text-amber-400"
+                          aria-label={t('workspace.git.stash.popLabel', { selector: stash.selector })}
+                          onClick={() => popStash(stash)}
+                          disabled={operationLoading === `stashPop:${stash.selector}`}
+                        >
+                          {operationLoading === `stashPop:${stash.selector}` ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : null}
+                          {t('workspace.git.actions.stashPop')}
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-2 grid grid-cols-2 gap-1 rounded-md bg-surface-input p-0.5">
-            {(['new', 'existing'] as const).map((mode) => (
-              <button
-                key={mode}
-                type="button"
-                className={cn(
-                  'rounded px-2 py-1 text-2xs text-muted-foreground',
-                  worktreeMode === mode && 'bg-black/5 text-foreground dark:bg-white/10',
-                )}
-                onClick={() => setWorktreeMode(mode)}
-              >
-                {mode === 'new' ? t('workspace.git.worktrees.newBranch') : t('workspace.git.worktrees.existingBranch')}
-              </button>
-            ))}
-          </div>
-          {worktreeMode === 'existing' ? (
-            <Select value={worktreeBranch} onValueChange={setWorktreeBranch}>
-              <SelectTrigger size="sm" className="mt-2 bg-surface-input text-xs">
-                <SelectValue placeholder={t('workspace.git.worktrees.selectBranch')} />
-              </SelectTrigger>
-              <SelectContent>
-                {branches.map((branch) => (
-                  <SelectItem key={branch.name} value={branch.name}>{branch.name}</SelectItem>
                 ))}
-              </SelectContent>
-            </Select>
-          ) : (
-            <>
-              <Input
-                value={worktreeBranch}
-                onChange={(event) => setWorktreeBranch(event.target.value)}
-                placeholder={t('workspace.git.branchWorktree.worktreePlaceholder')}
-                className="mt-2 h-8 bg-surface-input text-xs"
-              />
-              <Input
-                value={worktreeStartPoint}
-                onChange={(event) => setWorktreeStartPoint(event.target.value)}
-                placeholder={t('workspace.git.worktrees.startPointPlaceholder')}
-                className="mt-1.5 h-8 bg-surface-input text-xs"
-              />
-            </>
-          )}
-          <Button type="button" size="sm" className="mt-2 h-7 w-full text-xs" onClick={addWorktree} disabled={!worktreeBranch.trim() || operationLoading === 'worktreeAdd'}>
-            {operationLoading === 'worktreeAdd' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <GitCompareArrows className="mr-1.5 h-3 w-3" />}
-            {t('workspace.git.actions.addWorktree')}
-          </Button>
-        </section>
-
-        <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
-          <PanelTitle icon={<GitCommitHorizontal className="h-3.5 w-3.5" />} title={t('workspace.git.commit.title')} />
-          <Textarea
-            value={commitMessage}
-            onChange={(event) => setCommitMessage(event.target.value)}
-            placeholder={t('workspace.git.commit.placeholder')}
-            className="mt-2 h-16 resize-none bg-surface-input text-xs"
-          />
-          <Button type="button" size="sm" className="mt-2 h-7 w-full text-xs" onClick={commit} disabled={!commitMessage.trim() || operationLoading === 'commit'}>
-            {operationLoading === 'commit' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : null}
-            {t('workspace.git.actions.commit')}
-          </Button>
-        </section>
-
-        <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
-          <PanelTitle icon={<GitBranch className="h-3.5 w-3.5" />} title={t('workspace.git.branch.title')} />
-          <Input
-            value={branchName}
-            onChange={(event) => setBranchName(event.target.value)}
-            placeholder={t('workspace.git.branchWorktree.branchPlaceholder')}
-            className="mt-2 h-8 bg-surface-input text-xs"
-          />
-          <Button type="button" variant="outline" size="sm" className="mt-2 h-7 w-full bg-surface-input text-xs" onClick={createBranch} disabled={!branchName.trim() || operationLoading === 'branch'}>
-            {t('workspace.git.actions.createBranch')}
-          </Button>
-        </section>
-
-        <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
-          <PanelTitle icon={<GitPullRequest className="h-3.5 w-3.5" />} title={t('workspace.git.github.title')} />
-          {!githubAuth?.authenticated ? (
-            <p className="mt-2 rounded-md bg-surface-input p-2 text-2xs text-muted-foreground">
-              {t('workspace.git.github.notAuthenticated')}
-            </p>
-          ) : (
-            <div className="mt-2 max-h-16 space-y-1 overflow-y-auto">
-              {pullRequests.length === 0 ? (
-                <p className="text-2xs text-muted-foreground">{t('workspace.git.github.noPrs')}</p>
-              ) : pullRequests.map((pr) => (
-                <div key={pr.number} className="truncate rounded bg-surface-input px-2 py-1 text-2xs text-foreground">
-                  #{pr.number} {pr.title}
+              </div>
+              <div className="mt-2 rounded-md border border-black/5 bg-surface-input p-2 dark:border-white/10">
+                <Input
+                  value={stashMessage}
+                  onChange={(event) => setStashMessage(event.target.value)}
+                  placeholder={t('workspace.git.stash.messagePlaceholder')}
+                  className="h-8 bg-background text-xs dark:bg-white/5"
+                />
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-2xs font-medium text-foreground">{t('workspace.git.stash.includeUntrackedLabel')}</p>
+                    <p className="truncate text-2xs text-muted-foreground">{t('workspace.git.stash.includeUntrackedHelp')}</p>
+                  </div>
+                  <Switch
+                    checked={stashIncludeUntracked}
+                    onCheckedChange={setStashIncludeUntracked}
+                    aria-label={t('workspace.git.stash.includeUntrackedLabel')}
+                  />
                 </div>
-              ))}
+              </div>
+              <Button type="button" size="sm" className="mt-2 h-7 w-full text-xs" onClick={stashChanges} disabled={!canStashChanges}>
+                {operationLoading === 'stashPush' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <Archive className="mr-1.5 h-3 w-3" />}
+                {t('workspace.git.actions.stashPush')}
+              </Button>
+            </section>
+          ) : null}
+
+          {activeToolPanel === 'github' ? (
+            <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
+              <PanelTitle icon={<GitPullRequest className="h-3.5 w-3.5" />} title={t('workspace.git.github.title')} />
+              {!githubAuth?.authenticated ? (
+                <p className="mt-2 rounded-md bg-surface-input p-2 text-2xs text-muted-foreground">
+                  {t('workspace.git.github.notAuthenticated')}
+                </p>
+              ) : (
+                <div className="mt-2 max-h-16 space-y-1 overflow-y-auto">
+                  {pullRequests.length === 0 ? (
+                    <p className="text-2xs text-muted-foreground">{t('workspace.git.github.noPrs')}</p>
+                  ) : pullRequests.map((pr) => (
+                    <div key={pr.number} className="rounded bg-surface-input px-2 py-1 text-2xs text-foreground">
+                      <p className="truncate">#{pr.number} {pr.title}</p>
+                      <p className="truncate text-muted-foreground">
+                        {t('workspace.git.github.prRefs', {
+                          head: pr.headRefName || t('workspace.git.metrics.unknown'),
+                          base: pr.baseRefName || t('workspace.git.metrics.unknown'),
+                        })}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <Input
+                value={prTitle}
+                onChange={(event) => setPrTitle(event.target.value)}
+                placeholder={t('workspace.git.github.titlePlaceholder')}
+                className="mt-2 h-8 bg-surface-input text-xs"
+                disabled={!githubAuth?.authenticated}
+              />
+              <Textarea
+                value={prBody}
+                onChange={(event) => setPrBody(event.target.value)}
+                placeholder={t('workspace.git.github.bodyPlaceholder')}
+                className="mt-1.5 h-12 resize-none bg-surface-input text-xs"
+                disabled={!githubAuth?.authenticated}
+              />
+              <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+                <Input
+                  value={prBase}
+                  onChange={(event) => setPrBase(event.target.value)}
+                  placeholder={t('workspace.git.github.basePlaceholder')}
+                  aria-label={t('workspace.git.github.baseLabel')}
+                  className="h-8 bg-surface-input text-xs"
+                  disabled={!githubAuth?.authenticated}
+                />
+                <Input
+                  value={prHead}
+                  onChange={(event) => setPrHead(event.target.value)}
+                  placeholder={t('workspace.git.github.headPlaceholder')}
+                  aria-label={t('workspace.git.github.headLabel')}
+                  className="h-8 bg-surface-input text-xs"
+                  disabled={!githubAuth?.authenticated}
+                />
+              </div>
+              <div className="mt-2 flex items-center justify-between gap-2 rounded-md border border-black/5 bg-surface-input px-2 py-1.5 dark:border-white/10">
+                <div className="min-w-0">
+                  <p className="text-2xs font-medium text-foreground">{t('workspace.git.github.draftLabel')}</p>
+                  <p className="truncate text-2xs text-muted-foreground">{t('workspace.git.github.draftHelp')}</p>
+                </div>
+                <Switch
+                  checked={prDraft}
+                  onCheckedChange={setPrDraft}
+                  aria-label={t('workspace.git.github.draftLabel')}
+                  disabled={!githubAuth?.authenticated}
+                />
+              </div>
+              <Button type="button" variant="outline" size="sm" className="mt-2 h-7 w-full bg-surface-input text-xs" onClick={createPr} disabled={!canCreatePr}>
+                {operationLoading === 'prCreate' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <GitPullRequestCreate className="mr-1.5 h-3 w-3" />}
+                {t('workspace.git.actions.createPr')}
+              </Button>
+            </section>
+          ) : null}
             </div>
-          )}
-          <Input
-            value={prTitle}
-            onChange={(event) => setPrTitle(event.target.value)}
-            placeholder={t('workspace.git.github.titlePlaceholder')}
-            className="mt-2 h-8 bg-surface-input text-xs"
-            disabled={!githubAuth?.authenticated}
-          />
-          <Textarea
-            value={prBody}
-            onChange={(event) => setPrBody(event.target.value)}
-            placeholder={t('workspace.git.github.bodyPlaceholder')}
-            className="mt-1.5 h-12 resize-none bg-surface-input text-xs"
-            disabled={!githubAuth?.authenticated}
-          />
-          <Button type="button" variant="outline" size="sm" className="mt-2 h-7 w-full bg-surface-input text-xs" onClick={createPr} disabled={!githubAuth?.authenticated || !prTitle.trim() || operationLoading === 'prCreate'}>
-            <GitPullRequestCreate className="mr-1.5 h-3 w-3" />
-            {t('workspace.git.actions.createPr')}
-          </Button>
-        </section>
-        </div>
+          </div>
+        </details>
       </div>
     </div>
     <ConfirmDialog
@@ -831,3 +1291,4 @@ function PanelTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
     </p>
   );
 }
+

@@ -1,5 +1,5 @@
 /**
- * QQ Bot target address parser â€” parse "qqbot:c2c:xxx" style addresses
+ * QQ Bot target address parser â€?parse "qqbot:c2c:xxx" style addresses
  * into structured delivery targets.
  *
  * All functions are **pure** (no side effects, no I/O), making them easy
@@ -19,13 +19,13 @@ interface ParsedTarget {
  * Parse a qqbot target string into a structured delivery target.
  *
  * Supported formats:
- * - `qqbot:c2c:openid` â†’ C2C direct message
- * - `qqbot:group:groupid` â†’ Group message
- * - `qqbot:channel:channelid` â†’ Channel message
- * - `c2c:openid` â†’ C2C (without qqbot: prefix)
- * - `group:groupid` â†’ Group (without qqbot: prefix)
- * - `channel:channelid` â†’ Channel (without qqbot: prefix)
- * - `openid` â†’ C2C (bare openid, default)
+ * - `qqbot:c2c:openid` â†?C2C direct message
+ * - `qqbot:group:groupid` â†?Group message
+ * - `qqbot:channel:channelid` â†?Channel message
+ * - `c2c:openid` â†?C2C (without qqbot: prefix)
+ * - `group:groupid` â†?Group (without qqbot: prefix)
+ * - `channel:channelid` â†?Channel (without qqbot: prefix)
+ * - `openid` â†?C2C (bare openid, default)
  *
  * @param to - Raw target string.
  * @returns Parsed target with type and id.

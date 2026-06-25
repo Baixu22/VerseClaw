@@ -1,0 +1,1044 @@
+import { app, BrowserWindow } from 'electron';
+import { randomUUID } from 'node:crypto';
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type {
+  AgentBrowserArtifactRef,
+  AgentBrowserAuthPersistenceMode,
+  AgentBrowserCommandPayload,
+  AgentBrowserConnectionMode,
+  AgentBrowserConnectionSnapshot,
+  AgentBrowserOpenPayload,
+  AgentBrowserProfileEntry,
+  AgentBrowserProfileSavePayload,
+  AgentBrowserSession,
+  AgentBrowserSessionMode,
+  AgentBrowserValidatePayload,
+  AgentBrowserValidateResult,
+  BrowserAutomationRunResult,
+  BrowserAutomationRunStep,
+} from '@shared/host-api/contract';
+import type { AgentBrowserRunner } from './agent-browser-cli-runner';
+
+type AgentBrowserWindow = Pick<
+  BrowserWindow,
+  | 'close'
+  | 'isDestroyed'
+  | 'loadURL'
+  | 'setBounds'
+  | 'show'
+  | 'webContents'
+>;
+
+type AgentBrowserWebContents = BrowserWindow['webContents'];
+
+type AgentBrowserRecord = {
+  session: AgentBrowserSession;
+  window?: AgentBrowserWindow;
+  engine: 'browser-window' | 'agent-browser-cli';
+};
+
+type AgentBrowserServiceOptions = {
+  cliRunner?: AgentBrowserRunner;
+  createWindow?: (options: Electron.BrowserWindowConstructorOptions) => AgentBrowserWindow;
+  now?: () => Date;
+  userDataPath?: string;
+};
+
+type AgentBrowserProfileMetadataFile = {
+  profiles?: Record<string, Omit<AgentBrowserProfileEntry, 'profile' | 'source' | 'activeSessions'>>;
+};
+
+type AgentBrowserValidationSnapshot = {
+  url?: string;
+  title?: string;
+  text?: string;
+  links?: Array<{ text: string; href: string }>;
+  buttons?: string[];
+};
+
+const DEFAULT_WIDTH = 1280;
+const DEFAULT_HEIGHT = 900;
+const DEFAULT_PROFILE = 'default';
+const MAX_TEXT_SAMPLE = 4000;
+const MAX_ARTIFACT_TEXT = 120_000;
+const CONTROLLED_CLI_FLAGS = new Set([
+  '--json',
+  '--session',
+  '--profile',
+  '--headed',
+  '--max-output',
+  '--session-name',
+  '--state',
+  '--auto-connect',
+  '--cdp',
+  '--executable-path',
+]);
+
+function normalizeMode(value: unknown): AgentBrowserSessionMode {
+  return value === 'visible' ? 'visible' : 'headless';
+}
+
+function normalizeDimension(value: unknown, fallback: number): number {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Math.max(320, Math.min(4096, Math.floor(value)))
+    : fallback;
+}
+
+function normalizeTimeoutMs(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Math.max(1000, Math.min(300_000, Math.floor(value)))
+    : undefined;
+}
+
+function normalizeProfile(value: unknown): string {
+  if (typeof value !== 'string') return DEFAULT_PROFILE;
+  const normalized = value.trim().toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
+  return normalized || DEFAULT_PROFILE;
+}
+
+function normalizeAuthStateName(value: unknown, profile: string): string | undefined {
+  const source = typeof value === 'string' && value.trim() ? value.trim() : profile;
+  const normalized = source.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '');
+  return normalized || undefined;
+}
+
+function normalizeAuthPersistence(value: unknown): AgentBrowserAuthPersistenceMode {
+  return value === 'profile' || value === 'off' ? value : 'session-name';
+}
+
+function normalizeExternalValue(value: unknown, label: string): string {
+  if (typeof value !== 'string' || !value.trim()) {
+    throw new Error(`Agent browser ${label} is required`);
+  }
+  const normalized = value.trim();
+  if (/[\r\n\0]/.test(normalized) || normalized.length > 1024) {
+    throw new Error(`Agent browser ${label} is invalid`);
+  }
+  return normalized;
+}
+
+function normalizeConnection(payload: {
+  connectionMode?: AgentBrowserConnectionMode;
+  cdpEndpoint?: string;
+  externalProfile?: string;
+  executablePath?: string;
+  allowExternalBrowser?: boolean;
+}): AgentBrowserConnectionSnapshot {
+  const mode = payload.connectionMode ?? 'managed';
+  if (mode !== 'managed' && payload.allowExternalBrowser !== true) {
+    throw new Error('Agent browser external browser access requires allowExternalBrowser=true');
+  }
+  switch (mode) {
+    case 'managed':
+      return { mode };
+    case 'auto-connect':
+      return { mode };
+    case 'cdp':
+      return {
+        mode,
+        cdpEndpoint: normalizeExternalValue(payload.cdpEndpoint, 'cdpEndpoint'),
+      };
+    case 'external-profile':
+      return {
+        mode,
+        externalProfile: normalizeExternalValue(payload.externalProfile, 'externalProfile'),
+        ...(payload.executablePath
+          ? { executablePath: normalizeExternalValue(payload.executablePath, 'executablePath') }
+          : {}),
+      };
+    default:
+      throw new Error(`Unsupported agent browser connection mode: ${String(mode)}`);
+  }
+}
+
+function hasExplicitSafetyPayload(payload: AgentBrowserCommandPayload): boolean {
+  return payload.profile !== undefined
+    || payload.mode !== undefined
+    || payload.authPersistence !== undefined
+    || payload.authStateName !== undefined
+    || payload.connectionMode !== undefined
+    || payload.cdpEndpoint !== undefined
+    || payload.externalProfile !== undefined
+    || payload.executablePath !== undefined
+    || payload.allowExternalBrowser !== undefined;
+}
+
+function normalizeHttpUrl(value: string | undefined): string | undefined {
+  if (!value?.trim()) return undefined;
+  const raw = value.trim();
+  const withProtocol = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  const parsed = new URL(withProtocol);
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    throw new Error('Agent browser URL must use http or https');
+  }
+  return parsed.toString();
+}
+
+function normalizeCliArgs(value: unknown, label: string): string[] {
+  if (!Array.isArray(value)) {
+    throw new Error(`Agent browser ${label} must be an array`);
+  }
+  const args = value.map((entry) => {
+    if (typeof entry !== 'string') {
+      throw new Error(`Agent browser ${label} entries must be strings`);
+    }
+    const arg = entry.trim();
+    if (!arg) {
+      throw new Error(`Agent browser ${label} cannot include empty entries`);
+    }
+    return arg;
+  });
+  for (const arg of args) {
+    const flag = arg.includes('=') ? arg.slice(0, arg.indexOf('=')) : arg;
+    if (CONTROLLED_CLI_FLAGS.has(flag)) {
+      throw new Error(`Agent browser command cannot override managed CLI flag: ${flag}`);
+    }
+  }
+  return args;
+}
+
+function normalizeMaxOutput(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Math.max(1000, Math.min(2_000_000, Math.floor(value)))
+    : undefined;
+}
+
+async function waitForWebContents(
+  webContents: AgentBrowserWebContents,
+  eventName: 'did-finish-load' | 'dom-ready',
+): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const events = webContents as unknown as {
+      once: (eventName: string, listener: (...args: unknown[]) => void) => void;
+      removeListener: (eventName: string, listener: (...args: unknown[]) => void) => void;
+    };
+    const cleanup = () => {
+      events.removeListener(eventName, onReady);
+      events.removeListener('did-fail-load', onFail);
+    };
+    const onReady = () => {
+      cleanup();
+      resolve();
+    };
+    const onFail = (...args: unknown[]) => {
+      const errorCode = typeof args[1] === 'number' ? args[1] : 0;
+      const errorDescription = typeof args[2] === 'string' ? args[2] : 'unknown error';
+      cleanup();
+      reject(new Error(`Agent browser navigation failed (${errorCode}): ${errorDescription}`));
+    };
+    events.once(eventName, onReady);
+    events.once('did-fail-load', onFail);
+  });
+}
+
+const WAIT_FOR_SELECTOR_SCRIPT = `(selector, timeoutMs) => new Promise((resolve) => {
+  const started = Date.now();
+  const tick = () => {
+    if (document.querySelector(selector)) {
+      resolve(true);
+      return;
+    }
+    if (Date.now() - started >= timeoutMs) {
+      resolve(false);
+      return;
+    }
+    setTimeout(tick, 100);
+  };
+  tick();
+})`;
+
+export class AgentBrowserService {
+  private readonly sessions = new Map<string, AgentBrowserRecord>();
+  private readonly cliRunner: AgentBrowserRunner | undefined;
+  private readonly createWindow: (options: Electron.BrowserWindowConstructorOptions) => AgentBrowserWindow;
+  private readonly now: () => Date;
+  private readonly userDataPath: string | undefined;
+
+  constructor(options: AgentBrowserServiceOptions = {}) {
+    this.cliRunner = options.cliRunner;
+    this.createWindow = options.createWindow ?? ((windowOptions) => new BrowserWindow(windowOptions));
+    this.now = options.now ?? (() => new Date());
+    this.userDataPath = options.userDataPath;
+  }
+
+  list(): AgentBrowserSession[] {
+    return [...this.sessions.values()].map((record) => ({ ...record.session }));
+  }
+
+  async listProfiles(): Promise<AgentBrowserProfileEntry[]> {
+    const metadata = await this.readProfileMetadata();
+    const profiles = new Map<string, AgentBrowserProfileEntry>();
+    for (const [profile, entry] of Object.entries(metadata.profiles ?? {})) {
+      profiles.set(profile, {
+        profile,
+        ...entry,
+        source: 'metadata',
+      });
+    }
+
+    const profileRoot = this.profileRootDir();
+    const dirs = await readdir(profileRoot, { withFileTypes: true }).catch(() => []);
+    await Promise.all(dirs.filter((entry) => entry.isDirectory()).map(async (entry) => {
+      const profile = normalizeProfile(entry.name);
+      const profileStat = await stat(join(profileRoot, entry.name)).catch(() => undefined);
+      const current = profiles.get(profile);
+      profiles.set(profile, {
+        ...current,
+        profile,
+        lastUsedAt: current?.lastUsedAt ?? profileStat?.mtime?.toISOString(),
+        source: current?.source ?? 'profile-dir',
+      });
+    }));
+
+    for (const session of this.list()) {
+      const current = profiles.get(session.profile);
+      profiles.set(session.profile, {
+        ...current,
+        profile: session.profile,
+        authStateName: current?.authStateName ?? session.authStateName,
+        lastUsedAt: session.updatedAt,
+        activeSessions: (current?.activeSessions ?? 0) + 1,
+        source: current?.source ?? 'session',
+      });
+    }
+
+    if (!profiles.has(DEFAULT_PROFILE)) {
+      profiles.set(DEFAULT_PROFILE, {
+        profile: DEFAULT_PROFILE,
+        label: 'Default',
+        authStateName: DEFAULT_PROFILE,
+        activeSessions: 0,
+        source: 'metadata',
+      });
+    }
+
+    return [...profiles.values()].sort((left, right) => {
+      if (left.profile === DEFAULT_PROFILE) return -1;
+      if (right.profile === DEFAULT_PROFILE) return 1;
+      return (right.lastUsedAt ?? '').localeCompare(left.lastUsedAt ?? '')
+        || left.profile.localeCompare(right.profile);
+    });
+  }
+
+  async saveProfile(payload: AgentBrowserProfileSavePayload): Promise<AgentBrowserProfileEntry> {
+    const profile = normalizeProfile(payload.profile);
+    const authStateName = normalizeAuthStateName(payload.authStateName, profile);
+    const now = this.now().toISOString();
+    const metadata = await this.readProfileMetadata();
+    const current = metadata.profiles?.[profile];
+    metadata.profiles = {
+      ...(metadata.profiles ?? {}),
+      [profile]: {
+        ...current,
+        label: typeof payload.label === 'string' && payload.label.trim() ? payload.label.trim() : undefined,
+        description: typeof payload.description === 'string' && payload.description.trim() ? payload.description.trim() : undefined,
+        authStateName,
+        createdAt: current?.createdAt ?? now,
+        updatedAt: now,
+        lastUsedAt: current?.lastUsedAt,
+      },
+    };
+    await mkdir(join(this.getUserDataPath(), 'agent-browser'), { recursive: true });
+    await writeFile(this.profileMetadataPath(), JSON.stringify(metadata, null, 2), 'utf8');
+    const profileEntry = (await this.listProfiles()).find((entry) => entry.profile === profile);
+    if (!profileEntry) {
+      throw new Error(`Agent browser profile not found after save: ${profile}`);
+    }
+    return profileEntry;
+  }
+
+  async validate(payload: AgentBrowserValidatePayload = {}): Promise<AgentBrowserValidateResult> {
+    let sessionId: string | undefined;
+    const runId = randomUUID();
+    const startedAt = this.now().toISOString();
+    const steps: BrowserAutomationRunStep[] = [];
+    const markStep = (
+      id: string,
+      label: string,
+      status: BrowserAutomationRunStep['status'],
+      detail?: string,
+    ) => {
+      const timestamp = this.now().toISOString();
+      steps.push({
+        id,
+        label,
+        status,
+        ...(detail ? { detail } : {}),
+        startedAt: timestamp,
+        endedAt: timestamp,
+      });
+    };
+    try {
+      const opened = await this.open(payload);
+      sessionId = opened.session.id;
+      const session = opened.session;
+      markStep('open', 'Open page', 'passed', session.url);
+      const expectedDomains = Array.isArray(payload.expectedDomains)
+        ? payload.expectedDomains.map((entry) => String(entry).trim().toLowerCase()).filter(Boolean)
+        : [];
+      if (expectedDomains.length > 0 && session.url) {
+        const hostname = new URL(session.url).hostname.toLowerCase();
+        const allowed = expectedDomains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
+        if (!allowed) {
+          throw new Error(`Agent browser validation navigated outside allowed domains: ${hostname}`);
+        }
+        markStep('domain', 'Check allowed domain', 'passed', hostname);
+      } else {
+        markStep('domain', 'Check allowed domain', 'skipped');
+      }
+      const diagnostics: Record<string, unknown> = {};
+      if (payload.diagnostics?.snapshot) {
+        diagnostics.snapshot = await this.captureValidationSnapshot(session.id);
+        markStep('snapshot', 'Capture page snapshot', 'passed');
+      }
+      if (payload.diagnostics?.console) {
+        diagnostics.console = await this.safeCommand(session.id, ['console']);
+        markStep('console', 'Collect console diagnostics', 'passed');
+      }
+      if (payload.diagnostics?.errors) {
+        diagnostics.errors = await this.safeCommand(session.id, ['errors']);
+        markStep('errors', 'Collect page errors', 'passed');
+      }
+      if (payload.diagnostics?.network) {
+        diagnostics.network = await this.safeCommand(session.id, ['network', 'requests']);
+        markStep('network', 'Collect network diagnostics', 'passed');
+      }
+      const screenshot = payload.diagnostics?.screenshot
+        ? await this.screenshot({ sessionId: session.id }).catch(() => undefined)
+        : undefined;
+      if (screenshot?.dataUrl) {
+        markStep('screenshot', 'Capture screenshot', 'passed');
+      }
+      const runResult = await this.persistBrowserAutomationRunResult({
+        runId,
+        startedAt,
+        session,
+        ok: true,
+        steps,
+        textSample: opened.textSample,
+        diagnostics,
+        screenshotDataUrl: screenshot?.dataUrl,
+      });
+      return {
+        success: true,
+        ok: true,
+        session,
+        url: session.url,
+        title: session.title,
+        textSample: opened.textSample,
+        ...(screenshot?.dataUrl ? { screenshotDataUrl: screenshot.dataUrl } : {}),
+        ...(Object.keys(diagnostics).length > 0 ? { diagnostics } : {}),
+        runResult,
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      markStep('validate', 'Validate browser task', 'failed', message);
+      const runResult = await this.persistBrowserAutomationRunResult({
+        runId,
+        startedAt,
+        session: sessionId ? this.snapshot(sessionId) : undefined,
+        ok: false,
+        steps,
+        error: message,
+      }).catch(() => undefined);
+      return {
+        success: true,
+        ok: false,
+        ...(runResult ? { runResult } : {}),
+        error: message,
+      };
+    } finally {
+      if (sessionId) {
+        try {
+          this.close(sessionId);
+        } catch {
+          // Validation sessions are best-effort cleanup.
+        }
+      }
+    }
+  }
+
+  async open(payload: AgentBrowserOpenPayload = {}): Promise<{ session: AgentBrowserSession; textSample?: string }> {
+    const mode = normalizeMode(payload.mode);
+    const profile = normalizeProfile(payload.profile);
+    const authPersistence = normalizeAuthPersistence(payload.authPersistence);
+    const authStateName = authPersistence === 'session-name'
+      ? normalizeAuthStateName(payload.authStateName, profile)
+      : undefined;
+    const connection = normalizeConnection(payload);
+    const createdAt = this.now().toISOString();
+    const width = normalizeDimension(payload.width, DEFAULT_WIDTH);
+    const height = normalizeDimension(payload.height, DEFAULT_HEIGHT);
+    const session: AgentBrowserSession = {
+      id: randomUUID(),
+      profile,
+      mode,
+      authPersistence,
+      authStateName,
+      connection,
+      createdAt,
+      updatedAt: createdAt,
+    };
+    const url = normalizeHttpUrl(payload.url);
+
+    if (this.cliRunner?.isAvailable()) {
+      this.sessions.set(session.id, { session, engine: 'agent-browser-cli' });
+      const metadata = await this.cliRunner.open({ session, url, width, height });
+      await this.refreshCli(session.id, metadata);
+      return {
+        session: this.snapshot(session.id),
+        textSample: await this.cliRunner.textSample(this.snapshot(session.id), MAX_TEXT_SAMPLE),
+      };
+    }
+    if (connection.mode !== 'managed') {
+      throw new Error('Agent browser external browser access requires the bundled agent-browser CLI');
+    }
+
+    const window = this.createWindow({
+      show: mode === 'visible',
+      width,
+      height,
+      title: 'Agent Browser',
+      webPreferences: {
+        contextIsolation: true,
+        javascript: true,
+        nodeIntegration: false,
+        partition: `persist:agent-browser-${profile}`,
+        sandbox: true,
+      },
+    });
+    this.sessions.set(session.id, { session, window, engine: 'browser-window' });
+    if (url) {
+      await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
+    }
+    return { session: this.snapshot(session.id), textSample: await this.textSample(session.id) };
+  }
+
+  async navigate(payload: { sessionId: string; url: string; waitUntil?: 'dom-ready' | 'load' }): Promise<AgentBrowserSession> {
+    const record = this.getRecord(payload.sessionId);
+    const url = normalizeHttpUrl(payload.url);
+    if (!url) throw new Error('Agent browser URL is required');
+    if (record.engine === 'agent-browser-cli') {
+      const metadata = await this.requireCliRunner().navigate(record.session, url);
+      return await this.refreshCli(record.session.id, metadata);
+    }
+    const waitUntil = payload.waitUntil === 'dom-ready' ? 'dom-ready' : 'did-finish-load';
+    const window = this.requireWindow(record);
+    const wait = waitForWebContents(window.webContents, waitUntil);
+    await window.loadURL(url);
+    await wait;
+    return await this.refresh(record);
+  }
+
+  async waitForSelector(payload: { sessionId: string; selector: string; timeoutMs?: number }): Promise<AgentBrowserSession> {
+    const record = this.getRecord(payload.sessionId);
+    const selector = this.requireSelector(payload.selector);
+    const timeoutMs = normalizeDimension(payload.timeoutMs, 5000);
+    if (record.engine === 'agent-browser-cli') {
+      const metadata = await this.requireCliRunner().waitForSelector(record.session, selector, timeoutMs);
+      return await this.refreshCli(record.session.id, metadata);
+    }
+    const window = this.requireWindow(record);
+    const found = await window.webContents.executeJavaScript(
+      `(${WAIT_FOR_SELECTOR_SCRIPT})(${JSON.stringify(selector)}, ${timeoutMs})`,
+      true,
+    );
+    if (!found) throw new Error(`Agent browser selector timed out: ${selector}`);
+    return await this.refresh(record);
+  }
+
+  async click(payload: { sessionId: string; selector: string; timeoutMs?: number }): Promise<AgentBrowserSession> {
+    const record = this.getRecord(payload.sessionId);
+    const selector = this.requireSelector(payload.selector);
+    if (record.engine === 'agent-browser-cli') {
+      const metadata = await this.requireCliRunner().click(record.session, selector, payload.timeoutMs);
+      return await this.refreshCli(record.session.id, metadata);
+    }
+    await this.waitForSelector(payload);
+    const window = this.requireWindow(record);
+    await window.webContents.executeJavaScript(
+      `(() => {
+        const el = document.querySelector(${JSON.stringify(selector)});
+        if (!el) throw new Error('Selector not found');
+        el.scrollIntoView({ block: 'center', inline: 'center' });
+        el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
+        el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+        el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+        el.click();
+        return true;
+      })()`,
+      true,
+    );
+    return await this.refresh(record);
+  }
+
+  async type(payload: { sessionId: string; selector: string; text: string; clear?: boolean; timeoutMs?: number }): Promise<AgentBrowserSession> {
+    const record = this.getRecord(payload.sessionId);
+    const selector = this.requireSelector(payload.selector);
+    if (record.engine === 'agent-browser-cli') {
+      const metadata = await this.requireCliRunner().type({
+        session: record.session,
+        selector,
+        text: payload.text ?? '',
+        clear: payload.clear,
+        timeoutMs: payload.timeoutMs,
+      });
+      return await this.refreshCli(record.session.id, metadata);
+    }
+    await this.waitForSelector(payload);
+    const window = this.requireWindow(record);
+    await window.webContents.executeJavaScript(
+      `(() => {
+        const el = document.querySelector(${JSON.stringify(selector)});
+        if (!el) throw new Error('Selector not found');
+        el.scrollIntoView({ block: 'center', inline: 'center' });
+        el.focus();
+        const text = ${JSON.stringify(payload.text ?? '')};
+        if (${payload.clear === false ? 'false' : 'true'} && 'value' in el) {
+          el.value = '';
+        }
+        if ('value' in el) {
+          el.value = (${payload.clear === false ? 'String(el.value ?? "")' : '""'}) + text;
+          el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: text }));
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+          el.textContent = (${payload.clear === false ? 'String(el.textContent ?? "")' : '""'}) + text;
+          el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: text }));
+        }
+        return true;
+      })()`,
+      true,
+    );
+    return await this.refresh(record);
+  }
+
+  async evaluate(payload: { sessionId: string; expression: string }): Promise<{ session: AgentBrowserSession; value?: unknown }> {
+    const record = this.getRecord(payload.sessionId);
+    if (!payload.expression.trim()) throw new Error('Agent browser expression is required');
+    if (record.engine === 'agent-browser-cli') {
+      const result = await this.requireCliRunner().evaluate(record.session, payload.expression);
+      return { session: await this.refreshCli(record.session.id, result.session), value: result.value };
+    }
+    const window = this.requireWindow(record);
+    const value = await window.webContents.executeJavaScript(
+      `Promise.resolve().then(() => eval(${JSON.stringify(payload.expression)}))`,
+      true,
+    );
+    return { session: await this.refresh(record), value };
+  }
+
+  async screenshot(payload: { sessionId: string }): Promise<{ session: AgentBrowserSession; dataUrl: string; format: 'png' }> {
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine === 'agent-browser-cli') {
+      const result = await this.requireCliRunner().screenshot(record.session);
+      return {
+        session: await this.refreshCli(record.session.id, result.session),
+        dataUrl: result.dataUrl,
+        format: 'png',
+      };
+    }
+    const window = this.requireWindow(record);
+    const image = await window.webContents.capturePage();
+    return {
+      session: await this.refresh(record),
+      dataUrl: image.toDataURL(),
+      format: 'png',
+    };
+  }
+
+  async command(payload: AgentBrowserCommandPayload): Promise<{
+    session?: AgentBrowserSession;
+    data?: unknown;
+    stdout: string;
+    stderr: string;
+    command: string[];
+  }> {
+    const args = normalizeCliArgs(payload.args, 'args');
+    if (args.length === 0) {
+      throw new Error('Agent browser command args are required');
+    }
+    if (args[0]?.startsWith('-')) {
+      throw new Error('Agent browser command args must start with a command; use globalOptions for global flags');
+    }
+    const globalOptions = payload.globalOptions === undefined
+      ? undefined
+      : normalizeCliArgs(payload.globalOptions, 'globalOptions');
+    const runner = this.requireCliRunner();
+    const sessionId = payload.sessionId?.trim();
+    if (!sessionId) {
+      const session = hasExplicitSafetyPayload(payload)
+        ? this.createCliSession(payload)
+        : undefined;
+      const result = await runner.command({
+        session,
+        args,
+        globalOptions,
+        timeoutMs: normalizeTimeoutMs(payload.timeoutMs),
+        maxOutput: normalizeMaxOutput(payload.maxOutput),
+      });
+      if (session) {
+        return {
+          session: await this.refreshCli(session.id, result.session),
+          data: result.data,
+          stdout: result.stdout,
+          stderr: result.stderr,
+          command: result.command,
+        };
+      }
+      return {
+        data: result.data,
+        stdout: result.stdout,
+        stderr: result.stderr,
+        command: result.command,
+      };
+    }
+    const record = this.getRecord(sessionId);
+    if (record.engine !== 'agent-browser-cli') {
+      throw new Error('Agent browser command passthrough requires the bundled agent-browser CLI');
+    }
+    const result = await runner.command({
+      session: record.session,
+      args,
+      globalOptions,
+      timeoutMs: normalizeTimeoutMs(payload.timeoutMs),
+      maxOutput: normalizeMaxOutput(payload.maxOutput),
+    });
+    return {
+      session: await this.refreshCli(record.session.id, result.session),
+      data: result.data,
+      stdout: result.stdout,
+      stderr: result.stderr,
+      command: result.command,
+    };
+  }
+
+  close(sessionId: string): void {
+    const record = this.getRecord(sessionId);
+    this.sessions.delete(sessionId);
+    if (record.engine === 'agent-browser-cli') {
+      void this.requireCliRunner().close(record.session);
+      return;
+    }
+    const window = this.requireWindow(record);
+    if (!window.isDestroyed()) {
+      window.close();
+    }
+  }
+
+  private getRecord(sessionId: string): AgentBrowserRecord {
+    const record = this.sessions.get(sessionId);
+    if (!record || (record.window?.isDestroyed() ?? false)) {
+      this.sessions.delete(sessionId);
+      throw new Error(`Agent browser session not found: ${sessionId}`);
+    }
+    return record;
+  }
+
+  private requireSelector(value: string): string {
+    const selector = value?.trim();
+    if (!selector) throw new Error('Agent browser selector is required');
+    return selector;
+  }
+
+  private async refresh(record: AgentBrowserRecord): Promise<AgentBrowserSession> {
+    const window = this.requireWindow(record);
+    const webContents = window.webContents;
+    record.session = {
+      ...record.session,
+      url: webContents.getURL(),
+      title: webContents.getTitle(),
+      updatedAt: this.now().toISOString(),
+    };
+    if (record.session.mode === 'visible') {
+      window.show();
+    }
+    return { ...record.session };
+  }
+
+  private async refreshCli(
+    sessionId: string,
+    metadata: Partial<AgentBrowserSession> = {},
+  ): Promise<AgentBrowserSession> {
+    const record = this.getRecord(sessionId);
+    record.session = {
+      ...record.session,
+      ...metadata,
+      id: record.session.id,
+      profile: record.session.profile,
+      mode: record.session.mode,
+      createdAt: record.session.createdAt,
+      updatedAt: this.now().toISOString(),
+    };
+    return { ...record.session };
+  }
+
+  private snapshot(sessionId: string): AgentBrowserSession {
+    return { ...this.getRecord(sessionId).session };
+  }
+
+  private async textSample(sessionId: string): Promise<string | undefined> {
+    const record = this.getRecord(sessionId);
+    if (record.engine === 'agent-browser-cli') {
+      return await this.requireCliRunner().textSample(record.session, MAX_TEXT_SAMPLE);
+    }
+    try {
+      const window = this.requireWindow(record);
+      const value = await window.webContents.executeJavaScript(
+        `document.body ? document.body.innerText.slice(0, ${MAX_TEXT_SAMPLE}) : ''`,
+        true,
+      );
+      return typeof value === 'string' ? value : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private async captureValidationSnapshot(sessionId: string): Promise<unknown> {
+    const record = this.getRecord(sessionId);
+    if (record.engine === 'agent-browser-cli') {
+      const result = await this.command({ sessionId, args: ['snapshot', '-i'], maxOutput: 120_000 });
+      return result.data ?? result.stdout;
+    }
+    const snapshot = await this.evaluate({
+      sessionId,
+      expression: `(() => {
+        const clean = (value) => String(value || '').replace(/\\s+/g, ' ').trim();
+        return {
+          url: location.href,
+          title: document.title,
+          text: clean(document.body?.innerText || '').slice(0, ${MAX_TEXT_SAMPLE}),
+          links: Array.from(document.querySelectorAll('a[href]')).slice(0, 30).map((link) => ({
+            text: clean(link.textContent).slice(0, 120),
+            href: link.href,
+          })),
+          buttons: Array.from(document.querySelectorAll('button, input[type="button"], input[type="submit"]'))
+            .slice(0, 30)
+            .map((button) => clean(button.textContent || button.value).slice(0, 120)),
+        };
+      })()`,
+    });
+    return snapshot.value as AgentBrowserValidationSnapshot | undefined;
+  }
+
+  private async safeCommand(sessionId: string, args: string[]): Promise<unknown> {
+    try {
+      const result = await this.command({ sessionId, args, maxOutput: 80_000 });
+      return result.data ?? result.stdout;
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : String(error) };
+    }
+  }
+
+  private getUserDataPath(): string {
+    return this.userDataPath ?? app.getPath('userData');
+  }
+
+  private profileRootDir(): string {
+    return join(this.getUserDataPath(), 'agent-browser', 'profiles');
+  }
+
+  private profileMetadataPath(): string {
+    return join(this.getUserDataPath(), 'agent-browser', 'profile-metadata.json');
+  }
+
+  private async readProfileMetadata(): Promise<AgentBrowserProfileMetadataFile> {
+    try {
+      const content = await readFile(this.profileMetadataPath(), 'utf8');
+      const parsed = JSON.parse(content) as AgentBrowserProfileMetadataFile;
+      return parsed && typeof parsed === 'object'
+        ? { profiles: parsed.profiles && typeof parsed.profiles === 'object' ? parsed.profiles : {} }
+        : { profiles: {} };
+    } catch {
+      return { profiles: {} };
+    }
+  }
+
+  private runArtifactRootDir(runId: string): string {
+    return join(this.getUserDataPath(), 'agent-browser', 'run-artifacts', runId);
+  }
+
+  private detectLoginState(params: {
+    finalUrl?: string;
+    textSample?: string;
+    ok: boolean;
+  }): BrowserAutomationRunResult['loginState'] {
+    const haystack = `${params.finalUrl ?? ''}\n${params.textSample ?? ''}`.toLowerCase();
+    if (/\b(log[\s-]?in|sign[\s-]?in|password|验证码|登录|登入)\b/u.test(haystack)) {
+      return 'login-required';
+    }
+    if (/\b(log[\s-]?out|sign[\s-]?out|account|profile|dashboard|退出登录)\b/u.test(haystack)) {
+      return 'authenticated';
+    }
+    return params.ok ? 'unknown' : 'unknown';
+  }
+
+  private extractErrorLines(value: unknown): string[] {
+    const source = typeof value === 'string'
+      ? value
+      : (() => {
+        try {
+          return JSON.stringify(value) ?? '';
+        } catch {
+          return String(value ?? '');
+        }
+      })();
+    return source
+      .split(/\r?\n|","|", "/)
+      .map((entry) => entry.replace(/[{}\[\]"]/g, '').trim())
+      .filter((entry) => /error|failed|exception|ERR_|4\d\d|5\d\d/iu.test(entry))
+      .slice(0, 20);
+  }
+
+  private async writeJsonArtifact(
+    dir: string,
+    kind: AgentBrowserArtifactRef['kind'],
+    label: string,
+    value: unknown,
+    createdAt: string,
+  ): Promise<AgentBrowserArtifactRef> {
+    const fileName = `${kind}.json`;
+    const filePath = join(dir, fileName);
+    const content = JSON.stringify(value, null, 2).slice(0, MAX_ARTIFACT_TEXT);
+    await writeFile(filePath, content, 'utf8');
+    return {
+      id: `${kind}-${randomUUID()}`,
+      kind,
+      label,
+      path: filePath,
+      mimeType: 'application/json',
+      size: Buffer.byteLength(content, 'utf8'),
+      createdAt,
+    };
+  }
+
+  private async writeScreenshotArtifact(
+    dir: string,
+    dataUrl: string,
+    createdAt: string,
+  ): Promise<AgentBrowserArtifactRef | undefined> {
+    const match = /^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/u.exec(dataUrl);
+    if (!match) return undefined;
+    const mimeType = match[1] || 'image/png';
+    const ext = mimeType.includes('jpeg') ? 'jpg' : (mimeType.split('/')[1] || 'png');
+    const bytes = Buffer.from(match[2] || '', 'base64');
+    const filePath = join(dir, `screenshot.${ext}`);
+    await writeFile(filePath, bytes);
+    return {
+      id: `screenshot-${randomUUID()}`,
+      kind: 'screenshot',
+      label: 'Screenshot',
+      path: filePath,
+      mimeType,
+      size: bytes.byteLength,
+      createdAt,
+    };
+  }
+
+  private async persistBrowserAutomationRunResult(params: {
+    runId: string;
+    startedAt: string;
+    session?: AgentBrowserSession;
+    ok: boolean;
+    steps: BrowserAutomationRunStep[];
+    textSample?: string;
+    diagnostics?: Record<string, unknown>;
+    screenshotDataUrl?: string;
+    error?: string;
+  }): Promise<BrowserAutomationRunResult> {
+    const endedAt = this.now().toISOString();
+    const dir = this.runArtifactRootDir(params.runId);
+    await mkdir(dir, { recursive: true });
+
+    const artifacts: AgentBrowserArtifactRef[] = [];
+    const diagnostics = params.diagnostics ?? {};
+    for (const [key, value] of Object.entries(diagnostics)) {
+      if (value === undefined) continue;
+      const kind = key === 'snapshot' || key === 'console' || key === 'errors' || key === 'network'
+        ? key
+        : 'text';
+      artifacts.push(await this.writeJsonArtifact(dir, kind, `${kind} diagnostics`, value, endedAt));
+    }
+    const screenshotArtifact = params.screenshotDataUrl
+      ? await this.writeScreenshotArtifact(dir, params.screenshotDataUrl, endedAt)
+      : undefined;
+    if (screenshotArtifact) artifacts.push(screenshotArtifact);
+
+    const consoleErrors = [
+      ...this.extractErrorLines(diagnostics.console),
+      ...this.extractErrorLines(diagnostics.errors),
+    ];
+    const networkErrors = this.extractErrorLines(diagnostics.network);
+    const runResult: BrowserAutomationRunResult = {
+      schemaVersion: 1,
+      runId: params.runId,
+      status: params.ok ? 'success' : 'failed',
+      startedAt: params.startedAt,
+      endedAt,
+      ...(params.session?.profile ? { profile: params.session.profile } : {}),
+      ...(params.session?.authStateName ? { authStateName: params.session.authStateName } : {}),
+      ...(params.session?.url ? { finalUrl: params.session.url } : {}),
+      ...(params.session?.title ? { title: params.session.title } : {}),
+      loginState: this.detectLoginState({
+        finalUrl: params.session?.url,
+        textSample: params.textSample,
+        ok: params.ok,
+      }),
+      steps: params.steps,
+      evidence: {
+        ...(params.textSample ? { textSample: params.textSample } : {}),
+        artifacts,
+      },
+      ...(consoleErrors.length > 0 ? { consoleErrors } : {}),
+      ...(networkErrors.length > 0 ? { networkErrors } : {}),
+      ...(params.error ? { error: params.error } : {}),
+    };
+    await writeFile(join(dir, 'manifest.json'), JSON.stringify(runResult, null, 2), 'utf8');
+    return runResult;
+  }
+
+  private requireCliRunner(): AgentBrowserRunner {
+    if (!this.cliRunner) {
+      throw new Error('Agent browser CLI runner is not available');
+    }
+    return this.cliRunner;
+  }
+
+  private createCliSession(payload: Pick<
+    AgentBrowserCommandPayload,
+    | 'profile'
+    | 'mode'
+    | 'authPersistence'
+    | 'authStateName'
+    | 'connectionMode'
+    | 'cdpEndpoint'
+    | 'externalProfile'
+    | 'executablePath'
+    | 'allowExternalBrowser'
+  >): AgentBrowserSession {
+    const profile = normalizeProfile(payload.profile);
+    const authPersistence = normalizeAuthPersistence(payload.authPersistence);
+    const createdAt = this.now().toISOString();
+    const session: AgentBrowserSession = {
+      id: randomUUID(),
+      profile,
+      mode: normalizeMode(payload.mode),
+      authPersistence,
+      authStateName: authPersistence === 'session-name'
+        ? normalizeAuthStateName(payload.authStateName, profile)
+        : undefined,
+      connection: normalizeConnection(payload),
+      createdAt,
+      updatedAt: createdAt,
+    };
+    this.sessions.set(session.id, { session, engine: 'agent-browser-cli' });
+    return session;
+  }
+
+  private requireWindow(record: AgentBrowserRecord): AgentBrowserWindow {
+    if (!record.window) {
+      throw new Error(`Agent browser window is not available for session: ${record.session.id}`);
+    }
+    return record.window;
+  }
+}

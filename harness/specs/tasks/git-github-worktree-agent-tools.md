@@ -3,7 +3,7 @@ id: git-github-worktree-agent-tools
 title: Add structured Git, GitHub PR, and worktree controls
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Expose Git/GitHub/worktree operations through the typed host API, Workspace UI, and a built-in ClawX Git MCP tool surface while preserving workspace permissions and approval auditing.
+intent: Expose Git/GitHub/worktree operations through the typed host API, Workspace UI, and a built-in Verse Claw Git MCP tool surface while preserving workspace permissions and approval auditing.
 touchedAreas:
   - shared/host-api/contract.ts
   - shared/types/git.ts
@@ -16,6 +16,7 @@ touchedAreas:
   - src/components/file-preview/**
   - shared/i18n/locales/**
   - tests/e2e/workspace-git-panel.spec.ts
+  - tests/e2e/workspace-git-mcp-runtime.spec.ts
   - tests/unit/**
   - harness/specs/tasks/git-github-worktree-agent-tools.md
   - README.md
@@ -40,6 +41,7 @@ requiredTests:
   - tests/unit/mcp-api.test.ts
   - tests/unit/host-api-facade.test.ts
   - tests/e2e/workspace-git-panel.spec.ts
+  - tests/e2e/workspace-git-mcp-runtime.spec.ts
   - pnpm run typecheck
   - pnpm run comms:replay
   - pnpm run comms:compare

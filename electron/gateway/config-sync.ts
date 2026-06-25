@@ -39,7 +39,7 @@ import { syncProxyConfigToOpenClaw } from '../utils/openclaw-proxy';
 import { logger } from '../utils/logger';
 import { prependPathEntry } from '../utils/env-path';
 import { copyPluginFromNodeModules, fixupPluginManifest, cpSyncSafe, buildCandidateSources } from '../utils/plugin-install';
-import { CLAWX_OPENAI_IMAGE_PROVIDER_KEY } from '../utils/openclaw-image-relay-constants';
+import { VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY } from '../utils/openclaw-image-relay-constants';
 import { stripSystemdSupervisorEnv } from './config-sync-env';
 import { cleanupAgentsSymlinkedSkills, cleanupStalePluginRuntimeDeps } from './skills-symlink-cleanup';
 import { resolveMcpServersForContext } from '../services/mcp-api';
@@ -87,12 +87,12 @@ const CHANNEL_PLUGIN_MAP: Record<string, { dirName: string; npmName: string }> =
   whatsapp: { dirName: 'whatsapp', npmName: '@openclaw/whatsapp' },
 
   'openclaw-weixin': { dirName: 'openclaw-weixin', npmName: '@tencent-weixin/openclaw-weixin' },
-  [CLAWX_OPENAI_IMAGE_PROVIDER_KEY]: { dirName: CLAWX_OPENAI_IMAGE_PROVIDER_KEY, npmName: 'clawx-openai-image-plugin' },
+  [VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY]: { dirName: VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY, npmName: 'clawx-openai-image-plugin' },
 };
 
 /**
  * OpenClaw 3.22+ ships Discord, Telegram, and other channels as built-in
- * extensions.  If a previous ClawX version copied one of these into
+ * extensions.  If a previous Verse Claw version copied one of these into
  * ~/.openclaw/extensions/, the broken copy overrides the working built-in
  * plugin and must be removed.
  */
@@ -265,8 +265,8 @@ function withConfiguredImageGenerationPlugins(configuredChannels: string[], rawC
   const next = [...configuredChannels];
   const primary = resolveImageGenerationPrimary(rawConfig);
   const provider = primary?.includes('/') ? primary.slice(0, primary.indexOf('/')).trim() : primary;
-  if (provider === CLAWX_OPENAI_IMAGE_PROVIDER_KEY && !next.includes(CLAWX_OPENAI_IMAGE_PROVIDER_KEY)) {
-    next.push(CLAWX_OPENAI_IMAGE_PROVIDER_KEY);
+  if (provider === VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY && !next.includes(VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY)) {
+    next.push(VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY);
   }
   return next;
 }
@@ -592,12 +592,12 @@ async function resolveChannelStartupPolicy(): Promise<{
 }
 
 async function loadMcpRuntimeEnv(): Promise<Record<string, string>> {
-  // CLAWX_MCP_CONFIG_JSON is a legacy sidecar environment variable. The
+  // VERSE_CLAW_MCP_CONFIG_JSON is a legacy sidecar environment variable. The
   // OpenClaw gateway runtime does NOT consume it (verified against the
   // bundled dist — no reference to the variable exists there). MCP server
-  // persistence is owned by the ClawX electron-store `mcp-servers.json`;
+  // persistence is owned by the Verse Claw electron-store `mcp-servers.json`;
   // this env var only exposes the same resolved snapshot to out-of-tree
-  // ClawX plugins that still opt into the legacy payload.
+  // Verse Claw plugins that still opt into the legacy payload.
   try {
     const workspace = await getActiveWorkspaceProfile();
     const agentId = workspace?.selectedAgentId || workspace?.agentId || null;
@@ -606,7 +606,7 @@ async function loadMcpRuntimeEnv(): Promise<Record<string, string>> {
       agentId,
     });
     return {
-      CLAWX_MCP_CONFIG_JSON: JSON.stringify({
+      VERSE_CLAW_MCP_CONFIG_JSON: JSON.stringify({
         legacy: true,
         workspaceId: workspace?.id ?? null,
         agentId,
@@ -617,7 +617,7 @@ async function loadMcpRuntimeEnv(): Promise<Record<string, string>> {
   } catch (error) {
     logger.warn('Failed to resolve MCP runtime config:', error);
     return {
-      CLAWX_MCP_CONFIG_JSON: JSON.stringify({ legacy: true, servers: [], updatedAt: Date.now() }),
+      VERSE_CLAW_MCP_CONFIG_JSON: JSON.stringify({ legacy: true, servers: [], updatedAt: Date.now() }),
     };
   }
 }
@@ -694,7 +694,7 @@ function prepareSourceRuntimeIsolation(): {
 
   // Read the user's actual config so we can inherit model, agent, and plugin
   // settings. The isolation sandbox must still be able to resolve the same
-  // models the user configured in ClawX.
+  // models the user configured in Verse Claw.
   const userConfigPath = join(getOpenClawConfigDir(), 'openclaw.json');
   let userConfig: Record<string, unknown> = {};
   if (existsSync(userConfigPath)) {
@@ -738,7 +738,7 @@ function prepareSourceRuntimeIsolation(): {
 
       // Sync the user's model/agent/plugin settings into the isolated config
       // so the source runtime always uses the models the user configured in
-      // ClawX. Without this, a previously-created blank isolated config would
+      // Verse Claw. Without this, a previously-created blank isolated config would
       // lack any model providers and fall back to openai/gpt-5.5 (which is
       // not a registered model).
       for (const key of ['agents', 'models', 'plugins'] as const) {
@@ -786,7 +786,7 @@ function prepareSourceRuntimeIsolation(): {
 export async function prepareGatewayLaunchContext(port: number): Promise<GatewayLaunchContext> {
   const timingsMs: Record<string, number> = {};
   const totalStartedAt = Date.now();
-  const requestedRuntimeMode = process.env.CLAWX_OPENCLAW_RUNTIME?.trim().toLowerCase();
+  const requestedRuntimeMode = process.env.VERSE_CLAW_OPENCLAW_RUNTIME?.trim().toLowerCase();
   let runtimeMode: GatewayLaunchContext['runtimeMode'] = isOpenClawRuntimeEnabled() ? 'source' : 'npm';
   let openclawDir = runtimeMode === 'source' ? getOpenClawRuntimeDir() : getOpenClawDir();
   let entryScript = runtimeMode === 'source' ? getOpenClawRuntimeEntryPath() : getOpenClawEntryPath();
@@ -880,6 +880,7 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
     ...mcpEnv,
     ...proxyEnv,
     OPENCLAW_GATEWAY_TOKEN: appSettings.gatewayToken,
+    OPENCLAW_ROLE_MEMORY_ENABLED: appSettings.roleMemoryEnabled === false ? '0' : '1',
     OPENCLAW_SKIP_CHANNELS: skipChannels ? '1' : '',
     CLAWDBOT_SKIP_CHANNELS: skipChannels ? '1' : '',
     OPENCLAW_NO_RESPAWN: '1',

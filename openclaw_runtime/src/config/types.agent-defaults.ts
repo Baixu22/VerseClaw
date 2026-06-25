@@ -136,6 +136,10 @@ export type AgentTaskLoopConfig = {
   defaultTemplateId?: string;
   /** Include verifier workers when orchestration plans support them. Default: true. */
   includeVerifier?: boolean;
+  /** Emit RuntimeTaskEvent shadow records for TaskLoop lifecycle/checkpoints. Default: false. */
+  runtimeTaskEventLogShadow?: boolean;
+  /** Master switch for runtime-core TaskLoop shadow projection. Default: false. */
+  runtimeCoreShadow?: boolean;
   /** Optional model-backed self-check reviewer. */
   reviewer?: {
     model?: AgentModelConfig;

@@ -50,7 +50,8 @@ test.describe('Channels health diagnostics', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-channels').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-channels').click();
     await expect(page.getByTestId('channels-page')).toBeVisible();
     await expect(page.getByText('Feishu / Lark')).toBeVisible();
     await expect(page.getByTestId('channels-health-banner')).toHaveCount(0);
@@ -92,6 +93,19 @@ test.describe('Channels health diagnostics', () => {
                 defaultAccountId: 'default',
                 status: 'degraded',
                 statusReason: 'channels_status_timeout',
+                accessPolicy: {
+                  source: 'config',
+                  scope: 'mixed',
+                  mode: 'allowlist',
+                  dmPolicy: 'allowlist',
+                  groupPolicy: 'allowlist',
+                  dmAllowlistCount: 2,
+                  targetAllowlistCount: 1,
+                  nativeApproval: {
+                    enabled: 'auto',
+                    approverCount: 1,
+                  },
+                },
                 accounts: [
                   {
                     accountId: 'default',
@@ -100,6 +114,13 @@ test.describe('Channels health diagnostics', () => {
                     status: 'degraded',
                     statusReason: 'channels_status_timeout',
                     isDefault: true,
+                    accessPolicy: {
+                      source: 'config',
+                      scope: 'dm',
+                      mode: 'allowlist',
+                      dmPolicy: 'allowlist',
+                      dmAllowlistCount: 2,
+                    },
                   },
                 ],
               },
@@ -131,7 +152,7 @@ test.describe('Channels health diagnostics', () => {
               consecutiveHeartbeatMisses: 1,
               },
             channels: [],
-            clawxLogTail: 'clawx-log',
+            verseClawLogTail: 'verse-claw-log',
             gatewayLogTail: 'gateway-log',
             gatewayErrLogTail: '',
           });
@@ -156,11 +177,16 @@ test.describe('Channels health diagnostics', () => {
       });
     });
 
-    await page.getByTestId('sidebar-nav-channels').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-channels').click();
     await expect(page.getByTestId('channels-page')).toBeVisible();
     await expect(page.getByTestId('channels-health-banner')).toBeVisible();
     await expect(page.getByText(/Gateway degraded|状态波动|ゲートウェイ劣化/)).toBeVisible();
     await expect(page.locator('div.rounded-2xl').getByText(/Degraded|状态波动|劣化中/).first()).toBeVisible();
+
+    await expect(page.getByTestId('channels-policy-feishu-dm')).toBeVisible();
+    await expect(page.getByTestId('channels-policy-feishu-group')).toBeVisible();
+    await expect(page.getByTestId('channels-policy-feishu-approval')).toBeVisible();
 
     await page.getByTestId('channels-restart-gateway').click();
     await page.getByTestId('channels-copy-diagnostics').click();

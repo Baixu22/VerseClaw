@@ -353,7 +353,7 @@ export function registerIMessageApprovalReactionTarget(params: {
   }
   // Register the binding under every key we can derive from the conversation
   // (chat_guid / chat_identifier / chat_id / handle). Inbound lookup precedence
-  // can differ from outbound â€” e.g. send only sees `{handle: "+1..."}` for a
+  // can differ from outbound â€?e.g. send only sees `{handle: "+1..."}` for a
   // DM target, while the bridge populates chat_guid on the inbound tapback.
   // Indexing under every available key keeps send/inbound symmetric without
   // forcing the caller to know which key the bridge will pick.
@@ -432,7 +432,7 @@ export async function resolveIMessageApprovalReactionTargetWithPersistence(param
   // Try every key we can derive from the inbound payload. Send-side may have
   // registered only `handle:`, while the inbound payload carries chat_guid
   // (the bridge sets chat_guid even for DMs). We probe in precedence order
-  // (chat_guid â†’ chat_identifier â†’ chat_id â†’ handle) and accept the first hit.
+  // (chat_guid â†?chat_identifier â†?chat_id â†?handle) and accept the first hit.
   const keys = enumerateReactionTargetKeys(params);
   for (const key of keys) {
     const target = resolveTarget({
@@ -571,7 +571,7 @@ export async function handleIMessageApprovalReaction(params: {
       senderId: event.actorHandle,
       gatewayUrl: params.gatewayUrl,
     });
-    // Clear the binding on success so a second tapback (toggle ğŸ‘â†’ğŸ‘, Apple
+    // Clear the binding on success so a second tapback (toggle ğŸ‘â†’ğŸ‘? Apple
     // cross-device echo, or chat.db replay) does not re-fire and produce a
     // misleading 'expired approval' log line. Iterate every GUID candidate the
     // inbound surfaced so the prefixed/unprefixed form pair both get cleared.

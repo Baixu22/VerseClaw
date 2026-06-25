@@ -1,7 +1,7 @@
 /**
- * Monaco split diff editor (VS Code–style).  Replaces the custom table-based
- * `SplitDiffViewer`: same Monaco bundle as `MonacoViewer`, with syntax
- * highlighting, scroll sync, and virtualisation for large files.
+ * Monaco split diff editor — minimalist premium shell.
+ * Renders a clean VS Code–style diff with no extra chrome: no minimap,
+ * no overview ruler, no indicators clutter. Just the diff.
  */
 import { useMemo } from 'react';
 import { DiffEditor, languageForPath } from '@/lib/monaco/loader';
@@ -69,12 +69,13 @@ export default function MonacoDiffViewer({
           originalEditable: false,
           renderSideBySide: true,
           useInlineViewWhenSpaceIsLimited: false,
-          renderIndicators: true,
-          renderOverviewRuler: true,
+          renderIndicators: false,
+          renderOverviewRuler: false,
           renderMarginRevertIcon: false,
           minimap: { enabled: false },
-          fontSize: 13,
+          fontSize: 12.5,
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontLigatures: true,
           scrollBeyondLastLine: false,
           smoothScrolling: true,
           wordWrap: 'on',
@@ -82,7 +83,17 @@ export default function MonacoDiffViewer({
           automaticLayout: true,
           guides: { indentation: false },
           stickyScroll: { enabled: false },
-          padding: { top: 8, bottom: 8 },
+          scrollbar: {
+            vertical: 'auto',
+            horizontal: 'auto',
+            verticalScrollbarSize: 8,
+            horizontalScrollbarSize: 8,
+            useShadows: false,
+          },
+          padding: { top: 12, bottom: 12 },
+          renderLineHighlight: 'none',
+          overviewRulerBorder: false,
+          contextmenu: false,
         }}
       />
     </div>

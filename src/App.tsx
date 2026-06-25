@@ -16,17 +16,13 @@ import { useGatewayStore } from './stores/gateway';
 import { useProviderStore } from './stores/providers';
 import { rendererExtensionRegistry } from './extensions/registry';
 import { loadExternalRendererExtensions } from './extensions/_ext-bridge.generated';
-import { UpdateNotifier } from './components/update/UpdateNotifier';
 import { useNewChatAction } from './components/layout/use-new-chat-action';
 import { hostEvents } from './lib/host-events';
 import { recoverFromDynamicImportLoadError } from './lib/dynamic-import-recovery';
 
-const Models = lazy(() => import('./pages/Models').then((m) => ({ default: m.Models })));
 const Chat = lazy(() => import('./pages/Chat').then((m) => ({ default: m.Chat })));
-const Agents = lazy(() => import('./pages/Agents').then((m) => ({ default: m.Agents })));
-const Channels = lazy(() => import('./pages/Channels').then((m) => ({ default: m.Channels })));
-const Skills = lazy(() => import('./pages/Skills').then((m) => ({ default: m.Skills })));
 const Cron = lazy(() => import('./pages/Cron').then((m) => ({ default: m.Cron })));
+const RemoteTasks = lazy(() => import('./pages/RemoteTasks').then((m) => ({ default: m.RemoteTasks })));
 const Dreams = lazy(() => import('./pages/Dreams').then((m) => ({ default: m.Dreams })));
 const ImageGenerationPage = lazy(() => import('./pages/ImageGeneration').then((m) => ({ default: m.ImageGenerationPage })));
 const ObservabilityDashboard = lazy(() => import('./pages/Observability').then((m) => ({ default: m.ObservabilityDashboard })));
@@ -226,11 +222,12 @@ function App() {
             {/* Main application routes */}
             <Route element={<MainLayout />}>
               <Route path="/" element={<Chat />} />
-              <Route path="/models" element={<Models />} />
-              <Route path="/agents" element={<Agents />} />
-              <Route path="/channels" element={<Channels />} />
-              <Route path="/skills" element={<Skills />} />
+              <Route path="/models" element={<Navigate to="/settings/models" replace />} />
+              <Route path="/agents" element={<Navigate to="/settings/agents" replace />} />
+              <Route path="/channels" element={<Navigate to="/settings/channels" replace />} />
+              <Route path="/skills" element={<Navigate to="/settings/skills" replace />} />
               <Route path="/cron" element={<Cron />} />
+              <Route path="/remote-tasks" element={<RemoteTasks />} />
               <Route path="/task-ledger" element={<TaskLedgerPage />} />
               <Route path="/clawgraph" element={<ClawGraphPage />} />
               <Route path="/code-review" element={<CodeReviewPage />} />
@@ -245,8 +242,6 @@ function App() {
             </Route>
           </Routes>
         </Suspense>
-
-        <UpdateNotifier />
 
         {/* Global toast notifications */}
         <Toaster

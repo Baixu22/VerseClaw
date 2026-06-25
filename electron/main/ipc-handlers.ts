@@ -8,6 +8,7 @@ import { homedir } from 'node:os';
 import { join, extname, basename, resolve, sep, relative } from 'node:path';
 import { syncMacTrafficLightPosition } from './traffic-light-layout';
 import { GatewayManager } from '../gateway/manager';
+import { registerAgentBrowserGatewayBridge } from '../gateway/agent-browser-bridge';
 import { ClawHubService } from '../gateway/clawhub';
 import {
   type ProviderConfig,
@@ -76,10 +77,12 @@ import { createWebPreviewManager } from '../services/web-preview-manager';
 import { createWorkspacesApi } from '../services/workspaces-api';
 import { createProjectRulesApi } from '../services/project-rules-api';
 import { createRemoteControlApi } from '../services/remote-control-api';
+import { createAgentBrowserApi } from '../services/agent-browser-api';
 import { createMcpApiWithContext } from '../services/mcp-api';
 import { createSandboxApi } from '../services/sandbox-api';
 import { createTopicsApi } from '../services/topics-api';
 import { createTaskLedgerApi } from '../services/task-ledger-api';
+import { createRemoteTasksApi } from '../services/remote-tasks-api';
 import { createClawGraphApi } from '../services/clawgraph-api';
 import { createObservabilityApi, setRuntimeTraceFetcher } from '../services/observability-api';
 import {
@@ -161,6 +164,8 @@ function registerTypedHostHandlers(
     },
   });
   webPreviewManager = createWebPreviewManager({ mainWindow, terminalManager });
+  registerAgentBrowserGatewayBridge(gatewayManager);
+
   hostApiRegistry.registerCoreServices({
     app: createAppApi(),
     openclaw: createOpenClawApi(),
@@ -178,6 +183,7 @@ function registerTypedHostHandlers(
     settings: createSettingsApi(gatewayManager),
     gateway: createGatewayApi(gatewayManager, gatewayRpcBackpressure),
     remoteControl: createRemoteControlApi(),
+    agentBrowser: createAgentBrowserApi(),
     mcp: createMcpApiWithContext({ gatewayManager }),
     sandbox: createSandboxApi(),
     logs: createLogsApi(),
@@ -196,6 +202,7 @@ function registerTypedHostHandlers(
     usage: createUsageApi(),
     topics: createTopicsApi(),
     taskLedger: createTaskLedgerApi(),
+    remoteTasks: createRemoteTasksApi({ gatewayManager }),
     clawGraph: createClawGraphApi({ gatewayManager }),
     observability: createObservabilityApi({
       onRuntimeEvent: (event) => mainWindow.webContents.send('observability:runtime-event', event),
@@ -1104,7 +1111,7 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
         const resolvedBaseUrl = options?.baseUrl || provider?.baseUrl || registryBaseUrl;
         const resolvedProtocol = options?.apiProtocol || provider?.apiProtocol;
 
-        console.log(`[clawx-validate] validating provider type: ${providerType}`);
+        console.log(`[verse-claw-validate] validating provider type: ${providerType}`);
         return await validateApiKeyWithProvider(providerType, apiKey, {
           baseUrl: resolvedBaseUrl,
           apiProtocol: resolvedProtocol,

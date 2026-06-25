@@ -238,7 +238,7 @@ export default definePluginEntry({
           });
 
           const name = (chosen.name ?? "").trim() || "(unnamed)";
-          return { text: `âœ… ${providerLabel} Talk voice set to ${name}\n${chosen.id}` };
+          return { text: `âœ?${providerLabel} Talk voice set to ${name}\n${chosen.id}` };
         }
 
         return {

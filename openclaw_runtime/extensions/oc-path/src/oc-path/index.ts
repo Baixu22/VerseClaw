@@ -1,8 +1,8 @@
 /**
- * `@openclaw/oc-path` â€” substrate package public surface.
+ * `@openclaw/oc-path` â€?substrate package public surface.
  *
  * **Strategic frame**: workspace files are byte-stable and addressable
- * via the `oc://` scheme â€” the addressing scheme is universal across
+ * via the `oc://` scheme â€?the addressing scheme is universal across
  * file kinds (md / jsonc / jsonl / yaml). Encoding (parse/emit) is per-kind;
  * addressing (resolve/set) is universal.
  *
@@ -41,7 +41,7 @@ export type { YamlAst } from "./yaml/ast.js";
 
 // OcPath types + parser/formatter
 export type { OcPath, PathSegmentLayout, PositionalContainer, PredicateSpec } from "./oc-path.js";
-// Public OcPath surface â€” what plugin authors and callers use.
+// Public OcPath surface â€?what plugin authors and callers use.
 export {
   MAX_PATH_LENGTH,
   MAX_SUB_SEGMENTS_PER_SLOT,
@@ -67,7 +67,7 @@ export {
 // `parsePredicateSeg`, `parseUnionSeg`, `quoteSeg`, `unquoteSeg`,
 // `repackPath`, `resolvePositionalSeg`, `splitRespectingBrackets`
 // were exported from earlier prototypes. They're substrate-internal
-// helpers â€” used by `find.ts`, the per-kind resolvers, and the parser
+// helpers â€?used by `find.ts`, the per-kind resolvers, and the parser
 // itself, but not part of the upstream-portable public surface.
 // Callers that need their behavior should round-trip through
 // `parseOcPath` / `formatOcPath` / `findOcPaths`.
@@ -90,7 +90,7 @@ export { emitJsonl } from "./jsonl/emit.js";
 export type { YamlEmitOptions } from "./yaml/emit.js";
 export { emitYaml } from "./yaml/emit.js";
 
-// Universal verbs â€” the only public resolve / set on the surface.
+// Universal verbs â€?the only public resolve / set on the surface.
 export type {
   OcAst,
   OcMatch,
@@ -102,11 +102,11 @@ export type {
 } from "./universal.js";
 export { resolveOcPath, setOcPath, detectInsertion } from "./universal.js";
 
-// Multi-match search verb â€” the wildcard-accepting cousin of resolve.
+// Multi-match search verb â€?the wildcard-accepting cousin of resolve.
 export type { OcPathMatch } from "./find.js";
 export { findOcPaths } from "./find.js";
 
-// Cross-kind utility â€” filename â†’ kind hint.
+// Cross-kind utility â€?filename â†?kind hint.
 export { inferKind } from "./dispatch.js";
 export type { OcKind } from "./dispatch.js";
 

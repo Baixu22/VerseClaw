@@ -79,8 +79,8 @@ function formatFeishuStatusLine(status: "configured-unverified" | "needs-credent
 
 /**
  * Patch feishu config at the correct location based on accountId.
- * - DEFAULT_ACCOUNT_ID â†’ writes to top-level channels.feishu
- * - named account â†’ writes to channels.feishu.accounts[accountId]
+ * - DEFAULT_ACCOUNT_ID â†?writes to top-level channels.feishu
+ * - named account â†?writes to channels.feishu.accounts[accountId]
  */
 function patchFeishuConfig(
   cfg: OpenClawConfig,
@@ -493,11 +493,11 @@ async function runEditFlow(params: {
     });
 
     if (!useExisting) {
-      // User wants a new bot â€” run new app flow.
+      // User wants a new bot â€?run new app flow.
       return runNewAppFlow({ cfg: next, prompter, options });
     }
   } else {
-    // No existing appId â€” run new app flow.
+    // No existing appId â€?run new app flow.
     return runNewAppFlow({ cfg: next, prompter, options });
   }
 

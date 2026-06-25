@@ -2,7 +2,7 @@
   "gatewayNotRunning": "网关未运行",
   "gatewayRequired": "OpenClaw 网关需要运行才能使用聊天。它将自动启动，或者您可以从设置中启动。",
   "welcome": {
-    "title": "ClawX 聊天",
+    "title": "Verse Claw 聊天",
     "subtitle": "我能为你做些什么？",
     "askQuestions": "处理任务",
     "askQuestionsDesc": "处理面向任务的请求",
@@ -123,6 +123,54 @@
       "complete": "已完成",
       "saved": "已保存",
       "error": "需要处理"
+    },
+    "table": {
+      "label": "表格"
+    },
+    "weather": {
+      "label": "天气",
+      "humidity": "湿度",
+      "wind": "风速"
+    },
+    "directiveText": {
+      "label": "提示"
+    },
+    "source": {
+      "label": "来源",
+      "open": "打开来源"
+    },
+    "progress": {
+      "label": "进度",
+      "done": "已完成",
+      "inProgress": "进行中"
+    },
+    "statusGrid": {
+      "label": "状态"
+    },
+    "alert": {
+      "label": "提醒",
+      "dismiss": "关闭"
+    },
+    "keyValue": {
+      "label": "详情"
+    },
+    "chart": {
+      "label": "图表"
+    },
+    "imageGallery": {
+      "label": "图片"
+    },
+    "codeBlock": {
+      "label": "代码",
+      "copy": "复制",
+      "copied": "已复制"
+    },
+    "tokenUsage": {
+      "input": "输入 Token",
+      "output": "输出 Token",
+      "cache": "缓存 Token",
+      "total": "总 Token",
+      "cost": "预估费用"
     }
   },
   "knowledgeDraft": {
@@ -202,7 +250,7 @@
     "errors": {
       "outsideSandbox": "路径越界，已拒绝访问",
       "outsideSandboxTitle": "无法读取此文件",
-      "outsideSandboxHint": "ClawX 无法读取这个路径。文件可能已被移动、删除，或当前账户没有访问权限。可在文件管理器中查看。",
+      "outsideSandboxHint": "Verse Claw 无法读取这个路径。文件可能已被移动、删除，或当前账户没有访问权限。可在文件管理器中查看。",
       "readOnlyRoot": "该文件位于只读位置（如内置技能），无法修改",
       "tooLarge": "文件过大（{{size}}），已禁用预览",
       "binary": "二进制文件不支持文本预览",
@@ -212,7 +260,7 @@
       "unsupportedFormatTitle": "此文件格式暂不支持内置预览或变更",
       "unsupportedFormatHint": "当前仅支持文本/Markdown 等可直接读取的文件进行内置预览与变更对比。请在文件管理器中打开该文件。",
       "largeBinaryOpenTitle": "该文件较大，暂不支持内置预览",
-      "largeBinaryOpenHint": "当前文件为 {{size}}，ClawX 不提供内置预览。你可以确认后直接使用系统默认应用打开。",
+      "largeBinaryOpenHint": "当前文件为 {{size}}，Verse Claw 不提供内置预览。你可以确认后直接使用系统默认应用打开。",
       "openInFinderFailed": "无法在文件管理器中显示",
       "openFailed": "打开失败：{{error}}"
     },
@@ -396,16 +444,33 @@
         "refresh": "刷新",
         "stage": "暂存",
         "unstage": "取消暂存",
+        "copyPatch": "复制 patch",
+        "revert": "回滚",
         "commit": "提交已暂存变更",
+        "checkoutBranch": "切换",
         "createBranch": "创建分支",
+        "fetch": "Fetch",
+        "pull": "拉取",
+        "push": "推送",
         "addWorktree": "添加 worktree",
         "removeWorktree": "移除",
         "pruneWorktrees": "清理",
+        "stashPush": "暂存到 stash",
+        "stashApply": "应用",
+        "stashPop": "弹出",
         "createPr": "创建 PR",
-        "approveRetry": "批准并重试"
+        "approveRetry": "批准并重试",
+        "openWorktree": "打开",
+        "switchWorktree": "切换"
       },
       "approval": {
         "title": "{{action}} 需要审批"
+      },
+      "revertConfirm": {
+        "title": "回滚所选文件？",
+        "message": "这会丢弃 {{path}} 的 Git 变更。",
+        "confirm": "回滚",
+        "cancel": "取消"
       },
       "diff": {
         "unstaged": "未暂存",
@@ -414,12 +479,44 @@
         "binary": "二进制 diff 无法内联显示。",
         "tooLarge": "diff 过大，无法内联显示。"
       },
+      "validation": {
+        "title": "最近验证",
+        "empty": "尚未运行验证",
+        "status": "就绪"
+      },
+      "readiness": {
+        "gitCli": "Git CLI",
+        "agentTools": "Agent 工具",
+        "github": "GitHub",
+        "summaryLabel": "Git 就绪度",
+        "summaryValue": "{{ready}}/{{total}} 就绪",
+        "summaryHelp": "活动仓库、本机 Git、Agent 工具和 GitHub 登录",
+        "ready": "就绪",
+        "missing": "缺失",
+        "unavailable": "不可用",
+        "agentToolsReady": "{{count}} 个工具",
+        "githubLogin": "gh auth login",
+        "repository": "仓库",
+        "activeRepository": "活动仓库"
+      },
+      "toolTabs": {
+        "worktrees": "Worktree",
+        "commit": "提交",
+        "branch": "分支",
+        "stash": "Stash",
+        "github": "PR",
+        "compactHint": "紧凑工具"
+      },
       "commit": {
         "title": "提交",
         "placeholder": "提交信息"
       },
       "branch": {
-        "title": "分支"
+        "title": "分支",
+        "checkoutTitle": "切换分支",
+        "checkoutSelect": "选择分支",
+        "current": "当前",
+        "createTitle": "创建分支"
       },
       "branchWorktree": {
         "title": "分支和 worktree",
@@ -433,19 +530,70 @@
         "startPointPlaceholder": "起点，默认 HEAD",
         "selectBranch": "选择分支",
         "current": "当前",
-        "empty": "没有 worktree"
+        "locked": "已锁定",
+        "prunable": "可清理",
+        "defaultPath": "默认路径",
+        "defaultPathUnavailable": "输入分支后预览同级 worktree 路径",
+        "empty": "没有 worktree",
+        "branchExists": "该分支已存在。请选择已有分支模式，或换一个新分支名。",
+        "branchCheckedOut": "该分支已在 {{path}} checkout。"
+      },
+      "stash": {
+        "title": "Stash",
+        "count": "{{count}} 条",
+        "empty": "没有 stash",
+        "messagePlaceholder": "可选 stash 信息",
+        "includeUntrackedLabel": "包含未跟踪文件",
+        "includeUntrackedHelp": "同时保存尚未被 Git 跟踪的新文件。",
+        "applyLabel": "应用 {{selector}}",
+        "popLabel": "弹出 {{selector}}"
       },
       "github": {
         "title": "GitHub PR",
         "noPrs": "没有打开的 PR",
         "notAuthenticated": "在终端运行 gh auth login 后启用 PR 操作。",
         "titlePlaceholder": "PR 标题",
-        "bodyPlaceholder": "PR 正文"
+        "bodyPlaceholder": "PR 正文",
+        "baseLabel": "目标分支",
+        "basePlaceholder": "Base",
+        "headLabel": "来源分支",
+        "headPlaceholder": "Head",
+        "draftLabel": "草稿 PR",
+        "draftHelp": "以草稿状态创建 Pull Request。",
+        "prRefs": "{{head}} -> {{base}}"
       },
       "toast": {
         "blocked": "需要审批",
         "failed": "Git 操作失败",
-        "approvalFailed": "审批失败"
+        "approvalFailed": "审批失败",
+        "patchCopied": "Patch 已复制",
+        "patchCopyFailed": "复制 patch 失败：{{error}}",
+        "worktreeOpened": "Worktree 已打开",
+        "worktreeOpenFailed": "打开 worktree 失败：{{error}}",
+        "worktreeWorkspaceCreated": "已为这个 worktree 创建 Workspace",
+        "worktreeWorkspaceSwitched": "已切换到 worktree Workspace",
+        "worktreeWorkspaceSwitchFailed": "切换 worktree Workspace 失败：{{error}}"
+      },
+      "operation": {
+        "title": "最近操作",
+        "empty": "尚未执行 Git 操作",
+        "ready": "就绪",
+        "success": "完成",
+        "blocked": "已阻止",
+        "failed": "失败",
+        "completed": "已完成",
+        "detail": "{{action}}：{{detail}}"
+      },
+      "metrics": {
+        "changes": "变更",
+        "delta": "增删",
+        "staged": "已暂存",
+        "conflicts": "冲突",
+        "sync": "同步",
+        "worktrees": "Worktrees",
+        "stashes": "Stashes",
+        "aheadBehind": "ahead {{ahead}} / behind {{behind}}",
+        "unknown": "未知"
       }
     }
   },
@@ -453,7 +601,7 @@
     "eyebrow": "运行视图",
     "title": "任务脉络",
     "emptyTitle": "还没有结构化步骤",
-    "emptyBody": "当一次运行开始后，ClawX 会在这里展示思考、工具调用和收尾状态。",
+    "emptyBody": "当一次运行开始后，Verse Claw 会在这里展示思考、工具调用和收尾状态。",
     "status": {
       "idle": "空闲",
       "running_one": "1 个活动步骤",
@@ -535,7 +683,10 @@
   "session": {
     "renameHint": "双击重命名会话",
     "renameCurrent": "重命名当前会话",
-    "renameFailed": "重命名会话失败：{{error}}"
+    "renameFailed": "重命名会话失败：{{error}}",
+    "lineage": {
+      "forkedFrom": "Fork 自 {{session}}"
+    }
   },
   "composer": {
     "attachFiles": "添加文件",
@@ -560,8 +711,20 @@
     "knowledgeScopeDescription": {
       "none": "发送时不附加记忆或 wiki 上下文。",
       "memory": "在相关时使用运行时记忆卡片。",
-      "wiki": "使用 ClawX 托管的 wiki 知识和来源笔记。",
+      "wiki": "使用 Verse Claw 托管的 wiki 知识和来源笔记。",
       "all": "允许记忆和 wiki 一起提供上下文。"
+    },
+    "knowledgeModeTitle": "调用模式",
+    "knowledgeMode": {
+      "manual": "手动",
+      "suggest": "建议",
+      "auto-read": "自动读取"
+    },
+    "knowledgeRoute": {
+      "suggestion": "找到 {{count}} 条可能相关的知识",
+      "attach": "附加",
+      "open": "打开",
+      "dismiss": "忽略"
     },
     "knowledgeQuick": {
       "enable": "使用 wiki 知识",
@@ -588,7 +751,7 @@
       "contextButtonTooltip": "输入 / 可以附加知识、设置范围或运行会话动作。",
       "promptArgs": "范围：{{args}}",
       "unknownTitle": "未知命令",
-      "unknownDescription": "{{command}} 不是 ClawX 快捷动作。按 Escape 可继续编辑。",
+      "unknownDescription": "{{command}} 不是 Verse Claw 快捷动作。按 Escape 可继续编辑。",
       "unknownToast": "未知斜杠命令：{{command}}",
       "ledgerNodeDescription": "由 Chat 斜杠命令创建。",
       "ledgerSessionSummary": "由 Chat 斜杠命令关联：{{title}}",
@@ -624,10 +787,20 @@
           "description": "不离开输入框即可选择无、记忆、Wiki 或全部。",
           "argumentHint": "[范围]"
         },
+        "knowledge-mode": {
+          "label": "知识调用模式",
+          "description": "在手动、建议和自动读取之间切换知识库调用方式。",
+          "argumentHint": "[manual|suggest|auto]"
+        },
         "save": {
           "label": "起草知识",
           "description": "请助手准备可编辑的知识草稿，不会自动应用。",
           "argumentHint": "[主题]"
+        },
+        "steward-audit": {
+          "label": "知识审计",
+          "description": "按需运行 Knowledge Governance 审计并打开治理页。",
+          "argumentHint": ""
         },
         "steward": {
           "label": "请求知识管理员",
@@ -707,6 +880,9 @@
         "scopeOpened": "已打开知识范围选择器。",
         "scopeChanged": "知识范围已设为 {{scope}}。",
         "typeSlash": "在空输入框开头输入 / 可打开上下文面板。",
+        "knowledgeModeOpened": "已打开知识调用模式选择器。",
+        "knowledgeModeChanged": "知识调用模式已设为 {{mode}}。",
+        "stewardAuditStarted": "已开始知识治理审计。",
         "ledgerOpened": "已打开 Task Ledger",
         "ledgerCreated": "已创建任务：{{title}}",
         "ledgerFailed": "无法创建任务：{{error}}",
@@ -821,6 +997,11 @@
     },
     "continuity": {
       "recommended": "推荐",
+      "health": {
+        "healthy": "连续性状态健康",
+        "risky": "连续性需要先审阅",
+        "blocked": "当前运行结束后才能继续"
+      },
       "tooltip": {
         "fork": {
           "default": "当前推荐：把这段 transcript 分叉成新对话"
@@ -831,7 +1012,8 @@
           "high_pressure": "上下文压力较高；建议准备接力草稿",
           "truncated_context": "部分历史已隐藏；建议准备接力草稿",
           "compaction_warning": "上下文状态需要谨慎；建议准备接力草稿",
-          "recovery_checkpoint": "已有恢复 checkpoint；建议准备基于 checkpoint 的接力草稿"
+          "recovery_checkpoint": "已有恢复 checkpoint；建议准备基于 checkpoint 的接力草稿",
+          "recovery_context": "已有恢复上下文；建议准备可审阅草稿"
         }
       },
       "dialogHint": {
@@ -840,7 +1022,8 @@
         "high_pressure": "上下文压力较高，接力草稿能让下一步在新会话开始前先被确认。",
         "truncated_context": "部分 transcript 历史已隐藏，草稿接力比复制分支更稳妥。",
         "compaction_warning": "上下文压缩状态存在提示，草稿接力是更稳妥的延续方式。",
-        "recovery_checkpoint": "已有 ResumeCheckpoint，因此接力可以把 Task Ledger、Git、trace 和 checkpoint 证据带入可审阅草稿。"
+        "recovery_checkpoint": "已有 ResumeCheckpoint，因此接力可以把 Task Ledger、Git、trace 和 checkpoint 证据带入可审阅草稿。",
+        "recovery_context": "已有 runtime 恢复上下文，因此接力可以把有界恢复投影与 Task Ledger、证据一起带入草稿。"
       },
       "failure": {
         "action": {
@@ -933,7 +1116,7 @@
     "skillPreviewNotFound": "找不到该技能。请打开技能列表以刷新。",
     "capability": {
       "dialogTitle": "应用能力变更？",
-      "dialogDescription": "ClawX 在这条消息中检测到本地 Skill 或 MCP 管理动作。执行前请先确认。",
+      "dialogDescription": "Verse Claw 在这条消息中检测到本地 Skill 或 MCP 管理动作。执行前请先确认。",
       "confirm": "确认并发送",
       "cancel": "取消",
       "applied": "能力变更已应用",
@@ -959,10 +1142,10 @@
         }
       },
       "unsupported": {
-        "generic": "ClawX 需要匹配到本地技能或 MCP JSON，才能从聊天中应用该动作。",
-        "skillNotFound": "ClawX 找不到这个本地技能。请打开技能选择器，或先在本地安装该技能。",
+        "generic": "Verse Claw 需要匹配到本地技能或 MCP JSON，才能从聊天中应用该动作。",
+        "skillNotFound": "Verse Claw 找不到这个本地技能。请打开技能选择器，或先在本地安装该技能。",
         "mcpConfigRequired": "请粘贴完整 MCP JSON 配置，才能从聊天中注册 MCP 服务。",
-        "mcpServerNotFound": "ClawX 找不到这个已注册 MCP 服务。请使用 MCP 服务名称或 ID。"
+        "mcpServerNotFound": "Verse Claw 找不到这个已注册 MCP 服务。请使用 MCP 服务名称或 ID。"
       }
     },
     "effortButton": "强度",
@@ -991,7 +1174,94 @@
       "review": "默认不改文件，专注检查 diff 和风险。",
       "docsData": "处理文档、表格、PDF 和报告。"
     },
-    "workModeRecommendedPermission": "建议：{{mode}}"
+    "workModeRecommendedPermission": "建议：{{mode}}",
+    "intervention": {
+      "guide": "引导",
+      "guideTooltip": "向当前运行注入非打断式指导。",
+      "queue": "排队",
+      "queueTooltip": "保持当前运行不变，稍后重放这条后续输入。",
+      "interrupt": "打断",
+      "interruptTooltip": "在高风险回滚前中止或改向当前运行。"
+    },
+    "rollbackPlan": {
+      "title": "回滚与恢复方案",
+      "open": "打开",
+      "risk": {
+        "safe": "安全",
+        "review": "复核",
+        "dangerous": "高风险"
+      },
+      "riskCount": {
+        "safe": "{{count}} 项安全",
+        "review": "{{count}} 项复核",
+        "dangerous": "{{count}} 项高风险"
+      },
+      "signalState": {
+        "active": "已触发",
+        "ready": "待命"
+      },
+      "signals": {
+        "checkpoint": "检查点",
+        "queue": "队列",
+        "context": "上下文",
+        "terminal": "终端",
+        "git": "Git 回滚",
+        "taskLedger": "Task Ledger",
+        "memory": "记忆"
+      },
+      "destructiveWarning": "破坏性回滚必须通过带审批的 Git、文件或终端动作执行。",
+      "actions": {
+        "checkpoint-handoff": {
+          "title": "准备 checkpoint 接力",
+          "detail": "从 {{trigger}} checkpoint 恢复，避免重放完整 transcript。"
+        },
+        "drain-queue": {
+          "title": "发送排队后续",
+          "detail": "当前运行空闲后可重放 {{count}} 条排队后续。"
+        },
+        "manual-compact": {
+          "title": "压缩当前上下文",
+          "detailPressure": "降低 transcript 压力，同时保留有边界的延续摘要。",
+          "detailDefault": "继续高风险工作前创建新的有边界上下文。"
+        },
+        "review-git": {
+          "title": "复核文件回滚选项",
+          "detail": "使用 Git 面板的 revert/stash 审批动作，避免静默丢弃修改。"
+        },
+        "task-ledger-review": {
+          "title": "在 Task Ledger 标记恢复证据",
+          "detail": "把偏差、阻塞和复核证据记录成持久任务状态。"
+        },
+        "memory-review": {
+          "title": "记忆变更保持复核模式",
+          "detail": "把有用恢复事实转成 Knowledge 草稿或记忆提案，不自动写入持久记忆。"
+        },
+        "terminal-interrupt": {
+          "title": "破坏性回滚前先打断",
+          "detail": "执行终端、Git 或文件回滚前，先停止或引导当前运行。"
+        },
+        "terminal-control": {
+          "title": "打开终端介入控制",
+          "detail": "打开工作区终端面板；如存在运行中的终端会话则发送 Ctrl+C。"
+        }
+      },
+      "summary": {
+        "checkpoint": "可从 {{trigger}} checkpoint 恢复。",
+        "queue": "还有 {{count}} 条排队后续待处理。",
+        "truncated": "已有 {{count}} 条 transcript 消息被截断；优先使用接力或压缩。",
+        "default": "未检测到紧急回滚压力；破坏性操作前先走复核式恢复。"
+      },
+      "terminal": {
+        "interrupted": "已发送终端中断。",
+        "opened": "已打开终端控制；未发现正在运行的终端会话。",
+        "interruptFailed": "终端中断失败。"
+      },
+      "memoryDraft": {
+        "title": "恢复记忆提案：{{session}}",
+        "reviewNotice": "仅供复核的恢复记忆提案。用户验证事实、范围和来源证据前，不要写入持久记忆。",
+        "emptyBody": "会话 {{sessionKey}} 还没有可渲染的恢复 transcript。应用前只记录已验证的恢复事实、决策、阻塞和证据引用。"
+      }
+    }
   },
   "historyBuckets": {
     "today": "今天",
@@ -1007,6 +1277,21 @@
   "sessionView": {
     "project": "项目",
     "time": "时间"
+  },
+  "sidebar": {
+    "searchSessions": "搜索会话",
+    "clearSearch": "清除搜索",
+    "searchNoResults": "未找到会话",
+    "searchModalPlaceholder": "按名称、工作区或代理搜索会话...",
+    "searchEmptyHint": "开始输入以搜索你的会话",
+    "searchCurrent": "当前",
+    "searchRelativeNow": "刚刚",
+    "searchRelativeMinutes": "{{count}} 分钟前",
+    "searchRelativeHours": "{{count}} 小时前",
+    "searchRelativeDays": "{{count}} 天前",
+    "searchHintNavigate": "导航",
+    "searchHintSelect": "选择",
+    "searchHintClose": "关闭"
   },
   "questionDirectory": {
     "title": "问题目录",
@@ -1042,6 +1327,11 @@
       "runtimeUnavailable": "Runtime 不可用",
       "optionalExternal": "可选"
     },
+    "intensity": "提示词强度",
+    "intensityMode_full": "🛠️ 完整上下文",
+    "intensityMode_minimal": "⚡ 精简上下文",
+    "intensityMode_none": "🪶 轻量分析",
+    "tokenSavings": "节省 ~{{tokens}} token/轮",
     "status": {
       "plan": {
         "primary": "假设",
@@ -1091,11 +1381,11 @@
       "permission": "??"
     },
     "statusIndicator": {
-      "label": "\u52a9\u624b\u72b6\u6001"
+      "label": "助手状态"
     },
     "activity": {
-      "thinking": "\u6b63\u5728\u601d\u8003",
-      "processingToolResults": "\u6b63\u5728\u5904\u7406\u5de5\u5177\u7ed3\u679c"
+      "thinking": "正在思考",
+      "processingToolResults": "正在处理工具结果"
     },
     "quote": {
       "action": "??"
@@ -1111,12 +1401,12 @@
     }
   },
   "sessionStatus": {
-    "running": "\u6b63\u5728\u8fd0\u884c",
-    "waiting": "\u7b49\u5f85\u8f93\u5165",
-    "completed": "\u5df2\u5b8c\u6210",
-    "error": "\u9700\u8981\u6ce8\u610f",
-    "aborted": "\u5df2\u505c\u6b62",
-    "dismissCompleted": "\u9690\u85cf\u5df2\u5b8c\u6210\u72b6\u6001"
+    "running": "正在运行",
+    "waiting": "等待输入",
+    "completed": "已完成",
+    "error": "需要注意",
+    "aborted": "已停止",
+    "dismissCompleted": "隐藏已完成状态"
   },
   "turnWork": {
     "title": "工作面板",

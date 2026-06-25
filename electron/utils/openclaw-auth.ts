@@ -35,8 +35,8 @@ import {
   assertValidApiProtocol,
 } from '../shared/providers/types';
 import {
-  CLAWX_OPENAI_IMAGE_DEFAULT_MODEL,
-  CLAWX_OPENAI_IMAGE_PROVIDER_KEY,
+  VERSE_CLAW_OPENAI_IMAGE_DEFAULT_MODEL,
+  VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY,
 } from './openclaw-image-relay-constants';
 import {
   applyWorkspaceSandboxConfig,
@@ -1773,8 +1773,8 @@ export async function syncOpenAiCompatibleImageRelay(params: {
     if (!params.enabled) {
       const models = (config.models || {}) as Record<string, unknown>;
       const providers = (models.providers || {}) as Record<string, unknown>;
-      if (providers[CLAWX_OPENAI_IMAGE_PROVIDER_KEY]) {
-        delete providers[CLAWX_OPENAI_IMAGE_PROVIDER_KEY];
+      if (providers[VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY]) {
+        delete providers[VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY];
         models.providers = providers;
         config.models = models;
       }
@@ -1786,14 +1786,14 @@ export async function syncOpenAiCompatibleImageRelay(params: {
       const primary = typeof imageGenerationModel?.primary === 'string'
         ? imageGenerationModel.primary.trim().toLowerCase()
         : '';
-      if (defaults && primary.startsWith(`${CLAWX_OPENAI_IMAGE_PROVIDER_KEY}/`)) {
+      if (defaults && primary.startsWith(`${VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY}/`)) {
         delete defaults.imageGenerationModel;
       }
-      removePluginRegistrations(config, [CLAWX_OPENAI_IMAGE_PROVIDER_KEY]);
+      removePluginRegistrations(config, [VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY]);
       await writeOpenClawJson(config);
-      await removeProviderKeyFromOpenClaw(CLAWX_OPENAI_IMAGE_PROVIDER_KEY);
+      await removeProviderKeyFromOpenClaw(VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY);
       if (params.apiKey?.trim()) {
-        await saveProviderKeyToOpenClaw(CLAWX_OPENAI_IMAGE_PROVIDER_KEY, params.apiKey.trim());
+        await saveProviderKeyToOpenClaw(VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY, params.apiKey.trim());
       }
       return;
     }
@@ -1803,20 +1803,20 @@ export async function syncOpenAiCompatibleImageRelay(params: {
       .map((id) => id.trim())
       .filter(Boolean))];
     if (modelIds.length === 0) {
-      modelIds.push(CLAWX_OPENAI_IMAGE_DEFAULT_MODEL);
+      modelIds.push(VERSE_CLAW_OPENAI_IMAGE_DEFAULT_MODEL);
     }
-    upsertOpenClawProviderEntry(config, CLAWX_OPENAI_IMAGE_PROVIDER_KEY, {
+    upsertOpenClawProviderEntry(config, VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY, {
       baseUrl,
       api: 'openai-completions',
       modelIds,
       mergeExistingModels: false,
       request: { allowPrivateNetwork: true },
     });
-    ensurePluginRegistrationEnabled(config, CLAWX_OPENAI_IMAGE_PROVIDER_KEY);
+    ensurePluginRegistrationEnabled(config, VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY);
     await writeOpenClawJson(config);
 
     if (params.apiKey?.trim()) {
-      await saveProviderKeyToOpenClaw(CLAWX_OPENAI_IMAGE_PROVIDER_KEY, params.apiKey.trim());
+      await saveProviderKeyToOpenClaw(VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY, params.apiKey.trim());
     }
   });
 }
@@ -1824,10 +1824,10 @@ export async function syncOpenAiCompatibleImageRelay(params: {
 export function readOpenAiCompatibleImageRelayState(
   config: Record<string, unknown>,
 ): { enabled: boolean; baseUrl: string; providerKey?: string } {
-  const clawxRelay = readModelsProvider(config, CLAWX_OPENAI_IMAGE_PROVIDER_KEY);
+  const clawxRelay = readModelsProvider(config, VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY);
   const relayBaseUrl = typeof clawxRelay?.baseUrl === 'string' ? clawxRelay.baseUrl.trim() : '';
   if (relayBaseUrl) {
-    return { enabled: true, baseUrl: relayBaseUrl, providerKey: CLAWX_OPENAI_IMAGE_PROVIDER_KEY };
+    return { enabled: true, baseUrl: relayBaseUrl, providerKey: VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY };
   }
 
   // Backward compatibility for ClawX builds that used models.providers.openai

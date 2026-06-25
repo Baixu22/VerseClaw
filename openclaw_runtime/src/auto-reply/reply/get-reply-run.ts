@@ -406,6 +406,7 @@ type RunPreparedReplyParams = {
   directives: InlineDirectives;
   defaultActivation: Parameters<typeof buildGroupIntro>[0]["defaultActivation"];
   resolvedThinkLevel: ThinkLevel | undefined;
+  resolvedPromptMode: 'full' | 'minimal' | 'none' | undefined;
   resolvedVerboseLevel: VerboseLevel | undefined;
   resolvedReasoningLevel: ReasoningLevel;
   resolvedElevatedLevel: ElevatedLevel;
@@ -1306,6 +1307,7 @@ export async function runPreparedReply(
       authProfileId,
       authProfileIdSource,
       thinkLevel: resolvedThinkLevel,
+      promptMode: resolvedPromptMode,
       fastMode: useFastReplyRuntime
         ? false
         : resolveFastModeState({
@@ -1401,3 +1403,4 @@ export async function runPreparedReply(
     replyOperation: providedReplyOperation,
   });
 }
+  let { sessionEntry, resolvedThinkLevel, resolvedPromptMode } = params;

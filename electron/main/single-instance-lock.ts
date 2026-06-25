@@ -1,4 +1,4 @@
-import { closeSync, mkdirSync, openSync, rmSync } from 'node:fs';
+﻿import { closeSync, mkdirSync, openSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { app } from 'electron';
 import { acquireProcessInstanceFileLock } from './process-instance-lock';
@@ -18,7 +18,7 @@ export interface SingleInstanceLockOptions {
 }
 
 export function canCreateChromiumLockFile(userDataDir: string): boolean {
-  const probePath = join(userDataDir, '.clawx-electron-lock-probe');
+  const probePath = join(userDataDir, '.verse-claw-electron-lock-probe');
   try {
     mkdirSync(userDataDir, { recursive: true });
     const fd = openSync(probePath, 'wx');
@@ -42,7 +42,7 @@ export function acquireSingleInstanceLock(options: SingleInstanceLockOptions): S
   const gotElectronLock = options.isE2EMode || !shouldUseElectronLock || requestElectronLock();
 
   if (!gotElectronLock) {
-    console.info('[ClawX] Another instance already holds the single-instance lock; exiting duplicate process');
+    console.info('[Verse Claw] Another instance already holds the single-instance lock; exiting duplicate process');
     return {
       gotTheLock: false,
       gotElectronLock,
@@ -68,17 +68,17 @@ export function acquireSingleInstanceLock(options: SingleInstanceLockOptions): S
             ? 'unknown lock format/content'
             : 'unknown owner';
         console.info(
-          `[ClawX] Another instance already holds process lock (${fileLock.lockPath}, ${ownerDescriptor}); exiting duplicate process`,
+          `[Verse Claw] Another instance already holds process lock (${fileLock.lockPath}, ${ownerDescriptor}); exiting duplicate process`,
         );
       }
     } catch (error) {
       gotFileLock = shouldUseElectronLock;
-      console.warn('[ClawX] Failed to acquire process instance file lock; continuing with Electron single-instance lock only', error);
+      console.warn('[Verse Claw] Failed to acquire process instance file lock; continuing with Electron single-instance lock only', error);
     }
   }
 
   if (!shouldUseElectronLock && !options.isE2EMode) {
-    console.warn('[ClawX] Electron single-instance lock is unavailable for userData; using ClawX process lock only');
+    console.warn('[Verse Claw] Electron single-instance lock is unavailable for userData; using Verse Claw process lock only');
   }
 
   return {

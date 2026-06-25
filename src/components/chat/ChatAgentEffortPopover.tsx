@@ -17,7 +17,7 @@
  * expressive label without changing the API surface. Everything below
  * the visual layer (store mutation, IPC, gateway call) is unchanged.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -79,19 +79,6 @@ function fromSliderIndex(idx: number): SavedEffort {
   const opt = EFFORT_OPTIONS[safe];
   return opt === 'max' ? 'xhigh' : (opt as SavedEffort);
 }
-
-// ── Squircle clip-path ──────────────────────────────────────────
-//
-// The reference uses a precise superellipse path so the card has the
-// soft, slightly squashed Apple-icon look. We use a CSS approximation
-// of the same path (objectBoundingBox units) so it scales with the
-// element's actual size and adapts to both light and dark surfaces.
-
-const CARD_CLIP_PATH =
-  'polygon(5.3% 0%, 94.7% 0%, 100% 5.3%, 100% 94.7%, 94.7% 100%, 5.3% 100%, 0% 94.7%, 0% 5.3%)';
-
-const TRACK_CLIP_PATH =
-  'polygon(3.3% 0%, 96.7% 0%, 100% 15%, 100% 85%, 96.7% 100%, 3.3% 100%, 0% 85%, 0% 15%)';
 
 // ── Component ───────────────────────────────────────────────────
 
@@ -157,6 +144,11 @@ function ChatAgentEffortPopoverBody({
 }: ChatAgentEffortPopoverBodyProps) {
   const { t } = useTranslation('chat');
   const updateAgentReasoningEffort = useAgentsStore((s) => s.updateAgentReasoningEffort);
+
+  // Unique IDs for the SVG squircle clip-paths (one per popover instance).
+  const clipUid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const cardClipId = `effort-card-clip-${clipUid}`;
+  const trackClipId = `effort-track-clip-${clipUid}`;
 
   // Local optimistic state so the slider feels instant even before the
   // gateway roundtrip finishes. Seeded from the store snapshot at mount;
@@ -231,9 +223,12 @@ function ChatAgentEffortPopoverBody({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   useWebglFire(canvasRef, draftIndex / MAX_SLIDER_VALUE, isActive);
 
-  // ── Mask the canvas to the slider's fill width (reference parity)
+  // ── Mask the canvas to the slider's fill width (reference parity).
+  // Reference uses `p = min(sliderValue + 2, 100)` so the flame slightly
+  // covers the thumb and produces the trailing effect.
   const maskStyle = useMemo<React.CSSProperties>(() => {
-    const p = Math.min(((draftIndex + 0.5) / MAX_SLIDER_VALUE) * 100, 100);
+    const sliderPercent = (draftIndex / MAX_SLIDER_VALUE) * 100;
+    const p = Math.min(sliderPercent + 2, 100);
     return {
       maskImage: `linear-gradient(to right, black 0%, black ${p}%, transparent ${p}%)`,
       WebkitMaskImage: `linear-gradient(to right, black 0%, black ${p}%, transparent ${p}%)`,
@@ -255,29 +250,41 @@ function ChatAgentEffortPopoverBody({
     <div
       ref={containerRef}
       data-testid="chat-agent-effort-popover"
-      className="fixed z-50 select-none"
-      style={{ ...positionStyle, width: 384 }}
+      className="fixed z-50 w-[min(376px,calc(100vw-32px))] select-none"
+      style={positionStyle}
     >
+      {/* Squircle clip-paths ported 1:1 from the reference SVG. */}
+      <svg className="pointer-events-none absolute h-0 w-0" aria-hidden="true">
+        <defs>
+          <clipPath id={cardClipId} clipPathUnits="objectBoundingBox">
+            <path d="M 0.053,0 C 0.029,0 0.012,0.008 0.005,0.02 C 0.002,0.028 0,0.038 0,0.053 L 0,0.947 C 0,0.962 0.002,0.972 0.005,0.98 C 0.012,0.992 0.029,1 0.053,1 L 0.947,1 C 0.971,1 0.988,0.992 0.995,0.98 C 0.998,0.972 1,0.962 1,0.947 L 1,0.053 C 1,0.038 0.998,0.028 0.995,0.02 C 0.988,0.008 0.971,0 0.947,0 Z" />
+          </clipPath>
+          <clipPath id={trackClipId} clipPathUnits="objectBoundingBox">
+            <path d="M 0.033,0 C 0.018,0 0.007,0.012 0.003,0.035 C 0.001,0.055 0,0.1 0,0.15 L 0,0.85 C 0,0.9 0.001,0.945 0.003,0.965 C 0.007,0.988 0.018,1 0.033,1 L 0.967,1 C 0.982,1 0.993,0.988 0.997,0.965 C 0.999,0.945 1,0.9 1,0.85 L 1,0.15 C 1,0.1 0.999,0.055 0.997,0.035 C 0.993,0.012 0.982,0 0.967,0 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
       <div className="effort-card-shadow">
         <div
           className={cn(
             'effort-card',
-            'bg-black text-zinc-300',
-            'border border-white/10',
+            'bg-[#18181b] text-[#b0b0c7]',
+            'border border-white/[0.12]',
           )}
-          style={{ clipPath: CARD_CLIP_PATH, padding: '18px 20px 16px' }}
+          style={{ clipPath: `url(#${cardClipId})`, padding: '18px 20px 16px' }}
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-3.5">
             <div className="flex items-center gap-1.5 text-base font-medium perspective-[280px]">
-              <span className="text-zinc-300 font-bold leading-tight">
+              <span className="text-[#b0b0c7] font-bold leading-tight">
                 {t('composer.effortTitle')}
               </span>
               <span
                 key={statusEffort}
                 data-flip="1"
                 className={cn(
-                  'inline-block text-zinc-400 transition-colors',
+                  'inline-block text-[#a1a1aa] transition-colors',
                   'will-change-transform',
                   isFull && 'text-fuchsia-400 font-semibold',
                   'animate-flipUp',
@@ -294,7 +301,7 @@ function ChatAgentEffortPopoverBody({
                 <button
                   type="button"
                   aria-label={t('composer.effortHelpTooltip')}
-                  className="inline-flex h-6 w-6 items-center justify-center text-zinc-400 hover:text-zinc-200 transition-colors"
+                  className="inline-flex h-6 w-6 items-center justify-center text-[#a1a1aa] hover:text-[#d4d4d8] transition-colors"
                 >
                   <HelpCircle className="h-4 w-4" strokeWidth={1.5} />
                 </button>
@@ -306,7 +313,7 @@ function ChatAgentEffortPopoverBody({
           </div>
 
           {/* Faster / Smarter scale labels */}
-          <div className="flex justify-between text-sm font-extrabold text-zinc-400/90 mb-2 tracking-wider">
+          <div className="flex justify-between text-sm font-extrabold text-[#b0b0b8] mb-2 tracking-wider">
             <span>{t('composer.effortFaster')}</span>
             <span>{t('composer.effortSmarter')}</span>
           </div>
@@ -314,18 +321,18 @@ function ChatAgentEffortPopoverBody({
           {/* Track */}
           <div
             className={cn(
-              'relative h-[30px] rounded-[10px] overflow-hidden border border-white/[0.06]',
-              'bg-black/95',
+              'relative h-[30px] rounded-[10px] overflow-hidden border border-[#1a1a1e]',
+              'bg-[#121214]',
               isActive && 'effort-track-active',
               isFull && 'effort-track-full',
             )}
-            style={{ clipPath: TRACK_CLIP_PATH, isolation: 'isolate' }}
+            style={{ clipPath: `url(#${trackClipId})`, isolation: 'isolate' }}
           >
             <div
               className="absolute inset-0 z-0"
               style={{
                 background:
-                  'linear-gradient(135deg, #111113 0%, #0a0a0b 100%)',
+                  'linear-gradient(135deg, #1a1a1c 0%, #131314 100%)',
               }}
             />
             <div className="absolute inset-0 pointer-events-none z-[1]">
@@ -393,8 +400,8 @@ function ChatAgentEffortPopoverBody({
 const EFFORT_CSS = `
   .effort-card-shadow {
     filter:
-      drop-shadow(0 12px 28px rgba(0, 0, 0, 0.55))
-      drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+      drop-shadow(0 12px 28px rgba(0, 0, 0, 0.2))
+      drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
     transition: filter 200ms ease;
   }
   .effort-dot {
@@ -443,6 +450,22 @@ const EFFORT_CSS = `
   .effort-range::-webkit-slider-thumb:active {
     cursor: grabbing;
     transform: scale(0.95);
+    box-shadow:
+      0 0.5px 1px rgba(0, 0, 0, 0.2),
+      0 1px 3px rgba(0, 0, 0, 0.3),
+      0 3px 8px rgba(0, 0, 0, 0.15),
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.7),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+  }
+  .effort-range.glowing::-webkit-slider-thumb:active {
+    box-shadow:
+      0 0.5px 1px rgba(0, 0, 0, 0.2),
+      0 1px 3px rgba(0, 0, 0, 0.3),
+      0 3px 8px rgba(0, 0, 0, 0.15),
+      0 0 32px rgba(168, 85, 247, 0.55),
+      0 0 56px rgba(168, 85, 247, 0.3),
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.7),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.08);
   }
   .effort-range.glowing::-webkit-slider-thumb {
     box-shadow:
@@ -467,6 +490,10 @@ const EFFORT_CSS = `
     cursor: grab;
     transition: box-shadow 400ms ease;
   }
+  .effort-range::-moz-range-thumb:active {
+    cursor: grabbing;
+    transform: scale(0.95);
+  }
   .effort-range::-moz-range-track {
     background: transparent;
     border: none;
@@ -479,6 +506,14 @@ const EFFORT_CSS = `
       0 6px 16px rgba(0, 0, 0, 0.12),
       0 0 28px rgba(168, 85, 247, 0.5),
       0 0 50px rgba(168, 85, 247, 0.25);
+  }
+  .effort-range.glowing::-moz-range-thumb:active {
+    box-shadow:
+      0 0.5px 1px rgba(0, 0, 0, 0.2),
+      0 1px 3px rgba(0, 0, 0, 0.3),
+      0 3px 8px rgba(0, 0, 0, 0.15),
+      0 0 32px rgba(168, 85, 247, 0.55),
+      0 0 56px rgba(168, 85, 247, 0.3);
   }
 
   @keyframes flipUpFromBottom {

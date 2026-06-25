@@ -309,7 +309,7 @@ function detectReplyCacheMigration(params: {
     maxEntries: IMESSAGE_REPLY_CACHE_COUNTER_MAX_ENTRIES,
     scopeKey: "",
     stateDir,
-    preview: `- iMessage reply short-id counter: ${sourcePath} â†’ plugin state (${IMESSAGE_REPLY_CACHE_COUNTER_NAMESPACE})`,
+    preview: `- iMessage reply short-id counter: ${sourcePath} â†?plugin state (${IMESSAGE_REPLY_CACHE_COUNTER_NAMESPACE})`,
     readEntries: () => {
       const maxShortId = readReplyCacheMaxShortId(sourcePath);
       return maxShortId > 0
@@ -331,7 +331,7 @@ function detectReplyCacheMigration(params: {
     stateDir,
     cleanupSource: "rename",
     cleanupWhenEmpty: true,
-    preview: `- iMessage reply short-id cache: ${sourcePath} â†’ plugin state (${IMESSAGE_REPLY_CACHE_NAMESPACE})`,
+    preview: `- iMessage reply short-id cache: ${sourcePath} â†?plugin state (${IMESSAGE_REPLY_CACHE_NAMESPACE})`,
     readEntries: () => listReplyCacheEntries(sourcePath),
   });
   return plans;
@@ -359,7 +359,7 @@ function detectSentEchoMigration(params: {
       stateDir,
       cleanupSource: "rename",
       cleanupWhenEmpty: true,
-      preview: `- iMessage sent-echo dedupe cache: ${sourcePath} â†’ plugin state (${IMESSAGE_SENT_ECHOES_NAMESPACE})`,
+      preview: `- iMessage sent-echo dedupe cache: ${sourcePath} â†?plugin state (${IMESSAGE_SENT_ECHOES_NAMESPACE})`,
       readEntries: () => listSentEchoEntries(sourcePath),
     },
   ];
@@ -395,7 +395,7 @@ function detectCatchupCursorMigrations(params: {
       scopeKey: "",
       stateDir,
       cleanupSource: "rename" as const,
-      preview: `- iMessage catchup cursor: ${sourcePath} â†’ plugin state (${IMESSAGE_CATCHUP_CURSOR_NAMESPACE})`,
+      preview: `- iMessage catchup cursor: ${sourcePath} â†?plugin state (${IMESSAGE_CATCHUP_CURSOR_NAMESPACE})`,
       readEntries: () => {
         const cursor = readCatchupCursor(sourcePath);
         return [{ key: resolveIMessageCatchupCursorKey(accountId), value: cursor }];
@@ -420,7 +420,7 @@ function detectCatchupCursorMigrations(params: {
       stateDir,
       cleanupSource: "rename" as const,
       cleanupWhenEmpty: true,
-      preview: `- iMessage orphan catchup cursor: ${sourcePath} â†’ archived legacy state`,
+      preview: `- iMessage orphan catchup cursor: ${sourcePath} â†?archived legacy state`,
       readEntries: () => [],
     }));
   return [...configuredPlans, ...orphanPlans];

@@ -33,6 +33,7 @@ const scheduleRecoverableRuntimeError = vi.fn((commit: () => void) => commit());
 const isRecoverableRuntimeError = vi.fn((message: string) => /\bterminated\b/i.test(message));
 const snapshotStreamingAssistantMessage = vi.fn((currentStream: unknown) => currentStream ? [currentStream] : []);
 const upsertToolStatuses = vi.fn((_current, updates) => updates);
+const appendEventsMock = vi.fn();
 
 vi.mock('@/stores/chat/helpers', () => ({
   clearErrorRecoveryTimer: (...args: unknown[]) => clearErrorRecoveryTimer(...args),
@@ -57,6 +58,20 @@ vi.mock('@/stores/chat/helpers', () => ({
   scheduleRecoverableRuntimeError: (...args: unknown[]) => scheduleRecoverableRuntimeError(...args),
   snapshotStreamingAssistantMessage: (...args: unknown[]) => snapshotStreamingAssistantMessage(...args),
   upsertToolStatuses: (...args: unknown[]) => upsertToolStatuses(...args),
+}));
+
+vi.mock('@/lib/host-api', () => ({
+  hostApi: {
+    taskLedger: {
+      appendEvents: (...args: unknown[]) => appendEventsMock(...args),
+    },
+  },
+}));
+
+vi.mock('@/stores/workspaces', () => ({
+  useWorkspacesStore: {
+    getState: () => ({ activeWorkspaceId: 'workspace-a' }),
+  },
 }));
 
 type ChatLikeState = {
@@ -109,6 +124,7 @@ describe('chat runtime event handlers', () => {
     normalizeStreamingMessage.mockImplementation((message: unknown) => message);
     snapshotStreamingAssistantMessage.mockImplementation((currentStream: unknown) => currentStream ? [currentStream as Record<string, unknown>] : []);
     upsertToolStatuses.mockImplementation((_current, updates) => updates);
+    appendEventsMock.mockResolvedValue({ success: true, snapshot: { nodes: [] } });
   });
 
   it('marks sending on started event', async () => {
@@ -152,6 +168,59 @@ describe('chat runtime event handlers', () => {
     expect(next.pendingFinal).toBe(true);
     expect(next.streamingMessage).toBeNull();
     expect(h.read().loadHistory).toHaveBeenCalledTimes(1);
+  });
+
+  it('records final assistant turns to the Task Ledger with the active task parent', async () => {
+    getMessageText.mockImplementation((content: unknown) => {
+      if (typeof content === 'string') return content;
+      if (Array.isArray(content)) return content.map((block) => block?.text ?? '').join('\n');
+      return '';
+    });
+    hasNonToolAssistantContent.mockReturnValue(true);
+    const { handleRuntimeEventState } = await import('@/stores/chat/runtime-event-handlers');
+    const h = makeHarness({
+      currentSessionKey: 'agent:main:main',
+      activeTaskNodeId: 'task-1',
+      messages: [
+        { role: 'user', content: 'Please validate ledger recording' },
+      ],
+    } as Partial<ChatLikeState>);
+
+    handleRuntimeEventState(h.set as never, h.get as never, {
+      message: {
+        role: 'assistant',
+        id: 'final-assistant',
+        content: [
+          { type: 'tool_use', id: 'call-read-1', name: 'read', input: { filePath: 'src/stores/chat.ts' } },
+          { type: 'text', text: '## Summary\n- Validated ledger recording\n\nTouched src/stores/chat.ts' },
+        ],
+      },
+    }, 'final', 'run-ledger');
+
+    await vi.waitFor(() => {
+      expect(appendEventsMock).toHaveBeenCalled();
+    });
+    expect(appendEventsMock).toHaveBeenCalledWith(expect.objectContaining({
+      workspaceId: 'workspace-a',
+      events: expect.arrayContaining([
+        expect.objectContaining({
+          type: 'node_created',
+          payload: expect.objectContaining({
+            node: expect.objectContaining({
+              kind: 'check',
+              parentId: 'task-1',
+              status: 'done',
+              tags: expect.arrayContaining(['read']),
+              evidenceRefs: expect.arrayContaining([
+                expect.objectContaining({ type: 'tool', ref: 'call-read-1', label: 'read' }),
+                expect.objectContaining({ type: 'file', ref: 'src/stores/chat.ts' }),
+              ]),
+            }),
+          }),
+        }),
+        expect.objectContaining({ type: 'session_linked' }),
+      ]),
+    }));
   });
 
   it('marks tool-result attachments before appending them to the final assistant reply', async () => {

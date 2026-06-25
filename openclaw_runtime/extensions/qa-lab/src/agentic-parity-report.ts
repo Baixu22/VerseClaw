@@ -42,7 +42,7 @@ export type QaParitySuiteSummary = {
     passed?: number;
     failed?: number;
   };
-  /** Self-describing run metadata â€” see PR L #64789 for the writer side. */
+  /** Self-describing run metadata â€?see PR L #64789 for the writer side. */
   run?: QaParityRunBlock;
 };
 
@@ -125,7 +125,7 @@ const UNINTENDED_STOP_PATTERNS = [
 ] as const;
 
 // Failure-tone patterns: a passing scenario whose details text matches any
-// of these is treated as a "fake success" â€” the scenario is marked pass but
+// of these is treated as a "fake success" â€?the scenario is marked pass but
 // the supporting text reveals something went wrong. Adding new patterns here
 // widens the net for bad prose that correlates with runtime failure modes.
 const SUSPICIOUS_PASS_FAILURE_TONE_PATTERNS = [
@@ -206,7 +206,7 @@ export function computeQaAgenticParityMetrics(
       return false;
     }
     // Failure-tone patterns catch obviously-broken passes regardless of
-    // whether the scenario shows tool-call evidence â€” "timed out" under a
+    // whether the scenario shows tool-call evidence â€?"timed out" under a
     // pass is always fake.
     if (scenarioHasPattern(scenario, SUSPICIOUS_PASS_FAILURE_TONE_PATTERNS)) {
       return true;
@@ -349,7 +349,7 @@ function parseStructuredLabelRef(label: string): StructuredQaParityLabel | null 
  * is a no-op.
  *
  * Throws `QaParityLabelMismatchError` when the summary reports a different
- * provider/model than the caller claimed â€” this catches the "swapped
+ * provider/model than the caller claimed â€?this catches the "swapped
  * candidate and baseline summary paths" footgun the earlier adversarial
  * review flagged. Returns silently when the fields are absent (legacy
  * summaries) or when the fields match.
@@ -586,7 +586,7 @@ export function renderQaAgenticParityMarkdownReport(comparison: QaAgenticParityC
   // openai/gpt-5.5 vs anthropic/claude-opus-4-8, but the helper works for
   // any parity comparison a caller configures.
   const lines = [
-    `# OpenClaw Agentic Parity Report â€” ${comparison.candidateLabel} vs ${comparison.baselineLabel}`,
+    `# OpenClaw Agentic Parity Report â€?${comparison.candidateLabel} vs ${comparison.baselineLabel}`,
     "",
     `- Compared at: ${comparison.comparedAt}`,
     `- Candidate: ${comparison.candidateLabel}`,
@@ -722,7 +722,7 @@ export function buildQaRuntimeParityReport(params: {
 
 export function renderQaRuntimeParityMarkdownReport(report: QaRuntimeParityReport): string {
   const lines = [
-    `# OpenClaw Runtime Parity Report â€” ${report.runtimePair[0]} vs ${report.runtimePair[1]}`,
+    `# OpenClaw Runtime Parity Report â€?${report.runtimePair[0]} vs ${report.runtimePair[1]}`,
     "",
     `- Compared at: ${report.comparedAt}`,
     `- Provider mode: ${report.providerMode ?? "unknown"}`,

@@ -152,6 +152,21 @@ export type TaskLoopLifecycleEvent = {
   selfCheckDecision?: 'complete' | 'repair' | 'blocked';
   controlSignals?: LongConversationControlSignal[];
   validationState?: LongConversationValidationState;
+  evidenceGate?: {
+    status: 'pass' | 'repair' | 'blocked';
+    reasons: string[];
+    workerCount: number;
+    failedWorkerCount: number;
+    unverifiableWorkerCount: number;
+  };
+  roleQualitySummary?: {
+    good: number;
+    needsAttention: number;
+    poorAttempt: number;
+  };
+  filesTouched?: string[];
+  testsRun?: string[];
+  blockedReason?: string;
   error?: string;
   ts: number;
 };

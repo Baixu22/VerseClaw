@@ -1,5 +1,5 @@
 /**
- * `openclaw path` â€” shell access to the OcPath substrate verbs.
+ * `openclaw path` â€?shell access to the OcPath substrate verbs.
  *
  * Subcommands: `resolve` / `set` / `find` / `validate` / `emit`.
  * TTY-aware output: human when interactive, JSON when piped; `--json`
@@ -289,7 +289,7 @@ export async function pathResolveCommand(
     match = resolveOcPath(ast, ocPath);
   } catch (err) {
     if (err instanceof OcPathError) {
-      // resolveOcPath throws on wildcard patterns â€” point at find.
+      // resolveOcPath throws on wildcard patterns â€?point at find.
       emitError(runtime, mode, `resolve refused: ${err.message}`, err.code);
       runtime.exit(2);
       return;
@@ -347,7 +347,7 @@ export async function pathSetCommand(
       runtime,
       mode,
       { ok: false, reason: result.reason, detail },
-      () => `set failed: ${result.reason}${detail !== undefined ? ` â€” ${detail}` : ""}`,
+      () => `set failed: ${result.reason}${detail !== undefined ? ` â€?${detail}` : ""}`,
     );
     runtime.exit(1);
     return;
@@ -422,7 +422,7 @@ export async function pathFindCommand(
       const plural = matches.length === 1 ? "" : "es";
       const lines = [`${matches.length} match${plural} for ${patternStr}:`];
       for (const m of matches) {
-        lines.push(`  ${formatOcPath(m.path)}  â†’  ${formatMatchHuman(m.match)}`);
+        lines.push(`  ${formatOcPath(m.path)}  â†? ${formatMatchHuman(m.match)}`);
       }
       return lines.join("\n");
     },
@@ -583,7 +583,7 @@ export function registerPathCli(program: Command): void {
   });
 
   // Bare `openclaw path` prints help and exits 0 (matches the core
-  // applyParentDefaultHelpAction contract â€” see openclaw#73077).
+  // applyParentDefaultHelpAction contract â€?see openclaw#73077).
   path.action(() => {
     path.outputHelp();
     process.exitCode = 0;

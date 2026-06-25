@@ -1,5 +1,5 @@
 /**
- * `oc://` path syntax â€” universal addressing for the OpenClaw workspace.
+ * `oc://` path syntax â€?universal addressing for the OpenClaw workspace.
  *
  *     oc://{file}[/{section}[/{item}[/{field}]]][?session={id}]
  *
@@ -19,9 +19,9 @@ export const MAX_PATH_LENGTH = 4096;
 export const MAX_SUB_SEGMENTS_PER_SLOT = 64;
 export const MAX_TRAVERSAL_DEPTH = 256;
 
-const BOM = "ï»¿";
+const BOM = "ï»?;
 
-// Walk by char code rather than regex â€” the no-control-regex lint rule
+// Walk by char code rather than regex â€?the no-control-regex lint rule
 // rejects character classes covering U+0000â€“U+001F + U+007F.
 function hasControlChar(s: string): boolean {
   for (let i = 0; i < s.length; i++) {
@@ -134,7 +134,7 @@ export function parseOcPath(input: string): OcPath {
   if (input.length > MAX_PATH_LENGTH) {
     fail(
       `oc:// path exceeds ${MAX_PATH_LENGTH} bytes (length: ${input.length})`,
-      input.slice(0, 80) + "â€¦",
+      input.slice(0, 80) + "â€?,
       "OC_PATH_TOO_LONG",
     );
   }
@@ -147,7 +147,7 @@ export function parseOcPath(input: string): OcPath {
   if (normalized.length > MAX_PATH_LENGTH) {
     fail(
       `oc:// path exceeds ${MAX_PATH_LENGTH} bytes after NFC (length: ${normalized.length})`,
-      input.slice(0, 80) + "â€¦",
+      input.slice(0, 80) + "â€?,
       "OC_PATH_TOO_LONG",
     );
   }
@@ -311,11 +311,11 @@ export function formatOcPath(path: OcPath): string {
   if (out.length > MAX_PATH_LENGTH) {
     fail(
       `Formatted oc:// exceeds ${MAX_PATH_LENGTH} bytes (length: ${out.length})`,
-      out.slice(0, 80) + "â€¦",
+      out.slice(0, 80) + "â€?,
       "OC_PATH_TOO_LONG",
     );
   }
-  // Path strings flow into telemetry / audit / error messages â€” refuse
+  // Path strings flow into telemetry / audit / error messages â€?refuse
   // the redaction sentinel here so it can't slip past consumers.
   if (out.includes(REDACTED_SENTINEL)) {
     throw new OcEmitSentinelError(out);
@@ -349,7 +349,7 @@ export function isPositionalSeg(seg: string): boolean {
 }
 
 /**
- * Ordinal addressing â€” `#N` targets the Nth item by document order.
+ * Ordinal addressing â€?`#N` targets the Nth item by document order.
  * Earns its keep on slug-addressed kinds (md items can share a slug
  * via `- foo: a` / `- foo: b`); `#0`/`#1` distinguish them.
  */
@@ -415,7 +415,7 @@ export function isPattern(path: OcPath): boolean {
     if (slot === undefined) {
       continue;
     }
-    // Quote-aware split â€” `slot.split('.')` would shred quoted keys
+    // Quote-aware split â€?`slot.split('.')` would shred quoted keys
     // containing literal `*` and falsely flag them as wildcards.
     for (const sub of splitRespectingBrackets(slot, ".")) {
       if (sub === WILDCARD_SINGLE || sub === WILDCARD_RECURSIVE) {
@@ -432,7 +432,7 @@ export function isPattern(path: OcPath): boolean {
   return false;
 }
 
-/** @deprecated v1 â€” use {@link isPattern}. Behaviorally identical. */
+/** @deprecated v1 â€?use {@link isPattern}. Behaviorally identical. */
 export const hasWildcard = isPattern;
 
 /** Union segment `{a,b,c}` matches each comma-separated alternative. */
@@ -545,7 +545,7 @@ export interface PathSegmentLayout {
 }
 
 export function getPathLayout(path: OcPath): PathSegmentLayout {
-  // Quote-aware split â€” `.split('.')` would shred a quoted segment
+  // Quote-aware split â€?`.split('.')` would shred a quoted segment
   // containing a literal `.` (e.g. `"a.b"`) and break repackPath.
   const sectionSubs = path.section === undefined ? [] : splitRespectingBrackets(path.section, ".");
   const itemSubs = path.item === undefined ? [] : splitRespectingBrackets(path.item, ".");
@@ -706,7 +706,7 @@ export function unquoteSeg(seg: string): string {
   return isQuotedSeg(seg) ? seg.slice(1, -1) : seg;
 }
 
-// Refuses values with `"` or `\` â€” no escape mechanism.
+// Refuses values with `"` or `\` â€?no escape mechanism.
 export function quoteSeg(value: string): string {
   if (value.length === 0) {
     return '""';
@@ -721,7 +721,7 @@ export function quoteSeg(value: string): string {
   return /[/.[\]{}?&%\s]/.test(value) ? `"${value}"` : value;
 }
 
-// Defense-in-depth â€” the splitter validates segments it splits; this
+// Defense-in-depth â€?the splitter validates segments it splits; this
 // catches stray unmatched brackets in unsplit ones.
 function validateBrackets(seg: string, input: string): void {
   scanBracketAware(
@@ -766,7 +766,7 @@ function validateSubSegment(sub: string, input: string): void {
   }
 
   // Reserved characters used by the path grammar itself (`?`/`&`/`%`).
-  // Allowed inside predicate / union segments â€” those are content.
+  // Allowed inside predicate / union segments â€?those are content.
   if (!sub.startsWith("[") && !sub.startsWith("{")) {
     if (RESERVED_CHARS_RE.test(sub)) {
       fail(
@@ -808,7 +808,7 @@ function validateSubSegment(sub: string, input: string): void {
       const parsed = parsePredicateSeg(sub);
       if (parsed === null || parsed.key.length === 0 || parsed.value.length === 0) {
         fail(
-          `Malformed predicate "${sub}" â€” must be \`[key<op>value]\` with non-empty key and value: ${printable(input)}`,
+          `Malformed predicate "${sub}" â€?must be \`[key<op>value]\` with non-empty key and value: ${printable(input)}`,
           input,
           "OC_PATH_MALFORMED_PREDICATE",
         );
@@ -829,7 +829,7 @@ function validateSubSegment(sub: string, input: string): void {
     const inner = sub.slice(1, -1);
     if (inner.length === 0) {
       fail(
-        `Empty union "${sub}" â€” must contain at least one alternative: ${printable(input)}`,
+        `Empty union "${sub}" â€?must contain at least one alternative: ${printable(input)}`,
         input,
         "OC_PATH_MALFORMED_UNION",
       );

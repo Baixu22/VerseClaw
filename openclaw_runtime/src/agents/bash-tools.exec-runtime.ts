@@ -60,6 +60,7 @@ import {
 import { buildCursorPositionResponse, stripDsrRequests } from "./pty-dsr.js";
 import { maybeWrapCommandWithShellSnapshot } from "./shell-snapshot.js";
 import { getShellConfig, sanitizeBinaryOutput } from "./shell-utils.js";
+import { verseshellExec } from "./verseshell-runtime.js";
 
 export { execSchema } from "./bash-tools.schemas.js";
 
@@ -233,7 +234,10 @@ function emitExecProcessCompleted(params: {
 
 /** Renders a host label for user-facing exec policy messages. */
 export function renderExecHostLabel(host: ExecHost) {
-  return host === "sandbox" ? "sandbox" : host === "gateway" ? "gateway" : "node";
+  if (host === "sandbox") return "sandbox";
+  if (host === "gateway") return "gateway";
+  if (host === "node") return "node";
+  return "verseshell";
 }
 
 /** Renders an exec target label, preserving `auto`. */
@@ -662,6 +666,8 @@ export async function runExecProcess(opts: {
   // Execute this instead of `command` (which is kept for display/session/logging).
   // Used to sanitize safeBins execution while preserving the original user input.
   execCommand?: string;
+  /** The execution host to use. "verseshell" routes through ae --serve. */
+  execHost?: ExecHost;
   workdir: string;
   env: Record<string, string>;
   pathPrepend?: string[];
@@ -800,6 +806,82 @@ export async function runExecProcess(opts: {
 
   const timeoutMs = resolveExecTimeoutMs(opts.timeoutSec);
   let sandboxFinalizeToken: unknown;
+
+  // ── VerseShell Branch ──────────────────────────────────────────────────
+  // When the configured exec host is "verseshell", execute the command via
+  // the ae --serve JSON-RPC bridge instead of spawning a native shell.
+  // Falls back to native shell if VerseShell is unavailable.
+  if (opts.execHost === "verseshell") {
+    try {
+      const vsResult = await verseshellExec(execCommand, {
+        timeoutMs: opts.timeoutSec ? opts.timeoutSec * 1000 : undefined,
+        cwd: opts.workdir,
+      });
+
+      const aggregated = [vsResult.stdout, vsResult.stderr]
+        .filter(Boolean)
+        .join("\n");
+
+      for (const chunk of chunkString(vsResult.stdout)) {
+        appendOutput(session, "stdout", chunk);
+      }
+      for (const chunk of chunkString(vsResult.stderr)) {
+        appendOutput(session, "stderr", chunk);
+      }
+
+      const durationMs = Date.now() - startedAt;
+      const exitCode = vsResult.exitCode;
+      const exitSignal: NodeJS.Signals | number | null = null;
+      const status: "completed" | "failed" =
+        vsResult.success && exitCode === 0 ? "completed" : "failed";
+
+      markExited(session, exitCode, exitSignal, status, "exit");
+      maybeNotifyOnExit(session, status);
+
+      const outcome: ExecProcessOutcome =
+        status === "completed"
+          ? {
+              status: "completed",
+              exitCode,
+              exitSignal,
+              durationMs,
+              aggregated: aggregated.trim(),
+              timedOut: false,
+            }
+          : {
+              status: "failed",
+              exitCode,
+              exitSignal,
+              durationMs,
+              aggregated: aggregated.trim(),
+              timedOut: false,
+              failureKind: "aborted",
+              reason: `Command exited with code ${exitCode}`,
+            };
+
+      emitExecProcessCompleted({
+        command: opts.command,
+        mode: "child",
+        outcome,
+        sessionKey: opts.sessionKey,
+        target: "host",
+      });
+
+      return {
+        session,
+        startedAt,
+        pid: undefined,
+        promise: Promise.resolve(outcome),
+        kill: () => {},
+        disableUpdates: () => {},
+      };
+    } catch (err) {
+      logWarn(
+        `exec: VerseShell exec failed (${String(err)}); falling back to native shell for "${opts.command.slice(0, 80)}".`,
+      );
+      // Fall through to native shell spawn below.
+    }
+  }
 
   const spawnSpec:
     | {

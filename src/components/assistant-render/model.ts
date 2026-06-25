@@ -226,3 +226,74 @@ export function buildHeatGraphDays(entries: Array<{ timestamp: string; totalToke
   }
   return Array.from(days.values());
 }
+
+/**
+ * Extracts per-message token usage from a RawMessage's metadata/details.
+ *
+ * The Gateway attaches `usage` to the final event (not inside the message),
+ * but the runtime may also embed it in `message.details` or `message.metadata`.
+ * This function tries every known location and returns a normalized shape.
+ *
+ * Returns `null` when no usage data is found — the caller should then fall
+ * back to the session-level `liveUsage` for the streaming case.
+ */
+export function extractMessageUsage(message: RawMessage): {
+  inputTokens: number;
+  outputTokens: number;
+  cacheTokens: number;
+  totalTokens: number;
+  estimatedCostUsd?: number;
+} | null {
+  const record = message as unknown as RecordLike;
+  const meta = getMeta(message);
+  const details = isRecord(record.details) ? record.details : undefined;
+
+  // Try every known location: message.metadata, message.details, message.meta
+  const sources: unknown[] = [
+    meta.usage,
+    meta.tokenUsage,
+    meta.tokens,
+    details?.usage,
+    details?.tokenUsage,
+    details?.tokens,
+    record.usage,
+    record.tokenUsage,
+  ].filter((v) => v != null);
+
+  for (const source of sources) {
+    const parsed = normalizeUsageRecord(source);
+    if (parsed) return parsed;
+  }
+  return null;
+}
+
+function normalizeUsageRecord(source: unknown): {
+  inputTokens: number;
+  outputTokens: number;
+  cacheTokens: number;
+  totalTokens: number;
+  estimatedCostUsd?: number;
+} | null {
+  if (typeof source === 'number') {
+    return { inputTokens: 0, outputTokens: 0, cacheTokens: 0, totalTokens: source };
+  }
+  if (!isRecord(source)) return null;
+
+  const input = asNumber(source.inputTokens ?? source.input_tokens ?? source.input ?? source.promptTokens ?? source.prompt_tokens) ?? 0;
+  const output = asNumber(source.outputTokens ?? source.output_tokens ?? source.output ?? source.completionTokens ?? source.completion_tokens) ?? 0;
+  const cacheRead = asNumber(source.cacheReadTokens ?? source.cache_read_tokens ?? source.cacheReadInputTokens) ?? 0;
+  const cacheWrite = asNumber(source.cacheWriteTokens ?? source.cache_creation_tokens ?? source.cacheCreationInputTokens) ?? 0;
+  const cache = cacheRead + cacheWrite;
+  const total = asNumber(source.totalTokens ?? source.total_tokens ?? source.total) ?? (input + output + cache);
+
+  if (input === 0 && output === 0 && cache === 0 && total === 0) return null;
+
+  const cost = asNumber(source.estimatedCostUsd ?? source.estimated_cost_usd ?? source.costUsd ?? source.cost_usd);
+  return {
+    inputTokens: input,
+    outputTokens: output,
+    cacheTokens: cache,
+    totalTokens: total,
+    estimatedCostUsd: cost,
+  };
+}

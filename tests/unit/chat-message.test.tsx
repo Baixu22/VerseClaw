@@ -645,7 +645,7 @@ describe('ChatMessage Tool UI rendering', () => {
     const message: RawMessage = {
       role: 'assistant',
       content: [
-        'Question: Which format should ClawX use when the model pauses?',
+        'Question: Which format should Verse Claw use when the model pauses?',
         'Options:',
         '1. Structured cards -- Best for guided rendering',
         '2. Plain markdown -- Backup only',
@@ -654,7 +654,7 @@ describe('ChatMessage Tool UI rendering', () => {
 
     render(<ChatMessage message={message} />);
 
-    expect(screen.getByTestId('chat-tool-ui-question-flow')).toHaveTextContent('Which format should ClawX use when the model pauses?');
+    expect(screen.getByTestId('chat-tool-ui-question-flow')).toHaveTextContent('Which format should Verse Claw use when the model pauses?');
     expect(screen.getByText('Structured cards')).toBeInTheDocument();
     expect(screen.getByText('Backup only')).toBeInTheDocument();
   });

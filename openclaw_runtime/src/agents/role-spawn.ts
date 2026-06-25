@@ -21,7 +21,7 @@ import { compileRoleContractToSoul, type RoleContract } from "./role-contract.js
 import { roleEffortToThinking } from "./role-effort.js";
 import { resolveRoleContract, type RoleRegistryConfigCarrier } from "./role-registry.js";
 import { buildRolePermissionDenyPatches } from "./role-permissions-policy.js";
-import { getMemoryCards, ensureMemoryCardsLoaded, recordMemoryInjection, listMemoryConflicts, isMemoryStoreConfigured } from "../memory/memory-store.js";
+import { getMemoryCards, ensureMemoryCardsLoaded, recordMemoryInjection, listMemoryConflicts, isMemoryStoreConfigured, isRoleMemoryEnabled } from "../memory/memory-store.js";
 import { isInjectableMemoryCard } from "../memory/memory-card.js";
 import { buildContextPack, renderContextPack } from "../memory/context-pack.js";
 import type { MemoryCard } from "../memory/types.js";
@@ -121,7 +121,7 @@ export function buildRoleSystemPrompt(
 ): string {
   const soul = compileRoleContractToSoul(role);
   const parts: string[] = [soul];
-  if (memoryCards && memoryCards.length > 0) {
+  if (isRoleMemoryEnabled() && memoryCards && memoryCards.length > 0) {
     const injectable = memoryCards.filter((card) =>
       isInjectableMemoryCard(card) || (card.status === "cold" && !card.supersededBy),
     );
@@ -161,6 +161,9 @@ export function buildRoleSystemPrompt(
 /** Resolve role-tagged memory cards for injection into a role-spawned prompt. */
 export function resolveRoleMemoryCards(role: RoleContract): MemoryCard[] {
   try {
+    if (!isRoleMemoryEnabled()) {
+      return [];
+    }
     if (!isMemoryStoreConfigured()) {
       return [];
     }

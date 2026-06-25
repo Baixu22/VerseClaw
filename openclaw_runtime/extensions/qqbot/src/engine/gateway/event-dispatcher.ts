@@ -1,5 +1,5 @@
 /**
- * Event dispatcher â€” convert raw WebSocket op=0 events into QueuedMessage objects.
+ * Event dispatcher â€?convert raw WebSocket op=0 events into QueuedMessage objects.
  *
  * Pure mapping logic with zero side effects (except known-user recording).
  * Independently testable.
@@ -140,7 +140,7 @@ export function dispatchEvent(
  *
  * Used for both `GROUP_AT_MESSAGE_CREATE` (bot was @-ed) and
  * `GROUP_MESSAGE_CREATE` (non-@ background chatter). The only difference
- * between the two is the carried `eventType` â€” downstream gating uses
+ * between the two is the carried `eventType` â€?downstream gating uses
  * that to decide whether to treat the message as a bot-directed turn.
  */
 function buildGroupQueuedMessage(

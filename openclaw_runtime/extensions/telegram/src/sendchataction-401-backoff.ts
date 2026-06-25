@@ -74,7 +74,7 @@ function is401Error(error: unknown): boolean {
  * across all message contexts. This prevents the infinite loop that caused Telegram
  * to delete bots (issue #27092).
  *
- * When a 401 occurs, exponential backoff is applied (1s â†’ 2s â†’ 4s â†’ ... â†’ 5min).
+ * When a 401 occurs, exponential backoff is applied (1s â†?2s â†?4s â†?... â†?5min).
  * After maxConsecutive401 failures (default 10), all sendChatAction calls are
  * suspended until reset() is called.
  */

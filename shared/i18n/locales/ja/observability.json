@@ -14,6 +14,11 @@
   "spanUnit": "スパン",
   "noSpans": "このトレースにはスパンがありません。",
   "viewRoles": "ロールと編成を見る",
+  "drawer": {
+    "close": "閉じる",
+    "locateInGraph": "グラフで位置を確認",
+    "empty": "ノードを選択して実行詳細を確認します。"
+  },
   "status": {
     "running": "実行中",
     "completed": "完了",
@@ -69,7 +74,20 @@
     "collapse": "折りたたむ",
     "minimap": "ミニマップ",
     "emptyTitle": "トレースを選択",
-    "emptyBody": "実行を選択すると、Agent チェーン、モデル呼び出し、ツール、承認、エラーを確認できます。"
+    "emptyBody": "実行を選択すると、Agent チェーン、モデル呼び出し、ツール、承認、エラーを確認できます。",
+    "hidden": "{{count}} 件を非表示",
+    "density": "密度",
+    "densityHint": "低シグナルイベントの表示量を調整します。",
+    "densityModes": {
+      "focused": "集中",
+      "balanced": "標準",
+      "full": "全件"
+    },
+    "nodeMetrics": {
+      "events": "{{count}}件",
+      "artifacts": "{{count}}成果物",
+      "retries": "{{count}}再試行"
+    }
   },
   "tabs": {
     "details": "詳細",
@@ -80,7 +98,9 @@
     "artifacts": "成果物",
     "attributes": "属性",
     "timeline": "タイムライン",
-    "score": "スコア"
+    "score": "スコア",
+    "compare": "比較",
+    "annotation": "メモ"
   },
   "details": {
     "empty": "ノードを選択して実行詳細を確認します。",
@@ -209,5 +229,63 @@
     "tokens": "トークン",
     "cost": "コスト",
     "score": "スコア"
+  },
+  "savedViews": {
+    "all": "すべての Trace",
+    "recentErrors": "最近のエラー",
+    "artifactRuns": "ファイル変更",
+    "approvalRuns": "承認",
+    "retryWarnings": "再試行と警告",
+    "custom": "保存済みビュー",
+    "saveCurrent": "現在のビューを保存"
+  },
+  "views": {
+    "label": "ビュー",
+    "graph": "グラフ",
+    "tree": "実行ツリー",
+    "swimlane": "スイムレーン"
+  },
+  "summaryHeader": {
+    "rootCause": "根本原因",
+    "selected": "選択中",
+    "noIssue": "この Trace に高重大度の問題は検出されていません。"
+  },
+  "runTree": {
+    "title": "実行ツリー"
+  },
+  "swimlane": {
+    "title": "フェーズスイムレーン"
+  },
+  "evidence": {
+    "title": "診断エビデンス",
+    "issueMeta": "{{category}} / {{severity}}",
+    "why": "重要な理由",
+    "evidence": "エビデンス",
+    "nextStep": "次の推奨アクション",
+    "noIssue": "このノードに関連する問題はありません。"
+  },
+  "compare": {
+    "title": "Trace 比較",
+    "subtitle": "ワークベンチ内で選択中の Trace を別の実行と比較します。",
+    "selectTrace": "Trace を選択",
+    "none": "比較なし",
+    "empty": "別の Trace を選択して、時間、トークン、コスト、問題数を比較します。",
+    "delta": "差分 {{value}}"
+  },
+  "annotations": {
+    "title": "Trace メモ",
+    "subtitle": "この Trace に対するローカルのレビュー メモとタグ。",
+    "statusLabel": "レビュー状態",
+    "tags": "タグ",
+    "tagsPlaceholder": "triage, regression, tool",
+    "note": "メモ",
+    "notePlaceholder": "短い診断やフォローアップを追加...",
+    "save": "メモを保存",
+    "updatedAt": "{{time}} に更新",
+    "status": {
+      "open": "未対応",
+      "reviewed": "レビュー済み",
+      "ignored": "無視"
+    }
   }
 }

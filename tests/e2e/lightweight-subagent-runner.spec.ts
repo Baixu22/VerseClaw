@@ -83,7 +83,8 @@ test.describe('Lightweight Subagent Runner', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
     await page.getByTestId('role-orchestration-toggle').click();
     await expect(page.getByTestId('subagent-runner-panel')).toBeVisible();
 
@@ -181,7 +182,8 @@ test.describe('Lightweight Subagent Runner', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
     await page.getByTestId('role-orchestration-toggle').click();
     await page.getByTestId('subagent-runner-preset').click();
     await page.getByRole('option', { name: 'Reviewer' }).click();
@@ -237,7 +239,8 @@ test.describe('Lightweight Subagent Runner', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
     await page.getByTestId('role-orchestration-toggle').click();
     await page.getByTestId('subagent-runner-preset').click();
     await page.getByRole('option', { name: 'Reviewer' }).click();

@@ -5,7 +5,7 @@ export const DEFAULT_IMESSAGE_PROBE_TIMEOUT_MS = 10_000;
 // API bridge intermittently stalls up to ~124s before the send completes. The
 // 10s probe timeout aborts those mid-flight, and non-recoverable shapes
 // (attachment/reply) are then lost. This must clear the observed upper bound
-// plus headroom, otherwise the long tail of stalls still loses sends â€” 150s
+// plus headroom, otherwise the long tail of stalls still loses sends â€?150s
 // covers 124s with margin. Decoupling keeps probes/health checks fast while
 // letting real sends ride out the stall. Akin to the BlueBubbles fix (#69193).
 export const DEFAULT_IMESSAGE_SEND_TIMEOUT_MS = 150_000;

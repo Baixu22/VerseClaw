@@ -1,5 +1,5 @@
 /**
- * Known user tracking â€” SQLite KV-backed store.
+ * Known user tracking â€?SQLite KV-backed store.
  *
  * Legacy `known-users.json` data is imported once, then deleted after SQLite
  * has the canonical copy.

@@ -28,9 +28,9 @@
 //   }
 //
 // `ask` modes:
-//   off       â€” silent: allow if matched, deny if not (today's default)
-//   on-miss   â€” silent allow if matched; prompt operator if not matched
-//   always    â€” prompt operator on every call (denyPaths still hard-deny)
+//   off       â€?silent: allow if matched, deny if not (today's default)
+//   on-miss   â€?silent allow if matched; prompt operator if not matched
+//   always    â€?prompt operator on every call (denyPaths still hard-deny)
 //
 // `denyPaths` always wins, even in `ask: always`.
 // `allow-always` from the prompt appends the path back into allowReadPaths /
@@ -40,10 +40,10 @@
 // realpaths the requested path (or its parent for new-file writes) BEFORE
 // any I/O, and refuses with SYMLINK_REDIRECT if it differs from the
 // requested path. This stops a symlink in user-controlled territory
-// (e.g. ~/Downloads/evil â†’ /etc) from redirecting an allowed-looking path
+// (e.g. ~/Downloads/evil â†?/etc) from redirecting an allowed-looking path
 // to a disallowed canonical location. Set to true to opt back into the
 // looser "follow + post-flight check" behavior, e.g. on macOS where
-// /var â†’ /private/var trips the check for /var/folders paths.
+// /var â†?/private/var trips the check for /var/folders paths.
 
 import os from "node:os";
 import path from "node:path";
@@ -186,24 +186,24 @@ function normalizeAskMode(value: unknown): FilePolicyAskMode {
  * Evaluate whether (nodeId, kind, path) is permitted.
  *
  * Resolution order:
- *   1. No file-transfer config or no entry for this node â†’ NO_POLICY (deny,
- *      not askable â€” operator hasn't opted in at all).
- *   2. denyPaths matches â†’ POLICY_DENIED, not askable (hard deny).
- *   3. ask=always â†’ ask-always (prompt every time).
- *   4. allowPaths matches â†’ matched-allow (silent allow).
- *   5. ask=on-miss â†’ POLICY_DENIED with askable=true.
- *   6. ask=off (or unset) â†’ POLICY_DENIED, not askable.
+ *   1. No file-transfer config or no entry for this node â†?NO_POLICY (deny,
+ *      not askable â€?operator hasn't opted in at all).
+ *   2. denyPaths matches â†?POLICY_DENIED, not askable (hard deny).
+ *   3. ask=always â†?ask-always (prompt every time).
+ *   4. allowPaths matches â†?matched-allow (silent allow).
+ *   5. ask=on-miss â†?POLICY_DENIED with askable=true.
+ *   6. ask=off (or unset) â†?POLICY_DENIED, not askable.
  */
 /**
  * Reject any path whose RAW string contains a ".." segment. Checking the
- * raw string (not the normalized form) is the point â€” `posix.normalize`
+ * raw string (not the normalized form) is the point â€?`posix.normalize`
  * collapses "/allowed/../etc/passwd" to "/etc/passwd", which would defeat
  * the check. We want to flag the literal traversal sequence the agent
  * passed in, before any glob match runs.
  *
  * Without this, "/allowed/../etc/passwd" matches the glob "/allowed/**"
  * pre-realpath, so the node fetches the bytes before the post-flight
- * canonical-path check denies â€” too late, the bytes already crossed the
+ * canonical-path check denies â€?too late, the bytes already crossed the
  * nodeâ†’gateway boundary.
  *
  * Treats backslash and forward slash as equivalent separators so a Windows

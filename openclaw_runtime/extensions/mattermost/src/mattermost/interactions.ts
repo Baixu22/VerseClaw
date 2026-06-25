@@ -203,7 +203,7 @@ export function getInteractionSecret(accountId?: string): string {
     }
   }
   throw new Error(
-    "Interaction secret not initialized â€” call setInteractionSecret(accountId, botToken) first",
+    "Interaction secret not initialized â€?call setInteractionSecret(accountId, botToken) first",
   );
 }
 
@@ -616,7 +616,7 @@ export function createMattermostInteractionHandler(params: {
     }
 
     // Dispatch as system event so the agent can handle it.
-    // Wrapped in try/catch â€” the post update below must still run even if
+    // Wrapped in try/catch â€?the post update below must still run even if
     // system event dispatch fails (e.g. missing sessionKey or channel lookup).
     try {
       const eventLabel =
@@ -647,7 +647,7 @@ export function createMattermostInteractionHandler(params: {
         props: {
           attachments: [
             {
-              text: `âœ“ **${clickedButtonName}** selected by @${userName}`,
+              text: `âœ?**${clickedButtonName}** selected by @${userName}`,
             },
           ],
         },
@@ -656,7 +656,7 @@ export function createMattermostInteractionHandler(params: {
       log?.(`mattermost interaction: failed to update post ${payload.post_id}: ${String(err)}`);
     }
 
-    // Respond with empty JSON â€” the post update is handled above
+    // Respond with empty JSON â€?the post update is handled above
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
     res.end("{}");

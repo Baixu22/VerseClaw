@@ -36,7 +36,7 @@ function normalizeTarget(value: unknown): RemoteControlInspectTarget | null {
 function getBaseUrl(): string {
   const launchState = getRemoteControlLaunchState();
   if (!launchState.effectivePort) {
-    throw new Error('Electron CDP 调试端口当前未生效，请启用后重启 ClawX');
+    throw new Error('Electron CDP 调试端口当前未生效，请启用后重启 Verse Claw');
   }
   return `http://127.0.0.1:${launchState.effectivePort}`;
 }
@@ -50,7 +50,7 @@ async function listTargets(): Promise<RemoteControlInspectTarget[]> {
 
 function targetScore(target: RemoteControlInspectTarget): number {
   if (target.type !== 'page') return 0;
-  if (target.url?.includes('localhost:5173') || target.title === 'ClawX') return 4;
+  if (target.url?.includes('localhost:5173') || target.title === 'Verse Claw') return 4;
   if (target.url && !target.url.startsWith('devtools://')) return 3;
   return 1;
 }
@@ -175,7 +175,7 @@ export function createRemoteControlApi(): CompleteHostServiceRegistry['remoteCon
       if (!launchState.effectivePort) {
         return {
           success: false,
-          error: 'Electron CDP 调试端口当前未生效，请启用后重启 ClawX',
+          error: 'Electron CDP 调试端口当前未生效，请启用后重启 Verse Claw',
           endpoint: launchState.endpoint,
           webSocketDebuggerUrl: null,
           browser: null,

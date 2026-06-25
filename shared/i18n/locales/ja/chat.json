@@ -2,7 +2,7 @@
   "gatewayNotRunning": "ゲートウェイが停止中",
   "gatewayRequired": "チャットを利用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
   "welcome": {
-    "title": "ClawX チャット",
+    "title": "Verse Claw チャット",
     "subtitle": "お手伝いできることはありますか？",
     "askQuestions": "タスク対応",
     "askQuestionsDesc": "タスク指向の依頼に対応します",
@@ -123,6 +123,54 @@
       "complete": "完了",
       "saved": "保存済み",
       "error": "確認が必要"
+    },
+    "table": {
+      "label": "テーブル"
+    },
+    "weather": {
+      "label": "天気",
+      "humidity": "湿度",
+      "wind": "風速"
+    },
+    "directiveText": {
+      "label": "通知"
+    },
+    "source": {
+      "label": "出典",
+      "open": "出典を開く"
+    },
+    "progress": {
+      "label": "進捗",
+      "done": "完了",
+      "inProgress": "進行中"
+    },
+    "statusGrid": {
+      "label": "ステータス"
+    },
+    "alert": {
+      "label": "アラート",
+      "dismiss": "閉じる"
+    },
+    "keyValue": {
+      "label": "詳細"
+    },
+    "chart": {
+      "label": "チャート"
+    },
+    "imageGallery": {
+      "label": "画像"
+    },
+    "codeBlock": {
+      "label": "コード",
+      "copy": "コピー",
+      "copied": "コピー済み"
+    },
+    "tokenUsage": {
+      "input": "入力トークン",
+      "output": "出力トークン",
+      "cache": "キャッシュトークン",
+      "total": "合計トークン",
+      "cost": "推定コスト"
     }
   },
   "knowledgeDraft": {
@@ -202,7 +250,7 @@
     "errors": {
       "outsideSandbox": "サンドボックス外のパスのため拒否しました",
       "outsideSandboxTitle": "このファイルを読み取れません",
-      "outsideSandboxHint": "ClawX はこのパスを読み取れませんでした。ファイルが移動または削除されたか、現在のアカウントにアクセス権がない可能性があります。ファイルマネージャーで表示できます。",
+      "outsideSandboxHint": "Verse Claw はこのパスを読み取れませんでした。ファイルが移動または削除されたか、現在のアカウントにアクセス権がない可能性があります。ファイルマネージャーで表示できます。",
       "readOnlyRoot": "このファイルは読み取り専用領域（内蔵スキルなど）にあり、変更できません",
       "tooLarge": "ファイルが大きすぎます（{{size}}）。プレビューを無効化しました",
       "binary": "バイナリファイルのためテキストプレビューはできません",
@@ -212,7 +260,7 @@
       "unsupportedFormatTitle": "このファイル形式は内蔵プレビューまたは差分表示に未対応です",
       "unsupportedFormatHint": "現在、内蔵プレビューと差分表示は直接読み取れるテキスト/Markdown 系ファイルのみ対応しています。ファイルマネージャーで開いてください。",
       "largeBinaryOpenTitle": "このファイルは大きいため内蔵プレビューできません",
-      "largeBinaryOpenHint": "このファイルは {{size}} です。ClawX では内蔵プレビューできませんが、確認後にシステム既定のアプリで開けます。",
+      "largeBinaryOpenHint": "このファイルは {{size}} です。Verse Claw では内蔵プレビューできませんが、確認後にシステム既定のアプリで開けます。",
       "openInFinderFailed": "ファイルマネージャーで表示できません",
       "openFailed": "開けませんでした: {{error}}"
     },
@@ -396,16 +444,33 @@
         "refresh": "更新",
         "stage": "ステージ",
         "unstage": "ステージ解除",
+        "copyPatch": "パッチをコピー",
+        "revert": "元に戻す",
         "commit": "ステージ済み変更をコミット",
+        "checkoutBranch": "Checkout",
         "createBranch": "ブランチ作成",
+        "fetch": "Fetch",
+        "pull": "Pull",
+        "push": "Push",
         "addWorktree": "worktree を追加",
         "removeWorktree": "削除",
         "pruneWorktrees": "整理",
+        "stashPush": "stash に保存",
+        "stashApply": "適用",
+        "stashPop": "Pop",
         "createPr": "PR 作成",
-        "approveRetry": "承認して再試行"
+        "approveRetry": "承認して再試行",
+        "openWorktree": "Open",
+        "switchWorktree": "Switch"
       },
       "approval": {
         "title": "{{action}} には承認が必要です"
+      },
+      "revertConfirm": {
+        "title": "選択したファイルを元に戻しますか？",
+        "message": "{{path}} の Git 変更を破棄します。",
+        "confirm": "元に戻す",
+        "cancel": "キャンセル"
       },
       "diff": {
         "unstaged": "未ステージ",
@@ -414,12 +479,44 @@
         "binary": "バイナリ diff はインライン表示できません。",
         "tooLarge": "diff が大きすぎるためインライン表示できません。"
       },
+      "validation": {
+        "title": "最新の検証",
+        "empty": "検証はまだ実行されていません",
+        "status": "準備完了"
+      },
+      "readiness": {
+        "gitCli": "Git CLI",
+        "agentTools": "Agent ツール",
+        "github": "GitHub",
+        "summaryLabel": "Git readiness",
+        "summaryValue": "{{ready}}/{{total}} ready",
+        "summaryHelp": "Active repository, local Git, Agent tools, and GitHub auth",
+        "ready": "準備完了",
+        "missing": "未検出",
+        "unavailable": "利用不可",
+        "agentToolsReady": "{{count}} 個のツール",
+        "githubLogin": "gh auth login",
+        "repository": "Repository",
+        "activeRepository": "Active repo"
+      },
+      "toolTabs": {
+        "worktrees": "Worktree",
+        "commit": "コミット",
+        "branch": "ブランチ",
+        "stash": "Stash",
+        "github": "PR",
+        "compactHint": "コンパクトツール"
+      },
       "commit": {
         "title": "コミット",
         "placeholder": "コミットメッセージ"
       },
       "branch": {
-        "title": "ブランチ"
+        "title": "ブランチ",
+        "checkoutTitle": "Checkout branch",
+        "checkoutSelect": "Select branch",
+        "current": "current",
+        "createTitle": "Create branch"
       },
       "branchWorktree": {
         "title": "ブランチと worktree",
@@ -433,19 +530,70 @@
         "startPointPlaceholder": "開始点、既定は HEAD",
         "selectBranch": "ブランチを選択",
         "current": "現在",
-        "empty": "worktree はありません"
+        "locked": "ロック中",
+        "prunable": "Prune 可能",
+        "defaultPath": "既定パス",
+        "defaultPathUnavailable": "ブランチを入力すると同階層の worktree パスを表示します",
+        "empty": "worktree はありません",
+        "branchExists": "That branch already exists. Use Existing branch or choose a new name.",
+        "branchCheckedOut": "That branch is already checked out at {{path}}."
+      },
+      "stash": {
+        "title": "Stash",
+        "count": "{{count}} 件",
+        "empty": "stash はありません",
+        "messagePlaceholder": "任意の stash メッセージ",
+        "includeUntrackedLabel": "未追跡ファイルを含める",
+        "includeUntrackedHelp": "Git でまだ追跡していない新規ファイルも保存します。",
+        "applyLabel": "{{selector}} を適用",
+        "popLabel": "{{selector}} を pop"
       },
       "github": {
         "title": "GitHub PR",
         "noPrs": "オープンな PR はありません",
         "notAuthenticated": "PR 操作を有効にするにはターミナルで gh auth login を実行してください。",
         "titlePlaceholder": "PR タイトル",
-        "bodyPlaceholder": "PR 本文"
+        "bodyPlaceholder": "PR 本文",
+        "baseLabel": "Base branch",
+        "basePlaceholder": "Base",
+        "headLabel": "Head branch",
+        "headPlaceholder": "Head",
+        "draftLabel": "Draft PR",
+        "draftHelp": "Create the pull request as a draft.",
+        "prRefs": "{{head}} -> {{base}}"
       },
       "toast": {
         "blocked": "承認が必要です",
         "failed": "Git 操作に失敗しました",
-        "approvalFailed": "承認に失敗しました"
+        "approvalFailed": "承認に失敗しました",
+        "patchCopied": "パッチをコピーしました",
+        "patchCopyFailed": "パッチのコピーに失敗しました: {{error}}",
+        "worktreeOpened": "Worktree opened",
+        "worktreeOpenFailed": "Failed to open worktree: {{error}}",
+        "worktreeWorkspaceCreated": "Workspace created for this worktree",
+        "worktreeWorkspaceSwitched": "Switched to worktree workspace",
+        "worktreeWorkspaceSwitchFailed": "Failed to switch worktree workspace: {{error}}"
+      },
+      "operation": {
+        "title": "Last operation",
+        "empty": "No Git operation yet",
+        "ready": "Ready",
+        "success": "Done",
+        "blocked": "Blocked",
+        "failed": "Failed",
+        "completed": "Completed",
+        "detail": "{{action}}: {{detail}}"
+      },
+      "metrics": {
+        "changes": "Changes",
+        "delta": "Delta",
+        "staged": "Staged",
+        "conflicts": "Conflicts",
+        "sync": "Sync",
+        "worktrees": "Worktrees",
+        "stashes": "Stashes",
+        "aheadBehind": "ahead {{ahead}} / behind {{behind}}",
+        "unknown": "Unknown"
       }
     }
   },
@@ -453,7 +601,7 @@
     "eyebrow": "実行ビュー",
     "title": "タスクの流れ",
     "emptyTitle": "まだ構造化されたステップはありません",
-    "emptyBody": "実行が始まると、ClawX は思考・ツール呼び出し・最終化の状態をここに表示します。",
+    "emptyBody": "実行が始まると、Verse Claw は思考・ツール呼び出し・最終化の状態をここに表示します。",
     "status": {
       "idle": "待機中",
       "running_one": "進行中 1 件",
@@ -535,7 +683,10 @@
   "session": {
     "renameHint": "ダブルクリックでセッション名を変更",
     "renameCurrent": "現在のセッション名を変更",
-    "renameFailed": "セッション名の変更に失敗しました: {{error}}"
+    "renameFailed": "セッション名の変更に失敗しました: {{error}}",
+    "lineage": {
+      "forkedFrom": "{{session}} から Fork"
+    }
   },
   "composer": {
     "attachFiles": "ファイルを添付",
@@ -560,8 +711,20 @@
     "knowledgeScopeDescription": {
       "none": "メモリや wiki コンテキストなしで送信します。",
       "memory": "関連する場合にランタイムメモリカードを使います。",
-      "wiki": "ClawX 管理 wiki の出典付きノートを使います。",
+      "wiki": "Verse Claw 管理 wiki の出典付きノートを使います。",
       "all": "メモリと wiki の両方をコンテキストに使います。"
+    },
+    "knowledgeModeTitle": "呼び出しモード",
+    "knowledgeMode": {
+      "manual": "手動",
+      "suggest": "提案",
+      "auto-read": "自動読み取り"
+    },
+    "knowledgeRoute": {
+      "suggestion": "関連しそうなナレッジが {{count}} 件見つかりました",
+      "attach": "添付",
+      "open": "開く",
+      "dismiss": "閉じる"
     },
     "knowledgeQuick": {
       "enable": "wiki ナレッジを使う",
@@ -588,7 +751,7 @@
       "contextButtonTooltip": "/ を入力すると、ナレッジ添付、スコープ設定、セッション操作を選べます。",
       "promptArgs": "範囲: {{args}}",
       "unknownTitle": "不明なコマンド",
-      "unknownDescription": "{{command}} は ClawX のクイックアクションではありません。Escape で編集に戻れます。",
+      "unknownDescription": "{{command}} は Verse Claw のクイックアクションではありません。Escape で編集に戻れます。",
       "unknownToast": "不明なスラッシュコマンド: {{command}}",
       "ledgerNodeDescription": "Chat のスラッシュコマンドから作成されました。",
       "ledgerSessionSummary": "Chat のスラッシュコマンドからリンク: {{title}}",
@@ -624,10 +787,20 @@
           "description": "入力欄を離れずに None、Memory、Wiki、All を選びます。",
           "argumentHint": "[scope]"
         },
+        "knowledge-mode": {
+          "label": "ナレッジモード",
+          "description": "手動、提案、自動読み取りの呼び出し方法を切り替えます。",
+          "argumentHint": "[manual|suggest|auto]"
+        },
         "save": {
           "label": "ナレッジ下書き",
           "description": "編集可能なナレッジ下書きを依頼します。自動適用はしません。",
           "argumentHint": "[topic]"
+        },
+        "steward-audit": {
+          "label": "Steward 監査",
+          "description": "Knowledge Governance 監査をオンデマンドで実行し、Governance タブを開きます。",
+          "argumentHint": ""
         },
         "steward": {
           "label": "Steward に依頼",
@@ -707,6 +880,9 @@
         "scopeOpened": "ナレッジ範囲ピッカーを開きました。",
         "scopeChanged": "ナレッジ範囲を {{scope}} に設定しました。",
         "typeSlash": "空の入力欄の先頭に / を入力するとコンテキストパレットを開けます。",
+        "knowledgeModeOpened": "ナレッジモードピッカーを開きました。",
+        "knowledgeModeChanged": "ナレッジモードを {{mode}} に設定しました。",
+        "stewardAuditStarted": "ナレッジガバナンス監査を開始しました。",
         "ledgerOpened": "Task Ledger を開きました",
         "ledgerCreated": "Ledger タスクを作成しました: {{title}}",
         "ledgerFailed": "Ledger タスクを作成できませんでした: {{error}}",
@@ -821,6 +997,11 @@
     },
     "continuity": {
       "recommended": "推奨",
+      "health": {
+        "healthy": "継続性は良好です",
+        "risky": "継続性の確認が必要です",
+        "blocked": "現在の実行が終わるまで待機中です"
+      },
       "tooltip": {
         "fork": {
           "default": "今の推奨: この transcript を新しい会話へ分岐します"
@@ -831,7 +1012,8 @@
           "high_pressure": "コンテキスト圧が高いため、引き継ぎ下書きがおすすめです",
           "truncated_context": "一部の履歴が非表示のため、引き継ぎ下書きがおすすめです",
           "compaction_warning": "コンテキスト状態に注意が必要なため、引き継ぎ下書きがおすすめです",
-          "recovery_checkpoint": "復旧 checkpoint があるため、checkpoint ベースの下書きがおすすめです"
+          "recovery_checkpoint": "復旧 checkpoint があるため、checkpoint ベースの下書きがおすすめです",
+          "recovery_context": "復旧 context があるため、確認できる下書きがおすすめです"
         }
       },
       "dialogHint": {
@@ -840,7 +1022,8 @@
         "high_pressure": "コンテキスト圧が高いため、新しいセッションを始める前に下書きを確認できます。",
         "truncated_context": "一部の transcript 履歴が非表示のため、分岐コピーより下書き Handoff の方が安全です。",
         "compaction_warning": "コンテキスト圧縮状態に警告があるため、下書き Handoff がより安全な継続方法です。",
-        "recovery_checkpoint": "ResumeCheckpoint があるため、Task Ledger、Git、trace、checkpoint 証拠を確認できる下書きに引き継げます。"
+        "recovery_checkpoint": "ResumeCheckpoint があるため、Task Ledger、Git、trace、checkpoint 証拠を確認できる下書きに引き継げます。",
+        "recovery_context": "runtime recovery context があるため、有界の継続投影を Task Ledger と evidence と一緒に下書きへ含められます。"
       },
       "failure": {
         "action": {
@@ -933,7 +1116,7 @@
     "skillPreviewNotFound": "この Skill が見つかりません。Skill ピッカーを開いて一覧を更新してください。",
     "capability": {
       "dialogTitle": "能力の変更を適用しますか？",
-      "dialogDescription": "ClawX はこのメッセージ内でローカル Skill または MCP 管理アクションを検出しました。変更前に確認してください。",
+      "dialogDescription": "Verse Claw はこのメッセージ内でローカル Skill または MCP 管理アクションを検出しました。変更前に確認してください。",
       "confirm": "確認して送信",
       "cancel": "キャンセル",
       "applied": "能力の変更を適用しました",
@@ -991,7 +1174,94 @@
       "review": "既定では編集せず、diff とリスクを確認します。",
       "docsData": "文書、表計算、PDF、レポートを扱います。"
     },
-    "workModeRecommendedPermission": "推奨: {{mode}}"
+    "workModeRecommendedPermission": "推奨: {{mode}}",
+    "intervention": {
+      "guide": "誘導",
+      "guideTooltip": "実行中のランに非中断のガイダンスを注入します。",
+      "queue": "キュー",
+      "queueTooltip": "現在のランを保ち、この追加入力を後で再生します。",
+      "interrupt": "中断",
+      "interruptTooltip": "危険なロールバック前に現在のランを止めるか方向転換します。"
+    },
+    "rollbackPlan": {
+      "title": "ロールバックと復旧計画",
+      "open": "開く",
+      "risk": {
+        "safe": "安全",
+        "review": "確認",
+        "dangerous": "危険"
+      },
+      "riskCount": {
+        "safe": "安全 {{count}} 件",
+        "review": "確認 {{count}} 件",
+        "dangerous": "危険 {{count}} 件"
+      },
+      "signalState": {
+        "active": "有効",
+        "ready": "待機"
+      },
+      "signals": {
+        "checkpoint": "チェックポイント",
+        "queue": "キュー",
+        "context": "コンテキスト",
+        "terminal": "ターミナル",
+        "git": "Git ロールバック",
+        "taskLedger": "Task Ledger",
+        "memory": "メモリ"
+      },
+      "destructiveWarning": "破壊的なロールバックは承認付きの Git、ファイル、またはターミナル操作を通してください。",
+      "actions": {
+        "checkpoint-handoff": {
+          "title": "チェックポイント Handoff を準備",
+          "detail": "完全な transcript を再生せず、{{trigger}} チェックポイントから再開します。"
+        },
+        "drain-queue": {
+          "title": "キュー済みフォローアップを送信",
+          "detail": "アクティブランが空いた後、{{count}} 件のフォローアップを再生できます。"
+        },
+        "manual-compact": {
+          "title": "現在のコンテキストを圧縮",
+          "detailPressure": "境界付きの継続要約を保ちながら transcript 圧力を下げます。",
+          "detailDefault": "危険な作業を続ける前に新しい境界付きコンテキストを作ります。"
+        },
+        "review-git": {
+          "title": "ファイルロールバックを確認",
+          "detail": "編集を黙って破棄せず、Git パネルの revert/stash 承認操作を使います。"
+        },
+        "task-ledger-review": {
+          "title": "Task Ledger に復旧証拠を記録",
+          "detail": "逸脱、ブロッカー、確認済み証拠を永続的なタスク状態として記録します。"
+        },
+        "memory-review": {
+          "title": "メモリ変更は確認のみ",
+          "detail": "有用な復旧事実は Knowledge 下書きまたはメモリ提案にし、永続メモリへ自動保存しません。"
+        },
+        "terminal-interrupt": {
+          "title": "破壊的ロールバック前に中断",
+          "detail": "ターミナル、Git、ファイルのロールバック前に現在のランを止めるか誘導します。"
+        },
+        "terminal-control": {
+          "title": "ターミナル介入操作を開く",
+          "detail": "ワークスペースのターミナルパネルを開き、実行中のセッションがあれば Ctrl+C を送ります。"
+        }
+      },
+      "summary": {
+        "checkpoint": "{{trigger}} チェックポイントから復旧できます。",
+        "queue": "{{count}} 件のフォローアップがキュー済みです。",
+        "truncated": "{{count}} 件の transcript メッセージが切り詰め済みです。Handoff または圧縮を優先してください。",
+        "default": "緊急のロールバック圧力はありません。破壊的操作の前に確認優先で復旧してください。"
+      },
+      "terminal": {
+        "interrupted": "ターミナル中断を送信しました。",
+        "opened": "ターミナル操作を開きました。実行中のターミナルセッションは見つかりません。",
+        "interruptFailed": "ターミナルの中断に失敗しました。"
+      },
+      "memoryDraft": {
+        "title": "復旧メモリ提案: {{session}}",
+        "reviewNotice": "確認専用の復旧メモリ提案です。事実、範囲、証拠をユーザーが確認するまで永続メモリへ適用しないでください。",
+        "emptyBody": "セッション {{sessionKey}} にはまだ表示可能な復旧 transcript がありません。適用前に確認済みの復旧事実、決定、ブロッカー、証拠参照だけを記録してください。"
+      }
+    }
   },
   "historyBuckets": {
     "today": "今日",
@@ -1007,6 +1277,21 @@
   "sessionView": {
     "project": "プロジェクト",
     "time": "時間"
+  },
+  "sidebar": {
+    "searchSessions": "会話を検索",
+    "clearSearch": "検索をクリア",
+    "searchNoResults": "会話が見つかりません",
+    "searchModalPlaceholder": "名前、ワークスペース、エージェントで会話を検索...",
+    "searchEmptyHint": "入力して会話を検索してください",
+    "searchCurrent": "現在",
+    "searchRelativeNow": "たった今",
+    "searchRelativeMinutes": "{{count}} 分前",
+    "searchRelativeHours": "{{count}} 時間前",
+    "searchRelativeDays": "{{count}} 日前",
+    "searchHintNavigate": "移動",
+    "searchHintSelect": "選択",
+    "searchHintClose": "閉じる"
   },
   "questionDirectory": {
     "title": "質問目次",
@@ -1042,6 +1327,11 @@
       "runtimeUnavailable": "Runtime 不可",
       "optionalExternal": "任意"
     },
+    "intensity": "プロンプト強度",
+    "intensityMode_full": "🛠️ 完全コンテキスト",
+    "intensityMode_minimal": "⚡ 軽量コンテキスト",
+    "intensityMode_none": "🪶 最小限の分析",
+    "tokenSavings": "約 {{tokens}}/ターン節約",
     "status": {
       "plan": {
         "primary": "前提",
@@ -1091,11 +1381,11 @@
       "permission": "??"
     },
     "statusIndicator": {
-      "label": "\u30a2\u30b7\u30b9\u30bf\u30f3\u30c8\u72b6\u614b"
+      "label": "アシスタント状態"
     },
     "activity": {
-      "thinking": "\u601d\u8003\u4e2d",
-      "processingToolResults": "\u30c4\u30fc\u30eb\u7d50\u679c\u3092\u51e6\u7406\u4e2d"
+      "thinking": "思考中",
+      "processingToolResults": "ツール結果を処理中"
     },
     "quote": {
       "action": "??"
@@ -1111,12 +1401,12 @@
     }
   },
   "sessionStatus": {
-    "running": "\u5b9f\u884c\u4e2d",
-    "waiting": "\u5165\u529b\u5f85\u3061",
-    "completed": "\u5b8c\u4e86",
-    "error": "\u78ba\u8a8d\u304c\u5fc5\u8981",
-    "aborted": "\u505c\u6b62\u3057\u307e\u3057\u305f",
-    "dismissCompleted": "\u5b8c\u4e86\u72b6\u614b\u3092\u975e\u8868\u793a"
+    "running": "実行中",
+    "waiting": "入力待ち",
+    "completed": "完了",
+    "error": "確認が必要",
+    "aborted": "停止しました",
+    "dismissCompleted": "完了状態を非表示"
   },
   "turnWork": {
     "title": "作業パネル",

@@ -82,16 +82,16 @@ describe('observability local trace index', () => {
 
   beforeEach(async () => {
     tempRoot = await mkdtemp(join(tmpdir(), 'clawx-observability-index-'));
-    previousIndexDir = process.env.CLAWX_OBSERVABILITY_INDEX_DIR;
-    process.env.CLAWX_OBSERVABILITY_INDEX_DIR = tempRoot;
+    previousIndexDir = process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR;
+    process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR = tempRoot;
     resetObservabilityIndexForTests();
     await clearObservabilityIndex();
   });
 
   afterEach(async () => {
     resetObservabilityIndexForTests();
-    if (previousIndexDir == null) delete process.env.CLAWX_OBSERVABILITY_INDEX_DIR;
-    else process.env.CLAWX_OBSERVABILITY_INDEX_DIR = previousIndexDir;
+    if (previousIndexDir == null) delete process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR;
+    else process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR = previousIndexDir;
     await rm(tempRoot, { recursive: true, force: true });
   });
 

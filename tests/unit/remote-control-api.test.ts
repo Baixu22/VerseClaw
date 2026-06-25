@@ -39,7 +39,7 @@ const { wsSentMessages, FakeWebSocket } = vi.hoisted(() => {
             result: {
               value: message.params?.expression?.includes('getBoundingClientRect')
                 ? { x: 40, y: 50 }
-                : { title: 'ClawX', url: 'app://clawx' },
+                : { title: 'Verse Claw', url: 'app://verse-claw' },
             },
           };
         } else if (message.method === 'Page.captureScreenshot') {
@@ -146,8 +146,8 @@ describe('remote control api', () => {
           {
             id: 'page-1',
             type: 'page',
-            title: 'ClawX',
-            url: 'app://clawx/index.html',
+            title: 'Verse Claw',
+            url: 'app://verse-claw/index.html',
             webSocketDebuggerUrl: 'ws://127.0.0.1:9222/devtools/page/page-1',
           },
         ];
@@ -161,7 +161,7 @@ describe('remote control api', () => {
       success: true,
       browser: 'Electron/38.0.0',
       protocolVersion: '1.3',
-      targets: [{ id: 'page-1', title: 'ClawX' }],
+      targets: [{ id: 'page-1', title: 'Verse Claw' }],
     });
     expect(fetchMock).toHaveBeenCalledWith('http://127.0.0.1:9222/json/version');
     expect(fetchMock).toHaveBeenCalledWith('http://127.0.0.1:9222/json/list');
@@ -178,7 +178,7 @@ describe('remote control api', () => {
     await expect(createRemoteControlApi().inspect()).resolves.toMatchObject({
       success: false,
       targets: [],
-      error: 'Electron CDP 调试端口当前未生效，请启用后重启 ClawX',
+      error: 'Electron CDP 调试端口当前未生效，请启用后重启 Verse Claw',
     });
   });
 
@@ -193,8 +193,8 @@ describe('remote control api', () => {
         ? [{
           id: 'page-1',
           type: 'page',
-          title: 'ClawX',
-          url: 'app://clawx',
+          title: 'Verse Claw',
+          url: 'app://verse-claw',
           webSocketDebuggerUrl: 'ws://127.0.0.1:9222/devtools/page/page-1',
         }]
         : {},
@@ -222,8 +222,8 @@ describe('remote control api', () => {
       json: async () => [{
         id: 'page-1',
         type: 'page',
-        title: 'ClawX',
-        url: 'app://clawx',
+        title: 'Verse Claw',
+        url: 'app://verse-claw',
         webSocketDebuggerUrl: 'ws://127.0.0.1:9222/devtools/page/page-1',
       }],
     })));

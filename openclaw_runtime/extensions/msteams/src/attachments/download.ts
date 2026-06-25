@@ -71,14 +71,14 @@ function resolveDownloadCandidate(att: MSTeamsAttachmentLike): DownloadCandidate
   }
 
   // OneDrive/SharePoint shared links (delivered in 1:1 DMs when the user
-  // picks "Attach > OneDrive") cannot be fetched directly â€” the URL returns
+  // picks "Attach > OneDrive") cannot be fetched directly â€?the URL returns
   // an HTML landing page rather than the file bytes. Rewrite them to the
   // Graph shares endpoint so the auth fallback attaches a Graph-scoped token
   // and the response is the real file content.
   const sharesUrl = tryBuildGraphSharesUrlForSharedLink(contentUrl);
   const resolvedUrl = sharesUrl ?? contentUrl;
   // Graph shares returns raw bytes without a declared content type we can
-  // trust for routing â€” let the downloader infer MIME from the buffer.
+  // trust for routing â€?let the downloader infer MIME from the buffer.
   const resolvedContentTypeHint = sharesUrl ? undefined : contentType;
 
   return {

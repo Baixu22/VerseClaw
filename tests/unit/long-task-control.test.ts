@@ -60,12 +60,32 @@ describe('long-task intervention control', () => {
     });
   });
 
+  it('maps revise-goal to a checkpointed goal-revision deviation', () => {
+    const policy = interventionPolicyForInputMode('revise-goal', {
+      clawGraphNodeActive: true,
+    });
+
+    expect(policy).toMatchObject({
+      delivery: 'restart_now',
+      shouldAbortActiveRun: true,
+      mutatesCompletionState: false,
+      recordsSteeringEvidence: false,
+      recordsDeviation: true,
+      checkpointRequired: true,
+      reviewRequired: true,
+      confirmationRequired: true,
+      resumeTrigger: 'revise_goal',
+      taskLedgerEffect: 'deviation',
+    });
+  });
+
   it('builds a normalized resume checkpoint that can recover without the full transcript', () => {
     const checkpoint = buildResumeCheckpoint({
       id: 'checkpoint_1',
       workspaceId: 'workspace',
       sessionKey: 'agent:main:session',
       agentId: 'main',
+      taskLedgerRootId: 'tlroot_1',
       trigger: 'interrupt',
       objective: 'Ship long-task controls',
       activeNodeId: 'audit',
@@ -110,6 +130,7 @@ describe('long-task intervention control', () => {
       schemaVersion: 1,
       id: 'checkpoint_1',
       workspaceId: 'workspace',
+      taskLedgerRootId: 'tlroot_1',
       trigger: 'interrupt',
       openBlockers: ['missing trace evidence', 'needs user confirmation'],
       decisions: ['guide-first default'],

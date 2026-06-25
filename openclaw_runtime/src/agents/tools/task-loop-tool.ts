@@ -54,6 +54,8 @@ export function createTaskLoopTool(opts?: TaskLoopToolOptions): AnyAgentTool {
     parameters: Type.Object({
       action: Type.Optional(Type.Union([Type.Literal("run"), Type.Literal("status")])),
       task: Type.Optional(Type.String()),
+      workspaceId: Type.Optional(Type.String()),
+      taskLedgerRootId: Type.Optional(Type.String()),
       loopRunId: Type.Optional(Type.String()),
       templateId: Type.Optional(Type.String()),
       teamTemplateId: Type.Optional(Type.String()),
@@ -89,6 +91,8 @@ export function createTaskLoopTool(opts?: TaskLoopToolOptions): AnyAgentTool {
           task,
           sessionKey,
           agentId: opts?.requesterAgentIdOverride,
+          workspaceId: readStringParam(params, "workspaceId"),
+          taskLedgerRootId: readStringParam(params, "taskLedgerRootId"),
           fileHints: readStringArray(params.fileHints),
           acceptance: readStringArray(params.acceptance),
           important: readBoolean(params.important) ?? false,

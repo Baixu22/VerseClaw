@@ -56,7 +56,7 @@ function normalizeZalouserGroupAllowAliases(params: {
     nextGroups[groupId] = nextGroup;
     changed = true;
     params.changes.push(
-      `Moved ${params.pathPrefix}.${groupId}.allow â†’ ${params.pathPrefix}.${groupId}.enabled (${String(nextGroup.enabled)}).`,
+      `Moved ${params.pathPrefix}.${groupId}.allow â†?${params.pathPrefix}.${groupId}.enabled (${String(nextGroup.enabled)}).`,
     );
   }
   return { groups: nextGroups, changed };

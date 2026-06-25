@@ -19,12 +19,13 @@ async function seedTestProvider(page: Parameters<typeof completeSetup>[0]): Prom
   }, { providerId: TEST_PROVIDER_ID, providerLabel: TEST_PROVIDER_LABEL });
 }
 
-test.describe('ClawX provider lifecycle', () => {
+test.describe('Verse Claw provider lifecycle', () => {
   test('shows a saved provider and removes it cleanly after deletion', async ({ page }) => {
     await completeSetup(page);
     await seedTestProvider(page);
 
-    await page.getByTestId('sidebar-nav-models').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId('providers-settings')).toBeVisible();
     await expect(page.getByTestId(`provider-card-${TEST_PROVIDER_ID}`)).toContainText(TEST_PROVIDER_LABEL);
 
@@ -39,7 +40,8 @@ test.describe('ClawX provider lifecycle', () => {
     await completeSetup(page);
     await seedTestProvider(page);
 
-    await page.getByTestId('sidebar-nav-models').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId(`provider-card-${TEST_PROVIDER_ID}`)).toContainText(TEST_PROVIDER_LABEL);
 
     await page.getByTestId(`provider-card-${TEST_PROVIDER_ID}`).hover();
@@ -54,7 +56,8 @@ test.describe('ClawX provider lifecycle', () => {
       await relaunchedPage.waitForLoadState('domcontentloaded');
       await expect(relaunchedPage.getByTestId('main-layout')).toBeVisible();
 
-      await relaunchedPage.getByTestId('sidebar-nav-models').click();
+      await relaunchedPage.getByTestId('sidebar-nav-settings').click();
+      await relaunchedPage.getByTestId('settings-nav-models').click();
       await expect(relaunchedPage.getByTestId('providers-settings')).toBeVisible();
       await expect(relaunchedPage.getByTestId(`provider-card-${TEST_PROVIDER_ID}`)).toHaveCount(0);
       await expect(relaunchedPage.getByText(TEST_PROVIDER_LABEL)).toHaveCount(0);
@@ -66,7 +69,8 @@ test.describe('ClawX provider lifecycle', () => {
   test('shows OpenAI OAuth and API key auth mode toggle in add-provider dialog', async ({ page }) => {
     await completeSetup(page);
 
-    await page.getByTestId('sidebar-nav-models').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId('providers-settings')).toBeVisible();
 
     await page.getByTestId('providers-add-button').click();
@@ -158,7 +162,8 @@ test.describe('ClawX provider lifecycle', () => {
       });
     });
 
-    await page.getByTestId('sidebar-nav-models').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId('providers-settings')).toBeVisible();
 
     await page.getByTestId('providers-add-button').click();
@@ -244,7 +249,8 @@ test.describe('ClawX provider lifecycle', () => {
       });
     });
 
-    await page.getByTestId('sidebar-nav-models').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId('providers-settings')).toBeVisible();
     await expect(page.getByTestId('provider-card-moonshot-edit')).toBeVisible();
 

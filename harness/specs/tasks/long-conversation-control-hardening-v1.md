@@ -7,7 +7,6 @@ intent: Persist human-intervention queue state and resume checkpoints so long Ch
 touchedAreas:
   - shared/types/long-task-control.ts
   - shared/types/mission-control.ts
-  - shared/types/work-mode.ts
   - shared/host-api/contract.ts
   - shared/host-events/contract.ts
   - electron/services/sessions-api.ts
@@ -17,6 +16,7 @@ touchedAreas:
   - src/pages/Chat/**
   - shared/i18n/locales
   - openclaw_runtime/src/agents/user-message-queue.ts
+  - openclaw_runtime/src/agents/loop-context-pack.ts
   - openclaw_runtime/src/agents/long-task-control/**
   - openclaw_runtime/src/agents/long-conversation-control-signals.ts
   - openclaw_runtime/src/agents/task-loop-*.ts
@@ -32,7 +32,8 @@ expectedUserBehavior:
   - Manual compaction remains disabled during active runs and does not mutate Task Ledger.
   - Mission Loop and Task Loop reviewers emit bounded Engineering Control Signals for evidence gaps, missing validation, scope drift, unverified claims, and replan needs.
   - Complete decisions are downgraded when blocking control signals, missing validation, or missing acceptance remain.
-  - Work Mode metadata carries a phase-specific control contract as untrusted intent metadata without changing permissions.
+  - Thinking intensity and response intensity remain untrusted Chat preferences; they do not carry long-task control contracts, change permissions, or toggle capabilities.
+  - `/loop` is the explicit long-task entry; ordinary Chat does not create Task Ledger root nodes or enter checkpoint/intervention state machines by default.
 requiredProfiles:
   - fast
   - comms
@@ -41,11 +42,12 @@ requiredRules:
   - backend-communication-boundary
   - api-client-transport-policy
   - host-events-fallback-policy
+  - chat-loop-boundary
   - comms-regression
   - docs-sync
 requiredTests:
   - pnpm run typecheck
-  - pnpm exec vitest run tests/unit/long-task-control.test.ts tests/unit/mission-reviewer.test.ts tests/unit/mission-context-pack.test.ts tests/unit/mission-control-loop.test.ts tests/unit/task-loop-controller.test.ts tests/unit/work-mode.test.ts tests/unit/task-ledger-service.test.ts tests/unit/host-events.test.ts tests/unit/chat-knowledge-scope.test.ts
+  - pnpm exec vitest run tests/unit/long-task-control.test.ts tests/unit/mission-reviewer.test.ts tests/unit/mission-context-pack.test.ts tests/unit/mission-control-loop.test.ts tests/unit/task-loop-controller.test.ts tests/unit/loop-context-pack.test.ts tests/unit/task-ledger-service.test.ts tests/unit/host-events.test.ts tests/unit/chat-knowledge-scope.test.ts
   - pnpm exec vitest run tests/unit/user-message-queue.test.ts tests/unit/host-api-facade.test.ts tests/unit/host-services.test.ts tests/unit/chat-input.test.tsx
   - pnpm exec playwright test tests/e2e/chat-long-task-control.spec.ts tests/e2e/chat-manual-compaction.spec.ts tests/e2e/chat-run-state-events.spec.ts
   - pnpm run comms:replay
@@ -60,6 +62,8 @@ acceptance:
   - `evidence_gap`, `validation_missing`, `scope_drift`, `unverified_claim`, and `replan_required` can be represented in reviewer output, context packs, lifecycle events, and Task Ledger node metadata.
   - Observability traces and inner `task_loop` complete results are evidence only; they cannot by themselves complete a Mission or Task Ledger goal.
   - Task Ledger review/check nodes may receive `longConversationControl` metadata and evidence-gap/scope-drift/validation-missing tags, but review clearing remains explicit.
+  - User intervention modes `guide`, `queue`, `interrupt`, and `revise-goal` persist evidence and recovery state instead of existing only in the renderer.
+  - Loop recovery context is generated through LoopContextPack; Chat, Work Mode/intensity controls, Knowledge, and Task Ledger do not assemble separate long-context prompts.
 docs:
   required: true
   files:
@@ -69,6 +73,6 @@ docs:
     - README.ja-JP.md
 ---
 
-This hardening layer does not prove task completion and does not replace Task Ledger, ClawGraph, memory, Mission state, Work Mode, or observability. It preserves the minimum continuation state needed for a new run to continue safely after conversation pressure or lifecycle disruption.
+This hardening layer does not prove task completion and does not replace Task Ledger, ClawGraph, memory, Mission state, thinking/response intensity preferences, or observability. It preserves the minimum continuation state needed for a new run to continue safely after conversation pressure or lifecycle disruption.
 
 Engineering Control Signals are an internal contract, not a new prompt system or progress source. Existing long-conversation loops should use them to make evidence gaps, missing validation, scope drift, unverified claims, and replan requirements explicit during plan/build/review/recovery decisions.

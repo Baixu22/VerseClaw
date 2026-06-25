@@ -3,7 +3,7 @@ id: knowledge-hub-mvp
 title: Knowledge Hub MVP over memory-wiki
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Add a ClawX Knowledge Hub that wraps OpenClaw memory-wiki through the existing host API boundary.
+intent: Add a Verse Claw Knowledge Hub that wraps OpenClaw memory-wiki through the existing host API boundary.
 touchedAreas:
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
@@ -16,7 +16,7 @@ expectedUserBehavior:
   - Users can initialize, import bounded local files/folders, search, inspect, compile, lint, and apply confirmed drafts from the Knowledge page.
   - Chat sends carry an optional knowledgeScope through the typed host API without visible metadata leakage.
   - Saving a chat session to Knowledge opens an editable draft and writes only after explicit confirmation.
-  - Obsidian remains optional; default setup uses an isolated ClawX-managed native wiki.
+  - Obsidian remains optional; default setup uses an isolated Verse Claw-managed native wiki.
 requiredProfiles:
   - fast
   - comms
@@ -35,4 +35,4 @@ docs:
   required: true
 ---
 
-Knowledge Hub MVP is a thin ClawX product layer over OpenClaw memory-wiki/memory-core, not a new RAG stack.
+Knowledge Hub MVP is a thin Verse Claw product layer over OpenClaw memory-wiki/memory-core, not a new RAG stack.

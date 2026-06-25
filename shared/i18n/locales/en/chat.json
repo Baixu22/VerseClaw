@@ -2,7 +2,7 @@
   "gatewayNotRunning": "Gateway Not Running",
   "gatewayRequired": "The OpenClaw Gateway needs to be running to use chat. It will start automatically, or you can start it from Settings.",
   "welcome": {
-    "title": "ClawX Chat",
+    "title": "Verse Claw Chat",
     "subtitle": "What can I do for you?",
     "askQuestions": "Handle Tasks",
     "askQuestionsDesc": "Work on task-oriented requests",
@@ -123,6 +123,54 @@
       "complete": "Complete",
       "saved": "Saved",
       "error": "Needs attention"
+    },
+    "table": {
+      "label": "Table"
+    },
+    "weather": {
+      "label": "Weather",
+      "humidity": "Humidity",
+      "wind": "Wind"
+    },
+    "directiveText": {
+      "label": "Notice"
+    },
+    "source": {
+      "label": "Sources",
+      "open": "Open source"
+    },
+    "progress": {
+      "label": "Progress",
+      "done": "Done",
+      "inProgress": "In progress"
+    },
+    "statusGrid": {
+      "label": "Status"
+    },
+    "alert": {
+      "label": "Alert",
+      "dismiss": "Dismiss"
+    },
+    "keyValue": {
+      "label": "Details"
+    },
+    "chart": {
+      "label": "Chart"
+    },
+    "imageGallery": {
+      "label": "Images"
+    },
+    "codeBlock": {
+      "label": "Code",
+      "copy": "Copy",
+      "copied": "Copied"
+    },
+    "tokenUsage": {
+      "input": "Input tokens",
+      "output": "Output tokens",
+      "cache": "Cache tokens",
+      "total": "Total tokens",
+      "cost": "Estimated cost"
     }
   },
   "knowledgeDraft": {
@@ -202,7 +250,7 @@
     "errors": {
       "outsideSandbox": "Path outside sandbox — access denied",
       "outsideSandboxTitle": "Could not read this file",
-      "outsideSandboxHint": "ClawX could not read this path. The file may have been moved or deleted, or the current account may not have permission. You can still reveal it in the file manager.",
+      "outsideSandboxHint": "Verse Claw could not read this path. The file may have been moved or deleted, or the current account may not have permission. You can still reveal it in the file manager.",
       "readOnlyRoot": "File lives in a read-only location (e.g. bundled skill) and cannot be modified",
       "tooLarge": "File too large ({{size}}); preview disabled",
       "binary": "Binary file — text preview unavailable",
@@ -212,7 +260,7 @@
       "unsupportedFormatTitle": "This file format is not supported for built-in preview or diff",
       "unsupportedFormatHint": "Built-in preview and diff currently support directly readable text/Markdown-style files only. Open the file in the file manager instead.",
       "largeBinaryOpenTitle": "This file is too large for built-in preview",
-      "largeBinaryOpenHint": "This file is {{size}}. ClawX cannot preview it inline, but you can confirm and open it with the system default app.",
+      "largeBinaryOpenHint": "This file is {{size}}. Verse Claw cannot preview it inline, but you can confirm and open it with the system default app.",
       "openInFinderFailed": "Could not reveal file",
       "openFailed": "Open failed: {{error}}"
     },
@@ -396,16 +444,33 @@
         "refresh": "Refresh",
         "stage": "Stage",
         "unstage": "Unstage",
+        "copyPatch": "Copy patch",
+        "revert": "Revert",
         "commit": "Commit staged changes",
+        "checkoutBranch": "Checkout",
         "createBranch": "Create branch",
+        "fetch": "Fetch",
+        "pull": "Pull",
+        "push": "Push",
         "addWorktree": "Add worktree",
+        "openWorktree": "Open",
+        "switchWorktree": "Switch",
         "removeWorktree": "Remove",
         "pruneWorktrees": "Prune",
+        "stashPush": "Stash changes",
+        "stashApply": "Apply",
+        "stashPop": "Pop",
         "createPr": "Create PR",
         "approveRetry": "Approve & retry"
       },
       "approval": {
         "title": "{{action}} needs approval"
+      },
+      "revertConfirm": {
+        "title": "Revert selected file?",
+        "message": "This will discard Git changes for {{path}}.",
+        "confirm": "Revert",
+        "cancel": "Cancel"
       },
       "diff": {
         "unstaged": "Unstaged",
@@ -414,12 +479,65 @@
         "binary": "Binary diff cannot be displayed inline.",
         "tooLarge": "Diff is too large to display inline."
       },
+      "validation": {
+        "title": "Last validation",
+        "empty": "No validation run yet",
+        "status": "Ready"
+      },
+      "operation": {
+        "title": "Last operation",
+        "empty": "No Git operation yet",
+        "ready": "Ready",
+        "success": "Done",
+        "blocked": "Blocked",
+        "failed": "Failed",
+        "completed": "Completed",
+        "detail": "{{action}}: {{detail}}"
+      },
+      "readiness": {
+        "repository": "Repository",
+        "gitCli": "Git CLI",
+        "agentTools": "Agent tools",
+        "github": "GitHub",
+        "summaryLabel": "Git readiness",
+        "summaryValue": "{{ready}}/{{total}} ready",
+        "summaryHelp": "Active repository, local Git, Agent tools, and GitHub auth",
+        "activeRepository": "Active repo",
+        "ready": "Ready",
+        "missing": "Missing",
+        "unavailable": "Unavailable",
+        "agentToolsReady": "{{count}} tools",
+        "githubLogin": "gh auth login"
+      },
+      "metrics": {
+        "changes": "Changes",
+        "delta": "Delta",
+        "staged": "Staged",
+        "conflicts": "Conflicts",
+        "sync": "Sync",
+        "worktrees": "Worktrees",
+        "stashes": "Stashes",
+        "aheadBehind": "ahead {{ahead}} / behind {{behind}}",
+        "unknown": "Unknown"
+      },
+      "toolTabs": {
+        "worktrees": "Worktree",
+        "commit": "Commit",
+        "branch": "Branch",
+        "stash": "Stash",
+        "github": "PR",
+        "compactHint": "Compact tools"
+      },
       "commit": {
         "title": "Commit",
         "placeholder": "Commit message"
       },
       "branch": {
-        "title": "Branch"
+        "title": "Branch",
+        "checkoutTitle": "Checkout branch",
+        "checkoutSelect": "Select branch",
+        "current": "current",
+        "createTitle": "Create branch"
       },
       "branchWorktree": {
         "title": "Branch & worktree",
@@ -433,19 +551,49 @@
         "startPointPlaceholder": "Start point, default HEAD",
         "selectBranch": "Select branch",
         "current": "Current",
+        "locked": "Locked",
+        "prunable": "Prunable",
+        "defaultPath": "Default path",
+        "defaultPathUnavailable": "Enter a branch to preview the sibling worktree path",
+        "branchExists": "That branch already exists. Use Existing branch or choose a new name.",
+        "branchCheckedOut": "That branch is already checked out at {{path}}.",
         "empty": "No worktrees found"
+      },
+      "stash": {
+        "title": "Stashes",
+        "count": "{{count}} saved",
+        "empty": "No stashes saved",
+        "messagePlaceholder": "Optional stash message",
+        "includeUntrackedLabel": "Include untracked",
+        "includeUntrackedHelp": "Also save new files that are not tracked yet.",
+        "applyLabel": "Apply {{selector}}",
+        "popLabel": "Pop {{selector}}"
       },
       "github": {
         "title": "GitHub PRs",
         "noPrs": "No open pull requests",
         "notAuthenticated": "Run gh auth login in the terminal to enable PR actions.",
         "titlePlaceholder": "PR title",
-        "bodyPlaceholder": "PR body"
+        "bodyPlaceholder": "PR body",
+        "baseLabel": "Base branch",
+        "basePlaceholder": "Base",
+        "headLabel": "Head branch",
+        "headPlaceholder": "Head",
+        "draftLabel": "Draft PR",
+        "draftHelp": "Create the pull request as a draft.",
+        "prRefs": "{{head}} -> {{base}}"
       },
       "toast": {
         "blocked": "Approval required",
         "failed": "Git operation failed",
-        "approvalFailed": "Approval failed"
+        "approvalFailed": "Approval failed",
+        "patchCopied": "Patch copied",
+        "patchCopyFailed": "Failed to copy patch: {{error}}",
+        "worktreeOpened": "Worktree opened",
+        "worktreeOpenFailed": "Failed to open worktree: {{error}}",
+        "worktreeWorkspaceCreated": "Workspace created for this worktree",
+        "worktreeWorkspaceSwitched": "Switched to worktree workspace",
+        "worktreeWorkspaceSwitchFailed": "Failed to switch worktree workspace: {{error}}"
       }
     }
   },
@@ -453,7 +601,7 @@
     "eyebrow": "Run View",
     "title": "Task Outline",
     "emptyTitle": "No structured steps yet",
-    "emptyBody": "Once a run starts, ClawX will surface thinking, tool calls, and handoff states here.",
+    "emptyBody": "Once a run starts, Verse Claw will surface thinking, tool calls, and handoff states here.",
     "status": {
       "idle": "Idle",
       "running_one": "1 active step",
@@ -535,7 +683,10 @@
   "session": {
     "renameHint": "Double-click to rename session",
     "renameCurrent": "Rename current session",
-    "renameFailed": "Failed to rename session: {{error}}"
+    "renameFailed": "Failed to rename session: {{error}}",
+    "lineage": {
+      "forkedFrom": "Forked from {{session}}"
+    }
   },
   "composer": {
     "attachFiles": "Attach files",
@@ -560,8 +711,20 @@
     "knowledgeScopeDescription": {
       "none": "Send without memory or wiki context.",
       "memory": "Use runtime memory cards when relevant.",
-      "wiki": "Use the ClawX-managed wiki for source-backed notes.",
+      "wiki": "Use the Verse Claw-managed wiki for source-backed notes.",
       "all": "Let memory and wiki both contribute context."
+    },
+    "knowledgeModeTitle": "Invocation mode",
+    "knowledgeMode": {
+      "manual": "Manual",
+      "suggest": "Suggest",
+      "auto-read": "Auto-read"
+    },
+    "knowledgeRoute": {
+      "suggestion": "Found {{count}} possibly relevant knowledge item(s)",
+      "attach": "Attach",
+      "open": "Open",
+      "dismiss": "Dismiss"
     },
     "knowledgeQuick": {
       "enable": "Use wiki knowledge",
@@ -588,7 +751,7 @@
       "contextButtonTooltip": "Type / to attach knowledge, set scope, or run a session action.",
       "promptArgs": "Scope: {{args}}",
       "unknownTitle": "Unknown command",
-      "unknownDescription": "{{command}} is not a ClawX quick action. Press Escape to keep editing.",
+      "unknownDescription": "{{command}} is not a Verse Claw quick action. Press Escape to keep editing.",
       "unknownToast": "Unknown slash command: {{command}}",
       "ledgerNodeDescription": "Created from the Chat slash command.",
       "ledgerSessionSummary": "Linked from Chat slash command: {{title}}",
@@ -624,10 +787,20 @@
           "description": "Choose None, Memory, Wiki, or All without leaving the composer.",
           "argumentHint": "[scope]"
         },
+        "knowledge-mode": {
+          "label": "Knowledge mode",
+          "description": "Switch between Manual, Suggest, and Auto-read knowledge invocation.",
+          "argumentHint": "[manual|suggest|auto]"
+        },
         "save": {
           "label": "Draft knowledge",
           "description": "Ask for an editable knowledge draft; it will not be applied automatically.",
           "argumentHint": "[topic]"
+        },
+        "steward-audit": {
+          "label": "Steward audit",
+          "description": "Run an on-demand Knowledge Governance audit and open the Governance tab.",
+          "argumentHint": ""
         },
         "steward": {
           "label": "Ask steward",
@@ -707,6 +880,9 @@
         "scopeOpened": "Knowledge scope picker opened.",
         "scopeChanged": "Knowledge scope set to {{scope}}.",
         "typeSlash": "Type / at the start of an empty composer to open the context palette.",
+        "knowledgeModeOpened": "Knowledge mode picker opened.",
+        "knowledgeModeChanged": "Knowledge mode set to {{mode}}.",
+        "stewardAuditStarted": "Knowledge governance audit started.",
         "ledgerOpened": "Opened Task Ledger",
         "ledgerCreated": "Created ledger task: {{title}}",
         "ledgerFailed": "Could not create ledger task: {{error}}",
@@ -821,6 +997,11 @@
     },
     "continuity": {
       "recommended": "Recommended",
+      "health": {
+        "healthy": "Continuity looks healthy",
+        "risky": "Continuity needs review",
+        "blocked": "Continuity is waiting on the current run"
+      },
       "tooltip": {
         "fork": {
           "default": "Recommended now: branch this transcript into a new conversation"
@@ -831,7 +1012,8 @@
           "high_pressure": "Context is tight; prepare a continuation draft",
           "truncated_context": "Some history is hidden; prepare a continuation draft",
           "compaction_warning": "Context state needs care; prepare a continuation draft",
-          "recovery_checkpoint": "A recovery checkpoint exists; prepare a checkpoint-based draft"
+          "recovery_checkpoint": "A recovery checkpoint exists; prepare a checkpoint-based draft",
+          "recovery_context": "Recovery context is available; prepare a reviewable draft"
         }
       },
       "dialogHint": {
@@ -840,7 +1022,8 @@
         "high_pressure": "Context pressure is high, so this draft keeps the next step reviewable before a fresh session starts.",
         "truncated_context": "Some transcript history is hidden, so a draft handoff is safer than copying the branch.",
         "compaction_warning": "Context compression state has warnings, so a draft handoff is the safer continuation path.",
-        "recovery_checkpoint": "A ResumeCheckpoint is already available, so Handoff can carry Task Ledger, Git, trace, and checkpoint evidence into a reviewable draft."
+        "recovery_checkpoint": "A ResumeCheckpoint is already available, so Handoff can carry Task Ledger, Git, trace, and checkpoint evidence into a reviewable draft.",
+        "recovery_context": "Runtime recovery context is available, so Handoff can include the bounded continuation projection with Task Ledger and evidence."
       },
       "failure": {
         "action": {
@@ -933,7 +1116,7 @@
     "skillPreviewNotFound": "Could not find this skill. Open the skill picker to refresh the list.",
     "capability": {
       "dialogTitle": "Apply capability changes?",
-      "dialogDescription": "ClawX detected local Skill or MCP management actions in this message. Review and confirm before anything changes.",
+      "dialogDescription": "Verse Claw detected local Skill or MCP management actions in this message. Review and confirm before anything changes.",
       "confirm": "Confirm and send",
       "cancel": "Cancel",
       "applied": "Capability changes applied",
@@ -959,10 +1142,10 @@
         }
       },
       "unsupported": {
-        "generic": "ClawX needs a local skill match or MCP JSON before it can apply this from chat.",
-        "skillNotFound": "ClawX could not find that local skill. Open the skill picker or install the skill locally first.",
+        "generic": "Verse Claw needs a local skill match or MCP JSON before it can apply this from chat.",
+        "skillNotFound": "Verse Claw could not find that local skill. Open the skill picker or install the skill locally first.",
         "mcpConfigRequired": "Paste a complete MCP JSON configuration to register an MCP service from chat.",
-        "mcpServerNotFound": "ClawX could not find that registered MCP service. Use the MCP service name or id."
+        "mcpServerNotFound": "Verse Claw could not find that registered MCP service. Use the MCP service name or id."
       }
     },
     "effortButton": "Effort",
@@ -991,7 +1174,94 @@
       "review": "Inspect diffs and risks without changing files by default.",
       "docsData": "Work with documents, spreadsheets, PDFs, and reports."
     },
-    "workModeRecommendedPermission": "Recommended: {{mode}}"
+    "workModeRecommendedPermission": "Recommended: {{mode}}",
+    "intervention": {
+      "guide": "Guide",
+      "guideTooltip": "Inject non-interrupting guidance into the active run.",
+      "queue": "Queue",
+      "queueTooltip": "Keep the active run intact and replay this follow-up later.",
+      "interrupt": "Interrupt",
+      "interruptTooltip": "Abort or steer away from the active run before risky rollback."
+    },
+    "rollbackPlan": {
+      "title": "Rollback & recovery plan",
+      "open": "Open",
+      "risk": {
+        "safe": "safe",
+        "review": "review",
+        "dangerous": "dangerous"
+      },
+      "riskCount": {
+        "safe": "{{count}} safe",
+        "review": "{{count}} review",
+        "dangerous": "{{count}} dangerous"
+      },
+      "signalState": {
+        "active": "active",
+        "ready": "ready"
+      },
+      "signals": {
+        "checkpoint": "Checkpoint",
+        "queue": "Queue",
+        "context": "Context",
+        "terminal": "Terminal",
+        "git": "Git rollback",
+        "taskLedger": "Task Ledger",
+        "memory": "Memory"
+      },
+      "destructiveWarning": "Destructive rollback must go through approval-backed Git, file, or terminal actions.",
+      "actions": {
+        "checkpoint-handoff": {
+          "title": "Prepare checkpoint handoff",
+          "detail": "Resume from {{trigger}} checkpoint without replaying the full transcript."
+        },
+        "drain-queue": {
+          "title": "Drain queued follow-ups",
+          "detail": "{{count}} queued follow-up(s) can be replayed after the active run is idle."
+        },
+        "manual-compact": {
+          "title": "Compact current context",
+          "detailPressure": "Reduce transcript pressure while preserving a bounded continuation summary.",
+          "detailDefault": "Create a fresh bounded context before continuing risky work."
+        },
+        "review-git": {
+          "title": "Review file rollback options",
+          "detail": "Use Git panel revert/stash actions with approval instead of silently discarding edits."
+        },
+        "task-ledger-review": {
+          "title": "Mark recovery evidence in Task Ledger",
+          "detail": "Record deviations, blockers, and review-clearing evidence as durable task state."
+        },
+        "memory-review": {
+          "title": "Keep memory changes review-only",
+          "detail": "Convert useful recovery facts into Knowledge drafts or memory proposals; do not auto-write durable memory."
+        },
+        "terminal-interrupt": {
+          "title": "Interrupt before destructive rollback",
+          "detail": "Stop or steer the active run before applying terminal, Git, or file rollback actions."
+        },
+        "terminal-control": {
+          "title": "Open terminal intervention controls",
+          "detail": "Open the workspace terminal panel and send Ctrl+C when a running terminal session exists."
+        }
+      },
+      "summary": {
+        "checkpoint": "Recovery checkpoint available from {{trigger}}.",
+        "queue": "{{count}} queued follow-up(s) pending.",
+        "truncated": "{{count}} transcript message(s) already truncated; prefer handoff or compaction.",
+        "default": "No urgent rollback pressure detected; use review-first recovery before destructive actions."
+      },
+      "terminal": {
+        "interrupted": "Terminal interrupt sent.",
+        "opened": "Terminal controls opened; no running terminal session was found.",
+        "interruptFailed": "Failed to interrupt terminal."
+      },
+      "memoryDraft": {
+        "title": "Recovery memory proposal: {{session}}",
+        "reviewNotice": "Review-only recovery memory proposal. Do not apply durable memory until the user verifies the facts, scope, and source evidence.",
+        "emptyBody": "Session {{sessionKey}} has no rendered recovery transcript yet. Capture only verified recovery facts, decisions, blockers, and evidence references before applying."
+      }
+    }
   },
   "historyBuckets": {
     "today": "Today",
@@ -1007,6 +1277,21 @@
   "sessionView": {
     "project": "Project",
     "time": "Time"
+  },
+  "sidebar": {
+    "searchSessions": "Search conversations",
+    "clearSearch": "Clear search",
+    "searchNoResults": "No conversations found",
+    "searchModalPlaceholder": "Search conversations by name, workspace, or agent...",
+    "searchEmptyHint": "Start typing to search your conversations",
+    "searchCurrent": "Current",
+    "searchRelativeNow": "just now",
+    "searchRelativeMinutes": "{{count}} min ago",
+    "searchRelativeHours": "{{count}} hr ago",
+    "searchRelativeDays": "{{count}} d ago",
+    "searchHintNavigate": "navigate",
+    "searchHintSelect": "select",
+    "searchHintClose": "close"
   },
   "questionDirectory": {
     "title": "Question directory",
@@ -1042,6 +1327,11 @@
       "runtimeUnavailable": "Runtime unavailable",
       "optionalExternal": "Optional"
     },
+    "intensity": "Prompt intensity",
+    "intensityMode_full": "Full context",
+    "intensityMode_minimal": "Lightweight context",
+    "intensityMode_none": "Minimal analysis",
+    "tokenSavings": "Saves ~{{tokens}} tokens/turn",
     "status": {
       "plan": {
         "primary": "Assumptions",

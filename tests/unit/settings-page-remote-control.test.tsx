@@ -11,6 +11,7 @@ const remoteControlClickMock = vi.fn();
 const remoteControlScreenshotMock = vi.fn();
 const settingsSetManyMock = vi.fn();
 const gatewayRestartMock = vi.fn();
+const setRoleMemoryEnabledMock = vi.fn();
 const setWorkModeToolBundlesMock = vi.fn();
 const setWorkModeKitsMock = vi.fn();
 const saveWorkspaceStateMock = vi.fn();
@@ -23,6 +24,7 @@ const { settingsState, gatewayState, updateState } = vi.hoisted(() => ({
     language: 'zh',
     launchAtStartup: false,
     gatewayAutoStart: true,
+    roleMemoryEnabled: true,
     cdpRemoteControlEnabled: false,
     cdpRemoteDebuggingPort: 9222,
     proxyEnabled: false,
@@ -52,6 +54,7 @@ vi.mock('@/stores/settings', () => ({
     setLanguage: vi.fn(),
     setLaunchAtStartup: vi.fn(),
     setGatewayAutoStart: vi.fn(),
+    setRoleMemoryEnabled: setRoleMemoryEnabledMock,
     setCdpRemoteControlEnabled: vi.fn(),
     setCdpRemoteDebuggingPort: vi.fn(),
     setProxyEnabled: vi.fn(),
@@ -269,12 +272,12 @@ describe('Settings remote control section', () => {
       browser: 'Electron/38.0.0',
       protocolVersion: '1.3',
       webSocketDebuggerUrl: 'ws://127.0.0.1:9222/devtools/browser/abc',
-      targets: [{ id: 'page-1', title: 'ClawX', type: 'page', url: 'app://clawx' }],
+      targets: [{ id: 'page-1', title: 'Verse Claw', type: 'page', url: 'app://verse-claw' }],
     });
     remoteControlPageInfoMock.mockResolvedValue({
       success: true,
-      title: 'ClawX',
-      url: 'app://clawx',
+      title: 'Verse Claw',
+      url: 'app://verse-claw',
       viewport: { width: 1200, height: 800, deviceScaleFactor: 1 },
       scroll: { x: 0, y: 0, width: 1200, height: 1800 },
     });
@@ -298,8 +301,17 @@ describe('Settings remote control section', () => {
     await waitFor(() => {
       expect(remoteControlInspectMock).toHaveBeenCalledTimes(1);
       expect(screen.getByText('Browser：Electron/38.0.0')).toBeInTheDocument();
-      expect(screen.getByText('ClawX')).toBeInTheDocument();
+      expect(screen.getByText('Verse Claw')).toBeInTheDocument();
     });
+  });
+
+  it('shows the Role Memory runtime toggle in system settings', () => {
+    renderSettings('/settings/system');
+
+    expect(screen.getByTestId('settings-role-memory-section')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('settings-role-memory-toggle'));
+
+    expect(setRoleMemoryEnabledMock).toHaveBeenCalledWith(false);
   });
 
   it('can trigger CDP page actions from settings', async () => {
@@ -325,22 +337,15 @@ describe('Settings remote control section', () => {
     });
   });
 
-  it('moves work mode selection into settings and customizes tool bundles', async () => {
+  it('does not expose legacy Work Mode settings', async () => {
     renderSettings('/settings/work-modes');
 
-    expect(screen.getByTestId('settings-work-modes-section')).toBeInTheDocument();
-    expect(screen.getByTestId('settings-work-mode-build')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByTestId('settings-work-mode-review'));
+    expect(screen.queryByTestId('settings-work-modes-section')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('settings-nav-work-modes')).not.toBeInTheDocument();
     await waitFor(() => {
-      expect(saveWorkspaceStateMock).toHaveBeenCalledWith(expect.objectContaining({
-        id: 'workspace-1',
-        sessionKey: 'agent:main:main',
-        state: { workMode: 'review' },
-      }));
+      expect(saveWorkspaceStateMock).not.toHaveBeenCalled();
+      expect(setWorkModeKitsMock).not.toHaveBeenCalled();
+      expect(setWorkModeToolBundlesMock).not.toHaveBeenCalled();
     });
-
-    fireEvent.click(screen.getByTestId('settings-work-mode-kit-build-website'));
-    expect(setWorkModeKitsMock).toHaveBeenCalledWith('build', ['design']);
   });
 });

@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { shell } from 'electron';
 import type {
@@ -55,6 +55,12 @@ type RepoContext = {
 
 type GitRisk = 'none' | 'write' | 'dangerous';
 
+type DiffStat = {
+  additions: number | null;
+  deletions: number | null;
+  binary: boolean;
+};
+
 const MAX_OUTPUT_CHARS = 250_000;
 const MAX_PATCH_CHARS = 180_000;
 const DEFAULT_GH_LIMIT = 30;
@@ -62,6 +68,20 @@ const DEFAULT_GH_LIMIT = 30;
 function trimOutput(value: string, limit = MAX_OUTPUT_CHARS): string {
   if (value.length <= limit) return value;
   return `${value.slice(0, limit)}\n[output truncated]`;
+}
+
+function parseNum(value: string): number | null {
+  return /^\d+$/.test(value) ? Number(value) : null;
+}
+
+function mergeDiffStat(base: DiffStat | undefined, next: DiffStat): DiffStat {
+  if (!base) return next;
+  const binary = base.binary || next.binary;
+  return {
+    additions: base.additions == null || next.additions == null ? null : base.additions + next.additions,
+    deletions: base.deletions == null || next.deletions == null ? null : base.deletions + next.deletions,
+    binary,
+  };
 }
 
 function normalizeString(value: unknown): string | undefined {
@@ -320,6 +340,80 @@ function parsePorcelainStatus(ctx: RepoContext, output: string): GitRepositorySt
   };
 }
 
+function parseNumstat(output: string): Map<string, DiffStat> {
+  const stats = new Map<string, DiffStat>();
+  const records = output.includes('\0')
+    ? output.split('\0').filter(Boolean)
+    : output.split(/\r?\n/).filter(Boolean);
+
+  for (let index = 0; index < records.length; index += 1) {
+    const record = records[index];
+    const fields = record.split('\t');
+    if (fields.length < 3) continue;
+    const additions = parseNum(fields[0] ?? '');
+    const deletions = parseNum(fields[1] ?? '');
+    let path = fields.slice(2).join('\t');
+    if (!path && records[index + 1]) {
+      // With -z, rename records can emit the old and new paths as following NUL records.
+      index += 1;
+      path = records[index + 1] ?? records[index];
+      if (records[index + 1]) index += 1;
+    }
+    if (!path) continue;
+    const statEntry = {
+      additions,
+      deletions,
+      binary: additions == null || deletions == null,
+    };
+    stats.set(path, mergeDiffStat(stats.get(path), statEntry));
+  }
+  return stats;
+}
+
+async function readDiffStats(ctx: RepoContext): Promise<Map<string, DiffStat>> {
+  const [unstaged, staged] = await Promise.all([
+    git(['diff', '--numstat', '-z'], ctx.workspaceRoot),
+    git(['diff', '--cached', '--numstat', '-z'], ctx.workspaceRoot),
+  ]);
+  const merged = new Map<string, DiffStat>();
+  for (const result of [unstaged, staged]) {
+    if (result.exitCode !== 0) continue;
+    for (const [path, statEntry] of parseNumstat(result.stdout)) {
+      merged.set(path, mergeDiffStat(merged.get(path), statEntry));
+    }
+  }
+  return merged;
+}
+
+async function untrackedFileStat(change: GitFileChange): Promise<DiffStat | null> {
+  try {
+    const fileStat = await stat(change.absolutePath);
+    if (!fileStat.isFile() || fileStat.size > MAX_PATCH_CHARS) {
+      return { additions: null, deletions: null, binary: true };
+    }
+    const content = await readFile(change.absolutePath, 'utf8');
+    const additions = content.length === 0 ? 0 : content.replace(/\r\n/g, '\n').split('\n').length;
+    return { additions, deletions: 0, binary: false };
+  } catch {
+    return null;
+  }
+}
+
+async function enrichStatusWithDiffStats(ctx: RepoContext, status: GitRepositoryStatus): Promise<GitRepositoryStatus> {
+  const diffStats = await readDiffStats(ctx).catch(() => new Map<string, DiffStat>());
+  const changes = await Promise.all(status.changes.map(async (change) => {
+    const statEntry = diffStats.get(change.path) ?? (change.untracked ? await untrackedFileStat(change) : null);
+    if (!statEntry) return change;
+    return {
+      ...change,
+      additions: statEntry.additions,
+      deletions: statEntry.deletions,
+      binary: statEntry.binary,
+    };
+  }));
+  return { ...status, changes };
+}
+
 export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
   const workspace = requireWorkspace(await getActiveWorkspaceProfile());
   const ctx = await getRepoContextOrNull();
@@ -341,7 +435,7 @@ export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
   }
   const result = await git(['status', '--porcelain=v2', '-z', '--branch'], ctx.workspaceRoot);
   if (result.exitCode !== 0) throw new Error(result.stderr || 'git status failed');
-  return parsePorcelainStatus(ctx, result.stdout);
+  return enrichStatusWithDiffStats(ctx, parsePorcelainStatus(ctx, result.stdout));
 }
 
 async function enforcePermission(input: {
@@ -518,6 +612,27 @@ async function getGhPrUrl(number: number, cwd: string): Promise<string | undefin
   return normalizeString(parseJson<{ url?: string }>(result.stdout, {}).url);
 }
 
+async function pathExists(path: string): Promise<boolean> {
+  try {
+    await stat(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function ensureValidBranchName(ctx: RepoContext, branch: string): Promise<void> {
+  const result = await git(['check-ref-format', '--branch', branch], ctx.workspaceRoot);
+  if (result.exitCode !== 0) {
+    throw new Error(result.stderr.trim() || `Invalid branch name: ${branch}`);
+  }
+}
+
+async function localBranchExists(ctx: RepoContext, branch: string): Promise<boolean> {
+  const result = await git(['branch', '--list', branch, '--format=%(refname:short)'], ctx.workspaceRoot);
+  return result.exitCode === 0 && result.stdout.split(/\r?\n/).some((entry) => entry.trim() === branch);
+}
+
 export function createGitApi(): CompleteHostServiceRegistry['git'] {
   return {
     capabilities: async () => {
@@ -668,13 +783,17 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       return { success: result.exitCode === 0, branches: parseBranches(result.stdout), error: result.exitCode === 0 ? undefined : result.stderr };
     },
     checkoutBranch: async (payload: GitBranchCheckoutPayload) => {
+      const ctx = await requireRepoContext();
       const name = normalizeString(payload.name);
       if (!name) throw new Error('name is required');
+      await ensureValidBranchName(ctx, name);
       return withGitOperation('checkoutBranch', 'write', ['checkout', name], { approvalId: payload.approvalId });
     },
     createBranch: async (payload: GitBranchCreatePayload) => {
+      const ctx = await requireRepoContext();
       const name = normalizeString(payload.name);
       if (!name) throw new Error('name is required');
+      await ensureValidBranchName(ctx, name);
       const args = payload.checkout === false ? ['branch', name] : ['checkout', '-b', name];
       const startPoint = normalizeString(payload.startPoint);
       if (startPoint) args.push(startPoint);
@@ -712,18 +831,44 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const ctx = await requireRepoContext();
       const branch = normalizeString(payload.branch);
       if (!branch) throw new Error('branch is required');
-      const startPoint = normalizeString(payload.startPoint);
+      await ensureValidBranchName(ctx, branch);
+      const checkoutNewBranch = payload.checkoutNewBranch !== false;
+      const startPoint = normalizeString(payload.startPoint) ?? 'HEAD';
       const slug = branch.replace(/[^a-z0-9._-]+/gi, '-').replace(/^-|-$/g, '') || 'worktree';
+      const repoFolder = basename(ctx.repoRoot) || 'workspace';
       const target = payload.path
         ? resolveWorkspacePath(ctx, payload.path)
-        : resolve(dirname(ctx.repoRoot), `${ctx.workspace.name || 'workspace'}-${slug}`);
+        : resolve(dirname(ctx.repoRoot), `${repoFolder}-${slug}`);
+      if (await pathExists(target)) {
+        return {
+          success: false,
+          blocked: true,
+          reason: 'Worktree target path already exists.',
+        };
+      }
+      const listed = await git(['worktree', 'list', '--porcelain', '-z'], ctx.workspaceRoot);
+      const knownWorktrees = listed.exitCode === 0 ? parseWorktrees(listed.stdout) : [];
+      const branchWorktree = knownWorktrees.find((worktree) => worktree.branch === branch);
+      if (!checkoutNewBranch && branchWorktree) {
+        return {
+          success: false,
+          blocked: true,
+          reason: `Branch is already checked out at ${branchWorktree.path}.`,
+        };
+      }
+      if (checkoutNewBranch && await localBranchExists(ctx, branch)) {
+        return {
+          success: false,
+          blocked: true,
+          reason: 'Branch already exists. Choose Existing branch or use a new branch name.',
+        };
+      }
       const customOutsideSafeArea = Boolean(payload.path)
         && !isPathInsideWorkspace(target, ctx.workspaceRoot)
         && !isPathInsideRepoSiblingArea(target, ctx.repoRoot);
       const args = ['worktree', 'add'];
-      if (payload.checkoutNewBranch !== false) {
-        args.push('-b', branch, target);
-        if (startPoint) args.push(startPoint);
+      if (checkoutNewBranch) {
+        args.push('-b', branch, target, startPoint);
       } else {
         args.push(target, branch);
       }

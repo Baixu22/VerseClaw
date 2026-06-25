@@ -8,7 +8,7 @@ const QQBOT_UPGRADE_GUIDE_URL = "https://q.qq.com/qqbot/openclaw/upgrade.html";
 export function registerBasicBotCommands(registry: SlashCommandRegistry): void {
   registry.register({
     name: "bot-help",
-    description: "查看所有内置命令",
+    description: "查看所有内置命�?,
     usage: [
       `/bot-help`,
       ``,
@@ -41,7 +41,7 @@ export function registerBasicBotCommands(registry: SlashCommandRegistry): void {
 
   registry.register({
     name: "bot-ping",
-    description: "测试 OpenClaw 与 QQ 之间的网络延迟",
+    description: "测试 OpenClaw �?QQ 之间的网络延�?,
     usage: [
       `/bot-ping`,
       ``,
@@ -52,17 +52,17 @@ export function registerBasicBotCommands(registry: SlashCommandRegistry): void {
       const now = Date.now();
       const eventTime = new Date(ctx.eventTimestamp).getTime();
       if (Number.isNaN(eventTime)) {
-        return `✅ pong!`;
+        return `�?pong!`;
       }
       const totalMs = now - eventTime;
       const qqToPlugin = ctx.receivedAt - eventTime;
       const pluginProcess = now - ctx.receivedAt;
       const lines = [
-        `✅ pong!`,
+        `�?pong!`,
         ``,
-        `⏱ 延迟：${totalMs}ms`,
-        `  ├ 网络传输：${qqToPlugin}ms`,
-        `  └ 插件处理：${pluginProcess}ms`,
+        `�?延迟�?{totalMs}ms`,
+        `  �?网络传输�?{qqToPlugin}ms`,
+        `  �?插件处理�?{pluginProcess}ms`,
       ];
       return lines.join("\n");
     },
@@ -70,14 +70,14 @@ export function registerBasicBotCommands(registry: SlashCommandRegistry): void {
 
   registry.register({
     name: "bot-version",
-    description: "查看 QQBot 插件版本和 OpenClaw 框架版本",
+    description: "查看 QQBot 插件版本�?OpenClaw 框架版本",
     c2cOnly: true,
-    usage: [`/bot-version`, ``, `查看当前 QQBot 插件版本和 OpenClaw 框架版本。`].join("\n"),
+    usage: [`/bot-version`, ``, `查看当前 QQBot 插件版本�?OpenClaw 框架版本。`].join("\n"),
     handler: async () => {
       const frameworkVersion = resolveRuntimeServiceVersion();
       const ver = getPluginVersionString();
       const lines = [
-        `🦞 OpenClaw 框架版本：${frameworkVersion}`,
+        `🦞 OpenClaw 框架版本�?{frameworkVersion}`,
         `🤖 QQBot 插件版本：v${ver}`,
         `🌟 官方 GitHub 仓库：[点击前往](${QQBOT_PLUGIN_GITHUB_URL})`,
       ];

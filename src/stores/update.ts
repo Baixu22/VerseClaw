@@ -3,7 +3,6 @@
  * Manages application update state
  */
 import { create } from 'zustand';
-import { useSettingsStore } from './settings';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import type {
@@ -91,19 +90,14 @@ export const useUpdateStore = create<UpdateState>((set, get) => ({
         set({ autoInstallCountdown: cancelled ? null : seconds });
       });
 
-      // New default is prompt-first: never auto-download/install unless the
-      // user explicitly chooses Download from the notification or Settings.
+      // Updates are manual-only: never auto-download/install unless the user
+      // explicitly chooses Download from Settings.
       void hostApi.updates.setAutoDownload(false).catch(() => {});
 
       set({ isInitialized: true });
 
-      // Auto-check for updates on startup (respects user toggle)
-      const autoCheckUpdate = useSettingsStore.getState().autoCheckUpdate;
-      if (autoCheckUpdate) {
-        setTimeout(() => {
-          get().checkForUpdates().catch(() => {});
-        }, 10000);
-      }
+      // Do not check for updates automatically. Update checks are manual-only
+      // from Settings so the app never shows unsolicited update prompts.
     })();
 
     try {
@@ -182,12 +176,12 @@ export const useUpdateStore = create<UpdateState>((set, get) => ({
 
   setAutoDownload: async (enable) => {
     try {
-      // Compatibility shim for older UI paths: the updater is now prompt-first,
-      // so we keep electron-updater.autoDownload disabled even if a stale
-      // persisted setting says otherwise.
+      // Compatibility shim for older UI paths: updates are manual-only, so we
+      // keep electron-updater.autoDownload disabled even if a stale persisted
+      // setting says otherwise.
       await hostApi.updates.setAutoDownload(false);
       if (enable) {
-        console.info('[Update] Auto-download preference ignored; update prompts are shown instead.');
+        console.info('[Update] Auto-download preference ignored; updates are manual-only.');
       }
     } catch (error) {
       console.error('Failed to set auto-download:', error);

@@ -461,7 +461,7 @@ export type MSTeamsAttachmentFetchPolicy = {
 /**
  * Logger surface for attachment download errors. Structured so callers can
  * pass `MSTeamsMonitorLogger` directly without adapters. Optional `warn`/
- * `error` methods prevent silent swallowing of fetch failures â€” see issue
+ * `error` methods prevent silent swallowing of fetch failures â€?see issue
  * #63396 where empty `catch {}` blocks hid a Node 24+ undici incompatibility.
  */
 export type MSTeamsAttachmentDownloadLogger = {

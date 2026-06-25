@@ -15,9 +15,28 @@ const cronJobs = [
     name: 'Memory Dreaming Promotion With An Unusually Long Title That Should Trigger Truncation',
     message: '__openclaw_memory_core_short_term_promotion_pipeline__step_overflow_check__',
     schedule: { kind: 'cron', expr: '0 3 * * *' },
+    source: 'gateway',
+    runtime: {
+      source: 'gateway',
+      sessionTarget: 'isolated',
+      wakeMode: 'next-heartbeat',
+      payloadKind: 'agentTurn',
+    },
+    delivery: {
+      mode: 'announce',
+      channel: 'feishu',
+      accountId: 'main-feishu-account-with-a-long-readable-name',
+      to: 'chat:oc_extremely_long_delivery_target_that_should_never_push_metadata_outside_the_card',
+    },
     enabled: true,
     createdAt: '2026-04-30T03:00:00.000Z',
     updatedAt: '2026-04-30T03:00:00.000Z',
+    lastRun: {
+      time: '2026-04-30T03:10:00.000Z',
+      success: true,
+      duration: 1200,
+    },
+    nextRun: '2026-05-01T03:00:00.000Z',
     agentId: 'main',
   },
   {
@@ -71,20 +90,25 @@ test.describe('Cron job card layout', () => {
     const card = page.getByTestId('cron-job-card-job-long-title');
     const switchWrapper = page.getByTestId('cron-job-card-switch-job-long-title');
     const title = page.getByTestId('cron-job-card-title-job-long-title');
+    const meta = page.getByTestId('cron-job-card-meta-job-long-title');
 
+    await expect(page.getByTestId('cron-assurance-panel')).toBeVisible();
     await expect(card).toBeVisible();
     await expect(switchWrapper).toBeVisible();
     await expect(title).toBeVisible();
+    await expect(meta).toBeVisible();
 
     const cardBox = await card.boundingBox();
     const switchBox = await switchWrapper.boundingBox();
     const titleBox = await title.boundingBox();
+    const metaBox = await meta.boundingBox();
 
     expect(cardBox, 'card bounding box should be available').not.toBeNull();
     expect(switchBox, 'switch bounding box should be available').not.toBeNull();
     expect(titleBox, 'title bounding box should be available').not.toBeNull();
+    expect(metaBox, 'metadata bounding box should be available').not.toBeNull();
 
-    if (!cardBox || !switchBox || !titleBox) return;
+    if (!cardBox || !switchBox || !titleBox || !metaBox) return;
 
     // The switch must stay fully inside the card horizontally and not be
     // partially clipped by the card boundary (this is the regression we are
@@ -98,5 +122,11 @@ test.describe('Cron job card layout', () => {
     // overlap the switch container.
     const titleRight = titleBox.x + titleBox.width;
     expect(titleRight).toBeLessThanOrEqual(switchBox.x + 0.5);
+
+    const metaRight = metaBox.x + metaBox.width;
+    const metaBottom = metaBox.y + metaBox.height;
+    expect(metaBox.x).toBeGreaterThanOrEqual(cardBox.x);
+    expect(metaRight).toBeLessThanOrEqual(cardRight + 0.5);
+    expect(metaBottom).toBeLessThanOrEqual(cardBox.y + cardBox.height + 0.5);
   });
 });

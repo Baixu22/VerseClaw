@@ -94,7 +94,7 @@ export class ExecApprovalButton extends Button {
     if (!approvers.some((id) => id === userId)) {
       try {
         await interaction.reply({
-          content: "â›” You are not authorized to approve exec requests.",
+          content: "â›?You are not authorized to approve exec requests.",
           ephemeral: true,
         });
       } catch {}

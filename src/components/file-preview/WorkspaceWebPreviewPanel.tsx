@@ -1,15 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Camera, ExternalLink, Globe, MousePointer2, RefreshCw, Send, Square, X } from 'lucide-react';
+import { Camera, ExternalLink, Globe, Loader2, MousePointer2, RefreshCw, Send, Square, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { hostApi, type WorkspaceWebPreviewResult } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
@@ -289,38 +285,33 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-background">
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-black/5 bg-surface-input text-foreground shadow-sm dark:border-white/10">
-            <Globe className="h-4 w-4" />
+      {/* Slim toolbar — single row with mode tabs + address + actions */}
+      <div className="shrink-0 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
+        <div className="flex items-center gap-2">
+          <div className="inline-flex shrink-0 rounded-md border border-black/10 bg-surface-input p-0.5 dark:border-white/10">
+            {(['static', 'devServer', 'externalUrl'] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                className={cn(
+                  'rounded px-2 py-1 text-2xs transition-colors',
+                  mode === m ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
+                )}
+                onClick={() => setMode(m)}
+              >
+                {modeLabel(t, m)}
+              </button>
+            ))}
           </div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-foreground">{t('workspace.web.title', 'Web preview')}</p>
-            <p className="truncate text-2xs text-muted-foreground">{modeLabel(t, mode)} / {status?.status ?? t('workspace.web.status.idle', 'idle')}</p>
-          </div>
-        </div>
-        <Badge variant={status?.running ? 'success' : status?.status === 'error' ? 'destructive' : 'outline'}>{status?.status ?? t('workspace.web.status.idle', 'idle')}</Badge>
-      </div>
 
-      <div className="shrink-0 border-b border-black/5 bg-background/70 p-2 dark:border-white/10">
-        <div className="rounded-md border border-black/5 bg-surface-modal p-2 shadow-sm dark:border-white/10">
-        <Tabs value={mode} onValueChange={(value) => setMode(value as WorkspacePreviewMode)} className="mb-2">
-          <TabsList className="h-8 gap-0.5">
-            <TabsTrigger value="static" className="h-6 px-2 text-2xs">{t('workspace.web.mode.static', 'Static')}</TabsTrigger>
-            <TabsTrigger value="devServer" className="h-6 px-2 text-2xs">{t('workspace.web.mode.devServer', 'Dev server')}</TabsTrigger>
-            <TabsTrigger value="externalUrl" className="h-6 px-2 text-2xs">{t('workspace.web.mode.externalUrl', 'External URL')}</TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="min-w-[180px] flex-1">
+          <div className="min-w-0 flex-1">
             {mode !== 'externalUrl' ? (
               <Input
                 aria-label={t('workspace.web.fields.targetPath', 'Target path')}
                 value={targetPath}
                 onChange={(event) => setTargetPath(event.target.value)}
                 placeholder={t('workspace.web.fields.targetPathPlaceholder', 'Relative path, e.g. index.html')}
-                className="h-8 bg-surface-input font-mono text-xs"
+                className="h-7 bg-surface-input font-mono text-xs"
               />
             ) : (
               <Input
@@ -328,110 +319,93 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
                 value={externalUrl ?? ''}
                 onChange={(event) => setExternalUrl(event.target.value)}
                 placeholder="http://localhost:3000"
-                className="h-8 bg-surface-input font-mono text-xs"
+                className="h-7 bg-surface-input font-mono text-xs"
               />
             )}
           </div>
 
           {mode === 'devServer' && (
-            <>
-              <Select value={selectedConfigName} onValueChange={setSelectedConfigName} disabled={launchConfigs.length === 0}>
-                <SelectTrigger size="sm" className="h-8 min-w-[150px] bg-surface-input text-xs"><SelectValue placeholder={t('workspace.web.fields.detectScriptsFirst', 'Detect scripts first')} /></SelectTrigger>
-                <SelectContent>
-                  {launchConfigs.map((config) => <SelectItem key={config.name} value={config.name}>{config.name} / {config.command}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <Button variant="outline" size="sm" className="h-8 text-xs" disabled={busy} onClick={() => void detectConfig()}>
-                <RefreshCw className={cn('mr-1.5 h-3.5 w-3.5', busy && 'animate-spin')} />{t('workspace.web.actions.detect', 'Detect')}
-              </Button>
-            </>
+            <Select value={selectedConfigName} onValueChange={setSelectedConfigName} disabled={launchConfigs.length === 0}>
+              <SelectTrigger size="sm" className="h-7 min-w-[120px] bg-surface-input text-xs"><SelectValue placeholder={t('workspace.web.fields.detectScriptsFirst', 'Detect scripts first')} /></SelectTrigger>
+              <SelectContent>
+                {launchConfigs.map((config) => <SelectItem key={config.name} value={config.name}>{config.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
           )}
 
-          <Separator orientation="vertical" className="mx-0.5 h-6" />
-          <div className="flex flex-wrap items-center gap-1.5">
-            <Button size="sm" className="h-8 text-xs shadow-sm" disabled={busy} onClick={() => void startPreview()}>
-              <RefreshCw className={cn('mr-1.5 h-3.5 w-3.5', busy && 'animate-spin')} />{t('workspace.web.actions.start', 'Start')}
+          <div className="flex shrink-0 items-center gap-1">
+            {mode === 'devServer' && (
+              <Button variant="ghost" size="icon" className="h-7 w-7" disabled={busy} onClick={() => void detectConfig()} title={t('workspace.web.actions.detect', 'Detect')}>
+                <RefreshCw className={cn('h-3.5 w-3.5', busy && 'animate-spin')} />
+              </Button>
+            )}
+            <Button size="sm" className="h-7 text-xs" disabled={busy} onClick={() => void startPreview()}>
+              {busy ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <RefreshCw className="mr-1.5 h-3 w-3" />}
+              {t('workspace.web.actions.start', 'Start')}
             </Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs" disabled={busy || !status?.running} onClick={() => void stopPreview()}>
-              <Square className="mr-1.5 h-3.5 w-3.5" />{t('workspace.web.actions.stop', 'Stop')}
+            <Button variant="outline" size="sm" className="h-7 text-xs" disabled={busy || !status?.running} onClick={() => void stopPreview()}>
+              <Square className="h-3 w-3" />
             </Button>
-            <Separator orientation="vertical" className="mx-0.5 h-6" />
             <Button
               variant={selectionEnabled ? 'default' : 'outline'}
-              size="sm"
-              className="h-8 text-xs"
+              size="icon"
+              className="h-7 w-7"
               disabled={!previewUrl}
               onClick={() => setSelectionEnabled((current) => !current)}
+              title={t('workspace.web.actions.pickComponent', 'Pick component')}
             >
-              <MousePointer2 className="mr-1.5 h-3.5 w-3.5" />{selectionEnabled ? t('workspace.web.actions.picking', 'Picking') : t('workspace.web.actions.pickComponent', 'Pick component')}
+              <MousePointer2 className="h-3.5 w-3.5" />
             </Button>
           </div>
-        </div>
         </div>
       </div>
 
       {selectedElement && (
-        <div className="shrink-0 border-b border-primary/20 bg-primary/[0.04] px-3 py-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-2xs font-medium text-primary">{t('workspace.web.selection.selected', 'Selected')}</span>
-            <span className="rounded-md bg-background/80 px-1.5 py-0.5 font-mono text-2xs text-muted-foreground">&lt;{selectedElement.tagName}&gt;</span>
-            <span className="min-w-[120px] flex-1 truncate font-mono text-xs text-foreground">{selectedElement.cssSelector}</span>
-            <span className="shrink-0 rounded-md bg-background/80 px-1.5 py-0.5 font-mono text-2xs text-muted-foreground">
-              {selectedElement.rect.width}x{selectedElement.rect.height}
-            </span>
-            <div className="ml-auto flex shrink-0 items-center gap-1">
-              <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={clearSelection}>
-                <X className="mr-1 h-3.5 w-3.5" />{t('workspace.web.actions.clearSelection', 'Clear selection')}
+        <div className="shrink-0 border-b border-primary/20 bg-primary/[0.04] px-3 py-1.5">
+          <div className="flex items-center gap-2">
+            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-2xs font-medium text-primary">{t('workspace.web.selection.selected', 'Selected')}</span>
+            <span className="rounded bg-background/80 px-1.5 py-0.5 font-mono text-2xs text-muted-foreground">&lt;{selectedElement.tagName}&gt;</span>
+            <span className="min-w-0 flex-1 truncate font-mono text-xs text-foreground">{selectedElement.cssSelector}</span>
+            <div className="flex shrink-0 items-center gap-1">
+              <Button variant="ghost" size="sm" className="h-6 px-1.5 text-2xs" onClick={clearSelection}>
+                <X className="h-3 w-3" />
               </Button>
-              <Button variant="outline" size="sm" className="h-7 px-2 text-xs" onClick={sendSelection} disabled={!onAppendComposerDraft}>
-                <Send className="mr-1 h-3.5 w-3.5" />{t('workspace.web.actions.sendToComposer', 'Send to composer')}
+              <Button variant="outline" size="sm" className="h-6 px-1.5 text-2xs" onClick={sendSelection} disabled={!onAppendComposerDraft}>
+                <Send className="h-3 w-3" />
               </Button>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs"
-                    disabled={screenshotBusy || !onAppendComposerDraft}
-                    onClick={() => void captureAndSend()}
-                  >
-                    <Camera className={cn('mr-1 h-3.5 w-3.5', screenshotBusy && 'animate-pulse')} />
-                    {screenshotBusy ? t('workspace.web.actions.capturing', 'Capturing') : t('workspace.web.actions.captureAndSend', 'Capture and send')}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>{t('workspace.web.tooltips.captureAndSend', 'Send the selected component with a preview screenshot.')}</TooltipContent>
-              </Tooltip>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-6 px-1.5 text-2xs"
+                disabled={screenshotBusy || !onAppendComposerDraft}
+                onClick={() => void captureAndSend()}
+              >
+                <Camera className={cn('h-3 w-3', screenshotBusy && 'animate-pulse')} />
+              </Button>
             </div>
           </div>
-          <pre className="mt-1 max-h-14 overflow-hidden whitespace-pre-wrap break-words font-mono text-2xs leading-relaxed text-muted-foreground">
-            {selectedElement.outerHtmlPreview}
-          </pre>
         </div>
       )}
 
       {mode === 'devServer' && logs && (
-        <Textarea readOnly value={logs} className="mx-3 mt-3 h-20 shrink-0 resize-none border-black/10 bg-surface-input font-mono text-2xs dark:border-white/10" />
+        <Textarea readOnly value={logs} className="mx-3 mt-2 h-16 shrink-0 resize-none border-black/10 bg-surface-input font-mono text-2xs dark:border-white/10" />
       )}
 
-      <div className="min-h-0 flex-1 bg-surface-input p-3">
-        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-black/15 bg-[#111111] shadow-[0_18px_45px_rgba(0,0,0,0.16)] dark:border-white/10">
-          <div className="flex h-11 shrink-0 items-center gap-1.5 border-b border-white/10 bg-[#181818] px-2.5">
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-white/55 hover:bg-white/10 hover:text-white" disabled>
-              <ArrowLeft className="h-4 w-4" />
+      {/* Browser viewport — clean, minimal chrome */}
+      <div className="min-h-0 flex-1 bg-surface-input p-2">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-md border border-black/10 bg-white shadow-sm dark:border-white/10">
+          {/* Address bar — single slim row */}
+          <div className="flex h-8 shrink-0 items-center gap-1.5 border-b border-black/5 bg-surface-modal px-2 dark:border-white/10">
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" disabled={!previewUrl} onClick={() => setFrameNonce((value) => value + 1)} title={t('workspace.web.actions.refresh', 'Refresh')}>
+              <RefreshCw className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-white/55 hover:bg-white/10 hover:text-white" disabled>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-white/65 hover:bg-white/10 hover:text-white" disabled={!previewUrl} onClick={() => setFrameNonce((value) => value + 1)}>
-              <RefreshCw className="h-4 w-4" />
-            </Button>
-            <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-1.5 shadow-inner">
-              <span className={cn('h-2 w-2 shrink-0 rounded-full', status?.running ? 'bg-emerald-400' : 'bg-white/25')} />
-              <span className="truncate font-mono text-xs text-white/70">{previewUrl ?? t('workspace.web.browser.placeholder', 'Start a preview to load a URL')}</span>
+            <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-full border border-black/5 bg-surface-input px-2.5 py-1 dark:border-white/10">
+              <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', status?.running ? 'bg-emerald-400' : 'bg-muted-foreground/30')} />
+              <span className="truncate font-mono text-2xs text-muted-foreground">{previewUrl ?? t('workspace.web.browser.placeholder', 'Start a preview to load a URL')}</span>
             </div>
             {previewUrl && (
-              <Button variant="ghost" size="icon" className="h-7 w-7 text-white/65 hover:bg-white/10 hover:text-white" onClick={() => void hostApi.shell.openExternal(previewUrl)}>
-                <ExternalLink className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" onClick={() => void hostApi.shell.openExternal(previewUrl)} title={t('workspace.web.actions.openExternal', 'Open externally')}>
+                <ExternalLink className="h-3.5 w-3.5" />
               </Button>
             )}
           </div>
@@ -449,8 +423,8 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
               }}
             />
           ) : (
-            <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 text-white/45">
-              <Globe className="h-8 w-8 opacity-50" />
+            <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 text-muted-foreground/50">
+              <Globe className="h-7 w-7 opacity-60" />
               <p className="text-xs">{t('workspace.web.empty', '{{mode}} preview will appear here after it starts.', { mode: modeLabel(t, mode) })}</p>
             </div>
           )}

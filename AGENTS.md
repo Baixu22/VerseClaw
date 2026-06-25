@@ -1,10 +1,10 @@
-# AGENTS.md
+﻿# AGENTS.md
 
 ## Cursor Cloud specific instructions
 
 ### Overview
 
-ClawX is a cross-platform **Electron desktop app** (React 19 + Vite + TypeScript) providing a GUI for the OpenClaw AI agent runtime. It uses pnpm as its package manager (pinned version in `package.json`'s `packageManager` field).
+Verse Claw is a cross-platform **Electron desktop app** (React 19 + Vite + TypeScript) providing a GUI for the OpenClaw AI agent runtime. It uses pnpm as its package manager (pinned version in `package.json`'s `packageManager` field).
 
 ### Agent Harness routing
 
@@ -60,3 +60,46 @@ Standard dev commands are in `package.json` scripts and `README.md`. Key ones:
 - **Spec-driven harness rule**: AI Coding tasks that touch backend communication must start from a task spec under `harness/specs/tasks/` and reference `gateway-backend-communication` when the change involves renderer/Main/host-api/api-client/Gateway/OpenClaw runtime paths. Run `pnpm harness validate --spec <task-spec>` before implementation review, and `pnpm harness run --spec <task-spec>` or `--dry-run` when checking the selected validation flow.
 - **Spec/rule growth rule**: When adding a new feature, user-visible OpenClaw scenario, or recurring AI Coding constraint, add or update the relevant harness scenario spec and rule spec in the same PR so future AI work can validate the behavior instead of relying on tribal knowledge.
 - **Harness CI/local parity**: Run `pnpm run harness:ci` to exercise the same baseline harness checks used by GitHub Actions. Real task specs should be validated without `--no-diff`; `--no-diff` is only for structural checks of checked-in examples.
+### Bash Shell MCP Server
+
+该项目注册了一个 `bash-shell` MCP server（通过 Git Bash 执行），暴露 `bash_command` 工具。
+当需要运行 shell 命令时，优先使用 `bash_command` 工具而非 `shell_command`（PowerShell），
+因为 `shell_command` 在 Windows 上默认使用 PowerShell。
+
+MCP server 脚本路径：
+`.codex-tools/bash-mcp-server/scripts/bash-mcp-server.mjs`
+
+如需在 Codex 重启后重新注册，运行：
+```powershell
+& "$env:LOCALAPPDATA\OpenAI\Codex\bin\8e55c2dd143b6354\codex.exe" mcp add bash-shell -- node "C:\Users\27933\Desktop\Verse Claw\verse-claw\.codex-tools\bash-mcp-server\scripts\bash-mcp-server.mjs"
+```
+或运行安装脚本：
+```powershell
+.codex-tools\bash-mcp-server\install-mcp.ps1
+```
+
+## Shell Strategy (Git Bash as POSIX shell)
+
+### PATH 配置
+- Git Bash: C:\Program Files\Git\bin
+- Node.js: C:\Program Files\nodejs
+已在 User PATH 中持久化。
+
+### 执行策略（重要）
+
+PowerShell 的 ash 命令默认解析到 WSL（C:\Windows\system32\bash.exe），
+而非 Git Bash。使用 Git Bash 必须指定完整路径。
+
+| 场景 | 命令模式 |
+|------|----------|
+| POSIX 引号命令 | ` & \"C:\Program Files\Git\bin\bash.exe\" --% -c 'node -e \"...\"' ` |
+| Electron 构建/E2E | 直接使用 pnpm run build:vite 或 powershell.exe -Command "..." |
+| 复杂多行脚本 | 写入临时文件再执行 |
+| 单元测试 (vitest) | WSL Node 或 Windows Node 均可 |
+
+### E2E 测试注意点
+
+E2E 测试需要 Electron（Win32 进程），必须从 Windows 环境执行：
+- 构建：pnpm run build:vite（同时构建前端 + Electron）
+- 测试：pnpm run test:e2e tests/e2e/<spec>.ts
+- 测试文件支持在 WSL 中编写（POSIX 引号），在 Windows 中执行

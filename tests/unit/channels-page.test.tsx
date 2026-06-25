@@ -312,6 +312,68 @@ describe('Channels page status refresh', () => {
     });
   });
 
+  it('renders channel permission policy summaries', async () => {
+    subscribeHostEventMock.mockImplementation(() => vi.fn());
+    hostApiCallMock.mockImplementation(async (path: string) => {
+      if (path === 'channels.accounts') {
+        return {
+          success: true,
+          channels: [
+            {
+              channelType: 'telegram',
+              defaultAccountId: 'default',
+              status: 'connected',
+              accessPolicy: {
+                source: 'config',
+                scope: 'mixed',
+                mode: 'allowlist',
+                dmPolicy: 'allowlist',
+                groupPolicy: 'allowlist',
+                dmAllowlistCount: 2,
+                targetAllowlistCount: 1,
+                nativeApproval: {
+                  enabled: 'auto',
+                  approverCount: 1,
+                },
+              },
+              accounts: [
+                {
+                  accountId: 'default',
+                  name: 'Primary Account',
+                  configured: true,
+                  status: 'connected',
+                  isDefault: true,
+                  accessPolicy: {
+                    source: 'config',
+                    scope: 'dm',
+                    mode: 'allowlist',
+                    dmPolicy: 'allowlist',
+                    dmAllowlistCount: 2,
+                  },
+                },
+              ],
+            },
+          ],
+        };
+      }
+      if (path === 'agents.list') {
+        return {
+          success: true,
+          agents: [],
+        };
+      }
+      throw new Error(`Unexpected host API path: ${path}`);
+    });
+
+    render(<Channels />);
+
+    expect(await screen.findByTestId('channels-policy-telegram-access-policy')).toBeInTheDocument();
+    expect(screen.getByTestId('channels-policy-telegram-dm')).toHaveTextContent('permissions.mode.allowlist');
+    expect(screen.getByTestId('channels-policy-telegram-group')).toHaveTextContent('permissions.mode.allowlist');
+    expect(screen.getByTestId('channels-policy-telegram-approval')).toHaveTextContent('permissions.approval.auto');
+    expect(screen.getByTestId('channels-account-policy-telegram-default-dm')).toHaveTextContent('permissions.mode.allowlist');
+  });
+
   it('treats WeChat accounts as plugin-managed QR accounts', async () => {
     subscribeHostEventMock.mockImplementation(() => vi.fn());
     hostApiCallMock.mockImplementation(async (path: string) => {
@@ -522,7 +584,7 @@ describe('Channels page status refresh', () => {
             consecutiveHeartbeatMisses: 1,
           },
           channels: [],
-          clawxLogTail: 'clawx',
+          verseClawLogTail: 'verse-claw',
           gatewayLogTail: 'gateway',
           gatewayErrLogTail: '',
         };
@@ -746,7 +808,7 @@ describe('Channels page status refresh', () => {
             consecutiveHeartbeatMisses: 1,
           },
           channels: [],
-          clawxLogTail: `clawx-${diagnosticsFetchCount}`,
+          verseClawLogTail: `verse-claw-${diagnosticsFetchCount}`,
           gatewayLogTail: 'gateway',
           gatewayErrLogTail: '',
         };

@@ -104,7 +104,7 @@ export async function listMattermostDirectoryGroups(
         });
       }
     } catch (err) {
-      // Token may be expired/revoked â€” skip this account and try others
+      // Token may be expired/revoked â€?skip this account and try others
       console.debug?.(
         "[mattermost-directory] listGroups: skipping account:",
         (err as Error)?.message,
@@ -120,7 +120,7 @@ export async function listMattermostDirectoryGroups(
  *
  * Uses only the first available client since all bots in a team see the same
  * user list (unlike channels where membership varies). Uses the first team
- * returned â€” multi-team setups will only see members from that team.
+ * returned â€?multi-team setups will only see members from that team.
  *
  * NOTE: per_page=200 for member listing; same pagination caveat as groups.
  */
@@ -140,7 +140,7 @@ export async function listMattermostDirectoryPeers(
     if (!teams.length) {
       return [];
     }
-    // Uses first team â€” multi-team setups may need iteration in the future
+    // Uses first team â€?multi-team setups may need iteration in the future
     const teamId = teams[0].id;
     const q = normalizeLowercaseStringOrEmpty(params.query);
 

@@ -1,0 +1,66 @@
+{
+  "nav": "リモートタスク",
+  "title": "リモートタスク",
+  "subtitle": "構造化タスクがローカル状態を変更する前に確認します。",
+  "empty": "リモートタスクはまだありません。",
+  "actions": {
+    "refresh": "更新",
+    "create": "タスクを作成",
+    "approve": "承認",
+    "reject": "拒否",
+    "execute": "実行"
+  },
+  "form": {
+    "title": "ローカルタスクを作成",
+    "kind": "タスク種別",
+    "messageTitle": "タイトル",
+    "messageBody": "メッセージ",
+    "doctorMode": "Doctor モード",
+    "patch": "設定パッチ JSON",
+    "patchHint": "許可キー: theme, language, gatewayAutoStart, telemetryEnabled, autoCheckUpdate, autoDownloadUpdate, cdpRemoteControlEnabled, cdpRemoteDebuggingPort。",
+    "defaultTitle": "リモートタスク受信箱を確認",
+    "defaultBody": "これはローカルのテストタスクです。",
+    "localReason": "ローカルのリモートタスクページから作成"
+  },
+  "kind": {
+    "message": "メッセージ",
+    "doctor": "OpenClaw Doctor",
+    "settingsPatch": "設定パッチ"
+  },
+  "doctor": {
+    "diagnose": "診断",
+    "fix": "修復"
+  },
+  "status": {
+    "pending": "保留中",
+    "pendingApproval": "承認待ち",
+    "running": "実行中",
+    "completed": "完了",
+    "failed": "失敗",
+    "rejected": "拒否済み"
+  },
+  "source": {
+    "local": "ローカル",
+    "relay": "リレー",
+    "channel": "チャンネル",
+    "api": "API"
+  },
+  "detail": {
+    "kind": "種別",
+    "source": "ソース",
+    "created": "作成",
+    "updated": "更新"
+  },
+  "preview": {
+    "title": "変更プレビュー",
+    "before": "変更前",
+    "after": "変更後"
+  },
+  "toast": {
+    "created": "タスクを作成しました",
+    "approve": "タスクを承認しました",
+    "reject": "タスクを拒否しました",
+    "execute": "タスクを実行しました",
+    "invalidJson": "設定パッチは有効な JSON である必要があります"
+  }
+}

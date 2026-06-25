@@ -29,7 +29,7 @@ function readPersistedRemoteControlSettings(app: App): Partial<AppSettings> {
 }
 
 export function resolveRemoteDebuggingLaunchPort(app: App): number | null {
-  const envPort = parsePort(process.env.CLAWX_REMOTE_DEBUGGING_PORT);
+  const envPort = parsePort(process.env.VERSE_CLAW_REMOTE_DEBUGGING_PORT);
   if (envPort) {
     launchPort = envPort;
     launchEnvOverride = true;

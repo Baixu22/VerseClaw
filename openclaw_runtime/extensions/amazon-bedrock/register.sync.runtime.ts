@@ -134,7 +134,7 @@ function sharedRuntimeWouldInjectCachePoints(modelId: string): boolean {
 }
 
 /**
- * Detect Bedrock application inference profile ARNs â€” these are the only IDs
+ * Detect Bedrock application inference profile ARNs â€?these are the only IDs
  * where model-name-based checks fail because the ARN is opaque.
  * System-defined profiles (us., eu., global.) and base model IDs always
  * contain the model name and are handled by the shared model runtime natively.
@@ -152,7 +152,7 @@ function isBedrockAppInferenceProfile(modelId: string): boolean {
  * IDs that may not contain the model name). When OpenClaw's `isAnthropicBedrockModel`
  * identifies the model but the shared runtime won't inject cache points, we do it via onPayload.
  *
- * Gated to application inference profile ARNs only â€” regular Claude model IDs and
+ * Gated to application inference profile ARNs only â€?regular Claude model IDs and
  * system-defined inference profiles (us.anthropic.claude-*) are left to the shared runtime.
  */
 function needsCachePointInjection(modelId: string): boolean {
@@ -173,7 +173,7 @@ function needsCachePointInjection(modelId: string): boolean {
 
 /**
  * Extract the region from a Bedrock ARN.
- * e.g. "arn:aws:bedrock:us-east-1:123:application-inference-profile/abc" â†’ "us-east-1"
+ * e.g. "arn:aws:bedrock:us-east-1:123:application-inference-profile/abc" â†?"us-east-1"
  */
 function extractRegionFromArn(arn: string): string | undefined {
   const parts = arn.split(":");
@@ -266,7 +266,7 @@ async function resolveAppProfileTraits(
     appProfileTraitsCache.set(modelId, traits);
     return traits;
   } catch {
-    // Transient failures (throttling, network, IAM) should not be cached â€”
+    // Transient failures (throttling, network, IAM) should not be cached â€?
     // return the heuristic fallback but allow retry on the next request.
     return {
       cacheEligible: isAnthropicBedrockModel(modelId),
@@ -387,7 +387,7 @@ export function registerAmazonBedrockPlugin(api: OpenClawPluginApi): void {
       return streamFn;
     }
     // For app inference profiles with opaque IDs, don't force cacheRetention: "none"
-    // yet â€” we may resolve them as Claude later via GetInferenceProfile.
+    // yet â€?we may resolve them as Claude later via GetInferenceProfile.
     if (isBedrockAppInferenceProfile(modelId)) {
       return streamFn;
     }
@@ -574,7 +574,7 @@ export function registerAmazonBedrockPlugin(api: OpenClawPluginApi): void {
         // When undefined, default to "short" to match the shared runtime default.
         // Note: if the user set cacheRetention: "none" but the opaque ARN wasn't
         // recognized by resolveAnthropicCacheRetentionFamily, the value may have
-        // been dropped upstream. This is a known limitation â€” the proper fix is
+        // been dropped upstream. This is a known limitation â€?the proper fix is
         // to also teach resolveAnthropicCacheRetentionFamily about opaque profiles
         // (tracked separately). In practice, users with app inference profiles
         // want caching enabled, so defaulting to "short" is the safer behavior.
@@ -611,7 +611,7 @@ export function registerAmazonBedrockPlugin(api: OpenClawPluginApi): void {
           );
         }
 
-        // Slow path: opaque profile ID â€” resolve underlying model via API (cached).
+        // Slow path: opaque profile ID â€?resolve underlying model via API (cached).
         // onPayload supports async, so we await the resolution inline.
         return underlying(
           streamModel,

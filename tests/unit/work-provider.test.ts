@@ -4,6 +4,7 @@ import {
   resolveWorkKitProviderCapabilities,
   resolveWorkProviders,
   summarizeWorkProviderCapabilities,
+  summarizeWorkProviderSources,
 } from '@shared/types/work-provider';
 import type { WorkModeKit } from '@shared/types/work-mode';
 
@@ -52,6 +53,7 @@ describe('work provider registry', () => {
     expect(capabilities.find((item) => item.capability === 'document.read')).toMatchObject({
       providerId: 'office-document-js',
       status: 'ready',
+      sourceKinds: ['builtInLibrary'],
     });
     expect(capabilities.find((item) => item.capability === 'document.write')).toMatchObject({
       providerId: 'office-document-js',
@@ -62,6 +64,7 @@ describe('work provider registry', () => {
     expect(capabilities.find((item) => item.capability === 'web.search')).toMatchObject({
       providerId: 'web-search-configured',
       status: 'missingConfig',
+      sourceKinds: ['externalService', 'customHttp'],
     });
     expect(providers.find((provider) => provider.id === 'libreoffice-external')?.status).toBe('externalUnavailable');
   });
@@ -123,6 +126,7 @@ describe('work provider registry', () => {
       ['sheets', 'sheet.write'],
       ['sheets', 'csv.read'],
     ]);
+    expect(mapped.find((item) => item.capability === 'document.read')?.sourceKinds).toEqual(['builtInLibrary']);
   });
 
   it('summarizes capability statuses', () => {
@@ -136,6 +140,29 @@ describe('work provider registry', () => {
       missingDependency: 1,
       missingConfig: 1,
       disabled: 0,
+    });
+  });
+
+  it('summarizes provider implementation sources beyond skills and MCP', () => {
+    const providers = resolveWorkProviders({
+      config: {
+        'web-search-configured': {
+          config: {
+            provider: 'customHttp',
+            endpoint: 'https://search.local/search',
+          },
+        },
+      },
+    });
+
+    expect(summarizeWorkProviderSources(providers)).toMatchObject({
+      builtInLibrary: 5,
+      externalBinary: 2,
+      externalService: 4,
+      customHttp: 2,
+      runtimeSkill: 0,
+      mcpServer: 0,
+      openClawPlugin: 0,
     });
   });
 });

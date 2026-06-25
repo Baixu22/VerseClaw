@@ -3,7 +3,7 @@
 import 'zx/globals';
 
 const ROOT_DIR = path.resolve(__dirname, '..');
-const AGENT_BROWSER_VERSION = 'v0.27.0';
+const AGENT_BROWSER_VERSION = 'v0.29.0';
 const BASE_URL = `https://github.com/vercel-labs/agent-browser/releases/download/${AGENT_BROWSER_VERSION}`;
 const OUTPUT_BASE = path.join(ROOT_DIR, 'resources', 'bin');
 
@@ -61,6 +61,7 @@ async function setupTarget(id) {
 
   const targetDir = path.join(OUTPUT_BASE, id);
   const destBin = path.join(targetDir, target.binName);
+  const tempBin = path.join(targetDir, `${target.binName}.download`);
   const downloadUrl = `${BASE_URL}/${target.asset}`;
   const reusesX64 = id === 'win32-arm64';
 
@@ -68,12 +69,10 @@ async function setupTarget(id) {
   echo(`   asset:  ${target.asset}${reusesX64 ? ' (no native arm64 asset; reusing win32-x64)' : ''}`);
   echo(`   dest:   ${destBin}`);
 
-  // Only remove our own binary, not the entire directory, to avoid deleting
-  // uv / node binaries placed by other download scripts.
-  if (await fs.pathExists(destBin)) {
-    await fs.remove(destBin);
-  }
   await fs.ensureDir(targetDir);
+  if (await fs.pathExists(tempBin)) {
+    await fs.remove(tempBin);
+  }
 
   // Download (bare binary — no extraction needed)
   const startedAt = Date.now();
@@ -83,12 +82,13 @@ async function setupTarget(id) {
     throw new Error(`Failed to download ${target.asset}: ${response.status} ${response.statusText}`);
   }
   const buffer = await response.arrayBuffer();
-  await fs.writeFile(destBin, Buffer.from(buffer));
+  await fs.writeFile(tempBin, Buffer.from(buffer));
 
   // Permission fix
   if (os.platform() !== 'win32') {
-    await fs.chmod(destBin, 0o755);
+    await fs.chmod(tempBin, 0o755);
   }
+  await fs.move(tempBin, destBin, { overwrite: true });
 
   const { size } = await fs.stat(destBin);
   const elapsedMs = Date.now() - startedAt;

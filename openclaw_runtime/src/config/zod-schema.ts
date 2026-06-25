@@ -53,6 +53,69 @@ const NodeHostSchema = z
   .strict()
   .optional();
 
+const RuntimeFeatureSchema = z
+  .object({
+    registryPilot: z
+      .object({
+        enabled: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    providerRegistry: z
+      .object({
+        shadow: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    contextProviders: z
+      .object({
+        shadow: z.boolean().optional(),
+        loopPackShadow: z.boolean().optional(),
+        registryPilot: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    eventLog: z
+      .object({
+        shadow: z.boolean().optional(),
+        persist: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    checkpointSerializer: z
+      .object({
+        shadow: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    resume: z
+      .object({
+        replayShadow: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    toolRegistry: z
+      .object({
+        shadow: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    toolProtocol: z
+      .object({
+        mcpShadow: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    evidenceVerifier: z
+      .object({
+        shadow: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+  })
+  .strict()
+  .optional();
+
 type ConfigSchemaShape<T extends object> = {
   [Key in keyof T]-?: z.ZodType<T[Key]>;
 };
@@ -102,6 +165,12 @@ const SecuritySchema = z
               .strict(),
           )
           .optional(),
+      })
+      .strict()
+      .optional(),
+    validationShadow: z
+      .object({
+        enabled: z.boolean().optional(),
       })
       .strict()
       .optional(),
@@ -798,6 +867,7 @@ export const OpenClawSchema = z
     agents: AgentsSchema,
     tools: ToolsSchema,
     security: SecuritySchema,
+    runtime: RuntimeFeatureSchema,
     bindings: BindingsSchema,
     broadcast: BroadcastSchema,
     audio: AudioSchema,

@@ -1,0 +1,66 @@
+{
+  "nav": "Remote Tasks",
+  "title": "Remote Tasks",
+  "subtitle": "Review structured task envelopes before they change local state.",
+  "empty": "No remote tasks yet.",
+  "actions": {
+    "refresh": "Refresh",
+    "create": "Create task",
+    "approve": "Approve",
+    "reject": "Reject",
+    "execute": "Execute"
+  },
+  "form": {
+    "title": "Create local task",
+    "kind": "Task kind",
+    "messageTitle": "Title",
+    "messageBody": "Message",
+    "doctorMode": "Doctor mode",
+    "patch": "Settings patch JSON",
+    "patchHint": "Allowed keys: theme, language, gatewayAutoStart, telemetryEnabled, autoCheckUpdate, autoDownloadUpdate, cdpRemoteControlEnabled, cdpRemoteDebuggingPort.",
+    "defaultTitle": "Check remote task inbox",
+    "defaultBody": "This is a local test task.",
+    "localReason": "Created from the local Remote Tasks page"
+  },
+  "kind": {
+    "message": "Message",
+    "doctor": "OpenClaw Doctor",
+    "settingsPatch": "Settings patch"
+  },
+  "doctor": {
+    "diagnose": "Diagnose",
+    "fix": "Fix"
+  },
+  "status": {
+    "pending": "Pending",
+    "pendingApproval": "Needs approval",
+    "running": "Running",
+    "completed": "Completed",
+    "failed": "Failed",
+    "rejected": "Rejected"
+  },
+  "source": {
+    "local": "Local",
+    "relay": "Relay",
+    "channel": "Channel",
+    "api": "API"
+  },
+  "detail": {
+    "kind": "Kind",
+    "source": "Source",
+    "created": "Created",
+    "updated": "Updated"
+  },
+  "preview": {
+    "title": "Change preview",
+    "before": "Before",
+    "after": "After"
+  },
+  "toast": {
+    "created": "Task created",
+    "approve": "Task approved",
+    "reject": "Task rejected",
+    "execute": "Task executed",
+    "invalidJson": "Settings patch must be valid JSON"
+  }
+}

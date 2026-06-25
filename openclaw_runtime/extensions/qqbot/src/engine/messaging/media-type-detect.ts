@@ -1,5 +1,5 @@
 /**
- * Media type detection â€” pure functions for classifying files by MIME or extension.
+ * Media type detection â€?pure functions for classifying files by MIME or extension.
  *
  * These replace the inline `isImageFile` and `isVideoFile` helpers scattered
  * across `outbound.ts`. Centralizing them here keeps detection consistent.

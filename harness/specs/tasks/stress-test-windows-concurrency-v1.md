@@ -1,4 +1,4 @@
-﻿---
+---
 id: stress-test-windows-concurrency-v1
 title: Windows 高并发稳定性压测 v1
 intent: Verifies ResourceLeaseManager behavior under starvation-level concurrent load, and Chat UI jank at extreme message counts. Model API is mocked; the test isolates scheduling and rendering paths from API latency.

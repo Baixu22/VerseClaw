@@ -2,7 +2,7 @@
  * Token management for the QQ Open Platform.
  *
  * All state (cache, singleflight promises, background refresh controllers)
- * is encapsulated in the `TokenManager` class instance â€” no module-level
+ * is encapsulated in the `TokenManager` class instance â€?no module-level
  * globals, fully supporting multi-account concurrent operation.
  */
 
@@ -87,7 +87,7 @@ export class TokenManager {
    * Obtain an access token with caching and singleflight semantics.
    *
    * When multiple callers request a token for the same appId concurrently,
-   * only one actual HTTP request is made â€” the others await the same promise.
+   * only one actual HTTP request is made â€?the others await the same promise.
    */
   async getAccessToken(appId: string, clientSecret: string): Promise<string> {
     const normalizedId = appId.trim();

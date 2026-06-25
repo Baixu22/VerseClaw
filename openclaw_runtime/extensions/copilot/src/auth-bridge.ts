@@ -35,7 +35,7 @@ import { join, normalize, resolve, sep } from "node:path";
  *   2. `auth.gitHubToken` (explicit override; requires
  *      `profileId` + `profileVersion`)
  *   3. `resolvedApiKey` + `authProfileId` from the contract (core's
- *      AuthProfileStore-resolved token â€” the production main path for
+ *      AuthProfileStore-resolved token â€?the production main path for
  *      a configured `github-copilot` auth profile)
  *   4. OPENCLAW_GITHUB_TOKEN, then COPILOT_GITHUB_TOKEN, then
  *      GH_TOKEN, then GITHUB_TOKEN env vars (mirrors the

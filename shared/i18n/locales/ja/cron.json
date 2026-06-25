@@ -10,6 +10,25 @@
         "paused": "停止中",
         "failed": "失敗"
     },
+    "assurance": {
+        "scheduler": "スケジューラー",
+        "wake": "起動",
+        "source": "ソース",
+        "delivery": "配信",
+        "gatewayConnected": "Gateway 接続中",
+        "gatewayOffline": "Gateway オフライン",
+        "readOnlyFallback": "設定の読み取り専用表示",
+        "gatewaySnapshot": "Gateway スナップショット",
+        "fallbackCount": "{{count}} 件の設定フォールバック",
+        "sourceGateway": "Gateway",
+        "sourceFallback": "設定フォールバック",
+        "isolatedRun": "分離エージェント実行",
+        "nextHeartbeat": "次のハートビート",
+        "externalDelivery": "外部配信",
+        "inAppResult": "アプリ内結果",
+        "deliverySummary": "外部 {{external}} / アプリ内 {{local}}",
+        "unknown": "不明"
+    },
     "empty": {
         "title": "定期タスクがありません",
         "description": "定期タスクを作成してAIワークフローを自動化します。指定した時間にメッセージ送信、クエリ実行、アクション実行が可能です。",
@@ -18,8 +37,10 @@
     "card": {
         "runNow": "今すぐ実行",
         "deleteConfirm": "このタスクを削除してもよろしいですか？",
+        "browserAutomation": "ブラウザ",
         "last": "前回",
-        "next": "次回"
+        "next": "次回",
+        "runDetails": "Run Details"
     },
     "dialog": {
         "createTitle": "タスク作成",
@@ -27,16 +48,62 @@
         "description": "自動化AIタスクをスケジュール",
         "taskName": "タスク名",
         "taskNamePlaceholder": "例：朝のブリーフィング",
+        "taskType": "タスク種別",
+        "taskTypeAgent": "AI タスク",
+        "taskTypeAgentDesc": "通常の定期 Agent プロンプトを実行します。",
+        "taskTypeBrowser": "ブラウザ自動化",
+        "taskTypeBrowserDesc": "Agent Browser で Web 操作を実行します。",
         "message": "メッセージ / プロンプト",
         "messagePlaceholder": "AIに何をさせますか？ 例：今日のニュースと天気のまとめを作成",
+        "browserUrl": "URL",
+        "browserUrlPlaceholder": "https://example.com/check-in",
+        "browserObjective": "ブラウザ目標",
+        "browserObjectivePlaceholder": "例：必要ならチェックインし、成功したか報告する",
+        "browserTemplate": "テンプレート",
+        "browserTemplates": {
+            "checkIn": "チェックイン",
+            "monitor": "ページ監視",
+            "publishDraft": "公開/送信ドラフト",
+            "custom": "カスタム"
+        },
+        "browserMode": "ブラウザモード",
+        "browserModes": {
+            "headless": "ヘッドレス",
+            "visible": "表示"
+        },
+        "browserProfile": "Profile",
+        "browserProfilePlaceholder": "default",
+        "browserAuthStateName": "認証状態",
+        "browserAuthStateNamePlaceholder": "未入力なら Profile 名を使用",
+        "browserAuthPersistence": "ログイン保持",
+        "browserAuthPersistenceModes": {
+            "sessionName": "Session name",
+            "profile": "Profile",
+            "off": "オフ"
+        },
+        "browserSensitiveActionPolicy": "重要操作",
+        "browserSensitivePolicies": {
+            "draftOnly": "ドラフト/確認のみ",
+            "autoSubmit": "自動送信を許可"
+        },
+        "browserAllowedDomains": "許可ドメイン",
+        "browserAllowedDomainsPlaceholder": "example.com, auth.example.com",
+        "browserDiagnostics": "診断",
+        "browserDiagnosticOptions": {
+            "snapshot": "スナップショット",
+            "console": "コンソール",
+            "errors": "エラー",
+            "network": "ネットワーク",
+            "screenshot": "スクリーンショット"
+        },
         "agent": "エージェント",
         "schedule": "スケジュール",
         "cronPlaceholder": "Cron式（例：0 9 * * *）",
         "usePresets": "プリセットを使用",
         "useCustomCron": "カスタムCronを使用",
         "deliveryTitle": "配信設定",
-        "deliveryDescription": "結果を ClawX 内だけに残すか、外部チャンネルへ送信するかを選びます。",
-        "deliveryModeNone": "ClawX 内のみ",
+        "deliveryDescription": "結果を Verse Claw 内だけに残すか、外部チャンネルへ送信するかを選びます。",
+        "deliveryModeNone": "Verse Claw 内のみ",
         "deliveryModeNoneDesc": "タスクを実行し、結果はアプリ内だけに残します。",
         "deliveryModeAnnounce": "外部チャンネル",
         "deliveryModeAnnounceDesc": "最終結果を設定済みチャンネルへ送信します。",
@@ -74,7 +141,30 @@
         "discordChannelIdDesc": "Discordチャンネルを右クリック → チャンネルIDをコピー",
         "enableImmediately": "すぐに有効化",
         "enableImmediatelyDesc": "作成後すぐにこのタスクを実行開始",
-        "saveChanges": "変更を保存"
+        "saveChanges": "変更を保存",
+        "browserSavedProfiles": "Saved profiles",
+        "loadingProfiles": "Loading profiles...",
+        "noSavedProfiles": "No saved profiles",
+        "profileManager": "Profile Manager",
+        "profileManagerDescription": "Save and reuse Agent Browser login state references for scheduled browser tasks.",
+        "profileLabel": "Profile label",
+        "profileDescription": "Description",
+        "profileDescriptionPlaceholder": "e.g., Work Gmail session",
+        "saveProfile": "Save Profile",
+        "activeSessions": "{{count}} active",
+        "browserValidateTitle": "Validate once",
+        "browserValidateDescription": "Open the page with this profile, check domain safety, and collect selected diagnostics.",
+        "validateBrowserOnce": "Validate Once",
+        "validatingBrowser": "Validating...",
+        "validationPassed": "Validation passed",
+        "validationFailed": "Validation failed",
+        "validationScreenshotAlt": "Browser validation screenshot",
+        "browserSuccessCondition": "成功条件",
+        "browserSuccessConditionPlaceholder": "例: ページに「チェックイン済み」と表示される、または本日の報酬を取得済み",
+        "browserFailureCondition": "失敗条件",
+        "browserFailureConditionPlaceholder": "例: ログインが必要、CAPTCHA が表示される、成功テキストが見つからない",
+        "browserRetryOnTransientFailure": "安全な一時失敗を1回再試行",
+        "browserRetryOnTransientFailureDesc": "最終的な機密操作の前に、open/navigate/wait など安全な手順だけを1回繰り返します。"
     },
     "presets": {
         "everyMinute": "毎分",
@@ -98,6 +188,9 @@
         "failedDelete": "タスクの削除に失敗しました",
         "nameRequired": "タスク名を入力してください",
         "messageRequired": "メッセージを入力してください",
+        "browserUrlRequired": "ブラウザ URL を入力してください",
+        "browserUrlInvalid": "ブラウザ URL は http:// または https:// で始まる必要があります",
+        "browserObjectiveRequired": "ブラウザ目標を入力してください",
         "channelRequired": "チャンネルを選択してください",
         "deliveryChannelUnsupported": "{{channel}} はスケジュール送信にまだ対応していません",
         "deliveryTargetRequired": "送信先を入力してください",
@@ -105,7 +198,12 @@
         "failedLoadDeliveryTargets": "送信先の読み込みに失敗しました",
         "failedResolveDeliveryTarget": "既定の送信先を解決できませんでした",
         "discordIdRequired": "DiscordチャンネルIDを入力してください",
-        "scheduleRequired": "スケジュールを選択または入力してください"
+        "scheduleRequired": "スケジュールを選択または入力してください",
+        "browserProfileRequired": "Please enter a browser profile",
+        "browserProfileSaved": "Browser profile saved",
+        "browserProfileSaveFailed": "Failed to save browser profile: {{error}}",
+        "browserValidationPassed": "Browser validation passed",
+        "browserValidationFailed": "Browser validation failed: {{error}}"
     },
     "schedule": {
         "everySeconds": "{{count}}秒ごと",
@@ -117,5 +215,30 @@
         "monthlyAtDay": "毎月 {{day}}日 {{time}}",
         "dailyAt": "毎日 {{time}}",
         "unknown": "不明"
+    },
+    "details": {
+        "title": "Run Details",
+        "description": "Recent run evidence for {{name}}",
+        "url": "URL",
+        "profile": "Profile",
+        "template": "Template",
+        "lastRun": "Last run",
+        "success": "Success",
+        "failed": "Failed",
+        "loading": "Loading run details...",
+        "empty": "No run details are available yet.",
+        "structuredResult": "Structured result",
+        "loginState": "Login state",
+        "finalUrl": "Final URL",
+        "artifacts": "Artifacts",
+        "steps": "Steps",
+        "diagnosticEvidence": "診断証拠",
+        "diagnosticKinds": {
+            "screenshot": "スクリーンショット",
+            "snapshot": "スナップショット",
+            "console": "コンソール",
+            "errors": "エラー",
+            "network": "ネットワーク"
+        }
     }
 }

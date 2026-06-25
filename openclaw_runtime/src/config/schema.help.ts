@@ -1948,6 +1948,50 @@ export const FIELD_HELP: Record<string, string> = {
     "Per-agent override for whether the default agent's ## Heartbeats system prompt section is injected. Use false to keep heartbeat runtime behavior but omit the heartbeat prompt instructions from that agent's system prompt.",
   "agents.defaults.heartbeat.directPolicy":
     'Controls whether heartbeat delivery may target direct/DM chats: "allow" (default) permits DM delivery and "block" suppresses direct-target sends.',
+  runtime:
+    "Runtime-core migration and runtime-owned feature gates. Keep shadow flags disabled unless validating compatibility output.",
+  "runtime.registryPilot":
+    "Master Phase-3 registry pilot switch. Enabling it must only allow diagnostics until a later cutover explicitly changes provider/tool ordering.",
+  "runtime.registryPilot.enabled":
+    "Enable registry pilot diagnostics while keeping legacy context, tool, and task-loop behavior authoritative (default: false).",
+  "runtime.providerRegistry":
+    "Provider registry shadow settings for Phase-3 runtime migration diagnostics.",
+  "runtime.providerRegistry.shadow":
+    "Emit provider registry diagnostics and evidence without registering active providers or changing provider ordering (default: false).",
+  "runtime.contextProviders":
+    "Context provider migration flags. These are shadow/pilot controls and must not alter prompt text unless a later cutover says so.",
+  "runtime.contextProviders.shadow":
+    "Emit normalized ContextItem shadows from compatibility context providers without adding them to prompts (default: false).",
+  "runtime.contextProviders.loopPackShadow":
+    "Emit LoopContextPack ContextItem shadows without changing formatted prompt text (default: false).",
+  "runtime.contextProviders.registryPilot":
+    "Run context provider registry pilot diagnostics while preserving legacy message and prompt output (default: false).",
+  "runtime.eventLog":
+    "Append-only RuntimeTaskEvent event-log shadow settings. These flags are default-off and must not wire live TaskLoop execution by themselves.",
+  "runtime.eventLog.shadow":
+    "Enable event-log envelope/store diagnostics for shadow validation without changing legacy runtime behavior (default: false).",
+  "runtime.eventLog.persist":
+    "Allow an explicitly provided append-only shadow store to persist RuntimeTaskEvent log records. This does not enable live TaskLoop writes (default: false).",
+  "runtime.checkpointSerializer":
+    "Checkpoint serializer shadow settings for Phase-4 replay comparison. Legacy long_task_checkpoints remain authoritative.",
+  "runtime.checkpointSerializer.shadow":
+    "Serialize checkpoint shadows for diagnostics without changing long_task_checkpoints payloads or resume behavior (default: false).",
+  "runtime.resume":
+    "Resume replay shadow settings. These diagnostics must not execute tools, send messages, apply patches, or change legacy resume authority.",
+  "runtime.resume.replayShadow":
+    "Replay event-log state for comparison only, without executing side effects or preferring event-log resume (default: false).",
+  "runtime.toolRegistry":
+    "Tool registry shadow settings for Phase-3 runtime migration diagnostics.",
+  "runtime.toolRegistry.shadow":
+    "Emit tool registry diagnostics and normalized runtime-core evidence without changing legacy tool response shapes (default: false).",
+  "runtime.toolProtocol":
+    "Tool protocol migration flags. These are compatibility shadows and must not alter tool response semantics.",
+  "runtime.toolProtocol.mcpShadow":
+    "Emit MCP ToolCallRequest/ToolCallResult shadows without changing MCP callTool response shape (default: false).",
+  "runtime.evidenceVerifier":
+    "Warning-only evidence verifier shadow settings. These reports are diagnostics and do not change legacy task-loop or mission decisions.",
+  "runtime.evidenceVerifier.shadow":
+    "Emit warning-only evidence verifier reports beside the existing evidence gate without changing pass/repair/blocked decisions.",
   "agents.list.*.heartbeat.directPolicy":
     'Per-agent override for heartbeat direct/DM delivery policy; use "block" for agents that should only send heartbeat alerts to non-DM destinations.',
   "agents.list.*.heartbeat.skipWhenBusy":
@@ -1960,6 +2004,10 @@ export const FIELD_HELP: Record<string, string> = {
     "Maximum scoped repair iterations after failed self-checks. Default is 2.",
   "agents.defaults.taskLoop.defaultTemplateId":
     'Default team template for task_loop runs when the task does not imply a specialized template. Default is "quick-development".',
+  "agents.defaults.taskLoop.runtimeTaskEventLogShadow":
+    "Shadow-only flag that emits RuntimeTaskEvent records from TaskLoop lifecycle/checkpoint data without changing TaskLoop behavior.",
+  "agents.defaults.taskLoop.runtimeCoreShadow":
+    "Master shadow-only runtime-core flag for TaskLoop RuntimeTaskEvent projection. Leave off unless validating the runtime-core migration.",
   "agents.list.*.taskLoop":
     "Per-agent overrides for bounded self-checking task-loop behavior.",
   "channels.mattermost.configWrites":

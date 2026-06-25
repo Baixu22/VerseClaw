@@ -15,6 +15,7 @@ import type { AgentHarnessTaskRuntimeScope } from "../../../tasks/agent-harness-
 import type { AcceptedSessionSpawn } from "../../accepted-session-spawn.js";
 import type { ToolOutcomeObserver } from "../../agent-tools.before-tool-call.js";
 import type { AuthProfileStore } from "../../auth-profiles/types.js";
+import type { AgentBrowserAutomationEvent } from "../../tools/agent-browser-automation-event.js";
 import type {
   MessagingToolSend,
   MessagingToolSourceReplyPayload,
@@ -171,6 +172,7 @@ export type EmbeddedRunAttemptResult = {
     asyncTaskRunId?: string;
     asyncTaskId?: string;
   }>;
+  browserAutomationEvents?: AgentBrowserAutomationEvent[];
   acceptedSessionSpawns?: AcceptedSessionSpawn[];
   lastAssistant: AssistantMessage | undefined;
   currentAttemptAssistant?: AssistantMessage | undefined;

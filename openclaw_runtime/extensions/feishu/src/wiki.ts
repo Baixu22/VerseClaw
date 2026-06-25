@@ -15,7 +15,7 @@ type ObjType = "doc" | "sheet" | "mindnote" | "bitable" | "file" | "docx" | "sli
 // ============ Actions ============
 
 const WIKI_ACCESS_HINT =
-  "To grant wiki access: Open wiki space â†’ Settings â†’ Members â†’ Add the bot. " +
+  "To grant wiki access: Open wiki space â†?Settings â†?Members â†?Add the bot. " +
   "See: https://open.feishu.cn/document/server-docs/docs/wiki-v2/wiki-qa#a40ad4ca";
 
 function requireWikiSpaceId(value: unknown, fieldName: string): string {

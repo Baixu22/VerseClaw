@@ -1705,6 +1705,14 @@ export function listDescendantRunsForRequester(rootSessionKey: string): Subagent
   );
 }
 
+export function getSubagentRunByRunId(runId: string): SubagentRunRecord | null {
+  const key = runId.trim();
+  if (!key) {
+    return null;
+  }
+  return subagentRegistryDeps.getSubagentRunsSnapshotForRead(subagentRuns).get(key) ?? null;
+}
+
 export function getSubagentRunByChildSessionKey(childSessionKey: string): SubagentRunRecord | null {
   return getSubagentRunByChildSessionKeyFromRuns(
     subagentRegistryDeps.getSubagentRunsSnapshotForRead(subagentRuns),

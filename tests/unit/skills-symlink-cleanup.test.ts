@@ -43,6 +43,23 @@ import { logger } from '@electron/utils/logger';
 
 const SYMLINK_TYPE: 'dir' | 'junction' = process.platform === 'win32' ? 'junction' : 'dir';
 
+function canCreateFileSymlink(): boolean {
+  const probeRoot = mkdtempSync(path.join(tmpdir(), 'verse-claw-file-symlink-probe-'));
+  const target = path.join(probeRoot, 'target.txt');
+  const link = path.join(probeRoot, 'link.txt');
+  try {
+    writeFileSync(target, 'probe\n');
+    symlinkSync(target, link, 'file');
+    return lstatSync(link).isSymbolicLink();
+  } catch {
+    return false;
+  } finally {
+    rmSync(probeRoot, { recursive: true, force: true });
+  }
+}
+
+const fileSymlinkIt = canCreateFileSymlink() ? it : it.skip;
+
 describe('cleanupAgentsSymlinkedSkills', () => {
   let root: string;
   let skillsDir: string;
@@ -52,7 +69,7 @@ describe('cleanupAgentsSymlinkedSkills', () => {
   let workspaceAgentsSkillsDir: string;
 
   beforeEach(() => {
-    root = mkdtempSync(path.join(tmpdir(), 'clawx-skills-cleanup-'));
+    root = mkdtempSync(path.join(tmpdir(), 'verse-claw-skills-cleanup-'));
     skillsDir = path.join(root, 'openclaw', 'skills');
     agentsRootDir = path.join(root, 'agents');
     agentsSkillsDir = path.join(agentsRootDir, 'skills');
@@ -186,7 +203,7 @@ describe('cleanupAgentsSymlinkedSkills', () => {
     expect(existsSync(link)).toBe(false);
   });
 
-  it('removes file-type symlinks targeting a file inside .agents/skills', () => {
+  fileSymlinkIt('removes file-type symlinks targeting a file inside .agents/skills', () => {
     const skillDir = makeAgentSkill('lark-meta');
     const targetFile = path.join(skillDir, 'SKILL.md');
     const link = path.join(skillsDir, 'lark-meta.md');
@@ -358,7 +375,7 @@ describe('cleanupStalePluginRuntimeDeps', () => {
     return filePath;
   }
 
-  it('removes OpenClaw runtime cache roots that symlink to an old worktree package', () => {
+  fileSymlinkIt('removes OpenClaw runtime cache roots that symlink to an old worktree package', () => {
     const oldDistFile = writeOpenClawDistFile(oldOpenClawDir, 'runtime.js');
     const currentDistFile = writeOpenClawDistFile(currentOpenClawDir, 'runtime.js');
     const staleRoot = path.join(runtimeDepsDir, 'openclaw-2026.4.26-old');
@@ -377,7 +394,7 @@ describe('cleanupStalePluginRuntimeDeps', () => {
     expect(existsSync(oldDistFile)).toBe(true);
   });
 
-  it('keeps non-OpenClaw runtime cache roots and non-OpenClaw symlinks', () => {
+  fileSymlinkIt('keeps non-OpenClaw runtime cache roots and non-OpenClaw symlinks', () => {
     const externalPackageFile = path.join(root, 'external-plugin', 'dist', 'runtime.js');
     mkdirSync(path.dirname(externalPackageFile), { recursive: true });
     writeFileSync(externalPackageFile, 'export {}\n');

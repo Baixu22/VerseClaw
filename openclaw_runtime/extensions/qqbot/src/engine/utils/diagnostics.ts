@@ -1,5 +1,5 @@
 /**
- * Gateway startup diagnostics â€” extracted from utils/platform.ts.
+ * Gateway startup diagnostics â€?extracted from utils/platform.ts.
  *
  * Depends on utils/platform.ts for detection functions, but no plugin-sdk.
  */

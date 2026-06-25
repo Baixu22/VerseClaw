@@ -48,7 +48,7 @@ type MSTeamsActivity = {
   [key: string]: unknown;
 };
 
-/** Structural alias for ActivityParams â€” avoids tsgo resolution bugs with the bundled @microsoft/teams.api package. */
+/** Structural alias for ActivityParams â€?avoids tsgo resolution bugs with the bundled @microsoft/teams.api package. */
 export type MSTeamsActivityParams = { type?: string; [key: string]: unknown };
 /** Structural alias for ActivityLike. */
 export type MSTeamsActivityLike = MSTeamsActivityParams | string;

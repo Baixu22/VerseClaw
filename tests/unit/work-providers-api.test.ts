@@ -69,6 +69,13 @@ describe('work providers api', () => {
     expect(search).toMatchObject({
       providerId: 'web-search-configured',
       status: 'missingConfig',
+      sourceKinds: ['externalService', 'customHttp'],
+    });
+    expect(status.sourceSummary).toMatchObject({
+      builtInLibrary: 5,
+      externalService: 4,
+      externalBinary: 2,
+      customHttp: 2,
     });
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -140,6 +147,116 @@ describe('work providers api', () => {
     await expect(api.validateArtifact({ path: outsidePath })).resolves.toMatchObject({
       success: false,
       error: 'outsideSandbox',
+    });
+  });
+
+  it('writes and validates core Office artifacts through Main-owned providers', async () => {
+    const { PDFDocument } = await import('pdf-lib');
+    const { createWorkProvidersApi } = await import('@electron/services/work-providers-api');
+    const api = createWorkProvidersApi();
+
+    const docxPath = join(workspaceRoot, 'report.docx');
+    const xlsxPath = join(workspaceRoot, 'metrics.xlsx');
+    const pptxPath = join(workspaceRoot, 'deck.pptx');
+    const pdfOnePath = join(workspaceRoot, 'one.pdf');
+    const pdfTwoPath = join(workspaceRoot, 'two.pdf');
+    const mergedPdfPath = join(workspaceRoot, 'merged.pdf');
+
+    await expect(api.run({
+      capability: 'document.write',
+      input: {
+        outputPath: docxPath,
+        title: 'Quarterly Report',
+        content: 'Revenue grew 12 percent.',
+      },
+    })).resolves.toMatchObject({
+      success: true,
+      output: {
+        kind: 'document',
+        path: docxPath,
+      },
+    });
+
+    await expect(api.run({
+      capability: 'sheet.write',
+      input: {
+        outputPath: xlsxPath,
+        sheetName: 'Metrics',
+        rows: [
+          ['name', 'value'],
+          ['revenue', 12],
+        ],
+      },
+    })).resolves.toMatchObject({
+      success: true,
+      output: {
+        kind: 'sheet',
+        path: xlsxPath,
+        rowCount: 2,
+      },
+    });
+
+    await expect(api.run({
+      capability: 'slide.write',
+      input: {
+        outputPath: pptxPath,
+        title: 'Quarterly Review',
+        slides: [
+          { title: 'Revenue', body: 'Revenue grew 12 percent.' },
+          { title: 'Next', body: 'Focus on retention.' },
+        ],
+      },
+    })).resolves.toMatchObject({
+      success: true,
+      output: {
+        kind: 'slide',
+        path: pptxPath,
+        slideCount: 2,
+      },
+    });
+
+    for (const path of [pdfOnePath, pdfTwoPath]) {
+      const document = await PDFDocument.create();
+      document.addPage([200, 200]);
+      writeFileSync(path, Buffer.from(await document.save()));
+    }
+
+    await expect(api.run({
+      capability: 'pdf.merge',
+      input: {
+        outputPath: mergedPdfPath,
+        paths: [pdfOnePath, pdfTwoPath],
+      },
+    })).resolves.toMatchObject({
+      success: true,
+      output: {
+        kind: 'pdf',
+        path: mergedPdfPath,
+      },
+    });
+
+    await expect(api.validateArtifact({ path: docxPath })).resolves.toMatchObject({
+      success: true,
+      artifactType: 'docx',
+      valid: true,
+      previewAvailable: true,
+    });
+    await expect(api.validateArtifact({ path: xlsxPath })).resolves.toMatchObject({
+      success: true,
+      artifactType: 'xlsx',
+      valid: true,
+      previewAvailable: true,
+    });
+    await expect(api.validateArtifact({ path: pptxPath })).resolves.toMatchObject({
+      success: true,
+      artifactType: 'pptx',
+      valid: true,
+    });
+    await expect(api.validateArtifact({ path: mergedPdfPath })).resolves.toMatchObject({
+      success: true,
+      artifactType: 'pdf',
+      valid: true,
+      previewAvailable: true,
     });
   });
 });

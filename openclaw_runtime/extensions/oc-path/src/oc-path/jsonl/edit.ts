@@ -37,7 +37,7 @@ export function setJsonlOcPath(ast: JsonlAst, path: OcPath, newValue: JsoncValue
     return { ok: false, reason: "unresolved" };
   }
 
-  // No item/field â€” replace the whole line. Requires an existing value line.
+  // No item/field â€?replace the whole line. Requires an existing value line.
   if (path.item === undefined && path.field === undefined) {
     if (target.kind !== "value") {
       return { ok: false, reason: "not-a-value-line" };

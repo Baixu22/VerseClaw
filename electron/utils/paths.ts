@@ -24,7 +24,7 @@ function getElectronApp() {
     return (require('electron') as typeof import('electron')).app;
   }
 
-  const fallbackUserData = process.env.CLAWX_USER_DATA_DIR?.trim() || join(homedir(), '.clawx');
+  const fallbackUserData = process.env.VERSE_CLAW_USER_DATA_DIR?.trim() || join(homedir(), '.verse-claw');
   const fallbackAppPath = process.cwd();
   const fallbackApp: ElectronAppLike = {
     isPackaged: false,
@@ -58,25 +58,25 @@ export function getOpenClawConfigDir(): string {
  * Get OpenClaw skills directory
  */
 export function getOpenClawSkillsDir(): string {
-  return join(getDataDir(), 'clawx-skills');
+  return join(getDataDir(), 'verse-claw-skills');
 }
 
 /**
- * Get ClawX config directory
+ * Get Verse Claw config directory
  */
-export function getClawXConfigDir(): string {
-  return join(homedir(), '.clawx');
+export function getVerseClawConfigDir(): string {
+  return join(homedir(), '.verse-claw');
 }
 
 /**
- * Get ClawX logs directory
+ * Get Verse Claw logs directory
  */
 export function getLogsDir(): string {
   return join(getElectronApp().getPath('userData'), 'logs');
 }
 
 /**
- * Get ClawX data directory
+ * Get Verse Claw data directory
  */
 export function getDataDir(): string {
   return getElectronApp().getPath('userData');
@@ -138,15 +138,15 @@ export function getOpenClawResolvedDir(): string {
 }
 
 /**
- * Source-runtime selection for ClawX.
+ * Source-runtime selection for Verse Claw.
  *
- * ClawX now prefers the editable openclaw_runtime tree whenever it is
- * available. Set CLAWX_OPENCLAW_RUNTIME=npm to force the legacy published npm
- * package, or CLAWX_OPENCLAW_RUNTIME=source to fail fast if the source runtime
+ * Verse Claw now prefers the editable openclaw_runtime tree whenever it is
+ * available. Set VERSE_CLAW_OPENCLAW_RUNTIME=npm to force the legacy published npm
+ * package, or VERSE_CLAW_OPENCLAW_RUNTIME=source to fail fast if the source runtime
  * is missing.
  */
 export function isOpenClawRuntimeEnabled(): boolean {
-  const mode = process.env.CLAWX_OPENCLAW_RUNTIME?.trim().toLowerCase();
+  const mode = process.env.VERSE_CLAW_OPENCLAW_RUNTIME?.trim().toLowerCase();
   if (mode === 'npm') return false;
   if (mode === 'source') return true;
   return isOpenClawRuntimePresent();
@@ -177,7 +177,7 @@ export function getOpenClawRuntimeDir(): string {
     return appPathRuntime;
   }
 
-  return join(appPath, 'ClawX', 'openclaw_runtime');
+  return join(appPath, 'verse-claw', 'openclaw_runtime');
 }
 
 /**
@@ -231,7 +231,7 @@ export function getOpenClawEntryPath(): string {
 }
 
 /**
- * Get the OpenClaw runtime directory currently selected for ClawX.
+ * Get the OpenClaw runtime directory currently selected for Verse Claw.
  */
 export function getActiveOpenClawDir(): string {
   return isOpenClawRuntimeEnabled() ? getOpenClawRuntimeDir() : getOpenClawDir();

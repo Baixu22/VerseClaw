@@ -7,7 +7,6 @@ import { persist } from 'zustand/middleware';
 import i18n from '@/i18n';
 import { hostApi } from '@/lib/host-api';
 import { resolveSupportedLanguage } from '@shared/language';
-import type { WorkModeId, WorkModeKit, WorkModeKitConfig, WorkModeToolBundle, WorkModeToolBundleConfig } from '@shared/types/work-mode';
 import type { WorkProviderConfig, WorkProviderId } from '@shared/types/work-provider';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -24,6 +23,7 @@ interface SettingsState {
   // Gateway
   gatewayAutoStart: boolean;
   gatewayPort: number;
+  roleMemoryEnabled: boolean;
   cdpRemoteControlEnabled: boolean;
   cdpRemoteDebuggingPort: number;
   proxyEnabled: boolean;
@@ -41,8 +41,6 @@ interface SettingsState {
   sidebarCollapsed: boolean;
   sidebarWidth: number;
   devModeUnlocked: boolean;
-  workModeToolBundles: WorkModeToolBundleConfig;
-  workModeKits: WorkModeKitConfig;
   workProviders: WorkProviderConfig;
 
   // Setup
@@ -57,6 +55,7 @@ interface SettingsState {
   setTelemetryEnabled: (value: boolean) => void;
   setGatewayAutoStart: (value: boolean) => void;
   setGatewayPort: (port: number) => void;
+  setRoleMemoryEnabled: (value: boolean) => void;
   setCdpRemoteControlEnabled: (value: boolean) => void;
   setCdpRemoteDebuggingPort: (port: number) => void;
   setProxyEnabled: (value: boolean) => void;
@@ -70,8 +69,6 @@ interface SettingsState {
   setSidebarCollapsed: (value: boolean) => void;
   setSidebarWidth: (value: number) => void;
   setDevModeUnlocked: (value: boolean) => void;
-  setWorkModeToolBundles: (mode: WorkModeId, bundles: WorkModeToolBundle[]) => void;
-  setWorkModeKits: (mode: WorkModeId, kits: WorkModeKit[]) => void;
   setWorkProviderEnabled: (providerId: WorkProviderId, enabled: boolean) => void;
   markSetupComplete: () => void;
   resetSettings: () => void;
@@ -85,6 +82,7 @@ const defaultSettings = {
   telemetryEnabled: true,
   gatewayAutoStart: true,
   gatewayPort: 18789,
+  roleMemoryEnabled: true,
   cdpRemoteControlEnabled: false,
   cdpRemoteDebuggingPort: 9222,
   proxyEnabled: false,
@@ -94,12 +92,10 @@ const defaultSettings = {
   proxyAllServer: '',
   proxyBypassRules: '<local>;localhost;127.0.0.1;::1',
   updateChannel: 'stable' as UpdateChannel,
-  autoCheckUpdate: true,
+  autoCheckUpdate: false,
   sidebarCollapsed: false,
   sidebarWidth: 280,
   devModeUnlocked: false,
-  workModeToolBundles: {} as WorkModeToolBundleConfig,
-  workModeKits: {} as WorkModeKitConfig,
   workProviders: {} as WorkProviderConfig,
   setupComplete: false,
 };
@@ -161,6 +157,10 @@ export const useSettingsStore = create<SettingsState>()(
         set({ gatewayPort });
         void hostApi.settings.set('gatewayPort', gatewayPort).catch(() => { });
       },
+      setRoleMemoryEnabled: (roleMemoryEnabled) => {
+        set({ roleMemoryEnabled });
+        void hostApi.settings.set('roleMemoryEnabled', roleMemoryEnabled).catch(() => { });
+      },
       setCdpRemoteControlEnabled: (cdpRemoteControlEnabled) => {
         set({ cdpRemoteControlEnabled });
         void hostApi.settings.set('cdpRemoteControlEnabled', cdpRemoteControlEnabled).catch(() => { });
@@ -187,26 +187,6 @@ export const useSettingsStore = create<SettingsState>()(
         set({ devModeUnlocked });
         void hostApi.settings.set('devModeUnlocked', devModeUnlocked).catch(() => { });
       },
-      setWorkModeToolBundles: (mode, bundles) => {
-        set((state) => {
-          const workModeToolBundles = {
-            ...(state.workModeToolBundles ?? {}),
-            [mode]: bundles,
-          };
-          void hostApi.settings.set('workModeToolBundles', workModeToolBundles).catch(() => { });
-          return { workModeToolBundles };
-        });
-      },
-      setWorkModeKits: (mode, kits) => {
-        set((state) => {
-          const workModeKits = {
-            ...(state.workModeKits ?? {}),
-            [mode]: kits,
-          };
-          void hostApi.settings.set('workModeKits', workModeKits).catch(() => { });
-          return { workModeKits };
-        });
-      },
       setWorkProviderEnabled: (providerId, enabled) => {
         set((state) => {
           const workProviders = {
@@ -224,7 +204,7 @@ export const useSettingsStore = create<SettingsState>()(
       resetSettings: () => set(defaultSettings),
     }),
     {
-      name: 'clawx-settings',
+      name: 'verse-claw-settings',
     }
   )
 );

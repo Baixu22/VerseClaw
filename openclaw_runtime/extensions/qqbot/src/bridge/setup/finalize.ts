@@ -27,7 +27,7 @@ async function linkViaQrCode(params: {
     });
 
     if (accounts.length === 0) {
-      await params.prompter.note("未获取到任何 QQ Bot 账号信息。", "QQ Bot");
+      await params.prompter.note("未获取到任何 QQ Bot 账号信息�?, "QQ Bot");
       return params.cfg;
     }
 
@@ -45,10 +45,10 @@ async function linkViaQrCode(params: {
     }
 
     if (accounts.length === 1) {
-      params.runtime.log(`✔ QQ Bot 绑定成功！(AppID: ${accounts[0].appId})`);
+      params.runtime.log(`�?QQ Bot 绑定成功�?AppID: ${accounts[0].appId})`);
     } else {
       const idList = accounts.map((a) => a.appId).join(", ");
-      params.runtime.log(`✔ ${accounts.length} 个 QQ Bot 绑定成功！(AppID: ${idList})`);
+      params.runtime.log(`�?${accounts.length} �?QQ Bot 绑定成功�?AppID: ${idList})`);
     }
 
     return next;
@@ -56,7 +56,7 @@ async function linkViaQrCode(params: {
     params.runtime.error(`QQ Bot 绑定失败: ${String(error)}`);
     await params.prompter.note(
       [
-        "绑定失败，您可以稍后手动配置。",
+        "绑定失败，您可以稍后手动配置�?,
         `文档: ${formatDocsLink("/channels/qqbot", "qqbot")}`,
       ].join("\n"),
       "QQ Bot",
@@ -71,12 +71,12 @@ async function linkViaManualInput(params: {
   prompter: SetupPrompter;
 }): Promise<OpenClawConfig> {
   const appId = await params.prompter.text({
-    message: "请输入 QQ Bot AppID",
+    message: "请输�?QQ Bot AppID",
     validate: (value: string) => (value.trim() ? undefined : "AppID 不能为空"),
   });
 
   const appSecret = await params.prompter.text({
-    message: "请输入 QQ Bot AppSecret",
+    message: "请输�?QQ Bot AppSecret",
     validate: (value: string) => (value.trim() ? undefined : "AppSecret 不能为空"),
   });
 
@@ -85,7 +85,7 @@ async function linkViaManualInput(params: {
     clientSecret: appSecret.trim(),
   });
 
-  await params.prompter.note("✔ QQ Bot 配置完成！", "QQ Bot");
+  await params.prompter.note("�?QQ Bot 配置完成�?, "QQ Bot");
   return next;
 }
 
@@ -107,12 +107,12 @@ export async function finalizeQQBotSetup(params: {
       {
         value: "qr",
         label: "扫码绑定（推荐）",
-        hint: "使用 QQ 扫描二维码自动完成绑定",
+        hint: "使用 QQ 扫描二维码自动完成绑�?,
       },
       {
         value: "manual",
-        label: "手动输入 QQ Bot AppID 和 AppSecret",
-        hint: "需到 QQ 开放平台 q.qq.com 查看",
+        label: "手动输入 QQ Bot AppID �?AppSecret",
+        hint: "需�?QQ 开放平�?q.qq.com 查看",
       },
       {
         value: "skip",
@@ -136,7 +136,7 @@ export async function finalizeQQBotSetup(params: {
     });
   } else if (!configured) {
     await params.prompter.note(
-      ["您可以稍后运行以下命令重新选择 QQ Bot 进行配置：", "  openclaw channels add"].join("\n"),
+      ["您可以稍后运行以下命令重新选择 QQ Bot 进行配置�?, "  openclaw channels add"].join("\n"),
       "QQ Bot",
     );
   }

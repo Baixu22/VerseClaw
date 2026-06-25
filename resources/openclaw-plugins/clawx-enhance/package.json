@@ -1,7 +1,7 @@
 {
-  "name": "clawx-enhance",
+  "name": "verse-claw-enhance",
   "version": "1.0.0",
-  "description": "ClawX Enhance — stream guard + skill suggester OpenClaw plugin",
+  "description": "Verse Claw Enhance — stream guard + skill suggester OpenClaw plugin",
   "private": true,
   "license": "MIT",
   "main": "index.js"

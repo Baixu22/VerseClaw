@@ -15,8 +15,8 @@ import {
 } from './helpers';
 import type { ChatSession, RawMessage } from './types';
 import type { ChatGet, ChatSet, RuntimeActions } from './store-api';
-import type { WorkspaceKnowledgeScope } from '@shared/types/workspace';
-import type { WorkModeId } from '@shared/types/work-mode';
+import type { KnowledgeInvocationMode, WorkspaceKnowledgeScope } from '@shared/types/workspace';
+import { useWorkspacesStore } from '../workspaces';
 
 function normalizeAgentId(value: string | undefined | null): string {
   return (value ?? '').trim().toLowerCase() || 'main';
@@ -73,9 +73,10 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
       attachments?: Array<{ fileName: string; mimeType: string; fileSize: number; stagedPath: string; preview: string | null }>,
       targetAgentId?: string | null,
       knowledgeScope?: WorkspaceKnowledgeScope,
-      workMode?: WorkModeId,
-      inputMode?: 'interrupt' | 'guide' | 'queue',
+      knowledgeMode?: KnowledgeInvocationMode,
+      inputMode?: 'interrupt' | 'guide' | 'queue' | 'revise-goal',
       knowledgeReferences?: ChatKnowledgeReference[],
+      activeTaskNodeId?: string | null,
     ) => {
       const trimmed = text.trim();
       if (!trimmed && (!attachments || attachments.length === 0)) return;
@@ -83,7 +84,7 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
 
       const targetSessionKey = resolveMainSessionKeyForAgent(targetAgentId) ?? get().currentSessionKey;
 
-      if (get().sending && targetSessionKey === get().currentSessionKey) {
+      if (get().sending && targetSessionKey === get().currentSessionKey && !inputMode) {
         return;
       }
 
@@ -215,6 +216,7 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
       try {
         const idempotencyKey = crypto.randomUUID();
         const hasMedia = attachments && attachments.length > 0;
+        const workspaceId = useWorkspacesStore.getState().activeWorkspaceId;
         if (hasMedia) {
           console.log('[sendMessage] Media paths:', attachments!.map(a => a.stagedPath));
         }
@@ -234,17 +236,18 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
         }
 
         let result: ChatSendWithMediaResult;
-
         if (hasMedia) {
           result = await hostApi.chat.sendWithMedia({
             sessionKey: currentSessionKey,
+            ...(workspaceId ? { workspaceId } : {}),
             message: trimmed || 'Process the attached file(s).',
             deliver: false,
             idempotencyKey,
             knowledgeScope,
-            workMode,
+            knowledgeMode,
             ...(inputMode ? { inputMode } : {}),
             ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
+            ...(activeTaskNodeId ? { activeTaskNodeId } : {}),
             media: attachments.map((a) => ({
               filePath: a.stagedPath,
               mimeType: a.mimeType,
@@ -254,13 +257,15 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
         } else {
           result = await hostApi.chat.sendWithMedia({
             sessionKey: currentSessionKey,
+            ...(workspaceId ? { workspaceId } : {}),
             message: trimmed,
             deliver: false,
             idempotencyKey,
             knowledgeScope,
-            workMode,
+            knowledgeMode,
             ...(inputMode ? { inputMode } : {}),
             ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
+            ...(activeTaskNodeId ? { activeTaskNodeId } : {}),
           });
         }
 

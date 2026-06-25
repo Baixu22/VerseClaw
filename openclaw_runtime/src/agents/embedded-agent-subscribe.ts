@@ -165,6 +165,7 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
   const state: EmbeddedAgentSubscribeState = {
     assistantTexts: [],
     toolMetas: [],
+    browserAutomationEvents: [],
     acceptedSessionSpawns: [],
     toolMetaById: new Map(),
     toolSummaryById: new Set(),
@@ -1304,6 +1305,7 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
   return {
     assistantTexts,
     toolMetas,
+    getBrowserAutomationEvents: () => state.browserAutomationEvents.slice(),
     getAcceptedSessionSpawns: () => state.acceptedSessionSpawns.slice(),
     runToolLifecycle: async <T>(toolParams: {
       toolName: string;

@@ -1,9 +1,9 @@
 ---
 id: connect-clawx-to-openclaw-runtime
-title: Connect ClawX gateway startup to editable openclaw_runtime
+title: Connect Verse Claw gateway startup to editable openclaw_runtime
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Make ClawX prefer the editable openclaw_runtime tree for Gateway startup and runtime CLI helpers, while preserving an explicit npm fallback.
+intent: Make Verse Claw prefer the editable openclaw_runtime tree for Gateway startup and runtime CLI helpers, while preserving an explicit npm fallback.
 touchedAreas:
   - harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
   - electron/gateway/config-sync.ts
@@ -23,11 +23,11 @@ touchedAreas:
   - tests/unit/openclaw-cli.test.ts
   - tests/unit/openclaw-doctor.test.ts
 expectedUserBehavior:
-  - Running ClawX in development starts Gateway from openclaw_runtime/dist/entry.js by default.
-  - Gateway WebSocket connect.challenge handshake completes without requiring CLAWX_OPENCLAW_RUNTIME=source.
+  - Running Verse Claw in development starts Gateway from openclaw_runtime/dist/entry.js by default.
+  - Gateway WebSocket connect.challenge handshake completes without requiring VERSE_CLAW_OPENCLAW_RUNTIME=source.
   - Provider auth pre-warm can resolve its runtime worker file from openclaw_runtime/dist.
   - Doctor, doctor repair, device approval, and packaged CLI wrappers use the same selected OpenClaw runtime as Gateway.
-  - Setting CLAWX_OPENCLAW_RUNTIME=npm still forces the legacy npm package path.
+  - Setting VERSE_CLAW_OPENCLAW_RUNTIME=npm still forces the legacy npm package path.
 requiredProfiles:
   - fast
   - comms

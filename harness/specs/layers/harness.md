@@ -7,7 +7,7 @@ pathPatterns:
   - harness/**
 ---
 
-The harness is the ClawX-owned agent contract system. It stores scenarios, hard rules, task specs, guides, and layer specs in repo files that AI tools can reload.
+The harness is the Verse Claw-owned agent contract system. It stores scenarios, hard rules, task specs, guides, and layer specs in repo files that AI tools can reload.
 
 Keep `AGENTS.md` lightweight. Put durable, reusable policy in `harness/specs/**`, and make hard constraints machine-checkable when practical.
 

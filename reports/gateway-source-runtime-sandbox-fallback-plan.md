@@ -89,11 +89,11 @@
 
 推荐新增两个显式开关中的一个：
 
-- `CLAWX_OPENCLAW_SANDBOX_FALLBACK=auto|strict|off`
+- `VERSE_CLAW_OPENCLAW_SANDBOX_FALLBACK=auto|strict|off`
 
 或者
 
-- `CLAWX_OPENCLAW_RUNTIME_STRICT=1`
+- `VERSE_CLAW_OPENCLAW_RUNTIME_STRICT=1`
 
 这样可以把“正常可用优先”和“开发者强约束优先”分开。
 

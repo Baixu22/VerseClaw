@@ -1,4 +1,4 @@
-﻿---
+---
 id: pretext-text-measurement-integration
 title: Pretext Text Measurement Integration
 type: guide

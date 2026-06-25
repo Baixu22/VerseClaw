@@ -111,7 +111,7 @@ export function registerClearStorageCommands(registry: SlashCommandRegistry): vo
         const files = scanDirectoryFiles(targetDir);
 
         if (files.length === 0) {
-          return [`✅ 当前没有需要清理的文件`, ``, `目录 \`${displayDir}\` 为空或不存在。`].join(
+          return [`�?当前没有需要清理的文件`, ``, `目录 \`${displayDir}\` 为空或不存在。`].join(
             "\n",
           );
         }
@@ -129,14 +129,14 @@ export function registerClearStorageCommands(registry: SlashCommandRegistry): vo
           lines.push(`${relativePath} (${formatBytes(f.size)})`, ``, ``);
         }
         if (files.length > CLEAR_STORAGE_MAX_DISPLAY) {
-          lines.push(`...[合计：${files.length} 个文件（${formatBytes(totalSize)}）]`, ``);
+          lines.push(`...[合计�?{files.length} 个文件（${formatBytes(totalSize)}）]`, ``);
         }
 
         lines.push(
           ``,
           `---`,
           ``,
-          `确认清理后，上述保存在 OpenClaw 运行主机磁盘上的文件将永久删除，后续对话过程中 AI 无法再找回相关文件。`,
+          `确认清理后，上述保存�?OpenClaw 运行主机磁盘上的文件将永久删除，后续对话过程�?AI 无法再找回相关文件。`,
           `‼️ 点击指令确认删除`,
           `<qqbot-cmd-enter text="/bot-clear-storage --force" />`,
         );
@@ -147,7 +147,7 @@ export function registerClearStorageCommands(registry: SlashCommandRegistry): vo
       const files = scanDirectoryFiles(targetDir);
 
       if (files.length === 0) {
-        return `✅ 目录已为空，无需清理`;
+        return `�?目录已为空，无需清理`;
       }
 
       let deletedCount = 0;
@@ -172,16 +172,16 @@ export function registerClearStorageCommands(registry: SlashCommandRegistry): vo
 
       if (failedCount === 0) {
         return [
-          `✅ 清理成功`,
+          `�?清理成功`,
           ``,
-          `已删除 ${deletedCount} 个文件，释放 ${formatBytes(deletedSize)} 磁盘空间。`,
+          `已删�?${deletedCount} 个文件，释放 ${formatBytes(deletedSize)} 磁盘空间。`,
         ].join("\n");
       }
 
       return [
         `⚠️ 部分清理完成`,
         ``,
-        `已删除 ${deletedCount} 个文件（${formatBytes(deletedSize)}），${failedCount} 个文件删除失败。`,
+        `已删�?${deletedCount} 个文件（${formatBytes(deletedSize)}），${failedCount} 个文件删除失败。`,
       ].join("\n");
     },
   });

@@ -893,7 +893,7 @@ export async function monitorZalouserProvider(
           if (!nextGroups[cleaned]) {
             nextGroups[cleaned] = groupsConfig[entry];
           }
-          mapping.push(`${entry}â†’${cleaned}`);
+          mapping.push(`${entry}â†?{cleaned}`);
           continue;
         }
         const matches = byName.get(normalizeLowercaseStringOrEmpty(cleaned)) ?? [];
@@ -903,7 +903,7 @@ export async function monitorZalouserProvider(
           if (!nextGroups[id]) {
             nextGroups[id] = groupsConfig[entry];
           }
-          mapping.push(`${entry}â†’${id}`);
+          mapping.push(`${entry}â†?{id}`);
         } else {
           unresolved.push(entry);
         }

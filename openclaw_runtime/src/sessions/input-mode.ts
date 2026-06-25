@@ -3,6 +3,7 @@ import { resolveInputMode, type InputMode } from "../agents/input-classifier.js"
 
 export type InputModeAction =
   | { mode: "interrupt"; abort: true; message: AgentMessage }
+  | { mode: "revise-goal"; abort: true; message: AgentMessage }
   | { mode: "guide"; abort: false; steeringMessages: AgentMessage[] }
   | { mode: "queue"; abort: false; followUpMessages: AgentMessage[] };
 
@@ -17,7 +18,7 @@ function userMessage(text: string): AgentMessage {
 export function createInputModeAction(input: string, explicitMode?: InputMode): InputModeAction {
   const mode = resolveInputMode(input, explicitMode);
   const message = userMessage(input);
-  if (mode === "interrupt") {
+  if (mode === "interrupt" || mode === "revise-goal") {
     return { mode, abort: true, message };
   }
   if (mode === "queue") {

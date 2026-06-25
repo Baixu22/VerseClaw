@@ -19,13 +19,13 @@ const TAPBACK_TEXT_PATTERNS: Array<{
   { prefix: "disliked", action: "added", emoji: "👎" },
   { prefix: "laughed at", action: "added", emoji: "😂" },
   { prefix: "emphasized", action: "added", emoji: "‼️" },
-  { prefix: "questioned", action: "added", emoji: "❓" },
+  { prefix: "questioned", action: "added", emoji: "�? },
   { prefix: "removed a heart from", action: "removed", emoji: "❤️" },
   { prefix: "removed a like from", action: "removed", emoji: "👍" },
   { prefix: "removed a dislike from", action: "removed", emoji: "👎" },
   { prefix: "removed a laugh from", action: "removed", emoji: "😂" },
   { prefix: "removed an emphasis from", action: "removed", emoji: "‼️" },
-  { prefix: "removed a question from", action: "removed", emoji: "❓" },
+  { prefix: "removed a question from", action: "removed", emoji: "�? },
 ];
 
 function normalizeReactionValue(value: unknown): string | undefined {

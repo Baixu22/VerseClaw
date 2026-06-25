@@ -176,7 +176,7 @@ export const COMPLETE_UPLOAD_RETRY_POLICY: RetryPolicy = {
   maxRetries: 2,
   baseDelayMs: 2000,
   backoff: "exponential",
-  // Always retry â€” complete-upload failures are often transient server-side.
+  // Always retry â€?complete-upload failures are often transient server-side.
 };
 
 /** Part-finish standard retry policy. */

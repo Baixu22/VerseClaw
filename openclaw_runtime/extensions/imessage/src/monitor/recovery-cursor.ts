@@ -1,7 +1,7 @@
 // Per-account high-water of the last dispatched chat.db rowid. On startup it is
 // passed to imsg `watch.subscribe` as `since_rowid` so imsg replays the rows
 // that landed while the gateway was down (downtime recovery), then tails live.
-// The GUID dedupe makes this safe â€” anything already handled is dropped â€” so
+// The GUID dedupe makes this safe â€?anything already handled is dropped â€?so
 // this needs none of the cursor/retry bookkeeping the old catchup subsystem
 // carried. Single number per account.
 import { createHash } from "node:crypto";

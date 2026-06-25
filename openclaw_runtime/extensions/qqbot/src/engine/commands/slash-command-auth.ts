@@ -54,12 +54,12 @@ export function resolveQQBotCommandsAllowFrom(cfg: unknown): SlashCommandAuthEnt
  * slash commands for the given account configuration.
  *
  * Authorization rules:
- * - `commands.allowFrom.qqbot` / `commands.allowFrom["*"]` configured â†’
+ * - `commands.allowFrom.qqbot` / `commands.allowFrom["*"]` configured â†?
  *   use that command-specific list instead of channel allowFrom
- * - `allowFrom` not configured / empty / only `["*"]` â†’ **false**
+ * - `allowFrom` not configured / empty / only `["*"]` â†?**false**
  *   (wildcard means "open to everyone", not explicit authorization)
  * - `allowFrom` contains at least one concrete entry AND sender
- *   matches a concrete entry â†’ **true**
+ *   matches a concrete entry â†?**true**
  * - Group messages use `groupAllowFrom` when present, falling back
  *   to `allowFrom`.
  */

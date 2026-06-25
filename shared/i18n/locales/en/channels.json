@@ -69,6 +69,26 @@
         "accountIdPrompt": "Enter a new account ID for this channel",
         "accountIdExists": "Account ID {{accountId}} already exists"
     },
+    "permissions": {
+        "scope": {
+            "dm": "DM",
+            "group": "Groups",
+            "approval": "Approvals"
+        },
+        "mode": {
+            "open": "Open",
+            "allowlist": "Allowlist",
+            "pairing": "Pairing",
+            "disabled": "Disabled",
+            "unknown": "Unknown"
+        },
+        "approval": {
+            "auto": "Auto",
+            "enabled": "On",
+            "disabled": "Off"
+        },
+        "allowlistCount": "{{count}} allowed"
+    },
     "dialog": {
         "updateTitle": "Update {{name}}",
         "configureTitle": "Configure {{name}}",

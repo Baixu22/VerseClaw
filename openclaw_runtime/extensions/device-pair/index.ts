@@ -467,7 +467,7 @@ function encodeSetupCode(payload: SetupPayload): string {
 
 function buildPairingFlowLines(stepTwo: string): string[] {
   return [
-    "1) Open the iOS app â†’ Settings â†’ Gateway",
+    "1) Open the iOS app â†?Settings â†?Gateway",
     `2) ${stepTwo}`,
     "3) Back here, run /pair approve",
     "4) If this code leaks or you are done, run /pair cleanup",

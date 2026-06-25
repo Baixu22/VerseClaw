@@ -6,7 +6,7 @@
  *
  * macOS 15+ recipients render typed runs natively; macOS 14 falls back to
  * client-side markdown rendering, so passing both raw markdown and ranges
- * would double up â€” callers should send the stripped `text` only.
+ * would double up â€?callers should send the stripped `text` only.
  *
  * Supported markers:
  *  - `**bold**`
@@ -24,7 +24,7 @@
  *
  * Out of scope: escaped markers (`\*literal\*`), code spans (` `code` `),
  * and combining-character edge cases. The receiver's iMessage style
- * vocabulary covers only bold/italic/underline/strikethrough â€” there is
+ * vocabulary covers only bold/italic/underline/strikethrough â€?there is
  * nowhere to render anything fancier, and over-eager parsing would mangle
  * plain-text emoji/punctuation that happens to look like markdown.
  */
@@ -78,7 +78,7 @@ function tryConsumeMarker(
   if (m.marker.length === 1 && input[i + 1] === m.marker) {
     return null;
   }
-  // For 2-char markers, reject when there's a third repeat â€” that's the
+  // For 2-char markers, reject when there's a third repeat â€?that's the
   // longer compound marker (`***`, `___`) which should match first.
   if (m.marker.length === 2 && input[i + 2] === m.marker[0]) {
     return null;
@@ -123,7 +123,7 @@ function parseInternal(input: string, baseOffset: number, sink: IMessageFormatRa
       const innerOffset = baseOffset + out.length;
       const innerStripped = parseInternal(hit.inner, innerOffset, sink);
       // Compound markers (`***`, `___`) emit multiple styles over the same
-      // span â€” push them in order so callers see e.g. italic before bold.
+      // span â€?push them in order so callers see e.g. italic before bold.
       for (const style of m.styles) {
         sink.push({
           start: innerOffset,

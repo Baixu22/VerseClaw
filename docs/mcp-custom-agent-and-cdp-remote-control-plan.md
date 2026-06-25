@@ -58,9 +58,9 @@ Observed current behavior:
 - `agent-config.ts` already provisions agent filesystem directories and copies bootstrap files including `AGENTS.md`, `SOUL.md`, `TOOLS.md`, `USER.md`, `IDENTITY.md`, `HEARTBEAT.md`, and `BOOT.md`.
 - Skills are discovered from OpenClaw, workspace paths, `.agents/skills`, personal `.agents`, bundled resources, and local ClawHub-style registries.
 - `SkillQuickAccessPayload` already accepts `workspace`, which is a useful hook for workspace-specific skill discovery.
-- The architecture document previously noted that direct MCP integration is not currently visible in ClawX source, though OpenClaw may provide runtime support.
+- The architecture document previously noted that direct MCP integration is not currently visible in Verse Claw source, though OpenClaw may provide runtime support.
 - Settings already contains developer-mode surfaces for Gateway token, Control UI, Doctor, and CLI command.
-- `electron/main/index.ts` already reads `CLAWX_REMOTE_DEBUGGING_PORT` and appends Electron's `remote-debugging-port` switch when present.
+- `electron/main/index.ts` already reads `VERSE_CLAW_REMOTE_DEBUGGING_PORT` and appends Electron's `remote-debugging-port` switch when present.
 - `gateway-api.ts` already exposes `gateway.controlUi`, builds a Control UI URL, returns port/token, and schedules device auto-approval.
 
 ## 3. Architectural Principles
@@ -93,9 +93,9 @@ The relationship should be many-to-many over time:
 
 ### 3.2 Runtime Ownership
 
-ClawX should own UX, configuration, validation, and audit. OpenClaw should remain the runtime executor where possible.
+Verse Claw should own UX, configuration, validation, and audit. OpenClaw should remain the runtime executor where possible.
 
-If OpenClaw supports MCP and agent customization natively, ClawX should write validated config into OpenClaw's config format. If not, ClawX should keep its own config and expose it through Gateway environment variables or runtime bridge APIs.
+If OpenClaw supports MCP and agent customization natively, Verse Claw should write validated config into OpenClaw's config format. If not, Verse Claw should keep its own config and expose it through Gateway environment variables or runtime bridge APIs.
 
 ### 3.3 Remote Control Safety
 
@@ -228,7 +228,7 @@ mcp: {
 Main service:
 
 - Add `electron/services/mcp-api.ts`.
-- Store config in ClawX settings/store first.
+- Store config in Verse Claw settings/store first.
 - Sync to OpenClaw config or Gateway runtime only after validation.
 
 Renderer:
@@ -298,7 +298,7 @@ Required UI:
 Implementation notes:
 
 - Keep existing OpenClaw agent config as the runtime backing store.
-- Add ClawX-owned metadata for richer UI state if OpenClaw config cannot represent all fields.
+- Add Verse Claw-owned metadata for richer UI state if OpenClaw config cannot represent all fields.
 - Continue using filesystem provisioning for `agentDir`.
 - Use the existing bootstrap file list in `agent-config.ts` as the canonical initial file set.
 
@@ -318,7 +318,7 @@ Rules:
 
 - Edits are saved through Main APIs.
 - Workspace overrides should be stored separately until explicitly promoted to agent default.
-- Existing `ensureClawXIdentityFile` behavior should remain backward compatible.
+- Existing `ensureVerse ClawIdentityFile` behavior should remain backward compatible.
 
 ### 6.3 Skill Binding
 
@@ -368,7 +368,7 @@ Acceptance:
 
 Current baseline:
 
-- `electron/main/index.ts` supports `CLAWX_REMOTE_DEBUGGING_PORT` at process startup.
+- `electron/main/index.ts` supports `VERSE_CLAW_REMOTE_DEBUGGING_PORT` at process startup.
 - Settings already has a developer section.
 - Gateway Control UI already exposes URL, token, and port through `gateway.controlUi`.
 
@@ -377,7 +377,7 @@ Gap:
 - No Settings-managed CDP service config.
 - No UI to enable/disable Electron remote debugging.
 - No clear restart requirement display.
-- No remote-control token/origin policy in ClawX settings.
+- No remote-control token/origin policy in Verse Claw settings.
 - No consolidated "remote control" status panel.
 
 ### 7.2 Settings UI
@@ -430,7 +430,7 @@ Implementation strategy:
 - Store setting persistently.
 - At startup, read the stored setting before window creation.
 - Append `remote-debugging-port` when enabled.
-- Continue supporting `CLAWX_REMOTE_DEBUGGING_PORT` as an environment override for tests and advanced users.
+- Continue supporting `VERSE_CLAW_REMOTE_DEBUGGING_PORT` as an environment override for tests and advanced users.
 - If a user changes the setting during runtime, mark restart required.
 
 Important safety defaults:
@@ -446,12 +446,12 @@ Important safety defaults:
 There are two possible meanings of "CDP service":
 
 1. Expose Electron/Chromium's native DevTools Protocol endpoint.
-2. Provide a ClawX-controlled remote automation gateway that can broker a subset of safe actions.
+2. Provide a Verse Claw-controlled remote automation gateway that can broker a subset of safe actions.
 
 Plan recommendation:
 
 - Phase 1: expose Electron native CDP endpoint with settings and warnings.
-- Phase 2: add ClawX remote-control broker for safe app-level actions.
+- Phase 2: add Verse Claw remote-control broker for safe app-level actions.
 - Phase 3: support remote clients through MCP/CDP bridge if useful.
 
 Broker actions may include:
@@ -641,7 +641,7 @@ Files:
 
 Deliverables:
 
-- Local token-protected ClawX remote-control broker.
+- Local token-protected Verse Claw remote-control broker.
 - Status and health endpoints.
 - Optional safe app actions.
 
@@ -681,7 +681,7 @@ Acceptance criteria:
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
-| MCP support differs between OpenClaw versions | Runtime sync may fail or behave inconsistently | Start with ClawX-owned registry and feature-detect Gateway capabilities |
+| MCP support differs between OpenClaw versions | Runtime sync may fail or behave inconsistently | Start with Verse Claw-owned registry and feature-detect Gateway capabilities |
 | Agent and workspace concepts become confusing | Users may not understand which layer controls behavior | UI copy and layout must show "workspace selects agent" rather than "agent owns workspace" |
 | Bootstrap file edits break agent behavior | Agent may become unusable | Provide templates, diff preview, reset to default, and validation |
 | Skill overrides conflict with global skill config | Effective skill list may be surprising | Add an effective profile preview |
@@ -707,8 +707,8 @@ Acceptance criteria:
 ## 12. Open Questions
 
 1. Should MCP configuration be surfaced under Settings > Developer, Settings > Skills, or a new Integrations page?
-2. Should workspace-local MCP servers be stored inside the workspace root, ClawX app storage, or both?
-3. Should agent bootstrap edits be plain text editors only, or should ClawX provide templates and structured forms?
+2. Should workspace-local MCP servers be stored inside the workspace root, Verse Claw app storage, or both?
+3. Should agent bootstrap edits be plain text editors only, or should Verse Claw provide templates and structured forms?
 4. Should `SOUL.md` be treated as required for every custom agent, or optional when `IDENTITY.md` is present?
 5. Should Electron CDP support only local loopback, or allow LAN exposure with explicit warning?
 6. Should the remote-control broker be implemented before or after native CDP exposure?

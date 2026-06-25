@@ -34,6 +34,9 @@ export type MemorySuggestedAction = 'approve' | 'applyAsCold' | 'reject' | 'merg
 export type MemoryInjectionClass = 'must' | 'should' | 'may' | 'never';
 export type MemoryRetentionAction = 'keep' | 'cold' | 'archive' | 'tombstone' | 'review';
 export type MemoryEvidenceStatus = 'verified' | 'missing' | 'stale' | 'weak' | 'contradicted' | 'unchecked';
+export type MemoryFeedbackOutcome = 'helpful' | 'neutral' | 'harmful' | 'missing_needed' | 'user_corrected';
+export type MemoryTaskSuccess = 'success' | 'partial' | 'failure' | 'unknown';
+export type MemoryDataQuality = 'insufficient' | 'partial' | 'strong';
 
 export type MemoryEvidenceRef = {
   type: 'file' | 'trace' | 'session' | 'tool' | 'memory_search' | 'memory_md' | 'qmd' | 'dream' | 'manual';
@@ -247,6 +250,60 @@ export type MemoryInjectionRecord = {
   selectorSnapshot?: unknown;
   candidateExplanations?: MemoryInjectionCandidateExplain[];
   createdAt: string;
+};
+
+export type MemoryFeedbackRecord = {
+  id: string;
+  injectionId?: string | null;
+  cardId?: string | null;
+  roleName?: string | null;
+  outcome: MemoryFeedbackOutcome;
+  taskSuccess: MemoryTaskSuccess;
+  note?: string | null;
+  createdAt: string;
+};
+
+export type MemoryUtilityCardReport = {
+  cardId: string;
+  card?: MemoryCard;
+  selectedCount: number;
+  skippedCount: number;
+  feedbackCount: number;
+  helpfulCount: number;
+  neutralCount: number;
+  harmfulCount: number;
+  missingNeededCount: number;
+  userCorrectedCount: number;
+  conflictCount: number;
+  retentionAction: MemoryRetentionAction;
+  utilityScore: number | null;
+  dataQuality: MemoryDataQuality;
+  reasonSummary: string;
+};
+
+export type MemoryUtilityReport = {
+  roleName?: string;
+  generatedAt: string;
+  dataQuality: MemoryDataQuality;
+  missingEvidence: string[];
+  sample: {
+    cards: number;
+    injections: number;
+    feedback: number;
+    proposals: number;
+    conflicts: number;
+  };
+  aggregate: {
+    contextPrecisionAtK: number | null;
+    helpfulnessRate: number | null;
+    harmRate: number | null;
+    staleRate: number | null;
+    conflictRate: number | null;
+    reviewAcceptanceRate: number | null;
+    tokenOverheadPerRun: number | null;
+    taskSuccessDelta: number | null;
+  };
+  cards: MemoryUtilityCardReport[];
 };
 
 export type MemoryRetentionCandidate = {

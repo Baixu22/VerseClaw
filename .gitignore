@@ -5,6 +5,8 @@ node_modules/
 
 # Build outputs
 dist/
+!openclaw_runtime/extensions/codegraph/dist/
+!openclaw_runtime/extensions/codegraph/dist/**
 dist-electron/
 release/
 *.local

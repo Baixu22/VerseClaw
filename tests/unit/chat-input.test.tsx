@@ -1,5 +1,5 @@
 ﻿import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { ChatInput } from '@/pages/Chat/ChatInput';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type { ComponentProps } from 'react';
@@ -130,6 +130,13 @@ vi.mock('@/lib/host-api', () => ({
         method: 'POST',
         body: JSON.stringify(input),
       }),
+      routeContext: (input: unknown) => hostApiFetchMock('/api/knowledge/route-context', {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+      governanceAudit: () => hostApiFetchMock('/api/knowledge/governance-audit', {
+        method: 'POST',
+      }),
       recordKnowledgeReference: (input: unknown) => hostApiFetchMock('/api/knowledge/reference', {
         method: 'POST',
         body: JSON.stringify(input),
@@ -147,7 +154,7 @@ const slashCommandTranslations: Record<string, string> = {
   'composer.slashCommands.contextButtonTooltip': 'Type / to attach knowledge, set scope, or run a session action.',
   'composer.slashCommands.promptArgs': 'Scope: {{args}}',
   'composer.slashCommands.unknownTitle': 'Unknown command',
-  'composer.slashCommands.unknownDescription': '{{command}} is not a ClawX quick action. Press Escape to keep editing.',
+  'composer.slashCommands.unknownDescription': '{{command}} is not a Verse Claw quick action. Press Escape to keep editing.',
   'composer.slashCommands.unknownToast': 'Unknown slash command: {{command}}',
   'composer.slashCommands.ledgerNodeDescription': 'Created from the Chat slash command.',
   'composer.slashCommands.ledgerSessionSummary': 'Linked from Chat slash command: {{title}}',
@@ -170,9 +177,15 @@ const slashCommandTranslations: Record<string, string> = {
   'composer.slashCommands.commands.scope.label': 'Set knowledge scope',
   'composer.slashCommands.commands.scope.description': 'Choose None, Memory, Wiki, or All without leaving the composer.',
   'composer.slashCommands.commands.scope.argumentHint': '[scope]',
+  'composer.slashCommands.commands.knowledge-mode.label': 'Knowledge mode',
+  'composer.slashCommands.commands.knowledge-mode.description': 'Switch between Manual, Suggest, and Auto-read knowledge invocation.',
+  'composer.slashCommands.commands.knowledge-mode.argumentHint': '[manual|suggest|auto]',
   'composer.slashCommands.commands.save.label': 'Draft knowledge',
   'composer.slashCommands.commands.save.description': 'Ask for an editable knowledge draft; it will not be applied automatically.',
   'composer.slashCommands.commands.save.argumentHint': '[topic]',
+  'composer.slashCommands.commands.steward-audit.label': 'Steward audit',
+  'composer.slashCommands.commands.steward-audit.description': 'Run an on-demand Knowledge Governance audit and open the Governance tab.',
+  'composer.slashCommands.commands.steward-audit.argumentHint': '',
   'composer.slashCommands.commands.steward.label': 'Ask steward',
   'composer.slashCommands.commands.steward.description': 'Ask the Knowledge Steward to review, classify, or find conflicts.',
   'composer.slashCommands.commands.steward.argumentHint': '[topic]',
@@ -223,6 +236,9 @@ const slashCommandTranslations: Record<string, string> = {
   'composer.slashCommands.toasts.scopeOpened': 'Knowledge scope picker opened.',
   'composer.slashCommands.toasts.scopeChanged': 'Knowledge scope set to {{scope}}.',
   'composer.slashCommands.toasts.typeSlash': 'Type / at the start of an empty composer to open the context palette.',
+  'composer.slashCommands.toasts.knowledgeModeOpened': 'Knowledge mode picker opened.',
+  'composer.slashCommands.toasts.knowledgeModeChanged': 'Knowledge mode set to {{mode}}.',
+  'composer.slashCommands.toasts.stewardAuditStarted': 'Knowledge governance audit started.',
   'composer.slashCommands.toasts.ledgerOpened': 'Opened Task Ledger',
   'composer.slashCommands.toasts.ledgerCreated': 'Created ledger task: {{title}}',
   'composer.slashCommands.toasts.ledgerFailed': 'Could not create ledger task: {{error}}',
@@ -276,9 +292,25 @@ function translate(key: string, vars?: Record<string, unknown>): string {
     case 'composer.knowledgeScopeDescription.memory':
       return 'Use runtime memory cards when relevant.';
     case 'composer.knowledgeScopeDescription.wiki':
-      return 'Use the ClawX-managed wiki for source-backed notes.';
+      return 'Use the Verse Claw-managed wiki for source-backed notes.';
     case 'composer.knowledgeScopeDescription.all':
       return 'Let memory and wiki both contribute context.';
+    case 'composer.knowledgeModeTitle':
+      return 'Invocation mode';
+    case 'composer.knowledgeMode.manual':
+      return 'Manual';
+    case 'composer.knowledgeMode.suggest':
+      return 'Suggest';
+    case 'composer.knowledgeMode.auto-read':
+      return 'Auto-read';
+    case 'composer.knowledgeRoute.suggestion':
+      return `Found ${String(vars?.count ?? '')} possibly relevant knowledge item(s)`;
+    case 'composer.knowledgeRoute.attach':
+      return 'Attach';
+    case 'composer.knowledgeRoute.open':
+      return 'Open';
+    case 'composer.knowledgeRoute.dismiss':
+      return 'Dismiss';
     case 'composer.knowledgeQuick.enable':
       return 'Use wiki knowledge';
     case 'composer.knowledgeQuick.disable':
@@ -531,7 +563,7 @@ describe('ChatInput draft persistence', () => {
 
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('send this draft', undefined, null, 'none', 'build');
+    expect(onSend).toHaveBeenCalledWith('send this draft', undefined, null, 'none', 'suggest', undefined, null);
     expect(onDraftChange).toHaveBeenCalledWith('');
     expect(screen.getByTestId('chat-composer-input')).toHaveValue('');
   });
@@ -580,7 +612,92 @@ describe('ChatInput draft persistence', () => {
     fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: 'Use notes' } });
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Use notes', undefined, null, 'wiki', 'build');
+    expect(onSend).toHaveBeenCalledWith('Use notes', undefined, null, 'wiki', 'suggest', undefined, null);
+  });
+
+  it('changes knowledge invocation mode from the knowledge menu', () => {
+    const onKnowledgeModeChange = vi.fn();
+    const onKnowledgeScopeChange = vi.fn();
+    render(
+      <TooltipProvider>
+        <ChatInput
+          onSend={vi.fn()}
+          knowledgeScope="wiki"
+          onKnowledgeScopeChange={onKnowledgeScopeChange}
+          knowledgeMode="suggest"
+          onKnowledgeModeChange={onKnowledgeModeChange}
+        />
+      </TooltipProvider>,
+    );
+
+    fireEvent.click(screen.getByTitle('Knowledge scope'));
+    fireEvent.click(screen.getByTestId('chat-knowledge-mode-auto-read'));
+
+    expect(onKnowledgeModeChange).toHaveBeenCalledWith('auto-read');
+  });
+
+  it('shows suggest-mode knowledge candidates and attaches them only after user action', async () => {
+    const onSend = vi.fn();
+    hostApiFetchMock.mockImplementation(async (url) => {
+      if (url === '/api/knowledge/route-context') {
+        return {
+          success: true,
+          decision: 'suggest',
+          reason: 'project knowledge intent detected',
+          candidates: [{
+            id: 'suggested-page',
+            title: 'Suggested Decision',
+            lookup: 'knowledge/suggested.md',
+            corpus: 'wiki',
+            attachKind: 'suggested',
+            routingReason: 'project knowledge intent detected',
+            confidence: 0.88,
+            pagePath: 'knowledge/suggested.md',
+            snippet: 'Relevant project decision.',
+          }],
+          budget: { maxReferences: 3, maxSnippetChars: 800 },
+        };
+      }
+      if (url === '/api/knowledge/reference') {
+        return { success: true };
+      }
+      return { success: true };
+    });
+
+    render(
+      <TooltipProvider>
+        <ChatInput
+          onSend={onSend}
+          knowledgeScope="wiki"
+          knowledgeMode="suggest"
+        />
+      </TooltipProvider>,
+    );
+
+    fireEvent.change(screen.getByTestId('chat-composer-input'), {
+      target: { value: 'What was the previous architecture decision for the wiki router?' },
+    });
+
+    const suggestion = await screen.findByTestId('chat-knowledge-suggestion', {}, { timeout: 2000 });
+    expect(suggestion).toHaveTextContent('Found 1 possibly relevant knowledge item');
+
+    fireEvent.click(screen.getByTitle('Send'));
+    expect(onSend).toHaveBeenCalledWith(
+      'What was the previous architecture decision for the wiki router?',
+      undefined,
+      null,
+      'wiki',
+      'suggest',
+      undefined,
+      null,
+    );
+
+    fireEvent.change(screen.getByTestId('chat-composer-input'), {
+      target: { value: 'What was the previous architecture decision for the wiki router?' },
+    });
+    const suggestionAgain = await screen.findByTestId('chat-knowledge-suggestion', {}, { timeout: 2000 });
+    fireEvent.click(within(suggestionAgain).getByTestId('chat-knowledge-suggestion-attach'));
+    expect(screen.getByTestId('chat-knowledge-selected')).toHaveTextContent('Suggested Decision');
   });
 
   it('searches and attaches specific knowledge references before sending', async () => {
@@ -628,7 +745,7 @@ describe('ChatInput draft persistence', () => {
     fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: 'Use this context' } });
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Use this context', undefined, null, 'wiki', 'build', [{
+    expect(onSend).toHaveBeenCalledWith('Use this context', undefined, null, 'wiki', 'suggest', [{
       id: 'decision-page',
       title: 'Knowledge Hub decision',
       lookup: 'notes/decision.md',
@@ -636,20 +753,19 @@ describe('ChatInput draft persistence', () => {
       pageId: 'decision-page',
       pagePath: 'notes/decision.md',
       snippet: 'Keep Obsidian optional.',
-    }]);
+    }], null);
     await waitFor(() => expect(hostApiFetchMock).toHaveBeenCalledWith('/api/knowledge/reference', expect.objectContaining({
       method: 'POST',
     })));
   });
 
-  it('uses the externally selected work mode when sending', () => {
+  it('does not render or send Work Mode', () => {
     const onSend = vi.fn();
     render(
       <TooltipProvider>
         <ChatInput
           onSend={onSend}
           workspace={workspace({ permissionMode: 'acceptEdits' })}
-          workMode="plan"
         />
       </TooltipProvider>,
     );
@@ -658,7 +774,7 @@ describe('ChatInput draft persistence', () => {
     fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: 'Sketch the rollout' } });
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Sketch the rollout', undefined, null, 'none', 'plan');
+    expect(onSend).toHaveBeenCalledWith('Sketch the rollout', undefined, null, 'none', 'suggest', undefined, null);
   });
 });
 
@@ -694,7 +810,9 @@ describe('ChatInput slash commands', () => {
         undefined,
         null,
         'none',
-        'build',
+        'suggest',
+        undefined,
+        null,
       );
     });
   });
@@ -771,7 +889,7 @@ describe('ChatInput slash commands', () => {
     expect(screen.getByTestId('chat-knowledge-selected')).toHaveTextContent('Context Palette Notes');
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Use the selected knowledge references to answer.', undefined, null, 'wiki', 'build', [{
+    expect(onSend).toHaveBeenCalledWith('Use the selected knowledge references to answer.', undefined, null, 'wiki', 'suggest', [{
       id: 'wiki-context-page',
       title: 'Context Palette Notes',
       lookup: 'knowledge/context-palette.md',
@@ -779,7 +897,7 @@ describe('ChatInput slash commands', () => {
       pageId: 'wiki-context-page',
       pagePath: 'knowledge/context-palette.md',
       snippet: 'Use slash commands to keep the composer clean.',
-    }]);
+    }], null);
   });
 
   it('changes knowledge scope from slash commands without sending', async () => {
@@ -804,6 +922,32 @@ describe('ChatInput slash commands', () => {
     expect(textbox).toHaveValue('');
   });
 
+  it('runs steward audit slash command without sending a chat prompt', async () => {
+    const onSend = vi.fn();
+    hostApiFetchMock.mockImplementation(async (url) => {
+      if (url === '/api/knowledge/governance-audit') {
+        return {
+          success: true,
+          runAt: '2026-06-23T00:00:00.000Z',
+          issues: [],
+          summaries: { contradictions: 0, stale: 0, dangling: 0, duplicates: 0, provenanceGaps: 0 },
+        };
+      }
+      return { success: true };
+    });
+    renderChatInput(onSend);
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/steward-audit' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => expect(hostApiFetchMock).toHaveBeenCalledWith('/api/knowledge/governance-audit', {
+      method: 'POST',
+    }));
+    expect(onSend).not.toHaveBeenCalled();
+    expect(window.location.hash).toBe('#/knowledge?tab=governance');
+  });
+
   it('falls back to a review prompt when no code review hook is provided', async () => {
     const onSend = vi.fn();
     renderChatInput(onSend);
@@ -818,7 +962,9 @@ describe('ChatInput slash commands', () => {
         undefined,
         null,
         'none',
-        'build',
+        'suggest',
+        undefined,
+        null,
       );
     });
     expect(onSend.mock.calls[0][0]).toContain('Scope: auth changes');
@@ -874,7 +1020,7 @@ describe('ChatInput slash commands', () => {
     fireEvent.change(textbox, { target: { value: '/mission' } });
     fireEvent.keyDown(textbox, { key: 'Enter' });
 
-    expect(window.location.hash).toBe('#/agents');
+    expect(window.location.hash).toBe('#/settings/agents');
     expect(textbox).toHaveValue('');
   });
 
@@ -1003,7 +1149,7 @@ describe('ChatInput capability action preflight', () => {
     expect(hostApiFetchMock).toHaveBeenCalledWith('/api/skills/configs', expect.objectContaining({
       body: JSON.stringify([{ skillKey: 'create-skill', enabled: true }]),
     }));
-    expect(onSend.mock.calls[0][0]).toContain('Conversation info (trusted ClawX capability action results)');
+    expect(onSend.mock.calls[0][0]).toContain('Conversation info (trusted Verse Claw capability action results)');
     expect(onSend.mock.calls[0][0]).toContain('"skillId": "create-skill"');
     expect(onSend.mock.calls[0][0]).toContain('please enable create-skill skill and use it');
   });
@@ -1222,6 +1368,30 @@ describe('ChatInput read-only context status', () => {
     });
   });
 
+  it('sends explicit active-run intervention mode through the typed send path', async () => {
+    const onSend = vi.fn();
+    renderChatInput(onSend, {
+      sending: true,
+      draftValue: 'please keep the current validation evidence',
+    });
+
+    expect(screen.getByTestId('chat-intervention-controls')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('chat-intervention-guide'));
+
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith(
+        'please keep the current validation evidence',
+        undefined,
+        null,
+        'none',
+        'suggest',
+        undefined,
+        null,
+        'guide',
+      );
+    });
+  });
+
   it('omits the context status when no context data is available', () => {
     renderChatInput();
 
@@ -1409,7 +1579,7 @@ describe('ChatInput agent targeting', () => {
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Hello direct agent' } });
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Hello direct agent', undefined, 'research', 'none', 'build');
+    expect(onSend).toHaveBeenCalledWith('Hello direct agent', undefined, 'research', 'none', 'suggest', undefined, null);
   });
 
   it('disables the input while gateway is running but not yet ready', () => {
@@ -1647,7 +1817,7 @@ describe('ChatInput agent targeting', () => {
 
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Draft /create-skill  a new helper', undefined, null, 'none', 'build');
+    expect(onSend).toHaveBeenCalledWith('Draft /create-skill  a new helper', undefined, null, 'none', 'suggest', undefined, null);
     expect(hostApiFetchMock).toHaveBeenCalledWith(
       '/api/skills/quick-access',
       expect.objectContaining({
@@ -1701,7 +1871,7 @@ describe('ChatInput agent targeting', () => {
 
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('/create-skill  Draft a new helper', undefined, null, 'none', 'build');
+    expect(onSend).toHaveBeenCalledWith('/create-skill  Draft a new helper', undefined, null, 'none', 'suggest', undefined, null);
   });
 
   it('removes the full inline skill token with one backspace', async () => {

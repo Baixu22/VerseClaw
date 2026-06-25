@@ -60,4 +60,4 @@ docs:
   required: true
 ---
 
-The work mode MVP is a ClawX product/UI layer. It should guide agent behavior and user expectations while leaving actual permission, MCP, Gateway, and OpenClaw runtime tool decisions to their existing owners.
+The work mode MVP is a Verse Claw product/UI layer. It should guide agent behavior and user expectations while leaving actual permission, MCP, Gateway, and OpenClaw runtime tool decisions to their existing owners.

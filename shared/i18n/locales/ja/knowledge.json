@@ -137,7 +137,22 @@
     "permissions": "Permission Boundary",
     "permissionsDescription": "Chat の knowledge scope は search/get の読み取りだけを許可します。書き込み、マージ、アーカイブ、削除は draft または proposal とユーザー確認が必要です。",
     "lastReview": "Latest Steward Review",
-    "noReview": "このセッションではまだ steward review が実行されていません。"
+    "noReview": "このセッションではまだ steward review が実行されていません。",
+    "runHealthCheck": "ヘルスチェックを実行",
+    "runLint": "Lintを実行",
+    "runCompile": "コンパイルを実行",
+    "checking": "確認中...",
+    "contradictions": "矛盾した主張",
+    "stale": "古いページ",
+    "dangling": "孤立ページ",
+    "noIssues": "問題なし",
+    "suggestions": "ナレッジスチュワードの提案",
+    "lastCheck": "最終チェック：{time}",
+    "dismissAll": "すべて却下",
+    "allClear": "問題ありません",
+    "allClearHint": "ガバナンスの問題は検出されていません。ヘルスチェックを実行して確認してください。",
+    "lintComplete": "Lint完了",
+    "compileComplete": "コンパイル完了"
   },
   "dialogs": {
     "pickFiles": "知識ファイルをインポート",

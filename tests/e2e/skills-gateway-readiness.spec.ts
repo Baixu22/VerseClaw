@@ -38,7 +38,8 @@ test.describe('Skills page gateway readiness', () => {
       },
     });
 
-    await page.getByTestId('sidebar-nav-skills').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-skills').click();
     await expect(page.getByTestId('skills-page')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'PDF' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'XLSX' })).toBeVisible();
@@ -83,7 +84,8 @@ test.describe('Skills page gateway readiness', () => {
       },
     });
 
-    await page.getByTestId('sidebar-nav-skills').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-skills').click();
     await expect(page.getByRole('heading', { name: 'Browser Automation' })).toBeVisible();
     await page.getByText('Browser Automation').click();
     await expect(page.getByRole('button', { name: /Uninstall|卸载|アンインストール|Удалить/i })).toHaveCount(0);
@@ -110,7 +112,8 @@ test.describe('Skills page gateway readiness', () => {
       },
     });
 
-    await page.getByTestId('sidebar-nav-skills').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-skills').click();
     await expect(page.getByTestId('skills-page')).toBeVisible();
     await expect(page.getByTestId('skills-gateway-banner')).toHaveAttribute('data-state', 'stopped', { timeout: 3_500 });
 

@@ -34,8 +34,15 @@ const PROXY_SETTING_KEYS = new Set<keyof AppSettings>([
   'proxyBypassRules',
 ]);
 
+const LEGACY_WORK_MODE_SETTING_KEYS = new Set([
+  'workModeToolBundles',
+  'workModeKits',
+  'workModePromptModeOverrides',
+]);
+
 async function validateSettingKey(key: unknown): Promise<boolean> {
   if (typeof key !== 'string' || key.length === 0) return false;
+  if (LEGACY_WORK_MODE_SETTING_KEYS.has(key)) return false;
   const settings = await getAllSettings();
   return Object.prototype.hasOwnProperty.call(settings, key);
 }
@@ -74,10 +81,20 @@ function patchTouchesLanguage(patch: Partial<AppSettings>): boolean {
   return Object.prototype.hasOwnProperty.call(patch, 'language');
 }
 
+function patchTouchesRoleMemory(patch: Partial<AppSettings>): boolean {
+  return Object.prototype.hasOwnProperty.call(patch, 'roleMemoryEnabled');
+}
+
 async function handleProxySettingsChange(gatewayManager: GatewayManager): Promise<void> {
   const settings = await getAllSettings();
   await syncProxyConfigToOpenClaw(settings, { preserveExistingWhenDisabled: false });
   await applyProxySettings(settings);
+  if (gatewayManager.getStatus().state === 'running') {
+    await gatewayManager.restart();
+  }
+}
+
+async function handleRoleMemorySettingsChange(gatewayManager: GatewayManager): Promise<void> {
   if (gatewayManager.getStatus().state === 'running') {
     await gatewayManager.restart();
   }
@@ -89,6 +106,8 @@ async function runSettingsSideEffects(
 ): Promise<void> {
   if (patchTouchesProxy(patch)) {
     await handleProxySettingsChange(gatewayManager);
+  } else if (patchTouchesRoleMemory(patch)) {
+    await handleRoleMemorySettingsChange(gatewayManager);
   }
   if (patchTouchesLaunchAtStartup(patch)) {
     await syncLaunchAtStartupSettingFromStore();

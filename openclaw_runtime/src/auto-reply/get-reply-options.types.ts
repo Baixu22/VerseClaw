@@ -83,6 +83,8 @@ export type GetReplyOptions = {
   thinkingLevelOverride?: string;
   /** One-shot fast-mode override for this run; does not persist to the session. */
   fastModeOverride?: boolean;
+  /** One-shot prompt-mode (system prompt intensity) override for this run; does not persist to the session. */
+  promptModeOverride?: 'full' | 'minimal' | 'none';
   /** Controls bootstrap workspace context injection (default: full). */
   bootstrapContextMode?: "full" | "lightweight";
   /** If true, suppress tool error warning payloads for this run. */

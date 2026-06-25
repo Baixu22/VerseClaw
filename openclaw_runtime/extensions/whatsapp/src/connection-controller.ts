@@ -24,9 +24,9 @@ const LOGGED_OUT_STATUS = 401;
 const POST_PAIRING_RESTART_STATUS = 515;
 const TIMED_OUT_STATUS = 408;
 const WHATSAPP_LOGIN_RESTART_MESSAGE =
-  "WhatsApp asked for a restart after pairing (code 515); waiting for creds to saveâ€¦";
+  "WhatsApp asked for a restart after pairing (code 515); waiting for creds to saveâ€?;
 const WHATSAPP_LOGIN_TIMEOUT_RESTART_MESSAGE =
-  "WhatsApp connection timed out before login; retrying with a fresh socketâ€¦";
+  "WhatsApp connection timed out before login; retrying with a fresh socketâ€?;
 const WHATSAPP_LOGGED_OUT_RELINK_MESSAGE =
   "WhatsApp reported the session is logged out. Cleared cached web session; please rerun openclaw channels login and scan the QR again.";
 export const WHATSAPP_LOGGED_OUT_QR_MESSAGE =

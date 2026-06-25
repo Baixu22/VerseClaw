@@ -118,7 +118,7 @@ describe('workspaces store session state', () => {
     expect(active?.sessionStates?.['agent:main:feature']).toEqual({ draftInput: 'feature draft' });
   });
 
-  it('persists work mode per workspace session state', async () => {
+  it('drops legacy work mode from workspace session state', async () => {
     const { useWorkspacesStore } = await import('@/stores/workspaces');
     useWorkspacesStore.setState({
       profiles: [profile({
@@ -149,9 +149,9 @@ describe('workspaces store session state', () => {
     });
 
     const active = useWorkspacesStore.getState().activeWorkspace;
-    expect(active?.state.workMode).toBe('build');
-    expect(active?.sessionStates?.['agent:main:main'].workMode).toBe('plan');
-    expect(active?.sessionStates?.['agent:main:feature'].workMode).toBe('build');
+    expect(active?.state).toEqual({ draftInput: 'feature draft' });
+    expect(active?.sessionStates?.['agent:main:main']).toEqual({ draftInput: 'main draft' });
+    expect(active?.sessionStates?.['agent:main:feature']).toEqual({ draftInput: 'feature draft' });
   });
 
   it('switches active workspace to the target profile without mutating the previous workspace session state', async () => {

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Application Menu Configuration
  * Creates the native application menu for macOS/Windows/Linux
  */
@@ -201,13 +201,13 @@ export async function createMenu(language?: string): Promise<void> {
         {
           label: labels.help.documentation,
           click: async () => {
-            await shell.openExternal('https://claw-x.com');
+            await shell.openExternal('https://verse-claw.com');
           },
         },
         {
           label: labels.help.reportIssue,
           click: async () => {
-            await shell.openExternal('https://github.com/ValueCell-ai/ClawX/issues');
+            await shell.openExternal('https://github.com/ValueCell-ai/Verse-Claw/issues');
           },
         },
         { type: 'separator' },

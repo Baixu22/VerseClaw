@@ -21,6 +21,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FeedbackState } from '@/components/common/FeedbackState';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useGatewayStore } from '@/stores/gateway';
 import { hostApi } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
@@ -334,7 +335,6 @@ function CompleteUsageChart({
   inputLabel,
   outputLabel,
   cacheLabel,
-  tokensLabel,
   peakLabel,
 }: {
   buckets: DailyBucket[];
@@ -342,10 +342,9 @@ function CompleteUsageChart({
   inputLabel: string;
   outputLabel: string;
   cacheLabel: string;
-  tokensLabel: string;
+  tokensLabel?: string;
   peakLabel?: string;
 }) {
-  const maxTokens = Math.max(1, ...buckets.map((bucket) => bucket.totalTokens));
   const hasData = buckets.some((bucket) => bucket.totalTokens > 0);
 
   if (buckets.length === 0) {
@@ -355,8 +354,6 @@ function CompleteUsageChart({
       </div>
     );
   }
-
-  const yTicks = [maxTokens, Math.round(maxTokens / 2), 0];
 
   return (
     <div className="rounded-lg border border-black/10 bg-surface-modal p-4 dark:border-white/10" data-testid="billing-token-chart">
@@ -369,56 +366,59 @@ function CompleteUsageChart({
         {hasData && peakLabel && <Badge variant="outline" className="rounded-full">{peakLabel}</Badge>}
         {!hasData && <Badge variant="outline" className="rounded-full">{emptyLabel}</Badge>}
       </div>
-      <div className="grid min-h-[300px] grid-cols-[56px_minmax(0,1fr)] gap-3">
-        <div className="flex flex-col justify-between py-1 text-right text-[11px] font-medium text-muted-foreground">
-          {yTicks.map((tick, index) => (
-            <span key={`${tick}-${index}`}>{formatTokenCount(tick)}</span>
-          ))}
-        </div>
-        <div className="relative">
-          <div className="absolute inset-x-0 top-0 flex h-[240px] flex-col justify-between py-1">
-            {yTicks.map((tick, index) => (
-              <span key={`${tick}-${index}`} className="h-px w-full bg-black/5 dark:bg-white/10" />
-            ))}
-          </div>
-          <div className="relative flex h-[240px] items-end gap-1.5 border-b border-black/10 pb-1 dark:border-white/10">
-            {buckets.map((bucket) => {
-              const height = bucket.totalTokens > 0 ? Math.max((bucket.totalTokens / maxTokens) * 100, 2) : 0;
-              const inputHeight = bucket.totalTokens > 0 ? (bucket.inputTokens / bucket.totalTokens) * 100 : 0;
-              const outputHeight = bucket.totalTokens > 0 ? (bucket.outputTokens / bucket.totalTokens) * 100 : 0;
-              const cacheHeight = bucket.totalTokens > 0 ? (bucket.cacheTokens / bucket.totalTokens) * 100 : 0;
-              return (
-                <div key={bucket.key} className="group flex h-full min-w-0 flex-1 items-end justify-center">
-                  <div
-                    className="flex w-full min-w-[6px] max-w-8 flex-col justify-end overflow-hidden rounded-t-md bg-black/5 dark:bg-white/10"
-                    style={{ height: `${height}%` }}
-                    title={`${bucket.label}: ${formatTokenCount(bucket.totalTokens)} ${tokensLabel}`}
-                    data-testid="billing-token-chart-bar"
-                  >
-                    {cacheHeight > 0 && <div className="w-full bg-usage-cache" style={{ height: `${cacheHeight}%` }} />}
-                    {outputHeight > 0 && <div className="w-full bg-usage-output" style={{ height: `${outputHeight}%` }} />}
-                    {inputHeight > 0 && <div className="w-full bg-usage-input" style={{ height: `${inputHeight}%` }} />}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-2 flex gap-1.5">
-            {buckets.map((bucket, index) => {
-              const showLabel = buckets.length <= 12 || index === 0 || index === buckets.length - 1 || index % 5 === 0;
-              return (
-                <span
-                  key={`${bucket.key}-label`}
-                  className={cn('min-w-0 flex-1 truncate text-center text-[10px] text-muted-foreground', !showLabel && 'opacity-0')}
-                  aria-hidden={!showLabel}
-                >
-                  {bucket.label}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={buckets} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+          <XAxis
+            dataKey="label"
+            tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+            tickLine={false}
+            axisLine={false}
+            interval="preserveStartEnd"
+          />
+          <YAxis
+            tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+            tickLine={false}
+            axisLine={false}
+            tickFormatter={formatTokenCount}
+          />
+          <Tooltip
+            contentStyle={{
+              background: 'hsl(var(--surface-modal))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: '0.5rem',
+              fontSize: '0.75rem',
+            }}
+            labelStyle={{ fontWeight: 600, marginBottom: '0.25rem' }}
+            formatter={(_value: unknown, name: unknown) => [
+              formatTokenCount(Number(_value)),
+              String(name) === 'inputTokens' ? inputLabel : String(name) === 'outputTokens' ? outputLabel : cacheLabel,
+            ]}
+            labelFormatter={(label: unknown) => String(label)}
+          />
+          <Bar
+            dataKey="cacheTokens"
+            stackId="tokens"
+            fill="hsl(var(--usage-cache))"
+            radius={0}
+            isAnimationActive={false}
+          />
+          <Bar
+            dataKey="outputTokens"
+            stackId="tokens"
+            fill="hsl(var(--usage-output))"
+            radius={0}
+            isAnimationActive={false}
+          />
+          <Bar
+            dataKey="inputTokens"
+            stackId="tokens"
+            fill="hsl(var(--usage-input))"
+            radius={[4, 4, 0, 0]}
+            isAnimationActive={false}
+          />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }
@@ -430,8 +430,6 @@ function ModelRankChart({
   groups: UsageGroup[];
   emptyLabel: string;
 }) {
-  const maxTokens = Math.max(1, ...groups.map((group) => group.totalTokens));
-
   if (groups.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-black/10 p-6 text-center text-sm text-muted-foreground dark:border-white/10">
@@ -440,32 +438,57 @@ function ModelRankChart({
     );
   }
 
+  const chartData = groups.map((group) => ({
+    name: group.label,
+    totalTokens: group.totalTokens,
+    inputTokens: group.inputTokens,
+    outputTokens: group.outputTokens,
+    cacheTokens: group.cacheTokens,
+  }));
+
   return (
-    <div className="space-y-4 rounded-lg border border-black/10 bg-surface-modal p-4 dark:border-white/10" data-testid="billing-model-chart">
-      {groups.map((group, index) => (
-        <div key={group.label} className="space-y-1.5">
-          <div className="flex items-center justify-between gap-3 text-sm">
-            <span className="truncate font-medium text-foreground">{index + 1}. {group.label}</span>
-            <span className="shrink-0 font-mono text-xs text-muted-foreground">{formatTokenCount(group.totalTokens)}</span>
-          </div>
-          <div className="h-2.5 overflow-hidden rounded-full bg-black/5 dark:bg-white/10">
-            <div
-              className="flex h-full overflow-hidden rounded-full"
-              style={{ width: `${Math.max((group.totalTokens / maxTokens) * 100, 4)}%` }}
-            >
-              {group.inputTokens > 0 && (
-                <div className="h-full bg-usage-input" style={{ width: `${(group.inputTokens / group.totalTokens) * 100}%` }} />
-              )}
-              {group.outputTokens > 0 && (
-                <div className="h-full bg-usage-output" style={{ width: `${(group.outputTokens / group.totalTokens) * 100}%` }} />
-              )}
-              {group.cacheTokens > 0 && (
-                <div className="h-full bg-usage-cache" style={{ width: `${(group.cacheTokens / group.totalTokens) * 100}%` }} />
-              )}
-            </div>
-          </div>
-        </div>
-      ))}
+    <div className="rounded-lg border border-black/10 bg-surface-modal p-4 dark:border-white/10" data-testid="billing-model-chart">
+      <ResponsiveContainer width="100%" height={Math.max(200, groups.length * 48)}>
+        <BarChart
+          data={chartData}
+          layout="vertical"
+          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+          <XAxis
+            type="number"
+            tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+            tickLine={false}
+            axisLine={false}
+            tickFormatter={formatTokenCount}
+          />
+          <YAxis
+            type="category"
+            dataKey="name"
+            tick={{ fontSize: 12, fill: 'hsl(var(--foreground))' }}
+            tickLine={false}
+            axisLine={false}
+            width={140}
+            tickFormatter={(value: string) => {
+              const maxLen = 20;
+              return value.length > maxLen ? `${value.slice(0, maxLen)}…` : value;
+            }}
+          />
+          <Tooltip
+            contentStyle={{
+              background: 'hsl(var(--surface-modal))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: '0.5rem',
+              fontSize: '0.75rem',
+            }}
+            labelStyle={{ fontWeight: 600, marginBottom: '0.25rem' }}
+            formatter={(value: unknown) => [formatTokenCount(Number(value))]}
+          />
+          <Bar dataKey="cacheTokens" stackId="tokens" fill="hsl(var(--usage-cache))" isAnimationActive={false} />
+          <Bar dataKey="outputTokens" stackId="tokens" fill="hsl(var(--usage-output))" isAnimationActive={false} />
+          <Bar dataKey="inputTokens" stackId="tokens" fill="hsl(var(--usage-input))" radius={[0, 4, 4, 0]} isAnimationActive={false} />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }
@@ -631,7 +654,7 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
               data-testid="billing-back-to-models"
               className="h-10 rounded-lg border-black/10 bg-transparent px-4 dark:border-white/10"
             >
-              <Link to="/models">
+              <Link to="/settings/models">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 {t('dashboard:billing.backToModels')}
               </Link>
@@ -911,7 +934,7 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
               data-testid="billing-back-to-models"
               className="h-10 rounded-lg border-black/10 bg-transparent px-4 dark:border-white/10"
             >
-              <Link to="/models">
+              <Link to="/settings/models">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 {t('dashboard:billing.backToModels')}
               </Link>

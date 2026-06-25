@@ -87,7 +87,8 @@ test.describe('Russian language localization', () => {
       // "Настройки" is Russian-only, English is "Settings"
       await expect(page.getByTestId('sidebar-nav-settings')).toContainText('Настройки');
 
-      await page.getByTestId('sidebar-nav-skills').click();
+      await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-skills').click();
       await expect(page.getByTestId('skills-page')).toBeVisible();
       await expect(page.getByRole('heading', { name: 'Инструменты' })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Навыки' })).toBeVisible();

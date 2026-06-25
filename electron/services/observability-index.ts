@@ -41,9 +41,9 @@ let loaded = false;
 let writeQueue: Promise<void> = Promise.resolve();
 
 function getIndexDir(): string {
-  const override = process.env.CLAWX_OBSERVABILITY_INDEX_DIR?.trim();
+  const override = process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR?.trim();
   if (override) return override;
-  if (process.env.VITEST) return join(tmpdir(), 'clawx-vitest-observability');
+  if (process.env.VITEST) return join(tmpdir(), 'verse-claw-vitest-observability');
   return join(getDataDir(), 'observability');
 }
 

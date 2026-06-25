@@ -139,6 +139,41 @@ export type CronRunTelemetry = {
   usage?: CronUsageSummary;
 };
 
+export type BrowserAutomationRunStep = {
+  id: string;
+  label: string;
+  status: "passed" | "failed" | "skipped";
+  detail?: string;
+  at: string;
+};
+
+export type BrowserAutomationRunResult = {
+  schemaVersion: 1;
+  runId: string;
+  status: "success" | "failed";
+  startedAt: string;
+  endedAt: string;
+  profile?: string;
+  authStateName?: string;
+  finalUrl?: string;
+  title?: string;
+  loginState: "unknown" | "authenticated" | "login-required";
+  steps: BrowserAutomationRunStep[];
+  evidence: {
+    textSample?: string;
+    artifacts: Array<{
+      kind: "snapshot" | "console" | "errors" | "network" | "screenshot" | "trace" | "other";
+      path?: string;
+      label?: string;
+      mimeType?: string;
+      bytes?: number;
+    }>;
+  };
+  consoleErrors?: string[];
+  networkErrors?: string[];
+  error?: string;
+};
+
 /** Severity level for persisted cron run diagnostics. */
 export type CronRunDiagnosticSeverity = "info" | "warn" | "error";
 
@@ -179,6 +214,7 @@ export type CronRunOutcome = {
   sessionId?: string;
   sessionKey?: string;
   diagnostics?: CronRunDiagnostics;
+  browserAutomationResult?: BrowserAutomationRunResult;
 };
 
 /** Embedded-agent execution phase names surfaced to cron watchdog progress. */

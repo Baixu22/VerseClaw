@@ -32,6 +32,7 @@ export type CronEvent = {
   error?: string;
   summary?: string;
   diagnostics?: CronRunDiagnostics;
+  browserAutomationResult?: CronRunOutcome["browserAutomationResult"];
   delivered?: boolean;
   deliveryStatus?: CronDeliveryStatus;
   deliveryError?: string;

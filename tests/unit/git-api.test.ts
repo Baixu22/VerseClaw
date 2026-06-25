@@ -1,4 +1,4 @@
-import { resolve } from 'node:path';
+import { basename, resolve } from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
@@ -93,6 +93,9 @@ describe('git api', () => {
           ].join('\0'),
         };
       }
+      if (args[0] === 'diff' && args.includes('--numstat')) {
+        return { stdout: args.includes('--cached') ? '' : '2\t1\tsrc/app file.ts\0' };
+      }
       return { stdout: '' };
     });
     const { createGitApi } = await import('@electron/services/git-api');
@@ -108,7 +111,7 @@ describe('git api', () => {
         unstagedCount: 1,
         untrackedCount: 1,
         changes: expect.arrayContaining([
-          expect.objectContaining({ path: 'src/app file.ts' }),
+          expect.objectContaining({ path: 'src/app file.ts', additions: 2, deletions: 1 }),
           expect.objectContaining({ path: 'src/new file.ts' }),
         ]),
       },
@@ -248,6 +251,74 @@ describe('git api', () => {
     expect(calls).toContainEqual(['clean', '-f', '--', 'src/new.ts']);
   });
 
+  it('lists stashes and creates a stash with message and untracked files', async () => {
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'stash' && args[1] === 'list') return { stdout: 'stash@{0}\tOn main\tWIP demo\n' };
+      if (args[0] === 'stash' && args[1] === 'push') return { stdout: 'Saved working directory\n' };
+      if (args[0] === 'status') return { stdout: '# branch.head main\0' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const gitApi = createGitApi();
+
+    await expect(gitApi.stashList()).resolves.toMatchObject({
+      success: true,
+      stashes: [
+        {
+          index: 0,
+          selector: 'stash@{0}',
+          branch: 'On main',
+          message: 'WIP demo',
+        },
+      ],
+    });
+    await expect(gitApi.stashPush({ message: 'checkpoint', includeUntracked: true })).resolves.toMatchObject({
+      success: true,
+      stdout: 'Saved working directory\n',
+    });
+    expect(calls).toContainEqual(['stash', 'push', '-m', 'checkpoint', '--include-untracked']);
+  });
+
+  it('requires dangerous approval for stash apply and pop', async () => {
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'stash' && args[1] === 'apply') return { stdout: 'applied stash\n' };
+      if (args[0] === 'stash' && args[1] === 'pop') return { stdout: 'dropped stash\n' };
+      if (args[0] === 'status') return { stdout: '# branch.head main\0' };
+      return { stdout: '' };
+    });
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createGitApi } = await import('@electron/services/git-api');
+    const gitApi = createGitApi();
+
+    const applyFirst = await gitApi.stashApply({ selector: 'stash@{0}' });
+    expect(applyFirst).toMatchObject({ success: false, blocked: true, approvalRequired: true });
+    expect(calls).not.toContainEqual(['stash', 'apply', 'stash@{0}']);
+
+    await createPermissionsApi().decideApproval({ id: applyFirst.approval?.id ?? '', decision: 'approved' });
+    await expect(gitApi.stashApply({ selector: 'stash@{0}', approvalId: applyFirst.approval?.id })).resolves.toMatchObject({
+      success: true,
+      stdout: 'applied stash\n',
+    });
+    expect(calls).toContainEqual(['stash', 'apply', 'stash@{0}']);
+
+    const popFirst = await gitApi.stashPop({ selector: 'stash@{0}' });
+    expect(popFirst).toMatchObject({ success: false, blocked: true, approvalRequired: true });
+    expect(calls).not.toContainEqual(['stash', 'pop', 'stash@{0}']);
+
+    await createPermissionsApi().decideApproval({ id: popFirst.approval?.id ?? '', decision: 'approved' });
+    await expect(gitApi.stashPop({ selector: 'stash@{0}', approvalId: popFirst.approval?.id })).resolves.toMatchObject({
+      success: true,
+      stdout: 'dropped stash\n',
+    });
+    expect(calls).toContainEqual(['stash', 'pop', 'stash@{0}']);
+  });
+
   it('only allows worktree remove for paths registered with the repository', async () => {
     const registeredWorktree = resolve(process.cwd(), '..', 'Project-feature');
     mockExec((_command, args) => {
@@ -302,7 +373,7 @@ describe('git api', () => {
       'add',
       '-b',
       'feature/demo',
-      resolve(process.cwd(), '..', 'Project-feature-demo'),
+      resolve(process.cwd(), '..', `${basename(process.cwd())}-feature-demo`),
       'main',
     ]);
   });
@@ -326,9 +397,90 @@ describe('git api', () => {
     expect(calls).toContainEqual([
       'worktree',
       'add',
-      resolve(process.cwd(), '..', 'Project-release'),
+      resolve(process.cwd(), '..', `${basename(process.cwd())}-release`),
       'release',
     ]);
+  });
+
+  it('defaults new worktree start point to HEAD when omitted', async () => {
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'worktree' && args[1] === 'add') return { stdout: 'prepared worktree\n' };
+      if (args[0] === 'status') return { stdout: '# branch.head main\0' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    await expect(createGitApi().worktreeAdd({
+      branch: 'feature/head-default',
+      checkoutNewBranch: true,
+    })).resolves.toMatchObject({ success: true });
+
+    expect(calls).toContainEqual([
+      'worktree',
+      'add',
+      '-b',
+      'feature/head-default',
+      resolve(process.cwd(), '..', `${basename(process.cwd())}-feature-head-default`),
+      'HEAD',
+    ]);
+  });
+
+  it('blocks new worktree creation when the target branch already exists', async () => {
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'branch' && args[1] === '--list') return { stdout: 'feature/existing\n' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    await expect(createGitApi().worktreeAdd({
+      branch: 'feature/existing',
+      checkoutNewBranch: true,
+    })).resolves.toMatchObject({
+      success: false,
+      blocked: true,
+      reason: 'Branch already exists. Choose Existing branch or use a new branch name.',
+    });
+    expect(calls.some((args) => args[0] === 'worktree' && args[1] === 'add')).toBe(false);
+  });
+
+  it('blocks existing-branch worktree creation when that branch is already checked out', async () => {
+    const registeredWorktree = resolve(process.cwd(), '..', 'Project-feature');
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'worktree' && args[1] === 'list') {
+        return {
+          stdout: [
+            `worktree ${process.cwd()}`,
+            'HEAD abc',
+            'branch refs/heads/main',
+            `worktree ${registeredWorktree}`,
+            'HEAD def',
+            'branch refs/heads/feature/existing',
+            '',
+          ].join('\0'),
+        };
+      }
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    await expect(createGitApi().worktreeAdd({
+      branch: 'feature/existing',
+      checkoutNewBranch: false,
+    })).resolves.toMatchObject({
+      success: false,
+      blocked: true,
+      reason: `Branch is already checked out at ${registeredWorktree}.`,
+    });
+    expect(calls.some((args) => args[0] === 'worktree' && args[1] === 'add')).toBe(false);
   });
 
   it('requires dangerous approval for custom worktree paths outside the workspace and repo sibling area', async () => {
@@ -348,5 +500,69 @@ describe('git api', () => {
       approvalRequired: true,
     });
     expect(execFileMock).not.toHaveBeenCalledWith('git', expect.arrayContaining(['add', '-b']), expect.anything(), expect.anything());
+  });
+
+  it('creates GitHub PRs with explicit base/head/draft args after dangerous approval', async () => {
+    const calls: Array<{ command: string; args: string[] }> = [];
+    mockExec((command, args) => {
+      calls.push({ command, args });
+      if (command === 'git' && args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (command === 'gh' && args[0] === 'pr' && args[1] === 'create') {
+        return {
+          stdout: JSON.stringify({
+            number: 42,
+            title: 'Ship Git panel',
+            state: 'OPEN',
+            headRefName: 'feature/git-panel',
+            baseRefName: 'main',
+            isDraft: true,
+          }),
+        };
+      }
+      return { stdout: '' };
+    });
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createGitApi } = await import('@electron/services/git-api');
+    const gitApi = createGitApi();
+
+    const payload = {
+      title: 'Ship Git panel',
+      body: 'Ready for review',
+      base: 'main',
+      head: 'feature/git-panel',
+      draft: true,
+    };
+    const first = await gitApi.prCreate(payload);
+    expect(first).toMatchObject({ success: false, blocked: true, approvalRequired: true });
+    expect(calls.some((call) => call.command === 'gh' && call.args[0] === 'pr' && call.args[1] === 'create')).toBe(false);
+
+    await createPermissionsApi().decideApproval({ id: first.approval?.id ?? '', decision: 'approved' });
+    await expect(gitApi.prCreate({ ...payload, approvalId: first.approval?.id })).resolves.toMatchObject({
+      success: true,
+      pullRequest: expect.objectContaining({
+        number: 42,
+        headRefName: 'feature/git-panel',
+        baseRefName: 'main',
+        isDraft: true,
+      }),
+    });
+    expect(calls).toContainEqual({
+      command: 'gh',
+      args: [
+        'pr',
+        'create',
+        '--title',
+        'Ship Git panel',
+        '--body',
+        'Ready for review',
+        '--base',
+        'main',
+        '--head',
+        'feature/git-panel',
+        '--draft',
+        '--json',
+        'number,title,state,author,headRefName,baseRefName,url,isDraft,updatedAt',
+      ],
+    });
   });
 });

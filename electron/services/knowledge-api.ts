@@ -1,6 +1,6 @@
-import { shell } from 'electron';
+﻿import { shell } from 'electron';
 import { createHash, randomUUID } from 'node:crypto';
-import type { Dirent } from 'node:fs';
+import { existsSync, watch as fsWatch, type Dirent, type FSWatcher } from 'node:fs';
 import { mkdir, readFile, readdir, writeFile, appendFile, stat } from 'node:fs/promises';
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { parse as parseYaml } from 'yaml';
@@ -9,6 +9,11 @@ import type { GatewayManager } from '../gateway/manager';
 import { expandPath, getOpenClawConfigDir } from '../utils/paths';
 import { isRecord } from './payload-utils';
 import type {
+  HostSuccess,
+  ChatKnowledgeReference,
+  KnowledgeRouteCandidate,
+  KnowledgeRouteContextPayload,
+  KnowledgeRouteContextResult,
   KnowledgeChangeOperation,
   KnowledgeChangeProposal,
   KnowledgeCreateDraftPayload,
@@ -31,6 +36,13 @@ import type {
   KnowledgeReferenceKind,
   KnowledgeSourceRef,
   KnowledgeStewardConfig,
+  KnowledgeGovernanceIssue,
+  KnowledgeGovernanceResult,
+  KnowledgeCompileResult,
+  KnowledgeLintResult,
+  KnowledgeListWatchedDirectoryEventsPayload,
+  KnowledgeWatchedDirectoryConfig,
+  KnowledgeWatchedDirectoryEvent,
 } from '../../shared/host-api/contract';
 
 const DEFAULT_MAX_FILES = 80;
@@ -299,6 +311,24 @@ function normalizeSourceRefs(value: unknown): KnowledgeSourceRef[] {
   });
 }
 
+function isGovernedRulesPath(value: string | undefined): boolean {
+  if (!value) return false;
+  const normalized = value.replace(/\\/g, '/').toLowerCase();
+  const segments = normalized.split('/').filter(Boolean);
+  if (segments.at(-1) === 'agents.md') return true;
+  for (let index = 0; index < segments.length - 1; index += 1) {
+    if (segments[index] === 'harness' && segments[index + 1] === 'specs') return true;
+    if (segments[index] === '.clawx' && segments[index + 1] === 'rules' && normalized.endsWith('.md')) return true;
+  }
+  return false;
+}
+
+function rulesGuardWarningsForRefs(sourceRefs: KnowledgeSourceRef[]): string[] {
+  return sourceRefs.some((ref) => isGovernedRulesPath(ref.path) || isGovernedRulesPath(ref.id))
+    ? ['Rules-governed files are source evidence only; automatic memory paths must not modify AGENTS.md, harness/specs/**, or .clawx/rules/*.md.']
+    : [];
+}
+
 function normalizeDraftType(value: unknown): KnowledgeDraftType {
   return typeof value === 'string' && KNOWLEDGE_DRAFT_TYPES.has(value as KnowledgeDraftType)
     ? value as KnowledgeDraftType
@@ -518,6 +548,10 @@ function createInboxItemFromPayload(payload: KnowledgeCreateInboxItemPayload): K
     ...normalizeStringList(payload.sourceIds),
     ...sourceRefs.map((ref) => ref.id),
   ]));
+  const warnings = Array.from(new Set([
+    ...normalizeStringList(payload.warnings),
+    ...rulesGuardWarningsForRefs(sourceRefs),
+  ]));
   return {
     id: `ki_${randomUUID()}`,
     title,
@@ -531,7 +565,7 @@ function createInboxItemFromPayload(payload: KnowledgeCreateInboxItemPayload): K
     workspaceId: typeof payload.workspaceId === 'string' ? payload.workspaceId : payload.workspaceId ?? null,
     agentId: typeof payload.agentId === 'string' ? payload.agentId : payload.agentId ?? null,
     createdBy: normalizeDraftActor(payload.createdBy),
-    warnings: normalizeStringList(payload.warnings),
+    warnings,
     ...(isRecord(payload.metadata) ? { metadata: payload.metadata } : {}),
     createdAt: timestamp,
     updatedAt: timestamp,
@@ -1077,10 +1111,304 @@ function okfImportTitle(concept: KnowledgeOkfConcept): string {
     || concept.conceptId;
 }
 
+const ROUTER_BUDGET = {
+  maxReferences: 3,
+  maxSnippetChars: 800,
+} as const;
+
+const KNOWLEDGE_INTENT_PATTERN = /(之前|以往|历史|项目里|项目中|规范|架构|为什么|决策|约定|排障|故障|知识库|wiki|memory|context|architecture|decision|convention|troubleshoot|previous|history|project notes|knowledge)/i;
+
+function normalizeRouteMode(value: unknown): 'manual' | 'suggest' | 'auto-read' {
+  return value === 'manual' || value === 'auto-read' ? value : 'suggest';
+}
+
+function normalizeRouteScope(value: unknown): 'none' | 'memory' | 'wiki' | 'all' {
+  return value === 'memory' || value === 'wiki' || value === 'all' ? value : 'none';
+}
+
+function shouldRouteKnowledge(message: string, scope: 'none' | 'memory' | 'wiki' | 'all', mode: 'manual' | 'suggest' | 'auto-read', selectedCount: number): { route: boolean; reason: string; query?: string } {
+  const text = message.trim();
+  if (scope === 'none') return { route: false, reason: 'knowledge scope is none' };
+  if (mode === 'manual') return { route: false, reason: 'knowledge mode is manual' };
+  if (selectedCount > 0) return { route: false, reason: 'user selected explicit knowledge references' };
+  if (text.startsWith('/')) return { route: false, reason: 'slash command in progress' };
+  if (text.length < 18) return { route: false, reason: 'message too short for routing' };
+  if (!KNOWLEDGE_INTENT_PATTERN.test(text) && scope !== 'wiki' && scope !== 'all') {
+    return { route: false, reason: 'no project knowledge intent detected' };
+  }
+  return { route: true, reason: 'project knowledge intent detected', query: text.replace(/\s+/g, ' ').slice(0, 180) };
+}
+
+function getRouteSearchRows(value: unknown): Record<string, unknown>[] {
+  const record = isRecord(value) ? value : {};
+  const results = record.results;
+  if (Array.isArray(results)) return results.filter(isRecord) as Record<string, unknown>[];
+  const hits = record.hits;
+  if (Array.isArray(hits)) return hits.filter(isRecord) as Record<string, unknown>[];
+  return [];
+}
+
+function rowNumber(row: Record<string, unknown>, keys: string[], fallback = 0): number {
+  for (const key of keys) {
+    const value = row[key];
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value === 'string') {
+      const parsed = Number(value);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+  }
+  return fallback;
+}
+
+function rowString(row: Record<string, unknown>, keys: string[]): string {
+  for (const key of keys) {
+    const value = row[key];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+}
+
+function routeCandidateFromRow(row: Record<string, unknown>, corpus: 'wiki' | 'memory' | 'all', attachKind: 'suggested' | 'auto', reason: string): KnowledgeRouteCandidate | null {
+  const lookup = rowString(row, ['lookup', 'pagePath', 'path', 'id', 'pageId']);
+  if (!lookup) return null;
+  const title = rowString(row, ['title', 'name', 'pageTitle']) || lookup;
+  const score = rowNumber(row, ['score', 'rank', 'similarity'], 0.7);
+  const confidence = Math.max(0, Math.min(1, score > 1 ? score / 100 : score));
+  const snippet = rowString(row, ['snippet', 'bodyPreview', 'preview', 'text']).slice(0, ROUTER_BUDGET.maxSnippetChars);
+  const freshnessLevel = rowString(row, ['freshnessLevel', 'freshness']);
+  const matchedClaimStatus = rowString(row, ['matchedClaimStatus', 'claimStatus']);
+  return {
+    id: rowString(row, ['id', 'pageId']) || lookup,
+    title,
+    lookup,
+    corpus,
+    attachKind,
+    routingReason: reason,
+    confidence,
+    ...(rowString(row, ['pageId']) ? { pageId: rowString(row, ['pageId']) } : {}),
+    ...(rowString(row, ['pagePath', 'path']) ? { pagePath: rowString(row, ['pagePath', 'path']) } : {}),
+    ...(rowString(row, ['sourcePath']) ? { sourcePath: rowString(row, ['sourcePath']) } : {}),
+    ...(snippet ? { snippet } : {}),
+    ...(score ? { score } : {}),
+    ...(freshnessLevel ? { freshnessLevel } : {}),
+    ...(matchedClaimStatus ? { matchedClaimStatus } : {}),
+  };
+}
+
+function routeCandidatesFromSearch(result: unknown, corpus: 'wiki' | 'memory' | 'all', mode: 'suggest' | 'auto-read', reason: string): KnowledgeRouteCandidate[] {
+  const attachKind = mode === 'auto-read' ? 'auto' : 'suggested';
+  const candidates = getRouteSearchRows(result)
+    .map((row) => routeCandidateFromRow(row, corpus, attachKind, reason))
+    .filter((candidate): candidate is KnowledgeRouteCandidate => Boolean(candidate));
+  const filtered = mode === 'auto-read'
+    ? candidates.filter((candidate) => (
+      candidate.confidence >= 0.55
+      && candidate.freshnessLevel !== 'stale'
+      && candidate.matchedClaimStatus !== 'contradicted'
+    ))
+    : candidates;
+  return filtered.slice(0, ROUTER_BUDGET.maxReferences);
+}
+
 export function createKnowledgeApi({ gatewayManager }: { gatewayManager: GatewayManager }): CompleteHostServiceRegistry['knowledge'] {
   const rpc = <T>(method: string, params: unknown = {}, timeoutMs = 30_000) =>
     gatewayManager.rpc(method, params, timeoutMs) as Promise<T>;
 
+
+  // ── Inbox item helper ──
+  function createInboxItemObject(input: Record<string, unknown>): KnowledgeInboxItem {
+    const timestamp = nowIso();
+    const title = getString(input.title) ?? 'Untitled';
+    const body = getString(input.body) ?? getString(input.description) ?? '';
+    const kind = normalizeInboxKind(input.kind);
+    const sourcePath = getString(input.sourcePath);
+    const sourceRefs: KnowledgeSourceRef[] = sourcePath ? [{ id: sourcePath, kind: 'file', path: sourcePath }] : [];
+    const warnings = Array.from(new Set([
+      ...normalizeStringList(input.warnings),
+      ...rulesGuardWarningsForRefs(sourceRefs),
+      ...(input.requiresReview === false ? ['Automatic knowledge capture is review-gated; direct wiki ingest is disabled for this path.'] : []),
+    ]));
+    const metadata: Record<string, unknown> = { 
+      ...(isRecord(input.metadata) ? input.metadata : {}),
+      ...(sourcePath ? { sourcePath } : {}),
+      ...(sourcePath && isGovernedRulesPath(sourcePath) ? { rulesGuarded: true } : {}),
+    };
+    return {
+      id: `ki_${randomUUID()}`,
+      title,
+      body,
+      kind,
+      type: typeof input.type === 'string' ? normalizeDraftType(input.type) : classifyDraft(title, body),
+      status: 'pending',
+      sourceIds: sourceRefs.map((ref) => ref.id),
+      sourceRefs,
+      tags: normalizeStringList(input.tags),
+      workspaceId: null,
+      agentId: null,
+      createdBy: normalizeDraftActor(input.createdBy),
+      warnings,
+      metadata,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+  }
+
+  // ── Watched Directory Helpers ──
+
+  const WATCHED_DIR_CONFIG_PATH = () => join(getKnowledgeDir(), 'watched-directories.json');
+  const WATCHED_DIR_EVENTS_PATH = (configId: string) => join(getKnowledgeDir(), 'watched-events', `${configId}.jsonl`);
+
+  const watchedStates = new Map<string, { configId: string; watcher: FSWatcher | null; debounceTimer: ReturnType<typeof setTimeout> | null }>();
+
+  async function readWatchedDirConfigs(): Promise<KnowledgeWatchedDirectoryConfig[]> {
+    try {
+      const content = await readFile(WATCHED_DIR_CONFIG_PATH(), 'utf8');
+      const parsed = JSON.parse(content);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  async function writeWatchedDirConfigs(configs: KnowledgeWatchedDirectoryConfig[]): Promise<void> {
+    await mkdir(getKnowledgeDir(), { recursive: true });
+    await writeFile(WATCHED_DIR_CONFIG_PATH(), JSON.stringify(configs, null, 2), 'utf8');
+  }
+
+  async function appendWatchedDirEvent(configId: string, event: Omit<KnowledgeWatchedDirectoryEvent, 'id' | 'timestamp'>): Promise<void> {
+    const eventsDir = dirname(WATCHED_DIR_EVENTS_PATH(configId));
+    await mkdir(eventsDir, { recursive: true });
+    const line = JSON.stringify({ ...event, id: `we_${randomUUID()}`, timestamp: nowIso() }) + '\n';
+    await appendFile(WATCHED_DIR_EVENTS_PATH(configId), line, 'utf8');
+  }
+
+  async function readWatchedDirEvents(configId: string): Promise<KnowledgeWatchedDirectoryEvent[]> {
+    try {
+      const content = await readFile(WATCHED_DIR_EVENTS_PATH(configId), 'utf8');
+      return content.trim().split('\n').filter(Boolean).map(line => JSON.parse(line));
+    } catch {
+      return [];
+    }
+  }
+
+  function stopWatching(configId: string): void {
+    const state = watchedStates.get(configId);
+    if (!state) return;
+    if (state.debounceTimer) clearTimeout(state.debounceTimer);
+    if (state.watcher) {
+      try { state.watcher.close(); } catch {}
+    }
+    watchedStates.delete(configId);
+  }
+
+  function startWatching(config: KnowledgeWatchedDirectoryConfig): void {
+    if (!config.enabled) return;
+    
+    // Close existing watcher for this config
+    stopWatching(config.id);
+
+    try {
+      const watcher = fsWatch(config.path, { recursive: true }, (eventType, filename) => {
+        if (!filename || !config.enabled) return;
+
+        const filenameStr = filename.toString();
+        const matchesPattern = config.patterns.some(p => {
+          if (p === '**/*.md') return filenameStr.endsWith('.md');
+          if (p.startsWith('**/')) return filenameStr.endsWith(p.slice(3));
+          return filenameStr.includes(p);
+        });
+        if (!matchesPattern) return;
+
+        // Debounce
+        const state = watchedStates.get(config.id);
+        if (state?.debounceTimer) clearTimeout(state.debounceTimer);
+        
+        const timer = setTimeout(async () => {
+          try {
+            if (eventType === 'rename') {
+              const fullPath = join(config.path, filenameStr);
+              try {
+                await stat(fullPath);
+                // File exists - automatic capture is always review-gated.
+                if (config.ingestNewFiles) {
+                  const content = await readFile(fullPath, 'utf8');
+                  const inboxItem = createInboxItemObject({
+                    kind: 'file',
+                    title: basename(filenameStr),
+                    description: `Auto-detected from watched directory: ${config.path}`,
+                    sourcePath: fullPath,
+                    body: content,
+                    createdBy: 'system',
+                    requiresReview: config.requiresReview,
+                    metadata: { watchedConfigId: config.id },
+                  });
+                  await writeInboxItem(inboxItem);
+                  await appendAudit({
+                    type: 'inbox_created',
+                    inboxId: inboxItem.id,
+                    kind: inboxItem.kind,
+                    createdBy: 'system',
+                    watchedConfigId: config.id,
+                    rulesGuarded: isGovernedRulesPath(fullPath),
+                  });
+
+                  await appendWatchedDirEvent(config.id, {
+                    configId: config.id,
+                    event: 'ingested',
+                    filePath: fullPath,
+                    detail: 'added to inbox pending review; automatic direct wiki ingest is disabled',
+                  });
+                }
+              } catch {
+                // File deleted — just log
+                await appendWatchedDirEvent(config.id, {
+                  configId: config.id,
+                  event: 'skipped',
+                  filePath: fullPath,
+                  detail: 'file deleted; no action taken',
+                });
+              }
+            }
+            
+            // Auto compile is skipped because watched-directory changes do not
+            // mutate formal wiki pages until explicit review applies them.
+            if (config.autoCompile) {
+              await appendWatchedDirEvent(config.id, {
+                configId: config.id,
+                event: 'skipped',
+                filePath: filenameStr,
+                detail: 'auto compile skipped until reviewed knowledge is applied',
+              });
+            }
+          } catch (err) {
+            await appendWatchedDirEvent(config.id, {
+              configId: config.id,
+              event: 'error',
+              filePath: filenameStr,
+              detail: err instanceof Error ? err.message : String(err),
+            });
+          }
+        }, 5000); // 5 second debounce
+
+        watchedStates.set(config.id, { configId: config.id, watcher: state?.watcher ?? null, debounceTimer: timer });
+      });
+
+      watchedStates.set(config.id, { configId: config.id, watcher, debounceTimer: null });
+    } catch (err) {
+      // watcher failed to start — log but don't crash
+      console.error(`[knowledge-api] Failed to watch directory: ${config.path}`, err);
+    }
+  }
+
+  // Initialize watchers for persisted configs on module load
+  (async () => {
+    try {
+      const configs = await readWatchedDirConfigs();
+      for (const config of configs) {
+        if (config.enabled) startWatching(config);
+      }
+    } catch {}
+  })();
   return {
     status: async () => {
       try {
@@ -1106,7 +1434,7 @@ export function createKnowledgeApi({ gatewayManager }: { gatewayManager: Gateway
         await rpc('config.patch', {
           raw: JSON.stringify(patch),
           ...(snapshot.hash ? { baseHash: snapshot.hash } : {}),
-          note: 'Enable and configure ClawX Knowledge Hub memory-wiki defaults.',
+          note: 'Enable and configure Verse Claw Knowledge Hub memory-wiki defaults.',
         }, 30_000);
         return { success: true };
       } catch (error) {
@@ -1697,6 +2025,68 @@ export function createKnowledgeApi({ gatewayManager }: { gatewayManager: Gateway
       return { success: true, config: DEFAULT_STEWARD_CONFIG, ...review };
     },
 
+    routeContext: async (payload: KnowledgeRouteContextPayload): Promise<KnowledgeRouteContextResult> => {
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+      const message = getString(body.message) ?? '';
+      const scope = normalizeRouteScope(body.scope);
+      const mode = normalizeRouteMode(body.mode);
+      const selectedReferences = Array.isArray(body.selectedReferences)
+        ? body.selectedReferences.filter(isRecord) as ChatKnowledgeReference[]
+        : [];
+      const decision = shouldRouteKnowledge(message, scope, mode, selectedReferences.length);
+      if (!decision.route || !decision.query || mode === 'manual') {
+        return {
+          success: true,
+          decision: 'skip',
+          reason: decision.reason,
+          candidates: [],
+          budget: ROUTER_BUDGET,
+        };
+      }
+
+      try {
+        const corpus = scope === 'memory' ? 'memory' : scope === 'all' ? 'all' : 'wiki';
+        const result = await rpc<Record<string, unknown>>('wiki.search', {
+          query: decision.query,
+          maxResults: ROUTER_BUDGET.maxReferences,
+          corpus,
+        }, 30_000);
+        const candidates = routeCandidatesFromSearch(result, corpus, mode, decision.reason);
+        const routeDecision = mode === 'auto-read' && candidates.length > 0
+          ? 'auto_attach'
+          : candidates.length > 0
+            ? 'suggest'
+            : 'skip';
+        await appendAudit({
+          type: 'knowledge_route_context',
+          mode,
+          scope,
+          decision: routeDecision,
+          query: decision.query,
+          candidates: candidates.length,
+          sessionKey: getString(body.sessionKey),
+          workspaceId: typeof body.workspaceId === 'string' ? body.workspaceId : null,
+        });
+        return {
+          success: true,
+          decision: routeDecision,
+          reason: candidates.length > 0 ? decision.reason : 'no relevant knowledge candidates found',
+          query: decision.query,
+          candidates,
+          budget: ROUTER_BUDGET,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+          decision: 'skip',
+          reason: 'knowledge routing search failed',
+          candidates: [],
+          budget: ROUTER_BUDGET,
+        };
+      }
+    },
+
     recordKnowledgeReference: async (payload) => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
       const targetId = getString(body.targetId);
@@ -1743,6 +2133,202 @@ export function createKnowledgeApi({ gatewayManager }: { gatewayManager: Gateway
       const targetKind = normalizeProvenanceTargetKind(body.targetKind);
       const record = await readProvenance(targetKind, targetId);
       return { success: true, ...(record ? { record } : {}) };
+    },
+
+
+    governanceAudit: async (): Promise<KnowledgeGovernanceResult> => {
+      let compileResult: KnowledgeCompileResult | null = null;
+      let lintResult: KnowledgeLintResult | null = null;
+      try {
+        compileResult = await rpc<any>('wiki.compile', {}, 120_000);
+      } catch {}
+      try {
+        lintResult = await rpc<any>('wiki.lint', {}, 60_000);
+      } catch {}
+
+      const issues: KnowledgeGovernanceIssue[] = [];
+      const summaries = { contradictions: 0, stale: 0, dangling: 0, duplicates: 0, provenanceGaps: 0 };
+      const now = nowIso();
+
+      // Extract contradictions from compile result
+      if (compileResult?.contradictionClusters) {
+        const clusters = Array.isArray(compileResult.contradictionClusters) ? compileResult.contradictionClusters as unknown[] : [];
+        for (const cluster of clusters) {
+          const ids = (Array.isArray((cluster as any).claimIds) ? (cluster as any).claimIds : []).filter(Boolean);
+          summaries.contradictions++;
+          issues.push({
+            id: `gov_contradiction_${summaries.contradictions}`,
+            category: 'contradiction',
+            severity: 'error',
+            title: typeof (cluster as any).topic === 'string' ? (cluster as any).topic : 'Contradictory claims',
+            description: typeof (cluster as any).description === 'string' ? (cluster as any).description : `${ids.length} contradictory claim(s) detected`,
+            affectedPageIds: ids as string[],
+            affectedPagePaths: ids as string[],
+            detectedAt: now,
+          });
+        }
+      }
+
+      // Extract stale/outdated signals from compile result
+      if (compileResult?.freshnessReports) {
+        const freshReports = Array.isArray(compileResult.freshnessReports) ? compileResult.freshnessReports as unknown[] : [];
+        for (const report of freshReports) {
+          summaries.stale++;
+          issues.push({
+            id: `gov_stale_${summaries.stale}`,
+            category: 'stale',
+            severity: 'warning',
+            title: getString((report as any).pageTitle) ?? 'Stale knowledge',
+            description: getString((report as any).reason) ?? `Last updated ${getString((report as any).lastUpdated) ?? 'unknown'}`,
+            affectedPageIds: [getString((report as any).pageId) ?? ''].filter(Boolean),
+            affectedPagePaths: [getString((report as any).pagePath) ?? ''].filter(Boolean),
+            detectedAt: now,
+          });
+        }
+      }
+
+      // Extract provenance gaps from lint result
+      if (lintResult?.provenanceGaps) {
+        const gaps = Array.isArray(lintResult.provenanceGaps) ? lintResult.provenanceGaps as unknown[] : [];
+        for (const gap of gaps) {
+          summaries.provenanceGaps++;
+          issues.push({
+            id: `gov_provenance_${summaries.provenanceGaps}`,
+            category: 'provenance_gap',
+            severity: 'warning',
+            title: getString((gap as any).pageTitle) ?? 'Missing provenance',
+            description: getString((gap as any).description) ?? 'No evidence chain found',
+            affectedPageIds: [getString((gap as any).pageId) ?? ''].filter(Boolean),
+            affectedPagePaths: [getString((gap as any).pagePath) ?? ''].filter(Boolean),
+            detectedAt: now,
+          });
+        }
+      }
+
+      // Extract dangling/duplicate from lint result
+      if (lintResult?.danglingPages) {
+        const dangling = Array.isArray(lintResult.danglingPages) ? lintResult.danglingPages as unknown[] : [];
+        for (const d of dangling) {
+          summaries.dangling++;
+          issues.push({
+            id: `gov_dangling_${summaries.dangling}`,
+            category: 'dangling',
+            severity: 'info',
+            title: getString((d as any).pageTitle) ?? 'Isolated page',
+            description: getString((d as any).description) ?? 'No incoming or outgoing links',
+            affectedPageIds: [getString((d as any).pageId) ?? ''].filter(Boolean),
+            affectedPagePaths: [getString((d as any).pagePath) ?? ''].filter(Boolean),
+            detectedAt: now,
+          });
+        }
+      }
+
+      if (lintResult?.duplicates) {
+        const dups = Array.isArray(lintResult.duplicates) ? lintResult.duplicates as unknown[] : [];
+        for (const dup of dups) {
+          summaries.duplicates++;
+          issues.push({
+            id: `gov_duplicate_${summaries.duplicates}`,
+            category: 'duplicate',
+            severity: 'warning',
+            title: getString((dup as any).topic) ?? 'Duplicate content',
+            description: getString((dup as any).description) ?? `${(Array.isArray((dup as any).pageIds) ? (dup as any).pageIds : []).length} pages with overlapping content`,
+            affectedPageIds: (Array.isArray((dup as any).pageIds) ? (dup as any).pageIds : []) as string[],
+            affectedPagePaths: (Array.isArray((dup as any).pageIds) ? (dup as any).pageIds : []) as string[],
+            detectedAt: now,
+          });
+        }
+      }
+
+      // Sort: errors first, then warnings, then info
+      const severityOrder: Record<string, number> = { error: 0, warning: 1, info: 2 };
+      issues.sort((a, b) => (severityOrder[a.severity] ?? 9) - (severityOrder[b.severity] ?? 9));
+
+      await appendAudit({ type: 'governance_audit', issues: issues.length, contradictions: summaries.contradictions, stale: summaries.stale, dangling: summaries.dangling, duplicates: summaries.duplicates, provenanceGaps: summaries.provenanceGaps });
+      return { success: true, runAt: now, issues, summaries };
+    },
+
+    listWatchedDirectories: async (): Promise<KnowledgeWatchedDirectoryConfig[]> => {
+      try {
+        const configs = await readWatchedDirConfigs();
+        return configs;
+      } catch {
+        return [];
+      }
+    },
+
+    addWatchedDirectory: async (config: KnowledgeWatchedDirectoryConfig): Promise<HostSuccess> => {
+      const rawPath = getString(config.path);
+      if (!rawPath) return { success: false, error: 'path is required' };
+      const path = resolve(expandPath(rawPath));
+      if (!existsSync(path)) return { success: false, error: `path does not exist: ${path}` };
+
+      const configs = await readWatchedDirConfigs();
+      if (configs.length >= 10) return { success: false, error: 'maximum 10 watched directories allowed' };
+      if (configs.some(c => c.path === path)) return { success: false, error: `directory already watched: ${path}` };
+
+      const newConfig: KnowledgeWatchedDirectoryConfig = {
+        id: `wd_${randomUUID()}`,
+        path,
+        patterns: Array.isArray(config.patterns) && config.patterns.length > 0 ? config.patterns : ['**/*.md'],
+        enabled: config.enabled !== false,
+        ingestNewFiles: config.ingestNewFiles !== false,
+        autoCompile: config.autoCompile !== false,
+        requiresReview: true,
+      };
+
+      configs.push(newConfig);
+      await writeWatchedDirConfigs(configs);
+      startWatching(newConfig);
+      await appendAudit({ type: 'watched_directory_added', configId: newConfig.id, path });
+      return { success: true };
+    },
+
+    updateWatchedDirectory: async ({ id, config: updates }: { id: string; config: Partial<KnowledgeWatchedDirectoryConfig> }): Promise<HostSuccess> => {
+      const configs = await readWatchedDirConfigs();
+      const idx = configs.findIndex(c => c.id === id);
+      if (idx === -1) return { success: false, error: 'watched directory not found: ' + id };
+
+      const normalizedPath = updates.path ? resolve(expandPath(updates.path)) : undefined;
+      const updated = { ...configs[idx], ...updates, ...(normalizedPath ? { path: normalizedPath } : {}), id, requiresReview: true };
+      if (normalizedPath && !existsSync(normalizedPath)) return { success: false, error: `path does not exist: ${normalizedPath}` };
+      
+      configs[idx] = updated;
+      await writeWatchedDirConfigs(configs);
+
+      // Restart watcher if path, patterns, or enabled changed
+      if (updates.path !== undefined || updates.enabled !== undefined || updates.patterns !== undefined) {
+        stopWatching(id);
+        if (updated.enabled) startWatching(updated);
+      }
+
+      await appendAudit({ type: 'watched_directory_updated', configId: id });
+      return { success: true };
+    },
+
+    removeWatchedDirectory: async ({ id }: { id: string }): Promise<HostSuccess> => {
+      const configs = await readWatchedDirConfigs();
+      const idx = configs.findIndex(c => c.id === id);
+      if (idx === -1) return { success: false, error: `watched directory not found: ${id}` };
+
+      configs.splice(idx, 1);
+      await writeWatchedDirConfigs(configs);
+      stopWatching(id);
+      await appendAudit({ type: 'watched_directory_removed', configId: id });
+      return { success: true };
+    },
+
+    listWatchedDirectoryEvents: async (payload: KnowledgeListWatchedDirectoryEventsPayload): Promise<KnowledgeWatchedDirectoryEvent[]> => {
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+      const configId = getString(body.configId);
+      const limit = typeof body.limit === 'number' ? body.limit : 50;
+      try {
+        const events = await readWatchedDirEvents(configId ?? '');
+        const sliced = events.slice(-Math.max(1, Math.min(limit, 500)));
+        return sliced;
+      } catch {
+        return [];
+      }
     },
   };
 }

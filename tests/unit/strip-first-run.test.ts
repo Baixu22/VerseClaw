@@ -19,10 +19,10 @@ vi.mock('os', async () => {
 });
 
 import {
-  ensureClawXContext,
-  ensureClawXDefaultIdentity,
-  ensureClawXIdentityFile,
-  mergeClawXSection,
+  ensureVerseClawContext,
+  ensureVerseClawDefaultIdentity,
+  ensureVerseClawIdentityFile,
+  mergeVerseClawSection,
   stripFirstRunSection,
 } from '../../electron/utils/openclaw-workspace';
 
@@ -133,9 +133,9 @@ describe('stripFirstRunSection', () => {
 
   it('still changes AGENTS content when only First Run is removed', () => {
     const section = [
-      '## ClawX Environment',
+      '## Verse Claw Environment',
       '',
-      'You are ClawX.',
+      'You are Verse Claw.',
     ].join('\n');
     const original = [
       '# AGENTS.md',
@@ -149,15 +149,15 @@ describe('stripFirstRunSection', () => {
       'Read SOUL.md first.',
       '',
       '<!-- clawx:begin -->',
-      '## ClawX Environment',
+      '## Verse Claw Environment',
       '',
-      'You are ClawX.',
+      'You are Verse Claw.',
       '<!-- clawx:end -->',
       '',
     ].join('\n');
 
     const stripped = stripFirstRunSection(original);
-    const merged = mergeClawXSection(stripped, section);
+    const merged = mergeVerseClawSection(stripped, section);
 
     expect(merged).not.toBe(original);
     expect(merged).not.toContain('## First Run');
@@ -167,17 +167,17 @@ describe('stripFirstRunSection', () => {
   });
 });
 
-describe('ensureClawXIdentityFile', () => {
-  it('writes a default ClawX identity when the workspace has none', async () => {
+describe('ensureVerseClawIdentityFile', () => {
+  it('writes a default Verse Claw identity when the workspace has none', async () => {
     const workspaceDir = join(testHome, '.openclaw', 'workspace');
     await mkdir(workspaceDir, { recursive: true });
 
-    await ensureClawXIdentityFile(workspaceDir);
+    await ensureVerseClawIdentityFile(workspaceDir);
 
-    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('ClawX');
-    await expect(readFile(join(workspaceDir, '.clawx', 'harness', 'README.md'), 'utf-8')).resolves.toContain('ClawX Agent Harness');
-    await expect(readFile(join(workspaceDir, '.clawx', 'harness', 'specs', 'tasks', '_template.md'), 'utf-8')).resolves.toContain('type: task');
-    await expect(readFile(join(workspaceDir, '.clawx', 'harness', 'workspace', 'task-index.md'), 'utf-8')).resolves.toContain('Task Ledger Bridge');
+    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('Verse Claw');
+    await expect(readFile(join(workspaceDir, '.verse-claw', 'harness', 'README.md'), 'utf-8')).resolves.toContain('Verse Claw Agent Harness');
+    await expect(readFile(join(workspaceDir, '.verse-claw', 'harness', 'specs', 'tasks', '_template.md'), 'utf-8')).resolves.toContain('type: task');
+    await expect(readFile(join(workspaceDir, '.verse-claw', 'harness', 'workspace', 'task-index.md'), 'utf-8')).resolves.toContain('Task Ledger Bridge');
   });
 
   it('replaces the untouched OpenClaw identity template but preserves custom identities', async () => {
@@ -198,17 +198,17 @@ describe('ensureClawXIdentityFile', () => {
         '- **Vibe:**',
         '  _(how do you come across? sharp? warm? chaotic? calm?)_',
         '- **Emoji:**',
-        '  _(your signature â€” pick one that feels right)_',
+        '  _(your signature â€?pick one that feels right)_',
       ].join('\n'),
       'utf-8',
     );
 
-    await ensureClawXIdentityFile(workspaceDir);
-    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('ClawX');
+    await ensureVerseClawIdentityFile(workspaceDir);
+    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('Verse Claw');
     await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.not.toContain('pick something you like');
 
     await writeFile(join(workspaceDir, 'IDENTITY.md'), '# IDENTITY.md\n\n- **Name:** Paisley\n', 'utf-8');
-    await ensureClawXIdentityFile(workspaceDir);
+    await ensureVerseClawIdentityFile(workspaceDir);
     await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toBe('# IDENTITY.md\n\n- **Name:** Paisley\n');
   });
 
@@ -217,35 +217,35 @@ describe('ensureClawXIdentityFile', () => {
     await mkdir(workspaceDir, { recursive: true });
     await writeFile(join(workspaceDir, 'BOOTSTRAP.md'), 'chat-first bootstrap', 'utf-8');
 
-    await ensureClawXIdentityFile(workspaceDir);
+    await ensureVerseClawIdentityFile(workspaceDir);
 
     await expect(access(join(workspaceDir, 'BOOTSTRAP.md'))).rejects.toThrow();
-    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('ClawX');
+    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('Verse Claw');
   });
 
-  it('preserves existing ClawX harness files while filling missing templates', async () => {
+  it('preserves existing Verse Claw harness files while filling missing templates', async () => {
     const workspaceDir = join(testHome, '.openclaw', 'workspace');
-    const harnessDir = join(workspaceDir, '.clawx', 'harness');
+    const harnessDir = join(workspaceDir, '.verse-claw', 'harness');
     await mkdir(harnessDir, { recursive: true });
     await writeFile(join(harnessDir, 'README.md'), '# Custom Harness\n', 'utf-8');
 
-    await ensureClawXIdentityFile(workspaceDir);
+    await ensureVerseClawIdentityFile(workspaceDir);
 
     await expect(readFile(join(harnessDir, 'README.md'), 'utf-8')).resolves.toBe('# Custom Harness\n');
     await expect(readFile(join(harnessDir, 'workspace', 'schema.md'), 'utf-8')).resolves.toContain('Workspace Journal Schema');
   });
 });
 
-describe('ensureClawXDefaultIdentity', () => {
+describe('ensureVerseClawDefaultIdentity', () => {
   it('creates the default workspace and seeds IDENTITY.md for startup-owned workspaces', async () => {
-    await ensureClawXDefaultIdentity();
+    await ensureVerseClawDefaultIdentity();
 
-    await expect(readFile(join(testHome, '.openclaw', 'workspace', 'IDENTITY.md'), 'utf-8')).resolves.toContain('ClawX');
-    await expect(readFile(join(testHome, '.openclaw', 'workspace', '.clawx', 'harness', 'README.md'), 'utf-8')).resolves.toContain('ClawX Agent Harness');
+    await expect(readFile(join(testHome, '.openclaw', 'workspace', 'IDENTITY.md'), 'utf-8')).resolves.toContain('Verse Claw');
+    await expect(readFile(join(testHome, '.openclaw', 'workspace', '.verse-claw', 'harness', 'README.md'), 'utf-8')).resolves.toContain('Verse Claw Agent Harness');
   });
 });
 
-describe('ensureClawXContext', () => {
+describe('ensureVerseClawContext', () => {
   it('does not wait for missing files in non-default agent workspaces', async () => {
     const openclawDir = join(testHome, '.openclaw');
     const defaultWorkspace = join(openclawDir, 'workspace-main');
@@ -266,13 +266,13 @@ describe('ensureClawXContext', () => {
     );
 
     const result = await Promise.race([
-      ensureClawXContext().then(() => 'done'),
+      ensureVerseClawContext().then(() => 'done'),
       new Promise((resolve) => setTimeout(() => resolve('timeout'), 200)),
     ]);
 
     expect(result).toBe('done');
-    await expect(readFile(join(defaultWorkspace, 'AGENTS.md'), 'utf-8')).resolves.toContain('## ClawX Environment');
-    await expect(readFile(join(defaultWorkspace, 'TOOLS.md'), 'utf-8')).resolves.toContain('## ClawX Tool Notes');
+    await expect(readFile(join(defaultWorkspace, 'AGENTS.md'), 'utf-8')).resolves.toContain('## Verse Claw Environment');
+    await expect(readFile(join(defaultWorkspace, 'TOOLS.md'), 'utf-8')).resolves.toContain('## Verse Claw Tool Notes');
     await expect(access(join(agentWorkspace, 'AGENTS.md'))).rejects.toThrow();
     await expect(access(join(agentWorkspace, 'TOOLS.md'))).rejects.toThrow();
   });
@@ -292,7 +292,7 @@ describe('ensureClawXContext', () => {
     );
 
     const result = await Promise.race([
-      ensureClawXContext().then(() => 'done'),
+      ensureVerseClawContext().then(() => 'done'),
       new Promise((resolve) => setTimeout(() => resolve('timeout'), 200)),
     ]);
 

@@ -43,33 +43,74 @@ async function installHostInvokeRecorder(app: ElectronApplication) {
     const previous = handlers?.get('host:invoke');
     if (!previous) return;
     (globalThis as unknown as {
-      __clawxWorkModeRequests?: Array<Record<string, unknown>>;
-      __clawxSettingsRequests?: Array<Record<string, unknown>>;
       __clawxLastChatPayload?: unknown;
-    }).__clawxWorkModeRequests = [];
-    (globalThis as unknown as {
-      __clawxSettingsRequests?: Array<Record<string, unknown>>;
-    }).__clawxSettingsRequests = [];
+    }).__clawxLastChatPayload = undefined;
     ipcMain.removeHandler('host:invoke');
     ipcMain.handle('host:invoke', async (event, request: Record<string, unknown>) => {
       const module = request.module;
       const action = request.action;
       const payload = request.payload as Record<string, unknown> | undefined;
       if (module === 'workspaces' && action === 'saveState') {
-        (globalThis as unknown as { __clawxWorkModeRequests: Array<Record<string, unknown>> }).__clawxWorkModeRequests.push({
-          module,
-          action,
-          payload,
-        });
         return { id: request.id as string | undefined, ok: true, data: { success: true } };
       }
-      if (module === 'settings' && action === 'set') {
-        (globalThis as unknown as { __clawxSettingsRequests: Array<Record<string, unknown>> }).__clawxSettingsRequests.push({
-          module,
-          action,
-          payload,
-        });
-        return { id: request.id as string | undefined, ok: true, data: { success: true } };
+      if (module === 'workProviders' && action === 'status') {
+        return {
+          id: request.id as string | undefined,
+          ok: true,
+          data: {
+            success: true,
+            providers: [],
+            capabilities: [],
+            kitCapabilities: [
+              {
+                kit: 'reports',
+                capability: 'document.write',
+                providerIds: ['office-document-js'],
+                statuses: ['ready'],
+                sourceKinds: ['builtInLibrary'],
+              },
+              {
+                kit: 'sheets',
+                capability: 'sheet.read',
+                providerIds: ['office-sheet-js'],
+                statuses: ['ready'],
+                sourceKinds: ['builtInLibrary'],
+              },
+              {
+                kit: 'slides',
+                capability: 'slide.write',
+                providerIds: ['office-slide-js'],
+                statuses: ['ready'],
+                sourceKinds: ['builtInLibrary'],
+              },
+              {
+                kit: 'pdf',
+                capability: 'pdf.validate',
+                providerIds: ['pdf-js'],
+                statuses: ['ready'],
+                sourceKinds: ['builtInLibrary'],
+              },
+            ],
+            summary: {
+              ready: 4,
+              missingDependency: 0,
+              missingConfig: 0,
+              disabled: 0,
+              externalUnavailable: 0,
+              runtimeUnavailable: 0,
+            },
+            sourceSummary: {
+              builtInLibrary: 4,
+              optionalPackage: 0,
+              externalBinary: 0,
+              externalService: 0,
+              customHttp: 0,
+              runtimeSkill: 0,
+              mcpServer: 0,
+              openClawPlugin: 0,
+            },
+          },
+        };
       }
       if (module === 'chat' && action === 'sendWithMedia') {
         (globalThis as unknown as { __clawxLastChatPayload?: unknown }).__clawxLastChatPayload = payload;
@@ -80,24 +121,8 @@ async function installHostInvokeRecorder(app: ElectronApplication) {
   });
 }
 
-async function openChatFromNativeMenu(app: ElectronApplication) {
-  await app.evaluate(({ BrowserWindow, Menu }) => {
-    const menu = Menu.getApplicationMenu();
-    const findMenuItem = (items: Electron.MenuItem[]): Electron.MenuItem | undefined => {
-      for (const item of items) {
-        if (item.id === 'new-chat') return item;
-        const child = item.submenu ? findMenuItem(item.submenu.items) : undefined;
-        if (child) return child;
-      }
-      return undefined;
-    };
-    const newChatItem = menu ? findMenuItem(menu.items) : undefined;
-    newChatItem?.click(undefined, BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0], undefined);
-  });
-}
-
-test.describe('ClawX chat work mode', () => {
-  test('switches work modes without changing permission mode and sends selected workMode', async ({ launchElectronApp }) => {
+test.describe('Verse Claw chat without Work Mode', () => {
+  test('hides Work Mode UI and sends payload without workMode', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -148,6 +173,18 @@ test.describe('ClawX chat work mode', () => {
             },
           },
           [stableStringify(['workspaces', 'list', null])]: WORKSPACE_SNAPSHOT,
+          [stableStringify(['taskLedger', 'snapshot', { workspaceId: WORKSPACE.id }])]: {
+            snapshot: {
+              workspaceId: WORKSPACE.id,
+              nodes: [],
+              edges: [],
+              eventsCount: 0,
+              activeNodeIds: [],
+              blockedNodeIds: [],
+              reviewNodeIds: [],
+              recentDecisions: [],
+            },
+          },
           [stableStringify(['/api/skills/quick-access', 'POST'])]: {
             ok: true,
             data: {
@@ -163,47 +200,25 @@ test.describe('ClawX chat work mode', () => {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-work-mode-button')).toHaveCount(0);
-
-      await page.getByTestId('sidebar-nav-settings').click();
-      await page.getByTestId('settings-nav-work-modes').click();
-      await expect(page.getByTestId('settings-work-modes-section')).toBeVisible();
-      await page.getByTestId('settings-work-mode-plan').click();
-      await page.getByTestId('settings-work-mode-kit-docsData-sheets').click();
-
-      const savedWorkKitConfig = await app.evaluate(() => {
-        const requests = (globalThis as unknown as { __clawxSettingsRequests?: Array<{ payload?: { key?: string; value?: { docsData?: string[] } } }> }).__clawxSettingsRequests ?? [];
-        return requests.some((entry) => entry.payload?.key === 'workModeKits' && !entry.payload.value?.docsData?.includes('sheets'));
-      });
-      expect(savedWorkKitConfig).toBe(true);
-
-      await openChatFromNativeMenu(app);
-      await expect(page.getByTestId('chat-composer-input')).toBeVisible();
-      await expect(page.getByTestId('work-mode-summary-panel')).toContainText('Planning mode');
-
-      const savedPlanMode = await app.evaluate(() => {
-        const requests = (globalThis as unknown as { __clawxWorkModeRequests?: Array<{ payload?: { state?: { workMode?: string } } }> }).__clawxWorkModeRequests ?? [];
-        return requests.some((entry) => entry.payload?.state?.workMode === 'plan');
-      });
-      expect(savedPlanMode).toBe(true);
+      await expect(page.getByTestId('work-mode-summary-panel')).toHaveCount(0);
+      await expect(page.getByTestId('chat-agent-effort-button')).toBeVisible();
 
       await page.getByTestId('chat-composer-workspace-actions').click();
       await expect(page.getByTestId('chat-composer-permission-option-acceptEdits')).toBeVisible();
       await page.keyboard.press('Escape');
 
-      await page.getByTestId('sidebar-nav-settings').click();
-      await page.getByTestId('settings-nav-work-modes').click();
-      await expect(page.getByTestId('settings-work-modes-section')).toBeVisible();
-      await page.getByTestId('settings-work-mode-docsData').click();
-      await openChatFromNativeMenu(app);
-      await expect(page.getByTestId('chat-composer-input')).toBeVisible();
-      await expect(page.getByTestId('work-mode-summary-panel')).toContainText('Docs/Data mode');
-
       await page.getByTestId('chat-composer-input').fill('Summarize this spreadsheet');
       await page.getByTitle('Send').click();
+      await expect(page.getByTestId('work-mode-summary-panel')).toHaveCount(0);
 
       await expect.poll(async () => await app.evaluate(() => (
-        (globalThis as unknown as { __clawxLastChatPayload?: { workMode?: string } }).__clawxLastChatPayload?.workMode
-      ))).toBe('docsData');
+        Boolean((globalThis as unknown as { __clawxLastChatPayload?: unknown }).__clawxLastChatPayload)
+      ))).toBe(true);
+      const payload = await app.evaluate(() => (
+        (globalThis as unknown as { __clawxLastChatPayload?: Record<string, unknown> }).__clawxLastChatPayload ?? null
+      ));
+      expect(payload).toMatchObject({ message: 'Summarize this spreadsheet' });
+      expect(payload).not.toHaveProperty('workMode');
     } finally {
       await closeElectronApp(app);
     }

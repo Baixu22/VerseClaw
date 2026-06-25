@@ -192,11 +192,11 @@ async function dispatchSyntheticCommand(params: {
 }
 
 // Feishu's im.chat.get returns two fields:
-//   chat_mode: conversation type â€” "p2p" | "group" | "topic"
-//   chat_type: privacy classification â€” "private" | "public"
+//   chat_mode: conversation type â€?"p2p" | "group" | "topic"
+//   chat_type: privacy classification â€?"private" | "public"
 // We check chat_mode first because it directly indicates conversation type.
 // "private" maps to "p2p" as the safe-failure direction (restrictive DM
-// policy) â€” a private group chat misclassified as p2p is safer than the
+// policy) â€?a private group chat misclassified as p2p is safer than the
 // reverse. "topic" and "public" are treated as group semantics.
 function normalizeResolvedCardActionChatType(value: unknown): "p2p" | "group" | undefined {
   if (value === "group" || value === "topic" || value === "public") {

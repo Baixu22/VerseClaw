@@ -200,6 +200,129 @@ describe('task ledger service', () => {
     expect(snapshot.reviewNodeIds).toContain('review-1');
   });
 
+  it('projects long-task root children for checkpoints decisions deviations evidence and review', () => {
+    const events: TaskLedgerEvent[] = [
+      event({
+        id: 'root',
+        type: 'node_created',
+        payload: {
+          node: {
+            id: 'tlroot_1',
+            title: 'Ship /loop persistence',
+            kind: 'goal',
+            status: 'doing',
+            parentId: null,
+            tags: ['long-task', 'task_loop'],
+            metadata: { taskLedgerRootId: 'tlroot_1' },
+            createdAt: baseTime,
+            updatedAt: baseTime,
+          },
+        },
+      }),
+      event({
+        id: 'checkpoint',
+        type: 'node_created',
+        taskId: 'check-1',
+        payload: {
+          node: {
+            id: 'check-1',
+            title: 'Checkpoint: guide',
+            kind: 'check',
+            status: 'doing',
+            parentId: 'tlroot_1',
+            tags: ['long-task', 'checkpoint'],
+            evidenceRefs: [{ type: 'other', ref: 'tlroot_1', label: 'Task Ledger root' }],
+            metadata: { taskLedgerRootId: 'tlroot_1' },
+            createdAt: baseTime,
+            updatedAt: baseTime,
+          },
+        },
+      }),
+      event({
+        id: 'decision',
+        type: 'decision_recorded',
+        taskId: 'decision-1',
+        payload: {
+          decision: 'Restart from revised goal',
+          node: {
+            id: 'decision-1',
+            title: 'Restart from revised goal',
+            kind: 'decision',
+            status: 'done',
+            parentId: 'tlroot_1',
+            metadata: { taskLedgerRootId: 'tlroot_1' },
+            createdAt: baseTime,
+            updatedAt: baseTime,
+          },
+        },
+      }),
+      event({
+        id: 'deviation',
+        type: 'deviation_logged',
+        taskId: 'deviation-1',
+        payload: {
+          deviation: 'User revised the goal',
+          node: {
+            id: 'deviation-1',
+            title: 'User revised the goal',
+            kind: 'deviation',
+            status: 'review',
+            parentId: 'tlroot_1',
+            metadata: { taskLedgerRootId: 'tlroot_1' },
+            createdAt: baseTime,
+            updatedAt: baseTime,
+          },
+        },
+      }),
+      event({
+        id: 'evidence',
+        type: 'node_created',
+        taskId: 'evidence-1',
+        payload: {
+          node: {
+            id: 'evidence-1',
+            title: 'session evidence',
+            kind: 'check',
+            status: 'done',
+            parentId: 'tlroot_1',
+            tags: ['long-task', 'evidence'],
+            metadata: { taskLedgerRootId: 'tlroot_1' },
+            createdAt: baseTime,
+            updatedAt: baseTime,
+          },
+        },
+      }),
+      event({
+        id: 'review-node',
+        type: 'node_created',
+        taskId: 'review-1',
+        payload: {
+          node: {
+            id: 'review-1',
+            title: 'manual review needed',
+            kind: 'review',
+            status: 'review',
+            parentId: 'tlroot_1',
+            metadata: { taskLedgerRootId: 'tlroot_1' },
+            createdAt: baseTime,
+            updatedAt: baseTime,
+          },
+        },
+      }),
+    ];
+
+    const snapshot = projectTaskLedgerSnapshot(workspaceId, events);
+
+    expect(snapshot.rootNodeIds).toEqual(['tlroot_1']);
+    expect(snapshot.nodes.filter((node) => node.parentId === 'tlroot_1').map((node) => node.kind))
+      .toEqual(['check', 'decision', 'deviation', 'check', 'review']);
+    expect(snapshot.nodes.filter((node) => node.parentId === 'tlroot_1'))
+      .toEqual(expect.arrayContaining([
+        expect.objectContaining({ metadata: expect.objectContaining({ taskLedgerRootId: 'tlroot_1' }) }),
+      ]));
+    expect(snapshot.reviewNodeIds).toEqual(expect.arrayContaining(['deviation-1', 'review-1']));
+  });
+
   it('keeps valid JSONL events and reports damaged lines', () => {
     const valid = event({
       id: 'create',

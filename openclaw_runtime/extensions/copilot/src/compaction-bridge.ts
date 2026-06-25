@@ -10,9 +10,9 @@ import type { SessionConfig } from "@github/copilot-sdk";
 //
 // Host back-pointers (NOT imported here to keep the package boundary
 // clean):
-//   - `src/agents/pi-embedded-runner/compact.types.ts` â€” canonical
+//   - `src/agents/pi-embedded-runner/compact.types.ts` â€?canonical
 //     `CompactEmbeddedPiSessionParams`.
-//   - `src/agents/pi-embedded-runner/types.ts` â€” canonical
+//   - `src/agents/pi-embedded-runner/types.ts` â€?canonical
 //     `EmbeddedPiCompactResult`.
 
 type SdkInfiniteSessionConfig = NonNullable<SessionConfig["infiniteSessions"]>;

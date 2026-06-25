@@ -1,7 +1,7 @@
 import type { ChatRuntimeEvent } from '../chat-runtime-events';
 import type { ChatKnowledgeReference } from '../host-api/contract';
-import type { WorkspaceKnowledgeScope } from '../types/workspace';
-import type { WorkModeId } from '../types/work-mode';
+import type { KnowledgeInvocationMode, WorkspaceKnowledgeScope } from '../types/workspace';
+import type { TaskLedgerSnapshot } from '../types/task-ledger';
 
 /** Metadata for locally-attached files (not from Gateway) */
 export interface AttachedFileMeta {
@@ -93,6 +93,8 @@ export interface ChatSession {
   updatedAt?: number;
   status?: string;
   hasActiveRun?: boolean;
+  parentSessionKey?: string;
+  forkedFromParent?: boolean;
 }
 
 export interface ToolStatus {
@@ -149,6 +151,11 @@ export interface ChatState {
   // Thinking
   thinkingLevel: string | null;
 
+  // Task Ledger
+  activeTaskNodeId: string | null;
+  taskLedgerSnapshot: TaskLedgerSnapshot | null;
+  taskLedgerLoaded: boolean;
+
   // Actions
   loadSessions: () => Promise<void>;
   switchSession: (key: string) => void;
@@ -170,15 +177,17 @@ export interface ChatState {
     }>,
     targetAgentId?: string | null,
     knowledgeScope?: WorkspaceKnowledgeScope,
-    workMode?: WorkModeId,
-    inputMode?: 'interrupt' | 'guide' | 'queue',
+    knowledgeMode?: KnowledgeInvocationMode,
+    inputMode?: 'interrupt' | 'guide' | 'queue' | 'revise-goal',
     knowledgeReferences?: ChatKnowledgeReference[],
+    activeTaskNodeId?: string | null,
   ) => Promise<void>;
   abortRun: () => Promise<void>;
   handleChatEvent: (event: Record<string, unknown>) => void;
   handleRuntimeEvent: (event: ChatRuntimeEvent) => void;
   refresh: () => Promise<void>;
   clearError: () => void;
+  refreshTaskLedger: () => Promise<void>;
 }
 
 export const DEFAULT_CANONICAL_PREFIX = 'agent:main';

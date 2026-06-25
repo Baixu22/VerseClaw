@@ -1,619 +1,622 @@
 {
-    "title": "Настройки",
-    "subtitle": "Настройте ваш опыт работы с ClawX",
-    "navigation": {
-        "back": "Назад к настройкам",
-        "general": {
-            "title": "Общие",
-            "description": "Внешний вид, язык, автозапуск, обновления и сведения о приложении."
-        },
-        "workModes": {
-            "title": "Режимы работы",
-            "description": "Пресеты поведения рабочей области и рабочие наборы."
-        },
-        "system": {
-            "title": "Система и среда",
-            "description": "Статус Gateway, автозапуск, удаленное управление и sandbox."
-        },
-        "developer": {
-            "title": "Разработчик",
-            "description": "Режим разработчика, прокси, CLI, диагностика и локальная телеметрия."
-        },
-        "billing": {
-            "title": "Биллинг",
-            "description": "История использования токенов, оценка стоимости и графики активности."
-        }
+  "title": "Настройки",
+  "subtitle": "Настройте ваш опыт работы с Verse Claw",
+  "navigation": {
+    "back": "Назад к настройкам",
+    "groups": {
+      "configuration": "AI-конфигурация",
+      "experience": "Опыт и workflow",
+      "operations": "Операции и расширенное"
     },
-    "appearance": {
-        "title": "Общие",
-        "description": "Настройте внешний вид",
-        "theme": "Тема",
-        "light": "Светлая",
-        "dark": "Тёмная",
-        "system": "Системная",
-        "language": "Язык",
-        "menuLanguageUpdated": "Язык меню обновлён",
-        "launchAtStartup": "Запуск при старте системы",
-        "launchAtStartupDesc": "Автоматически запускать ClawX при входе в систему"
+    "general": {
+      "title": "Общие",
+      "description": "Внешний вид, язык, автозапуск, обновления и сведения о приложении."
     },
-    "aiProviders": {
-        "title": "AI-провайдеры",
-        "description": "Настройте провайдеров AI-моделей и API-ключи",
-        "overview": {
-            "title": "Учётные записи провайдеров",
-            "description": "Сводка об учётных записях провайдеров и моделях.",
-            "noModelSelected": "Модель не выбрана",
-            "multiAccountReady": "Готов к нескольким аккаунтам",
-            "singletonVendor": "Одноаккаунтный провайдер"
-        },
-        "authModes": {
-            "apiKey": "API-ключ",
-            "oauthDevice": "OAuth Устройство",
-            "oauthBrowser": "OAuth Браузер",
-            "local": "Локальный"
-        },
-        "sections": {
-            "model": "Настройки модели",
-            "fallback": "Настройки резервного переключения"
-        },
-        "add": "Добавить провайдера",
-        "custom": "Свой",
-        "notRequired": "Не требуется",
-        "empty": {
-            "title": "Провайдеры не настроены",
-            "desc": "Добавьте AI-провайдера, чтобы начать использовать ClawX",
-            "cta": "Добавить первого провайдера"
-        },
-        "dialog": {
-            "title": "Добавить AI-провайдера",
-            "desc": "Настройте нового провайдера AI-моделей",
-            "displayName": "Отображаемое имя",
-            "apiKey": "API-ключ",
-            "apiKeyConfigured": "API-ключ уже сохранён для этого провайдера.",
-            "apiKeyMissing": "API-ключ ещё не сохранён для этого провайдера.",
-            "apiKeyStored": "Ваш API-ключ хранится локально на вашем компьютере.",
-            "replaceApiKey": "Заменить API-ключ",
-            "replaceApiKeyHelp": "Оставьте это поле пустым, чтобы сохранить текущий API-ключ.",
-            "baseUrl": "Базовый URL",
-            "modelId": "ID модели",
-            "codePlanPreset": "Пресет Code Plan",
-            "codePlanMode": "Code Plan",
-            "useCodePlanPreset": "Использовать пресет Ark Code Plan",
-            "codePlanPresetDesc": "Code Plan использует https://ark.cn-beijing.volces.com/api/coding/v3 и модель ark-code-latest. Не используйте /api/v3 для трафика Code Plan.",
-            "codePlanDoc": "Документация Code Plan",
-            "protocol": "Протокол",
-            "advancedConfig": "Расширенная конфигурация",
-            "userAgent": "User-Agent",
-            "userAgentPlaceholder": "ClawX/1.0",
-            "fallbackModels": "Резервные модели",
-            "fallbackProviders": "Резервные провайдеры",
-            "fallbackModelIds": "ID резервных моделей",
-            "fallbackModelIdsPlaceholder": "gpt-4.1-mini\nanother-model-id",
-            "fallbackModelIdsHelp": "Один ID модели на строку. Эти модели используют текущую конфигурацию провайдера перед переходом к другим провайдерам.",
-            "noFallbackOptions": "Сначала добавьте другого провайдера, чтобы использовать его как резервный.",
-            "cancel": "Отмена",
-            "change": "Изменить провайдера",
-            "add": "Добавить провайдера",
-            "save": "Сохранить",
-            "customDoc": "Документация",
-            "validate": "Проверить",
-            "failed": "Ошибка",
-            "fetchingModels": "Загрузка",
-            "fetchModels": "Получить модели",
-            "customModel": "Ввести модель вручную",
-            "testConnection": "Проверить подключение"
-        },
-        "card": {
-            "default": "По умолчанию",
-            "configured": "Настроен",
-            "noKey": "API-ключ не задан",
-            "none": "Нет",
-            "fallbacks_one": "Резервный: {{names}}",
-            "fallbacks_other": "Резервные ({{count}}): {{names}}",
-            "setDefault": "Установить по умолчанию",
-            "editKey": "Редактировать API-ключ",
-            "delete": "Удалить провайдера"
-        },
-        "protocols": {
-            "openai": "Совместимый с OpenAI",
-            "openaiCompletions": "OpenAI Completions",
-            "openaiResponses": "OpenAI Responses",
-            "anthropic": "Совместимый с Anthropic"
-        },
-        "toast": {
-            "added": "Провайдер успешно добавлен",
-            "failedAdd": "Не удалось добавить провайдера",
-            "deleted": "Провайдер удалён",
-            "failedDelete": "Не удалось удалить провайдера",
-            "defaultUpdated": "Провайдер по умолчанию обновлён",
-            "failedDefault": "Не удалось установить провайдер по умолчанию",
-            "updated": "Провайдер обновлён",
-            "failedUpdate": "Не удалось обновить провайдера",
-            "invalidKey": "Неверный API-ключ",
-            "modelRequired": "Требуется ID модели",
-            "minimaxConflict": "Нельзя добавить оба провайдера MiniMax (Global) и MiniMax (CN).",
-            "connectionOk": "Подключено, задержка {{ms}} мс",
-            "connectionFailed": "Ошибка подключения: {{error}}",
-            "modelsUpdated": "Список моделей обновлён",
-            "modelsUpdatedWithLatency": "Список моделей обновлён, задержка {{ms}} мс",
-            "modelsFetchFailed": "Не удалось получить модели: {{error}}",
-            "noModelsReturned": "Сервис не вернул список моделей",
-            "providerRequired": "Выберите провайдера"
-        },
-        "oauth": {
-            "loginMode": "Вход через OAuth",
-            "apikeyMode": "API-ключ",
-            "loginPrompt": "Этот провайдер требует входа через браузер.",
-            "loginButton": "Войти через браузер",
-            "getApiKey": "Получить API-ключ",
-            "waiting": "Ожидание...",
-            "openLoginPage": "Открыть страницу входа",
-            "waitingApproval": "Ожидание подтверждения в браузере...",
-            "cancel": "Отмена",
-            "codeCopied": "Код скопирован в буфер обмена",
-            "authFailed": "Ошибка аутентификации",
-            "browserFlowUnavailable": "OAuth через браузер ещё не настроен для этого провайдера.",
-            "tryAgain": "Попробовать снова",
-            "approveLogin": "Подтвердить вход",
-            "step1": "Скопируйте код авторизации ниже.",
-            "step2": "Откройте страницу входа в браузере.",
-            "step3": "Вставьте код для подтверждения доступа.",
-            "requestingCode": "Запрос кода безопасного входа..."
-        }
+    "models": {
+      "title": "Модели и провайдеры",
+      "description": "Аккаунты провайдеров, модели по умолчанию, fallback и история токенов."
     },
-    "gateway": {
-        "title": "Шлюз",
-        "description": "Настройки шлюза OpenClaw",
-        "status": "Статус",
-        "port": "Порт",
-        "logs": "Журналы",
-        "appLogs": "Журналы приложения",
-        "openFolder": "Открыть папку",
-        "autoStart": "Автозапуск шлюза",
-        "autoStartDesc": "Запускать шлюз при старте ClawX",
-        "proxyTitle": "Прокси",
-        "proxyDesc": "Направлять трафик Electron и шлюза через локальный прокси-клиент.",
-        "proxyServer": "Прокси-сервер",
-        "proxyServerHelp": "Прокси по умолчанию для всех запросов. Значения вида хост:порт по умолчанию используют HTTP.",
-        "proxyHttpServer": "HTTP-прокси",
-        "proxyHttpServerHelp": "Расширенная настройка для HTTP-запросов. Оставьте пустым, чтобы использовать прокси-сервер.",
-        "proxyHttpsServer": "HTTPS-прокси",
-        "proxyHttpsServerHelp": "Расширенная настройка для HTTPS-запросов. Оставьте пустым, чтобы использовать прокси-сервер.",
-        "proxyAllServer": "ALL_PROXY / SOCKS",
-        "proxyAllServerHelp": "Расширенный резерв для SOCKS-клиентов и протоколов (например, Telegram). Оставьте пустым, чтобы использовать прокси-сервер.",
-        "showAdvancedProxy": "Показать расширенные поля прокси",
-        "hideAdvancedProxy": "Скрыть расширенные поля прокси",
-        "proxyBypass": "Правила обхода",
-        "proxyBypassHelp": "Разделённые точкой с запятой, запятой или новой строкой хосты, которые должны подключаться напрямую.",
-        "proxyRestartNote": "Сохранение переприменяет сетевые настройки Electron и немедленно перезапускает шлюз. Обычные перезапуски шлюза сохраняют значения прокси Telegram-канала при отключённом прокси; сохраните при отключённом прокси, чтобы очистить их.",
-        "proxySaved": "Настройки прокси сохранены",
-        "proxySaveFailed": "Не удалось сохранить настройки прокси"
+    "agents": {
+      "title": "Agents",
+      "description": "Профили Agent, роли, наследование моделей и привязки каналов."
     },
-    "sandbox": {
-        "title": "Управление песочницей",
-        "description": "ClawX по умолчанию использует policy-light. Docker и SSH остаются явными provider для сильной изоляции, а отсутствие Docker не блокирует обычный запуск Gateway.",
-        "defaultProfileName": "Песочница по умолчанию",
-        "loadFailed": "Не удалось загрузить состояние песочницы",
-        "saveFailed": "Не удалось сохранить профиль песочницы",
-        "profileSaved": "Профиль песочницы обновлен",
-        "refresh": "Обновить",
-        "loading": "Загрузка",
-        "degraded": "Снижение",
-        "fallbackToPolicy": "Использовать policy-light",
-        "requestedProvider": "Запрошенный provider",
-        "effectiveProvider": "Действующий provider",
-        "permissionMode": "Режим прав",
-        "workspaceAccess": "Доступ к workspace",
-        "execPolicy": "Политика exec",
-        "networkPolicy": "Сетевая политика",
-        "openClawMode": "Режим OpenClaw",
-        "updatedAt": "Обновлено",
-        "available": "Доступно",
-        "unavailable": "Недоступно",
-        "dockerChecks": "Проверки Docker strong",
-        "ok": "OK",
-        "missing": "Отсутствует",
-        "runtimeLevels": {
-            "policy": "Policy",
-            "light": "Light",
-            "strong": "Strong",
-            "unavailable": "Недоступно"
-        },
-        "networkPolicies": {
-            "disabled": "Отключено",
-            "approvalRequired": "Требуется подтверждение",
-            "enabled": "Включено"
-        },
-        "docker": {
-            "cli": "Docker CLI",
-            "daemon": "Docker daemon",
-            "image": "Образ песочницы"
-        }
+    "channels": {
+      "title": "Channels",
+      "description": "Аккаунты сообщений, состояние подключения, учетные данные и привязки Agent."
     },
-    "remoteControl": {
-        "title": "Удалённое управление Electron",
-        "description": "Открывает отладочный порт Electron CDP. Привязывайте его к localhost и используйте только в доверенной среде. После сохранения перезапустите ClawX.",
-        "port": "Порт CDP",
-        "configEndpoint": "Настроенный endpoint: 127.0.0.1:{{port}} /json/version",
-        "currentEndpoint": "Текущий endpoint: {{endpoint}}",
-        "envOverride": "Текущий процесс переопределён переменной окружения CLAWX_REMOTE_DEBUGGING_PORT.",
-        "restartRequired": "Конфигурация отличается от текущего процесса. Перезапустите приложение, чтобы применить её.",
-        "screenshotAlt": "Скриншот Electron CDP",
-        "status": {
-            "effective": "Сейчас действует",
-            "inactive": "Сейчас не действует"
-        },
-        "actions": {
-            "refreshStatus": "Обновить статус",
-            "connectDebug": "Подключить отладку",
-            "connecting": "Подключение",
-            "pageInfo": "Информация о странице",
-            "scroll": "Прокрутить страницу",
-            "scrollDown": "Прокрутить вниз",
-            "click": "Кликнуть страницу",
-            "clickCenter": "Кликнуть по центру",
-            "screenshot": "Скриншот",
-            "running": "{{action}}..."
-        },
-        "inspect": {
-            "result": "Результат подключения: {{result}}",
-            "success": "успех",
-            "failure": "ошибка",
-            "targets": "Страницы для отладки"
-        },
-        "toast": {
-            "connected": "Подключено к Electron CDP, найдено страниц: {{count}}",
-            "connectFailed": "Не удалось подключиться к Electron CDP",
-            "connectFailedWithError": "Не удалось подключиться к Electron CDP: {{error}}",
-            "actionFailed": "{{action}} не удалось: {{error}}",
-            "pageInfoRefreshed": "Информация о странице обновлена",
-            "pageInfoFailed": "Не удалось прочитать информацию о странице",
-            "scrollFailed": "Не удалось прокрутить страницу",
-            "clickedCenter": "Клик по центру страницы ({{x}}, {{y}})",
-            "clickFailed": "Не удалось кликнуть страницу",
-            "screenshotReady": "Скриншот создан",
-            "screenshotFailed": "Не удалось сделать скриншот страницы",
-            "invalidPort": "Порт CDP должен быть целым числом от 1 до 65535",
-            "saved": "Настройки удалённого управления сохранены. Перезапустите приложение для применения.",
-            "saveFailed": "Не удалось сохранить настройки удалённого управления: {{error}}"
-        }
+    "skills": {
+      "title": "Skills",
+      "description": "Установленные skills, MCP-сервисы, локальные папки и включение."
     },
-    "updates": {
-        "title": "Обновления",
-        "description": "Поддерживайте ClawX в актуальном состоянии",
-        "autoCheck": "Автопроверка обновлений",
-        "autoCheckDesc": "Проверять обновления при запуске",
-        "autoDownload": "Уведомления об обновлениях",
-        "autoDownloadDesc": "Показывать уведомление при наличии новой версии; загружать только после вашего выбора",
-        "status": {
-            "checking": "Проверка обновлений...",
-            "downloading": "Загрузка обновления...",
-            "available": "Доступно обновление: v{{version}}",
-            "downloaded": "Готово к установке: v{{version}}",
-            "autoInstalling": "Перезапуск для установки обновления через {{seconds}}с...",
-            "failed": "Ошибка проверки обновлений",
-            "latest": "У вас последняя версия",
-            "check": "Проверить обновления"
-        },
-        "action": {
-            "checking": "Проверка...",
-            "downloading": "Загрузка...",
-            "download": "Скачать обновление",
-            "install": "Установить и перезапустить",
-            "cancelAutoInstall": "Отмена",
-            "later": "Позже",
-            "retry": "Повторить",
-            "check": "Проверить обновления"
-        },
-        "currentVersion": "Текущая версия",
-        "whatsNew": "Что нового:",
-        "errorDetails": "Детали ошибки:",
-        "toast": {
-            "availableTitle": "Доступно обновление ClawX",
-            "availableDescription": "Доступна версия v{{version}}. Скачайте её, когда будете готовы.",
-            "downloadedTitle": "Обновление ClawX готово",
-            "downloadedDescription": "Версия v{{version}} загружена. Перезапустите приложение для установки.",
-            "unknownVersion": "новая"
-        },
-        "help": "ClawX автоматически проверяет обновления и показывает уведомление перед загрузкой или установкой."
-    },
-    "advanced": {
-        "title": "Дополнительные",
-        "description": "Опции для продвинутых пользователей",
-        "devMode": "Режим разработчика",
-        "devModeDesc": "Показывать инструменты и ярлыки разработчика",
-        "telemetry": "Анонимные данные об использовании",
-        "telemetryDesc": "Разрешить предоставление анонимных базовых данных об использовании для улучшения ClawX"
+    "system": {
+      "title": "Система и среда",
+      "description": "Статус Gateway, автозапуск, удаленное управление и sandbox."
     },
     "developer": {
-        "title": "Разработчик",
-        "description": "Расширенные опции для разработчиков",
-        "console": "Консоль OpenClaw",
-        "consoleDesc": "Доступ к нативному интерфейсу управления OpenClaw",
-        "openConsole": "Открыть консоль разработчика",
-        "consoleNote": "Открывает Control UI с токеном шлюза",
-        "gatewayToken": "Токен шлюза",
-        "gatewayTokenDesc": "Вставьте это в настройки Control UI при запросе",
-        "tokenUnavailable": "Токен недоступен",
-        "tokenCopied": "Токен шлюза скопирован",
-        "cli": "CLI OpenClaw",
-        "cliDesc": "Скопируйте команду для запуска OpenClaw без изменения PATH.",
-        "cliPowershell": "Команда PowerShell.",
-        "cmdUnavailable": "Команда недоступна",
-        "cmdCopied": "CLI-команда скопирована",
-        "doctor": "OpenClaw Doctor",
-        "doctorDesc": "Запустите `openclaw doctor` и просмотрите вывод диагностики.",
-        "runDoctor": "Запустить Doctor",
-        "runDoctorFix": "Запустить исправление Doctor",
-        "doctorSucceeded": "OpenClaw doctor завершён",
-        "doctorFailed": "OpenClaw doctor сообщил о проблемах",
-        "doctorRunFailed": "Не удалось запустить OpenClaw doctor",
-        "doctorFixSucceeded": "Исправление OpenClaw doctor завершено",
-        "doctorFixFailed": "Исправление OpenClaw doctor сообщило о проблемах",
-        "doctorFixRunFailed": "Не удалось запустить исправление OpenClaw doctor",
-        "doctorCopied": "Вывод doctor скопирован",
-        "doctorOk": "Исправен",
-        "doctorIssue": "Обнаружены проблемы",
-        "doctorFixOk": "Исправлено",
-        "doctorFixIssue": "Ошибка исправления",
-        "doctorExitCode": "Код выхода",
-        "doctorDuration": "Длительность",
-        "doctorCommand": "Команда",
-        "doctorWorkingDir": "Рабочая директория",
-        "doctorError": "Ошибка",
-        "doctorStdout": "Стандартный вывод",
-        "doctorStderr": "Стандартная ошибка",
-        "doctorOutputEmpty": "(пусто)",
-        "telemetryViewer": "Просмотр телеметрии",
-        "telemetryViewerDesc": "Локальная телеметрия UX/производительности, последние 200 записей.",
-        "telemetryAggregated": "Топ событий",
-        "telemetryTotal": "Всего",
-        "telemetryErrors": "Ошибки",
-        "telemetrySlow": "Медленные (>=800мс)",
-        "telemetryEmpty": "Телеметрия ещё не собрана",
-        "telemetryCopied": "Телеметрия скопирована",
-        "telemetryCleared": "Телеметрия очищена",
-        "installCmd": "Установить команду \"openclaw\"",
-        "installCmdDesc": "Устанавливает ~/.local/bin/openclaw (без прав администратора)",
-        "installTitle": "Установить команду OpenClaw",
-        "installMessage": "Установить команду \"openclaw\"?",
-        "installDetail": "Это создаст ~/.local/bin/openclaw. Убедитесь, что ~/.local/bin в PATH, если хотите запускать глобально."
+      "title": "Разработчик",
+      "description": "Режим разработчика, прокси, CLI, диагностика и локальная телеметрия."
     },
-    "about": {
-        "title": "О приложении",
-        "appName": "ClawX",
-        "tagline": "Графический AI-ассистент",
-        "basedOn": "На базе OpenClaw",
-        "version": "Версия {{version}}",
-        "docs": "Веб-сайт",
-        "github": "GitHub",
-        "faq": "FAQ"
-    },
-    "workModes": {
-        "title": "??????? ??????",
-        "currentMode": "??????? ????? ??????? ???????",
-        "currentModeDesc": "???????? ????????????? ?????? ??? ???????? ?????? ??????? ???????. ??? ?? ?????? ?????????? ? ?? ?????? ???????????.",
-        "noWorkspace": "???????? ??????? ??????? ????? ?????? ??????.",
-        "noWorkspaceBadge": "??? ??????? ???????",
-        "modeSaved": "??????? ????? ????????",
-        "kitsTitle": "Рабочие наборы",
-        "kitsDesc": "Выберите наборы, ориентированные на артефакты, которые режим передает runtime. Это только подсказки о возможностях; реальные инструменты определяет политика runtime.",
-        "installSkill": "Установить {{slug}}",
-        "installingSkill": "Установка {{slug}}",
-        "skillInstalled": "{{slug}} установлен",
-        "skillInstallFailed": "Не удалось установить skill: {{error}}",
-        "selectedCount": "Выбрано: {{count}}",
-        "capability": {
-            "ready": "Готово",
-            "missingSkill": "Нет skill",
-            "disabled": "Отключено",
-            "runtimeUnavailable": "Runtime недоступен",
-            "optionalExternal": "Опционально"
-        },
-        "kits": {
-            "reports": "Отчеты",
-            "sheets": "Таблицы",
-            "slides": "Слайды",
-            "pdf": "PDF",
-            "research": "Исследование",
-            "website": "Сайт",
-            "design": "Дизайн",
-            "ops": "Операции"
-        },
-        "kitDescriptions": {
-            "reports": "Создание, структурирование и экспорт отчетов и Word-документов.",
-            "sheets": "Чтение, очистка, расчет и сводка таблиц или CSV.",
-            "slides": "Создание структуры презентации и редактируемых PPTX.",
-            "pdf": "Извлечение, сводка, предпросмотр и упаковка PDF-артефактов.",
-            "research": "Сбор веб-материалов и источников с цитатами и краткими выводами.",
-            "website": "Создание и проверка HTML/Web-артефактов с предпросмотром.",
-            "design": "Оформление визуальных артефактов, дашбордов и макетов.",
-            "ops": "Легкие ежедневные тексты, действия и личные рабочие задачи."
-        },
-        "toolBundlesTitle": "Намерение набора инструментов",
-        "toolBundlesDesc": "Выберите метки наборов инструментов, которые режим передает runtime. Они выражают только намерение; реальные инструменты определяет политика runtime.",
-        "toolBundles": {
-            "code": "???",
-            "git": "Git",
-            "terminal": "????????",
-            "browser": "???????",
-            "docs": "?????????",
-            "sheets": "???????",
-            "pdf": "PDF",
-            "memory": "??????"
-        }
-    },
-    "workProviders": {
-        "title": "Work Providers",
-        "description": "Локальные и опциональные Provider для Work Kits. Они показывают статус возможностей и не выдают права на инструменты.",
-        "status": {
-            "ready": "Готово",
-            "missingDependency": "Нет зависимости",
-            "missingConfig": "Нет настроек",
-            "disabled": "Отключено",
-            "externalUnavailable": "Внешний недоступен",
-            "runtimeUnavailable": "Runtime недоступен"
-        },
-        "providers": {
-            "officeDocument": "Документы",
-            "officeSheet": "Таблицы",
-            "officeSlide": "Презентации",
-            "pdf": "PDF",
-            "webSearch": "Web search",
-            "webRead": "Web reading",
-            "libreOffice": "LibreOffice",
-            "pandoc": "Pandoc",
-            "crawler": "Crawler",
-            "ocr": "OCR",
-            "dataFrame": "Data analysis"
-        },
-        "providerDescriptions": {
-            "officeDocument": "Читает и создает документы Word через легкие JS-библиотеки.",
-            "officeSheet": "Читает и создает таблицы и CSV.",
-            "officeSlide": "Создает редактируемые презентации.",
-            "pdf": "Проверяет, просматривает, разделяет и объединяет PDF.",
-            "webSearch": "Использует внешний поисковый Provider, настроенный пользователем.",
-            "webRead": "Извлекает читаемый текст и ссылки со страниц.",
-            "libreOffice": "Опциональный локальный Provider для точной Office-конвертации.",
-            "pandoc": "Опциональный Provider конвертации документов.",
-            "crawler": "Опциональный внешний crawler-сервис.",
-            "ocr": "Опциональный OCR Provider.",
-            "dataFrame": "Опциональный Python или сервисный Provider анализа данных."
-        }
-    },
-    "projectRules": {
-        "title": "Центр правил проекта",
-        "description": "Проверяйте входной файл правил активного workspace, локальные заметки правил и детерминированные предупреждения.",
-        "noWorkspace": "Нет активного workspace",
-        "agentsFile": "AGENTS.md",
-        "ruleFileCount": "Файлы .clawx/rules",
-        "validation": "Проверка",
-        "issueSummary": "{{errors}} ошибок / {{warnings}} предупреждений / {{info}} справочных",
-        "missingAgents": "В этом workspace еще нет AGENTS.md. Можно создать консервативный шаблон входа правил без перезаписи других файлов.",
-        "previewTitle": "Предпросмотр AGENTS.md",
-        "emptyPreview": "(пустой файл)",
-        "localRulesTitle": "Локальные .clawx/rules/*.md",
-        "noLocalRules": "Локальные файлы заметок правил не найдены.",
-        "contextPreviewTitle": "Предпросмотр agent context",
-        "issuesTitle": "Результаты проверки",
-        "noIssues": "Проблем проверки не найдено.",
-        "actions": {
-            "refresh": "Обновить",
-            "createAgents": "Создать AGENTS.md",
-            "creating": "Создание..."
-        },
-        "toast": {
-            "loadFailed": "Не удалось загрузить правила проекта: {{error}}",
-            "createFailed": "Не удалось создать AGENTS.md: {{error}}",
-            "created": "Шаблон AGENTS.md создан",
-            "alreadyPresent": "AGENTS.md уже существует"
-        },
-        "health": {
-            "ready": "Готово",
-            "warnings": "{{count}} предупреждение",
-            "warnings_plural": "{{count}} предупреждений",
-            "errors": "{{count}} ошибка",
-            "errors_plural": "{{count}} ошибок"
-        },
-        "status": {
-            "missing": "Отсутствует",
-            "present": "Есть",
-            "empty": "Пустой",
-            "tooLarge": "Слишком большой",
-            "unreadable": "Не читается",
-            "included": "Включено",
-            "available": "Доступно",
-            "referenceOnly": "Только ссылка"
-        },
-        "contextStatus": {
-            "included": "Включено",
-            "available": "Доступно",
-            "referenceOnly": "Только ссылка",
-            "missing": "Отсутствует"
-        },
-        "context": {
-            "agents": {
-                "title": "AGENTS.md",
-                "description": "Входной файл активного workspace является первым источником правил проекта, ожидаемым в agent context."
-            },
-            "harnessSpecs": {
-                "title": "harness/specs/**",
-                "description": "При ссылке из AGENTS.md или task spec правила, сценарии, задачи, guides и layers остаются долговременным источником правил проекта."
-            },
-            "clawxRules": {
-                "title": ".clawx/rules/*.md",
-                "description": "Найден {{count}} локальный дополнительный файл. Он виден здесь, но не становится новым источником истины, если AGENTS.md или Context Pack recipe не ссылается на него.",
-                "description_plural": "Найдено {{count}} локальных дополнительных файлов. Они видны здесь, но не становятся новым источником истины, если AGENTS.md или Context Pack recipe не ссылается на них."
-            }
-        },
-        "issues": {
-            "workspace.missing": {
-                "title": "Нет активного workspace",
-                "description": "Выберите или создайте workspace перед проверкой правил проекта."
-            },
-            "agents.missing": {
-                "title": "AGENTS.md отсутствует",
-                "description": "{{path}} является ожидаемым входным файлом правил проекта."
-            },
-            "agents.empty": {
-                "title": "AGENTS.md пуст",
-                "description": "{{path}} существует, но пока не содержит правил."
-            },
-            "agents.tooLarge": {
-                "title": "AGENTS.md слишком большой для предпросмотра",
-                "description": "{{path}} имеет размер {{size}} байт; лимит предпросмотра {{maxBytes}} байт."
-            },
-            "agents.unreadable": {
-                "title": "AGENTS.md не читается",
-                "description": "{{path}} не удалось проверить: {{reason}}"
-            },
-            "ruleFile.empty": {
-                "title": "Локальный файл правил пуст",
-                "description": "{{path}} найден, но не содержит текста."
-            },
-            "ruleFile.tooLarge": {
-                "title": "Локальный файл правил слишком большой",
-                "description": "{{path}} имеет размер {{size}} байт; лимит lint {{maxBytes}} байт."
-            },
-            "ruleFile.unreadable": {
-                "title": "Локальный файл правил не читается",
-                "description": "{{path}} не удалось проверить: {{reason}}"
-            },
-            "rules.duplicateTitle": {
-                "title": "Повторяющийся заголовок правила",
-                "description": "Заголовок \"{{title}}\" встречается в нескольких файлах: {{relatedPaths}}."
-            },
-            "rules.duplicateLine": {
-                "title": "Повторяющаяся строка правила",
-                "description": "Одинаковая строка правила встречается в нескольких файлах: {{relatedPaths}}."
-            },
-            "renderer.hostApiGuidanceMissing": {
-                "title": "Нет указания renderer host-api",
-                "description": "Добавьте правило, что backend-вызовы из renderer идут через host-api или api-client."
-            },
-            "renderer.ipcBanMissing": {
-                "title": "Нет предупреждения о прямом renderer IPC",
-                "description": "Добавьте детерминированное правило против прямых window.electron.ipcRenderer.invoke в renderer pages/components."
-            },
-            "renderer.gatewayFetchBanMissing": {
-                "title": "Нет предупреждения о прямом Gateway fetch",
-                "description": "Добавьте детерминированное правило против renderer fetch/WebSocket к 127.0.0.1:18789 или localhost:18789."
-            },
-            "renderer.ipcConflict": {
-                "title": "Возможный конфликт прямого IPC",
-                "description": "Текст правил выглядит так, будто одновременно разрешает и запрещает прямой renderer IPC. Проверьте формулировку."
-            },
-            "renderer.gatewayFetchConflict": {
-                "title": "Возможный конфликт прямого Gateway",
-                "description": "Текст правил выглядит так, будто одновременно разрешает и запрещает прямые renderer Gateway вызовы. Проверьте формулировку."
-            }
-        }
-    },
-    "workHeatGraph": {
-        "title": "???????? ????? ??????",
-        "description": "????????? ?????????? ?? ????????? ????????????? ??????.",
-        "runs": "{{count}} ????????",
-        "tokens": "{{count}} ???????",
-        "dayTitle": "{{date}}: {{count}} ????????, {{tokens}} ???????"
+    "billing": {
+      "title": "Биллинг",
+      "description": "История использования токенов, оценка стоимости и графики активности."
     }
+  },
+  "appearance": {
+    "title": "Общие",
+    "description": "Настройте внешний вид",
+    "theme": "Тема",
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "system": "Системная",
+    "language": "Язык",
+    "menuLanguageUpdated": "Язык меню обновлён",
+    "launchAtStartup": "Запуск при старте системы",
+    "launchAtStartupDesc": "Автоматически запускать Verse Claw при входе в систему"
+  },
+  "aiProviders": {
+    "title": "AI-провайдеры",
+    "description": "Настройте провайдеров AI-моделей и API-ключи",
+    "overview": {
+      "title": "Учётные записи провайдеров",
+      "description": "Сводка об учётных записях провайдеров и моделях.",
+      "noModelSelected": "Модель не выбрана",
+      "multiAccountReady": "Готов к нескольким аккаунтам",
+      "singletonVendor": "Одноаккаунтный провайдер"
+    },
+    "authModes": {
+      "apiKey": "API-ключ",
+      "oauthDevice": "OAuth Устройство",
+      "oauthBrowser": "OAuth Браузер",
+      "local": "Локальный"
+    },
+    "sections": {
+      "model": "Настройки модели",
+      "fallback": "Настройки резервного переключения"
+    },
+    "add": "Добавить провайдера",
+    "custom": "Свой",
+    "notRequired": "Не требуется",
+    "empty": {
+      "title": "Провайдеры не настроены",
+      "desc": "Добавьте AI-провайдера, чтобы начать использовать Verse Claw",
+      "cta": "Добавить первого провайдера"
+    },
+    "dialog": {
+      "title": "Добавить AI-провайдера",
+      "desc": "Настройте нового провайдера AI-моделей",
+      "displayName": "Отображаемое имя",
+      "apiKey": "API-ключ",
+      "apiKeyConfigured": "API-ключ уже сохранён для этого провайдера.",
+      "apiKeyMissing": "API-ключ ещё не сохранён для этого провайдера.",
+      "apiKeyStored": "Ваш API-ключ хранится локально на вашем компьютере.",
+      "replaceApiKey": "Заменить API-ключ",
+      "replaceApiKeyHelp": "Оставьте это поле пустым, чтобы сохранить текущий API-ключ.",
+      "baseUrl": "Базовый URL",
+      "modelId": "ID модели",
+      "codePlanPreset": "Пресет Code Plan",
+      "codePlanMode": "Code Plan",
+      "useCodePlanPreset": "Использовать пресет Ark Code Plan",
+      "codePlanPresetDesc": "Code Plan использует https://ark.cn-beijing.volces.com/api/coding/v3 и модель ark-code-latest. Не используйте /api/v3 для трафика Code Plan.",
+      "codePlanDoc": "Документация Code Plan",
+      "protocol": "Протокол",
+      "advancedConfig": "Расширенная конфигурация",
+      "userAgent": "User-Agent",
+      "userAgentPlaceholder": "Verse Claw/1.0",
+      "fallbackModels": "Резервные модели",
+      "fallbackProviders": "Резервные провайдеры",
+      "fallbackModelIds": "ID резервных моделей",
+      "fallbackModelIdsPlaceholder": "gpt-4.1-mini\nanother-model-id",
+      "fallbackModelIdsHelp": "Один ID модели на строку. Эти модели используют текущую конфигурацию провайдера перед переходом к другим провайдерам.",
+      "noFallbackOptions": "Сначала добавьте другого провайдера, чтобы использовать его как резервный.",
+      "cancel": "Отмена",
+      "change": "Изменить провайдера",
+      "add": "Добавить провайдера",
+      "save": "Сохранить",
+      "customDoc": "Документация",
+      "validate": "Проверить",
+      "failed": "Ошибка",
+      "fetchingModels": "Загрузка",
+      "fetchModels": "Получить модели",
+      "customModel": "Ввести модель вручную",
+      "testConnection": "Проверить подключение"
+    },
+    "card": {
+      "default": "По умолчанию",
+      "configured": "Настроен",
+      "noKey": "API-ключ не задан",
+      "none": "Нет",
+      "fallbacks_one": "Резервный: {{names}}",
+      "fallbacks_other": "Резервные ({{count}}): {{names}}",
+      "setDefault": "Установить по умолчанию",
+      "editKey": "Редактировать API-ключ",
+      "delete": "Удалить провайдера"
+    },
+    "protocols": {
+      "openai": "Совместимый с OpenAI",
+      "openaiCompletions": "OpenAI Completions",
+      "openaiResponses": "OpenAI Responses",
+      "anthropic": "Совместимый с Anthropic"
+    },
+    "toast": {
+      "added": "Провайдер успешно добавлен",
+      "failedAdd": "Не удалось добавить провайдера",
+      "deleted": "Провайдер удалён",
+      "failedDelete": "Не удалось удалить провайдера",
+      "defaultUpdated": "Провайдер по умолчанию обновлён",
+      "failedDefault": "Не удалось установить провайдер по умолчанию",
+      "updated": "Провайдер обновлён",
+      "failedUpdate": "Не удалось обновить провайдера",
+      "invalidKey": "Неверный API-ключ",
+      "modelRequired": "Требуется ID модели",
+      "minimaxConflict": "Нельзя добавить оба провайдера MiniMax (Global) и MiniMax (CN).",
+      "connectionOk": "Подключено, задержка {{ms}} мс",
+      "connectionFailed": "Ошибка подключения: {{error}}",
+      "modelsUpdated": "Список моделей обновлён",
+      "modelsUpdatedWithLatency": "Список моделей обновлён, задержка {{ms}} мс",
+      "modelsFetchFailed": "Не удалось получить модели: {{error}}",
+      "noModelsReturned": "Сервис не вернул список моделей",
+      "providerRequired": "Выберите провайдера"
+    },
+    "oauth": {
+      "loginMode": "Вход через OAuth",
+      "apikeyMode": "API-ключ",
+      "loginPrompt": "Этот провайдер требует входа через браузер.",
+      "loginButton": "Войти через браузер",
+      "getApiKey": "Получить API-ключ",
+      "waiting": "Ожидание...",
+      "openLoginPage": "Открыть страницу входа",
+      "waitingApproval": "Ожидание подтверждения в браузере...",
+      "cancel": "Отмена",
+      "codeCopied": "Код скопирован в буфер обмена",
+      "authFailed": "Ошибка аутентификации",
+      "browserFlowUnavailable": "OAuth через браузер ещё не настроен для этого провайдера.",
+      "tryAgain": "Попробовать снова",
+      "approveLogin": "Подтвердить вход",
+      "step1": "Скопируйте код авторизации ниже.",
+      "step2": "Откройте страницу входа в браузере.",
+      "step3": "Вставьте код для подтверждения доступа.",
+      "requestingCode": "Запрос кода безопасного входа..."
+    }
+  },
+  "gateway": {
+    "title": "Шлюз",
+    "description": "Настройки шлюза OpenClaw",
+    "status": "Статус",
+    "port": "Порт",
+    "logs": "Журналы",
+    "appLogs": "Журналы приложения",
+    "openFolder": "Открыть папку",
+    "autoStart": "Автозапуск шлюза",
+    "autoStartDesc": "Запускать шлюз при старте Verse Claw",
+    "proxyTitle": "Прокси",
+    "proxyDesc": "Направлять трафик Electron и шлюза через локальный прокси-клиент.",
+    "proxyServer": "Прокси-сервер",
+    "proxyServerHelp": "Прокси по умолчанию для всех запросов. Значения вида хост:порт по умолчанию используют HTTP.",
+    "proxyHttpServer": "HTTP-прокси",
+    "proxyHttpServerHelp": "Расширенная настройка для HTTP-запросов. Оставьте пустым, чтобы использовать прокси-сервер.",
+    "proxyHttpsServer": "HTTPS-прокси",
+    "proxyHttpsServerHelp": "Расширенная настройка для HTTPS-запросов. Оставьте пустым, чтобы использовать прокси-сервер.",
+    "proxyAllServer": "ALL_PROXY / SOCKS",
+    "proxyAllServerHelp": "Расширенный резерв для SOCKS-клиентов и протоколов (например, Telegram). Оставьте пустым, чтобы использовать прокси-сервер.",
+    "showAdvancedProxy": "Показать расширенные поля прокси",
+    "hideAdvancedProxy": "Скрыть расширенные поля прокси",
+    "proxyBypass": "Правила обхода",
+    "proxyBypassHelp": "Разделённые точкой с запятой, запятой или новой строкой хосты, которые должны подключаться напрямую.",
+    "proxyRestartNote": "Сохранение переприменяет сетевые настройки Electron и немедленно перезапускает шлюз. Обычные перезапуски шлюза сохраняют значения прокси Telegram-канала при отключённом прокси; сохраните при отключённом прокси, чтобы очистить их.",
+    "proxySaved": "Настройки прокси сохранены",
+    "proxySaveFailed": "Не удалось сохранить настройки прокси"
+  },
+  "roleMemory": {
+    "title": "Role Memory",
+    "description": "Управляемая память выполнения ролей: предложения, проверка, объяснение инъекций, жизненный цикл и обратная связь по качеству.",
+    "disableEffect": "Отключение останавливает инъекцию Role Memory и блокирует записи памяти. Существующие карточки остаются на диске, нативная память OpenClaw не меняется.",
+    "enabled": "Включено",
+    "disabled": "Отключено"
+  },
+  "knowledgeHub": {
+    "watched": {
+      "title": "Knowledge Hub watched directories",
+      "description": "Watch trusted local folders for new Markdown sources. New files can enter the review inbox first, and compiles refresh indexes without creating syntheses automatically.",
+      "path": "Directory",
+      "pathPlaceholder": "Choose or paste a local folder path",
+      "patterns": "Patterns",
+      "pick": "Choose directory",
+      "pickTitle": "Choose watched directory",
+      "pickFailed": "Failed to choose directory: {{error}}",
+      "add": "Add directory",
+      "empty": "No watched directories yet.",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "reviewFirst": "Review first",
+      "directIngest": "Direct ingest",
+      "ingestNewFiles": "Ingest new files",
+      "requiresReview": "Review before ingest",
+      "autoCompile": "Auto compile",
+      "compileOff": "Compile off",
+      "pathRequired": "Directory path is required.",
+      "patternRequired": "At least one pattern is required.",
+      "loadFailed": "Failed to load watched directories: {{error}}",
+      "addFailed": "Failed to add watched directory.",
+      "addFailedWithError": "Failed to add watched directory: {{error}}",
+      "updateFailed": "Failed to update watched directory.",
+      "updateFailedWithError": "Failed to update watched directory: {{error}}",
+      "removeFailed": "Failed to remove watched directory.",
+      "removeFailedWithError": "Failed to remove watched directory: {{error}}",
+      "added": "Watched directory added.",
+      "removed": "Watched directory removed."
+    }
+  },
+  "sandbox": {
+    "title": "Управление песочницей",
+    "description": "Verse Claw по умолчанию использует policy-light. Docker и SSH остаются явными provider для сильной изоляции, а отсутствие Docker не блокирует обычный запуск Gateway.",
+    "defaultProfileName": "Песочница по умолчанию",
+    "loadFailed": "Не удалось загрузить состояние песочницы",
+    "saveFailed": "Не удалось сохранить профиль песочницы",
+    "profileSaved": "Профиль песочницы обновлен",
+    "refresh": "Обновить",
+    "loading": "Загрузка",
+    "degraded": "Снижение",
+    "fallbackToPolicy": "Использовать policy-light",
+    "requestedProvider": "Запрошенный provider",
+    "effectiveProvider": "Действующий provider",
+    "permissionMode": "Режим прав",
+    "workspaceAccess": "Доступ к workspace",
+    "execPolicy": "Политика exec",
+    "networkPolicy": "Сетевая политика",
+    "openClawMode": "Режим OpenClaw",
+    "updatedAt": "Обновлено",
+    "available": "Доступно",
+    "unavailable": "Недоступно",
+    "dockerChecks": "Проверки Docker strong",
+    "ok": "OK",
+    "missing": "Отсутствует",
+    "runtimeLevels": {
+      "policy": "Policy",
+      "light": "Light",
+      "strong": "Strong",
+      "unavailable": "Недоступно"
+    },
+    "networkPolicies": {
+      "disabled": "Отключено",
+      "approvalRequired": "Требуется подтверждение",
+      "enabled": "Включено"
+    },
+    "docker": {
+      "cli": "Docker CLI",
+      "daemon": "Docker daemon",
+      "image": "Образ песочницы"
+    }
+  },
+  "remoteControl": {
+    "title": "Удалённое управление Electron",
+    "description": "Открывает отладочный порт Electron CDP. Привязывайте его к localhost и используйте только в доверенной среде. После сохранения перезапустите Verse Claw.",
+    "port": "Порт CDP",
+    "configEndpoint": "Настроенный endpoint: 127.0.0.1:{{port}} /json/version",
+    "currentEndpoint": "Текущий endpoint: {{endpoint}}",
+    "envOverride": "Текущий процесс переопределён переменной окружения CLAWX_REMOTE_DEBUGGING_PORT.",
+    "restartRequired": "Конфигурация отличается от текущего процесса. Перезапустите приложение, чтобы применить её.",
+    "screenshotAlt": "Скриншот Electron CDP",
+    "status": {
+      "effective": "Сейчас действует",
+      "inactive": "Сейчас не действует"
+    },
+    "actions": {
+      "refreshStatus": "Обновить статус",
+      "connectDebug": "Подключить отладку",
+      "connecting": "Подключение",
+      "pageInfo": "Информация о странице",
+      "scroll": "Прокрутить страницу",
+      "scrollDown": "Прокрутить вниз",
+      "click": "Кликнуть страницу",
+      "clickCenter": "Кликнуть по центру",
+      "screenshot": "Скриншот",
+      "running": "{{action}}..."
+    },
+    "inspect": {
+      "result": "Результат подключения: {{result}}",
+      "success": "успех",
+      "failure": "ошибка",
+      "targets": "Страницы для отладки"
+    },
+    "toast": {
+      "connected": "Подключено к Electron CDP, найдено страниц: {{count}}",
+      "connectFailed": "Не удалось подключиться к Electron CDP",
+      "connectFailedWithError": "Не удалось подключиться к Electron CDP: {{error}}",
+      "actionFailed": "{{action}} не удалось: {{error}}",
+      "pageInfoRefreshed": "Информация о странице обновлена",
+      "pageInfoFailed": "Не удалось прочитать информацию о странице",
+      "scrollFailed": "Не удалось прокрутить страницу",
+      "clickedCenter": "Клик по центру страницы ({{x}}, {{y}})",
+      "clickFailed": "Не удалось кликнуть страницу",
+      "screenshotReady": "Скриншот создан",
+      "screenshotFailed": "Не удалось сделать скриншот страницы",
+      "invalidPort": "Порт CDP должен быть целым числом от 1 до 65535",
+      "saved": "Настройки удалённого управления сохранены. Перезапустите приложение для применения.",
+      "saveFailed": "Не удалось сохранить настройки удалённого управления: {{error}}"
+    }
+  },
+  "updates": {
+    "title": "Обновления",
+    "description": "Поддерживайте Verse Claw в актуальном состоянии",
+    "autoCheck": "Автопроверка обновлений",
+    "autoCheckDesc": "Проверять обновления при запуске",
+    "autoDownload": "Уведомления об обновлениях",
+    "autoDownloadDesc": "Показывать уведомление при наличии новой версии; загружать только после вашего выбора",
+    "status": {
+      "checking": "Проверка обновлений...",
+      "downloading": "Загрузка обновления...",
+      "available": "Доступно обновление: v{{version}}",
+      "downloaded": "Готово к установке: v{{version}}",
+      "autoInstalling": "Перезапуск для установки обновления через {{seconds}}с...",
+      "failed": "Ошибка проверки обновлений",
+      "latest": "У вас последняя версия",
+      "check": "Проверить обновления"
+    },
+    "action": {
+      "checking": "Проверка...",
+      "downloading": "Загрузка...",
+      "download": "Скачать обновление",
+      "install": "Установить и перезапустить",
+      "cancelAutoInstall": "Отмена",
+      "later": "Позже",
+      "retry": "Повторить",
+      "check": "Проверить обновления"
+    },
+    "currentVersion": "Текущая версия",
+    "whatsNew": "Что нового:",
+    "errorDetails": "Детали ошибки:",
+    "toast": {
+      "availableTitle": "Доступно обновление Verse Claw",
+      "availableDescription": "Доступна версия v{{version}}. Скачайте её, когда будете готовы.",
+      "downloadedTitle": "Обновление Verse Claw готово",
+      "downloadedDescription": "Версия v{{version}} загружена. Перезапустите приложение для установки.",
+      "unknownVersion": "новая"
+    },
+    "help": "Verse Claw автоматически проверяет обновления и показывает уведомление перед загрузкой или установкой."
+  },
+  "advanced": {
+    "title": "Дополнительные",
+    "description": "Опции для продвинутых пользователей",
+    "devMode": "Режим разработчика",
+    "devModeDesc": "Показывать инструменты и ярлыки разработчика",
+    "telemetry": "Анонимные данные об использовании",
+    "telemetryDesc": "Разрешить предоставление анонимных базовых данных об использовании для улучшения Verse Claw"
+  },
+  "developer": {
+    "title": "Разработчик",
+    "description": "Расширенные опции для разработчиков",
+    "console": "Консоль OpenClaw",
+    "consoleDesc": "Доступ к нативному интерфейсу управления OpenClaw",
+    "openConsole": "Открыть консоль разработчика",
+    "consoleNote": "Открывает Control UI с токеном шлюза",
+    "gatewayToken": "Токен шлюза",
+    "gatewayTokenDesc": "Вставьте это в настройки Control UI при запросе",
+    "tokenUnavailable": "Токен недоступен",
+    "tokenCopied": "Токен шлюза скопирован",
+    "cli": "CLI OpenClaw",
+    "cliDesc": "Скопируйте команду для запуска OpenClaw без изменения PATH.",
+    "cliPowershell": "Команда PowerShell.",
+    "cmdUnavailable": "Команда недоступна",
+    "cmdCopied": "CLI-команда скопирована",
+    "doctor": "OpenClaw Doctor",
+    "doctorDesc": "Запустите `openclaw doctor` и просмотрите вывод диагностики.",
+    "runDoctor": "Запустить Doctor",
+    "runDoctorFix": "Запустить исправление Doctor",
+    "doctorSucceeded": "OpenClaw doctor завершён",
+    "doctorFailed": "OpenClaw doctor сообщил о проблемах",
+    "doctorRunFailed": "Не удалось запустить OpenClaw doctor",
+    "doctorFixSucceeded": "Исправление OpenClaw doctor завершено",
+    "doctorFixFailed": "Исправление OpenClaw doctor сообщило о проблемах",
+    "doctorFixRunFailed": "Не удалось запустить исправление OpenClaw doctor",
+    "doctorCopied": "Вывод doctor скопирован",
+    "doctorOk": "Исправен",
+    "doctorIssue": "Обнаружены проблемы",
+    "doctorFixOk": "Исправлено",
+    "doctorFixIssue": "Ошибка исправления",
+    "doctorExitCode": "Код выхода",
+    "doctorDuration": "Длительность",
+    "doctorCommand": "Команда",
+    "doctorWorkingDir": "Рабочая директория",
+    "doctorError": "Ошибка",
+    "doctorStdout": "Стандартный вывод",
+    "doctorStderr": "Стандартная ошибка",
+    "doctorOutputEmpty": "(пусто)",
+    "telemetryViewer": "Просмотр телеметрии",
+    "telemetryViewerDesc": "Локальная телеметрия UX/производительности, последние 200 записей.",
+    "telemetryAggregated": "Топ событий",
+    "telemetryTotal": "Всего",
+    "telemetryErrors": "Ошибки",
+    "telemetrySlow": "Медленные (>=800мс)",
+    "telemetryEmpty": "Телеметрия ещё не собрана",
+    "telemetryCopied": "Телеметрия скопирована",
+    "telemetryCleared": "Телеметрия очищена",
+    "installCmd": "Установить команду \"openclaw\"",
+    "installCmdDesc": "Устанавливает ~/.local/bin/openclaw (без прав администратора)",
+    "installTitle": "Установить команду OpenClaw",
+    "installMessage": "Установить команду \"openclaw\"?",
+    "installDetail": "Это создаст ~/.local/bin/openclaw. Убедитесь, что ~/.local/bin в PATH, если хотите запускать глобально."
+  },
+  "about": {
+    "title": "О приложении",
+    "appName": "Verse Claw",
+    "tagline": "Графический AI-ассистент",
+    "basedOn": "На базе OpenClaw",
+    "version": "Версия {{version}}",
+    "docs": "Веб-сайт",
+    "github": "GitHub",
+    "faq": "FAQ"
+  },
+  "workProviders": {
+    "title": "Work Providers",
+    "description": "Локальные и опциональные Provider для Work Kits. Они показывают статус возможностей и не выдают права на инструменты.",
+    "status": {
+      "ready": "Готово",
+      "missingDependency": "Нет зависимости",
+      "missingConfig": "Нет настроек",
+      "disabled": "Отключено",
+      "externalUnavailable": "Внешний недоступен",
+      "runtimeUnavailable": "Runtime недоступен"
+    },
+    "providers": {
+      "officeDocument": "Документы",
+      "officeSheet": "Таблицы",
+      "officeSlide": "Презентации",
+      "pdf": "PDF",
+      "webSearch": "Web search",
+      "webRead": "Web reading",
+      "libreOffice": "LibreOffice",
+      "pandoc": "Pandoc",
+      "crawler": "Crawler",
+      "ocr": "OCR",
+      "dataFrame": "Data analysis"
+    },
+    "providerDescriptions": {
+      "officeDocument": "Читает и создает документы Word через легкие JS-библиотеки.",
+      "officeSheet": "Читает и создает таблицы и CSV.",
+      "officeSlide": "Создает редактируемые презентации.",
+      "pdf": "Проверяет, просматривает, разделяет и объединяет PDF.",
+      "webSearch": "Использует внешний поисковый Provider, настроенный пользователем.",
+      "webRead": "Извлекает читаемый текст и ссылки со страниц.",
+      "libreOffice": "Опциональный локальный Provider для точной Office-конвертации.",
+      "pandoc": "Опциональный Provider конвертации документов.",
+      "crawler": "Опциональный внешний crawler-сервис.",
+      "ocr": "Опциональный OCR Provider.",
+      "dataFrame": "Опциональный Python или сервисный Provider анализа данных."
+    }
+  },
+  "projectRules": {
+    "title": "Центр правил проекта",
+    "description": "Проверяйте входной файл правил активного workspace, локальные заметки правил и детерминированные предупреждения.",
+    "noWorkspace": "Нет активного workspace",
+    "agentsFile": "AGENTS.md",
+    "ruleFileCount": "Файлы .clawx/rules",
+    "validation": "Проверка",
+    "issueSummary": "{{errors}} ошибок / {{warnings}} предупреждений / {{info}} справочных",
+    "missingAgents": "В этом workspace еще нет AGENTS.md. Можно создать консервативный шаблон входа правил без перезаписи других файлов.",
+    "previewTitle": "Предпросмотр AGENTS.md",
+    "emptyPreview": "(пустой файл)",
+    "localRulesTitle": "Локальные .clawx/rules/*.md",
+    "noLocalRules": "Локальные файлы заметок правил не найдены.",
+    "contextPreviewTitle": "Предпросмотр agent context",
+    "issuesTitle": "Результаты проверки",
+    "noIssues": "Проблем проверки не найдено.",
+    "actions": {
+      "refresh": "Обновить",
+      "createAgents": "Создать AGENTS.md",
+      "creating": "Создание..."
+    },
+    "toast": {
+      "loadFailed": "Не удалось загрузить правила проекта: {{error}}",
+      "createFailed": "Не удалось создать AGENTS.md: {{error}}",
+      "created": "Шаблон AGENTS.md создан",
+      "alreadyPresent": "AGENTS.md уже существует"
+    },
+    "health": {
+      "ready": "Готово",
+      "warnings": "{{count}} предупреждение",
+      "warnings_plural": "{{count}} предупреждений",
+      "errors": "{{count}} ошибка",
+      "errors_plural": "{{count}} ошибок"
+    },
+    "status": {
+      "missing": "Отсутствует",
+      "present": "Есть",
+      "empty": "Пустой",
+      "tooLarge": "Слишком большой",
+      "unreadable": "Не читается",
+      "included": "Включено",
+      "available": "Доступно",
+      "referenceOnly": "Только ссылка"
+    },
+    "contextStatus": {
+      "included": "Включено",
+      "available": "Доступно",
+      "referenceOnly": "Только ссылка",
+      "missing": "Отсутствует"
+    },
+    "context": {
+      "agents": {
+        "title": "AGENTS.md",
+        "description": "Входной файл активного workspace является первым источником правил проекта, ожидаемым в agent context."
+      },
+      "harnessSpecs": {
+        "title": "harness/specs/**",
+        "description": "При ссылке из AGENTS.md или task spec правила, сценарии, задачи, guides и layers остаются долговременным источником правил проекта."
+      },
+      "clawxRules": {
+        "title": ".clawx/rules/*.md",
+        "description": "Найден {{count}} локальный дополнительный файл. Он виден здесь, но не становится новым источником истины, если AGENTS.md или Context Pack recipe не ссылается на него.",
+        "description_plural": "Найдено {{count}} локальных дополнительных файлов. Они видны здесь, но не становятся новым источником истины, если AGENTS.md или Context Pack recipe не ссылается на них."
+      }
+    },
+    "issues": {
+      "workspace.missing": {
+        "title": "Нет активного workspace",
+        "description": "Выберите или создайте workspace перед проверкой правил проекта."
+      },
+      "agents.missing": {
+        "title": "AGENTS.md отсутствует",
+        "description": "{{path}} является ожидаемым входным файлом правил проекта."
+      },
+      "agents.empty": {
+        "title": "AGENTS.md пуст",
+        "description": "{{path}} существует, но пока не содержит правил."
+      },
+      "agents.tooLarge": {
+        "title": "AGENTS.md слишком большой для предпросмотра",
+        "description": "{{path}} имеет размер {{size}} байт; лимит предпросмотра {{maxBytes}} байт."
+      },
+      "agents.unreadable": {
+        "title": "AGENTS.md не читается",
+        "description": "{{path}} не удалось проверить: {{reason}}"
+      },
+      "ruleFile.empty": {
+        "title": "Локальный файл правил пуст",
+        "description": "{{path}} найден, но не содержит текста."
+      },
+      "ruleFile.tooLarge": {
+        "title": "Локальный файл правил слишком большой",
+        "description": "{{path}} имеет размер {{size}} байт; лимит lint {{maxBytes}} байт."
+      },
+      "ruleFile.unreadable": {
+        "title": "Локальный файл правил не читается",
+        "description": "{{path}} не удалось проверить: {{reason}}"
+      },
+      "rules.duplicateTitle": {
+        "title": "Повторяющийся заголовок правила",
+        "description": "Заголовок \"{{title}}\" встречается в нескольких файлах: {{relatedPaths}}."
+      },
+      "rules.duplicateLine": {
+        "title": "Повторяющаяся строка правила",
+        "description": "Одинаковая строка правила встречается в нескольких файлах: {{relatedPaths}}."
+      },
+      "renderer.hostApiGuidanceMissing": {
+        "title": "Нет указания renderer host-api",
+        "description": "Добавьте правило, что backend-вызовы из renderer идут через host-api или api-client."
+      },
+      "renderer.ipcBanMissing": {
+        "title": "Нет предупреждения о прямом renderer IPC",
+        "description": "Добавьте детерминированное правило против прямых window.electron.ipcRenderer.invoke в renderer pages/components."
+      },
+      "renderer.gatewayFetchBanMissing": {
+        "title": "Нет предупреждения о прямом Gateway fetch",
+        "description": "Добавьте детерминированное правило против renderer fetch/WebSocket к 127.0.0.1:18789 или localhost:18789."
+      },
+      "renderer.ipcConflict": {
+        "title": "Возможный конфликт прямого IPC",
+        "description": "Текст правил выглядит так, будто одновременно разрешает и запрещает прямой renderer IPC. Проверьте формулировку."
+      },
+      "renderer.gatewayFetchConflict": {
+        "title": "Возможный конфликт прямого Gateway",
+        "description": "Текст правил выглядит так, будто одновременно разрешает и запрещает прямые renderer Gateway вызовы. Проверьте формулировку."
+      }
+    }
+  },
+  "workHeatGraph": {
+    "title": "???????? ????? ??????",
+    "description": "????????? ?????????? ?? ????????? ????????????? ??????.",
+    "runs": "{{count}} ????????",
+    "tokens": "{{count}} ???????",
+    "dayTitle": "{{date}}: {{count}} ????????, {{tokens}} ???????"
+  }
 }

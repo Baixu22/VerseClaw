@@ -1723,6 +1723,9 @@ function emitJobFinished(
     error: result.error,
     summary: result.summary,
     diagnostics: result.diagnostics,
+    ...(result.browserAutomationResult
+      ? { browserAutomationResult: result.browserAutomationResult }
+      : {}),
     delivered: job.state.lastDelivered,
     deliveryStatus: job.state.lastDeliveryStatus,
     deliveryError: job.state.lastDeliveryError,

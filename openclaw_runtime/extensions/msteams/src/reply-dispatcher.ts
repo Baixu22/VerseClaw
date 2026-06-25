@@ -116,7 +116,7 @@ export function createMSTeamsReplyDispatcher(params: {
   const sendTypingIndicator = isTypingSupported
     ? async () => {
         // While the streaming card is actively being updated the user
-        // already sees a live indicator in the stream â€” don't overlay a
+        // already sees a live indicator in the stream â€?don't overlay a
         // plain "..." typing on top of it. Between segments (tool chain)
         // the stream is finalized, so typing indicators are appropriate
         // and they are what keep the TurnContext alive. See #59731.
@@ -124,7 +124,7 @@ export function createMSTeamsReplyDispatcher(params: {
           return;
         }
         // Once the user pressed Stop (or Teams ended the stream), suppress
-        // typing pulses too â€” otherwise the bot keeps pulsing "typing..." in
+        // typing pulses too â€?otherwise the bot keeps pulsing "typing..." in
         // Teams for the rest of the agent run, fighting the user's explicit
         // cancel. The agent can't currently be canceled, but it's about to
         // wind down on its own; in the meantime we honor the cancel visually.
@@ -373,7 +373,7 @@ export function createMSTeamsReplyDispatcher(params: {
 
   // Pipe agent tool/plan/approval/command events into the stream controller's
   // progress-draft surface. In "progress" stream mode this lets the live
-  // streaming card show "Searching the schema..." â†’ "Generating SQL..." as
+  // streaming card show "Searching the schema..." â†?"Generating SQL..." as
   // tools fire (instead of the rotating "Thinking..." label sitting unchanged
   // for the duration of a long tool chain). In other modes these calls are
   // no-ops on the controller side.
@@ -547,7 +547,7 @@ export function createMSTeamsReplyDispatcher(params: {
       // Pass-through to the reply pipeline. `false` = "use block streaming"
       // (the default when streaming.mode=block or streaming.block.enabled=true,
       // or the legacy blockStreaming=true boolean). `true` = "do not use it".
-      // `undefined` = "no preference" â€” let the pipeline decide.
+      // `undefined` = "no preference" â€?let the pipeline decide.
       disableBlockStreaming: blockStreamingResolved == null ? undefined : !blockStreamingResolved,
       onModelSelected,
     },

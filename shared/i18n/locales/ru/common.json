@@ -19,7 +19,8 @@
         "saveSessionRename": "Сохранить название",
         "cancelSessionRename": "Отменить переименование",
         "imageGeneration": "Генерация изображений",
-        "billing": "Биллинг"
+        "billing": "Биллинг",
+        "remoteTasks": "Удалённые задачи"
     },
     "actions": {
         "save": "Сохранить",

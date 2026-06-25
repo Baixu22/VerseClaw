@@ -301,14 +301,14 @@ export type CatchupFetchFn = (params: {
    * Highest `rowid` the fetcher saw in the raw response, including rows it
    * dropped (parser failure, schema drift, missing fields). The replay loop
    * uses this as a floor for the cursor advance so a single unparseable row
-   * cannot stall catchup forever â€” without this, the bridge silently
+   * cannot stall catchup forever â€?without this, the bridge silently
    * dropping a row would mean the next pass re-fetches the same broken row
    * indefinitely. Optional so test fetchers that only emit fully-valid rows
    * can omit it; when omitted, the cursor advance falls back to the rows
    * the loop actually processed.
    */
   highWatermarkRowid?: number;
-  /** Companion to `highWatermarkRowid` â€” highest `date` seen in the raw response. */
+  /** Companion to `highWatermarkRowid` â€?highest `date` seen in the raw response. */
   highWatermarkMs?: number;
   /**
    * True when the fetcher reached every eligible source row for this pass.
@@ -438,7 +438,7 @@ export async function performIMessageCatchup(
   // any row we processed cleanly (success / skipFromMe / skipPreCursor /
   // skipGivenUp / give-up), and `earliestHeldFailureRow` is the smallest-rowid
   // row whose dispatch failed below the retry ceiling on this pass. When a
-  // failure is held, the persisted cursor must NOT leapfrog it â€” otherwise
+  // failure is held, the persisted cursor must NOT leapfrog it â€?otherwise
   // the next pass would filter the failed row out via `row.rowid <= sinceRowid`
   // and never retry. Already-successful rows above the held failure get
   // re-replayed on the next pass and absorbed by the inbound-dedupe cache.
@@ -508,7 +508,7 @@ export async function performIMessageCatchup(
     }
     // Below the retry ceiling: hold the cursor BEFORE this row so the next
     // pass retries it. Rows are sorted ascending, so the first held failure
-    // is the lowest-rowid one â€” clamp the persisted cursor at its rowid - 1.
+    // is the lowest-rowid one â€?clamp the persisted cursor at its rowid - 1.
     if (earliestHeldFailureRow === null || row.rowid < earliestHeldFailureRow.rowid) {
       earliestHeldFailureRow = row;
     }
@@ -519,7 +519,7 @@ export async function performIMessageCatchup(
   // drop (parser failure, schema drift). Without this, an unparseable row
   // could permanently stall the cursor: it never reaches the loop, the loop
   // never advances past it, the next pass re-fetches the same broken row.
-  // The floor only applies when no failure is held â€” a held failure has
+  // The floor only applies when no failure is held â€?a held failure has
   // tighter cursor-cap semantics that must win.
   if (earliestHeldFailureRow === null) {
     if (typeof fetchResult.highWatermarkMs === "number") {

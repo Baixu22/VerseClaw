@@ -62,10 +62,10 @@ function setMockEnv({
 } = {}): void {
   if (enabled) process.env.OPENCLAW_TEST_ENABLE_MOCK_PROVIDER = '1';
   else delete process.env.OPENCLAW_TEST_ENABLE_MOCK_PROVIDER;
-  if (userData === null) delete process.env.CLAWX_USER_DATA_DIR;
-  else process.env.CLAWX_USER_DATA_DIR = userData;
-  if (runtime === null) delete process.env.CLAWX_OPENCLAW_RUNTIME;
-  else process.env.CLAWX_OPENCLAW_RUNTIME = runtime;
+  if (userData === null) delete process.env.VERSE_CLAW_USER_DATA_DIR;
+  else process.env.VERSE_CLAW_USER_DATA_DIR = userData;
+  if (runtime === null) delete process.env.VERSE_CLAW_OPENCLAW_RUNTIME;
+  else process.env.VERSE_CLAW_OPENCLAW_RUNTIME = runtime;
 }
 
 describe('mock provider', () => {
@@ -77,8 +77,8 @@ describe('mock provider', () => {
     electronState.isPackaged = false;
     previousEnv = {
       OPENCLAW_TEST_ENABLE_MOCK_PROVIDER: process.env.OPENCLAW_TEST_ENABLE_MOCK_PROVIDER,
-      CLAWX_USER_DATA_DIR: process.env.CLAWX_USER_DATA_DIR,
-      CLAWX_OPENCLAW_RUNTIME: process.env.CLAWX_OPENCLAW_RUNTIME,
+      VERSE_CLAW_USER_DATA_DIR: process.env.VERSE_CLAW_USER_DATA_DIR,
+      VERSE_CLAW_OPENCLAW_RUNTIME: process.env.VERSE_CLAW_OPENCLAW_RUNTIME,
     };
   });
 

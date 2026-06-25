@@ -3,7 +3,7 @@ id: role-first-memory-control-plane
 title: Role-first memory control plane
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Upgrade the role-first runtime memory layer from MVP JSON cards to a structured SQLite-backed control plane with gatekeeper review, role-aware context-pack injection, and a lightweight ClawX management surface.
+intent: Upgrade the role-first runtime memory layer from MVP JSON cards to a structured SQLite-backed control plane with gatekeeper review, role-aware context-pack injection, and a lightweight Verse Claw management surface.
 touchedAreas:
   - openclaw_runtime/src/memory
   - openclaw_runtime/src/agents/role-spawn.ts
@@ -40,3 +40,12 @@ docs:
   required: true
   note: Update docs/clawx-design-overview.md role-first memory section.
 ---
+
+## Control-plane boundaries
+
+- Rules are hard constraints owned by `AGENTS.md` and `harness/specs/**`; Role Memory and automatic extraction must not write `AGENTS.md`, `harness/specs/**`, or `.clawx/rules/*.md`.
+- Knowledge stores project facts, architecture rationale, failure lessons, and workflow lessons. Role Memory can cite Knowledge, but automatic role extraction must not apply formal Knowledge.
+- Role Memory stores role experience, role preferences, and role-specific failure lessons. Automatic role, trace, and session-summary candidates must remain Memory proposals until explicit review.
+- Task Ledger stores current long-task state and evidence. It can supply evidence for memory proposals, but it is not a durable Role Memory or Rules store.
+
+Low-risk manual user proposals may follow the existing user-confirmed save path. Automatic memory proposals are proposal-first and never become applied cards or Project Rules without review.

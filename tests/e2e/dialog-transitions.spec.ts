@@ -28,7 +28,7 @@ async function expectSubtleDialogAnimation(locator: Locator): Promise<void> {
     };
   });
 
-  expect(animation.name).toContain('clawx-dialog-content-in');
+  expect(animation.name).toContain('verse-claw-dialog-content-in');
   expect(animation.duration).toContain('0.1s');
 
   const firstFrameOffset = await locator.evaluate(async (element) => {
@@ -118,7 +118,8 @@ test.describe('dialog transitions', () => {
 
     await completeSetup(page);
 
-    await page.getByTestId('sidebar-nav-models').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
     await page.getByTestId('providers-add-button').click();
     const providerDialog = page.getByTestId('add-provider-dialog');
     await expectSubtleDialogAnimation(providerDialog);
@@ -127,7 +128,8 @@ test.describe('dialog transitions', () => {
     await expect(providerDialog).toHaveAttribute('data-state', 'closed');
     await expect(providerDialog).toHaveCount(0);
 
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
     await page.getByTestId('agents-add-button').click();
     const agentDialog = page.getByTestId('add-agent-dialog');
     await expectSubtleDialogAnimation(agentDialog);

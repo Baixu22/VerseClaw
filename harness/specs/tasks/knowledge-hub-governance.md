@@ -38,4 +38,4 @@ docs:
   required: true
 ---
 
-Knowledge Hub governance is a ClawX Main/UI review layer over OpenClaw memory-wiki, not a new RAG stack or autonomous writer.
+Knowledge Hub governance is a Verse Claw Main/UI review layer over OpenClaw memory-wiki, not a new RAG stack or autonomous writer.
