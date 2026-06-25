@@ -1,5 +1,5 @@
 /**
- * Mention gate port â€” abstracts the SDK's `resolveInboundMentionDecision`
+ * Mention gate port â€?abstracts the SDK's `resolveInboundMentionDecision`
  * + `resolveControlCommandGate` into a single interface.
  *
  * The engine's `resolveGroupMessageGate` (Layer 1: ignoreOtherMentions)

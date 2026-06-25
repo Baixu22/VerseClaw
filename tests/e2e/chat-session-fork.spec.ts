@@ -4,7 +4,7 @@ const SOURCE_SESSION_KEY = 'agent:main:main';
 const FORK_SESSION_KEY = 'agent:main:fork-1711111111111';
 const SOURCE_DRAFT = 'unsent fork draft';
 const HANDOFF_DRAFT = [
-  '# Handoff: continue this ClawX conversation',
+  '# Handoff: continue this Verse Claw conversation',
   '',
   'Fork failed because the parent context is too large.',
 ].join('\n');
@@ -252,7 +252,7 @@ function baseHostApiMocks() {
   };
 }
 
-test.describe('ClawX chat session fork', () => {
+test.describe('Verse Claw chat session fork', () => {
   test('creates and selects a forked session with inherited history and copied draft without auto-send', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -367,7 +367,12 @@ test.describe('ClawX chat session fork', () => {
               return respond(request.id, {
                 sessions: [
                   { key: params.sourceSessionKey, displayName: 'main' },
-                  { key: params.forkSessionKey, displayName: 'Forked main', parentSessionKey: params.sourceSessionKey },
+                  {
+                    key: params.forkSessionKey,
+                    displayName: 'Forked main',
+                    parentSessionKey: params.sourceSessionKey,
+                    forkedFromParent: true,
+                  },
                 ],
               });
             }
@@ -433,6 +438,9 @@ test.describe('ClawX chat session fork', () => {
       )), { timeout: 30_000 }).toBeGreaterThan(0);
       await expect(page.getByText('Fork should preserve the active transcript branch.')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-composer-input')).toHaveValue(SOURCE_DRAFT);
+      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await expect(page.getByText(`Forked from ${SOURCE_SESSION_KEY}`)).toBeVisible();
+      await page.keyboard.press('Escape');
       await expect.poll(async () => app.evaluate(() => (
         (globalThis as typeof globalThis & { __forkCalls?: { chatSend: number } }).__forkCalls?.chatSend ?? 0
       ))).toBe(0);

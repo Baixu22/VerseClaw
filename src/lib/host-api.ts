@@ -1,5 +1,25 @@
 import type {
   AgentCreatePayload,
+  AgentBrowserClickPayload,
+  AgentBrowserActionResult,
+  AgentBrowserCommandPayload,
+  AgentBrowserCommandResult,
+  AgentBrowserEvaluatePayload,
+  AgentBrowserEvaluateResult,
+  AgentBrowserNavigatePayload,
+  AgentBrowserOpenPayload,
+  AgentBrowserProfileSavePayload,
+  AgentBrowserProfileSaveResult,
+  AgentBrowserProfilesResult,
+  AgentBrowserScreenshotPayload,
+  AgentBrowserScreenshotResult,
+  AgentBrowserSelectorPayload,
+  AgentBrowserSessionPayload,
+  AgentBrowserSessionResult,
+  AgentBrowserStatusResult,
+  AgentBrowserTypePayload,
+  AgentBrowserValidatePayload,
+  AgentBrowserValidateResult,
   AgentBootstrapUpdatePayload,
   AgentUpdateReasoningEffortPayload,
   AgentUpdatePayload,
@@ -28,6 +48,7 @@ import type {
   DialogOpenPayload,
   FilePreviewTreeOptions,
   FileReadBinaryOptions,
+  HostSuccess,
   GitBranchCheckoutPayload,
   GitBranchCreatePayload,
   GitBranchListResult,
@@ -94,6 +115,8 @@ import type {
   KnowledgeProvenanceResult,
   KnowledgeRecordReferencePayload,
   KnowledgeReviewDraftPayload,
+  KnowledgeRouteContextPayload,
+  KnowledgeRouteContextResult,
   KnowledgeSearchPayload,
   KnowledgeSearchResult,
   KnowledgeStewardReviewPayload,
@@ -102,6 +125,10 @@ import type {
   KnowledgeUpdateDraftPayload,
   KnowledgeUpdateInboxItemPayload,
   KnowledgeValidateOkfBundlePayload,
+  KnowledgeGovernanceResult,
+  KnowledgeListWatchedDirectoryEventsPayload,
+  KnowledgeWatchedDirectoryConfig,
+  KnowledgeWatchedDirectoryEvent,
   MediaThumbnailEntry,
   McpCallToolPayload,
   McpHeartbeatPayload,
@@ -154,6 +181,12 @@ import type {
   RemoteControlScreenshotPayload,
   RemoteControlScrollPayload,
   RemoteControlTargetPayload,
+  RemoteTaskApprovePayload,
+  RemoteTaskCreatePayload,
+  RemoteTaskIdPayload,
+  RemoteTaskListResult,
+  RemoteTaskPreviewResult,
+  RemoteTaskRecordResult,
   SessionCompactionHistoryResult,
   SessionCompactionHistoryPayload,
   SessionCompactionPayload,
@@ -205,6 +238,15 @@ export type { ChatKnowledgeReference } from '@shared/host-api/contract';
 
 export type {
   ChannelAccountsResult,
+  AgentBrowserActionResult,
+  AgentBrowserCommandResult,
+  AgentBrowserEvaluateResult,
+  AgentBrowserProfileSaveResult,
+  AgentBrowserProfilesResult,
+  AgentBrowserScreenshotResult,
+  AgentBrowserSessionResult,
+  AgentBrowserStatusResult,
+  AgentBrowserValidateResult,
   ChannelCredentialValidationResult,
   ChannelFormValuesResult,
   ChannelGroupItem,
@@ -256,6 +298,8 @@ export type {
   KnowledgeProposalResult,
   KnowledgeProvenanceRecord,
   KnowledgeProvenanceResult,
+  KnowledgeRouteCandidate,
+  KnowledgeRouteContextResult,
   KnowledgeSearchResult,
   KnowledgeStewardConfig,
   KnowledgeStewardReviewResult,
@@ -460,6 +504,31 @@ export const hostApi = {
     click: (input: RemoteControlClickPayload) => invokeHost('remoteControl', 'click', input),
     scroll: (input?: RemoteControlScrollPayload) => invokeHost('remoteControl', 'scroll', input),
     screenshot: (input?: RemoteControlScreenshotPayload) => invokeHost('remoteControl', 'screenshot', input),
+  },
+  agentBrowser: {
+    open: (input?: AgentBrowserOpenPayload): Promise<AgentBrowserSessionResult> =>
+      invokeHost('agentBrowser', 'open', input),
+    status: (): Promise<AgentBrowserStatusResult> => invokeHost('agentBrowser', 'status'),
+    profiles: (): Promise<AgentBrowserProfilesResult> => invokeHost('agentBrowser', 'profiles'),
+    saveProfile: (input: AgentBrowserProfileSavePayload): Promise<AgentBrowserProfileSaveResult> =>
+      invokeHost('agentBrowser', 'saveProfile', input),
+    validate: (input?: AgentBrowserValidatePayload): Promise<AgentBrowserValidateResult> =>
+      invokeHost('agentBrowser', 'validate', input),
+    navigate: (input: AgentBrowserNavigatePayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'navigate', input),
+    waitForSelector: (input: AgentBrowserSelectorPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'waitForSelector', input),
+    click: (input: AgentBrowserClickPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'click', input),
+    type: (input: AgentBrowserTypePayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'type', input),
+    evaluate: (input: AgentBrowserEvaluatePayload): Promise<AgentBrowserEvaluateResult> =>
+      invokeHost('agentBrowser', 'evaluate', input),
+    screenshot: (input: AgentBrowserScreenshotPayload): Promise<AgentBrowserScreenshotResult> =>
+      invokeHost('agentBrowser', 'screenshot', input),
+    command: (input: AgentBrowserCommandPayload): Promise<AgentBrowserCommandResult> =>
+      invokeHost('agentBrowser', 'command', input),
+    close: (input: AgentBrowserSessionPayload) => invokeHost('agentBrowser', 'close', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),
@@ -768,12 +837,21 @@ export const hostApi = {
     stewardReview: (input: KnowledgeStewardReviewPayload): Promise<KnowledgeStewardReviewResult> => (
       invokeHost('knowledge', 'stewardReview', input)
     ),
+    routeContext: (input: KnowledgeRouteContextPayload): Promise<KnowledgeRouteContextResult> => (
+      invokeHost('knowledge', 'routeContext', input)
+    ),
     recordKnowledgeReference: (input: KnowledgeRecordReferencePayload): Promise<KnowledgeProvenanceResult> => (
       invokeHost('knowledge', 'recordKnowledgeReference', input)
     ),
     getProvenance: (input: KnowledgeProvenancePayload): Promise<KnowledgeProvenanceResult> => (
       invokeHost('knowledge', 'getProvenance', input)
     ),
+    governanceAudit: (): Promise<KnowledgeGovernanceResult> => invokeHost('knowledge', 'governanceAudit'),
+    listWatchedDirectories: (): Promise<KnowledgeWatchedDirectoryConfig[]> => invokeHost('knowledge', 'listWatchedDirectories'),
+    addWatchedDirectory: (config: KnowledgeWatchedDirectoryConfig): Promise<HostSuccess> => invokeHost('knowledge', 'addWatchedDirectory', config),
+    updateWatchedDirectory: (id: string, config: Partial<KnowledgeWatchedDirectoryConfig>): Promise<HostSuccess> => invokeHost('knowledge', 'updateWatchedDirectory', { id, config }),
+    removeWatchedDirectory: (id: string): Promise<HostSuccess> => invokeHost('knowledge', 'removeWatchedDirectory', { id }),
+    listWatchedDirectoryEvents: (payload: KnowledgeListWatchedDirectoryEventsPayload): Promise<KnowledgeWatchedDirectoryEvent[]> => invokeHost('knowledge', 'listWatchedDirectoryEvents', payload),
   },
   cron: {
     list: () => invokeHost('cron', 'list'),
@@ -837,6 +915,14 @@ export const hostApi = {
     requestReview: (input: TaskLedgerReviewPayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'requestReview', input),
     clearReview: (input: TaskLedgerReviewPayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'clearReview', input),
     exportHtml: (input?: TaskLedgerExportHtmlPayload): Promise<TaskLedgerExportHtmlResult> => invokeHost('taskLedger', 'exportHtml', input),
+  },
+  remoteTasks: {
+    list: (): Promise<RemoteTaskListResult> => invokeHost('remoteTasks', 'list'),
+    create: (input: RemoteTaskCreatePayload): Promise<RemoteTaskRecordResult> => invokeHost('remoteTasks', 'create', input),
+    preview: (input: RemoteTaskIdPayload): Promise<RemoteTaskPreviewResult> => invokeHost('remoteTasks', 'preview', input),
+    approve: (input: RemoteTaskApprovePayload): Promise<RemoteTaskRecordResult> => invokeHost('remoteTasks', 'approve', input),
+    reject: (input: RemoteTaskIdPayload): Promise<RemoteTaskRecordResult> => invokeHost('remoteTasks', 'reject', input),
+    execute: (input: RemoteTaskIdPayload): Promise<RemoteTaskRecordResult> => invokeHost('remoteTasks', 'execute', input),
   },
   clawGraph: {
     listWorkflows: (input?: ClawGraphWorkspacePayload): Promise<ClawGraphListWorkflowsResult> => (

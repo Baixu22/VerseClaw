@@ -1,5 +1,11 @@
 import type { WorkspaceKnowledgeScope, WorkspacePermissionMode } from './workspace';
+import type { WorkProviderCapability } from './work-provider';
 
+/**
+ * @deprecated Internal compatibility for legacy Work Mode data and tests only.
+ * Current Chat behavior uses explicit effort/intensity preferences; Work Mode
+ * must not drive permissions, tool access, Task Ledger state, or runtime policy.
+ */
 export type WorkModeId = 'plan' | 'build' | 'review' | 'docsData';
 
 export type WorkModeStateWidget = 'planning' | 'build' | 'review' | 'docsData';
@@ -62,6 +68,7 @@ export interface WorkModeKitDefinition {
   labelKey: string;
   descriptionKey: string;
   artifactTypes: WorkModeArtifactType[];
+  requiredCapabilities: WorkProviderCapability[];
   requiredSkillSlugs: string[];
   optionalExternal: boolean;
   qualityChecks: WorkModeQualityCheck[];
@@ -82,6 +89,7 @@ export interface WorkModeKitCapability {
   status: WorkModeCapabilityStatus;
   artifactTypes: WorkModeArtifactType[];
   qualityChecks: WorkModeQualityCheck[];
+  requiredCapabilities: WorkProviderCapability[];
   requiredSkillSlugs: string[];
   missingSkillSlugs: string[];
   disabledSkillSlugs: string[];
@@ -111,6 +119,9 @@ export interface WorkModePreset {
 }
 
 export const WORK_MODE_IDS: WorkModeId[] = ['plan', 'build', 'review', 'docsData'];
+ 
+ /** All valid PromptMode values */
+ export const PROMPT_MODES: PromptMode[] = ['full', 'minimal', 'none'];
 
 export const WORK_MODE_KIT_IDS: WorkModeKit[] = [
   'reports',
@@ -149,6 +160,7 @@ export const WORK_MODE_KIT_DEFINITIONS: Record<WorkModeKit, WorkModeKitDefinitio
     labelKey: 'workModes.kits.reports',
     descriptionKey: 'workModes.kitDescriptions.reports',
     artifactTypes: ['markdown', 'docx', 'pdf'],
+    requiredCapabilities: ['document.read', 'document.write', 'pdf.validate'],
     requiredSkillSlugs: ['docx'],
     optionalExternal: false,
     qualityChecks: ['preview', 'export', 'readability'],
@@ -159,6 +171,7 @@ export const WORK_MODE_KIT_DEFINITIONS: Record<WorkModeKit, WorkModeKitDefinitio
     labelKey: 'workModes.kits.sheets',
     descriptionKey: 'workModes.kitDescriptions.sheets',
     artifactTypes: ['xlsx', 'csv'],
+    requiredCapabilities: ['sheet.read', 'sheet.write', 'csv.read'],
     requiredSkillSlugs: ['xlsx'],
     optionalExternal: false,
     qualityChecks: ['preview', 'formulas', 'charts'],
@@ -169,6 +182,7 @@ export const WORK_MODE_KIT_DEFINITIONS: Record<WorkModeKit, WorkModeKitDefinitio
     labelKey: 'workModes.kits.slides',
     descriptionKey: 'workModes.kitDescriptions.slides',
     artifactTypes: ['pptx', 'pdf'],
+    requiredCapabilities: ['slide.write'],
     requiredSkillSlugs: ['pptx'],
     optionalExternal: false,
     qualityChecks: ['preview', 'export'],
@@ -179,6 +193,7 @@ export const WORK_MODE_KIT_DEFINITIONS: Record<WorkModeKit, WorkModeKitDefinitio
     labelKey: 'workModes.kits.pdf',
     descriptionKey: 'workModes.kitDescriptions.pdf',
     artifactTypes: ['pdf', 'markdown'],
+    requiredCapabilities: ['pdf.validate', 'pdf.merge', 'document.read'],
     requiredSkillSlugs: ['pdf'],
     optionalExternal: false,
     qualityChecks: ['preview', 'citations'],
@@ -189,6 +204,7 @@ export const WORK_MODE_KIT_DEFINITIONS: Record<WorkModeKit, WorkModeKitDefinitio
     labelKey: 'workModes.kits.research',
     descriptionKey: 'workModes.kitDescriptions.research',
     artifactTypes: ['markdown', 'html', 'pdf'],
+    requiredCapabilities: ['web.search', 'web.extract', 'citation.pack'],
     requiredSkillSlugs: [],
     optionalExternal: true,
     qualityChecks: ['citations', 'readability'],
@@ -199,6 +215,7 @@ export const WORK_MODE_KIT_DEFINITIONS: Record<WorkModeKit, WorkModeKitDefinitio
     labelKey: 'workModes.kits.website',
     descriptionKey: 'workModes.kitDescriptions.website',
     artifactTypes: ['html', 'image'],
+    requiredCapabilities: ['web.extract'],
     requiredSkillSlugs: ['web-artifacts-builder'],
     optionalExternal: false,
     qualityChecks: ['preview', 'responsive', 'accessibility'],
@@ -209,6 +226,7 @@ export const WORK_MODE_KIT_DEFINITIONS: Record<WorkModeKit, WorkModeKitDefinitio
     labelKey: 'workModes.kits.design',
     descriptionKey: 'workModes.kitDescriptions.design',
     artifactTypes: ['html', 'image', 'pdf'],
+    requiredCapabilities: ['web.extract', 'pdf.validate'],
     requiredSkillSlugs: ['frontend-design'],
     optionalExternal: false,
     qualityChecks: ['preview', 'responsive'],
@@ -219,6 +237,7 @@ export const WORK_MODE_KIT_DEFINITIONS: Record<WorkModeKit, WorkModeKitDefinitio
     labelKey: 'workModes.kits.ops',
     descriptionKey: 'workModes.kitDescriptions.ops',
     artifactTypes: ['markdown', 'csv'],
+    requiredCapabilities: ['document.write', 'csv.read', 'citation.pack'],
     requiredSkillSlugs: [],
     optionalExternal: true,
     qualityChecks: ['readability'],
@@ -447,6 +466,7 @@ export function resolveWorkModeKitCapabilities(
       status,
       artifactTypes: definition.artifactTypes,
       qualityChecks: definition.qualityChecks,
+      requiredCapabilities: definition.requiredCapabilities,
       requiredSkillSlugs: definition.requiredSkillSlugs,
       missingSkillSlugs,
       disabledSkillSlugs,
@@ -468,3 +488,14 @@ export function summarizeWorkModeCapabilities(
     optionalExternal: 0,
   });
 }
+ 
+ /** System prompt intensity level. full=all sections, minimal=reduced (Tooling+Workspace+Runtime), none=identity only. */
+ export type PromptMode = 'full' | 'minimal' | 'none';
+ 
+ /** Default mapping: WorkModeId → PromptMode. plan→none, build→full, review/docsData→minimal. */
+ export const WORK_MODE_PROMPT_MAP: Record<WorkModeId, PromptMode> = {
+   plan: 'none',
+   build: 'full',
+   review: 'minimal',
+   docsData: 'minimal',
+ };

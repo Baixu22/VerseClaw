@@ -1,7 +1,7 @@
 /**
  * User-input bridge for the copilot agent runtime.
  *
- * STATUS â€” MVP DORMANT: This module is intentionally NOT registered with
+ * STATUS â€?MVP DORMANT: This module is intentionally NOT registered with
  * the SDK in the current harness (see `attempt.ts` / `side-question.ts`).
  * The SDK contract is "When `onUserInputRequest` is provided, enables the
  * `ask_user` tool allowing the agent to ask questions" (see
@@ -13,7 +13,7 @@
  * FOLLOW-UP: The scaffolding below stays in tree so the follow-up that
  * ports the codex user-input-bridge pattern
  * (`extensions/codex/src/app-server/user-input-bridge.ts`) has a stable
- * surface to wire â€” that change will route SDK `UserInputRequest`s
+ * surface to wire â€?that change will route SDK `UserInputRequest`s
  * through `params.onBlockReply` / `onPartialReply` and resolve the
  * pending promise from the next inbound channel message, then register
  * `createUserInputBridge(delegatingUserInputPolicy(...))` from

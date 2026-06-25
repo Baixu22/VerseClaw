@@ -1,12 +1,12 @@
 /**
  * Audio format conversion utilities.
- * 音频格式转换工具。
+ * 音频格式转换工具�?
  *
- * Handles SILK ↔ PCM ↔ WAV ↔ MP3 conversions for QQ Bot voice messaging.
+ * Handles SILK �?PCM �?WAV �?MP3 conversions for QQ Bot voice messaging.
  * Uses WASM decoders (silk-wasm, mpg123-decoder) and direct QQ-native uploads
  * without launching native subprocesses.
  *
- * Self-contained within engine/ — no framework SDK dependency.
+ * Self-contained within engine/ �?no framework SDK dependency.
  */
 
 import * as fs from "node:fs";
@@ -185,7 +185,7 @@ function normalizeFormats(formats: string[]): string[] {
 /**
  * Convert a local audio file to Base64-encoded SILK for QQ API upload.
  *
- * Attempts conversion via direct QQ-native upload → WASM decoders → null fallback chain.
+ * Attempts conversion via direct QQ-native upload �?WASM decoders �?null fallback chain.
  */
 export async function audioFileToSilkBase64(
   filePath: string,
@@ -257,7 +257,7 @@ export async function audioFileToSilkBase64(
     const pcmBuf = await wasmDecodeMp3ToPCM(buf, targetRate);
     if (pcmBuf) {
       const { silkBuffer } = await pcmToSilk(pcmBuf, targetRate);
-      debugLog(`[audio-convert] WASM: MP3 → SILK done (${silkBuffer.length} bytes)`);
+      debugLog(`[audio-convert] WASM: MP3 �?SILK done (${silkBuffer.length} bytes)`);
       return silkBuffer.toString("base64");
     }
   }

@@ -27,7 +27,7 @@ import { withRetry, UPLOAD_RETRY_POLICY } from "./retry.js";
 import { mediaUploadPath, messagePath, getNextMsgSeq } from "./routes.js";
 import { TokenManager } from "./token.js";
 
-/** Upload cache interface â€” the caller provides the implementation. */
+/** Upload cache interface â€?the caller provides the implementation. */
 export interface UploadCacheAdapter {
   computeHash: (data: string) => string;
   get: (hash: string, scope: string, targetId: string, fileType: number) => string | null;
@@ -42,7 +42,7 @@ export interface UploadCacheAdapter {
   ) => void;
 }
 
-/** File name sanitizer â€” injected to avoid importing platform-specific utils. */
+/** File name sanitizer â€?injected to avoid importing platform-specific utils. */
 export type SanitizeFileNameFn = (name: string) => string;
 
 interface MediaApiConfig {
@@ -193,7 +193,7 @@ export class MediaApi {
    * Upload media via base64, URL, buffer, or local file path to a C2C or Group target.
    *
    * The `localPath` and `buffer` branches are equivalent to `fileData` for the
-   * current one-shot implementation â€” the file is read and base64-encoded
+   * current one-shot implementation â€?the file is read and base64-encoded
    * synchronously. They exist as first-class inputs so that a future chunked
    * upload implementation can consume them without interface churn.
    *
@@ -309,7 +309,7 @@ export class MediaApi {
   }
 
   /**
-   * Send a media message (upload result â†’ message) to a C2C or Group target.
+   * Send a media message (upload result â†?message) to a C2C or Group target.
    *
    * @param scope - `'c2c'` or `'group'`.
    * @param targetId - User openid or group openid.

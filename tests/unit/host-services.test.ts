@@ -64,7 +64,7 @@ const {
   getSettingMock: vi.fn(),
   buildSandboxStatusMock: vi.fn(),
   listLogFilesMock: vi.fn(),
-  logDir: '/tmp/clawx-host-services-test-logs',
+  logDir: '/tmp/verse-claw-host-services-test-logs',
   listAgentsSnapshotFromConfigMock: vi.fn(),
   listAgentsSnapshotMock: vi.fn(),
   listConfiguredChannelAccountsFromConfigMock: vi.fn(),
@@ -118,7 +118,7 @@ const {
   syncSavedProviderToRuntimeMock: vi.fn(),
   syncLaunchAtStartupSettingFromStoreMock: vi.fn(),
   syncProxyConfigToOpenClawMock: vi.fn(),
-  testOpenClawConfigDir: '/tmp/clawx-host-services-openclaw',
+  testOpenClawConfigDir: '/tmp/verse-claw-host-services-openclaw',
   updateAgentNameMock: vi.fn(),
   validateApiKeyWithProviderMock: vi.fn(),
   writeAgentBootstrapFileMock: vi.fn(),
@@ -154,7 +154,7 @@ vi.mock('@electron/utils/logger', async (importOriginal) => {
       info: vi.fn(),
       warn: vi.fn(),
       getLogDir: () => logDir,
-      getLogFilePath: () => join(logDir, 'clawx-current.log'),
+      getLogFilePath: () => join(logDir, 'verse-claw-current.log'),
       getRecentLogs: vi.fn(),
       listLogFiles: (...args: unknown[]) => listLogFilesMock(...args),
       readLogFile: (...args: unknown[]) => readLogFileMock(...args),
@@ -221,7 +221,7 @@ vi.mock('@electron/utils/plugin-install', () => ({
 }));
 
 vi.mock('@electron/utils/openclaw-workspace', () => ({
-  ensureClawXContext: vi.fn(),
+  ensureVerseClawContext: vi.fn(),
 }));
 
 vi.mock('@electron/services/providers/provider-runtime-sync', () => ({
@@ -283,7 +283,7 @@ vi.mock('@electron/utils/paths', () => ({
   getOpenClawConfigDir: () => testOpenClawConfigDir,
   getOpenClawDir: () => testOpenClawConfigDir,
   getOpenClawResolvedDir: () => testOpenClawConfigDir,
-  isOpenClawRuntimeEnabled: () => process.env.CLAWX_OPENCLAW_RUNTIME === 'source',
+  isOpenClawRuntimeEnabled: () => process.env.VERSE_CLAW_OPENCLAW_RUNTIME === 'source',
 }));
 
 vi.mock('@electron/utils/proxy-fetch', () => ({
@@ -312,6 +312,7 @@ const baseSettings = {
   proxyBypassRules: '',
   launchAtStartup: false,
   theme: 'system',
+  roleMemoryEnabled: true,
 };
 
 describe('host services', () => {
@@ -415,6 +416,22 @@ describe('host services', () => {
       preserveExistingWhenDisabled: false,
     });
     expect(applyProxySettingsMock).toHaveBeenCalledWith(baseSettings);
+    expect(gatewayManager.restart).toHaveBeenCalledTimes(1);
+  });
+
+  it('restarts a running gateway when the Role Memory setting changes', async () => {
+    const gatewayManager = {
+      getStatus: vi.fn(() => ({ state: 'running', port: 18789 })),
+      restart: vi.fn(),
+    };
+    const { createSettingsApi } = await import('@electron/services/settings-api');
+
+    await expect(createSettingsApi(gatewayManager as never).set({
+      key: 'roleMemoryEnabled',
+      value: false,
+    })).resolves.toEqual({ success: true });
+
+    expect(setSettingMock).toHaveBeenCalledWith('roleMemoryEnabled', false);
     expect(gatewayManager.restart).toHaveBeenCalledTimes(1);
   });
 
@@ -827,7 +844,7 @@ describe('host services', () => {
 
   it('returns diagnostics snapshot with channel view and log tails', async () => {
     writeFileSync(join(testOpenClawConfigDir, 'logs', 'gateway.log'), 'gateway-one\ngateway-two\n');
-    readLogFileMock.mockResolvedValue('clawx-log-tail');
+    readLogFileMock.mockResolvedValue('verse-claw-log-tail');
     readOpenClawConfigMock.mockResolvedValue({
       channels: {
         feishu: {
@@ -879,7 +896,7 @@ describe('host services', () => {
           accounts: [expect.objectContaining({ accountId: 'default', agentId: 'main' })],
         }),
       ],
-      clawxLogTail: 'clawx-log-tail',
+      verseClawLogTail: 'verse-claw-log-tail',
       gateway: expect.objectContaining({
         state: 'healthy',
         capabilities: { rpc: true },
@@ -895,9 +912,9 @@ describe('host services', () => {
   });
 
   it('reads only selected log files from the log directory', async () => {
-    const selectedLog = join(logDir, 'clawx-selected.log');
+    const selectedLog = join(logDir, 'verse-claw-selected.log');
     writeFileSync(selectedLog, 'one\ntwo\nthree\n');
-    listLogFilesMock.mockResolvedValue([{ name: 'clawx-selected.log', path: selectedLog, size: 14, modified: 'now' }]);
+    listLogFilesMock.mockResolvedValue([{ name: 'verse-claw-selected.log', path: selectedLog, size: 14, modified: 'now' }]);
     const { createLogsApi } = await import('@electron/services/logs-api');
 
     await expect(createLogsApi().readFile({ path: selectedLog, tailLines: 2 })).resolves.toEqual({
@@ -909,7 +926,7 @@ describe('host services', () => {
   });
 
   it('sends staged media through the typed chat service with gateway attachments', async () => {
-    const mediaPath = join(tmpdir(), `clawx-host-services-media-${Date.now()}.png`);
+    const mediaPath = join(tmpdir(), `verse-claw-host-services-media-${Date.now()}.png`);
     writeFileSync(mediaPath, 'fake-image-bytes');
     const gatewayManager = {
       getStatus: vi.fn(() => ({ state: 'running' })),
@@ -1191,10 +1208,11 @@ describe('host services', () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const sessionsApi = createSessionsApi();
 
-    await expect(sessionsApi.prepareHandoff({
+    const result = await sessionsApi.prepareHandoff({
       sessionKey: 'agent:main:handoff',
       workspaceId: 'workspace-a',
-    })).resolves.toMatchObject({
+    });
+    expect(result).toMatchObject({
       success: true,
       checkpoint: {
         trigger: 'session_rotation',
@@ -1203,14 +1221,20 @@ describe('host services', () => {
         decisions: expect.arrayContaining([expect.stringContaining('deterministic template')]),
         testsRun: expect.arrayContaining([expect.stringContaining('pnpm run typecheck')]),
       },
-      draft: expect.stringContaining('Handoff: continue this ClawX conversation'),
+      draft: expect.stringContaining('Handoff: continue this Verse Claw conversation'),
       sources: expect.arrayContaining([
+        expect.objectContaining({ id: 'compression_artifact', available: false }),
         expect.objectContaining({ id: 'transcript', available: true }),
         expect.objectContaining({ id: 'task_ledger' }),
         expect.objectContaining({ id: 'git' }),
         expect.objectContaining({ id: 'observability' }),
       ]),
     });
+    expect(result.draft).toContain('## Current objective');
+    expect(result.draft).toContain('## Recently confirmed');
+    expect(result.draft).toContain('## In progress');
+    expect(result.draft).toContain('## Blockers and risks');
+    expect(result.draft).toContain('## Evidence sources');
   });
 
   it('merges runtime checkpoint handoff with ledger, git, observability, and transcript sources', async () => {
@@ -1233,6 +1257,23 @@ describe('host services', () => {
       },
     }));
     const rpc = vi.fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        key: 'agent:main:checkpoint',
+        checkpointId: 'ltcp-1',
+        context: 'Token-dense recovery projection from runtime.',
+        projectionTokens: 256,
+        quality: {
+          score: 0.92,
+          level: 'high',
+          fieldCoverage: 0.9,
+          evidenceCoverage: 0.8,
+          artifactTokens: 900,
+          projectionTokens: 256,
+          warnings: [],
+        },
+        warnings: ['projection clipped'],
+      })
       .mockResolvedValueOnce({
         ok: true,
         key: 'agent:main:checkpoint',
@@ -1280,18 +1321,27 @@ describe('host services', () => {
         metadata: {
           source: 'clawx-session-handoff-ecosystem',
           runtimeCheckpoint: true,
+          recoveryContext: true,
+          recoveryCheckpointId: 'ltcp-1',
         },
       },
-      draft: expect.stringContaining('Resume checkpoint'),
+      draft: expect.stringContaining('Token-dense recovery projection from runtime.'),
       sources: expect.arrayContaining([
+        expect.objectContaining({ id: 'compression_artifact', available: true }),
         expect.objectContaining({ id: 'runtime_checkpoint', available: true }),
         expect.objectContaining({ id: 'transcript', available: true }),
         expect.objectContaining({ id: 'task_ledger' }),
         expect.objectContaining({ id: 'git' }),
         expect.objectContaining({ id: 'observability' }),
       ]),
+      warnings: expect.arrayContaining(['Recovery context warning: projection clipped']),
     });
-    expect(rpc).toHaveBeenNthCalledWith(1, 'sessions.resumeCheckpoints', expect.objectContaining({
+    expect(rpc).toHaveBeenNthCalledWith(1, 'sessions.recoveryContext', expect.objectContaining({
+      key: 'agent:main:checkpoint',
+      budgetTokens: 1800,
+      purpose: 'session_handoff',
+    }), 10_000);
+    expect(rpc).toHaveBeenNthCalledWith(2, 'sessions.resumeCheckpoints', expect.objectContaining({
       key: 'agent:main:checkpoint',
       limit: 1,
     }), 10_000);

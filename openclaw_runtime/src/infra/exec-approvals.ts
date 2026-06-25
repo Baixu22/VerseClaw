@@ -21,17 +21,17 @@ export * from "./exec-approvals-analysis.js";
 export * from "./exec-approvals-allowlist.js";
 export type { ExecAllowlistEntry } from "./exec-approvals.types.js";
 
-export type ExecHost = "sandbox" | "gateway" | "node";
+export type ExecHost = "sandbox" | "gateway" | "node" | "verseshell";
 export type ExecTarget = "auto" | ExecHost;
 export type ExecSecurity = "deny" | "allowlist" | "full";
 export type ExecAsk = "off" | "on-miss" | "always";
 export type ExecMode = "deny" | "allowlist" | "ask" | "auto" | "full";
 
-export const EXEC_TARGET_VALUES: readonly ExecTarget[] = ["auto", "sandbox", "gateway", "node"];
+export const EXEC_TARGET_VALUES: readonly ExecTarget[] = ["auto", "sandbox", "gateway", "node", "verseshell"];
 
 export function normalizeExecHost(value?: string | null): ExecHost | null {
   const normalized = normalizeOptionalLowercaseString(value);
-  if (normalized === "sandbox" || normalized === "gateway" || normalized === "node") {
+  if (normalized === "sandbox" || normalized === "gateway" || normalized === "node" || normalized === "verseshell") {
     return normalized;
   }
   return null;

@@ -3,7 +3,7 @@ id: workspace-harness-bootstrap
 title: Workspace Harness Bootstrap
 type: workspace-bootstrap
 ownedPaths:
-  - electron/utils/clawx-harness-template.ts
+  - electron/utils/verse-claw-harness-template.ts
   - electron/utils/openclaw-workspace.ts
   - electron/services/workspaces-api.ts
   - resources/workspace-harness/**
@@ -18,14 +18,14 @@ requiredRules:
   - docs-sync
 ---
 
-Workspace harness bootstrap covers the ClawX-owned project specification and Task Ledger bridge skeleton that is seeded into active project workspaces and OpenClaw agent workspaces.
+Workspace harness bootstrap covers the Verse Claw-owned project specification and Task Ledger bridge skeleton that is seeded into active project workspaces and OpenClaw agent workspaces.
 
 The bootstrap flow has two entry points:
 
-- OpenClaw agent workspace provisioning calls `ensureClawXIdentityFile`, which also seeds `.clawx/harness/`.
-- ClawX active workspace profile creation or root-path migration calls the same harness seeder for the selected project directory.
+- OpenClaw agent workspace provisioning calls `ensureVerse ClawIdentityFile`, which also seeds `.clawx/harness/`.
+- Verse Claw active workspace profile creation or root-path migration calls the same harness seeder for the selected project directory.
 
-The seeded files provide a Trellis-inspired structure without copying Trellis, creating `.trellis/`, or competing with ClawX's long-conversation state owners:
+The seeded files provide a Trellis-inspired structure without copying Trellis, creating `.trellis/`, or competing with Verse Claw's long-conversation state owners:
 
 - `specs/rules/` for hard constraints.
 - `specs/scenarios/` for cross-layer workflows.

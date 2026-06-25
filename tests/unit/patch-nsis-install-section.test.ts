@@ -1,10 +1,17 @@
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
-import { patchNsisInstallSectionTemplate } from '../../scripts/patch-nsis-install-section.mjs';
+let patchNsisInstallSectionTemplate: (targetPath?: string) => boolean;
+
+beforeAll(async () => {
+  const modulePath = pathToFileURL(resolve('scripts/patch-nsis-install-section.mjs')).href;
+  const module = await import(/* @vite-ignore */ modulePath) as typeof import('../../scripts/patch-nsis-install-section.mjs');
+  patchNsisInstallSectionTemplate = module.patchNsisInstallSectionTemplate;
+});
 
 const SAMPLE_INSTALL_SECTION = `!ifdef ONE_CLICK
   !insertmacro CHECK_APP_RUNNING
@@ -35,7 +42,7 @@ describe('patchNsisInstallSectionTemplate', () => {
     expect(patchNsisInstallSectionTemplate(target)).toBe(true);
 
     const result = readFileSync(target, 'utf8');
-    expect(result).toContain('ClawX-patched-v2: run app-running guard in assisted UAC inner instance');
+    expect(result).toContain('Verse Claw-patched-v2: run app-running guard in assisted UAC inner instance');
     expect(result).toContain('!insertmacro CHECK_APP_RUNNING');
     expect(result).not.toContain('${ifNot} ${UAC_IsInnerInstance}\n    !insertmacro CHECK_APP_RUNNING');
     expect(patchNsisInstallSectionTemplate(target)).toBe(true);

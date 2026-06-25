@@ -783,6 +783,27 @@ function ensureAdditiveStateColumns(db: DatabaseSync): void {
   ensureColumn(db, "gateway_restart_sentinel", "doctor_hint TEXT");
   ensureColumn(db, "gateway_restart_sentinel", "stats_json TEXT");
   ensureColumn(db, "subagent_runs", "task_name TEXT");
+  ensureColumn(db, "long_task_checkpoints", "task_ledger_root_id TEXT");
+  ensureColumn(db, "long_task_intervention_events", "task_ledger_root_id TEXT");
+  ensureColumn(db, "long_task_user_queue", "task_ledger_root_id TEXT");
+  if (tableExists(db, "long_task_checkpoints")) {
+    db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_long_task_checkpoints_ledger_root
+        ON long_task_checkpoints(task_ledger_root_id, created_at DESC, id);
+    `);
+  }
+  if (tableExists(db, "long_task_intervention_events")) {
+    db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_long_task_intervention_ledger_root
+        ON long_task_intervention_events(task_ledger_root_id, created_at DESC, id);
+    `);
+  }
+  if (tableExists(db, "long_task_user_queue")) {
+    db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_long_task_user_queue_ledger_root
+        ON long_task_user_queue(task_ledger_root_id, status, created_at, id);
+    `);
+  }
 }
 
 function ensureSchema(db: DatabaseSync, pathname: string): void {

@@ -246,7 +246,7 @@ function SkillDetailDialog({ skill, isOpen, onClose, onToggle, onUninstall, onOp
   );
 }
 
-export function Skills() {
+export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
   const {
     skills,
     loading,
@@ -398,26 +398,43 @@ export function Skills() {
 
   if (loading) {
     return (
-      <div className="flex flex-col -m-6 dark:bg-background min-h-[calc(100vh-2.5rem)] items-center justify-center">
+      <div className={cn(
+        'flex flex-col items-center justify-center',
+        embedded ? 'min-h-64' : '-m-6 min-h-[calc(100vh-2.5rem)] dark:bg-background',
+      )}>
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div data-testid="skills-page" className="flex flex-col -m-6 dark:bg-background h-[calc(100vh-2.5rem)] overflow-hidden">
-      <div className="w-full max-w-5xl mx-auto flex flex-col h-full p-10 pt-16">
+    <div
+      data-testid="skills-page"
+      className={cn(
+        'flex flex-col',
+        embedded ? 'w-full' : '-m-6 h-[calc(100vh-2.5rem)] overflow-hidden dark:bg-background',
+      )}
+    >
+      <div className={cn(
+        'w-full flex flex-col',
+        embedded ? 'min-h-0' : 'max-w-5xl mx-auto h-full p-10 pt-16',
+      )}>
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-start justify-between mb-6 shrink-0 gap-4">
-          <div>
-            <h1 className="text-5xl md:text-6xl font-serif text-foreground mb-3 font-normal tracking-tight">
-              {t('title')}
-            </h1>
-            <p className="text-subtitle text-foreground/70 font-medium">
-              {t('subtitle')}
-            </p>
-          </div>
+        <div className={cn(
+          'flex flex-col md:flex-row md:items-start shrink-0 gap-4',
+          embedded ? 'mb-6 justify-end' : 'mb-6 justify-between',
+        )}>
+          {!embedded && (
+            <div>
+              <h1 className="text-5xl md:text-6xl font-serif text-foreground mb-3 font-normal tracking-tight">
+                {t('title')}
+              </h1>
+              <p className="text-subtitle text-foreground/70 font-medium">
+                {t('subtitle')}
+              </p>
+            </div>
+          )}
 
           <div className="flex items-center gap-3 md:mt-2">
             {hasInstalledSkills && (
@@ -553,7 +570,9 @@ export function Skills() {
           </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2">
+        <div className={cn(
+          embedded ? 'min-h-0' : 'flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2',
+        )}>
           {toolTab === 'mcp' ? (
             <McpServicesPanel />
           ) : toolTab === 'marketplace' ? (

@@ -2,11 +2,44 @@ import http from 'node:http';
 import { Buffer } from 'node:buffer';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 const repoRoot = process.cwd();
 
-describe('ClawX OpenAI image plugin request shape', () => {
+vi.mock('openclaw/plugin-sdk/core', () => ({
+  definePluginEntry: (entry: unknown) => entry,
+}));
+
+vi.mock('openclaw/plugin-sdk/image-generation', () => ({
+  createOpenAiCompatibleImageGenerationProvider: (options: {
+    defaultBaseUrl: string;
+    defaultModel: string;
+    resolveBaseUrl: (input: { providerConfig?: { baseUrl?: string }; defaultBaseUrl: string }) => string;
+    resolveCount: (input: { req: Record<string, unknown> }) => number;
+    buildGenerateRequest: (input: { req: Record<string, unknown>; model: string; count: number }) => {
+      body: Record<string, unknown>;
+    };
+  }) => ({
+    async generateImage(req: Record<string, unknown>) {
+      const cfg = req.cfg as { models?: { providers?: Record<string, { baseUrl?: string }> } } | undefined;
+      const providerConfig = cfg?.models?.providers?.['clawx-openai-image'];
+      const baseUrl = options.resolveBaseUrl({ providerConfig, defaultBaseUrl: options.defaultBaseUrl });
+      const model = typeof req.model === 'string' ? req.model : options.defaultModel;
+      const count = options.resolveCount({ req });
+      const request = options.buildGenerateRequest({ req, model, count });
+      const response = await fetch(`${baseUrl}/images/generations`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(request.body),
+      });
+      const json = await response.json() as { data?: unknown[] };
+      return { images: json.data ?? [] };
+    },
+  }),
+  toImageDataUrl: ({ buffer, mimeType }: { buffer: Buffer; mimeType: string }) => `data:${mimeType};base64,${buffer.toString('base64')}`,
+}));
+
+describe('Verse Claw OpenAI image plugin request shape', () => {
   it('does not force deprecated OpenAI Images response_format', async () => {
     const pluginSource = await readFile(
       join(repoRoot, 'resources/openclaw-plugins/clawx-openai-image/index.mjs'),

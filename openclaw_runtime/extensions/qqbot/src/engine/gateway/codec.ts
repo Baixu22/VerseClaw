@@ -1,7 +1,7 @@
 /**
  * Gateway message decoding utilities.
  *
- * Extracted from `gateway.ts` â€” handles the various data formats that
+ * Extracted from `gateway.ts` â€?handles the various data formats that
  * the QQ Bot WebSocket can deliver (string, Buffer, Buffer[], ArrayBuffer).
  *
  * Zero external dependencies beyond Node.js built-ins.

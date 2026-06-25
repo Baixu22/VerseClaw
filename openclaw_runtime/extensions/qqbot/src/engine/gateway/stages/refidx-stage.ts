@@ -1,5 +1,5 @@
 /**
- * RefIdx persistence stage â€” writes the current message into the shared
+ * RefIdx persistence stage â€?writes the current message into the shared
  * `refIndex` cache so future quote resolutions can find it.
  *
  * The stage also attaches voice transcripts (and their source) onto the
@@ -24,7 +24,7 @@ export function writeRefIndex(params: {
   event: QueuedMessage;
   parsedContent: string;
   processed: ProcessedAttachments;
-  /** Optional refIdx returned by `InputNotify` â€” used when `msgIdx` is missing. */
+  /** Optional refIdx returned by `InputNotify` â€?used when `msgIdx` is missing. */
   inputNotifyRefIdx?: string;
 }): void {
   const { event, parsedContent, processed, inputNotifyRefIdx } = params;

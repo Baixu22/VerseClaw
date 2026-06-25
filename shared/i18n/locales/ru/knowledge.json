@@ -137,7 +137,22 @@
     "permissions": "Permission Boundary",
     "permissionsDescription": "Chat knowledge scope разрешает только чтение через search/get. Запись, merge, archive и delete должны пройти draft или proposal и подтверждение пользователя.",
     "lastReview": "Latest Steward Review",
-    "noReview": "В этой сессии steward review еще не запускался."
+    "noReview": "В этой сессии steward review еще не запускался.",
+    "runHealthCheck": "Запустить проверку",
+    "runLint": "Запустить линтинг",
+    "runCompile": "Запустить компиляцию",
+    "checking": "Проверка...",
+    "contradictions": "Противоречия",
+    "stale": "Устаревшие страницы",
+    "dangling": "Изолированные страницы",
+    "noIssues": "Проблем не обнаружено",
+    "suggestions": "Предложения хранителя",
+    "lastCheck": "Последняя проверка: {time}",
+    "dismissAll": "Закрыть все",
+    "allClear": "Всё в порядке",
+    "allClearHint": "Проблем не обнаружено. Запустите проверку для подтверждения.",
+    "lintComplete": "Линтинг завершён",
+    "compileComplete": "Компиляция завершена"
   },
   "dialogs": {
     "pickFiles": "Импортировать файлы знаний",

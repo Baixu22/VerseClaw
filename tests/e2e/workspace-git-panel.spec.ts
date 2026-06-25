@@ -100,7 +100,11 @@ const gitBranches = [
 
 const gitWorktrees = [
   { path: '/workspace/demo', branch: 'feature/git-panel', head: 'abc123' },
-  { path: '/workspace/demo-feature-a', branch: 'feature/a', head: 'aaa111' },
+  { path: '/workspace/demo-feature-a', branch: 'feature/a', head: 'aaa111', locked: true, prunable: true },
+];
+
+const gitStashes = [
+  { index: 0, selector: 'stash@{0}', branch: 'feature/git-panel', message: 'WIP demo changes' },
 ];
 
 const removeApproval = {
@@ -123,6 +127,39 @@ const revertApproval = {
   mode: 'acceptEdits',
   requestedAt: 2,
   reason: 'Reverting a file requires approval.',
+};
+
+const pushApproval = {
+  id: 'approval-push',
+  workspaceId: WORKSPACE_ID,
+  source: 'git',
+  risk: 'dangerous',
+  status: 'pending',
+  mode: 'acceptEdits',
+  requestedAt: 3,
+  reason: 'Pushing changes requires approval.',
+};
+
+const prApproval = {
+  id: 'approval-pr-create',
+  workspaceId: WORKSPACE_ID,
+  source: 'git',
+  risk: 'dangerous',
+  status: 'pending',
+  mode: 'acceptEdits',
+  requestedAt: 4,
+  reason: 'Creating a pull request requires approval.',
+};
+
+const stashApplyApproval = {
+  id: 'approval-stash-apply',
+  workspaceId: WORKSPACE_ID,
+  source: 'git',
+  risk: 'dangerous',
+  status: 'pending',
+  mode: 'acceptEdits',
+  requestedAt: 5,
+  reason: 'Applying stash requires approval.',
 };
 
 test.describe('Workspace Git panel', () => {
@@ -171,6 +208,27 @@ test.describe('Workspace Git panel', () => {
             activeWorkspaceId: WORKSPACE_ID,
             activeWorkspace: workspace,
           },
+          [stableStringify(['workspaces', 'create', {
+            name: 'demo-feature-a',
+            rootPath: '/workspace/demo-feature-a',
+          }])]: {
+            profiles: [
+              workspace,
+              {
+                ...workspace,
+                id: 'workspace-worktree-a',
+                name: 'demo-feature-a',
+                rootPath: '/workspace/demo-feature-a',
+              },
+            ],
+            activeWorkspaceId: 'workspace-worktree-a',
+            activeWorkspace: {
+              ...workspace,
+              id: 'workspace-worktree-a',
+              name: 'demo-feature-a',
+              rootPath: '/workspace/demo-feature-a',
+            },
+          },
           [stableStringify(['workspaces', 'saveState', {
             id: WORKSPACE_ID,
             sessionKey: SESSION_KEY,
@@ -186,6 +244,11 @@ test.describe('Workspace Git panel', () => {
             ok: true,
             status: gitStatus,
           },
+          [stableStringify(['git', 'capabilities', null])]: {
+            ok: true,
+            git: { available: true, version: 'git version 2.45.0' },
+            gh: { available: true, version: 'gh version 2.56.0' },
+          },
           [stableStringify(['git', 'githubAuthStatus', null])]: {
             ok: true,
             available: true,
@@ -199,6 +262,19 @@ test.describe('Workspace Git panel', () => {
           [stableStringify(['git', 'worktrees', null])]: {
             success: true,
             worktrees: gitWorktrees,
+          },
+          [stableStringify(['git', 'stashList', null])]: {
+            success: true,
+            stashes: gitStashes,
+          },
+          [stableStringify(['mcp', 'listTools', { serverId: 'clawx-git' }])]: {
+            success: true,
+            serverId: 'clawx-git',
+            status: 'connected',
+            tools: Array.from({ length: 27 }, (_, index) => ({
+              name: `git_tool_${index + 1}`,
+              description: 'Mock Git tool',
+            })),
           },
           [stableStringify(['git', 'fileDiff', { mode: 'unstaged', path: 'src/demo.ts' }])]: {
             ok: true,
@@ -253,7 +329,39 @@ test.describe('Workspace Git panel', () => {
             blocked: true,
             reason: 'Commit requires approval',
           },
+          [stableStringify(['git', 'checkoutBranch', { name: 'main' }])]: {
+            success: true,
+          },
+          [stableStringify(['git', 'fetch', null])]: {
+            success: true,
+          },
+          [stableStringify(['git', 'push', null])]: {
+            success: false,
+            blocked: true,
+            approvalRequired: true,
+            approval: pushApproval,
+            reason: pushApproval.reason,
+          },
+          [stableStringify(['git', 'push', { approvalId: 'approval-push' }])]: {
+            success: true,
+          },
           [stableStringify(['git', 'worktreeAdd', { branch: 'feature/new-worktree', checkoutNewBranch: true }])]: {
+            success: true,
+          },
+          [stableStringify(['git', 'stashPush', { includeUntracked: true, message: 'checkpoint' }])]: {
+            success: true,
+          },
+          [stableStringify(['git', 'stashApply', { selector: 'stash@{0}' }])]: {
+            success: false,
+            blocked: true,
+            approvalRequired: true,
+            approval: stashApplyApproval,
+            reason: stashApplyApproval.reason,
+          },
+          [stableStringify(['git', 'stashApply', { selector: 'stash@{0}', approvalId: 'approval-stash-apply' }])]: {
+            success: true,
+          },
+          [stableStringify(['git', 'stashPop', { selector: 'stash@{0}' }])]: {
             success: true,
           },
           [stableStringify(['git', 'worktreeRemove', { path: '/workspace/demo-feature-a' }])]: {
@@ -267,6 +375,12 @@ test.describe('Workspace Git panel', () => {
             success: true,
           },
           [stableStringify(['permissions', 'decideApproval', { id: 'approval-revert-file', decision: 'approved' }])]: {
+            success: true,
+          },
+          [stableStringify(['permissions', 'decideApproval', { id: 'approval-push', decision: 'approved' }])]: {
+            success: true,
+          },
+          [stableStringify(['permissions', 'decideApproval', { id: 'approval-stash-apply', decision: 'approved' }])]: {
             success: true,
           },
           [stableStringify(['git', 'worktreeRemove', { path: '/workspace/demo-feature-a', approvalId: 'approval-remove-worktree' }])]: {
@@ -285,10 +399,13 @@ test.describe('Workspace Git panel', () => {
       }
 
       await expect(page.getByTestId('main-layout')).toBeVisible();
-      await page.getByRole('button', { name: 'Workspace' }).first().click();
+      const workspaceToggle = page.getByTestId('chat-workspace-toggle');
+      await expect(workspaceToggle).toBeVisible({ timeout: 30_000 });
+      await expect(workspaceToggle).toBeEnabled({ timeout: 30_000 });
+      await workspaceToggle.click();
 
       const sidePanel = page.getByTestId('artifact-panel');
-      await expect(sidePanel).toBeVisible();
+      await expect(sidePanel).toBeVisible({ timeout: 30_000 });
       await sidePanel.getByRole('button', { name: 'Git' }).click();
 
       const gitPanel = sidePanel.getByTestId('workspace-git-panel');
@@ -299,16 +416,27 @@ test.describe('Workspace Git panel', () => {
       await expect(gitPanel.getByText('Unstaged (1)', { exact: true })).toBeVisible();
       await expect(gitPanel.getByText('Untracked (1)', { exact: true })).toBeVisible();
       await expect(gitPanel.getByRole('button', { name: /src\/demo\.ts/ })).toBeVisible();
+      await expect(gitPanel.getByText('git version 2.45.0')).toBeVisible();
+      await expect(gitPanel.getByText('27 tools')).toBeVisible();
+      await expect(gitPanel.getByTestId('workspace-git-readiness-score')).toHaveText(/3\/4 ready/);
+      await expect(gitPanel.getByTestId('workspace-git-repo-metrics')).toContainText('Worktrees');
+      await expect(gitPanel.getByTestId('workspace-git-repo-metrics')).toContainText('Stashes');
+      await expect(gitPanel.getByTestId('workspace-git-repo-metrics')).toContainText('+4 -2');
+      await expect(gitPanel.getByText('+2 -1').first()).toBeVisible();
       await expect(gitPanel.getByTestId('monaco-diff-viewer')).toBeVisible();
       await expect(gitPanel.locator('.monaco-editor-background').first()).toBeVisible();
       await page.setViewportSize({ width: 760, height: 720 });
       await expect(gitPanel.getByTestId('monaco-diff-viewer')).toBeVisible();
       await page.setViewportSize({ width: 1280, height: 800 });
-      await expect(gitPanel.getByText('Worktrees')).toBeVisible();
+      await expect(gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Worktree' })).toBeVisible();
+      await expect(gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Stash' })).toBeVisible();
       await expect(gitPanel.getByText('demo-feature-a')).toBeVisible();
       await expect(gitPanel.getByText('Current')).toBeVisible();
+      await expect(gitPanel.getByText('Locked')).toBeVisible();
+      await expect(gitPanel.getByText('Prunable')).toBeVisible();
       await expect(gitPanel.getByText(/gh auth login/)).toBeVisible();
-      await expect(gitPanel.getByText('Last validation')).toBeVisible();
+      await expect(gitPanel.getByText('Last operation')).toBeVisible();
+      await expect(gitPanel.getByTestId('workspace-git-last-operation')).toContainText('No Git operation yet');
 
       await page.evaluate(() => {
         Object.defineProperty(navigator, 'clipboard', {
@@ -324,7 +452,7 @@ test.describe('Workspace Git panel', () => {
       await expect.poll(async () => page.evaluate(() => (window as typeof window & { __copiedPatch?: string }).__copiedPatch ?? '')).toContain('src/demo.ts');
 
       await gitPanel.getByRole('button', { name: /^Stage$/ }).click();
-      await expect(page.getByText('Stage requires approval')).toBeVisible();
+      await expect(page.getByText('Stage requires approval', { exact: true })).toBeVisible();
 
       await gitPanel.getByRole('button', { name: /src\/staged\.ts/ }).click();
       await gitPanel.getByRole('button', { name: /^Unstage$/ }).click();
@@ -333,20 +461,247 @@ test.describe('Workspace Git panel', () => {
       await expect(page.getByText('Revert selected file?')).toBeVisible();
       await page.getByTestId('confirm-dialog-confirm-button').click();
       await expect(gitPanel.getByText('Revert needs approval')).toBeVisible();
-      await expect(gitPanel.getByText('Reverting a file requires approval.')).toBeVisible();
+      await expect(gitPanel.getByText('Reverting a file requires approval.', { exact: true })).toBeVisible();
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
 
+      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Commit' }).click();
       await gitPanel.getByPlaceholder('Commit message').fill('Update demo');
       await gitPanel.getByRole('button', { name: 'Commit staged changes' }).click();
-      await expect(page.getByText('Commit requires approval')).toBeVisible();
+      await expect(page.getByText('Commit requires approval', { exact: true })).toBeVisible();
 
+      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Branch' }).click();
+      await gitPanel.getByRole('combobox', { name: 'Select branch' }).click();
+      await page.getByRole('option', { name: 'main' }).click();
+      await gitPanel.getByRole('button', { name: 'Checkout' }).click();
+      await gitPanel.getByRole('button', { name: 'Fetch' }).click();
+      await gitPanel.getByRole('button', { name: 'Push' }).click();
+      await expect(gitPanel.getByText('Push needs approval')).toBeVisible();
+      await expect(gitPanel.getByText('Pushing changes requires approval.', { exact: true })).toBeVisible();
+      await expect(gitPanel.getByTestId('workspace-git-last-operation')).toContainText('Push');
+      await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
+
+      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Worktree' }).click();
       await gitPanel.getByPlaceholder('Branch for worktree').fill('feature/new-worktree');
+      await expect(gitPanel.getByTestId('workspace-git-worktree-target')).toContainText('/workspace/demo-feature-new-worktree');
       await gitPanel.getByRole('button', { name: 'Add worktree' }).click();
 
       await gitPanel.getByRole('button', { name: 'Remove' }).click();
       await expect(gitPanel.getByText('Remove needs approval')).toBeVisible();
-      await expect(gitPanel.getByText('Removing a worktree requires approval.')).toBeVisible();
+      await expect(gitPanel.getByText('Removing a worktree requires approval.', { exact: true })).toBeVisible();
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
+
+      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Stash' }).click();
+      await expect(gitPanel.getByTestId('workspace-git-stash-panel')).toContainText('WIP demo changes');
+      await expect(gitPanel.getByTestId('workspace-git-stash-panel')).toContainText('stash@{0}');
+      await gitPanel.getByPlaceholder('Optional stash message').fill('checkpoint');
+      await gitPanel.getByRole('switch', { name: 'Include untracked' }).click();
+      await gitPanel.getByRole('button', { name: 'Stash changes' }).click();
+      await gitPanel.getByRole('button', { name: 'Apply stash@{0}' }).click();
+      await expect(gitPanel.getByText('Apply needs approval')).toBeVisible();
+      await expect(gitPanel.getByText('Applying stash requires approval.', { exact: true })).toBeVisible();
+      await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
+      await expect(gitPanel.getByTestId('workspace-git-last-operation')).toContainText('Apply');
+
+      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Worktree' }).click();
+      await gitPanel.getByRole('button', { name: 'Switch' }).click();
+      await expect(page.getByText('Workspace created for this worktree')).toBeVisible();
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
+  test('creates a draft GitHub PR with explicit base and head through approval', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', {}])]: {
+            success: true,
+            result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 1000, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+        },
+        hostApi: {
+          [stableStringify(['agents', 'list', null])]: {
+            success: true,
+            agents: [{
+              id: 'main',
+              name: 'Main',
+              isDefault: true,
+              workspace: '/workspace/demo',
+              mainSessionKey: SESSION_KEY,
+              channelTypes: [],
+            }],
+            defaultAgentId: 'main',
+            configuredChannelTypes: [],
+            channelOwners: {},
+            channelAccountOwners: {},
+          },
+          [stableStringify(['workspaces', 'list', null])]: {
+            profiles: [workspace],
+            activeWorkspaceId: WORKSPACE_ID,
+            activeWorkspace: workspace,
+          },
+          [stableStringify(['workspaces', 'getActive', null])]: {
+            activeWorkspaceId: WORKSPACE_ID,
+            activeWorkspace: workspace,
+          },
+          [stableStringify(['workspaces', 'saveState', {
+            id: WORKSPACE_ID,
+            sessionKey: SESSION_KEY,
+            state: { artifactPanel: { workspaceView: 'git' } },
+          }])]: { success: true },
+          [stableStringify(['workspaces', 'saveState', {
+            id: WORKSPACE_ID,
+            sessionKey: SESSION_KEY,
+            state: { artifactPanel: { gitSelectedPath: 'src/demo.ts' } },
+          }])]: { success: true },
+          [stableStringify(['git', 'status', null])]: {
+            ok: true,
+            status: gitStatus,
+          },
+          [stableStringify(['git', 'capabilities', null])]: {
+            ok: true,
+            git: { available: true, version: 'git version 2.45.0' },
+            gh: { available: true, version: 'gh version 2.56.0' },
+          },
+          [stableStringify(['git', 'githubAuthStatus', null])]: {
+            ok: true,
+            available: true,
+            authenticated: true,
+            user: 'octocat',
+            hosts: ['github.com'],
+          },
+          [stableStringify(['git', 'githubRepo', null])]: {
+            ok: true,
+            repository: {
+              owner: 'octo',
+              name: 'demo',
+              url: 'https://github.com/octo/demo',
+              defaultBranch: 'main',
+            },
+          },
+          [stableStringify(['git', 'prList', { limit: 8, state: 'open' }])]: {
+            success: true,
+            pullRequests: [{
+              number: 7,
+              title: 'Existing PR',
+              state: 'OPEN',
+              headRefName: 'feature/old',
+              baseRefName: 'main',
+              isDraft: false,
+            }],
+          },
+          [stableStringify(['git', 'branches', null])]: {
+            success: true,
+            branches: gitBranches,
+          },
+          [stableStringify(['git', 'worktrees', null])]: {
+            success: true,
+            worktrees: gitWorktrees,
+          },
+          [stableStringify(['git', 'stashList', null])]: {
+            success: true,
+            stashes: gitStashes,
+          },
+          [stableStringify(['mcp', 'listTools', { serverId: 'clawx-git' }])]: {
+            success: true,
+            serverId: 'clawx-git',
+            status: 'connected',
+            tools: Array.from({ length: 27 }, (_, index) => ({
+              name: `git_tool_${index + 1}`,
+              description: 'Mock Git tool',
+            })),
+          },
+          [stableStringify(['git', 'fileDiff', { mode: 'unstaged', path: 'src/demo.ts' }])]: {
+            ok: true,
+            path: 'src/demo.ts',
+            mode: 'unstaged',
+            patch: 'diff --git a/src/demo.ts b/src/demo.ts\n-const value = 1;\n+const value = 2;\n',
+            original: 'const value = 1;\n',
+            modified: 'const value = 2;\n',
+          },
+          [stableStringify(['git', 'prCreate', {
+            base: 'main',
+            body: 'Ready for review',
+            draft: true,
+            head: 'feature/git-panel',
+            title: 'Ship Git panel',
+          }])]: {
+            success: false,
+            blocked: true,
+            approvalRequired: true,
+            approval: prApproval,
+            reason: prApproval.reason,
+          },
+          [stableStringify(['permissions', 'decideApproval', { id: 'approval-pr-create', decision: 'approved' }])]: {
+            success: true,
+          },
+          [stableStringify(['git', 'prCreate', {
+            approvalId: 'approval-pr-create',
+            base: 'main',
+            body: 'Ready for review',
+            draft: true,
+            head: 'feature/git-panel',
+            title: 'Ship Git panel',
+          }])]: {
+            success: true,
+            pullRequest: {
+              number: 8,
+              title: 'Ship Git panel',
+              state: 'OPEN',
+              headRefName: 'feature/git-panel',
+              baseRefName: 'main',
+              isDraft: true,
+            },
+          },
+        },
+      });
+
+      const page = await getStableWindow(app);
+      try {
+        await page.reload();
+      } catch (error) {
+        if (!String(error).includes('ERR_FILE_NOT_FOUND')) {
+          throw error;
+        }
+      }
+
+      await expect(page.getByTestId('main-layout')).toBeVisible();
+      const workspaceToggle = page.getByTestId('chat-workspace-toggle');
+      await expect(workspaceToggle).toBeVisible({ timeout: 30_000 });
+      await expect(workspaceToggle).toBeEnabled({ timeout: 30_000 });
+      await workspaceToggle.click();
+
+      const sidePanel = page.getByTestId('artifact-panel');
+      await sidePanel.getByRole('button', { name: 'Git' }).click();
+      const gitPanel = sidePanel.getByTestId('workspace-git-panel');
+      await expect(gitPanel).toBeVisible();
+      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'PR' }).click();
+
+      await expect(gitPanel.getByText('octocat')).toBeVisible();
+      await expect(gitPanel.getByText('feature/old -> main')).toBeVisible();
+      await expect(gitPanel.getByLabel('Base branch')).toHaveValue('main');
+      await expect(gitPanel.getByLabel('Head branch')).toHaveValue('feature/git-panel');
+
+      await gitPanel.getByPlaceholder('PR title').fill('Ship Git panel');
+      await gitPanel.getByPlaceholder('PR body').fill('Ready for review');
+      await gitPanel.getByRole('switch', { name: 'Draft PR' }).click();
+      await gitPanel.getByRole('button', { name: 'Create PR' }).click();
+
+      await expect(gitPanel.getByText('Create PR needs approval')).toBeVisible();
+      await expect(gitPanel.getByText('Creating a pull request requires approval.', { exact: true })).toBeVisible();
+      await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
+      await expect(gitPanel.getByTestId('workspace-git-last-operation')).toContainText('Create PR');
     } finally {
       await closeElectronApp(app);
     }

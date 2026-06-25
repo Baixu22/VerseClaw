@@ -717,20 +717,20 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
             initialStatus.backend === "builtin" &&
             typeof manager.probeVectorStoreAvailability === "function";
           await withProgress(
-            { label: "Checking memoryâ€¦", total: hasVectorStoreProbe ? 3 : 2 },
+            { label: "Checking memoryâ€?, total: hasVectorStoreProbe ? 3 : 2 },
             async (progress) => {
-              progress.setLabel(hasVectorStoreProbe ? "Probing vector storeâ€¦" : "Probing vectorsâ€¦");
+              progress.setLabel(hasVectorStoreProbe ? "Probing vector storeâ€? : "Probing vectorsâ€?);
               if (hasVectorStoreProbe) {
                 await manager.probeVectorStoreAvailability?.();
               } else {
                 await manager.probeVectorAvailability();
               }
               progress.tick();
-              progress.setLabel("Probing embeddingsâ€¦");
+              progress.setLabel("Probing embeddingsâ€?);
               embeddingProbe = await manager.probeEmbeddingAvailability();
               progress.tick();
               if (hasVectorStoreProbe) {
-                progress.setLabel("Checking semantic vectorsâ€¦");
+                progress.setLabel("Checking semantic vectorsâ€?);
                 await manager.probeVectorAvailability();
                 progress.tick();
               }
@@ -739,7 +739,7 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
           if (opts.index && syncFn) {
             await withProgressTotals(
               {
-                label: "Indexing memoryâ€¦",
+                label: "Indexing memoryâ€?,
                 total: 0,
                 fallback: opts.verbose ? "line" : undefined,
               },
@@ -1111,7 +1111,7 @@ export async function runMemoryIndex(opts: MemoryCommandOptions) {
             defaultRuntime.log("");
           }
           const startedAt = Date.now();
-          let lastLabel = "Indexing memoryâ€¦";
+          let lastLabel = "Indexing memoryâ€?;
           let lastCompleted = 0;
           let lastTotal = 0;
           const formatElapsed = () => {
@@ -1149,7 +1149,7 @@ export async function runMemoryIndex(opts: MemoryCommandOptions) {
           }
           await withProgressTotals(
             {
-              label: "Indexing memoryâ€¦",
+              label: "Indexing memoryâ€?,
               total: 0,
               fallback: opts.verbose ? "line" : undefined,
             },
@@ -1211,7 +1211,7 @@ export async function runMemoryIndex(opts: MemoryCommandOptions) {
             // Indexing still persisted chunks/FTS state; keep the command successful but
             // emit a stderr warning so operators and scripts can detect degraded recall.
             defaultRuntime.error(
-              `Memory index WARNING (${agentId}): chunks_vec not updated â€” ${formatMemoryVectorDegradedWriteReason(vectorLoadErr)}. Vector recall degraded.`,
+              `Memory index WARNING (${agentId}): chunks_vec not updated â€?${formatMemoryVectorDegradedWriteReason(vectorLoadErr)}. Vector recall degraded.`,
             );
           } else {
             defaultRuntime.log(`Memory index updated (${agentId}).`);

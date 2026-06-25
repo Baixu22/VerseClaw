@@ -1200,7 +1200,7 @@ export class TelegramPollingSession {
       // Mark transport dirty on 409 conflict as well as recoverable network
       // errors. Without this, Telegram-side session termination returns 409
       // and the retry reuses the same HTTP keep-alive TCP socket, which
-      // Telegram treats as the "old" session and keeps terminating â€” producing
+      // Telegram treats as the "old" session and keeps terminating â€?producing
       // a tight 409 retry loop at low but non-zero rate. (#69787)
       if (isRecoverable || isConflict) {
         this.#transportState.markDirty();

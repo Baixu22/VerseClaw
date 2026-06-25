@@ -1,12 +1,15 @@
 // Context-engine public types define the pluggable context-management lifecycle.
 import type { AgentMessage } from "../agents/runtime/index.js";
 import type { MemoryCitationsMode } from "../config/types.memory.js";
+import type { ContextItem } from "../runtime-core/types.js";
 
 // Result types
 
 export type AssembleResult = {
   /** Ordered messages to use as model context */
   messages: AgentMessage[];
+  /** Optional shadow-only normalized context items; callers must not add these to prompts. */
+  contextItems?: ContextItem[];
   /** Estimated total tokens in assembled context */
   estimatedTokens: number;
   /**

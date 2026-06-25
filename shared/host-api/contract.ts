@@ -1,4 +1,4 @@
-import type { RawMessage } from '../chat/types';
+﻿import type { RawMessage } from '../chat/types';
 import type { AgentReasoningEffort, AgentsSnapshot } from '../types/agent';
 import type { CronJob, CronJobCreateInput, CronJobUpdateInput } from '../types/cron';
 import type { GatewayHealth, GatewayStatus } from '../types/gateway';
@@ -36,12 +36,14 @@ import type {
   SandboxProviderStatus,
   SandboxStatus,
 } from '../types/sandbox';
+import type { ChannelAccessPolicyView } from '../types/channel';
 import type { MarketplaceSkill, QuickAccessSkill, Skill } from '../types/skill';
 import type {
   LiveTokenUsage,
   PermissionApprovalDecision,
   PermissionApprovalEvent,
   WorkspaceContextRange,
+  KnowledgeInvocationMode,
   WorkspaceKnowledgeScope,
   WorkspacePermissionMode,
   WorkspacePreviewMode,
@@ -51,7 +53,6 @@ import type {
   WorkspaceWebPreviewLaunchConfig,
   WorkspaceWebPreviewStatus,
 } from '../types/workspace';
-import type { WorkModeId, WorkModeKitConfig, WorkModeToolBundleConfig } from '../types/work-mode';
 import type {
   WorkProviderConfig,
   WorkProviderRunPayload,
@@ -97,6 +98,12 @@ import type {
   TaskLedgerSessionLink,
   TaskLedgerSnapshot,
 } from '../types/task-ledger';
+import type {
+  RemoteTaskCommand,
+  RemoteTaskPreview,
+  RemoteTaskRecord,
+  RemoteTaskSnapshot,
+} from '../types/remote-tasks';
 import type {
   LongTaskCheckpointRecord,
   LongTaskControlEvent,
@@ -217,6 +224,7 @@ export type SettingsSnapshot = Partial<{
   telemetryEnabled: boolean;
   gatewayAutoStart: boolean;
   gatewayPort: number;
+  roleMemoryEnabled: boolean;
   proxyEnabled: boolean;
   proxyServer: string;
   proxyHttpServer: string;
@@ -231,8 +239,6 @@ export type SettingsSnapshot = Partial<{
   setupComplete: boolean;
   cdpRemoteControlEnabled: boolean;
   cdpRemoteDebuggingPort: number;
-  workModeToolBundles: WorkModeToolBundleConfig;
-  workModeKits: WorkModeKitConfig;
   workProviders: WorkProviderConfig;
 }>;
 export type SettingsKey = keyof SettingsSnapshot & string;
@@ -538,6 +544,180 @@ export type RemoteControlScreenshotResult = HostSuccess & {
   format: 'png' | 'jpeg' | 'webp';
 };
 
+export type AgentBrowserSessionMode = 'headless' | 'visible';
+export type AgentBrowserAuthPersistenceMode = 'session-name' | 'profile' | 'off';
+export type AgentBrowserConnectionMode = 'managed' | 'auto-connect' | 'cdp' | 'external-profile';
+export type AgentBrowserConnectionSnapshot = {
+  mode: AgentBrowserConnectionMode;
+  cdpEndpoint?: string;
+  externalProfile?: string;
+  executablePath?: string;
+};
+export type AgentBrowserSession = {
+  id: string;
+  profile: string;
+  mode: AgentBrowserSessionMode;
+  authPersistence?: AgentBrowserAuthPersistenceMode;
+  authStateName?: string;
+  connection?: AgentBrowserConnectionSnapshot;
+  url?: string;
+  title?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+export type AgentBrowserSecurityPayload = {
+  authPersistence?: AgentBrowserAuthPersistenceMode;
+  authStateName?: string;
+  connectionMode?: AgentBrowserConnectionMode;
+  cdpEndpoint?: string;
+  externalProfile?: string;
+  executablePath?: string;
+  allowExternalBrowser?: boolean;
+};
+export type AgentBrowserOpenPayload = {
+  url?: string;
+  profile?: string;
+  mode?: AgentBrowserSessionMode;
+  width?: number;
+  height?: number;
+} & AgentBrowserSecurityPayload;
+export type AgentBrowserSessionPayload = {
+  sessionId: string;
+};
+export type AgentBrowserNavigatePayload = AgentBrowserSessionPayload & {
+  url: string;
+  waitUntil?: 'dom-ready' | 'load';
+};
+export type AgentBrowserSelectorPayload = AgentBrowserSessionPayload & {
+  selector: string;
+  timeoutMs?: number;
+};
+export type AgentBrowserClickPayload = AgentBrowserSelectorPayload;
+export type AgentBrowserTypePayload = AgentBrowserSelectorPayload & {
+  text: string;
+  clear?: boolean;
+};
+export type AgentBrowserEvaluatePayload = AgentBrowserSessionPayload & {
+  expression: string;
+};
+export type AgentBrowserScreenshotPayload = AgentBrowserSessionPayload & {
+  fullPage?: boolean;
+};
+export type AgentBrowserCommandPayload = Partial<AgentBrowserSessionPayload> & {
+  args: string[];
+  globalOptions?: string[];
+  profile?: string;
+  mode?: AgentBrowserSessionMode;
+  timeoutMs?: number;
+  maxOutput?: number;
+} & AgentBrowserSecurityPayload;
+export type AgentBrowserProfileEntry = {
+  profile: string;
+  label?: string;
+  description?: string;
+  authStateName?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  lastUsedAt?: string;
+  activeSessions?: number;
+  source: 'metadata' | 'profile-dir' | 'session';
+};
+export type AgentBrowserProfilesResult = HostSuccess & {
+  profiles: AgentBrowserProfileEntry[];
+};
+export type AgentBrowserProfileSavePayload = {
+  profile: string;
+  label?: string;
+  description?: string;
+  authStateName?: string;
+};
+export type AgentBrowserProfileSaveResult = HostSuccess & {
+  profile: AgentBrowserProfileEntry;
+};
+export type AgentBrowserValidatePayload = AgentBrowserOpenPayload & {
+  expectedDomains?: string[];
+  diagnostics?: {
+    snapshot?: boolean;
+    console?: boolean;
+    errors?: boolean;
+    network?: boolean;
+    screenshot?: boolean;
+  };
+};
+export type AgentBrowserArtifactKind = 'snapshot' | 'console' | 'errors' | 'network' | 'screenshot' | 'text' | 'manifest';
+export type AgentBrowserArtifactRef = {
+  id: string;
+  kind: AgentBrowserArtifactKind;
+  label: string;
+  path?: string;
+  mimeType?: string;
+  size?: number;
+  createdAt: string;
+};
+export type BrowserAutomationRunStep = {
+  id: string;
+  label: string;
+  status: 'passed' | 'failed' | 'skipped';
+  detail?: string;
+  startedAt?: string;
+  endedAt?: string;
+};
+export type BrowserAutomationRunResult = {
+  schemaVersion: 1;
+  runId: string;
+  status: 'success' | 'failed';
+  startedAt: string;
+  endedAt: string;
+  profile?: string;
+  authStateName?: string;
+  finalUrl?: string;
+  title?: string;
+  loginState: 'unknown' | 'authenticated' | 'login-required';
+  steps: BrowserAutomationRunStep[];
+  evidence: {
+    textSample?: string;
+    artifacts: AgentBrowserArtifactRef[];
+  };
+  consoleErrors?: string[];
+  networkErrors?: string[];
+  error?: string;
+};
+export type AgentBrowserValidateResult = HostSuccess & {
+  ok: boolean;
+  session?: AgentBrowserSession;
+  url?: string;
+  title?: string;
+  textSample?: string;
+  screenshotDataUrl?: string;
+  diagnostics?: Record<string, unknown>;
+  runResult?: BrowserAutomationRunResult;
+  error?: string;
+};
+export type AgentBrowserSessionResult = HostSuccess & {
+  session: AgentBrowserSession;
+  textSample?: string;
+};
+export type AgentBrowserStatusResult = HostSuccess & {
+  sessions: AgentBrowserSession[];
+};
+export type AgentBrowserActionResult = HostSuccess & {
+  session: AgentBrowserSession;
+};
+export type AgentBrowserEvaluateResult = AgentBrowserActionResult & {
+  value?: unknown;
+};
+export type AgentBrowserScreenshotResult = AgentBrowserActionResult & {
+  dataUrl: string;
+  format: 'png';
+};
+export type AgentBrowserCommandResult = HostSuccess & {
+  session?: AgentBrowserSession;
+  data?: unknown;
+  stdout: string;
+  stderr: string;
+  command: string[];
+};
+
 export type McpServerListResult = HostSuccess & {
   servers: McpServerConfig[];
 };
@@ -620,17 +800,22 @@ export type ChannelAccountItem = {
   accountId: string;
   name: string;
   configured: boolean;
+  connected?: boolean;
+  running?: boolean;
+  linked?: boolean;
   status: ChannelRuntimeStatus;
   statusReason?: string;
   lastError?: string;
   isDefault: boolean;
   agentId?: string;
+  accessPolicy?: ChannelAccessPolicyView;
 };
 export type ChannelGroupItem = {
   channelType: string;
   defaultAccountId: string;
   status: ChannelRuntimeStatus;
   statusReason?: string;
+  accessPolicy?: ChannelAccessPolicyView;
   accounts: ChannelAccountItem[];
 };
 export type ChannelTargetOption = {
@@ -1335,14 +1520,16 @@ export type ChatCapabilityActionResult = {
 };
 export type ChatSendWithMediaPayload = {
   sessionKey: string;
+  workspaceId?: string | null;
   message?: string;
   deliver?: boolean;
   idempotencyKey: string;
   media?: ChatMediaItem[];
   inputMode?: ChatInputMode;
   knowledgeScope?: WorkspaceKnowledgeScope;
+  knowledgeMode?: KnowledgeInvocationMode;
   knowledgeReferences?: ChatKnowledgeReference[];
-  workMode?: WorkModeId;
+  activeTaskNodeId?: string | null;
 };
 export type ChatSendWithMediaResult = HostSuccess & {
   result?: { runId?: string };
@@ -1358,6 +1545,39 @@ export type ChatKnowledgeReference = {
   sourcePath?: string;
   snippet?: string;
   score?: number;
+  attachKind?: 'manual' | 'suggested' | 'auto';
+  routingReason?: string;
+  confidence?: number;
+  freshnessLevel?: string;
+  matchedClaimStatus?: string;
+};
+
+export type KnowledgeRouteContextPayload = {
+  message: string;
+  scope: WorkspaceKnowledgeScope;
+  mode: KnowledgeInvocationMode;
+  selectedReferences?: ChatKnowledgeReference[];
+  sessionKey?: string;
+  workspaceId?: string | null;
+};
+
+export type KnowledgeRouteCandidate = ChatKnowledgeReference & {
+  attachKind: 'suggested' | 'auto';
+  routingReason: string;
+  confidence: number;
+  freshnessLevel?: string;
+  matchedClaimStatus?: string;
+};
+
+export type KnowledgeRouteContextResult = HostSuccess & {
+  decision: 'skip' | 'suggest' | 'auto_attach';
+  reason: string;
+  query?: string;
+  candidates: KnowledgeRouteCandidate[];
+  budget: {
+    maxReferences: number;
+    maxSnippetChars: number;
+  };
 };
 
 export type KnowledgeConfigurePayload = {
@@ -1746,12 +1966,73 @@ export type KnowledgeProvenancePayload = {
 };
 export type KnowledgeProvenanceResult = HostSuccess & { record?: KnowledgeProvenanceRecord };
 
+
+
+// 鈹€鈹€ Governance Audit 鈹€鈹€
+
+export type KnowledgeGovernanceIssueSeverity = 'error' | 'warning' | 'info';
+
+export type KnowledgeGovernanceIssueCategory = 'contradiction' | 'stale' | 'dangling' | 'duplicate' | 'provenance_gap';
+
+export type KnowledgeGovernanceIssue = {
+  id: string;
+  category: KnowledgeGovernanceIssueCategory;
+  severity: KnowledgeGovernanceIssueSeverity;
+  title: string;
+  description: string;
+  affectedPageIds: string[];
+  affectedPagePaths: string[];
+  stewardSuggestion?: string;
+  detectedAt: string;
+};
+
+export type KnowledgeGovernanceResult = HostSuccess & {
+  runAt: string;
+  issues: KnowledgeGovernanceIssue[];
+  summaries: {
+    contradictions: number;
+    stale: number;
+    dangling: number;
+    duplicates: number;
+    provenanceGaps: number;
+  };
+};
+
+// 鈹€鈹€ Watched Directories 鈹€鈹€
+
+export type KnowledgeWatchedDirectoryConfig = {
+  id: string;
+  path: string;
+  patterns: string[];
+  enabled: boolean;
+  ingestNewFiles: boolean;
+  autoCompile: boolean;
+  requiresReview: boolean;
+};
+
+export type KnowledgeWatchedDirectoryEventType = 'ingested' | 'compiled' | 'skipped' | 'error';
+
+export type KnowledgeWatchedDirectoryEvent = {
+  id: string;
+  configId: string;
+  event: KnowledgeWatchedDirectoryEventType;
+  filePath: string;
+  detail?: string;
+  timestamp: string;
+};
+
+export type KnowledgeListWatchedDirectoryEventsPayload = {
+  configId: string;
+  limit?: number;
+};
+
 export type CronUpdatePayload = { id: string; input: CronJobUpdateInput };
 export type CronIdPayload = { id: string };
 export type CronTogglePayload = CronIdPayload & { enabled: boolean };
 export type CronSessionHistoryPayload = { sessionKey: string; limit?: number };
 export type CronSessionHistoryResult = {
   messages?: RawMessage[];
+  browserAutomationRuns?: BrowserAutomationRunResult[];
 };
 
 export type GitPathPayload = { path: string; approvalId?: string };
@@ -1832,6 +2113,17 @@ export type TaskLedgerReviewPayload = TaskLedgerWorkspacePayload & {
 };
 export type TaskLedgerExportHtmlPayload = TaskLedgerWorkspacePayload & { includeHistory?: boolean };
 export type TaskLedgerExportHtmlResult = HostSuccess & { path: string };
+
+export type RemoteTaskCreatePayload = {
+  command: RemoteTaskCommand;
+  source?: 'local' | 'relay' | 'channel' | 'api';
+  reason?: string;
+};
+export type RemoteTaskIdPayload = { id: string };
+export type RemoteTaskListResult = HostSuccess & RemoteTaskSnapshot;
+export type RemoteTaskRecordResult = HostSuccess & { task: RemoteTaskRecord };
+export type RemoteTaskPreviewResult = HostSuccess & RemoteTaskPreview;
+export type RemoteTaskApprovePayload = RemoteTaskIdPayload & { approved?: boolean };
 
 export type ClawGraphWorkspacePayload = { workspaceId?: string | null };
 export type ClawGraphListWorkflowsResult = HostSuccess & {
@@ -1978,7 +2270,7 @@ export type DeliveryChannelGroup = {
   accounts: DeliveryChannelAccount[];
 };
 
-// ── Topic types ────────────────────────────────────────────────────────────
+// 鈹€鈹€ Topic types 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 export type TopicEntry = {
   id: string;
@@ -2148,6 +2440,21 @@ export type HostApiContract = {
     scroll: (payload?: RemoteControlScrollPayload) => RemoteControlActionResult;
     screenshot: (payload?: RemoteControlScreenshotPayload) => RemoteControlScreenshotResult;
   };
+  agentBrowser: {
+    open: (payload?: AgentBrowserOpenPayload) => AgentBrowserSessionResult;
+    status: () => AgentBrowserStatusResult;
+    profiles: () => AgentBrowserProfilesResult;
+    saveProfile: (payload: AgentBrowserProfileSavePayload) => AgentBrowserProfileSaveResult;
+    validate: (payload?: AgentBrowserValidatePayload) => AgentBrowserValidateResult;
+    navigate: (payload: AgentBrowserNavigatePayload) => AgentBrowserActionResult;
+    waitForSelector: (payload: AgentBrowserSelectorPayload) => AgentBrowserActionResult;
+    click: (payload: AgentBrowserClickPayload) => AgentBrowserActionResult;
+    type: (payload: AgentBrowserTypePayload) => AgentBrowserActionResult;
+    evaluate: (payload: AgentBrowserEvaluatePayload) => AgentBrowserEvaluateResult;
+    screenshot: (payload: AgentBrowserScreenshotPayload) => AgentBrowserScreenshotResult;
+    command: (payload: AgentBrowserCommandPayload) => AgentBrowserCommandResult;
+    close: (payload: AgentBrowserSessionPayload) => HostSuccess;
+  };
   mcp: {
     listServers: () => McpServerListResult;
     createServer: (payload: McpServerCreatePayload) => McpServerListResult;
@@ -2307,8 +2614,17 @@ export type HostApiContract = {
     previewChange: (payload: KnowledgePreviewChangePayload) => KnowledgePreviewChangeResult;
     applyReviewedChange: (payload: KnowledgeApplyReviewedChangePayload) => KnowledgeApplyReviewedChangeResult;
     stewardReview: (payload: KnowledgeStewardReviewPayload) => KnowledgeStewardReviewResult;
+    routeContext: (payload: KnowledgeRouteContextPayload) => KnowledgeRouteContextResult;
     recordKnowledgeReference: (payload: KnowledgeRecordReferencePayload) => KnowledgeProvenanceResult;
     getProvenance: (payload: KnowledgeProvenancePayload) => KnowledgeProvenanceResult;
+
+    governanceAudit: () => KnowledgeGovernanceResult;
+    listWatchedDirectories: () => KnowledgeWatchedDirectoryConfig[];
+    addWatchedDirectory: (config: KnowledgeWatchedDirectoryConfig) => HostSuccess;
+    updateWatchedDirectory: (payload: { id: string; config: Partial<KnowledgeWatchedDirectoryConfig> }) => HostSuccess;
+    removeWatchedDirectory: (payload: { id: string }) => HostSuccess;
+    listWatchedDirectoryEvents: (payload: KnowledgeListWatchedDirectoryEventsPayload) => KnowledgeWatchedDirectoryEvent[];
+
   };
   cron: {
     list: () => CronJob[];
@@ -2330,6 +2646,14 @@ export type HostApiContract = {
     requestReview: (payload: TaskLedgerReviewPayload) => TaskLedgerSnapshotResult;
     clearReview: (payload: TaskLedgerReviewPayload) => TaskLedgerSnapshotResult;
     exportHtml: (payload?: TaskLedgerExportHtmlPayload) => TaskLedgerExportHtmlResult;
+  };
+  remoteTasks: {
+    list: () => RemoteTaskListResult;
+    create: (payload: RemoteTaskCreatePayload) => RemoteTaskRecordResult;
+    preview: (payload: RemoteTaskIdPayload) => RemoteTaskPreviewResult;
+    approve: (payload: RemoteTaskApprovePayload) => RemoteTaskRecordResult;
+    reject: (payload: RemoteTaskIdPayload) => RemoteTaskRecordResult;
+    execute: (payload: RemoteTaskIdPayload) => RemoteTaskRecordResult;
   };
   clawGraph: {
     listWorkflows: (payload?: ClawGraphWorkspacePayload) => ClawGraphListWorkflowsResult;

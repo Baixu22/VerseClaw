@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Electron Main Process Entry
  * Manages window creation, system tray, and IPC handlers
  */
@@ -22,9 +22,9 @@ import { loadExtensionsFromManifest } from '../extensions/loader';
 import { registerAllBuiltinExtensions } from '../extensions/builtin';
 import { loadExternalMainExtensions } from '../extensions/_ext-bridge.generated';
 import {
-  ensureClawXContext,
-  ensureClawXDefaultIdentity,
-  repairClawXOnlyBootstrapFiles,
+  ensureVerseClawContext,
+  ensureVerseClawDefaultIdentity,
+  repairVerseClawOnlyBootstrapFiles,
 } from '../utils/openclaw-workspace';
 import { autoInstallCliIfNeeded, generateCompletionCache, installCompletionToProfile } from '../utils/openclaw-cli';
 import { isQuitting, setQuitting } from './app-state';
@@ -62,9 +62,9 @@ import type {
 } from '../../shared/types/long-task-control';
 import type { MissionLifecycleEvent } from '../../shared/types/mission-control';
 
-const WINDOWS_APP_USER_MODEL_ID = 'app.clawx.desktop';
-const isE2EMode = process.env.CLAWX_E2E === '1';
-const requestedUserDataDir = process.env.CLAWX_USER_DATA_DIR?.trim();
+const WINDOWS_APP_USER_MODEL_ID = 'app.verse-claw.desktop';
+const isE2EMode = process.env.VERSE_CLAW_E2E === '1';
+const requestedUserDataDir = process.env.VERSE_CLAW_USER_DATA_DIR?.trim();
 const requestedRemoteDebuggingPort = resolveRemoteDebuggingLaunchPort(app);
 
 if (requestedRemoteDebuggingPort != null) {
@@ -97,7 +97,7 @@ app.disableHardwareAcceleration();
 // Must be called before app.whenReady() / before any window is created.
 if (process.platform === 'linux') {
   const linuxApp = app as typeof app & { setDesktopName?: (desktopName: string) => void };
-  linuxApp.setDesktopName?.('clawx.desktop');
+  linuxApp.setDesktopName?.('verse-claw.desktop');
 }
 
 // Prevent multiple instances of the app from running simultaneously.
@@ -108,7 +108,7 @@ if (process.platform === 'linux') {
 const singleInstanceLock = acquireSingleInstanceLock({
   isE2EMode,
   userDataDir: app.getPath('userData'),
-  lockName: 'clawx',
+  lockName: 'verse-claw',
 });
 const releaseProcessInstanceFileLock = singleInstanceLock.release;
 const gotTheLock = singleInstanceLock.gotTheLock;
@@ -138,12 +138,35 @@ type TaskLoopLifecyclePayload = {
   selfCheckDecision?: string;
   controlSignals?: LongConversationControlSignal[];
   validationState?: LongConversationValidationState;
+  evidenceGate?: {
+    status?: string;
+    reasons?: string[];
+    workerCount?: number;
+    failedWorkerCount?: number;
+    unverifiableWorkerCount?: number;
+  };
+  roleQualitySummary?: {
+    good?: number;
+    needsAttention?: number;
+    poorAttempt?: number;
+  };
+  filesTouched?: string[];
+  testsRun?: string[];
+  blockedReason?: string;
   error?: string;
   ts?: number;
 };
 
 function controlSignalTags(signals?: readonly LongConversationControlSignal[]): string[] {
   return [...new Set((signals ?? []).map((signal) => signal.kind.replace(/_/g, '-')))];
+}
+
+function evidenceGateTags(gate?: TaskLoopLifecyclePayload['evidenceGate']): string[] {
+  if (!gate?.status) return [];
+  return [
+    `evidence-gate-${gate.status}`,
+    ...((gate.reasons ?? []).map((reason) => `gate-${reason.replace(/[^a-zA-Z0-9-]+/g, '-').toLowerCase()}`)),
+  ].slice(0, 8);
 }
 
 function hasBlockingControlSignal(signals?: readonly LongConversationControlSignal[]): boolean {
@@ -153,10 +176,20 @@ function hasBlockingControlSignal(signals?: readonly LongConversationControlSign
 function longConversationControlMetadata(input: {
   controlSignals?: LongConversationControlSignal[];
   validationState?: LongConversationValidationState;
+  evidenceGate?: TaskLoopLifecyclePayload['evidenceGate'];
+  roleQualitySummary?: TaskLoopLifecyclePayload['roleQualitySummary'];
+  filesTouched?: string[];
+  testsRun?: string[];
+  blockedReason?: string;
 }): Record<string, unknown> {
   return {
     controlSignals: input.controlSignals ?? [],
     ...(input.validationState ? { validationState: input.validationState } : {}),
+    ...(input.evidenceGate ? { evidenceGate: input.evidenceGate } : {}),
+    ...(input.roleQualitySummary ? { roleQualitySummary: input.roleQualitySummary } : {}),
+    ...(input.filesTouched?.length ? { filesTouched: input.filesTouched } : {}),
+    ...(input.testsRun?.length ? { testsRun: input.testsRun } : {}),
+    ...(input.blockedReason ? { blockedReason: input.blockedReason } : {}),
   };
 }
 
@@ -228,10 +261,15 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
             parentId: goalId,
             status: 'doing',
             owner: 'agent',
-            tags: ['task-loop'],
+            tags: ['task-loop', ...evidenceGateTags(event.evidenceGate)],
             progress: event.progress ?? 0,
             evidenceRefs,
-            metadata: { loopRunId, phase: event.phase, iteration: event.iteration },
+            metadata: {
+              loopRunId,
+              phase: event.phase,
+              iteration: event.iteration,
+              longConversationControl: longConversationControlMetadata(event),
+            },
             createdAt,
             updatedAt: createdAt,
           },
@@ -319,7 +357,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
           parentId: taskId,
           status: event.selfCheckDecision ? 'done' : 'doing',
           owner: 'agent',
-          tags: ['task-loop', 'self-check', ...controlSignalTags(event.controlSignals)],
+          tags: ['task-loop', 'self-check', ...controlSignalTags(event.controlSignals), ...evidenceGateTags(event.evidenceGate)],
           evidenceRefs,
           metadata: {
             loopRunId,
@@ -354,8 +392,8 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
               ? 'blocked'
               : 'review',
           owner: 'agent',
-          tags: ['task-loop', 'self-check', ...controlSignalTags(event.controlSignals)],
-          description: event.error,
+          tags: ['task-loop', 'self-check', ...controlSignalTags(event.controlSignals), ...evidenceGateTags(event.evidenceGate)],
+          description: event.error ?? event.blockedReason ?? event.evidenceGate?.reasons?.join('; '),
           evidenceRefs,
           metadata: {
             loopRunId,
@@ -518,6 +556,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
   );
 
   if (event.phase === 'checkpoint' || event.phase === 'reflect' || event.reviewerDecision) {
+    const isMilestone = event.phase === 'checkpoint';
     events.push({
       id: `mission:${missionId}:check:${event.tick}:${event.phase}`,
       type: 'node_created',
@@ -527,8 +566,8 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
       payload: {
         node: {
           id: checkId,
-          title: 'Collect Mission evidence',
-          kind: 'check',
+          title: isMilestone ? `Mission checkpoint @ tick ${event.tick}` : 'Collect Mission evidence',
+          kind: isMilestone ? 'milestone' : 'check',
           parentId: taskId,
           status: event.reviewerDecision ? 'done' : 'doing',
           owner: 'agent',
@@ -776,7 +815,7 @@ function createWindow(): BrowserWindow {
   const isMac = process.platform === 'darwin';
   const isWindows = process.platform === 'win32';
   const useCustomTitleBar = isWindows;
-  const shouldSkipSetupForE2E = process.env.CLAWX_E2E_SKIP_SETUP === '1';
+  const shouldSkipSetupForE2E = process.env.VERSE_CLAW_E2E_SKIP_SETUP === '1';
 
   const win = new BrowserWindow({
     width: 1280,
@@ -914,7 +953,7 @@ function createMainWindow(): BrowserWindow {
 async function initialize(): Promise<void> {
   // Initialize logger first
   logger.init();
-  logger.info('=== ClawX Application Starting ===');
+  logger.info('=== Verse Claw Application Starting ===');
   logger.debug(
     `Runtime: platform=${process.platform}/${process.arch}, electron=${process.versions.electron}, node=${process.versions.node}, packaged=${app.isPackaged}, pid=${process.pid}, ppid=${process.ppid}`
   );
@@ -994,18 +1033,18 @@ async function initialize(): Promise<void> {
   // so it respects the user's "Auto-check for updates" setting.
 
   // Seed a stable default IDENTITY.md before the Gateway initializes the
-  // workspace so ClawX desktop sessions skip OpenClaw's chat-first bootstrap.
+  // workspace so Verse Claw desktop sessions skip OpenClaw's chat-first bootstrap.
   if (!isE2EMode) {
-    void ensureClawXDefaultIdentity().catch((error) => {
-      logger.warn('Failed to seed default ClawX identity:', error);
+    void ensureVerseClawDefaultIdentity().catch((error) => {
+      logger.warn('Failed to seed default Verse Claw identity:', error);
     });
   }
 
-  // Repair any bootstrap files that only contain ClawX markers (no OpenClaw
-  // template content). This fixes a race condition where ensureClawXContext()
+  // Repair any bootstrap files that only contain Verse Claw markers (no OpenClaw
+  // template content). This fixes a race condition where ensureVerseClawContext()
   // previously created the file before the gateway could seed the full template.
   if (!isE2EMode) {
-    void repairClawXOnlyBootstrapFiles().catch((error) => {
+    void repairVerseClawOnlyBootstrapFiles().catch((error) => {
       logger.warn('Failed to repair bootstrap files:', error);
     });
   }
@@ -1052,8 +1091,8 @@ async function initialize(): Promise<void> {
   gatewayManager.on('status', (status: { state: string }) => {
     sendMainWindowEvent('gateway:status-changed', status);
     if (status.state === 'running' && !isE2EMode) {
-      void ensureClawXContext().catch((error) => {
-        logger.warn('Failed to re-merge ClawX context after gateway reconnect:', error);
+      void ensureVerseClawContext().catch((error) => {
+        logger.warn('Failed to re-merge Verse Claw context after gateway reconnect:', error);
       });
     }
   });
@@ -1188,12 +1227,12 @@ async function initialize(): Promise<void> {
     logger.info('Gateway auto-start disabled in settings');
   }
 
-  // Merge ClawX context snippets into the workspace bootstrap files.
+  // Merge Verse Claw context snippets into the workspace bootstrap files.
   // The gateway seeds workspace files asynchronously after its HTTP server
-  // is ready, so ensureClawXContext will retry until the target files appear.
+  // is ready, so ensureVerseClawContext will retry until the target files appear.
   if (!isE2EMode) {
-    void ensureClawXContext().catch((error) => {
-      logger.warn('Failed to merge ClawX context into workspace:', error);
+    void ensureVerseClawContext().catch((error) => {
+      logger.warn('Failed to merge Verse Claw context into workspace:', error);
     });
   }
 
@@ -1243,7 +1282,7 @@ if (gotTheLock) {
 
   // When a second instance is launched, focus the existing window instead.
   app.on('second-instance', () => {
-    logger.info('Second ClawX instance detected; redirecting to the existing window');
+    logger.info('Second Verse Claw instance detected; redirecting to the existing window');
 
     const focusRequest = requestSecondInstanceFocus(
       mainWindowFocusState,

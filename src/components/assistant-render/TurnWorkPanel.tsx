@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { CheckCircle2, ExternalLink, FileText, Globe, Loader2, TriangleAlert, Wrench } from 'lucide-react';
+import { CheckCircle2, ExternalLink, FileText, Globe, Loader2, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Badge } from '@/components/ui/badge';
+import { ToolUiPlanView, type ToolUiPlanTodo } from '@/components/tool-ui/plan-view';
 import { computeLineStats, supportsInlineDocumentPreview, supportsInlineDiff } from '@/lib/generated-files';
 import { hostApi } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
@@ -16,7 +16,7 @@ export function TurnWorkPanel({
 }) {
   const { t } = useTranslation('chat');
   const availableKinds = useMemo(() => {
-    const kinds: TurnWorkPrimaryKind[] = [];
+    const kinds: NonNullable<TurnWorkPrimaryKind>[] = [];
     if (model?.tasks.length) kinds.push('tasks');
     if (model?.reports.length) kinds.push('reports');
     if (model?.sources.length) kinds.push('sources');
@@ -27,10 +27,15 @@ export function TurnWorkPanel({
   const activeKind = selectedKind && availableKinds.includes(selectedKind)
     ? selectedKind
     : model.primaryKind ?? availableKinds[0] ?? 'tasks';
+  const countForKind = (kind: NonNullable<TurnWorkPrimaryKind>) => {
+    if (kind === 'tasks') return model.tasks.length;
+    if (kind === 'reports') return model.reports.length;
+    return model.sources.length;
+  };
 
   return (
     <section
-      className="rounded-lg border border-border bg-black/[0.025] p-3 text-xs shadow-sm dark:bg-white/[0.035]"
+      className="rounded-md border border-border bg-black/[0.025] p-3 text-xs shadow-sm dark:bg-white/[0.035]"
       data-testid="turn-work-panel"
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -39,6 +44,7 @@ export function TurnWorkPanel({
           <div className="min-w-0">
             <p className="truncate text-xs font-semibold text-foreground">{t('turnWork.title')}</p>
             <p className="truncate text-2xs text-muted-foreground">{t(`turnWork.status.${model.status}`)}</p>
+            <WorkCountLine model={model} />
           </div>
         </div>
         {availableKinds.length > 1 && (
@@ -54,8 +60,15 @@ export function TurnWorkPanel({
                     : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
                 )}
                 onClick={() => setSelectedKind(kind)}
+                aria-pressed={activeKind === kind}
               >
-                {t(`turnWork.tabs.${kind}`)}
+                <span>{t(`turnWork.tabs.${kind}`)}</span>
+                <span className={cn(
+                  'ml-1 rounded-sm px-1 font-mono text-[10px]',
+                  activeKind === kind ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground',
+                )}>
+                  {countForKind(kind)}
+                </span>
               </button>
             ))}
           </div>
@@ -78,21 +91,40 @@ function StatusIcon({ status }: { status: TurnWorkModel['status'] }) {
 function TaskList({ tasks }: { tasks: TurnTaskItem[] }) {
   const { t } = useTranslation('chat');
   if (tasks.length === 0) return <EmptyLine label={t('turnWork.empty.tasks')} />;
+  const todos: ToolUiPlanTodo[] = tasks.map((task) => ({
+    id: task.id,
+    label: task.label,
+    status: task.status === 'completed' ? 'completed' : task.status === 'running' ? 'in_progress' : 'cancelled',
+    description: task.detail,
+  }));
   return (
-    <div className="space-y-1.5" data-testid="turn-work-tasks">
-      {tasks.slice(0, 5).map((task) => (
-        <div key={task.id} className="flex min-w-0 items-start gap-2 rounded-md bg-surface-input px-2.5 py-2">
-          <Wrench className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          <div className="min-w-0 flex-1">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="truncate font-mono text-2xs font-medium text-foreground">{task.label}</span>
-              <StatusBadge status={task.status} />
-            </div>
-            {task.detail && <p className="mt-1 line-clamp-2 break-words text-2xs text-muted-foreground">{task.detail}</p>}
-          </div>
-        </div>
-      ))}
+    <div data-testid="turn-work-tasks">
+      <ToolUiPlanView
+        title={t('turnWork.tabs.tasks')}
+        todos={todos}
+        maxVisibleTodos={5}
+        compact
+        showTitle={false}
+        testId="turn-work-plan"
+      />
     </div>
+  );
+}
+
+function WorkCountLine({ model }: { model: TurnWorkModel }) {
+  const { t } = useTranslation('chat');
+  const counters = [
+    { key: 'tasks', value: model.tasks.length },
+    { key: 'reports', value: model.reports.length },
+    { key: 'sources', value: model.sources.length },
+  ].filter((counter) => counter.value > 0);
+
+  if (counters.length === 0) return null;
+
+  return (
+    <p className="mt-0.5 truncate text-2xs text-muted-foreground" data-testid="turn-work-counts-line">
+      {counters.map((counter) => `${t(`turnWork.tabs.${counter.key}`)} ${counter.value}`).join(' / ')}
+    </p>
   );
 }
 
@@ -165,22 +197,6 @@ function SourceList({ sources }: { sources: TurnSourceItem[] }) {
         </button>
       ))}
     </div>
-  );
-}
-
-function StatusBadge({ status }: { status: TurnTaskItem['status'] }) {
-  const { t } = useTranslation('chat');
-  return (
-    <Badge
-      variant={status === 'error' ? 'destructive' : 'outline'}
-      className={cn(
-        'shrink-0 rounded-full px-1.5 py-0 text-2xs',
-        status === 'running' && 'border-primary/30 text-primary',
-        status === 'completed' && 'border-emerald-500/30 text-emerald-700 dark:text-emerald-400',
-      )}
-    >
-      {t(`turnWork.task.${status}`)}
-    </Badge>
   );
 }
 

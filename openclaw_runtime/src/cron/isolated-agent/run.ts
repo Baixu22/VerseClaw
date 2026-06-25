@@ -40,6 +40,7 @@ import {
   createCronRunDiagnosticsFromError,
   mergeCronRunDiagnostics,
 } from "../run-diagnostics.js";
+import { buildCronBrowserAutomationRunResultWithArtifacts } from "../browser-automation-result.js";
 import type {
   CronAgentExecutionPhaseUpdate,
   CronAgentExecutionStarted,
@@ -1065,6 +1066,16 @@ async function finalizeCronRun(params: {
   const agentDiagnostics = createCronRunDiagnosticsFromAgentResult(finalRunResult, {
     finalStatus: hasFatalErrorPayload ? "error" : "ok",
   });
+  const browserAutomationResult = await buildCronBrowserAutomationRunResultWithArtifacts({
+    job: prepared.input.job,
+    runId: prepared.runSessionId,
+    status: hasFatalErrorPayload ? "failed" : "success",
+    startedAt: execution.runStartedAt,
+    endedAt: execution.runEndedAt,
+    events: finalRunResult.browserAutomationEvents,
+    error: embeddedRunError,
+    artifactRootDir: prepared.agentDir,
+  });
   const resolveRunOutcome = (result?: {
     delivered?: boolean;
     deliveryAttempted?: boolean;
@@ -1077,6 +1088,7 @@ async function finalizeCronRun(params: {
         : {}),
       summary,
       outputText,
+      ...(browserAutomationResult ? { browserAutomationResult } : {}),
       delivered: result?.delivered,
       deliveryAttempted: result?.deliveryAttempted,
       delivery: result?.delivery,
@@ -1172,6 +1184,9 @@ async function finalizeCronRun(params: {
   if (deliveryResult.result) {
     const resultWithDeliveryMeta: RunCronAgentTurnResult = {
       ...deliveryResult.result,
+      ...((deliveryResult.result.browserAutomationResult ?? browserAutomationResult)
+        ? { browserAutomationResult: deliveryResult.result.browserAutomationResult ?? browserAutomationResult }
+        : {}),
       deliveryAttempted:
         deliveryResult.result.deliveryAttempted ?? deliveryResult.deliveryAttempted,
       delivery: deliveryTrace,

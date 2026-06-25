@@ -49,6 +49,10 @@ export type SecurityConfig = {
     /** Accepted security audit findings to omit from active summary/findings. */
     suppressions?: SecurityAuditSuppression[];
   };
+  /** Backend-only shadow validation; default off and never enforces policy. */
+  validationShadow?: {
+    enabled?: boolean;
+  };
   installPolicy?: {
     /**
      * Enable operator-owned install policy. When true without an exec command,
@@ -83,6 +87,60 @@ export type SurfaceConfigEntry = {
   silentReply?: SilentReplyPolicyShape;
 };
 
+export type RuntimeFeatureConfig = {
+  /** Master flag for the Phase-3 registry pilot. Defaults off; legacy paths stay authoritative. */
+  registryPilot?: {
+    /** Enable registry pilot diagnostics only. This must not cut over default behavior. */
+    enabled?: boolean;
+  };
+  /** Runtime provider registry shadow diagnostics. Defaults off. */
+  providerRegistry?: {
+    /** Emit provider registry diagnostics/evidence without changing provider ordering. */
+    shadow?: boolean;
+  };
+  /** Runtime context provider migration flags. Defaults off. */
+  contextProviders?: {
+    /** Emit normalized ContextItem shadows from compatibility context providers. */
+    shadow?: boolean;
+    /** Emit LoopContextPack ContextItem shadows without changing prompt text. */
+    loopPackShadow?: boolean;
+    /** Run context provider registry pilot diagnostics without changing prompt/message output. */
+    registryPilot?: boolean;
+  };
+  /** Append-only RuntimeTaskEvent event-log shadow flags. Defaults off. */
+  eventLog?: {
+    /** Allow event-log diagnostics/envelopes to be created without changing runtime behavior. */
+    shadow?: boolean;
+    /** Allow an explicitly provided append-only shadow store to persist event-log records. */
+    persist?: boolean;
+  };
+  /** Checkpoint serializer shadow flags. Defaults off. */
+  checkpointSerializer?: {
+    /** Serialize checkpoint shadows for comparison without changing long_task_checkpoints. */
+    shadow?: boolean;
+  };
+  /** Resume replay shadow flags. Defaults off and never cut over resume authority. */
+  resume?: {
+    /** Replay event-log state for diagnostics without executing tools or changing resume behavior. */
+    replayShadow?: boolean;
+  };
+  /** Runtime tool registry shadow diagnostics. Defaults off. */
+  toolRegistry?: {
+    /** Emit tool registry diagnostics/evidence without changing legacy tool responses. */
+    shadow?: boolean;
+  };
+  /** Runtime tool protocol migration flags. Defaults off. */
+  toolProtocol?: {
+    /** Emit MCP ToolCallRequest/ToolCallResult shadows without changing MCP response shape. */
+    mcpShadow?: boolean;
+  };
+  /** Runtime-core migration shadow surfaces. Defaults are off. */
+  evidenceVerifier?: {
+    /** Emit warning-only evidence verifier reports without changing task completion decisions. */
+    shadow?: boolean;
+  };
+};
+
 /** Top-level OpenClaw config as read from user/project config files. */
 export type OpenClawConfig = {
   /** JSON schema URL used by editors and generated config files. */
@@ -99,6 +157,8 @@ export type OpenClawConfig = {
   accessGroups?: AccessGroupsConfig;
   /** ACP integration settings. */
   acp?: AcpConfig;
+  /** Runtime-core migration flags and runtime-owned feature gates. */
+  runtime?: RuntimeFeatureConfig;
   env?: {
     /** Opt-in: import missing secrets from a login shell environment (exec `$SHELL -l -c 'env -0'`). */
     shellEnv?: {

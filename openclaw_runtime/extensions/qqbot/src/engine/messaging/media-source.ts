@@ -7,11 +7,11 @@
  *
  * ## Why four branches?
  *
- * - `url` â€” remote http(s) URL that the QQ server can fetch directly.
- * - `base64` â€” in-memory base64 string (typically from a `data:` URL).
- * - `localPath` â€” on-disk file; kept as a path plus an optional verified
+ * - `url` â€?remote http(s) URL that the QQ server can fetch directly.
+ * - `base64` â€?in-memory base64 string (typically from a `data:` URL).
+ * - `localPath` â€?on-disk file; kept as a path plus an optional verified
  *   descriptor so uploaders can avoid reopening a path after validation.
- * - `buffer` â€” in-memory raw bytes (e.g. TTS output, downloaded url-fallback).
+ * - `buffer` â€?in-memory raw bytes (e.g. TTS output, downloaded url-fallback).
  *
  * ## Security baseline (localPath branch)
  *
@@ -37,11 +37,11 @@ import { MAX_UPLOAD_SIZE, formatFileSize, getMimeType } from "../utils/file-util
 /**
  * Fully normalized media source. Downstream uploaders switch on `kind`.
  *
- * - `url`: remote URL â€” upload via `file_data=null; url=...`.
- * - `base64`: already-encoded base64 â€” upload via `file_data=...`.
- * - `localPath`: on-disk file â€” uploaders should prefer `opened` when present
+ * - `url`: remote URL â€?upload via `file_data=null; url=...`.
+ * - `base64`: already-encoded base64 â€?upload via `file_data=...`.
+ * - `localPath`: on-disk file â€?uploaders should prefer `opened` when present
  *   and only reopen `path` for direct, already-normalized test/helper calls.
- * - `buffer`: raw bytes in memory â€” same as above minus disk I/O.
+ * - `buffer`: raw bytes in memory â€?same as above minus disk I/O.
  */
 export type MediaSource =
   | { kind: "url"; url: string }
@@ -53,7 +53,7 @@ export type MediaSource =
  * Untyped media source accepted from callers.
  *
  * `url` may be either a remote `http(s)://...` URL or a `data:<mime>;base64,...`
- * data URL â€” {@link normalizeSource} transparently resolves the latter to a
+ * data URL â€?{@link normalizeSource} transparently resolves the latter to a
  * `base64` branch.
  */
 export type RawMediaSource =
@@ -103,7 +103,7 @@ export interface OpenedLocalFile {
  *
  * 1. `O_NOFOLLOW` refuses to traverse symlinks (prevents post-whitelist
  *    symlink swaps / TOCTOU attacks).
- * 2. `fstat` on the opened descriptor â€” NOT `fs.stat` on the path â€”
+ * 2. `fstat` on the opened descriptor â€?NOT `fs.stat` on the path â€?
  *    so the size check applies to the exact byte stream we will read.
  * 3. Rejects non-regular files (sockets / devices / directories).
  * 4. Enforces a caller-specified `maxSize` (default {@link MAX_UPLOAD_SIZE})

@@ -139,7 +139,7 @@ export class DiscordThreadUpdateListener extends ThreadUpdateListener {
           threadId,
         });
         if (count > 0) {
-          logger.info("Discord thread archived â€” reset sessions", { threadId, count });
+          logger.info("Discord thread archived â€?reset sessions", { threadId, count });
         }
       },
       onError: (err) => {

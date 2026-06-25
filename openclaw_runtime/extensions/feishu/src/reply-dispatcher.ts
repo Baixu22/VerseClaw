@@ -175,7 +175,7 @@ export function createFeishuReplyDispatcher(params: CreateFeishuReplyDispatcherP
         if (!replyToMessageId) {
           return;
         }
-        // Skip typing indicator for old messages â€” likely replays after context
+        // Skip typing indicator for old messages â€?likely replays after context
         // compaction that would flood users with stale notifications (#30418).
         const messageCreateTimeMs = normalizeEpochMs(params.messageCreateTimeMs);
         if (

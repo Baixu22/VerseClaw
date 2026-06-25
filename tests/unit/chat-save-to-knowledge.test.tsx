@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { Chat } from '@/pages/Chat';
 
 const hostApiMock = vi.hoisted(() => ({
@@ -12,7 +13,7 @@ const hostApiMock = vi.hoisted(() => ({
 const chatState = vi.hoisted(() => ({
   messages: [
     { role: 'user', id: 'u1', content: 'We decided to keep Obsidian optional.' },
-    { role: 'assistant', id: 'a1', content: 'Use the native ClawX-managed wiki for the MVP.' },
+    { role: 'assistant', id: 'a1', content: 'Use the native Verse Claw-managed wiki for the MVP.' },
   ],
   currentSessionKey: 'agent:main:knowledge-session',
   currentAgentId: 'main',
@@ -208,7 +209,7 @@ describe('Chat Save to Knowledge', () => {
   });
 
   it('opens an editable draft and creates a pending proposal only after confirmation', async () => {
-    render(<Chat />);
+    render(<MemoryRouter><Chat /></MemoryRouter>);
 
     fireEvent.click(await screen.findByTestId('chat-save-knowledge'));
     expect(await screen.findByTestId('knowledge-draft-dialog')).toBeInTheDocument();

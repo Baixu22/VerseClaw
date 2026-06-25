@@ -46,26 +46,44 @@ function applySnapshot(snapshot: WorkspaceSnapshot | undefined) {
   } : {};
 }
 
+function stripLegacyWorkspaceUiState(state: WorkspaceUiState | undefined): WorkspaceUiState {
+  const { workMode: _legacyWorkMode, ...safeState } = state ?? {};
+  return safeState;
+}
+
+function stripLegacySessionStates(
+  sessionStates: WorkspaceProfile['sessionStates'] | undefined,
+): WorkspaceProfile['sessionStates'] | undefined {
+  if (!sessionStates) return undefined;
+  return Object.fromEntries(
+    Object.entries(sessionStates).map(([sessionKey, sessionState]) => [
+      sessionKey,
+      stripLegacyWorkspaceUiState(sessionState),
+    ]),
+  );
+}
+
 function mergeWorkspaceUiState(current: WorkspaceUiState | undefined, patch: WorkspaceUiState | undefined): WorkspaceUiState {
-  if (!patch) return current ?? {};
+  const safeCurrent = stripLegacyWorkspaceUiState(current);
+  if (!patch) return safeCurrent;
+  const safePatch = stripLegacyWorkspaceUiState(patch);
   return {
-    ...(current ?? {}),
-    ...patch,
-    artifactPanel: patch.artifactPanel
-      ? { ...(current?.artifactPanel ?? {}), ...patch.artifactPanel }
+    ...safeCurrent,
+    ...safePatch,
+    artifactPanel: safePatch.artifactPanel
+      ? { ...(current?.artifactPanel ?? {}), ...safePatch.artifactPanel }
       : current?.artifactPanel,
-    terminal: patch.terminal ? { ...(current?.terminal ?? {}), ...patch.terminal } : current?.terminal,
-    webPreview: patch.webPreview ? { ...(current?.webPreview ?? {}), ...patch.webPreview } : current?.webPreview,
-    chatFooter: patch.chatFooter ? { ...(current?.chatFooter ?? {}), ...patch.chatFooter } : current?.chatFooter,
-    graphExpanded: patch.graphExpanded ? { ...(current?.graphExpanded ?? {}), ...patch.graphExpanded } : current?.graphExpanded,
-    activeTopicId: Object.prototype.hasOwnProperty.call(patch, 'activeTopicId')
-      ? patch.activeTopicId
+    terminal: safePatch.terminal ? { ...(current?.terminal ?? {}), ...safePatch.terminal } : current?.terminal,
+    webPreview: safePatch.webPreview ? { ...(current?.webPreview ?? {}), ...safePatch.webPreview } : current?.webPreview,
+    chatFooter: safePatch.chatFooter ? { ...(current?.chatFooter ?? {}), ...safePatch.chatFooter } : current?.chatFooter,
+    graphExpanded: safePatch.graphExpanded ? { ...(current?.graphExpanded ?? {}), ...safePatch.graphExpanded } : current?.graphExpanded,
+    activeTopicId: Object.prototype.hasOwnProperty.call(safePatch, 'activeTopicId')
+      ? safePatch.activeTopicId
       : current?.activeTopicId,
-    draftInput: Object.prototype.hasOwnProperty.call(patch, 'draftInput')
-      ? patch.draftInput
+    draftInput: Object.prototype.hasOwnProperty.call(safePatch, 'draftInput')
+      ? safePatch.draftInput
       : current?.draftInput,
-    workMode: patch.workMode ?? current?.workMode,
-    recentFiles: patch.recentFiles ?? current?.recentFiles,
+    recentFiles: safePatch.recentFiles ?? current?.recentFiles,
   };
 }
 
@@ -179,15 +197,16 @@ export const useWorkspacesStore = create<WorkspaceState>((set) => ({
           if (profile.id !== input.id) return profile;
           const targetSessionKey = input.sessionKey ?? input.activeSessionKey ?? profile.activeSessionKey;
           const nextActiveSessionKey = input.activeSessionKey ?? profile.activeSessionKey;
+          const baseSessionStates = stripLegacySessionStates(profile.sessionStates);
           const nextSessionStates = input.state
             ? {
-              ...(profile.sessionStates ?? {}),
+              ...(baseSessionStates ?? {}),
               [targetSessionKey]: mergeWorkspaceUiState(
-                profile.sessionStates?.[targetSessionKey],
+                baseSessionStates?.[targetSessionKey],
                 input.state,
               ),
             }
-            : profile.sessionStates;
+            : baseSessionStates;
           return {
             ...profile,
             activeSessionKey: nextActiveSessionKey,
@@ -195,7 +214,7 @@ export const useWorkspacesStore = create<WorkspaceState>((set) => ({
               ? nextSessionStates[nextActiveSessionKey] ?? {}
               : input.state && targetSessionKey === nextActiveSessionKey
                 ? mergeWorkspaceUiState(profile.state, input.state)
-                : profile.state,
+                : stripLegacyWorkspaceUiState(profile.state),
             sessionStates: nextSessionStates,
             updatedAt: Date.now(),
           };

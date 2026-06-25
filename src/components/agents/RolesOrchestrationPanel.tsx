@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AlertTriangle,
   Archive,
+  BarChart3,
   BookOpen,
   Bot,
   Check,
@@ -23,6 +24,8 @@ import {
   ShieldAlert,
   SlidersHorizontal,
   Sparkles,
+  ThumbsDown,
+  ThumbsUp,
   XCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,6 +41,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { useSettingsStore } from '@/stores/settings';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
 import type { TaskLoopLifecycleEvent } from '@shared/host-events/contract';
 import type { MissionLifecycleEvent, MissionStatus } from '@shared/types/mission-control';
@@ -283,6 +287,47 @@ type MemoryHealthView = {
   checks?: Array<{ name: string; status: string; message: string; count?: number }>;
 };
 
+type MemoryUtilityReportView = {
+  roleName?: string;
+  generatedAt?: string;
+  dataQuality?: string;
+  missingEvidence?: string[];
+  sample?: {
+    cards?: number;
+    injections?: number;
+    feedback?: number;
+    proposals?: number;
+    conflicts?: number;
+  };
+  aggregate?: {
+    contextPrecisionAtK?: number | null;
+    helpfulnessRate?: number | null;
+    harmRate?: number | null;
+    staleRate?: number | null;
+    conflictRate?: number | null;
+    reviewAcceptanceRate?: number | null;
+    tokenOverheadPerRun?: number | null;
+    taskSuccessDelta?: number | null;
+  };
+  cards?: Array<{
+    cardId: string;
+    card?: MemoryCardView;
+    selectedCount?: number;
+    skippedCount?: number;
+    feedbackCount?: number;
+    helpfulCount?: number;
+    neutralCount?: number;
+    harmfulCount?: number;
+    missingNeededCount?: number;
+    userCorrectedCount?: number;
+    conflictCount?: number;
+    retentionAction?: string;
+    utilityScore?: number | null;
+    dataQuality?: string;
+    reasonSummary?: string;
+  }>;
+};
+
 type MemoryDetailView = {
   card?: MemoryCardView;
   proposal?: MemoryProposalView;
@@ -301,6 +346,12 @@ type MemoryDetailView = {
 function scoreToPercent(value?: number): number {
   if (typeof value !== 'number' || Number.isNaN(value)) return 0;
   return Math.max(0, Math.min(100, Math.round(value * 100)));
+}
+
+function formatMemoryMetric(value?: number | null, options?: { percent?: boolean }): string {
+  if (typeof value !== 'number' || Number.isNaN(value)) return '—';
+  if (options?.percent) return `${Math.round(value * 100)}%`;
+  return Number.isInteger(value) ? String(value) : value.toFixed(2);
 }
 
 function memoryStatusClasses(status?: string): string {
@@ -398,6 +449,7 @@ function draftFromProposal(proposal: Record<string, unknown>, roleName?: string 
 
 export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[] }) {
   const { t } = useTranslation('agents');
+  const roleMemoryEnabled = useSettingsStore((state) => state.roleMemoryEnabled);
   const tt = useCallback(
     (key: string, defaultValue: string, vars?: Record<string, unknown>) =>
       t(key, { defaultValue, ...(vars ?? {}) }),
@@ -417,7 +469,17 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
   const [lifecycleEvents, setLifecycleEvents] = useState<Record<string, LifecycleEntry>>({});
   const [taskLoopEvents, setTaskLoopEvents] = useState<Record<string, TaskLoopLifecycleEvent>>({});
   const [taskLoopRunning, setTaskLoopRunning] = useState(false);
-  const [taskLoopResult, setTaskLoopResult] = useState<{ loopRunId: string; status: string; phase: string; traceId?: string } | null>(null);
+  const [taskLoopResult, setTaskLoopResult] = useState<{
+    loopRunId: string;
+    status: string;
+    phase: string;
+    traceId?: string;
+    evidenceGate?: TaskLoopLifecycleEvent['evidenceGate'];
+    roleQualitySummary?: TaskLoopLifecycleEvent['roleQualitySummary'];
+    filesTouched?: string[];
+    testsRun?: string[];
+    blockedReason?: string;
+  } | null>(null);
   const [missionEvents, setMissionEvents] = useState<Record<string, MissionLifecycleEvent>>({});
   const [missionRunning, setMissionRunning] = useState(false);
   const [missionResult, setMissionResult] = useState<MissionPanelResult | null>(null);
@@ -429,6 +491,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
   const [memoryStats, setMemoryStats] = useState<Record<string, number>>({});
   const [memoryConflicts, setMemoryConflicts] = useState(0);
   const [memoryLoading, setMemoryLoading] = useState(false);
+  const [memoryFeedbackLoading, setMemoryFeedbackLoading] = useState<string | null>(null);
   const [memoryDraft, setMemoryDraft] = useState<MemoryDraftState>(() => defaultMemoryDraft(null));
   const [memoryDraftTarget, setMemoryDraftTarget] = useState<{ id: string; mode: 'update' | 'supersede' } | null>(null);
   const [memoryAdvancedOpen, setMemoryAdvancedOpen] = useState(false);
@@ -437,9 +500,11 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
   const [selectedReviewIds, setSelectedReviewIds] = useState<string[]>([]);
   const [memorySimulation, setMemorySimulation] = useState<MemorySimulationView | null>(null);
   const [memoryHealth, setMemoryHealth] = useState<MemoryHealthView | null>(null);
+  const [memoryUtility, setMemoryUtility] = useState<MemoryUtilityReportView | null>(null);
   const [memoryDetailOpen, setMemoryDetailOpen] = useState(false);
   const [memoryDetail, setMemoryDetail] = useState<MemoryDetailView | null>(null);
   const [memoryDetailLoading, setMemoryDetailLoading] = useState(false);
+  const roleMemoryDisabled = !roleMemoryEnabled;
 
   const activeMemoryCards = useMemo(
     () => memoryCards.filter((card) => card.status === 'active' || card.status === 'cold'),
@@ -490,7 +555,8 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
   const conflictMemoryCount = memoryStats.conflictsOpen ?? memoryConflictItems.length;
   const retentionMemoryCount = memoryRetention.length;
   const healthWarningCount = memoryHealth?.checks?.filter((check) => check.status !== 'ok').length ?? 0;
-
+  const memoryFeedbackCount = memoryUtility?.sample?.feedback ?? 0;
+  const memoryQualityLabel = memoryUtility?.dataQuality ?? 'insufficient';
   const anchorSession = useMemo(() => {
     const def = agents.find((agent) => agent.isDefault) ?? agents[0];
     return def?.mainSessionKey ?? '';
@@ -499,6 +565,9 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     const def = agents.find((agent) => agent.isDefault) ?? agents[0];
     return def?.id ?? '';
   }, [agents]);
+  const showRoleMemoryDisabledToast = useCallback(() => {
+    toast.message(tt('roles.memoryDisabledToast', 'Role Memory is disabled in Settings.'));
+  }, [tt]);
 
   const loadRoles = useCallback(async () => {
     setLoading(true);
@@ -526,6 +595,19 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
 
   const loadRoleMemory = useCallback(async () => {
     if (!selectedRole) return;
+    if (roleMemoryDisabled) {
+      setMemoryCards([]);
+      setMemoryProposals([]);
+      setMemoryConflictItems([]);
+      setMemoryInjections([]);
+      setMemoryRetention([]);
+      setMemoryHealth(null);
+      setMemoryUtility(null);
+      setMemoryStats({});
+      setMemoryConflicts(0);
+      setMemorySimulation(null);
+      return;
+    }
     setMemoryLoading(true);
     try {
       const listResult = await hostApi.gateway.rpc('memory.list', { roleName: selectedRole, status: 'all' });
@@ -535,13 +617,14 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
       }
       setMemoryLoading(false);
 
-      const [proposalsSettled, conflictsSettled, injectionsSettled, statsSettled, retentionSettled, healthSettled] = await Promise.allSettled([
+      const [proposalsSettled, conflictsSettled, injectionsSettled, statsSettled, retentionSettled, healthSettled, utilitySettled] = await Promise.allSettled([
         hostApi.gateway.rpc('memory.proposals', { roleName: selectedRole, limit: 50 }),
         hostApi.gateway.rpc('memory.conflicts', { status: 'open' }),
         hostApi.gateway.rpc('memory.explainInjection', { roleName: selectedRole, limit: 10 }),
         hostApi.gateway.rpc('memory.stats'),
         hostApi.gateway.rpc('memory.retentionCandidates', { roleName: selectedRole, limit: 8 }),
         hostApi.gateway.rpc('memory.health'),
+        hostApi.gateway.rpc('memory.utilityReport', { roleName: selectedRole, limit: 12 }),
       ]);
       const proposalsResult = proposalsSettled.status === 'fulfilled' ? proposalsSettled.value : undefined;
       const conflictsResult = conflictsSettled.status === 'fulfilled' ? conflictsSettled.value : undefined;
@@ -549,6 +632,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
       const statsResult = statsSettled.status === 'fulfilled' ? statsSettled.value : undefined;
       const retentionResult = retentionSettled.status === 'fulfilled' ? retentionSettled.value : undefined;
       const healthResult = healthSettled.status === 'fulfilled' ? healthSettled.value : undefined;
+      const utilityResult = utilitySettled.status === 'fulfilled' ? utilitySettled.value : undefined;
       const conflictsUnwrapped = unwrapRpc(conflictsResult);
       if (conflictsUnwrapped.ok) {
         const conflicts = Array.isArray(conflictsUnwrapped.data.conflicts) ? conflictsUnwrapped.data.conflicts : [];
@@ -575,12 +659,16 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
       if (healthUnwrapped.ok && isRecord(healthUnwrapped.data.health)) {
         setMemoryHealth(healthUnwrapped.data.health as MemoryHealthView);
       }
+      const utilityUnwrapped = unwrapRpc(utilityResult);
+      if (utilityUnwrapped.ok && isRecord(utilityUnwrapped.data.report)) {
+        setMemoryUtility(utilityUnwrapped.data.report as MemoryUtilityReportView);
+      }
     } catch (err) {
       toast.error(String(err));
     } finally {
       setMemoryLoading(false);
     }
-  }, [selectedRole]);
+  }, [roleMemoryDisabled, selectedRole]);
 
   useEffect(() => {
     if (expanded && selectedRole) {
@@ -592,6 +680,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
       setMemoryInjections([]);
       setMemoryRetention([]);
       setMemoryHealth(null);
+      setMemoryUtility(null);
       setMemoryStats({});
       setMemoryConflicts(0);
     }
@@ -638,6 +727,10 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
 
   const previewRoleMemory = useCallback(async () => {
     if (!selectedRole || !memoryDraft.content.trim()) return;
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryPreviewLoading(true);
     try {
       const operation = memoryDraftTarget?.mode === 'supersede'
@@ -662,10 +755,14 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setMemoryPreviewLoading(false);
     }
-  }, [buildMemoryProposal, memoryDraft.content, memoryDraftTarget, selectedRole, tt]);
+  }, [buildMemoryProposal, memoryDraft.content, memoryDraftTarget, roleMemoryDisabled, selectedRole, showRoleMemoryDisabledToast, tt]);
 
   const proposeRoleMemory = useCallback(async () => {
     if (!selectedRole || !memoryDraft.content.trim()) return;
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryLoading(true);
     try {
       const proposal = buildMemoryProposal();
@@ -694,9 +791,13 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setMemoryLoading(false);
     }
-  }, [buildMemoryProposal, loadRoleMemory, memoryDraft.content, memoryDraftTarget, selectedRole, tt]);
+  }, [buildMemoryProposal, loadRoleMemory, memoryDraft.content, memoryDraftTarget, roleMemoryDisabled, selectedRole, showRoleMemoryDisabledToast, tt]);
 
   const archiveRoleMemory = useCallback(async (id: string) => {
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryLoading(true);
     try {
       const result = await hostApi.gateway.rpc('memory.archive', { id });
@@ -712,9 +813,13 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setMemoryLoading(false);
     }
-  }, [loadRoleMemory, tt]);
+  }, [loadRoleMemory, roleMemoryDisabled, showRoleMemoryDisabledToast, tt]);
 
   const reviewRoleMemory = useCallback(async (id: string, action: 'approve' | 'reject' | 'applyAsCold') => {
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryLoading(true);
     try {
       const result = await hostApi.gateway.rpc('memory.review', { id, action });
@@ -730,10 +835,14 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setMemoryLoading(false);
     }
-  }, [loadRoleMemory, tt]);
+  }, [loadRoleMemory, roleMemoryDisabled, showRoleMemoryDisabledToast, tt]);
 
   const reviewSelectedRoleMemory = useCallback(async (action: 'approve' | 'reject' | 'applyAsCold') => {
     if (selectedReviewIds.length === 0) return;
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryLoading(true);
     try {
       const result = await hostApi.gateway.rpc('memory.reviewBatch', { ids: selectedReviewIds, action });
@@ -750,9 +859,13 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setMemoryLoading(false);
     }
-  }, [loadRoleMemory, selectedReviewIds, tt]);
+  }, [loadRoleMemory, roleMemoryDisabled, selectedReviewIds, showRoleMemoryDisabledToast, tt]);
 
   const proposeRetention = useCallback(async (cardId: string, action?: string) => {
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryLoading(true);
     try {
       const result = await hostApi.gateway.rpc('memory.retentionPropose', { cardId, action });
@@ -768,9 +881,13 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setMemoryLoading(false);
     }
-  }, [loadRoleMemory, tt]);
+  }, [loadRoleMemory, roleMemoryDisabled, showRoleMemoryDisabledToast, tt]);
 
   const restoreRoleMemory = useCallback(async (id: string) => {
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryLoading(true);
     try {
       const result = await hostApi.gateway.rpc('memory.restore', { id });
@@ -786,9 +903,13 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setMemoryLoading(false);
     }
-  }, [loadRoleMemory, tt]);
+  }, [loadRoleMemory, roleMemoryDisabled, showRoleMemoryDisabledToast, tt]);
 
   const tombstoneRoleMemory = useCallback(async (id: string) => {
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryLoading(true);
     try {
       const result = await hostApi.gateway.rpc('memory.archive', { id, tombstone: true });
@@ -804,17 +925,25 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setMemoryLoading(false);
     }
-  }, [loadRoleMemory, tt]);
+  }, [loadRoleMemory, roleMemoryDisabled, showRoleMemoryDisabledToast, tt]);
 
   const prepareMemoryDraft = useCallback((card: MemoryCardView, mode: 'update' | 'supersede') => {
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryDraftTarget({ id: card.id, mode });
     setMemoryDraft(draftFromCard(card, selectedRole));
     setMemoryPreview(null);
     setMemoryDetailOpen(false);
     toast.message(mode === 'supersede' ? tt('roles.memorySupersedeDraftReady', 'Supersede draft loaded') : tt('roles.memoryEditDraftReady', 'Edit draft loaded'));
-  }, [selectedRole, tt]);
+  }, [roleMemoryDisabled, selectedRole, showRoleMemoryDisabledToast, tt]);
 
   const prepareMergeDraft = useCallback(async (cardIds?: string[], proposalIds?: string[]) => {
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryLoading(true);
     try {
       const result = await hostApi.gateway.rpc('memory.mergeDraft', { cardIds, proposalIds });
@@ -833,10 +962,14 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setMemoryLoading(false);
     }
-  }, [selectedRole, tt]);
+  }, [roleMemoryDisabled, selectedRole, showRoleMemoryDisabledToast, tt]);
 
   const simulateRoleMemoryInjection = useCallback(async () => {
     if (!selectedRole) return;
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
     setMemoryLoading(true);
     try {
       const result = await hostApi.gateway.rpc('memory.simulateInjection', { roleName: selectedRole, task });
@@ -852,7 +985,40 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setMemoryLoading(false);
     }
-  }, [selectedRole, task, tt]);
+  }, [roleMemoryDisabled, selectedRole, showRoleMemoryDisabledToast, task, tt]);
+
+  const submitMemoryFeedback = useCallback(async (
+    cardId: string,
+    outcome: 'helpful' | 'neutral' | 'harmful' | 'missing_needed' | 'user_corrected',
+    injectionId?: string,
+  ) => {
+    if (!selectedRole) return;
+    if (roleMemoryDisabled) {
+      showRoleMemoryDisabledToast();
+      return;
+    }
+    setMemoryFeedbackLoading(`${injectionId ?? 'card'}:${cardId}:${outcome}`);
+    try {
+      const result = await hostApi.gateway.rpc('memory.feedback', {
+        roleName: selectedRole,
+        cardId,
+        injectionId,
+        outcome,
+        taskSuccess: 'unknown',
+      });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      toast.success(tt('roles.memoryFeedbackSaved', 'Memory feedback recorded'));
+      await loadRoleMemory();
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMemoryFeedbackLoading(null);
+    }
+  }, [loadRoleMemory, roleMemoryDisabled, selectedRole, showRoleMemoryDisabledToast, tt]);
 
   const openMemoryDetail = useCallback(async (id: string, kind: 'card' | 'proposal' | 'conflict' | 'injection' = 'card') => {
     setMemoryDetailOpen(true);
@@ -1048,11 +1214,46 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
         return;
       }
       const loop = isRecord(unwrapped.data.loop) ? unwrapped.data.loop : {};
+      const loopEvidenceGate = isRecord(loop.evidenceGate) ? loop.evidenceGate : null;
+      const loopRoleQualitySummary = isRecord(loop.roleQualitySummary) ? loop.roleQualitySummary : null;
+      const evidenceGate = loopEvidenceGate
+        ? {
+            status: typeof loopEvidenceGate.status === 'string'
+              ? (loopEvidenceGate.status as NonNullable<TaskLoopLifecycleEvent['evidenceGate']>['status'])
+              : 'blocked',
+            reasons: Array.isArray(loopEvidenceGate.reasons)
+              ? loopEvidenceGate.reasons.filter((item): item is string => typeof item === 'string')
+              : [],
+            workerCount: typeof loopEvidenceGate.workerCount === 'number'
+              ? loopEvidenceGate.workerCount
+              : Array.isArray(loop.subagentEvidence)
+                ? loop.subagentEvidence.length
+                : 0,
+            failedWorkerCount: typeof loopEvidenceGate.failedWorkerCount === 'number' ? loopEvidenceGate.failedWorkerCount : 0,
+            unverifiableWorkerCount: typeof loopEvidenceGate.unverifiableWorkerCount === 'number' ? loopEvidenceGate.unverifiableWorkerCount : 0,
+          }
+        : undefined;
+      const roleQualitySummary = loopRoleQualitySummary
+        ? {
+            good: typeof loopRoleQualitySummary.good === 'number' ? loopRoleQualitySummary.good : 0,
+            needsAttention: typeof loopRoleQualitySummary.needsAttention === 'number' ? loopRoleQualitySummary.needsAttention : 0,
+            poorAttempt: typeof loopRoleQualitySummary.poorAttempt === 'number' ? loopRoleQualitySummary.poorAttempt : 0,
+          }
+        : undefined;
       const next = {
         loopRunId: String(loop.loopRunId ?? ''),
         status: String(loop.status ?? ''),
         phase: String(loop.phase ?? ''),
         traceId: typeof loop.traceId === 'string' ? loop.traceId : undefined,
+        evidenceGate,
+        roleQualitySummary,
+        filesTouched: Array.isArray(loopEvidenceGate?.filesTouched)
+          ? loopEvidenceGate.filesTouched.filter((item): item is string => typeof item === 'string')
+          : [],
+        testsRun: Array.isArray(loopEvidenceGate?.testsRun)
+          ? loopEvidenceGate.testsRun.filter((item): item is string => typeof item === 'string')
+          : [],
+        blockedReason: typeof loop.finalSummary === 'string' && loop.status === 'blocked' ? loop.finalSummary : undefined,
       };
       setTaskLoopResult(next);
       toast.success(tt('roles.taskLoopStarted', 'Task loop finished: {{status}}', { status: next.status || 'unknown' }));
@@ -1196,6 +1397,11 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                     <BookOpen className="h-4 w-4 text-primary" />
                     <span className="text-sm font-medium">{tt('roles.memoryTitle', 'Role Memory')}</span>
                     {selectedRole && <Badge variant="secondary" className="rounded-full">{selectedRole}</Badge>}
+                    {roleMemoryDisabled && (
+                      <Badge variant="outline" className="rounded-full border-zinc-500/30 bg-zinc-500/10 text-zinc-700 dark:text-zinc-400">
+                        {tt('roles.memoryDisabledBadge', 'Disabled')}
+                      </Badge>
+                    )}
                     {memoryConflicts > 0 && (
                       <Badge variant="outline" className="rounded-full border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400">
                         <AlertTriangle className="mr-1 h-3 w-3" />
@@ -1219,7 +1425,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                     {tt('roles.memoryGovernanceHint', 'Review what this role will remember, why changes are blocked, and what context was injected into recent runs.')}
                   </p>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => void loadRoleMemory()} disabled={!selectedRole || memoryLoading}>
+                <Button variant="ghost" size="sm" onClick={() => void loadRoleMemory()} disabled={!selectedRole || memoryLoading || roleMemoryDisabled}>
                   <RefreshCw className={cn('h-4 w-4', memoryLoading && 'animate-spin')} />
                 </Button>
               </div>
@@ -1231,12 +1437,29 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+                  {roleMemoryDisabled && (
+                    <div
+                      className="rounded-md border border-zinc-500/20 bg-zinc-500/10 px-3 py-3"
+                      data-testid="role-memory-disabled-banner"
+                    >
+                      <div className="flex items-start gap-2">
+                        <ShieldAlert className="mt-0.5 h-4 w-4 text-zinc-700 dark:text-zinc-400" />
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium text-foreground">{tt('roles.memoryDisabledTitle', 'Role Memory is off')}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {tt('roles.memoryDisabledDescription', 'Existing role memories stay on disk, but they are not injected into role runs and memory changes are blocked until you enable Role Memory in Settings.')}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
                     {[
                       { icon: Layers3, label: tt('roles.memoryMetricActive', 'Usable'), value: activeMemoryCount, tone: 'text-emerald-700 dark:text-emerald-400' },
                       { icon: Clock3, label: tt('roles.memoryMetricReview', 'Review'), value: reviewMemoryCount, tone: 'text-amber-700 dark:text-amber-400' },
                       { icon: GitMerge, label: tt('roles.memoryMetricConflicts', 'Conflicts'), value: conflictMemoryCount, tone: 'text-red-700 dark:text-red-400' },
                       { icon: History, label: tt('roles.memoryMetricInjections', 'Runs'), value: memoryInjections.length, tone: 'text-blue-700 dark:text-blue-400' },
+                      { icon: BarChart3, label: tt('roles.memoryMetricFeedback', 'Feedback'), value: memoryFeedbackCount, tone: memoryQualityLabel === 'strong' ? 'text-emerald-700 dark:text-emerald-400' : 'text-zinc-700 dark:text-zinc-400' },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center justify-between rounded-md border border-border/60 bg-surface-input px-3 py-2">
                         <div className="flex min-w-0 items-center gap-2">
@@ -1294,12 +1517,13 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                         value={memoryDraft.content}
                         onChange={(event) => updateMemoryDraft({ content: event.target.value })}
                         placeholder={tt('roles.memoryPlaceholder', 'Add a role-specific memory for future runs')}
+                        disabled={roleMemoryDisabled}
                         className="min-h-[116px] resize-none bg-background text-sm"
                       />
                       <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1">
                         <div className="space-y-1.5">
                           <span className="text-2xs font-medium text-muted-foreground">{tt('roles.memoryType', 'Type')}</span>
-                          <Select value={memoryDraft.type} onValueChange={(value) => updateMemoryDraft({ type: value })}>
+                          <Select value={memoryDraft.type} onValueChange={(value) => updateMemoryDraft({ type: value })} disabled={roleMemoryDisabled}>
                             <SelectTrigger size="sm" data-testid="role-memory-type"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               {MEMORY_TYPE_OPTIONS.map((type) => <SelectItem key={type} value={type}>{type}</SelectItem>)}
@@ -1308,7 +1532,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                         </div>
                         <div className="space-y-1.5">
                           <span className="text-2xs font-medium text-muted-foreground">{tt('roles.memoryScope', 'Scope')}</span>
-                          <Select value={memoryDraft.scope} onValueChange={(value) => updateMemoryDraft({ scope: value })}>
+                          <Select value={memoryDraft.scope} onValueChange={(value) => updateMemoryDraft({ scope: value })} disabled={roleMemoryDisabled}>
                             <SelectTrigger size="sm" data-testid="role-memory-scope"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               {MEMORY_SCOPE_OPTIONS.map((scope) => <SelectItem key={scope} value={scope}>{scope}</SelectItem>)}
@@ -1317,7 +1541,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                         </div>
                         <div className="space-y-1.5">
                           <span className="text-2xs font-medium text-muted-foreground">{tt('roles.memorySensitivity', 'Sensitivity')}</span>
-                          <Select value={memoryDraft.sensitivity} onValueChange={(value) => updateMemoryDraft({ sensitivity: value })}>
+                          <Select value={memoryDraft.sensitivity} onValueChange={(value) => updateMemoryDraft({ sensitivity: value })} disabled={roleMemoryDisabled}>
                             <SelectTrigger size="sm" data-testid="role-memory-sensitivity"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               {MEMORY_SENSITIVITY_OPTIONS.map((sensitivity) => <SelectItem key={sensitivity} value={sensitivity}>{sensitivity}</SelectItem>)}
@@ -1339,6 +1563,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                           step={0.05}
                           value={memoryDraft.confidence}
                           onChange={(event) => updateMemoryDraft({ confidence: Number(event.target.value) })}
+                          disabled={roleMemoryDisabled}
                           className="mt-2 h-1.5 w-full accent-primary"
                         />
                       </div>
@@ -1354,6 +1579,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                           step={0.05}
                           value={memoryDraft.importance}
                           onChange={(event) => updateMemoryDraft({ importance: Number(event.target.value) })}
+                          disabled={roleMemoryDisabled}
                           className="mt-2 h-1.5 w-full accent-primary"
                         />
                       </div>
@@ -1406,7 +1632,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                         variant="outline"
                         size="sm"
                         className="h-8"
-                        disabled={!memoryDraft.content.trim() || memoryPreviewLoading}
+                        disabled={roleMemoryDisabled || !memoryDraft.content.trim() || memoryPreviewLoading}
                         onClick={() => void previewRoleMemory()}
                         data-testid="role-memory-preview-button"
                       >
@@ -1416,7 +1642,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                       <Button
                         data-testid="role-memory-save"
                         className="h-8"
-                        disabled={!memoryDraft.content.trim() || memoryLoading}
+                        disabled={roleMemoryDisabled || !memoryDraft.content.trim() || memoryLoading}
                         onClick={() => void proposeRoleMemory()}
                       >
                         <Check className="mr-1 h-4 w-4" />
@@ -1468,7 +1694,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                   )}
 
                   <Tabs defaultValue="active" className="space-y-3">
-                    <TabsList className="grid h-auto w-full grid-cols-2 gap-1 bg-surface-input p-1 md:grid-cols-4">
+                    <TabsList className="grid h-auto w-full grid-cols-2 gap-1 bg-surface-input p-1 md:grid-cols-5">
                       <TabsTrigger value="active" className="gap-1.5 text-xs">
                         <Layers3 className="h-3.5 w-3.5" />
                         {tt('roles.memoryTabActive', 'Active')}
@@ -1484,6 +1710,10 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                       <TabsTrigger value="injections" className="gap-1.5 text-xs">
                         <Sparkles className="h-3.5 w-3.5" />
                         {tt('roles.memoryTabInjections', 'Injections')}
+                      </TabsTrigger>
+                      <TabsTrigger value="quality" className="gap-1.5 text-xs">
+                        <BarChart3 className="h-3.5 w-3.5" />
+                        {tt('roles.memoryTabQuality', 'Quality')}
                       </TabsTrigger>
                     </TabsList>
 
@@ -1539,7 +1769,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8 shrink-0"
-                                    disabled={memoryLoading}
+                                    disabled={roleMemoryDisabled || memoryLoading}
                                     onClick={(event) => {
                                       event.stopPropagation();
                                       void archiveRoleMemory(card.id);
@@ -1570,13 +1800,13 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                               {tt('roles.memorySelectedCount', '{{count}} selected', { count: selectedReviewIds.length })}
                             </span>
                             <div className="flex flex-wrap gap-1.5">
-                              <Button size="sm" className="h-7 text-2xs" disabled={memoryLoading || selectedReviewIds.length === 0} onClick={() => void reviewSelectedRoleMemory('approve')}>
+                              <Button size="sm" className="h-7 text-2xs" disabled={roleMemoryDisabled || memoryLoading || selectedReviewIds.length === 0} onClick={() => void reviewSelectedRoleMemory('approve')}>
                                 {tt('roles.memoryApproveSelected', 'Approve selected')}
                               </Button>
-                              <Button size="sm" variant="outline" className="h-7 text-2xs" disabled={memoryLoading || selectedReviewIds.length === 0} onClick={() => void reviewSelectedRoleMemory('applyAsCold')}>
+                              <Button size="sm" variant="outline" className="h-7 text-2xs" disabled={roleMemoryDisabled || memoryLoading || selectedReviewIds.length === 0} onClick={() => void reviewSelectedRoleMemory('applyAsCold')}>
                                 {tt('roles.memoryColdSelected', 'Cold selected')}
                               </Button>
-                              <Button size="sm" variant="ghost" className="h-7 text-2xs text-red-700 dark:text-red-400" disabled={memoryLoading || selectedReviewIds.length === 0} onClick={() => void reviewSelectedRoleMemory('reject')}>
+                              <Button size="sm" variant="ghost" className="h-7 text-2xs text-red-700 dark:text-red-400" disabled={roleMemoryDisabled || memoryLoading || selectedReviewIds.length === 0} onClick={() => void reviewSelectedRoleMemory('reject')}>
                                 {tt('roles.memoryRejectSelected', 'Reject selected')}
                               </Button>
                             </div>
@@ -1628,12 +1858,12 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                               ) : null}
                             </div>
                             <div className="flex shrink-0 flex-wrap gap-1.5 md:justify-end">
-                              <Button size="sm" className="h-8" disabled={memoryLoading} onClick={(event) => { event.stopPropagation(); void reviewRoleMemory(proposal.id, 'approve'); }}>
+                              <Button size="sm" className="h-8" disabled={roleMemoryDisabled || memoryLoading} onClick={(event) => { event.stopPropagation(); void reviewRoleMemory(proposal.id, 'approve'); }}>
                                 <Check className="mr-1 h-3.5 w-3.5" />
                                 {tt('roles.memoryApprove', 'Approve')}
                               </Button>
-                              <Button size="sm" variant="outline" className="h-8" disabled={memoryLoading} onClick={(event) => { event.stopPropagation(); void reviewRoleMemory(proposal.id, 'applyAsCold'); }}>{tt('roles.memoryApplyCold', 'Cold')}</Button>
-                              <Button size="sm" variant="ghost" className="h-8 text-red-700 dark:text-red-400" disabled={memoryLoading} onClick={(event) => { event.stopPropagation(); void reviewRoleMemory(proposal.id, 'reject'); }}>{tt('roles.memoryReject', 'Reject')}</Button>
+                              <Button size="sm" variant="outline" className="h-8" disabled={roleMemoryDisabled || memoryLoading} onClick={(event) => { event.stopPropagation(); void reviewRoleMemory(proposal.id, 'applyAsCold'); }}>{tt('roles.memoryApplyCold', 'Cold')}</Button>
+                              <Button size="sm" variant="ghost" className="h-8 text-red-700 dark:text-red-400" disabled={roleMemoryDisabled || memoryLoading} onClick={(event) => { event.stopPropagation(); void reviewRoleMemory(proposal.id, 'reject'); }}>{tt('roles.memoryReject', 'Reject')}</Button>
                             </div>
                           </div>
                         </div>
@@ -1695,7 +1925,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                             size="sm"
                             variant="outline"
                             className="h-8"
-                            disabled={memoryLoading || !selectedRole}
+                            disabled={roleMemoryDisabled || memoryLoading || !selectedRole}
                             onClick={() => void simulateRoleMemoryInjection()}
                             data-testid="role-memory-simulate"
                           >
@@ -1818,6 +2048,46 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                                   {candidate.whatWouldSelect ? (
                                     <p className="mt-1 text-2xs text-blue-700 dark:text-blue-400">{candidate.whatWouldSelect}</p>
                                   ) : null}
+                                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-6 px-2 text-2xs"
+                                      disabled={roleMemoryDisabled || Boolean(memoryFeedbackLoading)}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        void submitMemoryFeedback(candidate.cardId, 'helpful', injection.id);
+                                      }}
+                                    >
+                                      <ThumbsUp className="mr-1 h-3 w-3" />
+                                      {tt('roles.memoryFeedbackHelpful', 'Helpful')}
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      className="h-6 px-2 text-2xs text-red-700 dark:text-red-400"
+                                      disabled={roleMemoryDisabled || Boolean(memoryFeedbackLoading)}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        void submitMemoryFeedback(candidate.cardId, 'harmful', injection.id);
+                                      }}
+                                    >
+                                      <ThumbsDown className="mr-1 h-3 w-3" />
+                                      {tt('roles.memoryFeedbackHarmful', 'Harmful')}
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      className="h-6 px-2 text-2xs"
+                                      disabled={roleMemoryDisabled || Boolean(memoryFeedbackLoading)}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        void submitMemoryFeedback(candidate.cardId, candidate.selected ? 'user_corrected' : 'missing_needed', injection.id);
+                                      }}
+                                    >
+                                      {candidate.selected ? tt('roles.memoryFeedbackCorrected', 'Corrected') : tt('roles.memoryFeedbackMissing', 'Missing')}
+                                    </Button>
+                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -1831,6 +2101,114 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                             skipped: skippedInjectionCandidates,
                           })}
                         </p>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="quality" className="space-y-3">
+                      <div className="rounded-md border border-border/60 bg-surface-input px-3 py-3" data-testid="role-memory-quality">
+                        <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <Badge
+                                variant="outline"
+                                className={cn(
+                                  'rounded-full text-2xs',
+                                  memoryQualityLabel === 'strong'
+                                    ? 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                                    : memoryQualityLabel === 'partial'
+                                      ? 'border-blue-500/25 bg-blue-500/10 text-blue-700 dark:text-blue-400'
+                                      : 'border-zinc-500/25 bg-zinc-500/10 text-zinc-700 dark:text-zinc-400',
+                                )}
+                              >
+                                {memoryQualityLabel}
+                              </Badge>
+                              <span className="text-xs font-medium text-foreground">{tt('roles.memoryQualityTitle', 'Memory quality')}</span>
+                            </div>
+                            <p className="text-2xs text-muted-foreground">
+                              {tt('roles.memoryQualityHint', 'Quality is computed only from real injections, reviews, conflicts, retention signals, and user feedback. Missing data stays explicit.')}
+                            </p>
+                          </div>
+                          <span className="text-2xs text-muted-foreground">{formatMemoryDate(memoryUtility?.generatedAt)}</span>
+                        </div>
+
+                        <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+                          {[
+                            { label: tt('roles.memoryQualityPrecision', 'Precision'), value: formatMemoryMetric(memoryUtility?.aggregate?.contextPrecisionAtK, { percent: true }) },
+                            { label: tt('roles.memoryQualityHelpful', 'Helpful rate'), value: formatMemoryMetric(memoryUtility?.aggregate?.helpfulnessRate, { percent: true }) },
+                            { label: tt('roles.memoryQualityHarm', 'Harm rate'), value: formatMemoryMetric(memoryUtility?.aggregate?.harmRate, { percent: true }) },
+                            { label: tt('roles.memoryQualityTokens', 'Tokens/run'), value: formatMemoryMetric(memoryUtility?.aggregate?.tokenOverheadPerRun) },
+                          ].map((item) => (
+                            <div key={item.label} className="rounded-md border border-border/60 bg-background/70 px-2.5 py-2">
+                              <p className="text-2xs text-muted-foreground">{item.label}</p>
+                              <p className="mt-1 text-sm font-medium text-foreground">{item.value}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="mt-3 grid gap-2 md:grid-cols-2">
+                          <div className="rounded-md border border-border/60 bg-background/70 px-2.5 py-2">
+                            <p className="text-2xs font-medium text-muted-foreground">{tt('roles.memoryQualitySample', 'Sample')}</p>
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              {[
+                                ['cards', memoryUtility?.sample?.cards],
+                                ['injections', memoryUtility?.sample?.injections],
+                                ['feedback', memoryUtility?.sample?.feedback],
+                                ['proposals', memoryUtility?.sample?.proposals],
+                                ['conflicts', memoryUtility?.sample?.conflicts],
+                              ].map(([label, value]) => (
+                                <Badge key={label} variant="secondary" className="rounded-full text-2xs">
+                                  {label}: {value ?? 0}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="rounded-md border border-border/60 bg-background/70 px-2.5 py-2">
+                            <p className="text-2xs font-medium text-muted-foreground">{tt('roles.memoryQualityMissing', 'Missing evidence')}</p>
+                            <div className="mt-2 space-y-1">
+                              {(memoryUtility?.missingEvidence?.length ? memoryUtility.missingEvidence : [tt('roles.memoryQualityNoMissing', 'No missing evidence reported.')]).slice(0, 3).map((item) => (
+                                <p key={item} className="text-2xs text-muted-foreground">{item}</p>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {memoryUtility?.cards?.length ? (
+                        <div className="space-y-2">
+                          {memoryUtility.cards.slice(0, 8).map((item) => (
+                            <div
+                              key={item.cardId}
+                              className="cursor-pointer rounded-md border border-border/60 bg-surface-input px-3 py-3 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                              onClick={() => void openMemoryDetail(item.cardId, 'card')}
+                            >
+                              <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex flex-wrap items-center gap-1.5">
+                                    <Badge variant="outline" className="rounded-full text-2xs">{item.dataQuality ?? 'insufficient'}</Badge>
+                                    <Badge variant="secondary" className="rounded-full text-2xs">
+                                      {tt('roles.memoryQualityUtility', 'Utility')}: {formatMemoryMetric(item.utilityScore, { percent: true })}
+                                    </Badge>
+                                    <Badge variant="outline" className="rounded-full text-2xs">{item.retentionAction ?? 'review'}</Badge>
+                                    {item.conflictCount ? <Badge variant="outline" className="rounded-full border-red-500/25 bg-red-500/10 text-2xs text-red-700 dark:text-red-400">{tt('roles.memoryQualityConflictCount', '{{count}} conflicts', { count: item.conflictCount })}</Badge> : null}
+                                  </div>
+                                  <p className="mt-2 line-clamp-2 text-sm leading-5 text-foreground">{item.card?.content ?? item.cardId}</p>
+                                  <p className="mt-1 line-clamp-2 text-2xs text-muted-foreground">{item.reasonSummary}</p>
+                                </div>
+                                <div className="grid min-w-[170px] grid-cols-2 gap-1.5 text-2xs text-muted-foreground">
+                                  <span>{tt('roles.memorySelected', 'selected')}: {item.selectedCount ?? 0}</span>
+                                  <span>{tt('roles.memorySkipped', 'skipped')}: {item.skippedCount ?? 0}</span>
+                                  <span>{tt('roles.memoryFeedbackHelpful', 'Helpful')}: {item.helpfulCount ?? 0}</span>
+                                  <span>{tt('roles.memoryFeedbackHarmful', 'Harmful')}: {item.harmfulCount ?? 0}</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="rounded-md border border-dashed border-border/70 bg-surface-input px-3 py-4">
+                          <p className="text-xs font-medium text-foreground">{tt('roles.memoryQualityEmptyTitle', 'No quality signal yet')}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">{tt('roles.memoryQualityEmpty', 'Run a role with memory and record feedback to build a real quality report.')}</p>
+                        </div>
                       )}
                     </TabsContent>
                   </Tabs>
@@ -1932,8 +2310,29 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                     {event.selfCheckDecision && (
                       <Badge variant="outline" className="rounded-full text-2xs">{event.selfCheckDecision}</Badge>
                     )}
+                    {event.evidenceGate && (
+                      <Badge
+                        data-testid="role-task-loop-evidence-gate"
+                        variant={event.evidenceGate.status === 'pass' ? 'secondary' : 'outline'}
+                        className="rounded-full text-2xs"
+                      >
+                        {tt('roles.taskLoopEvidenceGate', 'Gate {{status}}', { status: event.evidenceGate.status })}
+                      </Badge>
+                    )}
+                    {event.roleQualitySummary && (
+                      <Badge data-testid="role-task-loop-quality" variant="outline" className="rounded-full text-2xs">
+                        {tt('roles.taskLoopQuality', 'Q {{good}}/{{needs}}/{{poor}}', {
+                          good: event.roleQualitySummary.good,
+                          needs: event.roleQualitySummary.needsAttention,
+                          poor: event.roleQualitySummary.poorAttempt,
+                        })}
+                      </Badge>
+                    )}
                     {event.error && (
                       <span className="text-2xs text-muted-foreground truncate">{event.error}</span>
+                    )}
+                    {!event.error && event.blockedReason && (
+                      <span className="text-2xs text-muted-foreground truncate">{event.blockedReason}</span>
                     )}
                   </div>
                 ))}
@@ -1951,6 +2350,39 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                     })}
                   </span>
                 </div>
+                {taskLoopResult.evidenceGate && (
+                  <div className="mt-2 flex flex-wrap items-center gap-1 pl-6">
+                    <Badge data-testid="role-task-loop-result-gate" variant="secondary" className="rounded-full text-2xs">
+                      {tt('roles.taskLoopEvidenceGate', 'Gate {{status}}', { status: taskLoopResult.evidenceGate.status })}
+                    </Badge>
+                    {taskLoopResult.roleQualitySummary && (
+                      <Badge data-testid="role-task-loop-result-quality" variant="outline" className="rounded-full text-2xs">
+                        {tt('roles.taskLoopQuality', 'Q {{good}}/{{needs}}/{{poor}}', {
+                          good: taskLoopResult.roleQualitySummary.good,
+                          needs: taskLoopResult.roleQualitySummary.needsAttention,
+                          poor: taskLoopResult.roleQualitySummary.poorAttempt,
+                        })}
+                      </Badge>
+                    )}
+                  </div>
+                )}
+                {(taskLoopResult.filesTouched?.length || taskLoopResult.testsRun?.length || taskLoopResult.blockedReason) && (
+                  <div className="mt-2 pl-6 text-2xs text-muted-foreground space-y-1">
+                    {taskLoopResult.filesTouched?.length ? (
+                      <p data-testid="role-task-loop-files" className="truncate">
+                        {tt('roles.taskLoopFiles', 'Files: {{count}}', { count: taskLoopResult.filesTouched.length })}
+                      </p>
+                    ) : null}
+                    {taskLoopResult.testsRun?.length ? (
+                      <p data-testid="role-task-loop-tests" className="truncate">
+                        {tt('roles.taskLoopTests', 'Tests: {{count}}', { count: taskLoopResult.testsRun.length })}
+                      </p>
+                    ) : null}
+                    {taskLoopResult.blockedReason ? (
+                      <p data-testid="role-task-loop-blocked" className="truncate">{taskLoopResult.blockedReason}</p>
+                    ) : null}
+                  </div>
+                )}
                 {taskLoopResult.traceId && (
                   <p data-testid="role-task-loop-trace" className="mt-1 pl-6 font-mono text-2xs text-muted-foreground">{taskLoopResult.traceId}</p>
                 )}
@@ -2146,28 +2578,28 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                     <span>{tt('roles.memoryAllowedMutators', 'Can propose changes')}: {(memoryDetail.card.allowedMutators ?? []).join(', ') || '-'}</span>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    <Button size="sm" variant="outline" className="h-8 text-2xs" onClick={() => memoryDetail.card && prepareMemoryDraft(memoryDetail.card, 'update')}>
+                    <Button size="sm" variant="outline" className="h-8 text-2xs" disabled={roleMemoryDisabled} onClick={() => memoryDetail.card && prepareMemoryDraft(memoryDetail.card, 'update')}>
                       <FileText className="mr-1 h-3.5 w-3.5" />
                       {tt('roles.memoryEditAsProposal', 'Edit as proposal')}
                     </Button>
-                    <Button size="sm" variant="outline" className="h-8 text-2xs" onClick={() => memoryDetail.card && prepareMemoryDraft(memoryDetail.card, 'supersede')}>
+                    <Button size="sm" variant="outline" className="h-8 text-2xs" disabled={roleMemoryDisabled} onClick={() => memoryDetail.card && prepareMemoryDraft(memoryDetail.card, 'supersede')}>
                       <GitMerge className="mr-1 h-3.5 w-3.5" />
                       {tt('roles.memorySupersede', 'Supersede')}
                     </Button>
                     {(memoryDetail.card.status === 'archived' || memoryDetail.card.status === 'tombstone') && (
-                      <Button size="sm" variant="outline" className="h-8 text-2xs" onClick={() => memoryDetail.card && void restoreRoleMemory(memoryDetail.card.id)}>
+                      <Button size="sm" variant="outline" className="h-8 text-2xs" disabled={roleMemoryDisabled} onClick={() => memoryDetail.card && void restoreRoleMemory(memoryDetail.card.id)}>
                         <History className="mr-1 h-3.5 w-3.5" />
                         {tt('roles.memoryRestore', 'Restore')}
                       </Button>
                     )}
                     {memoryDetail.retention?.recommendedAction && memoryDetail.retention.recommendedAction !== 'keep' && (
-                      <Button size="sm" variant="outline" className="h-8 text-2xs" onClick={() => memoryDetail.card && void proposeRetention(memoryDetail.card.id, memoryDetail.retention?.recommendedAction)}>
+                      <Button size="sm" variant="outline" className="h-8 text-2xs" disabled={roleMemoryDisabled} onClick={() => memoryDetail.card && void proposeRetention(memoryDetail.card.id, memoryDetail.retention?.recommendedAction)}>
                         <Clock3 className="mr-1 h-3.5 w-3.5" />
                         {tt('roles.memoryApplyRetention', 'Apply suggestion')}
                       </Button>
                     )}
                     {memoryDetail.card.status !== 'tombstone' && (
-                      <Button size="sm" variant="ghost" className="h-8 text-2xs text-red-700 dark:text-red-400" onClick={() => memoryDetail.card && void tombstoneRoleMemory(memoryDetail.card.id)}>
+                      <Button size="sm" variant="ghost" className="h-8 text-2xs text-red-700 dark:text-red-400" disabled={roleMemoryDisabled} onClick={() => memoryDetail.card && void tombstoneRoleMemory(memoryDetail.card.id)}>
                         {tt('roles.memoryTombstone', 'Tombstone')}
                       </Button>
                     )}
@@ -2213,7 +2645,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                         </div>
                       ))}
                       <div className="flex justify-end">
-                        <Button size="sm" variant="outline" className="h-8 text-2xs" onClick={() => void prepareMergeDraft(memoryDetail.conflictDetail?.cards?.map((card) => card.id))}>
+                        <Button size="sm" variant="outline" className="h-8 text-2xs" disabled={roleMemoryDisabled} onClick={() => void prepareMergeDraft(memoryDetail.conflictDetail?.cards?.map((card) => card.id))}>
                           <GitMerge className="mr-1 h-3.5 w-3.5" />
                           {tt('roles.memoryMergeDraft', 'Merge draft')}
                         </Button>

@@ -68,6 +68,7 @@ async function callHandler(
 }
 
 afterEach(() => {
+  delete process.env.OPENCLAW_ROLE_MEMORY_ENABLED;
   clearRuntimeTraceBuffer();
   clearMemoryCards();
 });
@@ -479,8 +480,29 @@ describe('memory.* handlers (store/read round-trip with persistence)', () => {
     clearMemoryCards();
   });
   afterEach(() => {
+    delete process.env.OPENCLAW_ROLE_MEMORY_ENABLED;
     clearMemoryCards();
     rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  it('returns disabled read state and blocks writes when Role Memory is off', async () => {
+    process.env.OPENCLAW_ROLE_MEMORY_ENABLED = '0';
+
+    const listRes = await callHandler('memory.list', { status: 'all' });
+    expect(listRes?.ok).toBe(true);
+    expect(listRes?.payload).toMatchObject({ disabled: true, cards: [], count: 0 });
+
+    const proposeRes = await callHandler('memory.propose', {
+      proposal: {
+        content: 'This should not be written while role memory is disabled.',
+        type: 'fact',
+        scope: 'role',
+        roleTags: ['architect'],
+        confidence: 0.9,
+      },
+    });
+    expect(proposeRes?.ok).toBe(false);
+    expect(proposeRes?.error?.message).toMatch(/disabled in Settings/);
   });
 
   it('memory.previewProposal returns governance preview without writing records', async () => {
@@ -527,6 +549,47 @@ describe('memory.* handlers (store/read round-trip with persistence)', () => {
     const cards = (listRes?.payload as { cards: { id: string; content: string }[] }).cards;
     expect(cards.length).toBeGreaterThanOrEqual(1);
     expect(cards.some((c) => c.content.includes('pnpm'))).toBe(true);
+  });
+
+  it('memory.feedback records real utility feedback and memory.utilityReport does not invent eval deltas', async () => {
+    const storeRes = await callHandler('memory.store', {
+      proposal: {
+        content: 'Architects should evaluate role memory with real feedback.',
+        type: 'procedure',
+        scope: 'role',
+        confidence: 0.9,
+        importance: 0.7,
+        roleTags: ['architect'],
+        source: 'user',
+        evidenceRefs: [{ type: 'manual', ref: 'test' }],
+      },
+    });
+    expect(storeRes?.ok).toBe(true);
+    const card = (storeRes?.payload as { card?: { id: string } }).card;
+    expect(card?.id).toBeTruthy();
+
+    const feedbackRes = await callHandler('memory.feedback', {
+      roleName: 'architect',
+      cardId: card!.id,
+      outcome: 'helpful',
+      taskSuccess: 'unknown',
+    });
+    expect(feedbackRes?.ok).toBe(true);
+
+    const listRes = await callHandler('memory.feedbackList', { roleName: 'architect' });
+    expect((listRes?.payload as { feedback: unknown[] }).feedback).toHaveLength(1);
+
+    const reportRes = await callHandler('memory.utilityReport', { roleName: 'architect' });
+    const report = (reportRes?.payload as { report: { sample: { feedback: number }; aggregate: { taskSuccessDelta: number | null }; missingEvidence: string[] } }).report;
+    expect(report.sample.feedback).toBe(1);
+    expect(report.aggregate.taskSuccessDelta).toBeNull();
+    expect(report.missingEvidence.some((entry) => entry.includes('memory-on/off'))).toBe(true);
+
+    const evalRes = await callHandler('memory.evalReport', { roleName: 'architect', task: 'evaluate role memory feedback' });
+    const evalPayload = evalRes?.payload as { report: { aggregate: { taskSuccessDelta: number | null } }; dryRun?: { roleName: string; pack?: { candidateExplanations?: unknown[] } } };
+    expect(evalPayload.report.aggregate.taskSuccessDelta).toBeNull();
+    expect(evalPayload.dryRun?.roleName).toBe('architect');
+    expect(evalPayload.dryRun?.pack?.candidateExplanations?.length).toBeGreaterThan(0);
   });
 
   it('memory.store rejects a low-confidence proposal', async () => {

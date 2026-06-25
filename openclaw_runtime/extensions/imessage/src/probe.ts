@@ -259,7 +259,7 @@ export async function probeIMessagePrivateApi(
           ? {
               error:
                 `imsg status --json returned no parseable JSONL ` +
-                `(first line: "${firstLineSnippet}") â€” output schema may have changed`,
+                `(first line: "${firstLineSnippet}") â€?output schema may have changed`,
             }
           : {}
         : { error: combined || `imsg status --json failed (code ${String(result.code)})` }),

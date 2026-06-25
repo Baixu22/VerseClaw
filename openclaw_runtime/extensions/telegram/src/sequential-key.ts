@@ -69,7 +69,7 @@ function isTelegramTargetedStopCommand(rawText?: string, botUsername?: string): 
   }
   // Isolated ingress may not have getMe() metadata yet. A targeted Telegram
   // /stop@bot command still needs the control lane so it can cancel a busy turn.
-  const match = trimmed.match(/^\/stop@([A-Za-z0-9_]+)(?:$|\s|[.!?‚Ä¶,Ôºå„ÄÇ;Ôºõ:Ôºö'"‚Äô‚Äù)\]}])/iu);
+  const match = trimmed.match(/^\/stop@([A-Za-z0-9_]+)(?:$|\s|[.!?‚Ä?Ôºå„Ä?Ôº?Ôº?"‚Äô‚Ä?\]}])/iu);
   if (!match) {
     return false;
   }

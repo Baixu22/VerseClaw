@@ -6,7 +6,7 @@
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
 import { useState, useCallback, useEffect, memo, useMemo } from 'react';
-import { Sparkles, Copy, Check, Wrench, FileText, Film, Music, FileArchive, File, X, FolderOpen, ZoomIn, AlertCircle } from 'lucide-react';
+import { Copy, Check, Wrench, X, FolderOpen, ZoomIn, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { TextMessagePartProvider } from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
@@ -22,10 +22,13 @@ import { hostApi } from '@/lib/host-api';
 import type { RawMessage, AttachedFileMeta } from '@/stores/chat';
 import { AgentInteractionRenderer, parseToolUiContent, parseToolUiToolUses } from '@/components/tool-ui/agent-interactions';
 import { BranchPicker, ReasoningPanel, ToolFallbackCard } from '@/components/assistant-render/AssistantRender';
+import { TokenUsageBadge } from '@/components/assistant-render/TokenUsageBadge';
 import { extractAssistantBranches, extractAssistantReasoning, extractAssistantToolFallbacks } from '@/components/assistant-render/model';
 import { KnowledgeDirectiveChip } from '@/components/assistant-render/KnowledgeDirectiveChip';
 import { GitHubCard, isGitHubUrl } from '@/components/assistant-render/GitHubCard';
 import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
+import { AttachmentName, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
+import characterImg from '@/assets/logo+character.png';
 
 import { extractText, extractImages, extractToolUse, formatTimestamp, isUnresolvableImageUrl } from './message-utils';
 import { copyImageToClipboard, type ImageCopyTarget } from './copy-image';
@@ -61,11 +64,22 @@ interface ChatMessageProps {
   onSubmitInteractionResponse?: (text: string) => void;
   onDraftInteractionResponse?: (text: string) => void;
   canSubmitInteractionResponse?: boolean;
+  /**
+   * Live token usage for the current streaming run. Passed to the
+   * TokenUsageBadge so the most recent assistant message can animate
+   * the counter as tokens arrive. Ignored for non-streaming messages.
+   */
+  liveUsage?: {
+    inputTokens: number;
+    outputTokens: number;
+    cacheReadTokens: number;
+    cacheWriteTokens: number;
+    totalTokens: number;
+    estimatedCostUsd?: number;
+  } | null;
 }
 
 interface ExtractedImage { url?: string; data?: string; mimeType: string; }
-
-const DIRECTORY_MIME_TYPE = 'application/x-directory';
 
 function isChatPreviewDocument(file: AttachedFileMeta): boolean {
   const name = file.fileName.toLowerCase();
@@ -254,6 +268,7 @@ export const ChatMessage = memo(function ChatMessage({
   onSubmitInteractionResponse,
   onDraftInteractionResponse,
   canSubmitInteractionResponse = true,
+  liveUsage,
 }: ChatMessageProps) {
   // // const { t } = useTranslation('chat');  // unused since KnowledgeDirectiveChip
   const isUser = message.role === 'user';
@@ -440,8 +455,8 @@ export const ChatMessage = memo(function ChatMessage({
           sit alongside a single line of text. */}
       {!isUser && (
         <div className="flex h-6 shrink-0 items-center">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 dark:bg-white/5 text-foreground">
-            <Sparkles className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center">
+            <img src={characterImg} alt="Verse" className="h-8 w-8 rounded-full object-cover" />
           </div>
         </div>
       )}
@@ -591,6 +606,11 @@ export const ChatMessage = memo(function ChatMessage({
               return <FileCard key={`local-${i}`} file={file} onOpen={onOpenFile} />;
             })}
           </div>
+        )}
+
+        {/* Token usage badge — animated counter at the end of assistant messages */}
+        {!isUser && (
+          <TokenUsageBadge message={message} liveUsage={liveUsage} isStreaming={isStreaming} />
         )}
 
         {/* Hover row for user messages — timestamp only */}
@@ -924,23 +944,6 @@ function AssistantMarkdown({
 
 // ── File Card (for user-uploaded non-image files) ───────────────
 
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-function FileIcon({ mimeType, className }: { mimeType: string; className?: string }) {
-  if (mimeType === DIRECTORY_MIME_TYPE) return <FolderOpen className={className} />;
-  if (mimeType.startsWith('video/')) return <Film className={className} />;
-  if (mimeType.startsWith('audio/')) return <Music className={className} />;
-  if (mimeType.startsWith('text/') || mimeType === 'application/json' || mimeType === 'application/xml') return <FileText className={className} />;
-  if (mimeType.includes('zip') || mimeType.includes('compressed') || mimeType.includes('archive') || mimeType.includes('tar') || mimeType.includes('rar') || mimeType.includes('7z')) return <FileArchive className={className} />;
-  if (mimeType === 'application/pdf') return <FileText className={className} />;
-  return <File className={className} />;
-}
-
 function FileCard({ file, onOpen }: { file: AttachedFileMeta; onOpen?: (file: AttachedFileMeta) => void }) {
   const { t } = useTranslation('chat');
   const handleOpen = useCallback(() => {
@@ -952,10 +955,17 @@ function FileCard({ file, onOpen }: { file: AttachedFileMeta; onOpen?: (file: At
     }
   }, [file, onOpen]);
 
+  const sublabel =
+    file.mimeType === DIRECTORY_MIME_TYPE
+      ? t('assistantRender.attachment.folder', { defaultValue: '\u6587\u4ef6\u5939' })
+      : file.fileSize > 0
+        ? formatFileSize(file.fileSize)
+        : t('assistantRender.attachment.file', { defaultValue: 'File' });
+
   return (
-    <div
+    <AttachmentRoot
       className={cn(
-        'group/file flex min-h-14 w-[min(260px,100%)] items-center gap-3 rounded-lg border border-border bg-background/70 px-3 py-2.5 shadow-sm',
+        'flex min-h-14 w-[min(260px,100%)] items-center gap-3 rounded-lg border border-border bg-background/70 px-3 py-2.5 shadow-sm',
         file.filePath && 'cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/10',
       )}
       onClick={handleOpen}
@@ -965,17 +975,8 @@ function FileCard({ file, onOpen }: { file: AttachedFileMeta; onOpen?: (file: At
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-black/5 text-muted-foreground dark:bg-white/10">
         <FileIcon mimeType={file.mimeType} className="h-4 w-4" />
       </div>
-      <div className="min-w-0 overflow-hidden">
-        <p className="truncate text-xs font-medium text-foreground">{file.fileName}</p>
-        <p className="truncate text-2xs text-muted-foreground">
-          {file.mimeType === DIRECTORY_MIME_TYPE
-            ? t('assistantRender.attachment.folder', { defaultValue: '\u6587\u4ef6\u5939' })
-            : file.fileSize > 0
-              ? formatFileSize(file.fileSize)
-              : t('assistantRender.attachment.file', { defaultValue: 'File' })}
-        </p>
-      </div>
-    </div>
+      <AttachmentName name={file.fileName} sublabel={sublabel} />
+    </AttachmentRoot>
   );
 }
 
@@ -1024,15 +1025,15 @@ function ImageThumbnail({
 }) {
   void filePath; void base64; void mimeType;
   return (
-    <div
-      className="relative w-36 h-36 rounded-xl border overflow-hidden border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 group/img cursor-zoom-in"
+    <AttachmentRoot
+      className="w-36 h-36 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 cursor-zoom-in"
       onClick={onPreview}
     >
-      <img src={src} alt={fileName} className="w-full h-full object-cover" />
+      <AttachmentThumb src={src} alt={fileName} className="h-full w-full" />
       <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/25 transition-colors flex items-center justify-center">
         <ZoomIn className="h-6 w-6 text-white opacity-0 group-hover/img:opacity-100 transition-opacity drop-shadow" />
       </div>
-    </div>
+    </AttachmentRoot>
   );
 }
 
@@ -1055,15 +1056,15 @@ function ImagePreviewCard({
 }) {
   void filePath; void base64; void mimeType;
   return (
-    <div
-      className="relative max-w-xs rounded-xl border overflow-hidden border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 group/img cursor-zoom-in"
+    <AttachmentRoot
+      className="max-w-xs rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 cursor-zoom-in"
       onClick={onPreview}
     >
-      <img src={src} alt={fileName} className="block w-full" />
+      <AttachmentThumb src={src} alt={fileName} className="block w-full" />
       <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/20 transition-colors flex items-center justify-center">
         <ZoomIn className="h-6 w-6 text-white opacity-0 group-hover/img:opacity-100 transition-opacity drop-shadow" />
       </div>
-    </div>
+    </AttachmentRoot>
   );
 }
 

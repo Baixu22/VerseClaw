@@ -13,7 +13,7 @@ export type MattermostNoVisibleReplyViolation = {
 /**
  * Detects the #80501 symptom: `deliverMattermostReplyPayload` accepted a
  * substantive (non-reasoning) payload, called the underlying
- * `deliverTextOrMediaReply`, and the outcome was `"empty"` â€” meaning the
+ * `deliverTextOrMediaReply`, and the outcome was `"empty"` â€?meaning the
  * payload had no text and no media to send, so no Mattermost API call
  * happened. The agent's run completes successfully, but no visible
  * channel/thread reply ever surfaces to the user.
@@ -34,7 +34,7 @@ export function evaluateMattermostNoVisibleReply(params: {
   const finalText = typeof params.payload.text === "string" ? params.payload.text.trim() : "";
   const mediaUrlCount = countOutboundMedia(params.payload);
   // If the payload had no text and no media even nominally, the run had
-  // nothing to send and "empty" is the correct outcome â€” do not flag.
+  // nothing to send and "empty" is the correct outcome â€?do not flag.
   if (finalText.length === 0 && mediaUrlCount === 0) {
     return null;
   }

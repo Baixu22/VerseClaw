@@ -44,7 +44,7 @@ export function shouldCombineIMessagePayloadBucket(
   buildEmitsBalloonMetadata: boolean,
 ): boolean {
   // Precise path: a real Apple URL-preview split-send carries the URL-balloon
-  // marker on the preview row â€” merge it into one turn.
+  // marker on the preview row â€?merge it into one turn.
   if (payloads.some(hasIMessageUrlBalloonBundleID)) {
     return true;
   }
@@ -54,7 +54,7 @@ export function shouldCombineIMessagePayloadBucket(
   if (buildEmitsBalloonMetadata || payloads.some(hasIMessageBalloonMetadata)) {
     return false;
   }
-  // Back-compat (remove once imsg coalesces split-sends upstream â€” see
+  // Back-compat (remove once imsg coalesces split-sends upstream â€?see
   // openclaw/imsg#141, tracked by #91243): a build that has never emitted any
   // balloon metadata cannot structurally tell a `Dump <url>` split-send from
   // separate sends. Preserve the pre-metadata merge so split-send users do not
@@ -65,7 +65,7 @@ export function shouldCombineIMessagePayloadBucket(
   // merges each multi-entry bucket unconditionally. So an unlatched session
   // (old build, or a metadata-capable build before its first balloon row) is
   // identical to today, not a new regression. Flushing these buckets instead
-  // would re-break old-imsg split-sends â€” the very case this guards. Fully
+  // would re-break old-imsg split-sends â€?the very case this guards. Fully
   // closing the pre-latch window needs an imsg-advertised capability flag, which
   // is part of the upstream #141 work.
   return true;
@@ -87,7 +87,7 @@ export type CoalescedIMessagePayload = IMessagePayload & {
 /**
  * Combine consecutive same-sender iMessage payloads into a single payload for
  * downstream dispatch. Used when the debouncer flushes a bucket containing
- * more than one event â€” e.g. Apple's split-send for `Dump https://example.com`
+ * more than one event â€?e.g. Apple's split-send for `Dump https://example.com`
  * arriving as two separate `chat.db` rows ~0.8-2.0 s apart.
  *
  * The first payload anchors the merged shape (preserving its GUID for reply

@@ -277,7 +277,7 @@ export async function collectCodeReviewDiffForTarget(target: CodeReviewTarget): 
 function buildReviewPrompt(bundle: ReviewDiffBundle, focus?: string): string {
   const focusText = normalizeString(focus);
   return [
-    'You are reviewing a Git diff for ClawX.',
+    'You are reviewing a Git diff for Verse Claw.',
     'This is a read-only code review. Do not suggest applying patches, staging, committing, or editing files directly.',
     'Return only JSON with this exact shape:',
     '{"summary":"short review summary","findings":[{"severity":"critical|high|medium|low|info","file":"path/from/diff","line":123,"reason":"why this is a bug or risk","suggestedFix":"specific fix guidance"}]}',

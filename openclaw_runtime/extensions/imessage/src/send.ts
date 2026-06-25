@@ -83,7 +83,7 @@ export type IMessageSendResult = {
    * Generic identifier returned by the bridge. May be a GUID string, a
    * numeric ROWID stringified, or the literal "ok"/"unknown" placeholders
    * when the bridge declines to return one. Most callers (reply cache, echo
-   * cache, receipts) want this field â€” it is the broadest match for
+   * cache, receipts) want this field â€?it is the broadest match for
    * downstream lookups.
    */
   messageId: string;
@@ -210,7 +210,7 @@ function resolveMessageId(result: Record<string, unknown> | null | undefined): s
 
 // Approval-reaction bindings need to match `reacted_to_guid` on the inbound
 // tapback, which is always the iMessage GUID (never a numeric ROWID). Some imsg
-// bridge variants return a numeric `message_id` from `send` without a `guid` â€”
+// bridge variants return a numeric `message_id` from `send` without a `guid` â€?
 // for the approval path we strictly require the string GUID so we never bind
 // against a numeric id that the inbound side can't produce.
 function resolveOutboundMessageGuid(

@@ -1,5 +1,5 @@
 /**
- * Unified message sender â€” per-account resource management + business function layer.
+ * Unified message sender â€?per-account resource management + business function layer.
  *
  * This module is the **single entry point** for all QQ Bot API operations.
  *
@@ -11,11 +11,11 @@
  * accountRegistry: Map<appId, AccountContext>
  *
  * AccountContext {
- *   logger      â€” per-account prefixed logger
- *   client      â€” per-account ApiClient
- *   tokenMgr    â€” per-account TokenManager
- *   mediaApi    â€” per-account MediaApi
- *   messageApi  â€” per-account MessageApi
+ *   logger      â€?per-account prefixed logger
+ *   client      â€?per-account ApiClient
+ *   tokenMgr    â€?per-account TokenManager
+ *   mediaApi    â€?per-account MediaApi
+ *   messageApi  â€?per-account MessageApi
  * }
  * ```
  *
@@ -100,7 +100,7 @@ interface AccountContext {
   markdownSupport: boolean;
 }
 
-/** Per-appId account registry â€” each account owns all its resources. */
+/** Per-appId account registry â€?each account owns all its resources. */
 const accountRegistry = new Map<string, AccountContext>();
 
 /** Fallback logger for unregistered accounts (CLI / test scenarios). */
@@ -156,7 +156,7 @@ function buildAccountContext(logger: EngineLogger, markdownSupport: boolean): Ac
 }
 
 /**
- * Register an account â€” atomically sets up all per-appId resources.
+ * Register an account â€?atomically sets up all per-appId resources.
  *
  * Must be called once per account during gateway startup.
  * Creates a complete isolated resource stack (ApiClient, TokenManager,
@@ -342,7 +342,7 @@ export async function withTokenRetry<T>(
       return await sendFn(newToken);
     }
 
-    // String fallback â€” retain for non-ApiError code paths but make it visible.
+    // String fallback â€?retain for non-ApiError code paths but make it visible.
     const errMsg = formatErrorMessage(err);
     const looksLike401 =
       errMsg.includes("401") || errMsg.includes("token") || errMsg.includes("access_token");
@@ -431,7 +431,7 @@ export async function sendInputNotify(opts: {
 }
 
 /**
- * Raw-token input notify â€” compatible with TypingKeepAlive's callback signature.
+ * Raw-token input notify â€?compatible with TypingKeepAlive's callback signature.
  */
 export function createRawInputNotifyFn(
   appId: string,
@@ -478,18 +478,18 @@ interface SendMediaOptions {
   creds: AccountCreds;
   /** Media kind (drives `file_type`, meta, and content semantics). */
   kind: MediaKind;
-  /** Media source â€” URL, base64, on-disk path, or in-memory buffer. */
+  /** Media source â€?URL, base64, on-disk path, or in-memory buffer. */
   source: RawMediaSource;
   /** Passive reply message ID; omit for proactive sends. */
   msgId?: string;
   /**
-   * Accompanying text. Only honored for `image` / `video` kinds â€” the QQ
+   * Accompanying text. Only honored for `image` / `video` kinds â€?the QQ
    * API ignores it for voice/file.
    */
   content?: string;
   /** Override the server-visible file name (FILE kind only). */
   fileName?: string;
-  /** Original TTS text â€” recorded in {@link OutboundMeta.ttsText} for voice. */
+  /** Original TTS text â€?recorded in {@link OutboundMeta.ttsText} for voice. */
   ttsText?: string;
   /**
    * Local path to record in {@link OutboundMeta.mediaLocalPath}. Usually set
@@ -517,10 +517,10 @@ interface SendMediaOptions {
  * ```
  * sendMedia(opts)
  *   â””â”€ sendMediaInternal(ctx, opts)
- *        â”œâ”€ normalizeSource  â† unified data:URL parsing + O_NOFOLLOW file safety
- *        â”œâ”€ uploadOnce       â† one-shot upload via MediaApi (chunked hook TBD)
+ *        â”œâ”€ normalizeSource  â†?unified data:URL parsing + O_NOFOLLOW file safety
+ *        â”œâ”€ uploadOnce       â†?one-shot upload via MediaApi (chunked hook TBD)
  *        â”œâ”€ sendMediaMessage
- *        â””â”€ notifyMediaHook  â† meta assembled per kind
+ *        â””â”€ notifyMediaHook  â†?meta assembled per kind
  * ```
  *
  * Future chunked upload will slot into the dispatch without touching callers.
@@ -572,7 +572,7 @@ function buildOutboundMeta(opts: SendMediaOptions, source: MediaSource): Outboun
 }
 
 /**
- * Core dispatch for rich media. Not exported â€” callers must go through
+ * Core dispatch for rich media. Not exported â€?callers must go through
  * {@link sendMedia}.
  *
  * Upload dispatch lives in {@link dispatchUpload}: sources smaller than
@@ -610,7 +610,7 @@ async function sendMediaInternal(
       opts.fileName,
     );
 
-    // Content is semantically meaningful only for image / video â€” the voice
+    // Content is semantically meaningful only for image / video â€?the voice
     // and file APIs ignore it.
     const msgContent = opts.kind === "image" || opts.kind === "video" ? opts.content : undefined;
 
@@ -641,7 +641,7 @@ async function sendMediaInternal(
  * Routing rules (kept here as the single source of truth so callers need
  * not know which endpoint was used):
  *
- * - `url` / `base64`: always one-shot â€” the server accepts these directly
+ * - `url` / `base64`: always one-shot â€?the server accepts these directly
  *   and the chunked endpoint has no representation for them.
  * - `localPath` / `buffer` with `size >= LARGE_FILE_THRESHOLD`: chunked.
  * - Everything else: one-shot.

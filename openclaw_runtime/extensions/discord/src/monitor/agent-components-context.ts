@@ -58,7 +58,7 @@ export async function ackComponentInteraction(params: {
 }) {
   try {
     await params.interaction.reply({
-      content: "âœ“",
+      content: "âœ?,
       ...params.replyOpts,
     });
   } catch (err) {

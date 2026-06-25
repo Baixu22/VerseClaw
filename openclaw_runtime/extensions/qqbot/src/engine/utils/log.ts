@@ -1,11 +1,11 @@
 /**
  * QQBot debug logging utilities.
- * QQBot 调试日志工具。
+ * QQBot 调试日志工具�?
  *
  * Only outputs when the QQBOT_DEBUG environment variable is set,
  * preventing user message content from leaking in production logs.
  *
- * Self-contained within engine/ — no framework SDK dependency.
+ * Self-contained within engine/ �?no framework SDK dependency.
  */
 
 function isQqbotDebugEnabled(): boolean {

@@ -2,7 +2,7 @@
 //
 // Records every decision (allow/deny/error) at the gateway-side tool
 // layer. Lands at ~/.openclaw/audit/file-transfer.jsonl. Rotation is
-// caller's responsibility â€” the file grows unbounded.
+// caller's responsibility â€?the file grows unbounded.
 //
 // Log records do NOT include file contents or hashes of secrets. They do
 // include canonical paths and sha256 of the payload, so treat the audit
@@ -74,7 +74,7 @@ function auditFilePath(dir: string): string {
 }
 
 /**
- * Append an audit record. Best-effort â€” failures are logged to stderr and
+ * Append an audit record. Best-effort â€?failures are logged to stderr and
  * never propagated to the caller (the caller's operation is the source of
  * truth, not the audit write).
  */

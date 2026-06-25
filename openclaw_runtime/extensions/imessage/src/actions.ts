@@ -151,7 +151,7 @@ async function resolveChatGuid(params: {
       );
     }
     if (target.kind === "handle") {
-      // A bare phone/email is a valid chat scope for direct messages ‚Äî
+      // A bare phone/email is a valid chat scope for direct messages ‚Ä?
       // Messages addresses DMs as `iMessage;-;<handle>` / `SMS;-;<handle>`.
       // Promote it to chat_identifier so resolveChatGuidForTarget (which
       // only accepts chat_id / chat_identifier kinds) can look it up.
@@ -187,7 +187,7 @@ async function resolveChatGuid(params: {
 function formatUnresolvedTarget(
   target: Extract<IMessageTarget, { kind: "chat_id" | "chat_identifier" }>,
 ): string {
-  // Redact the actual identifier ‚Äî error strings end up in agent tool
+  // Redact the actual identifier ‚Ä?error strings end up in agent tool
   // results and log streams, and exposing a chat_id or chat_identifier
   // there would leak the conversation handle to anything that observes
   // them.
@@ -209,7 +209,7 @@ function buildChatContextFromActionParams(params: {
     readStringParam(params.actionParams, "target") ??
     (params.currentChannelId?.trim() || undefined);
   const target = rawTarget ? parseIMessageTarget(rawTarget) : null;
-  // A "handle" target (raw phone or email ‚Äî what the agent uses most of the
+  // A "handle" target (raw phone or email ‚Ä?what the agent uses most of the
   // time) is still a usable chat scope: Messages addresses DMs as
   // `iMessage;-;+15551234567` / `SMS;-;+15551234567`. Synthesizing the
   // chat-identifier here lets resolveIMessageMessageId succeed without
@@ -238,7 +238,7 @@ function mapTapbackReaction(emoji?: string): string | undefined {
   if (!value) {
     return undefined;
   }
-  if (["love", "heart", "‚ù§", "‚ù§Ô∏è"].includes(value)) {
+  if (["love", "heart", "‚ù?, "‚ù§Ô∏è"].includes(value)) {
     return "love";
   }
   if (["like", "+1", "thumbsup", "üëç"].includes(value)) {
@@ -250,10 +250,10 @@ function mapTapbackReaction(emoji?: string): string | undefined {
   if (["laugh", "haha", "üòÇ", "ü§£"].includes(value)) {
     return "laugh";
   }
-  if (["emphasize", "!!", "‚Äº", "‚ÄºÔ∏è"].includes(value)) {
+  if (["emphasize", "!!", "‚Ä?, "‚ÄºÔ∏è"].includes(value)) {
     return "emphasize";
   }
-  if (["question", "?", "Ôºü", "‚ùì"].includes(value)) {
+  if (["question", "?", "Ôº?, "‚ù?].includes(value)) {
     return "question";
   }
   return undefined;
@@ -268,7 +268,7 @@ function decodeBase64Buffer(params: Record<string, unknown>, action: string): Ui
 }
 
 // Path-shaped attachment params the message-tool schema declares. We only
-// look at these to detect an unhydrated bypass attempt ‚Äî the resolver in
+// look at these to detect an unhydrated bypass attempt ‚Ä?the resolver in
 // hydrateAttachmentParamsForAction is responsible for loading them into
 // `buffer`/`filename` after enforcing localRoots, sandbox, and size limits.
 const REPLY_ATTACHMENT_PATH_PARAM_NAMES: readonly string[] = [
@@ -285,7 +285,7 @@ type ReplyAttachmentSpec = { kind: "buffer"; buffer: Uint8Array; filename: strin
 // loads `path`/`media`/`mediaUrl`/`filePath`/`fileUrl` through the outbound
 // media resolver (mediaLocalRoots / sandbox / size limits / SSRF) and writes
 // the result into `buffer` + `filename`. We deliberately do not consume raw
-// path params here ‚Äî accepting them would let an agent send any host file
+// path params here ‚Ä?accepting them would let an agent send any host file
 // imsg can read, bypassing the resolver. If a path-shaped param is present
 // without a corresponding `buffer`, the caller skipped hydration (most
 // likely calling handleAction directly in a test); fail loudly instead.
@@ -353,7 +353,7 @@ function effectIdFromParam(raw?: string): string | undefined {
     heart: "com.apple.MobileSMS.expressivesend.heart",
     // Background screen effects (com.apple.messages.effect.CK*Effect).
     // The error message below advertises these short names, so they must
-    // map to the canonical CKEffect identifier ‚Äî without this, agents
+    // map to the canonical CKEffect identifier ‚Ä?without this, agents
     // that follow our own guidance get "unknown effect" thrown back.
     echo: "com.apple.messages.effect.CKEchoEffect",
     happybirthday: "com.apple.messages.effect.CKHappyBirthdayEffect",
@@ -427,11 +427,11 @@ export const imessageMessageActions: ChannelMessageActionAdapter = {
         // Surface the silent-drop case: the throw becomes a tool-result
         // `success:false`, which the model may or may not relay clearly to the
         // user. Without a log line, an operator has no signal that a reply
-        // disappeared ‚Äî they only see "channel: running" in `channels status`.
+        // disappeared ‚Ä?they only see "channel: running" in `channels status`.
         // Common cause: gateway restart un-injects the imsg-bridge-helper.dylib
         // from Messages.app while imsg rpc keeps running.
         // imsg's status message names the actual blocker (SIP, library
-        // validation, macOS 26 AMFI gate) ‚Äî append it so the operator isn't
+        // validation, macOS 26 AMFI gate) ‚Ä?append it so the operator isn't
         // told to "run imsg launch" when the OS is rejecting the dylib.
         const reason = privateApiStatus?.statusMessage
           ? ` imsg reports: ${privateApiStatus.statusMessage}`
@@ -482,7 +482,7 @@ export const imessageMessageActions: ChannelMessageActionAdapter = {
       const reaction = mapTapbackReaction(emoji);
       const TAPBACK_KINDS = ["love", "like", "dislike", "laugh", "emphasize", "question"] as const;
       // For add operations we need a recognized tapback kind. For remove
-      // operations, the agent may not remember which kind it added ‚Äî when
+      // operations, the agent may not remember which kind it added ‚Ä?when
       // the emoji is empty or unrecognized but `remove: true`, fan out a
       // remove against every known kind. The bridge no-ops kinds that
       // weren't there, so this is safe and matches user intent ("undo my
@@ -566,7 +566,7 @@ export const imessageMessageActions: ChannelMessageActionAdapter = {
         // Reply-with-attachment requires the `imsg send-rich --file` flag
         // (openclaw/imsg#114). Older imsg builds reject the option, so
         // refuse loudly here rather than letting send-rich ship the text
-        // alone and silently drop the attachment ‚Äî the original symptom
+        // alone and silently drop the attachment ‚Ä?the original symptom
         // of openclaw/openclaw#79822.
         if (privateApiStatus?.cliCapabilities?.sendRichSupportsAttachment !== true) {
           throw new Error(

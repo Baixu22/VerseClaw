@@ -52,7 +52,7 @@ export function createDirListTool(): AnyAgentTool {
 
       const fileCount = entries.filter((e) => !e.isDir).length;
       const dirCount = entries.filter((e) => e.isDir).length;
-      const truncatedNote = truncated ? " (more entries available â€” pass nextPageToken)" : "";
+      const truncatedNote = truncated ? " (more entries available â€?pass nextPageToken)" : "";
       const summary = `Listed ${canonicalPath}: ${fileCount} file${fileCount !== 1 ? "s" : ""}, ${dirCount} subdir${dirCount !== 1 ? "s" : ""}${truncatedNote}`;
 
       await appendFileTransferAudit({

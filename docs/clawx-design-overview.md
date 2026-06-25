@@ -1,8 +1,8 @@
-﻿# ClawX 脳 openclaw_runtime Design Overview
+# Verse Claw 脳 openclaw_runtime Design Overview
 
-> Scope: A complete walk-through of the ClawX desktop app and the OpenClaw runtime it ships with, as of 2026-06-18.
-> Sandbox update: section 7.1 documents the ClawX lightweight layered sandbox control model implemented on 2026-06-17.
-> Basis: codegraph index (10,026 files / 158,358 nodes / 470,892 edges) + source review of `electron/`, `src/`, `shared/`, `openclaw_runtime/src/`, and `openclaw_runtime/extensions/`. Updated with role-first runtime architecture (搂11), Lightweight Subagent Runner (搂11.2 / 搂11.13), ClawGraph Runtime v1 (搂11.15), the long-task stability stack (搂8.5.3), Human Intervention / Resume Control (搂8.5.4), Mission Control / Mission Loop MVP+ (搂8.5.5), Knowledge Hub role-first governance (搂8.6), Chat Work Mode v2 Office Artifact kits (搂8.7), and Work Provider v1 Office/Search orchestration (搂8.7).
+> Scope: A complete walk-through of the Verse Claw desktop app and the OpenClaw runtime it ships with, as of 2026-06-25.
+> Sandbox update: section 7.1 documents the Verse Claw lightweight layered sandbox control model implemented on 2026-06-17.
+> Basis: codegraph index (10,026 files / 158,358 nodes / 470,892 edges) + source review of `electron/`, `src/`, `shared/`, `openclaw_runtime/src/`, and `openclaw_runtime/extensions/`. Updated with role-first runtime architecture (section 11), Lightweight Subagent Runner (sections 11.2 / 11.13), ClawGraph Runtime v1 (section 11.15), the long-task stability stack (section 8.5.3), Human Intervention / Resume Control (section 8.5.4), Mission Control / Mission Loop MVP+ (section 8.5.5), Knowledge Hub role-first governance (section 8.6), Chat slimming and legacy Work Mode compatibility (section 8.7), Work Provider v1 Office/Search orchestration (section 8.7), Task Ledger chat projection + explicit `/loop` root contract (section 8.5.0 - 2026-06-24), and runtime-level Agent Browser automation for Cron-driven web tasks (section 6.6 - 2026-06-25).
 
 ---
 
@@ -10,28 +10,30 @@
 
 ### 1.1 What the project is
 
-ClawX is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript) that provides a GUI for the **OpenClaw AI agent runtime**. The two layers are co-located in one repository but follow a hard client / server split:
+Verse Claw is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript) that provides a GUI for the **OpenClaw AI agent runtime**. The two layers are co-located in one repository but follow a hard client / server split:
 
-- **ClawX** owns the desktop shell, OS integration, UI, settings, theming, and per-machine engineering concerns.
+- **Verse Claw** owns the desktop shell, OS integration, UI, settings, theming, and per-machine engineering concerns.
 - **openclaw_runtime** is a headless Node gateway that owns AI business logic: agents, channels, model providers, memory, skills, cron, observability, and a 136-extension plugin ecosystem.
-- The runtime also owns the bounded **task loop** control layer: `task_loop.run/status`, role subagent orchestration, self-check review, scoped repair rounds, context packing, lifecycle broadcasts, observability trace evidence, and best-effort Task Ledger persistence.
-- **Engineering Control Signals** are the internal long-conversation constraint contract shared by ResumeCheckpoint, Task Loop, Mission Loop, Task Ledger metadata, and Work Mode metadata. They make `evidence_gap`, `validation_missing`, `scope_drift`, `unverified_claim`, and `replan_required` explicit without adding a new prompt system, rule directory, or parallel progress source.
-- **Lightweight Subagent Runner** is a ClawX UI wrapper over role-first orchestration for common no-YAML workflows. It lets users launch Explorer, Reviewer, Tester, and Compare 3 approaches presets from Agents -> Roles & Orchestration, using explicit role workers through the existing Gateway permission path, then displays goal, roles, live status, failures, summary, and Observability trace evidence.
-- **ClawX Mission Control / Mission Loop** is the MVP+ outer long-goal control layer above the bounded task loop. It binds user goals to persisted Mission state, Task Ledger evidence, ResumeCheckpoint continuation, Context Pack budgets, reviewer decisions, lifecycle events, observability traces, and governed memory proposals. Manual Missions start from the Agents panel, `mission.*` Gateway RPCs, or the lead-only `mission_loop` tool; scheduled ticks are explicit opt-in triggers, not completion truth.
+- **Agent Browser** is a runtime-level, agent-facing browser execution environment. It exposes a controlled `agent_browser` tool and Main-owned managed browser/profile/authState bridge so isolated agent turns can perform web check-in, page monitoring, draft publishing, and error inspection without turning Verse Claw into a human browser product.
+- The runtime also owns the bounded **task loop** control layer: `task_loop.run/status`, role subagent orchestration, self-check review, scoped repair rounds, `LoopContextPack` recovery context, lifecycle broadcasts, observability trace evidence, and Task Ledger root-bound persistence for explicit `/loop` runs.
+- **Engineering Control Signals** are the internal long-conversation constraint contract shared by ResumeCheckpoint, Task Loop, Mission Loop, and Task Ledger metadata. They make `evidence_gap`, `validation_missing`, `scope_drift`, `unverified_claim`, and `replan_required` explicit without adding a new prompt system, rule directory, or parallel progress source.
+- **Lightweight Subagent Runner** is a Verse Claw UI wrapper over role-first orchestration for common no-YAML workflows. It lets users launch Explorer, Reviewer, Tester, and Compare 3 approaches presets from Agents -> Roles & Orchestration, using explicit role workers through the existing Gateway permission path, then displays goal, roles, live status, failures, summary, and Observability trace evidence.
+- **Verse Claw Mission Control / Mission Loop** is the MVP+ outer long-goal control layer above the bounded task loop. It binds user goals to persisted Mission state, Task Ledger evidence, ResumeCheckpoint continuation, Context Pack budgets, reviewer decisions, lifecycle events, observability traces, and governed memory proposals. Manual Missions start from the Agents panel, `mission.*` Gateway RPCs, or the lead-only `mission_loop` tool; scheduled ticks are explicit opt-in triggers, not completion truth.
 - **ClawGraph Runtime** is the workspace YAML orchestration layer for long tasks that should not live inside one giant chat transcript. It compiles `.clawx/clawgraph/*.yaml` workflow specs into an IR, schedules stateless role workers as DAG nodes, requires structured handoffs, audits evidence, and freezes uncertain results for review.
-- **Task Ledger** is a ClawX-owned, workspace-scoped control layer for long-running work state. It records goals, subtasks, dependencies, blockers, review nodes, decisions, deviations, and session links without replacing runtime memory, observability traces, or chat transcripts.
-- **Knowledge Hub** is a ClawX-owned product layer over OpenClaw `memory-wiki` / `memory-core`. It gives users an inspectable, role-governed wiki workflow for source-backed local knowledge and local-folder OKF import compatibility without introducing a separate RAG stack, vector database, Google service dependency, or Obsidian dependency; agents read by scope, while writes pass through user-reviewed drafts/proposals.
-- **Chat Work Modes** are a ClawX-owned Settings/session layer for switching the next Chat turn between `Plan`, `Build`, `Review`, and `Docs/Data` behavior presets. v2 resolves per-mode Work Kits, Office Artifact output hints, quality-check hints, provider capability status, and old tool-bundle compatibility. Work Provider v1 adds a Main-owned `workProviders` host API for lightweight Office/Search execution and validation. The metadata remains untrusted and does not change workspace permissions or OpenClaw tool policy.
+- **Task Ledger** is a Verse Claw-owned, workspace-scoped control layer for long-running work state. It records goals, subtasks, dependencies, blockers, review nodes, decisions, deviations, and session links without replacing runtime memory, observability traces, or chat transcripts.
+- **Knowledge Hub** is a Verse Claw-owned product layer over OpenClaw `memory-wiki` / `memory-core`. It gives users an inspectable, role-governed wiki workflow for source-backed local knowledge and local-folder OKF import compatibility without introducing a separate RAG stack, vector database, Google service dependency, or Obsidian dependency; agents read by scope, while writes pass through user-reviewed drafts/proposals.
+- **Chat intensity and legacy Work Mode compatibility** replace the old user-facing Chat Work Mode layer. Current Chat uses explicit reasoning/effort, context/response intensity, Knowledge Scope, and optional task-node context as per-send preferences. Legacy Work Mode types, locale keys, and tests may remain for migration/internal compatibility only; they must not drive permissions, tool access, Task Ledger state, Knowledge writes, `/loop`, Mission, ClawGraph, or runtime policy. Work Provider v1 remains a Main-owned `workProviders` host API for lightweight Office/Search execution and validation, independent of legacy Work Mode.
 - **A2A adaptation** is tracked as a future interoperability edge for agent-to-agent collaboration, complementary to MCP and bounded by role-first governance, Task Ledger evidence, ClawGraph review gates, and Knowledge Hub confirmation. See `docs/a2a-adaptation-plan.md`.
 
 ### 1.2 Non-goals
 
-- ClawX is **not** an AI engine. It does not call model APIs directly; it goes through the runtime.
+- Verse Claw is **not** an AI engine. It does not call model APIs directly; it goes through the runtime.
 - openclaw_runtime is **not** a UI. It only ships a control-plane Web view (mostly for onboarding) and exposes JSON-RPC for any client.
+- Agent Browser is **not** a general-purpose browser, Chrome replacement, visual RPA builder, DevTools UI, download manager, bookmark/history surface, or profile-management product. Its UI contract is task intent, login-state reference, run result, and failure evidence only.
 - The two layers share no in-process state; they are independent processes that happen to live in one repo.
 - ClawGraph is **not** a drag-and-drop workflow editor, a container orchestrator, or a replacement for role contracts, workspace permissions, sandbox policy, Task Ledger, or observability traces.
-- Knowledge Hub is **not** a new ClawX-native knowledge graph, an Obsidian clone, or an autonomous agent writer. It does not replace role memory, Task Ledger, transcripts, or runtime memory governance.
-- Chat Work Modes are **not** permission modes, tool allow/deny rules, or runtime policy switches; they are UI and prompt-intent only.
+- Knowledge Hub is **not** a new Verse Claw-native knowledge graph, an Obsidian clone, or an autonomous agent writer. It does not replace role memory, Task Ledger, transcripts, or runtime memory governance.
+- Legacy Work Mode data is **not** a current Chat control, permission mode, tool allow/deny rule, runtime policy switch, `/loop` trigger, Task Ledger source of truth, or Knowledge write path.
 
 ---
 
@@ -39,7 +41,7 @@ ClawX is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript
 
 ```
 .
-鈹溾攢鈹€ electron/                 # ClawX main process + services + native bridge
+鈹溾攢鈹€ electron/                 # Verse Claw main process + services + native bridge
 鈹?  鈹溾攢鈹€ main/                 # window, menu, tray, updater, traffic-light, ipc-handlers
 鈹?  鈹溾攢鈹€ preload/              # contextBridge surface exposed as window.electronAPI
 鈹?  鈹溾攢鈹€ services/             # 34 host-api service modules (gateway-api, agents-api, knowledge-api, task-ledger-api, clawgraph-api, 鈥?
@@ -48,7 +50,7 @@ ClawX is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript
 鈹?  鈹溾攢鈹€ utils/                # store, logger, telemetry, secure-storage, token-usage, 鈥?
 鈹?  鈹斺攢鈹€ utils/                # native bindings (keychain, browser, etc.)
 鈹?
-鈹溾攢鈹€ src/                      # ClawX renderer (React 19 + Vite)
+鈹溾攢鈹€ src/                      # Verse Claw renderer (React 19 + Vite)
 鈹?  鈹溾攢鈹€ pages/                # /chat, /knowledge, /agents, /channels, /skills, /cron, /models, /task-ledger, /dreams, /observability, /image-generation, /settings, /setup
 鈹?  鈹溾攢鈹€ components/           # layout, file-preview, agents, channels, settings, topics, ui, update
 鈹?  鈹溾攢鈹€ stores/               # zustand stores (chat, agents, gateway, mcp, providers, skills, 鈥?
@@ -85,7 +87,7 @@ ClawX is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript
 
 ```
 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
-鈹? ClawX Renderer (React 19, HashRouter)                               鈹?
+鈹? Verse Claw Renderer (React 19, HashRouter)                               鈹?
 鈹? 鈹€ pages, components, zustand stores, host-api-client                鈹?
 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
                 鈹? hostApi.<module>.<action>(payload)                  鈹?
@@ -125,7 +127,7 @@ ClawX is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript
 
 ---
 
-## 4. ClawX Layer in Detail
+## 4. Verse Claw Layer in Detail
 
 ### 4.1 Main-process responsibilities
 
@@ -148,7 +150,7 @@ ClawX is a **cross-platform Electron desktop app** (React 19 + Vite + TypeScript
 
 ### 4.2 Service registry (35 modules)
 
-The 35 host-api modules under `electron/services/` implement every host-api action declared in `shared/host-api/contract.ts`. They are loaded by `electron/main/ipc-handlers.ts` into a typed `HostServiceRegistry` whose shape is `Record<Module, Record<Action, Function>>`. Each module keeps its boundary narrow and can call runtime JSON-RPC, local persistence, OS APIs, or ClawX-owned helpers as needed:
+The 35 host-api modules under `electron/services/` implement every host-api action declared in `shared/host-api/contract.ts`. They are loaded by `electron/main/ipc-handlers.ts` into a typed `HostServiceRegistry` whose shape is `Record<Module, Record<Action, Function>>`. Each module keeps its boundary narrow and can call runtime JSON-RPC, local persistence, OS APIs, or Verse Claw-owned helpers as needed:
 
 | Module group | Modules |
 |---|---|
@@ -175,7 +177,7 @@ Located under `electron/gateway/`, this is a full-featured process supervisor:
 - `startup-stderr.ts` 鈥?classify stderr lines for actionable error messages.
 - `startup-orchestrator.ts` 鈥?composes the whole startup sequence.
 - `reload-policy.ts` / `process-policy.ts` 鈥?reload and reconnect policies.
-- `config-sync.ts` 鈥?writes ClawX-managed config keys into runtime config dir.
+- `config-sync.ts` 鈥?writes Verse Claw-managed config keys into runtime config dir.
 - `ws-trace.ts` 鈥?optional frame tracing for debugging.
 
 The transport is **fixed** at `WS 鈫?HTTP 鈫?IPC fallback`. Renderer does not select.
@@ -217,7 +219,7 @@ The transport is **fixed** at `WS 鈫?HTTP 鈫?IPC fallback`. Renderer does not 
 - Subscribe to host events.
 - Inject React components / routes via a host-api contract.
 
-### 4.8 ClawX extension framework (main side)
+### 4.8 Verse Claw extension framework (main side)
 
 `electron/extensions/registry.ts` plus `electron/extensions/types.ts` define three extension kinds:
 
@@ -244,7 +246,7 @@ Hard-delete behavior: `Delete conversation` unlinks `<id>.jsonl`, `<id>.deleted.
 ### 5.1 Process and entry
 
 - CLI: `openclaw_runtime/src/entry.ts` 鈥?`startGatewayServer(port, { bind, auth, deferStartupSidecars })`. Default `127.0.0.1:18789`, supports `loopback` / `LAN` binds.
-- Library: `openclaw_runtime/src/library.ts` exports embedding helpers (`getReplyFromConfig`, `runExec`, `runCommandWithTimeout`, `monitorWebChannel`, `ensureBinary`, `loadConfig`, `applyTemplate`, session helpers, 鈥?. ClawX itself embeds the runtime both as a subprocess and as a library.
+- Library: `openclaw_runtime/src/library.ts` exports embedding helpers (`getReplyFromConfig`, `runExec`, `runCommandWithTimeout`, `monitorWebChannel`, `ensureBinary`, `loadConfig`, `applyTemplate`, session helpers, 鈥?. Verse Claw itself embeds the runtime both as a subprocess and as a library.
 - Legacy surface: `openclaw/extension-api` (deprecated, redirects to `openclaw/plugin-sdk/*`).
 
 ### 5.2 Sub-domains (`openclaw_runtime/src/*`)
@@ -259,8 +261,8 @@ Hard-delete behavior: `Delete conversation` unlinks `<id>.jsonl`, `<id>.deleted.
 | `mcp/` | MCP server sidecar + registry |
 | `memory/` + `memory-host-sdk/` | Long/short-term memory, multimodal, embeddings, QMD engine, state |
 | `skills/` | Skills runtime types |
-| `tools/` | Tool call contracts + `AnyAgentTool` registration |
-| `cron/` | Cron scheduler (store / service / run-log / stagger) |
+| `tools/` | Tool call contracts + `AnyAgentTool` registration, including `agent-browser-tool.ts` and Agent Browser automation telemetry |
+| `cron/` | Cron scheduler (store / service / run-log / stagger) plus browser automation run-result summarization |
 | `tts/`, `image-generation/`, `media-generation/`, `media-understanding/`, `music-generation/`, `video-generation/` | Multimodal provider families |
 | `talk/`, `realtime-transcription/`, `transcripts/` | Realtime voice + transcription provider families |
 | `model-catalog/`, `provider-runtime/` | Model catalog + provider auth/catalog/transport decoration (stream wrappers, replay policy, tool schema compat) |
@@ -312,7 +314,7 @@ Methods live in `openclaw_runtime/src/gateway/methods/core-descriptors.ts` + `se
 - Push (`push.test`, `push.web.*`)
 - Hidden / internal (`poll`, `sessions.steer`, `connect`, `nativeHook.invoke`, `web.login.start/wait`)
 
-Events broadcast in-process (consumed by ClawX and any other client): `connect.challenge`, `agent`, `chat`, `session.message`, `session.operation`, `session.tool`, `sessions.changed`, `presence`, `tick`, `talk.mode`, `talk.event`, `shutdown`, `health`, `heartbeat`, `cron`, `clawgraph-lifecycle`, `node.pair.*`, `device.pair.*`, `voicewake.*`, `exec.approval.*`, `plugin.approval.*`, `update.available`, 鈥?
+Events broadcast in-process (consumed by Verse Claw and any other client): `connect.challenge`, `agent`, `chat`, `session.message`, `session.operation`, `session.tool`, `sessions.changed`, `presence`, `tick`, `talk.mode`, `talk.event`, `shutdown`, `health`, `heartbeat`, `cron`, `clawgraph-lifecycle`, `node.pair.*`, `device.pair.*`, `voicewake.*`, `exec.approval.*`, `plugin.approval.*`, `update.available`, 鈥?
 
 ### 5.4 Plugin SDK
 
@@ -354,7 +356,7 @@ By family (representative):
 
 ### 5.7 Doctor / self-repair
 
-`openclaw doctor --json` and `openclaw doctor --fix --yes --non-interactive` are exposed to the renderer through `app.openClawDoctor` (ClawX Settings 鈫?Advanced 鈫?Developer). The renderer never spawns the CLI directly.
+`openclaw doctor --json` and `openclaw doctor --fix --yes --non-interactive` are exposed to the renderer through `app.openClawDoctor` (Verse Claw Settings 鈫?Advanced 鈫?Developer). The renderer never spawns the CLI directly.
 
 ---
 
@@ -388,11 +390,11 @@ Runtime broadcast events 鈫?`dispatchJsonRpcNotification` / `dispatchProtocolEv
 
 ### 6.3 HTTP proxy
 
-Some runtime endpoints are HTTP-only (MCP-over-HTTP, OpenAI-compat, OpenResponses, file downloads). ClawX exposes `hostapi:fetch` and `gateway:httpProxy` so the renderer never sees a cross-origin URL.
+Some runtime endpoints are HTTP-only (MCP-over-HTTP, OpenAI-compat, OpenResponses, file downloads). Verse Claw exposes `hostapi:fetch` and `gateway:httpProxy` so the renderer never sees a cross-origin URL.
 
 ### 6.4 Knowledge Hub flow
 
-Knowledge Hub follows the same renderer/Main/runtime boundary as the rest of ClawX:
+Knowledge Hub follows the same renderer/Main/runtime boundary as the rest of Verse Claw:
 
 ```
 /knowledge page or Chat draft action
@@ -405,38 +407,77 @@ electron/services/knowledge-api.ts
 openclaw_runtime memory-wiki / memory-core
 ```
 
-- `knowledge.configure` patches the runtime config to enable `plugins.entries.memory-wiki.enabled = true` with ClawX defaults: `vaultMode: "isolated"`, `renderMode: "native"`, `search.backend: "shared"`, and `search.corpus: "wiki"`.
-- File and folder import stays Main-owned: ClawX enumerates bounded text-like files, enforces size/count limits, and calls `wiki.ingest` once per accepted file. The default flow does **not** switch the runtime to `unsafe-local`.
+- `knowledge.configure` patches the runtime config to enable `plugins.entries.memory-wiki.enabled = true` with Verse Claw defaults: `vaultMode: "isolated"`, `renderMode: "native"`, `search.backend: "shared"`, and `search.corpus: "wiki"`.
+- File and folder import stays Main-owned: Verse Claw enumerates bounded text-like files, enforces size/count limits, and calls `wiki.ingest` once per accepted file. The default flow does **not** switch the runtime to `unsafe-local`.
 - Chat sends may include `knowledgeScope` (`none`, `memory`, `wiki`, `all`). `electron/services/chat-api.ts` converts non-`none` scopes into hidden metadata/instructions for runtime tool use; renderer message cleanup keeps that metadata out of visible chat history.
 - Session-derived knowledge uses an editable draft. Applying the draft calls `wiki.apply` only after explicit user confirmation.
 
-### 6.5 Chat Work Mode flow
+### 6.5 Chat intensity and legacy Work Mode boundary
 
-Work Mode follows the same renderer/Main/runtime boundary and deliberately stops short of changing runtime policy:
+Chat no longer has a user-facing Work Mode selector or a Work Mode-driven send path. The current Chat surface stays lightweight and sends only explicit per-turn choices:
 
 ```
-Settings work-mode controls
-  workspace session UI state (`workMode`)
-        鈹?
-        鈻?
-src/stores/chat.ts sendMessage(..., workMode)
-        鈹?
-        鈻?
-hostApi.chat.sendWithMedia({ workMode, knowledgeScope, ... })
-        鈹?
-        鈻?
+Chat Input explicit controls
+  knowledge scope + selected knowledge refs
+  thinking/effort and context/response intensity
+  optional inputMode and activeTaskNodeId
+        |
+        v
+src/stores/chat.ts / runtime-send-actions.ts
+        |
+        v
+hostApi.chat.sendWithMedia(...)
+        |
+        v
 electron/services/chat-api.ts
-        鈹?
-        鈻?
-Gateway chat.send with untrusted metadata block
+        |
+        v
+Gateway chat.send with current explicit metadata only
 ```
 
-- Shared presets live in `shared/types/work-mode.ts`: `plan`, `build`, `review`, and `docsData` define label keys, recommended permission, default knowledge scope, response style, state widgets, legacy tool bundle labels, Work Kits, and a behavior instruction. v2 Work Kit overrides are stored in `settings.workModeKits`; legacy `settings.workModeToolBundles` remains a compatibility seed.
-- `WorkspaceUiState.workMode` persists the selected mode per workspace/session. If no saved value exists, the default is `plan` only when the workspace `permissionMode` is `plan`; otherwise it is `build`.
-- Switching modes updates session UI state only. It does not call `setPermissionMode`, edit OpenClaw config, or rewrite `tools.allow` / `tools.deny`.
-- `electron/services/chat-api.ts` accepts known ids through `normalizeWorkModeId`; unknown values are ignored. Valid values inject untrusted intent metadata with response style, recommended permission, default knowledge scope, state widgets, legacy tool-bundle labels, Work Kits, expected artifact types, quality checks, and capability status summaries.
-- `WorkModeSummaryPanel` shows the current mode, knowledge scope, permission mismatch, enabled kits, expected artifact types, and kit capability status (`ready`, `missingSkill`, `disabled`, `runtimeUnavailable`, or `optionalExternal`) derived from local skills and Gateway readiness.
-- `electron/services/work-providers-api.ts` owns Work Provider status, controlled runs, and artifact validation. Renderer surfaces call only `hostApi.workProviders.*`; provider runs validate workspace paths in Main, `web.search` does not network without explicit provider config, and optional heavy providers such as LibreOffice, Pandoc, crawler, OCR, and dataframe runtimes remain interfaces until configured.
+- Settings no longer exposes Work Mode controls. Chat does not mount the old Work Mode selector or `WorkModeSummaryPanel`.
+- `shared/types/work-mode.ts`, old locale keys, old settings keys, and `WorkModeSummaryPanel` remain deprecated/internal compatibility only for migrations and tests. They must not be treated as an active behavior preset layer.
+- Renderer send actions do not use Work Mode to choose permissions, tools, context sources, Task Ledger state, Knowledge writes, `/loop`, Mission, or ClawGraph behavior.
+- Ordinary Chat can attach `knowledgeScope`, selected Knowledge refs, reasoning/effort/intensity preferences, and optional `activeTaskNodeId`. Those fields are explicit per-send choices; they are not long-term task truth.
+- `activeTaskNodeId` may inject existing Task Ledger context for a turn, but it does not create a `/loop` Task Ledger root or enter checkpoint/intervention state.
+- `inputMode` is a long-task intervention control only when an active `/loop` root exists. Gateway rejects attempts to enter checkpoint/intervention state from ordinary Chat without that root.
+- `electron/services/work-providers-api.ts` owns Work Provider status, controlled runs, and artifact validation independently of legacy Work Mode. Renderer surfaces call only `hostApi.workProviders.*`; provider runs validate workspace paths in Main, `web.search` does not network without explicit provider config, and optional heavy providers such as LibreOffice, Pandoc, crawler, OCR, and dataframe runtimes remain interfaces until configured.
+
+---
+
+### 6.6 Agent Browser runtime automation flow
+
+Agent Browser is an **agent-facing browser execution environment**, not a human-facing browser product. Its purpose is to let isolated runtime agent turns perform controlled web tasks such as check-in, page monitoring, draft publishing, and page-error inspection without asking the user to manually launch Chrome or install a separate agent browser.
+
+The current flow is:
+
+```text
+Cron page browserAutomation config
+  -> shared CronBrowserAutomationConfig
+  -> electron/services/cron-api.ts
+  -> buildCronBrowserAutomationPrompt(...)
+  -> Gateway cron.add/update payload.kind="agentTurn"
+     payload.toolsAllow=["agent_browser"]
+  -> openclaw_runtime isolated cron agent session
+  -> agent_browser tool
+  -> Electron Main-owned managed browser/profile/authState bridge
+  -> AgentBrowserAutomationEvent telemetry
+  -> Cron BrowserAutomationRunResult + artifact persistence
+  -> Cron Run Details evidence cards
+```
+
+Key runtime properties:
+
+- Cron browser tasks are still standard isolated `agentTurn` runs; no new scheduler, workflow engine, or human-operated browser UI is introduced.
+- The prompt embeds a JSON marker so Gateway Cron can persist the structured browser config even before Cron has native metadata fields.
+- `toolsAllow: ["agent_browser"]` constrains the isolated run to the browser tool surface.
+- The browser task config includes URL, objective, optional success/failure conditions, profile/authState references, auth persistence, run mode, allowed domains, sensitive-action policy, conservative retry, and diagnostics choices.
+- Managed internal browser is the default. External browser/CDP/local Chrome profile reuse remains gated by explicit `allowExternalBrowser=true`.
+- Login state is referenced by profile/authState; task configs do not store plaintext credentials.
+- Sensitive actions default to `draft-only`; final send/publish/pay/delete/confirm actions require explicit `auto-submit`.
+- Failures automatically collect minimal evidence: screenshot, snapshot, console, page errors, and network request diagnostics. These are summarized into run logs and persisted as artifacts when available.
+
+This deliberately avoids browser-product scope: no address bar, tabs, bookmarks, history, downloads UI, DevTools UI, visual RPA builder, or profile management center. The UI should configure intent and display results/evidence; the browser exists for the agent runtime.
 
 ---
 
@@ -449,11 +490,11 @@ Gateway chat.send with untrusted metadata block
 | Auth | Device identity signs `connect.challenge`; per-method operator scopes (`operator.read` / `operator.write` / `operator.admin` / `operator.approvals` / `operator.pairing`); control-plane write throttle |
 | Secrets | OS keychain (secure-storage) for API keys, device identity, channel login tokens |
 | Approvals | `exec.approval.*` and `plugin.approval.*` require explicit `approvals` scope; renderer surfaces approval events in the permission panel |
-| Sandbox policy | `electron/utils/sandbox-policy-resolver.ts` is the single effective policy resolver for ClawX sandbox status, OpenClaw config mapping, runtime sync, and diagnostics |
+| Sandbox policy | `electron/utils/sandbox-policy-resolver.ts` is the single effective policy resolver for Verse Claw sandbox status, OpenClaw config mapping, runtime sync, and diagnostics |
 | File sandbox | `electron/services/files-api.ts` enforces read/write roots; workspace root defines a per-workspace sandbox |
 | Command/RPC gate | `electron/services/workspace-permissions.ts` classifies command and Gateway RPC risk as `read` / `write` / `network` / `destructive` / `external-write` |
 | Knowledge import | `electron/services/knowledge-api.ts` bounds directory enumeration to text-like files, avoids `unsafe-local` by default, and writes derived knowledge only through confirmed drafts |
-| Work mode metadata | `workMode`, Work Kits, artifact hints, quality checks, and capability summaries are normalized in Main and injected only as untrusted intent metadata; they cannot grant tools, bypass approvals, install skills automatically, or change workspace permission mode |
+| Chat send metadata | Knowledge scope, selected Knowledge refs, reasoning/effort/intensity preferences, optional `activeTaskNodeId`, and valid `/loop` input-mode controls are normalized at UI/Main/runtime boundaries as untrusted request metadata; they cannot grant tools, bypass approvals, create `/loop` roots, install skills automatically, or change workspace permission mode |
 | Work providers | `electron/services/work-providers-api.ts` validates workspace paths before Office/PDF/WebRead runs, keeps Search missing-config until explicitly configured, and leaves heavy converters/crawlers/OCR/dataframe providers optional |
 | Telemetry | Opt-in, secret-scrubbing |
 | Renderer 鈫?runtime | Never direct; always through main |
@@ -462,7 +503,7 @@ Gateway chat.send with untrusted metadata block
 
 ### 7.1 Lightweight layered sandbox control
 
-ClawX now uses a **light by default, strong isolation optional** sandbox model. Docker is no longer part of the default Gateway startup path. The default effective provider is `policy-light`, which writes OpenClaw sandbox config as `agents.defaults.sandbox.mode = "off"` and keeps enforcement in the ClawX/Main + Gateway + OpenClaw exec approval control plane.
+Verse Claw now uses a **light by default, strong isolation optional** sandbox model. Docker is no longer part of the default Gateway startup path. The default effective provider is `policy-light`, which writes OpenClaw sandbox config as `agents.defaults.sandbox.mode = "off"` and keeps enforcement in the Verse Claw/Main + Gateway + OpenClaw exec approval control plane.
 
 **Decision source**
 
@@ -511,7 +552,7 @@ Legacy provider ids are normalized for compatibility: `openclaw-native` and `con
 
 - **Renderer**: `/observability` page reads `hostapi:observability.*` through `src/lib/host-api.ts` (dashboard snapshot, indexed trace query, trace graph, node diagnostics, trace detail, clear traces). The workbench combines a query-driven trace list, issue chips, source freshness, SVG/HTML agent-chain graph, node diagnostics drawer, synchronized timeline, and the legacy waterfall in `src/pages/Observability/TraceWaterfall.tsx`.
 - **Gateway**: connection monitor tracks heartbeat, last-RPC success, channel-status freshness, exposes `diagnostics.gatewaySnapshot` to the renderer for one-shot health capture.
-- **Runtime**: `observability.reportTrace` / `observability.traces` write/read the runtime trace store; Electron maps runtime spans, chat runtime events, and trajectory JSONL sidecars into `ObservabilityTraceGraph`, issue summaries, correlations, and redacted `traceNodeDiagnostics` payloads without adding a database. A ClawX-owned local JSON/JSONL index persists sanitized trace envelopes for recent-history queries and rehydration; `clearTraces()` clears only this observability index/cache, not transcript or trajectory source files.
+- **Runtime**: `observability.reportTrace` / `observability.traces` write/read the runtime trace store; Electron maps runtime spans, chat runtime events, and trajectory JSONL sidecars into `ObservabilityTraceGraph`, issue summaries, correlations, and redacted `traceNodeDiagnostics` payloads without adding a database. A Verse Claw-owned local JSON/JSONL index persists sanitized trace envelopes for recent-history queries and rehydration; `clearTraces()` clears only this observability index/cache, not transcript or trajectory source files.
 - **Doctor**: `openclaw doctor` exposed as a button in Settings 鈫?Advanced 鈫?Developer.
 
 ---
@@ -520,7 +561,7 @@ Legacy provider ids are normalized for compatibility: `openclaw-native` and `con
 
 Task Ledger is the product-level answer to long-running agent work. It is **not** an executor and does not replace the runtime's memory, sessions, transcripts, or observability traces. It is a structured state ledger that lets users and agents keep stable track of the shape of work across turns, sessions, and agents.
 
-- **Ownership**: ClawX owns Task Ledger in the Main process. Renderer code calls `hostApi.taskLedger.*`; pages/components never read or write ledger files directly.
+- **Ownership**: Verse Claw owns Task Ledger in the Main process. Renderer code calls `hostApi.taskLedger.*`; pages/components never read or write ledger files directly.
 - **Scope**: one ledger per workspace. It can link many agents, sessions, traces, and files, but it is not stored inside a chat transcript and is not scoped to one agent.
 - **Model**: `TaskNode` (`goal`, `milestone`, `task`, `check`, `decision`, `risk`, `deviation`, `review`) + `TaskEdge` (`depends_on`, `blocks`, `relates_to`, `derived_from`, `supersedes`, `needs_review`) + append-only `TaskEvent` + projected `TaskSnapshot`.
 - **Persistence**: local append-only JSONL under `<openclawConfig>/task-ledgers/workspaces/<workspaceKey>/events.jsonl`, with `snapshot.json` as a materialized read model and `exports/*.html` for offline review.
@@ -532,17 +573,79 @@ Task Ledger is the product-level answer to long-running agent work. It is **not*
 - **Boundary with Memory**: memory stores reusable knowledge; Task Ledger stores current work structure and progress. Memory may cite ledger state as evidence, but ledger events are the source of truth for task state.
 - **Boundary with Observability**: observability explains how a run executed; Task Ledger explains what long-running work currently exists, what depends on what, and what requires review. Traces can be linked as evidence through `sessionLinks`/metadata.
 
+### 8.5.0 Task Ledger Chat Projection and Explicit `/loop` Root (2026-06-24)
+
+Task Ledger is still the source of truth for long-running work structure, but ordinary Chat is not automatically promoted into that structure. The current boundary is:
+
+1. **Ordinary Chat remains lightweight.** Its facts come from the transcript, runtime turn events, files changed, approvals, and optional best-effort Task Ledger projection.
+2. **Ordinary Chat Task Ledger writes are best-effort evidence only.** They may create check/deviation/session-link events for a turn, but failed writes never fail Chat and never create a `/loop` root.
+3. **`/loop` is the explicit long-task entry point.** Starting `/loop` must create one Task Ledger root before recoverable checkpoint/intervention state begins; root creation failure blocks startup with a diagnostic.
+4. **Loop recovery uses one context builder.** `LoopContextPack` is the only `/loop` recovery-context generation entry point; Chat, Knowledge, Task Ledger, Mission, and renderer code must not each concatenate their own long-context prompt.
+
+**Ordinary Chat projection:**
+
+| Event | Best-effort action | Boundary |
+|-------|--------------------|----------|
+| Session created / switched | `linkSession` with `relation: 'related'` | Session relationship only; not a task root |
+| Turn completed (`final`) | `appendEvents` with `check` / `session_linked` evidence when extraction succeeds | Fire-and-forget; failure is ignored after the turn is committed |
+| Turn errored (`error`) | `appendEvents` with `deviation` evidence when extraction succeeds | Fire-and-forget; does not enter long-task state |
+| Composer selects `activeTaskNodeId` | Existing Task Ledger node context is injected into the send | Does not create a `/loop` root or checkpoint/intervention state |
+
+**Explicit `/loop` strategy:**
+
+| Event | Task Ledger action | Boundary |
+|-------|--------------------|----------|
+| `/loop` startup | Create one root goal/task record before recoverable state begins | Failure rejects startup (`Cannot start /loop without a Task Ledger root...`) |
+| Checkpoint / intervention / queue / guide / interrupt | Persist state with the same Task Ledger root id | No detached checkpoint/intervention state |
+| Decision / deviation / evidence / review / terminal status | Attach events and evidence to the same root | Completion/blocking status must remain tied to the root |
+
+**Chat Store integration (`ChatState`):**
+
+- `activeTaskNodeId: string \| null` — optional existing Task Ledger node selected by the user via `TaskNodeSelector`; it gives the turn context, not long-task authority.
+- `taskLedgerSnapshot: TaskLedgerSnapshot \| null` — cached snapshot for the current workspace, refreshed when the workspace or session changes.
+- `refreshTaskLedger()` — internal action that reloads the snapshot from `hostApi.taskLedger.snapshot()`.
+- `ensureSessionLinkedToLedger(sessionKey)` — internal helper that can link a session with idempotency key `auto-link:{sessionKey}`.
+
+**Turn projection (`turn-ledger-recorder.ts`):**
+
+- `extractTurnSummary(userMsg, assistantMsgs, error?)` extracts a `TurnLedgerSummary` from each completed turn. Priority: (1) fenced JSON `\`\`\`task-ledger ... \`\`\`` in the assistant reply, (2) heuristic extraction from tool names, file paths, and section headings.
+- `buildTurnLedgerEvents(workspaceId, sessionKey, summary, taskNodeId?)` builds `TaskLedgerEventInput[]` with `node_created` (check/deviation) + `session_linked` + optional `review_requested`.
+- `handleRuntimeEventState` triggers projection after `final` / `error` turn state is committed. These writes are fire-and-forget and cannot become acceptance criteria by themselves.
+
+**Key files:**
+
+| File | Role |
+|------|------|
+| `src/stores/chat/turn-ledger-recorder.ts` | Ordinary Chat turn summary extraction and evidence event building |
+| `src/stores/chat/runtime-event-handlers.ts` | Fire-and-forget Chat projection trigger in `final` / `error` |
+| `src/stores/chat/runtime-send-actions.ts` | `activeTaskNodeId` passthrough only; no Work Mode behavior path |
+| `electron/services/chat-api.ts` | Optional existing task-node context injection; ordinary sends do not create `/loop` roots |
+| `openclaw_runtime/src/agents/task-loop-controller.ts` | `/loop` root creation and startup rejection on root failure |
+| `openclaw_runtime/src/agents/loop-context-pack.ts` | Single bounded `/loop` recovery context builder |
+| `openclaw_runtime/src/agents/task-loop-context.ts` | Legacy reviewer headings rendered from `LoopContextPack` sections only |
+| `openclaw_runtime/src/agents/mission-control/context.ts` | Mission compatibility context rendered from `LoopContextPack` sections only |
+
+**Boundary clarification:**
+
+| Concern | Source of truth |
+|---------|-----------------|
+| Long-running task structure | Task Ledger root/event stream for explicit long tasks |
+| Ordinary Chat turn evidence | Transcript + runtime events + optional best-effort Task Ledger projection |
+| How a specific run executed | Observability traces and runtime events |
+| Reusable project knowledge | Knowledge drafts/proposals after user review |
+| Session transcript | Runtime session `.jsonl`, not Task Ledger |
+
 ---
 
 ## 8.5.1 Long Conversation Control and Manual Compaction
 
-ClawX treats long-conversation stability as a visible control layer over the runtime's existing compaction pipeline. Session compaction reduces transcript pressure for the **current Chat session**; it is not the source of truth for long-running task state.
+Verse Claw treats long-conversation stability as a visible control layer over the runtime's existing compaction pipeline. Session compaction reduces transcript pressure for the **current Chat session**; it is not the source of truth for long-running task state.
 
 - **Runtime boundary**: OpenClaw runtime keeps automatic pre-prompt pressure checks and overflow routing (`truncate_tool_results_only`, `compact_only`, `compact_then_truncate`). Manual compression calls the same transcript lock, timeout, hook, rotation, and thinking-signature repair path with `trigger: "manual"` and `force: true`.
-- **Gateway RPCs**: ClawX uses formal session RPCs instead of sending `/compact` text: `sessions.compactionStatus`, `sessions.compactionHistory`, and `sessions.compact`.
+- **Gateway RPCs**: Verse Claw uses formal session RPCs instead of sending `/compact` text: `sessions.compactionStatus`, `sessions.compactionHistory`, and `sessions.compact`.
 - **Host API boundary**: Renderer code calls `hostApi.sessions.compactionStatus/history/compact`; Main proxies to Gateway and returns a diagnostic unavailable state when Gateway is down. Renderer never reads transcript files and never calls Gateway directly.
 - **User control**: v1 supports manual compression only for the active Chat session. The composer context indicator shows a compact action; clicking it opens a confirmation dialog with token usage, hidden/truncated count, last compaction, expected effect, and optional extra preservation instructions.
-- **Run safety**: manual compression is disabled while a session has active streaming/tool execution or compaction in flight. The formal `force:true` path rejects active sessions instead of queueing behind or interrupting a run; legacy slash-command compaction remains available for non-ClawX users.
+- **Run safety**: manual compression is disabled while a session has active streaming/tool execution or compaction in flight. The formal `force:true` path rejects active sessions instead of queueing behind or interrupting a run; legacy slash-command compaction remains available for non-Verse Claw users.
 - **State separation**: compaction summaries preserve objective, open tasks, decisions, failed attempts, touched files, constraints, next action, and review-needed items. They may reference Task Ledger or Context Pack evidence, but they must not mutate Task Ledger automatically.
 - **Token-dense artifact**: compaction now stores a structured `CompressionArtifact v1` with objective, constraints, current state, done/in-progress/blocked work, decisions, files/tests, failed attempts, deviations, next action, review items, evidence refs, unverified claims, and quality metrics. The old string `summary` is rendered from this artifact for compatibility; recovery paths should prefer artifact projection over re-reading long transcript history.
 - **Recovery query surface**: `sessions.compressionArtifact` returns the latest or requested artifact, while `sessions.recoveryContext` returns a shorter token-budgeted projection for the next prompt or handoff. Main exposes these through `hostApi.sessions.compressionArtifact/recoveryContext`; Chat shows quality level, score, evidence coverage, unverified count, and projected recovery tokens near the context controls.
@@ -565,13 +668,13 @@ ClawGraph is the execution-side answer to long-task context explosion. Instead o
 
 ## 8.5.3 Long-Task Stability Stack
 
-The product rule is: **long-term truth must not depend on long chat transcripts**. ClawX therefore uses a layered stack where each layer owns one kind of state and no layer silently substitutes for another.
+The product rule is: **long-term truth must not depend on long chat transcripts**. Verse Claw therefore uses a layered stack where each layer owns one kind of state and no layer silently substitutes for another.
 
 | Layer | Owns | Does not own | Primary APIs / files |
 |---|---|---|---|
 | Chat transcript | User/assistant conversation history for the active session | Long-term task truth, workflow execution truth, reusable knowledge | Runtime session `.jsonl`, `sessions.*` |
 | Chat Input Mode | How human intervention enters an active run | Compression, durable task truth, proof of completion | `inputMode`, `shared/types/long-task-control.ts` |
-| Chat Work Mode | Per-session behavior preset for the next Chat turn: plan/build/review/docs-data response posture, Work Kit selection, artifact/quality hints, capability status, and mode panel state | Permissions, actual tool availability, task truth, skill installation authority, or runtime policy | `workMode`, `settings.workModeKits`, `shared/types/work-mode.ts` |
+| Chat intensity / legacy Work Mode compatibility | Explicit reasoning/effort and context/response intensity for the next ordinary Chat turn; deprecated Work Mode records only for migration/tests | Permissions, actual tool availability, task truth, skill installation authority, `/loop` state, or runtime policy | `thinkingLevel`, intensity/prompt preferences, `shared/types/work-mode.ts` (deprecated) |
 | Mission Control / Mission Loop (planned) | Policy loop for long-goal run/tick/reflect/schedule decisions | Worker execution, durable ledger truth, direct memory writes, approval bypass | `mission.*`, `MissionContextPack`, `mission.lifecycle` |
 | Manual compaction | Reducing current-session token pressure while preserving a structured summary | Mutating Task Ledger, proving execution evidence, changing workflow state | `sessions.compactionStatus/history/compact` |
 | Token-Dense Recovery Compression | High-density structured recovery artifact and short projection for the next prompt/handoff | Proving task completion, replacing Task Ledger/ClawGraph/observability evidence | `sessions.compressionArtifact`, `sessions.recoveryContext`, `CompressionArtifact v1` |
@@ -579,14 +682,16 @@ The product rule is: **long-term truth must not depend on long chat transcripts*
 | Persistent Intervention Queue | User-selected queued follow-up messages that must survive Gateway restart until drained or failed | Active-run steering, task completion truth, transcript compaction | OpenClaw state SQLite `long_task_user_queue`, `sessions.queueDrain` |
 | Chat Session Handoff | Preview-first continuation into a fresh session with an editable deterministic draft | Transcript branching, automatic sending, model-generated summaries | `hostApi.sessions.prepareHandoff`, `WorkspaceUiState.draftInput` |
 | Chat Session Fork | Runtime-backed child session that inherits the source transcript branch | Git branch/worktree creation, handoff prompt generation, isolated empty fallback | `hostApi.sessions.fork`, Gateway `sessions.fork` |
-| Context Pack | Token-budgeted injection of relevant memory, task state, team handoffs, and procedural notes | Durable source of truth | `buildContextPack`, memory explain logs |
+| LoopContextPack / Context Pack | Token-budgeted injection of relevant memory, task state, team handoffs, procedural notes, and `/loop` recovery context | Durable source of truth or independent prompt concatenation by each subsystem | `buildLoopContextPack`, `buildContextPack`, memory explain logs |
 | Workspace Harness | Project specs, task contracts, context-pack recipes, and human-readable Task Ledger bridge docs | Durable task state, execution state, proof of completion | `.clawx/harness/**`, `resources/workspace-harness/**` |
 | ClawGraph | DAG execution state, stateless worker prompts, handoffs, audit results, review items | Long-term goal ownership, reusable knowledge, arbitrary external truth | `.clawx/clawgraph/*.yaml`, `clawgraph.*` |
 | Task Ledger | Workspace-scoped long-term work structure, dependencies, blockers, decisions, deviations, review queue | Worker execution, trace storage, reusable memory | `taskLedger.*`, append-only ledger JSONL |
 | Observability | How a run executed: spans, tools, subagents, scorecards, trace evidence | Whether a long-term goal is complete | `observability.*`, runtime trace buffer |
 | Knowledge Hub / Memory | Reusable project knowledge after confirmation and governance | Current task progress or run status | `wiki.*`, `memory.*` |
 
-This split is specifically meant to avoid the failure mode seen in long Claude Code/Codex-style conversations: after enough turns, the transcript becomes expensive, brittle, and less reliable for tool orchestration. ClawX keeps chat useful but disposable: compaction can shrink it, ClawGraph can execute fresh bounded nodes, Task Ledger can preserve current work truth, and observability can prove what actually happened.
+This split is specifically meant to avoid the failure mode seen in long Claude Code/Codex-style conversations: after enough turns, the transcript becomes expensive, brittle, and less reliable for tool orchestration. Verse Claw keeps chat useful but disposable: compaction can shrink it, ClawGraph can execute fresh bounded nodes, Task Ledger can preserve current work truth, and observability can prove what actually happened.
+
+For `/loop`, `LoopContextPack` is the sole recovery prompt builder. `task-loop-context.ts` and `mission-control/context.ts` may render legacy reviewer headings for compatibility, but those headings are formatted from `LoopContextPack` sections only; they are not independent long-context sources.
 
 Recommended mapping for future agent work:
 
@@ -596,7 +701,7 @@ Recommended mapping for future agent work:
 - Use **manual compaction** when the current Chat session is too large but still worth continuing.
 - Use **Chat Session Fork** when the user wants a true conversation branch with the current transcript history immediately visible.
 - Use **Chat Session Handoff** when the source transcript is too large, unavailable, or should be replaced by a reviewable continuation prompt.
-- Use **Chat Work Mode** to declare the next turn's posture (plan first, implement, review, or docs/data artifact work) without changing permissions or durable state.
+- Use **Chat effort/intensity controls** when the next ordinary Chat turn should be shorter, deeper, cheaper, or use a specific reasoning effort; do not revive legacy Work Mode as behavior, task, or permission state.
 - Use **Mission Control** when one objective should survive multiple turns, scheduled checks, session rotation, evidence reviews, and memory updates. Mission Control is the planned outer policy loop; it should call `task_loop` or ClawGraph rather than replacing them.
 - Use **Knowledge Hub / Memory** only for reusable knowledge, not for ephemeral progress.
 - Use **Observability** as evidence, not as the state ledger.
@@ -615,20 +720,21 @@ Recommended mapping for future agent work:
 
 `ResumeCheckpoint` is the minimum continuation contract. It is intentionally smaller than a full node snapshot and larger than a free-form compaction summary. It preserves the current objective, active node/task, last confirmed handoff, blockers, decisions, deviations, files touched, tests run, next action, review-needed items, evidence refs, and bounded Engineering Control Signals (`controlSignals`, `validationState`, and `acceptanceStatus`). Runtime stores checkpoints, intervention events, and queued follow-ups in the OpenClaw state SQLite tables `long_task_checkpoints`, `long_task_intervention_events`, and `long_task_user_queue`; no JSON/JSONL sidecar is introduced. New runs should reconstruct context from checkpoint + Task Ledger summary + ClawGraph snapshot + Context Pack rather than asking the model to reread the full transcript.
 
-ClawX exposes a formal recovery query surface:
+Verse Claw exposes a formal recovery query surface:
 
 - Runtime RPCs: `sessions.longTaskControlStatus`, `sessions.longTaskControlHistory`, `sessions.resumeCheckpoints`, and `sessions.queueDrain`.
 - Host API facade: `hostApi.sessions.longTaskControlStatus/history/resumeCheckpoints/queueDrain`; renderer never reads runtime state files or calls Gateway directly.
 - Composer diagnostics: Chat shows latest checkpoint, queued follow-up count, latest intervention, and recovery warnings near the context/token indicator. When the session is idle and queue count is non-zero, the user can manually drain queued follow-up now.
+- Rollback plan UI: Chat renders a recovery panel that summarizes the active checkpoint, queue, context pressure, terminal risk, Git/file rollback, Task Ledger review, and Memory/Knowledge write risk. It shows safe/review/dangerous action counts plus a signal matrix before exposing typed actions. Destructive paths route to approval-backed Git/file/terminal controls, and memory-affecting recovery facts become Knowledge drafts or proposals instead of silent durable writes.
 - Handoff recovery: `prepareHandoff` first asks runtime for token-dense recovery context, then asks for the newest persistent `ResumeCheckpoint`, and still merges Task Ledger, Git status, recent observability, and transcript fallback signals into one deterministic checkpoint rendering context.
 
 Chat session continuity now has two explicit surfaces: **Handoff to new conversation** and **Fork to new conversation**. They share the same safety posture (idle session only, no renderer transcript reads, no renderer-direct Gateway calls, no auto-send), but they intentionally solve different failure modes.
 
-**Handoff** is the preview-first `session_rotation` use of `ResumeCheckpoint`. Main builds a deterministic continuation draft from conservative ecosystem sources: runtime checkpoint when available, the active workspace Task Ledger snapshot, Git status, recent observability trace/error state, and recent transcript entries only as supplemental/fallback evidence. It does not call a model to summarize or polish the result, and it does not write Memory/Knowledge. Renderer only receives the typed `hostApi.sessions.prepareHandoff` result, shows source chips and warnings, lets the user edit the draft, and creates a fresh workspace-scoped session with the edited text as composer `draftInput`. Handoff preparation is read-only; Task Ledger linking happens only after the user confirms creation, with `relation: 'handoff_from'`, `sourceSessionKey`, and child `sessionKey`. The source session is not mutated except for that optional relationship event.
+**Handoff** is the preview-first `session_rotation` use of `ResumeCheckpoint`. Main builds a deterministic continuation draft from conservative ecosystem sources: runtime recovery context / compression artifact when available, runtime checkpoint when available, the active workspace Task Ledger snapshot, Git status, recent observability trace/error state, and recent transcript entries only as supplemental/fallback evidence. The draft is a reviewable recovery package with sections for current objective, recently confirmed work, in-progress state, recovery context projection, blockers/risks, evidence sources, and suggested next action. It does not call a model to summarize or polish the result, and it does not write Memory/Knowledge. Renderer only receives the typed `hostApi.sessions.prepareHandoff` result, shows source chips and warnings, lets the user edit the draft, and creates a fresh workspace-scoped session with the edited text as composer `draftInput`. Handoff preparation is read-only; Task Ledger linking happens only after the user confirms creation, with `relation: 'handoff_from'`, `sourceSessionKey`, and child `sessionKey`. The source session is not mutated except for that optional relationship event.
 
-**Fork** is the branch-style counterpart for the cases where the parent transcript is still safe to reuse. Renderer calls `hostApi.sessions.fork`, Main proxies the explicit Gateway RPC `sessions.fork`, and the runtime returns only after it has written the child transcript and registered the child session entry with `parentSessionKey` and `forkedFromParent`. The child inherits the active transcript branch plus runtime selection metadata such as provider/model/thinking/fast-mode settings, while ClawX copies only non-running workspace UI state (`draftInput`, work mode, model selection, knowledge scope, artifact panel state, and recent files). Fork does not copy Task Ledger nodes, Memory, Knowledge, or workflow truth; it may only append a `session_linked` relationship with `relation: 'forked_from'`. The app immediately switches to the child session, refreshes sessions/history, leaves the parent unchanged, and never generates or sends a prompt. If the runtime reports an active run, an unavailable transcript, or a parent context that exceeds the fork limit, the operation fails instead of creating an empty isolated replacement.
+**Fork** is the branch-style counterpart for the cases where the parent transcript is still safe to reuse. Renderer calls `hostApi.sessions.fork`, Main proxies the explicit Gateway RPC `sessions.fork`, and the runtime returns only after it has written the child transcript and registered the child session entry with `parentSessionKey` and `forkedFromParent`. The child inherits the active transcript branch plus runtime selection metadata such as provider/model/thinking/fast-mode settings, while Verse Claw copies only non-running workspace UI state (`draftInput`, model selection, knowledge scope, artifact panel state, and recent files). Fork does not copy Task Ledger nodes, Memory, Knowledge, or workflow truth; it may only append a `session_linked` relationship with `relation: 'forked_from'`. The app immediately switches to the child session, refreshes sessions/history, leaves the parent unchanged, and never generates or sends a prompt. If the runtime reports an active run, an unavailable transcript, or a parent context that exceeds the fork limit, the operation fails instead of creating an empty isolated replacement.
 
-The UI keeps the entry points restrained. The composer context area shows only the locally recommended continuity action: Fork by default, or Handoff when Gateway is unavailable, context pressure is high, transcript history is already truncated, compaction state carries warnings, or a recent recovery checkpoint exists for compaction/interruption/abort/review/session rotation. The session dropdown remains the full choice surface and shows both Fork and Handoff with a light Recommended marker on the suggested action. Handoff opens an editable preview dialog first. Fork creates and switches immediately. Both actions are disabled while the current session is sending, streaming, waiting for a final response, or known to have an active Gateway run; Main/Gateway perform the same safety rejection so UI state cannot be the only guard. If Fork fails because Gateway is unavailable, the parent is too large, or the transcript is unavailable, ClawX offers a Prepare handoff toast action that explicitly uses ResumeCheckpoint + Task Ledger + evidence instead of automatically falling back or creating an empty session. If Handoff preparation fails while Gateway is available, ClawX can offer Try fork. Fork and Handoff may both append Task Ledger `session_linked` events using relation metadata (`forked_from` / `handoff_from`) so long-running work can explain how sessions relate without treating either transcript as the durable task source of truth.
+The UI keeps the entry points restrained. A local continuity preflight combines run state, Gateway availability, context pressure, truncation, compaction warnings, recovery-context signals, and long-task checkpoint status into one availability/recommendation/health result (`healthy`, `risky`, or `blocked`); it is a UI safety and guidance model, not a task truth source. The composer context area shows only the locally recommended continuity action: Fork by default, or Handoff when Gateway is unavailable, context pressure is high, transcript history is already truncated, compaction state carries warnings, runtime recovery context is already available, or a recent recovery checkpoint exists for compaction/interruption/abort/review/session rotation. Its tooltip gives a short health cue plus the reason for the recommendation instead of adding another visible control. The session dropdown remains the full choice surface and shows both Fork and Handoff with a light Recommended marker on the suggested action; forked sessions can also show lightweight `forkedFromParent` lineage from `sessions.list`. Handoff opens an editable preview dialog first. Fork creates and switches immediately. Both actions are disabled while the current session is sending, streaming, waiting for a final response, queue-draining, or known to have an active Gateway run; Main/Gateway perform the same safety rejection so UI state cannot be the only guard. If Fork fails because Gateway is unavailable, the parent is too large, or the transcript is unavailable, Verse Claw offers a Prepare handoff toast action that explicitly uses ResumeCheckpoint + Task Ledger + evidence instead of automatically falling back or creating an empty session. If Handoff preparation fails while Gateway is available, Verse Claw can offer Try fork. Fork and Handoff may both append Task Ledger `session_linked` events using relation metadata (`forked_from` / `handoff_from`) so long-running work can explain how sessions relate without treating either transcript as the durable task source of truth.
 
 Checkpoint triggers:
 
@@ -642,7 +748,7 @@ Checkpoint triggers:
 
 ### 8.5.5 Mission Control / Mission Loop (MVP+)
 
-**ClawX Mission Control** is the product umbrella for long-goal autonomy. The runtime primitive is **Mission Loop**. It sits above the bounded `task_loop` and uses the existing execution surfaces instead of becoming a second agent runtime.
+**Verse Claw Mission Control** is the product umbrella for long-goal autonomy. The runtime primitive is **Mission Loop**. It sits above the bounded `task_loop` and uses the existing execution surfaces instead of becoming a second agent runtime.
 
 Mission Control is meant for objectives that should survive long conversations, session handoff, scheduled checks, review pauses, and memory evolution. A Mission is not "run forever"; it is a governed goal controller that wakes, rebuilds bounded context, runs one controlled execution pulse when useful, reflects on evidence, writes a checkpoint, proposes memory, and either schedules the next tick or reaches a terminal state. The MVP+ defaults to manual Missions, at most 8 ticks, at most 3 repair ticks, and one bounded inner `task_loop` per execution pulse.
 
@@ -689,7 +795,7 @@ Each `mission.tick` should follow a fixed control path:
 5. Collect evidence, failures, verifier output, files touched, tests run, decisions, deviations, and memory candidates.
 6. Run `MissionReviewer` to decide `continue`, `repair`, `sleep`, `ask_user`, `complete`, or `blocked`.
 7. Mirror high-value evidence into Task Ledger, create or update review/blocker/check nodes, and write a Resume Checkpoint.
-8. Create role-memory proposals or Knowledge Hub drafts for reusable knowledge; do not apply high-risk memory without review.
+8. Create role-memory proposals and Knowledge Hub drafts/inbox items for reusable knowledge. Knowledge Hub changes never become formal wiki content until user-reviewed apply; role-memory candidates follow the gatekeeper/proposal policy.
 9. Schedule the next tick through existing cron/wake infrastructure only if the Mission is still active and policy allows it.
 
 `MissionContextPack` should be smaller and more structured than a transcript:
@@ -763,7 +869,7 @@ agents.defaults.missionLoop?: {
   };
   memory?: {
     proposeAfterTick?: boolean;
-    autoApplyLowRisk?: boolean;
+    autoApplyLowRisk?: boolean; // compatibility field; Mission currently proposes candidates rather than applying Knowledge directly
   };
   reviewer?: { model?: AgentModelConfig; timeoutMs?: number };
 }
@@ -775,20 +881,21 @@ Implementation should start from `harness/specs/tasks/mission-control-loop-mvp.m
 
 ## 8.6 Knowledge Hub and Personal Wiki State
 
-Knowledge Hub is the product-level answer to reusable project knowledge. It is intentionally built around the existing OpenClaw `memory-wiki` / `memory-core` runtime path instead of adding a ClawX-native RAG stack. The goal is a usable, inspectable MVP: users can initialize a vault, import bounded local sources, search and inspect source-backed wiki results, run compile/lint, and apply curated syntheses.
+Knowledge Hub is the product-level answer to reusable project knowledge. It is intentionally built around the existing OpenClaw `memory-wiki` / `memory-core` runtime path instead of adding a Verse Claw-native RAG stack. The goal is a usable, inspectable MVP: users can initialize a vault, import bounded local sources, search and inspect source-backed wiki results, run compile/lint, and apply curated syntheses.
 
-- **Ownership**: ClawX owns the UI, host-api facade, local file selection/import boundaries, and confirmation UX. The runtime owns wiki storage, search, compile, lint, and apply semantics through `wiki.*` JSON-RPC methods.
-- **Default mode**: `knowledge.configure` enables `memory-wiki` with `vaultMode: "isolated"` and `renderMode: "native"`. The default vault is ClawX-managed and works without Obsidian.
+- **Ownership**: Verse Claw owns the UI, host-api facade, local file selection/import boundaries, and confirmation UX. The runtime owns wiki storage, search, compile, lint, and apply semantics through `wiki.*` JSON-RPC methods.
+- **Default mode**: `knowledge.configure` enables `memory-wiki` with `vaultMode: "isolated"` and `renderMode: "native"`. The default vault is Verse Claw-managed and works without Obsidian.
 - **Import model**: users explicitly import files or folders. Directory import enumerates bounded text-like files in Main and calls `wiki.ingest` per file, preserving provenance without granting broad local-vault access.
 - **OKF compatibility**: `knowledge.validateOkfBundle` and `knowledge.importOkfBundle` support Open Knowledge Format v0.1 local folders as a thin adapter. The MVP validates Markdown files with YAML frontmatter, treats `index.md` and `log.md` as reserved, preserves unknown frontmatter fields, warns on unknown types or broken internal links, and imports selected valid concepts through `wiki.ingest`. It does not support zip/tar, Git URLs, export, Google Cloud services, or a separate graph/vector store.
 - **Search and inspection**: `/knowledge` calls `wiki.search` and `wiki.get`, showing page/source/provenance so results remain auditable instead of becoming opaque chat context.
-- **Role-first governance**: Knowledge Hub introduces a configurable `Knowledge Steward` role slot (`鐭ヨ瘑绠＄悊鍛榒) for classification, tagging, duplicate/conflict/staleness checks, and change proposals. It is not a superuser: its default `canApplyDirectly` capability is always false.
-- **Knowledge Inbox and provenance**: ClawX Main owns a lightweight inbox/provenance layer for candidate knowledge and usage metadata. Chat/session/task/file/OKF/ClawGraph candidates can enter the inbox first; provenance records source refs and read/reference events without mutating formal wiki pages.
-- **Draft/proposal/audit state**: ClawX Main owns UI review state under `<openclawConfig>/knowledge/drafts`, `<openclawConfig>/knowledge/proposals`, and `<openclawConfig>/knowledge/audit.jsonl`. Formal knowledge still lives in `memory-wiki`; local draft/proposal state is the confirmation buffer.
+- **Role-first governance**: Knowledge Hub introduces a configurable `Knowledge Steward` role slot (`知识管理员`) for classification, tagging, duplicate/conflict/staleness checks, and change proposals. It is not a superuser: its default `canApplyDirectly` capability is always false.
+- **Knowledge Inbox and provenance**: Verse Claw Main owns a lightweight inbox/provenance layer for candidate knowledge and usage metadata. Chat/session/task/file/OKF/ClawGraph candidates enter the inbox/draft/proposal review path before formal wiki mutation; provenance records source refs and read/reference events without mutating formal wiki pages.
+- **Draft/proposal/audit state**: Verse Claw Main owns UI review state under `<openclawConfig>/knowledge/drafts`, `<openclawConfig>/knowledge/proposals`, and `<openclawConfig>/knowledge/audit.jsonl`. Formal knowledge still lives in `memory-wiki`; local draft/proposal state is the confirmation buffer.
 - **Draft governance**: AI-generated, steward-generated, or session-derived knowledge is never written directly. Chat's `Save to Knowledge` action and the Knowledge page draft inbox create editable drafts/proposals; `wiki.apply` is reached only through an approved draft plus explicit user apply.
 - **Change boundaries**: create/update/merge/archive/delete all travel as proposals. Updates and merges must show a diff; archive/delete must show targets and reason; users remain the only final confirmer.
 - **Chat integration**: ChatInput exposes knowledge through a Codex-style Context Palette instead of making the composer a permanent knowledge workspace. Typing `/wiki <query>` searches source-backed wiki pages, lets the user attach explicit references as visible chips, and sends those references as read-only `knowledgeReferences`; `/memory`, `/all`, `/none`, and `/scope` adjust `knowledgeScope` without granting write authority. Main injects hidden runtime metadata for tool use while renderer cleanup keeps those instructions invisible in chat transcripts. `knowledgeScope=wiki/all` and selected references are read-only and only permit knowledge search/get; they never grant write, update, archive, delete, merge, or apply authority.
-- **Obsidian boundary**: Obsidian is optional. ClawX may expose `renderMode: "obsidian"` and open/search helpers when a user configures a vault or CLI is detected, but setup, ingestion, search, and draft apply do not depend on Obsidian.
+- **Agent routing mode**: `WorkspaceUiState.knowledgeMode` controls how knowledge is invoked independently from `knowledgeScope`. The default is `suggest`: Main may run a bounded `knowledge.routeContext` search and return chips, but the references are not attached unless the user clicks Attach. `manual` disables background routing and relies on `/wiki` or explicit references. `auto-read` is opt-in and may attach at most three fresh, non-contradicted, high-confidence read-only references before send. `knowledgeScope=none` always prevents routing/search.
+- **Obsidian boundary**: Obsidian is optional. Verse Claw may expose `renderMode: "obsidian"` and open/search helpers when a user configures a vault or CLI is detected, but setup, ingestion, search, and draft apply do not depend on Obsidian.
 - **Boundary with Role Memory**: role-first memory remains the structured, gatekeeper-governed memory card system for agent roles. Knowledge Hub is a wiki workbench for source-backed notes and syntheses; the two can reference each other but neither silently mutates the other.
 - **Boundary with Task Ledger**: Task Ledger tracks current work shape and review state. Knowledge Hub stores reusable knowledge and decisions after user confirmation.
 
@@ -818,8 +925,8 @@ Hard boundaries:
 
 The `knowledge` host API is a typed facade around two layers:
 
-- **Runtime-backed wiki operations**: `status`, `init`, `configure`, `ingestFiles`, `search`, `get`, `compile`, `lint`, `openVault`, and the final `wiki.apply` call used by reviewed create proposals.
-- **ClawX-owned governance operations**: `createDraft`, `listDrafts`, `getDraft`, `updateDraft`, `reviewDraft`, `proposeChange`, `listProposals`, `previewChange`, `applyReviewedChange`, and `stewardReview`.
+- **Runtime-backed wiki operations**: `status`, `init`, `configure`, `ingestFiles`, `search`, `get`, `compile`, `lint`, `openVault`, OKF validation/import over `wiki.ingest`, and the final `wiki.apply` call used by reviewed create proposals.
+- **Verse Claw-owned governance operations**: `routeContext`, `createDraft`, `listDrafts`, `getDraft`, `updateDraft`, `reviewDraft`, `proposeChange`, `listProposals`, `previewChange`, `applyReviewedChange`, `stewardReview`, `governanceAudit`, watched directory configuration/events, and provenance recording.
 
 Drafts and proposals are intentionally Main-owned because they are UI review state rather than formal knowledge. They live under:
 
@@ -828,6 +935,8 @@ Drafts and proposals are intentionally Main-owned because they are UI review sta
 - `<openclawConfig>/knowledge/proposals/*.json`
 - `<openclawConfig>/knowledge/okf/bundles/*.json`
 - `<openclawConfig>/knowledge/provenance/*.json`
+- `<openclawConfig>/knowledge/watched-directories.json`
+- `<openclawConfig>/knowledge/watched-events/*.jsonl`
 - `<openclawConfig>/knowledge/audit.jsonl`
 
 `KnowledgeDraft` records title/body/type/source refs/tags/workspace/agent/creator/status/warnings/steward notes. `KnowledgeChangeProposal` records operation, target page ids, optional draft id, diff/reason/sources, and always carries `requiresUserConfirmation: true`. `KnowledgeStewardConfig` is role/capability shaped and defaults to `canApplyDirectly: false`.
@@ -838,13 +947,14 @@ Drafts and proposals are intentionally Main-owned because they are UI review sta
 Approved flow:
 
 1. User imports sources, validates/imports an OKF local folder, or asks Chat to use knowledge.
-2. Chat sends `knowledgeScope` as hidden read-only metadata; Main describes allowed search/get and denied apply/update/delete/archive/merge behavior.
-3. Agent or Knowledge Steward reads/searches knowledge only within the selected scope.
-4. When the user asks to save or organize knowledge, ClawX either creates an editable `KnowledgeDraft` directly or places a candidate into Knowledge Inbox for review.
-5. Optional Knowledge Steward review adds type, tags, notes, warnings, duplicate/conflict hints, or proposal suggestions without writing wiki content.
-6. User promotes inbox candidates, edits drafts, and approves the draft/proposal.
-7. `applyReviewedChange` verifies approved draft + approved proposal and only then calls `wiki.apply`.
-8. Main records an audit event, then future chat turns can retrieve the saved knowledge through search/get.
+2. Chat sends `knowledgeScope`, `knowledgeMode`, and any explicit `knowledgeReferences` as hidden read-only metadata; Main describes allowed search/get and denied apply/update/delete/archive/merge behavior.
+3. `knowledge.routeContext` may search for candidates only when mode/scope allow it. Suggest-mode candidates remain UI chips until attached by the user; Auto-read candidates become read-only references only after confidence/freshness/conflict filtering.
+4. Agent or Knowledge Steward reads/searches knowledge only within the selected scope and selected/auto references.
+5. When the user asks to save or organize knowledge, Verse Claw either creates an editable `KnowledgeDraft` directly or places a candidate into Knowledge Inbox for review.
+6. Optional Knowledge Steward review adds type, tags, notes, warnings, duplicate/conflict hints, or proposal suggestions without writing wiki content.
+7. User promotes inbox candidates, edits drafts, and approves the draft/proposal.
+8. `applyReviewedChange` verifies approved draft + approved proposal and only then calls `wiki.apply`.
+9. Main records an audit event, then future chat turns can retrieve the saved knowledge through search/get.
 
 OKF import follows a shorter explicit-write path: the user selects a local folder, Main validates it, the UI shows concepts/warnings/errors and selected concept checkboxes, then user confirmation calls `wiki.ingest` for selected concept Markdown files. OKF import never calls `wiki.apply`, never grants runtime agents write authority, and stores only adapter metadata under `knowledge/okf/bundles`.
 
@@ -870,6 +980,8 @@ The `/knowledge` page is organized as a workbench rather than an Obsidian clone:
 
 Chat uses the `/` Context Palette as the primary knowledge entry point: `/wiki` searches and attaches wiki pages as visible chips, while `/memory`, `/all`, `/none`, and `/scope` change only read scope. Legacy quick controls may remain as compatibility affordances, but the intended UX keeps the composer clean until the user explicitly summons context. Session-level "Save to Knowledge" creates a review draft and proposal; it does not write directly. When wiki context is used in an answer, the intended UX is to surface page/source references so the user can inspect what influenced the response.
 
+The composer knowledge menu also exposes `Manual / Suggest / Auto-read`. Suggest is the default because it gives the user a lightweight "found relevant knowledge" affordance without polluting the prompt. Auto-read is an explicit power-user mode: it adds only a tiny bounded set of read-only references and should show a Used Knowledge surface after send. `/knowledge mode manual|suggest|auto` changes this invocation mode without sending a prompt. `/steward audit` is also a command, but it is not a chat message: it runs `knowledge.governanceAudit`, opens the Knowledge Governance tab, and never creates proposals or applies wiki changes by itself.
+
 ### 8.6.5 OKF Compatibility
 
 OKF support is a compatibility layer, not a second knowledge backend. The Main process owns validation and metadata persistence, while formal searchable knowledge still enters OpenClaw through `memory-wiki`.
@@ -889,37 +1001,113 @@ Future breadth should extend the same governance contract instead of adding a pa
 - Add citation/recent-use tracking so chat answers can show which pages were used.
 - Add optional Obsidian open/render helpers only when configured or detected; the core workbench must remain fully usable without Obsidian.
 - Add import connectors only through bounded, explicit user actions with provenance, never through ambient filesystem access.
+### 8.6.7 Governance Dashboard
+
+Knowledge Hub surfaces governance health through an on-demand dashboard in the `/knowledge` page's Governance tab. The dashboard does not poll or scan automatically; every check is triggered by the user.
+
+**Health Checks**: Three explicit action buttons let the user run targeted diagnostics:
+- **Run Health Check** performs a full `governanceAudit`, calling both `wiki.compile` and `wiki.lint`, and produces a complete issue set.
+- **Run Lint** calls `wiki.lint` only, surfacing format/style/convention warnings without the heavier compile step.
+- **Run Compile** calls `wiki.compile` only, detecting broken references, missing pages, and synthesis integrity gaps.
+
+**Health Summary Cards**: After each check, the top of the Governance panel displays summary cards:
+- **Contradictions** — conflicting or inconsistent knowledge entries (severity: error, red).
+- **Stale** — pages not referenced or updated beyond a configurable threshold (severity: warning, amber).
+- **Dangling** — pages with broken internal links, orphaned references, or missing source anchors (severity: info or warning depending on count, blue or amber).
+
+Each card shows a count and a severity-colored border. Tapping a card scrolls to the filtered issue list.
+
+**Action List**: Below the summary cards, a scrollable list displays individual `KnowledgeGovernanceIssue` records sorted by severity (error → warning → info). Each issue shows:
+- Title, severity badge, and affected page IDs.
+- A code-context snippet or diff when applicable.
+- A dismiss button with undo support. Dismissed issues are hidden from the current view but recorded in `audit.jsonl` so they are not raised again on the next identical check result.
+
+**Steward Suggestions**: When the Knowledge Steward role is configured, the dashboard appends a suggestion section with recommended actions (e.g., "Review 3 contradicting architecture decisions", "5 pages have not been updated in 90 days"). These suggestions are advisory only and never auto-apply.
+
+**Last Check**: A timestamp row shows when the last `governanceAudit` was run, and a mini-history list shows the last 5 check results with issue-count deltas.
+
+**Implementation note**: All governance checks route through `hostApi.knowledge.governanceAudit(...)`, which Main forwards to `wiki.compile` + `wiki.lint`. Results are aggregated into `KnowledgeGovernanceIssue[]` and returned to the renderer. No check runs on a timer or on page mount without user action.
+
+### 8.6.8 Watched Directories (Review-Gated Auto-Capture)
+
+The Knowledge Hub supports review-gated automatic capture from user-configured watch directories. This feature lets project documentation surface as pending knowledge candidates without silently mutating formal wiki pages.
+
+**Configuration**: Users add watch directories via Settings → Knowledge → Watched Directories. Each entry records:
+- `path` — absolute directory path.
+- `patterns` — optional glob array (defaults to `["**/*.md", "**/*.txt", "**/*.yaml", "**/*.yml", "**/*.rst"]`).
+- `excludes` — optional glob array (e.g., `["node_modules/**", ".git/**"]`).
+- `requiresReview` — compatibility boolean normalized to `true`; automatic capture is review-gated and new files land in the Knowledge Inbox rather than being ingested directly to `sources/`.
+- `enabled` — per-directory on/off switch.
+
+A hard cap of 10 watch directories prevents resource exhaustion.
+
+**Auto-Capture Behavior**:
+- **File creation and modification** trigger review-gated capture: Main reads the changed file, creates a Knowledge Inbox item with source type `watched-file`, source refs, warnings, and provenance metadata, and does not call `wiki.ingest` directly.
+- **New files** always enter the Knowledge Inbox. Legacy `requiresReview=false` input is accepted only as compatibility data and records a warning that direct wiki ingest is disabled for the automatic path.
+- **File deletion** is detected and logged as a provenance event (`watched-file-deleted`) but never triggers automatic wiki deletion. The user must review and decide whether to archive the corresponding wiki page.
+- **Rename/move** is treated as a delete (old path) + create (new path). Main logs the mapping so provenance records link the old and new paths.
+
+**Debounce and Throttle**: File system events are debounced at 5 seconds per path. Rapid successive writes (e.g., during an editor save sequence) are coalesced into a single capture event. Throttling ensures at most one active capture per watch directory at a time.
+
+**Persistence and Restore**: Watch directory configuration is stored in `<openclawConfig>/knowledge/watched-directories.json`, with events under `<openclawConfig>/knowledge/watched-events/*.jsonl`. On app startup, Main reads this file and re-establishes watchers for every enabled directory. The watcher lifecycle is tied to the Main process, not the renderer — closing the `/knowledge` page does not stop watching.
+
+**Error Handling**: Permission errors, deleted directories, and unreadable files are surfaced as non-blocking UI notifications. A failed watch on one directory does not affect other directories. The settings UI shows a directory-level status indicator (watching / error / disabled).
+
+### 8.6.9 Governance Data Flow
+
+The governance subsystem operates entirely through the host API boundary, keeping knowledge mutation gated behind the same draft/proposal flow as the rest of Knowledge Hub.
+
+**Audit Pipeline**:
+1. User clicks **Run Health Check** (or Run Lint / Run Compile) in the Governance tab.
+2. Renderer calls `hostApi.knowledge.governanceAudit()` for the full health check, or the existing `compile` / `lint` host methods for focused runs.
+3. Main maps the scope:
+   - `"full"` → `wiki.compile()` then `wiki.lint()`, merging results.
+   - `"lint"` → `wiki.lint()` only.
+   - `"compile"` → `wiki.compile()` only.
+4. Runtime executes the requested operations against the configured wiki vault and returns structured results.
+5. Main aggregates raw results into `KnowledgeGovernanceIssue[]`, assigning each issue:
+   - `severity`: `"error"` (contradictions, broken references), `"warning"` (stale, low-confidence), `"info"` (dangling orphans, minor style issues).
+   - `affectedPages`: page IDs involved.
+   - `suggestion`: optional steward-provided or rule-derived action text.
+6. Results are sorted severity-first (error → warning → info) and returned to the renderer.
+
+**Dismissal Flow**:
+- User dismisses an issue via the UI. Renderer calls `hostApi.knowledge.dismissGovernanceIssue({ issueId, reason? })`.
+- Main appends an `audit.jsonl` entry with `type: "governance-dismissal"`, the issue fingerprint, and an optional reason.
+- On the next audit, Main compares new issues against the dismissal log. Issues whose fingerprint matches a prior dismissal are suppressed unless the underlying pages have been modified since dismissal.
+
+**Governance → Draft/Proposal Gateway**:
+- Governance issues may include a "Create Fix Proposal" action that pre-populates a `KnowledgeChangeProposal` targeting the affected pages.
+- This proposal enters the standard draft/proposal flow (see 8.6.3) — it must be reviewed and confirmed by the user before `wiki.apply` is called.
+- Governance checks are **diagnostic only**. The governance flow never calls `wiki.apply`, `wiki.archive`, or `wiki.delete` directly. Every resulting change travels the same user-confirmed create/update/merge/archive/delete proposal path as any other knowledge mutation.
+
 
 ---
 
-## 8.7 Chat Work Modes
+## 8.7 Chat Intensity and Legacy Work Mode Compatibility
 
-Chat Work Modes are the Codex-style mode layer in ClawX Chat. They are intentionally a ClawX UI/session construct, not a new runtime permission or tool policy system.
+Chat Work Modes are retired as a user-facing Chat control. The active Chat UX uses explicit reasoning/thinking effort, context/response intensity, Knowledge Scope, selected Knowledge refs, and optional existing Task Ledger node context. These are per-send preferences, not behavior presets, permission modes, or long-term state.
 
-Work Mode v2 adds a Work Kit registry for artifact-first daily work. The first deep kit set is Office Artifact: `reports`, `sheets`, `slides`, and `pdf` are enabled by default for `Docs/Data`, while `research`, `website`, `design`, and `ops` remain visible follow-up kits. Each kit declares output artifact types, required skill slugs, optional external-provider markers, quality-check hints, and library notes. ClawX owns selection, status, preview/export affordances, and explicit install UI; runtime skills/providers own the actual generation and transformation work.
+Current contract:
 
-Work Provider v1 is the Main-owned capability layer underneath those kits. `shared/types/work-provider.ts` defines provider kinds (`officeDocument`, `officeSheet`, `officeSlide`, `pdf`, `webSearch`, `webRead`, `formatConversion`, `crawler`, `ocr`, `dataFrame`), install modes, status values, and Work Kit-to-capability mapping. `electron/services/work-providers-api.ts` exposes `status`, `run`, and `validateArtifact` through typed host API only. The light core uses project-available JS libraries where present (`mammoth`, `xlsx`, `pdfjs-dist`, `@mozilla/readability`, `jsdom`) and reports missing dependencies for absent generators/converters instead of installing silently. Search is an explicit-provider interface: Tavily, Brave, Bing, SearXNG, or Custom HTTP can be configured later, but no search request is sent while config is missing. Heavy LibreOffice/Pandoc/OCR/crawler/dataframe stacks are status/interfaces only in this round.
+| Surface | Current rule |
+|---------|--------------|
+| Chat UI | No Plan/Build/Review/Docs/Data selector and no active `WorkModeSummaryPanel` in the Chat page |
+| Settings UI | No Work Mode settings section or per-mode Work Kit toggles |
+| Send path | `workMode` must not drive `hostApi.chat.sendWithMedia`, hidden prompt metadata, permissions, tools, Task Ledger state, Knowledge writes, `/loop`, Mission, or ClawGraph behavior |
+| Legacy compatibility | `shared/types/work-mode.ts`, `WorkspaceUiState.workMode`, old settings keys, old locale keys, and `WorkModeSummaryPanel` may remain only for migrations/internal compatibility tests |
+| `/loop` boundary | Legacy Work Mode and intensity controls must not create a Task Ledger root or enter checkpoint/intervention state |
 
-| Mode | Recommended permission | Knowledge default | Primary behavior |
-|---|---|---|---|
-| `plan` | `plan` | `all` | Break down approach, assumptions, risks, affected areas, and acceptance criteria; no implied implementation. |
-| `build` | `acceptEdits` | current saved scope, default `none` | Implement when clear, run verification, and summarize changes. |
-| `review` | `readOnly` | `wiki` preference or current saved scope | Findings first by severity, evidence, and test gaps; no edits unless asked. |
-| `docsData` | `acceptEdits` | `all` | Prioritize document, spreadsheet, PDF, PPTX, report artifacts, and structured summaries. |
+Work Provider v1 remains the Main-owned capability layer for Office/Search style operations. `shared/types/work-provider.ts` defines provider kinds (`officeDocument`, `officeSheet`, `officeSlide`, `pdf`, `webSearch`, `webRead`, `formatConversion`, `crawler`, `ocr`, `dataFrame`), install modes, status values, and legacy Work Kit-to-capability mapping. `electron/services/work-providers-api.ts` exposes `status`, `run`, and `validateArtifact` through typed host API only. The light core uses project-available JS libraries where present (`mammoth`, `xlsx`, `pdfjs-dist`, `@mozilla/readability`, `jsdom`) and reports missing dependencies for absent generators/converters instead of installing silently. Search is an explicit-provider interface: Tavily, Brave, Bing, SearXNG, or Custom HTTP can be configured later, but no search request is sent while config is missing. Heavy LibreOffice/Pandoc/OCR/crawler/dataframe stacks are status/interfaces only until configured.
 
-- **Preset resolver**: `shared/types/work-mode.ts` is the shared source for mode ids, i18n keys, recommended permission, default knowledge scope, response style, state widgets, legacy tool bundle labels, Work Kit definitions, user Work Kit overrides, capability aggregation, and fallback behavior.
-- **UI state**: `WorkspaceUiState.workMode` stores the selected mode with the workspace/session UI state, next to knowledge scope, draft, and artifact panel state.
-- **Settings UI**: Settings exposes the mode selector and per-mode Work Kit toggles, shows capability status from local skills/Gateway readiness, and offers explicit install buttons for built-in catalog slugs only.
-- **Send path**: `src/stores/chat.ts` forwards `workMode` through `hostApi.chat.sendWithMedia`; `electron/services/chat-api.ts` normalizes it and injects a hidden untrusted metadata block into the outgoing runtime message with kits, expected artifact types, quality checks, capability summaries, and the mode's Engineering Control contract.
-- **Panel**: `WorkModeSummaryPanel` is a lightweight status surface near the Task Ledger summary. It explains the current mode, highlights permission mismatch, and shows enabled kits, output artifact types, kit status (`ready`, `missingSkill`, `disabled`, `runtimeUnavailable`, or `optionalExternal`), and Work Provider capability counts without creating a new task data model.
-- **Boundary**: Work Mode may influence the assistant's response posture, artifact intent, and capability hints, but workspace permission mode, MCP/runtime tool availability, approval gates, sandbox policy, explicit skill installation, and OpenClaw role/tool enforcement remain the sources of authority. Plan, Build, Review, and Docs/Data carry different control contracts, but those contracts are untrusted intent metadata and cannot grant tools or mark work complete.
+Future artifact workflows should be modeled as explicit provider/tool/artifact actions or dedicated UI surfaces, not by resurrecting Work Mode as a Chat behavior switch.
 
 ---
 
 ## 9. i18n, UX, and Theming
 
 - Locales: `en`, `zh`, `ja`, `ru` under `shared/i18n/locales/`. All new user-facing strings must add to all four.
-- Chat Work Mode strings live under `composer.workMode*` and `workModePanel.*` in all four locale files.
+- Legacy Work Mode strings may remain under `composer.workMode*` and `workModePanel.*` for compatibility; new active Chat controls should use explicit effort/intensity/knowledge-scope locale keys with full locale coverage.
 - No hardcoded display strings in components (rule enforced by workspace guidelines).
 - Design tokens in `src/styles/globals.css` (surfaces, selected state, status colors, page headings).
 
@@ -953,7 +1141,7 @@ After any functional or architecture change, review `README.md`, `README.zh-CN.m
 
 ## 11. Role-First Runtime Architecture
 
-ClawX implements a **role-first agent runtime** 鈥?users don't just "pick a model," they compose and orchestrate a team of role-driven agents. This section documents the complete architecture as implemented.
+Verse Claw implements a **role-first agent runtime** 鈥?users don't just "pick a model," they compose and orchestrate a team of role-driven agents. This section documents the complete architecture as implemented.
 
 ### 11.1 Role Contracts
 
@@ -1035,9 +1223,11 @@ The `role.tools[]` list is a **true allowlist** 鈥?any tool not listed is denie
 
 ### 11.6 Role-First Memory System
 
-ClawX treats role memory as a **control plane** layered above the native OpenClaw memory stack. It does not replace or mutate `memory-core`, `MEMORY.md`, QMD, dreaming, or `memorySearch`. Native memory remains responsible for source material, search, dreams, and root memory files; role memory owns structured role-first governance, review, injection, and explainability.
+Verse Claw treats role memory as a **control plane** layered above the native OpenClaw memory stack. It does not replace or mutate `memory-core`, `MEMORY.md`, QMD, dreaming, or `memorySearch`. Native memory remains responsible for source material, search, dreams, and root memory files; role memory owns structured role-first governance, review, injection, and explainability.
 
 **Storage boundary**: role memory uses a dedicated SQLite database at `<stateDir>/role-memory.sqlite`. It never writes the native memory-search index and never edits `MEMORY.md` or `memory/*.md`. The old `<stateDir>/memory-cards.json` MVP file is intentionally not migrated, read, or deleted.
+
+**Runtime enablement boundary**: Settings -> System exposes a Role Memory switch that defaults on. The main process passes it to the Gateway as `OPENCLAW_ROLE_MEMORY_ENABLED`; when disabled, role-spawn does not resolve or inject Role Memory cards, no injection explain record is written, mutating `memory.*` RPCs return an explicit disabled error, and read RPCs return empty/disabled state. Existing `role-memory.sqlite` data remains on disk, and native OpenClaw memory (`MEMORY.md`, QMD, dreaming, `memorySearch`) is not modified.
 
 **Boundary with Knowledge Hub**: Knowledge Hub uses runtime `memory-wiki` as an inspectable wiki workbench. Role memory remains the gatekeeper-governed card system for role behavior and context injection; Knowledge Hub drafts never bypass role-memory proposal/review rules.
 
@@ -1102,6 +1292,8 @@ ClawX treats role memory as a **control plane** layered above the native OpenCla
 
 **V5 user-facing governance UX**: the Role Memory UI now treats editing as a structured proposal workflow. Users can edit semantic type, scope, sensitivity, confidence, importance, ownership, applicable roles, allowed mutators, phase tags, expiration, and evidence refs before submitting. `memory.previewProposal` dry-runs the same gatekeeper/policy/evidence/conflict checks and returns a read-only governance preview without writing cards, proposals, audit events, conflicts, or native memory. The Injections tab groups simulation results by `must`, `should`, `may`, and `never`, shows context budget usage, and keeps the detail drawer focused on the runtime impact path from proposal to governance decision to injection/lifecycle state.
 
+**V6 real utility loop**: role memory now records explicit operator feedback through `memory.feedback` and exposes it through `memory.feedbackList`, `memory.utilityReport`, and `memory.evalReport`. Utility reports are computed only from real stored signals: injection explain logs, card/proposal/conflict state, retention candidates, review outcomes, and user/reviewer feedback. Metrics that require missing evidence, such as memory-on/off task success delta, remain `null` and include an `insufficientData` explanation instead of fabricated scores. The Roles panel adds a compact Quality tab and feedback controls on recent injection candidates, so users can see sample size, helpful/harmful rates, token overhead, stale/conflict rates, and per-card utility without leaving the role governance workflow.
+
 ### 11.7 Input Control Layer (3 modes)
 
 | Mode | Behavior | Implementation |
@@ -1128,7 +1320,7 @@ Capability-aware routing preserves role-first semantics: role responsibilities d
 
 **Trace recording**: `runOrchestrationObserved` wraps plan + initial worker spawn in recorder spans 鈫?`storeRuntimeTrace(trace, scorecard)` 鈫?trace buffer (cap 100, in-memory). Deferred verifier execution is correlated through `orchestrationRunId` and child-run metadata.
 
-**Trace index**: Electron Main maintains a ClawX-owned local JSON/JSONL observability index with sanitized trace envelopes, query rows, issue summaries, correlation keys, and update timestamps. Retention defaults to 30 days or 1000 traces; index rehydration can rebuild graph data from persisted summaries plus trajectory sidecars without introducing SQLite or another database.
+**Trace index**: Electron Main maintains a Verse Claw-owned local JSON/JSONL observability index with sanitized trace envelopes, query rows, issue summaries, correlation keys, and update timestamps. Retention defaults to 30 days or 1000 traces; index rehydration can rebuild graph data from persisted summaries plus trajectory sidecars without introducing SQLite or another database.
 
 **Diagnostics**: `buildObservabilityTraceGraph` and `traceNodeDiagnostics` share a redaction pipeline and issue detector. The detector marks root-cause errors, aborted/stalled running traces, slow/token/cost hotspots, retries, approval waits, artifacts, command failures, missing verifier coverage, orphan trajectory events, and missing final output while keeping raw prompt/output/tool args/tool output out of graph, index, query, and diagnostics payloads.
 
@@ -1217,6 +1409,10 @@ The model-callable `team_orchestrate` tool is not a separate transport. It reuse
 | `memory.evidenceCheck` | read | Check role-memory evidence refs through the read-only native evidence bridge |
 | `memory.simulateInjection` | read | Dry-run Context Pack selection for a role/task using the runtime selector |
 | `memory.health` | read | Report SQLite/schema/version/supersede/evidence health for role memory |
+| `memory.utilityReport` | read | Compute real-data utility metrics from feedback, injections, review, conflict, and retention signals |
+| `memory.evalReport` | read | Return utility metrics plus an optional dry-run selector output; task success deltas stay null without paired eval data |
+| `memory.feedbackList` | read | List recorded role-memory usefulness feedback |
+| `memory.feedback` | write | Record operator feedback for a card/injection without mutating cards or native memory |
 | `memory.detail` | read | Aggregate card/proposal/conflict/injection detail, versions, audit events, and runtime impact |
 | `memory.previewProposal` | read | Dry-run proposal normalization, gatekeeper, policy, evidence, and conflict checks without mutating role or native memory |
 | `memory.restore` | write | Create a restore proposal for archived/tombstone memory without directly reactivating it |
@@ -1256,20 +1452,21 @@ ClawGraph sits above the role-first runtime as a durable long-task execution lay
 - 60+ openclaw_runtime sub-domains, ~150+ advertised gateway methods, 136 bundled extensions
 - Plugin SDK (`openclaw/plugin-sdk/*`) with narrow subpath barrels
 - Renderer extension framework (host-api contribution + marketplace + auth)
-- i18n: 4 locales, all pages covered (including role-first `roles.*`, `observability.*`, Knowledge Hub `knowledge.*`, ClawGraph `clawGraph.*`, `composer.knowledgeScope.*`, `composer.inputMode.*`, `composer.queue*`, `composer.workMode.*`, `workModePanel.*`)
+- i18n: 4 locales, all pages covered (including role-first `roles.*`, `observability.*`, Knowledge Hub `knowledge.*`, ClawGraph `clawGraph.*`, `composer.knowledgeScope.*`, `composer.inputMode.*`, `composer.queue*`, and legacy `composer.workMode.*` / `workModePanel.*` compatibility keys)
 - Design tokens + component conventions in `globals.css`
 - E2E harness (Playwright) + unit harness (Vitest) + comms replay/baseline/compare
 - Token usage dashboard reading from runtime `.jsonl` transcripts
-- ClawHub integration in ClawX (search / install / uninstall / open)
-- OpenClaw Doctor button in ClawX Settings 鈫?Advanced 鈫?Developer
+- ClawHub integration in Verse Claw (search / install / uninstall / open)
+- OpenClaw Doctor button in Verse Claw Settings 鈫?Advanced 鈫?Developer
+- Agent Browser browser automation v1: Cron `browserAutomation` tasks compile to isolated `agentTurn` payloads with `toolsAllow: ["agent_browser"]`, managed browser/profile/authState persistence, safety gates, diagnostics, and Run Detail evidence cards
 - Auto-update (electron-updater) with multi-channel
 - Workspace browser (file tree + terminal + web preview + artifact panel)
 - Workspace permission and sandbox control: `policy-light` default, optional `docker-strong` / `ssh-strong`, shared effective sandbox policy resolver, OpenClaw `sandbox.mode=off` lightweight mapping, Docker degraded fallback, and command/RPC risk gates
 - Workspace Task Ledger (append-only JSONL task state, Tree/DAG/History/Review UI, Chat summary, offline HTML export)
 - ClawGraph Runtime v1 (workspace YAML DSL, YAML-to-IR compiler, boss scheduler, stateless worker handoffs, audit/review flow, `/clawgraph` UI)
 - Long-task stability stack: Chat transcript for conversation, Chat Input Mode for human intervention, manual compaction for pressure relief, Resume Checkpoint for continuation, Context Pack for bounded injection, ClawGraph for execution, Task Ledger for durable work truth, Observability for evidence, Knowledge Hub for reusable knowledge
-- Knowledge Hub (ClawX-managed native wiki by default, bounded local import, search/inspect, compile/lint, draft/proposal review, Knowledge Steward governance, user-confirmed apply, optional Obsidian render mode)
-- Chat Work Mode v2 (Plan/Build/Review/Docs/Data Settings controls, per-session persistence, configurable Work Kits, legacy tool-bundle compatibility, Main-injected untrusted metadata with artifact and capability hints, mode summary panel, full i18n, unit/E2E coverage)
+- Knowledge Hub (Verse Claw-managed native wiki by default, bounded local import, search/inspect, compile/lint, draft/proposal review, Knowledge Steward governance, user-confirmed apply, optional Obsidian render mode)
+- Chat slimming (Work Mode UI/send behavior retired, explicit effort/intensity preferences retained, legacy Work Mode data kept only for compatibility, Work Provider APIs remain Main-owned for Office/Search operations)
 - **Role-first runtime** (see 搂11 for full detail):
   - 8 built-in roles + config-defined custom roles with validation
   - 3 orchestration modes (router / lead-workers / adversarial-review) with parallel worker spawn and deferred verifier gating
@@ -1284,13 +1481,14 @@ ClawGraph sits above the role-first runtime as a durable long-task execution lay
 - Orchestration reliability: per-worker timeout, parallel workers, deferred verifier gating, error recovery
 - Audit logging (structured `[role-audit]` via `context.logGateway`)
 - External CLI integration (codex/claude/gemini/opencode/droid ACP harness backends)
-  - UI: RolesOrchestrationPanel, RoleCard, OrchestrationPlanView, role-visuals, Observability dashboard, Task Ledger, ClawGraph, ChatInput input-mode and work-mode selectors, WorkModeSummaryPanel with Work Kit capability status
+  - UI: RolesOrchestrationPanel, RoleCard, OrchestrationPlanView, role-visuals, Observability dashboard, Task Ledger, ClawGraph, ChatInput input-mode, knowledge-scope, active task-node, and effort/intensity controls
 
 ### 12.2 Known limitations / non-finished
 
 - Workspace + permission control is implemented for Main-owned files, terminal, web preview, Git, Gateway RPC, OpenClaw exec config sync, and sandbox status. Remaining work is broader native OS isolation beyond `policy-light` / Windows-light metadata and fuller UI/E2E coverage for every approval surface.
 - `policy-light` is a control-plane sandbox, not a container, VM, or kernel-equivalent isolation boundary. Docker/SSH remain optional strong providers and must be explicitly selected/configured.
 - ClawGraph v1 is a running MVP, not a full workflow editor. Run state is currently in-memory, graph edits during a run enter review instead of mutating the active DAG directly, and audit does not prove external database or SaaS truth without explicit evidence.
+- Agent Browser browser automation is a runtime agent surface, not a browser product. First-round scope intentionally excludes address-bar/tab/bookmark/history/download/DevTools UI, visual RPA builders, and broad profile-management UX; external browser/CDP/local Chrome profile reuse stays behind explicit advanced gating.
 - Custom agent + MCP-CDP remote control is also a plan document (`docs/mcp-custom-agent-and-cdp-remote-control-plan.md`) awaiting implementation.
 - `diffs` extension is on the runtime side; the Monaco diff viewer in the renderer is wired but not all runtime methods have UI affordances yet.
 - The `device.token.rotate` / `device.token.revoke` and other pairing flows are exposed on the runtime side, but the renderer UI for full device lifecycle is partial.
@@ -1301,9 +1499,9 @@ This roadmap turns the existing long-task, Git, plugin, rules, diff, and evidenc
 
 #### Codex / Claude Code Parity Matrix
 
-| Capability | Codex / Claude Code expectation | Existing ClawX foundation | Product entry gap | vNext slice | Priority |
+| Capability | Codex / Claude Code expectation | Existing Verse Claw foundation | Product entry gap | vNext slice | Priority |
 |---|---|---|---|---|---|
-| Code review | Findings-first review, severity ordering, file/line evidence, test gaps, and no accidental edits | Chat Review work mode, Observability trace graph, Task Ledger review nodes, role-first verifier/reviewer roles | No unified review inbox that joins code diff, runtime evidence, ledger review items, and actionable findings | Code Review Center | P0 |
+| Code review | Findings-first review, severity ordering, file/line evidence, test gaps, and no accidental edits | Review-style Chat behavior, Observability trace graph, Task Ledger review nodes, role-first verifier/reviewer roles | No unified review inbox that joins code diff, runtime evidence, ledger review items, and actionable findings | Code Review Center | P0 |
 | Diff inspection | Fast before/after inspection, staged/unstaged views, generated patch review, and safe apply/reject flow | Workspace Git panel, `shared/types/git.ts`, Monaco diff preview, runtime `diffs` extension | Diff surfaces are split across file preview, Git, runtime diffs, and Knowledge proposal diffs | Diff Workbench | P0 |
 | Project rules | Agent behavior should be grounded in visible project rules, task specs, and local instructions | `AGENTS.md`, `harness/specs/**`, Project Rules Center MVP work, renderer/Main boundary rules | No consolidated product view for active rules, selected task context, validation commands, and rule drift | Project Rules Center | P0 |
 | Developer commands | Discoverable, repeatable commands for typecheck, test, e2e, harness, doctor, and diagnostics | `package.json` scripts, Doctor buttons, terminal, harness CLI, diagnostics APIs | Commands are discoverable only through docs/terminal, not a typed command palette/status surface | Developer Command Surface | P1 |
@@ -1358,8 +1556,8 @@ This roadmap turns the existing long-task, Git, plugin, rules, diff, and evidenc
 #### Code Review Center
 
 - **Goal**: Build a P0 review inbox for code changes that leads with findings, severity, evidence refs, file/line anchors, test gaps, and recommended next actions.
-- **Non-goals**: Do not auto-edit code during review, do not merge PRs, and do not replace Chat Review mode or Observability.
-- **Existing foundation**: Chat Review work mode, role-first reviewer/verifier roles, Observability, Task Ledger review queue, Git diff types, and ClawGraph audit/review flow.
+- **Non-goals**: Do not auto-edit code during review, do not merge PRs, and do not replace review-style Chat behavior or Observability.
+- **Existing foundation**: Review-style Chat behavior, role-first reviewer/verifier roles, Observability, Task Ledger review queue, Git diff types, and ClawGraph audit/review flow.
 - **Product entry gaps**: Review data is not centralized; findings are not normalized across Chat, Git, traces, ledger items, and runtime audit outcomes.
 - **MVP path**: `/code-review` exposes a read-only Review Center backed by `hostApi.codeReview`. Main process collects Git diffs for uncommitted changes, base branch comparison, or a selected commit; runs a model-only/no-tool review through the Gateway; normalizes findings to severity/file/line/reason/suggested fix; records a sanitized Observability trace; and can create Task Ledger `review` nodes without touching the working tree.
 - **Acceptance criteria**: Users can open the Review Center, choose uncommitted/base-branch/commit targets, add a custom focus, inspect severity-sorted findings with file/line/reason/suggested-fix fields, and create Task Ledger `review` nodes without staging, committing, or editing files.
@@ -1405,25 +1603,27 @@ Code Review module: `codeReview` (`run`, `createTaskLedgerNode`).
 
 ## 15. Appendix C: Glossary
 
+- **Agent Browser / Agent OS Browser**: the runtime-level browser automation environment exposed to agents through `agent_browser`. Verse Claw owns managed browser windows, profile/authState references, security gates, and evidence display; the runtime owns tool invocation and telemetry, while Cron can schedule it as isolated `agentTurn` work.
+- **Cron browserAutomation task**: a Cron job kind that stores browser task intent (`url`, objective, login-state reference, safety policy, diagnostics, and success/failure conditions) and compiles it into a normal agent turn with `toolsAllow: ["agent_browser"]`.
 - **Memory Proposal**: a proposal-first memory mutation record used for create, update, archive, supersede, and tombstone operations before any card content changes.
 - **Injection Explain Log**: a persisted role-spawn trace describing selected and skipped memory candidates, scores, buckets, penalties, budget, and truncation reasons.
-- **Knowledge Hub**: the ClawX UI and host-api layer over OpenClaw `memory-wiki`, used for source-backed wiki knowledge, bounded import, search/inspect, compile/lint, governed draft/proposal review, and user-confirmed synthesis apply.
+- **Knowledge Hub**: the Verse Claw UI and host-api layer over OpenClaw `memory-wiki`, used for source-backed wiki knowledge, bounded import, search/inspect, compile/lint, governed draft/proposal review, and user-confirmed synthesis apply.
 - **Knowledge Steward**: a role-first governance slot for classifying, tagging, checking sources/conflicts/duplicates/staleness, and proposing knowledge changes. It cannot apply changes directly by default.
 - **Knowledge Draft**: editable pending knowledge content created by the user, an agent, or the Knowledge Steward; it remains outside the formal wiki until user review.
 - **Knowledge Inbox Item**: a candidate knowledge unit from chat, Task Ledger, ClawGraph, files, OKF, wiki search, or manual input. It can be promoted into a draft/proposal or dismissed, but it is never formal wiki content by itself.
 - **Knowledge Change Proposal**: a create/update/merge/archive/delete proposal that carries targets, sources, reason, and diff or preview details before any formal wiki mutation.
 - **Knowledge Scope**: the per-message Chat setting (`none`, `memory`, `wiki`, `all`) that tells the runtime which memory/wiki corpus may be read for that send. It is read-only intent and never grants write, update, archive, delete, merge, or apply authority.
 - **Knowledge Provenance Record**: Main-owned metadata that tracks source refs and read/reference events for a wiki page, draft, inbox item, OKF concept, or manual target without mutating formal knowledge.
-- **OKF Bundle**: an Open Knowledge Format local Markdown folder with YAML frontmatter concepts. ClawX validates and imports it as a compatibility adapter over `memory-wiki`, preserving metadata while keeping user confirmation and `wiki.ingest` boundaries.
-- **Work Mode**: the per-session Chat setting (`plan`, `build`, `review`, `docsData`) that tells the next send which response posture, Work Kits, artifact hints, and capability hints to prefer without changing actual permissions.
-- **Work Kit**: an artifact-focused Work Mode capability declaration such as `reports`, `sheets`, `slides`, `pdf`, `research`, `website`, `design`, or `ops`. Kits describe expected output types, required skill slugs, optional external-provider hints, and quality checks; they do not grant tools.
-- **Work Provider**: a Main-owned Office/Search capability adapter behind Work Kits. Providers expose status, controlled runs, and artifact validation through `hostApi.workProviders`; they are not model providers and do not bypass workspace sandbox, approval, or runtime tool policy.
-- **Work Mode Preset**: the shared ClawX preset record (`shared/types/work-mode.ts`) containing label keys, recommended permission, default knowledge scope, response style, state widgets, legacy tool bundle labels, Work Kits, and runtime intent instruction.
-- **Engineering Control Signals**: the internal long-conversation constraint fields (`controlSignals`, `validationState`, `acceptanceStatus`, and quality dimensions) used by ResumeCheckpoint, Task Loop, Mission Loop, Work Mode metadata, and Task Ledger metadata to express evidence gaps, missing validation, scope drift, unverified claims, and replan requirements without creating a second task fact source.
-- **Mission Control**: the planned ClawX product layer for long-goal autonomy. It binds user objectives to Task Ledger state, wakes on manual/scheduled/event ticks, rebuilds bounded context from checkpoints and evidence, and decides whether a Mission should continue, repair, sleep, ask the user, complete, or block.
+- **OKF Bundle**: an Open Knowledge Format local Markdown folder with YAML frontmatter concepts. Verse Claw validates and imports it as a compatibility adapter over `memory-wiki`, preserving metadata while keeping user confirmation and `wiki.ingest` boundaries.
+- **Work Mode (legacy)**: the retired per-session Chat setting (`plan`, `build`, `review`, `docsData`). It remains only as deprecated/internal compatibility data and must not drive Chat behavior, permissions, tools, Task Ledger state, Knowledge writes, `/loop`, Mission, ClawGraph, or runtime policy.
+- **Work Kit (legacy compatibility)**: an artifact-focused legacy declaration such as `reports`, `sheets`, `slides`, `pdf`, `research`, `website`, `design`, or `ops`. Kits may still help map compatibility data to Work Provider capabilities, but they do not grant tools or define active Chat modes.
+- **Work Provider**: a Main-owned Office/Search capability adapter. Providers expose status, source kinds, controlled runs, and artifact validation through `hostApi.workProviders`; they are not model providers and do not bypass workspace sandbox, approval, or runtime tool policy.
+- **Work Mode Preset (legacy)**: the deprecated shared compatibility record (`shared/types/work-mode.ts`) containing old label keys, recommended permission hints, default knowledge scope hints, response style, state widgets, legacy tool bundle labels, Work Kits, and runtime intent text for tests/migrations only.
+- **Engineering Control Signals**: the internal long-conversation constraint fields (`controlSignals`, `validationState`, `acceptanceStatus`, and quality dimensions) used by ResumeCheckpoint, Task Loop, Mission Loop, and Task Ledger metadata to express evidence gaps, missing validation, scope drift, unverified claims, and replan requirements without creating a second task fact source.
+- **Mission Control**: the planned Verse Claw product layer for long-goal autonomy. It binds user objectives to Task Ledger state, wakes on manual/scheduled/event ticks, rebuilds bounded context from checkpoints and evidence, and decides whether a Mission should continue, repair, sleep, ask the user, complete, or block.
 - **Mission Loop**: the planned runtime primitive behind Mission Control. It is an outer policy loop above `task_loop`, ClawGraph, cron/wake, observability, and governed memory proposal flows.
-- **Wiki Vault**: the `memory-wiki` storage surface. The default vault is ClawX-managed and isolated; Obsidian-backed rendering is optional.
-- **Task Ledger**: the workspace-scoped, agent-neutral long-task state ledger owned by ClawX Main; it records work structure and progress, not reusable knowledge or run telemetry.
+- **Wiki Vault**: the `memory-wiki` storage surface. The default vault is Verse Claw-managed and isolated; Obsidian-backed rendering is optional.
+- **Task Ledger**: the workspace-scoped, agent-neutral long-task state ledger owned by Verse Claw Main; it records work structure and progress, not reusable knowledge or run telemetry.
 - **Task Event**: an append-only ledger event used as the source of truth for task state; snapshots are projections from events.
 - **Task Snapshot**: the materialized read model consumed by the UI, containing nodes, edges, current goal, blockers, review queue, recent decisions, session links, and warnings.
 - **Review Node**: a task ledger node or dependency state that requires user confirmation before being treated as settled.
@@ -1431,7 +1631,7 @@ Code Review module: `codeReview` (`run`, `createTaskLedgerNode`).
 - **ClawGraph Handoff**: the fenced `clawgraph_handoff` JSON object a worker must return so a downstream node can proceed without inheriting the upstream transcript.
 - **ClawGraph Review Item**: a frozen audit failure, graph-change proposal, or uncertain completion that requires explicit user approval or rejection through `clawgraph.review`.
 - **Resume Checkpoint**: the minimal structured continuation record used after compaction, interrupt, abort, ClawGraph handoff, audit failure, review, or session rotation; it lets a new run resume without replaying the full transcript.
-- **Chat Session Fork**: a runtime-backed child conversation that inherits the source session's active transcript branch and non-running UI state without generating a handoff draft, auto-sending, or creating a Git branch/worktree.
+- **Chat Session Fork**: a runtime-backed child conversation that inherits the source session's active transcript branch and non-running UI state without generating a handoff draft, auto-sending, or creating a Git branch/worktree. Fork lineage is session metadata for navigation, not task truth.
 
 - **Workspace** 鈥?a user-managed working path (folder) used to scope terminals, file previews, and web preview.
 - **Agent** 鈥?a configured AI persona with its own model, channel bindings, and per-agent SQLite.
@@ -1439,7 +1639,7 @@ Code Review module: `codeReview` (`run`, `createTaskLedgerNode`).
 - **Skill** 鈥?a runtime-loadable capability the agent can invoke.
 - **Provider** 鈥?a model or multimodal vendor.
 - **Talk** 鈥?realtime voice sessions (provider + bridge).
-- **Approval** 鈥?exec / plugin approval events that the ClawX permission panel decides on.
+- **Approval** 鈥?exec / plugin approval events that the Verse Claw permission panel decides on.
 - **Capability** 鈥?a method the runtime has advertised as available *right now* (used to gate UI buttons during cold start).
 - **Host event** 鈥?a push event from the main process to the renderer (mirrors a runtime broadcast event).
 - **Role Contract** 鈥?a task contract defining an agent's responsibilities, tools, permissions, effort, and output schema (not a persona).

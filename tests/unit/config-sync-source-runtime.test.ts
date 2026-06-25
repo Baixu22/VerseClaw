@@ -1,12 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 
-const { mockSpawnSync } = vi.hoisted(() => ({
+const { mockExecFile, mockSpawnSync } = vi.hoisted(() => ({
+  mockExecFile: vi.fn(),
   mockSpawnSync: vi.fn(),
 }));
 
 vi.mock('node:child_process', () => ({
+  execFile: mockExecFile,
   spawnSync: mockSpawnSync,
   default: {
+    execFile: mockExecFile,
     spawnSync: mockSpawnSync,
   },
 }));
@@ -84,7 +87,7 @@ describe('applySourceRuntimeSandboxAutoFallback', () => {
     expect(applySourceRuntimeSandboxAutoFallback(input)).toBe(input);
   });
 
-  it('removes stale ClawX-only sandbox diagnostics from source runtime config', async () => {
+  it('removes stale Verse Claw-only sandbox diagnostics from source runtime config', async () => {
     mockSpawnSync.mockReturnValue({ status: 1 });
 
     const { applySourceRuntimeSandboxAutoFallback } = await import('@electron/gateway/config-sync');

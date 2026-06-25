@@ -10,7 +10,7 @@
  * Strategy: drop the OLDEST auto-promoted sections (date-ordered) until
  * the file plus the new section fit within the budget. User-authored
  * content (anything that is not a `## Promoted From Short-Term Memory
- * (DATE)` section) is preserved unconditionally â€” only dreaming-owned
+ * (DATE)` section) is preserved unconditionally â€?only dreaming-owned
  * sections are eligible for compaction.
  */
 
@@ -110,7 +110,7 @@ export type CompactMemoryResult = {
  *   memory is returned unchanged.
  * - If the budget cannot be satisfied even by dropping every promotion
  *   section, the function drops them all and returns; the caller writes
- *   the new section anyway. This is the "log and continue" failure mode â€”
+ *   the new section anyway. This is the "log and continue" failure mode â€?
  *   refusing the new write would silently swallow the freshest material.
  */
 export function compactMemoryForBudget(params: CompactMemoryParams): CompactMemoryResult {

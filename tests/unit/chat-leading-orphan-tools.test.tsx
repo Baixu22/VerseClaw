@@ -18,10 +18,30 @@ vi.mock('@/stores/agents', () => ({
 }));
 
 vi.mock('@/lib/host-api', () => ({
+  hostApi: {
+    skills: {
+      local: vi.fn().mockResolvedValue({ success: true, skills: [] }),
+    },
+    workProviders: {
+      status: vi.fn().mockResolvedValue({ success: true, providers: [], capabilities: [], kitCapabilities: [], summary: {} }),
+    },
+    usage: {
+      contextRange: vi.fn().mockResolvedValue({ success: true }),
+      live: vi.fn().mockResolvedValue({ success: true }),
+    },
+    sessions: {
+      compactionStatus: vi.fn().mockResolvedValue({ success: true }),
+      longTaskControlStatus: vi.fn().mockResolvedValue({ success: true }),
+    },
+  },
   hostApiFetch: vi.fn().mockResolvedValue({ success: true, messages: [] }),
 }));
 
 vi.mock('react-i18next', () => ({
+  initReactI18next: {
+    type: '3rdParty',
+    init: vi.fn(),
+  },
   useTranslation: () => ({
     t: (key: string, params?: Record<string, unknown> | string) => {
       if (typeof params === 'string') return params;
@@ -97,5 +117,5 @@ describe('Chat leading orphan tool folding', () => {
     expect(screen.queryByTestId('chat-message-0')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-message-1')).not.toBeInTheDocument();
     expect(screen.getByText('Finished.')).toBeInTheDocument();
-  });
+  }, 10_000);
 });

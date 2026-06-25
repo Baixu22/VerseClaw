@@ -2,7 +2,7 @@
  * Self-hosted Monaco Editor loader.
  *
  * `@monaco-editor/react` defaults to fetching Monaco from a CDN, which is not
- * suitable for ClawX's offline Electron runtime. Keep this loader deliberately
+ * suitable for Verse Claw's offline Electron runtime. Keep this loader deliberately
  * lean: file preview needs fast viewing/editing more than IDE diagnostics, so
  * we use the editor API, basic tokenizers, and one lightweight editor worker.
  */

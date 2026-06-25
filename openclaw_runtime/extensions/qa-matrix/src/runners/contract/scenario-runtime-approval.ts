@@ -14,8 +14,8 @@ import {
 } from "./scenario-runtime-shared.js";
 import type { MatrixQaScenarioExecution } from "./scenario-types.js";
 
-const MATRIX_QA_APPROVAL_ALLOW_ONCE_REACTION = "‚úÖ";
-const MATRIX_QA_APPROVAL_DENY_REACTION = "‚ùå";
+const MATRIX_QA_APPROVAL_ALLOW_ONCE_REACTION = "‚ú?;
+const MATRIX_QA_APPROVAL_DENY_REACTION = "‚ù?;
 const MATRIX_QA_APPROVAL_DECISION_TIMEOUT_MS = 30_000;
 const MATRIX_QA_APPROVAL_SHORT_WINDOW_MS = 4_000;
 const MATRIX_QA_APPROVAL_LONG_COMMAND_TEXT = "matrix approval chunk fallback ".repeat(40);

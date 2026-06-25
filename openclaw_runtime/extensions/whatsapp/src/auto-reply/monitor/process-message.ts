@@ -214,9 +214,9 @@ export async function processMessage(params: {
   statusReactionController?: StatusReactionController | null;
   /** Pre-computed audio transcript from a caller-level preflight, used to avoid
    * re-transcribing the same voice note once per broadcast agent.
-   * - string  â†’ transcript obtained; use it directly, skip internal STT
-   * - null    â†’ preflight was attempted but failed / returned nothing; skip internal STT
-   * - undefined (omitted) â†’ caller did not attempt preflight; run internal STT as normal */
+   * - string  â†?transcript obtained; use it directly, skip internal STT
+   * - null    â†?preflight was attempted but failed / returned nothing; skip internal STT
+   * - undefined (omitted) â†?caller did not attempt preflight; run internal STT as normal */
   preflightAudioTranscript?: string | null;
 }) {
   const conversationId = params.msg.conversationId ?? params.msg.from;
@@ -244,9 +244,9 @@ export async function processMessage(params: {
   // broadcast fan-out) the pre-computed result is reused to avoid N STT calls
   // for N broadcast agents on the same voice note.
   // preflightAudioTranscript semantics:
-  //   string    â†’ transcript ready, use it
-  //   null      â†’ caller attempted but got nothing; skip internal STT to avoid retry
-  //   undefined â†’ caller did not attempt; run internal STT
+  //   string    â†?transcript ready, use it
+  //   null      â†?caller attempted but got nothing; skip internal STT to avoid retry
+  //   undefined â†?caller did not attempt; run internal STT
   let audioTranscript: string | undefined = params.preflightAudioTranscript ?? undefined;
   const hasAudioBody =
     params.msg.mediaType?.startsWith("audio/") === true && params.msg.body === "<media:audio>";
@@ -341,7 +341,7 @@ export async function processMessage(params: {
   }
 
   // When statusReactions.enabled, a StatusReactionController takes over lifecycle
-  // signaling (queued â†’ thinking â†’ tool â†’ done/error). The plain ackReaction is
+  // signaling (queued â†?thinking â†?tool â†?done/error). The plain ackReaction is
   // skipped so the same message slot isn't used for two competing systems.
   const statusReactionController =
     params.statusReactionController ??

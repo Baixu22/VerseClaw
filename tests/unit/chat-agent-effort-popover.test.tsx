@@ -107,4 +107,95 @@ describe('ChatAgentEffortButton', () => {
     const [, value] = updateAgentReasoningEffort.mock.calls.at(-1)!;
     expect(value).toBe('xhigh');
   });
+
+  it('uses gray card background instead of pure black', async () => {
+    renderButton();
+    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
+    const popover = await screen.findByTestId('chat-agent-effort-popover');
+    const card = popover.querySelector('.effort-card') as HTMLElement;
+    expect(card).toBeTruthy();
+    // #18181b is the gray background, not #000000
+    expect(card.className).toContain('bg-[#18181b]');
+    expect(card.className).not.toContain('bg-black');
+  });
+
+  it('renders squircle SVG clip-path definitions', async () => {
+    renderButton();
+    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
+    const popover = await screen.findByTestId('chat-agent-effort-popover');
+    const clipPaths = popover.querySelectorAll('clipPath');
+    // Two clip-paths: one for the card, one for the track
+    expect(clipPaths.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('applies clip-path url() to the card element', async () => {
+    renderButton();
+    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
+    const popover = await screen.findByTestId('chat-agent-effort-popover');
+    const card = popover.querySelector('.effort-card') as HTMLElement;
+    const clipPath = card.style.clipPath;
+    // jsdom may serialize as url("#...") or url(#...)
+    expect(clipPath).toMatch(/url\(["']?#effort-card-clip-/);
+  });
+
+  it('shows all 7 tick labels under the track', async () => {
+    renderButton();
+    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
+    await screen.findByTestId('chat-agent-effort-slider');
+    const popover = screen.getByTestId('chat-agent-effort-popover');
+    // The tick labels are in a flex container right after the track
+    const tickContainer = popover.querySelector('.mt-2.flex.justify-between');
+    expect(tickContainer).toBeTruthy();
+    const ticks = tickContainer!.querySelectorAll('span');
+    expect(ticks.length).toBe(7);
+  });
+
+  it('highlights the active tick label in fuchsia', async () => {
+    renderButton();
+    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
+    await screen.findByTestId('chat-agent-effort-slider');
+    const popover = screen.getByTestId('chat-agent-effort-popover');
+    const tickContainer = popover.querySelector('.mt-2.flex.justify-between');
+    const ticks = tickContainer!.querySelectorAll('span');
+    // The agent starts at 'high' (index 4), so tick 4 should be fuchsia
+    const activeTick = ticks[4];
+    expect(activeTick.className).toContain('text-fuchsia-400');
+  });
+
+  it('closes the popover on Escape key', async () => {
+    renderButton();
+    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
+    await screen.findByTestId('chat-agent-effort-popover');
+    fireEvent.keyDown(document, { key: 'Escape' });
+    await waitFor(() => {
+      expect(screen.queryByTestId('chat-agent-effort-popover')).not.toBeInTheDocument();
+    });
+  });
+
+  it('does not commit when slider value matches the initial effort', async () => {
+    renderButton();
+    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
+    const slider = await screen.findByTestId('chat-agent-effort-slider');
+    // Agent starts at 'high' (index 4) — setting to the same value should not call update
+    fireEvent.change(slider, { target: { value: '4' } });
+    // Wait a tick to ensure no async call fires
+    await new Promise((r) => setTimeout(r, 50));
+    expect(updateAgentReasoningEffort).not.toHaveBeenCalled();
+  });
+
+  it('toggles chevron rotation when popover opens', async () => {
+    renderButton();
+    const btn = screen.getByTestId('chat-agent-effort-button');
+    const chevron = btn.querySelector('svg.lucide-chevron-down') as SVGElement;
+    expect(chevron).toBeTruthy();
+    // SVG elements have SVGAnimatedString for className — use getAttribute
+    const initialClass = chevron.getAttribute('class') ?? '';
+    expect(initialClass).not.toContain('rotate-180');
+    fireEvent.click(btn);
+    await screen.findByTestId('chat-agent-effort-popover');
+    // After opening, chevron should be rotated
+    const chevronAfter = screen.getByTestId('chat-agent-effort-button').querySelector('svg.lucide-chevron-down') as SVGElement;
+    const afterClass = chevronAfter.getAttribute('class') ?? '';
+    expect(afterClass).toContain('rotate-180');
+  });
 });

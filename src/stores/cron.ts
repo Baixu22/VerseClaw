@@ -47,14 +47,10 @@ export const useCronStore = create<CronState>((set) => ({
       try {
         const result = await hostApi.cron.list();
 
-        // Gateway now correctly returns agentId for all jobs.
-        // If Gateway returned fewer jobs than we have (e.g. race condition), preserve
-        // the extra ones from current state to avoid losing data.
-        const resultIds = new Set(result.map((j) => j.id));
-        const extraJobs = currentJobs.filter((j) => !resultIds.has(j.id));
-        const allJobs = [...result, ...extraJobs];
-
-        set({ jobs: allJobs, loading: false });
+        // Treat the host-api result as the source of truth. It may be a
+        // Gateway snapshot or a read-only config fallback, but it should not
+        // be mixed with stale renderer state.
+        set({ jobs: result, loading: false });
       } catch (error) {
         // Preserve previous jobs on error so the user sees stale data instead of nothing.
         set({ error: String(error), loading: false });

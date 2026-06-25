@@ -26,6 +26,16 @@ export type WorkProviderInstallMode =
   | 'externalBinary'
   | 'externalService';
 
+export type WorkProviderSourceKind =
+  | 'builtInLibrary'
+  | 'optionalPackage'
+  | 'externalBinary'
+  | 'externalService'
+  | 'customHttp'
+  | 'runtimeSkill'
+  | 'mcpServer'
+  | 'openClawPlugin';
+
 export type WorkProviderCapability =
   | 'document.read'
   | 'document.write'
@@ -69,6 +79,7 @@ export interface WorkProviderDefinition {
   labelKey: string;
   descriptionKey: string;
   installMode: WorkProviderInstallMode;
+  sourceKinds: WorkProviderSourceKind[];
   dependencyIds: string[];
   capabilities: WorkProviderCapabilityDefinition[];
   optional: boolean;
@@ -88,6 +99,7 @@ export interface WorkProviderCapabilityStatus {
   status: WorkProviderStatus;
   missingDependencyIds: string[];
   installMode: WorkProviderInstallMode;
+  sourceKinds: WorkProviderSourceKind[];
 }
 
 export interface WorkProviderResolved {
@@ -96,6 +108,7 @@ export interface WorkProviderResolved {
   labelKey: string;
   descriptionKey: string;
   installMode: WorkProviderInstallMode;
+  sourceKinds: WorkProviderSourceKind[];
   status: WorkProviderStatus;
   dependencyIds: string[];
   missingDependencyIds: string[];
@@ -108,9 +121,11 @@ export interface WorkKitProviderCapability {
   capability: WorkProviderCapability;
   providerIds: WorkProviderId[];
   statuses: WorkProviderStatus[];
+  sourceKinds: WorkProviderSourceKind[];
 }
 
 export type WorkProviderStatusSummary = Record<WorkProviderStatus, number>;
+export type WorkProviderSourceSummary = Record<WorkProviderSourceKind, number>;
 
 export interface WorkProviderStatusSnapshot {
   success: true;
@@ -118,6 +133,7 @@ export interface WorkProviderStatusSnapshot {
   capabilities: WorkProviderCapabilityStatus[];
   kitCapabilities: WorkKitProviderCapability[];
   summary: WorkProviderStatusSummary;
+  sourceSummary: WorkProviderSourceSummary;
 }
 
 export type WorkProviderRunPayload = {
@@ -157,6 +173,17 @@ export const WORK_PROVIDER_STATUSES: WorkProviderStatus[] = [
   'runtimeUnavailable',
 ];
 
+export const WORK_PROVIDER_SOURCE_KINDS: WorkProviderSourceKind[] = [
+  'builtInLibrary',
+  'optionalPackage',
+  'externalBinary',
+  'externalService',
+  'customHttp',
+  'runtimeSkill',
+  'mcpServer',
+  'openClawPlugin',
+];
+
 export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
   {
     id: 'office-document-js',
@@ -164,6 +191,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.officeDocument',
     descriptionKey: 'workProviders.providerDescriptions.officeDocument',
     installMode: 'builtIn',
+    sourceKinds: ['builtInLibrary'],
     dependencyIds: ['mammoth', 'docx'],
     capabilities: [
       { id: 'document.read', dependencyIds: ['mammoth'] },
@@ -177,6 +205,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.officeSheet',
     descriptionKey: 'workProviders.providerDescriptions.officeSheet',
     installMode: 'builtIn',
+    sourceKinds: ['builtInLibrary'],
     dependencyIds: ['xlsx', 'exceljs', 'papaparse'],
     capabilities: [
       { id: 'sheet.read', dependencyIds: ['xlsx'] },
@@ -191,6 +220,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.officeSlide',
     descriptionKey: 'workProviders.providerDescriptions.officeSlide',
     installMode: 'builtIn',
+    sourceKinds: ['builtInLibrary'],
     dependencyIds: ['pptxgenjs'],
     capabilities: [
       { id: 'slide.write', dependencyIds: ['pptxgenjs'] },
@@ -203,6 +233,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.pdf',
     descriptionKey: 'workProviders.providerDescriptions.pdf',
     installMode: 'builtIn',
+    sourceKinds: ['builtInLibrary'],
     dependencyIds: ['pdfjs-dist', 'pdf-lib'],
     capabilities: [
       { id: 'pdf.validate', dependencyIds: ['pdfjs-dist'] },
@@ -216,6 +247,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.webSearch',
     descriptionKey: 'workProviders.providerDescriptions.webSearch',
     installMode: 'externalService',
+    sourceKinds: ['externalService', 'customHttp'],
     dependencyIds: [],
     capabilities: [
       { id: 'web.search', requiresConfig: true, external: true },
@@ -228,6 +260,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.webRead',
     descriptionKey: 'workProviders.providerDescriptions.webRead',
     installMode: 'builtIn',
+    sourceKinds: ['builtInLibrary'],
     dependencyIds: ['@mozilla/readability', 'jsdom', 'turndown', 'cheerio'],
     capabilities: [
       { id: 'web.extract', dependencyIds: ['@mozilla/readability', 'jsdom'] },
@@ -241,6 +274,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.libreOffice',
     descriptionKey: 'workProviders.providerDescriptions.libreOffice',
     installMode: 'externalBinary',
+    sourceKinds: ['externalBinary'],
     dependencyIds: ['libreoffice'],
     capabilities: [
       { id: 'format.convert', dependencyIds: ['libreoffice'], external: true },
@@ -253,6 +287,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.pandoc',
     descriptionKey: 'workProviders.providerDescriptions.pandoc',
     installMode: 'externalBinary',
+    sourceKinds: ['externalBinary'],
     dependencyIds: ['pandoc'],
     capabilities: [
       { id: 'format.convert', dependencyIds: ['pandoc'], external: true },
@@ -265,6 +300,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.crawler',
     descriptionKey: 'workProviders.providerDescriptions.crawler',
     installMode: 'externalService',
+    sourceKinds: ['externalService', 'customHttp'],
     dependencyIds: [],
     capabilities: [
       { id: 'crawler.run', requiresConfig: true, external: true },
@@ -277,6 +313,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.ocr',
     descriptionKey: 'workProviders.providerDescriptions.ocr',
     installMode: 'externalService',
+    sourceKinds: ['externalService'],
     dependencyIds: [],
     capabilities: [
       { id: 'ocr.extract', requiresConfig: true, external: true },
@@ -289,6 +326,7 @@ export const WORK_PROVIDER_DEFINITIONS: WorkProviderDefinition[] = [
     labelKey: 'workProviders.providers.dataFrame',
     descriptionKey: 'workProviders.providerDescriptions.dataFrame',
     installMode: 'externalService',
+    sourceKinds: ['externalService'],
     dependencyIds: [],
     capabilities: [
       { id: 'dataframe.analyze', requiresConfig: true, external: true },
@@ -365,6 +403,7 @@ function resolveCapabilityStatus(
       status: 'disabled',
       missingDependencyIds: [],
       installMode: definition.installMode,
+      sourceKinds: definition.sourceKinds,
     };
   }
   if (!runtimeAvailable && definition.installMode === 'externalService') {
@@ -375,6 +414,7 @@ function resolveCapabilityStatus(
       status: 'runtimeUnavailable',
       missingDependencyIds: [],
       installMode: definition.installMode,
+      sourceKinds: definition.sourceKinds,
     };
   }
   if (capability.requiresConfig && !providerHasConfig(config)) {
@@ -385,6 +425,7 @@ function resolveCapabilityStatus(
       status: 'missingConfig',
       missingDependencyIds: [],
       installMode: definition.installMode,
+      sourceKinds: definition.sourceKinds,
     };
   }
 
@@ -401,6 +442,7 @@ function resolveCapabilityStatus(
       status,
       missingDependencyIds,
       installMode: definition.installMode,
+      sourceKinds: definition.sourceKinds,
     };
   }
 
@@ -411,6 +453,7 @@ function resolveCapabilityStatus(
     status: 'ready',
     missingDependencyIds: [],
     installMode: definition.installMode,
+    sourceKinds: definition.sourceKinds,
   };
 }
 
@@ -445,6 +488,7 @@ export function resolveWorkProviders(params?: {
       labelKey: definition.labelKey,
       descriptionKey: definition.descriptionKey,
       installMode: definition.installMode,
+      sourceKinds: definition.sourceKinds,
       status: aggregateProviderStatus(capabilities, definition.installMode),
       dependencyIds: definition.dependencyIds,
       missingDependencyIds,
@@ -463,6 +507,21 @@ export function summarizeWorkProviderCapabilities(
   }, createEmptyWorkProviderStatusSummary());
 }
 
+export function createEmptyWorkProviderSourceSummary(): WorkProviderSourceSummary {
+  return Object.fromEntries(WORK_PROVIDER_SOURCE_KINDS.map((sourceKind) => [sourceKind, 0])) as WorkProviderSourceSummary;
+}
+
+export function summarizeWorkProviderSources(
+  providers: Array<Pick<WorkProviderResolved, 'sourceKinds'>>,
+): WorkProviderSourceSummary {
+  return providers.reduce<WorkProviderSourceSummary>((summary, provider) => {
+    for (const sourceKind of provider.sourceKinds) {
+      summary[sourceKind] += 1;
+    }
+    return summary;
+  }, createEmptyWorkProviderSourceSummary());
+}
+
 export function resolveWorkKitProviderCapabilities(
   kits: WorkModeKit[],
   capabilities: WorkProviderCapabilityStatus[],
@@ -477,6 +536,7 @@ export function resolveWorkKitProviderCapabilities(
         capability,
         providerIds: Array.from(new Set(matches.map((entry) => entry.providerId))),
         statuses: Array.from(new Set(matches.map((entry) => entry.status))),
+        sourceKinds: Array.from(new Set(matches.flatMap((entry) => entry.sourceKinds))),
       }];
     });
   });

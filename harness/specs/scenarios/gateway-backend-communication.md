@@ -47,7 +47,7 @@ forbiddenPatterns:
   - new WebSocket("ws://localhost:18789 in src/**
 ---
 
-Gateway backend communication covers all ClawX paths that move data between the visual desktop UI and OpenClaw runtime/backend services.
+Gateway backend communication covers all Verse Claw paths that move data between the visual desktop UI and OpenClaw runtime/backend services.
 
 Allowed flow:
 Renderer page/component -> `src/lib/host-api.ts` or `src/lib/api-client.ts` -> Electron Main typed host service or IPC handler -> Main-owned OpenClaw Gateway WebSocket -> runtime result -> store/UI.
@@ -56,6 +56,6 @@ Renderer code must not own transport selection, direct IPC channels, direct Gate
 
 Renderer code must not create direct Gateway WebSocket connections. Gateway frame diagnostics must be emitted by Main-process Gateway logging.
 
-Channel/plugin migration behavior is also part of this scenario when ClawX rewrites OpenClaw config before Gateway launch. Upgrades must preserve single-owner channel registration for migrated plugin-backed channels such as Feishu/Lark.
+Channel/plugin migration behavior is also part of this scenario when Verse Claw rewrites OpenClaw config before Gateway launch. Upgrades must preserve single-owner channel registration for migrated plugin-backed channels such as Feishu/Lark.
 
 Chat composer intent metadata, including per-message knowledge scope and work mode, must cross this boundary through the typed host API. Main process may annotate runtime messages with untrusted metadata blocks, but renderer UI state must not bypass host-api/api-client or directly alter Gateway/OpenClaw tool policy.

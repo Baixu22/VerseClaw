@@ -218,7 +218,7 @@ export interface InlineKeyboard {
 
 /** Button interaction event (INTERACTION_CREATE). */
 export interface InteractionEvent {
-  /** Event ID â€” used to acknowledge the interaction (PUT /interactions/{id}). */
+  /** Event ID â€?used to acknowledge the interaction (PUT /interactions/{id}). */
   id: string;
   /** Event sub-type: 11=message button, 12=c2c quick menu. */
   type: number;
@@ -281,7 +281,7 @@ export interface QQBotAccountConfigView {
 // ============ Gateway Account ============
 
 /**
- * Resolved account configuration â€” shared across gateway/ and messaging/ layers.
+ * Resolved account configuration â€?shared across gateway/ and messaging/ layers.
  *
  * Lifted here from gateway/types.ts to eliminate the circular type dependency
  * where messaging/ had to import from gateway/.

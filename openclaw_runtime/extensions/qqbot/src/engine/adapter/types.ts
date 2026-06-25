@@ -29,7 +29,7 @@ export interface FetchMediaResult {
   fileName?: string;
 }
 
-/** SSRF policy configuration â€” platform-agnostic subset. */
+/** SSRF policy configuration â€?platform-agnostic subset. */
 export interface SsrfPolicyConfig {
   /** Hostnames that are always allowed (supports `*.example.com` wildcards). */
   hostnameAllowlist?: string[];

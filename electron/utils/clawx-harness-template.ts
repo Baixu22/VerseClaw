@@ -1,5 +1,5 @@
-/**
- * ClawX workspace harness template seeding.
+﻿/**
+ * Verse Claw workspace harness template seeding.
  *
  * This is intentionally best-effort: workspace/project creation should not
  * fail just because the optional guidance files could not be written.
@@ -11,19 +11,19 @@ import { logger } from './logger';
 import { getResourcesDir } from './paths';
 
 const TEMPLATE_DIR_NAME = 'workspace-harness';
-const TARGET_DIR_SEGMENTS = ['.clawx', 'harness'] as const;
+const TARGET_DIR_SEGMENTS = ['.verse-claw', 'harness'] as const;
 
-export type ClawXWorkspaceHarnessSkippedReason =
+export type VerseClawWorkspaceHarnessSkippedReason =
   | 'missing-workspace'
   | 'missing-template'
   | 'error';
 
-export interface ClawXWorkspaceHarnessResult {
+export interface VerseClawWorkspaceHarnessResult {
   workspaceDir: string;
   templateDir: string;
   targetDir: string;
   filesWritten: number;
-  skippedReason?: ClawXWorkspaceHarnessSkippedReason;
+  skippedReason?: VerseClawWorkspaceHarnessSkippedReason;
 }
 
 async function fileExists(path: string): Promise<boolean> {
@@ -72,14 +72,14 @@ async function copyTemplateFiles(sourceDir: string, targetDir: string): Promise<
   return filesWritten;
 }
 
-export async function ensureClawXWorkspaceHarness(
+export async function ensureVerseClawWorkspaceHarness(
   workspaceDir: string,
   options: { createDir?: boolean } = {},
-): Promise<ClawXWorkspaceHarnessResult> {
+): Promise<VerseClawWorkspaceHarnessResult> {
   const resolvedWorkspaceDir = resolve(workspaceDir);
   const templateDir = join(getResourcesDir(), TEMPLATE_DIR_NAME);
   const targetDir = join(resolvedWorkspaceDir, ...TARGET_DIR_SEGMENTS);
-  const baseResult: ClawXWorkspaceHarnessResult = {
+  const baseResult: VerseClawWorkspaceHarnessResult = {
     workspaceDir: resolvedWorkspaceDir,
     templateDir,
     targetDir,
@@ -94,18 +94,18 @@ export async function ensureClawXWorkspaceHarness(
     }
 
     if (!(await fileExists(templateDir))) {
-      logger.debug(`ClawX workspace harness template not found: ${templateDir}`);
+      logger.debug(`Verse Claw workspace harness template not found: ${templateDir}`);
       return { ...baseResult, skippedReason: 'missing-template' };
     }
 
     const filesWritten = await copyTemplateFiles(templateDir, targetDir);
     if (filesWritten > 0) {
-      logger.info(`Seeded ClawX workspace harness (${filesWritten} file(s)) at ${targetDir}`);
+      logger.info(`Seeded Verse Claw workspace harness (${filesWritten} file(s)) at ${targetDir}`);
     }
 
     return { ...baseResult, filesWritten };
   } catch (error) {
-    logger.warn('Failed to seed ClawX workspace harness', {
+    logger.warn('Failed to seed Verse Claw workspace harness', {
       workspaceDir: resolvedWorkspaceDir,
       targetDir,
       error,

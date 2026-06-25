@@ -1,6 +1,6 @@
 /**
  * QQBot config resolution (pure logic layer).
- * QQBot 配置解析（纯逻辑层）。
+ * QQBot 配置解析（纯逻辑层）�?
  *
  * Resolves account IDs, default account selection, and base account
  * info from raw config objects. Secret/credential resolution is
@@ -18,13 +18,13 @@ import {
 
 /**
  * Default account ID, used for the unnamed top-level account.
- * 默认账号 ID，用于顶层配置中未命名的账号。
+ * 默认账号 ID，用于顶层配置中未命名的账号�?
  */
 export const DEFAULT_ACCOUNT_ID = "default";
 
 /**
  * Internal shape of the channels.qqbot config section.
- * channels.qqbot 配置节的内部结构。
+ * channels.qqbot 配置节的内部结构�?
  */
 interface QQBotChannelConfig {
   appId?: unknown;
@@ -37,7 +37,7 @@ interface QQBotChannelConfig {
 
 /**
  * Base account resolution result (without credentials).
- * 账号基础解析结果（不含凭证信息）。
+ * 账号基础解析结果（不含凭证信息）�?
  *
  * The outer config.ts layer extends this with clientSecret / secretSource.
  */
@@ -81,7 +81,7 @@ function readQQBotSection(cfg: Record<string, unknown>): QQBotChannelConfig | un
 
 /**
  * List all configured QQBot account IDs.
- * 列出所有已配置的 QQBot 账号 ID。
+ * 列出所有已配置�?QQBot 账号 ID�?
  */
 export function listAccountIds(cfg: Record<string, unknown>): string[] {
   const ids = new Set<string>();
@@ -104,7 +104,7 @@ export function listAccountIds(cfg: Record<string, unknown>): string[] {
 
 /**
  * Resolve the default QQBot account ID.
- * 解析默认 QQBot 账号 ID（优先级：defaultAccount > 顶层 appId > 第一个命名账号）。
+ * 解析默认 QQBot 账号 ID（优先级：defaultAccount > 顶层 appId > 第一个命名账号）�?
  */
 export function resolveDefaultAccountId(cfg: Record<string, unknown>): string {
   const qqbot = readQQBotSection(cfg);
@@ -130,7 +130,7 @@ export function resolveDefaultAccountId(cfg: Record<string, unknown>): string {
 
 /**
  * Resolve base account info (without credentials).
- * 解析账号基础信息（不含凭证）。
+ * 解析账号基础信息（不含凭证）�?
  *
  * Resolves everything except Secret/credential fields. The outer
  * config.ts layer calls this and adds Secret handling on top.

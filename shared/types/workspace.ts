@@ -101,6 +101,7 @@ export interface WorkspaceChatFooterState {
 }
 
 export type WorkspaceKnowledgeScope = 'none' | 'memory' | 'wiki' | 'all';
+export type KnowledgeInvocationMode = 'manual' | 'suggest' | 'auto-read';
 
 export interface WorkspaceArtifactPanelState {
   open?: boolean;
@@ -118,6 +119,12 @@ export interface WorkspaceUiState {
   selectedModelRef?: string | null;
   activeTopicId?: string | null;
   knowledgeScope?: WorkspaceKnowledgeScope;
+  knowledgeMode?: KnowledgeInvocationMode;
+  /**
+   * @deprecated Internal migration compatibility only. Current Chat behavior
+   * uses explicit effort/intensity fields and must not persist Work Mode as
+   * session behavior state.
+   */
   workMode?: WorkModeId;
   artifactPanel?: WorkspaceArtifactPanelState;
   terminal?: WorkspaceTerminalState;

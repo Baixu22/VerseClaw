@@ -100,7 +100,7 @@ function escapeRegex(str: string): string {
  * "was the bot addressed by this message?".
  *
  * The `getRefEntry` callback is injected so this function does not
- * depend on the ref-index store implementation â€” any lookup that
+ * depend on the ref-index store implementation â€?any lookup that
  * returns `{ isBot?: boolean }` works.
  */
 export function resolveImplicitMention(params: {

@@ -10,14 +10,14 @@ import { join, resolve, sep } from 'path';
 import { homedir } from 'os';
 import { logger } from './logger';
 import { getResourcesDir } from './paths';
-import { ensureClawXWorkspaceHarness } from './clawx-harness-template';
+import { ensureVerseClawWorkspaceHarness } from './clawx-harness-template';
 
-const CLAWX_BEGIN = '<!-- clawx:begin -->';
-const CLAWX_END = '<!-- clawx:end -->';
+const VERSE_CLAW_BEGIN = '<!-- verse-claw:begin -->';
+const VERSE_CLAW_END = '<!-- verse-claw:end -->';
 const DEFAULT_BOOTSTRAP_FILENAME = 'BOOTSTRAP.md';
 const DEFAULT_IDENTITY_FILENAME = 'IDENTITY.md';
 
-// â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ©¤©¤ Helpers ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
 
 async function fileExists(p: string): Promise<boolean> {
   try { await access(p, constants.F_OK); return true; } catch { return false; }
@@ -29,17 +29,17 @@ function isCurrentOpenClawPath(p: string): boolean {
   return workspaceDir === openclawDir || workspaceDir.startsWith(openclawDir + sep);
 }
 
-export function buildDefaultClawXIdentityContent(): string {
+export function buildDefaultVerseClawIdentityContent(): string {
   return [
-    '# IDENTITY.md - ClawX',
+    '# IDENTITY.md - Verse Claw',
     '',
-    '- **Name:** ClawX',
+    '- **Name:** Verse Claw',
     '- **Creature:** desktop AI assistant',
     '- **Vibe:** concise, capable, and practical',
-    '- **Emoji:** ğŸ¾',
+    '- **Emoji:** ??',
     '- **Avatar:**',
     '',
-    'ClawX uses a default desktop identity instead of chat-first bootstrap.',
+    'Verse Claw uses a default desktop identity instead of chat-first bootstrap.',
     '',
   ].join('\n');
 }
@@ -65,10 +65,10 @@ async function writeFileIfMissing(path: string, content: string): Promise<boolea
 }
 
 /**
- * Ensure ClawX-managed workspaces have a non-template IDENTITY.md before the
+ * Ensure Verse Claw-managed workspaces have a non-template IDENTITY.md before the
  * Gateway initializes them. Existing custom identities are preserved.
  */
-export async function ensureClawXIdentityFile(
+export async function ensureVerseClawIdentityFile(
   workspaceDir: string,
   options: { createDir?: boolean } = {},
 ): Promise<void> {
@@ -80,7 +80,7 @@ export async function ensureClawXIdentityFile(
   }
 
   const identityPath = join(resolvedWorkspaceDir, DEFAULT_IDENTITY_FILENAME);
-  const defaultIdentity = buildDefaultClawXIdentityContent();
+  const defaultIdentity = buildDefaultVerseClawIdentityContent();
   let wroteIdentity = await writeFileIfMissing(identityPath, defaultIdentity);
 
   if (!wroteIdentity) {
@@ -101,37 +101,37 @@ export async function ensureClawXIdentityFile(
   if (await fileExists(bootstrapPath)) {
     try {
       await unlink(bootstrapPath);
-      logger.info(`Removed chat-first bootstrap file from ClawX workspace (${resolvedWorkspaceDir})`);
+      logger.info(`Removed chat-first bootstrap file from Verse Claw workspace (${resolvedWorkspaceDir})`);
     } catch {
       logger.warn(`Failed to remove chat-first bootstrap file: ${bootstrapPath}`);
     }
   } else if (wroteIdentity) {
-    logger.info(`Seeded default ClawX identity for workspace (${resolvedWorkspaceDir})`);
+    logger.info(`Seeded default Verse Claw identity for workspace (${resolvedWorkspaceDir})`);
   }
 
-  await ensureClawXWorkspaceHarness(resolvedWorkspaceDir);
+  await ensureVerseClawWorkspaceHarness(resolvedWorkspaceDir);
 }
 
-export async function ensureClawXDefaultIdentity(): Promise<void> {
+export async function ensureVerseClawDefaultIdentity(): Promise<void> {
   const workspaceDirs = await resolveAllWorkspaceDirs();
   for (const { dir: workspaceDir, waitForGatewaySeed } of workspaceDirs) {
-    await ensureClawXIdentityFile(workspaceDir, { createDir: waitForGatewaySeed });
+    await ensureVerseClawIdentityFile(workspaceDir, { createDir: waitForGatewaySeed });
   }
 }
 
-// â”€â”€ Pure helpers (no I/O) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ©¤©¤ Pure helpers (no I/O) ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
 
 /**
- * Merge a ClawX context section into an existing file's content.
+ * Merge a Verse Claw context section into an existing file's content.
  * If markers already exist, replaces the section in-place.
  * Otherwise appends it at the end.
  */
-export function mergeClawXSection(existing: string, section: string): string {
-  const wrapped = `${CLAWX_BEGIN}\n${section.trim()}\n${CLAWX_END}`;
-  const beginIdx = existing.indexOf(CLAWX_BEGIN);
-  const endIdx = existing.indexOf(CLAWX_END);
+export function mergeVerseClawSection(existing: string, section: string): string {
+  const wrapped = `${VERSE_CLAW_BEGIN}\n${section.trim()}\n${VERSE_CLAW_END}`;
+  const beginIdx = existing.indexOf(VERSE_CLAW_BEGIN);
+  const endIdx = existing.indexOf(VERSE_CLAW_END);
   if (beginIdx !== -1 && endIdx !== -1) {
-    return existing.slice(0, beginIdx) + wrapped + existing.slice(endIdx + CLAWX_END.length);
+    return existing.slice(0, beginIdx) + wrapped + existing.slice(endIdx + VERSE_CLAW_END.length);
   }
   return existing.trimEnd() + '\n\n' + wrapped + '\n';
 }
@@ -139,7 +139,7 @@ export function mergeClawXSection(existing: string, section: string): string {
 /**
  * Strip the "## First Run" section from workspace AGENTS.md content.
  * This section is seeded by the OpenClaw Gateway but is unnecessary
- * for ClawX-managed workspaces.  Removes everything from the heading
+ * for Verse Claw-managed workspaces.  Removes everything from the heading
  * line until the next markdown heading (any level) or end of content.
  */
 export function stripFirstRunSection(content: string): string {
@@ -196,7 +196,7 @@ export function stripFirstRunSection(content: string): string {
   return result.join('\n').replace(/\n{3,}/g, '\n\n');
 }
 
-// â”€â”€ Workspace directory resolution â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ©¤©¤ Workspace directory resolution ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
 
 type WorkspaceDir = {
   dir: string;
@@ -263,13 +263,13 @@ async function resolveAllWorkspaceDirs(): Promise<WorkspaceDir[]> {
   return [...dirs.values()];
 }
 
-// â”€â”€ Bootstrap file repair â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ©¤©¤ Bootstrap file repair ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
 
 /**
- * Detect and remove bootstrap .md files that contain only ClawX markers
+ * Detect and remove bootstrap .md files that contain only Verse Claw markers
  * with no meaningful OpenClaw content outside them.
  */
-export async function repairClawXOnlyBootstrapFiles(): Promise<void> {
+export async function repairVerseClawOnlyBootstrapFiles(): Promise<void> {
   const workspaceDirs = await resolveAllWorkspaceDirs();
   for (const { dir: workspaceDir } of workspaceDirs) {
     if (!(await fileExists(workspaceDir))) continue;
@@ -289,28 +289,28 @@ export async function repairClawXOnlyBootstrapFiles(): Promise<void> {
       } catch {
         continue;
       }
-      const beginIdx = content.indexOf(CLAWX_BEGIN);
-      const endIdx = content.indexOf(CLAWX_END);
+      const beginIdx = content.indexOf(VERSE_CLAW_BEGIN);
+      const endIdx = content.indexOf(VERSE_CLAW_END);
       if (beginIdx === -1 || endIdx === -1) continue;
 
       const before = content.slice(0, beginIdx).trim();
-      const after = content.slice(endIdx + CLAWX_END.length).trim();
+      const after = content.slice(endIdx + VERSE_CLAW_END.length).trim();
       if (before === '' && after === '') {
         try {
           await unlink(filePath);
-          logger.info(`Removed ClawX-only bootstrap file for re-seeding: ${file} (${workspaceDir})`);
+          logger.info(`Removed Verse Claw-only bootstrap file for re-seeding: ${file} (${workspaceDir})`);
         } catch {
-          logger.warn(`Failed to remove ClawX-only bootstrap file: ${filePath}`);
+          logger.warn(`Failed to remove Verse Claw-only bootstrap file: ${filePath}`);
         }
       }
     }
   }
 }
 
-// â”€â”€ Context merging â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ©¤©¤ Context merging ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
 
 /**
- * Merge ClawX context snippets into workspace bootstrap files that already
+ * Merge Verse Claw context snippets into workspace bootstrap files that already
  * exist on disk. Missing files are only retryable for startup-owned workspaces.
  */
 type MergeResult = {
@@ -318,7 +318,7 @@ type MergeResult = {
   retryableMissing: number;
 };
 
-type EnsureClawXContextOptions = {
+type ensureVerseClawContextOptions = {
   /**
    * Startup should only wait for the default workspace. Explicit provisioning
    * flows can opt in so a freshly-created agent workspace gets patched after
@@ -327,10 +327,10 @@ type EnsureClawXContextOptions = {
   waitForAllConfiguredWorkspaces?: boolean;
 };
 
-async function mergeClawXContextOnce(options: EnsureClawXContextOptions = {}): Promise<MergeResult> {
+async function mergeVerseClawContextOnce(options: ensureVerseClawContextOptions = {}): Promise<MergeResult> {
   const contextDir = join(getResourcesDir(), 'context');
   if (!(await fileExists(contextDir))) {
-    logger.debug('ClawX context directory not found, skipping context merge');
+    logger.debug('Verse Claw context directory not found, skipping context merge');
     return { missing: 0, retryableMissing: 0 };
   }
 
@@ -384,12 +384,12 @@ async function mergeClawXContextOnce(options: EnsureClawXContextOptions = {}): P
         }
       }
 
-      const merged = mergeClawXSection(existing, section);
+      const merged = mergeVerseClawSection(existing, section);
       // Compare against on-disk content so we persist changes even when only
-      // First Run stripping happened and the ClawX section stayed identical.
+      // First Run stripping happened and the Verse Claw section stayed identical.
       if (merged !== originalExisting) {
         await writeFile(targetPath, merged, 'utf-8');
-        logger.info(`Merged ClawX context into ${targetName} (${workspaceDir})`);
+        logger.info(`Merged Verse Claw context into ${targetName} (${workspaceDir})`);
       }
     }
   }
@@ -399,47 +399,49 @@ async function mergeClawXContextOnce(options: EnsureClawXContextOptions = {}): P
 
 const RETRY_INTERVAL_MS = 2000;
 const MAX_RETRIES = 5;
-let ensureClawXContextPromise: Promise<void> | null = null;
-let ensureClawXContextWaitsForAll = false;
+let ensureVerseClawContextPromise: Promise<void> | null = null;
+let ensureVerseClawContextWaitsForAll = false;
 
 /**
- * Ensure ClawX context snippets are merged into the openclaw workspace
+ * Ensure Verse Claw context snippets are merged into the openclaw workspace
  * bootstrap files.
  */
-export async function ensureClawXContext(options: EnsureClawXContextOptions = {}): Promise<void> {
-  if (ensureClawXContextPromise) {
-    if (options.waitForAllConfiguredWorkspaces && !ensureClawXContextWaitsForAll) {
-      return ensureClawXContextPromise.then(() => ensureClawXContext(options));
+export async function ensureVerseClawContext(options: ensureVerseClawContextOptions = {}): Promise<void> {
+  if (ensureVerseClawContextPromise) {
+    if (options.waitForAllConfiguredWorkspaces && !ensureVerseClawContextWaitsForAll) {
+      return ensureVerseClawContextPromise.then(() => ensureVerseClawContext(options));
     }
-    return ensureClawXContextPromise;
+    return ensureVerseClawContextPromise;
   }
 
-  ensureClawXContextWaitsForAll = options.waitForAllConfiguredWorkspaces === true;
-  ensureClawXContextPromise = runEnsureClawXContext(options).finally(() => {
-    ensureClawXContextPromise = null;
-    ensureClawXContextWaitsForAll = false;
+  ensureVerseClawContextWaitsForAll = options.waitForAllConfiguredWorkspaces === true;
+  ensureVerseClawContextPromise = runensureVerseClawContext(options).finally(() => {
+    ensureVerseClawContextPromise = null;
+    ensureVerseClawContextWaitsForAll = false;
   });
-  return ensureClawXContextPromise;
+  return ensureVerseClawContextPromise;
 }
 
-async function runEnsureClawXContext(options: EnsureClawXContextOptions): Promise<void> {
-  let result = await mergeClawXContextOnce(options);
+async function runensureVerseClawContext(options: ensureVerseClawContextOptions): Promise<void> {
+  let result = await mergeVerseClawContextOnce(options);
   if (result.retryableMissing === 0) {
     if (result.missing > 0) {
-      logger.debug(`ClawX context merge skipped ${result.missing} non-ready file(s)`);
+      logger.debug(`Verse Claw context merge skipped ${result.missing} non-ready file(s)`);
     }
     return;
   }
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     await new Promise((r) => setTimeout(r, RETRY_INTERVAL_MS));
-    result = await mergeClawXContextOnce(options);
+    result = await mergeVerseClawContextOnce(options);
     if (result.retryableMissing === 0) {
-      logger.info(`ClawX context merge completed after ${attempt} retry(ies)`);
+      logger.info(`Verse Claw context merge completed after ${attempt} retry(ies)`);
       return;
     }
-    logger.debug(`ClawX context merge: ${result.retryableMissing} startup file(s) still missing (retry ${attempt}/${MAX_RETRIES})`);
+    logger.debug(`Verse Claw context merge: ${result.retryableMissing} startup file(s) still missing (retry ${attempt}/${MAX_RETRIES})`);
   }
 
-  logger.warn(`ClawX context merge: ${result.retryableMissing} startup file(s) still missing after ${MAX_RETRIES} retries`);
+  logger.warn(`Verse Claw context merge: ${result.retryableMissing} startup file(s) still missing after ${MAX_RETRIES} retries`);
 }
+
+

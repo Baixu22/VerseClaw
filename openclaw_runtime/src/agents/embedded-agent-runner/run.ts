@@ -3112,6 +3112,7 @@ export async function runEmbeddedAgent(
               messagingToolSentTargets: attempt.messagingToolSentTargets,
               messagingToolSourceReplyPayloads: attempt.messagingToolSourceReplyPayloads,
               heartbeatToolResponse: attempt.heartbeatToolResponse,
+              browserAutomationEvents: attempt.browserAutomationEvents,
               successfulCronAdds: attempt.successfulCronAdds,
               acceptedSessionSpawns: attempt.acceptedSessionSpawns,
             };
@@ -3359,6 +3360,7 @@ export async function runEmbeddedAgent(
               messagingToolSentTargets: attempt.messagingToolSentTargets,
               messagingToolSourceReplyPayloads: attempt.messagingToolSourceReplyPayloads,
               heartbeatToolResponse: attempt.heartbeatToolResponse,
+              browserAutomationEvents: attempt.browserAutomationEvents,
               successfulCronAdds: attempt.successfulCronAdds,
               acceptedSessionSpawns: attempt.acceptedSessionSpawns,
             };
@@ -3415,6 +3417,7 @@ export async function runEmbeddedAgent(
               messagingToolSentTargets: attempt.messagingToolSentTargets,
               messagingToolSourceReplyPayloads: attempt.messagingToolSourceReplyPayloads,
               heartbeatToolResponse: attempt.heartbeatToolResponse,
+              browserAutomationEvents: attempt.browserAutomationEvents,
               successfulCronAdds: attempt.successfulCronAdds,
               acceptedSessionSpawns: attempt.acceptedSessionSpawns,
             };
@@ -3538,6 +3541,7 @@ export async function runEmbeddedAgent(
               messagingToolSentTargets: attempt.messagingToolSentTargets,
               messagingToolSourceReplyPayloads: attempt.messagingToolSourceReplyPayloads,
               heartbeatToolResponse: attempt.heartbeatToolResponse,
+              browserAutomationEvents: attempt.browserAutomationEvents,
               successfulCronAdds: attempt.successfulCronAdds,
               acceptedSessionSpawns: attempt.acceptedSessionSpawns,
             };
@@ -3683,6 +3687,7 @@ export async function runEmbeddedAgent(
             messagingToolSentTargets: attempt.messagingToolSentTargets,
             messagingToolSourceReplyPayloads: attempt.messagingToolSourceReplyPayloads,
             heartbeatToolResponse: attempt.heartbeatToolResponse,
+            browserAutomationEvents: attempt.browserAutomationEvents,
             successfulCronAdds: attempt.successfulCronAdds,
             acceptedSessionSpawns: attempt.acceptedSessionSpawns,
           };

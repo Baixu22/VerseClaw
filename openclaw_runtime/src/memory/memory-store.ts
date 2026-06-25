@@ -27,6 +27,8 @@ import type {
   MemoryEvidenceCheckResult,
   MemoryEvidenceRef,
   MemoryEvidenceStatus,
+  MemoryFeedbackOutcome,
+  MemoryFeedbackRecord,
   MemoryGatekeeperDecision,
   MemoryHealthReport,
   MemoryInjectionRecord,
@@ -42,6 +44,9 @@ import type {
   MemoryRetentionCandidate,
   MemoryReviewAction,
   MemorySuggestedAction,
+  MemoryTaskSuccess,
+  MemoryUtilityCardReport,
+  MemoryUtilityReport,
   MemoryReviewBatchResult,
   MemoryVersionRecord,
 } from "./types.js";
@@ -153,6 +158,18 @@ type InjectionRow = {
   created_at: string;
 };
 
+type FeedbackRow = {
+  id: string;
+  injection_id: string | null;
+  card_id: string | null;
+  role_name: string | null;
+  outcome: MemoryFeedbackOutcome;
+  task_success: MemoryTaskSuccess;
+  note: string | null;
+  actor_json: string;
+  created_at: string;
+};
+
 export function setMemoryStorePath(filePath: string): void {
   closeMemoryStore();
   storePath = filePath;
@@ -160,6 +177,10 @@ export function setMemoryStorePath(filePath: string): void {
 
 export function isMemoryStoreConfigured(): boolean {
   return Boolean(storePath);
+}
+
+export function isRoleMemoryEnabled(): boolean {
+  return process.env.OPENCLAW_ROLE_MEMORY_ENABLED !== "0";
 }
 
 export function resolveRoleMemoryStorePath(): string {
@@ -355,6 +376,21 @@ function openDatabase(): DatabaseSync {
       reason TEXT,
       created_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS role_memory_feedback (
+      id TEXT PRIMARY KEY,
+      injection_id TEXT,
+      card_id TEXT,
+      role_name TEXT,
+      outcome TEXT NOT NULL,
+      task_success TEXT NOT NULL,
+      note TEXT,
+      actor_json TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_role_memory_feedback_card ON role_memory_feedback(card_id, created_at);
+    CREATE INDEX IF NOT EXISTS idx_role_memory_feedback_injection ON role_memory_feedback(injection_id, created_at);
+    CREATE INDEX IF NOT EXISTS idx_role_memory_feedback_role ON role_memory_feedback(role_name, created_at);
   `);
   for (const sql of [
     `ALTER TABLE role_memory_injections ADD COLUMN policy_version TEXT`,
@@ -460,6 +496,24 @@ function proposalStatusForDecision(decision: MemoryGatekeeperDecision): MemoryPr
   if (decision.action === "needs_review") return "needs_review";
   if (decision.accepted) return "auto_accepted";
   return "pending";
+}
+
+function isAutomaticMemoryProposal(proposal: MemoryProposal): boolean {
+  return proposal.source === "trace" || proposal.source === "session_summary" || proposal.source === "role" || proposal.source === "system";
+}
+
+function reviewGateAutomaticMemoryProposal(decision: MemoryGatekeeperDecision, proposal: MemoryProposal): MemoryGatekeeperDecision {
+  if (!isAutomaticMemoryProposal(proposal) || decision.action !== "accept") return decision;
+  return {
+    ...decision,
+    action: "needs_review",
+    accepted: false,
+    card: undefined,
+    reason: "Automatic Role Memory candidates are proposal-only until explicit user review.",
+    permissionDecision: "needs_review",
+    permissionReason: "Automatic memory capture cannot directly mutate Role Memory or Project Rules.",
+    suggestedAction: decision.suggestedAction ?? "approve",
+  };
 }
 
 function rowToProposal(row: ProposalRow): MemoryProposalRecord {
@@ -810,12 +864,13 @@ export function proposeMemoryCard(
   options?: { actor?: MemoryAuditActor; idFactory?: () => string },
 ): MemoryGatekeeperDecision {
   const existing = getMemoryCards({ status: "active" });
-  const decision = reviewMemoryProposal(proposal, existing, {
+  const reviewedDecision = reviewMemoryProposal(proposal, existing, {
     now: new Date(),
     idFactory: options?.idFactory ?? (() => `mem_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`),
     actor: options?.actor,
     operation: proposal.operation ?? "create",
   });
+  const decision = reviewGateAutomaticMemoryProposal(reviewedDecision, proposal);
   const proposalRecord = storeProposalRecord(makeProposalRecord({
     operation: proposal.operation ?? "create",
     targetId: proposal.targetId ?? decision.targetId ?? null,
@@ -1751,7 +1806,7 @@ export function recordMemoryInjection(params: {
 }
 
 export function explainMemoryInjection(params?: { id?: string; roleName?: string; sessionKey?: string; limit?: number }): MemoryInjectionRecord[] {
-  const limit = Math.max(1, Math.min(100, params?.limit ?? 20));
+  const limit = Math.max(1, Math.min(500, params?.limit ?? 20));
   let rows = openDatabase()
     .prepare(`SELECT * FROM role_memory_injections ORDER BY created_at DESC LIMIT ?`)
     .all(limit) as InjectionRow[];
@@ -1775,9 +1830,270 @@ export function explainMemoryInjection(params?: { id?: string; roleName?: string
   }));
 }
 
+function rowToFeedback(row: FeedbackRow): MemoryFeedbackRecord {
+  return {
+    id: row.id,
+    injectionId: row.injection_id,
+    cardId: row.card_id,
+    roleName: row.role_name,
+    outcome: row.outcome,
+    taskSuccess: row.task_success,
+    note: row.note,
+    actor: parseJsonValue<MemoryAuditActor>(row.actor_json, { type: "system" }),
+    createdAt: row.created_at,
+  };
+}
+
+function isFeedbackOutcome(value: unknown): value is MemoryFeedbackOutcome {
+  return value === "helpful" || value === "neutral" || value === "harmful" || value === "missing_needed" || value === "user_corrected";
+}
+
+function isTaskSuccess(value: unknown): value is MemoryTaskSuccess {
+  return value === "success" || value === "partial" || value === "failure" || value === "unknown";
+}
+
+export function recordMemoryFeedback(params: {
+  injectionId?: string | null;
+  cardId?: string | null;
+  roleName?: string | null;
+  outcome: MemoryFeedbackOutcome;
+  taskSuccess?: MemoryTaskSuccess;
+  note?: string | null;
+  actor?: MemoryAuditActor;
+}): MemoryFeedbackRecord {
+  if (!isFeedbackOutcome(params.outcome)) {
+    throw new Error(`Invalid memory feedback outcome: ${String(params.outcome)}`);
+  }
+  const injection = params.injectionId ? explainMemoryInjection({ id: params.injectionId, limit: 500 })[0] : undefined;
+  const card = params.cardId ? getMemoryCard(params.cardId) : undefined;
+  const record: MemoryFeedbackRecord = {
+    id: `fb_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    injectionId: params.injectionId ?? null,
+    cardId: params.cardId ?? null,
+    roleName: params.roleName ?? injection?.roleName ?? card?.roleTags?.[0] ?? null,
+    outcome: params.outcome,
+    taskSuccess: isTaskSuccess(params.taskSuccess) ? params.taskSuccess : "unknown",
+    note: params.note ?? null,
+    actor: params.actor ?? { type: "user" },
+    createdAt: new Date().toISOString(),
+  };
+  openDatabase().prepare(
+    `INSERT INTO role_memory_feedback (
+      id, injection_id, card_id, role_name, outcome, task_success, note, actor_json, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    record.id,
+    record.injectionId ?? null,
+    record.cardId ?? null,
+    record.roleName ?? null,
+    record.outcome,
+    record.taskSuccess,
+    record.note ?? null,
+    json(record.actor ?? { type: "user" }),
+    record.createdAt,
+  );
+  insertAudit("feedback", record.cardId ?? null, record, record.actor, record.note ?? undefined);
+  return record;
+}
+
+export function listMemoryFeedback(params?: {
+  injectionId?: string;
+  cardId?: string;
+  roleName?: string;
+  outcome?: MemoryFeedbackOutcome;
+  limit?: number;
+}): MemoryFeedbackRecord[] {
+  const limit = Math.max(1, Math.min(500, params?.limit ?? 100));
+  let rows = openDatabase()
+    .prepare(`SELECT * FROM role_memory_feedback ORDER BY created_at DESC LIMIT ?`)
+    .all(limit) as FeedbackRow[];
+  if (params?.injectionId) rows = rows.filter((row) => row.injection_id === params.injectionId);
+  if (params?.cardId) rows = rows.filter((row) => row.card_id === params.cardId);
+  if (params?.roleName) rows = rows.filter((row) => row.role_name === params.roleName);
+  if (params?.outcome) rows = rows.filter((row) => row.outcome === params.outcome);
+  return rows.map(rowToFeedback);
+}
+
+function ratio(numerator: number, denominator: number): number | null {
+  if (denominator <= 0) return null;
+  return Math.max(0, Math.min(1, numerator / denominator));
+}
+
+function roundMetric(value: number | null): number | null {
+  return value === null ? null : Math.round(value * 1000) / 1000;
+}
+
+function feedbackDataQuality(feedbackCount: number, observedCount: number): MemoryUtilityCardReport["dataQuality"] {
+  if (feedbackCount >= 3) return "strong";
+  if (feedbackCount > 0 || observedCount > 0) return "partial";
+  return "insufficient";
+}
+
+function utilityScoreFromFeedback(params: {
+  helpful: number;
+  neutral: number;
+  harmful: number;
+  missingNeeded: number;
+  userCorrected: number;
+  total: number;
+}): number | null {
+  if (params.total <= 0) return null;
+  const raw = (
+    params.helpful * 1 +
+    params.neutral * 0.25 -
+    params.harmful * 1 -
+    params.missingNeeded * 0.6 -
+    params.userCorrected * 0.8
+  ) / params.total;
+  return roundMetric((raw + 1) / 2);
+}
+
+export function getMemoryUtilityReport(params?: { roleName?: string; limit?: number }): MemoryUtilityReport {
+  const generatedAt = new Date().toISOString();
+  const cards = getMemoryCards({ roleName: params?.roleName, status: "all" });
+  const proposals = listMemoryProposals({ roleName: params?.roleName, limit: 500 });
+  const conflicts = listMemoryConflicts();
+  const openConflicts = conflicts.filter((conflict) => conflict.status === "open");
+  const injections = explainMemoryInjection({ roleName: params?.roleName, limit: 500 });
+  const feedback = listMemoryFeedback({ roleName: params?.roleName, limit: 500 });
+  const cardIds = new Set(cards.map((card) => card.id));
+  const conflictCounts = new Map<string, number>();
+  for (const conflict of openConflicts) {
+    for (const cardId of conflict.cardIds) {
+      conflictCounts.set(cardId, (conflictCounts.get(cardId) ?? 0) + 1);
+    }
+  }
+  const selectedCounts = new Map<string, number>();
+  const skippedCounts = new Map<string, number>();
+  const selectedByInjection = new Map<string, Set<string>>();
+  let tokenTotal = 0;
+  let tokenRuns = 0;
+  for (const injection of injections) {
+    const totalTokens = injection.estimatedTokens?.total;
+    if (typeof totalTokens === "number" && Number.isFinite(totalTokens)) {
+      tokenTotal += totalTokens;
+      tokenRuns += 1;
+    }
+    const selectedForInjection = new Set<string>();
+    if (injection.candidateExplanations?.length) {
+      for (const candidate of injection.candidateExplanations) {
+        if (candidate.selected) {
+          selectedCounts.set(candidate.cardId, (selectedCounts.get(candidate.cardId) ?? 0) + 1);
+          selectedForInjection.add(candidate.cardId);
+        } else {
+          skippedCounts.set(candidate.cardId, (skippedCounts.get(candidate.cardId) ?? 0) + 1);
+        }
+      }
+    } else {
+      for (const cardId of injection.cardIds) {
+        selectedCounts.set(cardId, (selectedCounts.get(cardId) ?? 0) + 1);
+        selectedForInjection.add(cardId);
+      }
+    }
+    selectedByInjection.set(injection.id, selectedForInjection);
+  }
+  for (const entry of feedback) {
+    if (entry.cardId) cardIds.add(entry.cardId);
+  }
+  const retentionByCard = new Map(cards.map((card) => [card.id, evaluateRetentionCandidate(card)]));
+  const cardReports: MemoryUtilityCardReport[] = [];
+  for (const cardId of cardIds) {
+    const card = cards.find((entry) => entry.id === cardId);
+    const cardFeedback = feedback.filter((entry) => entry.cardId === cardId);
+    const helpful = cardFeedback.filter((entry) => entry.outcome === "helpful").length;
+    const neutral = cardFeedback.filter((entry) => entry.outcome === "neutral").length;
+    const harmful = cardFeedback.filter((entry) => entry.outcome === "harmful").length;
+    const missingNeeded = cardFeedback.filter((entry) => entry.outcome === "missing_needed").length;
+    const userCorrected = cardFeedback.filter((entry) => entry.outcome === "user_corrected").length;
+    const observedCount = (selectedCounts.get(cardId) ?? 0) + (skippedCounts.get(cardId) ?? 0);
+    const retention = card ? retentionByCard.get(card.id) : undefined;
+    const dataQuality = feedbackDataQuality(cardFeedback.length, observedCount);
+    const utilityScore = utilityScoreFromFeedback({
+      helpful,
+      neutral,
+      harmful,
+      missingNeeded,
+      userCorrected,
+      total: cardFeedback.length,
+    });
+    cardReports.push({
+      cardId,
+      card,
+      selectedCount: selectedCounts.get(cardId) ?? 0,
+      skippedCount: skippedCounts.get(cardId) ?? 0,
+      feedbackCount: cardFeedback.length,
+      helpfulCount: helpful,
+      neutralCount: neutral,
+      harmfulCount: harmful,
+      missingNeededCount: missingNeeded,
+      userCorrectedCount: userCorrected,
+      conflictCount: conflictCounts.get(cardId) ?? 0,
+      retentionAction: retention?.recommendedAction ?? "review",
+      utilityScore,
+      dataQuality,
+      reasonSummary: utilityScore === null
+        ? "Insufficient direct feedback for a utility score."
+        : `${helpful} helpful, ${harmful} harmful, ${missingNeeded} missing-needed, ${userCorrected} corrected feedback records.`,
+    });
+  }
+  cardReports.sort((left, right) =>
+    (right.harmfulCount + right.userCorrectedCount + right.missingNeededCount) -
+    (left.harmfulCount + left.userCorrectedCount + left.missingNeededCount) ||
+    (right.utilityScore ?? -1) - (left.utilityScore ?? -1) ||
+    right.selectedCount - left.selectedCount,
+  );
+  const selectedFeedback = feedback.filter((entry) =>
+    entry.injectionId && entry.cardId && selectedByInjection.get(entry.injectionId)?.has(entry.cardId),
+  );
+  const helpful = feedback.filter((entry) => entry.outcome === "helpful").length;
+  const harmful = feedback.filter((entry) => entry.outcome === "harmful").length;
+  const staleCount = cards.filter((card) => {
+    const action = retentionByCard.get(card.id)?.recommendedAction;
+    return action === "cold" || action === "archive" || action === "tombstone" || action === "review";
+  }).length;
+  const reviewed = proposals.filter((proposal) => proposal.status === "applied" || proposal.status === "rejected").length;
+  const missingEvidence: string[] = [];
+  if (feedback.length === 0) missingEvidence.push("No user/reviewer utility feedback has been recorded yet.");
+  if (injections.length === 0) missingEvidence.push("No injection logs are available for this role.");
+  missingEvidence.push("No memory-on/off evaluation pairs are available, so task success delta is not computed.");
+  const dataQuality: MemoryUtilityReport["dataQuality"] = feedback.length >= 20 && injections.length >= 10
+    ? "strong"
+    : feedback.length > 0 || injections.length > 0 || proposals.length > 0
+      ? "partial"
+      : "insufficient";
+  return {
+    roleName: params?.roleName,
+    generatedAt,
+    dataQuality,
+    missingEvidence,
+    sample: {
+      cards: cards.length,
+      injections: injections.length,
+      feedback: feedback.length,
+      proposals: proposals.length,
+      conflicts: openConflicts.length,
+    },
+    aggregate: {
+      contextPrecisionAtK: roundMetric(ratio(
+        selectedFeedback.filter((entry) => entry.outcome === "helpful").length,
+        selectedFeedback.filter((entry) => entry.outcome === "helpful" || entry.outcome === "neutral" || entry.outcome === "harmful" || entry.outcome === "user_corrected").length,
+      )),
+      helpfulnessRate: roundMetric(ratio(helpful, feedback.length)),
+      harmRate: roundMetric(ratio(harmful, feedback.length)),
+      staleRate: roundMetric(ratio(staleCount, cards.length)),
+      conflictRate: roundMetric(ratio(new Set(openConflicts.flatMap((conflict) => conflict.cardIds)).size, cards.length)),
+      reviewAcceptanceRate: roundMetric(ratio(proposals.filter((proposal) => proposal.status === "applied").length, reviewed)),
+      tokenOverheadPerRun: tokenRuns > 0 ? Math.round(tokenTotal / tokenRuns) : null,
+      taskSuccessDelta: null,
+    },
+    cards: cardReports.slice(0, Math.max(1, Math.min(100, params?.limit ?? 25))),
+  };
+}
+
 export function clearMemoryCards(): void {
   if (database?.isOpen) {
     database.exec(`
+      DELETE FROM role_memory_feedback;
       DELETE FROM role_memory_retention_runs;
       DELETE FROM role_memory_evidence_checks;
       DELETE FROM role_memory_review_batches;

@@ -593,6 +593,9 @@ export function buildGatewayCronService(params: {
             error: evt.error,
             summary: evt.summary,
             diagnostics: evt.diagnostics,
+            ...(evt.browserAutomationResult
+              ? { browserAutomationResult: evt.browserAutomationResult }
+              : {}),
             delivered: evt.delivered,
             deliveryStatus: evt.deliveryStatus,
             deliveryError: evt.deliveryError,

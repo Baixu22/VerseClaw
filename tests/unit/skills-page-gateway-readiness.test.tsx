@@ -284,7 +284,7 @@ describe('Skills page gateway readiness', () => {
       await vi.advanceTimersByTimeAsync(1_600);
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'MCP 服务' }));
+    fireEvent.click(screen.getByRole('button', { name: 'mcp.tab' }));
 
     expect(screen.getByTestId('mcp-services-panel')).toBeInTheDocument();
     fireEvent.change(screen.getByRole('textbox'), {
@@ -302,7 +302,7 @@ describe('Skills page gateway readiness', () => {
       },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '注册服务' }));
+    fireEvent.click(screen.getByRole('button', { name: 'mcp.actions.register' }));
     await act(async () => {
       await Promise.resolve();
     });

@@ -74,6 +74,13 @@ const usageHistory = [
   },
 ];
 
+async function openBillingSettingsPage(page: Awaited<ReturnType<typeof getStableWindow>>) {
+  await page.evaluate(() => {
+    window.location.hash = '#/settings/billing';
+  });
+  await expect(page).toHaveURL(/#\/settings\/billing/);
+}
+
 
 
 test('shows no-data guidance when billing history is empty', async ({ launchElectronApp }) => {
@@ -90,8 +97,7 @@ test('shows no-data guidance when billing history is empty', async ({ launchElec
     const page = await getStableWindow(app);
     await expect(page.getByTestId('main-layout')).toBeVisible();
 
-    await page.getByTestId('sidebar-nav-settings').click();
-      await page.getByTestId('settings-nav-billing').click();
+    await openBillingSettingsPage(page);
     await expect(page.getByTestId('billing-page')).toBeVisible();
     await expect(page.getByTestId('billing-page-title')).toBeVisible();
     await expect(page.getByTestId('billing-empty')).toBeVisible();
@@ -126,8 +132,7 @@ test.describe('Billing page', () => {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toBeVisible();
 
-      await page.getByTestId('sidebar-nav-settings').click();
-      await page.getByTestId('settings-nav-billing').click();
+      await openBillingSettingsPage(page);
       await expect(page.getByTestId('billing-page')).toBeVisible();
       await expect(page.getByTestId('billing-page-title')).toBeVisible();
       await expect(page.getByTestId('billing-back-to-models')).toBeVisible();
@@ -165,8 +170,7 @@ test.describe('Billing page', () => {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toBeVisible();
 
-      await page.getByTestId('sidebar-nav-settings').click();
-      await page.getByTestId('settings-nav-billing').click();
+      await openBillingSettingsPage(page);
       await expect(page.getByTestId('billing-page')).toBeVisible();
       await expect(page.getByTestId('billing-token-chart-bar')).toHaveCount(30);
       await expect(page.getByTestId('billing-model-chart')).toContainText('e2e-model-pro');

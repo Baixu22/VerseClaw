@@ -148,7 +148,7 @@ export async function handleMatrixSubagentSpawning(
   }
 
   // Resolve the raw Matrix room ID from the requester's `to` field
-  // (e.g. "room:!abc123:example.org" â†’ "!abc123:example.org").
+  // (e.g. "room:!abc123:example.org" â†?"!abc123:example.org").
   const rawTo = normalizeOptionalString(event.requester?.to) ?? "";
   const matrixTarget = rawTo ? resolveMatrixTargetIdentity(rawTo) : null;
   const roomId = matrixTarget?.kind === "room" ? matrixTarget.id : "";
@@ -182,7 +182,7 @@ export async function handleMatrixSubagentSpawning(
     // 2. Use the returned event ID as boundConversationId (the thread ID)
     // 3. Register the binding record in the in-memory store and persist it
     //
-    // We do NOT call setBindingRecord here â€” the adapter's bind() handles
+    // We do NOT call setBindingRecord here â€?the adapter's bind() handles
     // record creation, thread creation, and persistence atomically.
     const binding = await bindingService.bind({
       targetSessionKey: event.childSessionKey,

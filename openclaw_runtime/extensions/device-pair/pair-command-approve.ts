@@ -57,7 +57,7 @@ function formatApprovedPairingReply(approved: ApprovedPairingEntry): { text: str
   const label = normalizeOptionalString(approved.device.displayName) || approved.device.deviceId;
   const platform = normalizeOptionalString(approved.device.platform);
   const platformLabel = platform ? ` (${platform})` : "";
-  return { text: `âœ… Paired ${label}${platformLabel}.` };
+  return { text: `âœ?Paired ${label}${platformLabel}.` };
 }
 
 function formatForbiddenPairingRequirement(approved: ForbiddenPairingEntry): string {

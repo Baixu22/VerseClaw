@@ -1,15 +1,32 @@
 {
     "title": "Settings",
-    "subtitle": "Configure your ClawX experience",
+    "subtitle": "Configure your Verse Claw experience",
     "navigation": {
         "back": "Back to Settings",
+        "groups": {
+            "configuration": "AI Configuration",
+            "experience": "Experience & Workflow",
+            "operations": "Operations & Advanced"
+        },
         "general": {
             "title": "General",
             "description": "Appearance, language, startup, updates, and app details."
         },
-        "workModes": {
-            "title": "Work Modes",
-            "description": "Workspace behavior presets and advertised work kits."
+        "models": {
+            "title": "Models & Providers",
+            "description": "Provider accounts, model defaults, fallback rules, and token history."
+        },
+        "agents": {
+            "title": "Agents",
+            "description": "Agent profiles, role settings, model inheritance, and channel bindings."
+        },
+        "channels": {
+            "title": "Channels",
+            "description": "Messaging accounts, connection health, credentials, and agent bindings."
+        },
+        "skills": {
+            "title": "Skills",
+            "description": "Installed skills, MCP services, local folders, and enablement controls."
         },
         "system": {
             "title": "System & Runtime",
@@ -34,7 +51,7 @@
         "language": "Language",
         "menuLanguageUpdated": "Menu language updated",
         "launchAtStartup": "Launch at system startup",
-        "launchAtStartupDesc": "Automatically launch ClawX when you log in"
+        "launchAtStartupDesc": "Automatically launch Verse Claw when you log in"
     },
     "aiProviders": {
         "title": "AI Providers",
@@ -61,7 +78,7 @@
         "notRequired": "Not required",
         "empty": {
             "title": "No providers configured",
-            "desc": "Add an AI provider to start using ClawX",
+            "desc": "Add an AI provider to start using Verse Claw",
             "cta": "Add Your First Provider"
         },
         "dialog": {
@@ -84,7 +101,7 @@
             "protocol": "Protocol",
             "advancedConfig": "Advanced configuration",
             "userAgent": "User-Agent",
-            "userAgentPlaceholder": "ClawX/1.0",
+            "userAgentPlaceholder": "Verse Claw/1.0",
             "fallbackModels": "Fallback Models",
             "fallbackProviders": "Fallback Providers",
             "fallbackModelIds": "Fallback Model IDs",
@@ -170,7 +187,7 @@
         "appLogs": "Application Logs",
         "openFolder": "Open Folder",
         "autoStart": "Auto-start Gateway",
-        "autoStartDesc": "Start Gateway when ClawX launches",
+        "autoStartDesc": "Start Gateway when Verse Claw launches",
         "proxyTitle": "Proxy",
         "proxyDesc": "Route Electron and Gateway traffic through your local proxy client.",
         "proxyServer": "Proxy Server",
@@ -189,9 +206,49 @@
         "proxySaved": "Proxy settings saved",
         "proxySaveFailed": "Failed to save proxy settings"
     },
+    "roleMemory": {
+        "title": "Role Memory",
+        "description": "Governed role runtime memory: proposals, review, injection explain logs, retention, and quality feedback.",
+        "disableEffect": "Turning this off stops Role Memory injection and blocks memory writes. Existing cards remain on disk and native OpenClaw memory is unchanged.",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+    },
+    "knowledgeHub": {
+        "watched": {
+            "title": "Knowledge Hub watched directories",
+            "description": "Watch trusted local folders for new Markdown sources. New files can enter the review inbox first, and compiles refresh indexes without creating syntheses automatically.",
+            "path": "Directory",
+            "pathPlaceholder": "Choose or paste a local folder path",
+            "patterns": "Patterns",
+            "pick": "Choose directory",
+            "pickTitle": "Choose watched directory",
+            "pickFailed": "Failed to choose directory: {{error}}",
+            "add": "Add directory",
+            "empty": "No watched directories yet.",
+            "enabled": "Enabled",
+            "disabled": "Disabled",
+            "reviewFirst": "Review first",
+            "directIngest": "Direct ingest",
+            "ingestNewFiles": "Ingest new files",
+            "requiresReview": "Review before ingest",
+            "autoCompile": "Auto compile",
+            "compileOff": "Compile off",
+            "pathRequired": "Directory path is required.",
+            "patternRequired": "At least one pattern is required.",
+            "loadFailed": "Failed to load watched directories: {{error}}",
+            "addFailed": "Failed to add watched directory.",
+            "addFailedWithError": "Failed to add watched directory: {{error}}",
+            "updateFailed": "Failed to update watched directory.",
+            "updateFailedWithError": "Failed to update watched directory: {{error}}",
+            "removeFailed": "Failed to remove watched directory.",
+            "removeFailedWithError": "Failed to remove watched directory: {{error}}",
+            "added": "Watched directory added.",
+            "removed": "Watched directory removed."
+        }
+    },
     "sandbox": {
         "title": "Sandbox Control",
-        "description": "ClawX uses policy-light by default. Docker and SSH remain explicit strong-isolation providers, and missing Docker never blocks the default Gateway path.",
+        "description": "Verse Claw uses policy-light by default. Docker and SSH remain explicit strong-isolation providers, and missing Docker never blocks the default Gateway path.",
         "defaultProfileName": "Default sandbox",
         "loadFailed": "Failed to load sandbox status",
         "saveFailed": "Failed to save sandbox profile",
@@ -232,7 +289,7 @@
     },
     "remoteControl": {
         "title": "Electron Remote Control",
-        "description": "Expose the Electron CDP debugging port. Bind it to localhost and use it only in trusted environments. Restart ClawX after saving.",
+        "description": "Expose the Electron CDP debugging port. Bind it to localhost and use it only in trusted environments. Restart Verse Claw after saving.",
         "port": "CDP Port",
         "configEndpoint": "Configured endpoint: 127.0.0.1:{{port}} /json/version",
         "currentEndpoint": "Current endpoint: {{endpoint}}",
@@ -280,7 +337,7 @@
     },
     "updates": {
         "title": "Updates",
-        "description": "Keep ClawX up to date",
+        "description": "Keep Verse Claw up to date",
         "autoCheck": "Auto-check for updates",
         "autoCheckDesc": "Check for updates on startup",
         "autoDownload": "Update prompts",
@@ -309,13 +366,13 @@
         "whatsNew": "What's New:",
         "errorDetails": "Error Details:",
         "toast": {
-            "availableTitle": "ClawX update available",
+            "availableTitle": "Verse Claw update available",
             "availableDescription": "Version v{{version}} is available. Download it when you're ready.",
-            "downloadedTitle": "ClawX update ready",
+            "downloadedTitle": "Verse Claw update ready",
             "downloadedDescription": "Version v{{version}} has been downloaded. Restart to install it.",
             "unknownVersion": "new"
         },
-        "help": "ClawX checks for updates automatically and prompts you before downloading or installing."
+        "help": "Verse Claw checks for updates automatically and prompts you before downloading or installing."
     },
     "advanced": {
         "title": "Advanced",
@@ -323,7 +380,7 @@
         "devMode": "Developer Mode",
         "devModeDesc": "Show developer tools and shortcuts",
         "telemetry": "Anonymous Usage Data",
-        "telemetryDesc": "Allow providing anonymous basic usage data to improve ClawX"
+        "telemetryDesc": "Allow providing anonymous basic usage data to improve Verse Claw"
     },
     "developer": {
         "title": "Developer",
@@ -381,67 +438,13 @@
     },
     "about": {
         "title": "About",
-        "appName": "ClawX",
+        "appName": "Verse Claw",
         "tagline": "Graphical AI Assistant",
         "basedOn": "Based on OpenClaw",
         "version": "Version {{version}}",
         "docs": "Website",
         "github": "GitHub",
         "faq": "FAQ"
-    },
-    "workModes": {
-        "title": "Work Modes",
-        "currentMode": "Current workspace mode",
-        "currentModeDesc": "Choose the behavior preset for the active workspace session. This does not change permissions or grant tools.",
-        "noWorkspace": "Choose a workspace before changing the work mode.",
-        "noWorkspaceBadge": "No workspace",
-        "modeSaved": "Work mode updated",
-        "kitsTitle": "Work Kits",
-        "kitsDesc": "Choose the artifact-focused kits each mode advertises to the runtime. These are capability hints only; runtime policy still decides actual tools.",
-        "installSkill": "Install {{slug}}",
-        "installingSkill": "Installing {{slug}}",
-        "skillInstalled": "{{slug}} installed",
-        "skillInstallFailed": "Skill install failed: {{error}}",
-        "selectedCount": "{{count}} selected",
-        "capability": {
-            "ready": "Ready",
-            "missingSkill": "Missing skill",
-            "disabled": "Disabled",
-            "runtimeUnavailable": "Runtime unavailable",
-            "optionalExternal": "Optional"
-        },
-        "kits": {
-            "reports": "Reports",
-            "sheets": "Sheets",
-            "slides": "Slides",
-            "pdf": "PDF",
-            "research": "Research",
-            "website": "Website",
-            "design": "Design",
-            "ops": "Ops"
-        },
-        "kitDescriptions": {
-            "reports": "Draft, structure, and export reports and Word-style documents.",
-            "sheets": "Read, clean, calculate, and summarize spreadsheets or CSV data.",
-            "slides": "Create presentation outlines and editable PPTX decks.",
-            "pdf": "Extract, summarize, preview, and package PDF artifacts.",
-            "research": "Collect web/source material with citations and readable summaries.",
-            "website": "Build and verify HTML/web artifacts with browser previews.",
-            "design": "Shape visual artifacts, dashboards, and polished layouts.",
-            "ops": "Handle lightweight daily writing, action items, and personal operations."
-        },
-        "toolBundlesTitle": "Tool bundle intent",
-        "toolBundlesDesc": "Choose which tool bundle labels each mode advertises to the runtime. These labels express intent only; runtime policy still decides actual tools.",
-        "toolBundles": {
-            "code": "Code",
-            "git": "Git",
-            "terminal": "Terminal",
-            "browser": "Browser",
-            "docs": "Docs",
-            "sheets": "Sheets",
-            "pdf": "PDF",
-            "memory": "Memory"
-        }
     },
     "workProviders": {
         "title": "Work Providers",

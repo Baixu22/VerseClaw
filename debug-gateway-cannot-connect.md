@@ -87,14 +87,14 @@ TRAE Sandbox Error: hit restricted
 - 同时 trae-sandbox 报"`Not allow operate files: C:\Users\27933\AppData\Roaming\clawx\lockfile`"。
 - user data 目录（`C:\Users\27933\AppData\Roaming\clawx\`）里没有任何残留的 `*.lock*` / `Singleton*` / `lockfile` 文件（已用 `Get-ChildItem` 反复确认）。
 - 用 `tasklist` 确认没有任何 `electron.exe` / `chrome.exe` 进程残留。
-- 用 `node .dbg/clear-stale-locks.cjs`（项目内沙箱白名单路径下执行，所以能删除）成功删掉了 `clawx.instance.lock`（5 字节，时间戳是用户上次会话残留），但**重跑 dev 仍然报同样的 lock 创建错误**。
+- 用 `node .dbg/clear-stale-locks.cjs`（项目内沙箱白名单路径下执行，所以能删除）成功删掉了 `verse-claw.instance.lock`（5 字节，时间戳是用户上次会话残留），但**重跑 dev 仍然报同样的 lock 创建错误**。
 
 ### 结论
 **Trae AI 沙箱在 OS 层（minifilter 或类似机制）拦截了对 `C:\Users\27933\AppData\Roaming\clawx\` 目录下文件的创建操作**。`app.requestSingleInstanceLock()` 内部需要创建 `lockfile`（小写）来记录 holder PID，被沙箱挡掉后 Chromium 报 ERROR_ACCESS_DENIED，主进程走"另一个实例在跑"的分支立刻 `app.exit(0)`。`grep` 也能确认：main 流程里 Chromium lock 是 **先于** 自家 `acquireProcessInstanceFileLock` 检查的，所以靠自家 lock 也救不回来。
 
 ### 已尝试且失败的变通
-- 清掉 `clawx.instance.lock` / `SingletonLock` / `lockfile`（无残留，本来就没有）。
-- 设置 `CLAWX_USER_DATA_DIR=c:\Users\27933\Desktop\clawx\ClawX\.dbg\userData` 把 userData 指向项目内（沙箱允许的位置）。dev 跑起来了，但 Chromium 单实例锁默认锁在 userData 目录里 —— 此时又会被沙箱认为"新建文件落到了项目内"拦截（需要等 build 完成后才能确认；目前 terminal 还在跑，但已可判断大概率仍然会被拦，因为沙箱似乎对 electron 进程的所有 FS 写入都做拦截）。**接手 agent 不需要再试这一条**，但如果想看完整 log，文件在 `.dbg\dev-post-fix-ud.log`。
+- 清掉 `verse-claw.instance.lock` / `SingletonLock` / `lockfile`（无残留，本来就没有）。
+- 设置 `VERSE_CLAW_USER_DATA_DIR=c:\Users\27933\Desktop\clawx\ClawX\.dbg\userData` 把 userData 指向项目内（沙箱允许的位置）。dev 跑起来了，但 Chromium 单实例锁默认锁在 userData 目录里 —— 此时又会被沙箱认为"新建文件落到了项目内"拦截（需要等 build 完成后才能确认；目前 terminal 还在跑，但已可判断大概率仍然会被拦，因为沙箱似乎对 electron 进程的所有 FS 写入都做拦截）。**接手 agent 不需要再试这一条**，但如果想看完整 log，文件在 `.dbg\dev-post-fix-ud.log`。
 
 ### 接手 agent 建议的第一步
 **离开 Trae AI 这个沙箱环境（用普通 PowerShell / cmd / VSCode 自带 terminal）再跑一次 `npm run dev`**。如果届时仍然报 lockfile / 单实例锁错误，再去查：
@@ -111,7 +111,7 @@ TRAE Sandbox Error: hit restricted
 - Electron main 入口 & 单实例锁流程：[`electron/main/index.ts:99-130`](file:///c:/Users/27933/Desktop/clawx/ClawX/electron/main/index.ts#L99-L130)
 - 自家文件锁实现（force 模式，会在 Chrome 锁拿到之后清理 orphan lock）：[`electron/main/process-instance-lock.ts`](file:///c:/Users/27933/Desktop/clawx/ClawX/electron/main/process-instance-lock.ts)
 - Gateway 启动管理（含 stderr 分类、孤儿检测、reconnect）：[`electron/gateway/manager.ts:1020-1099`](file:///c:/Users/27933/Desktop/clawx/ClawX/electron/gateway/manager.ts#L1020-L1099)
-- `userData` 路径可通过 `CLAWX_USER_DATA_DIR` 覆盖：[`electron/main/index.ts:64-67`](file:///c:/Users/27933/Desktop/clawx/ClawX/electron/main/index.ts#L64-L67)
+- `userData` 路径可通过 `VERSE_CLAW_USER_DATA_DIR` 覆盖：[`electron/main/index.ts:64-67`](file:///c:/Users/27933/Desktop/clawx/ClawX/electron/main/index.ts#L64-L67)
 
 ### 配置
 - **正式配置**（独立系统）：`C:\Users\27933\AppData\Roaming\clawx\openclaw-source-state\openclaw.json`
@@ -120,12 +120,12 @@ TRAE Sandbox Error: hit restricted
 ### 日志
 - `.dbg\dev-pre-fix.log` — 修改 openclaw.json 之前那次 dev 的输出
 - `.dbg\dev-post-fix.log` — 改完 `reasoningEffort` 之后、但还没用 userData 覆盖的 dev 输出
-- `.dbg\dev-post-fix-ud.log` — 加了 `CLAWX_USER_DATA_DIR` 之后的 dev 输出（如果接手 agent 还要看）
+- `.dbg\dev-post-fix-ud.log` — 加了 `VERSE_CLAW_USER_DATA_DIR` 之后的 dev 输出（如果接手 agent 还要看）
 - `.dbg\clear-stale-locks.log` — 删残留 lock 文件的脚本日志
 - 运行时 ClawX 日志（不在项目内）：`C:\Users\27933\AppData\Roaming\clawx\logs\clawx-2026-06-12.log`
 
 ### 临时工具（项目内沙箱白名单路径下，可由 agent 直接复用）
-- `.dbg\clear-stale-locks.cjs` — 删 `clawx.instance.lock` / `Singleton*` / `lockfile` 的小脚本（不走沙箱受限的 PowerShell `Remove-Item`）。
+- `.dbg\clear-stale-locks.cjs` — 删 `verse-claw.instance.lock` / `Singleton*` / `lockfile` 的小脚本（不走沙箱受限的 PowerShell `Remove-Item`）。
 
 ---
 

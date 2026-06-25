@@ -1,20 +1,20 @@
 
 <p align="center">
-  <img src="src/assets/logo.svg" width="128" height="128" alt="ClawX Logo" />
+  <img src="src/assets/logo.svg" width="128" height="128" alt="Verse Claw Logo" />
 </p>
 
-<h1 align="center">ClawX</h1>
+<h1 align="center">Verse Claw</h1>
 
 <p align="center">
   <strong>The Desktop Interface for OpenClaw AI Agents</strong>
 </p>
 
 <p align="center">
-  <a href="#features">Features</a> •
-  <a href="#why-clawx">Why ClawX</a> •
-  <a href="#getting-started">Getting Started</a> •
-  <a href="#architecture">Architecture</a> •
-  <a href="#development">Development</a> •
+  <a href="#features">Features</a> 鈥?
+  <a href="#why-clawx">Why Verse Claw</a> 鈥?
+  <a href="#getting-started">Getting Started</a> 鈥?
+  <a href="#architecture">Architecture</a> 鈥?
+  <a href="#development">Development</a> 鈥?
   <a href="#contributing">Contributing</a>
 </p>
 
@@ -25,32 +25,32 @@
   <a href="https://discord.com/invite/84Kex3GGAh" target="_blank">
   <img src="https://img.shields.io/discord/1399603591471435907?logo=discord&labelColor=%20%235462eb&logoColor=%20%23f5f5f5&color=%20%235462eb" alt="chat on Discord" />
   </a>
-  <img src="https://img.shields.io/github/downloads/ValueCell-ai/ClawX/total?color=%23027DEB" alt="Downloads" />
+  <img src="https://img.shields.io/github/downloads/ValueCell-ai/Verse Claw/total?color=%23027DEB" alt="Downloads" />
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License" />
 </p>
 
 <p align="center">
-  English | <a href="README.zh-CN.md">简体中文</a> | <a href="README.ja-JP.md">日本語</a> | <a href="README.ru-RU.md">Русский</a>
+  English | <a href="README.zh-CN.md">绠€浣撲腑鏂?/a> | <a href="README.ja-JP.md">鏃ユ湰瑾?/a> | <a href="README.ru-RU.md">袪褍褋褋泻懈泄</a>
 </p>
 
 ---
 
 ## Overview
 
-**ClawX** bridges the gap between powerful AI agents and everyday users. Built on top of [OpenClaw](https://github.com/OpenClaw), it transforms command-line AI orchestration into an accessible, beautiful desktop experience—no terminal required.
+**Verse Claw** bridges the gap between powerful AI agents and everyday users. Built on top of [OpenClaw](https://github.com/OpenClaw), it transforms command-line AI orchestration into an accessible, beautiful desktop experience鈥攏o terminal required.
 
-Whether you're automating workflows, managing AI-powered channels, or scheduling intelligent tasks, ClawX provides the interface you need to harness AI agents effectively.
+Whether you're automating workflows, managing AI-powered channels, or scheduling intelligent tasks, Verse Claw provides the interface you need to harness AI agents effectively.
 
 For controlled autonomous execution, the Agents orchestration panel now includes a bounded **Task loop** that coordinates role subagents, self-checks evidence, runs scoped repairs, surfaces live status, and stops as `blocked` when confidence or permissions are insufficient.
 
-The same Agents -> Roles & Orchestration surface now includes a **Lightweight Subagent Runner** for common no-YAML workflows. Users can choose Explorer, Reviewer, Tester, or Compare 3 approaches, enter a goal, and launch explicit role workers through the existing Gateway permission path while ClawX shows live worker status, summary, failures, and an Observability trace link.
+The same Agents -> Roles & Orchestration surface now includes a **Lightweight Subagent Runner** for common no-YAML workflows. Users can choose Explorer, Reviewer, Tester, or Compare 3 approaches, enter a goal, and launch explicit role workers through the existing Gateway permission path while Verse Claw shows live worker status, summary, failures, and an Observability trace link.
 
 For goals that need to survive long conversations, checkpoints, evidence review, and explicit scheduled ticks, the Agents panel now includes **Mission Control**. It starts or resumes a Mission through `mission.run`, persists Mission state, rebuilds bounded context from ResumeCheckpoint, Task Ledger, memory, and trace evidence, runs one inner `task_loop` per tick, then lets the reviewer decide continue, repair, sleep, ask the user, complete, or block.
 Mission and Task loops now carry internal Engineering Control Signals such as `evidence_gap`, `validation_missing`, `scope_drift`, `unverified_claim`, and `replan_required`; these signals stay in checkpoints, lifecycle events, and Task Ledger metadata, and they prevent trace-only or inner-loop-only results from being treated as durable completion facts.
 
 For long tasks that need stable decomposition across many worker turns, **ClawGraph Runtime** adds workspace YAML workflows, DAG execution, stateless role-worker handoffs, audit checks, and user review without stuffing the whole workflow into one chat transcript.
 
-ClawX comes pre-configured with best-practice model providers and natively supports Windows as well as multi-language settings. Of course, you can also fine-tune advanced configurations via **Settings → Developer → Developer Mode**.
+Verse Claw comes pre-configured with best-practice model providers and natively supports Windows as well as multi-language settings. Of course, you can also fine-tune advanced configurations via **Settings 鈫?Developer 鈫?Developer Mode**.
 
 <p align="center"><strong style="font-size:1.1em; text-decoration: underline;">For a full enterprise edition, dedicated service support, or tailored deployment guidance for your business scenario, contact us at <a href="mailto:public@valuecell.ai">public@valuecell.ai</a>.</strong></p>
 
@@ -83,22 +83,22 @@ ClawX comes pre-configured with best-practice model providers and natively suppo
 
 ---
 
-## Why ClawX
+## Why Verse Claw
 
-Building AI agents shouldn't require mastering the command line. ClawX was designed with a simple philosophy: **powerful technology deserves an interface that respects your time.**
+Building AI agents shouldn't require mastering the command line. Verse Claw was designed with a simple philosophy: **powerful technology deserves an interface that respects your time.**
 
-| Challenge | ClawX Solution |
+| Challenge | Verse Claw Solution |
 |-----------|----------------|
 | Complex CLI setup | One-click installation with guided setup wizard |
 | Configuration files | Visual settings with real-time validation |
 | Process management | Automatic gateway lifecycle management |
-| App updates | Startup update checks with a prompt before downloading or installing |
+| App updates | Manual update checks in Settings; no startup prompts |
 | Multiple AI providers | Unified provider configuration panel |
 | Skill/plugin installation | Local-first skill management with optional extension-provided marketplace |
 
 ### OpenClaw Inside
 
-ClawX is built directly upon the official **OpenClaw** core. Instead of requiring a separate installation, we embed the runtime within the application to provide a seamless "battery-included" experience. Development builds prefer the editable `openclaw_runtime` tree by default, while `CLAWX_OPENCLAW_RUNTIME=npm` remains available as an explicit fallback to the published package.
+Verse Claw is built directly upon the official **OpenClaw** core. Instead of requiring a separate installation, we embed the runtime within the application to provide a seamless "battery-included" experience. Development builds prefer the editable `openclaw_runtime` tree by default, while `VERSE_CLAW_OPENCLAW_RUNTIME=npm` remains available as an explicit fallback to the published package.
 
 We are committed to maintaining strict alignment with the upstream OpenClaw project, ensuring that you always have access to the latest capabilities, stability improvements, and ecosystem compatibility provided by the official releases.
 
@@ -108,85 +108,93 @@ When Developer Mode is enabled, the sidebar also provides a native Dreams page f
 
 ## Features
 
-### 🎯 Zero Configuration Barrier
-Complete the entire setup—from installation to your first AI interaction—through an intuitive graphical interface. No terminal commands, no YAML files, no environment variable hunting.
+### 馃幆 Zero Configuration Barrier
+Complete the entire setup鈥攆rom installation to your first AI interaction鈥攖hrough an intuitive graphical interface. No terminal commands, no YAML files, no environment variable hunting.
 
-### 💬 Intelligent Chat Interface
+### 馃挰 Intelligent Chat Interface
 Communicate with AI agents through a modern chat experience. Support for multiple conversation contexts, message history, rich content rendering with Markdown (including GitHub-flavored tables and KaTeX-powered LaTeX math: `$inline$`, `$$block$$`, `\(inline\)`, and `\[block\]`), structured Tool UI cards for plans, option lists, question flows, and preferences, and direct `@agent` routing in the main composer for multi-agent setups.
-Settings → Work Modes includes Plan, Build, Review, and Docs/Data. Modes are saved per workspace session and now use artifact-focused Work Kits for reports, sheets, slides, PDFs, research, websites, design, and ops. Kit status shows local skill readiness, Main-owned Work Provider status for lightweight Office/Search capabilities, and optional install actions for built-in Office skills, while the next message only carries lightweight untrusted intent metadata. Search remains missing-config until the user explicitly configures a provider, and heavy converters, crawlers, OCR, and dataframe runtimes stay optional interfaces. Work Modes do not change workspace permission automatically or override OpenClaw runtime tool policy.
+Settings 鈫?Work Modes includes Plan, Build, Review, and Docs/Data. Modes are saved per workspace session and now use artifact-focused Work Kits for reports, sheets, slides, PDFs, research, websites, design, and ops. Kit status shows local skill readiness, Main-owned Work Provider status for lightweight Office/Search capabilities, and optional install actions for built-in Office skills, while the next message only carries lightweight untrusted intent metadata. Work Providers can be backed by built-in libraries, optional packages, external services, Custom HTTP, external binaries, runtime skills, MCP servers, or OpenClaw plugins through the same source model. Search remains missing-config until the user explicitly configures a provider, and heavy converters, crawlers, OCR, and dataframe runtimes stay optional interfaces. Work Modes do not change workspace permission automatically or override OpenClaw runtime tool policy.
 Skills you insert from the composer appear as `/skill-name` chips; click a chip to open the preview sidebar and read that skill's `SKILL.md`.
 Typing `/` in the composer opens the Context Palette for wiki search, read-only knowledge scope changes, review, CI repair, tests, diff explanation, Task Ledger, Mission Control, compaction, and session fork through the existing Chat and session flows.
-When you target another agent with `@agent`, ClawX switches into that agent's own conversation context directly instead of relaying through the default agent. Agent workspaces stay separate by default, and stronger isolation depends on OpenClaw sandbox settings.
-By default, ClawX uses a lightweight `policy-light` sandbox layer backed by Main-process permission gates, workspace-root checks, Gateway RPC approval, and OpenClaw exec approval; Docker and SSH remain optional explicit `strong` providers rather than startup requirements.
+When you target another agent with `@agent`, Verse Claw switches into that agent's own conversation context directly instead of relaying through the default agent. Agent workspaces stay separate by default, and stronger isolation depends on OpenClaw sandbox settings.
+By default, Verse Claw uses a lightweight `policy-light` sandbox layer backed by Main-process permission gates, workspace-root checks, Gateway RPC approval, and OpenClaw exec approval; Docker and SSH remain optional explicit `strong` providers rather than startup requirements.
 Settings, Doctor, and diagnostics now show the same effective sandbox policy, including requested/effective provider, runtime level, exec and network policy, Docker availability, and degraded fallback reason.
 Settings -> System & Runtime also includes Project Rules Center, which inspects the active workspace `AGENTS.md`, lists `.clawx/rules/*.md`, shows deterministic validation warnings, and can create a conservative missing `AGENTS.md` template without introducing a new rule source of truth.
 Each agent can also override its own `provider/model` runtime setting; agents without overrides continue inheriting the global default model.
 The composer context indicator includes a confirmed manual compression action for the current session, surfacing token pressure, hidden-message counts, last compaction, and compression quality while keeping long-task state in Task Ledger / Context Pack instead of relying on a huge transcript. Compaction also stores a token-dense recovery artifact that handoff can use before falling back to transcript evidence.
 It also surfaces checkpointed recovery state for long conversations: queued follow-ups, latest intervention/checkpoint signals, recovery warnings, and an idle-session action to drain queued follow-up messages that survived a Gateway restart.
-It also includes preview-first **Handoff to new conversation**: ClawX prepares an editable deterministic continuation draft from ResumeCheckpoint, Task Ledger, Git status, recent trace/error state, and transcript fallback evidence, then creates a fresh workspace-scoped session with that draft prefilled without auto-sending.
-**Fork to new conversation** is the branch-style counterpart: when the current session is idle, ClawX asks the runtime to create a child conversation with the active transcript branch already present, switches to it immediately, keeps the parent unchanged, and does not copy Task Ledger truth, generate a prompt, or auto-send.
-The composer shows only the recommended continuity action, while the session dropdown keeps both Fork and Handoff with a small Recommended marker; failure prompts offer explicit alternatives such as Prepare handoff without automatically switching semantics.
+The Chat rollback plan adds a review-first recovery panel with safe/review/dangerous counts, checkpoint/queue/context/terminal/Git/Task Ledger/Memory signals, and typed actions that route destructive work through approval-backed tools while memory facts become Knowledge drafts or proposals.
+It also includes preview-first **Handoff to new conversation**: Verse Claw prepares an editable deterministic recovery package from ResumeCheckpoint, runtime recovery context, Task Ledger, Git status, recent trace/error state, and transcript fallback evidence, then creates a fresh workspace-scoped session with that draft prefilled without auto-sending.
+**Fork to new conversation** is the branch-style counterpart: when the current session is idle, Verse Claw asks the runtime to create a child conversation with the active transcript branch already present, switches to it immediately, keeps the parent unchanged, and does not copy Task Ledger truth, generate a prompt, or auto-send.
+The composer shows only the recommended continuity action from a local preflight check with a short healthy/risky/blocked cue, while the session dropdown keeps both Fork and Handoff with a small Recommended marker and lightweight Fork lineage metadata; failure prompts offer explicit alternatives such as Prepare handoff without automatically switching semantics.
 
 The Agents orchestration panel also includes a bounded **Task loop** action for controlled autonomous work. It starts `task_loop.run` through the existing Gateway RPC path, coordinates role subagents, runs self-check and scoped repair rounds, and shows live phase, iteration, reviewer decision, terminal status, and trace evidence without adding renderer-direct Gateway transport.
 
 It also includes a **Lightweight Subagent Runner** for preset parallel workflows that do not require ClawGraph YAML. Explorer launches planner and architect workers for solution discovery, Reviewer reviews the current staged and unstaged Git diff, Tester asks tester and reviewer roles for coverage gaps, and Compare 3 approaches runs three labeled architect workers. The runner never auto-merges code and links completed runs to Observability traces.
 
 The same panel now exposes **Mission Control** for longer goals. It starts or resumes `mission.run`, stores Mission state in the OpenClaw state DB, rebuilds bounded context from ResumeCheckpoint, Task Ledger, memory, and trace evidence, runs an inner `task_loop` tick, reflects with the Mission reviewer, writes checkpoints, proposes memory, and surfaces pause/resume/cancel plus live tick phase, decision, next wake, blocked reason, and trace evidence. Scheduled Mission ticks are opt-in; completion is always decided from evidence, not from the wake trigger.
-Engineering Control Signals make evidence gaps, scope drift, missing validation, and unverified completion claims explicit inside the existing checkpoint, Mission/Task reviewer, HostEvent, and Task Ledger metadata paths; ClawX does not create a second progress file or treat Observability traces as completion truth.
+Engineering Control Signals make evidence gaps, scope drift, missing validation, and unverified completion claims explicit inside the existing checkpoint, Mission/Task reviewer, HostEvent, and Task Ledger metadata paths; Verse Claw does not create a second progress file or treat Observability traces as completion truth.
 
 ### ClawGraph Runtime
 The ClawGraph page lists `.clawx/clawgraph/*.yaml` workflows from the active workspace, compiles them into a checked DAG, starts controlled runs, and shows node status, read-only DAG structure, append-only events, and review items. Workers run as bounded role subagents and return structured `clawgraph_handoff` JSON; audit failures or uncertain graph changes freeze for user review instead of being accepted as truth. ClawGraph records execution state, while Task Ledger remains the long-term goal and review ledger.
 
 ### Agent Trace Workbench
-The Observability page keeps a ClawX-owned local JSON/JSONL trace index for recent sanitized trace envelopes (30 days or 1000 traces by default) and shows agent runs as an interactive diagnostic trace graph. The query-driven list surfaces issue chips, source freshness (`live`, `stale`, `rehydrated`, `partial`), errors, artifacts, retries, token/cost, and slow hotspots; Root Cause, Critical Path, Artifacts, and Cost views make diagnosis faster. The graph still supports search, phase/type/status filtering, pan/zoom, mini-map navigation, critical-path highlighting, timeline sync, and a node diagnostics drawer with Issues, events, redacted I/O summaries, artifacts, and whitelisted attributes. Chat execution cards link directly to their trace or issue node when trace data exists. `clearTraces()` resets only ClawX observability index/cache, while details stay summary-first and do not expose full raw prompts, outputs, tool args, or tool output by default.
+The Observability page keeps a Verse Claw-owned local JSON/JSONL trace index for recent sanitized trace envelopes (30 days or 1000 traces by default) and shows agent runs as an interactive diagnostic trace graph. The query-driven list surfaces issue chips, source freshness (`live`, `stale`, `rehydrated`, `partial`), errors, artifacts, retries, token/cost, and slow hotspots; Root Cause, Critical Path, Artifacts, and Cost views make diagnosis faster. The workbench now opens with a summary/root-cause strip, supports Graph, Run tree, and Swimlane views, and lets users switch focused/balanced/full graph density, compare a trace with another run, save common list views, and keep local review notes. The graph still supports search, phase/type/status filtering, pan/zoom, mini-map navigation, critical-path highlighting, timeline sync, and a node diagnostics drawer with Issues, events, redacted I/O summaries, artifacts, and whitelisted attributes. Chat execution cards link directly to their trace or issue node when trace data exists. `clearTraces()` resets only Verse Claw observability index/cache, while details stay summary-first and do not expose full raw prompts, outputs, tool args, or tool output by default.
+
+The runtime also includes a default-off security and verification shadow layer for Gateway-visible `tools.invoke` calls and runtime validation inputs. When enabled by policy, it records sanitized in-memory security decisions, deterministic tool-call/event-log/checkpoint verification summaries, runId-correlated result filters, and aggregate health counts through `security.*` and `verification.*` RPCs plus additive Observability spans; it does not block tools, run external tests, call an LLM judge, or persist raw tool arguments/results/events/checkpoints.
 
 ### Task Ledger
 The Task Ledger page keeps a workspace-scoped, agent-neutral record for long-running work: goals, subtasks, dependencies, blockers, review nodes, decisions, deviations, and session links. It stores append-only JSONL events under the local OpenClaw config directory, shows a compact summary beside active chats, and exports a single offline HTML file with Tree, DAG, History, and Review views.
+
+### Remote Tasks
+The Remote Tasks page provides a local-first inbox for structured message, OpenClaw Doctor, and settings patch envelopes. Settings patches show a change preview and require explicit approval before the Main process applies a whitelisted configuration update.
 
 ### Code Review Center
 The Review Center runs read-only AI review over uncommitted changes, diffs against a base branch, or a selected commit. It normalizes findings by severity with file and line anchors, records sanitized review traces, and can turn a finding or full review result into a Task Ledger review node without staging, committing, or editing files.
 
 ### Knowledge Hub
-The Knowledge page manages source-backed wiki context through OpenClaw `memory-wiki`. It defaults to an isolated ClawX-managed native vault, can import bounded text files or folders without switching to unsafe local-vault mode, and can validate/import local OKF v0.1 Markdown bundles as a thin compatibility adapter over `wiki.ingest`. It offers status, search, inspect, compile, lint, Knowledge Inbox, draft/proposal review, provenance, and governance workflows. Inbox items capture chat, task, file, OKF, ClawGraph, or agent candidates outside the formal wiki until the user promotes or dismisses them; provenance records source refs and read/reference events without mutating wiki pages. Chat knowledge scope (`None`, `Memory`, `Wiki`, or `All`) is read-only: agents may search/get context, but cannot write, update, archive, delete, merge, or apply knowledge because a scope is enabled. In Chat, `/wiki` searches and attaches explicit wiki references as visible chips before send, while `/memory`, `/all`, `/none`, and `/scope` adjust read scope without turning it into write permission. Session knowledge and agent/steward suggestions enter editable drafts/proposals first; only explicit user confirmation applies them to the wiki. Obsidian remains optional rather than required.
+The Knowledge page manages source-backed wiki context through OpenClaw `memory-wiki`. It defaults to an isolated Verse Claw-managed native vault, can import bounded text files or folders without switching to unsafe local-vault mode, and can validate/import local OKF v0.1 Markdown bundles as a thin compatibility adapter over `wiki.ingest`. It offers status, search, inspect, compile, lint, Knowledge Inbox, draft/proposal review, provenance, and governance workflows. Inbox items capture chat, task, file, OKF, ClawGraph, or agent candidates outside the formal wiki until the user promotes or dismisses them; provenance records source refs and read/reference events without mutating wiki pages. Chat knowledge scope (`None`, `Memory`, `Wiki`, or `All`) is read-only: agents may search/get context, but cannot write, update, archive, delete, merge, or apply knowledge because a scope is enabled. In Chat, `/wiki` searches and attaches explicit wiki references as visible chips before send, while `/memory`, `/all`, `/none`, and `/scope` adjust read scope without turning it into write permission. The invocation mode defaults to Suggest, where relevant knowledge appears as optional chips; Auto-read is opt-in and only attaches a small read-only set of fresh, high-confidence references. Session knowledge and agent/steward suggestions enter editable drafts/proposals first; only explicit user confirmation applies them to the wiki. Obsidian remains optional rather than required. A governance dashboard surfaces contradictions, stale pages, and dangling references through on-demand health checks; watched directories keep project docs flowing into pending Inbox items and never direct-ingest or create syntheses automatically.
 
 ### Workspace Git Control
-The Workspace sidebar includes a Git workbench for repository status, side-by-side file diffs, staging, copyable patches, approval-gated file reverts, commits, branches, stashes, worktrees, and GitHub pull requests. The same Main-process Git service powers the built-in `clawx-git` MCP server, so agents can use controlled Git and PR tools through ClawX permissions instead of shelling out directly.
+The Workspace sidebar includes a Git workbench for repository status, side-by-side file diffs, staging, copyable patches, approval-gated file reverts, commits, branches, stashes, worktrees, and GitHub pull requests. Its readiness strip quantifies local Git, built-in Agent Git tools, worktree count, and `gh` authentication so the panel shows what is actually usable. Worktree add supports new-branch and existing-branch flows, with new worktrees placed next to the repository by default. The same Main-process Git service powers the built-in `clawx-git` MCP server, so agents can use controlled Git and PR tools through Verse Claw permissions instead of shelling out directly; destructive or publishing actions such as revert, pull, push, worktree remove/prune, and PR creation stay approval-gated.
 
-### 📡 Multi-Channel Management
+### 馃摗 Multi-Channel Management
 Configure and monitor multiple AI channels simultaneously. Each channel operates independently, allowing you to run specialized agents for different tasks.
 Each channel now supports multiple accounts, per-account agent binding, and switching the channel default account directly from the Channels page.
-For custom channel account IDs, ClawX enforces OpenClaw-compatible canonical IDs (`[a-z0-9_-]`, lowercase, max 64 chars, must start with a letter/number) to prevent routing mismatches.
-ClawX now also bundles Tencent's official personal WeChat channel plugin, so you can link WeChat directly from the Channels page with an in-app QR flow.
+The same page now surfaces each channel/account's DM, group, and native approval policy summary without exposing allowlist entries or secrets.
+For custom channel account IDs, Verse Claw enforces OpenClaw-compatible canonical IDs (`[a-z0-9_-]`, lowercase, max 64 chars, must start with a letter/number) to prevent routing mismatches.
+Verse Claw now also bundles Tencent's official personal WeChat channel plugin, so you can link WeChat directly from the Channels page with an in-app QR flow.
 
-### ⏰ Cron-Based Automation
+### 鈴?Cron-Based Automation
 Schedule AI tasks to run automatically. Define triggers, set intervals, and let your AI agents work around the clock without manual intervention.
 The Cron page now lets you configure external delivery directly in the task form with separate sender-account and recipient-target selectors. For supported channels, recipient targets are discovered automatically from channel directories or known session history, so you no longer need to edit `jobs.json` by hand.
+Scheduled tasks can also run Agent Browser automations: choose a URL, a browser profile/auth state, safety policy, success/failure conditions, conservative safe-step retry, and diagnostics so jobs such as check-ins, page monitoring, or draft publishing can reuse persisted login state through the internal managed browser and show concise failure evidence.
 
 
-### 🧩 Extensible Skill System
+### 馃З Extensible Skill System
 Extend your AI agents with pre-built skills. The integrated Skills page is local-first: it scans managed/workspace skill directories, lets you enable or disable skills without depending on the Gateway, and can optionally expose an extension-provided marketplace in enterprise builds.
-ClawX also pre-bundles full document-processing skills (`pdf`, `xlsx`, `docx`, `pptx`), deploys them automatically to the managed skills directory (default `~/.openclaw/skills`) on startup, and enables them by default on first install. Additional bundled skills (`find-skills`, `self-improving-agent`, `tavily-search`) are also enabled by default; if required API keys are missing, OpenClaw will surface configuration errors in runtime.  
+Verse Claw also pre-bundles full document-processing skills (`pdf`, `xlsx`, `docx`, `pptx`), deploys them automatically to the managed skills directory (default `~/.openclaw/skills`) on startup, and enables them by default on first install. Additional bundled skills (`find-skills`, `self-improving-agent`, `tavily-search`) are also enabled by default; if required API keys are missing, OpenClaw will surface configuration errors in runtime.
 The Skills page can display skills discovered from multiple OpenClaw sources (managed dir, workspace, and extra skill dirs), and now shows each skill's actual location so you can open the real folder directly. For bundled OpenClaw skills, community builds now ship and expose only `skill-creator`; non-allowlisted bundled skills are physically trimmed in both dev and packaged startup, and any stale `openclaw.json` entries left behind for those removed bundled skills are pruned.
-From the chat composer, local-first capability requests such as enabling a discovered skill or registering pasted MCP JSON are detected before send, shown in a confirmation dialog with a local audit result, applied through the host API only when not blocked, and then summarized back into the message as trusted ClawX metadata. The capability orchestration also emits a `capability-management` Observability trace with audit, register, reload, heartbeat, and tool-list steps so install/registration flows can be inspected alongside agent runtime traces. The v1 audit is an explainable local gate for Skill metadata and MCP command/URL/env risk; it does not auto-download marketplace packages or run remote npm/npx templates.
+From the chat composer, local-first capability requests such as enabling a discovered skill or registering pasted MCP JSON are detected before send, shown in a confirmation dialog with a local audit result, applied through the host API only when not blocked, and then summarized back into the message as trusted Verse Claw metadata. The capability orchestration also emits a `capability-management` Observability trace with audit, register, reload, heartbeat, and tool-list steps so install/registration flows can be inspected alongside agent runtime traces. The v1 audit is an explainable local gate for Skill metadata and MCP command/URL/env risk; it does not auto-download marketplace packages or run remote npm/npx templates.
 
 Environment variables for bundled search skills:
 - `TAVILY_API_KEY` for `tavily-search` (OAuth may also be supported by upstream skill runtime)
 - `find-skills` and `self-improving-agent` do not require API keys
 
-### 🔐 Secure Provider Integration
+### 馃攼 Secure Provider Integration
 Connect to multiple AI providers (OpenAI, Anthropic, and more) with credentials stored securely in your system's native keychain. OpenAI supports both API key and browser OAuth (Codex subscription) sign-in.
 In developer mode, the dedicated Image Generation page supports an independent OpenAI-compatible image-generation endpoint (Base URL, API key, and model name such as `gpt-image-2`) so image generation can use a dedicated `/v1/images/generations` service while chat continues using the normal OpenAI provider.
-For **Custom** providers used with OpenAI-compatible gateways, you can set a custom `User-Agent` in **Settings → AI Providers → Edit Provider** for compatibility-sensitive endpoints.
-When a compatible gateway rejects `/models` for non-auth reasons, ClawX automatically falls back to a lightweight `/chat/completions` or `/responses` probe during API key validation.
+For **Custom** providers used with OpenAI-compatible gateways, you can set a custom `User-Agent` in **Settings 鈫?AI Providers 鈫?Edit Provider** for compatibility-sensitive endpoints.
+When a compatible gateway rejects `/models` for non-auth reasons, Verse Claw automatically falls back to a lightweight `/chat/completions` or `/responses` probe during API key validation.
 
-### 🌙 Adaptive Theming
-Light mode, dark mode, or system-synchronized themes. ClawX adapts to your preferences automatically.
+### 馃寵 Adaptive Theming
+Light mode, dark mode, or system-synchronized themes. Verse Claw adapts to your preferences automatically.
 
-### 🚀 Startup Launch Control
-In **Settings → General**, you can enable **Launch at system startup** so ClawX starts automatically after login.
+### 馃殌 Startup Launch Control
+In **Settings 鈫?General**, you can enable **Launch at system startup** so Verse Claw starts automatically after login.
 
-### 🔔 Update Prompts
-ClawX can automatically check for new versions on startup. When an update is available, it shows an in-app prompt; downloading and installing only happen after you choose the action.
+### 馃敂 Update Prompts
+Verse Claw does not check for updates or show update prompts on startup. Use **Settings → General** to check manually; downloading and installing still require an explicit action.
 
 ---
 
@@ -202,14 +210,14 @@ ClawX can automatically check for new versions on startup. When an update is ava
 
 #### Pre-built Releases (Recommended)
 
-Download the latest release for your platform from the [Releases](https://github.com/ValueCell-ai/ClawX/releases) page.
+Download the latest release for your platform from the [Releases](https://github.com/ValueCell-ai/Verse Claw/releases) page.
 
 #### Build from Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/ValueCell-ai/ClawX.git
-cd ClawX
+git clone https://github.com/ValueCell-ai/Verse Claw.git
+cd Verse Claw
 
 # Initialize the project
 pnpm run init
@@ -219,23 +227,23 @@ pnpm dev
 ```
 ### First Launch
 
-When you launch ClawX for the first time, the **Setup Wizard** will guide you through:
+When you launch Verse Claw for the first time, the **Setup Wizard** will guide you through:
 
-1. **Language & Region** – Configure your preferred locale
-2. **AI Provider** – Add providers with API keys or OAuth (for providers that support browser/device login)
-3. **Skill Bundles** – Select pre-configured skills for common use cases
-4. **Verification** – Test your configuration before entering the main interface
+1. **Language & Region** 鈥?Configure your preferred locale
+2. **AI Provider** 鈥?Add providers with API keys or OAuth (for providers that support browser/device login)
+3. **Skill Bundles** 鈥?Select pre-configured skills for common use cases
+4. **Verification** 鈥?Test your configuration before entering the main interface
 
 The wizard preselects your system language when it is supported, and falls back to English otherwise.
 
-> Note for Moonshot (Kimi): ClawX keeps Kimi web search enabled by default.  
-> When Moonshot is configured, ClawX also syncs Kimi web search to the China endpoint (`https://api.moonshot.cn/v1`) in OpenClaw config.
+> Note for Moonshot (Kimi): Verse Claw keeps Kimi web search enabled by default.
+> When Moonshot is configured, Verse Claw also syncs Kimi web search to the China endpoint (`https://api.moonshot.cn/v1`) in OpenClaw config.
 
 ### Proxy Settings
 
-ClawX includes built-in proxy settings for environments where Electron, the OpenClaw Gateway, or channels such as Telegram need to reach the internet through a local proxy client.
+Verse Claw includes built-in proxy settings for environments where Electron, the OpenClaw Gateway, or channels such as Telegram need to reach the internet through a local proxy client.
 
-Open **Settings → Developer → Proxy** and configure:
+Open **Settings 鈫?Developer 鈫?Proxy** and configure:
 
 - **Proxy Server**: the default proxy for all requests
 - **Bypass Rules**: hosts that should connect directly, separated by semicolons, commas, or new lines
@@ -252,63 +260,63 @@ Proxy Server: http://127.0.0.1:7890
 Notes:
 
 - A bare `host:port` value is treated as HTTP.
-- If advanced proxy fields are left empty, ClawX falls back to `Proxy Server`.
+- If advanced proxy fields are left empty, Verse Claw falls back to `Proxy Server`.
 - Saving proxy settings reapplies Electron networking immediately and restarts the Gateway automatically.
-- ClawX also syncs the proxy to OpenClaw's Telegram channel config when Telegram is enabled.
-- Gateway restarts preserve an existing Telegram channel proxy if ClawX proxy is currently disabled.
+- Verse Claw also syncs the proxy to OpenClaw's Telegram channel config when Telegram is enabled.
+- Gateway restarts preserve an existing Telegram channel proxy if Verse Claw proxy is currently disabled.
 - To explicitly clear Telegram channel proxy from OpenClaw config, save proxy settings with proxy disabled.
-- In **Settings → Developer**, you can run **OpenClaw Doctor** against the same selected runtime used by the Gateway and inspect the diagnostic output without leaving the app.
+- In **Settings 鈫?Developer**, you can run **OpenClaw Doctor** against the same selected runtime used by the Gateway and inspect the diagnostic output without leaving the app.
 - On packaged Windows builds, the bundled `openclaw` CLI/TUI runs through the shipped `node.exe` entrypoint and the packaged `openclaw-runtime` entry to keep terminal input behavior stable.
 
 ---
 
 ## Architecture
 
-ClawX employs a **dual-process architecture** with a unified host API layer. The renderer talks to a single client abstraction, while Electron Main owns protocol selection and process lifecycle:
+Verse Claw employs a **dual-process architecture** with a unified host API layer. The renderer talks to a single client abstraction, while Electron Main owns protocol selection and process lifecycle:
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                        ClawX Desktop App                         │
-│                                                                  │
-│  ┌────────────────────────────────────────────────────────────┐  │
-│  │              Electron Main Process                         │  │
-│  │  • Window & application lifecycle management               │  │
-│  │  • Gateway process supervision                             │  │
-│  │  • System integration (tray, notifications, keychain)      │  │
-│  │  • Auto-update orchestration                               │  │
-│  └────────────────────────────────────────────────────────────┘  │
-│                              │                                   │
-│                              │ IPC (authoritative control plane) │
-│                              ▼                                   │
-│  ┌────────────────────────────────────────────────────────────┐  │
-│  │              React Renderer Process                        │  │
-│  │  • Modern component-based UI (React 19)                    │  │
-│  │  • State management with Zustand                           │  │
-│  │  • Unified host-api/api-client calls                       │  │
-│  │  • Rich Markdown rendering                                 │  │
-│  └────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────┬───────────────────────────────────┘
-                               │
-                               │ Typed IPC requests
-                               ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                Main Host Services & Gateway Manager              │
-│                                                                  │
-│  • host:invoke typed service dispatcher                          │
-│  • Settings, files, sessions, skills, providers, diagnostics     │
-│  • Main-owned Gateway WebSocket and process supervision          │
-└──────────────────────────────┬───────────────────────────────────┘
-                               │
-                               │ Main-owned WebSocket
-                               ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                     OpenClaw Gateway                             │
-│                                                                  │
-│  • AI agent runtime and orchestration                            │
-│  • Message channel management                                    │
-│  • Skill/plugin execution environment                            │
-│  • Provider abstraction layer                                    │
-└──────────────────────────────────────────────────────────────────┘
+鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹?                       Verse Claw Desktop App                         鈹?
+鈹?                                                                 鈹?
+鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?
+鈹? 鈹?             Electron Main Process                         鈹? 鈹?
+鈹? 鈹? 鈥?Window & application lifecycle management               鈹? 鈹?
+鈹? 鈹? 鈥?Gateway process supervision                             鈹? 鈹?
+鈹? 鈹? 鈥?System integration (tray, notifications, keychain)      鈹? 鈹?
+鈹? 鈹? 鈥?Manual update orchestration                               鈹? 鈹?
+鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?
+鈹?                             鈹?                                  鈹?
+鈹?                             鈹?IPC (authoritative control plane) 鈹?
+鈹?                             鈻?                                  鈹?
+鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?
+鈹? 鈹?             React Renderer Process                        鈹? 鈹?
+鈹? 鈹? 鈥?Modern component-based UI (React 19)                    鈹? 鈹?
+鈹? 鈹? 鈥?State management with Zustand                           鈹? 鈹?
+鈹? 鈹? 鈥?Unified host-api/api-client calls                       鈹? 鈹?
+鈹? 鈹? 鈥?Rich Markdown rendering                                 鈹? 鈹?
+鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?
+鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+                               鈹?
+                               鈹?Typed IPC requests
+                               鈻?
+鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹?               Main Host Services & Gateway Manager              鈹?
+鈹?                                                                 鈹?
+鈹? 鈥?host:invoke typed service dispatcher                          鈹?
+鈹? 鈥?Settings, files, sessions, skills, providers, diagnostics     鈹?
+鈹? 鈥?Main-owned Gateway WebSocket and process supervision          鈹?
+鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+                               鈹?
+                               鈹?Main-owned WebSocket
+                               鈻?
+鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹?                    OpenClaw Gateway                             鈹?
+鈹?                                                                 鈹?
+鈹? 鈥?AI agent runtime and orchestration                            鈹?
+鈹? 鈥?Message channel management                                    鈹?
+鈹? 鈥?Skill/plugin execution environment                            鈹?
+鈹? 鈥?Provider abstraction layer                                    鈹?
+鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
 ```
 ### Design Principles
 
@@ -322,7 +330,7 @@ ClawX employs a **dual-process architecture** with a unified host API layer. The
 
 ### Process Model & Gateway Troubleshooting
 
-- ClawX is an Electron app, so **one app instance normally appears as multiple OS processes** (main/renderer/zygote/utility). This is expected.
+- Verse Claw is an Electron app, so **one app instance normally appears as multiple OS processes** (main/renderer/zygote/utility). This is expected.
 - Single-instance protection uses Electron's lock plus a local process-file lock fallback, preventing duplicate app launch in environments where desktop IPC/session bus is unstable.
 - During rolling upgrades, mixed old/new app versions can still have asymmetric protection behavior. For best reliability, upgrade all desktop clients to the same version.
 - The OpenClaw Gateway listener should still be **single-owner**: only one process should listen on `127.0.0.1:18789`.
@@ -330,23 +338,23 @@ ClawX employs a **dual-process architecture** with a unified host API layer. The
 - To verify the active listener:
   - macOS/Linux: `lsof -nP -iTCP:18789 -sTCP:LISTEN`
   - Windows (PowerShell): `Get-NetTCPConnection -LocalPort 18789 -State Listen`
-- Clicking the window close button (`X`) hides ClawX to tray; it does **not** fully quit the app. Use tray menu **Quit ClawX** for complete shutdown.
+- Clicking the window close button (`X`) hides Verse Claw to tray; it does **not** fully quit the app. Use tray menu **Quit Verse Claw** for complete shutdown.
 
 ---
 
 ## Use Cases
 
-### 🤖 Personal AI Assistant
-Configure a general-purpose AI agent that can answer questions, draft emails, summarize documents, and help with everyday tasks—all from a clean desktop interface.
+### 馃 Personal AI Assistant
+Configure a general-purpose AI agent that can answer questions, draft emails, summarize documents, and help with everyday tasks鈥攁ll from a clean desktop interface.
 
-### 📊 Automated Monitoring
+### 馃搳 Automated Monitoring
 Set up scheduled agents to monitor news feeds, track prices, or watch for specific events. Results are delivered to your preferred notification channel.
 
-### 💻 Developer Productivity
+### 馃捇 Developer Productivity
 Integrate AI into your development workflow. Use agents to review code, generate documentation, or automate repetitive coding tasks.
 
-### 🔄 Workflow Automation
-Chain multiple skills together to create sophisticated automation pipelines. Process data, transform content, and trigger actions—all orchestrated visually.
+### 馃攧 Workflow Automation
+Chain multiple skills together to create sophisticated automation pipelines. Process data, transform content, and trigger actions鈥攁ll orchestrated visually.
 
 ---
 
@@ -364,29 +372,29 @@ Chain multiple skills together to create sophisticated automation pipelines. Pro
 
 ### Project Structure
 
-```ClawX/
-├── electron/                 # Electron Main Process
-│   ├── services/            # Typed host APIs, provider, secrets and runtime services
-│   │   ├── providers/       # Provider/account model sync logic
-│   │   └── secrets/         # OS keychain and secret storage
-│   ├── shared/              # Shared provider schemas/constants
-│   │   └── providers/
-│   ├── main/                # App entry, windows, IPC registration
-│   ├── gateway/             # OpenClaw Gateway process manager
-│   ├── preload/             # Secure IPC bridge
-│   └── utils/               # Utilities (storage, auth, paths)
-├── src/                      # React Renderer Process
-│   ├── lib/                 # Unified frontend API + error model
-│   ├── stores/              # Zustand stores (settings/chat/gateway)
-│   ├── components/          # Reusable UI components
-│   ├── pages/               # Setup/Dashboard/Chat/Billing/Channels/Skills/Cron/Settings
-│   ├── i18n/                # Localization resources
-│   └── types/               # TypeScript type definitions
-├── tests/
-│   ├── e2e/                 # Playwright Electron end-to-end smoke tests
-│   └── unit/                # Vitest unit/integration-like tests
-├── resources/                # Static assets (icons/images)
-└── scripts/                  # Build and utility scripts
+```Verse Claw/
+鈹溾攢鈹€ electron/                 # Electron Main Process
+鈹?  鈹溾攢鈹€ services/            # Typed host APIs, provider, secrets and runtime services
+鈹?  鈹?  鈹溾攢鈹€ providers/       # Provider/account model sync logic
+鈹?  鈹?  鈹斺攢鈹€ secrets/         # OS keychain and secret storage
+鈹?  鈹溾攢鈹€ shared/              # Shared provider schemas/constants
+鈹?  鈹?  鈹斺攢鈹€ providers/
+鈹?  鈹溾攢鈹€ main/                # App entry, windows, IPC registration
+鈹?  鈹溾攢鈹€ gateway/             # OpenClaw Gateway process manager
+鈹?  鈹溾攢鈹€ preload/             # Secure IPC bridge
+鈹?  鈹斺攢鈹€ utils/               # Utilities (storage, auth, paths)
+鈹溾攢鈹€ src/                      # React Renderer Process
+鈹?  鈹溾攢鈹€ lib/                 # Unified frontend API + error model
+鈹?  鈹溾攢鈹€ stores/              # Zustand stores (settings/chat/gateway)
+鈹?  鈹溾攢鈹€ components/          # Reusable UI components
+鈹?  鈹溾攢鈹€ pages/               # Setup/Dashboard/Chat/Billing/Channels/Skills/Cron/Settings
+鈹?  鈹溾攢鈹€ i18n/                # Localization resources
+鈹?  鈹斺攢鈹€ types/               # TypeScript type definitions
+鈹溾攢鈹€ tests/
+鈹?  鈹溾攢鈹€ e2e/                 # Playwright Electron end-to-end smoke tests
+鈹?  鈹斺攢鈹€ unit/                # Vitest unit/integration-like tests
+鈹溾攢鈹€ resources/                # Static assets (icons/images)
+鈹斺攢鈹€ scripts/                  # Build and utility scripts
 ```
 ### Available Commands
 
@@ -420,7 +428,7 @@ pnpm package:win          # Package for Windows
 pnpm package:linux        # Package for Linux
 ```
 
-ClawX also seeds workspace-local `.clawx/harness/` docs for active project workspaces and OpenClaw agent workspaces. This provides a Trellis-inspired project harness for rules, scenarios, task contracts, guides, layers, context-pack recipes, and Task Ledger bridge docs without introducing a parallel `.trellis/` or Markdown task-state source of truth.
+Verse Claw also seeds workspace-local `.clawx/harness/` docs for active project workspaces and OpenClaw agent workspaces. This provides a Trellis-inspired project harness for rules, scenarios, task contracts, guides, layers, context-pack recipes, and Task Ledger bridge docs without introducing a parallel `.trellis/` or Markdown task-state source of truth.
 
 On headless Linux, run Electron tests under a display server such as `xvfb-run -a pnpm run test:e2e`.
 
@@ -445,7 +453,7 @@ from `dist/` and `dist-electron/`, so it does not require manually running
 
 - builds the renderer and Electron bundles with `pnpm run build:vite`
 - starts Electron in an isolated E2E mode with a temporary `HOME`
-- uses a temporary ClawX `userData` directory
+- uses a temporary Verse Claw `userData` directory
 - skips heavy startup side effects such as gateway auto-start, bundled skill
   installation, tray creation, and CLI auto-install
 
@@ -473,7 +481,7 @@ Add future Electron flows under `tests/e2e/` and reuse the shared fixture in
 
 ## Contributing
 
-We welcome contributions from the community! Whether it's bug fixes, new features, documentation improvements, or translations—every contribution helps make ClawX better.
+We welcome contributions from the community! Whether it's bug fixes, new features, documentation improvements, or translations鈥攅very contribution helps make Verse Claw better.
 
 ### How to Contribute
 
@@ -494,13 +502,13 @@ We welcome contributions from the community! Whether it's bug fixes, new feature
 
 ## Acknowledgments
 
-ClawX is built on the shoulders of excellent open-source projects:
+Verse Claw is built on the shoulders of excellent open-source projects:
 
-- [OpenClaw](https://github.com/OpenClaw) – The AI agent runtime
-- [Electron](https://www.electronjs.org/) – Cross-platform desktop framework
-- [React](https://react.dev/) – UI component library
-- [shadcn/ui](https://ui.shadcn.com/) – Beautifully designed components
-- [Zustand](https://github.com/pmndrs/zustand) – Lightweight state management
+- [OpenClaw](https://github.com/OpenClaw) 鈥?The AI agent runtime
+- [Electron](https://www.electronjs.org/) 鈥?Cross-platform desktop framework
+- [React](https://react.dev/) 鈥?UI component library
+- [shadcn/ui](https://ui.shadcn.com/) 鈥?Beautifully designed components
+- [Zustand](https://github.com/pmndrs/zustand) 鈥?Lightweight state management
 
 ---
 
@@ -512,11 +520,11 @@ Join our community to connect with other users, get support, and share your expe
 | :---: | :---: | :---: |
 | <img src="src/assets/community/wecom-qr.png" width="150" alt="WeChat QR Code" /> | <img src="src/assets/community/feishu-qr.png" width="150" alt="Feishu QR Code" /> | <img src="src/assets/community/20260212-185822.png" width="150" alt="Discord QR Code" /> |
 
-### ClawX Partner Program 🚀
+### Verse Claw Partner Program 馃殌
 
-We're launching the ClawX Partner Program and looking for partners who can help introduce ClawX to more clients, especially those with custom AI agent or automation needs.
+We're launching the Verse Claw Partner Program and looking for partners who can help introduce Verse Claw to more clients, especially those with custom AI agent or automation needs.
 
-Partners help connect us with potential users and projects, while the ClawX team provides full technical support, customization, and integration.
+Partners help connect us with potential users and projects, while the Verse Claw team provides full technical support, customization, and integration.
 
 If you work with clients interested in AI tools or automation, we'd love to collaborate.
 
@@ -527,17 +535,17 @@ DM us or email [public@valuecell.ai](mailto:public@valuecell.ai) to learn more.
 ## Star History
 
 <p align="center">
-  <img src="https://api.star-history.com/svg?repos=ValueCell-ai/ClawX&type=Date" alt="Star History Chart" />
+  <img src="https://api.star-history.com/svg?repos=ValueCell-ai/Verse Claw&type=Date" alt="Star History Chart" />
 </p>
 
 ---
 
 ## License
 
-ClawX is released under the [MIT License](LICENSE). You're free to use, modify, and distribute this software.
+Verse Claw is released under the [MIT License](LICENSE). You're free to use, modify, and distribute this software.
 
 ---
 
 <p align="center">
-  <sub>Built with ❤️ by the ValueCell Team</sub>
+  <sub>Built with 鉂わ笍 by the ValueCell Team</sub>
 </p>

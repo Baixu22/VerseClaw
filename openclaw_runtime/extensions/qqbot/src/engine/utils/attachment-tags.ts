@@ -4,28 +4,28 @@
  *
  * There is exactly ONE vocabulary shared by every consumer:
  *
- *   ‚Ä¢ Type labels: `image` / `voice` / `video` / `file` / `attachment`
- *   ‚Ä¢ Keyword for voice text: `transcript:` (never `content:`)
- *   ‚Ä¢ With source: `[{type}: {source}]`
- *   ‚Ä¢ Without source: `[{type}]` or `[{type}: {filename}]`
+ *   ‚Ä?Type labels: `image` / `voice` / `video` / `file` / `attachment`
+ *   ‚Ä?Keyword for voice text: `transcript:` (never `content:`)
+ *   ‚Ä?With source: `[{type}: {source}]`
+ *   ‚Ä?Without source: `[{type}]` or `[{type}: {filename}]`
  *
  * Both consumers (group history / current inbound event, and the ref-index
  * quoted-message block) call the same function with the same vocabulary.
  * They differ only on two orthogonal dimensions:
  *
- *   1. `transcriptSource` ‚Äî ref mode appends `[source: local STT]` (or
+ *   1. `transcriptSource` ‚Ä?ref mode appends `[source: local STT]` (or
  *      similar) after a voice transcript so the model knows where the
  *      text came from. Inline mode omits this (the current turn knows
  *      its own STT provenance).
  *
- *   2. Separator ‚Äî inline joins with `\n` (history replay is multi-line),
+ *   2. Separator ‚Ä?inline joins with `\n` (history replay is multi-line),
  *      ref joins with a space (quoted block is rendered inline).
  *
  * These are the ONLY permitted differences between modes. Any new
  * decoration must be added in both modes or behind an explicit option
  * documented here, otherwise the model ends up learning two dialects.
  *
- * Zero external dependencies ‚Äî pure string formatting.
+ * Zero external dependencies ‚Ä?pure string formatting.
  */
 
 import type { RefAttachmentSummary } from "../ref/types.js";
@@ -78,8 +78,8 @@ interface RenderOptions {
  * voice_suffix            := ' (transcript: "' TEXT '")' [source_suffix]
  * attachment_no_source    := "[" TYPE_LABEL [": " FILENAME] [voice_suffix_bare] "]" [source_suffix_bare]
  * voice_suffix_bare       := ' (transcript: "' TEXT '")'
- * source_suffix           := " [source: " LABEL "]"   ‚Üê ref mode only
- * source_suffix_bare      := " [source: " LABEL "]"   ‚Üê ref mode only
+ * source_suffix           := " [source: " LABEL "]"   ‚Ü?ref mode only
+ * source_suffix_bare      := " [source: " LABEL "]"   ‚Ü?ref mode only
  * TYPE_LABEL              := "image" | "voice" | "video" | "file" | "attachment"
  * ```
  *
@@ -119,7 +119,7 @@ export function formatAttachmentTags(attachments?: readonly AttachmentSummary[])
  * Render a single attachment.
  *
  * The function is split into two orthogonal concerns:
- *   - `renderBody`: the shared "[type: source]‚Ä¶" or "[type‚Ä¶]" string.
+ *   - `renderBody`: the shared "[type: source]‚Ä? or "[type‚Ä¶]" string.
  *   - `renderSourceSuffix`: ref-mode-only `" [source: ‚Ä¶]"` tail.
  *
  * Both consumers produce the same body; only the suffix differs.

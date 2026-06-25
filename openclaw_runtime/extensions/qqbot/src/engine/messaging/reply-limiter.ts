@@ -1,5 +1,5 @@
 /**
- * Passive reply limiter â€” enforce per-message reply count and TTL limits.
+ * Passive reply limiter â€?enforce per-message reply count and TTL limits.
  *
  * QQ Bot restricts how many passive replies can be sent in response to a
  * single inbound message (4 per hour by default). This module tracks reply

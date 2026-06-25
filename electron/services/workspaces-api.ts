@@ -5,7 +5,7 @@ import { homedir } from 'node:os';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
 import { expandPath } from '../utils/paths';
-import { ensureClawXWorkspaceHarness } from '../utils/clawx-harness-template';
+import { ensureVerseClawWorkspaceHarness } from '../utils/clawx-harness-template';
 import { isRecord } from './payload-utils';
 import { syncActiveWorkspacePermissionToRuntime } from './workspace-runtime-sync';
 import type { TerminalSessionManager } from './terminal-session-manager';
@@ -411,7 +411,7 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
         activeWorkspaceId: id,
         profiles: [...document.profiles, profile],
       };
-      await ensureClawXWorkspaceHarness(rootPath);
+      await ensureVerseClawWorkspaceHarness(rootPath);
       await writeDocument(nextDocument);
       ctx.terminalManager?.registerWorkspace(profile);
       ctx.webPreviewManager?.registerWorkspace(profile);
@@ -475,7 +475,7 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
       const nextDocument = { ...document, profiles };
       const rootPathChanged = nextProfile.rootPath !== current.rootPath;
       if (rootPathChanged) {
-        await ensureClawXWorkspaceHarness(rootPath);
+        await ensureVerseClawWorkspaceHarness(rootPath);
       }
       await writeDocument(nextDocument);
       const permissionNowRestrictive = nextProfile.permissionMode === 'plan' || nextProfile.permissionMode === 'readOnly';

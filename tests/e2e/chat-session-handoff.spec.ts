@@ -2,7 +2,7 @@ import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from
 
 const MAIN_SESSION_KEY = 'agent:main:main';
 const HANDOFF_DRAFT = [
-  '# Handoff: continue this ClawX conversation',
+  '# Handoff: continue this Verse Claw conversation',
   '',
   '## Resume checkpoint',
   'Objective: implement the handoff MVP.',
@@ -202,7 +202,7 @@ function baseHostApiMocks() {
   };
 }
 
-test.describe('ClawX chat session handoff', () => {
+test.describe('Verse Claw chat session handoff', () => {
   test('previews, edits, and creates a new session with the draft prefilled without auto-send', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -327,7 +327,7 @@ test.describe('ClawX chat session handoff', () => {
       await expect(page.getByTestId('chat-handoff-dialog').getByText('Task Ledger', { exact: true }))
         .toBeVisible();
       await expect(page.getByTestId('chat-handoff-draft'))
-        .toHaveValue(/Handoff: continue this ClawX conversation/);
+        .toHaveValue(/Handoff: continue this Verse Claw conversation/);
 
       const editedDraft = `${HANDOFF_DRAFT}\n\nContinue by running the targeted tests.`;
       await page.getByTestId('chat-handoff-draft').fill(editedDraft);

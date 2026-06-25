@@ -150,7 +150,7 @@ describe('GatewayManager gatewayReady fallback', () => {
     expect(statusUpdates.filter((u) => u.gatewayReady === true)).toHaveLength(1);
   });
 
-  it('marks gatewayReady after handshake advertises the ClawX required runtime surface', async () => {
+  it('marks gatewayReady after handshake advertises the Verse Claw required runtime surface', async () => {
     vi.resetModules();
     const { GatewayManager } = await import('@electron/gateway/manager');
     const manager = new GatewayManager();
@@ -176,6 +176,7 @@ describe('GatewayManager gatewayReady fallback', () => {
           'chat.abort',
           'sessions.list',
           'sessions.patch',
+          'sessions.fork',
           'sessions.delete',
           'cron.list',
           'cron.add',
@@ -205,7 +206,7 @@ describe('GatewayManager gatewayReady fallback', () => {
     expect(manager.getCapabilitySnapshot().runtimeHandshake.methods).toContain('channels.status');
   });
 
-  it('keeps gatewayReady false when handshake is missing ClawX required methods', async () => {
+  it('keeps gatewayReady false when handshake is missing Verse Claw required methods', async () => {
     vi.resetModules();
     const { GatewayManager } = await import('@electron/gateway/manager');
     const manager = new GatewayManager();

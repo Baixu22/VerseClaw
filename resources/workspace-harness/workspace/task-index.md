@@ -2,7 +2,7 @@
 
 Use this as a human-readable Task Ledger mirror or bootstrap checklist. It is not the authoritative task database.
 
-When ClawX Task Ledger is available, update Task Ledger first. Keep rows concise; move implementation detail into `../specs/tasks/*.md`, execution detail into ClawGraph runs, and evidence into Task Ledger/observability.
+When Verse Claw Task Ledger is available, update Task Ledger first. Keep rows concise; move implementation detail into `../specs/tasks/*.md`, execution detail into ClawGraph runs, and evidence into Task Ledger/observability.
 
 ## Status Values
 
@@ -25,4 +25,4 @@ When ClawX Task Ledger is available, update Task Ledger first. Keep rows concise
 - Next review:
 - Known blocker:
 
-Mirror note: if this table disagrees with ClawX Task Ledger, Task Ledger wins.
+Mirror note: if this table disagrees with Verse Claw Task Ledger, Task Ledger wins.

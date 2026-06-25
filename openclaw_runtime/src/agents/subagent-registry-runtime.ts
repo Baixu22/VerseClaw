@@ -6,6 +6,7 @@
  */
 export {
   countActiveDescendantRuns,
+  getSubagentRunByRunId,
   getLatestSubagentRunByChildSessionKey,
 } from "./subagent-registry-read.js";
 export {

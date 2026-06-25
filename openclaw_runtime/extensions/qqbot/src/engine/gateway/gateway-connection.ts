@@ -165,7 +165,7 @@ export class GatewayConnection {
       }
 
       const accessToken = await getAccessToken(account.appId, account.clientSecret);
-      log?.info(`âœ… Access token obtained successfully`);
+      log?.info(`âœ?Access token obtained successfully`);
       const gatewayUrl = await getGatewayUrl(accessToken, account.appId);
       log?.info(`Connecting to ${gatewayUrl}`);
       const ws = await createQQWSClient({
@@ -197,7 +197,7 @@ export class GatewayConnection {
           this.msgQueue.clearUserQueue(peerId);
           this.msgQueue.executeImmediate(msg);
         }
-        // "handled" â€” command executed, nothing to queue.
+        // "handled" â€?command executed, nothing to queue.
       };
 
       // ---- WebSocket: open ----

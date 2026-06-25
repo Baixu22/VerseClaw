@@ -1580,15 +1580,19 @@ export function createExecTool(
       });
       const host: ExecHost = target.effectiveHost;
 
+      // When host is "verseshell", bypass approval pipeline — VerseShell has
+      // its own capability-based security model (27 granular caps).
       const explicitSecurity = defaults?.security;
-      const configuredSecurity = explicitSecurity ?? (host === "sandbox" ? "deny" : "full");
+      const configuredSecurity =
+        explicitSecurity ??
+        (host === "sandbox" ? "deny" : host === "verseshell" ? "full" : "full");
       const modePolicy = resolveExecModePolicy({
         mode: defaults?.mode,
         security: configuredSecurity,
         ask: defaults?.ask ?? "off",
       });
       const approvalPolicy =
-        host === "sandbox"
+        host === "sandbox" || host === "verseshell"
           ? undefined
           : resolveExecApprovalsFromFile({
               file: loadExecApprovals(),
@@ -1852,6 +1856,7 @@ export function createExecTool(
       const run = await runExecProcess({
         command: params.command,
         execCommand: execCommandOverride,
+        execHost: host,
         workdir,
         env,
         pathPrepend: defaultPathPrepend,

@@ -69,6 +69,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  delete process.env.OPENCLAW_ROLE_MEMORY_ENABLED;
   clearMemoryCards();
   if (tempDir) rmSync(tempDir, { recursive: true, force: true });
   tempDir = undefined;
@@ -217,6 +218,42 @@ describe('role-driven spawn mapping', () => {
     const injections = explainMemoryInjection({ roleName: 'architect' });
     expect(injections).toHaveLength(1);
     expect(injections[0]?.cardIds).toContain('mem_arch_1');
+  });
+
+  it('does not inject or record role memory when Role Memory is disabled', () => {
+    process.env.OPENCLAW_ROLE_MEMORY_ENABLED = '0';
+    const now = new Date('2026-06-12T00:00:00.000Z').toISOString();
+    storeMemoryCard({
+      id: 'mem_arch_disabled',
+      type: 'constraint',
+      scope: 'role',
+      scopeKey: null,
+      roleTags: ['architect'],
+      phaseTags: ['plan'],
+      content: 'Architects must preserve renderer/main API boundaries.',
+      evidence: ['AGENTS.md'],
+      evidenceRefs: [{ type: 'file', ref: 'AGENTS.md' }],
+      confidence: 0.95,
+      importance: 0.8,
+      lastAccessedAt: now,
+      createdAt: now,
+      updatedAt: now,
+      accessCount: 0,
+      version: 1,
+      status: 'active',
+      sensitivity: 'normal',
+      durability: 'long_term',
+      source: 'user',
+      supersedes: null,
+      supersededBy: null,
+      expiresAt: null,
+    });
+
+    const params = buildRoleSpawnParams(architect, { role: architect, task: 'design module' }, { agentSessionKey: 'agent:main:abc' });
+
+    expect(params.roleSystemPrompt).not.toContain('## Memory Context');
+    expect(params.roleSystemPrompt).not.toContain('Architects must preserve renderer/main API boundaries.');
+    expect(explainMemoryInjection({ roleName: 'architect' })).toHaveLength(0);
   });
 
   it('sets a hard tool allowlist from the role tools + permission-derived deny', () => {

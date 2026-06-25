@@ -134,7 +134,7 @@ async function resolveTelegramFileWithRetry(
       );
       return null;
     }
-    // All retries exhausted â€” return null so the message still reaches the agent
+    // All retries exhausted â€?return null so the message still reaches the agent
     // with a type-based placeholder (e.g. <media:audio>) instead of being dropped.
     logVerbose(`telegram: getFile failed after retries: ${String(err)}`);
     return null;
@@ -152,7 +152,7 @@ function resolveRequiredTelegramTransport(transport?: TelegramTransport): Telegr
   return {
     fetch: resolvedFetch,
     sourceFetch: resolvedFetch,
-    // Caller-owned transport constructed from the globalThis fetch â€” it owns
+    // Caller-owned transport constructed from the globalThis fetch â€?it owns
     // no dispatcher lifecycle of its own, so close() is a no-op.
     close: async () => {},
   };

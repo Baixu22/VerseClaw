@@ -300,7 +300,7 @@ export function registerDiscordMonitorListeners(params: {
       params.client.listeners,
       new DiscordPresenceListener({ logger: params.logger, accountId: params.accountId }),
     );
-    params.runtime.log?.("discord: GuildPresences intent enabled â€” presence listener registered");
+    params.runtime.log?.("discord: GuildPresences intent enabled â€?presence listener registered");
   }
 }
 

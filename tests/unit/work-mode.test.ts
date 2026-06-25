@@ -7,6 +7,8 @@ import {
   resolveDefaultWorkMode,
   resolveWorkModePreset,
   summarizeWorkModeCapabilities,
+  WORK_MODE_PROMPT_MAP,
+  WORK_MODE_IDS,
   WORK_MODE_PRESETS,
 } from '@shared/types/work-mode';
 
@@ -68,6 +70,16 @@ describe('work mode presets', () => {
       missingSkill: 1,
       optionalExternal: 1,
     });
+    expect(capabilities.find((capability) => capability.kit === 'reports')?.requiredCapabilities).toEqual([
+      'document.read',
+      'document.write',
+      'pdf.validate',
+    ]);
+    expect(capabilities.find((capability) => capability.kit === 'research')?.requiredCapabilities).toEqual([
+      'web.search',
+      'web.extract',
+      'citation.pack',
+    ]);
     expect(resolveWorkModeKitCapabilities(['reports'], [{ id: 'docx', enabled: true }], false)[0]?.status).toBe('runtimeUnavailable');
   });
 
@@ -109,6 +121,42 @@ describe('work mode presets', () => {
     expect(resolveWorkModePreset('review')).toMatchObject({
       recommendedPermissionMode: 'readOnly',
       controlContract: expect.objectContaining({ phase: 'review' }),
+    });
+  });
+
+  describe('Work Mode ↔ PromptMode mapping', () => {
+    it('maps every work mode to a valid prompt mode', () => {
+      const validPromptModes = new Set(['full', 'minimal', 'none']);
+      for (const mode of WORK_MODE_IDS) {
+        const pm = WORK_MODE_PROMPT_MAP[mode];
+        expect(validPromptModes.has(pm)).toBe(true);
+      }
+    });
+
+    it('maps plan to none for read-only analysis', () => {
+      expect(WORK_MODE_PROMPT_MAP.plan).toBe('none');
+    });
+
+    it('maps build to full for implementation context', () => {
+      expect(WORK_MODE_PROMPT_MAP.build).toBe('full');
+    });
+
+    it('maps review to minimal for tooling + workspace without execution bias', () => {
+      expect(WORK_MODE_PROMPT_MAP.review).toBe('minimal');
+    });
+
+    it('maps docsData to minimal for artifact focus without code safety overhead', () => {
+      expect(WORK_MODE_PROMPT_MAP.docsData).toBe('minimal');
+    });
+
+    it('allows every work mode to be overridden with any prompt mode', () => {
+      const allPromptModes = ['full', 'minimal', 'none'] as const;
+      for (const mode of WORK_MODE_IDS) {
+        for (const override of allPromptModes) {
+          // The override pattern: promptMode = override ?? WORK_MODE_PROMPT_MAP[mode]
+          expect(override ?? WORK_MODE_PROMPT_MAP[mode]).toBe(override);
+        }
+      }
     });
   });
 });

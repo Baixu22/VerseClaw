@@ -3,13 +3,13 @@
  *
  * **Two modes**:
  *
- *   1. **Round-trip** â€” the AST hasn't been mutated since `parseMd`
+ *   1. **Round-trip** â€?the AST hasn't been mutated since `parseMd`
  *      produced it. Returns `ast.raw` verbatim. Byte-identical.
  *
- *   2. **Mutation-aware** â€” the AST has been modified (frontmatter
+ *   2. **Mutation-aware** â€?the AST has been modified (frontmatter
  *      entry edited, item kv.value changed, block reordered). Returns
  *      a freshly-rendered representation. **Not** byte-identical to a
- *      hypothetical "perfect" rewrite â€” we render canonical forms
+ *      hypothetical "perfect" rewrite â€?we render canonical forms
  *      (LF endings, single space after `:` in frontmatter, etc.).
  *      Callers needing byte-fidelity for partial edits should patch
  *      `raw` directly instead of mutating the AST.
@@ -42,7 +42,7 @@ export interface EmitOptions {
   readonly fileNameForGuard?: string;
   /**
    * See `JsoncEmitOptions.acceptPreExistingSentinel` for the rationale.
-   * Default `true` â€” round-trip echoes parsed bytes without scanning
+   * Default `true` â€?round-trip echoes parsed bytes without scanning
    * for the sentinel. Render mode scans every leaf regardless.
    */
   readonly acceptPreExistingSentinel?: boolean;
@@ -60,7 +60,7 @@ export function emitMd(ast: MdAst, opts: EmitOptions = {}): string {
   const acceptPreExisting = opts.acceptPreExistingSentinel ?? true;
 
   if (mode === "roundtrip") {
-    // Round-trip trusts parsed bytes â€” see emit-policy comment in
+    // Round-trip trusts parsed bytes â€?see emit-policy comment in
     // jsonc/emit.ts. A markdown file legitimately containing the
     // sentinel literal (in a code block, in a pasted error log) would
     // otherwise become a workspace-wide emit DoS.
@@ -126,10 +126,10 @@ function formatFrontmatterValue(value: string): string {
 }
 
 /**
- * Mark an AST as "dirty" â€” useful for callers that mutate the AST
+ * Mark an AST as "dirty" â€?useful for callers that mutate the AST
  * structurally and want emitMd() to re-render rather than round-trip.
  *
- * Currently a no-op flag â€” emitMd() decides based on `opts.mode`. Kept
+ * Currently a no-op flag â€?emitMd() decides based on `opts.mode`. Kept
  * as an extension point for a future invariant where the AST tracks
  * its own dirty state.
  */

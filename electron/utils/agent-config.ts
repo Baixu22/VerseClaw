@@ -7,7 +7,7 @@ import { withConfigLock } from './config-mutex';
 import { expandPath, getOpenClawConfigDir } from './paths';
 import * as logger from './logger';
 import { toUiChannelType } from './channel-alias';
-import { ensureClawXIdentityFile } from './openclaw-workspace';
+import { ensureVerseClawIdentityFile } from './openclaw-workspace';
 import type { AgentReasoningEffort, AgentRoleProfile } from '@shared/types/agent';
 import { DEFAULT_ROLE_PROFILE } from '@shared/types/agent';
 
@@ -494,7 +494,7 @@ async function provisionAgentFilesystem(
   if (options?.inheritWorkspace && targetWorkspace !== sourceWorkspace) {
     await copyBootstrapFiles(sourceWorkspace, targetWorkspace);
   }
-  await ensureClawXIdentityFile(targetWorkspace, { createDir: true });
+  await ensureVerseClawIdentityFile(targetWorkspace, { createDir: true });
   if (targetAgentDir !== sourceAgentDir) {
     await copyRuntimeFiles(sourceAgentDir, targetAgentDir);
   }

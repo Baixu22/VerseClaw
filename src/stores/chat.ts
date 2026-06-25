@@ -47,9 +47,9 @@ import {
   type RawMessage,
   type ToolStatus,
 } from './chat/types';
-import type { WorkspaceKnowledgeScope } from '@shared/types/workspace';
-import type { WorkModeId } from '@shared/types/work-mode';
+import type { KnowledgeInvocationMode, WorkspaceKnowledgeScope } from '@shared/types/workspace';
 import type { ChatGet, ChatSet } from './chat/store-api';
+import { useWorkspacesStore } from './workspaces';
 import { applyRuntimeEventToRuns, extractToolCompletedFiles } from './chat/runtime-graph';
 import {
   enrichWithTeamOrchestrationToolResults,
@@ -61,6 +61,7 @@ import {
   isInternalAssistantReplyText,
   isOpenClawRuntimeEventPrompt,
 } from '@/pages/Chat/message-utils';
+import { extractTurnSummary, buildTurnLedgerEvents } from './chat/turn-ledger-recorder';
 
 export type {
   AttachedFileMeta,
@@ -537,7 +538,7 @@ function isDuplicateChatEvent(eventState: string, event: Record<string, unknown>
 // [media attached: <path> ...] reference in the Gateway's user message text).
 // Keying by path avoids the race condition of keying by runId (which is only
 // available after the RPC returns, but history may load before that).
-const IMAGE_CACHE_KEY = 'clawx:image-cache';
+const IMAGE_CACHE_KEY = 'verse-claw:image-cache';
 const IMAGE_CACHE_MAX = 100; // max entries to prevent unbounded growth
 
 function loadImageCache(): Map<string, AttachedFileMeta> {
@@ -877,6 +878,116 @@ function getMessageTextForFilter(msg: { content?: unknown; text?: unknown }): st
   if (fromContent.trim()) return fromContent;
   if (typeof msg.text === 'string') return msg.text;
   return '';
+}
+
+function findLastUserMessage(messages: RawMessage[]): RawMessage | undefined {
+  for (let i = messages.length - 1; i >= 0; i -= 1) {
+    if (messages[i].role === 'user') return messages[i];
+  }
+  return undefined;
+}
+
+function findPostUserAssistantMessages(messages: RawMessage[]): RawMessage[] {
+  const result: RawMessage[] = [];
+  let foundUser = false;
+  for (let i = messages.length - 1; i >= 0; i -= 1) {
+    if (messages[i].role === 'user') {
+      foundUser = true;
+      break;
+    }
+    if (messages[i].role === 'assistant') result.unshift(messages[i]);
+  }
+  return foundUser ? result : [];
+}
+
+function stableTurnFingerprint(sessionKey: string, userMsg: RawMessage, assistantMsgs: RawMessage[]): string {
+  const raw = [
+    sessionKey,
+    userMsg.id ?? '',
+    userMsg.timestamp ?? '',
+    getMessageText(userMsg.content).slice(0, 160),
+    assistantMsgs.map((message) => [
+      message.id ?? '',
+      message.timestamp ?? '',
+      getMessageText(message.content).slice(0, 240),
+    ].join(':')).join('|'),
+  ].join('::');
+  let hash = 2166136261;
+  for (let i = 0; i < raw.length; i += 1) {
+    hash ^= raw.charCodeAt(i);
+    hash = Math.imul(hash, 16777619) >>> 0;
+  }
+  return `${sessionKey}:turn:${hash.toString(36)}`;
+}
+
+async function recordTurnToTaskLedger(
+  sessionKey: string,
+  messages: RawMessage[],
+  activeTaskNodeId: string | null,
+  error?: string | null,
+  runtimeEvents: ChatRuntimeEvent[] = [],
+  turnId?: string,
+): Promise<void> {
+  const wsId = useWorkspacesStore.getState().activeWorkspaceId;
+  if (!wsId) return;
+  const userMsg = findLastUserMessage(messages);
+  const assistantMsgs = findPostUserAssistantMessages(messages);
+  if (!userMsg || assistantMsgs.length === 0) return;
+
+  const summary = extractTurnSummary(userMsg, assistantMsgs, error, runtimeEvents);
+  const events = buildTurnLedgerEvents(wsId, sessionKey, summary, activeTaskNodeId, {
+    ...(turnId ? { turnId } : {}),
+  });
+
+  try {
+    await hostApi.taskLedger.appendEvents({
+      workspaceId: wsId,
+      events,
+      idempotencyKey: `turn:${sessionKey}:${Date.now()}`,
+    });
+  } catch {
+    // Task Ledger writes are best-effort; ordinary chat must keep working.
+  }
+}
+
+async function recordCompletedHistoryTurnsToTaskLedger(
+  sessionKey: string,
+  messages: RawMessage[],
+  activeTaskNodeId: string | null,
+): Promise<void> {
+  let lastUser: RawMessage | null = null;
+  let assistantSegment: RawMessage[] = [];
+
+  const flush = async (): Promise<void> => {
+    if (!lastUser || assistantSegment.length === 0) return;
+    const hasFinalAssistant = assistantSegment.some((message) => (
+      message.role === 'assistant'
+      && !hasPendingToolUse(message)
+      && hasNonToolAssistantContent(message)
+    ));
+    if (!hasFinalAssistant) return;
+    await recordTurnToTaskLedger(
+      sessionKey,
+      [lastUser, ...assistantSegment],
+      activeTaskNodeId,
+      null,
+      [],
+      stableTurnFingerprint(sessionKey, lastUser, assistantSegment),
+    );
+  };
+
+  for (const message of messages) {
+    if (message.role === 'user') {
+      await flush();
+      lastUser = message;
+      assistantSegment = [];
+      continue;
+    }
+    if (lastUser && message.role === 'assistant') {
+      assistantSegment.push(message);
+    }
+  }
+  await flush();
 }
 
 function getMessageStopReason(message: RawMessage | unknown): string | null {
@@ -2435,6 +2546,26 @@ function readMockAssistantText(result: unknown): string | null {
   return null;
 }
 
+// ── Task Ledger auto-link helper ──
+
+async function ensureSessionLinkedToLedger(sessionKey: string): Promise<void> {
+  if (!sessionKey || sessionKey.endsWith(':main')) return;
+  const wsId = useWorkspacesStore.getState().activeWorkspaceId;
+  if (!wsId) return;
+  const agentId = getAgentIdFromSessionKey(sessionKey);
+  try {
+    await hostApi.taskLedger.linkSession({
+      workspaceId: wsId,
+      sessionKey,
+      agentId,
+      relation: 'related',
+      idempotencyKey: `auto-link:${sessionKey}`,
+    });
+  } catch {
+    // Silent failure — Task Ledger writes must not block chat.
+  }
+}
+
 // ── Store ────────────────────────────────────────────────────────
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -2462,6 +2593,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
   sessionLastActivity: {},
 
   thinkingLevel: null,
+
+  // Task Ledger
+  activeTaskNodeId: null,
+  taskLedgerSnapshot: null,
+  taskLedgerLoaded: false,
 
   // ── Load sessions via sessions.list ──
 
@@ -2664,6 +2800,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     clearBaselines();
     set((s) => buildSessionSwitchPatch(s, key));
     get().loadHistory();
+    void get().refreshTaskLedger();
+    void ensureSessionLinkedToLedger(key);
   },
 
   resetSessionView: (key?: string) => {
@@ -2674,6 +2812,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     clearCachedSessionRunState(nextSessionKey);
     set((s) => buildSessionSwitchPatch(s, nextSessionKey));
     get().loadHistory();
+    void get().refreshTaskLedger();
   },
 
   // ── Delete session ──
@@ -2758,6 +2897,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     clearHistoryPoll();
     clearBaselines();
     set((s) => buildSessionSwitchPatch(s, newKey));
+    void get().refreshTaskLedger();
+    void ensureSessionLinkedToLedger(newKey);
   },
 
   // ── Rename session ──
@@ -3032,6 +3173,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
         runError: historyErrorIsTransient ? null : latestTerminalAssistantErrorMessage,
       });
       cacheSessionHistory(currentSessionKey, finalMessages, thinkingLevel);
+      void recordCompletedHistoryTurnsToTaskLedger(
+        currentSessionKey,
+        finalMessages,
+        get().activeTaskNodeId,
+      );
 
       // Seed a missing label from immutable history only. Once a label exists
       // for a session, do not rewrite it during later history refreshes; users
@@ -3487,9 +3633,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
     attachments?: Array<{ fileName: string; mimeType: string; fileSize: number; stagedPath: string; preview: string | null }>,
     targetAgentId?: string | null,
     knowledgeScope?: WorkspaceKnowledgeScope,
-    workMode?: WorkModeId,
-    inputMode?: 'interrupt' | 'guide' | 'queue',
+    knowledgeMode?: KnowledgeInvocationMode,
+    inputMode?: 'interrupt' | 'guide' | 'queue' | 'revise-goal',
     knowledgeReferences?: ChatKnowledgeReference[],
+    activeTaskNodeId?: string | null,
   ) => {
     const trimmed = text.trim();
     if (!trimmed && (!attachments || attachments.length === 0)) return;
@@ -3497,7 +3644,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const targetSessionKey = resolveMainSessionKeyForAgent(targetAgentId) ?? get().currentSessionKey;
 
     // Guard against double-submit before React re-renders with sending=true.
-    if (get().sending && targetSessionKey === get().currentSessionKey) {
+    if (get().sending && targetSessionKey === get().currentSessionKey && !inputMode) {
       return;
     }
 
@@ -3664,6 +3811,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       const idempotencyKey = crypto.randomUUID();
       const hasMedia = attachments && attachments.length > 0;
+      const workspaceId = useWorkspacesStore.getState().activeWorkspaceId;
       if (hasMedia) {
         console.log('[sendMessage] Media paths:', attachments!.map(a => a.stagedPath));
       }
@@ -3688,13 +3836,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
       if (hasMedia) {
         result = await hostApi.chat.sendWithMedia({
           sessionKey: currentSessionKey,
+          ...(workspaceId ? { workspaceId } : {}),
           message: trimmed || 'Process the attached file(s).',
           deliver: false,
           idempotencyKey,
           knowledgeScope,
+          knowledgeMode,
           ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
-          workMode,
           ...(inputMode ? { inputMode } : {}),
+          ...(activeTaskNodeId ? { activeTaskNodeId } : {}),
           media: attachments.map((a) => ({
             filePath: a.stagedPath,
             mimeType: a.mimeType,
@@ -3704,13 +3854,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
       } else {
         result = await hostApi.chat.sendWithMedia({
           sessionKey: currentSessionKey,
+          ...(workspaceId ? { workspaceId } : {}),
           message: trimmed,
           deliver: false,
           idempotencyKey,
           knowledgeScope,
+          knowledgeMode,
           ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
-          workMode,
           ...(inputMode ? { inputMode } : {}),
+          ...(activeTaskNodeId ? { activeTaskNodeId } : {}),
         });
       }
 
@@ -4116,6 +4268,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
             // `forceNextHistoryLoad` bypasses `HISTORY_LOAD_MIN_INTERVAL_MS`
             // so the call is not suppressed by the throttle.
             const sessionKeyAtFinal = get().currentSessionKey;
+            void recordTurnToTaskLedger(
+              sessionKeyAtFinal,
+              get().messages,
+              get().activeTaskNodeId,
+              undefined,
+              get().runtimeRuns[runId]?.events ?? [],
+            );
             setTimeout(() => {
               if (get().currentSessionKey !== sessionKeyAtFinal) {
                 return;
@@ -4173,6 +4332,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
           if (wasSending) {
             void get().loadHistory(true);
           }
+          void recordTurnToTaskLedger(
+            sessionKeyAtError,
+            get().messages,
+            get().activeTaskNodeId,
+            errorMsg,
+            get().runtimeRuns[runId]?.events ?? [],
+          );
         };
 
         if (recoverable) {
@@ -4327,6 +4493,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   clearError: () => set({ error: null, runError: null }),
+
+  // ── Refresh Task Ledger snapshot ──
+
+  refreshTaskLedger: async () => {
+    const wsId = useWorkspacesStore.getState().activeWorkspaceId;
+    if (!wsId) {
+      set({ taskLedgerSnapshot: null, taskLedgerLoaded: true });
+      return;
+    }
+    try {
+      const result = await hostApi.taskLedger.snapshot({ workspaceId: wsId });
+      set({ taskLedgerSnapshot: result.success ? result.snapshot : null, taskLedgerLoaded: true });
+    } catch {
+      set({ taskLedgerSnapshot: null, taskLedgerLoaded: true });
+    }
+  },
 }));
 
 export function syncCachedSessionRunIdle(sessionKey: string): void {

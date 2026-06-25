@@ -26,9 +26,9 @@ rmSync(TEMP_DIR, { recursive: true, force: true });
 mkdirSync(TEMP_DIR, { recursive: true });
 
 
-process.env.CLAWX_USER_DATA_DIR = TEMP_DIR;
+process.env.VERSE_CLAW_USER_DATA_DIR = TEMP_DIR;
 
-// Redirect electron-store → our shim that reads CLAWX_USER_DATA_DIR.
+// Redirect electron-store → our shim that reads VERSE_CLAW_USER_DATA_DIR.
 register(pathToFileURL(join(__dirname, 'smoke-mcp-store-shim.mjs')).href, import.meta.url);
 
 // ═══════════════════════════════════════════════════════════════════════

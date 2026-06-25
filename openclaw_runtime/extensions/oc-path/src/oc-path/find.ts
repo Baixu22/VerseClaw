@@ -1,5 +1,5 @@
 /**
- * `findOcPaths` â€” multi-match verb. `*` matches one sub-segment;
+ * `findOcPaths` â€?multi-match verb. `*` matches one sub-segment;
  * `**` matches zero or more (recursive). Returns concrete OcPaths
  * preserving the input pattern's slot shape, so each result is
  * pipeable into `resolveOcPath` / `setOcPath`.
@@ -60,7 +60,7 @@ type OnMatch = (subs: readonly SlotSub[]) => void;
 
 export function findOcPaths(ast: OcAst, pattern: OcPath): readonly OcPathMatch[] {
   const subs = patternSubs(pattern);
-  // Fast-path: no expansion needed â€” pure literals just resolve.
+  // Fast-path: no expansion needed â€?pure literals just resolve.
   const needsExpansion = subs.some(
     (s) =>
       s.value === WILDCARD_SINGLE ||
@@ -174,7 +174,7 @@ interface WalkOps<T> {
 function checkDepth(walked: readonly SlotSub[]): void {
   if (walked.length > MAX_TRAVERSAL_DEPTH) {
     throw new OcPathError(
-      `findOcPaths exceeded MAX_TRAVERSAL_DEPTH (${MAX_TRAVERSAL_DEPTH}) â€” likely a pathological pattern`,
+      `findOcPaths exceeded MAX_TRAVERSAL_DEPTH (${MAX_TRAVERSAL_DEPTH}) â€?likely a pathological pattern`,
       "",
       "OC_PATH_DEPTH_EXCEEDED",
     );
@@ -216,7 +216,7 @@ function dispatchSeg<T>(
   }
 
   if (cur.value === WILDCARD_RECURSIVE) {
-    // `**` â€” descend with `**` consumed (i+1) AND retained (i) so
+    // `**` â€?descend with `**` consumed (i+1) AND retained (i) so
     // deeper structures still match. Emit if no subs remain.
     if (i + 1 >= subs.length) {
       onMatch(walked);
@@ -387,7 +387,7 @@ const jsonlOps: WalkOps<JsonlAst> = {
   },
   // After the line slot is consumed, descend into the line's jsonc
   // value via the holder's WeakMap-tagged line. Otherwise this is a
-  // top-level walkJsonl entry â€” go through line-slot dispatch.
+  // top-level walkJsonl entry â€?go through line-slot dispatch.
   walk(child, subs, i, walked, onMatch) {
     const line = unwrapHolder(child);
     if (line === null) {
@@ -659,7 +659,7 @@ function walkMd(
     return;
   }
 
-  // Item-level field slot is terminal â€” descending would loop.
+  // Item-level field slot is terminal â€?descending would loop.
   if (level.kind === "item") {
     walkMdItemField(level.item, cur, walked, onMatch);
     return;

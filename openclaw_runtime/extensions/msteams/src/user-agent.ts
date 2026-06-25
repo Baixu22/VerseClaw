@@ -48,7 +48,7 @@ export function buildUserAgent(): string {
 /**
  * User-Agent fragment for the Teams SDK App's client. The SDK's Client.clone
  * merges this with its own `teams.ts[apps]/<sdk-version>` identifier, so we
- * only contribute the OpenClaw piece â€” passing the full `buildUserAgent()`
+ * only contribute the OpenClaw piece â€?passing the full `buildUserAgent()`
  * would double-print the SDK token.
  *
  * Format: "OpenClaw/<openclaw-version>"

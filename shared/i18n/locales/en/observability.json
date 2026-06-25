@@ -14,6 +14,11 @@
   "spanUnit": "span(s)",
   "noSpans": "No spans recorded for this trace.",
   "viewRoles": "View Roles & Orchestration",
+  "drawer": {
+    "close": "Close",
+    "locateInGraph": "Locate in graph",
+    "empty": "Select a node to inspect its runtime details."
+  },
   "status": {
     "running": "Running",
     "completed": "Completed",
@@ -41,9 +46,30 @@
     "openErrorPath": "Open error path",
     "slowest": "Slowest"
   },
+  "savedViews": {
+    "all": "All traces",
+    "recentErrors": "Recent errors",
+    "artifactRuns": "File changes",
+    "approvalRuns": "Approvals",
+    "retryWarnings": "Retries & warnings",
+    "custom": "Saved view",
+    "saveCurrent": "Save current view"
+  },
+  "views": {
+    "label": "View",
+    "graph": "Graph",
+    "tree": "Run tree",
+    "swimlane": "Swimlane"
+  },
+  "summaryHeader": {
+    "rootCause": "Root cause",
+    "selected": "Selected",
+    "noIssue": "No high-severity issue detected in this trace."
+  },
   "graph": {
     "title": "Agent Chain",
     "nodes": "nodes",
+    "hidden": "{{count}} hidden",
     "errorNodes": "errors",
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
@@ -63,6 +89,18 @@
     "focusTools": "Tools only",
     "focusArtifacts": "Artifacts only",
     "focusCost": "Cost",
+    "density": "Density",
+    "densityHint": "Control how many low-signal events are shown.",
+    "densityModes": {
+      "focused": "Focused",
+      "balanced": "Balanced",
+      "full": "Full"
+    },
+    "nodeMetrics": {
+      "events": "{{count}} ev",
+      "artifacts": "{{count}} art",
+      "retries": "{{count}} retry"
+    },
     "compactOn": "Compact",
     "compactOff": "Expanded",
     "expand": "Expand",
@@ -78,9 +116,49 @@
     "events": "Events",
     "io": "I/O",
     "artifacts": "Artifacts",
+    "compare": "Compare",
+    "annotation": "Notes",
     "attributes": "Attributes",
     "timeline": "Timeline",
     "score": "Score"
+  },
+  "runTree": {
+    "title": "Run tree"
+  },
+  "swimlane": {
+    "title": "Phase swimlane"
+  },
+  "evidence": {
+    "title": "Diagnostic evidence",
+    "issueMeta": "{{category}} / {{severity}}",
+    "why": "Why it matters",
+    "evidence": "Evidence",
+    "nextStep": "Suggested next step",
+    "noIssue": "No issue is linked to this node."
+  },
+  "compare": {
+    "title": "Trace compare",
+    "subtitle": "Compare the selected trace against another run without leaving the workbench.",
+    "selectTrace": "Select trace",
+    "none": "No comparison",
+    "empty": "Select another trace to compare duration, tokens, cost, and issues.",
+    "delta": "Δ {{value}}"
+  },
+  "annotations": {
+    "title": "Trace notes",
+    "subtitle": "Local reviewer notes and tags for this trace.",
+    "statusLabel": "Review status",
+    "tags": "Tags",
+    "tagsPlaceholder": "triage, regression, tool",
+    "note": "Note",
+    "notePlaceholder": "Add a short diagnosis or follow-up...",
+    "save": "Save note",
+    "updatedAt": "Updated {{time}}",
+    "status": {
+      "open": "Open",
+      "reviewed": "Reviewed",
+      "ignored": "Ignored"
+    }
   },
   "details": {
     "empty": "Select a node to inspect its runtime details.",

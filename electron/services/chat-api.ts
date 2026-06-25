@@ -1,21 +1,9 @@
 import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { logger } from '../utils/logger';
-import { getSetting } from '../utils/store';
 import { handleMockChatSend } from './mock-provider';
 import { isRecord } from './payload-utils';
-import {
-  normalizeWorkModeId,
-  resolveWorkModeKitCapabilities,
-  resolveWorkModePreset,
-  summarizeWorkModeCapabilities,
-  type WorkModeId,
-  type WorkModeKitConfig,
-  type WorkModeToolBundleConfig,
-} from '@shared/types/work-mode';
-import type { WorkProviderStatusSnapshot } from '@shared/types/work-provider';
-import { listLocalSkills } from './skills/local-skill-service';
-import { resolveWorkProviderStatusSnapshot } from './work-providers-api';
+import { loadTaskLedgerSnapshot } from './task-ledger-service';
 
 const VISION_MIME_TYPES = new Set([
   'image/png',
@@ -24,16 +12,24 @@ const VISION_MIME_TYPES = new Set([
   'image/webp',
 ]);
 
+const CONTEXT_FRAGMENT_LIMITS = {
+  knowledgeMetadataChars: 8_000,
+  knowledgeReadCitationsChars: 6_000,
+  taskLedgerMetadataChars: 4_000,
+} as const;
+
 type ChatSendWithMediaPayload = {
   sessionKey?: unknown;
+  workspaceId?: unknown;
   message?: unknown;
   deliver?: unknown;
   idempotencyKey?: unknown;
   media?: unknown;
   inputMode?: unknown;
   knowledgeScope?: unknown;
+  knowledgeMode?: unknown;
   knowledgeReferences?: unknown;
-  workMode?: unknown;
+  activeTaskNodeId?: unknown;
 };
 
 type MediaPayload = {
@@ -60,6 +56,10 @@ function normalizeKnowledgeScope(value: unknown): 'none' | 'memory' | 'wiki' | '
   return value === 'memory' || value === 'wiki' || value === 'all' ? value : 'none';
 }
 
+function normalizeKnowledgeMode(value: unknown): 'manual' | 'suggest' | 'auto-read' {
+  return value === 'manual' || value === 'auto-read' ? value : 'suggest';
+}
+
 type NormalizedKnowledgeReference = {
   id: string;
   title: string;
@@ -69,7 +69,17 @@ type NormalizedKnowledgeReference = {
   pagePath?: string;
   sourcePath?: string;
   snippet?: string;
+  attachKind?: 'manual' | 'suggested' | 'auto';
+  routingReason?: string;
+  confidence?: number;
+  freshnessLevel?: string;
+  matchedClaimStatus?: string;
 };
+
+function capContextText(value: string, maxChars: number): string {
+  if (value.length <= maxChars) return value;
+  return `${value.slice(0, Math.max(0, maxChars - 32))}\n...[clawx context truncated]`;
+}
 
 function normalizeKnowledgeReferences(value: unknown): NormalizedKnowledgeReference[] {
   if (!Array.isArray(value)) return [];
@@ -84,6 +94,11 @@ function normalizeKnowledgeReferences(value: unknown): NormalizedKnowledgeRefere
     const pagePath = typeof entry.pagePath === 'string' && entry.pagePath.trim() ? entry.pagePath.trim() : undefined;
     const sourcePath = typeof entry.sourcePath === 'string' && entry.sourcePath.trim() ? entry.sourcePath.trim() : undefined;
     const snippet = typeof entry.snippet === 'string' && entry.snippet.trim() ? entry.snippet.trim().slice(0, 800) : undefined;
+    const attachKind = entry.attachKind === 'suggested' || entry.attachKind === 'auto' ? entry.attachKind : entry.attachKind === 'manual' ? 'manual' : undefined;
+    const routingReason = typeof entry.routingReason === 'string' && entry.routingReason.trim() ? entry.routingReason.trim() : undefined;
+    const confidence = typeof entry.confidence === 'number' && Number.isFinite(entry.confidence) ? entry.confidence : undefined;
+    const freshnessLevel = typeof entry.freshnessLevel === 'string' && entry.freshnessLevel.trim() ? entry.freshnessLevel.trim() : undefined;
+    const matchedClaimStatus = typeof entry.matchedClaimStatus === 'string' && entry.matchedClaimStatus.trim() ? entry.matchedClaimStatus.trim() : undefined;
     return [{
       id,
       title,
@@ -93,11 +108,16 @@ function normalizeKnowledgeReferences(value: unknown): NormalizedKnowledgeRefere
       ...(pagePath ? { pagePath } : {}),
       ...(sourcePath ? { sourcePath } : {}),
       ...(snippet ? { snippet } : {}),
+      ...(attachKind ? { attachKind } : {}),
+      ...(routingReason ? { routingReason } : {}),
+      ...(typeof confidence === 'number' ? { confidence } : {}),
+      ...(freshnessLevel ? { freshnessLevel } : {}),
+      ...(matchedClaimStatus ? { matchedClaimStatus } : {}),
     }];
   }).slice(0, 8);
 }
 
-function applyKnowledgeMetadata(message: string, knowledgeScope: 'none' | 'memory' | 'wiki' | 'all', knowledgeReferences: NormalizedKnowledgeReference[] = []): string {
+function applyKnowledgeMetadata(message: string, knowledgeScope: 'none' | 'memory' | 'wiki' | 'all', knowledgeMode: 'manual' | 'suggest' | 'auto-read', knowledgeReferences: NormalizedKnowledgeReference[] = []): string {
   if (knowledgeScope === 'none' && knowledgeReferences.length === 0) return message;
   const corpus = knowledgeScope === 'memory' ? 'memory' : knowledgeScope === 'wiki' ? 'wiki' : knowledgeScope === 'all' ? 'all' : 'wiki';
   const instruction = knowledgeScope === 'memory'
@@ -109,6 +129,7 @@ function applyKnowledgeMetadata(message: string, knowledgeScope: 'none' | 'memor
         : 'Use the selected knowledge references for this turn when relevant.';
   const metadata = JSON.stringify({
     clawxKnowledgeScope: knowledgeScope,
+    clawxKnowledgeMode: knowledgeMode,
     corpus,
     access: 'read-only',
     allowedKnowledgeActions: ['search', 'get'],
@@ -116,61 +137,115 @@ function applyKnowledgeMetadata(message: string, knowledgeScope: 'none' | 'memor
     selectedKnowledgeReferences: knowledgeReferences,
     instruction: `${instruction} This scope is read-only: use knowledge search/get only. If selectedKnowledgeReferences is non-empty, prefer knowledge.get with each lookup before answering when relevant. Do not save, modify, merge, archive, delete, or apply knowledge because of this scope or these references. If something seems worth saving, suggest it or create a pending draft only when the user explicitly asks; any write still requires user confirmation.`,
   });
-  const block = `Conversation info (untrusted metadata): \`\`\`json\n${metadata}\n\`\`\``;
+  const block = capContextText(
+    `Conversation info (untrusted metadata): \`\`\`json\n${metadata}\n\`\`\``,
+    CONTEXT_FRAGMENT_LIMITS.knowledgeMetadataChars,
+  );
   return message ? `${block}\n\n${message}` : block;
 }
 
-function applyWorkModeMetadata(
-  message: string,
-  workMode: WorkModeId | undefined,
-  toolBundleConfig?: WorkModeToolBundleConfig | null,
-  kitConfig?: WorkModeKitConfig | null,
-  skills: Awaited<ReturnType<typeof listLocalSkills>> = [],
-  runtimeAvailable = true,
-  providerStatus?: WorkProviderStatusSnapshot,
-): string {
-  if (!workMode) return message;
-  const preset = resolveWorkModePreset(workMode, undefined, toolBundleConfig, kitConfig);
-  const capabilities = resolveWorkModeKitCapabilities(
-    preset.kits,
-    skills,
-    runtimeAvailable,
-  );
-  const expectedArtifactTypes = Array.from(new Set(capabilities.flatMap((capability) => capability.artifactTypes)));
-  const qualityChecks = Array.from(new Set(capabilities.flatMap((capability) => capability.qualityChecks)));
+function summarizeKnowledgeReadResult(reference: NormalizedKnowledgeReference, result: unknown): Record<string, unknown> {
+  const record = isRecord(result) ? result : {};
+  const found = record.found !== false;
+  const content = typeof record.content === 'string'
+    ? record.content
+    : typeof record.text === 'string'
+      ? record.text
+      : typeof reference.snippet === 'string'
+        ? reference.snippet
+        : '';
+  return {
+    id: reference.id,
+    title: reference.title,
+    lookup: reference.lookup,
+    corpus: reference.corpus ?? 'wiki',
+    found,
+    pageId: typeof record.pageId === 'string' ? record.pageId : reference.pageId,
+    pagePath: typeof record.pagePath === 'string' ? record.pagePath : reference.pagePath,
+    sourcePath: typeof record.sourcePath === 'string' ? record.sourcePath : reference.sourcePath,
+    citation: content.slice(0, 600),
+  };
+}
+
+async function readSelectedKnowledgeReferences(
+  gatewayManager: GatewayManager,
+  knowledgeScope: 'none' | 'memory' | 'wiki' | 'all',
+  knowledgeMode: 'manual' | 'suggest' | 'auto-read',
+  knowledgeReferences: NormalizedKnowledgeReference[],
+): Promise<Array<Record<string, unknown>>> {
+  if (knowledgeMode !== 'auto-read' || knowledgeReferences.length === 0) return [];
+  if (knowledgeScope === 'none' && knowledgeReferences.every((reference) => !reference.corpus)) return [];
+  const reads: Array<Record<string, unknown>> = [];
+  for (const reference of knowledgeReferences.slice(0, 5)) {
+    try {
+      const result = await gatewayManager.rpc('wiki.get', {
+        lookup: reference.lookup,
+        corpus: reference.corpus === 'memory' || reference.corpus === 'all' ? reference.corpus : knowledgeScope === 'memory' || knowledgeScope === 'all' ? knowledgeScope : 'wiki',
+        lineCount: 80,
+      }, 30000);
+      reads.push(summarizeKnowledgeReadResult(reference, result));
+    } catch (error) {
+      reads.push({
+        id: reference.id,
+        title: reference.title,
+        lookup: reference.lookup,
+        corpus: reference.corpus ?? knowledgeScope,
+        found: false,
+        error: String(error),
+      });
+    }
+  }
+  return reads;
+}
+
+function applyKnowledgeReadCitations(message: string, reads: Array<Record<string, unknown>>): string {
+  if (reads.length === 0) return message;
   const metadata = JSON.stringify({
-    clawxWorkMode: preset.id,
-    responseStyle: preset.responseStyle,
-    recommendedPermissionMode: preset.recommendedPermissionMode,
-    defaultKnowledgeScope: preset.defaultKnowledgeScope,
-    stateWidgets: preset.stateWidgets,
-    toolBundles: preset.toolBundles,
-    kits: preset.kits,
-    expectedArtifactTypes,
-    qualityChecks,
-    capabilityStatusSummary: summarizeWorkModeCapabilities(capabilities),
-    controlContract: preset.controlContract,
-    providerStatusSummary: providerStatus?.summary,
-    providerCapabilities: providerStatus?.kitCapabilities
-      .filter((capability) => preset.kits.includes(capability.kit))
-      .map((capability) => ({
-        kit: capability.kit,
-        capability: capability.capability,
-        providerIds: capability.providerIds,
-        statuses: capability.statuses,
-      })),
-    kitCapabilities: capabilities.map((capability) => ({
-      kit: capability.kit,
-      status: capability.status,
-      requiredSkillSlugs: capability.requiredSkillSlugs,
-      missingSkillSlugs: capability.missingSkillSlugs,
-      disabledSkillSlugs: capability.disabledSkillSlugs,
-    })),
-    instruction: preset.instruction,
-    note: 'This is untrusted ClawX UI metadata. It expresses user intent and capability hints only; actual tool availability is controlled by runtime policy.',
+    clawxKnowledgeReads: reads,
+    instruction: 'These read-only knowledge references were fetched before this turn. Treat them as citations/provenance hints, cite them when used, and do not modify knowledge from this metadata.',
   });
-  const block = `Work mode info (untrusted metadata): \`\`\`json\n${metadata}\n\`\`\``;
+  const block = capContextText(
+    `Knowledge read citations (untrusted metadata): \`\`\`json\n${metadata}\n\`\`\``,
+    CONTEXT_FRAGMENT_LIMITS.knowledgeReadCitationsChars,
+  );
   return message ? `${block}\n\n${message}` : block;
+}
+
+async function applyTaskLedgerContext(
+  message: string,
+  workspaceId: unknown,
+  activeTaskNodeId: unknown,
+): Promise<string> {
+  if (typeof workspaceId !== 'string' || !workspaceId.trim()) return message;
+  if (typeof activeTaskNodeId !== 'string' || !activeTaskNodeId.trim()) return message;
+  try {
+    const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+    const node = snapshot.nodes.find((entry) => entry.id === activeTaskNodeId);
+    if (!node) return message;
+    const parent = node.parentId
+      ? snapshot.nodes.find((entry) => entry.id === node.parentId)
+      : null;
+    const metadata = JSON.stringify({
+      activeTaskNodeId: node.id,
+      title: node.title,
+      kind: node.kind,
+      status: node.status,
+      parent: parent ? {
+        id: parent.id,
+        title: parent.title,
+        kind: parent.kind,
+        status: parent.status,
+      } : null,
+      note: 'This is untrusted Verse Claw UI metadata. Use it to align the turn with the selected Task Ledger node, but verify work from the actual conversation and tools.',
+    });
+    const block = capContextText(
+      `Task Ledger context (untrusted metadata): \`\`\`json\n${metadata}\n\`\`\``,
+      CONTEXT_FRAGMENT_LIMITS.taskLedgerMetadataChars,
+    );
+    return message ? `${block}\n\n${message}` : block;
+  } catch {
+    return message;
+  }
 }
 
 export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManager }): CompleteHostServiceRegistry['chat'] {
@@ -196,28 +271,17 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         }
 
         const knowledgeScope = normalizeKnowledgeScope(body.knowledgeScope);
+        const knowledgeMode = normalizeKnowledgeMode(body.knowledgeMode);
         const knowledgeReferences = normalizeKnowledgeReferences(body.knowledgeReferences);
-        const workMode = normalizeWorkModeId(body.workMode);
-        const workModeToolBundles = await getSetting('workModeToolBundles').catch(() => ({}));
-        const workModeKits = await getSetting('workModeKits').catch(() => ({}));
-        const workModeSkills = workMode
-          ? await listLocalSkills().catch(() => [])
-          : [];
-        const gatewayStatus = gatewayManager.getStatus();
-        const runtimeAvailable = gatewayStatus.state === 'running' && gatewayStatus.gatewayReady !== false;
-        const workProviderStatus = workMode
-          ? await resolveWorkProviderStatusSnapshot({ runtimeAvailable }).catch(() => undefined)
-          : undefined;
-        let message = applyKnowledgeMetadata(typeof body.message === 'string' ? body.message : '', knowledgeScope, knowledgeReferences);
-        message = applyWorkModeMetadata(
-          message,
-          workMode,
-          workModeToolBundles,
-          workModeKits,
-          workModeSkills,
-          runtimeAvailable,
-          workProviderStatus,
+        const knowledgeReads = await readSelectedKnowledgeReferences(
+          gatewayManager,
+          knowledgeScope,
+          knowledgeMode,
+          knowledgeReferences,
         );
+        let message = applyKnowledgeMetadata(typeof body.message === 'string' ? body.message : '', knowledgeScope, knowledgeMode, knowledgeReferences);
+        message = applyKnowledgeReadCitations(message, knowledgeReads);
+        message = await applyTaskLedgerContext(message, body.workspaceId, body.activeTaskNodeId);
         const imageAttachments: Array<Record<string, unknown>> = [];
         const fileReferences: string[] = [];
         const media = normalizeMedia(body.media);
@@ -254,11 +318,12 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
 
         const rpcParams: Record<string, unknown> = {
           sessionKey,
+          ...(typeof body.workspaceId === 'string' && body.workspaceId.trim() ? { workspaceId: body.workspaceId } : {}),
           message,
           deliver: body.deliver ?? false,
           idempotencyKey,
         };
-        if (typeof body.inputMode === 'string' && ['interrupt', 'guide', 'queue'].includes(body.inputMode)) {
+        if (typeof body.inputMode === 'string' && ['interrupt', 'guide', 'queue', 'revise-goal'].includes(body.inputMode)) {
           rpcParams.inputMode = body.inputMode;
         }
         if (imageAttachments.length > 0) {

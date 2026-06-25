@@ -1,15 +1,32 @@
 {
     "title": "設定",
-    "subtitle": "ClawX の体験をカスタマイズ",
+    "subtitle": "Verse Claw の体験をカスタマイズ",
     "navigation": {
         "back": "設定に戻る",
+        "groups": {
+            "configuration": "AI 設定",
+            "experience": "体験とワークフロー",
+            "operations": "運用と詳細"
+        },
         "general": {
             "title": "一般",
             "description": "外観、言語、起動、更新、アプリ情報。"
         },
-        "workModes": {
-            "title": "作業モード",
-            "description": "ワークスペースの動作プリセットと作業キット。"
+        "models": {
+            "title": "モデルとプロバイダー",
+            "description": "プロバイダーアカウント、既定モデル、フォールバック、トークン履歴。"
+        },
+        "agents": {
+            "title": "Agents",
+            "description": "Agent プロファイル、ロール設定、モデル継承、チャンネル連携。"
+        },
+        "channels": {
+            "title": "Channels",
+            "description": "メッセージアカウント、接続状態、認証情報、Agent 連携。"
+        },
+        "skills": {
+            "title": "Skills",
+            "description": "インストール済みスキル、MCP サービス、ローカルフォルダー、オン/オフ設定。"
         },
         "system": {
             "title": "システムとランタイム",
@@ -34,7 +51,7 @@
         "language": "言語",
         "menuLanguageUpdated": "メニューの言語を更新しました",
         "launchAtStartup": "システム起動時に自動起動",
-        "launchAtStartupDesc": "ログイン時に ClawX を自動的に起動します"
+        "launchAtStartupDesc": "ログイン時に Verse Claw を自動的に起動します"
     },
     "aiProviders": {
         "title": "AI プロバイダー",
@@ -61,7 +78,7 @@
         "notRequired": "不要",
         "empty": {
             "title": "プロバイダーが構成されていません",
-            "desc": "ClawX の使用を開始するには AI プロバイダーを追加してください",
+            "desc": "Verse Claw の使用を開始するには AI プロバイダーを追加してください",
             "cta": "最初のプロバイダーを追加"
         },
         "dialog": {
@@ -84,7 +101,7 @@
             "protocol": "プロトコル",
             "advancedConfig": "詳細設定",
             "userAgent": "User-Agent",
-            "userAgentPlaceholder": "ClawX/1.0",
+            "userAgentPlaceholder": "Verse Claw/1.0",
             "fallbackModels": "フォールバックモデル",
             "fallbackProviders": "別プロバイダーへのフォールバック",
             "fallbackModelIds": "同一プロバイダーのフォールバックモデル ID",
@@ -170,7 +187,7 @@
         "appLogs": "アプリケーションログ",
         "openFolder": "フォルダーを開く",
         "autoStart": "ゲートウェイ自動起動",
-        "autoStartDesc": "ClawX 起動時にゲートウェイを自動起動",
+        "autoStartDesc": "Verse Claw 起動時にゲートウェイを自動起動",
         "proxyTitle": "プロキシ",
         "proxyDesc": "Electron と Gateway の通信をローカルプロキシ経由にします。",
         "proxyServer": "プロキシサーバー",
@@ -189,9 +206,49 @@
         "proxySaved": "プロキシ設定を保存しました",
         "proxySaveFailed": "プロキシ設定の保存に失敗しました"
     },
+    "roleMemory": {
+        "title": "Role Memory",
+        "description": "提案、レビュー、注入説明、ライフサイクル、品質フィードバックを管理するロール実行時メモリです。",
+        "disableEffect": "オフにすると Role Memory の注入と書き込みを停止します。既存カードはディスクに残り、OpenClaw のネイティブメモリは変更されません。",
+        "enabled": "有効",
+        "disabled": "無効"
+    },
+    "knowledgeHub": {
+        "watched": {
+            "title": "Knowledge Hub 監視ディレクトリ",
+            "description": "信頼できるローカルフォルダの新しい Markdown ソースを監視します。新規ファイルは先にレビュー Inbox に入れられ、compile は synthesis を自動作成せずインデックスだけを更新します。",
+            "path": "ディレクトリ",
+            "pathPlaceholder": "ローカルフォルダのパスを選択または貼り付け",
+            "patterns": "パターン",
+            "pick": "ディレクトリを選択",
+            "pickTitle": "監視ディレクトリを選択",
+            "pickFailed": "ディレクトリを選択できませんでした: {{error}}",
+            "add": "ディレクトリを追加",
+            "empty": "監視ディレクトリはまだありません。",
+            "enabled": "有効",
+            "disabled": "無効",
+            "reviewFirst": "先にレビュー",
+            "directIngest": "直接 ingest",
+            "ingestNewFiles": "新規ファイルを ingest",
+            "requiresReview": "ingest 前にレビュー",
+            "autoCompile": "自動 compile",
+            "compileOff": "compile 無効",
+            "pathRequired": "ディレクトリパスが必要です。",
+            "patternRequired": "少なくとも 1 つのパターンが必要です。",
+            "loadFailed": "監視ディレクトリの読み込みに失敗しました: {{error}}",
+            "addFailed": "監視ディレクトリの追加に失敗しました。",
+            "addFailedWithError": "監視ディレクトリの追加に失敗しました: {{error}}",
+            "updateFailed": "監視ディレクトリの更新に失敗しました。",
+            "updateFailedWithError": "監視ディレクトリの更新に失敗しました: {{error}}",
+            "removeFailed": "監視ディレクトリの削除に失敗しました。",
+            "removeFailedWithError": "監視ディレクトリの削除に失敗しました: {{error}}",
+            "added": "監視ディレクトリを追加しました。",
+            "removed": "監視ディレクトリを削除しました。"
+        }
+    },
     "sandbox": {
         "title": "サンドボックス制御",
-        "description": "ClawX は既定で policy-light を使用します。Docker と SSH は明示的に選ぶ強い隔離 provider であり、Docker がなくても既定の Gateway 起動はブロックされません。",
+        "description": "Verse Claw は既定で policy-light を使用します。Docker と SSH は明示的に選ぶ強い隔離 provider であり、Docker がなくても既定の Gateway 起動はブロックされません。",
         "defaultProfileName": "既定のサンドボックス",
         "loadFailed": "サンドボックス状態の読み込みに失敗しました",
         "saveFailed": "サンドボックスプロファイルの保存に失敗しました",
@@ -232,7 +289,7 @@
     },
     "remoteControl": {
         "title": "Electron リモート制御",
-        "description": "Electron CDP デバッグポートを公開します。localhost にバインドし、信頼できる環境でのみ使用してください。保存後は ClawX の再起動が必要です。",
+        "description": "Electron CDP デバッグポートを公開します。localhost にバインドし、信頼できる環境でのみ使用してください。保存後は Verse Claw の再起動が必要です。",
         "port": "CDP ポート",
         "configEndpoint": "設定済みエンドポイント: 127.0.0.1:{{port}} /json/version",
         "currentEndpoint": "現在のエンドポイント: {{endpoint}}",
@@ -280,7 +337,7 @@
     },
     "updates": {
         "title": "アップデート",
-        "description": "ClawX を最新に保つ",
+        "description": "Verse Claw を最新に保つ",
         "autoCheck": "自動更新チェック",
         "autoCheckDesc": "起動時に更新を確認",
         "autoDownload": "更新通知",
@@ -309,13 +366,13 @@
         "whatsNew": "更新内容：",
         "errorDetails": "エラー詳細：",
         "toast": {
-            "availableTitle": "ClawX の更新があります",
+            "availableTitle": "Verse Claw の更新があります",
             "availableDescription": "バージョン v{{version}} を利用できます。準備ができたらダウンロードしてください。",
-            "downloadedTitle": "ClawX の更新準備ができました",
+            "downloadedTitle": "Verse Claw の更新準備ができました",
             "downloadedDescription": "バージョン v{{version}} のダウンロードが完了しました。再起動してインストールしてください。",
             "unknownVersion": "新しい"
         },
-        "help": "ClawX は自動的に更新を確認し、ダウンロードやインストールの前に通知します。"
+        "help": "Verse Claw は自動的に更新を確認し、ダウンロードやインストールの前に通知します。"
     },
     "advanced": {
         "title": "詳細設定",
@@ -323,7 +380,7 @@
         "devMode": "開発者モード",
         "devModeDesc": "開発者ツールとショートカットを表示",
         "telemetry": "匿名利用データ",
-        "telemetryDesc": "ClawX 改善のため、匿名の基本的な利用データの提供を許可します"
+        "telemetryDesc": "Verse Claw 改善のため、匿名の基本的な利用データの提供を許可します"
     },
     "developer": {
         "title": "開発者",
@@ -381,67 +438,13 @@
     },
     "about": {
         "title": "バージョン情報",
-        "appName": "ClawX",
+        "appName": "Verse Claw",
         "tagline": "グラフィカル AI アシスタント",
         "basedOn": "OpenClaw ベース",
         "version": "バージョン {{version}}",
         "docs": "公式サイト",
         "github": "GitHub",
         "faq": "よくある質問"
-    },
-    "workModes": {
-        "title": "??????",
-        "currentMode": "?????????????",
-        "currentModeDesc": "??????????????????????????????????????????????????",
-        "noWorkspace": "??????????????????????????????",
-        "noWorkspaceBadge": "?????????",
-        "modeSaved": "?????????????",
-        "kitsTitle": "ワークキット",
-        "kitsDesc": "各モードが runtime に伝える成果物中心のキットを選びます。これは能力ヒントのみで、実際のツールは runtime ポリシーが決定します。",
-        "installSkill": "{{slug}} をインストール",
-        "installingSkill": "{{slug}} をインストール中",
-        "skillInstalled": "{{slug}} をインストールしました",
-        "skillInstallFailed": "スキルのインストールに失敗しました: {{error}}",
-        "selectedCount": "{{count}} 件選択",
-        "capability": {
-            "ready": "利用可能",
-            "missingSkill": "スキル不足",
-            "disabled": "無効",
-            "runtimeUnavailable": "Runtime 不可",
-            "optionalExternal": "任意"
-        },
-        "kits": {
-            "reports": "レポート",
-            "sheets": "表計算",
-            "slides": "スライド",
-            "pdf": "PDF",
-            "research": "調査",
-            "website": "Webサイト",
-            "design": "デザイン",
-            "ops": "日常業務"
-        },
-        "kitDescriptions": {
-            "reports": "レポートや Word 形式の文書を作成、構成、出力します。",
-            "sheets": "表計算や CSV データを読み取り、整形、計算、要約します。",
-            "slides": "プレゼンのアウトラインと編集可能な PPTX を作成します。",
-            "pdf": "PDF 成果物を抽出、要約、プレビュー、整理します。",
-            "research": "Web や出典資料を集め、引用付きで要約します。",
-            "website": "HTML/Web 成果物を作成し、ブラウザプレビューで確認します。",
-            "design": "ビジュアル成果物、ダッシュボード、レイアウトを整えます。",
-            "ops": "軽量な日常文章、アクション項目、個人業務を扱います。"
-        },
-        "toolBundlesTitle": "ツールバンドル意図",
-        "toolBundlesDesc": "各モードが runtime に伝えるツールバンドルラベルを選びます。これは意図のみで、実際のツールは runtime ポリシーが決定します。",
-        "toolBundles": {
-            "code": "???",
-            "git": "Git",
-            "terminal": "?????",
-            "browser": "????",
-            "docs": "??",
-            "sheets": "???",
-            "pdf": "PDF",
-            "memory": "???"
-        }
     },
     "workProviders": {
         "title": "Work Provider",

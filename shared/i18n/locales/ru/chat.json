@@ -2,7 +2,7 @@
   "gatewayNotRunning": "Шлюз не запущен",
   "gatewayRequired": "Для использования чата требуется запущенный шлюз OpenClaw. Он запустится автоматически, или вы можете запустить его в Настройках.",
   "welcome": {
-    "title": "Чат ClawX",
+    "title": "Чат Verse Claw",
     "subtitle": "Чем могу помочь?",
     "askQuestions": "Задачи",
     "askQuestionsDesc": "Работа над задачами",
@@ -123,6 +123,54 @@
       "complete": "Готово",
       "saved": "Сохранено",
       "error": "Требует внимания"
+    },
+    "table": {
+      "label": "Таблица"
+    },
+    "weather": {
+      "label": "Погода",
+      "humidity": "Влажность",
+      "wind": "Ветер"
+    },
+    "directiveText": {
+      "label": "Уведомление"
+    },
+    "source": {
+      "label": "Источники",
+      "open": "Открыть источник"
+    },
+    "progress": {
+      "label": "Прогресс",
+      "done": "Готово",
+      "inProgress": "В процессе"
+    },
+    "statusGrid": {
+      "label": "Статус"
+    },
+    "alert": {
+      "label": "Предупреждение",
+      "dismiss": "Закрыть"
+    },
+    "keyValue": {
+      "label": "Подробности"
+    },
+    "chart": {
+      "label": "Диаграмма"
+    },
+    "imageGallery": {
+      "label": "Изображения"
+    },
+    "codeBlock": {
+      "label": "Код",
+      "copy": "Копировать",
+      "copied": "Скопировано"
+    },
+    "tokenUsage": {
+      "input": "Входные токены",
+      "output": "Выходные токены",
+      "cache": "Токены кэша",
+      "total": "Всего токенов",
+      "cost": "Оценочная стоимость"
     }
   },
   "knowledgeDraft": {
@@ -202,7 +250,7 @@
     "errors": {
       "outsideSandbox": "Путь вне песочницы — доступ запрещён",
       "outsideSandboxTitle": "Не удалось прочитать файл",
-      "outsideSandboxHint": "ClawX не удалось прочитать этот путь. Файл мог быть перемещён или удалён, либо у текущей учётной записи нет прав доступа. Его можно показать в файловом менеджере.",
+      "outsideSandboxHint": "Verse Claw не удалось прочитать этот путь. Файл мог быть перемещён или удалён, либо у текущей учётной записи нет прав доступа. Его можно показать в файловом менеджере.",
       "readOnlyRoot": "Файл находится в режиме только для чтения (например, встроенный навык) и не может быть изменён",
       "tooLarge": "Файл слишком большой ({{size}}); предпросмотр отключён",
       "binary": "Бинарный файл — текстовый предпросмотр недоступен",
@@ -212,7 +260,7 @@
       "unsupportedFormatTitle": "Этот формат файла не поддерживает встроенный предпросмотр или diff",
       "unsupportedFormatHint": "Встроенный предпросмотр и diff сейчас поддерживают только напрямую читаемые текстовые/Markdown-файлы. Откройте файл через файловый менеджер.",
       "largeBinaryOpenTitle": "Этот файл слишком большой для встроенного предпросмотра",
-      "largeBinaryOpenHint": "Размер файла — {{size}}. ClawX не может показать его встроенно, но вы можете подтвердить открытие в системном приложении по умолчанию.",
+      "largeBinaryOpenHint": "Размер файла — {{size}}. Verse Claw не может показать его встроенно, но вы можете подтвердить открытие в системном приложении по умолчанию.",
       "openInFinderFailed": "Не удалось показать файл",
       "openFailed": "Не удалось открыть: {{error}}"
     },
@@ -396,16 +444,33 @@
         "refresh": "Обновить",
         "stage": "Индексировать",
         "unstage": "Убрать из индекса",
+        "copyPatch": "Копировать patch",
+        "revert": "Откатить",
         "commit": "Закоммитить индекс",
+        "checkoutBranch": "Checkout",
         "createBranch": "Создать ветку",
+        "fetch": "Fetch",
+        "pull": "Pull",
+        "push": "Push",
         "addWorktree": "Добавить worktree",
         "removeWorktree": "Удалить",
         "pruneWorktrees": "Очистить",
+        "stashPush": "Сохранить stash",
+        "stashApply": "Применить",
+        "stashPop": "Pop",
         "createPr": "Создать PR",
-        "approveRetry": "Разрешить и повторить"
+        "approveRetry": "Разрешить и повторить",
+        "openWorktree": "Open",
+        "switchWorktree": "Switch"
       },
       "approval": {
         "title": "{{action}} требует подтверждения"
+      },
+      "revertConfirm": {
+        "title": "Откатить выбранный файл?",
+        "message": "Это отменит Git-изменения для {{path}}.",
+        "confirm": "Откатить",
+        "cancel": "Отмена"
       },
       "diff": {
         "unstaged": "Не в индексе",
@@ -414,12 +479,44 @@
         "binary": "Бинарный diff нельзя показать встроенно.",
         "tooLarge": "Diff слишком большой для встроенного просмотра."
       },
+      "validation": {
+        "title": "Последняя проверка",
+        "empty": "Проверка еще не запускалась",
+        "status": "Готово"
+      },
+      "readiness": {
+        "gitCli": "Git CLI",
+        "agentTools": "Agent tools",
+        "github": "GitHub",
+        "summaryLabel": "Готовность Git",
+        "summaryValue": "{{ready}}/{{total}} готово",
+        "summaryHelp": "Active repository, local Git, Agent tools, and GitHub auth",
+        "ready": "Готово",
+        "missing": "Не найдено",
+        "unavailable": "Недоступно",
+        "agentToolsReady": "{{count}} инструментов",
+        "githubLogin": "gh auth login",
+        "repository": "Repository",
+        "activeRepository": "Active repo"
+      },
+      "toolTabs": {
+        "worktrees": "Worktree",
+        "commit": "Коммит",
+        "branch": "Ветка",
+        "stash": "Stash",
+        "github": "PR",
+        "compactHint": "Компактные инструменты"
+      },
       "commit": {
         "title": "Коммит",
         "placeholder": "Сообщение коммита"
       },
       "branch": {
-        "title": "Ветка"
+        "title": "Ветка",
+        "checkoutTitle": "Checkout branch",
+        "checkoutSelect": "Select branch",
+        "current": "current",
+        "createTitle": "Create branch"
       },
       "branchWorktree": {
         "title": "Ветка и worktree",
@@ -433,19 +530,70 @@
         "startPointPlaceholder": "Начальная точка, по умолчанию HEAD",
         "selectBranch": "Выберите ветку",
         "current": "Текущая",
-        "empty": "Worktree не найдены"
+        "locked": "Заблокировано",
+        "prunable": "Можно очистить",
+        "defaultPath": "Путь по умолчанию",
+        "defaultPathUnavailable": "Введите ветку, чтобы увидеть соседний путь worktree",
+        "empty": "Worktree не найдены",
+        "branchExists": "That branch already exists. Use Existing branch or choose a new name.",
+        "branchCheckedOut": "That branch is already checked out at {{path}}."
+      },
+      "stash": {
+        "title": "Stash",
+        "count": "{{count}} сохранено",
+        "empty": "Stash не найден",
+        "messagePlaceholder": "Необязательное сообщение stash",
+        "includeUntrackedLabel": "Включить неотслеживаемые",
+        "includeUntrackedHelp": "Также сохранить новые файлы, которые Git еще не отслеживает.",
+        "applyLabel": "Применить {{selector}}",
+        "popLabel": "Pop {{selector}}"
       },
       "github": {
         "title": "GitHub PR",
         "noPrs": "Нет открытых PR",
         "notAuthenticated": "Выполните gh auth login в терминале, чтобы включить PR-действия.",
         "titlePlaceholder": "Заголовок PR",
-        "bodyPlaceholder": "Описание PR"
+        "bodyPlaceholder": "Описание PR",
+        "baseLabel": "Base branch",
+        "basePlaceholder": "Base",
+        "headLabel": "Head branch",
+        "headPlaceholder": "Head",
+        "draftLabel": "Draft PR",
+        "draftHelp": "Create the pull request as a draft.",
+        "prRefs": "{{head}} -> {{base}}"
       },
       "toast": {
         "blocked": "Требуется подтверждение",
         "failed": "Операция Git не удалась",
-        "approvalFailed": "Не удалось подтвердить"
+        "approvalFailed": "Не удалось подтвердить",
+        "patchCopied": "Patch скопирован",
+        "patchCopyFailed": "Не удалось скопировать patch: {{error}}",
+        "worktreeOpened": "Worktree opened",
+        "worktreeOpenFailed": "Failed to open worktree: {{error}}",
+        "worktreeWorkspaceCreated": "Workspace created for this worktree",
+        "worktreeWorkspaceSwitched": "Switched to worktree workspace",
+        "worktreeWorkspaceSwitchFailed": "Failed to switch worktree workspace: {{error}}"
+      },
+      "operation": {
+        "title": "Last operation",
+        "empty": "No Git operation yet",
+        "ready": "Ready",
+        "success": "Done",
+        "blocked": "Blocked",
+        "failed": "Failed",
+        "completed": "Completed",
+        "detail": "{{action}}: {{detail}}"
+      },
+      "metrics": {
+        "changes": "Changes",
+        "delta": "Delta",
+        "staged": "Staged",
+        "conflicts": "Conflicts",
+        "sync": "Sync",
+        "worktrees": "Worktrees",
+        "stashes": "Stashes",
+        "aheadBehind": "ahead {{ahead}} / behind {{behind}}",
+        "unknown": "Unknown"
       }
     }
   },
@@ -453,7 +601,7 @@
     "eyebrow": "Вид выполнения",
     "title": "Структура задачи",
     "emptyTitle": "Пока нет структурированных шагов",
-    "emptyBody": "Когда начнётся выполнение, ClawX покажет размышления, вызовы инструментов и состояния передачи здесь.",
+    "emptyBody": "Когда начнётся выполнение, Verse Claw покажет размышления, вызовы инструментов и состояния передачи здесь.",
     "status": {
       "idle": "Бездействует",
       "running_one": "1 активный шаг",
@@ -535,7 +683,10 @@
   "session": {
     "renameHint": "Дважды щёлкните, чтобы переименовать сессию",
     "renameCurrent": "Переименовать текущую сессию",
-    "renameFailed": "Не удалось переименовать сессию: {{error}}"
+    "renameFailed": "Не удалось переименовать сессию: {{error}}",
+    "lineage": {
+      "forkedFrom": "Fork от {{session}}"
+    }
   },
   "composer": {
     "attachFiles": "Прикрепить файлы",
@@ -560,8 +711,20 @@
     "knowledgeScopeDescription": {
       "none": "Отправить без памяти и wiki-контекста.",
       "memory": "Использовать карточки памяти, когда они уместны.",
-      "wiki": "Использовать wiki ClawX с заметками и источниками.",
+      "wiki": "Использовать wiki Verse Claw с заметками и источниками.",
       "all": "Разрешить памяти и wiki вместе давать контекст."
+    },
+    "knowledgeModeTitle": "Режим вызова",
+    "knowledgeMode": {
+      "manual": "Вручную",
+      "suggest": "Подсказки",
+      "auto-read": "Авточтение"
+    },
+    "knowledgeRoute": {
+      "suggestion": "Найдено релевантных записей: {{count}}",
+      "attach": "Прикрепить",
+      "open": "Открыть",
+      "dismiss": "Скрыть"
     },
     "knowledgeQuick": {
       "enable": "Использовать wiki-знания",
@@ -588,7 +751,7 @@
       "contextButtonTooltip": "Введите /, чтобы прикрепить знания, задать область или выполнить действие сеанса.",
       "promptArgs": "Область: {{args}}",
       "unknownTitle": "Неизвестная команда",
-      "unknownDescription": "{{command}} не является быстрым действием ClawX. Нажмите Escape, чтобы продолжить редактирование.",
+      "unknownDescription": "{{command}} не является быстрым действием Verse Claw. Нажмите Escape, чтобы продолжить редактирование.",
       "unknownToast": "Неизвестная slash-команда: {{command}}",
       "ledgerNodeDescription": "Создано из slash-команды Chat.",
       "ledgerSessionSummary": "Связано из slash-команды Chat: {{title}}",
@@ -624,10 +787,20 @@
           "description": "Выбрать None, Memory, Wiki или All, не покидая composer.",
           "argumentHint": "[scope]"
         },
+        "knowledge-mode": {
+          "label": "Режим знаний",
+          "description": "Переключить вызов знаний: вручную, подсказки или авточтение.",
+          "argumentHint": "[manual|suggest|auto]"
+        },
         "save": {
           "label": "Черновик знания",
           "description": "Попросить создать редактируемый черновик знания; он не будет применен автоматически.",
           "argumentHint": "[topic]"
+        },
+        "steward-audit": {
+          "label": "Аудит Steward",
+          "description": "Запустить Knowledge Governance аудит по запросу и открыть вкладку Governance.",
+          "argumentHint": ""
         },
         "steward": {
           "label": "Спросить Steward",
@@ -707,6 +880,9 @@
         "scopeOpened": "Открыт выбор области знаний.",
         "scopeChanged": "Область знаний установлена: {{scope}}.",
         "typeSlash": "Введите / в начале пустого composer, чтобы открыть палитру контекста.",
+        "knowledgeModeOpened": "Открыт выбор режима знаний.",
+        "knowledgeModeChanged": "Режим знаний установлен: {{mode}}.",
+        "stewardAuditStarted": "Аудит управления знаниями запущен.",
         "ledgerOpened": "Task Ledger открыт",
         "ledgerCreated": "Ledger task создан: {{title}}",
         "ledgerFailed": "Не удалось создать ledger task: {{error}}",
@@ -821,6 +997,11 @@
     },
     "continuity": {
       "recommended": "Рекомендуется",
+      "health": {
+        "healthy": "Непрерывность выглядит здоровой",
+        "risky": "Непрерывность требует проверки",
+        "blocked": "Нужно дождаться завершения текущего запуска"
+      },
       "tooltip": {
         "fork": {
           "default": "Сейчас рекомендуется: ответвить этот transcript в новый диалог"
@@ -831,7 +1012,8 @@
           "high_pressure": "Контекст близок к пределу; подготовьте черновик продолжения",
           "truncated_context": "Часть истории скрыта; подготовьте черновик продолжения",
           "compaction_warning": "Состояние контекста требует осторожности; подготовьте черновик продолжения",
-          "recovery_checkpoint": "Есть recovery checkpoint; подготовьте черновик на основе checkpoint"
+          "recovery_checkpoint": "Есть recovery checkpoint; подготовьте черновик на основе checkpoint",
+          "recovery_context": "Есть recovery context; подготовьте проверяемый черновик"
         }
       },
       "dialogHint": {
@@ -840,7 +1022,8 @@
         "high_pressure": "Контекст близок к пределу, поэтому черновик позволяет проверить следующий шаг до старта нового сеанса.",
         "truncated_context": "Часть transcript скрыта, поэтому Handoff с черновиком безопаснее копирования ветки.",
         "compaction_warning": "В состоянии сжатия контекста есть предупреждения, поэтому Handoff с черновиком безопаснее.",
-        "recovery_checkpoint": "ResumeCheckpoint уже доступен, поэтому Handoff может перенести Task Ledger, Git, trace и checkpoint evidence в проверяемый черновик."
+        "recovery_checkpoint": "ResumeCheckpoint уже доступен, поэтому Handoff может перенести Task Ledger, Git, trace и checkpoint evidence в проверяемый черновик.",
+        "recovery_context": "Runtime recovery context доступен, поэтому Handoff может добавить ограниченную проекцию продолжения вместе с Task Ledger и evidence."
       },
       "failure": {
         "action": {
@@ -933,7 +1116,7 @@
     "skillPreviewNotFound": "Skill не найден. Откройте список Skill, чтобы обновить его.",
     "capability": {
       "dialogTitle": "Применить изменения возможностей?",
-      "dialogDescription": "ClawX обнаружил в сообщении локальные действия управления Skill или MCP. Проверьте их перед изменением настроек.",
+      "dialogDescription": "Verse Claw обнаружил в сообщении локальные действия управления Skill или MCP. Проверьте их перед изменением настроек.",
       "confirm": "Подтвердить и отправить",
       "cancel": "Отмена",
       "applied": "Изменения возможностей применены",
@@ -959,10 +1142,10 @@
         }
       },
       "unsupported": {
-        "generic": "ClawX нужен локальный Skill или MCP JSON, чтобы применить это из чата.",
-        "skillNotFound": "ClawX не нашел этот локальный Skill. Откройте выбор Skill или сначала установите его локально.",
+        "generic": "Verse Claw нужен локальный Skill или MCP JSON, чтобы применить это из чата.",
+        "skillNotFound": "Verse Claw не нашел этот локальный Skill. Откройте выбор Skill или сначала установите его локально.",
         "mcpConfigRequired": "Вставьте полную конфигурацию MCP JSON, чтобы зарегистрировать MCP-сервис из чата.",
-        "mcpServerNotFound": "ClawX не нашел зарегистрированный MCP-сервис. Используйте имя или ID MCP-сервиса."
+        "mcpServerNotFound": "Verse Claw не нашел зарегистрированный MCP-сервис. Используйте имя или ID MCP-сервиса."
       }
     },
     "effortButton": "Усилие",
@@ -991,7 +1174,94 @@
       "review": "Проверяет diff и риски, по умолчанию без изменения файлов.",
       "docsData": "Работает с документами, таблицами, PDF и отчетами."
     },
-    "workModeRecommendedPermission": "Рекомендуется: {{mode}}"
+    "workModeRecommendedPermission": "Рекомендуется: {{mode}}",
+    "intervention": {
+      "guide": "Направить",
+      "guideTooltip": "Добавить ненарушающую подсказку в активный запуск.",
+      "queue": "В очередь",
+      "queueTooltip": "Не прерывать запуск и воспроизвести это сообщение позже.",
+      "interrupt": "Прервать",
+      "interruptTooltip": "Остановить или перенаправить активный запуск перед рискованным откатом."
+    },
+    "rollbackPlan": {
+      "title": "План отката и восстановления",
+      "open": "Открыть",
+      "risk": {
+        "safe": "безопасно",
+        "review": "проверка",
+        "dangerous": "опасно"
+      },
+      "riskCount": {
+        "safe": "{{count}} безопасно",
+        "review": "{{count}} на проверку",
+        "dangerous": "{{count}} опасно"
+      },
+      "signalState": {
+        "active": "активно",
+        "ready": "готово"
+      },
+      "signals": {
+        "checkpoint": "Checkpoint",
+        "queue": "Очередь",
+        "context": "Контекст",
+        "terminal": "Терминал",
+        "git": "Git откат",
+        "taskLedger": "Task Ledger",
+        "memory": "Память"
+      },
+      "destructiveWarning": "Разрушающий откат должен идти через Git, файловые или терминальные действия с подтверждением.",
+      "actions": {
+        "checkpoint-handoff": {
+          "title": "Подготовить handoff из checkpoint",
+          "detail": "Продолжить с checkpoint {{trigger}} без полного replay transcript."
+        },
+        "drain-queue": {
+          "title": "Отправить очередь follow-up",
+          "detail": "После простоя активного запуска можно воспроизвести {{count}} follow-up."
+        },
+        "manual-compact": {
+          "title": "Сжать текущий контекст",
+          "detailPressure": "Снизить давление transcript, сохранив ограниченное резюме продолжения.",
+          "detailDefault": "Создать свежий ограниченный контекст перед рискованным продолжением."
+        },
+        "review-git": {
+          "title": "Проверить варианты отката файлов",
+          "detail": "Используйте revert/stash в Git панели с подтверждением, а не тихое удаление правок."
+        },
+        "task-ledger-review": {
+          "title": "Записать evidence в Task Ledger",
+          "detail": "Сохранить отклонения, блокеры и evidence проверки как состояние задачи."
+        },
+        "memory-review": {
+          "title": "Память только через проверку",
+          "detail": "Полезные факты восстановления переводятся в Knowledge drafts или предложения памяти, без автозаписи."
+        },
+        "terminal-interrupt": {
+          "title": "Прервать перед разрушающим откатом",
+          "detail": "Остановить или направить активный запуск перед terminal, Git или file rollback."
+        },
+        "terminal-control": {
+          "title": "Открыть терминальное вмешательство",
+          "detail": "Открыть панель терминала workspace и отправить Ctrl+C, если есть активная терминальная сессия."
+        }
+      },
+      "summary": {
+        "checkpoint": "Доступно восстановление из checkpoint {{trigger}}.",
+        "queue": "Ожидает {{count}} follow-up в очереди.",
+        "truncated": "Уже усечено {{count}} сообщений transcript; предпочтите handoff или compact.",
+        "default": "Срочного давления отката нет; перед разрушающими действиями используйте review-first восстановление."
+      },
+      "terminal": {
+        "interrupted": "Прерывание терминала отправлено.",
+        "opened": "Открыты элементы управления терминалом; активная терминальная сессия не найдена.",
+        "interruptFailed": "Не удалось прервать терминал."
+      },
+      "memoryDraft": {
+        "title": "Предложение памяти восстановления: {{session}}",
+        "reviewNotice": "Черновик памяти восстановления только для проверки. Не применяйте долговременную память, пока пользователь не проверит факты, область и источники evidence.",
+        "emptyBody": "У сессии {{sessionKey}} пока нет отображаемого transcript восстановления. Перед применением фиксируйте только проверенные факты, решения, блокеры и ссылки evidence."
+      }
+    }
   },
   "historyBuckets": {
     "today": "Сегодня",
@@ -1007,6 +1277,21 @@
   "sessionView": {
     "project": "Проекты",
     "time": "Время"
+  },
+  "sidebar": {
+    "searchSessions": "Поиск диалогов",
+    "clearSearch": "Очистить поиск",
+    "searchNoResults": "Диалоги не найдены",
+    "searchModalPlaceholder": "Поиск диалогов по названию, пространству или агенту...",
+    "searchEmptyHint": "Начните вводить для поиска диалогов",
+    "searchCurrent": "Текущий",
+    "searchRelativeNow": "только что",
+    "searchRelativeMinutes": "{{count}} мин назад",
+    "searchRelativeHours": "{{count}} ч назад",
+    "searchRelativeDays": "{{count}} д назад",
+    "searchHintNavigate": "навигация",
+    "searchHintSelect": "выбор",
+    "searchHintClose": "закрыть"
   },
   "questionDirectory": {
     "title": "Список вопросов",
@@ -1042,6 +1327,11 @@
       "runtimeUnavailable": "Runtime недоступен",
       "optionalExternal": "Опционально"
     },
+    "intensity": "Интенсивность промпта",
+    "intensityMode_full": "🛠️ Полный контекст",
+    "intensityMode_minimal": "⚡ Облегчённый контекст",
+    "intensityMode_none": "🪶 Минимальный анализ",
+    "tokenSavings": "~{{tokens}} токенов/шаг экономии",
     "status": {
       "plan": {
         "primary": "Предположения",
@@ -1091,11 +1381,11 @@
       "permission": "?????"
     },
     "statusIndicator": {
-      "label": "\u0421\u0442\u0430\u0442\u0443\u0441 \u0430\u0441\u0441\u0438\u0441\u0442\u0435\u043d\u0442\u0430"
+      "label": "Статус ассистента"
     },
     "activity": {
-      "thinking": "\u0410\u0441\u0441\u0438\u0441\u0442\u0435\u043d\u0442 \u0434\u0443\u043c\u0430\u0435\u0442",
-      "processingToolResults": "\u041e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0430 \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u043e\u0432 \u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u043e\u0432"
+      "thinking": "Ассистент думает",
+      "processingToolResults": "Обработка результатов инструментов"
     },
     "quote": {
       "action": "??????????"
@@ -1111,12 +1401,12 @@
     }
   },
   "sessionStatus": {
-    "running": "\u0412\u044b\u043f\u043e\u043b\u043d\u044f\u0435\u0442\u0441\u044f",
-    "waiting": "\u041e\u0436\u0438\u0434\u0430\u0435\u0442 \u0432\u0432\u043e\u0434\u0430",
-    "completed": "\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043e",
-    "error": "\u0422\u0440\u0435\u0431\u0443\u0435\u0442 \u0432\u043d\u0438\u043c\u0430\u043d\u0438\u044f",
-    "aborted": "\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u043e",
-    "dismissCompleted": "\u0421\u043a\u0440\u044b\u0442\u044c \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043d\u044b\u0439 \u0441\u0442\u0430\u0442\u0443\u0441"
+    "running": "Выполняется",
+    "waiting": "Ожидает ввода",
+    "completed": "Завершено",
+    "error": "Требует внимания",
+    "aborted": "Остановлено",
+    "dismissCompleted": "Скрыть завершенный статус"
   },
   "turnWork": {
     "title": "Панель работы",

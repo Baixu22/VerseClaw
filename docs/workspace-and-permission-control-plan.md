@@ -1,6 +1,6 @@
 # Workspace And Permission Control Plan
 
-> Scope: ClawX workspace switching/state persistence and multi-level permission control.
+> Scope: Verse Claw workspace switching/state persistence and multi-level permission control.
 > Basis: CodeGraph index and source review on 2026-06-08.
 
 ## 1. Planning Goals
@@ -39,8 +39,8 @@ Observed current behavior:
 - Chat state is primarily keyed by `sessionKey`, usually in the shape `agent:<agentId>:<session>`.
 - Session history is stored under OpenClaw agent session files and loaded through `sessions-api.ts` plus Gateway fallback paths.
 - The file preview service has a limited read/write root model, but this protects file preview/write APIs rather than all agent tool execution.
-- Gateway startup currently launches the OpenClaw Gateway process from `process-launcher.ts`; no ClawX-owned permission profile or sandbox profile is visible at that layer.
-- Runtime events already include approval-like rendering paths, but there is no full product-level permission-mode model in ClawX UI or Main services.
+- Gateway startup currently launches the OpenClaw Gateway process from `process-launcher.ts`; no Verse Claw-owned permission profile or sandbox profile is visible at that layer.
+- Runtime events already include approval-like rendering paths, but there is no full product-level permission-mode model in Verse Claw UI or Main services.
 
 ## 3. Product Requirements
 
@@ -188,7 +188,7 @@ export type LiveTokenUsage = {
 };
 ```
 
-The context range is a user-facing explanation of what the current conversation is carrying forward. If Gateway/OpenClaw exposes exact context-window data, ClawX should display exact values. Until then, ClawX can display best-effort ranges based on loaded transcript, runtime usage events, and known model context limits.
+The context range is a user-facing explanation of what the current conversation is carrying forward. If Gateway/OpenClaw exposes exact context-window data, Verse Claw should display exact values. Until then, Verse Claw can display best-effort ranges based on loaded transcript, runtime usage events, and known model context limits.
 
 ### 5.3 Permission Profile
 
@@ -240,7 +240,7 @@ export type PermissionApprovalEvent = {
 
 ## 6. Storage Plan
 
-Use ClawX-owned app storage for workspace profiles.
+Use Verse Claw-owned app storage for workspace profiles.
 
 Recommended location:
 
@@ -333,7 +333,7 @@ When switching workspace:
 Runtime sync options:
 
 - Preferred: pass workspace and permission metadata to Gateway/OpenClaw using supported config or environment variables if available.
-- Fallback: ClawX Main applies policy to Gateway RPC calls and file APIs, then logs any unsupported enforcement gap.
+- Fallback: Verse Claw Main applies policy to Gateway RPC calls and file APIs, then logs any unsupported enforcement gap.
 
 ### 7.3 Permission Resolver
 
@@ -410,7 +410,7 @@ Security:
 - Only serve files inside the active workspace unless approved.
 - Local preview server should bind to `127.0.0.1` by default.
 - Preview frames should remain sandboxed.
-- Permission mode controls whether ClawX can start a dev server or only attach to an existing URL.
+- Permission mode controls whether Verse Claw can start a dev server or only attach to an existing URL.
 
 ### 7.6 Context Range And Live Token Usage
 
@@ -548,16 +548,16 @@ Layer 2: Main service guard.
 Layer 3: Gateway/RPC guard.
 
 - Intercept Gateway RPC calls that carry command, patch, file, or tool execution metadata.
-- If OpenClaw exposes approval hooks, map ClawX permission decisions into those hooks.
+- If OpenClaw exposes approval hooks, map Verse Claw permission decisions into those hooks.
 - If not available, start with deny/approval around known RPC methods and document gaps.
 
 Layer 4: runtime environment.
 
 - Pass environment variables to Gateway:
-  - `CLAWX_ACTIVE_WORKSPACE`
-  - `CLAWX_PERMISSION_MODE`
-  - `CLAWX_SANDBOX_READ_ROOTS`
-  - `CLAWX_SANDBOX_WRITE_ROOTS`
+  - `VERSE_CLAW_ACTIVE_WORKSPACE`
+  - `VERSE_CLAW_PERMISSION_MODE`
+  - `VERSE_CLAW_SANDBOX_READ_ROOTS`
+  - `VERSE_CLAW_SANDBOX_WRITE_ROOTS`
 - Prefer native OpenClaw sandbox support if upstream provides it.
 
 ## 10. Implementation Phases
@@ -790,7 +790,7 @@ Acceptance criteria:
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
-| OpenClaw runtime lacks a native sandbox hook | Some tool execution may be enforceable only at ClawX RPC boundary | Start with Main-owned guard, document enforcement gaps, add upstream integration later |
+| OpenClaw runtime lacks a native sandbox hook | Some tool execution may be enforceable only at Verse Claw RPC boundary | Start with Main-owned guard, document enforcement gaps, add upstream integration later |
 | Session keys are currently agent-centric | Workspace switching may fight existing chat assumptions | Store workspace-to-session mapping without changing transcript format in Phase 1/2 |
 | Workspace root may differ from Agent workspace | Confusing UI and runtime context drift | Show active workspace clearly and use active workspace as the primary UI root |
 | Overly strict permissions break existing flows | Users cannot complete normal tasks | Keep fallback mode and add detailed denial reasons |

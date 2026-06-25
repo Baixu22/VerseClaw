@@ -336,8 +336,8 @@ export async function discoverMantleModels(params: {
  * Resolve an implicit Bedrock Mantle provider if authentication is available.
  *
  * Detection priority:
- * 1. AWS_BEARER_TOKEN_BEDROCK env var â†’ use directly
- * 2. IAM credentials â†’ generate bearer token via `@aws/bedrock-token-generator`
+ * 1. AWS_BEARER_TOKEN_BEDROCK env var â†?use directly
+ * 2. IAM credentials â†?generate bearer token via `@aws/bedrock-token-generator`
  * - Region from AWS_REGION / AWS_DEFAULT_REGION / default us-east-1
  * - Models discovered from `/v1/models`
  */

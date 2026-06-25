@@ -42,7 +42,7 @@ export const FILE_FETCH_TOOL_DESCRIPTOR: FileTransferToolDescriptor = {
   label: "File Fetch",
   name: "file_fetch",
   description:
-    "Retrieve a file from a paired node by absolute path. Returns image content blocks for image MIME types, inlines small text files (â‰¤8 KB) as text content, and saves everything else under the gateway media store with a path you can pass to file_write or other tools. Use this for screenshots, photos, receipts, logs, source files. Pair with file_write to copy a file from one node to another (no exec/cp shell-out needed). Requires operator opt-in: gateway.nodes.allowCommands must include 'file.fetch' AND plugins.entries.file-transfer.config.nodes.<node>.allowReadPaths must match the path. Without policy configured, every call is denied.",
+    "Retrieve a file from a paired node by absolute path. Returns image content blocks for image MIME types, inlines small text files (â‰? KB) as text content, and saves everything else under the gateway media store with a path you can pass to file_write or other tools. Use this for screenshots, photos, receipts, logs, source files. Pair with file_write to copy a file from one node to another (no exec/cp shell-out needed). Requires operator opt-in: gateway.nodes.allowCommands must include 'file.fetch' AND plugins.entries.file-transfer.config.nodes.<node>.allowReadPaths must match the path. Without policy configured, every call is denied.",
   parameters: FileFetchToolSchema,
 };
 
@@ -143,6 +143,6 @@ export const FILE_WRITE_TOOL_DESCRIPTOR: FileTransferToolDescriptor = {
   label: "File Write",
   name: "file_write",
   description:
-    "Write file bytes to a paired node by absolute path. Atomic write (temp + rename). Refuses to overwrite by default â€” pass overwrite=true to replace. Refuses to write through symlink targets unless policy explicitly allows following symlinks. Pair with file_fetch by passing its mediaId as sourceMediaId for binary copy. Requires operator opt-in: gateway.nodes.allowCommands must include 'file.write' AND plugins.entries.file-transfer.config.nodes.<node>.allowWritePaths must match the destination path. Without policy configured, every call is denied.",
+    "Write file bytes to a paired node by absolute path. Atomic write (temp + rename). Refuses to overwrite by default â€?pass overwrite=true to replace. Refuses to write through symlink targets unless policy explicitly allows following symlinks. Pair with file_fetch by passing its mediaId as sourceMediaId for binary copy. Requires operator opt-in: gateway.nodes.allowCommands must include 'file.write' AND plugins.entries.file-transfer.config.nodes.<node>.allowWritePaths must match the destination path. Without policy configured, every call is denied.",
   parameters: FileWriteToolSchema,
 };

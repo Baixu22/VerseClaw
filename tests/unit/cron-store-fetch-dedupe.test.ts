@@ -54,4 +54,19 @@ describe('cron store fetchJobs dedupe', () => {
 
     expect(useCronStore.getState().jobs.map((job) => job.id)).toEqual(['job-1']);
   });
+
+  it('replaces stale renderer jobs with the host-api snapshot', async () => {
+    hostApiFetchMock.mockResolvedValueOnce([{ id: 'job-current' }]);
+
+    const { useCronStore } = await import('@/stores/cron');
+    useCronStore.setState({
+      jobs: [{ id: 'job-stale' } as never],
+      loading: false,
+      error: null,
+    });
+
+    await useCronStore.getState().fetchJobs();
+
+    expect(useCronStore.getState().jobs.map((job) => job.id)).toEqual(['job-current']);
+  });
 });

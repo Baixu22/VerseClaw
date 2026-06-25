@@ -138,6 +138,7 @@ import {
   getLatestLongTaskIntervention,
   listLongTaskCheckpoints,
   listLongTaskInterventions,
+  getLatestLongTaskLedgerRootId,
   recordLongTaskCheckpoint,
   recordLongTaskInterventionEvent,
 } from "../../agents/long-task-control/store.js";
@@ -3189,36 +3190,41 @@ export const sessionsHandlers: GatewayRequestHandlers = {
             delete entryToUpdate.totalTokensFresh;
           }
         });
-        const checkpoint = recordLongTaskCheckpoint({
-          idempotencyKey: `sessions:${target.canonicalKey}:compact:${operationId}:checkpoint`,
-          sessionKey: target.canonicalKey,
-          agentId: target.agentId,
-          trigger: "compaction",
-          status: "compacted",
-          activeTask: "Current chat session was manually compacted.",
-          nextAction: "Continue from the compaction checkpoint and preserved long-task state.",
-          evidenceRefs: [{ type: "session", ref: target.canonicalKey }],
-          metadata: {
-            summary: result.result?.summary,
-            tokensBefore: result.result?.tokensBefore,
-            tokensAfter: result.result?.tokensAfter,
-            firstKeptEntryId: result.result?.firstKeptEntryId,
-            sessionId: result.result?.sessionId,
-          },
-        });
-        recordLongTaskInterventionEvent({
-          idempotencyKey: `sessions:${target.canonicalKey}:compact:${operationId}:event`,
-          sessionKey: target.canonicalKey,
-          agentId: target.agentId,
-          checkpointId: checkpoint.id,
-          trigger: "compaction",
-          status: "checkpointed",
-          payload: {
-            tokensBefore: result.result?.tokensBefore,
-            tokensAfter: result.result?.tokensAfter,
-            firstKeptEntryId: result.result?.firstKeptEntryId,
-          },
-        });
+        const taskLedgerRootId = getLatestLongTaskLedgerRootId(target.canonicalKey);
+        if (taskLedgerRootId) {
+          const checkpoint = recordLongTaskCheckpoint({
+            idempotencyKey: `sessions:${target.canonicalKey}:compact:${operationId}:checkpoint`,
+            sessionKey: target.canonicalKey,
+            agentId: target.agentId,
+            taskLedgerRootId,
+            trigger: "compaction",
+            status: "compacted",
+            activeTask: "Current /loop session was manually compacted.",
+            nextAction: "Continue from the compaction checkpoint and preserved long-task state.",
+            evidenceRefs: [{ type: "session", ref: target.canonicalKey }],
+            metadata: {
+              summary: result.result?.summary,
+              tokensBefore: result.result?.tokensBefore,
+              tokensAfter: result.result?.tokensAfter,
+              firstKeptEntryId: result.result?.firstKeptEntryId,
+              sessionId: result.result?.sessionId,
+            },
+          });
+          recordLongTaskInterventionEvent({
+            idempotencyKey: `sessions:${target.canonicalKey}:compact:${operationId}:event`,
+            sessionKey: target.canonicalKey,
+            agentId: target.agentId,
+            taskLedgerRootId,
+            checkpointId: checkpoint.id,
+            trigger: "compaction",
+            status: "checkpointed",
+            payload: {
+              tokensBefore: result.result?.tokensBefore,
+              tokensAfter: result.result?.tokensAfter,
+              firstKeptEntryId: result.result?.firstKeptEntryId,
+            },
+          });
+        }
       }
 
       respond(

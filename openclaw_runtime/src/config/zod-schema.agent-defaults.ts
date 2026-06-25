@@ -49,6 +49,8 @@ export const AgentTaskLoopConfigSchema = z
     maxRepairIterations: z.number().int().min(0).max(10).optional(),
     defaultTemplateId: z.string().optional(),
     includeVerifier: z.boolean().optional(),
+    runtimeTaskEventLogShadow: z.boolean().optional(),
+    runtimeCoreShadow: z.boolean().optional(),
     reviewer: z
       .object({
         model: AgentModelSchema.optional(),

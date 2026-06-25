@@ -11,8 +11,8 @@ export function registerLogCommands(registry: SlashCommandRegistry): void {
     usage: [
       `/bot-logs`,
       ``,
-      `导出最近的 OpenClaw 日志文件（最多 4 个文件）。`,
-      `每个文件只保留最后 1000 行，并作为附件返回。`,
+      `导出最近的 OpenClaw 日志文件（最�?4 个文件）。`,
+      `每个文件只保留最�?1000 行，并作为附件返回。`,
     ].join("\n"),
     handler: () => {
       return buildBotLogsResult();

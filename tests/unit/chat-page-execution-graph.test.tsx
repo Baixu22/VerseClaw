@@ -118,6 +118,10 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => vi.fn(),
+}));
+
 vi.mock('@/hooks/use-stick-to-bottom-instant', () => ({
   useStickToBottomInstant: vi.fn(() => ({
     contentRef: { current: null },

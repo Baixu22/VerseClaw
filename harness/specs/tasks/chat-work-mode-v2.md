@@ -56,4 +56,4 @@ docs:
   required: true
 ---
 
-Work Mode v2 keeps ClawX-owned behavior presets separate from real runtime authority. Renderer UI may recommend and display Work Kits, while Main injects only untrusted intent metadata into chat sends.
+Work Mode v2 keeps Verse Claw-owned behavior presets separate from real runtime authority. Renderer UI may recommend and display Work Kits, while Main injects only untrusted intent metadata into chat sends.

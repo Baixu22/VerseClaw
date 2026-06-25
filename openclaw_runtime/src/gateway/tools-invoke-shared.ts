@@ -17,6 +17,17 @@ import { logWarn } from "../logger.js";
 import { isTestDefaultMemorySlotDisabled } from "../plugins/config-state.js";
 import { defaultSlotIdForKey } from "../plugins/slots.js";
 import { getPluginToolMeta } from "../plugins/tools.js";
+import type {
+  RuntimeCoreJsonObject,
+  RuntimeCoreJsonValue,
+  RuntimeErrorType,
+  ToolCallRequest,
+  ToolCallResult,
+} from "../runtime-core/index.js";
+import {
+  isSecurityVerificationShadowEnabled,
+  recordSecurityVerificationShadow,
+} from "../security-verification-shadow/index.js";
 import { canonicalizeSessionKeyForAgent } from "./session-store-key.js";
 import { resolveGatewayScopedTools } from "./tool-resolution.js";
 
@@ -31,6 +42,7 @@ export type ToolsInvokeInput = {
   sessionKey?: unknown;
   agentId?: unknown;
   idempotencyKey?: unknown;
+  runId?: unknown;
   dryRun?: unknown;
 };
 
@@ -146,6 +158,91 @@ function resolveToolSource(tool: AnyAgentTool): "core" | "plugin" | "channel" {
     return "channel";
   }
   return "core";
+}
+
+function toRuntimeCoreJsonValue(value: unknown): RuntimeCoreJsonValue {
+  if (value === null || typeof value === "string" || typeof value === "boolean") return value;
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (Array.isArray(value)) return value.map(toRuntimeCoreJsonValue);
+  if (value && typeof value === "object") return toRuntimeCoreJsonObject(value as Record<string, unknown>);
+  return null;
+}
+
+function toRuntimeCoreJsonObject(value: Record<string, unknown>): RuntimeCoreJsonObject {
+  const output: RuntimeCoreJsonObject = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (item === undefined || typeof item === "function" || typeof item === "symbol") continue;
+    output[key] = toRuntimeCoreJsonValue(item);
+  }
+  return output;
+}
+
+function toolInvokeOutcomeStatus(outcome: ToolsInvokeOutcome): ToolCallResult["status"] {
+  if (outcome.ok) return "success";
+  return outcome.status === 403 ? "denied" : "error";
+}
+
+function toolInvokeErrorType(outcome: ToolsInvokeOutcome): RuntimeErrorType {
+  if (outcome.ok) return "tool";
+  return outcome.error.requiresApproval || outcome.error.type === "tool_call_blocked"
+    ? "permission"
+    : "tool";
+}
+
+function maybeRecordToolsInvokeShadow(params: {
+  cfg: OpenClawConfig;
+  toolName: string;
+  args: Record<string, unknown>;
+  sessionKey: string;
+  toolCallIdPrefix: string;
+  idempotencyKey?: string;
+  runId?: string;
+  outcome: ToolsInvokeOutcome;
+}): void {
+  if (!isSecurityVerificationShadowEnabled(params.cfg)) {
+    return;
+  }
+  const now = Date.now();
+  const callId = params.idempotencyKey
+    ? `${params.toolCallIdPrefix}-${params.idempotencyKey}`
+    : `${params.toolCallIdPrefix}-shadow-${now}`;
+  const request: ToolCallRequest = {
+    callId,
+    taskId: params.sessionKey,
+    toolName: params.toolName,
+    args: toRuntimeCoreJsonObject(params.args),
+    permissionContext: {
+      surface: "tools.invoke",
+      sessionKey: params.sessionKey,
+    },
+  };
+  const result: ToolCallResult = {
+    callId,
+    status: toolInvokeOutcomeStatus(params.outcome),
+    contextItems: [],
+    structuredData: params.outcome.ok
+      ? { ok: true, source: params.outcome.source }
+      : { ok: false, errorType: params.outcome.error.type },
+    ...(!params.outcome.ok
+      ? {
+          error: {
+            type: toolInvokeErrorType(params.outcome),
+            message: params.outcome.error.message,
+            retryable: false,
+            evidenceRefs: [],
+          },
+        }
+      : {}),
+    startedAt: now,
+    finishedAt: now,
+    evidence: [{ type: "tool", ref: callId, label: `tools.invoke:${params.toolName}` }],
+  };
+  recordSecurityVerificationShadow({
+    source: "tools.invoke",
+    request,
+    result,
+    ...(params.runId ? { runId: params.runId } : {}),
+  });
 }
 
 async function invokeWarmMcpTool(params: {
@@ -279,6 +376,20 @@ export async function invokeGatewayTool(params: {
       : {};
   const sessionKey = resolveSessionKey({ cfg: params.cfg, input: params.input });
   const idempotencyKey = normalizeOptionalString(params.input.idempotencyKey);
+  const runId = normalizeOptionalString(params.input.runId);
+  const recordAndReturn = (outcome: ToolsInvokeOutcome): ToolsInvokeOutcome => {
+    maybeRecordToolsInvokeShadow({
+      cfg: params.cfg,
+      toolName,
+      args,
+      sessionKey,
+      toolCallIdPrefix: params.toolCallIdPrefix,
+      ...(idempotencyKey ? { idempotencyKey } : {}),
+      ...(runId ? { runId } : {}),
+      outcome,
+    });
+    return outcome;
+  };
   const mcpOutcome = await invokeWarmMcpTool({
     cfg: params.cfg,
     toolName,
@@ -289,7 +400,7 @@ export async function invokeGatewayTool(params: {
     approvalMode: params.approvalMode,
   });
   if (mcpOutcome) {
-    return mcpOutcome;
+    return recordAndReturn(mcpOutcome);
   }
 
   const resolveTools = (disablePluginTools: boolean) =>
@@ -314,7 +425,7 @@ export async function invokeGatewayTool(params: {
   }
   const requestedAgentId = normalizeOptionalString(params.input.agentId);
   if (requestedAgentId && agentId && requestedAgentId !== agentId) {
-    return {
+    return recordAndReturn({
       ok: false,
       status: 400,
       toolName,
@@ -322,16 +433,16 @@ export async function invokeGatewayTool(params: {
         type: "invalid_request",
         message: `agent id "${requestedAgentId}" does not match session agent "${agentId}"`,
       },
-    };
+    });
   }
   const tool = tools.find((candidate) => candidate.name === toolName);
   if (!tool) {
-    return {
+    return recordAndReturn({
       ok: false,
       status: 404,
       toolName,
       error: { type: "not_found", message: `Tool not available: ${toolName}` },
-    };
+    });
   }
 
   try {
@@ -357,7 +468,7 @@ export async function invokeGatewayTool(params: {
       approvalMode: params.approvalMode,
     });
     if (hookResult.blocked) {
-      return {
+      return recordAndReturn({
         ok: false,
         status: 403,
         toolName,
@@ -366,19 +477,19 @@ export async function invokeGatewayTool(params: {
           message: hookResult.reason,
           requiresApproval: hookResult.deniedReason === "plugin-approval",
         },
-      };
+      });
     }
-    return {
+    return recordAndReturn({
       ok: true,
       status: 200,
       toolName,
       source: resolveToolSource(gatewayTool),
       result: await gatewayTool.execute?.(toolCallId, hookResult.params),
-    };
+    });
   } catch (err) {
     const inputStatus = resolveToolInputErrorStatus(err);
     if (inputStatus !== null) {
-      return {
+      return recordAndReturn({
         ok: false,
         status: inputStatus === 403 ? 403 : 400,
         toolName,
@@ -386,14 +497,14 @@ export async function invokeGatewayTool(params: {
           type: "tool_error",
           message: getErrorMessage(err) || "invalid tool arguments",
         },
-      };
+      });
     }
     logWarn(`tools-invoke: tool execution failed: ${String(err)}`);
-    return {
+    return recordAndReturn({
       ok: false,
       status: 500,
       toolName,
       error: { type: "tool_error", message: "tool execution failed" },
-    };
+    });
   }
 }

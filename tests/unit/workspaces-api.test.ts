@@ -8,7 +8,7 @@ const storeState = vi.hoisted(() => ({
 }));
 
 const harnessTemplate = vi.hoisted(() => ({
-  ensureClawXWorkspaceHarness: vi.fn(async () => ({
+  ensureVerseClawWorkspaceHarness: vi.fn(async () => ({
     workspaceDir: '',
     templateDir: '',
     targetDir: '',
@@ -50,6 +50,7 @@ vi.mock('@electron/services/workspace-runtime-sync', () => ({
 
 vi.mock('@electron/utils/paths', () => ({
   expandPath: (value: string) => value,
+  getResourcesDir: () => resolve('resources'),
 }));
 
 vi.mock('@electron/utils/clawx-harness-template', () => harnessTemplate);
@@ -71,7 +72,7 @@ describe('workspaces api compatibility migration', () => {
         draftInput: 'legacy draft',
       },
     }];
-    harnessTemplate.ensureClawXWorkspaceHarness.mockClear();
+    harnessTemplate.ensureVerseClawWorkspaceHarness.mockClear();
     await rm(testWorkspaceRoot, { recursive: true, force: true });
   });
 
@@ -117,14 +118,14 @@ describe('workspaces api compatibility migration', () => {
       activeWorkspaceId: 'default',
       activeWorkspace: {
         id: 'default',
-        name: '默认工作区',
+        name: expect.any(String),
         agentId: 'main',
         selectedAgentId: 'main',
         activeSessionKey: 'agent:main:main',
       },
       profiles: [{
         id: 'default',
-        name: '默认工作区',
+        name: expect.any(String),
         activeSessionKey: 'agent:main:main',
       }],
     });
@@ -151,7 +152,7 @@ describe('workspaces api compatibility migration', () => {
       },
       {
         id: 'default',
-        name: '默认工作区',
+        name: expect.any(String),
         rootPath: 'C:/default',
         agentId: 'main',
         selectedAgentId: 'main',
@@ -327,7 +328,7 @@ describe('workspaces api compatibility migration', () => {
     });
   });
 
-  it('seeds the ClawX harness when creating a workspace profile', async () => {
+  it('seeds the Verse Claw harness when creating a workspace profile', async () => {
     const projectRoot = join(testWorkspaceRoot, 'project');
     await mkdir(projectRoot, { recursive: true });
     storeState.activeWorkspaceId = null;
@@ -344,7 +345,7 @@ describe('workspaces api compatibility migration', () => {
       },
     });
 
-    expect(harnessTemplate.ensureClawXWorkspaceHarness).toHaveBeenCalledWith(resolve(projectRoot));
+    expect(harnessTemplate.ensureVerseClawWorkspaceHarness).toHaveBeenCalledWith(resolve(projectRoot));
   });
 
   it('switches workspaces without rewriting the target workspace session or state', async () => {

@@ -3,7 +3,7 @@ id: fix-source-runtime-sandbox-fallback
 title: Restore source runtime sandbox fallback so Gateway can start without Docker
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Ensure ClawX can launch the editable openclaw_runtime even when Docker sandbox prerequisites are missing by applying an explicit, testable sandbox fallback instead of letting runtime startup fail.
+intent: Ensure Verse Claw can launch the editable openclaw_runtime even when Docker sandbox prerequisites are missing by applying an explicit, testable sandbox fallback instead of letting runtime startup fail.
 touchedAreas:
   - harness/specs/tasks/fix-source-runtime-sandbox-fallback.md
   - electron/gateway/config-sync.ts
@@ -26,7 +26,7 @@ touchedAreas:
   - tests/unit/host-services.test.ts
   - tests/e2e/gateway-lifecycle.spec.ts
 expectedUserBehavior:
-  - Starting ClawX in development still launches Gateway from openclaw_runtime by default.
+  - Starting Verse Claw in development still launches Gateway from openclaw_runtime by default.
   - When Docker or the required sandbox image is unavailable, Gateway starts with an explicit degraded sandbox fallback instead of hanging or failing to connect.
   - The UI can tell the difference between gateway unavailable and sandbox downgraded.
   - Doctor and runtime helper commands report the same effective runtime and sandbox mode used by Gateway.

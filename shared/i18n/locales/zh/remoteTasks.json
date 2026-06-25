@@ -1,0 +1,66 @@
+{
+  "nav": "远程任务",
+  "title": "远程任务",
+  "subtitle": "在结构化任务修改本地状态前进行审阅。",
+  "empty": "还没有远程任务。",
+  "actions": {
+    "refresh": "刷新",
+    "create": "创建任务",
+    "approve": "批准",
+    "reject": "拒绝",
+    "execute": "执行"
+  },
+  "form": {
+    "title": "创建本地任务",
+    "kind": "任务类型",
+    "messageTitle": "标题",
+    "messageBody": "消息",
+    "doctorMode": "Doctor 模式",
+    "patch": "设置补丁 JSON",
+    "patchHint": "允许的键：theme、language、gatewayAutoStart、telemetryEnabled、autoCheckUpdate、autoDownloadUpdate、cdpRemoteControlEnabled、cdpRemoteDebuggingPort。",
+    "defaultTitle": "检查远程任务收件箱",
+    "defaultBody": "这是一个本地测试任务。",
+    "localReason": "从本地远程任务页面创建"
+  },
+  "kind": {
+    "message": "消息",
+    "doctor": "OpenClaw Doctor",
+    "settingsPatch": "设置补丁"
+  },
+  "doctor": {
+    "diagnose": "诊断",
+    "fix": "修复"
+  },
+  "status": {
+    "pending": "待处理",
+    "pendingApproval": "需要批准",
+    "running": "运行中",
+    "completed": "已完成",
+    "failed": "失败",
+    "rejected": "已拒绝"
+  },
+  "source": {
+    "local": "本地",
+    "relay": "中继",
+    "channel": "频道",
+    "api": "API"
+  },
+  "detail": {
+    "kind": "类型",
+    "source": "来源",
+    "created": "创建时间",
+    "updated": "更新时间"
+  },
+  "preview": {
+    "title": "变更预览",
+    "before": "之前",
+    "after": "之后"
+  },
+  "toast": {
+    "created": "任务已创建",
+    "approve": "任务已批准",
+    "reject": "任务已拒绝",
+    "execute": "任务已执行",
+    "invalidJson": "设置补丁必须是有效 JSON"
+  }
+}

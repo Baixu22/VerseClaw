@@ -1,24 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const getSettingMock = vi.fn(async () => ({}));
+const loadTaskLedgerSnapshotMock = vi.fn();
 
-vi.mock('@electron/utils/store', () => ({
-  getSetting: (...args: unknown[]) => getSettingMock(...args),
-}));
-
-vi.mock('@electron/services/skills/local-skill-service', () => ({
-  listLocalSkills: vi.fn(async () => [
-    { id: 'docx', slug: 'docx', enabled: true },
-    { id: 'xlsx', slug: 'xlsx', enabled: true },
-    { id: 'pptx', slug: 'pptx', enabled: true },
-    { id: 'pdf', slug: 'pdf', enabled: true },
-  ]),
+vi.mock('@electron/services/task-ledger-service', () => ({
+  loadTaskLedgerSnapshot: (...args: unknown[]) => loadTaskLedgerSnapshotMock(...args),
 }));
 
 describe('chat knowledge scope metadata', () => {
   beforeEach(() => {
-    getSettingMock.mockReset();
-    getSettingMock.mockResolvedValue({});
+    loadTaskLedgerSnapshotMock.mockReset();
   });
 
   it('injects hidden knowledge metadata for wiki scope', async () => {
@@ -34,11 +24,13 @@ describe('chat knowledge scope metadata', () => {
       message: 'Use the project notes',
       idempotencyKey: 'idem-wiki',
       knowledgeScope: 'wiki',
+      knowledgeMode: 'auto-read',
     })).resolves.toEqual({ success: true, result: { runId: 'run-wiki' } });
 
     const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string };
     expect(payload.message).toContain('Conversation info (untrusted metadata)');
     expect(payload.message).toContain('"clawxKnowledgeScope":"wiki"');
+    expect(payload.message).toContain('"clawxKnowledgeMode":"auto-read"');
     expect(payload.message).toContain('"corpus":"wiki"');
     expect(payload.message).toContain('"access":"read-only"');
     expect(payload.message).toContain('"allowedKnowledgeActions":["search","get"]');
@@ -65,6 +57,11 @@ describe('chat knowledge scope metadata', () => {
         title: 'Knowledge Hub decision',
         lookup: 'notes/decision.md',
         corpus: 'wiki',
+        attachKind: 'auto',
+        routingReason: 'project knowledge intent detected',
+        confidence: 0.91,
+        freshnessLevel: 'fresh',
+        matchedClaimStatus: 'supported',
         pagePath: 'notes/decision.md',
         snippet: 'Keep Obsidian optional.',
       }],
@@ -73,12 +70,104 @@ describe('chat knowledge scope metadata', () => {
     const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string };
     expect(payload.message).toContain('"selectedKnowledgeReferences":[{"id":"decision-page"');
     expect(payload.message).toContain('"lookup":"notes/decision.md"');
+    expect(payload.message).toContain('"attachKind":"auto"');
+    expect(payload.message).toContain('"confidence":0.91');
     expect(payload.message).toContain('prefer knowledge.get with each lookup');
     expect(payload.message).toContain('"allowedKnowledgeActions":["search","get"]');
     expect(payload.message).toContain('"deniedKnowledgeActions":["apply","update","delete","archive","merge"]');
   });
 
-  it('injects work mode metadata when a valid work mode is provided', async () => {
+  it('auto-reads selected knowledge references before sending the chat turn', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'wiki.get') {
+          return {
+            found: true,
+            pageId: 'page-1',
+            pagePath: 'notes/decision.md',
+            sourcePath: 'C:/project/notes/decision.md',
+            content: 'Keep the Task Ledger projection durable and cite this page.',
+          };
+        }
+        return { runId: 'run-auto-read' };
+      }),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+
+    await api.sendWithMedia({
+      sessionKey: 'agent:main:main',
+      message: 'Use the decision page',
+      idempotencyKey: 'idem-auto-read',
+      knowledgeScope: 'wiki',
+      knowledgeMode: 'auto-read',
+      knowledgeReferences: [{
+        id: 'decision-page',
+        title: 'Knowledge Hub decision',
+        lookup: 'notes/decision.md',
+        corpus: 'wiki',
+      }],
+    });
+
+    expect(gatewayManager.rpc.mock.calls[0]).toEqual([
+      'wiki.get',
+      {
+        lookup: 'notes/decision.md',
+        corpus: 'wiki',
+        lineCount: 80,
+      },
+      30000,
+    ]);
+    expect(gatewayManager.rpc.mock.calls[1]?.[0]).toBe('chat.send');
+    const payload = gatewayManager.rpc.mock.calls[1]?.[1] as { message: string };
+    expect(payload.message).toContain('Knowledge read citations (untrusted metadata)');
+    expect(payload.message).toContain('"clawxKnowledgeReads"');
+    expect(payload.message).toContain('"lookup":"notes/decision.md"');
+    expect(payload.message).toContain('"citation":"Keep the Task Ledger projection durable and cite this page."');
+    expect(payload.message).toContain('Use the decision page');
+  });
+
+  it('bounds injected knowledge context fragments even for huge references', async () => {
+    const hugeText = 'x'.repeat(50_000);
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'wiki.get') {
+          return {
+            found: true,
+            pagePath: 'notes/huge.md',
+            content: hugeText,
+          };
+        }
+        return { runId: 'run-bounded-context' };
+      }),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+
+    await api.sendWithMedia({
+      sessionKey: 'agent:main:main',
+      message: 'Use huge context',
+      idempotencyKey: 'idem-bounded-context',
+      knowledgeScope: 'wiki',
+      knowledgeMode: 'auto-read',
+      knowledgeReferences: Array.from({ length: 8 }, (_, index) => ({
+        id: `huge-${index}`,
+        title: `Huge ${index}`,
+        lookup: `notes/huge-${index}.md`,
+        corpus: 'wiki',
+        snippet: hugeText,
+      })),
+    });
+
+    const payload = gatewayManager.rpc.mock.calls.at(-1)?.[1] as { message: string };
+    expect(payload.message.length).toBeLessThan(20_000);
+    expect(payload.message).not.toContain(hugeText);
+    expect(payload.message).toContain('Use huge context');
+  });
+
+  it('ignores legacy workMode fields for ordinary chat sends', async () => {
     const gatewayManager = {
       rpc: vi.fn(async () => ({ runId: 'run-plan' })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
@@ -86,34 +175,59 @@ describe('chat knowledge scope metadata', () => {
     const { createChatApi } = await import('@electron/services/chat-api');
     const api = createChatApi({ gatewayManager: gatewayManager as never });
 
-    await api.sendWithMedia({
+    const legacyPayload = {
       sessionKey: 'agent:main:main',
       message: 'Sketch the rollout',
       idempotencyKey: 'idem-plan',
       workMode: 'plan',
-    });
+    } as unknown as Parameters<typeof api.sendWithMedia>[0];
+    await api.sendWithMedia(legacyPayload);
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string };
-    expect(payload.message).toContain('Work mode info (untrusted metadata)');
-    expect(payload.message).toContain('"clawxWorkMode":"plan"');
-    expect(payload.message).toContain('"responseStyle":"plan-first"');
-    expect(payload.message).toContain('"defaultKnowledgeScope":"all"');
-    expect(payload.message).toContain('"stateWidgets":["planning"]');
-    expect(payload.message).toContain('"kits":["reports","research","ops"]');
-    expect(payload.message).toContain('"expectedArtifactTypes":["markdown","docx","pdf","html","csv"]');
-    expect(payload.message).toContain('"controlContract"');
-    expect(payload.message).toContain('"phase":"plan"');
-    expect(payload.message).toContain('"clarify objective"');
-    expect(payload.message).toContain('"capabilityStatusSummary":{"ready":1,"missingSkill":0,"disabled":0,"runtimeUnavailable":0,"optionalExternal":2}');
-    expect(payload.message).toContain('Sketch the rollout');
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string; promptMode?: string };
+    expect(payload.message).toBe('Sketch the rollout');
+    expect(payload.message).not.toContain('Work mode info (untrusted metadata)');
+    expect(payload.message).not.toContain('clawxWorkMode');
+    expect(payload).not.toHaveProperty('promptMode');
   });
 
-  it('uses customized tool bundle settings in work mode metadata and migrates them to kits', async () => {
-    getSettingMock.mockImplementation(async (key) => (
-      key === 'workModeToolBundles' ? { docsData: ['docs', 'pdf'] } : {}
-    ));
+  it('injects selected Task Ledger context when an active node is provided', async () => {
+    loadTaskLedgerSnapshotMock.mockResolvedValue({
+      schemaVersion: 1,
+      workspaceId: 'workspace-a',
+      generatedAt: '2026-06-23T00:00:00.000Z',
+      nodes: [
+        {
+          id: 'goal-1',
+          title: 'Unify work tracking',
+          kind: 'goal',
+          status: 'doing',
+          parentId: null,
+          createdAt: '2026-06-23T00:00:00.000Z',
+          updatedAt: '2026-06-23T00:00:00.000Z',
+        },
+        {
+          id: 'task-1',
+          title: 'Record every chat turn',
+          kind: 'task',
+          status: 'doing',
+          parentId: 'goal-1',
+          createdAt: '2026-06-23T00:00:00.000Z',
+          updatedAt: '2026-06-23T00:00:00.000Z',
+        },
+      ],
+      edges: [],
+      sessionLinks: [],
+      rootNodeIds: ['goal-1'],
+      reviewNodeIds: [],
+      activeNodeIds: ['goal-1', 'task-1'],
+      blockedNodeIds: [],
+      currentGoalId: 'goal-1',
+      recentDecisions: [],
+      eventsCount: 2,
+      warnings: [],
+    });
     const gatewayManager = {
-      rpc: vi.fn(async () => ({ runId: 'run-docs' })),
+      rpc: vi.fn(async () => ({ runId: 'run-task-context' })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
     };
     const { createChatApi } = await import('@electron/services/chat-api');
@@ -121,14 +235,19 @@ describe('chat knowledge scope metadata', () => {
 
     await api.sendWithMedia({
       sessionKey: 'agent:main:main',
-      message: 'Summarize reports',
-      idempotencyKey: 'idem-docs',
-      workMode: 'docsData',
+      workspaceId: 'workspace-a',
+      message: 'Continue implementation',
+      idempotencyKey: 'idem-task-context',
+      activeTaskNodeId: 'task-1',
     });
 
     const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string };
-    expect(payload.message).toContain('"toolBundles":["docs","pdf"]');
-    expect(payload.message).toContain('"kits":["reports","slides","pdf"]');
+    expect(loadTaskLedgerSnapshotMock).toHaveBeenCalledWith('workspace-a');
+    expect(payload.message).toContain('Task Ledger context (untrusted metadata)');
+    expect(payload.message).toContain('"activeTaskNodeId":"task-1"');
+    expect(payload.message).toContain('"title":"Record every chat turn"');
+    expect(payload.message).toContain('"parent":{"id":"goal-1"');
+    expect(payload.message).toContain('Continue implementation');
   });
 
   it('does not inject metadata for none or unknown scope', async () => {

@@ -1,5 +1,5 @@
 /**
- * Commands port â€” abstracts slash-command dependencies injected by the
+ * Commands port â€?abstracts slash-command dependencies injected by the
  * bridge layer (version resolvers, approve runtime getter).
  *
  * Eliminates global `register*` singletons in `slash-commands-impl.ts`.

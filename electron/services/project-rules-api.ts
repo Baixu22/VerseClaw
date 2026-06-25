@@ -348,7 +348,7 @@ function buildTemplate(workspace: WorkspaceProfile): string {
     '## Project Rules Entry',
     '',
     '- Start here for project-specific agent instructions.',
-    '- Keep durable AI coding policy in `harness/specs/**` when this workspace uses the ClawX harness.',
+    '- Keep durable AI coding policy in `harness/specs/**` when this workspace uses the Verse Claw harness.',
     '- Use `.clawx/rules/*.md` only for local supplemental rule notes; do not treat it as a separate source of truth.',
     '- Context Pack docs are recipes or explanations only; runtime Context Packs are bounded injections, not durable truth.',
     '',

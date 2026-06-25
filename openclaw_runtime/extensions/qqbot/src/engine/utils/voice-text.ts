@@ -1,7 +1,7 @@
 /**
  * Voice transcript formatting utility.
  *
- * Zero external dependencies â€” pure string formatting.
+ * Zero external dependencies â€?pure string formatting.
  */
 
 /** Format voice transcripts into user-visible text. */

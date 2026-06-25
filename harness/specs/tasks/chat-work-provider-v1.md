@@ -69,3 +69,21 @@ docs:
 ---
 
 Work Provider v1 keeps Work Mode focused on orchestration and status. Renderer reads state through `hostApi.workProviders`, Main owns execution and sandbox checks, and configured providers remain capability hints rather than runtime policy.
+
+## Five-stage completion plan
+
+This task is complete only when the Work Mode path stays lightweight while all five stages below are represented in code, docs, and validation.
+
+1. **Model boundary**: Work Mode resolves `Mode -> Work Kit -> Provider Capability -> Work Provider`. Work Kits may keep legacy skill hints, but provider capabilities are the primary orchestration contract. Skill, MCP, plugin, built-in library, external service, custom HTTP, and external binary adapters must fit behind the same provider-source model.
+2. **Office artifact workflow**: DOCX, XLSX, CSV, PPTX, PDF, Markdown, and HTML are handled through Main-owned provider APIs for read/write/validate/preview-friendly outputs. Renderer surfaces must not access the filesystem directly.
+3. **Search and research workflow**: URL/HTML extraction works without search configuration; web search remains `missingConfig` and makes no network request until a user explicitly configures Tavily, Brave, Bing, SearXNG, or a Custom HTTP-compatible provider. Outputs remain source/citation/brief artifacts and do not create a new RAG or knowledge store.
+4. **Optional provider interfaces**: LibreOffice, Pandoc, OCR, crawler, dataframe/Python stacks, Skill, MCP, plugin, and external-service connectors are exposed as optional provider/source types or status interfaces, not default bundled requirements.
+5. **Frontend workflow surface**: Settings owns provider configuration, Chat owns mode and slash/workflow intent, the Work Mode panel owns lightweight capability status, and the Artifact Panel remains the delivery center for generated files.
+
+## Five-stage validation
+
+- Stage 1 evidence: unit tests cover Work Kit-to-provider capability mapping, provider source summaries, unknown provider/kit filtering, and chat metadata shape.
+- Stage 2 evidence: unit/integration tests cover Main-owned `workProviders.run` and `validateArtifact` for workspace-bounded Office artifacts.
+- Stage 3 evidence: tests prove missing search config does not call `fetch`, and HTML/URL extraction returns source/citation-friendly Markdown.
+- Stage 4 evidence: provider registry exposes optional heavy provider/source statuses without auto-installing dependencies or changing runtime policy.
+- Stage 5 evidence: Chat Work Mode E2E shows Docs/Data provider status and payload metadata while preserving host-api-only renderer boundaries.

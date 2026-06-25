@@ -6,7 +6,8 @@ test.describe('hover-only scrollbar visibility', () => {
 
     try {
       const page = await getStableWindow(app);
-      await page.getByTestId('sidebar-nav-models').click();
+      await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
       await expect(page.getByTestId('models-page')).toBeVisible();
 
       const scrollContainer = page.locator('[data-testid="models-page"] .overflow-y-auto').first();

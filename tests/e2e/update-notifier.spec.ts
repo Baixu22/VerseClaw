@@ -1,7 +1,7 @@
 import { expect, test, completeSetup } from './fixtures/electron';
 
-test.describe('ClawX update notifications', () => {
-  test('prompts when a new version is available', async ({ electronApp, page }) => {
+test.describe('Verse Claw update notifications', () => {
+  test('does not show unsolicited prompts when a new version is available', async ({ electronApp, page }) => {
     await completeSetup(page);
 
     await electronApp.evaluate(() => {
@@ -16,7 +16,8 @@ test.describe('ClawX update notifications', () => {
       });
     });
 
-    await expect(page.getByText(/9\.9\.9/)).toBeVisible();
-    await expect(page.getByRole('button', { name: /Download|下载|ダウンロード|Скачать/i })).toBeVisible();
+    await page.waitForTimeout(500);
+    await expect(page.getByText(/9\.9\.9/)).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Download|下载|ダウンロード|Скачать/i })).toHaveCount(0);
   });
 });

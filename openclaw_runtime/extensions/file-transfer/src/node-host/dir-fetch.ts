@@ -117,7 +117,7 @@ async function listTarEntries(tarBuffer: Buffer): Promise<string[]> {
     }, 10_000);
     child.stdout.on("data", (chunk: Buffer) => {
       stdoutBuf += chunk.toString();
-      // Bound buffer growth â€” pathological archives shouldn't OOM us.
+      // Bound buffer growth â€?pathological archives shouldn't OOM us.
       if (stdoutBuf.length > 32 * 1024 * 1024) {
         aborted = true;
         try {

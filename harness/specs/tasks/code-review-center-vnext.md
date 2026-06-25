@@ -23,7 +23,7 @@ touchedAreas:
   - tests/unit/**
   - tests/e2e/**
 expectedUserBehavior:
-  - Users can launch a read-only Review Center from the ClawX sidebar.
+  - Users can launch a read-only Review Center from the Verse Claw sidebar.
   - Users can review uncommitted changes, changes against a base branch, or a selected commit.
   - Users can add a custom review focus before starting a review run.
   - Review results show normalized findings ordered by severity.

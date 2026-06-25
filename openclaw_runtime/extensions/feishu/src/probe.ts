@@ -97,7 +97,7 @@ export async function probeFeishu(
     const client = createFeishuClient(creds) as FeishuRequestClient;
     // Feishu-provided endpoint for OpenClaw, supported on both Feishu (CN)
     // and Lark (international). No OAuth scopes required. Validates
-    // credentials and registers the app as an AI agent (智能体).
+    // credentials and registers the app as an AI agent (智能�?.
     const responseResult = await raceWithTimeoutAndAbort<FeishuPingResponse>(
       client.request({
         method: "POST",

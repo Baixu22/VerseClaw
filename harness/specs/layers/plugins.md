@@ -7,7 +7,7 @@ pathPatterns:
   - openclaw_runtime/extensions/**
 ---
 
-Plugin behavior should stay owned by plugin contracts unless a generic ClawX or OpenClaw core seam is missing.
+Plugin behavior should stay owned by plugin contracts unless a generic Verse Claw or OpenClaw core seam is missing.
 
 Do not hardcode individual plugin identities in shared runtime paths when manifest, registry, or capability contracts can express the behavior.
 

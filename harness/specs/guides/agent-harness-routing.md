@@ -6,7 +6,7 @@ appliesTo:
   - all
 ---
 
-The ClawX agent harness uses `AGENTS.md` as the short entry point and `harness/specs/**` as the durable project knowledge base.
+The Verse Claw agent harness uses `AGENTS.md` as the short entry point and `harness/specs/**` as the durable project knowledge base.
 
 Before implementation, load the smallest useful context:
 

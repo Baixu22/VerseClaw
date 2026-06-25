@@ -1536,7 +1536,7 @@ export async function runQaSuite(params?: QaSuiteRunParams): Promise<QaSuiteResu
       fastMode,
       concurrency,
       isolatedWorkers: false,
-      // Same "filtered â†’ executed list, unfiltered â†’ null" convention as
+      // Same "filtered â†?executed list, unfiltered â†?null" convention as
       // the concurrent-path writeQaSuiteArtifacts call above.
       scenarioIds:
         params?.scenarioIds && params.scenarioIds.length > 0

@@ -366,7 +366,7 @@ export function parseDiscordModelPickerData(data: ComponentData): DiscordModelPi
  * return a single "All" bucket so callers can render the same code path.
  *
  * The boundary extender keeps items sharing the same starting letter inside
- * the same bucket â€” selecting "Aâ€“G" never strands a stray "g" item in the
+ * the same bucket â€?selecting "Aâ€“G" never strands a stray "g" item in the
  * next bucket. If every item shares a first letter (e.g. all `qwen3-*`),
  * the function falls back to count-based numeric chunks so the user still
  * gets a finite-cardinality picker.
@@ -418,7 +418,7 @@ export function computeAlphaBuckets(sortedItems: string[]): DiscordModelPickerBu
     const label =
       startLetter === endLetter
         ? `${startLetter.toUpperCase()} (${end - start})`
-        : `${startLetter.toUpperCase()}â€“${endLetter.toUpperCase()} (${end - start})`;
+        : `${startLetter.toUpperCase()}â€?{endLetter.toUpperCase()} (${end - start})`;
     buckets.push({ id, label, start, end });
     start = end;
   }
@@ -444,7 +444,7 @@ function chunkBucketsByCount(sortedItems: string[]): DiscordModelPickerBucket[] 
     const end = Math.min(sortedItems.length, start + target);
     buckets.push({
       id: `${start + 1}-${end}`,
-      label: `${start + 1}â€“${end} (${end - start})`,
+      label: `${start + 1}â€?{end} (${end - start})`,
       start,
       end,
     });
@@ -454,8 +454,8 @@ function chunkBucketsByCount(sortedItems: string[]): DiscordModelPickerBucket[] 
 
 /**
  * Resolve a bucket from a list given a (possibly user-supplied) bucket id.
- * Falls back to the first bucket when the id does not match â€” mirrors the
- * "bad customId â†’ reset to defaults" semantics already used for other
+ * Falls back to the first bucket when the id does not match â€?mirrors the
+ * "bad customId â†?reset to defaults" semantics already used for other
  * state fields.
  */
 export function resolveBucket(
@@ -476,7 +476,7 @@ export function resolveBucket(
  * `undefined` when bucketing is inactive (all providers fit in one bucket)
  * or the provider is unknown. Used by the interaction handler to recompute
  * `providerBucket` at re-render time without forcing every customId to
- * carry the bucket field â€” the bucket is a pure function of the provider
+ * carry the bucket field â€?the bucket is a pure function of the provider
  * list + provider id.
  */
 export function findProviderBucketId(
@@ -510,7 +510,7 @@ export function findProviderBucketLocation(
 
 /**
  * Derive the alpha-bucket id that contains a given model id within the
- * named provider. Same rationale as {@link findProviderBucketId} â€” saves
+ * named provider. Same rationale as {@link findProviderBucketId} â€?saves
  * customId budget by recomputing the bucket from the durable state
  * (provider + model) rather than carrying it as a parameter.
  */

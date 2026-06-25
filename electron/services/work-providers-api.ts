@@ -16,6 +16,7 @@ import {
   resolveWorkKitProviderCapabilities,
   resolveWorkProviders,
   summarizeWorkProviderCapabilities,
+  summarizeWorkProviderSources,
   type WorkProviderCapability,
   type WorkProviderConfig,
   type WorkProviderId,
@@ -80,6 +81,7 @@ export async function resolveWorkProviderStatusSnapshot(params?: {
     capabilities,
     kitCapabilities,
     summary: summarizeWorkProviderCapabilities(capabilities),
+    sourceSummary: summarizeWorkProviderSources(providers),
   };
 }
 
@@ -482,7 +484,7 @@ async function runSlideWrite(input: Record<string, unknown>): Promise<Record<str
   };
   const deck = new PptxGenJS();
   deck.layout = 'LAYOUT_WIDE';
-  deck.author = 'ClawX';
+  deck.author = 'Verse Claw';
   deck.title = typeof input.title === 'string' ? input.title : 'Presentation';
   const slides = Array.isArray(input.slides) ? input.slides : [{ title: deck.title, body: '' }];
   for (const entry of slides) {

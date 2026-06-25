@@ -136,7 +136,7 @@ function classifyCapabilityMethod(method: string): GatewayCapabilityName | null 
   return null;
 }
 
-const CLAWX_REQUIRED_GATEWAY_METHODS = [
+const VERSE_CLAW_REQUIRED_GATEWAY_METHODS = [
   'health',
   'status',
   'system-presence',
@@ -339,11 +339,11 @@ export class GatewayManager extends EventEmitter {
 
     const advertisedMethods = snapshot.methods ? new Set(snapshot.methods) : null;
     this.missingRequiredRuntimeMethods = advertisedMethods
-      ? CLAWX_REQUIRED_GATEWAY_METHODS.filter((method) => !advertisedMethods.has(method))
+      ? VERSE_CLAW_REQUIRED_GATEWAY_METHODS.filter((method) => !advertisedMethods.has(method))
       : [];
     if (this.missingRequiredRuntimeMethods.length > 0) {
       logger.warn(
-        `Gateway runtime is missing ClawX-required methods: ${this.missingRequiredRuntimeMethods.join(', ')}`,
+        `Gateway runtime is missing Verse Claw-required methods: ${this.missingRequiredRuntimeMethods.join(', ')}`,
       );
       this.capabilityMonitor.recordCoreProbe({
         ok: false,
@@ -369,7 +369,7 @@ export class GatewayManager extends EventEmitter {
   private async initDeviceIdentity(): Promise<void> {
     if (this.deviceIdentity) return; // already loaded
     try {
-      const identityPath = path.join(app.getPath('userData'), 'clawx-device-identity.json');
+      const identityPath = path.join(app.getPath('userData'), 'verse-claw-device-identity.json');
       this.deviceIdentity = await loadOrCreateDeviceIdentity(identityPath);
       logger.debug(`Device identity loaded (deviceId=${this.deviceIdentity.deviceId})`);
     } catch (err) {

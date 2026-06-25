@@ -2,6 +2,7 @@ import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Agents } from '../../src/pages/Agents/index';
+import { TooltipProvider } from '../../src/components/ui/tooltip';
 
 const channelsAccountsMock = vi.fn();
 const subscribeHostEventMock = vi.fn();
@@ -117,10 +118,20 @@ vi.mock('@/lib/host-events', () => ({
 }));
 
 vi.mock('react-i18next', () => ({
+  initReactI18next: {
+    type: '3rdParty',
+    init: vi.fn(),
+  },
   useTranslation: () => ({
     t: (key: string) => key,
   }),
 }));
+
+function renderAgents() {
+  return render(<Agents />, {
+    wrapper: ({ children }) => <TooltipProvider>{children}</TooltipProvider>,
+  });
+}
 
 vi.mock('sonner', () => ({
   toast: {
@@ -184,7 +195,7 @@ describe('Agents page status refresh', () => {
       return vi.fn();
     });
 
-    render(<Agents />);
+    renderAgents();
 
     await waitFor(() => {
       expect(fetchAgentsMock).toHaveBeenCalledTimes(1);
@@ -204,7 +215,7 @@ describe('Agents page status refresh', () => {
   it('refetches channel accounts when the gateway transitions to running after mount', async () => {
     gatewayState.status = { state: 'starting', port: 18789 };
 
-    const { rerender } = render(<Agents />);
+    const { rerender } = renderAgents();
 
     await waitFor(() => {
       expect(fetchAgentsMock).toHaveBeenCalledTimes(1);
@@ -224,7 +235,7 @@ describe('Agents page status refresh', () => {
   it('does not render the legacy gateway warning during transient stopped status', async () => {
     gatewayState.status = { state: 'stopped', port: 18789 };
 
-    render(<Agents />);
+    renderAgents();
 
     await waitFor(() => {
       expect(fetchAgentsMock).toHaveBeenCalledTimes(1);
@@ -268,7 +279,7 @@ describe('Agents page status refresh', () => {
     ];
     providersState.defaultAccountId = 'openrouter-default';
 
-    render(<Agents />);
+    renderAgents();
 
     await waitFor(() => {
       expect(fetchAgentsMock).toHaveBeenCalledTimes(1);
@@ -311,7 +322,7 @@ describe('Agents page status refresh', () => {
       },
     ];
 
-    const { rerender } = render(<Agents />);
+    const { rerender } = renderAgents();
 
     expect(await screen.findByText('Main')).toBeInTheDocument();
 
@@ -330,7 +341,7 @@ describe('Agents page status refresh', () => {
     refreshProviderSnapshotMock.mockImplementation(() => new Promise(() => {}));
     channelsAccountsMock.mockImplementation(() => new Promise(() => {}));
 
-    const { container } = render(<Agents />);
+    const { container } = renderAgents();
 
     expect(container.querySelector('svg.animate-spin')).toBeTruthy();
     expect(screen.queryByText('title')).not.toBeInTheDocument();

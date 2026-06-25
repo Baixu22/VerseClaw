@@ -1,4 +1,4 @@
-export type InputMode = "interrupt" | "guide" | "queue";
+export type InputMode = "interrupt" | "guide" | "queue" | "revise-goal";
 export type InputIntent = InputMode | "question" | "correction";
 
 export type InputIntentClassification = {
@@ -13,6 +13,8 @@ const INTERRUPT_PATTERNS = [/停下/, /停止/, /先别/, /打断/, /interrupt/i
 const QUESTION_PATTERNS = [/\?\s*$/, /？\s*$/, /^why\b/i, /^what\b/i, /^how\b/i, /为什么/, /是什么/];
 const CORRECTION_PATTERNS = [/刚才/, /上一/, /修正/, /改成/, /不对/, /correction/i];
 
+const REVISE_GOAL_PATTERNS = [/revise goal/i, /change goal/i, /new goal/i, /update objective/i, /change objective/i];
+
 function matchAny(input: string, patterns: readonly RegExp[]): RegExp | undefined {
   return patterns.find((pattern) => pattern.test(input));
 }
@@ -21,6 +23,7 @@ export function classifyInputIntent(input: string): InputIntentClassification {
   const text = input.trim();
   const checks: Array<[InputIntent, readonly RegExp[], number]> = [
     ["interrupt", INTERRUPT_PATTERNS, 0.9],
+    ["revise-goal", REVISE_GOAL_PATTERNS, 0.88],
     ["queue", QUEUE_PATTERNS, 0.85],
     ["guide", GUIDE_PATTERNS, 0.8],
     ["correction", CORRECTION_PATTERNS, 0.75],
@@ -40,7 +43,7 @@ export function resolveInputMode(input: string, explicitMode?: InputMode): Input
     return explicitMode;
   }
   const classification = classifyInputIntent(input);
-  if (classification.intent === "interrupt" || classification.intent === "queue") {
+  if (classification.intent === "interrupt" || classification.intent === "queue" || classification.intent === "revise-goal") {
     return classification.intent;
   }
   return "guide";

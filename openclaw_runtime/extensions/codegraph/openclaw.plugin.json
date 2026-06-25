@@ -1,0 +1,48 @@
+{
+  "id": "codegraph",
+  "activation": {
+    "onStartup": true
+  },
+  "enabledByDefault": true,
+  "name": "CodeGraph",
+  "description": "Semantic code intelligence: auto-indexes codebase, provides decision boundaries, source-reading plans, symbol search, call graph traversal, entry point detection, business flow tracing, minimal context generation, git history analysis, incremental sync, and freshness metadata.",
+  "contracts": {
+    "tools": [
+      "codegraph_decide",
+      "codegraph_context_plan",
+      "codegraph_explore",
+      "codegraph_search",
+      "codegraph_callers",
+      "codegraph_callees",
+      "codegraph_impact",
+      "codegraph_status",
+      "codegraph_sync",
+      "codegraph_init",
+      "codegraph_entrypoints",
+      "codegraph_find_flow",
+      "codegraph_minimal_context",
+      "codegraph_git_stats",
+      "codegraph_freshness"
+    ]
+  },
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "autoIndex": {
+        "type": "boolean",
+        "default": true,
+        "description": "Auto-index the workspace on session start"
+      },
+      "maxFilesExplore": {
+        "type": "number",
+        "default": 5,
+        "description": "Maximum source files returned by explore"
+      },
+      "minimalContextMaxTokens": {
+        "type": "number",
+        "default": 5000,
+        "description": "Token budget for minimal context"
+      }
+    }
+  }
+}

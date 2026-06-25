@@ -3,7 +3,7 @@
  *
  * ## Flow (mirrors the upload sequence diagram)
  *
- * 1. `upload_prepare` â€” submit file metadata + (md5 / sha1 / md5_10m) hashes,
+ * 1. `upload_prepare` â€?submit file metadata + (md5 / sha1 / md5_10m) hashes,
  *    receive `{ upload_id, block_size, parts[], concurrency?, retry_timeout? }`.
  * 2. For every part (parallelized under a bounded concurrency):
  *    a. Read the part bytes (stream from disk or slice in-memory buffer).
@@ -11,10 +11,10 @@
  *    c. POST `upload_part_finish { upload_id, part_index, block_size, md5 }`,
  *       retrying under {@link PART_FINISH_RETRY_POLICY} + the persistent
  *       retry loop for {@link PART_FINISH_RETRYABLE_CODES}.
- * 3. POST `complete_upload { upload_id }` â€” returns `{ file_uuid, file_info,
+ * 3. POST `complete_upload { upload_id }` â€?returns `{ file_uuid, file_info,
  *    ttl }` identical to the one-shot path.
  * 4. If `upload_prepare` returns {@link UPLOAD_PREPARE_FALLBACK_CODE}
- *    (`40093002` â€” daily upload quota exceeded), throw
+ *    (`40093002` â€?daily upload quota exceeded), throw
  *    {@link UploadDailyLimitExceededError} so the upper layer can surface a
  *    user-facing message. The dispatcher is responsible for the fallback
  *    (there is no server path that will accept the file at this point).
@@ -107,7 +107,7 @@ interface UploadChunkedOptions {
   fileName?: string;
   /** Progress callback invoked after every successful part. */
   onProgress?: (progress: ChunkedUploadProgress) => void;
-  /** Log prefix â€” defaults to `"[qqbot:chunked-upload]"`. */
+  /** Log prefix â€?defaults to `"[qqbot:chunked-upload]"`. */
   logPrefix?: string;
 }
 
@@ -116,7 +116,7 @@ interface ChunkedMediaApiConfig {
   logger?: EngineLogger;
   /** Upload cache adapter (optional; omit to disable caching). */
   uploadCache?: UploadCacheAdapter;
-  /** File name sanitizer â€” defaults to identity. */
+  /** File name sanitizer â€?defaults to identity. */
   sanitizeFileName?: SanitizeFileNameFn;
 }
 
@@ -131,7 +131,7 @@ const MAX_CONCURRENT_PARTS = 10;
 /**
  * Upper bound on the persistent-retry window for `upload_part_finish`.
  *
- * The server may suggest `retry_timeout` via `upload_prepare` â€” we honor
+ * The server may suggest `retry_timeout` via `upload_prepare` â€?we honor
  * it but clamp to 10 minutes so a runaway server can't hold the caller
  * hostage.
  */
@@ -141,7 +141,7 @@ const MAX_PART_FINISH_RETRY_TIMEOUT_MS = 10 * 60 * 1000;
 const PART_UPLOAD_TIMEOUT_MS = 300_000;
 
 /**
- * Boundary used by `md5_10m` â€” first 10,002,432 bytes.
+ * Boundary used by `md5_10m` â€?first 10,002,432 bytes.
  *
  * Files smaller than this return the whole-file md5 for `md5_10m` (per the
  * server contract).
@@ -151,7 +151,7 @@ const MD5_10M_SIZE = 10_002_432;
 // ============ Class ============
 
 /**
- * Chunked upload module. Stateless across calls â€” see
+ * Chunked upload module. Stateless across calls â€?see
  * {@link ChunkedMediaApi.uploadChunked} for the main entry.
  */
 export class ChunkedMediaApi {
@@ -171,7 +171,7 @@ export class ChunkedMediaApi {
 
   /**
    * Upload a {@link MediaSource} via the chunked endpoint. Only `localPath`
-   * and `buffer` sources are accepted â€” `url` / `base64` must fall through
+   * and `buffer` sources are accepted â€?`url` / `base64` must fall through
    * to {@link MediaApi.uploadMedia}.
    *
    * @throws {UploadDailyLimitExceededError} when `upload_prepare` returns
@@ -207,7 +207,7 @@ export class ChunkedMediaApi {
         const cached = this.cache.get(hashes.md5, opts.scope, opts.targetId, opts.fileType);
         if (cached) {
           this.logger?.info?.(
-            `${prefix} cache HIT (md5=${hashes.md5.slice(0, 8)}) â€” skipping chunked upload`,
+            `${prefix} cache HIT (md5=${hashes.md5.slice(0, 8)}) â€?skipping chunked upload`,
           );
           return { file_uuid: "", file_info: cached, ttl: 0 };
         }
@@ -264,7 +264,7 @@ export class ChunkedMediaApi {
           prefix,
         );
 
-        // 5b. upload_part_finish â€” fetch a fresh token each time to defend
+        // 5b. upload_part_finish â€?fetch a fresh token each time to defend
         // against long uploads exceeding the token TTL.
         await this.callUploadPartFinish(opts, upload_id, partIndex, length, md5Hex, retryTimeoutMs);
 
@@ -360,7 +360,7 @@ export class ChunkedMediaApi {
     const path = uploadPartFinishPath(opts.scope, opts.targetId);
     await withRetry(
       async () => {
-        // Refresh the token on every attempt â€” the token may be expired by
+        // Refresh the token on every attempt â€?the token may be expired by
         // the time we reach the tail of a long upload.
         const token = await this.tokenManager.getAccessToken(
           opts.creds.appId,

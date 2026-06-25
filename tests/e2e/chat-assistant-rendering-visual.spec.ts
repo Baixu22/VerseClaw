@@ -237,7 +237,7 @@ async function installAssistantRenderingMocks(app: Parameters<typeof installIpcM
   });
 }
 
-test.describe('ClawX assistant-style rendering layer', () => {
+test.describe('Verse Claw assistant-style rendering layer', () => {
   test('renders rich assistant cards and validates branch, quote, token, and heatgraph interactions', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -260,6 +260,12 @@ test.describe('ClawX assistant-style rendering layer', () => {
       await expect(page.getByTestId('assistant-attachment-card')).toContainText('assistant-rendering-output');
       await expect(page.getByTestId('assistant-token-usage-roll')).toContainText('1.6k');
       await expect(page.getByTestId('assistant-status-dot-matrix')).toBeVisible();
+      const statusMatrixDots = page.getByTestId('assistant-status-dot-matrix').locator('[data-slot="dot-matrix-dot"]');
+      await expect(statusMatrixDots).toHaveCount(25);
+      const statusMatrixDotPhases = await statusMatrixDots.evaluateAll((nodes) =>
+        nodes.map((node) => node.getAttribute('data-phase') ?? ''),
+      );
+      expect(new Set(statusMatrixDotPhases).size).toBeGreaterThan(5);
       await page.getByTestId('assistant-status-dot-matrix').hover();
       await expect(page.getByTestId('assistant-dot-matrix-status')).toBeVisible();
       await page.mouse.move(0, 0);

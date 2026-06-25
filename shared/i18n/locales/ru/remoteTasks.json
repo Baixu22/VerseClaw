@@ -1,0 +1,66 @@
+{
+  "nav": "Удалённые задачи",
+  "title": "Удалённые задачи",
+  "subtitle": "Проверяйте структурированные задачи до изменения локального состояния.",
+  "empty": "Удалённых задач пока нет.",
+  "actions": {
+    "refresh": "Обновить",
+    "create": "Создать задачу",
+    "approve": "Одобрить",
+    "reject": "Отклонить",
+    "execute": "Выполнить"
+  },
+  "form": {
+    "title": "Создать локальную задачу",
+    "kind": "Тип задачи",
+    "messageTitle": "Заголовок",
+    "messageBody": "Сообщение",
+    "doctorMode": "Режим Doctor",
+    "patch": "JSON патча настроек",
+    "patchHint": "Разрешённые ключи: theme, language, gatewayAutoStart, telemetryEnabled, autoCheckUpdate, autoDownloadUpdate, cdpRemoteControlEnabled, cdpRemoteDebuggingPort.",
+    "defaultTitle": "Проверить входящие удалённые задачи",
+    "defaultBody": "Это локальная тестовая задача.",
+    "localReason": "Создано на локальной странице удалённых задач"
+  },
+  "kind": {
+    "message": "Сообщение",
+    "doctor": "OpenClaw Doctor",
+    "settingsPatch": "Патч настроек"
+  },
+  "doctor": {
+    "diagnose": "Диагностика",
+    "fix": "Исправление"
+  },
+  "status": {
+    "pending": "Ожидает",
+    "pendingApproval": "Нужно одобрение",
+    "running": "Выполняется",
+    "completed": "Завершено",
+    "failed": "Ошибка",
+    "rejected": "Отклонено"
+  },
+  "source": {
+    "local": "Локально",
+    "relay": "Релей",
+    "channel": "Канал",
+    "api": "API"
+  },
+  "detail": {
+    "kind": "Тип",
+    "source": "Источник",
+    "created": "Создано",
+    "updated": "Обновлено"
+  },
+  "preview": {
+    "title": "Предпросмотр изменений",
+    "before": "До",
+    "after": "После"
+  },
+  "toast": {
+    "created": "Задача создана",
+    "approve": "Задача одобрена",
+    "reject": "Задача отклонена",
+    "execute": "Задача выполнена",
+    "invalidJson": "Патч настроек должен быть валидным JSON"
+  }
+}

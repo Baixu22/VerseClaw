@@ -272,7 +272,7 @@ function isKnownFromMeIMessageReactionTarget(params: {
  *    wildcard. This is how operators say "this specific group has no prompt"
  *    without inheriting from `groups["*"]`.
  * 2. Otherwise, return the wildcard `groups["*"].systemPrompt` (trimmed; empty
- *    after trim â†’ `undefined`).
+ *    after trim â†?`undefined`).
  */
 export function resolveIMessageGroupSystemPrompt(params: {
   groupConfig: unknown;
@@ -847,7 +847,7 @@ export async function buildIMessageInboundContext(params: {
         isFromMe: false,
       })
     : null;
-  // Only surface the gateway-allocated shortId â€” never the raw chat.db
+  // Only surface the gateway-allocated shortId â€?never the raw chat.db
   // ROWID. Mixing the two namespaces means the agent can call back with a
   // numeric id that the gateway will treat as a shortId but never issued
   // (e.g. chat.db rowid 13 with shortIds only allocated 1..10), and the
@@ -1010,7 +1010,7 @@ function buildIMessageEchoScope(params: {
 }): string[] {
   // Mirror every shape resolveOutboundEchoScope can persist (see send.ts).
   // Inbound messages carry chat_id, chat_guid, and chat_identifier when
-  // available, but the outbound side only writes one of them â€” whichever
+  // available, but the outbound side only writes one of them â€?whichever
   // shape the caller used. Returning all candidates lets hasIMessageEchoMatch
   // cross-check, so a chat_guid-keyed send is suppressed even when chat.db
   // annotates the inbound row with chat_id+chat_identifier (or any other

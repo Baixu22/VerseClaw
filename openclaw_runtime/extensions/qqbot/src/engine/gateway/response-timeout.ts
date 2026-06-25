@@ -7,7 +7,7 @@ import {
 /**
  * QQBot outbound response watchdog timeout resolver.
  *
- * Background â€” issue #85267:
+ * Background â€?issue #85267:
  *   The reporter ran openclaw + ollama + `qwen3.5:27b` (a slow local model)
  *   with `models.providers.ollama.timeoutSeconds: 1800` and saw the
  *   QQBot reply path abort at ~5 minutes with "LLM request timed out",
@@ -26,7 +26,7 @@ import {
  *     - `models.providers.<id>.timeoutSeconds` (max across configured providers)
  *   Take the maximum and clamp to `[DEFAULT_RESPONSE_TIMEOUT_MS, MAX_TIMER_TIMEOUT_MS]`.
  *   The default floor preserves the existing 5-minute guard for users
- *   that have not configured any longer ceiling â€” i.e. a no-op for
+ *   that have not configured any longer ceiling â€?i.e. a no-op for
  *   typical cloud-model deployments.
  */
 

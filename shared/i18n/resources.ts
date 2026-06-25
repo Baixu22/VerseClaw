@@ -14,6 +14,7 @@ import enDreams from './locales/en/dreams.json';
 import enSetup from './locales/en/setup.json';
 import enMenu from './locales/en/menu.json';
 import enTaskLedger from './locales/en/taskLedger.json';
+import enRemoteTasks from './locales/en/remoteTasks.json';
 import enClawGraph from './locales/en/clawGraph.json';
 import enKnowledge from './locales/en/knowledge.json';
 import enCodeReview from './locales/en/codeReview.json';
@@ -32,6 +33,7 @@ import zhDreams from './locales/zh/dreams.json';
 import zhSetup from './locales/zh/setup.json';
 import zhMenu from './locales/zh/menu.json';
 import zhTaskLedger from './locales/zh/taskLedger.json';
+import zhRemoteTasks from './locales/zh/remoteTasks.json';
 import zhClawGraph from './locales/zh/clawGraph.json';
 import zhKnowledge from './locales/zh/knowledge.json';
 import zhCodeReview from './locales/zh/codeReview.json';
@@ -50,6 +52,7 @@ import jaDreams from './locales/ja/dreams.json';
 import jaSetup from './locales/ja/setup.json';
 import jaMenu from './locales/ja/menu.json';
 import jaTaskLedger from './locales/ja/taskLedger.json';
+import jaRemoteTasks from './locales/ja/remoteTasks.json';
 import jaClawGraph from './locales/ja/clawGraph.json';
 import jaKnowledge from './locales/ja/knowledge.json';
 import jaCodeReview from './locales/ja/codeReview.json';
@@ -68,6 +71,7 @@ import ruDreams from './locales/ru/dreams.json';
 import ruSetup from './locales/ru/setup.json';
 import ruMenu from './locales/ru/menu.json';
 import ruTaskLedger from './locales/ru/taskLedger.json';
+import ruRemoteTasks from './locales/ru/remoteTasks.json';
 import ruClawGraph from './locales/ru/clawGraph.json';
 import ruKnowledge from './locales/ru/knowledge.json';
 import ruCodeReview from './locales/ru/codeReview.json';
@@ -86,6 +90,7 @@ export const I18N_NAMESPACES = [
   'setup',
   'menu',
   'taskLedger',
+  'remoteTasks',
   'clawGraph',
   'knowledge',
   'codeReview',
@@ -106,6 +111,7 @@ export const I18N_RESOURCES = {
     setup: enSetup,
     menu: enMenu,
     taskLedger: enTaskLedger,
+    remoteTasks: enRemoteTasks,
     clawGraph: enClawGraph,
     knowledge: enKnowledge,
     codeReview: enCodeReview,
@@ -124,6 +130,7 @@ export const I18N_RESOURCES = {
     setup: zhSetup,
     menu: zhMenu,
     taskLedger: zhTaskLedger,
+    remoteTasks: zhRemoteTasks,
     clawGraph: zhClawGraph,
     knowledge: zhKnowledge,
     codeReview: zhCodeReview,
@@ -142,6 +149,7 @@ export const I18N_RESOURCES = {
     setup: jaSetup,
     menu: jaMenu,
     taskLedger: jaTaskLedger,
+    remoteTasks: jaRemoteTasks,
     clawGraph: jaClawGraph,
     knowledge: jaKnowledge,
     codeReview: jaCodeReview,
@@ -160,6 +168,7 @@ export const I18N_RESOURCES = {
     setup: ruSetup,
     menu: ruMenu,
     taskLedger: ruTaskLedger,
+    remoteTasks: ruRemoteTasks,
     clawGraph: ruClawGraph,
     knowledge: ruKnowledge,
     codeReview: ruCodeReview,

@@ -36,8 +36,11 @@ import {
   getMemoryConflictDetail,
   getMemoryDetail,
   getMemoryHealthReport,
+  getMemoryUtilityReport,
   getRoleMemoryPolicy,
   getMemoryStats,
+  isRoleMemoryEnabled,
+  listMemoryFeedback,
   listMemoryAuditEvents,
   listMemoryConflicts,
   listMemoryProposals,
@@ -47,6 +50,7 @@ import {
   previewMemoryProposal,
   proposeMemoryRetention,
   proposeMemoryCard,
+  recordMemoryFeedback,
   reviewMemoryProposalBatch,
   reviewMemoryProposalRecord,
   resolveMemoryConflict,
@@ -55,7 +59,7 @@ import {
   supersedeMemoryCard,
   updateMemoryCard,
 } from "../../memory/memory-store.js";
-import type { MemoryPhaseTag, MemoryProposal, MemoryRetentionAction, MemoryReviewAction } from "../../memory/types.js";
+import type { MemoryFeedbackOutcome, MemoryPhaseTag, MemoryProposal, MemoryRetentionAction, MemoryReviewAction, MemoryTaskSuccess } from "../../memory/types.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { resolveControlPlaneActor, formatControlPlaneActor } from "../control-plane-audit.js";
 import type { GatewayRequestHandlers, RespondFn } from "./types.js";
@@ -76,6 +80,18 @@ function readStringArray(value: unknown): string[] {
 
 function readBoolean(value: unknown): boolean | undefined {
   return typeof value === "boolean" ? value : undefined;
+}
+
+function readMemoryFeedbackOutcome(value: unknown): MemoryFeedbackOutcome | undefined {
+  return value === "helpful" || value === "neutral" || value === "harmful" || value === "missing_needed" || value === "user_corrected"
+    ? value
+    : undefined;
+}
+
+function readMemoryTaskSuccess(value: unknown): MemoryTaskSuccess | undefined {
+  return value === "success" || value === "partial" || value === "failure" || value === "unknown"
+    ? value
+    : undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -101,6 +117,35 @@ function respondMissingTask(respond: RespondFn, method: string): void {
     undefined,
     errorShape(ErrorCodes.INVALID_REQUEST, `${method} requires a non-empty "task" string`),
   );
+}
+
+const ROLE_MEMORY_DISABLED_MESSAGE = "Role memory is disabled in Settings.";
+
+function disabledMemoryHealthReport() {
+  return {
+    ok: true,
+    checkedAt: new Date().toISOString(),
+    checks: [{
+      name: "role-memory-enabled",
+      status: "warn" as const,
+      message: ROLE_MEMORY_DISABLED_MESSAGE,
+    }],
+  };
+}
+
+function respondRoleMemoryDisabled(
+  respond: RespondFn,
+  options: { write?: boolean; payload?: Record<string, unknown> } = {},
+): boolean {
+  if (isRoleMemoryEnabled()) {
+    return false;
+  }
+  if (options.write) {
+    respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, ROLE_MEMORY_DISABLED_MESSAGE));
+    return true;
+  }
+  respond(true, { disabled: true, ...(options.payload ?? {}) }, undefined);
+  return true;
 }
 
 function readTemplateId(params: Record<string, unknown>): string | undefined {
@@ -416,6 +461,8 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           task,
           sessionKey,
           agentId: readString(params.agentId),
+          workspaceId: readString(params.workspaceId),
+          taskLedgerRootId: readString(params.taskLedgerRootId),
           fileHints: readStringArray(params.fileHints),
           acceptance: readStringArray(params.acceptance),
           important: readBoolean(params.important) ?? false,
@@ -486,6 +533,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
 
   // ── Memory subsystem ──
   "memory.list": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { cards: [], count: 0 } })) return;
     ensureMemoryCardsLoaded();
     const cards = getMemoryCards({
       scope: readString(params.scope),
@@ -500,6 +548,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.propose": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const proposal = params.proposal as MemoryProposal | undefined;
     if (!proposal || typeof proposal !== "object" || !proposal.content) {
       respond(
@@ -518,6 +567,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.previewProposal": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { preview: null } })) return;
     const proposal = params.proposal as MemoryProposal | undefined;
     const operation = readString(params.operation);
     const targetId = readString(params.targetId ?? params.id);
@@ -545,6 +595,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.store": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const proposal = params.proposal as MemoryProposal | undefined;
     if (!proposal || typeof proposal !== "object" || !proposal.content) {
       respond(
@@ -559,6 +610,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.update": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const id = readString(params.id);
     if (!id) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.update requires an "id" string'));
@@ -568,6 +620,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.archive": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const id = readString(params.id);
     if (!id) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.archive requires an "id" string'));
@@ -578,6 +631,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.supersede": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const id = readString(params.id);
     const proposal = params.proposal as MemoryProposal | undefined;
     if (!id || !proposal || typeof proposal !== "object" || !proposal.content) {
@@ -588,10 +642,21 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.conflicts": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { conflicts: [] } })) return;
     respond(true, { conflicts: listMemoryConflicts({ status: readString(params.status) }) }, undefined);
   },
 
   "memory.conflictDetail": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, {
+      payload: {
+        cards: [],
+        proposals: [],
+        evidence: [],
+        scopePrecedence: [],
+        suggestedAction: "reject",
+        reasonSummary: ROLE_MEMORY_DISABLED_MESSAGE,
+      },
+    })) return;
     const id = readString(params.id);
     if (!id) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.conflictDetail requires "id"'));
@@ -601,6 +666,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.proposals": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { proposals: [] } })) return;
     respond(true, {
       proposals: listMemoryProposals({
         status: readString(params.status),
@@ -614,6 +680,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.review": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const id = readString(params.id);
     const action = readString(params.action);
     if (!id || !action || !["approve", "reject", "applyAsCold", "supersede", "merge"].includes(action)) {
@@ -626,6 +693,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.reviewBatch": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const ids = readStringArray(params.ids ?? params.proposalIds);
     const action = readString(params.action);
     if (ids.length === 0 || !action || !["approve", "reject", "applyAsCold", "supersede", "merge"].includes(action)) {
@@ -640,6 +708,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.merge": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     respond(true, mergeMemoryEntries({
       cardIds: readStringArray(params.cardIds),
       proposalIds: readStringArray(params.proposalIds),
@@ -652,6 +721,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.mergeDraft": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { draft: null } })) return;
     const suggestedAction = readString(params.suggestedAction);
     respond(true, buildMemoryMergeDraft({
       cardIds: readStringArray(params.cardIds),
@@ -665,6 +735,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.versions": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { versions: [] } })) return;
     const cardId = readString(params.cardId ?? params.id);
     if (!cardId) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.versions requires "cardId"'));
@@ -674,6 +745,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.audit": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { events: [] } })) return;
     respond(true, {
       events: listMemoryAuditEvents({
         cardId: readString(params.cardId),
@@ -684,14 +756,17 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.stats": async ({ respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { stats: {} } })) return;
     respond(true, { stats: getMemoryStats() }, undefined);
   },
 
   "memory.policy": async ({ respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { policy: { ...getRoleMemoryPolicy(), enabled: false } } })) return;
     respond(true, { policy: getRoleMemoryPolicy() }, undefined);
   },
 
   "memory.retentionCandidates": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { candidates: [] } })) return;
     respond(true, {
       candidates: listMemoryRetentionCandidates({
         roleName: readString(params.roleName),
@@ -702,6 +777,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.retentionPropose": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const action = readString(params.action);
     if (action && !["cold", "archive", "tombstone", "review"].includes(action)) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.retentionPropose action must be cold, archive, tombstone, or review'));
@@ -718,6 +794,19 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.evidenceCheck": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, {
+      payload: {
+        evidence: {
+          id: "role-memory-disabled",
+          targetKind: "refs",
+          targetId: null,
+          status: "unchecked",
+          refs: [],
+          summary: ROLE_MEMORY_DISABLED_MESSAGE,
+          checkedAt: new Date().toISOString(),
+        },
+      },
+    })) return;
     const kind = readString(params.kind);
     respond(true, checkMemoryEvidence({
       id: readString(params.id),
@@ -728,6 +817,20 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.simulateInjection": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, {
+      payload: {
+        roleName: readString(params.roleName) ?? "",
+        pack: {
+          budget: {},
+          buckets: {},
+          estimatedTokens: { total: 0 },
+          truncated: false,
+          candidateExplanations: [],
+        },
+        selectedCards: [],
+        selectorSnapshot: { disabled: true },
+      },
+    })) return;
     const roleName = readString(params.roleName);
     if (!roleName) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.simulateInjection requires "roleName"'));
@@ -741,10 +844,82 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.health": async ({ respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { health: disabledMemoryHealthReport() } })) return;
     respond(true, { health: getMemoryHealthReport() }, undefined);
   },
 
+  "memory.utilityReport": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, {
+      payload: {
+        report: {
+          roleName: readString(params.roleName),
+          generatedAt: new Date().toISOString(),
+          dataQuality: "insufficient",
+          missingEvidence: [ROLE_MEMORY_DISABLED_MESSAGE],
+          sample: { cards: 0, injections: 0, feedback: 0, proposals: 0, conflicts: 0 },
+          aggregate: {
+            contextPrecisionAtK: null,
+            helpfulnessRate: null,
+            harmRate: null,
+            staleRate: null,
+            conflictRate: null,
+            reviewAcceptanceRate: null,
+            tokenOverheadPerRun: null,
+            taskSuccessDelta: null,
+          },
+          cards: [],
+        },
+      },
+    })) return;
+    respond(true, {
+      report: getMemoryUtilityReport({
+        roleName: readString(params.roleName),
+        limit: typeof params.limit === "number" ? params.limit : undefined,
+      }),
+    }, undefined);
+  },
+
+  "memory.evalReport": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, {
+      payload: {
+        report: {
+          roleName: readString(params.roleName),
+          generatedAt: new Date().toISOString(),
+          dataQuality: "insufficient",
+          missingEvidence: [ROLE_MEMORY_DISABLED_MESSAGE],
+          sample: { cards: 0, injections: 0, feedback: 0, proposals: 0, conflicts: 0 },
+          aggregate: {
+            contextPrecisionAtK: null,
+            helpfulnessRate: null,
+            harmRate: null,
+            staleRate: null,
+            conflictRate: null,
+            reviewAcceptanceRate: null,
+            tokenOverheadPerRun: null,
+            taskSuccessDelta: null,
+          },
+          cards: [],
+        },
+        dryRun: undefined,
+      },
+    })) return;
+    respond(true, {
+      report: getMemoryUtilityReport({
+        roleName: readString(params.roleName),
+        limit: typeof params.limit === "number" ? params.limit : undefined,
+      }),
+      dryRun: readString(params.roleName)
+        ? simulateMemoryInjection({
+          roleName: readString(params.roleName)!,
+          phase: readString(params.phase) as MemoryPhaseTag | undefined,
+          task: readString(params.task ?? params.taskState),
+        })
+        : undefined,
+    }, undefined);
+  },
+
   "memory.detail": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { detail: null } })) return;
     const id = readString(params.id);
     if (!id) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.detail requires "id"'));
@@ -758,6 +933,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.restore": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const id = readString(params.id);
     if (!id) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.restore requires "id"'));
@@ -767,6 +943,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.resolveConflict": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
     const id = readString(params.id);
     const resolution = readString(params.resolution);
     if (!id || !resolution) {
@@ -778,6 +955,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   "memory.explainInjection": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { injections: [] } })) return;
     respond(
       true,
       {
@@ -790,5 +968,38 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       },
       undefined,
     );
+  },
+
+  "memory.feedbackList": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { payload: { feedback: [] } })) return;
+    respond(true, {
+      feedback: listMemoryFeedback({
+        injectionId: readString(params.injectionId),
+        cardId: readString(params.cardId),
+        roleName: readString(params.roleName),
+        outcome: readMemoryFeedbackOutcome(params.outcome),
+        limit: typeof params.limit === "number" ? params.limit : undefined,
+      }),
+    }, undefined);
+  },
+
+  "memory.feedback": async ({ params, respond }) => {
+    if (respondRoleMemoryDisabled(respond, { write: true })) return;
+    const outcome = readMemoryFeedbackOutcome(params.outcome);
+    if (!outcome) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'memory.feedback requires a valid "outcome"'));
+      return;
+    }
+    respond(true, {
+      feedback: recordMemoryFeedback({
+        injectionId: readString(params.injectionId),
+        cardId: readString(params.cardId),
+        roleName: readString(params.roleName),
+        outcome,
+        taskSuccess: readMemoryTaskSuccess(params.taskSuccess),
+        note: readString(params.note),
+        actor: { type: "user" },
+      }),
+    }, undefined);
   },
 };

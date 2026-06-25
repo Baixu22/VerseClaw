@@ -1,6 +1,6 @@
 /**
  * QQBot credential management (pure logic layer).
- * QQBot 凭证管理（纯逻辑层）。
+ * QQBot 凭证管理（纯逻辑层）�?
  *
  * Credential clearing and field-level cleanup for logout and setup
  * flows. All functions operate on plain objects (Record<string, unknown>)

@@ -494,7 +494,7 @@ export function createMSTeamsMessageHandler(deps: MSTeamsMessageHandlerDeps) {
     // context does not bleed across threads. Prefer conversationMessageId (the
     // ;messageid= portion of conversation.id, i.e. the thread root) over
     // activity.replyToId (which may point to a non-root parent in deep threads).
-    // DMs and group chats are unaffected â€” only channel thread replies fork.
+    // DMs and group chats are unaffected â€?only channel thread replies fork.
     route.sessionKey = resolveMSTeamsRouteSessionKey({
       baseSessionKey: route.sessionKey,
       isChannel,

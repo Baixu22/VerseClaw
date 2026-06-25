@@ -2,29 +2,18 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
-import { Check, Circle, RotateCcw, ShieldAlert, Square, TerminalSquare, Zap } from 'lucide-react';
+import { Check, Circle, ShieldAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { hostApi, type WorkspaceTerminalSessionResult } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
-import type { PermissionApprovalEvent, WorkspacePermissionMode } from '@shared/types/workspace';
+import type { PermissionApprovalEvent } from '@shared/types/workspace';
 
 type TerminalStatus = NonNullable<WorkspaceTerminalSessionResult['status']>;
-
-function modeLabel(t: (key: string, fallback: string) => string, mode: WorkspacePermissionMode | undefined): string {
-  switch (mode) {
-    case 'readOnly': return t('workspace.terminal.permission.readOnly', 'Read only');
-    case 'acceptEdits': return t('workspace.terminal.permission.acceptEdits', 'Accept edits');
-    case 'plan': return t('workspace.terminal.permission.plan', 'Plan');
-    case 'fullAccess': return t('workspace.terminal.permission.fullAccess', 'Full access');
-    default: return t('workspace.terminal.permission.acceptEdits', 'Accept edits');
-  }
-}
 
 function statusLabel(t: (key: string, fallback: string) => string, status: TerminalStatus | undefined): string {
   switch (status) {
@@ -233,100 +222,41 @@ export function WorkspaceTerminalPanel() {
     }
   };
 
-  const closeTerminal = async () => {
-    if (!sessionId) return;
-    setBusy(true);
-    try {
-      await hostApi.terminal.close({ sessionId });
-      setStatus('exited');
-      setSessionId(null);
-      persistTerminalState({ sessionId: null, status: 'exited', activeProcessId: null });
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const interruptTerminal = async () => {
-    if (!sessionId) return;
-    await hostApi.terminal.interrupt({ sessionId });
-  };
-
-  const clearTerminal = () => terminalRef.current?.clear();
-
   const blocked = permissionMode === 'plan' || permissionMode === 'readOnly';
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-background">
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-black/5 bg-surface-input text-foreground shadow-sm dark:border-white/10">
-            <TerminalSquare className="h-4 w-4" />
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-foreground">{t('workspace.terminal.title', 'Workspace terminal')}</p>
-            <p className="truncate font-mono text-2xs text-muted-foreground">{workspaceRootPath ?? t('workspace.terminal.noWorkspace', 'No workspace selected')}</p>
-          </div>
-        </div>
-        <div className="flex shrink-0 items-center gap-1.5">
-          <Badge variant={permissionMode === 'fullAccess' ? 'warning' : 'outline'}>{modeLabel(t, permissionMode)}</Badge>
-          <Badge variant={status === 'running' ? 'success' : status === 'blocked' ? 'warning' : 'outline'}>{statusLabel(t, status)}</Badge>
-        </div>
-      </div>
-
-      <div className="flex shrink-0 items-center gap-1.5 border-b border-black/5 bg-background/70 px-3 py-2 dark:border-white/10">
-        <Button size="sm" className="h-8 text-xs shadow-sm" disabled={busy || blocked || status === 'running'} onClick={() => void openTerminal()}>
-          <Zap className={cn('mr-1.5 h-3.5 w-3.5', busy && 'animate-pulse')} />{t('workspace.terminal.actions.start', 'Start')}
-        </Button>
-        <Button size="sm" variant="ghost" className="h-8 text-xs" disabled={!sessionId || status !== 'running'} onClick={() => void interruptTerminal()}>
-          {t('workspace.terminal.actions.interrupt', 'Ctrl+C')}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 text-xs" disabled={!sessionId} onClick={() => void closeTerminal()}>
-          <Square className="mr-1.5 h-3.5 w-3.5" />{t('workspace.terminal.actions.close', 'Close')}
-        </Button>
-        <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={clearTerminal}>
-          <RotateCcw className="mr-1.5 h-3.5 w-3.5" />{t('workspace.terminal.actions.clear', 'Clear')}
-        </Button>
-      </div>
-
+    <div className="flex h-full min-h-0 flex-col bg-[#0a0a0a]">
       {blocked && (
-        <div className="mx-3 mt-3 flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-xs">
-          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
-          <div>
-            <p className="font-medium text-foreground">{t('workspace.terminal.blocked.title', 'Interactive terminal is disabled in this permission mode')}</p>
-            <p className="mt-1 text-muted-foreground">{t('workspace.terminal.blocked.body', 'Switch to Accept edits or Full access before starting a live terminal.')}</p>
-          </div>
+        <div className="mx-3 mt-3 flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 p-2.5 text-xs">
+          <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+          <p className="text-amber-800 dark:text-amber-300">{t('workspace.terminal.blocked.body', 'Switch to Accept edits or Full access before starting a live terminal.')}</p>
         </div>
       )}
 
       {pendingApproval && (
-        <div className="mx-3 mt-3 flex items-center justify-between gap-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-xs">
-          <div className="min-w-0">
-            <p className="font-medium text-foreground">{t('workspace.terminal.approval.title', 'Interactive terminal is waiting for approval')}</p>
-            <p className="truncate text-muted-foreground">{pendingApproval.reason}</p>
-          </div>
-          <Button size="sm" className="h-8" disabled={busy} onClick={() => void approveOpen()}>
-            <Check className="mr-1.5 h-3.5 w-3.5" />{t('workspace.terminal.actions.approve', 'Approve')}
+        <div className="mx-3 mt-3 flex items-center justify-between gap-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-2.5 text-xs">
+          <p className="truncate text-amber-800 dark:text-amber-300">{pendingApproval.reason}</p>
+          <Button size="sm" className="h-7" disabled={busy} onClick={() => void approveOpen()}>
+            <Check className="mr-1.5 h-3 w-3" />{t('workspace.terminal.actions.approve', 'Approve')}
           </Button>
         </div>
       )}
 
-      <div className="min-h-0 flex-1 bg-surface-input p-3">
-        <div className="h-full overflow-hidden rounded-lg border border-black/15 bg-[#111111] shadow-[0_18px_45px_rgba(0,0,0,0.16)] dark:border-white/10">
-          <div className="flex h-8 items-center justify-between gap-3 border-b border-white/10 bg-[#181818] px-3">
-            <div className="flex min-w-0 items-center gap-2">
-              <div className="flex shrink-0 items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
-                <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
-              </div>
-              <span className="truncate font-mono text-2xs text-white/45">{workspaceRootPath ?? '~'}</span>
-            </div>
-            <span className="flex shrink-0 items-center gap-1.5 font-mono text-2xs text-white/55">
-              <Circle className={cn('h-2 w-2 fill-current stroke-0', status === 'running' ? 'text-emerald-400' : status === 'blocked' ? 'text-amber-400' : 'text-white/25')} />
-              {statusLabel(t, status)}
-            </span>
+      <div className="min-h-0 flex-1 p-2">
+        <div className="relative h-full overflow-hidden rounded-md bg-[#0a0a0a]">
+          {/* Minimal status dot — top-right corner */}
+          <div className="pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-1.5">
+            <Circle
+              className={cn(
+                'h-1.5 w-1.5 fill-current stroke-0',
+                status === 'running' ? 'text-emerald-400' : status === 'blocked' ? 'text-amber-400' : 'text-white/20',
+              )}
+            />
+            {status === 'running' && (
+              <span className="font-mono text-[10px] text-white/30">{statusLabel(t, status)}</span>
+            )}
           </div>
-          <div ref={containerRef} className="h-[calc(100%-2rem)] w-full p-3" />
+          <div ref={containerRef} className="h-full w-full p-3" />
         </div>
       </div>
     </div>

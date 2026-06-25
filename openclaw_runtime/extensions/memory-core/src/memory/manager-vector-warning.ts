@@ -2,7 +2,7 @@
 export function formatMemoryVectorDegradedWriteReason(loadError?: string): string {
   return loadError
     ? `sqlite-vec unavailable: ${loadError}`
-    : "semantic vector embeddings unavailable â€” no vector dimensions resolved";
+    : "semantic vector embeddings unavailable â€?no vector dimensions resolved";
 }
 
 export function logMemoryVectorDegradedWrite(params: {
@@ -22,7 +22,7 @@ export function logMemoryVectorDegradedWrite(params: {
     return params.warningShown;
   }
   params.warn(
-    `chunks_vec not updated â€” ${formatMemoryVectorDegradedWriteReason(params.loadError)}. Vector recall degraded. Further duplicate warnings suppressed.`,
+    `chunks_vec not updated â€?${formatMemoryVectorDegradedWriteReason(params.loadError)}. Vector recall degraded. Further duplicate warnings suppressed.`,
   );
   return true;
 }

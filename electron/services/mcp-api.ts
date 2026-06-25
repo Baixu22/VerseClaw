@@ -1,5 +1,6 @@
 import type {
   McpCanonicalTransport,
+  McpCallToolResult,
   McpHeartbeatResult,
   McpListToolsResult,
   McpScope,
@@ -20,9 +21,36 @@ import { isRecord } from './payload-utils';
 import { readAgentBootstrapTools } from '../utils/agent-config';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createGitApi } from './git-api';
+import {
+  createMcpToolCallRequestShadow,
+  createMcpToolCallResultShadow,
+  createMcpToolCallThrownErrorShadow,
+  emitToolProtocolShadow,
+} from './tool-protocol-shadow';
+import type { McpToolCallShadowRecord } from './tool-protocol-shadow';
+import {
+  createMcpToolProviderRegistryRequestShadow,
+  createMcpToolProviderRegistryResultShadow,
+  emitMcpToolProviderRegistryShadow,
+} from './tool-provider-registry';
+import type { McpToolProviderRegistryShadowRecord } from './tool-provider-registry';
 
 type McpStoreDocument = {
   servers: McpServerConfig[];
+};
+
+type McpApiContext = {
+  gatewayManager?: GatewayManager;
+  runtime?: {
+    toolProtocol?: {
+      mcpShadow?: boolean;
+    };
+    toolRegistry?: {
+      shadow?: boolean;
+    };
+  };
+  toolProtocolShadowSink?: (record: McpToolCallShadowRecord) => void;
+  toolProviderRegistryShadowSink?: (record: McpToolProviderRegistryShadowRecord) => void;
 };
 
 const VALID_TRANSPORTS = new Set<McpTransport>(['stdio', 'http', 'streamable-http', 'sse', 'websocket']);
@@ -30,11 +58,11 @@ const VALID_SCOPES = new Set<McpScope>(['global', 'agent', 'workspace']);
 const DEFAULT_TRANSPORT: McpTransport = 'stdio';
 const DEFAULT_SCOPE: McpScope = 'global';
 const MAX_MCP_SERVERS = 200;
-const CLAWX_GIT_MCP_SERVER_ID = 'clawx-git';
+const VERSE_CLAW_GIT_MCP_SERVER_ID = 'clawx-git';
 
-const CLAWX_GIT_MCP_SERVER: McpServerConfig = {
-  id: CLAWX_GIT_MCP_SERVER_ID,
-  name: 'ClawX Git',
+const VERSE_CLAW_GIT_MCP_SERVER: McpServerConfig = {
+  id: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  name: 'Verse Claw Git',
   localAddress: 'clawx://mcp/clawx-git',
   transport: 'stdio',
   canonicalTransport: 'stdio',
@@ -43,17 +71,29 @@ const CLAWX_GIT_MCP_SERVER: McpServerConfig = {
   ownerId: '*',
   networkPolicy: 'disabled',
   runtimeStatus: 'connected',
-  toolCount: 6,
+  toolCount: 27,
   createdAt: 1,
   updatedAt: 1,
 };
 
-const CLAWX_GIT_MCP_TOOLS = [
+const VERSE_CLAW_GIT_MCP_TOOLS = [
   {
     name: 'git_status',
     description: 'Read the active workspace Git status.',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
-    serverId: CLAWX_GIT_MCP_SERVER_ID,
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_diff',
+    description: 'Read the active workspace Git patch and changed file list.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        mode: { type: 'string', enum: ['unstaged', 'staged'] },
+      },
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
   },
   {
     name: 'git_file_diff',
@@ -67,7 +107,7 @@ const CLAWX_GIT_MCP_TOOLS = [
       required: ['path'],
       additionalProperties: false,
     },
-    serverId: CLAWX_GIT_MCP_SERVER_ID,
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
   },
   {
     name: 'git_stage',
@@ -81,7 +121,35 @@ const CLAWX_GIT_MCP_TOOLS = [
       required: ['paths'],
       additionalProperties: false,
     },
-    serverId: CLAWX_GIT_MCP_SERVER_ID,
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_unstage',
+    description: 'Unstage one or more workspace files.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        paths: { type: 'array', items: { type: 'string' } },
+        approvalId: { type: 'string' },
+      },
+      required: ['paths'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_revert_file',
+    description: 'Revert one workspace file through the host approval flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        approvalId: { type: 'string' },
+      },
+      required: ['path'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
   },
   {
     name: 'git_commit',
@@ -95,7 +163,195 @@ const CLAWX_GIT_MCP_TOOLS = [
       required: ['message'],
       additionalProperties: false,
     },
-    serverId: CLAWX_GIT_MCP_SERVER_ID,
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_branch_list',
+    description: 'List local branches for the active workspace repository.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_checkout_branch',
+    description: 'Checkout an existing branch through the host permission flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        approvalId: { type: 'string' },
+      },
+      required: ['name'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_create_branch',
+    description: 'Create a branch, optionally checking it out.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        startPoint: { type: 'string' },
+        checkout: { type: 'boolean' },
+        approvalId: { type: 'string' },
+      },
+      required: ['name'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_stash_list',
+    description: 'List Git stash entries for the active workspace repository.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_stash_push',
+    description: 'Create a Git stash through the host permission flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+        includeUntracked: { type: 'boolean' },
+        approvalId: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_stash_apply',
+    description: 'Apply a Git stash through the host approval flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        selector: { type: 'string' },
+        approvalId: { type: 'string' },
+      },
+      required: ['selector'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_stash_pop',
+    description: 'Pop a Git stash through the host approval flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        selector: { type: 'string' },
+        approvalId: { type: 'string' },
+      },
+      required: ['selector'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_worktree_list',
+    description: 'List Git worktrees for the active workspace repository.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_worktree_add',
+    description: 'Add a Git worktree through the host permission flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        branch: { type: 'string' },
+        path: { type: 'string' },
+        startPoint: { type: 'string' },
+        checkoutNewBranch: { type: 'boolean' },
+        approvalId: { type: 'string' },
+      },
+      required: ['branch'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_worktree_remove',
+    description: 'Remove a Git worktree through the host approval flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        approvalId: { type: 'string' },
+      },
+      required: ['path'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_worktree_prune',
+    description: 'Prune stale Git worktree metadata through the host approval flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        approvalId: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_fetch',
+    description: 'Fetch remote refs through the host permission flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        remote: { type: 'string' },
+        approvalId: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_pull',
+    description: 'Pull remote changes through the host approval flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        remote: { type: 'string' },
+        branch: { type: 'string' },
+        rebase: { type: 'boolean' },
+        approvalId: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_push',
+    description: 'Push commits through the host approval flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        remote: { type: 'string' },
+        branch: { type: 'string' },
+        setUpstream: { type: 'boolean' },
+        approvalId: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'github_auth_status',
+    description: 'Read gh CLI authentication status for the active workspace.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'github_repo',
+    description: 'Read GitHub repository metadata for the active workspace.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
   },
   {
     name: 'github_pr_list',
@@ -108,7 +364,20 @@ const CLAWX_GIT_MCP_TOOLS = [
       },
       additionalProperties: false,
     },
-    serverId: CLAWX_GIT_MCP_SERVER_ID,
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'github_pr_view',
+    description: 'View one GitHub pull request by number.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        number: { type: 'number' },
+      },
+      required: ['number'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
   },
   {
     name: 'github_pr_create',
@@ -126,7 +395,20 @@ const CLAWX_GIT_MCP_TOOLS = [
       required: ['title', 'body'],
       additionalProperties: false,
     },
-    serverId: CLAWX_GIT_MCP_SERVER_ID,
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'github_open_pr',
+    description: 'Open a GitHub pull request in the default browser.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        number: { type: 'number' },
+      },
+      required: ['number'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
   },
 ];
 
@@ -328,7 +610,7 @@ async function writeServers(servers: McpServerConfig[]): Promise<void> {
 }
 
 function listResult(servers: McpServerConfig[]) {
-  return { success: true, servers: [CLAWX_GIT_MCP_SERVER, ...hydrateMcpServerAddresses(servers)] };
+  return { success: true, servers: [VERSE_CLAW_GIT_MCP_SERVER, ...hydrateMcpServerAddresses(servers)] };
 }
 
 function matchesContext(server: McpServerConfig, workspaceId?: string | null, agentId?: string | null): boolean {
@@ -339,7 +621,7 @@ function matchesContext(server: McpServerConfig, workspaceId?: string | null, ag
   return false;
 }
 
-function orderResolvedServers(servers: McpServerConfig[]): McpServerConfig[] {
+function orderResolvedServers(servers: McpServerConfig[], defaultIdSet = new Set<string>()): McpServerConfig[] {
   const rank: Record<McpScope, number> = {
     global: 0,
     agent: 1,
@@ -348,6 +630,8 @@ function orderResolvedServers(servers: McpServerConfig[]): McpServerConfig[] {
   return [...servers].sort((a, b) => {
     const scopeRank = rank[a.scope] - rank[b.scope];
     if (scopeRank !== 0) return scopeRank;
+    const defaultRank = Number(!defaultIdSet.has(a.id)) - Number(!defaultIdSet.has(b.id));
+    if (defaultRank !== 0) return defaultRank;
     const createdAtRank = a.createdAt - b.createdAt;
     if (createdAtRank !== 0) return createdAtRank;
     return a.id.localeCompare(b.id);
@@ -367,7 +651,7 @@ export async function resolveMcpServersForContext(input: {
     matchesContext(server, input.workspaceId, input.agentId)
     || (server.enabled && defaultIdSet.has(server.id))
   ));
-  return [CLAWX_GIT_MCP_SERVER, ...orderResolvedServers(resolved)];
+  return [VERSE_CLAW_GIT_MCP_SERVER, ...orderResolvedServers(resolved, defaultIdSet)];
 }
 
 function parsePayload<T>(payload: unknown): T {
@@ -387,7 +671,7 @@ async function checkMcpHeartbeat(server: McpServerConfig): Promise<{ message: st
   const startedAt = Date.now();
   if (server.transport === 'stdio') {
     return {
-      message: 'stdio 配置校验通过；实际进程由 ClawX MCP Runtime 通过 OpenClaw 沙盒启动',
+      message: 'stdio 配置校验通过；实际进程由 Verse Claw MCP Runtime 通过 OpenClaw 沙盒启动',
       latencyMs: Date.now() - startedAt,
     };
   }
@@ -414,7 +698,7 @@ async function checkMcpHeartbeat(server: McpServerConfig): Promise<{ message: st
     };
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error('MCP 心跳超时');
+      throw new Error('MCP 心跳超时', { cause: error });
     }
     throw error;
   } finally {
@@ -433,7 +717,7 @@ async function updateServerRuntimeFields(id: string, patch: Partial<McpServerCon
 }
 
 async function findServer(id: string): Promise<McpServerConfig> {
-  if (id === CLAWX_GIT_MCP_SERVER_ID) return CLAWX_GIT_MCP_SERVER;
+  if (id === VERSE_CLAW_GIT_MCP_SERVER_ID) return VERSE_CLAW_GIT_MCP_SERVER;
   const server = (await readServers()).find((entry) => entry.id === id);
   if (!server) throw new Error(`MCP 服务 "${id}" 不存在`);
   return server;
@@ -444,6 +728,10 @@ async function callClawxGitTool(toolName: string, args: Record<string, unknown>)
   switch (toolName) {
     case 'git_status':
       return await gitApi.status();
+    case 'git_diff':
+      return await gitApi.diff({
+        mode: args.mode === 'staged' ? 'staged' : 'unstaged',
+      });
     case 'git_file_diff':
       return await gitApi.fileDiff({
         path: typeof args.path === 'string' ? args.path : '',
@@ -454,15 +742,103 @@ async function callClawxGitTool(toolName: string, args: Record<string, unknown>)
         paths: Array.isArray(args.paths) ? args.paths.filter((entry): entry is string => typeof entry === 'string') : [],
         approvalId: normalizeString(args.approvalId),
       });
+    case 'git_unstage':
+      return await gitApi.unstage({
+        paths: Array.isArray(args.paths) ? args.paths.filter((entry): entry is string => typeof entry === 'string') : [],
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_revert_file':
+      return await gitApi.revertFile({
+        path: typeof args.path === 'string' ? args.path : '',
+        approvalId: normalizeString(args.approvalId),
+      });
     case 'git_commit':
       return await gitApi.commit({
         message: typeof args.message === 'string' ? args.message : '',
         approvalId: normalizeString(args.approvalId),
       });
+    case 'git_branch_list':
+      return await gitApi.branches();
+    case 'git_checkout_branch':
+      return await gitApi.checkoutBranch({
+        name: typeof args.name === 'string' ? args.name : '',
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_create_branch':
+      return await gitApi.createBranch({
+        name: typeof args.name === 'string' ? args.name : '',
+        startPoint: normalizeString(args.startPoint),
+        checkout: typeof args.checkout === 'boolean' ? args.checkout : undefined,
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_stash_list':
+      return await gitApi.stashList();
+    case 'git_stash_push':
+      return await gitApi.stashPush({
+        message: normalizeString(args.message),
+        includeUntracked: args.includeUntracked === true,
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_stash_apply':
+      return await gitApi.stashApply({
+        selector: typeof args.selector === 'string' ? args.selector : '',
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_stash_pop':
+      return await gitApi.stashPop({
+        selector: typeof args.selector === 'string' ? args.selector : '',
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_worktree_list':
+      return await gitApi.worktrees();
+    case 'git_worktree_add':
+      return await gitApi.worktreeAdd({
+        branch: typeof args.branch === 'string' ? args.branch : '',
+        path: normalizeString(args.path),
+        startPoint: normalizeString(args.startPoint),
+        checkoutNewBranch: typeof args.checkoutNewBranch === 'boolean' ? args.checkoutNewBranch : undefined,
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_worktree_remove':
+      return await gitApi.worktreeRemove({
+        path: typeof args.path === 'string' ? args.path : '',
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_worktree_prune':
+      return await gitApi.worktreePrune({
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_fetch':
+      return await gitApi.fetch({
+        remote: normalizeString(args.remote),
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_pull':
+      return await gitApi.pull({
+        remote: normalizeString(args.remote),
+        branch: normalizeString(args.branch),
+        rebase: args.rebase === true,
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_push':
+      return await gitApi.push({
+        remote: normalizeString(args.remote),
+        branch: normalizeString(args.branch),
+        setUpstream: args.setUpstream === true,
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'github_auth_status':
+      return await gitApi.githubAuthStatus();
+    case 'github_repo':
+      return await gitApi.githubRepo();
     case 'github_pr_list':
       return await gitApi.prList({
         state: args.state === 'closed' || args.state === 'merged' || args.state === 'all' ? args.state : 'open',
         limit: typeof args.limit === 'number' ? args.limit : undefined,
+      });
+    case 'github_pr_view':
+      return await gitApi.prView({
+        number: typeof args.number === 'number' ? args.number : 0,
       });
     case 'github_pr_create':
       return await gitApi.prCreate({
@@ -473,8 +849,12 @@ async function callClawxGitTool(toolName: string, args: Record<string, unknown>)
         draft: args.draft === true,
         approvalId: normalizeString(args.approvalId),
       });
+    case 'github_open_pr':
+      return await gitApi.openPr({
+        number: typeof args.number === 'number' ? args.number : 0,
+      });
     default:
-      throw new Error(`Unknown ClawX Git tool "${toolName}"`);
+      throw new Error(`Unknown Verse Claw Git tool "${toolName}"`);
   }
 }
 
@@ -495,7 +875,7 @@ export function createMcpApi(): CompleteHostServiceRegistry['mcp'] {
   return createMcpApiWithContext();
 }
 
-export function createMcpApiWithContext(ctx: { gatewayManager?: GatewayManager } = {}): CompleteHostServiceRegistry['mcp'] {
+export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostServiceRegistry['mcp'] {
   // Dispatch a best-effort runtime reload signal to the gateway. The
   // electron-store `mcp-servers.json` is the authoritative MCP server
   // store; this RPC only sends the resolved server snapshot for any
@@ -510,7 +890,7 @@ export function createMcpApiWithContext(ctx: { gatewayManager?: GatewayManager }
       workspaceId = workspace?.id ?? null;
       agentId = workspace?.selectedAgentId || workspace?.agentId || null;
       servers = await resolveMcpServersForContext({ workspaceId, agentId });
-    } catch (resolveError) {
+    } catch {
       // Non-disruptive: fall through with whatever we have.
     }
     try {
@@ -567,9 +947,9 @@ export function createMcpApiWithContext(ctx: { gatewayManager?: GatewayManager }
         } else {
           server = buildServer(parsePayload<McpServerCreatePayload>(body.server), new Set());
         }
-        if (server.id !== CLAWX_GIT_MCP_SERVER_ID) validateServer(server);
-        const heartbeat = server.id === CLAWX_GIT_MCP_SERVER_ID
-          ? { message: 'ClawX Git tools are available through the host Git service.', latencyMs: 0 }
+        if (server.id !== VERSE_CLAW_GIT_MCP_SERVER_ID) validateServer(server);
+        const heartbeat = server.id === VERSE_CLAW_GIT_MCP_SERVER_ID
+          ? { message: 'Verse Claw Git tools are available through the host Git service.', latencyMs: 0 }
           : await checkMcpHeartbeat(server);
         return {
           success: true,
@@ -598,13 +978,13 @@ export function createMcpApiWithContext(ctx: { gatewayManager?: GatewayManager }
       const id = normalizeString(body.serverId);
       if (!id) throw new Error('serverId is required');
       const server = await findServer(id);
-      if (id === CLAWX_GIT_MCP_SERVER_ID) {
+      if (id === VERSE_CLAW_GIT_MCP_SERVER_ID) {
         return {
           success: true,
           serverId: id,
           status: 'connected',
           latencyMs: 0,
-          message: 'ClawX Git tools are available through the host Git service.',
+          message: 'Verse Claw Git tools are available through the host Git service.',
           server,
         };
       }
@@ -655,13 +1035,13 @@ export function createMcpApiWithContext(ctx: { gatewayManager?: GatewayManager }
       const id = normalizeString(body.serverId);
       if (!id) throw new Error('serverId is required');
       const server = await findServer(id);
-      if (id === CLAWX_GIT_MCP_SERVER_ID) {
+      if (id === VERSE_CLAW_GIT_MCP_SERVER_ID) {
         return {
           success: true,
           serverId: id,
-          tools: CLAWX_GIT_MCP_TOOLS,
+          tools: VERSE_CLAW_GIT_MCP_TOOLS,
           status: 'connected',
-          message: 'ClawX Git host tools',
+          message: 'Verse Claw Git host tools',
         };
       }
       const runtime = await tryGatewayMcpRpc<McpListToolsResult>(ctx.gatewayManager, 'mcp.listTools', { serverId: id });
@@ -685,39 +1065,87 @@ export function createMcpApiWithContext(ctx: { gatewayManager?: GatewayManager }
       const serverId = normalizeString(body.serverId);
       const toolName = normalizeString(body.toolName);
       if (!serverId || !toolName) throw new Error('serverId and toolName are required');
-      if (serverId === CLAWX_GIT_MCP_SERVER_ID) {
+      const args = isRecord(body.args) ? body.args : {};
+      const approvalId = normalizeString(body.approvalId);
+      const workspaceId = normalizeString(body.workspaceId) ?? undefined;
+      const agentId = normalizeString(body.agentId) ?? undefined;
+      const requestShadow = createMcpToolCallRequestShadow({
+        serverId,
+        toolName,
+        args,
+        approvalId,
+        workspaceId,
+        agentId,
+      });
+      const finish = (
+        result: McpCallToolResult,
+        options?: Parameters<typeof createMcpToolCallResultShadow>[2],
+      ): McpCallToolResult => {
+        const resultShadow = createMcpToolCallResultShadow(requestShadow, result, options);
+        emitToolProtocolShadow(ctx, resultShadow);
+        emitMcpToolProviderRegistryShadow(
+          ctx,
+          createMcpToolProviderRegistryResultShadow(requestShadow, resultShadow, result),
+        );
+        return result;
+      };
+
+      emitToolProtocolShadow(ctx, requestShadow);
+      emitMcpToolProviderRegistryShadow(
+        ctx,
+        createMcpToolProviderRegistryRequestShadow(requestShadow),
+      );
+      try {
+      if (serverId === VERSE_CLAW_GIT_MCP_SERVER_ID) {
+        const gitArgs = { ...args };
+        if (approvalId && !normalizeString(gitArgs.approvalId)) {
+          gitArgs.approvalId = approvalId;
+        }
         try {
-          return {
+          return finish({
             success: true,
             serverId,
             toolName,
-            result: await callClawxGitTool(toolName, isRecord(body.args) ? body.args : {}),
-          };
+            result: await callClawxGitTool(toolName, gitArgs),
+          });
         } catch (error) {
-          return {
+          return finish({
             success: false,
             serverId,
             toolName,
             error: error instanceof Error ? error.message : String(error),
-          };
+          });
         }
       }
-      const result = await tryGatewayMcpRpc(ctx.gatewayManager, 'mcp.callTool', {
+
+      const gatewayRunning = ctx.gatewayManager?.getStatus().state === 'running';
+      const result = await tryGatewayMcpRpc<McpCallToolResult>(ctx.gatewayManager, 'mcp.callTool', {
         serverId,
         toolName,
-        args: isRecord(body.args) ? body.args : {},
-        approvalId: normalizeString(body.approvalId),
-        workspaceId: normalizeString(body.workspaceId) ?? undefined,
-        agentId: normalizeString(body.agentId) ?? undefined,
+        args,
+        approvalId,
+        workspaceId,
+        agentId,
       });
-      if (result) return result as Awaited<ReturnType<CompleteHostServiceRegistry['mcp']['callTool']>>;
-      return {
+      if (result) return finish(result);
+      return finish({
         success: false,
         serverId,
         toolName,
         blocked: true,
-        reason: '当前 OpenClaw Runtime 尚未暴露 MCP 工具调用 RPC；ClawX 已保留配置、心跳、权限与审计入口',
-      };
+        reason: '当前 OpenClaw Runtime 尚未暴露 MCP 工具调用 RPC；Verse Claw 已保留配置、心跳、权限与审计入口',
+      }, {
+        blockedReasonCode: gatewayRunning ? 'tool/blocked' : 'gateway/unavailable',
+      });
+      } catch (error) {
+        const thrownShadow = createMcpToolCallThrownErrorShadow(requestShadow, error);
+        emitToolProtocolShadow(ctx, thrownShadow);
+        emitMcpToolProviderRegistryShadow(
+          ctx,
+          createMcpToolProviderRegistryResultShadow(requestShadow, thrownShadow),
+        );
+        throw error;
+      }
     },
     reloadRuntime: async (payload) => {
       const body = parsePayload<McpReloadRuntimePayload>(payload);

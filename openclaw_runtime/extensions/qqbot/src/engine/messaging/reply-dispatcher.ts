@@ -1,5 +1,5 @@
 /**
- * Reply dispatcher ‚Äî structured payload handling and text routing.
+ * Reply dispatcher ‚Ä?structured payload handling and text routing.
  *
  * Uses the unified `sender.ts` business function layer for all message
  * sending. TTS is injected via `ReplyDispatcherDeps`.
@@ -31,9 +31,9 @@ import {
 
 // ---- Injected dependencies ----
 
-/** TTS provider interface ‚Äî injected from the outer layer. */
+/** TTS provider interface ‚Ä?injected from the outer layer. */
 interface TTSProvider {
-  /** Framework TTS: text ‚Üí audio file path. */
+  /** Framework TTS: text ‚Ü?audio file path. */
   textToSpeech(params: {
     text: string;
     cfg: unknown;
@@ -154,7 +154,7 @@ export async function handleStructuredPayload(
   if (isCronReminderPayload(parsedPayload)) {
     log?.debug?.(`Processing cron_reminder payload`);
     const cronMessage = encodePayloadForCron(parsedPayload);
-    const confirmText = `‚è∞ Reminder scheduled. It will be sent at the configured time: "${parsedPayload.content}"`;
+    const confirmText = `‚è?Reminder scheduled. It will be sent at the configured time: "${parsedPayload.content}"`;
     try {
       await sendTextToTarget(ctx, confirmText);
       log?.debug?.(`Cron reminder confirmation sent, cronMessage: ${cronMessage}`);
@@ -273,7 +273,7 @@ function describeMediaTargetForLog(pathValue: string, isHttpUrl: boolean): strin
  * Read a local file into memory for image base64 inlining.
  *
  * Non-image media (video / file) should pass `source: { localPath }` to
- * `sender.sendMedia` directly ‚Äî the sender pipeline handles chunked
+ * `sender.sendMedia` directly ‚Ä?the sender pipeline handles chunked
  * routing once this function validates the per-type ceiling.
  */
 async function readLocalFileForInlineBase64(
@@ -509,7 +509,7 @@ async function handleVideoPayload(ctx: ReplyContext, payload: MediaPayload): Pro
           log?.debug?.(
             `Video local (${formatFileSize(size)}): ${describeMediaTargetForLog(videoPath, false)}`,
           );
-          // Hand the local path straight to the sender ‚Äî `dispatchUpload`
+          // Hand the local path straight to the sender ‚Ä?`dispatchUpload`
           // routes one-shot vs chunked based on size.
           await senderSendMedia({
             target: deliveryTarget,
@@ -574,7 +574,7 @@ async function handleFilePayload(ctx: ReplyContext, payload: MediaPayload): Prom
           log?.debug?.(
             `File local (${formatFileSize(size)}): ${describeMediaTargetForLog(filePath, false)}`,
           );
-          // Hand the local path straight to the sender ‚Äî `dispatchUpload`
+          // Hand the local path straight to the sender ‚Ä?`dispatchUpload`
           // routes one-shot vs chunked based on size.
           await senderSendMedia({
             target: deliveryTarget,

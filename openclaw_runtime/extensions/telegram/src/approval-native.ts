@@ -155,7 +155,7 @@ const resolveTelegramApproveCommandBehavior: NonNullable<
   }
   return {
     kind: "reply",
-    text: "âŒ Telegram exec approvals are not enabled for this bot account.",
+    text: "â?Telegram exec approvals are not enabled for this bot account.",
   };
 };
 

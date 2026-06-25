@@ -3,9 +3,9 @@
  *
  * Handles three interaction branches:
  *
- * 1. **Config query**  (type=2001) â€” reads config, ACKs with `claw_cfg`.
- * 2. **Config update** (type=2002) â€” writes config, ACKs with updated snapshot.
- * 3. **Approval button** (other)   â€” ACKs, resolves authorized approval actions.
+ * 1. **Config query**  (type=2001) â€?reads config, ACKs with `claw_cfg`.
+ * 2. **Config update** (type=2002) â€?writes config, ACKs with updated snapshot.
+ * 3. **Approval button** (other)   â€?ACKs, resolves authorized approval actions.
  *
  * Config query/update require `runtime.config`. When unavailable, those
  * branches fall through to a bare ACK (backward-compatible).
@@ -47,7 +47,7 @@ type QQBotCommandAuthorizationResolver = (params: {
 /**
  * Build the canonical `claw_cfg` snapshot returned in interaction ACKs.
  *
- * Pure function â€” all resolution helpers live in engine/config/.
+ * Pure function â€?all resolution helpers live in engine/config/.
  */
 function buildClawCfgSnapshot(
   cfg: Record<string, unknown>,

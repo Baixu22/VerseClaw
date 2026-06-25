@@ -1,15 +1,32 @@
 {
     "title": "设置",
-    "subtitle": "配置您的 ClawX 体验",
+    "subtitle": "配置您的 Verse Claw 体验",
     "navigation": {
         "back": "返回设置",
+        "groups": {
+            "configuration": "AI 配置",
+            "experience": "体验与工作流",
+            "operations": "运维与高级"
+        },
         "general": {
             "title": "通用",
             "description": "外观、语言、启动项、更新与应用信息。"
         },
-        "workModes": {
-            "title": "工作模式",
-            "description": "工作区行为预设与对运行时声明的工作套件。"
+        "models": {
+            "title": "模型与提供商",
+            "description": "Provider 账户、默认模型、回退规则与 token 历史。"
+        },
+        "agents": {
+            "title": "Agents",
+            "description": "Agent 配置、角色设定、模型继承与渠道绑定。"
+        },
+        "channels": {
+            "title": "Channels",
+            "description": "消息账户、连接健康、凭据与 Agent 绑定。"
+        },
+        "skills": {
+            "title": "Skills",
+            "description": "已安装技能、MCP 服务、本地目录与启用控制。"
         },
         "system": {
             "title": "系统与运行时",
@@ -34,7 +51,7 @@
         "language": "语言",
         "menuLanguageUpdated": "菜单语言已更新",
         "launchAtStartup": "开机自动启动",
-        "launchAtStartupDesc": "登录系统后自动启动 ClawX"
+        "launchAtStartupDesc": "登录系统后自动启动 Verse Claw"
     },
     "aiProviders": {
         "title": "AI 模型提供商",
@@ -61,7 +78,7 @@
         "notRequired": "非必填",
         "empty": {
             "title": "未配置提供商",
-            "desc": "添加 AI 提供商以开始使用 ClawX",
+            "desc": "添加 AI 提供商以开始使用 Verse Claw",
             "cta": "添加您的第一个提供商"
         },
         "dialog": {
@@ -84,7 +101,7 @@
             "protocol": "协议",
             "advancedConfig": "高级配置",
             "userAgent": "User-Agent",
-            "userAgentPlaceholder": "ClawX/1.0",
+            "userAgentPlaceholder": "Verse Claw/1.0",
             "fallbackModels": "回退模型",
             "fallbackProviders": "跨 Provider 回退",
             "fallbackModelIds": "同 Provider 回退模型 ID",
@@ -170,7 +187,7 @@
         "appLogs": "应用日志",
         "openFolder": "打开文件夹",
         "autoStart": "自动启动网关",
-        "autoStartDesc": "ClawX 启动时自动启动网关",
+        "autoStartDesc": "Verse Claw 启动时自动启动网关",
         "proxyTitle": "代理",
         "proxyDesc": "让 Electron 和 Gateway 的网络请求都走本地代理客户端。",
         "proxyServer": "代理服务器",
@@ -189,9 +206,49 @@
         "proxySaved": "代理设置已保存",
         "proxySaveFailed": "保存代理设置失败"
     },
+    "roleMemory": {
+        "title": "角色记忆",
+        "description": "受治理的角色运行时记忆：提案、评审、注入解释、生命周期和质量反馈。",
+        "disableEffect": "关闭后会停止 Role Memory 注入并阻止记忆写入。已有卡片会保留在磁盘上，OpenClaw 原生记忆不受影响。",
+        "enabled": "已启用",
+        "disabled": "已关闭"
+    },
+    "knowledgeHub": {
+        "watched": {
+            "title": "Knowledge Hub 监听目录",
+            "description": "监听可信本地文件夹中的新 Markdown 来源。新文件可以先进入审查 Inbox，compile 只刷新索引，不会自动生成 synthesis。",
+            "path": "目录",
+            "pathPlaceholder": "选择或粘贴本地文件夹路径",
+            "patterns": "匹配模式",
+            "pick": "选择目录",
+            "pickTitle": "选择监听目录",
+            "pickFailed": "选择目录失败：{{error}}",
+            "add": "添加目录",
+            "empty": "还没有监听目录。",
+            "enabled": "已启用",
+            "disabled": "已停用",
+            "reviewFirst": "先审查",
+            "directIngest": "直接导入",
+            "ingestNewFiles": "导入新文件",
+            "requiresReview": "导入前审查",
+            "autoCompile": "自动编译",
+            "compileOff": "关闭编译",
+            "pathRequired": "需要填写目录路径。",
+            "patternRequired": "至少需要一个匹配模式。",
+            "loadFailed": "加载监听目录失败：{{error}}",
+            "addFailed": "添加监听目录失败。",
+            "addFailedWithError": "添加监听目录失败：{{error}}",
+            "updateFailed": "更新监听目录失败。",
+            "updateFailedWithError": "更新监听目录失败：{{error}}",
+            "removeFailed": "移除监听目录失败。",
+            "removeFailedWithError": "移除监听目录失败：{{error}}",
+            "added": "已添加监听目录。",
+            "removed": "已移除监听目录。"
+        }
+    },
     "sandbox": {
         "title": "沙盒控制",
-        "description": "ClawX 默认使用 policy-light。Docker 和 SSH 仍是显式选择的强隔离 provider，Docker 缺失不会阻塞默认 Gateway 启动。",
+        "description": "Verse Claw 默认使用 policy-light。Docker 和 SSH 仍是显式选择的强隔离 provider，Docker 缺失不会阻塞默认 Gateway 启动。",
         "defaultProfileName": "默认沙盒",
         "loadFailed": "读取沙盒状态失败",
         "saveFailed": "保存沙盒配置失败",
@@ -232,7 +289,7 @@
     },
     "remoteControl": {
         "title": "Electron 远程调控",
-        "description": "暴露 Electron CDP 调试端口，仅建议绑定本机并在可信环境中使用。保存配置后需要重启 ClawX。",
+        "description": "暴露 Electron CDP 调试端口，仅建议绑定本机并在可信环境中使用。保存配置后需要重启 Verse Claw。",
         "port": "CDP 端口",
         "configEndpoint": "配置端点：127.0.0.1:{{port}} /json/version",
         "currentEndpoint": "当前端点：{{endpoint}}",
@@ -280,7 +337,7 @@
     },
     "updates": {
         "title": "更新",
-        "description": "保持 ClawX 最新",
+        "description": "保持 Verse Claw 最新",
         "autoCheck": "自动检查更新",
         "autoCheckDesc": "启动时检查更新",
         "autoDownload": "更新提示",
@@ -309,13 +366,13 @@
         "whatsNew": "更新内容：",
         "errorDetails": "错误详情：",
         "toast": {
-            "availableTitle": "ClawX 有新版本可用",
+            "availableTitle": "Verse Claw 有新版本可用",
             "availableDescription": "v{{version}} 已可下载。准备好后可开始下载。",
-            "downloadedTitle": "ClawX 更新已就绪",
+            "downloadedTitle": "Verse Claw 更新已就绪",
             "downloadedDescription": "v{{version}} 已下载完成。重启即可安装。",
             "unknownVersion": "新版本"
         },
-        "help": "ClawX 会自动检查更新，并在下载或安装前提示您确认。"
+        "help": "Verse Claw 会自动检查更新，并在下载或安装前提示您确认。"
     },
     "advanced": {
         "title": "高级",
@@ -323,7 +380,7 @@
         "devMode": "开发者模式",
         "devModeDesc": "显示开发者工具和快捷方式",
         "telemetry": "匿名使用数据",
-        "telemetryDesc": "允许提供匿名的基础使用数据，用于改进 ClawX"
+        "telemetryDesc": "允许提供匿名的基础使用数据，用于改进 Verse Claw"
     },
     "developer": {
         "title": "开发者",
@@ -381,67 +438,13 @@
     },
     "about": {
         "title": "关于",
-        "appName": "ClawX",
+        "appName": "Verse Claw",
         "tagline": "图形化 AI 助手",
         "basedOn": "基于 OpenClaw",
         "version": "版本 {{version}}",
         "docs": "官网",
         "github": "GitHub",
         "faq": "常见问题"
-    },
-    "workModes": {
-        "title": "????",
-        "currentMode": "???????",
-        "currentModeDesc": "???????????????????????????????",
-        "noWorkspace": "????????????????",
-        "noWorkspaceBadge": "??????",
-        "modeSaved": "???????",
-        "kitsTitle": "工作工具包",
-        "kitsDesc": "选择每个模式向 runtime 表达的产物型工具包。这些只是能力提示，真实工具仍由 runtime 策略决定。",
-        "installSkill": "安装 {{slug}}",
-        "installingSkill": "正在安装 {{slug}}",
-        "skillInstalled": "{{slug}} 已安装",
-        "skillInstallFailed": "技能安装失败：{{error}}",
-        "selectedCount": "已选择 {{count}} 项",
-        "capability": {
-            "ready": "可用",
-            "missingSkill": "缺少技能",
-            "disabled": "已禁用",
-            "runtimeUnavailable": "Runtime 不可用",
-            "optionalExternal": "可选"
-        },
-        "kits": {
-            "reports": "报告",
-            "sheets": "表格",
-            "slides": "演示",
-            "pdf": "PDF",
-            "research": "调研",
-            "website": "网站",
-            "design": "设计",
-            "ops": "日常事务"
-        },
-        "kitDescriptions": {
-            "reports": "起草、组织并导出报告和 Word 类文档。",
-            "sheets": "读取、清洗、计算并总结表格或 CSV 数据。",
-            "slides": "创建演示大纲和可编辑 PPTX。",
-            "pdf": "提取、总结、预览和打包 PDF 产物。",
-            "research": "收集网页和来源材料，保留引用并生成摘要。",
-            "website": "构建并验证 HTML/网页产物和浏览器预览。",
-            "design": "打磨视觉产物、仪表盘和版式。",
-            "ops": "处理轻量日常写作、行动项和个人事务。"
-        },
-        "toolBundlesTitle": "工具包意图",
-        "toolBundlesDesc": "选择每个模式向 runtime 表达的工具包标签。这些标签只表达意图，真实工具仍由 runtime 策略决定。",
-        "toolBundles": {
-            "code": "??",
-            "git": "Git",
-            "terminal": "??",
-            "browser": "???",
-            "docs": "??",
-            "sheets": "??",
-            "pdf": "PDF",
-            "memory": "??"
-        }
     },
     "workProviders": {
         "title": "工作 Provider",

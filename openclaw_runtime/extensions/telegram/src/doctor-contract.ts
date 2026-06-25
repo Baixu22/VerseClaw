@@ -167,7 +167,7 @@ export function normalizeCompatibilityConfig({
         groups["*"] = entry;
         updated = { ...updated, groups };
         changes.push(
-          'Moved channels.telegram.groupMentionsOnly â†’ channels.telegram.groups."*".requireMention.',
+          'Moved channels.telegram.groupMentionsOnly â†?channels.telegram.groups."*".requireMention.',
         );
       } else {
         changes.push(

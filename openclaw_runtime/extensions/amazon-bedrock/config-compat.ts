@@ -93,7 +93,7 @@ export function migrateAmazonBedrockLegacyConfig<T>(raw: T): { config: T; change
 
   if (!existing) {
     config.discovery = cloneRecord(legacy);
-    changes.push(`Moved ${LEGACY_PATH} â†’ ${TARGET_PATH}.`);
+    changes.push(`Moved ${LEGACY_PATH} â†?${TARGET_PATH}.`);
     return { config: nextRoot as T, changes };
   }
 
@@ -102,7 +102,7 @@ export function migrateAmazonBedrockLegacyConfig<T>(raw: T): { config: T; change
   config.discovery = merged;
   if (JSON.stringify(merged) !== JSON.stringify(existing)) {
     changes.push(
-      `Merged ${LEGACY_PATH} â†’ ${TARGET_PATH} (filled missing fields from legacy; kept explicit plugin config values).`,
+      `Merged ${LEGACY_PATH} â†?${TARGET_PATH} (filled missing fields from legacy; kept explicit plugin config values).`,
     );
     return { config: nextRoot as T, changes };
   }

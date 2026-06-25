@@ -208,7 +208,6 @@ describe('workspace session helpers', () => {
         selectedModelRef: 'openai:gpt-test',
         activeTopicId: 'topic-b',
         knowledgeScope: 'memory',
-        workMode: 'review',
         artifactPanel: undefined,
         recentFiles: ['src/main.ts'],
       },

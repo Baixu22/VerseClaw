@@ -6,7 +6,6 @@ import { Suspense, lazy, useCallback, useEffect, useMemo, useState, type ReactNo
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
-  Briefcase,
   ChevronRight,
   ReceiptText,
   Sun,
@@ -21,10 +20,14 @@ import {
   MousePointerClick,
   Camera,
   MoveDown,
-  PanelsTopLeft,
   ScanSearch,
-  Check,
   ShieldCheck,
+  FolderOpen,
+  Trash2,
+  Cpu,
+  Bot,
+  Network,
+  Puzzle,
   Server,
   Wrench,
 } from 'lucide-react';
@@ -40,7 +43,6 @@ import { toast } from 'sonner';
 import { useSettingsStore } from '@/stores/settings';
 import { useGatewayStore } from '@/stores/gateway';
 import { useUpdateStore } from '@/stores/update';
-import { useWorkspacesStore } from '@/stores/workspaces';
 import { UpdateSettings } from '@/components/settings/UpdateSettings';
 import { ProjectRulesCenter } from '@/components/settings/ProjectRulesCenter';
 import { toUserMessage } from '@/lib/error-message';
@@ -57,21 +59,15 @@ import { hostApi, type OpenClawDoctorResult } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
 import type { SandboxNetworkPolicy, SandboxProviderId, SandboxProviderStatus } from '@shared/types/sandbox';
-import type { WorkModeCapabilitySkill, WorkModeId, WorkModeKit } from '@shared/types/work-mode';
-import {
-  normalizeWorkModeKits,
-  resolveDefaultWorkMode,
-  resolveWorkModeKitCapabilities,
-  resolveWorkModePreset,
-  WORK_MODE_IDS,
-  WORK_MODE_KIT_DEFINITIONS,
-  WORK_MODE_KIT_IDS,
-  WORK_MODE_PRESETS,
-} from '@shared/types/work-mode';
+import type { KnowledgeWatchedDirectoryConfig } from '@shared/host-api/contract';
 
 const WorkHeatGraphLazy = lazy(() =>
   import('@/components/assistant-render/WorkHeatGraph').then((m) => ({ default: m.WorkHeatGraph })),
 );
+const SettingsModelsLazy = lazy(() => import('@/pages/Models').then((m) => ({ default: m.Models })));
+const SettingsAgentsLazy = lazy(() => import('@/pages/Agents').then((m) => ({ default: m.Agents })));
+const SettingsChannelsLazy = lazy(() => import('@/pages/Channels').then((m) => ({ default: m.Channels })));
+const SettingsSkillsLazy = lazy(() => import('@/pages/Skills').then((m) => ({ default: m.Skills })));
 const SettingsBillingLazy = lazy(() => import('@/pages/Billing').then((m) => ({ default: m.Billing })));
 type ControlUiInfo = {
   url: string;
@@ -79,11 +75,23 @@ type ControlUiInfo = {
   port: number;
 };
 
-type SettingsSectionId = 'overview' | 'general' | 'work-modes' | 'system' | 'developer' | 'billing';
+type SettingsSectionId =
+  | 'overview'
+  | 'general'
+  | 'models'
+  | 'agents'
+  | 'channels'
+  | 'skills'
+  | 'system'
+  | 'developer'
+  | 'billing';
 
 const SETTINGS_SECTION_SEGMENTS: Record<Exclude<SettingsSectionId, 'overview'>, string> = {
   general: 'general',
-  'work-modes': 'work-modes',
+  models: 'models',
+  agents: 'agents',
+  channels: 'channels',
+  skills: 'skills',
   system: 'system',
   developer: 'developer',
   billing: 'billing',
@@ -123,6 +131,8 @@ export function Settings() {
     setLaunchAtStartup,
     gatewayAutoStart,
     setGatewayAutoStart,
+    roleMemoryEnabled,
+    setRoleMemoryEnabled,
     cdpRemoteControlEnabled,
     cdpRemoteDebuggingPort,
     setCdpRemoteControlEnabled,
@@ -139,20 +149,13 @@ export function Settings() {
     setProxyHttpsServer,
     setProxyAllServer,
     setProxyBypassRules,
-    autoCheckUpdate,
-    setAutoCheckUpdate,
     devModeUnlocked,
     setDevModeUnlocked,
     telemetryEnabled,
     setTelemetryEnabled,
-    workModeToolBundles,
-    workModeKits,
-    setWorkModeKits,
   } = useSettingsStore();
 
   const { status: gatewayStatus, restart: restartGateway } = useGatewayStore();
-  const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
-  const saveWorkspaceState = useWorkspacesStore((s) => s.saveWorkspaceState);
   const currentVersion = useUpdateStore((state) => state.currentVersion);
   const [controlUiInfo, setControlUiInfo] = useState<ControlUiInfo | null>(null);
   const [remoteControlStatus, setRemoteControlStatus] = useState<Awaited<ReturnType<typeof hostApi.remoteControl.status>> | null>(null);
@@ -172,8 +175,6 @@ export function Settings() {
   const [proxyServerDraft, setProxyServerDraft] = useState('');
   const [proxyHttpServerDraft, setProxyHttpServerDraft] = useState('');
   const [proxyHttpsServerDraft, setProxyHttpsServerDraft] = useState('');
-  const [workModeSkills, setWorkModeSkills] = useState<WorkModeCapabilitySkill[]>([]);
-  const [installingWorkModeSkill, setInstallingWorkModeSkill] = useState<string | null>(null);
   const [proxyAllServerDraft, setProxyAllServerDraft] = useState('');
   const [proxyBypassRulesDraft, setProxyBypassRulesDraft] = useState('');
   const [proxyEnabledDraft, setProxyEnabledDraft] = useState(false);
@@ -187,7 +188,13 @@ export function Settings() {
   const [logContent, setLogContent] = useState('');
   const [doctorRunningMode, setDoctorRunningMode] = useState<'diagnose' | 'fix' | null>(null);
   const [doctorResult, setDoctorResult] = useState<OpenClawDoctorResult | null>(null);
-
+  const [watchedDirectories, setWatchedDirectories] = useState<KnowledgeWatchedDirectoryConfig[]>([]);
+  const [watchedDirectoryPath, setWatchedDirectoryPath] = useState('');
+  const [watchedDirectoryPatterns, setWatchedDirectoryPatterns] = useState('**/*.md');
+  const [watchedIngestNewFiles, setWatchedIngestNewFiles] = useState(true);
+  const [watchedRequiresReview, setWatchedRequiresReview] = useState(true);
+  const [watchedAutoCompile, setWatchedAutoCompile] = useState(true);
+  const [watchedLoading, setWatchedLoading] = useState(false);
   const handleShowLogs = async () => {
     try {
       const logs = await hostApi.logs.recent(100);
@@ -209,6 +216,111 @@ export function Settings() {
       // ignore
     }
   };
+
+  const refreshWatchedDirectories = useCallback(async () => {
+    try {
+      setWatchedDirectories(await hostApi.knowledge.listWatchedDirectories());
+    } catch (error) {
+      toast.error(t('knowledgeHub.watched.loadFailed', { error: toUserMessage(error) || String(error) }));
+    }
+  }, [t]);
+
+  useEffect(() => {
+    if (currentSection !== 'system') return;
+    void refreshWatchedDirectories();
+  }, [currentSection, refreshWatchedDirectories]);
+
+  const handlePickWatchedDirectory = useCallback(async () => {
+    try {
+      const result = await hostApi.dialog.open({
+        title: t('knowledgeHub.watched.pickTitle'),
+        properties: ['openDirectory'],
+      });
+      if (!result.canceled && result.filePaths?.[0]) {
+        setWatchedDirectoryPath(result.filePaths[0]);
+      }
+    } catch (error) {
+      toast.error(t('knowledgeHub.watched.pickFailed', { error: toUserMessage(error) || String(error) }));
+    }
+  }, [t]);
+
+  const handleAddWatchedDirectory = useCallback(async () => {
+    const path = watchedDirectoryPath.trim();
+    const patterns = watchedDirectoryPatterns
+      .split(',')
+      .map((pattern) => pattern.trim())
+      .filter(Boolean);
+    if (!path) {
+      toast.error(t('knowledgeHub.watched.pathRequired'));
+      return;
+    }
+    if (patterns.length === 0) {
+      toast.error(t('knowledgeHub.watched.patternRequired'));
+      return;
+    }
+    setWatchedLoading(true);
+    try {
+      const result = await hostApi.knowledge.addWatchedDirectory({
+        id: '',
+        path,
+        patterns,
+        enabled: true,
+        ingestNewFiles: watchedIngestNewFiles,
+        requiresReview: watchedRequiresReview,
+        autoCompile: watchedAutoCompile,
+      });
+      if (!result.success) {
+        throw new Error(result.error || t('knowledgeHub.watched.addFailed'));
+      }
+      setWatchedDirectoryPath('');
+      setWatchedDirectoryPatterns('**/*.md');
+      setWatchedIngestNewFiles(true);
+      setWatchedRequiresReview(true);
+      setWatchedAutoCompile(true);
+      await refreshWatchedDirectories();
+      toast.success(t('knowledgeHub.watched.added'));
+    } catch (error) {
+      toast.error(t('knowledgeHub.watched.addFailedWithError', { error: toUserMessage(error) || String(error) }));
+    } finally {
+      setWatchedLoading(false);
+    }
+  }, [
+    refreshWatchedDirectories,
+    t,
+    watchedAutoCompile,
+    watchedDirectoryPath,
+    watchedDirectoryPatterns,
+    watchedIngestNewFiles,
+    watchedRequiresReview,
+  ]);
+
+  const handleUpdateWatchedDirectory = useCallback(async (
+    id: string,
+    updates: Partial<KnowledgeWatchedDirectoryConfig>,
+  ) => {
+    try {
+      const result = await hostApi.knowledge.updateWatchedDirectory(id, updates);
+      if (!result.success) {
+        throw new Error(result.error || t('knowledgeHub.watched.updateFailed'));
+      }
+      await refreshWatchedDirectories();
+    } catch (error) {
+      toast.error(t('knowledgeHub.watched.updateFailedWithError', { error: toUserMessage(error) || String(error) }));
+    }
+  }, [refreshWatchedDirectories, t]);
+
+  const handleRemoveWatchedDirectory = useCallback(async (id: string) => {
+    try {
+      const result = await hostApi.knowledge.removeWatchedDirectory(id);
+      if (!result.success) {
+        throw new Error(result.error || t('knowledgeHub.watched.removeFailed'));
+      }
+      await refreshWatchedDirectories();
+      toast.success(t('knowledgeHub.watched.removed'));
+    } catch (error) {
+      toast.error(t('knowledgeHub.watched.removeFailedWithError', { error: toUserMessage(error) || String(error) }));
+    }
+  }, [refreshWatchedDirectories, t]);
 
   const handleRunOpenClawDoctor = async (mode: 'diagnose' | 'fix') => {
     setDoctorRunningMode(mode);
@@ -1109,81 +1221,26 @@ export function Settings() {
     toast.success(translateNext('appearance.menuLanguageUpdated'));
   };
 
-  const activeSessionKey = activeWorkspace?.activeSessionKey;
-  const activeSessionState = activeSessionKey ? activeWorkspace?.sessionStates?.[activeSessionKey] : undefined;
-  const activeWorkMode = activeSessionState?.workMode
-    ?? activeWorkspace?.state?.workMode
-    ?? resolveDefaultWorkMode(activeWorkspace?.permissionMode);
-  const workModeRuntimeAvailable = gatewayStatus.state === 'running' && gatewayStatus.gatewayReady !== false;
-
-  useEffect(() => {
-    let cancelled = false;
-    hostApi.skills.local()
-      .then((result) => {
-        if (cancelled) return;
-        setWorkModeSkills(Array.isArray(result.skills) ? result.skills : []);
-      })
-      .catch(() => {
-        if (!cancelled) setWorkModeSkills([]);
-      });
-    return () => { cancelled = true; };
-  }, []);
-
-  const handleSettingsWorkModeChange = async (mode: WorkModeId) => {
-    if (!activeWorkspace?.id || !activeSessionKey) {
-      toast.error(t('workModes.noWorkspace'));
-      return;
-    }
-    await saveWorkspaceState({
-      id: activeWorkspace.id,
-      activeSessionKey,
-      sessionKey: activeSessionKey,
-      state: { workMode: mode },
-    });
-    toast.success(t('workModes.modeSaved'));
-  };
-
-  const handleToggleWorkModeKit = (mode: WorkModeId, kit: WorkModeKit) => {
-    const preset = WORK_MODE_PRESETS[mode];
-    const currentPreset = resolveWorkModePreset(mode, undefined, workModeToolBundles, workModeKits);
-    const current = normalizeWorkModeKits(workModeKits?.[mode], currentPreset.kits ?? preset.kits);
-    const next = current.includes(kit)
-      ? current.filter((item) => item !== kit)
-      : [...current, kit];
-    setWorkModeKits(mode, next);
-  };
-
-  const refreshWorkModeSkills = async () => {
-    const result = await hostApi.skills.local();
-    setWorkModeSkills(Array.isArray(result.skills) ? result.skills : []);
-  };
-
-  const handleInstallWorkModeSkill = async (slug: string) => {
-    setInstallingWorkModeSkill(slug);
-    try {
-      const result = await hostApi.skills.clawhubInstall({ slug });
-      if (!result.success) {
-        throw new Error(result.error || 'Install failed');
-      }
-      await refreshWorkModeSkills();
-      toast.success(t('workModes.skillInstalled', { slug }));
-    } catch (error) {
-      toast.error(t('workModes.skillInstallFailed', {
-        error: error instanceof Error ? error.message : String(error),
-      }));
-    } finally {
-      setInstallingWorkModeSkill(null);
-    }
-  };
-
   const sectionMeta = {
     general: {
       title: t('navigation.general.title'),
       description: t('navigation.general.description'),
     },
-    'work-modes': {
-      title: t('navigation.workModes.title'),
-      description: t('navigation.workModes.description'),
+    models: {
+      title: t('navigation.models.title'),
+      description: t('navigation.models.description'),
+    },
+    agents: {
+      title: t('navigation.agents.title'),
+      description: t('navigation.agents.description'),
+    },
+    channels: {
+      title: t('navigation.channels.title'),
+      description: t('navigation.channels.description'),
+    },
+    skills: {
+      title: t('navigation.skills.title'),
+      description: t('navigation.skills.description'),
     },
     system: {
       title: t('navigation.system.title'),
@@ -1208,11 +1265,32 @@ export function Settings() {
       testId: 'settings-nav-general',
     },
     {
-      id: 'work-modes',
-      to: '/settings/work-modes',
-      icon: <Briefcase className="h-5 w-5" />,
-      ...sectionMeta['work-modes'],
-      testId: 'settings-nav-work-modes',
+      id: 'models',
+      to: '/settings/models',
+      icon: <Cpu className="h-5 w-5" />,
+      ...sectionMeta.models,
+      testId: 'settings-nav-models',
+    },
+    {
+      id: 'agents',
+      to: '/settings/agents',
+      icon: <Bot className="h-5 w-5" />,
+      ...sectionMeta.agents,
+      testId: 'settings-nav-agents',
+    },
+    {
+      id: 'skills',
+      to: '/settings/skills',
+      icon: <Puzzle className="h-5 w-5" />,
+      ...sectionMeta.skills,
+      testId: 'settings-nav-skills',
+    },
+    {
+      id: 'channels',
+      to: '/settings/channels',
+      icon: <Network className="h-5 w-5" />,
+      ...sectionMeta.channels,
+      testId: 'settings-nav-channels',
     },
     {
       id: 'system',
@@ -1236,6 +1314,23 @@ export function Settings() {
       testId: 'settings-nav-billing',
     },
   ] as const;
+  const settingsSectionGroups = [
+    {
+      id: 'configuration',
+      title: t('navigation.groups.configuration'),
+      sections: settingsSections.filter((section) => ['models', 'agents', 'skills', 'channels'].includes(section.id)),
+    },
+    {
+      id: 'experience',
+      title: t('navigation.groups.experience'),
+      sections: settingsSections.filter((section) => ['general'].includes(section.id)),
+    },
+    {
+      id: 'operations',
+      title: t('navigation.groups.operations'),
+      sections: settingsSections.filter((section) => ['billing', 'system', 'developer'].includes(section.id)),
+    },
+  ] as const;
 
   const pageTitle = currentSection === 'overview'
     ? t('title')
@@ -1243,6 +1338,7 @@ export function Settings() {
   const pageSubtitle = currentSection === 'overview'
     ? t('subtitle')
     : sectionMeta[currentSection].description;
+  const pageTitleTestId = currentSection === 'models' ? 'models-page-title' : undefined;
 
   return (
     <SettingsPageShell>
@@ -1265,7 +1361,9 @@ export function Settings() {
             <h1 className={cn(
               'font-serif font-normal tracking-tight text-foreground',
               currentSection === 'overview' ? 'mb-3 text-5xl md:text-6xl' : 'mb-2 text-4xl md:text-5xl',
-            )}>
+            )}
+              data-testid={pageTitleTestId}
+            >
               {pageTitle}
             </h1>
             <p className="text-subtitle text-foreground/70 font-medium">
@@ -1282,27 +1380,36 @@ export function Settings() {
                 <WorkHeatGraphLazy />
               </Suspense>
 
-              <div data-testid="settings-overview" className="grid gap-4 md:grid-cols-2">
-                {settingsSections.map((section) => (
-                  <Card
-                    key={section.id}
-                    className="group rounded-lg border-black/10 bg-surface-modal shadow-none transition-colors hover:bg-black/[0.03] dark:border-white/10 dark:hover:bg-white/[0.05]"
-                  >
-                    <Link
-                      to={section.to}
-                      data-testid={section.testId}
-                      className="flex h-full items-start gap-4 p-5"
-                    >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-black/5 text-foreground/80 dark:bg-white/10">
-                        {section.icon}
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-base font-medium text-foreground">{section.title}</span>
-                        <span className="mt-1 block text-sm leading-5 text-muted-foreground">{section.description}</span>
-                      </span>
-                      <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-                    </Link>
-                  </Card>
+              <div data-testid="settings-overview" className="space-y-8">
+                {settingsSectionGroups.map((group) => (
+                  <section key={group.id} className="space-y-3">
+                    <h2 className="text-sm font-semibold text-foreground/70">
+                      {group.title}
+                    </h2>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {group.sections.map((section) => (
+                        <Card
+                          key={section.id}
+                          className="group rounded-lg border-black/10 bg-surface-modal shadow-none transition-colors hover:bg-black/[0.03] dark:border-white/10 dark:hover:bg-white/[0.05]"
+                        >
+                          <Link
+                            to={section.to}
+                            data-testid={section.testId}
+                            className="flex h-full items-start gap-4 p-5"
+                          >
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-black/5 text-foreground/80 dark:bg-white/10">
+                              {section.icon}
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-base font-medium text-foreground">{section.title}</span>
+                              <span className="mt-1 block text-sm leading-5 text-muted-foreground">{section.description}</span>
+                            </span>
+                            <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                          </Link>
+                        </Card>
+                      ))}
+                    </div>
+                  </section>
                 ))}
               </div>
             </>
@@ -1375,164 +1482,20 @@ export function Settings() {
           </div>
           )}
 
-          {currentSection === 'work-modes' && (
-            <>
-          <Separator className="bg-black/5 dark:bg-white/5" />
+          {currentSection === 'models' && (
+            <SettingsModelsLazy embedded />
+          )}
 
-          {/* Work Modes */}
-          <div data-testid="settings-work-modes-section">
-            <h2 className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
-              {t('workModes.title')}
-            </h2>
-            <div className="space-y-6">
-              <div className="flex flex-col gap-4 rounded-2xl border border-black/10 bg-black/[0.03] p-5 dark:border-white/10 dark:bg-white/[0.04]">
-                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <PanelsTopLeft className="h-4 w-4 text-foreground/70" />
-                      <Label className="text-sm font-medium text-foreground">{t('workModes.currentMode')}</Label>
-                    </div>
-                    <p className="mt-1 max-w-2xl text-meta text-muted-foreground">
-                      {t('workModes.currentModeDesc')}
-                    </p>
-                  </div>
-                  <Badge variant="outline" className="w-fit rounded-full">
-                    {activeWorkspace?.name || t('workModes.noWorkspaceBadge')}
-                  </Badge>
-                </div>
-                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                  {WORK_MODE_IDS.map((mode) => {
-                    const preset = WORK_MODE_PRESETS[mode];
-                    const selected = activeWorkMode === mode;
-                    return (
-                      <button
-                        key={mode}
-                        type="button"
-                        data-testid={`settings-work-mode-${mode}`}
-                        onClick={() => void handleSettingsWorkModeChange(mode)}
-                        disabled={!activeWorkspace?.id}
-                        className={cn(
-                          'min-h-24 rounded-xl border px-3 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-50',
-                          selected
-                            ? 'border-primary/30 bg-black/5 text-foreground dark:bg-white/10'
-                            : 'border-black/10 bg-transparent hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5',
-                        )}
-                      >
-                        <span className="flex items-start justify-between gap-2">
-                          <span className="min-w-0">
-                            <span className="block text-sm font-medium">{t(preset.labelKey, { ns: 'chat' })}</span>
-                            <span className="mt-1 block text-tiny leading-4 text-muted-foreground">
-                              {t(preset.descriptionKey, { ns: 'chat' })}
-                            </span>
-                          </span>
-                          {selected && <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+          {currentSection === 'agents' && (
+            <SettingsAgentsLazy embedded />
+          )}
 
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-sm font-medium text-foreground">{t('workModes.kitsTitle')}</Label>
-                  <p className="mt-1 max-w-2xl text-meta text-muted-foreground">
-                    {t('workModes.kitsDesc')}
-                  </p>
-                </div>
-                <div className="grid gap-4 lg:grid-cols-2">
-                  {WORK_MODE_IDS.map((mode) => {
-                    const preset = WORK_MODE_PRESETS[mode];
-                    const resolvedPreset = resolveWorkModePreset(mode, undefined, workModeToolBundles, workModeKits);
-                    const selectedKits = normalizeWorkModeKits(workModeKits?.[mode], resolvedPreset.kits);
-                    return (
-                      <div
-                        key={mode}
-                        className="rounded-2xl border border-black/10 bg-black/[0.03] p-4 dark:border-white/10 dark:bg-white/[0.04]"
-                        data-testid={`settings-work-mode-kits-${mode}`}
-                      >
-                        <div className="mb-3">
-                          <p className="text-sm font-medium text-foreground">{t(preset.labelKey, { ns: 'chat' })}</p>
-                          <p className="text-tiny text-muted-foreground">{t('workModes.selectedCount', { count: selectedKits.length })}</p>
-                        </div>
-                        <div className="grid gap-2">
-                          {WORK_MODE_KIT_IDS.map((kit) => {
-                            const enabled = selectedKits.includes(kit);
-                            const definition = WORK_MODE_KIT_DEFINITIONS[kit];
-                            const [capability] = resolveWorkModeKitCapabilities([kit], workModeSkills, workModeRuntimeAvailable);
-                            return (
-                              <div
-                                key={kit}
-                                className={cn(
-                                  'rounded-lg border p-2 transition-colors',
-                                  enabled
-                                    ? 'border-primary/30 bg-background/70'
-                                    : 'border-black/10 bg-transparent dark:border-white/10',
-                                )}
-                              >
-                                <div className="flex items-start gap-2">
-                                  <button
-                                    type="button"
-                                    data-testid={`settings-work-mode-kit-${mode}-${kit}`}
-                                    onClick={() => handleToggleWorkModeKit(mode, kit)}
-                                    className="flex min-w-0 flex-1 items-start gap-2 text-left"
-                                  >
-                                    <span className={cn(
-                                      'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border',
-                                      enabled
-                                        ? 'border-primary/40 bg-black/5 text-primary dark:bg-white/10'
-                                        : 'border-black/20 text-transparent dark:border-white/20',
-                                    )}
-                                    >
-                                      <Check className="h-3 w-3" />
-                                    </span>
-                                    <span className="min-w-0">
-                                      <span className="block text-xs font-medium text-foreground">
-                                        {t(definition.labelKey)}
-                                      </span>
-                                      <span className="mt-0.5 block text-tiny leading-4 text-muted-foreground">
-                                        {t(definition.descriptionKey)}
-                                      </span>
-                                    </span>
-                                  </button>
-                                  {enabled && capability && (
-                                    <Badge variant="outline" className="shrink-0 rounded-full text-[10px]">
-                                      {t(`workModes.capability.${capability.status}`)}
-                                    </Badge>
-                                  )}
-                                </div>
-                                {enabled && capability?.status === 'missingSkill' && capability.missingSkillSlugs.length > 0 && (
-                                  <div className="mt-2 flex flex-wrap gap-1.5 pl-6">
-                                    {capability.missingSkillSlugs.map((slug) => (
-                                      <Button
-                                        key={slug}
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        data-testid={`settings-work-mode-install-${slug}`}
-                                        disabled={installingWorkModeSkill === slug}
-                                        className="h-7 rounded-full px-2 text-tiny"
-                                        onClick={() => void handleInstallWorkModeSkill(slug)}
-                                      >
-                                        {installingWorkModeSkill === slug
-                                          ? t('workModes.installingSkill', { slug })
-                                          : t('workModes.installSkill', { slug })}
-                                      </Button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-            </>
+          {currentSection === 'skills' && (
+            <SettingsSkillsLazy embedded />
+          )}
+
+          {currentSection === 'channels' && (
+            <SettingsChannelsLazy embedded />
           )}
 
           {currentSection === 'system' && (
@@ -1613,8 +1576,199 @@ export function Settings() {
                 />
               </div>
 
+              <div
+                className="rounded-lg border border-black/10 bg-surface-modal p-5 shadow-none dark:border-white/10"
+                data-testid="settings-role-memory-section"
+              >
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="h-4 w-4 text-foreground/70" />
+                      <Label className="text-sm font-medium text-foreground">{t('roleMemory.title')}</Label>
+                      <Badge variant={roleMemoryEnabled ? 'secondary' : 'outline'} className="rounded-full text-2xs">
+                        {roleMemoryEnabled ? t('roleMemory.enabled') : t('roleMemory.disabled')}
+                      </Badge>
+                    </div>
+                    <p className="mt-1 max-w-2xl text-meta text-muted-foreground">
+                      {t('roleMemory.description')}
+                    </p>
+                    <p className="mt-2 max-w-2xl text-xs text-muted-foreground">
+                      {t('roleMemory.disableEffect')}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={roleMemoryEnabled}
+                    onCheckedChange={setRoleMemoryEnabled}
+                    data-testid="settings-role-memory-toggle"
+                  />
+                </div>
+              </div>
+
               {remoteControlSection}
               <ProjectRulesCenter />
+              <div className="rounded-lg border border-black/10 bg-surface-modal p-5 shadow-none dark:border-white/10">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-base font-medium text-foreground">
+                      {t('knowledgeHub.watched.title')}
+                    </h3>
+                    <p className="mt-1 max-w-2xl text-sm leading-5 text-muted-foreground">
+                      {t('knowledgeHub.watched.description')}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-8 shrink-0 rounded-full border-black/10 bg-transparent px-3 dark:border-white/10"
+                    onClick={() => void refreshWatchedDirectories()}
+                    disabled={watchedLoading}
+                    data-testid="settings-knowledge-watch-refresh"
+                  >
+                    <RefreshCw className={cn('mr-1.5 h-3.5 w-3.5', watchedLoading && 'animate-spin')} />
+                    {t('common:actions.refresh')}
+                  </Button>
+                </div>
+
+                <div className="mt-5 space-y-3">
+                  {watchedDirectories.length === 0 ? (
+                    <div className="rounded-lg border border-dashed border-black/10 bg-surface-input px-4 py-5 text-sm text-muted-foreground dark:border-white/10">
+                      {t('knowledgeHub.watched.empty')}
+                    </div>
+                  ) : (
+                    <div className="space-y-2" data-testid="settings-knowledge-watch-list">
+                      {watchedDirectories.map((directory) => (
+                        <div
+                          key={directory.id}
+                          className="flex flex-col gap-3 rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10 lg:flex-row lg:items-center lg:justify-between"
+                          data-testid="settings-knowledge-watch-item"
+                        >
+                          <div className="min-w-0">
+                            <div className="flex min-w-0 items-center gap-2">
+                              <FolderOpen className="h-4 w-4 shrink-0 text-muted-foreground" />
+                              <span className="truncate font-mono text-xs text-foreground">
+                                {directory.path}
+                              </span>
+                            </div>
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              <Badge variant="outline" className="rounded-full text-[10px]">
+                                {directory.enabled ? t('knowledgeHub.watched.enabled') : t('knowledgeHub.watched.disabled')}
+                              </Badge>
+                              <Badge variant="outline" className="rounded-full text-[10px]">
+                                {directory.requiresReview ? t('knowledgeHub.watched.reviewFirst') : t('knowledgeHub.watched.directIngest')}
+                              </Badge>
+                              <Badge variant="outline" className="rounded-full text-[10px]">
+                                {directory.autoCompile ? t('knowledgeHub.watched.autoCompile') : t('knowledgeHub.watched.compileOff')}
+                              </Badge>
+                              <Badge variant="outline" className="rounded-full text-[10px]">
+                                {directory.patterns.join(', ')}
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className="flex shrink-0 flex-wrap items-center gap-2">
+                            <Label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                              {t('knowledgeHub.watched.enabled')}
+                              <Switch
+                                checked={directory.enabled}
+                                onCheckedChange={(enabled) => void handleUpdateWatchedDirectory(directory.id, { enabled })}
+                                data-testid="settings-knowledge-watch-enabled"
+                              />
+                            </Label>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 rounded-full px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => void handleRemoveWatchedDirectory(directory.id)}
+                              data-testid="settings-knowledge-watch-remove"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              <span className="sr-only">{t('common:actions.delete')}</span>
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-5 grid gap-3 rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10 lg:grid-cols-[minmax(0,1fr)_180px_auto]">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="knowledge-watch-path" className="text-xs font-medium text-muted-foreground">
+                      {t('knowledgeHub.watched.path')}
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="knowledge-watch-path"
+                        value={watchedDirectoryPath}
+                        onChange={(event) => setWatchedDirectoryPath(event.target.value)}
+                        placeholder={t('knowledgeHub.watched.pathPlaceholder')}
+                        className="h-9 bg-transparent"
+                        data-testid="settings-knowledge-watch-path"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="h-9 shrink-0 rounded-lg border-black/10 bg-transparent dark:border-white/10"
+                        onClick={() => void handlePickWatchedDirectory()}
+                        data-testid="settings-knowledge-watch-pick"
+                      >
+                        <FolderOpen className="h-4 w-4" />
+                        <span className="sr-only">{t('knowledgeHub.watched.pick')}</span>
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="knowledge-watch-patterns" className="text-xs font-medium text-muted-foreground">
+                      {t('knowledgeHub.watched.patterns')}
+                    </Label>
+                    <Input
+                      id="knowledge-watch-patterns"
+                      value={watchedDirectoryPatterns}
+                      onChange={(event) => setWatchedDirectoryPatterns(event.target.value)}
+                      className="h-9 bg-transparent font-mono text-xs"
+                      data-testid="settings-knowledge-watch-patterns"
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <Button
+                      type="button"
+                      className="h-9 w-full rounded-lg px-4 lg:w-auto"
+                      onClick={() => void handleAddWatchedDirectory()}
+                      disabled={watchedLoading}
+                      data-testid="settings-knowledge-watch-add"
+                    >
+                      {t('knowledgeHub.watched.add')}
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-x-5 gap-y-3 lg:col-span-3">
+                    <Label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                      <Switch
+                        checked={watchedIngestNewFiles}
+                        onCheckedChange={setWatchedIngestNewFiles}
+                        data-testid="settings-knowledge-watch-ingest"
+                      />
+                      {t('knowledgeHub.watched.ingestNewFiles')}
+                    </Label>
+                    <Label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                      <Switch
+                        checked={watchedRequiresReview}
+                        onCheckedChange={setWatchedRequiresReview}
+                        data-testid="settings-knowledge-watch-review"
+                      />
+                      {t('knowledgeHub.watched.requiresReview')}
+                    </Label>
+                    <Label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                      <Switch
+                        checked={watchedAutoCompile}
+                        onCheckedChange={setWatchedAutoCompile}
+                        data-testid="settings-knowledge-watch-compile"
+                      />
+                      {t('knowledgeHub.watched.autoCompile')}
+                    </Label>
+                  </div>
+                </div>
+              </div>
               {devModeUnlocked && sandboxRuntimeSection}
 
             </div>
@@ -1625,7 +1779,12 @@ export function Settings() {
 
           {/* Developer */}
           {currentSection === 'billing' && (
-            <SettingsBillingLazy embedded />
+            <>
+              <Suspense fallback={null}>
+                <WorkHeatGraphLazy />
+              </Suspense>
+              <SettingsBillingLazy embedded />
+            </>
           )}
 
           {currentSection === 'developer' && (
@@ -2031,18 +2190,6 @@ export function Settings() {
             <div className="space-y-6">
               <UpdateSettings />
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-sm font-medium text-foreground">{t('updates.autoCheck')}</Label>
-                  <p className="text-meta text-muted-foreground mt-1">
-                    {t('updates.autoCheckDesc')}
-                  </p>
-                </div>
-                <Switch
-                  checked={autoCheckUpdate}
-                  onCheckedChange={setAutoCheckUpdate}
-                />
-              </div>
             </div>
           </div>
 
@@ -2070,7 +2217,7 @@ export function Settings() {
                 <Button
                   variant="link"
                   className="h-auto p-0 text-sm text-blue-500 hover:text-blue-600 font-medium"
-                  onClick={() => window.electron.openExternal('https://github.com/ValueCell-ai/ClawX')}
+                  onClick={() => window.electron.openExternal('https://github.com/ValueCell-ai/Verse-Claw')}
                 >
                   {t('about.github')}
                 </Button>

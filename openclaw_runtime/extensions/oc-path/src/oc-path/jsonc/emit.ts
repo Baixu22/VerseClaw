@@ -1,7 +1,7 @@
 /**
  * Emit a `JsoncAst` to bytes.
  *
- * Round-trip (default) echoes `ast.raw` verbatim â€” preserves comments
+ * Round-trip (default) echoes `ast.raw` verbatim â€?preserves comments
  * and formatting. Sentinel guard fires only in render mode by default;
  * round-trip trusts parsed bytes so a workspace file legitimately
  * containing the sentinel literal isn't a global emit DoS. Callers

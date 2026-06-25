@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { RefreshCw, Trash2, AlertCircle, Plus, Copy, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
+import { RefreshCw, Trash2, AlertCircle, Plus, Copy, RotateCcw, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -27,6 +27,8 @@ import {
   CHANNEL_NAMES,
   CHANNEL_META,
   getPrimaryChannels,
+  type ChannelAccessPolicyMode,
+  type ChannelAccessPolicyView,
   type ChannelType,
 } from '@/types/channel';
 import { usesPluginManagedQrAccounts } from '@/lib/channel-alias';
@@ -47,7 +49,7 @@ interface GatewayDiagnosticSnapshot {
   platform: string;
   gateway: GatewayHealthSummary & Record<string, unknown>;
   channels: ChannelGroupItem[];
-  clawxLogTail: string;
+  verseClawLogTail: string;
   gatewayLogTail: string;
   gatewayErrLogTail: string;
 }
@@ -64,7 +66,7 @@ function isGatewayDiagnosticSnapshot(value: unknown): value is GatewayDiagnostic
     && typeof snapshot.gateway === 'object'
     && snapshot.gateway !== null
     && Array.isArray(snapshot.channels)
-    && typeof snapshot.clawxLogTail === 'string'
+    && typeof snapshot.verseClawLogTail === 'string'
     && typeof snapshot.gatewayLogTail === 'string'
     && typeof snapshot.gatewayErrLogTail === 'string'
   );
@@ -108,6 +110,90 @@ const DEFAULT_GATEWAY_HEALTH: GatewayHealthSummary = {
   consecutiveHeartbeatMisses: 0,
 };
 
+type ChannelTranslation = (key: string, options?: Record<string, unknown>) => string;
+
+function safeTestIdSegment(value: string): string {
+  return value.replace(/[^A-Za-z0-9_-]+/g, '-');
+}
+
+function policyModeText(
+  t: ChannelTranslation,
+  mode: ChannelAccessPolicyMode | undefined,
+  count?: number,
+): string {
+  const label = t(`permissions.mode.${mode ?? 'unknown'}`);
+  if (mode === 'allowlist' && count !== undefined) {
+    return `${label} (${t('permissions.allowlistCount', { count })})`;
+  }
+  return label;
+}
+
+function approvalModeText(t: ChannelTranslation, enabled: boolean | 'auto'): string {
+  if (enabled === 'auto') return t('permissions.approval.auto');
+  return enabled ? t('permissions.approval.enabled') : t('permissions.approval.disabled');
+}
+
+function AccessPolicyPills({
+  policy,
+  t,
+  testIdPrefix,
+  className,
+}: {
+  policy?: ChannelAccessPolicyView;
+  t: ChannelTranslation;
+  testIdPrefix: string;
+  className?: string;
+}) {
+  if (!policy) return null;
+  const chips: Array<{
+    key: string;
+    scope: string;
+    value: string;
+  }> = [];
+
+  if (policy.dmPolicy) {
+    chips.push({
+      key: 'dm',
+      scope: t('permissions.scope.dm'),
+      value: policyModeText(t, policy.dmPolicy, policy.dmAllowlistCount),
+    });
+  }
+  if (policy.groupPolicy) {
+    chips.push({
+      key: 'group',
+      scope: t('permissions.scope.group'),
+      value: policyModeText(t, policy.groupPolicy, policy.groupAllowlistCount ?? policy.targetAllowlistCount),
+    });
+  }
+  if (policy.nativeApproval) {
+    chips.push({
+      key: 'approval',
+      scope: t('permissions.scope.approval'),
+      value: approvalModeText(t, policy.nativeApproval.enabled),
+    });
+  }
+  if (chips.length === 0) return null;
+
+  return (
+    <div
+      data-testid={`${testIdPrefix}-access-policy`}
+      className={cn('mt-2 flex min-w-0 flex-wrap items-center gap-1.5 text-xs', className)}
+    >
+      <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-700 dark:text-emerald-400" />
+      {chips.map((chip) => (
+        <span
+          key={chip.key}
+          data-testid={`${testIdPrefix}-${chip.key}`}
+          className="inline-flex h-6 max-w-full items-center gap-1 rounded-full border border-black/10 bg-background/70 px-2 text-muted-foreground shadow-none dark:border-white/10 dark:bg-white/[0.04]"
+        >
+          <span className="shrink-0">{chip.scope}</span>
+          <span className="truncate font-medium text-foreground/80">{chip.value}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function isStaleNotRunningHealthForRunningGateway(
   gatewayHealth: GatewayHealthSummary,
   gatewayState: string,
@@ -119,7 +205,7 @@ function isStaleNotRunningHealthForRunningGateway(
   );
 }
 
-export function Channels() {
+export function Channels({ embedded = false }: { embedded?: boolean } = {}) {
   const { t } = useTranslation('channels');
   const gatewayStatus = useGatewayStore((state) => state.status);
   const lastGatewayStateRef = useRef(gatewayStatus.state);
@@ -482,24 +568,41 @@ export function Channels() {
 
   if (loading && !hasStableValue) {
     return (
-      <div className="flex flex-col -m-6 dark:bg-background min-h-[calc(100vh-2.5rem)] items-center justify-center">
+      <div className={cn(
+        'flex flex-col items-center justify-center',
+        embedded ? 'min-h-64' : '-m-6 min-h-[calc(100vh-2.5rem)] dark:bg-background',
+      )}>
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div data-testid="channels-page" className="flex flex-col -m-6 dark:bg-background h-[calc(100vh-2.5rem)] overflow-hidden">
-      <div className="w-full max-w-5xl mx-auto flex flex-col h-full p-10 pt-16">
-        <div className="flex flex-col md:flex-row md:items-start justify-between mb-12 shrink-0 gap-4">
-          <div>
-            <h1 className="text-5xl md:text-6xl font-serif text-foreground mb-3 font-normal tracking-tight">
-              {t('title')}
-            </h1>
-            <p className="text-subtitle text-foreground/70 font-medium">
-              {t('subtitle')}
-            </p>
-          </div>
+    <div
+      data-testid="channels-page"
+      className={cn(
+        'flex flex-col',
+        embedded ? 'w-full' : '-m-6 h-[calc(100vh-2.5rem)] overflow-hidden dark:bg-background',
+      )}
+    >
+      <div className={cn(
+        'w-full flex flex-col',
+        embedded ? 'min-h-0' : 'max-w-5xl mx-auto h-full p-10 pt-16',
+      )}>
+        <div className={cn(
+          'flex flex-col md:flex-row md:items-start shrink-0 gap-4',
+          embedded ? 'mb-6 justify-end' : 'mb-12 justify-between',
+        )}>
+          {!embedded && (
+            <div>
+              <h1 className="text-5xl md:text-6xl font-serif text-foreground mb-3 font-normal tracking-tight">
+                {t('title')}
+              </h1>
+              <p className="text-subtitle text-foreground/70 font-medium">
+                {t('subtitle')}
+              </p>
+            </div>
+          )}
 
           <div className="flex items-center gap-3 md:mt-2">
             <Button
@@ -514,7 +617,9 @@ export function Channels() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2">
+        <div className={cn(
+          embedded ? 'min-h-0' : 'flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2',
+        )}>
           {isGatewayStopped(gatewayStatus) && (
             <div className="mb-8 p-4 rounded-xl border border-yellow-500/50 bg-yellow-500/10 flex items-center gap-3">
               <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
@@ -647,6 +752,11 @@ export function Channels() {
                               {statusLabel(group.status)}
                             </span>
                           </div>
+                          <AccessPolicyPills
+                            policy={group.accessPolicy}
+                            t={t}
+                            testIdPrefix={`channels-policy-${safeTestIdSegment(group.channelType)}`}
+                          />
                         </div>
                       </div>
 
@@ -708,6 +818,12 @@ export function Channels() {
                                   {t(`health.reasons.${account.statusReason}`)}
                                 </div>
                               )}
+                              <AccessPolicyPills
+                                policy={account.accessPolicy}
+                                t={t}
+                                testIdPrefix={`channels-account-policy-${safeTestIdSegment(group.channelType)}-${safeTestIdSegment(account.accountId)}`}
+                                className="mt-1"
+                              />
                             </div>
 
                             <div className="flex items-center gap-2">

@@ -3,7 +3,7 @@ import { resolveExpiresAtMsFromDurationMs } from "openclaw/plugin-sdk/number-run
 
 /**
  * QQBot reminder tool core logic.
- * QQBot 提醒工具核心逻辑。
+ * QQBot 提醒工具核心逻辑�?
  *
  * Pure functions for time parsing, cron detection, job building,
  * and remind execution. The framework registration shell
@@ -13,7 +13,7 @@ import { resolveExpiresAtMsFromDurationMs } from "openclaw/plugin-sdk/number-run
 
 /**
  * Reminder tool input parameters.
- * 提醒工具的输入参数。
+ * 提醒工具的输入参数�?
  */
 export interface RemindParams {
   action: "add" | "list" | "remove";
@@ -63,7 +63,7 @@ const PREPARED_CRON_PARAMS_INSTRUCTION =
 
 /**
  * JSON Schema for AI tool parameters (used by framework registration).
- * AI Tool 参数的 JSON Schema 定义（供框架注册使用）。
+ * AI Tool 参数�?JSON Schema 定义（供框架注册使用）�?
  */
 export const RemindSchema = {
   type: "object",
@@ -113,7 +113,7 @@ export const RemindSchema = {
 
 /**
  * Parse a relative time string into milliseconds.
- * 解析相对时间字符串为毫秒数。
+ * 解析相对时间字符串为毫秒数�?
  *
  * Supports: "5m", "1h", "1h30m", "2d", "45s", plain number (as minutes).
  *
@@ -157,8 +157,8 @@ export function parseRelativeTime(timeStr: string): number | null {
 }
 
 /**
- * Check whether a time string is a cron expression (3–6 space-separated fields).
- * 判断时间字符串是否为 cron 表达式。
+ * Check whether a time string is a cron expression (3�? space-separated fields).
+ * 判断时间字符串是否为 cron 表达式�?
  */
 export function isCronExpression(timeStr: string): boolean {
   const parts = timeStr.trim().split(/\s+/);
@@ -170,7 +170,7 @@ export function isCronExpression(timeStr: string): boolean {
 
 /**
  * Generate a cron job name from reminder content (first 20 chars).
- * 根据提醒内容生成 cron job 名称。
+ * 根据提醒内容生成 cron job 名称�?
  */
 export function generateJobName(content: string): string {
   const trimmed = content.trim();
@@ -310,7 +310,7 @@ export function prepareRemindCronAction(
       ok: true,
       action: "add",
       cronAction: buildCronJob(params, resolvedTo, resolvedAccountId),
-      summary: `⏰ Recurring reminder: "${params.content}" (${params.time}, tz=${params.timezone || "Asia/Shanghai"})`,
+      summary: `�?Recurring reminder: "${params.content}" (${params.time}, tz=${params.timezone || "Asia/Shanghai"})`,
     };
   }
 
@@ -333,13 +333,13 @@ export function prepareRemindCronAction(
     ok: true,
     action: "add",
     cronAction: buildOnceJob(params, atMs, resolvedTo, resolvedAccountId),
-    summary: `⏰ Reminder in ${formatDelay(delayMs)}: "${params.content}"`,
+    summary: `�?Reminder in ${formatDelay(delayMs)}: "${params.content}"`,
   };
 }
 
 /**
  * Execute the reminder tool logic.
- * 执行提醒工具逻辑。
+ * 执行提醒工具逻辑�?
  *
  * Validates params, parses time, and returns a structured result
  * containing cron job params that the framework shell passes back

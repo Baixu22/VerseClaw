@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   AlertTriangle,
@@ -9,9 +9,16 @@ import {
   FileCode2,
   Gauge,
   GitBranch,
+  GitCompareArrows,
   KeyRound,
+  ListTree,
+  MessageSquareText,
   RefreshCw,
+  Save,
   Search,
+  SplitSquareHorizontal,
+  Tags,
+  Target,
   Trash2,
   XCircle,
   Zap,
@@ -23,15 +30,69 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import { useObservabilityStore } from '@/stores/observability';
-import type { ObservabilityGraphNode, ObservabilityNodeDiagnostics, ObservabilityTraceStatus } from '@shared/types/observability';
+import type {
+  ObservabilityGraphNode,
+  ObservabilityNodeDiagnostics,
+  ObservabilityTraceGraph,
+  ObservabilityTraceGraphResult,
+  ObservabilityTraceStatus,
+} from '@shared/types/observability';
 import { cn } from '@/lib/utils';
 import { roleTone, toneClasses } from '@/lib/role-visuals';
 import { AgentTraceGraph } from './AgentTraceGraph';
+import { TraceNodeDrawer } from './TraceNodeDrawer';
 import { TraceWaterfall } from './TraceWaterfall';
 import type { ObservabilityTraceIndexEntry, ObservabilityTraceIssue } from '@shared/types/observability';
 
 type TraceRow = ObservabilityTraceIndexEntry | NonNullable<ReturnType<typeof useObservabilityStore.getState>['snapshot']>['traces'][number];
+type ViewMode = 'graph' | 'tree' | 'swimlane';
+type SavedViewKey = 'all' | 'recentErrors' | 'artifactRuns' | 'approvalRuns' | 'retryWarnings' | 'custom';
+
+type TraceFilterState = {
+  statusFilter: string;
+  timeFilter: string;
+  toolFilter: string;
+  query: string;
+};
+
+type TraceAnnotation = {
+  status: 'open' | 'reviewed' | 'ignored';
+  tags: string;
+  note: string;
+  updatedAt?: number;
+};
+
+const TRACE_ANNOTATIONS_KEY = 'clawx.observability.traceAnnotations.v1';
+const TRACE_SAVED_VIEW_KEY = 'clawx.observability.savedView.v1';
+
+function loadJson<T>(key: string, fallback: T): T {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw) as T;
+    if (
+      parsed
+      && typeof parsed === 'object'
+      && fallback
+      && typeof fallback === 'object'
+      && !Array.isArray(parsed)
+      && !Array.isArray(fallback)
+    ) {
+      return { ...fallback, ...parsed };
+    }
+    return parsed;
+  } catch {
+    return fallback;
+  }
+}
+
+function persistJson(key: string, value: unknown) {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem(key, JSON.stringify(value));
+}
 
 function formatDuration(ms: number): string {
   if (ms < 1000) return `${Math.round(ms)}ms`;
@@ -144,7 +205,13 @@ export function ObservabilityDashboard() {
   const [timeFilter, setTimeFilter] = useState<string>('all');
   const [toolFilter, setToolFilter] = useState<string>('all');
   const [query, setQuery] = useState('');
+  const [viewMode, setViewMode] = useState<ViewMode>('graph');
+  const [savedView, setSavedView] = useState<SavedViewKey>('all');
+  const [customSavedView, setCustomSavedView] = useState<TraceFilterState | null>(() => loadJson<TraceFilterState | null>(TRACE_SAVED_VIEW_KEY, null));
+  const [compareTraceId, setCompareTraceId] = useState<string>('none');
+  const [annotations, setAnnotations] = useState<Record<string, TraceAnnotation>>(() => loadJson<Record<string, TraceAnnotation>>(TRACE_ANNOTATIONS_KEY, {}));
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const skipAutoSelectRef = useRef(false);
   const { t } = useTranslation('observability');
 
   useEffect(() => {
@@ -180,6 +247,10 @@ export function ObservabilityDashboard() {
   }, [subscribeRealtime]);
 
   useEffect(() => {
+    persistJson(TRACE_ANNOTATIONS_KEY, annotations);
+  }, [annotations]);
+
+  useEffect(() => {
     const traceId = searchParams.get('traceId');
     if (traceId && traceId !== selectedTraceId) {
       void selectTrace(traceId);
@@ -188,15 +259,18 @@ export function ObservabilityDashboard() {
 
   useEffect(() => {
     const requestedNode = searchParams.get('nodeId');
-    const firstNode = requestedNode && selectedGraph?.graph.nodes.some((node) => node.id === requestedNode)
-      ? requestedNode
-      : selectedGraph?.graph.summary?.issues?.find((issue) => issue.nodeId && (issue.severity === 'critical' || issue.severity === 'error'))?.nodeId
-        ?? selectedGraph?.graph.summary?.errorNodeIds[0]
-        ?? selectedGraph?.graph.nodes[0]?.id
-        ?? null;
+    if (requestedNode && selectedGraph?.graph.nodes.some((node) => node.id === requestedNode)) {
+      skipAutoSelectRef.current = false;
+      setSelectedNodeId(requestedNode);
+      return;
+    }
+    if (skipAutoSelectRef.current) return;
+    const firstNode = selectedGraph?.graph.summary?.issues?.find((issue) => issue.nodeId && (issue.severity === 'critical' || issue.severity === 'error'))?.nodeId
+      ?? selectedGraph?.graph.summary?.errorNodeIds[0]
+      ?? selectedGraph?.graph.nodes[0]?.id
+      ?? null;
     setSelectedNodeId((current) => {
       if (!selectedGraph) return null;
-      if (requestedNode && selectedGraph.graph.nodes.some((node) => node.id === requestedNode)) return requestedNode;
       if (current && selectedGraph.graph.nodes.some((node) => node.id === current)) return current;
       return firstNode;
     });
@@ -240,15 +314,90 @@ export function ObservabilityDashboard() {
     return selectedGraph.graph.nodes.find((node) => node.id === selectedNodeId) ?? null;
   }, [selectedGraph, selectedNodeId]);
 
+  const allTraceRows = useMemo(() => queryResult?.items ?? snapshot?.traces ?? [], [queryResult?.items, snapshot?.traces]);
+  const selectedTraceRow = useMemo(() => allTraceRows.find((trace) => trace.id === selectedTraceId) ?? null, [allTraceRows, selectedTraceId]);
+  const compareTraceRow = useMemo(() => allTraceRows.find((trace) => trace.id === compareTraceId) ?? null, [allTraceRows, compareTraceId]);
+  const selectedAnnotation = selectedTraceId ? annotations[selectedTraceId] : undefined;
+
+  const applySavedView = (value: SavedViewKey) => {
+    setSavedView(value);
+    if (value === 'all') {
+      setStatusFilter('all');
+      setTimeFilter('all');
+      setToolFilter('all');
+      setQuery('');
+      return;
+    }
+    if (value === 'recentErrors') {
+      setStatusFilter('all');
+      setTimeFilter('day');
+      setToolFilter('errors');
+      setQuery('');
+      return;
+    }
+    if (value === 'artifactRuns') {
+      setStatusFilter('all');
+      setTimeFilter('all');
+      setToolFilter('artifacts');
+      setQuery('');
+      return;
+    }
+    if (value === 'approvalRuns') {
+      setStatusFilter('all');
+      setTimeFilter('all');
+      setToolFilter('approvals');
+      setQuery('');
+      return;
+    }
+    if (value === 'retryWarnings') {
+      setStatusFilter('all');
+      setTimeFilter('all');
+      setToolFilter('warnings');
+      setQuery('');
+      return;
+    }
+    if (customSavedView) {
+      setStatusFilter(customSavedView.statusFilter);
+      setTimeFilter(customSavedView.timeFilter);
+      setToolFilter(customSavedView.toolFilter);
+      setQuery(customSavedView.query);
+    }
+  };
+
+  const saveCurrentView = () => {
+    const nextView = { statusFilter, timeFilter, toolFilter, query };
+    setCustomSavedView(nextView);
+    persistJson(TRACE_SAVED_VIEW_KEY, nextView);
+    setSavedView('custom');
+  };
+
+  const updateAnnotation = (traceId: string, annotation: TraceAnnotation) => {
+    setAnnotations((current) => ({
+      ...current,
+      [traceId]: {
+        ...annotation,
+        updatedAt: Date.now(),
+      },
+    }));
+  };
+
   const openTrace = (trace: TraceRow, nodeId?: string) => {
+    skipAutoSelectRef.current = false;
     setSearchParams(nodeId ? { traceId: trace.id, nodeId } : { traceId: trace.id });
     if (nodeId) setSelectedNodeId(nodeId);
     void selectTrace(trace.id);
   };
 
   const selectGraphNode = (nodeId: string) => {
+    skipAutoSelectRef.current = false;
     setSelectedNodeId(nodeId);
     if (selectedTraceId) setSearchParams({ traceId: selectedTraceId, nodeId });
+  };
+
+  const clearNodeSelection = () => {
+    skipAutoSelectRef.current = true;
+    setSelectedNodeId(null);
+    if (selectedTraceId) setSearchParams({ traceId: selectedTraceId });
   };
 
   const handleClear = async () => {
@@ -329,7 +478,7 @@ export function ObservabilityDashboard() {
         </div>
       ) : null}
 
-      <div className="grid min-h-[620px] flex-1 grid-cols-1 gap-3 xl:grid-cols-[310px_minmax(480px,1fr)_330px]">
+      <div className="grid min-h-[620px] flex-1 grid-cols-1 gap-3 xl:grid-cols-[310px_minmax(480px,1fr)]">
         <aside className="flex min-h-0 flex-col rounded-md border border-black/10 dark:border-white/10 bg-background" data-testid="observability-trace-list">
           <div className="border-b border-black/10 dark:border-white/10 p-3">
             <div className="flex items-center gap-2 text-sm font-medium">
@@ -344,6 +493,24 @@ export function ObservabilityDashboard() {
                 placeholder={t('filters.search')}
                 className="h-8 border-0 bg-transparent px-0 text-xs focus-visible:ring-0 focus-visible:ring-offset-0"
               />
+            </div>
+            <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+              <Select value={savedView} onValueChange={(value) => applySavedView(value as SavedViewKey)}>
+                <SelectTrigger size="sm" data-testid="observability-saved-view">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('savedViews.all')}</SelectItem>
+                  <SelectItem value="recentErrors">{t('savedViews.recentErrors')}</SelectItem>
+                  <SelectItem value="artifactRuns">{t('savedViews.artifactRuns')}</SelectItem>
+                  <SelectItem value="approvalRuns">{t('savedViews.approvalRuns')}</SelectItem>
+                  <SelectItem value="retryWarnings">{t('savedViews.retryWarnings')}</SelectItem>
+                  <SelectItem value="custom" disabled={!customSavedView}>{t('savedViews.custom')}</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button type="button" variant="outline" className="h-8 rounded-md px-2" onClick={saveCurrentView} title={t('savedViews.saveCurrent')}>
+                <Save className="h-3.5 w-3.5" />
+              </Button>
             </div>
             <div className="mt-2 grid grid-cols-3 gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -421,6 +588,12 @@ export function ObservabilityDashboard() {
                     {(trace.approvalCount ?? 0) > 0 && <Badge variant="outline" className="rounded-full text-2xs">{trace.approvalCount} {t('filters.approvalsShort')}</Badge>}
                     {(trace.retryCount ?? 0) > 0 && <Badge variant="outline" className="rounded-full border-amber-500/30 text-2xs text-amber-700 dark:text-amber-400">{trace.retryCount} {t('filters.retriesShort')}</Badge>}
                     {(trace.warningCount ?? 0) > 0 && <Badge variant="outline" className="rounded-full border-amber-500/30 text-2xs text-amber-700 dark:text-amber-400">{trace.warningCount} {t('filters.warningsShort')}</Badge>}
+                    {annotations[trace.id] && (
+                      <Badge variant="outline" className="rounded-full border-blue-500/30 text-2xs text-blue-700 dark:text-blue-400">
+                        <MessageSquareText className="mr-1 h-3 w-3" />
+                        {t(`annotations.status.${annotations[trace.id].status}`)}
+                      </Badge>
+                    )}
                     {trace.sourceStatus && (
                       <Badge variant="outline" className={cn('rounded-full text-2xs', sourceStatusClass(trace.sourceStatus))}>
                         {t(`sourceStatus.${trace.sourceStatus}`)}
@@ -462,17 +635,66 @@ export function ObservabilityDashboard() {
           </div>
         </aside>
 
-        <main className="min-h-0">
+        <main className="flex min-h-0 flex-col gap-2">
           {traceLoading && !selectedGraph ? (
             <div className="flex h-full min-h-[520px] items-center justify-center rounded-md border">
               <RefreshCw className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
           ) : selectedGraph ? (
-            <AgentTraceGraph
-              graph={selectedGraph.graph}
-              selectedNodeId={selectedNodeId}
-              onSelectNode={selectGraphNode}
-            />
+            <>
+              <TraceSummaryHeader
+                graphResult={selectedGraph}
+                traceRow={selectedTraceRow}
+                selectedNode={selectedNode}
+                onSelectNode={selectGraphNode}
+              />
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-black/10 bg-background px-3 py-2 dark:border-white/10">
+                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                  <Target className="h-3.5 w-3.5" />
+                  {t('views.label')}
+                </div>
+                <div className="flex overflow-hidden rounded-md border border-black/10 bg-surface-input/50 dark:border-white/10" data-testid="observability-view-modes">
+                  {([
+                    ['graph', GitBranch],
+                    ['tree', ListTree],
+                    ['swimlane', SplitSquareHorizontal],
+                  ] as const).map(([mode, Icon]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => setViewMode(mode)}
+                      className={cn(
+                        'flex h-8 items-center gap-1.5 px-3 text-xs transition hover:bg-black/5 dark:hover:bg-white/10',
+                        viewMode === mode && 'bg-black/5 font-medium text-foreground dark:bg-white/10',
+                      )}
+                      data-testid={`observability-view-${mode}`}
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                      {t(`views.${mode}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {viewMode === 'graph' ? (
+                <AgentTraceGraph
+                  graph={selectedGraph.graph}
+                  selectedNodeId={selectedNodeId}
+                  onSelectNode={selectGraphNode}
+                />
+              ) : viewMode === 'tree' ? (
+                <RunTreeView
+                  graph={selectedGraph.graph}
+                  selectedNodeId={selectedNodeId}
+                  onSelectNode={selectGraphNode}
+                />
+              ) : (
+                <SwimlaneView
+                  graph={selectedGraph.graph}
+                  selectedNodeId={selectedNodeId}
+                  onSelectNode={selectGraphNode}
+                />
+              )}
+            </>
           ) : (
             <div className="flex h-full min-h-[520px] flex-col items-center justify-center rounded-md border border-dashed border-black/10 dark:border-white/10 bg-black/[0.015] dark:bg-white/[0.02] p-8 text-center">
               <GitBranch className="h-8 w-8 text-muted-foreground" />
@@ -481,16 +703,25 @@ export function ObservabilityDashboard() {
             </div>
           )}
         </main>
+      </div>
 
-        <aside className="min-h-0 rounded-md border border-black/10 dark:border-white/10 bg-background" data-testid="observability-detail-panel">
-          <Tabs defaultValue="summary" className="flex h-full min-h-[520px] flex-col">
-            <div className="border-b border-black/10 dark:border-white/10 p-3">
-              <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
-                <TabsTrigger value="summary" className="h-6 px-2 text-xs">{t('tabs.summary')}</TabsTrigger>
+      <TraceNodeDrawer
+        open={selectedNode !== null}
+        onClose={clearNodeSelection}
+        title={selectedNode?.label ?? t('details.empty')}
+        subtitle={selectedNode?.subtitle ?? (selectedNode ? t(`nodeKinds.${selectedNode.kind}`) : undefined)}
+        statusIcon={selectedNode ? statusIcon(selectedNode.status) : undefined}
+      >
+        <Tabs defaultValue="summary" className="flex h-full min-h-[520px] flex-col">
+          <div className="border-b border-black/10 dark:border-white/10 p-3">
+            <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
+              <TabsTrigger value="summary" className="h-6 px-2 text-xs">{t('tabs.summary')}</TabsTrigger>
                 <TabsTrigger value="issues" className="h-6 px-2 text-xs">{t('tabs.issues')}</TabsTrigger>
                 <TabsTrigger value="events" className="h-6 px-2 text-xs">{t('tabs.events')}</TabsTrigger>
                 <TabsTrigger value="io" className="h-6 px-2 text-xs">{t('tabs.io')}</TabsTrigger>
                 <TabsTrigger value="artifacts" className="h-6 px-2 text-xs">{t('tabs.artifacts')}</TabsTrigger>
+                <TabsTrigger value="compare" className="h-6 px-2 text-xs">{t('tabs.compare')}</TabsTrigger>
+                <TabsTrigger value="annotation" className="h-6 px-2 text-xs">{t('tabs.annotation')}</TabsTrigger>
                 <TabsTrigger value="attributes" className="h-6 px-2 text-xs">{t('tabs.attributes')}</TabsTrigger>
                 <TabsTrigger value="timeline" className="h-6 px-2 text-xs">{t('tabs.timeline')}</TabsTrigger>
                 <TabsTrigger value="score" className="h-6 px-2 text-xs">{t('tabs.score')}</TabsTrigger>
@@ -510,6 +741,11 @@ export function ObservabilityDashboard() {
                     <p className="mt-1 text-xs text-muted-foreground">{selectedNode.subtitle ?? t(`nodeKinds.${selectedNode.kind}`)}</p>
                     {diagnosticsLoading && <p className="mt-1 text-2xs text-muted-foreground">{t('details.loadingDiagnostics')}</p>}
                   </div>
+                  <EvidenceFirstPanel
+                    issues={selectedGraph?.graph.summary?.issues ?? []}
+                    selectedNodeId={selectedNode.id}
+                    onSelectNode={selectGraphNode}
+                  />
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <Info label={t('details.status')} value={t(`status.${selectedNode.status}`)} />
                     <Info label={t('details.phase')} value={selectedNode.phase ? t(`phases.${selectedNode.phase}`) : '-'} />
@@ -560,6 +796,24 @@ export function ObservabilityDashboard() {
 
             <TabsContent value="artifacts" className="m-0 min-h-0 flex-1 overflow-auto p-4">
               <DiagnosticArtifacts diagnostics={selectedNodeDiagnostics} />
+            </TabsContent>
+
+            <TabsContent value="compare" className="m-0 min-h-0 flex-1 overflow-auto p-4">
+              <TraceComparePanel
+                selectedTrace={selectedTraceRow}
+                compareTrace={compareTraceRow}
+                traceOptions={allTraceRows.filter((trace) => trace.id !== selectedTraceId)}
+                compareTraceId={compareTraceId}
+                onCompareTraceIdChange={setCompareTraceId}
+              />
+            </TabsContent>
+
+            <TabsContent value="annotation" className="m-0 min-h-0 flex-1 overflow-auto p-4">
+              <TraceAnnotationPanel
+                traceId={selectedTraceId}
+                annotation={selectedAnnotation}
+                onSave={updateAnnotation}
+              />
             </TabsContent>
 
             <TabsContent value="attributes" className="m-0 min-h-0 flex-1 overflow-auto p-4">
@@ -625,8 +879,407 @@ export function ObservabilityDashboard() {
               )}
             </TabsContent>
           </Tabs>
-        </aside>
+      </TraceNodeDrawer>
+    </div>
+  );
+}
+
+function TraceSummaryHeader({
+  graphResult,
+  traceRow,
+  selectedNode,
+  onSelectNode,
+}: {
+  graphResult: ObservabilityTraceGraphResult;
+  traceRow: TraceRow | null;
+  selectedNode: ObservabilityGraphNode | null;
+  onSelectNode: (nodeId: string) => void;
+}) {
+  const { t } = useTranslation('observability');
+  const { trace, graph } = graphResult;
+  const primaryIssue = graph.summary?.issues?.find((issue) => issue.severity === 'critical' || issue.severity === 'error')
+    ?? graph.summary?.issues?.[0];
+  const artifactCount = traceRow?.artifactCount ?? graph.summary?.artifactNodeIds.length ?? 0;
+  const tokenCount = traceRow?.tokenCount ?? trace.tokenUsage.totalTokens;
+  const costUsd = traceRow?.costUsd ?? trace.tokenUsage.costUsd;
+
+  return (
+    <div className="rounded-md border border-black/10 bg-background p-3 dark:border-white/10" data-testid="observability-summary-header">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            {statusIcon(trace.status)}
+            <h3 className="truncate text-sm font-medium">{trace.name}</h3>
+            {graph.summary?.sourceStatus && (
+              <Badge variant="outline" className={cn('rounded-full text-2xs', sourceStatusClass(graph.summary.sourceStatus))}>
+                {t(`sourceStatus.${graph.summary.sourceStatus}`)}
+              </Badge>
+            )}
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-2xs text-muted-foreground">
+            <span className="font-mono">{trace.id}</span>
+            {trace.sessionKey && <span>{trace.sessionKey}</span>}
+            {selectedNode && <span>{t('summaryHeader.selected')}: {selectedNode.label}</span>}
+          </div>
+          {primaryIssue ? (
+            <button
+              type="button"
+              className={cn('mt-3 rounded-md border px-3 py-2 text-left text-xs transition hover:bg-black/[0.02] dark:hover:bg-white/[0.04]', issueToneClass(primaryIssue))}
+              onClick={() => primaryIssue.nodeId && onSelectNode(primaryIssue.nodeId)}
+              disabled={!primaryIssue.nodeId}
+            >
+              <div className="flex items-center gap-2 font-medium">
+                <Target className="h-3.5 w-3.5" />
+                {t('summaryHeader.rootCause')}: {t(`issues.categories.${primaryIssue.category}`)}
+              </div>
+              {primaryIssue.detail && <div className="mt-1 line-clamp-2 text-2xs opacity-85">{primaryIssue.detail}</div>}
+            </button>
+          ) : (
+            <div className="mt-3 rounded-md border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-400">
+              {t('summaryHeader.noIssue')}
+            </div>
+          )}
+        </div>
+        <div className="grid min-w-[220px] grid-cols-2 gap-2 text-xs">
+          <Info label={t('details.duration')} value={formatDuration(trace.durationMs ?? traceRow?.durationMs ?? 0)} />
+          <Info label={t('details.tokens')} value={String(tokenCount)} />
+          <Info label={t('details.cost')} value={`$${costUsd.toFixed(5)}`} />
+          <Info label={t('diagnostics.items.artifacts')} value={String(artifactCount)} />
+        </div>
       </div>
+    </div>
+  );
+}
+
+function flattenGraphTree(graph: ObservabilityTraceGraph): Array<ObservabilityGraphNode & { treeDepth: number }> {
+  const byId = new Map(graph.nodes.map((node) => [node.id, node]));
+  const byParent = new Map<string, ObservabilityGraphNode[]>();
+  for (const node of graph.nodes) {
+    if (!node.parentId || !byId.has(node.parentId)) continue;
+    byParent.set(node.parentId, [...(byParent.get(node.parentId) ?? []), node]);
+  }
+  const roots = graph.nodes
+    .filter((node) => !node.parentId || !byId.has(node.parentId))
+    .sort((a, b) => (a.sequence ?? a.startedAt ?? 0) - (b.sequence ?? b.startedAt ?? 0));
+  const result: Array<ObservabilityGraphNode & { treeDepth: number }> = [];
+  const visited = new Set<string>();
+  const visit = (node: ObservabilityGraphNode, treeDepth: number) => {
+    if (visited.has(node.id)) return;
+    visited.add(node.id);
+    result.push({ ...node, treeDepth });
+    for (const child of (byParent.get(node.id) ?? []).sort((a, b) => (a.sequence ?? a.startedAt ?? 0) - (b.sequence ?? b.startedAt ?? 0))) {
+      visit(child, treeDepth + 1);
+    }
+  };
+  roots.forEach((root) => visit(root, 0));
+  graph.nodes
+    .filter((node) => !visited.has(node.id))
+    .sort((a, b) => (a.sequence ?? a.startedAt ?? 0) - (b.sequence ?? b.startedAt ?? 0))
+    .forEach((node) => visit(node, 0));
+  return result;
+}
+
+function RunTreeView({
+  graph,
+  selectedNodeId,
+  onSelectNode,
+}: {
+  graph: ObservabilityTraceGraph;
+  selectedNodeId: string | null;
+  onSelectNode: (nodeId: string) => void;
+}) {
+  const { t } = useTranslation('observability');
+  const rows = useMemo(() => flattenGraphTree(graph), [graph]);
+  return (
+    <div className="min-h-[520px] overflow-auto rounded-md border border-black/10 bg-background p-3 dark:border-white/10" data-testid="observability-run-tree">
+      <div className="mb-3 flex items-center gap-2 text-sm font-medium">
+        <ListTree className="h-4 w-4 text-muted-foreground" />
+        {t('runTree.title')}
+      </div>
+      <div className="space-y-1">
+        {rows.map((node) => (
+          <button
+            key={node.id}
+            type="button"
+            onClick={() => onSelectNode(node.id)}
+            className={cn(
+              'grid w-full grid-cols-[minmax(0,1fr)_80px_70px] items-center gap-2 rounded-md border border-transparent px-2 py-2 text-left text-xs transition hover:border-black/10 hover:bg-black/[0.02] dark:hover:border-white/10 dark:hover:bg-white/[0.04]',
+              selectedNodeId === node.id && 'border-primary/35 bg-black/[0.03] dark:bg-white/[0.05]',
+              node.status === 'error' && 'border-red-500/30 bg-red-500/5',
+            )}
+            data-testid="observability-run-tree-row"
+          >
+            <span className="flex min-w-0 items-center gap-2" style={{ paddingLeft: node.treeDepth * 18 }}>
+              {statusIcon(node.status)}
+              <span className="min-w-0">
+                <span className="block truncate font-medium">{node.label}</span>
+                <span className="block truncate text-2xs text-muted-foreground">{node.phase ? t(`phases.${node.phase}`) : t(`nodeKinds.${node.kind}`)}</span>
+              </span>
+            </span>
+            <span className="truncate text-2xs text-muted-foreground">{node.modelRef ?? node.roleName ?? t(`nodeKinds.${node.kind}`)}</span>
+            <span className="text-right font-mono text-2xs text-muted-foreground">{formatDuration(node.durationMs ?? 0)}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SwimlaneView({
+  graph,
+  selectedNodeId,
+  onSelectNode,
+}: {
+  graph: ObservabilityTraceGraph;
+  selectedNodeId: string | null;
+  onSelectNode: (nodeId: string) => void;
+}) {
+  const { t } = useTranslation('observability');
+  const phaseOrder = ['input', 'routing', 'context', 'model', 'tool', 'artifact', 'approval', 'subagent', 'verifier', 'output', 'warning', 'error', 'orchestration', 'memory', 'event'];
+  const lanes = useMemo(() => {
+    const groups = new Map<string, ObservabilityGraphNode[]>();
+    for (const node of graph.nodes) {
+      const phase = node.phase ?? node.kind;
+      groups.set(phase, [...(groups.get(phase) ?? []), node]);
+    }
+    return [...groups.entries()]
+      .sort(([left], [right]) => {
+        const leftIndex = phaseOrder.indexOf(left);
+        const rightIndex = phaseOrder.indexOf(right);
+        return (leftIndex === -1 ? 999 : leftIndex) - (rightIndex === -1 ? 999 : rightIndex);
+      })
+      .map(([phase, nodes]) => [phase, nodes.sort((a, b) => (a.sequence ?? a.startedAt ?? 0) - (b.sequence ?? b.startedAt ?? 0))] as const);
+  }, [graph.nodes]);
+
+  return (
+    <div className="min-h-[520px] overflow-auto rounded-md border border-black/10 bg-background p-3 dark:border-white/10" data-testid="observability-swimlane">
+      <div className="mb-3 flex items-center gap-2 text-sm font-medium">
+        <SplitSquareHorizontal className="h-4 w-4 text-muted-foreground" />
+        {t('swimlane.title')}
+      </div>
+      <div className="space-y-3">
+        {lanes.map(([phase, nodes]) => (
+          <section key={phase} className="grid grid-cols-[92px_minmax(0,1fr)] gap-3">
+            <div className="pt-2 text-2xs font-medium uppercase text-muted-foreground">{t(`phases.${phase}`, { defaultValue: phase })}</div>
+            <div className="flex min-h-12 flex-wrap gap-2 rounded-md bg-surface-input/45 p-2">
+              {nodes.map((node) => (
+                <button
+                  key={node.id}
+                  type="button"
+                  onClick={() => onSelectNode(node.id)}
+                  className={cn(
+                    'min-w-[150px] max-w-[220px] rounded-md border border-black/10 bg-background px-3 py-2 text-left text-xs shadow-sm transition hover:bg-black/[0.02] dark:border-white/10 dark:hover:bg-white/[0.04]',
+                    selectedNodeId === node.id && 'ring-2 ring-primary/30',
+                    node.status === 'error' && 'border-red-500/35 bg-red-500/5',
+                    node.critical && 'border-primary/30',
+                  )}
+                  data-testid="observability-swimlane-node"
+                >
+                  <div className="flex items-center gap-2">
+                    {statusIcon(node.status)}
+                    <span className="truncate font-medium">{node.label}</span>
+                  </div>
+                  <div className="mt-1 flex items-center justify-between gap-2 text-2xs text-muted-foreground">
+                    <span className="truncate">{t(`nodeKinds.${node.kind}`)}</span>
+                    <span className="font-mono">{formatDuration(node.durationMs ?? 0)}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function EvidenceFirstPanel({
+  issues,
+  selectedNodeId,
+  onSelectNode,
+}: {
+  issues: ObservabilityTraceIssue[];
+  selectedNodeId: string;
+  onSelectNode: (nodeId: string) => void;
+}) {
+  const { t } = useTranslation('observability');
+  const issue = issues.find((entry) => entry.nodeId === selectedNodeId) ?? issues[0];
+  if (!issue) {
+    return (
+      <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-700 dark:text-emerald-400" data-testid="observability-evidence-panel">
+        {t('evidence.noIssue')}
+      </div>
+    );
+  }
+  return (
+    <div className={cn('rounded-md border p-3 text-xs', issueToneClass(issue))} data-testid="observability-evidence-panel">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5 font-medium">
+            <Target className="h-3.5 w-3.5" />
+            {t('evidence.title')}
+          </div>
+          <div className="mt-1 text-2xs opacity-85">
+            {t('evidence.issueMeta', {
+              category: t(`issues.categories.${issue.category}`),
+              severity: t(`issues.severity.${issue.severity}`),
+            })}
+          </div>
+        </div>
+        {issue.nodeId && issue.nodeId !== selectedNodeId && (
+          <Button type="button" variant="outline" className="h-7 rounded-md px-2 text-[10px]" onClick={() => issue.nodeId && onSelectNode(issue.nodeId)}>
+            {t('issues.openNode')}
+          </Button>
+        )}
+      </div>
+      {issue.detail && (
+        <div className="mt-3">
+          <div className="text-2xs font-medium opacity-80">{t('evidence.why')}</div>
+          <p className="mt-1 line-clamp-3 text-2xs opacity-90">{issue.detail}</p>
+        </div>
+      )}
+      {issue.evidence?.length ? (
+        <div className="mt-3">
+          <div className="text-2xs font-medium opacity-80">{t('evidence.evidence')}</div>
+          <div className="mt-1 space-y-1">
+            {issue.evidence.slice(0, 3).map((entry) => (
+              <div key={entry} className="truncate rounded bg-black/5 px-2 py-1 font-mono text-[10px] dark:bg-white/10">{entry}</div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      {issue.recommendation && (
+        <div className="mt-3">
+          <div className="text-2xs font-medium opacity-80">{t('evidence.nextStep')}</div>
+          <p className="mt-1 text-2xs opacity-90">{issue.recommendation}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TraceComparePanel({
+  selectedTrace,
+  compareTrace,
+  traceOptions,
+  compareTraceId,
+  onCompareTraceIdChange,
+}: {
+  selectedTrace: TraceRow | null;
+  compareTrace: TraceRow | null;
+  traceOptions: TraceRow[];
+  compareTraceId: string;
+  onCompareTraceIdChange: (traceId: string) => void;
+}) {
+  const { t } = useTranslation('observability');
+  if (!selectedTrace) return <p className="text-xs text-muted-foreground">{t('traceUnavailable')}</p>;
+  return (
+    <div className="space-y-4" data-testid="observability-compare-panel">
+      <div>
+        <div className="flex items-center gap-2 text-xs font-medium">
+          <GitCompareArrows className="h-3.5 w-3.5 text-muted-foreground" />
+          {t('compare.title')}
+        </div>
+        <p className="mt-1 text-2xs text-muted-foreground">{t('compare.subtitle')}</p>
+      </div>
+      <Select value={compareTraceId} onValueChange={onCompareTraceIdChange}>
+        <SelectTrigger size="sm">
+          <SelectValue placeholder={t('compare.selectTrace')} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="none">{t('compare.none')}</SelectItem>
+          {traceOptions.map((trace) => (
+            <SelectItem key={trace.id} value={trace.id}>{trace.name}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {!compareTrace ? (
+        <div className="rounded-md border border-dashed border-black/10 p-4 text-xs text-muted-foreground dark:border-white/10">
+          {t('compare.empty')}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-2">
+          <CompareMetric label={t('details.duration')} base={formatDuration(selectedTrace.durationMs)} compare={formatDuration(compareTrace.durationMs)} delta={formatDuration(compareTrace.durationMs - selectedTrace.durationMs)} />
+          <CompareMetric label={t('details.tokens')} base={String(selectedTrace.tokenCount)} compare={String(compareTrace.tokenCount)} delta={String(compareTrace.tokenCount - selectedTrace.tokenCount)} />
+          <CompareMetric label={t('details.cost')} base={`$${selectedTrace.costUsd.toFixed(5)}`} compare={`$${compareTrace.costUsd.toFixed(5)}`} delta={`$${(compareTrace.costUsd - selectedTrace.costUsd).toFixed(5)}`} />
+          <CompareMetric label={t('tabs.issues')} base={String(selectedTrace.issueCount ?? 0)} compare={String(compareTrace.issueCount ?? 0)} delta={String((compareTrace.issueCount ?? 0) - (selectedTrace.issueCount ?? 0))} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CompareMetric({ label, base, compare, delta }: { label: string; base: string; compare: string; delta: string }) {
+  const { t } = useTranslation('observability');
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)_72px_72px_72px] items-center gap-2 rounded-md border border-black/10 p-2 text-xs dark:border-white/10">
+      <span className="truncate font-medium">{label}</span>
+      <span className="truncate text-right font-mono text-2xs text-muted-foreground">{base}</span>
+      <span className="truncate text-right font-mono text-2xs text-muted-foreground">{compare}</span>
+      <span className="truncate text-right font-mono text-2xs">{t('compare.delta', { value: delta })}</span>
+    </div>
+  );
+}
+
+function TraceAnnotationPanel({
+  traceId,
+  annotation,
+  onSave,
+}: {
+  traceId: string | null;
+  annotation?: TraceAnnotation;
+  onSave: (traceId: string, annotation: TraceAnnotation) => void;
+}) {
+  const { t } = useTranslation('observability');
+  const [status, setStatus] = useState<TraceAnnotation['status']>(annotation?.status ?? 'open');
+  const [tags, setTags] = useState(annotation?.tags ?? '');
+  const [note, setNote] = useState(annotation?.note ?? '');
+
+  useEffect(() => {
+    setStatus(annotation?.status ?? 'open');
+    setTags(annotation?.tags ?? '');
+    setNote(annotation?.note ?? '');
+  }, [annotation, traceId]);
+
+  if (!traceId) return <p className="text-xs text-muted-foreground">{t('traceUnavailable')}</p>;
+  return (
+    <div className="space-y-4" data-testid="observability-annotation-panel">
+      <div>
+        <div className="flex items-center gap-2 text-xs font-medium">
+          <MessageSquareText className="h-3.5 w-3.5 text-muted-foreground" />
+          {t('annotations.title')}
+        </div>
+        <p className="mt-1 text-2xs text-muted-foreground">{t('annotations.subtitle')}</p>
+      </div>
+      <div className="space-y-2">
+        <label className="text-2xs font-medium text-muted-foreground">{t('annotations.statusLabel')}</label>
+        <Select value={status} onValueChange={(value) => setStatus(value as TraceAnnotation['status'])}>
+          <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="open">{t('annotations.status.open')}</SelectItem>
+            <SelectItem value="reviewed">{t('annotations.status.reviewed')}</SelectItem>
+            <SelectItem value="ignored">{t('annotations.status.ignored')}</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <label className="flex items-center gap-1.5 text-2xs font-medium text-muted-foreground">
+          <Tags className="h-3 w-3" />
+          {t('annotations.tags')}
+        </label>
+        <Input value={tags} onChange={(event) => setTags(event.target.value)} placeholder={t('annotations.tagsPlaceholder')} className="h-8 text-xs" />
+      </div>
+      <div className="space-y-2">
+        <label className="text-2xs font-medium text-muted-foreground">{t('annotations.note')}</label>
+        <Textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder={t('annotations.notePlaceholder')} className="min-h-24 resize-none text-xs" />
+      </div>
+      {annotation?.updatedAt && (
+        <p className="text-2xs text-muted-foreground">{t('annotations.updatedAt', { time: formatTime(annotation.updatedAt) })}</p>
+      )}
+      <Button type="button" className="h-8 rounded-md px-3 text-xs" onClick={() => onSave(traceId, { status, tags, note })}>
+        <Save className="mr-1.5 h-3.5 w-3.5" />
+        {t('annotations.save')}
+      </Button>
     </div>
   );
 }

@@ -1283,7 +1283,7 @@ async function quarantineBlockedTarget(opts: {
 
 // Quarantine and close a tab that OpenClaw itself navigated to a blocked URL.
 // Only callers that own the navigation lifecycle (gotoPageWithNavigationGuard
-// and the navigate-style entry points that wrap it) may invoke this â€” closing
+// and the navigate-style entry points that wrap it) may invoke this â€?closing
 // a tab is a destructive action that must not happen on user-owned tabs from
 // read-only operations like snapshot/screenshot/interactions.
 /** Quarantine and close a tab that OpenClaw navigated to a blocked URL. */
@@ -1601,7 +1601,7 @@ async function tryTerminateExecutionViaCdp(opts: {
  *
  * Instead we:
  * 1. Null out `cached` so the next call triggers a fresh connectOverCDP
- * 2. Fire-and-forget browser.close() â€” it may hang but won't block us
+ * 2. Fire-and-forget browser.close() â€?it may hang but won't block us
  * 3. The next connectBrowser() creates a completely new CDP WebSocket connection
  *
  * The old browser.close() eventually resolves when the in-browser evaluate timeout fires,

@@ -3,7 +3,7 @@
 > **写于**: 2026-06-13
 > **作者**: 主会话 agent
 > **范围**: P0「接通链路」—— 让 Observability dashboard 显示真实 trace
-> **工作目录**: `C:\Users\27933\Desktop\clawx\ClawX`
+> **工作目录**: `C:\Users\27933\Desktop\clawx\Verse Claw`
 
 ---
 
@@ -91,7 +91,7 @@ dashboardSnapshot ──▶ observability store ──▶ Observability 页面
   - 触发两次真实 chat run，渲染进程挂的探针 **收到 `observability:runtime-event` 推送**（每次 `trace.started`+`trace.completed`）→ P1-a 主→渲染推送 E2E 生效。
   - Observability 页 DOM **自动出现 2 行真实 trace**（导航后未手动刷新）→ store `subscribeRealtime` 渲染侧闭环生效。
   - 点击 trace 行 → 内联展开行挂载 `TraceWaterfall` → P1-b 下钻 UI 路径生效。
-- **未能现场展示的部分**：带多 span 的瀑布图横条。原因：配置的模型 `deepseek-v4-pro` 在该环境返回 "LLM request failed"，每次 run 在 LLM 调用即失败（0 span）；且渲染进程无法注入合成数据（`window.clawx` 是 contextBridge 只读对象）。横条渲染由 typecheck + 后端单测（tool 事件→span）+ 组件代码覆盖。
+- **未能现场展示的部分**：带多 span 的瀑布图横条。原因：配置的模型 `deepseek-v4-pro` 在该环境返回 "LLM request failed"，每次 run 在 LLM 调用即失败（0 span）；且渲染进程无法注入合成数据（`window.verseClaw` 是 contextBridge 只读对象）。横条渲染由 typecheck + 后端单测（tool 事件→span）+ 组件代码覆盖。
 - **发现的小问题 → 已修复并真机验证**：失败的 run（trace `status='error'`）原先在 "Errors" 卡片显示 0（`buildObservabilityDashboardSnapshot` 只统计 span 级错误）。已改为统计**失败的 trace**（run 级 error/aborted 或含 error span）。真机复测：一个 0-span 的失败 run 现在 Errors 卡片正确显示 `1`（修复前为 `0`）。
 - **瀑布图横条仍未现场坐实 —— 阻塞原因：缺 API key**。唯一配置的 provider 是 deepseek 且 `hasKey: false`，每次 run 在 LLM 调用即 "LLM request failed"（0 span）。按安全规则不能代填密钥。待用户在 设置→Providers 配好任一可用模型后，跑一次带工具的 run 即可看到横条（其余链路均已验证）。
 
@@ -102,7 +102,7 @@ dashboardSnapshot ──▶ observability store ──▶ Observability 页面
 用户配好 API key 后仍失败 → 定位为 **runtime 层**问题（与 P1 无关，但阻断真机验证）。真实错误从 `logs.recent` / gateway stderr 日志拿到（被 `GENERIC_ASSISTANT_ERROR_TEXT="LLM request failed."` 脱敏掩盖）。
 
 ### 已修复 ✅（两处真实 bug）
-1. **dist 陈旧**：`openclaw_runtime/src/agents/openai-transport-stream.ts` 已是真实实现（`import {AzureOpenAI,OpenAI} from "openai"`），但 `dist/` 是旧的桩版本（`PRUNED_PROVIDER_ERROR="OpenAI/Azure OpenAI transport is not available in the ClawX pruned source runtime"`）。gateway 跑 dist → 抛桩错误。修复：`pnpm run build:runtime` 重建（`openai@6.39.1` 已在 runtime node_modules，作 external 保留）。错误随之变为下一个真实 bug。
+1. **dist 陈旧**：`openclaw_runtime/src/agents/openai-transport-stream.ts` 已是真实实现（`import {AzureOpenAI,OpenAI} from "openai"`），但 `dist/` 是旧的桩版本（`PRUNED_PROVIDER_ERROR="OpenAI/Azure OpenAI transport is not available in the Verse Claw pruned source runtime"`）。gateway 跑 dist → 抛桩错误。修复：`pnpm run build:runtime` 重建（`openai@6.39.1` 已在 runtime node_modules，作 external 保留）。错误随之变为下一个真实 bug。
 2. **漏 `await`**：`openai-transport-stream.ts` 三处 `client.chat.completions.create({stream:true})` / `client.responses.create(...)` 未 `await` 就 `for await` 迭代 → `chatStream is not async iterable`（APIPromise 非 async-iterable，须先 await 得到 Stream）。修复：第 761/373/1160 行补 `await`。
    - 真机验证：run 从「<600ms 秒错」变为「真正打开流、装配工具、status=running」——transport 连接已通。
 
@@ -125,7 +125,7 @@ await 修复后流打开却**拿到 ~4 个 SSE event 就 stall**。通过埋点 
 ### 端到端真机验证（全链路真实数据）✅
 真实模型 run → 流式（pinDns 修复）→ 正确参数调用 `exec`（tool-args 修复）→ 工具成功执行 → observability 链路捕获 → 实时推送 → **Observability 页瀑布图渲染 2 条绿色（completed）span 横条**（按 startedAt/duration 定位，DOM 实测 `barCount=2` / `bg-emerald-500`）。"真实链路监控"在真机端到端打通。
 
-> 本轮 runtime 修复（全部保留、typecheck 通过、埋点/实验已清理）：① dist 重建 ② 三处 `await` ③ `pinDns:false` ④ tool-call key 对齐。这是 OpenClaw 上游剪枝运行时遗留的 4 个真实 bug，至此 ClawX 内核的 OpenAI 兼容流式 transport 可用、可定制。
+> 本轮 runtime 修复（全部保留、typecheck 通过、埋点/实验已清理）：① dist 重建 ② 三处 `await` ③ `pinDns:false` ④ tool-call key 对齐。这是 OpenClaw 上游剪枝运行时遗留的 4 个真实 bug，至此 Verse Claw 内核的 OpenAI 兼容流式 transport 可用、可定制。
 
 ### 备注（非阻塞）
 - xhigh 推理下，工具 run 的最终回合较慢，trace 会在模型完成总结前停留 `running` 较久（模型行为，非 bug）。

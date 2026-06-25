@@ -1,5 +1,5 @@
 /**
- * Outbound delivery helpers â€” core/ version.
+ * Outbound delivery helpers â€?core/ version.
  *
  * Uses the unified `sender.ts` business function layer for all text and
  * image sending. Media sends (photo/voice/video/file) are injected via
@@ -27,7 +27,7 @@ import {
 
 // ---- Injected dependency interfaces ----
 
-/** Media target context â€” describes where to send media. */
+/** Media target context â€?describes where to send media. */
 interface MediaTargetContext {
   targetType: "c2c" | "group" | "channel" | "dm";
   targetId: string;
@@ -42,7 +42,7 @@ interface MediaSendResult {
   messageId?: string;
 }
 
-/** Media sender interface â€” implemented by the upper-layer outbound.ts module. */
+/** Media sender interface â€?implemented by the upper-layer outbound.ts module. */
 interface MediaSender {
   sendPhoto(target: MediaTargetContext, imageUrl: string): Promise<MediaSendResult>;
   sendVoice(
@@ -63,10 +63,10 @@ interface MediaSender {
   }): Promise<MediaSendResult>;
 }
 
-/** Delivery dependencies â€” injected when calling parseAndSendMediaTags / sendPlainReply. */
+/** Delivery dependencies â€?injected when calling parseAndSendMediaTags / sendPlainReply. */
 export interface DeliverDeps {
   mediaSender: MediaSender;
-  /** Text chunker â€” delegates to `runtime.channel.text.chunkMarkdownText`. */
+  /** Text chunker â€?delegates to `runtime.channel.text.chunkMarkdownText`. */
   chunkText: (text: string, limit: number) => string[];
 }
 
@@ -711,7 +711,7 @@ async function sendMarkdownReply(
     }
   }
 
-  // Handle public image URLs â€” format as markdown images with dimensions.
+  // Handle public image URLs â€?format as markdown images with dimensions.
   const existingMdUrls = new Set(mdMatches.map((m) => m[2]));
   const imagesToAppend: string[] = [];
 

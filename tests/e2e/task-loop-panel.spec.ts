@@ -81,6 +81,20 @@ test.describe('Agent task loop panel', () => {
               iteration: 1,
               orchestrationRunId: 'orch-e2e',
               activeRoles: ['implementer', 'tester', 'reviewer'],
+              evidenceGate: {
+                status: 'pass',
+                reasons: [],
+                workerCount: 3,
+                failedWorkerCount: 0,
+                unverifiableWorkerCount: 0,
+              },
+              roleQualitySummary: {
+                good: 3,
+                needsAttention: 0,
+                poorAttempt: 0,
+              },
+              filesTouched: ['src/task-loop-controller.ts'],
+              testsRun: ['pnpm exec vitest run tests/unit/task-loop-controller.test.ts'],
               ts: Date.now(),
             };
             emitTaskLoop({
@@ -104,6 +118,21 @@ test.describe('Agent task loop panel', () => {
                 status: 'complete',
                 phase: 'complete',
                 traceId: 'trace-loop-e2e',
+                evidenceGate: {
+                  status: 'pass',
+                  reasons: [],
+                  workerCount: 3,
+                  failedWorkerCount: 0,
+                  unverifiableWorkerCount: 0,
+                  filesTouched: ['src/task-loop-controller.ts'],
+                  testsRun: ['pnpm exec vitest run tests/unit/task-loop-controller.test.ts'],
+                },
+                roleQualitySummary: {
+                  good: 3,
+                  needsAttention: 0,
+                  poorAttempt: 0,
+                  roles: [],
+                },
               },
             });
           }
@@ -114,7 +143,9 @@ test.describe('Agent task loop panel', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.evaluate(() => {
+      window.location.hash = '#/settings/agents';
+    });
     await expect(page.getByTestId('agents-page')).toBeVisible();
 
     await page.getByTestId('role-orchestration-toggle').click();
@@ -125,6 +156,10 @@ test.describe('Agent task loop panel', () => {
     await expect(page.getByTestId('role-task-loop-event')).toContainText('running');
     await expect(page.getByTestId('role-task-loop-event')).toContainText('complete');
     await expect(page.getByTestId('role-task-loop-result')).toContainText('Task loop complete at complete');
+    await expect(page.getByTestId('role-task-loop-result-gate')).toContainText('pass');
+    await expect(page.getByTestId('role-task-loop-result-quality')).toContainText('3/0/0');
+    await expect(page.getByTestId('role-task-loop-files')).toContainText('1');
+    await expect(page.getByTestId('role-task-loop-tests')).toContainText('1');
     await expect(page.getByTestId('role-task-loop-trace')).toContainText('trace-loop-e2e');
 
     const calls = await electronApp.evaluate(() => {

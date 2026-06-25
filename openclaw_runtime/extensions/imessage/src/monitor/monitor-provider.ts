@@ -365,8 +365,8 @@ export async function monitorIMessageProvider(opts: MonitorIMessageOpts = {}): P
 
   // Downtime recovery. We pass the persisted recovery cursor (the last
   // dispatched rowid) to watch.subscribe as since_rowid so imsg replays the rows
-  // that landed while the gateway was down â€” over the same RPC client, so this
-  // works for remote SSH `cliPath` setups too â€” then tails live. The GUID dedupe
+  // that landed while the gateway was down â€?over the same RPC client, so this
+  // works for remote SSH `cliPath` setups too â€?then tails live. The GUID dedupe
   // drops anything already handled.
   //
   // `recoveryBoundaryRowid` (M) is the local MAX(ROWID) at startup, read before
@@ -554,7 +554,7 @@ export async function monitorIMessageProvider(opts: MonitorIMessageOpts = {}): P
       if (resolveIMessageReactionContext(msg, (msg.text ?? "").trim())) {
         return false;
       }
-      // From-me messages are cached, not processed â€” never debounce.
+      // From-me messages are cached, not processed â€?never debounce.
       if (msg.is_from_me === true) {
         return false;
       }
@@ -889,7 +889,7 @@ export async function monitorIMessageProvider(opts: MonitorIMessageOpts = {}): P
           });
         },
         onReplyError: (err) => {
-          // Pairing relies on the user receiving the challenge â€” silent
+          // Pairing relies on the user receiving the challenge â€?silent
           // failure here is the user's only "pairing seems broken" signal.
           runtime.error?.(`imessage pairing reply failed for ${decision.senderId}: ${String(err)}`);
         },
@@ -1227,7 +1227,7 @@ export async function monitorIMessageProvider(opts: MonitorIMessageOpts = {}): P
     const message = parseIMessageNotification(raw);
     if (!message) {
       // A malformed RPC notification means imsg shipped a payload shape
-      // we do not understand â€” almost always a real bridge bug. Surface
+      // we do not understand â€?almost always a real bridge bug. Surface
       // the keys so an operator can correlate without leaking content.
       const shape =
         raw && typeof raw === "object" && !Array.isArray(raw)
@@ -1245,9 +1245,9 @@ export async function monitorIMessageProvider(opts: MonitorIMessageOpts = {}): P
     }
     // Age fence with two windows, split on the recovery boundary:
     //  - rows at/below recoveryBoundaryRowid are the downtime-recovery replay
-    //    imsg emits from since_rowid â€” deliver them up to the wider recovery
+    //    imsg emits from since_rowid â€?deliver them up to the wider recovery
     //    age, suppressing only ancient history.
-    //  - rows above it are genuinely live â€” suppress at the tighter live
+    //  - rows above it are genuinely live â€?suppress at the tighter live
     //    threshold, which is where #89237's Push-flush backlog (old send date,
     //    fresh rowid) appears.
     // Logged at default level so suppressed traffic is never silent (#89237).
@@ -1446,7 +1446,7 @@ export async function monitorIMessageProvider(opts: MonitorIMessageOpts = {}): P
   // proactive exec/plugin approval prompts can be delivered through the
   // imessageApprovalCapability's lazy nativeRuntime adapter. Without this
   // registration the adapter's `Boolean(context)` gates always fail and the
-  // gateway can never push native approval prompts to iMessage targets â€” only
+  // gateway can never push native approval prompts to iMessage targets â€?only
   // the reaction shortcut and `/approve` text fallback would work.
   const approvalContextLease = opts.channelRuntime
     ? registerChannelRuntimeContext({

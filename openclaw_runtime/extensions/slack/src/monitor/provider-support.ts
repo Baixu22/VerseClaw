@@ -446,7 +446,7 @@ function formatSlackResolvedLabel(params: {
   const extras = params.extra?.filter(Boolean) ?? [];
   const suffix =
     extras.length > 0 ? ` (id:${params.id}, ${extras.join(", ")})` : ` (id:${params.id})`;
-  return `${params.input}â†’${params.name ?? params.id}${suffix}`;
+  return `${params.input}â†?{params.name ?? params.id}${suffix}`;
 }
 
 export function formatSlackChannelResolved(entry: SlackChannelResolution): string {

@@ -42,7 +42,7 @@ function normalizeSlackChannelAllowAliases(params: {
     if (nextChannel.enabled === undefined) {
       nextChannel.enabled = channel.allow;
       params.changes.push(
-        `Moved ${params.pathPrefix}.${channelId}.allow â†’ ${params.pathPrefix}.${channelId}.enabled.`,
+        `Moved ${params.pathPrefix}.${channelId}.allow â†?${params.pathPrefix}.${channelId}.enabled.`,
       );
     } else {
       params.changes.push(

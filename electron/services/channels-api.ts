@@ -1,6 +1,14 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { BrowserWindow } from 'electron';
+import type { ChannelAccountItem, ChannelGroupItem } from '@shared/host-api/contract';
+import type {
+  ChannelAccessPolicyMode,
+  ChannelAccessPolicyScope,
+  ChannelAccessPolicySource,
+  ChannelAccessPolicyView,
+  ChannelNativeApprovalPolicyView,
+} from '@shared/types/channel';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { extractSessionRecords } from '../utils/session-util';
 import {
@@ -121,31 +129,24 @@ interface GatewayChannelStatusPayload {
     name?: string;
     linked?: boolean;
     probe?: { ok?: boolean } | null;
+    accessPolicy?: unknown;
+    permissions?: unknown;
+    policy?: unknown;
   }>>;
   channelDefaultAccountId?: Record<string, string>;
 }
 
-interface ChannelAccountView {
-  accountId: string;
-  name: string;
-  configured: boolean;
+type ChannelAccountView = ChannelAccountItem & {
   connected: boolean;
   running: boolean;
   linked: boolean;
-  lastError?: string;
   status: ChannelConnectionStatus;
-  statusReason?: string;
-  isDefault: boolean;
-  agentId?: string;
-}
+};
 
-interface ChannelAccountsView {
-  channelType: string;
-  defaultAccountId: string;
+type ChannelAccountsView = ChannelGroupItem & {
   status: ChannelConnectionStatus;
-  statusReason?: string;
   accounts: ChannelAccountView[];
-}
+};
 
 let lastChannelsStatusOkAt: number | undefined;
 let lastChannelsStatusFailureAt: number | undefined;
@@ -243,6 +244,346 @@ function shouldIncludeRuntimeAccountId(
   return runtimeAccount.configured === true;
 }
 
+const ACCESS_POLICY_MODES: ChannelAccessPolicyMode[] = ['open', 'allowlist', 'pairing', 'disabled', 'unknown'];
+const ACCESS_POLICY_SCOPES: ChannelAccessPolicyScope[] = ['dm', 'group', 'channel', 'mixed', 'unknown'];
+const DEFAULT_PAIRING_DM_CHANNELS = new Set([
+  'discord',
+  'telegram',
+  'whatsapp',
+  'feishu',
+  'imessage',
+  OPENCLAW_WECHAT_CHANNEL_TYPE,
+]);
+const DEFAULT_ALLOWLIST_GROUP_CHANNELS = new Set([
+  'discord',
+  'telegram',
+  'whatsapp',
+  'feishu',
+  'imessage',
+  'matrix',
+  'slack',
+  OPENCLAW_WECHAT_CHANNEL_TYPE,
+]);
+
+function firstDefined<T>(...values: Array<T | undefined>): T | undefined {
+  return values.find((value): value is T => value !== undefined);
+}
+
+function asRecord(value: unknown): JsonRecord | undefined {
+  return isRecord(value) ? value as JsonRecord : undefined;
+}
+
+function normalizeAccessPolicyMode(value: unknown): ChannelAccessPolicyMode | undefined {
+  if (typeof value !== 'string') return undefined;
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) return undefined;
+  if (normalized === 'all' || normalized === 'public') return 'open';
+  if (normalized === 'whitelist' || normalized === 'allow-list') return 'allowlist';
+  if (normalized === 'off' || normalized === 'closed') return 'disabled';
+  return ACCESS_POLICY_MODES.includes(normalized as ChannelAccessPolicyMode)
+    ? normalized as ChannelAccessPolicyMode
+    : undefined;
+}
+
+function normalizeAccessPolicyScope(value: unknown): ChannelAccessPolicyScope | undefined {
+  if (typeof value !== 'string') return undefined;
+  const normalized = value.trim().toLowerCase();
+  return ACCESS_POLICY_SCOPES.includes(normalized as ChannelAccessPolicyScope)
+    ? normalized as ChannelAccessPolicyScope
+    : undefined;
+}
+
+function normalizeApprovalEnabled(value: unknown): boolean | 'auto' | undefined {
+  if (typeof value === 'boolean') return value;
+  if (typeof value !== 'string') return undefined;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'auto') return 'auto';
+  if (normalized === 'true' || normalized === 'on' || normalized === 'enabled') return true;
+  if (normalized === 'false' || normalized === 'off' || normalized === 'disabled') return false;
+  return undefined;
+}
+
+function normalizeApprovalTarget(value: unknown): ChannelNativeApprovalPolicyView['target'] | undefined {
+  if (typeof value !== 'string') return undefined;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'dm' || normalized === 'channel' || normalized === 'both') return normalized;
+  return normalized ? 'unknown' : undefined;
+}
+
+function normalizeEntries(value: unknown): string[] | undefined {
+  if (Array.isArray(value)) {
+    return value
+      .map((entry) => typeof entry === 'string' || typeof entry === 'number' ? String(entry).trim() : '')
+      .filter(Boolean);
+  }
+  if (typeof value === 'string') {
+    return value
+      .split(/[\n,;]+/)
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+  }
+  if (typeof value === 'number') {
+    return [String(value)];
+  }
+  if (isRecord(value)) {
+    return Object.entries(value)
+      .filter(([, entryValue]) => entryValue !== false && entryValue !== null)
+      .map(([key]) => key.trim())
+      .filter(Boolean);
+  }
+  return undefined;
+}
+
+function countAllowlistEntries(...values: unknown[]): number | undefined {
+  const entries = values.flatMap((value) => normalizeEntries(value) ?? []);
+  if (entries.length === 0) return undefined;
+  const unique = new Set(entries.filter((entry) => entry !== '*'));
+  return unique.size;
+}
+
+function hasWildcardEntry(...values: unknown[]): boolean {
+  return values.some((value) => (normalizeEntries(value) ?? []).some((entry) => entry === '*'));
+}
+
+function countOptionalNumber(value: unknown): number | undefined {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return undefined;
+  return Math.max(0, Math.floor(value));
+}
+
+function sumOptionalCounts(...values: Array<number | undefined>): number | undefined {
+  const counts = values.filter((value): value is number => value !== undefined);
+  if (counts.length === 0) return undefined;
+  return counts.reduce((sum, value) => sum + value, 0);
+}
+
+function sanitizeNativeApprovalPolicy(
+  value: unknown,
+  source: ChannelAccessPolicySource,
+): ChannelNativeApprovalPolicyView | undefined {
+  const enabledFromPrimitive = normalizeApprovalEnabled(value);
+  if (enabledFromPrimitive !== undefined) {
+    return { enabled: enabledFromPrimitive, source };
+  }
+
+  const record = asRecord(value);
+  if (!record) return undefined;
+  const enabled = normalizeApprovalEnabled(
+    firstDefined(record.enabled, record.mode, record.native, record.nativeApprovals),
+  );
+  if (enabled === undefined) return undefined;
+
+  return {
+    enabled,
+    approverCount: countAllowlistEntries(record.approvers, record.allowFrom, record.allowedUsers),
+    agentFilterCount: countAllowlistEntries(record.agentFilter, record.agents),
+    sessionFilterCount: countAllowlistEntries(record.sessionFilter, record.sessions),
+    target: normalizeApprovalTarget(record.target),
+    source,
+  };
+}
+
+function findNativeApprovalPolicy(
+  config: JsonRecord,
+  source: ChannelAccessPolicySource,
+): ChannelNativeApprovalPolicyView | undefined {
+  return firstDefined(
+    sanitizeNativeApprovalPolicy(config.execApprovals, source),
+    sanitizeNativeApprovalPolicy(config.nativeApprovals, source),
+    sanitizeNativeApprovalPolicy(config.nativeApproval, source),
+    sanitizeNativeApprovalPolicy(config.approvals, source),
+    sanitizeNativeApprovalPolicy(config.approval, source),
+  );
+}
+
+function readPolicyCandidate(value: unknown): unknown {
+  const record = asRecord(value);
+  if (!record) return undefined;
+  return firstDefined(record.accessPolicy, record.permissions, record.policy);
+}
+
+function sanitizeRuntimeAccessPolicy(value: unknown): Partial<ChannelAccessPolicyView> | undefined {
+  const record = asRecord(value);
+  if (!record) return undefined;
+  const nativeApproval = firstDefined(
+    sanitizeNativeApprovalPolicy(record.nativeApproval, 'runtime'),
+    sanitizeNativeApprovalPolicy(record.execApprovals, 'runtime'),
+  );
+  return {
+    source: 'runtime',
+    scope: normalizeAccessPolicyScope(record.scope),
+    mode: normalizeAccessPolicyMode(record.mode),
+    dmPolicy: normalizeAccessPolicyMode(record.dmPolicy),
+    groupPolicy: normalizeAccessPolicyMode(record.groupPolicy),
+    allowlistCount: countOptionalNumber(record.allowlistCount),
+    dmAllowlistCount: countOptionalNumber(record.dmAllowlistCount),
+    groupAllowlistCount: countOptionalNumber(record.groupAllowlistCount),
+    targetAllowlistCount: countOptionalNumber(record.targetAllowlistCount),
+    pairingRequired: typeof record.pairingRequired === 'boolean' ? record.pairingRequired : undefined,
+    configWritable: typeof record.configWritable === 'boolean' ? record.configWritable : undefined,
+    nativeApproval,
+  };
+}
+
+function hasPolicyConfig(config: JsonRecord, dmRecord?: JsonRecord, groupRecord?: JsonRecord): boolean {
+  return [
+    config.dmPolicy,
+    config.groupPolicy,
+    config.allowFrom,
+    config.allowedUsers,
+    config.groupAllowFrom,
+    config.groups,
+    config.guilds,
+    config.channels,
+    config.execApprovals,
+    config.nativeApprovals,
+    config.nativeApproval,
+    config.approvals,
+    config.approval,
+    dmRecord?.enabled,
+    dmRecord?.policy,
+    dmRecord?.mode,
+    dmRecord?.allowFrom,
+    groupRecord?.policy,
+    groupRecord?.mode,
+    groupRecord?.allowFrom,
+  ].some((value) => value !== undefined);
+}
+
+function resolvePolicyScope(
+  dmPolicy: ChannelAccessPolicyMode | undefined,
+  groupPolicy: ChannelAccessPolicyMode | undefined,
+  runtimeScope: ChannelAccessPolicyScope | undefined,
+): ChannelAccessPolicyScope {
+  if (runtimeScope) return runtimeScope;
+  if (dmPolicy && groupPolicy) return 'mixed';
+  if (dmPolicy) return 'dm';
+  if (groupPolicy) return 'group';
+  return 'unknown';
+}
+
+function buildChannelAccessPolicyView(
+  config: JsonRecord,
+  channelType: string,
+  accountId: string | undefined,
+  runtimePolicyInput?: unknown,
+): ChannelAccessPolicyView | undefined {
+  const channelSection = asRecord(config.channels)?.[channelType];
+  const hasLocalConfig = Boolean(channelSection);
+  const mergedConfig = mergeChannelAccountConfig(config, channelType, accountId);
+  const dmRecord = asRecord(mergedConfig.dm);
+  const groupRecord = asRecord(mergedConfig.group);
+  const runtimePolicy = sanitizeRuntimeAccessPolicy(runtimePolicyInput);
+
+  const dmAllowlistCount = firstDefined(
+    countAllowlistEntries(mergedConfig.allowFrom, mergedConfig.allowedUsers, mergedConfig.users),
+    countAllowlistEntries(dmRecord?.allowFrom, dmRecord?.allowedUsers, dmRecord?.users),
+    runtimePolicy?.dmAllowlistCount,
+  );
+  const dmHasWildcard = hasWildcardEntry(
+    mergedConfig.allowFrom,
+    mergedConfig.allowedUsers,
+    mergedConfig.users,
+    dmRecord?.allowFrom,
+    dmRecord?.allowedUsers,
+    dmRecord?.users,
+  );
+  const dmDisabled = dmRecord?.enabled === false
+    || mergedConfig.dmEnabled === false
+    || mergedConfig.directMessageEnabled === false;
+  let dmPolicy = dmDisabled
+    ? 'disabled' as ChannelAccessPolicyMode
+    : firstDefined(
+      normalizeAccessPolicyMode(mergedConfig.dmPolicy),
+      normalizeAccessPolicyMode(mergedConfig.directMessagePolicy),
+      normalizeAccessPolicyMode(dmRecord?.policy),
+      normalizeAccessPolicyMode(dmRecord?.mode),
+      runtimePolicy?.dmPolicy,
+    );
+  if (!dmPolicy) {
+    if (dmHasWildcard) {
+      dmPolicy = 'open';
+    } else if ((dmAllowlistCount ?? 0) > 0) {
+      dmPolicy = 'allowlist';
+    } else if (DEFAULT_PAIRING_DM_CHANNELS.has(channelType)) {
+      dmPolicy = 'pairing';
+    }
+  }
+
+  const groupAllowlistCount = firstDefined(
+    countAllowlistEntries(mergedConfig.groupAllowFrom, mergedConfig.groupUsers),
+    countAllowlistEntries(groupRecord?.allowFrom, groupRecord?.allowedUsers, groupRecord?.users),
+    runtimePolicy?.groupAllowlistCount,
+  );
+  const targetAllowlistCount = firstDefined(
+    countAllowlistEntries(mergedConfig.groups, mergedConfig.guilds, mergedConfig.channels),
+    countAllowlistEntries(groupRecord?.groups, groupRecord?.channels),
+    runtimePolicy?.targetAllowlistCount,
+  );
+  const groupHasWildcard = hasWildcardEntry(
+    mergedConfig.groupAllowFrom,
+    mergedConfig.groups,
+    mergedConfig.guilds,
+    mergedConfig.channels,
+    groupRecord?.allowFrom,
+    groupRecord?.groups,
+    groupRecord?.channels,
+  );
+  let groupPolicy = firstDefined(
+    normalizeAccessPolicyMode(mergedConfig.groupPolicy),
+    normalizeAccessPolicyMode(groupRecord?.policy),
+    normalizeAccessPolicyMode(groupRecord?.mode),
+    runtimePolicy?.groupPolicy,
+  );
+  if (!groupPolicy) {
+    if (groupHasWildcard) {
+      groupPolicy = 'open';
+    } else if ((groupAllowlistCount ?? 0) > 0 || (targetAllowlistCount ?? 0) > 0) {
+      groupPolicy = 'allowlist';
+    } else if (DEFAULT_ALLOWLIST_GROUP_CHANNELS.has(channelType)) {
+      groupPolicy = 'allowlist';
+    }
+  }
+
+  const nativeApproval = firstDefined(
+    findNativeApprovalPolicy(mergedConfig, 'config'),
+    runtimePolicy?.nativeApproval,
+  );
+  const source = hasPolicyConfig(mergedConfig, dmRecord, groupRecord)
+    ? 'config'
+    : runtimePolicy?.source ?? 'inferred';
+  const allowlistCount = firstDefined(
+    sumOptionalCounts(dmAllowlistCount, groupAllowlistCount, targetAllowlistCount),
+    runtimePolicy?.allowlistCount,
+  );
+  const mode = firstDefined(runtimePolicy?.mode, dmPolicy, groupPolicy, nativeApproval ? 'unknown' : undefined) ?? 'unknown';
+  const scope = resolvePolicyScope(dmPolicy, groupPolicy, runtimePolicy?.scope);
+
+  if (
+    !hasLocalConfig
+    && !runtimePolicy
+    && !dmPolicy
+    && !groupPolicy
+    && !nativeApproval
+  ) {
+    return undefined;
+  }
+
+  return {
+    source,
+    scope,
+    mode,
+    dmPolicy: dmPolicy ?? runtimePolicy?.dmPolicy,
+    groupPolicy: groupPolicy ?? runtimePolicy?.groupPolicy,
+    allowlistCount,
+    dmAllowlistCount,
+    groupAllowlistCount,
+    targetAllowlistCount,
+    pairingRequired: runtimePolicy?.pairingRequired ?? dmPolicy === 'pairing',
+    configWritable: runtimePolicy?.configWritable ?? hasLocalConfig,
+    nativeApproval,
+  };
+}
+
 export function getChannelStatusDiagnostics(): {
   lastChannelsStatusOkAt?: number;
   lastChannelsStatusFailureAt?: number;
@@ -314,7 +655,7 @@ export async function buildChannelAccountsView(
     const hasLocalConfig = configuredChannels.includes(rawChannelType) || Boolean(configuredAccounts[rawChannelType]);
     const channelSection = openClawConfig.channels?.[rawChannelType];
     const channelSummary =
-      (gatewayStatus?.channels?.[rawChannelType] as { error?: string; lastError?: string } | undefined) ?? undefined;
+      (gatewayStatus?.channels?.[rawChannelType] as ({ error?: string; lastError?: string } & JsonRecord) | undefined) ?? undefined;
     const sortedConfigAccountIds = [...channelAccountsFromConfig].sort((left, right) => {
       if (left === 'default') return -1;
       if (right === 'default') return 1;
@@ -361,6 +702,12 @@ export async function buildChannelAccountsView(
             : undefined,
         isDefault: accountId === defaultAccountId,
         agentId: agentsSnapshot.channelAccountOwners[`${rawChannelType}:${accountId}`],
+        accessPolicy: buildChannelAccessPolicyView(
+          openClawConfig,
+          rawChannelType,
+          accountId,
+          readPolicyCandidate(runtime),
+        ),
       };
     }).sort((left, right) => {
       if (left.accountId === defaultAccountId) return -1;
@@ -396,6 +743,12 @@ export async function buildChannelAccountsView(
         : groupStatus === 'degraded' && effectiveGatewayHealthState
           ? overlayStatusReason(gatewayHealth, 'gateway_degraded')
           : undefined,
+      accessPolicy: buildChannelAccessPolicyView(
+        openClawConfig,
+        rawChannelType,
+        defaultAccountId,
+        readPolicyCandidate(channelSummary),
+      ),
       accounts,
     });
   }

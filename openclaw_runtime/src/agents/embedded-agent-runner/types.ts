@@ -9,6 +9,7 @@ import type {
 } from "../../config/sessions/types.js";
 import type { DiagnosticTraceContext } from "../../infra/diagnostic-trace-context.js";
 import type { AcceptedSessionSpawn } from "../accepted-session-spawn.js";
+import type { AgentBrowserAutomationEvent } from "../tools/agent-browser-automation-event.js";
 import type {
   MessagingToolSend,
   MessagingToolSourceReplyPayload,
@@ -212,6 +213,8 @@ export type EmbeddedAgentRunResult = {
   acceptedSessionSpawns?: AcceptedSessionSpawn[];
   // Structured heartbeat outcome recorded by the heartbeat response tool.
   heartbeatToolResponse?: HeartbeatToolResponse;
+  // Agent Browser tool telemetry fragments captured during this run.
+  browserAutomationEvents?: AgentBrowserAutomationEvent[];
   // Count of successful cron.add tool calls in this run.
   successfulCronAdds?: number;
 };

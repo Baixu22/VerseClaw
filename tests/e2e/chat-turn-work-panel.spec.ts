@@ -88,7 +88,7 @@ async function installMocks(app: Parameters<typeof installIpcMocks>[0]) {
   });
 }
 
-test.describe('ClawX turn work panel', () => {
+test.describe('Verse Claw turn work panel', () => {
   test('summarizes tasks, generated reports, and visited sources with visual baseline', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

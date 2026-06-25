@@ -163,7 +163,7 @@ export function createProfileAvailability({
     options?: { ephemeral?: boolean; signal?: AbortSignal },
   ) => {
     if (capabilities.usesChromeMcp) {
-      // listChromeMcpTabs creates the session if needed â€” no separate ensureChromeMcpAvailable call required.
+      // listChromeMcpTabs creates the session if needed â€?no separate ensureChromeMcpAvailable call required.
       // Status probes opt into ephemeral so they reuse a cached attach session if one exists,
       // but do not seed a new persistent session as a side effect of read-only status calls.
       const { listChromeMcpTabs } = await getChromeMcpModule();

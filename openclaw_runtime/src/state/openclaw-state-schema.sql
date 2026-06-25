@@ -1025,9 +1025,10 @@ CREATE TABLE IF NOT EXISTS long_task_checkpoints (
   id TEXT NOT NULL PRIMARY KEY,
   idempotency_key TEXT UNIQUE,
   session_key TEXT NOT NULL,
-  agent_id TEXT,
-  workspace_id TEXT,
-  run_id TEXT,
+  agent_id TEXT, 
+  workspace_id TEXT, 
+  task_ledger_root_id TEXT,
+  run_id TEXT, 
   trace_id TEXT,
   clawgraph_run_id TEXT,
   trigger TEXT NOT NULL,
@@ -1040,16 +1041,20 @@ CREATE TABLE IF NOT EXISTS long_task_checkpoints (
 CREATE INDEX IF NOT EXISTS idx_long_task_checkpoints_session
   ON long_task_checkpoints(session_key, created_at DESC, id);
 
-CREATE INDEX IF NOT EXISTS idx_long_task_checkpoints_status
-  ON long_task_checkpoints(status, created_at DESC, id);
+CREATE INDEX IF NOT EXISTS idx_long_task_checkpoints_status 
+  ON long_task_checkpoints(status, created_at DESC, id); 
+
+CREATE INDEX IF NOT EXISTS idx_long_task_checkpoints_ledger_root
+  ON long_task_checkpoints(task_ledger_root_id, created_at DESC, id);
 
 CREATE TABLE IF NOT EXISTS long_task_intervention_events (
   id TEXT NOT NULL PRIMARY KEY,
   idempotency_key TEXT UNIQUE,
   session_key TEXT NOT NULL,
-  agent_id TEXT,
-  workspace_id TEXT,
-  run_id TEXT,
+  agent_id TEXT, 
+  workspace_id TEXT, 
+  task_ledger_root_id TEXT,
+  run_id TEXT, 
   trace_id TEXT,
   clawgraph_run_id TEXT,
   checkpoint_id TEXT,
@@ -1064,16 +1069,20 @@ CREATE TABLE IF NOT EXISTS long_task_intervention_events (
 CREATE INDEX IF NOT EXISTS idx_long_task_intervention_session
   ON long_task_intervention_events(session_key, created_at DESC, id);
 
-CREATE INDEX IF NOT EXISTS idx_long_task_intervention_status
-  ON long_task_intervention_events(status, created_at DESC, id);
+CREATE INDEX IF NOT EXISTS idx_long_task_intervention_status 
+  ON long_task_intervention_events(status, created_at DESC, id); 
+
+CREATE INDEX IF NOT EXISTS idx_long_task_intervention_ledger_root
+  ON long_task_intervention_events(task_ledger_root_id, created_at DESC, id);
 
 CREATE TABLE IF NOT EXISTS long_task_user_queue (
   id TEXT NOT NULL PRIMARY KEY,
   idempotency_key TEXT UNIQUE,
   session_key TEXT NOT NULL,
-  agent_id TEXT,
-  workspace_id TEXT,
-  status TEXT NOT NULL,
+  agent_id TEXT, 
+  workspace_id TEXT, 
+  task_ledger_root_id TEXT,
+  status TEXT NOT NULL, 
   text TEXT NOT NULL,
   source TEXT NOT NULL,
   attempts INTEGER NOT NULL DEFAULT 0,
@@ -1088,8 +1097,11 @@ CREATE TABLE IF NOT EXISTS long_task_user_queue (
 CREATE INDEX IF NOT EXISTS idx_long_task_user_queue_session
   ON long_task_user_queue(session_key, status, created_at, id);
 
-CREATE INDEX IF NOT EXISTS idx_long_task_user_queue_pending
-  ON long_task_user_queue(status, created_at, id);
+CREATE INDEX IF NOT EXISTS idx_long_task_user_queue_pending 
+  ON long_task_user_queue(status, created_at, id); 
+
+CREATE INDEX IF NOT EXISTS idx_long_task_user_queue_ledger_root
+  ON long_task_user_queue(task_ledger_root_id, status, created_at, id);
 
 CREATE TABLE IF NOT EXISTS mission_runs (
   mission_id TEXT NOT NULL PRIMARY KEY,

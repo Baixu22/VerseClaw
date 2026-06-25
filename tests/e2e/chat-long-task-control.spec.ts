@@ -1,6 +1,7 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const MAIN_SESSION_KEY = 'agent:main:main';
+const WORKSPACE_ID = 'workspace-rollback';
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -11,7 +12,7 @@ function stableStringify(value: unknown): string {
   return `{${entries.join(',')}}`;
 }
 
-test.describe('ClawX chat long-task recovery controls', () => {
+test.describe('Verse Claw chat long-task recovery controls', () => {
   test('shows recovery status and drains queued follow-up through Host API', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -57,7 +58,49 @@ test.describe('ClawX chat long-task recovery controls', () => {
             data: {
               status: 200,
               ok: true,
-              json: { success: true, workspaces: [], activeWorkspaceId: null },
+              json: {
+                success: true,
+                workspaces: [{
+                  id: WORKSPACE_ID,
+                  name: 'Rollback Workspace',
+                  rootPath: 'C:\\Users\\27933\\Desktop\\clawx\\ClawX',
+                  activeSessionKey: MAIN_SESSION_KEY,
+                  permissionMode: 'workspace-write',
+                  state: {},
+                  sessionStates: {},
+                }],
+                activeWorkspaceId: WORKSPACE_ID,
+                activeWorkspace: {
+                  id: WORKSPACE_ID,
+                  name: 'Rollback Workspace',
+                  rootPath: 'C:\\Users\\27933\\Desktop\\clawx\\ClawX',
+                  activeSessionKey: MAIN_SESSION_KEY,
+                  permissionMode: 'workspace-write',
+                  state: {},
+                  sessionStates: {},
+                },
+              },
+            },
+          },
+          [stableStringify(['workspaces', 'list', null])]: {
+            profiles: [{
+              id: WORKSPACE_ID,
+              name: 'Rollback Workspace',
+              rootPath: 'C:\\Users\\27933\\Desktop\\clawx\\ClawX',
+              activeSessionKey: MAIN_SESSION_KEY,
+              permissionMode: 'workspace-write',
+              state: {},
+              sessionStates: {},
+            }],
+            activeWorkspaceId: WORKSPACE_ID,
+            activeWorkspace: {
+              id: WORKSPACE_ID,
+              name: 'Rollback Workspace',
+              rootPath: 'C:\\Users\\27933\\Desktop\\clawx\\ClawX',
+              activeSessionKey: MAIN_SESSION_KEY,
+              permissionMode: 'workspace-write',
+              state: {},
+              sessionStates: {},
             },
           },
           [stableStringify(['usage', 'live', {
@@ -122,6 +165,13 @@ test.describe('ClawX chat long-task recovery controls', () => {
             },
             warnings: ['gateway_unavailable'],
           },
+          [stableStringify(['workspaces', 'saveState', {
+            id: WORKSPACE_ID,
+            sessionKey: MAIN_SESSION_KEY,
+            state: { artifactPanel: { open: true, activeTab: 'browser', workspaceView: 'git' } },
+          }])]: {
+            success: true,
+          },
         },
       });
 
@@ -130,6 +180,10 @@ test.describe('ClawX chat long-task recovery controls', () => {
           _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
         })._invokeHandlers?.get('host:invoke');
         const queueDrainCalls: unknown[] = [];
+        const chatSendCalls: unknown[] = [];
+        const taskLedgerAppendCalls: unknown[] = [];
+        const terminalInterruptCalls: unknown[] = [];
+        const knowledgeDraftCalls: unknown[] = [];
         const makeResponse = (id: unknown, data: unknown) => ({
           id: typeof id === 'string' ? id : undefined,
           ok: true,
@@ -154,9 +208,82 @@ test.describe('ClawX chat long-task recovery controls', () => {
               queueCount: 0,
             });
           }
+          if (request?.module === 'workspaces' && request.action === 'saveState') {
+            return makeResponse(request.id, { success: true });
+          }
+          if (request?.module === 'chat' && request.action === 'sendWithMedia') {
+            chatSendCalls.push(request.payload);
+            if (request.payload?.inputMode) {
+              return makeResponse(request.id, {
+                success: true,
+                result: { runId: `run-${request.payload.inputMode}` },
+              });
+            }
+            return new Promise(() => {});
+          }
+          if (request?.module === 'taskLedger' && request.action === 'appendEvents') {
+            taskLedgerAppendCalls.push(request.payload);
+            return makeResponse(request.id, {
+              success: true,
+              snapshot: {
+                schemaVersion: 1,
+                workspaceId: 'workspace-rollback',
+                generatedAt: new Date(1).toISOString(),
+                nodes: [],
+                edges: [],
+                sessionLinks: [],
+                rootNodeIds: [],
+                reviewNodeIds: [],
+                activeNodeIds: [],
+                blockedNodeIds: [],
+                recentDecisions: [],
+                eventsCount: taskLedgerAppendCalls.length,
+                warnings: [],
+              },
+            });
+          }
+          if (request?.module === 'terminal' && request.action === 'status') {
+            return makeResponse(request.id, {
+              success: true,
+              status: 'running',
+              sessionId: 'terminal-e2e',
+            });
+          }
+          if (request?.module === 'terminal' && request.action === 'interrupt') {
+            terminalInterruptCalls.push(request.payload);
+            return makeResponse(request.id, { success: true });
+          }
+          if (request?.module === 'knowledge' && request.action === 'createDraft') {
+            knowledgeDraftCalls.push(request.payload);
+            return makeResponse(request.id, {
+              success: true,
+              draft: {
+                id: 'recovery-draft-e2e',
+                title: request.payload?.title,
+                body: request.payload?.body,
+                type: 'synthesis',
+                status: 'draft',
+                sourceIds: [sessionKey],
+                sourceRefs: [],
+                createdBy: 'user',
+                createdAt: new Date(1).toISOString(),
+                updatedAt: new Date(1).toISOString(),
+              },
+            });
+          }
+          if (request?.module === 'knowledge' && request.action === 'proposeChange') {
+            return makeResponse(request.id, {
+              success: true,
+              proposal: { id: 'proposal-e2e', draftId: request.payload?.draftId },
+            });
+          }
           return originalHostInvoke?.(event, request) ?? makeResponse(request?.id, {});
         });
         (globalThis as typeof globalThis & { __longTaskQueueDrainCalls?: unknown[] }).__longTaskQueueDrainCalls = queueDrainCalls;
+        (globalThis as typeof globalThis & { __longTaskChatSendCalls?: unknown[] }).__longTaskChatSendCalls = chatSendCalls;
+        (globalThis as typeof globalThis & { __longTaskLedgerAppendCalls?: unknown[] }).__longTaskLedgerAppendCalls = taskLedgerAppendCalls;
+        (globalThis as typeof globalThis & { __longTaskTerminalInterruptCalls?: unknown[] }).__longTaskTerminalInterruptCalls = terminalInterruptCalls;
+        (globalThis as typeof globalThis & { __longTaskKnowledgeDraftCalls?: unknown[] }).__longTaskKnowledgeDraftCalls = knowledgeDraftCalls;
       }, MAIN_SESSION_KEY);
 
       const page = await getStableWindow(app);
@@ -166,6 +293,20 @@ test.describe('ClawX chat long-task recovery controls', () => {
       await expect(page.getByTestId('chat-long-task-checkpoint')).toBeVisible();
       await expect(page.getByTestId('chat-long-task-intervention')).toBeVisible();
       await expect(page.getByTestId('chat-long-task-warnings')).toBeVisible();
+      await expect(page.getByTestId('chat-rollback-plan')).toBeVisible();
+      await expect(page.getByTestId('chat-rollback-risk-summary')).toBeVisible();
+      await expect(page.getByTestId('chat-rollback-risk-safe')).toContainText('safe');
+      await expect(page.getByTestId('chat-rollback-risk-review')).toContainText('review');
+      await expect(page.getByTestId('chat-rollback-risk-dangerous')).toContainText('dangerous');
+      await expect(page.getByTestId('chat-rollback-signal-checkpoint')).toContainText('Checkpoint');
+      await expect(page.getByTestId('chat-rollback-signal-queue')).toContainText('Queue');
+      await expect(page.getByTestId('chat-rollback-signal-terminal')).toContainText('Terminal');
+      await expect(page.getByTestId('chat-rollback-signal-memory')).toContainText('Memory');
+      await expect(page.getByTestId('chat-rollback-action-checkpoint-handoff')).toBeVisible();
+      await expect(page.getByTestId('chat-rollback-action-drain-queue')).toBeVisible();
+      await expect(page.getByTestId('chat-rollback-action-terminal-control')).toBeVisible();
+      await expect(page.getByTestId('chat-rollback-action-memory-review')).toBeVisible();
+      await expect(page.getByTestId('chat-rollback-action-review-git')).toBeVisible();
 
       await page.getByTestId('chat-long-task-drain').click();
 
@@ -179,6 +320,47 @@ test.describe('ClawX chat long-task recovery controls', () => {
         sessionKey: MAIN_SESSION_KEY,
         agentId: 'main',
       });
+
+      await page.getByTestId('chat-rollback-run-interruptTerminal').click();
+      await expect.poll(async () => app.evaluate(() => (
+        (globalThis as typeof globalThis & { __longTaskTerminalInterruptCalls?: unknown[] }).__longTaskTerminalInterruptCalls?.length ?? 0
+      ))).toBe(1);
+
+      await page.getByTestId('chat-rollback-run-createMemoryDraft').click();
+      await expect(page.getByTestId('knowledge-draft-dialog')).toBeVisible();
+      await expect(page.getByTestId('knowledge-draft-body')).toHaveValue(/Review-only recovery memory proposal/);
+      await page.getByTestId('knowledge-draft-apply').click();
+      await expect.poll(async () => app.evaluate(() => (
+        (globalThis as typeof globalThis & { __longTaskKnowledgeDraftCalls?: Array<Record<string, unknown>> }).__longTaskKnowledgeDraftCalls?.length ?? 0
+      ))).toBe(1);
+
+      await page.getByTestId('chat-rollback-run-openGit').click();
+      await expect(page.getByTestId('artifact-panel')).toBeVisible();
+
+      await page.getByTestId('chat-composer-input').fill('start a long validation run');
+      await page.getByTestId('chat-composer-send').click();
+      await expect(page.getByTestId('chat-intervention-controls')).toBeVisible();
+      await page.getByTestId('chat-composer-input').fill('preserve the validation evidence before continuing');
+      await page.getByTestId('chat-intervention-guide').click();
+
+      await expect.poll(async () => app.evaluate(() => (
+        (globalThis as typeof globalThis & { __longTaskChatSendCalls?: Array<Record<string, unknown>> }).__longTaskChatSendCalls
+          ?.filter((call) => call?.inputMode === 'guide').length ?? 0
+      ))).toBe(1);
+      const chatCalls = await app.evaluate(() => (
+        (globalThis as typeof globalThis & { __longTaskChatSendCalls?: Array<Record<string, unknown>> }).__longTaskChatSendCalls ?? []
+      ));
+      expect(chatCalls).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          message: 'preserve the validation evidence before continuing',
+          inputMode: 'guide',
+          sessionKey: MAIN_SESSION_KEY,
+        }),
+      ]));
+      await expect.poll(async () => app.evaluate(() => (
+        (globalThis as typeof globalThis & { __longTaskLedgerAppendCalls?: Array<Record<string, unknown>> }).__longTaskLedgerAppendCalls
+          ?.filter((call) => Array.isArray(call?.events) && call.events.some((event: Record<string, unknown>) => event.type === 'decision_recorded')).length ?? 0
+      ))).toBe(1);
     } finally {
       await closeElectronApp(app);
     }

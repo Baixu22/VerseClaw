@@ -634,8 +634,8 @@ export async function uploadImageFeishu(params: {
  * preserving the original UTF-8 display name (Chinese, emoji, etc.).
  *
  * Previous versions percent-encoded non-ASCII characters, but the Feishu
- * `im.file.create` API uses `file_name` as a literal display name â€” it does
- * NOT decode percent-encoding â€” so encoded filenames appeared as garbled text
+ * `im.file.create` API uses `file_name` as a literal display name â€?it does
+ * NOT decode percent-encoding â€?so encoded filenames appeared as garbled text
  * in chat (regression in v2026.3.2).
  */
 export function sanitizeFileNameForUpload(fileName: string): string {

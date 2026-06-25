@@ -11,12 +11,30 @@ export type SessionContinuityReason =
   | 'truncated_context'
   | 'compaction_warning'
   | 'recovery_checkpoint'
+  | 'recovery_context'
   | 'active_run';
 
 export type SessionContinuityRecommendation = {
   action: SessionContinuityAction;
   reason: SessionContinuityReason;
   disabled: boolean;
+};
+
+export type SessionContinuityAvailability = {
+  disabled: boolean;
+  reasons: SessionContinuityReason[];
+};
+
+export type SessionContinuityHealth = {
+  status: 'healthy' | 'risky' | 'blocked';
+  reasons: SessionContinuityReason[];
+};
+
+export type SessionContinuityPreflight = {
+  fork: SessionContinuityAvailability;
+  handoff: SessionContinuityAvailability;
+  recommendation: SessionContinuityRecommendation;
+  health: SessionContinuityHealth;
 };
 
 export type SessionContinuityErrorKind =
@@ -27,21 +45,37 @@ export type SessionContinuityErrorKind =
   | 'unknown';
 
 const HIGH_CONTEXT_PRESSURE_RATIO = 0.85;
+const RECOVERY_CHECKPOINT_TRIGGERS = new Set([
+  'compaction',
+  'interrupt',
+  'run_abort',
+  'manual_review',
+  'session_rotation',
+]);
 
-export function resolveSessionContinuityRecommendation(input: {
+export function resolveSessionContinuityPreflight(input: {
   gatewayAvailable: boolean;
   activeRun: boolean;
   contextRange?: WorkspaceContextRange | null;
   liveUsage?: LiveTokenUsage | null;
   compactionStatus?: SessionCompactionStatus | null;
   longTaskControlStatus?: LongTaskControlStatus | null;
-}): SessionContinuityRecommendation {
+}): SessionContinuityPreflight {
+  const forkReasons: SessionContinuityReason[] = [];
+  const handoffReasons: SessionContinuityReason[] = [];
+
   if (input.activeRun || input.longTaskControlStatus?.latestIntervention?.status === 'draining') {
-    return { action: 'fork', reason: 'active_run', disabled: true };
+    return {
+      fork: { disabled: true, reasons: ['active_run'] },
+      handoff: { disabled: true, reasons: ['active_run'] },
+      recommendation: { action: 'fork', reason: 'active_run', disabled: true },
+      health: { status: 'blocked', reasons: ['active_run'] },
+    };
   }
 
   if (!input.gatewayAvailable) {
-    return { action: 'handoff', reason: 'gateway_unavailable', disabled: false };
+    forkReasons.push('gateway_unavailable');
+    handoffReasons.push('gateway_unavailable');
   }
 
   const truncatedMessageCount = Math.max(
@@ -49,26 +83,30 @@ export function resolveSessionContinuityRecommendation(input: {
     input.compactionStatus?.truncatedMessageCount ?? 0,
   );
   if (truncatedMessageCount > 0) {
-    return { action: 'handoff', reason: 'truncated_context', disabled: false };
+    forkReasons.push('truncated_context');
+    handoffReasons.push('truncated_context');
   }
 
   if ((input.compactionStatus?.warnings?.length ?? 0) > 0 || input.compactionStatus?.canCompact === false) {
-    return { action: 'handoff', reason: 'compaction_warning', disabled: false };
+    forkReasons.push('compaction_warning');
+    handoffReasons.push('compaction_warning');
   }
 
   const checkpointTrigger = input.longTaskControlStatus?.latestCheckpoint?.trigger;
-  if (
-    checkpointTrigger === 'compaction'
-    || checkpointTrigger === 'interrupt'
-    || checkpointTrigger === 'run_abort'
-    || checkpointTrigger === 'manual_review'
-    || checkpointTrigger === 'session_rotation'
-  ) {
-    return { action: 'handoff', reason: 'recovery_checkpoint', disabled: false };
+  if (checkpointTrigger && RECOVERY_CHECKPOINT_TRIGGERS.has(checkpointTrigger)) {
+    forkReasons.push('recovery_checkpoint');
+    handoffReasons.push('recovery_checkpoint');
+  }
+
+  const recoveryWarnings = input.longTaskControlStatus?.warnings ?? [];
+  if (recoveryWarnings.some((warning) => /recovery|context[_ -]?pack|compression[_ -]?artifact/i.test(warning))) {
+    forkReasons.push('recovery_context');
+    handoffReasons.push('recovery_context');
   }
 
   if (input.compactionStatus?.pressure === 'high') {
-    return { action: 'handoff', reason: 'high_pressure', disabled: false };
+    forkReasons.push('high_pressure');
+    handoffReasons.push('high_pressure');
   }
 
   const maxTokens = input.compactionStatus?.maxTokens ?? input.contextRange?.maxTokens ?? null;
@@ -82,10 +120,38 @@ export function resolveSessionContinuityRecommendation(input: {
     && typeof usedTokens === 'number'
     && usedTokens / maxTokens >= HIGH_CONTEXT_PRESSURE_RATIO
   ) {
-    return { action: 'handoff', reason: 'high_pressure', disabled: false };
+    forkReasons.push('high_pressure');
+    handoffReasons.push('high_pressure');
   }
 
-  return { action: 'fork', reason: 'default', disabled: false };
+  const firstHandoffReason = handoffReasons.find((reason) => reason !== 'gateway_unavailable') ?? handoffReasons[0];
+  const recommendation: SessionContinuityRecommendation = firstHandoffReason
+    ? { action: 'handoff', reason: firstHandoffReason, disabled: false }
+    : { action: 'fork', reason: 'default', disabled: false };
+  const riskReasons = uniqueReasons([
+    ...forkReasons,
+    ...handoffReasons,
+  ]);
+
+  return {
+    fork: {
+      disabled: !input.gatewayAvailable,
+      reasons: uniqueReasons(forkReasons),
+    },
+    handoff: {
+      disabled: false,
+      reasons: uniqueReasons(handoffReasons),
+    },
+    recommendation,
+    health: {
+      status: riskReasons.length > 0 ? 'risky' : 'healthy',
+      reasons: riskReasons,
+    },
+  };
+}
+
+export function resolveSessionContinuityRecommendation(input: Parameters<typeof resolveSessionContinuityPreflight>[0]): SessionContinuityRecommendation {
+  return resolveSessionContinuityPreflight(input).recommendation;
 }
 
 export function classifySessionContinuityError(error: unknown): SessionContinuityErrorKind {
@@ -116,4 +182,8 @@ function extractErrorText(error: unknown): string {
   return [record.error, record.message, record.reason, record.warning]
     .filter((value): value is string => typeof value === 'string')
     .join(' ');
+}
+
+function uniqueReasons(reasons: SessionContinuityReason[]): SessionContinuityReason[] {
+  return Array.from(new Set(reasons));
 }

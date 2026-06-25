@@ -44,10 +44,10 @@ describe('dynamic import recovery', () => {
       reload,
     })).toBe(true);
 
-    expect(reload).toHaveBeenCalledWith('file:///C:/app/dist/index.html?e2eSkipSetup=1&clawxReload=1000#/clawgraph');
+    expect(reload).toHaveBeenCalledWith('file:///C:/app/dist/index.html?e2eSkipSetup=1&verse-clawReload=1000#/clawgraph');
 
     expect(recoverFromDynamicImportLoadError(error, {
-      href: 'file:///C:/app/dist/index.html?e2eSkipSetup=1&clawxReload=1000#/clawgraph',
+      href: 'file:///C:/app/dist/index.html?e2eSkipSetup=1&verse-clawReload=1000#/clawgraph',
       now: 2000,
       storage,
       reload,

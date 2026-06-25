@@ -246,6 +246,70 @@ describe('knowledge host API', () => {
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
   });
 
+  it('keeps automatic knowledge candidates as pending Inbox items without reviewed apply', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async () => {
+        throw new Error('automatic knowledge candidates must not call Gateway writes');
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    const created = await api.createInboxItem({
+      title: 'Architecture correction',
+      body: 'User corrected the architecture note: watched directory capture must be review-gated.',
+      kind: 'chat-session',
+      type: 'architecture',
+      sourceRefs: [{ id: 'AGENTS.md', kind: 'file', path: join(root, 'workspace', 'AGENTS.md') }],
+      createdBy: 'agent',
+    });
+
+    expect(created.success).toBe(true);
+    expect(created.item).toMatchObject({
+      status: 'pending',
+      type: 'architecture',
+      createdBy: 'agent',
+    });
+    expect(created.item?.warnings).toEqual(expect.arrayContaining([
+      expect.stringContaining('Rules-governed files'),
+    ]));
+
+    const proposals = await api.listProposals({ status: 'all' });
+    expect(proposals.proposals).toHaveLength(0);
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
+  it('forces watched-directory automation to remain review-gated', async () => {
+    const watchedDir = join(root, 'watched');
+    mkdirSync(watchedDir, { recursive: true });
+    const gatewayManager = {
+      rpc: vi.fn(async () => {
+        throw new Error('watched directories must not direct-ingest automatically');
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    const added = await api.addWatchedDirectory({
+      id: 'ignored',
+      path: watchedDir,
+      patterns: ['**/*.md'],
+      enabled: false,
+      ingestNewFiles: true,
+      autoCompile: true,
+      requiresReview: false,
+    });
+
+    expect(added.success).toBe(true);
+    expect(await api.listWatchedDirectories()).toEqual([
+      expect.objectContaining({
+        path: watchedDir,
+        requiresReview: true,
+      }),
+    ]);
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
   it('records knowledge provenance references as metadata only', async () => {
     const gatewayManager = { rpc: vi.fn() };
     const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
@@ -331,6 +395,109 @@ describe('knowledge host API', () => {
       title: 'Reviewed synthesis',
       sourceIds: ['notes/decision.md'],
     }), 120000);
+  });
+
+  it('routes knowledge context only when scope and mode allow read-only search', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'wiki.search') {
+          return {
+            results: [{
+              id: 'route-1',
+              title: 'Architecture Decision',
+              lookup: 'architecture/decision.md',
+              pagePath: 'architecture/decision.md',
+              snippet: 'Use the managed wiki as read-only context.',
+              score: 0.82,
+            }],
+          };
+        }
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    await expect(api.routeContext({
+      message: '之前项目里为什么选择 managed wiki 架构？',
+      scope: 'none',
+      mode: 'suggest',
+    })).resolves.toMatchObject({ success: true, decision: 'skip' });
+
+    await expect(api.routeContext({
+      message: '之前项目里为什么选择 managed wiki 架构？',
+      scope: 'wiki',
+      mode: 'manual',
+    })).resolves.toMatchObject({ success: true, decision: 'skip' });
+
+    await expect(api.routeContext({
+      message: '之前项目里为什么选择 managed wiki 架构？',
+      scope: 'wiki',
+      mode: 'suggest',
+      selectedReferences: [{ id: 'manual', title: 'Manual', lookup: 'manual.md', corpus: 'wiki' }],
+    })).resolves.toMatchObject({ success: true, decision: 'skip' });
+
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+
+    const suggest = await api.routeContext({
+      message: '之前项目里为什么选择 managed wiki 架构？',
+      scope: 'wiki',
+      mode: 'suggest',
+    });
+
+    expect(suggest).toMatchObject({
+      success: true,
+      decision: 'suggest',
+      candidates: [expect.objectContaining({
+        attachKind: 'suggested',
+        lookup: 'architecture/decision.md',
+        confidence: 0.82,
+      })],
+    });
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.search', expect.objectContaining({
+      corpus: 'wiki',
+      maxResults: 3,
+    }), 30000);
+    expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+  });
+
+  it('auto-read routes only high-confidence fresh non-contradicted candidates', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'wiki.search') {
+          return {
+            results: [
+              { id: 'fresh', title: 'Fresh', lookup: 'fresh.md', score: 0.9, freshnessLevel: 'fresh', matchedClaimStatus: 'supported' },
+              { id: 'low', title: 'Low', lookup: 'low.md', score: 0.2, freshnessLevel: 'fresh', matchedClaimStatus: 'supported' },
+              { id: 'stale', title: 'Stale', lookup: 'stale.md', score: 0.9, freshnessLevel: 'stale', matchedClaimStatus: 'supported' },
+              { id: 'conflict', title: 'Conflict', lookup: 'conflict.md', score: 0.9, freshnessLevel: 'fresh', matchedClaimStatus: 'contradicted' },
+              { id: 'extra', title: 'Extra', lookup: 'extra.md', score: 0.8, freshnessLevel: 'fresh', matchedClaimStatus: 'supported' },
+            ],
+          };
+        }
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    const result = await api.routeContext({
+      message: '项目历史里这个排障约定和架构决策是什么？',
+      scope: 'all',
+      mode: 'auto-read',
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      decision: 'auto_attach',
+      candidates: [
+        expect.objectContaining({ id: 'fresh', attachKind: 'auto' }),
+        expect.objectContaining({ id: 'extra', attachKind: 'auto' }),
+      ],
+    });
+    expect(result.candidates).toHaveLength(2);
+    expect(result.candidates.map((candidate) => candidate.id)).not.toEqual(expect.arrayContaining(['low', 'stale', 'conflict']));
+    expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 
   it('validates OKF bundles while preserving frontmatter and treating compatibility issues as warnings', async () => {

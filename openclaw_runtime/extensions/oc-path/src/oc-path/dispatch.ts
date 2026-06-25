@@ -13,7 +13,7 @@
 export type OcKind = "md" | "jsonc" | "jsonl" | "yaml";
 
 /**
- * Recommend a kind from a filename. Pure convention helper â€” returns
+ * Recommend a kind from a filename. Pure convention helper â€?returns
  * the substrate's default mapping. Consumers can override.
  */
 export function inferKind(filename: string): OcKind | null {

@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { invokeGatewayTool } from "../tools-invoke-shared.js";
+import {
+  clearSecurityVerificationShadowRecords,
+  getSecurityVerificationShadowRecords,
+} from "../../security-verification-shadow/index.js";
 
 const mocks = vi.hoisted(() => ({
   materializeBundleMcpToolsForRun: vi.fn(),
@@ -51,9 +55,9 @@ vi.mock("../tool-resolution.js", () => ({
   resolveGatewayScopedTools: mocks.resolveGatewayScopedTools,
 }));
 
-function invoke(input: Record<string, unknown>) {
+function invoke(input: Record<string, unknown>, cfg: Record<string, unknown> = {}) {
   return invokeGatewayTool({
-    cfg: {},
+    cfg: cfg as never,
     input,
     toolCallIdPrefix: "test",
     approvalMode: "report",
@@ -63,6 +67,8 @@ function invoke(input: Record<string, unknown>) {
 describe("invokeGatewayTool warm MCP fallback", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    delete process.env.OPENCLAW_SECURITY_VERIFICATION_SHADOW;
+    clearSecurityVerificationShadowRecords();
     mocks.peekSessionMcpRuntime.mockReturnValue(null);
     mocks.materializeBundleMcpToolsForRun.mockResolvedValue({ tools: [], dispose: vi.fn() });
     mocks.runBeforeToolCallHook.mockImplementation(async ({ params }) => ({
@@ -147,5 +153,154 @@ describe("invokeGatewayTool warm MCP fallback", () => {
       result: { ok: true, source: "core" },
     });
     expect(execute).toHaveBeenCalledWith("test-core", { value: 1 });
+    expect(getSecurityVerificationShadowRecords()).toHaveLength(0);
+  });
+
+  it("records a sanitized shadow result when the security verification flag is enabled", async () => {
+    process.env.OPENCLAW_SECURITY_VERIFICATION_SHADOW = "1";
+    const execute = vi.fn().mockResolvedValue({ ok: true, source: "core", secret: "do-not-store" });
+    mocks.resolveGatewayScopedTools.mockReturnValue({
+      agentId: "main",
+      tools: [{ name: "local_core_tool", parameters: {}, execute }],
+    });
+
+    const outcome = await invoke({
+      name: "local_core_tool",
+      sessionKey: "agent:main:r12-test",
+      args: { value: 1, apiToken: "hidden-token" },
+      idempotencyKey: "core",
+    });
+
+    expect(outcome).toMatchObject({
+      ok: true,
+      status: 200,
+      toolName: "local_core_tool",
+      source: "core",
+      result: { ok: true, source: "core", secret: "do-not-store" },
+    });
+    const records = getSecurityVerificationShadowRecords();
+    expect(records).toHaveLength(1);
+    expect(records[0]).toMatchObject({
+      source: "tools.invoke",
+      request: {
+        toolName: "local_core_tool",
+        argKeys: ["apiToken", "value"],
+        sensitiveArgKeyCount: 1,
+      },
+      result: { status: "success" },
+    });
+    expect(JSON.stringify(records[0])).not.toContain("hidden-token");
+    expect(JSON.stringify(records[0])).not.toContain("do-not-store");
+  });
+
+  it("keeps success payload shape identical when the shadow layer is enabled through config", async () => {
+    const execute = vi.fn().mockResolvedValue({ ok: true, source: "core", secret: "do-not-store" });
+    mocks.resolveGatewayScopedTools.mockReturnValue({
+      agentId: "main",
+      tools: [{ name: "local_core_tool", parameters: {}, execute }],
+    });
+    const input = {
+      name: "local_core_tool",
+      sessionKey: "agent:main:r12-test",
+      args: { value: 1, apiToken: "hidden-token" },
+      idempotencyKey: "core",
+      runId: "run_tools_contract",
+    };
+
+    const disabledOutcome = await invoke(input);
+    clearSecurityVerificationShadowRecords();
+    const enabledOutcome = await invoke(input, {
+      security: { validationShadow: { enabled: true } },
+    });
+
+    expect(enabledOutcome).toEqual(disabledOutcome);
+    expect(getSecurityVerificationShadowRecords()).toHaveLength(1);
+    expect(getSecurityVerificationShadowRecords()[0]).toMatchObject({
+      runId: "run_tools_contract",
+    });
+    expect(JSON.stringify(getSecurityVerificationShadowRecords()[0])).not.toContain("hidden-token");
+    expect(JSON.stringify(getSecurityVerificationShadowRecords()[0])).not.toContain("do-not-store");
+  });
+
+  it("keeps tool error payload shape identical while recording only sanitized error metadata", async () => {
+    const execute = vi.fn().mockRejectedValue(new Error("complete tool output with hidden-token"));
+    mocks.resolveGatewayScopedTools.mockReturnValue({
+      agentId: "main",
+      tools: [{ name: "local_core_tool", parameters: {}, execute }],
+    });
+    const input = {
+      name: "local_core_tool",
+      sessionKey: "agent:main:r12-test",
+      args: { value: 1, apiToken: "hidden-token" },
+      idempotencyKey: "core",
+    };
+
+    const disabledOutcome = await invoke(input);
+    clearSecurityVerificationShadowRecords();
+    const enabledOutcome = await invoke(input, {
+      security: { validationShadow: { enabled: true } },
+    });
+
+    expect(enabledOutcome).toEqual(disabledOutcome);
+    expect(enabledOutcome).toMatchObject({
+      ok: false,
+      status: 500,
+      toolName: "local_core_tool",
+      error: { type: "tool_error", message: "tool execution failed" },
+    });
+    const records = getSecurityVerificationShadowRecords();
+    expect(records).toHaveLength(1);
+    expect(records[0]).toMatchObject({
+      source: "tools.invoke",
+      result: { status: "error", errorType: "tool", hasErrorMessage: true },
+      verification: { status: "failed" },
+    });
+    expect(JSON.stringify(records[0])).not.toContain("hidden-token");
+    expect(JSON.stringify(records[0])).not.toContain("complete tool output");
+  });
+
+  it("keeps approval-blocked payload shape identical while recording a denied shadow result", async () => {
+    const execute = vi.fn().mockResolvedValue({ ok: true });
+    mocks.resolveGatewayScopedTools.mockReturnValue({
+      agentId: "main",
+      tools: [{ name: "local_core_tool", parameters: {}, execute }],
+    });
+    mocks.runBeforeToolCallHook.mockResolvedValue({
+      blocked: true,
+      reason: "approval required",
+      deniedReason: "plugin-approval",
+    });
+    const input = {
+      name: "local_core_tool",
+      sessionKey: "agent:main:r12-test",
+      args: { value: 1 },
+      idempotencyKey: "approval",
+    };
+
+    const disabledOutcome = await invoke(input);
+    clearSecurityVerificationShadowRecords();
+    const enabledOutcome = await invoke(input, {
+      security: { validationShadow: { enabled: true } },
+    });
+
+    expect(enabledOutcome).toEqual(disabledOutcome);
+    expect(enabledOutcome).toMatchObject({
+      ok: false,
+      status: 403,
+      toolName: "local_core_tool",
+      error: {
+        type: "tool_call_blocked",
+        message: "approval required",
+        requiresApproval: true,
+      },
+    });
+    expect(execute).not.toHaveBeenCalled();
+    expect(getSecurityVerificationShadowRecords()).toHaveLength(1);
+    expect(getSecurityVerificationShadowRecords()[0]).toMatchObject({
+      source: "tools.invoke",
+      result: { status: "denied", errorType: "permission", hasErrorMessage: true },
+      security: { decision: "would_block" },
+      verification: { status: "failed" },
+    });
   });
 });

@@ -32,7 +32,7 @@ export function verifyNextcloudTalkSignature(params: {
   // Pad to equal length before constant-time comparison to prevent
   // leaking length information via early-return timing.
   // Note: digest("hex") always produces lowercase ASCII (64 bytes for SHA-256),
-  // so expectedBuf is always 64 bytes â€” no variable-length concern on the expected side.
+  // so expectedBuf is always 64 bytes â€?no variable-length concern on the expected side.
   const maxLen = Math.max(expectedBuf.length, signatureBuf.length);
   const paddedExpected = Buffer.alloc(maxLen);
   const paddedSignature = Buffer.alloc(maxLen);

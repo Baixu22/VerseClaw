@@ -400,7 +400,7 @@ export async function runCopilotAttempt(
     // SAFETY: replay-shim owns the create/resume decision and the
     // recovery policy when resumeSession fails. See replay-shim.ts.
     // continuePendingWork is always false here so suspended tool/
-    // permission work cannot be replayed implicitly â€” replay-shim's
+    // permission work cannot be replayed implicitly â€?replay-shim's
     // worst-case-wins replayMetadata is the only signal the
     // orchestrator uses to decide whether the next attempt is safe.
     if (resumeSessionId) {
@@ -592,8 +592,8 @@ export async function runCopilotAttempt(
         return message;
       }
       // Preserve any caller-attached (or upstream-attached) mirror
-      // identity â€” especially the `${runId}:prompt` /
-      // `${runId}:assistant:final` identities attached above â€” so the
+      // identity â€?especially the `${runId}:prompt` /
+      // `${runId}:assistant:final` identities attached above â€?so the
       // dedupe key stays turn-stable. Falling back to a per-attempt
       // positional identity here is only safe for messages that don't
       // already carry a logical identity; with SDK session reuse the
@@ -763,7 +763,7 @@ function createSessionConfig(
     onPermissionRequest: createPermissionBridge(permissionPolicy),
     // `onUserInputRequest` is intentionally NOT registered: per the SDK
     // contract, omitting the handler hides the `ask_user` tool from the
-    // model entirely. This is the MVP posture â€” interactive ask_user
+    // model entirely. This is the MVP posture â€?interactive ask_user
     // requires routing the request to the OpenClaw channel/TUI prompt
     // path (mirroring extensions/codex/src/app-server/user-input-bridge.ts),
     // which is tracked as a follow-up. With the handler absent, agents
@@ -823,10 +823,10 @@ function createSessionConfig(
     // (`@github/copilot-sdk/dist/types.d.ts:1168-1178`), the client-
     // level token authenticates the CLI process while the session-
     // level token determines the identity used for content exclusion,
-    // model routing, and quota â€” and is sent on BOTH `createSession`
+    // model routing, and quota â€?and is sent on BOTH `createSession`
     // and `resumeSession` (`ResumeSessionConfig` picks `gitHubToken`
     // at types.d.ts:1198). Omitted when `useLoggedInUser` is the
-    // resolved mode â€” passing both would be contradictory and the SDK
+    // resolved mode â€?passing both would be contradictory and the SDK
     // already implies content-exclusion/quota from the logged-in
     // identity in that mode.
     ...(resolvedAuth.authMode === "gitHubToken" && resolvedAuth.gitHubToken

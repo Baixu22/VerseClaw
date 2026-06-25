@@ -45,7 +45,7 @@ type IMessageReplyCacheEntry = IMessageChatContext & {
    *
    * Optional for backwards compatibility with persisted entries from older
    * gateway versions that did not record this field; missing values are
-   * treated as `false` (the safe default â€” pre-existing entries on disk
+   * treated as `false` (the safe default â€?pre-existing entries on disk
    * came from the inbound-only writer that existed before this change).
    */
   isFromMe?: boolean;
@@ -251,8 +251,8 @@ function hasChatScope(ctx?: IMessageChatContext): boolean {
 /**
  * Strip the `iMessage;-;` / `SMS;-;` / `any;-;` service prefix that Messages
  * uses for direct chats. Different layers report direct DMs in different
- * forms â€” imsg's watch emits the bare handle plus an `any;-;â€¦` chat_guid,
- * the action surface synthesizes `iMessage;-;â€¦` from a phone-number target â€”
+ * forms â€?imsg's watch emits the bare handle plus an `any;-;â€¦` chat_guid,
+ * the action surface synthesizes `iMessage;-;â€¦` from a phone-number target â€?
  * so comparing the raw strings would falsely flag the same chat as a
  * cross-chat target. Normalize both sides to the bare suffix.
  */
@@ -358,7 +358,7 @@ export function resolveIMessageMessageId(
     /**
      * When true, only resolve message ids that the gateway recorded as sent
      * by itself (`isFromMe: true`). Used by `edit` / `unsend` so an agent
-     * cannot retract or edit messages other participants sent â€” Messages.app
+     * cannot retract or edit messages other participants sent â€?Messages.app
      * enforces this at the OS level too, but failing earlier in the plugin
      * gives a clean error and avoids dispatching a guaranteed-to-fail bridge
      * call.
@@ -399,7 +399,7 @@ export function resolveIMessageMessageId(
       }
       return uuid;
     }
-    // Cache miss: now the chat-scope requirement matters â€” without scope
+    // Cache miss: now the chat-scope requirement matters â€?without scope
     // we have no way to verify the caller is reacting in the right chat,
     // and without a cached UUID the bridge cannot resolve the short id.
     if (opts?.requireKnownShortId && !hasChatScope(opts.chatContext)) {
@@ -454,14 +454,14 @@ function buildFromMeError(inputId: string, inputKind: "short" | "uuid"): Error {
 /**
  * Return the most recent cached entry whose chat scope matches the supplied
  * context. Used as a fallback when an agent calls a per-message action (e.g.
- * `react`) without specifying a `messageId` â€” the natural intent is "react
+ * `react`) without specifying a `messageId` â€?the natural intent is "react
  * to the message I just received in this chat."
  *
  * Strict semantics for safety:
  *  - Caller must supply a chat scope. We refuse to "guess" the active chat.
  *  - Cached entry must positively match on at least one identifier kind
  *    (chatGuid, chatIdentifier, chatId, or normalized direct-DM fingerprint).
- *    We do NOT fall through on "no overlapping identifier" â€” that's how a
+ *    We do NOT fall through on "no overlapping identifier" â€?that's how a
  *    cached entry from a foreign chat could be returned when the caller's
  *    context didn't share any identifier kind with the cache.
  *  - Caller must supply an accountId; we never cross account boundaries.

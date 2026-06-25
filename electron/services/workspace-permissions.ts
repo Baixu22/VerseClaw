@@ -95,9 +95,21 @@ const SAFE_GATEWAY_METHODS = new Set([
   'memory.evidenceCheck',
   'memory.simulateInjection',
   'memory.health',
+  'memory.utilityReport',
+  'memory.evalReport',
   'memory.detail',
   'memory.previewProposal',
+  'memory.feedbackList',
   'observability.traces',
+  'security.health',
+  'security.policy.get',
+  'security.policy.simulate',
+  'security.intercepts.list',
+  'verification.health',
+  'verification.run',
+  'verification.status',
+  'verification.results.list',
+  'verification.results.get',
 ]);
 
 const DEV_ONLY_GATEWAY_METHODS = new Set<string>([]);
@@ -116,8 +128,8 @@ export function isDevOnlyGatewayRpc(method: string): boolean {
 export function isDevOnlyGatewayRpcEnabled(method: string): boolean {
   if (!isDevOnlyGatewayRpc(method)) return true;
   return process.env.OPENCLAW_TEST_ENABLE_SESSION_MCP_WARM === '1'
-    && typeof process.env.CLAWX_USER_DATA_DIR === 'string'
-    && process.env.CLAWX_USER_DATA_DIR.trim().length > 0;
+    && typeof process.env.VERSE_CLAW_USER_DATA_DIR === 'string'
+    && process.env.VERSE_CLAW_USER_DATA_DIR.trim().length > 0;
 }
 
 export function isPathInsideWorkspace(path: string, workspaceRoot: string): boolean {
@@ -229,7 +241,7 @@ export function decideGatewayRpc(
     return {
       allowed: false,
       risk: 'destructive',
-      reason: `${method.trim()} is a dev/test-only Gateway RPC and requires OPENCLAW_TEST_ENABLE_SESSION_MCP_WARM=1 with CLAWX_USER_DATA_DIR`,
+      reason: `${method.trim()} is a dev/test-only Gateway RPC and requires OPENCLAW_TEST_ENABLE_SESSION_MCP_WARM=1 with VERSE_CLAW_USER_DATA_DIR`,
     };
   }
   const risk = classifyGatewayRpcRisk(method, params);

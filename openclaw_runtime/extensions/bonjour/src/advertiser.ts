@@ -414,7 +414,7 @@ export async function startGatewayBonjourAdvertiser(
         // function without it, so surface a single warning and skip recovery.
         // Recovery would just re-enter the same failing syscall.
         logger.warn(
-          `bonjour: disabling mDNS â€” networkInterfaces() unavailable in this environment: ${classification.formatted}`,
+          `bonjour: disabling mDNS â€?networkInterfaces() unavailable in this environment: ${classification.formatted}`,
         );
       } else {
         const label =

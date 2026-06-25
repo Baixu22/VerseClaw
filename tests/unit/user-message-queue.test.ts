@@ -123,6 +123,54 @@ describe('persistent user message queue', () => {
 });
 
 describe('persistent long-task control records', () => {
+  it('does not infer a Task Ledger root from prior records', () => {
+    const sessionKey = 'agent:main:no-root-inference';
+
+    const rootedCheckpoint = recordLongTaskCheckpoint({
+      sessionKey,
+      agentId: 'main',
+      workspaceId: 'workspace',
+      taskLedgerRootId: 'tlroot_loop',
+      trigger: 'guide',
+      activeTask: 'rooted loop checkpoint',
+      idempotencyKey: 'checkpoint-rooted',
+    });
+    const detachedCheckpoint = recordLongTaskCheckpoint({
+      sessionKey,
+      agentId: 'main',
+      workspaceId: 'workspace',
+      trigger: 'guide',
+      activeTask: 'ordinary chat must not borrow the loop root',
+      idempotencyKey: 'checkpoint-detached',
+    });
+    const detachedIntervention = recordLongTaskInterventionEvent({
+      sessionKey,
+      agentId: 'main',
+      workspaceId: 'workspace',
+      trigger: 'guide',
+      mode: 'guide',
+      status: 'recorded',
+      payload: { text: 'ordinary guidance without an explicit loop root' },
+      checkpointId: detachedCheckpoint.id,
+      idempotencyKey: 'intervention-detached',
+    });
+    const detachedQueueItem = enqueueUserMessage(sessionKey, {
+      text: 'queued without an explicit loop root',
+      source: 'queue',
+      idempotencyKey: 'queue-detached',
+    });
+
+    expect(rootedCheckpoint.taskLedgerRootId).toBe('tlroot_loop');
+    expect(detachedCheckpoint.taskLedgerRootId).toBeUndefined();
+    expect(detachedCheckpoint.checkpoint.taskLedgerRootId).toBeUndefined();
+    expect(detachedCheckpoint.checkpoint.evidenceRefs).not.toContainEqual(
+      expect.objectContaining({ type: 'task_ledger', ref: 'tlroot_loop' }),
+    );
+    expect(detachedIntervention.taskLedgerRootId).toBeUndefined();
+    expect(detachedIntervention.payload).not.toHaveProperty('taskLedgerRootId');
+    expect(detachedQueueItem.taskLedgerRootId).toBeUndefined();
+  });
+
   it('upserts checkpoints and intervention events by idempotency key', () => {
     const sessionKey = 'agent:main:checkpoint-idempotent';
 

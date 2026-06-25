@@ -9,6 +9,7 @@ import {
   getLatestLongTaskCheckpoint,
   recordLongTaskCheckpoint,
 } from "../long-task-control/store.js";
+import { ensureLongTaskLedgerRoot } from "../long-task-control/task-ledger.js";
 import {
   defaultQualityAssessments,
   deriveValidationState,
@@ -372,6 +373,21 @@ export function createMission(
   if (config.enabled === false) throw new Error("mission loop is disabled by configuration");
   const now = deps.now?.() ?? Date.now();
   const missionId = request.missionId?.trim() || (deps.idFactory ?? defaultId)("mission");
+  let taskLedgerRootId: string | undefined;
+  try {
+    taskLedgerRootId = ensureLongTaskLedgerRoot({
+      workspaceId: request.workspaceId,
+      sessionKey: request.sessionKey,
+      ...(request.agentId ? { agentId: request.agentId } : {}),
+      runId: missionId,
+      title: request.objective,
+      source: "mission_loop",
+      createdAt: now,
+      metadata: { missionId, acceptance: request.acceptance ?? [] },
+    });
+  } catch {
+    // Mission state remains authoritative if the ledger file is temporarily unavailable.
+  }
   const record: MissionRunRecord = {
     missionId,
     sessionKey: request.sessionKey,
@@ -392,6 +408,7 @@ export function createMission(
     metadata: {
       enableSchedule: request.enableSchedule === true,
       taskLedgerSummary: request.taskLedgerSummary,
+      taskLedgerRootId,
       memorySummary: request.memorySummary,
       fileHints: request.fileHints ?? [],
       important: request.important ?? false,
@@ -501,6 +518,10 @@ export async function tickMission(
         : record.objective,
       sessionKey: record.sessionKey,
       agentId: record.agentId,
+      workspaceId: record.workspaceId,
+      taskLedgerRootId: typeof record.metadata?.taskLedgerRootId === "string"
+        ? record.metadata.taskLedgerRootId
+        : undefined,
       acceptance: record.acceptance,
       fileHints: Array.isArray(record.metadata?.fileHints) ? record.metadata.fileHints as string[] : [],
       important: record.metadata?.important === true,
@@ -590,6 +611,9 @@ export async function tickMission(
       sessionKey: record.sessionKey,
       agentId: record.agentId,
       workspaceId: record.workspaceId ?? undefined,
+      taskLedgerRootId: typeof record.metadata?.taskLedgerRootId === "string"
+        ? record.metadata.taskLedgerRootId
+        : undefined,
       trigger: reviewer.decision === "blocked" || reviewer.decision === "ask_user" ? "manual_review" : "guide",
       activeTask: record.objective,
       nextAction: reviewer.decision,
@@ -600,6 +624,7 @@ export async function tickMission(
       acceptanceStatus: reviewer.acceptanceStatus,
       metadata: {
         missionId: record.missionId,
+        taskLedgerRootId: record.metadata?.taskLedgerRootId,
         tick: record.tick,
         reviewer,
       },
@@ -611,6 +636,9 @@ export async function tickMission(
       sessionKey: record.sessionKey,
       agentId: record.agentId,
       workspaceId: record.workspaceId ?? undefined,
+      taskLedgerRootId: typeof record.metadata?.taskLedgerRootId === "string"
+        ? record.metadata.taskLedgerRootId
+        : undefined,
       runId: record.missionId,
       traceId: record.traceId,
       trigger: checkpoint.trigger,

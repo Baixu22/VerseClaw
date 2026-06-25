@@ -38,7 +38,7 @@ type DeepInfraAuthConfig = {
   models?: { providers?: Record<string, { apiKey?: unknown } | undefined> };
 };
 
-// Wire format â€” mirrors deepapi/agent_models_api.AgentOpenAIModelsOut.
+// Wire format â€?mirrors deepapi/agent_models_api.AgentOpenAIModelsOut.
 interface DeepInfraAgentModelPricing {
   // chat / vlm / embed
   input_tokens?: number;
@@ -223,8 +223,8 @@ function manifestChatEntryToSurfaceModel(entry: ManifestChatModelEntry): DeepInf
 // `/v1/openai/models?sort_by=openclaw&filter=with_meta` projection is the
 // real source of truth (140 tagged rows today), so every retired model
 // removed from the DeepInfra catalog disappears here automatically the
-// next time discovery runs. Newer entries â€” additional image-gen models,
-// video-gen models, additional TTS voices â€” arrive through discovery
+// next time discovery runs. Newer entries â€?additional image-gen models,
+// video-gen models, additional TTS voices â€?arrive through discovery
 // without a code change.
 //
 // Every entry below is verified against the live catalog at the time of
@@ -233,7 +233,7 @@ function manifestChatEntryToSurfaceModel(entry: ManifestChatModelEntry): DeepInf
 // Lightning-Flux` was removed from DeepInfra and is therefore not listed
 // even though earlier main releases shipped it as a fallback).
 const STATIC_NON_CHAT_FALLBACK: DeepInfraSurfaceModel[] = [
-  // image-gen â€” representative subset of currently-served models.
+  // image-gen â€?representative subset of currently-served models.
   {
     id: "black-forest-labs/FLUX-1-schnell",
     name: "black-forest-labs/FLUX-1-schnell",
@@ -270,10 +270,10 @@ const STATIC_NON_CHAT_FALLBACK: DeepInfraSurfaceModel[] = [
     defaultHeight: 1024,
     defaultIterations: 4,
   },
-  // video-gen â€” DeepInfra has no live video-gen catalog rows today;
+  // video-gen â€?DeepInfra has no live video-gen catalog rows today;
   // intentionally empty here. Live discovery picks up text-to-video
   // models as soon as the backend tags them, no static row required.
-  // tts â€” Kokoro first so the shipped default voice (af_bella) pairs with
+  // tts â€?Kokoro first so the shipped default voice (af_bella) pairs with
   // the chosen default model; the rest are alternative TTS providers
   // currently served by DeepInfra. Qwen3-TTS / chatterbox-turbo / csm-1b
   // each require their own voice; they ship as discoverable alternatives,
@@ -457,7 +457,7 @@ export async function discoverDeepInfraModels(options?: {
   const catalog = await discoverDeepInfraSurfaces(options);
   const chatModels = catalog.chat.length > 0 ? catalog.chat : [...catalog.chat, ...catalog.vlm];
   if (chatModels.length === 0) {
-    // True empty (no manifest entries either) â€” keep behavior stable.
+    // True empty (no manifest entries either) â€?keep behavior stable.
     return DEEPINFRA_MODEL_CATALOG.map(buildDeepInfraModelDefinition);
   }
   const liveModels = chatModels.map(chatSurfaceModelToModelDefinition);

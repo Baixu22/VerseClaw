@@ -121,7 +121,7 @@ function baseHostApiMocks() {
   };
 }
 
-test.describe('ClawX chat slash commands', () => {
+test.describe('Verse Claw chat slash commands', () => {
   test('discovers and dispatches quick actions from the composer', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -286,7 +286,7 @@ test.describe('ClawX chat slash commands', () => {
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill('/mission');
       await page.keyboard.press('Enter');
-      await expect.poll(() => page.evaluate(() => window.location.hash)).toBe('#/agents');
+      await expect.poll(() => page.evaluate(() => window.location.hash)).toBe('#/settings/agents');
 
     } finally {
       await closeElectronApp(app);

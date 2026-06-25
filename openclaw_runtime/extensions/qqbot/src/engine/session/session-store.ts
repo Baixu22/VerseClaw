@@ -1,5 +1,5 @@
 /**
- * Gateway session persistence â€” SQLite KV-backed store.
+ * Gateway session persistence â€?SQLite KV-backed store.
  *
  * Legacy JSON session files are imported on first account access, then
  * removed after SQLite has the canonical short-lived session entry.

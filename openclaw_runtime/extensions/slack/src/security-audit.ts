@@ -51,7 +51,7 @@ export async function collectSlackSecurityAuditFindings(params: {
       severity: "critical",
       title: "Slack slash commands bypass access groups",
       detail:
-        "Slack slash/native commands are enabled while commands.useAccessGroups=false; this can allow unrestricted /â€¦ command execution from channels/users you didn't explicitly authorize.",
+        "Slack slash/native commands are enabled while commands.useAccessGroups=false; this can allow unrestricted /â€?command execution from channels/users you didn't explicitly authorize.",
       remediation: "Set commands.useAccessGroups=true (recommended).",
     });
     return findings;
@@ -83,7 +83,7 @@ export async function collectSlackSecurityAuditFindings(params: {
       severity: "warn",
       title: "Slack slash commands have no allowlists",
       detail:
-        "Slack slash/native commands are enabled, but neither an owner allowFrom list nor any channels.<id>.users allowlist is configured; /â€¦ commands will be rejected for everyone.",
+        "Slack slash/native commands are enabled, but neither an owner allowFrom list nor any channels.<id>.users allowlist is configured; /â€?commands will be rejected for everyone.",
       remediation:
         "Approve yourself via pairing (recommended), or set channels.slack.allowFrom and/or channels.slack.channels.<id>.users.",
     });

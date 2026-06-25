@@ -137,7 +137,22 @@
     "permissions": "Permission Boundary",
     "permissionsDescription": "Chat knowledge scope only grants search/get access. Writes, merges, archives, and deletes must pass through draft or proposal review and user confirmation.",
     "lastReview": "Latest Steward Review",
-    "noReview": "No steward review has run in this session."
+    "noReview": "No steward review has run in this session.",
+    "runHealthCheck": "Run Health Check",
+    "runLint": "Run Lint",
+    "runCompile": "Run Compile",
+    "checking": "Checking...",
+    "contradictions": "Contradictions",
+    "stale": "Stale Pages",
+    "dangling": "Orphan Pages",
+    "noIssues": "No issues detected",
+    "suggestions": "Steward Suggestions",
+    "lastCheck": "Last checked: {time}",
+    "dismissAll": "Dismiss All",
+    "allClear": "All Clear",
+    "allClearHint": "No governance issues detected. Run a health check to verify.",
+    "lintComplete": "Lint complete",
+    "compileComplete": "Compile complete"
   },
   "dialogs": {
     "pickFiles": "Import knowledge files",

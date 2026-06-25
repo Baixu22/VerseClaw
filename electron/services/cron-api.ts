@@ -1,7 +1,21 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
-import type { CronJob, CronJobDelivery, CronSchedule } from '@shared/types/cron';
+import {
+  buildCronBrowserAutomationPrompt,
+  CRON_BROWSER_AUTOMATION_TOOL_ALLOW,
+  parseCronBrowserAutomationPrompt,
+} from '@shared/cron-browser-automation';
+import type { BrowserAutomationRunResult } from '@shared/host-api/contract';
+import type {
+  CronBrowserAutomationConfig,
+  CronJob,
+  CronJobDelivery,
+  CronJobCreateInput,
+  CronJobSource,
+  CronJobUpdateInput,
+  CronSchedule,
+} from '@shared/types/cron';
 import type { GatewayManager } from '../gateway/manager';
 import { getOpenClawConfigDir } from '../utils/paths';
 import { resolveAgentIdFromChannel } from '../utils/agent-config';
@@ -17,9 +31,10 @@ interface GatewayCronJob {
   createdAtMs: number;
   updatedAtMs: number;
   schedule: { kind: string; expr?: string; everyMs?: number; at?: string; tz?: string };
-  payload: { kind: string; message?: string; text?: string };
+  payload: { kind: string; message?: string; text?: string; toolsAllow?: string[] };
   delivery?: { mode: string; channel?: string; to?: string; accountId?: string };
   sessionTarget?: string;
+  wakeMode?: string;
   state: {
     nextRunAtMs?: number;
     runningAtMs?: number;
@@ -43,6 +58,7 @@ interface CronRunLogEntry {
   durationMs?: number;
   model?: string;
   provider?: string;
+  browserAutomationResult?: BrowserAutomationRunResult;
 }
 
 interface CronSessionKeyParts {
@@ -60,6 +76,33 @@ interface CronSessionFallbackMessage {
 }
 
 type JsonRecord = Record<string, unknown>;
+
+function isBrowserAutomationInput(
+  input: Pick<CronJobCreateInput, 'taskKind' | 'browserAutomation'> | Pick<CronJobUpdateInput, 'taskKind' | 'browserAutomation'>,
+): input is { taskKind: 'browserAutomation'; browserAutomation: CronBrowserAutomationConfig } {
+  return input.taskKind === 'browserAutomation' && !!input.browserAutomation;
+}
+
+function buildCronAgentPayload(input: Pick<
+  CronJobCreateInput | CronJobUpdateInput,
+  'message' | 'taskKind' | 'browserAutomation' | 'toolsAllow'
+>): Record<string, unknown> | undefined {
+  if (isBrowserAutomationInput(input)) {
+    return {
+      kind: 'agentTurn',
+      message: buildCronBrowserAutomationPrompt(input.browserAutomation),
+      toolsAllow: [...CRON_BROWSER_AUTOMATION_TOOL_ALLOW],
+    };
+  }
+  if (typeof input.message === 'string') {
+    return {
+      kind: 'agentTurn',
+      message: input.message,
+      ...(Array.isArray(input.toolsAllow) ? { toolsAllow: input.toolsAllow } : {}),
+    };
+  }
+  return undefined;
+}
 
 function parseCronSessionKey(sessionKey: string): CronSessionKeyParts | null {
   if (!sessionKey.startsWith('agent:')) return null;
@@ -106,6 +149,20 @@ function buildCronRunMessage(entry: CronRunLogEntry, index: number): CronSession
   }
   if (status === 'error' && !content.toLowerCase().startsWith('run failed:')) {
     content = `Run failed: ${content}`;
+  }
+  if (entry.browserAutomationResult) {
+    const result = entry.browserAutomationResult;
+    const artifactCount = result.evidence?.artifacts?.length ?? 0;
+    const lines = [
+      `Browser automation: ${result.status}`,
+      result.finalUrl ? `Final URL: ${result.finalUrl}` : '',
+      result.title ? `Title: ${result.title}` : '',
+      `Login state: ${result.loginState}`,
+      `Steps: ${result.steps?.filter((step) => step.status === 'passed').length ?? 0}/${result.steps?.length ?? 0} passed`,
+      artifactCount > 0 ? `Artifacts: ${artifactCount}` : '',
+      result.error ? `Error: ${result.error}` : '',
+    ].filter(Boolean);
+    content = `${content}\n\n${lines.join('\n')}`;
   }
 
   const meta: string[] = [];
@@ -244,6 +301,24 @@ function buildCronSessionFallbackMessages(params: {
   return messages.slice(-limit);
 }
 
+function isBrowserAutomationRunResult(value: unknown): value is BrowserAutomationRunResult {
+  return !!value
+    && typeof value === 'object'
+    && (value as { schemaVersion?: unknown }).schemaVersion === 1
+    && typeof (value as { runId?: unknown }).runId === 'string'
+    && ((value as { status?: unknown }).status === 'success' || (value as { status?: unknown }).status === 'failed');
+}
+
+function collectBrowserAutomationRuns(
+  runs: CronRunLogEntry[],
+  limit: number,
+): BrowserAutomationRunResult[] {
+  return runs
+    .map((entry) => entry.browserAutomationResult)
+    .filter(isBrowserAutomationRunResult)
+    .slice(-limit);
+}
+
 function getUnsupportedCronDeliveryError(_channel: string | undefined): string | null {
   return null;
 }
@@ -313,9 +388,13 @@ function normalizeCronDeliveryPatch(rawDelivery: unknown): Record<string, unknow
 function buildCronUpdatePatch(input: Record<string, unknown>): Record<string, unknown> {
   const patch = { ...input };
   if (typeof patch.schedule === 'string') patch.schedule = { kind: 'cron', expr: patch.schedule };
-  if (typeof patch.message === 'string') {
-    patch.payload = { kind: 'agentTurn', message: patch.message };
+  const payload = buildCronAgentPayload(patch as CronJobUpdateInput);
+  if (payload) {
+    patch.payload = payload;
     delete patch.message;
+    delete patch.taskKind;
+    delete patch.browserAutomation;
+    delete patch.toolsAllow;
   }
   if ('delivery' in patch) patch.delivery = normalizeCronDeliveryPatch(patch.delivery);
   if ('agentId' in patch) {
@@ -324,8 +403,9 @@ function buildCronUpdatePatch(input: Record<string, unknown>): Record<string, un
   return patch;
 }
 
-function transformCronJob(job: GatewayCronJob): CronJob {
+function transformCronJob(job: GatewayCronJob, source: CronJobSource = 'gateway'): CronJob {
   const message = job.payload?.message || job.payload?.text || '';
+  const browserAutomation = parseCronBrowserAutomationPrompt(message);
   const gatewayDelivery = normalizeCronDelivery(job.delivery);
   const channelType = gatewayDelivery.channel ? toUiChannelType(gatewayDelivery.channel) : undefined;
   const delivery = channelType ? { ...gatewayDelivery, channel: channelType } : gatewayDelivery;
@@ -351,8 +431,18 @@ function transformCronJob(job: GatewayCronJob): CronJob {
   return {
     id: job.id,
     name: job.name,
-    message,
+    message: browserAutomation?.config.objective || browserAutomation?.messageWithoutMarker || message,
+    taskKind: browserAutomation ? 'browserAutomation' : 'agentTurn',
+    ...(browserAutomation ? { browserAutomation: browserAutomation.config } : {}),
+    ...(Array.isArray(job.payload?.toolsAllow) ? { toolsAllow: job.payload.toolsAllow } : {}),
     schedule: normalizeCronSchedule(job.schedule),
+    source,
+    runtime: {
+      source,
+      sessionTarget: job.sessionTarget || 'isolated',
+      wakeMode: job.wakeMode || 'next-heartbeat',
+      payloadKind: job.payload?.kind || 'agentTurn',
+    },
     delivery,
     target,
     enabled: job.enabled,
@@ -388,7 +478,7 @@ async function listCronJobs(gatewayManager: GatewayManager): Promise<CronJob[]> 
     repairCronJobsInBackground(gatewayManager, jobs);
   }
 
-  return jobs.map((job) => ({ ...transformCronJob(job), ...(usedFallback ? { _fromFallback: true } : {}) }));
+  return jobs.map((job) => transformCronJob(job, usedFallback ? 'config-fallback' : 'gateway'));
 }
 
 function repairCronJobsInBackground(gatewayManager: GatewayManager, jobs: GatewayCronJob[]): void {
@@ -479,10 +569,14 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
       if (delivery.mode === 'announce' && unsupportedDeliveryError) {
         throw new Error(unsupportedDeliveryError);
       }
+      const agentPayload = buildCronAgentPayload(input);
+      if (!agentPayload) {
+        throw new Error('Cron create requires a message or browser automation task');
+      }
       const result = await gatewayManager.rpc('cron.add', {
         name: input.name,
         schedule: { kind: 'cron', expr: input.schedule },
-        payload: { kind: 'agentTurn', message: input.message },
+        payload: agentPayload,
         enabled: typeof input.enabled === 'boolean' ? input.enabled : true,
         wakeMode: 'next-heartbeat',
         sessionTarget: 'isolated',
@@ -556,6 +650,7 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
           } : undefined,
           limit,
         }),
+        browserAutomationRuns: collectBrowserAutomationRuns(runs, limit),
       };
     },
     deliveryTargets: async () => ({ success: true, targets: [] }),

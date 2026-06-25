@@ -14,6 +14,11 @@ import {
 } from '../../openclaw_runtime/src/agents/task-loop-self-check';
 import { createTaskLoopTool } from '../../openclaw_runtime/src/agents/tools/task-loop-tool';
 import { buildRolePermissionDenyList } from '../../openclaw_runtime/src/agents/role-permissions-policy';
+import {
+  isRuntimeTaskEvent,
+  type RuntimeRegistryDiagnostic,
+  type RuntimeTaskEvent,
+} from '../../openclaw_runtime/src/runtime-core';
 
 type FakePlan = {
   mode: 'router' | 'lead-workers' | 'adversarial-review';
@@ -24,7 +29,9 @@ type FakePlan = {
   reasons: string[];
 };
 
-function fakeResult(templateId = 'quick-development', failures: Array<{ roleName: string; status: string; error?: string }> = []) {
+type FakeFailure = { roleName: string; status: 'error' | 'forbidden' | 'timeout'; error?: string };
+
+function fakeResult(templateId = 'quick-development', failures: FakeFailure[] = []) {
   const plan: FakePlan = {
     mode: templateId === 'security-audit' ? 'adversarial-review' : 'lead-workers',
     leadRole: templateId === 'security-audit' ? 'security-reviewer' : 'planner',
@@ -44,7 +51,11 @@ function fakeResult(templateId = 'quick-development', failures: Array<{ roleName
       task: worker.task,
       isVerifier: false,
       spawn: failures[index]
-        ? { status: 'error', error: failures[index].error, result: { error: failures[index].error } }
+        ? {
+            status: failures[index].status === 'forbidden' ? 'forbidden' : 'error',
+            error: failures[index].error,
+            result: { error: failures[index].error },
+          }
         : { status: 'accepted', result: { runId: `run_${index}`, childSessionKey: `child_${index}` } },
     })),
     spawnedRunIds: failures.length ? [] : ['run_0', 'run_1', 'run_2'],
@@ -52,6 +63,191 @@ function fakeResult(templateId = 'quick-development', failures: Array<{ roleName
     pendingVerifier: failures.length === 0,
     failures,
   };
+}
+
+function getEvidenceRun(runId?: string, childSessionKey?: string) {
+  if (!runId || !childSessionKey) return null;
+  return {
+    runId,
+    childSessionKey,
+    requesterSessionKey: 'agent:main:abc',
+    requesterDisplayKey: 'Main',
+    task: 'task',
+    cleanup: 'delete',
+    createdAt: 1,
+    endedAt: 2,
+    outcome: { status: 'ok' },
+    completion: {
+      required: true,
+      capturedAt: 2,
+      resultText: [
+        '## Summary',
+        `Completed ${runId} with evidence.`,
+        '',
+        '## Files Touched',
+        `src/${runId}.ts`,
+        '',
+        '## Tests Run',
+        `pnpm exec vitest run ${runId}.test.ts passed`,
+        '',
+        '## Decisions',
+        'Kept changes scoped.',
+        '',
+        '## Follow-up Candidates',
+        'none',
+      ].join('\n'),
+    },
+  };
+}
+
+function getStructuredEvidenceRun(runId?: string, childSessionKey?: string) {
+  if (!runId || !childSessionKey) return null;
+  return {
+    runId,
+    childSessionKey,
+    requesterSessionKey: 'agent:main:abc',
+    requesterDisplayKey: 'Main',
+    task: 'task',
+    cleanup: 'delete',
+    createdAt: 1,
+    endedAt: 2,
+    outcome: { status: 'ok' },
+    completion: {
+      required: true,
+      capturedAt: 2,
+      resultText: [
+        '```task_loop_evidence',
+        JSON.stringify({
+          summary: `Structured evidence for ${runId}.`,
+          filesTouched: ['src/structured-evidence.ts'],
+          testsRun: ['pnpm exec vitest run tests/unit/structured-evidence.test.ts'],
+          evidenceRefs: [{
+            type: 'tool',
+            ref: `vitest:${runId}`,
+            label: 'Vitest',
+            summary: 'Focused unit test passed.',
+          }],
+          decisions: ['Kept Task Ledger as audit-only metadata.'],
+          risks: ['Regression if child result capture is missing.'],
+          followupTasks: ['Add mid-wave interrupt handling in a later phase.'],
+        }),
+        '```',
+      ].join('\n'),
+    },
+  };
+}
+
+function getPriorityEvidenceRun(runId?: string, childSessionKey?: string) {
+  if (!runId || !childSessionKey) return null;
+  return {
+    runId,
+    childSessionKey,
+    requesterSessionKey: 'agent:main:abc',
+    requesterDisplayKey: 'Main',
+    task: 'task',
+    cleanup: 'delete',
+    createdAt: 1,
+    endedAt: 2,
+    outcome: { status: 'ok' },
+    frozenResultText: [
+      '## Summary',
+      'Legacy frozen result should not win.',
+      '## Files Touched',
+      'src/legacy-frozen.ts',
+    ].join('\n'),
+    delivery: {
+      status: 'pending',
+      payload: {
+        frozenResultText: [
+          '## Summary',
+          'Delivery frozen result should not win when completion exists.',
+          '## Files Touched',
+          'src/delivery-frozen.ts',
+        ].join('\n'),
+      },
+    },
+    completion: {
+      required: true,
+      capturedAt: 2,
+      resultText: [
+        '## Summary',
+        `Completion result wins for ${runId}.`,
+        '## Files Touched',
+        'src/completion-result.ts',
+        '## Tests Run',
+        'pnpm exec vitest run tests/unit/completion-result.test.ts',
+      ].join('\n'),
+    },
+  };
+}
+
+function getLegacyFrozenEvidenceRun(runId?: string, childSessionKey?: string) {
+  if (!runId || !childSessionKey) return null;
+  return {
+    runId,
+    childSessionKey,
+    requesterSessionKey: 'agent:main:abc',
+    requesterDisplayKey: 'Main',
+    task: 'task',
+    cleanup: 'delete',
+    createdAt: 1,
+    endedAt: 2,
+    outcome: { status: 'ok' },
+    frozenResultText: [
+      '## Summary',
+      `Legacy frozen result was recovered for ${runId}.`,
+      '## Files Touched',
+      'src/legacy-frozen.ts',
+      '## Tests Run',
+      'pnpm exec vitest run tests/unit/legacy-frozen.test.ts',
+    ].join('\n'),
+  };
+}
+
+function getFileOnlyEvidenceRun(runId?: string, childSessionKey?: string) {
+  if (!runId || !childSessionKey) return null;
+  return {
+    runId,
+    childSessionKey,
+    requesterSessionKey: 'agent:main:abc',
+    requesterDisplayKey: 'Main',
+    task: 'task',
+    cleanup: 'delete',
+    createdAt: 1,
+    endedAt: 2,
+    outcome: { status: 'ok' },
+    completion: {
+      required: true,
+      capturedAt: 2,
+      resultText: [
+        '## Summary',
+        `Touched files for ${runId}, but no validation was captured.`,
+        '## Files Touched',
+        `src/${runId}.ts`,
+      ].join('\n'),
+    },
+  };
+}
+
+function registryFallbackDiagnostics(): RuntimeRegistryDiagnostic[] {
+  return [{
+    surface: 'context',
+    providerId: 'legacy-context-engine',
+    status: 'fallback',
+    reason: 'legacy_authoritative',
+    message: 'Legacy context remains authoritative during the registry pilot.',
+    retryable: false,
+    evidenceRefs: [{
+      type: 'other',
+      ref: 'runtime-registry:context:legacy-context-engine:legacy_authoritative',
+      label: 'Runtime registry fallback',
+      summary: 'Compatibility provider stayed shadow-only.',
+    }],
+    metadata: {
+      shadowOnly: true,
+      legacyAuthoritative: true,
+    },
+  }];
 }
 
 afterEach(() => {
@@ -255,6 +451,82 @@ describe('task-loop context and self-check', () => {
 });
 
 describe('runTaskLoop', () => {
+  it('creates a Task Ledger root at startup and associates checkpoints with it', async () => {
+    const ensureTaskLedgerRoot = vi.fn(() => 'tlroot_loop');
+    const recordCheckpoint = vi.fn();
+
+    const result = await runTaskLoop(
+      { task: 'persist /loop root', sessionKey: 'agent:main:abc', workspaceId: 'workspace-a' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_ledger`,
+        ensureTaskLedgerRoot,
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: recordCheckpoint as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.taskLedgerRootId).toBe('tlroot_loop');
+    expect(ensureTaskLedgerRoot).toHaveBeenCalledWith(expect.objectContaining({
+      workspaceId: 'workspace-a',
+      sessionKey: 'agent:main:abc',
+      runId: 'loop_ledger',
+      source: 'task_loop',
+    }));
+    expect(recordCheckpoint).toHaveBeenCalledWith(expect.objectContaining({
+      workspaceId: 'workspace-a',
+      taskLedgerRootId: 'tlroot_loop',
+      checkpoint: expect.objectContaining({
+        taskLedgerRootId: 'tlroot_loop',
+        metadata: expect.objectContaining({ taskLedgerRootId: 'tlroot_loop' }),
+      }),
+    }));
+  });
+
+  it('blocks startup when Task Ledger root creation fails', async () => {
+    const ensureTaskLedgerRoot = vi.fn(() => {
+      throw new Error('disk is read-only');
+    });
+    const runObserved = vi.fn();
+    const selfCheck = vi.fn();
+    const recordCheckpoint = vi.fn();
+
+    await expect(runTaskLoop(
+      { task: 'must not run detached', sessionKey: 'agent:main:abc', workspaceId: 'workspace-a' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_root_fail`,
+        ensureTaskLedgerRoot,
+        runObserved: runObserved as never,
+        selfCheck: selfCheck as never,
+        recordCheckpoint: recordCheckpoint as never,
+        storeTrace: vi.fn() as never,
+      },
+    )).rejects.toThrow(/Cannot start \/loop without a Task Ledger root.*disk is read-only/);
+
+    expect(runObserved).not.toHaveBeenCalled();
+    expect(selfCheck).not.toHaveBeenCalled();
+    expect(recordCheckpoint).not.toHaveBeenCalled();
+    expect(getTaskLoopRun('loop_root_fail')).toBeNull();
+  });
+
+  it('does not create a Task Ledger root for ordinary chat helpers', () => {
+    const ensureTaskLedgerRoot = vi.fn(() => 'tlroot_unused');
+
+    expect(ensureTaskLedgerRoot).not.toHaveBeenCalled();
+  });
+
   it('completes after one successful self-check', async () => {
     const lifecycle: string[] = [];
     const result = await runTaskLoop(
@@ -269,17 +541,514 @@ describe('runTaskLoop', () => {
           missingEvidence: [],
           verificationGaps: [],
           risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
           contextSummary: 'done',
         })) as never,
+        getSubagentRun: getEvidenceRun as never,
         lifecycle: (event) => lifecycle.push(`${event.phase}:${event.status}`),
+        recordCheckpoint: vi.fn() as never,
         storeTrace: vi.fn() as never,
       },
     );
     expect(result.status).toBe('complete');
     expect(result.phase).toBe('complete');
     expect(result.finalSummary).toBe('done');
+    expect(result.evidenceGate?.status).toBe('pass');
+    expect(result.subagentEvidence.every((entry) => entry.completionStatus === 'completed')).toBe(true);
+    expect(result.roleQualitySummary.good).toBeGreaterThan(0);
     expect(getTaskLoopRun(result.loopRunId)?.status).toBe('complete');
     expect(lifecycle).toContain('complete:complete');
+  });
+
+  it('keeps legacy lifecycle and checkpoint payloads unchanged when RuntimeTaskEvent shadow is off', async () => {
+    const lifecycle: unknown[] = [];
+    const checkpoints: unknown[] = [];
+    const runtimeTaskEventShadowSink = vi.fn();
+
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc', workspaceId: 'workspace-a' },
+      { agents: { defaults: { taskLoop: { runtimeTaskEventLogShadow: false, runtimeCoreShadow: false } } } },
+      {
+        idFactory: (prefix) => `${prefix}_parity`,
+        now: () => 1_700_000_000_000,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_parity'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        lifecycle: (event) => lifecycle.push(event),
+        recordCheckpoint: ((input: unknown) => checkpoints.push(input)) as never,
+        runtimeTaskEventShadowSink,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result).toMatchObject({ status: 'complete', phase: 'complete' });
+    expect(result.evidenceVerifierReport).toBeUndefined();
+    expect(runtimeTaskEventShadowSink).not.toHaveBeenCalled();
+    expect(lifecycle.at(-1)).toMatchObject({
+      loopRunId: 'loop_parity',
+      sessionKey: 'agent:main:abc',
+      phase: 'complete',
+      status: 'complete',
+      iteration: 1,
+      selfCheckDecision: 'complete',
+      ts: 1_700_000_000_000,
+    });
+    expect(lifecycle.at(-1)).not.toHaveProperty('runtimeTaskEvent');
+    expect(lifecycle.at(-1)).not.toHaveProperty('evidenceVerifierReport');
+    expect(checkpoints.at(-1)).toMatchObject({
+      id: 'task-loop:loop_parity:iteration:1:complete',
+      sessionKey: 'agent:main:abc',
+      workspaceId: 'workspace-a',
+      taskLedgerRootId: 'tlroot_parity',
+      runId: 'loop_parity',
+      status: 'complete',
+      checkpoint: expect.objectContaining({
+        id: 'task-loop:loop_parity:iteration:1:complete',
+        taskLedgerRootId: 'tlroot_parity',
+        metadata: expect.objectContaining({
+          loopRunId: 'loop_parity',
+          phase: 'complete',
+          status: 'complete',
+        }),
+      }),
+    });
+    expect(checkpoints.at(-1)).not.toHaveProperty('runtimeTaskEvent');
+    expect(checkpoints.at(-1)).not.toHaveProperty('evidenceVerifierReport');
+    expect((checkpoints.at(-1) as { checkpoint?: { metadata?: Record<string, unknown> } })?.checkpoint?.metadata)
+      .not.toHaveProperty('evidenceVerifierReport');
+  });
+
+  it('emits a warning-only evidence verifier report without changing complete status', async () => {
+    const lifecycle: unknown[] = [];
+    const recordCheckpoint = vi.fn();
+
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      { runtime: { evidenceVerifier: { shadow: true } } },
+      {
+        idFactory: (prefix) => `${prefix}_evidence_shadow_complete`,
+        now: () => 1_700_000_000_000,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_evidence_shadow_complete'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['manual review'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getFileOnlyEvidenceRun as never,
+        lifecycle: (event) => lifecycle.push(event),
+        recordCheckpoint: recordCheckpoint as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('complete');
+    expect(result.evidenceGate?.status).toBe('pass');
+    expect(result.evidenceVerifierReport).toMatchObject({
+      mode: 'warning',
+      status: 'warning',
+      legacyGateStatus: 'pass',
+      legacyDecisionUnaffected: true,
+      reasons: [expect.objectContaining({ code: 'missing_tests' })],
+    });
+    expect(result.evidenceVerifierReport?.evidenceRefs).toEqual(expect.arrayContaining([
+      expect.objectContaining({ type: 'file', ref: 'src/run_0.ts' }),
+      expect.objectContaining({ type: 'subagent', ref: 'run_0' }),
+    ]));
+    const lifecycleWithReport = lifecycle.find((event) =>
+      typeof event === 'object' && event !== null && 'evidenceVerifierReport' in event,
+    ) as { evidenceVerifierReport?: { reasons?: Array<{ code: string }> } } | undefined;
+    expect(lifecycleWithReport?.evidenceVerifierReport?.reasons).toContainEqual(
+      expect.objectContaining({ code: 'missing_tests' }),
+    );
+    const checkpointArg = recordCheckpoint.mock.calls.at(-1)?.[0] as {
+      checkpoint?: { reviewNeededItems?: string[]; metadata?: { evidenceVerifierReport?: unknown } };
+      reviewNeededItems?: string[];
+    } | undefined;
+    expect(checkpointArg?.reviewNeededItems).toEqual([]);
+    expect(checkpointArg?.checkpoint?.reviewNeededItems).toEqual([]);
+    expect(checkpointArg?.checkpoint?.metadata?.evidenceVerifierReport).toMatchObject({
+      status: 'warning',
+      reasons: [expect.objectContaining({ code: 'missing_tests' })],
+    });
+  });
+
+  it('includes subagent-provided evidence refs in the shadow report', async () => {
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      { runtime: { evidenceVerifier: { shadow: true } } },
+      {
+        idFactory: (prefix) => `${prefix}_evidence_shadow_refs`,
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getStructuredEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('complete');
+    expect(result.evidenceVerifierReport).toMatchObject({
+      status: 'pass',
+      legacyGateStatus: 'pass',
+      legacyDecisionUnaffected: true,
+    });
+    expect(result.evidenceVerifierReport?.evidenceRefs).toEqual(expect.arrayContaining([
+      expect.objectContaining({ type: 'file', ref: 'src/structured-evidence.ts' }),
+      expect.objectContaining({ type: 'test', ref: 'pnpm exec vitest run tests/unit/structured-evidence.test.ts' }),
+      expect.objectContaining({ type: 'tool', ref: 'vitest:run_0' }),
+      expect.objectContaining({ type: 'subagent', ref: 'run_0' }),
+    ]));
+  });
+
+  it('emits RuntimeTaskEvent lifecycle and checkpoint shadows for a complete TaskLoop', async () => {
+    const shadows: RuntimeTaskEvent[] = [];
+
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc', workspaceId: 'workspace-a' },
+      { agents: { defaults: { taskLoop: { runtimeTaskEventLogShadow: true } } } },
+      {
+        idFactory: (prefix) => `${prefix}_shadow_complete`,
+        now: () => 1_700_000_000_000,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_shadow_complete'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
+        runtimeTaskEventShadowSink: (event) => shadows.push(event),
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result).toMatchObject({ loopRunId: 'loop_shadow_complete', status: 'complete', phase: 'complete' });
+    expect(shadows.length).toBeGreaterThan(0);
+    expect(shadows.every(isRuntimeTaskEvent)).toBe(true);
+    expect(shadows.map((event) => event.kind)).toEqual(expect.arrayContaining([
+      'created',
+      'planning',
+      'running',
+      'verifying',
+      'completed',
+      'checkpoint',
+    ]));
+    expect(shadows).toContainEqual(expect.objectContaining({
+      kind: 'completed',
+      taskId: 'loop_shadow_complete',
+      payload: expect.objectContaining({
+        status: 'completed',
+        metadata: expect.objectContaining({
+          legacyPhase: 'complete',
+          legacyStatus: 'complete',
+        }),
+      }),
+    }));
+    const checkpointEvent = shadows.find((event) => event.kind === 'checkpoint');
+    expect(checkpointEvent).toMatchObject({
+      taskId: 'loop_shadow_complete',
+      payload: {
+        checkpoint: expect.objectContaining({
+          checkpointId: 'task-loop:loop_shadow_complete:iteration:1:complete',
+          taskId: 'loop_shadow_complete',
+          state: 'completed',
+          schemaVersion: 1,
+        }),
+      },
+      evidenceRefs: expect.arrayContaining([
+        expect.objectContaining({
+          type: 'checkpoint',
+          ref: 'task-loop:loop_shadow_complete:iteration:1:complete',
+        }),
+      ]),
+    });
+  });
+
+  it('attaches registry diagnostics to TaskLoop shadow events without changing legacy decisions', async () => {
+    const lifecycle: unknown[] = [];
+    const checkpoints: unknown[] = [];
+    const shadows: RuntimeTaskEvent[] = [];
+    const selfCheck = vi.fn(async () => ({
+      decision: 'complete',
+      confidence: 0.9,
+      missingEvidence: [],
+      verificationGaps: [],
+      risks: [],
+      validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+      contextSummary: 'done',
+    }));
+
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc', workspaceId: 'workspace-a' },
+      {
+        runtime: {
+          registryPilot: { enabled: true },
+          providerRegistry: { shadow: true },
+          contextProviders: { registryPilot: true },
+          toolRegistry: { shadow: true },
+        },
+        agents: { defaults: { taskLoop: { runtimeTaskEventLogShadow: true } } },
+      },
+      {
+        idFactory: (prefix) => `${prefix}_registry_shadow`,
+        now: () => 1_700_000_000_000,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_registry_shadow'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: selfCheck as never,
+        getSubagentRun: getEvidenceRun as never,
+        lifecycle: (event) => lifecycle.push(event),
+        recordCheckpoint: ((input: unknown) => checkpoints.push(input)) as never,
+        runtimeRegistryDiagnostics: registryFallbackDiagnostics(),
+        runtimeTaskEventShadowSink: (event) => shadows.push(event),
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result).toMatchObject({ status: 'complete', phase: 'complete' });
+    expect(result.evidenceVerifierReport).toBeUndefined();
+    expect(selfCheck).toHaveBeenCalled();
+    const selfCheckInput = (selfCheck.mock.calls as unknown as Array<[{ contextPack?: unknown }]>)
+      .at(-1)?.[0];
+    expect(JSON.stringify(selfCheckInput?.contextPack ?? {}))
+      .not.toContain('runtime-registry:');
+    expect(lifecycle.at(-1)).toMatchObject({
+      phase: 'complete',
+      status: 'complete',
+      selfCheckDecision: 'complete',
+    });
+    expect(lifecycle.at(-1)).not.toHaveProperty('registryDiagnostics');
+
+    const checkpointArg = checkpoints.at(-1) as {
+      checkpoint?: { evidenceRefs?: Array<{ ref: string }>; metadata?: Record<string, unknown> };
+      evidenceRefs?: Array<{ ref: string }>;
+      status?: string;
+    } | undefined;
+    expect(checkpointArg).toMatchObject({
+      status: 'complete',
+      checkpoint: expect.objectContaining({
+        id: 'task-loop:loop_registry_shadow:iteration:1:complete',
+        metadata: expect.objectContaining({
+          phase: 'complete',
+          status: 'complete',
+        }),
+      }),
+    });
+    expect(JSON.stringify(checkpointArg ?? {})).not.toContain('runtime-registry:');
+    expect(checkpointArg?.checkpoint?.metadata).not.toHaveProperty('registryDiagnostics');
+
+    const registryEvidenceRef = 'runtime-registry:context:legacy-context-engine:legacy_authoritative';
+    const completedEvent = shadows.find((event) => event.kind === 'completed');
+    expect(completedEvent?.evidenceRefs).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        type: 'other',
+        ref: registryEvidenceRef,
+        metadata: expect.objectContaining({
+          source: 'task_loop.registry_shadow',
+          registryReason: 'legacy_authoritative',
+          legacyDecisionUnaffected: true,
+          finalTaskStatusUnaffected: true,
+        }),
+      }),
+    ]));
+    expect((completedEvent?.payload as { metadata?: Record<string, unknown> } | undefined)?.metadata)
+      .toMatchObject({
+        registryDiagnostics: expect.objectContaining({
+          source: 'task_loop.registry_shadow',
+          mode: 'shadow',
+          legacyDecisionUnaffected: true,
+          finalTaskStatusUnaffected: true,
+          diagnostics: [
+            expect.objectContaining({
+              surface: 'context',
+              providerId: 'legacy-context-engine',
+              status: 'fallback',
+              reason: 'legacy_authoritative',
+            }),
+          ],
+        }),
+      });
+
+    const checkpointEvent = shadows.find((event) => event.kind === 'checkpoint');
+    expect(checkpointEvent?.evidenceRefs).toEqual(expect.arrayContaining([
+      expect.objectContaining({ ref: registryEvidenceRef }),
+    ]));
+    expect((checkpointEvent?.payload as { checkpoint?: { evidenceRefs?: Array<{ ref: string }> } })?.checkpoint?.evidenceRefs)
+      .not.toEqual(expect.arrayContaining([
+        expect.objectContaining({ ref: registryEvidenceRef }),
+      ]));
+  });
+
+  it('does not attach registry diagnostics when registry flags are off', async () => {
+    const shadows: RuntimeTaskEvent[] = [];
+
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      { agents: { defaults: { taskLoop: { runtimeTaskEventLogShadow: true } } } },
+      {
+        idFactory: (prefix) => `${prefix}_registry_flag_off`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_registry_flag_off'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
+        runtimeRegistryDiagnostics: registryFallbackDiagnostics(),
+        runtimeTaskEventShadowSink: (event) => shadows.push(event),
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result).toMatchObject({ status: 'complete', phase: 'complete' });
+    expect(shadows.length).toBeGreaterThan(0);
+    expect(shadows.every(isRuntimeTaskEvent)).toBe(true);
+    expect(shadows.flatMap((event) => event.evidenceRefs).map((ref) => ref.ref))
+      .not.toContain('runtime-registry:context:legacy-context-engine:legacy_authoritative');
+    expect(JSON.stringify(shadows)).not.toContain('"registryDiagnostics"');
+  });
+
+  it('emits a blocked RuntimeTaskEvent shadow without changing TaskLoop blocked decisions', async () => {
+    const shadows: RuntimeTaskEvent[] = [];
+
+    const result = await runTaskLoop(
+      { task: 'verify release', sessionKey: 'agent:main:abc' },
+      { agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 0, runtimeCoreShadow: true } } } },
+      {
+        idFactory: (prefix) => `${prefix}_shadow_blocked`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_shadow_blocked'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'blocked',
+          confidence: 0.4,
+          missingEvidence: ['manual verification'],
+          verificationGaps: ['manual verification'],
+          risks: [],
+          contextSummary: 'blocked by reviewer',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
+        runtimeTaskEventShadowSink: (event) => shadows.push(event),
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result).toMatchObject({ status: 'blocked', phase: 'blocked' });
+    expect(shadows.every(isRuntimeTaskEvent)).toBe(true);
+    expect(shadows).toContainEqual(expect.objectContaining({
+      kind: 'blocked',
+      taskId: 'loop_shadow_blocked',
+      payload: expect.objectContaining({
+        status: 'blocked',
+        summary: 'blocked by reviewer',
+        metadata: expect.objectContaining({
+          legacyPhase: 'blocked',
+          legacyStatus: 'blocked',
+        }),
+      }),
+    }));
+  });
+
+  it('emits a failed RuntimeTaskEvent shadow for TaskLoop errors without changing the error result', async () => {
+    const shadows: RuntimeTaskEvent[] = [];
+
+    const result = await runTaskLoop(
+      { task: 'fail loudly', sessionKey: 'agent:main:abc' },
+      { agents: { defaults: { taskLoop: { runtimeTaskEventLogShadow: true } } } },
+      {
+        idFactory: (prefix) => `${prefix}_shadow_error`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_shadow_error'),
+        runObserved: (async () => {
+          throw new Error('orchestrator exploded');
+        }) as never,
+        selfCheck: vi.fn() as never,
+        recordCheckpoint: vi.fn() as never,
+        runtimeTaskEventShadowSink: (event) => shadows.push(event),
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result).toMatchObject({
+      status: 'error',
+      phase: 'error',
+      error: 'orchestrator exploded',
+    });
+    expect(shadows.every(isRuntimeTaskEvent)).toBe(true);
+    expect(shadows).toContainEqual(expect.objectContaining({
+      kind: 'failed',
+      taskId: 'loop_shadow_error',
+      payload: expect.objectContaining({
+        status: 'failed',
+        metadata: expect.objectContaining({
+          legacyPhase: 'error',
+          legacyStatus: 'error',
+          error: 'orchestrator exploded',
+        }),
+      }),
+    }));
+  });
+
+  it('ignores RuntimeTaskEvent shadow sink failures', async () => {
+    const recordCheckpoint = vi.fn();
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      { agents: { defaults: { taskLoop: { runtimeTaskEventLogShadow: true } } } },
+      {
+        idFactory: (prefix) => `${prefix}_shadow_throw`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_shadow_throw'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: recordCheckpoint as never,
+        runtimeTaskEventShadowSink: () => {
+          throw new Error('shadow sink unavailable');
+        },
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result).toMatchObject({ status: 'complete', phase: 'complete' });
+    expect(recordCheckpoint).toHaveBeenCalled();
   });
 
   it('auto-selects the security-audit template for security-sensitive tasks', async () => {
@@ -299,8 +1068,11 @@ describe('runTaskLoop', () => {
           missingEvidence: [],
           verificationGaps: [],
           risks: [],
+          validationState: { status: 'passed', checks: ['security audit'], evidenceRefs: [] },
           contextSummary: 'done',
         })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
         storeTrace: vi.fn() as never,
       },
     );
@@ -337,9 +1109,12 @@ describe('runTaskLoop', () => {
                 missingEvidence: [],
                 verificationGaps: [],
                 risks: [],
+                validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
                 contextSummary: 'done after repair',
               };
         }) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
         storeTrace: vi.fn() as never,
       },
     );
@@ -364,6 +1139,7 @@ describe('runTaskLoop', () => {
           risks: [],
           contextSummary: 'still failing',
         })) as never,
+        recordCheckpoint: vi.fn() as never,
         storeTrace: vi.fn() as never,
       },
     );
@@ -387,6 +1163,8 @@ describe('runTaskLoop', () => {
           risks: [],
           contextSummary: 'needs another round',
         })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
         storeTrace: vi.fn() as never,
       },
     );
@@ -410,6 +1188,7 @@ describe('runTaskLoop', () => {
           risks: [],
           contextSummary: 'blocked by verifier',
         })) as never,
+        recordCheckpoint: vi.fn() as never,
         storeTrace: vi.fn() as never,
       },
     );
@@ -434,6 +1213,8 @@ describe('runTaskLoop', () => {
           validationState: { status: 'missing', checks: [], evidenceRefs: [], summary: 'not run' },
           contextSummary: 'claimed complete',
         })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
         storeTrace: vi.fn() as never,
       },
     );
@@ -441,6 +1222,446 @@ describe('runTaskLoop', () => {
     expect(result.status).toBe('blocked');
     expect(result.iterations[0]?.selfCheck?.decision).toBe('repair');
     expect(result.remaining).toContain('Task-loop validation or acceptance evidence is missing.');
+  });
+
+  it('blocks accepted workers with no captured child result', async () => {
+    const result = await runTaskLoop(
+      { task: 'ship feature', sessionKey: 'agent:main:abc' },
+      { agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 0 } } } },
+      {
+        idFactory: (prefix) => `${prefix}_no_result`,
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.95,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'claimed complete',
+        })) as never,
+        getSubagentRun: (() => null) as never,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('blocked');
+    expect(result.evidenceGate?.status).toBe('blocked');
+    expect(result.subagentEvidence.map((entry) => entry.completionStatus)).toContain('unverifiable');
+    expect(result.remaining.join(' ')).toContain('unverifiable_result');
+  });
+
+  it.each([
+    {
+      spawnStatus: 'forbidden' as const,
+      completionStatus: 'permission_blocked',
+      reason: 'permission_blocked:implementer',
+      error: 'role policy denied filesystem writes',
+    },
+    {
+      spawnStatus: 'error' as const,
+      completionStatus: 'failed',
+      reason: 'worker_failed:implementer',
+      error: 'child process failed before completion',
+    },
+  ])('normalizes $spawnStatus worker failures into evidence gate reasons', async ({ spawnStatus, completionStatus, reason, error }) => {
+    const result = await runTaskLoop(
+      { task: 'ship feature', sessionKey: 'agent:main:abc' },
+      { agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 0 } } } },
+      {
+        idFactory: (prefix) => `${prefix}_${spawnStatus}`,
+        runObserved: (async (request) => fakeResult(request.templateId, [{ roleName: 'implementer', status: spawnStatus, error }])) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.95,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'claimed complete',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('blocked');
+    expect(result.evidenceGate?.status).toBe('blocked');
+    expect(result.evidenceGate?.reasons).toContain(reason);
+    expect(result.subagentEvidence).toContainEqual(expect.objectContaining({
+      roleName: 'implementer',
+      completionStatus,
+      failureReason: error,
+    }));
+  });
+
+  it('records timeout failures from orchestrator failures even when no outcome exists', async () => {
+    const result = await runTaskLoop(
+      { task: 'ship feature', sessionKey: 'agent:main:abc' },
+      { agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 0 } } } },
+      {
+        idFactory: (prefix) => `${prefix}_timeout`,
+        runObserved: (async (request) => {
+          const base = fakeResult(request.templateId);
+          return {
+            ...base,
+            outcomes: base.outcomes.filter((outcome) => outcome.roleName !== 'implementer'),
+            failures: [{ roleName: 'implementer', status: 'timeout', error: 'Worker "implementer" timed out after 120s' }],
+          };
+        }) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.95,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'claimed complete',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('blocked');
+    expect(result.evidenceGate?.reasons).toContain('worker_timeout:implementer');
+    expect(result.subagentEvidence).toContainEqual(expect.objectContaining({
+      roleName: 'implementer',
+      spawnStatus: 'timeout',
+      completionStatus: 'timeout',
+    }));
+  });
+
+  it.each([
+    {
+      name: 'permission',
+      runObserved: (async (request) =>
+        fakeResult(request.templateId, [{
+          roleName: 'implementer',
+          status: 'forbidden',
+          error: 'role policy denied filesystem writes',
+        }])) as never,
+      getSubagentRun: getEvidenceRun as never,
+      code: 'permission',
+      legacyReason: 'permission_blocked:implementer',
+    },
+    {
+      name: 'worker failure',
+      runObserved: (async (request) =>
+        fakeResult(request.templateId, [{
+          roleName: 'implementer',
+          status: 'error',
+          error: 'child process failed before completion',
+        }])) as never,
+      getSubagentRun: getEvidenceRun as never,
+      code: 'worker_failure',
+      legacyReason: 'worker_failed:implementer',
+    },
+    {
+      name: 'timeout',
+      runObserved: (async (request) => {
+        const base = fakeResult(request.templateId);
+        return {
+          ...base,
+          outcomes: base.outcomes.filter((outcome) => outcome.roleName !== 'implementer'),
+          failures: [{ roleName: 'implementer', status: 'timeout', error: 'Worker timed out' }],
+        };
+      }) as never,
+      getSubagentRun: getEvidenceRun as never,
+      code: 'timeout',
+      legacyReason: 'worker_timeout:implementer',
+    },
+    {
+      name: 'unverifiable',
+      runObserved: (async (request) => fakeResult(request.templateId)) as never,
+      getSubagentRun: (() => null) as never,
+      code: 'unverifiable',
+      legacyReason: 'unverifiable_result:implementer',
+    },
+  ])('emits warning-only evidence verifier report for $name without changing blocked status', async ({
+    runObserved,
+    getSubagentRun,
+    code,
+    legacyReason,
+  }) => {
+    const result = await runTaskLoop(
+      { task: 'ship feature', sessionKey: 'agent:main:abc' },
+      {
+        runtime: { evidenceVerifier: { shadow: true } },
+        agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 0 } } },
+      },
+      {
+        idFactory: (prefix) => `${prefix}_${code}`,
+        ensureTaskLedgerRoot: vi.fn(() => `tlroot_${code}`),
+        runObserved,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.95,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'claimed complete',
+        })) as never,
+        getSubagentRun,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('blocked');
+    expect(result.evidenceGate?.status).toBe('blocked');
+    expect(result.evidenceGate?.reasons).toContain(legacyReason);
+    expect(result.evidenceVerifierReport).toMatchObject({
+      mode: 'warning',
+      status: 'warning',
+      legacyGateStatus: 'blocked',
+      legacyDecisionUnaffected: true,
+    });
+    expect(result.evidenceVerifierReport?.reasons).toContainEqual(
+      expect.objectContaining({ code, roleName: 'implementer' }),
+    );
+    expect(result.evidenceVerifierReport?.evidenceRefs).toEqual(expect.arrayContaining([
+      expect.objectContaining({ type: 'subagent' }),
+      expect.objectContaining({ type: 'trace' }),
+    ]));
+  });
+
+  it('keeps legacy repair evidence-gate status when evidence verifier shadow is enabled', async () => {
+    const result = await runTaskLoop(
+      { task: 'ship feature', sessionKey: 'agent:main:abc' },
+      {
+        runtime: { evidenceVerifier: { shadow: true } },
+        agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 1 } } },
+      },
+      {
+        idFactory: (prefix) => `${prefix}_shadow_repair`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_shadow_repair'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.95,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'claimed complete',
+        })) as never,
+        getSubagentRun: (() => null) as never,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.evidenceGate?.status).toBe('repair');
+    expect(result.status).toBe('blocked');
+    expect(result.evidenceVerifierReport).toMatchObject({
+      status: 'warning',
+      legacyGateStatus: 'repair',
+    });
+    expect(result.evidenceVerifierReport?.reasons).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'unverifiable' }),
+    ]));
+  });
+
+  it('extracts structured subagent evidence into files tests risks and followups', async () => {
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_structured`,
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          acceptanceStatus: { status: 'accepted', criteria: ['unit tests pass'], gaps: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getStructuredEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('complete');
+    expect(result.evidenceGate?.filesTouched).toContain('src/structured-evidence.ts');
+    expect(result.evidenceGate?.testsRun).toContain('pnpm exec vitest run tests/unit/structured-evidence.test.ts');
+    expect(result.subagentEvidence[0]?.risks).toContain('Regression if child result capture is missing.');
+    expect(result.subagentEvidence[0]?.followupTasks).toContain('Add mid-wave interrupt handling in a later phase.');
+    expect(result.subagentEvidence[0]?.evidenceRefs).toContainEqual(expect.objectContaining({
+      type: 'tool',
+      ref: 'vitest:run_0',
+    }));
+  });
+
+  it('prefers completion result text over frozen fallback evidence sources', async () => {
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_priority`,
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          acceptanceStatus: { status: 'accepted', criteria: ['unit tests pass'], gaps: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getPriorityEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('complete');
+    expect(result.evidenceGate?.filesTouched).toContain('src/completion-result.ts');
+    expect(result.evidenceGate?.filesTouched).not.toContain('src/delivery-frozen.ts');
+    expect(result.evidenceGate?.filesTouched).not.toContain('src/legacy-frozen.ts');
+  });
+
+  it('falls back to legacy frozen result text when completion delivery is absent', async () => {
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_legacy_frozen`,
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getLegacyFrozenEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('complete');
+    expect(result.evidenceGate?.filesTouched).toContain('src/legacy-frozen.ts');
+    expect(result.evidenceGate?.testsRun).toContain('pnpm exec vitest run tests/unit/legacy-frozen.test.ts');
+  });
+
+  it('emits lifecycle evidence gate and role quality summaries for UI consumers', async () => {
+    const lifecycle: unknown[] = [];
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_lifecycle`,
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        lifecycle: (event) => lifecycle.push(event),
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    const eventWithGate = lifecycle.find((event) =>
+      typeof event === 'object'
+      && event !== null
+      && 'evidenceGate' in event,
+    ) as { evidenceGate?: { status?: string }; roleQualitySummary?: { good?: number }; filesTouched?: string[]; testsRun?: string[] } | undefined;
+    expect(result.status).toBe('complete');
+    expect(eventWithGate?.evidenceGate?.status).toBe('pass');
+    expect(eventWithGate?.roleQualitySummary?.good).toBeGreaterThan(0);
+    expect(eventWithGate?.filesTouched?.length).toBeGreaterThan(0);
+    expect(eventWithGate?.testsRun?.length).toBeGreaterThan(0);
+  });
+
+  it('records evidence gate checkpoint details', async () => {
+    const recordCheckpoint = vi.fn();
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_checkpoint`,
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          acceptanceStatus: { status: 'accepted', criteria: ['unit tests pass'], gaps: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: recordCheckpoint as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('complete');
+    expect(recordCheckpoint).toHaveBeenCalled();
+    const checkpointArg = recordCheckpoint.mock.calls.at(-1)?.[0] as {
+      filesTouched?: string[];
+      testsRun?: string[];
+      checkpoint?: { acceptanceStatus?: { status?: string }; reviewNeededItems?: string[] };
+      acceptanceStatus?: { status?: string };
+    } | undefined;
+    expect(checkpointArg?.filesTouched?.length).toBeGreaterThan(0);
+    expect(checkpointArg?.testsRun?.length).toBeGreaterThan(0);
+    expect(checkpointArg?.acceptanceStatus?.status).toBe('accepted');
+    expect(checkpointArg?.checkpoint?.acceptanceStatus?.status).toBe('accepted');
+    expect(checkpointArg?.checkpoint?.reviewNeededItems).toEqual([]);
+  });
+
+  it('records evidence gate reasons in checkpoint review items for recovery', async () => {
+    const recordCheckpoint = vi.fn();
+    const result = await runTaskLoop(
+      { task: 'ship feature', sessionKey: 'agent:main:abc' },
+      { agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 0 } } } },
+      {
+        idFactory: (prefix) => `${prefix}_checkpoint_gap`,
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.95,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'claimed complete',
+        })) as never,
+        getSubagentRun: (() => null) as never,
+        recordCheckpoint: recordCheckpoint as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('blocked');
+    const checkpointArg = recordCheckpoint.mock.calls.at(-1)?.[0] as {
+      reviewNeededItems?: string[];
+      checkpoint?: { reviewNeededItems?: string[] };
+    } | undefined;
+    expect(checkpointArg?.reviewNeededItems).toContain('evidence_gate:unverifiable_result:implementer');
+    expect(checkpointArg?.checkpoint?.reviewNeededItems).toContain('evidence_gate:unverifiable_result:implementer');
   });
 });
 
@@ -478,8 +1699,11 @@ describe('task_loop tool', () => {
           missingEvidence: [],
           verificationGaps: [],
           risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
           contextSummary: 'done',
         })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
         storeTrace: vi.fn() as never,
       },
     });
@@ -503,8 +1727,11 @@ describe('task_loop tool', () => {
           missingEvidence: [],
           verificationGaps: [],
           risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
           contextSummary: 'done',
         })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
         storeTrace: vi.fn() as never,
       },
     });

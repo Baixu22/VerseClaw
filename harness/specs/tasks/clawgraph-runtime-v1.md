@@ -3,7 +3,7 @@ id: clawgraph-runtime-v1
 title: ClawGraph Runtime v1
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Add workspace YAML orchestration that compiles to an agent-neutral IR, runs stateless role workers through the runtime, audits handoffs, and exposes run state through the typed Host API and ClawX UI.
+intent: Add workspace YAML orchestration that compiles to an agent-neutral IR, runs stateless role workers through the runtime, audits handoffs, and exposes run state through the typed Host API and Verse Claw UI.
 touchedAreas:
   - shared/types/clawgraph.ts
   - shared/host-api/contract.ts

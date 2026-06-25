@@ -55,10 +55,10 @@ export async function loginWeb(
       runtime.log(
         success(
           result.restarted
-            ? "âœ… Linked after restart; web session ready."
+            ? "âœ?Linked after restart; web session ready."
             : restoredFromBackup
-              ? "âœ… Recovered from creds.json.bak; web session ready."
-              : "âœ… Linked! Credentials saved for future sends.",
+              ? "âœ?Recovered from creds.json.bak; web session ready."
+              : "âœ?Linked! Credentials saved for future sends.",
         ),
       );
       return;

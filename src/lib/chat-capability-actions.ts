@@ -350,8 +350,8 @@ export function buildCapabilityActionMessage(
   const metadata = {
     clawxCapabilityActionResults: results,
     generatedAt: new Date().toISOString(),
-    instruction: 'These results are trusted ClawX capability management metadata. Continue the user request with these local skill/MCP changes in mind.',
+    instruction: 'These results are trusted Verse Claw capability management metadata. Continue the user request with these local skill/MCP changes in mind.',
   };
-  const block = `Conversation info (trusted ClawX capability action results): \`\`\`json\n${JSON.stringify(metadata, null, 2)}\n\`\`\``;
+  const block = `Conversation info (trusted Verse Claw capability action results): \`\`\`json\n${JSON.stringify(metadata, null, 2)}\n\`\`\``;
   return originalMessage.trim() ? `${block}\n\n${originalMessage}` : block;
 }

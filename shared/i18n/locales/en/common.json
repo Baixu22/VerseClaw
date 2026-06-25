@@ -19,7 +19,8 @@
         "saveSessionRename": "Save session title",
         "cancelSessionRename": "Cancel renaming",
         "imageGeneration": "Image Generation",
-        "billing": "Billing"
+        "billing": "Billing",
+        "remoteTasks": "Remote Tasks"
     },
     "actions": {
         "save": "Save",

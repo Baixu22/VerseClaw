@@ -304,8 +304,8 @@ function shouldNormalizeDescriptionValue(
  *
  * 1. Consecutive whitespace (including `\n`) is collapsed to a single space.
  * 2. Whitespace between two CJK (Chinese, Japanese, Korean) characters is
- *    removed entirely. So a local description `"第一行。\n第二行。"` is stored
- *    as `"第一行。第二行。"` on Discord and returned without the `\n`.
+ *    removed entirely. So a local description `"第一行。\n第二行�?` is stored
+ *    as `"第一行。第二行�?` on Discord and returned without the `\n`.
  *
  * Without this normalization every startup for any CJK-heavy deployment reads
  * back Discord's collapsed form, computes a diff against the local `\n`-form,
@@ -321,7 +321,7 @@ function normalizeDescriptionForComparison(description: string): string {
   const collapsed = description.replace(/\s+/g, " ");
   // Matches whitespace surrounded by CJK code points. Run twice because a
   // single `replace` consumes the boundary characters, which can leave
-  // adjacent matches (e.g. "字 字 字") partially unhandled.
+  // adjacent matches (e.g. "�?�?�?) partially unhandled.
   const cjkBoundaryWhitespace =
     /([\u3000-\u303F\u4E00-\u9FFF\uFF00-\uFFEF])\s+([\u3000-\u303F\u4E00-\u9FFF\uFF00-\uFFEF])/g;
   return collapsed

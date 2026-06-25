@@ -382,7 +382,7 @@ function compactCandidateTitle(title: string): string {
   let compact = sanitizeSectionTitle(title)
     .replace(/\s*\((?:via:|from qmd \+ memory|this session)[^)]+\)\s*/gi, " ")
     .replace(
-      /\s*[â€”-]\s*(?:research results.*|in progress.*|working.*|installed.*|booked.*|proposed.*|clarified.*|candidate.*|fixes.*|updates?.*)$/i,
+      /\s*[â€?]\s*(?:research results.*|in progress.*|working.*|installed.*|booked.*|proposed.*|clarified.*|candidate.*|fixes.*|updates?.*)$/i,
       "",
     )
     .trim();

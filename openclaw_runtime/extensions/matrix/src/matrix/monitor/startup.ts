@@ -152,7 +152,7 @@ export async function runMatrixStartupMaintenance(
       startupVerification.kind === "request-failed"
     ) {
       params.logger.info(
-        "matrix: device not verified â€” run 'openclaw matrix verify device <key>' to enable E2EE",
+        "matrix: device not verified â€?run 'openclaw matrix verify device <key>' to enable E2EE",
       );
       if (startupVerification.kind === "pending") {
         params.logger.info(
@@ -169,7 +169,7 @@ export async function runMatrixStartupMaintenance(
       }
     } else if (startupVerification.kind === "requested") {
       params.logger.info(
-        "matrix: device not verified â€” requested verification in another Matrix client",
+        "matrix: device not verified â€?requested verification in another Matrix client",
       );
     }
   } catch (err) {

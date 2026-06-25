@@ -28,6 +28,36 @@ export type ChannelType =
  */
 export type ChannelStatus = 'connected' | 'disconnected' | 'connecting' | 'degraded' | 'error';
 
+export type ChannelConnectionStatus = ChannelStatus;
+
+export type ChannelAccessPolicyMode = 'open' | 'allowlist' | 'pairing' | 'disabled' | 'unknown';
+export type ChannelAccessPolicyScope = 'dm' | 'group' | 'channel' | 'mixed' | 'unknown';
+export type ChannelAccessPolicySource = 'config' | 'runtime' | 'inferred';
+
+export interface ChannelNativeApprovalPolicyView {
+  enabled: boolean | 'auto';
+  approverCount?: number;
+  agentFilterCount?: number;
+  sessionFilterCount?: number;
+  target?: 'dm' | 'channel' | 'both' | 'unknown';
+  source?: ChannelAccessPolicySource;
+}
+
+export interface ChannelAccessPolicyView {
+  source: ChannelAccessPolicySource;
+  scope: ChannelAccessPolicyScope;
+  mode: ChannelAccessPolicyMode;
+  dmPolicy?: ChannelAccessPolicyMode;
+  groupPolicy?: ChannelAccessPolicyMode;
+  allowlistCount?: number;
+  dmAllowlistCount?: number;
+  groupAllowlistCount?: number;
+  targetAllowlistCount?: number;
+  pairingRequired?: boolean;
+  configWritable?: boolean;
+  nativeApproval?: ChannelNativeApprovalPolicyView;
+}
+
 /**
  * Channel connection type
  */

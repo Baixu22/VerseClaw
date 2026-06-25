@@ -65,6 +65,12 @@ export function parseCronRunLogEntryObject(
     normalizeCronRunLogErrorReason(entryObj.errorReason) ??
     resolveFailoverReasonFromError(normalizedError, normalizedProvider) ??
     undefined;
+  const browserAutomationResult =
+    entryObj.browserAutomationResult &&
+    typeof entryObj.browserAutomationResult === "object" &&
+    !Array.isArray(entryObj.browserAutomationResult)
+      ? entryObj.browserAutomationResult
+      : undefined;
   // Recompute missing/legacy error reasons from the stored error text so old
   // run-log rows can still drive retry/status filtering.
   const entry: CronRunLogEntry = {
@@ -75,6 +81,7 @@ export function parseCronRunLogEntryObject(
     error: normalizedError,
     errorReason: normalizedErrorReason,
     summary: entryObj.summary,
+    ...(browserAutomationResult ? { browserAutomationResult } : {}),
     runId: typeof entryObj.runId === "string" && entryObj.runId.trim() ? entryObj.runId : undefined,
     diagnostics: normalizeCronRunDiagnostics(entryObj.diagnostics),
     runAtMs: entryObj.runAtMs,

@@ -72,13 +72,13 @@ export function parseMSTeamsConversationId(raw: string): string | null {
  * forward verbatim to the channel adapter.
  *
  * Accepts both prefixed and bare formats:
- * - `conversation:<id>` â€” explicit conversation prefix
- * - `user:<aad-guid>`   â€” user id (16+ hex chars, UUID-like)
- * - `19:abc@thread.tacv2` / `19:abc@thread.skype` â€” channel / legacy group
- * - `19:{userId}_{appId}@unq.gbl.spaces` â€” Graph 1:1 chat thread format
- * - `a:1xxx` â€” Bot Framework personal (1:1) chat id
- * - `8:orgid:xxx` â€” Bot Framework org-scoped personal chat id
- * - `29:xxx` â€” Bot Framework user id
+ * - `conversation:<id>` â€?explicit conversation prefix
+ * - `user:<aad-guid>`   â€?user id (16+ hex chars, UUID-like)
+ * - `19:abc@thread.tacv2` / `19:abc@thread.skype` â€?channel / legacy group
+ * - `19:{userId}_{appId}@unq.gbl.spaces` â€?Graph 1:1 chat thread format
+ * - `a:1xxx` â€?Bot Framework personal (1:1) chat id
+ * - `8:orgid:xxx` â€?Bot Framework org-scoped personal chat id
+ * - `29:xxx` â€?Bot Framework user id
  *
  * Display-name user targets such as `user:John Smith` intentionally return
  * false so that the Graph API directory lookup still runs for them.
@@ -234,12 +234,12 @@ export async function resolveMSTeamsChannelAllowlist(params: {
       try {
         teamChannels = await listChannelsForTeam(token, graphTeamId);
       } catch {
-        // API failure (rate limit, network error) â€” fall back to Graph GUID as team key
+        // API failure (rate limit, network error) â€?fall back to Graph GUID as team key
       }
       const generalChannel = teamChannels.find(
         (ch) => normalizeOptionalLowercaseString(ch.displayName) === "general",
       );
-      // Use the General channel's conversation ID as the team key â€” this
+      // Use the General channel's conversation ID as the team key â€?this
       // matches what Bot Framework sends at runtime. Fall back to the Graph
       // GUID if the General channel isn't found (renamed or deleted).
       const teamId = generalChannel?.id?.trim() || graphTeamId;
@@ -252,7 +252,7 @@ export async function resolveMSTeamsChannelAllowlist(params: {
           note: teams.length > 1 ? "multiple teams; chose first" : undefined,
         };
       }
-      // Reuse teamChannels â€” already fetched above
+      // Reuse teamChannels â€?already fetched above
       const normalizedChannel = normalizeOptionalLowercaseString(channel);
       const channelMatch =
         teamChannels.find((item) => item.id === channel) ??

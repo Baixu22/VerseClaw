@@ -61,6 +61,10 @@ const loadAgentHandlers = lazyHandlerModule(
   () => import("./server-methods/agent.js"),
   (module) => module.agentHandlers,
 );
+const loadAgentBrowserHandlers = lazyHandlerModule(
+  () => import("./server-methods/agent-browser.js"),
+  (module) => module.agentBrowserHandlers,
+);
 const loadAgentsHandlers = lazyHandlerModule(
   () => import("./server-methods/agents.js"),
   (module) => module.agentsHandlers,
@@ -200,6 +204,10 @@ const loadToolsEffectiveHandlers = lazyHandlerModule(
 const loadToolsInvokeHandlers = lazyHandlerModule(
   () => import("./server-methods/tools-invoke.js"),
   (module) => module.toolsInvokeHandlers,
+);
+const loadSecurityVerificationShadowHandlers = lazyHandlerModule(
+  () => import("./server-methods/security-verification-shadow.js"),
+  (module) => module.securityVerificationShadowHandlers,
 );
 const loadTtsHandlers = lazyHandlerModule(
   () => import("./server-methods/tts.js"),
@@ -442,6 +450,24 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   }),
   ...createLazyCoreHandlers({
     methods: [
+      "security.health",
+      "security.policy.get",
+      "security.policy.simulate",
+      "security.intercepts.list",
+      "verification.health",
+      "verification.run",
+      "verification.status",
+      "verification.results.list",
+      "verification.results.get",
+    ],
+    loadHandlers: loadSecurityVerificationShadowHandlers,
+  }),
+  ...createLazyCoreHandlers({
+    methods: ["agentBrowser.invoke", "agentBrowser.invoke.result"],
+    loadHandlers: loadAgentBrowserHandlers,
+  }),
+  ...createLazyCoreHandlers({
+    methods: [
       "tts.status",
       "tts.enable",
       "tts.disable",
@@ -619,9 +645,13 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "memory.evidenceCheck",
       "memory.simulateInjection",
       "memory.health",
+      "memory.utilityReport",
+      "memory.evalReport",
       "memory.detail",
       "memory.previewProposal",
+      "memory.feedbackList",
       "memory.propose",
+      "memory.feedback",
       "memory.store",
       "memory.update",
       "memory.archive",

@@ -69,6 +69,26 @@
         "accountIdPrompt": "Введите новый ID учётной записи для этого канала",
         "accountIdExists": "ID учётной записи {{accountId}} уже существует"
     },
+    "permissions": {
+        "scope": {
+            "dm": "ЛС",
+            "group": "Группы",
+            "approval": "Разрешения"
+        },
+        "mode": {
+            "open": "Открыто",
+            "allowlist": "Белый список",
+            "pairing": "Сопряжение",
+            "disabled": "Отключено",
+            "unknown": "Неизвестно"
+        },
+        "approval": {
+            "auto": "Авто",
+            "enabled": "Вкл.",
+            "disabled": "Выкл."
+        },
+        "allowlistCount": "разрешено: {{count}}"
+    },
     "dialog": {
         "updateTitle": "Обновить {{name}}",
         "configureTitle": "Настроить {{name}}",

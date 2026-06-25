@@ -119,7 +119,8 @@ test.describe('Mission Control panel', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
     await expect(page.getByTestId('agents-page')).toBeVisible();
 
     await page.getByTestId('role-orchestration-toggle').click();
@@ -242,7 +243,8 @@ test.describe('Mission Control panel', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-agents').click();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
     await page.getByTestId('role-orchestration-toggle').click();
     await page.getByTestId('role-orchestration-task-input').fill('Schedule this mission.');
     await page.getByTestId('role-mission-run').click();

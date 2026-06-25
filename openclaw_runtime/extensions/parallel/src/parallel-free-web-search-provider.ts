@@ -1,8 +1,8 @@
 import type { WebSearchProviderPlugin } from "openclaw/plugin-sdk/provider-web-search-contract";
 import { createParallelFreeWebSearchProviderBase } from "./parallel-free-web-search-provider.shared.js";
 import { PARALLEL_FREE_SESSION_ID_MAX_LENGTH } from "./parallel-search-normalize.js";
-// Reuse the paid provider's tool schema â€” both transports accept the same
-// objective + search_queries shape â€” but the free Search MCP caps session_id at
+// Reuse the paid provider's tool schema â€?both transports accept the same
+// objective + search_queries shape â€?but the free Search MCP caps session_id at
 // 100 chars (its `tools/list` schema), tighter than the paid v1 REST limit, so
 // the free model-facing schema advertises that tighter bound.
 import { ParallelSearchSchema } from "./parallel-web-search-provider.js";

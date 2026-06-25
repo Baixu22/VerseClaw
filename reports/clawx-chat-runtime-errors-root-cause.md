@@ -1,12 +1,12 @@
-# ClawX Chat Runtime Errors Root Cause Report
+# Verse Claw Chat Runtime Errors Root Cause Report
 
 Date: 2026-06-12
 
 ## Scope
 
-This report investigates the two real Chat page failures reported from ClawX:
+This report investigates the two real Chat page failures reported from Verse Claw:
 
-1. `OpenAI/Azure OpenAI transport is not available in the ClawX pruned source runtime`
+1. `OpenAI/Azure OpenAI transport is not available in the Verse Claw pruned source runtime`
 2. `Agent failed before reply: Sandbox image not found: openclaw-sandbox:bookworm-slim...`
 
 The goal is root-cause confirmation and a safe follow-up plan, not immediate broad changes.
@@ -17,13 +17,13 @@ The two errors are separate layers exposed in sequence.
 
 - The OpenAI/Azure transport error is a source-runtime pruning defect. The active source runtime contains a stubbed `openai-transport-stream.ts` that always throws for OpenAI, Azure OpenAI, and OpenAI-compatible completions/responses transports. DeepSeek is configured as `api: "openai-completions"`, so it also hits this missing transport.
 - The sandbox image error came from an earlier source-runtime session where Docker sandboxing was still effectively enabled. The current isolated source-runtime config now has `sandbox.mode: "off"`, so the current persistent failure is no longer the Docker image check; it has advanced to the missing OpenAI-compatible transport.
-- ClawX source-runtime isolation and channel pruning are mostly working: the Gateway launches with `runtime=source` and `channels=skipped(source runtime isolated config)`. The failure is inside the agent/model transport layer, not the channel startup layer.
+- Verse Claw source-runtime isolation and channel pruning are mostly working: the Gateway launches with `runtime=source` and `channels=skipped(source runtime isolated config)`. The failure is inside the agent/model transport layer, not the channel startup layer.
 
 ## Evidence
 
 ### Runtime Mode
 
-ClawX log confirms the Gateway is launched in source mode:
+Verse Claw log confirms the Gateway is launched in source mode:
 
 ```text
 Starting Gateway process (mode=dev, runtime=source, ... cwd="...\openclaw_runtime", ... channels=skipped(source runtime isolated config))
@@ -53,7 +53,7 @@ The file defines:
 
 ```ts
 const PRUNED_PROVIDER_ERROR =
-  "OpenAI/Azure OpenAI transport is not available in the ClawX pruned source runtime";
+  "OpenAI/Azure OpenAI transport is not available in the Verse Claw pruned source runtime";
 ```
 
 and all relevant exported factories return a stream function that throws this error:
@@ -166,13 +166,13 @@ The reported Chat failures are not caused by channel startup conflict. Logs show
 channels=skipped(source runtime isolated config)
 ```
 
-So ClawX's decision to use its own channel design and skip source runtime channels is consistent with the current error path.
+So Verse Claw's decision to use its own channel design and skip source runtime channels is consistent with the current error path.
 
 Potential channel conflict remains a separate pruning concern, but it is not the cause of these two Chat failures.
 
 ### Runtime Pruning
 
-The pruning boundary is currently too aggressive for model providers. OpenAI-family transport must not be pruned if ClawX supports:
+The pruning boundary is currently too aggressive for model providers. OpenAI-family transport must not be pruned if Verse Claw supports:
 
 - OpenAI
 - Azure OpenAI
@@ -183,14 +183,14 @@ Anthropic and Google transport availability should also be audited, but the live
 
 ### Sandbox Fallback
 
-ClawX should not mutate the user's global `~/.openclaw/openclaw.json` just to make source runtime safe. The current direction, an isolated source-runtime config under ClawX userData, is correct.
+Verse Claw should not mutate the user's global `~/.openclaw/openclaw.json` just to make source runtime safe. The current direction, an isolated source-runtime config under Verse Claw userData, is correct.
 
 However, the fallback should be hardened so that when the Docker image is missing:
 
 - no source-runtime agent path can re-enable Docker sandboxing from user/global config
 - invalid metadata fields such as `autoDisabledReason` are never written into `openclaw.json`
 - Gateway restart/reload clears stale pinned config snapshots
-- user-facing status makes clear that sandbox was auto-disabled for ClawX source runtime only
+- user-facing status makes clear that sandbox was auto-disabled for Verse Claw source runtime only
 
 ## Recommended Fix Plan
 
@@ -213,7 +213,7 @@ Avoid replacing this with a quick generic fetch unless it preserves the existing
 
 ### Phase 2: Harden Source Runtime Sandbox Isolation
 
-Goal: prevent Docker image errors when ClawX source runtime auto-disables sandbox.
+Goal: prevent Docker image errors when Verse Claw source runtime auto-disables sandbox.
 
 Recommended checks:
 
@@ -222,14 +222,14 @@ Recommended checks:
    - every agent list entry sandbox becomes `mode: "off"`
    - no non-schema fields are written
 2. Confirm runtime reload path uses the isolated config after Gateway restart and does not retain an older pinned config snapshot.
-3. Consider an explicit source-runtime env override such as `CLAWX_SOURCE_RUNTIME_FORCE_SANDBOX_OFF=1`, read only by ClawX integration code, if config-only fallback remains leaky.
+3. Consider an explicit source-runtime env override such as `VERSE_CLAW_SOURCE_RUNTIME_FORCE_SANDBOX_OFF=1`, read only by Verse Claw integration code, if config-only fallback remains leaky.
 4. Do not modify the user's global sandbox setting automatically.
 
 ### Phase 3: Keep Channel Pruning Separate
 
 Goal: avoid conflating channel pruning with model transport.
 
-Keep source runtime channels skipped unless ClawX explicitly needs runtime-owned channel methods. Current Chat failure does not require enabling runtime channel startup.
+Keep source runtime channels skipped unless Verse Claw explicitly needs runtime-owned channel methods. Current Chat failure does not require enabling runtime channel startup.
 
 Maintain/verify required Gateway RPC methods independently:
 
@@ -238,7 +238,7 @@ Maintain/verify required Gateway RPC methods independently:
 - `chat.abort`
 - `models.*`
 - `agents.*`
-- `channels.status/start/stop/logout` only as ClawX UI compatibility shims, not as runtime channel daemons
+- `channels.status/start/stop/logout` only as Verse Claw UI compatibility shims, not as runtime channel daemons
 
 ## Suggested Validation
 

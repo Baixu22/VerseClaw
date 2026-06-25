@@ -117,7 +117,7 @@ function isSlashCommand(msg: QueuedMessage): boolean {
  *   - `mentions` is deduplicated by member/user openid; if *any* source
  *     message was a `GROUP_AT_MESSAGE_CREATE`, the merged result inherits
  *     that eventType (the merged turn effectively @-s the bot).
- *   - `messageId`, `msgIdx`, `timestamp` come from the last message â€” the
+ *   - `messageId`, `msgIdx`, `timestamp` come from the last message â€?the
  *     most recent identity is what the outbound reply should quote.
  *   - `refMsgIdx` (the message that the user quoted) comes from the FIRST
  *     message in the batch because the first quote anchors the topic.

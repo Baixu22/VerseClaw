@@ -6,7 +6,7 @@ import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import { resolveSandboxRuntimeStatus } from "openclaw/plugin-sdk/sandbox";
 import { getSessionEntry, type SessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
 
-type ExecHost = "sandbox" | "gateway" | "node";
+type ExecHost = "sandbox" | "gateway" | "node" | "verseshell";
 type ExecTarget = "auto" | ExecHost;
 
 type ExecHostOverride = {
@@ -177,7 +177,8 @@ function normalizeExecTarget(value?: string | null): ExecTarget | undefined {
     normalized === "auto" ||
     normalized === "sandbox" ||
     normalized === "gateway" ||
-    normalized === "node"
+    normalized === "node" ||
+    normalized === "verseshell"
   ) {
     return normalized;
   }

@@ -26,9 +26,9 @@ export function createOpenClawApi(): CompleteHostServiceRegistry['openclaw'] {
       return {
         runtimeMode: sourceRuntime ? 'source' : 'npm',
         mockProviderEnabled: process.env.OPENCLAW_TEST_ENABLE_MOCK_PROVIDER === '1'
-          && typeof process.env.CLAWX_USER_DATA_DIR === 'string'
-          && process.env.CLAWX_USER_DATA_DIR.trim().length > 0
-          && process.env.CLAWX_OPENCLAW_RUNTIME === 'source',
+          && typeof process.env.VERSE_CLAW_USER_DATA_DIR === 'string'
+          && process.env.VERSE_CLAW_USER_DATA_DIR.trim().length > 0
+          && process.env.VERSE_CLAW_OPENCLAW_RUNTIME === 'source',
       };
     },
   };

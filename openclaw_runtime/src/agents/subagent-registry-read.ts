@@ -55,6 +55,15 @@ export function listDescendantRunsForRequester(rootSessionKey: string): Subagent
   );
 }
 
+/** Returns a readable registry entry by run id. */
+export function getSubagentRunByRunId(runId: string): SubagentRunRecord | null {
+  const key = runId.trim();
+  if (!key) {
+    return null;
+  }
+  return getSubagentRunsSnapshotForRead(subagentRuns).get(key) ?? null;
+}
+
 /** Returns the preferred run for a child session, favoring active over ended runs. */
 export function getSubagentRunByChildSessionKey(childSessionKey: string): SubagentRunRecord | null {
   return getSubagentRunByChildSessionKeyFromRuns(

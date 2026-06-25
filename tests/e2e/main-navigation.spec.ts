@@ -13,7 +13,7 @@ async function readNativeMenuLabels(app: ElectronApplication) {
   });
 }
 
-test.describe('ClawX main navigation without setup flow', () => {
+test.describe('Verse Claw main navigation without setup flow', () => {
   test('navigates between core pages with setup bypassed', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -26,14 +26,17 @@ test.describe('ClawX main navigation without setup flow', () => {
       await expect(page.getByTestId('sidebar-resize-handle')).toBeVisible();
       await expect(page.getByTestId('main-content')).toHaveCSS('border-top-left-radius', '16px');
 
-      await page.getByTestId('sidebar-nav-models').click();
+      await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
       await expect(page.getByTestId('models-page')).toBeVisible();
       await expect(page.getByTestId('models-page-title')).toBeVisible();
 
-      await page.getByTestId('sidebar-nav-agents').click();
+      await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
       await expect(page.getByTestId('agents-page')).toBeVisible();
 
-      await page.getByTestId('sidebar-nav-channels').click();
+      await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-channels').click();
       await expect(page.getByTestId('channels-page')).toBeVisible();
     } finally {
       await closeElectronApp(app);
@@ -47,7 +50,8 @@ test.describe('ClawX main navigation without setup flow', () => {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('chat-page')).toBeVisible();
 
-      await page.getByTestId('sidebar-nav-models').click();
+      await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
       await expect(page.getByTestId('models-page')).toBeVisible();
 
       await app.evaluate(({ BrowserWindow, Menu }) => {

@@ -86,7 +86,7 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
       })),
     }),
     {
-      name: 'clawx.artifact-panel',
+      name: 'verse-claw.artifact-panel',
       // Only persist the user-controlled width — open/tab/focus reset on reload.
       partialize: (state) => ({ widthPct: state.widthPct }),
     },

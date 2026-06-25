@@ -549,6 +549,7 @@ export const CronRunLogEntrySchema = Type.Object(
     errorReason: Type.Optional(CronFailoverReasonSchema),
     summary: Type.Optional(Type.String()),
     diagnostics: Type.Optional(CronRunDiagnosticsSchema),
+    browserAutomationResult: Type.Optional(Type.Unknown()),
     delivered: Type.Optional(Type.Boolean()),
     deliveryStatus: Type.Optional(CronDeliveryStatusSchema),
     deliveryError: Type.Optional(Type.String()),

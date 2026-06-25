@@ -659,7 +659,7 @@ export async function prepareSlackMessage(params: {
   // Channels with `requireMention: false` and a non-`off` reply mode produce
   // a Slack-side thread on every top-level bot reply (because `replyToMode`
   // creates one). Seed thread routing for the root turn too, so the inbound
-  // root and its later thread replies share one parent session â€” same way
+  // root and its later thread replies share one parent session â€?same way
   // app_mention / explicitly mentioned roots already do. Without this gate,
   // the root lands on the channel session while later thread replies land on
   // a fresh `:thread:<root_ts>` session, breaking continuity.

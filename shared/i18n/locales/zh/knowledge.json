@@ -137,7 +137,22 @@
     "permissions": "权限边界",
     "permissionsDescription": "对话中的知识范围只授予 search/get 读取能力。写入、合并、归档和删除都必须进入草稿或 proposal，并由用户确认。",
     "lastReview": "最近一次管理员审查",
-    "noReview": "本会话还没有执行知识管理员审查。"
+    "noReview": "本会话还没有执行知识管理员审查。",
+    "runHealthCheck": "运行健康检查",
+    "runLint": "运行代码检查",
+    "runCompile": "运行编译",
+    "checking": "检查中...",
+    "contradictions": "矛盾声明",
+    "stale": "过期页面",
+    "dangling": "孤立页面",
+    "noIssues": "未发现异常",
+    "suggestions": "知识管理员建议",
+    "lastCheck": "上次检查：{time}",
+    "dismissAll": "全部忽略",
+    "allClear": "一切正常",
+    "allClearHint": "未检测到治理问题。运行健康检查以确认。",
+    "lintComplete": "代码检查完成",
+    "compileComplete": "编译完成"
   },
   "dialogs": {
     "pickFiles": "导入知识文件",

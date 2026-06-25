@@ -35,7 +35,7 @@ export function normalizeSlackChannelType(
     normalized === "channel" ||
     normalized === "group"
   ) {
-    // D-prefix channel IDs are always DMs â€” override a contradicting channel_type.
+    // D-prefix channel IDs are always DMs â€?override a contradicting channel_type.
     if (inferred === "im" && normalized !== "im") {
       return "im";
     }

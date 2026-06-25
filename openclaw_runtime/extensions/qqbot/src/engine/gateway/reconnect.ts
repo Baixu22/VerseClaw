@@ -4,7 +4,7 @@
  * Encapsulates the reconnect delay scheduling, quick-disconnect detection,
  * and close-code interpretation that both plugin versions share.
  *
- * Zero external dependencies â€” uses only the constants from `./constants.ts`.
+ * Zero external dependencies â€?uses only the constants from `./constants.ts`.
  */
 
 import type { EngineLogger } from "../types.js";
