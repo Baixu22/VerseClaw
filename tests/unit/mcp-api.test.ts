@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { isToolCallRequest, isToolCallResult } from '../../openclaw_runtime/src/runtime-core';
+import type { McpToolProviderRegistryShadowRecord } from '@electron/services/tool-provider-registry';
 import type { McpToolCallShadowRecord } from '@electron/services/tool-protocol-shadow';
 
 const { readAgentBootstrapToolsMock } = vi.hoisted(() => ({
@@ -670,6 +671,41 @@ describe('mcp api registry', () => {
       head: 'feature/git-panel',
       draft: true,
       approvalId: 'approval-pr-create',
+    });
+  });
+
+  it('emits built-in Git tool registry diagnostics through the existing MCP adapter seam', async () => {
+    gitApiMock.status.mockResolvedValue({
+      success: true,
+      status: { isRepository: true, branch: 'main' },
+    });
+    const registryShadows: McpToolProviderRegistryShadowRecord[] = [];
+    const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const api = createMcpApiWithContext({
+      runtime: { toolRegistry: { shadow: true } },
+      toolProviderRegistryShadowSink: (record) => registryShadows.push(record),
+    });
+
+    const result = await api.callTool({ serverId: 'clawx-git', toolName: 'git_status' });
+
+    expect(result).toMatchObject({
+      success: true,
+      serverId: 'clawx-git',
+      toolName: 'git_status',
+      result: { status: expect.objectContaining({ branch: 'main' }) },
+    });
+    expect(registryShadows[1]).toMatchObject({
+      kind: 'tool_provider.result',
+      diagnostics: expect.arrayContaining([
+        expect.objectContaining({
+          providerId: 'builtin-host-tool-compat',
+          metadata: expect.objectContaining({
+            builtInToolDiagnosticShape: true,
+            noNewTransport: true,
+            toolName: 'git_status',
+          }),
+        }),
+      ]),
     });
   });
 

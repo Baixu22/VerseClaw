@@ -913,8 +913,8 @@ exports.default = async function afterPack(context) {
 
   // 5. Patch lru-cache in app.asar.unpacked
   //
-  // Production dependencies (electron-updater → semver → lru-cache@6,
-  // posthog-node → proxy agents → lru-cache@7, etc.) end up inside app.asar.
+  // Production dependencies (posthog-node → proxy agents → lru-cache@7, etc.)
+  // end up inside app.asar.
   // Older CJS versions lack the `LRUCache` named export, breaking
   // `import { LRUCache }` in Electron 40+ (Node.js 22+ ESM interop).
   //

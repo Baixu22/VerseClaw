@@ -75,8 +75,72 @@
     "noSources": "未附加来源引用。",
     "warnings": "警告",
     "noWarnings": "没有警告。",
+    "reason": "推荐理由",
+    "noReason": "未记录推荐理由。",
+    "boundary": "仅进入草稿审核",
+    "context": "捕获上下文",
+    "statusLabel": "状态",
+    "missionId": "Mission",
+    "tick": "Tick",
+    "tickValue": "Tick {{tick}}",
+    "outcome": "结果",
+    "temporalityLabel": "时效性",
+    "captureKey": "捕获键",
+    "auditDetails": "审计详情",
+    "notAvailable": "不可用",
+    "score": "评分 {{score}}",
+    "percentValue": "{{percent}}%",
+    "evidenceCount": "{{count}} 条证据",
+    "evidenceCount_plural": "{{count}} 条证据",
     "warningCount": "{{count}} 条警告",
     "warningCount_plural": "{{count}} 条警告",
+    "status": {
+      "pending": "待处理",
+      "promoted": "已提升",
+      "dismissed": "已忽略"
+    },
+    "temporality": {
+      "stable": "稳定",
+      "versioned": "版本相关",
+      "ephemeral": "临时"
+    },
+    "outcomes": {
+      "idle": "空闲",
+      "running": "运行中",
+      "sleeping": "休眠",
+      "paused": "已暂停",
+      "ask_user": "需要用户输入",
+      "complete": "已完成",
+      "blocked": "已阻塞",
+      "cancelled": "已取消",
+      "error": "错误"
+    },
+    "scoreDimensions": {
+      "reusability": "复用性",
+      "uniqueness": "独特性",
+      "confidence": "置信度"
+    },
+    "sourceKinds": {
+      "chat": "对话",
+      "file": "文件",
+      "wiki": "Wiki",
+      "task_ledger": "任务账本",
+      "trace": "轨迹",
+      "task_loop": "任务循环",
+      "manual": "手动",
+      "search_result": "搜索",
+      "other": "其他"
+    },
+    "groups": {
+      "save": "推荐保存",
+      "review": "需要审核",
+      "archive-only": "仅归档"
+    },
+    "recommendations": {
+      "save": "保存",
+      "review": "审核",
+      "archive-only": "仅归档"
+    },
     "kinds": {
       "chat-session": "对话",
       "task-ledger": "任务账本",

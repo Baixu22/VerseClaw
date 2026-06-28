@@ -137,6 +137,10 @@ const loadLogsHandlers = lazyHandlerModule(
   () => import("./server-methods/logs.js"),
   (module) => module.logsHandlers,
 );
+const loadLocalControlPlaneHandlers = lazyHandlerModule(
+  () => import("./server-methods/local-control-plane.js"),
+  (module) => module.localControlPlaneHandlers,
+);
 const loadModelsAuthStatusHandlers = lazyHandlerModule(
   () => import("./server-methods/models-auth-status.js"),
   (module) => module.modelsAuthStatusHandlers,
@@ -281,6 +285,10 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...createLazyCoreHandlers({
     methods: ["logs.tail"],
     loadHandlers: loadLogsHandlers,
+  }),
+  ...createLazyCoreHandlers({
+    methods: ["localControlPlane.status", "localControlPlane.reports", "localControlPlane.correlations"],
+    loadHandlers: loadLocalControlPlaneHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: ["voicewake.get", "voicewake.set"],

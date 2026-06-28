@@ -5,12 +5,16 @@ import type { ObservabilityTrace } from "../observability/types.js";
 import { isEvidenceRefType } from "../runtime-core/index.js";
 import {
   deserializeRuntimeCheckpoint,
+  evaluateEvidenceVerifier,
   isRuntimeTaskEvent,
   replayRuntimeTaskEvents,
   resolveRuntimeEventLogFeatureFlags,
   setRuntimeVerificationShadowSink,
 } from "../runtime-core/index.js";
 import type {
+  EvidenceVerifierDecision,
+  EvidenceVerifierEvidenceKind,
+  EvidenceVerifierFindingCategory,
   RuntimeCoreJsonObject,
   RuntimeCoreJsonValue,
   RuntimeErrorType,
@@ -52,6 +56,16 @@ export type VerificationShadowFinding = {
 export type VerificationShadowEvaluation = {
   status: VerificationShadowStatus;
   findings: VerificationShadowFinding[];
+};
+
+export type EvidenceVerifierDecisionSummary = {
+  decision: EvidenceVerifierDecision;
+  findingCount: number;
+  evidenceRefCount: number;
+  requiredEvidenceKinds: EvidenceVerifierEvidenceKind[];
+  findingCodes: string[];
+  findingCategories: EvidenceVerifierFindingCategory[];
+  legacyDecisionUnaffected: true;
 };
 
 export type SanitizedToolCallRequest = {
@@ -126,6 +140,7 @@ export type SecurityVerificationShadowRecord = {
   checkpoint?: SanitizedRuntimeCheckpoint;
   security: SecurityShadowEvaluation;
   verification: VerificationShadowEvaluation;
+  evidenceVerifier?: EvidenceVerifierDecisionSummary;
   observabilityTraceId?: string;
 };
 
@@ -136,6 +151,7 @@ export type SecurityVerificationShadowRecordFilter = {
   subject?: ShadowRecordSubject;
   securityDecision?: SecurityShadowDecision;
   verificationStatus?: VerificationShadowStatus;
+  verifierDecision?: EvidenceVerifierDecision;
 };
 
 export type SecurityVerificationShadowSummary = {
@@ -143,12 +159,14 @@ export type SecurityVerificationShadowSummary = {
   healthLevel: SecurityVerificationShadowHealthLevel;
   securityDecisionCounts: Record<SecurityShadowDecision, number>;
   verificationStatusCounts: Record<VerificationShadowStatus, number>;
+  evidenceVerifierDecisionCounts: Record<EvidenceVerifierDecision, number>;
   sourceCounts: Record<ShadowRecordSource, number>;
   subjectCounts: Record<ShadowRecordSubject, number>;
   samplingModeCounts: Record<SecurityVerificationShadowSamplingMode, number>;
   findingCounts: {
     security: number;
     verification: number;
+    evidenceVerifier: number;
   };
   recentFindingCodes: string[];
   latestRunId: string | null;
@@ -217,6 +235,16 @@ function zeroVerificationStatusCounts(): Record<VerificationShadowStatus, number
   };
 }
 
+function zeroEvidenceVerifierDecisionCounts(): Record<EvidenceVerifierDecision, number> {
+  return {
+    completed: 0,
+    failed: 0,
+    blocked: 0,
+    cancelled: 0,
+    insufficient_evidence: 0,
+  };
+}
+
 function zeroSourceCounts(): Record<ShadowRecordSource, number> {
   return {
     "tools.invoke": 0,
@@ -241,14 +269,19 @@ function zeroSamplingModeCounts(): Record<SecurityVerificationShadowSamplingMode
 }
 
 export function resolveSecurityVerificationShadowHealthLevel(
-  summary: Pick<SecurityVerificationShadowSummary, "securityDecisionCounts" | "verificationStatusCounts">,
+  summary: Pick<SecurityVerificationShadowSummary, "securityDecisionCounts" | "verificationStatusCounts"> &
+    Partial<Pick<SecurityVerificationShadowSummary, "evidenceVerifierDecisionCounts">>,
 ): SecurityVerificationShadowHealthLevel {
-  if (summary.verificationStatusCounts.failed > 0) {
+  const verifierCounts = summary.evidenceVerifierDecisionCounts;
+  if (summary.verificationStatusCounts.failed > 0 || (verifierCounts?.failed ?? 0) > 0) {
     return "failing";
   }
   if (
     summary.securityDecisionCounts.would_block > 0 ||
-    summary.verificationStatusCounts.insufficient_evidence > 0
+    summary.verificationStatusCounts.insufficient_evidence > 0 ||
+    (verifierCounts?.blocked ?? 0) > 0 ||
+    (verifierCounts?.cancelled ?? 0) > 0 ||
+    (verifierCounts?.insufficient_evidence ?? 0) > 0
   ) {
     return "degraded";
   }
@@ -271,6 +304,11 @@ function isVerificationShadowStatus(value: unknown): value is VerificationShadow
   return value === "passed" || value === "warning" || value === "failed" || value === "insufficient_evidence";
 }
 
+function isEvidenceVerifierDecisionValue(value: unknown): value is EvidenceVerifierDecision {
+  return value === "completed" || value === "failed" || value === "blocked" || value === "cancelled" ||
+    value === "insufficient_evidence";
+}
+
 function normalizeRecordFilter(
   filterOrLimit: number | SecurityVerificationShadowRecordFilter | undefined,
 ): Required<Pick<SecurityVerificationShadowRecordFilter, "limit">> &
@@ -288,6 +326,7 @@ function normalizeRecordFilter(
     ...(isShadowRecordSubject(filter.subject) ? { subject: filter.subject } : {}),
     ...(isSecurityShadowDecision(filter.securityDecision) ? { securityDecision: filter.securityDecision } : {}),
     ...(isVerificationShadowStatus(filter.verificationStatus) ? { verificationStatus: filter.verificationStatus } : {}),
+    ...(isEvidenceVerifierDecisionValue(filter.verifierDecision) ? { verifierDecision: filter.verifierDecision } : {}),
   };
 }
 
@@ -323,6 +362,20 @@ function missingVerification(code: string, message: string): VerificationShadowE
   return {
     status: "insufficient_evidence",
     findings: [{ code, message, severity: "medium" }],
+  };
+}
+
+function summarizeEvidenceVerifierDecision(input: unknown): EvidenceVerifierDecisionSummary {
+  const report = evaluateEvidenceVerifier(input);
+  return {
+    decision: report.decision,
+    findingCount: report.findings.length,
+    evidenceRefCount: report.evidenceRefs.length,
+    requiredEvidenceKinds: [...report.requiredEvidenceKinds],
+    findingCodes: uniqueStrings(report.findings.map((finding) => finding.code)),
+    findingCategories: uniqueStrings(report.findings.map((finding) => finding.category))
+      .filter((category): category is EvidenceVerifierFindingCategory => typeof category === "string"),
+    legacyDecisionUnaffected: true,
   };
 }
 
@@ -713,6 +766,7 @@ function recordToTrace(record: SecurityVerificationShadowRecord): ObservabilityT
         attributes: {
           ...baseAttributes,
           verificationStatus: record.verification.status,
+          evidenceVerifierDecision: record.evidenceVerifier?.decision,
           findingCodes: record.verification.findings.map((finding) => finding.code),
         },
       },
@@ -722,6 +776,7 @@ function recordToTrace(record: SecurityVerificationShadowRecord): ObservabilityT
     metrics: {
       securityFindingCount: record.security.findings.length,
       verificationFindingCount: record.verification.findings.length,
+      evidenceVerifierFindingCount: record.evidenceVerifier?.findingCount ?? 0,
     },
     tags: ["security-verification-shadow"],
   };
@@ -733,6 +788,7 @@ export function recordSecurityVerificationShadow(params: {
   result?: ToolCallResult;
   events?: unknown;
   checkpoint?: unknown;
+  evidenceVerifier?: unknown;
   runId?: string;
   sampling?: Partial<SecurityVerificationShadowSampling>;
   storeTrace?: boolean;
@@ -755,6 +811,9 @@ export function recordSecurityVerificationShadow(params: {
     (params.request
       ? evaluateVerificationShadow(params.request, params.result)
       : missingVerification("tool-call-request-missing", "No tool call request was available for verification."));
+  const evidenceVerifier = params.evidenceVerifier === undefined
+    ? undefined
+    : summarizeEvidenceVerifierDecision(params.evidenceVerifier);
   const record: SecurityVerificationShadowRecord = {
     id: `svs_${randomUUID()}`,
     runId,
@@ -768,6 +827,7 @@ export function recordSecurityVerificationShadow(params: {
     ...(checkpointEvaluation ? { checkpoint: checkpointEvaluation.checkpoint } : {}),
     security,
     verification,
+    ...(evidenceVerifier ? { evidenceVerifier } : {}),
   };
   if (params.storeTrace !== false) {
     const trace = recordToTrace(record);
@@ -812,6 +872,7 @@ export function getSecurityVerificationShadowRecords(
     .filter((record) => !filter.subject || record.subject === filter.subject)
     .filter((record) => !filter.securityDecision || record.security.decision === filter.securityDecision)
     .filter((record) => !filter.verificationStatus || record.verification.status === filter.verificationStatus)
+    .filter((record) => !filter.verifierDecision || record.evidenceVerifier?.decision === filter.verifierDecision)
     .slice(0, filter.limit);
 }
 
@@ -829,15 +890,21 @@ export function getSecurityVerificationShadowSummary(
   const records = getSecurityVerificationShadowRecords(filterOrLimit);
   const securityDecisionCounts = zeroSecurityDecisionCounts();
   const verificationStatusCounts = zeroVerificationStatusCounts();
+  const evidenceVerifierDecisionCounts = zeroEvidenceVerifierDecisionCounts();
   const sourceCounts = zeroSourceCounts();
   const subjectCounts = zeroSubjectCounts();
   const samplingModeCounts = zeroSamplingModeCounts();
   const recentFindingCodes: string[] = [];
   let securityFindingCount = 0;
   let verificationFindingCount = 0;
+  let evidenceVerifierFindingCount = 0;
   for (const record of records) {
     securityDecisionCounts[record.security.decision] += 1;
     verificationStatusCounts[record.verification.status] += 1;
+    if (record.evidenceVerifier) {
+      evidenceVerifierDecisionCounts[record.evidenceVerifier.decision] += 1;
+      evidenceVerifierFindingCount += record.evidenceVerifier.findingCount;
+    }
     sourceCounts[record.source] += 1;
     subjectCounts[record.subject] += 1;
     samplingModeCounts[record.sampling.mode] += 1;
@@ -853,18 +920,21 @@ export function getSecurityVerificationShadowSummary(
   const healthLevel = resolveSecurityVerificationShadowHealthLevel({
     securityDecisionCounts,
     verificationStatusCounts,
+    evidenceVerifierDecisionCounts,
   });
   return {
     totalRecords: records.length,
     healthLevel,
     securityDecisionCounts,
     verificationStatusCounts,
+    evidenceVerifierDecisionCounts,
     sourceCounts,
     subjectCounts,
     samplingModeCounts,
     findingCounts: {
       security: securityFindingCount,
       verification: verificationFindingCount,
+      evidenceVerifier: evidenceVerifierFindingCount,
     },
     recentFindingCodes,
     latestRunId: records[0]?.runId ?? null,
@@ -883,6 +953,7 @@ export function getSecurityVerificationShadowStatus(cfg?: OpenClawConfig) {
     lastRecordAt: records[0]?.createdAt ?? null,
     securityFindingCount: records.reduce((sum, record) => sum + record.security.findings.length, 0),
     verificationFindingCount: records.reduce((sum, record) => sum + record.verification.findings.length, 0),
+    evidenceVerifierFindingCount: records.reduce((sum, record) => sum + (record.evidenceVerifier?.findingCount ?? 0), 0),
     summary,
   };
 }

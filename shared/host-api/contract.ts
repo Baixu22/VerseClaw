@@ -193,29 +193,6 @@ export type DialogMessageResult = {
   checkboxChecked?: boolean;
 };
 export type WindowSyncTrafficLightPayload = { sidebarCollapsed: boolean };
-export type UpdateChannel = 'stable' | 'beta' | 'dev';
-export type UpdateInfoSnapshot = {
-  version: string;
-  releaseDate?: string;
-  releaseNotes?: string | null;
-};
-export type UpdateProgressSnapshot = {
-  total: number;
-  delta: number;
-  transferred: number;
-  percent: number;
-  bytesPerSecond: number;
-};
-export type UpdateStatusSnapshot = {
-  status: 'idle' | 'checking' | 'available' | 'not-available' | 'downloading' | 'downloaded' | 'error';
-  info?: UpdateInfoSnapshot;
-  progress?: UpdateProgressSnapshot;
-  error?: string;
-};
-export type UpdateCheckResult = HostSuccess & { status?: UpdateStatusSnapshot };
-export type UpdateSetChannelPayload = { channel: UpdateChannel };
-export type UpdateSetAutoDownloadPayload = { enable: boolean };
-
 export type SettingsSnapshot = Partial<{
   theme: 'light' | 'dark' | 'system';
   language: string;
@@ -231,8 +208,6 @@ export type SettingsSnapshot = Partial<{
   proxyHttpsServer: string;
   proxyAllServer: string;
   proxyBypassRules: string;
-  updateChannel: 'stable' | 'beta' | 'dev';
-  autoCheckUpdate: boolean;
   sidebarCollapsed: boolean;
   sidebarWidth: number;
   devModeUnlocked: boolean;
@@ -475,6 +450,116 @@ export type GatewayRpcPayload = {
   params?: unknown;
   timeoutMs?: number;
   approvalId?: string;
+};
+
+export type LocalControlPlaneReportKind =
+  | 'context'
+  | 'model_router'
+  | 'capability'
+  | 'evidence'
+  | 'mission';
+export type LocalControlPlaneReportMode = 'observe';
+export type LocalControlPlaneDiagnosticSeverity = 'info' | 'warning' | 'error';
+export type LocalControlPlaneJsonPrimitive = string | number | boolean | null;
+export type LocalControlPlaneJsonValue =
+  | LocalControlPlaneJsonPrimitive
+  | LocalControlPlaneJsonValue[]
+  | { [key: string]: LocalControlPlaneJsonValue };
+export type LocalControlPlaneJsonObject = { [key: string]: LocalControlPlaneJsonValue };
+export type LocalControlPlaneEvidenceRef = {
+  type: string;
+  ref: string;
+  label?: string;
+  summary?: string;
+  metadata?: LocalControlPlaneJsonObject;
+};
+export type LocalControlPlaneDiagnostic = {
+  code: string;
+  severity: LocalControlPlaneDiagnosticSeverity;
+  message: string;
+  metadata?: LocalControlPlaneJsonObject;
+};
+export type LocalControlPlaneReport = {
+  schema: 'openclaw.local-control-plane.report.v1';
+  id: string;
+  kind: LocalControlPlaneReportKind;
+  mode: LocalControlPlaneReportMode;
+  legacyUnaffected: true;
+  timestamp: string;
+  sessionKey?: string;
+  runId?: string;
+  taskId?: string;
+  summary: string;
+  diagnostics: LocalControlPlaneDiagnostic[];
+  evidenceRefs: LocalControlPlaneEvidenceRef[];
+  payload?: LocalControlPlaneJsonValue;
+};
+export type LocalControlPlaneFlags = Record<
+  'contextReport' | 'modelRouterReport' | 'capabilityReport' | 'evidenceReport' | 'missionReport',
+  boolean
+>;
+export type LocalControlPlaneStatus = {
+  schema: 'openclaw.local-control-plane.status.v1';
+  mode: LocalControlPlaneReportMode;
+  legacyUnaffected: true;
+  flags: LocalControlPlaneFlags;
+  enabledKinds: LocalControlPlaneReportKind[];
+  buffer: {
+    size: number;
+    maxSize: number;
+    lastReportAt: string | null;
+  };
+  countsByKind: Record<LocalControlPlaneReportKind, number>;
+};
+export type LocalControlPlaneReportFilter = {
+  kind?: LocalControlPlaneReportKind;
+  sessionKey?: string;
+  runId?: string;
+  taskId?: string;
+  limit?: number;
+};
+export type LocalControlPlaneCorrelationGroupBy = 'task' | 'run' | 'session' | 'evidence';
+export type LocalControlPlaneCorrelationFilter = LocalControlPlaneReportFilter & {
+  groupBy?: LocalControlPlaneCorrelationGroupBy;
+  evidenceType?: string;
+  evidenceRef?: string;
+};
+export type LocalControlPlaneCorrelationGroup = {
+  key: string;
+  groupBy: LocalControlPlaneCorrelationGroupBy;
+  sessionKey?: string;
+  runId?: string;
+  taskId?: string;
+  evidenceRefs: LocalControlPlaneEvidenceRef[];
+  reportIds: string[];
+  kinds: LocalControlPlaneReportKind[];
+  reportCount: number;
+  firstReportAt: string;
+  lastReportAt: string;
+  diagnosticsBySeverity: Record<LocalControlPlaneDiagnosticSeverity, number>;
+  diagnosticCodes: string[];
+};
+export type LocalControlPlaneCorrelationSummary = {
+  schema: 'openclaw.local-control-plane.correlations.v1';
+  mode: LocalControlPlaneReportMode;
+  legacyUnaffected: true;
+  generatedAt: string;
+  filter: LocalControlPlaneCorrelationFilter;
+  totals: {
+    reportCount: number;
+    groupCount: number;
+    evidenceRefCount: number;
+  };
+  groups: LocalControlPlaneCorrelationGroup[];
+};
+export type LocalControlPlaneStatusResult = HostSuccess & {
+  status: LocalControlPlaneStatus;
+};
+export type LocalControlPlaneReportsResult = HostSuccess & {
+  reports: LocalControlPlaneReport[];
+};
+export type LocalControlPlaneCorrelationsResult = HostSuccess & {
+  correlations: LocalControlPlaneCorrelationSummary;
 };
 
 export type RemoteControlStatusResult = HostSuccess & {
@@ -915,6 +1000,167 @@ export type AgentBootstrapUpdatePayload = {
 };
 
 export type DiagnosticsGatewaySnapshotResult = JsonRecord;
+
+export type AgentDevScenarioId =
+  | 'chat-empty'
+  | 'chat-streaming'
+  | 'models-heavy-usage'
+  | 'settings-provider-error'
+  | 'doctor-failed'
+  | 'gateway-connecting'
+  | 'knowledge-drafts'
+  | 'observability-trace-errors';
+export type AgentDevScenario = {
+  id: AgentDevScenarioId;
+  route: string;
+  description: string;
+  seed: JsonRecord;
+};
+export type AgentDevSeedConversation = {
+  id: string;
+  title: string;
+  agentId?: string;
+  workspacePath?: string;
+  messages: RawMessage[];
+  createdAt: string;
+};
+export type AgentDevSeedProviderConfig = {
+  id: string;
+  name: string;
+  type: ProviderType | 'custom';
+  model?: string;
+  baseUrl?: string;
+  apiProtocol?: ProviderProtocol;
+  hasApiKey?: boolean;
+};
+export type AgentDevSeedState = {
+  scenario?: AgentDevScenarioId;
+  settings?: SettingsSnapshot;
+  conversations: AgentDevSeedConversation[];
+  providers: AgentDevSeedProviderConfig[];
+  gatewayStatus?: JsonRecord;
+  featureFlags: string[];
+  visual?: AgentDevVisualPreset;
+  metadata: JsonRecord;
+  updatedAt: string;
+};
+export type AgentDevSeedStatePayload = Partial<{
+  scenario: AgentDevScenarioId;
+  settings: SettingsSnapshot;
+  conversations: AgentDevSeedConversation[];
+  providers: AgentDevSeedProviderConfig[];
+  gatewayStatus: JsonRecord;
+  featureFlags: string[];
+  visual: AgentDevVisualPreset;
+  metadata: JsonRecord;
+}>;
+export type AgentDevSeedStateResult = HostSuccess & {
+  enabled: boolean;
+  state: AgentDevSeedState;
+  applied: string[];
+};
+export type AgentDevCreateConversationPayload = Partial<Omit<AgentDevSeedConversation, 'createdAt'>> & {
+  messages?: RawMessage[];
+};
+export type AgentDevCreateConversationResult = HostSuccess & {
+  enabled: boolean;
+  conversation: AgentDevSeedConversation;
+  state: AgentDevSeedState;
+};
+export type AgentDevCreateProviderConfigPayload = {
+  provider: Partial<AgentDevSeedProviderConfig> & { id: string };
+  apiKey?: string;
+  makeDefault?: boolean;
+};
+export type AgentDevCreateProviderConfigResult = HostSuccess & {
+  enabled: boolean;
+  provider: AgentDevSeedProviderConfig;
+  state: AgentDevSeedState;
+};
+export type AgentDevMockReplayMode = 'off' | 'record' | 'replay';
+export type AgentDevHostApiFixture = {
+  module: string;
+  action: string;
+  payload?: unknown;
+  result: unknown;
+};
+export type AgentDevMockReplayConfig = {
+  mode: AgentDevMockReplayMode;
+  fixtures?: AgentDevHostApiFixture[];
+  clearCalls?: boolean;
+};
+export type AgentDevHostApiCall = {
+  id: string;
+  module: string;
+  action: string;
+  payload?: unknown;
+  startedAt: number;
+  endedAt?: number;
+  durationMs?: number;
+  mocked?: boolean;
+  ok?: boolean;
+  error?: string;
+};
+export type AgentDevMockReplayResult = HostSuccess & {
+  enabled: boolean;
+  mode: AgentDevMockReplayMode;
+  fixtureCount: number;
+  callCount: number;
+};
+export type AgentDevHostApiCallsPayload = { limit?: number };
+export type AgentDevHostApiCallsResult = HostSuccess & {
+  calls: AgentDevHostApiCall[];
+};
+export type AgentDevFeatureFlagsPayload = { flags?: string[]; merge?: boolean };
+export type AgentDevFeatureFlagsResult = HostSuccess & {
+  flags: string[];
+};
+export type AgentDevVisualPreset = Partial<{
+  enabled: boolean;
+  width: number;
+  height: number;
+  theme: 'light' | 'dark';
+  language: 'en' | 'zh' | 'ja' | 'ru';
+  reducedMotion: boolean;
+  scenario: AgentDevScenarioId;
+}>;
+export type AgentDevVisualPresetResult = HostSuccess & {
+  preset: AgentDevVisualPreset;
+};
+export type AgentDevDiagnosticsSnapshotResult = HostSuccess & {
+  snapshot: JsonRecord;
+};
+export type AgentDevTransportTracePayload = {
+  sessionId?: string;
+  limit?: number;
+};
+export type AgentDevTransportTraceEvent = {
+  id: string;
+  at: number;
+  layer: 'gateway' | 'host-api' | 'renderer' | 'ipc';
+  direction: 'in' | 'out' | 'internal';
+  label: string;
+  metadata?: JsonRecord;
+};
+export type AgentDevTransportTraceResult = HostSuccess & {
+  events: AgentDevTransportTraceEvent[];
+};
+export type AgentDevSelectorContractResult = HostSuccess & {
+  requiredAttributes: string[];
+  requiredSurfaces: string[];
+  notes: string[];
+};
+export type AgentDevStatusResult = HostSuccess & {
+  enabled: boolean;
+  scenarios: AgentDevScenario[];
+  state: AgentDevSeedState;
+  flags: string[];
+  mockReplay: {
+    mode: AgentDevMockReplayMode;
+    fixtureCount: number;
+    callCount: number;
+  };
+};
 
 export type ProviderType =
   | 'anthropic'
@@ -1780,9 +2026,26 @@ export type KnowledgeDraftActor = 'user' | 'agent' | 'steward';
 export type KnowledgeSourceRef = {
   id: string;
   label?: string;
-  kind?: 'chat' | 'file' | 'wiki' | 'task_ledger' | 'manual' | 'search_result';
+  kind?: 'chat' | 'file' | 'wiki' | 'task_ledger' | 'trace' | 'task_loop' | 'manual' | 'search_result' | 'other';
   path?: string;
   url?: string;
+};
+export type KnowledgeInteractionMvpMetadata = {
+  mvpVersion: 'knowledge-interaction-mvp-1';
+  recommendation: 'save' | 'review' | 'archive-only';
+  score: {
+    reusability: number;
+    uniqueness: number;
+    confidence: number;
+    overall: number;
+  };
+  temporality: 'stable' | 'versioned' | 'ephemeral';
+  reason: string;
+  missionId: string;
+  tick: number;
+  outcome: 'idle' | 'running' | 'sleeping' | 'paused' | 'ask_user' | 'complete' | 'blocked' | 'cancelled' | 'error';
+  evidenceRefs: string[];
+  captureKey: string;
 };
 export type KnowledgeDraft = {
   id: string;
@@ -2299,6 +2562,7 @@ export type DeliveryChannelGroup = {
   accounts: DeliveryChannelAccount[];
 };
 
+
 // 鈹€鈹€ Topic types 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
 export type TopicEntry = {
@@ -2340,6 +2604,7 @@ export type DeliveryTargetsResult = HostSuccess & { targets: DeliveryChannelGrou
 
 export type HostApiContract = {
   app: {
+    version: () => string;
     openClawDoctor: (payload: OpenClawDoctorPayload) => Omit<OpenClawDoctorResult, 'mode'>;
   };
   openclaw: {
@@ -2363,16 +2628,6 @@ export type HostApiContract = {
     maximize: () => void;
     close: () => void;
     isMaximized: () => boolean;
-  };
-  updates: {
-    status: () => UpdateStatusSnapshot;
-    version: () => string;
-    check: () => UpdateCheckResult;
-    download: () => HostSuccess;
-    install: () => HostSuccess;
-    setChannel: (payload: UpdateSetChannelPayload) => HostSuccess;
-    setAutoDownload: (payload: UpdateSetAutoDownloadPayload) => HostSuccess;
-    cancelAutoInstall: () => HostSuccess;
   };
   uv: {
     installAll: () => HostSuccess;
@@ -2460,6 +2715,11 @@ export type HostApiContract = {
     controlUi: (payload?: GatewayControlUiPayload) => GatewayControlUiResult;
     rpc: (payload: GatewayRpcPayload) => unknown;
   };
+  localControlPlane: {
+    status: () => LocalControlPlaneStatusResult;
+    reports: (payload?: LocalControlPlaneReportFilter) => LocalControlPlaneReportsResult;
+    correlations: (payload?: LocalControlPlaneCorrelationFilter) => LocalControlPlaneCorrelationsResult;
+  };
   remoteControl: {
     status: () => RemoteControlStatusResult;
     inspect: () => RemoteControlInspectResult;
@@ -2540,6 +2800,22 @@ export type HostApiContract = {
   };
   diagnostics: {
     gatewaySnapshot: () => DiagnosticsGatewaySnapshotResult;
+  };
+  agentDev: {
+    status: () => AgentDevStatusResult;
+    scenarios: () => AgentDevScenario[];
+    seedState: (payload?: AgentDevSeedStatePayload) => AgentDevSeedStateResult;
+    resetState: () => AgentDevSeedStateResult;
+    createConversation: (payload: AgentDevCreateConversationPayload) => AgentDevCreateConversationResult;
+    createProviderConfig: (payload: AgentDevCreateProviderConfigPayload) => AgentDevCreateProviderConfigResult;
+    configureMockReplay: (payload: AgentDevMockReplayConfig) => AgentDevMockReplayResult;
+    hostApiCalls: (payload?: AgentDevHostApiCallsPayload) => AgentDevHostApiCallsResult;
+    featureFlags: () => AgentDevFeatureFlagsResult;
+    setFeatureFlags: (payload: AgentDevFeatureFlagsPayload) => AgentDevFeatureFlagsResult;
+    visualPreset: (payload?: AgentDevVisualPreset) => AgentDevVisualPresetResult;
+    diagnosticsSnapshot: () => AgentDevDiagnosticsSnapshotResult;
+    transportTrace: (payload?: AgentDevTransportTracePayload) => AgentDevTransportTraceResult;
+    selectorContract: () => AgentDevSelectorContractResult;
   };
   providers: {
     list: () => ProviderWithKeyInfo[];

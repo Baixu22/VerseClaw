@@ -42,7 +42,6 @@ import {
   syncUpdatedProviderToRuntime,
 } from '../services/providers/provider-runtime-sync';
 import { validateApiKeyWithProvider } from '../services/providers/provider-validation';
-import { appUpdater } from './updater';
 import { GatewayRpcBackpressure } from '../gateway/rpc-backpressure';
 import { HostApiRegistry, registerHostInvokeHandler } from './ipc/host-invoke';
 import { createAppApi } from '../services/app-api';
@@ -50,9 +49,10 @@ import { createOpenClawApi } from '../services/openclaw-api';
 import { createShellApi } from '../services/shell-api';
 import { createDialogApi } from '../services/dialog-api';
 import { createWindowApi } from '../services/window-api';
-import { createUpdatesApi } from '../services/updates-api';
 import { createUvApi } from '../services/uv-api';
 import { createGatewayApi } from '../services/gateway-api';
+import { createLocalControlPlaneApi } from '../services/local-control-plane-api';
+import { createAgentDevApi } from '../services/agent-dev-api';
 import { createLogsApi } from '../services/logs-api';
 import { createSettingsApi } from '../services/settings-api';
 import { createChannelsApi } from '../services/channels-api';
@@ -165,6 +165,7 @@ function registerTypedHostHandlers(
   });
   webPreviewManager = createWebPreviewManager({ mainWindow, terminalManager });
   registerAgentBrowserGatewayBridge(gatewayManager);
+  const knowledgeApi = createKnowledgeApi({ gatewayManager });
 
   hostApiRegistry.registerCoreServices({
     app: createAppApi(),
@@ -172,7 +173,6 @@ function registerTypedHostHandlers(
     shell: createShellApi(),
     dialog: createDialogApi(),
     window: createWindowApi(mainWindow),
-    updates: createUpdatesApi(appUpdater),
     uv: createUvApi(),
     workspaces: createWorkspacesApi({ gatewayManager, terminalManager, webPreviewManager }),
     projectRules: createProjectRulesApi(),
@@ -181,7 +181,11 @@ function registerTypedHostHandlers(
     permissions: createPermissionsApi(),
     webPreview: createWebPreviewApi({ webPreviewManager }),
     settings: createSettingsApi(gatewayManager),
-    gateway: createGatewayApi(gatewayManager, gatewayRpcBackpressure),
+    gateway: createGatewayApi(gatewayManager, gatewayRpcBackpressure, {
+      createKnowledgeInboxItem: knowledgeApi.createInboxItem,
+    }),
+    localControlPlane: createLocalControlPlaneApi(gatewayManager),
+    agentDev: createAgentDevApi({ gatewayManager }),
     remoteControl: createRemoteControlApi(),
     agentBrowser: createAgentBrowserApi(),
     mcp: createMcpApiWithContext({ gatewayManager }),
@@ -196,7 +200,7 @@ function registerTypedHostHandlers(
     chat: createChatApi({ gatewayManager }),
     codeReview: createCodeReviewApi({ gatewayManager }),
     workProviders: createWorkProvidersApi(),
-    knowledge: createKnowledgeApi({ gatewayManager }),
+    knowledge: knowledgeApi,
     cron: createCronApi({ gatewayManager }),
     skills: createSkillsApi({ clawHubService, gatewayManager }),
     usage: createUsageApi(),
@@ -502,68 +506,6 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
             } catch (error) {
               data = { success: false, error: String(error) };
             }
-            break;
-          }
-          return {
-            id: request.id,
-            ok: false,
-            error: {
-              code: 'UNSUPPORTED',
-              message: `APP_REQUEST_UNSUPPORTED:${request.module}.${request.action}`,
-            },
-          };
-        }
-        case 'update': {
-          if (request.action === 'status') {
-            data = appUpdater.getStatus();
-            break;
-          }
-          if (request.action === 'version') {
-            data = appUpdater.getCurrentVersion();
-            break;
-          }
-          if (request.action === 'check') {
-            try {
-              await appUpdater.checkForUpdates();
-              data = { success: true, status: appUpdater.getStatus() };
-            } catch (error) {
-              data = { success: false, error: String(error), status: appUpdater.getStatus() };
-            }
-            break;
-          }
-          if (request.action === 'download') {
-            try {
-              await appUpdater.downloadUpdate();
-              data = { success: true };
-            } catch (error) {
-              data = { success: false, error: String(error) };
-            }
-            break;
-          }
-          if (request.action === 'install') {
-            appUpdater.quitAndInstall();
-            data = { success: true };
-            break;
-          }
-          if (request.action === 'setChannel') {
-            const payload = request.payload as { channel?: 'stable' | 'beta' | 'dev' } | 'stable' | 'beta' | 'dev' | undefined;
-            const channel = typeof payload === 'string' ? payload : payload?.channel;
-            if (!channel) throw new Error('Invalid update.setChannel payload');
-            appUpdater.setChannel(channel);
-            data = { success: true };
-            break;
-          }
-          if (request.action === 'setAutoDownload') {
-            const payload = request.payload as { enable?: boolean } | boolean | undefined;
-            const enable = typeof payload === 'boolean' ? payload : payload?.enable;
-            if (typeof enable !== 'boolean') throw new Error('Invalid update.setAutoDownload payload');
-            appUpdater.setAutoDownload(enable);
-            data = { success: true };
-            break;
-          }
-          if (request.action === 'cancelAutoInstall') {
-            appUpdater.cancelAutoInstall();
-            data = { success: true };
             break;
           }
           return {

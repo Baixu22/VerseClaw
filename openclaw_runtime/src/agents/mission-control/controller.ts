@@ -5,6 +5,11 @@ import { storeRuntimeTrace } from "../../observability/trace-buffer.js";
 import { createRoleFirstTrace, completeObservedRun } from "../../observability/role-first-observer.js";
 import type { ObservabilityTraceRecorder } from "../../observability/trace-recorder.js";
 import {
+  localControlPlaneReportEnabled,
+  recordLocalControlPlaneReport,
+  type LocalControlPlaneDiagnostic,
+} from "../../local-control-plane/index.js";
+import {
   buildRuntimeResumeCheckpoint,
   getLatestLongTaskCheckpoint,
   recordLongTaskCheckpoint,
@@ -63,9 +68,52 @@ export type MissionControllerDeps = {
   recordEvent?: typeof recordMissionEvent;
   storeTrace?: typeof storeRuntimeTrace;
   proposeMemory?: typeof proposeMemoryCard;
+  createKnowledgeInboxItem?: (item: MissionKnowledgeInboxItem) => void;
 };
 
 export type MissionRunResult = MissionRunRecord;
+
+const missionLocalControlPlaneConfigs = new WeakMap<MissionRunRecord, OpenClawConfig | undefined>();
+
+export type MissionKnowledgeInboxSourceRef = {
+  id: string;
+  label?: string;
+  kind?: "chat" | "file" | "wiki" | "task_ledger" | "trace" | "task_loop" | "manual" | "search_result" | "other";
+  path?: string;
+  url?: string;
+};
+
+export type MissionKnowledgeInboxItem = {
+  title: string;
+  body: string;
+  kind: "chat-session" | "task-ledger";
+  type: "source-note" | "synthesis" | "decision" | "architecture" | "command" | "troubleshooting" | "glossary" | "procedure";
+  status: "pending";
+  sourceIds: string[];
+  sourceRefs: MissionKnowledgeInboxSourceRef[];
+  tags: string[];
+  workspaceId?: string | null;
+  agentId?: string | null;
+  createdBy: "agent";
+  warnings?: string[];
+  metadata: {
+    mvpVersion: "knowledge-interaction-mvp-1";
+    recommendation: "save" | "review" | "archive-only";
+    score: {
+      reusability: number;
+      uniqueness: number;
+      confidence: number;
+      overall: number;
+    };
+    temporality: "stable" | "versioned" | "ephemeral";
+    reason: string;
+    missionId: string;
+    tick: number;
+    outcome: MissionStatus;
+    evidenceRefs: string[];
+    captureKey: string;
+  };
+};
 
 function defaultId(prefix: string): string {
   return `${prefix}_${crypto.randomUUID()}`;
@@ -131,6 +179,90 @@ function clone(record: MissionRunRecord): MissionRunRecord {
   };
 }
 
+function missionSeverity(status: MissionStatus): LocalControlPlaneDiagnostic["severity"] {
+  if (status === "error") return "error";
+  if (status === "blocked" || status === "ask_user" || status === "cancelled") return "warning";
+  return "info";
+}
+
+function missionEvidenceRefsForReport(record: MissionRunRecord) {
+  return record.evidenceRefs.map((ref) => ({
+    type: ref.type === "task_loop" ? "task_loop" as const : ref.type,
+    ref: ref.ref,
+    ...(ref.label ? { label: ref.label } : {}),
+    ...(ref.summary ? { summary: ref.summary } : {}),
+  }));
+}
+
+function recordMissionLifecycleReport(
+  record: MissionRunRecord,
+  event: MissionLifecycleEvent,
+): void {
+  const cfg = missionLocalControlPlaneConfigs.get(record);
+  if (!localControlPlaneReportEnabled(cfg, "mission")) return;
+  try {
+    const diagnostics: LocalControlPlaneDiagnostic[] = [
+      {
+        code: `mission.phase.${event.phase}`,
+        severity: missionSeverity(event.status),
+        message: `Mission phase ${event.phase} status ${event.status}.`,
+        metadata: {
+          phase: event.phase,
+          status: event.status,
+          tick: event.tick,
+          progress: event.progress,
+          reviewerDecision: event.reviewerDecision ?? record.lastDecision ?? null,
+        },
+      },
+      ...(event.blockedReason
+        ? [{
+            code: "mission.blocked_reason",
+            severity: "warning" as const,
+            message: event.blockedReason,
+          }]
+        : []),
+      ...(record.remaining.length
+        ? [{
+            code: "mission.remaining_evidence_or_work",
+            severity: "warning" as const,
+            message: "Mission has remaining evidence or verification gaps.",
+            metadata: { remainingCount: record.remaining.length },
+          }]
+        : []),
+    ];
+    recordLocalControlPlaneReport(cfg, {
+      kind: "mission",
+      sessionKey: record.sessionKey,
+      runId: record.missionId,
+      taskId: record.taskLoopRunId ?? record.missionId,
+      timestamp: event.ts,
+      summary: `Mission ${event.phase}/${event.status}`,
+      diagnostics,
+      evidenceRefs: missionEvidenceRefsForReport(record),
+      payload: {
+        source: "mission.lifecycle",
+        missionId: record.missionId,
+        phase: event.phase,
+        status: event.status,
+        tick: event.tick,
+        maxTicks: record.maxTicks,
+        repairCount: record.repairTicks,
+        maxRepairTicks: record.maxRepairTicks,
+        reviewerDecision: event.reviewerDecision ?? record.lastDecision,
+        evidenceRefCount: record.evidenceRefs.length,
+        taskLoopRunId: record.taskLoopRunId,
+        traceId: record.traceId,
+        nextWakeAt: record.nextWakeAt,
+        nextAction: record.lastDecision ?? record.phase,
+        blockedReason: event.blockedReason ?? record.blockedReason,
+        legacyDecisionUnaffected: true,
+      },
+    });
+  } catch {
+    // Local control-plane reports are observe-only and must not perturb Mission behavior.
+  }
+}
+
 function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Partial<MissionLifecycleEvent> = {}): void {
   const now = deps.now?.() ?? Date.now();
   record.updatedAt = now;
@@ -157,6 +289,25 @@ function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Part
     createdAt: now,
   });
   deps.lifecycle?.({
+    missionId: record.missionId,
+    sessionKey: record.sessionKey,
+    agentId: record.agentId,
+    workspaceId: record.workspaceId,
+    phase: record.phase,
+    status: record.status,
+    tick: record.tick,
+    progress: record.progress,
+    reviewerDecision: record.lastDecision,
+    nextWakeAt: record.nextWakeAt,
+    blockedReason: record.blockedReason,
+    taskLoopRunId: record.taskLoopRunId,
+    traceId: record.traceId,
+    controlSignals: record.controlSignals,
+    validationState: record.validationState,
+    ts: now,
+    ...patch,
+  });
+  recordMissionLifecycleReport(record, {
     missionId: record.missionId,
     sessionKey: record.sessionKey,
     agentId: record.agentId,
@@ -334,6 +485,190 @@ function memoryEvidenceRefs(record: MissionRunRecord): MemoryEvidenceRef[] {
   });
 }
 
+function clampScore(value: number): number {
+  return Math.max(0, Math.min(1, Number(value.toFixed(2))));
+}
+
+function titleFromKnowledgeCandidate(candidate: MissionMemoryCandidate): string {
+  const firstLine = candidate.summary.split(/\r?\n/u).map((line) => line.trim()).find(Boolean);
+  if (!firstLine) return "Mission knowledge candidate";
+  return firstLine.length <= 88 ? firstLine : `${firstLine.slice(0, 85)}...`;
+}
+
+function knowledgeDraftTypeFromCandidate(candidate: MissionMemoryCandidate, failed: boolean): MissionKnowledgeInboxItem["type"] {
+  const text = candidate.summary.toLowerCase();
+  if (failed || /error|failed|failure|blocked|bug|排障|故障|失败|错误/u.test(text)) return "troubleshooting";
+  if (/decision|rationale|chose|chosen|选择|决策|取舍/u.test(text)) return "decision";
+  if (/workflow|procedure|steps|流程|步骤/u.test(text)) return "procedure";
+  if (/architecture|架构/u.test(text)) return "architecture";
+  return "synthesis";
+}
+
+function temporalityFromSummary(summary: string): MissionKnowledgeInboxItem["metadata"]["temporality"] {
+  if (/temporary|workaround|hack|临时|绕过/u.test(summary)) return "ephemeral";
+  if (/v\d+|version|migration|upgrade|Next\.js|React|TypeScript|版本|迁移|升级/u.test(summary)) return "versioned";
+  return "stable";
+}
+
+function sourceRefFromEvidence(ref: MissionEvidenceRef): MissionKnowledgeInboxSourceRef {
+  const label = ref.label ?? `${ref.type}:${ref.ref}`;
+  switch (ref.type) {
+    case "task_ledger":
+      return { id: ref.ref, kind: "task_ledger", label };
+    case "trace":
+      return { id: `trace:${ref.ref}`, kind: "trace", label };
+    case "task_loop":
+      return { id: `task_loop:${ref.ref}`, kind: "task_loop", label };
+    case "session":
+      return { id: ref.ref, kind: "chat", label };
+    case "file":
+      return { id: ref.ref, kind: "file", path: ref.ref, label };
+    case "memory":
+      return { id: ref.ref, kind: "wiki", label };
+    case "manual":
+      return { id: ref.ref, kind: "manual", label };
+    default:
+      return { id: `${ref.type}:${ref.ref}`, kind: "other", label };
+  }
+}
+
+function knowledgeCandidateCaptureHash(candidate: MissionMemoryCandidate): string {
+  return createHash("sha256")
+    .update(JSON.stringify({
+      summary: candidate.summary.trim(),
+      evidenceRefs: [...candidate.evidenceRefs].map((ref) => ref.trim()).filter(Boolean).sort(),
+    }))
+    .digest("hex")
+    .slice(0, 16);
+}
+
+function knowledgeCandidateCaptureKey(record: MissionRunRecord, candidate: MissionMemoryCandidate): string {
+  return `mission:${record.missionId}:tick:${record.tick}:knowledge:${knowledgeCandidateCaptureHash(candidate)}`;
+}
+
+function outcomeFromReviewer(record: MissionRunRecord, reviewer: MissionReviewerResult, failedOverride = false): MissionStatus {
+  if (failedOverride) return "blocked";
+  if (reviewer.decision === "complete") return "complete";
+  if (reviewer.decision === "blocked") return "blocked";
+  if (reviewer.decision === "ask_user") return "ask_user";
+  if (reviewer.decision === "repair" || reviewer.decision === "sleep" || reviewer.decision === "continue") {
+    return record.tick >= record.maxTicks ? "blocked" : "sleeping";
+  }
+  return record.status;
+}
+
+function buildKnowledgeSourceRefs(
+  record: MissionRunRecord,
+  candidate: MissionMemoryCandidate,
+): MissionKnowledgeInboxSourceRef[] {
+  const refs = new Map<string, MissionKnowledgeInboxSourceRef>();
+  const allEvidence = [...record.evidenceRefs];
+  for (const tick of record.ticks) {
+    allEvidence.push(...tick.evidenceRefs);
+  }
+  const evidenceByRef = new Map(allEvidence.map((ref) => [ref.ref, ref]));
+
+  for (const ref of allEvidence) {
+    const source = sourceRefFromEvidence(ref);
+    refs.set(source.id, source);
+  }
+
+  for (const evidenceRef of candidate.evidenceRefs) {
+    const known = evidenceByRef.get(evidenceRef);
+    const source = known
+      ? sourceRefFromEvidence(known)
+      : { id: evidenceRef, kind: "manual" as const, label: evidenceRef };
+    refs.set(source.id, source);
+  }
+
+  const metadata = record.metadata && typeof record.metadata === "object" ? record.metadata as Record<string, unknown> : {};
+  const taskLedgerRootId = typeof metadata.taskLedgerRootId === "string" ? metadata.taskLedgerRootId : undefined;
+  if (taskLedgerRootId) {
+    refs.set(taskLedgerRootId, {
+      id: taskLedgerRootId,
+      kind: "task_ledger",
+      label: "Mission Task Ledger root",
+    });
+  }
+
+  return [...refs.values()].slice(0, 12);
+}
+
+function scoreKnowledgeCandidate(params: {
+  record: MissionRunRecord;
+  reviewer: MissionReviewerResult;
+  sourceRefs: MissionKnowledgeInboxSourceRef[];
+  failed: boolean;
+  captureKey: string;
+}): MissionKnowledgeInboxItem["metadata"] {
+  const { record, reviewer, sourceRefs, failed, captureKey } = params;
+  const strongEvidence = sourceRefs.some((ref) => ref.kind === "task_ledger" || ref.kind === "file" || ref.kind === "trace" || ref.kind === "task_loop" || ref.id.startsWith("trace:") || ref.id.startsWith("task_loop:"));
+  const validated = reviewer.validationState?.status === "passed" || reviewer.acceptanceStatus?.status === "satisfied";
+  const complete = reviewer.decision === "complete" || record.status === "complete";
+  const recommendation: MissionKnowledgeInboxItem["metadata"]["recommendation"] = failed
+    ? "archive-only"
+    : complete && (validated || strongEvidence)
+      ? "save"
+      : "review";
+  const reusability = recommendation === "save" ? 0.82 : recommendation === "review" ? 0.62 : 0.58;
+  const uniqueness = 0.5;
+  const confidence = recommendation === "save" ? (validated ? 0.86 : 0.76) : recommendation === "review" ? 0.55 : 0.48;
+  const overall = clampScore((reusability * 0.4) + (uniqueness * 0.2) + (confidence * 0.4));
+  const reason = recommendation === "save"
+    ? "Mission completed with reusable evidence-backed knowledge."
+    : recommendation === "archive-only"
+      ? "Mission did not fully succeed; keep the lesson reviewable without formal wiki writes."
+      : "Mission produced a reusable lesson, but evidence or validation needs user review.";
+
+  return {
+    mvpVersion: "knowledge-interaction-mvp-1",
+    recommendation,
+    score: {
+      reusability: clampScore(reusability),
+      uniqueness: clampScore(uniqueness),
+      confidence: clampScore(confidence),
+      overall,
+    },
+    temporality: "stable",
+    reason,
+    missionId: record.missionId,
+    tick: record.tick,
+    outcome: outcomeFromReviewer(record, reviewer, failed),
+    evidenceRefs: sourceRefs.map((ref) => ref.id),
+    captureKey,
+  };
+}
+
+function buildMissionKnowledgeInboxItem(
+  record: MissionRunRecord,
+  reviewer: MissionReviewerResult,
+  candidate: MissionMemoryCandidate,
+  failedOverride = false,
+): MissionKnowledgeInboxItem {
+  const failed = failedOverride || record.status === "blocked" || record.status === "error" || reviewer.decision === "blocked";
+  const sourceRefs = buildKnowledgeSourceRefs(record, candidate);
+  const captureKey = knowledgeCandidateCaptureKey(record, candidate);
+  const metadata = scoreKnowledgeCandidate({ record, reviewer, sourceRefs, failed, captureKey });
+  return {
+    title: titleFromKnowledgeCandidate(candidate),
+    body: candidate.summary,
+    kind: sourceRefs.some((ref) => ref.kind === "task_ledger") ? "task-ledger" : "chat-session",
+    type: knowledgeDraftTypeFromCandidate(candidate, failed),
+    status: "pending",
+    sourceIds: sourceRefs.map((ref) => ref.id),
+    sourceRefs,
+    tags: ["mission-control", "knowledge-interaction-mvp"],
+    workspaceId: record.workspaceId,
+    agentId: record.agentId,
+    createdBy: "agent",
+    warnings: sourceRefs.length === 0 ? ["Mission knowledge candidate has no evidence references."] : [],
+    metadata: {
+      ...metadata,
+      temporality: temporalityFromSummary(candidate.summary),
+    },
+  };
+}
+
 function proposeMemoryCandidates(record: MissionRunRecord, candidates: readonly MissionMemoryCandidate[], deps: MissionControllerDeps): number {
   const propose = deps.proposeMemory ?? proposeMemoryCard;
   let proposed = 0;
@@ -359,6 +694,21 @@ function proposeMemoryCandidates(record: MissionRunRecord, candidates: readonly 
       proposed += 1;
     } catch {
       // Memory proposals are best-effort; Mission state remains authoritative.
+    }
+  }
+  return proposed;
+}
+
+function proposeKnowledgeInboxCandidates(record: MissionRunRecord, reviewer: MissionReviewerResult, deps: MissionControllerDeps, failedOverride = false): number {
+  if (!deps.createKnowledgeInboxItem) return 0;
+  let proposed = 0;
+  for (const candidate of reviewer.memoryCandidates) {
+    if (candidate.kind !== "knowledge_draft" || !candidate.summary.trim()) continue;
+    try {
+      deps.createKnowledgeInboxItem(buildMissionKnowledgeInboxItem(record, reviewer, candidate, failedOverride));
+      proposed += 1;
+    } catch {
+      // Knowledge Inbox capture is best-effort; Mission state remains authoritative.
     }
   }
   return proposed;
@@ -419,6 +769,7 @@ export function createMission(
     updatedAt: now,
     ticks: [],
   };
+  missionLocalControlPlaneConfigs.set(record, cfg);
   emit(record, deps);
   return clone(record);
 }
@@ -452,6 +803,7 @@ export async function tickMission(
   const saveMission = deps.saveMission ?? saveMissionRun;
   const record = getMission(input.missionId);
   if (!record) throw new Error(`unknown mission "${input.missionId}"`);
+  missionLocalControlPlaneConfigs.set(record, cfg);
   const config = resolveAgentMissionConfig(cfg, record.agentId);
   const now = deps.now ?? Date.now;
   if (record.status === "paused" || record.status === "cancelled" || terminal(record.status)) {
@@ -596,8 +948,9 @@ export async function tickMission(
     const proposedMemory = config.memory?.proposeAfterTick === false
       ? 0
       : proposeMemoryCandidates(record, reviewer.memoryCandidates, deps);
+    const proposedKnowledge = proposeKnowledgeInboxCandidates(record, reviewer, deps, repeatedRepair);
     recorder.recordEvent("mission.memory_propose", String(proposedMemory), {
-      attributes: { missionId: record.missionId, proposedMemory },
+      attributes: { missionId: record.missionId, proposedMemory, proposedKnowledge },
     });
 
     record.phase = "checkpoint";

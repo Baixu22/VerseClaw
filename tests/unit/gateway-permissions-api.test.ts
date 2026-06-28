@@ -140,4 +140,100 @@ describe('gateway permission approval flow', () => {
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
   });
 
+  it('captures mission knowledge draft candidates into Knowledge Inbox without changing the RPC result', async () => {
+    activeWorkspace.profile = null;
+    const missionResult = {
+      missionId: 'mission-knowledge-1',
+      sessionKey: 'agent:main:main',
+      agentId: 'main',
+      workspaceId: 'workspace-1',
+      objective: 'Ship reusable Mission knowledge',
+      acceptance: ['tests pass'],
+      status: 'complete',
+      phase: 'complete',
+      tick: 1,
+      repairTicks: 0,
+      maxTicks: 3,
+      maxRepairTicks: 1,
+      progress: 100,
+      lastDecision: 'complete',
+      evidenceRefs: [{ type: 'trace', ref: 'trace-loop', label: 'Mission trace' }],
+      risks: [],
+      remaining: [],
+      createdAt: 1,
+      updatedAt: 2,
+      ticks: [{
+        tick: 1,
+        phase: 'complete',
+        status: 'complete',
+        decision: 'complete',
+        traceId: 'trace-loop',
+        evidenceRefs: [
+          { type: 'trace', ref: 'trace-loop', label: 'Mission trace' },
+          { type: 'task_ledger', ref: 'ledger-root', label: 'Task Ledger root' },
+        ],
+        reviewer: {
+          decision: 'complete',
+          confidence: 0.91,
+          reason: 'complete reason',
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: ['trace-loop'] },
+          memoryCandidates: [{
+            kind: 'knowledge_draft',
+            summary: 'Workflow lesson: save Mission evidence through Knowledge Inbox first.',
+            evidenceRefs: ['trace-loop', 'ledger-root'],
+          }, {
+            kind: 'role_memory',
+            summary: 'Role memory remains separate.',
+            evidenceRefs: ['trace-loop'],
+          }],
+          checkpointSummary: 'complete summary',
+        },
+        createdAt: 1,
+        updatedAt: 2,
+      }],
+    };
+    const gatewayManager = {
+      getStatus: vi.fn(() => ({ state: 'running', port: 18789 })),
+      rpc: vi.fn(async () => ({ mission: missionResult })),
+    };
+    const backpressure = {
+      run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)),
+    };
+    const createKnowledgeInboxItem = vi.fn(async () => ({ success: true }));
+    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, backpressure as never, { createKnowledgeInboxItem: createKnowledgeInboxItem as never });
+
+    await expect(api.rpc({
+      method: 'mission.tick',
+      params: { missionId: 'mission-knowledge-1' },
+    })).resolves.toEqual({ mission: missionResult });
+
+    expect(createKnowledgeInboxItem).toHaveBeenCalledTimes(1);
+    expect(createKnowledgeInboxItem).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Workflow lesson: save Mission evidence through Knowledge Inbox first.',
+      body: 'Workflow lesson: save Mission evidence through Knowledge Inbox first.',
+      kind: 'task-ledger',
+      type: 'procedure',
+      createdBy: 'agent',
+      sourceRefs: expect.arrayContaining([
+        expect.objectContaining({ id: 'trace:trace-loop', kind: 'trace', label: 'Mission trace' }),
+        expect.objectContaining({ id: 'ledger-root', kind: 'task_ledger', label: 'Task Ledger root' }),
+      ]),
+      metadata: expect.objectContaining({
+        mvpVersion: 'knowledge-interaction-mvp-1',
+        recommendation: 'save',
+        missionId: 'mission-knowledge-1',
+        tick: 1,
+        outcome: 'complete',
+        evidenceRefs: expect.arrayContaining(['trace:trace-loop', 'ledger-root']),
+        captureKey: expect.stringMatching(/^mission:mission-knowledge-1:tick:1:knowledge:[a-f0-9]{16}$/),
+      }),
+    }));
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('mission.tick', { missionId: 'mission-knowledge-1' }, undefined);
+    expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+  });
+
 });

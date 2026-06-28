@@ -160,6 +160,15 @@
       "ignored": "Ignored"
     }
   },
+  "quickLocate": {
+    "title": "Quick locate",
+    "subtitle": "Jump to a conversation turn in this trace.",
+    "searchPlaceholder": "Filter turns...",
+    "empty": "No matching turns.",
+    "turnLabel": "Turn {{sequence}}",
+    "collapse": "Hide",
+    "expand": "Show quick locate"
+  },
   "details": {
     "empty": "Select a node to inspect its runtime details.",
     "status": "Status",

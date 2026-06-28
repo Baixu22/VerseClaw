@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Activity,
   AlertTriangle,
   BarChart3,
   CheckCircle2,
+  ChevronDown,
   Clock,
   Coins,
   FileCode2,
@@ -204,19 +205,47 @@ export function ObservabilityDashboard() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [timeFilter, setTimeFilter] = useState<string>('all');
   const [toolFilter, setToolFilter] = useState<string>('all');
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState<string>('');
+  // Date.now() must not be called during render (react-hooks/purity), so seed
+  // the cutoff via a lazy useState initializer and recompute in an effect
+  // when the time filter changes. The cascading setState in the effect is the
+  // standard pattern for time-based filters in React 19.
+  const [timeCutoff, setTimeCutoff] = useState(() =>
+    timeFilter === 'hour'
+      ? Date.now() - 60 * 60 * 1000
+      : timeFilter === 'day'
+        ? Date.now() - 24 * 60 * 60 * 1000
+        : 0,
+  );
   const [viewMode, setViewMode] = useState<ViewMode>('graph');
   const [savedView, setSavedView] = useState<SavedViewKey>('all');
   const [customSavedView, setCustomSavedView] = useState<TraceFilterState | null>(() => loadJson<TraceFilterState | null>(TRACE_SAVED_VIEW_KEY, null));
   const [compareTraceId, setCompareTraceId] = useState<string>('none');
   const [annotations, setAnnotations] = useState<Record<string, TraceAnnotation>>(() => loadJson<Record<string, TraceAnnotation>>(TRACE_ANNOTATIONS_KEY, {}));
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const skipAutoSelectRef = useRef(false);
+  // The selected node is derived from three sources (in priority order):
+  //   1. URL search param `nodeId` (deep-link / share-link entry point)
+  //   2. A node the user explicitly picked in this session (userNodeId)
+  //   3. Auto-selected first critical/error node from the graph (unless cleared)
+  // Deriving during render avoids the cascading setState-in-effect pattern
+  // (see https://react.dev/learn/you-might-not-need-an-effect).
+  const [userNodeId, setUserNodeId] = useState<string | null>(null);
+  const [isCleared, setIsCleared] = useState(false);
   const { t } = useTranslation('observability');
 
   useEffect(() => {
     void fetchDashboard();
   }, [fetchDashboard]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- recompute "now"-based cutoff when time filter changes; the cascade is bounded to one re-render per filter change
+    setTimeCutoff(
+      timeFilter === 'hour'
+        ? Date.now() - 60 * 60 * 1000
+        : timeFilter === 'day'
+          ? Date.now() - 24 * 60 * 60 * 1000
+          : 0,
+    );
+  }, [timeFilter]);
 
   useEffect(() => {
     const from = timeFilter === 'hour'
@@ -257,24 +286,31 @@ export function ObservabilityDashboard() {
     }
   }, [searchParams, selectTrace, selectedTraceId]);
 
-  useEffect(() => {
-    const requestedNode = searchParams.get('nodeId');
-    if (requestedNode && selectedGraph?.graph.nodes.some((node) => node.id === requestedNode)) {
-      skipAutoSelectRef.current = false;
-      setSelectedNodeId(requestedNode);
-      return;
-    }
-    if (skipAutoSelectRef.current) return;
-    const firstNode = selectedGraph?.graph.summary?.issues?.find((issue) => issue.nodeId && (issue.severity === 'critical' || issue.severity === 'error'))?.nodeId
-      ?? selectedGraph?.graph.summary?.errorNodeIds[0]
-      ?? selectedGraph?.graph.nodes[0]?.id
+  // Derive the effective selected node id from URL, user pick, and graph
+  // fallback (see comment on the state declarations above).
+  const autoNodeId = useMemo(() => {
+    if (!selectedGraph || isCleared) return null;
+    return selectedGraph.graph.summary?.issues?.find((issue) => issue.nodeId && (issue.severity === 'critical' || issue.severity === 'error'))?.nodeId
+      ?? selectedGraph.graph.summary?.errorNodeIds[0]
+      ?? selectedGraph.graph.nodes[0]?.id
       ?? null;
-    setSelectedNodeId((current) => {
-      if (!selectedGraph) return null;
-      if (current && selectedGraph.graph.nodes.some((node) => node.id === current)) return current;
-      return firstNode;
-    });
+  }, [selectedGraph, isCleared]);
+
+  const requestedNodeId = useMemo(() => {
+    const requested = searchParams.get('nodeId');
+    if (requested && selectedGraph?.graph.nodes.some((node) => node.id === requested)) {
+      return requested;
+    }
+    return null;
   }, [searchParams, selectedGraph]);
+
+  const selectedNodeId = useMemo(() => {
+    if (requestedNodeId) return requestedNodeId;
+    if (userNodeId && selectedGraph?.graph.nodes.some((node) => node.id === userNodeId)) {
+      return userNodeId;
+    }
+    return autoNodeId;
+  }, [requestedNodeId, userNodeId, autoNodeId, selectedGraph]);
 
   useEffect(() => {
     if (!selectedTraceId || !selectedNodeId) return;
@@ -283,11 +319,6 @@ export function ObservabilityDashboard() {
 
   const filteredTraces = useMemo(() => {
     const rows = queryResult?.items ?? snapshot?.traces ?? [];
-    const cutoff = timeFilter === 'hour'
-      ? Date.now() - 60 * 60 * 1000
-      : timeFilter === 'day'
-        ? Date.now() - 24 * 60 * 60 * 1000
-        : 0;
     const needle = query.trim().toLowerCase();
     return rows.filter((trace) => {
       if (statusFilter !== 'all' && trace.status !== statusFilter) return false;
@@ -297,7 +328,7 @@ export function ObservabilityDashboard() {
       if (toolFilter === 'approvals' && (trace.approvalCount ?? 0) === 0) return false;
       if (toolFilter === 'retries' && (trace.retryCount ?? 0) === 0) return false;
       if (toolFilter === 'warnings' && (trace.warningCount ?? 0) === 0) return false;
-      if (cutoff && (trace.startedAt ?? 0) < cutoff) return false;
+      if (timeCutoff && (trace.startedAt ?? 0) < timeCutoff) return false;
       if (!needle) return true;
       return [
         trace.name,
@@ -307,7 +338,7 @@ export function ObservabilityDashboard() {
         trace.slowestNodeLabel,
       ].some((value) => value?.toLowerCase().includes(needle));
     });
-  }, [query, queryResult?.items, snapshot?.traces, statusFilter, timeFilter, toolFilter]);
+  }, [query, queryResult?.items, snapshot?.traces, statusFilter, timeCutoff, toolFilter]);
 
   const selectedNode = useMemo<ObservabilityGraphNode | null>(() => {
     if (!selectedGraph || !selectedNodeId) return null;
@@ -382,21 +413,21 @@ export function ObservabilityDashboard() {
   };
 
   const openTrace = (trace: TraceRow, nodeId?: string) => {
-    skipAutoSelectRef.current = false;
+    setIsCleared(false);
+    setUserNodeId(nodeId ?? null);
     setSearchParams(nodeId ? { traceId: trace.id, nodeId } : { traceId: trace.id });
-    if (nodeId) setSelectedNodeId(nodeId);
     void selectTrace(trace.id);
   };
 
   const selectGraphNode = (nodeId: string) => {
-    skipAutoSelectRef.current = false;
-    setSelectedNodeId(nodeId);
+    setIsCleared(false);
+    setUserNodeId(nodeId);
     if (selectedTraceId) setSearchParams({ traceId: selectedTraceId, nodeId });
   };
 
   const clearNodeSelection = () => {
-    skipAutoSelectRef.current = true;
-    setSelectedNodeId(null);
+    setIsCleared(true);
+    setUserNodeId(null);
     if (selectedTraceId) setSearchParams({ traceId: selectedTraceId });
   };
 
@@ -633,6 +664,13 @@ export function ObservabilityDashboard() {
               ))
             )}
           </div>
+          {selectedGraph && selectedGraph.graph.nodes.length > 3 && (
+            <QuickLocatePanel
+              graph={selectedGraph.graph}
+              selectedNodeId={selectedNodeId}
+              onSelectNode={selectGraphNode}
+            />
+          )}
         </aside>
 
         <main className="flex min-h-0 flex-col gap-2">
@@ -1235,11 +1273,16 @@ function TraceAnnotationPanel({
   const [tags, setTags] = useState(annotation?.tags ?? '');
   const [note, setNote] = useState(annotation?.note ?? '');
 
-  useEffect(() => {
+  // Reset form state when the trace changes. Tracking the previous traceId
+  // and resetting during render avoids cascading setState-in-effect re-renders
+  // (see https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes).
+  const [prevTraceId, setPrevTraceId] = useState(traceId);
+  if (traceId !== prevTraceId) {
+    setPrevTraceId(traceId);
     setStatus(annotation?.status ?? 'open');
     setTags(annotation?.tags ?? '');
     setNote(annotation?.note ?? '');
-  }, [annotation, traceId]);
+  }
 
   if (!traceId) return <p className="text-xs text-muted-foreground">{t('traceUnavailable')}</p>;
   return (
@@ -1280,6 +1323,99 @@ function TraceAnnotationPanel({
         <Save className="mr-1.5 h-3.5 w-3.5" />
         {t('annotations.save')}
       </Button>
+    </div>
+  );
+}
+
+function QuickLocatePanel({
+  graph,
+  selectedNodeId,
+  onSelectNode,
+}: {
+  graph: ObservabilityTraceGraph;
+  selectedNodeId: string | null;
+  onSelectNode: (nodeId: string) => void;
+}) {
+  const { t } = useTranslation('observability');
+  const [query, setQuery] = useState('');
+  const [collapsed, setCollapsed] = useState(false);
+
+  const filteredNodes = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    const sorted = [...graph.nodes].sort(
+      (a, b) => (a.sequence ?? a.startedAt ?? 0) - (b.sequence ?? b.startedAt ?? 0),
+    );
+    if (!needle) return sorted;
+    return sorted.filter((node) =>
+      [node.label, node.subtitle, node.roleName, node.modelRef, node.kind, node.phase]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(needle)),
+    );
+  }, [graph.nodes, query]);
+
+  return (
+    <div className="border-t border-black/10 dark:border-white/10" data-testid="observability-quick-locate">
+      <button
+        type="button"
+        onClick={() => setCollapsed((value) => !value)}
+        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-xs font-medium hover:bg-black/[0.02] dark:hover:bg-white/[0.04]"
+        aria-expanded={!collapsed}
+        aria-label={collapsed ? t('quickLocate.expand') : t('quickLocate.collapse')}
+        data-testid="observability-quick-locate-toggle"
+      >
+        <span className="flex items-center gap-2">
+          <ListTree className="h-3.5 w-3.5 text-muted-foreground" />
+          {t('quickLocate.title')}
+          <Badge variant="secondary" className="rounded-full text-2xs">{graph.nodes.length}</Badge>
+        </span>
+        <ChevronDown className={cn('h-3.5 w-3.5 text-muted-foreground transition', collapsed && 'rotate-180')} />
+      </button>
+      {!collapsed && (
+        <div className="space-y-2 px-3 pb-3">
+          <p className="text-2xs text-muted-foreground">{t('quickLocate.subtitle')}</p>
+          <div className="flex items-center gap-2 rounded-md border bg-surface-input px-2">
+            <Search className="h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t('quickLocate.searchPlaceholder')}
+              className="h-7 border-0 bg-transparent px-0 text-xs focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+          </div>
+          <div className="max-h-[220px] overflow-auto" data-testid="observability-quick-locate-list">
+            {filteredNodes.length === 0 ? (
+              <p className="p-2 text-center text-2xs text-muted-foreground">{t('quickLocate.empty')}</p>
+            ) : (
+              filteredNodes.map((node) => (
+                <button
+                  key={node.id}
+                  type="button"
+                  onClick={() => onSelectNode(node.id)}
+                  className={cn(
+                    'mb-1 flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 text-left text-xs transition hover:bg-black/[0.02] dark:hover:bg-white/[0.04]',
+                    selectedNodeId === node.id && 'border-primary/35 bg-black/[0.03] dark:bg-white/[0.05]',
+                    node.status === 'error' && 'border-red-500/30 bg-red-500/5',
+                  )}
+                  data-testid="observability-quick-locate-row"
+                >
+                  {statusIcon(node.status)}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-medium">{node.label}</span>
+                    <span className="block truncate text-2xs text-muted-foreground">
+                      {node.subtitle ?? (node.phase ? t(`phases.${node.phase}`) : t(`nodeKinds.${node.kind}`))}
+                    </span>
+                  </span>
+                  {typeof node.sequence === 'number' && (
+                    <Badge variant="outline" className="rounded-full text-[10px]">
+                      {t('quickLocate.turnLabel', { sequence: node.sequence })}
+                    </Badge>
+                  )}
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

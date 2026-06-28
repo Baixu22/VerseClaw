@@ -1,0 +1,228 @@
+import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import type { Page, TestInfo } from '@playwright/test';
+import { mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+
+const SESSION_KEY = 'agent:main:main';
+const SECOND_SESSION_KEY = 'agent:main:follow-up';
+const WORKSPACE_ID = 'workspace-layout-cdp';
+
+function stableStringify(value: unknown): string {
+  if (value == null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map((item) => stableStringify(item)).join(',')}]`;
+  const entries = Object.entries(value as Record<string, unknown>)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, entryValue]) => `${JSON.stringify(key)}:${stableStringify(entryValue)}`);
+  return `{${entries.join(',')}}`;
+}
+
+function buildWorkspace() {
+  return {
+    id: WORKSPACE_ID,
+    name: 'Layout Workspace',
+    rootPath: 'C:/workspace-layout-cdp',
+    agentId: 'main',
+    selectedAgentId: 'main',
+    activeSessionKey: SESSION_KEY,
+    agentBindings: {
+      main: {
+        workspaceId: WORKSPACE_ID,
+        agentId: 'main',
+        sessionKey: SESSION_KEY,
+      },
+    },
+    permissionMode: 'acceptEdits' as const,
+    createdAt: 1,
+    updatedAt: 1,
+    lastOpenedAt: 1,
+    state: {},
+    sessionStates: {
+      [SESSION_KEY]: {},
+      [SECOND_SESSION_KEY]: {},
+    },
+  };
+}
+
+function chatLayoutMocks() {
+  const workspace = buildWorkspace();
+  const sessions = [
+    { key: SESSION_KEY, displayName: 'main', label: 'Main conversation', updatedAt: Date.now() },
+    { key: SECOND_SESSION_KEY, displayName: 'follow-up', label: 'Follow up notes', updatedAt: Date.now() - 60_000 },
+  ];
+  const contextRange = {
+    success: true,
+    range: {
+      sessionKey: SESSION_KEY,
+      usedTokens: 0,
+      maxTokens: 128000,
+      truncatedMessageCount: 0,
+      status: 'bestEffort',
+    },
+  };
+
+  return {
+    gatewayStatus: {
+      state: 'running',
+      port: 18789,
+      pid: 12345,
+      gatewayReady: true,
+    },
+    gatewayRpc: {
+      [stableStringify(['sessions.list', {}])]: { success: true, result: { sessions } },
+      [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+        success: true,
+        result: { sessions },
+      },
+      [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+        success: true,
+        result: {
+          messages: [
+            { id: 'user-1', role: 'user', content: 'Please check the layout alignment.', timestamp: 1 },
+            { id: 'assistant-1', role: 'assistant', content: 'The chat body should stay centered and usable.', timestamp: 2 },
+          ],
+        },
+      },
+      [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 1000, maxChars: 500000 }])]: {
+        success: true,
+        result: { messages: [] },
+      },
+    },
+    hostApi: {
+      [stableStringify(['agents', 'list', null])]: { success: true, agents: [{ id: 'main', name: 'Main' }] },
+      [stableStringify(['workspaces', 'getActive', null])]: {
+        success: true,
+        activeWorkspaceId: WORKSPACE_ID,
+        activeWorkspace: workspace,
+      },
+      [stableStringify(['workspaces', 'list', null])]: {
+        profiles: [workspace],
+        activeWorkspaceId: WORKSPACE_ID,
+        activeWorkspace: workspace,
+      },
+      [stableStringify(['usage', 'contextRange', {
+        sessionKey: SESSION_KEY,
+        modelRef: null,
+        messageCount: 2,
+        usedTokens: null,
+      }])]: contextRange,
+      [stableStringify(['usage', 'contextRange', {
+        sessionKey: SESSION_KEY,
+        modelRef: null,
+        messageCount: 2,
+        usedTokens: 0,
+      }])]: contextRange,
+    },
+  };
+}
+
+async function captureLayoutScreenshot(
+  page: Page,
+  testInfo: TestInfo,
+  name: string,
+) {
+  const testPath = testInfo.outputPath(`${name}.png`);
+  await page.screenshot({ path: testPath, fullPage: false });
+  await testInfo.attach(name, { path: testPath, contentType: 'image/png' });
+
+  const screenshotDir = process.env.CLAWX_LAYOUT_SCREENSHOT_DIR;
+  if (screenshotDir) {
+    const resolvedDir = join(process.cwd(), screenshotDir);
+    await mkdir(resolvedDir, { recursive: true });
+    await page.screenshot({ path: join(resolvedDir, `${name}.png`), fullPage: false });
+  }
+}
+
+test.describe('Chat page layout CDP checks', () => {
+  test('keeps chat content, session search modal, and window controls aligned', async ({ launchElectronApp }, testInfo) => {
+    const app = await launchElectronApp({ skipSetup: true });
+    try {
+      await installIpcMocks(app, chatLayoutMocks());
+      const page = await getStableWindow(app);
+      await page.setViewportSize({ width: 1280, height: 800 });
+      const url = new URL(page.url());
+      url.searchParams.set('e2eSkipSetup', '1');
+      await page.goto(url.toString());
+
+      await expect(page.getByTestId('chat-page')).toBeVisible();
+      await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('sidebar-session-search')).toBeVisible({ timeout: 30_000 });
+
+      await captureLayoutScreenshot(page, testInfo, 'chat-layout-before-search');
+
+      const platform = await page.getByTestId('main-layout').getAttribute('data-platform');
+      if (platform === 'win32') {
+        const titlebar = page.getByTestId('windows-titlebar');
+        await expect(titlebar).toBeVisible();
+        await expect(titlebar.getByTitle('Minimize')).toBeVisible();
+        await expect(titlebar.getByTitle(/Maximize|Restore/)).toBeVisible();
+        await expect(titlebar.getByTitle('Close')).toBeVisible();
+      }
+
+      await page.getByTestId('sidebar-session-search').click();
+      const modal = page.getByTestId('session-search-modal');
+      await expect(modal).toBeVisible();
+      await expect(page.getByTestId('session-search-result-0')).toBeVisible();
+
+      await captureLayoutScreenshot(page, testInfo, 'chat-layout-session-search-modal');
+
+      const metrics = await page.evaluate(() => {
+        const modalEl = document.querySelector('[data-testid="session-search-modal"]') as HTMLElement | null;
+        const chatEl = document.querySelector('[data-testid="chat-page"]') as HTMLElement | null;
+        const mainEl = document.querySelector('[data-testid="main-content"]') as HTMLElement | null;
+        const titlebarEl = document.querySelector('[data-testid="windows-titlebar"]') as HTMLElement | null;
+        if (!modalEl || !chatEl || !mainEl) throw new Error('Missing layout elements');
+        const modalRect = modalEl.getBoundingClientRect();
+        const chatRect = chatEl.getBoundingClientRect();
+        const mainRect = mainEl.getBoundingClientRect();
+        const titlebarRect = titlebarEl?.getBoundingClientRect() ?? null;
+        return {
+          viewport: { width: window.innerWidth, height: window.innerHeight },
+          modal: {
+            left: modalRect.left,
+            top: modalRect.top,
+            width: modalRect.width,
+            height: modalRect.height,
+            centerX: modalRect.left + modalRect.width / 2,
+            centerY: modalRect.top + modalRect.height / 2,
+          },
+          chat: {
+            left: chatRect.left,
+            top: chatRect.top,
+            width: chatRect.width,
+            height: chatRect.height,
+          },
+          main: {
+            left: mainRect.left,
+            top: mainRect.top,
+            width: mainRect.width,
+            height: mainRect.height,
+          },
+          titlebar: titlebarRect && {
+            left: titlebarRect.left,
+            top: titlebarRect.top,
+            width: titlebarRect.width,
+            height: titlebarRect.height,
+          },
+        };
+      });
+
+      testInfo.attach('layout-metrics', {
+        body: JSON.stringify(metrics, null, 2),
+        contentType: 'application/json',
+      });
+
+      expect(Math.abs(metrics.modal.centerX - metrics.viewport.width / 2)).toBeLessThanOrEqual(2);
+      expect(Math.abs(metrics.modal.centerY - metrics.viewport.height / 2)).toBeLessThanOrEqual(2);
+      expect(metrics.modal.left).toBeGreaterThanOrEqual(16);
+      expect(metrics.modal.left + metrics.modal.width).toBeLessThanOrEqual(metrics.viewport.width - 16);
+      expect(Math.abs(metrics.chat.top - metrics.main.top)).toBeLessThanOrEqual(1);
+      expect(Math.abs(metrics.chat.height - metrics.main.height)).toBeLessThanOrEqual(1);
+      if (platform === 'win32') {
+        expect(metrics.titlebar?.height).toBe(40);
+        expect(metrics.titlebar?.top).toBe(0);
+      }
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+});

@@ -56,15 +56,6 @@ const electronAPI = {
         'settings:getAll',
         'settings:reset',
         'usage:recentTokenHistory',
-        // Update
-        'update:status',
-        'update:version',
-        'update:check',
-        'update:download',
-        'update:install',
-        'update:setChannel',
-        'update:setAutoDownload',
-        'update:cancelAutoInstall',
         // Env
         'env:getConfig',
         'env:setApiKey',

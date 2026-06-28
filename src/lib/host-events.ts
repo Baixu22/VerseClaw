@@ -76,11 +76,6 @@ const onChannelEvent = <E extends HostEventName<'channel'>>(
   handler: HostEventHandler<'channel', E>,
 ) => onIpc(buildHostChannelEventName(channel, event), handler);
 
-const onUpdateEvent = <E extends HostEventName<'updates'>>(
-  event: E,
-  handler: HostEventHandler<'updates', E>,
-) => onIpc(HOST_EVENT_CHANNELS.updates[event], handler);
-
 const onTerminalEvent = <E extends HostEventName<'terminal'>>(
   event: E,
   handler: HostEventHandler<'terminal', E>,
@@ -157,12 +152,6 @@ export const hostEvents = {
   onChannelError: (channel: string, handler: HostEventHandler<'channel', 'error'>) => (
     onChannelEvent(channel, 'error', handler)
   ),
-  onUpdateStatusChanged: (handler: HostEventHandler<'updates', 'statusChanged'>) => (
-    onUpdateEvent('statusChanged', handler)
-  ),
-  onUpdateAutoInstallCountdown: (
-    handler: HostEventHandler<'updates', 'autoInstallCountdown'>,
-  ) => onUpdateEvent('autoInstallCountdown', handler),
   onTerminalRegistered: (handler: HostEventHandler<'terminal', 'registered'>) => (
     onTerminalEvent('registered', handler)
   ),

@@ -6,6 +6,7 @@ import {
 import { securityVerificationShadowHandlers } from '../../openclaw_runtime/src/gateway/server-methods/security-verification-shadow';
 import {
   buildCheckpointFixture,
+  buildEvidenceVerifierInputFixture,
   buildRuntimeTaskEventFixture,
   serializeRuntimeCheckpoint,
 } from '../../openclaw_runtime/src/runtime-core';
@@ -96,6 +97,27 @@ describe('security/verification shadow RPC regression fixture', () => {
         structuredData: { output: 'complete tool output' },
         evidence: [],
       },
+      evidenceVerifier: buildEvidenceVerifierInputFixture({
+        objective: 'raw-prompt complete tool output with secret-value',
+        toolResults: [
+          {
+            callId: 'fixture_call',
+            status: 'error',
+            contextItems: [],
+            startedAt: 1,
+            finishedAt: 2,
+            error: {
+              type: 'tool',
+              message: 'complete tool output with secret-value',
+              retryable: false,
+              evidenceRefs: [],
+            },
+            evidence: [],
+          },
+        ],
+        obligations: [],
+        evidenceRefs: [],
+      }),
     });
 
     expect(run.ok).toBe(true);
@@ -103,6 +125,15 @@ describe('security/verification shadow RPC regression fixture', () => {
     expect(runPayload).toMatchObject({
       runId: 'run_fixture',
       result: { status: 'failed' },
+      evidenceVerifier: {
+        decision: 'failed',
+        findingCodes: [
+          'missing_file_evidence',
+          'missing_test_evidence',
+          'missing_tool_evidence',
+          'tool_result_error',
+        ],
+      },
       record: {
         runId: 'run_fixture',
         source: 'verification.run',
@@ -120,6 +151,14 @@ describe('security/verification shadow RPC regression fixture', () => {
         },
         security: { decision: 'warn' },
         verification: { status: 'failed' },
+        evidenceVerifier: {
+          decision: 'failed',
+          findingCount: 4,
+          evidenceRefCount: 0,
+          requiredEvidenceKinds: ['file', 'test', 'tool'],
+          findingCategories: ['evidence', 'tool'],
+          legacyDecisionUnaffected: true,
+        },
       },
     });
     expectNoRawSensitivePayload(run.payload);
@@ -138,6 +177,7 @@ describe('security/verification shadow RPC regression fixture', () => {
         status: 'success',
         evidence: [{ type: 'tool', ref: 'other_call' }],
       },
+      evidenceVerifier: buildEvidenceVerifierInputFixture(),
     });
     expect(otherRun).toMatchObject({
       ok: true,
@@ -146,6 +186,7 @@ describe('security/verification shadow RPC regression fixture', () => {
         record: {
           security: { decision: 'allow' },
           verification: { status: 'passed' },
+          evidenceVerifier: { decision: 'completed' },
         },
       },
     });
@@ -159,6 +200,7 @@ describe('security/verification shadow RPC regression fixture', () => {
           latestRunId: 'run_other',
           securityDecisionCounts: { allow: 1 },
           verificationStatusCounts: { passed: 1 },
+          evidenceVerifierDecisionCounts: { completed: 1 },
         },
         results: [{ runId: 'run_other' }],
       },
@@ -169,6 +211,7 @@ describe('security/verification shadow RPC regression fixture', () => {
       source: 'verification.run',
       decision: 'warn',
       status: 'failed',
+      verifierDecision: 'failed',
       limit: 10,
     });
     expect(filteredList).toMatchObject({
@@ -179,6 +222,7 @@ describe('security/verification shadow RPC regression fixture', () => {
           latestRunId: 'run_fixture',
           securityDecisionCounts: { warn: 1 },
           verificationStatusCounts: { failed: 1 },
+          evidenceVerifierDecisionCounts: { failed: 1 },
           sourceCounts: { 'verification.run': 1 },
         },
         results: [
@@ -188,6 +232,7 @@ describe('security/verification shadow RPC regression fixture', () => {
             source: 'verification.run',
             security: { decision: 'warn' },
             verification: { status: 'failed' },
+            evidenceVerifier: { decision: 'failed' },
           },
         ],
       },
@@ -203,6 +248,7 @@ describe('security/verification shadow RPC regression fixture', () => {
           runId: 'run_fixture',
           security: { decision: 'warn' },
           verification: { status: 'failed' },
+          evidenceVerifier: { decision: 'failed' },
         },
       },
     });
@@ -212,6 +258,7 @@ describe('security/verification shadow RPC regression fixture', () => {
       runId: 'run_fixture',
       decision: 'warn',
       status: 'failed',
+      verifierDecision: 'failed',
     });
     expect(intercepts).toMatchObject({
       ok: true,
@@ -221,6 +268,7 @@ describe('security/verification shadow RPC regression fixture', () => {
           latestRunId: 'run_fixture',
           securityDecisionCounts: { warn: 1 },
           verificationStatusCounts: { failed: 1 },
+          evidenceVerifierDecisionCounts: { failed: 1 },
         },
         intercepts: [
           {
@@ -228,6 +276,7 @@ describe('security/verification shadow RPC regression fixture', () => {
             runId: 'run_fixture',
             security: { decision: 'warn' },
             verification: { status: 'failed' },
+            evidenceVerifier: { decision: 'failed' },
           },
         ],
       },
@@ -250,6 +299,7 @@ describe('security/verification shadow RPC regression fixture', () => {
             latestRunId: 'run_other',
             securityDecisionCounts: { allow: 1, warn: 1 },
             verificationStatusCounts: { passed: 1, failed: 1 },
+            evidenceVerifierDecisionCounts: { completed: 1, failed: 1 },
             sourceCounts: { 'verification.run': 2 },
           },
         },

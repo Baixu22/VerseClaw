@@ -21,6 +21,7 @@ import { resolveDefaultAgentDir } from "../agent-scope.js";
 import { ensureAuthProfileStore, resolveAuthProfileOrder } from "../auth-profiles.js";
 import type { AuthProfileCredential } from "../auth-profiles/types.js";
 import { DEFAULT_CONTEXT_TOKENS } from "../defaults.js";
+import { recordLocalControlPlaneReport } from "../../local-control-plane/index.js";
 import { buildModelAliasLines } from "../model-alias-lines.js";
 import { resolveModelWorkspaceDir } from "../model-discovery-context.js";
 import { modelKey, normalizeStaticProviderModelId } from "../model-ref-shared.js";
@@ -31,7 +32,10 @@ import {
   shouldUnconditionallySuppress,
 } from "../model-suppression.js";
 import { listOpenAIAuthProfileProvidersForAgentRuntime } from "../openai-routing.js";
-import { attachModelProviderLocalService } from "../provider-local-service.js";
+import {
+  attachModelProviderLocalService,
+  getModelProviderLocalService,
+} from "../provider-local-service.js";
 import {
   attachModelProviderRequestTransport,
   resolveProviderRequestConfig,
@@ -1275,6 +1279,149 @@ function normalizeProviderModelRef(params: {
   };
 }
 
+function isLocalModelEndpoint(baseUrl: string | undefined): boolean {
+  if (!baseUrl) return false;
+  try {
+    const parsed = new URL(baseUrl);
+    return /^(?:localhost|127(?:\.\d{1,3}){3}|\[?::1\]?|0\.0\.0\.0)$/i.test(parsed.hostname);
+  } catch {
+    return false;
+  }
+}
+
+function contextPressureSignal(model: Model | undefined): "unknown" | "low" | "medium" | "high" {
+  const contextTokens = model?.contextTokens ?? model?.contextWindow;
+  if (!contextTokens || !Number.isFinite(contextTokens)) return "unknown";
+  if (contextTokens <= 32_000) return "high";
+  if (contextTokens <= 128_000) return "medium";
+  return "low";
+}
+
+function withModelRouterReport<T extends { model?: Model; error?: string }>(
+  params: {
+    cfg?: OpenClawConfig;
+    requestedProvider: string;
+    requestedModelId: string;
+    normalizedRef: { provider: string; model: string };
+    agentDir?: string;
+    workspaceDir?: string;
+    authProfileId?: string;
+    preferredProfile?: string;
+    resolutionPath: "sync" | "async";
+  },
+  result: T,
+): T {
+  try {
+    const model = result.model;
+    const localService = model ? getModelProviderLocalService(model) : undefined;
+    const endpointClass = localService
+      ? "local_service"
+      : isLocalModelEndpoint(model?.baseUrl)
+        ? "local_endpoint"
+        : model?.baseUrl
+          ? "remote_or_custom_endpoint"
+          : "unknown";
+    const pressure = contextPressureSignal(model);
+    recordLocalControlPlaneReport(params.cfg, {
+      kind: "model_router",
+      summary: model
+        ? `Model router recommendation mirrors selected model ${model.provider}/${model.id}.`
+        : `Model router observed unresolved model ${params.normalizedRef.provider}/${params.normalizedRef.model}.`,
+      diagnostics: [
+        {
+          code: model ? "model_router.selected_unchanged" : "model_router.unresolved",
+          severity: model ? "info" : "warning",
+          message: model
+            ? "Observe-only recommendation did not change the selected model."
+            : result.error ?? "Model resolution did not produce a selected model.",
+          metadata: {
+            resolutionPath: params.resolutionPath,
+            requestedProvider: params.requestedProvider,
+            requestedModel: params.requestedModelId,
+            normalizedProvider: params.normalizedRef.provider,
+            normalizedModel: params.normalizedRef.model,
+          },
+        },
+        {
+          code: `model_router.context_pressure.${pressure}`,
+          severity: pressure === "high" ? "warning" : "info",
+          message: `Resolved model context pressure signal is ${pressure}.`,
+          metadata: {
+            pressure,
+            contextWindow: model?.contextWindow ?? null,
+            contextTokens: model?.contextTokens ?? null,
+            maxTokens: model?.maxTokens ?? null,
+          },
+        },
+        {
+          code: `model_router.privacy.${endpointClass}`,
+          severity: endpointClass === "remote_or_custom_endpoint" ? "warning" : "info",
+          message: `Provider endpoint signal is ${endpointClass}.`,
+          metadata: {
+            endpointClass,
+            hasLocalService: Boolean(localService),
+          },
+        },
+        {
+          code: model?.reasoning ? "model_router.role_effort.reasoning_capable" : "model_router.role_effort.standard",
+          severity: "info",
+          message: model?.reasoning
+            ? "Selected model advertises reasoning controls."
+            : "Selected model does not advertise reasoning controls.",
+          metadata: {
+            reasoning: model?.reasoning ?? false,
+            authProfileSelected: Boolean(params.authProfileId || params.preferredProfile),
+          },
+        },
+      ],
+      payload: {
+        source: "embedded_agent_model_resolution",
+        mode: "observe",
+        selectedModelUnaffected: true,
+        request: {
+          provider: params.requestedProvider,
+          model: params.requestedModelId,
+          normalizedProvider: params.normalizedRef.provider,
+          normalizedModel: params.normalizedRef.model,
+        },
+        actualSelection: model
+          ? {
+              provider: model.provider,
+              model: model.id,
+              api: model.api,
+              contextWindow: model.contextWindow,
+              contextTokens: model.contextTokens,
+              maxTokens: model.maxTokens,
+              reasoning: model.reasoning,
+            }
+          : null,
+        recommendation: model
+          ? {
+              provider: model.provider,
+              model: model.id,
+              reason: "MVP observe-only recommendation mirrors the legacy selected model.",
+            }
+          : {
+              provider: params.normalizedRef.provider,
+              model: params.normalizedRef.model,
+              reason: "No recommendation because legacy model resolution failed.",
+            },
+        signals: {
+          privacy: endpointClass,
+          localFirst: endpointClass === "local_service" || endpointClass === "local_endpoint",
+          contextPressure: pressure,
+          roleEffortRisk: model?.reasoning ? "reasoning_capable" : "standard",
+          authProfileSelected: Boolean(params.authProfileId || params.preferredProfile),
+        },
+        error: result.error,
+      },
+    });
+  } catch {
+    // Model router reports are observe-only and must not perturb model resolution.
+  }
+  return result;
+}
+
 export function resolveModelWithRegistry(params: {
   provider: string;
   modelId: string;
@@ -1376,10 +1523,30 @@ export function resolveModel(
     runtimeHooks,
   });
   if (model) {
-    return { model, authStorage, modelRegistry };
+    return withModelRouterReport({
+      cfg,
+      requestedProvider: provider,
+      requestedModelId: modelId,
+      normalizedRef,
+      agentDir: resolvedAgentDir,
+      workspaceDir,
+      authProfileId: options?.authProfileId,
+      preferredProfile: options?.preferredProfile,
+      resolutionPath: "sync",
+    }, { model, authStorage, modelRegistry });
   }
 
-  return {
+  return withModelRouterReport({
+    cfg,
+    requestedProvider: provider,
+    requestedModelId: modelId,
+    normalizedRef,
+    agentDir: resolvedAgentDir,
+    workspaceDir,
+    authProfileId: options?.authProfileId,
+    preferredProfile: options?.preferredProfile,
+    resolutionPath: "sync",
+  }, {
     error: buildUnknownModelError({
       provider: normalizedRef.provider,
       modelId: normalizedRef.model,
@@ -1390,7 +1557,7 @@ export function resolveModel(
     }),
     authStorage,
     modelRegistry,
-  };
+  });
 }
 
 export async function resolveModelAsync(
@@ -1449,7 +1616,17 @@ export async function resolveModelAsync(
     runtimeHooks,
   });
   if (explicitModel?.kind === "suppressed") {
-    return {
+    return withModelRouterReport({
+      cfg,
+      requestedProvider: provider,
+      requestedModelId: modelId,
+      normalizedRef,
+      agentDir: resolvedAgentDir,
+      workspaceDir,
+      authProfileId: options?.authProfileId,
+      preferredProfile: options?.preferredProfile,
+      resolutionPath: "async",
+    }, {
       error: buildUnknownModelError({
         provider: normalizedRef.provider,
         modelId: normalizedRef.model,
@@ -1460,7 +1637,7 @@ export async function resolveModelAsync(
       }),
       authStorage,
       modelRegistry,
-    };
+    });
   }
   const providerConfig = resolveConfiguredProviderConfig(cfg, normalizedRef.provider);
   const authProfile = resolveDynamicModelAuthProfile({
@@ -1582,10 +1759,30 @@ export async function resolveModelAsync(
     }
   }
   if (model) {
-    return { model, authStorage, modelRegistry };
+    return withModelRouterReport({
+      cfg,
+      requestedProvider: provider,
+      requestedModelId: modelId,
+      normalizedRef,
+      agentDir: resolvedAgentDir,
+      workspaceDir,
+      authProfileId: options?.authProfileId,
+      preferredProfile: options?.preferredProfile,
+      resolutionPath: "async",
+    }, { model, authStorage, modelRegistry });
   }
 
-  return {
+  return withModelRouterReport({
+    cfg,
+    requestedProvider: provider,
+    requestedModelId: modelId,
+    normalizedRef,
+    agentDir: resolvedAgentDir,
+    workspaceDir,
+    authProfileId: options?.authProfileId,
+    preferredProfile: options?.preferredProfile,
+    resolutionPath: "async",
+  }, {
     error: buildUnknownModelError({
       provider: normalizedRef.provider,
       modelId: normalizedRef.model,
@@ -1596,7 +1793,7 @@ export async function resolveModelAsync(
     }),
     authStorage,
     modelRegistry,
-  };
+  });
 }
 
 /**

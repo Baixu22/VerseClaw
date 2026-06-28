@@ -110,7 +110,22 @@ describe('chat capability actions', () => {
       mode: 'capability-management',
       tags: expect.arrayContaining(['capability-management', 'skill-mcp']),
       spans: expect.arrayContaining([
-        expect.objectContaining({ name: 'Chat capability management', kind: 'orchestrator' }),
+        expect.objectContaining({
+          name: 'Chat capability management',
+          kind: 'orchestrator',
+          attributes: expect.objectContaining({
+            localControlPlaneReportCount: 1,
+            localControlPlaneReports: [
+              expect.objectContaining({
+                kind: 'capability',
+                evidenceRefs: expect.arrayContaining([
+                  expect.objectContaining({ type: 'trace' }),
+                  expect.objectContaining({ type: 'tool', ref: 'filesystem' }),
+                ]),
+              }),
+            ],
+          }),
+        }),
         expect.objectContaining({ name: 'mcp.register: filesystem', kind: 'tool' }),
       ]),
       events: expect.arrayContaining([
@@ -118,6 +133,23 @@ describe('chat capability actions', () => {
         expect.objectContaining({ type: 'capability.runtimeReload.success' }),
         expect.objectContaining({ type: 'capability.heartbeat.success' }),
         expect.objectContaining({ type: 'capability.listTools.success' }),
+        expect.objectContaining({
+          type: 'localControlPlane.capability.report.projected',
+          attributes: expect.objectContaining({
+            report: expect.objectContaining({
+              schema: 'openclaw.local-control-plane.report.v1',
+              kind: 'capability',
+              mode: 'observe',
+              legacyUnaffected: true,
+              payload: expect.objectContaining({
+                source: 'chat.capability.action',
+                observeOnlyProjection: true,
+                reportDoesNotDriveCapabilityState: true,
+                audit: expect.objectContaining({ status: 'warning' }),
+              }),
+            }),
+          }),
+        }),
       ]),
     }));
     expect(results).toEqual(expect.arrayContaining([
@@ -226,10 +258,40 @@ describe('chat capability actions', () => {
       auditResult: expect.objectContaining({ status: 'blocked' }),
     }));
 
-    const results = await executeChatCapabilityActions(result.actions, {}, api);
+    const results = await executeChatCapabilityActions(result.actions, {
+      confirmation: { required: true, confirmed: false, source: 'chat-preflight' },
+    }, api);
 
     expect(api.mcp.createServer).not.toHaveBeenCalled();
     expect(api.mcp.reloadRuntime).not.toHaveBeenCalled();
+    expect(api.observability.reportTrace).toHaveBeenCalledWith(expect.objectContaining({
+      events: expect.arrayContaining([
+        expect.objectContaining({
+          type: 'localControlPlane.capability.report.projected',
+          attributes: expect.objectContaining({
+            report: expect.objectContaining({
+              kind: 'capability',
+              diagnostics: [
+                expect.objectContaining({
+                  severity: 'error',
+                  metadata: expect.objectContaining({
+                    confirmationRequired: true,
+                    confirmationConfirmed: false,
+                  }),
+                }),
+              ],
+              payload: expect.objectContaining({
+                confirmation: expect.objectContaining({
+                  required: true,
+                  confirmed: false,
+                  source: 'chat-preflight',
+                }),
+              }),
+            }),
+          }),
+        }),
+      ]),
+    }));
     expect(results).toEqual([
       expect.objectContaining({
         kind: 'mcp.register',

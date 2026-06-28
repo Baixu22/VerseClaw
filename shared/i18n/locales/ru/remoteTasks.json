@@ -17,7 +17,7 @@
     "messageBody": "Сообщение",
     "doctorMode": "Режим Doctor",
     "patch": "JSON патча настроек",
-    "patchHint": "Разрешённые ключи: theme, language, gatewayAutoStart, telemetryEnabled, autoCheckUpdate, autoDownloadUpdate, cdpRemoteControlEnabled, cdpRemoteDebuggingPort.",
+    "patchHint": "Разрешённые ключи: theme, language, gatewayAutoStart, telemetryEnabled, cdpRemoteControlEnabled, cdpRemoteDebuggingPort.",
     "defaultTitle": "Проверить входящие удалённые задачи",
     "defaultBody": "Это локальная тестовая задача.",
     "localReason": "Создано на локальной странице удалённых задач"

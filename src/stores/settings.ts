@@ -10,7 +10,6 @@ import { resolveSupportedLanguage } from '@shared/language';
 import type { WorkProviderConfig, WorkProviderId } from '@shared/types/work-provider';
 
 type Theme = 'light' | 'dark' | 'system';
-type UpdateChannel = 'stable' | 'beta' | 'dev';
 
 interface SettingsState {
   // General
@@ -32,10 +31,6 @@ interface SettingsState {
   proxyHttpsServer: string;
   proxyAllServer: string;
   proxyBypassRules: string;
-
-  // Update
-  updateChannel: UpdateChannel;
-  autoCheckUpdate: boolean;
 
   // UI State
   sidebarCollapsed: boolean;
@@ -64,8 +59,6 @@ interface SettingsState {
   setProxyHttpsServer: (value: string) => void;
   setProxyAllServer: (value: string) => void;
   setProxyBypassRules: (value: string) => void;
-  setUpdateChannel: (channel: UpdateChannel) => void;
-  setAutoCheckUpdate: (value: boolean) => void;
   setSidebarCollapsed: (value: boolean) => void;
   setSidebarWidth: (value: number) => void;
   setDevModeUnlocked: (value: boolean) => void;
@@ -91,8 +84,6 @@ const defaultSettings = {
   proxyHttpsServer: '',
   proxyAllServer: '',
   proxyBypassRules: '<local>;localhost;127.0.0.1;::1',
-  updateChannel: 'stable' as UpdateChannel,
-  autoCheckUpdate: false,
   sidebarCollapsed: false,
   sidebarWidth: 280,
   devModeUnlocked: false,
@@ -175,12 +166,6 @@ export const useSettingsStore = create<SettingsState>()(
       setProxyHttpsServer: (proxyHttpsServer) => set({ proxyHttpsServer }),
       setProxyAllServer: (proxyAllServer) => set({ proxyAllServer }),
       setProxyBypassRules: (proxyBypassRules) => set({ proxyBypassRules }),
-      setUpdateChannel: (updateChannel) => set({ updateChannel }),
-      setAutoCheckUpdate: (autoCheckUpdate) => {
-        set({ autoCheckUpdate });
-        void hostApi.settings.set('autoCheckUpdate', autoCheckUpdate).catch(() => { });
-      },
-
       setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
       setSidebarWidth: (sidebarWidth) => set({ sidebarWidth: clampSidebarWidth(sidebarWidth) }),
       setDevModeUnlocked: (devModeUnlocked) => {

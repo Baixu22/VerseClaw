@@ -75,8 +75,72 @@
     "noSources": "No source references attached.",
     "warnings": "Warnings",
     "noWarnings": "No warnings.",
+    "reason": "Recommendation",
+    "noReason": "No recommendation reason recorded.",
+    "boundary": "Draft review only",
+    "context": "Capture Context",
+    "statusLabel": "Status",
+    "missionId": "Mission",
+    "tick": "Tick",
+    "tickValue": "Tick {{tick}}",
+    "outcome": "Outcome",
+    "temporalityLabel": "Temporality",
+    "captureKey": "Capture key",
+    "auditDetails": "Audit details",
+    "notAvailable": "Not available",
+    "score": "Score {{score}}",
+    "percentValue": "{{percent}}%",
+    "evidenceCount": "{{count}} evidence",
+    "evidenceCount_plural": "{{count}} evidence",
     "warningCount": "{{count}} warning",
     "warningCount_plural": "{{count}} warnings",
+    "status": {
+      "pending": "Pending",
+      "promoted": "Promoted",
+      "dismissed": "Dismissed"
+    },
+    "temporality": {
+      "stable": "Stable",
+      "versioned": "Versioned",
+      "ephemeral": "Ephemeral"
+    },
+    "outcomes": {
+      "idle": "Idle",
+      "running": "Running",
+      "sleeping": "Sleeping",
+      "paused": "Paused",
+      "ask_user": "Needs user input",
+      "complete": "Complete",
+      "blocked": "Blocked",
+      "cancelled": "Cancelled",
+      "error": "Error"
+    },
+    "scoreDimensions": {
+      "reusability": "Reusability",
+      "uniqueness": "Uniqueness",
+      "confidence": "Confidence"
+    },
+    "sourceKinds": {
+      "chat": "Chat",
+      "file": "File",
+      "wiki": "Wiki",
+      "task_ledger": "Task Ledger",
+      "trace": "Trace",
+      "task_loop": "Task Loop",
+      "manual": "Manual",
+      "search_result": "Search",
+      "other": "Other"
+    },
+    "groups": {
+      "save": "Recommended save",
+      "review": "Needs review",
+      "archive-only": "Archive only"
+    },
+    "recommendations": {
+      "save": "Save",
+      "review": "Review",
+      "archive-only": "Archive only"
+    },
     "kinds": {
       "chat-session": "Chat",
       "task-ledger": "Task Ledger",

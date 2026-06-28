@@ -11,8 +11,6 @@ const { state } = vi.hoisted(() => ({
       language: 'en',
       gatewayAutoStart: true,
       telemetryEnabled: true,
-      autoCheckUpdate: true,
-      autoDownloadUpdate: false,
       cdpRemoteControlEnabled: false,
       cdpRemoteDebuggingPort: 9222,
     },

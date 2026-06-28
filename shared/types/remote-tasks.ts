@@ -18,8 +18,6 @@ export type RemoteTaskSettingsPatch = Partial<{
   language: string;
   gatewayAutoStart: boolean;
   telemetryEnabled: boolean;
-  autoCheckUpdate: boolean;
-  autoDownloadUpdate: boolean;
   cdpRemoteControlEnabled: boolean;
   cdpRemoteDebuggingPort: number;
 }>;

@@ -58,6 +58,7 @@ acceptance:
   - Scheduled behavior reuses existing cron/wake infrastructure as a tick trigger; cron does not become the source of truth for Mission completion.
   - Repeated no-progress ticks, exhausted tick/repair budgets, missing permissions, or insufficient evidence end in blocked or ask_user instead of infinite unattended looping.
   - Memory candidates go through role-memory proposal or Knowledge Hub draft/review flows and preserve evidence refs.
+  - `knowledge_draft` candidates create pending Knowledge Inbox items only, include a stable `metadata.captureKey`, and never call wiki.apply, applyReviewedChange, archive, delete, or merge.
   - Leaf subagents do not receive mission_loop, task_loop, or team_orchestrate unless an existing lead/orchestration policy explicitly grants them.
 docs:
   required: true

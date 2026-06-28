@@ -136,6 +136,11 @@ export type RuntimeFeatureConfig = {
     /** Emit tool registry diagnostics/evidence without changing legacy tool responses. */
     shadow?: boolean;
   };
+  /** Runtime registry diagnostic collector flags. Defaults off. */
+  registryDiagnostics?: {
+    /** Merge registry diagnostics into bounded caller-owned shadow output only. */
+    collector?: boolean;
+  };
   /** Runtime tool protocol migration flags. Defaults off. */
   toolProtocol?: {
     /** Emit MCP ToolCallRequest/ToolCallResult shadows without changing MCP response shape. */
@@ -145,6 +150,52 @@ export type RuntimeFeatureConfig = {
   evidenceVerifier?: {
     /** Emit warning-only evidence verifier reports without changing task completion decisions. */
     shadow?: boolean;
+  };
+  /** Runtime trace context shadow/provider flags. Defaults are off. */
+  traceContext?: {
+    /** Record sanitized trace diagnostics only; TaskLoop behavior remains authoritative. */
+    shadow?: boolean;
+    /** Allow readonly trace context provider output only when explicitly registered. */
+    provider?: boolean;
+    /** Observe sanitized external trace context only; no telemetry export or runtime authority. */
+    propagation?: boolean;
+  };
+  /** Runtime memory shadow/provider/proposal/persistence flags. Defaults are off. */
+  memory?: {
+    /** Emit sanitized memory diagnostics; TaskLoop episode persistence also requires persist. */
+    shadow?: boolean;
+    /** Allow readonly memory context provider output only when explicitly registered. */
+    provider?: boolean;
+    /** Allow candidate fact proposals only; no durable promotion. */
+    proposeFacts?: boolean;
+    /** Default-off gate for local sanitized persistence; TaskLoop writes also require shadow. */
+    persist?: boolean;
+  };
+  /** Runtime AgentMap shadow/provider flags. Defaults are off. */
+  agentMap?: {
+    /** Allow readonly AgentMap context provider output only when explicitly registered. */
+    provider?: boolean;
+    /** Allow experimental AgentMap prompt candidate assembly only for explicit evaluation. */
+    promptAssemblyExperiment?: boolean;
+    /** Allow runtime shadow diagnostics for prompt candidates; also requires promptAssemblyExperiment. */
+    promptCandidateRuntimeShadow?: boolean;
+    /** Allow controlled prompt candidate pilot output; also requires promptAssemblyExperiment and promptCandidateRuntimeShadow. */
+    promptCandidateControlledCutoverPilot?: boolean;
+    /** Allow explicit TaskLoop reviewer prompt pilot output; also requires all prompt candidate pilot gates and explicit invocation. */
+    promptCandidateTaskLoopExplicitInvocationPilot?: boolean;
+  };
+  /** Local runtime control-plane observe-only report flags. Defaults are off. */
+  localControlPlane?: {
+    /** Record LoopContextPack diagnostics without changing prompt text. */
+    contextReport?: boolean;
+    /** Record model-router recommendations without changing selected models. */
+    modelRouterReport?: boolean;
+    /** Record Skill/MCP governance summaries without enabling or registering capabilities. */
+    capabilityReport?: boolean;
+    /** Record evidence coverage summaries without changing completion gates. */
+    evidenceReport?: boolean;
+    /** Record Mission/Task Loop lifecycle summaries without changing decisions. */
+    missionReport?: boolean;
   };
 };
 

@@ -12,10 +12,14 @@ import type { WorkProviderConfig } from '@shared/types/work-provider';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let settingsStoreInstance: any = null;
 
-const LEGACY_WORK_MODE_SETTING_KEYS = [
+const LEGACY_SETTING_KEYS = [
   'workModeToolBundles',
   'workModeKits',
   'workModePromptModeOverrides',
+  'updateChannel',
+  'autoCheckUpdate',
+  'autoDownloadUpdate',
+  'skippedVersions',
 ] as const;
 
 /**
@@ -51,12 +55,6 @@ export interface AppSettings {
   proxyHttpsServer: string;
   proxyAllServer: string;
   proxyBypassRules: string;
-
-  // Update
-  updateChannel: 'stable' | 'beta' | 'dev';
-  autoCheckUpdate: boolean;
-  autoDownloadUpdate: boolean;
-  skippedVersions: string[];
 
   // UI State
   sidebarCollapsed: boolean;
@@ -107,12 +105,6 @@ function createDefaultSettings(): AppSettings {
     proxyAllServer: '',
     proxyBypassRules: '<local>;localhost;127.0.0.1;::1',
 
-    // Update
-    updateChannel: 'stable',
-    autoCheckUpdate: false,
-    autoDownloadUpdate: false,
-    skippedVersions: [],
-
     // UI State
     sidebarCollapsed: false,
     devModeUnlocked: false,
@@ -125,9 +117,9 @@ function createDefaultSettings(): AppSettings {
   };
 }
 
-function omitLegacyWorkModeSettings(settings: Record<string, unknown>): AppSettings {
+function omitLegacySettings(settings: Record<string, unknown>): AppSettings {
   const sanitized = { ...settings };
-  for (const key of LEGACY_WORK_MODE_SETTING_KEYS) {
+  for (const key of LEGACY_SETTING_KEYS) {
     delete sanitized[key];
   }
   return sanitized as unknown as AppSettings;
@@ -171,7 +163,7 @@ export async function setSetting<K extends keyof AppSettings>(
  */
 export async function getAllSettings(): Promise<AppSettings> {
   const store = await getSettingsStore();
-  return omitLegacyWorkModeSettings(store.store);
+  return omitLegacySettings(store.store);
 }
 
 /**
@@ -187,7 +179,7 @@ export async function resetSettings(): Promise<void> {
  */
 export async function exportSettings(): Promise<string> {
   const store = await getSettingsStore();
-  return JSON.stringify(omitLegacyWorkModeSettings(store.store), null, 2);
+  return JSON.stringify(omitLegacySettings(store.store), null, 2);
 }
 
 /**
@@ -197,7 +189,7 @@ export async function importSettings(json: string): Promise<void> {
   try {
     const settings = JSON.parse(json);
     const store = await getSettingsStore();
-    store.set(omitLegacyWorkModeSettings(settings));
+    store.set(omitLegacySettings(settings));
   } catch {
     throw new Error('Invalid settings JSON');
   }

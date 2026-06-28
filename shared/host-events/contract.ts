@@ -1,4 +1,3 @@
-import type { UpdateStatusSnapshot } from '../host-api/contract';
 import type { ChatRuntimeEvent } from '../chat-runtime-events';
 import type { ClawGraphRunEvent, ClawGraphRunSnapshot } from '../types/clawgraph';
 import type {
@@ -37,7 +36,6 @@ export type GatewayChannelStatusEvent = {
   status: string;
 };
 export type GatewayExitEvent = number | null | { code: number | null };
-
 export type OAuthCodeEvent =
   | {
     provider: string;
@@ -72,11 +70,6 @@ export type ChannelSuccessEvent = {
   message?: string;
 };
 export type ChannelErrorEvent = string | { message?: string };
-
-export type UpdateAutoInstallCountdownEvent = {
-  seconds: number;
-  cancelled?: boolean;
-};
 
 export type TerminalSessionEvent = {
   workspaceId: string;
@@ -217,10 +210,6 @@ export type HostEventContract = {
     success: (payload: ChannelSuccessEvent) => void;
     error: (payload: ChannelErrorEvent) => void;
   };
-  updates: {
-    statusChanged: (payload: UpdateStatusSnapshot) => void;
-    autoInstallCountdown: (payload: UpdateAutoInstallCountdownEvent) => void;
-  };
   terminal: {
     registered: (payload: TerminalSessionEvent) => void;
     unregistered: (payload: TerminalExitEvent) => void;
@@ -286,10 +275,7 @@ export const HOST_EVENT_CHANNELS = {
     success: 'oauth:success',
     error: 'oauth:error',
   },
-  updates: {
-    statusChanged: 'update:status-changed',
-    autoInstallCountdown: 'update:auto-install-countdown',
-  },
+
   terminal: {
     registered: 'terminal:registered',
     unregistered: 'terminal:unregistered',

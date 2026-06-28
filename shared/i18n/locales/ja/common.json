@@ -20,7 +20,9 @@
         "cancelSessionRename": "名前変更をキャンセル",
         "imageGeneration": "画像生成",
         "billing": "課金",
-        "remoteTasks": "リモートタスク"
+        "remoteTasks": "リモートタスク",
+        "collapseSidebar": "サイドバーを折りたたむ",
+        "expandSidebar": "サイドバーを展開"
     },
     "actions": {
         "save": "保存",

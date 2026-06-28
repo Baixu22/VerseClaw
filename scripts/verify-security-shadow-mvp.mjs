@@ -10,16 +10,19 @@ const autoSamplingSpec = 'harness/specs/tasks/runtime-verification-auto-sampling
 function withWindowsNodePath(env) {
   if (process.platform !== 'win32') return env;
 
-  const nodeDir = 'C:\\Program Files\\nodejs';
+  const candidates = [
+    'C:\\Program Files\\nodejs',
+    env.APPDATA ? path.join(env.APPDATA, 'npm') : undefined,
+    env.LOCALAPPDATA ? path.join(env.LOCALAPPDATA, 'pnpm') : undefined,
+  ].filter(Boolean);
   const currentPath = env.Path ?? env.PATH ?? '';
-  if (currentPath.toLowerCase().includes(nodeDir.toLowerCase())) {
-    return env;
-  }
+  const lowerPath = currentPath.toLowerCase();
+  const missingPaths = candidates.filter((candidate) => !lowerPath.includes(candidate.toLowerCase()));
 
   return {
     ...env,
-    Path: `${nodeDir};${currentPath}`,
-    PATH: `${nodeDir};${currentPath}`,
+    Path: `${missingPaths.join(';')}${missingPaths.length > 0 && currentPath ? ';' : ''}${currentPath}`,
+    PATH: `${missingPaths.join(';')}${missingPaths.length > 0 && currentPath ? ';' : ''}${currentPath}`,
   };
 }
 
@@ -32,6 +35,17 @@ function makeEnv() {
   });
 }
 
+function commandExists(command) {
+  const pathValue = process.env.Path ?? process.env.PATH ?? '';
+  const extensions = process.platform === 'win32'
+    ? ['', '.cmd', '.exe', '.bat']
+    : [''];
+  return pathValue
+    .split(path.delimiter)
+    .filter(Boolean)
+    .some((entry) => extensions.some((ext) => existsSync(path.join(entry, `${command}${ext}`))));
+}
+
 function pnpmCommand() {
   const npmExecPath = process.env.npm_execpath;
   if (
@@ -39,23 +53,54 @@ function pnpmCommand() {
     path.basename(npmExecPath).toLowerCase().includes('pnpm') &&
     existsSync(npmExecPath)
   ) {
-  return {
-    command: process.execPath,
-    argsPrefix: [npmExecPath, '--pm-on-fail=ignore'],
-    displayPrefix: ['--pm-on-fail=ignore'],
-    label: 'pnpm',
-  };
-}
+    return {
+      command: process.execPath,
+      argsPrefix: [npmExecPath, '--pm-on-fail=ignore'],
+      displayPrefix: ['--pm-on-fail=ignore'],
+      label: 'pnpm',
+    };
+  }
 
-  return {
-    command: process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
-    argsPrefix: ['--pm-on-fail=ignore'],
-    displayPrefix: ['--pm-on-fail=ignore'],
-  label: 'pnpm',
-};
+  if (commandExists('pnpm')) {
+    return {
+      command: process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
+      argsPrefix: ['--pm-on-fail=ignore'],
+      displayPrefix: ['--pm-on-fail=ignore'],
+      label: 'pnpm',
+    };
+  }
+
+  return undefined;
 }
 
 const pnpm = pnpmCommand();
+const rootVitest = ['node_modules/vitest/vitest.mjs'];
+const runtimeVitest = ['node_modules/vitest/vitest.mjs'];
+const tsc = ['node_modules/typescript/bin/tsc'];
+
+function pnpmOrNodeStep({
+  name,
+  pnpmArgs,
+  nodeArgs,
+  cwd = repoRoot,
+}) {
+  if (pnpm) {
+    return {
+      name,
+      command: pnpm.command,
+      args: [...pnpm.argsPrefix, ...pnpmArgs],
+      displayArgs: [...pnpm.displayPrefix, ...pnpmArgs],
+      label: pnpm.label,
+      cwd,
+    };
+  }
+  return {
+    name,
+    command: process.execPath,
+    args: nodeArgs,
+    cwd,
+  };
+}
 
 const steps = [
   {
@@ -88,11 +133,9 @@ const steps = [
     command: process.execPath,
     args: ['harness/src/cli.mjs', 'validate', '--spec', autoSamplingSpec],
   },
-  {
+  pnpmOrNodeStep({
     name: 'Shadow evaluator and RPC contract tests',
-    command: pnpm.command,
-    args: [
-      ...pnpm.argsPrefix,
+    pnpmArgs: [
       'exec',
       'vitest',
       'run',
@@ -100,22 +143,17 @@ const steps = [
       'tests/unit/security-verification-shadow-contract.test.ts',
       'tests/unit/runtime-verification-auto-sampling.test.ts',
     ],
-    displayArgs: [
-      ...pnpm.displayPrefix,
-      'exec',
-      'vitest',
+    nodeArgs: [
+      ...rootVitest,
       'run',
       'tests/unit/security-verification-shadow.test.ts',
       'tests/unit/security-verification-shadow-contract.test.ts',
       'tests/unit/runtime-verification-auto-sampling.test.ts',
     ],
-    label: pnpm.label,
-  },
-  {
+  }),
+  pnpmOrNodeStep({
     name: 'Gateway tools.invoke regression tests',
-    command: pnpm.command,
-    args: [
-      ...pnpm.argsPrefix,
+    pnpmArgs: [
       '--dir',
       'openclaw_runtime',
       'exec',
@@ -125,26 +163,25 @@ const steps = [
       'test/vitest/vitest.gateway-methods.config.ts',
       'src/gateway/server-methods/tools-invoke-mcp-fallback.test.ts',
     ],
-    displayArgs: [
-      ...pnpm.displayPrefix,
-      '--dir',
-      'openclaw_runtime',
-      'exec',
-      'vitest',
+    nodeArgs: [
+      ...runtimeVitest,
       'run',
       '--config',
       'test/vitest/vitest.gateway-methods.config.ts',
       'src/gateway/server-methods/tools-invoke-mcp-fallback.test.ts',
     ],
-    label: pnpm.label,
-  },
-  {
-    name: 'Typecheck',
-    command: pnpm.command,
-    args: [...pnpm.argsPrefix, 'run', 'typecheck'],
-    displayArgs: [...pnpm.displayPrefix, 'run', 'typecheck'],
-    label: pnpm.label,
-  },
+    cwd: path.join(repoRoot, 'openclaw_runtime'),
+  }),
+  pnpmOrNodeStep({
+    name: 'Typecheck node',
+    pnpmArgs: ['run', 'typecheck:node'],
+    nodeArgs: [...tsc, '--noEmit', '-p', 'tsconfig.node.json', '--composite', 'false'],
+  }),
+  pnpmOrNodeStep({
+    name: 'Typecheck web',
+    pnpmArgs: ['run', 'typecheck:web'],
+    nodeArgs: [...tsc, '--noEmit', '-p', 'tsconfig.web.json', '--composite', 'false'],
+  }),
   {
     name: 'Comms replay',
     command: process.execPath,
@@ -165,7 +202,7 @@ async function runStep(step) {
 
   await new Promise((resolve, reject) => {
     const child = spawn(step.command, step.args, {
-      cwd: repoRoot,
+      cwd: step.cwd ?? repoRoot,
       env: makeEnv(),
       stdio: 'inherit',
       shell: false,

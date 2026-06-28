@@ -55,17 +55,6 @@ asarUnpack:
 # own process — @electron/rebuild must NOT touch them.
 npmRebuild: false
 
-# Auto-update configuration
-# Primary: Alibaba Cloud OSS (fast for Chinese users, used for auto-update)
-# Fallback: GitHub Releases (backup, used when OSS is unavailable)
-publish:
-  - provider: generic
-    url: https://oss.intelli-spectrum.com/latest
-    useMultipleRangeRequest: false
-  - provider: github
-    owner: ValueCell-ai
-    repo: Verse-Claw
-
 # macOS Configuration
 mac:
   extraResources:
@@ -116,9 +105,6 @@ dmg:
 
 # Windows Configuration
 win:
-  # Skip update signature verification: we ship via OSS + GitHub without a
-  # code-signing certificate, so verifying would always fail on the updater.
-  verifyUpdateCodeSignature: false
   extraResources:
     - from: resources/bin/win32-${arch}
       to: bin

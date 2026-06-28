@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Knowledge } from '@/pages/Knowledge';
 
 const hostApiMock = vi.hoisted(() => ({
@@ -143,6 +143,46 @@ const labels: Record<string, string> = {
   'inbox.noSources': 'No source references attached.',
   'inbox.warnings': 'Warnings',
   'inbox.noWarnings': 'No warnings.',
+  'inbox.reason': 'Recommendation',
+  'inbox.noReason': 'No recommendation reason recorded.',
+  'inbox.boundary': 'Draft review only',
+  'inbox.context': 'Capture Context',
+  'inbox.statusLabel': 'Status',
+  'inbox.missionId': 'Mission',
+  'inbox.tick': 'Tick',
+  'inbox.tickValue': 'Tick {{tick}}',
+  'inbox.outcome': 'Outcome',
+  'inbox.temporalityLabel': 'Temporality',
+  'inbox.captureKey': 'Capture key',
+  'inbox.auditDetails': 'Audit details',
+  'inbox.notAvailable': 'Not available',
+  'inbox.score': 'Score {{score}}',
+  'inbox.percentValue': '{{percent}}%',
+  'inbox.evidenceCount': '{{count}} evidence',
+  'inbox.warningCount': '{{count}} warning',
+  'inbox.status.pending': 'Pending',
+  'inbox.status.promoted': 'Promoted',
+  'inbox.status.dismissed': 'Dismissed',
+  'inbox.temporality.stable': 'Stable',
+  'inbox.temporality.versioned': 'Versioned',
+  'inbox.temporality.ephemeral': 'Ephemeral',
+  'inbox.outcomes.complete': 'Complete',
+  'inbox.outcomes.sleeping': 'Sleeping',
+  'inbox.outcomes.blocked': 'Blocked',
+  'inbox.scoreDimensions.reusability': 'Reusability',
+  'inbox.scoreDimensions.uniqueness': 'Uniqueness',
+  'inbox.scoreDimensions.confidence': 'Confidence',
+  'inbox.sourceKinds.task_ledger': 'Task Ledger',
+  'inbox.sourceKinds.trace': 'Trace',
+  'inbox.sourceKinds.chat': 'Chat',
+  'inbox.sourceKinds.manual': 'Manual',
+  'inbox.sourceKinds.other': 'Other',
+  'inbox.groups.save': 'Recommended save',
+  'inbox.groups.review': 'Needs review',
+  'inbox.groups.archive-only': 'Archive only',
+  'inbox.recommendations.save': 'Save',
+  'inbox.recommendations.review': 'Review',
+  'inbox.recommendations.archive-only': 'Archive only',
   'inbox.kinds.chat-session': 'Chat',
   'inbox.kinds.task-ledger': 'Task Ledger',
   'inbox.kinds.clawgraph': 'ClawGraph',
@@ -230,11 +270,18 @@ const labels: Record<string, string> = {
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => labels[key] ?? key,
+    t: (key: string, options?: Record<string, unknown>) => {
+      const template = labels[key] ?? key;
+      return template.replace(/\{\{(\w+)\}\}/g, (_, name: string) => String(options?.[name] ?? ''));
+    },
   }),
 }));
 
 describe('Knowledge page', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   beforeEach(() => {
     hostApiMock.status.mockReset();
     hostApiMock.init.mockReset();
@@ -339,13 +386,100 @@ describe('Knowledge page', () => {
         kind: 'task-ledger',
         type: 'decision',
         status: 'pending',
-        sourceIds: ['task-1'],
-        sourceRefs: [{ id: 'task-1', kind: 'task_ledger', label: 'Task Ledger decision' }],
+        sourceIds: ['task-1', 'trace:trace-loop'],
+        sourceRefs: [
+          { id: 'task-1', kind: 'task_ledger', label: 'Task Ledger decision' },
+          { id: 'trace:trace-loop', kind: 'trace', label: 'Mission trace' },
+        ],
         tags: ['governance'],
         workspaceId: null,
         agentId: null,
         createdBy: 'agent',
         warnings: ['Needs user review before writing.'],
+        metadata: {
+          mvpVersion: 'knowledge-interaction-mvp-1',
+          recommendation: 'save',
+          score: { reusability: 0.82, uniqueness: 0.5, confidence: 0.86, overall: 0.77 },
+          temporality: 'stable',
+          reason: 'Mission completed with reusable evidence-backed knowledge.',
+          missionId: 'mission-1',
+          tick: 1,
+          outcome: 'complete',
+          evidenceRefs: ['task-1', 'trace:trace-loop'],
+          captureKey: 'mission:mission-1:tick:1:knowledge:abcdef0123456789',
+        },
+        createdAt: '2026-06-20T00:00:00.000Z',
+        updatedAt: '2026-06-20T00:00:00.000Z',
+      }, {
+        id: 'inbox-2',
+        title: 'Review candidate',
+        body: 'Mission produced a reusable lesson, but evidence needs a person.',
+        kind: 'chat-session',
+        type: 'synthesis',
+        status: 'pending',
+        sourceIds: ['session-1'],
+        sourceRefs: [{ id: 'session-1', kind: 'chat', label: 'Mission session' }],
+        tags: ['governance'],
+        workspaceId: null,
+        agentId: null,
+        createdBy: 'agent',
+        warnings: [],
+        metadata: {
+          mvpVersion: 'knowledge-interaction-mvp-1',
+          recommendation: 'review',
+          score: { reusability: 0.62, uniqueness: 0.5, confidence: 0.55, overall: 0.57 },
+          temporality: 'stable',
+          reason: 'Mission produced a reusable lesson, but evidence or validation needs user review.',
+          missionId: 'mission-2',
+          tick: 1,
+          outcome: 'sleeping',
+          evidenceRefs: ['session-1'],
+          captureKey: 'mission:mission-2:tick:1:knowledge:abcdef0123456790',
+        },
+        createdAt: '2026-06-20T00:00:00.000Z',
+        updatedAt: '2026-06-20T00:00:00.000Z',
+      }, {
+        id: 'inbox-3',
+        title: 'Failure lesson',
+        body: 'Mission failed but the troubleshooting note may still be worth archiving.',
+        kind: 'task-ledger',
+        type: 'troubleshooting',
+        status: 'pending',
+        sourceIds: ['trace:failure'],
+        sourceRefs: [{ id: 'trace:failure', kind: 'trace', label: 'Failure trace' }],
+        tags: ['governance'],
+        workspaceId: null,
+        agentId: null,
+        createdBy: 'agent',
+        warnings: [],
+        metadata: {
+          mvpVersion: 'knowledge-interaction-mvp-1',
+          recommendation: 'archive-only',
+          score: { reusability: 0.58, uniqueness: 0.5, confidence: 0.48, overall: 0.52 },
+          temporality: 'ephemeral',
+          reason: 'Mission did not fully succeed; keep the lesson reviewable without formal wiki writes.',
+          missionId: 'mission-3',
+          tick: 1,
+          outcome: 'blocked',
+          evidenceRefs: ['trace:failure'],
+          captureKey: 'mission:mission-3:tick:1:knowledge:abcdef0123456791',
+        },
+        createdAt: '2026-06-20T00:00:00.000Z',
+        updatedAt: '2026-06-20T00:00:00.000Z',
+      }, {
+        id: 'inbox-4',
+        title: 'Legacy candidate',
+        body: 'Older inbox item without MVP metadata should remain reviewable.',
+        kind: 'manual',
+        type: 'synthesis',
+        status: 'pending',
+        sourceIds: ['legacy-source'],
+        sourceRefs: [{ id: 'legacy-source', kind: 'manual', label: 'Legacy source' }],
+        tags: [],
+        workspaceId: null,
+        agentId: null,
+        createdBy: 'agent',
+        warnings: [],
         createdAt: '2026-06-20T00:00:00.000Z',
         updatedAt: '2026-06-20T00:00:00.000Z',
       }],
@@ -575,7 +709,7 @@ describe('Knowledge page', () => {
     await waitFor(() => expect(hostApiMock.applyReviewedChange).toHaveBeenCalledWith({ id: 'proposal-1' }));
   });
 
-  it('shows inbox candidates and promotes them into draft review without applying', async () => {
+  it('shows grouped inbox candidates and promotes or dismisses them without applying', async () => {
     render(<Knowledge />);
 
     await screen.findByTestId('knowledge-page');
@@ -585,6 +719,37 @@ describe('Knowledge page', () => {
     await screen.findByTestId('knowledge-inbox');
     expect(screen.getAllByText('Task decision candidate').length).toBeGreaterThan(0);
     expect(screen.getByText('Needs user review before writing.')).toBeInTheDocument();
+    expect(screen.getByTestId('knowledge-inbox-group-save')).toHaveTextContent('Recommended save');
+    expect(screen.getByTestId('knowledge-inbox-group-review')).toHaveTextContent('Needs review');
+    expect(screen.getByTestId('knowledge-inbox-group-review')).toHaveTextContent('Legacy candidate');
+    expect(screen.getByTestId('knowledge-inbox-group-archive-only')).toHaveTextContent('Archive only');
+    expect(screen.getAllByText('Save').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Review').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Archive only').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Mission completed with reusable evidence-backed knowledge.').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('2 evidence').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Score 77').length).toBeGreaterThan(0);
+    expect(screen.getByTestId('knowledge-inbox-boundary')).toHaveTextContent('Draft review only');
+    expect(screen.getByTestId('knowledge-inbox-scores')).toHaveTextContent('Reusability');
+    expect(screen.getByTestId('knowledge-inbox-scores')).toHaveTextContent('82%');
+    expect(screen.getByTestId('knowledge-inbox-scores')).toHaveTextContent('Uniqueness');
+    expect(screen.getByTestId('knowledge-inbox-scores')).toHaveTextContent('50%');
+    expect(screen.getByTestId('knowledge-inbox-scores')).toHaveTextContent('Confidence');
+    expect(screen.getByTestId('knowledge-inbox-scores')).toHaveTextContent('86%');
+    expect(screen.getByTestId('knowledge-inbox-context')).toHaveTextContent('Pending');
+    expect(screen.getByTestId('knowledge-inbox-context')).toHaveTextContent('mission-1');
+    expect(screen.getByTestId('knowledge-inbox-context')).toHaveTextContent('Tick 1');
+    expect(screen.getByTestId('knowledge-inbox-context')).toHaveTextContent('Complete');
+    expect(screen.getByTestId('knowledge-inbox-context')).toHaveTextContent('Stable');
+    expect(screen.getByTestId('knowledge-inbox-audit')).toHaveTextContent('Audit details');
+    expect(screen.getByTestId('knowledge-inbox-context')).toHaveTextContent('mission:mission-1:tick:1:knowledge:abcdef0123456789');
+    expect(screen.getByTestId('knowledge-inbox-sources')).toHaveTextContent('Task Ledger');
+    expect(screen.getByTestId('knowledge-inbox-sources')).toHaveTextContent('Trace');
+    expect(screen.getAllByTestId('knowledge-inbox-source')).toHaveLength(2);
+
+    fireEvent.click(screen.getByTestId('knowledge-inbox-dismiss'));
+    await waitFor(() => expect(hostApiMock.dismissInboxItem).toHaveBeenCalledWith({ id: 'inbox-1' }));
+    await waitFor(() => expect(screen.getByTestId('knowledge-inbox-promote')).not.toBeDisabled());
 
     fireEvent.click(screen.getByTestId('knowledge-inbox-promote'));
     await waitFor(() => expect(hostApiMock.promoteInboxItemToDraft).toHaveBeenCalledWith({ id: 'inbox-1' }));

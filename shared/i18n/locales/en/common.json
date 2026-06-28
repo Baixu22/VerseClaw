@@ -20,7 +20,9 @@
         "cancelSessionRename": "Cancel renaming",
         "imageGeneration": "Image Generation",
         "billing": "Billing",
-        "remoteTasks": "Remote Tasks"
+        "remoteTasks": "Remote Tasks",
+        "collapseSidebar": "Collapse sidebar",
+        "expandSidebar": "Expand sidebar"
     },
     "actions": {
         "save": "Save",

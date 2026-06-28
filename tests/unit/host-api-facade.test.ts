@@ -35,6 +35,52 @@ describe('hostApi facade', () => {
     await expect(hostApi.settings.getAll()).rejects.toThrow('disk failed');
   });
 
+  it('replays host API fixtures from the agent dev test surface', async () => {
+    vi.stubGlobal('window', {
+      verseClaw: { hostInvoke },
+      __CLAWX_TEST__: {
+        hostApiCalls: [],
+        hostApiReplay: {
+          mode: 'replay',
+          fixtures: [{
+            module: 'settings',
+            action: 'getAll',
+            payload: null,
+            result: { theme: 'dark' },
+          }],
+        },
+      },
+    });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(hostApi.settings.getAll()).resolves.toEqual({ theme: 'dark' });
+    expect(hostInvoke).not.toHaveBeenCalled();
+    expect(window.__CLAWX_TEST__?.hostApiCalls).toEqual([
+      expect.objectContaining({ module: 'settings', action: 'getAll', mocked: true, ok: true }),
+    ]);
+  });
+
+  it('records host API fixtures when agent dev record mode is enabled', async () => {
+    vi.stubGlobal('window', {
+      localStorage: {
+        getItem: vi.fn(() => null),
+        setItem: vi.fn(),
+      },
+      verseClaw: { hostInvoke },
+      __CLAWX_TEST__: {
+        hostApiCalls: [],
+        hostApiReplay: { mode: 'record', fixtures: [] },
+      },
+    });
+    hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: { theme: 'light' } });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(hostApi.settings.getAll()).resolves.toEqual({ theme: 'light' });
+    expect(window.__CLAWX_TEST__?.hostApiReplay.fixtures).toEqual([
+      expect.objectContaining({ module: 'settings', action: 'getAll', result: { theme: 'light' } }),
+    ]);
+  });
+
   it('calls settings.setMany and reset through hostInvoke', async () => {
     hostInvoke
       .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: true } })
@@ -206,42 +252,160 @@ describe('hostApi facade', () => {
     }));
   });
 
-  it('routes openclaw, shell, dialog, window, and updates methods through hostInvoke', async () => {
+  it('routes app, openclaw, shell, dialog, and window methods through hostInvoke', async () => {
     hostInvoke
-      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { packageExists: true, isBuilt: true, entryPath: '/openclaw/openclaw.mjs', dir: '/openclaw' } })
-      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: '' })
-      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { canceled: false, filePaths: ['/tmp/a.txt'] } })
-      .mockResolvedValueOnce({ id: 'req-4', ok: true, data: undefined })
-      .mockResolvedValueOnce({ id: 'req-5', ok: true, data: { success: true, status: { status: 'not-available' } } });
+      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: '1.2.3' })
+      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: { packageExists: true, isBuilt: true, entryPath: '/openclaw/openclaw.mjs', dir: '/openclaw' } })
+      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: '' })
+      .mockResolvedValueOnce({ id: 'req-4', ok: true, data: { canceled: false, filePaths: ['/tmp/a.txt'] } })
+      .mockResolvedValueOnce({ id: 'req-5', ok: true, data: undefined });
     const { hostApi } = await import('@/lib/host-api');
 
+    await hostApi.app.version();
     await hostApi.openclaw.status();
     await hostApi.shell.openPath('/tmp/a.txt');
     await hostApi.dialog.open({ properties: ['openFile'] });
     await hostApi.window.maximize();
-    await hostApi.updates.check();
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      module: 'app',
+      action: 'version',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
       module: 'openclaw',
       action: 'status',
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
       module: 'shell',
       action: 'openPath',
       payload: { path: '/tmp/a.txt' },
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
       module: 'dialog',
       action: 'open',
       payload: { properties: ['openFile'] },
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
       module: 'window',
       action: 'maximize',
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
-      module: 'updates',
-      action: 'check',
+  });
+
+  it('routes Local Control Plane read methods through hostInvoke', async () => {
+    const status = {
+      schema: 'openclaw.local-control-plane.status.v1',
+      mode: 'observe',
+      legacyUnaffected: true,
+      flags: {
+        contextReport: true,
+        modelRouterReport: false,
+        capabilityReport: false,
+        evidenceReport: false,
+        missionReport: false,
+      },
+      enabledKinds: ['context'],
+      buffer: { size: 1, maxSize: 200, lastReportAt: '2026-01-01T00:00:00.000Z' },
+      countsByKind: { context: 1, model_router: 0, capability: 0, evidence: 0, mission: 0 },
+    };
+    const report = {
+      schema: 'openclaw.local-control-plane.report.v1',
+      id: 'lcp_context_1',
+      kind: 'context',
+      mode: 'observe',
+      legacyUnaffected: true,
+      timestamp: '2026-01-01T00:00:00.000Z',
+      summary: 'context report',
+      diagnostics: [],
+      evidenceRefs: [],
+    };
+    const correlations = {
+      schema: 'openclaw.local-control-plane.correlations.v1',
+      mode: 'observe',
+      legacyUnaffected: true,
+      generatedAt: '2026-01-01T00:00:00.000Z',
+      filter: { groupBy: 'task' },
+      totals: { reportCount: 1, groupCount: 1, evidenceRefCount: 0 },
+      groups: [],
+    };
+    hostInvoke
+      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: true, status } })
+      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: { success: true, reports: [report] } })
+      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { success: true, correlations } });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(hostApi.localControlPlane.status()).resolves.toEqual({ success: true, status });
+    await expect(hostApi.localControlPlane.reports({ kind: 'context', sessionKey: 'session-lcp' })).resolves.toEqual({
+      success: true,
+      reports: [report],
+    });
+    await expect(hostApi.localControlPlane.correlations({ groupBy: 'task', taskId: 'task-lcp' })).resolves.toEqual({
+      success: true,
+      correlations,
+    });
+
+    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      module: 'localControlPlane',
+      action: 'status',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      module: 'localControlPlane',
+      action: 'reports',
+      payload: { kind: 'context', sessionKey: 'session-lcp' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
+      module: 'localControlPlane',
+      action: 'correlations',
+      payload: { groupBy: 'task', taskId: 'task-lcp' },
+    }));
+  });
+
+  it('routes agent dev methods through hostInvoke', async () => {
+    hostInvoke
+      .mockResolvedValueOnce({
+        id: 'req-1',
+        ok: true,
+        data: { success: true, enabled: true, scenarios: [], state: { conversations: [], providers: [], featureFlags: [], metadata: {}, updatedAt: 'now' }, flags: [], mockReplay: { mode: 'off', fixtureCount: 0, callCount: 0 } },
+      })
+      .mockResolvedValueOnce({
+        id: 'req-2',
+        ok: true,
+        data: { success: true, enabled: true, state: { conversations: [], providers: [], featureFlags: ['doctor-ui'], metadata: {}, updatedAt: 'now' }, applied: [] },
+      })
+      .mockResolvedValueOnce({
+        id: 'req-3',
+        ok: true,
+        data: { success: true, flags: ['doctor-ui'] },
+      })
+      .mockResolvedValueOnce({
+        id: 'req-4',
+        ok: true,
+        data: { success: true, events: [] },
+      });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await hostApi.agentDev.status();
+    await hostApi.agentDev.seedState({ scenario: 'doctor-failed', featureFlags: ['doctor-ui'] });
+    await hostApi.agentDev.setFeatureFlags({ flags: ['doctor-ui'] });
+    await hostApi.agentDev.transportTrace({ limit: 10 });
+
+    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      module: 'agentDev',
+      action: 'status',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      module: 'agentDev',
+      action: 'seedState',
+      payload: { scenario: 'doctor-failed', featureFlags: ['doctor-ui'] },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
+      module: 'agentDev',
+      action: 'setFeatureFlags',
+      payload: { flags: ['doctor-ui'] },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
+      module: 'agentDev',
+      action: 'transportTrace',
+      payload: { limit: 10 },
     }));
   });
 
@@ -792,9 +956,9 @@ describe('hostApi facade', () => {
     });
 
     const electronToRenderer = findViolations('electron', [
-      /\bfrom\s+['"][^'"]*src\//g,
-      /\bimport\(\s*['"][^'"]*src\//g,
-      /\brequire\(\s*['"][^'"]*src\//g,
+      /\bfrom\s+['"](?![^'"]*openclaw_runtime\/src\/)[^'"]*src\//g,
+      /\bimport\(\s*['"](?![^'"]*openclaw_runtime\/src\/)[^'"]*src\//g,
+      /\brequire\(\s*['"](?![^'"]*openclaw_runtime\/src\/)[^'"]*src\//g,
     ]);
     const rendererToElectron = findViolations('src', [
       /\bfrom\s+['"]electron['"]/g,

@@ -46,10 +46,8 @@ describe('Settings Store', () => {
       devModeUnlocked: false,
       gatewayAutoStart: true,
       gatewayPort: 18789,
-      autoCheckUpdate: true,
       startMinimized: false,
       launchAtStartup: false,
-      updateChannel: 'stable',
     });
   });
   

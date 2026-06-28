@@ -17,7 +17,7 @@
     "messageBody": "消息",
     "doctorMode": "Doctor 模式",
     "patch": "设置补丁 JSON",
-    "patchHint": "允许的键：theme、language、gatewayAutoStart、telemetryEnabled、autoCheckUpdate、autoDownloadUpdate、cdpRemoteControlEnabled、cdpRemoteDebuggingPort。",
+    "patchHint": "允许的键：theme、language、gatewayAutoStart、telemetryEnabled、cdpRemoteControlEnabled、cdpRemoteDebuggingPort。",
     "defaultTitle": "检查远程任务收件箱",
     "defaultBody": "这是一个本地测试任务。",
     "localReason": "从本地远程任务页面创建"

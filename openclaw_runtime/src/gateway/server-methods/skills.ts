@@ -29,6 +29,7 @@ import { listAgentWorkspaceDirs } from "../../agents/workspace-dirs.js";
 import { redactConfigObject } from "../../config/redact-snapshot.js";
 import { fetchClawHubSkillDetail } from "../../infra/clawhub.js";
 import { formatErrorMessage } from "../../infra/errors.js";
+import { recordLocalControlPlaneReport } from "../../local-control-plane/index.js";
 import { normalizeAgentId } from "../../routing/session-key.js";
 import { updateSkillConfigEntry } from "../../skills/config/mutations.js";
 import { collectSkillBins } from "../../skills/discovery/bins.js";
@@ -132,6 +133,53 @@ function buildRevisionAgentInstruction(proposal: Awaited<ReturnType<typeof inspe
 }
 
 const SKILL_PROPOSAL_RESPONSE_HANDLED = Symbol("skill proposal response handled");
+
+function recordSkillCapabilityReport(params: {
+  cfg: ReturnType<GatewayRequestContext["getRuntimeConfig"]>;
+  method: string;
+  action: "install" | "update";
+  source: "local" | "clawhub" | "upload" | "config";
+  target: string;
+  ok: boolean;
+  request?: unknown;
+  result?: unknown;
+  error?: string;
+}): void {
+  try {
+    recordLocalControlPlaneReport(params.cfg, {
+      kind: "capability",
+      summary: `Skill capability ${params.action} ${params.ok ? "succeeded" : "failed"} for ${params.target}.`,
+      diagnostics: [
+        {
+          code: `capability.skill.${params.action}.${params.ok ? "ok" : "failed"}`,
+          severity: params.ok ? "info" : "warning",
+          message: params.ok
+            ? `Skill capability ${params.action} completed without changing governance policy.`
+            : params.error ?? `Skill capability ${params.action} did not complete successfully.`,
+          metadata: {
+            method: params.method,
+            source: params.source,
+            target: params.target,
+            capabilityEnablementUnaffected: true,
+          },
+        },
+      ],
+      payload: {
+        source: "gateway.skills",
+        method: params.method,
+        action: params.action,
+        target: params.target,
+        installDoesNotEqualTrust: true,
+        confirmationBehaviorUnaffected: true,
+        request: params.request,
+        result: params.result,
+        error: params.error,
+      },
+    });
+  } catch {
+    // Capability governance reports are observe-only and must not perturb skill operations.
+  }
+}
 
 async function runSkillsProposalWorkspaceHandler<TParams, TResult>(params: {
   method: string;
@@ -540,6 +588,17 @@ export const skillsHandlers: GatewayRequestHandlers = {
         force: Boolean(p.force),
         config: cfg,
       });
+      recordSkillCapabilityReport({
+        cfg,
+        method: "skills.install",
+        action: "install",
+        source: "clawhub",
+        target: p.slug,
+        ok: result.ok,
+        request: p,
+        result,
+        error: result.ok ? undefined : result.error,
+      });
       respond(
         result.ok,
         result.ok
@@ -577,6 +636,17 @@ export const skillsHandlers: GatewayRequestHandlers = {
         config: context.getRuntimeConfig(),
         log: context.logGateway,
       });
+      recordSkillCapabilityReport({
+        cfg,
+        method: "skills.install",
+        action: "install",
+        source: "upload",
+        target: p.slug,
+        ok: result.ok,
+        request: p,
+        result,
+        error: result.ok ? undefined : result.error,
+      });
       const errorCode =
         !result.ok && result.errorKind === "invalid-request"
           ? ErrorCodes.INVALID_REQUEST
@@ -606,6 +676,17 @@ export const skillsHandlers: GatewayRequestHandlers = {
       installId: p.installId,
       timeoutMs: p.timeoutMs,
       config: cfg,
+    });
+    recordSkillCapabilityReport({
+      cfg,
+      method: "skills.install",
+      action: "install",
+      source: "local",
+      target: p.name,
+      ok: result.ok,
+      request: p,
+      result,
+      error: result.ok ? undefined : result.message,
     });
     respond(
       result.ok,
@@ -650,6 +731,17 @@ export const skillsHandlers: GatewayRequestHandlers = {
         config: cfg,
       });
       const errors = results.filter((result) => !result.ok);
+      recordSkillCapabilityReport({
+        cfg,
+        method: "skills.update",
+        action: "update",
+        source: "clawhub",
+        target: p.slug ?? "*",
+        ok: errors.length === 0,
+        request: p,
+        result: { source: "clawhub", results },
+        error: errors.length === 0 ? undefined : errors.map((result) => result.error).join("; "),
+      });
       respond(
         errors.length === 0,
         {
@@ -673,6 +765,17 @@ export const skillsHandlers: GatewayRequestHandlers = {
       env?: Record<string, string>;
     };
     const updated = await updateSkillConfigEntry(p);
+    const cfg = context.getRuntimeConfig();
+    recordSkillCapabilityReport({
+      cfg,
+      method: "skills.update",
+      action: "update",
+      source: "config",
+      target: p.skillKey,
+      ok: true,
+      request: p,
+      result: { ok: true, skillKey: p.skillKey, config: redactConfigObject(updated) },
+    });
     respond(
       true,
       { ok: true, skillKey: p.skillKey, config: redactConfigObject(updated) },

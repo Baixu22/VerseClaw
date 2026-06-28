@@ -477,6 +477,93 @@ describe('host services', () => {
     expect(gatewayManager.rpc).toHaveBeenCalledWith('chat.history', { limit: 1 }, 42);
   });
 
+  it('exposes Local Control Plane diagnostics through read-only Gateway RPCs', async () => {
+    const status = {
+      schema: 'openclaw.local-control-plane.status.v1',
+      mode: 'observe',
+      legacyUnaffected: true,
+      flags: {
+        contextReport: true,
+        modelRouterReport: false,
+        capabilityReport: false,
+        evidenceReport: false,
+        missionReport: false,
+      },
+      enabledKinds: ['context'],
+      buffer: { size: 1, maxSize: 200, lastReportAt: '2026-01-01T00:00:00.000Z' },
+      countsByKind: { context: 1, model_router: 0, capability: 0, evidence: 0, mission: 0 },
+    };
+    const report = {
+      schema: 'openclaw.local-control-plane.report.v1',
+      id: 'lcp_context_1',
+      kind: 'context',
+      mode: 'observe',
+      legacyUnaffected: true,
+      timestamp: '2026-01-01T00:00:00.000Z',
+      sessionKey: 'session-lcp',
+      runId: 'run-lcp',
+      taskId: 'task-lcp',
+      summary: 'context report',
+      diagnostics: [],
+      evidenceRefs: [],
+    };
+    const correlations = {
+      schema: 'openclaw.local-control-plane.correlations.v1',
+      mode: 'observe',
+      legacyUnaffected: true,
+      generatedAt: '2026-01-01T00:00:00.000Z',
+      filter: { groupBy: 'task' },
+      totals: { reportCount: 1, groupCount: 1, evidenceRefCount: 0 },
+      groups: [{
+        key: 'task:task-lcp',
+        groupBy: 'task',
+        sessionKey: 'session-lcp',
+        runId: 'run-lcp',
+        taskId: 'task-lcp',
+        evidenceRefs: [],
+        reportIds: ['lcp_context_1'],
+        kinds: ['context'],
+        reportCount: 1,
+        firstReportAt: '2026-01-01T00:00:00.000Z',
+        lastReportAt: '2026-01-01T00:00:00.000Z',
+        diagnosticsBySeverity: { info: 0, warning: 0, error: 0 },
+        diagnosticCodes: [],
+      }],
+    };
+    const gatewayManager = {
+      rpc: vi.fn()
+        .mockResolvedValueOnce({ status })
+        .mockResolvedValueOnce({ reports: [report] })
+        .mockResolvedValueOnce({ correlations }),
+    };
+    const { createLocalControlPlaneApi } = await import('@electron/services/local-control-plane-api');
+    const localControlPlaneApi = createLocalControlPlaneApi(gatewayManager as never);
+
+    await expect(localControlPlaneApi.status()).resolves.toEqual({ success: true, status });
+    await expect(localControlPlaneApi.reports({ kind: 'context', sessionKey: 'session-lcp' })).resolves.toEqual({
+      success: true,
+      reports: [report],
+    });
+    await expect(localControlPlaneApi.correlations({ groupBy: 'task', taskId: 'task-lcp' })).resolves.toEqual({
+      success: true,
+      correlations,
+    });
+
+    expect(gatewayManager.rpc).toHaveBeenNthCalledWith(1, 'localControlPlane.status', {}, 10_000);
+    expect(gatewayManager.rpc).toHaveBeenNthCalledWith(
+      2,
+      'localControlPlane.reports',
+      { kind: 'context', sessionKey: 'session-lcp' },
+      10_000,
+    );
+    expect(gatewayManager.rpc).toHaveBeenNthCalledWith(
+      3,
+      'localControlPlane.correlations',
+      { groupBy: 'task', taskId: 'task-lcp' },
+      10_000,
+    );
+  });
+
   it('exposes provider account snapshot actions through the typed providers service', async () => {
     const account = {
       id: 'custom-local',
