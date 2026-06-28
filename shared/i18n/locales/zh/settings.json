@@ -1,622 +1,583 @@
 {
-    "title": "设置",
-    "subtitle": "配置您的 Verse Claw 体验",
-    "navigation": {
-        "back": "返回设置",
-        "groups": {
-            "configuration": "AI 配置",
-            "experience": "体验与工作流",
-            "operations": "运维与高级"
-        },
-        "general": {
-            "title": "通用",
-            "description": "外观、语言、启动项、更新与应用信息。"
-        },
-        "models": {
-            "title": "模型与提供商",
-            "description": "Provider 账户、默认模型、回退规则与 token 历史。"
-        },
-        "agents": {
-            "title": "Agents",
-            "description": "Agent 配置、角色设定、模型继承与渠道绑定。"
-        },
-        "channels": {
-            "title": "Channels",
-            "description": "消息账户、连接健康、凭据与 Agent 绑定。"
-        },
-        "skills": {
-            "title": "Skills",
-            "description": "已安装技能、MCP 服务、本地目录与启用控制。"
-        },
-        "system": {
-            "title": "系统与运行时",
-            "description": "网关状态、自动启动、远程控制与沙盒运行时。"
-        },
-        "developer": {
-            "title": "开发者",
-            "description": "开发者模式、代理、CLI、诊断与本地遥测。"
-        },
-        "billing": {
-            "title": "计费",
-            "description": "Token 用量历史、费用估算及使用活跃度图表。"
-        }
+  "title": "设置",
+  "subtitle": "配置您的 Verse Claw 体验",
+  "navigation": {
+    "back": "返回设置",
+    "groups": {
+      "configuration": "AI 配置",
+      "experience": "体验与工作流",
+      "operations": "运维与高级"
     },
-    "appearance": {
-        "title": "通用",
-        "description": "自定义外观和风格",
-        "theme": "主题",
-        "light": "浅色",
-        "dark": "深色",
-        "system": "跟随系统",
-        "language": "语言",
-        "menuLanguageUpdated": "菜单语言已更新",
-        "launchAtStartup": "开机自动启动",
-        "launchAtStartupDesc": "登录系统后自动启动 Verse Claw"
+    "general": {
+      "title": "通用",
+      "description": "外观、语言、启动项与应用信息。"
     },
-    "aiProviders": {
-        "title": "AI 模型提供商",
-        "description": "配置 AI 模型提供商和 API 密钥",
-        "overview": {
-            "title": "提供商账户",
-            "description": "这里汇总当前已配置的 provider 账户与模型信息。",
-            "noModelSelected": "未选择模型",
-            "multiAccountReady": "支持多账户",
-            "singletonVendor": "单例提供商"
-        },
-        "authModes": {
-            "apiKey": "API 密钥",
-            "oauthDevice": "OAuth 设备登录",
-            "oauthBrowser": "OAuth 浏览器登录",
-            "local": "本地"
-        },
-        "sections": {
-            "model": "模型配置",
-            "fallback": "回退配置"
-        },
-        "add": "添加提供商",
-        "custom": "自定义",
-        "notRequired": "非必填",
-        "empty": {
-            "title": "未配置提供商",
-            "desc": "添加 AI 提供商以开始使用 Verse Claw",
-            "cta": "添加您的第一个提供商"
-        },
-        "dialog": {
-            "title": "添加 AI 提供商",
-            "desc": "配置新的 AI 模型提供商",
-            "displayName": "显示名称",
-            "apiKey": "API 密钥",
-            "apiKeyConfigured": "这个 provider 已经保存了 API key。",
-            "apiKeyMissing": "这个 provider 还没有保存 API key。",
-            "apiKeyStored": "您的 API 密钥存储在本地机器上。",
-            "replaceApiKey": "替换 API Key",
-            "replaceApiKeyHelp": "如果想保留当前已保存的 API key，这里留空即可。",
-            "baseUrl": "基础 URL",
-            "modelId": "模型 ID",
-            "codePlanPreset": "Code Plan 预设",
-            "codePlanMode": "Code Plan",
-            "useCodePlanPreset": "使用 Ark Code Plan 预设",
-            "codePlanPresetDesc": "Code Plan 使用 https://ark.cn-beijing.volces.com/api/coding/v3 与模型 ark-code-latest。请勿把 /api/v3 用于 Code Plan 流量。",
-            "codePlanDoc": "Code Plan 文档",
-            "protocol": "协议",
-            "advancedConfig": "高级配置",
-            "userAgent": "User-Agent",
-            "userAgentPlaceholder": "Verse Claw/1.0",
-            "fallbackModels": "回退模型",
-            "fallbackProviders": "跨 Provider 回退",
-            "fallbackModelIds": "同 Provider 回退模型 ID",
-            "fallbackModelIdsPlaceholder": "gpt-4.1-mini\nanother-model-id",
-            "fallbackModelIdsHelp": "每行一个模型 ID。会先使用当前 provider 的这些模型，再回退到其他 provider。",
-            "noFallbackOptions": "请先添加其他 provider，才能把它设为回退目标。",
-            "cancel": "取消",
-            "change": "更换提供商",
-            "add": "添加提供商",
-            "save": "保存",
-            "customDoc": "查看文档",
-            "validate": "验证",
-            "failed": "失败",
-            "fetchingModels": "获取中",
-            "fetchModels": "获取模型",
-            "customModel": "手动输入模型",
-            "testConnection": "测试连接"
-        },
-        "card": {
-            "default": "默认",
-            "configured": "已配置",
-            "noKey": "未设置 API 密钥",
-            "none": "无",
-            "fallbacks_one": "回退：{{names}}",
-            "fallbacks_other": "回退（{{count}} 个）：{{names}}",
-            "setDefault": "设为默认",
-            "editKey": "编辑 API 密钥",
-            "delete": "删除提供商"
-        },
-        "protocols": {
-            "openai": "OpenAI 兼容",
-            "openaiCompletions": "OpenAI Completions",
-            "openaiResponses": "OpenAI Responses",
-            "anthropic": "Anthropic 兼容"
-        },
-        "toast": {
-            "added": "提供商添加成功",
-            "failedAdd": "添加提供商失败",
-            "deleted": "提供商已删除",
-            "failedDelete": "删除提供商失败",
-            "defaultUpdated": "默认提供商已更新",
-            "failedDefault": "设置默认失败",
-            "updated": "提供商已更新",
-            "failedUpdate": "更新提供商失败",
-            "invalidKey": "无效的 API 密钥",
-            "modelRequired": "需要模型 ID",
-            "minimaxConflict": "不能同时添加 MiniMax 国际站和国内站的服务商。",
-            "connectionOk": "连接成功，延迟 {{ms}} ms",
-            "connectionFailed": "连接失败：{{error}}",
-            "modelsUpdated": "模型列表已更新",
-            "modelsUpdatedWithLatency": "模型列表已更新，延迟 {{ms}} ms",
-            "modelsFetchFailed": "获取模型失败：{{error}}",
-            "noModelsReturned": "服务未返回模型列表",
-            "providerRequired": "请选择提供商"
-        },
-        "oauth": {
-            "loginMode": "OAuth 登录",
-            "apikeyMode": "API 密钥",
-            "loginPrompt": "此提供商需要通过浏览器登录授权。",
-            "loginButton": "浏览器登录",
-            "getApiKey": "获取 API 密钥",
-            "waiting": "等待中...",
-            "openLoginPage": "打开登录页面",
-            "waitingApproval": "等待浏览器中的授权...",
-            "cancel": "取消",
-            "codeCopied": "代码已复制到剪贴板",
-            "authFailed": "认证失败",
-            "browserFlowUnavailable": "该提供商的浏览器 OAuth 登录链路暂未接通。",
-            "tryAgain": "重试",
-            "approveLogin": "确认登录",
-            "step1": "复制下方的授权码。",
-            "step2": "在浏览器中打开登录页面。",
-            "step3": "粘贴授权码以批准访问。",
-            "requestingCode": "正在获取安全登录码..."
-        }
+    "models": {
+      "title": "模型与提供商",
+      "description": "Provider 账户、默认模型、回退规则与 token 历史。"
     },
-    "gateway": {
-        "title": "网关",
-        "description": "OpenClaw 网关设置",
-        "status": "状态",
-        "port": "端口",
-        "logs": "日志",
-        "appLogs": "应用日志",
-        "openFolder": "打开文件夹",
-        "autoStart": "自动启动网关",
-        "autoStartDesc": "Verse Claw 启动时自动启动网关",
-        "proxyTitle": "代理",
-        "proxyDesc": "让 Electron 和 Gateway 的网络请求都走本地代理客户端。",
-        "proxyServer": "代理服务器",
-        "proxyServerHelp": "所有请求默认使用的代理。只填 host:port 时默认按 HTTP 处理。",
-        "proxyHttpServer": "HTTP 代理",
-        "proxyHttpServerHelp": "HTTP 请求的高级覆盖项。留空时使用“代理服务器”。",
-        "proxyHttpsServer": "HTTPS 代理",
-        "proxyHttpsServerHelp": "HTTPS 请求的高级覆盖项。留空时使用“代理服务器”。",
-        "proxyAllServer": "ALL_PROXY / SOCKS",
-        "proxyAllServerHelp": "支持 SOCKS 的客户端和 Telegram 等协议的高级兜底代理。留空时使用“代理服务器”。",
-        "showAdvancedProxy": "显示高级代理字段",
-        "hideAdvancedProxy": "隐藏高级代理字段",
-        "proxyBypass": "绕过规则",
-        "proxyBypassHelp": "使用分号、逗号或换行分隔需要直连的主机。",
-        "proxyRestartNote": "保存后会立即重新应用 Electron 网络代理，并自动重启 Gateway。若代理已关闭，Gateway 常规重启会保留 Telegram 频道已有代理；如需清空，请在关闭代理后手动保存一次。",
-        "proxySaved": "代理设置已保存",
-        "proxySaveFailed": "保存代理设置失败"
+    "agents": {
+      "title": "Agents",
+      "description": "Agent 配置、角色设定、模型继承与渠道绑定。"
     },
-    "roleMemory": {
-        "title": "角色记忆",
-        "description": "受治理的角色运行时记忆：提案、评审、注入解释、生命周期和质量反馈。",
-        "disableEffect": "关闭后会停止 Role Memory 注入并阻止记忆写入。已有卡片会保留在磁盘上，OpenClaw 原生记忆不受影响。",
-        "enabled": "已启用",
-        "disabled": "已关闭"
+    "channels": {
+      "title": "Channels",
+      "description": "消息账户、连接健康、凭据与 Agent 绑定。"
     },
-    "knowledgeHub": {
-        "watched": {
-            "title": "Knowledge Hub 监听目录",
-            "description": "监听可信本地文件夹中的新 Markdown 来源。新文件可以先进入审查 Inbox，compile 只刷新索引，不会自动生成 synthesis。",
-            "path": "目录",
-            "pathPlaceholder": "选择或粘贴本地文件夹路径",
-            "patterns": "匹配模式",
-            "pick": "选择目录",
-            "pickTitle": "选择监听目录",
-            "pickFailed": "选择目录失败：{{error}}",
-            "add": "添加目录",
-            "empty": "还没有监听目录。",
-            "enabled": "已启用",
-            "disabled": "已停用",
-            "reviewFirst": "先审查",
-            "directIngest": "直接导入",
-            "ingestNewFiles": "导入新文件",
-            "requiresReview": "导入前审查",
-            "autoCompile": "自动编译",
-            "compileOff": "关闭编译",
-            "pathRequired": "需要填写目录路径。",
-            "patternRequired": "至少需要一个匹配模式。",
-            "loadFailed": "加载监听目录失败：{{error}}",
-            "addFailed": "添加监听目录失败。",
-            "addFailedWithError": "添加监听目录失败：{{error}}",
-            "updateFailed": "更新监听目录失败。",
-            "updateFailedWithError": "更新监听目录失败：{{error}}",
-            "removeFailed": "移除监听目录失败。",
-            "removeFailedWithError": "移除监听目录失败：{{error}}",
-            "added": "已添加监听目录。",
-            "removed": "已移除监听目录。"
-        }
+    "skills": {
+      "title": "Skills",
+      "description": "已安装技能、MCP 服务、本地目录与启用控制。"
     },
-    "sandbox": {
-        "title": "沙盒控制",
-        "description": "Verse Claw 默认使用 policy-light。Docker 和 SSH 仍是显式选择的强隔离 provider，Docker 缺失不会阻塞默认 Gateway 启动。",
-        "defaultProfileName": "默认沙盒",
-        "loadFailed": "读取沙盒状态失败",
-        "saveFailed": "保存沙盒配置失败",
-        "profileSaved": "沙盒配置已更新",
-        "refresh": "刷新",
-        "loading": "加载中",
-        "degraded": "已降级",
-        "fallbackToPolicy": "使用 policy-light",
-        "requestedProvider": "请求 provider",
-        "effectiveProvider": "生效 provider",
-        "permissionMode": "权限模式",
-        "workspaceAccess": "工作区访问",
-        "execPolicy": "执行策略",
-        "networkPolicy": "网络策略",
-        "openClawMode": "OpenClaw 模式",
-        "updatedAt": "更新时间",
-        "available": "可用",
-        "unavailable": "不可用",
-        "dockerChecks": "Docker 强隔离检查",
-        "ok": "正常",
-        "missing": "缺失",
-        "runtimeLevels": {
-            "policy": "策略",
-            "light": "轻量",
-            "strong": "强隔离",
-            "unavailable": "不可用"
-        },
-        "networkPolicies": {
-            "disabled": "禁用",
-            "approvalRequired": "需要审批",
-            "enabled": "启用"
-        },
-        "docker": {
-            "cli": "Docker CLI",
-            "daemon": "Docker daemon",
-            "image": "沙盒镜像"
-        }
-    },
-    "remoteControl": {
-        "title": "Electron 远程调控",
-        "description": "暴露 Electron CDP 调试端口，仅建议绑定本机并在可信环境中使用。保存配置后需要重启 Verse Claw。",
-        "port": "CDP 端口",
-        "configEndpoint": "配置端点：127.0.0.1:{{port}} /json/version",
-        "currentEndpoint": "当前端点：{{endpoint}}",
-        "envOverride": "当前进程由 CLAWX_REMOTE_DEBUGGING_PORT 环境变量覆盖。",
-        "restartRequired": "配置与当前进程不一致，请重启应用使其生效。",
-        "screenshotAlt": "Electron CDP 截图",
-        "status": {
-            "effective": "当前已生效",
-            "inactive": "当前未生效"
-        },
-        "actions": {
-            "refreshStatus": "刷新状态",
-            "connectDebug": "连接调试",
-            "connecting": "连接中",
-            "pageInfo": "页面信息",
-            "scroll": "滚动页面",
-            "scrollDown": "向下滚动",
-            "click": "点击页面",
-            "clickCenter": "点击中心",
-            "screenshot": "截图",
-            "running": "{{action}}中..."
-        },
-        "inspect": {
-            "result": "连接结果：{{result}}",
-            "success": "成功",
-            "failure": "失败",
-            "targets": "可调试页面"
-        },
-        "toast": {
-            "connected": "已连接 Electron CDP，发现 {{count}} 个页面",
-            "connectFailed": "连接 Electron CDP 失败",
-            "connectFailedWithError": "连接 Electron CDP 失败: {{error}}",
-            "actionFailed": "{{action}}失败: {{error}}",
-            "pageInfoRefreshed": "页面信息已刷新",
-            "pageInfoFailed": "读取页面信息失败",
-            "scrollFailed": "滚动页面失败",
-            "clickedCenter": "已点击页面中心 ({{x}}, {{y}})",
-            "clickFailed": "点击页面失败",
-            "screenshotReady": "截图已生成",
-            "screenshotFailed": "页面截图失败",
-            "invalidPort": "CDP 端口必须是 1-65535 之间的整数",
-            "saved": "远程调控设置已保存，重启后生效",
-            "saveFailed": "保存远程调控设置失败: {{error}}"
-        }
-    },
-    "updates": {
-        "title": "更新",
-        "description": "保持 Verse Claw 最新",
-        "autoCheck": "自动检查更新",
-        "autoCheckDesc": "启动时检查更新",
-        "autoDownload": "更新提示",
-        "autoDownloadDesc": "发现新版本时显示通知；仅在您选择更新后才下载",
-        "status": {
-            "checking": "正在检查更新...",
-            "downloading": "正在下载更新...",
-            "available": "可用更新：v{{version}}",
-            "downloaded": "准备安装：v{{version}}",
-            "autoInstalling": "将在 {{seconds}} 秒后重启并安装更新...",
-            "failed": "检查更新失败",
-            "latest": "您已拥有最新版本",
-            "check": "检查更新以获取最新功能"
-        },
-        "action": {
-            "checking": "检查中...",
-            "downloading": "下载中...",
-            "download": "下载更新",
-            "install": "安装并重启",
-            "cancelAutoInstall": "取消",
-            "later": "稍后",
-            "retry": "重试",
-            "check": "检查更新"
-        },
-        "currentVersion": "当前版本",
-        "whatsNew": "更新内容：",
-        "errorDetails": "错误详情：",
-        "toast": {
-            "availableTitle": "Verse Claw 有新版本可用",
-            "availableDescription": "v{{version}} 已可下载。准备好后可开始下载。",
-            "downloadedTitle": "Verse Claw 更新已就绪",
-            "downloadedDescription": "v{{version}} 已下载完成。重启即可安装。",
-            "unknownVersion": "新版本"
-        },
-        "help": "Verse Claw 会自动检查更新，并在下载或安装前提示您确认。"
-    },
-    "advanced": {
-        "title": "高级",
-        "description": "高级选项",
-        "devMode": "开发者模式",
-        "devModeDesc": "显示开发者工具和快捷方式",
-        "telemetry": "匿名使用数据",
-        "telemetryDesc": "允许提供匿名的基础使用数据，用于改进 Verse Claw"
+    "system": {
+      "title": "系统与运行时",
+      "description": "网关状态、自动启动、远程控制与沙盒运行时。"
     },
     "developer": {
-        "title": "开发者",
-        "description": "开发者高级选项",
-        "console": "OpenClaw 控制台",
-        "consoleDesc": "访问原生 OpenClaw 管理界面",
-        "openConsole": "打开开发者控制台",
-        "consoleNote": "使用注入的网关令牌打开控制台",
-        "gatewayToken": "网关令牌",
-        "gatewayTokenDesc": "如果需要，将此粘贴到控制台设置中",
-        "tokenUnavailable": "令牌不可用",
-        "tokenCopied": "网关令牌已复制",
-        "cli": "OpenClaw CLI",
-        "cliDesc": "复制命令以运行 OpenClaw，无需修改 PATH。",
-        "cliPowershell": "PowerShell 命令。",
-        "cmdUnavailable": "命令不可用",
-        "cmdCopied": "CLI 命令已复制",
-        "doctor": "OpenClaw Doctor 诊断",
-        "doctorDesc": "运行 `openclaw doctor` 并查看原始诊断输出。",
-        "runDoctor": "运行 Doctor",
-        "runDoctorFix": "运行 Doctor 并修复",
-        "doctorSucceeded": "OpenClaw doctor 已完成",
-        "doctorFailed": "OpenClaw doctor 检测到问题",
-        "doctorRunFailed": "运行 OpenClaw doctor 失败",
-        "doctorFixSucceeded": "OpenClaw doctor 修复已完成",
-        "doctorFixFailed": "OpenClaw doctor 修复后仍有问题",
-        "doctorFixRunFailed": "运行 OpenClaw doctor 修复失败",
-        "doctorCopied": "诊断输出已复制",
-        "doctorOk": "正常",
-        "doctorIssue": "发现问题",
-        "doctorFixOk": "已修复",
-        "doctorFixIssue": "修复失败",
-        "doctorExitCode": "退出码",
-        "doctorDuration": "耗时",
-        "doctorCommand": "命令",
-        "doctorWorkingDir": "工作目录",
-        "doctorError": "错误",
-        "doctorStdout": "标准输出",
-        "doctorStderr": "标准错误",
-        "doctorOutputEmpty": "（空）",
-        "telemetryViewer": "埋点查看器",
-        "telemetryViewerDesc": "仅本地 UX/性能埋点，显示最近 200 条。",
-        "telemetryAggregated": "事件聚合",
-        "telemetryTotal": "总数",
-        "telemetryErrors": "错误",
-        "telemetrySlow": "慢请求（>=800ms）",
-        "telemetryEmpty": "暂无埋点",
-        "telemetryCopied": "埋点已复制",
-        "telemetryCleared": "埋点已清空",
-        "installCmd": "安装 \"openclaw\" 命令",
-        "installCmdDesc": "安装 ~/.local/bin/openclaw（无需管理员权限）",
-        "installTitle": "安装 OpenClaw 命令",
-        "installMessage": "安装 \"openclaw\" 命令？",
-        "installDetail": "这将创建 ~/.local/bin/openclaw。确保 ~/.local/bin 在您的 PATH 中。"
+      "title": "开发者",
+      "description": "开发者模式、代理、CLI、诊断与本地遥测。"
     },
-    "about": {
-        "title": "关于",
-        "appName": "Verse Claw",
-        "tagline": "图形化 AI 助手",
-        "basedOn": "基于 OpenClaw",
-        "version": "版本 {{version}}",
-        "docs": "官网",
-        "github": "GitHub",
-        "faq": "常见问题"
-    },
-    "workProviders": {
-        "title": "工作 Provider",
-        "description": "Work Kits 背后的本地和可选 Provider。Provider 只展示能力状态，不授予工具权限。",
-        "status": {
-            "ready": "可用",
-            "missingDependency": "缺少依赖",
-            "missingConfig": "缺少配置",
-            "disabled": "已禁用",
-            "externalUnavailable": "外部不可用",
-            "runtimeUnavailable": "Runtime 不可用"
-        },
-        "providers": {
-            "officeDocument": "文档",
-            "officeSheet": "表格",
-            "officeSlide": "演示",
-            "pdf": "PDF",
-            "webSearch": "网页搜索",
-            "webRead": "网页读取",
-            "libreOffice": "LibreOffice",
-            "pandoc": "Pandoc",
-            "crawler": "爬虫",
-            "ocr": "OCR",
-            "dataFrame": "数据分析"
-        },
-        "providerDescriptions": {
-            "officeDocument": "使用轻量 JS 库读取和生成 Word 类文档产物。",
-            "officeSheet": "读取和生成表格与 CSV 产物。",
-            "officeSlide": "生成可编辑演示文稿。",
-            "pdf": "校验、预览、拆分和合并 PDF 产物。",
-            "webSearch": "使用用户配置的外部搜索 Provider。",
-            "webRead": "从网页提取可读正文和引用信息。",
-            "libreOffice": "可选的高保真本地 Office 转换 Provider。",
-            "pandoc": "可选的文档转换 Provider。",
-            "crawler": "可选外部爬虫服务。",
-            "ocr": "可选 OCR Provider。",
-            "dataFrame": "可选 Python 或服务型数据分析 Provider。"
-        }
-    },
-    "projectRules": {
-        "title": "项目规则中心",
-        "description": "查看当前 workspace 的规则入口、本地规则备注和确定性校验提示。",
-        "noWorkspace": "没有活动 workspace",
-        "agentsFile": "AGENTS.md",
-        "ruleFileCount": ".clawx/rules 文件",
-        "validation": "校验",
-        "issueSummary": "{{errors}} 个错误 / {{warnings}} 个警告 / {{info}} 条提示",
-        "missingAgents": "此 workspace 还没有 AGENTS.md。可创建保守模板来补齐项目规则入口，不会覆盖其它文件。",
-        "previewTitle": "AGENTS.md 预览",
-        "emptyPreview": "（空文件）",
-        "localRulesTitle": "本地 .clawx/rules/*.md",
-        "noLocalRules": "未找到本地规则备注文件。",
-        "contextPreviewTitle": "Agent context 预览",
-        "issuesTitle": "校验结果",
-        "noIssues": "未发现校验问题。",
-        "actions": {
-            "refresh": "刷新",
-            "createAgents": "创建 AGENTS.md",
-            "creating": "创建中..."
-        },
-        "toast": {
-            "loadFailed": "加载项目规则失败：{{error}}",
-            "createFailed": "创建 AGENTS.md 失败：{{error}}",
-            "created": "已创建 AGENTS.md 模板",
-            "alreadyPresent": "AGENTS.md 已存在"
-        },
-        "health": {
-            "ready": "就绪",
-            "warnings": "{{count}} 个警告",
-            "warnings_plural": "{{count}} 个警告",
-            "errors": "{{count}} 个错误",
-            "errors_plural": "{{count}} 个错误"
-        },
-        "status": {
-            "missing": "缺失",
-            "present": "存在",
-            "empty": "空文件",
-            "tooLarge": "过大",
-            "unreadable": "不可读",
-            "included": "会进入",
-            "available": "可用",
-            "referenceOnly": "仅作引用"
-        },
-        "contextStatus": {
-            "included": "会进入",
-            "available": "可用",
-            "referenceOnly": "仅作引用",
-            "missing": "缺失"
-        },
-        "context": {
-            "agents": {
-                "title": "AGENTS.md",
-                "description": "当前 workspace 的入口文件是预期进入 agent context 的首要项目规则来源。"
-            },
-            "harnessSpecs": {
-                "title": "harness/specs/**",
-                "description": "被 AGENTS.md 或 task spec 引用时，rules、scenarios、tasks、guides 和 layers 仍是持久项目规则真相源。"
-            },
-            "clawxRules": {
-                "title": ".clawx/rules/*.md",
-                "description": "找到 {{count}} 个本地补充文件。它们会在此展示，但除非被 AGENTS.md 或 Context Pack recipe 引用，否则不是新的规则真相源。",
-                "description_plural": "找到 {{count}} 个本地补充文件。它们会在此展示，但除非被 AGENTS.md 或 Context Pack recipe 引用，否则不是新的规则真相源。"
-            }
-        },
-        "issues": {
-            "workspace.missing": {
-                "title": "没有活动 workspace",
-                "description": "请先选择或创建 workspace，再查看项目规则。"
-            },
-            "agents.missing": {
-                "title": "缺少 AGENTS.md",
-                "description": "{{path}} 是预期的项目规则入口文件。"
-            },
-            "agents.empty": {
-                "title": "AGENTS.md 为空",
-                "description": "{{path}} 已存在，但还没有规则内容。"
-            },
-            "agents.tooLarge": {
-                "title": "AGENTS.md 过大，无法预览",
-                "description": "{{path}} 为 {{size}} 字节；预览上限是 {{maxBytes}} 字节。"
-            },
-            "agents.unreadable": {
-                "title": "无法读取 AGENTS.md",
-                "description": "{{path}} 无法检查：{{reason}}"
-            },
-            "ruleFile.empty": {
-                "title": "本地规则文件为空",
-                "description": "{{path}} 已列出，但没有内容。"
-            },
-            "ruleFile.tooLarge": {
-                "title": "本地规则文件过大",
-                "description": "{{path}} 为 {{size}} 字节；lint 上限是 {{maxBytes}} 字节。"
-            },
-            "ruleFile.unreadable": {
-                "title": "无法读取本地规则文件",
-                "description": "{{path}} 无法检查：{{reason}}"
-            },
-            "rules.duplicateTitle": {
-                "title": "重复规则标题",
-                "description": "标题“{{title}}”出现在多个文件中：{{relatedPaths}}。"
-            },
-            "rules.duplicateLine": {
-                "title": "重复规则行",
-                "description": "同一条规则行出现在多个文件中：{{relatedPaths}}。"
-            },
-            "renderer.hostApiGuidanceMissing": {
-                "title": "缺少 renderer host-api 指引",
-                "description": "请补充 renderer 后端调用必须经过 host-api 或 api-client 的规则。"
-            },
-            "renderer.ipcBanMissing": {
-                "title": "缺少直接 renderer IPC 警告",
-                "description": "请补充禁止在 renderer pages/components 中直接调用 window.electron.ipcRenderer.invoke 的确定性规则。"
-            },
-            "renderer.gatewayFetchBanMissing": {
-                "title": "缺少直接 Gateway fetch 警告",
-                "description": "请补充禁止 renderer fetch/WebSocket 访问 127.0.0.1:18789 或 localhost:18789 的确定性规则。"
-            },
-            "renderer.ipcConflict": {
-                "title": "潜在直接 IPC 冲突",
-                "description": "规则文本看起来同时允许和禁止直接 renderer IPC，请检查措辞。"
-            },
-            "renderer.gatewayFetchConflict": {
-                "title": "潜在直接 Gateway 调用冲突",
-                "description": "规则文本看起来同时允许和禁止直接 renderer Gateway 调用，请检查措辞。"
-            }
-        }
-    },
-    "workHeatGraph": {
-        "title": "?????",
-        "description": "??????????????",
-        "runs": "{{count}} ???",
-        "tokens": "{{count}} tokens",
-        "dayTitle": "{{date}}?{{count}} ????{{tokens}} tokens"
+    "billing": {
+      "title": "计费",
+      "description": "Token 用量历史、费用估算及使用活跃度图表。"
     }
+  },
+  "appearance": {
+    "title": "通用",
+    "description": "自定义外观和风格",
+    "theme": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "system": "跟随系统",
+    "language": "语言",
+    "menuLanguageUpdated": "菜单语言已更新",
+    "launchAtStartup": "开机自动启动",
+    "launchAtStartupDesc": "登录系统后自动启动 Verse Claw"
+  },
+  "aiProviders": {
+    "title": "AI 模型提供商",
+    "description": "配置 AI 模型提供商和 API 密钥",
+    "overview": {
+      "title": "提供商账户",
+      "description": "这里汇总当前已配置的 provider 账户与模型信息。",
+      "noModelSelected": "未选择模型",
+      "multiAccountReady": "支持多账户",
+      "singletonVendor": "单例提供商"
+    },
+    "authModes": {
+      "apiKey": "API 密钥",
+      "oauthDevice": "OAuth 设备登录",
+      "oauthBrowser": "OAuth 浏览器登录",
+      "local": "本地"
+    },
+    "sections": {
+      "model": "模型配置",
+      "fallback": "回退配置"
+    },
+    "add": "添加提供商",
+    "custom": "自定义",
+    "notRequired": "非必填",
+    "empty": {
+      "title": "未配置提供商",
+      "desc": "添加 AI 提供商以开始使用 Verse Claw",
+      "cta": "添加您的第一个提供商"
+    },
+    "dialog": {
+      "title": "添加 AI 提供商",
+      "desc": "配置新的 AI 模型提供商",
+      "displayName": "显示名称",
+      "apiKey": "API 密钥",
+      "apiKeyConfigured": "这个 provider 已经保存了 API key。",
+      "apiKeyMissing": "这个 provider 还没有保存 API key。",
+      "apiKeyStored": "您的 API 密钥存储在本地机器上。",
+      "replaceApiKey": "替换 API Key",
+      "replaceApiKeyHelp": "如果想保留当前已保存的 API key，这里留空即可。",
+      "baseUrl": "基础 URL",
+      "modelId": "模型 ID",
+      "codePlanPreset": "Code Plan 预设",
+      "codePlanMode": "Code Plan",
+      "useCodePlanPreset": "使用 Ark Code Plan 预设",
+      "codePlanPresetDesc": "Code Plan 使用 https://ark.cn-beijing.volces.com/api/coding/v3 与模型 ark-code-latest。请勿把 /api/v3 用于 Code Plan 流量。",
+      "codePlanDoc": "Code Plan 文档",
+      "protocol": "协议",
+      "advancedConfig": "高级配置",
+      "userAgent": "User-Agent",
+      "userAgentPlaceholder": "Verse Claw/1.0",
+      "fallbackModels": "回退模型",
+      "fallbackProviders": "跨 Provider 回退",
+      "fallbackModelIds": "同 Provider 回退模型 ID",
+      "fallbackModelIdsPlaceholder": "gpt-4.1-mini\nanother-model-id",
+      "fallbackModelIdsHelp": "每行一个模型 ID。会先使用当前 provider 的这些模型，再回退到其他 provider。",
+      "noFallbackOptions": "请先添加其他 provider，才能把它设为回退目标。",
+      "cancel": "取消",
+      "change": "更换提供商",
+      "add": "添加提供商",
+      "save": "保存",
+      "customDoc": "查看文档",
+      "validate": "验证",
+      "failed": "失败",
+      "fetchingModels": "获取中",
+      "fetchModels": "获取模型",
+      "customModel": "手动输入模型",
+      "testConnection": "测试连接"
+    },
+    "card": {
+      "default": "默认",
+      "configured": "已配置",
+      "noKey": "未设置 API 密钥",
+      "none": "无",
+      "fallbacks_one": "回退：{{names}}",
+      "fallbacks_other": "回退（{{count}} 个）：{{names}}",
+      "setDefault": "设为默认",
+      "editKey": "编辑 API 密钥",
+      "delete": "删除提供商"
+    },
+    "protocols": {
+      "openai": "OpenAI 兼容",
+      "openaiCompletions": "OpenAI Completions",
+      "openaiResponses": "OpenAI Responses",
+      "anthropic": "Anthropic 兼容"
+    },
+    "toast": {
+      "added": "提供商添加成功",
+      "failedAdd": "添加提供商失败",
+      "deleted": "提供商已删除",
+      "failedDelete": "删除提供商失败",
+      "defaultUpdated": "默认提供商已更新",
+      "failedDefault": "设置默认失败",
+      "updated": "提供商已更新",
+      "failedUpdate": "更新提供商失败",
+      "invalidKey": "无效的 API 密钥",
+      "modelRequired": "需要模型 ID",
+      "minimaxConflict": "不能同时添加 MiniMax 国际站和国内站的服务商。",
+      "connectionOk": "连接成功，延迟 {{ms}} ms",
+      "connectionFailed": "连接失败：{{error}}",
+      "modelsUpdated": "模型列表已更新",
+      "modelsUpdatedWithLatency": "模型列表已更新，延迟 {{ms}} ms",
+      "modelsFetchFailed": "获取模型失败：{{error}}",
+      "noModelsReturned": "服务未返回模型列表",
+      "providerRequired": "请选择提供商"
+    },
+    "oauth": {
+      "loginMode": "OAuth 登录",
+      "apikeyMode": "API 密钥",
+      "loginPrompt": "此提供商需要通过浏览器登录授权。",
+      "loginButton": "浏览器登录",
+      "getApiKey": "获取 API 密钥",
+      "waiting": "等待中...",
+      "openLoginPage": "打开登录页面",
+      "waitingApproval": "等待浏览器中的授权...",
+      "cancel": "取消",
+      "codeCopied": "代码已复制到剪贴板",
+      "authFailed": "认证失败",
+      "browserFlowUnavailable": "该提供商的浏览器 OAuth 登录链路暂未接通。",
+      "tryAgain": "重试",
+      "approveLogin": "确认登录",
+      "step1": "复制下方的授权码。",
+      "step2": "在浏览器中打开登录页面。",
+      "step3": "粘贴授权码以批准访问。",
+      "requestingCode": "正在获取安全登录码..."
+    }
+  },
+  "gateway": {
+    "title": "网关",
+    "description": "OpenClaw 网关设置",
+    "status": "状态",
+    "port": "端口",
+    "logs": "日志",
+    "appLogs": "应用日志",
+    "openFolder": "打开文件夹",
+    "autoStart": "自动启动网关",
+    "autoStartDesc": "Verse Claw 启动时自动启动网关",
+    "proxyTitle": "代理",
+    "proxyDesc": "让 Electron 和 Gateway 的网络请求都走本地代理客户端。",
+    "proxyServer": "代理服务器",
+    "proxyServerHelp": "所有请求默认使用的代理。只填 host:port 时默认按 HTTP 处理。",
+    "proxyHttpServer": "HTTP 代理",
+    "proxyHttpServerHelp": "HTTP 请求的高级覆盖项。留空时使用“代理服务器”。",
+    "proxyHttpsServer": "HTTPS 代理",
+    "proxyHttpsServerHelp": "HTTPS 请求的高级覆盖项。留空时使用“代理服务器”。",
+    "proxyAllServer": "ALL_PROXY / SOCKS",
+    "proxyAllServerHelp": "支持 SOCKS 的客户端和 Telegram 等协议的高级兜底代理。留空时使用“代理服务器”。",
+    "showAdvancedProxy": "显示高级代理字段",
+    "hideAdvancedProxy": "隐藏高级代理字段",
+    "proxyBypass": "绕过规则",
+    "proxyBypassHelp": "使用分号、逗号或换行分隔需要直连的主机。",
+    "proxyRestartNote": "保存后会立即重新应用 Electron 网络代理，并自动重启 Gateway。若代理已关闭，Gateway 常规重启会保留 Telegram 频道已有代理；如需清空，请在关闭代理后手动保存一次。",
+    "proxySaved": "代理设置已保存",
+    "proxySaveFailed": "保存代理设置失败"
+  },
+  "roleMemory": {
+    "title": "角色记忆",
+    "description": "受治理的角色运行时记忆：提案、评审、注入解释、生命周期和质量反馈。",
+    "disableEffect": "关闭后会停止 Role Memory 注入并阻止记忆写入。已有卡片会保留在磁盘上，OpenClaw 原生记忆不受影响。",
+    "enabled": "已启用",
+    "disabled": "已关闭"
+  },
+  "knowledgeHub": {
+    "watched": {
+      "title": "Knowledge Hub 监听目录",
+      "description": "监听可信本地文件夹中的新 Markdown 来源。新文件可以先进入审查 Inbox，compile 只刷新索引，不会自动生成 synthesis。",
+      "path": "目录",
+      "pathPlaceholder": "选择或粘贴本地文件夹路径",
+      "patterns": "匹配模式",
+      "pick": "选择目录",
+      "pickTitle": "选择监听目录",
+      "pickFailed": "选择目录失败：{{error}}",
+      "add": "添加目录",
+      "empty": "还没有监听目录。",
+      "enabled": "已启用",
+      "disabled": "已停用",
+      "reviewFirst": "先审查",
+      "directIngest": "直接导入",
+      "ingestNewFiles": "导入新文件",
+      "requiresReview": "导入前审查",
+      "autoCompile": "自动编译",
+      "compileOff": "关闭编译",
+      "pathRequired": "需要填写目录路径。",
+      "patternRequired": "至少需要一个匹配模式。",
+      "loadFailed": "加载监听目录失败：{{error}}",
+      "addFailed": "添加监听目录失败。",
+      "addFailedWithError": "添加监听目录失败：{{error}}",
+      "updateFailed": "更新监听目录失败。",
+      "updateFailedWithError": "更新监听目录失败：{{error}}",
+      "removeFailed": "移除监听目录失败。",
+      "removeFailedWithError": "移除监听目录失败：{{error}}",
+      "added": "已添加监听目录。",
+      "removed": "已移除监听目录。"
+    }
+  },
+  "sandbox": {
+    "title": "沙盒控制",
+    "description": "Verse Claw 默认使用 policy-light。Docker 和 SSH 仍是显式选择的强隔离 provider，Docker 缺失不会阻塞默认 Gateway 启动。",
+    "defaultProfileName": "默认沙盒",
+    "loadFailed": "读取沙盒状态失败",
+    "saveFailed": "保存沙盒配置失败",
+    "profileSaved": "沙盒配置已更新",
+    "refresh": "刷新",
+    "loading": "加载中",
+    "degraded": "已降级",
+    "fallbackToPolicy": "使用 policy-light",
+    "requestedProvider": "请求 provider",
+    "effectiveProvider": "生效 provider",
+    "permissionMode": "权限模式",
+    "workspaceAccess": "工作区访问",
+    "execPolicy": "执行策略",
+    "networkPolicy": "网络策略",
+    "openClawMode": "OpenClaw 模式",
+    "updatedAt": "更新时间",
+    "available": "可用",
+    "unavailable": "不可用",
+    "dockerChecks": "Docker 强隔离检查",
+    "ok": "正常",
+    "missing": "缺失",
+    "runtimeLevels": {
+      "policy": "策略",
+      "light": "轻量",
+      "strong": "强隔离",
+      "unavailable": "不可用"
+    },
+    "networkPolicies": {
+      "disabled": "禁用",
+      "approvalRequired": "需要审批",
+      "enabled": "启用"
+    },
+    "docker": {
+      "cli": "Docker CLI",
+      "daemon": "Docker daemon",
+      "image": "沙盒镜像"
+    }
+  },
+  "remoteControl": {
+    "title": "Electron 远程调控",
+    "description": "暴露 Electron CDP 调试端口，仅建议绑定本机并在可信环境中使用。保存配置后需要重启 Verse Claw。",
+    "port": "CDP 端口",
+    "configEndpoint": "配置端点：127.0.0.1:{{port}} /json/version",
+    "currentEndpoint": "当前端点：{{endpoint}}",
+    "envOverride": "当前进程由 CLAWX_REMOTE_DEBUGGING_PORT 环境变量覆盖。",
+    "restartRequired": "配置与当前进程不一致，请重启应用使其生效。",
+    "screenshotAlt": "Electron CDP 截图",
+    "status": {
+      "effective": "当前已生效",
+      "inactive": "当前未生效"
+    },
+    "actions": {
+      "refreshStatus": "刷新状态",
+      "connectDebug": "连接调试",
+      "connecting": "连接中",
+      "pageInfo": "页面信息",
+      "scroll": "滚动页面",
+      "scrollDown": "向下滚动",
+      "click": "点击页面",
+      "clickCenter": "点击中心",
+      "screenshot": "截图",
+      "running": "{{action}}中..."
+    },
+    "inspect": {
+      "result": "连接结果：{{result}}",
+      "success": "成功",
+      "failure": "失败",
+      "targets": "可调试页面"
+    },
+    "toast": {
+      "connected": "已连接 Electron CDP，发现 {{count}} 个页面",
+      "connectFailed": "连接 Electron CDP 失败",
+      "connectFailedWithError": "连接 Electron CDP 失败: {{error}}",
+      "actionFailed": "{{action}}失败: {{error}}",
+      "pageInfoRefreshed": "页面信息已刷新",
+      "pageInfoFailed": "读取页面信息失败",
+      "scrollFailed": "滚动页面失败",
+      "clickedCenter": "已点击页面中心 ({{x}}, {{y}})",
+      "clickFailed": "点击页面失败",
+      "screenshotReady": "截图已生成",
+      "screenshotFailed": "页面截图失败",
+      "invalidPort": "CDP 端口必须是 1-65535 之间的整数",
+      "saved": "远程调控设置已保存，重启后生效",
+      "saveFailed": "保存远程调控设置失败: {{error}}"
+    }
+  },
+  "advanced": {
+    "title": "高级",
+    "description": "高级选项",
+    "devMode": "开发者模式",
+    "devModeDesc": "显示开发者工具和快捷方式",
+    "telemetry": "匿名使用数据",
+    "telemetryDesc": "允许提供匿名的基础使用数据，用于改进 Verse Claw"
+  },
+  "developer": {
+    "title": "开发者",
+    "description": "开发者高级选项",
+    "console": "OpenClaw 控制台",
+    "consoleDesc": "访问原生 OpenClaw 管理界面",
+    "openConsole": "打开开发者控制台",
+    "consoleNote": "使用注入的网关令牌打开控制台",
+    "gatewayToken": "网关令牌",
+    "gatewayTokenDesc": "如果需要，将此粘贴到控制台设置中",
+    "tokenUnavailable": "令牌不可用",
+    "tokenCopied": "网关令牌已复制",
+    "cli": "OpenClaw CLI",
+    "cliDesc": "复制命令以运行 OpenClaw，无需修改 PATH。",
+    "cliPowershell": "PowerShell 命令。",
+    "cmdUnavailable": "命令不可用",
+    "cmdCopied": "CLI 命令已复制",
+    "doctor": "OpenClaw Doctor 诊断",
+    "doctorDesc": "运行 `openclaw doctor` 并查看原始诊断输出。",
+    "runDoctor": "运行 Doctor",
+    "runDoctorFix": "运行 Doctor 并修复",
+    "doctorSucceeded": "OpenClaw doctor 已完成",
+    "doctorFailed": "OpenClaw doctor 检测到问题",
+    "doctorRunFailed": "运行 OpenClaw doctor 失败",
+    "doctorFixSucceeded": "OpenClaw doctor 修复已完成",
+    "doctorFixFailed": "OpenClaw doctor 修复后仍有问题",
+    "doctorFixRunFailed": "运行 OpenClaw doctor 修复失败",
+    "doctorCopied": "诊断输出已复制",
+    "doctorOk": "正常",
+    "doctorIssue": "发现问题",
+    "doctorFixOk": "已修复",
+    "doctorFixIssue": "修复失败",
+    "doctorExitCode": "退出码",
+    "doctorDuration": "耗时",
+    "doctorCommand": "命令",
+    "doctorWorkingDir": "工作目录",
+    "doctorError": "错误",
+    "doctorStdout": "标准输出",
+    "doctorStderr": "标准错误",
+    "doctorOutputEmpty": "（空）",
+    "telemetryViewer": "埋点查看器",
+    "telemetryViewerDesc": "仅本地 UX/性能埋点，显示最近 200 条。",
+    "telemetryAggregated": "事件聚合",
+    "telemetryTotal": "总数",
+    "telemetryErrors": "错误",
+    "telemetrySlow": "慢请求（>=800ms）",
+    "telemetryEmpty": "暂无埋点",
+    "telemetryCopied": "埋点已复制",
+    "telemetryCleared": "埋点已清空",
+    "installCmd": "安装 \"openclaw\" 命令",
+    "installCmdDesc": "安装 ~/.local/bin/openclaw（无需管理员权限）",
+    "installTitle": "安装 OpenClaw 命令",
+    "installMessage": "安装 \"openclaw\" 命令？",
+    "installDetail": "这将创建 ~/.local/bin/openclaw。确保 ~/.local/bin 在您的 PATH 中。"
+  },
+  "about": {
+    "title": "关于",
+    "appName": "Verse Claw",
+    "tagline": "图形化 AI 助手",
+    "basedOn": "基于 OpenClaw",
+    "version": "版本 {{version}}",
+    "docs": "官网",
+    "github": "GitHub",
+    "faq": "常见问题"
+  },
+  "workProviders": {
+    "title": "工作 Provider",
+    "description": "Work Kits 背后的本地和可选 Provider。Provider 只展示能力状态，不授予工具权限。",
+    "status": {
+      "ready": "可用",
+      "missingDependency": "缺少依赖",
+      "missingConfig": "缺少配置",
+      "disabled": "已禁用",
+      "externalUnavailable": "外部不可用",
+      "runtimeUnavailable": "Runtime 不可用"
+    },
+    "providers": {
+      "officeDocument": "文档",
+      "officeSheet": "表格",
+      "officeSlide": "演示",
+      "pdf": "PDF",
+      "webSearch": "网页搜索",
+      "webRead": "网页读取",
+      "libreOffice": "LibreOffice",
+      "pandoc": "Pandoc",
+      "crawler": "爬虫",
+      "ocr": "OCR",
+      "dataFrame": "数据分析"
+    },
+    "providerDescriptions": {
+      "officeDocument": "使用轻量 JS 库读取和生成 Word 类文档产物。",
+      "officeSheet": "读取和生成表格与 CSV 产物。",
+      "officeSlide": "生成可编辑演示文稿。",
+      "pdf": "校验、预览、拆分和合并 PDF 产物。",
+      "webSearch": "使用用户配置的外部搜索 Provider。",
+      "webRead": "从网页提取可读正文和引用信息。",
+      "libreOffice": "可选的高保真本地 Office 转换 Provider。",
+      "pandoc": "可选的文档转换 Provider。",
+      "crawler": "可选外部爬虫服务。",
+      "ocr": "可选 OCR Provider。",
+      "dataFrame": "可选 Python 或服务型数据分析 Provider。"
+    }
+  },
+  "projectRules": {
+    "title": "项目规则中心",
+    "description": "查看当前 workspace 的规则入口、本地规则备注和确定性校验提示。",
+    "noWorkspace": "没有活动 workspace",
+    "agentsFile": "AGENTS.md",
+    "ruleFileCount": ".clawx/rules 文件",
+    "validation": "校验",
+    "issueSummary": "{{errors}} 个错误 / {{warnings}} 个警告 / {{info}} 条提示",
+    "missingAgents": "此 workspace 还没有 AGENTS.md。可创建保守模板来补齐项目规则入口，不会覆盖其它文件。",
+    "previewTitle": "AGENTS.md 预览",
+    "emptyPreview": "（空文件）",
+    "localRulesTitle": "本地 .clawx/rules/*.md",
+    "noLocalRules": "未找到本地规则备注文件。",
+    "contextPreviewTitle": "Agent context 预览",
+    "issuesTitle": "校验结果",
+    "noIssues": "未发现校验问题。",
+    "actions": {
+      "refresh": "刷新",
+      "createAgents": "创建 AGENTS.md",
+      "creating": "创建中..."
+    },
+    "toast": {
+      "loadFailed": "加载项目规则失败：{{error}}",
+      "createFailed": "创建 AGENTS.md 失败：{{error}}",
+      "created": "已创建 AGENTS.md 模板",
+      "alreadyPresent": "AGENTS.md 已存在"
+    },
+    "health": {
+      "ready": "就绪",
+      "warnings": "{{count}} 个警告",
+      "warnings_plural": "{{count}} 个警告",
+      "errors": "{{count}} 个错误",
+      "errors_plural": "{{count}} 个错误"
+    },
+    "status": {
+      "missing": "缺失",
+      "present": "存在",
+      "empty": "空文件",
+      "tooLarge": "过大",
+      "unreadable": "不可读",
+      "included": "会进入",
+      "available": "可用",
+      "referenceOnly": "仅作引用"
+    },
+    "contextStatus": {
+      "included": "会进入",
+      "available": "可用",
+      "referenceOnly": "仅作引用",
+      "missing": "缺失"
+    },
+    "context": {
+      "agents": {
+        "title": "AGENTS.md",
+        "description": "当前 workspace 的入口文件是预期进入 agent context 的首要项目规则来源。"
+      },
+      "harnessSpecs": {
+        "title": "harness/specs/**",
+        "description": "被 AGENTS.md 或 task spec 引用时，rules、scenarios、tasks、guides 和 layers 仍是持久项目规则真相源。"
+      },
+      "clawxRules": {
+        "title": ".clawx/rules/*.md",
+        "description": "找到 {{count}} 个本地补充文件。它们会在此展示，但除非被 AGENTS.md 或 Context Pack recipe 引用，否则不是新的规则真相源。",
+        "description_plural": "找到 {{count}} 个本地补充文件。它们会在此展示，但除非被 AGENTS.md 或 Context Pack recipe 引用，否则不是新的规则真相源。"
+      }
+    },
+    "issues": {
+      "workspace.missing": {
+        "title": "没有活动 workspace",
+        "description": "请先选择或创建 workspace，再查看项目规则。"
+      },
+      "agents.missing": {
+        "title": "缺少 AGENTS.md",
+        "description": "{{path}} 是预期的项目规则入口文件。"
+      },
+      "agents.empty": {
+        "title": "AGENTS.md 为空",
+        "description": "{{path}} 已存在，但还没有规则内容。"
+      },
+      "agents.tooLarge": {
+        "title": "AGENTS.md 过大，无法预览",
+        "description": "{{path}} 为 {{size}} 字节；预览上限是 {{maxBytes}} 字节。"
+      },
+      "agents.unreadable": {
+        "title": "无法读取 AGENTS.md",
+        "description": "{{path}} 无法检查：{{reason}}"
+      },
+      "ruleFile.empty": {
+        "title": "本地规则文件为空",
+        "description": "{{path}} 已列出，但没有内容。"
+      },
+      "ruleFile.tooLarge": {
+        "title": "本地规则文件过大",
+        "description": "{{path}} 为 {{size}} 字节；lint 上限是 {{maxBytes}} 字节。"
+      },
+      "ruleFile.unreadable": {
+        "title": "无法读取本地规则文件",
+        "description": "{{path}} 无法检查：{{reason}}"
+      },
+      "rules.duplicateTitle": {
+        "title": "重复规则标题",
+        "description": "标题“{{title}}”出现在多个文件中：{{relatedPaths}}。"
+      },
+      "rules.duplicateLine": {
+        "title": "重复规则行",
+        "description": "同一条规则行出现在多个文件中：{{relatedPaths}}。"
+      },
+      "renderer.hostApiGuidanceMissing": {
+        "title": "缺少 renderer host-api 指引",
+        "description": "请补充 renderer 后端调用必须经过 host-api 或 api-client 的规则。"
+      },
+      "renderer.ipcBanMissing": {
+        "title": "缺少直接 renderer IPC 警告",
+        "description": "请补充禁止在 renderer pages/components 中直接调用 window.electron.ipcRenderer.invoke 的确定性规则。"
+      },
+      "renderer.gatewayFetchBanMissing": {
+        "title": "缺少直接 Gateway fetch 警告",
+        "description": "请补充禁止 renderer fetch/WebSocket 访问 127.0.0.1:18789 或 localhost:18789 的确定性规则。"
+      },
+      "renderer.ipcConflict": {
+        "title": "潜在直接 IPC 冲突",
+        "description": "规则文本看起来同时允许和禁止直接 renderer IPC，请检查措辞。"
+      },
+      "renderer.gatewayFetchConflict": {
+        "title": "潜在直接 Gateway 调用冲突",
+        "description": "规则文本看起来同时允许和禁止直接 renderer Gateway 调用，请检查措辞。"
+      }
+    }
+  },
+  "workHeatGraph": {
+    "title": "?????",
+    "description": "??????????????",
+    "runs": "{{count}} ???",
+    "tokens": "{{count}} tokens",
+    "dayTitle": "{{date}}?{{count}} ????{{tokens}} tokens"
+  }
 }

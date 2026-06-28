@@ -75,8 +75,72 @@
     "noSources": "Источники не прикреплены.",
     "warnings": "Warnings",
     "noWarnings": "Предупреждений нет.",
+    "reason": "Причина рекомендации",
+    "noReason": "Причина рекомендации не записана.",
+    "boundary": "Только черновик",
+    "context": "Контекст захвата",
+    "statusLabel": "Статус",
+    "missionId": "Mission",
+    "tick": "Tick",
+    "tickValue": "Tick {{tick}}",
+    "outcome": "Исход",
+    "temporalityLabel": "Временность",
+    "captureKey": "Ключ захвата",
+    "auditDetails": "Детали аудита",
+    "notAvailable": "Недоступно",
+    "score": "Оценка {{score}}",
+    "percentValue": "{{percent}}%",
+    "evidenceCount": "{{count}} доказательство",
+    "evidenceCount_plural": "{{count}} доказательств",
     "warningCount": "{{count}} предупреждение",
     "warningCount_plural": "{{count}} предупреждений",
+    "status": {
+      "pending": "Ожидает",
+      "promoted": "Повышено",
+      "dismissed": "Отклонено"
+    },
+    "temporality": {
+      "stable": "Стабильное",
+      "versioned": "Зависит от версии",
+      "ephemeral": "Временное"
+    },
+    "outcomes": {
+      "idle": "Ожидание",
+      "running": "Выполняется",
+      "sleeping": "Спит",
+      "paused": "На паузе",
+      "ask_user": "Нужен ввод пользователя",
+      "complete": "Завершено",
+      "blocked": "Заблокировано",
+      "cancelled": "Отменено",
+      "error": "Ошибка"
+    },
+    "scoreDimensions": {
+      "reusability": "Повторное использование",
+      "uniqueness": "Уникальность",
+      "confidence": "Уверенность"
+    },
+    "sourceKinds": {
+      "chat": "Chat",
+      "file": "File",
+      "wiki": "Wiki",
+      "task_ledger": "Task Ledger",
+      "trace": "Trace",
+      "task_loop": "Task Loop",
+      "manual": "Manual",
+      "search_result": "Search",
+      "other": "Other"
+    },
+    "groups": {
+      "save": "Рекомендуется сохранить",
+      "review": "Нужна проверка",
+      "archive-only": "Только архив"
+    },
+    "recommendations": {
+      "save": "Сохранить",
+      "review": "Проверить",
+      "archive-only": "Только архив"
+    },
     "kinds": {
       "chat-session": "Chat",
       "task-ledger": "Task Ledger",

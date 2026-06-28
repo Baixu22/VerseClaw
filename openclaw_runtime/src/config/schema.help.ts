@@ -1984,6 +1984,10 @@ export const FIELD_HELP: Record<string, string> = {
     "Tool registry shadow settings for Phase-3 runtime migration diagnostics.",
   "runtime.toolRegistry.shadow":
     "Emit tool registry diagnostics and normalized runtime-core evidence without changing legacy tool response shapes (default: false).",
+  "runtime.registryDiagnostics":
+    "Runtime registry diagnostic collector settings. Collector output is bounded, caller-owned, and shadow-only.",
+  "runtime.registryDiagnostics.collector":
+    "Merge context/tool registry diagnostics into bounded shadow output without changing provider ordering, prompts, tool responses, or TaskLoop authority (default: false).",
   "runtime.toolProtocol":
     "Tool protocol migration flags. These are compatibility shadows and must not alter tool response semantics.",
   "runtime.toolProtocol.mcpShadow":
@@ -1992,6 +1996,48 @@ export const FIELD_HELP: Record<string, string> = {
     "Warning-only evidence verifier shadow settings. These reports are diagnostics and do not change legacy task-loop or mission decisions.",
   "runtime.evidenceVerifier.shadow":
     "Emit warning-only evidence verifier reports beside the existing evidence gate without changing pass/repair/blocked decisions.",
+  "runtime.traceContext":
+    "Default-off runtime trace context flags for Phase 6 shadow diagnostics and readonly provider validation. These flags do not enable telemetry export, provider-ordering cutover, completion gates, security policy, retry policy, tool permission authority, or runtime authority.",
+  "runtime.traceContext.shadow":
+    "Enable sanitized trace shadow diagnostics only (default: false). This remains readonly/diagnostic and does not change TaskLoop, Gateway, renderer, provider ordering, or runtime authority.",
+  "runtime.traceContext.provider":
+    "Allow the readonly trace context provider gate when an experimental provider is explicitly registered (default: false). This does not register the provider by default or change provider ordering.",
+  "runtime.traceContext.propagation":
+    "Allow sanitized external trace context propagation diagnostics only (default: false). Raw traceparent, tracestate, and baggage remain untrusted and this does not enable telemetry export or runtime authority.",
+  "runtime.memory":
+    "Default-off runtime memory flags for shadow diagnostics, readonly provider validation, candidate proposal checks, and explicit sanitized persistence pilots. These flags do not enable default-on memory, provider ordering cutover, fact promotion, completion gates, security policy, retry policy, tool permission authority, or runtime authority.",
+  "runtime.memory.shadow":
+    "Enable sanitized runtime memory shadow diagnostics only (default: false). The TaskLoop sanitized episode persistence pilot also requires runtime.memory.persist; this flag alone does not open or write persistence and never records raw chat logs, raw trace dumps, transcripts, tool payloads, or prompt dumps.",
+  "runtime.memory.provider":
+    "Allow the readonly runtime memory provider gate when an experimental provider is explicitly registered (default: false). This does not register the provider by default, change provider ordering, or make memory authoritative.",
+  "runtime.memory.proposeFacts":
+    "Allow candidate memory fact proposals only when the shadow path is explicitly enabled (default: false). This does not promote facts, enable durable facts, or bypass verifier, human, or deterministic-rule evidence requirements.",
+  "runtime.memory.persist":
+    "Default-off gate for the local sanitized persistence foundation and explicit adapter paths (default: false). The TaskLoop sanitized episode pilot requires this flag plus runtime.memory.shadow; persist alone does not enable TaskLoop writes, Gateway cutover, provider output, default-on memory, fact extraction or promotion, user-facing persistence flows, or runtime authority.",
+  "runtime.agentMap":
+    "Default-off AgentMap readiness flags for explicit readonly shadow provider validation and prompt assembly experiments. These flags do not register AgentMap by default, change provider ordering, alter prompts, replace read/grep/find/ls, or grant runtime authority.",
+  "runtime.agentMap.provider":
+    "Allow the readonly AgentMap context provider gate when the provider is explicitly registered (default: false). This exposes shadow diagnostics/provider output only and does not add AgentMap output to default prompts.",
+  "runtime.agentMap.promptAssemblyExperiment":
+    "Allow a pure experimental AgentMap prompt candidate helper for explicit evaluation only (default: false). This does not feed AgentMap output into default prompts, TaskLoop, Gateway, model messages, provider transport, or provider ordering.",
+  "runtime.agentMap.promptCandidateRuntimeShadow":
+    "Allow AgentMap prompt candidate runtime shadow diagnostics only after promptAssemblyExperiment is also enabled (default: false). This records candidate metadata only and does not add candidate text to prompts, model messages, Gateway requests, provider transport, or runtime decisions.",
+  "runtime.agentMap.promptCandidateControlledCutoverPilot":
+    "Allow the controlled AgentMap prompt candidate pilot surface only after promptAssemblyExperiment and promptCandidateRuntimeShadow are also enabled and a valid AgentMapResult is explicitly supplied (default: false). This is not default cutover, does not register AgentMap by default, and does not change TaskLoop reviewer prompts, Gateway requests, model messages, provider transport, provider ordering, or runtime authority.",
+  "runtime.agentMap.promptCandidateTaskLoopExplicitInvocationPilot":
+    "Allow the TaskLoop explicit invocation AgentMap prompt candidate pilot surface only after promptAssemblyExperiment, promptCandidateRuntimeShadow, and promptCandidateControlledCutoverPilot are also enabled, a valid AgentMapResult is explicitly supplied, and the caller explicitly requests TaskLoop pilot invocation (default: false). This is not default cutover, does not register AgentMap by default, and does not change default TaskLoop reviewer prompts, Gateway requests, model messages, provider transport, provider ordering, or runtime authority.",
+  "runtime.localControlPlane":
+    "Observe-only local runtime control-plane report flags. Reports are in-memory diagnostics and must not change prompt text, selected models, capabilities, evidence gates, or mission/task-loop decisions.",
+  "runtime.localControlPlane.contextReport":
+    "Record Context Engineering reports from LoopContextPack metadata without changing builder output or formatted prompt text (default: false).",
+  "runtime.localControlPlane.modelRouterReport":
+    "Record Dynamic Model Router recommendations beside model resolution without changing the selected provider/model (default: false).",
+  "runtime.localControlPlane.capabilityReport":
+    "Record Skill/MCP Governance summaries without enabling skills, registering MCP servers, or changing confirmation/approval behavior (default: false).",
+  "runtime.localControlPlane.evidenceReport":
+    "Record Evidence Kernel v0 coverage and missing-evidence summaries without changing completion, repair, or blocked decisions (default: false).",
+  "runtime.localControlPlane.missionReport":
+    "Record Mission/Task Loop lifecycle summaries without changing phase transitions, repair counts, or next-action decisions (default: false).",
   "agents.list.*.heartbeat.directPolicy":
     'Per-agent override for heartbeat direct/DM delivery policy; use "block" for agents that should only send heartbeat alerts to non-DM destinations.',
   "agents.list.*.heartbeat.skipWhenBusy":

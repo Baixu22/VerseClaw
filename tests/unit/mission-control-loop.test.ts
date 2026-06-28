@@ -86,6 +86,7 @@ function createDeps(params?: {
   reviewerDecision?: MissionDecision;
   reviewer?: MissionControllerDeps['reviewer'];
   runTaskLoop?: MissionControllerDeps['runTaskLoop'];
+  createKnowledgeInboxItem?: MissionControllerDeps['createKnowledgeInboxItem'];
 }) {
   const store = new Map<string, MissionRunRecord>();
   let id = 0;
@@ -106,6 +107,7 @@ function createDeps(params?: {
     reviewer: params?.reviewer ?? (async () => review(params?.reviewerDecision ?? 'complete')),
     storeTrace: vi.fn() as never,
     proposeMemory: vi.fn() as never,
+    createKnowledgeInboxItem: params?.createKnowledgeInboxItem ?? vi.fn(),
     lifecycle: (event) => {
       lifecycle.push(`${event.phase}:${event.status}:${event.reviewerDecision ?? ''}`);
       lifecycleEvents.push(JSON.parse(JSON.stringify(event)) as Record<string, unknown>);
@@ -267,6 +269,119 @@ describe('Mission Control controller', () => {
     expect(mission.status).not.toBe('complete');
     expect(mission.lastDecision).toBe('repair');
     expect(mission.remaining).toContain('Mission validation or acceptance evidence is missing.');
+  });
+
+  it('creates a pending Knowledge Inbox item for mission knowledge draft candidates', async () => {
+    const createKnowledgeInboxItem = vi.fn();
+    const { deps } = createDeps({
+      createKnowledgeInboxItem,
+      reviewer: async () => review('complete', {
+        validationState: {
+          status: 'passed',
+          checks: ['unit tests'],
+          evidenceRefs: [{ type: 'trace', ref: 'trace-loop' }],
+        },
+        memoryCandidates: [{
+          kind: 'knowledge_draft',
+          summary: 'Workflow lesson: verify Mission evidence before applying knowledge.',
+          evidenceRefs: ['trace-loop'],
+        }],
+      }),
+    });
+
+    const mission = await runMission(
+      {
+        objective: 'Capture reusable Mission knowledge',
+        sessionKey: 'agent:main:session',
+        acceptance: ['tests pass'],
+      },
+      {},
+      deps,
+    );
+
+    expect(mission.status).toBe('complete');
+    expect(createKnowledgeInboxItem).toHaveBeenCalledTimes(1);
+    expect(createKnowledgeInboxItem).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Workflow lesson: verify Mission evidence before applying knowledge.',
+      body: 'Workflow lesson: verify Mission evidence before applying knowledge.',
+      kind: 'task-ledger',
+      status: 'pending',
+      createdBy: 'agent',
+      tags: expect.arrayContaining(['mission-control', 'knowledge-interaction-mvp']),
+      sourceRefs: expect.arrayContaining([
+        expect.objectContaining({ id: 'trace:trace-loop', kind: 'trace' }),
+        expect.objectContaining({ id: 'task_loop:loop-1', kind: 'task_loop' }),
+        expect.objectContaining({ kind: 'task_ledger' }),
+      ]),
+      metadata: expect.objectContaining({
+        mvpVersion: 'knowledge-interaction-mvp-1',
+        recommendation: 'save',
+        missionId: mission.missionId,
+        tick: 1,
+        outcome: 'complete',
+        evidenceRefs: expect.arrayContaining(['trace:trace-loop']),
+        captureKey: expect.stringMatching(/^mission:mission-1:tick:1:knowledge:[a-f0-9]{16}$/),
+      }),
+    }));
+    expect(createKnowledgeInboxItem.mock.calls[0]?.[0].metadata.score.overall).toBeGreaterThan(0);
+  });
+
+  it('keeps role memory candidates on the existing memory proposal path', async () => {
+    const createKnowledgeInboxItem = vi.fn();
+    const { deps } = createDeps({
+      createKnowledgeInboxItem,
+      reviewer: async () => review('complete', {
+        memoryCandidates: [{
+          kind: 'role_memory',
+          summary: 'Remember that Mission Control evidence should stay review-gated.',
+          evidenceRefs: ['trace-loop'],
+        }],
+      }),
+    });
+
+    await runMission(
+      {
+        objective: 'Keep role memory behavior',
+        sessionKey: 'agent:main:session',
+        acceptance: ['tests pass'],
+      },
+      {},
+      deps,
+    );
+
+    expect(deps.proposeMemory).toHaveBeenCalledTimes(1);
+    expect(deps.proposeMemory).toHaveBeenCalledWith(expect.objectContaining({
+      content: 'Remember that Mission Control evidence should stay review-gated.',
+      scopeKey: expect.stringMatching(/^mission-/),
+    }), expect.anything());
+    expect(createKnowledgeInboxItem).not.toHaveBeenCalled();
+  });
+
+  it('does not send knowledge draft candidates to role memory proposals', async () => {
+    const createKnowledgeInboxItem = vi.fn();
+    const { deps } = createDeps({
+      createKnowledgeInboxItem,
+      reviewer: async () => review('complete', {
+        memoryCandidates: [{
+          kind: 'knowledge_draft',
+          summary: 'Decision: keep Mission knowledge drafts in the Knowledge Inbox.',
+          evidenceRefs: ['trace-loop'],
+        }],
+      }),
+    });
+
+    await runMission(
+      {
+        objective: 'Separate knowledge candidates from role memory',
+        sessionKey: 'agent:main:session',
+        acceptance: ['tests pass'],
+      },
+      {},
+      deps,
+    );
+
+    expect(deps.proposeMemory).not.toHaveBeenCalled();
+    expect(createKnowledgeInboxItem).toHaveBeenCalledTimes(1);
   });
 
   it('pauses, resumes, and cancels non-terminal missions', () => {

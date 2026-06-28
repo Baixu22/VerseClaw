@@ -6,6 +6,7 @@ import type {
   CapabilityOrchestrationSummary,
   ChatCapabilityActionPlan,
   ChatCapabilityActionResult,
+  LocalControlPlaneReport,
 } from '@shared/host-api/contract';
 import type { ObservabilitySpan, ObservabilityTokenUsage, ObservabilityTrace, ObservabilityTraceEvent } from '@shared/types/observability';
 
@@ -18,6 +19,12 @@ export type CapabilityActionHostApi = {
 export type CapabilityActionExecutionContext = {
   workspaceId?: string | null;
   agentId?: string | null;
+  confirmation?: {
+    required?: boolean;
+    confirmed?: boolean;
+    source?: string;
+    approvalId?: string;
+  };
 };
 
 type RegisteredServer = {
@@ -84,6 +91,120 @@ function parseStepTime(stepEntry: CapabilityOrchestrationStep, fallback: number)
 
 function safeIdPart(value: string): string {
   return value.replace(/[^a-z0-9_.:-]+/giu, '-').slice(0, 80) || 'capability';
+}
+
+function completedAtForResult(result: ChatCapabilityActionResult, fallback: number): string {
+  const steps = result.orchestration?.steps ?? [];
+  const latest = steps.length > 0
+    ? Math.max(...steps.map((entry) => parseStepTime(entry, fallback)))
+    : fallback;
+  return new Date(latest).toISOString();
+}
+
+function diagnosticSeverityForResult(result: ChatCapabilityActionResult): 'info' | 'warning' | 'error' {
+  if (!result.success || result.orchestration?.status === 'failed' || result.orchestration?.status === 'blocked') {
+    return 'error';
+  }
+  if (result.auditResult?.status === 'warning' || result.orchestration?.status === 'partial') {
+    return 'warning';
+  }
+  return 'info';
+}
+
+function compactAuditResult(result: ChatCapabilityActionResult) {
+  const audit = result.auditResult;
+  if (!audit) return undefined;
+  return {
+    status: audit.status,
+    summary: audit.summary,
+    auditedAt: audit.auditedAt,
+    source: audit.source ?? null,
+    findings: audit.findings.map((finding) => ({
+      id: finding.id,
+      severity: finding.severity,
+      title: finding.title,
+    })),
+  };
+}
+
+function buildCapabilityActionReportProjection(params: {
+  traceId: string;
+  action?: ChatCapabilityActionPlan;
+  result: ChatCapabilityActionResult;
+  context: CapabilityActionExecutionContext;
+  completedAtMs: number;
+}): LocalControlPlaneReport {
+  const { traceId, action, result, context, completedAtMs } = params;
+  const target = result.targetName ?? result.skillId ?? result.serverId ?? action?.targetName ?? action?.skillId ?? action?.serverId ?? result.id;
+  const severity = diagnosticSeverityForResult(result);
+  const audit = compactAuditResult(result);
+  return {
+    schema: 'openclaw.local-control-plane.report.v1',
+    id: `lcp_capability_${safeIdPart(traceId)}_${safeIdPart(result.id)}`,
+    kind: 'capability',
+    mode: 'observe',
+    legacyUnaffected: true,
+    timestamp: completedAtForResult(result, completedAtMs),
+    runId: traceId,
+    taskId: result.id,
+    summary: `Chat capability action ${result.kind} ${result.success ? 'succeeded' : 'failed'} for ${target}.`,
+    diagnostics: [
+      {
+        code: `capability.chat_action.${result.kind.replace('.', '_')}`,
+        severity,
+        message: result.error ?? result.message ?? `Chat capability action ${result.kind} completed.`,
+        metadata: {
+          actionId: result.id,
+          actionKind: result.kind,
+          auditStatus: result.auditResult?.status ?? 'unknown',
+          orchestrationStatus: result.orchestration?.status ?? 'unknown',
+          confirmationRequired: context.confirmation?.required ?? null,
+          confirmationConfirmed: context.confirmation?.confirmed ?? null,
+        },
+      },
+    ],
+    evidenceRefs: [
+      { type: 'trace', ref: traceId, summary: 'Capability management trace' },
+      ...(result.serverId ? [{ type: 'tool' as const, ref: result.serverId, summary: 'MCP server capability target' }] : []),
+      ...(result.skillId ? [{ type: 'file' as const, ref: result.skillId, summary: 'Skill capability target' }] : []),
+    ],
+    payload: {
+      source: 'chat.capability.action',
+      observeOnlyProjection: true,
+      reportDoesNotDriveCapabilityState: true,
+      action: {
+        id: result.id,
+        kind: result.kind,
+        targetName: result.targetName ?? null,
+        skillId: result.skillId ?? action?.skillId ?? null,
+        serverId: result.serverId ?? action?.serverId ?? null,
+        risk: action?.risk ?? null,
+      },
+      result: {
+        success: result.success,
+        skipped: result.skipped ?? false,
+        orchestrationStatus: result.orchestration?.status ?? null,
+        verified: result.orchestration?.verified ?? null,
+        reloaded: result.orchestration?.reloaded ?? null,
+        heartbeatStatus: result.orchestration?.heartbeatStatus ?? null,
+        toolNames: result.toolNames ?? result.orchestration?.toolNames ?? [],
+      },
+      audit: audit ?? null,
+      confirmation: context.confirmation
+        ? {
+            required: context.confirmation.required ?? null,
+            confirmed: context.confirmation.confirmed ?? null,
+            source: context.confirmation.source ?? null,
+            approvalId: context.confirmation.approvalId ?? null,
+          }
+        : {
+            required: null,
+            confirmed: null,
+            source: 'caller-owned',
+            approvalId: null,
+          },
+    },
+  };
 }
 
 function makeTraceId(results: ChatCapabilityActionResult[]): string {
@@ -168,6 +289,29 @@ function buildCapabilityTrace(
       },
     }))
   ));
+  const reports = results
+    .filter((result) => result.id !== 'mcp.register:reload')
+    .map((result) => buildCapabilityActionReportProjection({
+      traceId,
+      action: actions.find((action) => action.id === result.id),
+      result,
+      context,
+      completedAtMs: endedAt,
+    }));
+  const reportEvents: ObservabilityTraceEvent[] = reports.map((report) => ({
+    id: `${traceId}:event:lcp:${safeIdPart(report.id)}`,
+    traceId,
+    spanId: rootSpanId,
+    type: 'localControlPlane.capability.report.projected',
+    name: report.summary,
+    timestamp: Date.parse(report.timestamp),
+    attributes: {
+      report,
+      reportId: report.id,
+      reportKind: report.kind,
+      observeOnlyProjection: true,
+    },
+  }));
   const rootSpan: ObservabilitySpan = {
     id: rootSpanId,
     traceId,
@@ -183,6 +327,8 @@ function buildCapabilityTrace(
       actionCount: actions.length,
       successfulActionCount: results.filter((result) => result.success && result.id !== 'mcp.register:reload').length,
       blockedActionCount: results.filter((result) => result.orchestration?.status === 'blocked').length,
+      localControlPlaneReportCount: reports.length,
+      localControlPlaneReports: reports,
     },
     error: status === 'error' || status === 'aborted'
       ? results.find((result) => result.error)?.error
@@ -201,7 +347,7 @@ function buildCapabilityTrace(
     updatedAt: endedAt,
     durationMs: Math.max(0, endedAt - startedAt),
     spans: [rootSpan, ...actionSpans],
-    events,
+    events: [...events, ...reportEvents],
     tokenUsage: emptyTokenUsage(),
     metrics: {
       actions: actions.length,

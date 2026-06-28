@@ -441,16 +441,16 @@ export async function resolveReplyDirectives(params: {
     normalizeThinkLevel(opts?.thinkingLevelOverride) ?? directives.thinkLevel ?? sessionThinkLevel;
   const resolvedFastMode =
     opts?.fastModeOverride ??
-  directives.fastMode ??
-  const resolvedPromptMode =
-    opts?.promptModeOverride ?? undefined;
-  resolveFastModeState({
+    directives.fastMode ??
+    resolveFastModeState({
       cfg,
       provider,
       model,
       agentId,
       sessionEntry: directives.clearFastMode ? undefined : targetSessionEntry,
     }).enabled;
+  const resolvedPromptMode =
+    opts?.promptModeOverride ?? undefined;
 
   const resolvedVerboseLevel =
     directives.verboseLevel ??

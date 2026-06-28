@@ -26,7 +26,22 @@ import {
 import { cn } from '@/lib/utils';
 
 type SearchRow = Record<string, unknown>;
+
 type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'runtime' | 'review' | 'governance';
+	type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'review' | 'governance';
+type InboxMetadataView = Record<string, unknown> & {
+  recommendation?: unknown;
+  reason?: unknown;
+  score?: unknown;
+  evidenceRefs?: unknown;
+  missionId?: unknown;
+  tick?: unknown;
+  outcome?: unknown;
+  temporality?: unknown;
+  captureKey?: unknown;
+};
+type InboxScoreDimension = 'reusability' | 'uniqueness' | 'confidence';
+type InboxSourceDisplay = KnowledgeInboxItem['sourceRefs'][number];
 
 const PANEL_CLASS = 'rounded-xl border border-black/10 bg-surface-modal shadow-sm dark:border-white/10';
 const QUIET_BUTTON_CLASS = 'h-9 rounded-lg border border-black/10 bg-transparent px-3 text-meta font-medium text-foreground/80 shadow-none transition-colors hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5';
@@ -134,6 +149,79 @@ function okfConceptTitle(concept: KnowledgeOkfConcept): string {
   return concept.frontmatter.title || concept.conceptId;
 }
 
+type InboxRecommendation = 'save' | 'review' | 'archive-only';
+
+const INBOX_RECOMMENDATION_ORDER: InboxRecommendation[] = ['save', 'review', 'archive-only'];
+const INBOX_STATUSES = new Set(['pending', 'promoted', 'dismissed']);
+const INBOX_TEMPORALITIES = new Set(['stable', 'versioned', 'ephemeral']);
+const INBOX_OUTCOMES = new Set(['idle', 'running', 'sleeping', 'paused', 'ask_user', 'complete', 'blocked', 'cancelled', 'error']);
+const INBOX_SOURCE_KINDS = new Set(['chat', 'file', 'wiki', 'task_ledger', 'trace', 'task_loop', 'manual', 'search_result', 'other']);
+const INBOX_SCORE_DIMENSIONS: InboxScoreDimension[] = ['reusability', 'uniqueness', 'confidence'];
+
+function inboxMetadata(item: KnowledgeInboxItem): InboxMetadataView {
+  return (asRecord(item.metadata) ?? {}) as InboxMetadataView;
+}
+
+function inboxRecommendation(item: KnowledgeInboxItem): InboxRecommendation {
+  const recommendation = inboxMetadata(item).recommendation;
+  return recommendation === 'save' || recommendation === 'archive-only' ? recommendation : 'review';
+}
+
+function inboxReason(item: KnowledgeInboxItem): string {
+  const reason = inboxMetadata(item).reason;
+  return typeof reason === 'string' && reason.trim() ? reason.trim() : '';
+}
+
+function inboxMetadataString(item: KnowledgeInboxItem, key: keyof InboxMetadataView): string {
+  const value = inboxMetadata(item)[key];
+  return typeof value === 'string' && value.trim() ? value.trim() : '';
+}
+
+function inboxMetadataNumber(item: KnowledgeInboxItem, key: keyof InboxMetadataView): number | null {
+  const value = inboxMetadata(item)[key];
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function inboxOverallScore(item: KnowledgeInboxItem): number | null {
+  const score = asRecord(inboxMetadata(item).score);
+  const overall = score?.overall;
+  return typeof overall === 'number' && Number.isFinite(overall) ? overall : null;
+}
+
+function inboxScorePercent(item: KnowledgeInboxItem, dimension: InboxScoreDimension): number | null {
+  const score = asRecord(inboxMetadata(item).score);
+  const value = score?.[dimension];
+  return typeof value === 'number' && Number.isFinite(value) ? Math.round(value * 100) : null;
+}
+
+function inboxEvidenceCount(item: KnowledgeInboxItem): number {
+  const evidenceRefs = inboxMetadata(item).evidenceRefs;
+  if (Array.isArray(evidenceRefs)) return evidenceRefs.filter((ref) => typeof ref === 'string' && ref.trim()).length;
+  return Math.max(item.sourceRefs.length, item.sourceIds.length);
+}
+
+function inboxRecommendationClass(recommendation: InboxRecommendation): string {
+  if (recommendation === 'save') return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400';
+  if (recommendation === 'archive-only') return 'border-slate-500/30 bg-slate-500/10 text-slate-700 dark:text-slate-400';
+  return 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400';
+}
+
+function inboxKnownLabel(namespace: 'status' | 'temporality' | 'outcomes', value: string): string {
+  if (namespace === 'status' && INBOX_STATUSES.has(value)) return `inbox.status.${value}`;
+  if (namespace === 'temporality' && INBOX_TEMPORALITIES.has(value)) return `inbox.temporality.${value}`;
+  if (namespace === 'outcomes' && INBOX_OUTCOMES.has(value)) return `inbox.outcomes.${value}`;
+  return '';
+}
+
+function inboxSourceKindLabel(kind: unknown): string {
+  return typeof kind === 'string' && INBOX_SOURCE_KINDS.has(kind) ? `inbox.sourceKinds.${kind}` : 'inbox.sourceKinds.other';
+}
+
+function inboxSourceDisplays(item: KnowledgeInboxItem): InboxSourceDisplay[] {
+  if (item.sourceRefs.length > 0) return item.sourceRefs;
+  return item.sourceIds.map((id) => ({ id, kind: 'manual' as const, label: id }));
+}
+
 export function Knowledge() {
   const { t } = useTranslation(['knowledge', 'common']);
   const [status, setStatus] = useState<KnowledgeStatusResult['status'] | null>(null);
@@ -187,14 +275,28 @@ export function Knowledge() {
     { label: t('metrics.entities'), value: (pageCounts.entity ?? 0) + (pageCounts.concept ?? 0), icon: Database, tone: 'text-emerald-700 dark:text-emerald-400' },
     { label: t('metrics.warnings'), value: warnings.length, icon: AlertTriangle, tone: warnings.length > 0 ? 'text-yellow-700 dark:text-yellow-400' : 'text-muted-foreground' },
   ], [pageCounts.concept, pageCounts.entity, pageCounts.source, pageCounts.synthesis, t, warnings.length]);
+
   const runtimeCounts = runtimeLessons?.counts ?? { trajectories: 0, undistilledTrajectories: 0, activePrinciples: 0 };
   const runtimeMetrics = useMemo(() => [
     { label: t('runtime.metrics.trajectories'), value: runtimeCounts.trajectories, icon: History, tone: 'text-sky-700 dark:text-sky-400' },
     { label: t('runtime.metrics.undistilled'), value: runtimeCounts.undistilledTrajectories, icon: AlertTriangle, tone: 'text-yellow-700 dark:text-yellow-400' },
     { label: t('runtime.metrics.principles'), value: runtimeCounts.activePrinciples, icon: Lightbulb, tone: 'text-emerald-700 dark:text-emerald-400' },
   ], [runtimeCounts.activePrinciples, runtimeCounts.trajectories, runtimeCounts.undistilledTrajectories, t]);
+
+  const groupedInboxItems = useMemo(() => {
+    const groups: Record<InboxRecommendation, KnowledgeInboxItem[]> = {
+      save: [],
+      review: [],
+      'archive-only': [],
+    };
+    for (const item of inboxItems) {
+      groups[inboxRecommendation(item)].push(item);
+    }
+    return groups;
+  }, [inboxItems]);
+  const orderedInboxItems = useMemo(() => INBOX_RECOMMENDATION_ORDER.flatMap((key) => groupedInboxItems[key]), [groupedInboxItems]);
   const selectedDraft = useMemo(() => drafts.find((draft) => draft.id === selectedDraftId) ?? drafts[0] ?? null, [drafts, selectedDraftId]);
-  const selectedInboxItem = useMemo(() => inboxItems.find((item) => item.id === selectedInboxId) ?? inboxItems[0] ?? null, [inboxItems, selectedInboxId]);
+  const selectedInboxItem = useMemo(() => inboxItems.find((item) => item.id === selectedInboxId) ?? orderedInboxItems[0] ?? null, [inboxItems, orderedInboxItems, selectedInboxId]);
   const selectedProposal = useMemo(() => proposals.find((proposal) => proposal.id === selectedProposalId) ?? proposals[0] ?? null, [proposals, selectedProposalId]);
   const draftCounts = useMemo(() => drafts.reduce<Record<string, number>>((acc, draft) => {
     acc[draft.status] = (acc[draft.status] ?? 0) + 1;
@@ -1013,47 +1115,80 @@ export function Knowledge() {
                   </div>
                   <div className="max-h-80 space-y-1.5 overflow-auto">
                     {inboxItems.length === 0 && <p className="py-6 text-center text-sm text-muted-foreground">{t('inbox.empty')}</p>}
-                    {inboxItems.map((item) => {
-                      const isSelected = selectedInboxItem?.id === item.id;
+                    {INBOX_RECOMMENDATION_ORDER.map((recommendation) => {
+                      const group = groupedInboxItems[recommendation];
+                      if (group.length === 0) return null;
                       return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        className={cn(
-                          'w-full rounded-lg border border-black/10 p-3 text-left transition-all duration-200 dark:border-white/10',
-                          isSelected
-                            ? 'border-primary/30 bg-primary/5 shadow-sm'
-                            : 'hover:bg-black/5 hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
-                        )}
-                        onClick={() => setSelectedInboxId(item.id)}
-                        data-testid="knowledge-inbox-row"
-                      >
-                        <div className="flex items-center gap-2">
-                          {item.warnings && item.warnings.length > 0 && (
-                            <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-yellow-600 dark:text-yellow-400" />
-                          )}
-                          <span className="truncate text-sm font-semibold">{item.title}</span>
+                        <div key={recommendation} className="space-y-1.5" data-testid={`knowledge-inbox-group-${recommendation}`}>
+                          <div className="flex items-center justify-between px-1 pt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                            <span>{t(`inbox.groups.${recommendation}`)}</span>
+                            <span className="tabular-nums">{group.length}</span>
+                          </div>
+                          {group.map((item) => {
+                            const isSelected = selectedInboxItem?.id === item.id;
+                            const recommendationForItem = inboxRecommendation(item);
+                            const reason = inboxReason(item);
+                            return (
+                              <button
+                                key={item.id}
+                                type="button"
+                                className={cn(
+                                  'w-full rounded-lg border border-black/10 p-3 text-left transition-all duration-200 dark:border-white/10',
+                                  isSelected
+                                    ? 'border-primary/30 bg-primary/5 shadow-sm'
+                                    : 'hover:bg-black/5 hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
+                                )}
+                                onClick={() => setSelectedInboxId(item.id)}
+                                data-testid="knowledge-inbox-row"
+                              >
+                                <div className="flex items-center gap-2">
+                                  {item.warnings && item.warnings.length > 0 && (
+                                    <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-yellow-600 dark:text-yellow-400" />
+                                  )}
+                                  <span className="truncate text-sm font-semibold">{item.title}</span>
+                                </div>
+                                <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
+                                  <Badge variant="outline" className={cn('border text-[10px] font-medium', inboxRecommendationClass(recommendationForItem))}>
+                                    {t(`inbox.recommendations.${recommendationForItem}`)}
+                                  </Badge>
+                                  <Badge variant="outline" className="border-black/10 bg-transparent text-[10px] font-medium dark:border-white/10">{t(`inbox.kinds.${item.kind}`)}</Badge>
+                                  <span className="font-medium">{t(`types.${item.type}`)}</span>
+                                  <span>{t('inbox.evidenceCount', { count: inboxEvidenceCount(item) })}</span>
+                                  {item.warnings && item.warnings.length > 0 && (
+                                    <span className="text-yellow-600 dark:text-yellow-400 font-medium">{t('inbox.warningCount', { count: item.warnings.length })}</span>
+                                  )}
+                                </div>
+                                {reason && <p className="mt-1 line-clamp-2 text-xs leading-4 text-muted-foreground">{reason}</p>}
+                              </button>
+                            );
+                          })}
                         </div>
-                        <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
-                          <Badge variant="outline" className="border-black/10 bg-transparent text-[10px] font-medium dark:border-white/10">{t(`inbox.kinds.${item.kind}`)}</Badge>
-                          <span className="font-medium">{t(`types.${item.type}`)}</span>
-                          {item.warnings && item.warnings.length > 0 && (
-                            <span className="text-yellow-600 dark:text-yellow-400 font-medium">{t('inbox.warningCount', { count: item.warnings.length })}</span>
-                          )}
-                        </div>
-                      </button>
                       );
                     })}
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
                       <div className="min-w-0">
                         <h3 className="truncate text-sm font-semibold">{selectedInboxItem?.title ?? t('inbox.noSelection')}</h3>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          {selectedInboxItem ? `${t(`inbox.kinds.${selectedInboxItem.kind}`)} · ${t(`types.${selectedInboxItem.type}`)}` : t('inbox.noSelectionHint')}
+                          {selectedInboxItem ? `${t(`inbox.kinds.${selectedInboxItem.kind}`)} / ${t(`types.${selectedInboxItem.type}`)}` : t('inbox.noSelectionHint')}
                         </p>
+                        {selectedInboxItem && (
+                          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                            <Badge variant="outline" className={cn('border', inboxRecommendationClass(inboxRecommendation(selectedInboxItem)))}>
+                              {t(`inbox.recommendations.${inboxRecommendation(selectedInboxItem)}`)}
+                            </Badge>
+                            <Badge variant="outline" className="border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-400" data-testid="knowledge-inbox-boundary">
+                              {t('inbox.boundary')}
+                            </Badge>
+                            <span className="text-muted-foreground">{t('inbox.evidenceCount', { count: inboxEvidenceCount(selectedInboxItem) })}</span>
+                            {inboxOverallScore(selectedInboxItem) != null && (
+                              <span className="text-muted-foreground">{t('inbox.score', { score: Math.round((inboxOverallScore(selectedInboxItem) ?? 0) * 100) })}</span>
+                            )}
+                          </div>
+                        )}
                       </div>
                       {selectedInboxItem && (
                         <div className="flex shrink-0 gap-2">
@@ -1087,25 +1222,104 @@ export function Knowledge() {
                     {selectedInboxItem?.body ?? t('inbox.noSelection')}
                   </div>
                   {selectedInboxItem && (
-                    <div className="grid gap-3 md:grid-cols-2">
-                      <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                    <div className="grid gap-3 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+                      <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-inbox-recommendation">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="text-xs font-medium text-muted-foreground">{t('inbox.reason')}</div>
+                          {inboxOverallScore(selectedInboxItem) != null && (
+                            <Badge variant="outline" className={cn('border text-[10px]', inboxRecommendationClass(inboxRecommendation(selectedInboxItem)))}>
+                              {t('inbox.score', { score: Math.round((inboxOverallScore(selectedInboxItem) ?? 0) * 100) })}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                          {inboxReason(selectedInboxItem) || t('inbox.noReason')}
+                        </p>
+                        <div className="mt-3 grid gap-2 sm:grid-cols-3" data-testid="knowledge-inbox-scores">
+                          {INBOX_SCORE_DIMENSIONS.map((dimension) => {
+                            const percent = inboxScorePercent(selectedInboxItem, dimension);
+                            return (
+                              <div key={dimension} className="rounded-md border border-black/10 bg-background/50 p-2 dark:border-white/10">
+                                <div className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">{t(`inbox.scoreDimensions.${dimension}`)}</div>
+                                <div className="mt-1 text-sm font-semibold tabular-nums">{percent == null ? t('inbox.notAvailable') : t('inbox.percentValue', { percent })}</div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-inbox-context">
+                        <div className="text-xs font-medium text-muted-foreground">{t('inbox.context')}</div>
+                        <dl className="mt-2 space-y-1.5 text-xs">
+                          <div className="flex items-center justify-between gap-2">
+                            <dt className="text-muted-foreground">{t('inbox.statusLabel')}</dt>
+                            <dd className="min-w-0 truncate font-medium">
+                              {t(inboxKnownLabel('status', selectedInboxItem.status) || 'inbox.notAvailable')}
+                            </dd>
+                          </div>
+                          {inboxMetadataString(selectedInboxItem, 'missionId') && (
+                            <div className="flex items-center justify-between gap-2">
+                              <dt className="text-muted-foreground">{t('inbox.missionId')}</dt>
+                              <dd className="min-w-0 truncate font-mono text-[11px]">{inboxMetadataString(selectedInboxItem, 'missionId')}</dd>
+                            </div>
+                          )}
+                          {inboxMetadataNumber(selectedInboxItem, 'tick') != null && (
+                            <div className="flex items-center justify-between gap-2">
+                              <dt className="text-muted-foreground">{t('inbox.tick')}</dt>
+                              <dd className="min-w-0 truncate font-medium">{t('inbox.tickValue', { tick: inboxMetadataNumber(selectedInboxItem, 'tick') })}</dd>
+                            </div>
+                          )}
+                          {inboxMetadataString(selectedInboxItem, 'outcome') && (
+                            <div className="flex items-center justify-between gap-2">
+                              <dt className="text-muted-foreground">{t('inbox.outcome')}</dt>
+                              <dd className="min-w-0 truncate font-medium">
+                                {t(inboxKnownLabel('outcomes', inboxMetadataString(selectedInboxItem, 'outcome')) || 'inbox.notAvailable')}
+                              </dd>
+                            </div>
+                          )}
+                          {inboxMetadataString(selectedInboxItem, 'temporality') && (
+                            <div className="flex items-center justify-between gap-2">
+                              <dt className="text-muted-foreground">{t('inbox.temporalityLabel')}</dt>
+                              <dd className="min-w-0 truncate font-medium">
+                                {t(inboxKnownLabel('temporality', inboxMetadataString(selectedInboxItem, 'temporality')) || 'inbox.notAvailable')}
+                              </dd>
+                            </div>
+                          )}
+                        </dl>
+                        {inboxMetadataString(selectedInboxItem, 'captureKey') && (
+                          <details className="mt-3 rounded-md border border-black/10 bg-background/50 p-2 text-xs dark:border-white/10" data-testid="knowledge-inbox-audit">
+                            <summary className="cursor-pointer select-none font-medium text-muted-foreground">{t('inbox.auditDetails')}</summary>
+                            <div className="mt-2 min-w-0 break-all font-mono text-[11px] text-muted-foreground">
+                              <span className="font-sans text-muted-foreground">{t('inbox.captureKey')}: </span>
+                              {inboxMetadataString(selectedInboxItem, 'captureKey')}
+                            </div>
+                          </details>
+                        )}
+                      </div>
+                      <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-inbox-sources">
                         <div className="text-xs font-medium text-muted-foreground">{t('inbox.sources')}</div>
-                        <div className="mt-2 space-y-1">
+                        <div className="mt-2 space-y-2">
                           {selectedInboxItem.sourceRefs.length === 0 && selectedInboxItem.sourceIds.length === 0 && <p className="text-xs text-muted-foreground">{t('inbox.noSources')}</p>}
-                          {selectedInboxItem.sourceRefs.map((ref) => (
-                            <p key={ref.id} className="truncate font-mono text-[11px] text-muted-foreground">{ref.label ?? ref.path ?? ref.id}</p>
-                          ))}
-                          {selectedInboxItem.sourceRefs.length === 0 && selectedInboxItem.sourceIds.map((id) => (
-                            <p key={id} className="truncate font-mono text-[11px] text-muted-foreground">{id}</p>
+                          {inboxSourceDisplays(selectedInboxItem).map((ref) => (
+                            <div key={ref.id} className="rounded-md border border-black/10 bg-background/50 p-2 dark:border-white/10" data-testid="knowledge-inbox-source">
+                              <div className="flex min-w-0 items-center gap-2">
+                                <Badge variant="outline" className="shrink-0 border-black/10 bg-transparent text-[10px] font-medium dark:border-white/10">
+                                  {t(inboxSourceKindLabel(ref.kind))}
+                                </Badge>
+                                <span className="min-w-0 truncate text-xs font-medium">{ref.label ?? ref.path ?? ref.id}</span>
+                              </div>
+                              {(ref.path || ref.id) && (
+                                <div className="mt-1 truncate font-mono text-[11px] text-muted-foreground">{ref.path ?? ref.id}</div>
+                              )}
+                            </div>
                           ))}
                         </div>
                       </div>
-                      <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                      <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-inbox-warnings">
                         <div className="text-xs font-medium text-muted-foreground">{t('inbox.warnings')}</div>
-                        <div className="mt-2 space-y-1">
+                        <div className="mt-2 space-y-2">
                           {(selectedInboxItem.warnings ?? []).length === 0 && <p className="text-xs text-muted-foreground">{t('inbox.noWarnings')}</p>}
                           {(selectedInboxItem.warnings ?? []).map((warning) => (
-                            <p key={warning} className="text-xs text-yellow-700 dark:text-yellow-400">{warning}</p>
+                            <p key={warning} className="rounded-md border border-yellow-500/20 bg-yellow-500/10 p-2 text-xs text-yellow-700 dark:text-yellow-400">{warning}</p>
                           ))}
                         </div>
                       </div>

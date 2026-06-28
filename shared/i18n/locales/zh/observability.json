@@ -160,6 +160,15 @@
       "ignored": "已忽略"
     }
   },
+  "quickLocate": {
+    "title": "快速定位",
+    "subtitle": "跳转到此追踪中的某一对话轮次。",
+    "searchPlaceholder": "筛选轮次...",
+    "empty": "没有匹配的轮次。",
+    "turnLabel": "第 {{sequence}} 轮",
+    "collapse": "收起",
+    "expand": "展开快速定位"
+  },
   "details": {
     "empty": "选择一个节点查看运行详情。",
     "status": "状态",

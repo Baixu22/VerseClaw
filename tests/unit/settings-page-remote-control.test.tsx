@@ -18,7 +18,7 @@ const saveWorkspaceStateMock = vi.fn();
 const sandboxStatusMock = vi.fn();
 const sandboxUpdateProfileMock = vi.fn();
 
-const { settingsState, gatewayState, updateState } = vi.hoisted(() => ({
+const { settingsState, gatewayState } = vi.hoisted(() => ({
   settingsState: {
     theme: 'system',
     language: 'zh',
@@ -33,7 +33,6 @@ const { settingsState, gatewayState, updateState } = vi.hoisted(() => ({
     proxyHttpsServer: '',
     proxyAllServer: '',
     proxyBypassRules: '',
-    autoCheckUpdate: true,
     devModeUnlocked: false,
     telemetryEnabled: false,
     workModeToolBundles: {},
@@ -41,9 +40,6 @@ const { settingsState, gatewayState, updateState } = vi.hoisted(() => ({
   },
   gatewayState: {
     status: { state: 'stopped', port: 18789 },
-  },
-  updateState: {
-    currentVersion: '0.0.0-test',
   },
 }));
 
@@ -63,7 +59,6 @@ vi.mock('@/stores/settings', () => ({
     setProxyHttpsServer: vi.fn(),
     setProxyAllServer: vi.fn(),
     setProxyBypassRules: vi.fn(),
-    setAutoCheckUpdate: vi.fn(),
     setDevModeUnlocked: vi.fn(),
     setTelemetryEnabled: vi.fn(),
     setWorkModeToolBundles: setWorkModeToolBundlesMock,
@@ -93,14 +88,6 @@ vi.mock('@/stores/gateway', () => ({
     status: gatewayState.status,
     restart: gatewayRestartMock,
   }),
-}));
-
-vi.mock('@/stores/update', () => ({
-  useUpdateStore: (selector: (state: typeof updateState) => unknown) => selector(updateState),
-}));
-
-vi.mock('@/components/settings/UpdateSettings', () => ({
-  UpdateSettings: () => null,
 }));
 
 vi.mock('@/lib/host-events', () => ({
@@ -137,6 +124,7 @@ vi.mock('@/lib/host-api', () => ({
       getCliCommand: vi.fn(),
     },
     app: {
+      version: vi.fn(async () => '0.0.0-test'),
       openClawDoctor: vi.fn(),
     },
     sandbox: {

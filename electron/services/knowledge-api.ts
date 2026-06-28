@@ -308,8 +308,11 @@ function normalizeSourceRefs(value: unknown): KnowledgeSourceRef[] {
       || entry.kind === 'file'
       || entry.kind === 'wiki'
       || entry.kind === 'task_ledger'
+      || entry.kind === 'trace'
+      || entry.kind === 'task_loop'
       || entry.kind === 'manual'
       || entry.kind === 'search_result'
+      || entry.kind === 'other'
       ? entry.kind
       : undefined;
     return [{
@@ -630,6 +633,17 @@ function classifyDraft(title: string, body: string, tags: string[] = []): Knowle
   if (/(procedure|steps|workflow|流程|步骤)/u.test(haystack)) return 'procedure';
   if (/(source|excerpt|import|来源)/u.test(haystack)) return 'source-note';
   return 'synthesis';
+}
+
+function knowledgeCaptureKey(value: unknown): string | null {
+  const metadata = isRecord(value) ? value : {};
+  const captureKey = metadata.captureKey;
+  return typeof captureKey === 'string' && captureKey.trim() ? captureKey.trim() : null;
+}
+
+async function findInboxItemByCaptureKey(captureKey: string): Promise<KnowledgeInboxItem | null> {
+  const items = await listInboxRecords();
+  return items.find((item) => knowledgeCaptureKey(item.metadata) === captureKey) ?? null;
 }
 
 function stewardReviewDraft(input: { title?: string; body?: string; sourceIds?: string[]; tags?: string[] }): {
@@ -1767,6 +1781,11 @@ export function createKnowledgeApi({
     createInboxItem: async (payload) => {
       const item = createInboxItemFromPayload(payload);
       if (!item) return { success: false, error: 'title and body are required' };
+      const captureKey = knowledgeCaptureKey(item.metadata);
+      if (captureKey) {
+        const existing = await findInboxItemByCaptureKey(captureKey);
+        if (existing) return { success: true, item: existing };
+      }
       await writeInboxItem(item);
       await appendAudit({ type: 'inbox_created', inboxId: item.id, kind: item.kind, createdBy: item.createdBy });
       return { success: true, item };

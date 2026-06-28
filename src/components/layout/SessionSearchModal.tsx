@@ -2,9 +2,8 @@
  * Session Search Modal
  *
  * Spotlight-style search overlay triggered from the sidebar search input.
- * Uses framer-motion `layoutId` for shared-element transition: the modal
- * expands from the trigger input's position to the screen center and
- * collapses back when dismissed.
+ * Uses a fixed centered overlay. Keep centering independent from animation
+ * transforms so the panel cannot drift toward the sidebar trigger.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,7 +16,6 @@ import type { WorkspaceProfile } from '@shared/types/workspace';
 
 const LAYOUT_ID = 'sidebar-session-search';
 
-const MODAL_WIDTH = 560;
 const MODAL_MAX_HEIGHT = 460;
 
 export interface SessionSearchModalProps {
@@ -194,22 +192,20 @@ export function SessionSearchModal({
             data-testid="session-search-modal-backdrop"
           />
 
-          {/* Modal panel — shared layoutId with sidebar trigger for position transition */}
           <motion.div
-            layoutId={LAYOUT_ID}
-            className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg border border-black/10 bg-surface-modal shadow-lg dark:border-white/10"
-            style={{ width: MODAL_WIDTH, maxHeight: MODAL_MAX_HEIGHT }}
+            className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4"
             transition={{
-              type: 'spring',
-              stiffness: 380,
-              damping: 32,
-              opacity: { duration: 0.15 },
+              duration: 0.12,
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            data-testid="session-search-modal"
           >
+            <div
+              className="pointer-events-auto w-full max-w-[560px] overflow-hidden rounded-lg border border-black/10 bg-surface-modal shadow-lg dark:border-white/10"
+              style={{ maxHeight: MODAL_MAX_HEIGHT }}
+              data-testid="session-search-modal"
+            >
             {/* Search header */}
             <div className="flex items-center gap-2.5 border-b border-black/5 px-3 py-2.5 dark:border-white/10">
               <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -323,6 +319,7 @@ export function SessionSearchModal({
                 <kbd className="rounded bg-surface-input px-1 py-0.5 font-mono">esc</kbd>
                 {t('chat:sidebar.searchHintClose')}
               </span>
+            </div>
             </div>
           </motion.div>
         </>

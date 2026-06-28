@@ -107,6 +107,12 @@ const RuntimeFeatureSchema = z
       })
       .strict()
       .optional(),
+    registryDiagnostics: z
+      .object({
+        collector: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
     toolProtocol: z
       .object({
         mcpShadow: z.boolean().optional(),
@@ -116,6 +122,43 @@ const RuntimeFeatureSchema = z
     evidenceVerifier: z
       .object({
         shadow: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    traceContext: z
+      .object({
+        shadow: z.boolean().optional(),
+        provider: z.boolean().optional(),
+        propagation: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    memory: z
+      .object({
+        shadow: z.boolean().optional(),
+        provider: z.boolean().optional(),
+        proposeFacts: z.boolean().optional(),
+        persist: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    agentMap: z
+      .object({
+        provider: z.boolean().optional(),
+        promptAssemblyExperiment: z.boolean().optional(),
+        promptCandidateRuntimeShadow: z.boolean().optional(),
+        promptCandidateControlledCutoverPilot: z.boolean().optional(),
+        promptCandidateTaskLoopExplicitInvocationPilot: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    localControlPlane: z
+      .object({
+        contextReport: z.boolean().optional(),
+        modelRouterReport: z.boolean().optional(),
+        capabilityReport: z.boolean().optional(),
+        evidenceReport: z.boolean().optional(),
+        missionReport: z.boolean().optional(),
       })
       .strict()
       .optional(),

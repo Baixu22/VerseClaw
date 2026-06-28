@@ -28,8 +28,6 @@ const ALLOWED_SETTINGS_KEYS = new Set<keyof RemoteTaskSettingsPatch>([
   'language',
   'gatewayAutoStart',
   'telemetryEnabled',
-  'autoCheckUpdate',
-  'autoDownloadUpdate',
   'cdpRemoteControlEnabled',
   'cdpRemoteDebuggingPort',
 ]);

@@ -17,7 +17,7 @@
     "messageBody": "メッセージ",
     "doctorMode": "Doctor モード",
     "patch": "設定パッチ JSON",
-    "patchHint": "許可キー: theme, language, gatewayAutoStart, telemetryEnabled, autoCheckUpdate, autoDownloadUpdate, cdpRemoteControlEnabled, cdpRemoteDebuggingPort。",
+    "patchHint": "許可キー: theme, language, gatewayAutoStart, telemetryEnabled, cdpRemoteControlEnabled, cdpRemoteDebuggingPort。",
     "defaultTitle": "リモートタスク受信箱を確認",
     "defaultBody": "これはローカルのテストタスクです。",
     "localReason": "ローカルのリモートタスクページから作成"

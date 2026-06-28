@@ -17,7 +17,7 @@
     "messageBody": "Message",
     "doctorMode": "Doctor mode",
     "patch": "Settings patch JSON",
-    "patchHint": "Allowed keys: theme, language, gatewayAutoStart, telemetryEnabled, autoCheckUpdate, autoDownloadUpdate, cdpRemoteControlEnabled, cdpRemoteDebuggingPort.",
+    "patchHint": "Allowed keys: theme, language, gatewayAutoStart, telemetryEnabled, cdpRemoteControlEnabled, cdpRemoteDebuggingPort.",
     "defaultTitle": "Check remote task inbox",
     "defaultBody": "This is a local test task.",
     "localReason": "Created from the local Remote Tasks page"

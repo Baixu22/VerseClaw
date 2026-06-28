@@ -7,6 +7,9 @@ import { join, resolve } from 'node:path';
 
 type LaunchElectronOptions = {
   skipSetup?: boolean;
+  flags?: string[];
+  visualMode?: boolean;
+  devScenario?: string;
 };
 
 type IpcMockConfig = {
@@ -168,6 +171,10 @@ async function launchVerseClawElectron(
       LC_ALL: 'en_US.UTF-8',
       LANGUAGE: 'en',
       VERSE_CLAW_E2E: '1',
+      CLAWX_AGENT_DEV: '1',
+      ...(options.flags?.length ? { CLAWX_FLAGS: options.flags.join(',') } : {}),
+      ...(options.visualMode ? { CLAWX_VISUAL_MODE: '1' } : {}),
+      ...(options.devScenario ? { CLAWX_DEV_SCENARIO: options.devScenario } : {}),
       VERSE_CLAW_USER_DATA_DIR: userDataDir,
       ...(options.skipSetup ? { VERSE_CLAW_E2E_SKIP_SETUP: '1' } : {}),
       VERSE_CLAW_PORT_CLAWX_HOST_API: String(hostApiPort),
@@ -234,6 +241,39 @@ export async function completeSetup(page: Page): Promise<void> {
 export { closeElectronApp };
 export { getStableWindow };
 export { expect };
+
+export async function openAgentDevScenario(
+  page: Page,
+  scenario: string,
+  options: { flags?: string[]; visualMode?: boolean } = {},
+): Promise<void> {
+  const url = new URL(page.url());
+  url.searchParams.set('e2eSkipSetup', '1');
+  url.searchParams.set('devScenario', scenario);
+  if (options.flags?.length) url.searchParams.set('flags', options.flags.join(','));
+  if (options.visualMode) url.searchParams.set('visual', '1');
+  await page.goto(url.toString());
+}
+
+export async function getAgentDevSnapshot(page: Page): Promise<unknown> {
+  return page.evaluate(() => window.__CLAWX_TEST__?.getSnapshot?.() ?? null);
+}
+
+export async function configureAgentDevHostReplay(
+  page: Page,
+  config: {
+    mode?: 'off' | 'record' | 'replay';
+    fixtures?: Array<{ module: string; action: string; payload?: unknown; result: unknown }>;
+  },
+): Promise<void> {
+  await page.evaluate((replayConfig) => {
+    window.__CLAWX_TEST__?.setHostApiReplay(replayConfig);
+  }, config);
+}
+
+export async function getAgentDevHostCalls(page: Page): Promise<unknown[]> {
+  return page.evaluate(() => window.__CLAWX_TEST__?.hostApiCalls ?? []);
+}
 
 export async function installIpcMocks(
   app: ElectronApplication,

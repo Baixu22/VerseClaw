@@ -1,0 +1,65 @@
+AgentMap readonly diagnostic
+symbolCount: 7
+tokenBudget: 760
+
+## src/shared/host-api.ts
+@@ symbol sendMessage (function) src/shared/host-api.ts:11:0-13:1
+rank: 1 score: 231 reasons: fromActiveFileReference+84, mentionedByUser+90, pathComponentMatch+24, uniqueDefinition+12, stableTieBreak+0
+11 | export async function sendMessage(input: ChatInput): Promise<ChatResult> {
+12 |   return hostApi.post("/chat/send", input);
+13 | }
+@@ end tag:src/shared/host-api.ts:11:22:sendMessage:definition:6
+
+@@ symbol ChatInput (interface) src/shared/host-api.ts:1:0-4:1
+rank: 3 score: 107 reasons: fromActiveFileReference+76, uniqueDefinition+12, stableTieBreak+0
+1 | export interface ChatInput {
+2 |   channel: "desktop" | "mobile";
+3 |   text: string;
+4 | }
+@@ end tag:src/shared/host-api.ts:1:17:ChatInput:definition:0
+
+## src/renderer/useDraftMessage.ts
+@@ symbol useDraftMessage (hook) src/renderer/useDraftMessage.ts:3:0-12:1
+rank: 2 score: 110 reasons: fromActiveFileReference+76, uniqueDefinition+12, stableTieBreak+0
+ 3 | export function useDraftMessage() {
+ 4 |   const [draft, setDraft] = useState("");
+ 5 |   return {
+ 6 |     draft,
+ 7 |     resetDraft() {
+ 8 |       setDraft("");
+ 9 |     },
+10 |     setDraft,
+11 |   };
+12 | }
+@@ end tag:src/renderer/useDraftMessage.ts:3:16:useDraftMessage:definition:0
+
+@@ symbol useDraftMessage.resetDraft (method) src/renderer/useDraftMessage.ts:7:4-9:5
+rank: 4 score: 100 reasons: fromActiveFileReference+68, uniqueDefinition+12, stableTieBreak+0
+7 |     resetDraft() {
+8 |       setDraft("");
+9 |     },
+@@ end tag:src/renderer/useDraftMessage.ts:7:4:resetDraft:definition:1
+
+## src/main/ipc.ts
+@@ symbol registerChatIpc (function) src/main/ipc.ts:3:0-10:1
+rank: 5 score: 34 reasons: uniqueDefinition+12, stableTieBreak+0
+ 3 | export function registerChatIpc() {
+ 4 |   return {
+ 5 |     channel: "chat:send",
+ 6 |     async handle(input: ChatInput) {
+ 7 |       return sendMessage(input);
+ 8 |     },
+ 9 |   };
+10 | }
+@@ end tag:src/main/ipc.ts:3:16:registerChatIpc:definition:0
+
+## src/renderer/SettingsPanel.tsx
+@@ symbol SettingsPanelProps.onModeChange (property) src/renderer/SettingsPanel.tsx:5:2-5:45
+rank: 6 score: 34 reasons: uniqueDefinition+12, stableTieBreak+0
+5 |   onModeChange: (mode: SettingsMode) => void;
+@@ end tag:src/renderer/SettingsPanel.tsx:5:2:onModeChange:definition:3
+
+@@ symbol SettingsMode (type) src/renderer/SettingsPanel.tsx:1:0-1:50
+rank: 7 score: 34 reasons: uniqueDefinition+12, stableTieBreak+0
+1 | export type SettingsMode = "compact" | "expanded";
+@@ end tag:src/renderer/SettingsPanel.tsx:1:12:SettingsMode:definition:0

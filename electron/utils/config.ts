@@ -44,29 +44,6 @@ export const APP_PATHS = {
 } as const;
 
 /**
- * Update channels
- */
-export const UPDATE_CHANNELS = ['stable', 'beta', 'dev'] as const;
-export type UpdateChannel = (typeof UPDATE_CHANNELS)[number];
-
-/**
- * Default update configuration
- */
-export const UPDATE_CONFIG = {
-  /** Check interval in milliseconds (6 hours) */
-  CHECK_INTERVAL: 6 * 60 * 60 * 1000,
-  
-  /** Default update channel */
-  DEFAULT_CHANNEL: 'stable' as UpdateChannel,
-  
-  /** Auto download updates */
-  AUTO_DOWNLOAD: false,
-  
-  /** Show update notifications */
-  SHOW_NOTIFICATION: true,
-};
-
-/**
  * Gateway configuration
  */
 export const GATEWAY_CONFIG = {

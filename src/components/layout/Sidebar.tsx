@@ -707,6 +707,7 @@ export function Sidebar() {
         )}
         <Button
           data-testid="sidebar-collapse-toggle"
+          aria-label={t(sidebarCollapsed ? 'sidebar.expandSidebar' : 'sidebar.collapseSidebar')}
           variant="ghost"
           size="icon"
           className={cn(

@@ -20,7 +20,9 @@
         "cancelSessionRename": "Отменить переименование",
         "imageGeneration": "Генерация изображений",
         "billing": "Биллинг",
-        "remoteTasks": "Удалённые задачи"
+        "remoteTasks": "Удалённые задачи",
+        "collapseSidebar": "Свернуть боковую панель",
+        "expandSidebar": "Развернуть боковую панель"
     },
     "actions": {
         "save": "Сохранить",

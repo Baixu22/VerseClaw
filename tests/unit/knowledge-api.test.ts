@@ -247,6 +247,18 @@ describe('knowledge host API', () => {
       tags: ['governance'],
       createdBy: 'agent',
       warnings: ['Needs user review before writing.'],
+      metadata: {
+        mvpVersion: 'knowledge-interaction-mvp-1',
+        recommendation: 'save',
+        score: { reusability: 0.82, uniqueness: 0.5, confidence: 0.86, overall: 0.77 },
+        temporality: 'stable',
+        reason: 'Mission completed with reusable evidence-backed knowledge.',
+        missionId: 'mission-1',
+        tick: 1,
+        outcome: 'complete',
+        evidenceRefs: ['task-1'],
+        captureKey: 'mission:mission-1:tick:1:knowledge:abcdef0123456789',
+      },
     });
 
     expect(created.success).toBe(true);
@@ -254,8 +266,41 @@ describe('knowledge host API', () => {
       status: 'pending',
       kind: 'task-ledger',
       sourceIds: ['task-1'],
+      metadata: expect.objectContaining({
+        mvpVersion: 'knowledge-interaction-mvp-1',
+        recommendation: 'save',
+        reason: 'Mission completed with reusable evidence-backed knowledge.',
+        evidenceRefs: ['task-1'],
+        captureKey: 'mission:mission-1:tick:1:knowledge:abcdef0123456789',
+      }),
     });
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
+
+    const duplicate = await api.createInboxItem({
+      title: 'Duplicate Task decision',
+      body: 'Duplicate capture should return the original item.',
+      kind: 'task-ledger',
+      type: 'decision',
+      sourceRefs: [{ id: 'task-1', kind: 'task_ledger', label: 'Task Ledger decision' }],
+      tags: ['governance'],
+      createdBy: 'agent',
+      metadata: {
+        mvpVersion: 'knowledge-interaction-mvp-1',
+        recommendation: 'save',
+        score: { reusability: 0.82, uniqueness: 0.5, confidence: 0.86, overall: 0.77 },
+        temporality: 'stable',
+        reason: 'Mission completed with reusable evidence-backed knowledge.',
+        missionId: 'mission-1',
+        tick: 1,
+        outcome: 'complete',
+        evidenceRefs: ['task-1'],
+        captureKey: 'mission:mission-1:tick:1:knowledge:abcdef0123456789',
+      },
+    });
+
+    expect(duplicate.success).toBe(true);
+    expect(duplicate.item?.id).toBe(created.item?.id);
+    expect(duplicate.item?.title).toBe('Task decision');
 
     const listed = await api.listInboxItems({ status: 'pending' });
     expect(listed.items).toHaveLength(1);

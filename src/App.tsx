@@ -11,7 +11,6 @@ import { MainLayout } from './components/layout/MainLayout';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { useSettingsStore } from './stores/settings';
-import { useUpdateStore } from './stores/update';
 import { useGatewayStore } from './stores/gateway';
 import { useProviderStore } from './stores/providers';
 import { rendererExtensionRegistry } from './extensions/registry';
@@ -19,6 +18,7 @@ import { loadExternalRendererExtensions } from './extensions/_ext-bridge.generat
 import { useNewChatAction } from './components/layout/use-new-chat-action';
 import { hostEvents } from './lib/host-events';
 import { recoverFromDynamicImportLoadError } from './lib/dynamic-import-recovery';
+import { getAgentDevScenarioRoute, installAgentDevTestSurface } from './lib/agent-dev';
 
 const Chat = lazy(() => import('./pages/Chat').then((m) => ({ default: m.Chat })));
 const Cron = lazy(() => import('./pages/Cron').then((m) => ({ default: m.Cron })));
@@ -121,23 +121,22 @@ function App() {
   const setupComplete = useSettingsStore((state) => state.setupComplete);
   const devModeUnlocked = useSettingsStore((state) => state.devModeUnlocked);
   const initGateway = useGatewayStore((state) => state.init);
-  const initUpdate = useUpdateStore((state) => state.init);
   const initProviders = useProviderStore((state) => state.init);
   const handleNewChat = useNewChatAction();
 
   useEffect(() => {
-    let cancelled = false;
-
-    void initSettings().finally(() => {
-      if (!cancelled) {
-        void initUpdate();
-      }
+    installAgentDevTestSurface({
+      route: location.pathname,
+      language,
+      theme,
+      setupComplete,
+      devModeUnlocked,
     });
+  }, [devModeUnlocked, language, location.pathname, setupComplete, theme]);
 
-    return () => {
-      cancelled = true;
-    };
-  }, [initSettings, initUpdate]);
+  useEffect(() => {
+    void initSettings();
+  }, [initSettings]);
 
   // Sync i18n language with persisted settings on mount
   useEffect(() => {
@@ -162,6 +161,13 @@ function App() {
       navigate('/setup');
     }
   }, [setupComplete, skipSetupForE2E, location.pathname, navigate]);
+
+  useEffect(() => {
+    const scenarioRoute = getAgentDevScenarioRoute();
+    if (scenarioRoute && location.pathname !== scenarioRoute) {
+      navigate(scenarioRoute, { replace: true });
+    }
+  }, [location.pathname, navigate]);
 
   // Listen for navigation events from main process
   useEffect(() => {

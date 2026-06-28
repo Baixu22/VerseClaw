@@ -15,6 +15,7 @@ import type {
 import { buildRuntimeCompatibleMcpToolInventory } from "../../agents/tools-effective-mcp-inventory.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { toErrorObject } from "../../infra/errors.js";
+import { recordLocalControlPlaneReport } from "../../local-control-plane/index.js";
 import { logDebug, logWarn } from "../../logger.js";
 import { stringifyRouteThreadId } from "../../plugin-sdk/channel-route.js";
 import {
@@ -452,6 +453,54 @@ async function resolveReadOnlyToolsEffectiveInventory(
   return appendMcpInventoryGroups({ base, mcpInventory });
 }
 
+function recordToolsEffectiveCapabilityReport(params: {
+  context: TrustedToolsEffectiveContext;
+  inventory: EffectiveToolInventoryResult;
+}): void {
+  try {
+    const mcpGroup = params.inventory.groups.find((group) => group.source === "mcp");
+    const warningNotices = (params.inventory.notices ?? []).filter((notice) => notice.severity === "warning");
+    recordLocalControlPlaneReport(params.context.cfg, {
+      kind: "capability",
+      sessionKey: params.context.sessionKey,
+      taskId: params.context.sessionId,
+      summary: mcpGroup
+        ? `Effective tool inventory includes ${mcpGroup.tools.length} MCP tools.`
+        : "Effective tool inventory has no active MCP tools.",
+      diagnostics: [
+        {
+          code: mcpGroup ? "capability.mcp.inventory_present" : "capability.mcp.inventory_absent",
+          severity: warningNotices.length ? "warning" : "info",
+          message: warningNotices.length
+            ? "Effective tool inventory has MCP-related notices."
+            : "Effective tool inventory was projected without changing MCP runtime state.",
+          metadata: {
+            mcpToolCount: mcpGroup?.tools.length ?? 0,
+            noticeCount: params.inventory.notices?.length ?? 0,
+            warningNoticeCount: warningNotices.length,
+          },
+        },
+      ],
+      payload: {
+        source: "gateway.tools.effective",
+        mode: "read_only_projection",
+        agentId: params.context.agentId,
+        profile: params.inventory.profile,
+        groupCount: params.inventory.groups.length,
+        toolCount: params.inventory.groups.reduce((sum, group) => sum + group.tools.length, 0),
+        mcpToolCount: mcpGroup?.tools.length ?? 0,
+        notices: (params.inventory.notices ?? []).map((notice) => ({
+          id: notice.id,
+          severity: notice.severity,
+        })),
+        capabilityEnablementUnaffected: true,
+      },
+    });
+  } catch {
+    // Capability governance reports are observe-only and must not perturb inventory reads.
+  }
+}
+
 function resolveTrustedToolsEffectiveContext(params: {
   sessionKey: string;
   requestedAgentId?: string;
@@ -569,7 +618,9 @@ async function handleToolsEffectiveRequest(params: {
     return;
   }
   try {
-    params.respond(true, await resolveReadOnlyToolsEffectiveInventory(trustedContext), undefined);
+    const inventory = await resolveReadOnlyToolsEffectiveInventory(trustedContext);
+    params.respond(true, inventory, undefined);
+    recordToolsEffectiveCapabilityReport({ context: trustedContext, inventory });
   } catch (err) {
     params.respond(
       false,

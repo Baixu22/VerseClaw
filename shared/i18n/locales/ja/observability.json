@@ -287,5 +287,14 @@
       "reviewed": "レビュー済み",
       "ignored": "無視"
     }
+  },
+  "quickLocate": {
+    "title": "クイック移動",
+    "subtitle": "このトレース内の会話ターンにジャンプします。",
+    "searchPlaceholder": "ターンを絞り込み...",
+    "empty": "一致するターンがありません。",
+    "turnLabel": "ターン {{sequence}}",
+    "collapse": "非表示",
+    "expand": "クイック移動を表示"
   }
 }

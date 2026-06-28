@@ -172,13 +172,28 @@ test.describe('Knowledge Hub MVP', () => {
             kind: 'task-ledger',
             type: 'decision',
             status: 'pending',
-            sourceIds: ['task-1'],
-            sourceRefs: [{ id: 'task-1', kind: 'task_ledger', label: 'Task Ledger decision' }],
+            sourceIds: ['task-1', 'trace:trace-loop'],
+            sourceRefs: [
+              { id: 'task-1', kind: 'task_ledger', label: 'Task Ledger decision' },
+              { id: 'trace:trace-loop', kind: 'trace', label: 'Mission trace' },
+            ],
             tags: ['governance'],
             workspaceId: null,
             agentId: null,
             createdBy: 'agent',
             warnings: ['Needs user review before writing.'],
+            metadata: {
+              mvpVersion: 'knowledge-interaction-mvp-1',
+              recommendation: 'save',
+              score: { reusability: 0.82, uniqueness: 0.5, confidence: 0.86, overall: 0.77 },
+              temporality: 'stable',
+              reason: 'Mission completed with reusable evidence-backed knowledge.',
+              missionId: 'mission-1',
+              tick: 1,
+              outcome: 'complete',
+              evidenceRefs: ['task-1', 'trace:trace-loop'],
+              captureKey: 'mission:mission-1:tick:1:knowledge:abcdef0123456789',
+            },
             createdAt: '2026-06-20T00:00:00.000Z',
             updatedAt: '2026-06-20T00:00:00.000Z',
           }],
@@ -400,8 +415,34 @@ test.describe('Knowledge Hub MVP', () => {
 
     await page.getByTestId('knowledge-tab-inbox').click();
     await expect(page.getByTestId('knowledge-inbox')).toContainText('Task decision candidate');
+    await expect(page.getByTestId('knowledge-inbox-group-save')).toContainText('Recommended save');
+    await expect(page.getByTestId('knowledge-inbox')).toContainText('Mission completed with reusable evidence-backed knowledge.');
+    await expect(page.getByTestId('knowledge-inbox')).toContainText('2 evidence');
+    await expect(page.getByTestId('knowledge-inbox')).toContainText('Score 77');
+    await expect(page.getByTestId('knowledge-inbox-boundary')).toContainText('Draft review only');
+    await expect(page.getByTestId('knowledge-inbox-scores')).toContainText('Reusability');
+    await expect(page.getByTestId('knowledge-inbox-scores')).toContainText('82%');
+    await expect(page.getByTestId('knowledge-inbox-scores')).toContainText('Uniqueness');
+    await expect(page.getByTestId('knowledge-inbox-scores')).toContainText('50%');
+    await expect(page.getByTestId('knowledge-inbox-scores')).toContainText('Confidence');
+    await expect(page.getByTestId('knowledge-inbox-scores')).toContainText('86%');
+    await expect(page.getByTestId('knowledge-inbox-sources')).toContainText('Task Ledger');
+    await expect(page.getByTestId('knowledge-inbox-sources')).toContainText('Trace');
+    await expect(page.getByTestId('knowledge-inbox-context')).toContainText('Pending');
+    await expect(page.getByTestId('knowledge-inbox-context')).toContainText('mission-1');
+    await expect(page.getByTestId('knowledge-inbox-context')).toContainText('Tick 1');
+    await expect(page.getByTestId('knowledge-inbox-context')).toContainText('Complete');
+    await expect(page.getByTestId('knowledge-inbox-context')).toContainText('Stable');
+    await expect(page.getByTestId('knowledge-inbox-audit')).toContainText('Audit details');
+    await page.getByTestId('knowledge-inbox-audit').getByText('Audit details').click();
+    await expect(page.getByTestId('knowledge-inbox-context')).toContainText('mission:mission-1:tick:1:knowledge:abcdef0123456789');
     await page.getByTestId('knowledge-inbox-promote').click();
     await expect(page.getByText(/Inbox item promoted to draft/)).toBeVisible();
+    const postPromoteKnowledgeActions = await electronApp.evaluate(() => (
+      (globalThis as unknown as { __clawxKnowledgeRequests?: Array<{ action?: string }> }).__clawxKnowledgeRequests ?? []
+    ).map((request) => request.action));
+    expect(postPromoteKnowledgeActions).toContain('promoteInboxItemToDraft');
+    expect(postPromoteKnowledgeActions).not.toContain('applyReviewedChange');
 
     await page.getByRole('button', { name: /Validate OKF Bundle/ }).click();
     await expect(page.getByTestId('knowledge-okf-panel')).toBeVisible();

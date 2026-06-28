@@ -93,7 +93,7 @@ Verse Claw 预置了最佳实践的模型供应商配置，原生支持 Windows 
 | 复杂的命令行配置 | 一键安装，配合引导式设置向导 |
 | 手动编辑配置文件 | 可视化设置界面，实时校验 |
 | 进程管理繁琐 | 自动管理网关生命周期 |
-| 应用更新 | 仅在设置中手动检查；启动时不再弹出更新提示 |
+| 应用更新 | 不内置更新检查，也不连接上游更新源 |
 | 多 AI 供应商切换 | 统一的供应商配置面板 |
 | 技能/插件安装复杂 | 内置技能市场与管理界面 |
 
@@ -199,7 +199,7 @@ Skills 页面可展示来自多个 OpenClaw 来源的技能（托管目录、wor
 在 **设置 → 通用** 中，你可以开启 **开机自动启动**，让 Verse Claw 在系统登录后自动启动。
 
 ### 🔔 更新提示
-Verse Claw 不会在启动时自动检查更新，也不会弹出更新提示。需要时请在 **设置 → 通用** 中手动检查；下载和安装仍需你明确操作。
+Verse Claw 不内置更新检查，也不会连接上游更新源或弹出更新提示。二次分发时请使用你自己的打包发布渠道。
 
 ---
 
@@ -288,7 +288,7 @@ Verse Claw 采用 **双进程 + Host API 统一接入架构**。渲染进程只�
 │  │  • 窗口与应用生命周期管理                                       │  │
 │  │  • 网关进程监控                                               │  │
 │  │  • 系统集成（托盘、通知、密钥链）                                │  │
-│  │  • 手动更新编排                                               │  │
+│  │  • 仅保留发布打包                                               │  │
 │  └─────────────────────────────────────────────────────────────┘  │
 │                              │                                    │
 │                              │ IPC (权威控制面)                     │
@@ -424,6 +424,9 @@ pnpm run comms:compare    # 将回放指标与基线阈值对比
 pnpm harness context --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 pnpm harness validate --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 
+# Agent dev/test control plane
+pnpm agent-dev:make e2e my-scenario
+
 # 构建与打包
 pnpm run build:vite       # 仅构建前端
 pnpm build                # 完整生产构建（含打包资源）
@@ -434,6 +437,8 @@ pnpm package:linux        # 为 Linux 打包
 ```
 
 Verse Claw 现在会在 active project workspace 和 OpenClaw agent workspace 中播种 `.clawx/harness/` 项目 harness 文档骨架，用 Verse Claw 自有结构承载 rules、scenarios、task contracts、guides、layers、context-pack recipes 和 Task Ledger bridge docs，而不是引入并行的 `.trellis/` 或 Markdown 任务状态事实源。
+
+Agent 编写的页面开发和功能测试可以使用 typed `hostApi.agentDev` 控制面来完成状态种子、`?devScenario=...`、host-api record/replay、诊断快照、transport trace、视觉 preset 和 selector contract。详见 [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md)。
 
 在无头 Linux 环境下，Electron 测试需要显示服务；可使用 `xvfb-run -a pnpm run test:e2e`。
 

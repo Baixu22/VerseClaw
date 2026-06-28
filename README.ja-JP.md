@@ -92,7 +92,7 @@ AIエージェントの構築にコマンドラインの習得は不要である
 | 複雑なCLIセットアップ | ワンクリックインストールとガイド付きセットアップウィザード |
 | 設定ファイル | リアルタイムバリデーション付きのビジュアル設定 |
 | プロセス管理 | ゲートウェイライフサイクルの自動管理 |
-| アプリ更新 | 設定で手動確認のみ。起動時の更新通知は表示しません |
+| アプリ更新 | 組み込みの更新確認や上流更新通知はありません |
 | 複数のAIプロバイダー | 統合プロバイダー設定パネル |
 | スキル/プラグインのインストール | 組み込みのスキルマーケットプレイスと管理機能 |
 
@@ -198,7 +198,7 @@ OpenAI-compatible ゲートウェイを **Custom プロバイダー** で使う�
 **設定 → 一般** から **システム起動時に自動起動** を有効化すると、ログイン後に Verse Claw が自動的に起動します。
 
 ### 🔔 更新通知
-Verse Claw は起動時に更新を自動確認せず、更新通知も表示しません。必要な場合は **設定 → 一般** で手動確認してください。ダウンロードやインストールは明示的な操作後にのみ実行されます。
+Verse Claw には組み込みの更新確認や上流更新通知はありません。二次配布では独自のパッケージングまたはリリース経路を使用してください。
 
 ---
 
@@ -284,7 +284,7 @@ Verse Clawは、**デュアルプロセス + Host API 統一アクセス**構成
 │  │  • ウィンドウ＆アプリケーションライフサイクル管理                    │  │
 │  │  • ゲートウェイプロセスの監視                                     │  │
 │  │  • システム統合（トレイ、通知、キーチェーン）                       │  │
-│  │  • 手動アップデートオーケストレーション                            │  │
+│  │  • リリースパッケージングのみ                            │  │
 │  └──────────────────────────────────────────────────────────────┘  │
 │                              │                                     │
 │                              │ IPC（権威ある制御プレーン）             │
@@ -420,6 +420,9 @@ pnpm run comms:compare    # リプレイ指標をベースライン閾値と比�
 pnpm harness context --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 pnpm harness validate --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 
+# Agent dev/test control plane
+pnpm agent-dev:make e2e my-scenario
+
 # ビルド＆パッケージ
 pnpm run build:vite       # フロントエンドのみビルド
 pnpm build                # フルプロダクションビルド（パッケージアセット含む）
@@ -430,6 +433,8 @@ pnpm package:linux        # Linux向けにパッケージ化
 ```
 
 Verse Claw は active project workspace と OpenClaw agent workspace に `.clawx/harness/` の project harness ドキュメント骨格を生成します。rules、scenarios、task contracts、guides、layers、context-pack recipes、Task Ledger bridge docs を Verse Claw 独自の構造で扱い、並行する `.trellis/` や Markdown タスク状態の事実源は作りません。
+
+Agent が作成するページ開発と機能テストでは、typed `hostApi.agentDev` control plane を使って state seed、`?devScenario=...`、host-api record/replay、diagnostics snapshot、transport trace、visual preset、selector contract を扱えます。詳しくは [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md) を参照してください。
 
 ヘッドレス Linux では Electron テストに表示サーバーが必要です。`xvfb-run -a pnpm run test:e2e` を利用してください。
 

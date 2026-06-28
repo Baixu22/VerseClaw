@@ -1,5 +1,10 @@
 import { createHash } from "node:crypto";
 import {
+  assembleAgentMapPromptCandidateTaskLoopExplicitInvocationPilot,
+  type AgentMapPromptCandidateTaskLoopExplicitInvocationInput,
+  type AgentMapPromptCandidateTaskLoopExplicitInvocationResult,
+} from "../runtime-core/agent-map-prompt-candidate-taskloop-explicit-invocation-pilot.js";
+import {
   normalizeAcceptanceStatus,
   normalizeControlSignals,
   normalizeValidationState,
@@ -255,4 +260,14 @@ export function formatTaskLoopContextPackForReviewer(pack: TaskLoopContextPack):
     "evidence:",
     pack.evidenceText,
   ].join("\n");
+}
+
+export function formatTaskLoopContextPackForReviewerPilot(
+  pack: TaskLoopContextPack,
+  input: Omit<AgentMapPromptCandidateTaskLoopExplicitInvocationInput, "legacyReviewerPrompt">,
+): AgentMapPromptCandidateTaskLoopExplicitInvocationResult {
+  return assembleAgentMapPromptCandidateTaskLoopExplicitInvocationPilot({
+    ...input,
+    legacyReviewerPrompt: formatTaskLoopContextPackForReviewer(pack),
+  });
 }

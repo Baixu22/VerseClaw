@@ -1,0 +1,80 @@
+AgentMap readonly diagnostic
+symbolCount: 10
+tokenBudget: 1000
+
+## openclaw_runtime/src/runtime-core/chat-dispatch.ts
+@@ symbol dispatchRuntimeMessage (function) openclaw_runtime/src/runtime-core/chat-dispatch.ts:7:0-13:1
+rank: 1 score: 148 reasons: mentionedByUser+90, pathComponentMatch+24, uniqueDefinition+12, stableTieBreak+0
+ 7 | export function dispatchRuntimeMessage(request: ChatRequest): ChatResponse {
+ 8 |   const envelope = buildRuntimeEnvelope(request);
+ 9 |   return {
+10 |     id: envelope.conversationId,
+11 |     accepted: envelope.payload.length > 0,
+12 |   };
+13 | }
+@@ end tag:openclaw_runtime/src/runtime-core/chat-dispatch.ts:7:16:dispatchRuntimeMessage:definition:0
+
+@@ symbol buildDispatchRuntimeMessageNote (function) openclaw_runtime/src/runtime-core/chat-dispatch.ts:23:0-25:1
+rank: 8 score: 103 reasons: mentionedByUser+45, pathComponentMatch+24, uniqueDefinition+12, stableTieBreak+0
+23 | export function buildDispatchRuntimeMessageNote(request: ChatRequest): string {
+24 |   return `${request.conversationId}:${request.mode}`;
+25 | }
+@@ end tag:openclaw_runtime/src/runtime-core/chat-dispatch.ts:23:16:buildDispatchRuntimeMessageNote:definition:2
+
+@@ symbol runtimeMessageQueueState (variable) openclaw_runtime/src/runtime-core/chat-dispatch.ts:27:13-30:1
+rank: 11 score: 58 reasons: pathComponentMatch+24, uniqueDefinition+12, stableTieBreak+0
+27 | export const runtimeMessageQueueState = {
+28 |   pending: 0,
+29 |   lastEnvelope: undefined as RuntimeEnvelope | undefined,
+30 | };
+@@ end tag:openclaw_runtime/src/runtime-core/chat-dispatch.ts:27:13:runtimeMessageQueueState:definition:3
+
+## shared/types/chat.ts
+@@ symbol ConversationId (type) shared/types/chat.ts:1:0-1:36
+rank: 2 score: 114 reasons: fromActiveFileReference+92, stableTieBreak+0
+1 | export type ConversationId = string;
+@@ end tag:shared/types/chat.ts:1:12:ConversationId:definition:0
+
+@@ symbol RuntimeEnvelope.conversationId (property) shared/types/chat.ts:15:2-15:33
+rank: 3 score: 114 reasons: fromActiveFileReference+92, stableTieBreak+0
+15 |   conversationId: ConversationId;
+@@ end tag:shared/types/chat.ts:15:2:conversationId:definition:9
+
+@@ symbol ChatRequest.conversationId (property) shared/types/chat.ts:4:2-4:33
+rank: 4 score: 114 reasons: fromActiveFileReference+92, stableTieBreak+0
+4 |   conversationId: ConversationId;
+@@ end tag:shared/types/chat.ts:4:2:conversationId:definition:2
+
+@@ symbol ChatRequest (interface) shared/types/chat.ts:3:0-7:1
+rank: 7 score: 109 reasons: fromActiveFileReference+76, uniqueDefinition+12, stableTieBreak+0
+3 | export interface ChatRequest {
+4 |   conversationId: ConversationId;
+5 |   body: string;
+6 |   mode: "interactive" | "background";
+7 | }
+@@ end tag:shared/types/chat.ts:3:17:ChatRequest:definition:1
+
+## src/lib/host-api.ts
+@@ symbol sendClawMessage (function) src/lib/host-api.ts:5:0-9:1
+rank: 6 score: 110 reasons: fromActiveFileReference+76, uniqueDefinition+12, stableTieBreak+0
+5 | export async function sendClawMessage(
+6 |   request: ChatRequest,
+7 | ): Promise<ChatResponse> {
+8 |   return windowHostApi.invoke("chat:send", request);
+9 | }
+@@ end tag:src/lib/host-api.ts:5:22:sendClawMessage:definition:1
+
+## electron/main/ipc-handlers.ts
+@@ symbol chatIpcChannel (variable) electron/main/ipc-handlers.ts:5:13-5:41
+rank: 12 score: 34 reasons: uniqueDefinition+12, stableTieBreak+0
+5 | export const chatIpcChannel = "chat:send";
+@@ end tag:electron/main/ipc-handlers.ts:5:13:chatIpcChannel:definition:0
+
+@@ symbol registerChatIpcHandlers (function) electron/main/ipc-handlers.ts:7:0-11:1
+rank: 13 score: 34 reasons: uniqueDefinition+12, stableTieBreak+0
+ 7 | export function registerChatIpcHandlers(ipcMain: Pick<IpcMain, "handle">) {
+ 8 |   ipcMain.handle(chatIpcChannel, async (_event, request: ChatRequest) => {
+ 9 |     return dispatchRuntimeMessage(request);
+10 |   });
+11 | }
+@@ end tag:electron/main/ipc-handlers.ts:7:16:registerChatIpcHandlers:definition:1

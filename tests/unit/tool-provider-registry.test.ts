@@ -5,10 +5,17 @@ import {
   isToolCallResult,
 } from '../../openclaw_runtime/src/runtime-core';
 import {
+  BUILTIN_HOST_TOOL_DIAGNOSTIC_PROVIDER_ID,
   MCP_CALL_TOOL_COMPAT_PROVIDER_ID,
   MCP_CALL_TOOL_COMPAT_PROVIDER_MANIFEST,
+  createMcpToolProviderRegistryResultShadow,
   type McpToolProviderRegistryShadowRecord,
 } from '@electron/services/tool-provider-registry';
+import {
+  createMcpToolCallRequestShadow,
+  createMcpToolCallResultShadow,
+  createMcpToolCallThrownErrorShadow,
+} from '@electron/services/tool-protocol-shadow';
 
 vi.mock('electron-store', () => {
   class MockStore {
@@ -175,15 +182,128 @@ describe('MCP tool provider registry pilot', () => {
         approval: { required: true, state: 'waiting', approvalId: 'approval-1' },
       },
       diagnostics: [{
-        status: 'fallback',
-        reason: 'policy_denied',
+        status: 'waiting',
+        reason: 'policy_waiting',
         metadata: {
           adapterStatus: 'waiting',
           adapterReasonCode: 'permission/waiting',
+          errorCategory: 'permission_waiting',
           legacyBlocked: true,
         },
       }],
     });
+  });
+
+  it('normalizes unsupported MCP content, exceptions, denied, and cancelled outcomes as diagnostics only', () => {
+    const request = createMcpToolCallRequestShadow({
+      serverId: 'http-local',
+      toolName: 'demo',
+      args: {},
+    });
+    const unsupportedLegacy = {
+      success: true,
+      serverId: 'http-local',
+      toolName: 'demo',
+      result: { content: [{ type: 'image', data: 'redacted' }] },
+    };
+    const unsupported = createMcpToolProviderRegistryResultShadow(
+      request,
+      createMcpToolCallResultShadow(request, unsupportedLegacy),
+      unsupportedLegacy,
+    );
+
+    expect(unsupported.diagnostics[0]).toMatchObject({
+      status: 'fallback',
+      reason: 'unsupported_content',
+      metadata: {
+        errorCategory: 'unsupported_mcp_content',
+        unsupportedContentTypes: ['image'],
+        legacyAuthoritative: true,
+      },
+    });
+
+    const deniedLegacy = {
+      success: false,
+      serverId: 'http-local',
+      toolName: 'write_file',
+      blocked: true,
+      reason: 'Blocked by policy',
+    };
+    const denied = createMcpToolProviderRegistryResultShadow(
+      request,
+      createMcpToolCallResultShadow(request, deniedLegacy),
+      deniedLegacy,
+    );
+    expect(denied.diagnostics[0]).toMatchObject({
+      status: 'denied',
+      reason: 'policy_denied',
+      metadata: { errorCategory: 'policy_denied', legacyBlocked: true },
+    });
+
+    const cancelledLegacy = {
+      success: false,
+      serverId: 'http-local',
+      toolName: 'demo',
+      error: 'cancelled by user',
+    };
+    const cancelled = createMcpToolProviderRegistryResultShadow(
+      request,
+      createMcpToolCallResultShadow(request, cancelledLegacy),
+      cancelledLegacy,
+    );
+    expect(cancelled.diagnostics[0]).toMatchObject({
+      status: 'cancelled',
+      reason: 'tool_cancelled',
+      metadata: { errorCategory: 'tool_cancelled' },
+    });
+
+    const exception = createMcpToolProviderRegistryResultShadow(
+      request,
+      createMcpToolCallThrownErrorShadow(request, new Error('provider exploded')),
+    );
+    expect(exception.diagnostics[0]).toMatchObject({
+      status: 'error',
+      reason: 'provider_exception',
+      metadata: { errorCategory: 'provider_exception' },
+    });
+    expect(unsupported.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
+    expect(denied.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
+    expect(cancelled.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
+    expect(exception.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
+  });
+
+  it('adds a built-in host tool diagnostic shape through the existing Git MCP adapter seam', () => {
+    const request = createMcpToolCallRequestShadow({
+      serverId: 'clawx-git',
+      toolName: 'git_status',
+      args: {},
+    });
+    const legacy = {
+      success: true,
+      serverId: 'clawx-git',
+      toolName: 'git_status',
+      result: { status: { branch: 'main' } },
+    };
+    const record = createMcpToolProviderRegistryResultShadow(
+      request,
+      createMcpToolCallResultShadow(request, legacy),
+      legacy,
+    );
+
+    expect(record.diagnostics).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        providerId: BUILTIN_HOST_TOOL_DIAGNOSTIC_PROVIDER_ID,
+        status: 'ok',
+        reason: 'legacy_authoritative',
+        metadata: expect.objectContaining({
+          builtInToolDiagnosticShape: true,
+          existingAdapterSeam: 'electron.services.mcp-api.callTool.clawx-git',
+          noNewTransport: true,
+          toolName: 'git_status',
+        }),
+      }),
+    ]));
+    expect(record.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
   });
 
   it('does not emit registry shadows when the tool registry flag is off', async () => {

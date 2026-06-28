@@ -1,6 +1,20 @@
 import type { GatewayManager } from '../gateway/manager';
 import type { GatewayRpcBackpressure } from '../gateway/rpc-backpressure';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
+import { createHash } from 'node:crypto';
+import type {
+  KnowledgeCreateInboxItemPayload,
+  KnowledgeDraftType,
+  KnowledgeSourceRef,
+} from '../../shared/host-api/contract';
+import type {
+  MissionEvidenceRef,
+  MissionMemoryCandidate,
+  MissionReviewerResult,
+  MissionRunRecord,
+  MissionStatus,
+  MissionTickRecord,
+} from '../../shared/types/mission-control';
 import { PORTS } from '../utils/config';
 import { scheduleControlUiDeviceAutoApproval } from '../utils/control-ui-device-pairing';
 import { buildOpenClawControlUiUrl } from '../utils/openclaw-control-ui';
@@ -28,6 +42,10 @@ type RpcPayload = {
   params?: unknown;
   timeoutMs?: unknown;
   approvalId?: unknown;
+};
+
+type GatewayApiOptions = {
+  createKnowledgeInboxItem?: CompleteHostServiceRegistry['knowledge']['createInboxItem'];
 };
 
 function parseTimeoutMs(timeoutMs: unknown): number | undefined {
@@ -74,10 +92,244 @@ function runGatewayRpc(
   );
 }
 
+const KNOWLEDGE_INTERACTION_MVP_VERSION = 'knowledge-interaction-mvp-1';
+
+function clampScore(value: number): number {
+  return Math.max(0, Math.min(1, Number(value.toFixed(2))));
+}
+
+function readMissionRecord(result: unknown): MissionRunRecord | null {
+  const record = isRecord(result) ? result as Record<string, unknown> : {};
+  const mission = isRecord(record.mission) ? record.mission as Record<string, unknown> : record;
+  return typeof mission.missionId === 'string' && Array.isArray(mission.ticks)
+    ? mission as unknown as MissionRunRecord
+    : null;
+}
+
+function missionEvidenceLabel(ref: MissionEvidenceRef): string {
+  return ref.label ?? `${ref.type}:${ref.ref}`;
+}
+
+function sourceRefFromMissionEvidence(ref: MissionEvidenceRef): KnowledgeSourceRef {
+  const label = missionEvidenceLabel(ref);
+  switch (ref.type) {
+    case 'task_ledger':
+      return { id: ref.ref, kind: 'task_ledger', label };
+    case 'trace':
+      return { id: `trace:${ref.ref}`, kind: 'trace', label };
+    case 'task_loop':
+      return { id: `task_loop:${ref.ref}`, kind: 'task_loop', label };
+    case 'session':
+      return { id: ref.ref, kind: 'chat', label };
+    case 'file':
+      return { id: ref.ref, kind: 'file', path: ref.ref, label };
+    case 'memory':
+      return { id: ref.ref, kind: 'wiki', label };
+    case 'manual':
+      return { id: ref.ref, kind: 'manual', label };
+    default:
+      return { id: `${ref.type}:${ref.ref}`, kind: 'other', label };
+  }
+}
+
+function knowledgeCandidateCaptureHash(candidate: MissionMemoryCandidate): string {
+  return createHash('sha256')
+    .update(JSON.stringify({
+      summary: candidate.summary.trim(),
+      evidenceRefs: [...(candidate.evidenceRefs ?? [])].map((ref) => ref.trim()).filter(Boolean).sort(),
+    }))
+    .digest('hex')
+    .slice(0, 16);
+}
+
+function knowledgeCandidateCaptureKey(record: MissionRunRecord, tick: MissionTickRecord, candidate: MissionMemoryCandidate): string {
+  return `mission:${record.missionId}:tick:${tick.tick}:knowledge:${knowledgeCandidateCaptureHash(candidate)}`;
+}
+
+function collectMissionKnowledgeSourceRefs(record: MissionRunRecord, tick: MissionTickRecord, candidate: MissionMemoryCandidate): KnowledgeSourceRef[] {
+  const refs = new Map<string, KnowledgeSourceRef>();
+  const allEvidence = [...(record.evidenceRefs ?? []), ...(tick.evidenceRefs ?? [])];
+  const evidenceByRef = new Map(allEvidence.map((ref) => [ref.ref, ref]));
+
+  for (const ref of allEvidence) {
+    const source = sourceRefFromMissionEvidence(ref);
+    refs.set(source.id, source);
+  }
+  for (const evidenceRef of candidate.evidenceRefs ?? []) {
+    const known = evidenceByRef.get(evidenceRef);
+    const source = known
+      ? sourceRefFromMissionEvidence(known)
+      : { id: evidenceRef, kind: 'manual' as const, label: evidenceRef };
+    refs.set(source.id, source);
+  }
+
+  const metadata = isRecord((record as unknown as Record<string, unknown>).metadata)
+    ? (record as unknown as Record<string, unknown>).metadata as Record<string, unknown>
+    : {};
+  const taskLedgerRootId = typeof metadata.taskLedgerRootId === 'string' ? metadata.taskLedgerRootId : undefined;
+  if (taskLedgerRootId) {
+    refs.set(taskLedgerRootId, { id: taskLedgerRootId, kind: 'task_ledger', label: 'Mission Task Ledger root' });
+  }
+
+  return [...refs.values()].slice(0, 12);
+}
+
+function titleFromKnowledgeCandidate(candidate: MissionMemoryCandidate): string {
+  const firstLine = candidate.summary.split(/\r?\n/u).map((line) => line.trim()).find(Boolean);
+  if (!firstLine) return 'Mission knowledge candidate';
+  return firstLine.length <= 88 ? firstLine : `${firstLine.slice(0, 85)}...`;
+}
+
+function temporalityFromSummary(summary: string): 'stable' | 'versioned' | 'ephemeral' {
+  if (/temporary|workaround|hack|临时|绕过/u.test(summary)) return 'ephemeral';
+  if (/v\d+|version|migration|upgrade|Next\.js|React|TypeScript|版本|迁移|升级/u.test(summary)) return 'versioned';
+  return 'stable';
+}
+
+function typeFromKnowledgeCandidate(candidate: MissionMemoryCandidate, failed: boolean): KnowledgeDraftType {
+  const text = candidate.summary.toLowerCase();
+  if (failed || /error|failed|failure|blocked|bug|排障|故障|失败|错误/u.test(text)) return 'troubleshooting';
+  if (/decision|rationale|chose|chosen|选择|决策|取舍/u.test(text)) return 'decision';
+  if (/workflow|procedure|steps|流程|步骤/u.test(text)) return 'procedure';
+  if (/architecture|架构/u.test(text)) return 'architecture';
+  return 'synthesis';
+}
+
+function missionOutcomeFromReviewer(record: MissionRunRecord, tick: MissionTickRecord, reviewer: MissionReviewerResult): MissionStatus {
+  if (reviewer.decision === 'complete') return 'complete';
+  if (reviewer.decision === 'blocked') return 'blocked';
+  if (reviewer.decision === 'ask_user') return 'ask_user';
+  return tick.status ?? record.status;
+}
+
+function scoreMissionKnowledgeCandidate(params: {
+  record: MissionRunRecord;
+  tick: MissionTickRecord;
+  reviewer: MissionReviewerResult;
+  sourceRefs: KnowledgeSourceRef[];
+  failed: boolean;
+  captureKey: string;
+}) {
+  const { record, tick, reviewer, sourceRefs, failed, captureKey } = params;
+  const strongEvidence = sourceRefs.some((ref) => (
+    ref.kind === 'task_ledger'
+    || ref.kind === 'file'
+    || ref.kind === 'trace'
+    || ref.kind === 'task_loop'
+    || ref.id.startsWith('trace:')
+    || ref.id.startsWith('task_loop:')
+  ));
+  const validated = reviewer.validationState?.status === 'passed' || reviewer.acceptanceStatus?.status === 'satisfied';
+  const complete = reviewer.decision === 'complete' || record.status === 'complete';
+  const recommendation = failed
+    ? 'archive-only'
+    : complete && (validated || strongEvidence)
+      ? 'save'
+      : 'review';
+  const reusability = recommendation === 'save' ? 0.82 : recommendation === 'review' ? 0.62 : 0.58;
+  const uniqueness = 0.5;
+  const confidence = recommendation === 'save' ? (validated ? 0.86 : 0.76) : recommendation === 'review' ? 0.55 : 0.48;
+  const reason = recommendation === 'save'
+    ? 'Mission completed with reusable evidence-backed knowledge.'
+    : recommendation === 'archive-only'
+      ? 'Mission did not fully succeed; keep the lesson reviewable without formal wiki writes.'
+      : 'Mission produced a reusable lesson, but evidence or validation needs user review.';
+
+  return {
+    mvpVersion: KNOWLEDGE_INTERACTION_MVP_VERSION,
+    recommendation,
+    score: {
+      reusability: clampScore(reusability),
+      uniqueness: clampScore(uniqueness),
+      confidence: clampScore(confidence),
+      overall: clampScore((reusability * 0.4) + (uniqueness * 0.2) + (confidence * 0.4)),
+    },
+    temporality: 'stable' as const,
+    reason,
+    missionId: record.missionId,
+    tick: tick.tick,
+    outcome: missionOutcomeFromReviewer(record, tick, reviewer),
+    evidenceRefs: sourceRefs.map((ref) => ref.id),
+    captureKey,
+  };
+}
+
+function buildMissionKnowledgeInboxPayload(
+  record: MissionRunRecord,
+  tick: MissionTickRecord,
+  reviewer: MissionReviewerResult,
+  candidate: MissionMemoryCandidate,
+): KnowledgeCreateInboxItemPayload {
+  const failed = record.status === 'blocked'
+    || record.status === 'error'
+    || tick.status === 'blocked'
+    || tick.status === 'error'
+    || reviewer.decision === 'blocked';
+  const sourceRefs = collectMissionKnowledgeSourceRefs(record, tick, candidate);
+  const captureKey = knowledgeCandidateCaptureKey(record, tick, candidate);
+  const metadata = scoreMissionKnowledgeCandidate({ record, tick, reviewer, sourceRefs, failed, captureKey });
+  return {
+    title: titleFromKnowledgeCandidate(candidate),
+    body: candidate.summary,
+    kind: sourceRefs.some((ref) => ref.kind === 'task_ledger') ? 'task-ledger' : 'chat-session',
+    type: typeFromKnowledgeCandidate(candidate, failed),
+    sourceRefs,
+    sourceIds: sourceRefs.map((ref) => ref.id),
+    tags: ['mission-control', 'knowledge-interaction-mvp'],
+    workspaceId: record.workspaceId ?? null,
+    agentId: record.agentId ?? null,
+    createdBy: 'agent',
+    warnings: sourceRefs.length === 0 ? ['Mission knowledge candidate has no evidence references.'] : [],
+    metadata: {
+      ...metadata,
+      temporality: temporalityFromSummary(candidate.summary),
+    },
+  };
+}
+
+async function captureMissionKnowledgeCandidates(
+  method: string,
+  result: unknown,
+  createKnowledgeInboxItem: GatewayApiOptions['createKnowledgeInboxItem'],
+  capturedKeys: Set<string>,
+): Promise<void> {
+  if (!createKnowledgeInboxItem || (method !== 'mission.run' && method !== 'mission.tick')) return;
+  const mission = readMissionRecord(result);
+  if (!mission) return;
+  for (const tick of mission.ticks ?? []) {
+    const reviewer = tick.reviewer;
+    if (!reviewer) continue;
+    for (const candidate of reviewer.memoryCandidates ?? []) {
+      if (candidate.kind !== 'knowledge_draft' || !candidate.summary.trim()) continue;
+      const key = knowledgeCandidateCaptureKey(mission, tick, candidate);
+      if (capturedKeys.has(key)) continue;
+      try {
+        const response = await createKnowledgeInboxItem(buildMissionKnowledgeInboxPayload(mission, tick, reviewer, candidate));
+        if (isRecord(response) && response.success === false) continue;
+        capturedKeys.add(key);
+      } catch {
+        // Knowledge capture is best-effort and must not fail the Gateway RPC.
+      }
+    }
+  }
+}
+
 export function createGatewayApi(
   gatewayManager: GatewayManager,
   gatewayRpcBackpressure: GatewayRpcBackpressure,
+  options: GatewayApiOptions = {},
 ): CompleteHostServiceRegistry['gateway'] {
+  const capturedMissionKnowledgeKeys = new Set<string>();
+  const runRpcAndCaptureKnowledge = async (
+    method: string,
+    params: unknown,
+    timeoutMs: number | undefined,
+  ) => {
+    const result = await runGatewayRpc(gatewayManager, gatewayRpcBackpressure, method, params, timeoutMs);
+    await captureMissionKnowledgeCandidates(method, result, options.createKnowledgeInboxItem, capturedMissionKnowledgeKeys);
+    return result;
+  };
+
   return {
     status: () => gatewayManager.getStatus(),
     start: async () => {
@@ -130,7 +382,7 @@ export function createGatewayApi(
                 requestHash,
               });
               if (approved) {
-                return runGatewayRpc(gatewayManager, gatewayRpcBackpressure, method, body.params, timeoutMs);
+                return runRpcAndCaptureKnowledge(method, body.params, timeoutMs);
               }
             }
 
@@ -180,7 +432,7 @@ export function createGatewayApi(
         if (mockResult) return mockResult;
       }
 
-      return runGatewayRpc(gatewayManager, gatewayRpcBackpressure, method, body.params, timeoutMs);
+      return runRpcAndCaptureKnowledge(method, body.params, timeoutMs);
     },
   };
 }

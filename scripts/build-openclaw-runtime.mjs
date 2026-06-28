@@ -76,7 +76,36 @@ const runtimeEntryPoints = {
   'agents/code-mode.worker': join(RUNTIME_ROOT, 'src', 'agents', 'code-mode.worker.ts'),
   'agents/compaction-planning.worker': join(RUNTIME_ROOT, 'src', 'agents', 'compaction-planning.worker.ts'),
   'agents/model-provider-auth.worker': join(RUNTIME_ROOT, 'src', 'agents', 'model-provider-auth.worker.ts'),
+  'runtime-core/memory-operator-inspection': join(
+    RUNTIME_ROOT,
+    'src',
+    'runtime-core',
+    'memory-operator-inspection.ts',
+  ),
 };
+const memoryReadHydrationShadowEntry = join(
+  RUNTIME_ROOT,
+  'src',
+  'runtime-core',
+  'memory-read-hydration-shadow.ts',
+);
+
+function selectRuntimeEntryPoints() {
+  if (process.argv.includes('--memory-operator-inspection-only')) {
+    return {
+      'runtime-core/memory-operator-inspection':
+        runtimeEntryPoints['runtime-core/memory-operator-inspection'],
+    };
+  }
+  if (process.argv.includes('--memory-read-hydration-shadow-only')) {
+    return {
+      'runtime-core/memory-read-hydration-shadow': memoryReadHydrationShadowEntry,
+    };
+  }
+  return runtimeEntryPoints;
+}
+
+const selectedRuntimeEntryPoints = selectRuntimeEntryPoints();
 
 function canResolveLocally(importPath) {
   if (importPath.startsWith('.')) return true;
@@ -173,7 +202,7 @@ for (const pkg of nodeModulesPackages) {
 const start = Date.now();
 
 await esbuild.build({
-  entryPoints: runtimeEntryPoints,
+  entryPoints: selectedRuntimeEntryPoints,
   bundle: true,
   outdir: DIST,
   format: 'esm',

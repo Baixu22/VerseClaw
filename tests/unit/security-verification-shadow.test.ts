@@ -17,6 +17,7 @@ import {
 } from '../../openclaw_runtime/src/security-verification-shadow';
 import {
   buildCheckpointFixture,
+  buildEvidenceVerifierInputFixture,
   buildRuntimeTaskEventFixture,
   RuntimeTaskEventLogStore,
   serializeRuntimeCheckpoint,
@@ -194,6 +195,51 @@ describe('security/verification shadow evaluators', () => {
       runId: 'run_events',
       eventLog: { eventCount: 3, diagnosticCount: 0 },
       verification: { status: 'passed' },
+    });
+    expectNoRawSensitivePayload(record);
+  });
+
+  it('stores sanitized canonical evidence verifier decision summaries', () => {
+    const record = recordSecurityVerificationShadow({
+      source: 'verification.run',
+      runId: 'run_verifier_summary',
+      request: request(),
+      result: result(),
+      evidenceVerifier: buildEvidenceVerifierInputFixture({
+        objective: 'raw-prompt complete tool output with secret-value',
+        obligations: [
+          {
+            id: 'external_blocker',
+            description: 'Waiting for hidden-token from an external system.',
+            status: 'blocked',
+            externalDependency: true,
+          },
+        ],
+        evidenceRefs: [],
+        toolResults: [],
+        eventReplay: {
+          status: 'not_run',
+          diagnosticCodes: [],
+          pendingToolCallIds: [],
+        },
+      }),
+      storeTrace: false,
+    });
+
+    expect(record.evidenceVerifier).toEqual({
+      decision: 'blocked',
+      findingCount: 5,
+      evidenceRefCount: 0,
+      requiredEvidenceKinds: ['file', 'test', 'tool'],
+      findingCodes: [
+        'external_dependency_blocked',
+        'missing_file_evidence',
+        'missing_test_evidence',
+        'missing_tool_evidence',
+        'event_replay_not_run',
+      ],
+      findingCategories: ['external_dependency', 'evidence', 'event_replay'],
+      legacyDecisionUnaffected: true,
     });
     expectNoRawSensitivePayload(record);
   });
@@ -634,6 +680,13 @@ describe('security/verification gateway methods', () => {
         'tools.invoke': 1,
         'security.policy.simulate': 0,
         'verification.run': 2,
+      },
+      evidenceVerifierDecisionCounts: {
+        completed: 0,
+        failed: 0,
+        blocked: 0,
+        cancelled: 0,
+        insufficient_evidence: 0,
       },
     });
 

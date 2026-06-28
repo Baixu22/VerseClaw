@@ -9,6 +9,7 @@ import {
   buildRuntimeToolProviderManifestFixture,
   buildToolCallRequestFixture,
   buildToolCallResultFixture,
+  collectRuntimeRegistryDiagnostics,
   isContextItem,
   isolateRuntimeRegistryError,
   isRuntimeContextProviderManifest,
@@ -66,6 +67,7 @@ describe("runtime provider/tool registry contracts and flags", () => {
     expect(runtimeRegistryFlagEnabled({}, "providerRegistryShadow")).toBe(false);
     expect(runtimeRegistryFlagEnabled({}, "contextProviderRegistryPilot")).toBe(false);
     expect(runtimeRegistryFlagEnabled({}, "toolRegistryShadow")).toBe(false);
+    expect(runtimeRegistryFlagEnabled({}, "registryDiagnosticsCollector")).toBe(false);
 
     const flags = resolveRuntimeRegistryFeatureFlags({
       config: {
@@ -74,6 +76,7 @@ describe("runtime provider/tool registry contracts and flags", () => {
           providerRegistry: { shadow: true },
           contextProviders: { registryPilot: true },
           toolRegistry: { shadow: true },
+          registryDiagnostics: { collector: true },
         },
       },
     });
@@ -83,6 +86,7 @@ describe("runtime provider/tool registry contracts and flags", () => {
       providerRegistryShadow: true,
       contextProviderRegistryPilot: true,
       toolRegistryShadow: true,
+      registryDiagnosticsCollector: true,
     });
   });
 
@@ -170,15 +174,71 @@ describe("runtime provider/tool registry contracts and flags", () => {
         providerRegistry: { shadow: true },
         contextProviders: { shadow: true, loopPackShadow: true, registryPilot: true },
         toolRegistry: { shadow: true },
+        registryDiagnostics: { collector: true },
         toolProtocol: { mcpShadow: true },
       },
     });
 
     expect(parsed.runtime?.registryPilot?.enabled).toBe(true);
+    expect(parsed.runtime?.registryDiagnostics?.collector).toBe(true);
     expect(OpenClawSchema.parse({}).runtime).toBeUndefined();
     expect(() =>
       OpenClawSchema.parse({ runtime: { toolRegistry: { shadow: true, enabled: true } } }),
     ).toThrow();
+  });
+
+  it("collects context and tool registry diagnostics into bounded shadow output only when enabled", () => {
+    const contextDiagnostic = isolateRuntimeRegistryError({
+      surface: "context",
+      providerId: "context-provider",
+      error: new Error("context boom"),
+    }).diagnostic;
+    const toolDiagnostic = isolateRuntimeRegistryError({
+      surface: "tool",
+      providerId: "tool-provider",
+      error: new Error("tool boom"),
+    }).diagnostic;
+
+    const disabled = collectRuntimeRegistryDiagnostics({
+      contextDiagnostics: [contextDiagnostic],
+      toolDiagnostics: [toolDiagnostic],
+    });
+
+    expect(disabled).toMatchObject({
+      enabled: false,
+      diagnostics: [],
+      omittedDiagnosticCount: 2,
+      summary: {
+        totalDiagnosticCount: 2,
+        includedDiagnosticCount: 0,
+        contextDiagnosticCount: 0,
+        toolDiagnosticCount: 0,
+      },
+    });
+
+    const enabled = collectRuntimeRegistryDiagnostics({
+      enabled: true,
+      limit: 1,
+      contextDiagnostics: [contextDiagnostic],
+      toolDiagnostics: [toolDiagnostic],
+      metadata: { shadowOnly: true },
+    });
+
+    expect(enabled).toMatchObject({
+      enabled: true,
+      diagnostics: [expect.objectContaining({ surface: "context", providerId: "context-provider" })],
+      omittedDiagnosticCount: 1,
+      metadata: { shadowOnly: true },
+      summary: {
+        totalDiagnosticCount: 2,
+        includedDiagnosticCount: 1,
+        contextDiagnosticCount: 1,
+        toolDiagnosticCount: 0,
+        byStatus: { error: 1 },
+        byReason: { provider_error: 1 },
+      },
+    });
+    expect(enabled.evidenceRefs.length).toBeGreaterThan(0);
   });
 
   it("keeps provider errors isolated as diagnostics and typed RuntimeError evidence", () => {

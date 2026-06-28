@@ -75,8 +75,72 @@
     "noSources": "出典参照はありません。",
     "warnings": "Warnings",
     "noWarnings": "警告はありません。",
+    "reason": "推奨理由",
+    "noReason": "推奨理由は記録されていません。",
+    "boundary": "ドラフトレビューのみ",
+    "context": "捕捉コンテキスト",
+    "statusLabel": "ステータス",
+    "missionId": "Mission",
+    "tick": "Tick",
+    "tickValue": "Tick {{tick}}",
+    "outcome": "結果",
+    "temporalityLabel": "時間性",
+    "captureKey": "Capture key",
+    "auditDetails": "監査詳細",
+    "notAvailable": "利用不可",
+    "score": "Score {{score}}",
+    "percentValue": "{{percent}}%",
+    "evidenceCount": "{{count}} 件の証拠",
+    "evidenceCount_plural": "{{count}} 件の証拠",
     "warningCount": "{{count}} 件の警告",
     "warningCount_plural": "{{count}} 件の警告",
+    "status": {
+      "pending": "保留中",
+      "promoted": "昇格済み",
+      "dismissed": "却下済み"
+    },
+    "temporality": {
+      "stable": "安定",
+      "versioned": "バージョン依存",
+      "ephemeral": "一時的"
+    },
+    "outcomes": {
+      "idle": "アイドル",
+      "running": "実行中",
+      "sleeping": "スリープ中",
+      "paused": "一時停止",
+      "ask_user": "ユーザー入力待ち",
+      "complete": "完了",
+      "blocked": "ブロック中",
+      "cancelled": "キャンセル済み",
+      "error": "エラー"
+    },
+    "scoreDimensions": {
+      "reusability": "再利用性",
+      "uniqueness": "独自性",
+      "confidence": "信頼度"
+    },
+    "sourceKinds": {
+      "chat": "Chat",
+      "file": "File",
+      "wiki": "Wiki",
+      "task_ledger": "Task Ledger",
+      "trace": "Trace",
+      "task_loop": "Task Loop",
+      "manual": "Manual",
+      "search_result": "Search",
+      "other": "Other"
+    },
+    "groups": {
+      "save": "保存推奨",
+      "review": "要レビュー",
+      "archive-only": "アーカイブのみ"
+    },
+    "recommendations": {
+      "save": "保存",
+      "review": "レビュー",
+      "archive-only": "アーカイブのみ"
+    },
     "kinds": {
       "chat-session": "Chat",
       "task-ledger": "Task Ledger",

@@ -23,16 +23,16 @@ describe('hostEvents', () => {
     expect(on).toHaveBeenCalledWith('gateway:status-changed', expect.any(Function));
   });
 
-  it('passes typed payloads from IPC callbacks', async () => {
+  it('passes typed app navigation payloads from IPC callbacks', async () => {
     const { hostEvents } = await import('@/lib/host-events');
     const handler = vi.fn();
 
-    hostEvents.onUpdateStatusChanged(handler);
-    const callback = on.mock.calls[0]?.[1] as ((payload: unknown) => void) | undefined;
-    callback?.({ status: 'available', info: { version: '1.2.3' } });
+    hostEvents.onNavigate(handler);
+    const callback = on.mock.calls[0]?.[1] as ((payload: string) => void) | undefined;
+    callback?.('/settings');
 
-    expect(on).toHaveBeenCalledWith('update:status-changed', expect.any(Function));
-    expect(handler).toHaveBeenCalledWith({ status: 'available', info: { version: '1.2.3' } });
+    expect(on).toHaveBeenCalledWith('navigate', expect.any(Function));
+    expect(handler).toHaveBeenCalledWith('/settings');
   });
 
   it('subscribes to chat runtime events over IPC', async () => {

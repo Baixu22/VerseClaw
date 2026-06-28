@@ -92,7 +92,7 @@ Building AI agents shouldn't require mastering the command line. Verse Claw was 
 | Complex CLI setup | One-click installation with guided setup wizard |
 | Configuration files | Visual settings with real-time validation |
 | Process management | Automatic gateway lifecycle management |
-| App updates | Manual update checks in Settings; no startup prompts |
+| App updates | No built-in update checks or upstream update prompts |
 | Multiple AI providers | Unified provider configuration panel |
 | Skill/plugin installation | Local-first skill management with optional extension-provided marketplace |
 
@@ -198,7 +198,7 @@ Light mode, dark mode, or system-synchronized themes. Verse Claw adapts to your 
 In **Settings 鈫?General**, you can enable **Launch at system startup** so Verse Claw starts automatically after login.
 
 ### 馃敂 Update Prompts
-Verse Claw does not check for updates or show update prompts on startup. Use **Settings → General** to check manually; downloading and installing still require an explicit action.
+Verse Claw does not include built-in update checks or upstream update prompts. Distribute updates through your own packaging or release channel.
 
 ---
 
@@ -287,7 +287,7 @@ Verse Claw employs a **dual-process architecture** with a unified host API layer
 鈹? 鈹? 鈥?Window & application lifecycle management               鈹? 鈹?
 鈹? 鈹? 鈥?Gateway process supervision                             鈹? 鈹?
 鈹? 鈹? 鈥?System integration (tray, notifications, keychain)      鈹? 鈹?
-鈹? 鈹? 鈥?Manual update orchestration                               鈹? 鈹?
+鈹? 鈹? 鈥?Release packaging only                               鈹? 鈹?
 鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?
 鈹?                             鈹?                                  鈹?
 鈹?                             鈹?IPC (authoritative control plane) 鈹?
@@ -423,6 +423,9 @@ pnpm run comms:compare    # Compare replay metrics against baseline thresholds
 pnpm harness context --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 pnpm harness validate --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 
+# Agent dev/test control plane
+pnpm agent-dev:make e2e my-scenario
+
 # Build & Package
 pnpm run build:vite       # Build frontend only
 pnpm build                # Full production build (with packaging assets)
@@ -433,6 +436,8 @@ pnpm package:linux        # Package for Linux
 ```
 
 Verse Claw also seeds workspace-local `.clawx/harness/` docs for active project workspaces and OpenClaw agent workspaces. This provides a Trellis-inspired project harness for rules, scenarios, task contracts, guides, layers, context-pack recipes, and Task Ledger bridge docs without introducing a parallel `.trellis/` or Markdown task-state source of truth.
+
+Agent-authored page and functional tests can use the typed `hostApi.agentDev` control plane for state seeds, `?devScenario=...`, host-api record/replay, diagnostics snapshots, transport traces, visual presets, and selector contracts. See [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md).
 
 On headless Linux, run Electron tests under a display server such as `xvfb-run -a pnpm run test:e2e`.
 

@@ -11,7 +11,6 @@ import { createTray } from './tray';
 import { createMenu } from './menu';
 import { registerZoomShortcuts } from './zoom-shortcuts';
 
-import { appUpdater, registerUpdateHandlers } from './updater';
 import { logger } from '../utils/logger';
 import { warmupNetworkOptimization } from '../utils/uv-env';
 import { initTelemetry } from '../utils/telemetry';
@@ -1025,12 +1024,6 @@ async function initialize(): Promise<void> {
   if (marketplaceProvider) {
     clawHubService.setMarketplaceProvider(marketplaceProvider);
   }
-
-  // Register update handlers
-  registerUpdateHandlers(appUpdater, window);
-
-  // Note: Auto-check for updates is driven by the renderer (update store init)
-  // so it respects the user's "Auto-check for updates" setting.
 
   // Seed a stable default IDENTITY.md before the Gateway initializes the
   // workspace so Verse Claw desktop sessions skip OpenClaw's chat-first bootstrap.

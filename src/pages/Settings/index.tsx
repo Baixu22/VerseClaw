@@ -42,8 +42,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { useSettingsStore } from '@/stores/settings';
 import { useGatewayStore } from '@/stores/gateway';
-import { useUpdateStore } from '@/stores/update';
-import { UpdateSettings } from '@/components/settings/UpdateSettings';
 import { ProjectRulesCenter } from '@/components/settings/ProjectRulesCenter';
 import { toUserMessage } from '@/lib/error-message';
 import {
@@ -156,7 +154,7 @@ export function Settings() {
   } = useSettingsStore();
 
   const { status: gatewayStatus, restart: restartGateway } = useGatewayStore();
-  const currentVersion = useUpdateStore((state) => state.currentVersion);
+  const [currentVersion, setCurrentVersion] = useState('0.0.0');
   const [controlUiInfo, setControlUiInfo] = useState<ControlUiInfo | null>(null);
   const [remoteControlStatus, setRemoteControlStatus] = useState<Awaited<ReturnType<typeof hostApi.remoteControl.status>> | null>(null);
   const [remoteControlInspect, setRemoteControlInspect] = useState<Awaited<ReturnType<typeof hostApi.remoteControl.inspect>> | null>(null);
@@ -186,6 +184,20 @@ export function Settings() {
   const showCliTools = true;
   const [showLogs, setShowLogs] = useState(false);
   const [logContent, setLogContent] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    void hostApi.app.version()
+      .then((version) => {
+        if (!cancelled) setCurrentVersion(version);
+      })
+      .catch(() => {
+        if (!cancelled) setCurrentVersion('0.0.0');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const [doctorRunningMode, setDoctorRunningMode] = useState<'diagnose' | 'fix' | null>(null);
   const [doctorResult, setDoctorResult] = useState<OpenClawDoctorResult | null>(null);
   const [watchedDirectories, setWatchedDirectories] = useState<KnowledgeWatchedDirectoryConfig[]>([]);
@@ -2180,19 +2192,6 @@ export function Settings() {
 
           {currentSection === 'general' && (
             <>
-          <Separator className="bg-black/5 dark:bg-white/5" />
-
-          {/* Updates */}
-          <div>
-            <h2 className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
-              {t('updates.title')}
-            </h2>
-            <div className="space-y-6">
-              <UpdateSettings />
-
-            </div>
-          </div>
-
           <Separator className="bg-black/5 dark:bg-white/5" />
 
           {/* About */}

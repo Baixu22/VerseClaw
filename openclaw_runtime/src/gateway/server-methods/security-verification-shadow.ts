@@ -13,11 +13,13 @@ import {
   getSecurityVerificationShadowSummary,
   getSecurityVerificationShadowStatus,
   recordSecurityVerificationShadow,
+  type EvidenceVerifierDecisionSummary,
   type SecurityShadowDecision,
   type ShadowRecordSubject,
   type ShadowRecordSource,
   type VerificationShadowStatus,
 } from "../../security-verification-shadow/index.js";
+import type { EvidenceVerifierDecision } from "../../runtime-core/index.js";
 import type { GatewayRequestHandlers } from "./types.js";
 
 function readString(value: unknown): string | undefined {
@@ -51,6 +53,17 @@ function readVerificationStatus(value: unknown): VerificationShadowStatus | unde
     : undefined;
 }
 
+function readEvidenceVerifierDecision(value: unknown): EvidenceVerifierDecision | undefined {
+  return value === "completed" || value === "failed" || value === "blocked" || value === "cancelled" ||
+      value === "insufficient_evidence"
+    ? value
+    : undefined;
+}
+
+function readEvidenceVerifierInput(params: Record<string, unknown>): unknown {
+  return params.evidenceVerifier ?? params.verifier;
+}
+
 function readRecordFilters(params: Record<string, unknown>) {
   return {
     ...(readLimit(params.limit) !== undefined ? { limit: readLimit(params.limit) } : {}),
@@ -63,6 +76,29 @@ function readRecordFilters(params: Record<string, unknown>) {
     ...(readVerificationStatus(params.status ?? params.verificationStatus)
       ? { verificationStatus: readVerificationStatus(params.status ?? params.verificationStatus) }
       : {}),
+    ...(readEvidenceVerifierDecision(params.verifierDecision ?? params.evidenceVerifierDecision)
+      ? { verifierDecision: readEvidenceVerifierDecision(params.verifierDecision ?? params.evidenceVerifierDecision) }
+      : {}),
+  };
+}
+
+type VerificationRunResponse = {
+  result: unknown;
+  runId: string;
+  record: unknown;
+  evidenceVerifier?: EvidenceVerifierDecisionSummary;
+};
+
+function verificationRunResponse(record: {
+  runId: string;
+  verification: unknown;
+  evidenceVerifier?: EvidenceVerifierDecisionSummary;
+}): VerificationRunResponse {
+  return {
+    result: record.verification,
+    runId: record.runId,
+    record,
+    ...(record.evidenceVerifier ? { evidenceVerifier: record.evidenceVerifier } : {}),
   };
 }
 
@@ -132,18 +168,20 @@ export const securityVerificationShadowHandlers: GatewayRequestHandlers = {
       const record = recordSecurityVerificationShadow({
         source: "verification.run",
         events: params.events,
+        ...(readEvidenceVerifierInput(params) !== undefined ? { evidenceVerifier: readEvidenceVerifierInput(params) } : {}),
         ...(readString(params.runId) ? { runId: readString(params.runId) } : {}),
       });
-      respond(true, { result: record.verification, runId: record.runId, record }, undefined);
+      respond(true, verificationRunResponse(record), undefined);
       return;
     }
     if (hasCheckpoint) {
       const record = recordSecurityVerificationShadow({
         source: "verification.run",
         checkpoint: params.checkpoint,
+        ...(readEvidenceVerifierInput(params) !== undefined ? { evidenceVerifier: readEvidenceVerifierInput(params) } : {}),
         ...(readString(params.runId) ? { runId: readString(params.runId) } : {}),
       });
-      respond(true, { result: record.verification, runId: record.runId, record }, undefined);
+      respond(true, verificationRunResponse(record), undefined);
       return;
     }
     const request = buildToolCallRequestFromUnknown({
@@ -155,9 +193,10 @@ export const securityVerificationShadowHandlers: GatewayRequestHandlers = {
       source: "verification.run",
       request,
       ...(result ? { result } : {}),
+      ...(readEvidenceVerifierInput(params) !== undefined ? { evidenceVerifier: readEvidenceVerifierInput(params) } : {}),
       ...(readString(params.runId) ? { runId: readString(params.runId) } : {}),
     });
-    respond(true, { result: record.verification, runId: record.runId, record }, undefined);
+    respond(true, verificationRunResponse(record), undefined);
   },
 
   "verification.status": async ({ respond, context }) => {
@@ -181,6 +220,7 @@ export const securityVerificationShadowHandlers: GatewayRequestHandlers = {
         checkpoint: record.checkpoint,
         security: record.security,
         verification: record.verification,
+        evidenceVerifier: record.evidenceVerifier,
         observabilityTraceId: record.observabilityTraceId,
       })),
       summary: getSecurityVerificationShadowSummary(filters),

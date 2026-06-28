@@ -1026,4 +1026,3 @@ export async function getReplyFromConfig(
   logResolverTiming("completed", "prepared_reply");
   return replyResult;
 }
-  let { directives, cleanedBody, resolvedThinkLevel, resolvedPromptMode, resolvedReasoningLevel } =

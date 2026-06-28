@@ -21,6 +21,24 @@ import type {
   AgentBrowserValidatePayload,
   AgentBrowserValidateResult,
   AgentBootstrapUpdatePayload,
+  AgentDevCreateConversationPayload,
+  AgentDevCreateConversationResult,
+  AgentDevCreateProviderConfigPayload,
+  AgentDevCreateProviderConfigResult,
+  AgentDevDiagnosticsSnapshotResult,
+  AgentDevFeatureFlagsPayload,
+  AgentDevFeatureFlagsResult,
+  AgentDevHostApiCallsPayload,
+  AgentDevHostApiCallsResult,
+  AgentDevMockReplayConfig,
+  AgentDevMockReplayResult,
+  AgentDevSeedStatePayload,
+  AgentDevSeedStateResult,
+  AgentDevSelectorContractResult,
+  AgentDevTransportTracePayload,
+  AgentDevTransportTraceResult,
+  AgentDevVisualPreset,
+  AgentDevVisualPresetResult,
   AgentUpdateReasoningEffortPayload,
   AgentUpdatePayload,
   ChannelAccountsPayload,
@@ -130,6 +148,11 @@ import type {
   KnowledgeListWatchedDirectoryEventsPayload,
   KnowledgeWatchedDirectoryConfig,
   KnowledgeWatchedDirectoryEvent,
+  LocalControlPlaneCorrelationFilter,
+  LocalControlPlaneCorrelationsResult,
+  LocalControlPlaneReportFilter,
+  LocalControlPlaneReportsResult,
+  LocalControlPlaneStatusResult,
   MediaThumbnailEntry,
   McpCallToolPayload,
   McpHeartbeatPayload,
@@ -174,7 +197,6 @@ import type {
   TaskLedgerSnapshotResult,
   TaskLedgerUpdateNodePayload,
   TaskLedgerWorkspacePayload,
-  UpdateChannel,
   PermissionApprovalDecisionPayload,
   PermissionApprovalListPayload,
   RemoteControlClickPayload,
@@ -248,6 +270,18 @@ export type {
   AgentBrowserSessionResult,
   AgentBrowserStatusResult,
   AgentBrowserValidateResult,
+  AgentDevCreateConversationResult,
+  AgentDevCreateProviderConfigResult,
+  AgentDevDiagnosticsSnapshotResult,
+  AgentDevFeatureFlagsResult,
+  AgentDevHostApiCallsResult,
+  AgentDevMockReplayResult,
+  AgentDevScenario,
+  AgentDevSeedStateResult,
+  AgentDevSelectorContractResult,
+  AgentDevStatusResult,
+  AgentDevTransportTraceResult,
+  AgentDevVisualPresetResult,
   ChannelCredentialValidationResult,
   ChannelFormValuesResult,
   ChannelGroupItem,
@@ -306,6 +340,14 @@ export type {
   KnowledgeStewardConfig,
   KnowledgeStewardReviewResult,
   KnowledgeStatusResult,
+  LocalControlPlaneCorrelationFilter,
+  LocalControlPlaneCorrelationsResult,
+  LocalControlPlaneCorrelationSummary,
+  LocalControlPlaneReport,
+  LocalControlPlaneReportFilter,
+  LocalControlPlaneReportsResult,
+  LocalControlPlaneStatus,
+  LocalControlPlaneStatusResult,
   LocalSkillsResult,
   LogContentResult,
   LogDirResult,
@@ -369,6 +411,7 @@ export type {
 
 export const hostApi = {
   app: {
+    version: () => invokeHost('app', 'version'),
     openClawDoctor: async (mode: OpenClawDoctorMode): Promise<OpenClawDoctorResult> => ({
       ...(await invokeHost('app', 'openClawDoctor', { mode })),
       mode,
@@ -397,16 +440,6 @@ export const hostApi = {
     maximize: () => invokeHost('window', 'maximize'),
     close: () => invokeHost('window', 'close'),
     isMaximized: () => invokeHost('window', 'isMaximized'),
-  },
-  updates: {
-    status: () => invokeHost('updates', 'status'),
-    version: () => invokeHost('updates', 'version'),
-    check: () => invokeHost('updates', 'check'),
-    download: () => invokeHost('updates', 'download'),
-    install: () => invokeHost('updates', 'install'),
-    setChannel: (channel: UpdateChannel) => invokeHost('updates', 'setChannel', { channel }),
-    setAutoDownload: (enable: boolean) => invokeHost('updates', 'setAutoDownload', { enable }),
-    cancelAutoInstall: () => invokeHost('updates', 'cancelAutoInstall'),
   },
   uv: {
     installAll: () => invokeHost('uv', 'installAll'),
@@ -496,6 +529,15 @@ export const hostApi = {
     controlUi: (view?: 'dreams') => invokeHost('gateway', 'controlUi', { view }),
     rpc: <T = unknown>(method: string, params?: unknown, timeoutMs?: number, approvalId?: string) => (
       invokeHost('gateway', 'rpc', { method, params, timeoutMs, approvalId }) as Promise<T>
+    ),
+  },
+  localControlPlane: {
+    status: (): Promise<LocalControlPlaneStatusResult> => invokeHost('localControlPlane', 'status'),
+    reports: (input?: LocalControlPlaneReportFilter): Promise<LocalControlPlaneReportsResult> => (
+      invokeHost('localControlPlane', 'reports', input)
+    ),
+    correlations: (input?: LocalControlPlaneCorrelationFilter): Promise<LocalControlPlaneCorrelationsResult> => (
+      invokeHost('localControlPlane', 'correlations', input)
     ),
   },
   remoteControl: {
@@ -620,6 +662,44 @@ export const hostApi = {
   },
   diagnostics: {
     gatewaySnapshot: () => invokeHost('diagnostics', 'gatewaySnapshot'),
+  },
+  agentDev: {
+    status: () => invokeHost('agentDev', 'status'),
+    scenarios: () => invokeHost('agentDev', 'scenarios'),
+    seedState: (input?: AgentDevSeedStatePayload): Promise<AgentDevSeedStateResult> => (
+      invokeHost('agentDev', 'seedState', input)
+    ),
+    resetState: (): Promise<AgentDevSeedStateResult> => invokeHost('agentDev', 'resetState'),
+    createConversation: (
+      input: AgentDevCreateConversationPayload,
+    ): Promise<AgentDevCreateConversationResult> => (
+      invokeHost('agentDev', 'createConversation', input)
+    ),
+    createProviderConfig: (
+      input: AgentDevCreateProviderConfigPayload,
+    ): Promise<AgentDevCreateProviderConfigResult> => (
+      invokeHost('agentDev', 'createProviderConfig', input)
+    ),
+    configureMockReplay: (input: AgentDevMockReplayConfig): Promise<AgentDevMockReplayResult> => (
+      invokeHost('agentDev', 'configureMockReplay', input)
+    ),
+    hostApiCalls: (input?: AgentDevHostApiCallsPayload): Promise<AgentDevHostApiCallsResult> => (
+      invokeHost('agentDev', 'hostApiCalls', input)
+    ),
+    featureFlags: (): Promise<AgentDevFeatureFlagsResult> => invokeHost('agentDev', 'featureFlags'),
+    setFeatureFlags: (input: AgentDevFeatureFlagsPayload): Promise<AgentDevFeatureFlagsResult> => (
+      invokeHost('agentDev', 'setFeatureFlags', input)
+    ),
+    visualPreset: (input?: AgentDevVisualPreset): Promise<AgentDevVisualPresetResult> => (
+      invokeHost('agentDev', 'visualPreset', input)
+    ),
+    diagnosticsSnapshot: (): Promise<AgentDevDiagnosticsSnapshotResult> => (
+      invokeHost('agentDev', 'diagnosticsSnapshot')
+    ),
+    transportTrace: (input?: AgentDevTransportTracePayload): Promise<AgentDevTransportTraceResult> => (
+      invokeHost('agentDev', 'transportTrace', input)
+    ),
+    selectorContract: (): Promise<AgentDevSelectorContractResult> => invokeHost('agentDev', 'selectorContract'),
   },
   providers: {
     list: () => invokeHost('providers', 'list'),
