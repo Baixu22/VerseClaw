@@ -163,12 +163,36 @@ describe('ClawX product semantics', () => {
     }
   });
 
-  it('keeps remaining incomplete P1 work positioned while marking verified closures done', () => {
+  it('marks verified P0/P1 closures done while preserving product boundaries', () => {
+    expect(PRODUCT_SEMANTIC_TASK_BOUNDARIES.find((task) => task.id === 'P0-12')).toMatchObject({
+      implementationStatus: 'done',
+      lane: 'permission-boundary',
+      safeClaim: expect.stringContaining('Electron write/edit/exec challenge'),
+      forbiddenClaim: expect.stringContaining('exhaustive no-diff'),
+    });
+    expect(PRODUCT_SEMANTIC_TASK_BOUNDARIES.find((task) => task.id === 'P0-13')).toMatchObject({
+      implementationStatus: 'done',
+      lane: 'permission-boundary',
+      safeClaim: expect.stringContaining('PermissionDecisionEvent'),
+      forbiddenClaim: expect.stringContaining('exhaustively covers every permission surface'),
+    });
+    expect(PRODUCT_SEMANTIC_TASK_BOUNDARIES.find((task) => task.id === 'P1-02')).toMatchObject({
+      implementationStatus: 'done',
+      lane: 'chat-plan',
+      safeClaim: expect.stringContaining('lightweight'),
+      forbiddenClaim: expect.stringContaining('full drag-and-drop DAG editor'),
+    });
+    expect(PRODUCT_SEMANTIC_TASK_BOUNDARIES.find((task) => task.id === 'P1-03')).toMatchObject({
+      implementationStatus: 'done',
+      lane: 'task-ledger-workboard',
+      safeClaim: expect.stringContaining('one-way TaskLedgerReference'),
+      forbiddenClaim: expect.stringContaining('two-way task system'),
+    });
     expect(PRODUCT_SEMANTIC_TASK_BOUNDARIES.find((task) => task.id === 'P1-04')).toMatchObject({
-      implementationStatus: 'todo',
+      implementationStatus: 'done',
       lane: 'orchestration-quality',
-      safeClaim: expect.stringContaining('qualityState=null'),
-      forbiddenClaim: expect.stringContaining('complete quality scorecard'),
+      safeClaim: expect.stringContaining('shadow quality scorecard'),
+      forbiddenClaim: expect.stringContaining('complete quality product'),
     });
     expect(PRODUCT_SEMANTIC_TASK_BOUNDARIES.find((task) => task.id === 'P1-05')).toMatchObject({
       implementationStatus: 'done',
@@ -193,12 +217,6 @@ describe('ClawX product semantics', () => {
       lane: 'chat-to-task-loop',
       safeClaim: expect.stringContaining('upgrade suggestion'),
       forbiddenClaim: expect.stringContaining('automatically starts Task Loop'),
-    });
-    expect(PRODUCT_SEMANTIC_TASK_BOUNDARIES.find((task) => task.id === 'P0-12')).toMatchObject({
-      implementationStatus: 'defer',
-      lane: 'permission-boundary',
-      safeClaim: expect.stringContaining('unit-level'),
-      forbiddenClaim: expect.stringContaining('real write challenge E2E'),
     });
   });
 });

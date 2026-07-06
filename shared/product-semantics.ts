@@ -5,6 +5,10 @@ import {
 import type { WorkspacePermissionMode } from './types/workspace';
 
 export type { TaskLedgerReference } from './types/task-ledger-reference';
+export {
+  PRODUCT_SEMANTIC_UNSAFE_CLAIMS,
+  type ProductSemanticUnsafeClaim,
+} from './product-semantic-unsafe-claims';
 
 export type ProductSemanticConceptId =
   | 'chat'
@@ -28,7 +32,7 @@ export const PRODUCT_SEMANTIC_CONCEPTS = [
     id: 'chat',
     positioning: 'Immediate user/agent collaboration surface',
     sourceOfTruth: 'conversation transcript',
-    allowedReferences: ['Task Loop upgrade suggestion', 'read-only Chat Plan projection'],
+    allowedReferences: ['Task Loop upgrade suggestion', 'bounded Chat Plan projection/edit draft'],
     forbiddenClaims: [
       'ordinary Chat is an automatic project manager',
       'ordinary Chat automatically enters Task Loop',
@@ -46,9 +50,9 @@ export const PRODUCT_SEMANTIC_CONCEPTS = [
   },
   {
     id: 'chat-plan',
-    positioning: 'Read-only projection of orchestration intent',
-    sourceOfTruth: 'orchestrator plan output',
-    allowedReferences: ['Task Ledger read-only node projection'],
+    positioning: 'Projection of orchestration intent plus lightweight edit draft',
+    sourceOfTruth: 'orchestrator plan output plus Task Ledger projectionEdit metadata',
+    allowedReferences: ['Task Ledger read-only node projection', 'lightweight reorder/disable/note edit draft'],
     forbiddenClaims: [
       'editable Chat DAG',
       'drag-and-drop dependency editor',
@@ -97,66 +101,6 @@ export const PRODUCT_SEMANTIC_CONCEPTS = [
     ],
   },
 ] as const satisfies readonly ProductSemanticConcept[];
-
-export type ProductSemanticUnsafeClaim = {
-  id:
-    | 'chat-editable-dag'
-    | 'chat-auto-task-loop'
-    | 'team-orchestrate-complete-quality'
-    | 'routing-memo-default-learning'
-    | 'plan-mode-strict-no-diff';
-  unsafe: string;
-  safe: string;
-  patterns: readonly RegExp[];
-};
-
-export const PRODUCT_SEMANTIC_UNSAFE_CLAIMS = [
-  {
-    id: 'chat-editable-dag',
-    unsafe: 'Chat plan exposes an editable DAG.',
-    safe: 'Chat Plan is a read-only projection; lightweight edits must not be described as DAG editing.',
-    patterns: [
-      /\bchat\b.{0,60}\beditable\b.{0,30}\bdag\b/i,
-      /\bchat plan\b.{0,60}\b(edit|drag|dependency)\b.{0,30}\bdag\b/i,
-    ],
-  },
-  {
-    id: 'chat-auto-task-loop',
-    unsafe: 'Ordinary Chat automatically starts or enters Task Loop.',
-    safe: 'Ordinary Chat may suggest a Task Loop upgrade; the user must confirm it.',
-    patterns: [
-      /\bordinary chat\b.{0,60}\b(auto|automatic|automatically)\b.{0,40}\btask loop\b/i,
-      /\bchat\b.{0,40}\b(auto|automatic|automatically)\b.{0,40}\btask loop\b/i,
-    ],
-  },
-  {
-    id: 'team-orchestrate-complete-quality',
-    unsafe: 'Ordinary team_orchestrate returns complete quality scoring.',
-    safe: 'Ordinary team_orchestrate uses explicit null/shadow/active quality state; Task Loop owns repair semantics.',
-    patterns: [
-      /\bordinary\s+team_orchestrate\b.{0,80}\bcomplete quality scoring\b/i,
-      /\bteam_orchestrate\b.{0,80}\b(full|complete)\b.{0,30}\bquality (score|scoring|scorecard)\b/i,
-    ],
-  },
-  {
-    id: 'routing-memo-default-learning',
-    unsafe: 'Routing Memo learns role quality by default.',
-    safe: 'Routing Memo remains shadow until scorecard-backed active state is available.',
-    patterns: [
-      /\brouting memo\b.{0,60}\b(learns|learning)\b.{0,30}\bby default\b/i,
-      /\brouting memo\b.{0,40}\bdefault\b.{0,40}\b(active|learning)\b/i,
-    ],
-  },
-  {
-    id: 'plan-mode-strict-no-diff',
-    unsafe: 'Plan mode provides strict no-diff execution for every write.',
-    safe: 'Plan mode is a permission gate for user file writes; system metadata writes are explicit exceptions.',
-    patterns: [
-      /\bplan mode\b.{0,60}\bstrict no-diff\b/i,
-      /\bplan mode\b.{0,80}\bno-diff\b.{0,30}\bevery write\b/i,
-    ],
-  },
-] as const satisfies readonly ProductSemanticUnsafeClaim[];
 
 export type ProductSemanticTaskId = `P0-${string}` | `P1-${string}`;
 export type ProductSemanticImplementationStatus = 'done' | 'todo' | 'defer';
@@ -332,24 +276,33 @@ export const PRODUCT_SEMANTIC_TASK_BOUNDARIES = [
   task({
     id: 'P0-12',
     title: 'Plan mode real write challenge E2E',
-    implementationStatus: 'defer',
+    implementationStatus: 'done',
     lane: 'permission-boundary',
-    sourceOfTruth: 'workspace permission unit policy',
-    safeClaim: 'Plan mode has unit-level write/exec denial evidence.',
-    forbiddenClaim: 'Plan mode has passed a real write challenge E2E.',
-    nextAction: 'Add Electron E2E only when permission productization becomes the active task.',
-    boundaryRefs: ['electron/services/workspace-permissions.ts', 'tests/unit/workspace-permissions.test.ts'],
+    sourceOfTruth: 'workspace permission policy plus Electron write/edit/exec challenge',
+    safeClaim: 'Plan mode has unit policy coverage and an Electron write/edit/exec challenge for terminal, file write, and mutating Gateway RPC paths.',
+    forbiddenClaim: 'Plan mode has exhaustive no-diff coverage for every possible write path.',
+    nextAction: 'Keep new write surfaces covered by permission policy and focused E2E challenges.',
+    boundaryRefs: [
+      'electron/services/workspace-permissions.ts',
+      'tests/unit/workspace-permissions.test.ts',
+      'tests/e2e/chat-plan-mode-write-challenge.spec.ts',
+    ],
   }),
   task({
     id: 'P0-13',
     title: 'Unified permission audit event',
-    implementationStatus: 'defer',
+    implementationStatus: 'done',
     lane: 'permission-boundary',
-    sourceOfTruth: 'PermissionDecisionEvent schema boundary',
-    safeClaim: 'A normalized PermissionDecisionEvent shape exists as a contract boundary.',
-    forbiddenClaim: 'Unified permission audit is productized across Workspace and Role systems.',
-    nextAction: 'Wire minimal producers before claiming audit traceability.',
-    boundaryRefs: ['shared/product-semantics.ts', 'tests/unit/product-semantics.test.ts'],
+    sourceOfTruth: 'PermissionDecisionEvent producers and bounded storage',
+    safeClaim: 'Workspace and Role permission decisions produce normalized PermissionDecisionEvent records for wired producers.',
+    forbiddenClaim: 'Unified permission audit exhaustively covers every permission surface.',
+    nextAction: 'Add producers deliberately when new permission boundaries are introduced.',
+    boundaryRefs: [
+      'electron/services/permission-decision-audit.ts',
+      'electron/services/permissions-api.ts',
+      'openclaw_runtime/src/agents/role-permission-audit.ts',
+      'tests/unit/permission-decision-audit.test.ts',
+    ],
   }),
   task({
     id: 'P0-14',
@@ -409,35 +362,49 @@ export const PRODUCT_SEMANTIC_TASK_BOUNDARIES = [
   task({
     id: 'P1-02',
     title: 'Lightweight Chat Plan editing',
-    implementationStatus: 'todo',
+    implementationStatus: 'done',
     lane: 'chat-plan',
-    sourceOfTruth: 'future lightweight edit contract',
-    safeClaim: 'Future scope is reorder, disable, note, or regenerate plan controls only.',
+    sourceOfTruth: 'lightweight plan edit draft and Task Ledger projectionEdit metadata',
+    safeClaim: 'Chat Plan supports lightweight reorder, disable, note, regenerate, save, and cancel controls without becoming a full DAG editor.',
     forbiddenClaim: 'A full drag-and-drop DAG editor is planned as the default fix.',
-    nextAction: 'Define lightweight controls before adding UI.',
-    boundaryRefs: ['docs/clawx-product-semantics.md'],
+    nextAction: 'Keep edge editing and arbitrary graph mutation out of the Chat Plan claim.',
+    boundaryRefs: [
+      'src/lib/orchestration-plan-edit-draft.ts',
+      'src/components/agents/OrchestrationPlanView.tsx',
+      'src/components/agents/RolesOrchestrationPanel.tsx',
+      'tests/e2e/role-orchestration-plan-editing.spec.ts',
+    ],
   }),
   task({
     id: 'P1-03',
     title: 'Task Ledger and Workboard data relationship',
-    implementationStatus: 'todo',
+    implementationStatus: 'done',
     lane: 'task-ledger-workboard',
     sourceOfTruth: 'Task Ledger facts plus Workboard scheduling references',
-    safeClaim: 'Workboard may reference Task Ledger node ids one-way.',
+    safeClaim: 'Workboard references Task Ledger nodes through a one-way TaskLedgerReference protocol.',
     forbiddenClaim: 'Task Ledger and Workboard are one mirrored two-way task system.',
-    nextAction: 'Use TaskLedgerReference for Workboard link semantics.',
-    boundaryRefs: ['shared/product-semantics.ts', 'openclaw_runtime/extensions/workboard/src/types.ts'],
+    nextAction: 'Keep runtime scheduling state and user-visible task facts in their separate owners.',
+    boundaryRefs: [
+      'shared/types/task-ledger-reference.ts',
+      'openclaw_runtime/extensions/workboard/src/types.ts',
+      'tests/unit/task-ledger-reference.test.ts',
+    ],
   }),
   task({
     id: 'P1-04',
     title: 'Ordinary orchestration quality state',
-    implementationStatus: 'todo',
+    implementationStatus: 'done',
     lane: 'orchestration-quality',
-    sourceOfTruth: 'team_orchestrate qualityState field',
-    safeClaim: 'Ordinary team_orchestrate currently reports qualityState=null until scorecard evidence exists.',
-    forbiddenClaim: 'Ordinary team_orchestrate has a complete quality scorecard.',
-    nextAction: 'Only move to shadow or active after real scorecard inputs exist.',
-    boundaryRefs: ['openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts', 'shared/product-semantics.ts'],
+    sourceOfTruth: 'ordinary orchestration shadow quality scorecard',
+    safeClaim: 'Ordinary orchestration reports a real shadow quality scorecard when evidence exists and keeps active routing gated.',
+    forbiddenClaim: 'Ordinary orchestration has active repair quality semantics or a complete quality product.',
+    nextAction: 'Keep ordinary quality shadow-only unless an explicit scorecard-backed active gate allows routing influence.',
+    boundaryRefs: [
+      'openclaw_runtime/src/agents/orchestration-quality-scorecard.ts',
+      'openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts',
+      'openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts',
+      'tests/unit/role-orchestration-methods.test.ts',
+    ],
   }),
   task({
     id: 'P1-05',
@@ -477,7 +444,7 @@ export const PRODUCT_SEMANTIC_TASK_BOUNDARIES = [
     sourceOfTruth: 'scorecard-backed OrchestrationQualityState',
     safeClaim: 'Routing Memo may become active only after scorecard-backed qualityOverall input exists.',
     forbiddenClaim: 'Routing Memo learns from unreliable or unwired quality signals.',
-    nextAction: 'Keep ordinary team_orchestrate at qualityState=null until real scorecard producers exist.',
+    nextAction: 'Keep ordinary orchestration quality in shadow unless an explicit scorecard authority input is provided.',
     boundaryRefs: [
       'openclaw_runtime/src/agents/orchestrator.ts',
       'openclaw_runtime/src/agents/routing-memo.ts',
