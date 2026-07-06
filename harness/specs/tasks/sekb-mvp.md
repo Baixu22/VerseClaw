@@ -33,6 +33,10 @@ acceptance:
   - Distillation suggestions are manual/advisory in MVP and confirm_and_save is the only path that marks source trajectories distilled.
   - Renderer code, if touched, calls SEKB/Knowledge functionality only through src/lib/host-api.ts and never directly invokes IPC or Gateway HTTP.
   - Stage 2/3 schema extension fields are present but no autonomous verifier, curator, pause, retry, hidden correction, or tool blocking is added.
+  - AgentHarness integration, if enabled, uses existing hook seams and remains no-op unless explicitly installed.
+  - SEKB hook failures do not fail agent execution; they are reported only through an optional diagnostic callback.
+  - Tool-error advice is visible advisory context, not a hidden correction, retry, pause, or block.
+  - The operator report is read-only and does not write principles or mark trajectories distilled.
 docs:
   required: true
 ---
