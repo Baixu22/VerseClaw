@@ -1103,6 +1103,102 @@ CREATE INDEX IF NOT EXISTS idx_long_task_user_queue_pending
 CREATE INDEX IF NOT EXISTS idx_long_task_user_queue_ledger_root
   ON long_task_user_queue(task_ledger_root_id, status, created_at, id);
 
+CREATE TABLE IF NOT EXISTS runtime_task_event_log_records (
+  event_id TEXT NOT NULL PRIMARY KEY,
+  task_id TEXT NOT NULL,
+  task_sequence INTEGER NOT NULL,
+  kind TEXT NOT NULL,
+  event_timestamp INTEGER NOT NULL,
+  appended_at INTEGER NOT NULL,
+  idempotency_key TEXT,
+  session_key TEXT,
+  workspace_id TEXT,
+  run_id TEXT,
+  task_ledger_root_id TEXT,
+  trace_id TEXT,
+  schema_version INTEGER NOT NULL,
+  schema_marker TEXT NOT NULL,
+  record_json TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_runtime_task_event_log_task_sequence
+  ON runtime_task_event_log_records(task_id, task_sequence);
+
+CREATE INDEX IF NOT EXISTS idx_runtime_task_event_log_session
+  ON runtime_task_event_log_records(session_key, appended_at DESC, task_id);
+
+CREATE INDEX IF NOT EXISTS idx_runtime_task_event_log_trace
+  ON runtime_task_event_log_records(trace_id, appended_at DESC);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_runtime_task_event_log_task_idempotency
+  ON runtime_task_event_log_records(task_id, idempotency_key)
+  WHERE idempotency_key IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS sekb_trajectories (
+  trajectory_id TEXT NOT NULL PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  task_intent TEXT NOT NULL,
+  task_type TEXT NOT NULL,
+  context_fingerprint_json TEXT NOT NULL,
+  steps_json TEXT NOT NULL,
+  outcome TEXT NOT NULL,
+  error_signature TEXT,
+  cost_json TEXT NOT NULL,
+  distilled INTEGER NOT NULL DEFAULT 0,
+  distilled_into_json TEXT NOT NULL DEFAULT '[]',
+  expires_at TEXT,
+  metadata_json TEXT NOT NULL DEFAULT '{}',
+  updated_at_ms INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_sekb_trajectories_task
+  ON sekb_trajectories(task_type, outcome, distilled, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_sekb_trajectories_error
+  ON sekb_trajectories(error_signature, created_at DESC)
+  WHERE error_signature IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS sekb_principles (
+  principle_id TEXT NOT NULL PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  title TEXT NOT NULL,
+  condition TEXT NOT NULL,
+  action TEXT NOT NULL,
+  reason TEXT NOT NULL,
+  full_content TEXT NOT NULL,
+  task_types_json TEXT NOT NULL,
+  context_tags_json TEXT NOT NULL,
+  embedding_json TEXT,
+  source_trajectories_json TEXT NOT NULL,
+  created_by TEXT NOT NULL,
+  status TEXT NOT NULL,
+  retrieval_count INTEGER NOT NULL DEFAULT 0,
+  adoption_count INTEGER NOT NULL DEFAULT 0,
+  post_adoption_success INTEGER NOT NULL DEFAULT 0,
+  criticality TEXT NOT NULL DEFAULT 'medium',
+  pinned INTEGER NOT NULL DEFAULT 0,
+  metadata_json TEXT NOT NULL DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS idx_sekb_principles_status
+  ON sekb_principles(status, updated_at DESC, principle_id);
+
+CREATE TABLE IF NOT EXISTS sekb_error_signature_cache (
+  raw_error_hash TEXT NOT NULL PRIMARY KEY,
+  raw_error_sample TEXT NOT NULL,
+  error_signature TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS sekb_distillation_rejections (
+  rejection_id TEXT NOT NULL PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  suggestion_json TEXT NOT NULL,
+  reason TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS mission_runs (
   mission_id TEXT NOT NULL PRIMARY KEY,
   session_key TEXT NOT NULL,

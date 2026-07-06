@@ -609,51 +609,6 @@ export interface LongTaskUserQueue {
   workspace_id: string | null;
 }
 
-export interface MissionEvents {
-  created_at: number;
-  decision: string | null;
-  id: string;
-  mission_id: string;
-  payload_json: string;
-  phase: string;
-  session_key: string;
-  status: string;
-  tick: Generated<number>;
-  type: string;
-}
-
-export interface MissionRuns {
-  acceptance_json: string;
-  agent_id: string | null;
-  blocked_reason: string | null;
-  completed_at: number | null;
-  created_at: number;
-  evidence_refs_json: Generated<string>;
-  last_decision: string | null;
-  last_reason: string | null;
-  last_reviewer_summary: string | null;
-  max_repair_ticks: number;
-  max_ticks: number;
-  metadata_json: Generated<string>;
-  mission_id: string;
-  next_wake_at: number | null;
-  no_progress_hash: string | null;
-  objective: string;
-  phase: string;
-  progress: Generated<number>;
-  remaining_json: Generated<string>;
-  repair_tick_count: Generated<number>;
-  risks_json: Generated<string>;
-  schedule_json: Generated<string>;
-  session_key: string;
-  status: string;
-  task_loop_run_id: string | null;
-  tick_count: Generated<number>;
-  trace_id: string | null;
-  updated_at: number;
-  workspace_id: string | null;
-}
-
 export interface MacosPortGuardianRecords {
   command: string;
   mode: string;
@@ -711,6 +666,51 @@ export interface MigrationSources {
   source_size_bytes: number | null;
   status: string;
   target_table: string;
+}
+
+export interface MissionEvents {
+  created_at: number;
+  decision: string | null;
+  id: string;
+  mission_id: string;
+  payload_json: string;
+  phase: string;
+  session_key: string;
+  status: string;
+  tick: Generated<number>;
+  type: string;
+}
+
+export interface MissionRuns {
+  acceptance_json: string;
+  agent_id: string | null;
+  blocked_reason: string | null;
+  completed_at: number | null;
+  created_at: number;
+  evidence_refs_json: Generated<string>;
+  last_decision: string | null;
+  last_reason: string | null;
+  last_reviewer_summary: string | null;
+  max_repair_ticks: number;
+  max_ticks: number;
+  metadata_json: Generated<string>;
+  mission_id: string;
+  next_wake_at: number | null;
+  no_progress_hash: string | null;
+  objective: string;
+  phase: string;
+  progress: Generated<number>;
+  remaining_json: Generated<string>;
+  repair_tick_count: Generated<number>;
+  risks_json: Generated<string>;
+  schedule_json: Generated<string>;
+  session_key: string;
+  status: string;
+  task_loop_run_id: string | null;
+  tick_count: Generated<number>;
+  trace_id: string | null;
+  updated_at: number;
+  workspace_id: string | null;
 }
 
 export interface ModelCapabilityCache {
@@ -825,6 +825,24 @@ export interface PluginStateEntries {
   value_json: string;
 }
 
+export interface RuntimeTaskEventLogRecords {
+  appended_at: number;
+  event_id: string;
+  event_timestamp: number;
+  idempotency_key: string | null;
+  kind: string;
+  record_json: string;
+  run_id: string | null;
+  schema_marker: string;
+  schema_version: number;
+  session_key: string | null;
+  task_id: string;
+  task_ledger_root_id: string | null;
+  task_sequence: number;
+  trace_id: string | null;
+  workspace_id: string | null;
+}
+
 export interface SandboxRegistryEntries {
   backend_id: string | null;
   cdp_port: number | null;
@@ -850,6 +868,61 @@ export interface SchemaMeta {
   role: string;
   schema_version: number;
   updated_at: number;
+}
+
+export interface SekbDistillationRejections {
+  created_at: string;
+  reason: string;
+  rejection_id: string;
+  suggestion_json: string;
+}
+
+export interface SekbErrorSignatureCache {
+  created_at: string;
+  error_signature: string;
+  raw_error_hash: string;
+  raw_error_sample: string;
+  updated_at: string;
+}
+
+export interface SekbPrinciples {
+  action: string;
+  adoption_count: Generated<number>;
+  condition: string;
+  context_tags_json: string;
+  created_at: string;
+  created_by: string;
+  criticality: Generated<string>;
+  embedding_json: string | null;
+  full_content: string;
+  metadata_json: Generated<string>;
+  pinned: Generated<number>;
+  post_adoption_success: Generated<number>;
+  principle_id: string;
+  reason: string;
+  retrieval_count: Generated<number>;
+  source_trajectories_json: string;
+  status: string;
+  task_types_json: string;
+  title: string;
+  updated_at: string;
+}
+
+export interface SekbTrajectories {
+  context_fingerprint_json: string;
+  cost_json: string;
+  created_at: string;
+  distilled: Generated<number>;
+  distilled_into_json: Generated<string>;
+  error_signature: string | null;
+  expires_at: string | null;
+  metadata_json: Generated<string>;
+  outcome: string;
+  steps_json: string;
+  task_intent: string;
+  task_type: string;
+  trajectory_id: string;
+  updated_at_ms: number;
 }
 
 export interface SkillUploads {
@@ -1095,8 +1168,13 @@ export interface DB {
   plugin_binding_approvals: PluginBindingApprovals;
   plugin_blob_entries: PluginBlobEntries;
   plugin_state_entries: PluginStateEntries;
+  runtime_task_event_log_records: RuntimeTaskEventLogRecords;
   sandbox_registry_entries: SandboxRegistryEntries;
   schema_meta: SchemaMeta;
+  sekb_distillation_rejections: SekbDistillationRejections;
+  sekb_error_signature_cache: SekbErrorSignatureCache;
+  sekb_principles: SekbPrinciples;
+  sekb_trajectories: SekbTrajectories;
   skill_uploads: SkillUploads;
   state_leases: StateLeases;
   subagent_runs: SubagentRuns;
