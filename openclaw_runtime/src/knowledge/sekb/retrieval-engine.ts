@@ -45,10 +45,10 @@ export class RetrievalEngine {
     return principles
       .map((principle, index) =>
         [
-          `【相关经验 ${index + 1}】${principle.title}`,
-          `条件：${principle.condition}`,
-          `做法：${principle.action}`,
-          `原因：${principle.reason}`,
+          `[Relevant SEKB principle ${index + 1}] ${principle.title}`,
+          `Condition: ${principle.condition}`,
+          `Action: ${principle.action}`,
+          `Reason: ${principle.reason}`,
           "---",
         ].join("\n")
       )
@@ -104,7 +104,7 @@ export class ContextInjector {
     const injection = this.#engine.format_for_injection(
       this.#engine.retrieve_for_error(error_signature, context_tags),
     );
-    return injection ? `【检测到相关历史错误经验，供参考】\n${injection}` : "";
+    return injection ? `[SEKB historical error advice]\n${injection}` : "";
   }
 }
 
