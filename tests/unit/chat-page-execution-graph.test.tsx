@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const hostApiFetchMock = vi.fn();
 
@@ -42,6 +42,9 @@ vi.mock('@/lib/host-api', () => ({
     topics: {
       list: vi.fn(async () => ({ topics: [], activeTopicId: null })),
     },
+    knowledge: {
+      matchErrorExperience: vi.fn(async () => ({ success: true, matches: [] })),
+    },
     files: {
       writeText: vi.fn(async () => ({ success: true })),
     },
@@ -58,6 +61,8 @@ vi.mock('@/lib/host-api', () => ({
     usage: {
       contextRange: vi.fn(async () => ({ usedTokens: 0, maxTokens: 0, percentage: 0 })),
       live: vi.fn(async () => ({ input: 0, output: 0, total: 0, costUsd: 0 })),
+      promptCacheStatus: vi.fn(async () => ({ success: true, assessment: null })),
+      recordPromptCacheRiskEvent: vi.fn(async () => ({ success: true, event: null })),
     },
     sessions: {
       history: vi.fn(async () => ({ messages: [], hasMore: false })),
@@ -242,8 +247,106 @@ describe('Chat execution graph lifecycle', () => {
       expect(screen.getByTestId('chat-execution-graph')).toHaveAttribute('data-collapsed', 'false');
     });
 
+    expect(screen.queryByTestId('chat-turn-summary-card')).not.toBeInTheDocument();
     expect(screen.getByText('Here is the summary.')).toBeInTheDocument();
     expect(screen.queryByText('Checked X. Here is the summary.')).not.toBeInTheDocument();
+  });
+
+  it('collapses completed long task work into a deterministic summary card by default', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    useChatStore.setState({
+      messages: [
+        { role: 'user', content: 'Inspect and summarize the workspace' },
+        {
+          role: 'assistant',
+          id: 'read-step',
+          content: [{ type: 'tool_use', id: 'read-1', name: 'read_file', input: { path: '/tmp/a.ts' } }],
+        },
+        {
+          role: 'assistant',
+          id: 'grep-step',
+          content: [{ type: 'tool_use', id: 'grep-1', name: 'search', input: { pattern: 'TODO' } }],
+        },
+        {
+          role: 'assistant',
+          id: 'test-step',
+          content: [{ type: 'tool_use', id: 'test-1', name: 'run_tests', input: { command: 'pnpm test' } }],
+        },
+        {
+          role: 'assistant',
+          id: 'final-summary',
+          content: [{ type: 'text', text: 'Workspace summary is ready.' }],
+        },
+      ],
+      loading: false,
+      error: null,
+      runError: null,
+      sending: false,
+      activeRunId: null,
+      streamingText: '',
+      streamingMessage: null,
+      streamingTools: [],
+      pendingFinal: false,
+      lastUserMessageAt: Date.now(),
+      pendingToolImages: [],
+      runtimeRuns: {},
+      sessions: [{ key: 'agent:main:main' }],
+      currentSessionKey: 'agent:main:main',
+      currentAgentId: 'main',
+      sessionLabels: {},
+      sessionLastActivity: {},
+      thinkingLevel: null,
+    });
+
+    const { Chat } = await import('@/pages/Chat/index');
+    render(<Chat />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
+    });
+    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
+    expect(screen.getAllByText('Workspace summary is ready.').length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
+  });
+
+  it('keeps short conversations as normal messages without a turn summary card', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    useChatStore.setState({
+      messages: [
+        { role: 'user', content: 'What is two plus two?' },
+        { role: 'assistant', content: [{ type: 'text', text: 'Four.' }] },
+      ],
+      loading: false,
+      error: null,
+      runError: null,
+      sending: false,
+      activeRunId: null,
+      streamingText: '',
+      streamingMessage: null,
+      streamingTools: [],
+      pendingFinal: false,
+      lastUserMessageAt: null,
+      pendingToolImages: [],
+      runtimeRuns: {},
+      sessions: [{ key: 'agent:main:main' }],
+      currentSessionKey: 'agent:main:main',
+      currentAgentId: 'main',
+      sessionLabels: {},
+      sessionLastActivity: {},
+      thinkingLevel: null,
+    });
+
+    const { Chat } = await import('@/pages/Chat/index');
+    render(<Chat />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Four.')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('chat-turn-summary-card')).not.toBeInTheDocument();
   });
 
   it('renders a team orchestration card for team_orchestrate task graph results', async () => {
@@ -342,12 +445,110 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getAllByTestId('chat-team-orchestration-card').length).toBeGreaterThan(0);
+      expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     });
+    expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    expect(screen.getAllByTestId('chat-team-orchestration-card').length).toBeGreaterThan(0);
     expect(screen.getAllByText('implementer').length).toBeGreaterThan(0);
     expect(screen.getAllByText('tester').length).toBeGreaterThan(0);
     expect(screen.getAllByText('reviewer').length).toBeGreaterThan(0);
     expect(screen.getByText('Template quick-development selected staged graph.')).toBeInTheDocument();
+  });
+
+  it('renders ordinary orchestration diagnostics without Task Loop repair wording', async () => {
+    const orchestrationResult = {
+      status: 'partial',
+      orchestrationRunId: 'orch-diagnostics-1',
+      graphStatus: 'partial',
+      taskGraph: {
+        graphRunId: 'orch-diagnostics-1',
+        mode: 'staged',
+        status: 'partial',
+        nodes: [
+          {
+            taskNodeId: 'reviewer-1',
+            roleName: 'reviewer',
+            phase: 'review',
+            task: 'Review the worker output.',
+            status: 'failed',
+            dependsOn: [],
+          },
+        ],
+        edges: [],
+      },
+      failures: [{ roleName: 'reviewer', status: 'forbidden', error: 'max children reached' }],
+      orchestrationDiagnostics: {
+        kind: 'ordinary-orchestration-diagnostics',
+        boundary: 'diagnostics-only',
+        status: 'needs_attention',
+        summary: '1 worker did not start. Ordinary orchestration is showing diagnostics only.',
+        failedWorkerCount: 1,
+        taskLoopUpgradeAvailable: true,
+        recommendations: [{
+          code: 'worker-spawn-failed',
+          roleName: 'reviewer',
+          message: 'Worker failed before acceptance: max children reached',
+          recommendedAction: 'Review worker limits or permissions before retrying ordinary orchestration.',
+        }],
+        nextSteps: ['Review failed worker details', 'Explicitly start Task Loop only if a governed long-run retry is needed'],
+      },
+    };
+    const { useChatStore } = await import('@/stores/chat');
+    useChatStore.setState({
+      messages: [
+        { role: 'user', content: 'Coordinate the implementation safely' },
+        {
+          role: 'assistant',
+          id: 'team-tool-turn',
+          content: [{
+            type: 'tool_use',
+            id: 'team-1',
+            name: 'team_orchestrate',
+            input: { task: 'Coordinate the implementation safely', graphMode: 'staged' },
+          }],
+        },
+        {
+          role: 'toolresult',
+          toolCallId: 'team-1',
+          content: JSON.stringify(orchestrationResult),
+        },
+      ],
+      loading: false,
+      error: null,
+      runError: null,
+      sending: false,
+      activeRunId: null,
+      pendingFinal: false,
+      lastUserMessageAt: null,
+      streamingText: '',
+      streamingMessage: null,
+      streamingTools: [],
+      pendingToolImages: [],
+      runtimeRuns: {},
+      sessions: [{ key: 'agent:main:main' }],
+      currentSessionKey: 'agent:main:main',
+      currentAgentId: 'main',
+      sessionLabels: { 'agent:main:main': 'Coordinate the implementation safely' },
+      sessionLastActivity: {},
+      thinkingLevel: null,
+    });
+
+    const { Chat } = await import('@/pages/Chat/index');
+    render(<Chat />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    expect(screen.getByText('Worker failed before acceptance: max children reached')).toBeInTheDocument();
+    expect(screen.getByText('Review worker limits or permissions before retrying ordinary orchestration.')).toBeInTheDocument();
+    expect(screen.getByText('Explicitly start Task Loop only if a governed long-run retry is needed')).toBeInTheDocument();
+    expect(screen.queryByText(/checkpoint/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/blocked/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/repair/i)).not.toBeInTheDocument();
   });
 
   it('keeps runtime tool status inside the execution graph while a tool is running', async () => {
@@ -510,6 +711,9 @@ describe('Chat execution graph lifecycle', () => {
       expect(screen.getByText('demo.ts')).toBeInTheDocument();
     });
 
+    expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
+    expect(screen.queryByText('+1')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
     expect(screen.getByText('+1')).toBeInTheDocument();
     expect(screen.getByText('-1')).toBeInTheDocument();
   });
@@ -711,11 +915,11 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     });
 
     expect(screen.queryByTestId('chat-execution-step-thinking-trailing')).not.toBeInTheDocument();
-    expect(screen.getByText('执行完成 ✅ 今天的 github1 已写入飞书文档。')).toBeInTheDocument();
+    expect(screen.getAllByText('执行完成 ✅ 今天的 github1 已写入飞书文档。').length).toBeGreaterThan(0);
     expect(screen.queryByTestId('chat-typing-indicator')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-activity-indicator')).not.toBeInTheDocument();
   });

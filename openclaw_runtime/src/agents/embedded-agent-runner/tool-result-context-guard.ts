@@ -2,6 +2,7 @@
  * Installs context guards for oversized tool-result histories.
  */
 import type { ContextEngine, ContextEngineRuntimeContext } from "../../context-engine/types.js";
+import type { RuntimeIntensityPolicy } from "../intensity-policy.js";
 import type { AgentMessage } from "../runtime/index.js";
 import {
   CONTEXT_LIMIT_TRUNCATION_NOTICE,
@@ -29,6 +30,44 @@ export const PREEMPTIVE_CONTEXT_OVERFLOW_MESSAGE =
   "Context overflow: estimated context size exceeds safe threshold during tool loop.";
 const TOOL_RESULT_ESTIMATE_TO_TEXT_RATIO = 4 / TOOL_RESULT_CHARS_PER_TOKEN_ESTIMATE;
 const TRANSCRIPT_PROMPT_TEXT_KEY = "__openclawTranscriptPromptText";
+
+export function resolveToolResultContextGuardLimits(params: {
+  contextWindowTokens: number;
+  intensityPolicy?: RuntimeIntensityPolicy;
+}): {
+  contextWindowTokens: number;
+  maxContextChars: number;
+  maxSingleToolResultChars: number;
+} {
+  const contextWindowTokens = Math.max(1, Math.floor(params.contextWindowTokens));
+  const preemptiveOverflowRatio =
+    params.intensityPolicy?.contextPressure.mode === "tighten"
+      ? Math.min(
+          PREEMPTIVE_OVERFLOW_RATIO,
+          params.intensityPolicy.contextPressure.preemptiveOverflowRatio,
+        )
+      : PREEMPTIVE_OVERFLOW_RATIO;
+  const singleToolResultContextShare =
+    params.intensityPolicy?.toolResults.mode === "tighten"
+      ? Math.min(
+          SINGLE_TOOL_RESULT_CONTEXT_SHARE,
+          params.intensityPolicy.toolResults.singleToolResultContextShare,
+        )
+      : SINGLE_TOOL_RESULT_CONTEXT_SHARE;
+  return {
+    contextWindowTokens,
+    maxContextChars: Math.max(
+      1_024,
+      Math.floor(contextWindowTokens * CHARS_PER_TOKEN_ESTIMATE * preemptiveOverflowRatio),
+    ),
+    maxSingleToolResultChars: Math.max(
+      1_024,
+      Math.floor(
+        contextWindowTokens * TOOL_RESULT_CHARS_PER_TOKEN_ESTIMATE * singleToolResultContextShare,
+      ),
+    ),
+  };
+}
 
 type GuardableTransformContext = (
   messages: AgentMessage[],
@@ -462,19 +501,13 @@ export function installContextEngineLoopHook(params: {
 export function installToolResultContextGuard(params: {
   agent: GuardableAgent;
   contextWindowTokens: number;
+  intensityPolicy?: RuntimeIntensityPolicy;
   midTurnPrecheck?: MidTurnPrecheckOptions;
 }): () => void {
-  const contextWindowTokens = Math.max(1, Math.floor(params.contextWindowTokens));
-  const maxContextChars = Math.max(
-    1_024,
-    Math.floor(contextWindowTokens * CHARS_PER_TOKEN_ESTIMATE * PREEMPTIVE_OVERFLOW_RATIO),
-  );
-  const maxSingleToolResultChars = Math.max(
-    1_024,
-    Math.floor(
-      contextWindowTokens * TOOL_RESULT_CHARS_PER_TOKEN_ESTIMATE * SINGLE_TOOL_RESULT_CONTEXT_SHARE,
-    ),
-  );
+  const { maxContextChars, maxSingleToolResultChars } = resolveToolResultContextGuardLimits({
+    contextWindowTokens: params.contextWindowTokens,
+    intensityPolicy: params.intensityPolicy,
+  });
 
   // Agent.transformContext is private in session runtime, so access it via a
   // narrow runtime view to keep callsites type-safe while preserving behavior.

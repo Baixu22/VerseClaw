@@ -1,0 +1,130 @@
+# Research Pack — Area 3 §3.5 example Role Pack
+#
+# An adversarial research team: searcher → synthesizer, with a critic
+# verifier. Copy `roles:` into `agents.roles` and `teams:` into
+# `agents.teams` of your `config.openclaw.json`, then reload the gateway.
+# Edit freely — this is a starting point, not a canonical bundle.
+#
+# After install, verify with `gateway.rpc('roles.list')`: each role
+# should appear with `origin: 'config'` (Area 1 badge). The
+# `routing_keywords` field (Area 3 §3.5) lets these roles be routed by
+# user-authored language on equal footing with built-in roles.
+
+roles:
+  - name: searcher
+    display_name: Searcher
+    description: Gathers and triages sources for a research question.
+    role_prompt: |
+      Given a research question, gather candidate sources, deduplicate
+      them, and score each on relevance and recency. Never fabricate
+      sources — if a needed source cannot be found, list it as an open
+      gap. Output a triaged source list with one-line relevance notes so
+      the synthesizer can pick without re-reading everything.
+    tools: ["read", "glob", "grep"]
+    capabilities: ["task-analysis", "research", "search"]
+    tool_requirements: ["read", "glob", "grep"]
+    risk_profile: medium
+    can_modify_scope: false
+    permissions:
+      filesystem: read
+      network: limited
+      commands: []
+    model:
+      default: null
+      fallback: []
+    effort: medium
+    output_schema:
+      format: markdown
+      sections: ["Triaged sources", "Open gaps"]
+    handoff:
+      to: ["synthesizer"]
+      from: []
+      requires_review: false
+    version: "1.0.0"
+    tags: ["research", "search"]
+    routing_keywords: ["search", "source", "literature", "gather", "检索", "文献"]
+
+  - name: synthesizer
+    display_name: Synthesizer
+    description: Integrates triaged sources into a structured synthesis with explicit confidence.
+    role_prompt: |
+      Take the searcher's triaged sources and produce a structured
+      synthesis: key findings, points of agreement, points of
+      disagreement, and open questions. Mark every claim with its source
+      index. Assign a confidence level (high/medium/low) per finding so
+      the critic knows where to push hardest. Do not introduce claims
+      that lack a source — those go under open questions instead.
+    tools: ["read", "write", "edit", "glob", "grep"]
+    capabilities: ["task-analysis", "research", "synthesis"]
+    tool_requirements: ["read", "write", "edit"]
+    risk_profile: low
+    can_modify_scope: false
+    permissions:
+      filesystem: write
+      network: none
+      commands: []
+    model:
+      default: null
+      fallback: []
+    effort: high
+    output_schema:
+      format: markdown
+      sections: ["Key findings", "Agreement", "Disagreement", "Open questions", "Confidence"]
+    handoff:
+      to: ["critic"]
+      from: ["searcher"]
+      requires_review: false
+    version: "1.0.0"
+    tags: ["research", "synthesis"]
+    routing_keywords: ["synthesize", "integrate", "summary", "findings", "综合", "总结"]
+
+  - name: critic
+    display_name: Critic
+    description: Adversarially reviews the synthesis for unsupported claims and missing perspectives.
+    role_prompt: |
+      Adversarially review the synthesizer's output. For every claim
+      marked high-confidence, attempt to refute it from the same source
+      set or flag missing perspectives. For every open question, propose
+      a concrete next step that would close it. Return a verdict:
+      accept, accept-with-revisions (list them), or reject (with the
+      single strongest reason). Do not rewrite the synthesis — your job
+      is to stress-test it, not replace it.
+    tools: ["read", "glob", "grep"]
+    capabilities: ["task-analysis", "review", "verification"]
+    tool_requirements: ["read", "glob", "grep"]
+    risk_profile: medium
+    can_modify_scope: false
+    permissions:
+      filesystem: read
+      network: limited
+      commands: []
+    model:
+      default: null
+      fallback: []
+    effort: high
+    output_schema:
+      format: markdown
+      sections: ["Refutations attempted", "Missing perspectives", "Required revisions", "Verdict"]
+    handoff:
+      to: []
+      from: ["synthesizer"]
+      requires_review: true
+    version: "1.0.0"
+    tags: ["research", "verification", "adversarial"]
+    routing_keywords: ["critique", "review", "challenge", "refute", "批判", "反驳"]
+
+teams:
+  - id: research-team
+    name: Research Team
+    description: Adversarial research flow: search → synthesize, with critic verification.
+    mode: adversarial-review
+    default_lead_role: synthesizer
+    verifier_role: critic
+    roles:
+      - role_name: searcher
+        required: true
+      - role_name: synthesizer
+        required: true
+      - role_name: critic
+        required: true
+    tags: ["research", "adversarial"]

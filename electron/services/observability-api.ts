@@ -15,6 +15,7 @@ import {
   persistObservabilityTracesToIndex,
   queryObservabilityTraces,
 } from './observability-index';
+import { refreshObservabilityTrajectoryIndex } from './observability-trajectory-index';
 import { readTrajectoryEventsForTrace } from './observability-trajectory';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type {
@@ -55,6 +56,7 @@ async function ingestRuntimeTraces(): Promise<void> {
 
 async function refreshTraceIndex(): Promise<void> {
   await loadObservabilityIndex();
+  await refreshObservabilityTrajectoryIndex();
   const memoryTraces = getObservabilityTraceBuffer();
   if (memoryTraces.length > 0) {
     await persistObservabilityTracesToIndex(memoryTraces);

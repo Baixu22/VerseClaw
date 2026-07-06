@@ -103,6 +103,24 @@ export type OrchestrationRerouteRecommendation = {
   missingCapabilities?: string[];
 };
 
+export type OrchestrationDiagnosticsRecommendation = {
+  code: "worker-spawn-failed" | "reroute-consideration";
+  roleName?: string;
+  message: string;
+  recommendedAction: string;
+};
+
+export type OrchestrationDiagnostics = {
+  kind: "ordinary-orchestration-diagnostics";
+  boundary: "diagnostics-only";
+  status: "ok" | "needs_attention";
+  summary: string;
+  failedWorkerCount: number;
+  taskLoopUpgradeAvailable: boolean;
+  recommendations: OrchestrationDiagnosticsRecommendation[];
+  nextSteps: string[];
+};
+
 export type OrchestratorGraphWorker = {
   roleName: string;
   task: string;
@@ -744,6 +762,54 @@ export function buildRerouteRecommendations(params: {
     }];
   });
   return [...fromCapabilityGaps, ...fromFailures];
+}
+
+export function buildOrchestrationDiagnostics(params: {
+  failures: readonly { roleName: string; status: string; error?: string }[];
+  rerouteRecommendations?: readonly OrchestrationRerouteRecommendation[];
+}): OrchestrationDiagnostics {
+  const recommendations: OrchestrationDiagnosticsRecommendation[] = [];
+  for (const failure of params.failures) {
+    const error = failure.error?.trim();
+    recommendations.push({
+      code: "worker-spawn-failed",
+      roleName: failure.roleName,
+      message: error
+        ? `Worker failed before acceptance: ${error}`
+        : `Worker failed before acceptance with status ${failure.status}.`,
+      recommendedAction: /permission|forbidden/i.test(`${failure.status} ${error ?? ""}`)
+        ? "Review worker limits or permissions before retrying ordinary orchestration."
+        : "Review the worker details before retrying ordinary orchestration.",
+    });
+  }
+  for (const reroute of params.rerouteRecommendations ?? []) {
+    recommendations.push({
+      code: "reroute-consideration",
+      roleName: reroute.roleName,
+      message: `Role ${reroute.roleName} may need a different route because ${reroute.reason}.`,
+      recommendedAction: "Choose an explicit role or adjust role settings before retrying ordinary orchestration.",
+    });
+  }
+
+  const failedWorkerCount = params.failures.length;
+  const status: OrchestrationDiagnostics["status"] = recommendations.length > 0 ? "needs_attention" : "ok";
+  return {
+    kind: "ordinary-orchestration-diagnostics",
+    boundary: "diagnostics-only",
+    status,
+    summary: status === "needs_attention"
+      ? `${failedWorkerCount} worker${failedWorkerCount === 1 ? "" : "s"} did not start. Ordinary orchestration is showing diagnostics only.`
+      : "Ordinary orchestration completed without diagnostic recommendations.",
+    failedWorkerCount,
+    taskLoopUpgradeAvailable: true,
+    recommendations,
+    nextSteps: status === "needs_attention"
+      ? [
+          "Review failed worker details",
+          "Explicitly start Task Loop only if a governed long-run retry is needed",
+        ]
+      : [],
+  };
 }
 
 export function buildPendingGraphNodesFromFollowups(params: {

@@ -166,6 +166,76 @@ describe('deriveTaskSteps', () => {
     ]);
   });
 
+  it('keeps historical tool results and final assistant reply locatable in the execution graph', () => {
+    const steps = deriveTaskSteps({
+      messages: [
+        {
+          role: 'assistant',
+          id: 'tool-calls',
+          content: [
+            { type: 'tool_use', id: 'read-call', name: 'read', input: { filePath: 'src/math.js' } },
+            { type: 'tool_use', id: 'edit-call', name: 'edit', input: { filePath: 'src/math.js' } },
+            { type: 'tool_use', id: 'exec-call', name: 'exec', input: { command: 'node test/run-tests.mjs' } },
+          ],
+        },
+        {
+          role: 'toolResult',
+          toolCallId: 'read-call',
+          toolName: 'read',
+          content: [{ type: 'text', text: 'Read src/math.js' }],
+        },
+        {
+          role: 'toolResult',
+          toolCallId: 'edit-call',
+          toolName: 'edit',
+          content: [{ type: 'text', text: 'Updated subtract implementation' }],
+        },
+        {
+          role: 'toolResult',
+          toolCallId: 'exec-call',
+          toolName: 'exec',
+          content: [{ type: 'text', text: 'math tests passed' }],
+        },
+        {
+          role: 'assistant',
+          id: 'final-assistant',
+          content: [{ type: 'text', text: 'Fixed subtract and tests now pass.' }],
+        },
+      ],
+      streamingTools: [],
+    });
+
+    expect(steps).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'read-call', label: 'read', kind: 'tool' }),
+      expect.objectContaining({ id: 'edit-call', label: 'edit', kind: 'tool' }),
+      expect.objectContaining({ id: 'exec-call', label: 'exec', kind: 'tool' }),
+      expect.objectContaining({
+        id: 'tool-result-read-call',
+        label: 'Tool Result: read',
+        kind: 'system',
+        detail: 'Read src/math.js',
+      }),
+      expect.objectContaining({
+        id: 'tool-result-edit-call',
+        label: 'Tool Result: edit',
+        kind: 'system',
+        detail: 'Updated subtract implementation',
+      }),
+      expect.objectContaining({
+        id: 'tool-result-exec-call',
+        label: 'Tool Result: exec',
+        kind: 'system',
+        detail: 'math tests passed',
+      }),
+      expect.objectContaining({
+        id: 'assistant-final-final-assistant',
+        label: 'Assistant Final',
+        kind: 'system',
+        detail: 'Fixed subtract and tests now pass.',
+      }),
+    ]));
+  });
+
   it('upgrades a completed historical tool step when streaming status reports a later state', () => {
     const steps = deriveTaskSteps({
       messages: [

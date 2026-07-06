@@ -19,9 +19,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { testHome, testUserData, mockLoggerWarn, mockLoggerInfo, mockLoggerError } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
+  const root = process.env.CLAWX_TEST_TMPDIR ?? `${process.cwd()}/.tmp/vitest`;
   return {
-    testHome: `/tmp/clawx-whatsapp-login-${suffix}`,
-    testUserData: `/tmp/clawx-whatsapp-login-user-data-${suffix}`,
+    testHome: `${root}/clawx-whatsapp-login-${suffix}`,
+    testUserData: `${root}/clawx-whatsapp-login-user-data-${suffix}`,
     mockLoggerWarn: vi.fn(),
     mockLoggerInfo: vi.fn(),
     mockLoggerError: vi.fn(),

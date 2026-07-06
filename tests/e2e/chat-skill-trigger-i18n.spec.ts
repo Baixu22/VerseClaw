@@ -39,7 +39,7 @@ function stableStringify(value: unknown): string {
 }
 
 test.describe('Verse Claw chat skill trigger', () => {
-  test('renders the localized Chinese skill label after the @ trigger', async ({ launchElectronApp }) => {
+  test('renders localized skill access inside the slash palette', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -117,6 +117,14 @@ test.describe('Verse Claw chat skill trigger', () => {
                     manifestPath: '/tmp/workspace/skill/create-skill/SKILL.md',
                     baseDir: '/tmp/workspace/skill/create-skill',
                   },
+                  {
+                    name: 'officecli-docx',
+                    description: 'Work with Word documents.',
+                    source: 'openclaw',
+                    sourceLabel: 'OpenClaw',
+                    manifestPath: '/tmp/openclaw/skills/officecli-docx/SKILL.md',
+                    baseDir: '/tmp/openclaw/skills/officecli-docx',
+                  },
                 ],
               },
             },
@@ -128,36 +136,36 @@ test.describe('Verse Claw chat skill trigger', () => {
 
       await expect(page.getByTestId('main-layout')).toBeVisible();
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByTestId('chat-composer-workspace-actions')).toBeVisible();
-      await page.getByTestId('chat-composer-workspace-actions').click();
-      await expect(page.getByTestId('chat-composer-workspace-actions-menu')).toBeVisible();
+      await page.getByTestId('chat-composer-permission-mode').click();
+      await expect(page.getByTestId('chat-composer-permission-menu')).toBeVisible();
       await expect(page.getByTestId('chat-composer-permission-option-acceptEdits')).toBeVisible();
       await expect(page.getByTestId('chat-composer-new-session')).toBeVisible();
       await page.keyboard.press('Escape');
+      await expect(page.getByTestId('chat-composer-permission-menu')).toHaveCount(0);
       await expect(page.getByTestId('chat-composer-agent')).toBeVisible();
-      await expect(page.getByTestId('chat-composer-skill')).toHaveText('技能');
+      await expect(page.getByTestId('chat-composer-skill')).toHaveCount(0);
+      await expect(page.getByTestId('chat-model-picker-button')).toHaveCount(0);
 
-      const isSkillAfterAgent = await page.evaluate(() => {
-        const agentTrigger = document.querySelector('[data-testid="chat-composer-agent"]');
-        const skillTrigger = document.querySelector('[data-testid="chat-composer-skill"]');
-        if (!(agentTrigger instanceof HTMLElement) || !(skillTrigger instanceof HTMLElement)) {
-          return false;
-        }
-        return Boolean(agentTrigger.compareDocumentPosition(skillTrigger) & Node.DOCUMENT_POSITION_FOLLOWING);
-      });
+      await page.getByTestId('chat-composer-actions').click();
+      await expect(page.getByTestId('chat-composer-actions-menu')).toBeVisible();
+      await expect(page.getByTestId('chat-composer-action-group-context')).toBeVisible();
+      await expect(page.getByTestId('chat-composer-action-group-skills')).toBeVisible();
+      await expect(page.getByTestId('chat-composer-action-group-office')).toBeVisible();
+      await expect(page.getByTestId('chat-composer-action-skill-create-skill')).toBeVisible();
+      await page.getByTestId('chat-composer-action-skill-create-skill').click();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue('/create-skill  ');
+      await page.getByTestId('chat-composer-input').fill('');
 
-      expect(isSkillAfterAgent).toBe(true);
+      await page.getByTestId('chat-composer-actions').click();
+      await page.getByTestId('chat-composer-action-office-word').click();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(/\/officecli-docx {2}.+/);
+      await page.getByTestId('chat-composer-input').fill('');
 
-      await page.getByTestId('chat-composer-input').fill('Draft a new helper');
-      await page.getByTestId('chat-composer-input').evaluate((element) => {
-        if (!(element instanceof HTMLTextAreaElement)) return;
-        const cursorPosition = 'Draft '.length;
-        element.focus();
-        element.setSelectionRange(cursorPosition, cursorPosition);
-      });
-      await page.getByTestId('chat-composer-skill').click();
-      await page.getByText('/create-skill', { exact: true }).click();
-      await expect(page.getByTestId('chat-composer-input')).toHaveValue('Draft /create-skill  a new helper');
+      await page.getByTestId('chat-composer-input').fill('Draft /create');
+      await expect(page.getByTestId('chat-slash-command-menu')).toBeVisible();
+      await expect(page.getByTestId('chat-slash-command-group-skills')).toContainText('技能');
+      await page.getByTestId('chat-composer-skill-option-create-skill').click();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue('Draft /create-skill  ');
       await expect(page.getByTestId('chat-composer-skill-token')).toHaveText('/create-skill');
     } finally {
       await closeElectronApp(app);
@@ -250,9 +258,8 @@ test.describe('Verse Claw chat skill trigger', () => {
       const page = await getStableWindow(app);
 
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
-      await page.getByTestId('chat-composer-input').fill('Hello ');
-      await page.getByTestId('chat-composer-skill').click();
-      await page.getByText('/create-skill', { exact: true }).click();
+      await page.getByTestId('chat-composer-input').fill('Hello /create');
+      await page.getByTestId('chat-composer-skill-option-create-skill').click();
       await expect(page.getByTestId('chat-composer-skill-token')).toHaveText('/create-skill');
 
       await page.getByTestId('chat-composer-skill-token').click();
@@ -323,14 +330,31 @@ test.describe('Verse Claw chat skill trigger', () => {
             sessionKey: SESSION_KEY,
             state: {},
           }])]: { success: true },
-          [stableStringify(['skills', 'local', null])]: {
+          [stableStringify(['capabilities', 'publications', {
+            includeCandidates: true,
+            includeDiagnostics: true,
+            includeToolCatalog: 'warmOnly',
+          }])]: {
             success: true,
-            skills: [
+            source: 'local-fallback',
+            generatedAt: '2025-01-01T00:00:00.000Z',
+            diagnostics: [],
+            publications: [
               {
-                id: 'create-skill',
+                id: 'skill:create-skill',
+                kind: 'skill',
+                sourceId: 'create-skill',
                 name: 'create-skill',
-                description: 'Create and refine reusable skills.',
-                enabled: false,
+                owner: { type: 'workspace', id: 'workspace-1' },
+                scope: 'workspace',
+                source: 'workspace',
+                state: 'available',
+                exposure: { userInvocable: true, promptVisible: false, runtimeVisible: false },
+                useModes: ['userCommand'],
+                runtime: { status: 'ready', method: 'prompt', source: 'local-fallback' },
+                reasons: [],
+                diagnostics: [],
+                skillId: 'create-skill',
               },
             ],
           },

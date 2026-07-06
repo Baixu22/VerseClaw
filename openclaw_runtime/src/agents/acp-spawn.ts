@@ -17,7 +17,7 @@ import {
   type AcpSpawnRuntimeCloseHandle,
 } from "../acp/control-plane/spawn.js";
 import { isAcpEnabledByPolicy, resolveAcpAgentPolicyError } from "../acp/policy.js";
-import { readAcpSessionMeta } from "../acp/runtime/session-meta.js";
+import { readAcpSessionMeta } from "../runtime/session-meta.ts";
 import { DEFAULT_HEARTBEAT_EVERY } from "../auto-reply/heartbeat.js";
 import { formatThinkingLevels } from "../auto-reply/thinking.js";
 import {

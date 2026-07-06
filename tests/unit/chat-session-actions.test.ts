@@ -3,6 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const gatewayRpcMock = vi.fn();
 const sessionDeleteMock = vi.fn();
 const sessionRenameMock = vi.fn();
+const sessionArchiveMock = vi.fn();
+const sessionRestoreMock = vi.fn();
+const sessionPermanentDeleteMock = vi.fn();
+const sessionListArchivedMock = vi.fn();
 
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
@@ -22,6 +26,10 @@ vi.mock('@/lib/host-api', () => ({
     sessions: {
       delete: (id: string) => sessionDeleteMock(id),
       rename: (id: string, title: string) => sessionRenameMock(id, title),
+      archive: (input: unknown) => sessionArchiveMock(input),
+      restore: (input: unknown) => sessionRestoreMock(input),
+      permanentDelete: (input: unknown) => sessionPermanentDeleteMock(input),
+      listArchived: (input?: unknown) => sessionListArchivedMock(input),
     },
   },
 }));
@@ -41,7 +49,11 @@ type ChatLikeState = {
   pendingFinal: boolean;
   lastUserMessageAt: number | null;
   pendingToolImages: unknown[];
+  archivedSessions: Array<{ sessionKey: string; agentId: string; label: string; archivedAt: number }>;
+  archivedSessionsLoading: boolean;
   loadHistory: ReturnType<typeof vi.fn>;
+  loadSessions: ReturnType<typeof vi.fn>;
+  loadArchivedSessions: ReturnType<typeof vi.fn>;
 };
 
 function makeHarness(initial?: Partial<ChatLikeState>) {
@@ -60,7 +72,11 @@ function makeHarness(initial?: Partial<ChatLikeState>) {
     pendingFinal: false,
     lastUserMessageAt: null,
     pendingToolImages: [],
+    archivedSessions: [],
+    archivedSessionsLoading: false,
     loadHistory: vi.fn(),
+    loadSessions: vi.fn(),
+    loadArchivedSessions: vi.fn(),
     ...initial,
   };
   const set = (partial: Partial<ChatLikeState> | ((s: ChatLikeState) => Partial<ChatLikeState>)) => {
@@ -77,6 +93,10 @@ describe('chat session actions', () => {
     gatewayRpcMock.mockResolvedValue({ success: true });
     sessionDeleteMock.mockResolvedValue({ success: true });
     sessionRenameMock.mockResolvedValue({ success: true });
+    sessionArchiveMock.mockResolvedValue({ success: true, entries: [] });
+    sessionRestoreMock.mockResolvedValue({ success: true });
+    sessionPermanentDeleteMock.mockResolvedValue({ success: true });
+    sessionListArchivedMock.mockResolvedValue({ success: true, entries: [] });
   });
 
   it('switchSession preserves non-main session that has activity history', async () => {
@@ -272,5 +292,156 @@ describe('chat session actions', () => {
     expect(next.activeRunId).toBe('run-current');
     expect(next.pendingFinal).toBe(true);
     expect(next.lastUserMessageAt).toBe(2000);
+  });
+
+  it('archiveSession removes the session from the sidebar and calls the archive IPC', async () => {
+    const { createSessionActions } = await import('@/stores/chat/session-actions');
+    const h = makeHarness({
+      currentSessionKey: 'agent:main:session-a',
+      sessions: [{ key: 'agent:main:session-a' }, { key: 'agent:main:main' }],
+      sessionLabels: { 'agent:main:session-a': 'A' },
+      sessionLastActivity: { 'agent:main:session-a': 1 },
+    });
+    const actions = createSessionActions(h.set as never, h.get as never);
+
+    await actions.archiveSession('agent:main:session-a', { workspaceId: 'ws-1', folderId: null });
+
+    expect(sessionArchiveMock).toHaveBeenCalledWith({
+      id: 'agent:main:session-a',
+      originalWorkspaceId: 'ws-1',
+      originalFolderId: null,
+    });
+    const next = h.read();
+    expect(next.sessions.map((s) => s.key)).toEqual(['agent:main:main']);
+    expect(next.sessionLabels['agent:main:session-a']).toBeUndefined();
+    expect(next.sessionLastActivity['agent:main:session-a']).toBeUndefined();
+    // Archiving the current session switches to the next remaining session.
+    expect(next.currentSessionKey).toBe('agent:main:main');
+    expect(next.loadHistory).toHaveBeenCalledTimes(1);
+  });
+
+  it('archiveSession on a non-current session keeps the current session key', async () => {
+    const { createSessionActions } = await import('@/stores/chat/session-actions');
+    const h = makeHarness({
+      currentSessionKey: 'agent:main:main',
+      sessions: [{ key: 'agent:main:main' }, { key: 'agent:main:session-b' }],
+      sessionLabels: { 'agent:main:session-b': 'B' },
+    });
+    const actions = createSessionActions(h.set as never, h.get as never);
+
+    await actions.archiveSession('agent:main:session-b');
+
+    expect(sessionArchiveMock).toHaveBeenCalledWith({
+      id: 'agent:main:session-b',
+      originalWorkspaceId: null,
+      originalFolderId: null,
+    });
+    const next = h.read();
+    expect(next.currentSessionKey).toBe('agent:main:main');
+    expect(next.sessions.map((s) => s.key)).toEqual(['agent:main:main']);
+    // loadHistory should NOT be called because the current session didn't change.
+    expect(next.loadHistory).not.toHaveBeenCalled();
+  });
+
+  it('restoreSession removes the entry from archivedSessions and reloads sessions', async () => {
+    const { createSessionActions } = await import('@/stores/chat/session-actions');
+    const archivedEntry = {
+      sessionKey: 'agent:main:session-old',
+      agentId: 'main',
+      label: 'Old',
+      archivedAt: 1000,
+    };
+    const h = makeHarness({
+      currentSessionKey: 'agent:main:main',
+      sessions: [{ key: 'agent:main:main' }],
+      archivedSessions: [archivedEntry],
+    });
+    const actions = createSessionActions(h.set as never, h.get as never);
+
+    await actions.restoreSession('agent:main:session-old');
+
+    expect(sessionRestoreMock).toHaveBeenCalledWith({ id: 'agent:main:session-old' });
+    const next = h.read();
+    expect(next.archivedSessions).toEqual([]);
+    // loadSessions is called to re-surface the restored session in the sidebar.
+    expect(next.loadSessions).toHaveBeenCalledTimes(1);
+  });
+
+  it('restoreSession does not reload sessions when the IPC call fails', async () => {
+    const { createSessionActions } = await import('@/stores/chat/session-actions');
+    sessionRestoreMock.mockResolvedValueOnce({ success: false, error: 'disk full' });
+    const h = makeHarness({
+      currentSessionKey: 'agent:main:main',
+      sessions: [{ key: 'agent:main:main' }],
+      archivedSessions: [{
+        sessionKey: 'agent:main:session-old',
+        agentId: 'main',
+        label: 'Old',
+        archivedAt: 1000,
+      }],
+    });
+    const actions = createSessionActions(h.set as never, h.get as never);
+
+    await actions.restoreSession('agent:main:session-old');
+
+    expect(h.read().archivedSessions).toHaveLength(1);
+    expect(h.read().loadSessions).not.toHaveBeenCalled();
+  });
+
+  it('permanentDeleteSession removes the entry from archivedSessions', async () => {
+    const { createSessionActions } = await import('@/stores/chat/session-actions');
+    const entryA = { sessionKey: 'agent:main:session-a', agentId: 'main', label: 'A', archivedAt: 1 };
+    const entryB = { sessionKey: 'agent:main:session-b', agentId: 'main', label: 'B', archivedAt: 2 };
+    const h = makeHarness({
+      currentSessionKey: 'agent:main:main',
+      sessions: [{ key: 'agent:main:main' }],
+      archivedSessions: [entryA, entryB],
+    });
+    const actions = createSessionActions(h.set as never, h.get as never);
+
+    await actions.permanentDeleteSession('agent:main:session-a');
+
+    expect(sessionPermanentDeleteMock).toHaveBeenCalledWith({ id: 'agent:main:session-a' });
+    const next = h.read();
+    expect(next.archivedSessions.map((e) => e.sessionKey)).toEqual(['agent:main:session-b']);
+  });
+
+  it('loadArchivedSessions populates archivedSessions from the IPC result', async () => {
+    const { createSessionActions } = await import('@/stores/chat/session-actions');
+    const h = makeHarness({
+      currentSessionKey: 'agent:main:main',
+      sessions: [{ key: 'agent:main:main' }],
+    });
+    const actions = createSessionActions(h.set as never, h.get as never);
+
+    const entries = [
+      { sessionKey: 'agent:main:old-1', agentId: 'main', label: 'Old 1', archivedAt: 1000 },
+      { sessionKey: 'agent:main:old-2', agentId: 'main', label: 'Old 2', archivedAt: 2000 },
+    ];
+    sessionListArchivedMock.mockResolvedValueOnce({ success: true, entries });
+
+    await actions.loadArchivedSessions('main');
+
+    expect(sessionListArchivedMock).toHaveBeenCalledWith({ agentId: 'main' });
+    const next = h.read();
+    expect(next.archivedSessions).toEqual(entries);
+    expect(next.archivedSessionsLoading).toBe(false);
+  });
+
+  it('loadArchivedSessions clears the list on IPC failure', async () => {
+    const { createSessionActions } = await import('@/stores/chat/session-actions');
+    const h = makeHarness({
+      currentSessionKey: 'agent:main:main',
+      sessions: [{ key: 'agent:main:main' }],
+      archivedSessions: [{ sessionKey: 'agent:main:old', agentId: 'main', label: 'Old', archivedAt: 1 }],
+    });
+    const actions = createSessionActions(h.set as never, h.get as never);
+
+    sessionListArchivedMock.mockRejectedValueOnce(new Error('IPC failed'));
+    await actions.loadArchivedSessions();
+
+    const next = h.read();
+    expect(next.archivedSessions).toEqual([]);
+    expect(next.archivedSessionsLoading).toBe(false);
   });
 });

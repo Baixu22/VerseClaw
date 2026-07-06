@@ -26,6 +26,13 @@ import {
   createPermissionApproval,
   recordPermissionAudit,
 } from './permissions-api';
+import {
+  extractMaxWorkers,
+  extractRequestedRoles,
+  extractTemplateId,
+  listActiveOrchestrationPresets,
+  matchOrchestrationPreset,
+} from './orchestration-presets-api';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { decideGatewayRpc, isApprovalRisk } from './workspace-permissions';
 
@@ -373,6 +380,42 @@ export function createGatewayApi(
         if (!decision.allowed) {
           if (decision.requiresApproval && isApprovalRisk(decision.risk)) {
             const requestHash = buildGatewayRequestHash(method, body.params);
+
+            // Area 3 §3.3: Trusted Orchestration Presets — for orchestrator.run,
+            // check whether an active workspace preset covers this exact shape
+            // (templateId + role set + maxWorkers). If yes, auto-approve and
+            // record an audit line ("approved by preset X"). Exceeding the
+            // preset in any dimension falls through to the normal dialog.
+            // Store read failure → no presets → normal flow (degrade to today).
+            if (method === 'orchestrator.run') {
+              try {
+                const presets = await listActiveOrchestrationPresets(workspace.id);
+                if (presets.length > 0) {
+                  const matchResult = matchOrchestrationPreset(presets, {
+                    workspaceId: workspace.id,
+                    templateId: extractTemplateId(body.params),
+                    requestedRoles: extractRequestedRoles(body.params),
+                    maxWorkers: extractMaxWorkers(body.params),
+                  });
+                  if (matchResult.matched && matchResult.preset) {
+                    void recordPermissionAudit({
+                      workspace,
+                      source: 'gateway',
+                      risk: decision.risk,
+                      command: method,
+                      requestHash,
+                      paramsPreview: buildParamsPreview(body.params),
+                      reason: `approved by preset ${matchResult.preset.label} (${matchResult.preset.id})`,
+                    });
+                    return runRpcAndCaptureKnowledge(method, body.params, timeoutMs);
+                  }
+                }
+              } catch {
+                // Preset check is best-effort; any error → fall through to
+                // the normal approval flow so the gate is never weakened.
+              }
+            }
+
             if (approvalId) {
               const approved = await consumeApprovedPermissionApproval({
                 id: approvalId,

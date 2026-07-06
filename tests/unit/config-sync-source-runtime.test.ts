@@ -1,8 +1,19 @@
 import { describe, expect, it, vi } from 'vitest';
 
-const { mockExecFile, mockSpawnSync } = vi.hoisted(() => ({
+const {
+  mockExecFile,
+  mockGetDefaultProvider,
+  mockGetProvider,
+  mockGetApiKey,
+  mockSpawnSync,
+  mockSyncDefaultProviderToRuntime,
+} = vi.hoisted(() => ({
   mockExecFile: vi.fn(),
+  mockGetDefaultProvider: vi.fn(),
+  mockGetProvider: vi.fn(),
+  mockGetApiKey: vi.fn(),
   mockSpawnSync: vi.fn(),
+  mockSyncDefaultProviderToRuntime: vi.fn(),
 }));
 
 vi.mock('node:child_process', () => ({
@@ -14,7 +25,47 @@ vi.mock('node:child_process', () => ({
   },
 }));
 
+vi.mock('@electron/utils/secure-storage', () => ({
+  getApiKey: mockGetApiKey,
+  getDefaultProvider: mockGetDefaultProvider,
+  getProvider: mockGetProvider,
+}));
+
+vi.mock('@electron/services/providers/provider-runtime-sync', () => ({
+  syncDefaultProviderToRuntime: mockSyncDefaultProviderToRuntime,
+}));
+
+describe('syncDefaultProviderRuntimeBeforeLaunch', () => {
+  it('syncs the configured default provider before Gateway launch config is copied', async () => {
+    mockGetDefaultProvider.mockResolvedValue('deepseek');
+    mockSyncDefaultProviderToRuntime.mockResolvedValue(undefined);
+
+    const { syncDefaultProviderRuntimeBeforeLaunch } = await import('@electron/gateway/config-sync');
+    await syncDefaultProviderRuntimeBeforeLaunch();
+
+    expect(mockSyncDefaultProviderToRuntime).toHaveBeenCalledWith('deepseek');
+  });
+});
+
 describe('applySourceRuntimeSandboxAutoFallback', () => {
+  it('strips legacy agent reasoningEffort from source runtime config copies', async () => {
+    const { stripSourceRuntimeIncompatibleConfigKeys } = await import('@electron/gateway/config-sync');
+
+    const result = stripSourceRuntimeIncompatibleConfigKeys({
+      agents: {
+        list: [
+          { id: 'main', reasoningEffort: 'high', thinkingDefault: 'high' },
+          { id: 'helper', reasoningEffort: 'medium' },
+        ],
+      },
+    });
+
+    const list = ((result.agents as { list: Array<Record<string, unknown>> }).list);
+    expect(list.find((agent) => agent.id === 'main')?.reasoningEffort).toBeUndefined();
+    expect(list.find((agent) => agent.id === 'main')?.thinkingDefault).toBe('high');
+    expect(list.find((agent) => agent.id === 'helper')?.reasoningEffort).toBeUndefined();
+  });
+
   it('forces sandbox off for defaults and per-agent overrides when Docker image is unavailable', async () => {
     mockSpawnSync.mockReturnValue({ status: 1 });
 

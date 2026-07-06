@@ -23,6 +23,7 @@ interface SettingsState {
   gatewayAutoStart: boolean;
   gatewayPort: number;
   roleMemoryEnabled: boolean;
+  memoryEmbeddingEnabled: boolean;
   cdpRemoteControlEnabled: boolean;
   cdpRemoteDebuggingPort: number;
   proxyEnabled: boolean;
@@ -51,6 +52,7 @@ interface SettingsState {
   setGatewayAutoStart: (value: boolean) => void;
   setGatewayPort: (port: number) => void;
   setRoleMemoryEnabled: (value: boolean) => void;
+  setMemoryEmbeddingEnabled: (value: boolean) => void;
   setCdpRemoteControlEnabled: (value: boolean) => void;
   setCdpRemoteDebuggingPort: (port: number) => void;
   setProxyEnabled: (value: boolean) => void;
@@ -76,6 +78,7 @@ const defaultSettings = {
   gatewayAutoStart: true,
   gatewayPort: 18789,
   roleMemoryEnabled: true,
+  memoryEmbeddingEnabled: false,
   cdpRemoteControlEnabled: false,
   cdpRemoteDebuggingPort: 9222,
   proxyEnabled: false,
@@ -151,6 +154,10 @@ export const useSettingsStore = create<SettingsState>()(
       setRoleMemoryEnabled: (roleMemoryEnabled) => {
         set({ roleMemoryEnabled });
         void hostApi.settings.set('roleMemoryEnabled', roleMemoryEnabled).catch(() => { });
+      },
+      setMemoryEmbeddingEnabled: (memoryEmbeddingEnabled) => {
+        set({ memoryEmbeddingEnabled });
+        void hostApi.settings.set('memoryEmbeddingEnabled', memoryEmbeddingEnabled).catch(() => { });
       },
       setCdpRemoteControlEnabled: (cdpRemoteControlEnabled) => {
         set({ cdpRemoteControlEnabled });

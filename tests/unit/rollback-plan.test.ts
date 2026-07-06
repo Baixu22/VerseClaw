@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildRollbackPlan } from '@/pages/Chat/rollback-plan';
+import { buildRollbackPlan, hasRollbackPlanSidebarTrigger } from '@/pages/Chat/rollback-plan';
 
 describe('rollback plan', () => {
   it('labels checkpoint handoff as evidence-backed when fingerprints and tool results are available', () => {
@@ -146,6 +146,7 @@ describe('rollback plan', () => {
       risk: 'dangerous',
       command: 'openGit',
     });
+    expect(hasRollbackPlanSidebarTrigger(plan)).toBe(true);
     expect(plan.riskCounts).toEqual({ safe: 2, review: 3, dangerous: 2 });
     expect(plan.signals).toEqual(expect.arrayContaining([
       expect.objectContaining({ kind: 'checkpoint', active: true, risk: 'safe' }),
@@ -206,6 +207,49 @@ describe('rollback plan', () => {
       expect.objectContaining({ kind: 'context', active: true, risk: 'review' }),
       expect.objectContaining({ kind: 'git', active: true, risk: 'dangerous' }),
     ]));
+    expect(hasRollbackPlanSidebarTrigger(plan)).toBe(true);
+  });
+
+  it('does not request the chat side rail for generic recovery shortcuts only', () => {
+    const plan = buildRollbackPlan({
+      activeRun: false,
+      gatewayAvailable: true,
+      queueDrainBusy: false,
+      compactionBusy: false,
+      handoffDisabled: true,
+      contextRange: {
+        sessionKey: 'agent:main:main',
+        usedTokens: 1000,
+        maxTokens: 128000,
+        truncatedMessageCount: 0,
+        status: 'bestEffort',
+      },
+      compactionStatus: {
+        success: true,
+        available: true,
+        canCompact: false,
+        inProgress: false,
+        pressure: 'low',
+        usedTokens: 1000,
+        maxTokens: 128000,
+        remainingTokens: 127000,
+        truncatedMessageCount: 0,
+        warnings: [],
+      },
+      longTaskControlStatus: {
+        available: true,
+        queueCount: 0,
+        warnings: [],
+      },
+    });
+
+    expect(plan.actions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'terminal-control' }),
+      expect.objectContaining({ kind: 'review-git' }),
+      expect.objectContaining({ kind: 'task-ledger-review' }),
+      expect.objectContaining({ kind: 'memory-review' }),
+    ]));
+    expect(hasRollbackPlanSidebarTrigger(plan)).toBe(false);
   });
 
   it('does not add Git recovery when there is no recovery pressure', () => {

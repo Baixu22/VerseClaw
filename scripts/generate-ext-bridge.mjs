@@ -138,25 +138,34 @@ function guessFactoryExport(subpath) {
   return `create${camel}Extension`;
 }
 
+function writeFileIfChanged(path, content) {
+  if (existsSync(path) && readFileSync(path, 'utf-8') === content) {
+    return false;
+  }
+  writeFileSync(path, content);
+  return true;
+}
+
 // ─── Main ───
 const manifest = readManifest();
 
 mkdirSync(dirname(MAIN_OUT), { recursive: true });
 mkdirSync(dirname(RENDERER_OUT), { recursive: true });
 
-writeFileSync(MAIN_OUT, generateMainBridge(manifest));
-writeFileSync(RENDERER_OUT, generateRendererBridge(manifest));
+const mainChanged = writeFileIfChanged(MAIN_OUT, generateMainBridge(manifest));
+const rendererChanged = writeFileIfChanged(RENDERER_OUT, generateRendererBridge(manifest));
 
 const mainExts = (manifest.extensions?.main ?? []).filter(isExternalId);
 const rendererExts = (manifest.extensions?.renderer ?? []).filter(isExternalId);
 const totalExternal = mainExts.length + rendererExts.length;
 
 if (totalExternal === 0) {
-  console.log('[ext-bridge] No external extensions configured — generated empty stubs.');
+  const status = mainChanged || rendererChanged ? 'generated' : 'up to date';
+  console.log(`[ext-bridge] No external extensions configured — empty stubs ${status}.`);
 } else {
   const installedMain = mainExts.filter((id) => isPackageInstalled(resolvePackageName(id)));
   const installedRenderer = rendererExts.filter((id) => isPackageInstalled(resolvePackageName(id)));
   console.log(
-    `[ext-bridge] Generated bridges: ${installedMain.length}/${mainExts.length} main, ${installedRenderer.length}/${rendererExts.length} renderer extensions resolved.`,
+    `[ext-bridge] Bridges ${mainChanged || rendererChanged ? 'generated' : 'up to date'}: ${installedMain.length}/${mainExts.length} main, ${installedRenderer.length}/${rendererExts.length} renderer extensions resolved.`,
   );
 }

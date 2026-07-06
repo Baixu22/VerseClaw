@@ -32,6 +32,10 @@ import { emitModelTransportDebug } from "./model-transport-debug.js";
 import { formatModelTransportDebugUrl } from "./model-transport-url.js";
 import { ProviderHttpError, readResponseTextLimited } from "./provider-http-errors.js";
 import {
+  isProviderPayloadTraceEnabled,
+  recordProviderPayloadTrace,
+} from "./provider-payload-trace.js";
+import {
   ensureModelProviderLocalService,
   type ProviderLocalServiceLease,
 } from "./provider-local-service.js";
@@ -363,6 +367,65 @@ async function requestBodyHasStreamTrue(
   } catch {
     return false;
   }
+}
+
+function decodeProviderTraceBody(body: BodyInit | null | undefined): string | undefined {
+  if (typeof body === "string") {
+    return body;
+  }
+  if (body instanceof ArrayBuffer) {
+    return Buffer.from(body).toString("utf8");
+  }
+  if (ArrayBuffer.isView(body)) {
+    return Buffer.from(body.buffer, body.byteOffset, body.byteLength).toString("utf8");
+  }
+  return undefined;
+}
+
+async function readProviderRequestJsonPayloadForTrace(
+  request: Request | undefined,
+  init: RequestInit | undefined,
+): Promise<unknown | undefined> {
+  if (!isProviderPayloadTraceEnabled()) {
+    return undefined;
+  }
+  const headers = request?.headers ?? new Headers(init?.headers);
+  const contentType = headers.get("content-type") ?? "";
+  if (contentType && !isJsonContentType(contentType)) {
+    return undefined;
+  }
+
+  let text = decodeProviderTraceBody(init?.body ?? null);
+  if (!text && request) {
+    try {
+      text = await request.clone().text();
+    } catch {
+      return undefined;
+    }
+  }
+  if (!text?.trim()) {
+    return undefined;
+  }
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    return undefined;
+  }
+}
+
+function resolveProviderHttpPayloadTraceSource(model: Model, url: string): string {
+  let endpoint = "request";
+  try {
+    const pathname = new URL(url).pathname.toLowerCase();
+    if (pathname.endsWith("/chat/completions")) {
+      endpoint = "chat-completions";
+    } else if (pathname.endsWith("/responses")) {
+      endpoint = "responses";
+    }
+  } catch {
+    // Keep the generic endpoint label for non-standard URL strings.
+  }
+  return `${model.api}-${endpoint}-http`;
 }
 
 function parseRetryAfterSeconds(headers: Headers): number | undefined {
@@ -772,6 +835,14 @@ export function buildGuardedModelFetch(
         ...(request.body ? ({ duplex: "half" } as const) : {}),
       } satisfies RequestInit & { duplex?: "half" });
     const baseInit = requestInit ?? init;
+    const providerPayloadForTrace = await readProviderRequestJsonPayloadForTrace(request, baseInit);
+    if (providerPayloadForTrace !== undefined) {
+      recordProviderPayloadTrace(
+        undefined,
+        providerPayloadForTrace,
+        resolveProviderHttpPayloadTraceSource(model, url),
+      );
+    }
     const synthesizeJsonAsSse = await requestBodyHasStreamTrue(request, baseInit);
     const baseSignal = baseInit?.signal ?? undefined;
     const localServiceSignal = buildModelRequestSignal(baseSignal, requestTimeoutMs);

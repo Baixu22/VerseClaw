@@ -47,6 +47,7 @@ import {
 } from "../plugin-state/plugin-state-store.js";
 import { normalizePluginGatewayMethodScope } from "../shared/gateway-method-policy.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
+import { assertWriteRiskProfileForTool } from "../shared/tool-registration.js";
 import {
   getDetachedTaskLifecycleRuntimeRegistration,
   registerDetachedTaskLifecycleRuntime,
@@ -619,6 +620,11 @@ export function createPluginRegistry(registryParams: PluginRegistryParams) {
 
     if (typeof tool !== "function") {
       names.push(tool.name);
+      // A1 Stage 2 (acceptance 2.1/2.2): enforce writeRiskProfile on
+      // write-capable tools registered via the plugin API. Throws
+      // MissingWriteRiskProfileError (with field='writeRiskProfile') when a
+      // write/destructive tool lacks a valid profile.
+      assertWriteRiskProfileForTool(tool.risk ?? "readonly", tool.writeRiskProfile);
     }
 
     const normalized = normalizePluginToolNames(names);

@@ -1,5 +1,5 @@
 /** Backend failover helpers for ACP session initialization and turn execution. */
-import type { AcpRuntimeErrorCode } from "../runtime/errors.js";
+import type { AcpRuntimeErrorCode } from "../../runtime/errors.ts";
 import { normalizeText } from "./runtime-options.js";
 
 /** Captured backend attempt state used to decide whether failover is safe. */

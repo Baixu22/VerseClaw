@@ -44,6 +44,7 @@ import { stripSystemdSupervisorEnv } from './config-sync-env';
 import { cleanupAgentsSymlinkedSkills, cleanupStalePluginRuntimeDeps } from './skills-symlink-cleanup';
 import { resolveMcpServersForContext } from '../services/mcp-api';
 import { getActiveWorkspaceProfile } from '../services/workspaces-api';
+import { syncDefaultProviderToRuntime } from '../services/providers/provider-runtime-sync';
 import {
   buildPrelaunchMaintenanceCacheKey,
   directoryChildrenSignature,
@@ -523,6 +524,18 @@ export async function syncGatewayConfigBeforeLaunch(
   };
 }
 
+export async function syncDefaultProviderRuntimeBeforeLaunch(): Promise<void> {
+  try {
+    const defaultProviderId = await getDefaultProvider();
+    if (!defaultProviderId) {
+      return;
+    }
+    await syncDefaultProviderToRuntime(defaultProviderId);
+  } catch (err) {
+    logger.warn('Failed to sync default provider model before Gateway launch:', err);
+  }
+}
+
 async function loadProviderEnv(): Promise<{ providerEnv: Record<string, string>; loadedProviderKeyCount: number }> {
   const providerEnv: Record<string, string> = {};
   const providerTypes = getKeyableProviderTypes();
@@ -642,6 +655,43 @@ function forceSandboxOffRecord(value: unknown): Record<string, unknown> {
   };
 }
 
+export function stripSourceRuntimeIncompatibleConfigKeys(config: Record<string, unknown>): Record<string, unknown> {
+  const agents = config.agents && typeof config.agents === 'object' && !Array.isArray(config.agents)
+    ? config.agents as Record<string, unknown>
+    : null;
+  if (!agents || !Array.isArray(agents.list)) {
+    return config;
+  }
+
+  let changed = false;
+  const list = agents.list.map((entry) => {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+      return entry;
+    }
+
+    const agentEntry = entry as Record<string, unknown>;
+    if (!('reasoningEffort' in agentEntry)) {
+      return entry;
+    }
+
+    const { reasoningEffort: _reasoningEffort, ...schemaSafeEntry } = agentEntry;
+    changed = true;
+    return schemaSafeEntry;
+  });
+
+  if (!changed) {
+    return config;
+  }
+
+  return {
+    ...config,
+    agents: {
+      ...agents,
+      list,
+    },
+  };
+}
+
 export function applySourceRuntimeSandboxAutoFallback(config: Record<string, unknown>): Record<string, unknown> {
   if (hasDockerSandboxImage()) {
     return config;
@@ -700,6 +750,7 @@ function prepareSourceRuntimeIsolation(): {
   if (existsSync(userConfigPath)) {
     try {
       userConfig = JSON.parse(readFileSync(userConfigPath, 'utf-8')) as Record<string, unknown>;
+      userConfig = stripSourceRuntimeIncompatibleConfigKeys(userConfig);
     } catch {
       logger.warn('Failed to read user config for source runtime isolation');
     }
@@ -719,7 +770,7 @@ function prepareSourceRuntimeIsolation(): {
       plugins: userConfig.plugins ?? { enabled: false },
       channels: {},
     };
-    const isolatedConfig = applySourceRuntimeSandboxAutoFallback(minimalConfig);
+    const isolatedConfig = applySourceRuntimeSandboxAutoFallback(stripSourceRuntimeIncompatibleConfigKeys(minimalConfig));
     writeFileSync(fsPath(configPath), `${JSON.stringify(isolatedConfig, null, 2)}\n`, 'utf-8');
   } else {
     try {
@@ -754,6 +805,12 @@ function prepareSourceRuntimeIsolation(): {
         }
       }
 
+      const schemaAdjustedConfig = stripSourceRuntimeIncompatibleConfigKeys(nextConfig);
+      if (JSON.stringify(schemaAdjustedConfig) !== JSON.stringify(nextConfig)) {
+        nextConfig = schemaAdjustedConfig;
+        needsWrite = true;
+      }
+
       const sandboxAdjustedConfig = applySourceRuntimeSandboxAutoFallback(nextConfig);
       if (JSON.stringify(sandboxAdjustedConfig) !== JSON.stringify(nextConfig)) {
         nextConfig = sandboxAdjustedConfig;
@@ -779,6 +836,8 @@ function prepareSourceRuntimeIsolation(): {
       OPENCLAW_SKIP_LEGACY_STATE_MIGRATION: '1',
       OPENCLAW_NO_AUTO_UPDATE: '1',
       OPENCLAW_DEFER_STARTUP_SIDECARS: '1',
+      OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS: '600000',
+      OPENCLAW_SKIP_AGENT_PLUGIN_TOOLS: '1',
     },
   };
 }
@@ -822,6 +881,7 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
   }
 
   const appSettings = await measureAsync(timingsMs, 'settingsMs', getAllSettings);
+  await measureAsync(timingsMs, 'defaultProviderRuntimeSyncMs', syncDefaultProviderRuntimeBeforeLaunch);
   const prelaunchSummary: GatewayPrelaunchSyncSummary = runtimeMode === 'source'
     ? { timingsMs: {}, maintenance: {}, configuredChannels: [] }
     : await measureAsync(timingsMs, 'prelaunchSyncMs', async () => (

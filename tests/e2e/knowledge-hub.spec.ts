@@ -335,6 +335,10 @@ test.describe('Knowledge Hub MVP', () => {
             updatedAt: '2026-06-19T00:00:00.000Z',
           }],
         },
+        [typed('knowledge', 'listSourceSets')]: {
+          success: true,
+          sourceSets: [],
+        },
         [typed('knowledge', 'createDraft', {
           title: 'Knowledge Hub decision',
           body: 'Keep Obsidian optional.',
@@ -382,6 +386,7 @@ test.describe('Knowledge Hub MVP', () => {
         [typed('knowledge', 'reviewDraft', {
           id: 'draft-1',
           action: 'approve',
+          stewardNotes: undefined,
         })]: { success: true, draft: { id: 'draft-1', status: 'approved' } },
         [typed('knowledge', 'applyReviewedChange', { id: 'proposal-1' })]: { success: true },
         [typed('dialog', 'open', {
@@ -415,7 +420,8 @@ test.describe('Knowledge Hub MVP', () => {
 
     await page.getByTestId('knowledge-tab-inbox').click();
     await expect(page.getByTestId('knowledge-inbox')).toContainText('Task decision candidate');
-    await expect(page.getByTestId('knowledge-inbox-group-save')).toContainText('Recommended save');
+    await expect(page.getByTestId('knowledge-inbox-group-ready-for-review')).toContainText('Ready for review');
+    await expect(page.getByTestId('knowledge-inbox-group-ready-for-review')).toContainText('Save');
     await expect(page.getByTestId('knowledge-inbox')).toContainText('Mission completed with reusable evidence-backed knowledge.');
     await expect(page.getByTestId('knowledge-inbox')).toContainText('2 evidence');
     await expect(page.getByTestId('knowledge-inbox')).toContainText('Score 77');
@@ -452,10 +458,11 @@ test.describe('Knowledge Hub MVP', () => {
     await page.getByTestId('knowledge-okf-import').click();
     await expect(page.getByText(/OKF concepts imported/)).toBeVisible();
 
+    await page.getByTestId('knowledge-audit-center-button').click();
     await page.getByRole('button', { name: /Compile/ }).click();
-    await expect(page.getByText(/Knowledge compiled/)).toBeVisible();
+    await expect(page.getByText(/Compile complete/)).toBeVisible();
     await page.getByRole('button', { name: /Lint/ }).click();
-    await expect(page.getByText(/Knowledge lint complete/)).toBeVisible();
+    await expect(page.getByText(/Lint complete/)).toBeVisible();
 
     await page.getByTestId('knowledge-search-input').fill('native wiki');
     await page.getByTestId('knowledge-search-submit').click();
@@ -478,7 +485,140 @@ test.describe('Knowledge Hub MVP', () => {
     await expect(page.getByTestId('knowledge-error')).not.toBeVisible();
   });
 
-  test('quickly enables wiki knowledge from the chat composer', async ({ electronApp, page }) => {
+  test('creates a Source Set from search results and generates a review-only Studio draft', async ({ electronApp, page }) => {
+    await installIpcMocks(electronApp, {
+      gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+      gatewayRpc: {
+        [stableStringify(['sessions.list', {}])]: {
+          success: true,
+          result: { sessions: [] },
+        },
+      },
+      hostApi: {
+        [typed('knowledge', 'status')]: {
+          success: true,
+          status: {
+            vaultExists: true,
+            vaultPath: 'C:/clawx/wiki',
+            vaultMode: 'isolated',
+            renderMode: 'native',
+            pageCounts: { source: 1, synthesis: 0 },
+            sourceCounts: { native: 1 },
+            warnings: [],
+            obsidianCli: { available: false },
+          },
+        },
+        [typed('knowledge', 'listInboxItems', { status: 'pending', limit: 100 })]: {
+          success: true,
+          items: [],
+        },
+        [typed('knowledge', 'listDrafts', { status: 'all', limit: 100 })]: {
+          success: true,
+          drafts: [{
+            id: 'studio-draft-1',
+            title: 'Decision Memo',
+            body: '## Sources used\n- Decision (notes/decision.md)',
+            type: 'decision',
+            status: 'draft',
+            sourceIds: ['notes/decision.md'],
+            sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
+            tags: ['studio-artifact', 'decision-memo'],
+            workspaceId: null,
+            agentId: null,
+            createdBy: 'agent',
+            createdAt: '2026-07-05T00:00:00.000Z',
+            updatedAt: '2026-07-05T00:00:00.000Z',
+          }],
+        },
+        [typed('knowledge', 'listProposals', { status: 'all', limit: 100 })]: {
+          success: true,
+          proposals: [],
+        },
+        [typed('knowledge', 'listSourceSets')]: {
+          success: true,
+          sourceSets: [],
+        },
+        [typed('knowledge', 'search', { query: 'durable writes', maxResults: 12, corpus: 'wiki' })]: {
+          success: true,
+          results: [{
+            pagePath: 'notes/decision.md',
+            title: 'Decision',
+            snippet: 'Use source-backed drafts before durable Knowledge writes.',
+          }],
+        },
+        [typed('knowledge', 'saveSourceSet', {
+          title: 'Decision sources',
+          sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
+        })]: {
+          success: true,
+          sourceSet: {
+            id: 'ks-e2e',
+            title: 'Decision sources',
+            sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
+            createdAt: '2026-07-05T00:00:00.000Z',
+            updatedAt: '2026-07-05T00:00:00.000Z',
+          },
+        },
+        [typed('knowledge', 'createArtifactDraft', {
+          artifactType: 'decision-memo',
+          title: 'Decision Memo',
+          question: 'Create a Decision Memo from the current Source Set.',
+          sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
+          sourceSetId: 'ks-e2e',
+        })]: {
+          success: true,
+          draft: {
+            id: 'studio-draft-1',
+            title: 'Decision Memo',
+            body: '## Sources used\n- Decision (notes/decision.md)',
+            type: 'decision',
+            status: 'draft',
+            sourceIds: ['notes/decision.md'],
+            sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
+            tags: ['studio-artifact', 'decision-memo'],
+            workspaceId: null,
+            agentId: null,
+            createdBy: 'agent',
+            createdAt: '2026-07-05T00:00:00.000Z',
+            updatedAt: '2026-07-05T00:00:00.000Z',
+          },
+        },
+      },
+    });
+
+    await completeSetup(page);
+    await page.getByTestId('sidebar-nav-knowledge').click();
+    await expect(page.getByTestId('knowledge-page')).toBeVisible();
+    await expect(page.getByTestId('knowledge-source-set-panel')).toContainText('Current Source Set');
+
+    await page.getByTestId('knowledge-search-input').fill('durable writes');
+    await page.getByTestId('knowledge-search-submit').click();
+    await expect(page.getByTestId('knowledge-search-result')).toContainText('Decision');
+
+    await page.getByTestId('knowledge-source-set-add-result').click();
+    await expect(page.getByTestId('knowledge-source-set-panel')).toContainText('Decision');
+    await expect(page.getByTestId('knowledge-source-set-panel')).toContainText('1 sources');
+
+    await page.getByTestId('knowledge-source-set-title').fill('Decision sources');
+    await expect(page.getByTestId('knowledge-source-set-save')).toBeEnabled();
+    await page.getByTestId('knowledge-source-set-save').click();
+    await expect(page.getByText(/Source Set saved/)).toBeVisible();
+
+    await page.getByTestId('knowledge-studio-artifact-decision-memo').click();
+    await expect(page.getByText(/Studio draft created/)).toBeVisible();
+    await expect(page.getByTestId('knowledge-draft-inbox')).toBeVisible();
+    await expect(page.getByTestId('knowledge-draft-row')).toContainText('Decision Memo');
+
+    const knowledgeActions = await electronApp.evaluate(() => (
+      (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string }> }).__verseClawE2eHostCalls ?? []
+    ).filter((request) => request.module === 'knowledge').map((request) => request.action));
+    expect(knowledgeActions).toContain('saveSourceSet');
+    expect(knowledgeActions).toContain('createArtifactDraft');
+    expect(knowledgeActions).not.toContain('applyDraft');
+    expect(knowledgeActions).not.toContain('applyReviewedChange');
+  });
+
+  test('enables wiki knowledge from the chat composer scope picker', async ({ electronApp, page }) => {
     await installIpcMocks(electronApp, {
       gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
       gatewayRpc: {
@@ -494,8 +634,9 @@ test.describe('Knowledge Hub MVP', () => {
     await completeSetup(page);
     await expect(page.getByTestId('chat-composer-input')).toBeVisible();
 
-    await page.getByTestId('chat-knowledge-quick-toggle').click();
-    await expect(page.getByTestId('chat-knowledge-quick-toggle')).toHaveAttribute('title', 'Disable wiki knowledge');
+    await page.getByTestId('chat-knowledge-scope-button').click();
+    await page.getByTestId('chat-knowledge-scope-wiki').click();
+    await expect(page.getByTestId('chat-knowledge-scope-button')).toContainText('Wiki');
 
     await page.getByTestId('chat-composer-input').fill('Use my project notes for this answer');
     await page.getByTitle('Send').click();

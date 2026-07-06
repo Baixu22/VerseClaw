@@ -70,7 +70,7 @@ export function mapWorkspacePermissionToExecApproval(mode: WorkspacePermissionMo
       return { security: 'full', ask: 'off' };
     case 'acceptEdits':
     default:
-      return { security: 'allowlist', ask: 'dangerous' };
+      return { security: 'allowlist', ask: 'on-miss' };
   }
 }
 

@@ -1,5 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AlertCircle, Bot, Check, Plus, RefreshCw, Settings2, Trash2, X, ChevronDown } from 'lucide-react';
+import {
+  Activity,
+  AlertCircle,
+  Bot,
+  Check,
+  ChevronDown,
+  Info,
+  ListChecks,
+  Plus,
+  RefreshCw,
+  RotateCcw,
+  Save,
+  Search,
+  Server,
+  Settings2,
+  ShieldAlert,
+  Trash2,
+  Wrench,
+  X,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,17 +39,34 @@ import { DEFAULT_ROLE_PROFILE } from '@shared/types/agent';
 import { Badge } from '@/components/ui/badge';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { useAgentsStore } from '@/stores/agents';
 import { useGatewayStore } from '@/stores/gateway';
 import { useProviderStore } from '@/stores/providers';
-import { useSkillsStore } from '@/stores/skills';
-import { useMcpStore } from '@/stores/mcp';
 import { hostApi, type ChannelGroupItem } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { CHANNEL_ICONS, CHANNEL_NAMES, type ChannelType } from '@/types/channel';
 import type { AgentSummary } from '@/types/agent';
+import type {
+  CapabilityPublicationEntry,
+  CapabilityPublicationQuery,
+  CapabilityPublicationResult,
+} from '@shared/host-api/contract';
+import {
+  addPublicationToIds,
+  buildCapabilityRows,
+  calculateCapabilityDraftDiff,
+  filterCapabilityRows,
+  removePublicationFromIds,
+  sortCapabilityRows,
+  splitCapabilityIdList,
+  summarizeCapabilityDiagnostics,
+  type CapabilityKindFilter,
+  type CapabilityPublicationRow,
+  type CapabilityStateFilter,
+} from '@/lib/capability-publication-view-model';
 import {
   buildRuntimeProviderOptions,
   splitModelRef,
@@ -321,6 +357,7 @@ function AgentCard({
               </Button>
             )}
             <Button
+              data-testid={`agent-settings-${agent.id}`}
               variant="ghost"
               size="icon"
               className={cn(
@@ -357,16 +394,586 @@ const inputClasses = 'h-[44px] rounded-xl font-mono text-meta bg-transparent bor
 const selectTriggerClasses = 'h-[44px] w-full rounded-xl font-mono text-meta bg-foreground/[0.04] dark:bg-white/[0.05] border-black/10 dark:border-white/10 focus:ring-2 focus:ring-primary/30 focus:border-primary/50 px-4 text-foreground shadow-sm transition-all';
 const labelClasses = 'text-sm text-foreground/80 font-bold';
 
-function splitBootstrapIdList(value: string): string[] {
-  const seen = new Set<string>();
-  return value
-    .split(/\r?\n|,/)
-    .map((entry) => entry.trim())
-    .filter((entry) => {
-      if (!entry || seen.has(entry)) return false;
-      seen.add(entry);
-      return true;
-    });
+type AgentsT = ReturnType<typeof useTranslation>['t'];
+
+function idsToText(ids: string[]): string {
+  return ids.join('\n');
+}
+
+function publicationStateLabel(t: AgentsT, state: CapabilityPublicationEntry['state']): string {
+  return t(`identityTools.publication.state.${state}`, { defaultValue: state });
+}
+
+function publicationKindLabel(t: AgentsT, kind: CapabilityPublicationEntry['kind']): string {
+  return t(`identityTools.publication.kind.${kind}`, { defaultValue: kind });
+}
+
+function rowKey(row: CapabilityPublicationRow): string {
+  return `${row.publication.kind}:${row.canonicalId}`;
+}
+
+function compactList(values?: string[]): string {
+  return values && values.length > 0 ? values.join(', ') : '-';
+}
+
+function CapabilityPublicationWorkbench({
+  agent,
+  baselineSkillIds,
+  baselineMcpServerIds,
+  draftSkillIds,
+  draftMcpServerIds,
+  onDraftSkillIdsChange,
+  onDraftMcpServerIdsChange,
+  onApplyChanges,
+  onDiscardChanges,
+  saving,
+  disabled,
+}: {
+  agent: AgentSummary;
+  baselineSkillIds: string[];
+  baselineMcpServerIds: string[];
+  draftSkillIds: string[];
+  draftMcpServerIds: string[];
+  onDraftSkillIdsChange: (ids: string[]) => void;
+  onDraftMcpServerIdsChange: (ids: string[]) => void;
+  onApplyChanges: () => Promise<void>;
+  onDiscardChanges: () => void;
+  saving: boolean;
+  disabled?: boolean;
+}) {
+  const { t } = useTranslation('agents');
+  const [result, setResult] = useState<CapabilityPublicationResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [roleName, setRoleName] = useState('');
+  const [search, setSearch] = useState('');
+  const [kindFilter, setKindFilter] = useState<CapabilityKindFilter>('all');
+  const [stateFilter, setStateFilter] = useState<CapabilityStateFilter>('all');
+  const [onlySelected, setOnlySelected] = useState(false);
+  const [onlyDiagnostics, setOnlyDiagnostics] = useState(false);
+  const [onlyChanged, setOnlyChanged] = useState(false);
+  const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null);
+  const [mcpBusy, setMcpBusy] = useState<string | null>(null);
+  const [mcpToolNames, setMcpToolNames] = useState<Record<string, string[]>>({});
+  const [mcpRuntimeMessage, setMcpRuntimeMessage] = useState<Record<string, string>>({});
+
+  const trimmedRoleName = roleName.trim();
+
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const query: CapabilityPublicationQuery = {
+        agentId: agent.id,
+        workspaceId: agent.workspace,
+        includeDiagnostics: true,
+        includeCandidates: true,
+        includeToolCatalog: 'warmOnly',
+        ...(trimmedRoleName ? { roleName: trimmedRoleName } : {}),
+      };
+      const next = await hostApi.capabilities.publications(query);
+      setResult(next);
+    } catch (err) {
+      setError(String(err));
+      setResult(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [agent.id, agent.workspace, trimmedRoleName]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    const query: CapabilityPublicationQuery = {
+      agentId: agent.id,
+      workspaceId: agent.workspace,
+      includeDiagnostics: true,
+      includeCandidates: true,
+      includeToolCatalog: 'warmOnly',
+      ...(trimmedRoleName ? { roleName: trimmedRoleName } : {}),
+    };
+    void hostApi.capabilities.publications(query)
+      .then((next) => {
+        if (!cancelled) setResult(next);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(String(err));
+          setResult(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [agent.id, agent.workspace, trimmedRoleName]);
+
+  const publications = result?.publications ?? [];
+  const rows = useMemo(() => buildCapabilityRows({
+    publications,
+    baselineSkillIds,
+    draftSkillIds,
+    baselineMcpServerIds,
+    draftMcpServerIds,
+  }), [baselineMcpServerIds, baselineSkillIds, draftMcpServerIds, draftSkillIds, publications]);
+  const visibleRows = useMemo(() => sortCapabilityRows(filterCapabilityRows(rows, {
+    query: search,
+    kind: kindFilter,
+    state: stateFilter,
+    onlySelected,
+    onlyDiagnostics,
+    onlyChanged,
+  })), [kindFilter, onlyChanged, onlyDiagnostics, onlySelected, rows, search, stateFilter]);
+  const diff = useMemo(() => calculateCapabilityDraftDiff({
+    publications,
+    baselineSkillIds,
+    draftSkillIds,
+    baselineMcpServerIds,
+    draftMcpServerIds,
+  }), [baselineMcpServerIds, baselineSkillIds, draftMcpServerIds, draftSkillIds]);
+  const diagnostics = summarizeCapabilityDiagnostics(result);
+  const selectedRow = selectedRowKey ? rows.find((row) => rowKey(row) === selectedRowKey) ?? null : null;
+  const publishedCount = publications.filter((entry) => entry.state === 'published').length;
+  const selectedCount = draftSkillIds.length + draftMcpServerIds.length;
+  const fallback = result?.source === 'local-fallback'
+    || result?.diagnostics.some((entry) => entry.code === 'runtimeUnavailable');
+
+  const updateRowSelection = (row: CapabilityPublicationRow) => {
+    if (row.blocked && !row.selected) return;
+    if (row.publication.kind === 'skill') {
+      onDraftSkillIdsChange(row.selected
+        ? removePublicationFromIds(draftSkillIds, row.publication)
+        : addPublicationToIds(draftSkillIds, row.publication));
+      return;
+    }
+    onDraftMcpServerIdsChange(row.selected
+      ? removePublicationFromIds(draftMcpServerIds, row.publication)
+      : addPublicationToIds(draftMcpServerIds, row.publication));
+  };
+
+  const runMcpHeartbeat = async (row: CapabilityPublicationRow) => {
+    const serverId = row.publication.serverId ?? row.publication.sourceId;
+    setMcpBusy(`heartbeat:${serverId}`);
+    try {
+      const outcome = await hostApi.mcp.heartbeat({ serverId });
+      const message = outcome.message || outcome.error || outcome.status || '-';
+      setMcpRuntimeMessage((prev) => ({ ...prev, [serverId]: message }));
+      if (outcome.success) toast.success(message);
+      else toast.error(message);
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMcpBusy(null);
+    }
+  };
+
+  const runMcpListTools = async (row: CapabilityPublicationRow) => {
+    const serverId = row.publication.serverId ?? row.publication.sourceId;
+    setMcpBusy(`tools:${serverId}`);
+    try {
+      const outcome = await hostApi.mcp.listTools({ serverId });
+      setMcpToolNames((prev) => ({ ...prev, [serverId]: outcome.tools.map((tool) => tool.name) }));
+      const message = outcome.message || t('identityTools.publication.detail.toolsLoaded', { count: outcome.tools.length });
+      setMcpRuntimeMessage((prev) => ({ ...prev, [serverId]: message }));
+      if (outcome.success) toast.success(message);
+      else toast.error(outcome.error || message);
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMcpBusy(null);
+    }
+  };
+
+  const runMcpReload = async () => {
+    setMcpBusy('reload');
+    try {
+      const outcome = await hostApi.mcp.reloadRuntime({ agentId: agent.id, workspaceId: agent.workspace });
+      const message = outcome.message || t('identityTools.publication.detail.runtimeReloaded');
+      if (outcome.success) toast.success(message);
+      else toast.error(outcome.error || message);
+      setMcpRuntimeMessage((prev) => ({ ...prev, __reload: message }));
+      await refresh();
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setMcpBusy(null);
+    }
+  };
+
+  return (
+    <div
+      data-testid="agent-capability-workbench"
+      className="space-y-4 rounded-2xl border border-black/10 bg-transparent p-4 dark:border-white/10"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h4 className="text-sm font-semibold text-foreground">{t('identityTools.publication.workbenchTitle')}</h4>
+          <p className="mt-1 truncate text-xs text-muted-foreground">
+            {fallback
+              ? t('identityTools.publication.sourceFallback')
+              : t('identityTools.publication.sourceRuntime')}
+          </p>
+          <p className="mt-1 truncate font-mono text-[11px] text-muted-foreground">
+            {agent.id} · {agent.workspace}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={() => void refresh()}
+            disabled={loading}
+            className="h-8 w-8 rounded-full"
+            title={t('identityTools.publication.refresh')}
+          >
+            <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+        {[
+          ['selected', selectedCount],
+          ['published', publishedCount],
+          ['add', diff.totalAdds],
+          ['remove', diff.totalRemoves],
+          ['diagnostics', diagnostics.total],
+        ].map(([key, value]) => (
+          <div key={key} className="rounded-xl bg-black/5 p-3 dark:bg-white/5">
+            <p className="text-[10px] font-medium uppercase text-muted-foreground">{t(`identityTools.publication.metric.${key}`)}</p>
+            <p className="mt-1 text-lg font-semibold text-foreground">{value}</p>
+          </div>
+        ))}
+      </div>
+
+      {error && (
+        <div className="rounded-xl border border-amber-300/40 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+          {t('identityTools.publication.loadFailed', { error })}
+        </div>
+      )}
+      {!error && (diagnostics.blocked > 0 || diagnostics.warnings > 0) && (
+        <div className="rounded-xl border border-amber-300/40 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+          {t('identityTools.publication.diagnosticSummary', {
+            blocked: diagnostics.blocked,
+            warnings: diagnostics.warnings,
+          })}
+        </div>
+      )}
+
+      <div className="grid gap-2 lg:grid-cols-[1fr_180px]">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder={t('identityTools.publication.searchPlaceholder')}
+            className="h-9 rounded-full bg-black/5 pl-9 text-sm dark:bg-white/5"
+          />
+        </div>
+        <Input
+          value={roleName}
+          onChange={(event) => setRoleName(event.target.value)}
+          placeholder={t('identityTools.publication.rolePreviewPlaceholder')}
+          className="h-9 rounded-full bg-black/5 text-sm dark:bg-white/5"
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {(['all', 'skill', 'mcp'] as CapabilityKindFilter[]).map((kind) => (
+          <Button
+            key={kind}
+            type="button"
+            size="sm"
+            variant={kindFilter === kind ? 'secondary' : 'outline'}
+            className="h-8 rounded-full px-3 text-xs"
+            onClick={() => setKindFilter(kind)}
+          >
+            {kind === 'all' ? t('identityTools.publication.filter.all') : publicationKindLabel(t, kind)}
+          </Button>
+        ))}
+        <Select value={stateFilter} onValueChange={(value) => setStateFilter(value as CapabilityStateFilter)}>
+          <SelectTrigger className="h-8 w-[150px] rounded-full bg-transparent text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t('identityTools.publication.filter.anyState')}</SelectItem>
+            {(['published', 'available', 'disabled', 'blocked', 'missing', 'runtimeUnavailable'] as CapabilityPublicationEntry['state'][]).map((state) => (
+              <SelectItem key={state} value={state}>{publicationStateLabel(t, state)}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {[
+          ['selected', onlySelected, setOnlySelected],
+          ['diagnostics', onlyDiagnostics, setOnlyDiagnostics],
+          ['changed', onlyChanged, setOnlyChanged],
+        ].map(([key, value, setter]) => (
+          <Button
+            key={key as string}
+            type="button"
+            size="sm"
+            variant={value ? 'secondary' : 'outline'}
+            className="h-8 rounded-full px-3 text-xs"
+            onClick={() => (setter as (next: boolean) => void)(!(value as boolean))}
+          >
+            {t(`identityTools.publication.filter.${key}`)}
+          </Button>
+        ))}
+      </div>
+
+      <div className="max-h-[360px] space-y-2 overflow-y-auto pr-1">
+        {visibleRows.length === 0 ? (
+          <p className="rounded-xl bg-black/5 px-3 py-6 text-center text-xs text-muted-foreground dark:bg-white/5">
+            {t('identityTools.publication.empty')}
+          </p>
+        ) : visibleRows.map((row) => {
+          const entry = row.publication;
+          const blockedAdd = row.blocked && !row.selected;
+          return (
+            <div
+              key={rowKey(row)}
+              data-testid={`agent-capability-row-${entry.kind}-${row.canonicalId}`}
+              className={cn(
+                'grid gap-3 rounded-xl bg-black/5 px-3 py-2.5 transition-colors dark:bg-white/5 md:grid-cols-[1fr_auto]',
+                row.change !== 'none' && 'ring-1 ring-primary/30',
+              )}
+            >
+              <button
+                type="button"
+                className="min-w-0 text-left"
+                onClick={() => setSelectedRowKey(rowKey(row))}
+              >
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {entry.kind === 'skill' ? <Wrench className="h-3.5 w-3.5 text-muted-foreground" /> : <Server className="h-3.5 w-3.5 text-muted-foreground" />}
+                  <p className="truncate text-sm font-medium text-foreground">{entry.name}</p>
+                  <Badge variant="secondary" className="rounded-full px-2 py-0 text-[10px]">
+                    {publicationKindLabel(t, entry.kind)}
+                  </Badge>
+                  <Badge variant={row.blocked ? 'destructive' : row.published ? 'secondary' : 'outline'} className="rounded-full px-2 py-0 text-[10px]">
+                    {publicationStateLabel(t, entry.state)}
+                  </Badge>
+                  {row.change !== 'none' && (
+                    <Badge variant={row.change === 'add' ? 'success' : 'warning'} className="rounded-full px-2 py-0 text-[10px]">
+                      {t(`identityTools.publication.change.${row.change}`)}
+                    </Badge>
+                  )}
+                  {row.diagnosticLevel !== 'none' && (
+                    <Badge variant={row.diagnosticLevel === 'blocked' ? 'destructive' : 'warning'} className="rounded-full px-2 py-0 text-[10px]">
+                      {t(`identityTools.publication.diagnosticLevel.${row.diagnosticLevel}`)}
+                    </Badge>
+                  )}
+                </div>
+                <p className="mt-1 truncate font-mono text-xs text-muted-foreground">
+                  {row.canonicalId} · {entry.scope ?? '-'} · {entry.source ?? '-'} · {entry.useModes.join(', ') || '-'}
+                </p>
+              </button>
+              <div className="flex items-center justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full"
+                  onClick={() => setSelectedRowKey(rowKey(row))}
+                  aria-label={t('identityTools.publication.detail.open')}
+                >
+                  <Info className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant={row.selected ? 'outline' : 'secondary'}
+                  size="sm"
+                  disabled={disabled || blockedAdd}
+                  onClick={() => updateRowSelection(row)}
+                  className="h-8 rounded-full px-3 text-xs"
+                >
+                  {blockedAdd ? (
+                    <>
+                      <ShieldAlert className="mr-1.5 h-3.5 w-3.5" />
+                      {t('identityTools.publication.blocked')}
+                    </>
+                  ) : row.selected ? (
+                    <>
+                      <X className="mr-1.5 h-3.5 w-3.5" />
+                      {t('identityTools.publication.remove')}
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="mr-1.5 h-3.5 w-3.5" />
+                      {t('identityTools.publication.add')}
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex flex-col gap-2 border-t border-black/10 pt-3 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-muted-foreground">
+          {diff.changed
+            ? t('identityTools.publication.pendingSummary', { adds: diff.totalAdds, removes: diff.totalRemoves })
+            : t('identityTools.publication.noPendingChanges')}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={!diff.changed || saving || disabled}
+            className="h-8 rounded-full px-3 text-xs"
+            onClick={onDiscardChanges}
+          >
+            <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
+            {t('identityTools.publication.discard')}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            disabled={!diff.changed || saving || disabled}
+            className="h-8 rounded-full px-3 text-xs"
+            onClick={() => void onApplyChanges()}
+          >
+            {saving ? <RefreshCw className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Save className="mr-1.5 h-3.5 w-3.5" />}
+            {t('identityTools.publication.apply')}
+          </Button>
+        </div>
+      </div>
+
+      <Sheet open={!!selectedRow} onOpenChange={(open) => !open && setSelectedRowKey(null)}>
+        <SheetContent
+          side="right"
+          className="z-[80] flex w-full flex-col bg-surface-modal p-0 sm:max-w-[560px]"
+        >
+          {selectedRow && (
+            <div className="flex min-h-0 flex-1 flex-col">
+              <div className="border-b border-black/10 px-6 py-5 dark:border-white/10">
+                <SheetTitle className="truncate text-xl font-serif font-normal tracking-tight">
+                  {selectedRow.publication.name}
+                </SheetTitle>
+                <SheetDescription className="mt-1 truncate font-mono text-xs">
+                  {selectedRow.publication.id}
+                </SheetDescription>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Badge variant="secondary" className="rounded-full">{publicationKindLabel(t, selectedRow.publication.kind)}</Badge>
+                  <Badge variant="outline" className="rounded-full">{publicationStateLabel(t, selectedRow.publication.state)}</Badge>
+                  <Badge variant="outline" className="rounded-full">{selectedRow.publication.runtime.status}</Badge>
+                  {selectedRow.change !== 'none' && <Badge variant="warning" className="rounded-full">{t(`identityTools.publication.change.${selectedRow.change}`)}</Badge>}
+                </div>
+              </div>
+              <div className="flex-1 space-y-4 overflow-y-auto px-6 py-5">
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-xl bg-black/5 p-3 dark:bg-white/5">
+                    <p className="text-[10px] font-medium uppercase text-muted-foreground">{t('identityTools.publication.detail.exposure')}</p>
+                    <p className="mt-2 font-mono text-xs text-foreground">
+                      {[
+                        `${t('identityTools.publication.detail.exposureAgents')}=${compactList(selectedRow.publication.exposure.agentIds)}`,
+                        `${t('identityTools.publication.detail.exposureWorkspaces')}=${compactList(selectedRow.publication.exposure.workspaceIds)}`,
+                        `${t('identityTools.publication.detail.exposureRoles')}=${compactList(selectedRow.publication.exposure.roleNames)}`,
+                      ].join(' · ')}
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-black/5 p-3 dark:bg-white/5">
+                    <p className="text-[10px] font-medium uppercase text-muted-foreground">{t('identityTools.publication.detail.runtime')}</p>
+                    <p className="mt-2 font-mono text-xs text-foreground">
+                      {selectedRow.publication.runtime.status} · {selectedRow.publication.runtime.method ?? '-'} · {selectedRow.publication.runtime.source ?? '-'}
+                    </p>
+                  </div>
+                </div>
+                {selectedRow.publication.runtime.message && (
+                  <div className="rounded-xl border border-amber-300/40 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+                    {selectedRow.publication.runtime.message}
+                  </div>
+                )}
+                <div className="rounded-xl bg-black/5 p-3 dark:bg-white/5">
+                  <p className="text-[10px] font-medium uppercase text-muted-foreground">{t('identityTools.publication.detail.useModes')}</p>
+                  <p className="mt-2 font-mono text-xs text-foreground">{selectedRow.publication.useModes.join(', ') || '-'}</p>
+                </div>
+                <div className="rounded-xl bg-black/5 p-3 dark:bg-white/5">
+                  <p className="text-[10px] font-medium uppercase text-muted-foreground">{t('identityTools.publication.detail.diagnostics')}</p>
+                  {selectedRow.publication.diagnostics.length === 0 ? (
+                    <p className="mt-2 text-xs text-muted-foreground">{t('identityTools.publication.detail.none')}</p>
+                  ) : (
+                    <div className="mt-2 space-y-2">
+                      {selectedRow.publication.diagnostics.map((diagnostic) => (
+                        <div key={`${diagnostic.code}:${diagnostic.message}`} className="rounded-lg bg-background/60 px-3 py-2">
+                          <p className="text-xs font-medium text-foreground">{diagnostic.code}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">{diagnostic.message}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="rounded-xl bg-black/5 p-3 dark:bg-white/5">
+                  <p className="text-[10px] font-medium uppercase text-muted-foreground">{t('identityTools.publication.detail.reasons')}</p>
+                  <p className="mt-2 font-mono text-xs text-foreground">{selectedRow.publication.reasons.join(', ') || '-'}</p>
+                </div>
+                {selectedRow.publication.kind === 'mcp' && (
+                  <div className="rounded-xl border border-black/10 p-3 dark:border-white/10">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs font-semibold text-foreground">{t('identityTools.publication.detail.mcpRuntime')}</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-8 rounded-full px-3 text-xs"
+                        disabled={mcpBusy === 'reload'}
+                        onClick={() => void runMcpReload()}
+                      >
+                        <RefreshCw className={cn('mr-1.5 h-3.5 w-3.5', mcpBusy === 'reload' && 'animate-spin')} />
+                        {t('identityTools.publication.detail.reload')}
+                      </Button>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-8 rounded-full px-3 text-xs"
+                        disabled={mcpBusy === `heartbeat:${selectedRow.publication.serverId ?? selectedRow.publication.sourceId}`}
+                        onClick={() => void runMcpHeartbeat(selectedRow)}
+                      >
+                        <Activity className="mr-1.5 h-3.5 w-3.5" />
+                        {t('identityTools.publication.detail.heartbeat')}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-8 rounded-full px-3 text-xs"
+                        disabled={mcpBusy === `tools:${selectedRow.publication.serverId ?? selectedRow.publication.sourceId}`}
+                        onClick={() => void runMcpListTools(selectedRow)}
+                      >
+                        <ListChecks className="mr-1.5 h-3.5 w-3.5" />
+                        {t('identityTools.publication.detail.listTools')}
+                      </Button>
+                    </div>
+                    {mcpRuntimeMessage[selectedRow.publication.serverId ?? selectedRow.publication.sourceId] && (
+                      <p className="mt-3 text-xs text-muted-foreground">
+                        {mcpRuntimeMessage[selectedRow.publication.serverId ?? selectedRow.publication.sourceId]}
+                      </p>
+                    )}
+                    {(selectedRow.publication.toolNames?.length || mcpToolNames[selectedRow.publication.serverId ?? selectedRow.publication.sourceId]?.length) ? (
+                      <div className="mt-3 space-y-1">
+                        {(mcpToolNames[selectedRow.publication.serverId ?? selectedRow.publication.sourceId] ?? selectedRow.publication.toolNames ?? []).map((toolName) => (
+                          <div key={toolName} className="rounded-lg bg-black/5 px-3 py-1.5 font-mono text-xs dark:bg-white/5">
+                            {toolName}
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
 }
 
 function ChannelLogo({ type }: { type: ChannelType }) {
@@ -510,18 +1117,17 @@ function AgentSettingsModal({
 }) {
   const { t } = useTranslation('agents');
   const { updateAgent, defaultModelRef } = useAgentsStore();
-  const skills = useSkillsStore((state) => state.skills);
-  const fetchSkills = useSkillsStore((state) => state.fetchSkills);
-  const mcpServers = useMcpStore((state) => state.servers);
-  const fetchMcpServers = useMcpStore((state) => state.fetchServers);
   const [name, setName] = useState(agent.name);
   const [savingName, setSavingName] = useState(false);
   const [soulMd, setSoulMd] = useState('');
-  const [defaultSkillIdsText, setDefaultSkillIdsText] = useState('');
-  const [defaultMcpServerIdsText, setDefaultMcpServerIdsText] = useState('');
+  const [baselineSkillIds, setBaselineSkillIds] = useState<string[]>([]);
+  const [baselineMcpServerIds, setBaselineMcpServerIds] = useState<string[]>([]);
+  const [draftSkillIds, setDraftSkillIds] = useState<string[]>([]);
+  const [draftMcpServerIds, setDraftMcpServerIds] = useState<string[]>([]);
   const [bootstrapPath, setBootstrapPath] = useState('');
   const [loadingSoul, setLoadingSoul] = useState(false);
   const [savingSoul, setSavingSoul] = useState(false);
+  const [savingCapabilities, setSavingCapabilities] = useState(false);
   const [showModelModal, setShowModelModal] = useState(false);
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
   const [prevOpen, setPrevOpen] = useState(open);
@@ -537,6 +1143,7 @@ function AgentSettingsModal({
   const [identityMd, setIdentityMd] = useState('');
   const [heartbeatMd, setHeartbeatMd] = useState('');
   const [showBootstrapFiles, setShowBootstrapFiles] = useState(false);
+  const [showAdvancedCapabilityIds, setShowAdvancedCapabilityIds] = useState(false);
 
   useEffect(() => {
     setName(agent.name);
@@ -548,10 +1155,14 @@ function AgentSettingsModal({
     void hostApi.agents.getBootstrap(agent.id)
       .then((result) => {
         if (cancelled) return;
+        const nextSkillIds = result.defaultSkillIds ?? [];
+        const nextMcpServerIds = result.defaultMcpServerIds ?? [];
         setSoulMd(result.soulMd ?? '');
         setBootstrapPath(result.bootstrapPath ?? '');
-        setDefaultSkillIdsText((result.defaultSkillIds ?? []).join('\n'));
-        setDefaultMcpServerIdsText((result.defaultMcpServerIds ?? []).join('\n'));
+        setBaselineSkillIds(nextSkillIds);
+        setBaselineMcpServerIds(nextMcpServerIds);
+        setDraftSkillIds(nextSkillIds);
+        setDraftMcpServerIds(nextMcpServerIds);
         // Phase 1: role profile
         if (result.roleProfile) {
           setRoleProfile({ ...DEFAULT_ROLE_PROFILE, ...(result.roleProfile as AgentRoleProfile) });
@@ -571,12 +1182,10 @@ function AgentSettingsModal({
       .finally(() => {
         if (!cancelled) setLoadingSoul(false);
       });
-    void fetchSkills();
-    void fetchMcpServers();
     return () => {
       cancelled = true;
     };
-  }, [agent.id, agent.name, fetchMcpServers, fetchSkills, t]);
+  }, [agent.id, agent.name, t]);
 
   if (prevOpen !== open) {
     setPrevOpen(open);
@@ -588,13 +1197,17 @@ function AgentSettingsModal({
   }
 
   const hasNameChanges = name.trim() !== agent.name;
-  const agentMcpServers = mcpServers.filter((server) => server.scope === 'agent' && server.ownerId === agent.id);
-  const enabledSkillNames = skills.filter((skill) => skill.enabled).slice(0, 8).map((skill) => skill.name);
-  const configuredSkillIds = splitBootstrapIdList(defaultSkillIdsText);
-  const configuredMcpServerIds = splitBootstrapIdList(defaultMcpServerIdsText);
+  const capabilityDiff = calculateCapabilityDraftDiff({
+    baselineSkillIds,
+    draftSkillIds,
+    baselineMcpServerIds,
+    draftMcpServerIds,
+  });
+  const configuredSkillIds = draftSkillIds;
+  const configuredMcpServerIds = draftMcpServerIds;
 
   const handleRequestClose = () => {
-    if (savingName || hasNameChanges) {
+    if (savingName || savingCapabilities || hasNameChanges || capabilityDiff.changed) {
       setShowCloseConfirm(true);
       return;
     }
@@ -639,16 +1252,48 @@ function AgentSettingsModal({
       }
 
       const result = await hostApi.agents.updateBootstrap(updatePayload as Parameters<typeof hostApi.agents.updateBootstrap>[0]);
+      const nextSkillIds = result.defaultSkillIds ?? configuredSkillIds;
+      const nextMcpServerIds = result.defaultMcpServerIds ?? configuredMcpServerIds;
       setSoulMd(result.soulMd ?? soulMd);
       setBootstrapPath(result.bootstrapPath ?? bootstrapPath);
-      setDefaultSkillIdsText((result.defaultSkillIds ?? configuredSkillIds).join('\n'));
-      setDefaultMcpServerIdsText((result.defaultMcpServerIds ?? configuredMcpServerIds).join('\n'));
+      setBaselineSkillIds(nextSkillIds);
+      setBaselineMcpServerIds(nextMcpServerIds);
+      setDraftSkillIds(nextSkillIds);
+      setDraftMcpServerIds(nextMcpServerIds);
       toast.success(t('identityTools.toast.saved'));
     } catch (error) {
       toast.error(t('identityTools.toast.saveFailed', { error: String(error) }));
     } finally {
       setSavingSoul(false);
     }
+  };
+
+  const handleApplyCapabilityChanges = async () => {
+    if (!capabilityDiff.changed) return;
+    setSavingCapabilities(true);
+    try {
+      const result = await hostApi.agents.updateBootstrap({
+        id: agent.id,
+        defaultSkillIds: draftSkillIds,
+        defaultMcpServerIds: draftMcpServerIds,
+      });
+      const nextSkillIds = result.defaultSkillIds ?? draftSkillIds;
+      const nextMcpServerIds = result.defaultMcpServerIds ?? draftMcpServerIds;
+      setBaselineSkillIds(nextSkillIds);
+      setBaselineMcpServerIds(nextMcpServerIds);
+      setDraftSkillIds(nextSkillIds);
+      setDraftMcpServerIds(nextMcpServerIds);
+      toast.success(t('identityTools.publication.toast.saved'));
+    } catch (error) {
+      toast.error(t('identityTools.publication.toast.saveFailed', { error: String(error) }));
+    } finally {
+      setSavingCapabilities(false);
+    }
+  };
+
+  const handleDiscardCapabilityChanges = () => {
+    setDraftSkillIds(baselineSkillIds);
+    setDraftMcpServerIds(baselineMcpServerIds);
   };
 
   const assignedChannels = channelGroups.flatMap((group) =>
@@ -667,7 +1312,7 @@ function AgentSettingsModal({
 
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && handleRequestClose()}>
-      <DialogContent asChild className="w-[calc(100%-2rem)] max-w-2xl max-h-[90vh] flex flex-col rounded-3xl border-0 shadow-2xl bg-surface-modal overflow-hidden">
+      <DialogContent asChild className="w-[calc(100%-2rem)] max-w-4xl max-h-[90vh] flex flex-col rounded-3xl border-0 shadow-2xl bg-surface-modal overflow-hidden">
         <Card>
         <CardHeader className="flex flex-row items-start justify-between pb-2 shrink-0">
           <div>
@@ -755,49 +1400,52 @@ function AgentSettingsModal({
                 {t('identityTools.description')}
               </p>
             </div>
-            <div className="grid gap-3 md:grid-cols-2">
-              <div className="rounded-2xl bg-black/5 dark:bg-white/5 border border-transparent p-4">
-                <p className="text-tiny uppercase tracking-[0.08em] text-muted-foreground/80 font-medium">{t('identityTools.defaultSkills')}</p>
-                <p className="mt-2 text-sm text-foreground/80">
-                  {configuredSkillIds.length > 0
-                    ? configuredSkillIds.join(t('identityTools.listSeparator'))
-                    : enabledSkillNames.length > 0
-                      ? enabledSkillNames.join(t('identityTools.listSeparator'))
-                      : t('identityTools.noDefaultSkills')}
-                </p>
-              </div>
-              <div className="rounded-2xl bg-black/5 dark:bg-white/5 border border-transparent p-4">
-                <p className="text-tiny uppercase tracking-[0.08em] text-muted-foreground/80 font-medium">Agent MCP</p>
-                <p className="mt-2 text-sm text-foreground/80">
-                  {configuredMcpServerIds.length > 0
-                    ? configuredMcpServerIds.join(t('identityTools.listSeparator'))
-                    : agentMcpServers.length > 0
-                      ? agentMcpServers.map((server) => server.name).join(t('identityTools.listSeparator'))
-                      : t('identityTools.noAgentMcp')}
-                </p>
-              </div>
-            </div>
-            <div className="grid gap-3 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="agent-default-skills" className={labelClasses}>{t('identityTools.defaultSkillIds')}</Label>
-                <Textarea
-                  id="agent-default-skills"
-                  value={defaultSkillIdsText}
-                  onChange={(event) => setDefaultSkillIdsText(event.target.value)}
-                  placeholder={t('identityTools.defaultSkillIdsPlaceholder')}
-                  className="min-h-[88px] resize-y rounded-2xl bg-black/5 dark:bg-white/5 border-transparent font-mono text-xs leading-relaxed"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="agent-default-mcp" className={labelClasses}>{t('identityTools.defaultMcpIds')}</Label>
-                <Textarea
-                  id="agent-default-mcp"
-                  value={defaultMcpServerIdsText}
-                  onChange={(event) => setDefaultMcpServerIdsText(event.target.value)}
-                  placeholder={t('identityTools.defaultMcpIdsPlaceholder')}
-                  className="min-h-[88px] resize-y rounded-2xl bg-black/5 dark:bg-white/5 border-transparent font-mono text-xs leading-relaxed"
-                />
-              </div>
+            <CapabilityPublicationWorkbench
+              agent={agent}
+              baselineSkillIds={baselineSkillIds}
+              baselineMcpServerIds={baselineMcpServerIds}
+              draftSkillIds={draftSkillIds}
+              draftMcpServerIds={draftMcpServerIds}
+              onDraftSkillIdsChange={setDraftSkillIds}
+              onDraftMcpServerIdsChange={setDraftMcpServerIds}
+              onApplyChanges={handleApplyCapabilityChanges}
+              onDiscardChanges={handleDiscardCapabilityChanges}
+              saving={savingCapabilities}
+              disabled={loadingSoul}
+            />
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => setShowAdvancedCapabilityIds(!showAdvancedCapabilityIds)}
+                className="flex items-center gap-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
+              >
+                <ChevronDown className={`h-4 w-4 transition-transform ${showAdvancedCapabilityIds ? 'rotate-0' : '-rotate-90'}`} />
+                {t('identityTools.publication.advancedIds')}
+              </button>
+              {showAdvancedCapabilityIds && (
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="agent-default-skills" className={labelClasses}>{t('identityTools.defaultSkillIds')}</Label>
+                    <Textarea
+                      id="agent-default-skills"
+                      value={idsToText(draftSkillIds)}
+                      onChange={(event) => setDraftSkillIds(splitCapabilityIdList(event.target.value))}
+                      placeholder={t('identityTools.defaultSkillIdsPlaceholder')}
+                      className="min-h-[88px] resize-y rounded-2xl bg-black/5 dark:bg-white/5 border-transparent font-mono text-xs leading-relaxed"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="agent-default-mcp" className={labelClasses}>{t('identityTools.defaultMcpIds')}</Label>
+                    <Textarea
+                      id="agent-default-mcp"
+                      value={idsToText(draftMcpServerIds)}
+                      onChange={(event) => setDraftMcpServerIds(splitCapabilityIdList(event.target.value))}
+                      placeholder={t('identityTools.defaultMcpIdsPlaceholder')}
+                      className="min-h-[88px] resize-y rounded-2xl bg-black/5 dark:bg-white/5 border-transparent font-mono text-xs leading-relaxed"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
@@ -810,7 +1458,7 @@ function AgentSettingsModal({
                 <Button
                   variant="outline"
                   onClick={() => void handleSaveSoul()}
-                  disabled={savingSoul || loadingSoul}
+                  disabled={savingSoul || savingCapabilities || loadingSoul}
                   className="h-9 text-meta font-medium rounded-full px-4 border-black/10 dark:border-white/10 bg-transparent hover:bg-black/5 dark:hover:bg-white/5 shadow-none text-foreground/80 hover:text-foreground"
                 >
                   {savingSoul ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('identityTools.saveRole')}
@@ -934,6 +1582,7 @@ function AgentSettingsModal({
         onConfirm={() => {
           setShowCloseConfirm(false);
           setName(agent.name);
+          handleDiscardCapabilityChanges();
           onClose();
         }}
         onCancel={() => setShowCloseConfirm(false)}

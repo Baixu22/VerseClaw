@@ -10,6 +10,80 @@ import { loadCapabilityRegistry } from '@/lib/capability-registry';
 
 function createApi(overrides: Record<string, unknown> = {}) {
   const api = {
+    capabilities: {
+      publications: vi.fn(async () => ({
+        success: true,
+        source: 'gateway',
+        generatedAt: '2026-01-01T00:00:00.000Z',
+        diagnostics: [],
+        publications: [
+          {
+            id: 'skill:create-skill',
+            kind: 'skill',
+            sourceId: 'create-skill',
+            name: 'create-skill',
+            owner: { type: 'agent', id: 'main' },
+            scope: 'agent',
+            source: 'local',
+            state: 'available',
+            exposure: { promptVisible: false, runtimeVisible: false, userInvocable: false },
+            useModes: ['adminAction'],
+            runtime: { status: 'cold', method: 'prompt', source: 'gateway' },
+            reasons: ['candidate'],
+            diagnostics: [],
+            skillId: 'create-skill',
+          },
+          {
+            id: 'skill:xlsx',
+            kind: 'skill',
+            sourceId: 'xlsx',
+            name: 'xlsx',
+            owner: { type: 'agent', id: 'main' },
+            scope: 'agent',
+            source: 'local',
+            state: 'published',
+            exposure: { promptVisible: true, runtimeVisible: true, userInvocable: true },
+            useModes: ['prompt', 'userCommand', 'adminAction'],
+            runtime: { status: 'ready', method: 'prompt', source: 'gateway' },
+            reasons: ['test'],
+            diagnostics: [],
+            skillId: 'xlsx',
+          },
+          {
+            id: 'mcp:filesystem',
+            kind: 'mcp',
+            sourceId: 'filesystem',
+            name: 'Filesystem',
+            owner: { type: 'global' },
+            scope: 'global',
+            source: 'registered',
+            state: 'published',
+            exposure: { runtimeVisible: true, toolVisible: true },
+            useModes: ['modelTool', 'adminAction'],
+            runtime: { status: 'configured', method: 'tool', source: 'gateway' },
+            reasons: ['test'],
+            diagnostics: [{ code: 'testWarning', severity: 'warning', message: 'registered with warning' }],
+            serverId: 'filesystem',
+          },
+          {
+            id: 'mcp:draft',
+            kind: 'mcp',
+            sourceId: 'draft',
+            name: 'Draft MCP',
+            owner: { type: 'agent', id: 'main' },
+            scope: 'agent',
+            source: 'registered',
+            state: 'available',
+            exposure: { runtimeVisible: false, toolVisible: false, agentIds: ['other-agent'] },
+            useModes: ['adminAction'],
+            runtime: { status: 'cold', method: 'tool', source: 'gateway' },
+            reasons: ['mcp-candidate'],
+            diagnostics: [],
+            serverId: 'draft',
+          },
+        ],
+      })),
+    },
     skills: {
       local: vi.fn(async () => ({
         success: true,
@@ -328,6 +402,15 @@ describe('chat capability actions', () => {
     });
   });
 
+  it('does not generate runtime MCP management actions for unpublished candidates', async () => {
+    const api = createApi();
+
+    await expect(resolveChatCapabilityActions('list draft mcp tools', api)).resolves.toMatchObject({
+      actions: [],
+      unsupportedReason: 'mcpServerNotFound',
+    });
+  });
+
   it('builds trusted metadata while preserving the original message', () => {
     const message = buildCapabilityActionMessage('now use it', [
       { id: 'skill.enable:1', kind: 'skill.enable', success: true, skillId: 'create-skill' },
@@ -390,7 +473,10 @@ describe('chat capability actions', () => {
         kind: 'skill',
         installed: true,
         enabled: false,
-        lastAuditResult: expect.objectContaining({ status: 'passed' }),
+        lastAuditResult: expect.objectContaining({
+          status: 'passed',
+          summary: 'Capability is available for explicit management.',
+        }),
       }),
       expect.objectContaining({
         id: 'mcp:filesystem',

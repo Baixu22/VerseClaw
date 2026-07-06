@@ -183,6 +183,7 @@ import { resolveSandboxContext } from "../../sandbox.js";
 import { resolveSandboxRuntimeStatus } from "../../sandbox/runtime-status.js";
 import { repairSessionFileIfNeeded } from "../../session-file-repair.js";
 import { guardSessionManager } from "../../session-tool-result-guard-wrapper.js";
+import { resolveRuntimeIntensityPolicy } from "../../intensity-policy.js";
 import { sanitizeToolUseResultPairing } from "../../session-transcript-repair.js";
 import { acquireSessionWriteLock } from "../../session-write-lock.js";
 import { createAgentSession, SessionManager } from "../../sessions/index.js";
@@ -1076,6 +1077,30 @@ export async function runEmbeddedAttempt(
       skillsWorkspaceDir: effectiveSkillsWorkspace,
       skillsPromptWorkspaceDir: effectiveSkillsPromptWorkspace,
     });
+    const rawModelRunForIntensity = params.modelRun === true || params.promptMode === "none";
+    const runtimeIntensityPolicy = resolveRuntimeIntensityPolicy({
+      thinkLevel: params.thinkLevel,
+      promptModeExplicit: params.promptMode !== undefined,
+      requestedPromptMode: params.promptMode,
+      rawModelRun: rawModelRunForIntensity,
+    });
+    const skillsTransientLimits =
+      runtimeIntensityPolicy.skills.mode === "preserve"
+        ? undefined
+        : {
+            maxSkillsInPrompt: runtimeIntensityPolicy.skills.maxSkillsInPrompt,
+            preferCompact: runtimeIntensityPolicy.skills.preferCompact,
+          };
+    const baselineSkillsPromptForSavings = skillsTransientLimits
+      ? resolveSkillsPromptForRun({
+          skillsSnapshot: skillsSnapshotForRun,
+          entries: promptSkillEntries,
+          config: params.config,
+          workspaceDir: effectiveSkillsPromptWorkspace,
+          agentId: sessionAgentId,
+          eligibility: skillsEligibility,
+        })
+      : undefined;
 
     const skillsPrompt = resolveSkillsPromptForRun({
       skillsSnapshot: skillsSnapshotForRun,
@@ -1084,12 +1109,17 @@ export async function runEmbeddedAttempt(
       workspaceDir: effectiveSkillsPromptWorkspace,
       agentId: sessionAgentId,
       eligibility: skillsEligibility,
+      transientLimits: skillsTransientLimits,
     });
+    const estimatedSkillsPromptSavedChars =
+      typeof baselineSkillsPromptForSavings === "string"
+        ? Math.max(0, baselineSkillsPromptForSavings.length - skillsPrompt.length)
+        : undefined;
     prepStages.mark("skills");
 
     const sessionLabel = params.sessionKey ?? params.sessionId;
     const contextInjectionMode = resolveContextInjectionMode(params.config, sessionAgentId);
-    const isRawModelRun = params.modelRun === true || params.promptMode === "none";
+    const isRawModelRun = rawModelRunForIntensity;
     if (isRawModelRun && log.isEnabled("debug")) {
       log.debug(
         `raw model run enabled: modelRun=${params.modelRun === true} promptMode=${params.promptMode ?? "unset"}`,
@@ -1491,6 +1521,8 @@ export async function runEmbeddedAttempt(
           sessionKey: params.sessionKey,
           workspaceDir: effectiveWorkspace,
           cfg: params.config,
+          agentId: params.agentId,
+          workspaceId: effectiveWorkspace,
         })
       : undefined;
     bundleMcpRuntime = bundleMcpSessionRuntime
@@ -1818,9 +1850,13 @@ export async function runEmbeddedAttempt(
       },
     });
     const isDefaultAgent = sessionAgentId === defaultAgentId;
-    const promptMode =
+    const defaultPromptMode =
       params.promptMode ??
       (isRawModelRun ? "none" : resolvePromptModeForSession(params.sessionKey));
+    const promptMode =
+      runtimeIntensityPolicy.promptMode === "preserve"
+        ? defaultPromptMode
+        : runtimeIntensityPolicy.promptMode;
     const promptSurface = resolveAgentPromptSurfaceForSessionKey(params.sessionKey);
 
     // When toolsAllow is set, use minimal prompt and strip skills catalog
@@ -1870,6 +1906,13 @@ export async function runEmbeddedAttempt(
     const bootstrapTruncationNotice = buildBootstrapPromptWarningNotice(
       bootstrapPromptWarning.lines,
     );
+    const runtimeIntensitySystemPrompt =
+      runtimeIntensityPolicy.systemPromptLines.length > 0
+        ? ["## Runtime Intensity", ...runtimeIntensityPolicy.systemPromptLines].join("\n")
+        : undefined;
+    const effectiveExtraSystemPrompt = [params.extraSystemPrompt, runtimeIntensitySystemPrompt]
+      .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
+      .join("\n\n");
     const attemptSystemPrompt = buildAttemptSystemPrompt({
       isRawModelRun,
       transformProviderSystemPrompt: (transformParams) =>
@@ -1883,7 +1926,7 @@ export async function runEmbeddedAttempt(
         workspaceDir: effectiveWorkspace,
         defaultThinkLevel: params.thinkLevel,
         reasoningLevel: params.reasoningLevel ?? "off",
-        extraSystemPrompt: params.extraSystemPrompt,
+        extraSystemPrompt: effectiveExtraSystemPrompt || undefined,
         ownerNumbers: params.ownerNumbers,
         reasoningTagHint,
         heartbeatPrompt,
@@ -1934,6 +1977,26 @@ export async function runEmbeddedAttempt(
       },
     });
     const appendPrompt = attemptSystemPrompt.systemPrompt;
+    const contextTokenBudgetForIntensityReport = Math.max(
+      1,
+      Math.floor(
+        params.contextTokenBudget ??
+          params.model.contextWindow ??
+          params.model.maxTokens ??
+          DEFAULT_CONTEXT_TOKENS,
+      ),
+    );
+    const runtimeIntensityToolResultMaxChars = resolveLiveToolResultMaxChars({
+      contextWindowTokens: contextTokenBudgetForIntensityReport,
+      cfg: params.config,
+      agentId: sessionAgentId,
+      intensityPolicy: runtimeIntensityPolicy,
+    });
+    const runtimeIntensitySkillsIncluded = Array.from(
+      skillsPrompt.matchAll(/<skill>[\s\S]*?<\/skill>/gi),
+    ).length;
+    const runtimeIntensitySkillsTotal =
+      promptSkillEntries?.length ?? runtimeIntensitySkillsIncluded;
     const systemPromptReport = buildSystemPromptReport({
       source: "run",
       generatedAt: Date.now(),
@@ -1961,6 +2024,14 @@ export async function runEmbeddedAttempt(
       injectedFiles: contextFiles,
       skillsPrompt,
       tools: effectiveTools,
+      runtimeIntensity: {
+        policy: runtimeIntensityPolicy,
+        promptMode: effectivePromptMode,
+        skillsIncluded: runtimeIntensitySkillsIncluded,
+        skillsTotal: runtimeIntensitySkillsTotal,
+        toolResultMaxChars: runtimeIntensityToolResultMaxChars,
+        estimatedSavedChars: estimatedSkillsPromptSavedChars,
+      },
     });
     let systemPromptText = attemptSystemPrompt.systemPrompt;
     prepStages.mark("system-prompt");
@@ -2067,6 +2138,7 @@ export async function runEmbeddedAttempt(
           tokenBudget: params.contextTokenBudget,
           activeAgentId: sessionAgentId,
           contextEnginePluginId: resolveActiveContextEnginePluginId(),
+          runtimeIntensityPolicy,
         }),
         runMaintenance: async (contextParams) =>
           await runContextEngineMaintenance({
@@ -2404,6 +2476,7 @@ export async function runEmbeddedAttempt(
         contextWindowTokens: contextTokenBudgetForGuard,
         cfg: params.config,
         agentId: sessionAgentId,
+        intensityPolicy: runtimeIntensityPolicy,
       });
       const midTurnPrecheckEnabled =
         params.config?.agents?.defaults?.compaction?.midTurnPrecheck?.enabled === true;
@@ -2450,6 +2523,7 @@ export async function runEmbeddedAttempt(
               cwd: effectiveCwd,
               agentDir,
               tokenBudget: params.contextTokenBudget,
+              runtimeIntensityPolicy,
               promptCache:
                 promptCache ??
                 buildLoopPromptCacheInfo({
@@ -2467,6 +2541,7 @@ export async function runEmbeddedAttempt(
         const removeGuard = installToolResultContextGuard({
           agent: activeSession.agent,
           contextWindowTokens: contextTokenBudgetForGuard,
+          intensityPolicy: runtimeIntensityPolicy,
           ...midTurnPrecheckOptions,
         });
         removeToolResultContextGuard = () => {
@@ -2477,6 +2552,7 @@ export async function runEmbeddedAttempt(
         removeToolResultContextGuard = installToolResultContextGuard({
           agent: activeSession.agent,
           contextWindowTokens: contextTokenBudgetForGuard,
+          intensityPolicy: runtimeIntensityPolicy,
           ...midTurnPrecheckOptions,
         });
       }
@@ -3536,6 +3612,7 @@ export async function runEmbeddedAttempt(
             contextWindowTokens: contextTokenBudget,
             cfg: params.config,
             agentId: sessionAgentId,
+            intensityPolicy: runtimeIntensityPolicy,
           });
           const truncationResult = truncateOversizedToolResultsInSessionManager({
             sessionManager: activeSessionManager,
@@ -3851,6 +3928,7 @@ export async function runEmbeddedAttempt(
             contextWindowTokens: contextTokenBudget,
             cfg: params.config,
             agentId: sessionAgentId,
+            intensityPolicy: runtimeIntensityPolicy,
           });
           let promptHistoryMessages = activeSession.messages;
           const promptToolResultTruncation = truncateOversizedToolResultsInMessages(
@@ -4305,6 +4383,7 @@ export async function runEmbeddedAttempt(
               contextWindowTokens: contextTokenBudget,
               cfg: params.config,
               agentId: sessionAgentId,
+              intensityPolicy: runtimeIntensityPolicy,
             });
             const truncationResult = truncateOversizedToolResultsInSessionManager({
               sessionManager,
@@ -4764,6 +4843,7 @@ export async function runEmbeddedAttempt(
             promptCache,
             activeAgentId: sessionAgentId,
             contextEnginePluginId: resolveActiveContextEnginePluginId(),
+            runtimeIntensityPolicy,
           });
           await finalizeAttemptContextEngineTurn({
             contextEngine: activeContextEngine,

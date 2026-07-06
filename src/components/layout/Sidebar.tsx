@@ -19,6 +19,7 @@ import {
   Terminal,
   ExternalLink,
   Trash2,
+  Archive as ArchiveIcon,
   Pencil,
   Check,
   X,
@@ -32,6 +33,7 @@ import {
   GitCompare,
   Inbox,
   Search,
+  AlertTriangle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
@@ -42,20 +44,23 @@ import { useChatStore, type ChatRuntimeRunState, type ChatSession } from '@/stor
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useWorkspacesStore } from '@/stores/workspaces';
+import { useStorageHealthStore } from '@/stores/storage-health';
 import {
   buildSidebarTimeSessions,
   buildSidebarWorkspaceSessionGroups,
   type SidebarSessionEntry,
 } from './session-buckets';
 import { SessionSearchModal, SESSION_SEARCH_LAYOUT_ID } from './SessionSearchModal';
+import { ArchiveModal } from './ArchiveModal';
+import { SessionFolderTree } from './SessionFolderTree';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { hostApi } from '@/lib/host-api';
 import { SIDEBAR_COLLAPSED_WIDTH, MAC_SIDEBAR_CHROME_HEIGHT } from '@shared/sidebar-layout';
 import { useTranslation } from 'react-i18next';
-import logoSvg from '@/assets/logo.png';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useNewChatAction } from './use-new-chat-action';
 
 interface NavItemProps {
@@ -123,6 +128,8 @@ interface SessionRowProps {
   navigate: (to: string) => void;
   onDeleteClick: (key: string, label: string) => void;
   onDismissSessionStatus: (key: string, signature: string) => void;
+  leadingActions?: React.ReactNode;
+  forceActionsVisible?: boolean;
 }
 
 type SidebarSessionStatusKind = 'running' | 'waiting' | 'completed' | 'error' | 'aborted';
@@ -250,9 +257,12 @@ const SessionRowMemo = memo(function SessionRow({
   navigate,
   onDeleteClick,
   onDismissSessionStatus,
+  leadingActions,
+  forceActionsVisible = false,
 }: SessionRowProps) {
   const { t } = useTranslation(['common', 'chat']);
   const sessionStatusLabel = sessionStatus ? t(`chat:${sessionStatus.labelKey}`) : '';
+  const hasLeadingActions = Boolean(leadingActions);
   return (
     <div className="group relative flex items-center">
       {isEditing ? (
@@ -296,7 +306,7 @@ const SessionRowMemo = memo(function SessionRow({
             onDoubleClick={() => onStartRename(s.key, sessionLabel)}
             className={cn(
               'w-full text-left rounded-lg px-2.5 py-1.5 text-meta transition-colors',
-              'pr-16',
+              hasLeadingActions ? 'pr-20' : 'pr-16',
               'hover:bg-black/5 dark:hover:bg-white/5',
               isOnChat && currentSessionKey === s.key
                 ? 'bg-black/5 dark:bg-white/10 text-foreground font-medium'
@@ -338,10 +348,12 @@ const SessionRowMemo = memo(function SessionRow({
             </div>
           </button>
           <div className={cn(
-            'absolute right-1 flex items-center gap-0.5 transition-opacity',
-            'opacity-0 group-hover:opacity-100',
+            'absolute right-1 top-1/2 flex -translate-y-1/2 items-center gap-0.5 transition-opacity',
+            forceActionsVisible ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
           )}>
+            {leadingActions}
             <button
+              data-testid={`sidebar-session-rename-${s.key}`}
               aria-label={t('common:sidebar.renameSession', { ns: 'common' })}
               onClick={(e) => {
                 e.stopPropagation();
@@ -400,17 +412,27 @@ export function Sidebar() {
   })));
   const switchSession = useChatStore((s) => s.switchSession);
   const deleteSession = useChatStore((s) => s.deleteSession);
+  const archiveSession = useChatStore((s) => s.archiveSession);
   const renameSession = useChatStore((s) => s.renameSession);
   const loadSessions = useChatStore((s) => s.loadSessions);
   const loadHistory = useChatStore((s) => s.loadHistory);
   const handleNewChat = useNewChatAction();
   const workspaceProfiles = useWorkspacesStore((s) => s.profiles);
+  const createWorkspaceFolder = useWorkspacesStore((s) => s.createFolder);
+  const renameWorkspaceFolder = useWorkspacesStore((s) => s.renameFolder);
+  const deleteWorkspaceFolder = useWorkspacesStore((s) => s.deleteFolder);
+  const moveSessionToFolder = useWorkspacesStore((s) => s.moveSessionToFolder);
   const [dismissedCompletedStatuses, setDismissedCompletedStatuses] = useState<Record<string, string>>({});
+  const [collapsedFolderIds, setCollapsedFolderIds] = useState<Record<string, boolean>>({});
+  const [archiveModalOpen, setArchiveModalOpen] = useState(false);
 
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
   const isGatewayReady = isGatewayRunning && gatewayStatus.gatewayReady !== false;
   const gatewayRestarting = isGatewayRestarting(gatewayStatus);
+  const storageRamLow = useStorageHealthStore((s) => s.ramLow);
+  const storageDiskLow = useStorageHealthStore((s) => s.diskLow);
+  const storageHealthLow = storageRamLow || storageDiskLow;
   const gatewayRuntimeKey = `${gatewayStatus.pid ?? 'none'}:${gatewayStatus.connectedAt ?? 'none'}:${gatewayStatus.port}`;
 
   const hasLoadedCurrentRuntimeRef = useRef(false);
@@ -508,6 +530,29 @@ export function Sidebar() {
       [workspaceId]: !current[workspaceId],
     }));
   }, []);
+
+  const toggleFolder = useCallback((folderId: string) => {
+    setCollapsedFolderIds((current) => ({
+      ...current,
+      [folderId]: !current[folderId],
+    }));
+  }, []);
+
+  const handleCreateFolder = useCallback(async (workspaceId: string, name: string, parentId: string | null) => {
+    await createWorkspaceFolder(workspaceId, name, parentId);
+  }, [createWorkspaceFolder]);
+
+  const handleRenameFolder = useCallback(async (workspaceId: string, folderId: string, name: string) => {
+    await renameWorkspaceFolder(workspaceId, folderId, name);
+  }, [renameWorkspaceFolder]);
+
+  const handleDeleteFolder = useCallback(async (workspaceId: string, folderId: string) => {
+    await deleteWorkspaceFolder(workspaceId, folderId);
+  }, [deleteWorkspaceFolder]);
+
+  const handleMoveSessionToFolder = useCallback(async (workspaceId: string, sessionKey: string, folderId: string | null) => {
+    await moveSessionToFolder(workspaceId, sessionKey, folderId);
+  }, [moveSessionToFolder]);
 
   const handleRenameKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -640,7 +685,15 @@ export function Sidebar() {
     }));
   }, []);
 
-  const renderSessionRow = useCallback(({ session: s }: SidebarSessionEntry) => {
+  const sessionStatusKinds = useMemo(() => Object.fromEntries(
+    Object.entries(sessionStatuses).map(([key, status]) => [key, status.kind]),
+  ) as Record<string, SidebarSessionStatus['kind'] | undefined>, [sessionStatuses]);
+
+  const renderSessionRow = useCallback((entry: SidebarSessionEntry, options?: {
+    leadingActions?: React.ReactNode;
+    forceActionsVisible?: boolean;
+  }) => {
+    const { session: s } = entry;
     return <SessionRowMemo
       key={s.key}
       session={s}
@@ -664,6 +717,8 @@ export function Sidebar() {
         setDeleteDialogOpen(true);
       }}
       onDismissSessionStatus={handleDismissSessionStatus}
+      leadingActions={options?.leadingActions}
+      forceActionsVisible={options?.forceActionsVisible}
     />;
   }, [
     agentNameById, editingSessionKey, editingLabel, sessionLabels, sessionStatuses,
@@ -693,13 +748,13 @@ export function Sidebar() {
       {/* Top Header Toggle */}
       <div
         className={cn(
-          'flex shrink-0 items-center p-2 h-8',
+          'flex h-10 shrink-0 items-center px-2 py-1.5',
           sidebarCollapsed ? 'justify-center' : 'justify-between',
         )}
       >
         {!sidebarCollapsed && (
-          <div className="flex items-center gap-2 px-2 overflow-hidden">
-            <img src={logoSvg} alt="Verse" className="h-5 w-auto shrink-0" />
+          <div className="flex min-w-0 items-center gap-2 overflow-hidden px-2">
+            <BrandLogo size="sidebar" />
             <span className="text-sm font-semibold truncate whitespace-nowrap text-foreground/90">
               Verse
             </span>
@@ -822,7 +877,20 @@ export function Sidebar() {
                         ? <ChevronRight className="h-3.5 w-3.5 shrink-0" />
                         : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
                     </button>
-                    {!collapsed && group.sessions.map((entry) => renderSessionRow(entry))}
+                    {!collapsed && (
+                      <SessionFolderTree
+                        workspace={group.workspace}
+                        sessions={group.sessions}
+                        collapsedFolders={collapsedFolderIds}
+                        sessionStatusKinds={sessionStatusKinds}
+                        onToggleFolder={toggleFolder}
+                        onCreateFolder={handleCreateFolder}
+                        onRenameFolder={handleRenameFolder}
+                        onDeleteFolder={handleDeleteFolder}
+                        onMoveSession={handleMoveSessionToFolder}
+                        renderSessionRow={renderSessionRow}
+                      />
+                    )}
                   </div>
                 );
               })
@@ -833,6 +901,23 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="mt-auto flex flex-col gap-1 p-2">
+        {!sidebarCollapsed && (
+          <button
+            data-testid="sidebar-archive"
+            onClick={() => setArchiveModalOpen(true)}
+            className={cn(
+              'sidebar-nav-text flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors',
+              'hover:bg-black/5 dark:hover:bg-white/5 text-foreground/80',
+            )}
+          >
+            <div className="flex shrink-0 items-center justify-center text-current [&_svg]:size-4">
+              <ArchiveIcon className="h-4 w-4" strokeWidth={2} />
+            </div>
+            <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+              {t('chat:archive.open')}
+            </span>
+          </button>
+        )}
         <div
           data-testid="sidebar-gateway-restarting"
           data-state={gatewayRestarting ? 'visible' : 'hidden'}
@@ -859,6 +944,35 @@ export function Sidebar() {
               </span>
             )}
           </div>
+        </div>
+        <div
+          data-testid="sidebar-storage-low"
+          data-state={storageHealthLow ? 'visible' : 'hidden'}
+          aria-hidden={!storageHealthLow}
+          className={cn(
+            'overflow-hidden transition-[max-height,opacity,transform] duration-200 ease-out',
+            storageHealthLow ? 'max-h-12 translate-y-0 opacity-100' : 'max-h-0 translate-y-1 opacity-0',
+          )}
+        >
+          <button
+            type="button"
+            onClick={() => navigate('/settings/storage')}
+            aria-live="polite"
+            aria-label={t('common:storageHealth.bannerLow')}
+            title={t('common:storageHealth.bannerLow')}
+            className={cn(
+              'sidebar-nav-text flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5',
+              'border border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-400',
+              sidebarCollapsed && 'justify-center px-0',
+            )}
+          >
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            {!sidebarCollapsed && (
+              <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                {t('common:storageHealth.bannerLow')}
+              </span>
+            )}
+          </button>
         </div>
 
         <NavLink
@@ -924,21 +1038,60 @@ export function Sidebar() {
         </div>
       )}
 
-      <ConfirmDialog
-        open={deleteDialogOpen}
-        title={t('common:actions.confirm')}
-        message={t('common:sidebar.deleteSessionConfirm', { label: sessionToDelete?.label ?? '' })}
-        confirmLabel={t('common:actions.delete')}
-        cancelLabel={t('common:actions.cancel')}
-        variant="destructive"
-        onConfirm={async () => {
-          const targetSession = sessionToDelete;
-          if (!targetSession) return;
-          await deleteSession(targetSession.key);
-          if (currentSessionKey === targetSession.key) navigate('/');
-          setDeleteDialogOpen(false);
-        }}
-        onCancel={() => setDeleteDialogOpen(false)}
+      <Dialog open={deleteDialogOpen} onOpenChange={(next) => { if (!next) setDeleteDialogOpen(false); }}>
+        <DialogContent
+          data-testid="session-delete-dialog"
+          className="w-[calc(100%-2rem)] max-w-md rounded-lg border bg-surface-modal p-6 shadow-lg"
+        >
+          <DialogTitle className="text-lg font-semibold">
+            {t('chat:archive.deleteTitle')}
+          </DialogTitle>
+          <DialogDescription className="mt-2 text-sm text-muted-foreground">
+            {t('chat:archive.deleteMessage', { label: sessionToDelete?.label ?? '' })}
+          </DialogDescription>
+          <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
+            <Button
+              data-testid="session-delete-dialog-cancel"
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+            >
+              {t('common:actions.cancel')}
+            </Button>
+            <Button
+              data-testid="session-delete-dialog-archive"
+              variant="default"
+              onClick={async () => {
+                const target = sessionToDelete;
+                if (!target) return;
+                setDeleteDialogOpen(false);
+                await archiveSession(target.key);
+                if (currentSessionKey === target.key) navigate('/');
+              }}
+            >
+              <ArchiveIcon className="mr-1 h-3.5 w-3.5" />
+              {t('chat:archive.archiveAction')}
+            </Button>
+            <Button
+              data-testid="session-delete-dialog-permanent"
+              variant="destructive"
+              onClick={async () => {
+                const target = sessionToDelete;
+                if (!target) return;
+                setDeleteDialogOpen(false);
+                await deleteSession(target.key);
+                if (currentSessionKey === target.key) navigate('/');
+              }}
+            >
+              <Trash2 className="mr-1 h-3.5 w-3.5" />
+              {t('chat:archive.deletePermanently')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <ArchiveModal
+        open={archiveModalOpen}
+        onClose={() => setArchiveModalOpen(false)}
       />
 
       <SessionSearchModal

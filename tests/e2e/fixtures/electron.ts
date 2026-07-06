@@ -4,6 +4,7 @@ import { access, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 type LaunchElectronOptions = {
   skipSetup?: boolean;
@@ -28,6 +29,7 @@ type ElectronFixtures = {
 
 const repoRoot = resolve(process.cwd());
 const electronEntry = join(repoRoot, 'dist-electron/main/index.js');
+const rendererEntryUrl = pathToFileURL(join(repoRoot, 'dist', 'index.html')).toString();
 
 async function allocatePort(): Promise<number> {
   return await new Promise((resolvePort, reject) => {
@@ -131,6 +133,10 @@ async function seedE2eSettings(userDataDir: string): Promise<void> {
 }
 
 async function cleanupTempDir(path: string): Promise<void> {
+  if (process.env.CLAWX_E2E_KEEP_TEMP === '1') {
+    return;
+  }
+
   try {
     await rm(path, { recursive: true, force: true });
   } catch (error) {
@@ -158,7 +164,15 @@ async function launchVerseClawElectron(
     : {};
   return await electron.launch({
     executablePath: electronBinaryPath,
-    args: ['--lang=en-US', electronEntry],
+    args: [
+      '--lang=en-US',
+      '--disable-gpu',
+      '--disable-gpu-compositing',
+      '--disable-software-rasterizer',
+      '--in-process-gpu',
+      '--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization',
+      electronEntry,
+    ],
     env: {
       ...process.env,
       ...electronEnv,
@@ -247,7 +261,15 @@ export async function openAgentDevScenario(
   scenario: string,
   options: { flags?: string[]; visualMode?: boolean } = {},
 ): Promise<void> {
-  const url = new URL(page.url());
+  let url: URL;
+  try {
+    url = new URL(page.url());
+    if (url.protocol === 'chrome-error:' || url.protocol === 'about:') {
+      url = new URL(rendererEntryUrl);
+    }
+  } catch {
+    url = new URL(rendererEntryUrl);
+  }
   url.searchParams.set('e2eSkipSetup', '1');
   url.searchParams.set('devScenario', scenario);
   if (options.flags?.length) url.searchParams.set('flags', options.flags.join(','));

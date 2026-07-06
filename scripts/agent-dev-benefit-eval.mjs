@@ -29,9 +29,9 @@ function countMatches(text, pattern) {
   return [...text.matchAll(pattern)].length;
 }
 
-function extractScenarioIds(contractText) {
-  const match = contractText.match(/export type AgentDevScenarioId =([\s\S]*?);/);
-  return match ? [...match[1].matchAll(/'([^']+)'/g)].map((entry) => entry[1]) : [];
+function extractScenarioIds(registryText) {
+  const match = registryText.match(/export const AGENT_DEV_SCENARIOS = \[([\s\S]*?)\] as const/);
+  return match ? [...match[1].matchAll(/\{\s*id:\s*'([^']+)'/g)].map((entry) => entry[1]) : [];
 }
 
 function packageInstalled(name) {
@@ -103,20 +103,20 @@ ${tools}
 
 const start = performance.now();
 const [
-  contract,
+  scenarioRegistry,
   hostApi,
   e2eFixture,
   schemaText,
   a11yText,
 ] = await Promise.all([
-  read('shared/host-api/contract.ts'),
+  read('shared/agent-dev/scenarios.ts'),
   read('src/lib/host-api.ts'),
   read('tests/e2e/fixtures/electron.ts'),
   read('shared/host-api/agent-dev-schemas.ts'),
   read('tests/e2e/fixtures/a11y.ts'),
 ]);
 
-const scenarioIds = extractScenarioIds(contract);
+const scenarioIds = extractScenarioIds(scenarioRegistry);
 const hostApiAgentDevBlock = hostApi.match(/agentDev:\s*\{([\s\S]*?)\n  \},\n  providers:/)?.[1] ?? '';
 const report = {
   generatedAt: new Date().toISOString(),

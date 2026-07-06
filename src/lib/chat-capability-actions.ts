@@ -1,17 +1,17 @@
 import { hostApi } from '@/lib/host-api';
 import type {
+  CapabilityRegistryEntry,
   ChatCapabilityActionPlan,
   ChatCapabilityActionResult,
   McpServerCreatePayload,
 } from '@shared/host-api/contract';
 import type { McpNetworkPolicy, McpScope, McpTransport } from '@shared/types/mcp';
-import type { Skill } from '@/types/skill';
 import {
   auditMcpServerForAction,
-  auditSkillForAction,
   riskFromAudit,
 } from '@/lib/capability-audit';
 import { executeCapabilityActionPlan, type CapabilityActionHostApi } from '@/lib/capability-orchestrator';
+import { loadCapabilityRegistry } from '@/lib/capability-registry';
 
 type CapabilityHostApi = CapabilityActionHostApi;
 
@@ -182,13 +182,13 @@ function normalizeSearchText(value: string): string {
   return value.toLowerCase().replace(/[_\s]+/g, '-');
 }
 
-function skillAliases(skill: Skill): string[] {
-  return [skill.id, skill.slug, skill.name]
+function skillAliases(skill: CapabilityRegistryEntry): string[] {
+  return [skill.skillId, skill.id.replace(/^skill:/, ''), skill.name]
     .filter((entry): entry is string => typeof entry === 'string' && entry.trim().length > 0)
     .map((entry) => entry.trim().toLowerCase());
 }
 
-function findRequestedSkills(message: string, skills: Skill[]): Skill[] {
+function findRequestedSkills(message: string, skills: CapabilityRegistryEntry[]): CapabilityRegistryEntry[] {
   const normalizedMessage = normalizeSearchText(message);
   return skills.filter((skill) => (
     skillAliases(skill).some((alias) => {
@@ -214,23 +214,28 @@ async function resolveSkillActions(
   api: CapabilityHostApi,
 ): Promise<Pick<ChatCapabilityPlanResolution, 'actions' | 'unsupportedReason' | 'unsupportedTarget'>> {
   if (!textContainsSkillIntent(message)) return { actions: [] };
-  const result = await api.skills.local();
-  const skills = result.success && Array.isArray(result.skills) ? result.skills : [];
+  const registry = await loadCapabilityRegistry(api);
+  const skills = registry.filter((entry) => entry.kind === 'skill');
   const matches = findRequestedSkills(message, skills);
   if (matches.length === 0) {
     return { actions: [], unsupportedReason: 'skillNotFound' };
   }
   return {
     actions: matches.map((skill, index) => {
-      const auditResult = auditSkillForAction(skill);
+      const auditResult = skill.lastAuditResult ?? {
+        status: 'unknown' as const,
+        summary: 'Skill publication state is unknown.',
+        findings: [],
+        auditedAt: new Date().toISOString(),
+      };
       return {
         id: actionId('skill.enable', index),
         kind: 'skill.enable',
         label: skill.enabled ? `Skill already enabled: ${skill.name}` : `Enable skill: ${skill.name}`,
         targetName: skill.name,
-        skillId: skill.id,
+        skillId: skill.skillId ?? skill.id.replace(/^skill:/, ''),
         skillAlreadyEnabled: skill.enabled,
-        summary: skill.enabled ? 'No change needed' : skill.description,
+        summary: skill.enabled ? 'No change needed' : auditResult.summary,
         risk: riskFromAudit(auditResult),
         auditResult,
       };
@@ -264,11 +269,11 @@ async function resolveMcpManagementAction(
     };
   }
 
-  const listed = await api.mcp.listServers();
-  const servers = Array.isArray(listed.servers) ? listed.servers : [];
+  const registry = await loadCapabilityRegistry(api);
+  const servers = registry.filter((entry) => entry.kind === 'mcp' && entry.enabled);
   const normalizedMessage = normalizeSearchText(message);
   const server = servers.find((entry) => (
-    [entry.id, entry.name, entry.localAddress]
+    [entry.serverId, entry.id, entry.name]
       .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
       .some((value) => normalizedMessage.includes(normalizeSearchText(value)))
   ));
@@ -279,8 +284,8 @@ async function resolveMcpManagementAction(
       kind,
       label: kind === 'mcp.listTools' ? `List MCP tools: ${server.name}` : `Check MCP heartbeat: ${server.name}`,
       targetName: server.name,
-      serverId: server.id,
-      summary: server.localAddress,
+      serverId: server.serverId ?? server.id.replace(/^mcp:/, ''),
+      summary: server.lastAuditResult?.summary,
       risk: 'low',
     }],
   };

@@ -147,9 +147,12 @@ const STATIC_ASSET_EXTENSIONS = new Set([
 const CONTROL_UI_NAMESPACE_PREFIX = "/__openclaw__/";
 const CONTROL_UI_ROOT_PUBLIC_ASSETS = new Set([
   "apple-touch-icon.png",
+  "apple-touch-icon-dark.png",
   "favicon-32.png",
+  "favicon-32-dark.png",
   "favicon.ico",
   "favicon.svg",
+  "favicon-dark.svg",
   "manifest.webmanifest",
   "sw.js",
 ]);

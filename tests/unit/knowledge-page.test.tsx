@@ -14,13 +14,17 @@ const hostApiMock = vi.hoisted(() => ({
   updateInboxItem: vi.fn(),
   dismissInboxItem: vi.fn(),
   promoteInboxItemToDraft: vi.fn(),
-  runtimeLessonsReport: vi.fn(),
   search: vi.fn(),
   get: vi.fn(),
   compile: vi.fn(),
   lint: vi.fn(),
   applyDraft: vi.fn(),
   createDraft: vi.fn(),
+  listSourceSets: vi.fn(),
+  saveSourceSet: vi.fn(),
+  deleteSourceSet: vi.fn(),
+  answerFromSourceSet: vi.fn(),
+  createArtifactDraft: vi.fn(),
   listDrafts: vi.fn(),
   getDraft: vi.fn(),
   updateDraft: vi.fn(),
@@ -30,6 +34,7 @@ const hostApiMock = vi.hoisted(() => ({
   previewChange: vi.fn(),
   applyReviewedChange: vi.fn(),
   stewardReview: vi.fn(),
+  governanceAudit: vi.fn(),
   recordKnowledgeReference: vi.fn(),
   getProvenance: vi.fn(),
   openVault: vi.fn(),
@@ -50,13 +55,17 @@ vi.mock('@/lib/host-api', () => ({
       updateInboxItem: hostApiMock.updateInboxItem,
       dismissInboxItem: hostApiMock.dismissInboxItem,
       promoteInboxItemToDraft: hostApiMock.promoteInboxItemToDraft,
-      runtimeLessonsReport: hostApiMock.runtimeLessonsReport,
       search: hostApiMock.search,
       get: hostApiMock.get,
       compile: hostApiMock.compile,
       lint: hostApiMock.lint,
       applyDraft: hostApiMock.applyDraft,
       createDraft: hostApiMock.createDraft,
+      listSourceSets: hostApiMock.listSourceSets,
+      saveSourceSet: hostApiMock.saveSourceSet,
+      deleteSourceSet: hostApiMock.deleteSourceSet,
+      answerFromSourceSet: hostApiMock.answerFromSourceSet,
+      createArtifactDraft: hostApiMock.createArtifactDraft,
       listDrafts: hostApiMock.listDrafts,
       getDraft: hostApiMock.getDraft,
       updateDraft: hostApiMock.updateDraft,
@@ -66,6 +75,7 @@ vi.mock('@/lib/host-api', () => ({
       previewChange: hostApiMock.previewChange,
       applyReviewedChange: hostApiMock.applyReviewedChange,
       stewardReview: hostApiMock.stewardReview,
+      governanceAudit: hostApiMock.governanceAudit,
       recordKnowledgeReference: hostApiMock.recordKnowledgeReference,
       getProvenance: hostApiMock.getProvenance,
       openVault: hostApiMock.openVault,
@@ -86,6 +96,19 @@ vi.mock('sonner', () => ({
 const labels: Record<string, string> = {
   title: 'Knowledge',
   subtitle: 'Manage source-backed wiki context for OpenClaw runs.',
+  'assistant.title': 'Knowledge Assistant',
+  'assistant.subtitle': 'Read what is already in the vault.',
+  'assistant.browse': 'Browse docs',
+  'assistant.docs': 'Readable docs',
+  'assistant.docsHint': 'Start with pages and categories.',
+  'assistant.pending': 'Needs review',
+  'assistant.pendingHint': 'Captured ideas waiting for a person.',
+  'assistant.drafts': 'Editable drafts',
+  'assistant.draftsHint': 'Drafts become durable knowledge.',
+  'assistant.health': 'Health signals',
+  'assistant.healthHint': 'Warnings and audit checks live in the audit center.',
+  'assistant.mapTitle': 'What is inside',
+  'assistant.mapHint': 'Open a topic to search the vault.',
   'actions.configure': 'Configure',
   'actions.init': 'Initialize',
   'actions.importFiles': 'Import Files',
@@ -125,13 +148,126 @@ const labels: Record<string, string> = {
   'okf.typeDistribution': 'Types',
   'okf.selectAll': 'Select all valid concepts',
   'tabs.library': 'Library',
+  'tabs.sources': 'Sources',
   'tabs.inbox': 'Inbox',
   'tabs.drafts': 'Draft Inbox',
   'tabs.review': 'Review',
   'tabs.governance': 'Governance',
-  'tabs.runtime': 'Runtime Lessons',
   'library.title': 'Library',
+  'sources.title': 'Sources',
+  'sourceSet.title': 'Current Source Set',
+  'sourceSet.empty': 'Add sources from search results or the current document.',
+  'sourceSet.count': '{{count}} sources',
+  'sourceSet.save': 'Save Source Set',
+  'sourceSet.clear': 'Clear',
+  'sourceSet.titlePlaceholder': 'Source Set title',
+  'sourceSet.defaultTitle': 'Untitled Source Set',
+  'sourceSet.addResult': 'Add to Source Set',
+  'sourceSet.saved': 'Source Set saved',
+  'sourceSet.answerBoundary': 'Answers prioritize selected sources; durable writes still require review.',
+  'studio.title': 'Studio Assistant',
+  'studio.summary': 'Summary',
+  'studio.faq': 'FAQ',
+  'studio.decisionMemo': 'Decision Memo',
+  'studio.troubleshootingRecipe': 'Troubleshooting',
+  'studio.artifactCreated': 'Studio draft created',
+  'studio.question': 'Create a {{artifact}} from the current Source Set.',
   'library.typeHint': 'Filter and browse this knowledge type',
+  'library.countLabel': '{{count}} pages',
+  'workspace.vault': 'Vault',
+  'workspace.localVault': 'Local knowledge vault',
+  'workspace.documents': 'Documents',
+  'workspace.emptyDocuments': 'Search the vault or create a new Markdown note to begin.',
+  'workspace.types': 'Types',
+  'workspace.untitled': 'Untitled note',
+  'workspace.localDraft': 'local draft',
+  'workspace.characters': 'chars',
+  'workspace.tagsPlaceholder': 'tags, aliases, project',
+  'workspace.submitReview': 'Submit',
+  'workspace.reviewReason': 'User-authored Markdown note submitted from the knowledge workspace for review.',
+  'workspace.emptyPreview': 'Nothing to preview yet.',
+  'workspace.modes.edit': 'Edit',
+  'workspace.modes.preview': 'Preview',
+  'workspace.modes.split': 'Split',
+  'librarian.title': 'Knowledge Librarian',
+  'librarian.roleId': 'knowledge-librarian',
+  'librarian.currentDocument': 'Current document',
+  'librarian.noSummary': 'Write or open a Markdown document to give the librarian context.',
+  'librarian.openAssistant': 'Open librarian',
+  'librarian.askSteward': 'Ask steward',
+  'librarian.related': 'Related pages',
+  'librarian.noRelated': 'Search results and related pages will appear here.',
+  'librarian.boundaries': 'Role boundaries',
+  'librarian.boundaryRead': 'Can search and answer with citations.',
+  'librarian.boundaryDraft': 'Can prepare drafts and proposals, not silently write the vault.',
+  'librarian.boundarySources': 'Must surface missing sources, conflicts, and stale claims.',
+  'librarian.modalTitle': 'Knowledge Librarian',
+  'librarian.modalSubtitle': 'Ask, organize, and review your Markdown knowledge base.',
+  'librarian.writeBoundary': 'The librarian can help organize and draft knowledge.',
+  'librarian.askPlaceholder': 'Ask about this vault or the current document',
+  'librarian.askButton': 'Ask',
+  'librarian.askHint': 'Answers use local knowledge search.',
+  'librarian.checkpointSaved': 'Checkpoint saved at {{time}}',
+  'librarian.noCheckpoint': 'No local checkpoint yet',
+  'librarian.clearThread': 'Clear thread',
+  'librarian.threadEmpty': 'Ask a question to search the vault.',
+  'librarian.you': 'You',
+  'librarian.answerIntro': 'I searched the vault and found {{count}} relevant source(s):',
+  'librarian.answerBoundary': 'This is a local retrieval answer.',
+  'librarian.answerError': 'I could not query the vault: {{error}}',
+  'librarian.noAnswer': 'I could not find a matching page.',
+  'librarian.emptyCitation': 'No readable excerpt was available for this source.',
+  'librarian.copy': 'Copy message',
+  'librarian.copied': 'Copied',
+  'librarian.copyFailed': 'Could not copy message.',
+  'librarian.citations': 'Citations',
+  'librarian.searching': 'Searching local knowledge and reading page previews...',
+  'librarian.errorTitle': 'The librarian hit a local retrieval error',
+  'librarian.retry': 'Retry',
+  'librarian.dismissError': 'Dismiss',
+  'librarian.sections.answer': 'Answer',
+  'librarian.sections.sources': 'Sources used',
+  'librarian.sections.unknowns': 'Unknowns / missing sources',
+  'librarian.sections.nextAction': 'Suggested next action',
+  'librarian.sections.retrieval': 'Retrieval inspector',
+  'librarian.retrieval.query': 'Query',
+  'librarian.retrieval.corpus': 'Corpus',
+  'librarian.retrieval.roleTag': 'Role tag',
+  'librarian.retrieval.resultCount': 'Result count',
+  'librarian.retrieval.selectedSources': 'Selected sources',
+  'librarian.retrieval.selectedReason': 'Selected from local keyword retrieval',
+  'librarian.unknowns.noSources': 'No matching source was found for this answer.',
+  'librarian.unknowns.pageSnippetLevel': 'Grounding is page/snippet level.',
+  'librarian.groundingStatus.grounded': 'Grounded',
+  'librarian.groundingStatus.partial': 'Partial',
+  'librarian.groundingStatus.missingSources': 'Missing sources',
+  'librarian.confidence': 'Confidence',
+  'librarian.candidate.draftTitlePrefix': 'Librarian answer',
+  'librarian.candidate.errorExperienceTitlePrefix': 'Error experience',
+  'librarian.candidate.stewardTitlePrefix': 'Steward review',
+  'librarian.suggestions.summarize.label': 'Summarize current note',
+  'librarian.suggestions.summarize.prompt': 'Summarize {{title}}.',
+  'librarian.suggestions.related.label': 'Find related pages',
+  'librarian.suggestions.related.prompt': 'Find related pages for {{title}}.',
+  'librarian.suggestions.gaps.label': 'Review gaps',
+  'librarian.suggestions.gaps.prompt': 'Review gaps for {{title}}.',
+  'librarian.capabilities.ask.title': 'Ask the vault',
+  'librarian.capabilities.ask.body': 'Answer simple questions from knowledge pages.',
+  'librarian.capabilities.organize.title': 'Organize notes',
+  'librarian.capabilities.organize.body': 'Suggest titles, tags, links, and frontmatter.',
+  'librarian.capabilities.review.title': 'Review changes',
+  'librarian.capabilities.review.body': 'Hand drafts to the steward.',
+  'librarian.actions.searchRelated': 'Find related',
+  'librarian.actions.saveDraft': 'Save as Draft',
+  'librarian.actions.createErrorExperience': 'Create Error Experience',
+  'librarian.actions.sendToSteward': 'Send to Steward',
+  'librarian.actions.stewardReview': 'Steward review',
+  'librarian.actions.openInbox': 'Open inbox',
+  'librarian.actions.submitDraft': 'Submit draft',
+  'librarian.suggestions.next.saveDraft': 'Save the grounded answer as a review draft.',
+  'librarian.suggestions.next.createErrorExperience': 'Create an error-experience candidate.',
+  'librarian.suggestions.next.sendToSteward': 'Ask the Knowledge Steward.',
+  'librarian.suggestions.next.broadenSearch': 'Broaden the search.',
   'inbox.title': 'Knowledge Inbox',
   'inbox.pending': 'Pending candidates',
   'inbox.empty': 'No pending knowledge candidates.',
@@ -180,6 +316,21 @@ const labels: Record<string, string> = {
   'inbox.groups.save': 'Recommended save',
   'inbox.groups.review': 'Needs review',
   'inbox.groups.archive-only': 'Archive only',
+  'inbox.triage.title': 'Steward triage',
+  'inbox.triage.confidence': '{{confidence}}%',
+  'inbox.triage.duplicateOf': 'Duplicate of',
+  'inbox.triage.conflictWith': 'Conflicts with',
+  'inbox.triage.suggestedEdits': 'Suggested edits',
+  'inbox.triage.groups.needs-decision': 'Needs decision',
+  'inbox.triage.groups.ready-for-review': 'Ready for review',
+  'inbox.triage.groups.possible-duplicate': 'Possible duplicate',
+  'inbox.triage.groups.observe': 'Observe',
+  'inbox.triage.groups.reject-low-value': 'Low value',
+  'inbox.triage.actions.needs-decision': 'Needs decision',
+  'inbox.triage.actions.ready-for-review': 'Ready for review',
+  'inbox.triage.actions.possible-duplicate': 'Possible duplicate',
+  'inbox.triage.actions.observe': 'Observe',
+  'inbox.triage.actions.reject-low-value': 'Low value',
   'inbox.recommendations.save': 'Save',
   'inbox.recommendations.review': 'Review',
   'inbox.recommendations.archive-only': 'Archive only',
@@ -222,20 +373,9 @@ const labels: Record<string, string> = {
   'review.confirmationBoundary': 'Agents and the Knowledge Steward can only prepare drafts or proposals. Applying knowledge requires this explicit user confirmation.',
   'review.approveAndApply': 'Approve and Apply',
   'review.reject': 'Reject',
-  'runtime.title': 'Runtime Lessons',
-  'runtime.subtitle': 'SEKB runtime learning from agent runs.',
-  'runtime.unavailable': 'Runtime lessons are not available.',
-  'runtime.metrics.trajectories': 'Trajectories',
-  'runtime.metrics.undistilled': 'Undistilled',
-  'runtime.metrics.principles': 'Principles',
-  'runtime.undistilledTitle': 'Undistilled runs',
-  'runtime.principlesTitle': 'Active principles',
-  'runtime.indexTitle': 'Index preview',
-  'runtime.emptyUndistilled': 'No undistilled runtime runs.',
-  'runtime.emptyPrinciples': 'No active runtime principles.',
-  'runtime.errorSignature': 'Error signature',
-  'runtime.taskType': 'Task type',
   'governance.title': 'Governance',
+  'governance.openAudit': 'Audit Center',
+  'governance.backToLibrary': 'Back to Library',
   'governance.readOnlyBadge': 'Agent read-only by default',
   'governance.steward': 'Knowledge Steward',
   'governance.stewardDescription': 'A role-first slot.',
@@ -243,6 +383,41 @@ const labels: Record<string, string> = {
   'governance.permissionsDescription': 'Chat knowledge scope only grants search/get access.',
   'governance.lastReview': 'Latest Steward Review',
   'governance.noReview': 'No steward review has run.',
+  'governance.runHealthCheck': 'Run Health Check',
+  'governance.runLint': 'Run Lint',
+  'governance.runCompile': 'Run Compile',
+  'governance.checking': 'Checking...',
+  'governance.contradictions': 'Contradictions',
+  'governance.stale': 'Stale Pages',
+  'governance.dangling': 'Orphan Pages',
+  'governance.noIssues': 'No issues detected',
+  'governance.qualityMetrics.title': 'Quality Metrics',
+  'governance.qualityMetrics.description': 'Compact health signals.',
+  'governance.qualityMetrics.pendingAudit': 'Run health check',
+  'governance.qualityMetrics.sourceAudit': 'Audit result',
+  'governance.qualityMetrics.affected': '{{count}} affected item(s)',
+  'governance.qualityMetrics.severity.info': 'Info',
+  'governance.qualityMetrics.severity.warning': 'Warning',
+  'governance.qualityMetrics.severity.error': 'Error',
+  'governance.qualityMetrics.kinds.stale_cards': 'Stale cards',
+  'governance.qualityMetrics.kinds.duplicate_clusters': 'Duplicate clusters',
+  'governance.qualityMetrics.kinds.source_gaps': 'Source gaps',
+  'governance.qualityMetrics.kinds.unreferenced_pages': 'Unreferenced pages',
+  'governance.qualityMetrics.kinds.low_confidence_high_hit_cards': 'Low-confidence high-hit cards',
+  'governance.qualityMetrics.kinds.high_dismissal_cards': 'High-dismissal cards',
+  'governance.qualityMetrics.hints.stale_cards': 'Cards or pages with stale signals.',
+  'governance.qualityMetrics.hints.duplicate_clusters': 'Potentially duplicated knowledge entries.',
+  'governance.qualityMetrics.hints.source_gaps': 'Items missing usable provenance.',
+  'governance.qualityMetrics.hints.unreferenced_pages': 'Pages not connected to other reviewed knowledge.',
+  'governance.qualityMetrics.hints.low_confidence_high_hit_cards': 'Experience cards that fire often despite low confidence.',
+  'governance.qualityMetrics.hints.high_dismissal_cards': 'Experience cards users dismiss more than they accept.',
+  'governance.suggestions': 'Steward Suggestions',
+  'governance.lastCheck': 'Last checked: {{time}}',
+  'governance.dismissAll': 'Dismiss All',
+  'governance.allClear': 'All Clear',
+  'governance.allClearHint': 'No governance issues detected.',
+  'governance.lintComplete': 'Lint complete',
+  'governance.compileComplete': 'Compile complete',
   'dialogs.pickFiles': 'Import knowledge files',
   'dialogs.pickFolder': 'Import a knowledge folder',
   'dialogs.pickOkfBundle': 'Select an OKF bundle folder',
@@ -259,6 +434,9 @@ const labels: Record<string, string> = {
   'toasts.stewardReview': 'Steward review updated',
   'toasts.applyReviewedChange': 'Reviewed change applied',
   'toasts.rejectDraft': 'Draft rejected',
+  'toasts.librarianDraft': 'Librarian draft created',
+  'toasts.librarianErrorExperience': 'Error experience candidate created',
+  'toasts.librarianSteward': 'Steward review prepared',
   'errors.status': 'Failed to load knowledge status.',
   'errors.action': 'Knowledge action failed.',
   'errors.okfValidation': 'OKF validation failed.',
@@ -283,6 +461,8 @@ describe('Knowledge page', () => {
   });
 
   beforeEach(() => {
+    cleanup();
+    window.localStorage.clear();
     hostApiMock.status.mockReset();
     hostApiMock.init.mockReset();
     hostApiMock.configure.mockReset();
@@ -294,13 +474,17 @@ describe('Knowledge page', () => {
     hostApiMock.updateInboxItem.mockReset();
     hostApiMock.dismissInboxItem.mockReset();
     hostApiMock.promoteInboxItemToDraft.mockReset();
-    hostApiMock.runtimeLessonsReport.mockReset();
     hostApiMock.search.mockReset();
     hostApiMock.get.mockReset();
     hostApiMock.compile.mockReset();
     hostApiMock.lint.mockReset();
     hostApiMock.applyDraft.mockReset();
     hostApiMock.createDraft.mockReset();
+    hostApiMock.listSourceSets.mockReset();
+    hostApiMock.saveSourceSet.mockReset();
+    hostApiMock.deleteSourceSet.mockReset();
+    hostApiMock.answerFromSourceSet.mockReset();
+    hostApiMock.createArtifactDraft.mockReset();
     hostApiMock.listDrafts.mockReset();
     hostApiMock.getDraft.mockReset();
     hostApiMock.updateDraft.mockReset();
@@ -310,6 +494,7 @@ describe('Knowledge page', () => {
     hostApiMock.previewChange.mockReset();
     hostApiMock.applyReviewedChange.mockReset();
     hostApiMock.stewardReview.mockReset();
+    hostApiMock.governanceAudit.mockReset();
     hostApiMock.recordKnowledgeReference.mockReset();
     hostApiMock.getProvenance.mockReset();
     hostApiMock.openVault.mockReset();
@@ -407,6 +592,11 @@ describe('Knowledge page', () => {
           outcome: 'complete',
           evidenceRefs: ['task-1', 'trace:trace-loop'],
           captureKey: 'mission:mission-1:tick:1:knowledge:abcdef0123456789',
+          triage: {
+            action: 'ready-for-review',
+            confidence: 0.76,
+            reason: 'Candidate has a clear type and source evidence for manual draft review.',
+          },
         },
         createdAt: '2026-06-20T00:00:00.000Z',
         updatedAt: '2026-06-20T00:00:00.000Z',
@@ -435,6 +625,12 @@ describe('Knowledge page', () => {
           outcome: 'sleeping',
           evidenceRefs: ['session-1'],
           captureKey: 'mission:mission-2:tick:1:knowledge:abcdef0123456790',
+          triage: {
+            action: 'needs-decision',
+            confidence: 0.78,
+            reason: 'Candidate has warnings or review notes that need a human decision.',
+            suggestedEdits: ['Confirm source coverage before promotion.'],
+          },
         },
         createdAt: '2026-06-20T00:00:00.000Z',
         updatedAt: '2026-06-20T00:00:00.000Z',
@@ -463,6 +659,12 @@ describe('Knowledge page', () => {
           outcome: 'blocked',
           evidenceRefs: ['trace:failure'],
           captureKey: 'mission:mission-3:tick:1:knowledge:abcdef0123456791',
+          triage: {
+            action: 'reject-low-value',
+            confidence: 0.81,
+            reason: 'Candidate is too sparse to promote without more context.',
+            suggestedEdits: ['Add verification evidence before reviewing.'],
+          },
         },
         createdAt: '2026-06-20T00:00:00.000Z',
         updatedAt: '2026-06-20T00:00:00.000Z',
@@ -480,6 +682,15 @@ describe('Knowledge page', () => {
         agentId: null,
         createdBy: 'agent',
         warnings: [],
+        metadata: {
+          triage: {
+            action: 'possible-duplicate',
+            confidence: 0.74,
+            duplicateOf: 'inbox-1',
+            reason: 'Candidate overlaps with "Task decision candidate".',
+            suggestedEdits: ['Compare with the existing candidate before promotion.'],
+          },
+        },
         createdAt: '2026-06-20T00:00:00.000Z',
         updatedAt: '2026-06-20T00:00:00.000Z',
       }],
@@ -515,30 +726,6 @@ describe('Knowledge page', () => {
       },
     });
     hostApiMock.dismissInboxItem.mockResolvedValue({ success: true, item: { id: 'inbox-1', status: 'dismissed' } });
-    hostApiMock.runtimeLessonsReport.mockResolvedValue({
-      success: true,
-      available: true,
-      counts: { trajectories: 5, undistilledTrajectories: 2, activePrinciples: 1 },
-      undistilled: [{
-        trajectory_id: 'traj-runtime-1',
-        created_at: '2026-07-06T00:00:00.000Z',
-        task_intent: 'Recover from failed Knowledge import',
-        task_type: 'coding',
-        context_fingerprint: ['knowledge', 'runtime-lessons'],
-        outcome: 'failure',
-        error_signature: 'ImportError::knowledge_runtime_lessons',
-      }],
-      activePrinciples: [{
-        principle_id: 'principle-runtime-1',
-        title: 'Inspect runtime lessons before changing Knowledge flows',
-        task_types: ['coding'],
-        context_tags: ['knowledge'],
-        criticality: 'medium',
-        retrieval_count: 3,
-        adoption_count: 1,
-      }],
-      indexPreview: 'Runtime lesson index preview',
-    });
     hostApiMock.recordKnowledgeReference.mockResolvedValue({
       success: true,
       record: {
@@ -610,6 +797,58 @@ describe('Knowledge page', () => {
         updatedAt: '2026-06-19T00:00:00.000Z',
       },
     });
+    hostApiMock.listSourceSets.mockResolvedValue({
+      success: true,
+      sourceSets: [],
+    });
+    hostApiMock.saveSourceSet.mockResolvedValue({
+      success: true,
+      sourceSet: {
+        id: 'ks-1',
+        title: 'Decision sources',
+        sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
+        createdAt: '2026-07-04T00:00:00.000Z',
+        updatedAt: '2026-07-04T00:00:00.000Z',
+      },
+    });
+    hostApiMock.answerFromSourceSet.mockResolvedValue({
+      success: true,
+      question: 'Why use native wiki?',
+      answer: 'Answer grounded in 1 selected source.\nDecision: Use native wiki.',
+      sources: [{ id: 'notes/decision.md', lookup: 'notes/decision.md', title: 'Decision', excerpt: 'Use native wiki.' }],
+      unknowns: ['Grounding is page/snippet level.'],
+      suggestedNextActions: ['Create a Studio artifact draft when the synthesis looks useful.'],
+      groundingStatus: 'grounded',
+      confidence: 0.78,
+      retrievalDiagnostics: {
+        query: 'Why use native wiki?',
+        corpus: 'wiki',
+        mode: 'source-set',
+        backend: 'fallback-keyword',
+        resultCount: 1,
+        selectedCount: 1,
+        reason: 'explicit Source Set selection',
+        items: [],
+      },
+    });
+    hostApiMock.createArtifactDraft.mockResolvedValue({
+      success: true,
+      draft: {
+        id: 'artifact-draft-1',
+        title: 'Decision memo',
+        body: '## Sources used\nDecision',
+        type: 'decision',
+        status: 'draft',
+        sourceIds: ['notes/decision.md'],
+        sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
+        tags: ['studio-artifact', 'decision-memo'],
+        workspaceId: null,
+        agentId: null,
+        createdBy: 'agent',
+        createdAt: '2026-07-04T00:00:00.000Z',
+        updatedAt: '2026-07-04T00:00:00.000Z',
+      },
+    });
     hostApiMock.proposeChange.mockResolvedValue({
       success: true,
       proposal: {
@@ -639,6 +878,28 @@ describe('Knowledge page', () => {
         scope: { workspace: true, agent: false, global: false },
       },
     });
+    hostApiMock.governanceAudit.mockResolvedValue({
+      success: true,
+      runAt: '2026-07-04T00:00:00.000Z',
+      issues: [],
+      summaries: { contradictions: 0, stale: 0, dangling: 0, duplicates: 0, provenanceGaps: 0 },
+      qualityMetrics: {
+        staleCards: 1,
+        duplicateClusters: 2,
+        sourceGaps: 3,
+        unreferencedPages: 4,
+        lowConfidenceHighHitCards: 5,
+        highDismissalCards: 6,
+        metrics: [
+          { kind: 'stale_cards', count: 1, severity: 'warning', affectedIds: ['stale-1'] },
+          { kind: 'duplicate_clusters', count: 2, severity: 'warning', affectedIds: ['dup-1'] },
+          { kind: 'source_gaps', count: 3, severity: 'warning', affectedIds: ['gap-1'] },
+          { kind: 'unreferenced_pages', count: 4, severity: 'warning', affectedIds: ['orphan-1'] },
+          { kind: 'low_confidence_high_hit_cards', count: 5, severity: 'warning', affectedIds: ['low-1'] },
+          { kind: 'high_dismissal_cards', count: 6, severity: 'warning', affectedIds: ['dismiss-1'] },
+        ],
+      },
+    });
     hostApiMock.openVault.mockResolvedValue({ success: true, path: 'C:/clawx/wiki' });
     hostApiMock.dialogOpen.mockResolvedValue({ canceled: false, filePaths: ['C:/notes/decision.md'] });
   });
@@ -655,20 +916,26 @@ describe('Knowledge page', () => {
 
     fireEvent.click(screen.getByText('Import Files'));
     await waitFor(() => expect(hostApiMock.ingestFiles).toHaveBeenCalledWith({ paths: ['C:/notes/decision.md'] }));
-    await waitFor(() => expect(screen.getByText('Compile')).not.toBeDisabled());
+    expect(screen.getByTestId('knowledge-assistant-overview')).toHaveTextContent('Knowledge Assistant');
+    expect(screen.getByTestId('knowledge-workbench-tabs').querySelectorAll('button')).toHaveLength(4);
 
-    fireEvent.click(screen.getByText('Compile'));
+    fireEvent.click(screen.getByTestId('knowledge-audit-center-button'));
+    await waitFor(() => expect(screen.getByText('Run Compile')).not.toBeDisabled());
+    fireEvent.click(screen.getByText('Run Compile'));
     await waitFor(() => expect(hostApiMock.compile).toHaveBeenCalled());
-    await waitFor(() => expect(screen.getByText('Lint')).not.toBeDisabled());
-    fireEvent.click(screen.getByText('Lint'));
+    await waitFor(() => expect(screen.getByText('Run Lint')).not.toBeDisabled());
+    fireEvent.click(screen.getByText('Run Lint'));
     await waitFor(() => expect(hostApiMock.lint).toHaveBeenCalled());
     fireEvent.change(screen.getByTestId('knowledge-search-input'), { target: { value: 'native wiki' } });
     await waitFor(() => expect(screen.getByTestId('knowledge-search-submit')).not.toBeDisabled());
     fireEvent.click(screen.getByTestId('knowledge-search-submit'));
-    await screen.findByText('Decision');
+    await waitFor(() => expect(screen.getByTestId('knowledge-search-result')).toHaveTextContent('Decision'));
 
     fireEvent.click(screen.getByTestId('knowledge-search-result'));
     await screen.findByText(/Use native wiki/);
+    expect(screen.getByTestId('knowledge-markdown-workspace')).toBeInTheDocument();
+    expect(screen.getByTestId('knowledge-editor-title')).toHaveValue('Decision');
+    expect(screen.getByTestId('knowledge-markdown-editor')).toHaveValue('# Decision\nUse native wiki.');
     expect(hostApiMock.get).toHaveBeenCalledWith({ lookup: 'notes/decision.md', lineCount: 120, corpus: 'wiki' });
     expect(hostApiMock.recordKnowledgeReference).toHaveBeenCalledWith({
       targetId: 'notes/decision.md',
@@ -709,6 +976,46 @@ describe('Knowledge page', () => {
     await waitFor(() => expect(hostApiMock.applyReviewedChange).toHaveBeenCalledWith({ id: 'proposal-1' }));
   });
 
+  it('builds a Source Set from search results and creates Studio artifact drafts without applying', async () => {
+    render(<Knowledge />);
+
+    await screen.findByTestId('knowledge-page');
+    expect(hostApiMock.listSourceSets).toHaveBeenCalled();
+    expect(screen.getByTestId('knowledge-source-set-panel')).toHaveTextContent('Current Source Set');
+    expect(screen.getByTestId('knowledge-source-set-panel')).toHaveTextContent('Add sources from search results');
+
+    fireEvent.change(screen.getByTestId('knowledge-search-input'), { target: { value: 'native wiki' } });
+    await waitFor(() => expect(screen.getByTestId('knowledge-search-submit')).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId('knowledge-search-submit'));
+    await waitFor(() => expect(screen.getByTestId('knowledge-search-result')).toHaveTextContent('Decision'));
+
+    fireEvent.click(screen.getByTestId('knowledge-source-set-add-result'));
+    await waitFor(() => expect(screen.getByTestId('knowledge-source-set-panel')).toHaveTextContent('Decision'));
+    await waitFor(() => expect(screen.getByTestId('knowledge-source-set-panel')).toHaveTextContent('1 sources'));
+
+    fireEvent.change(screen.getByTestId('knowledge-source-set-title'), { target: { value: 'Decision sources' } });
+    await waitFor(() => expect(screen.getByTestId('knowledge-source-set-title')).toHaveValue('Decision sources'));
+    await waitFor(() => expect(screen.getByTestId('knowledge-source-set-save')).not.toBeDisabled());
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fireEvent.click(screen.getByTestId('knowledge-source-set-save'));
+
+    await waitFor(() => expect(hostApiMock.saveSourceSet).toHaveBeenCalledWith({
+      title: 'Decision sources',
+      sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
+    }));
+
+    fireEvent.click(screen.getByTestId('knowledge-studio-artifact-decision-memo'));
+    await waitFor(() => expect(hostApiMock.createArtifactDraft).toHaveBeenCalledWith({
+      artifactType: 'decision-memo',
+      title: 'Decision Memo',
+      question: 'Create a Decision Memo from the current Source Set.',
+      sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
+      sourceSetId: 'ks-1',
+    }));
+    expect(hostApiMock.applyDraft).not.toHaveBeenCalled();
+    expect(hostApiMock.applyReviewedChange).not.toHaveBeenCalled();
+  });
+
   it('shows grouped inbox candidates and promotes or dismisses them without applying', async () => {
     render(<Knowledge />);
 
@@ -718,18 +1025,29 @@ describe('Knowledge page', () => {
 
     await screen.findByTestId('knowledge-inbox');
     expect(screen.getAllByText('Task decision candidate').length).toBeGreaterThan(0);
-    expect(screen.getByText('Needs user review before writing.')).toBeInTheDocument();
-    expect(screen.getByTestId('knowledge-inbox-group-save')).toHaveTextContent('Recommended save');
-    expect(screen.getByTestId('knowledge-inbox-group-review')).toHaveTextContent('Needs review');
-    expect(screen.getByTestId('knowledge-inbox-group-review')).toHaveTextContent('Legacy candidate');
-    expect(screen.getByTestId('knowledge-inbox-group-archive-only')).toHaveTextContent('Archive only');
+    expect(screen.getByTestId('knowledge-inbox-group-needs-decision')).toHaveTextContent('Needs decision');
+    expect(screen.getByTestId('knowledge-inbox-group-ready-for-review')).toHaveTextContent('Ready for review');
+    expect(screen.getByTestId('knowledge-inbox-group-possible-duplicate')).toHaveTextContent('Legacy candidate');
+    expect(screen.getByTestId('knowledge-inbox-group-reject-low-value')).toHaveTextContent('Low value');
+    expect(screen.getAllByText('Ready for review').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Possible duplicate').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Save').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Review').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Archive only').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Mission completed with reusable evidence-backed knowledge.').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Candidate has a clear type and source evidence for manual draft review.').length).toBeGreaterThan(0);
     expect(screen.getAllByText('2 evidence').length).toBeGreaterThan(0);
+
+    const readyReviewRow = within(screen.getByTestId('knowledge-inbox-group-ready-for-review'))
+      .getByText('Task decision candidate')
+      .closest('button');
+    expect(readyReviewRow).not.toBeNull();
+    fireEvent.click(readyReviewRow!);
+    await waitFor(() => expect(screen.getByTestId('knowledge-inbox-triage-detail')).toHaveTextContent('Ready for review'));
+    expect(screen.getByText('Needs user review before writing.')).toBeInTheDocument();
     expect(screen.getAllByText('Score 77').length).toBeGreaterThan(0);
     expect(screen.getByTestId('knowledge-inbox-boundary')).toHaveTextContent('Draft review only');
+    expect(screen.getByTestId('knowledge-inbox-recommendation')).toHaveTextContent('Steward triage');
+    expect(screen.getByTestId('knowledge-inbox-recommendation')).toHaveTextContent('76%');
     expect(screen.getByTestId('knowledge-inbox-scores')).toHaveTextContent('Reusability');
     expect(screen.getByTestId('knowledge-inbox-scores')).toHaveTextContent('82%');
     expect(screen.getByTestId('knowledge-inbox-scores')).toHaveTextContent('Uniqueness');
@@ -747,31 +1065,122 @@ describe('Knowledge page', () => {
     expect(screen.getByTestId('knowledge-inbox-sources')).toHaveTextContent('Trace');
     expect(screen.getAllByTestId('knowledge-inbox-source')).toHaveLength(2);
 
+    await waitFor(() => expect(screen.getByTestId('knowledge-inbox-dismiss')).not.toBeDisabled());
     fireEvent.click(screen.getByTestId('knowledge-inbox-dismiss'));
     await waitFor(() => expect(hostApiMock.dismissInboxItem).toHaveBeenCalledWith({ id: 'inbox-1' }));
     await waitFor(() => expect(screen.getByTestId('knowledge-inbox-promote')).not.toBeDisabled());
 
     fireEvent.click(screen.getByTestId('knowledge-inbox-promote'));
-    await waitFor(() => expect(hostApiMock.promoteInboxItemToDraft).toHaveBeenCalledWith({ id: 'inbox-1' }));
+    await waitFor(() => expect(hostApiMock.promoteInboxItemToDraft).toHaveBeenCalledWith({ id: 'inbox-2' }));
     expect(hostApiMock.applyDraft).not.toHaveBeenCalled();
     expect(hostApiMock.applyReviewedChange).not.toHaveBeenCalled();
   });
 
-  it('shows SEKB runtime lessons as a read-only Knowledge tab', async () => {
+  it('shows Governance quality metrics after a health check', async () => {
     render(<Knowledge />);
 
     await screen.findByTestId('knowledge-page');
-    fireEvent.click(await screen.findByTestId('knowledge-tab-runtime'));
+    fireEvent.click(screen.getByTestId('knowledge-audit-center-button'));
+    await screen.findByTestId('knowledge-governance');
 
-    const runtimePanel = await screen.findByTestId('knowledge-runtime-lessons');
-    expect(hostApiMock.runtimeLessonsReport).toHaveBeenCalledTimes(1);
-    expect(within(runtimePanel).getByText('Runtime Lessons')).toBeInTheDocument();
-    expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.getByText('Recover from failed Knowledge import')).toBeInTheDocument();
-    expect(screen.getByText('ImportError::knowledge_runtime_lessons')).toBeInTheDocument();
-    expect(screen.getByText('Inspect runtime lessons before changing Knowledge flows')).toBeInTheDocument();
-    expect(screen.getByText('Runtime lesson index preview')).toBeInTheDocument();
-    expect(screen.queryByText('Approve and Apply')).not.toBeInTheDocument();
+    expect(screen.getByTestId('knowledge-quality-metrics')).toHaveTextContent('Quality Metrics');
+    expect(screen.getByTestId('knowledge-quality-metrics')).toHaveTextContent('Run health check');
+
+    fireEvent.click(screen.getByTestId('knowledge-governance-run'));
+    await waitFor(() => expect(hostApiMock.governanceAudit).toHaveBeenCalled());
+
+    const metrics = screen.getByTestId('knowledge-quality-metrics');
+    expect(metrics).toHaveTextContent('Audit result');
+    expect(within(screen.getByTestId('knowledge-quality-metric-stale_cards')).getByText('1')).toBeInTheDocument();
+    expect(within(screen.getByTestId('knowledge-quality-metric-source_gaps')).getByText('3')).toBeInTheDocument();
+    expect(screen.getByTestId('knowledge-quality-metric-low_confidence_high_hit_cards')).toHaveTextContent('Low-confidence high-hit cards');
+    expect(screen.getByTestId('knowledge-quality-metric-high_dismissal_cards')).toHaveTextContent('6');
+  });
+
+  it('answers knowledge librarian questions with local citations and a checkpoint', async () => {
+    render(<Knowledge />);
+
+    await screen.findByTestId('knowledge-page');
+    fireEvent.click(screen.getByTestId('knowledge-librarian-fab'));
+    await screen.findByTestId('knowledge-librarian-modal');
+    expect(screen.getByTestId('knowledge-librarian-composer')).toBeInTheDocument();
+    expect(screen.getByTestId('knowledge-librarian-suggestions')).toHaveTextContent('Summarize current note');
+
+    fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Why use native wiki?' } });
+    await waitFor(() => expect(screen.getByTestId('knowledge-librarian-ask')).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
+
+    await waitFor(() => expect(hostApiMock.search).toHaveBeenCalledWith({
+      query: 'Why use native wiki?',
+      maxResults: 4,
+      corpus: 'wiki',
+      roleTag: 'knowledge-librarian',
+    }));
+    await waitFor(() => expect(hostApiMock.get).toHaveBeenCalledWith({ lookup: 'notes/decision.md', lineCount: 80, corpus: 'wiki' }));
+    await screen.findByText(/I searched the vault/);
+    expect(screen.getByTestId('knowledge-librarian-message-assistant')).toHaveTextContent('Decision');
+    expect(screen.getByTestId('knowledge-librarian-grounded-answer')).toHaveTextContent('Answer');
+    expect(screen.getByTestId('knowledge-librarian-sources-section')).toHaveTextContent('Decision');
+    expect(screen.getByTestId('knowledge-librarian-unknowns-section')).toHaveTextContent('Grounding is page/snippet level.');
+    expect(screen.getByTestId('knowledge-librarian-next-action-section')).toHaveTextContent('Save the grounded answer');
+    expect(screen.getByTestId('knowledge-librarian-retrieval-inspector')).toHaveTextContent('Why use native wiki?');
+    expect(screen.getByTestId('knowledge-librarian-citations')).toHaveTextContent('notes/decision.md');
+
+    fireEvent.click(screen.getByTestId('knowledge-librarian-save-draft'));
+    await waitFor(() => expect(hostApiMock.createDraft).toHaveBeenCalledWith(expect.objectContaining({
+      title: expect.stringContaining('Librarian answer: Why use native wiki?'),
+      metadata: expect.objectContaining({
+        knowledgeKind: 'librarian-grounded-answer',
+        groundingStatus: 'grounded',
+      }),
+    })));
+
+    fireEvent.click(screen.getByTestId('knowledge-librarian-create-error-experience'));
+    await waitFor(() => expect(hostApiMock.createInboxItem).toHaveBeenCalledWith(expect.objectContaining({
+      kind: 'manual',
+      type: 'troubleshooting',
+      metadata: expect.objectContaining({
+        knowledgeKind: 'error-experience',
+        errorExperience: expect.objectContaining({
+          schemaVersion: 1,
+          title: expect.stringContaining('Error experience: Why use native wiki?'),
+        }),
+      }),
+    })));
+
+    fireEvent.click(screen.getByTestId('knowledge-librarian-send-steward'));
+    await waitFor(() => expect(hostApiMock.stewardReview).toHaveBeenCalledWith({ draftId: 'draft-1' }));
+    expect(hostApiMock.applyDraft).not.toHaveBeenCalled();
+    expect(hostApiMock.applyReviewedChange).not.toHaveBeenCalled();
+    expect(window.localStorage.getItem('clawx.knowledge.librarian.checkpoint.v1')).toContain('Why use native wiki?');
+  });
+
+  it('shows a recoverable librarian retrieval error with retry', async () => {
+    hostApiMock.search
+      .mockResolvedValueOnce({ success: false, error: 'Index unavailable' })
+      .mockResolvedValueOnce({
+        success: true,
+        results: [{ pagePath: 'notes/decision.md', title: 'Decision', snippet: 'Use native wiki.' }],
+      });
+
+    render(<Knowledge />);
+
+    await screen.findByTestId('knowledge-page');
+    fireEvent.click(screen.getByTestId('knowledge-librarian-fab'));
+    await screen.findByTestId('knowledge-librarian-modal');
+
+    fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Why use native wiki?' } });
+    await waitFor(() => expect(screen.getByTestId('knowledge-librarian-ask')).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
+
+    await screen.findByTestId('knowledge-librarian-error');
+    expect(screen.getByTestId('knowledge-librarian-error')).toHaveTextContent('Index unavailable');
+
+    fireEvent.click(screen.getByTestId('knowledge-librarian-retry'));
+
+    await waitFor(() => expect(hostApiMock.search).toHaveBeenCalledTimes(2));
+    await screen.findByText(/I searched the vault/);
+    expect(screen.queryByTestId('knowledge-librarian-error')).not.toBeInTheDocument();
   });
 
   it('validates an OKF folder and imports only user-selected concepts', async () => {

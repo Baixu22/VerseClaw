@@ -111,6 +111,18 @@ function chatLayoutMocks() {
         messageCount: 2,
         usedTokens: 0,
       }])]: contextRange,
+      [stableStringify(['taskLedger', 'snapshot', { workspaceId: WORKSPACE_ID }])]: {
+        snapshot: {
+          workspaceId: WORKSPACE_ID,
+          nodes: [],
+          edges: [],
+          eventsCount: 0,
+          activeNodeIds: [],
+          blockedNodeIds: [],
+          reviewNodeIds: [],
+          recentDecisions: [],
+        },
+      },
     },
   };
 }
@@ -138,16 +150,31 @@ test.describe('Chat page layout CDP checks', () => {
     try {
       await installIpcMocks(app, chatLayoutMocks());
       const page = await getStableWindow(app);
-      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.setViewportSize({ width: 1600, height: 800 });
       const url = new URL(page.url());
       url.searchParams.set('e2eSkipSetup', '1');
       await page.goto(url.toString());
 
       await expect(page.getByTestId('chat-page')).toBeVisible();
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('chat-composer-context-menu-trigger')).toHaveCount(0);
+      await expect(page.getByTestId('chat-composer-permission-mode')).toBeVisible();
+      await expect(page.getByTestId('chat-composer-skill')).toHaveCount(0);
+      await expect(page.getByTestId('chat-knowledge-quick-toggle')).toHaveCount(0);
+      await expect(page.getByTestId('chat-knowledge-scope-button')).toBeVisible();
+      await expect(page.getByTestId('chat-composer-permission-menu')).not.toBeVisible();
       await expect(page.getByTestId('sidebar-session-search')).toBeVisible({ timeout: 30_000 });
-
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-before-search');
+      await page.getByTestId('chat-composer-permission-mode').click();
+      await expect(page.getByTestId('chat-composer-permission-menu')).toBeVisible();
+      await expect(page.getByTestId('chat-composer-permission-option-acceptEdits')).toBeVisible();
+      await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu');
+      await page.getByTestId('chat-composer-input').fill('/');
+      await expect(page.getByTestId('chat-slash-command-menu')).toBeVisible();
+      await captureLayoutScreenshot(page, testInfo, 'chat-layout-slash-menu');
+      await page.keyboard.press('Escape');
+      await expect(page.getByTestId('chat-question-directory')).toHaveCount(0);
+      await expect(page.getByTestId('chat-assistive-rail')).toHaveCount(0);
 
       const platform = await page.getByTestId('main-layout').getAttribute('data-platform');
       if (platform === 'win32') {
@@ -168,11 +195,15 @@ test.describe('Chat page layout CDP checks', () => {
       const metrics = await page.evaluate(() => {
         const modalEl = document.querySelector('[data-testid="session-search-modal"]') as HTMLElement | null;
         const chatEl = document.querySelector('[data-testid="chat-page"]') as HTMLElement | null;
+        const messageLayoutEl = document.querySelector('[data-testid="chat-message-layout"]') as HTMLElement | null;
+        const scrollEl = document.querySelector('[data-testid="chat-scroll-container"]') as HTMLElement | null;
         const mainEl = document.querySelector('[data-testid="main-content"]') as HTMLElement | null;
         const titlebarEl = document.querySelector('[data-testid="windows-titlebar"]') as HTMLElement | null;
-        if (!modalEl || !chatEl || !mainEl) throw new Error('Missing layout elements');
+        if (!modalEl || !chatEl || !messageLayoutEl || !scrollEl || !mainEl) throw new Error('Missing layout elements');
         const modalRect = modalEl.getBoundingClientRect();
         const chatRect = chatEl.getBoundingClientRect();
+        const messageLayoutRect = messageLayoutEl.getBoundingClientRect();
+        const scrollRect = scrollEl.getBoundingClientRect();
         const mainRect = mainEl.getBoundingClientRect();
         const titlebarRect = titlebarEl?.getBoundingClientRect() ?? null;
         return {
@@ -190,6 +221,16 @@ test.describe('Chat page layout CDP checks', () => {
             top: chatRect.top,
             width: chatRect.width,
             height: chatRect.height,
+          },
+          messageLayout: {
+            left: messageLayoutRect.left,
+            width: messageLayoutRect.width,
+            centerX: messageLayoutRect.left + messageLayoutRect.width / 2,
+          },
+          scroll: {
+            left: scrollRect.left,
+            width: scrollRect.width,
+            centerX: scrollRect.left + scrollRect.width / 2,
           },
           main: {
             left: mainRect.left,
@@ -217,6 +258,9 @@ test.describe('Chat page layout CDP checks', () => {
       expect(metrics.modal.left + metrics.modal.width).toBeLessThanOrEqual(metrics.viewport.width - 16);
       expect(Math.abs(metrics.chat.top - metrics.main.top)).toBeLessThanOrEqual(1);
       expect(Math.abs(metrics.chat.height - metrics.main.height)).toBeLessThanOrEqual(1);
+      expect(metrics.messageLayout.width).toBeLessThanOrEqual(1030);
+      expect(Math.abs(metrics.messageLayout.centerX - (metrics.chat.left + metrics.chat.width / 2))).toBeLessThanOrEqual(2);
+      expect(Math.abs(metrics.scroll.centerX - metrics.messageLayout.centerX)).toBeLessThanOrEqual(2);
       if (platform === 'win32') {
         expect(metrics.titlebar?.height).toBe(40);
         expect(metrics.titlebar?.top).toBe(0);

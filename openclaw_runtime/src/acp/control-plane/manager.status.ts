@@ -7,7 +7,7 @@ import type {
   AcpRuntimeStatus,
 } from "@openclaw/acp-core/runtime/types";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
-import { withAcpRuntimeErrorBoundary } from "../runtime/errors.js";
+import { withAcpRuntimeErrorBoundary } from "../../runtime/errors.ts";
 import type {
   AcpSessionStatus,
   EnsureManagerRuntimeHandle,

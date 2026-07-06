@@ -12,7 +12,9 @@ Renderer backend calls must go through `src/lib/host-api.ts` and `src/lib/api-cl
 
 Pages and components must not add direct `window.electron.ipcRenderer.invoke(...)` calls.
 
-Renderer code must not call Gateway HTTP endpoints directly, including `127.0.0.1:18789` and `localhost:18789`.
+Renderer code must not call Gateway HTTP endpoints directly, including `127.0.0.1:18789`, `localhost:18789`, and `[::1]:18789`.
+
+Renderer code must not open Gateway WebSocket connections directly, including `ws://127.0.0.1:18789`, `ws://localhost:18789`, and `ws://[::1]:18789`.
 
 Gateway transport policy remains owned by Electron Main. Renderer code must not implement `WS -> HTTP -> IPC` protocol switching.
 

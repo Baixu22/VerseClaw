@@ -26,6 +26,7 @@ import type { RoleRegistryConfigCarrier } from "../role-registry.js";
 import { listRoleContracts } from "../role-registry.js";
 import type { SpawnFn } from "../role-spawn.js";
 import { spawnSubagentDirect } from "../subagent-spawn.js";
+import { buildSynthesisContract } from "../synthesis-contract.js";
 import { resolveTeamTemplate } from "../team-template.js";
 import type { AnyAgentTool } from "./common.js";
 import {
@@ -37,6 +38,8 @@ import {
 
 const TEAM_ORCHESTRATE_NEXT_ACTIONS = ["yield_for_results", "synthesize_now"] as const;
 const TEAM_ORCHESTRATE_STATUSES = ["accepted", "partial", "error"] as const;
+const TEAM_ORCHESTRATE_QUALITY_STATE_REASON =
+  "Ordinary team_orchestrate quality is not evaluated by a scorecard yet; Task Loop owns active repair quality semantics.";
 
 type TeamOrchestrateStatus = (typeof TEAM_ORCHESTRATE_STATUSES)[number];
 type TeamOrchestrateNextAction = (typeof TEAM_ORCHESTRATE_NEXT_ACTIONS)[number];
@@ -196,6 +199,10 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         agentId: opts?.requesterAgentIdOverride,
         orchestrationRunId,
         patchRegistryMetadata: !opts?.deps,
+        // Area 3 §3.1: workspace dir enables routing memo recall/record.
+        // Undefined when the caller has no workspace context → memo pilot
+        // degrades to no-op (today's routing unchanged).
+        workspaceDir: opts?.workspaceDir,
       };
       const plan = createOrchestratorPlan(request);
       const result = await deps.runObserved(
@@ -223,16 +230,21 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
       const status = resolveStatus(spawnedCount, result.failures.length);
       const nextAction = resolveNextAction(spawnedCount);
       const quality: unknown[] = [];
+      // Area 3 §3.2: build the structured synthesis contract from the plan's
+      // worker output schemas. `undefined` for single-worker router-mode plans
+      // (no synthesis needed) — callers degrade to today's free-form behavior.
+      const synthesisContract = buildSynthesisContract(plan, cfgCarrier);
       return jsonResult({
         status,
         plan,
+        synthesisContract,
         routeDiagnostics: result.plan.routeDiagnostics,
         taskGraph: result.taskGraph,
         resultBundle: result.resultBundle,
         graphStatus: result.graphStatus,
         executionWaves: result.executionWaves,
         pendingGraphNodes: result.pendingGraphNodes,
-        repairNodes: result.repairNodes,
+        orchestrationDiagnostics: result.orchestrationDiagnostics,
         rerouteRecommendations: result.rerouteRecommendations,
         runId: orchestrationRunId,
         orchestrationRunId,
@@ -261,6 +273,8 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         capabilityGaps: result.plan.capabilityGaps,
         estimatedRepairPolicy: result.plan.estimatedRepairPolicy,
         quality,
+        qualityState: null,
+        qualityStateReason: TEAM_ORCHESTRATE_QUALITY_STATE_REASON,
         qualitySummary: summarizeQuality([]),
         followupCandidates: [],
         memoryCandidates: [],

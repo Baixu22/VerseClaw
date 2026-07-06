@@ -1,6 +1,6 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Agents } from '../../src/pages/Agents/index';
 import { TooltipProvider } from '../../src/components/ui/tooltip';
 
@@ -12,10 +12,14 @@ const updateAgentModelMock = vi.fn();
 const refreshProviderSnapshotMock = vi.fn();
 const getAgentBootstrapMock = vi.fn();
 const updateAgentBootstrapMock = vi.fn();
+const capabilitiesPublicationsMock = vi.fn();
+const mcpHeartbeatMock = vi.fn();
+const mcpListToolsMock = vi.fn();
+const mcpReloadRuntimeMock = vi.fn();
 const fetchSkillsMock = vi.fn();
 const fetchMcpServersMock = vi.fn();
 
-const { gatewayState, agentsState, providersState, skillsState, mcpState } = vi.hoisted(() => ({
+const { gatewayState, agentsState, providersState, skillsState, mcpState, translate } = vi.hoisted(() => ({
   gatewayState: {
     status: { state: 'running', port: 18789 },
   },
@@ -37,6 +41,7 @@ const { gatewayState, agentsState, providersState, skillsState, mcpState } = vi.
   mcpState: {
     servers: [] as Array<Record<string, unknown>>,
   },
+  translate: (key: string) => key,
 }));
 
 vi.mock('@/stores/gateway', () => ({
@@ -108,6 +113,14 @@ vi.mock('@/lib/host-api', () => ({
     channels: {
       accounts: (...args: unknown[]) => channelsAccountsMock(...args),
     },
+    capabilities: {
+      publications: (...args: unknown[]) => capabilitiesPublicationsMock(...args),
+    },
+    mcp: {
+      heartbeat: (...args: unknown[]) => mcpHeartbeatMock(...args),
+      listTools: (...args: unknown[]) => mcpListToolsMock(...args),
+      reloadRuntime: (...args: unknown[]) => mcpReloadRuntimeMock(...args),
+    },
   },
 }));
 
@@ -123,7 +136,7 @@ vi.mock('react-i18next', () => ({
     init: vi.fn(),
   },
   useTranslation: () => ({
-    t: (key: string) => key,
+    t: translate,
   }),
 }));
 
@@ -159,6 +172,16 @@ describe('Agents page status refresh', () => {
     refreshProviderSnapshotMock.mockResolvedValue(undefined);
     fetchSkillsMock.mockResolvedValue(undefined);
     fetchMcpServersMock.mockResolvedValue(undefined);
+    mcpHeartbeatMock.mockResolvedValue({ success: true, serverId: 'filesystem', status: 'connected', message: 'ok', latencyMs: 1 });
+    mcpListToolsMock.mockResolvedValue({ success: true, serverId: 'filesystem', status: 'connected', tools: [{ name: 'read_file' }] });
+    mcpReloadRuntimeMock.mockResolvedValue({ success: true, serverCount: 1, hotReloaded: true, restartRequired: false, message: 'reloaded' });
+    capabilitiesPublicationsMock.mockResolvedValue({
+      success: true,
+      source: 'gateway',
+      generatedAt: '2026-01-01T00:00:00.000Z',
+      publications: [],
+      diagnostics: [],
+    });
     getAgentBootstrapMock.mockResolvedValue({
       success: true,
       id: 'main',
@@ -303,6 +326,265 @@ describe('Agents page status refresh', () => {
     expect(updateAgentModelMock).not.toHaveBeenCalled();
     expect((modelIdInput as HTMLInputElement).value).toBe('anthropic/claude-opus-4.6');
     expect(useDefaultButton).toBeDisabled();
+  });
+
+  it('loads publication candidates and stages selected capabilities into the bootstrap save payload', async () => {
+    agentsState.agents = [
+      {
+        id: 'main',
+        name: 'Main',
+        isDefault: true,
+        modelDisplay: 'gpt-5',
+        modelRef: 'openai/gpt-5',
+        overrideModelRef: null,
+        inheritedModel: true,
+        workspace: 'C:\\Users\\27933\\Desktop\\project',
+        agentDir: '~/.openclaw/agents/main/agent',
+        mainSessionKey: 'agent:main:main',
+        channelTypes: [],
+      },
+    ];
+    capabilitiesPublicationsMock.mockResolvedValue({
+      success: true,
+      source: 'gateway',
+      generatedAt: '2026-01-01T00:00:00.000Z',
+      diagnostics: [],
+      publications: [
+        {
+          id: 'skill:create-skill',
+          kind: 'skill',
+          sourceId: 'create-skill',
+          name: 'create-skill',
+          owner: { type: 'agent', id: 'main' },
+          scope: 'agent',
+          source: 'local',
+          state: 'available',
+          exposure: { runtimeVisible: false, promptVisible: false, userInvocable: false },
+          useModes: ['adminAction'],
+          runtime: { status: 'cold', method: 'prompt', source: 'gateway' },
+          reasons: ['agent-skill-candidate'],
+          diagnostics: [],
+          skillId: 'create-skill',
+        },
+      ],
+    });
+
+    renderAgents();
+
+    expect(await screen.findByText('Main')).toBeInTheDocument();
+    fireEvent.click(screen.getByTitle('settings'));
+
+    const panel = await screen.findByTestId('agent-capability-workbench');
+    await waitFor(() => {
+      expect(capabilitiesPublicationsMock).toHaveBeenCalledWith(expect.objectContaining({
+        agentId: 'main',
+        workspaceId: 'C:\\Users\\27933\\Desktop\\project',
+        includeDiagnostics: true,
+        includeCandidates: true,
+        includeToolCatalog: 'warmOnly',
+      }));
+    });
+
+    const row = await within(panel).findByTestId('agent-capability-row-skill-create-skill');
+    fireEvent.click(within(row).getByRole('button', { name: /identityTools\.publication\.add/ }));
+
+    expect(screen.getByText('identityTools.publication.pendingSummary')).toBeInTheDocument();
+
+    const applyButton = screen.getByRole('button', { name: 'identityTools.publication.apply' });
+    await waitFor(() => {
+      expect(applyButton).toBeEnabled();
+    });
+    fireEvent.click(applyButton);
+
+    await waitFor(() => {
+      expect(updateAgentBootstrapMock).toHaveBeenCalledWith(expect.objectContaining({
+        id: 'main',
+        defaultSkillIds: ['create-skill'],
+      }));
+    });
+  });
+
+  it('keeps advanced capability IDs in sync with the workbench draft', async () => {
+    agentsState.agents = [
+      {
+        id: 'main',
+        name: 'Main',
+        isDefault: true,
+        modelDisplay: 'gpt-5',
+        modelRef: 'openai/gpt-5',
+        overrideModelRef: null,
+        inheritedModel: true,
+        workspace: 'C:\\Users\\27933\\Desktop\\project',
+        agentDir: '~/.openclaw/agents/main/agent',
+        mainSessionKey: 'agent:main:main',
+        channelTypes: [],
+      },
+    ];
+    capabilitiesPublicationsMock.mockResolvedValue({
+      success: true,
+      source: 'gateway',
+      generatedAt: '2026-01-01T00:00:00.000Z',
+      diagnostics: [],
+      publications: [
+        {
+          id: 'mcp:filesystem',
+          kind: 'mcp',
+          sourceId: 'filesystem',
+          name: 'Filesystem',
+          owner: { type: 'agent', id: 'main' },
+          scope: 'agent',
+          source: 'registered',
+          state: 'available',
+          exposure: { runtimeVisible: false, toolVisible: false },
+          useModes: ['adminAction'],
+          runtime: { status: 'cold', method: 'tool', source: 'gateway' },
+          reasons: ['mcp-candidate'],
+          diagnostics: [],
+          serverId: 'filesystem',
+        },
+      ],
+    });
+
+    renderAgents();
+    expect(await screen.findByText('Main')).toBeInTheDocument();
+    fireEvent.click(screen.getByTitle('settings'));
+    await screen.findByTestId('agent-capability-workbench');
+
+    fireEvent.click(screen.getByText('identityTools.publication.advancedIds'));
+    fireEvent.change(screen.getByLabelText('identityTools.defaultMcpIds'), { target: { value: 'filesystem' } });
+
+    const row = await screen.findByTestId('agent-capability-row-mcp-filesystem');
+    expect(within(row).getByRole('button', { name: /identityTools\.publication\.remove/ })).toBeEnabled();
+
+    const applyButton = screen.getByRole('button', { name: 'identityTools.publication.apply' });
+    await waitFor(() => expect(applyButton).toBeEnabled());
+    fireEvent.click(applyButton);
+
+    await waitFor(() => {
+      expect(updateAgentBootstrapMock).toHaveBeenCalledWith(expect.objectContaining({
+        id: 'main',
+        defaultMcpServerIds: ['filesystem'],
+      }));
+    });
+  });
+
+  it('passes roleName only when the role policy preview is filled', async () => {
+    agentsState.agents = [
+      {
+        id: 'main',
+        name: 'Main',
+        isDefault: true,
+        modelDisplay: 'gpt-5',
+        modelRef: 'openai/gpt-5',
+        overrideModelRef: null,
+        inheritedModel: true,
+        workspace: 'C:\\Users\\27933\\Desktop\\project',
+        agentDir: '~/.openclaw/agents/main/agent',
+        mainSessionKey: 'agent:main:main',
+        channelTypes: [],
+      },
+    ];
+
+    renderAgents();
+    expect(await screen.findByText('Main')).toBeInTheDocument();
+    fireEvent.click(screen.getByTitle('settings'));
+    await screen.findByTestId('agent-capability-workbench');
+
+    expect(capabilitiesPublicationsMock.mock.calls.some(([payload]) => (
+      typeof payload === 'object' && payload !== null && 'roleName' in payload
+    ))).toBe(false);
+
+    fireEvent.change(screen.getByPlaceholderText('identityTools.publication.rolePreviewPlaceholder'), {
+      target: { value: 'reviewer' },
+    });
+
+    await waitFor(() => {
+      expect(capabilitiesPublicationsMock).toHaveBeenCalledWith(expect.objectContaining({ roleName: 'reviewer' }));
+    });
+  });
+
+  it('blocks adding role-blocked capabilities and shows detail diagnostics', async () => {
+    agentsState.agents = [
+      {
+        id: 'main',
+        name: 'Main',
+        isDefault: true,
+        modelDisplay: 'gpt-5',
+        modelRef: 'openai/gpt-5',
+        overrideModelRef: null,
+        inheritedModel: true,
+        workspace: 'C:\\Users\\27933\\Desktop\\project',
+        agentDir: '~/.openclaw/agents/main/agent',
+        mainSessionKey: 'agent:main:main',
+        channelTypes: [],
+      },
+    ];
+    capabilitiesPublicationsMock.mockResolvedValue({
+      success: true,
+      source: 'gateway',
+      generatedAt: '2026-01-01T00:00:00.000Z',
+      diagnostics: [],
+      publications: [
+        {
+          id: 'mcp:danger',
+          kind: 'mcp',
+          sourceId: 'danger',
+          name: 'Danger MCP',
+          owner: { type: 'agent', id: 'main' },
+          scope: 'agent',
+          source: 'registered',
+          state: 'blocked',
+          exposure: { runtimeVisible: false, toolVisible: false },
+          useModes: ['adminAction'],
+          runtime: { status: 'blocked', method: 'tool', source: 'gateway' },
+          reasons: ['role-policy'],
+          diagnostics: [{ code: 'roleToolsFilter', severity: 'blocked', message: 'blocked by role' }],
+          serverId: 'danger',
+        },
+      ],
+    });
+
+    renderAgents();
+    expect(await screen.findByText('Main')).toBeInTheDocument();
+    fireEvent.click(screen.getByTitle('settings'));
+
+    const row = await screen.findByTestId('agent-capability-row-mcp-danger');
+    expect(within(row).getByRole('button', { name: /identityTools\.publication\.blocked/ })).toBeDisabled();
+    fireEvent.click(within(row).getByLabelText('identityTools.publication.detail.open'));
+
+    expect(await screen.findByText('roleToolsFilter')).toBeInTheDocument();
+    expect(screen.getByText('blocked by role')).toBeInTheDocument();
+  });
+
+  it('shows local fallback publication state when runtime is unavailable', async () => {
+    agentsState.agents = [
+      {
+        id: 'main',
+        name: 'Main',
+        isDefault: true,
+        modelDisplay: 'gpt-5',
+        modelRef: 'openai/gpt-5',
+        overrideModelRef: null,
+        inheritedModel: true,
+        workspace: 'C:\\Users\\27933\\Desktop\\project',
+        agentDir: '~/.openclaw/agents/main/agent',
+        mainSessionKey: 'agent:main:main',
+        channelTypes: [],
+      },
+    ];
+    capabilitiesPublicationsMock.mockResolvedValue({
+      success: true,
+      source: 'local-fallback',
+      generatedAt: '2026-01-01T00:00:00.000Z',
+      diagnostics: [{ code: 'runtimeUnavailable', severity: 'warning', message: 'Runtime unavailable' }],
+      publications: [],
+    });
+
+    renderAgents();
+    expect(await screen.findByText('Main')).toBeInTheDocument();
+    fireEvent.click(screen.getByTitle('settings'));
+
+    expect(await screen.findByText('identityTools.publication.sourceFallback')).toBeInTheDocument();
   });
 
   it('keeps the last agent snapshot visible while a refresh is in flight', async () => {

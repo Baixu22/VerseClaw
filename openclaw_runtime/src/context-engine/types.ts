@@ -215,6 +215,20 @@ export type ContextEngineRuntimeContext = Record<string, unknown> & {
   currentTokenCount?: number;
   /** Optional prompt-cache telemetry for cache-aware engines. */
   promptCache?: ContextEnginePromptCacheInfo;
+  /** Runtime intensity hints for budget-aware engines; runtime owns the authoritative policy. */
+  runtimeIntensityPolicy?: {
+    level?: string;
+    policyId?: string;
+    promptMode?: string;
+    skills?: unknown;
+    toolResults?: unknown;
+    contextPressure?: unknown;
+    shellOutput?: {
+      mode?: string;
+      recovery?: string;
+    };
+    [key: string]: unknown;
+  };
   /**
    * Safe transcript rewrite helper implemented by the runtime.
    *

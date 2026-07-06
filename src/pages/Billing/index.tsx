@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useRef, useState, type ReactNode } from 'react';
+import * as HeatGraph from 'heat-graph';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -40,6 +41,13 @@ const USAGE_FETCH_RETRY_DELAY_MS = 1200;
 const USAGE_FETCH_MAX_ATTEMPTS = 3;
 
 const HIDDEN_USAGE_MARKERS = ['gateway-injected', 'delivery-mirror'];
+const HEAT_GRAPH_COLORS = [
+  'var(--billing-heatgraph-level-0)',
+  'var(--billing-heatgraph-level-1)',
+  'var(--billing-heatgraph-level-2)',
+  'var(--billing-heatgraph-level-3)',
+  'var(--billing-heatgraph-level-4)',
+];
 
 type FetchState = {
   status: 'idle' | 'loading' | 'done';
@@ -60,6 +68,13 @@ type DailyBucket = {
   cacheTokens: number;
   totalTokens: number;
   costUsd: number;
+  count: number;
+};
+
+type HeatmapBucket = {
+  key: string;
+  label: string;
+  totalTokens: number;
   count: number;
 };
 
@@ -105,11 +120,63 @@ function formatTimestamp(timestamp: string): string {
 }
 
 function dayKey(date: Date): string {
-  return date.toISOString().slice(0, 10);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function formatDayLabel(date: Date): string {
   return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(date);
+}
+
+function formatMonthLabel(month: number, locale?: string): string {
+  const date = new Date(2026, month, 1);
+  return new Intl.DateTimeFormat(locale, { month: 'short' }).format(date);
+}
+
+function formatWeekdayLabel(dayOfWeek: number, locale?: string): string {
+  const sunday = new Date(2026, 0, 4 + dayOfWeek);
+  return new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(sunday);
+}
+
+function getSundayAlignedWeekCount(start?: string, end?: string): number {
+  if (!start || !end) return 0;
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) return 0;
+  startDate.setDate(startDate.getDate() - startDate.getDay());
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+  const days = Math.max(0, Math.floor((endDate.getTime() - startDate.getTime()) / 86_400_000) + 1);
+  return Math.max(1, Math.ceil(days / 7));
+}
+
+function buildHeatmapBuckets(entries: UsageHistoryEntry[], dayCount = 365): HeatmapBucket[] {
+  const now = new Date();
+  const buckets = new Map<string, HeatmapBucket>();
+  for (let index = dayCount - 1; index >= 0; index -= 1) {
+    const date = new Date(now);
+    date.setDate(now.getDate() - index);
+    const key = dayKey(date);
+    buckets.set(key, {
+      key,
+      label: formatDayLabel(date),
+      totalTokens: 0,
+      count: 0,
+    });
+  }
+
+  for (const entry of entries) {
+    const date = new Date(entry.timestamp);
+    if (Number.isNaN(date.getTime())) continue;
+    const bucket = buckets.get(dayKey(date));
+    if (!bucket) continue;
+    bucket.totalTokens += entry.totalTokens;
+    bucket.count += 1;
+  }
+
+  return Array.from(buckets.values());
 }
 
 function getLatestTimestamp(entries: UsageHistoryEntry[]): string | null {
@@ -245,15 +312,6 @@ function buildDailyBuckets(entries: UsageHistoryEntry[], window: UsageWindow): D
   }
 
   return Array.from(buckets.values());
-}
-
-function heatTone(value: number, max: number): string {
-  if (value <= 0) return 'bg-black/5 dark:bg-white/10';
-  const ratio = max > 0 ? value / max : 0;
-  if (ratio > 0.75) return 'bg-usage-input';
-  if (ratio > 0.45) return 'bg-usage-input/75';
-  if (ratio > 0.2) return 'bg-usage-input/45';
-  return 'bg-usage-input/20';
 }
 
 function BillingKpi({
@@ -496,30 +554,127 @@ function ModelRankChart({
 function UsageHeatmap({
   buckets,
   tokensLabel,
+  lessLabel,
+  moreLabel,
+  locale,
 }: {
-  buckets: DailyBucket[];
+  buckets: HeatmapBucket[];
   tokensLabel: string;
+  lessLabel: string;
+  moreLabel: string;
+  locale?: string;
 }) {
-  const maxTokens = Math.max(1, ...buckets.map((bucket) => bucket.totalTokens));
+  const bucketByDate = new Map(buckets.map((bucket) => [bucket.key, bucket]));
+  const data = buckets.map((bucket) => ({ date: bucket.key, count: bucket.totalTokens }));
+  const start = buckets[0]?.key;
+  const end = buckets[buckets.length - 1]?.key;
+  const weekCount = getSundayAlignedWeekCount(start, end);
 
   return (
-    <div className="rounded-lg border border-black/10 bg-surface-modal p-4 dark:border-white/10" data-testid="billing-usage-heatmap">
-      <div className="grid grid-cols-7 gap-1">
-        {buckets.map((bucket) => (
+    <div
+      className={cn(
+        'overflow-x-auto rounded-lg border p-5 shadow-none',
+        'border-[#d0d7de] bg-white text-[#24292f] dark:border-[#30363d] dark:bg-[#0d1117] dark:text-white',
+        '[--billing-heatgraph-level-0:#ebedf0] [--billing-heatgraph-level-1:#9be9a8] [--billing-heatgraph-level-2:#40c463] [--billing-heatgraph-level-3:#30a14e] [--billing-heatgraph-level-4:#216e39]',
+        'dark:[--billing-heatgraph-level-0:#161b22] dark:[--billing-heatgraph-level-1:#0e4429] dark:[--billing-heatgraph-level-2:#006d32] dark:[--billing-heatgraph-level-3:#26a641] dark:[--billing-heatgraph-level-4:#39d353]',
+      )}
+      data-testid="billing-usage-heatmap"
+    >
+      <HeatGraph.Root
+        data={data}
+        start={start}
+        end={end}
+        weekStart="sunday"
+        colorScale={HEAT_GRAPH_COLORS}
+        className="min-w-max"
+      >
+        <div
+          className="grid gap-x-3 gap-y-2"
+          style={{
+            gridTemplateColumns: '40px auto',
+            gridTemplateRows: '20px auto',
+          }}
+        >
+          <div />
           <div
-            key={bucket.key}
-            className={cn('aspect-square rounded-[3px]', heatTone(bucket.totalTokens, maxTokens))}
-            title={`${bucket.label}: ${formatTokenCount(bucket.totalTokens)} ${tokensLabel}`}
-            data-testid="billing-usage-heatmap-day"
-          />
-        ))}
-      </div>
+            className="relative h-5 text-xs font-semibold text-[#24292f] dark:text-white"
+            style={{ width: `${weekCount * 12 + Math.max(0, weekCount - 1) * 3}px` }}
+          >
+            <HeatGraph.MonthLabels>
+              {({ label }) => {
+                if (label.column === 0) return null;
+                return (
+                  <span
+                    className="absolute top-0 whitespace-nowrap"
+                    style={{ left: `${label.column * 15}px` }}
+                  >
+                    {formatMonthLabel(label.month, locale)}
+                  </span>
+                );
+              }}
+            </HeatGraph.MonthLabels>
+          </div>
+          <div
+            className="grid text-sm font-semibold leading-3 text-[#24292f] dark:text-white"
+            style={{
+              gridTemplateRows: 'repeat(7, 12px)',
+              rowGap: '3px',
+            }}
+          >
+            <HeatGraph.DayLabels>
+              {({ label }) => {
+                const showLabel = label.dayOfWeek === 1 || label.dayOfWeek === 3 || label.dayOfWeek === 5;
+                return (
+                  <span
+                    className="self-center whitespace-nowrap"
+                    style={{ gridRow: label.row + 1 }}
+                  >
+                    {showLabel ? formatWeekdayLabel(label.dayOfWeek, locale) : ''}
+                  </span>
+                );
+              }}
+            </HeatGraph.DayLabels>
+          </div>
+          <HeatGraph.Grid
+            className="gap-[3px]"
+            style={{
+              gridTemplateColumns: `repeat(${weekCount}, 12px)`,
+              gridTemplateRows: 'repeat(7, 12px)',
+            }}
+          >
+            {({ cell }) => {
+              const dateKey = dayKey(cell.date);
+              const bucket = bucketByDate.get(dateKey);
+              const label = bucket?.label ?? formatDayLabel(cell.date);
+              return (
+                <HeatGraph.Cell
+                  className="h-3 w-3 rounded-[2px]"
+                  title={`${label}: ${formatTokenCount(cell.count)} ${tokensLabel}`}
+                  data-billing-usage-date={dateKey}
+                  data-billing-usage-records={bucket?.count ?? 0}
+                  data-billing-usage-tokens={cell.count}
+                  data-testid="billing-usage-heatmap-day"
+                />
+              );
+            }}
+          </HeatGraph.Grid>
+        </div>
+        <div className="mt-4 flex items-center justify-end gap-2 text-sm text-[#57606a] dark:text-[#8b949e]">
+          <span>{lessLabel}</span>
+          <div className="flex gap-[3px]">
+            <HeatGraph.Legend>
+              {() => <HeatGraph.LegendLevel className="h-3 w-3 rounded-[2px]" />}
+            </HeatGraph.Legend>
+          </div>
+          <span>{moreLabel}</span>
+        </div>
+      </HeatGraph.Root>
     </div>
   );
 }
 
 export function Billing({ embedded }: { embedded?: boolean } = {}) {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
   const gatewayStatus = useGatewayStore((state) => state.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
   const [usageWindow, setUsageWindow] = useState<UsageWindow>('30d');
@@ -589,6 +744,7 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
   const filteredUsageHistory = filterUsageHistoryByWindow(visibleUsageHistory, usageWindow);
   const billableUsageHistory = filteredUsageHistory.filter(isTokenizedUsageEntry);
   const dailyBuckets = buildDailyBuckets(billableUsageHistory, usageWindow);
+  const heatmapBuckets = buildHeatmapBuckets(visibleUsageHistory.filter(isTokenizedUsageEntry), 365);
   const modelGroups = groupUsageHistory(billableUsageHistory, 'model');
 
   const totalTokens = billableUsageHistory.reduce((sum, entry) => sum + entry.totalTokens, 0);
@@ -615,22 +771,17 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
     .slice(0, 6);
 
   const billingContent = (
-    <div data-testid="billing-page" className="flex h-[calc(100vh-2.5rem)] -m-6 flex-col overflow-hidden dark:bg-background">
-      <div className="mx-auto flex h-full w-full max-w-6xl flex-col p-10 pt-12">
-        <div className="mb-8 flex shrink-0 flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div>
-            <div className="mb-3 flex items-center gap-3">
-              <IconFrame tone="output" size="lg">
-                <ReceiptText />
-              </IconFrame>
-              <h1 data-testid="billing-page-title" className="font-serif text-5xl font-normal tracking-tight text-foreground md:text-6xl">
-                {t('dashboard:billing.title')}
-              </h1>
-            </div>
-            <p className="max-w-3xl text-subtitle font-medium text-foreground/70">
-              {t('dashboard:billing.subtitle')}
-            </p>
-            <div className="mt-4 flex flex-wrap items-center gap-2">
+    <div
+      data-testid="billing-page"
+      className={cn(
+        'flex flex-col overflow-hidden dark:bg-background',
+        embedded ? 'min-h-0' : 'h-[calc(100vh-2.5rem)] -m-6',
+      )}
+    >
+      <div className={cn('mx-auto flex h-full w-full max-w-6xl flex-col', embedded ? 'p-0' : 'p-10 pt-12')}>
+        {embedded ? (
+          <div className="mb-5 flex shrink-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="outline" className="gap-1.5 rounded-full border-black/10 bg-transparent [&_svg]:shrink-0 dark:border-white/10">
                 <Database className="h-3.5 w-3.5" />
                 {t('dashboard:billing.transcriptSource')}
@@ -646,32 +797,86 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
                 </Badge>
               )}
             </div>
+            <div className="flex shrink-0 flex-wrap items-center gap-2">
+              <Button
+                asChild
+                variant="outline"
+                data-testid="billing-back-to-models"
+                className="h-10 rounded-lg border-black/10 bg-transparent px-4 dark:border-white/10"
+              >
+                <Link to="/settings/models">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  {t('dashboard:billing.backToModels')}
+                </Link>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setUsageRefreshNonce((value) => value + 1)}
+                className="h-10 rounded-lg border-black/10 bg-transparent px-4 dark:border-white/10"
+              >
+                <RefreshCw className={cn('mr-2 h-4 w-4', fetchState.status === 'loading' && 'animate-spin')} />
+                {t('common:actions.refresh')}
+              </Button>
+            </div>
           </div>
-          <div className="flex shrink-0 flex-wrap items-center gap-2">
-            <Button
-              asChild
-              variant="outline"
-              data-testid="billing-back-to-models"
-              className="h-10 rounded-lg border-black/10 bg-transparent px-4 dark:border-white/10"
-            >
-              <Link to="/settings/models">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {t('dashboard:billing.backToModels')}
-              </Link>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setUsageRefreshNonce((value) => value + 1)}
-              className="h-10 rounded-lg border-black/10 bg-transparent px-4 dark:border-white/10"
-            >
-              <RefreshCw className={cn('mr-2 h-4 w-4', fetchState.status === 'loading' && 'animate-spin')} />
-              {t('common:actions.refresh')}
-            </Button>
+        ) : (
+          <div className="mb-8 flex shrink-0 flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <div className="mb-3 flex items-center gap-3">
+                <IconFrame tone="output" size="lg">
+                  <ReceiptText />
+                </IconFrame>
+                <h1 data-testid="billing-page-title" className="font-serif text-5xl font-normal tracking-tight text-foreground md:text-6xl">
+                  {t('dashboard:billing.title')}
+                </h1>
+              </div>
+              <p className="max-w-3xl text-subtitle font-medium text-foreground/70">
+                {t('dashboard:billing.subtitle')}
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className="gap-1.5 rounded-full border-black/10 bg-transparent [&_svg]:shrink-0 dark:border-white/10">
+                  <Database className="h-3.5 w-3.5" />
+                  {t('dashboard:billing.transcriptSource')}
+                </Badge>
+                <Badge variant={isGatewayRunning ? 'secondary' : 'outline'} className="gap-1.5 rounded-full [&_svg]:shrink-0">
+                  <Server className="h-3.5 w-3.5" />
+                  {isGatewayRunning ? t('dashboard:billing.gatewayLive') : t('dashboard:billing.gatewayOffline')}
+                </Badge>
+                {usageRefreshing && (
+                  <Badge variant="outline" className="gap-1.5 rounded-full border-black/10 bg-transparent [&_svg]:shrink-0 dark:border-white/10">
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                    {t('dashboard:billing.refreshing')}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            <div className="flex shrink-0 flex-wrap items-center gap-2">
+              <Button
+                asChild
+                variant="outline"
+                data-testid="billing-back-to-models"
+                className="h-10 rounded-lg border-black/10 bg-transparent px-4 dark:border-white/10"
+              >
+                <Link to="/settings/models">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  {t('dashboard:billing.backToModels')}
+                </Link>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setUsageRefreshNonce((value) => value + 1)}
+                className="h-10 rounded-lg border-black/10 bg-transparent px-4 dark:border-white/10"
+              >
+                <RefreshCw className={cn('mr-2 h-4 w-4', fetchState.status === 'loading' && 'animate-spin')} />
+                {t('common:actions.refresh')}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="min-h-0 flex-1 overflow-y-auto pr-2 -mr-2 pb-10">
+        <div className={cn('min-h-0 flex-1 pr-2 -mr-2 pb-10', embedded ? 'overflow-visible' : 'overflow-y-auto')}>
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div className="flex rounded-lg border border-black/10 bg-transparent p-1 dark:border-white/10" data-testid="billing-window-controls">
               {(['7d', '30d', 'all'] as UsageWindow[]).map((windowValue) => (
@@ -796,27 +1001,31 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
                 />
               </section>
 
-              <div className="grid gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(280px,0.75fr)]">
-                <section className="space-y-3">
-                  <SectionHeader
-                    icon={<Layers3 />}
-                    tone="output"
-                    title={t('dashboard:billing.modelChart.title')}
-                    description={t('dashboard:billing.modelChart.description')}
-                  />
-                  <ModelRankChart groups={modelGroups} emptyLabel={t('dashboard:billing.empty')} />
-                </section>
+              <section className="space-y-3">
+                <SectionHeader
+                  icon={<Grid3X3 />}
+                  tone="cache"
+                  title={t('dashboard:billing.heatmap.title')}
+                  description={t('dashboard:billing.heatmap.description')}
+                />
+                <UsageHeatmap
+                  buckets={heatmapBuckets}
+                  tokensLabel={t('dashboard:billing.tokensSuffix')}
+                  lessLabel={t('dashboard:billing.heatmap.less')}
+                  moreLabel={t('dashboard:billing.heatmap.more')}
+                  locale={i18n.language}
+                />
+              </section>
 
-                <section className="space-y-3">
-                  <SectionHeader
-                    icon={<Grid3X3 />}
-                    tone="cache"
-                    title={t('dashboard:billing.heatmap.title')}
-                    description={t('dashboard:billing.heatmap.description')}
-                  />
-                  <UsageHeatmap buckets={dailyBuckets} tokensLabel={t('dashboard:billing.tokensSuffix')} />
-                </section>
-              </div>
+              <section className="space-y-3">
+                <SectionHeader
+                  icon={<Layers3 />}
+                  tone="output"
+                  title={t('dashboard:billing.modelChart.title')}
+                  description={t('dashboard:billing.modelChart.description')}
+                />
+                <ModelRankChart groups={modelGroups} emptyLabel={t('dashboard:billing.empty')} />
+              </section>
 
               <section className="space-y-3">
                 <SectionHeader
@@ -1076,27 +1285,31 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
                 />
               </section>
 
-              <div className="grid gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(280px,0.75fr)]">
-                <section className="space-y-3">
-                  <SectionHeader
-                    icon={<Layers3 />}
-                    tone="output"
-                    title={t('dashboard:billing.modelChart.title')}
-                    description={t('dashboard:billing.modelChart.description')}
-                  />
-                  <ModelRankChart groups={modelGroups} emptyLabel={t('dashboard:billing.empty')} />
-                </section>
+              <section className="space-y-3">
+                <SectionHeader
+                  icon={<Grid3X3 />}
+                  tone="cache"
+                  title={t('dashboard:billing.heatmap.title')}
+                  description={t('dashboard:billing.heatmap.description')}
+                />
+                <UsageHeatmap
+                  buckets={heatmapBuckets}
+                  tokensLabel={t('dashboard:billing.tokensSuffix')}
+                  lessLabel={t('dashboard:billing.heatmap.less')}
+                  moreLabel={t('dashboard:billing.heatmap.more')}
+                  locale={i18n.language}
+                />
+              </section>
 
-                <section className="space-y-3">
-                  <SectionHeader
-                    icon={<Grid3X3 />}
-                    tone="cache"
-                    title={t('dashboard:billing.heatmap.title')}
-                    description={t('dashboard:billing.heatmap.description')}
-                  />
-                  <UsageHeatmap buckets={dailyBuckets} tokensLabel={t('dashboard:billing.tokensSuffix')} />
-                </section>
-              </div>
+              <section className="space-y-3">
+                <SectionHeader
+                  icon={<Layers3 />}
+                  tone="output"
+                  title={t('dashboard:billing.modelChart.title')}
+                  description={t('dashboard:billing.modelChart.description')}
+                />
+                <ModelRankChart groups={modelGroups} emptyLabel={t('dashboard:billing.empty')} />
+              </section>
 
               <section className="space-y-3">
                 <SectionHeader

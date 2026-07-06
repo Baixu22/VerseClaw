@@ -369,16 +369,22 @@ Acceptance:
 Current baseline:
 
 - `electron/main/index.ts` supports `VERSE_CLAW_REMOTE_DEBUGGING_PORT` at process startup.
+- Settings exposes a Remote Control section with CDP enable/port persistence,
+  endpoint/status display, restart-required state, target inspection, pageInfo,
+  scroll, click, and screenshot developer actions.
+- `electron/services/remote-control-api.ts` exposes the local developer API
+  through the host-api boundary.
 - Settings already has a developer section.
 - Gateway Control UI already exposes URL, token, and port through `gateway.controlUi`.
 
 Gap:
 
-- No Settings-managed CDP service config.
-- No UI to enable/disable Electron remote debugging.
-- No clear restart requirement display.
+- CDP enable/port and restart-required status exist, but the surface is still a
+  developer API rather than a supported public automation product.
 - No remote-control token/origin policy in Verse Claw settings.
-- No consolidated "remote control" status panel.
+- No token-protected Verse Claw remote-control broker.
+- No MCP/CDP bridge or remote client support.
+- Permission/audit policy for mutating remote actions is not productized.
 
 ### 7.2 Settings UI
 
@@ -451,7 +457,9 @@ There are two possible meanings of "CDP service":
 Plan recommendation:
 
 - Phase 1: expose Electron native CDP endpoint with settings and warnings.
+  This baseline is now landed for local developer use.
 - Phase 2: add Verse Claw remote-control broker for safe app-level actions.
+  This remains the next CDP component.
 - Phase 3: support remote clients through MCP/CDP bridge if useful.
 
 Broker actions may include:
@@ -488,7 +496,7 @@ Recommended merge order:
 3. Add custom agent profile editor.
 4. Add MCP server registry and effective resolver.
 5. Add permission enforcement for MCP tools.
-6. Add CDP remote-control settings.
+6. Productize CDP remote-control broker, token/origin policy, and audit gates.
 
 ## 9. Implementation Phases
 
@@ -605,6 +613,8 @@ Acceptance criteria:
 
 ### Phase 5: CDP Remote Control Settings
 
+Status as of 2026-07-04: landed as a developer surface.
+
 Files:
 
 - `electron/main/index.ts`
@@ -629,8 +639,19 @@ Acceptance criteria:
 - After restart, app exposes the requested port.
 - Invalid ports are rejected.
 - Environment variable override still works.
+- Settings can inspect CDP targets and run local pageInfo, scroll, click, and
+  screenshot actions for developer dogfooding.
+
+Coverage:
+
+- `tests/unit/remote-control-api.test.ts`
+- `tests/unit/settings-page-remote-control.test.tsx`
+- `tests/e2e/knowledge-ux-cdp.spec.ts`
 
 ### Phase 6: Remote-Control Broker
+
+Status as of 2026-07-04: next component. The host-api CDP developer actions are
+landed, but this is not yet a token-protected broker with remote client policy.
 
 Files:
 
@@ -651,6 +672,8 @@ Acceptance criteria:
 - Token is required by default.
 - Actions are audited.
 - Permission mode constrains mutating actions.
+- Target selection UX is explicit and never guesses a mutating target when more
+  than one page is available.
 
 ### Phase 7: Tests And Documentation
 
@@ -675,6 +698,7 @@ Acceptance criteria:
 - E2E verifies workspace A uses Agent X while workspace B uses Agent Y.
 - E2E verifies custom agent bootstrap editing.
 - E2E verifies remote-control setting shows restart-required state.
+- E2E verifies CDP target inspection and a read-only pageInfo/screenshot flow.
 - Documentation explains security implications.
 
 ## 10. Risk Register

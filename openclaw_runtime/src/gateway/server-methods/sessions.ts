@@ -17,11 +17,13 @@ import {
   validateSessionsCleanupParams,
   validateSessionsCompactParams,
   validateSessionsCompactionHistoryParams,
+  validateSessionsCompressionArtifactParams,
   validateSessionsCompactionBranchParams,
   validateSessionsCompactionGetParams,
   validateSessionsCompactionListParams,
   validateSessionsCompactionRestoreParams,
   validateSessionsCompactionStatusParams,
+  validateSessionsRecoveryContextParams,
   validateSessionsLongTaskControlHistoryParams,
   validateSessionsLongTaskControlStatusParams,
   validateSessionsQueueDrainParams,
@@ -40,7 +42,13 @@ import {
   validateSessionsResolveParams,
   validateSessionsSendParams,
 } from "../../../packages/gateway-protocol/src/index.js";
-import { readAcpSessionMeta } from "../../acp/runtime/session-meta.js";
+import {
+  buildDeterministicCompressionArtifact,
+  normalizeCompressionArtifact,
+  renderRecoveryContextProjection,
+  type CompressionArtifact,
+} from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
+import { readAcpSessionMeta } from "../../runtime/session-meta.ts";
 import { resolveModelAgentRuntimeMetadata } from "../../agents/agent-runtime-metadata.js";
 import {
   listAgentIds,
@@ -771,7 +779,87 @@ async function interruptSessionRunIfActive(params: {
   return { interrupted: true };
 }
 
+function compressionDetailsFromCheckpoint(
+  checkpoint: ReturnType<typeof listSessionCompactionCheckpoints>[number],
+): Record<string, unknown> | undefined {
+  const details = (checkpoint as { details?: unknown }).details;
+  if (!details || typeof details !== "object" || Array.isArray(details)) return undefined;
+  return details as Record<string, unknown>;
+}
+
+function telemetryFromCheckpoint(
+  checkpoint: ReturnType<typeof listSessionCompactionCheckpoints>[number],
+): Record<string, unknown> | undefined {
+  const compression = compressionDetailsFromCheckpoint(checkpoint)?.compression;
+  if (!compression || typeof compression !== "object" || Array.isArray(compression)) return undefined;
+  return compression as Record<string, unknown>;
+}
+
+function compressionArtifactFromCheckpoint(
+  checkpoint: ReturnType<typeof listSessionCompactionCheckpoints>[number],
+): CompressionArtifact | undefined {
+  const details = compressionDetailsFromCheckpoint(checkpoint);
+  const storedArtifact = normalizeCompressionArtifact(details?.artifact);
+  const telemetry = telemetryFromCheckpoint(checkpoint);
+  const readFiles = Array.isArray(details?.readFiles)
+    ? details.readFiles.filter((item): item is string => typeof item === "string")
+    : [];
+  const modifiedFiles = Array.isArray(details?.modifiedFiles)
+    ? details.modifiedFiles.filter((item): item is string => typeof item === "string")
+    : [];
+  const artifact = storedArtifact ?? buildDeterministicCompressionArtifact({
+    messages: [],
+    summary: checkpoint.summary,
+    readFiles,
+    modifiedFiles,
+    telemetry: {
+      ...(typeof telemetry?.tier === "string" ? { tier: telemetry.tier } : {}),
+      ...(typeof telemetry?.strategy === "string" ? { strategy: telemetry.strategy } : {}),
+      ...(typeof telemetry?.compressionRatio === "number" ? { compressionRatio: telemetry.compressionRatio } : {}),
+      ...(typeof checkpoint.tokensBefore === "number" ? { tokensBefore: checkpoint.tokensBefore } : {}),
+      ...(typeof checkpoint.tokensAfter === "number" ? { tokensAfter: checkpoint.tokensAfter } : {}),
+      ...(Array.isArray(telemetry?.rehydratedFiles)
+        ? { rehydratedFiles: telemetry.rehydratedFiles.filter((item): item is string => typeof item === "string") }
+        : {}),
+      ...(typeof telemetry?.staleExcludedCount === "number"
+        ? { staleExcludedCount: telemetry.staleExcludedCount }
+        : {}),
+      ...(typeof telemetry?.causalAnchorCount === "number"
+        ? { causalAnchorCount: telemetry.causalAnchorCount }
+        : {}),
+      ...(Array.isArray(telemetry?.warnings)
+        ? { warnings: telemetry.warnings.filter((item): item is string => typeof item === "string") }
+        : {}),
+    },
+  });
+  return {
+    ...artifact,
+    ...(typeof telemetry?.tier === "string" ? { tier: telemetry.tier } : {}),
+    ...(typeof telemetry?.strategy === "string" ? { strategy: telemetry.strategy } : {}),
+    ...(typeof telemetry?.compressionRatio === "number" ? { compressionRatio: telemetry.compressionRatio } : {}),
+    ...(typeof checkpoint.tokensBefore === "number" ? { tokensBefore: checkpoint.tokensBefore } : {}),
+    ...(typeof checkpoint.tokensAfter === "number" ? { tokensAfter: checkpoint.tokensAfter } : {}),
+    ...(Array.isArray(telemetry?.rehydratedFiles)
+      ? { rehydratedFiles: telemetry.rehydratedFiles.filter((item): item is string => typeof item === "string") }
+      : {}),
+    ...(typeof telemetry?.staleExcludedCount === "number"
+      ? { staleExcludedCount: telemetry.staleExcludedCount }
+      : {}),
+    ...(typeof telemetry?.causalAnchorCount === "number"
+      ? { causalAnchorCount: telemetry.causalAnchorCount }
+      : {}),
+    ...(Array.isArray(telemetry?.warnings)
+      ? { warnings: telemetry.warnings.filter((item): item is string => typeof item === "string") }
+      : {}),
+  };
+}
+
+function estimateProjectionTokens(text: string): number {
+  return Math.max(0, Math.ceil(text.length / 4));
+}
+
 function compactionHistoryEntryFromCheckpoint(checkpoint: ReturnType<typeof listSessionCompactionCheckpoints>[number]) {
+  const artifact = compressionArtifactFromCheckpoint(checkpoint);
   return {
     id: checkpoint.checkpointId,
     timestamp: checkpoint.createdAt,
@@ -780,6 +868,12 @@ function compactionHistoryEntryFromCheckpoint(checkpoint: ReturnType<typeof list
     ...(typeof checkpoint.tokensAfter === "number" ? { tokensAfter: checkpoint.tokensAfter } : {}),
     ...(checkpoint.firstKeptEntryId ? { firstKeptEntryId: checkpoint.firstKeptEntryId } : {}),
     trigger: checkpoint.reason,
+    ...(artifact?.quality ? { quality: artifact.quality } : {}),
+    ...(artifact?.quality ? { artifactTokens: artifact.quality.artifactTokens } : {}),
+    ...(artifact?.quality ? { projectionTokens: artifact.quality.projectionTokens } : {}),
+    ...(artifact?.quality ? { evidenceCoverage: artifact.quality.evidenceCoverage } : {}),
+    ...(artifact ? { unverifiedCount: artifact.unverifiedClaims.length } : {}),
+    ...(artifact?.quality.warnings.length ? { warnings: artifact.quality.warnings } : {}),
   };
 }
 
@@ -1475,6 +1569,124 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         ok: true,
         key: canonicalKey,
         entries: listCompactionHistoryEntries(entry, p.limit),
+      },
+      undefined,
+    );
+  },
+  "sessions.compressionArtifact": ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsCompressionArtifactParams,
+        "sessions.compressionArtifact",
+        respond,
+      )
+    ) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const { entry, canonicalKey } = loadSessionEntry(key, {
+      agentId: requestedAgent.agentId,
+    });
+    const checkpoints = listSessionCompactionCheckpoints(entry);
+    const checkpoint = p.checkpointId
+      ? checkpoints.find((item) => item.checkpointId === p.checkpointId)
+      : checkpoints[0];
+    const warnings: string[] = [];
+    if (!checkpoint) {
+      warnings.push("compression_artifact_unavailable");
+      respond(true, { ok: true, key: canonicalKey, warnings }, undefined);
+      return;
+    }
+    const artifact = compressionArtifactFromCheckpoint(checkpoint);
+    respond(
+      true,
+      {
+        ok: true,
+        key: canonicalKey,
+        checkpointId: checkpoint.checkpointId,
+        ...(artifact ? { artifact, quality: artifact.quality } : {}),
+        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],
+      },
+      undefined,
+    );
+  },
+  "sessions.recoveryContext": ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsRecoveryContextParams,
+        "sessions.recoveryContext",
+        respond,
+      )
+    ) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const { entry, canonicalKey } = loadSessionEntry(key, {
+      agentId: requestedAgent.agentId,
+    });
+    const checkpoints = listSessionCompactionCheckpoints(entry);
+    const checkpoint = p.checkpointId
+      ? checkpoints.find((item) => item.checkpointId === p.checkpointId)
+      : checkpoints[0];
+    const warnings: string[] = [];
+    if (!checkpoint) {
+      warnings.push("recovery_context_unavailable");
+      respond(
+        true,
+        {
+          ok: true,
+          key: canonicalKey,
+          context: "",
+          projectionTokens: 0,
+          warnings,
+        },
+        undefined,
+      );
+      return;
+    }
+    const artifact = compressionArtifactFromCheckpoint(checkpoint);
+    const budgetTokens =
+      typeof p.budgetTokens === "number" && Number.isFinite(p.budgetTokens)
+        ? Math.max(1, Math.floor(p.budgetTokens))
+        : 1400;
+    const projection = artifact
+      ? renderRecoveryContextProjection(artifact, budgetTokens)
+      : checkpoint.summary ?? "";
+    if (!artifact) {
+      warnings.push("legacy_summary_fallback");
+    }
+    respond(
+      true,
+      {
+        ok: true,
+        key: canonicalKey,
+        checkpointId: checkpoint.checkpointId,
+        context: projection,
+        projectionTokens: estimateProjectionTokens(projection),
+        ...(artifact ? { artifact, quality: artifact.quality } : {}),
+        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],
       },
       undefined,
     );

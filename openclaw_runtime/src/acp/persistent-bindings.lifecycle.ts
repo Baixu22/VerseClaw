@@ -12,7 +12,7 @@ import {
   type ConfiguredAcpBindingSpec,
   type ResolvedConfiguredAcpBinding,
 } from "./persistent-bindings.types.js";
-import { readAcpSessionEntry } from "./runtime/session-meta.js";
+import { readAcpSessionEntry } from "../runtime/session-meta.ts";
 
 // Binding lifecycle keeps configured channel conversations attached to matching ACP sessions.
 function sessionMatchesConfiguredBinding(params: {

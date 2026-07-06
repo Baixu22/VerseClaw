@@ -14,7 +14,7 @@ import type {
 } from "@openclaw/acp-core/runtime/types";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { logVerbose } from "../../globals.js";
-import { withAcpRuntimeErrorBoundary } from "../runtime/errors.js";
+import { withAcpRuntimeErrorBoundary } from "../../runtime/errors.ts";
 import type { SessionAcpMeta, SessionEntry } from "./manager.types.js";
 import { hasLegacyAcpIdentityProjection } from "./manager.utils.js";
 

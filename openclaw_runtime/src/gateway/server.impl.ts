@@ -1669,99 +1669,123 @@ export async function startGatewayServer(
     postAttachRuntimeReturned = true;
     activateScheduledServicesWhenReady();
 
-    const { startManagedGatewayConfigReloader } = await import("./server-reload-handlers.js");
-    runtimeState.configReloader = startManagedGatewayConfigReloader({
-      minimalTestGateway,
-      initialConfig: cfgAtStart,
-      initialCompareConfig: startupLastGoodSnapshot.sourceConfig,
-      initialInternalWriteHash: startupInternalWriteHash,
-      watchPath: configSnapshot.path,
-      readSnapshot: readConfigFileSnapshot,
-      promoteSnapshot: promoteConfigSnapshotToLastKnownGood,
-      subscribeToWrites: registerConfigWriteListener,
-      deps,
-      broadcast,
-      getState: () => ({
-        hooksConfig: runtimeState.hooksConfig,
-        hookClientIpConfig: runtimeState.hookClientIpConfig,
-        heartbeatRunner: runtimeState.heartbeatRunner,
-        cronState: runtimeState.cronState,
-        channelHealthMonitor: runtimeState.channelHealthMonitor,
-      }),
-      setState: (nextState) => {
-        const cronStateChanged = nextState.cronState !== runtimeState.cronState;
-        runtimeState.hooksConfig = nextState.hooksConfig;
-        runtimeState.hookClientIpConfig = nextState.hookClientIpConfig;
-        runtimeState.heartbeatRunner = nextState.heartbeatRunner;
-        runtimeState.cronState = nextState.cronState;
-        deps.cron = runtimeState.cronState.cron;
-        runtimeState.channelHealthMonitor = nextState.channelHealthMonitor;
-        if (cronStateChanged) {
-          gatewayCronStartHandled = true;
-        }
-      },
-      startChannel,
-      stopChannel,
-      stopPostReadySidecars: stopRegisteredPostReadySidecars,
-      reloadPlugins: reloadAttachedGatewayPlugins,
-      logHooks,
-      logChannels,
-      logCron,
-      logReload,
-      onCronRestart: () => {
-        gatewayCronStartHandled = true;
-      },
-      channelManager,
-      activateRuntimeSecrets,
-      resolveSharedGatewaySessionGenerationForConfig,
-      sharedGatewaySessionGenerationState,
-      clients,
-    });
-    await promoteConfigSnapshotToLastKnownGood(startupLastGoodSnapshot).catch((err: unknown) => {
-      log.warn(`gateway: failed to promote config last-known-good backup: ${String(err)}`);
-    });
-    if (!minimalTestGateway) {
-      const gatewayRuntimeServices = await loadScheduledServicesModule();
-      postReadyMaintenanceTimer = gatewayRuntimeServices.scheduleGatewayPostReadyMaintenance({
-        delayMs: POST_READY_MAINTENANCE_DELAY_MS,
-        isClosing: () => closePreludeStarted,
-        onStarted: () => {
-          postReadyMaintenanceTimer = null;
-        },
-        startMaintenance: async () => {
-          if (closePreludeStarted) {
-            return null;
+    const startPostReadyRuntimeServices = async () => {
+      const { startManagedGatewayConfigReloader } = await import("./server-reload-handlers.js");
+      if (closePreludeStarted) {
+        return;
+      }
+      runtimeState.configReloader = startManagedGatewayConfigReloader({
+        minimalTestGateway,
+        initialConfig: cfgAtStart,
+        initialCompareConfig: startupLastGoodSnapshot.sourceConfig,
+        initialInternalWriteHash: startupInternalWriteHash,
+        watchPath: configSnapshot.path,
+        readSnapshot: readConfigFileSnapshot,
+        promoteSnapshot: promoteConfigSnapshotToLastKnownGood,
+        subscribeToWrites: registerConfigWriteListener,
+        deps,
+        broadcast,
+        getState: () => ({
+          hooksConfig: runtimeState.hooksConfig,
+          hookClientIpConfig: runtimeState.hookClientIpConfig,
+          heartbeatRunner: runtimeState.heartbeatRunner,
+          cronState: runtimeState.cronState,
+          channelHealthMonitor: runtimeState.channelHealthMonitor,
+        }),
+        setState: (nextState) => {
+          const cronStateChanged = nextState.cronState !== runtimeState.cronState;
+          runtimeState.hooksConfig = nextState.hooksConfig;
+          runtimeState.hookClientIpConfig = nextState.hookClientIpConfig;
+          runtimeState.heartbeatRunner = nextState.heartbeatRunner;
+          runtimeState.cronState = nextState.cronState;
+          deps.cron = runtimeState.cronState.cron;
+          runtimeState.channelHealthMonitor = nextState.channelHealthMonitor;
+          if (cronStateChanged) {
+            gatewayCronStartHandled = true;
           }
-          return earlyRuntime.startMaintenance();
         },
-        applyMaintenance: (maintenance) => {
-          if (closePreludeStarted) {
-            clearInterval(maintenance.tickInterval);
-            clearInterval(maintenance.healthInterval);
-            clearInterval(maintenance.dedupeCleanup);
-            if (maintenance.mediaCleanup) {
-              clearInterval(maintenance.mediaCleanup);
-            }
-            return;
-          }
-          runtimeState.tickInterval = maintenance.tickInterval;
-          runtimeState.healthInterval = maintenance.healthInterval;
-          runtimeState.dedupeCleanup = maintenance.dedupeCleanup;
-          runtimeState.mediaCleanup = maintenance.mediaCleanup;
-        },
-        shouldStartCron: () => !closePreludeStarted && !gatewayCronStartHandled,
-        markCronStartHandled: () => {
-          gatewayCronStartHandled = true;
-        },
-        cron: runtimeState.cronState.cron,
+        startChannel,
+        stopChannel,
+        stopPostReadySidecars: stopRegisteredPostReadySidecars,
+        reloadPlugins: reloadAttachedGatewayPlugins,
+        logHooks,
+        logChannels,
         logCron,
-        log,
-        recordPostReadyMemory: () => {
-          startupTrace.detail("memory.post-ready", collectGatewayProcessMemoryUsageMb());
+        logReload,
+        onCronRestart: () => {
+          gatewayCronStartHandled = true;
         },
+        channelManager,
+        activateRuntimeSecrets,
+        resolveSharedGatewaySessionGenerationForConfig,
+        sharedGatewaySessionGenerationState,
+        clients,
       });
+      await promoteConfigSnapshotToLastKnownGood(startupLastGoodSnapshot).catch((err: unknown) => {
+        log.warn(`gateway: failed to promote config last-known-good backup: ${String(err)}`);
+      });
+      if (!minimalTestGateway) {
+        const gatewayRuntimeServices = await loadScheduledServicesModule();
+        if (closePreludeStarted) {
+          return;
+        }
+        postReadyMaintenanceTimer = gatewayRuntimeServices.scheduleGatewayPostReadyMaintenance({
+          delayMs: POST_READY_MAINTENANCE_DELAY_MS,
+          isClosing: () => closePreludeStarted,
+          onStarted: () => {
+            postReadyMaintenanceTimer = null;
+          },
+          startMaintenance: async () => {
+            if (closePreludeStarted) {
+              return null;
+            }
+            return earlyRuntime.startMaintenance();
+          },
+          applyMaintenance: (maintenance) => {
+            if (closePreludeStarted) {
+              clearInterval(maintenance.tickInterval);
+              clearInterval(maintenance.healthInterval);
+              clearInterval(maintenance.dedupeCleanup);
+              if (maintenance.mediaCleanup) {
+                clearInterval(maintenance.mediaCleanup);
+              }
+              return;
+            }
+            runtimeState.tickInterval = maintenance.tickInterval;
+            runtimeState.healthInterval = maintenance.healthInterval;
+            runtimeState.dedupeCleanup = maintenance.dedupeCleanup;
+            runtimeState.mediaCleanup = maintenance.mediaCleanup;
+          },
+          shouldStartCron: () => !closePreludeStarted && !gatewayCronStartHandled,
+          markCronStartHandled: () => {
+            gatewayCronStartHandled = true;
+          },
+          cron: runtimeState.cronState.cron,
+          logCron,
+          log,
+          recordPostReadyMemory: () => {
+            startupTrace.detail("memory.post-ready", collectGatewayProcessMemoryUsageMb());
+          },
+        });
+      } else {
+        startupTrace.detail("memory.post-ready", collectGatewayProcessMemoryUsageMb());
+      }
+    };
+    if (deferStartupSidecars) {
+      const rawDelayMs =
+        process.env.OPENCLAW_DEFERRED_POST_READY_SERVICES_DELAY_MS ??
+        process.env.OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS;
+      const parsedDelayMs = rawDelayMs ? Number(rawDelayMs) : 10_000;
+      const postReadyDelayMs =
+        Number.isFinite(parsedDelayMs) && parsedDelayMs >= 0 ? Math.floor(parsedDelayMs) : 10_000;
+      const postReadyTimer = setTimeout(() => {
+        void startPostReadyRuntimeServices().catch((err: unknown) => {
+          log.warn(`gateway post-ready runtime services failed to start: ${String(err)}`);
+        });
+      }, postReadyDelayMs);
+      postReadyTimer.unref?.();
     } else {
-      startupTrace.detail("memory.post-ready", collectGatewayProcessMemoryUsageMb());
+      await startPostReadyRuntimeServices();
     }
   } catch (err) {
     await closeOnStartupFailure();

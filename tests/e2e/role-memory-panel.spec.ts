@@ -477,6 +477,90 @@ test.describe('Role memory panel', () => {
           }
         }
 
+        // Area 4 Phase 6: typed memory facade mocks.
+        // The renderer now calls hostApi.memory.* (module='memory') for 6 migrated
+        // methods. These reach Main's createMemoryApi which would forward to
+        // gateway.rpc — but in the E2E env there's no real gateway, so we mock
+        // at the IPC level and return the typed-facade result shape (HostSuccess
+        // & data, with health flattened).
+        if (request?.module === 'memory') {
+          const action = request.action;
+          const payload = request.payload ?? {};
+
+          if (action === 'list') {
+            return respond(request.id, {
+              success: true,
+              cards: current.cards.filter((card) => card.status === 'active'),
+            });
+          }
+
+          if (action === 'explainInjection') {
+            return respond(request.id, {
+              success: true,
+              injections: [{
+                id: 'inj-1',
+                roleName: 'architect',
+                createdAt: '2026-06-16T00:00:00.000Z',
+                truncated: false,
+                policyVersion: 'role-memory-context-v3',
+                cardIds: ['mem-1'],
+                candidateExplanations: [{
+                  cardId: 'mem-1',
+                  selected: true,
+                  score: 0.91,
+                  reason: 'Injected as a must role constraint.',
+                  penalties: [],
+                  injectionClass: 'must',
+                }],
+              }],
+            });
+          }
+
+          if (action === 'health') {
+            // Typed facade flattens envelope.health to top level.
+            return respond(request.id, { success: true, ok: true, checks: [] });
+          }
+
+          if (action === 'detail') {
+            const id = String((payload as { id?: string }).id ?? '');
+            const card = current.cards.find((entry) => entry.id === id);
+            return respond(request.id, {
+              success: true,
+              card,
+              proposals: [],
+              conflicts: [],
+              versions: card ? [{ id: 'ver-1', cardId: card.id, version: 1, createdAt: '2026-06-16T00:00:00.000Z' }] : [],
+              audit: [],
+              injections: [],
+            });
+          }
+
+          if (action === 'propose') {
+            const proposal = payload as { content?: string } | undefined;
+            current.proposeCount += 1;
+            const newCard = {
+              id: `mem-${current.cards.length + 1}`,
+              type: 'role_experience',
+              status: 'active',
+              content: proposal?.content ?? '',
+              confidence: 0.85,
+              importance: 0.55,
+            };
+            current.cards.push(newCard);
+            return respond(request.id, { success: true, accepted: true, card: newCard });
+          }
+
+          if (action === 'update') {
+            const updatePayload = payload as { id?: string; patch?: { content?: string } };
+            const id = String(updatePayload?.id ?? '');
+            const card = current.cards.find((entry) => entry.id === id);
+            if (card && updatePayload?.patch?.content !== undefined) {
+              card.content = updatePayload.patch.content;
+            }
+            return respond(request.id, { success: true, accepted: true, card });
+          }
+        }
+
         return originalHostInvoke?.(event, request) ?? respond(request?.id, {});
       });
     });

@@ -276,7 +276,8 @@ const TOOLS = [
   { name: "verseshell_sys_process", description: "Get detailed process info by PID", parameters: { type: "object", properties: { pid: { type: "number", description: "Process ID" } }, required: ["pid"] } },
 
   // Files
-  { name: "verseshell_file_ls", description: "List directory contents with metadata (structured)", parameters: { type: "object", properties: { path: { type: "string", description: "Directory path (default: .)" } } } },
+  { name: "verseshell_file_ls", description: "List directory contents (names and directory/not, minimal syscalls). Use file.stat for per-entry size/ext/modified.", parameters: { type: "object", properties: { path: { type: "string", description: "Directory path (default: .)" } } } },
+  { name: "verseshell_file_stat", description: "Get detailed file/directory metadata: size, is_file, is_dir, ext, modified, accessed, created", parameters: { type: "object", properties: { path: { type: "string" } }, required: ["path"] } } },
   { name: "verseshell_file_read", description: "Read file content", parameters: { type: "object", properties: { path: { type: "string", description: "File path" } }, required: ["path"] } },
   { name: "verseshell_file_write", description: "Write content to file (atomic: temp→fsync→rename)", parameters: { type: "object", properties: { path: { type: "string" }, content: { type: "string" } }, required: ["path", "content"] } },
   { name: "verseshell_file_exists", description: "Check if file/directory exists", parameters: { type: "object", properties: { path: { type: "string" } }, required: ["path"] } },
@@ -314,6 +315,67 @@ const TOOLS = [
 
   // Generic
   { name: "verseshell_eval", description: "Execute any VerseShell expression and return structured result", parameters: { type: "object", properties: { code: { type: "string", description: "VerseShell code to evaluate" }, timeoutMs: { type: "number", description: "Optional MCP-side timeout in milliseconds (default 30000)." } }, required: ["code"] } },
+
+  // ── Process Management ────────────────────────────────────────────────
+  { name: "verseshell_proc_list", description: "List all running processes with PID, name, CPU%, memory, status, threads", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_proc_info", description: "Get detailed process info by PID", parameters: { type: "object", properties: { pid: { type: "number" } }, required: ["pid"] } },
+  { name: "verseshell_proc_kill", description: "Kill a process by PID", parameters: { type: "object", properties: { pid: { type: "number" } }, required: ["pid"] } },
+  { name: "verseshell_proc_children", description: "Get child process PIDs for a given parent PID", parameters: { type: "object", properties: { pid: { type: "number" } }, required: ["pid"] } },
+  { name: "verseshell_proc_exists", description: "Check if a process exists by PID", parameters: { type: "object", properties: { pid: { type: "number" } }, required: ["pid"] } },
+
+  // ── Network ───────────────────────────────────────────────────────────
+  { name: "verseshell_net_interfaces", description: "List network interfaces with IPs, MAC, status", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_net_ping", description: "Ping a host and return latency stats", parameters: { type: "object", properties: { host: { type: "string" } }, required: ["host"] } },
+  { name: "verseshell_net_dns", description: "DNS lookup for a hostname", parameters: { type: "object", properties: { host: { type: "string" } }, required: ["host"] } },
+  { name: "verseshell_net_connections", description: "List active network connections", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_net_ports", description: "List listening ports", parameters: { type: "object", properties: {} } },
+
+  // ── Hardware ───────────────────────────────────────────────────────────
+  { name: "verseshell_hw_cpu", description: "Get CPU hardware details (model, sockets, cores, threads)", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_hw_memory", description: "Get physical memory hardware details", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_hw_disks", description: "List physical disk drives", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_hw_gpus", description: "List GPU devices", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_hw_battery", description: "Get battery status (percent, charging, time remaining)", parameters: { type: "object", properties: {} } },
+
+  // ── Platform ───────────────────────────────────────────────────────────
+  { name: "verseshell_platform_summary", description: "Comprehensive hardware and OS platform summary", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_platform_os", description: "OS version string", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_platform_tools", description: "Detect installed developer tools (compilers, runtimes, package managers)", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_platform_has_tool", description: "Check if a specific tool is available", parameters: { type: "object", properties: { tool: { type: "string" } }, required: ["tool"] } },
+
+  // ── Files Extended ────────────────────────────────────────────────────
+  { name: "verseshell_file_tail", description: "Read last N lines of file", parameters: { type: "object", properties: { path: { type: "string" }, n: { type: "number", description: "Lines (default: 10)" } }, required: ["path"] } },
+  { name: "verseshell_file_copy", description: "Copy a file from src to dst", parameters: { type: "object", properties: { src: { type: "string" }, dst: { type: "string" } }, required: ["src", "dst"] } },
+  { name: "verseshell_file_move", description: "Move/rename a file from src to dst", parameters: { type: "object", properties: { src: { type: "string" }, dst: { type: "string" } }, required: ["src", "dst"] } },
+  { name: "verseshell_file_mkdir", description: "Create a directory (including parents)", parameters: { type: "object", properties: { path: { type: "string" } }, required: ["path"] } },
+  { name: "verseshell_file_pwd", description: "Get current working directory", parameters: { type: "object", properties: {} } },
+
+  // ── Git ───────────────────────────────────────────────────────────────
+  { name: "verseshell_git_status", description: "Git working tree status", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_git_branch", description: "Current git branch name", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_git_log", description: "Git commit log", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_git_diff", description: "Git working tree diff", parameters: { type: "object", properties: {} } },
+
+  // ── Archive ───────────────────────────────────────────────────────────
+  { name: "verseshell_tar_create", description: "Create a tar archive", parameters: { type: "object", properties: { archive: { type: "string" }, sources: { type: "array", items: { type: "string" } } }, required: ["archive", "sources"] } },
+  { name: "verseshell_tar_extract", description: "Extract a tar archive", parameters: { type: "object", properties: { archive: { type: "string" }, dest: { type: "string", description: "Extract destination (default: .)" } }, required: ["archive"] } },
+  { name: "verseshell_zip_create", description: "Create a zip archive", parameters: { type: "object", properties: { archive: { type: "string" }, sources: { type: "array", items: { type: "string" } } }, required: ["archive", "sources"] } },
+  { name: "verseshell_zip_extract", description: "Extract a zip archive", parameters: { type: "object", properties: { archive: { type: "string" }, dest: { type: "string", description: "Extract destination (default: .)" } }, required: ["archive"] } },
+
+  // ── Crypto Extended ───────────────────────────────────────────────────
+  { name: "verseshell_crypto_base64_encode", description: "Base64 encode data", parameters: { type: "object", properties: { data: { type: "string" } }, required: ["data"] } },
+  { name: "verseshell_crypto_base64_decode", description: "Base64 decode data", parameters: { type: "object", properties: { data: { type: "string" } }, required: ["data"] } },
+
+  // ── HTTP Extended ─────────────────────────────────────────────────────
+  { name: "verseshell_http_json_post", description: "HTTP POST with JSON content-type, returns parsed JSON", parameters: { type: "object", properties: { url: { type: "string" }, data: { type: "object" } }, required: ["url", "data"] } },
+
+  // ── Sys Extended ──────────────────────────────────────────────────────
+  { name: "verseshell_sys_env", description: "Get all environment variables", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_sys_load_avg", description: "Get system load average (1/5/15 min)", parameters: { type: "object", properties: {} } },
+
+  // ── Clipboard ─────────────────────────────────────────────────────────
+  { name: "verseshell_clipboard_read", description: "Read text from the clipboard", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_clipboard_write", description: "Write text to the clipboard", parameters: { type: "object", properties: { text: { type: "string" } }, required: ["text"] } },
 ];
 
 // ── Tool → Command Mapping ────────────────────────────────────────────
@@ -326,6 +388,7 @@ const COMMAND_MAP = {
   "verseshell_sys_hostname": 'sys.hostname()',
   "verseshell_sys_process": (args) => `sys.process_info(${args.pid})`,
   "verseshell_file_ls": (args) => `file.ls(${aeString(normalizeToolPath(args.path || "."))})`,
+  "verseshell_file_stat": (args) => `file.stat(${aeString(normalizeToolPath(args.path))})`,
   "verseshell_file_read": (args) => `file.read(${aeString(normalizeToolPath(args.path))})`,
   "verseshell_file_write": (args) => `file.write(${aeString(normalizeToolPath(args.path))}, ${JSON.stringify(args.content)})`,
   "verseshell_file_exists": (args) => `file.exists(${aeString(normalizeToolPath(args.path))})`,
@@ -349,6 +412,67 @@ const COMMAND_MAP = {
   "verseshell_http_post": (args) => `http.post(${aeString(args.url)}, ${JSON.stringify(args.body || "")})`,
   "verseshell_math": (args) => `math.${args.expr}`,
   "verseshell_eval": (args) => args.code,
+
+  // Process Management
+  "verseshell_proc_list": "proc.list()",
+  "verseshell_proc_info": (args) => `proc.info(${args.pid})`,
+  "verseshell_proc_kill": (args) => `proc.kill(${args.pid})`,
+  "verseshell_proc_children": (args) => `proc.children(${args.pid})`,
+  "verseshell_proc_exists": (args) => `proc.exists(${args.pid})`,
+
+  // Network
+  "verseshell_net_interfaces": "net.interfaces()",
+  "verseshell_net_ping": (args) => `net.ping(${aeString(args.host)})`,
+  "verseshell_net_dns": (args) => `net.dns_lookup(${aeString(args.host)})`,
+  "verseshell_net_connections": "net.connections()",
+  "verseshell_net_ports": "net.ports()",
+
+  // Hardware
+  "verseshell_hw_cpu": "hw.cpu()",
+  "verseshell_hw_memory": "hw.memory()",
+  "verseshell_hw_disks": "hw.disks()",
+  "verseshell_hw_gpus": "hw.gpus()",
+  "verseshell_hw_battery": "hw.battery()",
+
+  // Platform
+  "verseshell_platform_summary": "platform.hardware_summary()",
+  "verseshell_platform_os": "platform.os()",
+  "verseshell_platform_tools": "platform.detect_tools()",
+  "verseshell_platform_has_tool": (args) => `platform.has_tool(${aeString(args.tool)})`,
+
+  // Files Extended
+  "verseshell_file_tail": (args) => `file.tail(${aeString(normalizeToolPath(args.path))}, ${args.n || 10})`,
+  "verseshell_file_copy": (args) => `file.copy(${aeString(normalizeToolPath(args.src))}, ${aeString(normalizeToolPath(args.dst))})`,
+  "verseshell_file_move": (args) => `file.move(${aeString(normalizeToolPath(args.src))}, ${aeString(normalizeToolPath(args.dst))})`,
+  "verseshell_file_mkdir": (args) => `file.mkdir(${aeString(normalizeToolPath(args.path))})`,
+  "verseshell_file_pwd": "file.pwd()",
+
+  // Git
+  "verseshell_git_status": "git.status()",
+  "verseshell_git_branch": "git.branch()",
+  "verseshell_git_log": "git.log()",
+  "verseshell_git_diff": "git.diff()",
+
+  // Archive
+  "verseshell_tar_create": (args) => `archive.tar_create(${aeString(normalizeToolPath(args.archive))}, [${args.sources.map((s) => aeString(s)).join(", ")}])`,
+  "verseshell_tar_extract": (args) => `archive.tar_extract(${aeString(normalizeToolPath(args.archive))}, ${aeString(normalizeToolPath(args.dest || "."))})`,
+  "verseshell_zip_create": (args) => `archive.zip_create(${aeString(normalizeToolPath(args.archive))}, [${args.sources.map((s) => aeString(s)).join(", ")}])`,
+  "verseshell_zip_extract": (args) => `archive.zip_extract(${aeString(normalizeToolPath(args.archive))}, ${aeString(normalizeToolPath(args.dest || "."))})`,
+
+  // Crypto Extended
+  "verseshell_crypto_base64_encode": (args) => `crypto.base64_encode(${aeString(args.data)})`,
+  "verseshell_crypto_base64_decode": (args) => `crypto.base64_decode(${aeString(args.data)})`,
+
+  // HTTP Extended
+  "verseshell_http_json_post": (args) => `http.json_post(${aeString(args.url)}, ${JSON.stringify(args.data)})`,
+
+  // Sys Extended
+  "verseshell_sys_env": "sys.env_all()",
+  "verseshell_sys_load_avg": "sys.load_avg()",
+
+  // Clipboard
+  "verseshell_clipboard_read": "clip.read()",
+  "verseshell_clipboard_write": (args) => `clip.write(${aeString(args.text)})`,
 };
 
 // ── MCP Server ────────────────────────────────────────────────────────

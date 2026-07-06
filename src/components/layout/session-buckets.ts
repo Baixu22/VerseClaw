@@ -1,5 +1,5 @@
 import type { ChatSession } from '@/stores/chat';
-import type { WorkspaceProfile } from '@shared/types/workspace';
+import type { SessionFolder, WorkspaceProfile } from '@shared/types/workspace';
 
 function getAgentIdFromSessionKey(sessionKey: string): string {
   if (!sessionKey.startsWith('agent:')) return 'main';
@@ -146,4 +146,84 @@ export function buildSidebarWorkspaceSessionGroups(params: {
     })
     .filter((group) => group.sessions.length > 0)
     .sort(compareActivityDesc);
+}
+
+export type SidebarFolderNode = {
+  folder: SessionFolder;
+  depth: number;
+  sessions: SidebarSessionEntry[];
+  children: SidebarFolderNode[];
+};
+
+export type SidebarWorkspaceFolderGroups = {
+  rootSessions: SidebarSessionEntry[];
+  folders: SidebarFolderNode[];
+};
+
+/**
+ * Build a folder-tree view of a workspace's sessions. Sessions whose key is
+ * present in `sessionFolderAssignments` are placed under the assigned folder;
+ * the rest fall through to `rootSessions`. Folders are nested according to
+ * `parentId` and ordered by `folder.order` then `createdAt`. Empty folders
+ * are preserved so the sidebar can render the folder shell even when it has
+ * no sessions yet (lets the user drop sessions into it).
+ */
+export function buildSidebarWorkspaceFolderGroups(params: {
+  sessions: SidebarSessionEntry[];
+  folders: SessionFolder[];
+  assignments: Record<string, string>;
+}): SidebarWorkspaceFolderGroups {
+  const { sessions, folders, assignments } = params;
+  const foldersById = new Map(folders.map((folder) => [folder.id, folder]));
+  const sessionsByFolder = new Map<string, SidebarSessionEntry[]>();
+  const rootSessions: SidebarSessionEntry[] = [];
+
+  for (const entry of sessions) {
+    const assignedFolderId = assignments[entry.session.key];
+    if (typeof assignedFolderId === 'string' && foldersById.has(assignedFolderId)) {
+      const list = sessionsByFolder.get(assignedFolderId) ?? [];
+      list.push(entry);
+      sessionsByFolder.set(assignedFolderId, list);
+    } else {
+      rootSessions.push(entry);
+    }
+  }
+
+  const sortedFolders = [...folders].sort((a, b) => {
+    if (a.order !== b.order) return a.order - b.order;
+    return a.createdAt - b.createdAt;
+  });
+
+  const childrenByParent = new Map<string | null, SessionFolder[]>();
+  for (const folder of sortedFolders) {
+    const parentKey = folder.parentId ?? null;
+    const list = childrenByParent.get(parentKey) ?? [];
+    list.push(folder);
+    childrenByParent.set(parentKey, list);
+  }
+
+  const buildNode = (folder: SessionFolder, depth: number): SidebarFolderNode => {
+    const childFolders = childrenByParent.get(folder.id) ?? [];
+    const ownSessions = (sessionsByFolder.get(folder.id) ?? []).slice().sort(compareActivityDesc);
+    return {
+      folder,
+      depth,
+      sessions: ownSessions,
+      children: childFolders.map((child) => buildNode(child, depth + 1)),
+    };
+  };
+
+  const rootFolders = childrenByParent.get(null) ?? [];
+  return {
+    rootSessions: rootSessions.sort(compareActivityDesc),
+    folders: rootFolders.map((folder) => buildNode(folder, 0)),
+  };
+}
+
+export function collectFolderSessionKeys(node: SidebarFolderNode): string[] {
+  const keys = node.sessions.map((entry) => entry.session.key);
+  for (const child of node.children) {
+    keys.push(...collectFolderSessionKeys(child));
+  }
+  return keys;
 }

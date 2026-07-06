@@ -4,7 +4,7 @@ import type { AcpRuntime } from "@openclaw/acp-core/runtime/types";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { logVerbose } from "../../globals.js";
 import { formatErrorMessage } from "../../infra/errors.js";
-import type { AcpRuntimeError } from "../runtime/errors.js";
+import type { AcpRuntimeError } from "../../runtime/errors.ts";
 import type { ManagerRuntimeHandleCache } from "./manager.runtime-handle-cache.js";
 import type {
   AcpSessionManagerDeps,

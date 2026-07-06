@@ -139,7 +139,7 @@ describe('mcp api registry', () => {
 
     await expect(api.resolveForContext({ agentId: 'main' })).resolves.toMatchObject({
       success: true,
-      servers: [{ id: 'clawx-git' }],
+      servers: [{ id: 'clawx-git' }, { id: 'clawx-storage' }],
       agentId: 'main',
     });
 
@@ -152,7 +152,7 @@ describe('mcp api registry', () => {
 
     await expect(api.deleteServer({ id: 'filesystem' })).resolves.toMatchObject({
       success: true,
-      servers: [{ id: 'clawx-git' }],
+      servers: [{ id: 'clawx-git' }, { id: 'clawx-storage' }],
     });
   });
 
@@ -196,6 +196,7 @@ describe('mcp api registry', () => {
 
     expect(resolved.servers.map((server) => server.id)).toEqual([
       'clawx-git',
+      'clawx-storage',
       'global',
       'agent-default',
       'agent-owned',
@@ -203,6 +204,7 @@ describe('mcp api registry', () => {
     ]);
     expect(resolved.servers.map((server) => server.localAddress)).toEqual([
       'clawx://mcp/clawx-git',
+      'clawx://mcp/clawx-storage',
       'clawx://mcp/global',
       'clawx://mcp/agent-default',
       'clawx://mcp/agent-owned',
@@ -760,11 +762,18 @@ describe('mcp api registry', () => {
       success: true,
       workspaceId: 'workspace-a',
       agentId: 'main',
-      servers: [expect.objectContaining({
-        id: 'clawx-git',
-        scope: 'workspace',
-        localAddress: 'clawx://mcp/clawx-git',
-      })],
+      servers: [
+        expect.objectContaining({
+          id: 'clawx-git',
+          scope: 'workspace',
+          localAddress: 'clawx://mcp/clawx-git',
+        }),
+        expect.objectContaining({
+          id: 'clawx-storage',
+          scope: 'workspace',
+          localAddress: 'clawx://mcp/clawx-storage',
+        }),
+      ],
     });
 
     await expect(api.listTools({ serverId: 'clawx-git' })).resolves.toMatchObject({

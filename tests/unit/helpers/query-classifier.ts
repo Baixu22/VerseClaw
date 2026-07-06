@@ -176,32 +176,19 @@ export function buildQueryPlan(
 }
 
 // === LLM 分类 prompt ===
-//
-// Multi-hop alignment (2026-07-07): Rewritten to fix systematic
-// misclassification (68/96 GT multi_hop questions were labeled single_hop,
-// 13 were stolen by the temporal-first rule). Two changes:
-// 1. multi_hop now checks FIRST (before temporal) — a question that chains
-//    facts is multi_hop even when it mentions a date.
-// 2. multi_hop definition covers the LoCoMo surface form: an embedded
-//    description that must be resolved to an entity before the main
-//    question can be answered ("the friend she met at the support group").
 
 const CLASSIFICATION_SYSTEM_PROMPT =
   "You classify a user question into one of four types for memory retrieval routing.\n\n" +
   "Question types:\n" +
-  "- multi_hop: Answering requires CHAINING two or more separate facts. Signals:\n" +
-  "  * The question embeds a description that must be resolved to an entity first (\"the friend she met at the support group\", \"the item he bought after the tournament\", \"the city where X's brother lives\")\n" +
-  "  * It asks to compare, relate, or connect two entities/events, or asks about cause/effect\n" +
-  "  * It asks WHAT SPECIFIC thing (brand/game/show/organization) that the conversation only described indirectly\n" +
-  "  * The answer needs facts from different moments combined (e.g., \"What gift did X receive from Y?\" when the gift and the relationship were mentioned separately)\n" +
-  "- temporal: The expected ANSWER is a time, date, or duration (\"When did...\", \"How long...\", \"What year...\"). A question that merely MENTIONS a time but chains facts is multi_hop, not temporal.\n" +
-  "- open_domain: Broad overview or summary (\"tell me about\", \"describe\", \"what do you know about\")\n" +
-  "- single_hop: ONE direct fact lookup fully answers it (default fallback)\n\n" +
-  "Rules (apply in order):\n" +
-  "1. If answering requires resolving an intermediate entity or combining facts from separate statements, classify as multi_hop — even if the question mentions a date or time.\n" +
-  "2. Else if the expected answer is a time/date/duration, classify as temporal.\n" +
-  "3. Else if the question asks for a broad overview or summary, classify as open_domain.\n" +
-  "4. Else classify as single_hop.\n\n" +
+  "- temporal: Time-related queries (when, how long ago, what date, relative time references like \"recently\", \"last month\")\n" +
+  "- multi_hop: Multi-hop reasoning requiring cross-entity or cross-session inference (e.g., \"What job did X have before Y?\")\n" +
+  "- open_domain: Open-domain queries requiring broad summaries or external knowledge (\"tell me about\", \"describe\")\n" +
+  "- single_hop: Direct single-fact queries (default fallback)\n\n" +
+  "Rules:\n" +
+  "- If the question mentions a specific date, year, or relative time, classify as temporal.\n" +
+  "- If the question requires linking two or more entities/events across sessions, classify as multi_hop.\n" +
+  "- If the question asks for a broad overview or summary, classify as open_domain.\n" +
+  "- Otherwise, classify as single_hop.\n\n" +
   'Output format: JSON object {"type": "...", "reasoning": "..."}. No preamble, no markdown.';
 
 // === 解析 LLM 分类响应 ===

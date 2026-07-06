@@ -39,6 +39,7 @@ const chatState = vi.hoisted(() => ({
   loadMoreHistory: vi.fn(),
   loadHistory: vi.fn(),
   refresh: vi.fn(),
+  refreshTaskLedger: vi.fn(),
   cleanupEmptySession: vi.fn(),
   lastUserMessageAt: null,
   sessionLastActivity: {},
@@ -113,6 +114,8 @@ vi.mock('@/lib/host-api', () => ({
     usage: {
       contextRange: vi.fn(async () => ({ range: null })),
       live: vi.fn(async () => ({ usage: null })),
+      promptCacheStatus: vi.fn(async () => ({ success: true, assessment: null })),
+      recordPromptCacheRiskEvent: vi.fn(async () => ({ success: true, event: null })),
     },
     knowledge: {
       applyDraft: hostApiMock.applyDraft,

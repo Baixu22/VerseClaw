@@ -1992,12 +1992,26 @@ export function createGatewayWsMessageProcessor(params: GatewayWsMessageHandlerP
         });
         // Keep hello-ok on the handshake's critical path, then let follow-up RPCs
         // such as system-presence run before the optional health refresh does any
-        // synchronous snapshot work.
-        setImmediate(() => {
+        // synchronous snapshot work. Source-runtime desktop startup can defer
+        // heavy post-ready work; honor the same window here so chat.send is not
+        // serialized behind the first health snapshot.
+        const rawPostConnectDelay =
+          process.env.OPENCLAW_DEFER_STARTUP_SIDECARS === "1"
+            ? process.env.OPENCLAW_DEFERRED_POST_CONNECT_HEALTH_DELAY_MS ??
+              process.env.OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS
+            : undefined;
+        const parsedPostConnectDelay =
+          rawPostConnectDelay !== undefined ? Number(rawPostConnectDelay) : 0;
+        const postConnectDelayMs =
+          Number.isFinite(parsedPostConnectDelay) && parsedPostConnectDelay > 0
+            ? Math.floor(parsedPostConnectDelay)
+            : 0;
+        const postConnectHealthTimer = setTimeout(() => {
           void refreshHealthSnapshot({ probe: false }).catch((err: unknown) =>
             logHealth.error(`post-connect health refresh failed: ${formatError(err)}`),
           );
-        });
+        }, postConnectDelayMs);
+        postConnectHealthTimer.unref?.();
         return;
       }
 
@@ -2016,6 +2030,9 @@ export function createGatewayWsMessageProcessor(params: GatewayWsMessageHandlerP
       }
       const req = parsed;
       logWs("in", "req", { connId, id: req.id, method: req.method });
+      if (req.method === "chat.send") {
+        console.error(`[gateway.ws.trace] chat.send req received conn=${connId} id=${req.id}`);
+      }
       for (;;) {
         const barrier = deviceCredentialMutationBarrier;
         if (!barrier) {
@@ -2111,6 +2128,9 @@ export function createGatewayWsMessageProcessor(params: GatewayWsMessageHandlerP
 
       const dispatch = (async () => {
         const { handleGatewayRequest } = await import("../../server-methods.js");
+        if (req.method === "chat.send") {
+          console.error(`[gateway.ws.trace] chat.send dispatch begin conn=${connId} id=${req.id}`);
+        }
         await handleGatewayRequest({
           req,
           respond,
@@ -2120,6 +2140,9 @@ export function createGatewayWsMessageProcessor(params: GatewayWsMessageHandlerP
           methodRegistry: getMethodRegistry?.(),
           context: buildRequestContext(),
         });
+        if (req.method === "chat.send") {
+          console.error(`[gateway.ws.trace] chat.send dispatch returned conn=${connId} id=${req.id}`);
+        }
       })().catch((err: unknown) => {
         logGateway.error(`request handler failed: ${formatForLog(err)}`);
         respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, formatForLog(err)));

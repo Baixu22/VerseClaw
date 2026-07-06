@@ -1457,6 +1457,10 @@ export function createExecTool(
     name: "exec",
     label: "exec",
     displaySummary: EXEC_TOOL_DISPLAY_SUMMARY,
+    // A1 Stage 2 (acceptance 2.1): exec runs arbitrary commands that can
+    // perform irreversible filesystem operations.
+    risk: "destructive",
+    writeRiskProfile: { kind: "dynamic_writes", requiresApproval: true },
     get description() {
       return describeExecTool({ agentId, hasCronTool: defaults?.hasCronTool === true });
     },

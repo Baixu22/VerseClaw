@@ -83,6 +83,12 @@ export type GetReplyOptions = {
   thinkingLevelOverride?: string;
   /** One-shot fast-mode override for this run; does not persist to the session. */
   fastModeOverride?: boolean;
+  /**
+   * One-shot turn-scoped model override (Area 2 §3.2). When set, this single
+   * run uses the named model instead of the session/agent default. Resolved
+   * above session `modelOverride` and `Agent.modelRef`. Does not persist.
+   */
+  modelRefOverride?: string;
   /** One-shot prompt-mode (system prompt intensity) override for this run; does not persist to the session. */
   promptModeOverride?: 'full' | 'minimal' | 'none';
   /** Controls bootstrap workspace context injection (default: full). */

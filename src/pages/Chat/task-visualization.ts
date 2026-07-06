@@ -7,7 +7,7 @@ import {
   isInternalAssistantReplyText,
   isInternalProcessNarration,
 } from './message-utils';
-import { isInternalMessage } from '@/stores/chat/helpers';
+import { isInternalMessage, isToolResultRole } from '@/stores/chat/helpers';
 import type { RawMessage, ToolStatus } from '@/stores/chat';
 import type { ChatRuntimeRunState } from '@/stores/chat/types';
 
@@ -362,6 +362,14 @@ function runtimeDetail(value: unknown): string | undefined {
   }
 }
 
+function toolResultDetail(value: unknown): string | undefined {
+  if (value == null) return undefined;
+  if (typeof value === 'string') return normalizeText(value);
+  const text = extractText({ role: 'toolresult', content: value } as RawMessage);
+  if (text.trim()) return normalizeText(text);
+  return runtimeDetail(value);
+}
+
 export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | undefined): TaskStep[] {
   if (!runState) return [];
 
@@ -473,6 +481,8 @@ export function deriveTaskSteps({
 }: DeriveTaskStepsInput): TaskStep[] {
   const steps: TaskStep[] = [];
   const stepIndexById = new Map<string, number>();
+  const toolLabelsById = new Map<string, string>();
+  let finalReply: { id: string; detail: string } | null = null;
 
   const upsertStep = (step: TaskStep): void => {
     const existingIndex = stepIndexById.get(step.id);
@@ -489,6 +499,23 @@ export function deriveTaskSteps({
     };
   };
 
+  const appendToolResultStep = (
+    toolCallId: string | undefined,
+    toolName: string | undefined,
+    result: unknown,
+  ): void => {
+    if (!toolCallId) return;
+    const label = toolName || toolLabelsById.get(toolCallId) || toolCallId;
+    upsertStep({
+      id: `tool-result-${toolCallId}`,
+      label: `Tool Result: ${label}`,
+      status: 'completed',
+      kind: 'system',
+      detail: toolResultDetail(result),
+      depth: 1,
+    });
+  };
+
   const streamMessage = streamingMessage && typeof streamingMessage === 'object'
     ? streamingMessage as RawMessage
     : null;
@@ -500,7 +527,12 @@ export function deriveTaskSteps({
   const replyIndex = findReplyMessageIndex(messages, streamMessage != null);
 
   for (const [messageIndex, message] of messages.entries()) {
-    if (!message || message.role !== 'assistant') continue;
+    if (!message) continue;
+    if (isToolResultRole(message.role)) {
+      appendToolResultStep(message.toolCallId, message.toolName, message.details ?? message.content);
+      continue;
+    }
+    if (message.role !== 'assistant') continue;
 
     const toolUses = extractToolUse(message);
     if (!isInternalMessage(message)) {
@@ -513,6 +545,12 @@ export function deriveTaskSteps({
       const graphNarrationSegments = messageIndex === replyIndex
         ? narrationSegments.slice(0, -1)
         : narrationSegments;
+      if (messageIndex === replyIndex) {
+        const finalDetail = normalizeText(narrationSegments.at(-1));
+        finalReply = finalDetail
+          ? { id: `assistant-final-${message.id || messageIndex}`, detail: finalDetail }
+          : null;
+      }
       appendDetailSegments(graphNarrationSegments, {
         idPrefix: `history-message-${message.id || messageIndex}`,
         label: 'Message',
@@ -527,8 +565,10 @@ export function deriveTaskSteps({
     toolUses.forEach((tool, index) => {
       const input = tool.input as Record<string, unknown>;
       const url = tool.name === 'web_fetch' && typeof input?.url === 'string' ? input.url : undefined;
+      const id = tool.id || makeToolId(`history-tool-${message.id || messageIndex}`, tool.name, index);
+      toolLabelsById.set(id, tool.name);
       upsertStep({
-        id: tool.id || makeToolId(`history-tool-${message.id || messageIndex}`, tool.name, index),
+        id,
         label: tool.name,
         status: 'completed',
         kind: 'tool',
@@ -536,6 +576,21 @@ export function deriveTaskSteps({
         depth: 1,
         url,
       });
+    });
+
+    for (const result of message._toolResults ?? []) {
+      appendToolResultStep(result.toolCallId, result.toolName, result.result);
+    }
+  }
+
+  if (finalReply && steps.some((step) => step.kind === 'tool' || step.id.startsWith('tool-result-'))) {
+    upsertStep({
+      id: finalReply.id,
+      label: 'Assistant Final',
+      status: 'completed',
+      kind: 'system',
+      detail: finalReply.detail,
+      depth: 1,
     });
   }
 

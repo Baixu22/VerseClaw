@@ -60,7 +60,7 @@ describe('workspace permission policy', () => {
   it('maps workspace modes to OpenClaw exec approval config', () => {
     expect(mapWorkspacePermissionToExecApproval('readOnly')).toEqual({ security: 'allowlist', ask: 'always' });
     expect(mapWorkspacePermissionToExecApproval('plan')).toEqual({ security: 'deny', ask: 'always' });
-    expect(mapWorkspacePermissionToExecApproval('acceptEdits')).toEqual({ security: 'allowlist', ask: 'dangerous' });
+    expect(mapWorkspacePermissionToExecApproval('acceptEdits')).toEqual({ security: 'allowlist', ask: 'on-miss' });
     expect(mapWorkspacePermissionToExecApproval('fullAccess')).toEqual({ security: 'full', ask: 'off' });
   });
 

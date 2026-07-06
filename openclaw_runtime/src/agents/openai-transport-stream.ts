@@ -8,7 +8,12 @@ import { getEnvApiKey } from "../llm/env-api-keys.js";
 import { calculateCost } from "../llm/model-utils.js";
 import type { Context, Message, Model, SimpleStreamOptions } from "../llm/types.js";
 import { parseStreamingJson } from "../llm/utils/json-parse.js";
+import { recordProviderPayloadTrace } from "./provider-payload-trace.js";
 import { buildGuardedModelFetch } from "./provider-transport-fetch.js";
+import {
+  canonicalizeProviderToolSchema,
+  canonicalizeProviderTools,
+} from "./provider-payload-cache-shape.js";
 import type { StreamFn } from "./runtime/index.js";
 import {
   coerceTransportToolCallArguments,
@@ -18,6 +23,7 @@ import {
   finalizeTransportStream,
   sanitizeTransportPayloadText,
 } from "./transport-stream-shared.js";
+import { normalizeUsage, type UsageLike } from "./usage.js";
 
 // ── internal types ───────────────────────────────────────────────────────────
 
@@ -78,6 +84,45 @@ function mapStopReason(reason: string | undefined): string {
 
 function parseToolCallArguments(inputJson: string): unknown {
   return parseStreamingJson(inputJson);
+}
+
+function applyProviderUsage(
+  output: MutableAssistantOutput,
+  model: Model,
+  usage: Record<string, unknown> | undefined,
+): void {
+  const normalized = normalizeUsage(usage as UsageLike | undefined);
+  if (!normalized) {
+    return;
+  }
+  output.usage.input = normalized.input ?? 0;
+  output.usage.output = normalized.output ?? 0;
+  output.usage.cacheRead = normalized.cacheRead ?? 0;
+  output.usage.cacheWrite = normalized.cacheWrite ?? 0;
+  const componentTotal =
+    output.usage.input +
+    output.usage.output +
+    output.usage.cacheRead +
+    output.usage.cacheWrite;
+  output.usage.totalTokens =
+    typeof normalized.total === "number" && Number.isFinite(normalized.total)
+      ? Math.max(componentTotal, normalized.total)
+      : componentTotal;
+  calculateCost(model, output.usage);
+}
+
+function finalizeOpenAIProviderParams(params: Record<string, unknown>): void {
+  if (params.tools !== undefined) {
+    params.tools = canonicalizeProviderTools(params.tools);
+  }
+}
+
+function recordFinalOpenAIProviderPayload(
+  options: SimpleStreamOptions | undefined,
+  params: Record<string, unknown>,
+  source: string,
+): void {
+  recordProviderPayloadTrace(options as Record<PropertyKey, unknown> | undefined, params, source);
 }
 
 // ── message conversion: Chat Completions ─────────────────────────────────────
@@ -288,12 +333,14 @@ function toResponsesTools(context: Context): Array<Record<string, unknown>> | un
   if (!context.tools || context.tools.length === 0) {
     return undefined;
   }
-  return context.tools.map((tool) => ({
-    type: "function" as const,
-    name: tool.name,
-    description: tool.description,
-    parameters: tool.parameters,
-  }));
+  return canonicalizeProviderTools(
+    context.tools.map((tool) => ({
+      type: "function" as const,
+      name: tool.name,
+      description: tool.description,
+      parameters: canonicalizeProviderToolSchema(tool.parameters),
+    })),
+  ) as Array<Record<string, unknown>>;
 }
 
 // ── Chat Completions tools ───────────────────────────────────────────────────
@@ -302,14 +349,16 @@ function toChatCompletionsTools(context: Context): Array<Record<string, unknown>
   if (!context.tools || context.tools.length === 0) {
     return undefined;
   }
-  return context.tools.map((tool) => ({
-    type: "function" as const,
-    function: {
-      name: tool.name,
-      description: tool.description,
-      parameters: tool.parameters,
-    },
-  }));
+  return canonicalizeProviderTools(
+    context.tools.map((tool) => ({
+      type: "function" as const,
+      function: {
+        name: tool.name,
+        description: tool.description,
+        parameters: canonicalizeProviderToolSchema(tool.parameters),
+      },
+    })),
+  ) as Array<Record<string, unknown>>;
 }
 
 // ── Responses API transport stream ───────────────────────────────────────────
@@ -369,6 +418,8 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
         if (nextParams !== undefined) {
           Object.assign(params, nextParams);
         }
+        finalizeOpenAIProviderParams(params);
+        recordFinalOpenAIProviderPayload(options, params, "openai-responses-transport");
 
         const responseStream = await client.responses.create(
           params as unknown as Record<string, unknown>,
@@ -645,28 +696,7 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
                   ? "length"
                   : "stop";
 
-            if (usage) {
-              output.usage.input =
-                typeof usage.input_tokens === "number" ? usage.input_tokens : 0;
-              output.usage.output =
-                typeof usage.output_tokens === "number" ? usage.output_tokens : 0;
-              output.usage.cacheRead =
-                (() => {
-                  if (
-                    typeof usage.input_tokens_details === "object" &&
-                    usage.input_tokens_details
-                  ) {
-                    const cached = (
-                      usage.input_tokens_details as Record<string, unknown>
-                    ).cached_tokens;
-                    return typeof cached === "number" ? cached : 0;
-                  }
-                  return 0;
-                })();
-              output.usage.totalTokens =
-                output.usage.input + output.usage.output + output.usage.cacheRead;
-              calculateCost(model, output.usage);
-            }
+            applyProviderUsage(output, model, usage);
           }
         }
 
@@ -756,6 +786,8 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
         if (nextParams !== undefined) {
           Object.assign(params, nextParams);
         }
+        finalizeOpenAIProviderParams(params);
+        recordFinalOpenAIProviderPayload(options, params, "openai-completions-transport");
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const chatStream = await client.chat.completions.create(params as any);
@@ -771,28 +803,7 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
           // Handle usage chunk (sent when stream_options.include_usage is true)
           const usage = chunk.usage as Record<string, unknown> | undefined;
           if (usage) {
-            output.usage.input =
-              typeof usage.prompt_tokens === "number" ? usage.prompt_tokens : 0;
-            output.usage.output =
-              typeof usage.completion_tokens === "number"
-                ? usage.completion_tokens
-                : 0;
-            output.usage.cacheRead =
-              (() => {
-                if (
-                  typeof usage.prompt_tokens_details === "object" &&
-                  usage.prompt_tokens_details
-                ) {
-                  const cached = (
-                    usage.prompt_tokens_details as Record<string, unknown>
-                  ).cached_tokens;
-                  return typeof cached === "number" ? cached : 0;
-                }
-                return 0;
-              })();
-            output.usage.totalTokens =
-              output.usage.input + output.usage.output + output.usage.cacheRead;
-            calculateCost(model, output.usage);
+            applyProviderUsage(output, model, usage);
             continue;
           }
 
@@ -1152,6 +1163,8 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
         if (nextParams !== undefined) {
           Object.assign(params, nextParams);
         }
+        finalizeOpenAIProviderParams(params);
+        recordFinalOpenAIProviderPayload(options, params, "azure-openai-responses-transport");
 
         const responseStream = await client.responses.create(
           params as unknown as Record<string, unknown>,
@@ -1409,28 +1422,7 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
                   ? "length"
                   : "stop";
 
-            if (usage) {
-              output.usage.input =
-                typeof usage.input_tokens === "number" ? usage.input_tokens : 0;
-              output.usage.output =
-                typeof usage.output_tokens === "number" ? usage.output_tokens : 0;
-              output.usage.cacheRead =
-                (() => {
-                  if (
-                    typeof usage.input_tokens_details === "object" &&
-                    usage.input_tokens_details
-                  ) {
-                    const cached = (
-                      usage.input_tokens_details as Record<string, unknown>
-                    ).cached_tokens;
-                    return typeof cached === "number" ? cached : 0;
-                  }
-                  return 0;
-                })();
-              output.usage.totalTokens =
-                output.usage.input + output.usage.output + output.usage.cacheRead;
-              calculateCost(model, output.usage);
-            }
+            applyProviderUsage(output, model, usage);
           }
         }
 
@@ -1499,6 +1491,7 @@ export function buildOpenAICompletionsParams(
 
   // Include usage in stream by default for token tracking
   params.stream_options = { include_usage: true };
+  finalizeOpenAIProviderParams(params);
 
   return params;
 }

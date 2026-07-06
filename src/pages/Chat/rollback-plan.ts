@@ -46,6 +46,17 @@ export type RollbackPlan = {
   actions: RollbackPlanAction[];
 };
 
+const SIDEBAR_TRIGGER_ACTIONS = new Set<RollbackPlanActionKind>([
+  'checkpoint-handoff',
+  'drain-queue',
+  'manual-compact',
+  'terminal-interrupt',
+]);
+
+export function hasRollbackPlanSidebarTrigger(plan: RollbackPlan): boolean {
+  return plan.actions.some((action) => SIDEBAR_TRIGGER_ACTIONS.has(action.kind));
+}
+
 export type BuildRollbackPlanInput = {
   activeRun: boolean;
   gatewayAvailable: boolean;

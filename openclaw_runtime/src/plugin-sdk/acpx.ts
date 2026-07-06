@@ -1,9 +1,9 @@
 // Private ACPX runtime backend helpers for bundled extensions.
 // Keep this surface narrow and limited to the ACP runtime/backend contract.
 
-export type { AcpRuntimeErrorCode } from "../acp/runtime/errors.js";
-export { AcpRuntimeError } from "../acp/runtime/errors.js";
-export { registerAcpRuntimeBackend, unregisterAcpRuntimeBackend } from "../acp/runtime/registry.js";
+export type { AcpRuntimeErrorCode } from "../runtime/errors.ts";
+export { AcpRuntimeError } from "../runtime/errors.ts";
+export { registerAcpRuntimeBackend, unregisterAcpRuntimeBackend } from "../runtime/registry.ts";
 export type {
   AcpRuntime,
   AcpRuntimeCapabilities,

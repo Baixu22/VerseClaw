@@ -39,6 +39,10 @@
     "billing": {
       "title": "Биллинг",
       "description": "История использования токенов, оценка стоимости и графики активности."
+    },
+    "storage": {
+      "title": "Хранилище и память",
+      "description": "Сканируйте и очищайте кэш приложения, журналы и артефакты сеансов."
     }
   },
   "appearance": {
@@ -212,6 +216,13 @@
     "disableEffect": "Отключение останавливает инъекцию Role Memory и блокирует записи памяти. Существующие карточки остаются на диске, нативная память OpenClaw не меняется.",
     "enabled": "Включено",
     "disabled": "Отключено"
+  },
+  "memoryEmbedding": {
+    "title": "Embedding памяти",
+    "description": "Использовать настоящие векторные embedding для поиска в памяти вместо стандартного нечёткого сопоставления символьных n-грамм. Повышает семантическую полноту для перефразированных или морфологически varied запросов.",
+    "disableEffect": "При отключении поиск возвращается к локальному 3-gram TF-IDF сопоставлению без регрессии. Включайте после настройки хотя бы одного embedding-провайдера.",
+    "enabled": "Включено",
+    "disabled": "Выкл"
   },
   "knowledgeHub": {
     "watched": {
@@ -391,11 +402,100 @@
     "telemetryEmpty": "Телеметрия ещё не собрана",
     "telemetryCopied": "Телеметрия скопирована",
     "telemetryCleared": "Телеметрия очищена",
+    "agentDevWorkbench": {
+      "title": "Agent Dev Workbench",
+      "description": "Проверяйте реальные evidence Agent Dev registry, contract, trace, cost, sandbox, conformance и recording через host-api.",
+      "scenarios": "Сценарии",
+      "contractGaps": "Пробелы contract",
+      "traceEvents": "События trace",
+      "totalTokens": "Всего tokens",
+      "contracts": "Contracts",
+      "artifacts": "Artifacts",
+      "record": "Записать сценарий",
+      "recorded": "Запись сценария создана: {{path}}",
+      "recordFailed": "Не удалось записать сценарий: {{error}}",
+      "loadFailed": "Не удалось загрузить Agent Dev Workbench: {{error}}",
+      "diagnostics": "Host calls: {{mockCalls}} / sandbox effects: {{sandboxEffects}} / selector surfaces: {{selectorSurfaces}}",
+      "contractLabels": {
+        "traceTimeline": "Trace timeline",
+        "costReport": "Cost report",
+        "skillSandboxReport": "Skill sandbox",
+        "selectorContract": "Selector contract"
+      },
+      "artifactLabels": {
+        "workbench": "Workbench",
+        "quality": "Quality",
+        "channelConformance": "Channel conformance",
+        "scenarioRecordings": "Recordings"
+      },
+      "gates": {
+        "fastPr": "Fast PR",
+        "fullLocal": "Full local",
+        "nightlyRelease": "Nightly / release"
+      }
+    },
     "installCmd": "Установить команду \"openclaw\"",
     "installCmdDesc": "Устанавливает ~/.local/bin/openclaw (без прав администратора)",
     "installTitle": "Установить команду OpenClaw",
     "installMessage": "Установить команду \"openclaw\"?",
     "installDetail": "Это создаст ~/.local/bin/openclaw. Убедитесь, что ~/.local/bin в PATH, если хотите запускать глобально."
+  },
+  "storage": {
+    "title": "Хранилище и память",
+    "description": "Сканируйте и очищайте кэш приложения, журналы и артефакты сеансов.",
+    "systemInfo": {
+      "ram": "Память (RAM)",
+      "disk": "Дисковое пространство",
+      "cpu": "ЦП",
+      "used": "Использовано",
+      "free": "Свободно",
+      "total": "Всего",
+      "cores": "{{count}} ядер",
+      "load": "{{percent}}% нагрузка",
+      "notAvailable": "Недоступно"
+    },
+    "categories": {
+      "logs": { "label": "Журналы", "description": "Файлы журналов приложения" },
+      "sessions": { "label": "Сессии", "description": "Стенограммы разговоров" },
+      "trajectories": { "label": "Траектории", "description": "Траектории запуска агентов и бортовые самописцы" },
+      "mediaOutbound": { "label": "Исходящие медиа", "description": "Сгенерированные медиа-артефакты" },
+      "mediaThumbs": { "label": "Медиа-эскизы", "description": "Кэшированные эскизы медиа (восстановимо)" },
+      "uvCache": { "label": "UV-кэш", "description": "Кэш Python uv (восстановимо)" },
+      "electronCache": { "label": "Кэш Electron", "description": "Кэш среды выполнения Electron (восстановимо)" },
+      "trash": { "label": "Корзина", "description": "Мягко удалённые элементы ожидают очистки" }
+    },
+    "actions": {
+      "refresh": "Обновить",
+      "scan": "Сканировать",
+      "deleteSelected": "Удалить выбранные",
+      "askAgent": "Попросить агента рекомендовать",
+      "confirmDelete": "Подтвердить удаление",
+      "cancel": "Отмена",
+      "dryRun": "Пробный запуск",
+      "itemsSelected": "Выбрано {{count}} элемент(ов)"
+    },
+    "status": {
+      "scanning": "Сканирование...",
+      "deleting": "Удаление...",
+      "empty": "Элементы не найдены",
+      "truncated": "Показаны первые {{count}} элементов (усечено)",
+      "safeToDelete": "Можно удалить",
+      "notDeletable": "Нельзя удалить",
+      "regenerable": "Восстановимо"
+    },
+    "toast": {
+      "deleteSucceeded": "Удалено {{count}} элемент(ов), освобождено {{bytes}}",
+      "deleteFailed": "Ошибка удаления: {{error}}",
+      "scanFailed": "Ошибка сканирования: {{error}}",
+      "ramLow": "Память заканчивается. Рекомендуется очистка в Настройки > Хранилище.",
+      "diskLow": "Дисковое пространство заканчивается. Рекомендуется очистка в Настройки > Хранилище."
+    },
+    "agent": {
+      "recommendPrompt": "Пожалуйста, просканируйте хранилище приложения и порекомендуйте элементы, которые можно безопасно удалить для освобождения места. Используйте инструменты clawx-storage для сканирования и рекомендаций, затем представьте рекомендацию как tool-ui OptionListCard, чтобы я мог подтвердить, какие элементы удалить."
+    },
+    "riskNote": {
+      "activeSession": "Активная сессия — нельзя удалить"
+    }
   },
   "about": {
     "title": "О приложении",

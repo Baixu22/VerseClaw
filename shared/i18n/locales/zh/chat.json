@@ -8,7 +8,8 @@
     "askQuestionsDesc": "处理面向任务的请求",
     "creativeTasks": "持续执行",
     "creativeTasksDesc": "持续推进多步骤工作",
-    "brainstorming": "多智能体并行"
+    "brainstorming": "多智能体并行",
+    "brainstormingDesc": "让多个智能体协同拆分任务"
   },
   "noLogs": "（暂无日志）",
   "scrollToLatest": "回到底部",
@@ -19,14 +20,68 @@
     "currentAgent": "当前对话对象：{{agent}}",
     "workspace": "工作空间",
     "saveToKnowledge": "保存到知识库",
-    "workContext": "工作上下文",
     "addWorkspaceDialogTitle": "选择工作区目录",
-    "addWorkspaceDialogButton": "设为工作区"
+    "addWorkspaceDialogButton": "设为工作区",
+    "promptCache": {
+      "ariaLabel": "提示缓存状态：{{status}}",
+      "title": "提示缓存：{{status}}",
+      "hitRate": "命中率 {{value}}",
+      "lastTurnHitRate": "上一轮 {{value}}",
+      "warmTurnHitRate": "暖缓存轮次 {{value}}",
+      "tokens": "读取 {{read}} · 写入 {{write}}",
+      "confidence": "置信度 {{value}}",
+      "saved": "预计节省 {{value}}",
+      "extraCost": "预计额外 {{value}}",
+      "reason": "最近原因：{{reason}}",
+      "ledger": "{{warnings}} 次提醒 · {{cancelled}} 次取消",
+      "status": {
+        "warm": "已预热",
+        "warming": "写入中",
+        "cold": "冷缓存",
+        "at-risk": "有风险",
+        "ineligible": "不可缓存",
+        "unknown": "未知"
+      },
+      "short": {
+        "warm": "已热",
+        "warming": "缓存",
+        "cold": "冷",
+        "at-risk": "风险",
+        "ineligible": "无缓存",
+        "unknown": "缓存"
+      },
+      "reasonValue": {
+        "model-switch": "模型切换",
+        "manual-compaction": "手动压缩",
+        "skill-enable": "启用技能",
+        "mcp-register": "注册 MCP",
+        "mcp-reload": "重载 MCP",
+        "system-prompt-change": "系统提示变更",
+        "context-reset": "上下文重置",
+        "ineligible": "前缀低于缓存阈值",
+        "provider-unknown": "Provider 支持未知"
+      },
+      "confidenceValue": {
+        "high": "高",
+        "medium": "中",
+        "low": "低",
+        "unknown": "未知"
+      }
+    }
   },
   "markdown": {
     "codeBlock": "代码",
     "copyCode": "复制代码",
     "copiedCode": "已复制"
+  },
+  "messageActions": {
+    "copy": "复制消息",
+    "copied": "已复制",
+    "edit": "编辑",
+    "editInputLabel": "编辑消息",
+    "cancelEdit": "取消",
+    "sendEdit": "发送",
+    "resendFailed": "重发消息失败"
   },
   "approvals": {
     "title": "审批与审计",
@@ -166,6 +221,69 @@
       "copy": "复制",
       "copied": "已复制"
     },
+    "testResults": {
+      "label": "Test results",
+      "total": "total",
+      "passed": "passed",
+      "failed": "failed",
+      "skipped": "skipped",
+      "running": "running",
+      "empty": "No test suites were reported.",
+      "suiteCount": "{{count}} tests",
+      "status": {
+        "passed": "Passed",
+        "failed": "Failed",
+        "skipped": "Skipped",
+        "running": "Running"
+      }
+    },
+    "stackTrace": {
+      "label": "Stack trace",
+      "empty": "No stack frames were reported.",
+      "lineColumn": "L{{line}}:C{{column}}",
+      "source": {
+        "app": "App",
+        "web-preview": "Web preview",
+        "tool": "Tool"
+      }
+    },
+    "chainOfThought": {
+      "label": "Reasoning steps",
+      "title": "Reasoning",
+      "progress": "{{complete}} complete, {{active}} active",
+      "empty": "No reasoning steps were reported.",
+      "status": {
+        "complete": "Complete",
+        "active": "Active",
+        "pending": "Pending"
+      }
+    },
+    "task": {
+      "label": "Task",
+      "itemCount": "{{count}} items",
+      "empty": "No task items were reported."
+    },
+    "reasoning": {
+      "label": "Reasoning",
+      "thinking": "Thinking",
+      "empty": "No reasoning summary was provided."
+    },
+    "commit": {
+      "label": "Commit",
+      "detached": "Detached HEAD",
+      "staged": "staged",
+      "unstaged": "unstaged",
+      "untracked": "untracked",
+      "conflicted": "conflicted",
+      "operationWithAction": "{{action}}: {{status}}",
+      "operation": {
+        "ready": "Ready",
+        "running": "Running",
+        "success": "Done",
+        "blocked": "Blocked",
+        "failed": "Failed"
+      }
+    },
     "tokenUsage": {
       "input": "输入 Token",
       "output": "输出 Token",
@@ -196,6 +314,23 @@
   "runError": {
     "title": "模型调用失败"
   },
+  "knowledgeGuard": {
+    "title": "可能命中已知坑",
+    "confidence": "{{confidence}}%",
+    "rootCause": "根因：",
+    "whyMatched": "命中：",
+    "matchFallback": "相似失败信号",
+    "dismiss": "忽略",
+    "use": "使用",
+    "usedToast": "知识建议已添加到输入框。",
+    "composerPrefix": "重试前先使用这条经验：{{title}}",
+    "severity": {
+      "low": "低",
+      "medium": "中",
+      "high": "高",
+      "blocking": "阻塞"
+    }
+  },
   "artifactPanel": {
     "tabs": {
       "changes": "变更",
@@ -206,9 +341,37 @@
     "workspaceTabs": {
       "files": "文件",
       "terminal": "终端",
-      "git": "Git",
+      "git": "审查",
       "web": "Web",
       "audit": "审计"
+    },
+    "workspaceLaunchpad": {
+      "title": "ClawX 工作区",
+      "subtitle": "固定入口",
+      "moreHint": "用 + 打开审查、预览和审计工具。",
+      "actions": {
+        "open": "打开入口选择器",
+        "back": "返回入口",
+        "moreEntries": "更多入口"
+      },
+      "sections": {
+        "highFrequency": "高频入口",
+        "projectTools": "项目工具",
+        "reviewAndSafety": "审查与安全"
+      },
+      "entries": {
+        "files": "浏览文件并预览选中的内容。",
+        "terminal": "为当前工作区启动交互式终端。",
+        "review": "审查变更、分支、暂存和 PR。",
+        "reviewBranch": "审查 {{branch}} 上的变更。",
+        "web": "打开本地预览或检查 URL。",
+        "audit": "查看权限请求和最近的审批。"
+      },
+      "badges": {
+        "changes": "{{count}} 个变更",
+        "conflicts": "{{count}} 个冲突",
+        "clean": "干净"
+      }
     },
     "actions": {
       "back": "返回列表"
@@ -297,6 +460,16 @@
       "rowRange": "行 {{from}}-{{to}} / {{total}}",
       "prevPage": "上一页",
       "nextPage": "下一页"
+    },
+    "office": {
+      "title": "Office 预览：{{fileName}}",
+      "loading": "正在加载 Office 预览...",
+      "notInstalledTitle": "OfficeCLI 未安装",
+      "notInstalledHint": "安装 OfficeCLI 后再重试预览。",
+      "failedTitle": "Office 预览失败",
+      "install": "安装 OfficeCLI",
+      "installing": "正在安装...",
+      "retry": "重试"
     }
   },
   "workspace": {
@@ -380,14 +553,19 @@
         "clearSelection": "清除选择",
         "sendToComposer": "发送到对话框",
         "captureAndSend": "截图并发送",
-        "capturing": "截图中"
+        "capturing": "截图中",
+        "refresh": "刷新",
+        "openExternal": "在外部打开",
+        "openAgentBrowser": "用 Agent Browser 打开",
+        "locateAgentBrowser": "定位 Agent Browser"
       },
       "tooltips": {
         "captureAndSend": "把选中组件和预览截图发送到对话框。"
       },
       "browser": {
         "placeholder": "启动预览后会加载 URL",
-        "title": "Workspace 预览"
+        "title": "Workspace 预览",
+        "agentBrowserActive": "Agent"
       },
       "selection": {
         "selected": "已选择"
@@ -400,7 +578,10 @@
         "sent": "已发送到对话框",
         "screenshotUnavailable": "截图不可用，已仅发送组件信息",
         "screenshotFailed": "截图失败，已仅发送组件信息",
-        "screenshotSent": "截图与组件信息已发送"
+        "screenshotSent": "截图与组件信息已发送",
+        "agentBrowserNoUrl": "请先启动预览或输入 URL",
+        "agentBrowserOpened": "Agent Browser 已打开",
+        "agentBrowserLocated": "Agent Browser 已定位"
       },
       "prompt": {
         "title": "请基于 Web 预览中选中的组件做适应性调整。",
@@ -648,6 +829,16 @@
       "followup": "后续",
       "reroute": "重路由"
     },
+    "diagnostics": {
+      "title": "诊断",
+      "recommendations": "建议",
+      "nextSteps": "下一步",
+      "taskLoopUpgrade": "Task Loop 仅在明确确认后可用。",
+      "status": {
+        "ok": "正常",
+        "needs_attention": "需要关注"
+      }
+    },
     "status": {
       "running": "运行中",
       "planned": "已规划",
@@ -691,6 +882,7 @@
   },
   "composer": {
     "attachFiles": "添加文件",
+    "placeholder": "输入消息...  / 打开命令与技能",
     "pickSkill": "选择技能",
     "pickTool": "选择工具",
     "skillButton": "技能",
@@ -702,6 +894,71 @@
     "skillEmpty": "未找到匹配的技能",
     "pickAgent": "选择 Agent",
     "pickModel": "选择模型",
+    "actions": {
+      "add": "添加",
+      "context": "添加上下文",
+      "skills": "技能",
+      "office": "办公",
+      "session": "会话",
+      "attachFiles": "添加文件",
+      "knowledge": "搜索知识",
+      "model": "模型",
+      "compact": "压缩会话",
+      "fork": "分叉会话",
+      "handoff": "交接会话"
+    },
+    "office": {
+      "excel": "Excel",
+      "word": "Word 文档",
+      "ppt": "演示文稿",
+      "pdf": "PDF",
+      "pitchDeck": "融资路演",
+      "morph": "Morph 动画",
+      "morph3d": "3D Morph",
+      "academic": "学术论文",
+      "financial": "财务模型",
+      "dashboard": "数据仪表盘",
+      "setupRequired": "请先在「技能 > 功能包」中启用 {{action}}。",
+      "prompts": {
+        "excel": "创建一个 Excel 工作簿，要求如下：\n\n[在此描述数据、表格、公式和图表]",
+        "word": "创建一个 Word 文档，要求如下：\n\n[在此描述文档内容、结构和格式]",
+        "ppt": "创建一个 PowerPoint 演示文稿，要求如下：\n\n[在此描述幻灯片、内容和设计]",
+        "pdf": "阅读、总结或转换 PDF 文档。",
+        "pitchDeck": "创建一个融资路演 PPT，要求如下：\n\n[在此描述公司、融资轮次和关键指标]",
+        "morph": "创建一个带 Morph 转场动画的演示文稿：\n\n[在此描述演示主题和期望的视觉效果]",
+        "morph3d": "创建一个带 GLB 模型和镜头运动的 3D Morph 演示文稿：\n\n[在此描述主题和 3D 视觉构想]",
+        "academic": "用 Word 写一篇学术论文，要求如下：\n\n[在此描述研究主题、方法和主要发现]",
+        "financial": "用 Excel 创建一个财务模型，要求如下：\n\n[在此描述财务报表、预测和分析]",
+        "dashboard": "用 Excel 创建一个数据仪表盘，要求如下：\n\n[在此描述数据来源、KPI 和图表]"
+      }
+    },
+    "promptCacheGuard": {
+      "title": "此操作可能让提示缓存变冷",
+      "description": "{{action}} 可能让下一轮重建约 {{tokens}} 个提示 token。当前缓存命中率：{{hitRate}}。{{reason}}",
+      "continue": "继续",
+      "cancel": "取消",
+      "action": {
+        "model-switch": "切换模型",
+        "manual-compaction": "手动压缩",
+        "skill-enable": "启用技能",
+        "mcp-register": "注册 MCP 工具",
+        "mcp-reload": "重载 MCP 工具",
+        "system-prompt-change": "修改系统提示",
+        "context-reset": "重置上下文"
+      },
+      "reason": {
+        "model-switch": "不同模型的缓存彼此隔离。",
+        "manual-compaction": "压缩会重写当前可见对话前缀。",
+        "skill-enable": "技能变更可能改变工具和提示前缀。",
+        "mcp-register": "新增 MCP 工具可能改变工具 schema 前缀。",
+        "mcp-reload": "重载 MCP 可能改变可用工具 schema。",
+        "system-prompt-change": "系统提示变更会改变缓存前缀。",
+        "context-reset": "上下文重置会改变缓存前缀。",
+        "provider-unknown": "当前 Provider 的缓存支持未知。",
+        "ineligible": "当前前缀可能低于缓存阈值。",
+        "default": "下一次请求可能无法命中当前缓存。"
+      }
+    },
     "knowledgeScopeTitle": "知识范围",
     "knowledgeScope": {
       "none": "不使用知识",
@@ -725,7 +982,8 @@
       "suggestion": "找到 {{count}} 条可能相关的知识",
       "attach": "附加",
       "open": "打开",
-      "dismiss": "忽略"
+      "dismiss": "忽略",
+      "inspect": "??"
     },
     "knowledgeQuick": {
       "enable": "使用 wiki 知识",
@@ -744,12 +1002,12 @@
       "messageRefTitle": "知识引用：{{title}}"
     },
     "slashCommands": {
-      "menuLabel": "斜杠命令",
-      "title": "快捷动作",
-      "subtitle": "为这条消息或当前会话选择动作。每个动作都会先说明它会做什么。",
-      "contextButton": "打开上下文面板",
-      "contextButtonShort": "上下文",
-      "contextButtonTooltip": "输入 / 可以附加知识、设置范围或运行会话动作。",
+      "menuLabel": "ClawX 斜杠命令",
+      "title": "ClawX 命令",
+      "subtitle": "为知识、代码工作、流程或当前会话选择有针对性的动作。",
+      "contextButton": "打开命令",
+      "contextButtonShort": "命令",
+      "contextButtonTooltip": "输入 / 搜索 ClawX 的针对性命令。",
       "promptArgs": "范围：{{args}}",
       "unknownTitle": "未知命令",
       "unknownDescription": "{{command}} 不是 Verse Claw 快捷动作。按 Escape 可继续编辑。",
@@ -757,10 +1015,18 @@
       "ledgerNodeDescription": "由 Chat 斜杠命令创建。",
       "ledgerSessionSummary": "由 Chat 斜杠命令关联：{{title}}",
       "groups": {
+        "skills": "技能",
         "knowledge": "知识",
         "coding": "编码",
         "workflow": "工作流",
         "session": "会话"
+      },
+      "groupDescriptions": {
+        "skills": "来自工作区和运行时的可复用 Agent 行为。",
+        "knowledge": "附加来源，并塑造本轮可读取的内容。",
+        "coding": "围绕当前变更请求聚焦的工程工作。",
+        "workflow": "把任务推进到规划或追踪流程中。",
+        "session": "管理连续性、压缩和交接。"
       },
       "commands": {
         "wiki": {
@@ -838,6 +1104,11 @@
           "description": "起草 PR 说明和验证记录。",
           "argumentHint": "[受众]"
         },
+        "goal": {
+          "label": "目标",
+          "description": "打开或引导一个长期目标流程。",
+          "argumentHint": "[目标]"
+        },
         "mission": {
           "label": "Mission Control",
           "description": "打开或引导一个长期目标流程。",
@@ -880,7 +1151,7 @@
         "wikiOpened": "已打开 Wiki 搜索。请选择要作为只读上下文附加的页面。",
         "scopeOpened": "已打开知识范围选择器。",
         "scopeChanged": "知识范围已设为 {{scope}}。",
-        "typeSlash": "在空输入框开头输入 / 可打开上下文面板。",
+        "typeSlash": "在空输入框开头输入 / 可打开命令。",
         "knowledgeModeOpened": "已打开知识调用模式选择器。",
         "knowledgeModeChanged": "知识调用模式已设为 {{mode}}。",
         "stewardAuditStarted": "已开始知识治理审计。",
@@ -893,6 +1164,14 @@
     },
     "modelPickerTitle": "切换当前 Agent 模型",
     "modelSwitchFailed": "模型切换失败：{{error}}",
+    "modelScope": {
+      "turn": "仅本条消息",
+      "session": "本会话",
+      "persistent": "始终"
+    },
+    "clearTurnModel": "清除单条消息模型覆盖",
+    "turnModelChip": "使用 {{model}}",
+    "modelSourceDefault": "默认模型",
     "inputModeTitle": "输入模式",
     "inputModeHint": "仅对本次消息生效",
     "guideInjected": "已作为引导注入活跃运行",
@@ -907,6 +1186,19 @@
     "stop": "停止",
     "gatewayConnected": "已连接",
     "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
+    "contextMenu": {
+      "button": "上下文",
+      "title": "上下文状态",
+      "tooltip": "显示上下文、token 和路由状态",
+      "toolsSection": "工具与路由",
+      "statusSection": "状态",
+      "attachedSection": "已附加上下文",
+      "emptyDiagnostics": "未附加额外上下文",
+      "close": "关闭上下文控制",
+      "target": "@{{agent}}",
+      "knowledgeRefs": "{{count}} 个引用",
+      "skillTokens": "{{count}} 个技能"
+    },
     "contextStatusTitle": "上下文和 token 状态",
     "messageCount": "{{count}} 条消息",
     "tokenUsage": "{{tokens}} tokens",
@@ -950,6 +1242,15 @@
         "no_transcript": "未找到 transcript",
         "gateway_unavailable": "Gateway 不可用"
       }
+    },
+    "taskLoopUpgrade": {
+      "title": "可升级为 Task Loop",
+      "summary": "项目级执行与检查点。",
+      "confirm": "启动 Task Loop",
+      "starting": "正在启动 Task Loop",
+      "toastUpdated": "Task Loop 运行已更新：{{status}}",
+      "toastFailed": "无法启动 Task Loop",
+      "unknownStatus": "未知"
     },
     "longTaskControl": {
       "queued": "已排队 {{count}}",
@@ -1179,6 +1480,7 @@
     "intervention": {
       "guide": "引导",
       "guideTooltip": "向当前运行注入非打断式指导。",
+      "queueDefault": "运行中：Enter 默认排队",
       "queue": "排队",
       "queueTooltip": "保持当前运行不变，稍后重放这条后续输入。",
       "interrupt": "打断",
@@ -1263,39 +1565,17 @@
         "emptyBody": "会话 {{sessionKey}} 还没有可渲染的恢复 transcript。应用前只记录已验证的恢复事实、决策、阻塞和证据引用。"
       }
     },
-    "git": {
-      "loading": "加载 Git",
-      "branchLabel": "分支",
-      "worktreeLabel": "工作树",
-      "clean": "干净",
-      "dirty": "{{count}} 项变更",
-      "conflicts": "{{count}} 个冲突",
-      "detached": "Detached",
-      "unknownBranch": "未知分支",
-      "sync": "领先 {{ahead}} / 落后 {{behind}}",
-      "openPanel": "打开 Git 面板",
-      "refresh": "刷新",
-      "branches": "分支",
-      "searchBranches": "搜索分支",
-      "checkout": "切换",
-      "createBranch": "创建分支",
-      "branchName": "分支名",
-      "startPoint": "起点",
-      "worktrees": "工作树",
-      "current": "当前",
-      "locked": "已锁定",
-      "prunable": "可清理",
-      "switchWorktree": "切换",
-      "addWorktree": "添加工作树",
-      "newBranch": "新分支",
-      "existingBranch": "现有分支",
-      "defaultPath": "默认路径",
-      "defaultPathUnavailable": "输入分支后预览路径",
-      "branchExists": "分支已存在",
-      "branchCheckedOut": "分支已在 {{path}} checkout",
-      "operationBlocked": "{{reason}}",
-      "operationFailed": "{{error}}",
-      "operationSuccess": "{{action}} 已完成"
+    "knowledgePreflight": {
+      "title": "????",
+      "summary": "{{docs}} ??????{{pitfalls}} ??????{{rules}} ????????",
+      "confidence": "{{confidence}}%",
+      "whyMatched": "???{{reason}}",
+      "source": "{{corpus}} ? {{source}}",
+      "groups": {
+        "docs": "????",
+        "pitfalls": "????",
+        "rules": "??"
+      }
     }
   },
   "historyBuckets": {
@@ -1310,14 +1590,14 @@
     "work": "任务"
   },
   "sessionView": {
-    "project": "项目",
+    "project": "工作组",
     "time": "时间"
   },
   "sidebar": {
     "searchSessions": "搜索会话",
     "clearSearch": "清除搜索",
     "searchNoResults": "未找到会话",
-    "searchModalPlaceholder": "按名称、工作区或代理搜索会话...",
+    "searchModalPlaceholder": "按名称、工作组、工作区或代理搜索会话...",
     "searchEmptyHint": "开始输入以搜索你的会话",
     "searchCurrent": "当前",
     "searchRelativeNow": "刚刚",
@@ -1327,6 +1607,45 @@
     "searchHintNavigate": "导航",
     "searchHintSelect": "选择",
     "searchHintClose": "关闭"
+  },
+  "folders": {
+    "create": "新建文件夹",
+    "namePlaceholder": "文件夹名称",
+    "rename": "重命名文件夹",
+    "delete": "删除文件夹",
+    "moveTo": "移至文件夹",
+    "noFolder": "未分组"
+  },
+  "workgroups": {
+    "create": "新建工作组",
+    "namePlaceholder": "工作组名称",
+    "rename": "重命名工作组",
+    "delete": "删除工作组",
+    "moveTo": "移至工作组",
+    "noWorkgroup": "无工作组",
+    "ungrouped": "未归组",
+    "sessionCount": "{{count}} 个会话",
+    "status": {
+      "running": "进行中",
+      "waiting": "等待中",
+      "attention": "需处理",
+      "done": "已完成",
+      "stopped": "已停止",
+      "idle": "空闲"
+    }
+  },
+  "archive": {
+    "title": "已归档对话",
+    "open": "归档",
+    "empty": "暂无已归档对话",
+    "loading": "正在加载已归档对话...",
+    "restore": "恢复",
+    "deletePermanently": "删除",
+    "deleteTitle": "删除对话",
+    "deleteMessage": "选择移除方式。归档将其移入回收站（可恢复）；删除将永久移除 \"{{label}}\"。",
+    "archiveAction": "归档",
+    "emptyAll": "清空归档",
+    "emptyAllConfirm": "再次点击以永久删除所有已归档对话"
   },
   "questionDirectory": {
     "title": "问题目录",
@@ -1443,42 +1762,18 @@
     "aborted": "已停止",
     "dismissCompleted": "隐藏已完成状态"
   },
-  "workContext": {
-    "title": "工作上下文",
-    "sections": {
-      "plan": "任务日志 / 计划",
-      "ledger": "Task Ledger",
-      "environment": "环境信息",
-      "artifacts": "产物",
-      "sources": "来源"
+  "turnSummary": {
+    "titleFallback": "工作已完成",
+    "toggle": "展开或折叠工作总结",
+    "status": {
+      "completed": "工作已完成",
+      "error": "需要处理"
     },
-    "environment": {
-      "workspace": "工作空间",
-      "branch": "分支",
-      "changes": "变更",
-      "unknownWorkspace": "工作空间",
-      "changeCounts": "{{count}} 项变更",
-      "delta": "+{{added}} -{{removed}}"
-    },
-    "actions": {
-      "viewChanges": "查看变更",
-      "commitOrPush": "提交或推送",
-      "createPr": "创建拉取请求"
-    },
-    "ledger": {
-      "noCurrentGoal": "暂无当前目标",
-      "counts": "{{active}} 进行中 / {{review}} 待复核 / {{blocked}} 阻塞",
-      "active": "进行中",
-      "review": "复核",
-      "blocked": "阻塞"
-    },
-    "git": {
-      "clean": "干净",
-      "detached": "Detached HEAD",
-      "unknownBranch": "未知分支"
-    },
-    "empty": {
-      "sources": "暂无来源"
+    "counts": {
+      "tasks": "{{count}} 个任务",
+      "reports": "{{count}} 个文件",
+      "sources": "{{count}} 个来源",
+      "orchestrations": "{{count}} 个团队"
     }
   },
   "turnWork": {

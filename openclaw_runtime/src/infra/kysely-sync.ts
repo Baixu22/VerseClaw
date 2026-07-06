@@ -1,5 +1,5 @@
 // Adapts node:sqlite sync database calls for Kysely-style query execution.
-import type { DatabaseSync, SQLInputValue } from "node:sqlite";
+import type { DatabaseSync, SQLInputValue, StatementSync } from "node:sqlite";
 import type {
   CompiledQuery,
   DatabaseConnection,
@@ -10,6 +10,7 @@ import type {
 } from "kysely";
 import { InsertQueryNode, Kysely as KyselyInstance, SqliteAdapter } from "kysely";
 import { NodeSqliteKyselyDialect } from "./kysely-node-sqlite.js";
+import { LruCache } from "./lru-cache.js";
 
 // Sync query helpers execute compiled Kysely SQL against node:sqlite without
 // going through Kysely's async driver path.
@@ -18,6 +19,21 @@ type CompilableQuery<Row = unknown> = {
 };
 
 const kyselyByDatabase = new WeakMap<DatabaseSync, Kysely<unknown>>();
+
+const PREPARED_STATEMENT_CACHE_MAX_PER_DB = 64;
+const preparedStatementsByDatabase = new WeakMap<
+  DatabaseSync,
+  LruCache<string, StatementSync>
+>();
+
+function getPreparedStatementCache(db: DatabaseSync): LruCache<string, StatementSync> {
+  let cache = preparedStatementsByDatabase.get(db);
+  if (!cache) {
+    cache = new LruCache<string, StatementSync>(PREPARED_STATEMENT_CACHE_MAX_PER_DB);
+    preparedStatementsByDatabase.set(db, cache);
+  }
+  return cache;
+}
 
 export function getNodeSqliteKysely<Database>(db: DatabaseSync): Kysely<Database> {
   const existing = kyselyByDatabase.get(db);
@@ -36,7 +52,12 @@ export function executeCompiledSqliteQuerySync<Row>(
   db: DatabaseSync,
   compiledQuery: CompiledQuery<Row>,
 ): QueryResult<Row> {
-  const statement = db.prepare(compiledQuery.sql);
+  const cache = getPreparedStatementCache(db);
+  let statement = cache.get(compiledQuery.sql);
+  if (!statement) {
+    statement = db.prepare(compiledQuery.sql);
+    cache.set(compiledQuery.sql, statement);
+  }
   const parameters = compiledQuery.parameters as SQLInputValue[];
 
   if (statement.columns().length > 0) {
@@ -73,9 +94,11 @@ export function executeSqliteQueryTakeFirstSync<Row>(
   return executeSqliteQuerySync<Row>(db, query).rows[0];
 }
 
-/** Drop the cached Kysely facade for a DatabaseSync after close/test reset. */
+/** Drop the cached Kysely facade and prepared statements for a DatabaseSync after close/test reset. */
 export function clearNodeSqliteKyselyCacheForDatabase(db: DatabaseSync): void {
   kyselyByDatabase.delete(db);
+  preparedStatementsByDatabase.get(db)?.clear();
+  preparedStatementsByDatabase.delete(db);
 }
 
 class CompileOnlyNodeSqliteKyselyDialect extends NodeSqliteKyselyDialect {

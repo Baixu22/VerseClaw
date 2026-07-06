@@ -290,6 +290,10 @@ export function createBashToolDefinition(
     label: "bash",
     description: `Execute a bash command in the current working directory. Returns stdout and stderr. Output is truncated to last ${DEFAULT_MAX_LINES} lines or ${DEFAULT_MAX_BYTES / 1024}KB (whichever is hit first). If truncated, full output is saved to a temp file. Optionally provide a timeout in seconds.`,
     promptSnippet: "Execute bash commands (ls, grep, find, etc.)",
+    // A1 Stage 2 (acceptance 2.1): bash executes arbitrary commands that can
+    // perform irreversible filesystem operations (rm -rf, >file, etc.).
+    risk: "destructive",
+    writeRiskProfile: { kind: "dynamic_writes", requiresApproval: true },
     parameters: bashSchema,
     async execute(
       toolCallId,

@@ -3,8 +3,9 @@ import path from 'node:path';
 import { ROOT, pathMatchesAny, toArray } from './specs.mjs';
 
 const DIRECT_IPC_PATTERN = /window\.electron\.ipcRenderer\.invoke\s*\(/;
-const DIRECT_GATEWAY_HTTP_PATTERN = /fetch\s*\(\s*['"`]http:\/\/(?:127\.0\.0\.1|localhost):18789/;
-const DIRECT_GATEWAY_WS_PATTERN = /new\s+WebSocket\s*\(\s*['"`]ws:\/\/(?:127\.0\.0\.1|localhost):18789|ws:\/\/(?:127\.0\.0\.1|localhost):18789/;
+const GATEWAY_LOCAL_HOST_PATTERN = String.raw`(?:127\.0\.0\.1|localhost|\[::1\])`;
+const DIRECT_GATEWAY_HTTP_PATTERN = new RegExp(String.raw`fetch\s*\(\s*['"\`]http:\/\/${GATEWAY_LOCAL_HOST_PATTERN}:18789`);
+const DIRECT_GATEWAY_WS_PATTERN = new RegExp(String.raw`new\s+WebSocket\s*\(\s*['"\`]ws:\/\/${GATEWAY_LOCAL_HOST_PATTERN}:18789|ws:\/\/${GATEWAY_LOCAL_HOST_PATTERN}:18789`);
 const HOST_API_LOCAL_HTTP_PATTERN = /fetch\s*\(\s*['"`]http:\/\/(?:127\.0\.0\.1|localhost):13210|HOST_API_BASE\s*=\s*`?http:\/\/127\.0\.0\.1:\$\{HOST_API_PORT\}`?/;
 const GATEWAY_READY_MUTATION_PATTERN = /gatewayReady\s*[:=]\s*(?:true|false)|setStatus\s*\([^)]*gatewayReady|setState\s*\([^)]*gatewayReady/s;
 const COMMUNICATION_PATHS = [
@@ -37,6 +38,33 @@ export function touchesCommunicationPath(files) {
   return files.some((file) => pathMatchesAny(file, COMMUNICATION_PATHS));
 }
 
+export function scanBackendCommunicationBoundaryText(file, text) {
+  const failures = [];
+  const isPageOrComponent = file.startsWith('src/pages/') || file.startsWith('src/components/');
+
+  if (isPageOrComponent && DIRECT_IPC_PATTERN.test(text)) {
+    failures.push(`${file}: renderer page/component must not call window.electron.ipcRenderer.invoke directly`);
+  }
+
+  if (DIRECT_GATEWAY_HTTP_PATTERN.test(text)) {
+    failures.push(`${file}: renderer must not fetch Gateway HTTP directly`);
+  }
+
+  if (DIRECT_GATEWAY_WS_PATTERN.test(text)) {
+    failures.push(`${file}: renderer must not open Gateway WebSocket connections directly`);
+  }
+
+  if (HOST_API_LOCAL_HTTP_PATTERN.test(text)) {
+    failures.push(`${file}: renderer must not use the removed Host API localhost server`);
+  }
+
+  if (isPageOrComponent && GATEWAY_READY_MUTATION_PATTERN.test(text)) {
+    failures.push(`${file}: gatewayReady mutation and refresh gating must stay in stores/main lifecycle code`);
+  }
+
+  return failures;
+}
+
 export async function scanBackendCommunicationBoundary(files) {
   const failures = [];
   const scanFiles = unique(files).filter((file) => file.startsWith('src/') && /\.(ts|tsx|js|jsx)$/.test(file));
@@ -44,28 +72,7 @@ export async function scanBackendCommunicationBoundary(files) {
   for (const file of scanFiles) {
     const text = await readTextIfExists(file);
     if (!text) continue;
-
-    const isPageOrComponent = file.startsWith('src/pages/') || file.startsWith('src/components/');
-    if (isPageOrComponent && DIRECT_IPC_PATTERN.test(text)) {
-      failures.push(`${file}: renderer page/component must not call window.electron.ipcRenderer.invoke directly`);
-    }
-
-    if (DIRECT_GATEWAY_HTTP_PATTERN.test(text)) {
-      failures.push(`${file}: renderer must not fetch Gateway HTTP directly`);
-    }
-
-    if (DIRECT_GATEWAY_WS_PATTERN.test(text)) {
-      failures.push(`${file}: renderer must not open Gateway WebSocket connections directly`);
-    }
-
-    if (HOST_API_LOCAL_HTTP_PATTERN.test(text)) {
-      failures.push(`${file}: renderer must not use the removed Host API localhost server`);
-    }
-
-    const isPageOrComponentFile = file.startsWith('src/pages/') || file.startsWith('src/components/');
-    if (isPageOrComponentFile && GATEWAY_READY_MUTATION_PATTERN.test(text)) {
-      failures.push(`${file}: gatewayReady mutation and refresh gating must stay in stores/main lifecycle code`);
-    }
+    failures.push(...scanBackendCommunicationBoundaryText(file, text));
   }
 
   return failures;

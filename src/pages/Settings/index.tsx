@@ -2,7 +2,7 @@
  * Settings Page
  * Application configuration
  */
-import { Suspense, lazy, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { lazy, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -43,6 +43,8 @@ import { toast } from 'sonner';
 import { useSettingsStore } from '@/stores/settings';
 import { useGatewayStore } from '@/stores/gateway';
 import { ProjectRulesCenter } from '@/components/settings/ProjectRulesCenter';
+import { AgentDevWorkbenchPanel } from '@/components/settings/AgentDevWorkbenchPanel';
+import { StorageCleanerSection } from './sections/StorageCleanerSection';
 import { toUserMessage } from '@/lib/error-message';
 import {
   clearUiTelemetry,
@@ -59,9 +61,6 @@ import { cn } from '@/lib/utils';
 import type { SandboxNetworkPolicy, SandboxProviderId, SandboxProviderStatus } from '@shared/types/sandbox';
 import type { KnowledgeWatchedDirectoryConfig } from '@shared/host-api/contract';
 
-const WorkHeatGraphLazy = lazy(() =>
-  import('@/components/assistant-render/WorkHeatGraph').then((m) => ({ default: m.WorkHeatGraph })),
-);
 const SettingsModelsLazy = lazy(() => import('@/pages/Models').then((m) => ({ default: m.Models })));
 const SettingsAgentsLazy = lazy(() => import('@/pages/Agents').then((m) => ({ default: m.Agents })));
 const SettingsChannelsLazy = lazy(() => import('@/pages/Channels').then((m) => ({ default: m.Channels })));
@@ -82,7 +81,8 @@ type SettingsSectionId =
   | 'skills'
   | 'system'
   | 'developer'
-  | 'billing';
+  | 'billing'
+  | 'storage';
 
 const SETTINGS_SECTION_SEGMENTS: Record<Exclude<SettingsSectionId, 'overview'>, string> = {
   general: 'general',
@@ -93,6 +93,7 @@ const SETTINGS_SECTION_SEGMENTS: Record<Exclude<SettingsSectionId, 'overview'>, 
   system: 'system',
   developer: 'developer',
   billing: 'billing',
+  storage: 'storage',
 };
 
 function resolveSettingsSection(pathname: string): SettingsSectionId {
@@ -131,6 +132,8 @@ export function Settings() {
     setGatewayAutoStart,
     roleMemoryEnabled,
     setRoleMemoryEnabled,
+    memoryEmbeddingEnabled,
+    setMemoryEmbeddingEnabled,
     cdpRemoteControlEnabled,
     cdpRemoteDebuggingPort,
     setCdpRemoteControlEnabled,
@@ -1266,6 +1269,10 @@ export function Settings() {
       title: t('navigation.billing.title'),
       description: t('navigation.billing.description'),
     },
+    storage: {
+      title: t('navigation.storage.title'),
+      description: t('navigation.storage.description'),
+    },
   } satisfies Record<Exclude<SettingsSectionId, 'overview'>, { title: string; description: string }>;
 
   const settingsSections = [
@@ -1325,6 +1332,13 @@ export function Settings() {
       ...sectionMeta.billing,
       testId: 'settings-nav-billing',
     },
+    {
+      id: 'storage',
+      to: '/settings/storage',
+      icon: <Trash2 className="h-5 w-5" />,
+      ...sectionMeta.storage,
+      testId: 'settings-nav-storage',
+    },
   ] as const;
   const settingsSectionGroups = [
     {
@@ -1340,7 +1354,7 @@ export function Settings() {
     {
       id: 'operations',
       title: t('navigation.groups.operations'),
-      sections: settingsSections.filter((section) => ['billing', 'system', 'developer'].includes(section.id)),
+      sections: settingsSections.filter((section) => ['billing', 'system', 'developer', 'storage'].includes(section.id)),
     },
   ] as const;
 
@@ -1350,7 +1364,11 @@ export function Settings() {
   const pageSubtitle = currentSection === 'overview'
     ? t('subtitle')
     : sectionMeta[currentSection].description;
-  const pageTitleTestId = currentSection === 'models' ? 'models-page-title' : undefined;
+  const pageTitleTestId = currentSection === 'models'
+    ? 'models-page-title'
+    : currentSection === 'billing'
+      ? 'billing-page-title'
+      : undefined;
 
   return (
     <SettingsPageShell>
@@ -1387,44 +1405,38 @@ export function Settings() {
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2 space-y-12">
           {currentSection === 'overview' && (
-            <>
-              <Suspense fallback={null}>
-                <WorkHeatGraphLazy />
-              </Suspense>
-
-              <div data-testid="settings-overview" className="space-y-8">
-                {settingsSectionGroups.map((group) => (
-                  <section key={group.id} className="space-y-3">
-                    <h2 className="text-sm font-semibold text-foreground/70">
-                      {group.title}
-                    </h2>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      {group.sections.map((section) => (
-                        <Card
-                          key={section.id}
-                          className="group rounded-lg border-black/10 bg-surface-modal shadow-none transition-colors hover:bg-black/[0.03] dark:border-white/10 dark:hover:bg-white/[0.05]"
+            <div data-testid="settings-overview" className="space-y-8">
+              {settingsSectionGroups.map((group) => (
+                <section key={group.id} className="space-y-3">
+                  <h2 className="text-sm font-semibold text-foreground/70">
+                    {group.title}
+                  </h2>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {group.sections.map((section) => (
+                      <Card
+                        key={section.id}
+                        className="group rounded-lg border-black/10 bg-surface-modal shadow-none transition-colors hover:bg-black/[0.03] dark:border-white/10 dark:hover:bg-white/[0.05]"
+                      >
+                        <Link
+                          to={section.to}
+                          data-testid={section.testId}
+                          className="flex h-full items-start gap-4 p-5"
                         >
-                          <Link
-                            to={section.to}
-                            data-testid={section.testId}
-                            className="flex h-full items-start gap-4 p-5"
-                          >
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-black/5 text-foreground/80 dark:bg-white/10">
-                              {section.icon}
-                            </span>
-                            <span className="min-w-0 flex-1">
-                              <span className="block text-base font-medium text-foreground">{section.title}</span>
-                              <span className="mt-1 block text-sm leading-5 text-muted-foreground">{section.description}</span>
-                            </span>
-                            <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-                          </Link>
-                        </Card>
-                      ))}
-                    </div>
-                  </section>
-                ))}
-              </div>
-            </>
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-black/5 text-foreground/80 dark:bg-white/10">
+                            {section.icon}
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block text-base font-medium text-foreground">{section.title}</span>
+                            <span className="mt-1 block text-sm leading-5 text-muted-foreground">{section.description}</span>
+                          </span>
+                          <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                        </Link>
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
           )}
 
           {/* Appearance */}
@@ -1616,6 +1628,34 @@ export function Settings() {
                 </div>
               </div>
 
+              <div
+                className="rounded-lg border border-black/10 bg-surface-modal p-5 shadow-none dark:border-white/10"
+                data-testid="settings-memory-embedding-section"
+              >
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <ScanSearch className="h-4 w-4 text-foreground/70" />
+                      <Label className="text-sm font-medium text-foreground">{t('memoryEmbedding.title')}</Label>
+                      <Badge variant={memoryEmbeddingEnabled ? 'secondary' : 'outline'} className="rounded-full text-2xs">
+                        {memoryEmbeddingEnabled ? t('memoryEmbedding.enabled') : t('memoryEmbedding.disabled')}
+                      </Badge>
+                    </div>
+                    <p className="mt-1 max-w-2xl text-meta text-muted-foreground">
+                      {t('memoryEmbedding.description')}
+                    </p>
+                    <p className="mt-2 max-w-2xl text-xs text-muted-foreground">
+                      {t('memoryEmbedding.disableEffect')}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={memoryEmbeddingEnabled}
+                    onCheckedChange={setMemoryEmbeddingEnabled}
+                    data-testid="settings-memory-embedding-toggle"
+                  />
+                </div>
+              </div>
+
               {remoteControlSection}
               <ProjectRulesCenter />
               <div className="rounded-lg border border-black/10 bg-surface-modal p-5 shadow-none dark:border-white/10">
@@ -1791,12 +1831,7 @@ export function Settings() {
 
           {/* Developer */}
           {currentSection === 'billing' && (
-            <>
-              <Suspense fallback={null}>
-                <WorkHeatGraphLazy />
-              </Suspense>
-              <SettingsBillingLazy embedded />
-            </>
+            <SettingsBillingLazy embedded />
           )}
 
           {currentSection === 'developer' && (
@@ -1980,6 +2015,8 @@ export function Settings() {
                       </Button>
                     </div>
                   </div>
+
+                  <AgentDevWorkbenchPanel />
 
                   {showCliTools && (
                     <div className="space-y-3">
@@ -2186,6 +2223,18 @@ export function Settings() {
                     </>
                   )}
                 </div>
+              </div>
+            </>
+          )}
+
+          {currentSection === 'storage' && (
+            <>
+              <Separator className="bg-black/5 dark:bg-white/5" />
+              <div data-testid="settings-storage-section">
+                <h2 data-testid="settings-storage-title" className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
+                  {t('storage.title')}
+                </h2>
+                <StorageCleanerSection />
               </div>
             </>
           )}

@@ -76,6 +76,15 @@ function inferProviderVendorIdFromOpenClawEntry(
   return ((BUILTIN_PROVIDER_TYPES as readonly string[]).includes(key) ? key : 'custom') as ProviderType | 'custom';
 }
 
+function getRuntimeDefaultModelForKey(
+  key: string,
+  defaultModel: string | undefined,
+): string | undefined {
+  if (!defaultModel?.includes('/')) return undefined;
+  const [providerKey] = defaultModel.split('/');
+  return providerKey === key ? defaultModel : undefined;
+}
+
 export class ProviderService {
   async listVendors(): Promise<ProviderDefinition[]> {
     return PROVIDER_DEFINITIONS;
@@ -143,10 +152,20 @@ export class ProviderService {
         const aliasAccounts = storeGroup.filter((a) => a.vendorId !== key);
         const candidates = aliasAccounts.length > 0 ? aliasAccounts : storeGroup;
         candidates.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-        result.push(candidates[0]);
+        const kept = candidates[0];
+        const canHydrateRuntimeModel = !kept.model && (kept.id === key || kept.vendorId === key);
+        const runtimeDefaultModel = canHydrateRuntimeModel
+          ? getRuntimeDefaultModelForKey(key, defaultModel)
+          : undefined;
+        const hydrated = runtimeDefaultModel && kept.model !== runtimeDefaultModel
+          ? { ...kept, model: runtimeDefaultModel }
+          : kept;
+        if (hydrated !== kept) {
+          await saveProviderAccount(hydrated);
+        }
+        result.push(hydrated);
 
         // Clean up orphaned duplicates from the store.
-        const kept = candidates[0];
         for (const account of storeGroup) {
           if (account.id !== kept.id) {
             logger.info(

@@ -6,6 +6,7 @@
 import { randomBytes } from 'crypto';
 import { app } from 'electron';
 import { resolveSupportedLanguage } from '@shared/language';
+import type { PromptCacheRiskEvent } from '@shared/types/workspace';
 import type { WorkProviderConfig } from '@shared/types/work-provider';
 
 // Lazy-load electron-store (ESM module)
@@ -46,6 +47,7 @@ export interface AppSettings {
   gatewayAutoStart: boolean;
   gatewayPort: number;
   roleMemoryEnabled: boolean;
+  memoryEmbeddingEnabled: boolean;
   gatewayToken: string;
   cdpRemoteControlEnabled: boolean;
   cdpRemoteDebuggingPort: number;
@@ -65,6 +67,7 @@ export interface AppSettings {
   enabledSkills: string[];
   disabledSkills: string[];
   workProviders: WorkProviderConfig;
+  promptCacheRiskLedger: PromptCacheRiskEvent[];
 }
 
 /**
@@ -95,6 +98,7 @@ function createDefaultSettings(): AppSettings {
     gatewayAutoStart: true,
     gatewayPort: 18789,
     roleMemoryEnabled: true,
+    memoryEmbeddingEnabled: false,
     gatewayToken: generateToken(),
     cdpRemoteControlEnabled: false,
     cdpRemoteDebuggingPort: 9222,
@@ -114,6 +118,7 @@ function createDefaultSettings(): AppSettings {
     enabledSkills: [],
     disabledSkills: [],
     workProviders: {},
+    promptCacheRiskLedger: [],
   };
 }
 

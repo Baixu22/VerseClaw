@@ -8,7 +8,9 @@ import { createHash } from "node:crypto";
 import type { SessionSystemPromptReport } from "../config/sessions/types.js";
 import { buildBootstrapInjectionStats } from "./bootstrap-budget.js";
 import type { EmbeddedContextFile } from "./embedded-agent-helpers.js";
+import type { RuntimeIntensityPolicy } from "./intensity-policy.js";
 import type { AgentTool } from "./runtime/index.js";
+import type { PromptMode } from "./system-prompt.types.js";
 import type { WorkspaceBootstrapFile } from "./workspace.js";
 
 type ToolReportEntry = SessionSystemPromptReport["tools"]["entries"][number];
@@ -102,6 +104,50 @@ function measureRenderedProjectContextChars(systemPrompt: string): number {
   return extractBetween(systemPrompt, "\n# Project Context\n", "\n## Silent Replies\n").length;
 }
 
+function normalizeNonNegativeInteger(value: number | undefined): number {
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
+    return 0;
+  }
+  return Math.floor(value);
+}
+
+function estimateSavedTokens(chars: number | undefined): number {
+  return Math.ceil(normalizeNonNegativeInteger(chars) / 4);
+}
+
+function buildRuntimeIntensityReport(
+  params:
+    | {
+        policy: RuntimeIntensityPolicy;
+        promptMode: PromptMode;
+        skillsIncluded?: number;
+        skillsTotal?: number;
+        toolResultMaxChars?: number;
+        estimatedSavedChars?: number;
+      }
+    | undefined,
+): SessionSystemPromptReport["runtimeIntensity"] | undefined {
+  if (!params) {
+    return undefined;
+  }
+  const estimatedSavedChars = normalizeNonNegativeInteger(params.estimatedSavedChars);
+  return {
+    level: params.policy.level,
+    policyId: params.policy.policyId,
+    promptMode: params.promptMode,
+    skillsMode: params.policy.skills.mode,
+    shellOutputMode: params.policy.shellOutput.mode,
+    ...(params.policy.shellOutput.mode === "compact-preferred"
+      ? { shellOutputRecovery: params.policy.shellOutput.recovery }
+      : {}),
+    skillsIncluded: normalizeNonNegativeInteger(params.skillsIncluded),
+    skillsTotal: normalizeNonNegativeInteger(params.skillsTotal),
+    toolResultMaxChars: normalizeNonNegativeInteger(params.toolResultMaxChars),
+    estimatedSavedChars,
+    estimatedSavedTokens: estimateSavedTokens(estimatedSavedChars),
+  };
+}
+
 /** Builds the stored report for a rendered system prompt and its inputs. */
 export function buildSystemPromptReport(params: {
   source: SessionSystemPromptReport["source"];
@@ -121,6 +167,7 @@ export function buildSystemPromptReport(params: {
   skillsPrompt: string;
   tools: AgentTool[];
   currentTurn?: SessionSystemPromptReport["currentTurn"];
+  runtimeIntensity?: Parameters<typeof buildRuntimeIntensityReport>[0];
 }): SessionSystemPromptReport {
   const systemPromptChars = params.systemPrompt.length;
   const projectContextChars = measureRenderedProjectContextChars(params.systemPrompt);
@@ -147,6 +194,9 @@ export function buildSystemPromptReport(params: {
       nonProjectContextChars: Math.max(0, systemPromptChars - projectContextChars),
     },
     ...(params.currentTurn ? { currentTurn: params.currentTurn } : {}),
+    ...(params.runtimeIntensity
+      ? { runtimeIntensity: buildRuntimeIntensityReport(params.runtimeIntensity) }
+      : {}),
     injectedWorkspaceFiles: buildBootstrapInjectionStats({
       bootstrapFiles: params.bootstrapFiles,
       injectedFiles: params.injectedFiles,

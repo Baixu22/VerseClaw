@@ -39,6 +39,10 @@
     "billing": {
       "title": "Billing",
       "description": "Token usage history, cost estimates, and usage activity charts."
+    },
+    "storage": {
+      "title": "Storage & Memory",
+      "description": "Scan and clean app caches, logs, and session artefacts."
     }
   },
   "appearance": {
@@ -212,6 +216,13 @@
     "disableEffect": "Turning this off stops Role Memory injection and blocks memory writes. Existing cards remain on disk and native OpenClaw memory is unchanged.",
     "enabled": "Enabled",
     "disabled": "Disabled"
+  },
+  "memoryEmbedding": {
+    "title": "Memory Embedding",
+    "description": "Use real vector embeddings for memory retrieval instead of the default character n-gram fuzzy match. Improves semantic recall for paraphrased or morphologically varied queries.",
+    "disableEffect": "When off, memory retrieval falls back to local 3-gram TF-IDF matching with zero regression. Enable after configuring at least one embedding provider.",
+    "enabled": "Enabled",
+    "disabled": "Off"
   },
   "knowledgeHub": {
     "watched": {
@@ -391,11 +402,100 @@
     "telemetryEmpty": "No telemetry yet",
     "telemetryCopied": "Telemetry copied",
     "telemetryCleared": "Telemetry cleared",
+    "agentDevWorkbench": {
+      "title": "Agent Dev Workbench",
+      "description": "Inspect real Agent Dev registry, contract, trace, cost, sandbox, conformance, and recording evidence through host-api.",
+      "scenarios": "Scenarios",
+      "contractGaps": "Contract gaps",
+      "traceEvents": "Trace events",
+      "totalTokens": "Total tokens",
+      "contracts": "Contracts",
+      "artifacts": "Artifacts",
+      "record": "Record Scenario",
+      "recorded": "Scenario recording written: {{path}}",
+      "recordFailed": "Failed to record scenario: {{error}}",
+      "loadFailed": "Failed to load Agent Dev Workbench: {{error}}",
+      "diagnostics": "Host calls: {{mockCalls}} / sandbox effects: {{sandboxEffects}} / selector surfaces: {{selectorSurfaces}}",
+      "contractLabels": {
+        "traceTimeline": "Trace timeline",
+        "costReport": "Cost report",
+        "skillSandboxReport": "Skill sandbox",
+        "selectorContract": "Selector contract"
+      },
+      "artifactLabels": {
+        "workbench": "Workbench",
+        "quality": "Quality",
+        "channelConformance": "Channel conformance",
+        "scenarioRecordings": "Recordings"
+      },
+      "gates": {
+        "fastPr": "Fast PR",
+        "fullLocal": "Full local",
+        "nightlyRelease": "Nightly / release"
+      }
+    },
     "installCmd": "Install \"openclaw\" Command",
     "installCmdDesc": "Installs ~/.local/bin/openclaw (no admin required)",
     "installTitle": "Install OpenClaw Command",
     "installMessage": "Install the \"openclaw\" command?",
     "installDetail": "This will create ~/.local/bin/openclaw. Ensure ~/.local/bin is on your PATH if you want to run it globally."
+  },
+  "storage": {
+    "title": "Storage & Memory",
+    "description": "Scan and clean app caches, logs, and session artefacts.",
+    "systemInfo": {
+      "ram": "Memory (RAM)",
+      "disk": "Disk Space",
+      "cpu": "CPU",
+      "used": "Used",
+      "free": "Free",
+      "total": "Total",
+      "cores": "{{count}} cores",
+      "load": "{{percent}}% load",
+      "notAvailable": "Not available"
+    },
+    "categories": {
+      "logs": { "label": "Logs", "description": "Application log files" },
+      "sessions": { "label": "Sessions", "description": "Conversation transcripts" },
+      "trajectories": { "label": "Trajectories", "description": "Agent run trajectories and flight records" },
+      "mediaOutbound": { "label": "Outbound Media", "description": "Generated media artifacts" },
+      "mediaThumbs": { "label": "Media Thumbnails", "description": "Cached media thumbnails (regenerable)" },
+      "uvCache": { "label": "UV Cache", "description": "Python uv tool cache (regenerable)" },
+      "electronCache": { "label": "Electron Cache", "description": "Electron runtime cache (regenerable)" },
+      "trash": { "label": "Trash", "description": "Soft-deleted items awaiting cleanup" }
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "scan": "Scan Now",
+      "deleteSelected": "Delete Selected",
+      "askAgent": "Ask Agent to Recommend",
+      "confirmDelete": "Confirm Delete",
+      "cancel": "Cancel",
+      "dryRun": "Dry Run",
+      "itemsSelected": "{{count}} item(s) selected"
+    },
+    "status": {
+      "scanning": "Scanning...",
+      "deleting": "Deleting...",
+      "empty": "No items found",
+      "truncated": "Showing first {{count}} items (truncated)",
+      "safeToDelete": "Safe to delete",
+      "notDeletable": "Not deletable",
+      "regenerable": "Regenerable"
+    },
+    "toast": {
+      "deleteSucceeded": "Deleted {{count}} item(s), freed {{bytes}}",
+      "deleteFailed": "Delete failed: {{error}}",
+      "scanFailed": "Scan failed: {{error}}",
+      "ramLow": "Memory is running low. Consider cleaning up in Settings > Storage.",
+      "diskLow": "Disk space is running low. Consider cleaning up in Settings > Storage."
+    },
+    "agent": {
+      "recommendPrompt": "Please scan the app's storage and recommend items I can safely delete to free up space. Use the clawx-storage tools to scan and recommend, then present the recommendation as a tool-ui OptionListCard so I can confirm which items to delete."
+    },
+    "riskNote": {
+      "activeSession": "Active session — cannot be deleted"
+    }
   },
   "about": {
     "title": "About",

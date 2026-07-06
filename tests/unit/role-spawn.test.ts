@@ -80,7 +80,11 @@ describe('role registry', () => {
     const names = listRoleContracts().map((role) => role.name);
     expect(names).toContain('planner');
     expect(names).toContain('skeptic');
+    expect(names).toContain('knowledge-librarian');
     expect(resolveRoleContract('implementer')?.tools).toContain('edit');
+    expect(resolveRoleContract('knowledge-librarian')?.tools).toEqual(
+      expect.arrayContaining(['knowledge.search', 'knowledge.get']),
+    );
   });
 
   it('merges config roles and lets config override a built-in by name', () => {

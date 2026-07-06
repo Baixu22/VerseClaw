@@ -55,6 +55,85 @@ function project({
 }
 
 describe('execution projection', () => {
+  it('promotes active runtime assistant text into the latest streaming reply', () => {
+    const messages: RawMessage[] = [
+      { role: 'user', content: 'Stream through runtime events' },
+    ];
+    const runtimeRuns: Record<string, ChatRuntimeRunState> = {
+      'run-live': {
+        runId: 'run-live',
+        sessionKey: SESSION_KEY,
+        status: 'running',
+        assistantText: 'First line of streamed output.',
+        thinkingText: '',
+        events: [
+          {
+            type: 'run.started',
+            runId: 'run-live',
+            sessionKey: SESSION_KEY,
+          },
+          {
+            type: 'assistant.delta',
+            runId: 'run-live',
+            sessionKey: SESSION_KEY,
+            text: 'First line of streamed output.',
+          },
+        ],
+      },
+    };
+
+    const result = project({
+      messages,
+      sending: true,
+      activeRunId: 'run-live',
+      runtimeRuns,
+    });
+
+    expect(result.streamingReplyText).toBe('First line of streamed output.');
+    expect(result.cards).toHaveLength(1);
+    expect(result.cards[0]).toMatchObject({
+      active: true,
+      streamingReplyText: 'First line of streamed output.',
+    });
+  });
+
+  it('keeps a new active runtime run visible when history already has a prior reply', () => {
+    const messages: RawMessage[] = [
+      { role: 'user', content: 'Earlier request' },
+      { role: 'assistant', content: 'Earlier reply.' },
+    ];
+    const runtimeRuns: Record<string, ChatRuntimeRunState> = {
+      'run-new': {
+        runId: 'run-new',
+        sessionKey: SESSION_KEY,
+        status: 'running',
+        assistantText: '',
+        thinkingText: '',
+        events: [
+          {
+            type: 'run.started',
+            runId: 'run-new',
+            sessionKey: SESSION_KEY,
+          },
+        ],
+      },
+    };
+
+    const result = project({
+      messages,
+      activeRunId: 'run-new',
+      runtimeRuns,
+    });
+
+    expect(result.inputRunActive).toBe(true);
+    expect(result.runSettledInHistory).toBe(false);
+    expect(result.cards).toHaveLength(1);
+    expect(result.cards[0]).toMatchObject({
+      active: true,
+      streamingReplyText: null,
+    });
+  });
+
   it('turns active runtime events into a running tool step', () => {
     const messages: RawMessage[] = [
       { role: 'user', content: 'Read the file' },

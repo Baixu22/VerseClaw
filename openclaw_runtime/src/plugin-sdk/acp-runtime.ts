@@ -1,17 +1,17 @@
 // Public ACP runtime helpers for plugins that integrate with ACP control/session state.
 
 import { testing as managerTesting, getAcpSessionManager } from "../acp/control-plane/manager.js";
-import { testing as registryTesting } from "../acp/runtime/registry.js";
+import { testing as registryTesting } from "../runtime/registry.ts";
 
 export { getAcpSessionManager };
-export { AcpRuntimeError, isAcpRuntimeError } from "../acp/runtime/errors.js";
-export type { AcpRuntimeErrorCode } from "../acp/runtime/errors.js";
+export { AcpRuntimeError, isAcpRuntimeError } from "../runtime/errors.ts";
+export type { AcpRuntimeErrorCode } from "../runtime/errors.ts";
 export {
   getAcpRuntimeBackend,
   registerAcpRuntimeBackend,
   requireAcpRuntimeBackend,
   unregisterAcpRuntimeBackend,
-} from "../acp/runtime/registry.js";
+} from "../runtime/registry.ts";
 export type {
   AcpRuntime,
   AcpRuntimeCapabilities,
@@ -27,8 +27,8 @@ export type {
   AcpRuntimeTurnResultError,
   AcpSessionUpdateTag,
 } from "@openclaw/acp-core/runtime/types";
-export { readAcpSessionEntry } from "../acp/runtime/session-meta.js";
-export type { AcpSessionStoreEntry } from "../acp/runtime/session-meta.js";
+export { readAcpSessionEntry } from "../runtime/session-meta.ts";
+export type { AcpSessionStoreEntry } from "../runtime/session-meta.ts";
 export { tryDispatchAcpReplyHook } from "./acp-runtime-backend.js";
 
 // Keep test helpers off the hot init path. Eagerly merging them here can

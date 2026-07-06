@@ -2,7 +2,7 @@
 import type { AcpRuntime, AcpRuntimeHandle } from "@openclaw/acp-core/runtime/types";
 import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
-import { AcpRuntimeError, withAcpRuntimeErrorBoundary } from "../runtime/errors.js";
+import { AcpRuntimeError, withAcpRuntimeErrorBoundary } from "../../runtime/errors.ts";
 import type { ManagerRuntimeHandleCache } from "./manager.runtime-handle-cache.js";
 import type {
   AcpSessionRuntimeOptions,

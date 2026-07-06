@@ -120,6 +120,7 @@ const TEXT_DOCUMENT_EXTS = new Set([
 ]);
 const PDF_PREVIEW_EXTS = new Set(['.pdf']);
 const SHEET_PREVIEW_EXTS = new Set(['.xlsx', '.xls']);
+const OFFICE_PREVIEW_EXTS = new Set(['.docx', '.xlsx', '.pptx']);
 const CODE_EXTS = new Set([
   '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs',
   '.py', '.rb', '.go', '.rs', '.java', '.kt', '.swift',
@@ -189,13 +190,19 @@ export function supportsInlineDocumentPreview(ext: string): boolean {
     TEXT_DOCUMENT_EXTS.has(lower)
     || PDF_PREVIEW_EXTS.has(lower)
     || SHEET_PREVIEW_EXTS.has(lower)
+    || OFFICE_PREVIEW_EXTS.has(lower)
   );
 }
 
 /** True for binary documents we render via dedicated viewers (PDF / spreadsheet). */
 export function supportsRichDocumentPreview(ext: string): boolean {
   const lower = ext.toLowerCase();
-  return PDF_PREVIEW_EXTS.has(lower) || SHEET_PREVIEW_EXTS.has(lower);
+  return PDF_PREVIEW_EXTS.has(lower) || SHEET_PREVIEW_EXTS.has(lower) || OFFICE_PREVIEW_EXTS.has(lower);
+}
+
+export function isOfficePreviewExt(ext: string | null | undefined): boolean {
+  if (!ext) return false;
+  return OFFICE_PREVIEW_EXTS.has(ext.toLowerCase());
 }
 
 export function isHtmlPreviewExt(ext: string | null | undefined): boolean {

@@ -4,6 +4,30 @@ import { FIELD_LABELS } from "../../openclaw_runtime/src/config/schema.labels";
 import { OpenClawSchema } from "../../openclaw_runtime/src/config/zod-schema";
 
 describe("runtime feature config schema", () => {
+  it("accepts MCP exposure filters for capability publication scoping", () => {
+    const parsed = OpenClawSchema.parse({
+      mcp: {
+        servers: {
+          filesystem: {
+            command: "npx",
+            args: ["-y", "@modelcontextprotocol/server-filesystem"],
+            exposure: {
+              agents: ["main"],
+              workspaces: ["workspace-a"],
+              roles: ["reviewer"],
+            },
+          },
+        },
+      },
+    });
+
+    expect(parsed.mcp?.servers?.filesystem?.exposure).toEqual({
+      agents: ["main"],
+      workspaces: ["workspace-a"],
+      roles: ["reviewer"],
+    });
+  });
+
   it("accepts default-off runtime AgentMap flags without widening strict keys", () => {
     const parsed = OpenClawSchema.parse({
       runtime: {
@@ -103,12 +127,22 @@ describe("runtime feature config schema", () => {
         memory: {},
         agentMap: {},
         traceContext: {},
+        toolGovernance: {
+          destructiveOperationGuard: {
+            preflight: {},
+          },
+        },
       },
     });
 
     expect(parsed.runtime?.memory).toEqual({});
     expect(parsed.runtime?.agentMap).toEqual({});
     expect(parsed.runtime?.traceContext).toEqual({});
+    expect(parsed.runtime?.toolGovernance).toEqual({
+      destructiveOperationGuard: {
+        preflight: {},
+      },
+    });
     expect(parsed.runtime?.memory?.shadow).not.toBe(true);
     expect(parsed.runtime?.memory?.provider).not.toBe(true);
     expect(parsed.runtime?.memory?.proposeFacts).not.toBe(true);
@@ -122,6 +156,8 @@ describe("runtime feature config schema", () => {
     expect(parsed.runtime?.agentMap?.promptCandidateControlledCutoverPilot).not.toBe(true);
     expect(parsed.runtime?.agentMap?.promptCandidateTaskLoopExplicitInvocationPilot)
       .not.toBe(true);
+    expect(parsed.runtime?.toolGovernance?.destructiveOperationGuard?.preflight?.enabled)
+      .not.toBe(true);
   });
 
   it("keeps the existing evidence verifier schema entry valid", () => {
@@ -132,6 +168,61 @@ describe("runtime feature config schema", () => {
     });
 
     expect(parsed.runtime?.evidenceVerifier?.shadow).toBe(true);
+  });
+
+  it("accepts default-off destructive operation guard preflight without widening strict keys", () => {
+    const parsed = OpenClawSchema.parse({
+      runtime: {
+        toolGovernance: {
+          destructiveOperationGuard: {
+            preflight: {
+              enabled: true,
+            },
+          },
+        },
+      },
+    });
+
+    expect(parsed.runtime?.toolGovernance?.destructiveOperationGuard?.preflight?.enabled)
+      .toBe(true);
+    expect(() =>
+      OpenClawSchema.parse({
+        runtime: {
+          toolGovernance: {
+            destructiveOperationGuard: {
+              preflight: {
+                enabled: "true",
+              },
+            },
+          },
+        },
+      }),
+    ).toThrow();
+    expect(() =>
+      OpenClawSchema.parse({
+        runtime: {
+          toolGovernance: {
+            destructiveOperationGuard: {
+              preflight: {
+                enabled: true,
+                defaultOn: true,
+              },
+            },
+          },
+        },
+      }),
+    ).toThrow();
+    expect(() =>
+      OpenClawSchema.parse({
+        runtime: {
+          toolGovernance: {
+            destructiveOperationGuard: {
+              activeOwner: "task_loop",
+            },
+          },
+        },
+      }),
+    ).toThrow();
   });
 
   it("documents runtime AgentMap provider labels and help as shadow-only", () => {
@@ -166,5 +257,27 @@ describe("runtime feature config schema", () => {
       .toContain("caller explicitly requests TaskLoop pilot invocation");
     expect(FIELD_HELP["runtime.agentMap.promptCandidateTaskLoopExplicitInvocationPilot"])
       .toContain("does not change default TaskLoop reviewer prompts");
+  });
+
+  it("documents destructive operation guard preflight as default-off and preflight-only", () => {
+    expect(FIELD_LABELS["runtime.toolGovernance"]).toBe("Runtime Tool Governance");
+    expect(FIELD_LABELS["runtime.toolGovernance.destructiveOperationGuard"])
+      .toBe("Destructive Operation Guard");
+    expect(FIELD_LABELS["runtime.toolGovernance.destructiveOperationGuard.preflight"])
+      .toBe("Destructive Operation Guard Preflight");
+    expect(FIELD_LABELS["runtime.toolGovernance.destructiveOperationGuard.preflight.enabled"])
+      .toBe("Destructive Operation Guard Preflight Enabled");
+    expect(FIELD_HELP["runtime.toolGovernance"]).toContain("Default-off");
+    expect(FIELD_HELP["runtime.toolGovernance"]).toContain("do not change TaskLoop");
+    expect(FIELD_HELP["runtime.toolGovernance.destructiveOperationGuard"])
+      .toContain("mutation-capable tool invocation preflight");
+    expect(FIELD_HELP["runtime.toolGovernance.destructiveOperationGuard"])
+      .toContain("never enables broad shell pattern blocking");
+    expect(FIELD_HELP["runtime.toolGovernance.destructiveOperationGuard.preflight"])
+      .toContain("Omitted settings preserve legacy tool behavior");
+    expect(FIELD_HELP["runtime.toolGovernance.destructiveOperationGuard.preflight.enabled"])
+      .toContain("default: false");
+    expect(FIELD_HELP["runtime.toolGovernance.destructiveOperationGuard.preflight.enabled"])
+      .toContain("false-block corpus");
   });
 });

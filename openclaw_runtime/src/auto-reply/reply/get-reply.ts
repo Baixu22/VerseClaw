@@ -333,6 +333,20 @@ export async function getReplyFromConfig(
   let provider = defaultProvider;
   let model = defaultModel;
   let hasResolvedHeartbeatModelOverride = false;
+  // Area 2 §3.2: turn-scoped model override wins over everything (heartbeat,
+  // session modelOverride, agent default). Resolved here, never persisted.
+  const turnModelRaw = normalizeOptionalString(opts?.modelRefOverride);
+  if (turnModelRaw) {
+    const turnRef = resolveModelRefFromString({
+      raw: turnModelRaw,
+      defaultProvider,
+      aliasIndex,
+    });
+    if (turnRef) {
+      provider = turnRef.ref.provider;
+      model = turnRef.ref.model;
+    }
+  }
   if (opts?.isHeartbeat) {
     // Prefer the resolved per-agent heartbeat model passed from the heartbeat runner,
     // fall back to the global defaults heartbeat model for backward compatibility.
@@ -787,7 +801,7 @@ export async function getReplyFromConfig(
     perMessageQueueMode,
     perMessageQueueOptions,
   } = directiveResult.result;
-  let { directives, cleanedBody, resolvedThinkLevel, resolvedReasoningLevel } =
+  let { directives, cleanedBody, resolvedThinkLevel, resolvedPromptMode, resolvedReasoningLevel } =
     directiveResult.result;
   provider = resolvedProvider;
   model = resolvedModel;

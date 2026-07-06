@@ -84,10 +84,16 @@ function collectFilePaths(trace: ObservabilityTrace): string[] {
   for (const span of trace.spans ?? []) {
     consider(attrString(span.attributes, 'path'));
     consider(attrString(span.attributes, 'filePath'));
+    consider(attrString(span.attributes, 'workspaceRoot'));
+    consider(attrString(span.attributes, 'workspacePath'));
+    consider(attrString(span.attributes, 'cwd'));
   }
   for (const event of trace.events ?? []) {
     consider(attrString(event.attributes, 'path'));
     consider(attrString(event.attributes, 'filePath'));
+    consider(attrString(event.attributes, 'workspaceRoot'));
+    consider(attrString(event.attributes, 'workspacePath'));
+    consider(attrString(event.attributes, 'cwd'));
   }
   return [...paths].sort();
 }

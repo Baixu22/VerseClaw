@@ -16,6 +16,14 @@ function usageTimestamp(daysAgo: number): string {
   return date.toISOString();
 }
 
+function usageDayKey(timestamp: string): string {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 const usageHistory = [
   {
     timestamp: usageTimestamp(0),
@@ -135,15 +143,29 @@ test.describe('Billing page', () => {
       await openBillingSettingsPage(page);
       await expect(page.getByTestId('billing-page')).toBeVisible();
       await expect(page.getByTestId('billing-page-title')).toBeVisible();
+      await expect(page.getByTestId('billing-page-title')).toHaveCount(1);
       await expect(page.getByTestId('billing-back-to-models')).toBeVisible();
       await expect(page.getByTestId('billing-window-controls')).toBeVisible();
       await expect(page.getByTestId('billing-data-quality')).toBeVisible();
       await expect(page.getByTestId('billing-data-quality')).toContainText('Billable records');
 
       await expect(page.getByTestId('billing-token-chart')).toBeVisible();
-      await expect(page.getByTestId('billing-token-chart-bar')).toHaveCount(30);
+      await expect(page.getByTestId('billing-token-chart').locator('svg')).toBeVisible();
       await expect(page.getByTestId('billing-usage-heatmap')).toBeVisible();
-      await expect(page.getByTestId('billing-usage-heatmap-day')).toHaveCount(30);
+      expect(await page.getByTestId('billing-usage-heatmap-day').count()).toBeGreaterThanOrEqual(30);
+      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('border-radius', '2px');
+      await page.evaluate(() => document.documentElement.classList.remove('dark'));
+      await expect(page.getByTestId('billing-usage-heatmap')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('background-color', 'rgb(235, 237, 240)');
+      await page.evaluate(() => document.documentElement.classList.add('dark'));
+      await expect(page.getByTestId('billing-usage-heatmap')).toHaveCSS('background-color', 'rgb(13, 17, 23)');
+      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('background-color', 'rgb(22, 27, 34)');
+      const actualUsageDate = usageDayKey(usageHistory[1].timestamp);
+      const actualUsageCell = page.locator(`[data-billing-usage-date="${actualUsageDate}"]`);
+      await expect(actualUsageCell).toHaveAttribute('data-billing-usage-tokens', '2900');
+      await expect(actualUsageCell).toHaveAttribute('data-billing-usage-records', '1');
+      await expect(actualUsageCell).toHaveAttribute('title', /2,900/);
+      await expect(actualUsageCell).not.toHaveCSS('background-color', 'rgb(22, 27, 34)');
       await expect(page.getByTestId('billing-model-chart')).toContainText('e2e-model-pro');
       await expect(page.getByTestId('billing-model-chart')).not.toContainText('e2e-model-pending');
       await expect(page.getByTestId('billing-recent-list')).toContainText('billing-session-a');
@@ -172,7 +194,7 @@ test.describe('Billing page', () => {
 
       await openBillingSettingsPage(page);
       await expect(page.getByTestId('billing-page')).toBeVisible();
-      await expect(page.getByTestId('billing-token-chart-bar')).toHaveCount(30);
+      await expect(page.getByTestId('billing-token-chart').locator('svg')).toBeVisible();
       await expect(page.getByTestId('billing-model-chart')).toContainText('e2e-model-pro');
       await expect(page.getByText('Gateway offline')).toBeVisible();
     } finally {

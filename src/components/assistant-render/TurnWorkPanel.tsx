@@ -35,7 +35,7 @@ export function TurnWorkPanel({
 
   return (
     <section
-      className="rounded-md border border-border bg-black/[0.025] p-3 text-xs shadow-sm dark:bg-white/[0.035]"
+      className="rounded-md border border-border/70 bg-background/60 p-3 text-xs shadow-sm"
       data-testid="turn-work-panel"
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -48,7 +48,7 @@ export function TurnWorkPanel({
           </div>
         </div>
         {availableKinds.length > 1 && (
-          <div className="flex rounded-md bg-surface-input p-1" data-testid="turn-work-tabs">
+          <div className="flex rounded-md bg-surface-input/70 p-1" data-testid="turn-work-tabs">
             {availableKinds.map((kind) => (
               <button
                 key={kind}
@@ -149,7 +149,7 @@ function ReportList({
             disabled={!canOpen}
             onClick={() => onOpenReport(report)}
             className={cn(
-              'inline-flex min-w-0 max-w-full items-center gap-2 rounded-md border border-border bg-background/70 px-2.5 py-2 text-left',
+              'inline-flex min-w-0 max-w-full items-center gap-2 rounded-md border border-border/70 bg-background/60 px-2.5 py-2 text-left',
               canOpen && 'transition-colors hover:bg-black/5 dark:hover:bg-white/10',
               !canOpen && 'cursor-default opacity-80',
             )}
@@ -184,7 +184,7 @@ function SourceList({ sources }: { sources: TurnSourceItem[] }) {
         <button
           key={source.id}
           type="button"
-          className="flex w-full min-w-0 items-center gap-2 rounded-md bg-surface-input px-2.5 py-2 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+          className="flex w-full min-w-0 items-center gap-2 rounded-md bg-surface-input/70 px-2.5 py-2 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
           title={source.url}
           onClick={() => void hostApi.shell.openExternal(source.url)}
         >
@@ -201,5 +201,5 @@ function SourceList({ sources }: { sources: TurnSourceItem[] }) {
 }
 
 function EmptyLine({ label }: { label: string }) {
-  return <div className="rounded-md bg-surface-input px-2.5 py-2 text-2xs text-muted-foreground">{label}</div>;
+  return <div className="rounded-md bg-surface-input/70 px-2.5 py-2 text-2xs text-muted-foreground">{label}</div>;
 }

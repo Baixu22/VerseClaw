@@ -46,18 +46,15 @@ export function TaskLedgerSummaryPanel({
   const { t } = useTranslation('taskLedger');
   const [snapshot, setSnapshot] = useState<TaskLedgerSnapshot | null>(null);
   const [loading, setLoading] = useState(false);
-  const [loaded, setLoaded] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
-    setLoaded(false);
     try {
       const result = await hostApi.taskLedger.snapshot(workspaceId ? { workspaceId } : undefined);
       setSnapshot(result.snapshot);
     } catch {
       setSnapshot(null);
     } finally {
-      setLoaded(true);
       setLoading(false);
     }
   }, [workspaceId]);
@@ -76,7 +73,7 @@ export function TaskLedgerSummaryPanel({
   }, [snapshot]);
 
   const hasContent = !!snapshot && snapshot.nodes.length > 0;
-  const visible = !hideWhenEmpty || !loaded || loading || hasContent;
+  const visible = !hideWhenEmpty || hasContent;
   useEffect(() => {
     onVisibilityChange?.(visible);
   }, [onVisibilityChange, visible]);

@@ -5,7 +5,7 @@ import {
   type AcpRuntimeError,
   toAcpRuntimeError,
   withAcpRuntimeErrorBoundary,
-} from "../runtime/errors.js";
+} from "../../runtime/errors.ts";
 import type {
   ActiveTurnState,
   EnsureManagerRuntimeHandle,

@@ -21,6 +21,7 @@ import {
   writeAgentRoleProfile,
   writeAgentSoul,
 } from '../utils/agent-config';
+import { syncAgentMcpExposureToOpenClawConfig } from './mcp-api';
 import { deleteChannelAccountConfig } from '../utils/channel-config';
 import { ensureVerseClawContext } from '../utils/openclaw-workspace';
 import { isRecord } from './payload-utils';
@@ -212,6 +213,7 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
         defaultSkillIds: optionalStringArray(body.defaultSkillIds),
         defaultMcpServerIds: optionalStringArray(body.defaultMcpServerIds),
       });
+      await syncAgentMcpExposureToOpenClawConfig(agentId, tools.defaultMcpServerIds);
 
       await Promise.all(bootstrapWrites);
       scheduleGatewayReload(ctx, 'update-agent-bootstrap');

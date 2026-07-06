@@ -84,6 +84,8 @@ export const ChatSendParamsSchema = Type.Object(
     message: Type.String(),
     thinking: Type.Optional(Type.String()),
     fastMode: Type.Optional(Type.Boolean()),
+    /** Turn-scoped model override (Area 2 §3.2). Resolved above session/agent defaults. */
+    model: Type.Optional(Type.String()),
     deliver: Type.Optional(Type.Boolean()),
     originatingChannel: Type.Optional(Type.String()),
     originatingTo: Type.Optional(Type.String()),

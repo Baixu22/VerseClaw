@@ -167,6 +167,57 @@ const KIND_TO_FLAG = {
   mission: "missionReport",
 } as const satisfies Record<LocalControlPlaneReportKind, keyof LocalControlPlaneFlags>;
 
+// ---------------------------------------------------------------------------
+// Round 2: LCP Kind Registry Governance
+//
+// Every LCP report kind must declare a decay policy. The kind count is capped
+// at MAX_LCP_KINDS (currently 10) to prevent observability surface explosion.
+// New kinds require project-lead approval and a decay policy entry here.
+//
+// See: net use/designs/development-manual.md §1.1, Stage 0
+// ---------------------------------------------------------------------------
+
+/** Hard cap on the number of LCP report kinds. Currently 5; ceiling is 10. */
+export const MAX_LCP_KINDS = 10;
+
+/** Decay policy for an LCP report kind. Required for every kind. */
+export type LcpKindDecayPolicy = {
+  /** How long the report is retained in the ring buffer, in milliseconds. */
+  retentionMs: number;
+  /** Sampling rate after the shadow phase for this kind is promoted. */
+  postPromotionSamplingRate: number;
+};
+
+/**
+ * Metadata for each LCP report kind. Every kind in
+ * `LOCAL_CONTROL_PLANE_REPORT_KINDS` MUST have an entry here — enforced by
+ * `satisfies`. Adding a kind without a decay policy is a compile error.
+ */
+export const LCP_KIND_METADATA = {
+  context: { retentionMs: 7 * 24 * 60 * 60 * 1000, postPromotionSamplingRate: 1.0 },
+  model_router: { retentionMs: 7 * 24 * 60 * 60 * 1000, postPromotionSamplingRate: 1.0 },
+  capability: { retentionMs: 7 * 24 * 60 * 60 * 1000, postPromotionSamplingRate: 1.0 },
+  evidence: { retentionMs: 30 * 24 * 60 * 60 * 1000, postPromotionSamplingRate: 1.0 },
+  mission: { retentionMs: 7 * 24 * 60 * 60 * 1000, postPromotionSamplingRate: 1.0 },
+} as const satisfies Record<LocalControlPlaneReportKind, LcpKindDecayPolicy>;
+
+/** Compile-time assertion: current kind count does not exceed the cap. */
+const _KIND_COUNT_ASSERTION: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 =
+  LOCAL_CONTROL_PLANE_REPORT_KINDS.length;
+void _KIND_COUNT_ASSERTION;
+
+/**
+ * Validate that adding a new LCP kind would not exceed the cap.
+ * Returns `null` if allowed, or an error message.
+ */
+export function validateLcpKindRegistration(currentCount: number): string | null {
+  if (currentCount >= MAX_LCP_KINDS) {
+    return `Cannot register new LCP kind: current count (${currentCount}) >= cap (${MAX_LCP_KINDS}). ` +
+      `Must deprecate an existing kind or raise the cap (requires project-lead + architecture review).`;
+  }
+  return null;
+}
+
 const MAX_REPORTS = 200;
 const MAX_STRING_CHARS = 1_000;
 const MAX_ARRAY_ITEMS = 50;

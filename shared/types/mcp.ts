@@ -6,6 +6,12 @@ export type McpScope = 'global' | 'agent' | 'workspace';
 export type McpNetworkPolicy = 'disabled' | 'localOnly' | 'enabled';
 export type McpRuntimeStatus = 'unknown' | 'registered' | 'connecting' | 'connected' | 'error';
 
+export interface McpExposureConfig {
+  agents?: string[];
+  workspaces?: string[];
+  roles?: string[];
+}
+
 export interface McpServerConfig {
   id: string;
   name: string;
@@ -21,6 +27,7 @@ export interface McpServerConfig {
   enabled: boolean;
   scope: McpScope;
   ownerId?: string;
+  exposure?: McpExposureConfig;
   toolAllowlist?: string[];
   toolDenylist?: string[];
   permissionMode?: WorkspacePermissionMode;

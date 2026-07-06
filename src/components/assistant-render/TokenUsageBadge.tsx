@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowDown, ArrowUp, Database, Coins } from 'lucide-react';
 import type { RawMessage } from '@/stores/chat';
 import { extractMessageUsage } from '@/components/assistant-render/model';
-import { NumberRoll } from '@/components/assistant-render/NumberRoll';
+import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { cn } from '@/lib/utils';
 
 /**

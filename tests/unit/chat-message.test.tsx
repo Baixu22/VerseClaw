@@ -461,8 +461,9 @@ describe('ChatMessage reply styling', () => {
     };
 
     const { container } = render(<ChatMessage message={message} />);
-    const bubble = container.querySelector('.rounded-2xl.bg-brand');
+    const bubble = container.querySelector('[data-testid="chat-user-message-bubble"]');
     expect(bubble).not.toBeNull();
+    expect(bubble?.classList.contains('rounded-2xl')).toBe(true);
     expect(bubble).toHaveTextContent('Keep the prompt bubble.');
   });
 });

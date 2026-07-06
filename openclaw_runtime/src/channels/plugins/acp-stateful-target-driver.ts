@@ -9,7 +9,7 @@ import {
 } from "../../acp/persistent-bindings.lifecycle.js";
 import { resolveConfiguredAcpBindingSpecBySessionKey } from "../../acp/persistent-bindings.resolve.js";
 import { resolveConfiguredAcpBindingSpecFromRecord } from "../../acp/persistent-bindings.types.js";
-import { readAcpSessionEntry } from "../../acp/runtime/session-meta.js";
+import { readAcpSessionEntry } from "../../runtime/session-meta.ts";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { isAcpSessionKey, resolveAgentIdFromSessionKey } from "../../routing/session-key.js";
 import { performGatewaySessionReset } from "./acp-stateful-target-reset.runtime.js";

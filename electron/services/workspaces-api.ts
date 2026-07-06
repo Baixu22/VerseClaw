@@ -16,6 +16,7 @@ import type {
   WorkspaceProfile,
   WorkspaceSnapshot,
   WorkspaceUiState,
+  SessionFolder,
 } from '@shared/types/workspace';
 
 type WorkspaceStoreDocument = {
@@ -46,6 +47,30 @@ type WorkspaceSaveStateBody = {
   activeSessionKey?: unknown;
   state?: unknown;
   sessionKey?: unknown;
+};
+
+type WorkspaceFolderCreateBody = {
+  workspaceId?: unknown;
+  name?: unknown;
+  parentId?: unknown;
+  kind?: unknown;
+};
+
+type WorkspaceFolderRenameBody = {
+  workspaceId?: unknown;
+  folderId?: unknown;
+  name?: unknown;
+};
+
+type WorkspaceFolderDeleteBody = {
+  workspaceId?: unknown;
+  folderId?: unknown;
+};
+
+type WorkspaceFolderMoveSessionBody = {
+  workspaceId?: unknown;
+  sessionKey?: unknown;
+  folderId?: unknown;
 };
 
 const DEFAULT_SESSION_KEY = 'agent:main:main';
@@ -168,6 +193,8 @@ function normalizeWorkspaceProfile(profile: WorkspaceProfile): WorkspaceProfile 
   const legacyState = normalizeUiState(profile.state);
   const sessionStates = normalizeSessionStates({ ...profile, state: legacyState }, normalizedActiveSessionKey);
   const state = sessionStates[normalizedActiveSessionKey] ?? {};
+  const sessionFolders = normalizeSessionFolders(profile.sessionFolders);
+  const sessionFolderAssignments = normalizeSessionFolderAssignments(profile.sessionFolderAssignments, sessionFolders);
   return {
     ...profile,
     agentId: selectedAgentId,
@@ -176,7 +203,41 @@ function normalizeWorkspaceProfile(profile: WorkspaceProfile): WorkspaceProfile 
     agentBindings,
     state,
     sessionStates,
+    sessionFolders,
+    sessionFolderAssignments,
   };
+}
+
+function normalizeSessionFolders(folders: unknown): SessionFolder[] {
+  if (!Array.isArray(folders)) return [];
+  return folders
+    .filter((folder): folder is SessionFolder => Boolean(folder) && typeof folder === 'object'
+      && typeof (folder as SessionFolder).id === 'string'
+      && typeof (folder as SessionFolder).name === 'string')
+    .map((folder) => ({
+      id: folder.id,
+      name: folder.name,
+      parentId: typeof folder.parentId === 'string' ? folder.parentId : null,
+      order: typeof folder.order === 'number' && Number.isFinite(folder.order) ? folder.order : 0,
+      kind: folder.kind === 'folder' || folder.kind === 'workgroup' ? folder.kind : undefined,
+      createdAt: typeof folder.createdAt === 'number' ? folder.createdAt : Date.now(),
+      updatedAt: typeof folder.updatedAt === 'number' ? folder.updatedAt : Date.now(),
+    }));
+}
+
+function normalizeSessionFolderAssignments(
+  assignments: unknown,
+  folders: SessionFolder[],
+): Record<string, string> {
+  if (!isRecord(assignments)) return {};
+  const folderIds = new Set(folders.map((folder) => folder.id));
+  const result: Record<string, string> = {};
+  for (const [sessionKey, folderId] of Object.entries(assignments)) {
+    if (typeof folderId === 'string' && folderIds.has(folderId)) {
+      result[sessionKey] = folderId;
+    }
+  }
+  return result;
 }
 
 function normalizePermissionMode(value: unknown): WorkspacePermissionMode {
@@ -281,6 +342,56 @@ function requireId(value: unknown): string {
     throw new Error('id is required');
   }
   return value.trim();
+}
+
+function requireNonEmptyString(value: unknown, fieldName: string): string {
+  if (typeof value !== 'string' || !value.trim()) {
+    throw new Error(`${fieldName} is required`);
+  }
+  return value.trim();
+}
+
+function createFolderId(name: string, folders: SessionFolder[]): string {
+  const base = normalizeId(name) || 'folder';
+  const existing = new Set(folders.map((folder) => folder.id));
+  let candidate = base;
+  let suffix = 2;
+  while (existing.has(candidate)) {
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+  return candidate;
+}
+
+function folderExists(folders: SessionFolder[], folderId: string | null | undefined): boolean {
+  return folderId == null || folders.some((folder) => folder.id === folderId);
+}
+
+function collectFolderDescendants(folders: SessionFolder[], folderId: string): Set<string> {
+  const removed = new Set<string>([folderId]);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const folder of folders) {
+      if (folder.parentId && removed.has(folder.parentId) && !removed.has(folder.id)) {
+        removed.add(folder.id);
+        changed = true;
+      }
+    }
+  }
+  return removed;
+}
+
+function updateWorkspaceProfile(
+  document: WorkspaceStoreDocument,
+  workspaceId: string,
+  updater: (profile: WorkspaceProfile) => WorkspaceProfile,
+): WorkspaceStoreDocument {
+  const index = document.profiles.findIndex((profile) => profile.id === workspaceId);
+  if (index === -1) throw new Error(`Workspace "${workspaceId}" not found`);
+  const profiles = [...document.profiles];
+  profiles[index] = updater(profiles[index]);
+  return { ...document, profiles };
 }
 
 function makeDefaultProfile(): WorkspaceProfile {
@@ -590,6 +701,134 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
       };
       await writeDocument({ ...document, profiles });
       return { success: true };
+    },
+    createFolder: async (payload) => {
+      const body = isRecord(payload) ? payload as WorkspaceFolderCreateBody : {};
+      const workspaceId = requireId(body.workspaceId);
+      const name = requireNonEmptyString(body.name, 'name');
+      const parentId = typeof body.parentId === 'string' && body.parentId.trim()
+        ? body.parentId.trim()
+        : null;
+      const kind = body.kind === 'folder' || body.kind === 'workgroup'
+        ? body.kind
+        : 'workgroup';
+      const document = await readDocument();
+      if (parentId != null) {
+        const parentProfile = document.profiles.find((profile) => profile.id === workspaceId);
+        if (!parentProfile) throw new Error(`Workspace "${workspaceId}" not found`);
+        if (!(parentProfile.sessionFolders ?? []).some((folder) => folder.id === parentId)) {
+          throw new Error(`Parent folder "${parentId}" not found`);
+        }
+      }
+      let createdFolder: SessionFolder | undefined;
+      const nextDocument = updateWorkspaceProfile(document, workspaceId, (profile) => {
+        const folders = profile.sessionFolders ?? [];
+        if (!folderExists(folders, parentId)) {
+          throw new Error(`Parent folder "${parentId}" not found`);
+        }
+        const id = createFolderId(name, folders);
+        const now = Date.now();
+        const folder: SessionFolder = {
+          id,
+          name,
+          parentId,
+          order: folders.length,
+          kind,
+          createdAt: now,
+          updatedAt: now,
+        };
+        createdFolder = folder;
+        return {
+          ...profile,
+          sessionFolders: [...folders, folder],
+          updatedAt: now,
+        };
+      });
+      await writeDocument(nextDocument);
+      return { ...successSnapshot(nextDocument), folder: createdFolder };
+    },
+    renameFolder: async (payload) => {
+      const body = isRecord(payload) ? payload as WorkspaceFolderRenameBody : {};
+      const workspaceId = requireId(body.workspaceId);
+      const folderId = requireId(body.folderId);
+      const name = requireNonEmptyString(body.name, 'name');
+      const document = await readDocument();
+      const nextDocument = updateWorkspaceProfile(document, workspaceId, (profile) => {
+        const folders = profile.sessionFolders ?? [];
+        if (!folders.some((folder) => folder.id === folderId)) {
+          throw new Error(`Folder "${folderId}" not found`);
+        }
+        const now = Date.now();
+        return {
+          ...profile,
+          sessionFolders: folders.map((folder) => folder.id === folderId
+            ? { ...folder, name, updatedAt: now }
+            : folder),
+          updatedAt: now,
+        };
+      });
+      await writeDocument(nextDocument);
+      return successSnapshot(nextDocument);
+    },
+    deleteFolder: async (payload) => {
+      const body = isRecord(payload) ? payload as WorkspaceFolderDeleteBody : {};
+      const workspaceId = requireId(body.workspaceId);
+      const folderId = requireId(body.folderId);
+      const document = await readDocument();
+      const nextDocument = updateWorkspaceProfile(document, workspaceId, (profile) => {
+        const folders = profile.sessionFolders ?? [];
+        const target = folders.find((folder) => folder.id === folderId);
+        if (!target) throw new Error(`Folder "${folderId}" not found`);
+        const removedIds = collectFolderDescendants(folders, folderId);
+        const newParentId = target.parentId;
+        const assignments = { ...(profile.sessionFolderAssignments ?? {}) };
+        for (const [sessionKey, assignedFolderId] of Object.entries(assignments)) {
+          if (typeof assignedFolderId === 'string' && removedIds.has(assignedFolderId)) {
+            if (newParentId == null) {
+              delete assignments[sessionKey];
+            } else {
+              assignments[sessionKey] = newParentId;
+            }
+          }
+        }
+        const now = Date.now();
+        return {
+          ...profile,
+          sessionFolders: folders.filter((folder) => !removedIds.has(folder.id)),
+          sessionFolderAssignments: assignments,
+          updatedAt: now,
+        };
+      });
+      await writeDocument(nextDocument);
+      return successSnapshot(nextDocument);
+    },
+    moveSessionToFolder: async (payload) => {
+      const body = isRecord(payload) ? payload as WorkspaceFolderMoveSessionBody : {};
+      const workspaceId = requireId(body.workspaceId);
+      const sessionKey = requireNonEmptyString(body.sessionKey, 'sessionKey');
+      const folderId = typeof body.folderId === 'string' && body.folderId.trim()
+        ? body.folderId.trim()
+        : null;
+      const document = await readDocument();
+      const nextDocument = updateWorkspaceProfile(document, workspaceId, (profile) => {
+        const folders = profile.sessionFolders ?? [];
+        if (!folderExists(folders, folderId)) {
+          throw new Error(`Folder "${folderId}" not found`);
+        }
+        const assignments = { ...(profile.sessionFolderAssignments ?? {}) };
+        if (folderId == null) {
+          delete assignments[sessionKey];
+        } else {
+          assignments[sessionKey] = folderId;
+        }
+        return {
+          ...profile,
+          sessionFolderAssignments: assignments,
+          updatedAt: Date.now(),
+        };
+      });
+      await writeDocument(nextDocument);
+      return successSnapshot(nextDocument);
     },
   };
 }

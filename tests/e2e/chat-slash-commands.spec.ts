@@ -122,7 +122,7 @@ function baseHostApiMocks() {
 }
 
 test.describe('Verse Claw chat slash commands', () => {
-  test('discovers and dispatches quick actions from the composer', async ({ launchElectronApp }) => {
+  test('discovers and dispatches quick actions from the composer', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -245,12 +245,85 @@ test.describe('Verse Claw chat slash commands', () => {
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('chat-composer-input')).toHaveAttribute('placeholder', /\/.*commands/i);
+      await expect(page.getByTestId('chat-slash-command-trigger')).toHaveCount(0);
 
       await page.getByTestId('chat-composer-input').fill('/');
       await expect(page.getByTestId('chat-slash-command-menu')).toBeVisible();
-      await expect(page.getByTestId('chat-slash-command-menu')).toContainText('Pick an action for this message or session');
+      await expect(page.getByTestId('chat-slash-command-menu')).toContainText('ClawX commands');
+      await expect(page.getByTestId('chat-slash-command-menu')).toContainText('Choose a targeted action for knowledge, code work, workflow, or the current session');
+      await expect(page.getByTestId('chat-slash-command-group-knowledge')).toContainText('Attach sources and shape what this turn can read');
+      await expect(page.getByTestId('chat-slash-command-group-coding')).toContainText('Ask for focused engineering work on the current change');
       await expect(page.getByTestId('chat-slash-command-option-wiki')).toContainText('Find source-backed wiki pages');
       await expect(page.getByTestId('chat-slash-command-option-review')).toContainText('/review');
+      await expect(page.getByTestId('chat-slash-command-icon-wiki')).toBeVisible();
+
+      await page.getByTestId('chat-composer-permission-mode').click();
+      await expect(page.getByTestId('chat-composer-permission-menu')).toBeVisible();
+      await expect(page.getByTestId('chat-composer-permission-menu')).toContainText('Permission mode');
+      await expect(page.getByTestId('chat-slash-command-menu')).toHaveCount(0);
+      await expect(page.getByTestId('chat-composer-permission-menu')).not.toContainText('/review');
+      await page.getByTestId('chat-composer-input').fill('');
+      await page.getByTestId('chat-composer-input').fill('/');
+      await expect(page.getByTestId('chat-slash-command-menu')).toBeVisible();
+
+      await page.getByTestId('chat-composer-input').fill('/go');
+      const menu = page.getByTestId('chat-slash-command-menu');
+      const goalOption = page.getByTestId('chat-slash-command-option-goal');
+      await expect(goalOption).toContainText('/goal');
+      await expect(goalOption).toContainText('Goal');
+      await expect(page.getByTestId('chat-slash-command-icon-goal')).toBeVisible();
+      await expect(page.getByTestId('chat-slash-command-option-review')).toHaveCount(0);
+      await expect(page.getByTestId('chat-slash-command-option-compact')).toHaveCount(0);
+      await expect(page.locator('[data-testid^="chat-slash-command-option-"]')).toHaveCount(1);
+
+      const slashPaletteMetrics = await page.evaluate(() => {
+        const menuEl = document.querySelector('[data-testid="chat-slash-command-menu"]');
+        const inputEl = document.querySelector('[data-testid="chat-composer-input"]');
+        const optionEl = document.querySelector('[data-testid="chat-slash-command-option-goal"]');
+        const iconEl = document.querySelector('[data-testid="chat-slash-command-icon-goal"]');
+        if (
+          !(menuEl instanceof HTMLElement)
+          || !(inputEl instanceof HTMLElement)
+          || !(optionEl instanceof HTMLElement)
+          || !(iconEl instanceof HTMLElement)
+        ) {
+          return null;
+        }
+        const menuBox = menuEl.getBoundingClientRect();
+        const inputBox = inputEl.getBoundingClientRect();
+        const optionBox = optionEl.getBoundingClientRect();
+        const iconBox = iconEl.getBoundingClientRect();
+        return {
+          iconHeight: iconBox.height,
+          iconWidth: iconBox.width,
+          menuBottom: menuBox.bottom,
+          menuHasHorizontalOverflow: menuEl.scrollWidth > menuEl.clientWidth + 1,
+          menuLeft: menuBox.left,
+          menuRight: menuBox.right,
+          optionHeight: optionBox.height,
+          optionText: optionEl.textContent ?? '',
+          inputTop: inputBox.top,
+          viewportWidth: window.innerWidth,
+        };
+      });
+      expect(slashPaletteMetrics).not.toBeNull();
+      expect(slashPaletteMetrics!.menuBottom).toBeLessThanOrEqual(slashPaletteMetrics!.inputTop + 2);
+      expect(slashPaletteMetrics!.menuLeft).toBeGreaterThanOrEqual(0);
+      expect(slashPaletteMetrics!.menuRight).toBeLessThanOrEqual(slashPaletteMetrics!.viewportWidth);
+      expect(slashPaletteMetrics!.menuHasHorizontalOverflow).toBe(false);
+      expect(slashPaletteMetrics!.iconWidth).toBeGreaterThanOrEqual(24);
+      expect(slashPaletteMetrics!.iconHeight).toBeGreaterThanOrEqual(24);
+      expect(slashPaletteMetrics!.optionHeight).toBeGreaterThanOrEqual(38);
+      expect(slashPaletteMetrics!.optionText).toContain('/goal');
+      expect(slashPaletteMetrics!.optionText).not.toContain('/review');
+
+      const screenshotPath = testInfo.outputPath('slash-goal-filter.png');
+      await menu.screenshot({ path: screenshotPath, animations: 'disabled' });
+      await testInfo.attach('slash-goal-filter', {
+        path: screenshotPath,
+        contentType: 'image/png',
+      });
 
       await page.getByTestId('chat-composer-input').fill('/wiki context palette');
       await page.keyboard.press('Enter');

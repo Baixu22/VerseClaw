@@ -226,7 +226,7 @@ type AttemptExecutionRuntime = typeof import("./command/attempt-execution.runtim
 type AgentAttemptResult = Awaited<ReturnType<AttemptExecutionRuntime["runAgentAttempt"]>>;
 type AcpManagerRuntime = typeof import("../acp/control-plane/manager.js");
 type AcpPolicyRuntime = typeof import("../acp/policy.js");
-type AcpRuntimeErrorsRuntime = typeof import("../acp/runtime/errors.js");
+type AcpRuntimeErrorsRuntime = typeof import("../runtime/errors.ts");
 type AcpSessionIdentifiersRuntime = typeof import("@openclaw/acp-core/runtime/session-identifiers");
 type DeliveryRuntime = typeof import("./command/delivery.runtime.js");
 type SessionStoreRuntime = typeof import("./command/session-store.runtime.js");
@@ -249,7 +249,7 @@ const acpPolicyRuntimeLoader = createLazyImportLoader<AcpPolicyRuntime>(
   () => import("../acp/policy.js"),
 );
 const acpRuntimeErrorsRuntimeLoader = createLazyImportLoader<AcpRuntimeErrorsRuntime>(
-  () => import("../acp/runtime/errors.js"),
+  () => import("../runtime/errors.ts"),
 );
 const acpSessionIdentifiersRuntimeLoader = createLazyImportLoader<AcpSessionIdentifiersRuntime>(
   () => import("@openclaw/acp-core/runtime/session-identifiers"),

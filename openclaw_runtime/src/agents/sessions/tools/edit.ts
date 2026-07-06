@@ -372,6 +372,9 @@ export function createEditToolDefinition(
       "Each edits[].oldText is matched against the original file, not after earlier edits are applied. Do not emit overlapping or nested edits. Merge nearby changes into one edit.",
       "Keep edits[].oldText as small as possible while still being unique in the file. Do not pad with large unchanged regions.",
     ],
+    // A1 Stage 2 (acceptance 2.1): edit tool writes to LLM-provided paths.
+    risk: "write",
+    writeRiskProfile: { kind: "dynamic_writes", requiresApproval: true },
     parameters: editSchema,
     renderShell: "self",
     prepareArguments: prepareEditArguments,

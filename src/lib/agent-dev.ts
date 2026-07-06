@@ -1,4 +1,4 @@
-import type { AgentDevScenarioId } from '@shared/host-api/contract';
+import { composeAgentDevScenarioFromSearchParams } from '@shared/agent-dev/scenario-composer';
 
 type HostApiReplayMode = 'off' | 'record' | 'replay';
 type HostApiFixture = {
@@ -33,14 +33,14 @@ type AgentDevTestSurface = {
     fixtures: HostApiFixture[];
   };
   featureFlags: string[];
-  devScenario: AgentDevScenarioId | null;
+  devScenario: string | null;
   visualMode: boolean;
   getSnapshot: () => AgentDevSnapshotInput & {
     activeElementTestId: string | null;
     visibleToasts: string[];
     activeModalTestId: string | null;
     featureFlags: string[];
-    devScenario: AgentDevScenarioId | null;
+    devScenario: string | null;
     visualMode: boolean;
   };
   setHostApiReplay: (config: Partial<AgentDevTestSurface['hostApiReplay']>) => void;
@@ -50,16 +50,6 @@ type AgentDevTestSurface = {
 
 const REPLAY_STORAGE_KEY = 'clawx.agentDev.hostApiReplay';
 const FLAGS_STORAGE_KEY = 'clawx.agentDev.flags';
-const VALID_SCENARIOS = new Set<string>([
-  'chat-empty',
-  'chat-streaming',
-  'models-heavy-usage',
-  'settings-provider-error',
-  'doctor-failed',
-  'gateway-connecting',
-  'knowledge-drafts',
-  'observability-trace-errors',
-]);
 
 function query(): URLSearchParams {
   return new URLSearchParams(window.location.search);
@@ -69,11 +59,6 @@ function readFlags(): string[] {
   const params = query();
   const raw = params.get('flags') || window.localStorage.getItem(FLAGS_STORAGE_KEY) || '';
   return [...new Set(raw.split(',').map((flag) => flag.trim()).filter(Boolean))].sort();
-}
-
-function readScenario(): AgentDevScenarioId | null {
-  const value = query().get('devScenario');
-  return value && VALID_SCENARIOS.has(value) ? value as AgentDevScenarioId : null;
 }
 
 function readReplayConfig(): AgentDevTestSurface['hostApiReplay'] {
@@ -123,36 +108,18 @@ function getActiveModalTestId(): string | null {
   return null;
 }
 
-function scenarioRoute(scenario: AgentDevScenarioId | null): string | null {
-  switch (scenario) {
-    case 'models-heavy-usage':
-    case 'settings-provider-error':
-      return '/settings/models';
-    case 'doctor-failed':
-      return '/settings/advanced';
-    case 'knowledge-drafts':
-      return '/knowledge';
-    case 'observability-trace-errors':
-      return '/observability';
-    case 'chat-empty':
-    case 'chat-streaming':
-    case 'gateway-connecting':
-      return '/';
-    default:
-      return null;
-  }
-}
-
 export function getAgentDevScenarioRoute(): string | null {
-  return scenarioRoute(readScenario());
+  return composeAgentDevScenarioFromSearchParams(query()).route;
 }
 
 export function installAgentDevTestSurface(input: AgentDevSnapshotInput): void {
   if (typeof window === 'undefined') return;
   const existing = (window as unknown as { __CLAWX_TEST__?: Partial<AgentDevTestSurface> }).__CLAWX_TEST__;
+  const params = query();
   const featureFlags = readFlags();
-  const devScenario = readScenario();
-  const visualMode = query().get('visual') === '1' || query().get('visualMode') === '1';
+  const scenario = composeAgentDevScenarioFromSearchParams(params);
+  const devScenario = scenario.expression;
+  const visualMode = params.get('visual') === '1' || params.get('visualMode') === '1';
   const hostApiReplay = existing?.hostApiReplay ?? readReplayConfig();
   const hostApiCalls = existing?.hostApiCalls ?? [];
   const surface: AgentDevTestSurface = {

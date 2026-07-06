@@ -3,9 +3,12 @@ import { inferBasePathFromPathname, normalizeBasePath } from "./navigation.ts";
 
 export type ControlUiPublicAsset =
   | "apple-touch-icon.png"
+  | "apple-touch-icon-dark.png"
   | "favicon-32.png"
+  | "favicon-32-dark.png"
   | "favicon.ico"
   | "favicon.svg"
+  | "favicon-dark.svg"
   | "manifest.webmanifest"
   | "sw.js";
 

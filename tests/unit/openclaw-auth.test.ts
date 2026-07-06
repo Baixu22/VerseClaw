@@ -4,9 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { testHome, testUserData, getSettingMock } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
+  const root = process.env.CLAWX_TEST_TMPDIR ?? `${process.cwd()}/.tmp/vitest`;
   return {
-    testHome: `/tmp/clawx-openclaw-auth-${suffix}`,
-    testUserData: `/tmp/clawx-openclaw-auth-user-data-${suffix}`,
+    testHome: `${root}/clawx-openclaw-auth-${suffix}`,
+    testUserData: `${root}/clawx-openclaw-auth-user-data-${suffix}`,
     getSettingMock: vi.fn(),
   };
 });
@@ -362,6 +363,30 @@ describe('sanitizeOpenClawConfig', () => {
     logSpy.mockRestore();
   });
 
+  it('removes legacy agent reasoningEffort before Gateway launch', async () => {
+    await writeOpenClawJson({
+      agents: {
+        list: [
+          { id: 'main', name: 'Main', reasoningEffort: 'high', thinkingDefault: 'high' },
+          { id: 'coder', name: 'Coder', reasoningEffort: 'medium' },
+        ],
+      },
+    });
+
+    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await sanitizeOpenClawConfig();
+
+    const result = await readOpenClawJson();
+    const list = ((result.agents as { list: Array<Record<string, unknown>> }).list);
+    expect(list.find((agent) => agent.id === 'main')?.reasoningEffort).toBeUndefined();
+    expect(list.find((agent) => agent.id === 'main')?.thinkingDefault).toBe('high');
+    expect(list.find((agent) => agent.id === 'coder')?.reasoningEffort).toBeUndefined();
+
+    logSpy.mockRestore();
+  });
+
   it('properly sanitizes a genuinely empty {} config (fresh install)', async () => {
     // A fresh install with {} is a valid config — sanitize should proceed
     // and enforce tools.profile, commands.restart, etc.
@@ -689,7 +714,7 @@ describe('sanitizeOpenClawConfig', () => {
       tools: {
         exec: {
           security: 'workspace-write',
-          ask: 'dangerous',
+          ask: 'on-miss',
         },
       },
     });
@@ -701,7 +726,7 @@ describe('sanitizeOpenClawConfig', () => {
     const tools = config.tools as Record<string, unknown>;
     const exec = tools.exec as Record<string, unknown>;
     expect(exec.security).toBe('allowlist');
-    expect(exec.ask).toBe('dangerous');
+    expect(exec.ask).toBe('on-miss');
   });
 
   it('removes missing external plugin ids from plugins.allow while preserving installed and configured plugins', async () => {

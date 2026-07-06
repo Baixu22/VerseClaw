@@ -47,6 +47,23 @@ export type RoleContract = {
   handoff: RoleHandoffRules;
   version?: string;
   tags?: string[];
+  /**
+   * Area 3 §3.5: optional routing keywords for role-router scoring. Built-in
+   * roles use the static `ROLE_KEYWORDS` table in role-router.ts; config-defined
+   * (pack) roles declare their own keywords here so they can be routed by
+   * user-authored language (CN/EN/mixed) without modifying the built-in table.
+   * Normalized like `tags` (kebab-case trimmed, case-insensitive match). The
+   * router applies the same +2 weight as built-in keyword matches.
+   */
+  routingKeywords?: string[];
+  /**
+   * Optional Persona fragment (bridge to AgentRoleProfile). Untyped passthrough
+   * record runtime-side so this module stays free of cross-package imports; the
+   * shared declaration (`shared/types/agent.ts`) types it as
+   * `Partial<AgentRoleProfile>`. When present, `compileRoleContractToSoul`
+   * appends a persona section to the compiled SOUL.
+   */
+  profile?: Record<string, unknown>;
 };
 
 export type RoleContractValidationIssue = {
@@ -89,6 +106,10 @@ const stringArray = (value: unknown): string[] => {
 
 const recordValue = (value: unknown): Record<string, unknown> =>
   value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
+
+/** Like recordValue but returns undefined instead of {} for absent/invalid input. */
+const optionalRecord = (value: unknown): Record<string, unknown> | undefined =>
+  value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : undefined;
 
 function enumValue<T extends string>(value: unknown, allowed: readonly T[], fallback: T): T {
   const text = stringValue(value)?.toLowerCase();
@@ -156,6 +177,8 @@ export function normalizeRoleContract(input: unknown): RoleContract {
     handoff: normalizeHandoff(raw.handoff),
     version: stringValue(raw.version),
     tags: stringArray(raw.tags),
+    routingKeywords: stringArray(raw.routing_keywords ?? raw.routingKeywords),
+    profile: optionalRecord(raw.profile),
   };
 }
 
@@ -184,6 +207,12 @@ export function validateRoleContract(role: RoleContract): RoleContractValidation
   }
   if (!role.outputSchema.format) {
     issues.push({ path: "outputSchema.format", message: "outputSchema.format is required." });
+  }
+  // Soft check: profile, when present, must be an object. Invalid profiles are
+  // already dropped by normalizeRoleContract, so this only fires when a caller
+  // bypasses normalization — the contract still loads without the profile.
+  if (role.profile !== undefined && (typeof role.profile !== "object" || Array.isArray(role.profile))) {
+    issues.push({ path: "profile", message: "profile must be an object when present." });
   }
   return { ok: issues.length === 0, issues };
 }
@@ -339,6 +368,23 @@ export const BUILT_IN_ROLE_CONTRACTS: readonly RoleContract[] = [
     outputSchema: { format: "markdown", sections: ["Summary", "Usage", "Notes"] },
     handoff: { to: ["reviewer"], from: ["implementer"] },
     tags: ["docs"],
+  }),
+  role({
+    name: "knowledge-librarian",
+    displayName: "Knowledge Librarian",
+    rolePrompt: "Manage a local knowledge base by searching source-backed pages, answering with citations, organizing Markdown notes, and preparing reviewed drafts without silently writing durable knowledge.",
+    tools: ["knowledge.search", "knowledge.get", "knowledge.createDraft", "knowledge.stewardReview"],
+    capabilities: ["knowledge-search", "citation-answering", "markdown-organization", "draft-preparation"],
+    toolRequirements: ["knowledge.search", "knowledge.get"],
+    riskProfile: "medium",
+    canModifyScope: false,
+    permissions: { filesystem: "read", network: "none", commands: [] },
+    model: { default: null, fallback: [] },
+    effort: "medium",
+    outputSchema: { format: "markdown", sections: ["Answer", "Citations", "Draft Suggestions", "Review Boundary"] },
+    handoff: { to: ["docs-writer", "reviewer"], from: ["planner", "implementer"], requiresReview: true },
+    tags: ["knowledge", "wiki", "citations"],
+    routingKeywords: ["knowledge", "wiki", "obsidian", "notes", "citation", "知识库", "笔记"],
   }),
   role({
     name: "skeptic",

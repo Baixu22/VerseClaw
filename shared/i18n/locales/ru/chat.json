@@ -8,7 +8,8 @@
     "askQuestionsDesc": "Работа над задачами",
     "creativeTasks": "Непрерывное выполнение",
     "creativeTasksDesc": "Выполнение многошаговых задач",
-    "brainstorming": "Параллельные агенты"
+    "brainstorming": "Параллельные агенты",
+    "brainstormingDesc": "Разделить работу между агентами"
   },
   "noLogs": "(Журналы ещё недоступны)",
   "scrollToLatest": "Вернуться вниз",
@@ -19,14 +20,68 @@
     "currentAgent": "Общение с {{agent}}",
     "workspace": "Рабочая область",
     "saveToKnowledge": "Сохранить в знания",
-    "workContext": "Рабочий контекст",
     "addWorkspaceDialogTitle": "Выберите каталог рабочей области",
-    "addWorkspaceDialogButton": "Сделать рабочей областью"
+    "addWorkspaceDialogButton": "Сделать рабочей областью",
+    "promptCache": {
+      "ariaLabel": "Состояние кэша промпта: {{status}}",
+      "title": "Кэш промпта: {{status}}",
+      "hitRate": "Попадания {{value}}",
+      "lastTurnHitRate": "Последний ход {{value}}",
+      "warmTurnHitRate": "Теплые ходы {{value}}",
+      "tokens": "Чтение {{read}} · Запись {{write}}",
+      "confidence": "Уверенность {{value}}",
+      "saved": "Оценка экономии {{value}}",
+      "extraCost": "Оценка доп. затрат {{value}}",
+      "reason": "Последняя причина: {{reason}}",
+      "ledger": "{{warnings}} предупреждений · {{cancelled}} отмен",
+      "status": {
+        "warm": "Прогрет",
+        "warming": "Прогревается",
+        "cold": "Холодный",
+        "at-risk": "Риск",
+        "ineligible": "Недоступен",
+        "unknown": "Неизвестно"
+      },
+      "short": {
+        "warm": "Warm",
+        "warming": "Cache",
+        "cold": "Cold",
+        "at-risk": "Risk",
+        "ineligible": "No cache",
+        "unknown": "Cache"
+      },
+      "reasonValue": {
+        "model-switch": "смена модели",
+        "manual-compaction": "ручное сжатие",
+        "skill-enable": "включение Skill",
+        "mcp-register": "регистрация MCP",
+        "mcp-reload": "перезагрузка MCP",
+        "system-prompt-change": "изменение системного промпта",
+        "context-reset": "сброс контекста",
+        "ineligible": "префикс ниже порога кэша",
+        "provider-unknown": "поддержка Provider неизвестна"
+      },
+      "confidenceValue": {
+        "high": "высокая",
+        "medium": "средняя",
+        "low": "низкая",
+        "unknown": "неизвестно"
+      }
+    }
   },
   "markdown": {
     "codeBlock": "Код",
     "copyCode": "Скопировать код",
     "copiedCode": "Скопировано"
+  },
+  "messageActions": {
+    "copy": "Копировать сообщение",
+    "copied": "Скопировано",
+    "edit": "Редактировать",
+    "editInputLabel": "Редактировать сообщение",
+    "cancelEdit": "Отмена",
+    "sendEdit": "Отправить",
+    "resendFailed": "Не удалось отправить сообщение повторно"
   },
   "approvals": {
     "title": "Одобрения и аудит",
@@ -166,6 +221,69 @@
       "copy": "Копировать",
       "copied": "Скопировано"
     },
+    "testResults": {
+      "label": "Test results",
+      "total": "total",
+      "passed": "passed",
+      "failed": "failed",
+      "skipped": "skipped",
+      "running": "running",
+      "empty": "No test suites were reported.",
+      "suiteCount": "{{count}} tests",
+      "status": {
+        "passed": "Passed",
+        "failed": "Failed",
+        "skipped": "Skipped",
+        "running": "Running"
+      }
+    },
+    "stackTrace": {
+      "label": "Stack trace",
+      "empty": "No stack frames were reported.",
+      "lineColumn": "L{{line}}:C{{column}}",
+      "source": {
+        "app": "App",
+        "web-preview": "Web preview",
+        "tool": "Tool"
+      }
+    },
+    "chainOfThought": {
+      "label": "Reasoning steps",
+      "title": "Reasoning",
+      "progress": "{{complete}} complete, {{active}} active",
+      "empty": "No reasoning steps were reported.",
+      "status": {
+        "complete": "Complete",
+        "active": "Active",
+        "pending": "Pending"
+      }
+    },
+    "task": {
+      "label": "Task",
+      "itemCount": "{{count}} items",
+      "empty": "No task items were reported."
+    },
+    "reasoning": {
+      "label": "Reasoning",
+      "thinking": "Thinking",
+      "empty": "No reasoning summary was provided."
+    },
+    "commit": {
+      "label": "Commit",
+      "detached": "Detached HEAD",
+      "staged": "staged",
+      "unstaged": "unstaged",
+      "untracked": "untracked",
+      "conflicted": "conflicted",
+      "operationWithAction": "{{action}}: {{status}}",
+      "operation": {
+        "ready": "Ready",
+        "running": "Running",
+        "success": "Done",
+        "blocked": "Blocked",
+        "failed": "Failed"
+      }
+    },
     "tokenUsage": {
       "input": "Входные токены",
       "output": "Выходные токены",
@@ -196,6 +314,23 @@
   "runError": {
     "title": "Ошибка вызова модели"
   },
+  "knowledgeGuard": {
+    "title": "Может подходить известная ловушка",
+    "confidence": "{{confidence}}%",
+    "rootCause": "Причина:",
+    "whyMatched": "Совпало:",
+    "matchFallback": "похожий сигнал ошибки",
+    "dismiss": "Закрыть",
+    "use": "Использовать",
+    "usedToast": "Подсказка знаний добавлена в composer.",
+    "composerPrefix": "Используйте этот прошлый опыт перед повтором: {{title}}",
+    "severity": {
+      "low": "Низкая",
+      "medium": "Средняя",
+      "high": "Высокая",
+      "blocking": "Блокирующая"
+    }
+  },
   "artifactPanel": {
     "tabs": {
       "changes": "Изменения",
@@ -206,9 +341,37 @@
     "workspaceTabs": {
       "files": "Файлы",
       "terminal": "Терминал",
-      "git": "Git",
+      "git": "Review",
       "web": "Web",
       "audit": "Аудит"
+    },
+    "workspaceLaunchpad": {
+      "title": "Рабочая область ClawX",
+      "subtitle": "Закрепленные входы",
+      "moreHint": "Используйте + для review, preview и audit tools.",
+      "actions": {
+        "open": "Открыть список входов",
+        "back": "Назад ко входам",
+        "moreEntries": "Другие входы"
+      },
+      "sections": {
+        "highFrequency": "Частые действия",
+        "projectTools": "Инструменты проекта",
+        "reviewAndSafety": "Review и безопасность"
+      },
+      "entries": {
+        "files": "Просматривайте файлы и выбранное содержимое.",
+        "terminal": "Запустите интерактивную оболочку для этой рабочей области.",
+        "review": "Проверьте изменения, ветки, stash и PR.",
+        "reviewBranch": "Проверьте изменения в {{branch}}.",
+        "web": "Откройте локальный предпросмотр или проверьте URL.",
+        "audit": "Просмотрите запросы разрешений и последние подтверждения."
+      },
+      "badges": {
+        "changes": "{{count}} изменений",
+        "conflicts": "{{count}} конфликтов",
+        "clean": "Чисто"
+      }
     },
     "actions": {
       "back": "Назад к списку"
@@ -297,6 +460,16 @@
       "rowRange": "Строки {{from}}-{{to}} / {{total}}",
       "prevPage": "Предыдущие строки",
       "nextPage": "Следующие строки"
+    },
+    "office": {
+      "title": "Предпросмотр Office: {{fileName}}",
+      "loading": "Загрузка предпросмотра Office...",
+      "notInstalledTitle": "OfficeCLI не установлен",
+      "notInstalledHint": "Установите OfficeCLI, затем повторите предпросмотр.",
+      "failedTitle": "Не удалось открыть предпросмотр Office",
+      "install": "Установить OfficeCLI",
+      "installing": "Установка...",
+      "retry": "Повторить"
     }
   },
   "workspace": {
@@ -380,14 +553,19 @@
         "clearSelection": "Сбросить выбор",
         "sendToComposer": "В поле ввода",
         "captureAndSend": "Снимок и отправка",
-        "capturing": "Снимок"
+        "capturing": "Снимок",
+        "refresh": "Обновить",
+        "openExternal": "Открыть снаружи",
+        "openAgentBrowser": "Открыть в Agent Browser",
+        "locateAgentBrowser": "Найти Agent Browser"
       },
       "tooltips": {
         "captureAndSend": "Отправить выбранный компонент вместе со снимком предпросмотра."
       },
       "browser": {
         "placeholder": "Запустите предпросмотр, чтобы загрузить URL",
-        "title": "Предпросмотр рабочей области"
+        "title": "Предпросмотр рабочей области",
+        "agentBrowserActive": "Agent"
       },
       "selection": {
         "selected": "Выбрано"
@@ -400,7 +578,10 @@
         "sent": "Отправлено в поле ввода",
         "screenshotUnavailable": "Снимок недоступен; отправлены только данные компонента",
         "screenshotFailed": "Снимок не удался; отправлены только данные компонента",
-        "screenshotSent": "Снимок и данные компонента отправлены"
+        "screenshotSent": "Снимок и данные компонента отправлены",
+        "agentBrowserNoUrl": "Сначала запустите предпросмотр или введите URL",
+        "agentBrowserOpened": "Agent Browser открыт",
+        "agentBrowserLocated": "Agent Browser найден"
       },
       "prompt": {
         "title": "Пожалуйста, настройте компонент, выбранный в Web-предпросмотре.",
@@ -648,6 +829,16 @@
       "followup": "Продолжение",
       "reroute": "Перемаршрутизация"
     },
+    "diagnostics": {
+      "title": "Диагностика",
+      "recommendations": "Рекомендации",
+      "nextSteps": "Следующие шаги",
+      "taskLoopUpgrade": "Task Loop доступен только после явного подтверждения.",
+      "status": {
+        "ok": "OK",
+        "needs_attention": "Требует внимания"
+      }
+    },
     "status": {
       "running": "Выполняется",
       "planned": "Запланировано",
@@ -691,6 +882,7 @@
   },
   "composer": {
     "attachFiles": "Прикрепить файлы",
+    "placeholder": "Сообщение...  / для команд и Skills",
     "pickSkill": "Выбрать Skill",
     "pickTool": "Выбрать инструмент",
     "skillButton": "Skills",
@@ -702,6 +894,71 @@
     "skillEmpty": "Подходящие Skill не найдены",
     "pickAgent": "Выбрать агента",
     "pickModel": "Выбрать модель",
+    "actions": {
+      "add": "Добавить",
+      "context": "Добавить контекст",
+      "skills": "Skills",
+      "office": "Office",
+      "session": "Сессия",
+      "attachFiles": "Прикрепить файлы",
+      "knowledge": "Искать знания",
+      "model": "Модель",
+      "compact": "Сжать сессию",
+      "fork": "Ответвить сессию",
+      "handoff": "Передать сессию"
+    },
+    "office": {
+      "excel": "Excel",
+      "word": "Word",
+      "ppt": "PPT",
+      "pdf": "PDF",
+      "pitchDeck": "Pitch Deck",
+      "morph": "Morph Animation",
+      "morph3d": "3D Morph",
+      "academic": "Academic Paper",
+      "financial": "Financial Model",
+      "dashboard": "Data Dashboard",
+      "setupRequired": "Сначала включите {{action}} в Skills > Feature packs.",
+      "prompts": {
+        "pitchDeck": "Create a fundraising pitch deck with the following requirements:\n\n[describe your company, funding round, and key metrics here]",
+        "morph": "Create a presentation with Morph transition animations:\n\n[describe your presentation topic and desired visual effects here]",
+        "morph3d": "Create a 3D Morph presentation with GLB models and camera moves:\n\n[describe your topic and 3D visual concept here]",
+        "academic": "Write an academic paper in Word with the following requirements:\n\n[describe your research topic, methodology, and key findings here]",
+        "financial": "Create a financial model in Excel with the following requirements:\n\n[describe your financial statements, projections, and analysis here]",
+        "dashboard": "Create a data dashboard in Excel with the following requirements:\n\n[describe your data source, KPIs, and charts here]",
+        "excel": "Создайте или проанализируйте книгу Excel.",
+        "word": "Создайте или отредактируйте профессиональный документ Word.",
+        "ppt": "Создайте аккуратную презентацию.",
+        "pdf": "Прочитайте, кратко изложите или преобразуйте PDF-документ."
+      }
+    },
+    "promptCacheGuard": {
+      "title": "Это может охладить кэш промпта",
+      "description": "{{action}} может заставить следующий ход перестроить около {{tokens}} prompt-токенов. Текущий hit rate: {{hitRate}}. {{reason}}",
+      "continue": "Продолжить",
+      "cancel": "Отмена",
+      "action": {
+        "model-switch": "Смена модели",
+        "manual-compaction": "Ручное сжатие",
+        "skill-enable": "Включение Skill",
+        "mcp-register": "Регистрация MCP-инструментов",
+        "mcp-reload": "Перезагрузка MCP-инструментов",
+        "system-prompt-change": "Изменение системного промпта",
+        "context-reset": "Сброс контекста"
+      },
+      "reason": {
+        "model-switch": "Кэши изолированы для каждой модели.",
+        "manual-compaction": "Сжатие переписывает видимый префикс диалога.",
+        "skill-enable": "Изменение Skill может изменить префикс инструментов и промпта.",
+        "mcp-register": "Новые MCP-инструменты могут изменить префикс schema инструментов.",
+        "mcp-reload": "Перезагрузка MCP может изменить доступную schema инструментов.",
+        "system-prompt-change": "Изменение системного промпта меняет кэшируемый префикс.",
+        "context-reset": "Сброс контекста меняет кэшируемый префикс.",
+        "provider-unknown": "Поддержка кэша у этого Provider неизвестна.",
+        "ineligible": "Текущий префикс может быть ниже порога кэша.",
+        "default": "Следующий запрос может не попасть в текущий кэш."
+      }
+    },
     "knowledgeScopeTitle": "Область знаний",
     "knowledgeScope": {
       "none": "Без знаний",
@@ -725,7 +982,8 @@
       "suggestion": "Найдено релевантных записей: {{count}}",
       "attach": "Прикрепить",
       "open": "Открыть",
-      "dismiss": "Скрыть"
+      "dismiss": "Скрыть",
+      "inspect": "?????????"
     },
     "knowledgeQuick": {
       "enable": "Использовать wiki-знания",
@@ -744,12 +1002,12 @@
       "messageRefTitle": "Ссылка на знания: {{title}}"
     },
     "slashCommands": {
-      "menuLabel": "Slash-команды",
-      "title": "Быстрые действия",
-      "subtitle": "Выберите действие для этого сообщения или сеанса. Каждое действие заранее объясняет, что оно сделает.",
-      "contextButton": "Открыть палитру контекста",
-      "contextButtonShort": "Context",
-      "contextButtonTooltip": "Введите /, чтобы прикрепить знания, задать область или выполнить действие сеанса.",
+      "menuLabel": "Slash-команды ClawX",
+      "title": "Команды ClawX",
+      "subtitle": "Выберите точечное действие для знаний, кода, рабочего процесса или текущего сеанса.",
+      "contextButton": "Открыть команды",
+      "contextButtonShort": "Commands",
+      "contextButtonTooltip": "Введите /, чтобы найти целевые команды ClawX.",
       "promptArgs": "Область: {{args}}",
       "unknownTitle": "Неизвестная команда",
       "unknownDescription": "{{command}} не является быстрым действием Verse Claw. Нажмите Escape, чтобы продолжить редактирование.",
@@ -757,10 +1015,18 @@
       "ledgerNodeDescription": "Создано из slash-команды Chat.",
       "ledgerSessionSummary": "Связано из slash-команды Chat: {{title}}",
       "groups": {
+        "skills": "Skills",
         "knowledge": "Знания",
         "coding": "Код",
         "workflow": "Рабочий процесс",
         "session": "Сеанс"
+      },
+      "groupDescriptions": {
+        "skills": "Переиспользуемые поведения агента из workspace и runtime.",
+        "knowledge": "Прикрепить источники и настроить, что этот ход может читать.",
+        "coding": "Запросить сфокусированную инженерную работу по текущему изменению.",
+        "workflow": "Перевести задачу в планирование или отслеживание.",
+        "session": "Управлять непрерывностью, сжатием и передачей."
       },
       "commands": {
         "wiki": {
@@ -838,6 +1104,11 @@
           "description": "Составить черновик PR summary и notes по проверке.",
           "argumentHint": "[audience]"
         },
+        "goal": {
+          "label": "Цель",
+          "description": "Открыть или направить long-goal Mission Control flow.",
+          "argumentHint": "[goal]"
+        },
         "mission": {
           "label": "Mission Control",
           "description": "Открыть или направить long-goal Mission Control flow.",
@@ -880,7 +1151,7 @@
         "wikiOpened": "Wiki-поиск открыт. Выберите страницы, чтобы прикрепить их как read-only контекст.",
         "scopeOpened": "Открыт выбор области знаний.",
         "scopeChanged": "Область знаний установлена: {{scope}}.",
-        "typeSlash": "Введите / в начале пустого composer, чтобы открыть палитру контекста.",
+        "typeSlash": "Введите / в начале пустого composer, чтобы открыть команды.",
         "knowledgeModeOpened": "Открыт выбор режима знаний.",
         "knowledgeModeChanged": "Режим знаний установлен: {{mode}}.",
         "stewardAuditStarted": "Аудит управления знаниями запущен.",
@@ -893,6 +1164,14 @@
     },
     "modelPickerTitle": "Переключить модель",
     "modelSwitchFailed": "Не удалось переключить модель: {{error}}",
+    "modelScope": {
+      "turn": "Только это сообщение",
+      "session": "Этот сеанс",
+      "persistent": "Всегда"
+    },
+    "clearTurnModel": "Очистить переопределение модели сообщения",
+    "turnModelChip": "через {{model}}",
+    "modelSourceDefault": "Модель по умолчанию",
     "inputModeTitle": "Режим ввода",
     "inputModeHint": "Применяется только к этому сообщению",
     "guideInjected": "Внедрено как руководство в активный запуск",
@@ -907,6 +1186,19 @@
     "stop": "Остановить",
     "gatewayConnected": "подключён",
     "gatewayStatus": "шлюз {{state}} | порт: {{port}} {{pid}}",
+    "contextMenu": {
+      "button": "Контекст",
+      "title": "Статус контекста",
+      "tooltip": "Показать статус контекста, токенов и маршрутизации",
+      "toolsSection": "Инструменты и маршрутизация",
+      "statusSection": "Статус",
+      "attachedSection": "Прикрепленный контекст",
+      "emptyDiagnostics": "Дополнительный контекст не прикреплен",
+      "close": "Закрыть управление контекстом",
+      "target": "@{{agent}}",
+      "knowledgeRefs": "{{count}} ссылок",
+      "skillTokens": "{{count}} навыков"
+    },
     "contextStatusTitle": "Статус контекста и токенов",
     "messageCount": "{{count}} сообщений",
     "tokenUsage": "{{tokens}} токенов",
@@ -950,6 +1242,15 @@
         "no_transcript": "Transcript не найден",
         "gateway_unavailable": "Gateway недоступен"
       }
+    },
+    "taskLoopUpgrade": {
+      "title": "Доступен Task Loop",
+      "summary": "Проектное выполнение с checkpoint.",
+      "confirm": "Запустить Task Loop",
+      "starting": "Запуск Task Loop",
+      "toastUpdated": "Task Loop обновлен: {{status}}",
+      "toastFailed": "Не удалось запустить Task Loop",
+      "unknownStatus": "неизвестно"
     },
     "longTaskControl": {
       "queued": "{{count}} в очереди",
@@ -1179,6 +1480,7 @@
     "intervention": {
       "guide": "Направить",
       "guideTooltip": "Добавить ненарушающую подсказку в активный запуск.",
+      "queueDefault": "Запуск активен: Enter ставит в очередь",
       "queue": "В очередь",
       "queueTooltip": "Не прерывать запуск и воспроизвести это сообщение позже.",
       "interrupt": "Прервать",
@@ -1263,39 +1565,17 @@
         "emptyBody": "У сессии {{sessionKey}} пока нет отображаемого transcript восстановления. Перед применением фиксируйте только проверенные факты, решения, блокеры и ссылки evidence."
       }
     },
-    "git": {
-      "loading": "Загрузка Git",
-      "branchLabel": "Ветка",
-      "worktreeLabel": "Worktree",
-      "clean": "Чисто",
-      "dirty": "{{count}} изменений",
-      "conflicts": "{{count}} конфликтов",
-      "detached": "Detached",
-      "unknownBranch": "Неизвестная ветка",
-      "sync": "ahead {{ahead}} / behind {{behind}}",
-      "openPanel": "Открыть Git-панель",
-      "refresh": "Обновить",
-      "branches": "Ветки",
-      "searchBranches": "Поиск веток",
-      "checkout": "Checkout",
-      "createBranch": "Создать ветку",
-      "branchName": "Имя ветки",
-      "startPoint": "Начальная точка",
-      "worktrees": "Worktrees",
-      "current": "Текущий",
-      "locked": "Заблокирован",
-      "prunable": "Можно очистить",
-      "switchWorktree": "Переключить",
-      "addWorktree": "Добавить worktree",
-      "newBranch": "Новая ветка",
-      "existingBranch": "Существующая ветка",
-      "defaultPath": "Путь по умолчанию",
-      "defaultPathUnavailable": "Введите ветку для предпросмотра пути",
-      "branchExists": "Ветка уже существует",
-      "branchCheckedOut": "Ветка уже checkout в {{path}}",
-      "operationBlocked": "{{reason}}",
-      "operationFailed": "{{error}}",
-      "operationSuccess": "{{action}} выполнено"
+    "knowledgePreflight": {
+      "title": "Knowledge Preflight",
+      "summary": "{{docs}} ????????? ??????????, {{pitfalls}} ??????? ??????, {{rules}} ?????? ????? ???????.",
+      "confidence": "{{confidence}}%",
+      "whyMatched": "???????: {{reason}}",
+      "source": "{{corpus}} ? {{source}}",
+      "groups": {
+        "docs": "????????? ?????????",
+        "pitfalls": "??????? ??????",
+        "rules": "???????"
+      }
     }
   },
   "historyBuckets": {
@@ -1310,14 +1590,14 @@
     "work": "Задачи"
   },
   "sessionView": {
-    "project": "Проекты",
+    "project": "Рабочие группы",
     "time": "Время"
   },
   "sidebar": {
     "searchSessions": "Поиск диалогов",
     "clearSearch": "Очистить поиск",
     "searchNoResults": "Диалоги не найдены",
-    "searchModalPlaceholder": "Поиск диалогов по названию, пространству или агенту...",
+    "searchModalPlaceholder": "Поиск диалогов по названию, рабочей группе, пространству или агенту...",
     "searchEmptyHint": "Начните вводить для поиска диалогов",
     "searchCurrent": "Текущий",
     "searchRelativeNow": "только что",
@@ -1327,6 +1607,45 @@
     "searchHintNavigate": "навигация",
     "searchHintSelect": "выбор",
     "searchHintClose": "закрыть"
+  },
+  "folders": {
+    "create": "Новая папка",
+    "namePlaceholder": "Имя папки",
+    "rename": "Переименовать папку",
+    "delete": "Удалить папку",
+    "moveTo": "Переместить в папку",
+    "noFolder": "Без папки"
+  },
+  "workgroups": {
+    "create": "Новая рабочая группа",
+    "namePlaceholder": "Имя рабочей группы",
+    "rename": "Переименовать рабочую группу",
+    "delete": "Удалить рабочую группу",
+    "moveTo": "Переместить в рабочую группу",
+    "noWorkgroup": "Без рабочей группы",
+    "ungrouped": "Без группы",
+    "sessionCount": "{{count}} диалогов",
+    "status": {
+      "running": "В работе",
+      "waiting": "Ожидает",
+      "attention": "Требует внимания",
+      "done": "Готово",
+      "stopped": "Остановлено",
+      "idle": "Нет активности"
+    }
+  },
+  "archive": {
+    "title": "Архив разговоров",
+    "open": "Архив",
+    "empty": "Нет архивированных разговоров",
+    "loading": "Загрузка архивированных разговоров...",
+    "restore": "Восстановить",
+    "deletePermanently": "Удалить",
+    "deleteTitle": "Удалить разговор",
+    "deleteMessage": "Выберите способ удаления. Архив перемещает в корзину (восстановимо); Удалить окончательно удаляет «{{label}}».",
+    "archiveAction": "Архив",
+    "emptyAll": "Очистить архив",
+    "emptyAllConfirm": "Нажмите ещё раз, чтобы окончательно удалить все архивированные разговоры"
   },
   "questionDirectory": {
     "title": "Список вопросов",
@@ -1443,42 +1762,18 @@
     "aborted": "Остановлено",
     "dismissCompleted": "Скрыть завершенный статус"
   },
-  "workContext": {
-    "title": "Рабочий контекст",
-    "sections": {
-      "plan": "Журнал задач / план",
-      "ledger": "Task Ledger",
-      "environment": "Среда",
-      "artifacts": "Артефакты",
-      "sources": "Источники"
+  "turnSummary": {
+    "titleFallback": "Работа завершена",
+    "toggle": "Развернуть или свернуть сводку работы",
+    "status": {
+      "completed": "Работа завершена",
+      "error": "Требует внимания"
     },
-    "environment": {
-      "workspace": "Рабочая область",
-      "branch": "Ветка",
-      "changes": "Изменения",
-      "unknownWorkspace": "Рабочая область",
-      "changeCounts": "{{count}} изменений",
-      "delta": "+{{added}} -{{removed}}"
-    },
-    "actions": {
-      "viewChanges": "Показать изменения",
-      "commitOrPush": "Коммит или push",
-      "createPr": "Создать PR"
-    },
-    "ledger": {
-      "noCurrentGoal": "Нет текущей цели",
-      "counts": "{{active}} активных / {{review}} на проверке / {{blocked}} заблокировано",
-      "active": "Активно",
-      "review": "Проверка",
-      "blocked": "Блок"
-    },
-    "git": {
-      "clean": "Чисто",
-      "detached": "Detached HEAD",
-      "unknownBranch": "Неизвестная ветка"
-    },
-    "empty": {
-      "sources": "Источников пока нет"
+    "counts": {
+      "tasks": "{{count}} задач",
+      "reports": "{{count}} файлов",
+      "sources": "{{count}} источников",
+      "orchestrations": "{{count}} команд"
     }
   },
   "turnWork": {

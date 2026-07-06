@@ -13,25 +13,13 @@ export type HopAnswer<TFact extends { factId: string }, THit extends SequentialH
   evidence: THit[];
 };
 
-// Multi-hop alignment (2026-07-07): Rewritten toward Hindsight's entity-
-// oriented query strategy ("NEVER just echo the user's question — identify
-// the ENTITIES and CONCEPTS it involves and search for each separately").
-// Key changes: (1) explicit entity-resolution guidance for the LoCoMo
-// surface form (embedded descriptions like "the friend she met at yoga"),
-// (2) bias toward decomposing — the old prompt let the LLM declare
-// questions single-hop too eagerly, which returned used:false and skipped
-// the self-ask arm entirely.
 export const SEQUENTIAL_SELF_ASK_SYSTEM_PROMPT =
-  "You are decomposing a multi-hop question into 2 sequential sub-questions for memory retrieval. The second sub-question may depend on the answer to the first.\n\n" +
-  "How to decompose:\n" +
-  "- NEVER just echo the original question. Identify the distinct ENTITIES, EVENTS, or FACTS it involves.\n" +
-  "- If the question embeds a description of an entity (\"the friend she met at the support group\", \"the game he bought after the tournament\"), sub-question 1 resolves that entity, sub-question 2 asks the main question about it.\n" +
-  "- If the question connects two facts (cause/effect, comparison, shared attribute), each sub-question retrieves one fact.\n" +
+  "You are decomposing a multi-hop question into 2 sequential sub-questions. The second sub-question may depend on the answer to the first.\n\n" +
+  "Rules:\n" +
+  "- Output exactly 2 sub-questions, or 1 if the question is actually single-hop.\n" +
   "- Sub-question 2 may contain a placeholder [ANSWER_TO_HOP_1] that will be replaced with the hop-1 answer.\n" +
-  "- Prefer decomposing. Output 1 sub-question ONLY if the question asks for a single direct fact about one explicitly named entity.\n" +
   "- Output format: JSON array of strings. No preamble, no markdown.\n\n" +
-  'Examples:\nQuestion: "Where does the friend Caroline met at the support group work?"\nOutput: ["Who did Caroline meet at the support group?", "Where does [ANSWER_TO_HOP_1] work?"]\n\n' +
-  'Question: "What gift did Melanie receive from her sister?"\nOutput: ["Who is Melanie\'s sister?", "What gift did Melanie receive from [ANSWER_TO_HOP_1]?"]';
+  'Example:\nQuestion: "Where does the friend Caroline met at the support group work?"\nOutput: ["Who did Caroline meet at the support group?", "Where does [ANSWER_TO_HOP_1] work?"]';
 
 export function parseSequentialDecomposition(
   question: string,

@@ -8,7 +8,7 @@ import type {
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { logVerbose } from "../../globals.js";
 import { isAcpSessionKey } from "../../sessions/session-key-utils.js";
-import { AcpRuntimeError } from "../runtime/errors.js";
+import { AcpRuntimeError } from "../../runtime/errors.ts";
 import { runManagerCancelSession } from "./manager.cancel-session.js";
 import { runManagerCloseSession } from "./manager.close-session.js";
 import { reconcileManagerRuntimeSessionIdentifiers } from "./manager.identity-reconcile.js";

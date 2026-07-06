@@ -35,6 +35,10 @@
 
 ---
 
+## Capability Claim Boundary
+
+Product capability statements must be checked against the canonical matrix in `shared/capability-claims.ts` and the generated status table in `artifacts/capability-claims/status-table.json` before being described as implemented, productized, stable, or end-to-end verified. The local gate `node scripts/check-capability-claims.mjs <files>` warns when high-confidence claims lack matrix, E2E, or real-runtime evidence.
+
 ## Overview
 
 **Verse Claw** bridges the gap between powerful AI agents and everyday users. Built on top of [OpenClaw](https://github.com/OpenClaw), it transforms command-line AI orchestration into an accessible, beautiful desktop experience鈥攏o terminal required.
@@ -104,8 +108,6 @@ We are committed to maintaining strict alignment with the upstream OpenClaw proj
 
 When Developer Mode is enabled, the sidebar also provides a native Dreams page for OpenClaw memory review, dream diary inspection, and basic maintenance actions. The full upstream OpenClaw Dreams UI remains available from that page when deeper diagnostics are needed.
 
-OpenClaw runtime context now defaults to the backend Context Runtime Kit when no explicit `plugins.slots.contextEngine` is configured. CRK adds bounded selector-backed prompt and recovery diagnostics while preserving `legacy` as the fallback; operators can roll back without UI changes by setting `runtime.contextRuntimeKit.enabled: false` or `plugins.slots.contextEngine: "legacy"`. Tool-call gate diagnostics remain report-only.
-
 ---
 
 ## Features
@@ -115,7 +117,10 @@ Complete the entire setup鈥攆rom installation to your first AI interaction鈥�
 
 ### 馃挰 Intelligent Chat Interface
 Communicate with AI agents through a modern chat experience. Support for multiple conversation contexts, message history, rich content rendering with Markdown (including GitHub-flavored tables and KaTeX-powered LaTeX math: `$inline$`, `$$block$$`, `\(inline\)`, and `\[block\]`), structured Tool UI cards for plans, option lists, question flows, and preferences, and direct `@agent` routing in the main composer for multi-agent setups.
+Reasoning intensity is also a runtime policy: minimal/low runs reduce prompt, skill, and tool-result density for cheaper concise turns, while high/xhigh can recommend explicit `/loop`, ClawGraph, role/subagent, or multi-model workflows without changing permissions or tool authority.
+The left sidebar includes a Workgroups view that organizes conversations by workspace-level task groups, shows aggregate running/waiting/attention status, keeps ungrouped conversations visible, and lets new workspace-scoped conversations inherit the current workgroup.
 Settings 鈫?Work Modes includes Plan, Build, Review, and Docs/Data. Modes are saved per workspace session and now use artifact-focused Work Kits for reports, sheets, slides, PDFs, research, websites, design, and ops. Kit status shows local skill readiness, Main-owned Work Provider status for lightweight Office/Search capabilities, and optional install actions for built-in Office skills, while the next message only carries lightweight untrusted intent metadata. Work Providers can be backed by built-in libraries, optional packages, external services, Custom HTTP, external binaries, runtime skills, MCP servers, or OpenClaw plugins through the same source model. Search remains missing-config until the user explicitly configures a provider, and heavy converters, crawlers, OCR, and dataframe runtimes stay optional interfaces. Work Modes do not change workspace permission automatically or override OpenClaw runtime tool policy.
+OfficeCLI is also managed from Settings -> Skills -> Feature Plugins: Verse Claw detects the binary, streams install logs, syncs Codeg-compatible `/officecli-*` skills, and uses `officecli watch` for live `.docx`, `.xlsx`, and `.pptx` previews.
 Skills you insert from the composer appear as `/skill-name` chips; click a chip to open the preview sidebar and read that skill's `SKILL.md`.
 Typing `/` in the composer opens the Context Palette for wiki search, read-only knowledge scope changes, review, CI repair, tests, diff explanation, Task Ledger, Mission Control, compaction, and session fork through the existing Chat and session flows.
 When you target another agent with `@agent`, Verse Claw switches into that agent's own conversation context directly instead of relaying through the default agent. Agent workspaces stay separate by default, and stronger isolation depends on OpenClaw sandbox settings.
@@ -123,7 +128,7 @@ By default, Verse Claw uses a lightweight `policy-light` sandbox layer backed by
 Settings, Doctor, and diagnostics now show the same effective sandbox policy, including requested/effective provider, runtime level, exec and network policy, Docker availability, and degraded fallback reason.
 Settings -> System & Runtime also includes Project Rules Center, which inspects the active workspace `AGENTS.md`, lists `.clawx/rules/*.md`, shows deterministic validation warnings, and can create a conservative missing `AGENTS.md` template without introducing a new rule source of truth.
 Each agent can also override its own `provider/model` runtime setting; agents without overrides continue inheriting the global default model.
-The composer context indicator includes a confirmed manual compression action for the current session, surfacing token pressure, hidden-message counts, last compaction, and compression quality while keeping long-task state in Task Ledger / Context Pack instead of relying on a huge transcript. Compaction also stores a token-dense recovery artifact that handoff can use before falling back to transcript evidence.
+The composer context indicator includes a confirmed manual compression action for the current session, surfacing token pressure, hidden-message counts, last compaction, and compression quality while keeping long-task state in Task Ledger / Context Pack instead of relying on a huge transcript. Compaction also stores a token-dense recovery artifact that handoff can use before falling back to transcript evidence. The runtime uses a tiered progressive compression plan for manual/explicit opt-in compaction first; automatic compaction records telemetry until the quality gates prove the new path is ready to take over.
 It also surfaces checkpointed recovery state for long conversations: queued follow-ups, latest intervention/checkpoint signals, recovery warnings, and an idle-session action to drain queued follow-up messages that survived a Gateway restart.
 The Chat rollback plan adds a review-first recovery panel with safe/review/dangerous counts, checkpoint/queue/context/terminal/Git/Task Ledger/Memory signals, and typed actions that route destructive work through approval-backed tools while memory facts become Knowledge drafts or proposals.
 It also includes preview-first **Handoff to new conversation**: Verse Claw prepares an editable deterministic recovery package from ResumeCheckpoint, runtime recovery context, Task Ledger, Git status, recent trace/error state, and transcript fallback evidence, then creates a fresh workspace-scoped session with that draft prefilled without auto-sending.
@@ -146,7 +151,7 @@ The Observability page keeps a Verse Claw-owned local JSON/JSONL trace index for
 The runtime also includes a default-off security and verification shadow layer for Gateway-visible `tools.invoke` calls and runtime validation inputs. When enabled by policy, it records sanitized in-memory security decisions, deterministic tool-call/event-log/checkpoint verification summaries, runId-correlated result filters, and aggregate health counts through `security.*` and `verification.*` RPCs plus additive Observability spans; it does not block tools, run external tests, call an LLM judge, or persist raw tool arguments/results/events/checkpoints.
 
 ### Task Ledger
-The Task Ledger page keeps a workspace-scoped, agent-neutral record for long-running work: goals, subtasks, dependencies, blockers, review nodes, decisions, deviations, and session links. It stores append-only JSONL events under the local OpenClaw config directory, shows a compact summary in the Chat work context bar, and exports a single offline HTML file with Tree, DAG, History, and Review views.
+The Task Ledger page keeps a workspace-scoped, agent-neutral record for long-running work: goals, subtasks, dependencies, blockers, review nodes, decisions, deviations, and session links. It stores append-only JSONL events under the local OpenClaw config directory, shows a compact summary beside active chats, and exports a single offline HTML file with Tree, DAG, History, and Review views.
 
 ### Remote Tasks
 The Remote Tasks page provides a local-first inbox for structured message, OpenClaw Doctor, and settings patch envelopes. Settings patches show a change preview and require explicit approval before the Main process applies a whitelisted configuration update.
@@ -155,12 +160,11 @@ The Remote Tasks page provides a local-first inbox for structured message, OpenC
 The Review Center runs read-only AI review over uncommitted changes, diffs against a base branch, or a selected commit. It normalizes findings by severity with file and line anchors, records sanitized review traces, and can turn a finding or full review result into a Task Ledger review node without staging, committing, or editing files.
 
 ### Knowledge Hub
-Knowledge includes a read-only Runtime Lessons view for SEKB trajectories, undistilled runs, active principles, and index preview.
-
 The Knowledge page manages source-backed wiki context through OpenClaw `memory-wiki`. It defaults to an isolated Verse Claw-managed native vault, can import bounded text files or folders without switching to unsafe local-vault mode, and can validate/import local OKF v0.1 Markdown bundles as a thin compatibility adapter over `wiki.ingest`. It offers status, search, inspect, compile, lint, Knowledge Inbox, draft/proposal review, provenance, and governance workflows. Inbox items capture chat, task, file, OKF, ClawGraph, or agent candidates outside the formal wiki until the user promotes or dismisses them; provenance records source refs and read/reference events without mutating wiki pages. Chat knowledge scope (`None`, `Memory`, `Wiki`, or `All`) is read-only: agents may search/get context, but cannot write, update, archive, delete, merge, or apply knowledge because a scope is enabled. In Chat, `/wiki` searches and attaches explicit wiki references as visible chips before send, while `/memory`, `/all`, `/none`, and `/scope` adjust read scope without turning it into write permission. The invocation mode defaults to Suggest, where relevant knowledge appears as optional chips; Auto-read is opt-in and only attaches a small read-only set of fresh, high-confidence references. Session knowledge and agent/steward suggestions enter editable drafts/proposals first; only explicit user confirmation applies them to the wiki. Obsidian remains optional rather than required. A governance dashboard surfaces contradictions, stale pages, and dangling references through on-demand health checks; watched directories keep project docs flowing into pending Inbox items and never direct-ingest or create syntheses automatically.
 
 ### Workspace Git Control
-The Chat composer shows a compact Git strip when the active workspace is a repository, surfacing branch, clean/dirty/conflict state, ahead/behind counts, and the current worktree folder. Its dropdown can refresh repository context, search and switch branches, create a checked-out branch, add a sibling worktree with a default path preview, switch into a worktree workspace profile, and open the full Git workbench. The Workspace sidebar Git workbench remains the full surface for repository status, side-by-side file diffs, staging, copyable patches, approval-gated file reverts, commits, branches, stashes, worktrees, and GitHub pull requests. The same Main-process Git service powers both UI surfaces and the built-in `clawx-git` MCP server, so agents can use controlled Git and PR tools through Verse Claw permissions instead of shelling out directly; destructive or publishing actions such as revert, pull, push, worktree remove/prune, and PR creation stay approval-gated.
+The Workspace sidebar now opens to a compact entry launcher; repository review appears as a Review entry only when the active workspace is a Git repository, so non-Git projects are not shown Git controls.
+The Workspace sidebar includes a Git workbench for repository status, side-by-side file diffs, staging, copyable patches, approval-gated file reverts, commits, branches, stashes, worktrees, and GitHub pull requests. Its readiness strip quantifies local Git, built-in Agent Git tools, worktree count, and `gh` authentication so the panel shows what is actually usable. Worktree add supports new-branch and existing-branch flows, with new worktrees placed next to the repository by default. The same Main-process Git service powers the built-in `clawx-git` MCP server, so agents can use controlled Git and PR tools through Verse Claw permissions instead of shelling out directly; destructive or publishing actions such as revert, pull, push, worktree remove/prune, and PR creation stay approval-gated.
 
 ### 馃摗 Multi-Channel Management
 Configure and monitor multiple AI channels simultaneously. Each channel operates independently, allowing you to run specialized agents for different tasks.
@@ -424,7 +428,24 @@ pnpm harness context --spec harness/specs/tasks/connect-clawx-to-openclaw-runtim
 pnpm harness validate --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 
 # Agent dev/test control plane
-pnpm agent-dev:make e2e my-scenario
+pnpm agent-dev:make <page|e2e|host-route|skill|channel|plugin|scenario> my-scenario
+# scenario scaffolds register shared/agent-dev/scenarios.ts and generate snapshot-backed E2E
+pnpm contract:check
+pnpm i18n:lint
+pnpm channel:conformance my-channel
+pnpm agent-dev:workbench
+pnpm agent-dev:promote-scenario artifacts/agent-dev-scenarios/example.scenario.json my-scenario
+pnpm agent-dev:deep-test
+pnpm agent-dev:deep-test:reuse     # Daily loop: reuse build, cached typecheck, Workbench smoke E2E
+pnpm agent-dev:deep-test:reuse:full  # Reuse build and cached typecheck, but run full Agent Dev E2E
+pnpm agent-dev:audit               # Score Agent Dev maturity from existing evidence
+pnpm agent-dev:audit:report        # Generate the same audit report without failing the shell
+pnpm agent-dev:unit:fast           # Daily unit loop; use agent-dev:unit for full review evidence
+pnpm run typecheck:agent-dev       # Parallel node+web typecheck daily loop
+pnpm run typecheck:cached          # Fingerprint-cached repeat typecheck for local diagnosis
+pnpm run typecheck:force           # Force a fresh uncached typecheck cache refresh
+pnpm run test:e2e:agent-dev-quality:smoke  # Workbench E2E smoke loop only
+pnpm agent-dev:validate
 
 # Build & Package
 pnpm run build:vite       # Build frontend only
@@ -437,7 +458,7 @@ pnpm package:linux        # Package for Linux
 
 Verse Claw also seeds workspace-local `.clawx/harness/` docs for active project workspaces and OpenClaw agent workspaces. This provides a Trellis-inspired project harness for rules, scenarios, task contracts, guides, layers, context-pack recipes, and Task Ledger bridge docs without introducing a parallel `.trellis/` or Markdown task-state source of truth.
 
-Agent-authored page and functional tests can use the typed `hostApi.agentDev` control plane for state seeds, `?devScenario=...`, host-api record/replay, diagnostics snapshots, transport traces, visual presets, and selector contracts. See [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md).
+Agent-authored page and functional tests can use the typed `hostApi.agentDev` control plane for state seeds, `?devScenario=...`, host-api record/replay, diagnostics snapshots, transport traces, trace timelines, Workbench evidence, cost reports, skill sandbox reports, visual presets, selector contracts, redacted scenario recordings, and reviewed scenario promotion. Settings > Developer includes the in-app Agent Dev Workbench panel, and deep-test reports now include machine-readable `decision` and rolling timing history evidence. See [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md).
 
 On headless Linux, run Electron tests under a display server such as `xvfb-run -a pnpm run test:e2e`.
 

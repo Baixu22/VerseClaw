@@ -80,6 +80,7 @@ export type SessionCompactionCheckpoint = {
   tokensAfter?: number;
   summary?: string;
   firstKeptEntryId?: string;
+  details?: unknown;
   preCompaction: SessionCompactionTranscriptReference;
   postCompaction: SessionCompactionTranscriptReference;
 };
@@ -696,6 +697,19 @@ export type SessionSystemPromptReport = {
     kind?: "user_request" | "room_event";
     promptChars: number;
     runtimeContextChars: number;
+  };
+  runtimeIntensity?: {
+    level: string;
+    policyId: string;
+    promptMode: "full" | "minimal" | "none";
+    skillsMode: string;
+    shellOutputMode: string;
+    shellOutputRecovery?: string;
+    skillsIncluded: number;
+    skillsTotal: number;
+    toolResultMaxChars: number;
+    estimatedSavedChars: number;
+    estimatedSavedTokens: number;
   };
   injectedWorkspaceFiles: Array<{
     name: string;

@@ -1,0 +1,84 @@
+{
+  "replayCase": {
+    "id": "runtime-replay-dirty-workspace",
+    "title": "Fixture-backed dirty workspace replay",
+    "scenario": "dirty_workspace",
+    "input": {
+      "userMessage": "Detect a dirty workspace without mutating it.",
+      "providerFixture": "runtime-replay/providers/dirty-workspace",
+      "toolFixture": "runtime-replay/tools/status",
+      "workspaceFixture": "runtime-replay/workspaces/dirty"
+    },
+    "expected": {
+      "terminalStatus": "blocked",
+      "allowedFailureKinds": [
+        "environment_contamination"
+      ],
+      "touchedPaths": [
+        "[redacted-path]"
+      ]
+    },
+    "budgets": {
+      "maxPromptBytes": 4096,
+      "maxToolCalls": 2,
+      "maxDurationMs": 120000
+    }
+  },
+  "fixtures": {
+    "provider": {
+      "ref": "runtime-replay/providers/dirty-workspace",
+      "mode": "fixture",
+      "status": "ok",
+      "summary": "Provider fixture requested a workspace status check."
+    },
+    "tool": {
+      "ref": "runtime-replay/tools/status",
+      "mode": "fixture",
+      "status": "ok",
+      "summary": "Status fixture found pre-existing local changes.",
+      "toolCalls": 1
+    },
+    "workspace": {
+      "ref": "runtime-replay/workspaces/dirty",
+      "mode": "fixture",
+      "status": "dirty",
+      "summary": "Dirty workspace fixture is summarized without reverting local changes.",
+      "touchedPaths": [
+        {
+          "path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\private\\secret-file.ts",
+          "status": "dirty",
+          "summary": "Pre-existing workspace change with PASSWORD=hunter2 was detected and left untouched."
+        }
+      ]
+    },
+    "failureSignals": [
+      {
+        "id": "failure-dirty-workspace",
+        "runId": "run-dirty-workspace",
+        "source": "workspace.fixture",
+        "occurredAt": "2026-07-01T11:59:00.000Z",
+        "signal": {
+          "stage": "tool_call",
+          "kind": "environment_contamination",
+          "message": "Dirty workspace detected at C:\\Users\\27933\\Desktop\\clawx\\ClawX\\private\\secret-file.ts with PASSWORD=hunter2."
+        },
+        "evidenceRefs": [
+          "dirty-workspace-fixture"
+        ]
+      }
+    ]
+  },
+  "expectedFailureKinds": [
+    "environment_contamination"
+  ],
+  "expectedEvidenceDecisions": [
+    {
+      "kind": "failure_summary",
+      "accepted": true,
+      "authority": "none"
+    }
+  ],
+  "expectedTouchedPathSummaries": [
+    "[redacted-path]"
+  ]
+}

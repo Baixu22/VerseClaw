@@ -28,10 +28,6 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('@/hooks/use-webgl-fire', () => ({
-  useWebglFire: () => undefined,
-}));
-
 function renderButton() {
   return render(
     <TooltipProvider>
@@ -85,7 +81,7 @@ describe('ChatAgentEffortButton', () => {
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const slider = await screen.findByTestId('chat-agent-effort-slider');
     fireEvent.change(slider, { target: { value: '5' } });
-    // Commit fires on the input handler in this component (optimistic).
+    // Commit is debounced so slider drag stays smooth.
     await waitFor(() => {
       expect(updateAgentReasoningEffort).toHaveBeenCalled();
     });
@@ -108,34 +104,31 @@ describe('ChatAgentEffortButton', () => {
     expect(value).toBe('xhigh');
   });
 
-  it('uses gray card background instead of pure black', async () => {
+  it('uses a theme-aware rounded popover card', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const popover = await screen.findByTestId('chat-agent-effort-popover');
     const card = popover.querySelector('.effort-card') as HTMLElement;
     expect(card).toBeTruthy();
-    // #18181b is the gray background, not #000000
-    expect(card.className).toContain('bg-[#18181b]');
-    expect(card.className).not.toContain('bg-black');
+    expect(card.className).toContain('rounded-xl');
+    expect(card.className).toContain('bg-surface-modal');
+    expect(card.className).not.toContain('bg-[#18181b]');
   });
 
-  it('renders squircle SVG clip-path definitions', async () => {
+  it('does not render legacy squircle clip-path definitions', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const popover = await screen.findByTestId('chat-agent-effort-popover');
     const clipPaths = popover.querySelectorAll('clipPath');
-    // Two clip-paths: one for the card, one for the track
-    expect(clipPaths.length).toBeGreaterThanOrEqual(2);
+    expect(clipPaths).toHaveLength(0);
   });
 
-  it('applies clip-path url() to the card element', async () => {
+  it('keeps the card as a normal rounded rectangle', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const popover = await screen.findByTestId('chat-agent-effort-popover');
     const card = popover.querySelector('.effort-card') as HTMLElement;
-    const clipPath = card.style.clipPath;
-    // jsdom may serialize as url("#...") or url(#...)
-    expect(clipPath).toMatch(/url\(["']?#effort-card-clip-/);
+    expect(card.style.clipPath).toBe('');
   });
 
   it('shows all 7 tick labels under the track', async () => {
@@ -143,23 +136,21 @@ describe('ChatAgentEffortButton', () => {
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     await screen.findByTestId('chat-agent-effort-slider');
     const popover = screen.getByTestId('chat-agent-effort-popover');
-    // The tick labels are in a flex container right after the track
-    const tickContainer = popover.querySelector('.mt-2.flex.justify-between');
+    const tickContainer = screen.getByTestId('chat-agent-effort-ticks');
     expect(tickContainer).toBeTruthy();
-    const ticks = tickContainer!.querySelectorAll('span');
+    const ticks = tickContainer.querySelectorAll('span');
     expect(ticks.length).toBe(7);
   });
 
-  it('highlights the active tick label in fuchsia', async () => {
+  it('highlights the active tick label with the theme accent', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     await screen.findByTestId('chat-agent-effort-slider');
-    const popover = screen.getByTestId('chat-agent-effort-popover');
-    const tickContainer = popover.querySelector('.mt-2.flex.justify-between');
-    const ticks = tickContainer!.querySelectorAll('span');
-    // The agent starts at 'high' (index 4), so tick 4 should be fuchsia
+    const tickContainer = screen.getByTestId('chat-agent-effort-ticks');
+    const ticks = tickContainer.querySelectorAll('span');
+    // The agent starts at 'high' (index 4), so tick 4 should be active.
     const activeTick = ticks[4];
-    expect(activeTick.className).toContain('text-fuchsia-400');
+    expect(activeTick.className).toContain('text-primary');
   });
 
   it('closes the popover on Escape key', async () => {

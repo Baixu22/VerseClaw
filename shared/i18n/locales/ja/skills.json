@@ -13,6 +13,63 @@
         "marketplaceLocalOnly": "ローカルのみ — マーケットプレイスは近日公開",
         "marketplaceLocalOnlyAria": "マーケットプレイス (ローカルのみ — 近日公開)"
     },
+    "packs": {
+        "tab": "機能プラグイン",
+        "skillCounts": "{{enabled}} 有効 / {{installed}} インストール済み / 全 {{total}} 件",
+        "status": {
+            "notInstalled": "未インストール",
+            "installing": "インストール中",
+            "installed": "インストール済み",
+            "enabled": "有効",
+            "syncNeeded": "同期が必要",
+            "error": "エラー"
+        },
+        "actions": {
+            "install": "インストール",
+            "downloadInstall": "ダウンロードしてインストール",
+            "sync": "同期",
+            "enable": "有効化",
+            "disable": "無効化",
+            "previewSkill": "{{skill}} をプレビュー",
+            "uninstall": "アンインストール"
+        },
+        "skill": {
+            "enabled": "有効",
+            "notInstalled": "未インストール"
+        },
+        "office": {
+            "detecting": "確認中",
+            "installed": "インストール済み",
+            "notRunnable": "インストール済みですが実行できません",
+            "notInstalled": "未インストール",
+            "installHint": "OfficeCLI をインストールすると、Office スキルの同期と Office 文書のプレビューが使えます。",
+            "installSuccess": "OfficeCLI をインストールし、スキルを同期しました",
+            "installFailed": "OfficeCLI のインストールに失敗しました: {{error}}",
+            "syncSuccess": "{{synced}} 件の Office スキルを同期しました",
+            "syncFailed": "Office スキルの同期に失敗しました: {{error}}",
+            "syncPartial": "{{synced}} 件の Office スキルを同期しました。{{errors}} 件は失敗しました",
+            "uninstallSuccess": "OfficeCLI をアンインストールしました",
+            "uninstallFailed": "OfficeCLI のアンインストールに失敗しました: {{error}}",
+            "agentMatrix": {
+                "title": "Agent 割り当て",
+                "skill": "スキル",
+                "emptyAgents": "利用できる Agent がありません",
+                "notSynced": "先に同期",
+                "cellLabel": "{{agent}} の {{skill}}",
+                "enableSuccess": "Agent に Office スキルを有効化しました",
+                "disableSuccess": "Agent の Office スキルを無効化しました",
+                "applyFailed": "Office スキルの割り当てに失敗しました: {{error}}",
+                "applyPartial": "{{failed}} 件の Office スキル割り当てに失敗しました"
+            }
+        },
+        "toast": {
+            "installed": "機能プラグインをインストールしました",
+            "synced": "機能プラグインを同期しました",
+            "enabled": "機能プラグインを有効化しました",
+            "disabled": "機能プラグインを無効化しました",
+            "failed": "機能プラグインの操作に失敗しました: {{error}}"
+        }
+    },
     "filter": {
         "all": "すべて ({{count}})",
         "builtIn": "内蔵 ({{count}})",

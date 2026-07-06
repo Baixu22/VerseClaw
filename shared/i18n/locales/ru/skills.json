@@ -13,6 +13,63 @@
         "marketplaceLocalOnly": "Только локально — маркетплейс скоро появится",
         "marketplaceLocalOnlyAria": "Маркетплейс (Только локально — скоро появится)"
     },
+    "packs": {
+        "tab": "Функциональные плагины",
+        "skillCounts": "{{enabled}} включено / {{installed}} установлено / всего {{total}}",
+        "status": {
+            "notInstalled": "Не установлено",
+            "installing": "Установка",
+            "installed": "Установлено",
+            "enabled": "Включено",
+            "syncNeeded": "Нужна синхронизация",
+            "error": "Ошибка"
+        },
+        "actions": {
+            "install": "Установить",
+            "downloadInstall": "Скачать и установить",
+            "sync": "Синхронизировать",
+            "enable": "Включить",
+            "disable": "Отключить",
+            "previewSkill": "Предпросмотр {{skill}}",
+            "uninstall": "Удалить"
+        },
+        "skill": {
+            "enabled": "Включено",
+            "notInstalled": "Не установлено"
+        },
+        "office": {
+            "detecting": "Проверка",
+            "installed": "Установлено",
+            "notRunnable": "Установлено, но не запускается",
+            "notInstalled": "Не установлено",
+            "installHint": "Установите OfficeCLI, чтобы синхронизировать Office-навыки и просматривать Office-документы.",
+            "installSuccess": "OfficeCLI установлен, навыки синхронизированы",
+            "installFailed": "Не удалось установить OfficeCLI: {{error}}",
+            "syncSuccess": "Синхронизировано Office-навыков: {{synced}}",
+            "syncFailed": "Не удалось синхронизировать Office-навыки: {{error}}",
+            "syncPartial": "Синхронизировано Office-навыков: {{synced}}; ошибок: {{errors}}",
+            "uninstallSuccess": "OfficeCLI удален",
+            "uninstallFailed": "Не удалось удалить OfficeCLI: {{error}}",
+            "agentMatrix": {
+                "title": "Назначения Agent",
+                "skill": "Навык",
+                "emptyAgents": "Нет доступных Agent",
+                "notSynced": "Сначала синхронизируйте",
+                "cellLabel": "{{skill}} для {{agent}}",
+                "enableSuccess": "Office-навык включен для Agent",
+                "disableSuccess": "Office-навык отключен для Agent",
+                "applyFailed": "Не удалось назначить Office-навык: {{error}}",
+                "applyPartial": "Не удалось назначить Office-навыков: {{failed}}"
+            }
+        },
+        "toast": {
+            "installed": "Функциональный плагин установлен",
+            "synced": "Функциональный плагин синхронизирован",
+            "enabled": "Функциональный плагин включен",
+            "disabled": "Функциональный плагин отключен",
+            "failed": "Не удалось выполнить действие плагина: {{error}}"
+        }
+    },
     "filter": {
         "all": "Все ({{count}})",
         "builtIn": "Встроенные ({{count}})",

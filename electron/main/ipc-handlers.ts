@@ -52,6 +52,7 @@ import { createWindowApi } from '../services/window-api';
 import { createUvApi } from '../services/uv-api';
 import { createGatewayApi } from '../services/gateway-api';
 import { createLocalControlPlaneApi } from '../services/local-control-plane-api';
+import { createCapabilitiesApi } from '../services/capabilities-api';
 import { createAgentDevApi } from '../services/agent-dev-api';
 import { createLogsApi } from '../services/logs-api';
 import { createSettingsApi } from '../services/settings-api';
@@ -66,9 +67,13 @@ import { createFilesApi } from '../services/files-api';
 import { createMediaApi } from '../services/media-api';
 import { createProvidersApi } from '../services/providers-api';
 import { createSessionsApi } from '../services/sessions-api';
+import { createMemoryApi } from '../services/memory-api';
 import { createSkillsApi } from '../services/skills-api';
+import { createSkillPacksApi } from '../services/skill-packs-api';
+import { createOfficeToolsApi } from '../services/office-tools-api';
 import { createUsageApi } from '../services/usage-api';
 import { createPermissionsApi } from '../services/permissions-api';
+import { createOrchestrationPresetsApi } from '../services/orchestration-presets-api';
 import { createTerminalApi } from '../services/terminal-api';
 import { createGitApi } from '../services/git-api';
 import { createTerminalSessionManager } from '../services/terminal-session-manager';
@@ -85,6 +90,9 @@ import { createTaskLedgerApi } from '../services/task-ledger-api';
 import { createRemoteTasksApi } from '../services/remote-tasks-api';
 import { createClawGraphApi } from '../services/clawgraph-api';
 import { createObservabilityApi, setRuntimeTraceFetcher } from '../services/observability-api';
+import { createSystemApi } from '../services/system-api';
+import { createResourceTrackerApi } from '../services/resource-tracker-api';
+import { HOST_EVENT_CHANNELS } from '@shared/host-events/contract';
 import {
   isLaunchAtStartupKey,
   isProxyKey,
@@ -179,12 +187,14 @@ function registerTypedHostHandlers(
     terminal: createTerminalApi({ gatewayManager, terminalManager }),
     git: createGitApi(),
     permissions: createPermissionsApi(),
+    orchestrationPresets: createOrchestrationPresetsApi(),
     webPreview: createWebPreviewApi({ webPreviewManager }),
     settings: createSettingsApi(gatewayManager),
     gateway: createGatewayApi(gatewayManager, gatewayRpcBackpressure, {
       createKnowledgeInboxItem: knowledgeApi.createInboxItem,
     }),
     localControlPlane: createLocalControlPlaneApi(gatewayManager),
+    capabilities: createCapabilitiesApi({ gatewayManager }),
     agentDev: createAgentDevApi({ gatewayManager }),
     remoteControl: createRemoteControlApi(),
     agentBrowser: createAgentBrowserApi(),
@@ -203,6 +213,12 @@ function registerTypedHostHandlers(
     knowledge: knowledgeApi,
     cron: createCronApi({ gatewayManager }),
     skills: createSkillsApi({ clawHubService, gatewayManager }),
+    skillPacks: createSkillPacksApi(),
+    officeTools: createOfficeToolsApi({
+      emitInstallEvent: (event) => (
+        mainWindow.webContents.send(HOST_EVENT_CHANNELS.officeTools.installEvent, event)
+      ),
+    }),
     usage: createUsageApi(),
     topics: createTopicsApi(),
     taskLedger: createTaskLedgerApi(),
@@ -211,6 +227,9 @@ function registerTypedHostHandlers(
     observability: createObservabilityApi({
       onRuntimeEvent: (event) => mainWindow.webContents.send('observability:runtime-event', event),
     }).observability,
+    system: createSystemApi(),
+    resourceTracker: createResourceTrackerApi(),
+    memory: createMemoryApi({ gatewayManager }),
   });
     // Bridge runtime-process traces into the electron observability store.
   // The gateway's `observability.traces` RPC returns role-first traces + scorecards;

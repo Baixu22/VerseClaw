@@ -3116,6 +3116,8 @@ export const chatHandlers: GatewayRequestHandlers = {
   },
   "chat.send": async ({ params, respond, context, client }) => {
     const chatSendReceivedAtMs = performance.now();
+    console.error("[chat.send.trace] handler entered");
+    context.logGateway.info("chat.send handler entered");
     if (!validateChatSendParams(params)) {
       respond(
         false,
@@ -3135,6 +3137,8 @@ export const chatHandlers: GatewayRequestHandlers = {
       message: string;
       thinking?: string;
       fastMode?: boolean;
+      /** Turn-scoped model override (Area 2 §3.2). */
+      model?: string;
       deliver?: boolean;
       originatingChannel?: string;
       originatingTo?: string;
@@ -3147,6 +3151,9 @@ export const chatHandlers: GatewayRequestHandlers = {
         content?: unknown;
       }>;
       timeoutMs?: number;
+      workspaceId?: unknown;
+      inputMode?: unknown;
+      promptMode?: unknown;
       systemInputProvenance?: InputProvenance;
       systemProvenanceReceipt?: string;
       suppressCommandInterpretation?: boolean;
@@ -3217,7 +3224,7 @@ export const chatHandlers: GatewayRequestHandlers = {
     const rawSessionKey = p.sessionKey;
     const agentIdOverride = normalizeOptionalText(p.agentId);
     const clientRunId = p.idempotencyKey;
-    const workspaceId = normalizeOptionalText((params as { workspaceId?: unknown }).workspaceId);
+    const workspaceId = normalizeOptionalText(p.workspaceId);
     const requestedAgentId = resolveRequestedChatAgentId({
       cfg: (context as { getRuntimeConfig?: () => OpenClawConfig }).getRuntimeConfig?.(),
       requestedSessionKey: rawSessionKey,
@@ -3239,6 +3246,12 @@ export const chatHandlers: GatewayRequestHandlers = {
     );
     const sessionLoadMs = roundedChatSendTimingMs(performance.now() - sessionLoadStartedAtMs);
     const { cfg, entry, canonicalKey: sessionKey } = sessionLoadResult;
+    context.logGateway.info(
+      `chat.send session loaded runId=${clientRunId} sessionKey=${sessionKey} loadSessionMs=${sessionLoadMs}`,
+    );
+    console.error(
+      `[chat.send.trace] session loaded runId=${clientRunId} sessionKey=${sessionKey} loadSessionMs=${sessionLoadMs}`,
+    );
     const selectedAgent = validateChatSelectedAgent({
       cfg,
       requestedSessionKey: rawSessionKey,
@@ -3344,10 +3357,10 @@ export const chatHandlers: GatewayRequestHandlers = {
       // Honor an explicit inputMode from the caller (UI) when it is a valid mode.
       // Without this the classifier regex alone decides, silently dropping the
       // user's explicit "guide"/"queue"/"interrupt" choice.
-      const explicitInputMode = typeof params.inputMode === "string" 
-        && ["interrupt", "guide", "queue", "revise-goal"].includes(params.inputMode) 
-        ? (params.inputMode as "interrupt" | "guide" | "queue" | "revise-goal") 
-        : undefined; 
+      const explicitInputMode = typeof p.inputMode === "string"
+        && ["interrupt", "guide", "queue", "revise-goal"].includes(p.inputMode)
+        ? (p.inputMode as "interrupt" | "guide" | "queue" | "revise-goal")
+        : undefined;
       const action = createInputModeAction(inboundMessage, explicitInputMode);
       const taskLedgerRootId = getLatestLongTaskLedgerRootId(sessionKey);
       if (!taskLedgerRootId && explicitInputMode) {
@@ -3738,6 +3751,12 @@ export const chatHandlers: GatewayRequestHandlers = {
         payload: { runId: clientRunId },
       });
     }
+    context.logGateway.info(
+      `chat.send pre-ack ready runId=${clientRunId} sessionKey=${sessionKey} attachments=${normalizedAttachments.length}`,
+    );
+    console.error(
+      `[chat.send.trace] pre-ack ready runId=${clientRunId} sessionKey=${sessionKey} attachments=${normalizedAttachments.length}`,
+    );
     const explicitOriginTargetsPlugin = explicitOriginTargetsPluginBinding(
       explicitOriginResult.value,
     );
@@ -3872,6 +3891,8 @@ export const chatHandlers: GatewayRequestHandlers = {
         status: "started" as const,
         ...(serverTiming ? { serverTiming } : {}),
       };
+      context.logGateway.info(`chat.send ack responding runId=${clientRunId} sessionKey=${sessionKey}`);
+      console.error(`[chat.send.trace] ack responding runId=${clientRunId} sessionKey=${sessionKey}`);
       emitDiagnosticsTimelineEvent(
         {
           type: "mark",
@@ -4255,6 +4276,8 @@ export const chatHandlers: GatewayRequestHandlers = {
               imageOrder: imageOrder.length > 0 ? imageOrder : undefined,
               thinkingLevelOverride: p.thinking,
               fastModeOverride: p.fastMode,
+              /** Turn-scoped model override (Area 2 §3.2); resolves above session/agent defaults. */
+              modelRefOverride: p.model,
               promptModeOverride: p.promptMode,
               userTurnTranscriptRecorder: userTurnRecorder,
               onAgentRunStart: (runId) => {
@@ -4946,6 +4969,10 @@ export const chatHandlers: GatewayRequestHandlers = {
           );
         })
         .catch(async (err: unknown) => {
+          context.logGateway.error(`webchat dispatch pipeline failed: ${formatForLog(err)}`);
+          if (err instanceof Error && err.stack) {
+            console.error(`[chat.send.trace] dispatch error stack\n${err.stack}`);
+          }
           const emitAfterError =
             userTurnRecorder.hasPersisted() || userTurnRecorder.isBlocked()
               ? Promise.resolve()

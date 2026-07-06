@@ -1,9 +1,12 @@
 import {
   createRuntimeMemoryGroundingShadowSummary,
   findRuntimeMemoryFacts,
+  isEmbeddingProviderAvailable,
   resolveRuntimeMemoryFeatureFlags,
+  DEFAULT_RUNTIME_MEMORY_TYPE,
   type ContextItem,
   type ContextItemPriority,
+  type EmbeddingProviderOrNone,
   type EvidenceRef,
   type GroundingQuery,
   type GroundingRef,
@@ -15,11 +18,15 @@ import {
   type RuntimeCoreJsonObject,
   type RuntimeMemoryContextProviderResult,
   type RuntimeMemoryFactQuery,
+  type RuntimeMemoryFactRelation,
   type RuntimeMemoryQueryableFact,
+  type RuntimeMemoryRelationType,
   type RuntimeMemorySummary,
   type RuntimeMemorySummaryItem,
+  type RuntimeMemoryType,
   type RuntimeRegistryDiagnostic,
 } from "../runtime-core/index.js";
+import { hybridSearchFactsWithEmbedding } from "../runtime-core/memory-hybrid-retrieval.js";
 
 export const RUNTIME_MEMORY_CONTEXT_PROVIDER_ID = "runtime-memory";
 
@@ -28,6 +35,13 @@ export type RuntimeMemoryContextProviderOptions = {
   queryFacts?: (
     query: RuntimeMemoryFactQuery,
   ) => readonly RuntimeMemoryQueryableFact[] | Promise<readonly RuntimeMemoryQueryableFact[]>;
+  queryRelations?: (
+    factId: string,
+  ) =>
+    | readonly RuntimeMemoryFactRelation[]
+    | Promise<readonly RuntimeMemoryFactRelation[]>;
+  embeddingProvider?: EmbeddingProviderOrNone;
+  embeddingEnabled?: boolean;
   config?: unknown;
   defaultTokenBudget?: number;
   defaultLimit?: number;
@@ -53,11 +67,49 @@ type MemoryProviderQuery = RuntimeMemoryFactQuery & {
 const DEFAULT_TOKEN_BUDGET = 256;
 const DEFAULT_LIMIT = 24;
 const TOKEN_CHAR_WIDTH = 4;
+const MAX_RELATION_EXPANSIONS = 2;
+
+const RELATION_TYPE_PRIORITY: Record<RuntimeMemoryRelationType, number> = {
+  supersedes: 3,
+  contradicts: 2,
+  related_to: 1,
+};
 const PROVIDER_EVIDENCE_REF: EvidenceRef = {
   type: "other",
   ref: RUNTIME_MEMORY_CONTEXT_PROVIDER_ID,
   label: "Runtime memory context provider",
 };
+
+/**
+ * Type-aware retrieval slots (Phase 4.3). Each memory type gets a dedicated
+ * retrieval quota with a type-appropriate sort order, ensuring context
+ * diversity — a single type can never monopolize the token budget.
+ *
+ * - `semantic`: 4 slots, sorted by importance (verification + evidence).
+ *   Stable facts are always useful, so they get the largest quota.
+ * - `episodic`: 2 slots, sorted by recency + relevance. Time-bound events
+ *   are most valuable when recent.
+ * - `procedural`: 2 slots, sorted by usage + relevance. Learned behaviors
+ *   are scarce and high-value, so even 2 slots ensure they surface.
+ *
+ * Unused slots are redistributed to types that have more matching facts, so
+ * total capacity is never wasted (e.g., if there are 0 episodic facts, the
+ * 2 episodic slots go to semantic/procedural).
+ */
+const MEMORY_TYPE_SLOTS: Record<
+  RuntimeMemoryType,
+  { limit: number; sortBy: "importance" | "recency+relevance" | "usage+relevance" }
+> = {
+  semantic: { limit: 4, sortBy: "importance" },
+  episodic: { limit: 2, sortBy: "recency+relevance" },
+  procedural: { limit: 2, sortBy: "usage+relevance" },
+};
+
+const SLOT_PRIORITY_ORDER: readonly RuntimeMemoryType[] = [
+  "procedural",
+  "semantic",
+  "episodic",
+];
 
 export function createRuntimeMemoryContextProvider(
   options: RuntimeMemoryContextProviderOptions = {},
@@ -136,11 +188,17 @@ export function createRuntimeMemoryContextProvider(
 
       const providerQuery = memoryProviderQuery(options, query, extras);
       const facts = await readFacts(options, providerQuery);
-      const rankedFacts = rankProviderFacts(
-        findRuntimeMemoryFacts(facts, providerQuery),
-        providerQuery,
-      );
-      const summary = buildSummary(rankedFacts, providerQuery);
+      const useEmbedding = options.embeddingEnabled === true &&
+        options.embeddingProvider !== undefined &&
+        isEmbeddingProviderAvailable(options.embeddingProvider);
+      const matchedFacts = useEmbedding
+        ? await findFactsWithEmbedding(options.embeddingProvider, facts, providerQuery)
+        : findRuntimeMemoryFacts(facts, { ...providerQuery, limit: undefined });
+      const rankedFacts = applyTypeAwareSlots(matchedFacts, providerQuery);
+      const expandedFacts = options.queryRelations
+        ? await expandOneHopRelations(rankedFacts, facts, options.queryRelations)
+        : rankedFacts;
+      const summary = buildSummary(expandedFacts, providerQuery);
       const contextItems = summary.items.map(toContextItem);
 
       return withGroundingDiagnostics(providerResult({
@@ -201,10 +259,17 @@ export async function createRuntimeMemoryProviderResult(
 ): Promise<RuntimeMemoryContextProviderResult> {
   const providerQuery = memoryProviderQuery(options, query, extras);
   const facts = await readFacts(options, providerQuery);
-  const summary = buildSummary(
-    rankProviderFacts(findRuntimeMemoryFacts(facts, providerQuery), providerQuery),
-    providerQuery,
-  );
+  const useEmbedding = options.embeddingEnabled === true &&
+    options.embeddingProvider !== undefined &&
+    isEmbeddingProviderAvailable(options.embeddingProvider);
+  const matchedFacts = useEmbedding
+    ? await findFactsWithEmbedding(options.embeddingProvider, facts, providerQuery)
+    : findRuntimeMemoryFacts(facts, { ...providerQuery, limit: undefined });
+  const rankedFacts = applyTypeAwareSlots(matchedFacts, providerQuery);
+  const expandedFacts = options.queryRelations
+    ? await expandOneHopRelations(rankedFacts, facts, options.queryRelations)
+    : rankedFacts;
+  const summary = buildSummary(expandedFacts, providerQuery);
   const contextItems = summary.items.map(toContextItem);
   return {
     contextItems,
@@ -423,6 +488,36 @@ async function readFacts(
   return options.facts ?? [];
 }
 
+async function findFactsWithEmbedding(
+  embeddingProvider: EmbeddingProviderOrNone,
+  facts: readonly RuntimeMemoryQueryableFact[],
+  query: MemoryProviderQuery,
+): Promise<RuntimeMemoryQueryableFact[]> {
+  const queryText = [query.subject, query.predicate, query.file, query.symbol]
+    .filter((s): s is string => typeof s === "string" && s.length > 0)
+    .join(" ");
+  if (queryText.trim().length === 0) {
+    return findRuntimeMemoryFacts(facts, { ...query, limit: undefined });
+  }
+  try {
+    const hits = await hybridSearchFactsWithEmbedding(
+      facts,
+      {
+        queryText,
+        referenceTime: query.reference_time || undefined,
+        taskId: query.taskId,
+        subject: query.subject,
+        topK: query.limit || DEFAULT_LIMIT,
+        includeCandidates: query.includeCandidates,
+      },
+      embeddingProvider,
+    );
+    return hits.map((hit) => hit.fact);
+  } catch {
+    return findRuntimeMemoryFacts(facts, { ...query, limit: undefined });
+  }
+}
+
 function buildSummary(
   facts: readonly RuntimeMemoryQueryableFact[],
   query: MemoryProviderQuery,
@@ -564,24 +659,156 @@ function itemPriority(item: RuntimeMemorySummaryItem): ContextItemPriority {
   return "P2";
 }
 
-function rankProviderFacts(
+function factMemoryType(fact: RuntimeMemoryQueryableFact): RuntimeMemoryType {
+  return fact.memoryType ?? DEFAULT_RUNTIME_MEMORY_TYPE;
+}
+
+function rankFactsForType(
+  facts: readonly RuntimeMemoryQueryableFact[],
+  memoryType: RuntimeMemoryType,
+  query: MemoryProviderQuery,
+): RuntimeMemoryQueryableFact[] {
+  const ranked = [...facts].map((fact, index) => ({
+    fact,
+    index,
+    rank: providerFactRank(fact, query),
+    validAt: fact.valid_at,
+  }));
+
+  if (memoryType === "episodic") {
+    ranked.sort((a, b) => {
+      const time = b.validAt - a.validAt;
+      if (time !== 0) return time;
+      const rank = b.rank - a.rank;
+      if (rank !== 0) return rank;
+      return a.index - b.index;
+    });
+  } else {
+    ranked.sort((a, b) => {
+      const rank = b.rank - a.rank;
+      if (rank !== 0) return rank;
+      const time = b.validAt - a.validAt;
+      if (time !== 0) return time;
+      return a.index - b.index;
+    });
+  }
+
+  return ranked.map((entry) => entry.fact);
+}
+
+function applyTypeAwareSlots(
   facts: readonly RuntimeMemoryQueryableFact[],
   query: MemoryProviderQuery,
 ): RuntimeMemoryQueryableFact[] {
-  return [...facts]
-    .map((fact, index) => ({
-      fact,
-      index,
-      rank: providerFactRank(fact, query),
-    }))
-    .sort((left, right) => {
-      const rank = right.rank - left.rank;
-      if (rank !== 0) return rank;
-      const time = right.fact.valid_at - left.fact.valid_at;
-      if (time !== 0) return time;
-      return left.index - right.index;
-    })
-    .map((entry) => entry.fact);
+  if (facts.length === 0) return [];
+
+  const overallLimit = query.limit ?? DEFAULT_LIMIT;
+
+  const byType = new Map<RuntimeMemoryType, RuntimeMemoryQueryableFact[]>();
+  for (const fact of facts) {
+    const type = factMemoryType(fact);
+    const list = byType.get(type);
+    if (list) {
+      list.push(fact);
+    } else {
+      byType.set(type, [fact]);
+    }
+  }
+
+  const sortedByType = new Map<RuntimeMemoryType, RuntimeMemoryQueryableFact[]>();
+  for (const [type, typeFacts] of byType) {
+    sortedByType.set(type, rankFactsForType(typeFacts, type, query));
+  }
+
+  const takenPerType = new Map<RuntimeMemoryType, number>();
+  for (const type of SLOT_PRIORITY_ORDER) {
+    takenPerType.set(type, 0);
+  }
+
+  const result: RuntimeMemoryQueryableFact[] = [];
+
+  for (const type of SLOT_PRIORITY_ORDER) {
+    const sorted = sortedByType.get(type) ?? [];
+    const slotLimit = Math.min(MEMORY_TYPE_SLOTS[type].limit, sorted.length);
+    for (let i = 0; i < slotLimit && result.length < overallLimit; i++) {
+      result.push(sorted[i]);
+      takenPerType.set(type, i + 1);
+    }
+  }
+
+  let remaining = overallLimit - result.length;
+  while (remaining > 0) {
+    let added = false;
+    for (const type of SLOT_PRIORITY_ORDER) {
+      if (remaining <= 0) break;
+      const sorted = sortedByType.get(type) ?? [];
+      const taken = takenPerType.get(type) ?? 0;
+      if (taken < sorted.length) {
+        result.push(sorted[taken]);
+        takenPerType.set(type, taken + 1);
+        remaining--;
+        added = true;
+      }
+    }
+    if (!added) break;
+  }
+
+  return result;
+}
+
+async function expandOneHopRelations(
+  rankedFacts: readonly RuntimeMemoryQueryableFact[],
+  allFacts: readonly RuntimeMemoryQueryableFact[],
+  queryRelations: (factId: string) =>
+    | readonly RuntimeMemoryFactRelation[]
+    | Promise<readonly RuntimeMemoryFactRelation[]>,
+): Promise<RuntimeMemoryQueryableFact[]> {
+  if (rankedFacts.length === 0) return [...rankedFacts];
+
+  const existingIds = new Set(rankedFacts.map((f) => f.factId));
+  const factsById = new Map(allFacts.map((f) => [f.factId, f]));
+
+  type Candidate = {
+    fact: RuntimeMemoryQueryableFact;
+    relationType: RuntimeMemoryRelationType;
+    confidence: number;
+  };
+  const candidates: Candidate[] = [];
+  const seenCandidateIds = new Set<string>();
+
+  for (const fact of rankedFacts) {
+    const relations = await queryRelations(fact.factId);
+    for (const rel of relations) {
+      const relatedId = rel.sourceFactId === fact.factId
+        ? rel.targetFactId
+        : rel.targetFactId === fact.factId
+          ? rel.sourceFactId
+          : undefined;
+      if (relatedId === undefined) continue;
+      if (existingIds.has(relatedId)) continue;
+      if (seenCandidateIds.has(relatedId)) continue;
+      const relatedFact = factsById.get(relatedId);
+      if (relatedFact === undefined) continue;
+      seenCandidateIds.add(relatedId);
+      candidates.push({
+        fact: relatedFact,
+        relationType: rel.relationType,
+        confidence: rel.confidence,
+      });
+    }
+  }
+
+  candidates.sort((a, b) => {
+    const priority = RELATION_TYPE_PRIORITY[b.relationType] - RELATION_TYPE_PRIORITY[a.relationType];
+    if (priority !== 0) return priority;
+    return b.confidence - a.confidence;
+  });
+
+  const expanded = candidates
+    .slice(0, MAX_RELATION_EXPANSIONS)
+    .map((c) => c.fact);
+
+  return [...rankedFacts, ...expanded];
 }
 
 function providerFactRank(

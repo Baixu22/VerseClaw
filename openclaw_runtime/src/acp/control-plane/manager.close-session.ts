@@ -3,7 +3,7 @@ import {
   identityHasStableSessionId,
   resolveSessionIdentityFromMeta,
 } from "@openclaw/acp-core/runtime/session-identity";
-import { toAcpRuntimeError, withAcpRuntimeErrorBoundary } from "../runtime/errors.js";
+import { toAcpRuntimeError, withAcpRuntimeErrorBoundary } from "../../runtime/errors.ts";
 import type { ManagerRuntimeHandleCache } from "./manager.runtime-handle-cache.js";
 import {
   discardPersistedManagerRuntimeState,

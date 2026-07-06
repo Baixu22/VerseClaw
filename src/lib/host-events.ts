@@ -65,6 +65,11 @@ const onObservabilityEvent = <E extends HostEventName<'observability'>>(
   handler: HostEventHandler<'observability', E>,
 ) => onIpc(HOST_EVENT_CHANNELS.observability[event], handler);
 
+const onOfficeToolsEvent = <E extends HostEventName<'officeTools'>>(
+  event: E,
+  handler: HostEventHandler<'officeTools', E>,
+) => onIpc(HOST_EVENT_CHANNELS.officeTools[event], handler);
+
 const onOAuthEvent = <E extends HostEventName<'oauth'>>(
   event: E,
   handler: HostEventHandler<'oauth', E>,
@@ -139,6 +144,9 @@ export const hostEvents = {
   ),
   onObservabilityRuntimeEvent: (handler: HostEventHandler<'observability', 'runtimeEvent'>) => (
     onObservabilityEvent('runtimeEvent', handler)
+  ),
+  onOfficeToolsInstallEvent: (handler: HostEventHandler<'officeTools', 'installEvent'>) => (
+    onOfficeToolsEvent('installEvent', handler)
   ),
   onOAuthCode: (handler: HostEventHandler<'oauth', 'code'>) => onOAuthEvent('code', handler),
   onOAuthSuccess: (handler: HostEventHandler<'oauth', 'success'>) => onOAuthEvent('success', handler),

@@ -2,8 +2,24 @@
   "nav": "Knowledge",
   "title": "Knowledge",
   "subtitle": "Manage source-backed wiki context, reviewed drafts, and role-governed knowledge changes.",
+  "assistant": {
+    "title": "Knowledge Assistant",
+    "subtitle": "Read what is already in the vault, search source documents, and turn useful findings into reviewed knowledge without starting from audit reports.",
+    "browse": "Browse docs",
+    "docs": "Readable docs",
+    "docsHint": "Start with pages and categories instead of maintenance output.",
+    "pending": "Needs review",
+    "pendingHint": "Captured ideas waiting for a person to keep, edit, or dismiss.",
+    "drafts": "Editable drafts",
+    "draftsHint": "Drafts are where notes become durable knowledge.",
+    "health": "Health signals",
+    "healthHint": "Warnings and audit checks live in the audit center.",
+    "mapTitle": "What is inside",
+    "mapHint": "Open a topic to search the vault and preview matching pages."
+  },
   "tabs": {
     "library": "Library",
+    "sources": "Sources",
     "inbox": "Inbox",
     "drafts": "Draft Inbox",
     "runtime": "Runtime Lessons",
@@ -61,7 +77,164 @@
   },
   "library": {
     "title": "Library",
-    "typeHint": "Filter and browse this knowledge type"
+    "typeHint": "Filter and browse this knowledge type",
+    "countLabel": "{{count}} pages"
+  },
+  "sources": {
+    "title": "Sources",
+    "typeHint": "Filter and browse this source type",
+    "countLabel": "{{count}} pages"
+  },
+  "sourceSet": {
+    "title": "Current Source Set",
+    "empty": "Add sources from search results or the current document.",
+    "count": "{{count}} sources",
+    "save": "Save Source Set",
+    "clear": "Clear",
+    "titlePlaceholder": "Source Set title",
+    "defaultTitle": "Untitled Source Set",
+    "addResult": "Add to Source Set",
+    "saved": "Source Set saved",
+    "answerBoundary": "Answers prioritize selected sources; durable writes still require draft review and explicit confirmation."
+  },
+  "studio": {
+    "title": "Studio Assistant",
+    "summary": "Summary",
+    "faq": "FAQ",
+    "decisionMemo": "Decision Memo",
+    "troubleshootingRecipe": "Troubleshooting",
+    "artifactCreated": "Studio draft created",
+    "question": "Create a {{artifact}} from the current Source Set."
+  },
+  "workspace": {
+    "vault": "Vault",
+    "localVault": "Local knowledge vault",
+    "documents": "Documents",
+    "emptyDocuments": "Search the vault or create a new Markdown note to begin.",
+    "types": "Types",
+    "untitled": "Untitled note",
+    "localDraft": "local draft",
+    "characters": "chars",
+    "tagsPlaceholder": "tags, aliases, project",
+    "submitReview": "Submit",
+    "reviewReason": "User-authored Markdown note submitted from the knowledge workspace for review.",
+    "emptyPreview": "Nothing to preview yet.",
+    "modes": {
+      "edit": "Edit",
+      "preview": "Preview",
+      "split": "Split"
+    }
+  },
+  "librarian": {
+    "title": "Knowledge Librarian",
+    "roleId": "knowledge-librarian",
+    "currentDocument": "Current document",
+    "noSummary": "Write or open a Markdown document to give the librarian context.",
+    "openAssistant": "Open librarian",
+    "askSteward": "Ask steward",
+    "related": "Related pages",
+    "noRelated": "Search results and related pages will appear here.",
+    "boundaries": "Role boundaries",
+    "boundaryRead": "Can search and answer with citations.",
+    "boundaryDraft": "Can prepare drafts and proposals, not silently write the vault.",
+    "boundarySources": "Must surface missing sources, conflicts, and stale claims.",
+    "modalTitle": "Knowledge Librarian",
+    "modalSubtitle": "Ask, organize, and review your Markdown knowledge base.",
+    "writeBoundary": "The librarian can help organize and draft knowledge, but durable writes still go through draft review and explicit confirmation.",
+    "askPlaceholder": "Ask about this vault or the current document",
+    "askButton": "Ask",
+    "askHint": "Answers use local knowledge search and page previews first; durable writes still go through review.",
+    "checkpointSaved": "Checkpoint saved at {{time}}",
+    "noCheckpoint": "No local checkpoint yet",
+    "clearThread": "Clear thread",
+    "threadEmpty": "Ask a question to search the vault, summarize matching pages, and keep this thread as a local checkpoint.",
+    "you": "You",
+    "answerIntro": "I searched the vault and found {{count}} relevant source(s):",
+    "answerBoundary": "This is a local retrieval answer. Use steward review before turning it into durable knowledge.",
+    "answerError": "I could not query the vault: {{error}}",
+    "noAnswer": "I could not find a matching page. Try a narrower term or open a document first.",
+    "emptyCitation": "No readable excerpt was available for this source.",
+    "copy": "Copy message",
+    "copied": "Copied",
+    "copyFailed": "Could not copy message.",
+    "citations": "Citations",
+    "searching": "Searching local knowledge and reading page previews...",
+    "errorTitle": "The librarian hit a local retrieval error",
+    "retry": "Retry",
+    "dismissError": "Dismiss",
+    "sections": {
+      "answer": "Answer",
+      "sources": "Sources used",
+      "unknowns": "Unknowns / missing sources",
+      "nextAction": "Suggested next action",
+      "retrieval": "Retrieval inspector"
+    },
+    "retrieval": {
+      "query": "Query",
+      "corpus": "Corpus",
+      "roleTag": "Role tag",
+      "resultCount": "Result count",
+      "selectedSources": "Selected sources",
+      "selectedReason": "Selected from local keyword retrieval"
+    },
+    "unknowns": {
+      "noSources": "No matching source was found for this answer.",
+      "pageSnippetLevel": "Grounding is page/snippet level; section-level verification is not available yet."
+    },
+    "groundingStatus": {
+      "grounded": "Grounded",
+      "partial": "Partial",
+      "missingSources": "Missing sources"
+    },
+    "confidence": "Confidence",
+    "candidate": {
+      "draftTitlePrefix": "Librarian answer",
+      "errorExperienceTitlePrefix": "Error experience",
+      "stewardTitlePrefix": "Steward review"
+    },
+    "suggestions": {
+      "summarize": {
+        "label": "Summarize current note",
+        "prompt": "Summarize the current note \"{{title}}\" with source-backed takeaways and open questions."
+      },
+      "related": {
+        "label": "Find related pages",
+        "prompt": "Find related pages for \"{{title}}\" and explain how they connect."
+      },
+      "gaps": {
+        "label": "Review gaps",
+        "prompt": "Review \"{{title}}\" for missing sources, stale claims, and useful follow-up drafts."
+      },
+      "next": {
+        "saveDraft": "Save the grounded answer as a review draft.",
+        "createErrorExperience": "Create an error-experience candidate if this captures a repeatable pitfall.",
+        "sendToSteward": "Ask the Knowledge Steward to review the answer before promotion.",
+        "broadenSearch": "Broaden the search or open a source document first."
+      }
+    },
+    "capabilities": {
+      "ask": {
+        "title": "Ask the vault",
+        "body": "Answer simple questions from knowledge pages and show source references."
+      },
+      "organize": {
+        "title": "Organize notes",
+        "body": "Suggest titles, tags, links, and frontmatter for the current Markdown page."
+      },
+      "review": {
+        "title": "Review changes",
+        "body": "Hand drafts to the steward for source, conflict, and freshness checks."
+      }
+    },
+    "actions": {
+      "saveDraft": "Save as Draft",
+      "createErrorExperience": "Create Error Experience",
+      "sendToSteward": "Send to Steward",
+      "searchRelated": "Find related",
+      "stewardReview": "Steward review",
+      "openInbox": "Open inbox",
+      "submitDraft": "Submit draft"
+    }
   },
   "inbox": {
     "title": "Knowledge Inbox",
@@ -149,6 +322,27 @@
       "okf": "OKF",
       "manual": "Manual",
       "wiki-result": "Wiki"
+    },
+    "triage": {
+      "title": "Steward triage",
+      "confidence": "{{confidence}}%",
+      "duplicateOf": "Duplicate of",
+      "conflictWith": "Conflicts with",
+      "suggestedEdits": "Suggested edits",
+      "groups": {
+        "needs-decision": "Needs decision",
+        "ready-for-review": "Ready for review",
+        "possible-duplicate": "Possible duplicate",
+        "observe": "Observe",
+        "reject-low-value": "Low value"
+      },
+      "actions": {
+        "needs-decision": "Needs decision",
+        "ready-for-review": "Ready for review",
+        "possible-duplicate": "Possible duplicate",
+        "observe": "Observe",
+        "reject-low-value": "Low value"
+      }
     }
   },
   "provenance": {
@@ -192,7 +386,27 @@
     "noProposal": "No proposal selected.",
     "confirmationBoundary": "Agents and the Knowledge Steward can only prepare drafts or proposals. Applying knowledge requires this explicit user confirmation.",
     "approveAndApply": "Approve and Apply",
-    "reject": "Reject"
+    "reject": "Reject",
+    "steward": {
+      "section": "Steward Review",
+      "queue": "Steward Queue",
+      "queueEmpty": "No drafts awaiting steward review.",
+      "variant": "Variant",
+      "classifiedAs": "Classified as {type}",
+      "warnings": "Warnings",
+      "notes": "Notes",
+      "noReview": "No steward review for this draft yet.",
+      "configure": "Configure Steward",
+      "configureTitle": "Steward Variants",
+      "activeVariant": "Active",
+      "setActive": "Set as active",
+      "boundaryNotice": "The Steward can never apply changes directly. This boundary is enforced mechanically.",
+      "classification": "Classification",
+      "heuristic": "Heuristic",
+      "semantic": "Semantic",
+      "defaultRole": "Default role",
+      "close": "Close"
+    }
   },
   "runtime": {
     "title": "Runtime Lessons",
@@ -214,6 +428,8 @@
   },
   "governance": {
     "title": "Governance",
+    "openAudit": "Audit Center",
+    "backToLibrary": "Back to Library",
     "readOnlyBadge": "Agent read-only by default",
     "steward": "Knowledge Steward",
     "stewardDescription": "A role-first slot that classifies, checks sources, finds conflicts, and proposes changes without applying them directly.",
@@ -229,8 +445,36 @@
     "stale": "Stale Pages",
     "dangling": "Orphan Pages",
     "noIssues": "No issues detected",
+    "qualityMetrics": {
+      "title": "Quality Metrics",
+      "description": "Compact health signals for retrieval quality and repeated-error cards.",
+      "pendingAudit": "Run health check",
+      "sourceAudit": "Audit result",
+      "affected": "{{count}} affected item(s)",
+      "severity": {
+        "info": "Info",
+        "warning": "Warning",
+        "error": "Error"
+      },
+      "kinds": {
+        "stale_cards": "Stale cards",
+        "duplicate_clusters": "Duplicate clusters",
+        "source_gaps": "Source gaps",
+        "unreferenced_pages": "Unreferenced pages",
+        "low_confidence_high_hit_cards": "Low-confidence high-hit cards",
+        "high_dismissal_cards": "High-dismissal cards"
+      },
+      "hints": {
+        "stale_cards": "Cards or pages with stale signals.",
+        "duplicate_clusters": "Potentially duplicated knowledge entries.",
+        "source_gaps": "Items missing usable provenance or source links.",
+        "unreferenced_pages": "Pages not connected to other reviewed knowledge.",
+        "low_confidence_high_hit_cards": "Experience cards that fire often despite low confidence.",
+        "high_dismissal_cards": "Experience cards users dismiss more than they accept."
+      }
+    },
     "suggestions": "Steward Suggestions",
-    "lastCheck": "Last checked: {time}",
+    "lastCheck": "Last checked: {{time}}",
     "dismissAll": "Dismiss All",
     "allClear": "All Clear",
     "allClearHint": "No governance issues detected. Run a health check to verify.",
@@ -257,7 +501,10 @@
     "dismissInbox": "Inbox item dismissed",
     "stewardReview": "Steward review updated",
     "applyReviewedChange": "Reviewed change applied",
-    "rejectDraft": "Draft rejected"
+    "rejectDraft": "Draft rejected",
+    "librarianDraft": "Librarian draft created",
+    "librarianErrorExperience": "Error experience candidate created",
+    "librarianSteward": "Steward review prepared"
   },
   "errors": {
     "status": "Failed to load knowledge status.",

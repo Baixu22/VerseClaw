@@ -121,7 +121,7 @@ export {
 export { maybeLoadShellEnvForGenerationProviders } from "../test-utils/generation-live-test-helpers.js";
 export { testing, testing as __testing } from "../acp/control-plane/manager.js";
 export { testing as acpManagerTesting } from "../acp/control-plane/manager.js";
-export { runAcpRuntimeAdapterContract } from "../acp/runtime/adapter-contract.testkit.js";
+export { runAcpRuntimeAdapterContract } from "../runtime/adapter-contract.testkit.ts";
 export { handleAcpCommand } from "../auto-reply/reply/commands-acp.js";
 export { buildCommandTestParams } from "../auto-reply/reply/commands-spawn.test-harness.js";
 export { peekSystemEvents, resetSystemEventsForTest } from "../infra/system-events.js";

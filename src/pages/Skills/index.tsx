@@ -2,7 +2,7 @@
  * Skills Page
  * Browse and manage AI skills
  */
-import { Suspense, lazy, useEffect, useState, useCallback } from 'react';
+import { Suspense, lazy, useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import {
   Search,
   Puzzle,
@@ -20,6 +20,9 @@ import {
   Plus,
   RefreshCw,
   Save,
+  Download,
+  Power,
+  Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,11 +31,13 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useSkillsStore } from '@/stores/skills';
+import { useSkillPacksStore } from '@/stores/skill-packs';
 import { useMcpStore } from '@/stores/mcp';
 import { useGatewayStore } from '@/stores/gateway';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
+import { hostEvents } from '@/lib/host-events';
 import { isGatewayStopped } from '@/lib/gateway-status';
 import { toast } from 'sonner';
 import type { Skill } from '@/types/skill';
@@ -44,6 +49,16 @@ import type { TFunction } from 'i18next';
 import { SkillFileSections } from '@/components/file-preview/SkillFileSections';
 import type { FilePreviewTarget } from '@/components/file-preview/FilePreviewOverlay';
 import type { SkillFile } from '@/lib/skill-files';
+import type {
+  OfficecliInfo,
+  OfficecliInstallEvent,
+  OfficecliSkillInstallStatus,
+  OfficecliSkillSyncReport,
+  SkillPackSkill,
+  SkillPackId,
+  SkillPackSummary,
+} from '@shared/host-api/contract';
+import type { AgentSummary } from '@shared/types/agent';
 
 const FilePreviewOverlayLazy = lazy(() =>
   import('@/components/file-preview/FilePreviewOverlay').then((m) => ({ default: m.FilePreviewOverlay })),
@@ -62,12 +77,21 @@ function skillFileToTarget(file: SkillFile): FilePreviewTarget {
 const FETCH_ERROR_CODES = new Set(['fetchTimeoutError', 'fetchRateLimitError', 'timeoutError', 'rateLimitError']);
 
 type SkillsGatewayBannerState = 'none' | 'stopped';
+type SkillsToolTab = 'skills' | 'packs' | 'marketplace' | 'mcp';
 
 function getSkillsGatewayBannerState(status: GatewayStatus): SkillsGatewayBannerState {
   if (isGatewayStopped(status)) {
     return 'stopped';
   }
   return 'none';
+}
+
+function resolveInitialToolTab(): SkillsToolTab {
+  if (typeof window === 'undefined') return 'skills';
+  const hash = window.location.hash;
+  const query = hash.includes('?') ? hash.slice(hash.indexOf('?') + 1) : window.location.search.replace(/^\?/, '');
+  const tab = new URLSearchParams(query).get('tab');
+  return tab === 'packs' || tab === 'marketplace' || tab === 'mcp' || tab === 'skills' ? tab : 'skills';
 }
 
 // Skill detail dialog component
@@ -260,7 +284,7 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'enabled' | 'disabled'>('all');
-  const [toolTab, setToolTab] = useState<'skills' | 'marketplace' | 'mcp'>('skills');
+  const [toolTab, setToolTab] = useState<SkillsToolTab>(() => resolveInitialToolTab());
 
   const gatewayRunning = gatewayStatus.state === 'running';
   const gatewayReportedReady = gatewayStatus.gatewayReady !== false;
@@ -484,6 +508,20 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
               type="button"
               variant="ghost"
               size="sm"
+              onClick={() => setToolTab('packs')}
+              className={cn(
+                'h-8 rounded-full px-3 text-meta font-medium border shadow-none',
+                toolTab === 'packs'
+                  ? 'bg-black/5 dark:bg-white/10 border-black/10 dark:border-white/10 text-foreground'
+                  : 'bg-transparent border-transparent text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5',
+              )}
+            >
+              {t('packs.tab')}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               data-testid="skills-tab-marketplace"
               aria-label={t('tabs.marketplaceLocalOnlyAria', {
                 defaultValue: 'Marketplace (Local only — marketplace coming soon)',
@@ -575,6 +613,8 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
         )}>
           {toolTab === 'mcp' ? (
             <McpServicesPanel />
+          ) : toolTab === 'packs' ? (
+            <SkillPacksPanel />
           ) : toolTab === 'marketplace' ? (
             <div
               data-testid="skills-marketplace-local-only-notice"
@@ -677,6 +717,619 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
         }}
         onOpenFolder={handleOpenSkillFolder}
       />
+    </div>
+  );
+}
+
+function packBusyKey(packId: SkillPackId, action: string): string {
+  return `${packId}:${action}`;
+}
+
+function createOfficeInstallTaskId(): string {
+  const randomId = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `officecli-${randomId}`;
+}
+
+function formatOfficeInstallEvent(event: OfficecliInstallEvent): string {
+  if (event.kind === 'started') return 'STARTED';
+  if (event.kind === 'completed') return event.payload ? `COMPLETED: ${event.payload}` : 'COMPLETED';
+  if (event.kind === 'failed') return event.payload ? `ERROR: ${event.payload}` : 'ERROR';
+  return event.payload;
+}
+
+function officeAgentStatusKey(skillId: string, agentId: string): string {
+  return `${skillId}:${agentId}`;
+}
+
+function OfficeAgentMatrix({
+  skills,
+  agents,
+  statuses,
+  loading,
+  busyKey,
+  onToggle,
+}: {
+  skills: SkillPackSkill[];
+  agents: AgentSummary[];
+  statuses: OfficecliSkillInstallStatus[];
+  loading: boolean;
+  busyKey: string | null;
+  onToggle: (skill: SkillPackSkill, agent: AgentSummary, enabled: boolean) => void;
+}) {
+  const { t } = useTranslation('skills');
+  const statusMap = useMemo(() => {
+    const map = new Map<string, OfficecliSkillInstallStatus>();
+    for (const status of statuses) {
+      map.set(officeAgentStatusKey(status.skillId || status.expertId, status.agentId), status);
+    }
+    return map;
+  }, [statuses]);
+
+  if (skills.length === 0) return null;
+
+  return (
+    <div
+      data-testid="officecli-agent-matrix"
+      className="mt-4 overflow-hidden rounded-lg border border-black/10 bg-black/[0.02] dark:border-white/10 dark:bg-white/[0.03]"
+    >
+      <div className="flex items-center gap-2 border-b border-black/10 px-3 py-2 text-xs font-medium text-foreground dark:border-white/10">
+        {loading && <LoadingSpinner size="sm" />}
+        <span>{t('packs.office.agentMatrix.title')}</span>
+      </div>
+      {agents.length === 0 ? (
+        <div className="px-3 py-3 text-xs text-muted-foreground">
+          {t('packs.office.agentMatrix.emptyAgents')}
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[420px] border-collapse text-xs">
+            <thead>
+              <tr className="border-b border-black/10 text-muted-foreground dark:border-white/10">
+                <th className="w-[220px] px-3 py-2 text-left font-medium">
+                  {t('packs.office.agentMatrix.skill')}
+                </th>
+                {agents.map((agent) => (
+                  <th key={agent.id} className="px-2 py-2 text-center font-medium">
+                    <span className="block max-w-28 truncate">{agent.name || agent.id}</span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {skills.map((skill) => (
+                <tr key={skill.id} className="border-b border-black/10 last:border-b-0 dark:border-white/10">
+                  <th className="px-3 py-2 text-left font-normal">
+                    <div className="min-w-0">
+                      <div className="truncate font-mono text-[11px] font-medium text-foreground">{skill.id}</div>
+                      {!skill.installed && (
+                        <div className="mt-0.5 text-[11px] text-yellow-700 dark:text-yellow-400">
+                          {t('packs.office.agentMatrix.notSynced')}
+                        </div>
+                      )}
+                    </div>
+                  </th>
+                  {agents.map((agent) => {
+                    const key = officeAgentStatusKey(skill.id, agent.id);
+                    const status = statusMap.get(key);
+                    const enabled = status?.state === 'linked_to_codeg';
+                    const broken = status?.state === 'broken';
+                    const cellBusy = busyKey === key;
+                    const disabled = loading || Boolean(busyKey) || (!skill.installed && !enabled);
+                    return (
+                      <td key={agent.id} className="px-2 py-2 text-center">
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={enabled}
+                          aria-label={t('packs.office.agentMatrix.cellLabel', {
+                            skill: skill.name || skill.id,
+                            agent: agent.name || agent.id,
+                          })}
+                          data-testid={`officecli-agent-cell-${skill.id}-${agent.id}`}
+                          disabled={disabled}
+                          onClick={() => onToggle(skill, agent, enabled)}
+                          className={cn(
+                            'inline-flex h-7 w-7 items-center justify-center rounded-md border align-middle transition-colors',
+                            enabled
+                              ? 'border-green-500/40 bg-green-500/15 text-green-700 dark:text-green-400'
+                              : broken
+                                ? 'border-yellow-500/50 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400'
+                                : 'border-black/15 bg-surface-input text-muted-foreground hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10',
+                            disabled && !enabled && 'cursor-not-allowed opacity-60',
+                          )}
+                        >
+                          {cellBusy ? (
+                            <LoadingSpinner size="sm" />
+                          ) : enabled ? (
+                            <CheckCircle2 className="h-4 w-4" />
+                          ) : broken ? (
+                            <AlertCircle className="h-3.5 w-3.5" />
+                          ) : (
+                            <Plus className="h-3.5 w-3.5" />
+                          )}
+                        </button>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SkillPacksPanel() {
+  const { t } = useTranslation('skills');
+  const {
+    packs,
+    loading,
+    busy,
+    error,
+    fetchPacks,
+    installPack,
+    syncPack,
+    setPackEnabled,
+    readSkill,
+  } = useSkillPacksStore();
+  const [preview, setPreview] = useState<{ pack: SkillPackSummary; skillId: string; content: string } | null>(null);
+  const [officeInfo, setOfficeInfo] = useState<OfficecliInfo | null>(null);
+  const [officeDetecting, setOfficeDetecting] = useState(false);
+  const [officeAction, setOfficeAction] = useState<'install' | 'sync' | 'uninstall' | null>(null);
+  const [officeInstallLogs, setOfficeInstallLogs] = useState<string[]>([]);
+  const [officeSyncReport, setOfficeSyncReport] = useState<OfficecliSkillSyncReport | null>(null);
+  const [officeAgents, setOfficeAgents] = useState<AgentSummary[]>([]);
+  const [officeLinkStatuses, setOfficeLinkStatuses] = useState<OfficecliSkillInstallStatus[]>([]);
+  const [officeLinksLoading, setOfficeLinksLoading] = useState(false);
+  const [officeLinkBusyKey, setOfficeLinkBusyKey] = useState<string | null>(null);
+  const officeInstallTaskIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    void fetchPacks().catch((err) => toast.error(String(err)));
+  }, [fetchPacks]);
+
+  const refreshOfficeInfo = useCallback(async () => {
+    setOfficeDetecting(true);
+    try {
+      setOfficeInfo(await hostApi.officeTools.detect());
+    } catch {
+      setOfficeInfo(null);
+    } finally {
+      setOfficeDetecting(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshOfficeInfo();
+  }, [refreshOfficeInfo]);
+
+  const refreshOfficeAssignments = useCallback(async () => {
+    setOfficeLinksLoading(true);
+    try {
+      const [agentsSnapshot, statuses] = await Promise.all([
+        hostApi.agents.list(),
+        hostApi.officeTools.listAllSkillInstallStatuses(),
+      ]);
+      setOfficeAgents(agentsSnapshot.agents ?? []);
+      setOfficeLinkStatuses(statuses);
+    } catch (err) {
+      console.warn('[skills] Failed to load Office agent assignments:', err);
+      setOfficeAgents([]);
+      setOfficeLinkStatuses([]);
+    } finally {
+      setOfficeLinksLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshOfficeAssignments();
+  }, [refreshOfficeAssignments]);
+
+  useEffect(() => hostEvents.onOfficeToolsInstallEvent((event) => {
+    if (event.taskId !== officeInstallTaskIdRef.current) return;
+    const line = formatOfficeInstallEvent(event);
+    if (!line) return;
+    setOfficeInstallLogs((logs) => [...logs, line]);
+  }), []);
+
+  const refreshAfterOfficeChange = useCallback(async () => {
+    await Promise.all([
+      fetchPacks(),
+      useSkillsStore.getState().fetchSkills(),
+      refreshOfficeInfo(),
+      refreshOfficeAssignments(),
+    ]);
+  }, [fetchPacks, refreshOfficeInfo, refreshOfficeAssignments]);
+
+  const handleOfficeAgentToggle = useCallback(async (skill: SkillPackSkill, agent: AgentSummary, enabled: boolean) => {
+    const key = officeAgentStatusKey(skill.id, agent.id);
+    setOfficeLinkBusyKey(key);
+    try {
+      const results = await hostApi.officeTools.applySkillLinks({
+        ops: [{ expertId: skill.id, agentId: agent.id, enable: !enabled }],
+      });
+      const failures = results.filter((result) => !result.ok);
+      if (failures.length > 0) {
+        toast.warning(t('packs.office.agentMatrix.applyPartial', { failed: failures.length }), {
+          description: failures[0]?.error ?? undefined,
+        });
+      } else {
+        toast.success(!enabled
+          ? t('packs.office.agentMatrix.enableSuccess')
+          : t('packs.office.agentMatrix.disableSuccess'));
+      }
+      await refreshOfficeAssignments();
+    } catch (err) {
+      toast.error(t('packs.office.agentMatrix.applyFailed', { error: String(err) }));
+    } finally {
+      setOfficeLinkBusyKey(null);
+    }
+  }, [refreshOfficeAssignments, t]);
+
+  const handleOfficeInstall = async () => {
+    const taskId = createOfficeInstallTaskId();
+    officeInstallTaskIdRef.current = taskId;
+    setOfficeAction('install');
+    setOfficeInstallLogs([]);
+    setOfficeSyncReport(null);
+    try {
+      setOfficeInfo(await hostApi.officeTools.install({ taskId }));
+      const report = await hostApi.officeTools.syncSkills();
+      setOfficeSyncReport(report);
+      await refreshAfterOfficeChange();
+      if (report.errors.length > 0) {
+        toast.warning(t('packs.office.syncPartial', { synced: report.synced, errors: report.errors.length }));
+      } else {
+        toast.success(t('packs.office.installSuccess'));
+      }
+    } catch (err) {
+      toast.error(t('packs.office.installFailed', { error: String(err) }));
+      await refreshOfficeInfo();
+    } finally {
+      setOfficeAction(null);
+      officeInstallTaskIdRef.current = null;
+    }
+  };
+
+  const handleOfficeSync = async () => {
+    setOfficeAction('sync');
+    setOfficeSyncReport(null);
+    try {
+      const report = await hostApi.officeTools.syncSkills();
+      setOfficeSyncReport(report);
+      await refreshAfterOfficeChange();
+      if (report.errors.length > 0) {
+        toast.warning(t('packs.office.syncPartial', { synced: report.synced, errors: report.errors.length }));
+      } else {
+        toast.success(t('packs.office.syncSuccess', { synced: report.synced }));
+      }
+    } catch (err) {
+      toast.error(t('packs.office.syncFailed', { error: String(err) }));
+      await refreshOfficeInfo();
+    } finally {
+      setOfficeAction(null);
+    }
+  };
+
+  const handleOfficeUninstall = async () => {
+    setOfficeAction('uninstall');
+    setOfficeSyncReport(null);
+    try {
+      setOfficeInfo(await hostApi.officeTools.uninstall());
+      await refreshAfterOfficeChange();
+      toast.success(t('packs.office.uninstallSuccess'));
+    } catch (err) {
+      toast.error(t('packs.office.uninstallFailed', { error: String(err) }));
+    } finally {
+      setOfficeAction(null);
+    }
+  };
+
+  const handleInstall = async (packId: SkillPackId) => {
+    if (packId === 'officecli') {
+      await handleOfficeInstall();
+      return;
+    }
+    try {
+      await installPack(packId);
+      toast.success(t('packs.toast.installed'));
+    } catch (err) {
+      toast.error(t('packs.toast.failed', { error: String(err) }));
+    }
+  };
+
+  const handleSync = async (packId: SkillPackId) => {
+    if (packId === 'officecli') {
+      await handleOfficeSync();
+      return;
+    }
+    try {
+      await syncPack(packId);
+      toast.success(t('packs.toast.synced'));
+    } catch (err) {
+      toast.error(t('packs.toast.failed', { error: String(err) }));
+    }
+  };
+
+  const handleEnabled = async (packId: SkillPackId, enabled: boolean) => {
+    try {
+      await setPackEnabled(packId, enabled);
+      toast.success(enabled ? t('packs.toast.enabled') : t('packs.toast.disabled'));
+    } catch (err) {
+      toast.error(t('packs.toast.failed', { error: String(err) }));
+    }
+  };
+
+  const handlePreview = async (pack: SkillPackSummary, skillId: string) => {
+    try {
+      const content = await readSkill(pack.id, skillId);
+      setPreview({ pack, skillId, content });
+    } catch (err) {
+      toast.error(t('packs.toast.failed', { error: String(err) }));
+    }
+  };
+
+  if (loading && packs.length === 0) {
+    return <div className="flex justify-center py-16"><LoadingSpinner size="lg" /></div>;
+  }
+
+  return (
+    <div className="space-y-5" data-testid="skill-packs-panel">
+      {error && (
+        <div className="rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
+      <div className="grid gap-4">
+        {packs.map((pack) => {
+          const isOfficeCli = pack.id === 'officecli';
+          const packInstalled = pack.status !== 'notInstalled';
+          const installed = isOfficeCli ? (officeInfo?.installed ?? packInstalled) : packInstalled;
+          const installBusy = isOfficeCli
+            ? officeAction === 'install'
+            : Boolean(busy[packBusyKey(pack.id, 'install')]);
+          const syncBusy = isOfficeCli
+            ? officeAction === 'sync'
+            : Boolean(busy[packBusyKey(pack.id, 'sync')]);
+          const uninstallBusy = isOfficeCli && officeAction === 'uninstall';
+          const enabledBusy = Boolean(busy[packBusyKey(pack.id, 'enabled')]);
+          const enabledCount = pack.skills.filter((skill) => skill.enabled).length;
+          const installedCount = pack.skills.filter((skill) => skill.installed).length;
+          const officeRuntimeError = isOfficeCli ? officeInfo?.runtimeError : null;
+          const officeHealthy = isOfficeCli && officeInfo?.installed === true && !officeRuntimeError;
+
+          return (
+            <section
+              key={pack.id}
+              data-testid={`skill-pack-card-${pack.id}`}
+              className="rounded-xl border border-black/10 bg-black/[0.02] p-4 dark:border-white/10 dark:bg-white/[0.03]"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Package className="h-4 w-4 text-foreground/70" />
+                    <h2 className="text-base font-semibold text-foreground">{pack.name}</h2>
+                    <Badge variant={pack.enabled ? 'secondary' : 'outline'} className="rounded-full">
+                      {t(`packs.status.${pack.status}`)}
+                    </Badge>
+                  </div>
+                  <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                    {pack.description}
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {t('packs.skillCounts', {
+                      installed: installedCount,
+                      enabled: enabledCount,
+                      total: pack.skills.length,
+                    })}
+                  </p>
+                  {pack.error && <p className="mt-2 text-xs text-destructive">{pack.error}</p>}
+                  {isOfficeCli && (
+                    <div
+                      data-testid="officecli-detection-card"
+                      className={cn(
+                        'mt-3 rounded-lg border px-3 py-2 text-xs',
+                        officeHealthy
+                          ? 'border-green-500/30 bg-green-500/5 text-green-700 dark:text-green-400'
+                          : officeInfo?.installed
+                            ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400'
+                            : 'border-black/10 bg-black/[0.03] text-muted-foreground dark:border-white/10 dark:bg-white/[0.04]',
+                      )}
+                    >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-semibold text-foreground">OfficeCLI</span>
+                        <Badge variant={officeHealthy ? 'secondary' : 'outline'} className="rounded-full">
+                          {officeDetecting
+                            ? t('packs.office.detecting')
+                            : officeHealthy
+                              ? t('packs.office.installed')
+                              : officeInfo?.installed
+                                ? t('packs.office.notRunnable')
+                                : t('packs.office.notInstalled')}
+                        </Badge>
+                      </div>
+                      {officeInfo?.installed && (
+                        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-muted-foreground">
+                          {officeInfo.version && <span>{officeInfo.version}</span>}
+                          {officeInfo.path && <code className="break-all text-2xs">{officeInfo.path}</code>}
+                        </div>
+                      )}
+                      {officeRuntimeError && (
+                        <p className="mt-1.5 whitespace-pre-wrap break-words">{officeRuntimeError}</p>
+                      )}
+                      {!officeInfo?.installed && !officeDetecting && (
+                        <p className="mt-1 text-muted-foreground">{t('packs.office.installHint')}</p>
+                      )}
+                    </div>
+                  )}
+                  {isOfficeCli && officeInstallLogs.length > 0 && (
+                    <div
+                      data-testid="officecli-install-log"
+                      className="mt-3 max-h-36 overflow-auto rounded-lg border border-black/10 bg-black/[0.03] p-3 font-mono text-2xs leading-relaxed text-muted-foreground dark:border-white/10 dark:bg-white/[0.04]"
+                    >
+                      {officeInstallLogs.map((line, index) => (
+                        <div key={`${index}-${line}`} className={line.startsWith('ERROR:') ? 'text-destructive' : undefined}>
+                          {line}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {isOfficeCli && officeSyncReport && officeSyncReport.errors.length > 0 && (
+                    <div
+                      data-testid="officecli-sync-report"
+                      className="mt-3 rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-3 text-xs text-yellow-700 dark:text-yellow-400"
+                    >
+                      <p className="font-medium">
+                        {t('packs.office.syncPartial', {
+                          synced: officeSyncReport.synced,
+                          errors: officeSyncReport.errors.length,
+                        })}
+                      </p>
+                      <ul className="mt-1 space-y-1">
+                        {officeSyncReport.errors.slice(0, 3).map((item) => (
+                          <li key={item} className="break-words font-mono text-2xs">{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
+                  {!installed ? (
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="h-8 rounded-full px-3"
+                      data-testid={`skill-pack-install-${pack.id}`}
+                      disabled={installBusy}
+                      onClick={() => void handleInstall(pack.id)}
+                    >
+                      {installBusy ? <LoadingSpinner size="sm" /> : <Download className="mr-1.5 h-3.5 w-3.5" />}
+                      {pack.id === 'officecli' ? t('packs.actions.downloadInstall') : t('packs.actions.install')}
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-8 rounded-full bg-transparent px-3"
+                        data-testid={`skill-pack-sync-${pack.id}`}
+                        disabled={syncBusy}
+                        onClick={() => void handleSync(pack.id)}
+                      >
+                        {syncBusy ? <LoadingSpinner size="sm" /> : <RefreshCw className="mr-1.5 h-3.5 w-3.5" />}
+                        {t('packs.actions.sync')}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={pack.enabled ? 'outline' : 'default'}
+                        size="sm"
+                        className="h-8 rounded-full px-3"
+                        data-testid={pack.enabled ? `skill-pack-disable-${pack.id}` : `skill-pack-enable-${pack.id}`}
+                        disabled={enabledBusy}
+                        onClick={() => void handleEnabled(pack.id, !pack.enabled)}
+                      >
+                        {enabledBusy ? <LoadingSpinner size="sm" /> : <Power className="mr-1.5 h-3.5 w-3.5" />}
+                        {pack.enabled ? t('packs.actions.disable') : t('packs.actions.enable')}
+                      </Button>
+                      {isOfficeCli && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-8 rounded-full bg-transparent px-3 text-destructive hover:text-destructive"
+                          data-testid="skill-pack-uninstall-officecli"
+                          disabled={uninstallBusy}
+                          onClick={() => void handleOfficeUninstall()}
+                        >
+                          {uninstallBusy ? <LoadingSpinner size="sm" /> : <Trash2 className="mr-1.5 h-3.5 w-3.5" />}
+                          {t('packs.actions.uninstall')}
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {pack.skills.length > 0 && (
+                <div className="mt-4 grid gap-2">
+                  {pack.skills.map((skill) => (
+                    <div
+                      key={skill.id}
+                      className="flex items-center justify-between gap-3 rounded-lg bg-black/[0.03] px-3 py-2 dark:bg-white/[0.04]"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate font-mono text-xs font-medium text-foreground">{skill.id}</p>
+                          {skill.enabled && (
+                            <Badge variant="secondary" className="rounded-full">
+                              {t('packs.skill.enabled')}
+                            </Badge>
+                          )}
+                          {!skill.installed && (
+                            <Badge variant="outline" className="rounded-full">
+                              {t('packs.skill.notInstalled')}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="mt-0.5 truncate text-xs text-muted-foreground">{skill.description}</p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0"
+                        disabled={!skill.installed}
+                        onClick={() => void handlePreview(pack, skill.id)}
+                        aria-label={t('packs.actions.previewSkill', { skill: skill.id })}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {isOfficeCli && pack.skills.length > 0 && (
+                <OfficeAgentMatrix
+                  skills={pack.skills}
+                  agents={officeAgents}
+                  statuses={officeLinkStatuses}
+                  loading={officeLinksLoading}
+                  busyKey={officeLinkBusyKey}
+                  onToggle={handleOfficeAgentToggle}
+                />
+              )}
+            </section>
+          );
+        })}
+      </div>
+
+      <Sheet open={Boolean(preview)} onOpenChange={(open) => !open && setPreview(null)}>
+        <SheetContent
+          side="right"
+          className="flex w-full flex-col border-l border-black/10 bg-surface-modal p-0 shadow-[0_0_40px_rgba(0,0,0,0.2)] dark:border-white/10 sm:max-w-[560px]"
+        >
+          {preview && (
+            <>
+              <div className="border-b border-black/10 px-6 py-5 dark:border-white/10">
+                <h2 className="font-serif text-2xl font-normal tracking-tight text-foreground">
+                  {preview.skillId}
+                </h2>
+                <p className="mt-1 text-xs text-muted-foreground">{preview.pack.name}</p>
+              </div>
+              <pre className="min-h-0 flex-1 overflow-auto whitespace-pre-wrap px-6 py-5 font-mono text-xs leading-relaxed text-foreground">
+                {preview.content}
+              </pre>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

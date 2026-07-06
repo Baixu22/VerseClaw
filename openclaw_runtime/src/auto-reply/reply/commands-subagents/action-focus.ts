@@ -4,7 +4,7 @@ import {
   resolveAcpThreadSessionDetailLines,
 } from "@openclaw/acp-core/runtime/session-identifiers";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { readAcpSessionEntry } from "../../../acp/runtime/session-meta.js";
+import { readAcpSessionEntry } from "../../../runtime/session-meta.ts";
 import { normalizeChatType } from "../../../channels/chat-type.js";
 import {
   resolveThreadBindingIntroText,

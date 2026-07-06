@@ -33,6 +33,9 @@ export type UsageLike = {
   input_tokens_details?: { cached_tokens?: number };
   // Kimi K2 uses prompt_tokens_details.cached_tokens for automatic prefix caching.
   prompt_tokens_details?: { cached_tokens?: number };
+  // DeepSeek reports automatic prefix caching at the top level.
+  prompt_cache_hit_tokens?: number;
+  prompt_cache_miss_tokens?: number;
   // Some agents/logs emit alternate naming.
   totalTokens?: number;
   total_tokens?: number;
@@ -136,12 +139,15 @@ export function normalizeUsage(raw?: UsageLike | null): NormalizedUsage | undefi
     raw.cacheRead ??
       raw.cache_read ??
       raw.cache_read_input_tokens ??
+      raw.prompt_cache_hit_tokens ??
       raw.cached_tokens ??
       raw.input_tokens_details?.cached_tokens ??
       raw.prompt_tokens_details?.cached_tokens,
   );
 
+  const explicitCacheMiss = raw.prompt_cache_miss_tokens;
   const rawInputValue =
+    explicitCacheMiss ??
     raw.input ??
     raw.inputTokens ??
     raw.input_tokens ??
@@ -151,6 +157,7 @@ export function normalizeUsage(raw?: UsageLike | null): NormalizedUsage | undefi
     raw.timings?.prompt_n;
 
   const usesOpenAIStylePromptTotals =
+    raw.prompt_cache_hit_tokens !== undefined ||
     raw.cached_tokens !== undefined ||
     raw.input_tokens_details?.cached_tokens !== undefined ||
     raw.prompt_tokens_details?.cached_tokens !== undefined;
@@ -162,7 +169,10 @@ export function normalizeUsage(raw?: UsageLike | null): NormalizedUsage | undefi
   // count cache reads.
   const rawInput = asFiniteNumber(rawInputValue);
   const normalizedInput =
-    rawInput !== undefined && usesOpenAIStylePromptTotals && cacheRead !== undefined
+    explicitCacheMiss === undefined &&
+    rawInput !== undefined &&
+    usesOpenAIStylePromptTotals &&
+    cacheRead !== undefined
       ? rawInput - cacheRead
       : rawInput;
   const input = normalizeTokenCount(normalizedInput);

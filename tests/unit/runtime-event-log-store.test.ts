@@ -226,6 +226,227 @@ describe("RuntimeTaskEvent event log store", () => {
     ]);
   });
 
+  it("uses indexed append context without loading the whole log", () => {
+    let loadCalls = 0;
+    const appended: RuntimeTaskEventLogRecord[] = [];
+    const storage: RuntimeTaskEventLogStorage = {
+      load() {
+        loadCalls += 1;
+        throw new Error("append must not scan full storage when indexed context exists");
+      },
+      loadAppendContext(query) {
+        expect(query).toEqual({
+          taskId: "task-a",
+          eventId: "event-indexed",
+          idempotencyKey: "idem-indexed",
+        });
+        return { maxSequence: 4, diagnostics: [] };
+      },
+      append(record) {
+        appended.push(record);
+      },
+    };
+
+    const result = new RuntimeTaskEventLogStore(storage).append(event("event-indexed"), {
+      idempotencyKey: "idem-indexed",
+      appendedAt: 123,
+    });
+
+    expect(result).toMatchObject({ appended: true, duplicate: false });
+    expect(result.record?.sequence).toBe(5);
+    expect(appended.map((record) => record.sequence)).toEqual([5]);
+    expect(loadCalls).toBe(0);
+  });
+
+  it("preserves duplicate behavior through indexed append context", () => {
+    const existingEventRecord: RuntimeTaskEventLogRecord = {
+      ...createRuntimeTaskEventLogEnvelope(event("event-existing")),
+      sequence: 0,
+      appendedAt: 100,
+    };
+    const existingIdempotencyRecord: RuntimeTaskEventLogRecord = {
+      ...createRuntimeTaskEventLogEnvelope(event("event-idem")),
+      sequence: 1,
+      appendedAt: 101,
+      idempotencyKey: "idem-existing",
+    };
+    const storage: RuntimeTaskEventLogStorage = {
+      load() {
+        throw new Error("append must not scan full storage when indexed context exists");
+      },
+      loadAppendContext(query) {
+        if (query.eventId === "event-existing") {
+          return { maxSequence: 1, duplicateEventRecord: existingEventRecord, diagnostics: [] };
+        }
+        return {
+          maxSequence: 1,
+          duplicateIdempotencyRecord: existingIdempotencyRecord,
+          diagnostics: [],
+        };
+      },
+      append() {
+        throw new Error("duplicate append should not write");
+      },
+    };
+    const store = new RuntimeTaskEventLogStore(storage);
+
+    expect(store.append(event("event-existing"))).toMatchObject({
+      appended: false,
+      duplicate: true,
+      record: expect.objectContaining({ event: expect.objectContaining({ eventId: "event-existing" }) }),
+      diagnostics: [expect.objectContaining({ code: "duplicate_event_id" })],
+    });
+    expect(store.append(event("event-new"), { idempotencyKey: "idem-existing" }))
+      .toMatchObject({
+        appended: false,
+        duplicate: true,
+        record: expect.objectContaining({ event: expect.objectContaining({ eventId: "event-idem" }) }),
+        diagnostics: [expect.objectContaining({ code: "duplicate_idempotency_key" })],
+      });
+  });
+
+  it("reconciles write-time duplicate event conflicts through indexed reread", () => {
+    const existingEventRecord: RuntimeTaskEventLogRecord = {
+      ...createRuntimeTaskEventLogEnvelope(event("event-race")),
+      sequence: 0,
+      appendedAt: 100,
+    };
+    let readCalls = 0;
+    const storage: RuntimeTaskEventLogStorage = {
+      load() {
+        throw new Error("append conflict reconciliation must not scan full storage");
+      },
+      loadAppendContext() {
+        readCalls += 1;
+        return readCalls === 1
+          ? { maxSequence: -1, diagnostics: [] }
+          : { maxSequence: 0, duplicateEventRecord: existingEventRecord, diagnostics: [] };
+      },
+      append() {
+        throw new Error("SQLITE_CONSTRAINT_PRIMARYKEY: UNIQUE constraint failed");
+      },
+    };
+
+    const result = new RuntimeTaskEventLogStore(storage).append(event("event-race"));
+
+    expect(result).toMatchObject({
+      appended: false,
+      duplicate: true,
+      record: expect.objectContaining({ event: expect.objectContaining({ eventId: "event-race" }) }),
+      diagnostics: [expect.objectContaining({ code: "duplicate_event_id" })],
+    });
+    expect(result.diagnostics.map((diagnostic) => diagnostic.code))
+      .not.toContain("store_write_failure");
+    expect(readCalls).toBe(2);
+  });
+
+  it("reconciles write-time duplicate idempotency conflicts before event id conflicts", () => {
+    const existingEventRecord: RuntimeTaskEventLogRecord = {
+      ...createRuntimeTaskEventLogEnvelope(event("event-race")),
+      sequence: 0,
+      appendedAt: 100,
+    };
+    const existingIdempotencyRecord: RuntimeTaskEventLogRecord = {
+      ...createRuntimeTaskEventLogEnvelope(event("event-idem")),
+      sequence: 1,
+      appendedAt: 101,
+      idempotencyKey: "idem-race",
+    };
+    let readCalls = 0;
+    const storage: RuntimeTaskEventLogStorage = {
+      load() {
+        throw new Error("append conflict reconciliation must not scan full storage");
+      },
+      loadAppendContext() {
+        readCalls += 1;
+        return readCalls === 1
+          ? { maxSequence: -1, diagnostics: [] }
+          : {
+              maxSequence: 1,
+              duplicateEventRecord: existingEventRecord,
+              duplicateIdempotencyRecord: existingIdempotencyRecord,
+              diagnostics: [],
+            };
+      },
+      append() {
+        throw new Error("SQLITE_CONSTRAINT_UNIQUE: UNIQUE constraint failed");
+      },
+    };
+
+    const result = new RuntimeTaskEventLogStore(storage).append(event("event-race"), {
+      idempotencyKey: "idem-race",
+    });
+
+    expect(result).toMatchObject({
+      appended: false,
+      duplicate: true,
+      record: expect.objectContaining({ event: expect.objectContaining({ eventId: "event-idem" }) }),
+      diagnostics: [expect.objectContaining({
+        code: "duplicate_idempotency_key",
+        idempotencyKey: "idem-race",
+      })],
+    });
+    expect(result.diagnostics.map((diagnostic) => diagnostic.code))
+      .not.toContain("store_write_failure");
+    expect(readCalls).toBe(2);
+  });
+
+  it("keeps write failures when indexed reread finds no duplicate", () => {
+    let readCalls = 0;
+    const storage: RuntimeTaskEventLogStorage = {
+      load() {
+        throw new Error("append conflict reconciliation must not scan full storage");
+      },
+      loadAppendContext() {
+        readCalls += 1;
+        return { maxSequence: -1, diagnostics: [] };
+      },
+      append() {
+        throw new Error("disk still unavailable");
+      },
+    };
+
+    const result = new RuntimeTaskEventLogStore(storage).append(event("event-write-failure"));
+
+    expect(result).toMatchObject({
+      appended: false,
+      duplicate: false,
+      diagnostics: [expect.objectContaining({ code: "store_write_failure" })],
+    });
+    expect(readCalls).toBe(2);
+  });
+
+  it("keeps write and read diagnostics when post-write reconciliation cannot read", () => {
+    let readCalls = 0;
+    const storage: RuntimeTaskEventLogStorage = {
+      load() {
+        throw new Error("append conflict reconciliation must not scan full storage");
+      },
+      loadAppendContext() {
+        readCalls += 1;
+        if (readCalls > 1) {
+          throw new Error("reread unavailable");
+        }
+        return { maxSequence: -1, diagnostics: [] };
+      },
+      append() {
+        throw new Error("disk write unavailable");
+      },
+    };
+
+    const result = new RuntimeTaskEventLogStore(storage).append(event("event-reread-failure"));
+
+    expect(result).toMatchObject({
+      appended: false,
+      duplicate: false,
+    });
+    expect(result.diagnostics.map((diagnostic) => diagnostic.code)).toEqual([
+      "store_write_failure",
+      "store_read_failure",
+    ]);
+    expect(readCalls).toBe(2);
+  });
+
   it("validates stored records through the envelope contract", () => {
     const storage = new InMemoryRuntimeTaskEventLogStorage([
       {

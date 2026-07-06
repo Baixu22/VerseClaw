@@ -1,9 +1,16 @@
 // @vitest-environment node
 
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  aggregateFactSetEvaluations,
+  assessLayer1Gate,
+  evaluateFactSet,
+  type AnnotatedFact,
+  type FactSetEvaluation,
+} from './helpers/context-compression-eval';
 
 const {
   applyProxySettingsMock,
@@ -47,85 +54,90 @@ const {
   validateApiKeyWithProviderMock,
   writeAgentBootstrapFileMock,
   writeAgentBootstrapToolsMock,
+  writeOpenClawConfigMock,
   writeAgentRoleProfileMock,
   writeAgentSoulMock,
-} = vi.hoisted(() => ({
-  applyProxySettingsMock: vi.fn(),
-  assignChannelAccountToAgentMock: vi.fn(),
-  assignChannelToAgentMock: vi.fn(),
-  clearChannelBindingMock: vi.fn(),
-  createAgentMock: vi.fn(),
-  deleteAgentConfigMock: vi.fn(),
-  deleteChannelAccountConfigMock: vi.fn(),
-  deleteChannelConfigMock: vi.fn(),
-  ensureFeishuPluginInstalledMock: vi.fn(),
-  getAllSettingsMock: vi.fn(),
-  getChannelFormValuesMock: vi.fn(),
-  getSettingMock: vi.fn(),
-  buildSandboxStatusMock: vi.fn(),
-  listLogFilesMock: vi.fn(),
-  logDir: '/tmp/verse-claw-host-services-test-logs',
-  listAgentsSnapshotFromConfigMock: vi.fn(),
-  listAgentsSnapshotMock: vi.fn(),
-  listConfiguredChannelAccountsFromConfigMock: vi.fn(),
-  listConfiguredChannelsFromConfigMock: vi.fn(),
-  listConfiguredChannelsMock: vi.fn(),
-  providerAccountToConfigMock: vi.fn((account: Record<string, unknown>) => ({
-    id: account.id,
-    name: account.label,
-    type: account.vendorId,
-    baseUrl: account.baseUrl,
-    apiProtocol: account.apiProtocol,
-    model: account.model,
-    enabled: account.enabled,
-    createdAt: account.createdAt,
-    updatedAt: account.updatedAt,
-  })),
-  providerServiceMock: {
-    _deleteProviderApiKeyInternal: vi.fn(),
-    _deleteProviderInternal: vi.fn(),
-    _getDefaultProviderInternal: vi.fn(),
-    _getProviderApiKeyInternal: vi.fn(),
-    _getProviderInternal: vi.fn(),
-    _hasProviderApiKeyInternal: vi.fn(),
-    _listProvidersWithKeyInfoInternal: vi.fn(),
-    _saveProviderInternal: vi.fn(),
-    _setDefaultProviderInternal: vi.fn(),
-    _setProviderApiKeyInternal: vi.fn(),
-    createAccount: vi.fn(),
-    deleteAccount: vi.fn(),
-    getAccount: vi.fn(),
-    getAccountApiKey: vi.fn(),
-    getDefaultAccountId: vi.fn(),
-    hasAccountApiKey: vi.fn(),
-    listAccounts: vi.fn(),
-    listAccountsKeyInfo: vi.fn(),
-    listVendors: vi.fn(),
-    setDefaultAccount: vi.fn(),
-    updateAccount: vi.fn(),
-  },
-  readOpenClawConfigMock: vi.fn(),
-  readLogFileMock: vi.fn(),
-  readAgentBootstrapFileMock: vi.fn(),
-  readAgentSoulMock: vi.fn(),
-  readAgentRoleProfileMock: vi.fn(),
-  removeAgentWorkspaceDirectoryMock: vi.fn(),
-  resetSettingsMock: vi.fn(),
-  readAgentBootstrapToolsMock: vi.fn(),
-  saveChannelConfigMock: vi.fn(),
-  setSettingMock: vi.fn(),
-  syncDefaultProviderToRuntimeMock: vi.fn(),
-  syncSavedProviderToRuntimeMock: vi.fn(),
-  syncLaunchAtStartupSettingFromStoreMock: vi.fn(),
-  syncProxyConfigToOpenClawMock: vi.fn(),
-  testOpenClawConfigDir: '/tmp/verse-claw-host-services-openclaw',
-  updateAgentNameMock: vi.fn(),
-  validateApiKeyWithProviderMock: vi.fn(),
-  writeAgentBootstrapFileMock: vi.fn(),
-  writeAgentBootstrapToolsMock: vi.fn(),
-  writeAgentRoleProfileMock: vi.fn(),
-  writeAgentSoulMock: vi.fn(),
-}));
+} = vi.hoisted(() => {
+  const root = process.env.CLAWX_TEST_TMPDIR ?? `${process.cwd()}/.tmp/vitest`;
+  return {
+    applyProxySettingsMock: vi.fn(),
+    assignChannelAccountToAgentMock: vi.fn(),
+    assignChannelToAgentMock: vi.fn(),
+    clearChannelBindingMock: vi.fn(),
+    createAgentMock: vi.fn(),
+    deleteAgentConfigMock: vi.fn(),
+    deleteChannelAccountConfigMock: vi.fn(),
+    deleteChannelConfigMock: vi.fn(),
+    ensureFeishuPluginInstalledMock: vi.fn(),
+    getAllSettingsMock: vi.fn(),
+    getChannelFormValuesMock: vi.fn(),
+    getSettingMock: vi.fn(),
+    buildSandboxStatusMock: vi.fn(),
+    listLogFilesMock: vi.fn(),
+    logDir: `${root}/verse-claw-host-services-test-logs`,
+    listAgentsSnapshotFromConfigMock: vi.fn(),
+    listAgentsSnapshotMock: vi.fn(),
+    listConfiguredChannelAccountsFromConfigMock: vi.fn(),
+    listConfiguredChannelsFromConfigMock: vi.fn(),
+    listConfiguredChannelsMock: vi.fn(),
+    providerAccountToConfigMock: vi.fn((account: Record<string, unknown>) => ({
+      id: account.id,
+      name: account.label,
+      type: account.vendorId,
+      baseUrl: account.baseUrl,
+      apiProtocol: account.apiProtocol,
+      model: account.model,
+      enabled: account.enabled,
+      createdAt: account.createdAt,
+      updatedAt: account.updatedAt,
+    })),
+    providerServiceMock: {
+      _deleteProviderApiKeyInternal: vi.fn(),
+      _deleteProviderInternal: vi.fn(),
+      _getDefaultProviderInternal: vi.fn(),
+      _getProviderApiKeyInternal: vi.fn(),
+      _getProviderInternal: vi.fn(),
+      _hasProviderApiKeyInternal: vi.fn(),
+      _listProvidersWithKeyInfoInternal: vi.fn(),
+      _saveProviderInternal: vi.fn(),
+      _setDefaultProviderInternal: vi.fn(),
+      _setProviderApiKeyInternal: vi.fn(),
+      createAccount: vi.fn(),
+      deleteAccount: vi.fn(),
+      getAccount: vi.fn(),
+      getAccountApiKey: vi.fn(),
+      getDefaultAccountId: vi.fn(),
+      hasAccountApiKey: vi.fn(),
+      listAccounts: vi.fn(),
+      listAccountsKeyInfo: vi.fn(),
+      listVendors: vi.fn(),
+      setDefaultAccount: vi.fn(),
+      updateAccount: vi.fn(),
+    },
+    readOpenClawConfigMock: vi.fn(),
+    readLogFileMock: vi.fn(),
+    readAgentBootstrapFileMock: vi.fn(),
+    readAgentSoulMock: vi.fn(),
+    readAgentRoleProfileMock: vi.fn(),
+    removeAgentWorkspaceDirectoryMock: vi.fn(),
+    resetSettingsMock: vi.fn(),
+    readAgentBootstrapToolsMock: vi.fn(),
+    saveChannelConfigMock: vi.fn(),
+    setSettingMock: vi.fn(),
+    syncDefaultProviderToRuntimeMock: vi.fn(),
+    syncSavedProviderToRuntimeMock: vi.fn(),
+    syncLaunchAtStartupSettingFromStoreMock: vi.fn(),
+    syncProxyConfigToOpenClawMock: vi.fn(),
+    testOpenClawConfigDir: `${root}/verse-claw-host-services-openclaw`,
+    updateAgentNameMock: vi.fn(),
+    validateApiKeyWithProviderMock: vi.fn(),
+    writeAgentBootstrapFileMock: vi.fn(),
+    writeAgentBootstrapToolsMock: vi.fn(),
+    writeOpenClawConfigMock: vi.fn(),
+    writeAgentRoleProfileMock: vi.fn(),
+    writeAgentSoulMock: vi.fn(),
+  };
+});
 
 vi.mock('@electron/utils/store', () => ({
   getAllSettings: (...args: unknown[]) => getAllSettingsMock(...args),
@@ -177,6 +189,7 @@ vi.mock('@electron/utils/channel-config', () => ({
   setChannelEnabled: vi.fn(),
   validateChannelConfig: vi.fn(),
   validateChannelCredentials: vi.fn(),
+  writeOpenClawConfig: (...args: unknown[]) => writeOpenClawConfigMock(...args),
 }));
 
 vi.mock('@electron/utils/agent-config', () => ({
@@ -280,6 +293,7 @@ vi.mock('@electron/utils/whatsapp-login', () => ({
 }));
 
 vi.mock('@electron/utils/paths', () => ({
+  getDataDir: () => testOpenClawConfigDir,
   getOpenClawConfigDir: () => testOpenClawConfigDir,
   getOpenClawDir: () => testOpenClawConfigDir,
   getOpenClawResolvedDir: () => testOpenClawConfigDir,
@@ -364,7 +378,7 @@ describe('host services', () => {
       summary: 'Policy-light / acceptEdits / policy / network=disabled',
       updatedAt: 1,
       docker: { cli: false, daemon: false, image: false },
-      execPolicy: { host: 'gateway', security: 'allowlist', ask: 'dangerous' },
+      execPolicy: { host: 'gateway', security: 'allowlist', ask: 'on-miss' },
       networkPolicy: 'disabled',
       workspaceAccess: 'none',
       providers: [],
@@ -388,7 +402,7 @@ describe('host services', () => {
           },
         },
         tools: {
-          exec: { host: 'gateway', security: 'allowlist', ask: 'dangerous' },
+          exec: { host: 'gateway', security: 'allowlist', ask: 'on-miss' },
           sandbox: { tools: { alsoAllow: [] } },
         },
       },
@@ -1096,6 +1110,429 @@ describe('host services', () => {
       });
   });
 
+  it('truncates transcript state before resending an edited user message', async () => {
+    const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
+    mkdirSync(sessionsDir, { recursive: true });
+    writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({
+      sessions: [
+        {
+          key: 'agent:main:abc123',
+          file: 'abc123.jsonl',
+        },
+      ],
+    }));
+    const retainedHeader = JSON.stringify({ type: 'session', id: 'abc123' });
+    const retainedUser = JSON.stringify({
+      type: 'message',
+      message: {
+        id: 'user-kept',
+        role: 'user',
+        content: 'Keep this earlier context',
+        timestamp: 1000,
+      },
+    });
+    const retainedAssistant = JSON.stringify({
+      type: 'message',
+      message: {
+        id: 'assistant-kept',
+        role: 'assistant',
+        content: 'Kept answer',
+        timestamp: 1001,
+      },
+    });
+    const targetUser = JSON.stringify({
+      type: 'message',
+      message: {
+        id: 'user-old',
+        role: 'user',
+        content: 'Original message to edit',
+        timestamp: 1002,
+      },
+    });
+    const staleAssistant = JSON.stringify({
+      type: 'message',
+      message: {
+        id: 'assistant-stale',
+        role: 'assistant',
+        content: 'Stale answer that must be removed',
+        timestamp: 1003,
+      },
+    });
+    const laterUser = JSON.stringify({
+      type: 'message',
+      message: {
+        id: 'user-later',
+        role: 'user',
+        content: 'Later follow-up',
+        timestamp: 1004,
+      },
+    });
+    const laterAssistant = JSON.stringify({
+      type: 'message',
+      message: {
+        id: 'assistant-later',
+        role: 'assistant',
+        content: 'Later answer',
+        timestamp: 1005,
+      },
+    });
+    const transcriptPath = join(sessionsDir, 'abc123.jsonl');
+    writeFileSync(transcriptPath, [
+      retainedHeader,
+      retainedUser,
+      retainedAssistant,
+      targetUser,
+      staleAssistant,
+      laterUser,
+      laterAssistant,
+    ].join('\n'));
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sessionsApi = createSessionsApi();
+
+    await expect(sessionsApi.truncate({
+      sessionKey: 'agent:main:abc123',
+      messageId: 'user-old',
+    })).resolves.toMatchObject({
+      success: true,
+      sessionKey: 'agent:main:abc123',
+      messageId: 'user-old',
+      truncated: true,
+      removedMessageCount: 4,
+      retainedLineCount: 3,
+    });
+
+    expect(readFileSync(transcriptPath, 'utf8')).toBe([
+      retainedHeader,
+      retainedUser,
+      retainedAssistant,
+      '',
+    ].join('\n'));
+    await expect(sessionsApi.history({ sessionKey: 'agent:main:abc123', limit: 10 }))
+      .resolves.toMatchObject({
+        success: true,
+        messages: [
+          { id: 'user-kept', role: 'user', content: 'Keep this earlier context' },
+          { id: 'assistant-kept', role: 'assistant', content: 'Kept answer' },
+        ],
+      });
+  });
+
+  it('quantifies mock context fidelity across 30 handoff, truncate, and resend continuations', async () => {
+    const roundCount = 30;
+    const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
+    mkdirSync(sessionsDir, { recursive: true });
+    writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({
+      sessions: Array.from({ length: roundCount }, (_, index) => ({
+        key: `agent:main:fidelity-${index + 1}`,
+        file: `fidelity-${index + 1}.jsonl`,
+      })),
+    }));
+
+    const entry = (message: Record<string, unknown>) => JSON.stringify({
+      type: 'message',
+      message,
+    });
+    const fact = (
+      id: string,
+      text: string,
+      severity: AnnotatedFact['severity'],
+      category: AnnotatedFact['category'],
+    ): AnnotatedFact => ({ id, text, severity, category });
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sessionsApi = createSessionsApi();
+    const historyScores: FactSetEvaluation[] = [];
+    const localScores: FactSetEvaluation[] = [];
+    const runtimeScores: FactSetEvaluation[] = [];
+
+    const rpc = vi.fn(async (method: string, payload: Record<string, unknown>) => {
+      const key = String(payload.key ?? '');
+      const round = Number(key.match(/fidelity-(\d+)$/u)?.[1] ?? 0);
+      if (!round) throw new Error(`Unexpected fidelity key: ${key}`);
+
+      if (method === 'sessions.recoveryContext') {
+        return {
+          ok: true,
+          key,
+          checkpointId: `ltcp-fidelity-${round}`,
+          context: `Runtime recovery projection preserved for round ${round}. FACT_${round}_RUNTIME_RECOVERY`,
+          projectionTokens: 320 + round,
+          quality: {
+            score: 0.9,
+            level: 'high',
+            fieldCoverage: 1,
+            evidenceCoverage: 1,
+            artifactTokens: 1400 + round,
+            projectionTokens: 320 + round,
+            warnings: [],
+          },
+          warnings: [],
+        };
+      }
+      if (method === 'sessions.resumeCheckpoints') {
+        return {
+          ok: true,
+          key,
+          checkpoints: [{
+            id: `ltcp-fidelity-${round}`,
+            sessionKey: key,
+            agentId: 'main',
+            workspaceId: 'workspace-a',
+            trigger: 'compaction',
+            status: 'ready',
+            checkpoint: {
+              schemaVersion: 1,
+              id: `ltcp-fidelity-${round}`,
+              sessionKey: key,
+              agentId: 'main',
+              workspaceId: 'workspace-a',
+              trigger: 'compaction',
+              objective: `Continue resend validation round ${round}. FACT_${round}_RUNTIME_OBJECTIVE`,
+              activeTask: `Validate mock context fidelity after truncation round ${round}.`,
+              openBlockers: [`Provider key needs user setup round ${round}. FACT_${round}_RUNTIME_BLOCKER`],
+              decisions: [`Runtime checkpoint wins when present round ${round}. FACT_${round}_RUNTIME_DECISION`],
+              deviations: [],
+              filesTouched: [`src/pages/chat-runtime-fidelity-${round}.tsx FACT_${round}_RUNTIME_FILE`],
+              testsRun: [],
+              nextAction: `Run focused fidelity tests and report round ${round}. FACT_${round}_RUNTIME_NEXT`,
+              reviewNeededItems: [],
+              evidenceRefs: [{ type: 'session', ref: key }],
+              createdAt: new Date(0).toISOString(),
+            },
+            createdAt: 1,
+            updatedAt: 1,
+          }],
+        };
+      }
+      throw new Error(`Unexpected RPC method: ${method}`);
+    });
+    const runtimeSessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
+
+    for (let round = 1; round <= roundCount; round += 1) {
+      const sessionKey = `agent:main:fidelity-${round}`;
+      const transcriptPath = join(sessionsDir, `fidelity-${round}.jsonl`);
+      const paths = [
+        `src/stores/chat-fidelity-${round}.ts`,
+        `electron/services/sessions-api-fidelity-${round}.ts`,
+        `tests/e2e/chat-user-message-actions-fidelity-${round}.spec.ts`,
+      ];
+      const retainedFacts = [
+        fact(`objective-${round}`, `FACT_${round}_OBJECTIVE`, 'critical', 'objective'),
+        fact(`decision-truncate-${round}`, `FACT_${round}_DECISION_TRUNCATE`, 'critical', 'decision'),
+        fact(`decision-icon-row-${round}`, `FACT_${round}_DECISION_ICON_ROW`, 'important', 'decision'),
+        fact(`test-unit-${round}`, `FACT_${round}_TEST_UNIT`, 'important', 'test_result'),
+        fact(`test-build-${round}`, `FACT_${round}_TEST_BUILD`, 'important', 'test_result'),
+        fact(`blocker-gateway-${round}`, `FACT_${round}_BLOCKER_GATEWAY`, 'critical', 'blocker'),
+        fact(`ui-color-${round}`, `FACT_${round}_PLAIN_COLOR`, 'nice_to_have', 'ui_detail'),
+        fact(`ui-copy-${round}`, `FACT_${round}_PLAIN_COPY`, 'nice_to_have', 'ui_detail'),
+        fact(`constraint-host-api-${round}`, `FACT_${round}_CONSTRAINT_HOST_API`, 'critical', 'constraint'),
+        fact(`file-store-${round}`, paths[0], 'important', 'file_mutation'),
+        fact(`file-session-api-${round}`, paths[1], 'important', 'file_mutation'),
+        fact(`file-e2e-${round}`, paths[2], 'important', 'file_mutation'),
+      ];
+      const editedContinuationFacts = [
+        fact(`edited-intent-${round}`, `FACT_${round}_EDITED_INTENT`, 'critical', 'objective'),
+        fact(`new-reply-${round}`, `FACT_${round}_NEW_REPLY`, 'important', 'decision'),
+      ];
+      const staleFacts = [
+        fact(`stale-user-${round}`, `FACT_${round}_STALE_USER_BRANCH`, 'critical', 'objective'),
+        fact(`stale-ipc-${round}`, `FACT_${round}_STALE_DIRECT_IPC`, 'critical', 'constraint'),
+        fact(`stale-file-marker-${round}`, `FACT_${round}_STALE_FILE`, 'important', 'file_mutation'),
+        fact(`stale-assistant-${round}`, `FACT_${round}_STALE_ASSISTANT_REPLY`, 'important', 'ephemeral'),
+        fact(`stale-file-path-${round}`, `tests/e2e/stale-overdesigned-${round}.spec.ts`, 'important', 'file_mutation'),
+      ];
+      const runtimeFacts = [
+        fact(`runtime-objective-${round}`, `FACT_${round}_RUNTIME_OBJECTIVE`, 'critical', 'objective'),
+        fact(`runtime-decision-${round}`, `FACT_${round}_RUNTIME_DECISION`, 'critical', 'decision'),
+        fact(`runtime-blocker-${round}`, `FACT_${round}_RUNTIME_BLOCKER`, 'critical', 'blocker'),
+        fact(`runtime-file-${round}`, `FACT_${round}_RUNTIME_FILE`, 'important', 'file_mutation'),
+        fact(`runtime-next-${round}`, `FACT_${round}_RUNTIME_NEXT`, 'important', 'decision'),
+        fact(`runtime-recovery-${round}`, `FACT_${round}_RUNTIME_RECOVERY`, 'important', 'ephemeral'),
+      ];
+      const neutralContext = Array.from({ length: 36 }, (_, index) => (
+        `Background note ${round}.${index + 1}: retained but non-critical implementation chatter for compression-ratio calibration.`
+      )).join('\n');
+
+      const initialTranscript = [
+        JSON.stringify({ type: 'session', id: `fidelity-${round}` }),
+        entry({
+          id: `u-objective-${round}`,
+          role: 'user',
+          content: `Please finish restrained resend validation round ${round}. FACT_${round}_OBJECTIVE`,
+          timestamp: 1000 + round,
+        }),
+        entry({
+          id: `a-decisions-${round}`,
+          role: 'assistant',
+          content: [
+            `Decision: call hostApi.sessions.truncate before sending edited message round ${round}. FACT_${round}_DECISION_TRUNCATE`,
+            `Decision: keep message action icons below the conversation bubble round ${round}. FACT_${round}_DECISION_ICON_ROW`,
+            `Touched ${paths[0]} and ${paths[1]} for reset wiring round ${round}.`,
+            `Renderer boundary note for round ${round}: use host-api only. FACT_${round}_CONSTRAINT_HOST_API`,
+            `Plain visual detail round ${round}: compact dark icon spacing. FACT_${round}_PLAIN_COLOR`,
+            neutralContext,
+          ].join('\n'),
+          timestamp: 1100 + round,
+        }),
+        entry({
+          id: `a-validation-${round}`,
+          role: 'assistant',
+          content: [
+            `pnpm exec vitest run tests/unit/host-services.test.ts passed round ${round}. FACT_${round}_TEST_UNIT`,
+            `pnpm run build:vite passed round ${round}. FACT_${round}_TEST_BUILD`,
+            `Blocked once by gateway timeout round ${round}. FACT_${round}_BLOCKER_GATEWAY`,
+            `Also touched ${paths[2]} round ${round}.`,
+            `Plain copy detail round ${round}: editor label stays terse. FACT_${round}_PLAIN_COPY`,
+          ].join('\n'),
+          timestamp: 1200 + round,
+        }),
+        entry({
+          id: `u-resend-target-${round}`,
+          role: 'user',
+          content: `Old wording round ${round}: use a decorative oversized toolbar. FACT_${round}_STALE_USER_BRANCH`,
+          timestamp: 1300 + round,
+        }),
+        entry({
+          id: `a-stale-${round}`,
+          role: 'assistant',
+          content: [
+            `Decision: bypass host-api and call renderer ipc directly round ${round}. FACT_${round}_STALE_DIRECT_IPC`,
+            `Touched tests/e2e/stale-overdesigned-${round}.spec.ts. FACT_${round}_STALE_FILE`,
+            `Assistant reply from stale branch round ${round}. FACT_${round}_STALE_ASSISTANT_REPLY`,
+          ].join('\n'),
+          timestamp: 1400 + round,
+        }),
+      ].join('\n');
+      writeFileSync(transcriptPath, initialTranscript);
+
+      const beforeHistory = await sessionsApi.history({ sessionKey, limit: 20 });
+      expect(JSON.stringify(beforeHistory)).toContain(`FACT_${round}_STALE_ASSISTANT_REPLY`);
+
+      await expect(sessionsApi.truncate({
+        sessionKey,
+        messageId: `u-resend-target-${round}`,
+      })).resolves.toMatchObject({
+        success: true,
+        truncated: true,
+        removedMessageCount: 2,
+        retainedLineCount: 4,
+      });
+
+      const transcriptAfterResend = [
+        readFileSync(transcriptPath, 'utf8').trimEnd(),
+        entry({
+          id: `u-edited-${round}`,
+          role: 'user',
+          content: `Edited resend round ${round}: keep restrained icons and continue from retained context. FACT_${round}_EDITED_INTENT`,
+          timestamp: 1500 + round,
+        }),
+        entry({
+          id: `a-new-${round}`,
+          role: 'assistant',
+          content: `Decision: resumed from truncated context without stale branch state round ${round}. FACT_${round}_NEW_REPLY`,
+          timestamp: 1600 + round,
+        }),
+        '',
+      ].join('\n');
+      writeFileSync(transcriptPath, transcriptAfterResend);
+
+      const expectedAfterResend = [...retainedFacts, ...editedContinuationFacts];
+      const afterHistory = await sessionsApi.history({ sessionKey, limit: 20 });
+      const afterHistoryText = JSON.stringify(afterHistory);
+      historyScores.push(evaluateFactSet({
+        haystack: afterHistoryText,
+        expected: expectedAfterResend,
+        forbidden: staleFacts,
+      }));
+
+      const localHandoff = await sessionsApi.prepareHandoff({
+        sessionKey,
+        workspaceId: 'workspace-a',
+      });
+      const localHandoffText = JSON.stringify(localHandoff);
+      const localCompressedText = typeof localHandoff.draft === 'string' ? localHandoff.draft : localHandoffText;
+      localScores.push(evaluateFactSet({
+        haystack: localHandoffText,
+        expected: expectedAfterResend,
+        forbidden: staleFacts,
+        originalText: transcriptAfterResend,
+        compressedText: localCompressedText,
+      }));
+
+      const runtimeHandoff = await runtimeSessionsApi.prepareHandoff({
+        sessionKey,
+        workspaceId: 'workspace-a',
+      });
+      const runtimeHandoffText = JSON.stringify(runtimeHandoff);
+      const runtimeCompressedText = typeof runtimeHandoff.draft === 'string' ? runtimeHandoff.draft : runtimeHandoffText;
+      runtimeScores.push(evaluateFactSet({
+        haystack: runtimeHandoffText,
+        expected: runtimeFacts,
+        forbidden: staleFacts,
+        originalText: transcriptAfterResend,
+        compressedText: runtimeCompressedText,
+      }));
+      expect(runtimeHandoff).toMatchObject({
+        success: true,
+        checkpoint: {
+          trigger: 'compaction',
+          metadata: {
+            runtimeCheckpoint: true,
+            recoveryContext: true,
+            recoveryCheckpointId: `ltcp-fidelity-${round}`,
+          },
+        },
+        sources: expect.arrayContaining([
+          expect.objectContaining({ id: 'compression_artifact', available: true }),
+          expect.objectContaining({ id: 'runtime_checkpoint', available: true }),
+          expect.objectContaining({ id: 'transcript', available: true }),
+        ]),
+      });
+    }
+
+    const historyAggregate = aggregateFactSetEvaluations(historyScores);
+    const localAggregate = aggregateFactSetEvaluations(localScores);
+    const runtimeAggregate = aggregateFactSetEvaluations(runtimeScores);
+    const localGate = assessLayer1Gate(localAggregate);
+    const runtimeGate = assessLayer1Gate(runtimeAggregate);
+    console.info('[mock-context-fidelity:30-rounds]', {
+      history: historyAggregate,
+      localHandoff: localAggregate,
+      localGate,
+      runtimeHandoff: runtimeAggregate,
+      runtimeGate,
+    });
+
+    expect(historyAggregate).toMatchObject({
+      rounds: roundCount,
+      recallMean: 1,
+      precisionMean: 1,
+      f1Mean: 1,
+      staleExclusionMean: 1,
+      forbiddenFoundTotal: 0,
+    });
+
+    expect(localAggregate.rounds).toBe(roundCount);
+    expect(localAggregate.recallMean).toBeGreaterThan(0.65);
+    expect(localAggregate.recallMean).toBeLessThan(0.8);
+    expect(localAggregate.precisionMean).toBe(1);
+    expect(localAggregate.f1Mean).toBeGreaterThan(0.78);
+    expect(localAggregate.f1Mean).toBeLessThan(0.9);
+    expect(localAggregate.weightedRecallMean).toBeLessThan(0.82);
+    expect(localGate.pass).toBe(false);
+    expect(localAggregate.staleExclusionMean).toBe(1);
+    expect(localAggregate.forbiddenFoundTotal).toBe(0);
+
+    expect(runtimeAggregate).toMatchObject({
+      rounds: roundCount,
+      recallMean: 1,
+      precisionMean: 1,
+      f1Mean: 1,
+      staleExclusionMean: 1,
+      forbiddenFoundTotal: 0,
+    });
+  });
+
   it('reports compaction status unavailable when Gateway is missing', async () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const sessionsApi = createSessionsApi();
@@ -1348,7 +1785,7 @@ describe('host services', () => {
         ok: true,
         key: 'agent:main:checkpoint',
         checkpointId: 'ltcp-1',
-        context: 'Token-dense recovery projection from runtime.',
+        context: 'Token-dense recovery projection from runtime.\n\nrehydratedFileContext:\n- src/pages/Chat/index.tsx:12-24 (next_action hash=sha256:fixture)',
         projectionTokens: 256,
         quality: {
           score: 0.92,
@@ -1397,10 +1834,11 @@ describe('host services', () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
 
-    await expect(sessionsApi.prepareHandoff({
+    const handoff = await sessionsApi.prepareHandoff({
       sessionKey: 'agent:main:checkpoint',
       workspaceId: 'workspace-a',
-    })).resolves.toMatchObject({
+    });
+    expect(handoff).toMatchObject({
       success: true,
       checkpoint: {
         trigger: 'compaction',
@@ -1423,6 +1861,7 @@ describe('host services', () => {
       ]),
       warnings: expect.arrayContaining(['Recovery context warning: projection clipped']),
     });
+    expect(handoff.draft).toContain('src/pages/Chat/index.tsx:12-24');
     expect(rpc).toHaveBeenNthCalledWith(1, 'sessions.recoveryContext', expect.objectContaining({
       key: 'agent:main:checkpoint',
       budgetTokens: 1800,

@@ -82,6 +82,12 @@ const runtimeEntryPoints = {
     'runtime-core',
     'memory-operator-inspection.ts',
   ),
+  'runtime-core/event-log-operator-inspection': join(
+    RUNTIME_ROOT,
+    'src',
+    'runtime-core',
+    'event-log-operator-inspection.ts',
+  ),
 };
 const memoryReadHydrationShadowEntry = join(
   RUNTIME_ROOT,
@@ -95,6 +101,12 @@ function selectRuntimeEntryPoints() {
     return {
       'runtime-core/memory-operator-inspection':
         runtimeEntryPoints['runtime-core/memory-operator-inspection'],
+    };
+  }
+  if (process.argv.includes('--event-log-operator-inspection-only')) {
+    return {
+      'runtime-core/event-log-operator-inspection':
+        runtimeEntryPoints['runtime-core/event-log-operator-inspection'],
     };
   }
   if (process.argv.includes('--memory-read-hydration-shadow-only')) {
@@ -121,23 +133,21 @@ function collectNodeModulesPackages() {
   if (!existsSync(nmDir)) return result;
 
   for (const entry of readdirSync(nmDir)) {
-    if (entry === '.bin' || entry === '.pnpm' || entry.startsWith('.') || entry.startsWith('@')) continue;
-    result.push(entry);
-  }
-
-  const scopedDir = join(nmDir, '@');
-  if (existsSync(scopedDir)) {
-    for (const scope of readdirSync(scopedDir)) {
-      const scopeDir = join(scopedDir, scope);
-      if (!existsSync(join(scopeDir, 'package.json'))) {
-        try {
-          for (const pkg of readdirSync(scopeDir)) {
-            result.push(`@${scope}/${pkg}`);
-          }
-        } catch { /* skip */ }
-      } else {
-        result.push(`@${scope}`);
+    if (entry === '.bin' || entry === '.pnpm' || entry.startsWith('.')) continue;
+    if (!entry.startsWith('@')) {
+      result.push(entry);
+      continue;
+    }
+    const scopedDir = join(nmDir, entry);
+    try {
+      for (const pkg of readdirSync(scopedDir)) {
+        const packageDir = join(scopedDir, pkg);
+        if (existsSync(join(packageDir, 'package.json'))) {
+          result.push(`${entry}/${pkg}`);
+        }
       }
+    } catch {
+      // Ignore incomplete scoped package folders.
     }
   }
 

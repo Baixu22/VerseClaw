@@ -5,6 +5,7 @@ import type {
   WorkspaceProfile,
   WorkspaceSnapshot,
   WorkspaceUiState,
+  SessionFolder,
 } from '@shared/types/workspace';
 
 type WorkspaceCreateInput = {
@@ -35,6 +36,15 @@ type WorkspaceState = {
   switchWorkspace: (id: string) => Promise<WorkspaceProfile | null>;
   setPermissionMode: (id: string, permissionMode: WorkspacePermissionMode) => Promise<void>;
   saveWorkspaceState: (input: { id: string; activeSessionKey?: string; sessionKey?: string; state?: WorkspaceUiState }) => Promise<void>;
+  createFolder: (
+    workspaceId: string,
+    name: string,
+    parentId?: string | null,
+    kind?: SessionFolder['kind'],
+  ) => Promise<SessionFolder | null>;
+  renameFolder: (workspaceId: string, folderId: string, name: string) => Promise<void>;
+  deleteFolder: (workspaceId: string, folderId: string) => Promise<void>;
+  moveSessionToFolder: (workspaceId: string, sessionKey: string, folderId: string | null) => Promise<void>;
   clearError: () => void;
 };
 
@@ -224,6 +234,56 @@ export const useWorkspacesStore = create<WorkspaceState>((set) => ({
       });
     } catch (error) {
       set({ error: String(error) });
+    }
+  },
+
+  createFolder: async (workspaceId, name, parentId = null, kind = 'workgroup') => {
+    set({ error: null });
+    try {
+      const snapshot = await hostApi.workspaces.createFolder({ workspaceId, name, parentId, kind });
+      set(applySnapshot(snapshot));
+      const profile = (snapshot.profiles ?? []).find((p) => p.id === workspaceId);
+      const folder = snapshot.folder
+        ?? profile?.sessionFolders?.find((candidate) => candidate.name === name)
+        ?? profile?.sessionFolders?.[profile.sessionFolders.length - 1]
+        ?? null;
+      return folder ?? null;
+    } catch (error) {
+      set({ error: String(error) });
+      throw error;
+    }
+  },
+
+  renameFolder: async (workspaceId, folderId, name) => {
+    set({ error: null });
+    try {
+      const snapshot = await hostApi.workspaces.renameFolder({ workspaceId, folderId, name });
+      set(applySnapshot(snapshot));
+    } catch (error) {
+      set({ error: String(error) });
+      throw error;
+    }
+  },
+
+  deleteFolder: async (workspaceId, folderId) => {
+    set({ error: null });
+    try {
+      const snapshot = await hostApi.workspaces.deleteFolder({ workspaceId, folderId });
+      set(applySnapshot(snapshot));
+    } catch (error) {
+      set({ error: String(error) });
+      throw error;
+    }
+  },
+
+  moveSessionToFolder: async (workspaceId, sessionKey, folderId) => {
+    set({ error: null });
+    try {
+      const snapshot = await hostApi.workspaces.moveSessionToFolder({ workspaceId, sessionKey, folderId });
+      set(applySnapshot(snapshot));
+    } catch (error) {
+      set({ error: String(error) });
+      throw error;
     }
   },
 

@@ -3,7 +3,7 @@ import { join } from 'path';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 
 const { testHome } = vi.hoisted(() => ({
-  testHome: `/tmp/clawx-openclaw-workspace-${Math.random().toString(36).slice(2)}`,
+  testHome: `${process.env.CLAWX_TEST_TMPDIR ?? `${process.cwd()}/.tmp/vitest`}/clawx-openclaw-workspace-${Math.random().toString(36).slice(2)}`,
 }));
 
 vi.mock('os', async () => {

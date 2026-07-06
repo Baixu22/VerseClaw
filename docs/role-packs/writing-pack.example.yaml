@@ -1,0 +1,159 @@
+# Writing Pack — Area 3 §3.5 example Role Pack
+#
+# A long-form writing team: outliner → drafter → line-editor, with a
+# fact-checker verifier. Copy `roles:` into `agents.roles` and `teams:`
+# into `agents.teams` of your `config.openclaw.json`, then reload the
+# gateway. Edit freely — this is a starting point, not a canonical bundle.
+#
+# After install, verify with `gateway.rpc('roles.list')`: each role should
+# appear with `origin: 'config'` (Area 1 badge). The `routing_keywords`
+# field (Area 3 §3.5) lets these roles be routed by user-authored
+# language on equal footing with built-in roles.
+
+roles:
+  - name: outliner
+    display_name: Outliner
+    description: Structures long-form work into a section-by-section outline.
+    role_prompt: |
+      Read the brief and produce a section-by-section outline with explicit
+      open questions. Each section names its thesis, intended length, and
+      the evidence it will lean on. Flag anything that needs research
+      before drafting can start.
+    tools: ["read", "glob", "grep"]
+    capabilities: ["task-analysis", "planning", "writing"]
+    tool_requirements: ["read", "glob", "grep"]
+    risk_profile: low
+    can_modify_scope: false
+    permissions:
+      filesystem: read
+      network: none
+      commands: []
+    model:
+      default: null
+      fallback: []
+    effort: medium
+    output_schema:
+      format: markdown
+      sections: ["Outline", "Open questions"]
+    handoff:
+      to: ["drafter"]
+      from: []
+      requires_review: false
+    version: "1.0.0"
+    tags: ["writing", "planning"]
+    routing_keywords: ["outline", "structure", "plan", "draft", "大纲", "结构"]
+
+  - name: drafter
+    display_name: Drafter
+    description: Writes full prose from an outline, section by section.
+    role_prompt: |
+      Take the outline and write full prose for each section. Match the
+      requested voice. Do not invent citations — mark anything that needs
+      a source with [CITATION NEEDED] so the fact-checker can resolve it.
+      Keep paragraphs tight; prefer concrete examples over abstractions.
+    tools: ["read", "write", "edit", "glob", "grep"]
+    capabilities: ["task-analysis", "writing", "implementation"]
+    tool_requirements: ["read", "write", "edit"]
+    risk_profile: low
+    can_modify_scope: false
+    permissions:
+      filesystem: write
+      network: none
+      commands: []
+    model:
+      default: null
+      fallback: []
+    effort: high
+    output_schema:
+      format: markdown
+      sections: ["Draft", "Citations needed"]
+    handoff:
+      to: ["line-editor", "fact-checker"]
+      from: ["outliner"]
+      requires_review: false
+    version: "1.0.0"
+    tags: ["writing", "drafting"]
+    routing_keywords: ["write", "draft", "prose", "撰写", "草稿"]
+
+  - name: line-editor
+    display_name: Line Editor
+    description: Tightens prose at the sentence level without rewriting structure.
+    role_prompt: |
+      Edit the drafter's output at the sentence level: cut redundancy,
+      fix awkward constructions, align tense and tone. Do not restructure
+      sections or delete whole paragraphs — surface structural concerns
+      in a separate "Notes for outliner" list instead.
+    tools: ["read", "edit", "glob", "grep"]
+    capabilities: ["task-analysis", "review", "writing"]
+    tool_requirements: ["read", "edit"]
+    risk_profile: low
+    can_modify_scope: false
+    permissions:
+      filesystem: write
+      network: none
+      commands: []
+    model:
+      default: null
+      fallback: []
+    effort: medium
+    output_schema:
+      format: markdown
+      sections: ["Edited prose", "Notes for outliner"]
+    handoff:
+      to: ["fact-checker"]
+      from: ["drafter"]
+      requires_review: false
+    version: "1.0.0"
+    tags: ["writing", "editing"]
+    routing_keywords: ["edit", "tighten", "polish", "line-edit", "编辑", "润色"]
+
+  - name: fact-checker
+    display_name: Fact Checker
+    description: Verifies claims and resolves [CITATION NEEDED] markers.
+    role_prompt: |
+      Walk the draft and verify every concrete claim. Resolve every
+      [CITATION NEEDED] marker with a real source or flag it as
+      unverifiable. For unverifiable claims, propose either a softer
+      wording or removal. Do not rewrite prose beyond the minimal edit
+      needed for factual accuracy.
+    tools: ["read", "glob", "grep"]
+    capabilities: ["task-analysis", "verification"]
+    tool_requirements: ["read", "glob", "grep"]
+    risk_profile: medium
+    can_modify_scope: false
+    permissions:
+      filesystem: read
+      network: limited
+      commands: []
+    model:
+      default: null
+      fallback: []
+    effort: high
+    output_schema:
+      format: markdown
+      sections: ["Verified claims", "Unverifiable claims", "Verdict"]
+    handoff:
+      to: []
+      from: ["drafter", "line-editor"]
+      requires_review: true
+    version: "1.0.0"
+    tags: ["writing", "verification"]
+    routing_keywords: ["fact", "verify", "citation", "核实", "引用"]
+
+teams:
+  - id: writing-team
+    name: Writing Team
+    description: Long-form writing flow: outline → draft → line-edit, with fact-check verification.
+    mode: lead-workers
+    default_lead_role: outliner
+    verifier_role: fact-checker
+    roles:
+      - role_name: outliner
+        required: true
+      - role_name: drafter
+        required: true
+      - role_name: line-editor
+        required: true
+      - role_name: fact-checker
+        required: true
+    tags: ["writing", "long-form"]

@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, ArrowRight, BookOpen, BrainCircuit, Check, Database, Edit3, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, ListTodo, Loader2, Puzzle, RefreshCw, Ruler, Search, ShieldCheck, Sparkles, Upload, Wrench, X } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AlertTriangle, ArrowRight, BookOpen, Bot, Check, Columns3, Copy, Database, Edit3, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, MessageCircle, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, SendHorizontal, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
+import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
   hostApi,
+  type KnowledgeArtifactType,
   type KnowledgeChangeProposal,
   type KnowledgeDraft,
   type KnowledgeDraftType,
@@ -18,17 +21,61 @@ import {
   type KnowledgeOkfConcept,
   type KnowledgeOkfValidationResult,
   type KnowledgeProvenanceRecord,
-  type KnowledgeRuntimeLessonsReportResult,
+  type KnowledgeQualityMetrics,
   type KnowledgeSearchResult,
+  type KnowledgeSourceSet,
   type KnowledgeStatusResult,
+  type KnowledgeStewardConfigGetResult,
   type KnowledgeStewardReviewResult,
+  type KnowledgeStewardTriage,
+  type KnowledgeStewardTriageAction,
 } from '@/lib/host-api';
+import {
+  buildGroundedLibrarianAnswer,
+  createDraftPayloadFromGroundedAnswer,
+  createErrorExperienceInboxPayloadFromGroundedAnswer,
+  type KnowledgeLibrarianGroundedAnswer,
+} from '@/lib/knowledge-librarian';
 import { cn } from '@/lib/utils';
 
 type SearchRow = Record<string, unknown>;
-
-type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'runtime' | 'review' | 'governance';
-	type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'review' | 'governance';
+type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'review' | 'governance';
+type MarkdownEditorMode = 'edit' | 'preview' | 'split';
+type KnowledgeLibrarianCitation = {
+  lookup: string;
+  title: string;
+  excerpt: string;
+  path?: string;
+  score?: number;
+};
+type KnowledgeLibrarianMessage = {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  createdAt: string;
+  citations?: KnowledgeLibrarianCitation[];
+  groundedAnswer?: KnowledgeLibrarianGroundedAnswer;
+};
+type KnowledgeLibrarianCheckpoint = {
+  version: 1;
+  updatedAt: string;
+  vaultPath?: string;
+  editorTitle: string;
+  editorSource: string;
+  messages: KnowledgeLibrarianMessage[];
+};
+type KnowledgeLibrarianPromptSuggestion = {
+  id: string;
+  label: string;
+  prompt: string;
+};
+type KnowledgeQualityMetricKind =
+  | 'stale_cards'
+  | 'duplicate_clusters'
+  | 'source_gaps'
+  | 'unreferenced_pages'
+  | 'low_confidence_high_hit_cards'
+  | 'high_dismissal_cards';
 type InboxMetadataView = Record<string, unknown> & {
   recommendation?: unknown;
   reason?: unknown;
@@ -39,32 +86,41 @@ type InboxMetadataView = Record<string, unknown> & {
   outcome?: unknown;
   temporality?: unknown;
   captureKey?: unknown;
+  triage?: unknown;
 };
 type InboxScoreDimension = 'reusability' | 'uniqueness' | 'confidence';
 type InboxSourceDisplay = KnowledgeInboxItem['sourceRefs'][number];
+type SourceSetRef = KnowledgeSourceSet['sourceRefs'][number];
 
 const PANEL_CLASS = 'rounded-xl border border-black/10 bg-surface-modal shadow-sm dark:border-white/10';
 const QUIET_BUTTON_CLASS = 'h-9 rounded-lg border border-black/10 bg-transparent px-3 text-meta font-medium text-foreground/80 shadow-none transition-colors hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5';
 const ROW_CLASS = 'flex items-center justify-between gap-4 rounded-lg bg-surface-input px-3 py-2';
+const WORKSPACE_CHROME_CLASS = 'overflow-hidden rounded-xl border border-black/10 bg-surface-modal shadow-sm dark:border-white/10';
+const WORKSPACE_SECTION_CLASS = 'min-h-0 bg-surface-input/70 dark:bg-surface-input/80';
+const KNOWLEDGE_LIBRARIAN_STORAGE_KEY = 'clawx.knowledge.librarian.checkpoint.v1';
 const KNOWLEDGE_TYPES: KnowledgeDraftType[] = ['decision', 'architecture', 'command', 'troubleshooting', 'glossary', 'source-note', 'synthesis', 'procedure'];
-const WORKBENCH_TABS: WorkbenchTab[] = ['library', 'inbox', 'drafts', 'runtime', 'review', 'governance'];
+const PRIMARY_WORKBENCH_TABS: WorkbenchTab[] = ['library', 'inbox', 'drafts', 'review'];
+const QUALITY_METRIC_KINDS: KnowledgeQualityMetricKind[] = [
+  'stale_cards',
+  'duplicate_clusters',
+  'source_gaps',
+  'unreferenced_pages',
+  'low_confidence_high_hit_cards',
+  'high_dismissal_cards',
+];
+const STUDIO_ARTIFACTS: Array<{ type: KnowledgeArtifactType; labelKey: string }> = [
+  { type: 'summary', labelKey: 'studio.summary' },
+  { type: 'faq', labelKey: 'studio.faq' },
+  { type: 'decision-memo', labelKey: 'studio.decisionMemo' },
+  { type: 'troubleshooting-recipe', labelKey: 'studio.troubleshootingRecipe' },
+];
 
 const TAB_ICONS: Record<WorkbenchTab, React.ComponentType<{ className?: string }>> = {
   library: Layers,
   inbox: Inbox,
   drafts: Edit3,
-  runtime: BrainCircuit,
   review: ShieldCheck,
   governance: Database,
-};
-
-const WORKBENCH_TITLE_KEYS: Record<WorkbenchTab, string> = {
-  library: 'library.title',
-  inbox: 'inbox.title',
-  drafts: 'draft.title',
-  runtime: 'runtime.title',
-  review: 'review.title',
-  governance: 'governance.title',
 };
 
 const TYPE_ICONS: Record<KnowledgeDraftType, React.ComponentType<{ className?: string }>> = {
@@ -76,6 +132,14 @@ const TYPE_ICONS: Record<KnowledgeDraftType, React.ComponentType<{ className?: s
   'source-note': FileText,
   synthesis: Lightbulb,
   procedure: ListTodo,
+};
+const QUALITY_METRIC_ICONS: Record<KnowledgeQualityMetricKind, React.ComponentType<{ className?: string }>> = {
+  stale_cards: History,
+  duplicate_clusters: Layers,
+  source_gaps: Link2,
+  unreferenced_pages: FileSearch,
+  low_confidence_high_hit_cards: Lightbulb,
+  high_dismissal_cards: RotateCcw,
 };
 
 const TYPE_COLOR = {
@@ -124,6 +188,27 @@ function getSnippet(row: SearchRow): string {
   return getString(row, ['snippet', 'excerpt', 'text', 'summary', 'content']);
 }
 
+function sourceRefFromSearchRow(row: SearchRow): SourceSetRef | null {
+  const lookup = getLookup(row);
+  if (!lookup) return null;
+  return {
+    id: lookup,
+    kind: 'wiki',
+    path: lookup,
+    label: getTitle(row),
+  };
+}
+
+function getScore(row: SearchRow): number | undefined {
+  const value = row.score ?? row.rank ?? row.similarity;
+  if (typeof value === 'number' && Number.isFinite(value)) return value > 1 ? value / 100 : value;
+  if (typeof value === 'string') {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed > 1 ? parsed / 100 : parsed;
+  }
+  return undefined;
+}
+
 function getPageBody(page: Record<string, unknown> | null): string {
   if (!page) return '';
   const direct = getString(page, ['content', 'markdown', 'text', 'body', 'raw']);
@@ -149,9 +234,458 @@ function okfConceptTitle(concept: KnowledgeOkfConcept): string {
   return concept.frontmatter.title || concept.conceptId;
 }
 
-type InboxRecommendation = 'save' | 'review' | 'archive-only';
+function knowledgeTypeCount(pageCounts: Record<string, number>, type: KnowledgeDraftType): number {
+  if (type === 'source-note') return pageCounts['source-note'] ?? pageCounts.source ?? 0;
+  if (type === 'glossary') return pageCounts.glossary ?? pageCounts.entity ?? pageCounts.concept ?? 0;
+  return pageCounts[type] ?? 0;
+}
 
-const INBOX_RECOMMENDATION_ORDER: InboxRecommendation[] = ['save', 'review', 'archive-only'];
+function makeStarterMarkdown(title: string): string {
+  return `# ${title}\n\n## Notes\n\n\n## Links\n\n- \n`;
+}
+
+function markdownSummary(body: string): string {
+  const compact = body
+    .replace(/^---[\s\S]*?---/u, '')
+    .replace(/[#>*_`[\]()-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!compact) return '';
+  return compact.length > 180 ? `${compact.slice(0, 180)}...` : compact;
+}
+
+function readableExcerpt(body: string, fallback = ''): string {
+  const compact = (body || fallback)
+    .replace(/^---[\s\S]*?---/u, '')
+    .replace(/```[\s\S]*?```/gu, ' ')
+    .replace(/[#>*_`[\]()[\]-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!compact) return '';
+  return compact.length > 220 ? `${compact.slice(0, 220)}...` : compact;
+}
+
+function makeLibrarianMessage(
+  role: KnowledgeLibrarianMessage['role'],
+  content: string,
+  citations?: KnowledgeLibrarianCitation[],
+  groundedAnswer?: KnowledgeLibrarianGroundedAnswer,
+): KnowledgeLibrarianMessage {
+  return {
+    id: `kl_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    role,
+    content,
+    createdAt: new Date().toISOString(),
+    ...(citations && citations.length > 0 ? { citations } : {}),
+    ...(groundedAnswer ? { groundedAnswer } : {}),
+  };
+}
+
+function parseLibrarianCheckpoint(raw: string | null): KnowledgeLibrarianCheckpoint | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as Partial<KnowledgeLibrarianCheckpoint>;
+    if (parsed.version !== 1 || !Array.isArray(parsed.messages)) return null;
+    return {
+      version: 1,
+      updatedAt: typeof parsed.updatedAt === 'string' ? parsed.updatedAt : new Date().toISOString(),
+      vaultPath: typeof parsed.vaultPath === 'string' ? parsed.vaultPath : undefined,
+      editorTitle: typeof parsed.editorTitle === 'string' ? parsed.editorTitle : '',
+      editorSource: typeof parsed.editorSource === 'string' ? parsed.editorSource : '',
+      messages: parsed.messages.filter((message): message is KnowledgeLibrarianMessage => (
+        !!message
+        && typeof message.id === 'string'
+        && (message.role === 'user' || message.role === 'assistant' || message.role === 'system')
+        && typeof message.content === 'string'
+        && typeof message.createdAt === 'string'
+      )).slice(-30),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function KnowledgeAssistantMarkdown({ content }: { content: string }) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        a({ href, children, ...props }) {
+          return (
+            <a
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:decoration-primary"
+              {...props}
+            >
+              {children}
+            </a>
+          );
+        },
+        code({ className, children, ...props }) {
+          const block = /language-/u.test(className ?? '');
+          return block ? (
+            <code className={cn('font-mono text-xs', className)} {...props}>
+              {children}
+            </code>
+          ) : (
+            <code className="rounded bg-black/5 px-1 py-0.5 font-mono text-[0.85em] dark:bg-white/10" {...props}>
+              {children}
+            </code>
+          );
+        },
+        pre({ children, ...props }) {
+          return (
+            <pre
+              className="my-3 max-w-full overflow-x-auto rounded-lg border border-black/10 bg-black/[0.04] p-3 text-xs leading-5 dark:border-white/10 dark:bg-white/[0.06]"
+              {...props}
+            >
+              {children}
+            </pre>
+          );
+        },
+        ul({ children, ...props }) {
+          return <ul className="my-2 list-disc space-y-1 pl-5" {...props}>{children}</ul>;
+        },
+        ol({ children, ...props }) {
+          return <ol className="my-2 list-decimal space-y-1 pl-5" {...props}>{children}</ol>;
+        },
+        p({ children, ...props }) {
+          return <p className="my-2 first:mt-0 last:mb-0" {...props}>{children}</p>;
+        },
+        table({ children, ...props }) {
+          return (
+            <div className="my-3 max-w-full overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
+              <table className="w-full min-w-max border-collapse text-xs" {...props}>{children}</table>
+            </div>
+          );
+        },
+        th({ children, ...props }) {
+          return <th className="border-b border-black/10 bg-black/[0.04] px-2 py-1.5 text-left font-semibold dark:border-white/10 dark:bg-white/[0.06]" {...props}>{children}</th>;
+        },
+        td({ children, ...props }) {
+          return <td className="border-t border-black/5 px-2 py-1.5 align-top dark:border-white/10" {...props}>{children}</td>;
+        },
+      }}
+    >
+      {content}
+    </ReactMarkdown>
+  );
+}
+
+function KnowledgeAssistantMessage({
+  message,
+  copied,
+  copyLabel,
+  copiedLabel,
+  roleLabel,
+  userLabel,
+  citationsLabel,
+  sectionLabels,
+  actionLabels,
+  onCopy,
+  onOpenCitation,
+  onSaveDraft,
+  onCreateErrorExperience,
+  onSendToSteward,
+}: {
+  message: KnowledgeLibrarianMessage;
+  copied: boolean;
+  copyLabel: string;
+  copiedLabel: string;
+  roleLabel: string;
+  userLabel: string;
+  citationsLabel: string;
+  sectionLabels: {
+    answer: string;
+    sources: string;
+    unknowns: string;
+    nextAction: string;
+    retrieval: string;
+    query: string;
+    corpus: string;
+    roleTag: string;
+    resultCount: string;
+    selectedSources: string;
+    confidence: string;
+    groundingStatus: Record<KnowledgeLibrarianGroundedAnswer['groundingStatus'], string>;
+  };
+  actionLabels: {
+    saveDraft: string;
+    createErrorExperience: string;
+    sendToSteward: string;
+  };
+  onCopy: (content: string) => void;
+  onOpenCitation: (citation: KnowledgeLibrarianCitation) => void;
+  onSaveDraft: (answer: KnowledgeLibrarianGroundedAnswer) => void;
+  onCreateErrorExperience: (answer: KnowledgeLibrarianGroundedAnswer) => void;
+  onSendToSteward: (answer: KnowledgeLibrarianGroundedAnswer) => void;
+}) {
+  const isUser = message.role === 'user';
+  const label = isUser ? userLabel : roleLabel;
+  const groundedAnswer = !isUser ? message.groundedAnswer : undefined;
+  return (
+    <article
+      className={cn(
+        'group flex gap-2.5',
+        isUser ? 'justify-end' : 'justify-start',
+      )}
+      data-testid={`knowledge-librarian-message-${message.role}`}
+    >
+      {!isUser ? (
+        <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+          <Bot className="h-3.5 w-3.5" />
+        </div>
+      ) : null}
+      <div className={cn('min-w-0 max-w-[88%]', isUser && 'flex flex-col items-end')}>
+        <div className="mb-1 flex items-center gap-2 text-[11px] text-muted-foreground">
+          <span>{label}</span>
+          <span>{new Date(message.createdAt).toLocaleTimeString()}</span>
+          <button
+            type="button"
+            className="inline-flex h-5 w-5 items-center justify-center rounded-md opacity-0 transition-opacity hover:bg-black/5 group-hover:opacity-100 focus:opacity-100 dark:hover:bg-white/10"
+            onClick={() => onCopy(message.content)}
+            aria-label={copied ? copiedLabel : copyLabel}
+            title={copied ? copiedLabel : copyLabel}
+            data-testid="knowledge-librarian-copy"
+          >
+            {copied ? <Check className="h-3 w-3 text-green-700 dark:text-green-400" /> : <Copy className="h-3 w-3" />}
+          </button>
+        </div>
+        <div
+          className={cn(
+            'rounded-xl border px-3.5 py-2.5 text-sm leading-6 shadow-sm',
+            isUser
+              ? 'border-primary/20 bg-primary/10 text-foreground'
+              : 'border-black/10 bg-surface-input/90 text-foreground dark:border-white/10',
+          )}
+        >
+          {isUser ? (
+            <div className="whitespace-pre-wrap break-words">{message.content}</div>
+          ) : groundedAnswer ? (
+            <div className="space-y-3" data-testid="knowledge-librarian-grounded-answer">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+                  {sectionLabels.groundingStatus[groundedAnswer.groundingStatus]}
+                </Badge>
+                <Badge variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
+                  {sectionLabels.confidence}: {Math.round(groundedAnswer.confidence * 100)}%
+                </Badge>
+              </div>
+              <section data-testid="knowledge-librarian-answer-section">
+                <h4 className="text-xs font-semibold uppercase text-muted-foreground">{sectionLabels.answer}</h4>
+                <div className="prose prose-sm mt-1 max-w-none break-words text-foreground dark:prose-invert prose-headings:font-serif prose-headings:font-normal prose-a:text-primary">
+                  <KnowledgeAssistantMarkdown content={groundedAnswer.answer} />
+                </div>
+              </section>
+              <section data-testid="knowledge-librarian-sources-section">
+                <h4 className="text-xs font-semibold uppercase text-muted-foreground">{sectionLabels.sources}</h4>
+                <div className="mt-2 grid gap-2">
+                  {groundedAnswer.sources.map((source, index) => (
+                    <button
+                      key={`${message.id}:source:${source.lookup}`}
+                      type="button"
+                      className="rounded-lg border border-black/10 bg-background/70 px-3 py-2 text-left text-xs shadow-sm transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5"
+                      onClick={() => onOpenCitation({ lookup: source.lookup, title: source.title, excerpt: source.excerpt, path: source.path, score: source.score })}
+                      data-testid="knowledge-librarian-source"
+                    >
+                      <span className="flex items-start gap-2">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-emerald-500/10 font-mono text-[10px] text-emerald-700 dark:text-emerald-400">
+                          {index + 1}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block truncate font-medium text-foreground">{source.title}</span>
+                          <span className="mt-0.5 block truncate font-mono text-[10px] text-muted-foreground">{source.path || source.lookup}</span>
+                          <span className="mt-1 line-clamp-2 text-[11px] leading-4 text-muted-foreground">{source.excerpt}</span>
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                  {groundedAnswer.sources.length === 0 ? (
+                    <p className="text-xs text-muted-foreground">{groundedAnswer.unknowns[0]}</p>
+                  ) : null}
+                </div>
+              </section>
+              <section data-testid="knowledge-librarian-unknowns-section">
+                <h4 className="text-xs font-semibold uppercase text-muted-foreground">{sectionLabels.unknowns}</h4>
+                <ul className="mt-1 list-disc space-y-1 pl-4 text-xs leading-5 text-muted-foreground">
+                  {groundedAnswer.unknowns.map((unknown) => <li key={unknown}>{unknown}</li>)}
+                </ul>
+              </section>
+              <section data-testid="knowledge-librarian-next-action-section">
+                <h4 className="text-xs font-semibold uppercase text-muted-foreground">{sectionLabels.nextAction}</h4>
+                <ul className="mt-1 list-disc space-y-1 pl-4 text-xs leading-5 text-muted-foreground">
+                  {groundedAnswer.nextActions.map((action) => <li key={action}>{action}</li>)}
+                </ul>
+              </section>
+              <details className="rounded-lg border border-black/10 bg-background/60 px-3 py-2 text-xs dark:border-white/10" data-testid="knowledge-librarian-retrieval-inspector">
+                <summary className="cursor-pointer font-medium text-foreground">{sectionLabels.retrieval}</summary>
+                <dl className="mt-2 grid gap-1.5 text-muted-foreground">
+                  <div className="flex justify-between gap-3"><dt>{sectionLabels.query}</dt><dd className="min-w-0 truncate font-mono">{groundedAnswer.retrieval.query}</dd></div>
+                  <div className="flex justify-between gap-3"><dt>{sectionLabels.corpus}</dt><dd>{groundedAnswer.retrieval.corpus}</dd></div>
+                  <div className="flex justify-between gap-3"><dt>{sectionLabels.roleTag}</dt><dd>{groundedAnswer.retrieval.roleTag}</dd></div>
+                  <div className="flex justify-between gap-3"><dt>{sectionLabels.resultCount}</dt><dd>{groundedAnswer.retrieval.resultCount}</dd></div>
+                  <div className="flex justify-between gap-3"><dt>{sectionLabels.selectedSources}</dt><dd>{groundedAnswer.retrieval.selectedSources.length}</dd></div>
+                </dl>
+              </details>
+              <div className="flex flex-wrap gap-2" data-testid="knowledge-librarian-candidate-actions">
+                <Button type="button" variant="outline" size="sm" className="h-7 rounded-md px-2 text-[11px]" onClick={() => onSaveDraft(groundedAnswer)} data-testid="knowledge-librarian-save-draft">
+                  <FilePlus2 className="mr-1.5 h-3 w-3" />
+                  {actionLabels.saveDraft}
+                </Button>
+                <Button type="button" variant="outline" size="sm" className="h-7 rounded-md px-2 text-[11px]" onClick={() => onCreateErrorExperience(groundedAnswer)} data-testid="knowledge-librarian-create-error-experience">
+                  <Wrench className="mr-1.5 h-3 w-3" />
+                  {actionLabels.createErrorExperience}
+                </Button>
+                <Button type="button" variant="outline" size="sm" className="h-7 rounded-md px-2 text-[11px]" onClick={() => onSendToSteward(groundedAnswer)} data-testid="knowledge-librarian-send-steward">
+                  <ShieldCheck className="mr-1.5 h-3 w-3" />
+                  {actionLabels.sendToSteward}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="prose prose-sm max-w-none break-words text-foreground dark:prose-invert prose-headings:font-serif prose-headings:font-normal prose-a:text-primary">
+              <KnowledgeAssistantMarkdown content={message.content} />
+            </div>
+          )}
+        </div>
+        {message.citations && message.citations.length > 0 ? (
+          <div className="mt-2 grid gap-2" data-testid="knowledge-librarian-citations" aria-label={citationsLabel}>
+            {message.citations.map((citation, index) => (
+              <button
+                key={`${message.id}:${citation.lookup}`}
+                type="button"
+                className="rounded-lg border border-black/10 bg-background/70 px-3 py-2 text-left text-xs shadow-sm transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5"
+                onClick={() => onOpenCitation(citation)}
+                data-testid="knowledge-librarian-citation"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-emerald-500/10 font-mono text-[10px] text-emerald-700 dark:text-emerald-400">
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate font-medium text-foreground">{citation.title}</span>
+                    <span className="mt-0.5 block truncate font-mono text-[10px] text-muted-foreground">{citation.lookup}</span>
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
+function KnowledgeAssistantPromptInput({
+  value,
+  onChange,
+  onSubmit,
+  disabled,
+  running,
+  placeholder,
+  askLabel,
+  hint,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
+  disabled: boolean;
+  running: boolean;
+  placeholder: string;
+  askLabel: string;
+  hint: string;
+}) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
+  }, [value]);
+
+  return (
+    <form
+      className="rounded-xl border border-black/10 bg-background px-3 py-2 shadow-sm transition-colors focus-within:border-primary/35 dark:border-white/10"
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit();
+      }}
+      data-testid="knowledge-librarian-composer"
+    >
+      <Textarea
+        ref={textareaRef}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            onSubmit();
+          }
+        }}
+        placeholder={placeholder}
+        data-testid="knowledge-librarian-question"
+        className="min-h-[48px] resize-none border-0 bg-transparent px-0 py-1 text-sm shadow-none focus-visible:ring-0"
+        disabled={disabled}
+      />
+      <div className="mt-1 flex items-center justify-between gap-2">
+        <p className="min-w-0 text-[11px] leading-4 text-muted-foreground">{hint}</p>
+        <Button type="submit" size="sm" className="h-8 rounded-lg px-3" disabled={disabled || !value.trim()} data-testid="knowledge-librarian-ask">
+          {running ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <SendHorizontal className="mr-2 h-3.5 w-3.5" />}
+          {askLabel}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+function KnowledgeAssistantErrorCard({
+  error,
+  retryLabel,
+  dismissLabel,
+  title,
+  onRetry,
+  onDismiss,
+}: {
+  error: string;
+  retryLabel: string;
+  dismissLabel: string;
+  title: string;
+  onRetry: () => void;
+  onDismiss: () => void;
+}) {
+  return (
+    <div
+      className="rounded-xl border border-red-500/25 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
+      data-testid="knowledge-librarian-error"
+      role="alert"
+    >
+      <div className="flex items-start gap-2">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+        <div className="min-w-0 flex-1">
+          <div className="font-medium">{title}</div>
+          <p className="mt-1 break-words text-xs leading-5">{error}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button type="button" variant="outline" size="sm" className="h-7 rounded-md px-2 text-[11px]" onClick={onRetry} data-testid="knowledge-librarian-retry">
+              <RotateCcw className="mr-1.5 h-3 w-3" />
+              {retryLabel}
+            </Button>
+            <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px]" onClick={onDismiss}>
+              {dismissLabel}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type InboxRecommendation = 'save' | 'review' | 'archive-only';
+type InboxTriageGroup = KnowledgeStewardTriageAction;
+
+const INBOX_TRIAGE_ORDER: InboxTriageGroup[] = ['needs-decision', 'ready-for-review', 'possible-duplicate', 'observe', 'reject-low-value'];
 const INBOX_STATUSES = new Set(['pending', 'promoted', 'dismissed']);
 const INBOX_TEMPORALITIES = new Set(['stable', 'versioned', 'ephemeral']);
 const INBOX_OUTCOMES = new Set(['idle', 'running', 'sleeping', 'paused', 'ask_user', 'complete', 'blocked', 'cancelled', 'error']);
@@ -167,7 +701,42 @@ function inboxRecommendation(item: KnowledgeInboxItem): InboxRecommendation {
   return recommendation === 'save' || recommendation === 'archive-only' ? recommendation : 'review';
 }
 
+function inboxTriage(item: KnowledgeInboxItem): KnowledgeStewardTriage {
+  const triage = asRecord(inboxMetadata(item).triage);
+  const action = triage?.action;
+  if (
+    triage
+    && (
+    action === 'needs-decision'
+    || action === 'ready-for-review'
+    || action === 'possible-duplicate'
+    || action === 'observe'
+    || action === 'reject-low-value'
+    )
+  ) {
+    return {
+      action,
+      confidence: typeof triage.confidence === 'number' && Number.isFinite(triage.confidence) ? triage.confidence : 0.5,
+      ...(typeof triage.duplicateOf === 'string' && triage.duplicateOf.trim() ? { duplicateOf: triage.duplicateOf.trim() } : {}),
+      ...(Array.isArray(triage.conflictWith) ? { conflictWith: triage.conflictWith.filter((entry): entry is string => typeof entry === 'string' && entry.trim().length > 0) } : {}),
+      reason: typeof triage.reason === 'string' && triage.reason.trim() ? triage.reason.trim() : '',
+      ...(Array.isArray(triage.suggestedEdits) ? { suggestedEdits: triage.suggestedEdits.filter((entry): entry is string => typeof entry === 'string' && entry.trim().length > 0) } : {}),
+    };
+  }
+  const recommendation = inboxRecommendation(item);
+  if (recommendation === 'save') {
+    return { action: 'ready-for-review', confidence: 0.6, reason: inboxReason(item) };
+  }
+  if (recommendation === 'archive-only') {
+    return { action: 'observe', confidence: 0.5, reason: inboxReason(item) };
+  }
+  return { action: 'needs-decision', confidence: 0.5, reason: inboxReason(item) };
+}
+
 function inboxReason(item: KnowledgeInboxItem): string {
+  const triage = asRecord(inboxMetadata(item).triage);
+  const triageReason = triage?.reason;
+  if (typeof triageReason === 'string' && triageReason.trim()) return triageReason.trim();
   const reason = inboxMetadata(item).reason;
   return typeof reason === 'string' && reason.trim() ? reason.trim() : '';
 }
@@ -206,6 +775,14 @@ function inboxRecommendationClass(recommendation: InboxRecommendation): string {
   return 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400';
 }
 
+function inboxTriageClass(action: InboxTriageGroup): string {
+  if (action === 'needs-decision') return 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400';
+  if (action === 'ready-for-review') return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400';
+  if (action === 'possible-duplicate') return 'border-violet-500/30 bg-violet-500/10 text-violet-700 dark:text-violet-400';
+  if (action === 'observe') return 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-400';
+  return 'border-slate-500/30 bg-slate-500/10 text-slate-700 dark:text-slate-400';
+}
+
 function inboxKnownLabel(namespace: 'status' | 'temporality' | 'outcomes', value: string): string {
   if (namespace === 'status' && INBOX_STATUSES.has(value)) return `inbox.status.${value}`;
   if (namespace === 'temporality' && INBOX_TEMPORALITIES.has(value)) return `inbox.temporality.${value}`;
@@ -238,6 +815,29 @@ export function Knowledge() {
   const [draftSources, setDraftSources] = useState('');
   const [draftType, setDraftType] = useState<KnowledgeDraftType>('synthesis');
   const [draftTags, setDraftTags] = useState('');
+  const [editorTitle, setEditorTitle] = useState(t('workspace.untitled'));
+  const [editorBody, setEditorBody] = useState(() => makeStarterMarkdown(t('workspace.untitled')));
+  const [editorSource, setEditorSource] = useState('');
+  const [editorType, setEditorType] = useState<KnowledgeDraftType>('source-note');
+  const [editorTags, setEditorTags] = useState('');
+  const [editorMode, setEditorMode] = useState<MarkdownEditorMode>('split');
+  const [sourceSets, setSourceSets] = useState<KnowledgeSourceSet[]>([]);
+  const [currentSourceRefs, setCurrentSourceRefs] = useState<SourceSetRef[]>([]);
+  const [sourceSetTitle, setSourceSetTitle] = useState('');
+  const [currentSourceSetId, setCurrentSourceSetId] = useState<string | null>(null);
+  const [librarianOpen, setLibrarianOpen] = useState(false);
+  const [librarianQuestion, setLibrarianQuestion] = useState('');
+  const [librarianError, setLibrarianError] = useState<string | null>(null);
+  const [lastLibrarianQuestion, setLastLibrarianQuestion] = useState('');
+  const [copiedLibrarianMessageId, setCopiedLibrarianMessageId] = useState<string | null>(null);
+  const [librarianMessages, setLibrarianMessages] = useState<KnowledgeLibrarianMessage[]>(() => {
+    if (typeof window === 'undefined') return [];
+    return parseLibrarianCheckpoint(window.localStorage.getItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY))?.messages ?? [];
+  });
+  const [librarianCheckpointAt, setLibrarianCheckpointAt] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return parseLibrarianCheckpoint(window.localStorage.getItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY))?.updatedAt ?? null;
+  });
   const [workbenchTab, setWorkbenchTab] = useState<WorkbenchTab>('library');
   const [drafts, setDrafts] = useState<KnowledgeDraft[]>([]);
   const [inboxItems, setInboxItems] = useState<KnowledgeInboxItem[]>([]);
@@ -245,24 +845,25 @@ export function Knowledge() {
   const [selectedInboxId, setSelectedInboxId] = useState<string | null>(null);
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
   const [selectedProposalId, setSelectedProposalId] = useState<string | null>(null);
-  const [stewardReview, setStewardReview] = useState<KnowledgeStewardReviewResult | null>(null); void stewardReview;
+  const [stewardReview, setStewardReview] = useState<KnowledgeStewardReviewResult | null>(null);
+  const [stewardConfig, setStewardConfig] = useState<KnowledgeStewardConfigGetResult | null>(null);
+  const [showStewardConfig, setShowStewardConfig] = useState(false);
   const [selectedProvenance, setSelectedProvenance] = useState<KnowledgeProvenanceRecord | null>(null);
   const [okfPath, setOkfPath] = useState('');
   const [okfValidation, setOkfValidation] = useState<KnowledgeOkfValidationResult | null>(null);
   const [selectedOkfConceptIds, setSelectedOkfConceptIds] = useState<Set<string>>(() => new Set());
-  const [runtimeLessons, setRuntimeLessons] = useState<KnowledgeRuntimeLessonsReportResult | null>(null);
-  const [runtimeLessonsLoading, setRuntimeLessonsLoading] = useState(false);
   const [governanceRunning, setGovernanceRunning] = useState(false);
   const [governanceIssues, setGovernanceIssues] = useState<any[]>([]);
   const [governanceContradictions, setGovernanceContradictions] = useState(0);
   const [governanceStale, setGovernanceStale] = useState(0);
   const [governanceDangling, setGovernanceDangling] = useState(0);
+  const [governanceQualityMetrics, setGovernanceQualityMetrics] = useState<KnowledgeQualityMetrics | null>(null);
   const [governanceLastChecked, setGovernanceLastChecked] = useState<string | null>(null);
   const [, setDismissedIssueIds] = useState<Set<string>>(() => new Set());
 
   const rows = useMemo(() => getSearchRows(searchResult), [searchResult]);
-  const pageCounts = status?.pageCounts ?? {};
-  const sourceCounts = status?.sourceCounts ?? {};
+  const pageCounts = (status?.pageCounts ?? {}) as Record<string, number>;
+  const sourceCounts = (status?.sourceCounts ?? {}) as Record<string, number>;
   const warnings = status?.warnings ?? [];
   const selectedPageBody = useMemo(() => getPageBody(selectedPage), [selectedPage]);
   const ready = Boolean(status?.vaultExists);
@@ -275,26 +876,21 @@ export function Knowledge() {
     { label: t('metrics.entities'), value: (pageCounts.entity ?? 0) + (pageCounts.concept ?? 0), icon: Database, tone: 'text-emerald-700 dark:text-emerald-400' },
     { label: t('metrics.warnings'), value: warnings.length, icon: AlertTriangle, tone: warnings.length > 0 ? 'text-yellow-700 dark:text-yellow-400' : 'text-muted-foreground' },
   ], [pageCounts.concept, pageCounts.entity, pageCounts.source, pageCounts.synthesis, t, warnings.length]);
-
-  const runtimeCounts = runtimeLessons?.counts ?? { trajectories: 0, undistilledTrajectories: 0, activePrinciples: 0 };
-  const runtimeMetrics = useMemo(() => [
-    { label: t('runtime.metrics.trajectories'), value: runtimeCounts.trajectories, icon: History, tone: 'text-sky-700 dark:text-sky-400' },
-    { label: t('runtime.metrics.undistilled'), value: runtimeCounts.undistilledTrajectories, icon: AlertTriangle, tone: 'text-yellow-700 dark:text-yellow-400' },
-    { label: t('runtime.metrics.principles'), value: runtimeCounts.activePrinciples, icon: Lightbulb, tone: 'text-emerald-700 dark:text-emerald-400' },
-  ], [runtimeCounts.activePrinciples, runtimeCounts.trajectories, runtimeCounts.undistilledTrajectories, t]);
-
+  const knowledgeDocTotal = useMemo(
+    () => (pageCounts.source ?? 0) + (pageCounts.synthesis ?? 0) + (pageCounts.entity ?? 0) + (pageCounts.concept ?? 0),
+    [pageCounts.concept, pageCounts.entity, pageCounts.source, pageCounts.synthesis],
+  );
   const groupedInboxItems = useMemo(() => {
-    const groups: Record<InboxRecommendation, KnowledgeInboxItem[]> = {
-      save: [],
-      review: [],
-      'archive-only': [],
-    };
+    const groups: Record<InboxTriageGroup, KnowledgeInboxItem[]> = INBOX_TRIAGE_ORDER.reduce((acc, action) => {
+      acc[action] = [];
+      return acc;
+    }, {} as Record<InboxTriageGroup, KnowledgeInboxItem[]>);
     for (const item of inboxItems) {
-      groups[inboxRecommendation(item)].push(item);
+      groups[inboxTriage(item).action].push(item);
     }
     return groups;
   }, [inboxItems]);
-  const orderedInboxItems = useMemo(() => INBOX_RECOMMENDATION_ORDER.flatMap((key) => groupedInboxItems[key]), [groupedInboxItems]);
+  const orderedInboxItems = useMemo(() => INBOX_TRIAGE_ORDER.flatMap((key) => groupedInboxItems[key]), [groupedInboxItems]);
   const selectedDraft = useMemo(() => drafts.find((draft) => draft.id === selectedDraftId) ?? drafts[0] ?? null, [drafts, selectedDraftId]);
   const selectedInboxItem = useMemo(() => inboxItems.find((item) => item.id === selectedInboxId) ?? orderedInboxItems[0] ?? null, [inboxItems, orderedInboxItems, selectedInboxId]);
   const selectedProposal = useMemo(() => proposals.find((proposal) => proposal.id === selectedProposalId) ?? proposals[0] ?? null, [proposals, selectedProposalId]);
@@ -306,6 +902,85 @@ export function Knowledge() {
   const selectedOkfCount = selectedOkfConceptIds.size;
   const okfCanImport = Boolean(okfValidation?.success && okfPath && selectedOkfCount > 0);
   const okfAllSelected = okfConcepts.length > 0 && okfConcepts.every((concept) => selectedOkfConceptIds.has(concept.conceptId));
+  const editorSummary = useMemo(() => markdownSummary(editorBody), [editorBody]);
+  const editorSourceIds = useMemo(() => {
+    const explicit = editorSource.trim();
+    if (explicit) return [explicit];
+    const slug = editorTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    return [`manual:${slug || 'untitled'}`];
+  }, [editorSource, editorTitle]);
+  const relatedRows = useMemo(() => rows.filter((row) => getLookup(row) !== editorSource).slice(0, 4), [editorSource, rows]);
+  const librarianPromptSuggestions = useMemo<KnowledgeLibrarianPromptSuggestion[]>(() => {
+    const currentTitle = editorTitle.trim() || t('workspace.untitled');
+    return [
+      {
+        id: 'summarize-current',
+        label: t('librarian.suggestions.summarize.label'),
+        prompt: t('librarian.suggestions.summarize.prompt', { title: currentTitle }),
+      },
+      {
+        id: 'find-related',
+        label: t('librarian.suggestions.related.label'),
+        prompt: t('librarian.suggestions.related.prompt', { title: currentTitle }),
+      },
+      {
+        id: 'review-gaps',
+        label: t('librarian.suggestions.gaps.label'),
+        prompt: t('librarian.suggestions.gaps.prompt', { title: currentTitle }),
+      },
+    ];
+  }, [editorTitle, t]);
+  const qualityMetricCards = useMemo(() => QUALITY_METRIC_KINDS.map((kind) => {
+    const metric = governanceQualityMetrics?.metrics.find((entry) => entry.kind === kind);
+    const count = metric?.count ?? 0;
+    const severity = metric?.severity ?? 'info';
+    const MetricIcon = QUALITY_METRIC_ICONS[kind];
+    const tone = severity === 'error'
+      ? 'border-red-500/30 bg-red-500/5 text-red-700 dark:text-red-400'
+      : severity === 'warning'
+        ? 'border-yellow-500/30 bg-yellow-500/5 text-yellow-700 dark:text-yellow-400'
+        : 'border-black/10 bg-surface-input text-muted-foreground dark:border-white/10';
+    return {
+      kind,
+      count,
+      severity,
+      affectedIds: metric?.affectedIds ?? [],
+      MetricIcon,
+      tone,
+      label: t(`governance.qualityMetrics.kinds.${kind}`),
+      hint: t(`governance.qualityMetrics.hints.${kind}`),
+    };
+  }), [governanceQualityMetrics, t]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || librarianMessages.length === 0) return;
+    const updatedAt = new Date().toISOString();
+    const checkpoint: KnowledgeLibrarianCheckpoint = {
+      version: 1,
+      updatedAt,
+      vaultPath: status?.vaultPath,
+      editorTitle,
+      editorSource,
+      messages: librarianMessages.slice(-30),
+    };
+    try {
+      window.localStorage.setItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY, JSON.stringify(checkpoint));
+      setLibrarianCheckpointAt(updatedAt);
+    } catch {
+      // Best-effort checkpoint only; never block the knowledge workspace.
+    }
+  }, [editorSource, editorTitle, librarianMessages, status?.vaultPath]);
+
+  const clearLibrarianThread = useCallback(() => {
+    setLibrarianMessages([]);
+    setLibrarianQuestion('');
+    setLibrarianError(null);
+    setLastLibrarianQuestion('');
+    setLibrarianCheckpointAt(null);
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY);
+    }
+  }, []);
 
   const refreshStatus = useCallback(async () => {
     setLoading(true);
@@ -326,45 +1001,21 @@ export function Knowledge() {
   }, [refreshStatus]);
 
   const refreshGovernance = useCallback(async () => {
-    const [inboxResult, draftResult, proposalResult] = await Promise.all([
+    const [inboxResult, draftResult, proposalResult, sourceSetResult] = await Promise.all([
       hostApi.knowledge.listInboxItems({ status: 'pending', limit: 100 }),
       hostApi.knowledge.listDrafts({ status: 'all', limit: 100 }),
       hostApi.knowledge.listProposals({ status: 'all', limit: 100 }),
+      hostApi.knowledge.listSourceSets(),
     ]);
     if (inboxResult.success) setInboxItems(inboxResult.items);
     if (draftResult.success) setDrafts(draftResult.drafts);
     if (proposalResult.success) setProposals(proposalResult.proposals);
+    if (sourceSetResult.success) setSourceSets(sourceSetResult.sourceSets);
   }, []);
 
   useEffect(() => {
     void refreshGovernance();
   }, [refreshGovernance]);
-
-  const refreshRuntimeLessons = useCallback(async () => {
-    setRuntimeLessonsLoading(true);
-    try {
-      setRuntimeLessons(await hostApi.knowledge.runtimeLessonsReport());
-    } catch (err) {
-      setRuntimeLessons({
-        success: false,
-        available: false,
-        reason: 'reportFailed',
-        error: err instanceof Error ? err.message : String(err),
-        counts: { trajectories: 0, undistilledTrajectories: 0, activePrinciples: 0 },
-        undistilled: [],
-        activePrinciples: [],
-        indexPreview: '',
-      });
-    } finally {
-      setRuntimeLessonsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (workbenchTab === 'runtime' && !runtimeLessons && !runtimeLessonsLoading) {
-      void refreshRuntimeLessons();
-    }
-  }, [refreshRuntimeLessons, runtimeLessons, runtimeLessonsLoading, workbenchTab]);
 
   const runGovernanceChecks = useCallback(async () => {
     setGovernanceRunning(true);
@@ -377,6 +1028,7 @@ export function Knowledge() {
         setGovernanceContradictions(summaries.contradictions ?? 0);
         setGovernanceStale(summaries.stale ?? 0);
         setGovernanceDangling(summaries.dangling ?? 0);
+        setGovernanceQualityMetrics((result as { qualityMetrics?: KnowledgeQualityMetrics }).qualityMetrics ?? null);
         setGovernanceLastChecked((result as any).runAt ?? null);
       }
     } catch (err) {
@@ -524,12 +1176,14 @@ export function Knowledge() {
     }
   }, [okfPath, okfValidation, refreshStatus, selectedOkfConceptIds, t]);
 
-  const searchWiki = useCallback(async () => {
-    if (!query.trim()) return;
+  const searchWiki = useCallback(async (searchTerm?: string) => {
+    const term = (searchTerm ?? query).trim();
+    if (!term) return;
+    if (searchTerm != null) setQuery(term);
     setRunning('search');
     setError(null);
     try {
-      const result = await hostApi.knowledge.search({ query: query.trim(), maxResults: 12, corpus: 'wiki' });
+      const result = await hostApi.knowledge.search({ query: term, maxResults: 12, corpus: 'wiki' });
       if (!result.success) throw new Error(result.error || t('errors.search'));
       setSearchResult(result);
       setSelectedPage(null);
@@ -544,6 +1198,293 @@ export function Knowledge() {
     }
   }, [query, t]);
 
+  const addSourceToCurrentSet = useCallback((ref: SourceSetRef | null) => {
+    if (!ref) return;
+    setCurrentSourceRefs((current) => {
+      const next = new Map(current.map((item) => [item.id, item]));
+      next.set(ref.id, { ...next.get(ref.id), ...ref });
+      return Array.from(next.values());
+    });
+    if (!sourceSetTitle.trim()) setSourceSetTitle(t('sourceSet.defaultTitle'));
+    setCurrentSourceSetId(null);
+  }, [sourceSetTitle, t]);
+
+  const clearCurrentSourceSet = useCallback(() => {
+    setCurrentSourceRefs([]);
+    setSourceSetTitle('');
+    setCurrentSourceSetId(null);
+  }, []);
+
+  const saveCurrentSourceSet = useCallback(async () => {
+    if (currentSourceRefs.length === 0) return;
+    setRunning('sourceSetSave');
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.saveSourceSet({
+        ...(currentSourceSetId ? { id: currentSourceSetId } : {}),
+        title: sourceSetTitle.trim() || t('sourceSet.defaultTitle'),
+        sourceRefs: currentSourceRefs,
+      });
+      if (!result.success || !result.sourceSet) throw new Error(result.error || t('errors.action'));
+      setCurrentSourceSetId(result.sourceSet.id);
+      setSourceSetTitle(result.sourceSet.title);
+      setCurrentSourceRefs(result.sourceSet.sourceRefs);
+      setSourceSets((current) => [result.sourceSet!, ...current.filter((item) => item.id !== result.sourceSet!.id)]);
+      toast.success(t('sourceSet.saved'));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [currentSourceRefs, currentSourceSetId, sourceSetTitle, t]);
+
+  const createStudioArtifact = useCallback(async (artifactType: KnowledgeArtifactType, label: string) => {
+    if (currentSourceRefs.length === 0) return;
+    setRunning(`studio:${artifactType}`);
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.createArtifactDraft({
+        artifactType,
+        title: label,
+        question: t('studio.question', { artifact: label }),
+        sourceRefs: currentSourceRefs,
+        ...(currentSourceSetId ? { sourceSetId: currentSourceSetId } : {}),
+      });
+      if (!result.success || !result.draft) throw new Error(result.error || t('errors.action'));
+      setSelectedDraftId(result.draft.id);
+      setWorkbenchTab('drafts');
+      await refreshGovernance();
+      toast.success(t('studio.artifactCreated'));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [currentSourceRefs, currentSourceSetId, refreshGovernance, t]);
+
+  const askLibrarian = useCallback(async (questionOverride?: string) => {
+    const question = (questionOverride ?? librarianQuestion).trim();
+    if (!question || running) return;
+    const userMessage = makeLibrarianMessage('user', question);
+    setLibrarianMessages((messages) => [...messages, userMessage].slice(-30));
+    setLibrarianQuestion('');
+    setLastLibrarianQuestion(question);
+    setLibrarianError(null);
+    setRunning('librarianAsk');
+    setError(null);
+    try {
+      if (currentSourceRefs.length > 0) {
+        const result = await hostApi.knowledge.answerFromSourceSet({
+          question,
+          sourceRefs: currentSourceRefs,
+          ...(currentSourceSetId ? { sourceSetId: currentSourceSetId } : {}),
+        });
+        if (!result.success) throw new Error(result.error || t('errors.search'));
+        const citations: KnowledgeLibrarianCitation[] = result.sources.map((source) => ({
+          lookup: source.lookup,
+          title: source.title,
+          path: source.path || source.lookup,
+          excerpt: source.excerpt || t('librarian.emptyCitation'),
+        }));
+        const groundedAnswer: KnowledgeLibrarianGroundedAnswer = {
+          question,
+          answer: result.answer,
+          sources: result.sources.map((source) => ({
+            id: source.id,
+            lookup: source.lookup,
+            title: source.title,
+            path: source.path || source.lookup,
+            excerpt: source.excerpt,
+            corpus: 'wiki',
+            reason: t('sourceSet.answerBoundary'),
+          })),
+          unknowns: result.unknowns,
+          suggestions: result.suggestedNextActions,
+          nextActions: result.suggestedNextActions,
+          confidence: result.confidence,
+          groundingStatus: result.groundingStatus,
+          retrieval: {
+            query: result.retrievalDiagnostics.query,
+            corpus: result.retrievalDiagnostics.corpus,
+            roleTag: 'knowledge-librarian',
+            resultCount: result.retrievalDiagnostics.resultCount,
+            selectedSources: result.sources.map((source) => ({
+              id: source.id,
+              lookup: source.lookup,
+              title: source.title,
+              path: source.path || source.lookup,
+              excerpt: source.excerpt,
+              corpus: 'wiki',
+            })),
+          },
+        };
+        setLibrarianMessages((messages) => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
+        return;
+      }
+      const result = await hostApi.knowledge.search({
+        query: question,
+        maxResults: 4,
+        corpus: 'wiki',
+        roleTag: 'knowledge-librarian',
+      });
+      if (!result.success) throw new Error(result.error || t('errors.search'));
+      setSearchResult(result);
+      setQuery(question);
+      const matches = getSearchRows(result).slice(0, 3);
+      const citations: KnowledgeLibrarianCitation[] = [];
+      for (const row of matches) {
+        const lookup = getLookup(row);
+        if (!lookup) continue;
+        let body = getSnippet(row);
+        try {
+          const page = await hostApi.knowledge.get({ lookup, lineCount: 80, corpus: 'wiki' });
+          if (page.success) body = getPageBody(page as Record<string, unknown>) || body;
+        } catch {
+          // Search snippets are still useful if a page preview fails.
+        }
+        const excerpt = readableExcerpt(body, getSnippet(row));
+        citations.push({
+          lookup,
+          title: getTitle(row),
+          path: getString(row, ['sourcePath', 'pagePath', 'path']) || lookup,
+          score: getScore(row),
+          excerpt: excerpt || t('librarian.emptyCitation'),
+        });
+        void hostApi.knowledge.recordKnowledgeReference({
+          targetId: lookup,
+          targetKind: 'wiki-page',
+          title: getTitle(row),
+          sourceRefs: [{ id: lookup, kind: 'wiki', path: lookup }],
+          reference: { kind: 'search', lookup, query: question },
+        }).catch(() => undefined);
+      }
+
+      if (citations.length === 0 && editorBody.trim()) {
+        citations.push({
+          lookup: editorSource || editorSourceIds[0],
+          title: editorTitle.trim() || t('workspace.untitled'),
+          path: editorSource || editorSourceIds[0],
+          excerpt: readableExcerpt(editorBody, editorSummary) || t('librarian.emptyCitation'),
+        });
+      }
+
+      const groundedAnswer = buildGroundedLibrarianAnswer({
+        question,
+        resultCount: getSearchRows(result).length,
+        corpus: 'wiki',
+        roleTag: 'knowledge-librarian',
+        sources: citations.map((citation) => ({
+          id: citation.lookup,
+          lookup: citation.lookup,
+          title: citation.title,
+          path: citation.path || citation.lookup,
+          excerpt: citation.excerpt,
+          corpus: 'wiki',
+          ...(typeof citation.score === 'number' ? { score: citation.score } : {}),
+          reason: t('librarian.retrieval.selectedReason'),
+        })),
+        messages: {
+          answerIntro: t('librarian.answerIntro', { count: citations.length }),
+          answerBoundary: t('librarian.answerBoundary'),
+          noAnswer: t('librarian.noAnswer'),
+          missingSources: t('librarian.unknowns.noSources'),
+          pageSnippetGrounding: t('librarian.unknowns.pageSnippetLevel'),
+          suggestionSaveDraft: t('librarian.suggestions.next.saveDraft'),
+          suggestionCreateErrorExperience: t('librarian.suggestions.next.createErrorExperience'),
+          suggestionSendToSteward: t('librarian.suggestions.next.sendToSteward'),
+          suggestionBroadenSearch: t('librarian.suggestions.next.broadenSearch'),
+        },
+      });
+      setLibrarianMessages((messages) => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      setLibrarianError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [currentSourceRefs, currentSourceSetId, editorBody, editorSource, editorSourceIds, editorSummary, editorTitle, librarianQuestion, running, t]);
+
+  const copyLibrarianMessage = useCallback(async (messageId: string, content: string) => {
+    if (!content.trim()) return;
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedLibrarianMessageId(messageId);
+      window.setTimeout(() => setCopiedLibrarianMessageId((current) => (current === messageId ? null : current)), 1600);
+    } catch {
+      toast.error(t('librarian.copyFailed'));
+    }
+  }, [t]);
+
+  const saveGroundedAnswerDraft = useCallback(async (answer: KnowledgeLibrarianGroundedAnswer) => {
+    setRunning('librarianDraft');
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.createDraft(createDraftPayloadFromGroundedAnswer(answer, {
+        titlePrefix: t('librarian.candidate.draftTitlePrefix'),
+      }));
+      if (!result.success) throw new Error(result.error || t('errors.action'));
+      toast.success(t('toasts.librarianDraft'));
+      await refreshGovernance();
+      setWorkbenchTab('drafts');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [refreshGovernance, t]);
+
+  const createGroundedAnswerErrorExperience = useCallback(async (answer: KnowledgeLibrarianGroundedAnswer) => {
+    setRunning('librarianErrorExperience');
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.createInboxItem(createErrorExperienceInboxPayloadFromGroundedAnswer(answer, {
+        titlePrefix: t('librarian.candidate.errorExperienceTitlePrefix'),
+        createdFromId: answer.question,
+      }));
+      if (!result.success) throw new Error(result.error || t('errors.action'));
+      toast.success(t('toasts.librarianErrorExperience'));
+      await refreshGovernance();
+      setWorkbenchTab('inbox');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [refreshGovernance, t]);
+
+  const sendGroundedAnswerToSteward = useCallback(async (answer: KnowledgeLibrarianGroundedAnswer) => {
+    setRunning('librarianSteward');
+    setError(null);
+    try {
+      const created = await hostApi.knowledge.createDraft(createDraftPayloadFromGroundedAnswer(answer, {
+        titlePrefix: t('librarian.candidate.stewardTitlePrefix'),
+      }));
+      if (!created.success || !created.draft) throw new Error(created.error || t('errors.action'));
+      const reviewed = await hostApi.knowledge.stewardReview({ draftId: created.draft.id });
+      if (!reviewed.success) throw new Error(reviewed.error || t('errors.action'));
+      setStewardReview(reviewed);
+      toast.success(t('toasts.librarianSteward'));
+      await refreshGovernance();
+      setWorkbenchTab('review');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [refreshGovernance, t]);
+
   const openResult = useCallback(async (row: SearchRow) => {
     const lookup = getLookup(row);
     if (!lookup) return;
@@ -555,6 +1496,12 @@ export function Knowledge() {
       setSelectedPage(result);
       setSelectedRow(row);
       setSelectedLookup(lookup);
+      const body = getPageBody(result as Record<string, unknown>);
+      setEditorTitle(getTitle(row));
+      setEditorBody(body || makeStarterMarkdown(getTitle(row)));
+      setEditorSource(lookup);
+      setEditorType('source-note');
+      setWorkbenchTab('library');
       try {
         const provenance = await hostApi.knowledge.recordKnowledgeReference({
           targetId: lookup,
@@ -580,6 +1527,60 @@ export function Knowledge() {
       setRunning(null);
     }
   }, [draftSources, query, t]);
+
+  const createEditorNote = useCallback(() => {
+    const title = t('workspace.untitled');
+    setEditorTitle(title);
+    setEditorBody(makeStarterMarkdown(title));
+    setEditorSource('');
+    setEditorTags('');
+    setEditorType('source-note');
+    setSelectedPage(null);
+    setSelectedRow(null);
+    setSelectedLookup('');
+    setWorkbenchTab('library');
+  }, [t]);
+
+  const sendEditorToReview = useCallback(async () => {
+    const title = editorTitle.trim() || t('workspace.untitled');
+    const body = editorBody.trim();
+    if (!body) return;
+    const tags = editorTags
+      .split(/\r?\n|,/u)
+      .map((item) => item.trim())
+      .filter(Boolean);
+    setRunning('editorDraft');
+    setError(null);
+    try {
+      const draftResult = await hostApi.knowledge.createDraft({
+        title,
+        body,
+        type: editorType,
+        sourceIds: editorSourceIds,
+        tags,
+        createdBy: 'user',
+      });
+      if (!draftResult.success || !draftResult.draft) throw new Error(draftResult.error || t('errors.action'));
+      const proposalResult = await hostApi.knowledge.proposeChange({
+        operation: 'create',
+        draftId: draftResult.draft.id,
+        reason: t('workspace.reviewReason'),
+        sources: editorSourceIds.map((id) => ({ id, kind: 'manual' as const })),
+      });
+      if (!proposalResult.success) throw new Error(proposalResult.error || t('errors.action'));
+      toast.success(t('toasts.createDraft'));
+      await refreshGovernance();
+      setSelectedDraftId(draftResult.draft.id);
+      if (proposalResult.proposal) setSelectedProposalId(proposalResult.proposal.id);
+      setWorkbenchTab('review');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [editorBody, editorSourceIds, editorTags, editorTitle, editorType, refreshGovernance, t]);
 
   const promoteInboxItem = useCallback(async (item?: KnowledgeInboxItem | null) => {
     const target = item ?? selectedInboxItem;
@@ -696,7 +1697,6 @@ export function Knowledge() {
       setStewardReview(result);
       toast.success(t('toasts.stewardReview'));
       await refreshGovernance();
-      setWorkbenchTab('governance');
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       setError(message);
@@ -705,6 +1705,39 @@ export function Knowledge() {
       setRunning(null);
     }
   }, [draftBody, draftSources, draftTags, draftTitle, refreshGovernance, selectedDraft, t]);
+
+  // Area 5 §3.5 — load the KB role registry for the Configure flow.
+  const loadStewardConfig = useCallback(async () => {
+    try {
+      const result = await hostApi.knowledge.stewardConfigGet();
+      if (result.success) setStewardConfig(result);
+    } catch {
+      // Best-effort: if the registry can't be loaded, the Configure modal
+      // simply shows nothing. The steward still works via DEFAULT_REGISTRY.
+    }
+  }, []);
+
+  // Area 5 §3.5 — change the active default role variant.
+  const setStewardDefaultRole = useCallback(async (roleId: string) => {
+    setRunning('stewardConfigUpdate');
+    try {
+      const result = await hostApi.knowledge.stewardConfigUpdate({ defaultRoleId: roleId });
+      if (!result.success) throw new Error(result.error || t('errors.action'));
+      setStewardConfig({ success: true, registry: result.registry, activeRole: result.registry.roles.find((r) => r.roleId === result.registry.defaultRoleId) });
+      toast.success(t('toasts.stewardReview'));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [t]);
+
+  // Area 5 §3.5 — load the steward registry once on mount so the Configure
+  // modal and review-tab steward section have variant metadata available.
+  useEffect(() => {
+    void loadStewardConfig();
+  }, [loadStewardConfig]);
 
   const reviewAndApply = useCallback(async () => {
     if (!selectedDraft || !selectedProposal) return;
@@ -763,14 +1796,14 @@ export function Knowledge() {
         </div>
       </header>
 
-      <main className="min-h-0 flex-1 overflow-auto px-10 pb-10">
+      <main className="min-h-0 flex-1 overflow-auto px-5 pb-10 md:px-8 xl:px-10">
         {error && (
           <div data-testid="knowledge-error" className="mb-4 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
             {error}
           </div>
         )}
 
-        <div data-testid="knowledge-command-bar" className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-black/10 bg-surface-modal p-2 shadow-sm dark:border-white/10">
+        <div data-testid="knowledge-command-bar" className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-black/10 bg-surface-modal/90 p-2 shadow-sm backdrop-blur dark:border-white/10">
           <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void pickAndIngest('files')} disabled={busy}>
             <FilePlus2 className="mr-2 h-3.5 w-3.5" />
             {t('actions.importFiles')}
@@ -787,18 +1820,120 @@ export function Knowledge() {
             {running === 'importOkf' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Upload className="mr-2 h-3.5 w-3.5" />}
             {t('actions.importOkf')}{selectedOkfCount > 0 ? ` (${selectedOkfCount})` : ''}
           </Button>
-          <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void runAction('compile', () => hostApi.knowledge.compile())} disabled={busy}>
-            {running === 'compile' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Sparkles className="mr-2 h-3.5 w-3.5" />}
-            {t('actions.compile')}
-          </Button>
-          <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void runAction('lint', () => hostApi.knowledge.lint())} disabled={busy}>
-            {running === 'lint' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Check className="mr-2 h-3.5 w-3.5" />}
-            {t('actions.lint')}
-          </Button>
           <Button variant="outline" className={cn('ml-auto', QUIET_BUTTON_CLASS)} onClick={() => void runAction('openVault', () => hostApi.knowledge.openVault())} disabled={busy}>
             {t('actions.openVault')}
           </Button>
         </div>
+
+        <section className="mb-4 grid gap-4 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]" data-testid="knowledge-assistant-overview">
+          <div className={cn(PANEL_CLASS, 'overflow-hidden p-5')}>
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
+                  <h2 className="font-serif text-2xl font-normal tracking-tight text-foreground">{t('assistant.title')}</h2>
+                </div>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{t('assistant.subtitle')}</p>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-2">
+                <Button type="button" size="sm" onClick={() => setWorkbenchTab('library')} data-testid="knowledge-assistant-browse">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  {t('assistant.browse')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className={QUIET_BUTTON_CLASS}
+                  onClick={() => setWorkbenchTab('governance')}
+                  data-testid="knowledge-audit-center-button"
+                >
+                  <ShieldCheck className="mr-2 h-3.5 w-3.5" />
+                  {t('governance.openAudit')}
+                </Button>
+              </div>
+            </div>
+            <div className="mt-5 grid gap-2 md:grid-cols-4">
+              <button
+                type="button"
+                className="rounded-lg border border-black/10 bg-surface-input/80 p-3 text-left transition-colors hover:border-black/20 hover:bg-black/5 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5"
+                onClick={() => setWorkbenchTab('library')}
+                data-testid="knowledge-assistant-docs"
+              >
+                <div className="text-xl font-semibold tabular-nums tracking-tight">{knowledgeDocTotal}</div>
+                <div className="mt-1 text-xs font-medium text-muted-foreground">{t('assistant.docs')}</div>
+                <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-muted-foreground/80">{t('assistant.docsHint')}</p>
+              </button>
+              <button
+                type="button"
+                className="rounded-lg border border-black/10 bg-surface-input/80 p-3 text-left transition-colors hover:border-black/20 hover:bg-black/5 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5"
+                onClick={() => setWorkbenchTab('inbox')}
+                data-testid="knowledge-assistant-inbox"
+              >
+                <div className="text-xl font-semibold tabular-nums tracking-tight">{inboxItems.length}</div>
+                <div className="mt-1 text-xs font-medium text-muted-foreground">{t('assistant.pending')}</div>
+                <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-muted-foreground/80">{t('assistant.pendingHint')}</p>
+              </button>
+              <button
+                type="button"
+                className="rounded-lg border border-black/10 bg-surface-input/80 p-3 text-left transition-colors hover:border-black/20 hover:bg-black/5 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5"
+                onClick={() => setWorkbenchTab('drafts')}
+                data-testid="knowledge-assistant-drafts"
+              >
+                <div className="text-xl font-semibold tabular-nums tracking-tight">{drafts.length}</div>
+                <div className="mt-1 text-xs font-medium text-muted-foreground">{t('assistant.drafts')}</div>
+                <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-muted-foreground/80">{t('assistant.draftsHint')}</p>
+              </button>
+              <button
+                type="button"
+                className={cn(
+                  'rounded-lg border p-3 text-left transition-colors',
+                  warnings.length > 0
+                    ? 'border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/15'
+                    : 'border-black/10 bg-surface-input/80 hover:border-black/20 hover:bg-black/5 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5',
+                )}
+                onClick={() => setWorkbenchTab('governance')}
+                data-testid="knowledge-assistant-audit"
+              >
+                <div className="text-xl font-semibold tabular-nums tracking-tight">{warnings.length}</div>
+                <div className="mt-1 text-xs font-medium text-muted-foreground">{t('assistant.health')}</div>
+                <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-muted-foreground/80">{t('assistant.healthHint')}</p>
+              </button>
+            </div>
+          </div>
+
+          <div className={cn(PANEL_CLASS, 'p-5')}>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="font-serif text-xl font-normal tracking-tight">{t('assistant.mapTitle')}</h2>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">{t('assistant.mapHint')}</p>
+              </div>
+              <Badge variant="outline" className={cn('border', statusTone)}>
+                {ready ? t('status.ready') : t('status.missing')}
+              </Badge>
+            </div>
+            <div className="mt-4 grid gap-2">
+              {KNOWLEDGE_TYPES.slice(0, 4).map((type) => {
+                const TypeIcon = TYPE_ICONS[type];
+                return (
+                  <button
+                    key={type}
+                    type="button"
+                    className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-surface-input/80 px-3 py-2 text-left transition-colors hover:border-black/20 hover:bg-black/5 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5"
+                    onClick={() => void searchWiki(t(`types.${type}`))}
+                    data-testid={`knowledge-assistant-map-${type}`}
+                  >
+                    <span className="flex min-w-0 items-center gap-2">
+                      <TypeIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      <span className="truncate text-sm font-medium">{t(`types.${type}`)}</span>
+                    </span>
+                    <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{knowledgeTypeCount(pageCounts, type)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
         {okfValidation && (
           <Card className={cn('mb-4', PANEL_CLASS)} data-testid="knowledge-okf-panel">
@@ -924,8 +2059,8 @@ export function Knowledge() {
           })}
         </div>
 
-        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6" data-testid="knowledge-workbench-tabs">
-          {WORKBENCH_TABS.map((tab) => {
+        <div className="mt-4 grid gap-1 rounded-xl border border-black/10 bg-surface-modal p-1 shadow-sm dark:border-white/10 md:grid-cols-4" data-testid="knowledge-workbench-tabs">
+          {PRIMARY_WORKBENCH_TABS.map((tab) => {
             const TabIcon = TAB_ICONS[tab];
             const isActive = workbenchTab === tab;
             return (
@@ -933,19 +2068,35 @@ export function Knowledge() {
               key={tab}
               type="button"
               className={cn(
-                'flex items-center gap-2.5 rounded-lg border border-black/10 bg-surface-modal px-3 py-2.5 text-left text-sm font-medium transition-all duration-200 dark:border-white/10 cursor-pointer',
+                'flex items-center justify-center gap-2.5 rounded-lg border px-3 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer',
                 isActive
                   ? 'border-primary/30 bg-primary/5 text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:bg-black/5 hover:text-foreground hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
+                  : 'border-transparent text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
               )}
               onClick={() => setWorkbenchTab(tab)}
               data-testid={`knowledge-tab-${tab}`}
             >
               {TabIcon && <TabIcon className={cn('h-4 w-4 shrink-0', isActive ? 'text-primary' : 'text-muted-foreground/60')} />}
-              {t(`tabs.${tab}`)}
+              {t(tab === 'library' ? 'tabs.sources' : `tabs.${tab}`)}
             </button>
             );
           })}
+        </div>
+        <div className="mt-3 flex justify-end">
+          <button
+            type="button"
+            className={cn(
+              'flex items-center gap-2 rounded-lg border border-black/10 bg-surface-modal px-3 py-2 text-sm font-medium transition-all duration-200 dark:border-white/10',
+              workbenchTab === 'governance'
+                ? 'border-primary/30 bg-primary/5 text-foreground shadow-sm'
+                : 'text-muted-foreground hover:border-black/20 hover:bg-black/5 hover:text-foreground dark:hover:border-white/20 dark:hover:bg-white/5',
+            )}
+            onClick={() => setWorkbenchTab(workbenchTab === 'governance' ? 'library' : 'governance')}
+            data-testid="knowledge-tab-governance"
+          >
+            <ShieldCheck className={cn('h-4 w-4', workbenchTab === 'governance' ? 'text-primary' : 'text-muted-foreground/60')} />
+            {workbenchTab === 'governance' ? t('governance.backToLibrary') : t('governance.openAudit')}
+          </button>
         </div>
 
         <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(360px,1.05fr)]">
@@ -991,9 +2142,10 @@ export function Knowledge() {
                   const lookup = getLookup(row);
                   const okfBadges = getOkfBadges(row);
                   return (
-                    <button
+                    <div
                       key={`${lookup || index}`}
-                      type="button"
+                      role="button"
+                      tabIndex={0}
                       className={cn(
                         'w-full rounded-lg border border-black/10 p-3 text-left transition-all duration-200 hover:shadow-sm dark:border-white/10',
                         lookup && lookup === selectedLookup
@@ -1002,11 +2154,28 @@ export function Knowledge() {
                       )}
                       data-testid="knowledge-search-result"
                       onClick={() => void openResult(row)}
+                      onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') void openResult(row); }}
                     >
                       <div className="flex items-center justify-between gap-3">
                         <span className="truncate text-sm font-semibold">{getTitle(row)}</span>
-                        {running === `get:${lookup}` && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
-                        {lookup && lookup === selectedLookup && !running && <Check className="h-3.5 w-3.5 text-primary" />}
+                        <div className="flex shrink-0 items-center gap-2">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            className="h-7 rounded-md px-2 text-[11px]"
+                            data-testid="knowledge-source-set-add-result"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              addSourceToCurrentSet(sourceRefFromSearchRow(row));
+                            }}
+                            disabled={!lookup}
+                          >
+                            <Plus className="mr-1 h-3 w-3" />
+                            {t('sourceSet.addResult')}
+                          </Button>
+                          {running === `get:${lookup}` && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+                          {lookup && lookup === selectedLookup && !running && <Check className="h-3.5 w-3.5 text-primary" />}
+                        </div>
                       </div>
                       {okfBadges.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1">
@@ -1019,7 +2188,7 @@ export function Knowledge() {
                       )}
                       {getSnippet(row) && <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">{getSnippet(row)}</p>}
                       {lookup && <p className="mt-1 truncate font-mono text-[11px] text-muted-foreground/70">{lookup}</p>}
-                    </button>
+                    </div>
                   );
                 })}
                 {searchResult && rows.length === 0 && <p className="text-sm text-muted-foreground">{t('search.empty')}</p>}
@@ -1056,48 +2225,252 @@ export function Knowledge() {
           </Card>
         </div>
 
-        <Card className={cn('mt-4', PANEL_CLASS)}>
-          <CardHeader className="p-4">
+        <Card className={cn('mt-4', workbenchTab === 'library' ? WORKSPACE_CHROME_CLASS : PANEL_CLASS)}>
+          <CardHeader className={cn('p-4', workbenchTab === 'library' && 'border-b border-black/10 bg-surface-input/60 dark:border-white/10')}>
             <CardTitle className="flex items-center justify-between gap-3 text-base">
-              <span>{t(WORKBENCH_TITLE_KEYS[workbenchTab])}</span>
-              <Badge variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
+              <span className="flex min-w-0 items-center gap-2">
+                {(() => {
+                  const ActiveIcon = TAB_ICONS[workbenchTab];
+                  return ActiveIcon ? <ActiveIcon className="h-4 w-4 shrink-0 text-muted-foreground" /> : null;
+                })()}
+                <span className="truncate">{t(workbenchTab === 'library' ? 'sources.title' : workbenchTab === 'inbox' ? 'inbox.title' : workbenchTab === 'drafts' ? 'draft.title' : workbenchTab === 'review' ? 'review.title' : 'governance.title')}</span>
+              </span>
+              <Badge variant="outline" className="shrink-0 border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
                 {t('governance.readOnlyBadge')}
               </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0">
+          <CardContent className={cn(workbenchTab === 'library' ? 'p-0' : 'p-4 pt-0')}>
             {workbenchTab === 'library' && (
-              <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4" data-testid="knowledge-library">
-                {KNOWLEDGE_TYPES.map((type) => {
-                  const TypeIcon = TYPE_ICONS[type];
-                  const accent = TYPE_COLOR[type];
-                  return (
-                  <button
-                    key={type}
-                    type="button"
-                    className={cn(
-                      'group flex flex-col gap-3 rounded-lg border p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg cursor-pointer',
-                      accent,
-                    )}
-                    onClick={() => {
-                      setQuery(type);
-                      setWorkbenchTab('library');
-                    }}
-                    data-testid={`knowledge-type-${type}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className={cn('flex h-8 w-8 items-center justify-center rounded-lg border', accent)}>
-                        <TypeIcon className="h-4 w-4" />
+              <div className="grid min-h-[680px] xl:grid-cols-[280px_minmax(0,1fr)_320px]" data-testid="knowledge-library">
+                <aside className={cn('flex min-h-0 flex-col border-b border-black/10 dark:border-white/10 xl:border-b-0 xl:border-r', WORKSPACE_SECTION_CLASS)} data-testid="knowledge-vault-sidebar">
+                  <div className="flex items-center justify-between gap-2 border-b border-black/10 bg-background/30 p-3 dark:border-white/10">
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold">{t('workspace.vault')}</div>
+                      <div className="truncate text-[11px] text-muted-foreground">{status?.vaultPath || t('workspace.localVault')}</div>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" className="h-8 shrink-0 rounded-md border-black/10 bg-background/60 px-2 shadow-none dark:border-white/10" onClick={createEditorNote} data-testid="knowledge-new-note">
+                      <Plus className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                  <div className="min-h-0 flex-1 overflow-auto p-3">
+                    <div className="mb-3 text-[11px] font-semibold uppercase text-muted-foreground">{t('workspace.documents')}</div>
+                    <div className="space-y-1.5" data-testid="knowledge-document-list">
+                      {rows.length === 0 && (
+                        <div className="rounded-md border border-dashed border-black/10 p-3 text-xs leading-5 text-muted-foreground dark:border-white/10">
+                          {t('workspace.emptyDocuments')}
+                        </div>
+                      )}
+                      {rows.map((row, index) => {
+                        const lookup = getLookup(row);
+                        const selected = lookup && lookup === editorSource;
+                        return (
+                          <button
+                            key={`${lookup || index}:workspace`}
+                            type="button"
+                            className={cn(
+                              'flex w-full items-start gap-2 rounded-md border px-2 py-2 text-left transition-colors',
+                              selected
+                                ? 'border-primary/30 bg-primary/5 text-foreground shadow-sm'
+                                : 'border-transparent hover:border-black/10 hover:bg-black/5 dark:hover:border-white/10 dark:hover:bg-white/5',
+                            )}
+                            onClick={() => void openResult(row)}
+                            data-testid="knowledge-document-row"
+                          >
+                            <FileText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-xs font-medium">{getTitle(row)}</span>
+                              <span className="block truncate font-mono text-[10px] text-muted-foreground">{lookup || t('workspace.localDraft')}</span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="mb-2 mt-5 text-[11px] font-semibold uppercase text-muted-foreground">{t('workspace.types')}</div>
+                    <div className="grid gap-1.5">
+                      {KNOWLEDGE_TYPES.map((type) => {
+                        const TypeIcon = TYPE_ICONS[type];
+                        const accent = TYPE_COLOR[type];
+                        return (
+                          <button
+                            key={type}
+                            type="button"
+                            className={cn('flex items-center justify-between gap-2 rounded-md border px-2 py-1.5 text-left text-xs transition-colors', accent)}
+                            onClick={() => void searchWiki(t(`types.${type}`))}
+                            data-testid={`knowledge-type-${type}`}
+                          >
+                            <span className="flex min-w-0 items-center gap-2">
+                              <TypeIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                              <span className="truncate">{t(`types.${type}`)}</span>
+                            </span>
+                            <span className="shrink-0 tabular-nums text-muted-foreground">{knowledgeTypeCount(pageCounts, type)}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </aside>
+                <section className="flex min-h-0 flex-col bg-background/70" data-testid="knowledge-markdown-workspace">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-background/60 p-3 dark:border-white/10">
+                    <div className="min-w-0 flex-1">
+                      <Input value={editorTitle} onChange={(event) => setEditorTitle(event.target.value)} className="h-9 border-transparent bg-transparent px-0 font-serif text-2xl tracking-tight shadow-none focus-visible:ring-0" data-testid="knowledge-editor-title" />
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                        <span className="font-mono">{editorSource || t('workspace.localDraft')}</span>
+                        <span>{editorBody.length} {t('workspace.characters')}</span>
                       </div>
-                      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5" />
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1 rounded-lg border border-black/10 bg-background/50 p-1 dark:border-white/10">
+                      {(['edit', 'preview', 'split'] as MarkdownEditorMode[]).map((mode) => {
+                        const ModeIcon = mode === 'edit' ? Edit3 : mode === 'preview' ? Eye : Columns3;
+                        return (
+                          <button key={mode} type="button" className={cn('flex h-7 w-8 items-center justify-center rounded-md transition-colors', editorMode === mode ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5')} onClick={() => setEditorMode(mode)} title={t(`workspace.modes.${mode}`)} data-testid={`knowledge-editor-mode-${mode}`}>
+                            <ModeIcon className="h-3.5 w-3.5" />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="grid gap-3 border-b border-black/10 bg-surface-input/50 p-3 dark:border-white/10 md:grid-cols-[180px_minmax(0,1fr)_160px]">
+                    <select value={editorType} onChange={(event) => setEditorType(event.target.value as KnowledgeDraftType)} className="h-9 rounded-lg border border-black/10 bg-background/70 px-3 text-sm shadow-none dark:border-white/10" data-testid="knowledge-editor-type">
+                      {KNOWLEDGE_TYPES.map((type) => <option key={type} value={type}>{t(`types.${type}`)}</option>)}
+                    </select>
+                    <Input value={editorTags} onChange={(event) => setEditorTags(event.target.value)} placeholder={t('workspace.tagsPlaceholder')} className="h-9 bg-background/70 shadow-none" data-testid="knowledge-editor-tags" />
+                    <Button type="button" className="shadow-none" onClick={() => void sendEditorToReview()} disabled={busy || !editorBody.trim()} data-testid="knowledge-editor-save-draft">
+                      {running === 'editorDraft' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                      {t('workspace.submitReview')}
+                    </Button>
+                  </div>
+                  <div className={cn('grid min-h-0 flex-1 gap-0', editorMode === 'split' ? 'lg:grid-cols-2' : 'grid-cols-1')}>
+                    {(editorMode === 'edit' || editorMode === 'split') && (
+                      <Textarea value={editorBody} onChange={(event) => setEditorBody(event.target.value)} className="min-h-[520px] resize-none rounded-none border-0 bg-background/40 p-5 font-mono text-sm leading-7 shadow-none focus-visible:ring-0" data-testid="knowledge-markdown-editor" />
+                    )}
+                    {(editorMode === 'preview' || editorMode === 'split') && (
+                      <div className="min-h-[520px] overflow-auto border-black/10 bg-background/80 p-6 text-sm leading-7 dark:border-white/10 lg:border-l [&_a]:text-primary [&_blockquote]:border-l-2 [&_blockquote]:border-black/20 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1 [&_h1]:mb-4 [&_h1]:font-serif [&_h1]:text-3xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-normal [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-3 [&_pre]:overflow-auto [&_pre]:rounded-lg [&_pre]:bg-black/5 [&_pre]:p-3 [&_ul]:list-disc" data-testid="knowledge-markdown-preview">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{editorBody || t('workspace.emptyPreview')}</ReactMarkdown>
+                      </div>
+                    )}
+                  </div>
+                </section>
+                <aside className={cn('flex min-h-0 flex-col gap-3 border-t border-black/10 p-3 dark:border-white/10 xl:border-l xl:border-t-0', WORKSPACE_SECTION_CLASS)} data-testid="knowledge-librarian-panel">
+                  <div className="flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
+                      <Bot className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-foreground">{t(`types.${type}`)}</div>
-                      <div className="mt-0.5 text-xs leading-4 text-muted-foreground">{t('library.typeHint')}</div>
+                      <div className="text-sm font-semibold">{t('librarian.title')}</div>
+                      <div className="text-[11px] text-muted-foreground">{t('librarian.roleId')}</div>
                     </div>
-                  </button>
-                  );
-                })}
+                  </div>
+                  <div className="space-y-3 rounded-lg border border-black/10 bg-background/60 p-3 dark:border-white/10" data-testid="knowledge-source-set-panel">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                          <Layers className="h-3.5 w-3.5" />
+                          {t('sourceSet.title')}
+                        </div>
+                        <p className="mt-1 text-[11px] text-muted-foreground">
+                          {t('sourceSet.count', { count: currentSourceRefs.length })}
+                        </p>
+                      </div>
+                      <Button type="button" variant="ghost" className="h-7 rounded-md px-2 text-[11px]" onClick={clearCurrentSourceSet} disabled={currentSourceRefs.length === 0} data-testid="knowledge-source-set-clear">
+                        {t('sourceSet.clear')}
+                      </Button>
+                    </div>
+                    <Input
+                      value={sourceSetTitle}
+                      onChange={(event) => setSourceSetTitle(event.target.value)}
+                      placeholder={t('sourceSet.titlePlaceholder')}
+                      className="h-8 bg-background/70 text-xs shadow-none"
+                      data-testid="knowledge-source-set-title"
+                    />
+                    {currentSourceRefs.length === 0 ? (
+                      <p className="text-xs leading-5 text-muted-foreground">{t('sourceSet.empty')}</p>
+                    ) : (
+                      <div className="max-h-28 space-y-1 overflow-auto">
+                        {currentSourceRefs.map((ref) => (
+                          <div key={ref.id} className="rounded-md bg-black/5 px-2 py-1.5 text-xs dark:bg-white/10" data-testid="knowledge-source-set-ref">
+                            <span className="block truncate font-medium">{ref.label || ref.id}</span>
+                            <span className="block truncate font-mono text-[10px] text-muted-foreground">{ref.path || ref.id}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {sourceSets.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {sourceSets.slice(0, 3).map((sourceSet) => (
+                          <button
+                            key={sourceSet.id}
+                            type="button"
+                            className="max-w-full truncate rounded-md border border-black/10 px-2 py-1 text-[11px] text-muted-foreground hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5"
+                            onClick={() => {
+                              setCurrentSourceSetId(sourceSet.id);
+                              setSourceSetTitle(sourceSet.title);
+                              setCurrentSourceRefs(sourceSet.sourceRefs);
+                            }}
+                            data-testid="knowledge-source-set-saved"
+                          >
+                            {sourceSet.title}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void saveCurrentSourceSet()} disabled={busy || currentSourceRefs.length === 0} data-testid="knowledge-source-set-save">
+                      {running === 'sourceSetSave' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Save className="mr-2 h-3.5 w-3.5" />}
+                      {t('sourceSet.save')}
+                    </Button>
+                    <p className="text-[11px] leading-4 text-muted-foreground">{t('sourceSet.answerBoundary')}</p>
+                  </div>
+                  <div className="space-y-2 rounded-lg border border-black/10 bg-background/60 p-3 dark:border-white/10" data-testid="knowledge-studio-actions">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                      <Sparkles className="h-3.5 w-3.5" />
+                      {t('studio.title')}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {STUDIO_ARTIFACTS.map((artifact) => {
+                        const label = t(artifact.labelKey);
+                        return (
+                          <Button
+                            key={artifact.type}
+                            type="button"
+                            variant="outline"
+                            className="h-8 rounded-md px-2 text-[11px] shadow-none"
+                            onClick={() => void createStudioArtifact(artifact.type, label)}
+                            disabled={busy || currentSourceRefs.length === 0}
+                            data-testid={`knowledge-studio-artifact-${artifact.type}`}
+                          >
+                            {running === `studio:${artifact.type}` ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <FileText className="mr-1 h-3 w-3" />}
+                            <span className="truncate">{label}</span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="rounded-lg border border-black/10 bg-background/60 p-3 dark:border-white/10">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground"><FileText className="h-3.5 w-3.5" />{t('librarian.currentDocument')}</div>
+                    <p className="mt-2 text-xs leading-5 text-muted-foreground">{editorSummary || t('librarian.noSummary')}</p>
+                  </div>
+                  <div className="grid gap-2">
+                    <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => setLibrarianOpen(true)} data-testid="knowledge-librarian-open"><MessageCircle className="mr-2 h-3.5 w-3.5" />{t('librarian.openAssistant')}</Button>
+                    <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void askSteward(null)} disabled={busy || !editorBody.trim()} data-testid="knowledge-librarian-review"><ShieldCheck className="mr-2 h-3.5 w-3.5" />{t('librarian.askSteward')}</Button>
+                  </div>
+                  <div className="space-y-2 rounded-lg border border-black/10 bg-background/60 p-3 dark:border-white/10">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground"><Link2 className="h-3.5 w-3.5" />{t('librarian.related')}</div>
+                    {relatedRows.length === 0 ? <p className="text-xs leading-5 text-muted-foreground">{t('librarian.noRelated')}</p> : relatedRows.map((row, index) => (
+                      <button key={`${getLookup(row) || index}:related`} type="button" className="block w-full rounded-md px-2 py-1.5 text-left text-xs hover:bg-black/5 dark:hover:bg-white/5" onClick={() => void openResult(row)} data-testid="knowledge-related-row">
+                        <span className="block truncate font-medium">{getTitle(row)}</span>
+                        <span className="block truncate font-mono text-[10px] text-muted-foreground">{getLookup(row)}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="space-y-2 rounded-lg border border-black/10 bg-background/60 p-3 dark:border-white/10">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground"><Tags className="h-3.5 w-3.5" />{t('librarian.boundaries')}</div>
+                    <ul className="space-y-1 text-xs leading-5 text-muted-foreground">
+                      <li>{t('librarian.boundaryRead')}</li>
+                      <li>{t('librarian.boundaryDraft')}</li>
+                      <li>{t('librarian.boundarySources')}</li>
+                    </ul>
+                  </div>
+                </aside>
               </div>
             )}
 
@@ -1115,17 +2488,18 @@ export function Knowledge() {
                   </div>
                   <div className="max-h-80 space-y-1.5 overflow-auto">
                     {inboxItems.length === 0 && <p className="py-6 text-center text-sm text-muted-foreground">{t('inbox.empty')}</p>}
-                    {INBOX_RECOMMENDATION_ORDER.map((recommendation) => {
-                      const group = groupedInboxItems[recommendation];
+                    {INBOX_TRIAGE_ORDER.map((triageAction) => {
+                      const group = groupedInboxItems[triageAction];
                       if (group.length === 0) return null;
                       return (
-                        <div key={recommendation} className="space-y-1.5" data-testid={`knowledge-inbox-group-${recommendation}`}>
+                        <div key={triageAction} className="space-y-1.5" data-testid={`knowledge-inbox-group-${triageAction}`}>
                           <div className="flex items-center justify-between px-1 pt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                            <span>{t(`inbox.groups.${recommendation}`)}</span>
+                            <span>{t(`inbox.triage.groups.${triageAction}`)}</span>
                             <span className="tabular-nums">{group.length}</span>
                           </div>
                           {group.map((item) => {
                             const isSelected = selectedInboxItem?.id === item.id;
+                            const triage = inboxTriage(item);
                             const recommendationForItem = inboxRecommendation(item);
                             const reason = inboxReason(item);
                             return (
@@ -1148,6 +2522,9 @@ export function Knowledge() {
                                   <span className="truncate text-sm font-semibold">{item.title}</span>
                                 </div>
                                 <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
+                                  <Badge variant="outline" className={cn('border text-[10px] font-medium', inboxTriageClass(triage.action))} data-testid="knowledge-inbox-triage-badge">
+                                    {t(`inbox.triage.actions.${triage.action}`)}
+                                  </Badge>
                                   <Badge variant="outline" className={cn('border text-[10px] font-medium', inboxRecommendationClass(recommendationForItem))}>
                                     {t(`inbox.recommendations.${recommendationForItem}`)}
                                   </Badge>
@@ -1177,6 +2554,9 @@ export function Knowledge() {
                         </p>
                         {selectedInboxItem && (
                           <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                            <Badge variant="outline" className={cn('border', inboxTriageClass(inboxTriage(selectedInboxItem).action))} data-testid="knowledge-inbox-triage-detail">
+                              {t(`inbox.triage.actions.${inboxTriage(selectedInboxItem).action}`)}
+                            </Badge>
                             <Badge variant="outline" className={cn('border', inboxRecommendationClass(inboxRecommendation(selectedInboxItem)))}>
                               {t(`inbox.recommendations.${inboxRecommendation(selectedInboxItem)}`)}
                             </Badge>
@@ -1225,16 +2605,47 @@ export function Knowledge() {
                     <div className="grid gap-3 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
                       <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-inbox-recommendation">
                         <div className="flex items-center justify-between gap-2">
-                          <div className="text-xs font-medium text-muted-foreground">{t('inbox.reason')}</div>
-                          {inboxOverallScore(selectedInboxItem) != null && (
-                            <Badge variant="outline" className={cn('border text-[10px]', inboxRecommendationClass(inboxRecommendation(selectedInboxItem)))}>
-                              {t('inbox.score', { score: Math.round((inboxOverallScore(selectedInboxItem) ?? 0) * 100) })}
+                          <div className="text-xs font-medium text-muted-foreground">{t('inbox.triage.title')}</div>
+                          <div className="flex shrink-0 items-center gap-1.5">
+                            <Badge variant="outline" className={cn('border text-[10px]', inboxTriageClass(inboxTriage(selectedInboxItem).action))}>
+                              {t('inbox.triage.confidence', { confidence: Math.round(inboxTriage(selectedInboxItem).confidence * 100) })}
                             </Badge>
-                          )}
+                            {inboxOverallScore(selectedInboxItem) != null && (
+                              <Badge variant="outline" className={cn('border text-[10px]', inboxRecommendationClass(inboxRecommendation(selectedInboxItem)))}>
+                                {t('inbox.score', { score: Math.round((inboxOverallScore(selectedInboxItem) ?? 0) * 100) })}
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                         <p className="mt-2 text-xs leading-5 text-muted-foreground">
                           {inboxReason(selectedInboxItem) || t('inbox.noReason')}
                         </p>
+                        {(inboxTriage(selectedInboxItem).duplicateOf || (inboxTriage(selectedInboxItem).conflictWith ?? []).length > 0 || (inboxTriage(selectedInboxItem).suggestedEdits ?? []).length > 0) && (
+                          <div className="mt-3 grid gap-2 text-xs" data-testid="knowledge-inbox-triage-details">
+                            {inboxTriage(selectedInboxItem).duplicateOf && (
+                              <div className="rounded-md border border-black/10 bg-background/50 p-2 dark:border-white/10">
+                                <span className="font-medium text-foreground/80">{t('inbox.triage.duplicateOf')}: </span>
+                                <span className="font-mono text-[11px] text-muted-foreground">{inboxTriage(selectedInboxItem).duplicateOf}</span>
+                              </div>
+                            )}
+                            {(inboxTriage(selectedInboxItem).conflictWith ?? []).length > 0 && (
+                              <div className="rounded-md border border-black/10 bg-background/50 p-2 dark:border-white/10">
+                                <span className="font-medium text-foreground/80">{t('inbox.triage.conflictWith')}: </span>
+                                <span className="font-mono text-[11px] text-muted-foreground">{(inboxTriage(selectedInboxItem).conflictWith ?? []).join(', ')}</span>
+                              </div>
+                            )}
+                            {(inboxTriage(selectedInboxItem).suggestedEdits ?? []).length > 0 && (
+                              <div className="rounded-md border border-black/10 bg-background/50 p-2 dark:border-white/10">
+                                <div className="font-medium text-foreground/80">{t('inbox.triage.suggestedEdits')}</div>
+                                <ul className="mt-1 space-y-1 text-muted-foreground">
+                                  {(inboxTriage(selectedInboxItem).suggestedEdits ?? []).map((edit) => (
+                                    <li key={edit}>{edit}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        )}
                         <div className="mt-3 grid gap-2 sm:grid-cols-3" data-testid="knowledge-inbox-scores">
                           {INBOX_SCORE_DIMENSIONS.map((dimension) => {
                             const percent = inboxScorePercent(selectedInboxItem, dimension);
@@ -1418,135 +2829,6 @@ export function Knowledge() {
               </div>
             )}
 
-            {workbenchTab === 'runtime' && (
-              <div className="space-y-4">
-                {runtimeLessonsLoading && !runtimeLessons && (
-                  <div className="flex items-center gap-2 rounded-lg border border-black/10 bg-surface-input p-4 text-sm text-muted-foreground dark:border-white/10">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    {t('runtime.loading')}
-                  </div>
-                )}
-
-                {runtimeLessons && (
-                  <div className="space-y-4" data-testid="knowledge-runtime-lessons">
-                    <div className="flex flex-wrap items-start justify-between gap-3 rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-semibold">{t('runtime.title')}</h3>
-                        <p className="mt-1 text-xs leading-5 text-muted-foreground">{t('runtime.subtitle')}</p>
-                      </div>
-                      <Badge variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
-                        {t('governance.readOnlyBadge')}
-                      </Badge>
-                    </div>
-
-                    {(!runtimeLessons.success || !runtimeLessons.available) && (
-                      <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs leading-relaxed text-yellow-700 dark:text-yellow-400">
-                        {runtimeLessons.error || t('runtime.unavailable')}
-                      </div>
-                    )}
-
-                    <div className="grid gap-3 sm:grid-cols-3">
-                      {runtimeMetrics.map((metric) => {
-                        const Icon = metric.icon;
-                        return (
-                          <div key={metric.label} className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
-                            <div className="flex items-center justify-between gap-3">
-                              <div>
-                                <div className="text-xl font-semibold tabular-nums tracking-tight">{metric.value}</div>
-                                <div className="mt-0.5 truncate text-[11px] font-medium text-muted-foreground">{metric.label}</div>
-                              </div>
-                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-background/50 dark:border-white/10">
-                                <Icon className={cn('h-4 w-4', metric.tone)} />
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(300px,0.8fr)]">
-                      <div className="space-y-3">
-                        <div className="text-sm font-semibold">{t('runtime.undistilledTitle')}</div>
-                        {runtimeLessons.undistilled.length === 0 && (
-                          <p className="rounded-lg border border-black/10 bg-surface-input p-4 text-sm text-muted-foreground dark:border-white/10">{t('runtime.emptyUndistilled')}</p>
-                        )}
-                        {runtimeLessons.undistilled.map((trajectory) => (
-                          <div key={trajectory.trajectory_id} className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
-                            <div className="flex flex-wrap items-start justify-between gap-3">
-                              <div className="min-w-0">
-                                <div className="text-sm font-semibold text-foreground">{trajectory.task_intent}</div>
-                                <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                                  <span>{t('runtime.taskType')}: {trajectory.task_type}</span>
-                                  <span className="text-muted-foreground/50">/</span>
-                                  <span>{trajectory.outcome}</span>
-                                  <span className="font-mono text-muted-foreground/70">{trajectory.created_at}</span>
-                                </div>
-                              </div>
-                              <Badge variant="outline" className="border-black/10 bg-background/60 text-[10px] dark:border-white/10">
-                                {trajectory.trajectory_id}
-                              </Badge>
-                            </div>
-                            {trajectory.context_fingerprint.length > 0 && (
-                              <div className="mt-3 flex flex-wrap gap-1.5">
-                                {trajectory.context_fingerprint.map((tag) => (
-                                  <Badge key={tag} variant="outline" className="border-black/10 bg-black/5 text-[10px] dark:border-white/10 dark:bg-white/10">
-                                    {tag}
-                                  </Badge>
-                                ))}
-                              </div>
-                            )}
-                            {trajectory.error_signature && (
-                              <div className="mt-3 rounded-md border border-red-500/20 bg-red-500/5 px-2.5 py-2 text-xs text-red-700 dark:text-red-400">
-                                <span className="font-medium">{t('runtime.errorSignature')}:</span>{' '}
-                                <span className="font-mono">{trajectory.error_signature}</span>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="space-y-4">
-                        <div className="space-y-3">
-                          <div className="text-sm font-semibold">{t('runtime.principlesTitle')}</div>
-                          {runtimeLessons.activePrinciples.length === 0 && (
-                            <p className="rounded-lg border border-black/10 bg-surface-input p-4 text-sm text-muted-foreground dark:border-white/10">{t('runtime.emptyPrinciples')}</p>
-                          )}
-                          {runtimeLessons.activePrinciples.map((principle) => (
-                            <div key={principle.principle_id} className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
-                              <div className="flex items-start justify-between gap-3">
-                                <div className="min-w-0">
-                                  <div className="text-sm font-semibold text-foreground">{principle.title}</div>
-                                  <div className="mt-2 flex flex-wrap gap-1.5">
-                                    <Badge variant="outline" className="border-black/10 bg-background/60 text-[10px] dark:border-white/10">{principle.criticality}</Badge>
-                                    {principle.task_types.map((taskType) => (
-                                      <Badge key={taskType} variant="outline" className="border-black/10 bg-black/5 text-[10px] dark:border-white/10 dark:bg-white/10">{taskType}</Badge>
-                                    ))}
-                                    {principle.context_tags.map((tag) => (
-                                      <Badge key={tag} variant="outline" className="border-black/10 bg-black/5 text-[10px] dark:border-white/10 dark:bg-white/10">{tag}</Badge>
-                                    ))}
-                                  </div>
-                                </div>
-                                <div className="shrink-0 text-right font-mono text-xs text-muted-foreground">
-                                  {principle.retrieval_count}/{principle.adoption_count}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="text-sm font-semibold">{t('runtime.indexTitle')}</div>
-                          <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-lg border border-black/10 bg-surface-input p-3 text-xs leading-relaxed dark:border-white/10">
-                            {runtimeLessons.indexPreview || '-'}
-                          </pre>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
             {workbenchTab === 'review' && (
               <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]" data-testid="knowledge-review">
                 <div className="space-y-3">
@@ -1582,6 +2864,76 @@ export function Knowledge() {
                     <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void rejectDraft()} disabled={busy || !selectedDraft}>
                       {t('review.reject')}
                     </Button>
+                    <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => setShowStewardConfig(true)} data-testid="knowledge-steward-configure">
+                      <Wrench className="mr-1.5 h-3.5 w-3.5" />
+                      {t('review.steward.configure')}
+                    </Button>
+                  </div>
+
+                  {/* Area 5 §3.5 — Steward review result for the current draft */}
+                  <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-steward-review-result">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="text-sm font-semibold">{t('review.steward.section')}</div>
+                      {stewardReview ? (
+                        <Badge variant="outline" className="border-violet-500/30 bg-violet-500/5 text-violet-700 dark:text-violet-400">
+                          {t('review.steward.classifiedAs', { type: t(`types.${stewardReview.type}`) })}
+                        </Badge>
+                      ) : null}
+                    </div>
+                    {stewardReview ? (
+                      <div className="mt-2 space-y-2 text-xs leading-relaxed text-muted-foreground">
+                        {stewardConfig?.activeRole ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-medium text-foreground/80">{t('review.steward.variant')}:</span>
+                            <span>{stewardConfig.activeRole.displayName ?? stewardConfig.activeRole.roleId}</span>
+                            <Badge variant="outline" className="ml-1 border-slate-500/30 bg-slate-500/5 text-slate-700 dark:text-slate-400">
+                              {stewardConfig.activeRole.classification === 'semantic' ? t('review.steward.semantic') : t('review.steward.heuristic')}
+                            </Badge>
+                          </div>
+                        ) : null}
+                        {stewardReview.warnings.length > 0 ? (
+                          <div>
+                            <div className="font-medium text-foreground/80">{t('review.steward.warnings')}</div>
+                            <ul className="mt-1 list-inside list-disc space-y-0.5 text-amber-700 dark:text-amber-400">
+                              {stewardReview.warnings.map((warning, idx) => (
+                                <li key={idx}>{warning}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : null}
+                        {stewardReview.notes ? (
+                          <div>
+                            <div className="font-medium text-foreground/80">{t('review.steward.notes')}</div>
+                            <p className="mt-1 whitespace-pre-wrap">{stewardReview.notes}</p>
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-xs text-muted-foreground">{t('review.steward.noReview')}</p>
+                    )}
+                  </div>
+
+                  {/* Area 5 §3.5 — Steward queue: drafts awaiting steward review */}
+                  <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-steward-queue">
+                    <div className="text-sm font-semibold">{t('review.steward.queue')}</div>
+                    {drafts.filter((draft) => draft.status === 'steward_reviewed').length > 0 ? (
+                      <ul className="mt-2 space-y-1 text-xs">
+                        {drafts.filter((draft) => draft.status === 'steward_reviewed').map((draft) => (
+                          <li key={draft.id}>
+                            <button
+                              type="button"
+                              className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                              onClick={() => setSelectedDraftId(draft.id)}
+                            >
+                              <span className="truncate font-medium text-foreground/80">{draft.title}</span>
+                              <span className="shrink-0 text-muted-foreground">{t(`types.${draft.type}`)}</span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-2 text-xs text-muted-foreground">{t('review.steward.queueEmpty')}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1777,6 +3129,48 @@ export function Knowledge() {
                   </div>
                 </div>
 
+                <section className="space-y-3" data-testid="knowledge-quality-metrics">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <h4 className="text-sm font-semibold">{t('governance.qualityMetrics.title')}</h4>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{t('governance.qualityMetrics.description')}</p>
+                    </div>
+                    <Badge variant="outline" className="border-black/10 bg-surface-input text-xs font-medium dark:border-white/10">
+                      {governanceQualityMetrics ? t('governance.qualityMetrics.sourceAudit') : t('governance.qualityMetrics.pendingAudit')}
+                    </Badge>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                    {qualityMetricCards.map(({ kind, count, severity, affectedIds, MetricIcon, tone, label, hint }) => (
+                      <div
+                        key={kind}
+                        className={cn('rounded-lg border p-3', tone)}
+                        data-testid={`knowledge-quality-metric-${kind}`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="truncate text-xs font-semibold text-foreground">{label}</div>
+                            <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{hint}</p>
+                          </div>
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-current/20 bg-background/50">
+                            <MetricIcon className="h-4 w-4" />
+                          </div>
+                        </div>
+                        <div className="mt-3 flex items-center justify-between gap-2">
+                          <span className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">{count}</span>
+                          <span className="rounded-md border border-current/20 bg-background/40 px-1.5 py-0.5 text-[10px] font-medium uppercase">
+                            {t(`governance.qualityMetrics.severity.${severity}`)}
+                          </span>
+                        </div>
+                        {affectedIds.length > 0 ? (
+                          <div className="mt-2 truncate text-[10px] text-muted-foreground" title={affectedIds.join(', ')}>
+                            {t('governance.qualityMetrics.affected', { count: affectedIds.length })}
+                          </div>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
                 {/* Action list */}
                 {governanceIssues.length > 0 && (
                   <div className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
@@ -1858,6 +3252,270 @@ export function Knowledge() {
           </CardContent>
         </Card>
       </main>
+
+      <button
+        type="button"
+        className="fixed bottom-6 right-6 z-40 flex h-12 items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-600 px-4 text-white shadow-lg transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40"
+        onClick={() => setLibrarianOpen(true)}
+        data-testid="knowledge-librarian-fab"
+        aria-label={t('librarian.openAssistant')}
+      >
+        <Bot className="h-5 w-5" />
+        <span className="hidden text-sm font-medium md:inline">{t('librarian.openAssistant')}</span>
+      </button>
+
+      {librarianOpen ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-end bg-black/35 p-3 backdrop-blur-[2px] md:items-stretch md:p-4" role="dialog" aria-modal="true" data-testid="knowledge-librarian-modal">
+          <div className="flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-black/10 bg-surface-modal shadow-2xl dark:border-white/10 md:max-h-none">
+            <div className="flex items-center justify-between gap-3 border-b border-black/10 bg-emerald-500/10 px-4 py-3 dark:border-white/10">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
+                  <Bot className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
+                </div>
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold">{t('librarian.modalTitle')}</div>
+                  <div className="truncate text-xs text-muted-foreground">{t('librarian.modalSubtitle')}</div>
+                </div>
+              </div>
+              <button type="button" className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5" onClick={() => setLibrarianOpen(false)} aria-label={t('review.steward.close')}>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-auto p-4">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-black/10 bg-surface-input/80 px-3 py-2 text-xs text-muted-foreground dark:border-white/10" data-testid="knowledge-librarian-checkpoint">
+                <span className="flex min-w-0 items-center gap-2">
+                  <History className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate">
+                    {librarianCheckpointAt ? t('librarian.checkpointSaved', { time: new Date(librarianCheckpointAt).toLocaleTimeString() }) : t('librarian.noCheckpoint')}
+                  </span>
+                </span>
+                <Button type="button" variant="ghost" className="h-7 rounded-md px-2 text-[11px]" onClick={clearLibrarianThread} disabled={librarianMessages.length === 0} data-testid="knowledge-librarian-clear">
+                  {t('librarian.clearThread')}
+                </Button>
+              </div>
+
+              <div className="grid gap-3 md:grid-cols-3">
+                {(['ask', 'organize', 'review'] as const).map((mode) => (
+                  <div key={mode} className="rounded-lg border border-black/10 bg-surface-input/80 p-3 dark:border-white/10" data-testid={`knowledge-librarian-capability-${mode}`}>
+                    <div className="text-sm font-semibold">{t(`librarian.capabilities.${mode}.title`)}</div>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{t(`librarian.capabilities.${mode}.body`)}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 rounded-lg border border-black/10 bg-surface-input/80 p-3 dark:border-white/10">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold">{editorTitle}</div>
+                    <div className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">{editorSource || t('workspace.localDraft')}</div>
+                  </div>
+                  <Badge variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">{t(`types.${editorType}`)}</Badge>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">{editorSummary || t('librarian.noSummary')}</p>
+              </div>
+
+              <div className="mt-4 rounded-xl border border-black/10 bg-background/60 p-3 dark:border-white/10" data-testid="knowledge-librarian-thread">
+                <div className="mb-3 flex flex-wrap gap-2" data-testid="knowledge-librarian-suggestions">
+                  {librarianPromptSuggestions.map((suggestion) => (
+                    <button
+                      key={suggestion.id}
+                      type="button"
+                      className="rounded-full border border-black/10 bg-surface-input px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:hover:bg-white/5"
+                      onClick={() => void askLibrarian(suggestion.prompt)}
+                      disabled={busy}
+                      data-testid={`knowledge-librarian-suggestion-${suggestion.id}`}
+                    >
+                      {suggestion.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="space-y-3">
+                  {librarianMessages.length === 0 ? (
+                    <div className="rounded-xl border border-dashed border-black/10 bg-surface-input/50 p-4 text-center text-xs leading-5 text-muted-foreground dark:border-white/10">
+                      {t('librarian.threadEmpty')}
+                    </div>
+                  ) : librarianMessages.map((message) => (
+                    <KnowledgeAssistantMessage
+                      key={message.id}
+                      message={message}
+                      copied={copiedLibrarianMessageId === message.id}
+                      copyLabel={t('librarian.copy')}
+                      copiedLabel={t('librarian.copied')}
+                      roleLabel={t('librarian.roleId')}
+                      userLabel={t('librarian.you')}
+                      citationsLabel={t('librarian.citations')}
+                      sectionLabels={{
+                        answer: t('librarian.sections.answer'),
+                        sources: t('librarian.sections.sources'),
+                        unknowns: t('librarian.sections.unknowns'),
+                        nextAction: t('librarian.sections.nextAction'),
+                        retrieval: t('librarian.sections.retrieval'),
+                        query: t('librarian.retrieval.query'),
+                        corpus: t('librarian.retrieval.corpus'),
+                        roleTag: t('librarian.retrieval.roleTag'),
+                        resultCount: t('librarian.retrieval.resultCount'),
+                        selectedSources: t('librarian.retrieval.selectedSources'),
+                        confidence: t('librarian.confidence'),
+                        groundingStatus: {
+                          grounded: t('librarian.groundingStatus.grounded'),
+                          partial: t('librarian.groundingStatus.partial'),
+                          missing_sources: t('librarian.groundingStatus.missingSources'),
+                        },
+                      }}
+                      actionLabels={{
+                        saveDraft: t('librarian.actions.saveDraft'),
+                        createErrorExperience: t('librarian.actions.createErrorExperience'),
+                        sendToSteward: t('librarian.actions.sendToSteward'),
+                      }}
+                      onCopy={(content) => void copyLibrarianMessage(message.id, content)}
+                      onOpenCitation={(citation) => void openResult({ title: citation.title, pagePath: citation.lookup, snippet: citation.excerpt })}
+                      onSaveDraft={(answer) => void saveGroundedAnswerDraft(answer)}
+                      onCreateErrorExperience={(answer) => void createGroundedAnswerErrorExperience(answer)}
+                      onSendToSteward={(answer) => void sendGroundedAnswerToSteward(answer)}
+                    />
+                  ))}
+                  {running === 'librarianAsk' ? (
+                    <div className="flex items-center gap-2 rounded-xl border border-black/10 bg-surface-input/80 px-3 py-2 text-xs text-muted-foreground dark:border-white/10" data-testid="knowledge-librarian-loading">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      {t('librarian.searching')}
+                    </div>
+                  ) : null}
+                  {librarianError ? (
+                    <KnowledgeAssistantErrorCard
+                      error={librarianError}
+                      title={t('librarian.errorTitle')}
+                      retryLabel={t('librarian.retry')}
+                      dismissLabel={t('librarian.dismissError')}
+                      onRetry={() => void askLibrarian(lastLibrarianQuestion)}
+                      onDismiss={() => setLibrarianError(null)}
+                    />
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void searchWiki(editorTitle)} disabled={busy || !editorTitle.trim()} data-testid="knowledge-librarian-search">
+                  <Search className="mr-2 h-3.5 w-3.5" />
+                  {t('librarian.actions.searchRelated')}
+                </Button>
+                <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void askSteward(null)} disabled={busy || !editorBody.trim()} data-testid="knowledge-librarian-steward">
+                  <ShieldCheck className="mr-2 h-3.5 w-3.5" />
+                  {t('librarian.actions.stewardReview')}
+                </Button>
+                <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => setWorkbenchTab('inbox')} data-testid="knowledge-librarian-inbox">
+                  <Inbox className="mr-2 h-3.5 w-3.5" />
+                  {t('librarian.actions.openInbox')}
+                </Button>
+                <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void sendEditorToReview()} disabled={busy || !editorBody.trim()} data-testid="knowledge-librarian-submit">
+                  <Save className="mr-2 h-3.5 w-3.5" />
+                  {t('librarian.actions.submitDraft')}
+                </Button>
+              </div>
+
+              <div className="mt-4 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs leading-5 text-yellow-700 dark:text-yellow-400">
+                {t('librarian.writeBoundary')}
+              </div>
+            </div>
+
+            <div className="border-t border-black/10 bg-surface-input/70 p-3 dark:border-white/10">
+              <KnowledgeAssistantPromptInput
+                value={librarianQuestion}
+                onChange={setLibrarianQuestion}
+                onSubmit={() => void askLibrarian()}
+                disabled={busy}
+                running={running === 'librarianAsk'}
+                placeholder={t('librarian.askPlaceholder')}
+                askLabel={t('librarian.askButton')}
+                hint={t('librarian.askHint')}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Area 5 §3.5 — Configure Steward modal: variant list + active selection */}
+      {showStewardConfig ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" data-testid="knowledge-steward-config-modal" role="dialog" aria-modal="true">
+          <div className="w-full max-w-lg rounded-xl border border-black/10 bg-surface-modal p-5 shadow-lg dark:border-white/10">
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm font-semibold">{t('review.steward.configureTitle')}</div>
+              <button type="button" className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5" onClick={() => setShowStewardConfig(false)} aria-label={t('review.steward.close')}>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {stewardConfig?.registry ? (
+              <div className="mt-3 space-y-2">
+                {stewardConfig.registry.roles.map((role) => {
+                  const isActive = role.roleId === stewardConfig.registry.defaultRoleId;
+                  return (
+                    <div
+                      key={role.roleId}
+                      className={cn(
+                        'rounded-lg border p-3 transition-colors',
+                        isActive
+                          ? 'border-violet-500/40 bg-violet-500/5'
+                          : 'border-black/10 bg-surface-input dark:border-white/10',
+                      )}
+                      data-testid={`knowledge-steward-variant-${role.roleId}`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="truncate text-sm font-medium text-foreground/80">{role.displayName ?? role.roleId}</span>
+                            {isActive ? (
+                              <Badge variant="outline" className="border-violet-500/30 bg-violet-500/5 text-violet-700 dark:text-violet-400">
+                                {t('review.steward.activeVariant')}
+                              </Badge>
+                            ) : null}
+                          </div>
+                          <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <Badge variant="outline" className="border-slate-500/30 bg-slate-500/5 text-slate-700 dark:text-slate-400">
+                              {role.classification === 'semantic' ? t('review.steward.semantic') : t('review.steward.heuristic')}
+                            </Badge>
+                            {role.reviewFocus && role.reviewFocus.length > 0 ? (
+                              <span className="truncate">{role.reviewFocus.join(' · ')}</span>
+                            ) : null}
+                          </div>
+                          {role.description ? (
+                            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{role.description}</p>
+                          ) : null}
+                        </div>
+                        {!isActive ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 shrink-0 rounded-md px-2 text-xs font-medium"
+                            onClick={() => void setStewardDefaultRole(role.roleId)}
+                            disabled={busy}
+                            data-testid={`knowledge-steward-variant-set-active-${role.roleId}`}
+                          >
+                            {running === 'stewardConfigUpdate' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : null}
+                            {t('review.steward.setActive')}
+                          </Button>
+                        ) : null}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="mt-3 text-xs text-muted-foreground">{t('review.steward.queueEmpty')}</p>
+            )}
+
+            <div className="mt-3 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs leading-relaxed text-yellow-700 dark:text-yellow-400">
+              {t('review.steward.boundaryNotice')}
+            </div>
+
+            <div className="mt-3 flex justify-end">
+              <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => setShowStewardConfig(false)}>
+                {t('review.steward.close')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -4,7 +4,7 @@
  * Communicates with OpenClaw Gateway through the Main-owned host API.
  */
 import { create } from 'zustand';
-import { hostApi, type ChatKnowledgeReference, type ChatSendWithMediaResult, type SessionLabelSummary } from '@/lib/host-api';
+import { hostApi, type ChatSendWithMediaResult, type SessionLabelSummary } from '@/lib/host-api';
 import { useGatewayStore } from './gateway';
 import { useAgentsStore } from './agents';
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
@@ -45,9 +45,9 @@ import {
   type ChatState,
   type ContentBlock,
   type RawMessage,
+  type SendOptions,
   type ToolStatus,
 } from './chat/types';
-import type { KnowledgeInvocationMode, WorkspaceKnowledgeScope } from '@shared/types/workspace';
 import type { ChatGet, ChatSet } from './chat/store-api';
 import { useWorkspacesStore } from './workspaces';
 import { applyRuntimeEventToRuns, extractToolCompletedFiles } from './chat/runtime-graph';
@@ -2591,6 +2591,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   currentAgentId: 'main',
   sessionLabels: {},
   sessionLastActivity: {},
+  archivedSessions: [],
+  archivedSessionsLoading: false,
 
   thinkingLevel: null,
 
@@ -2937,6 +2939,104 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   // ── Cleanup empty session on navigate away ──
+
+  archiveSession: async (key, options) => {
+    clearCachedSessionHistory(key);
+    clearCachedSessionRunState(key);
+    clearSessionLabelHydrationTracking(key);
+    clearPendingOptimisticUserMessages(key);
+    try {
+      const result = await hostApi.sessions.archive({
+        id: key,
+        originalWorkspaceId: options?.workspaceId ?? null,
+        originalFolderId: options?.folderId ?? null,
+      });
+      if (!result.success) {
+        console.warn(`[archiveSession] IPC reported failure for ${key}:`, result.error);
+      }
+    } catch (err) {
+      console.warn(`[archiveSession] IPC call failed for ${key}:`, err);
+    }
+
+    const { currentSessionKey, sessions } = get();
+    const remaining = sessions.filter((s) => s.key !== key);
+    const dropSessionState = (state: ChatState) => ({
+      sessions: remaining,
+      sessionLabels: Object.fromEntries(Object.entries(state.sessionLabels).filter(([k]) => k !== key)),
+      sessionLastActivity: Object.fromEntries(Object.entries(state.sessionLastActivity).filter(([k]) => k !== key)),
+    });
+
+    if (currentSessionKey === key) {
+      const next = remaining[0];
+      set((s) => ({
+        ...dropSessionState(s),
+        messages: [],
+        streamingText: '',
+        streamingMessage: null,
+        streamingTools: [],
+        activeRunId: null,
+        error: null,
+        runError: null,
+        pendingFinal: false,
+        lastUserMessageAt: null,
+        pendingToolImages: [],
+        currentSessionKey: next?.key ?? DEFAULT_SESSION_KEY,
+        currentAgentId: getAgentIdFromSessionKey(next?.key ?? DEFAULT_SESSION_KEY),
+      }));
+      if (next) {
+        get().loadHistory();
+      }
+    } else {
+      set(dropSessionState);
+    }
+    void get().loadArchivedSessions();
+  },
+
+  restoreSession: async (sessionKey) => {
+    try {
+      const result = await hostApi.sessions.restore({ id: sessionKey });
+      if (!result.success) {
+        console.warn(`[restoreSession] IPC reported failure for ${sessionKey}:`, result.error);
+        return;
+      }
+    } catch (err) {
+      console.warn(`[restoreSession] IPC call failed for ${sessionKey}:`, err);
+      return;
+    }
+    set((s) => ({
+      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey),
+    }));
+    void get().loadSessions();
+  },
+
+  permanentDeleteSession: async (sessionKey) => {
+    try {
+      const result = await hostApi.sessions.permanentDelete({ id: sessionKey });
+      if (!result.success) {
+        console.warn(`[permanentDeleteSession] IPC reported failure for ${sessionKey}:`, result.error);
+        return;
+      }
+    } catch (err) {
+      console.warn(`[permanentDeleteSession] IPC call failed for ${sessionKey}:`, err);
+      return;
+    }
+    set((s) => ({
+      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey),
+    }));
+  },
+
+  loadArchivedSessions: async (agentId) => {
+    set({ archivedSessionsLoading: true });
+    try {
+      const result = await hostApi.sessions.listArchived(agentId ? { agentId } : undefined);
+      set({ archivedSessions: result.entries ?? [] });
+    } catch (err) {
+      console.warn('[loadArchivedSessions] IPC call failed:', err);
+      set({ archivedSessions: [] });
+    } finally {
+      set({ archivedSessionsLoading: false });
+    }
+  },
 
   cleanupEmptySession: () => {
     const { currentSessionKey, messages, sessionLastActivity, sessionLabels } = get();
@@ -3628,16 +3728,82 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   // ── Send message ──
 
+  resendUserMessage: async (input) => {
+    const trimmed = input.text.trim();
+    if (!trimmed) return;
+
+    const state = get();
+    const sessionKey = input.sessionKey || state.currentSessionKey;
+    if (sessionKey !== state.currentSessionKey) {
+      throw new Error('Cannot resend a message from an inactive session');
+    }
+    if (state.sending || state.activeRunId || state.pendingFinal) {
+      throw new Error('Cannot resend while a run is active');
+    }
+
+    const targetMessage = state.messages[input.messageIndex];
+    const targetMessageId = (input.messageId || targetMessage?.id || '').trim();
+    if (!targetMessageId) {
+      throw new Error('Cannot resend this message because it has no transcript id');
+    }
+
+    const truncateResult = await hostApi.sessions.truncate({
+      sessionKey,
+      agentId: state.currentAgentId,
+      messageId: targetMessageId,
+    });
+    if (!truncateResult.success) {
+      throw new Error(truncateResult.error || 'Failed to reset conversation before resend');
+    }
+
+    clearHistoryPoll();
+    clearErrorRecoveryTimer();
+    clearBaselines();
+    clearCachedSessionHistory(sessionKey);
+    clearCachedSessionRunState(sessionKey);
+    clearPendingOptimisticUserMessages(sessionKey);
+    _activeSendGenerationBySession.delete(sessionKey);
+
+    set((current) => {
+      if (current.currentSessionKey !== sessionKey) return {};
+      const matchedIndex = current.messages.findIndex((message, index) => (
+        (targetMessageId && message.id === targetMessageId)
+        || (index === input.messageIndex && message.role === 'user')
+      ));
+      const cutoff = matchedIndex >= 0
+        ? matchedIndex
+        : Math.max(0, Math.min(input.messageIndex, current.messages.length));
+      return {
+        messages: current.messages.slice(0, cutoff),
+        sending: false,
+        activeRunId: null,
+        streamingText: '',
+        streamingMessage: null,
+        streamingTools: [],
+        pendingFinal: false,
+        lastUserMessageAt: null,
+        pendingToolImages: [],
+        runtimeRuns: {},
+        error: null,
+        runError: null,
+      };
+    });
+
+    await get().sendMessage(trimmed);
+  },
+
   sendMessage: async (
     text: string,
-    attachments?: Array<{ fileName: string; mimeType: string; fileSize: number; stagedPath: string; preview: string | null }>,
-    targetAgentId?: string | null,
-    knowledgeScope?: WorkspaceKnowledgeScope,
-    knowledgeMode?: KnowledgeInvocationMode,
-    inputMode?: 'interrupt' | 'guide' | 'queue' | 'revise-goal',
-    knowledgeReferences?: ChatKnowledgeReference[],
-    activeTaskNodeId?: string | null,
+    opts?: SendOptions,
   ) => {
+    const attachments = opts?.attachments;
+    const targetAgentId = opts?.targetAgentId;
+    const knowledgeScope = opts?.knowledgeScope;
+    const knowledgeMode = opts?.knowledgeMode;
+    const inputMode = opts?.inputMode;
+    const knowledgeReferences = opts?.knowledgeReferences;
+    const activeTaskNodeId = opts?.activeTaskNodeId;
+    const modelRefOverride = opts?.modelRefOverride ?? null;
     const trimmed = text.trim();
     if (!trimmed && (!attachments || attachments.length === 0)) return;
 
@@ -3845,6 +4011,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
           ...(inputMode ? { inputMode } : {}),
           ...(activeTaskNodeId ? { activeTaskNodeId } : {}),
+          ...(modelRefOverride ? { modelRef: modelRefOverride } : {}),
           media: attachments.map((a) => ({
             filePath: a.stagedPath,
             mimeType: a.mimeType,
@@ -3863,6 +4030,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
           ...(inputMode ? { inputMode } : {}),
           ...(activeTaskNodeId ? { activeTaskNodeId } : {}),
+          ...(modelRefOverride ? { modelRef: modelRefOverride } : {}),
         });
       }
 

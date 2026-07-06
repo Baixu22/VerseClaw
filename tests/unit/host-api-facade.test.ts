@@ -380,6 +380,21 @@ describe('hostApi facade', () => {
         id: 'req-4',
         ok: true,
         data: { success: true, events: [] },
+      })
+      .mockResolvedValueOnce({
+        id: 'req-5',
+        ok: true,
+        data: {
+          success: true,
+          evidence: {
+            generatedAt: 'now',
+            scenarioCount: 0,
+            artifactStatus: { workbench: false, quality: false, channelConformance: false, scenarioRecordings: false },
+            hostApi: { contractActions: [], facadeActions: [], serviceActions: [], missingFacadeActions: [], missingServiceActions: [] },
+            contracts: { traceTimeline: true, costReport: true, skillSandboxReport: true, selectorContract: true },
+            gateCommands: { fastPr: [], fullLocal: [], nightlyRelease: [] },
+          },
+        },
       });
     const { hostApi } = await import('@/lib/host-api');
 
@@ -387,6 +402,7 @@ describe('hostApi facade', () => {
     await hostApi.agentDev.seedState({ scenario: 'doctor-failed', featureFlags: ['doctor-ui'] });
     await hostApi.agentDev.setFeatureFlags({ flags: ['doctor-ui'] });
     await hostApi.agentDev.transportTrace({ limit: 10 });
+    await hostApi.agentDev.workbenchEvidence();
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
       module: 'agentDev',
@@ -406,6 +422,10 @@ describe('hostApi facade', () => {
       module: 'agentDev',
       action: 'transportTrace',
       payload: { limit: 10 },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
+      module: 'agentDev',
+      action: 'workbenchEvidence',
     }));
   });
 
@@ -634,6 +654,8 @@ describe('hostApi facade', () => {
     await hostApi.knowledge.importOkfBundle({ path: 'C:/okf', conceptIds: ['alpha'] });
     await hostApi.knowledge.createInboxItem({ title: 'Candidate', body: 'Body', kind: 'chat-session' });
     await hostApi.knowledge.promoteInboxItemToDraft({ id: 'inbox-1' });
+    await hostApi.knowledge.matchErrorExperience({ signal: { text: 'routeContext failed', kind: 'test-failure' }, limit: 1 });
+    await hostApi.knowledge.updateErrorExperienceEffectiveness({ targetKind: 'inbox', targetId: 'inbox-1', action: 'accepted' });
     await hostApi.knowledge.recordKnowledgeReference({ targetId: 'notes/a.md', reference: { kind: 'search', lookup: 'notes/a.md' } });
     await hostApi.knowledge.runtimeLessonsReport();
 
@@ -668,6 +690,16 @@ describe('hostApi facade', () => {
       payload: { id: 'inbox-1' },
     }));
     expect(hostInvoke).toHaveBeenNthCalledWith(7, expect.objectContaining({
+      module: 'knowledge',
+      action: 'matchErrorExperience',
+      payload: { signal: { text: 'routeContext failed', kind: 'test-failure' }, limit: 1 },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
+      module: 'knowledge',
+      action: 'updateErrorExperienceEffectiveness',
+      payload: { targetKind: 'inbox', targetId: 'inbox-1', action: 'accepted' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
       module: 'knowledge',
       action: 'recordKnowledgeReference',
       payload: { targetId: 'notes/a.md', reference: { kind: 'search', lookup: 'notes/a.md' } },
@@ -825,6 +857,142 @@ describe('hostApi facade', () => {
       module: 'usage',
       action: 'recentTokenHistory',
       payload: { limit: 25 },
+    }));
+  });
+
+  it('calls Office Tools host APIs through hostInvoke', async () => {
+    hostInvoke
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: { installed: true, version: 'officecli 1.2.3', path: '/bin/officecli', runtimeError: null } })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: [{ id: 'officecli-docx', installedCentrally: true }] })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: { synced: 9, errors: [] } })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: { expertId: 'officecli-docx', skillId: 'officecli-docx', agentId: 'main', agentType: 'main', agentName: 'Main Agent', state: 'linked_to_codeg', linkPath: 'agent:main:defaultSkillIds', targetPath: '/skills/officecli-docx', expectedTargetPath: '/skills/officecli-docx', copyMode: false, installedCentrally: true } })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: undefined })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: [] })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: [] })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: [] })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: 'skill content' })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: '<html></html>' })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: { port: 24000, cap: 'cap' } })
+      .mockResolvedValueOnce({ id: 'req', ok: true, data: undefined });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await hostApi.officeTools.detect();
+    await hostApi.officeTools.listSkills();
+    await hostApi.officeTools.syncSkills();
+    await hostApi.officeTools.linkSkillToAgent('officecli-docx', 'main');
+    await hostApi.officeTools.unlinkSkillFromAgent('officecli-docx', 'main');
+    await hostApi.officeTools.getSkillInstallStatus('officecli-docx');
+    await hostApi.officeTools.listAllSkillInstallStatuses();
+    await hostApi.officeTools.applySkillLinks({
+      ops: [{ expertId: 'officecli-docx', agentId: 'main', enable: true }],
+    });
+    await hostApi.officeTools.readSkillContent('officecli-docx');
+    await hostApi.officeTools.renderHtml({ rootPath: '/workspace', path: 'report.docx' });
+    await hostApi.officeTools.startWatch({ rootPath: '/workspace', path: 'report.docx' });
+    await hostApi.officeTools.stopWatch({ rootPath: '/workspace', path: 'report.docx' });
+
+    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({ module: 'officeTools', action: 'detect' }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({ module: 'officeTools', action: 'listSkills' }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({ module: 'officeTools', action: 'syncSkills' }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
+      module: 'officeTools',
+      action: 'linkSkillToAgent',
+      payload: { skillId: 'officecli-docx', agentId: 'main' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
+      module: 'officeTools',
+      action: 'unlinkSkillFromAgent',
+      payload: { skillId: 'officecli-docx', agentId: 'main' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(6, expect.objectContaining({
+      module: 'officeTools',
+      action: 'getSkillInstallStatus',
+      payload: { skillId: 'officecli-docx' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(7, expect.objectContaining({
+      module: 'officeTools',
+      action: 'listAllSkillInstallStatuses',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
+      module: 'officeTools',
+      action: 'applySkillLinks',
+      payload: { ops: [{ expertId: 'officecli-docx', agentId: 'main', enable: true }] },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
+      module: 'officeTools',
+      action: 'readSkillContent',
+      payload: { skillId: 'officecli-docx' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(10, expect.objectContaining({
+      module: 'officeTools',
+      action: 'renderHtml',
+      payload: { rootPath: '/workspace', path: 'report.docx' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(11, expect.objectContaining({
+      module: 'officeTools',
+      action: 'startWatch',
+      payload: { rootPath: '/workspace', path: 'report.docx' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(12, expect.objectContaining({
+      module: 'officeTools',
+      action: 'stopWatch',
+      payload: { rootPath: '/workspace', path: 'report.docx' },
+    }));
+  });
+
+  it('calls usage.promptCacheStatus through hostInvoke', async () => {
+    hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: { success: true, assessment: null } });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await hostApi.usage.promptCacheStatus({
+      sessionKey: 'agent:main:main',
+      modelRef: 'anthropic/claude-sonnet-4',
+      targetModelRef: 'anthropic/claude-opus-4',
+      action: 'model-switch',
+      usedTokens: 12_000,
+    });
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
+      module: 'usage',
+      action: 'promptCacheStatus',
+      payload: {
+        sessionKey: 'agent:main:main',
+        modelRef: 'anthropic/claude-sonnet-4',
+        targetModelRef: 'anthropic/claude-opus-4',
+        action: 'model-switch',
+        usedTokens: 12_000,
+      },
+    }));
+  });
+
+  it('calls usage.recordPromptCacheRiskEvent through hostInvoke', async () => {
+    hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: { success: true, event: null } });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await hostApi.usage.recordPromptCacheRiskEvent({
+      sessionKey: 'agent:main:main',
+      action: 'model-switch',
+      severity: 'high',
+      status: 'at-risk',
+      decision: 'cancelled',
+      hitRate: 0.6,
+      promptTokens: 12_000,
+      estimatedExtraCostUsd: 0.01,
+      reason: 'model-switch',
+    });
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
+      module: 'usage',
+      action: 'recordPromptCacheRiskEvent',
+      payload: {
+        sessionKey: 'agent:main:main',
+        action: 'model-switch',
+        severity: 'high',
+        status: 'at-risk',
+        decision: 'cancelled',
+        hitRate: 0.6,
+        promptTokens: 12_000,
+        estimatedExtraCostUsd: 0.01,
+        reason: 'model-switch',
+      },
     }));
   });
 

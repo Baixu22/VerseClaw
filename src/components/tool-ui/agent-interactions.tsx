@@ -9,6 +9,11 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 import { ToolUiPlanView, type ToolUiPlanTodoStatus } from './plan-view';
+import { TestResults, type TestResultSuite, type TestStatus } from '@/components/ai-elements/test-results';
+import { StackTrace, type StackTraceProps } from '@/components/ai-elements/stack-trace';
+import { ChainOfThought, type ChainOfThoughtStep } from '@/components/ai-elements/chain-of-thought';
+import { Task as AiTask, type TaskItem } from '@/components/ai-elements/task';
+import { Reasoning } from '@/components/ai-elements/reasoning';
 
 type PlanTodoStatus = ToolUiPlanTodoStatus;
 
@@ -221,6 +226,57 @@ type CodeBlockInteraction = {
   runnable?: boolean;
 };
 
+type TestResultsInteraction = {
+  type: 'test-results';
+  id: string;
+  title?: string;
+  summary: {
+    total: number;
+    passed: number;
+    failed: number;
+    skipped: number;
+    running?: number;
+    durationMs?: number;
+  };
+  suites: TestResultSuite[];
+};
+
+type StackTraceInteraction = {
+  type: 'stack-trace';
+  id: string;
+  title?: string;
+  errorType?: string;
+  message?: string;
+  stack: string;
+  source?: StackTraceProps['source'];
+};
+
+type ChainOfThoughtInteraction = {
+  type: 'chain-of-thought';
+  id: string;
+  title?: string;
+  defaultOpen?: boolean;
+  steps: ChainOfThoughtStep[];
+};
+
+type TaskInteraction = {
+  type: 'task';
+  id: string;
+  title: string;
+  defaultOpen?: boolean;
+  items: TaskItem[];
+};
+
+type ReasoningInteraction = {
+  type: 'reasoning';
+  id: string;
+  title?: string;
+  summary?: string;
+  text?: string;
+  defaultOpen?: boolean;
+  loading?: boolean;
+};
+
 export type ToolUiInteraction =
   | PlanInteraction
   | OptionListInteraction
@@ -236,7 +292,12 @@ export type ToolUiInteraction =
   | KeyValueInteraction
   | ChartInteraction
   | ImageGalleryInteraction
-  | CodeBlockInteraction;
+  | CodeBlockInteraction
+  | TestResultsInteraction
+  | StackTraceInteraction
+  | ChainOfThoughtInteraction
+  | TaskInteraction
+  | ReasoningInteraction;
 
 type ToolUseLike = {
   id?: string;
@@ -249,6 +310,7 @@ type AgentInteractionRendererProps = {
   canSubmit?: boolean;
   onSubmitResponse?: (text: string) => void;
   onDraftResponse?: (text: string) => void;
+  onOpenFilePath?: (path: string) => void;
 };
 
 type ActionFooterProps = {
@@ -344,7 +406,14 @@ function normalizeInteractionType(value: unknown, payload: Record<string, unknow
   if (normalized === 'chart' || normalized === 'chart-card' || normalized === 'graph') return 'chart';
   if (normalized === 'image-gallery' || normalized === 'gallery' || normalized === 'image-grid') return 'image-gallery';
   if (normalized === 'code-block' || normalized === 'code-snippet' || normalized === 'code') return 'code-block';
+  if (normalized === 'test-results' || normalized === 'test-result' || normalized === 'tests' || normalized === 'test-report') return 'test-results';
+  if (normalized === 'stack-trace' || normalized === 'stacktrace' || normalized === 'error-stack' || normalized === 'exception') return 'stack-trace';
+  if (normalized === 'chain-of-thought' || normalized === 'cot' || normalized === 'reasoning-steps' || normalized === 'thought-chain') return 'chain-of-thought';
+  if (normalized === 'task' || normalized === 'task-card' || normalized === 'task-report') return 'task';
+  if (normalized === 'reasoning' || normalized === 'thinking' || normalized === 'thought') return 'reasoning';
   // Shape-based fallbacks
+  if (Array.isArray(payload.suites) || (isRecord(payload.summary) && Array.isArray(payload.tests))) return 'test-results';
+  if (typeof payload.stack === 'string' || typeof payload.trace === 'string') return 'stack-trace';
   if (Array.isArray(payload.todos) || Array.isArray(payload.tasks)) return 'plan';
   if (Array.isArray(payload.sections) || Array.isArray(payload.preferences)) return 'preferences-panel';
   if (Array.isArray(payload.steps) || (Array.isArray(payload.options) && payload.step !== undefined)) return 'question-flow';
@@ -879,6 +948,239 @@ function parseCodeBlock(payload: Record<string, unknown>, fallbackId: string): C
   };
 }
 
+function normalizeTestStatus(value: unknown): TestStatus {
+  const normalized = normalizeType(value);
+  if (normalized === 'passed' || normalized === 'pass' || normalized === 'ok' || normalized === 'success') return 'passed';
+  if (normalized === 'failed' || normalized === 'fail' || normalized === 'error') return 'failed';
+  if (normalized === 'skipped' || normalized === 'skip' || normalized === 'todo') return 'skipped';
+  if (normalized === 'running' || normalized === 'active' || normalized === 'in-progress') return 'running';
+  return 'passed';
+}
+
+function parseDurationMs(payload: Record<string, unknown>): number | undefined {
+  return asNumber(payload.durationMs)
+    ?? asNumber(payload.duration_ms)
+    ?? asNumber(payload.duration)
+    ?? asNumber(payload.timeMs)
+    ?? asNumber(payload.time_ms);
+}
+
+function parseTestCase(entry: unknown, index: number): TestResultSuite['tests'][number] | null {
+  if (typeof entry === 'string') {
+    const name = entry.trim();
+    return name ? { name, status: 'passed' } : null;
+  }
+  if (!isRecord(entry)) return null;
+  const name = asString(entry.name) ?? asString(entry.title) ?? asString(entry.label) ?? `Test ${index + 1}`;
+  const rawError = entry.error ?? entry.failure;
+  const error = typeof rawError === 'string'
+    ? { message: rawError }
+    : isRecord(rawError)
+      ? {
+        message: asString(rawError.message) ?? asString(rawError.text) ?? asString(entry.message) ?? '',
+        stack: asString(rawError.stack) ?? asString(rawError.trace),
+      }
+      : asString(entry.message)
+        ? { message: asString(entry.message) ?? '' }
+        : undefined;
+  const status = error ? 'failed' : normalizeTestStatus(entry.status ?? entry.state ?? entry.outcome);
+  return {
+    name,
+    status,
+    durationMs: parseDurationMs(entry),
+    error: error?.message ? error : undefined,
+  };
+}
+
+function suiteStatusFromTests(tests: TestResultSuite['tests'], fallback: unknown): TestStatus {
+  const explicit = normalizeType(fallback);
+  if (explicit) return normalizeTestStatus(explicit);
+  if (tests.some((test) => test.status === 'failed')) return 'failed';
+  if (tests.some((test) => test.status === 'running')) return 'running';
+  if (tests.length > 0 && tests.every((test) => test.status === 'skipped')) return 'skipped';
+  return 'passed';
+}
+
+function parseTestResults(payload: Record<string, unknown>, fallbackId: string): TestResultsInteraction | null {
+  const rawSuites = Array.isArray(payload.suites)
+    ? payload.suites
+    : Array.isArray(payload.tests)
+      ? [{ name: asString(payload.title) ?? 'Tests', tests: payload.tests }]
+      : [];
+  const suites: TestResultSuite[] = rawSuites
+    .map((entry, index): TestResultSuite | null => {
+      if (!isRecord(entry)) return null;
+      const tests = (Array.isArray(entry.tests) ? entry.tests : Array.isArray(entry.cases) ? entry.cases : [])
+        .map(parseTestCase)
+        .filter((test): test is TestResultSuite['tests'][number] => test != null);
+      const name = asString(entry.name) ?? asString(entry.title) ?? `Suite ${index + 1}`;
+      return {
+        id: asString(entry.id),
+        name,
+        status: suiteStatusFromTests(tests, entry.status ?? entry.state),
+        tests,
+      };
+    })
+    .filter((entry): entry is TestResultSuite => entry != null);
+
+  const computed = suites.flatMap((suite) => suite.tests).reduce((acc, test) => {
+    acc.total += 1;
+    acc[test.status] += 1;
+    return acc;
+  }, { total: 0, passed: 0, failed: 0, skipped: 0, running: 0 } as Record<TestStatus | 'total', number>);
+
+  const summary = isRecord(payload.summary) ? payload.summary : {};
+  const total = asNumber(summary.total) ?? computed.total;
+  if (total === 0 && suites.length === 0) return null;
+
+  return {
+    type: 'test-results',
+    id: asString(payload.id) ?? fallbackId,
+    title: asString(payload.title),
+    summary: {
+      total,
+      passed: asNumber(summary.passed) ?? computed.passed,
+      failed: asNumber(summary.failed) ?? computed.failed,
+      skipped: asNumber(summary.skipped) ?? computed.skipped,
+      running: (asNumber(summary.running) ?? computed.running) || undefined,
+      durationMs: parseDurationMs(summary),
+    },
+    suites,
+  };
+}
+
+function parseStackTrace(payload: Record<string, unknown>, fallbackId: string): StackTraceInteraction | null {
+  const stack = asString(payload.stack) ?? asString(payload.trace) ?? asString(payload.stderr);
+  if (!stack) return null;
+  const sourceRaw = normalizeType(payload.source);
+  const source: StackTraceInteraction['source'] =
+    sourceRaw === 'web-preview' ? 'web-preview'
+    : sourceRaw === 'tool' ? 'tool'
+    : sourceRaw === 'app' ? 'app'
+    : undefined;
+  return {
+    type: 'stack-trace',
+    id: asString(payload.id) ?? fallbackId,
+    title: asString(payload.title),
+    errorType: asString(payload.errorType) ?? asString(payload.error_type) ?? asString(payload.name),
+    message: asString(payload.message) ?? asString(payload.errorMessage) ?? asString(payload.error_message),
+    stack,
+    source,
+  };
+}
+
+function normalizeCotStatus(value: unknown): ChainOfThoughtStep['status'] {
+  const normalized = normalizeType(value);
+  if (normalized === 'complete' || normalized === 'completed' || normalized === 'done' || normalized === 'success') return 'complete';
+  if (normalized === 'active' || normalized === 'running' || normalized === 'in-progress') return 'active';
+  return 'pending';
+}
+
+function parseResultLinks(value: unknown): ChainOfThoughtStep['results'] {
+  const entries = Array.isArray(value) ? value : [];
+  return entries
+    .map((entry): NonNullable<ChainOfThoughtStep['results']>[number] | null => {
+      if (typeof entry === 'string') {
+        const label = entry.trim();
+        return label ? { label } : null;
+      }
+      if (!isRecord(entry)) return null;
+      const label = asString(entry.label) ?? asString(entry.title) ?? asString(entry.name) ?? asString(entry.url);
+      if (!label) return null;
+      return { label, url: asString(entry.url) ?? asString(entry.href) };
+    })
+    .filter((entry): entry is NonNullable<ChainOfThoughtStep['results']>[number] => entry != null);
+}
+
+function parseChainOfThought(payload: Record<string, unknown>, fallbackId: string): ChainOfThoughtInteraction | null {
+  const rawSteps = Array.isArray(payload.steps) ? payload.steps : [];
+  const steps = rawSteps
+    .map((entry, index): ChainOfThoughtStep | null => {
+      if (typeof entry === 'string') {
+        const title = entry.trim();
+        return title ? { title, status: index === rawSteps.length - 1 ? 'active' : 'complete' } : null;
+      }
+      if (!isRecord(entry)) return null;
+      const title = asString(entry.title) ?? asString(entry.label) ?? asString(entry.name);
+      if (!title) return null;
+      return {
+        title,
+        description: asString(entry.description) ?? asString(entry.detail) ?? asString(entry.text),
+        status: normalizeCotStatus(entry.status ?? entry.state),
+        icon: asString(entry.icon),
+        results: parseResultLinks(entry.results ?? entry.sources),
+      };
+    })
+    .filter((entry): entry is ChainOfThoughtStep => entry != null);
+  if (steps.length === 0) return null;
+  return {
+    type: 'chain-of-thought',
+    id: asString(payload.id) ?? fallbackId,
+    title: asString(payload.title),
+    defaultOpen: asBoolean(payload.defaultOpen),
+    steps,
+  };
+}
+
+function parseTaskFiles(value: unknown): TaskItem['files'] {
+  const entries = Array.isArray(value) ? value : [];
+  return entries
+    .map((entry): NonNullable<TaskItem['files']>[number] | null => {
+      if (typeof entry === 'string') {
+        const path = entry.trim();
+        return path ? { path } : null;
+      }
+      if (!isRecord(entry)) return null;
+      const path = asString(entry.path) ?? asString(entry.file) ?? asString(entry.name);
+      if (!path) return null;
+      return { path, status: asString(entry.status) ?? asString(entry.state) };
+    })
+    .filter((entry): entry is NonNullable<TaskItem['files']>[number] => entry != null);
+}
+
+function parseTask(payload: Record<string, unknown>, fallbackId: string): TaskInteraction | null {
+  const title = asString(payload.title) ?? asString(payload.name);
+  const rawItems = Array.isArray(payload.items) ? payload.items : [];
+  const items = rawItems
+    .map((entry, index): TaskItem | null => {
+      if (typeof entry === 'string') {
+        const label = entry.trim();
+        return label ? { label } : null;
+      }
+      if (!isRecord(entry)) return null;
+      const label = asString(entry.label) ?? asString(entry.title) ?? asString(entry.name) ?? `Item ${index + 1}`;
+      return {
+        label,
+        detail: asString(entry.detail) ?? asString(entry.description) ?? asString(entry.text),
+        files: parseTaskFiles(entry.files),
+      };
+    })
+    .filter((entry): entry is TaskItem => entry != null);
+  if (!title || items.length === 0) return null;
+  return {
+    type: 'task',
+    id: asString(payload.id) ?? fallbackId,
+    title,
+    defaultOpen: asBoolean(payload.defaultOpen),
+    items,
+  };
+}
+
+function parseReasoning(payload: Record<string, unknown>, fallbackId: string): ReasoningInteraction | null {
+  const summary = asString(payload.summary) ?? asString(payload.description);
+  const text = asString(payload.text) ?? asString(payload.content) ?? asString(payload.body);
+  if (!summary && !text && !asBoolean(payload.loading)) return null;
+  return {
+    type: 'reasoning',
+    id: asString(payload.id) ?? fallbackId,
+    title: asString(payload.title),
+    summary,
+    text,
+    defaultOpen: asBoolean(payload.defaultOpen),
+    loading: asBoolean(payload.loading),
+  };
+}
+
 export function parseToolUiInteraction(candidate: unknown, fallbackId = 'tool-ui'): ToolUiInteraction | null {
   const payload = unwrapCandidate(candidate);
   if (!payload) return null;
@@ -898,6 +1200,11 @@ export function parseToolUiInteraction(candidate: unknown, fallbackId = 'tool-ui
   if (type === 'chart') return parseChart(payload, fallbackId);
   if (type === 'image-gallery') return parseImageGallery(payload, fallbackId);
   if (type === 'code-block') return parseCodeBlock(payload, fallbackId);
+  if (type === 'test-results') return parseTestResults(payload, fallbackId);
+  if (type === 'stack-trace') return parseStackTrace(payload, fallbackId);
+  if (type === 'chain-of-thought') return parseChainOfThought(payload, fallbackId);
+  if (type === 'task') return parseTask(payload, fallbackId);
+  if (type === 'reasoning') return parseReasoning(payload, fallbackId);
   return null;
 }
 
@@ -1636,6 +1943,7 @@ function ActionFooter({
         onClick={() => void copyResponse()}
         disabled={disabled}
         className="gap-2"
+        data-testid="chat-tool-ui-action-copy"
       >
         {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
         {copied ? t('toolUi.actions.copied') : t('toolUi.actions.copyResponse')}
@@ -1648,6 +1956,7 @@ function ActionFooter({
           onClick={() => onDraftResponse(responseText)}
           disabled={disabled}
           className="gap-2"
+          data-testid="chat-tool-ui-action-insert"
         >
           <Clipboard className="h-3.5 w-3.5" />
           {t('toolUi.actions.insertResponse')}
@@ -1660,6 +1969,7 @@ function ActionFooter({
           onClick={() => onSubmitResponse(responseText)}
           disabled={disabled}
           className="gap-2"
+          data-testid="chat-tool-ui-action-send"
         >
           <CheckCircle2 className="h-3.5 w-3.5" />
           {t('toolUi.actions.sendResponse')}
@@ -1765,6 +2075,7 @@ function OptionListCard(props: {
                   aria-selected={selectedNow}
                   disabled={option.disabled || isReceipt}
                   onClick={() => toggle(option.id)}
+                  data-testid={`chat-tool-ui-option-${option.id}`}
                   className="flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-black/5 disabled:cursor-default disabled:opacity-70 dark:hover:bg-white/10"
                 >
                   <SelectionMark mode={mode} selected={selectedNow} />
@@ -1908,6 +2219,7 @@ function QuestionFlowCard(props: {
                 type="button"
                 disabled={option.disabled}
                 onClick={() => toggle(option.id)}
+                data-testid={`chat-tool-ui-question-option-${option.id}`}
                 className="flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-black/5 disabled:opacity-60 dark:hover:bg-white/10"
               >
                 <SelectionMark mode={currentStep.selectionMode ?? 'single'} selected={selected.has(option.id)} />
@@ -1927,6 +2239,7 @@ function QuestionFlowCard(props: {
             disabled={stepIndex === 0}
             onClick={() => setStepIndex((current) => Math.max(0, current - 1))}
             className="gap-1"
+            data-testid="chat-tool-ui-question-back"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
             {t('toolUi.actions.back')}
@@ -1937,6 +2250,7 @@ function QuestionFlowCard(props: {
               size="sm"
               disabled={disabled}
               onClick={() => setStepIndex((current) => Math.min(steps.length - 1, current + 1))}
+              data-testid="chat-tool-ui-question-next"
             >
               {t('toolUi.actions.next')}
             </Button>
@@ -2124,8 +2438,9 @@ function TableCard({ interaction }: { interaction: TableInteraction }) {
   const { t } = useTranslation('chat');
   return (
     <ToolUiShell icon={<TableIcon className="h-3.5 w-3.5" />} label={interaction.title ?? t('toolUi.table.label', 'Table')}>
-      {interaction.description && <p className="mb-2 text-xs text-muted-foreground">{interaction.description}</p>}
-      <div className="overflow-x-auto rounded-md border border-black/5 dark:border-white/5">
+      <div data-testid="chat-tool-ui-table">
+        {interaction.description && <p className="mb-2 text-xs text-muted-foreground">{interaction.description}</p>}
+        <div className="overflow-x-auto rounded-md border border-black/5 dark:border-white/5">
         <table className="w-full text-xs">
           <thead className="bg-black/[0.03] dark:bg-white/[0.04]">
             <tr>
@@ -2163,6 +2478,7 @@ function TableCard({ interaction }: { interaction: TableInteraction }) {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </ToolUiShell>
   );
@@ -2276,7 +2592,7 @@ function ProgressCard({ interaction }: { interaction: ProgressInteraction }) {
   const pct = Math.min(100, Math.max(0, Math.round((interaction.value / max) * 100)));
   return (
     <ToolUiShell icon={<Loader2 className="h-3.5 w-3.5" />} label={interaction.label ?? t('toolUi.progress.label', 'Progress')}>
-      <div className="space-y-1.5">
+      <div data-testid="chat-tool-ui-progress" className="space-y-1.5">
         <div className="flex items-center justify-between text-xs">
           <span className="text-muted-foreground">{interaction.status === 'completed' ? t('toolUi.progress.done', 'Done') : t('toolUi.progress.inProgress', 'In progress')}</span>
           <span className="font-medium text-foreground tabular-nums">{pct}%</span>
@@ -2337,7 +2653,7 @@ function AlertCard({ interaction }: { interaction: AlertInteraction }) {
   if (dismissed) return null;
   return (
     <ToolUiShell icon={style.icon} label={t('toolUi.alert.label', 'Alert')}>
-      <div className={cn('flex items-start justify-between gap-2 rounded-md border p-3', style.className)}>
+      <div data-testid="chat-tool-ui-alert" className={cn('flex items-start justify-between gap-2 rounded-md border p-3', style.className)}>
         <div className="min-w-0">
           {interaction.title && <p className="mb-0.5 text-sm font-semibold text-foreground">{interaction.title}</p>}
           <p className="text-sm text-foreground/80">{interaction.message}</p>
@@ -2361,14 +2677,16 @@ function KeyValueCard({ interaction }: { interaction: KeyValueInteraction }) {
   const { t } = useTranslation('chat');
   return (
     <ToolUiShell icon={<KeyRound className="h-3.5 w-3.5" />} label={interaction.title ?? t('toolUi.keyValue.label', 'Details')}>
-      <dl className="divide-y divide-black/5 dark:divide-white/5">
+      <div data-testid="chat-tool-ui-key-value">
+        <dl className="divide-y divide-black/5 dark:divide-white/5">
         {interaction.entries.map((entry, i) => (
           <div key={i} className="flex items-center justify-between gap-3 py-1.5">
             <dt className="text-xs text-muted-foreground">{entry.key}</dt>
             <dd className={cn('text-xs text-foreground', entry.mono && 'font-mono')}>{entry.value}</dd>
           </div>
         ))}
-      </dl>
+        </dl>
+      </div>
     </ToolUiShell>
   );
 }
@@ -2510,6 +2828,7 @@ export function AgentInteractionRenderer({
   canSubmit,
   onSubmitResponse,
   onDraftResponse,
+  onOpenFilePath,
 }: AgentInteractionRendererProps) {
   if (interactions.length === 0) return null;
 
@@ -2572,6 +2891,51 @@ export function AgentInteractionRenderer({
             return <ImageGalleryCard key={key} interaction={interaction} />;
           case 'code-block':
             return <CodeBlockCard key={key} interaction={interaction} />;
+          case 'test-results':
+            return <TestResults key={key} title={interaction.title} summary={interaction.summary} suites={interaction.suites} />;
+          case 'stack-trace':
+            return (
+              <StackTrace
+                key={key}
+                title={interaction.title}
+                errorType={interaction.errorType}
+                message={interaction.message}
+                stack={interaction.stack}
+                source={interaction.source}
+                onOpenFile={onOpenFilePath}
+              />
+            );
+          case 'chain-of-thought':
+            return (
+              <ChainOfThought
+                key={key}
+                title={interaction.title}
+                defaultOpen={interaction.defaultOpen}
+                steps={interaction.steps}
+              />
+            );
+          case 'task':
+            return (
+              <AiTask
+                key={key}
+                title={interaction.title}
+                defaultOpen={interaction.defaultOpen}
+                items={interaction.items}
+                onOpenFile={onOpenFilePath}
+              />
+            );
+          case 'reasoning':
+            return (
+              <Reasoning
+                key={key}
+                title={interaction.title}
+                summary={interaction.summary}
+                loading={interaction.loading}
+                defaultOpen={interaction.defaultOpen}
+              >
+                {interaction.text}
+              </Reasoning>
+            );
           default:
             return null;
         }

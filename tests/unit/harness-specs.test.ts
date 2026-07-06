@@ -10,6 +10,7 @@ import {
 import { buildContext } from '../../harness/src/context.mjs';
 import {
   scanBackendCommunicationBoundary,
+  scanBackendCommunicationBoundaryText,
   touchesCommunicationPath,
   validateGatewayTaskSpec,
   validatePluginLifecycleTaskSpec,
@@ -181,6 +182,29 @@ Body`);
   it('blocks direct Gateway HTTP in renderer files', async () => {
     const failures = await scanBackendCommunicationBoundary(['src/pages/Chat/index.tsx']);
     expect(failures).toEqual([]);
+  });
+
+  it('blocks direct IPC and Gateway transport calls in renderer text', () => {
+    expect(scanBackendCommunicationBoundaryText(
+      'src/pages/Chat/BadPanel.tsx',
+      "window.electron.ipcRenderer.invoke('chat:send')",
+    )).toEqual([
+      'src/pages/Chat/BadPanel.tsx: renderer page/component must not call window.electron.ipcRenderer.invoke directly',
+    ]);
+
+    expect(scanBackendCommunicationBoundaryText(
+      'src/stores/chat/bad-direct-fetch.ts',
+      "await fetch('http://[::1]:18789/rpc')",
+    )).toEqual([
+      'src/stores/chat/bad-direct-fetch.ts: renderer must not fetch Gateway HTTP directly',
+    ]);
+
+    expect(scanBackendCommunicationBoundaryText(
+      'src/lib/bad-gateway-ws.ts',
+      'const ws = new WebSocket("ws://[::1]:18789/events")',
+    )).toEqual([
+      'src/lib/bad-gateway-ws.ts: renderer must not open Gateway WebSocket connections directly',
+    ]);
   });
 
   it('allows fallback flags only in their boundary modules', async () => {

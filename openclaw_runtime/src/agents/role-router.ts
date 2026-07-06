@@ -2,6 +2,11 @@ import {
   BUILT_IN_ROLE_CONTRACTS,
   type RoleContract,
 } from "./role-contract.js";
+import {
+  buildMemoActiveAdjustment,
+  type RoutingMemoMatch,
+  type RoutingMemoPilotMode,
+} from "./routing-memo.js";
 
 export type RoleRouteMode = "router" | "lead-workers" | "adversarial-review";
 
@@ -11,6 +16,17 @@ export type RoleRouteRequest = {
   availableRoles?: readonly RoleContract[];
   fileHints?: string[];
   important?: boolean;
+  /**
+   * Area 3 §3.1: optional routing memo signal. When `mode === 'active'`, the
+   * top recalled memo applies a bounded ±2/−1 score adjustment to the matching
+   * role (keyword evidence stays dominant — memos nudge, never dictate). When
+   * `mode === 'shadow'`, scores are unchanged (shadow reasons are added by the
+   * caller via `buildMemoShadowReason`). Undefined → today's routing unchanged.
+   */
+  memoSignal?: {
+    matches: RoutingMemoMatch[];
+    mode: RoutingMemoPilotMode;
+  };
 };
 
 export type RoleRouteMatch = {
@@ -40,7 +56,12 @@ function normalizeTask(task: string): string {
   return task.toLowerCase();
 }
 
-function scoreRole(role: RoleContract, task: string, fileHints: readonly string[]): RoleRouteMatch {
+function scoreRole(
+  role: RoleContract,
+  task: string,
+  fileHints: readonly string[],
+  memoSignal?: RoleRouteRequest["memoSignal"],
+): RoleRouteMatch {
   const normalized = normalizeTask(task);
   const reasons: string[] = [];
   let score = 0;
@@ -48,6 +69,16 @@ function scoreRole(role: RoleContract, task: string, fileHints: readonly string[
     if (normalized.includes(keyword.toLowerCase())) {
       score += 2;
       reasons.push(`matched:${keyword}`);
+    }
+  }
+  // Area 3 §3.5: config-defined (pack) roles declare their own routing keywords
+  // via `RoleContract.routingKeywords`. Same +2 weight as built-in keywords so
+  // pack roles are routable on equal footing without modifying the static table.
+  for (const keyword of role.routingKeywords ?? []) {
+    const lowered = keyword.toLowerCase();
+    if (lowered && normalized.includes(lowered)) {
+      score += 2;
+      reasons.push(`routing-keyword:${keyword}`);
     }
   }
   for (const tag of role.tags ?? []) {
@@ -72,6 +103,20 @@ function scoreRole(role: RoleContract, task: string, fileHints: readonly string[
     score += 1;
     reasons.push("default-execution-role");
   }
+  // Area 3 §3.1: apply bounded memo score adjustment in active phase only.
+  // Shadow phase leaves scores unchanged (byte-identical routing); shadow
+  // reasons are added by the caller. Only the top recalled memo matching this
+  // role's lead contributes — bounded magnitudes keep keyword evidence dominant.
+  if (memoSignal && memoSignal.mode === "active" && memoSignal.matches.length > 0) {
+    const topMatch = memoSignal.matches[0];
+    if (topMatch.memo.leadRole === role.name) {
+      const adjustment = buildMemoActiveAdjustment(topMatch);
+      if (adjustment) {
+        score += adjustment.delta;
+        reasons.push(adjustment.reason);
+      }
+    }
+  }
   return { role, score, reasons };
 }
 
@@ -95,10 +140,11 @@ function resolveMode(request: RoleRouteRequest): RoleRouteMode {
 export function routeRole(request: RoleRouteRequest): RoleRouteResult {
   const roles = request.availableRoles?.length ? request.availableRoles : BUILT_IN_ROLE_CONTRACTS;
   const fileHints = request.fileHints ?? [];
+  const memoSignal = request.memoSignal;
   const matches = roles
-    .map((role) => scoreRole(role, request.task, fileHints))
+    .map((role) => scoreRole(role, request.task, fileHints, memoSignal))
     .sort((left, right) => right.score - left.score || left.role.name.localeCompare(right.role.name));
-  const primary = matches[0] ?? scoreRole(BUILT_IN_ROLE_CONTRACTS[2], request.task, fileHints);
+  const primary = matches[0] ?? scoreRole(BUILT_IN_ROLE_CONTRACTS[2], request.task, fileHints, memoSignal);
   const mode = resolveMode(request);
   const supportingNames = mode === "router"
     ? []

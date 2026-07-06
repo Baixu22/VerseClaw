@@ -19,11 +19,19 @@ export function loadEmbeddedAgentMcpConfig(params: {
   workspaceDir: string;
   cfg?: OpenClawConfig;
   manifestRegistry?: Pick<PluginManifestRegistry, "plugins">;
+  agentId?: string | null;
+  workspaceId?: string | null;
+  roleName?: string | null;
 }): EmbeddedAgentMcpConfig {
   const bundleMcp = loadMergedBundleMcpConfig({
     workspaceDir: params.workspaceDir,
     cfg: params.cfg,
     manifestRegistry: params.manifestRegistry,
+    exposureContext: {
+      agentId: params.agentId,
+      workspaceId: params.workspaceId ?? params.workspaceDir,
+      roleName: params.roleName,
+    },
   });
 
   return {

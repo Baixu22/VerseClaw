@@ -1,6 +1,21 @@
 {
   "nav": "Knowledge",
   "title": "Knowledge",
+  "assistant": {
+    "title": "Knowledge Assistant",
+    "subtitle": "保管庫にある文書を読み、ソースを検索し、役立つ発見を監査レポートからではなくレビュー済みの知識へ整理します。",
+    "browse": "文書を見る",
+    "docs": "読める文書",
+    "docsHint": "メンテナンス結果ではなく、ページと分類から始めます。",
+    "pending": "確認待ち",
+    "pendingHint": "保持、編集、却下を待つ候補です。",
+    "drafts": "編集できるドラフト",
+    "draftsHint": "メモを長く使える知識にする場所です。",
+    "health": "ヘルス信号",
+    "healthHint": "警告と監査チェックは監査センターにあります。",
+    "mapTitle": "中身を見る",
+    "mapHint": "トピックを開くと保管庫を検索し、一致するページをプレビューできます。"
+  },
   "subtitle": "出典付き wiki コンテキスト、レビュー待ちドラフト、ロール管理された知識変更を扱います。",
   "tabs": {
     "library": "Library",
@@ -8,7 +23,8 @@
     "drafts": "Draft Inbox",
     "runtime": "Runtime Lessons",
     "review": "Review",
-    "governance": "Governance"
+    "governance": "Governance",
+    "sources": "ソース"
   },
   "actions": {
     "configure": "Configure",
@@ -61,7 +77,138 @@
   },
   "library": {
     "title": "Library",
+    "countLabel": "{{count}} ページ",
     "typeHint": "この知識タイプで絞り込んで表示"
+  },
+  "workspace": {
+    "vault": "Vault",
+    "localVault": "ローカル知識保管庫",
+    "documents": "文書",
+    "emptyDocuments": "保管庫を検索するか、新しい Markdown ノートを作成してください。",
+    "types": "タイプ",
+    "untitled": "無題のノート",
+    "localDraft": "ローカルドラフト",
+    "characters": "文字",
+    "tagsPlaceholder": "タグ、別名、プロジェクト",
+    "submitReview": "送信",
+    "reviewReason": "知識ワークスペースで作成された Markdown ノートをレビューへ送信しました。",
+    "emptyPreview": "まだプレビューする内容がありません。",
+    "modes": {
+      "edit": "編集",
+      "preview": "プレビュー",
+      "split": "分割"
+    }
+  },
+  "librarian": {
+    "title": "Knowledge Librarian",
+    "roleId": "knowledge-librarian",
+    "currentDocument": "現在の文書",
+    "noSummary": "Markdown 文書を書くか開くと、Librarian が文脈を取得できます。",
+    "openAssistant": "Librarian を開く",
+    "askSteward": "Steward に依頼",
+    "related": "関連ページ",
+    "noRelated": "検索結果と関連ページがここに表示されます。",
+    "boundaries": "ロール境界",
+    "boundaryRead": "引用付きで検索と回答ができます。",
+    "boundaryDraft": "ドラフトと proposal は準備できますが、保管庫へ無断で書き込めません。",
+    "boundarySources": "不足ソース、競合、古い主張を明示します。",
+    "modalTitle": "Knowledge Librarian",
+    "modalSubtitle": "Markdown 知識ベースに質問し、整理し、レビューします。",
+    "writeBoundary": "Librarian は整理とドラフト作成を支援できますが、永続的な書き込みはドラフトレビューと明示的な確認を通ります。",
+    "askPlaceholder": "この保管庫または現在の文書について質問",
+    "askButton": "質問",
+    "askHint": "回答はまずローカルの知識検索とページプレビューを使います。永続的な書き込みは引き続きレビューを通します。",
+    "checkpointSaved": "{{time}} にチェックポイントを保存しました",
+    "noCheckpoint": "ローカルチェックポイントはまだありません",
+    "clearThread": "スレッドを消去",
+    "threadEmpty": "質問すると保管庫を検索し、一致したページを要約して、このスレッドをローカルチェックポイントとして保持します。",
+    "you": "あなた",
+    "answerIntro": "保管庫を検索し、関連するソースを {{count}} 件見つけました:",
+    "answerBoundary": "これはローカル検索による回答です。永続的な知識にする前に steward review を使ってください。",
+    "answerError": "保管庫を照会できませんでした: {{error}}",
+    "noAnswer": "一致するページが見つかりませんでした。より具体的な語句を使うか、先に文書を開いてください。",
+    "emptyCitation": "このソースには読み取れる抜粋がありません。",
+    "copy": "メッセージをコピー",
+    "copied": "コピーしました",
+    "copyFailed": "メッセージをコピーできませんでした。",
+    "citations": "引用",
+    "searching": "ローカル知識を検索し、ページプレビューを読み込んでいます...",
+    "errorTitle": "Knowledge Librarian でローカル検索エラーが発生しました",
+    "retry": "再試行",
+    "dismissError": "閉じる",
+    "sections": {
+      "answer": "回答",
+      "sources": "使用したソース",
+      "unknowns": "不明点 / 不足ソース",
+      "nextAction": "推奨される次のアクション",
+      "retrieval": "検索インスペクター"
+    },
+    "retrieval": {
+      "query": "クエリ",
+      "corpus": "コーパス",
+      "roleTag": "ロールタグ",
+      "resultCount": "結果数",
+      "selectedSources": "選択ソース",
+      "selectedReason": "ローカルキーワード検索から選択"
+    },
+    "unknowns": {
+      "noSources": "この回答を裏付けるソースは見つかりませんでした。",
+      "pageSnippetLevel": "根拠付けはページ/スニペット単位です。セクション単位の検証はまだ利用できません。"
+    },
+    "groundingStatus": {
+      "grounded": "根拠あり",
+      "partial": "部分的",
+      "missingSources": "ソース不足"
+    },
+    "confidence": "信頼度",
+    "candidate": {
+      "draftTitlePrefix": "Librarian 回答",
+      "errorExperienceTitlePrefix": "エラー経験",
+      "stewardTitlePrefix": "Steward レビュー"
+    },
+    "suggestions": {
+      "summarize": {
+        "label": "現在のノートを要約",
+        "prompt": "現在のノート「{{title}}」を、出典に基づく要点と未解決の問いで要約してください。"
+      },
+      "related": {
+        "label": "関連ページを探す",
+        "prompt": "「{{title}}」に関連するページを探し、それらがどうつながるか説明してください。"
+      },
+      "gaps": {
+        "label": "不足を確認",
+        "prompt": "「{{title}}」について、不足している出典、古い主張、次に作るとよい草稿を確認してください。"
+      },
+      "next": {
+        "saveDraft": "根拠付き回答をレビュー用ドラフトとして保存します。",
+        "createErrorExperience": "再現しやすい落とし穴ならエラー経験候補を作成します。",
+        "sendToSteward": "昇格前に Knowledge Steward へレビューを依頼します。",
+        "broadenSearch": "検索範囲を広げるか、先にソース文書を開いてください。"
+      }
+    },
+    "capabilities": {
+      "ask": {
+        "title": "保管庫に質問",
+        "body": "知識ページから簡単な質問に答え、ソース参照を表示します。"
+      },
+      "organize": {
+        "title": "ノートを整理",
+        "body": "現在の Markdown ページにタイトル、タグ、リンク、frontmatter を提案します。"
+      },
+      "review": {
+        "title": "変更をレビュー",
+        "body": "ドラフトを Steward に渡し、ソース、競合、鮮度を確認します。"
+      }
+    },
+    "actions": {
+      "saveDraft": "Draft として保存",
+      "createErrorExperience": "Error Experience を作成",
+      "sendToSteward": "Steward へ送信",
+      "searchRelated": "関連を探す",
+      "stewardReview": "Steward レビュー",
+      "openInbox": "Inbox を開く",
+      "submitDraft": "ドラフト送信"
+    }
   },
   "inbox": {
     "title": "Knowledge Inbox",
@@ -149,6 +296,27 @@
       "okf": "OKF",
       "manual": "Manual",
       "wiki-result": "Wiki"
+    },
+    "triage": {
+      "title": "Steward ?????",
+      "confidence": "{{confidence}}%",
+      "duplicateOf": "???",
+      "conflictWith": "???",
+      "suggestedEdits": "???",
+      "groups": {
+        "needs-decision": "?????",
+        "ready-for-review": "??????",
+        "possible-duplicate": "??????",
+        "observe": "??",
+        "reject-low-value": "???"
+      },
+      "actions": {
+        "needs-decision": "?????",
+        "ready-for-review": "??????",
+        "possible-duplicate": "??????",
+        "observe": "??",
+        "reject-low-value": "???"
+      }
     }
   },
   "provenance": {
@@ -192,7 +360,27 @@
     "noProposal": "proposal が選択されていません。",
     "confirmationBoundary": "Agent と Knowledge Steward はドラフトまたは proposal だけを準備できます。知識の apply にはユーザーの明示的な確認が必要です。",
     "approveAndApply": "Approve and Apply",
-    "reject": "Reject"
+    "reject": "Reject",
+    "steward": {
+      "section": "Steward レビュー",
+      "queue": "Steward キュー",
+      "queueEmpty": "Steward レビュー待ちのドラフトはありません。",
+      "variant": "バリアント",
+      "classifiedAs": "{type} に分類",
+      "warnings": "警告",
+      "notes": "ノート",
+      "noReview": "このドラフトにはまだ Steward レビューがありません。",
+      "configure": "Steward を設定",
+      "configureTitle": "Steward バリアント",
+      "activeVariant": "アクティブ",
+      "setActive": "アクティブに設定",
+      "boundaryNotice": "Steward は変更を直接適用できません。この境界は機械的に強制されます。",
+      "classification": "分類モード",
+      "heuristic": "ヒューリスティック",
+      "semantic": "セマンティック",
+      "defaultRole": "デフォルトロール",
+      "close": "閉じる"
+    }
   },
   "runtime": {
     "title": "Runtime Lessons",
@@ -214,6 +402,8 @@
   },
   "governance": {
     "title": "Governance",
+    "openAudit": "監査センター",
+    "backToLibrary": "ライブラリへ戻る",
     "readOnlyBadge": "Agent は既定で読み取り専用",
     "steward": "Knowledge Steward",
     "stewardDescription": "分類、出典確認、競合検出、変更提案を行う role-first のスロットです。直接 apply はできません。",
@@ -229,8 +419,36 @@
     "stale": "古いページ",
     "dangling": "孤立ページ",
     "noIssues": "問題なし",
+    "qualityMetrics": {
+      "title": "品質メトリクス",
+      "description": "検索品質と反復エラーカードのためのコンパクトな健全性シグナルです。",
+      "pendingAudit": "ヘルスチェックを実行",
+      "sourceAudit": "監査結果",
+      "affected": "{{count}} 件に影響",
+      "severity": {
+        "info": "情報",
+        "warning": "警告",
+        "error": "エラー"
+      },
+      "kinds": {
+        "stale_cards": "古いカード",
+        "duplicate_clusters": "重複クラスター",
+        "source_gaps": "ソース不足",
+        "unreferenced_pages": "未参照ページ",
+        "low_confidence_high_hit_cards": "低信頼・高ヒットカード",
+        "high_dismissal_cards": "却下が多いカード"
+      },
+      "hints": {
+        "stale_cards": "古いシグナルを持つカードまたはページ。",
+        "duplicate_clusters": "重複している可能性のある知識項目。",
+        "source_gaps": "利用可能な出典や provenance が不足している項目。",
+        "unreferenced_pages": "他のレビュー済み知識とつながっていないページ。",
+        "low_confidence_high_hit_cards": "信頼度が低いのに頻繁に発火する経験カード。",
+        "high_dismissal_cards": "受け入れより却下が多い経験カード。"
+      }
+    },
     "suggestions": "ナレッジスチュワードの提案",
-    "lastCheck": "最終チェック：{time}",
+    "lastCheck": "最終チェック：{{time}}",
     "dismissAll": "すべて却下",
     "allClear": "問題ありません",
     "allClearHint": "ガバナンスの問題は検出されていません。ヘルスチェックを実行して確認してください。",
@@ -257,7 +475,10 @@
     "dismissInbox": "Inbox item dismissed",
     "stewardReview": "Steward review updated",
     "applyReviewedChange": "Reviewed change applied",
-    "rejectDraft": "Draft rejected"
+    "rejectDraft": "Draft rejected",
+    "librarianDraft": "Librarian draft created",
+    "librarianErrorExperience": "Error experience candidate created",
+    "librarianSteward": "Steward review prepared"
   },
   "errors": {
     "status": "知識ステータスを読み込めませんでした。",
@@ -266,5 +487,31 @@
     "okfImport": "OKF import failed.",
     "search": "検索に失敗しました。",
     "get": "知識ページを読み込めませんでした。"
+  },
+  "sources": {
+    "title": "ソース",
+    "typeHint": "このソース種別をフィルターして表示",
+    "countLabel": "{{count}} ページ"
+  },
+  "sourceSet": {
+    "title": "現在の Source Set",
+    "empty": "検索結果または現在の文書からソースを追加します。",
+    "count": "{{count}} 件のソース",
+    "save": "Source Set を保存",
+    "clear": "クリア",
+    "titlePlaceholder": "Source Set のタイトル",
+    "defaultTitle": "無題の Source Set",
+    "addResult": "Source Set に追加",
+    "saved": "Source Set を保存しました",
+    "answerBoundary": "回答は選択したソースを優先します。永続的な書き込みには草稿レビューと明示的な確認が必要です。"
+  },
+  "studio": {
+    "title": "Studio アシスタント",
+    "summary": "要約",
+    "faq": "FAQ",
+    "decisionMemo": "意思決定メモ",
+    "troubleshootingRecipe": "トラブルシュート",
+    "artifactCreated": "Studio 草稿を作成しました",
+    "question": "現在の Source Set から {{artifact}} を作成します。"
   }
 }

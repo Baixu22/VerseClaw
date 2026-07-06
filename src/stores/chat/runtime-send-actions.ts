@@ -1,4 +1,4 @@
-import { hostApi, type ChatKnowledgeReference, type ChatSendWithMediaResult } from '@/lib/host-api';
+import { hostApi, type ChatSendWithMediaResult } from '@/lib/host-api';
 import { useAgentsStore } from '@/stores/agents';
 import {
   clearErrorRecoveryTimer,
@@ -13,9 +13,8 @@ import {
   takeBlockedRunEvents,
   upsertImageCacheEntry,
 } from './helpers';
-import type { ChatSession, RawMessage } from './types';
+import type { ChatSession, RawMessage, SendOptions } from './types';
 import type { ChatGet, ChatSet, RuntimeActions } from './store-api';
-import type { KnowledgeInvocationMode, WorkspaceKnowledgeScope } from '@shared/types/workspace';
 import { useWorkspacesStore } from '../workspaces';
 
 function normalizeAgentId(value: string | undefined | null): string {
@@ -70,14 +69,16 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
   return {
     sendMessage: async (
       text: string,
-      attachments?: Array<{ fileName: string; mimeType: string; fileSize: number; stagedPath: string; preview: string | null }>,
-      targetAgentId?: string | null,
-      knowledgeScope?: WorkspaceKnowledgeScope,
-      knowledgeMode?: KnowledgeInvocationMode,
-      inputMode?: 'interrupt' | 'guide' | 'queue' | 'revise-goal',
-      knowledgeReferences?: ChatKnowledgeReference[],
-      activeTaskNodeId?: string | null,
+      opts?: SendOptions,
     ) => {
+      const attachments = opts?.attachments;
+      const targetAgentId = opts?.targetAgentId;
+      const knowledgeScope = opts?.knowledgeScope;
+      const knowledgeMode = opts?.knowledgeMode;
+      const inputMode = opts?.inputMode;
+      const knowledgeReferences = opts?.knowledgeReferences;
+      const activeTaskNodeId = opts?.activeTaskNodeId;
+      const modelRefOverride = opts?.modelRefOverride ?? null;
       const trimmed = text.trim();
       if (!trimmed && (!attachments || attachments.length === 0)) return;
       const currentSendGeneration = ++sendGeneration;
@@ -248,6 +249,7 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
             ...(inputMode ? { inputMode } : {}),
             ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
             ...(activeTaskNodeId ? { activeTaskNodeId } : {}),
+            ...(modelRefOverride ? { modelRef: modelRefOverride } : {}),
             media: attachments.map((a) => ({
               filePath: a.stagedPath,
               mimeType: a.mimeType,
@@ -266,6 +268,7 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
             ...(inputMode ? { inputMode } : {}),
             ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
             ...(activeTaskNodeId ? { activeTaskNodeId } : {}),
+            ...(modelRefOverride ? { modelRef: modelRefOverride } : {}),
           });
         }
 

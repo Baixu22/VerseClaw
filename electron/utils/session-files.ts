@@ -10,6 +10,7 @@
  *      conversation:
  *        - `<baseId>.jsonl`               the live transcript
  *        - `<baseId>.deleted.jsonl`       legacy soft-delete leftover
+ *        - `<baseId>.archived.jsonl`      archived transcript (recycle bin)
  *        - `<baseId>.jsonl.reset.*`       reset snapshots from sessions.reset
  *        - `<baseId>.trajectory.jsonl`    OpenClaw runtime "flight recorder"
  *                                         (default location, beside session)
@@ -25,10 +26,22 @@
  * follow path is the only deliberate exception: it walks to whatever
  * `runtimeFile` says (defended by schema + extension checks) so Verse Claw can
  * cooperate with OpenClaw's documented `OPENCLAW_TRAJECTORY_DIR` override.
+ *
+ * Archive (recycle bin) contract:
+ *   - Archiving renames `<baseId>.jsonl` → `<baseId>.archived.jsonl` and
+ *     removes the entry from `sessions.json` so `sessions.list` skips it
+ *     (same skip behaviour as the legacy `.deleted.jsonl` soft-delete).
+ *   - A Verse-Claw-owned index `sessions.archives.json` (beside
+ *     `sessions.json`) records each archived session's original metadata so
+ *     it can be restored exactly. OpenClaw's runtime ignores this file.
+ *   - Permanent delete (empty recycle bin) runs `sweepSessionArtefacts` on
+ *     the `.archived.jsonl` base id, which unlinks the archived transcript
+ *     and all sibling trajectory/reset artefacts.
  */
 
 import { promises as fsP } from 'node:fs';
 import path from 'node:path';
+import type { SessionArchiveEntry, SessionArchiveIndex } from '@shared/types/workspace';
 
 export type SessionResolutionFailure =
   | { kind: 'not-found' }
@@ -205,6 +218,7 @@ export async function sweepSessionArtefacts(
   const targets = dirEntries.filter((name) =>
     name === `${baseId}.jsonl`
     || name === `${baseId}.deleted.jsonl`
+    || name === `${baseId}.archived.jsonl`
     || name === `${baseId}.trajectory.jsonl`
     || name === pointerName
     || name.startsWith(`${baseId}.jsonl.reset.`),
@@ -268,4 +282,191 @@ export function removeSessionEntry(
   } else if (sessionsJson[sessionKey]) {
     delete sessionsJson[sessionKey];
   }
+}
+
+/**
+ * Snapshot the sessions.json entry for `sessionKey` so it can be re-inserted
+ * verbatim on restore. Returns the raw entry value (object or string) or
+ * null when the session is not listed in sessions.json. Handles both the
+ * array-shape and the object-keyed shape.
+ */
+export function snapshotSessionEntry(
+  sessionsJson: Record<string, unknown>,
+  sessionKey: string,
+): unknown {
+  if (Array.isArray(sessionsJson.sessions)) {
+    const entry = (sessionsJson.sessions as Array<Record<string, unknown>>)
+      .find((s) => s.key === sessionKey || s.sessionKey === sessionKey);
+    return entry ? structuredClone(entry) : null;
+  }
+  if (sessionsJson[sessionKey] != null) {
+    return structuredClone(sessionsJson[sessionKey]);
+  }
+  return null;
+}
+
+/**
+ * Re-insert a previously snapshotted sessions.json entry for `sessionKey`.
+ * If the snapshot was taken from the array shape, it is pushed back onto
+ * `sessions.sessions`; otherwise it is restored under the object key. When
+ * the current sessions.json uses the array shape but the snapshot is an
+ * object (or vice versa), we normalise into the current shape so restore
+ * stays idempotent across sessions.json migrations.
+ */
+export function restoreSessionEntry(
+  sessionsJson: Record<string, unknown>,
+  sessionKey: string,
+  snapshot: unknown,
+): void {
+  if (snapshot == null) return;
+  if (Array.isArray(sessionsJson.sessions)) {
+    const exists = (sessionsJson.sessions as Array<Record<string, unknown>>)
+      .some((s) => s.key === sessionKey || s.sessionKey === sessionKey);
+    if (exists) return;
+    const entry = (snapshot && typeof snapshot === 'object')
+      ? { ...(snapshot as Record<string, unknown>), key: sessionKey }
+      : { key: sessionKey, sessionFile: snapshot };
+    (sessionsJson.sessions as Array<Record<string, unknown>>).push(entry);
+  } else {
+    if (sessionsJson[sessionKey] != null) return;
+    sessionsJson[sessionKey] = snapshot;
+  }
+}
+
+/**
+ * Rename `<baseId>.jsonl` → `<baseId>.archived.jsonl` inside the sessions
+ * dir. Tolerates ENOENT (file already archived or concurrently removed) by
+ * returning `false` so the caller can decide whether to treat it as success.
+ * Refuses paths that would escape `sessionsDirAbs` (defence-in-depth, same
+ * rule as the resolution step).
+ */
+export async function archiveSessionTranscript(
+  sessionsDirAbs: string,
+  baseId: string,
+): Promise<{ renamed: boolean; archivedPath: string; error?: string }> {
+  const livePath = path.join(sessionsDirAbs, `${baseId}.jsonl`);
+  const archivedPath = path.join(sessionsDirAbs, `${baseId}.archived.jsonl`);
+  const rel = path.relative(sessionsDirAbs, archivedPath);
+  if (rel.startsWith('..') || path.isAbsolute(rel)) {
+    return { renamed: false, archivedPath, error: `archived path escapes sessions dir: ${archivedPath}` };
+  }
+  try {
+    await fsP.rename(livePath, archivedPath);
+    return { renamed: true, archivedPath };
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === 'ENOENT') return { renamed: false, archivedPath, error: 'live transcript not found' };
+    return { renamed: false, archivedPath, error: String(err) };
+  }
+}
+
+/**
+ * Rename `<baseId>.archived.jsonl` → `<baseId>.jsonl` to bring an archived
+ * session back into the live set. Tolerates ENOENT (already restored or
+ * permanently deleted) by returning `false`.
+ */
+export async function restoreSessionTranscript(
+  sessionsDirAbs: string,
+  baseId: string,
+): Promise<{ restored: boolean; livePath: string; error?: string }> {
+  const livePath = path.join(sessionsDirAbs, `${baseId}.jsonl`);
+  const archivedPath = path.join(sessionsDirAbs, `${baseId}.archived.jsonl`);
+  try {
+    await fsP.rename(archivedPath, livePath);
+    return { restored: true, livePath };
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === 'ENOENT') return { restored: false, livePath, error: 'archived transcript not found' };
+    return { restored: false, livePath, error: String(err) };
+  }
+}
+
+const EMPTY_ARCHIVE_INDEX: SessionArchiveIndex = { version: 1, entries: [] };
+
+/**
+ * Read the Verse-Claw-owned archive index at `archiveIndexPath` (convention:
+ * `<sessionsDir>/sessions.archives.json`). Returns an empty index when the
+ * file is missing, malformed, or carries an unexpected schema version — the
+ * caller can then treat the archive as empty rather than crashing the UI.
+ */
+export async function readArchiveIndex(
+  archiveIndexPath: string,
+): Promise<SessionArchiveIndex> {
+  let raw: string;
+  try {
+    raw = await fsP.readFile(archiveIndexPath, 'utf8');
+  } catch {
+    return { ...EMPTY_ARCHIVE_INDEX, entries: [] };
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return { ...EMPTY_ARCHIVE_INDEX, entries: [] };
+  }
+  if (!parsed || typeof parsed !== 'object') return { ...EMPTY_ARCHIVE_INDEX, entries: [] };
+  const obj = parsed as Record<string, unknown>;
+  if (obj.version !== 1 || !Array.isArray(obj.entries)) {
+    return { ...EMPTY_ARCHIVE_INDEX, entries: [] };
+  }
+  const entries = (obj.entries as unknown[])
+    .filter((value): value is SessionArchiveEntry => Boolean(value) && typeof value === 'object'
+      && typeof (value as SessionArchiveEntry).sessionKey === 'string'
+      && typeof (value as SessionArchiveEntry).agentId === 'string'
+      && typeof (value as SessionArchiveEntry).transcriptPath === 'string');
+  return { version: 1, entries };
+}
+
+/**
+ * Persist the archive index. Writes are atomic-ish (write to temp then
+ * rename) so a crash mid-write cannot corrupt the existing index — the
+ * index is the only record of which `.archived.jsonl` files exist on disk,
+ * so losing it would orphan archived transcripts in the recycle bin.
+ */
+export async function writeArchiveIndex(
+  archiveIndexPath: string,
+  index: SessionArchiveIndex,
+): Promise<void> {
+  const tmpPath = `${archiveIndexPath}.tmp`;
+  await fsP.writeFile(tmpPath, JSON.stringify(index, null, 2), 'utf8');
+  await fsP.rename(tmpPath, archiveIndexPath);
+}
+
+/**
+ * Append/replace an archive entry. If an entry with the same `sessionKey`
+ * already exists, it is replaced (idempotent re-archive).
+ */
+export async function upsertArchiveEntry(
+  archiveIndexPath: string,
+  entry: SessionArchiveEntry,
+): Promise<SessionArchiveIndex> {
+  const index = await readArchiveIndex(archiveIndexPath);
+  const without = index.entries.filter((existing) => existing.sessionKey !== entry.sessionKey);
+  without.push(entry);
+  const next: SessionArchiveIndex = { version: 1, entries: without };
+  await writeArchiveIndex(archiveIndexPath, next);
+  return next;
+}
+
+/**
+ * Remove an entry from the archive index by `sessionKey`. Returns the
+ * updated index and the removed entry (or null when absent) so the caller
+ * can use the snapshot for restore.
+ */
+export async function removeArchiveEntry(
+  archiveIndexPath: string,
+  sessionKey: string,
+): Promise<{ index: SessionArchiveIndex; removed: SessionArchiveEntry | null }> {
+  const index = await readArchiveIndex(archiveIndexPath);
+  let removed: SessionArchiveEntry | null = null;
+  const entries = index.entries.filter((existing) => {
+    if (existing.sessionKey === sessionKey) {
+      removed = existing;
+      return false;
+    }
+    return true;
+  });
+  const next: SessionArchiveIndex = { version: 1, entries };
+  await writeArchiveIndex(archiveIndexPath, next);
+  return { index: next, removed };
 }

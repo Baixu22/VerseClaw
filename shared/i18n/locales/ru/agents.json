@@ -61,6 +61,16 @@
         "available": "Доступные роли",
         "tools": "Инструменты",
         "orchestrate": "Задача оркестрации",
+        "routingMemoTitle": "Данные Routing Memo",
+        "routingMemoAuthority": "Полномочие",
+        "routingMemoSamples": "Shadow-выборки",
+        "routingMemoDivergence": "Расхождения",
+        "routingMemoOutcomes": "Исходы",
+        "routingMemoOutcomeSummary": "{{completed}} заверш. / {{partial}} частич.",
+        "routingMemoActiveGate": "Active-гейт",
+        "routingMemoGateMet": "Гейт выполнен",
+        "routingMemoGateNotMet": "Гейт не выполнен",
+        "routingMemoRecentSample": "Последний",
         "taskPlaceholder": "Опишите задачу для оркестрации, например: рефакторинг этого модуля и добавление тестов",
         "taskRequired": "Сначала введите описание задачи",
         "noSession": "Нет сессии для оркестрации. Сначала создайте или выберите Агента.",
@@ -75,6 +85,8 @@
         "cancel": "Отмена",
         "approveFailed": "Одобрение не удалось",
         "toolsUnit": "инстр.",
+        "originBuiltIn": "Встроенный",
+        "originCustom": "Польз.",
         "viewContract": "Показать контракт",
         "soulEmpty": "(нет скомпилированного вывода)",
         "worker": "Исполнитель",
@@ -300,6 +312,7 @@
         "defaultSkills": "Навыки по умолчанию",
         "noDefaultSkills": "Навыков по умолчанию нет",
         "noAgentMcp": "MCP-сервисов в области Agent нет",
+        "agentMcp": "Agent MCP",
         "defaultSkillIds": "ID навыков по умолчанию",
         "defaultSkillIdsPlaceholder": "Один skill id на строку. Рабочая область может их переопределить.",
         "defaultMcpIds": "ID MCP-сервисов по умолчанию",
@@ -318,6 +331,87 @@
             "user": "Профиль пользователя и предпочтения",
             "identity": "Идентичность (имя, emoji, аватар)",
             "heartbeat": "Периодическое фоновое поведение"
+        },
+        "publication": {
+            "title": "Публикация возможностей",
+            "workbenchTitle": "Workbench управления возможностями",
+            "sourceRuntime": "Данные публикации Runtime доступны.",
+            "sourceFallback": "Runtime недоступен; показан локальный fallback.",
+            "refresh": "Обновить публикации",
+            "loadFailed": "Не удалось загрузить публикации возможностей: {{error}}",
+            "diagnosticSummary": "{{blocked}} заблокировано / {{warnings}} предупреждений",
+            "skills": "Навыки",
+            "mcp": "MCP-сервисы",
+            "empty": "Возможности не найдены.",
+            "searchPlaceholder": "Поиск возможностей",
+            "rolePreviewPlaceholder": "Предпросмотр политики роли",
+            "advancedIds": "Расширенные ID возможностей",
+            "add": "Добавить",
+            "remove": "Удалить",
+            "blocked": "Заблокировано",
+            "discard": "Отменить",
+            "apply": "Применить изменения",
+            "pendingSummary": "{{adds}} добавить / {{removes}} удалить",
+            "noPendingChanges": "Нет ожидающих изменений возможностей",
+            "kind": {
+                "skill": "Навык",
+                "mcp": "MCP"
+            },
+            "filter": {
+                "all": "Все",
+                "anyState": "Любой статус",
+                "selected": "Выбрано",
+                "diagnostics": "С диагностикой",
+                "changed": "Изменено"
+            },
+            "change": {
+                "add": "Добавить",
+                "remove": "Удалить"
+            },
+            "diagnosticLevel": {
+                "info": "Инфо",
+                "warning": "Предупреждение",
+                "blocked": "Заблокировано"
+            },
+            "metric": {
+                "selected": "Выбрано",
+                "published": "Опубликовано",
+                "skills": "Навыки",
+                "mcp": "MCP",
+                "add": "Добавить",
+                "remove": "Удалить",
+                "diagnostics": "Диагностика"
+            },
+            "state": {
+                "published": "Опубликовано",
+                "available": "Доступно",
+                "disabled": "Отключено",
+                "blocked": "Заблокировано",
+                "missing": "Отсутствует",
+                "runtimeUnavailable": "Runtime недоступен"
+            },
+            "detail": {
+                "open": "Открыть детали возможности",
+                "exposure": "Область публикации",
+                "exposureAgents": "Агенты",
+                "exposureWorkspaces": "Рабочие области",
+                "exposureRoles": "Роли",
+                "runtime": "Runtime",
+                "useModes": "Режимы использования",
+                "diagnostics": "Диагностика",
+                "none": "Нет",
+                "reasons": "Причины",
+                "mcpRuntime": "MCP Runtime",
+                "reload": "Перезагрузить Runtime",
+                "heartbeat": "Heartbeat",
+                "listTools": "Список tools",
+                "toolsLoaded": "{{count}} tools загружено",
+                "runtimeReloaded": "Runtime перезагружен"
+            },
+            "toast": {
+                "saved": "Изменения возможностей применены",
+                "saveFailed": "Не удалось применить изменения возможностей: {{error}}"
+            }
         },
         "toast": {
             "loadFailed": "Не удалось загрузить конфигурацию Agent: {{error}}",

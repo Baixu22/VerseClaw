@@ -1,12 +1,12 @@
 /**
  * Chat Input Component
  * Textarea with send button and universal file upload support.
- * Enter to send, Shift+Enter for new line.
+ * Enter to send, Shift+Enter for new line unless an active run is being interrupted.
  * Supports: native file picker, clipboard paste, drag & drop.
  * Files are staged to disk via IPC — only lightweight path references
  * are sent with the message (no base64 over WebSocket).
  */
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo, type ReactNode } from 'react';
 import {
   Archive,
   AtSign,
@@ -14,26 +14,34 @@ import {
   Briefcase,
   Check,
   ChevronDown,
+  CircleSlash,
+  Database,
+  Eye,
   FileText,
   FolderPlus,
+  Gauge,
   GitBranchPlus,
   Loader2,
   MessageSquarePlus,
   Paperclip,
+  Plus,
   Search,
   SendHorizontal,
   Shield,
   Square,
+  Target,
   Wrench,
   Users,
   X,
+  type LucideIcon,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, type KnowledgeSearchResult } from '@/lib/host-api';
+import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, type KnowledgeRouteCandidateGroupKey, type KnowledgeSearchResult } from '@/lib/host-api';
+import type { SendOptions } from '@shared/chat/types';
 import { cn } from '@/lib/utils';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
@@ -61,12 +69,23 @@ import {
   type ChatCapabilityPlanResolution,
 } from '@/lib/chat-capability-actions';
 import { isCapabilityAuditBlocked } from '@/lib/capability-audit';
-import type { KnowledgeInvocationMode, LiveTokenUsage, WorkspaceContextRange, WorkspaceKnowledgeScope, WorkspacePermissionMode, WorkspaceProfile } from '@shared/types/workspace';
+import type {
+  KnowledgeInvocationMode,
+  LiveTokenUsage,
+  PromptCacheRiskAction,
+  PromptCacheRiskAssessment,
+  PromptCacheRiskDecision,
+  WorkspaceContextRange,
+  WorkspaceKnowledgeScope,
+  WorkspacePermissionMode,
+  WorkspaceProfile,
+} from '@shared/types/workspace';
 import type { ChatCapabilityActionPlan, ChatCapabilityActionResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus, LongTaskInputMode } from '@shared/types/long-task-control';
-import type { GitWorktree } from '@shared/types/git';
-import { ComposerGitStrip } from './ComposerGitStrip';
+import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
 import type { SessionContinuityPreflight, SessionContinuityRecommendation } from './session-continuity';
+import { OFFICE_ACTIONS, findOfficeSkill, type OfficeAction } from './composer-actions';
+import { detectTaskLoopUpgradeSuggestion } from './task-loop-upgrade';
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -82,13 +101,11 @@ export interface FileAttachment {
 }
 
 interface ChatInputProps {
-  onSend: (text: string, attachments?: FileAttachment[], targetAgentId?: string | null, knowledgeScope?: WorkspaceKnowledgeScope, knowledgeMode?: KnowledgeInvocationMode, knowledgeReferences?: ChatKnowledgeReference[], activeTaskNodeId?: string | null, inputMode?: LongTaskInputMode) => void;
+  onSend: (text: string, opts?: SendOptions) => void;
   onStop?: () => void;
   disabled?: boolean;
   sending?: boolean;
   workspace?: WorkspaceProfile | null;
-  onOpenGitPanel?: () => void;
-  onSwitchWorktreeWorkspace?: (worktree: GitWorktree) => Promise<void>;
   contextRange?: WorkspaceContextRange | null;
   liveUsage?: LiveTokenUsage | null;
   messageCount?: number;
@@ -116,6 +133,8 @@ interface ChatInputProps {
   longTaskControlStatus?: LongTaskControlStatus | null;
   queueDrainBusy?: boolean;
   onDrainQueuedFollowup?: () => Promise<void>;
+  taskLoopUpgradeBusy?: boolean;
+  onConfirmTaskLoopUpgrade?: (suggestion: TaskLoopUpgradeSuggestion) => Promise<void> | void;
 }
 
 type PendingCapabilitySend = {
@@ -135,6 +154,12 @@ type PendingCapabilitySend = {
 type KnowledgeSearchRow = Record<string, unknown>;
 
 const WORKSPACE_PERMISSION_MODES: WorkspacePermissionMode[] = ['readOnly', 'plan', 'acceptEdits', 'fullAccess'];
+const PERMISSION_MODE_STYLES: Record<WorkspacePermissionMode, string> = {
+  readOnly: 'border-sky-500/25 bg-sky-500/10 text-sky-700 hover:bg-sky-500/15 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-300 dark:hover:bg-sky-400/15',
+  plan: 'border-amber-500/25 bg-amber-500/10 text-amber-700 hover:bg-amber-500/15 dark:border-amber-400/25 dark:bg-amber-400/10 dark:text-amber-300 dark:hover:bg-amber-400/15',
+  acceptEdits: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/15 dark:border-emerald-400/25 dark:bg-emerald-400/10 dark:text-emerald-300 dark:hover:bg-emerald-400/15',
+  fullAccess: 'border-rose-500/30 bg-rose-500/10 text-rose-700 hover:bg-rose-500/15 dark:border-rose-400/25 dark:bg-rose-400/10 dark:text-rose-300 dark:hover:bg-rose-400/15',
+};
 const KNOWLEDGE_SCOPES: WorkspaceKnowledgeScope[] = ['none', 'memory', 'wiki', 'all'];
 const KNOWLEDGE_MODES: KnowledgeInvocationMode[] = ['manual', 'suggest', 'auto-read'];
 
@@ -154,7 +179,7 @@ const SLASH_COMMANDS = [
   { id: 'explain-diff', group: 'coding', kind: 'prompt', aliases: ['diff'] },
   { id: 'commit', group: 'coding', kind: 'prompt', aliases: ['commit-summary'] },
   { id: 'pr-summary', group: 'coding', kind: 'prompt', aliases: ['pr'] },
-  { id: 'mission', group: 'workflow', kind: 'mission' },
+  { id: 'goal', group: 'workflow', kind: 'mission', aliases: ['mission'] },
   { id: 'ledger', group: 'workflow', kind: 'ledger', aliases: ['task'] },
   { id: 'compact', group: 'session', kind: 'compact', aliases: ['compress'] },
   { id: 'fork', group: 'session', kind: 'fork' },
@@ -165,34 +190,105 @@ type SlashCommand = (typeof SLASH_COMMANDS)[number];
 type SlashCommandGroup = SlashCommand['group'];
 
 const SLASH_COMMAND_GROUP_ORDER: SlashCommandGroup[] = ['knowledge', 'coding', 'workflow', 'session'];
+type SlashPaletteGroup = SlashCommandGroup | 'skills';
+type SlashPaletteCommandItem = {
+  id: string;
+  type: 'command';
+  group: SlashCommandGroup;
+  command: SlashCommand;
+};
+type SlashPaletteSkillItem = {
+  id: string;
+  type: 'skill';
+  group: 'skills';
+  skill: QuickAccessSkill;
+};
+type SlashPaletteItem = SlashPaletteCommandItem | SlashPaletteSkillItem;
+
+const SLASH_PALETTE_GROUP_ORDER: SlashPaletteGroup[] = ['skills', ...SLASH_COMMAND_GROUP_ORDER];
+const EMPTY_QUERY_SKILL_LIMIT = 6;
+const FILTERED_SKILL_LIMIT = 20;
 
 type SlashInputState = {
   active: boolean;
   commandText: string;
   args: string;
+  allowsCommands: boolean;
+  replacementStart: number;
+  replacementEnd: number;
 };
 
+type SlashCommandTranslate = (key: string, options?: Record<string, unknown>) => string;
+
 function parseSlashInput(value: string): SlashInputState {
+  const inactive: SlashInputState = {
+    active: false,
+    commandText: '',
+    args: '',
+    allowsCommands: false,
+    replacementStart: 0,
+    replacementEnd: 0,
+  };
+
   if (!/^\s*\//u.test(value)) {
-    return { active: false, commandText: '', args: '' };
+    const inlineMatch = /(^|\s)\/([^\s]*)$/u.exec(value);
+    if (!inlineMatch) return inactive;
+    return {
+      active: true,
+      commandText: (inlineMatch[2] ?? '').trim().toLowerCase(),
+      args: '',
+      allowsCommands: false,
+      replacementStart: inlineMatch.index + (inlineMatch[1]?.length ?? 0),
+      replacementEnd: value.length,
+    };
   }
   const body = value.trimStart().slice(1);
   if (/^[^\s]+\s{2}/u.test(body)) {
-    return { active: false, commandText: '', args: '' };
+    const inlineMatch = /(^|\s)\/([^\s]*)$/u.exec(value);
+    if (!inlineMatch) return inactive;
+    return {
+      active: true,
+      commandText: (inlineMatch[2] ?? '').trim().toLowerCase(),
+      args: '',
+      allowsCommands: false,
+      replacementStart: inlineMatch.index + (inlineMatch[1]?.length ?? 0),
+      replacementEnd: value.length,
+    };
   }
+  const replacementStart = value.match(/^\s*/u)?.[0].length ?? 0;
   const separator = body.search(/\s/u);
   if (separator === -1) {
-    return { active: true, commandText: body.trim().toLowerCase(), args: '' };
+    return {
+      active: true,
+      commandText: body.trim().toLowerCase(),
+      args: '',
+      allowsCommands: true,
+      replacementStart,
+      replacementEnd: value.length,
+    };
+  }
+  const bodyStart = replacementStart + 1;
+  let replacementEnd = bodyStart + separator;
+  while (replacementEnd < value.length && /\s/u.test(value[replacementEnd] ?? '')) {
+    replacementEnd += 1;
   }
   return {
     active: true,
     commandText: body.slice(0, separator).trim().toLowerCase(),
     args: body.slice(separator + 1).trim(),
+    allowsCommands: true,
+    replacementStart,
+    replacementEnd,
   };
 }
 
 function slashCommandNames(command: SlashCommand): string[] {
   return [command.id, ...('aliases' in command ? command.aliases : [])];
+}
+
+function slashCommandMatchesQuery(command: SlashCommand, query: string): boolean {
+  if (!query) return true;
+  return slashCommandNames(command).some((name) => name.startsWith(query));
 }
 
 function findExactSlashCommand(commandText: string): SlashCommand | null {
@@ -201,6 +297,270 @@ function findExactSlashCommand(commandText: string): SlashCommand | null {
   return SLASH_COMMANDS.find((command) => slashCommandNames(command).includes(normalized)) ?? null;
 }
 
+function slashSkillMatchesQuery(skill: QuickAccessSkill, query: string): boolean {
+  if (!query) return true;
+  const normalized = query.toLowerCase();
+  return [
+    skill.name,
+    skill.description,
+    skill.sourceLabel,
+  ].some((value) => value.toLowerCase().includes(normalized));
+}
+
+function slashSkillSortScore(skill: QuickAccessSkill, query: string): number {
+  if (!query) return 3;
+  const name = skill.name.toLowerCase();
+  if (name === query) return 0;
+  if (name.startsWith(query)) return 1;
+  return 2;
+}
+
+function SlashCommandIcon({ command }: { command: SlashCommand }) {
+  const className = 'h-3.5 w-3.5';
+  switch (command.id) {
+    case 'wiki':
+      return <BookOpen className={className} />;
+    case 'memory':
+      return <Database className={className} />;
+    case 'all':
+      return <BookOpen className={className} />;
+    case 'none':
+      return <CircleSlash className={className} />;
+    case 'scope':
+      return <Search className={className} />;
+    case 'knowledge-mode':
+      return <Gauge className={className} />;
+    case 'save':
+      return <FileText className={className} />;
+    case 'steward':
+      return <Users className={className} />;
+    case 'steward-audit':
+      return <Shield className={className} />;
+    case 'review':
+      return <Search className={className} />;
+    case 'fix-ci':
+      return <Wrench className={className} />;
+    case 'write-tests':
+      return <Check className={className} />;
+    case 'explain-diff':
+      return <FileText className={className} />;
+    case 'commit':
+    case 'pr-summary':
+      return <GitBranchPlus className={className} />;
+    case 'goal':
+      return <Target className={className} />;
+    case 'ledger':
+      return <Check className={className} />;
+    case 'compact':
+      return <Archive className={className} />;
+    case 'fork':
+      return <GitBranchPlus className={className} />;
+    case 'handoff':
+      return <MessageSquarePlus className={className} />;
+    default:
+      return <Wrench className={className} />;
+  }
+}
+
+function SlashCommandPalette({
+  items,
+  getCommandStatus,
+  onHover,
+  onSelect,
+  selectedIndex,
+  skillsError,
+  skillsLoading,
+  slashInput,
+  t,
+}: {
+  items: SlashPaletteItem[];
+  getCommandStatus: (command: SlashCommand) => string;
+  onHover: (index: number) => void;
+  onSelect: (item: SlashPaletteItem) => void;
+  selectedIndex: number;
+  skillsError: string | null;
+  skillsLoading: boolean;
+  slashInput: SlashInputState;
+  t: SlashCommandTranslate;
+}) {
+  const hasItems = items.length > 0;
+  const showSkillFeedback = skillsLoading || Boolean(skillsError);
+
+  return (
+    <div
+      role="listbox"
+      aria-label={t('composer.slashCommands.menuLabel')}
+      data-testid="chat-slash-command-menu"
+      className="absolute bottom-full left-0 right-0 z-30 mb-2 max-h-[min(420px,calc(100vh-190px))] overflow-hidden rounded-lg border border-black/10 bg-surface-modal shadow-md dark:border-white/10 sm:right-auto sm:w-[520px]"
+    >
+      <div className="flex items-center justify-between gap-3 border-b border-black/5 px-3 py-2 dark:border-white/10">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-input text-primary">
+              <Wrench className="h-3.5 w-3.5" />
+            </span>
+            <p className="truncate text-xs font-medium text-foreground">{t('composer.slashCommands.title')}</p>
+          </div>
+          <p className="mt-1 truncate text-2xs leading-4 text-muted-foreground">
+            {t('composer.slashCommands.subtitle')}
+          </p>
+        </div>
+        <code className="shrink-0 rounded-md bg-surface-input px-1.5 py-1 font-mono text-2xs text-muted-foreground">
+          /{slashInput.commandText || ''}
+        </code>
+      </div>
+
+      {!hasItems && !showSkillFeedback ? (
+        <div className="px-3 py-3" data-testid="chat-slash-command-empty">
+          <p className="text-xs font-medium text-foreground">{t('composer.slashCommands.unknownTitle')}</p>
+          <p className="mt-0.5 text-2xs leading-4 text-muted-foreground">
+            {t('composer.slashCommands.unknownDescription', { command: `/${slashInput.commandText}` })}
+          </p>
+        </div>
+      ) : (
+        <div className="max-h-[340px] overflow-y-auto p-1">
+          {showSkillFeedback && (
+            <div>
+              <div className="px-2 pb-1 pt-2" data-testid="chat-slash-command-group-skills">
+                <div className="text-2xs font-semibold uppercase tracking-wide text-muted-foreground/70">
+                  {t('composer.slashCommands.groups.skills')}
+                </div>
+                <div className="mt-0.5 truncate text-2xs leading-4 text-muted-foreground/55">
+                  {t('composer.slashCommands.groupDescriptions.skills')}
+                </div>
+              </div>
+              <div
+                className={cn(
+                  'mx-1 rounded-md px-2 py-2 text-xs',
+                  skillsError ? 'text-destructive' : 'text-muted-foreground',
+                )}
+              >
+                {skillsError || t('composer.skillLoading')}
+              </div>
+            </div>
+          )}
+
+          {items.map((item, index) => {
+            const previous = items[index - 1];
+            const showGroup = !previous || previous.group !== item.group;
+            const selected = index === selectedIndex;
+
+            return (
+              <div key={item.id}>
+                {showGroup && (
+                  <div className="px-2 pb-1 pt-2" data-testid={`chat-slash-command-group-${item.group}`}>
+                    <div className="text-2xs font-semibold uppercase tracking-wide text-muted-foreground/70">
+                      {t(`composer.slashCommands.groups.${item.group}`)}
+                    </div>
+                    <div className="mt-0.5 truncate text-2xs leading-4 text-muted-foreground/55">
+                      {t(`composer.slashCommands.groupDescriptions.${item.group}`)}
+                    </div>
+                  </div>
+                )}
+
+                {item.type === 'command' ? (() => {
+                  const { command } = item;
+                  const status = getCommandStatus(command);
+                  const argumentHint = t(`composer.slashCommands.commands.${command.id}.argumentHint`);
+
+                  return (
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={selected}
+                      data-testid={`chat-slash-command-option-${command.id}`}
+                      className={cn(
+                        'flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors',
+                        selected ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-foreground hover:bg-black/5 dark:hover:bg-white/5',
+                      )}
+                      onMouseEnter={() => onHover(index)}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => onSelect(item)}
+                    >
+                      <span
+                        data-testid={`chat-slash-command-icon-${command.id}`}
+                        className={cn(
+                          'flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-surface-input text-muted-foreground',
+                          selected && 'text-primary',
+                        )}
+                      >
+                        <SlashCommandIcon command={command} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex min-w-0 items-center gap-1.5">
+                          <code className="shrink-0 rounded bg-surface-input px-1 py-0.5 font-mono text-2xs text-foreground">
+                            /{command.id}
+                          </code>
+                          <span className="min-w-0 truncate text-xs font-medium text-foreground">
+                            {t(`composer.slashCommands.commands.${command.id}.label`)}
+                          </span>
+                          {argumentHint && (
+                            <span className="hidden shrink-0 font-mono text-2xs text-muted-foreground sm:inline">
+                              {argumentHint}
+                            </span>
+                          )}
+                        </span>
+                        <span className="mt-0.5 block truncate text-2xs leading-4 text-muted-foreground">
+                          {t(`composer.slashCommands.commands.${command.id}.description`)}
+                        </span>
+                      </span>
+                      {status && (
+                        <span className="max-w-[120px] shrink-0 truncate rounded-md bg-surface-input px-1.5 py-0.5 text-2xs text-muted-foreground">
+                          {status}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })() : (
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={selected}
+                    data-testid={`chat-composer-skill-option-${item.skill.name}`}
+                    title={item.skill.description}
+                    className={cn(
+                      'flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors',
+                      selected ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-foreground hover:bg-black/5 dark:hover:bg-white/5',
+                    )}
+                    onMouseEnter={() => onHover(index)}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => onSelect(item)}
+                  >
+                    <span
+                      data-testid={`chat-slash-skill-icon-${item.skill.name}`}
+                      className={cn(
+                        'flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-surface-input text-muted-foreground',
+                        selected && 'text-primary',
+                      )}
+                    >
+                      <Wrench className="h-3.5 w-3.5" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="flex min-w-0 items-center gap-1.5">
+                        <code className="shrink-0 rounded bg-surface-input px-1 py-0.5 font-mono text-2xs text-foreground">
+                          /{item.skill.name}
+                        </code>
+                        <span className="min-w-0 truncate text-xs font-medium text-foreground">
+                          {item.skill.sourceLabel}
+                        </span>
+                      </span>
+                      <span className="mt-0.5 block truncate text-2xs leading-4 text-muted-foreground">
+                        {item.skill.description}
+                      </span>
+                    </span>
+                    <span className="max-w-[120px] shrink-0 truncate rounded-md bg-surface-input px-1.5 py-0.5 text-2xs text-muted-foreground">
+                      {item.skill.sourceLabel}
+                    </span>
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 function resolveSlashScope(value: string): WorkspaceKnowledgeScope | null {
   const normalized = value.trim().toLowerCase();
   if (normalized === 'none' || normalized === 'memory' || normalized === 'wiki' || normalized === 'all') {
@@ -275,6 +635,32 @@ function knowledgeReferenceFromRow(row: KnowledgeSearchRow, corpus: 'wiki' | 'me
   };
 }
 
+const KNOWLEDGE_PREFLIGHT_GROUP_ORDER: KnowledgeRouteCandidateGroupKey[] = ['docs', 'pitfalls', 'rules'];
+
+function routeGroupForCandidate(candidate: KnowledgeRouteCandidate): KnowledgeRouteCandidateGroupKey {
+  if (candidate.routeGroup === 'pitfalls' || candidate.routeGroup === 'rules' || candidate.routeGroup === 'docs') {
+    return candidate.routeGroup;
+  }
+  const status = `${candidate.matchedClaimStatus ?? ''} ${candidate.freshnessLevel ?? ''}`.toLowerCase();
+  const lookup = `${candidate.lookup} ${candidate.pagePath ?? ''} ${candidate.sourcePath ?? ''}`.toLowerCase();
+  if (/rule|agents\.md|harness\/specs|convention/u.test(status) || /rule|agents\.md|harness\/specs|convention/u.test(lookup)) {
+    return 'rules';
+  }
+  if (/error|failure|pitfall|troubleshoot|incident|unreviewed/u.test(status) || /error|failure|pitfall|troubleshoot|incident/u.test(lookup)) {
+    return 'pitfalls';
+  }
+  return 'docs';
+}
+
+function groupKnowledgePreflightCandidates(candidates: KnowledgeRouteCandidate[]) {
+  return KNOWLEDGE_PREFLIGHT_GROUP_ORDER
+    .map((key) => ({
+      key,
+      candidates: candidates.filter((candidate) => routeGroupForCandidate(candidate) === key),
+    }))
+    .filter((group) => group.candidates.length > 0);
+}
+
 function formatCompactNumber(value: number): string {
   if (!Number.isFinite(value)) return '0';
   const absolute = Math.abs(value);
@@ -285,6 +671,20 @@ function formatCompactNumber(value: number): string {
   }
   const compact = value / 1_000_000;
   return `${compact >= 10 ? compact.toFixed(0) : compact.toFixed(1)}m`;
+}
+
+function formatPromptCacheHitRate(value: number | null): string {
+  if (value == null || !Number.isFinite(value)) return '-';
+  return `${Math.round(value * 100)}%`;
+}
+
+function promptCacheRiskActionForCapabilityPlan(plan: ChatCapabilityActionPlan[]): PromptCacheRiskAction | null {
+  for (const action of plan) {
+    if (action.kind === 'skill.enable' && !action.skillAlreadyEnabled) return 'skill-enable';
+    if (action.kind === 'mcp.register') return 'mcp-register';
+    if (action.kind === 'mcp.reload') return 'mcp-reload';
+  }
+  return null;
 }
 
 function formatCompactionDate(value?: number): string {
@@ -311,13 +711,6 @@ function needsLeadingSkillSpace(value: string, position: number): boolean {
 
 type SkillTokenRange = { start: number; end: number };
 
-function findSkillTokenRange(value: string, skillName: string): SkillTokenRange | null {
-  const token = getSkillPrefix(skillName);
-  const start = value.indexOf(token);
-  if (start === -1) return null;
-  return { start, end: start + token.length };
-}
-
 function findSkillTokenRanges(value: string): SkillTokenRange[] {
   const ranges: SkillTokenRange[] = [];
   const skillTokenPattern = /\/[^\s]+ {2}/g;
@@ -326,12 +719,6 @@ function findSkillTokenRanges(value: string): SkillTokenRange[] {
     ranges.push({ start: match.index, end: match.index + match[0].length });
   }
   return ranges;
-}
-
-function removeSkillToken(value: string, skillName: string): string {
-  const range = findSkillTokenRange(value, skillName);
-  if (!range) return value;
-  return `${value.slice(0, range.start)}${value.slice(range.end)}`;
 }
 
 const SKILL_TOKEN_BUTTON_CLASS =
@@ -435,8 +822,6 @@ export function ChatInput({
   draftValue,
   onDraftChange,
   workspace,
-  onOpenGitPanel,
-  onSwitchWorktreeWorkspace,
   onPermissionModeChange,
   onPickWorkspaceFolder,
   onSwitchAgent,
@@ -459,13 +844,20 @@ export function ChatInput({
   longTaskControlStatus,
   queueDrainBusy = false,
   onDrainQueuedFollowup,
+  taskLoopUpgradeBusy = false,
+  onConfirmTaskLoopUpgrade,
 }: ChatInputProps) {
   const { t } = useTranslation('chat');
   const [input, setInput] = useState(() => draftValue ?? '');
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [targetAgentId, setTargetAgentId] = useState<string | null>(null);
+  /** Area 2 §3.1: turn-scoped model override; cleared after each send. */
+  const [pendingTurnModelRef, setPendingTurnModelRef] = useState<string | null>(null);
+  /** Area 2 §3.1: active scope in the model picker menu. */
+  const [modelScope, setModelScope] = useState<'turn' | 'session' | 'persistent'>('persistent');
+  const [actionMenuOpen, setActionMenuOpen] = useState(false);
+  const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [skillPickerOpen, setSkillPickerOpen] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
   const [knowledgePickerOpen, setKnowledgePickerOpen] = useState(false);
   const [knowledgeQuery, setKnowledgeQuery] = useState('');
@@ -474,14 +866,12 @@ export function ChatInput({
   const [knowledgeSearchError, setKnowledgeSearchError] = useState<string | null>(null);
   const [selectedKnowledgeRefs, setSelectedKnowledgeRefs] = useState<ChatKnowledgeReference[]>([]);
   const [suggestedKnowledgeRefs, setSuggestedKnowledgeRefs] = useState<KnowledgeRouteCandidate[]>([]);
+  const [knowledgePreflightExpanded, setKnowledgePreflightExpanded] = useState(false);
   const [knowledgeRoutingBusy, setKnowledgeRoutingBusy] = useState(false);
   const dismissedRouteKeysRef = useRef<Map<string, number>>(new Map());
-  const [workspaceActionsOpen, setWorkspaceActionsOpen] = useState(false);
-  const [skillQuery, setSkillQuery] = useState('');
   const [quickSkills, setQuickSkills] = useState<QuickAccessSkill[]>([]);
   const [skillsLoading, setSkillsLoading] = useState(false);
   const [skillsError, setSkillsError] = useState<string | null>(null);
-  const [selectedSkill, setSelectedSkill] = useState<QuickAccessSkill | null>(null);
   const [slashMenuDismissed, setSlashMenuDismissed] = useState(false);
   const [slashSelectedIndex, setSlashSelectedIndex] = useState(0);
   const [switchingModelRef, setSwitchingModelRef] = useState<string | null>(null);
@@ -500,11 +890,11 @@ export function ChatInput({
     useChatStore.setState({ activeTaskNodeId: nodeId });
   }, []);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const actionMenuRef = useRef<HTMLDivElement>(null);
+  const workspaceMenuRef = useRef<HTMLDivElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
-  const skillPickerRef = useRef<HTMLDivElement>(null);
   const modelPickerRef = useRef<HTMLDivElement>(null);
   const knowledgePickerRef = useRef<HTMLDivElement>(null);
-  const workspaceActionsRef = useRef<HTMLDivElement>(null);
   const isComposingRef = useRef(false);
   const lastDraftValueRef = useRef(draftValue);
   const gatewayStatus = useGatewayStore((s) => s.status);
@@ -530,7 +920,6 @@ export function ChatInput({
     [providerAccounts, providerDefaultAccountId, providerStatuses],
   );
   const effectiveModelRef = optimisticModelRef || currentAgent?.modelRef || defaultModelRef || modelOptions[0]?.modelRef || null;
-  const currentModelLabel = formatModelRefLabel(effectiveModelRef);
   const mentionableAgents = useMemo(
     () => (agents ?? []).filter((agent) => agent.id !== currentAgentId),
     [agents, currentAgentId],
@@ -539,27 +928,31 @@ export function ChatInput({
     () => (agents ?? []).find((agent) => agent.id === targetAgentId) ?? null,
     [agents, targetAgentId],
   );
-  const filteredQuickSkills = useMemo(() => {
-    const query = skillQuery.trim().toLowerCase();
-    if (!query) return quickSkills;
-    return quickSkills.filter((skill) =>
-      skill.name.toLowerCase().includes(query)
-      || skill.description.toLowerCase().includes(query)
-      || skill.sourceLabel.toLowerCase().includes(query),
-    );
-  }, [quickSkills, skillQuery]);
   const knowledgeCorpus = knowledgeCorpusForScope(knowledgeScope);
   const knowledgeRows = useMemo(() => getKnowledgeSearchRows(knowledgeSearchResult), [knowledgeSearchResult]);
   const selectedKnowledgeIds = useMemo(() => new Set(selectedKnowledgeRefs.map((reference) => reference.id)), [selectedKnowledgeRefs]);
+  const suggestedKnowledgeGroups = useMemo(() => groupKnowledgePreflightCandidates(suggestedKnowledgeRefs), [suggestedKnowledgeRefs]);
+  const suggestedKnowledgeCounts = useMemo(() => {
+    const counts: Record<KnowledgeRouteCandidateGroupKey, number> = { docs: 0, pitfalls: 0, rules: 0 };
+    for (const group of suggestedKnowledgeGroups) counts[group.key] = group.candidates.length;
+    return counts;
+  }, [suggestedKnowledgeGroups]);
   const showAgentPicker = mentionableAgents.length > 0;
   const showModelPicker = modelOptions.length > 1;
-  const showWorkspaceActions = Boolean(
+  const showWorkspaceMenu = Boolean(
     workspace
     || onPickWorkspaceFolder
     || onPermissionModeChange
     || onSwitchAgent
     || onNewSession,
   );
+  const activePermissionMode = workspace?.permissionMode ?? 'acceptEdits';
+  const workspaceMenuLabel = workspace && onPermissionModeChange
+    ? t(`composer.permissionMode.${activePermissionMode}`)
+    : t('composer.workspaceActions');
+  const workspaceMenuTitle = workspace && onPermissionModeChange
+    ? t('composer.permissionModeTitle')
+    : t('composer.workspaceActions');
   const chatComposerStatusComponents = rendererExtensionRegistry.getChatComposerStatusComponents();
   const isGatewayUsable = gatewayStatus.state === 'running' && gatewayStatus.gatewayReady !== false;
   const inputDisabled = disabled || !isGatewayUsable;
@@ -570,6 +963,99 @@ export function ChatInput({
     setInput(value);
     onDraftChange?.(value);
   }, [onDraftChange]);
+
+  const recordPromptCacheDecision = useCallback((
+    assessment: PromptCacheRiskAssessment,
+    decision: PromptCacheRiskDecision,
+  ) => {
+    void hostApi.usage.recordPromptCacheRiskEvent({
+      sessionKey: currentSessionKey,
+      action: assessment.action ?? 'context-reset',
+      severity: assessment.severity,
+      status: assessment.status,
+      decision,
+      hitRate: assessment.hitRate,
+      promptTokens: assessment.promptTokens,
+      ...(assessment.estimatedExtraCostUsd != null
+        ? { estimatedExtraCostUsd: assessment.estimatedExtraCostUsd }
+        : {}),
+      ...(assessment.reason ? { reason: assessment.reason } : {}),
+    }).catch(() => {
+      // Best-effort ledger; the user action should not fail because telemetry did.
+    });
+  }, [currentSessionKey]);
+
+  const confirmPromptCacheRisk = useCallback(async (
+    action: PromptCacheRiskAction,
+    targetModelRef?: string | null,
+  ): Promise<boolean> => {
+    let assessment: PromptCacheRiskAssessment | null = null;
+    try {
+      const result = await hostApi.usage.promptCacheStatus({
+        sessionKey: currentSessionKey,
+        modelRef: effectiveModelRef,
+        targetModelRef,
+        action,
+        usedTokens: liveUsage?.totalTokens ?? contextRange?.usedTokens ?? null,
+      });
+      assessment = result.success ? result.assessment : null;
+    } catch {
+      assessment = null;
+    }
+
+    if (!assessment?.shouldWarn) {
+      return true;
+    }
+
+    return await new Promise<boolean>((resolve) => {
+      let settled = false;
+      let toastId: string | number | undefined;
+      const settle = (decision: PromptCacheRiskDecision) => {
+        if (settled) return;
+        settled = true;
+        if (toastId !== undefined) toast.dismiss(toastId);
+        recordPromptCacheDecision(assessment, decision);
+        resolve(decision === 'continued');
+      };
+
+      const actionLabel = t(`composer.promptCacheGuard.action.${action}`, {
+        defaultValue: action,
+      });
+      const reasonLabel = assessment.reason
+        ? t(`composer.promptCacheGuard.reason.${assessment.reason}`, {
+          defaultValue: assessment.reason,
+        })
+        : t('composer.promptCacheGuard.reason.default');
+      toastId = toast.warning(t('composer.promptCacheGuard.title'), {
+        description: t('composer.promptCacheGuard.description', {
+          action: actionLabel,
+          tokens: formatCompactNumber(assessment.promptTokens),
+          hitRate: formatPromptCacheHitRate(assessment.hitRate),
+          reason: reasonLabel,
+        }),
+        duration: Infinity,
+        closeButton: true,
+        testId: 'prompt-cache-risk-toast',
+        action: {
+          label: t('composer.promptCacheGuard.continue'),
+          onClick: () => settle('continued'),
+        },
+        cancel: {
+          label: t('composer.promptCacheGuard.cancel'),
+          onClick: () => settle('cancelled'),
+        },
+        onDismiss: () => settle('cancelled'),
+        onAutoClose: () => settle('cancelled'),
+      });
+    });
+  }, [
+    contextRange?.usedTokens,
+    currentSessionKey,
+    effectiveModelRef,
+    liveUsage?.totalTokens,
+    recordPromptCacheDecision,
+    t,
+  ]);
 
   const composerContextParts = useMemo(() => {
     const parts: string[] = [];
@@ -598,6 +1084,14 @@ export function ChatInput({
 
     return parts;
   }, [contextRange?.maxTokens, contextRange?.truncatedMessageCount, contextRange?.usedTokens, liveUsage?.totalTokens, messageCount, t]);
+
+  const closeComposerPopovers = useCallback(() => {
+    setActionMenuOpen(false);
+    setPickerOpen(false);
+    setModelPickerOpen(false);
+    setKnowledgePickerOpen(false);
+    setWorkspaceMenuOpen(false);
+  }, []);
 
   const compactionUsedTokens = compactionStatus?.usedTokens ?? liveUsage?.totalTokens ?? contextRange?.usedTokens ?? null;
   const compactionMaxTokens = compactionStatus?.maxTokens ?? contextRange?.maxTokens ?? null;
@@ -664,21 +1158,16 @@ export function ChatInput({
       ].filter(Boolean).join(' - ')
     : '';
   const ComposerContinuityIcon = composerContinuityAction?.icon ?? GitBranchPlus;
-  const wikiQuickActive = knowledgeScope === 'wiki';
   const slashInput = useMemo(() => parseSlashInput(input), [input]);
-  const slashCommands = useMemo(() => {
+  const slashItems = useMemo<SlashPaletteItem[]>(() => {
     if (!slashInput.active) return [];
     const query = slashInput.commandText;
-    const commands = !query
-      ? [...SLASH_COMMANDS]
-      : SLASH_COMMANDS.filter((command) => {
-        const label = t(`composer.slashCommands.commands.${command.id}.label`).toLowerCase();
-        const description = t(`composer.slashCommands.commands.${command.id}.description`).toLowerCase();
-        return slashCommandNames(command).some((name) => name.startsWith(query))
-          || label.includes(query)
-          || description.includes(query);
-      });
-    return [...commands].sort((left: SlashCommand, right: SlashCommand) => {
+    const commands = !slashInput.allowsCommands
+      ? []
+      : !query
+        ? [...SLASH_COMMANDS]
+        : SLASH_COMMANDS.filter((command) => slashCommandMatchesQuery(command, query));
+    const commandItems = [...commands].sort((left: SlashCommand, right: SlashCommand) => {
       if (query) {
         const leftExact = slashCommandNames(left).includes(query);
         const rightExact = slashCommandNames(right).includes(query);
@@ -688,14 +1177,114 @@ export function ChatInput({
         if (leftPrefix !== rightPrefix) return leftPrefix ? -1 : 1;
       }
       return SLASH_COMMAND_GROUP_ORDER.indexOf(left.group) - SLASH_COMMAND_GROUP_ORDER.indexOf(right.group);
+    }).map((command): SlashPaletteCommandItem => ({
+      id: `command:${command.id}`,
+      type: 'command',
+      group: command.group,
+      command,
+    }));
+
+    const skillItems = quickSkills
+      .filter((skill) => slashSkillMatchesQuery(skill, query))
+      .sort((left, right) => {
+        const scoreDelta = slashSkillSortScore(left, query) - slashSkillSortScore(right, query);
+        if (scoreDelta !== 0) return scoreDelta;
+        return left.name.localeCompare(right.name);
+      })
+      .slice(0, query ? FILTERED_SKILL_LIMIT : EMPTY_QUERY_SKILL_LIMIT)
+      .map((skill): SlashPaletteSkillItem => ({
+        id: `skill:${skill.source}:${skill.name}`,
+        type: 'skill',
+        group: 'skills',
+        skill,
+      }));
+
+    return [...skillItems, ...commandItems].sort((left, right) => {
+      const groupDelta = SLASH_PALETTE_GROUP_ORDER.indexOf(left.group) - SLASH_PALETTE_GROUP_ORDER.indexOf(right.group);
+      if (groupDelta !== 0) return groupDelta;
+      return 0;
     });
-  }, [slashInput.active, slashInput.commandText, t]);
+  }, [quickSkills, slashInput.active, slashInput.allowsCommands, slashInput.commandText]);
   const slashMenuOpen = slashInput.active && !slashMenuDismissed;
-  const selectedSlashCommand = slashCommands[Math.min(slashSelectedIndex, Math.max(0, slashCommands.length - 1))] ?? null;
+  const selectedSlashItem = slashItems[Math.min(slashSelectedIndex, Math.max(0, slashItems.length - 1))] ?? null;
+  const taskLoopUpgradeSuggestion = useMemo(
+    () => detectTaskLoopUpgradeSuggestion({ text: input, sessionId: currentSessionKey }),
+    [currentSessionKey, input],
+  );
+  const showTaskLoopUpgradeSuggestion = Boolean(
+    onConfirmTaskLoopUpgrade
+    && taskLoopUpgradeSuggestion
+    && !inputDisabled
+    && !sending
+    && !slashInput.active,
+  );
+
+  const handleConfirmTaskLoopUpgrade = useCallback(async () => {
+    if (!taskLoopUpgradeSuggestion || !onConfirmTaskLoopUpgrade || taskLoopUpgradeBusy) return;
+    try {
+      await onConfirmTaskLoopUpgrade(taskLoopUpgradeSuggestion);
+      updateInput('');
+    } catch {
+      // The parent surface owns the user-facing failure toast; keep the draft intact.
+    }
+  }, [onConfirmTaskLoopUpgrade, taskLoopUpgradeBusy, taskLoopUpgradeSuggestion, updateInput]);
+
+  useEffect(() => {
+    if (slashMenuOpen && workspaceMenuOpen) {
+      setWorkspaceMenuOpen(false);
+    }
+  }, [slashMenuOpen, workspaceMenuOpen]);
+
+  const getSlashCommandStatus = useCallback((command: SlashCommand) => {
+    if (command.kind === 'scope') {
+      return t(`composer.knowledgeScope.${command.scope}`);
+    }
+    if (command.kind === 'scopePicker') {
+      return t(`composer.knowledgeScope.${knowledgeScope}`);
+    }
+    if (command.kind === 'knowledgeMode') {
+      return t(`composer.knowledgeMode.${knowledgeMode}`);
+    }
+    if (command.kind === 'wikiSearch') {
+      return selectedKnowledgeRefs.length > 0
+        ? t('composer.knowledgeAttach.selected', { count: selectedKnowledgeRefs.length })
+        : t('composer.knowledgeScope.wiki');
+    }
+    if (command.kind === 'compact') {
+      if (compactDisabledReason) return compactDisabledReason;
+      if (compactionUsedTokens != null && compactionMaxTokens != null && compactionMaxTokens > 0) {
+        return t('composer.tokenUsageWithLimit', {
+          used: formatCompactNumber(compactionUsedTokens),
+          max: formatCompactNumber(compactionMaxTokens),
+        });
+      }
+      if (compactionHiddenCount > 0) {
+        return t('composer.contextHidden', { count: compactionHiddenCount });
+      }
+    }
+    if (command.kind === 'fork' && forkDisabled) {
+      return t('composer.slashCommands.toasts.forkUnavailable');
+    }
+    if (command.kind === 'handoff' && handoffDisabled) {
+      return t('composer.handoff.disabledActiveRun');
+    }
+    return t(`composer.slashCommands.groups.${command.group}`);
+  }, [
+    compactDisabledReason,
+    compactionHiddenCount,
+    compactionMaxTokens,
+    compactionUsedTokens,
+    forkDisabled,
+    handoffDisabled,
+    knowledgeMode,
+    knowledgeScope,
+    selectedKnowledgeRefs.length,
+    t,
+  ]);
 
   useEffect(() => {
     setSlashSelectedIndex(0);
-  }, [slashInput.commandText, slashCommands.length]);
+  }, [slashInput.commandText, slashItems.length]);
 
   const runKnowledgeSearch = useCallback(async (
     rawQuery: string,
@@ -750,9 +1339,10 @@ export function ChatInput({
   const recordKnowledgeReferences = useCallback((references: ChatKnowledgeReference[]) => {
     if (references.length === 0) return;
     for (const reference of references) {
+      const inboxTargetId = reference.lookup.startsWith('inbox:') ? reference.lookup.slice('inbox:'.length) : '';
       void hostApi.knowledge.recordKnowledgeReference({
-        targetId: reference.lookup,
-        targetKind: 'wiki-page',
+        targetId: inboxTargetId || reference.lookup,
+        targetKind: inboxTargetId ? 'inbox' : 'wiki-page',
         title: reference.title,
         reference: {
           kind: 'chat',
@@ -784,7 +1374,11 @@ export function ChatInput({
     }
     const routeKey = `${currentSessionKey}:${knowledgeScope}:${message.trim().slice(0, 120).toLowerCase()}`;
     const dismissedAt = dismissedRouteKeysRef.current.get(routeKey);
-    if (dismissedAt && Date.now() - dismissedAt < 10 * 60 * 1000) return [];
+    if (dismissedAt && Date.now() - dismissedAt < 10 * 60 * 1000) {
+      setSuggestedKnowledgeRefs([]);
+      setKnowledgePreflightExpanded(false);
+      return [];
+    }
 
     setKnowledgeRoutingBusy(true);
     try {
@@ -797,15 +1391,21 @@ export function ChatInput({
         workspaceId: workspace?.id ?? null,
       });
       if (!result.success) return [];
+      const routedCandidates = result.candidates.length > 0
+        ? result.candidates
+        : (result.candidateGroups ?? []).flatMap((group) => group.candidates);
       if (result.decision === 'suggest') {
-        setSuggestedKnowledgeRefs(result.candidates);
+        setSuggestedKnowledgeRefs(routedCandidates);
+        setKnowledgePreflightExpanded(false);
         return [];
       }
       if (result.decision === 'auto_attach') {
         setSuggestedKnowledgeRefs([]);
-        return result.candidates;
+        setKnowledgePreflightExpanded(false);
+        return routedCandidates;
       }
       setSuggestedKnowledgeRefs([]);
+      setKnowledgePreflightExpanded(false);
       return [];
     } catch (error) {
       console.warn('[knowledge] routeContext failed:', error);
@@ -826,6 +1426,7 @@ export function ChatInput({
       return next.slice(0, 6);
     });
     setSuggestedKnowledgeRefs([]);
+    setKnowledgePreflightExpanded(false);
     if (knowledgeScope === 'none') void onKnowledgeScopeChange?.('wiki');
   }, [knowledgeScope, onKnowledgeScopeChange, suggestedKnowledgeRefs]);
 
@@ -833,43 +1434,17 @@ export function ChatInput({
     const routeKey = `${currentSessionKey}:${knowledgeScope}:${input.trim().slice(0, 120).toLowerCase()}`;
     dismissedRouteKeysRef.current.set(routeKey, Date.now());
     setSuggestedKnowledgeRefs([]);
+    setKnowledgePreflightExpanded(false);
   }, [currentSessionKey, input, knowledgeScope]);
-
-  const handleQuickWikiToggle = useCallback(() => {
-    if (!onKnowledgeScopeChange) return;
-    void onKnowledgeScopeChange(wikiQuickActive ? 'none' : 'wiki');
-    setKnowledgePickerOpen(false);
-    setPickerOpen(false);
-    setSkillPickerOpen(false);
-    setWorkspaceActionsOpen(false);
-    setModelPickerOpen(false);
-    textareaRef.current?.focus();
-  }, [onKnowledgeScopeChange, wikiQuickActive]);
-
-  const handleOpenSlashPalette = useCallback(() => {
-    if (input.trim().length > 0 && !slashInput.active) {
-      toast.message(t('composer.slashCommands.toasts.typeSlash'));
-      textareaRef.current?.focus();
-      return;
-    }
-    if (!slashInput.active) {
-      updateInput('/');
-    }
-    setSlashMenuDismissed(false);
-    setPickerOpen(false);
-    setSkillPickerOpen(false);
-    setModelPickerOpen(false);
-    setWorkspaceActionsOpen(false);
-    setKnowledgePickerOpen(false);
-    requestAnimationFrame(() => textareaRef.current?.focus());
-  }, [input, slashInput.active, t, updateInput]);
 
   const handleConfirmCompaction = useCallback(async () => {
     if (!onManualCompact || compactDisabled) return;
+    const allowed = await confirmPromptCacheRisk('manual-compaction');
+    if (!allowed) return;
     await onManualCompact(compactionInstructions.trim() || undefined);
     setCompactionInstructions('');
     setCompactionDialogOpen(false);
-  }, [compactDisabled, compactionInstructions, onManualCompact]);
+  }, [compactDisabled, compactionInstructions, confirmPromptCacheRisk, onManualCompact]);
 
   useEffect(() => {
     if (draftValue === lastDraftValueRef.current) return;
@@ -880,11 +1455,13 @@ export function ChatInput({
   useEffect(() => {
     if (knowledgeMode !== 'suggest' || knowledgeScope === 'none' || selectedKnowledgeRefs.length > 0 || slashInput.active) {
       setSuggestedKnowledgeRefs([]);
+      setKnowledgePreflightExpanded(false);
       return;
     }
     const text = input.trim();
     if (text.length < 18) {
       setSuggestedKnowledgeRefs([]);
+      setKnowledgePreflightExpanded(false);
       return;
     }
     const timer = setTimeout(() => {
@@ -946,57 +1523,50 @@ export function ChatInput({
   }, [agents, currentAgentId, targetAgentId]);
 
   useEffect(() => {
-    if (!pickerOpen && !skillPickerOpen && !modelPickerOpen && !workspaceActionsOpen && !knowledgePickerOpen) return;
+    if (!actionMenuOpen && !workspaceMenuOpen && !pickerOpen && !modelPickerOpen && !knowledgePickerOpen) return;
     const handlePointerDown = (event: MouseEvent) => {
       const target = event.target as Node;
+      const insideActionMenu = actionMenuRef.current?.contains(target);
+      const insideWorkspaceMenu = workspaceMenuRef.current?.contains(target);
       const insideAgentPicker = pickerRef.current?.contains(target);
-      const insideSkillPicker = skillPickerRef.current?.contains(target);
       const insideModelPicker = modelPickerRef.current?.contains(target);
       const insideKnowledgePicker = knowledgePickerRef.current?.contains(target);
-      const insideWorkspaceActions = workspaceActionsRef.current?.contains(target);
-      if (!insideAgentPicker && !insideSkillPicker && !insideModelPicker && !insideKnowledgePicker && !insideWorkspaceActions) {
-        setPickerOpen(false);
-        setSkillPickerOpen(false);
-        setModelPickerOpen(false);
-        setKnowledgePickerOpen(false);
-        setWorkspaceActionsOpen(false);
+      if (!insideActionMenu && !insideWorkspaceMenu && !insideAgentPicker && !insideModelPicker && !insideKnowledgePicker) {
+        closeComposerPopovers();
       }
     };
     document.addEventListener('mousedown', handlePointerDown);
     return () => {
       document.removeEventListener('mousedown', handlePointerDown);
     };
-  }, [knowledgePickerOpen, modelPickerOpen, pickerOpen, skillPickerOpen, workspaceActionsOpen]);
+  }, [actionMenuOpen, closeComposerPopovers, knowledgePickerOpen, modelPickerOpen, pickerOpen, workspaceMenuOpen]);
 
   useEffect(() => {
-    setSelectedSkill((prev) => {
-      if (prev) {
-        setInput((currentInput) => removeSkillToken(currentInput, prev.name));
-      }
-      return null;
-    });
-    setSkillPickerOpen(false);
-    setSkillQuery('');
+    if (!actionMenuOpen && !workspaceMenuOpen && !pickerOpen && !modelPickerOpen && !knowledgePickerOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      closeComposerPopovers();
+      textareaRef.current?.focus();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [actionMenuOpen, closeComposerPopovers, knowledgePickerOpen, modelPickerOpen, pickerOpen, workspaceMenuOpen]);
+
+  useEffect(() => {
     setQuickSkills([]);
     setSkillsError(null);
   }, [currentAgentId]);
-
-  useEffect(() => {
-    if (!selectedSkill) return;
-    const tokenRange = findSkillTokenRange(input, selectedSkill.name);
-    if (!tokenRange) {
-      setSelectedSkill(null);
-    }
-  }, [input, selectedSkill]);
 
   const handleInputChange = useCallback((value: string) => {
     updateInput(value);
     setSlashMenuDismissed(false);
     if (parseSlashInput(value).active) {
+      setActionMenuOpen(false);
       setPickerOpen(false);
-      setSkillPickerOpen(false);
       setModelPickerOpen(false);
-      setWorkspaceActionsOpen(false);
+      setWorkspaceMenuOpen(false);
       setKnowledgePickerOpen(false);
     }
   }, [updateInput]);
@@ -1022,6 +1592,56 @@ export function ChatInput({
       moveCaretTo(tokenRange.end);
     }
   }, [moveCaretTo, skillTokenRanges]);
+
+  const insertSkillToken = useCallback((skill: QuickAccessSkill, options: { replaceSlashInput?: boolean } = {}) => {
+    const textarea = textareaRef.current;
+    const nextToken = getSkillPrefix(skill.name);
+    let adjustedStart = textarea?.selectionStart ?? input.length;
+    let adjustedEnd = textarea?.selectionEnd ?? input.length;
+
+    if (options.replaceSlashInput) {
+      if (slashInput.active) {
+        adjustedStart = slashInput.replacementStart;
+        adjustedEnd = slashInput.replacementEnd;
+      }
+    }
+
+    const leadingSpace = needsLeadingSkillSpace(input, adjustedStart) ? ' ' : '';
+    const nextValue = `${input.slice(0, adjustedStart)}${leadingSpace}${nextToken}${input.slice(adjustedEnd)}`;
+    updateInput(nextValue);
+    setSlashMenuDismissed(true);
+    setSlashSelectedIndex(0);
+    setActionMenuOpen(false);
+    setPickerOpen(false);
+    setModelPickerOpen(false);
+    setWorkspaceMenuOpen(false);
+    setKnowledgePickerOpen(false);
+    requestAnimationFrame(() => {
+      textareaRef.current?.focus();
+      const cursorPosition = adjustedStart + leadingSpace.length + nextToken.length;
+      textareaRef.current?.setSelectionRange(cursorPosition, cursorPosition);
+    });
+  }, [input, slashInput, updateInput]);
+
+  const insertSkillPrompt = useCallback((skill: QuickAccessSkill, prompt: string) => {
+    const textarea = textareaRef.current;
+    const adjustedStart = textarea?.selectionStart ?? input.length;
+    const adjustedEnd = textarea?.selectionEnd ?? input.length;
+    const nextToken = getSkillPrefix(skill.name);
+    const leadingSpace = needsLeadingSkillSpace(input, adjustedStart) ? ' ' : '';
+    const body = prompt.trim();
+    const inserted = `${leadingSpace}${nextToken}${body}`;
+    const nextValue = `${input.slice(0, adjustedStart)}${inserted}${input.slice(adjustedEnd)}`;
+    updateInput(nextValue);
+    setSlashMenuDismissed(true);
+    setSlashSelectedIndex(0);
+    closeComposerPopovers();
+    requestAnimationFrame(() => {
+      textareaRef.current?.focus();
+      const cursorPosition = adjustedStart + inserted.length;
+      textareaRef.current?.setSelectionRange(cursorPosition, cursorPosition);
+    });
+  }, [closeComposerPopovers, input, updateInput]);
 
   const loadQuickSkills = useCallback(async (): Promise<QuickAccessSkill[]> => {
     if (!currentAgent) {
@@ -1051,6 +1671,21 @@ export function ChatInput({
     }
   }, [currentAgent]);
 
+  const officeActionEntries = useMemo(
+    () => OFFICE_ACTIONS.map((action) => ({ action, skill: findOfficeSkill(action, quickSkills) })),
+    [quickSkills],
+  );
+
+  const handleOfficeAction = useCallback((action: OfficeAction, skill: QuickAccessSkill | null) => {
+    if (!skill) {
+      setActionMenuOpen(false);
+      window.location.hash = '#/settings/skills?tab=packs';
+      toast.info(t('composer.office.setupRequired', { action: t(action.labelKey) }));
+      return;
+    }
+    insertSkillPrompt(skill, t(action.promptKey));
+  }, [insertSkillPrompt, t]);
+
   const handleSkillTokenPreview = useCallback(async (skillName: string) => {
     let list = quickSkills;
     if (list.length === 0 && currentAgent) {
@@ -1067,12 +1702,52 @@ export function ChatInput({
   }, [quickSkills, currentAgent, loadQuickSkills, openArtifactPreview, t]);
 
   useEffect(() => {
-    if (!skillPickerOpen) return;
+    if (!slashMenuOpen) return;
     void loadQuickSkills();
-  }, [skillPickerOpen, loadQuickSkills]);
+  }, [loadQuickSkills, slashMenuOpen]);
 
   const handleSelectModel = useCallback(async (modelRef: string) => {
     if (!currentAgent || switchingModelRef) return;
+
+    if (modelRef !== effectiveModelRef) {
+      const allowed = await confirmPromptCacheRisk('model-switch', modelRef);
+      if (!allowed) {
+        setModelPickerOpen(false);
+        textareaRef.current?.focus();
+        return;
+      }
+    }
+
+    // Area 2 §3.1: turn tier — composer-local state, no persistence.
+    if (modelScope === 'turn') {
+      setPendingTurnModelRef(modelRef === pendingTurnModelRef ? null : modelRef);
+      setModelPickerOpen(false);
+      textareaRef.current?.focus();
+      return;
+    }
+
+    // Area 2 §3.3: session tier — patch runtime SessionEntry.modelOverride.
+    if (modelScope === 'session') {
+      setSwitchingModelRef(modelRef);
+      setModelPickerOpen(false);
+      try {
+        const result = await hostApi.sessions.patchRuntimeModel({
+          sessionKey: currentSessionKey,
+          modelRef,
+        });
+        if (!result.success) {
+          toast.error(t('composer.modelSwitchFailed', { error: result.error ?? 'Unknown error' }));
+        }
+      } catch (error) {
+        toast.error(t('composer.modelSwitchFailed', { error: String(error) }));
+      } finally {
+        setSwitchingModelRef(null);
+        textareaRef.current?.focus();
+      }
+      return;
+    }
+
+    // Persistent tier — existing behavior (updateAgentModel).
     if (modelRef === effectiveModelRef) {
       setModelPickerOpen(false);
       textareaRef.current?.focus();
@@ -1093,10 +1768,10 @@ export function ChatInput({
       setSwitchingModelRef(null);
       textareaRef.current?.focus();
     }
-  }, [currentAgent, defaultModelRef, effectiveModelRef, switchingModelRef, t, updateAgentModel]);
+  }, [confirmPromptCacheRisk, currentAgent, currentSessionKey, defaultModelRef, effectiveModelRef, modelScope, pendingTurnModelRef, switchingModelRef, t, updateAgentModel]);
 
   const handleWorkspaceAction = useCallback((action: () => void | Promise<void>) => {
-    setWorkspaceActionsOpen(false);
+    setWorkspaceMenuOpen(false);
     void Promise.resolve(action()).catch((error) => {
       toast.error(t('composer.workspaceActionFailed', { error: String(error) }));
     });
@@ -1219,9 +1894,15 @@ export function ChatInput({
 
   const allReady = attachments.length === 0 || attachments.every(a => a.status === 'ready');
   const hasFailedAttachments = attachments.some((a) => a.status === 'error');
+  const hasComposerDraft = Boolean(input.trim() || selectedKnowledgeRefs.length > 0);
   const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
   const canStop = sending && !inputDisabled && !!onStop;
-  const canIntervene = sending && (input.trim() || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !hasFailedAttachments && !capabilityExecuting;
+  const canIntervene = sending && hasComposerDraft && allReady && !inputDisabled && !hasFailedAttachments && !capabilityExecuting;
+  const showInlineComposerStatus = !isGatewayUsable
+    || chatComposerStatusComponents.length > 0
+    || Boolean(longTaskControlStatus)
+    || compactAttention
+    || hasFailedAttachments;
 
   const completeSend = useCallback(async (
     textToSend: string,
@@ -1257,8 +1938,6 @@ export function ChatInput({
     }
     updateInput('');
     setAttachments([]);
-    setSelectedSkill(null);
-    setSkillQuery('');
     setSelectedKnowledgeRefs([]);
     setSuggestedKnowledgeRefs([]);
     if (textareaRef.current) {
@@ -1268,31 +1947,37 @@ export function ChatInput({
     if (inputMode) {
       onSend(
         textToSend,
-        safeAttachments,
-        sendTargetAgentId,
-        sendKnowledgeScope,
-        sendKnowledgeMode,
-        sendKnowledgeReferences.length > 0 ? sendKnowledgeReferences : undefined,
-        activeTaskNodeId,
-        inputMode,
+        {
+          attachments: safeAttachments,
+          targetAgentId: sendTargetAgentId,
+          knowledgeScope: sendKnowledgeScope,
+          knowledgeMode: sendKnowledgeMode,
+          knowledgeReferences: sendKnowledgeReferences.length > 0 ? sendKnowledgeReferences : undefined,
+          activeTaskNodeId,
+          inputMode,
+          ...(pendingTurnModelRef ? { modelRefOverride: pendingTurnModelRef } : {}),
+        },
       );
     } else {
       onSend(
         textToSend,
-        safeAttachments,
-        sendTargetAgentId,
-        sendKnowledgeScope,
-        sendKnowledgeMode,
-        sendKnowledgeReferences.length > 0 ? sendKnowledgeReferences : undefined,
-        activeTaskNodeId,
+        {
+          attachments: safeAttachments,
+          targetAgentId: sendTargetAgentId,
+          knowledgeScope: sendKnowledgeScope,
+          knowledgeMode: sendKnowledgeMode,
+          knowledgeReferences: sendKnowledgeReferences.length > 0 ? sendKnowledgeReferences : undefined,
+          activeTaskNodeId,
+          ...(pendingTurnModelRef ? { modelRefOverride: pendingTurnModelRef } : {}),
+        },
       );
     }
+    setPendingTurnModelRef(null);
     setTargetAgentId(null);
     setPickerOpen(false);
-    setSkillPickerOpen(false);
     setKnowledgePickerOpen(false);
     return true;
-  }, [activeTaskNodeId, onSend, recordKnowledgeReferences, updateInput]);
+  }, [activeTaskNodeId, onSend, pendingTurnModelRef, recordKnowledgeReferences, updateInput]);
 
   const handleInterventionSend = useCallback(async (inputMode: LongTaskInputMode) => {
     if (!sending) return;
@@ -1321,6 +2006,7 @@ export function ChatInput({
     knowledgeMode,
     knowledgeScope,
     selectedKnowledgeRefs,
+    sending,
     t,
     targetAgentId,
   ]);
@@ -1346,9 +2032,8 @@ export function ChatInput({
       setKnowledgeSearchError(null);
       setKnowledgePickerOpen(true);
       setPickerOpen(false);
-      setSkillPickerOpen(false);
       setModelPickerOpen(false);
-      setWorkspaceActionsOpen(false);
+      setWorkspaceMenuOpen(false);
       if (onKnowledgeScopeChange) {
         await onKnowledgeScopeChange('wiki');
       }
@@ -1385,9 +2070,8 @@ export function ChatInput({
       clearComposer();
       setKnowledgePickerOpen(true);
       setPickerOpen(false);
-      setSkillPickerOpen(false);
       setModelPickerOpen(false);
-      setWorkspaceActionsOpen(false);
+      setWorkspaceMenuOpen(false);
       toast.message(t('composer.slashCommands.toasts.scopeOpened'));
       requestAnimationFrame(() => textareaRef.current?.focus());
       return;
@@ -1569,6 +2253,40 @@ export function ChatInput({
     workspace?.id,
   ]);
 
+  const findExactSlashItem = useCallback((): SlashPaletteItem | null => {
+    const exactCommand = slashInput.allowsCommands ? findExactSlashCommand(slashInput.commandText) : null;
+    if (exactCommand) {
+      return {
+        id: `command:${exactCommand.id}`,
+        type: 'command',
+        group: exactCommand.group,
+        command: exactCommand,
+      };
+    }
+    const normalized = slashInput.commandText.trim().toLowerCase();
+    if (!normalized) return null;
+    const exactSkill = quickSkills.find((skill) => skill.name.toLowerCase() === normalized);
+    if (!exactSkill) return null;
+    return {
+      id: `skill:${exactSkill.source}:${exactSkill.name}`,
+      type: 'skill',
+      group: 'skills',
+      skill: exactSkill,
+    };
+  }, [quickSkills, slashInput.allowsCommands, slashInput.commandText]);
+
+  const selectSlashItem = useCallback((item: SlashPaletteItem | null) => {
+    if (!item) {
+      toast.message(t('composer.slashCommands.unknownToast', { command: `/${slashInput.commandText}` }));
+      return;
+    }
+    if (item.type === 'skill') {
+      insertSkillToken(item.skill, { replaceSlashInput: true });
+      return;
+    }
+    void executeSlashCommand(item.command, slashInput.args);
+  }, [executeSlashCommand, insertSkillToken, slashInput.args, slashInput.commandText, t]);
+
   const handleUnsupportedCapabilityRequest = useCallback((resolution: ChatCapabilityPlanResolution): boolean => {
     if (!resolution.unsupportedReason) return false;
     toast.message(t(`composer.capability.unsupported.${resolution.unsupportedReason}`, {
@@ -1579,12 +2297,7 @@ export function ChatInput({
 
   const handleSend = useCallback(async () => {
     if (slashInput.active) {
-      const exactCommand = findExactSlashCommand(slashInput.commandText);
-      if (!exactCommand) {
-        toast.message(t('composer.slashCommands.unknownToast', { command: `/${slashInput.commandText}` }));
-        return;
-      }
-      await executeSlashCommand(exactCommand, slashInput.args);
+      selectSlashItem(findExactSlashItem() ?? selectedSlashItem);
       return;
     }
 
@@ -1623,9 +2336,8 @@ export function ChatInput({
           results: [],
         });
         setPickerOpen(false);
-        setSkillPickerOpen(false);
         setModelPickerOpen(false);
-        setWorkspaceActionsOpen(false);
+        setWorkspaceMenuOpen(false);
         setKnowledgePickerOpen(false);
         return;
       }
@@ -1658,8 +2370,6 @@ export function ChatInput({
     }
     updateInput('');
     setAttachments([]);
-    setSelectedSkill(null);
-    setSkillQuery('');
     setSelectedKnowledgeRefs([]);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -1667,18 +2377,21 @@ export function ChatInput({
     recordKnowledgeReferences(knowledgeReferencesToSend);
     onSend(
       textToSend,
-      attachmentsToSend,
-      targetAgentId,
-      sendKnowledgeScope,
-      knowledgeMode,
-      knowledgeReferencesToSend.length > 0 ? knowledgeReferencesToSend : undefined,
-      activeTaskNodeId,
+      {
+        attachments: attachmentsToSend,
+        targetAgentId,
+        knowledgeScope: sendKnowledgeScope,
+        knowledgeMode,
+        knowledgeReferences: knowledgeReferencesToSend.length > 0 ? knowledgeReferencesToSend : undefined,
+        activeTaskNodeId,
+        ...(pendingTurnModelRef ? { modelRefOverride: pendingTurnModelRef } : {}),
+      },
     );
+    setPendingTurnModelRef(null);
     setTargetAgentId(null);
     setPickerOpen(false);
-    setSkillPickerOpen(false);
     setKnowledgePickerOpen(false);
-  }, [input, attachments, canSend, onSend, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, executeSlashCommand, slashInput, activeTaskNodeId, routeKnowledgeForMessage]);
+  }, [input, attachments, canSend, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -1688,6 +2401,8 @@ export function ChatInput({
   const handleConfirmCapabilityActions = useCallback(async () => {
     if (!pendingCapabilitySend || capabilityExecuting) return;
     if (pendingCapabilitySend.plan.some((action) => isCapabilityAuditBlocked(action.auditResult))) return;
+    const promptCacheAction = promptCacheRiskActionForCapabilityPlan(pendingCapabilitySend.plan);
+    if (promptCacheAction && !(await confirmPromptCacheRisk(promptCacheAction))) return;
     setCapabilityExecuting(true);
     try {
       const results = await executeChatCapabilityActions(pendingCapabilitySend.plan, {
@@ -1718,19 +2433,42 @@ export function ChatInput({
     } finally {
       setCapabilityExecuting(false);
     }
-  }, [capabilityExecuting, completeSend, currentAgentId, pendingCapabilitySend, t, workspace?.id]);
+  }, [capabilityExecuting, completeSend, confirmPromptCacheRisk, currentAgentId, pendingCapabilitySend, t, workspace?.id]);
 
   const handleStop = useCallback(() => {
     if (!canStop) return;
     onStop?.();
   }, [canStop, onStop]);
 
+  const handlePrimaryComposerAction = useCallback(() => {
+    if (sending) {
+      if (canIntervene) {
+        void handleInterventionSend('queue');
+        return;
+      }
+      handleStop();
+      return;
+    }
+    void handleSend();
+  }, [canIntervene, handleInterventionSend, handleSend, handleStop, sending]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      if (sending && e.key === 'Enter' && (e.ctrlKey || e.metaKey || e.shiftKey)) {
+        const nativeEvent = e.nativeEvent as KeyboardEvent;
+        if (isComposingRef.current || nativeEvent.isComposing || nativeEvent.keyCode === 229) {
+          return;
+        }
+        e.preventDefault();
+        if (!canIntervene) return;
+        void handleInterventionSend(e.shiftKey ? 'interrupt' : 'guide');
+        return;
+      }
+
       if (slashMenuOpen) {
         if (e.key === 'ArrowDown') {
           e.preventDefault();
-          setSlashSelectedIndex((index) => Math.min(index + 1, Math.max(0, slashCommands.length - 1)));
+          setSlashSelectedIndex((index) => Math.min(index + 1, Math.max(0, slashItems.length - 1)));
           return;
         }
         if (e.key === 'ArrowUp') {
@@ -1749,12 +2487,7 @@ export function ChatInput({
             return;
           }
           e.preventDefault();
-          const commandToRun = findExactSlashCommand(slashInput.commandText) ?? selectedSlashCommand;
-          if (!commandToRun) {
-            toast.message(t('composer.slashCommands.unknownToast', { command: `/${slashInput.commandText}` }));
-            return;
-          }
-          void executeSlashCommand(commandToRun, slashInput.args);
+          selectSlashItem(findExactSlashItem() ?? selectedSlashItem);
           return;
         }
       }
@@ -1765,12 +2498,7 @@ export function ChatInput({
           return;
         }
         e.preventDefault();
-        const exactCommand = findExactSlashCommand(slashInput.commandText);
-        if (!exactCommand) {
-          toast.message(t('composer.slashCommands.unknownToast', { command: `/${slashInput.commandText}` }));
-          return;
-        }
-        void executeSlashCommand(exactCommand, slashInput.args);
+        selectSlashItem(findExactSlashItem() ?? selectedSlashItem);
         return;
       }
 
@@ -1790,16 +2518,11 @@ export function ChatInput({
           e.preventDefault();
           const valueWithoutToken = `${input.slice(0, tokenRange.start)}${input.slice(tokenRange.end)}`;
           updateInput(valueWithoutToken);
-          setSelectedSkill(null);
           moveCaretTo(tokenRange.start);
           return;
         }
 
         if (!input) {
-          if (selectedSkill) {
-            setSelectedSkill(null);
-            return;
-          }
           setTargetAgentId(null);
           return;
         }
@@ -1828,9 +2551,8 @@ export function ChatInput({
       }
       if (e.key === 'Escape') {
         setPickerOpen(false);
-        setSkillPickerOpen(false);
         setModelPickerOpen(false);
-        setWorkspaceActionsOpen(false);
+        setWorkspaceMenuOpen(false);
         setKnowledgePickerOpen(false);
         return;
       }
@@ -1840,21 +2562,27 @@ export function ChatInput({
           return;
         }
         e.preventDefault();
+        if (sending) {
+          if (canIntervene) void handleInterventionSend('queue');
+          return;
+        }
         handleSend();
       }
     },
     [
-      executeSlashCommand,
+      canIntervene,
+      findExactSlashItem,
+      handleInterventionSend,
       handleSend,
       input,
       moveCaretTo,
-      selectedSkill,
-      selectedSlashCommand,
+      selectSlashItem,
+      selectedSlashItem,
+      sending,
       skillTokenRanges,
-      slashCommands.length,
+      slashItems.length,
       slashInput,
       slashMenuOpen,
-      t,
       updateInput,
     ],
   );
@@ -1939,106 +2667,44 @@ export function ChatInput({
         {/* Input Container */}
         <div className={`relative bg-surface-modal rounded-2xl shadow-sm border px-3 pt-2.5 pb-1.5 transition-all ${dragOver ? 'border-primary ring-1 ring-primary' : 'border-black/10 dark:border-white/10'}`}>
           {slashMenuOpen && (
-            <div
-              role="listbox"
-              aria-label={t('composer.slashCommands.menuLabel')}
-              data-testid="chat-slash-command-menu"
-              className="absolute bottom-full left-0 right-0 z-30 mb-2 max-h-[min(420px,calc(100vh-190px))] overflow-hidden rounded-lg border border-black/10 bg-surface-modal shadow-md dark:border-white/10 sm:right-auto sm:w-[520px]"
-            >
-              <div className="border-b border-black/5 px-3 py-2 dark:border-white/10">
-                <div className="flex items-center gap-2">
-                  <Wrench className="h-3.5 w-3.5 text-primary" />
-                  <p className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">{t('composer.slashCommands.title')}</p>
-                </div>
-                <p className="mt-0.5 text-2xs leading-4 text-muted-foreground/70">
-                  {t('composer.slashCommands.subtitle')}
-                </p>
-              </div>
-
-              {slashCommands.length === 0 ? (
-                <div className="px-3 py-3" data-testid="chat-slash-command-empty">
-                  <p className="text-xs font-medium text-foreground">{t('composer.slashCommands.unknownTitle')}</p>
-                  <p className="mt-0.5 text-2xs leading-4 text-muted-foreground">
-                    {t('composer.slashCommands.unknownDescription', { command: `/${slashInput.commandText}` })}
-                  </p>
-                </div>
-              ) : (
-                <div className="max-h-[340px] overflow-y-auto p-1">
-                  {slashCommands.map((command, index) => {
-                    const previous = slashCommands[index - 1];
-                    const showGroup = !previous || previous.group !== command.group;
-                    const selected = index === slashSelectedIndex;
-                    const icon = command.group === 'knowledge'
-                      ? <BookOpen className="h-3.5 w-3.5" />
-                      : command.group === 'coding'
-                        ? <Wrench className="h-3.5 w-3.5" />
-                        : command.group === 'workflow'
-                          ? <Briefcase className="h-3.5 w-3.5" />
-                          : <MessageSquarePlus className="h-3.5 w-3.5" />;
-                    return (
-                      <div key={command.id}>
-                        {showGroup && (
-                          <div className="px-2 pb-0.5 pt-1.5 text-2xs font-medium uppercase tracking-wide text-muted-foreground/60">
-                            {t(`composer.slashCommands.groups.${command.group}`)}
-                          </div>
-                        )}
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={selected}
-                          data-testid={`chat-slash-command-option-${command.id}`}
-                          className={cn(
-                            'flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors',
-                            selected ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-foreground hover:bg-black/5 dark:hover:bg-white/5',
-                          )}
-                          onMouseEnter={() => setSlashSelectedIndex(index)}
-                          onMouseDown={(event) => event.preventDefault()}
-                          onClick={() => void executeSlashCommand(command, slashInput.args)}
-                        >
-                          <span className={cn(
-                            'flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-surface-input text-muted-foreground',
-                            selected && 'text-primary',
-                          )}>
-                            {icon}
-                          </span>
-                          <span className="min-w-0 flex-1">
-                            <span className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-                              <code className="rounded bg-surface-input px-1 py-0.5 font-mono text-2xs text-foreground">
-                                /{command.id}
-                              </code>
-                              <span className="text-xs font-medium text-foreground">
-                                {t(`composer.slashCommands.commands.${command.id}.label`)}
-                              </span>
-                              {t(`composer.slashCommands.commands.${command.id}.argumentHint`) && (
-                                <span className="font-mono text-2xs text-muted-foreground">
-                                  {t(`composer.slashCommands.commands.${command.id}.argumentHint`)}
-                                </span>
-                              )}
-                            </span>
-                            <span className="mt-0.5 block text-2xs leading-4 text-muted-foreground">
-                              {t(`composer.slashCommands.commands.${command.id}.description`)}
-                            </span>
-                          </span>
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            <SlashCommandPalette
+              items={slashItems}
+              getCommandStatus={getSlashCommandStatus}
+              onHover={setSlashSelectedIndex}
+              onSelect={selectSlashItem}
+              selectedIndex={slashSelectedIndex}
+              skillsError={skillsError}
+              skillsLoading={skillsLoading && !slashItems.some((item) => item.type === 'skill')}
+              slashInput={slashInput}
+              t={t}
+            />
           )}
 
-          {selectedTarget && (
+          {(selectedTarget || pendingTurnModelRef) && (
             <div className="flex flex-wrap gap-2 pb-1.5">
-              <button
-                type="button"
-                onClick={() => setTargetAgentId(null)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1 text-meta font-medium text-foreground transition-colors hover:bg-primary/10"
-                title={t('composer.clearTarget')}
-              >
-                <span>{t('composer.targetChip', { agent: selectedTarget.name })}</span>
-                <X className="h-3 w-3 text-muted-foreground" />
-              </button>
+              {pendingTurnModelRef && (
+                <button
+                  type="button"
+                  onClick={() => setPendingTurnModelRef(null)}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1 text-meta font-medium text-foreground transition-colors hover:bg-primary/10"
+                  title={t('composer.clearTurnModel')}
+                  data-testid="chat-turn-model-chip"
+                >
+                  <span>{t('composer.turnModelChip', { model: formatModelRefLabel(pendingTurnModelRef) })}</span>
+                  <X className="h-3 w-3 text-muted-foreground" />
+                </button>
+              )}
+              {selectedTarget && (
+                <button
+                  type="button"
+                  onClick={() => setTargetAgentId(null)}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1 text-meta font-medium text-foreground transition-colors hover:bg-primary/10"
+                  title={t('composer.clearTarget')}
+                >
+                  <span>{t('composer.targetChip', { agent: selectedTarget.name })}</span>
+                  <X className="h-3 w-3 text-muted-foreground" />
+                </button>
+              )}
             </div>
           )}
 
@@ -2063,40 +2729,176 @@ export function ChatInput({
           )}
 
           {suggestedKnowledgeRefs.length > 0 && selectedKnowledgeRefs.length === 0 && (
-            <div className="mb-2 flex flex-wrap items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-2 text-meta text-emerald-700 dark:text-emerald-400" data-testid="chat-knowledge-suggestion">
-              <BookOpen className="h-3.5 w-3.5 shrink-0" />
-              <span className="min-w-0 flex-1 truncate">
-                {t('composer.knowledgeRoute.suggestion', { count: suggestedKnowledgeRefs.length })}
+            <div
+              className="mb-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-2 text-meta text-emerald-700 dark:text-emerald-400"
+              data-testid="chat-knowledge-suggestion"
+            >
+              <div className="flex flex-wrap items-center gap-2" data-testid="chat-knowledge-preflight">
+                <BookOpen className="h-3.5 w-3.5 shrink-0" />
+                <span className="font-semibold text-foreground">{t('composer.knowledgePreflight.title')}</span>
+                <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                  {t('composer.knowledgePreflight.summary', {
+                    docs: suggestedKnowledgeCounts.docs,
+                    pitfalls: suggestedKnowledgeCounts.pitfalls,
+                    rules: suggestedKnowledgeCounts.rules,
+                  })}
+                </span>
+                {knowledgeRoutingBusy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                <button
+                  type="button"
+                  className="rounded-md px-2 py-1 text-tiny font-semibold hover:bg-emerald-500/10"
+                  onClick={attachSuggestedKnowledge}
+                  data-testid="chat-knowledge-suggestion-attach"
+                >
+                  {t('composer.knowledgeRoute.attach')}
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-tiny font-semibold hover:bg-emerald-500/10"
+                  onClick={() => setKnowledgePreflightExpanded((open) => !open)}
+                  data-testid="chat-knowledge-suggestion-open"
+                >
+                  <Eye className="h-3 w-3" />
+                  {t('composer.knowledgeRoute.inspect')}
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md p-1 hover:bg-emerald-500/10"
+                  onClick={dismissSuggestedKnowledge}
+                  data-testid="chat-knowledge-suggestion-dismiss"
+                  aria-label={t('composer.knowledgeRoute.dismiss')}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              {knowledgePreflightExpanded && (
+                <div className="mt-2 grid gap-2 border-t border-emerald-500/15 pt-2" data-testid="chat-knowledge-preflight-inspect">
+                  {suggestedKnowledgeGroups.map((group) => (
+                    <div key={group.key} className="rounded-md bg-background/60 p-2 dark:bg-white/[0.04]" data-testid={`chat-knowledge-preflight-group-${group.key}`}>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                          {t(`composer.knowledgePreflight.groups.${group.key}`)}
+                        </span>
+                        <span className="text-[11px] tabular-nums text-muted-foreground">{group.candidates.length}</span>
+                      </div>
+                      <div className="mt-1.5 grid gap-1.5">
+                        {group.candidates.map((candidate) => {
+                          const source = candidate.sourcePath || candidate.pagePath || candidate.lookup;
+                          return (
+                            <div key={candidate.id} className="rounded-md border border-black/10 bg-surface-input px-2 py-1.5 dark:border-white/10" data-testid="chat-knowledge-preflight-item">
+                              <div className="flex min-w-0 items-center justify-between gap-2">
+                                <span className="min-w-0 truncate text-xs font-medium text-foreground">{candidate.title}</span>
+                                <span className="shrink-0 text-[11px] tabular-nums text-muted-foreground">
+                                  {t('composer.knowledgePreflight.confidence', { confidence: Math.round(candidate.confidence * 100) })}
+                                </span>
+                              </div>
+                              <div className="mt-1 grid gap-0.5 text-[11px] leading-4 text-muted-foreground">
+                                <span className="truncate">
+                                  {t('composer.knowledgePreflight.whyMatched', { reason: candidate.routingReason })}
+                                </span>
+                                <span className="truncate">
+                                  {t('composer.knowledgePreflight.source', { corpus: candidate.corpus ?? knowledgeCorpus, source })}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="justify-self-start rounded-md px-2 py-1 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-500/10 dark:text-emerald-400"
+                    onClick={() => {
+                      setKnowledgePickerOpen(true);
+                      setKnowledgeSearchResult({ success: true, results: suggestedKnowledgeRefs } as KnowledgeSearchResult);
+                    }}
+                    data-testid="chat-knowledge-preflight-open-picker"
+                  >
+                    {t('composer.knowledgeRoute.open')}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {showTaskLoopUpgradeSuggestion && taskLoopUpgradeSuggestion && (
+            <div
+              className="mb-2 rounded-lg border border-sky-500/20 bg-sky-500/5 px-2.5 py-2 text-meta text-sky-700 dark:text-sky-400"
+              data-testid="chat-task-loop-upgrade-suggestion"
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <Target className="h-3.5 w-3.5 shrink-0" />
+                <span className="font-semibold text-foreground">{t('composer.taskLoopUpgrade.title')}</span>
+                <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                  {t('composer.taskLoopUpgrade.summary')}
+                </span>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-tiny font-semibold hover:bg-sky-500/10 disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={() => void handleConfirmTaskLoopUpgrade()}
+                  disabled={taskLoopUpgradeBusy}
+                  data-testid="chat-task-loop-upgrade-confirm"
+                >
+                  {taskLoopUpgradeBusy && <Loader2 className="h-3 w-3 animate-spin" />}
+                  {taskLoopUpgradeBusy
+                    ? t('composer.taskLoopUpgrade.starting')
+                    : t('composer.taskLoopUpgrade.confirm')}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {sending && (
+            <div
+              className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-2.5 py-1.5 text-meta text-amber-800 dark:text-amber-300"
+              data-testid="chat-intervention-controls"
+            >
+              <span className="min-w-0 truncate font-medium">
+                {t('composer.intervention.queueDefault')}
               </span>
-              {knowledgeRoutingBusy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-              <button
-                type="button"
-                className="rounded-md px-2 py-1 text-tiny font-semibold hover:bg-emerald-500/10"
-                onClick={attachSuggestedKnowledge}
-                data-testid="chat-knowledge-suggestion-attach"
-              >
-                {t('composer.knowledgeRoute.attach')}
-              </button>
-              <button
-                type="button"
-                className="rounded-md px-2 py-1 text-tiny font-semibold hover:bg-emerald-500/10"
-                onClick={() => {
-                  setKnowledgePickerOpen(true);
-                  setKnowledgeSearchResult({ success: true, results: suggestedKnowledgeRefs } as KnowledgeSearchResult);
-                }}
-                data-testid="chat-knowledge-suggestion-open"
-              >
-                {t('composer.knowledgeRoute.open')}
-              </button>
-              <button
-                type="button"
-                className="rounded-md p-1 hover:bg-emerald-500/10"
-                onClick={dismissSuggestedKnowledge}
-                data-testid="chat-knowledge-suggestion-dismiss"
-                aria-label={t('composer.knowledgeRoute.dismiss')}
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
+              <div className="ml-auto flex shrink-0 items-center gap-1">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        data-testid="chat-intervention-guide"
+                        disabled={!canIntervene}
+                        onClick={() => void handleInterventionSend('guide')}
+                        className="h-7 rounded-md px-2 text-[11px] font-medium text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+                      >
+                        {t('composer.intervention.guide')}
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs text-xs">
+                    {t('composer.intervention.guideTooltip')}
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        data-testid="chat-intervention-interrupt"
+                        disabled={!canIntervene}
+                        onClick={() => void handleInterventionSend('interrupt')}
+                        className="h-7 rounded-md px-2 text-[11px] font-medium text-red-700 hover:bg-red-500/10 hover:text-red-700 dark:text-red-400 dark:hover:text-red-400"
+                      >
+                        {t('composer.intervention.interrupt')}
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs text-xs">
+                    {t('composer.intervention.interruptTooltip')}
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </div>
           )}
 
@@ -2128,7 +2930,7 @@ export function ChatInput({
                 isComposingRef.current = false;
               }}
               onPaste={handlePaste}
-              placeholder={inputDisabled ? t('composer.gatewayDisconnectedPlaceholder') : ''}
+              placeholder={inputDisabled ? t('composer.gatewayDisconnectedPlaceholder') : t('composer.placeholder')}
               disabled={inputDisabled}
               data-testid="chat-composer-input"
               className={cn(
@@ -2139,111 +2941,232 @@ export function ChatInput({
             />
           </div>
 
-          {workspace && onOpenGitPanel && onSwitchWorktreeWorkspace && (
-            <ComposerGitStrip
-              workspace={workspace}
-              disabled={inputDisabled || sending}
-              onOpenGitPanel={onOpenGitPanel}
-              onSwitchWorktreeWorkspace={onSwitchWorktreeWorkspace}
-            />
-          )}
-
           {/* Action Row — icons on their own line */}
           <div className="mt-1.5 flex items-center gap-1">
-            {/* Attach Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="shrink-0 h-8 w-8 rounded-lg text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground transition-colors"
-              onClick={pickFiles}
-              disabled={inputDisabled || sending}
-              title={t('composer.attachFiles')}
-            >
-              <Paperclip className="h-3.5 w-3.5" />
-            </Button>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  data-testid="chat-slash-command-trigger"
-                  className={cn(
-                    'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md px-2 text-2xs font-medium text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-white/10',
-                    slashMenuOpen && 'bg-black/5 text-foreground dark:bg-white/10',
-                  )}
-                  onClick={handleOpenSlashPalette}
-                  disabled={inputDisabled || sending}
-                  title={t('composer.slashCommands.contextButton')}
-                  aria-label={t('composer.slashCommands.contextButton')}
-                >
-                  <Wrench className="h-3.5 w-3.5" />
-                  <span>{t('composer.slashCommands.contextButtonShort')}</span>
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-xs text-xs">
-                {t('composer.slashCommands.contextButtonTooltip')}
-              </TooltipContent>
-            </Tooltip>
-
-            {showWorkspaceActions && (
-              <div ref={workspaceActionsRef} className="relative shrink-0">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  data-testid="chat-composer-workspace-actions"
-                  className={cn(
-                    'h-8 w-8 rounded-lg text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground transition-colors',
-                    workspaceActionsOpen && 'bg-black/5 text-foreground dark:bg-white/10',
-                  )}
-                  onClick={() => {
+            <div ref={actionMenuRef} className="relative shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  'shrink-0 h-8 w-8 rounded-lg text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground transition-colors',
+                  actionMenuOpen && 'bg-black/5 text-foreground dark:bg-white/10',
+                )}
+                onClick={() => {
+                  const nextOpen = !actionMenuOpen;
+                  setWorkspaceMenuOpen(false);
                   setPickerOpen(false);
-                  setSkillPickerOpen(false);
                   setModelPickerOpen(false);
                   setKnowledgePickerOpen(false);
-                  setWorkspaceActionsOpen((open) => !open);
-                  }}
-                  disabled={inputDisabled || sending}
-                  title={t('composer.workspaceActions')}
+                  setActionMenuOpen(nextOpen);
+                  if (nextOpen) void loadQuickSkills();
+                }}
+                disabled={inputDisabled || sending}
+                title={t('composer.actions.add')}
+                data-testid="chat-composer-actions"
+                aria-label={t('composer.actions.add')}
+                aria-expanded={actionMenuOpen}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+              {actionMenuOpen && (
+                <div
+                  className="absolute bottom-full left-0 z-30 mb-2 w-[min(360px,calc(100vw-2rem))] overflow-hidden rounded-xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
+                  data-testid="chat-composer-actions-menu"
                 >
-                  <Briefcase className="h-3.5 w-3.5" />
-                </Button>
-                {workspaceActionsOpen && (
-                  <div
-                    className="absolute left-0 bottom-full z-20 mb-2 w-80 overflow-hidden rounded-2xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
-                    data-testid="chat-composer-workspace-actions-menu"
-                  >
-                    <div className="border-b border-black/5 px-3 py-2 dark:border-white/10">
-                      <div className="truncate text-xs font-medium text-foreground">
-                        {workspace?.name || t('composer.workspaceActions')}
+                  <ComposerActionGroup title={t('composer.actions.context')} testId="chat-composer-action-group-context">
+                    <ComposerActionButton
+                      icon={Paperclip}
+                      label={t('composer.actions.attachFiles')}
+                      testId="chat-composer-action-attach-files"
+                      onClick={() => {
+                        setActionMenuOpen(false);
+                        void pickFiles();
+                      }}
+                    />
+                    <ComposerActionButton
+                      icon={BookOpen}
+                      label={t('composer.actions.knowledge')}
+                      testId="chat-composer-action-knowledge"
+                      onClick={() => {
+                        setActionMenuOpen(false);
+                        setKnowledgePickerOpen(true);
+                        requestAnimationFrame(() => textareaRef.current?.focus());
+                      }}
+                    />
+                    {showModelPicker && (
+                      <ComposerActionButton
+                        icon={Gauge}
+                        label={t('composer.actions.model')}
+                        testId="chat-composer-action-model"
+                        onClick={() => {
+                          setActionMenuOpen(false);
+                          setModelPickerOpen(true);
+                        }}
+                      />
+                    )}
+                  </ComposerActionGroup>
+
+                  <ComposerActionGroup title={t('composer.actions.skills')} testId="chat-composer-action-group-skills">
+                    {skillsLoading && quickSkills.length === 0 ? (
+                      <div className="px-2.5 py-2 text-xs text-muted-foreground">{t('composer.skillLoading')}</div>
+                    ) : quickSkills.length === 0 ? (
+                      <div className="px-2.5 py-2 text-xs text-muted-foreground">
+                        {skillsError || t('composer.skillEmpty')}
                       </div>
-                      {workspace?.rootPath && (
-                        <div className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
-                          {workspace.rootPath}
-                        </div>
+                    ) : (
+                      quickSkills.slice(0, 8).map((skill) => (
+                        <ComposerActionButton
+                          key={`${skill.source}:${skill.name}`}
+                          icon={Wrench}
+                          label={`/${skill.name}`}
+                          description={skill.description}
+                          testId={`chat-composer-action-skill-${skill.name}`}
+                          onClick={() => insertSkillToken(skill)}
+                        />
+                      ))
+                    )}
+                  </ComposerActionGroup>
+
+                  <ComposerActionGroup title={t('composer.actions.office')} testId="chat-composer-action-group-office">
+                    {officeActionEntries.map(({ action, skill }) => (
+                      <ComposerActionButton
+                        key={action.id}
+                        icon={action.icon}
+                        label={t(action.labelKey)}
+                        testId={`chat-composer-action-office-${action.id}`}
+                        onClick={() => handleOfficeAction(action, skill)}
+                      />
+                    ))}
+                  </ComposerActionGroup>
+
+                  {(onManualCompact || onForkSession || onHandoffSession) && (
+                    <ComposerActionGroup title={t('composer.actions.session')} testId="chat-composer-action-group-session">
+                      {onManualCompact && (
+                        <ComposerActionButton
+                          icon={Archive}
+                          label={t('composer.actions.compact')}
+                          testId="chat-composer-action-compact"
+                          disabled={compactDisabled}
+                          onClick={() => {
+                            setActionMenuOpen(false);
+                            setCompactionDialogOpen(true);
+                          }}
+                        />
                       )}
-                    </div>
+                      {onForkSession && (
+                        <ComposerActionButton
+                          icon={GitBranchPlus}
+                          label={t('composer.actions.fork')}
+                          testId="chat-composer-action-fork"
+                          disabled={forkDisabled || forkBusy}
+                          onClick={() => {
+                            setActionMenuOpen(false);
+                            void onForkSession();
+                          }}
+                        />
+                      )}
+                      {onHandoffSession && (
+                        <ComposerActionButton
+                          icon={MessageSquarePlus}
+                          label={t('composer.actions.handoff')}
+                          testId="chat-composer-action-handoff"
+                          disabled={handoffDisabled || handoffBusy}
+                          onClick={() => {
+                            setActionMenuOpen(false);
+                            void onHandoffSession();
+                          }}
+                        />
+                      )}
+                    </ComposerActionGroup>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {showWorkspaceMenu && (
+              <div ref={workspaceMenuRef} className="relative shrink-0">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      data-testid="chat-composer-permission-mode"
+                      className={cn(
+                        'inline-flex h-8 max-w-[220px] items-center gap-1.5 rounded-lg border px-2 text-2xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50',
+                        workspace && onPermissionModeChange
+                          ? PERMISSION_MODE_STYLES[activePermissionMode]
+                          : 'border-transparent text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
+                        workspaceMenuOpen && 'ring-1 ring-primary/20',
+                      )}
+                      onClick={() => {
+                        setSlashMenuDismissed(true);
+                        setPickerOpen(false);
+                        setModelPickerOpen(false);
+                        setKnowledgePickerOpen(false);
+                        setWorkspaceMenuOpen((open) => !open);
+                      }}
+                      disabled={inputDisabled || sending}
+                      title={workspaceMenuTitle}
+                      aria-label={workspaceMenuTitle}
+                      aria-expanded={workspaceMenuOpen}
+                    >
+                      {workspace && onPermissionModeChange ? (
+                        <Shield className="h-3.5 w-3.5 shrink-0" />
+                      ) : (
+                        <Briefcase className="h-3.5 w-3.5 shrink-0" />
+                      )}
+                      <span className="truncate">{workspaceMenuLabel}</span>
+                      <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform', workspaceMenuOpen && 'rotate-180')} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs text-xs">
+                    {workspaceMenuTitle}
+                  </TooltipContent>
+                </Tooltip>
+
+                {workspaceMenuOpen && (
+                  <div
+                    data-testid="chat-composer-permission-menu"
+                    className="absolute bottom-full left-0 z-30 mb-2 w-[min(336px,calc(100vw-2rem))] overflow-hidden rounded-xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
+                  >
+                    {workspace && (
+                      <div className="border-b border-black/5 px-3 py-2 dark:border-white/10">
+                        <div className="truncate text-xs font-medium text-foreground">
+                          {workspace.name || t('composer.workspaceActions')}
+                        </div>
+                        {workspace.rootPath && (
+                          <div className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
+                            {workspace.rootPath}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {workspace && onPermissionModeChange && (
                       <div className="py-1.5">
-                        <div className="flex items-center gap-1.5 px-3 py-1 text-tiny font-medium text-muted-foreground/80">
+                        <div className="flex items-center gap-1.5 px-2.5 pb-1 text-tiny font-medium text-muted-foreground/80">
                           <Shield className="h-3 w-3" />
                           <span>{t('composer.permissionModeTitle')}</span>
                         </div>
-                        {WORKSPACE_PERMISSION_MODES.map((mode) => (
-                          <button
-                            key={mode}
-                            type="button"
-                            className={cn(
-                              'flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors',
-                              workspace.permissionMode === mode ? 'bg-black/5 text-foreground dark:bg-white/10' : 'hover:bg-black/5 dark:hover:bg-white/5',
-                            )}
-                            data-testid={`chat-composer-permission-option-${mode}`}
-                            onClick={() => handleWorkspaceAction(() => onPermissionModeChange(mode))}
-                          >
-                            <span>{t(`composer.permissionMode.${mode}`)}</span>
-                            {workspace.permissionMode === mode && <Check className="h-3.5 w-3.5 text-primary" />}
-                          </button>
-                        ))}
+                        {WORKSPACE_PERMISSION_MODES.map((mode) => {
+                          const selected = activePermissionMode === mode;
+                          return (
+                            <button
+                              key={mode}
+                              type="button"
+                              className={cn(
+                                'flex w-full items-center justify-between gap-3 rounded-lg border border-transparent px-2.5 py-2 text-left text-xs font-medium transition-colors',
+                                selected
+                                  ? PERMISSION_MODE_STYLES[mode]
+                                  : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+                              )}
+                              data-testid={`chat-composer-permission-option-${mode}`}
+                              onClick={() => handleWorkspaceAction(() => onPermissionModeChange(mode))}
+                            >
+                              <span className="truncate">{t(`composer.permissionMode.${mode}`)}</span>
+                              {selected && <Check className="h-3.5 w-3.5 shrink-0" />}
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
 
@@ -2252,23 +3175,23 @@ export function ChatInput({
                         {onPickWorkspaceFolder && (
                           <button
                             type="button"
-                            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
                             data-testid="chat-composer-pick-workspace"
                             onClick={() => handleWorkspaceAction(onPickWorkspaceFolder)}
                           >
-                            <FolderPlus className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span>{t('composer.pickWorkspaceFolder')}</span>
+                            <FolderPlus className="h-3.5 w-3.5 shrink-0" />
+                            <span className="truncate">{t('composer.pickWorkspaceFolder')}</span>
                           </button>
                         )}
                         {onNewSession && (
                           <button
                             type="button"
-                            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
                             data-testid="chat-composer-new-session"
                             onClick={() => handleWorkspaceAction(onNewSession)}
                           >
-                            <MessageSquarePlus className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span>{t('composer.newWorkspaceSession')}</span>
+                            <MessageSquarePlus className="h-3.5 w-3.5 shrink-0" />
+                            <span className="truncate">{t('composer.newWorkspaceSession')}</span>
                           </button>
                         )}
                       </div>
@@ -2276,7 +3199,7 @@ export function ChatInput({
 
                     {onSwitchAgent && (agents ?? []).length > 0 && (
                       <div className="border-t border-black/5 py-1.5 dark:border-white/10">
-                        <div className="flex items-center gap-1.5 px-3 py-1 text-tiny font-medium text-muted-foreground/80">
+                        <div className="flex items-center gap-1.5 px-2.5 pb-1 text-tiny font-medium text-muted-foreground/80">
                           <Users className="h-3 w-3" />
                           <span>{t('composer.workspaceAgentTitle')}</span>
                         </div>
@@ -2287,8 +3210,8 @@ export function ChatInput({
                               key={agent.id}
                               type="button"
                               className={cn(
-                                'flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors',
-                                selected ? 'bg-black/5 text-foreground dark:bg-white/10' : 'hover:bg-black/5 dark:hover:bg-white/5',
+                                'flex w-full items-center justify-between gap-3 rounded-lg px-2.5 py-2 text-left text-xs transition-colors',
+                                selected ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
                               )}
                               data-testid={`chat-composer-switch-agent-${agent.id}`}
                               disabled={selected}
@@ -2296,9 +3219,11 @@ export function ChatInput({
                             >
                               <span className="min-w-0">
                                 <span className="block truncate font-medium">{agent.name}</span>
-                                <span className="block truncate text-tiny text-muted-foreground">{agent.modelDisplay}</span>
+                                <span className="block truncate text-tiny text-muted-foreground">
+                                  {t('composer.modelSourceDefault')}: {agent.modelDisplay}
+                                </span>
                               </span>
-                              {selected && <Check className="h-3.5 w-3.5 text-primary" />}
+                              {selected && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
                             </button>
                           );
                         })}
@@ -2320,8 +3245,7 @@ export function ChatInput({
                     (pickerOpen || selectedTarget) && 'bg-primary/10 text-primary hover:bg-primary/20'
                   )}
                   onClick={() => {
-                    setSkillPickerOpen(false);
-                    setWorkspaceActionsOpen(false);
+                    setWorkspaceMenuOpen(false);
                     setModelPickerOpen(false);
                     setKnowledgePickerOpen(false);
                     setPickerOpen((open) => !open);
@@ -2355,135 +3279,34 @@ export function ChatInput({
               </div>
             )}
 
-            <div ref={skillPickerRef} className="relative shrink-0">
-              <button
-                type="button"
-                data-testid="chat-composer-skill"
-                className={cn(
-                  'inline-flex h-8 items-center gap-1 rounded-lg px-1.5 text-meta font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground focus-visible:outline-none focus-visible:ring-0 disabled:pointer-events-none disabled:opacity-50',
-                  (skillPickerOpen || selectedSkill) && 'text-foreground',
-                )}
-                onClick={() => {
-                  setPickerOpen(false);
-                  setWorkspaceActionsOpen(false);
-                  setModelPickerOpen(false);
-                  setKnowledgePickerOpen(false);
-                  setSkillPickerOpen((open) => !open);
-                }}
-                disabled={inputDisabled || sending}
-                title={t('composer.pickSkill')}
-              >
-                <span>{t('composer.skillButton')}</span>
-                <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', skillPickerOpen && 'rotate-180')} />
-              </button>
-              {skillPickerOpen && (
-                <div className="absolute left-0 bottom-full z-20 mb-2 w-80 overflow-hidden rounded-2xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10">
-                  <div className="flex items-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]">
-                    <Search className="h-3.5 w-3.5 text-muted-foreground" />
-                    <input
-                      value={skillQuery}
-                      onChange={(event) => setSkillQuery(event.target.value)}
-                      placeholder={t('composer.skillSearchPlaceholder')}
-                      className="w-full bg-transparent text-meta outline-none placeholder:text-muted-foreground/70"
-                      autoFocus
-                    />
-                  </div>
-                  <div className="px-3 py-2 text-tiny font-medium text-muted-foreground/80">
-                    {t('composer.skillPickerTitle', { agent: currentAgentName })}
-                  </div>
-                  <div className="max-h-72 overflow-y-auto">
-                    {skillsLoading ? (
-                      <div className="px-3 py-4 text-xs text-muted-foreground">
-                        {t('composer.skillLoading')}
-                      </div>
-                    ) : skillsError ? (
-                      <div className="px-3 py-4 text-xs text-destructive">
-                        {skillsError}
-                      </div>
-                    ) : filteredQuickSkills.length === 0 ? (
-                      <div className="px-3 py-4 text-xs text-muted-foreground">
-                        {t('composer.skillEmpty')}
-                      </div>
-                    ) : (
-                      filteredQuickSkills.map((skill) => (
-                        <SkillPickerItem
-                          key={`${skill.source}:${skill.name}`}
-                          skill={skill}
-                          selected={false}
-                          onSelect={() => {
-                            const textarea = textareaRef.current;
-                            const nextToken = getSkillPrefix(skill.name);
-                            const selectionStart = textarea?.selectionStart ?? input.length;
-                            const selectionEnd = textarea?.selectionEnd ?? input.length;
-                            let nextValue = input;
-                            let adjustedStart = selectionStart;
-                            let adjustedEnd = selectionEnd;
-
-                            const leadingSpace = needsLeadingSkillSpace(nextValue, adjustedStart) ? ' ' : '';
-                            nextValue = `${nextValue.slice(0, adjustedStart)}${leadingSpace}${nextToken}${nextValue.slice(adjustedEnd)}`;
-                            setSelectedSkill(null);
-                            updateInput(nextValue);
-                            setSkillPickerOpen(false);
-                            setSkillQuery('');
-                            requestAnimationFrame(() => {
-                              textareaRef.current?.focus();
-                              const cursorPosition = adjustedStart + leadingSpace.length + nextToken.length;
-                              textareaRef.current?.setSelectionRange(cursorPosition, cursorPosition);
-                            });
-                          }}
-                        />
-                      ))
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  data-testid="chat-knowledge-quick-toggle"
-                  className={cn(
-                    'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-white/10',
-                    wikiQuickActive && 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 dark:bg-emerald-500/15',
-                  )}
-                  onClick={handleQuickWikiToggle}
-                  disabled={inputDisabled || sending || !onKnowledgeScopeChange}
-                  title={t(wikiQuickActive ? 'composer.knowledgeQuick.disable' : 'composer.knowledgeQuick.enable')}
-                  aria-label={t(wikiQuickActive ? 'composer.knowledgeQuick.disable' : 'composer.knowledgeQuick.enable')}
-                >
-                  <BookOpen className={cn('h-3.5 w-3.5 transition-transform', wikiQuickActive && 'scale-110')} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-xs text-xs">
-                {t(wikiQuickActive ? 'composer.knowledgeQuick.disable' : 'composer.knowledgeQuick.enable')}
-              </TooltipContent>
-            </Tooltip>
-
             <div ref={knowledgePickerRef} className="relative shrink-0">
-              <button
+              <Button
                 type="button"
-                data-testid="chat-knowledge-scope-button"
+                variant="ghost"
+                size="sm"
                 className={cn(
-                  'inline-flex h-8 items-center gap-1.5 rounded-lg px-1.5 text-meta font-medium text-muted-foreground transition-all duration-200 hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-0 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-white/5',
-                  (knowledgePickerOpen || knowledgeScope !== 'none') && 'text-foreground',
-                  knowledgeScope !== 'none' && knowledgeScope !== 'memory' && 'bg-emerald-500/5',
+                  'h-8 max-w-[152px] gap-1.5 rounded-lg px-2 text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
+                  (knowledgePickerOpen || knowledgeScope !== 'none' || selectedKnowledgeRefs.length > 0)
+                    && 'bg-black/5 text-foreground dark:bg-white/10',
                 )}
-                onClick={() => {
-                  setPickerOpen(false);
-                  setSkillPickerOpen(false);
-                  setWorkspaceActionsOpen(false);
-                  setModelPickerOpen(false);
-                  setKnowledgePickerOpen((open) => !open);
-                }}
-                disabled={inputDisabled || sending || !onKnowledgeScopeChange}
+                data-testid="chat-knowledge-scope-button"
+                aria-label={t('composer.knowledgeScopeTitle')}
+                aria-expanded={knowledgePickerOpen}
+                disabled={inputDisabled || sending}
                 title={t('composer.knowledgeScopeTitle')}
+                onClick={() => {
+                  const nextOpen = !knowledgePickerOpen;
+                  setActionMenuOpen(false);
+                  setWorkspaceMenuOpen(false);
+                  setPickerOpen(false);
+                  setModelPickerOpen(false);
+                  setKnowledgePickerOpen(nextOpen);
+                }}
               >
-                <BookOpen className={cn('h-3.5 w-3.5', knowledgeScope !== 'none' && knowledgeScope !== 'memory' && 'text-emerald-700 dark:text-emerald-400')} />
-                <span>{t(`composer.knowledgeScope.${knowledgeScope}`)}</span>
-                <ChevronDown className={cn('h-3.5 w-3.5 transition-transform duration-200', knowledgePickerOpen && 'rotate-180')} />
-              </button>
+                <BookOpen className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">{t(`composer.knowledgeScope.${knowledgeScope}`)}</span>
+                <ChevronDown className={cn('h-3 w-3 shrink-0 transition-transform', knowledgePickerOpen && 'rotate-180')} />
+              </Button>
               {knowledgePickerOpen && (
                 <div
                   className="absolute left-0 bottom-full z-20 mb-2 w-[360px] overflow-hidden rounded-2xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
@@ -2627,10 +3450,10 @@ export function ChatInput({
               )}
             </div>
 
-            {currentAgent && (
+            {currentAgentId && (
               <div className="shrink-0">
                 <ChatAgentEffortButton
-                  agentId={currentAgent.id}
+                  agentId={currentAgent?.id ?? currentAgentId}
                   disabled={inputDisabled || sending}
                 />
               </div>
@@ -2638,29 +3461,6 @@ export function ChatInput({
 
             {showModelPicker && (
               <div ref={modelPickerRef} className="relative shrink-0">
-                <button
-                  type="button"
-                  data-testid="chat-model-picker-button"
-                  className={cn(
-                    'inline-flex h-8 max-w-[220px] items-center gap-1 rounded-lg px-1.5 text-meta font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground focus-visible:outline-none focus-visible:ring-0 disabled:pointer-events-none disabled:opacity-50',
-                    (modelPickerOpen || switchingModelRef) && 'text-foreground',
-                  )}
-                  onClick={() => {
-                    setPickerOpen(false);
-                    setSkillPickerOpen(false);
-                    setWorkspaceActionsOpen(false);
-                    setKnowledgePickerOpen(false);
-                    setModelPickerOpen((open) => !open);
-                  }}
-                  disabled={inputDisabled || sending || !currentAgent || !!switchingModelRef}
-                  title={t('composer.pickModel')}
-                >
-                  {switchingModelRef ? (
-                    <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
-                  ) : null}
-                  <span className="truncate">{currentModelLabel}</span>
-                  <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform', modelPickerOpen && 'rotate-180')} />
-                </button>
                 {modelPickerOpen && (
                   <div
                     className="absolute left-0 bottom-full z-20 mb-2 w-72 overflow-hidden rounded-2xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
@@ -2669,24 +3469,48 @@ export function ChatInput({
                     <div className="px-3 py-2 text-tiny font-medium text-muted-foreground/80">
                       {t('composer.modelPickerTitle')}
                     </div>
-                    <div className="max-h-64 overflow-y-auto">
-                      {modelOptions.map((option) => (
+                    {/* Area 2 §3.1: scope segmented control */}
+                    <div className="flex gap-1 px-2 pb-2" data-testid="chat-model-scope-selector">
+                      {(['turn', 'session', 'persistent'] as const).map((scope) => (
                         <button
-                          key={option.modelRef}
+                          key={scope}
                           type="button"
-                          onClick={() => void handleSelectModel(option.modelRef)}
+                          onClick={() => setModelScope(scope)}
                           className={cn(
-                            'flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium transition-colors',
-                            option.modelRef === effectiveModelRef ? 'bg-primary/10 text-foreground' : 'hover:bg-black/5 dark:hover:bg-white/5'
+                            'flex-1 rounded-md px-2 py-1 text-tiny font-medium transition-colors',
+                            modelScope === scope
+                              ? 'bg-primary/10 text-foreground'
+                              : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'
                           )}
-                          data-testid={`chat-model-picker-option-${option.label}`}
+                          data-testid={`chat-model-scope-${scope}`}
                         >
-                          <span className="truncate">{option.label}</span>
-                          {option.modelRef === effectiveModelRef && (
-                            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                          )}
+                          {t(`composer.modelScope.${scope}`)}
                         </button>
                       ))}
+                    </div>
+                    <div className="max-h-64 overflow-y-auto">
+                      {modelOptions.map((option) => {
+                        const isActive = modelScope === 'turn'
+                          ? option.modelRef === pendingTurnModelRef
+                          : option.modelRef === effectiveModelRef;
+                        return (
+                          <button
+                            key={option.modelRef}
+                            type="button"
+                            onClick={() => void handleSelectModel(option.modelRef)}
+                            className={cn(
+                              'flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium transition-colors',
+                              isActive ? 'bg-primary/10 text-foreground' : 'hover:bg-black/5 dark:hover:bg-white/5'
+                            )}
+                            data-testid={`chat-model-picker-option-${option.label}`}
+                          >
+                            <span className="truncate">{option.label}</span>
+                            {isActive && (
+                              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -2694,46 +3518,9 @@ export function ChatInput({
             )}
 
             {/* Send Button — pushed to the right */}
-            {sending && (
-              <div
-                className="ml-auto flex shrink-0 items-center gap-1"
-                data-testid="chat-intervention-controls"
-              >
-                {(['guide', 'queue', 'interrupt'] as const).map((mode) => (
-                  <Tooltip key={mode}>
-                    <TooltipTrigger asChild>
-                      <span className="inline-flex">
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="ghost"
-                          data-testid={`chat-intervention-${mode}`}
-                          disabled={!canIntervene}
-                          onClick={() => void handleInterventionSend(mode)}
-                          className={cn(
-                            'h-7 rounded-md px-2 text-[11px] font-medium',
-                            mode === 'interrupt'
-                              ? 'text-red-700 hover:bg-red-500/10 hover:text-red-700 dark:text-red-400 dark:hover:text-red-400'
-                              : mode === 'queue'
-                                ? 'text-amber-700 hover:bg-amber-500/10 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-400'
-                                : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
-                          )}
-                        >
-                          {t(`composer.intervention.${mode}`)}
-                        </Button>
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-xs text-xs">
-                      {t(`composer.intervention.${mode}Tooltip`)}
-                    </TooltipContent>
-                  </Tooltip>
-                ))}
-              </div>
-            )}
-
             <Button
-              onClick={sending ? handleStop : handleSend}
-              disabled={sending ? !canStop : !canSend}
+              onClick={handlePrimaryComposerAction}
+              disabled={sending ? !(canIntervene || canStop) : !canSend}
               size="icon"
               data-testid="chat-composer-send"
               className={`ml-auto shrink-0 h-8 w-8 rounded-lg transition-colors ${
@@ -2742,9 +3529,9 @@ export function ChatInput({
                   : 'text-muted-foreground/50 hover:bg-transparent bg-transparent'
               }`}
               variant="ghost"
-              title={sending ? t('composer.stop') : t('composer.send')}
+              title={sending && canIntervene ? t('composer.intervention.queue') : sending ? t('composer.stop') : t('composer.send')}
             >
-              {sending ? (
+              {sending && !canIntervene ? (
                 <Square className="h-3.5 w-3.5" fill="currentColor" />
               ) : (
                 <SendHorizontal className="h-4 w-4" strokeWidth={2} />
@@ -2752,27 +3539,35 @@ export function ChatInput({
             </Button>
           </div>
         </div>
-        <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-tiny text-muted-foreground/60 px-4">
-          <div className="flex min-w-0 items-center gap-1.5">
-            <div className={cn(
-              "w-1.5 h-1.5 rounded-full",
-              isGatewayUsable ? "bg-green-500/80" : "bg-red-500/80",
-            )} />
-            <span className="truncate">
-              {t('composer.gatewayStatus', {
-                state: isGatewayUsable
-                  ? t('composer.gatewayConnected')
-                  : gatewayStatus.state === 'running'
-                    ? 'starting'
-                    : gatewayStatus.state,
-                port: gatewayStatus.port,
-                pid: gatewayStatus.pid ? `| pid: ${gatewayStatus.pid}` : '',
-              })}
-            </span>
-            {chatComposerStatusComponents.map((Component, index) => (
-              <Component key={`${index}`} gatewayStatus={gatewayStatus} />
-            ))}
-          </div>
+        <div
+          hidden={!showInlineComposerStatus}
+          className={cn(
+            'mt-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 text-tiny text-muted-foreground/60',
+            !showInlineComposerStatus && 'hidden',
+          )}
+        >
+          {(!isGatewayUsable || chatComposerStatusComponents.length > 0) && (
+            <div className="flex min-w-0 items-center gap-1.5">
+              <div className={cn(
+                "w-1.5 h-1.5 rounded-full",
+                isGatewayUsable ? "bg-green-500/80" : "bg-red-500/80",
+              )} />
+              <span className="truncate">
+                {t('composer.gatewayStatus', {
+                  state: isGatewayUsable
+                    ? t('composer.gatewayConnected')
+                    : gatewayStatus.state === 'running'
+                      ? 'starting'
+                      : gatewayStatus.state,
+                  port: gatewayStatus.port,
+                  pid: gatewayStatus.pid ? `| pid: ${gatewayStatus.pid}` : '',
+                })}
+              </span>
+              {chatComposerStatusComponents.map((Component, index) => (
+                <Component key={`${index}`} gatewayStatus={gatewayStatus} />
+              ))}
+            </div>
+          )}
           {(composerContextParts.length > 0 || longTaskControlStatus || onManualCompact || onForkSession || onHandoffSession) && (
             <div
               className="ml-auto flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-1.5 text-right"
@@ -3184,6 +3979,60 @@ export function ChatInput({
 
 // ── Attachment Preview ───────────────────────────────────────────
 
+function ComposerActionGroup({
+  title,
+  testId,
+  children,
+}: {
+  title: string;
+  testId: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="border-b border-black/5 py-1.5 last:border-b-0 dark:border-white/10" data-testid={testId}>
+      <div className="px-2.5 pb-1 text-tiny font-medium text-muted-foreground/80">{title}</div>
+      <div className="grid gap-0.5">{children}</div>
+    </section>
+  );
+}
+
+function ComposerActionButton({
+  icon: Icon,
+  label,
+  description,
+  testId,
+  disabled = false,
+  onClick,
+}: {
+  icon: LucideIcon;
+  label: string;
+  description?: string;
+  testId: string;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={cn(
+        'flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium transition-colors',
+        disabled
+          ? 'cursor-not-allowed text-muted-foreground/40'
+          : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+      )}
+      data-testid={testId}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      <Icon className="h-3.5 w-3.5 shrink-0" />
+      <span className="min-w-0 flex-1">
+        <span className="block truncate">{label}</span>
+        {description && <span className="mt-0.5 block truncate text-tiny font-normal text-muted-foreground/70">{description}</span>}
+      </span>
+    </button>
+  );
+}
+
 function AttachmentPreview({
   attachment,
   onRemove,
@@ -3258,46 +4107,5 @@ function AgentPickerItem({
         {agent.modelDisplay}
       </span>
     </button>
-  );
-}
-
-function SkillPickerItem({
-  skill,
-  selected,
-  onSelect,
-}: {
-  skill: QuickAccessSkill;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <button
-          type="button"
-          data-testid={`chat-composer-skill-option-${skill.name}`}
-          onClick={onSelect}
-          className={cn(
-            'flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left transition-colors',
-            selected ? 'bg-primary/10 text-foreground' : 'hover:bg-black/5 dark:hover:bg-white/5',
-          )}
-        >
-          <div className="min-w-0">
-            <div className="truncate text-meta font-semibold text-foreground">
-              <span className="font-mono">/{skill.name}</span>
-            </div>
-            <div className="truncate text-tiny text-muted-foreground">
-              {skill.sourceLabel}
-            </div>
-          </div>
-          <span className="rounded-full border border-black/10 bg-black/[0.03] px-2 py-0.5 text-2xs font-medium text-muted-foreground dark:border-white/10 dark:bg-white/[0.04]">
-            {skill.sourceLabel}
-          </span>
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side="right" className="max-w-xs text-xs leading-relaxed">
-        {skill.description}
-      </TooltipContent>
-    </Tooltip>
   );
 }

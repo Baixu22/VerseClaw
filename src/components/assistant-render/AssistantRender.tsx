@@ -54,13 +54,13 @@ export function BranchPicker({
 
   return (
     <div
-      className="inline-flex items-center gap-1 rounded-lg border border-border bg-background/80 p-1 text-xs text-muted-foreground shadow-sm"
+      className="inline-flex items-center gap-1 rounded-md border border-border/70 bg-background/60 p-1 text-xs text-muted-foreground shadow-sm"
       data-testid="assistant-branch-picker"
     >
       <GitBranch className="h-3.5 w-3.5" />
       <button
         type="button"
-        className="inline-flex h-6 w-6 items-center justify-center rounded-md hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+        className="inline-flex h-6 w-6 items-center justify-center rounded-md transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
         onClick={() => move(-1)}
         aria-label={t('assistantRender.branch.previous')}
       >
@@ -71,7 +71,7 @@ export function BranchPicker({
       </span>
       <button
         type="button"
-        className="inline-flex h-6 w-6 items-center justify-center rounded-md hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+        className="inline-flex h-6 w-6 items-center justify-center rounded-md transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
         onClick={() => move(1)}
         aria-label={t('assistantRender.branch.next')}
       >
@@ -86,10 +86,10 @@ export function ReasoningPanel({ items }: { items: AssistantReasoning[] }) {
   const [open, setOpen] = useState(false);
   if (items.length === 0) return null;
   return (
-    <div className="w-full rounded-lg border border-border bg-black/[0.025] dark:bg-white/[0.035]" data-testid="assistant-reasoning-panel">
+    <div className="w-full rounded-md border border-border/70 bg-background/60 text-muted-foreground shadow-sm" data-testid="assistant-reasoning-panel">
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-xs text-muted-foreground hover:text-foreground"
+        className="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
         onClick={() => setOpen((value) => !value)}
       >
         <span className="flex min-w-0 items-center gap-2">
@@ -99,7 +99,7 @@ export function ReasoningPanel({ items }: { items: AssistantReasoning[] }) {
         <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
-        <div className="space-y-2 border-t border-border px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+        <div className="space-y-2 border-t border-border/70 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
           {items.map((item) => (
             <p key={item.id} className="whitespace-pre-wrap break-words">{item.summary}</p>
           ))}
@@ -118,10 +118,10 @@ export function ToolFallbackCard({ tools }: { tools: AssistantToolFallback[] }) 
         <div
           key={tool.id}
           className={cn(
-            'rounded-lg border px-3 py-2 text-xs',
+            'rounded-md border px-3 py-2 text-xs shadow-sm',
             tool.status === 'error' && 'border-destructive/30 bg-destructive/5 text-destructive',
-            tool.status === 'running' && 'border-primary/30 bg-primary/5 text-foreground',
-            tool.status === 'completed' && 'border-border bg-black/[0.025] text-muted-foreground dark:bg-white/[0.035]',
+            tool.status === 'running' && 'border-primary/30 bg-background/60 text-foreground',
+            tool.status === 'completed' && 'border-border/70 bg-background/60 text-muted-foreground',
           )}
         >
           <div className="flex items-center gap-2">

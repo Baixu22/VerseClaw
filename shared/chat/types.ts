@@ -2,6 +2,7 @@ import type { ChatRuntimeEvent } from '../chat-runtime-events';
 import type { ChatKnowledgeReference } from '../host-api/contract';
 import type { KnowledgeInvocationMode, WorkspaceKnowledgeScope } from '../types/workspace';
 import type { TaskLedgerSnapshot } from '../types/task-ledger';
+import type { SessionArchiveEntry } from '../types/workspace';
 
 /** Metadata for locally-attached files (not from Gateway) */
 export interface AttachedFileMeta {
@@ -118,6 +119,39 @@ export interface ChatRuntimeRunState {
   events: ChatRuntimeEvent[];
 }
 
+export type ChatResendUserMessageInput = {
+  text: string;
+  messageId?: string;
+  messageIndex: number;
+  sessionKey?: string;
+};
+
+/**
+ * Options for `sendMessage` (Area 2 §3.2). The options-object form replaces
+ * the prior 8-positional-arg signature; callers pass only the fields they need.
+ */
+export type SendOptions = {
+  attachments?: Array<{
+    fileName: string;
+    mimeType: string;
+    fileSize: number;
+    stagedPath: string;
+    preview: string | null;
+  }>;
+  targetAgentId?: string | null;
+  knowledgeScope?: WorkspaceKnowledgeScope;
+  knowledgeMode?: KnowledgeInvocationMode;
+  inputMode?: 'interrupt' | 'guide' | 'queue' | 'revise-goal';
+  knowledgeReferences?: ChatKnowledgeReference[];
+  activeTaskNodeId?: string | null;
+  /**
+   * Turn-scoped model override (Area 2 §3.2). When set, this single send runs
+   * on the named model. Cleared after send (composer-local state). Never
+   * persisted to Agent.modelRef.
+   */
+  modelRefOverride?: string | null;
+};
+
 export interface ChatState {
   // Messages
   messages: RawMessage[];
@@ -147,6 +181,10 @@ export interface ChatState {
   sessionLabels: Record<string, string>;
   /** Last message timestamp (ms) per session key, used for sorting */
   sessionLastActivity: Record<string, number>;
+  /** Archived sessions (recycle bin) loaded from Main-process archive index */
+  archivedSessions: SessionArchiveEntry[];
+  /** True while `loadArchivedSessions` is in flight */
+  archivedSessionsLoading: boolean;
 
   // Thinking
   thinkingLevel: string | null;
@@ -163,25 +201,15 @@ export interface ChatState {
   newSession: () => void;
   deleteSession: (key: string) => Promise<void>;
   renameSession: (key: string, label: string) => Promise<void>;
+  archiveSession: (key: string, options?: { workspaceId?: string | null; folderId?: string | null }) => Promise<void>;
+  restoreSession: (sessionKey: string) => Promise<void>;
+  permanentDeleteSession: (sessionKey: string) => Promise<void>;
+  loadArchivedSessions: (agentId?: string) => Promise<void>;
   cleanupEmptySession: () => void;
   loadHistory: (quiet?: boolean) => Promise<void>;
   loadMoreHistory: () => Promise<void>;
-  sendMessage: (
-    text: string,
-    attachments?: Array<{
-      fileName: string;
-      mimeType: string;
-      fileSize: number;
-      stagedPath: string;
-      preview: string | null;
-    }>,
-    targetAgentId?: string | null,
-    knowledgeScope?: WorkspaceKnowledgeScope,
-    knowledgeMode?: KnowledgeInvocationMode,
-    inputMode?: 'interrupt' | 'guide' | 'queue' | 'revise-goal',
-    knowledgeReferences?: ChatKnowledgeReference[],
-    activeTaskNodeId?: string | null,
-  ) => Promise<void>;
+  sendMessage: (text: string, opts?: SendOptions) => Promise<void>;
+  resendUserMessage: (input: ChatResendUserMessageInput) => Promise<void>;
   abortRun: () => Promise<void>;
   handleChatEvent: (event: Record<string, unknown>) => void;
   handleRuntimeEvent: (event: ChatRuntimeEvent) => void;

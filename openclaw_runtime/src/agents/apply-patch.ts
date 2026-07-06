@@ -100,6 +100,10 @@ export function createApplyPatchTool(
     label: "apply_patch",
     description:
       "Apply a patch to one or more files using the apply_patch format. The input should include *** Begin Patch and *** End Patch markers.",
+    // A1 Stage 2 (acceptance 2.1): apply_patch can add/update/delete/move
+    // files — destructive (irreversible file removals).
+    risk: "destructive",
+    writeRiskProfile: { kind: "dynamic_writes", requiresApproval: true },
     parameters: applyPatchSchema,
     execute: async (_toolCallId, args, signal) => {
       const params = args as { input?: string };

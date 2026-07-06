@@ -340,8 +340,20 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
       await page.getByTestId('chat-composer-input').fill('start a long validation run');
       await page.getByTestId('chat-composer-send').click();
       await expect(page.getByTestId('chat-intervention-controls')).toBeVisible();
+      await expect(page.getByTestId('chat-intervention-guide')).toBeVisible();
+      await expect(page.getByTestId('chat-intervention-interrupt')).toBeVisible();
+      await expect(page.getByTestId('chat-intervention-queue')).toHaveCount(0);
+      await page.getByTestId('chat-composer-input').fill('queue this after the active validation run');
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('title', 'Queue');
+      await page.getByTestId('chat-composer-send').click();
+      await expect.poll(async () => (
+        (await app.evaluate(() => (
+          (globalThis as typeof globalThis & { __longTaskChatSendCalls?: Array<Record<string, unknown>> }).__longTaskChatSendCalls
+            ?.filter((call) => call?.inputMode === 'queue').length ?? 0
+        )))
+      )).toBe(1);
       await page.getByTestId('chat-composer-input').fill('preserve the validation evidence before continuing');
-      await page.getByTestId('chat-intervention-guide').click();
+      await page.keyboard.press('Control+Enter');
 
       await expect.poll(async () => app.evaluate(() => (
         (globalThis as typeof globalThis & { __longTaskChatSendCalls?: Array<Record<string, unknown>> }).__longTaskChatSendCalls
@@ -357,9 +369,11 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
           sessionKey: MAIN_SESSION_KEY,
         }),
       ]));
+      await page.getByTestId('chat-composer-input').fill('stop and replace the active validation plan');
+      await page.keyboard.press('Shift+Enter');
       await expect.poll(async () => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __longTaskLedgerAppendCalls?: Array<Record<string, unknown>> }).__longTaskLedgerAppendCalls
-          ?.filter((call) => Array.isArray(call?.events) && call.events.some((event: Record<string, unknown>) => event.type === 'decision_recorded')).length ?? 0
+        (globalThis as typeof globalThis & { __longTaskChatSendCalls?: Array<Record<string, unknown>> }).__longTaskChatSendCalls
+          ?.filter((call) => call?.inputMode === 'interrupt').length ?? 0
       ))).toBe(1);
     } finally {
       await closeElectronApp(app);

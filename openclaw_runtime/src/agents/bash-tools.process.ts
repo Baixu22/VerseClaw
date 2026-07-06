@@ -238,6 +238,10 @@ export function createProcessTool(
     name: "process",
     label: "process",
     displaySummary: PROCESS_TOOL_DISPLAY_SUMMARY,
+    // A1 Stage 2 (acceptance 2.1): process can write to stdin, kill/remove
+    // processes — destructive (irreversible process termination).
+    risk: "destructive",
+    writeRiskProfile: { kind: "dynamic_writes", requiresApproval: true },
     description: describeProcessTool({ hasCronTool: defaults?.hasCronTool === true }),
     parameters: processSchema,
     execute: async (_toolCallId, args, signal, _onUpdate): Promise<AgentToolResult<unknown>> => {

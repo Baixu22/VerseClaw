@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { WorkspaceGitPanel } from '@/components/file-preview/WorkspaceGitPanel';
 
@@ -10,6 +10,7 @@ const hostApiMock = vi.hoisted(() => ({
     stashList: vi.fn(),
     githubAuthStatus: vi.fn(),
     githubRepo: vi.fn(),
+    capabilities: vi.fn(),
     prList: vi.fn(),
     fileDiff: vi.fn(),
     stage: vi.fn(),
@@ -28,6 +29,9 @@ const hostApiMock = vi.hoisted(() => ({
     worktreeRemove: vi.fn(),
     worktreePrune: vi.fn(),
     prCreate: vi.fn(),
+  },
+  mcp: {
+    listTools: vi.fn(),
   },
   shell: {
     openPath: vi.fn(),
@@ -74,6 +78,17 @@ vi.mock('react-i18next', () => ({
         'workspace.git.actions.stashPop': 'Pop',
         'workspace.git.actions.approveRetry': 'Approve & retry',
         'workspace.git.approval.title': `${String(options?.action)} needs approval`,
+        'workspace.git.readiness.repository': 'Repository',
+        'workspace.git.readiness.activeRepository': 'Active repo',
+        'workspace.git.readiness.gitCli': 'Git CLI',
+        'workspace.git.readiness.agentTools': 'Agent tools',
+        'workspace.git.readiness.github': 'GitHub',
+        'workspace.git.readiness.summaryLabel': 'Git readiness',
+        'workspace.git.readiness.summaryHelp': 'Active repository, local Git, Agent tools, and GitHub auth',
+        'workspace.git.readiness.ready': 'Ready',
+        'workspace.git.readiness.missing': 'Missing',
+        'workspace.git.readiness.unavailable': 'Unavailable',
+        'workspace.git.readiness.githubLogin': 'gh auth login',
         'workspace.git.operation.title': 'Last operation',
         'workspace.git.operation.empty': 'No Git operation yet',
         'workspace.git.operation.ready': 'Ready',
@@ -149,6 +164,12 @@ vi.mock('react-i18next', () => ({
       if (key === 'workspace.git.summary') {
         return `${String(options?.count)} changes`;
       }
+      if (key === 'workspace.git.readiness.agentToolsReady') {
+        return `${String(options?.count)} tools`;
+      }
+      if (key === 'workspace.git.readiness.summaryValue') {
+        return `${String(options?.ready)}/${String(options?.total)} ready`;
+      }
       if (key === 'workspace.git.operation.detail') {
         return `${String(options?.action)}: ${String(options?.detail)}`;
       }
@@ -176,7 +197,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 describe('WorkspaceGitPanel', () => {
-  it('renders Git context and routes branch, worktree, stash, and PR actions through host APIs', async () => {
+  it('quantifies repository state, worktrees, stashes, GitHub PRs, and operations through host APIs', async () => {
     hostApiMock.git.status.mockResolvedValue({
       status: {
         isRepository: true,
@@ -236,6 +257,10 @@ describe('WorkspaceGitPanel', () => {
         defaultBranch: 'main',
       },
     });
+    hostApiMock.git.capabilities.mockResolvedValue({
+      git: { available: true, version: 'git version 2.45.0' },
+      gh: { available: true, version: 'gh version 2.56.0' },
+    });
     hostApiMock.git.prList.mockResolvedValue({ pullRequests: [] });
     hostApiMock.git.fileDiff.mockResolvedValue({
       path: 'src/demo.ts',
@@ -267,6 +292,12 @@ describe('WorkspaceGitPanel', () => {
     hostApiMock.git.stashPop.mockResolvedValue({ success: true });
     hostApiMock.git.prCreate.mockResolvedValue({ success: true });
     hostApiMock.permissions.decideApproval.mockResolvedValue({ success: true });
+    hostApiMock.mcp.listTools.mockResolvedValue({
+      success: true,
+      serverId: 'clawx-git',
+      status: 'connected',
+      tools: Array.from({ length: 27 }, (_, index) => ({ name: `git_tool_${index + 1}` })),
+    });
     hostApiMock.workspaces.list.mockResolvedValue({
       profiles: [{ id: 'workspace-demo', name: 'demo', rootPath: '/workspace/demo' }],
       activeWorkspaceId: 'workspace-demo',
@@ -287,14 +318,31 @@ describe('WorkspaceGitPanel', () => {
 
     render(<WorkspaceGitPanel />);
 
-    expect((await screen.findAllByText('feature/git-panel')).length).toBeGreaterThanOrEqual(1);
+    await waitFor(() => {
+      expect(hostApiMock.git.status).toHaveBeenCalledTimes(1);
+      expect(hostApiMock.git.branches).toHaveBeenCalledTimes(1);
+      expect(hostApiMock.git.worktrees).toHaveBeenCalledTimes(1);
+      expect(hostApiMock.git.stashList).toHaveBeenCalledTimes(1);
+      expect(hostApiMock.git.githubAuthStatus).toHaveBeenCalledTimes(1);
+      expect(hostApiMock.git.githubRepo).toHaveBeenCalledTimes(1);
+      expect(hostApiMock.git.prList).toHaveBeenCalledWith({ state: 'open', limit: 8 });
+    });
+
+    expect((await screen.findAllByText('feature/git-panel')).length).toBeGreaterThan(0);
     expect(screen.getByText('Dirty')).toBeInTheDocument();
-    expect(screen.getByText((content) => content.replace(/\s+/g, ' ').trim() === '1 Changes')).toBeInTheDocument();
+    expect(screen.getByText('1 Changes')).toBeInTheDocument();
+    expect(screen.getAllByText('+2 -1').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('+2 -1').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Locked')).toBeInTheDocument();
     expect(screen.getByText('Prunable')).toBeInTheDocument();
     expect(screen.getByTestId('workspace-git-tool-tabs')).toBeInTheDocument();
 
+    fireEvent.click(screen.getByRole('button', { name: 'Commit' }));
+    expect(screen.getByTestId('ai-commit-card')).toBeInTheDocument();
+    expect(screen.getByTestId('ai-commit-summary')).toHaveTextContent('unstaged');
+    expect(screen.getByTestId('ai-commit-operation')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Worktree' }));
     fireEvent.change(screen.getByPlaceholderText('Branch for worktree'), {
       target: { value: 'feature/score' },
     });

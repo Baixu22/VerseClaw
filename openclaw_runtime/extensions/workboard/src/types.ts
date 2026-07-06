@@ -282,6 +282,13 @@ export type WorkboardNotificationSubscription = {
   updatedAt: number;
 };
 
+export type WorkboardTaskLedgerReference = {
+  direction: "workboard-to-task-ledger";
+  taskLedgerNodeId: string;
+  workboardCardId?: string;
+  source: "workboard" | "plugin" | "runtime";
+};
+
 export type WorkboardMetadata = {
   attempts?: WorkboardRunAttempt[];
   comments?: WorkboardComment[];
@@ -295,6 +302,7 @@ export type WorkboardMetadata = {
   claim?: WorkboardClaim;
   diagnostics?: WorkboardDiagnostic[];
   notifications?: WorkboardNotification[];
+  taskLedgerReference?: WorkboardTaskLedgerReference;
   templateId?: WorkboardTemplateId;
   archivedAt?: number;
   stale?: WorkboardStaleState;

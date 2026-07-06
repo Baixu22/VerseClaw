@@ -483,6 +483,7 @@ export async function persistSessionCompactionCheckpoint(params: {
   firstKeptEntryId?: string;
   tokensBefore?: number;
   tokensAfter?: number;
+  details?: unknown;
   postSessionFile?: string;
   postLeafId?: string;
   postEntryId?: string;
@@ -515,6 +516,7 @@ export async function persistSessionCompactionCheckpoint(params: {
     ...(params.firstKeptEntryId?.trim()
       ? { firstKeptEntryId: params.firstKeptEntryId.trim() }
       : {}),
+    ...(params.details !== undefined ? { details: params.details } : {}),
     preCompaction: {
       sessionId: params.snapshot.sessionId,
       ...(params.snapshot.sessionFile?.trim()

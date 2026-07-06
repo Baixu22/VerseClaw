@@ -146,6 +146,8 @@
             "description": "按选中时间范围内的总 Token 对模型排序。"
         },
         "heatmap": {
+            "less": "较少",
+            "more": "更多",
             "title": "使用热力图",
             "description": "每个格子代表一天，颜色深浅表示当天 Token 总量。"
         },

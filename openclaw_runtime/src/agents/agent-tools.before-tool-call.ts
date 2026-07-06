@@ -45,6 +45,10 @@ import {
 } from "../plugins/types.js";
 import { createLazyRuntimeSurface } from "../shared/lazy-runtime.js";
 import {
+  evaluateRuntimeFailureDestructiveOperationGuardRuntimePreflightComponent,
+  type RuntimeFailureDestructiveOperationGuardPreflightCandidate,
+} from "../runtime-core/failure-tool-invocation-governance-destructive-operation-guard-preflight-pilot.js";
+import {
   resolveSkillTelemetrySource,
   resolveSkillTelemetrySourceValue,
 } from "../skills/loading/source.js";
@@ -109,6 +113,11 @@ export type HookContext = {
     skillSource?: SkillTelemetrySource;
     toolName?: string;
   };
+  toolGovernance?: {
+    destructiveOperationGuard?: {
+      preflightCandidate?: RuntimeFailureDestructiveOperationGuardPreflightCandidate;
+    };
+  };
   sandbox?: {
     root: string;
     bridge: SandboxFsBridge;
@@ -116,7 +125,11 @@ export type HookContext = {
 };
 
 type HookBlockedKind = "veto" | "failure";
-type HookBlockedReason = "plugin-before-tool-call" | "plugin-approval" | "tool-loop";
+type HookBlockedReason =
+  | "plugin-before-tool-call"
+  | "plugin-approval"
+  | "tool-loop"
+  | "destructive-operation-guard";
 type HookOutcome =
   | {
       blocked: true;
@@ -874,6 +887,27 @@ export async function runBeforeToolCallHook(args: {
     const hasBeforeToolCallHooks = hookRunner?.hasHooks("before_tool_call") === true;
     const shouldRunTrustedPolicies = hasTrustedToolPolicies();
     const normalizedParams = isPlainObject(params) ? params : {};
+    const destructiveOperationGuardResult =
+      evaluateRuntimeFailureDestructiveOperationGuardRuntimePreflightComponent({
+        config: args.ctx?.config,
+        tool: {
+          name: toolName,
+          ...(args.toolKind ? { kind: args.toolKind } : {}),
+          ...(args.toolInputKind ? { inputKind: args.toolInputKind } : {}),
+          mutationCapable: args.toolKind === "code_mode_exec",
+        },
+        candidate: args.ctx?.toolGovernance?.destructiveOperationGuard?.preflightCandidate,
+      });
+    const destructiveOperationGuardDecision = destructiveOperationGuardResult.decision;
+    if (destructiveOperationGuardDecision.action === "block") {
+      return {
+        blocked: true,
+        kind: "veto",
+        deniedReason: destructiveOperationGuardDecision.deniedReason,
+        reason: destructiveOperationGuardDecision.reason,
+        params,
+      };
+    }
     const initialCorePolicyResult = resolveSkillWorkshopToolApproval({
       toolName,
       toolParams: normalizedParams,

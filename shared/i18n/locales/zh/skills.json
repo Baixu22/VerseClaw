@@ -13,6 +13,63 @@
         "marketplaceLocalOnly": "仅本地 — 市场即将推出",
         "marketplaceLocalOnlyAria": "市场 (仅本地 — 市场即将推出)"
     },
+    "packs": {
+        "tab": "功能插件",
+        "skillCounts": "{{enabled}} 已启用 / {{installed}} 已安装 / 共 {{total}} 个",
+        "status": {
+            "notInstalled": "未安装",
+            "installing": "安装中",
+            "installed": "已安装",
+            "enabled": "已启用",
+            "syncNeeded": "需要同步",
+            "error": "错误"
+        },
+        "actions": {
+            "install": "安装",
+            "downloadInstall": "下载并安装",
+            "sync": "同步",
+            "enable": "启用",
+            "disable": "禁用",
+            "previewSkill": "预览 {{skill}}",
+            "uninstall": "卸载"
+        },
+        "skill": {
+            "enabled": "已启用",
+            "notInstalled": "未安装"
+        },
+        "office": {
+            "detecting": "检查中",
+            "installed": "已安装",
+            "notRunnable": "已安装但无法运行",
+            "notInstalled": "未安装",
+            "installHint": "安装 OfficeCLI 后即可同步 Office 技能并预览 Office 文档。",
+            "installSuccess": "OfficeCLI 已安装，技能已同步",
+            "installFailed": "OfficeCLI 安装失败：{{error}}",
+            "syncSuccess": "已同步 {{synced}} 个 Office 技能",
+            "syncFailed": "Office 技能同步失败：{{error}}",
+            "syncPartial": "已同步 {{synced}} 个 Office 技能，{{errors}} 个失败",
+            "uninstallSuccess": "OfficeCLI 已卸载",
+            "uninstallFailed": "OfficeCLI 卸载失败：{{error}}",
+            "agentMatrix": {
+                "title": "Agent 分配",
+                "skill": "技能",
+                "emptyAgents": "暂无可用 Agent",
+                "notSynced": "请先同步",
+                "cellLabel": "为 {{agent}} 启用 {{skill}}",
+                "enableSuccess": "已为 Agent 启用 Office 技能",
+                "disableSuccess": "已为 Agent 禁用 Office 技能",
+                "applyFailed": "Office 技能分配失败：{{error}}",
+                "applyPartial": "{{failed}} 个 Office 技能分配失败"
+            }
+        },
+        "toast": {
+            "installed": "功能插件已安装",
+            "synced": "功能插件已同步",
+            "enabled": "功能插件已启用",
+            "disabled": "功能插件已禁用",
+            "failed": "功能插件操作失败：{{error}}"
+        }
+    },
     "filter": {
         "all": "全部 ({{count}})",
         "builtIn": "内置 ({{count}})",
