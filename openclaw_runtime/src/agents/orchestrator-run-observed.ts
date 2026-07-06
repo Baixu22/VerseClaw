@@ -32,6 +32,10 @@ import {
   type OrchestrationTaskNode,
 } from "./orchestration-protocol.js";
 import {
+  buildOrdinaryOrchestrationQualityScorecard,
+  type OrdinaryOrchestrationQualityScorecard,
+} from "./orchestration-quality-scorecard.js";
+import {
   createRoleFirstTrace,
   completeObservedRun,
 } from "../observability/role-first-observer.js";
@@ -76,6 +80,7 @@ export type OrchestrationRunResult = {
   pendingGraphNodes: OrchestrationTaskNode[];
   repairNodes: OrchestrationRepairNode[];
   rerouteRecommendations: OrchestrationRerouteRecommendation[];
+  qualityScorecard?: OrdinaryOrchestrationQualityScorecard | null;
   /** Worker tasks that failed to spawn (status !== "accepted"). */
   failures: Array<{ roleName: string; status: string; error?: string }>;
   resultBundle: OrchestrationResultBundle;
@@ -519,6 +524,32 @@ export async function runOrchestrationWithRecorder(
     : undefined;
   const { trace, scorecard } = completeObservedRun(recorder, status, errorSummary);
   storeRuntimeTrace(trace, scorecard);
+  const outcomeFailureKeys = new Set(outcomes
+    .filter((outcome) => outcome.spawn.status !== "accepted")
+    .map((outcome) => `${outcome.roleName}:${outcome.spawn.status}:${outcome.spawn.error ?? outcome.spawn.result?.error ?? ""}`));
+  const qualityScorecard = buildOrdinaryOrchestrationQualityScorecard({
+    orchestrationRunId,
+    attempts: [
+      ...outcomes.map((outcome) => ({
+        roleName: outcome.roleName,
+        taskId: outcome.ledger.taskNodeId ?? outcome.ledger.taskId,
+        childRunId: outcome.spawn.result?.runId ?? outcome.ledger.roleInstanceId,
+        childSessionKey: outcome.spawn.result?.childSessionKey,
+        status: outcome.spawn.status === "accepted" ? "ok" : outcome.spawn.status,
+        error: outcome.spawn.error ?? outcome.spawn.result?.error,
+        resultText: outcome.spawn.result?.note,
+      })),
+      ...failures
+        .filter((failure) => !outcomeFailureKeys.has(`${failure.roleName}:${failure.status}:${failure.error ?? ""}`))
+        .map((failure) => ({
+          roleName: failure.roleName,
+          status: failure.status,
+          error: failure.error,
+        })),
+    ],
+    observabilityScorecard: scorecard,
+    allowActive: false,
+  });
 
   const pendingVerifier = request.includeVerifier !== false && Boolean(plan.verifierRole) && expectedWorkerRunIds.length > 0;
   const repairNodes = buildRepairNodes({
@@ -567,6 +598,7 @@ export async function runOrchestrationWithRecorder(
     pendingGraphNodes: [],
     repairNodes,
     rerouteRecommendations,
+    qualityScorecard,
     failures,
     resultBundle,
   };

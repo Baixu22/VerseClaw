@@ -51,6 +51,7 @@ type FakeSpawnResult = {
   status: 'accepted' | 'forbidden' | 'error';
   runId?: string;
   childSessionKey?: string;
+  note?: string;
   error?: string;
 };
 
@@ -335,6 +336,11 @@ describe('team_orchestrate tool', () => {
       status: 'accepted',
       runId: 'run_team_1',
       childSessionKey: 'child_team_1',
+      note: [
+        '## Summary',
+        'Reviewed src/example.ts and verified the behavior with tests.',
+        'Evidence: tests/unit/example.test.ts passed and logs showed no failures.',
+      ].join('\n'),
     });
     const tool = createTeamOrchestrateTool({
       agentSessionKey: 'agent:main:abc',
@@ -355,17 +361,36 @@ describe('team_orchestrate tool', () => {
       children: unknown[];
       pendingVerifier: boolean;
       resultPolicy: { completion: string };
-      quality: unknown[];
+      quality: Array<{ roleName: string; overall: string }>;
       qualityState: null | 'shadow' | 'active';
       qualityStateReason: string;
+      qualityScorecard?: {
+        overall: string;
+        worst: string;
+        reason: string;
+        scorecardBacked: boolean;
+        evidenceRefs: string[];
+      };
     };
     expect(details.plan.mode).toBe('router');
     expect(details.children).toHaveLength(1);
     expect(details.pendingVerifier).toBe(false);
     expect(details.resultPolicy.completion).toBe('team_result_bundle');
-    expect(details.quality).toEqual([]);
-    expect(details.qualityState).toBeNull();
-    expect(details.qualityStateReason).toMatch(/not evaluated/i);
+    expect(details.qualityState).toBe('shadow');
+    expect(details.quality).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        roleName: expect.any(String),
+        overall: expect.stringMatching(/good|needs_attention|poor_attempt/),
+      }),
+    ]));
+    expect(details.qualityScorecard).toMatchObject({
+      overall: expect.stringMatching(/good|needs_attention|poor_attempt/),
+      worst: expect.stringMatching(/good|needs_attention|poor_attempt/),
+      reason: expect.any(String),
+      scorecardBacked: true,
+      evidenceRefs: expect.arrayContaining([expect.stringMatching(/trace:|run:|orchestration:/)]),
+    });
+    expect(details.qualityStateReason).toMatch(/score/i);
   });
 
   it('uses template roles and reports partial failures', async () => {
@@ -406,6 +431,13 @@ describe('team_orchestrate tool', () => {
       nextAction: string;
       pendingVerifier: boolean;
       expectedChildren: unknown[];
+      quality: Array<{ roleName: string; overall: string }>;
+      qualityState: null | 'shadow' | 'active';
+      qualityScorecard?: {
+        overall: string;
+        worst: string;
+        scorecardBacked: boolean;
+      };
     };
     expect(details.status).toBe('partial');
     expect(details.plan.templateId).toBe('security-audit');
@@ -416,6 +448,18 @@ describe('team_orchestrate tool', () => {
     expect(details.expectedChildren).toHaveLength(3);
     expect(details.pendingVerifier).toBe(true);
     expect(details.nextAction).toBe('yield_for_results');
+    expect(details.qualityState).toBe('shadow');
+    expect(details.quality).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        roleName: expect.any(String),
+        overall: expect.stringMatching(/good|needs_attention|poor_attempt/),
+      }),
+    ]));
+    expect(details.qualityScorecard).toMatchObject({
+      overall: 'needs_attention',
+      worst: 'poor_attempt',
+      scorecardBacked: true,
+    });
     expect(details).not.toHaveProperty('repairNodes');
     expect(details).not.toHaveProperty('blocked');
     expect(details).not.toHaveProperty('checkpoint');

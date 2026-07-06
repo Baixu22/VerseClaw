@@ -39,7 +39,7 @@ import {
 const TEAM_ORCHESTRATE_NEXT_ACTIONS = ["yield_for_results", "synthesize_now"] as const;
 const TEAM_ORCHESTRATE_STATUSES = ["accepted", "partial", "error"] as const;
 const TEAM_ORCHESTRATE_QUALITY_STATE_REASON =
-  "Ordinary team_orchestrate quality is not evaluated by a scorecard yet; Task Loop owns active repair quality semantics.";
+  "Ordinary team_orchestrate quality is scored from shadow evidence; Task Loop owns active repair quality semantics.";
 
 type TeamOrchestrateStatus = (typeof TEAM_ORCHESTRATE_STATUSES)[number];
 type TeamOrchestrateNextAction = (typeof TEAM_ORCHESTRATE_NEXT_ACTIONS)[number];
@@ -229,7 +229,8 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
       const spawnedCount = result.spawnedRunIds.length;
       const status = resolveStatus(spawnedCount, result.failures.length);
       const nextAction = resolveNextAction(spawnedCount);
-      const quality: unknown[] = [];
+      const qualityScorecard = result.qualityScorecard ?? null;
+      const quality = qualityScorecard?.workerScores ?? [];
       // Area 3 §3.2: build the structured synthesis contract from the plan's
       // worker output schemas. `undefined` for single-worker router-mode plans
       // (no synthesis needed) — callers degrade to today's free-form behavior.
@@ -273,9 +274,10 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         capabilityGaps: result.plan.capabilityGaps,
         estimatedRepairPolicy: result.plan.estimatedRepairPolicy,
         quality,
-        qualityState: null,
-        qualityStateReason: TEAM_ORCHESTRATE_QUALITY_STATE_REASON,
-        qualitySummary: summarizeQuality([]),
+        qualityState: qualityScorecard?.state ?? null,
+        qualityStateReason: qualityScorecard?.reason ?? TEAM_ORCHESTRATE_QUALITY_STATE_REASON,
+        qualityScorecard,
+        qualitySummary: qualityScorecard?.summary ?? summarizeQuality([]),
         followupCandidates: [],
         memoryCandidates: [],
         resultPolicy: {
