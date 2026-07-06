@@ -3,6 +3,7 @@ import type { WorkspaceProfile } from '@shared/types/workspace';
 
 const storeState = vi.hoisted(() => ({
   approvals: [] as unknown[],
+  decisionEvents: [] as unknown[],
 }));
 
 const activeWorkspace = vi.hoisted(() => ({
@@ -11,19 +12,27 @@ const activeWorkspace = vi.hoisted(() => ({
 
 vi.mock('electron-store', () => {
   class MockStore {
-    constructor(options?: { defaults?: { approvals?: unknown[] } }) {
+    constructor(options?: { defaults?: { approvals?: unknown[]; decisionEvents?: unknown[] } }) {
       if (storeState.approvals.length === 0 && options?.defaults?.approvals) {
         storeState.approvals = [...options.defaults.approvals];
+      }
+      if (storeState.decisionEvents.length === 0 && options?.defaults?.decisionEvents) {
+        storeState.decisionEvents = [...options.defaults.decisionEvents];
       }
     }
 
     get(key: string) {
-      return key === 'approvals' ? storeState.approvals : undefined;
+      if (key === 'approvals') return storeState.approvals;
+      if (key === 'decisionEvents') return storeState.decisionEvents;
+      return undefined;
     }
 
     set(key: string, value: unknown) {
       if (key === 'approvals') {
         storeState.approvals = Array.isArray(value) ? [...value] : [];
+      }
+      if (key === 'decisionEvents') {
+        storeState.decisionEvents = Array.isArray(value) ? [...value] : [];
       }
     }
   }
@@ -61,6 +70,7 @@ function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptE
 describe('gateway permission approval flow', () => {
   beforeEach(() => {
     storeState.approvals = [];
+    storeState.decisionEvents = [];
     activeWorkspace.profile = workspace();
   });
 
@@ -72,8 +82,8 @@ describe('gateway permission approval flow', () => {
     const backpressure = {
       run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)),
     };
-    const { createGatewayApi } = await import('@electron/services/gateway-api');
-    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createGatewayApi } = await import('../../electron/services/gateway-api');
+    const { createPermissionsApi, listPermissionDecisionEvents } = await import('../../electron/services/permissions-api');
     const api = createGatewayApi(gatewayManager as never, backpressure as never);
     const permissions = createPermissionsApi();
 
@@ -98,6 +108,15 @@ describe('gateway permission approval flow', () => {
       approvalId,
     })).resolves.toEqual({ ok: true });
     expect(gatewayManager.rpc).toHaveBeenCalledWith('tools.exec', { command: 'git clean -fd' }, undefined);
+    await expect(listPermissionDecisionEvents(10)).resolves.toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        kind: 'permission-decision',
+        workspaceMode: 'acceptEdits',
+        tool: 'tools.exec',
+        boundary: 'gateway-rpc',
+        decision: 'approval-required',
+      }),
+    ]));
 
     await expect(api.rpc({
       method: 'tools.exec',
@@ -117,8 +136,8 @@ describe('gateway permission approval flow', () => {
     const backpressure = {
       run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)),
     };
-    const { createGatewayApi } = await import('@electron/services/gateway-api');
-    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createGatewayApi } = await import('../../electron/services/gateway-api');
+    const { createPermissionsApi } = await import('../../electron/services/permissions-api');
     const api = createGatewayApi(gatewayManager as never, backpressure as never);
     const permissions = createPermissionsApi();
 
@@ -203,7 +222,7 @@ describe('gateway permission approval flow', () => {
       run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)),
     };
     const createKnowledgeInboxItem = vi.fn(async () => ({ success: true }));
-    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const { createGatewayApi } = await import('../../electron/services/gateway-api');
     const api = createGatewayApi(gatewayManager as never, backpressure as never, { createKnowledgeInboxItem: createKnowledgeInboxItem as never });
 
     await expect(api.rpc({

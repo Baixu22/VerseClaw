@@ -1,4 +1,5 @@
 import type { RawMessage } from '../chat/types';
+import type { PermissionDecisionEvent } from '../product-semantics';
 import type { AgentReasoningEffort, AgentsSnapshot } from '../types/agent';
 import type { CronJob, CronJobCreateInput, CronJobUpdateInput } from '../types/cron';
 import type { GatewayHealth, GatewayStatus } from '../types/gateway';
@@ -467,6 +468,12 @@ export type PermissionApprovalDecisionPayload = {
 };
 export type PermissionApprovalDecisionResult = HostSuccess & {
   approval?: PermissionApprovalEvent;
+};
+export type PermissionDecisionEventListPayload = {
+  limit?: number;
+};
+export type PermissionDecisionEventListResult = HostSuccess & {
+  events: PermissionDecisionEvent[];
 };
 
 /**
@@ -3557,6 +3564,7 @@ export type HostApiContract = {
   };
   permissions: {
     approvals: (payload?: PermissionApprovalListPayload) => PermissionApprovalListResult;
+    decisionEvents: (payload?: PermissionDecisionEventListPayload) => PermissionDecisionEventListResult;
     decideApproval: (payload: PermissionApprovalDecisionPayload) => PermissionApprovalDecisionResult;
   };
   orchestrationPresets: {

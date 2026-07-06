@@ -33,6 +33,61 @@ vi.mock('electron', () => ({
   utilityProcess: {},
 }));
 
+const electronStoreMockState = vi.hoisted(() => ({
+  memory: new Map<string, Record<string, unknown>>(),
+  clone<T>(value: T): T {
+    if (Array.isArray(value)) return [...value] as T;
+    if (value && typeof value === 'object') return { ...(value as Record<string, unknown>) } as T;
+    return value;
+  },
+}));
+
+vi.mock('electron-store', () => {
+  class MockElectronStore {
+    private readonly key: string;
+
+    constructor(options?: { name?: string; projectName?: string; defaults?: Record<string, unknown> }) {
+      this.key = `${options?.projectName ?? 'test'}:${options?.name ?? 'default'}`;
+      if (!electronStoreMockState.memory.has(this.key)) {
+        const defaults = options?.defaults ?? {};
+        electronStoreMockState.memory.set(this.key, Object.fromEntries(
+          Object.entries(defaults).map(([entryKey, value]) => [entryKey, electronStoreMockState.clone(value)]),
+        ));
+      }
+    }
+
+    get store(): Record<string, unknown> {
+      return { ...(electronStoreMockState.memory.get(this.key) ?? {}) };
+    }
+
+    set store(value: Record<string, unknown>) {
+      electronStoreMockState.memory.set(this.key, { ...value });
+    }
+
+    get(key: string) {
+      return electronStoreMockState.clone((electronStoreMockState.memory.get(this.key) ?? {})[key]);
+    }
+
+    set(key: string, value: unknown) {
+      const store = electronStoreMockState.memory.get(this.key) ?? {};
+      store[key] = electronStoreMockState.clone(value);
+      electronStoreMockState.memory.set(this.key, store);
+    }
+
+    delete(key: string) {
+      const store = electronStoreMockState.memory.get(this.key) ?? {};
+      delete store[key];
+      electronStoreMockState.memory.set(this.key, store);
+    }
+
+    clear() {
+      electronStoreMockState.memory.set(this.key, {});
+    }
+  }
+
+  return { default: MockElectronStore };
+});
+
 // Mock window.electron API
 const mockElectron = {
   ipcRenderer: {

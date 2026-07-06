@@ -24,6 +24,7 @@ import { isRecord } from './payload-utils';
 import {
   consumeApprovedPermissionApproval,
   createPermissionApproval,
+  recordPermissionDecisionEvent,
   recordPermissionAudit,
 } from './permissions-api';
 import {
@@ -34,6 +35,7 @@ import {
   matchOrchestrationPreset,
 } from './orchestration-presets-api';
 import { getActiveWorkspaceProfile } from './workspaces-api';
+import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
 import { decideGatewayRpc, isApprovalRisk } from './workspace-permissions';
 
 type HealthPayload = {
@@ -377,6 +379,13 @@ export function createGatewayApi(
 
       if (workspace) {
         const decision = decideGatewayRpc(method, workspace.permissionMode, body.params);
+        void recordPermissionDecisionEvent(createWorkspacePermissionDecisionEvent({
+          workspaceMode: workspace.permissionMode,
+          tool: method,
+          boundary: 'gateway-rpc',
+          requestId: approvalId ?? buildGatewayRequestHash(method, body.params),
+          decision,
+        }));
         if (!decision.allowed) {
           if (decision.requiresApproval && isApprovalRisk(decision.risk)) {
             const requestHash = buildGatewayRequestHash(method, body.params);

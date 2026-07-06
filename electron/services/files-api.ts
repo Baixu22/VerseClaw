@@ -13,9 +13,11 @@ import { isRecord } from './payload-utils';
 import {
   consumeApprovedPermissionApproval,
   createPermissionApproval,
+  recordPermissionDecisionEvent,
   recordPermissionAudit,
 } from './permissions-api';
 import { getActiveWorkspaceProfile } from './workspaces-api';
+import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
 import { decideWorkspaceFileWrite, isApprovalRisk } from './workspace-permissions';
 
 const EXT_MIME_MAP: Record<string, string> = {
@@ -362,6 +364,13 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
         const workspace = await getActiveWorkspaceProfile();
         if (workspace) {
           const decision = decideWorkspaceFileWrite(requestedPath, workspace);
+          void recordPermissionDecisionEvent(createWorkspacePermissionDecisionEvent({
+            workspaceMode: workspace.permissionMode,
+            tool: 'files.writeText',
+            boundary: 'user-file',
+            requestId: approvalId ?? buildFileWriteRequestHash(requestedPath, body.content),
+            decision,
+          }));
           let approvedByRequest = false;
           if (!decision.allowed) {
             if (decision.requiresApproval && isApprovalRisk(decision.risk)) {

@@ -6,6 +6,7 @@ import type { WorkspaceProfile } from '@shared/types/workspace';
 
 const storeState = vi.hoisted(() => ({
   approvals: [] as unknown[],
+  decisionEvents: [] as unknown[],
 }));
 
 const activeWorkspace = vi.hoisted(() => ({
@@ -26,19 +27,27 @@ vi.mock('electron', () => ({
 
 vi.mock('electron-store', () => {
   class MockStore {
-    constructor(options?: { defaults?: { approvals?: unknown[] } }) {
+    constructor(options?: { defaults?: { approvals?: unknown[]; decisionEvents?: unknown[] } }) {
       if (storeState.approvals.length === 0 && options?.defaults?.approvals) {
         storeState.approvals = [...options.defaults.approvals];
+      }
+      if (storeState.decisionEvents.length === 0 && options?.defaults?.decisionEvents) {
+        storeState.decisionEvents = [...options.defaults.decisionEvents];
       }
     }
 
     get(key: string) {
-      return key === 'approvals' ? storeState.approvals : undefined;
+      if (key === 'approvals') return storeState.approvals;
+      if (key === 'decisionEvents') return storeState.decisionEvents;
+      return undefined;
     }
 
     set(key: string, value: unknown) {
       if (key === 'approvals') {
         storeState.approvals = Array.isArray(value) ? [...value] : [];
+      }
+      if (key === 'decisionEvents') {
+        storeState.decisionEvents = Array.isArray(value) ? [...value] : [];
       }
     }
   }
@@ -72,6 +81,7 @@ function workspace(rootPath: string, permissionMode: WorkspaceProfile['permissio
 describe('files api permission approval flow', () => {
   beforeEach(() => {
     storeState.approvals = [];
+    storeState.decisionEvents = [];
     activeWorkspace.profile = null;
   });
 
@@ -119,11 +129,21 @@ describe('files api permission approval flow', () => {
     activeWorkspace.profile = workspace(workspaceDir, 'plan');
 
     const { createFilesApi } = await import('@electron/services/files-api');
+    const { listPermissionDecisionEvents } = await import('@electron/services/permissions-api');
     const api = createFilesApi();
 
     await expect(api.writeText({ path: filePath, content: 'new' })).resolves.toMatchObject({
       ok: false,
       error: 'permissionDenied',
     });
+    await expect(listPermissionDecisionEvents(10)).resolves.toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        kind: 'permission-decision',
+        workspaceMode: 'plan',
+        tool: 'files.writeText',
+        boundary: 'user-file',
+        decision: 'deny',
+      }),
+    ]));
   });
 });

@@ -1,5 +1,6 @@
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { isRecord } from './payload-utils';
+import type { PermissionDecisionEvent } from '@shared/product-semantics';
 import type {
   PermissionApprovalDecision,
   PermissionApprovalEvent,
@@ -10,6 +11,7 @@ import type {
 
 type PermissionStoreDocument = {
   approvals: PermissionApprovalEvent[];
+  decisionEvents: PermissionDecisionEvent[];
 };
 
 type ApprovalDecisionBody = {
@@ -40,6 +42,7 @@ type CreateApprovalInput = {
 };
 
 const MAX_APPROVAL_EVENTS = 2000;
+const MAX_PERMISSION_DECISION_EVENTS = 2000;
 const DEFAULT_APPROVAL_LIMIT = 200;
 const MAX_APPROVAL_LIMIT = 1000;
 const PENDING_APPROVAL_TTL_MS = 10 * 60 * 1000;
@@ -49,16 +52,25 @@ const VALID_SOURCES = new Set<PermissionApprovalEvent['source']>(['terminal', 'g
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let permissionStoreInstance: any = null;
+let permissionDecisionEventWriteQueue: Promise<void> = Promise.resolve();
 
 async function getPermissionStore() {
   if (!permissionStoreInstance) {
     const Store = (await import('electron-store')).default;
-    permissionStoreInstance = new Store<PermissionStoreDocument>({
+    const options = {
       name: 'workspace-permissions',
+      projectName: 'Verse Claw',
       defaults: {
         approvals: [],
+        decisionEvents: [],
       },
-    });
+    };
+    permissionStoreInstance = new Store<PermissionStoreDocument>(
+      // electron-store forwards this to conf, which requires projectName
+      // outside Electron. The published types do not expose that option.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      options as any,
+    );
   }
   return permissionStoreInstance;
 }
@@ -110,6 +122,36 @@ async function readApprovals(): Promise<PermissionApprovalEvent[]> {
 async function writeApprovals(approvals: PermissionApprovalEvent[]): Promise<void> {
   const store = await getPermissionStore();
   store.set('approvals', approvals.slice(0, MAX_APPROVAL_EVENTS));
+}
+
+async function readPermissionDecisionEvents(): Promise<PermissionDecisionEvent[]> {
+  const store = await getPermissionStore();
+  const events = store.get('decisionEvents');
+  return Array.isArray(events) ? events as PermissionDecisionEvent[] : [];
+}
+
+async function writePermissionDecisionEvents(events: PermissionDecisionEvent[]): Promise<void> {
+  const store = await getPermissionStore();
+  store.set('decisionEvents', events.slice(0, MAX_PERMISSION_DECISION_EVENTS));
+}
+
+export async function recordPermissionDecisionEvent(event: PermissionDecisionEvent): Promise<PermissionDecisionEvent> {
+  const write = permissionDecisionEventWriteQueue.then(async () => {
+    const events = await readPermissionDecisionEvents();
+    await writePermissionDecisionEvents([event, ...events]);
+  });
+  permissionDecisionEventWriteQueue = write.then(
+    () => undefined,
+    () => undefined,
+  );
+  await write;
+  return event;
+}
+
+export async function listPermissionDecisionEvents(limit = DEFAULT_APPROVAL_LIMIT): Promise<PermissionDecisionEvent[]> {
+  const normalizedLimit = normalizeLimit(limit);
+  await permissionDecisionEventWriteQueue;
+  return (await readPermissionDecisionEvents()).slice(0, normalizedLimit);
 }
 
 function isExpiredPendingApproval(approval: PermissionApprovalEvent, now = Date.now()): boolean {
@@ -245,6 +287,14 @@ export function createPermissionsApi(): CompleteHostServiceRegistry['permissions
       return {
         success: true,
         approvals: approvals.slice(0, limit),
+      };
+    },
+    decisionEvents: async (payload) => {
+      const body = isRecord(payload) ? payload as { limit?: unknown } : {};
+      const limit = normalizeLimit(body.limit);
+      return {
+        success: true,
+        events: await listPermissionDecisionEvents(limit),
       };
     },
     decideApproval: async (payload) => {

@@ -21,11 +21,13 @@ import { compileRoleContractToSoul, type RoleContract } from "./role-contract.js
 import { roleEffortToThinking } from "./role-effort.js";
 import { resolveRoleContract, type RoleRegistryConfigCarrier } from "./role-registry.js";
 import { buildRolePermissionDenyPatches } from "./role-permissions-policy.js";
+import { buildRolePermissionDecisionEvents } from "./role-permission-audit.js";
 import { getMemoryCards, ensureMemoryCardsLoaded, recordMemoryInjection, listMemoryConflicts, isMemoryStoreConfigured, isRoleMemoryEnabled } from "../memory/memory-store.js";
 import { isInjectableMemoryCard } from "../memory/memory-card.js";
 import { buildContextPack, renderContextPack } from "../memory/context-pack.js";
 import type { MemoryCard } from "../memory/types.js";
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
+import type { PermissionDecisionEvent } from "../../../shared/product-semantics.js";
 
 /** Minimal spawn-param set mapped from a role contract. */
 export type RoleSpawnParams = {
@@ -56,6 +58,7 @@ export type RoleSpawnContext = {
   workspaceDir?: string;
   inheritedToolAllowlist?: string[];
   inheritedToolDenylist?: string[];
+  permissionDecisionEvents?: PermissionDecisionEvent[];
   completionOwnerKey?: string;
 };
 
@@ -213,10 +216,20 @@ export function buildRoleSpawnContext(
   const allowlist = role.tools.length > 0 ? [...role.tools] : ctx.inheritedToolAllowlist;
   // Build permission-derived deny lists (filesystem / network / commands).
   const permissionPatches = buildRolePermissionDenyPatches(role, ctx.inheritedToolDenylist);
+  const deniedTools = permissionPatches.inheritedToolDenylist ?? [];
+  const permissionDecisionEvents = deniedTools.length > 0
+    ? buildRolePermissionDecisionEvents({
+      roleName: role.name,
+      deniedTools,
+      requestId: ctx.agentSessionKey,
+      reason: `role permissions for ${role.name}`,
+    })
+    : undefined;
   return {
     ...ctx,
     ...(allowlist ? { inheritedToolAllowlist: allowlist } : {}),
     ...permissionPatches,
+    ...(permissionDecisionEvents ? { permissionDecisionEvents } : {}),
   };
 }
 
