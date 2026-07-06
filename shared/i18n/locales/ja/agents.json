@@ -76,6 +76,18 @@
         "noSession": "オーケストレーションに使用できるセッションがありません。先に Agent を作成または選択してください。",
         "runStarted": "オーケストレーションを開始しました：サブエージェント {{count}} 個",
         "plan": "計画",
+        "planEdit": {
+            "edit": "計画を編集",
+            "save": "計画編集を保存",
+            "cancel": "計画編集をキャンセル",
+            "regenerate": "計画を再生成",
+            "disableNode": "ノードを無効化",
+            "enableNode": "ノードを有効化",
+            "moveUp": "上へ移動",
+            "moveDown": "下へ移動",
+            "notePlaceholder": "メモを追加",
+            "saved": "計画編集を保存しました"
+        },
         "run": "実行",
         "lead": "リード",
         "verifier": "検証",

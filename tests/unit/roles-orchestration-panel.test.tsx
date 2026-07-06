@@ -151,4 +151,43 @@ describe('RolesOrchestrationPanel', () => {
       ]),
     }));
   });
+
+  it('saves lightweight plan edits to Task Ledger without creating a DAG editor', async () => {
+    renderPanel();
+
+    fireEvent.click(screen.getByTestId('role-orchestration-toggle'));
+    fireEvent.change(screen.getByTestId('role-orchestration-task-input'), {
+      target: { value: 'Stabilize smoke tests' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Plan/ }));
+
+    await screen.findByTestId('orchestration-plan-edit-toggle');
+    appendEventsMock.mockClear();
+    fireEvent.click(screen.getByTestId('orchestration-plan-edit-toggle'));
+    fireEvent.click(screen.getByTestId('orchestration-plan-disable-planner-1'));
+    fireEvent.change(screen.getByTestId('orchestration-plan-note-planner-1'), {
+      target: { value: 'Skip planner slice for this run' },
+    });
+    fireEvent.click(screen.getByTestId('orchestration-plan-save-edits'));
+
+    await waitFor(() => {
+      expect(appendEventsMock).toHaveBeenCalledWith(expect.objectContaining({
+        events: expect.arrayContaining([
+          expect.objectContaining({
+            type: 'node_updated',
+            payload: expect.objectContaining({
+              patch: expect.objectContaining({
+                metadata: expect.objectContaining({
+                  projectionEdit: expect.objectContaining({
+                    auditReason: expect.stringMatching(/plan edit/i),
+                  }),
+                }),
+              }),
+            }),
+          }),
+        ]),
+      }));
+    });
+    expect(screen.queryByTestId('orchestration-plan-edge-editor')).toBeNull();
+  });
 });

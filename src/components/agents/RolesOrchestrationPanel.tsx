@@ -41,6 +41,12 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import {
+  applyPlanEditOperation,
+  buildPlanEditLedgerEvents,
+  createPlanEditDraft,
+  type PlanEditDraft,
+} from '@/lib/orchestration-plan-edit-draft';
 import { buildOrchestrationPlanLedgerEvents } from '@/lib/task-ledger-plan-projection';
 import { useSettingsStore } from '@/stores/settings';
 import { useWorkspacesStore } from '@/stores/workspaces';
@@ -506,6 +512,8 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [task, setTask] = useState('');
   const [plan, setPlan] = useState<PlanView | null>(null);
+  const [planEditDraft, setPlanEditDraft] = useState<PlanEditDraft | null>(null);
+  const [planEditing, setPlanEditing] = useState(false);
   const [planning, setPlanning] = useState(false);
   const [running, setRunning] = useState(false);
   const [pendingApproval, setPendingApproval] = useState<PermissionApprovalEvent | null>(null);
@@ -1206,6 +1214,8 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     }
     setPlanning(true);
     setPlan(null);
+    setPlanEditDraft(null);
+    setPlanEditing(false);
     try {
       const result = await hostApi.gateway.rpc('orchestrator.plan', {
         task: task.trim(),
@@ -1218,6 +1228,20 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
       }
       const nextPlan = isRecord(unwrapped.data.plan) ? (unwrapped.data.plan as unknown as PlanView) : null;
       setPlan(nextPlan);
+      const planNodes = nextPlan?.taskGraph?.nodes
+        ?.filter((node) => node.taskNodeId && node.roleName && node.task)
+        .map((node) => ({
+          id: String(node.taskNodeId),
+          title: `${node.roleName}: ${node.task}`,
+          parentId: nextPlan.taskGraph?.graphRunId ?? null,
+          metadata: { readonlyProjection: true, source: 'orchestrator.plan' },
+        })) ?? [];
+      setPlanEditDraft(planNodes.length > 0
+        ? createPlanEditDraft({
+          baseProjectionId: nextPlan?.taskGraph?.graphRunId ?? `plan:${Date.now()}`,
+          nodes: planNodes,
+        })
+        : null);
       if (nextPlan) {
         const events = buildOrchestrationPlanLedgerEvents({
           task: task.trim(),
@@ -1242,6 +1266,54 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
       setPlanning(false);
     }
   }, [activeWorkspaceId, anchorSession, task, selectedRole, tt]);
+
+  const updatePlanEditDraft = useCallback((operation: Parameters<typeof applyPlanEditOperation>[1]) => {
+    setPlanEditDraft((current) => current ? applyPlanEditOperation(current, operation) : current);
+  }, []);
+
+  const resetPlanEditDraft = useCallback(() => {
+    if (!plan?.taskGraph?.nodes?.length) {
+      setPlanEditDraft(null);
+      setPlanEditing(false);
+      return;
+    }
+    const planNodes = plan.taskGraph.nodes
+      .filter((node) => node.taskNodeId && node.roleName && node.task)
+      .map((node) => ({
+        id: String(node.taskNodeId),
+        title: `${node.roleName}: ${node.task}`,
+        parentId: plan.taskGraph?.graphRunId ?? null,
+        metadata: { readonlyProjection: true, source: 'orchestrator.plan' },
+      }));
+    setPlanEditDraft(planNodes.length > 0
+      ? createPlanEditDraft({
+        baseProjectionId: plan.taskGraph?.graphRunId ?? `plan:${Date.now()}`,
+        nodes: planNodes,
+      })
+      : null);
+    setPlanEditing(false);
+  }, [plan]);
+
+  const savePlanEdits = useCallback(async () => {
+    if (!planEditDraft) return;
+    const events = buildPlanEditLedgerEvents({
+      draft: planEditDraft,
+      workspaceId: activeWorkspaceId,
+      sessionKey: anchorSession || null,
+      auditReason: 'User saved plan edit',
+    });
+    if (events.length === 0) {
+      setPlanEditing(false);
+      return;
+    }
+    await hostApi.taskLedger.appendEvents({
+      workspaceId: activeWorkspaceId,
+      events,
+      idempotencyKey: events[0].idempotencyKey,
+    });
+    setPlanEditing(false);
+    toast.success(tt('roles.planEdit.saved', 'Plan edits saved'));
+  }, [activeWorkspaceId, anchorSession, planEditDraft, tt]);
 
   const executeRun = useCallback(
     async (approvalId?: string) => {
@@ -2434,7 +2506,26 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
 
             <SubagentRunnerPanel anchorSession={anchorSession} anchorAgentId={anchorAgentId} />
 
-            {plan && <OrchestrationPlanView plan={plan} tt={tt} />}
+            {plan && (
+              <OrchestrationPlanView
+                plan={plan}
+                tt={tt}
+                editControl={planEditDraft ? {
+                  editing: planEditing,
+                  order: planEditDraft.order,
+                  disabledNodeIds: planEditDraft.disabledNodeIds,
+                  notesByNodeId: planEditDraft.notesByNodeId,
+                  onToggleEditing: () => setPlanEditing((value) => !value),
+                  onDisableNode: (nodeId) => updatePlanEditDraft({ type: 'disable_node', nodeId }),
+                  onEnableNode: (nodeId) => updatePlanEditDraft({ type: 'enable_node', nodeId }),
+                  onNoteNode: (nodeId, note) => updatePlanEditDraft({ type: 'note_node', nodeId, note }),
+                  onMoveNode: (nodeId, beforeNodeId) => updatePlanEditDraft({ type: 'reorder_node', nodeId, beforeNodeId }),
+                  onSave: () => void savePlanEdits(),
+                  onCancel: resetPlanEditDraft,
+                  onRegenerate: () => void runPlan(),
+                } : undefined}
+              />
+            )}
 
             {/* Real-time orchestration progress (fed by subagent lifecycle events) */}
             {Object.keys(lifecycleEvents).length > 0 && (
