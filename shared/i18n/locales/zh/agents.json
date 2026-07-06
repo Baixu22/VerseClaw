@@ -76,6 +76,18 @@
         "noSession": "没有可用于编排的会话，请先创建或选择一个 Agent",
         "runStarted": "已启动编排：{{count}} 个子代理",
         "plan": "规划",
+        "planEdit": {
+            "edit": "编辑计划",
+            "save": "保存计划编辑",
+            "cancel": "取消计划编辑",
+            "regenerate": "重新生成计划",
+            "disableNode": "停用节点",
+            "enableNode": "启用节点",
+            "moveUp": "上移",
+            "moveDown": "下移",
+            "notePlaceholder": "添加备注",
+            "saved": "计划编辑已保存"
+        },
         "run": "运行",
         "lead": "主导",
         "verifier": "验证",

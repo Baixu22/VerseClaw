@@ -76,6 +76,18 @@
         "noSession": "No session available for orchestration. Create or select an Agent first.",
         "runStarted": "Orchestration started: {{count}} subagents",
         "plan": "Plan",
+        "planEdit": {
+            "edit": "Edit plan",
+            "save": "Save plan edits",
+            "cancel": "Cancel plan edits",
+            "regenerate": "Regenerate plan",
+            "disableNode": "Disable node",
+            "enableNode": "Enable node",
+            "moveUp": "Move up",
+            "moveDown": "Move down",
+            "notePlaceholder": "Add a note",
+            "saved": "Plan edits saved"
+        },
         "run": "Run",
         "taskLoop": "Task loop",
         "taskLoopStarted": "Task loop finished: {{status}}",
