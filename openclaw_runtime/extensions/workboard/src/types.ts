@@ -1,3 +1,5 @@
+import type { TaskLedgerReference } from "../../../../shared/types/task-ledger-reference";
+
 // Workboard type declarations define plugin contracts.
 export const WORKBOARD_STATUSES = [
   "triage",
@@ -282,12 +284,7 @@ export type WorkboardNotificationSubscription = {
   updatedAt: number;
 };
 
-export type WorkboardTaskLedgerReference = {
-  direction: "workboard-to-task-ledger";
-  taskLedgerNodeId: string;
-  workboardCardId?: string;
-  source: "workboard" | "plugin" | "runtime";
-};
+export type WorkboardTaskLedgerReference = TaskLedgerReference;
 
 export type WorkboardMetadata = {
   attempts?: WorkboardRunAttempt[];
