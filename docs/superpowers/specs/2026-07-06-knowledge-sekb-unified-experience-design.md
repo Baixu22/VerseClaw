@@ -366,6 +366,11 @@ Phase 1: Read-only unification
 - Show counts, undistilled trajectories, active principles, and index preview.
 - Add i18n and Electron E2E for the read-only desktop workflow.
 
+Implementation note (2026-07-06): Phase 1 now exposes the SEKB operator
+report through a Knowledge-owned Host API method and renders it as a
+read-only Runtime Lessons tab. Confirm/reject actions, Library draft export,
+and retrieval policy changes remain deferred to later phases.
+
 Phase 2: Reviewable Runtime Lesson suggestions
 
 - Expose SEKB distillation suggestions through Knowledge-owned Host API.

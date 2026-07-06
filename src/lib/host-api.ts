@@ -117,6 +117,7 @@ import type {
   KnowledgeReviewDraftPayload,
   KnowledgeRouteContextPayload,
   KnowledgeRouteContextResult,
+  KnowledgeRuntimeLessonsReportResult,
   KnowledgeSearchPayload,
   KnowledgeSearchResult,
   KnowledgeStewardReviewPayload,
@@ -300,6 +301,7 @@ export type {
   KnowledgeProvenanceResult,
   KnowledgeRouteCandidate,
   KnowledgeRouteContextResult,
+  KnowledgeRuntimeLessonsReportResult,
   KnowledgeSearchResult,
   KnowledgeStewardConfig,
   KnowledgeStewardReviewResult,
@@ -839,6 +841,9 @@ export const hostApi = {
     ),
     routeContext: (input: KnowledgeRouteContextPayload): Promise<KnowledgeRouteContextResult> => (
       invokeHost('knowledge', 'routeContext', input)
+    ),
+    runtimeLessonsReport: (): Promise<KnowledgeRuntimeLessonsReportResult> => (
+      invokeHost('knowledge', 'runtimeLessonsReport')
     ),
     recordKnowledgeReference: (input: KnowledgeRecordReferencePayload): Promise<KnowledgeProvenanceResult> => (
       invokeHost('knowledge', 'recordKnowledgeReference', input)

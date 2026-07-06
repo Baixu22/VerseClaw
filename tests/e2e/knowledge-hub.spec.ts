@@ -131,6 +131,30 @@ test.describe('Knowledge Hub MVP', () => {
             obsidianCli: { available: false },
           },
         },
+        [typed('knowledge', 'runtimeLessonsReport')]: {
+          success: true,
+          available: true,
+          counts: { trajectories: 4, undistilledTrajectories: 1, activePrinciples: 1 },
+          undistilled: [{
+            trajectory_id: 'traj-e2e-1',
+            created_at: '2026-07-06T00:00:00.000Z',
+            task_intent: 'E2E runtime lesson capture',
+            task_type: 'knowledge-ui',
+            context_fingerprint: ['knowledge', 'runtime-lessons'],
+            outcome: 'success',
+            error_signature: null,
+          }],
+          activePrinciples: [{
+            principle_id: 'principle-e2e-1',
+            title: 'Keep Runtime Lessons review-only in Phase 1',
+            task_types: ['knowledge-ui'],
+            context_tags: ['knowledge'],
+            criticality: 'medium',
+            retrieval_count: 2,
+            adoption_count: 1,
+          }],
+          indexPreview: 'E2E runtime lesson index',
+        },
         [typed('knowledge', 'init')]: { success: true },
         [typed('knowledge', 'ingestFiles', { paths: ['C:/notes/decision.md'] })]: {
           success: true,
@@ -360,6 +384,13 @@ test.describe('Knowledge Hub MVP', () => {
     await completeSetup(page);
     await page.getByTestId('sidebar-nav-knowledge').click();
     await expect(page.getByTestId('knowledge-page')).toBeVisible();
+
+    await page.getByTestId('knowledge-tab-runtime').click();
+    await expect(page.getByTestId('knowledge-runtime-lessons')).toBeVisible();
+    await expect(page.getByTestId('knowledge-runtime-lessons')).toContainText('E2E runtime lesson capture');
+    await expect(page.getByTestId('knowledge-runtime-lessons')).toContainText('Keep Runtime Lessons review-only in Phase 1');
+    await expect(page.getByTestId('knowledge-runtime-lessons')).toContainText('E2E runtime lesson index');
+    await expect(page.getByTestId('knowledge-runtime-lessons')).not.toContainText('Approve and Apply');
 
     await page.getByRole('button', { name: /Initialize/ }).click();
     await expect(page.getByText(/Knowledge vault initialized/)).toBeVisible();

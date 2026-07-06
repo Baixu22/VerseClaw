@@ -155,6 +155,8 @@ Remote Tasks 页面提供本地优先的结构化任务收件箱，可接收消�
 Review Center 可以对未提交改动、相对基准分支的 diff 或指定 commit 运行只读 AI 审查。它会按 severity 结构化 findings，保留 file/line 锚点，写入脱敏 review trace，并可把单条 finding 或整次 review 转成 Task Ledger review node，不会暂存、提交或编辑文件。
 
 ### Knowledge Hub
+Knowledge 现在包含只读的 Runtime Lessons 视图，用于查看 SEKB 轨迹、未蒸馏运行、已激活原则和索引预览。
+
 Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上下文。默认使用 Verse Claw 托管的隔离 native vault，可在不切换到 unsafe local-vault 模式的情况下导入受限的文本文件或文件夹，也可以验证并导入本地 OKF v0.1 Markdown bundle，作为覆盖在 `wiki.ingest` 之上的轻量兼容适配层。它提供状态、搜索、查看、compile、lint、Knowledge Inbox、draft/proposal 审查、provenance 和治理流程。Inbox 会把 Chat、任务账本、文件、OKF、ClawGraph 或 agent 提出的候选知识暂存在正式 wiki 之外，直到用户选择提升为草稿或忽略；provenance 只记录来源引用和读取/引用事件，不修改 wiki 页面。Chat 的知识范围（`None`、`Memory`、`Wiki` 或 `All`）只代表读取范围：agent 可以 search/get 上下文，但不能因为启用 scope 就写入、修改、归档、删除、合并或 apply 知识。在 Chat 中，`/wiki` 会搜索并以可见 chip 挂载明确的 wiki 引用后再发送，`/memory`、`/all`、`/none` 和 `/scope` 只调整读取范围，不会变成写权限。知识调用模式默认是 Suggest：相关知识只显示为可选 chip；Auto-read 需要用户显式开启，并且只会附加少量新鲜、高置信、只读引用。会话知识以及 agent/知识管理员建议都会先进入可编辑 draft/proposal，只有用户明确确认后才写入 wiki。Obsidian 是可选增强，不是必需依赖。治理仪表盘按需运行健康检查，呈现矛盾条目、陈旧页面和无主引用；监控目录只会把项目文档放入 pending Inbox，不会自动 direct-ingest 到正式 wiki，也不会自动生成 synthesis。
 
 ### Workspace Git 控制
