@@ -13,6 +13,11 @@ export {
   type SekbTaskClassifier,
 } from "./harness-integration.js";
 export { KnowledgeStore, type KnowledgeStoreOptions } from "./knowledge-store.js";
+export {
+  buildSekbOperatorReport,
+  type SekbOperatorReport,
+  type SekbOperatorReportOptions,
+} from "./operator-report.js";
 export { ContextInjector, RetrievalEngine, type RetrievalEngineOptions } from "./retrieval-engine.js";
 export { TrajectoryCapture, capture_trajectory, type TrajectoryCaptureOptions } from "./trajectory-capture.js";
 export type {
