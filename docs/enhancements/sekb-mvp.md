@@ -21,6 +21,29 @@ capture.finish_trajectory(trajectoryId, "success");
 
 For failures, pass the raw error to `finish_trajectory`. The capture layer extracts and caches a deterministic signature such as `ConnectionError::db_connection_refused::postgresql`.
 
+## Runtime Hook Integration v0.2
+
+SEKB can be attached to an AgentHarness-like runtime with
+`installSekbHarnessHooks(target, options)`. The installer is explicit and
+default-off: callers must pass `enabled: true` plus a `TrajectoryCapture` and
+`ContextInjector`.
+
+The hook installer uses existing harness seams:
+
+- `before_agent_start` starts an L3 trajectory and appends bounded task advice
+  to the system prompt.
+- `tool_call` and `tool_result` record tool steps.
+- failed `tool_result` events append visible SEKB historical error advice to
+  the tool result content for the next model turn.
+- `agent_end` finishes the trajectory as success or failure.
+- `abort` finishes the trajectory as partial.
+
+SEKB hook failures are swallowed and reported through the optional `onError`
+callback so knowledge capture cannot break the agent run.
+
+No v0.2 path pauses tools, retries work, blocks tool calls, silently rewrites
+tool output, or writes L2 principles without `DistillationTool.confirm_and_save()`.
+
 ## Manual Distillation
 
 MVP distillation is explicit:
@@ -47,6 +70,14 @@ Embeddings are stored as nullable JSON arrays. When embeddings are missing, retr
 
 The L1 index is derived from active L2 principles and bounded to an approximate 2K-token budget.
 
+## Operator Report
+
+`buildSekbOperatorReport(store)` returns a read-only snapshot for manual
+distillation review. It includes total trajectory counts, undistilled
+trajectory summaries, active principle summaries, and the current L1 index
+preview. The report does not write principles, reject suggestions, or mark
+trajectories distilled.
+
 ## Stage 2 Decisions
 
 The MVP leaves these decisions open:
@@ -55,4 +86,6 @@ The MVP leaves these decisions open:
 - Verifier model policy: independent LLM or the same model with different parameters.
 - Curator scoring: evaluation cadence and weights for retrieval, adoption, and post-adoption success.
 
-README translation updates are not required for this slice because no renderer workflow, visible desktop page, or user-facing navigation changed.
+README translation updates are not required for v0.2 because the branch adds
+runtime-side explicit hook integration and a read-only operator report, with no
+new renderer page, visible navigation, or end-user desktop workflow.
