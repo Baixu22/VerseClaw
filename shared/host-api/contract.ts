@@ -1580,6 +1580,35 @@ export type KnowledgeRouteContextResult = HostSuccess & {
   };
 };
 
+export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'reportFailed';
+  counts: {
+    trajectories: number;
+    undistilledTrajectories: number;
+    activePrinciples: number;
+  };
+  undistilled: Array<{
+    trajectory_id: string;
+    created_at: string;
+    task_intent: string;
+    task_type: string;
+    context_fingerprint: string[];
+    outcome: 'success' | 'failure' | 'partial';
+    error_signature: string | null;
+  }>;
+  activePrinciples: Array<{
+    principle_id: string;
+    title: string;
+    task_types: string[];
+    context_tags: string[];
+    criticality: 'low' | 'medium' | 'high' | 'critical';
+    retrieval_count: number;
+    adoption_count: number;
+  }>;
+  indexPreview: string;
+};
+
 export type KnowledgeConfigurePayload = {
   vaultPath?: string;
   renderMode?: 'native' | 'obsidian';
@@ -2615,6 +2644,7 @@ export type HostApiContract = {
     applyReviewedChange: (payload: KnowledgeApplyReviewedChangePayload) => KnowledgeApplyReviewedChangeResult;
     stewardReview: (payload: KnowledgeStewardReviewPayload) => KnowledgeStewardReviewResult;
     routeContext: (payload: KnowledgeRouteContextPayload) => KnowledgeRouteContextResult;
+    runtimeLessonsReport: () => KnowledgeRuntimeLessonsReportResult;
     recordKnowledgeReference: (payload: KnowledgeRecordReferencePayload) => KnowledgeProvenanceResult;
     getProvenance: (payload: KnowledgeProvenancePayload) => KnowledgeProvenanceResult;
 

@@ -471,6 +471,7 @@ describe('hostApi facade', () => {
     await hostApi.knowledge.createInboxItem({ title: 'Candidate', body: 'Body', kind: 'chat-session' });
     await hostApi.knowledge.promoteInboxItemToDraft({ id: 'inbox-1' });
     await hostApi.knowledge.recordKnowledgeReference({ targetId: 'notes/a.md', reference: { kind: 'search', lookup: 'notes/a.md' } });
+    await hostApi.knowledge.runtimeLessonsReport();
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
       module: 'knowledge',
@@ -506,6 +507,10 @@ describe('hostApi facade', () => {
       module: 'knowledge',
       action: 'recordKnowledgeReference',
       payload: { targetId: 'notes/a.md', reference: { kind: 'search', lookup: 'notes/a.md' } },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
+      module: 'knowledge',
+      action: 'runtimeLessonsReport',
     }));
   });
 

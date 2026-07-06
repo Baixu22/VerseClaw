@@ -6,6 +6,7 @@
     "library": "Library",
     "inbox": "Inbox",
     "drafts": "Draft Inbox",
+    "runtime": "Runtime Lessons",
     "review": "Review",
     "governance": "Governance"
   },
@@ -128,6 +129,24 @@
     "confirmationBoundary": "Agent и Knowledge Steward могут только подготовить draft или proposal. Применение знаний требует явного подтверждения пользователя.",
     "approveAndApply": "Approve and Apply",
     "reject": "Reject"
+  },
+  "runtime": {
+    "title": "Runtime Lessons",
+    "subtitle": "SEKB обучается на реальных запусках Agent.",
+    "loading": "Загрузка Runtime Lessons...",
+    "unavailable": "Runtime Lessons сейчас недоступны.",
+    "metrics": {
+      "trajectories": "Trajectories",
+      "undistilled": "Undistilled",
+      "principles": "Principles"
+    },
+    "undistilledTitle": "Undistilled runs",
+    "principlesTitle": "Active principles",
+    "indexTitle": "Index preview",
+    "emptyUndistilled": "Нет недистиллированных запусков.",
+    "emptyPrinciples": "Нет активных runtime-принципов.",
+    "errorSignature": "Error signature",
+    "taskType": "Task type"
   },
   "governance": {
     "title": "Governance",

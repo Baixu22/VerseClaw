@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, ArrowRight, BookOpen, Check, Database, Edit3, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, ListTodo, Loader2, Puzzle, RefreshCw, Ruler, Search, ShieldCheck, Sparkles, Upload, Wrench, X } from 'lucide-react';
+import { AlertTriangle, ArrowRight, BookOpen, BrainCircuit, Check, Database, Edit3, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, ListTodo, Loader2, Puzzle, RefreshCw, Ruler, Search, ShieldCheck, Sparkles, Upload, Wrench, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -18,6 +18,7 @@ import {
   type KnowledgeOkfConcept,
   type KnowledgeOkfValidationResult,
   type KnowledgeProvenanceRecord,
+  type KnowledgeRuntimeLessonsReportResult,
   type KnowledgeSearchResult,
   type KnowledgeStatusResult,
   type KnowledgeStewardReviewResult,
@@ -25,20 +26,30 @@ import {
 import { cn } from '@/lib/utils';
 
 type SearchRow = Record<string, unknown>;
-type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'review' | 'governance';
+type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'runtime' | 'review' | 'governance';
 
 const PANEL_CLASS = 'rounded-xl border border-black/10 bg-surface-modal shadow-sm dark:border-white/10';
 const QUIET_BUTTON_CLASS = 'h-9 rounded-lg border border-black/10 bg-transparent px-3 text-meta font-medium text-foreground/80 shadow-none transition-colors hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5';
 const ROW_CLASS = 'flex items-center justify-between gap-4 rounded-lg bg-surface-input px-3 py-2';
 const KNOWLEDGE_TYPES: KnowledgeDraftType[] = ['decision', 'architecture', 'command', 'troubleshooting', 'glossary', 'source-note', 'synthesis', 'procedure'];
-const WORKBENCH_TABS: WorkbenchTab[] = ['library', 'inbox', 'drafts', 'review', 'governance'];
+const WORKBENCH_TABS: WorkbenchTab[] = ['library', 'inbox', 'drafts', 'runtime', 'review', 'governance'];
 
 const TAB_ICONS: Record<WorkbenchTab, React.ComponentType<{ className?: string }>> = {
   library: Layers,
   inbox: Inbox,
   drafts: Edit3,
+  runtime: BrainCircuit,
   review: ShieldCheck,
   governance: Database,
+};
+
+const WORKBENCH_TITLE_KEYS: Record<WorkbenchTab, string> = {
+  library: 'library.title',
+  inbox: 'inbox.title',
+  drafts: 'draft.title',
+  runtime: 'runtime.title',
+  review: 'review.title',
+  governance: 'governance.title',
 };
 
 const TYPE_ICONS: Record<KnowledgeDraftType, React.ComponentType<{ className?: string }>> = {
@@ -151,6 +162,8 @@ export function Knowledge() {
   const [okfPath, setOkfPath] = useState('');
   const [okfValidation, setOkfValidation] = useState<KnowledgeOkfValidationResult | null>(null);
   const [selectedOkfConceptIds, setSelectedOkfConceptIds] = useState<Set<string>>(() => new Set());
+  const [runtimeLessons, setRuntimeLessons] = useState<KnowledgeRuntimeLessonsReportResult | null>(null);
+  const [runtimeLessonsLoading, setRuntimeLessonsLoading] = useState(false);
   const [governanceRunning, setGovernanceRunning] = useState(false);
   const [governanceIssues, setGovernanceIssues] = useState<any[]>([]);
   const [governanceContradictions, setGovernanceContradictions] = useState(0);
@@ -174,6 +187,12 @@ export function Knowledge() {
     { label: t('metrics.entities'), value: (pageCounts.entity ?? 0) + (pageCounts.concept ?? 0), icon: Database, tone: 'text-emerald-700 dark:text-emerald-400' },
     { label: t('metrics.warnings'), value: warnings.length, icon: AlertTriangle, tone: warnings.length > 0 ? 'text-yellow-700 dark:text-yellow-400' : 'text-muted-foreground' },
   ], [pageCounts.concept, pageCounts.entity, pageCounts.source, pageCounts.synthesis, t, warnings.length]);
+  const runtimeCounts = runtimeLessons?.counts ?? { trajectories: 0, undistilledTrajectories: 0, activePrinciples: 0 };
+  const runtimeMetrics = useMemo(() => [
+    { label: t('runtime.metrics.trajectories'), value: runtimeCounts.trajectories, icon: History, tone: 'text-sky-700 dark:text-sky-400' },
+    { label: t('runtime.metrics.undistilled'), value: runtimeCounts.undistilledTrajectories, icon: AlertTriangle, tone: 'text-yellow-700 dark:text-yellow-400' },
+    { label: t('runtime.metrics.principles'), value: runtimeCounts.activePrinciples, icon: Lightbulb, tone: 'text-emerald-700 dark:text-emerald-400' },
+  ], [runtimeCounts.activePrinciples, runtimeCounts.trajectories, runtimeCounts.undistilledTrajectories, t]);
   const selectedDraft = useMemo(() => drafts.find((draft) => draft.id === selectedDraftId) ?? drafts[0] ?? null, [drafts, selectedDraftId]);
   const selectedInboxItem = useMemo(() => inboxItems.find((item) => item.id === selectedInboxId) ?? inboxItems[0] ?? null, [inboxItems, selectedInboxId]);
   const selectedProposal = useMemo(() => proposals.find((proposal) => proposal.id === selectedProposalId) ?? proposals[0] ?? null, [proposals, selectedProposalId]);
@@ -218,6 +237,32 @@ export function Knowledge() {
   useEffect(() => {
     void refreshGovernance();
   }, [refreshGovernance]);
+
+  const refreshRuntimeLessons = useCallback(async () => {
+    setRuntimeLessonsLoading(true);
+    try {
+      setRuntimeLessons(await hostApi.knowledge.runtimeLessonsReport());
+    } catch (err) {
+      setRuntimeLessons({
+        success: false,
+        available: false,
+        reason: 'reportFailed',
+        error: err instanceof Error ? err.message : String(err),
+        counts: { trajectories: 0, undistilledTrajectories: 0, activePrinciples: 0 },
+        undistilled: [],
+        activePrinciples: [],
+        indexPreview: '',
+      });
+    } finally {
+      setRuntimeLessonsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (workbenchTab === 'runtime' && !runtimeLessons && !runtimeLessonsLoading) {
+      void refreshRuntimeLessons();
+    }
+  }, [refreshRuntimeLessons, runtimeLessons, runtimeLessonsLoading, workbenchTab]);
 
   const runGovernanceChecks = useCallback(async () => {
     setGovernanceRunning(true);
@@ -777,7 +822,7 @@ export function Knowledge() {
           })}
         </div>
 
-        <div className="mt-4 grid gap-2 md:grid-cols-5" data-testid="knowledge-workbench-tabs">
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6" data-testid="knowledge-workbench-tabs">
           {WORKBENCH_TABS.map((tab) => {
             const TabIcon = TAB_ICONS[tab];
             const isActive = workbenchTab === tab;
@@ -912,7 +957,7 @@ export function Knowledge() {
         <Card className={cn('mt-4', PANEL_CLASS)}>
           <CardHeader className="p-4">
             <CardTitle className="flex items-center justify-between gap-3 text-base">
-              <span>{t(workbenchTab === 'library' ? 'library.title' : workbenchTab === 'inbox' ? 'inbox.title' : workbenchTab === 'drafts' ? 'draft.title' : workbenchTab === 'review' ? 'review.title' : 'governance.title')}</span>
+              <span>{t(WORKBENCH_TITLE_KEYS[workbenchTab])}</span>
               <Badge variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
                 {t('governance.readOnlyBadge')}
               </Badge>
@@ -1156,6 +1201,135 @@ export function Knowledge() {
                     <Textarea value={draftBody} onChange={(event) => setDraftBody(event.target.value)} rows={16} className="font-mono text-xs" data-testid="knowledge-draft-body" />
                   </div>
                 </div>
+              </div>
+            )}
+
+            {workbenchTab === 'runtime' && (
+              <div className="space-y-4">
+                {runtimeLessonsLoading && !runtimeLessons && (
+                  <div className="flex items-center gap-2 rounded-lg border border-black/10 bg-surface-input p-4 text-sm text-muted-foreground dark:border-white/10">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {t('runtime.loading')}
+                  </div>
+                )}
+
+                {runtimeLessons && (
+                  <div className="space-y-4" data-testid="knowledge-runtime-lessons">
+                    <div className="flex flex-wrap items-start justify-between gap-3 rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-semibold">{t('runtime.title')}</h3>
+                        <p className="mt-1 text-xs leading-5 text-muted-foreground">{t('runtime.subtitle')}</p>
+                      </div>
+                      <Badge variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
+                        {t('governance.readOnlyBadge')}
+                      </Badge>
+                    </div>
+
+                    {(!runtimeLessons.success || !runtimeLessons.available) && (
+                      <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs leading-relaxed text-yellow-700 dark:text-yellow-400">
+                        {runtimeLessons.error || t('runtime.unavailable')}
+                      </div>
+                    )}
+
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {runtimeMetrics.map((metric) => {
+                        const Icon = metric.icon;
+                        return (
+                          <div key={metric.label} className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <div className="text-xl font-semibold tabular-nums tracking-tight">{metric.value}</div>
+                                <div className="mt-0.5 truncate text-[11px] font-medium text-muted-foreground">{metric.label}</div>
+                              </div>
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-background/50 dark:border-white/10">
+                                <Icon className={cn('h-4 w-4', metric.tone)} />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(300px,0.8fr)]">
+                      <div className="space-y-3">
+                        <div className="text-sm font-semibold">{t('runtime.undistilledTitle')}</div>
+                        {runtimeLessons.undistilled.length === 0 && (
+                          <p className="rounded-lg border border-black/10 bg-surface-input p-4 text-sm text-muted-foreground dark:border-white/10">{t('runtime.emptyUndistilled')}</p>
+                        )}
+                        {runtimeLessons.undistilled.map((trajectory) => (
+                          <div key={trajectory.trajectory_id} className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
+                            <div className="flex flex-wrap items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <div className="text-sm font-semibold text-foreground">{trajectory.task_intent}</div>
+                                <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                                  <span>{t('runtime.taskType')}: {trajectory.task_type}</span>
+                                  <span className="text-muted-foreground/50">/</span>
+                                  <span>{trajectory.outcome}</span>
+                                  <span className="font-mono text-muted-foreground/70">{trajectory.created_at}</span>
+                                </div>
+                              </div>
+                              <Badge variant="outline" className="border-black/10 bg-background/60 text-[10px] dark:border-white/10">
+                                {trajectory.trajectory_id}
+                              </Badge>
+                            </div>
+                            {trajectory.context_fingerprint.length > 0 && (
+                              <div className="mt-3 flex flex-wrap gap-1.5">
+                                {trajectory.context_fingerprint.map((tag) => (
+                                  <Badge key={tag} variant="outline" className="border-black/10 bg-black/5 text-[10px] dark:border-white/10 dark:bg-white/10">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                            {trajectory.error_signature && (
+                              <div className="mt-3 rounded-md border border-red-500/20 bg-red-500/5 px-2.5 py-2 text-xs text-red-700 dark:text-red-400">
+                                <span className="font-medium">{t('runtime.errorSignature')}:</span>{' '}
+                                <span className="font-mono">{trajectory.error_signature}</span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="space-y-3">
+                          <div className="text-sm font-semibold">{t('runtime.principlesTitle')}</div>
+                          {runtimeLessons.activePrinciples.length === 0 && (
+                            <p className="rounded-lg border border-black/10 bg-surface-input p-4 text-sm text-muted-foreground dark:border-white/10">{t('runtime.emptyPrinciples')}</p>
+                          )}
+                          {runtimeLessons.activePrinciples.map((principle) => (
+                            <div key={principle.principle_id} className="rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                  <div className="text-sm font-semibold text-foreground">{principle.title}</div>
+                                  <div className="mt-2 flex flex-wrap gap-1.5">
+                                    <Badge variant="outline" className="border-black/10 bg-background/60 text-[10px] dark:border-white/10">{principle.criticality}</Badge>
+                                    {principle.task_types.map((taskType) => (
+                                      <Badge key={taskType} variant="outline" className="border-black/10 bg-black/5 text-[10px] dark:border-white/10 dark:bg-white/10">{taskType}</Badge>
+                                    ))}
+                                    {principle.context_tags.map((tag) => (
+                                      <Badge key={tag} variant="outline" className="border-black/10 bg-black/5 text-[10px] dark:border-white/10 dark:bg-white/10">{tag}</Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div className="shrink-0 text-right font-mono text-xs text-muted-foreground">
+                                  {principle.retrieval_count}/{principle.adoption_count}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="text-sm font-semibold">{t('runtime.indexTitle')}</div>
+                          <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-lg border border-black/10 bg-surface-input p-3 text-xs leading-relaxed dark:border-white/10">
+                            {runtimeLessons.indexPreview || '-'}
+                          </pre>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

@@ -6,6 +6,7 @@
     "library": "知识库",
     "inbox": "收件箱",
     "drafts": "草稿箱",
+    "runtime": "运行经验",
     "review": "审查",
     "governance": "治理"
   },
@@ -128,6 +129,24 @@
     "confirmationBoundary": "Agent 和知识管理员只能准备草稿或 proposal。写入知识库必须由用户在这里明确确认。",
     "approveAndApply": "批准并应用",
     "reject": "拒绝"
+  },
+  "runtime": {
+    "title": "运行经验",
+    "subtitle": "来自 Agent 运行过程的 SEKB 运行时学习。",
+    "loading": "正在加载运行经验...",
+    "unavailable": "运行经验当前不可用。",
+    "metrics": {
+      "trajectories": "轨迹",
+      "undistilled": "未蒸馏",
+      "principles": "原则"
+    },
+    "undistilledTitle": "未蒸馏运行",
+    "principlesTitle": "已激活原则",
+    "indexTitle": "索引预览",
+    "emptyUndistilled": "暂无未蒸馏运行。",
+    "emptyPrinciples": "暂无已激活运行原则。",
+    "errorSignature": "错误签名",
+    "taskType": "任务类型"
   },
   "governance": {
     "title": "治理",

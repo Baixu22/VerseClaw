@@ -14,6 +14,7 @@ const hostApiMock = vi.hoisted(() => ({
   updateInboxItem: vi.fn(),
   dismissInboxItem: vi.fn(),
   promoteInboxItemToDraft: vi.fn(),
+  runtimeLessonsReport: vi.fn(),
   search: vi.fn(),
   get: vi.fn(),
   compile: vi.fn(),
@@ -49,6 +50,7 @@ vi.mock('@/lib/host-api', () => ({
       updateInboxItem: hostApiMock.updateInboxItem,
       dismissInboxItem: hostApiMock.dismissInboxItem,
       promoteInboxItemToDraft: hostApiMock.promoteInboxItemToDraft,
+      runtimeLessonsReport: hostApiMock.runtimeLessonsReport,
       search: hostApiMock.search,
       get: hostApiMock.get,
       compile: hostApiMock.compile,
@@ -127,6 +129,7 @@ const labels: Record<string, string> = {
   'tabs.drafts': 'Draft Inbox',
   'tabs.review': 'Review',
   'tabs.governance': 'Governance',
+  'tabs.runtime': 'Runtime Lessons',
   'library.title': 'Library',
   'library.typeHint': 'Filter and browse this knowledge type',
   'inbox.title': 'Knowledge Inbox',
@@ -179,6 +182,19 @@ const labels: Record<string, string> = {
   'review.confirmationBoundary': 'Agents and the Knowledge Steward can only prepare drafts or proposals. Applying knowledge requires this explicit user confirmation.',
   'review.approveAndApply': 'Approve and Apply',
   'review.reject': 'Reject',
+  'runtime.title': 'Runtime Lessons',
+  'runtime.subtitle': 'SEKB runtime learning from agent runs.',
+  'runtime.unavailable': 'Runtime lessons are not available.',
+  'runtime.metrics.trajectories': 'Trajectories',
+  'runtime.metrics.undistilled': 'Undistilled',
+  'runtime.metrics.principles': 'Principles',
+  'runtime.undistilledTitle': 'Undistilled runs',
+  'runtime.principlesTitle': 'Active principles',
+  'runtime.indexTitle': 'Index preview',
+  'runtime.emptyUndistilled': 'No undistilled runtime runs.',
+  'runtime.emptyPrinciples': 'No active runtime principles.',
+  'runtime.errorSignature': 'Error signature',
+  'runtime.taskType': 'Task type',
   'governance.title': 'Governance',
   'governance.readOnlyBadge': 'Agent read-only by default',
   'governance.steward': 'Knowledge Steward',
@@ -231,6 +247,7 @@ describe('Knowledge page', () => {
     hostApiMock.updateInboxItem.mockReset();
     hostApiMock.dismissInboxItem.mockReset();
     hostApiMock.promoteInboxItemToDraft.mockReset();
+    hostApiMock.runtimeLessonsReport.mockReset();
     hostApiMock.search.mockReset();
     hostApiMock.get.mockReset();
     hostApiMock.compile.mockReset();
@@ -364,6 +381,30 @@ describe('Knowledge page', () => {
       },
     });
     hostApiMock.dismissInboxItem.mockResolvedValue({ success: true, item: { id: 'inbox-1', status: 'dismissed' } });
+    hostApiMock.runtimeLessonsReport.mockResolvedValue({
+      success: true,
+      available: true,
+      counts: { trajectories: 5, undistilledTrajectories: 2, activePrinciples: 1 },
+      undistilled: [{
+        trajectory_id: 'traj-runtime-1',
+        created_at: '2026-07-06T00:00:00.000Z',
+        task_intent: 'Recover from failed Knowledge import',
+        task_type: 'coding',
+        context_fingerprint: ['knowledge', 'runtime-lessons'],
+        outcome: 'failure',
+        error_signature: 'ImportError::knowledge_runtime_lessons',
+      }],
+      activePrinciples: [{
+        principle_id: 'principle-runtime-1',
+        title: 'Inspect runtime lessons before changing Knowledge flows',
+        task_types: ['coding'],
+        context_tags: ['knowledge'],
+        criticality: 'medium',
+        retrieval_count: 3,
+        adoption_count: 1,
+      }],
+      indexPreview: 'Runtime lesson index preview',
+    });
     hostApiMock.recordKnowledgeReference.mockResolvedValue({
       success: true,
       record: {
@@ -549,6 +590,23 @@ describe('Knowledge page', () => {
     await waitFor(() => expect(hostApiMock.promoteInboxItemToDraft).toHaveBeenCalledWith({ id: 'inbox-1' }));
     expect(hostApiMock.applyDraft).not.toHaveBeenCalled();
     expect(hostApiMock.applyReviewedChange).not.toHaveBeenCalled();
+  });
+
+  it('shows SEKB runtime lessons as a read-only Knowledge tab', async () => {
+    render(<Knowledge />);
+
+    await screen.findByTestId('knowledge-page');
+    fireEvent.click(await screen.findByTestId('knowledge-tab-runtime'));
+
+    const runtimePanel = await screen.findByTestId('knowledge-runtime-lessons');
+    expect(hostApiMock.runtimeLessonsReport).toHaveBeenCalledTimes(1);
+    expect(within(runtimePanel).getByText('Runtime Lessons')).toBeInTheDocument();
+    expect(screen.getByText('5')).toBeInTheDocument();
+    expect(screen.getByText('Recover from failed Knowledge import')).toBeInTheDocument();
+    expect(screen.getByText('ImportError::knowledge_runtime_lessons')).toBeInTheDocument();
+    expect(screen.getByText('Inspect runtime lessons before changing Knowledge flows')).toBeInTheDocument();
+    expect(screen.getByText('Runtime lesson index preview')).toBeInTheDocument();
+    expect(screen.queryByText('Approve and Apply')).not.toBeInTheDocument();
   });
 
   it('validates an OKF folder and imports only user-selected concepts', async () => {

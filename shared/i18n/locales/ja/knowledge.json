@@ -6,6 +6,7 @@
     "library": "Library",
     "inbox": "Inbox",
     "drafts": "Draft Inbox",
+    "runtime": "Runtime Lessons",
     "review": "Review",
     "governance": "Governance"
   },
@@ -128,6 +129,24 @@
     "confirmationBoundary": "Agent と Knowledge Steward はドラフトまたは proposal だけを準備できます。知識の apply にはユーザーの明示的な確認が必要です。",
     "approveAndApply": "Approve and Apply",
     "reject": "Reject"
+  },
+  "runtime": {
+    "title": "Runtime Lessons",
+    "subtitle": "Agent の実行から学習した SEKB のランタイム知識です。",
+    "loading": "Runtime Lessons を読み込み中...",
+    "unavailable": "Runtime Lessons は利用できません。",
+    "metrics": {
+      "trajectories": "Trajectories",
+      "undistilled": "Undistilled",
+      "principles": "Principles"
+    },
+    "undistilledTitle": "Undistilled runs",
+    "principlesTitle": "Active principles",
+    "indexTitle": "Index preview",
+    "emptyUndistilled": "未蒸留の実行はありません。",
+    "emptyPrinciples": "有効なランタイム原則はありません。",
+    "errorSignature": "Error signature",
+    "taskType": "Task type"
   },
   "governance": {
     "title": "Governance",

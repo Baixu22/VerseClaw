@@ -46,6 +46,51 @@ describe('knowledge host API', () => {
     expect(gatewayManager.rpc).toHaveBeenNthCalledWith(1, 'wiki.status', {}, 12000);
   });
 
+  it('returns a read-only SEKB runtime lessons report without Gateway writes', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async () => {
+        throw new Error('runtime lessons report must not call Gateway RPC');
+      }),
+    };
+    const runtimeLessonsReporter = vi.fn(async () => ({
+      success: true,
+      available: true,
+      counts: { trajectories: 3, undistilledTrajectories: 2, activePrinciples: 1 },
+      undistilled: [{
+        trajectory_id: 'traj-1',
+        created_at: '2026-07-06T00:00:00.000Z',
+        task_intent: 'Fix failing Knowledge import',
+        task_type: 'coding',
+        context_fingerprint: ['knowledge', 'sekb'],
+        outcome: 'failure',
+        error_signature: 'TypeError::missing_runtime_report',
+      }],
+      activePrinciples: [{
+        principle_id: 'pr-1',
+        title: 'Check runtime report before editing Knowledge UI',
+        task_types: ['coding'],
+        context_tags: ['knowledge'],
+        criticality: 'medium',
+        retrieval_count: 4,
+        adoption_count: 2,
+      }],
+      indexPreview: 'SEKB L1 index preview',
+    }));
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never, runtimeLessonsReporter });
+
+    await expect(api.runtimeLessonsReport()).resolves.toMatchObject({
+      success: true,
+      available: true,
+      counts: { trajectories: 3, undistilledTrajectories: 2, activePrinciples: 1 },
+      undistilled: [expect.objectContaining({ trajectory_id: 'traj-1' })],
+      activePrinciples: [expect.objectContaining({ principle_id: 'pr-1' })],
+      indexPreview: 'SEKB L1 index preview',
+    });
+    expect(runtimeLessonsReporter).toHaveBeenCalledTimes(1);
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
   it('configures memory-wiki defaults without overwriting unrelated plugin config', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
