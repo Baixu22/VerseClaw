@@ -100,13 +100,18 @@ describe("SEKB-MVP", () => {
 
     const errorMatches = engine.retrieve_for_error("ConnectionError::db_connection_refused::postgresql", ["postgresql"], 3);
     expect(errorMatches.map((principle) => principle.principle_id)).toEqual([principleId]);
-    expect(engine.format_for_injection(errorMatches)).toContain("【相关经验 1】Check PG access");
+    const formatted = engine.format_for_injection(errorMatches);
+    expect(formatted).toContain("[Relevant SEKB principle 1] Check PG access");
+    expect(formatted).toContain("Condition: When PostgreSQL reports Connection refused");
+    expect(formatted).toContain("Action: Check pg_hba.conf and firewall rules");
+    expect(formatted).toContain("Reason: Most connection refusals are environment");
+    expect(formatted).not.toMatch(/[【】：]/u);
 
     const injector = engine.create_context_injector();
     expect(injector.for_task("system", "configure database connection", "config/db", ["postgresql"]))
       .toContain("Check PG access");
     expect(injector.for_error("ConnectionError::db_connection_refused::postgresql", ["postgresql"]))
-      .toContain("【检测到相关历史错误经验，供参考】");
+      .toContain("[SEKB historical error advice]");
   });
 
   it("keeps distillation manual and marks trajectories only after confirmation", () => {
