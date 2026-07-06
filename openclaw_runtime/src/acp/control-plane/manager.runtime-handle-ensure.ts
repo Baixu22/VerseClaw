@@ -12,7 +12,7 @@ import type { AcpRuntime, AcpRuntimeHandle } from "@openclaw/acp-core/runtime/ty
 import { resolveRuntimeConfigCacheKey } from "../../config/runtime-snapshot.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { logVerbose } from "../../globals.js";
-import { toAcpRuntimeError, withAcpRuntimeErrorBoundary } from "../runtime/errors.js";
+import { toAcpRuntimeError, withAcpRuntimeErrorBoundary } from "../../runtime/errors.ts";
 import type { ManagerRuntimeHandleCache } from "./manager.runtime-handle-cache.js";
 import type {
   AcpSessionManagerDeps,

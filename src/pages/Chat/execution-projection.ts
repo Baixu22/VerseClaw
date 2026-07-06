@@ -153,6 +153,23 @@ export function hasRunningRuntimeTool(run: ChatRuntimeRunState | null | undefine
   return Array.from(toolStatuses.values()).some((status) => status === 'running');
 }
 
+function runtimeRunHasImageGenerationActivity(run: ChatRuntimeRunState | null | undefined): boolean {
+  return Boolean(run?.events.some((event) =>
+    (event.type === 'tool.started' || event.type === 'tool.updated' || event.type === 'tool.completed')
+    && event.name === 'image_generate',
+  ));
+}
+
+function segmentHasDeliveredImage(segmentMessages: RawMessage[]): boolean {
+  return segmentMessages.some((message) =>
+    normalizeMessageRole(message.role) === 'assistant'
+    && (
+      (message._attachedFiles ?? []).some((file) => file.mimeType.startsWith('image/'))
+      || extractImages(message).length > 0
+    ),
+  );
+}
+
 export function deriveExecutionStreamState({
   streamingMessage,
   streamingTools,
@@ -336,6 +353,7 @@ export function deriveUserRunProjection({
   const foldedNarrationIndices = new Set<number>();
   const cards: UserRunCard[] = [];
   const currentRuntimeRun = activeRunId ? runtimeRuns[activeRunId] ?? null : null;
+  const currentRuntimeRunActive = currentRuntimeRun?.status === 'running';
   const currentRuntimeHasToolActivity = runtimeRunHasToolActivity(currentRuntimeRun);
   const hasRunningRuntimeToolStatus = hasRunningRuntimeTool(currentRuntimeRun);
   let latestRunSegmentCompletion = { hasFinalReply: false, hasToolActivity: false };
@@ -371,15 +389,18 @@ export function deriveUserRunProjection({
     const hasFinalReply = segmentHasFinalReply(postTriggerMessages);
     const pendingImageGeneration = isLatestRunSegment
       && isImageGenerationPending(postTriggerMessages, streamingTools);
+    const runtimeImageGenerationSettledInHistory = isLatestRunSegment
+      && runtimeRunHasImageGenerationActivity(activeRuntimeRun)
+      && segmentHasDeliveredImage(postTriggerMessages);
     const imageGenerationSettledInHistory = isLatestRunSegment
-      && hasDeliveredImageGenerationResult(postTriggerMessages)
+      && (hasDeliveredImageGenerationResult(postTriggerMessages) || runtimeImageGenerationSettledInHistory)
       && !pendingImageGeneration;
     const runStillExecutingTools = hasToolActivity && !hasFinalReply;
     const streamBlocksHistoryCompletion = stream.hasHistoryCompletionBlockingStream && !imageGenerationSettledInHistory;
-    const runCompletedInHistory = imageGenerationSettledInHistory || (hasFinalReply
+    const runCompletedInHistory = imageGenerationSettledInHistory || (!currentRuntimeRunActive && (hasFinalReply
       && !pendingImageGeneration
       && !streamBlocksHistoryCompletion
-      && (hasToolActivity || !sending));
+      && (hasToolActivity || !sending)));
     const isLatestOpenRun = isLatestRunSegment
       && !runError
       && !runCompletedInHistory
@@ -387,6 +408,7 @@ export function deriveUserRunProjection({
         sending
         || pendingFinal
         || pendingImageGeneration
+        || currentRuntimeRunActive
         || stream.hasAnyStreamContent
         || (runStillExecutingTools && !!activeRunId)
       );
@@ -408,13 +430,16 @@ export function deriveUserRunProjection({
     });
 
     const allToolsCompleted = streamingTools.length > 0 && !stream.hasRunningStreamToolStatus;
+    const runtimeReplyText = activeRuntimeRun?.assistantText ?? '';
+    const hasRuntimeReplyText = runtimeReplyText.trim().length > 0
+      && !isInternalAssistantReplyText(runtimeReplyText);
     const canPromoteStreamToBubble = pendingFinal
       || allToolsCompleted
       || hasToolActivity
-      || (!hasToolActivity && (stream.hasStreamText || stream.hasStreamImages));
+      || (!hasToolActivity && (stream.hasStreamText || stream.hasStreamImages || hasRuntimeReplyText));
     const rawStreamingReplyCandidate = isLatestOpenRun
       && canPromoteStreamToBubble
-      && (stream.hasStreamText || stream.hasStreamImages)
+      && (stream.hasStreamText || stream.hasStreamImages || hasRuntimeReplyText)
       && stream.streamTools.length === 0
       && !stream.hasRunningStreamToolStatus
       && !runtimeHasRunningTool;
@@ -424,7 +449,8 @@ export function deriveUserRunProjection({
       : sanitizeGraphSteps(buildSteps(rawStreamingReplyCandidate));
     let streamingReplyText: string | null = null;
     if (rawStreamingReplyCandidate) {
-      const trimmedReplyText = stripProcessMessagePrefix(stream.streamText, getPrimaryMessageStepTexts(steps));
+      const candidateReplyText = stream.hasStreamText ? stream.streamText : runtimeReplyText;
+      const trimmedReplyText = stripProcessMessagePrefix(candidateReplyText, getPrimaryMessageStepTexts(steps));
       const hasReplyText = trimmedReplyText.trim().length > 0
         && !isInternalAssistantReplyText(trimmedReplyText);
       if (hasReplyText || stream.hasStreamImages) {
@@ -448,9 +474,27 @@ export function deriveUserRunProjection({
     const segmentSessionLabel = sessionLabels[currentSessionKey] || currentSessionKey;
 
     if (steps.length === 0) {
+      if (isLatestOpenRun && streamingReplyText != null) {
+        cards.push({
+          runKey,
+          triggerIndex: idx,
+          replyIndex,
+          active: true,
+          agentLabel: segmentAgentLabel,
+          sessionLabel: segmentSessionLabel,
+          segmentEnd: displaySegmentEnd,
+          steps: [],
+          orchestrations: teamOrchestrations,
+          messageStepTexts: [],
+          streamingReplyText,
+          traceId,
+          suppressThinking: false,
+        });
+        return;
+      }
       if (isLatestOpenRun && streamingReplyText == null) {
         const historyReplyOffset = findReplyMessageIndex(postTriggerMessages, false);
-        if (historyReplyOffset >= 0 && !hasActiveStreamingReply) {
+        if (historyReplyOffset >= 0 && !hasActiveStreamingReply && !currentRuntimeRunActive) {
           return;
         }
         cards.push({
@@ -530,14 +574,14 @@ export function deriveUserRunProjection({
     card.active || card.steps.length > 0 || card.orchestrations.length > 0 || !!card.traceId,
   );
   const streamBlocksHistoryCompletion = stream.hasHistoryCompletionBlockingStream && !latestImageGenerationSettledInHistory;
-  const runSettledInHistory = latestImageGenerationSettledInHistory || (latestRunSegmentCompletion.hasFinalReply
+  const runSettledInHistory = latestImageGenerationSettledInHistory || (!currentRuntimeRunActive && (latestRunSegmentCompletion.hasFinalReply
     && !latestPendingImageGeneration
     && !streamBlocksHistoryCompletion
     && (
       latestRunSegmentCompletion.hasToolActivity
       || currentRuntimeHasToolActivity
       || !sending
-    ));
+    )));
   const shouldClearStoreLifecycleFromHistory = sending
     && runSettledInHistory
     && (
@@ -555,7 +599,7 @@ export function deriveUserRunProjection({
     imageGenerationSettledInHistory: latestImageGenerationSettledInHistory,
     runSettledInHistory,
     shouldClearStoreLifecycleFromHistory,
-    inputRunActive: sending || latestPendingImageGeneration || (hasActiveExecutionGraph && !runSettledInHistory),
+    inputRunActive: sending || latestPendingImageGeneration || currentRuntimeRunActive || (hasActiveExecutionGraph && !runSettledInHistory),
     currentRuntimeHasToolActivity,
     hasRunningRuntimeToolStatus,
   };

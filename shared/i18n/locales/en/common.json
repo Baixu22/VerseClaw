@@ -67,5 +67,38 @@
         "notRunningDesc": "The OpenClaw Gateway needs to be running to use this feature. It will start automatically, or you can start it from Settings.",
         "restarting": "Gateway restarting",
         "warning": "Gateway is not running."
+    },
+    "storageHealth": {
+        "ramLow": "Memory is running low",
+        "diskLow": "Disk space is running low",
+        "bannerLow": "Storage low — click to clean up"
+    },
+    "resourceTracker": {
+        "chip": {
+            "ariaLabel": "{{count}} running resources",
+            "tooltip": "{{count}} running resources",
+            "warningCount": "{{count}} idle"
+        },
+        "popover": {
+            "title": "Running Resources",
+            "close": "Close resource list",
+            "empty": "No tracked resources",
+            "stopAll": "Stop All",
+            "autoCleanup": "Idle resources are cleaned up after {{minutes}} minutes."
+        },
+        "status": {
+            "healthy": "active",
+            "idle": "idle",
+            "unreachable": "down"
+        },
+        "timeAgo": {
+            "justNow": "just now",
+            "m": "{{count}}m",
+            "h": "{{count}}h"
+        },
+        "pid": "pid {{pid}}",
+        "fromSession": "from {{session}}",
+        "stop": "Stop",
+        "stopResource": "Stop {{label}}"
     }
 }

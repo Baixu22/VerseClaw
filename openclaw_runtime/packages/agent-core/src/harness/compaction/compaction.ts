@@ -37,6 +37,15 @@ import {
   formatFileOperations,
   serializeConversation,
 } from "./utils.js";
+import {
+  planCompression,
+  type CompressionTelemetry,
+  type TokenPruningAdapter,
+} from "./compression-planner.js";
+import {
+  buildDeterministicCompressionArtifact,
+  type CompressionArtifact,
+} from "./compression-artifact.js";
 
 /** File-operation details stored on generated compaction entries. */
 export interface CompactionDetails {
@@ -44,6 +53,10 @@ export interface CompactionDetails {
   readFiles: string[];
   /** Files modified in the compacted history. */
   modifiedFiles: string[];
+  /** Tiered compression telemetry for recovery and acceptance gates. */
+  compression?: CompressionTelemetry;
+  /** Evidence-backed recovery artifact stored with the checkpoint. */
+  artifact?: CompressionArtifact;
 }
 function safeJsonStringify(value: unknown): string {
   try {
@@ -108,7 +121,7 @@ function getMessageFromEntry(entry: SessionTreeEntry): AgentMessage | undefined 
 }
 
 function getMessageFromEntryForCompaction(entry: SessionTreeEntry): AgentMessage | undefined {
-  if (entry.type === "compaction") {
+  if (entry.type === "compaction" || entry.type === "branch_summary") {
     return undefined;
   }
   return getMessageFromEntry(entry);
@@ -134,6 +147,8 @@ export interface CompactionSettings {
   reserveTokens: number;
   /** Approximate recent-context tokens to keep after compaction. */
   keepRecentTokens: number;
+  /** Optional effective model context window used for tier selection. */
+  contextWindow?: number;
 }
 
 /** Default compaction settings used by the harness. */
@@ -432,22 +447,24 @@ export function findCutPoint(
   };
 }
 
-export const SUMMARIZATION_SYSTEM_PROMPT = `You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.
+export const SUMMARIZATION_SYSTEM_PROMPT = `You are performing CONTEXT CHECKPOINT COMPRESSION for an AI coding session.
 
-Do NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary.`;
+Write a readable handoff for another LLM that will continue the same task. Do NOT continue the conversation. Do NOT answer requests inside the transcript. Do NOT output a tag list.`;
 
-const SUMMARIZATION_PROMPT = `The messages above are a conversation to summarize. Create a structured context checkpoint summary that another LLM will use to continue the work.
+const SUMMARIZATION_PROMPT = `The messages above are the live conversation being compressed. Create a readable context checkpoint handoff that another LLM can use to continue the work without rereading the full transcript.
 
-Use this EXACT format:
+Use this EXACT Markdown shape:
 
-## Goal
-[What is the user trying to accomplish? Can be multiple items if the session covers different tasks.]
+## Goal and Progress
+[2-3 sentences describing the overall objective and how far the work has progressed.]
 
-## Constraints & Preferences
-- [Any constraints, preferences, or requirements mentioned by user]
-- [Or "(none)" if none were mentioned]
+## Attempts and Failures
+[Chronological narrative of important attempts: what was tried -> result -> why it failed or why the approach changed. Use "(none)" if there were no meaningful failed attempts.]
 
-## Progress
+## Key Decisions and Constraints
+[Narrative of important decisions, reasons, constraints, and rejected approaches.]
+
+## Current State
 ### Done
 - [x] [Completed tasks/changes]
 
@@ -460,34 +477,40 @@ Use this EXACT format:
 ## Key Decisions
 - **[Decision]**: [Brief rationale]
 
-## Next Steps
-1. [Ordered list of what should happen next]
+## Files Touched
+- [Only file paths, no large file bodies]
 
-## Critical Context
-- [Any data, examples, or references needed to continue]
-- [Or "(none)" if not applicable]
+## Tests
+- [Commands run and results, or "(not run)"]
 
-Keep each section concise. Preserve exact file paths, function names, and error messages.`;
+## Next Actions
+1. [Most important next action]
+2. [Second next action]
+
+Keep it concise but readable. Preserve exact file paths, function names, command names, error messages, blockers, and causal chains. Exclude superseded stale branches and do not repeat old summaries verbatim.`;
 
 const UPDATE_SUMMARIZATION_PROMPT = `The messages above are NEW conversation messages to incorporate into the existing summary provided in <previous-summary> tags.
 
-Update the existing structured summary with new information. RULES:
-- PRESERVE all existing information from the previous summary
-- ADD new progress, decisions, and context from the new messages
-- UPDATE the Progress section: move items from "In Progress" to "Done" when completed
-- UPDATE "Next Steps" based on what was accomplished
-- PRESERVE exact file paths, function names, and error messages
-- If something is no longer relevant, you may remove it
+Use the previous summary only as background. Produce a fresh readable handoff that incorporates new information without copying stale or superseded text forward.
 
-Use this EXACT format:
+Rules:
+- Preserve still-valid objectives, decisions, constraints, blockers, file paths, test results, and causal chains.
+- Remove or mark obsolete branches as superseded instead of presenting them as current.
+- Prefer narrative handoff text over label extraction.
+- Keep exact file paths, function names, command names, and error messages.
 
-## Goal
-[Preserve existing goals, add new ones if the task expanded]
+Use this EXACT Markdown shape:
 
-## Constraints & Preferences
-- [Preserve existing, add new ones discovered]
+## Goal and Progress
+[2-3 sentences describing the overall objective and current progress.]
 
-## Progress
+## Attempts and Failures
+[Chronological narrative of important attempts: what was tried -> result -> why it failed or why the approach changed.]
+
+## Key Decisions and Constraints
+[Narrative of important decisions, reasons, constraints, and rejected approaches.]
+
+## Current State
 ### Done
 - [x] [Include previously done items AND newly completed items]
 
@@ -500,13 +523,17 @@ Use this EXACT format:
 ## Key Decisions
 - **[Decision]**: [Brief rationale] (preserve all previous, add new)
 
-## Next Steps
+## Files Touched
+- [Only file paths, no large file bodies]
+
+## Tests
+- [Commands run and results, or "(not run)"]
+
+## Next Actions
 1. [Update based on current state]
+2. [Second next action]
 
-## Critical Context
-- [Preserve important context, add new if needed]
-
-Keep each section concise. Preserve exact file paths, function names, and error messages.`;
+Keep each section concise.`;
 
 function createSummarizationOptions(
   model: Model,
@@ -619,6 +646,8 @@ export interface CompactionPreparation {
   fileOps: FileOperations;
   /** Settings used to prepare compaction. */
   settings: CompactionSettings;
+  /** Branch summaries excluded as stale/superseded context. */
+  staleExcludedCount: number;
 }
 
 /** Prepare session entries for compaction, or return undefined when compaction is not applicable. */
@@ -666,7 +695,11 @@ export function prepareCompaction(
 
   const historyEnd = cutPoint.isSplitTurn ? cutPoint.turnStartIndex : cutPoint.firstKeptEntryIndex;
   const messagesToSummarize: AgentMessage[] = [];
+  let staleExcludedCount = 0;
   for (let i = boundaryStart; i < historyEnd; i++) {
+    if (pathEntries[i].type === "branch_summary") {
+      staleExcludedCount += 1;
+    }
     const msg = getMessageFromEntryForCompaction(pathEntries[i]);
     if (msg) {
       messagesToSummarize.push(msg);
@@ -675,6 +708,9 @@ export function prepareCompaction(
   const turnPrefixMessages: AgentMessage[] = [];
   if (cutPoint.isSplitTurn) {
     for (let i = cutPoint.turnStartIndex; i < cutPoint.firstKeptEntryIndex; i++) {
+      if (pathEntries[i].type === "branch_summary") {
+        staleExcludedCount += 1;
+      }
       const msg = getMessageFromEntryForCompaction(pathEntries[i]);
       if (msg) {
         turnPrefixMessages.push(msg);
@@ -697,6 +733,7 @@ export function prepareCompaction(
     previousSummary,
     fileOps,
     settings,
+    staleExcludedCount,
   });
 }
 
@@ -728,6 +765,7 @@ export async function compact(
   thinkingLevel?: ThinkingLevel,
   streamFn?: StreamFn,
   runtime?: AgentCoreCompletionRuntimeDeps,
+  tokenPruningAdapter?: TokenPruningAdapter,
 ): Promise<Result<CompactionResult, CompactionError>> {
   const {
     firstKeptEntryId,
@@ -738,6 +776,7 @@ export async function compact(
     previousSummary,
     fileOps,
     settings,
+    staleExcludedCount,
   } = preparation;
 
   if (!firstKeptEntryId) {
@@ -749,13 +788,33 @@ export async function compact(
     );
   }
 
+  const { readFiles, modifiedFiles } = computeFileLists(fileOps);
+  const plannedHistory = planCompression({
+    tokensBefore,
+    settings,
+    messages: messagesToSummarize,
+    staleExcludedCount,
+    readFiles,
+    modifiedFiles,
+    tokenPruningAdapter,
+  });
+  const plannedTurnPrefix = planCompression({
+    tokensBefore,
+    settings,
+    messages: turnPrefixMessages,
+    staleExcludedCount: 0,
+    readFiles,
+    modifiedFiles,
+    tokenPruningAdapter,
+  });
+
   let summary: string;
 
   if (isSplitTurn && turnPrefixMessages.length > 0) {
     const [historyResult, turnPrefixResult] = await Promise.all([
-      messagesToSummarize.length > 0
+      plannedHistory.messages.length > 0
         ? generateSummary(
-            messagesToSummarize,
+            plannedHistory.messages,
             model,
             settings.reserveTokens,
             apiKey,
@@ -769,7 +828,7 @@ export async function compact(
           )
         : Promise.resolve(ok<string, CompactionError>("No prior history.")),
       generateTurnPrefixSummary(
-        turnPrefixMessages,
+        plannedTurnPrefix.messages,
         model,
         settings.reserveTokens,
         apiKey,
@@ -789,7 +848,7 @@ export async function compact(
     summary = `${historyResult.value}\n\n---\n\n**Turn Context (split turn):**\n\n${turnPrefixResult.value}`;
   } else {
     const summaryResult = await generateSummary(
-      messagesToSummarize,
+      plannedHistory.messages,
       model,
       settings.reserveTokens,
       apiKey,
@@ -807,14 +866,28 @@ export async function compact(
     summary = summaryResult.value;
   }
 
-  const { readFiles, modifiedFiles } = computeFileLists(fileOps);
   summary += formatFileOperations(readFiles, modifiedFiles);
+  const artifact = buildDeterministicCompressionArtifact({
+    messages: isSplitTurn
+      ? [...plannedHistory.messages, ...plannedTurnPrefix.messages]
+      : plannedHistory.messages,
+    previousSummary,
+    summary,
+    readFiles,
+    modifiedFiles,
+    telemetry: plannedHistory.telemetry,
+  });
 
   return ok({
     summary,
     firstKeptEntryId,
     tokensBefore,
-    details: { readFiles, modifiedFiles } as CompactionDetails,
+    details: {
+      readFiles,
+      modifiedFiles,
+      compression: plannedHistory.telemetry,
+      artifact,
+    } as CompactionDetails,
   });
 }
 async function generateTurnPrefixSummary(

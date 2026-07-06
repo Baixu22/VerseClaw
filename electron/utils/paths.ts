@@ -172,12 +172,20 @@ export function getOpenClawRuntimeDir(): string {
   }
 
   const appPath = getElectronApp().getAppPath();
-  const appPathRuntime = join(appPath, 'openclaw_runtime');
-  if (existsSync(appPathRuntime)) {
-    return appPathRuntime;
+  const candidates = [
+    join(process.cwd(), 'openclaw_runtime'),
+    join(appPath, 'openclaw_runtime'),
+    join(appPath, '..', '..', 'openclaw_runtime'),
+    join(process.cwd(), 'verse-claw', 'openclaw_runtime'),
+    join(appPath, 'verse-claw', 'openclaw_runtime'),
+  ];
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) {
+      return candidate;
+    }
   }
 
-  return join(appPath, 'verse-claw', 'openclaw_runtime');
+  return join(process.cwd(), 'openclaw_runtime');
 }
 
 /**

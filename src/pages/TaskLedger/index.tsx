@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { hostApi } from '@/lib/host-api';
+import { isReadOnlyTaskLedgerProjection } from '@/lib/task-ledger-plan-projection';
 import { cn } from '@/lib/utils';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
@@ -43,6 +44,7 @@ type NodeCardProps = {
 
 function NodeCard({ node, getChildren, onStatus, onReviewClear, t }: NodeCardProps) {
   const childrenNodes = getChildren(node.id);
+  const readOnlyProjection = isReadOnlyTaskLedgerProjection(node);
   return (
     <article className="rounded-md border border-border/70 bg-background p-3" data-testid="task-ledger-node">
       <div className="flex items-start justify-between gap-3">
@@ -55,8 +57,16 @@ function NodeCard({ node, getChildren, onStatus, onReviewClear, t }: NodeCardPro
           {node.description && <p className="mt-1 text-xs text-muted-foreground">{node.description}</p>}
           <p className="mt-1 text-2xs text-muted-foreground">{formatTime(node.updatedAt)}</p>
         </div>
-        <Select value={node.status} onValueChange={(value) => onStatus(node, value as TaskLedgerNodeStatus)}>
-          <SelectTrigger className="h-8 w-28 text-xs">
+        <Select
+          value={node.status}
+          onValueChange={(value) => onStatus(node, value as TaskLedgerNodeStatus)}
+          disabled={readOnlyProjection}
+        >
+          <SelectTrigger
+            data-testid={`task-ledger-status-${node.id}`}
+            className="h-8 w-28 text-xs"
+            disabled={readOnlyProjection}
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -66,7 +76,7 @@ function NodeCard({ node, getChildren, onStatus, onReviewClear, t }: NodeCardPro
           </SelectContent>
         </Select>
       </div>
-      {node.status === 'review' && (
+      {node.status === 'review' && !readOnlyProjection && (
         <Button type="button" variant="outline" size="sm" className="mt-3 h-8 text-xs" onClick={() => onReviewClear(node)}>
           <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
           {t('actions.clearReview')}

@@ -2,8 +2,10 @@ import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { logger } from '../utils/logger';
 import { handleMockChatSend } from './mock-provider';
+import { findStewardNotesForReferences } from './knowledge-api';
 import { isRecord } from './payload-utils';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
+import { getResourceTracker } from './resource-tracker';
 
 const VISION_MIME_TYPES = new Set([
   'image/png',
@@ -15,7 +17,14 @@ const VISION_MIME_TYPES = new Set([
 const CONTEXT_FRAGMENT_LIMITS = {
   knowledgeMetadataChars: 8_000,
   knowledgeReadCitationsChars: 6_000,
+  // Area 5 §3.3 — Steward Notes injection budget. Smaller than the metadata
+  // and citations blocks: notes are short persisted-state warnings/flags
+  // (typically 1-3 lines per reference), not full page content. 2_000 chars
+  // covers ~10 references with a warning each while keeping the chat send
+  // path fast and the prompt budget impact bounded.
+  knowledgeStewardNotesChars: 2_000,
   taskLedgerMetadataChars: 4_000,
+  toolUiResponseContractChars: 2_000,
 } as const;
 
 type ChatSendWithMediaPayload = {
@@ -30,6 +39,8 @@ type ChatSendWithMediaPayload = {
   knowledgeMode?: unknown;
   knowledgeReferences?: unknown;
   activeTaskNodeId?: unknown;
+  /** Area 2 §3.2: turn-scoped model override. */
+  modelRef?: unknown;
 };
 
 type MediaPayload = {
@@ -37,6 +48,12 @@ type MediaPayload = {
   mimeType?: unknown;
   fileName?: unknown;
 };
+
+function agentIdFromSessionKey(sessionKey: string): string | null {
+  if (!sessionKey.startsWith('agent:')) return null;
+  const [, agentId] = sessionKey.split(':');
+  return agentId || null;
+}
 
 function normalizeMedia(media: unknown): Array<{ filePath: string; mimeType: string; fileName: string }> {
   if (!Array.isArray(media)) return [];
@@ -211,6 +228,53 @@ function applyKnowledgeReadCitations(message: string, reads: Array<Record<string
   return message ? `${block}\n\n${message}` : block;
 }
 
+/**
+ * Area 5 §3.3 — Steward Notes injection. Third metadata block alongside
+ * `applyKnowledgeMetadata` and `applyKnowledgeReadCitations`, carrying the
+ * Steward's persisted opinions (warnings, review status, suggestions) for
+ * the references actually attached this turn.
+ *
+ * Notes come from persisted state only — NO turn-time LLM call. The block:
+ *   - is absent when `notes` is empty (zero overhead for non-KB turns)
+ *   - respects the 2_000-char cap (older notes truncated by `capContextText`)
+ *   - carries an explicit "do not modify knowledge" instruction (read-only
+ *     discipline extends unchanged from the existing two blocks)
+ *   - attributes each note to the steward variant that produced it (so the
+ *     model can weigh conflicting opinions from different variants)
+ *
+ * Lookup failure for any reference → that reference's notes are skipped
+ * (callers filter before calling). The block never throws.
+ */
+function applyKnowledgeStewardNotes(
+  message: string,
+  notes: Array<{
+    referenceId: string;
+    roleId: string;
+    warnings: string[];
+    reviewStatus?: 'steward_reviewed' | 'unreviewed';
+    suggestion?: 'merge' | 'archive' | null;
+  }>,
+): string {
+  if (notes.length === 0) return message;
+  // Filter out notes with no signal (empty warnings + no suggestion + unreviewed).
+  // This keeps the block absent when none of the attached refs have steward state.
+  const meaningful = notes.filter((note) => (
+    note.warnings.length > 0
+    || note.suggestion !== undefined && note.suggestion !== null
+    || note.reviewStatus === 'steward_reviewed'
+  ));
+  if (meaningful.length === 0) return message;
+  const metadata = JSON.stringify({
+    clawxKnowledgeStewardNotes: meaningful,
+    instruction: 'Advisory steward notes about the attached references. Consider the warnings when citing; do not modify knowledge because of these notes. Each note names the steward variant (roleId) that produced it. Notes are persisted review state, not live steward judgment.',
+  });
+  const block = capContextText(
+    `Knowledge steward notes (untrusted metadata): \`\`\`json\n${metadata}\n\`\`\``,
+    CONTEXT_FRAGMENT_LIMITS.knowledgeStewardNotesChars,
+  );
+  return message ? `${block}\n\n${message}` : block;
+}
+
 async function applyTaskLedgerContext(
   message: string,
   workspaceId: unknown,
@@ -248,6 +312,27 @@ async function applyTaskLedgerContext(
   }
 }
 
+function applyToolUiResponseContract(message: string): string {
+  if (!message.startsWith('Tool UI response:')) return message;
+  const contract = [
+    'Tool UI response contract (untrusted metadata):',
+    'The user message below is a structured interaction response from a Verse Claw tool-ui card, not free-form text.',
+    'Format: "Tool UI response:" followed by a JSON object with fields { type, id, action, value }.',
+    '- type: the tool-ui card type (e.g. "option-list", "question-flow", "preferences-panel", "plan").',
+    '- id: the interaction identifier for correlation.',
+    '- action: the user action (e.g. "select", "submit", "cancel").',
+    '- value: the user\'s selection or input (may be a string, array of strings, or object).',
+    'Instructions:',
+    '- Parse the JSON payload and act on the user\'s choice. Do not ask the user to restate it.',
+    '- For "option-list" with "select", value holds the selected option id(s). Proceed with the corresponding operation.',
+    '- If action is "cancel", stop the pending operation gracefully.',
+    '- When the action implies a destructive operation (e.g. deleting files), use the appropriate MCP tool with dryRun=true first if an approvalId is needed, then perform the real operation with the approvalId.',
+    '---',
+  ].join('\n');
+  const block = capContextText(contract, CONTEXT_FRAGMENT_LIMITS.toolUiResponseContractChars);
+  return `${block}\n\n${message}`;
+}
+
 export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManager }): CompleteHostServiceRegistry['chat'] {
   return {
     sendWithMedia: async (payload) => {
@@ -279,8 +364,14 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           knowledgeMode,
           knowledgeReferences,
         );
-        let message = applyKnowledgeMetadata(typeof body.message === 'string' ? body.message : '', knowledgeScope, knowledgeMode, knowledgeReferences);
+        // Area 5 §3.3 — Load persisted steward notes for the attached references.
+        // Best-effort: never throws; absent when no drafts match (zero overhead
+        // for non-KB turns). Reads only persisted state — no turn-time LLM call.
+        const stewardNotes = await findStewardNotesForReferences(knowledgeReferences);
+        let message = applyToolUiResponseContract(typeof body.message === 'string' ? body.message : '');
+        message = applyKnowledgeMetadata(message, knowledgeScope, knowledgeMode, knowledgeReferences);
         message = applyKnowledgeReadCitations(message, knowledgeReads);
+        message = applyKnowledgeStewardNotes(message, stewardNotes);
         message = await applyTaskLedgerContext(message, body.workspaceId, body.activeTaskNodeId);
         const imageAttachments: Array<Record<string, unknown>> = [];
         const fileReferences: string[] = [];
@@ -318,7 +409,6 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
 
         const rpcParams: Record<string, unknown> = {
           sessionKey,
-          ...(typeof body.workspaceId === 'string' && body.workspaceId.trim() ? { workspaceId: body.workspaceId } : {}),
           message,
           deliver: body.deliver ?? false,
           idempotencyKey,
@@ -326,14 +416,31 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         if (typeof body.inputMode === 'string' && ['interrupt', 'guide', 'queue', 'revise-goal'].includes(body.inputMode)) {
           rpcParams.inputMode = body.inputMode;
         }
+        // Area 2 §3.2: forward turn-scoped model override to runtime chat.send.
+        // Empty/null means "no turn override" — omit so resolution falls through.
+        if (typeof body.modelRef === 'string' && body.modelRef.trim()) {
+          rpcParams.model = body.modelRef.trim();
+        }
         if (imageAttachments.length > 0) {
           rpcParams.attachments = imageAttachments;
         }
+
+        const tracker = getResourceTracker();
+        tracker.markSessionActive(sessionKey);
+        const portBaseline = await tracker.scanListeningPorts().catch(() => []);
 
         logger.info(
           `[chat:sendWithMedia] Sending: message="${message.substring(0, 100)}", attachments=${imageAttachments.length}, fileRefs=${fileReferences.length}`,
         );
         const result = await gatewayManager.rpc('chat.send', rpcParams, 120000);
+        tracker.watchNewListeningPorts({
+          before: portBaseline,
+          sessionKey,
+          sessionLabel: sessionKey,
+          workspaceId: typeof body.workspaceId === 'string' && body.workspaceId.trim() ? body.workspaceId : null,
+          agentId: agentIdFromSessionKey(sessionKey),
+          labelPrefix: 'Session server',
+        });
         logger.info(`[chat:sendWithMedia] RPC result: ${JSON.stringify(result)}`);
         const response = isRecord(result) && typeof result.runId === 'string'
           ? { runId: result.runId }

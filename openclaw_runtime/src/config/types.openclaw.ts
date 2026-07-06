@@ -146,6 +146,17 @@ export type RuntimeFeatureConfig = {
     /** Emit MCP ToolCallRequest/ToolCallResult shadows without changing MCP response shape. */
     mcpShadow?: boolean;
   };
+  /** Runtime tool governance pilot flags. Defaults off. */
+  toolGovernance?: {
+    /** Default-off destructive operation guard pilot gates. */
+    destructiveOperationGuard?: {
+      /** Mutation-capable tool invocation preflight pilot. */
+      preflight?: {
+        /** Explicit opt-in; omitted or non-true leaves legacy tool behavior unchanged. */
+        enabled?: boolean;
+      };
+    };
+  };
   /** Runtime-core migration shadow surfaces. Defaults are off. */
   evidenceVerifier?: {
     /** Emit warning-only evidence verifier reports without changing task completion decisions. */
@@ -170,6 +181,23 @@ export type RuntimeFeatureConfig = {
     proposeFacts?: boolean;
     /** Default-off gate for local sanitized persistence; TaskLoop writes also require shadow. */
     persist?: boolean;
+    /**
+     * Area 4 §3.4: chat-turn memory injection pilot gate (default-off).
+     * When enabled, the agent gateway queries registered memory context
+     * providers and appends a `## Memory Context` block to extraSystemPrompt
+     * for matching sessions. When disabled (or omitted), prompt bytes are
+     * byte-identical to today (comms replay parity, §8).
+     */
+    injectPilot?: {
+      /** Explicit opt-in; omitted or non-true leaves legacy behavior unchanged. */
+      enabled?: boolean;
+      /** Provider ids to query; unknown ids are filtered. Defaults to ['role-memory']. */
+      providers?: Array<"role-memory" | "runtime-memory">;
+      /** Total token budget across all providers; defaults to 768. */
+      totalTokenBudget?: number;
+      /** Session scope; defaults to 'main-only' (agent:<id>:main sessions). */
+      sessions?: "all" | "main-only";
+    };
   };
   /** Runtime AgentMap shadow/provider flags. Defaults are off. */
   agentMap?: {
@@ -196,6 +224,47 @@ export type RuntimeFeatureConfig = {
     evidenceReport?: boolean;
     /** Record Mission/Task Loop lifecycle summaries without changing decisions. */
     missionReport?: boolean;
+  };
+  /**
+   * Area 3 §3.1 / §3.4: multi-agent orchestration pilot flags. Defaults are off;
+   * legacy orchestration behavior is byte-identical when omitted.
+   */
+  orchestration?: {
+    /**
+     * Routing memo store pilot (Area 3 §3.1). Records each orchestration's
+     * routing decision + outcome to a per-workspace JSONL store; on the next
+     * plan, recalls similar-task memos as an additive scoring signal.
+     * - 'shadow': memos are recorded/recalled; would-be adjustment is written
+     *   into `RouteDiagnostics.reasons` as `memo-shadow:...` but scores are
+     *   unchanged (byte-identical routing).
+     * - 'active': memos apply a bounded ±2/−1 score adjustment to the matching
+     *   role (keyword evidence stays dominant).
+     * Gate to active: ≥20 shadow runs + ≥70% divergence improvement (§6).
+     */
+    routingMemoPilot?: "off" | "shadow" | "active";
+    /**
+     * Handoff artifacts pilot (Area 3 §3.4). When 'on', dependent workers
+     * receive their predecessor's expected outputSchema sections in
+     * `extraSystemPrompt` along `handoff` graph edges. Adds prompt text only
+     * — never tools or permissions (§9 boundary). Default-off for one release
+     * alongside the memo pilot.
+     */
+    handoffArtifacts?: "off" | "on";
+  };
+  /**
+   * Area 3 Round 2: runtime resilience pilot flags. Defaults are off; when
+   * omitted, `MissionReviewerInput.anomalyPattern` is `undefined` and the
+   * Mission reviewer behaves exactly as before (flag-off parity, §1.2).
+   */
+  resilience?: {
+    /**
+     * Anomaly classifier pilot gate. When 'shadow', `classifyAnomalyPattern`
+     * is invoked before the Mission reviewer and the result is injected into
+     * `MissionReviewerInput.anomalyPattern?` (advisory only — the reviewer
+     * MAY ignore it, observe-only honesty, area-3-runtime-resilience.md §9.1).
+     * When 'off' (default), the field is always `undefined`.
+     */
+    anomalyClassifierPilot?: "off" | "shadow";
   };
 };
 

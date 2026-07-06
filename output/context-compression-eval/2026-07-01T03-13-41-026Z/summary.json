@@ -1,0 +1,1251 @@
+{
+  "runId": "2026-07-01T03-13-41-026Z",
+  "target": "C:\\Users\\27933\\Desktop\\clawx\\ClawX",
+  "generatedAt": "2026-07-01T03:14:22.798Z",
+  "suite": "daily",
+  "sampleSource": "hybrid",
+  "requestedSampleCount": 10,
+  "sampleCount": 10,
+  "semanticMatching": false,
+  "realInventory": {
+    "transcriptRoot": "C:\\Users\\27933\\.openclaw",
+    "filesFound": 3,
+    "transcriptsParsed": 2,
+    "entriesParsed": 199
+  },
+  "sampleMix": {
+    "realRequested": 4,
+    "syntheticRequested": 6,
+    "realActual": 0,
+    "syntheticActual": 10,
+    "realShortfall": 4,
+    "evidenceInsufficient": true
+  },
+  "llmJudge": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 10,
+    "results": [
+      {
+        "sampleId": "S1",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All critical expected facts (S1_OBJECTIVE_GRAPHITI_TEST, S1_DECISION_USE_UV_PYTEST, S1_CONSTRAINT_NO_DB_IN_UNIT, S1_BLOCKER_NO_GIT_METADATA, S1_EDITED_RESUME_INTENT, S1_NEW_ASSISTANT_ACK) are present.",
+          "Important file mutations (graphiti_core/, tests/) and test result (S1_TEST_PYTEST_UNIT) are included.",
+          "Nice-to-have detail (S1_DETAIL_REPORT_MARKDOWN) is preserved.",
+          "Accuracy: All evidence-backed facts match the transcript evidence lines exactly.",
+          "Causal chain: The summary correctly shows the continuation from S1_EDITED_RESUME_INTENT, the decision to use uv/pytest under no-DB constraint due to S1_BLOCKER_NO_GIT_METADATA, and the stale branch exclusion.",
+          "No fabrication: No facts are invented; all statements are supported by evidence lines or expected facts.",
+          "Actionability: Next actions (read pyproject.toml, edit test file, run pytest) are concrete and follow from the current state.",
+          "Stale facts are explicitly tombstoned and excluded, matching the forbidden list."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All critical expected facts (S1_OBJECTIVE_GRAPHITI_TEST, S1_DECISION_USE_UV_PYTEST, S1_CONSTRAINT_NO_DB_IN_UNIT, S1_BLOCKER_NO_GIT_METADATA, S1_EDITED_RESUME_INTENT, S1_NEW_ASSISTANT_ACK) are present.\",\n    \"Important file mutations (graphiti_core/, tests/) and test result (S1_TEST_PYTEST_UNIT) are included.\",\n    \"Nice-to-have detail "
+      },
+      {
+        "sampleId": "S2",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the summary.",
+          "All evidence-backed facts are accurately represented.",
+          "Causal chain from blocker to decision to next actions is preserved.",
+          "No fabricated facts; stale branch is correctly excluded.",
+          "Next actions are actionable and consistent with the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the summary.\",\n    \"All evidence-backed facts are accurately represented.\",\n    \"Causal chain from blocker to decision to next actions is preserved.\",\n    \"No fabricated facts; stale branch is correctly excluded.\",\n    \"Next actions are actionable and consistent with the summary.\"\n  ]\n}"
+      },
+      {
+        "sampleId": "S3",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the summary.",
+          "No factual errors or contradictions with evidence lines.",
+          "Causal chain from blocker to decision to next actions is preserved.",
+          "No fabricated facts; all statements are traceable to evidence.",
+          "Next actions are concrete and actionable given the context."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the summary.\",\n    \"No factual errors or contradictions with evidence lines.\",\n    \"Causal chain from blocker to decision to next actions is preserved.\",\n    \"No fabricated facts; all statements are traceable to evidence.\",\n    \"Next actions are concrete and actionable given the context.\"\n  ]\n}"
+      },
+      {
+        "sampleId": "S4",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the summary.",
+          "All facts match the evidence lines exactly.",
+          "The causal chain from objective to decision to constraint to blocker to next actions is preserved.",
+          "No fabricated facts are introduced.",
+          "The next actions are concrete and actionable given the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the summary.\",\n    \"All facts match the evidence lines exactly.\",\n    \"The causal chain from objective to decision to constraint to blocker to next actions is preserved.\",\n    \"No fabricated facts are introduced.\",\n    \"The next actions are concrete and actionable given the summary.\"\n  ]\n}"
+      },
+      {
+        "sampleId": "S5",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the summary.",
+          "Accuracy is maintained; no contradictions with evidence lines.",
+          "Causal chain is preserved: blocker leads to unit-test focus, stale branch excluded.",
+          "No fabricated facts; all statements trace to evidence or expected facts.",
+          "Next actions are concrete and actionable given the current state."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the summary.\",\n    \"Accuracy is maintained; no contradictions with evidence lines.\",\n    \"Causal chain is preserved: blocker leads to unit-test focus, stale branch excluded.\",\n    \"No fabricated facts; all statements trace to evidence or expected facts.\",\n    \"Next actions are concrete and actionable g"
+      },
+      {
+        "sampleId": "S6",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present: S6_OBJECTIVE_GRAPHITI_TEST, S6_DECISION_USE_UV_PYTEST, S6_CONSTRAINT_NO_DB_IN_UNIT, S6_BLOCKER_NO_GIT_METADATA, graphiti_core/, tests/, S6_TEST_PYTEST_UNIT, S6_DETAIL_REPORT_MARKDOWN, S6_EDITED_RESUME_INTENT, S6_NEW_ASSISTANT_ACK.",
+          "Accuracy is maintained: facts match evidence lines exactly, no contradictions.",
+          "Causal chain preserved: stale integration branch excluded, active unit-test path justified by blocker and constraint, next actions logically follow.",
+          "No fabrication: all statements trace to evidence lines or expected facts; section headings and 'no concrete X was promoted' are structural.",
+          "Actionability: next actions are concrete and feasible given current state."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present: S6_OBJECTIVE_GRAPHITI_TEST, S6_DECISION_USE_UV_PYTEST, S6_CONSTRAINT_NO_DB_IN_UNIT, S6_BLOCKER_NO_GIT_METADATA, graphiti_core/, tests/, S6_TEST_PYTEST_UNIT, S6_DETAIL_REPORT_MARKDOWN, S6_EDITED_RESUME_INTENT, S6_NEW_ASSISTANT_ACK.\",\n    \"Accuracy is maintained: facts match evidence lines exactly, no cont"
+      },
+      {
+        "sampleId": "S7",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the summary.",
+          "All evidence-backed facts are accurately represented.",
+          "The causal chain from objective to decision to constraint to blocker to next actions is preserved.",
+          "No fabricated facts are introduced; stale branch is correctly excluded.",
+          "Next actions are concrete and actionable given the preserved facts."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the summary.\",\n    \"All evidence-backed facts are accurately represented.\",\n    \"The causal chain from objective to decision to constraint to blocker to next actions is preserved.\",\n    \"No fabricated facts are introduced; stale branch is correctly excluded.\",\n    \"Next actions are concrete and actiona"
+      },
+      {
+        "sampleId": "S8",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the summary.",
+          "No factual errors or contradictions with evidence lines.",
+          "Causal chain from objective to decision to constraint to blocker to next actions is preserved.",
+          "No fabricated facts; all statements are traceable to evidence.",
+          "Next actions are concrete and actionable given the current state."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the summary.\",\n    \"No factual errors or contradictions with evidence lines.\",\n    \"Causal chain from objective to decision to constraint to blocker to next actions is preserved.\",\n    \"No fabricated facts; all statements are traceable to evidence.\",\n    \"Next actions are concrete and actionable given "
+      },
+      {
+        "sampleId": "S9",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the summary.",
+          "All evidence-backed facts are accurately represented.",
+          "The causal chain from objective to decision to constraint to blocker to next actions is preserved.",
+          "No fabricated facts are introduced.",
+          "The next actions are concrete and actionable based on the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the summary.\",\n    \"All evidence-backed facts are accurately represented.\",\n    \"The causal chain from objective to decision to constraint to blocker to next actions is preserved.\",\n    \"No fabricated facts are introduced.\",\n    \"The next actions are concrete and actionable based on the summary.\"\n  ]\n}"
+      },
+      {
+        "sampleId": "S10",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the summary.",
+          "Accuracy is maintained; no contradictions with evidence lines.",
+          "Causal chain is preserved: blocker leads to unit-test focus, stale branch excluded.",
+          "No fabricated facts; all statements trace to evidence or expected facts.",
+          "Next actions are concrete and actionable given the context."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the summary.\",\n    \"Accuracy is maintained; no contradictions with evidence lines.\",\n    \"Causal chain is preserved: blocker leads to unit-test focus, stale branch excluded.\",\n    \"No fabricated facts; all statements trace to evidence or expected facts.\",\n    \"Next actions are concrete and actionable g"
+      }
+    ],
+    "aggregate": {
+      "judgeScoreMean": 10,
+      "judgeScoreMin": 10,
+      "completenessRate": 1,
+      "accuracyRate": 1,
+      "causalChainRate": 1,
+      "noFabricationRate": 1,
+      "actionabilityRate": 1
+    }
+  },
+  "llmContinuation": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 10,
+    "results": [
+      {
+        "sampleId": "S1",
+        "actions": [
+          {
+            "id": "S1-read",
+            "kind": "read_file",
+            "target": "pyproject.toml",
+            "critical": true,
+            "label": "Read pyproject.toml to understand project config"
+          },
+          {
+            "id": "S1-edit",
+            "kind": "edit_file",
+            "target": "tests/test_context_eval_probe.py",
+            "critical": true,
+            "label": "Edit test file for unit test"
+          },
+          {
+            "id": "S1-test",
+            "kind": "run_test",
+            "target": "uv run pytest -m \"not integration\"",
+            "critical": true,
+            "label": "Run unit tests excluding integration"
+          }
+        ],
+        "completed": true,
+        "rationale": "Continue the unit-test flow: read pyproject.toml, edit the test file, then run unit tests. Avoid stale integration decisions and completed actions.",
+        "evaluation": {
+          "taskId": "S1-graphiti-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"S1-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"pyproject.toml\",\n      \"decision\": \"\",\n      \"label\": \"Read pyproject.toml to understand project config\"\n    },\n    {\n      \"id\": \"S1-edit\",\n      \"kind\": \"edit_file\",\n      \"target\": \"tests/test_context_eval_probe.py\",\n      \"decision\": \"\",\n      \"label\": \"Edit test file for unit test\"\n    },\n    {\n      \"id\": \"S1-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"uv run pytest -m \\\"not integration\\\"\",\n    "
+      },
+      {
+        "sampleId": "S2",
+        "actions": [
+          {
+            "id": "S2-read",
+            "kind": "read_file",
+            "target": "pyproject.toml",
+            "critical": true,
+            "label": "Read pyproject.toml to understand project setup"
+          },
+          {
+            "id": "S2-edit",
+            "kind": "edit_file",
+            "target": "tests/test_context_eval_probe.py",
+            "critical": true,
+            "label": "Edit test file to add unit tests"
+          },
+          {
+            "id": "S2-test",
+            "kind": "run_test",
+            "target": "uv run pytest -m \"not integration\"",
+            "critical": true,
+            "label": "Run unit tests excluding integration"
+          }
+        ],
+        "completed": true,
+        "rationale": "Continue the active unit-test flow: read pyproject.toml to understand dependencies, edit the test file to add unit tests, then run the non-integration tests. Avoid stale integration decisions and completed actions.",
+        "evaluation": {
+          "taskId": "S2-graphiti-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"S2-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"pyproject.toml\",\n      \"decision\": \"\",\n      \"label\": \"Read pyproject.toml to understand project setup\"\n    },\n    {\n      \"id\": \"S2-edit\",\n      \"kind\": \"edit_file\",\n      \"target\": \"tests/test_context_eval_probe.py\",\n      \"decision\": \"\",\n      \"label\": \"Edit test file to add unit tests\"\n    },\n    {\n      \"id\": \"S2-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"uv run pytest -m \\\"not integration\\\"\",\n "
+      },
+      {
+        "sampleId": "S3",
+        "actions": [
+          {
+            "id": "S3-read",
+            "kind": "read_file",
+            "target": "pyproject.toml",
+            "critical": true
+          },
+          {
+            "id": "S3-edit",
+            "kind": "edit_file",
+            "target": "tests/test_context_eval_probe.py",
+            "critical": true
+          },
+          {
+            "id": "S3-test",
+            "kind": "run_test",
+            "target": "uv run pytest -m \"not integration\"",
+            "critical": true
+          }
+        ],
+        "completed": true,
+        "rationale": "Continue the unit-test flow: read pyproject.toml to understand project config, edit the test file as per the task, then run non-integration tests. Avoid stale integration decisions and completed actions.",
+        "evaluation": {
+          "taskId": "S3-graphiti-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"S3-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"pyproject.toml\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S3-edit\",\n      \"kind\": \"edit_file\",\n      \"target\": \"tests/test_context_eval_probe.py\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S3-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"uv run pytest -m \\\"not integration\\\"\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"rati"
+      },
+      {
+        "sampleId": "S4",
+        "actions": [
+          {
+            "id": "S4-read",
+            "kind": "read_file",
+            "target": "pyproject.toml",
+            "critical": true
+          },
+          {
+            "id": "S4-edit",
+            "kind": "edit_file",
+            "target": "tests/test_context_eval_probe.py",
+            "critical": true
+          },
+          {
+            "id": "S4-test",
+            "kind": "run_test",
+            "target": "uv run pytest -m \"not integration\"",
+            "critical": true
+          }
+        ],
+        "completed": true,
+        "rationale": "Continue the unit-test flow: read pyproject.toml to understand project config, edit the test file as needed, then run non-integration tests. Avoid stale integration decisions and completed actions.",
+        "evaluation": {
+          "taskId": "S4-graphiti-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"S4-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"pyproject.toml\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S4-edit\",\n      \"kind\": \"edit_file\",\n      \"target\": \"tests/test_context_eval_probe.py\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S4-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"uv run pytest -m \\\"not integration\\\"\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"rati"
+      },
+      {
+        "sampleId": "S5",
+        "actions": [
+          {
+            "id": "S5-read",
+            "kind": "read_file",
+            "target": "pyproject.toml",
+            "critical": true
+          },
+          {
+            "id": "S5-edit",
+            "kind": "edit_file",
+            "target": "tests/test_context_eval_probe.py",
+            "critical": true
+          },
+          {
+            "id": "S5-test",
+            "kind": "run_test",
+            "target": "uv run pytest -m \"not integration\"",
+            "critical": true
+          }
+        ],
+        "completed": true,
+        "rationale": "Continue the unit-test flow: read pyproject.toml to understand project config, edit the test file to add or adjust unit tests, then run non-integration tests. Avoid stale integration decisions and repeated completed actions.",
+        "evaluation": {
+          "taskId": "S5-graphiti-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"S5-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"pyproject.toml\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S5-edit\",\n      \"kind\": \"edit_file\",\n      \"target\": \"tests/test_context_eval_probe.py\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S5-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"uv run pytest -m \\\"not integration\\\"\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"rati"
+      },
+      {
+        "sampleId": "S6",
+        "actions": [
+          {
+            "id": "S6-read",
+            "kind": "read_file",
+            "target": "pyproject.toml",
+            "critical": true
+          },
+          {
+            "id": "S6-edit",
+            "kind": "edit_file",
+            "target": "tests/test_context_eval_probe.py",
+            "critical": true
+          },
+          {
+            "id": "S6-test",
+            "kind": "run_test",
+            "target": "uv run pytest -m \"not integration\"",
+            "critical": true
+          }
+        ],
+        "completed": true,
+        "rationale": "Continue the active unit-test flow: read pyproject.toml to understand project config, edit the test file as needed, then run non-integration tests. Avoid stale integration decisions and completed validations.",
+        "evaluation": {
+          "taskId": "S6-graphiti-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"S6-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"pyproject.toml\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S6-edit\",\n      \"kind\": \"edit_file\",\n      \"target\": \"tests/test_context_eval_probe.py\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S6-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"uv run pytest -m \\\"not integration\\\"\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"rati"
+      },
+      {
+        "sampleId": "S7",
+        "actions": [
+          {
+            "id": "S7-read",
+            "kind": "read_file",
+            "target": "pyproject.toml",
+            "critical": true
+          },
+          {
+            "id": "S7-edit",
+            "kind": "edit_file",
+            "target": "tests/test_context_eval_probe.py",
+            "critical": true
+          },
+          {
+            "id": "S7-test",
+            "kind": "run_test",
+            "target": "uv run pytest -m \"not integration\"",
+            "critical": true
+          }
+        ],
+        "completed": true,
+        "rationale": "Continue the unit-test flow: read pyproject.toml to understand project config, edit the test file as needed, then run non-integration tests. Avoid stale integration decisions and completed validations.",
+        "evaluation": {
+          "taskId": "S7-graphiti-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"S7-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"pyproject.toml\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S7-edit\",\n      \"kind\": \"edit_file\",\n      \"target\": \"tests/test_context_eval_probe.py\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S7-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"uv run pytest -m \\\"not integration\\\"\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"rati"
+      },
+      {
+        "sampleId": "S8",
+        "actions": [
+          {
+            "id": "S8-read",
+            "kind": "read_file",
+            "target": "pyproject.toml",
+            "critical": true
+          },
+          {
+            "id": "S8-edit",
+            "kind": "edit_file",
+            "target": "tests/test_context_eval_probe.py",
+            "critical": true
+          },
+          {
+            "id": "S8-test",
+            "kind": "run_test",
+            "target": "uv run pytest -m \"not integration\"",
+            "critical": true
+          }
+        ],
+        "completed": true,
+        "rationale": "Continue the unit-test flow: read pyproject.toml to understand project config, edit the test file as per next actions, then run non-integration tests. Avoid stale integration branch and completed validation.",
+        "evaluation": {
+          "taskId": "S8-graphiti-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"S8-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"pyproject.toml\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S8-edit\",\n      \"kind\": \"edit_file\",\n      \"target\": \"tests/test_context_eval_probe.py\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S8-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"uv run pytest -m \\\"not integration\\\"\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"rati"
+      },
+      {
+        "sampleId": "S9",
+        "actions": [
+          {
+            "id": "S9-read",
+            "kind": "read_file",
+            "target": "pyproject.toml",
+            "critical": true
+          },
+          {
+            "id": "S9-edit",
+            "kind": "edit_file",
+            "target": "tests/test_context_eval_probe.py",
+            "critical": true
+          },
+          {
+            "id": "S9-test",
+            "kind": "run_test",
+            "target": "uv run pytest -m \"not integration\"",
+            "critical": true
+          }
+        ],
+        "completed": true,
+        "rationale": "Continue the active unit-test path: read pyproject.toml to understand project config, edit the test file as needed, then run non-integration tests. Avoid stale integration decisions and completed actions.",
+        "evaluation": {
+          "taskId": "S9-graphiti-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"S9-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"pyproject.toml\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S9-edit\",\n      \"kind\": \"edit_file\",\n      \"target\": \"tests/test_context_eval_probe.py\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S9-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"uv run pytest -m \\\"not integration\\\"\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"rati"
+      },
+      {
+        "sampleId": "S10",
+        "actions": [
+          {
+            "id": "S10-read",
+            "kind": "read_file",
+            "target": "pyproject.toml",
+            "critical": true
+          },
+          {
+            "id": "S10-edit",
+            "kind": "edit_file",
+            "target": "tests/test_context_eval_probe.py",
+            "critical": true
+          },
+          {
+            "id": "S10-test",
+            "kind": "run_test",
+            "target": "uv run pytest -m \"not integration\"",
+            "critical": true
+          }
+        ],
+        "completed": true,
+        "rationale": "Continue the unit-test flow: read pyproject.toml to understand project config, edit the test file as required, then run unit tests excluding integration. Avoid stale decisions and completed work.",
+        "evaluation": {
+          "taskId": "S10-graphiti-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"S10-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"pyproject.toml\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S10-edit\",\n      \"kind\": \"edit_file\",\n      \"target\": \"tests/test_context_eval_probe.py\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    },\n    {\n      \"id\": \"S10-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"uv run pytest -m \\\"not integration\\\"\",\n      \"decision\": \"\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"r"
+      }
+    ],
+    "aggregate": {
+      "total": 10,
+      "firstActionMatchRate": 1,
+      "criticalActionMatchRate": 1,
+      "noRepeatedWorkRate": 1,
+      "noContradictoryActionRate": 1,
+      "decisionConsistencyRate": 1,
+      "taskCompletionDelta": 0
+    },
+    "gate": {
+      "pass": true,
+      "thresholds": {
+        "firstActionMatchRate": ">= 0.85",
+        "criticalActionMatchRate": ">= 0.90",
+        "noRepeatedWorkRate": ">= 0.95",
+        "noContradictoryActionRate": ">= 0.95",
+        "decisionConsistencyRate": ">= 0.90",
+        "taskCompletionDelta": "<= 0.08"
+      }
+    }
+  },
+  "layer0": {
+    "rounds": 10,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": null,
+    "informationDensityMean": null,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 100,
+    "expectedTotal": 100
+  },
+  "layer1": {
+    "rounds": 10,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": 0.1628,
+    "informationDensityMean": 6.1448,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 100,
+    "expectedTotal": 100
+  },
+  "layer1Gate": {
+    "pass": true,
+    "thresholds": {
+      "recallCriticalMean": ">= 0.95",
+      "recallImportantMean": ">= 0.75",
+      "weightedRecallMean": ">= 0.90",
+      "precisionMean": "= 1",
+      "forbiddenFoundTotal": "= 0",
+      "staleExclusionMean": ">= 0.99",
+      "compressionRatioMean": "0.15..0.35",
+      "informationDensityMean": ">= 2"
+    }
+  },
+  "layer2": {
+    "total": 10,
+    "judgeScoreMean": 10,
+    "judgeScoreMin": 10,
+    "completenessRate": 1,
+    "accuracyRate": 1,
+    "causalChainPreservation": 1,
+    "causalChainRate": 1,
+    "noFabricationRate": 1,
+    "actionabilityRate": 1
+  },
+  "layer2Gate": {
+    "pass": true
+  },
+  "layer3": {
+    "total": 10,
+    "firstActionMatchRate": 1,
+    "criticalActionMatchRate": 1,
+    "noRepeatedWorkRate": 1,
+    "noContradictoryActionRate": 1,
+    "decisionConsistencyRate": 1,
+    "taskCompletionDelta": 0
+  },
+  "layer3Gate": {
+    "pass": true,
+    "thresholds": {
+      "firstActionMatchRate": ">= 0.85",
+      "criticalActionMatchRate": ">= 0.90",
+      "noRepeatedWorkRate": ">= 0.95",
+      "noContradictoryActionRate": ">= 0.95",
+      "decisionConsistencyRate": ">= 0.90",
+      "taskCompletionDelta": "<= 0.08"
+    }
+  },
+  "cohorts": {
+    "real": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 10,
+      "layer0": {
+        "rounds": 10,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 100,
+        "expectedTotal": 100
+      },
+      "layer1": {
+        "rounds": 10,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1628,
+        "informationDensityMean": 6.1448,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 100,
+        "expectedTotal": 100
+      },
+      "layer3": {
+        "total": 10,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.60": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1616,
+        "informationDensityMean": 6.1888,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 20,
+        "expectedTotal": 20
+      },
+      "0.75": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1616,
+        "informationDensityMean": 6.1888,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 20,
+        "expectedTotal": 20
+      },
+      "0.85": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1616,
+        "informationDensityMean": 6.1888,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 20,
+        "expectedTotal": 20
+      },
+      "0.95": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1616,
+        "informationDensityMean": 6.1888,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 20,
+        "expectedTotal": 20
+      },
+      "emergency": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1678,
+        "informationDensityMean": 5.9687,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 20,
+        "expectedTotal": 20
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 10,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1628,
+        "informationDensityMean": 6.1448,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 100,
+        "expectedTotal": 100
+      }
+    },
+    "byPressureContinuation": {
+      "0.60": {
+        "total": 2,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.75": {
+        "total": 2,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.85": {
+        "total": 2,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.95": {
+        "total": 2,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "emergency": {
+        "total": 2,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    }
+  },
+  "cohortBreakdown": {
+    "real": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 10,
+      "layer0": {
+        "rounds": 10,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 100,
+        "expectedTotal": 100
+      },
+      "layer1": {
+        "rounds": 10,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1628,
+        "informationDensityMean": 6.1448,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 100,
+        "expectedTotal": 100
+      },
+      "layer3": {
+        "total": 10,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.60": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1616,
+        "informationDensityMean": 6.1888,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 20,
+        "expectedTotal": 20
+      },
+      "0.75": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1616,
+        "informationDensityMean": 6.1888,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 20,
+        "expectedTotal": 20
+      },
+      "0.85": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1616,
+        "informationDensityMean": 6.1888,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 20,
+        "expectedTotal": 20
+      },
+      "0.95": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1616,
+        "informationDensityMean": 6.1888,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 20,
+        "expectedTotal": 20
+      },
+      "emergency": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1678,
+        "informationDensityMean": 5.9687,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 20,
+        "expectedTotal": 20
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 10,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1628,
+        "informationDensityMean": 6.1448,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 100,
+        "expectedTotal": 100
+      }
+    }
+  },
+  "worstCases": [],
+  "regressionExamples": [],
+  "redactionSummary": {
+    "mode": "strict",
+    "replacements": {
+      "apiKeys": 0,
+      "authTokens": 0,
+      "authHeaders": 0,
+      "providerKeys": 0,
+      "urlTokens": 0,
+      "usernames": 0
+    },
+    "filesScanned": 3,
+    "linesScanned": 642
+  },
+  "acceptance": {
+    "status": "PASS",
+    "checks": [
+      {
+        "id": "sampleCount.exact",
+        "pass": true,
+        "actual": 10,
+        "expected": "= 10"
+      },
+      {
+        "id": "samplesJsonl.exact",
+        "pass": true,
+        "actual": 10,
+        "expected": "= 10"
+      },
+      {
+        "id": "l0.recallMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l0.staleExclusionMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l1.gate",
+        "pass": true,
+        "actual": 1,
+        "expected": "all L1 thresholds"
+      },
+      {
+        "id": "l2.deterministicGate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 thresholds"
+      },
+      {
+        "id": "l3.deterministicGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "L3 thresholds"
+      },
+      {
+        "id": "realCohort.notMasked",
+        "pass": true,
+        "actual": 1,
+        "expected": "real L1 gate passes independently when real samples exist"
+      },
+      {
+        "id": "daily.evidenceSufficiency",
+        "pass": true,
+        "actual": 0,
+        "expected": "daily may degrade but must mark evidenceInsufficient"
+      },
+      {
+        "id": "l2.realJudge.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed"
+      },
+      {
+        "id": "l2.realJudge.gate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 real judge thresholds"
+      },
+      {
+        "id": "l3.realContinuation.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed"
+      },
+      {
+        "id": "l3.realContinuation.gate",
+        "pass": true,
+        "actual": 1,
+        "expected": "L3 real continuation thresholds"
+      }
+    ],
+    "evidenceInsufficient": true
+  }
+}

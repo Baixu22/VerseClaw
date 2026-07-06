@@ -31,6 +31,7 @@ import {
 } from "../task-loop-controller.js";
 import { proposeMemoryCard } from "../../memory/memory-store.js";
 import type { MemoryEvidenceRef, MemoryProposal } from "../../memory/types.js";
+import { resolveAnomalyPatternForReviewer } from "../anomaly-classifier.js";
 import { buildMissionContextPack } from "./context.js";
 import { runMissionReviewer } from "./reviewer.js";
 import {
@@ -896,6 +897,25 @@ export async function tickMission(
 
     record.phase = "reflect";
     emit(record, deps);
+
+    // A3 Round 2 wiring (Stage 1 Stream 1B acceptance 1.8):
+    // Flag-gated seam — when `runtime.resilience.anomalyClassifierPilot !== 'shadow'`,
+    // returns `undefined` and `anomalyPattern` stays undefined (flag-off parity).
+    // When 'shadow', classifies recent signals into an advisory AnomalyPattern.
+    const failures = taskLoopResult.status === "error" ? [taskLoopResult.error ?? "task_loop error"] : [];
+    const anomalyPattern = resolveAnomalyPatternForReviewer(cfg?.runtime, {
+      tick: record.tick,
+      repairTicksUsed: record.repairTicks,
+      maxRepairTicks: record.maxRepairTicks,
+      maxTicks: record.maxTicks,
+      failures,
+      // previousNoProgressHash comes from the prior tick's hash on the record.
+      previousNoProgressHash: record.noProgressHash,
+      // noProgressHash for the current tick is computed AFTER the reviewer runs
+      // (line ~930: buildNoProgressHash). At classification time we don't have
+      // the current hash yet, so we omit it; classifier relies on the other signals.
+    });
+
     const rawReviewer = await (deps.reviewer ?? runMissionReviewer)({
       cfg,
       agentId: record.agentId,
@@ -919,11 +939,12 @@ export async function tickMission(
         scopeSummary: record.lastReason,
       }),
       taskLoopResult,
-      failures: taskLoopResult.status === "error" ? [taskLoopResult.error ?? "task_loop error"] : [],
+      failures,
       tick: record.tick,
       repairTicksUsed: record.repairTicks,
       maxRepairTicks: record.maxRepairTicks,
       maxTicks: record.maxTicks,
+      ...(anomalyPattern !== undefined ? { anomalyPattern } : {}),
     }, deps.reviewerDeps);
     const reviewer = gateMissionReviewerCompletion(rawReviewer, record);
 

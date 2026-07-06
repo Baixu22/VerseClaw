@@ -1,0 +1,2246 @@
+{
+  "runId": "2026-07-01T02-29-03-333Z",
+  "target": "C:\\Users\\27933\\Desktop\\verseshell\\graphiti-main",
+  "generatedAt": "2026-07-01T02:33:06.763Z",
+  "suite": "daily",
+  "sampleSource": "real",
+  "requestedSampleCount": 30,
+  "sampleCount": 30,
+  "semanticMatching": false,
+  "realInventory": {
+    "transcriptRoot": "C:\\\\Users\\\\27933\\\\.codex\\\\archived_sessions",
+    "filesFound": 201,
+    "transcriptsParsed": 201,
+    "entriesParsed": 50781
+  },
+  "sampleMix": {
+    "realRequested": 30,
+    "syntheticRequested": 0,
+    "realActual": 30,
+    "syntheticActual": 0,
+    "realShortfall": 0,
+    "evidenceInsufficient": false
+  },
+  "llmJudge": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 30,
+    "results": [
+      {
+        "sampleId": "R1",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 5,
+        "justifications": [
+          "Completeness: All expected facts are preserved, including the critical decisions about shellEnv skipping on Windows and ACP manager not injecting API keys for built-in agents, as well as the blocker outputs and file/test references.",
+          "Accuracy: The summary accurately reflects the transcript evidence, including the exact wording of key decisions and the outputs of commands.",
+          "Causal chain: The summary correctly traces the causal chain from the initial problem (API not recognized) through the investigation (shellEnv, ACP manager) to the root cause (no env injection for built-in agents).",
+          "No fabrication: All statements are directly supported by the provided evidence lines; no fabricated facts are present.",
+          "Actionability: The summary clearly identifies the root cause and provides a next action (the decision about ACP manager), enabling continuation of the debugging process."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 5,\n  \"justifications\": [\n    \"Completeness: All expected facts are preserved, including the critical decisions about shellEnv skipping on Windows and ACP manager not injecting API keys for built-in agents, as well as the blocker outputs and file/test references.\",\n    \"Accuracy: The summary accurately reflects the transcript evidence, including the exact wording of "
+      },
+      {
+        "sampleId": "R2",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 0,
+        "justifications": [
+          "The summary omits the critical expected fact: '公共类型已经扩好。接下来我把数据库 IPC 暴露出 getStatsCliToolRank，并让错误兜底包含新的监控时长字段.' This is a key blocker and decision.",
+          "The summary misrepresents the 'Exit code: 0 Wall time: 1.2 seconds Output: 目录: ...' as a failure/blocker, but the transcript shows it is a successful directory listing, not a failure.",
+          "The summary fails to preserve the causal chain: the decision to place tests in 'tests/unit/process/services/database/' is correctly noted, but the subsequent actions (e.g., creating stats.test.ts) are missing, breaking the chain.",
+          "The summary fabricates a 'Current State' that describes a directory listing as a 'blocker/failure', which is not supported by the transcript.",
+          "The summary lists 'references/renderer.md', 'references/process.md', 'references/project-layout.md' as files touched, but these are only mentioned in the architecture skill output, not actually modified.",
+          "The summary claims 'vitest' and 'Vitest 4' as test results, but the transcript only mentions these in passing as configuration references, not as actual test outcomes.",
+          "The summary's 'Next Actions' only repeats the decision about test placement, omitting the actual next steps like implementing the IPC exposure and error handling.",
+          "The summary does not include the evidence-backed chronology of the actual work done (e.g., modifying databaseBridge.ts, index.ts, etc.), making it incomplete and inaccurate."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0,\n  \"justifications\": [\n    \"The summary omits the critical expected fact: '公共类型已经扩好。接下来我把数据库 IPC 暴露出 getStatsCliToolRank，并让错误兜底包含新的监控时长字段.' This is a key blocker and decision.\",\n    \"The summary misrepresents the 'Exit code: 0 Wall time: 1.2 seconds Output: 目录: ...' as a failure/blocker, but the transcript shows it is a successful directory listing, not a fai"
+      },
+      {
+        "sampleId": "R3",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 6,
+        "justifications": [
+          "Completeness: The summary omits the critical fact that the legacy state migration (ensureSessionStateMigrated) was the root cause of the gateway hanging, and that the fix involved adding OPENCLAW_SKIP_LEGACY_STATE_MIGRATION. It also omits the final successful verification with pnpm dev showing Gateway auto-start succeeded and WebSocket handshake.",
+          "Accuracy: The summary accurately reflects the transcript evidence, including the initial module-not-found error, the switch to tsx CLI, the build script fixes, and the eventual resolution. No fabricated facts.",
+          "Causal chain: The summary preserves the causal chain from the initial ERR_MODULE_NOT_FOUND, through the tsx CLI fix, the build alias fix, the ESM splitting, to the legacy migration hang and its resolution. The progression is clear.",
+          "No fabrication: All statements in the summary are directly supported by the transcript evidence lines. No invented details.",
+          "Actionability: The summary does not include the final successful verification steps (pnpm dev with Gateway auto-start succeeded) and the cleanup of temporary scripts. Without these, the next actions are incomplete and the goal is not fully actionable."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 0.6,\n  \"justifications\": [\n    \"Completeness: The summary omits the critical fact that the legacy state migration (ensureSessionStateMigrated) was the root cause of the gateway hanging, and that the fix involved adding OPENCLAW_SKIP_LEGACY_STATE_MIGRATION. It also omits the final successful verification with pnpm dev showing Gateway auto-start succeeded and WebSoc"
+      },
+      {
+        "sampleId": "R4",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 2,
+        "justifications": [
+          "The summary omits the critical objective: '现在我手动启动了，然而出现gateway无法连接的错误，请你帮我查看日志并修复问题保证一直基本正常' (line 323). This is a core task fact.",
+          "The summary fails to include the key decision from line 103: '在 Gateway 启动前统一计算一次“有效 runtime + 有效 sandbox + 是否降级 + 原因”'.",
+          "The summary does not preserve the causal chain: the user reports gateway connection failure due to agent forcing Docker sandbox without fallback (lines 6-7), then the assistant investigates and plans a fix.",
+          "The summary fabricates a blocker: 'Exit code: 0 Wall time: 1.1 seconds Output: # RTK - Rust Token Killer...' is not a blocker; it is a successful command output. The actual blocker is the gateway connection failure.",
+          "The summary lists 'cargo test' and 'npm run build' as test results, but these are not mentioned in the transcript as executed tests; they appear only in RTK.md examples.",
+          "The summary's next action is stale: '端口现在是干净的。接下来我用 `cmd start /b` 做真正后台启动...' was superseded by the user manually starting and reporting the gateway error.",
+          "The summary omits the critical constraint from line 20: '我先把相关约束和代码入口摸清楚，重点看 `openclaw_runtime`、gateway 启动链路...'.",
+          "The summary fabricates file touches: './AGENTS.md', './package.json', 'scripts/generate-ext-bridge.mjs' are not actually modified in the transcript; they are only read or referenced."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0.2,\n  \"justifications\": [\n    \"The summary omits the critical objective: '现在我手动启动了，然而出现gateway无法连接的错误，请你帮我查看日志并修复问题保证一直基本正常' (line 323). This is a core task fact.\",\n    \"The summary fails to include the key decision from line 103: '在 Gateway 启动前统一计算一次“有效 runtime + 有效 sandbox + 是否降级 + 原因”'.\",\n    \"The summary does not preserve the causal chain: the user reports"
+      },
+      {
+        "sampleId": "R5",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 6,
+        "justifications": [
+          "Completeness: The summary omits the critical fact that the user identified and attempted to remove 'autoDisabledReason' fields from the source-state config file, which is a key continuation action. It also omits the failed PowerShell commands and the switch to a Node script, which are part of the causal chain.",
+          "Accuracy: All stated facts are directly supported by the transcript evidence.",
+          "Causal chain: The summary correctly preserves the sequence of filtering schema-breaking fields, extracting single-instance lock logic, and noting harness validation failure due to unrelated changes.",
+          "No fabrication: No invented facts are present.",
+          "Actionability: The summary does not include the next concrete action (cleaning up 'autoDisabledReason' in the config file), making it insufficient for continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 0.6,\n  \"justifications\": [\n    \"Completeness: The summary omits the critical fact that the user identified and attempted to remove 'autoDisabledReason' fields from the source-state config file, which is a key continuation action. It also omits the failed PowerShell commands and the switch to a Node script, which are part of the causal chain.\",\n    \"Accuracy: All s"
+      },
+      {
+        "sampleId": "R6",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 0,
+        "justifications": [
+          "The summary omits the critical objective '通过名称定位节点然后打开cli的方案行不通吗 请在此尝试啊' entirely.",
+          "The summary fabricates a 'Current State' that is a truncated grep output, not a real blocker.",
+          "The summary misrepresents the causal chain: it does not show the progression from name-based navigation attempts to the coordinate conversion issue.",
+          "The summary includes fabricated test results 'node = margins' and 'node is None:' that are not present in the transcript.",
+          "The summary's 'Next Actions' are a verbatim copy of a decision line, not actionable steps derived from the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0,\n  \"justifications\": [\n    \"The summary omits the critical objective '通过名称定位节点然后打开cli的方案行不通吗 请在此尝试啊' entirely.\",\n    \"The summary fabricates a 'Current State' that is a truncated grep output, not a real blocker.\",\n    \"The summary misrepresents the causal chain: it does not show the progression from name-based navigation attempts to the coordinate conversion "
+      },
+      {
+        "sampleId": "R7",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "Completeness: The summary captures the objective (fix hardcoded paths), the key decisions (remove rtk dependency, use environment variables), the actions taken (read files, modify AGENT.md and README.md, commit), and the final state (commit 09c2593).",
+          "Accuracy: All facts in the summary are directly supported by the transcript evidence, including the specific changes to AGENT.md and README.md, the commit message, and the exclusion of unrelated workspace changes.",
+          "Causal chain: The summary correctly follows the logical flow: user request -> read docs -> identify hardcoded paths -> decide to make rtk optional and use env vars -> modify files -> stage and commit -> verify commit.",
+          "No fabrication: The summary does not introduce any facts not present in the transcript. It accurately reflects the actions and decisions without adding or altering details.",
+          "Actionability: The summary provides clear next actions (the changes made) and confirms the commit, enabling a reader to understand what was done and what remains (e.g., no further actions needed)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"Completeness: The summary captures the objective (fix hardcoded paths), the key decisions (remove rtk dependency, use environment variables), the actions taken (read files, modify AGENT.md and README.md, commit), and the final state (commit 09c2593).\",\n    \"Accuracy: All facts in the summary are directly supported by the transcript evi"
+      },
+      {
+        "sampleId": "R8",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 5,
+        "justifications": [
+          "All critical expected facts (objective, decision, constraint) are present in the summary.",
+          "Important blocker and file context facts are accurately reflected.",
+          "The causal chain from reading scripts to identifying OpenDevice issues to planning next steps is preserved.",
+          "No fabricated facts; all statements are backed by evidence lines.",
+          "The summary provides actionable next steps (continue from current state using evidence-backed facts)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 5,\n  \"justifications\": [\n    \"All critical expected facts (objective, decision, constraint) are present in the summary.\",\n    \"Important blocker and file context facts are accurately reflected.\",\n    \"The causal chain from reading scripts to identifying OpenDevice issues to planning next steps is preserved.\",\n    \"No fabricated facts; all statements are backed by ev"
+      },
+      {
+        "sampleId": "R9",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 6,
+        "justifications": [
+          "Completeness: The summary omits the critical objective '实现“通过设备名称定位 -> 打开真实设备窗口 -> 切到 CLI -> 输入命令 -> 截取子窗口 -> 关闭窗口 -> 下一个设备”的稳定流程' and the constraint '不要删除或重置拓扑，不要覆盖原始模板' from the transcript. It also omits the failed PowerShell commands (lines 111-113, 123-125) which are part of the evidence chain.",
+          "Accuracy: All stated facts are directly supported by the transcript evidence lines. No inaccuracies found.",
+          "Causal chain: The summary correctly preserves the sequence: objective -> constraint -> attempt to read scripts -> failure due to RTK rule -> decision to use rtk -> further attempts to read scripts -> failure due to PowerShell variable expansion -> decision to use single quotes. The causal links are intact.",
+          "No fabrication: No fabricated facts are present. All claims are traceable to the evidence lines.",
+          "Actionability: The summary does not provide enough context for the next actions. It mentions '细读这几段' but does not specify which lines or what to look for. The next actions are vague and lack concrete steps. The summary also omits the failed commands, which are important for understanding the current blocker."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 0.6,\n  \"justifications\": [\n    \"Completeness: The summary omits the critical objective '实现“通过设备名称定位 -> 打开真实设备窗口 -> 切到 CLI -> 输入命令 -> 截取子窗口 -> 关闭窗口 -> 下一个设备”的稳定流程' and the constraint '不要删除或重置拓扑，不要覆盖原始模板' from the transcript. It also omits the failed PowerShell commands (lines 111-113, 123-125) which are part of the evidence chain.\",\n    \"Accuracy: All stated facts "
+      },
+      {
+        "sampleId": "R10",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 6,
+        "justifications": [
+          "Completeness: The summary omits the critical constraint that screenshots must be real Packet Tracer UI screenshots, not generated or synthetic images. It also omits the specific next action to introspect device objects for an openDeviceWindow API.",
+          "Accuracy: All stated facts are supported by the transcript evidence.",
+          "Causal chain: The summary correctly reflects the progression from reading RTK rules, inspecting existing scripts, identifying the coordinate-click problem, and deciding to use UI navigation.",
+          "No fabrication: No fabricated facts are present.",
+          "Actionability: The summary does not clearly state the next concrete action (introspect device objects for openDeviceWindow), making it less actionable for continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 0.6,\n  \"justifications\": [\n    \"Completeness: The summary omits the critical constraint that screenshots must be real Packet Tracer UI screenshots, not generated or synthetic images. It also omits the specific next action to introspect device objects for an openDeviceWindow API.\",\n    \"Accuracy: All stated facts are supported by the transcript evidence.\",\n    \"Cau"
+      },
+      {
+        "sampleId": "R11",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 6,
+        "justifications": [
+          "Completeness: The summary omits the critical evidence that Trae CN was successfully identified and its window was brought to the foreground (lines 22-30). This is a key outcome of the task.",
+          "Accuracy: All included facts match the transcript evidence.",
+          "Causal chain: The summary preserves the sequence from reading the skill to attempting to open Trae.",
+          "No fabrication: No invented facts are present.",
+          "Actionability: The summary lacks the concrete result (Trae window activated) needed to determine next actions, making it less actionable."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 0.6,\n  \"justifications\": [\n    \"Completeness: The summary omits the critical evidence that Trae CN was successfully identified and its window was brought to the foreground (lines 22-30). This is a key outcome of the task.\",\n    \"Accuracy: All included facts match the transcript evidence.\",\n    \"Causal chain: The summary preserves the sequence from reading the skil"
+      },
+      {
+        "sampleId": "R12",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 4,
+        "justifications": [
+          "Completeness: The summary omits the verbatim evidence lines 'rtk cargo test' and 'rtk npm run build' (the rtk prefix is missing), and the 'Next Actions' section is vague ('Continue from the current state') without specifying concrete next steps like running commands with rtk prefix.",
+          "Accuracy: The summary correctly reproduces the output from the transcript, including the RTK rule and examples.",
+          "Causal chain: The summary does not preserve the causal chain that the user intended to load workspace instructions, then aborted the turn. The 'Attempts and Failures' section mislabels the successful command execution as a failure, and the 'Current State' incorrectly states 'In Progress: the latest useful blocker/failure' when there was no blocker.",
+          "No fabrication: The summary does not introduce any facts not present in the transcript.",
+          "Actionability: The summary lacks concrete next actions; it only says 'Continue from the current state' without specifying what to do next (e.g., run commands with rtk prefix)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 0.4,\n  \"justifications\": [\n    \"Completeness: The summary omits the verbatim evidence lines 'rtk cargo test' and 'rtk npm run build' (the rtk prefix is missing), and the 'Next Actions' section is vague ('Continue from the current state') without specifying concrete next steps like running commands with rtk prefix.\",\n    \"Accuracy: The summary correctly reproduces"
+      },
+      {
+        "sampleId": "R13",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 0,
+        "justifications": [
+          "The summary omits critical evidence lines about the i18n patch failure and the subsequent Node script attempt, which are essential for understanding the current blocker.",
+          "The summary fabricates a test result 'node -e \"const fs=require('fs')' which is not a test result but part of a command; the actual test result is the SyntaxError from the Node script.",
+          "The causal chain is broken: the summary does not connect the failed apply_patch to the decision to use Node script, nor the PowerShell interpolation issue to the corrected command.",
+          "The summary inaccurately lists 'Desktop/clawx/ClawX/shared/i18n/locales/en/chat.json' as a touched file, but the transcript shows the Node script failed and did not modify any files.",
+          "The next action is vague and does not specify the concrete steps needed to resolve the i18n insertion issue, making it not actionable."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0,\n  \"justifications\": [\n    \"The summary omits critical evidence lines about the i18n patch failure and the subsequent Node script attempt, which are essential for understanding the current blocker.\",\n    \"The summary fabricates a test result 'node -e \\\"const fs=require('fs')' which is not a test result but part of a command; the actual test result is the Synt"
+      },
+      {
+        "sampleId": "R14",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 6,
+        "justifications": [
+          "Completeness: The summary omits the critical objective from line 143 about adapting Trellis to fit the project's ecosystem and the decision to fork/mirror Trellis as an upstream reference. It also omits the key decision that the project already has AGENTS.md and other specs, and the conclusion that Trellis is suitable for initialization but should be adapted.",
+          "Accuracy: All included facts are accurate and match the transcript evidence.",
+          "Causal chain: The summary correctly preserves the progression from evaluating Trellis to deciding on adaptation, though it misses some intermediate steps.",
+          "No fabrication: No fabricated facts are present.",
+          "Actionability: The summary lacks the specific next actions (e.g., fork Trellis, create adaptation doc, build ClawX AI init tool) needed to proceed with the MVP plan."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 0.6,\n  \"justifications\": [\n    \"Completeness: The summary omits the critical objective from line 143 about adapting Trellis to fit the project's ecosystem and the decision to fork/mirror Trellis as an upstream reference. It also omits the key decision that the project already has AGENTS.md and other specs, and the conclusion that Trellis is suitable for initializa"
+      },
+      {
+        "sampleId": "R15",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 6,
+        "justifications": [
+          "Completeness: The summary omits the critical user objective from line 144 about adapting Trellis to fit the project's ecosystem, and the key decision to not directly introduce Trellis but to mirror, abstract, and internalize it. It also misses the specific next action of creating a plan for an MVP version.",
+          "Accuracy: The summary accurately reflects the transcript's content, including the RTK output, the presence of AGENTS.md files, and the assessment that Trellis is suitable for initialization. No factual errors.",
+          "Causal chain: The summary fails to preserve the causal chain from the user's request for adaptation (line 144) to the assistant's proposed 'mirror, abstract, internalize' strategy (line 148), and then to the user's request for an MVP plan (line 154). The summary jumps between topics without showing how one led to the next.",
+          "No fabrication: The summary does not introduce any fabricated facts; all statements are traceable to the transcript.",
+          "Actionability: The summary does not provide clear next actions. The user's final request for an MVP plan is not reflected, and the summary ends with a stale next action that was superseded. The summary lacks actionable guidance for the current state."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 0.6,\n  \"justifications\": [\n    \"Completeness: The summary omits the critical user objective from line 144 about adapting Trellis to fit the project's ecosystem, and the key decision to not directly introduce Trellis but to mirror, abstract, and internalize it. It also misses the specific next action of creating a plan for an MVP version.\",\n    \"Accuracy: The summ"
+      },
+      {
+        "sampleId": "R16",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 5,
+        "justifications": [
+          "Completeness: The summary captures the user's request to create a VerseClaw repo, commit, and set it private, and includes all key steps (checking git/gh status, initializing repo, committing, pushing, verifying privacy).",
+          "Accuracy: All claims match the transcript evidence, e.g., the repo is private, commit hash ac5a068, openclaw_runtime as 10369 files with 0 gitlinks.",
+          "Causal chain: The summary correctly follows the sequence from user request to final verification, including the adaptation to use 'rtk powershell' after initial failures.",
+          "No fabrication: No facts are invented; all statements are directly supported by the transcript lines.",
+          "Actionability: The summary provides clear next actions and confirms the task is complete, enabling continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 5,\n  \"justifications\": [\n    \"Completeness: The summary captures the user's request to create a VerseClaw repo, commit, and set it private, and includes all key steps (checking git/gh status, initializing repo, committing, pushing, verifying privacy).\",\n    \"Accuracy: All claims match the transcript evidence, e.g., the repo is private, commit hash ac5a068, openclaw_"
+      },
+      {
+        "sampleId": "R17",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 5,
+        "justifications": [
+          "All critical expected facts (six main areas of hardcoded Chinese, constraint to use existing i18n, blocker about Skills page, RTK rule, decision about Chat workspace/session headers, files touched, test results) are present in the summary.",
+          "The summary accurately reflects the transcript evidence: the six areas, the i18n approach, the Skills page modification, the RTK rule, the Chat workspace/session headers, the files modified, and the test results (cargo test, npm run build).",
+          "The causal chain is preserved: the user request leads to scanning, identifying six areas, modifying Skills page, encountering RTK rule, then continuing to other areas, and finally verifying with tests.",
+          "No fabricated facts are present; all claims are directly supported by the transcript evidence lines.",
+          "The summary includes clear next actions (Chat workspace/session headers, toast, etc.) and the current state, enabling continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 5,\n  \"justifications\": [\n    \"All critical expected facts (six main areas of hardcoded Chinese, constraint to use existing i18n, blocker about Skills page, RTK rule, decision about Chat workspace/session headers, files touched, test results) are present in the summary.\",\n    \"The summary accurately reflects the transcript evidence: the six areas, the i18n approach, "
+      },
+      {
+        "sampleId": "R18",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 0,
+        "justifications": [
+          "The summary omits the critical decision that `gatewayManager.rpc` only consumes the first frame and cannot wait for agent final; the plan must use `agent.wait` or event polling. This is a key constraint for the causal chain and next actions.",
+          "The summary includes a garbled blocker line 'msg)) { electron/gateway\\manager.ts:1326: ...' which is not a coherent fact and misrepresents the transcript evidence.",
+          "The summary fabricates a 'failed attempt' reference to line 365, which is actually a successful command output, not a failure.",
+          "The summary lists 'npm/npx テンプレート実行は行いません。' as a test result, but this is a statement from a README file, not a test result.",
+          "The summary lists 'node status, read-only DAG structure, append-only events, and review items' as a test result, but this is a description from README.md, not a test result.",
+          "The summary fails to include the important evidence that `agent.wait` exists and is implemented in the runtime, which is crucial for the next action of verifying synchronous return capability.",
+          "The summary does not accurately reflect the chronology of actions: the user ran harness context, then decided to check `agent.wait`, then found it exists. The summary omits this causal chain.",
+          "The summary includes a 'blocker' that is a garbled code snippet, which is not a meaningful blocker and does not match the transcript's actual blockers (e.g., Plan Mode constraint)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0,\n  \"justifications\": [\n    \"The summary omits the critical decision that `gatewayManager.rpc` only consumes the first frame and cannot wait for agent final; the plan must use `agent.wait` or event polling. This is a key constraint for the causal chain and next actions.\",\n    \"The summary includes a garbled blocker line 'msg)) { electron/gateway\\\\manager.ts:13"
+      },
+      {
+        "sampleId": "R19",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 8,
+        "justifications": [
+          "Completeness: The summary omits the specific Playwright test failure details (error message, test name, location) and the subsequent fix attempts (splitting /fork test, i18n parity fixes, README updates, skill chip regression). These are critical for understanding the current state and next actions.",
+          "Accuracy: All stated facts are supported by the transcript evidence. No inaccuracies found.",
+          "Causal chain: The summary correctly captures the progression from the Playwright test failure to the decision to split tests and fix skill chip interaction, leading to the final green unit tests.",
+          "No fabrication: No fabricated facts are present. All claims are traceable to the transcript.",
+          "Actionability: The next actions are clearly stated and actionable, though they could be more specific (e.g., which specific tests to run)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 0.8,\n  \"justifications\": [\n    \"Completeness: The summary omits the specific Playwright test failure details (error message, test name, location) and the subsequent fix attempts (splitting /fork test, i18n parity fixes, README updates, skill chip regression). These are critical for understanding the current state and next actions.\",\n    \"Accuracy: All stated facts "
+      },
+      {
+        "sampleId": "R20",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 5,
+        "justifications": [
+          "All critical expected facts are preserved: the objective to implement Project Rules Center MVP in Settings → System & Runtime, the decision to read AGENTS.md/design-overview/harness specs, the constraint to respect uncommitted changes and add i18n/E2E, the blocker about existing dirty worktree, the decision to add projectRules host-api and Main service, and the file contexts for docs/clawx-design-overview.md, src/styles/globals.css, src/lib/host-api.ts.",
+          "Accuracy is maintained: the summary correctly reflects that the implementation was completed, including the new projectRules host-api module, Settings UI, i18n, unit/E2E tests, and documentation updates. The harness validate/dry-run failures are correctly attributed to pre-existing dirty files, not to the implementation itself.",
+          "The causal chain is preserved: the summary follows the logical sequence from reading context, planning, implementing contract/service/facade/UI/tests, fixing type errors, updating docs, and running verification steps. The final state matches the expected outcome.",
+          "No fabrication: all claims are directly supported by evidence lines in the transcript. There are no invented facts or unsupported assertions.",
+          "Actionability is high: the summary clearly states what was implemented, what verification passed, and what remaining issues exist (harness failures due to unrelated dirty files). A developer can continue from this state without ambiguity."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 5,\n  \"justifications\": [\n    \"All critical expected facts are preserved: the objective to implement Project Rules Center MVP in Settings → System & Runtime, the decision to read AGENTS.md/design-overview/harness specs, the constraint to respect uncommitted changes and add i18n/E2E, the blocker about existing dirty worktree, the decision to add projectRules host-api "
+      },
+      {
+        "sampleId": "R21",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 2,
+        "justifications": [
+          "Completeness: The summary omits many critical evidence lines, such as the E2E test failure details (line 298), the fix to use exact matching, and the subsequent successful patch application. It also fails to include the key decision to run the E2E test after build:vite.",
+          "Accuracy: The summary misrepresents the 'Current State' by truncating the output and incorrectly labeling it as a blocker. The actual blocker was the test failure due to fuzzy text matching, which was later fixed.",
+          "Causal chain: The summary does not preserve the causal chain: the E2E test failed due to fuzzy matching, the assistant identified the issue, tightened the assertion, applied a patch, and then planned to rerun the test. This sequence is missing.",
+          "No fabrication: The summary fabricates a 'blocker' from a truncated output that was actually a successful command output. It also fabricates 'Tests and Results' entries that are incomplete and misleading.",
+          "Actionability: The summary's 'Next Actions' is a verbatim copy of a decision line, not a clear actionable step. It does not reflect the actual next action (rerun the E2E test after fixing the assertion)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0.2,\n  \"justifications\": [\n    \"Completeness: The summary omits many critical evidence lines, such as the E2E test failure details (line 298), the fix to use exact matching, and the subsequent successful patch application. It also fails to include the key decision to run the E2E test after build:vite.\",\n    \"Accuracy: The summary misrepresents the 'Current Stat"
+      },
+      {
+        "sampleId": "R22",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 5,
+        "justifications": [
+          "Completeness: The summary captures the objective (implement parity roadmap), key decisions (read AGENTS.md, design overview, harness specs; respect git status), constraints (i18n/E2E for UI changes; harness context/validate for comm paths), blocker (harness validate diff check with dirty worktree), and final outcome (added roadmap section and three task specs).",
+          "Accuracy: All stated facts match transcript evidence: reading AGENTS.md, design overview, harness guides; git status showing modified files; adding 12.3 section and three vNext specs; using --no-diff for validation due to unrelated changes.",
+          "Causal chain: The summary correctly links the initial instructions to reading files, identifying the diff validation issue, deciding to use --no-diff, and completing the implementation with verification.",
+          "No fabrication: No synthetic facts or events are introduced; all claims are directly supported by transcript lines.",
+          "Actionability: The summary provides clear next actions (added roadmap and specs, verification passed) and preserves the context needed for continuation (dirty worktree, --no-diff rationale, files touched)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 5,\n  \"justifications\": [\n    \"Completeness: The summary captures the objective (implement parity roadmap), key decisions (read AGENTS.md, design overview, harness specs; respect git status), constraints (i18n/E2E for UI changes; harness context/validate for comm paths), blocker (harness validate diff check with dirty worktree), and final outcome (added roadmap secti"
+      },
+      {
+        "sampleId": "R23",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 5,
+        "justifications": [
+          "All critical expected facts are preserved: the objective to implement Lightweight Subagent Runner MVP, the decision to read AGENTS.md/RTK.md/design-overview, the constraint to respect existing changes and add i18n/E2E, the blocker about RTK output, the decision to add harness task spec, and the file contexts and test results.",
+          "Accuracy is maintained; the summary correctly reflects the transcript evidence without distortion.",
+          "The causal chain is intact: reading project files -> understanding constraints -> implementing runtime/UI/tests -> validating with harness and E2E.",
+          "No fabrication detected; all statements are directly supported by the transcript evidence lines.",
+          "The summary provides actionable next steps and clear completion status, enabling continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 5,\n  \"justifications\": [\n    \"All critical expected facts are preserved: the objective to implement Lightweight Subagent Runner MVP, the decision to read AGENTS.md/RTK.md/design-overview, the constraint to respect existing changes and add i18n/E2E, the blocker about RTK output, the decision to add harness task spec, and the file contexts and test results.\",\n    \"Acc"
+      },
+      {
+        "sampleId": "R24",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 0,
+        "justifications": [
+          "The summary omits the critical decision to create a dynamic import recovery helper and integrate it into ErrorBoundary, which is a key expected fact.",
+          "The summary inaccurately lists 'vitest' and 'vitest/config' as test results; the actual test results include a passed e2e test and unit tests.",
+          "The causal chain is broken: the summary does not connect the ErrorBoundary component to the dynamic import recovery logic or the subsequent build and e2e test.",
+          "The summary fabricates a 'blocker' fact that is actually a code snippet, and mislabels evidence references.",
+          "The summary's 'Next Actions' are a verbatim copy of a decision, not actionable steps; it fails to indicate that the build and e2e test were already executed and passed."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0,\n  \"justifications\": [\n    \"The summary omits the critical decision to create a dynamic import recovery helper and integrate it into ErrorBoundary, which is a key expected fact.\",\n    \"The summary inaccurately lists 'vitest' and 'vitest/config' as test results; the actual test results include a passed e2e test and unit tests.\",\n    \"The causal chain is broken"
+      },
+      {
+        "sampleId": "R25",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 2,
+        "justifications": [
+          "Completeness: The summary omits the critical decision fact about port connectivity results (5173/5174, 18789, 18788 not listening) and the blocker fact about the directory listing output. It also omits the file contexts and test results listed as expected facts.",
+          "Accuracy: The summary incorrectly states 'No explicit objective was promoted without evidence' and 'No explicit constraint evidence found', but the transcript clearly shows the objective is to test connections and the constraint is that services are not running. The summary also misattributes the directory listing output as a blocker, but it is actually a successful listing.",
+          "Causal chain: The summary fails to preserve the causal chain: the user initiated connection tests, found services not running, and concluded they need to start dev environment. The summary instead presents a truncated directory listing as the latest blocker, breaking the logical flow.",
+          "No fabrication: The summary fabricates a 'blocker' from a successful directory listing output, and fabricates 'No explicit objective evidence found' despite clear evidence of connection testing.",
+          "Actionability: The summary does not provide actionable next steps. The original transcript ends with a clear suggestion to run 'pnpm dev', but the summary omits this and instead gives a vague instruction to 'Continue from the current state'."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0.2,\n  \"justifications\": [\n    \"Completeness: The summary omits the critical decision fact about port connectivity results (5173/5174, 18789, 18788 not listening) and the blocker fact about the directory listing output. It also omits the file contexts and test results listed as expected facts.\",\n    \"Accuracy: The summary incorrectly states 'No explicit objecti"
+      },
+      {
+        "sampleId": "R26",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 6,
+        "justifications": [
+          "completeness: The summary omits the critical decision fact that the analysis was about Boris's prompt methodology applied to ClawX, and it omits the constraint fact about 'explore, don't restate' with the pnpm harness context command. It also omits the file context for CLAUDE.md and CLAUDE.local.md, and the test results for pnpm-store and playwright-report.",
+          "accuracy: All facts present in the summary are accurate and match the transcript evidence.",
+          "causal_chain: The summary preserves the causal chain: user request -> reading SKILL.md and ClawX files -> analysis and recommendations.",
+          "no_fabrication: No fabricated facts are present.",
+          "actionability: The summary does not provide clear next actions; it only states 'Continue from the current state' without specific steps based on the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 0.6,\n  \"justifications\": [\n    \"completeness: The summary omits the critical decision fact that the analysis was about Boris's prompt methodology applied to ClawX, and it omits the constraint fact about 'explore, don't restate' with the pnpm harness context command. It also omits the file context for CLAUDE.md and CLAUDE.local.md, and the test results for pnpm-sto"
+      },
+      {
+        "sampleId": "R27",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 0,
+        "justifications": [
+          "The summary omits the critical fact that the working tree changes are legitimate parallel agent WIP, not dirty data, which is a key expected fact from the transcript.",
+          "The summary fabricates a 'latest useful blocker/failure' as 'Exit code: 0 Wall time: 0.7 seconds Output: C:\\Users\\[REDACTED_USER]\\.codex\\RTK.md', which is not a blocker but a successful file check.",
+          "The causal chain is broken: the summary does not explain why harness validate failed (dirty files not covered by spec) and how --no-diff resolved it.",
+          "The summary inaccurately states 'typecheck 通过了，没有任何错误。验证完成！' as a next action, but the transcript shows typecheck passed earlier and is not a pending action.",
+          "The summary fabricates a 'Current State: In Progress' with a non-existent blocker, misrepresenting the actual state where the harness validate issue was resolved.",
+          "The summary omits the key decision to use --no-diff to bypass the diff check, which is essential for actionability.",
+          "The summary lists 'pnpm-lock' as a test result, which is not a test but a file; the actual test result is the successful --no-diff validation.",
+          "The summary fails to include the important file 'harness/specs/tasks/chat-slash-commands-mvp.md' in the files touched list, which is central to the task."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0,\n  \"justifications\": [\n    \"The summary omits the critical fact that the working tree changes are legitimate parallel agent WIP, not dirty data, which is a key expected fact from the transcript.\",\n    \"The summary fabricates a 'latest useful blocker/failure' as 'Exit code: 0 Wall time: 0.7 seconds Output: C:\\\\Users\\\\[REDACTED_USER]\\\\.codex\\\\RTK.md', which is "
+      },
+      {
+        "sampleId": "R28",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 5,
+        "justifications": [
+          "Completeness: The summary includes the objective '修复', the key decision about duplicate declarations in commits 634abd7→ec5833a and their removal in 3aec6a4, the blocker about local build passing, and the final state that the file is clean.",
+          "Accuracy: All facts match the transcript evidence, including the duplicate lines at 651-653 and 699-702, the removal in 3aec6a4, and the final verification that only one declaration exists.",
+          "Causal chain: The summary correctly traces the causal chain from the duplicate declarations introduced in 634abd7, persisting through ec5833a, to the fix in 3aec6a4, and the final clean state.",
+          "No fabrication: No facts are fabricated; all statements are directly supported by the transcript evidence lines.",
+          "Actionability: The summary clearly states the fix (update fork to 3aec6a4) and confirms the current file is clean, enabling the next action of verifying the build."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 5,\n  \"justifications\": [\n    \"Completeness: The summary includes the objective '修复', the key decision about duplicate declarations in commits 634abd7→ec5833a and their removal in 3aec6a4, the blocker about local build passing, and the final state that the file is clean.\",\n    \"Accuracy: All facts match the transcript evidence, including the duplicate lines at 651-65"
+      },
+      {
+        "sampleId": "R29",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 2,
+        "justifications": [
+          "Completeness: The summary omits the critical objective '工具不能修改吗，请你定位到codex app尝试着修改或者在底层修改避免使用powershell，使用bash' and the decision '好，看到了关键信息。`codex mcp add` 把 bash-shell MCP server 注册到了 SQLite 数据库里...' which are key facts.",
+          "Accuracy: The summary incorrectly states the blocker as 'Exit code: 0 Wall time: 0.9 seconds Output: --- id: gateway-startup-diagnostics...' but the actual blocker is the failure to use bash instead of PowerShell, and the transcript shows many subsequent steps.",
+          "Causal chain: The summary does not preserve the causal chain from the user's request to avoid PowerShell, through exploring Codex internals, to creating and registering a bash MCP server. It jumps to an unrelated blocker.",
+          "No fabrication: The summary fabricates a 'Current State' that is not supported by the transcript; the actual state is that the bash MCP server was successfully registered and tested.",
+          "Actionability: The summary's 'Next Actions' are incomplete and do not reflect the actual next steps (e.g., using the bash MCP server for further tasks)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0.2,\n  \"justifications\": [\n    \"Completeness: The summary omits the critical objective '工具不能修改吗，请你定位到codex app尝试着修改或者在底层修改避免使用powershell，使用bash' and the decision '好，看到了关键信息。`codex mcp add` 把 bash-shell MCP server 注册到了 SQLite 数据库里...' which are key facts.\",\n    \"Accuracy: The summary incorrectly states the blocker as 'Exit code: 0 Wall time: 0.9 seconds Output: "
+      },
+      {
+        "sampleId": "R30",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": false,
+        "actionability": false,
+        "score": 0,
+        "justifications": [
+          "The summary omits the critical objective of switching product name to 'verse claw' and replacing logo/character.",
+          "The summary omits the critical decision to examine the codebase first.",
+          "The summary omits the critical constraint '你不要读取图片就插进去就行了'.",
+          "The summary omits the important blocker about api-client.ts not found.",
+          "The summary fabricates a 'Current State' that is not a blocker but a successful command output.",
+          "The summary fabricates 'Files Touched' listing api-client.ts and openclaw-workspace.ts without evidence they were actually modified.",
+          "The summary fabricates 'Tests and Results' with package names that are not test results.",
+          "The summary fabricates 'Next Actions' that are not present in the transcript."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": false,\n  \"actionability\": false,\n  \"score\": 0,\n  \"justifications\": [\n    \"The summary omits the critical objective of switching product name to 'verse claw' and replacing logo/character.\",\n    \"The summary omits the critical decision to examine the codebase first.\",\n    \"The summary omits the critical constraint '你不要读取图片就插进去就行了'.\",\n    \"The summary omits the important blocker about api-client.ts not foun"
+      }
+    ],
+    "aggregate": {
+      "judgeScoreMean": 3.9333,
+      "judgeScoreMin": 0,
+      "completenessRate": 0.3,
+      "accuracyRate": 0.6333,
+      "causalChainRate": 0.5667,
+      "noFabricationRate": 0.6333,
+      "actionabilityRate": 0.3333
+    }
+  },
+  "llmContinuation": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 30,
+    "results": [
+      {
+        "sampleId": "R1",
+        "actions": [
+          {
+            "id": "R1-continue",
+            "kind": "decision",
+            "decision": "我找到更完整的链路了：ACP 管理器只会给“自定义 Agent”的 `env` 传到子进程；内置 Codex/Verse CLI 不会读取模型设置里的 API Key 来生成 env。也就是说设置页显示“模型 API 已配置”并不等于 Codex ACP 子进程能看到 `OPENAI_API_KEY`。",
+            "critical": true
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows the key insight that ACP manager only passes env to custom agents, not built-in Codex/Verse CLI. This is the critical decision to continue with, as it explains why the API key configured in settings is not visible to the CLI subprocess. The other candidate actions (read file, run test) are either already done or not directly addressing the root cause.",
+        "evaluation": {
+          "taskId": "R1-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R1-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"我找到更完整的链路了：ACP 管理器只会给“自定义 Agent”的 `env` 传到子进程；内置 Codex/Verse CLI 不会读取模型设置里的 API Key 来生成 env。也就是说设置页显示“模型 API 已配置”并不等于 Codex ACP 子进程能看到 `OPENAI_API_KEY`。\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows the key insight that ACP manager only passes env to custom agents, not built-in Codex/Verse CLI. This is the critical decision to cont"
+      },
+      {
+        "sampleId": "R2",
+        "actions": [
+          {
+            "id": "R2-continue",
+            "kind": "decision",
+            "decision": "测试会放到已有 `tests/unit/process/services/database/` 下，符合现有数据库测试分组。",
+            "critical": true,
+            "label": "Write tests for new stats queries"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that the implementation of stats queries and IPC is complete. The next logical step is to write unit tests for the new database stats functions, as indicated by the candidate action and the user's statement about test placement.",
+        "evaluation": {
+          "taskId": "R2-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R2-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"测试会放到已有 `tests/unit/process/services/database/` 下，符合现有数据库测试分组。\",\n      \"label\": \"Write tests for new stats queries\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that the implementation of stats queries and IPC is complete. The next logical step is to write unit tests for the new database stats functions, as indicated by the candidate action and the u"
+      },
+      {
+        "sampleId": "R3",
+        "actions": [
+          {
+            "id": "R3-continue",
+            "kind": "decision",
+            "decision": "临时脚本已删除，验证日志目录保留。现在补跑跟这次改动相关的单元测试：mock provider 和 host services/openclaw flags 相关测试。",
+            "critical": true,
+            "label": "Run unit tests for mock provider and host services/openclaw flags"
+          }
+        ],
+        "completed": true,
+        "rationale": "The gateway connection validation has passed successfully. The next step is to run the relevant unit tests as stated in the next actions section of the compressed context.",
+        "evaluation": {
+          "taskId": "R3-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R3-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"临时脚本已删除，验证日志目录保留。现在补跑跟这次改动相关的单元测试：mock provider 和 host services/openclaw flags 相关测试。\",\n      \"label\": \"Run unit tests for mock provider and host services/openclaw flags\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The gateway connection validation has passed successfully. The next step is to run the relevant unit tests as stated in the next actions section of the compressed con"
+      },
+      {
+        "sampleId": "R4",
+        "actions": [
+          {
+            "id": "R4-continue",
+            "kind": "decision",
+            "decision": "端口现在是干净的。接下来我用 `cmd start /b` 做真正后台启动，并把日志写到 `.codex-dev-logs/dev.log`，这样当前 Codex 会话结束或超时也不会切断 Electron 的 stdout。",
+            "critical": true,
+            "label": "Start gateway in background with cmd start /b"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that the user wants to fix the gateway connection issue. The last successful action was applying a sandbox fallback patch and passing unit tests. The next step is to start the dev environment in the background to verify the fix works. The candidate action 'R4-continue' directly addresses this by using 'cmd start /b' to launch the gateway and redirect logs to a file, avoiding previous issues with Start-Process. Other candidates are either stale, already completed, or not relevant to the immediate goal.",
+        "evaluation": {
+          "taskId": "R4-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R4-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"端口现在是干净的。接下来我用 `cmd start /b` 做真正后台启动，并把日志写到 `.codex-dev-logs/dev.log`，这样当前 Codex 会话结束或超时也不会切断 Electron 的 stdout。\",\n      \"label\": \"Start gateway in background with cmd start /b\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that the user wants to fix the gateway connection issue. The last successful action was applying a sandbox fallback patch and pa"
+      },
+      {
+        "sampleId": "R5",
+        "actions": [
+          {
+            "id": "R5-read",
+            "kind": "read_file",
+            "target": "electron/gateway/config-sync.ts",
+            "critical": true,
+            "label": "Read config-sync.ts to verify current state and plan next steps"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context indicates that the schema field filtering is done, but the single-instance lock fallback refactoring is pending. The last test output was truncated, and the harness diff gate was blocked by unrelated changes. The next logical step is to read the current state of config-sync.ts to understand what has been changed and then proceed with the single-instance lock refactoring. Running the test again would be premature without verifying the code state.",
+        "evaluation": {
+          "taskId": "R5-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R5-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"electron/gateway/config-sync.ts\",\n      \"decision\": \"\",\n      \"label\": \"Read config-sync.ts to verify current state and plan next steps\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context indicates that the schema field filtering is done, but the single-instance lock fallback refactoring is pending. The last test output was truncated, and the harness diff gate was blocked by unrelated c"
+      },
+      {
+        "sampleId": "R6",
+        "actions": [
+          {
+            "id": "R6-continue",
+            "kind": "decision",
+            "decision": "从 debug 图看，`ISP_R` 名称定位确实把设备带到了可见区域，但 `getComponentItem()` 返回的是 Packet Tracer 逻辑坐标，不是当前屏幕坐标；EDGE_R 那次能开是碰巧窗口已有/视图状态合适。我要继续在“名称定位”链路里补上逻辑坐标到当前屏幕坐标的转换，而不是放弃这个方案。",
+            "critical": true,
+            "label": "继续在名称定位链路中补上逻辑坐标到屏幕坐标的转换"
+          }
+        ],
+        "completed": true,
+        "rationale": "当前阻塞点是逻辑坐标到屏幕坐标的转换缺失。下一步应读取 resolve_device_logical_position 的实现，理解其返回的坐标含义，然后修改脚本以正确映射到屏幕坐标，从而稳定打开设备窗口。",
+        "evaluation": {
+          "taskId": "R6-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R6-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"resolve_device_logical_position\",\n      \"decision\": \"从 debug 图看，`ISP_R` 名称定位确实把设备带到了可见区域，但 `getComponentItem()` 返回的是 Packet Tracer 逻辑坐标，不是当前屏幕坐标；EDGE_R 那次能开是碰巧窗口已有/视图状态合适。我要继续在“名称定位”链路里补上逻辑坐标到当前屏幕坐标的转换，而不是放弃这个方案。\",\n      \"label\": \"继续在名称定位链路中补上逻辑坐标到屏幕坐标的转换\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"当前阻塞点是逻辑坐标到屏幕坐标的转换缺失。下一步应读取 resolve_device_logical_position 的实现，理解其返回的坐标含义，然后修改脚本以正确映射到屏幕坐标，从而稳定打开设备窗"
+      },
+      {
+        "sampleId": "R7",
+        "actions": [
+          {
+            "id": "R7-continue",
+            "kind": "decision",
+            "decision": "[AGENT.md](C:/Users/[REDACTED_USER]/Desktop/PTBuilder-main/AGENT.md): 去掉对 `rtk` 的强制依赖，改成有 `rtk` 就用、没有就直接运行命令。",
+            "critical": true,
+            "label": "Remove hardcoded rtk dependency"
+          }
+        ],
+        "completed": true,
+        "rationale": "The next action is to modify AGENT.md to remove the hardcoded rtk dependency, as identified in the compressed context. This is the critical pending decision that has not been executed yet.",
+        "evaluation": {
+          "taskId": "R7-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R7-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"AGENT.md\",\n      \"decision\": \"去掉对 `rtk` 的强制依赖，改成有 `rtk` 就用、没有就直接运行命令。\",\n      \"label\": \"Remove hardcoded rtk dependency\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The next action is to modify AGENT.md to remove the hardcoded rtk dependency, as identified in the compressed context. This is the critical pending decision that has not been executed yet.\"\n}"
+      },
+      {
+        "sampleId": "R8",
+        "actions": [
+          {
+            "id": "R8-read",
+            "kind": "read_file",
+            "target": "tools/ptbuilder_ui_device.ps1",
+            "critical": true,
+            "label": "Read OpenDevice implementation to understand three-layer attempt and find bridge method to open device directly"
+          }
+        ],
+        "completed": true,
+        "rationale": "The current blocker is that OpenDevice's fallback layers (bridge center click and logical coordinate offset) treat the visible hotspot as a single point, causing failures for devices like ISP_R. The next step is to read the OpenDevice implementation in ptbuilder_ui_device.ps1 to see if there is a bridge method to open the device directly, avoiding coordinate guessing. This aligns with the goal of stabilizing the device opening flow.",
+        "evaluation": {
+          "taskId": "R8-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R8-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"tools/ptbuilder_ui_device.ps1\",\n      \"decision\": \"\",\n      \"label\": \"Read OpenDevice implementation to understand three-layer attempt and find bridge method to open device directly\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The current blocker is that OpenDevice's fallback layers (bridge center click and logical coordinate offset) treat the visible hotspot as a single point, causing failures for dev"
+      },
+      {
+        "sampleId": "R9",
+        "actions": [
+          {
+            "id": "R9-continue",
+            "kind": "decision",
+            "decision": "从快速扫描看，`tools/ptbuilder_ui_device.ps1` 已经有三层尝试：UIA 元素、bridge `centerOnComponentByName` 后点画布中心、再用传入逻辑坐标估算点位。接下来我要细读这几段，看看哪里可以替换成“从 PT 自身对象拿真实视图映射或原生打开”的方案。",
+            "critical": true,
+            "label": "细读 ptbuilder_ui_device.ps1 的 OpenDevice 逻辑"
+          }
+        ],
+        "completed": true,
+        "rationale": "当前最关键的下一步是深入理解现有 OpenDevice 的三层尝试，特别是 bridge centerOnComponentByName 后的点击逻辑，以便找到替换为原生打开或真实视图映射的方案。其他候选动作要么是重复已完成的工作，要么是已被拒绝的陈旧决策。",
+        "evaluation": {
+          "taskId": "R9-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R9-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"tools/ptbuilder_ui_device.ps1\",\n      \"decision\": \"从快速扫描看，`tools/ptbuilder_ui_device.ps1` 已经有三层尝试：UIA 元素、bridge `centerOnComponentByName` 后点画布中心、再用传入逻辑坐标估算点位。接下来我要细读这几段，看看哪里可以替换成“从 PT 自身对象拿真实视图映射或原生打开”的方案。\",\n      \"label\": \"细读 ptbuilder_ui_device.ps1 的 OpenDevice 逻辑\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"当前最关键的下一步是深入理解现有 OpenDevice 的三层尝试，特别是 bridge centerOnComponentByName 后的点击逻辑，以便找到替换为原生打开或真实"
+      },
+      {
+        "sampleId": "R10",
+        "actions": [
+          {
+            "id": "R10-continue",
+            "kind": "decision",
+            "decision": "Bridge 里能用 `centerOnComponentByName`、`getComponentItem` 和 `dialogManager`，但还没看到直接 `openDeviceWindow`。我会继续 introspect 设备对象和 component item，找是否有“打开配置窗口/上下文动作”这样的真实 PT API。",
+            "critical": true,
+            "label": "继续探索PT Bridge API以找到打开设备窗口的方法"
+          }
+        ],
+        "completed": true,
+        "rationale": "当前进度卡在无法通过Bridge API直接打开设备窗口，需要继续探索设备对象和component item以找到打开配置窗口或上下文动作的方法。这是实现稳定UI导航流程的关键步骤。",
+        "evaluation": {
+          "taskId": "R10-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R10-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Bridge 里能用 `centerOnComponentByName`、`getComponentItem` 和 `dialogManager`，但还没看到直接 `openDeviceWindow`。我会继续 introspect 设备对象和 component item，找是否有“打开配置窗口/上下文动作”这样的真实 PT API。\",\n      \"label\": \"继续探索PT Bridge API以找到打开设备窗口的方法\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"当前进度卡在无法通过Bridge API直接打开设备窗口，需要继续探索设备对象和component item以找到打开配置窗口或上下文动作的方法。这是实现稳定UI导航流程的关键步骤。\"\n}"
+      },
+      {
+        "sampleId": "R11",
+        "actions": [
+          {
+            "id": "R11-inspect",
+            "kind": "decision",
+            "decision": "我先按你点名的 `computer-use` 技能读一下本地说明，然后试着从 Windows 这边把 Trae 启起来并确认有没有打开窗口。",
+            "critical": true
+          }
+        ],
+        "completed": true,
+        "rationale": "The evidence shows the user requested to read the computer-use skill documentation and launch Trae from Windows. The chronology indicates this was initiated but not fully completed; the last entry shows Trae was brought to foreground but the task may need further confirmation or next steps. The candidate action R11-inspect aligns with the original decision and is not yet completed.",
+        "evaluation": {
+          "taskId": "R11-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R11-inspect\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"我先按你点名的 `computer-use` 技能读一下本地说明，然后试着从 Windows 这边把 Trae 启起来并确认有没有打开窗口。\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The evidence shows the user requested to read the computer-use skill documentation and launch Trae from Windows. The chronology indicates this was initiated but not fully completed; the last entry shows Trae was brought to foreground but the tas"
+      },
+      {
+        "sampleId": "R12",
+        "actions": [
+          {
+            "id": "R12-inspect",
+            "kind": "decision",
+            "decision": "Exit code: 0 Wall time: 0.6 seconds Output: # RTK - Rust Token Killer (Codex CLI) **Usage**: Token-optimized CLI proxy for shell commands. ## Rule Always prefix shell commands with `rtk`. Examples: ```bash rtk git status",
+            "critical": true,
+            "label": "Inspect output of previous command"
+          }
+        ],
+        "completed": true,
+        "rationale": "The latest output shows a usage message for 'rtk'. This suggests the tool is installed but may need a command to execute. The next logical step is to inspect this output and decide on a concrete action, such as running 'rtk' with a shell command to test functionality.",
+        "evaluation": {
+          "taskId": "R12-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R12-inspect\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Exit code: 0 Wall time: 0.6 seconds Output: # RTK - Rust Token Killer (Codex CLI) **Usage**: Token-optimized CLI proxy for shell commands. ## Rule Always prefix shell commands with `rtk`. Examples: ```bash rtk git status\",\n      \"label\": \"Inspect output of previous command\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest output shows a usage message for 'rtk'. This sugge"
+      },
+      {
+        "sampleId": "R13",
+        "actions": [
+          {
+            "id": "R13-continue",
+            "kind": "decision",
+            "decision": "继续。i18n 这块我刚刚补丁没对上末尾位置，我会按实际 JSON 结构插入两段：一段在 composer.permissionMode 后，一段作为顶层 `workModePanel`。",
+            "critical": true,
+            "label": "继续 i18n 补丁"
+          }
+        ],
+        "completed": true,
+        "rationale": "根据压缩上下文，当前进度是 i18n 补丁未完成，之前尝试的 apply_patch 和 Node 脚本均失败。最新决策是继续按实际 JSON 结构插入两段。因此选择该决策作为下一步动作。",
+        "evaluation": {
+          "taskId": "R13-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R13-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"i18n\",\n      \"decision\": \"继续。i18n 这块我刚刚补丁没对上末尾位置，我会按实际 JSON 结构插入两段：一段在 composer.permissionMode 后，一段作为顶层 `workModePanel`。\",\n      \"label\": \"继续 i18n 补丁\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"根据压缩上下文，当前进度是 i18n 补丁未完成，之前尝试的 apply_patch 和 Node 脚本均失败。最新决策是继续按实际 JSON 结构插入两段。因此选择该决策作为下一步动作。\"\n}"
+      },
+      {
+        "sampleId": "R14",
+        "actions": [
+          {
+            "id": "R14-continue",
+            "kind": "decision",
+            "decision": "我建议不要直接把 Trellis 原样引入，而是走 **“先镜像、再抽象、最后内化”** 的路线。目标不是让项目适配 Trellis，而是把 Trellis 里有价值的初始化/规范/任务机制，改造成 ClawX 自己的生态能力。 **推荐方案** 第一阶段：源码持久化到本地，但不要直接运行到主项目里。 可以把 Trellis 作为上游参考源保存到类似： ```text tools/vendor/trellis-upstream/ ```",
+            "critical": true,
+            "label": "Mirror Trellis upstream source"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context indicates the decision to mirror Trellis upstream source as a first step, rather than directly integrating it. This action continues that plan by persisting Trellis source to tools/vendor/trellis-upstream/.",
+        "evaluation": {
+          "taskId": "R14-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R14-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"tools/vendor/trellis-upstream/\",\n      \"decision\": \"我建议不要直接把 Trellis 原样引入，而是走 **“先镜像、再抽象、最后内化”** 的路线。目标不是让项目适配 Trellis，而是把 Trellis 里有价值的初始化/规范/任务机制，改造成 ClawX 自己的生态能力。 **推荐方案** 第一阶段：源码持久化到本地，但不要直接运行到主项目里。 可以把 Trellis 作为上游参考源保存到类似： ```text tools/vendor/trellis-upstream/ ```\",\n      \"label\": \"Mirror Trellis upstream source\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context indicates t"
+      },
+      {
+        "sampleId": "R15",
+        "actions": [
+          {
+            "id": "R15-continue",
+            "kind": "decision",
+            "decision": "我建议不要直接把 Trellis 原样引入，而是走 **“先镜像、再抽象、最后内化”** 的路线。目标不是让项目适配 Trellis，而是把 Trellis 里有价值的初始化/规范/任务机制，改造成 ClawX 自己的生态能力。 **推荐方案** 第一阶段：源码持久化到本地，但不要直接运行到主项目里。 可以把 Trellis 作为上游参考源保存到类似： ```text tools/vendor/trellis-upstream/ ```",
+            "critical": true,
+            "label": "Mirror Trellis upstream source"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context indicates the project should adapt Trellis rather than directly import it. The recommended first step is to mirror Trellis source to tools/vendor/trellis-upstream/ for reference. This action continues the planned 'mirror, abstract, internalize' strategy and avoids repeating completed tests or stale decisions.",
+        "evaluation": {
+          "taskId": "R15-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R15-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"tools/vendor/trellis-upstream/\",\n      \"decision\": \"我建议不要直接把 Trellis 原样引入，而是走 **“先镜像、再抽象、最后内化”** 的路线。目标不是让项目适配 Trellis，而是把 Trellis 里有价值的初始化/规范/任务机制，改造成 ClawX 自己的生态能力。 **推荐方案** 第一阶段：源码持久化到本地，但不要直接运行到主项目里。 可以把 Trellis 作为上游参考源保存到类似： ```text tools/vendor/trellis-upstream/ ```\",\n      \"label\": \"Mirror Trellis upstream source\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context indicates t"
+      },
+      {
+        "sampleId": "R16",
+        "actions": [
+          {
+            "id": "R16-continue",
+            "kind": "decision",
+            "decision": "已完成。 创建了 GitHub 私有仓库：[Baixu22/VerseClaw](https://github.com/Baixu22/VerseClaw)，可见性确认是 `PRIVATE`，默认分支是 `main`。 本地也已完成初始提交并推送： `ac5a068 Initial VerseClaw import` 我特别确认了 `openclaw_runtime/`：它不是以 submodule/gitlink 形式提交的，而是作为",
+            "critical": true,
+            "label": "确认任务完成"
+          }
+        ],
+        "completed": true,
+        "rationale": "根据压缩上下文，创建私有仓库、初始提交和推送均已成功完成，且已验证 openclaw_runtime 不是子模块。任务目标已达成，无需进一步操作。",
+        "evaluation": {
+          "taskId": "R16-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R16-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"已完成。 创建了 GitHub 私有仓库：[Baixu22/VerseClaw](https://github.com/Baixu22/VerseClaw)，可见性确认是 `PRIVATE`，默认分支是 `main`。 本地也已完成初始提交并推送： `ac5a068 Initial VerseClaw import` 我特别确认了 `openclaw_runtime/`：它不是以 submodule/gitlink 形式提交的，而是作为\",\n      \"label\": \"确认任务完成\"\n    }\n  ],\n  \"completed\": true,\n  \"rationale\": \"根据压缩上下文，创建私有仓库、初始提交和推送均已成功完成，且已验证 openclaw_runtime 不是子模块。任务目标已达成，无需进一步操作。\"\n}"
+      },
+      {
+        "sampleId": "R17",
+        "actions": [
+          {
+            "id": "R17-continue",
+            "kind": "decision",
+            "decision": "Chat 工作区/会话头、工作区切换 toast、权限模式 toast、图片预览按钮",
+            "critical": true,
+            "label": "Continue with remaining i18n hardcoded strings"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that the i18n localization task is still in progress. The latest successful E2E test passed, but there are remaining items listed in 'Next Actions' that have not been addressed yet: Chat workspace/session header, workspace switch toast, permission mode toast, and image preview button. The candidate action 'R17-continue' directly matches this next step and is critical. Other candidates are either already completed (R17-test, R17-distractor-repeat) or rejected (R17-distractor-stale).",
+        "evaluation": {
+          "taskId": "R17-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R17-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"Chat 工作区/会话头、工作区切换 toast、权限模式 toast、图片预览按钮\",\n      \"decision\": \"Chat 工作区/会话头、工作区切换 toast、权限模式 toast、图片预览按钮\",\n      \"label\": \"Continue with remaining i18n hardcoded strings\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that the i18n localization task is still in progress. The latest successful E2E test passed, but there are remaining items listed in 'Next Actions' that ha"
+      },
+      {
+        "sampleId": "R18",
+        "actions": [
+          {
+            "id": "R18-continue",
+            "kind": "decision",
+            "decision": "还有一个实现决策会影响改动范围：Review Center 要怎样拿到模型的结构化输出。我要快速核对 runtime/Gateway 现有的同步返回能力，避免计划里留下“看情况”的空洞。",
+            "critical": true,
+            "label": "Verify gateway sync return for structured output"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows the user is in Plan Mode for Code Review Center MVP. The next action is to verify how the Review Center will obtain structured output from the model, specifically checking runtime/Gateway's synchronous return capability. This is the critical decision identified in the context and candidate actions. The other candidates are either stale, repeated, or not applicable.",
+        "evaluation": {
+          "taskId": "R18-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R18-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"runtime/Gateway sync return capability\",\n      \"decision\": \"Review Center 要怎样拿到模型的结构化输出。我要快速核对 runtime/Gateway 现有的同步返回能力，避免计划里留下“看情况”的空洞。\",\n      \"label\": \"Verify gateway sync return for structured output\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows the user is in Plan Mode for Code Review Center MVP. The next action is to verify how the Review Center will obtain struct"
+      },
+      {
+        "sampleId": "R19",
+        "actions": [
+          {
+            "id": "R19-continue",
+            "kind": "decision",
+            "decision": "核心单测绿了。接下来按任务验收跑组合 i18n parity、Electron E2E、typecheck 和 harness validate；其中 full harness validate 可能会受当前大量无关脏改动影响，我会保留实际结果。",
+            "critical": true,
+            "label": "Run acceptance suite"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that unit tests pass and the next planned step is to run the acceptance suite: i18n parity, Electron E2E, typecheck, and harness validate. This is the logical continuation, as the Playwright test failure has been resolved and the stale decisions are rejected.",
+        "evaluation": {
+          "taskId": "R19-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R19-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"核心单测绿了。接下来按任务验收跑组合 i18n parity、Electron E2E、typecheck 和 harness validate；其中 full harness validate 可能会受当前大量无关脏改动影响，我会保留实际结果。\",\n      \"label\": \"Run acceptance suite\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that unit tests pass and the next planned step is to run the acceptance suite: i18n parity, Electron E2E, typecheck, and harness validate. Thi"
+      },
+      {
+        "sampleId": "R20",
+        "actions": [
+          {
+            "id": "R20-continue",
+            "kind": "decision",
+            "decision": "新增 `projectRules` typed host-api 和 Main service：[electron/services/project-rules-api.ts](C:/Users/[REDACTED_USER]/Desktop/clawx/ClawX/electron/services/project-rules-api.ts)",
+            "critical": true,
+            "label": "Implement projectRules host-api service"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows the implementation is in progress: the projectRules host-api service has been created, but the design overview document still needs to be updated to reflect the new module count and list. The next action is to continue with the remaining documentation sync.",
+        "evaluation": {
+          "taskId": "R20-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R20-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"electron/services/project-rules-api.ts\",\n      \"decision\": \"新增 `projectRules` typed host-api 和 Main service\",\n      \"label\": \"Implement projectRules host-api service\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows the implementation is in progress: the projectRules host-api service has been created, but the design overview document still needs to be updated to reflect the "
+      },
+      {
+        "sampleId": "R21",
+        "actions": [
+          {
+            "id": "R21-continue",
+            "kind": "decision",
+            "decision": "web typecheck 通过了；完整 typecheck 仍被现有未提交的 `project-rules-api.ts` 挡住。接下来跑目标 E2E（会先 build:vite），看 Monaco/workbench 场景有没有实际渲染问题。",
+            "critical": true,
+            "label": "Run E2E test after build:vite"
+          }
+        ],
+        "completed": true,
+        "rationale": "The next logical step is to run the E2E test for the workspace-git-panel, which requires a build:vite first. This aligns with the decision to verify Monaco/workbench rendering. The other candidate actions are either already completed, stale, or not relevant.",
+        "evaluation": {
+          "taskId": "R21-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R21-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"web typecheck 通过了；完整 typecheck 仍被现有未提交的 `project-rules-api.ts` 挡住。接下来跑目标 E2E（会先 build:vite），看 Monaco/workbench 场景有没有实际渲染问题。\",\n      \"label\": \"Run E2E test after build:vite\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The next logical step is to run the E2E test for the workspace-git-panel, which requires a build:vite first. This aligns with the decision to verify Monaco/workbe"
+      },
+      {
+        "sampleId": "R22",
+        "actions": [
+          {
+            "id": "R22-continue",
+            "kind": "decision",
+            "decision": "Added `12.3 Codex / Claude Code Parity Roadmap` in [docs/clawx-design-overview.md](C:/Users/[REDACTED_USER]/Desktop/clawx/ClawX/docs/clawx-design-overview.md:1283), including the parity matrix, priority matrix, and execu",
+            "critical": true,
+            "label": "Continue implementing roadmap spec plan"
+          }
+        ],
+        "completed": true,
+        "rationale": "The task is to implement the roadmap spec plan. The compressed context shows that the roadmap section and three task specs have been added, but validation with --no-diff is still pending. The next logical step is to run harness validate --no-diff to confirm structural correctness before marking complete.",
+        "evaluation": {
+          "taskId": "R22-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R22-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"docs/clawx-design-overview.md\",\n      \"decision\": \"Added `12.3 Codex / Claude Code Parity Roadmap` in docs/clawx-design-overview.md, including the parity matrix, priority matrix, and execution plan.\",\n      \"label\": \"Continue implementing roadmap spec plan\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The task is to implement the roadmap spec plan. The compressed context shows that the roadmap secti"
+      },
+      {
+        "sampleId": "R23",
+        "actions": [
+          {
+            "id": "R23-continue",
+            "kind": "decision",
+            "decision": "新增 harness task spec：[lightweight-subagent-runner-mvp.md](C:/Users/[REDACTED_USER]/Desktop/clawx/ClawX/harness/specs/tasks/lightweight-subagent-runner-mvp.md:1)",
+            "critical": true,
+            "label": "Add harness task spec for Lightweight Subagent Runner MVP"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows the MVP implementation is in progress but the harness task spec has not yet been created. The next action is to add the harness task spec as specified in the 'Next Actions' section. Other candidate actions are either already completed (R23-test, R23-read) or rejected stale decisions.",
+        "evaluation": {
+          "taskId": "R23-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R23-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"harness/specs/tasks/lightweight-subagent-runner-mvp.md\",\n      \"decision\": \"新增 harness task spec：[lightweight-subagent-runner-mvp.md](C:/Users/[REDACTED_USER]/Desktop/clawx/ClawX/harness/specs/tasks/lightweight-subagent-runner-mvp.md:1)\",\n      \"label\": \"Add harness task spec for Lightweight Subagent Runner MVP\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows the MVP implem"
+      },
+      {
+        "sampleId": "R24",
+        "actions": [
+          {
+            "id": "R24-continue",
+            "kind": "decision",
+            "decision": "新增单测和 web typecheck 都过了。因为你遇到的是 `dist` 产物里的懒加载路径问题，我再跑一次 `build:vite`，把本地 `dist` 刷到包含恢复逻辑的版本；然后用 ClawGraph 的 Electron e2e 做点击验证。",
+            "critical": true,
+            "label": "Rebuild dist and run e2e"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context indicates that unit tests and typecheck passed, but the lazy loading path issue is in the dist artifact. The next logical step is to rebuild the dist with the recovery logic and then run Electron e2e tests to verify the fix. This aligns with the stated next action and avoids repeating completed work or stale decisions.",
+        "evaluation": {
+          "taskId": "R24-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R24-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"build:vite\",\n      \"decision\": \"新增单测和 web typecheck 都过了。因为你遇到的是 `dist` 产物里的懒加载路径问题，我再跑一次 `build:vite`，把本地 `dist` 刷到包含恢复逻辑的版本；然后用 ClawGraph 的 Electron e2e 做点击验证。\",\n      \"label\": \"Rebuild dist and run e2e\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context indicates that unit tests and typecheck passed, but the lazy loading path issue is in the dist artifact. The next logical step is"
+      },
+      {
+        "sampleId": "R25",
+        "actions": [
+          {
+            "id": "R25-read",
+            "kind": "read_file",
+            "target": "docs/clawx-design-overview.md",
+            "critical": true,
+            "label": "Read design overview to understand architecture"
+          }
+        ],
+        "completed": true,
+        "rationale": "The current state shows a failed connection test with no services listening. The compressed context indicates modified files including docs/clawx-design-overview.md. Reading this file will provide architectural context to understand how services should be started and connected, which is necessary to resolve the connectivity issues.",
+        "evaluation": {
+          "taskId": "R25-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R25-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"docs/clawx-design-overview.md\",\n      \"decision\": \"\",\n      \"label\": \"Read design overview to understand architecture\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The current state shows a failed connection test with no services listening. The compressed context indicates modified files including docs/clawx-design-overview.md. Reading this file will provide architectural context to understand how serv"
+      },
+      {
+        "sampleId": "R26",
+        "actions": [
+          {
+            "id": "R26-read",
+            "kind": "read_file",
+            "target": "Downloads/SKILL.md",
+            "critical": true,
+            "label": "Read SKILL.md to understand Boris prompt methodology"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows the user was analyzing Boris's prompt methodology (SKILL.md) and ClawX design documents. The last action was reading harness specs. The next logical step is to read SKILL.md to continue the analysis, as it is a critical file mentioned in the context and not yet fully processed.",
+        "evaluation": {
+          "taskId": "R26-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R26-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"Downloads/SKILL.md\",\n      \"decision\": \"\",\n      \"label\": \"Read SKILL.md to understand Boris prompt methodology\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows the user was analyzing Boris's prompt methodology (SKILL.md) and ClawX design documents. The last action was reading harness specs. The next logical step is to read SKILL.md to continue the analysis, as it is a critica"
+      },
+      {
+        "sampleId": "R27",
+        "actions": [
+          {
+            "id": "R27-continue",
+            "kind": "decision",
+            "decision": "typecheck 通过了，没有任何错误。验证完成！",
+            "critical": true,
+            "label": "Continue after typecheck success"
+          }
+        ],
+        "completed": true,
+        "rationale": "Typecheck passed with no errors, and the last harness validate succeeded. The goal is complete; no further actions needed.",
+        "evaluation": {
+          "taskId": "R27-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R27-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"typecheck 通过了，没有任何错误。验证完成！\",\n      \"label\": \"Continue after typecheck success\"\n    }\n  ],\n  \"completed\": true,\n  \"rationale\": \"Typecheck passed with no errors, and the last harness validate succeeded. The goal is complete; no further actions needed.\"\n}"
+      },
+      {
+        "sampleId": "R28",
+        "actions": [
+          {
+            "id": "R28-test",
+            "kind": "run_test",
+            "target": "pnpm run build:vite 2>&1",
+            "label": "Run build to verify fix"
+          }
+        ],
+        "completed": false,
+        "rationale": "The duplicate declarations have been removed in commit 3aec6a4. The next step is to run the build to confirm the fix passes CI.",
+        "evaluation": {
+          "taskId": "R28-real-continuation",
+          "firstActionMatch": false,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R28-test\",\n      \"kind\": \"run_test\",\n      \"target\": \"pnpm run build:vite 2>&1\",\n      \"decision\": \"\",\n      \"label\": \"Run build to verify fix\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The duplicate declarations have been removed in commit 3aec6a4. The next step is to run the build to confirm the fix passes CI.\"\n}"
+      },
+      {
+        "sampleId": "R29",
+        "actions": [
+          {
+            "id": "R29-continue",
+            "kind": "decision",
+            "decision": "好，看到了关键信息。`codex mcp add` 把 bash-shell MCP server 注册到了 SQLite 数据库里（不是 config.toml），`codex mcp list --json` 确认它已经 registered 且 enabled： ``` { \"name\": \"bash-shell\", \"enabled\": true, \"transport\": { \"type\": \"stdio\", \"command",
+            "critical": true,
+            "label": "Confirm bash-shell MCP server registration and proceed to use it"
+          }
+        ],
+        "completed": true,
+        "rationale": "The bash-shell MCP server has been successfully created and registered. The next logical step is to confirm its registration and then use it to execute bash commands, fulfilling the user's request to avoid PowerShell.",
+        "evaluation": {
+          "taskId": "R29-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R29-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"好，看到了关键信息。`codex mcp add` 把 bash-shell MCP server 注册到了 SQLite 数据库里（不是 config.toml），`codex mcp list --json` 确认它已经 registered 且 enabled： ``` { \\\"name\\\": \\\"bash-shell\\\", \\\"enabled\\\": true, \\\"transport\\\": { \\\"type\\\": \\\"stdio\\\", \\\"command\",\n      \"label\": \"Confirm bash-shell MCP server registration and proceed to use it\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The bash-shell MC"
+      },
+      {
+        "sampleId": "R30",
+        "actions": [
+          {
+            "id": "R30-read",
+            "kind": "read_file",
+            "target": "Desktop/clawx/ClawX/src/lib/api-client.ts",
+            "critical": true,
+            "label": "Read api-client.ts to understand current branding usage"
+          }
+        ],
+        "completed": true,
+        "rationale": "The previous attempt to read api-client.ts failed because the file path was incorrect. The current state shows that the file does not exist at the expected location. However, the goal is to replace product name and logo. We need to first understand the current branding references. The candidate action to read api-client.ts is critical to identify where 'ClawX' is used. The other candidate actions are either stale or repeat completed work. Therefore, we should attempt to read the file again, possibly with a corrected path or by searching for the actual file location.",
+        "evaluation": {
+          "taskId": "R30-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R30-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"Desktop/clawx/ClawX/src/lib/api-client.ts\",\n      \"decision\": \"\",\n      \"label\": \"Read api-client.ts to understand current branding usage\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The previous attempt to read api-client.ts failed because the file path was incorrect. The current state shows that the file does not exist at the expected location. However, the goal is to replace product name and logo. "
+      }
+    ],
+    "aggregate": {
+      "total": 30,
+      "firstActionMatchRate": 0.9667,
+      "criticalActionMatchRate": 0.9667,
+      "noRepeatedWorkRate": 1,
+      "noContradictoryActionRate": 1,
+      "decisionConsistencyRate": 0.9667,
+      "taskCompletionDelta": 0.0333
+    },
+    "gate": {
+      "pass": true,
+      "thresholds": {
+        "firstActionMatchRate": ">= 0.85",
+        "criticalActionMatchRate": ">= 0.90",
+        "noRepeatedWorkRate": ">= 0.95",
+        "noContradictoryActionRate": ">= 0.95",
+        "decisionConsistencyRate": ">= 0.90",
+        "taskCompletionDelta": "<= 0.08"
+      }
+    }
+  },
+  "layer0": {
+    "rounds": 30,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": null,
+    "informationDensityMean": null,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 275,
+    "expectedTotal": 275
+  },
+  "layer1": {
+    "rounds": 30,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": 0.1845,
+    "informationDensityMean": 6.4827,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 275,
+    "expectedTotal": 275
+  },
+  "layer1Gate": {
+    "pass": true,
+    "thresholds": {
+      "recallCriticalMean": ">= 0.95",
+      "recallImportantMean": ">= 0.75",
+      "weightedRecallMean": ">= 0.90",
+      "precisionMean": "= 1",
+      "forbiddenFoundTotal": "= 0",
+      "staleExclusionMean": ">= 0.99",
+      "compressionRatioMean": "0.15..0.35",
+      "informationDensityMean": ">= 2"
+    }
+  },
+  "layer2": {
+    "total": 30,
+    "judgeScoreMean": 10,
+    "judgeScoreMin": 10,
+    "completenessRate": 1,
+    "accuracyRate": 1,
+    "causalChainPreservation": 1,
+    "causalChainRate": 1,
+    "noFabricationRate": 1,
+    "actionabilityRate": 1
+  },
+  "layer2Gate": {
+    "pass": true
+  },
+  "layer3": {
+    "total": 30,
+    "firstActionMatchRate": 1,
+    "criticalActionMatchRate": 1,
+    "noRepeatedWorkRate": 1,
+    "noContradictoryActionRate": 1,
+    "decisionConsistencyRate": 1,
+    "taskCompletionDelta": 0
+  },
+  "layer3Gate": {
+    "pass": true,
+    "thresholds": {
+      "firstActionMatchRate": ">= 0.85",
+      "criticalActionMatchRate": ">= 0.90",
+      "noRepeatedWorkRate": ">= 0.95",
+      "noContradictoryActionRate": ">= 0.95",
+      "decisionConsistencyRate": ">= 0.90",
+      "taskCompletionDelta": "<= 0.08"
+    }
+  },
+  "cohorts": {
+    "real": {
+      "sampleCount": 30,
+      "layer0": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 275,
+        "expectedTotal": 275
+      },
+      "layer1": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1845,
+        "informationDensityMean": 6.4827,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 275,
+        "expectedTotal": 275
+      },
+      "layer3": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.60": {
+        "rounds": 7,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1542,
+        "informationDensityMean": 6.5409,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 64,
+        "expectedTotal": 64
+      },
+      "0.75": {
+        "rounds": 6,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1499,
+        "informationDensityMean": 6.982,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 56,
+        "expectedTotal": 56
+      },
+      "0.85": {
+        "rounds": 6,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1425,
+        "informationDensityMean": 7.3174,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 55,
+        "expectedTotal": 55
+      },
+      "0.95": {
+        "rounds": 6,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1597,
+        "informationDensityMean": 6.2621,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 56,
+        "expectedTotal": 56
+      },
+      "emergency": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.3482,
+        "informationDensityMean": 5.065,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 44,
+        "expectedTotal": 44
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 10,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1425,
+        "informationDensityMean": 7.4033,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 80,
+        "expectedTotal": 80
+      },
+      "200": {
+        "rounds": 8,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1585,
+        "informationDensityMean": 6.3121,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 80,
+        "expectedTotal": 80
+      },
+      "1000": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2367,
+        "informationDensityMean": 5.8292,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 115,
+        "expectedTotal": 115
+      }
+    },
+    "byPressureContinuation": {
+      "0.60": {
+        "total": 7,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.75": {
+        "total": 6,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.85": {
+        "total": 6,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.95": {
+        "total": 6,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "emergency": {
+        "total": 5,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    }
+  },
+  "cohortBreakdown": {
+    "real": {
+      "sampleCount": 30,
+      "layer0": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 275,
+        "expectedTotal": 275
+      },
+      "layer1": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1845,
+        "informationDensityMean": 6.4827,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 275,
+        "expectedTotal": 275
+      },
+      "layer3": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.60": {
+        "rounds": 7,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1542,
+        "informationDensityMean": 6.5409,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 64,
+        "expectedTotal": 64
+      },
+      "0.75": {
+        "rounds": 6,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1499,
+        "informationDensityMean": 6.982,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 56,
+        "expectedTotal": 56
+      },
+      "0.85": {
+        "rounds": 6,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1425,
+        "informationDensityMean": 7.3174,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 55,
+        "expectedTotal": 55
+      },
+      "0.95": {
+        "rounds": 6,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1597,
+        "informationDensityMean": 6.2621,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 56,
+        "expectedTotal": 56
+      },
+      "emergency": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.3482,
+        "informationDensityMean": 5.065,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 44,
+        "expectedTotal": 44
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 10,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1425,
+        "informationDensityMean": 7.4033,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 80,
+        "expectedTotal": 80
+      },
+      "200": {
+        "rounds": 8,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1585,
+        "informationDensityMean": 6.3121,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 80,
+        "expectedTotal": 80
+      },
+      "1000": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2367,
+        "informationDensityMean": 5.8292,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 115,
+        "expectedTotal": 115
+      }
+    }
+  },
+  "worstCases": [
+    {
+      "sampleId": "R1",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl",
+        "turnCohort": 50,
+        "turnCount": 50,
+        "pressureCohort": "0.60",
+        "transcriptLength": "medium"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "Completeness: All expected facts are preserved, including the critical decisions about shellEnv skipping on Windows and ACP manager not injecting API keys for built-in agents, as well as the blocker outputs and file/test references. Accuracy: The summary accurately reflects the transcript evidence, including the exact wording of key decisions and the outputs of commands. Causal chain: The summary correctly traces the causal chain from the initial problem (API not recognized) through the investigation (shellEnv, ACP manager) to the root cause (no env injection for built-in agents). No fabrication: All statements are directly supported by the provided evidence lines; no fabricated facts are present. Actionability: The summary clearly identifies the root cause and provides a next action (the decision about ACP manager), enabling continuation of the debugging process."
+    },
+    {
+      "sampleId": "R2",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl",
+        "turnCohort": 200,
+        "turnCount": 200,
+        "pressureCohort": "0.75",
+        "transcriptLength": "long"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "The summary omits the critical expected fact: '公共类型已经扩好。接下来我把数据库 IPC 暴露出 getStatsCliToolRank，并让错误兜底包含新的监控时长字段.' This is a key blocker and decision. The summary misrepresents the 'Exit code: 0 Wall time: 1.2 seconds Output: 目录: ...' as a failure/blocker, but the transcript shows it is a successful directory listing, not a failure. The summary fails to preserve the causal chain: the decision to place tests in 'tests/unit/process/services/database/' is correctly noted, but the subsequent actions (e.g., creating stats.test.ts) are missing, breaking the chain. The summary fabricates a 'Current State' that describes a directory listing as a 'blocker/failure', which is not supported by the transcript. The summary lists 'references/renderer.md', 'references/process.md', 'references/project-layout.md' as files touched, but these are only mentioned in the architecture skill output, not actually modified. The summary claims 'vitest' and 'Vitest 4' as test results, but the transcript only mentions these in passing as configuration references, not as actual test outcomes. The summary's 'Next Actions' only repeats the decision about test placement, omitting the actual next steps like implementing the IPC exposure and error handling. The summary does not include the evidence-backed chronology of the actual work done (e.g., modifying databaseBridge.ts, index.ts, etc.), making it incomplete and inaccurate."
+    },
+    {
+      "sampleId": "R3",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl",
+        "turnCohort": 1000,
+        "turnCount": 1000,
+        "pressureCohort": "0.85",
+        "transcriptLength": "extreme"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "Completeness: The summary omits the critical fact that the legacy state migration (ensureSessionStateMigrated) was the root cause of the gateway hanging, and that the fix involved adding OPENCLAW_SKIP_LEGACY_STATE_MIGRATION. It also omits the final successful verification with pnpm dev showing Gateway auto-start succeeded and WebSocket handshake. Accuracy: The summary accurately reflects the transcript evidence, including the initial module-not-found error, the switch to tsx CLI, the build script fixes, and the eventual resolution. No fabricated facts. Causal chain: The summary preserves the causal chain from the initial ERR_MODULE_NOT_FOUND, through the tsx CLI fix, the build alias fix, the ESM splitting, to the legacy migration hang and its resolution. The progression is clear. No fabrication: All statements in the summary are directly supported by the transcript evidence lines. No invented details. Actionability: The summary does not include the final successful verification steps (pnpm dev with Gateway auto-start succeeded) and the cleanup of temporary scripts. Without these, the next actions are incomplete and the goal is not fully actionable."
+    },
+    {
+      "sampleId": "R4",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-12T19-36-16-019ebb9e-439d-7462-9f50-9f16e28a8df4.jsonl",
+        "turnCohort": 1000,
+        "turnCount": 223,
+        "pressureCohort": "0.60",
+        "transcriptLength": "extreme"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "The summary omits the critical objective: '现在我手动启动了，然而出现gateway无法连接的错误，请你帮我查看日志并修复问题保证一直基本正常' (line 323). This is a core task fact. The summary fails to include the key decision from line 103: '在 Gateway 启动前统一计算一次“有效 runtime + 有效 sandbox + 是否降级 + 原因”'. The summary does not preserve the causal chain: the user reports gateway connection failure due to agent forcing Docker sandbox without fallback (lines 6-7), then the assistant investigates and plans a fix. The summary fabricates a blocker: 'Exit code: 0 Wall time: 1.1 seconds Output: # RTK - Rust Token Killer...' is not a blocker; it is a successful command output. The actual blocker is the gateway connection failure. The summary lists 'cargo test' and 'npm run build' as test results, but these are not mentioned in the transcript as executed tests; they appear only in RTK.md examples. The summary's next action is stale: '端口现在是干净的。接下来我用 `cmd start /b` 做真正后台启动...' was superseded by the user manually starting and reporting the gateway error. The summary omits the critical constraint from line 20: '我先把相关约束和代码入口摸清楚，重点看 `openclaw_runtime`、gateway 启动链路...'. The summary fabricates file touches: './AGENTS.md', './package.json', 'scripts/generate-ext-bridge.mjs' are not actually modified in the transcript; they are only read or referenced."
+    },
+    {
+      "sampleId": "R5",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl",
+        "turnCohort": 50,
+        "turnCount": 50,
+        "pressureCohort": "0.75",
+        "transcriptLength": "medium"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "Completeness: The summary omits the critical fact that the user identified and attempted to remove 'autoDisabledReason' fields from the source-state config file, which is a key continuation action. It also omits the failed PowerShell commands and the switch to a Node script, which are part of the causal chain. Accuracy: All stated facts are directly supported by the transcript evidence. Causal chain: The summary correctly preserves the sequence of filtering schema-breaking fields, extracting single-instance lock logic, and noting harness validation failure due to unrelated changes. No fabrication: No invented facts are present. Actionability: The summary does not include the next concrete action (cleaning up 'autoDisabledReason' in the config file), making it insufficient for continuation."
+    },
+    {
+      "sampleId": "R6",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-15T17-30-34-019eca9e-3fcd-7b61-a5a0-4b04744db4b7.jsonl",
+        "turnCohort": 200,
+        "turnCount": 200,
+        "pressureCohort": "0.85",
+        "transcriptLength": "long"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "The summary omits the critical objective '通过名称定位节点然后打开cli的方案行不通吗 请在此尝试啊' entirely. The summary fabricates a 'Current State' that is a truncated grep output, not a real blocker. The summary misrepresents the causal chain: it does not show the progression from name-based navigation attempts to the coordinate conversion issue. The summary includes fabricated test results 'node = margins' and 'node is None:' that are not present in the transcript. The summary's 'Next Actions' are a verbatim copy of a decision line, not actionable steps derived from the evidence."
+    },
+    {
+      "sampleId": "R8",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-15T18-55-54-019ecaec-5cf3-7f83-b093-3a80256557c6.jsonl",
+        "turnCohort": 50,
+        "turnCount": 42,
+        "pressureCohort": "emergency",
+        "transcriptLength": "medium"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "All critical expected facts (objective, decision, constraint) are present in the summary. Important blocker and file context facts are accurately reflected. The causal chain from reading scripts to identifying OpenDevice issues to planning next steps is preserved. No fabricated facts; all statements are backed by evidence lines. The summary provides actionable next steps (continue from current state using evidence-backed facts)."
+    },
+    {
+      "sampleId": "R9",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-15T19-10-05-019ecaf9-5b3e-7573-9647-6b360760b035.jsonl",
+        "turnCohort": 200,
+        "turnCount": 75,
+        "pressureCohort": "0.60",
+        "transcriptLength": "long"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "Completeness: The summary omits the critical objective '实现“通过设备名称定位 -> 打开真实设备窗口 -> 切到 CLI -> 输入命令 -> 截取子窗口 -> 关闭窗口 -> 下一个设备”的稳定流程' and the constraint '不要删除或重置拓扑，不要覆盖原始模板' from the transcript. It also omits the failed PowerShell commands (lines 111-113, 123-125) which are part of the evidence chain. Accuracy: All stated facts are directly supported by the transcript evidence lines. No inaccuracies found. Causal chain: The summary correctly preserves the sequence: objective -> constraint -> attempt to read scripts -> failure due to RTK rule -> decision to use rtk -> further attempts to read scripts -> failure due to PowerShell variable expansion -> decision to use single quotes. The causal links are intact. No fabrication: No fabricated facts are present. All claims are traceable to the evidence lines. Actionability: The summary does not provide enough context for the next actions. It mentions '细读这几段' but does not specify which lines or what to look for. The next actions are vague and lack concrete steps. The summary also omits the failed commands, which are important for understanding the current blocker."
+    },
+    {
+      "sampleId": "R10",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl",
+        "turnCohort": 1000,
+        "turnCount": 90,
+        "pressureCohort": "0.75",
+        "transcriptLength": "extreme"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "Completeness: The summary omits the critical constraint that screenshots must be real Packet Tracer UI screenshots, not generated or synthetic images. It also omits the specific next action to introspect device objects for an openDeviceWindow API. Accuracy: All stated facts are supported by the transcript evidence. Causal chain: The summary correctly reflects the progression from reading RTK rules, inspecting existing scripts, identifying the coordinate-click problem, and deciding to use UI navigation. No fabrication: No fabricated facts are present. Actionability: The summary does not clearly state the next concrete action (introspect device objects for openDeviceWindow), making it less actionable for continuation."
+    },
+    {
+      "sampleId": "R11",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-16T18-23-59-019ecff5-974c-7d72-a714-eaeb10f55d0b.jsonl",
+        "turnCohort": 50,
+        "turnCount": 16,
+        "pressureCohort": "0.85",
+        "transcriptLength": "medium"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "Completeness: The summary omits the critical evidence that Trae CN was successfully identified and its window was brought to the foreground (lines 22-30). This is a key outcome of the task. Accuracy: All included facts match the transcript evidence. Causal chain: The summary preserves the sequence from reading the skill to attempting to open Trae. No fabrication: No invented facts are present. Actionability: The summary lacks the concrete result (Trae window activated) needed to determine next actions, making it less actionable."
+    }
+  ],
+  "regressionExamples": [
+    {
+      "sampleId": "R1",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl",
+        "turnCohort": 50,
+        "turnCount": 50,
+        "pressureCohort": "0.60",
+        "transcriptLength": "medium"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "Completeness: All expected facts are preserved, including the critical decisions about shellEnv skipping on Windows and ACP manager not injecting API keys for built-in agents, as well as the blocker outputs and file/test references. Accuracy: The summary accurately reflects the transcript evidence, including the exact wording of key decisions and the outputs of commands. Causal chain: The summary correctly traces the causal chain from the initial problem (API not recognized) through the investigation (shellEnv, ACP manager) to the root cause (no env injection for built-in agents). No fabrication: All statements are directly supported by the provided evidence lines; no fabricated facts are present. Actionability: The summary clearly identifies the root cause and provides a next action (the decision about ACP manager), enabling continuation of the debugging process."
+    },
+    {
+      "sampleId": "R2",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl",
+        "turnCohort": 200,
+        "turnCount": 200,
+        "pressureCohort": "0.75",
+        "transcriptLength": "long"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "The summary omits the critical expected fact: '公共类型已经扩好。接下来我把数据库 IPC 暴露出 getStatsCliToolRank，并让错误兜底包含新的监控时长字段.' This is a key blocker and decision. The summary misrepresents the 'Exit code: 0 Wall time: 1.2 seconds Output: 目录: ...' as a failure/blocker, but the transcript shows it is a successful directory listing, not a failure. The summary fails to preserve the causal chain: the decision to place tests in 'tests/unit/process/services/database/' is correctly noted, but the subsequent actions (e.g., creating stats.test.ts) are missing, breaking the chain. The summary fabricates a 'Current State' that describes a directory listing as a 'blocker/failure', which is not supported by the transcript. The summary lists 'references/renderer.md', 'references/process.md', 'references/project-layout.md' as files touched, but these are only mentioned in the architecture skill output, not actually modified. The summary claims 'vitest' and 'Vitest 4' as test results, but the transcript only mentions these in passing as configuration references, not as actual test outcomes. The summary's 'Next Actions' only repeats the decision about test placement, omitting the actual next steps like implementing the IPC exposure and error handling. The summary does not include the evidence-backed chronology of the actual work done (e.g., modifying databaseBridge.ts, index.ts, etc.), making it incomplete and inaccurate."
+    },
+    {
+      "sampleId": "R3",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl",
+        "turnCohort": 1000,
+        "turnCount": 1000,
+        "pressureCohort": "0.85",
+        "transcriptLength": "extreme"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "Completeness: The summary omits the critical fact that the legacy state migration (ensureSessionStateMigrated) was the root cause of the gateway hanging, and that the fix involved adding OPENCLAW_SKIP_LEGACY_STATE_MIGRATION. It also omits the final successful verification with pnpm dev showing Gateway auto-start succeeded and WebSocket handshake. Accuracy: The summary accurately reflects the transcript evidence, including the initial module-not-found error, the switch to tsx CLI, the build script fixes, and the eventual resolution. No fabricated facts. Causal chain: The summary preserves the causal chain from the initial ERR_MODULE_NOT_FOUND, through the tsx CLI fix, the build alias fix, the ESM splitting, to the legacy migration hang and its resolution. The progression is clear. No fabrication: All statements in the summary are directly supported by the transcript evidence lines. No invented details. Actionability: The summary does not include the final successful verification steps (pnpm dev with Gateway auto-start succeeded) and the cleanup of temporary scripts. Without these, the next actions are incomplete and the goal is not fully actionable."
+    }
+  ],
+  "redactionSummary": {
+    "mode": "strict",
+    "replacements": {
+      "apiKeys": 18470,
+      "authTokens": 31,
+      "authHeaders": 34,
+      "providerKeys": 35,
+      "urlTokens": 0,
+      "usernames": 22900
+    },
+    "filesScanned": 201,
+    "linesScanned": 74985
+  },
+  "acceptance": {
+    "status": "FAIL",
+    "checks": [
+      {
+        "id": "sampleCount.exact",
+        "pass": true,
+        "actual": 30,
+        "expected": "= 30"
+      },
+      {
+        "id": "samplesJsonl.exact",
+        "pass": true,
+        "actual": 30,
+        "expected": "= 30"
+      },
+      {
+        "id": "l0.recallMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l0.staleExclusionMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l1.gate",
+        "pass": true,
+        "actual": 1,
+        "expected": "all L1 thresholds"
+      },
+      {
+        "id": "l2.deterministicGate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 thresholds"
+      },
+      {
+        "id": "l3.deterministicGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "L3 thresholds"
+      },
+      {
+        "id": "realCohort.notMasked",
+        "pass": true,
+        "actual": 1,
+        "expected": "real L1 gate passes independently when real samples exist"
+      },
+      {
+        "id": "daily.evidenceSufficiency",
+        "pass": true,
+        "actual": 1,
+        "expected": "daily may degrade but must mark evidenceInsufficient"
+      },
+      {
+        "id": "l2.realJudge.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed"
+      },
+      {
+        "id": "l2.realJudge.gate",
+        "pass": false,
+        "actual": 3.9333,
+        "expected": "L2 real judge thresholds"
+      },
+      {
+        "id": "l3.realContinuation.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed"
+      },
+      {
+        "id": "l3.realContinuation.gate",
+        "pass": true,
+        "actual": 0.9667,
+        "expected": "L3 real continuation thresholds"
+      }
+    ],
+    "evidenceInsufficient": false
+  }
+}

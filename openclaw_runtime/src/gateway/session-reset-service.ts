@@ -5,12 +5,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { ErrorCodes, errorShape } from "../../packages/gateway-protocol/src/index.js";
 import { getAcpSessionManager } from "../acp/control-plane/manager.js";
-import { getAcpRuntimeBackend } from "../acp/runtime/registry.js";
+import { getAcpRuntimeBackend } from "../runtime/registry.ts";
 import {
   readAcpSessionMeta,
   upsertAcpSessionMeta,
   writeAcpSessionMetaForMigration,
-} from "../acp/runtime/session-meta.js";
+} from "../runtime/session-meta.ts";
 import { retireSessionMcpRuntime } from "../agents/agent-bundle-mcp-tools.js";
 import {
   listAgentIds,

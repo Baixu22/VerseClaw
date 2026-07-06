@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { startGatewayPostAttachRuntime } from "./server-startup-post-attach.js";
+import { startGatewayPostAttachRuntime, testing } from "./server-startup-post-attach.js";
 
 describe("startGatewayPostAttachRuntime deferred sidecars", () => {
   afterEach(() => {
@@ -78,5 +78,18 @@ describe("startGatewayPostAttachRuntime deferred sidecars", () => {
     await vi.waitFor(() => expect(sidecarsStarted).toHaveBeenCalledTimes(1));
     expect(pluginLoadStarted).toHaveBeenCalledTimes(1);
     expect(pluginLoadFinished).toHaveBeenCalledTimes(1);
+  });
+
+  it("uses OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS when present", () => {
+    expect(
+      testing.resolveDeferredSidecarStartDelayMs({
+        OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS: "600000",
+      } as NodeJS.ProcessEnv),
+    ).toBe(600_000);
+    expect(
+      testing.resolveDeferredSidecarStartDelayMs({
+        OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS: "not-a-number",
+      } as NodeJS.ProcessEnv),
+    ).toBe(10_000);
   });
 });

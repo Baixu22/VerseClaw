@@ -32,6 +32,7 @@ import { resolveContextEngineCapabilities } from "../context-engine-capabilities
 import { log } from "../logger.js";
 import { shouldInjectHeartbeatPromptForTrigger } from "./trigger-policy.js";
 import type { EmbeddedRunAttemptParams } from "./types.js";
+import type { RuntimeIntensityPolicy } from "../../intensity-policy.js";
 
 export type PromptBuildHookRunner = {
   hasHooks: (
@@ -581,6 +582,7 @@ export function buildAfterTurnRuntimeContext(params: {
   tokenBudget?: number;
   currentTokenCount?: number;
   promptCache?: ContextEnginePromptCacheInfo;
+  runtimeIntensityPolicy?: RuntimeIntensityPolicy;
 }): ContextEngineRuntimeContext {
   return {
     ...buildEmbeddedCompactionRuntimeContext({
@@ -633,6 +635,9 @@ export function buildAfterTurnRuntimeContext(params: {
       ? { currentTokenCount: Math.floor(params.currentTokenCount) }
       : {}),
     ...(params.promptCache ? { promptCache: params.promptCache } : {}),
+    ...(params.runtimeIntensityPolicy
+      ? { runtimeIntensityPolicy: params.runtimeIntensityPolicy }
+      : {}),
   };
 }
 

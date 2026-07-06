@@ -7,14 +7,14 @@ import type {
   PluginHookReplyDispatchResult,
 } from "../plugins/types.js";
 
-export { AcpRuntimeError, isAcpRuntimeError } from "../acp/runtime/errors.js";
-export type { AcpRuntimeErrorCode } from "../acp/runtime/errors.js";
+export { AcpRuntimeError, isAcpRuntimeError } from "../runtime/errors.ts";
+export type { AcpRuntimeErrorCode } from "../runtime/errors.ts";
 export {
   getAcpRuntimeBackend,
   registerAcpRuntimeBackend,
   requireAcpRuntimeBackend,
   unregisterAcpRuntimeBackend,
-} from "../acp/runtime/registry.js";
+} from "../runtime/registry.ts";
 export type {
   AcpRuntime,
   AcpRuntimeCapabilities,

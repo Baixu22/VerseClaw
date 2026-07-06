@@ -4,12 +4,23 @@
  * via the Main-owned host API. Session selector, thinking toggle, and refresh
  * are in the toolbar; messages render with markdown + streaming.
  */
-import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { ArrowDownToLine, Check, ChevronDown, FileText, Folder, FolderPlus, GitBranchPlus, Laptop, Loader2, Pencil, Sparkles } from 'lucide-react';
-import type { SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
-import type { LongTaskControlStatus, LongTaskInputMode } from '@shared/types/long-task-control';
-import type { GitWorktree } from '@shared/types/git';
+import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, FileText, Folder, FolderPlus, GitBranchPlus, Laptop, Loader2, Pencil, Sparkles, X } from 'lucide-react';
+import {
+  AssistantRuntimeProvider,
+  AuiProvider,
+  Suggestions,
+  SuggestionPrimitive,
+  ThreadPrimitive,
+  useAui,
+  useLocalRuntime,
+  type ChatModelAdapter,
+  type SuggestionConfig,
+} from '@assistant-ui/react';
+import type { KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
+import type { LongTaskControlStatus } from '@shared/types/long-task-control';
+import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
 import { useChatStore, type RawMessage } from '@/stores/chat';
 import { isInternalMessage } from '@/stores/chat/helpers';
 import { buildBaselineRunKey, getBaseline } from '@/stores/baseline-cache';
@@ -22,7 +33,7 @@ import {
   ARTIFACT_PANEL_MIN_WIDTH,
   useArtifactPanel,
 } from '@/stores/artifact-panel';
-import { hostApi, type ChatKnowledgeReference } from '@/lib/host-api';
+import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ChatMessage } from './ChatMessage';
@@ -37,7 +48,9 @@ import {
   type SessionContinuityErrorKind,
   type SessionContinuityRecommendation,
 } from './session-continuity';
-import { buildRollbackPlan } from './rollback-plan';
+import { buildRollbackPlan, hasRollbackPlanSidebarTrigger } from './rollback-plan';
+import { startTaskLoopUpgradeRun } from './task-loop-upgrade';
+import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
 import { extractText, extractThinking, extractToolUse, normalizeMessageRole } from './message-utils';
 import { parseSubagentCompletionInfo } from './task-visualization';
 import {
@@ -56,7 +69,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { basenameFromPath, pathEquals } from '@/lib/git-ui';
 import { buildConfiguredModelOptions } from '@/lib/model-options';
 import {
   createFreshWorkspaceSessionKey,
@@ -69,11 +81,12 @@ import {
 import { useStickToBottomInstant } from '@/hooks/use-stick-to-bottom-instant';
 import { useMinLoading } from '@/hooks/use-min-loading';
 import { extractGeneratedFiles, generatedFileHasDiffPayload, isHtmlPreviewExt, type GeneratedFile } from '@/lib/generated-files';
-import { AssistantErrorCard, AssistantStatusIndicator, SelectionQuoteToolbar, TokenUsageRoll } from '@/components/assistant-render/AssistantRender';
-import { buildStatusDimensions, buildUsageModel } from '@/components/assistant-render/model';
+import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistant-render/AssistantRender';
 import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
-import { WorkContextBar } from '@/components/assistant-render/WorkContextBar';
+import { TurnWorkPanel } from '@/components/assistant-render/TurnWorkPanel';
 import { buildTurnWorkModel } from '@/components/assistant-render/turn-work-model';
+import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
+import { buildTurnSummaryModel } from '@/components/assistant-render/turn-summary-model';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -86,6 +99,7 @@ import type { AttachedFileMeta } from '@/stores/chat/types';
 import type {
   KnowledgeInvocationMode,
   LiveTokenUsage,
+  PromptCacheRiskAssessment,
   WorkspaceContextRange,
   WorkspaceArtifactPanelState,
   WorkspaceKnowledgeScope,
@@ -94,8 +108,7 @@ import type {
   WorkspaceUiState,
 } from '@shared/types/workspace';
 import type { WorkArtifact } from '@shared/types/work-artifact';
-import type { GitRepositoryStatus } from '@shared/types/git';
-import type { ChatSession, ChatRuntimeRunState } from '@/stores/chat/types';
+import type { ChatSession, ChatRuntimeRunState, SendOptions } from '@/stores/chat/types';
 import { toast } from 'sonner';
 
 const ArtifactPanelLazy = lazy(() =>
@@ -115,6 +128,34 @@ type ChatMessageRenderRow = {
   textOverride?: string;
   runCards: UserRunCard[];
 };
+
+type KnowledgeAdvisorySource = {
+  key: string;
+  signal: KnowledgeErrorGuardSignal;
+};
+
+const USER_CORRECTION_SIGNAL_PATTERN = /(\u4e0d\u5bf9|\u91cd\u505a|\u6709\u95ee\u9898|\u91cd\u65b0\u6765|\u9519\u4e86|\u5931\u8d25|\u62a5\u9519|redo|wrong|not right|incorrect|try again|start over|this failed|failed again)/iu;
+
+function classifyErrorGuardSignal(text: string): KnowledgeErrorGuardSignal['kind'] {
+  const lower = text.toLowerCase();
+  if (/\b(eslint|lint)\b/u.test(lower)) return 'lint-failure';
+  if (/\b(playwright|vitest|jest|test failed|tests failed|expect\(|assertion)\b/u.test(lower)) return 'test-failure';
+  if (/\b(vite|webpack|rollup|tsc|typecheck|typescript|build failed|compile)\b/u.test(lower)) return 'build-failure';
+  if (USER_CORRECTION_SIGNAL_PATTERN.test(text)) return 'user-correction';
+  return 'runtime-error';
+}
+
+function extractLikelyFilePaths(text: string): string[] {
+  const matches = text.match(/(?:[A-Za-z]:)?[A-Za-z0-9_./\\-]+\.[A-Za-z0-9]{1,8}(?::\d+)?/gu) ?? [];
+  return Array.from(new Set(matches.map((match) => match.replace(/:\d+$/u, '')).filter((match) => match.includes('/') || match.includes('\\')))).slice(0, 12);
+}
+
+function buildAdvisoryComposerText(advisory: KnowledgeErrorGuardAdvisory, title: string): string {
+  const steps = advisory.recommendedResolution.length > 0
+    ? advisory.recommendedResolution.map((step, index) => `${index + 1}. ${step}`).join('\n')
+    : advisory.summary;
+  return `${title}\n\n${steps}`;
+}
 
 function formatTokenCountForToast(value: number): string {
   if (!Number.isFinite(value)) return '0';
@@ -216,6 +257,16 @@ function getWorkspaceSessionState(
   return workspace.state ?? {};
 }
 
+function basenameFromPath(path: string | null | undefined): string {
+  if (!path) return '';
+  const normalized = path.replace(/[\\/]+$/, '');
+  return normalized.split(/[\\/]/).pop() || normalized;
+}
+
+function normalizeComparablePath(path: string): string {
+  return path.replace(/\\/g, '/').replace(/\/+$/g, '').toLowerCase();
+}
+
 function getSessionDisplayName(sessionKey: string, sessions: ChatSession[], labels: Record<string, string>): string {
   const session = sessions.find((entry) => entry.key === sessionKey);
   return labels[sessionKey] || session?.label || session?.displayName || formatNewSessionDisplayName(sessionKey);
@@ -282,6 +333,13 @@ function getContinuityErrorMessage(error: unknown, fallback: string): string {
 const HEADER_COMPLETED_STATUSES = new Set(['completed', 'success', 'done', 'finished']);
 const HEADER_ERROR_STATUSES = new Set(['failed', 'error', 'killed', 'timeout']);
 const HEADER_ABORTED_STATUSES = new Set(['aborted', 'cancelled', 'canceled']);
+const HEADER_SESSION_DOT_LABEL_KEYS: Partial<Record<DotMatrixState, string>> = {
+  streaming: 'sessionStatus.running',
+  waiting: 'sessionStatus.waiting',
+  success: 'sessionStatus.completed',
+  error: 'sessionStatus.error',
+  stopped: 'sessionStatus.aborted',
+};
 
 function getHeaderSessionDotState(input: {
   sessionKey: string;
@@ -366,6 +424,18 @@ function ProjectSessionHeader({
   const [renaming, setRenaming] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
+  const currentSessionDotState = getHeaderSessionDotState({
+    sessionKey: currentSessionKey,
+    currentSessionKey,
+    runtimeRuns,
+    activeRunId,
+    sending,
+    pendingFinal,
+    runError,
+  });
+  const currentSessionDotLabel = currentSessionDotState
+    ? t(HEADER_SESSION_DOT_LABEL_KEYS[currentSessionDotState] ?? 'sessionStatus.running')
+    : '';
   const sortedWorkspaces = useMemo(
     () => [...workspaceProfiles].sort((left, right) => (right.lastOpenedAt ?? 0) - (left.lastOpenedAt ?? 0)),
     [workspaceProfiles],
@@ -493,6 +563,14 @@ function ProjectSessionHeader({
             }}
             title={t('session.renameHint')}
           >
+            {currentSessionDotState && (
+              <DotMatrix
+                state={currentSessionDotState}
+                label={currentSessionDotLabel}
+                className="size-3.5 shrink-0"
+                data-testid="chat-current-session-status"
+              />
+            )}
             <span className="truncate">{sessionName}</span>
             <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           </button>
@@ -605,13 +683,99 @@ function ProjectSessionHeader({
   );
 }
 
+function KnowledgeErrorAdvisoryCard({
+  advisory,
+  busy = false,
+  onDismiss,
+  onUse,
+}: {
+  advisory: KnowledgeErrorGuardAdvisory;
+  busy?: boolean;
+  onDismiss: () => void | Promise<void>;
+  onUse: () => void | Promise<void>;
+}) {
+  const { t } = useTranslation('chat');
+  const severityTone = advisory.severity === 'blocking' || advisory.severity === 'high'
+    ? 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400'
+    : advisory.severity === 'medium'
+      ? 'border-yellow-500/30 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400'
+      : 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-400';
+  return (
+    <div className="px-4 pt-2" data-testid="chat-knowledge-error-advisory">
+      <div className="mx-auto max-w-4xl rounded-lg border border-yellow-500/20 bg-surface-modal p-3 shadow-sm dark:border-yellow-500/25">
+        <div className="flex items-start gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-yellow-500/20 bg-yellow-500/10">
+            <AlertTriangle className="h-4 w-4 text-yellow-700 dark:text-yellow-400" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="truncate text-sm font-semibold text-foreground">{t('knowledgeGuard.title')}</div>
+              <span className={cn('rounded-md border px-1.5 py-0.5 text-[10px] font-medium uppercase', severityTone)}>
+                {t(`knowledgeGuard.severity.${advisory.severity}`)}
+              </span>
+              <span className="rounded-md border border-black/10 bg-surface-input px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground dark:border-white/10">
+                {t('knowledgeGuard.confidence', { confidence: Math.round(advisory.confidence * 100) })}
+              </span>
+            </div>
+            <p className="mt-1 text-sm font-medium text-foreground/90">{advisory.title}</p>
+            <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">{advisory.summary}</p>
+            <div className="mt-2 grid gap-2 text-xs leading-5 md:grid-cols-2">
+              <div className="rounded-md bg-surface-input px-2 py-1.5">
+                <span className="font-medium text-foreground/80">{t('knowledgeGuard.rootCause')}</span>
+                <span className="ml-1 text-muted-foreground">{advisory.rootCause}</span>
+              </div>
+              <div className="rounded-md bg-surface-input px-2 py-1.5">
+                <span className="font-medium text-foreground/80">{t('knowledgeGuard.whyMatched')}</span>
+                <span className="ml-1 text-muted-foreground">{advisory.whyMatched.slice(0, 2).join(', ') || t('knowledgeGuard.matchFallback')}</span>
+              </div>
+            </div>
+            {advisory.recommendedResolution.length > 0 ? (
+              <ol className="mt-2 list-inside list-decimal space-y-0.5 text-xs leading-5 text-muted-foreground">
+                {advisory.recommendedResolution.slice(0, 3).map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+            ) : null}
+            <div className="mt-3 flex flex-wrap justify-end gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-8 rounded-md px-2 text-xs"
+                onClick={() => void onDismiss()}
+                disabled={busy}
+                data-testid="chat-knowledge-error-advisory-dismiss"
+              >
+                <X className="mr-1.5 h-3.5 w-3.5" />
+                {t('knowledgeGuard.dismiss')}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-8 rounded-md border-black/10 px-2 text-xs shadow-none dark:border-white/10"
+                onClick={() => void onUse()}
+                disabled={busy}
+                data-testid="chat-knowledge-error-advisory-use"
+              >
+                <Check className="mr-1.5 h-3.5 w-3.5" />
+                {t('knowledgeGuard.use')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Chat() {
   const { t } = useTranslation(['chat', 'common']);
   const navigate = useNavigate();
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
 
-  const { messages, currentSessionKey, currentAgentId, sessions, sessionLabels, loading, loadingMoreHistory, hasMoreHistory, sending, error, runError, streamingMessage, streamingTools, pendingFinal, activeRunId, runtimeRuns, lastUserMessageAt, taskLedgerSnapshot } = useChatStore(useShallow((s) => ({
+  const { messages, currentSessionKey, currentAgentId, sessions, sessionLabels, loading, loadingMoreHistory, hasMoreHistory, sending, error, runError, streamingMessage, streamingTools, pendingFinal, activeRunId, runtimeRuns, lastUserMessageAt } = useChatStore(useShallow((s) => ({
     messages: s.messages,
     currentSessionKey: s.currentSessionKey,
     currentAgentId: s.currentAgentId,
@@ -629,13 +793,13 @@ export function Chat() {
     activeRunId: s.activeRunId,
     runtimeRuns: s.runtimeRuns ?? {},
     lastUserMessageAt: s.lastUserMessageAt,
-    taskLedgerSnapshot: s.taskLedgerSnapshot,
   })));
   const switchSession = useChatStore((s) => s.switchSession);
   const resetSessionView = useChatStore((s) => s.resetSessionView);
   const renameSession = useChatStore((s) => s.renameSession);
   const loadMoreHistory = useChatStore((s) => s.loadMoreHistory);
   const sendMessage = useChatStore((s) => s.sendMessage);
+  const resendUserMessage = useChatStore((s) => s.resendUserMessage);
   const abortRun = useChatStore((s) => s.abortRun);
   const clearError = useChatStore((s) => s.clearError);
   const cleanupEmptySession = useChatStore((s) => s.cleanupEmptySession);
@@ -662,8 +826,14 @@ export function Chat() {
   const [knowledgeDraftTitle, setKnowledgeDraftTitle] = useState('');
   const [knowledgeDraftBody, setKnowledgeDraftBody] = useState('');
   const [knowledgeDraftApplying, setKnowledgeDraftApplying] = useState(false);
-  const [workContextVisible, setWorkContextVisible] = useState(true);
-  const [gitStatus, setGitStatus] = useState<GitRepositoryStatus | null>(null);
+  const [knowledgeErrorAdvisory, setKnowledgeErrorAdvisory] = useState<KnowledgeErrorGuardAdvisory | null>(null);
+  const [knowledgeErrorAdvisoryBusy, setKnowledgeErrorAdvisoryBusy] = useState(false);
+  const [dismissedKnowledgeAdvisoryKeys, setDismissedKnowledgeAdvisoryKeys] = useState<Set<string>>(() => new Set());
+  const [taskLedgerSummaryVisible, setTaskLedgerSummaryVisible] = useState(true);
+
+  useEffect(() => {
+    setTaskLedgerSummaryVisible(true);
+  }, [activeWorkspaceId, currentSessionKey]);
 
   // Refresh Task Ledger snapshot when workspace changes
   const refreshTaskLedger = useChatStore((s) => s.refreshTaskLedger);
@@ -705,14 +875,18 @@ export function Chat() {
   });
   const skipNextWorkspaceStateSaveRef = useRef(false);
   const draftSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastKnowledgeAdvisorySignalKeyRef = useRef<string | null>(null);
+  const knowledgeAdvisorySourceRef = useRef<KnowledgeAdvisorySource | null>(null);
   const [childTranscripts, setChildTranscripts] = useState<Record<string, RawMessage[]>>({});
   const [questionDirectoryOpenSessionKey, setQuestionDirectoryOpenSessionKey] = useState<string | null>(null);
   const [contextRange, setContextRange] = useState<WorkspaceContextRange | null>(null);
   const [liveUsage, setLiveUsage] = useState<LiveTokenUsage | null>(null);
+  const [promptCacheStatus, setPromptCacheStatus] = useState<PromptCacheRiskAssessment | null>(null);
   const [compactionStatus, setCompactionStatus] = useState<SessionCompactionStatus | null>(null);
   const [compactionBusy, setCompactionBusy] = useState(false);
   const [longTaskControlStatus, setLongTaskControlStatus] = useState<LongTaskControlStatus | null>(null);
   const [queueDrainBusy, setQueueDrainBusy] = useState(false);
+  const [taskLoopUpgradeBusy, setTaskLoopUpgradeBusy] = useState(false);
   const [forkBusy, setForkBusy] = useState(false);
   const [handoffBusy, setHandoffBusy] = useState(false);
   const [handoffCreating, setHandoffCreating] = useState(false);
@@ -720,6 +894,7 @@ export function Chat() {
   const [handoffResult, setHandoffResult] = useState<SessionHandoffResult | null>(null);
   const [handoffDraft, setHandoffDraft] = useState('');
   const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
+  const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   // Persistent per-run override for the Execution Graph's expanded/collapsed
@@ -729,10 +904,9 @@ export function Chat() {
   // remount and reset. `undefined` values mean "user hasn't toggled, let the
   // card pick a default from its own `active` prop."
   const [graphExpandedOverrides, setGraphExpandedOverrides] = useState<Record<string, boolean>>({});
+  const [turnSummaryExpandedOverrides, setTurnSummaryExpandedOverrides] = useState<Record<string, boolean>>({});
   const captureCurrentWorkspaceSessionState = useCallback((draft = composerDraft): WorkspaceUiState => {
-    const previousSessionState = getWorkspaceSessionState(activeWorkspace, currentSessionKey);
-    const previousArtifactPanel = previousSessionState.artifactPanel ?? {};
-    const previousChatFooter = previousSessionState.chatFooter ?? {};
+    const previousArtifactPanel = getWorkspaceSessionState(activeWorkspace, currentSessionKey).artifactPanel ?? {};
     return {
       draftInput: draft,
       activeTopicId: null,
@@ -743,13 +917,10 @@ export function Chat() {
         open: panelOpen,
         activeTab: artifactTab,
       },
-      chatFooter: {
-        ...previousChatFooter,
-        workContextVisible,
-      },
       graphExpanded: graphExpandedOverrides,
+      turnSummaryExpanded: turnSummaryExpandedOverrides,
     };
-  }, [activeWorkspace, artifactTab, composerDraft, currentSessionKey, graphExpandedOverrides, knowledgeMode, knowledgeScope, panelOpen, workContextVisible]);
+  }, [activeWorkspace, artifactTab, composerDraft, currentSessionKey, graphExpandedOverrides, knowledgeMode, knowledgeScope, panelOpen, turnSummaryExpandedOverrides]);
 
   const persistCurrentWorkspaceSessionState = useCallback(async (options?: {
     activeSessionKey?: string;
@@ -909,7 +1080,8 @@ export function Chat() {
     });
     if (result.canceled || !result.filePaths[0]) return;
     const rootPath = result.filePaths[0];
-    const existing = workspaceProfiles.find((profile) => pathEquals(profile.rootPath, rootPath));
+    const normalizedRootPath = normalizeComparablePath(rootPath);
+    const existing = workspaceProfiles.find((profile) => normalizeComparablePath(profile.rootPath) === normalizedRootPath);
     try {
       await persistCurrentWorkspaceSessionState({
         activeSessionKey: currentSessionKey,
@@ -1001,9 +1173,9 @@ export function Chat() {
     };
     setComposerDraft(sessionState.draftInput ?? '');
     setGraphExpandedOverrides(sessionState.graphExpanded ?? {});
+    setTurnSummaryExpandedOverrides(sessionState.turnSummaryExpanded ?? {});
     setKnowledgeScope(sessionState.knowledgeScope ?? 'none');
     setKnowledgeMode(sessionState.knowledgeMode ?? 'suggest');
-    setWorkContextVisible(sessionState.chatFooter?.workContextVisible ?? true);
     void clearActiveTopicMarker(activeWorkspace.rootPath);
     restoreArtifactPanelState(sessionState.artifactPanel ?? { open: false });
   }, [activeWorkspace, clearActiveTopicMarker, currentSessionKey, restoreArtifactPanelState]);
@@ -1064,15 +1236,13 @@ export function Chat() {
 
   const handleSendMessage = useCallback((
     text: string,
-    attachments?: Parameters<typeof sendMessage>[1],
-    targetAgentId?: string | null,
-    scope?: WorkspaceKnowledgeScope,
-    mode?: KnowledgeInvocationMode,
-    knowledgeReferences?: ChatKnowledgeReference[],
-    activeTaskNodeId?: string | null,
-    inputMode?: LongTaskInputMode,
+    opts?: SendOptions,
   ) => {
-    return sendMessage(text, attachments, targetAgentId, scope, mode ?? knowledgeMode, inputMode, knowledgeReferences, activeTaskNodeId);
+    const resolved: SendOptions = {
+      ...opts,
+      knowledgeMode: opts?.knowledgeMode ?? knowledgeMode,
+    };
+    return sendMessage(text, resolved);
   }, [knowledgeMode, sendMessage]);
 
   const handleSubmitInteractionResponse = useCallback((responseText: string) => {
@@ -1172,63 +1342,6 @@ export function Chat() {
     });
   }, [activeWorkspaceId, currentSessionKey, openBrowser, saveWorkspaceState]);
 
-  const handleSwitchWorktreeWorkspace = useCallback(async (worktree: GitWorktree) => {
-    await persistCurrentWorkspaceSessionState({
-      activeSessionKey: currentSessionKey,
-      sessionKey: currentSessionKey,
-    });
-    const existingWorkspace = workspaceProfiles.find((profile) => pathEquals(profile.rootPath, worktree.path));
-    if (existingWorkspace) {
-      await handleSwitchWorkspace(existingWorkspace.id);
-      toast.success(t('workspace.git.toast.worktreeWorkspaceSwitched'));
-      return;
-    }
-    const nextWorkspace = await createWorkspace({
-      name: basenameFromPath(worktree.path),
-      rootPath: worktree.path,
-      agentId: currentAgentId,
-    });
-    if (nextWorkspace?.id) {
-      await handleSwitchWorkspace(nextWorkspace.id);
-    }
-    toast.success(t('workspace.git.toast.worktreeWorkspaceCreated'));
-  }, [createWorkspace, currentAgentId, currentSessionKey, handleSwitchWorkspace, persistCurrentWorkspaceSessionState, t, workspaceProfiles]);
-
-  const handleToggleWorkContext = useCallback(() => {
-    const nextVisible = !workContextVisible;
-    setWorkContextVisible(nextVisible);
-    if (!activeWorkspaceId) return;
-    const previousChatFooter = getWorkspaceSessionState(activeWorkspace, currentSessionKey).chatFooter ?? {};
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        ...captureCurrentWorkspaceSessionState(composerDraft),
-        chatFooter: {
-          ...previousChatFooter,
-          workContextVisible: nextVisible,
-        },
-      },
-    });
-  }, [
-    activeWorkspace,
-    activeWorkspaceId,
-    captureCurrentWorkspaceSessionState,
-    composerDraft,
-    currentSessionKey,
-    saveWorkspaceState,
-    workContextVisible,
-  ]);
-
-  const handleOpenWorkReport = useCallback((report: { file: GeneratedFile }) => {
-    const target = generatedFileToTarget(report.file);
-    if (isHtmlPreviewExt(report.file.ext)) {
-      openPreview(target);
-      return;
-    }
-    openChanges(target);
-  }, [openChanges, openPreview]);
-
   const handleInterruptTerminal = useCallback(async () => {
     openBrowser();
     if (!activeWorkspaceId) return;
@@ -1273,6 +1386,109 @@ export function Chat() {
     handleAppendComposerDraft(`> ${clipped.replace(/\n/g, '\n> ')}\n\n`);
   }, [handleAppendComposerDraft]);
 
+  const knowledgeAdvisorySource = useMemo<KnowledgeAdvisorySource | null>(() => {
+    if (runError?.trim()) {
+      const text = runError.trim();
+      return {
+        key: `run-error:${currentSessionKey}:${text}`,
+        signal: {
+          text,
+          kind: classifyErrorGuardSignal(text),
+          stackTrace: text,
+          filePaths: extractLikelyFilePaths(text),
+          sessionKey: currentSessionKey,
+          workspaceId: activeWorkspaceId ?? null,
+        },
+      };
+    }
+
+    const latestUserMessage = [...messages].reverse().find((message) => isRealUserMessage(message));
+    const text = latestUserMessage ? extractText(latestUserMessage).trim() : '';
+    if (!text || !USER_CORRECTION_SIGNAL_PATTERN.test(text)) return null;
+    return {
+      key: `user-correction:${currentSessionKey}:${latestUserMessage?.id ?? latestUserMessage?.timestamp ?? text}`,
+      signal: {
+        text,
+        kind: 'user-correction',
+        filePaths: extractLikelyFilePaths(text),
+        sessionKey: currentSessionKey,
+        workspaceId: activeWorkspaceId ?? null,
+      },
+    };
+  }, [activeWorkspaceId, currentSessionKey, messages, runError]);
+
+  const knowledgeAdvisorySourceKey = knowledgeAdvisorySource?.key ?? null;
+
+  useEffect(() => {
+    knowledgeAdvisorySourceRef.current = knowledgeAdvisorySource;
+  }, [knowledgeAdvisorySource]);
+
+  useEffect(() => {
+    if (!knowledgeAdvisorySourceKey) return;
+    const source = knowledgeAdvisorySourceRef.current;
+    if (!source || source.key !== knowledgeAdvisorySourceKey) return;
+    if (lastKnowledgeAdvisorySignalKeyRef.current === source.key) return;
+    lastKnowledgeAdvisorySignalKeyRef.current = source.key;
+    const signalKey = source.key;
+    const signal = source.signal;
+    let cancelled = false;
+    void hostApi.knowledge.matchErrorExperience({ signal, limit: 1 })
+      .then((result) => {
+        if (cancelled || !result.success) return;
+        const advisory = result.advisories[0];
+        if (!advisory) return;
+        const dismissalKey = `${signalKey}:${advisory.id}`;
+        if (dismissedKnowledgeAdvisoryKeys.has(dismissalKey)) return;
+        setKnowledgeErrorAdvisory(advisory);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [dismissedKnowledgeAdvisoryKeys, knowledgeAdvisorySourceKey]);
+
+  const handleDismissKnowledgeErrorAdvisory = useCallback(async () => {
+    const advisory = knowledgeErrorAdvisory;
+    if (!advisory) return;
+    const signalKey = knowledgeAdvisorySource?.key ?? currentSessionKey;
+    setDismissedKnowledgeAdvisoryKeys((current) => new Set(current).add(`${signalKey}:${advisory.id}`));
+    setKnowledgeErrorAdvisory(null);
+    setKnowledgeErrorAdvisoryBusy(true);
+    try {
+      await hostApi.knowledge.updateErrorExperienceEffectiveness({
+        targetKind: advisory.targetKind,
+        targetId: advisory.targetId,
+        action: 'dismissed',
+        note: 'chat advisory dismissed',
+      });
+    } catch {
+      // Best-effort effectiveness telemetry only; never affect Chat.
+    } finally {
+      setKnowledgeErrorAdvisoryBusy(false);
+    }
+  }, [currentSessionKey, knowledgeAdvisorySource?.key, knowledgeErrorAdvisory]);
+
+  const handleUseKnowledgeErrorAdvisory = useCallback(async () => {
+    const advisory = knowledgeErrorAdvisory;
+    if (!advisory) return;
+    handleAppendComposerDraft(buildAdvisoryComposerText(advisory, t('knowledgeGuard.composerPrefix', { title: advisory.title })));
+    setKnowledgeErrorAdvisory(null);
+    setKnowledgeErrorAdvisoryBusy(true);
+    try {
+      await hostApi.knowledge.updateErrorExperienceEffectiveness({
+        targetKind: advisory.targetKind,
+        targetId: advisory.targetId,
+        action: 'accepted',
+        note: 'chat advisory used',
+      });
+      toast.success(t('knowledgeGuard.usedToast'));
+    } catch {
+      // Best-effort effectiveness telemetry only; composer update already happened.
+    } finally {
+      setKnowledgeErrorAdvisoryBusy(false);
+    }
+  }, [handleAppendComposerDraft, knowledgeErrorAdvisory, t]);
+
   useEffect(() => {
     if (!activeWorkspace?.id) return;
     if (skipNextWorkspaceStateSaveRef.current) {
@@ -1287,7 +1503,7 @@ export function Chat() {
       });
     }, 300);
     return () => clearTimeout(timer);
-  }, [activeWorkspace?.id, artifactTab, captureCurrentWorkspaceSessionState, currentSessionKey, graphExpandedOverrides, panelOpen, saveWorkspaceState]);
+  }, [activeWorkspace?.id, artifactTab, captureCurrentWorkspaceSessionState, currentSessionKey, graphExpandedOverrides, panelOpen, saveWorkspaceState, turnSummaryExpandedOverrides]);
 
   useEffect(() => () => {
     if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
@@ -1341,6 +1557,34 @@ export function Chat() {
     };
   }, [currentSessionKey, activeRunId, sending, pendingFinal, streamingMessage]);
 
+  useEffect(() => {
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+      void hostApi.usage.promptCacheStatus({
+        sessionKey: currentSessionKey,
+        modelRef: currentModelRef,
+        usedTokens: liveUsage?.totalTokens ?? contextRange?.usedTokens ?? null,
+      })
+        .then((result) => {
+          if (!cancelled) setPromptCacheStatus(result.success ? result.assessment : null);
+        })
+        .catch(() => {
+          if (!cancelled) setPromptCacheStatus(null);
+        });
+    }, 650);
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [
+    contextRange?.usedTokens,
+    currentModelRef,
+    currentSessionKey,
+    liveUsage?.cacheReadTokens,
+    liveUsage?.cacheWriteTokens,
+    liveUsage?.totalTokens,
+  ]);
+
   const refreshCompactionStatus = useCallback(async () => {
     try {
       const result = await hostApi.sessions.compactionStatus({
@@ -1364,6 +1608,40 @@ export function Chat() {
       setLongTaskControlStatus(null);
     }
   }, [currentAgentId, currentSessionKey]);
+
+  const handleConfirmTaskLoopUpgrade = useCallback(async (suggestion: TaskLoopUpgradeSuggestion) => {
+    setTaskLoopUpgradeBusy(true);
+    try {
+      const result = await startTaskLoopUpgradeRun({
+        rpc: hostApi.gateway.rpc,
+        suggestion,
+        taskText: composerDraft,
+        sessionKey: currentSessionKey,
+        agentId: currentAgentId,
+        workspaceId: activeWorkspace?.id ?? null,
+      });
+      toast.success(t('composer.taskLoopUpgrade.toastUpdated', {
+        status: result.status || t('composer.taskLoopUpgrade.unknownStatus'),
+      }));
+      await Promise.all([
+        refreshLongTaskControlStatus(),
+        refreshTaskLedger(),
+      ]);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('composer.taskLoopUpgrade.toastFailed'));
+      throw error;
+    } finally {
+      setTaskLoopUpgradeBusy(false);
+    }
+  }, [
+    activeWorkspace?.id,
+    composerDraft,
+    currentAgentId,
+    currentSessionKey,
+    refreshLongTaskControlStatus,
+    refreshTaskLedger,
+    t,
+  ]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1900,12 +2178,30 @@ export function Chat() {
   const shouldClearStoreLifecycleFromHistory = executionProjection.shouldClearStoreLifecycleFromHistory;
   const inputRunActive = executionProjection.inputRunActive;
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
-  const showRollbackPlanPanel = rollbackPlan.actions.length > 0
+  const handleResendUserMessage = useCallback((input: {
+    messageText: string;
+    messageId?: string;
+    messageIndex: number;
+  }) => {
+    if (!isGatewayRunning || inputRunActive) return;
+    void resendUserMessage({
+      text: input.messageText,
+      messageId: input.messageId,
+      messageIndex: input.messageIndex,
+      sessionKey: currentSessionKey,
+    }).catch((error) => {
+      console.warn('[chat:resendUserMessage] failed', error);
+      toast.error(t('messageActions.resendFailed'));
+    });
+  }, [currentSessionKey, inputRunActive, isGatewayRunning, resendUserMessage, t]);
+  const showTaskLedgerSummaryPanel = !isEmpty && !!activeWorkspaceId && taskLedgerSummaryVisible;
+  const showRollbackPlanPanel = hasRollbackPlanSidebarTrigger(rollbackPlan)
     && (!isEmpty || !!longTaskControlStatus || !!compactionStatus);
   const showChatAssistiveRail = chatAssistiveRailVisible
     && !isEmpty
     && !questionDirectoryVisible
-    && showRollbackPlanPanel;
+    && (showTaskLedgerSummaryPanel || showRollbackPlanPanel);
+  const showChatSideRail = questionDirectoryVisible || showChatAssistiveRail;
 
   useEffect(() => {
     if (!shouldClearStoreLifecycleFromHistory) return;
@@ -1969,6 +2265,30 @@ export function Chat() {
     () => (streamingReplyText != null || hasActiveExecutionGraph ? [] : streamingTools),
     [hasActiveExecutionGraph, streamingReplyText, streamingTools],
   );
+  const activeRuntimeRun = activeRunId ? runtimeRuns[activeRunId] : null;
+  const activeRuntimeRunStartedAt = activeRuntimeRun?.startedAt ?? lastUserMessageAt ?? null;
+  const shouldRenderAssistantStreamMessage = shouldRenderStreaming || streamingReplyText != null;
+  const assistantStreamStatus = inputRunActive
+    ? {
+      active: true,
+      startedAt: activeRuntimeRunStartedAt,
+      now: streamStatusNow,
+      tokenCount: liveUsage?.totalTokens ?? null,
+      state: (pendingFinal || streamingTools.length > 0 || hasRunningRuntimeToolStatus
+        ? 'syncing'
+        : streamingReplyText != null || hasAnyStreamContent
+          ? 'streaming'
+          : 'thinking') as 'thinking' | 'streaming' | 'syncing',
+    }
+    : null;
+  const showStandaloneStreamStatus = inputRunActive && streamingReplyText == null && !pendingImageGeneration;
+
+  useEffect(() => {
+    if (!assistantStreamStatus?.active) return;
+    setStreamStatusNow(Date.now());
+    const timer = window.setInterval(() => setStreamStatusNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [assistantStreamStatus?.active, activeRuntimeRunStartedAt]);
 
   // Derive the set of run keys that should be auto-collapsed (run finished
   // streaming or has a reply override) during render instead of in an effect,
@@ -2000,20 +2320,6 @@ export function Chat() {
     for (const files of filesByRun.values()) all.push(...files);
     return all;
   }, [filesByRun]);
-  const workContextRunCard = useMemo(
-    () => userRunCards.find((card) => card.active) ?? userRunCards[userRunCards.length - 1] ?? null,
-    [userRunCards],
-  );
-  const workContextModel = useMemo(() => {
-    if (!workContextRunCard) return null;
-    const generatedFiles = filesByRun.get(workContextRunCard.triggerIndex) ?? [];
-    return buildTurnWorkModel({
-      id: workContextRunCard.runKey,
-      active: workContextRunCard.active,
-      steps: workContextRunCard.steps,
-      reports: generatedFiles,
-    });
-  }, [filesByRun, workContextRunCard]);
 
   // Derive WorkArtifacts from generated files (docx/xlsx/pdf/html/csv/md)
   const artifacts = useMemo(() => {
@@ -2054,27 +2360,6 @@ export function Chat() {
     return lastUserMessageAt ?? 0;
   }, [sending, lastUserMessageAt]);
 
-  useEffect(() => {
-    let cancelled = false;
-    if (!activeWorkspaceId) {
-      setGitStatus(null);
-      return () => {
-        cancelled = true;
-      };
-    }
-    void hostApi.git.status()
-      .then((result) => {
-        if (cancelled) return;
-        setGitStatus(result.status?.isRepository ? result.status : null);
-      })
-      .catch(() => {
-        if (!cancelled) setGitStatus(null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [activeWorkspaceId, activeWorkspace?.rootPath, refreshSignal]);
-
   const autoCollapsedRunKeys = useMemo(() => {
     const keys = new Set<string>();
     for (const card of userRunCards) {
@@ -2101,17 +2386,6 @@ export function Chat() {
   const platform = window.electron?.platform;
   const isMac = platform === 'darwin';
   const isWindows = platform === 'win32';
-  const assistantUsageModel = buildUsageModel(liveUsage, contextRange);
-  const assistantStatusDimensions = buildStatusDimensions({
-    gatewayState: gatewayStatus.state,
-    sending,
-    pendingFinal,
-    activeRunId,
-    streamingToolCount: streamingTools.length,
-    contextRange,
-    workspaceName: activeWorkspace?.name || activeWorkspace?.rootPath,
-    permissionMode: activeWorkspace?.permissionMode,
-  });
 
   return (
     <TooltipProvider>
@@ -2168,11 +2442,10 @@ export function Chat() {
         </div>
         <div data-testid="chat-toolbar-actions" className="no-drag relative z-10">
           <ChatToolbar
-            workContextVisible={workContextVisible}
-            onToggleWorkContext={handleToggleWorkContext}
             questionDirectoryOpen={questionDirectoryVisible}
             questionDirectoryCount={questionDirectoryItems.length}
             onSaveToKnowledge={handleOpenKnowledgeDraft}
+            promptCacheStatus={promptCacheStatus}
             onToggleQuestionDirectory={() =>
               setQuestionDirectoryOpenSessionKey((openSessionKey) =>
                 openSessionKey === currentSessionKey ? null : currentSessionKey,
@@ -2185,19 +2458,10 @@ export function Chat() {
       {/* Messages Area */}
       <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-4">
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
-        <WorkContextBar
-          visible={workContextVisible}
-          workspace={activeWorkspace ? { name: activeWorkspace.name, rootPath: activeWorkspace.rootPath } : null}
-          gitStatus={gitStatus}
-          workModel={workContextModel}
-          taskLedgerSnapshot={taskLedgerSnapshot}
-          onOpenGit={handleOpenGitPanel}
-          onOpenReport={handleOpenWorkReport}
-        />
         <div
           className={cn(
             'mx-auto flex h-full min-h-0 w-full flex-col gap-4 xl:items-stretch',
-            chatAssistiveRailVisible ? 'max-w-7xl xl:flex-row' : 'max-w-5xl',
+            showChatSideRail ? 'max-w-7xl xl:flex-row' : 'max-w-5xl',
           )}
           data-testid="chat-message-layout"
         >
@@ -2211,7 +2475,7 @@ export function Chat() {
             >
               {isEmpty ? (
                 <>
-                  <WelcomeScreen />
+                  <WelcomeScreen onSend={handleSendMessage} disabled={!isGatewayRunning} />
                   {showRollbackPlanPanel && (
                     <RollbackPlanPanel
                       plan={rollbackPlan}
@@ -2262,6 +2526,12 @@ export function Chat() {
                         canSubmitInteractionResponse={isGatewayRunning && !inputRunActive}
                         onSubmitInteractionResponse={handleSubmitInteractionResponse}
                         onDraftInteractionResponse={handleAppendComposerDraft}
+                        canResendUserMessage={isGatewayRunning && !inputRunActive}
+                        onResendUserMessage={(messageText) => handleResendUserMessage({
+                          messageText,
+                          messageId: row.message.id,
+                          messageIndex: row.index,
+                        })}
                       />
                       {row.runCards.map((card) => {
                           const runKey = card.runKey;
@@ -2275,8 +2545,38 @@ export function Chat() {
                           const expanded = userOverride != null
                             ? userOverride
                             : !autoCollapsedRunKeys.has(runKey);
-                          return (
-                            <div key={`run-${currentSessionKey}:${card.triggerIndex}`} className="space-y-3">
+                          const generatedFiles = filesByRun.get(card.triggerIndex) ?? [];
+                          const turnWorkModel = buildTurnWorkModel({
+                            id: runKey,
+                            active: card.active,
+                            steps: card.steps,
+                            reports: generatedFiles,
+                          });
+                          const replyMessage = card.replyIndex == null ? null : messages[card.replyIndex];
+                          const finalReplyText = card.replyIndex == null
+                            ? card.streamingReplyText ?? ''
+                            : replyTextOverrides.get(card.replyIndex) ?? (replyMessage ? extractText(replyMessage) : '');
+                          const turnSummaryModel = buildTurnSummaryModel({
+                            card,
+                            finalReplyText,
+                            generatedFiles,
+                          });
+                          const summaryExpanded = turnSummaryModel
+                            ? turnSummaryExpandedOverrides[runKey] ?? !turnSummaryModel.defaultCollapsed
+                            : true;
+                          const runDetails = (
+                            <>
+                              <TurnWorkPanel
+                                model={turnWorkModel}
+                                onOpenReport={(report) => {
+                                  const target = generatedFileToTarget(report.file);
+                                  if (isHtmlPreviewExt(report.file.ext)) {
+                                    openPreview(target);
+                                    return;
+                                  }
+                                  openChanges(target);
+                                }}
+                              />
                               <ExecutionGraphCard
                                 key={`graph-${currentSessionKey}:${card.triggerIndex}`}
                                 agentLabel={card.agentLabel}
@@ -2295,6 +2595,21 @@ export function Chat() {
                                   orchestration={orchestration}
                                 />
                               ))}
+                            </>
+                          );
+                          return (
+                            <div key={`run-${currentSessionKey}:${card.triggerIndex}`} className="space-y-3">
+                              {turnSummaryModel ? (
+                                <TurnSummaryCard
+                                  model={turnSummaryModel}
+                                  expanded={summaryExpanded}
+                                  onExpandedChange={(next) =>
+                                    setTurnSummaryExpandedOverrides((prev) => ({ ...prev, [runKey]: next }))
+                                  }
+                                >
+                                  {runDetails}
+                                </TurnSummaryCard>
+                              ) : runDetails}
                             </div>
                           );
                         })}
@@ -2304,7 +2619,21 @@ export function Chat() {
 
                   {/* Streaming message — render when reply text is separated from graph,
                       OR when there's streaming content without an active graph */}
-                  {shouldRenderStreaming && (
+                  {showStandaloneStreamStatus && (
+                    <ChatMessage
+                      message={{
+                        role: 'assistant',
+                        content: '',
+                        timestamp: activeRuntimeRunStartedAt ?? Date.now(),
+                      }}
+                      isStreaming
+                      streamStatus={assistantStreamStatus}
+                      liveUsage={liveUsage}
+                      onOpenFile={handleOpenAttachedFile}
+                    />
+                  )}
+
+                  {shouldRenderAssistantStreamMessage && (
                     streamingReplyText != null
                     || !hasActiveExecutionGraph
                     || (hasStreamText && streamTools.length === 0 && !hasRunningStreamToolStatus && !hasRunningRuntimeToolStatus)
@@ -2318,6 +2647,7 @@ export function Chat() {
                       })}
                       textOverride={streamingReplyText ?? undefined}
                       isStreaming
+                      streamStatus={assistantStreamStatus}
                       streamingTools={streamingToolsForMessage}
                       liveUsage={liveUsage}
                       onOpenFile={handleOpenAttachedFile}
@@ -2328,18 +2658,11 @@ export function Chat() {
                   )}
 
                   {/* Activity indicator: waiting for next AI turn after tool execution */}
-                  {inputRunActive && pendingFinal && !shouldRenderStreaming && !hasActiveExecutionGraph && (
-                    <ActivityIndicator phase="tool_processing" />
-                  )}
-
                   {pendingImageGeneration && (
                     <ImageGeneratingIndicator />
                   )}
 
                   {/* Typing indicator when sending but no stream content yet */}
-                  {inputRunActive && !pendingFinal && !hasAnyStreamContent && !hasActiveExecutionGraph && !pendingImageGeneration && (
-                    <TypingIndicator />
-                  )}
                 </>
               )}
             </div>
@@ -2366,6 +2689,15 @@ export function Chat() {
             data-testid="chat-assistive-rail"
             className="flex w-full shrink-0 flex-col gap-3 xl:w-72"
           >
+              {showTaskLedgerSummaryPanel && (
+                <TaskLedgerSummaryPanel
+                  workspaceId={activeWorkspace?.id}
+                  compact
+                  hideWhenEmpty
+                  className="w-full lg:w-full xl:w-full"
+                  onVisibilityChange={setTaskLedgerSummaryVisible}
+                />
+              )}
               {showRollbackPlanPanel && (
                 <RollbackPlanPanel
                   plan={rollbackPlan}
@@ -2395,20 +2727,20 @@ export function Chat() {
         </div>
       )}
 
+      {knowledgeErrorAdvisory ? (
+        <KnowledgeErrorAdvisoryCard
+          advisory={knowledgeErrorAdvisory}
+          busy={knowledgeErrorAdvisoryBusy}
+          onDismiss={handleDismissKnowledgeErrorAdvisory}
+          onUse={handleUseKnowledgeErrorAdvisory}
+        />
+      ) : null}
+
       {/* Error bar */}
       {error && (
         <div className="px-4 py-2">
           <div className="mx-auto max-w-4xl">
             <AssistantErrorCard title={t('assistantRender.error.title')} message={error} onDismiss={clearError} />
-          </div>
-        </div>
-      )}
-
-      {!isEmpty && (
-        <div className="px-4 pb-2" data-testid="assistant-chat-status-footer">
-          <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2">
-            <TokenUsageRoll usage={assistantUsageModel} />
-            <AssistantStatusIndicator dimensions={assistantStatusDimensions} />
           </div>
         </div>
       )}
@@ -2420,8 +2752,6 @@ export function Chat() {
         disabled={!isGatewayRunning}
         sending={inputRunActive}
         workspace={activeWorkspace}
-        onOpenGitPanel={handleOpenGitPanel}
-        onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace}
         contextRange={contextRange}
         liveUsage={liveUsage}
         messageCount={messages.length}
@@ -2449,6 +2779,8 @@ export function Chat() {
         longTaskControlStatus={longTaskControlStatus}
         queueDrainBusy={queueDrainBusy}
         onDrainQueuedFollowup={handleDrainQueuedFollowup}
+        taskLoopUpgradeBusy={taskLoopUpgradeBusy}
+        onConfirmTaskLoopUpgrade={handleConfirmTaskLoopUpgrade}
       />
       <Dialog open={handoffDialogOpen} onOpenChange={setHandoffDialogOpen}>
         <DialogContent
@@ -2712,13 +3044,96 @@ function QuestionDirectory({ items }: { items: QuestionDirectoryItem[] }) {
 
 // ── Welcome Screen ──────────────────────────────────────────────
 
-function WelcomeScreen() {
+type WelcomeScreenProps = {
+  onSend: (text: string) => void | Promise<unknown>;
+  disabled?: boolean;
+};
+
+type WelcomeSuggestionRuntimeProps = {
+  children: ReactNode;
+  onSend: (text: string) => void | Promise<unknown>;
+  suggestions: SuggestionConfig[];
+};
+
+function getAssistantUiTextPart(parts: unknown): string {
+  if (!Array.isArray(parts)) return '';
+  for (const part of parts) {
+    if (!part || typeof part !== 'object') continue;
+    const candidate = part as { text?: unknown; type?: unknown };
+    if (candidate.type === 'text' && typeof candidate.text === 'string') {
+      return candidate.text;
+    }
+  }
+  return '';
+}
+
+function WelcomeSuggestionRuntime({ children, onSend, suggestions }: WelcomeSuggestionRuntimeProps) {
+  const suggestionsKey = useMemo(
+    () => suggestions.map((suggestion) => (typeof suggestion === 'string'
+      ? suggestion
+      : `${suggestion.title}\u001f${suggestion.label}\u001f${suggestion.prompt}`)).join('\u001e'),
+    [suggestions],
+  );
+  const chatModel = useMemo<ChatModelAdapter>(() => ({
+    async run({ abortSignal, messages }) {
+      const latestUserMessage = [...messages].reverse().find((message) => message.role === 'user');
+      const latestUserText = getAssistantUiTextPart(latestUserMessage?.content).trim();
+
+      if (latestUserText && !abortSignal.aborted) {
+        await onSend(latestUserText);
+      }
+
+      return { content: [] };
+    },
+  }), [onSend]);
+  const runtime = useLocalRuntime(chatModel, {
+    adapters: {
+      suggestion: {
+        generate: async () => suggestions.map((suggestion) => ({ prompt: typeof suggestion === 'string' ? suggestion : suggestion.prompt })),
+      },
+    },
+  });
+
+  return (
+    <AssistantRuntimeProvider runtime={runtime}>
+      <WelcomeSuggestionScope key={suggestionsKey} suggestions={suggestions}>
+        {children}
+      </WelcomeSuggestionScope>
+    </AssistantRuntimeProvider>
+  );
+}
+
+function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestionRuntimeProps, 'onSend'>) {
+  const parentAui = useAui();
+  const aui = useAui(
+    {
+      suggestions: Suggestions(suggestions),
+    },
+    { parent: parentAui },
+  );
+
+  return <AuiProvider value={aui}>{children}</AuiProvider>;
+}
+
+function WelcomeScreen({ disabled = false, onSend }: WelcomeScreenProps) {
   const { t } = useTranslation('chat');
-  const quickActions = [
-    { key: 'askQuestions', label: t('welcome.askQuestions') },
-    { key: 'creativeTasks', label: t('welcome.creativeTasks') },
-    { key: 'brainstorming', label: t('welcome.brainstorming') },
-  ];
+  const quickActions = useMemo<SuggestionConfig[]>(() => [
+    {
+      title: t('welcome.askQuestions'),
+      label: t('welcome.askQuestionsDesc'),
+      prompt: t('welcome.askQuestions'),
+    },
+    {
+      title: t('welcome.creativeTasks'),
+      label: t('welcome.creativeTasksDesc'),
+      prompt: t('welcome.creativeTasks'),
+    },
+    {
+      title: t('welcome.brainstorming'),
+      label: t('welcome.brainstormingDesc'),
+      prompt: t('welcome.brainstorming'),
+    },
+  ], [t]);
 
   return (
     <div className="flex flex-col items-center justify-center text-center h-[60vh]">
@@ -2726,58 +3141,42 @@ function WelcomeScreen() {
         {t('welcome.subtitle')}
       </h1>
 
-      <div className="flex flex-wrap items-center justify-center gap-2.5 max-w-lg w-full">
-        {quickActions.map(({ key, label }) => (
-          <button 
-            key={key}
-            className="px-4 py-1.5 rounded-full border border-black/10 dark:border-white/10 text-meta font-medium text-foreground/70 hover:bg-black/5 dark:hover:bg-white/5 transition-colors bg-black/[0.02]"
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      <WelcomeSuggestionRuntime onSend={onSend} suggestions={quickActions}>
+        <div className="grid w-full max-w-2xl grid-cols-1 gap-2 sm:grid-cols-2" data-testid="chat-welcome-suggestions">
+          <ThreadPrimitive.Suggestions>
+            {() => <SuggestionItem disabled={disabled} />}
+          </ThreadPrimitive.Suggestions>
+        </div>
+      </WelcomeSuggestionRuntime>
     </div>
+  );
+}
+
+function SuggestionItem({ disabled = false }: { disabled?: boolean }) {
+  return (
+    <SuggestionPrimitive.Trigger
+      send
+      disabled={disabled}
+      className={cn(
+        'flex min-h-[84px] flex-col items-start gap-1 rounded-2xl border border-border bg-surface-input/70 px-4 py-3 text-left text-sm transition-colors',
+        'hover:bg-black/5 dark:hover:bg-white/10',
+        'disabled:cursor-not-allowed disabled:opacity-60',
+      )}
+    >
+      <span className="font-medium text-foreground">
+        <SuggestionPrimitive.Title />
+      </span>
+      <span className="text-muted-foreground">
+        <SuggestionPrimitive.Description />
+      </span>
+    </SuggestionPrimitive.Trigger>
   );
 }
 
 // ── Typing Indicator ────────────────────────────────────────────
 
-function TypingIndicator() {
-  const { t } = useTranslation('chat');
-  return (
-    <div className="flex gap-3" data-testid="chat-typing-indicator">
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full mt-1 bg-black/5 dark:bg-white/5 text-foreground">
-        <Sparkles className="h-4 w-4" />
-      </div>
-      <div className="bg-black/5 dark:bg-white/5 text-foreground rounded-2xl px-4 py-3">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <DotMatrix state="thinking" label={t('assistantRender.activity.thinking')} className="size-4 text-primary" />
-          <span>{t('assistantRender.activity.thinking')}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ── Activity Indicator (shown between tool cycles) ─────────────
-
-function ActivityIndicator({ phase }: { phase: 'tool_processing' }) {
-  const { t } = useTranslation('chat');
-  void phase;
-  return (
-    <div className="flex gap-3" data-testid="chat-activity-indicator">
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full mt-1 bg-black/5 dark:bg-white/5 text-foreground">
-        <Sparkles className="h-4 w-4" />
-      </div>
-      <div className="bg-black/5 dark:bg-white/5 text-foreground rounded-2xl px-4 py-3">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <DotMatrix state="syncing" label={t('assistantRender.activity.processingToolResults')} className="size-4 text-primary" />
-          <span>{t('assistantRender.activity.processingToolResults')}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function ImageGeneratingIndicator() {
   const { t } = useTranslation('chat');

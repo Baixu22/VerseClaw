@@ -1,16 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Camera, ExternalLink, Globe, Loader2, MousePointer2, RefreshCw, Send, Square, X } from 'lucide-react';
+import { Camera, Loader2, MousePointer2, RefreshCw, Send, SlidersHorizontal, Square, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import {
+  WebPreviewBrowser,
+  WebPreviewConsole,
+  WebPreviewEmpty,
+  WebPreviewRoot,
+  WebPreviewSelectionBar,
+  WebPreviewToolbar,
+} from '@/components/ai-elements/web-preview';
 import { hostApi, type WorkspaceWebPreviewResult } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
+import type { AgentBrowserSession } from '@shared/host-api/contract';
 import type { WorkspacePreviewMode, WorkspacePreviewSelectedElement, WorkspaceWebPreviewLaunchConfig } from '@shared/types/workspace';
 
 type WorkspaceWebPreviewPanelProps = {
@@ -58,6 +66,12 @@ function isSelectionMessage(value: unknown): value is PreviewMessage {
   return Boolean(value && typeof value === 'object' && (value as PreviewMessage).type === 'clawx.preview.selection');
 }
 
+function makeAgentBrowserProfile(workspaceId: string | undefined, sessionKey: string): string {
+  const source = `${workspaceId || 'workspace'}-${sessionKey || 'session'}`;
+  const normalized = source.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '');
+  return `workspace-${normalized || 'default'}`.slice(0, 96);
+}
+
 export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendComposerDraft }: WorkspaceWebPreviewPanelProps) {
   const { t } = useTranslation('chat');
   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
@@ -81,6 +95,21 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
   const [selectedElement, setSelectedElement] = useState<WorkspacePreviewSelectedElement | null>(currentSessionState?.webPreview?.selectedElement ?? null);
   const [screenshotBusy, setScreenshotBusy] = useState(false);
   const [frameNonce, setFrameNonce] = useState(0);
+  const [agentBrowserBusy, setAgentBrowserBusy] = useState(false);
+  const [agentBrowserSession, setAgentBrowserSession] = useState<AgentBrowserSession | null>(() => {
+    const saved = currentSessionState?.webPreview;
+    if (!saved?.agentBrowserSessionId) return null;
+    const now = new Date(saved.agentBrowserUpdatedAt ?? Date.now()).toISOString();
+    return {
+      id: saved.agentBrowserSessionId,
+      profile: saved.agentBrowserProfile ?? makeAgentBrowserProfile(workspaceId, currentSessionKey),
+      mode: saved.agentBrowserMode ?? 'visible',
+      url: saved.agentBrowserUrl ?? undefined,
+      title: saved.agentBrowserTitle ?? undefined,
+      createdAt: now,
+      updatedAt: now,
+    };
+  });
 
   const selectedConfig = useMemo(() => {
     return launchConfigs.find((config) => config.name === selectedConfigName) ?? launchConfigs[0] ?? null;
@@ -88,6 +117,10 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
 
   const previewId = status?.previewId ?? null;
   const previewUrl = status?.previewUrl ?? status?.url ?? null;
+  const agentBrowserTargetUrl = useMemo(() => {
+    const typedExternalUrl = mode === 'externalUrl' ? externalUrl.trim() : '';
+    return typedExternalUrl || status?.targetUrl || previewUrl || '';
+  }, [externalUrl, mode, previewUrl, status?.targetUrl]);
 
   const persistWebState = useCallback((patch: Record<string, unknown>) => {
     if (!workspaceId) return;
@@ -111,6 +144,34 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
       setStatus(result);
     }).catch(() => setStatus(null));
   }, [workspaceId]);
+
+  useEffect(() => {
+    const savedSessionId = currentSessionState?.webPreview?.agentBrowserSessionId;
+    if (!savedSessionId) return;
+    let cancelled = false;
+    void hostApi.agentBrowser.status().then((result) => {
+      if (cancelled) return;
+      const session = result.sessions?.find((entry) => entry.id === savedSessionId) ?? null;
+      if (session) {
+        setAgentBrowserSession(session);
+      } else {
+        setAgentBrowserSession(null);
+        persistWebState({
+          agentBrowserSessionId: null,
+          agentBrowserMode: null,
+          agentBrowserProfile: null,
+          agentBrowserUrl: null,
+          agentBrowserTitle: null,
+          agentBrowserUpdatedAt: null,
+        });
+      }
+    }).catch(() => {
+      // Keep the saved binding visible even if the runtime cannot report status.
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentSessionState?.webPreview?.agentBrowserSessionId, persistWebState]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -228,6 +289,74 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
     }
   };
 
+  const persistAgentBrowserSession = (session: AgentBrowserSession) => {
+    setAgentBrowserSession(session);
+    persistWebState({
+      agentBrowserSessionId: session.id,
+      agentBrowserMode: session.mode,
+      agentBrowserProfile: session.profile,
+      agentBrowserUrl: session.url ?? null,
+      agentBrowserTitle: session.title ?? null,
+      agentBrowserUpdatedAt: Date.now(),
+    });
+  };
+
+  const openOrLocateAgentBrowser = async () => {
+    const url = agentBrowserTargetUrl.trim();
+    if (!url) {
+      toast.info(t('workspace.web.toast.agentBrowserNoUrl', 'Start a preview or enter a URL first'));
+      return;
+    }
+    setAgentBrowserBusy(true);
+    try {
+      if (agentBrowserSession?.id) {
+        try {
+          const result = await hostApi.agentBrowser.navigate({
+            sessionId: agentBrowserSession.id,
+            url,
+            waitUntil: 'dom-ready',
+          });
+          let nextSession = result.session;
+          persistAgentBrowserSession(nextSession);
+          try {
+            const focusResult = await hostApi.agentBrowser.focus({ sessionId: nextSession.id });
+            nextSession = focusResult.session;
+            persistAgentBrowserSession(nextSession);
+          } catch {
+            // Navigation succeeded; focus is best-effort for external headed browsers.
+          }
+          toast.success(t('workspace.web.toast.agentBrowserLocated', 'Agent Browser located'));
+          return;
+        } catch {
+          setAgentBrowserSession(null);
+        }
+      }
+
+      const result = await hostApi.agentBrowser.open({
+        url,
+        mode: 'visible',
+        profile: currentSessionState?.webPreview?.agentBrowserProfile ?? makeAgentBrowserProfile(workspaceId, currentSessionKey),
+        width: 1280,
+        height: 900,
+        authPersistence: 'profile',
+      });
+      let nextSession = result.session;
+      persistAgentBrowserSession(nextSession);
+      try {
+        const focusResult = await hostApi.agentBrowser.focus({ sessionId: nextSession.id });
+        nextSession = focusResult.session;
+        persistAgentBrowserSession(nextSession);
+      } catch {
+        // The visible open path already surfaced the browser; focusing is best-effort.
+      }
+      toast.success(t('workspace.web.toast.agentBrowserOpened', 'Agent Browser opened'));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setAgentBrowserBusy(false);
+    }
+  };
+
   const sendSelection = () => {
     if (!selectedElement) return;
     onAppendComposerDraft?.(formatPrompt({
@@ -284,25 +413,26 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-background">
+    <WebPreviewRoot>
       {/* Slim toolbar — single row with mode tabs + address + actions */}
-      <div className="shrink-0 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
-        <div className="flex items-center gap-2">
-          <div className="inline-flex shrink-0 rounded-md border border-black/10 bg-surface-input p-0.5 dark:border-white/10">
-            {(['static', 'devServer', 'externalUrl'] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                className={cn(
-                  'rounded px-2 py-1 text-2xs transition-colors',
-                  mode === m ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
-                )}
-                onClick={() => setMode(m)}
-              >
-                {modeLabel(t, m)}
-              </button>
-            ))}
-          </div>
+      <WebPreviewToolbar>
+          <Select value={mode} onValueChange={(value) => setMode(value as WorkspacePreviewMode)}>
+            <SelectTrigger
+              size="sm"
+              className="h-7 w-8 shrink-0 justify-center gap-0 bg-surface-input px-0 text-muted-foreground [&>span]:sr-only [&>svg:last-child]:hidden"
+              aria-label={t('workspace.web.prompt.mode', 'Mode')}
+              title={modeLabel(t, mode)}
+              data-testid="ai-web-preview-mode-select"
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent align="start" className="min-w-[150px]">
+              {(['static', 'devServer', 'externalUrl'] as const).map((previewMode) => (
+                <SelectItem key={previewMode} value={previewMode}>{modeLabel(t, previewMode)}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <div className="min-w-0 flex-1">
             {mode !== 'externalUrl' ? (
@@ -343,7 +473,15 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
               {busy ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <RefreshCw className="mr-1.5 h-3 w-3" />}
               {t('workspace.web.actions.start', 'Start')}
             </Button>
-            <Button variant="outline" size="sm" className="h-7 text-xs" disabled={busy || !status?.running} onClick={() => void stopPreview()}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 text-xs"
+              disabled={busy || !status?.running}
+              onClick={() => void stopPreview()}
+              aria-label={t('workspace.web.actions.stop', 'Stop')}
+              title={t('workspace.web.actions.stop', 'Stop')}
+            >
               <Square className="h-3 w-3" />
             </Button>
             <Button
@@ -357,20 +495,34 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
               <MousePointer2 className="h-3.5 w-3.5" />
             </Button>
           </div>
-        </div>
-      </div>
+      </WebPreviewToolbar>
 
       {selectedElement && (
-        <div className="shrink-0 border-b border-primary/20 bg-primary/[0.04] px-3 py-1.5">
+        <WebPreviewSelectionBar>
           <div className="flex items-center gap-2">
             <span className="rounded bg-primary/10 px-1.5 py-0.5 text-2xs font-medium text-primary">{t('workspace.web.selection.selected', 'Selected')}</span>
             <span className="rounded bg-background/80 px-1.5 py-0.5 font-mono text-2xs text-muted-foreground">&lt;{selectedElement.tagName}&gt;</span>
             <span className="min-w-0 flex-1 truncate font-mono text-xs text-foreground">{selectedElement.cssSelector}</span>
             <div className="flex shrink-0 items-center gap-1">
-              <Button variant="ghost" size="sm" className="h-6 px-1.5 text-2xs" onClick={clearSelection}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 px-1.5 text-2xs"
+                onClick={clearSelection}
+                aria-label={t('workspace.web.actions.clearSelection', 'Clear selection')}
+                title={t('workspace.web.actions.clearSelection', 'Clear selection')}
+              >
                 <X className="h-3 w-3" />
               </Button>
-              <Button variant="outline" size="sm" className="h-6 px-1.5 text-2xs" onClick={sendSelection} disabled={!onAppendComposerDraft}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-6 px-1.5 text-2xs"
+                onClick={sendSelection}
+                disabled={!onAppendComposerDraft}
+                aria-label={t('workspace.web.actions.sendToComposer', 'Send to composer')}
+                title={t('workspace.web.actions.sendToComposer', 'Send to composer')}
+              >
                 <Send className="h-3 w-3" />
               </Button>
               <Button
@@ -379,36 +531,36 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
                 className="h-6 px-1.5 text-2xs"
                 disabled={screenshotBusy || !onAppendComposerDraft}
                 onClick={() => void captureAndSend()}
+                aria-label={t('workspace.web.actions.captureAndSend', 'Capture and send')}
+                title={t('workspace.web.actions.captureAndSend', 'Capture and send')}
               >
                 <Camera className={cn('h-3 w-3', screenshotBusy && 'animate-pulse')} />
               </Button>
             </div>
           </div>
-        </div>
+        </WebPreviewSelectionBar>
       )}
 
       {mode === 'devServer' && logs && (
-        <Textarea readOnly value={logs} className="mx-3 mt-2 h-16 shrink-0 resize-none border-black/10 bg-surface-input font-mono text-2xs dark:border-white/10" />
+        <WebPreviewConsole value={logs} />
       )}
 
       {/* Browser viewport — clean, minimal chrome */}
-      <div className="min-h-0 flex-1 bg-surface-input p-2">
-        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-md border border-black/10 bg-white shadow-sm dark:border-white/10">
+      <WebPreviewBrowser
+        previewUrl={previewUrl}
+        running={status?.running}
+        onReload={() => setFrameNonce((value) => value + 1)}
+        onOpenExternal={previewUrl ? () => void hostApi.shell.openExternal(previewUrl) : undefined}
+        agentBrowser={{
+          active: Boolean(agentBrowserSession),
+          busy: agentBrowserBusy,
+          canOpen: Boolean(agentBrowserTargetUrl),
+          label: agentBrowserSession?.title || agentBrowserSession?.profile || null,
+          url: agentBrowserSession?.url ?? null,
+        }}
+        onOpenAgentBrowser={() => void openOrLocateAgentBrowser()}
+      >
           {/* Address bar — single slim row */}
-          <div className="flex h-8 shrink-0 items-center gap-1.5 border-b border-black/5 bg-surface-modal px-2 dark:border-white/10">
-            <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" disabled={!previewUrl} onClick={() => setFrameNonce((value) => value + 1)} title={t('workspace.web.actions.refresh', 'Refresh')}>
-              <RefreshCw className="h-3.5 w-3.5" />
-            </Button>
-            <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-full border border-black/5 bg-surface-input px-2.5 py-1 dark:border-white/10">
-              <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', status?.running ? 'bg-emerald-400' : 'bg-muted-foreground/30')} />
-              <span className="truncate font-mono text-2xs text-muted-foreground">{previewUrl ?? t('workspace.web.browser.placeholder', 'Start a preview to load a URL')}</span>
-            </div>
-            {previewUrl && (
-              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" onClick={() => void hostApi.shell.openExternal(previewUrl)} title={t('workspace.web.actions.openExternal', 'Open externally')}>
-                <ExternalLink className="h-3.5 w-3.5" />
-              </Button>
-            )}
-          </div>
           {previewUrl ? (
             <iframe
               ref={iframeRef}
@@ -423,13 +575,9 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
               }}
             />
           ) : (
-            <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 text-muted-foreground/50">
-              <Globe className="h-7 w-7 opacity-60" />
-              <p className="text-xs">{t('workspace.web.empty', '{{mode}} preview will appear here after it starts.', { mode: modeLabel(t, mode) })}</p>
-            </div>
+            <WebPreviewEmpty label={t('workspace.web.browser.placeholder', 'Start a preview to load a URL')} />
           )}
-        </div>
-      </div>
-    </div>
+      </WebPreviewBrowser>
+    </WebPreviewRoot>
   );
 }

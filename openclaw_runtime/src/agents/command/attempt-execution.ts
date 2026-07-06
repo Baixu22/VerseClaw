@@ -3,7 +3,7 @@
  */
 import type { AcpRuntimeEvent } from "@openclaw/acp-core/runtime/types";
 import { sanitizeForLog } from "../../../packages/terminal-core/src/ansi.js";
-import { formatAcpErrorChain } from "../../acp/runtime/errors.js";
+import { formatAcpErrorChain } from "../../runtime/errors.ts";
 import { normalizeReplyPayload } from "../../auto-reply/reply/normalize-reply.js";
 import type { ThinkLevel, VerboseLevel } from "../../auto-reply/thinking.js";
 import { appendSessionTranscriptMessage } from "../../config/sessions/transcript-append.js";

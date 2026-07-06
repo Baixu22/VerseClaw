@@ -1,0 +1,55 @@
+{
+  "replayCase": {
+    "id": "runtime-replay-success",
+    "title": "Fixture-backed successful runtime replay",
+    "scenario": "success",
+    "input": {
+      "userMessage": "Implement the fixture-backed success task.",
+      "providerFixture": "runtime-replay/providers/success",
+      "toolFixture": "runtime-replay/tools/success",
+      "workspaceFixture": "runtime-replay/workspaces/clean"
+    },
+    "expected": {
+      "terminalStatus": "completed",
+      "allowedFailureKinds": [],
+      "touchedPaths": [
+        "src/example.ts"
+      ]
+    },
+    "budgets": {
+      "maxPromptBytes": 4096,
+      "maxToolCalls": 3,
+      "maxDurationMs": 120000
+    }
+  },
+  "fixtures": {
+    "provider": {
+      "ref": "runtime-replay/providers/success",
+      "mode": "fixture",
+      "status": "ok",
+      "summary": "Provider returned a sanitized success response from fixture data."
+    },
+    "tool": {
+      "ref": "runtime-replay/tools/success",
+      "mode": "fixture",
+      "status": "ok",
+      "summary": "Tool calls completed from fixture data.",
+      "toolCalls": 1
+    },
+    "workspace": {
+      "ref": "runtime-replay/workspaces/clean",
+      "mode": "fixture",
+      "status": "clean",
+      "summary": "Clean fixture workspace with one sanitized touched path.",
+      "touchedPaths": [
+        {
+          "path": "src/example.ts",
+          "status": "modified",
+          "summary": "Updated fixture example without raw workspace content."
+        }
+      ]
+    }
+  },
+  "expectedFailureKinds": [],
+  "expectedEvidenceDecisions": []
+}

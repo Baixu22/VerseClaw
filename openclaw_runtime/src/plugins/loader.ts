@@ -632,6 +632,39 @@ function listPackageLocalDistRuntimeArtifactRelativePaths(relativePath: string):
   return [...candidates];
 }
 
+function isPackageLocalStaticAsset(params: {
+  artifactRelativePath: string;
+  rootDir: string;
+}): boolean {
+  const packageJsonPath = path.join(params.rootDir, "package.json");
+  if (!fs.existsSync(packageJsonPath)) {
+    return false;
+  }
+  try {
+    const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as {
+      openclaw?: {
+        build?: {
+          staticAssets?: unknown;
+        };
+      };
+    };
+    const staticAssets = pkg.openclaw?.build?.staticAssets;
+    if (!Array.isArray(staticAssets)) {
+      return false;
+    }
+    const normalizedArtifact = params.artifactRelativePath.split(path.sep).join("/");
+    return staticAssets.some((entry) => {
+      if (!entry || typeof entry !== "object") {
+        return false;
+      }
+      const source = (entry as { source?: unknown }).source;
+      return typeof source === "string" && source.split(path.sep).join("/") === normalizedArtifact;
+    });
+  } catch {
+    return false;
+  }
+}
+
 function shouldPreferPackageLocalDistRuntimeArtifact(source: string): boolean {
   switch (path.extname(source).toLowerCase()) {
     case ".ts":
@@ -661,6 +694,15 @@ function resolvePackageLocalDistRuntimeArtifact(params: {
   for (const artifactRelativePath of listPackageLocalDistRuntimeArtifactRelativePaths(
     relativeSource,
   )) {
+    const packageRelativeArtifactPath = path.join("dist", artifactRelativePath);
+    if (
+      isPackageLocalStaticAsset({
+        artifactRelativePath: packageRelativeArtifactPath,
+        rootDir: params.rootDir,
+      })
+    ) {
+      continue;
+    }
     const artifactSource = path.join(artifactRoot, artifactRelativePath);
     if (fs.existsSync(artifactSource)) {
       return safeRealpathOrResolve(artifactSource);
@@ -754,6 +796,8 @@ export const testing = {
   toSafeImportPath,
   createGuardedPluginRegistrationApi,
   runPluginRegisterSync,
+  isPackageLocalStaticAsset,
+  resolvePackageLocalDistRuntimeArtifact,
   getCompatibleActivePluginRegistry,
   resolvePluginLoadCacheContext,
   get maxPluginRegistryCacheEntries() {

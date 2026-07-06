@@ -19,15 +19,27 @@ const workspace = {
   rootPath: '/workspace/demo',
   permissionMode: 'acceptEdits',
   activeSessionKey: SESSION_KEY,
-  state: {},
-  sessionStates: {},
+  state: {
+    webPreview: {
+      mode: 'externalUrl',
+      targetUrl: 'http://localhost:8082/',
+    },
+  },
+  sessionStates: {
+    [SESSION_KEY]: {
+      webPreview: {
+        mode: 'externalUrl',
+        targetUrl: 'http://localhost:8082/',
+      },
+    },
+  },
 };
 
 const previewUrl = `data:text/html,${encodeURIComponent('<!doctype html><html><body><button id="save">Save changes</button></body></html>')}`;
 
 test.describe('Workspace Web preview panel', () => {
   test('selects a preview component and sends it to the composer', async ({ launchElectronApp }) => {
-    const app = await launchElectronApp({ skipSetup: true });
+    const app = await launchElectronApp({ skipSetup: true, visualMode: true });
 
     try {
       await installIpcMocks(app, {
@@ -76,6 +88,11 @@ test.describe('Workspace Web preview panel', () => {
             sessionKey: SESSION_KEY,
             state: { artifactPanel: { workspaceView: 'web' } },
           }])]: { success: true },
+          [stableStringify(['workspaces', 'saveState', null])]: { success: true },
+          [stableStringify(['git', 'status', null])]: {
+            success: true,
+            status: { isRepository: false },
+          },
           [stableStringify(['webPreview', 'status', { workspaceId: WORKSPACE_ID }])]: {
             success: true,
             running: true,
@@ -86,6 +103,42 @@ test.describe('Workspace Web preview panel', () => {
             url: previewUrl,
             targetUrl: 'http://localhost:8082/',
             rootPath: '/workspace/demo',
+          },
+          [stableStringify(['agentBrowser', 'open', null])]: {
+            success: true,
+            session: {
+              id: 'agent-browser-1',
+              profile: 'workspace-workspace-1-agent-main-main',
+              mode: 'visible',
+              url: 'http://localhost:8082/',
+              title: 'Demo Agent Browser',
+              createdAt: '2026-07-04T00:00:00.000Z',
+              updatedAt: '2026-07-04T00:00:00.000Z',
+            },
+          },
+          [stableStringify(['agentBrowser', 'focus', null])]: {
+            success: true,
+            session: {
+              id: 'agent-browser-1',
+              profile: 'workspace-workspace-1-agent-main-main',
+              mode: 'visible',
+              url: 'http://localhost:8082/',
+              title: 'Demo Agent Browser',
+              createdAt: '2026-07-04T00:00:00.000Z',
+              updatedAt: '2026-07-04T00:00:01.000Z',
+            },
+          },
+          [stableStringify(['agentBrowser', 'status', null])]: {
+            success: true,
+            sessions: [{
+              id: 'agent-browser-1',
+              profile: 'workspace-workspace-1-agent-main-main',
+              mode: 'visible',
+              url: 'http://localhost:8082/',
+              title: 'Demo Agent Browser',
+              createdAt: '2026-07-04T00:00:00.000Z',
+              updatedAt: '2026-07-04T00:00:01.000Z',
+            }],
           },
         },
       });
@@ -99,13 +152,65 @@ test.describe('Workspace Web preview panel', () => {
         }
       }
 
+      await page.setViewportSize({ width: 1280, height: 820 });
+      await page.addStyleTag({
+        content: `
+          *, *::before, *::after {
+            animation-duration: 0s !important;
+            animation-delay: 0s !important;
+            transition-duration: 0s !important;
+            caret-color: transparent !important;
+          }
+          [data-sonner-toaster] {
+            display: none !important;
+          }
+        `,
+      });
+
       await expect(page.getByTestId('main-layout')).toBeVisible();
-      await page.getByRole('button', { name: 'Workspace' }).first().click();
+      await page.getByTestId('chat-workspace-toggle').click();
 
       const sidePanel = page.getByTestId('artifact-panel');
       await expect(sidePanel).toBeVisible();
-      await sidePanel.getByRole('button', { name: 'Web' }).click();
-      await expect(sidePanel.getByText('Web preview')).toBeVisible();
+      await sidePanel.getByTestId('workspace-launchpad-add').click();
+      await sidePanel.getByTestId('workspace-launchpad-entry-web').click();
+      const webPreview = sidePanel.getByTestId('ai-web-preview');
+      await expect(webPreview).toBeVisible();
+      await expect(webPreview.getByTestId('ai-web-preview-toolbar')).toBeVisible();
+      await expect(webPreview.getByTestId('ai-web-preview-mode-tabs')).toHaveCount(0);
+      await expect(webPreview.getByTestId('ai-web-preview-mode-select')).toBeVisible();
+      await webPreview.getByTestId('ai-web-preview-mode-select').click();
+      await expect(page.getByRole('option', { name: 'External URL' })).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(webPreview.getByTestId('ai-web-preview-browser')).toBeVisible();
+      await expect(webPreview.locator('iframe[title="Workspace preview"]')).toBeVisible();
+
+      await webPreview.getByTestId('ai-web-preview-agent-browser-open').click();
+      await expect.poll(async () => {
+        const calls = await app.evaluate(() => (
+          (globalThis as unknown as {
+            __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: Record<string, unknown> | null }>;
+          }).__verseClawE2eHostCalls ?? []
+        ));
+        return calls.filter((call) => call.module === 'agentBrowser').map((call) => call.action).join(',');
+      }).toContain('open');
+      const hostCalls = await app.evaluate(() => (
+        (globalThis as unknown as {
+          __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: Record<string, unknown> | null }>;
+        }).__verseClawE2eHostCalls ?? []
+      ));
+      const agentBrowserOpen = hostCalls.find((call) => call.module === 'agentBrowser' && call.action === 'open');
+      expect(agentBrowserOpen?.payload).toMatchObject({
+        url: 'http://localhost:8082/',
+        mode: 'visible',
+        profile: 'workspace-workspace-1-agent-main-main',
+        authPersistence: 'profile',
+      });
+      const agentBrowserFocus = hostCalls.find((call) => call.module === 'agentBrowser' && call.action === 'focus');
+      expect(agentBrowserFocus?.payload).toMatchObject({
+        sessionId: 'agent-browser-1',
+      });
+      await expect(webPreview.getByTestId('ai-web-preview-agent-browser-status')).toContainText('Agent');
 
       await sidePanel.getByRole('button', { name: 'Pick component' }).click();
 
@@ -135,6 +240,11 @@ test.describe('Workspace Web preview panel', () => {
       }, PREVIEW_ID);
 
       await expect(sidePanel.getByText('#save')).toBeVisible();
+      await expect(webPreview.getByTestId('ai-web-preview-selection')).toContainText('#save');
+      await expect(webPreview).toHaveScreenshot('workspace-web-preview-ai-elements-selected.png', {
+        animations: 'disabled',
+        caret: 'hide',
+      });
       await sidePanel.getByRole('button', { name: 'Send to composer' }).click();
 
       const composer = page.getByTestId('chat-composer-input');

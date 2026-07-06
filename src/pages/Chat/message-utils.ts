@@ -542,5 +542,5 @@ export function formatTimestamp(timestamp: unknown): string {
   if (diffMs < 3600000) return `${Math.floor(diffMs / 60000)}m ago`;
   if (diffMs < 86400000) return `${Math.floor(diffMs / 3600000)}h ago`;
 
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(date);
 }

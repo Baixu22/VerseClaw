@@ -17,7 +17,7 @@ const harnessTemplate = vi.hoisted(() => ({
 }));
 
 const { testWorkspaceRoot } = vi.hoisted(() => ({
-  testWorkspaceRoot: `/tmp/clawx-workspaces-api-${Math.random().toString(36).slice(2)}`,
+  testWorkspaceRoot: `${process.env.CLAWX_TEST_TMPDIR ?? `${process.cwd()}/.tmp/vitest`}/clawx-workspaces-api-${Math.random().toString(36).slice(2)}`,
 }));
 
 vi.mock('electron-store', () => {

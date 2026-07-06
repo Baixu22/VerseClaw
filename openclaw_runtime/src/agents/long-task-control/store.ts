@@ -280,6 +280,15 @@ export function buildRuntimeCoreCheckpointFromResumeCheckpoint(input: {
   checkpoint: RuntimeResumeCheckpoint;
   openObligations?: string[];
   contextSummary?: string;
+  /**
+   * A6 Stage 2 Stream 2B-2: pre-computed file fingerprints for the checkpoint.
+   * Caller (A6) computes this via `computeFileFingerprintsForDirectory` /
+   * `fingerprintToRecord` from `./file-fingerprint.js` BEFORE calling this
+   * function, then passes the resulting `Record<path, sha256>` here.
+   *
+   * When omitted, `fileHashes` is `{}` (legacy behavior — flag-off parity).
+   */
+  fileHashes?: Record<string, string>;
 }): Checkpoint {
   return {
     checkpointId: input.checkpointId,
@@ -295,7 +304,7 @@ export function buildRuntimeCoreCheckpointFromResumeCheckpoint(input: {
       ?? input.checkpoint.activeTask
       ?? "",
     toolResults: [],
-    fileHashes: {},
+    fileHashes: input.fileHashes ?? {},
     evidenceRefs: runtimeEvidenceRefsFromResumeCheckpoint(input.checkpoint, input.checkpointId),
     schemaVersion: 1,
   };

@@ -1,7 +1,19 @@
-﻿import type { RawMessage } from '../chat/types';
+import type { RawMessage } from '../chat/types';
 import type { AgentReasoningEffort, AgentsSnapshot } from '../types/agent';
 import type { CronJob, CronJobCreateInput, CronJobUpdateInput } from '../types/cron';
 import type { GatewayHealth, GatewayStatus } from '../types/gateway';
+import type {
+  MemoryCard,
+  MemoryCardScope,
+  MemoryCardStatus,
+  MemoryConflict,
+  MemoryEvidenceCheckResult,
+  MemoryGatekeeperDecision,
+  MemoryHealthReport,
+  MemoryInjectionRecord,
+  MemoryProposal,
+  MemoryProposalRecord,
+} from '../types/memory';
 import type {
   GitBranch,
   GitCapabilities,
@@ -20,6 +32,7 @@ import type {
 export type { GitCommitResult, GitOperationResult, GithubPrCreateInput } from '../types/git';
 import type {
   McpCallToolResult,
+  McpExposureConfig,
   McpHeartbeatResult,
   McpListToolsResult,
   McpNetworkPolicy,
@@ -42,8 +55,15 @@ import type {
   LiveTokenUsage,
   PermissionApprovalDecision,
   PermissionApprovalEvent,
+  PromptCacheRiskAction,
+  PromptCacheRiskAssessment,
+  PromptCacheRiskDecision,
+  PromptCacheRiskSeverity,
+  PromptCacheStatus,
   WorkspaceContextRange,
   KnowledgeInvocationMode,
+  SessionArchiveEntry,
+  SessionFolder,
   WorkspaceKnowledgeScope,
   WorkspacePermissionMode,
   WorkspacePreviewMode,
@@ -77,6 +97,15 @@ import type {
   ObservabilityTraceQuery,
   ObservabilityTraceQueryResult,
 } from '../types/observability';
+
+export type {
+  PromptCacheRiskAction,
+  PromptCacheRiskAssessment,
+  PromptCacheRiskDecision,
+  PromptCacheRiskEvent,
+  PromptCacheRiskSeverity,
+  PromptCacheStatus,
+} from '../types/workspace';
 import type {
   ClawGraphCompileResult,
   ClawGraphReviewDecision,
@@ -111,6 +140,15 @@ import type {
   LongTaskInputMode,
   ResumeCheckpoint,
 } from '../types/long-task-control';
+import type {
+  AgentDevScenarioDefinition,
+  AgentDevScenarioId,
+} from '../agent-dev/scenarios';
+import type {
+  AgentDevCostReport,
+  AgentDevSkillSandboxReport,
+  AgentDevTraceEvent,
+} from '../agent-dev/trace-contract';
 export type {
   LongTaskCheckpointRecord,
   LongTaskControlEvent,
@@ -118,6 +156,44 @@ export type {
   LongTaskInputMode,
   ResumeCheckpoint,
 } from '../types/long-task-control';
+
+export type {
+  ContextPack,
+  ContextPackBudget,
+  ContextPackBucketName,
+  ContextPackBuckets,
+  MemoryCard,
+  MemoryCardScope,
+  MemoryCardStatus,
+  MemoryCardType,
+  MemoryConflict,
+  MemoryConflictDetail,
+  MemoryEvidenceCheckResult,
+  MemoryEvidenceRef,
+  MemoryFeedbackRecord,
+  MemoryGatekeeperDecision,
+  MemoryHealthReport,
+  MemoryInjectionCandidateExplain,
+  MemoryInjectionRecord,
+  MemoryInjectionSimulation,
+  MemoryMergeDraft,
+  MemoryPermissionDecision,
+  MemoryPhaseTag,
+  MemoryProposal,
+  MemoryProposalOperation,
+  MemoryProposalPreview,
+  MemoryProposalRecord,
+  MemoryProposalStatus,
+  MemoryReviewAction,
+  MemoryReviewBatchResult,
+  MemoryRetentionAction,
+  MemoryRetentionCandidate,
+  MemoryRiskLevel,
+  MemoryCardSensitivity,
+  MemorySuggestedAction,
+  MemoryUtilityCardReport,
+  MemoryUtilityReport,
+} from '../types/memory';
 
 export type JsonRecord = Record<string, unknown>;
 export type HostSuccess = { success: boolean; error?: string };
@@ -202,6 +278,7 @@ export type SettingsSnapshot = Partial<{
   gatewayAutoStart: boolean;
   gatewayPort: number;
   roleMemoryEnabled: boolean;
+  memoryEmbeddingEnabled: boolean;
   proxyEnabled: boolean;
   proxyServer: string;
   proxyHttpServer: string;
@@ -243,6 +320,26 @@ export type WorkspaceUpdatePayload = {
 };
 export type WorkspaceDeletePayload = { id: string };
 export type WorkspaceSwitchPayload = { id: string };
+export type WorkspaceFolderCreatePayload = {
+  workspaceId: string;
+  name: string;
+  parentId?: string | null;
+  kind?: SessionFolder['kind'];
+};
+export type WorkspaceFolderRenamePayload = {
+  workspaceId: string;
+  folderId: string;
+  name: string;
+};
+export type WorkspaceFolderDeletePayload = {
+  workspaceId: string;
+  folderId: string;
+};
+export type WorkspaceFolderMoveSessionPayload = {
+  workspaceId: string;
+  sessionKey: string;
+  folderId: string | null;
+};
 export type WorkspaceSaveStatePayload = {
   id: string;
   activeSessionKey?: string;
@@ -370,6 +467,47 @@ export type PermissionApprovalDecisionPayload = {
 };
 export type PermissionApprovalDecisionResult = HostSuccess & {
   approval?: PermissionApprovalEvent;
+};
+
+/**
+ * Area 3 §3.3: Trusted Orchestration Preset — workspace-scoped standing
+ * approval for a named orchestration shape (templateId + role set + maxWorkers).
+ * Auto-approves matching `orchestrator.run` requests with an audit trail;
+ * revoked presets stop matching. The approval gate itself is unchanged.
+ */
+export type TrustedOrchestrationPreset = {
+  id: string;
+  workspaceId: string;
+  label: string;
+  templateId?: string;
+  allowedRoles: string[];
+  maxWorkers: number;
+  approvedAt: string;
+  revokedAt?: string;
+};
+export type OrchestrationPresetListPayload = {
+  workspaceId?: string;
+  includeRevoked?: boolean;
+};
+export type OrchestrationPresetListResult = HostSuccess & {
+  presets: TrustedOrchestrationPreset[];
+};
+export type OrchestrationPresetCreatePayload = {
+  workspaceId: string;
+  label: string;
+  templateId?: string;
+  allowedRoles: string[];
+  maxWorkers: number;
+};
+export type OrchestrationPresetCreateResult = HostSuccess & {
+  preset?: TrustedOrchestrationPreset;
+};
+export type OrchestrationPresetRevokePayload = {
+  workspaceId: string;
+  presetId: string;
+};
+export type OrchestrationPresetRevokeResult = HostSuccess & {
+  preset?: TrustedOrchestrationPreset;
 };
 
 export type ProjectRulesFileStatus = 'missing' | 'present' | 'empty' | 'tooLarge' | 'unreadable';
@@ -818,6 +956,7 @@ export type McpServerCreatePayload = {
   enabled?: boolean;
   scope?: McpScope;
   ownerId?: string;
+  exposure?: McpExposureConfig;
   toolAllowlist?: string[];
   toolDenylist?: string[];
   permissionMode?: WorkspacePermissionMode;
@@ -867,6 +1006,85 @@ export type LogFileEntry = {
   mtime?: number;
 };
 export type LogFilesResult = { files: LogFileEntry[] };
+
+export type SystemRamInfo = {
+  totalBytes: number;
+  freeBytes: number;
+  appUsedBytes: number;
+};
+export type SystemDiskInfo = {
+  root: string;
+  totalBytes: number;
+  freeBytes: number;
+};
+export type SystemCpuInfo = {
+  loadPercent: number;
+  cores: number;
+  available: boolean;
+};
+export type SystemInfoResult = HostSuccess & {
+  ram: SystemRamInfo;
+  disk: SystemDiskInfo[];
+  cpu: SystemCpuInfo;
+  platform: string;
+  arch: string;
+};
+export type SystemScanCategoryId =
+  | 'logs'
+  | 'sessions'
+  | 'trajectories'
+  | 'mediaOutbound'
+  | 'mediaThumbs'
+  | 'uvCache'
+  | 'electronCache'
+  | 'trash';
+export type SystemScanItem = {
+  id: string;
+  path: string;
+  displayPath: string;
+  sizeBytes: number;
+  mtime: number;
+  isDir: boolean;
+  safeToDelete: boolean;
+  riskNoteKey?: string;
+  metadata?: Record<string, unknown>;
+};
+export type SystemScanCategory = {
+  id: SystemScanCategoryId;
+  labelKey: string;
+  totalBytes: number;
+  itemCount: number;
+  deletable: 'always' | 'conditional' | 'never';
+  regenerate: boolean;
+  items: SystemScanItem[];
+  truncated: boolean;
+};
+export type SystemScanResult = HostSuccess & {
+  scannedAt: number;
+  system: {
+    ram: SystemRamInfo;
+    disk: SystemDiskInfo[];
+    cpu: SystemCpuInfo;
+    platform: string;
+    arch: string;
+  };
+  categories: SystemScanCategory[];
+};
+export type SystemScanPayload = {
+  categories?: SystemScanCategoryId[];
+};
+export type SystemDeleteItemsPayload = {
+  items: Array<{ id: string; path: string }>;
+  dryRun?: boolean;
+  approvalId?: string;
+};
+export type SystemDeleteItemsResult = HostSuccess & {
+  dryRun: boolean;
+  removed: string[];
+  errors: Array<{ path: string; error: string }>;
+  freedBytes: number;
+  auditId?: string;
+};
 
 export type GatewayHealthSummary = {
   state: 'healthy' | 'degraded' | 'unresponsive';
@@ -1001,21 +1219,8 @@ export type AgentBootstrapUpdatePayload = {
 
 export type DiagnosticsGatewaySnapshotResult = JsonRecord;
 
-export type AgentDevScenarioId =
-  | 'chat-empty'
-  | 'chat-streaming'
-  | 'models-heavy-usage'
-  | 'settings-provider-error'
-  | 'doctor-failed'
-  | 'gateway-connecting'
-  | 'knowledge-drafts'
-  | 'observability-trace-errors';
-export type AgentDevScenario = {
-  id: AgentDevScenarioId;
-  route: string;
-  description: string;
-  seed: JsonRecord;
-};
+export type { AgentDevScenarioId } from '../agent-dev/scenarios';
+export type AgentDevScenario = AgentDevScenarioDefinition;
 export type AgentDevSeedConversation = {
   id: string;
   title: string;
@@ -1134,16 +1339,64 @@ export type AgentDevTransportTracePayload = {
   sessionId?: string;
   limit?: number;
 };
-export type AgentDevTransportTraceEvent = {
-  id: string;
-  at: number;
-  layer: 'gateway' | 'host-api' | 'renderer' | 'ipc';
-  direction: 'in' | 'out' | 'internal';
-  label: string;
-  metadata?: JsonRecord;
-};
+export type AgentDevTransportTraceEvent = AgentDevTraceEvent;
 export type AgentDevTransportTraceResult = HostSuccess & {
   events: AgentDevTransportTraceEvent[];
+};
+export type AgentDevTraceTimelinePayload = {
+  requestId?: string;
+  limit?: number;
+};
+export type AgentDevTraceTimelineResult = HostSuccess & {
+  events: AgentDevTraceEvent[];
+};
+export type AgentDevRecordScenarioPayload = Partial<{
+  slug: string;
+  route: string;
+  language: string;
+  theme: string;
+  visibleState: JsonRecord;
+}>;
+export type AgentDevRecordScenarioResult = HostSuccess & {
+  artifactPath: string;
+  scenario: JsonRecord;
+};
+export type AgentDevCostReportResult = HostSuccess & {
+  report: AgentDevCostReport;
+};
+export type AgentDevSkillSandboxReportResult = HostSuccess & {
+  report: AgentDevSkillSandboxReport;
+};
+export type AgentDevWorkbenchEvidence = {
+  generatedAt: string;
+  scenarioCount: number;
+  artifactStatus: {
+    workbench: boolean;
+    quality: boolean;
+    channelConformance: boolean;
+    scenarioRecordings: boolean;
+  };
+  hostApi: {
+    contractActions: string[];
+    facadeActions: string[];
+    serviceActions: string[];
+    missingFacadeActions: string[];
+    missingServiceActions: string[];
+  };
+  contracts: {
+    traceTimeline: boolean;
+    costReport: boolean;
+    skillSandboxReport: boolean;
+    selectorContract: boolean;
+  };
+  gateCommands: {
+    fastPr: string[];
+    fullLocal: string[];
+    nightlyRelease: string[];
+  };
+};
+export type AgentDevWorkbenchEvidenceResult = HostSuccess & {
+  evidence: AgentDevWorkbenchEvidence;
 };
 export type AgentDevSelectorContractResult = HostSuccess & {
   requiredAttributes: string[];
@@ -1495,9 +1748,32 @@ export type SessionSummariesResult = HostSuccess & {
 };
 export type SessionDeletePayload = { id: string };
 export type SessionRenamePayload = { id: string; title: string };
+export type SessionArchivePayload = {
+  id: string;
+  label?: string;
+  originalWorkspaceId?: string | null;
+  originalFolderId?: string | null;
+};
+export type SessionRestorePayload = { id: string };
+export type SessionPermanentDeletePayload = { id: string };
+export type SessionListArchivedPayload = { agentId?: string };
+export type SessionListArchivedResult = HostSuccess & {
+  entries: SessionArchiveEntry[];
+};
+export type SessionEmptyArchivePayload = { agentId?: string };
 export type SessionPatchThinkingPayload = {
   sessionKey: string;
   thinkingLevel: AgentReasoningEffort | null;
+};
+/**
+ * Session-scoped model override (Area 2 §3.3). Sets `SessionEntry.modelOverride`
+ * on the current session — every future turn on this session uses the named
+ * model until cleared. `modelRef: null` clears the override (reset to agent
+ * default). Forks inherit the override (existing runtime behavior).
+ */
+export type SessionPatchRuntimeModelPayload = {
+  sessionKey: string;
+  modelRef: string | null;
 };
 export type SessionCompactionPayload = {
   sessionKey: string;
@@ -1542,6 +1818,15 @@ export type CompressionArtifact = {
   evidenceRefs: CompressionEvidenceRef[];
   unverifiedClaims: string[];
   quality: CompressionArtifactQuality;
+  tier?: string;
+  strategy?: string;
+  compressionRatio?: number;
+  tokensBefore?: number;
+  tokensAfter?: number;
+  rehydratedFiles?: string[];
+  staleExcludedCount?: number;
+  causalAnchorCount?: number;
+  warnings?: string[];
 };
 export type SessionCompressionArtifactPayload = SessionCompactionPayload & {
   checkpointId?: string;
@@ -1672,6 +1957,18 @@ export type SessionForkResult = HostSuccess & {
   forkedFromParent?: boolean;
   warnings?: string[];
 };
+export type SessionTruncatePayload = {
+  sessionKey: string;
+  agentId?: string;
+  messageId: string;
+};
+export type SessionTruncateResult = HostSuccess & {
+  sessionKey?: string;
+  messageId?: string;
+  truncated?: boolean;
+  removedMessageCount?: number;
+  retainedLineCount?: number;
+};
 
 export type ChatInputMode = LongTaskInputMode;
 export type ChatMediaItem = { filePath: string; mimeType?: string; fileName?: string };
@@ -1691,6 +1988,95 @@ export type CapabilityAuditResult = {
   auditedAt: string;
   source?: 'local' | 'mcp-json' | 'registered' | 'unknown';
 };
+export type CapabilityPublicationKind = 'skill' | 'mcp';
+export type CapabilityPublicationSource =
+  | 'runtime'
+  | 'local'
+  | 'bundled'
+  | 'workspace'
+  | 'mcp-json'
+  | 'registered'
+  | 'unknown';
+export type CapabilityPublicationState =
+  | 'published'
+  | 'available'
+  | 'disabled'
+  | 'blocked'
+  | 'missing'
+  | 'runtimeUnavailable';
+export type CapabilityPublicationUseMode = 'prompt' | 'modelTool' | 'userCommand' | 'adminAction';
+export type CapabilityPublicationRuntimeStatus =
+  | 'ready'
+  | 'configured'
+  | 'warm'
+  | 'cold'
+  | 'disabled'
+  | 'blocked'
+  | 'missing'
+  | 'unavailable';
+export type CapabilityPublicationDiagnosticSeverity = 'info' | 'warning' | 'blocked';
+export type CapabilityPublicationDiagnostic = {
+  code: string;
+  severity: CapabilityPublicationDiagnosticSeverity;
+  message: string;
+  details?: JsonRecord;
+};
+export type CapabilityPublicationOwner = {
+  type: 'global' | 'agent' | 'workspace' | 'role' | 'unknown';
+  id?: string | null;
+};
+export type CapabilityPublicationExposure = {
+  agentIds?: string[];
+  workspaceIds?: string[];
+  roleNames?: string[];
+  promptVisible?: boolean;
+  runtimeVisible?: boolean;
+  userInvocable?: boolean;
+  toolVisible?: boolean;
+};
+export type CapabilityPublicationRuntime = {
+  status: CapabilityPublicationRuntimeStatus;
+  method?: 'prompt' | 'tool' | 'config' | 'fallback';
+  source?: 'gateway' | 'local-fallback' | 'electron-store' | 'openclaw-config';
+  message?: string;
+};
+export type CapabilityPublicationQuery = {
+  agentId?: string | null;
+  workspaceId?: string | null;
+  roleName?: string | null;
+  includeDiagnostics?: boolean;
+  /**
+   * Include known but not currently published capabilities for management UIs.
+   * Defaults to false so runtime consumers keep seeing only the effective
+   * published surface.
+   */
+  includeCandidates?: boolean;
+  includeToolCatalog?: 'none' | 'warmOnly';
+};
+export type CapabilityPublicationEntry = {
+  id: string;
+  kind: CapabilityPublicationKind;
+  sourceId: string;
+  name: string;
+  owner: CapabilityPublicationOwner;
+  scope?: 'global' | 'agent' | 'workspace' | 'role' | 'unknown';
+  source?: CapabilityPublicationSource;
+  state: CapabilityPublicationState;
+  exposure: CapabilityPublicationExposure;
+  useModes: CapabilityPublicationUseMode[];
+  runtime: CapabilityPublicationRuntime;
+  toolNames?: string[];
+  reasons: string[];
+  diagnostics: CapabilityPublicationDiagnostic[];
+  skillId?: string;
+  serverId?: string;
+};
+export type CapabilityPublicationResult = HostSuccess & {
+  source: 'gateway' | 'local-fallback';
+  generatedAt: string;
+  publications: CapabilityPublicationEntry[];
+  diagnostics: CapabilityPublicationDiagnostic[];
+};
 export type CapabilityRegistryEntry = {
   id: string;
   kind: 'skill' | 'mcp';
@@ -1702,6 +2088,8 @@ export type CapabilityRegistryEntry = {
   lastAuditResult?: CapabilityAuditResult;
   skillId?: string;
   serverId?: string;
+  /** @deprecated Use CapabilityPublicationEntry via hostApi.capabilities.publications. */
+  publication?: CapabilityPublicationEntry;
 };
 export type CapabilityOrchestrationStage =
   | 'audit'
@@ -1776,6 +2164,13 @@ export type ChatSendWithMediaPayload = {
   knowledgeMode?: KnowledgeInvocationMode;
   knowledgeReferences?: ChatKnowledgeReference[];
   activeTaskNodeId?: string | null;
+  /**
+   * Turn-scoped model override (Area 2 §3.2). When set, this single send runs
+   * on the named model instead of the session/agent default. `null`/undefined
+   * means "no turn override" (resolution falls to session override → agent
+   * config). Never persisted to Agent.modelRef.
+   */
+  modelRef?: string | null;
 };
 export type ChatSendWithMediaResult = HostSuccess & {
   result?: { runId?: string };
@@ -1798,6 +2193,8 @@ export type ChatKnowledgeReference = {
   matchedClaimStatus?: string;
 };
 
+export type KnowledgeRouteCandidateGroupKey = 'docs' | 'pitfalls' | 'rules';
+
 export type KnowledgeRouteContextPayload = {
   message: string;
   scope: WorkspaceKnowledgeScope;
@@ -1811,8 +2208,14 @@ export type KnowledgeRouteCandidate = ChatKnowledgeReference & {
   attachKind: 'suggested' | 'auto';
   routingReason: string;
   confidence: number;
+  routeGroup?: KnowledgeRouteCandidateGroupKey;
   freshnessLevel?: string;
   matchedClaimStatus?: string;
+};
+
+export type KnowledgeRouteCandidateGroup = {
+  key: KnowledgeRouteCandidateGroupKey;
+  candidates: KnowledgeRouteCandidate[];
 };
 
 export type KnowledgeRouteContextResult = HostSuccess & {
@@ -1820,39 +2223,13 @@ export type KnowledgeRouteContextResult = HostSuccess & {
   reason: string;
   query?: string;
   candidates: KnowledgeRouteCandidate[];
+  candidateGroups?: KnowledgeRouteCandidateGroup[];
+  groupedCandidates?: Partial<Record<KnowledgeRouteCandidateGroupKey, KnowledgeRouteCandidate[]>>;
+  retrievalDiagnostics?: KnowledgeRetrievalDiagnostics;
   budget: {
     maxReferences: number;
     maxSnippetChars: number;
   };
-};
-
-export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
-  available: boolean;
-  reason?: 'runtimeUnavailable' | 'reportFailed';
-  counts: {
-    trajectories: number;
-    undistilledTrajectories: number;
-    activePrinciples: number;
-  };
-  undistilled: Array<{
-    trajectory_id: string;
-    created_at: string;
-    task_intent: string;
-    task_type: string;
-    context_fingerprint: string[];
-    outcome: 'success' | 'failure' | 'partial';
-    error_signature: string | null;
-  }>;
-  activePrinciples: Array<{
-    principle_id: string;
-    title: string;
-    task_types: string[];
-    context_tags: string[];
-    criticality: 'low' | 'medium' | 'high' | 'critical';
-    retrieval_count: number;
-    adoption_count: number;
-  }>;
-  indexPreview: string;
 };
 
 export type KnowledgeConfigurePayload = {
@@ -1988,9 +2365,37 @@ export type KnowledgeSearchPayload = {
   maxResults?: number;
   corpus?: 'wiki' | 'memory' | 'all';
   mode?: string;
+  /**
+   * Area 5 §3.4 — optional role tag for ranking shaping. When set, entries
+   * whose `roleTags` contain this tag rank first in the result list. This is
+   * ranking-only — entries without the tag remain visible (the KB is a single
+   * user's wiki; per-role ACLs are off-spec).
+   */
+  roleTag?: string;
+};
+export type KnowledgeRetrievalDiagnosticItem = {
+  id: string;
+  title: string;
+  lookup: string;
+  sourceKind: 'wiki-page' | 'memory-card' | 'error-experience' | 'rule' | 'draft' | 'inbox' | 'unknown';
+  reason: string;
+  score?: number;
+  confidence?: number;
+  path?: string;
+};
+export type KnowledgeRetrievalDiagnostics = {
+  query: string;
+  corpus: 'wiki' | 'memory' | 'all';
+  mode: string;
+  backend: 'keyword' | 'hybrid' | 'semantic' | 'fallback-keyword';
+  resultCount: number;
+  selectedCount: number;
+  reason: string;
+  items: KnowledgeRetrievalDiagnosticItem[];
 };
 export type KnowledgeSearchResult = OptionalHostSuccess & {
   results?: Array<Record<string, unknown>>;
+  retrievalDiagnostics?: KnowledgeRetrievalDiagnostics;
   [key: string]: unknown;
 };
 export type KnowledgeGetPayload = {
@@ -2016,6 +2421,9 @@ export type KnowledgeApplyDraftResult = OptionalHostSuccess & {
   pagePath?: string;
   pageId?: string;
   compile?: Record<string, unknown>;
+  reviewRequired?: boolean;
+  draft?: KnowledgeDraft;
+  proposal?: KnowledgeChangeProposal;
 };
 export type KnowledgeCompileResult = OptionalHostSuccess & Record<string, unknown>;
 export type KnowledgeLintResult = OptionalHostSuccess & Record<string, unknown>;
@@ -2023,6 +2431,7 @@ export type KnowledgeOpenVaultResult = HostSuccess & { path?: string };
 export type KnowledgeDraftType = 'source-note' | 'synthesis' | 'decision' | 'architecture' | 'command' | 'troubleshooting' | 'glossary' | 'procedure';
 export type KnowledgeDraftStatus = 'draft' | 'steward_reviewed' | 'approved' | 'rejected' | 'applied';
 export type KnowledgeDraftActor = 'user' | 'agent' | 'steward';
+export type KnowledgeArtifactType = 'summary' | 'faq' | 'decision-memo' | 'troubleshooting-recipe' | 'concept-map';
 export type KnowledgeSourceRef = {
   id: string;
   label?: string;
@@ -2047,6 +2456,122 @@ export type KnowledgeInteractionMvpMetadata = {
   evidenceRefs: string[];
   captureKey: string;
 };
+export type KnowledgeStewardTriageAction =
+  | 'needs-decision'
+  | 'ready-for-review'
+  | 'possible-duplicate'
+  | 'observe'
+  | 'reject-low-value';
+export type KnowledgeStewardTriage = {
+  action: KnowledgeStewardTriageAction;
+  confidence: number;
+  duplicateOf?: string;
+  conflictWith?: string[];
+  reason: string;
+  suggestedEdits?: string[];
+};
+export type KnowledgeInboxMetadata = Record<string, unknown> & {
+  triage?: KnowledgeStewardTriage;
+};
+export type KnowledgeErrorExperienceCard = {
+  schemaVersion: 1;
+  id: string;
+  title: string;
+  summary: string;
+  triggerPattern: {
+    errorType: 'compile' | 'runtime' | 'lint' | 'test' | 'logic' | 'convention' | 'architecture' | 'ui-regression';
+    keywords: string[];
+    filePatterns: string[];
+    stackTraceSignature?: string;
+    commandSignature?: string;
+    scenarioDescription: string;
+    routeQueries: string[];
+  };
+  rootCause: {
+    summary: string;
+    contributingFactors: string[];
+  };
+  resolution: {
+    steps: string[];
+    antiPattern?: string;
+    correctPattern?: string;
+    codeSnippet?: string;
+    verificationCommands: string[];
+  };
+  applicability: {
+    projectScopes: string[];
+    modules: string[];
+    roles: string[];
+    confidence: number;
+    severity: 'low' | 'medium' | 'high' | 'blocking';
+  };
+  provenance: {
+    createdFrom: {
+      kind: 'chat-session' | 'task-ledger' | 'manual' | 'test-run' | 'runtime-event';
+      id: string;
+      label?: string;
+    };
+    sourceRefs: Array<{
+      id: string;
+      kind: string;
+      label?: string;
+      path?: string;
+    }>;
+    createdAt: string;
+    lastVerifiedAt?: string;
+  };
+  effectiveness: {
+    hitCount: number;
+    acceptedCount: number;
+    dismissedCount: number;
+    preventedFailureCount: number;
+    staleCount: number;
+  };
+};
+export type KnowledgeErrorGuardSignal = {
+  text: string;
+  kind?: 'command-failure' | 'test-failure' | 'lint-failure' | 'build-failure' | 'runtime-error' | 'user-correction';
+  command?: string;
+  stackTrace?: string;
+  filePaths?: string[];
+  sessionKey?: string;
+  workspaceId?: string | null;
+};
+export type KnowledgeErrorGuardAdvisory = {
+  id: string;
+  targetKind: 'inbox' | 'draft';
+  targetId: string;
+  cardId: string;
+  title: string;
+  summary: string;
+  whyMatched: string[];
+  rootCause: string;
+  recommendedResolution: string[];
+  confidence: number;
+  severity: KnowledgeErrorExperienceCard['applicability']['severity'];
+  sourceRefs: KnowledgeSourceRef[];
+  provenance: {
+    createdFrom: KnowledgeErrorExperienceCard['provenance']['createdFrom'];
+    source: 'knowledge-error-experience';
+  };
+};
+export type KnowledgeMatchErrorExperiencePayload = {
+  signal: KnowledgeErrorGuardSignal;
+  limit?: number;
+};
+export type KnowledgeMatchErrorExperienceResult = HostSuccess & {
+  advisories: KnowledgeErrorGuardAdvisory[];
+};
+export type KnowledgeErrorExperienceEffectivenessAction = 'hit' | 'accepted' | 'dismissed' | 'prevented-failure' | 'stale';
+export type KnowledgeUpdateErrorExperienceEffectivenessPayload = {
+  targetKind: 'inbox' | 'draft';
+  targetId: string;
+  action: KnowledgeErrorExperienceEffectivenessAction;
+  note?: string;
+};
+export type KnowledgeUpdateErrorExperienceEffectivenessResult = HostSuccess & {
+  effectiveness?: KnowledgeErrorExperienceCard['effectiveness'];
+};
 export type KnowledgeDraft = {
   id: string;
   title: string;
@@ -2058,10 +2583,19 @@ export type KnowledgeDraft = {
   tags: string[];
   workspaceId?: string | null;
   agentId?: string | null;
+  /**
+   * Area 5 §3.4 — optional role-tag binding. Reuses the Role Memory binding
+   * vocabulary (`MemoryCard.roleTags`, Area 4) so "role-scoped knowledge"
+   * means one thing across both systems. Ranking-only — never access control
+   * (every KB read remains available to every role; the KB is a single
+   * user's wiki, off-spec for per-role vaults/ACLs).
+   */
+  roleTags?: string[];
   createdBy: KnowledgeDraftActor;
   confidence?: number;
   stewardNotes?: string;
   warnings?: string[];
+  metadata?: KnowledgeInboxMetadata;
   createdAt: string;
   updatedAt: string;
   reviewedAt?: string;
@@ -2081,9 +2615,11 @@ export type KnowledgeInboxItem = {
   tags: string[];
   workspaceId?: string | null;
   agentId?: string | null;
+  /** Area 5 §3.4 — optional role-tag binding (ranking-only, see KnowledgeDraft.roleTags). */
+  roleTags?: string[];
   createdBy: KnowledgeDraftActor;
   warnings?: string[];
-  metadata?: Record<string, unknown>;
+  metadata?: KnowledgeInboxMetadata;
   createdAt: string;
   updatedAt: string;
   promotedAt?: string;
@@ -2101,6 +2637,8 @@ export type KnowledgeCreateInboxItemPayload = {
   tags?: string[];
   workspaceId?: string | null;
   agentId?: string | null;
+  /** Area 5 §3.4 — optional role-tag binding (ranking-only, see KnowledgeDraft.roleTags). */
+  roleTags?: string[];
   createdBy?: KnowledgeDraftActor;
   warnings?: string[];
   metadata?: Record<string, unknown>;
@@ -2154,6 +2692,47 @@ export type KnowledgeStewardConfig = {
     global: boolean;
   };
 };
+/**
+ * Area 5 §3.1 — config-driven KB role player variant. Extends the existing
+ * `KnowledgeStewardConfig` additively. `capabilities.canApplyDirectly`
+ * remains the literal type `false` (preserved boundary); variants differ in
+ * focus and classification mode only. Missing/corrupt registry file →
+ * registry containing exactly `DEFAULT_STEWARD_CONFIG` (today's behavior).
+ */
+export type KnowledgeRolePlayerConfig = KnowledgeStewardConfig & {
+  displayName?: string;
+  description?: string;
+  classification?: 'heuristic' | 'semantic';
+  reviewFocus?: Array<'classification' | 'duplicates' | 'freshness' | 'conflicts'>;
+  /** Optional RoleContract name for the semantic pass (§3.2). Default `roleId`. */
+  contractRef?: string;
+};
+/**
+ * Area 5 §3.1 — file-backed registry shape. Lives at
+ * `<OpenClaw config dir>/knowledge/steward-roles.json` (KB-local, next to the
+ * data it governs — same level as `watched-directories.json`). Loaded lazily
+ * with read-or-default pattern; corrupt entries are skipped with a logged
+ * issue, never crashing the steward.
+ */
+export type KnowledgeRoleRegistryFile = {
+  version: 1;
+  defaultRoleId: string;
+  roles: KnowledgeRolePlayerConfig[];
+};
+export type KnowledgeStewardConfigGetResult = HostSuccess & {
+  registry: KnowledgeRoleRegistryFile;
+  /** Active role for the current workspace/agent context (defaultRoleId resolved). */
+  activeRole?: KnowledgeRolePlayerConfig;
+};
+export type KnowledgeStewardConfigUpdatePayload = {
+  registry?: KnowledgeRoleRegistryFile;
+  /** Set the active default role id for new steward reviews. */
+  defaultRoleId?: string;
+};
+export type KnowledgeStewardConfigUpdateResult = HostSuccess & {
+  registry: KnowledgeRoleRegistryFile;
+  issues?: Array<{ path: string; message: string }>;
+};
 export type KnowledgeCreateDraftPayload = {
   title: string;
   body: string;
@@ -2163,14 +2742,72 @@ export type KnowledgeCreateDraftPayload = {
   tags?: string[];
   workspaceId?: string | null;
   agentId?: string | null;
+  /** Area 5 §3.4 — optional role-tag binding (ranking-only, see KnowledgeDraft.roleTags). */
+  roleTags?: string[];
   createdBy?: KnowledgeDraftActor;
   confidence?: number;
+  metadata?: Record<string, unknown>;
 };
 export type KnowledgeDraftResult = HostSuccess & { draft?: KnowledgeDraft };
+export type KnowledgeSourceSet = {
+  id: string;
+  title: string;
+  sourceRefs: KnowledgeSourceRef[];
+  createdAt: string;
+  updatedAt: string;
+  lastUsedAt?: string;
+  metadata?: Record<string, unknown>;
+};
+export type KnowledgeSaveSourceSetPayload = {
+  id?: string;
+  title: string;
+  sourceRefs: KnowledgeSourceRef[];
+  metadata?: Record<string, unknown>;
+};
+export type KnowledgeSourceSetResult = HostSuccess & { sourceSet?: KnowledgeSourceSet };
+export type KnowledgeListSourceSetsResult = HostSuccess & { sourceSets: KnowledgeSourceSet[] };
+export type KnowledgeDeleteSourceSetPayload = { id: string };
+export type KnowledgeSourceSetAnswerSource = {
+  id: string;
+  lookup: string;
+  title: string;
+  excerpt: string;
+  path?: string;
+};
+export type KnowledgeAnswerFromSourceSetPayload = {
+  question: string;
+  sourceRefs: KnowledgeSourceRef[];
+  artifactType?: KnowledgeArtifactType;
+  sourceSetId?: string;
+};
+export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
+  question: string;
+  answer: string;
+  sources: KnowledgeSourceSetAnswerSource[];
+  unknowns: string[];
+  suggestedNextActions: string[];
+  groundingStatus: 'grounded' | 'partial' | 'missing_sources';
+  confidence: number;
+  retrievalDiagnostics: KnowledgeRetrievalDiagnostics;
+};
+export type KnowledgeCreateArtifactDraftPayload = {
+  artifactType: KnowledgeArtifactType;
+  title?: string;
+  question?: string;
+  sourceRefs: KnowledgeSourceRef[];
+  sourceSetId?: string;
+  metadata?: Record<string, unknown>;
+};
 export type KnowledgeListDraftsPayload = {
   status?: KnowledgeDraftStatus | 'all';
   workspaceId?: string | null;
   limit?: number;
+  /**
+   * Area 5 §3.4 — optional role tag for ranking shaping. When set, drafts
+   * whose `roleTags` contain this tag rank first in the returned list.
+   * Ranking-only — drafts without the tag remain visible.
+   */
+  roleTag?: string;
 };
 export type KnowledgeListDraftsResult = HostSuccess & { drafts: KnowledgeDraft[] };
 export type KnowledgeGetDraftPayload = { id: string };
@@ -2219,6 +2856,20 @@ export type KnowledgeStewardReviewResult = HostSuccess & {
   tags: string[];
   warnings: string[];
   notes: string;
+};
+/**
+ * Area 5 §3.2 — structured output from the optional semantic steward pass.
+ * The heuristic pass runs first (instant, offline-safe); if the active role
+ * has `classification: 'semantic'` and an LLM invoker is available, this
+ * second pass refines type/tags and adds judgment warnings. LLM failure or
+ * missing invoker → heuristic result stands, notes record "semantic pass
+ * unavailable".
+ */
+export type StewardSemanticReview = {
+  type: KnowledgeDraftType;
+  tags: string[];
+  warnings: Array<{ kind: 'duplicate' | 'conflict' | 'stale' | 'quality'; message: string; relatedPageId?: string }>;
+  confidence: number;
 };
 export type KnowledgeProvenanceTargetKind = 'wiki-page' | 'draft' | 'inbox' | 'okf-concept' | 'manual';
 export type KnowledgeReferenceKind = 'chat' | 'search' | 'draft' | 'task-ledger' | 'clawgraph' | 'manual';
@@ -2277,6 +2928,28 @@ export type KnowledgeGovernanceIssue = {
   stewardSuggestion?: string;
   detectedAt: string;
 };
+export type KnowledgeQualityMetricKind =
+  | 'stale_cards'
+  | 'duplicate_clusters'
+  | 'source_gaps'
+  | 'unreferenced_pages'
+  | 'low_confidence_high_hit_cards'
+  | 'high_dismissal_cards';
+export type KnowledgeQualityMetric = {
+  kind: KnowledgeQualityMetricKind;
+  count: number;
+  severity: KnowledgeGovernanceIssueSeverity;
+  affectedIds: string[];
+};
+export type KnowledgeQualityMetrics = {
+  staleCards: number;
+  duplicateClusters: number;
+  sourceGaps: number;
+  unreferencedPages: number;
+  lowConfidenceHighHitCards: number;
+  highDismissalCards: number;
+  metrics: KnowledgeQualityMetric[];
+};
 
 export type KnowledgeGovernanceResult = HostSuccess & {
   runAt: string;
@@ -2288,6 +2961,7 @@ export type KnowledgeGovernanceResult = HostSuccess & {
     duplicates: number;
     provenanceGaps: number;
   };
+  qualityMetrics?: KnowledgeQualityMetrics;
 };
 
 // 鈹€鈹€ Watched Directories 鈹€鈹€
@@ -2524,6 +3198,103 @@ export type ClawHubOpenPayload = {
   slug?: string;
   baseDir?: string;
 };
+export type SkillPackId = 'superpowers' | 'officecli';
+export type SkillPackStatus = 'notInstalled' | 'installing' | 'installed' | 'enabled' | 'syncNeeded' | 'error';
+export type SkillPackSkill = {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+  installed: boolean;
+  sourcePath?: string;
+  managedPath?: string;
+};
+export type SkillPackSummary = {
+  id: SkillPackId;
+  name: string;
+  description: string;
+  status: SkillPackStatus;
+  enabled: boolean;
+  installedVersion?: string;
+  skills: SkillPackSkill[];
+  error?: string;
+};
+export type SkillPackListResult = HostSuccess & { packs?: SkillPackSummary[] };
+export type SkillPackPayload = { packId: SkillPackId };
+export type SkillPackSetEnabledPayload = SkillPackPayload & { enabled: boolean };
+export type SkillPackReadSkillPayload = SkillPackPayload & { skillId: string };
+export type SkillPackReadSkillResult = HostSuccess & { content?: string };
+
+export type OfficecliInfo = {
+  installed: boolean;
+  version: string | null;
+  path: string | null;
+  runtimeError: string | null;
+};
+export type OfficecliSkill = {
+  id: string;
+  category: string;
+  icon: string;
+  sortOrder: number;
+  displayName: Record<string, string>;
+  description: Record<string, string>;
+  installedCentrally: boolean;
+};
+export type OfficecliSkillSyncReport = {
+  synced: number;
+  errors: string[];
+};
+export type OfficecliInstallPayload = { taskId?: string };
+export type OfficecliInstallEventKind = 'started' | 'log' | 'completed' | 'failed';
+export type OfficecliInstallEvent = {
+  taskId: string;
+  kind: OfficecliInstallEventKind;
+  payload: string;
+};
+export type OfficecliSkillContentPayload = { skillId: string };
+export type OfficecliSkillAgentPayload = { skillId: string; agentId: string };
+export type OfficecliSkillLinkState =
+  | 'not_linked'
+  | 'linked_to_codeg'
+  | 'linked_elsewhere'
+  | 'blocked_by_real_directory'
+  | 'broken';
+export type OfficecliSkillInstallStatus = {
+  expertId: string;
+  skillId: string;
+  agentId: string;
+  agentType: string;
+  agentName: string;
+  state: OfficecliSkillLinkState;
+  linkPath: string;
+  targetPath: string | null;
+  expectedTargetPath: string;
+  copyMode: boolean;
+  installedCentrally: boolean;
+};
+export type OfficecliSkillLinkOp = {
+  expertId: string;
+  skillId?: string;
+  agentId: string;
+  agentType?: string;
+  enable: boolean;
+};
+export type OfficecliSkillLinkOpResult = {
+  expertId: string;
+  skillId: string;
+  agentId: string;
+  agentType: string;
+  ok: boolean;
+  status: OfficecliSkillInstallStatus | null;
+  error: string | null;
+};
+export type OfficecliSkillApplyLinksPayload = { ops: OfficecliSkillLinkOp[] };
+export type OfficecliRenderHtmlPayload = { rootPath: string; path: string };
+export type OfficecliWatchPayload = { rootPath: string; path: string };
+export type OfficecliWatchStarted = {
+  port: number;
+  cap: string;
+};
 
 export type UsageHistoryEntry = {
   timestamp: string;
@@ -2550,6 +3321,26 @@ export type WorkspaceContextRangePayload = {
   usedTokens?: number | null;
 };
 export type WorkspaceContextRangeResult = HostSuccess & { range: WorkspaceContextRange };
+export type PromptCacheStatusPayload = {
+  sessionKey: string;
+  modelRef?: string | null;
+  action?: PromptCacheRiskAction;
+  targetModelRef?: string | null;
+  usedTokens?: number | null;
+};
+export type PromptCacheStatusResult = HostSuccess & { assessment: PromptCacheRiskAssessment };
+export type PromptCacheRiskEventPayload = {
+  sessionKey: string;
+  action: PromptCacheRiskAction;
+  severity: PromptCacheRiskSeverity;
+  status: PromptCacheStatus;
+  decision: PromptCacheRiskDecision;
+  hitRate?: number | null;
+  promptTokens?: number;
+  estimatedExtraCostUsd?: number;
+  reason?: string;
+};
+export type PromptCacheRiskEventResult = HostSuccess & { event: PromptCacheRiskAssessment['lastRiskEvent'] };
 
 export type DeliveryChannelAccount = {
   accountId: string;
@@ -2602,6 +3393,71 @@ export type TopicContextPayload = {
 };
 export type DeliveryTargetsResult = HostSuccess & { targets: DeliveryChannelGroup[] };
 
+// ── Area 4 §3.3: Memory facade payload/result types ──────────────────────────
+// The underlying gateway `memory.*` RPCs return untyped objects; these types
+// give the renderer a typed surface. All re-exported from shared/types/memory
+// where they already exist.
+
+export type MemoryListPayload = {
+  roleName?: string;
+  scope?: MemoryCardScope;
+  status?: 'all' | MemoryCardStatus;
+  limit?: number;
+};
+
+export type MemoryListResult = HostSuccess & {
+  cards: MemoryCard[];
+};
+
+export type MemorySearchPayload = MemoryListPayload & {
+  query: string;
+  topK?: number;
+};
+
+export type MemoryDetailPayload = {
+  id: string;
+  // Gateway accepts 4 kinds; typed facade passes them through. UI consumers
+  // that only handle 'card' | 'proposal' can narrow at the call site.
+  kind?: 'card' | 'proposal' | 'conflict' | 'injection';
+};
+
+export type MemoryDetailResult = HostSuccess & {
+  card?: MemoryCard;
+  proposal?: MemoryProposalRecord;
+  conflict?: MemoryConflict;
+  evidence?: MemoryEvidenceCheckResult;
+  // Gateway's getMemoryDetail returns a richer object for conflict/injection
+  // kinds; typed facade keeps these as opaque records so the panel can cast.
+  [key: string]: unknown;
+};
+
+// Gateway's proposeMemoryCard/updateMemoryCard return MemoryGatekeeperDecision
+// fields directly (action/accepted/reason/card/conflicts/...), not nested
+// under a `decision` key. The result type matches that shape.
+export type MemoryProposeResult = HostSuccess & Partial<MemoryGatekeeperDecision>;
+
+export type MemoryUpdatePayload = {
+  id: string;
+  patch: MemoryProposal;
+};
+
+export type MemoryUpdateResult = MemoryProposeResult;
+
+// Gateway returns { health: MemoryHealthReport }; the facade flattens it so
+// the typed result IS the report (no nested `.health` access needed).
+export type MemoryHealthReportResult = HostSuccess & MemoryHealthReport;
+
+export type MemoryExplainInjectionPayload = {
+  injectionId?: string;
+  sessionKey?: string;
+  roleName?: string;
+  limit?: number;
+};
+
+export type MemoryExplainInjectionResult = HostSuccess & {
+  injections: MemoryInjectionRecord[];
+};
+
 export type HostApiContract = {
   app: {
     version: () => string;
@@ -2647,6 +3503,10 @@ export type HostApiContract = {
     delete: (payload: WorkspaceDeletePayload) => WorkspaceSnapshotResult;
     switch: (payload: WorkspaceSwitchPayload) => WorkspaceActiveResult;
     saveState: (payload: WorkspaceSaveStatePayload) => HostSuccess;
+    createFolder: (payload: WorkspaceFolderCreatePayload) => WorkspaceSnapshotResult & { folder?: SessionFolder };
+    renameFolder: (payload: WorkspaceFolderRenamePayload) => WorkspaceSnapshotResult;
+    deleteFolder: (payload: WorkspaceFolderDeletePayload) => WorkspaceSnapshotResult;
+    moveSessionToFolder: (payload: WorkspaceFolderMoveSessionPayload) => WorkspaceSnapshotResult;
   };
   projectRules: {
     snapshot: () => ProjectRulesSnapshotResult;
@@ -2699,6 +3559,11 @@ export type HostApiContract = {
     approvals: (payload?: PermissionApprovalListPayload) => PermissionApprovalListResult;
     decideApproval: (payload: PermissionApprovalDecisionPayload) => PermissionApprovalDecisionResult;
   };
+  orchestrationPresets: {
+    list: (payload?: OrchestrationPresetListPayload) => OrchestrationPresetListResult;
+    create: (payload: OrchestrationPresetCreatePayload) => OrchestrationPresetCreateResult;
+    revoke: (payload: OrchestrationPresetRevokePayload) => OrchestrationPresetRevokeResult;
+  };
   webPreview: {
     detect: (payload?: WorkspaceWebPreviewDetectPayload) => WorkspaceWebPreviewDetectResult;
     start: (payload?: WorkspaceWebPreviewStartPayload) => WorkspaceWebPreviewResult;
@@ -2720,6 +3585,9 @@ export type HostApiContract = {
     reports: (payload?: LocalControlPlaneReportFilter) => LocalControlPlaneReportsResult;
     correlations: (payload?: LocalControlPlaneCorrelationFilter) => LocalControlPlaneCorrelationsResult;
   };
+  capabilities: {
+    publications: (payload?: CapabilityPublicationQuery) => CapabilityPublicationResult;
+  };
   remoteControl: {
     status: () => RemoteControlStatusResult;
     inspect: () => RemoteControlInspectResult;
@@ -2736,6 +3604,7 @@ export type HostApiContract = {
     saveProfile: (payload: AgentBrowserProfileSavePayload) => AgentBrowserProfileSaveResult;
     validate: (payload?: AgentBrowserValidatePayload) => AgentBrowserValidateResult;
     navigate: (payload: AgentBrowserNavigatePayload) => AgentBrowserActionResult;
+    focus: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;
     waitForSelector: (payload: AgentBrowserSelectorPayload) => AgentBrowserActionResult;
     click: (payload: AgentBrowserClickPayload) => AgentBrowserActionResult;
     type: (payload: AgentBrowserTypePayload) => AgentBrowserActionResult;
@@ -2815,6 +3684,11 @@ export type HostApiContract = {
     visualPreset: (payload?: AgentDevVisualPreset) => AgentDevVisualPresetResult;
     diagnosticsSnapshot: () => AgentDevDiagnosticsSnapshotResult;
     transportTrace: (payload?: AgentDevTransportTracePayload) => AgentDevTransportTraceResult;
+    traceTimeline: (payload?: AgentDevTraceTimelinePayload) => AgentDevTraceTimelineResult;
+    costReport: () => AgentDevCostReportResult;
+    skillSandboxReport: () => AgentDevSkillSandboxReportResult;
+    workbenchEvidence: () => AgentDevWorkbenchEvidenceResult;
+    recordScenario: (payload?: AgentDevRecordScenarioPayload) => AgentDevRecordScenarioResult;
     selectorContract: () => AgentDevSelectorContractResult;
   };
   providers: {
@@ -2871,6 +3745,7 @@ export type HostApiContract = {
     summaries: (payload?: SessionSummariesPayload) => SessionSummariesResult;
     history: (payload: SessionHistoryPayload) => SessionHistoryResult;
     patchThinking: (payload: SessionPatchThinkingPayload) => HostSuccess & { result?: unknown };
+    patchRuntimeModel: (payload: SessionPatchRuntimeModelPayload) => HostSuccess & { result?: unknown };
     compactionStatus: (payload: SessionCompactionPayload) => SessionCompactionStatusResult;
     compactionHistory: (payload: SessionCompactionHistoryPayload) => SessionCompactionHistoryResult;
     compressionArtifact: (payload: SessionCompressionArtifactPayload) => SessionCompressionArtifactResult;
@@ -2882,6 +3757,12 @@ export type HostApiContract = {
     compact: (payload: SessionManualCompactPayload) => SessionCompactionResult;
     prepareHandoff: (payload: SessionHandoffPayload) => SessionHandoffResult;
     fork: (payload: SessionForkPayload) => SessionForkResult;
+    truncate: (payload: SessionTruncatePayload) => SessionTruncateResult;
+    archive: (payload: SessionArchivePayload) => HostSuccess;
+    restore: (payload: SessionRestorePayload) => HostSuccess;
+    permanentDelete: (payload: SessionPermanentDeletePayload) => HostSuccess;
+    listArchived: (payload?: SessionListArchivedPayload) => SessionListArchivedResult;
+    emptyArchive: (payload: SessionEmptyArchivePayload) => HostSuccess;
   };
   chat: {
     sendWithMedia: (payload: ChatSendWithMediaPayload) => ChatSendWithMediaResult;
@@ -2910,6 +3791,11 @@ export type HostApiContract = {
     dismissInboxItem: (payload: KnowledgeInboxItemIdPayload) => KnowledgeInboxResult;
     promoteInboxItemToDraft: (payload: KnowledgeInboxItemIdPayload) => KnowledgeInboxResult;
     createDraft: (payload: KnowledgeCreateDraftPayload) => KnowledgeDraftResult;
+    listSourceSets: () => KnowledgeListSourceSetsResult;
+    saveSourceSet: (payload: KnowledgeSaveSourceSetPayload) => KnowledgeSourceSetResult;
+    deleteSourceSet: (payload: KnowledgeDeleteSourceSetPayload) => HostSuccess;
+    answerFromSourceSet: (payload: KnowledgeAnswerFromSourceSetPayload) => KnowledgeAnswerFromSourceSetResult;
+    createArtifactDraft: (payload: KnowledgeCreateArtifactDraftPayload) => KnowledgeDraftResult;
     listDrafts: (payload?: KnowledgeListDraftsPayload) => KnowledgeListDraftsResult;
     getDraft: (payload: KnowledgeGetDraftPayload) => KnowledgeDraftResult;
     updateDraft: (payload: KnowledgeUpdateDraftPayload) => KnowledgeDraftResult;
@@ -2919,8 +3805,11 @@ export type HostApiContract = {
     previewChange: (payload: KnowledgePreviewChangePayload) => KnowledgePreviewChangeResult;
     applyReviewedChange: (payload: KnowledgeApplyReviewedChangePayload) => KnowledgeApplyReviewedChangeResult;
     stewardReview: (payload: KnowledgeStewardReviewPayload) => KnowledgeStewardReviewResult;
+    stewardConfigGet: () => KnowledgeStewardConfigGetResult;
+    stewardConfigUpdate: (payload: KnowledgeStewardConfigUpdatePayload) => KnowledgeStewardConfigUpdateResult;
     routeContext: (payload: KnowledgeRouteContextPayload) => KnowledgeRouteContextResult;
-    runtimeLessonsReport: () => KnowledgeRuntimeLessonsReportResult;
+    matchErrorExperience: (payload: KnowledgeMatchErrorExperiencePayload) => KnowledgeMatchErrorExperienceResult;
+    updateErrorExperienceEffectiveness: (payload: KnowledgeUpdateErrorExperienceEffectivenessPayload) => KnowledgeUpdateErrorExperienceEffectivenessResult;
     recordKnowledgeReference: (payload: KnowledgeRecordReferencePayload) => KnowledgeProvenanceResult;
     getProvenance: (payload: KnowledgeProvenancePayload) => KnowledgeProvenanceResult;
 
@@ -2988,10 +3877,35 @@ export type HostApiContract = {
     clawhubOpenSkillReadme: (payload: ClawHubOpenPayload) => HostSuccess;
     clawhubOpenSkillPath: (payload: ClawHubOpenPayload) => HostSuccess;
   };
+  skillPacks: {
+    list: () => SkillPackListResult;
+    install: (payload: SkillPackPayload) => HostSuccess;
+    sync: (payload: SkillPackPayload) => HostSuccess;
+    setEnabled: (payload: SkillPackSetEnabledPayload) => HostSuccess;
+    readSkill: (payload: SkillPackReadSkillPayload) => SkillPackReadSkillResult;
+  };
+  officeTools: {
+    detect: () => OfficecliInfo;
+    install: (payload?: OfficecliInstallPayload) => OfficecliInfo;
+    uninstall: () => OfficecliInfo;
+    listSkills: () => OfficecliSkill[];
+    syncSkills: () => OfficecliSkillSyncReport;
+    linkSkillToAgent: (payload: OfficecliSkillAgentPayload) => OfficecliSkillInstallStatus;
+    unlinkSkillFromAgent: (payload: OfficecliSkillAgentPayload) => void;
+    getSkillInstallStatus: (payload: OfficecliSkillContentPayload) => OfficecliSkillInstallStatus[];
+    listAllSkillInstallStatuses: () => OfficecliSkillInstallStatus[];
+    applySkillLinks: (payload: OfficecliSkillApplyLinksPayload) => OfficecliSkillLinkOpResult[];
+    readSkillContent: (payload: OfficecliSkillContentPayload) => string;
+    renderHtml: (payload: OfficecliRenderHtmlPayload) => string;
+    startWatch: (payload: OfficecliWatchPayload) => OfficecliWatchStarted;
+    stopWatch: (payload: OfficecliWatchPayload) => void;
+  };
   usage: {
     recentTokenHistory: (payload?: UsageHistoryPayload) => UsageHistoryEntry[];
     live: (payload: WorkspaceLiveUsagePayload) => WorkspaceLiveUsageResult;
     contextRange: (payload: WorkspaceContextRangePayload) => WorkspaceContextRangeResult;
+    promptCacheStatus: (payload: PromptCacheStatusPayload) => PromptCacheStatusResult;
+    recordPromptCacheRiskEvent: (payload: PromptCacheRiskEventPayload) => PromptCacheRiskEventResult;
   };
   topics: {
     list: (payload?: { agentId?: string; workspacePath?: string }) => HostSuccess & { topics: TopicEntry[] };
@@ -3009,6 +3923,31 @@ export type HostApiContract = {
     traceGraph: (payload: { id: string }) => ObservabilityTraceGraphResult | null;
     traceNodeDiagnostics: (payload: { traceId: string; nodeId: string }) => ObservabilityNodeDiagnostics | null;
     clearTraces: () => HostSuccess;
+  };
+  system: {
+    info: () => SystemInfoResult;
+    scan: (payload?: SystemScanPayload) => SystemScanResult;
+    deleteItems: (payload: SystemDeleteItemsPayload) => SystemDeleteItemsResult;
+  };
+  resourceTracker: {
+    list: () => import('../types/resource-tracker').ResourceTrackerListResult;
+    stop: (payload: { resourceId: string }) => import('../types/resource-tracker').ResourceTrackerStopResult;
+    stopAll: () => import('../types/resource-tracker').ResourceTrackerStopAllResult;
+  };
+  /**
+   * Area 4 §3.3: typed memory facade. Forwards to the existing gateway `memory.*`
+   * RPCs through `electron/services/memory-api.ts`; reads stay SAFE-listed,
+   * writes stay approval-gated. The facade is additive — `hostApi.gateway.rpc('memory.*')`
+   * keeps working throughout the incremental migration.
+   */
+  memory: {
+    list: (payload: MemoryListPayload) => MemoryListResult;
+    search: (payload: MemorySearchPayload) => MemoryListResult;
+    detail: (payload: MemoryDetailPayload) => MemoryDetailResult;
+    propose: (payload: MemoryProposal) => MemoryProposeResult;
+    update: (payload: MemoryUpdatePayload) => MemoryUpdateResult;
+    health: () => MemoryHealthReportResult;
+    explainInjection: (payload: MemoryExplainInjectionPayload) => MemoryExplainInjectionResult;
   };
 };
 

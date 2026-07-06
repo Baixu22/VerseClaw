@@ -45,7 +45,7 @@ const MAX_APPROVAL_LIMIT = 1000;
 const PENDING_APPROVAL_TTL_MS = 10 * 60 * 1000;
 const VALID_DECISIONS = new Set<PermissionApprovalDecision>(['approved', 'denied']);
 const VALID_STATUSES = new Set<PermissionApprovalEvent['status']>(['pending', 'approved', 'denied', 'expired']);
-const VALID_SOURCES = new Set<PermissionApprovalEvent['source']>(['terminal', 'gateway', 'mcp', 'file', 'remoteControl', 'git']);
+const VALID_SOURCES = new Set<PermissionApprovalEvent['source']>(['terminal', 'gateway', 'mcp', 'file', 'remoteControl', 'git', 'cleaner']);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let permissionStoreInstance: any = null;

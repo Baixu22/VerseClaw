@@ -5,10 +5,10 @@
  * streaming runs may show a compact ToolStatusBar. Thinking output is
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
-import { useState, useCallback, useEffect, memo, useMemo } from 'react';
-import { Copy, Check, Wrench, X, FolderOpen, ZoomIn, AlertCircle } from 'lucide-react';
+import { useState, useCallback, useEffect, memo, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
+import { Copy, Check, Wrench, X, FolderOpen, ZoomIn, AlertCircle, Pencil, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { TextMessagePartProvider } from '@assistant-ui/react';
+import { ActionBarPrimitive, MessageProvider, TextMessagePartProvider, type ThreadMessage } from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
 import type { CodeHeaderProps } from '@assistant-ui/react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -27,8 +27,11 @@ import { extractAssistantBranches, extractAssistantReasoning, extractAssistantTo
 import { KnowledgeDirectiveChip } from '@/components/assistant-render/KnowledgeDirectiveChip';
 import { GitHubCard, isGitHubUrl } from '@/components/assistant-render/GitHubCard';
 import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
+import { Shimmer } from '@/components/ai-elements/shimmer';
+import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { AttachmentName, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
 import characterImg from '@/assets/logo+character.png';
+import characterDarkImg from '@/assets/logo+character-dark.png';
 
 import { extractText, extractImages, extractToolUse, formatTimestamp, isUnresolvableImageUrl } from './message-utils';
 import { copyImageToClipboard, type ImageCopyTarget } from './copy-image';
@@ -64,6 +67,15 @@ interface ChatMessageProps {
   onSubmitInteractionResponse?: (text: string) => void;
   onDraftInteractionResponse?: (text: string) => void;
   canSubmitInteractionResponse?: boolean;
+  onResendUserMessage?: (text: string) => void;
+  canResendUserMessage?: boolean;
+  streamStatus?: {
+    active: boolean;
+    startedAt?: number | null;
+    now?: number;
+    tokenCount?: number | null;
+    state?: 'thinking' | 'streaming' | 'syncing';
+  } | null;
   /**
    * Live token usage for the current streaming run. Passed to the
    * TokenUsageBadge so the most recent assistant message can animate
@@ -268,9 +280,12 @@ export const ChatMessage = memo(function ChatMessage({
   onSubmitInteractionResponse,
   onDraftInteractionResponse,
   canSubmitInteractionResponse = true,
+  onResendUserMessage,
+  canResendUserMessage = true,
+  streamStatus,
   liveUsage,
 }: ChatMessageProps) {
-  // // const { t } = useTranslation('chat');  // unused since KnowledgeDirectiveChip
+  const { t } = useTranslation('chat');
   const isUser = message.role === 'user';
   const role = typeof message.role === 'string' ? message.role.toLowerCase() : '';
   const isToolResult = role === 'toolresult' || role === 'tool_result';
@@ -431,14 +446,50 @@ export const ChatMessage = memo(function ChatMessage({
     () => resolvePrimaryImageCopyTarget(resolvableContentImages, attachedFiles),
     [attachedFiles, resolvableContentImages],
   );
+  const handleOpenToolUiFilePath = useCallback((filePath: string) => {
+    const file: AttachedFileMeta = {
+      fileName: fileNameFromPath(filePath),
+      mimeType: previewMimeFromPath(filePath) ?? 'text/plain',
+      fileSize: 0,
+      preview: null,
+      filePath,
+      source: 'message-ref',
+    };
+    if (onOpenFile) {
+      onOpenFile(file);
+      return;
+    }
+    void hostApi.shell.openPath(filePath);
+  }, [onOpenFile]);
   const showAssistantHoverBar = !isUser && (hasText || imageCopyTarget != null);
+  const showUserHoverBar = isUser && hasText;
+  const [isEditingUserMessage, setIsEditingUserMessage] = useState(false);
+  const [userEditDraft, setUserEditDraft] = useState(text);
   const [lightboxImg, setLightboxImg] = useState<{ src: string; fileName: string; filePath?: string; base64?: string; mimeType?: string } | null>(null);
+
+  const handleStartUserMessageEdit = useCallback(() => {
+    setUserEditDraft(text);
+    setIsEditingUserMessage(true);
+  }, [text]);
+
+  const handleCancelUserMessageEdit = useCallback(() => {
+    setUserEditDraft(text);
+    setIsEditingUserMessage(false);
+  }, [text]);
+
+  const handleSubmitUserMessageEdit = useCallback(() => {
+    const nextText = userEditDraft.trim();
+    if (!nextText || !canResendUserMessage || !onResendUserMessage) return;
+    setIsEditingUserMessage(false);
+    onResendUserMessage(nextText);
+  }, [canResendUserMessage, onResendUserMessage, userEditDraft]);
 
   // Never render tool result messages in chat UI
   if (isToolResult) return null;
 
   const hasStreamingToolStatus = isStreaming && streamingTools.length > 0;
-  if (!hasText && resolvableContentImages.length === 0 && visibleTools.length === 0 && toolUiInteractions.length === 0 && attachedFiles.length === 0 && knowledgeRefs.length === 0 && reasoning.length === 0 && toolFallbacks.length === 0 && !hasStreamingToolStatus) return null;
+  const showStreamStatus = !isUser && !!streamStatus?.active;
+  if (!hasText && resolvableContentImages.length === 0 && visibleTools.length === 0 && toolUiInteractions.length === 0 && attachedFiles.length === 0 && knowledgeRefs.length === 0 && reasoning.length === 0 && toolFallbacks.length === 0 && !hasStreamingToolStatus && !showStreamStatus) return null;
 
   return (
     <div
@@ -456,7 +507,8 @@ export const ChatMessage = memo(function ChatMessage({
       {!isUser && (
         <div className="flex h-6 shrink-0 items-center">
           <div className="flex h-8 w-8 items-center justify-center">
-            <img src={characterImg} alt="Verse" className="h-8 w-8 rounded-full object-cover" />
+            <img src={characterImg} alt="Verse" className="h-8 w-8 rounded-full object-cover dark:hidden" />
+            <img src={characterDarkImg} alt="Verse" className="hidden h-8 w-8 rounded-full object-cover dark:block" />
           </div>
         </div>
       )}
@@ -464,7 +516,8 @@ export const ChatMessage = memo(function ChatMessage({
       {/* Content */}
       <div
         className={cn(
-          'flex flex-col w-full min-w-0 max-w-[80%] space-y-2',
+          'flex flex-col w-full min-w-0 space-y-2',
+          isUser && isEditingUserMessage ? 'max-w-full' : 'max-w-[80%]',
           isUser ? 'items-end' : 'items-start',
         )}
       >
@@ -543,10 +596,27 @@ export const ChatMessage = memo(function ChatMessage({
         {/* Main text */}
         {hasText && (
           isUser ? (
-            <UserMessageBubble text={text} />
+            isEditingUserMessage ? (
+              <UserMessageEditor
+                value={userEditDraft}
+                onChange={setUserEditDraft}
+                onCancel={handleCancelUserMessageEdit}
+                onSubmit={handleSubmitUserMessageEdit}
+                canSubmit={canResendUserMessage && userEditDraft.trim().length > 0}
+                inputLabel={t('messageActions.editInputLabel')}
+                cancelLabel={t('messageActions.cancelEdit')}
+                sendLabel={t('messageActions.sendEdit')}
+              />
+            ) : (
+              <UserMessageBubble text={text} />
+            )
           ) : (
             <AssistantMarkdown text={text} isStreaming={isStreaming} />
           )
+        )}
+
+        {showStreamStatus && (
+          <AssistantStreamStatusBar status={streamStatus} />
         )}
 
         {!isUser && toolUiInteractions.length > 0 && (
@@ -555,6 +625,7 @@ export const ChatMessage = memo(function ChatMessage({
             canSubmit={canSubmitInteractionResponse}
             onSubmitResponse={onSubmitInteractionResponse}
             onDraftResponse={onDraftInteractionResponse}
+            onOpenFilePath={handleOpenToolUiFilePath}
           />
         )}
 
@@ -609,15 +680,18 @@ export const ChatMessage = memo(function ChatMessage({
         )}
 
         {/* Token usage badge — animated counter at the end of assistant messages */}
-        {!isUser && (
+        {!isUser && !showStreamStatus && (
           <TokenUsageBadge message={message} liveUsage={liveUsage} isStreaming={isStreaming} />
         )}
 
-        {/* Hover row for user messages — timestamp only */}
-        {isUser && message.timestamp && (
-          <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-200 select-none">
-            {formatTimestamp(message.timestamp)}
-          </span>
+        {/* Hover row for user messages */}
+        {showUserHoverBar && !isEditingUserMessage && (
+          <UserMessageActions
+            text={text}
+            timestamp={message.timestamp}
+            canEdit={Boolean(onResendUserMessage) && canResendUserMessage}
+            onEdit={handleStartUserMessageEdit}
+          />
         )}
 
         {/* Hover row for assistant messages */}
@@ -640,6 +714,68 @@ export const ChatMessage = memo(function ChatMessage({
     </div>
   );
 });
+
+function formatElapsedSeconds(startedAt?: number | null, now = Date.now()): string {
+  if (!startedAt || !Number.isFinite(startedAt)) return '0s';
+  const elapsedMs = Math.max(0, now - startedAt);
+  return `${Math.max(0, Math.round(elapsedMs / 1000))}s`;
+}
+
+function AssistantStreamStatusBar({
+  status,
+}: {
+  status: NonNullable<ChatMessageProps['streamStatus']>;
+}) {
+  const { t, i18n } = useTranslation('chat');
+  const elapsed = formatElapsedSeconds(status.startedAt, status.now);
+  const tokenCount = status.tokenCount ?? 0;
+  const dotState = status.state === 'syncing'
+    ? 'syncing'
+    : status.state === 'streaming'
+      ? 'streaming'
+      : 'thinking';
+
+  return (
+    <div
+      className="flex min-h-6 items-center gap-2 text-sm font-medium leading-6 text-muted-foreground"
+      data-testid="assistant-stream-status"
+    >
+      {dotState === 'thinking' ? (
+        <Shimmer
+          className="text-sm font-medium text-primary"
+          data-testid="assistant-stream-status-dot"
+          data-state="thinking"
+        >
+          {t('assistantRender.activity.thinking')}
+        </Shimmer>
+      ) : (
+        <DotMatrix
+          state={dotState}
+          label={t('assistantRender.activity.thinking')}
+          className="size-4 shrink-0 text-primary"
+          data-testid="assistant-stream-status-dot"
+        />
+      )}
+      <span className="tabular-nums" data-testid="assistant-stream-status-elapsed">
+        {elapsed}
+      </span>
+      {tokenCount > 0 && (
+        <>
+          <span className="text-muted-foreground/55">·</span>
+          <span className="inline-flex items-baseline gap-1 tabular-nums" data-testid="assistant-stream-status-tokens">
+            <NumberRoll
+              value={tokenCount}
+              locales={i18n.language}
+              format={{ notation: 'compact', maximumFractionDigits: 1 }}
+              trend="up"
+            />
+            <span>{t('assistantRender.usage.tokens')}</span>
+          </span>
+        </>
+      )}
+    </div>
+  );
+}
 
 function formatDuration(durationMs?: number): string | null {
   if (!durationMs || !Number.isFinite(durationMs)) return null;
@@ -720,6 +856,84 @@ function resolvePrimaryImageCopyTarget(
 
 // ── Assistant hover bar (timestamp + copy, shown on group hover) ─
 
+function normalizeAssistantUiTimestamp(timestamp?: number): Date {
+  if (!timestamp || !Number.isFinite(timestamp)) return new Date();
+  return new Date(timestamp > 1_000_000_000_000 ? timestamp : timestamp * 1000);
+}
+
+function createAssistantUiActionMessage({
+  role,
+  text,
+  timestamp,
+}: {
+  role: 'assistant' | 'user';
+  text: string;
+  timestamp?: number;
+}): ThreadMessage {
+  const createdAt = normalizeAssistantUiTimestamp(timestamp);
+  const id = `${role}:${createdAt.getTime()}:${text.slice(0, 48) || 'empty'}`;
+  const content = [{ type: 'text' as const, text }];
+
+  if (role === 'user') {
+    return {
+      id,
+      role: 'user',
+      createdAt,
+      content,
+      attachments: [],
+      metadata: { custom: {} },
+    };
+  }
+
+  return {
+    id,
+    role: 'assistant',
+    createdAt,
+    content,
+    status: { type: 'complete', reason: 'stop' },
+    metadata: {
+      unstable_state: null,
+      unstable_annotations: [],
+      unstable_data: [],
+      steps: [],
+      custom: {},
+    },
+  };
+}
+
+function AssistantUiGhostActionBar({
+  role,
+  text,
+  timestamp,
+  className,
+  testId,
+  children,
+}: {
+  role: 'assistant' | 'user';
+  text: string;
+  timestamp?: number;
+  className?: string;
+  testId?: string;
+  children: ReactNode;
+}) {
+  const actionMessage = useMemo(
+    () => createAssistantUiActionMessage({ role, text, timestamp }),
+    [role, text, timestamp],
+  );
+
+  return (
+    <MessageProvider message={actionMessage} index={0} isLast>
+      <ActionBarPrimitive.Root
+        autohide="never"
+        className={className}
+        data-testid={testId}
+      >
+        {children}
+      </ActionBarPrimitive.Root>
+    </MessageProvider>
+  );
+}
+
 function AssistantHoverBar({
   text,
   timestamp,
@@ -747,7 +961,13 @@ function AssistantHoverBar({
   }, [text, imageCopyTarget]);
 
   return (
-    <div className="flex items-center justify-between w-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 select-none px-1">
+    <AssistantUiGhostActionBar
+      role="assistant"
+      text={text}
+      timestamp={timestamp}
+      testId="chat-assistant-message-actions"
+      className="flex h-6 w-full translate-y-0.5 items-center justify-between px-1 opacity-0 transition-[opacity,transform] duration-150 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
+    >
       <span className="text-xs text-muted-foreground">
         {timestamp ? formatTimestamp(timestamp) : ''}
       </span>
@@ -759,11 +979,159 @@ function AssistantHoverBar({
       >
         {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
       </Button>
-    </div>
+    </AssistantUiGhostActionBar>
   );
 }
 
 // ── User Message Bubble ─────────────────────────────────────────
+
+function UserMessageActions({
+  text,
+  timestamp,
+  canEdit,
+  onEdit,
+}: {
+  text: string;
+  timestamp?: number;
+  canEdit: boolean;
+  onEdit: () => void;
+}) {
+  const { t } = useTranslation('chat');
+  const [copied, setCopied] = useState(false);
+
+  const copyContent = useCallback(async () => {
+    if (!text.trim()) return;
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  }, [text]);
+
+  return (
+    <AssistantUiGhostActionBar
+      role="user"
+      text={text}
+      timestamp={timestamp}
+      testId="chat-user-message-actions"
+      className="flex h-6 translate-y-0.5 items-center justify-end gap-1 px-1 opacity-0 transition-[opacity,transform] duration-150 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
+    >
+      {timestamp && (
+        <span className="mr-1 select-none text-[11px] leading-none text-muted-foreground/80">
+          {formatTimestamp(timestamp)}
+        </span>
+      )}
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="h-6 w-6 text-muted-foreground/75 transition-transform active:scale-95"
+        onClick={() => void copyContent()}
+        aria-label={copied ? t('messageActions.copied') : t('messageActions.copy')}
+        title={copied ? t('messageActions.copied') : t('messageActions.copy')}
+        data-testid="chat-user-message-copy"
+      >
+        {copied ? <Check className="h-3.5 w-3.5 text-green-700 dark:text-green-400" /> : <Copy className="h-3.5 w-3.5" />}
+      </Button>
+      {canEdit && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 text-muted-foreground/75 transition-transform active:scale-95"
+          onClick={onEdit}
+          aria-label={t('messageActions.edit')}
+          title={t('messageActions.edit')}
+          data-testid="chat-user-message-edit"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </Button>
+      )}
+    </AssistantUiGhostActionBar>
+  );
+}
+
+function UserMessageEditor({
+  value,
+  onChange,
+  onCancel,
+  onSubmit,
+  canSubmit,
+  inputLabel,
+  cancelLabel,
+  sendLabel,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  onCancel: () => void;
+  onSubmit: () => void;
+  canSubmit: boolean;
+  inputLabel: string;
+  cancelLabel: string;
+  sendLabel: string;
+}) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+  }, []);
+
+  const handleKeyDown = useCallback((event: ReactKeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      onCancel();
+      return;
+    }
+    if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      onSubmit();
+    }
+  }, [onCancel, onSubmit]);
+
+  return (
+    <form
+      className="w-[min(72vw,48rem)] max-w-full rounded-2xl border border-black/10 bg-surface-input px-3 py-2.5 transition-colors duration-150 focus-within:border-black/20 dark:border-white/10 dark:focus-within:border-white/20"
+      data-testid="chat-user-message-editor"
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit();
+      }}
+    >
+      <textarea
+        ref={textareaRef}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        onKeyDown={handleKeyDown}
+        aria-label={inputLabel}
+        data-testid="chat-user-message-editor-input"
+        className="block min-h-[72px] w-full resize-none border-0 bg-transparent p-0 text-sm leading-6 text-foreground shadow-none outline-none placeholder:text-muted-foreground/60 focus:ring-0"
+      />
+      <div className="mt-2 flex h-6 items-center justify-end gap-1" data-testid="chat-user-message-editor-actions">
+        <button
+          type="button"
+          onClick={onCancel}
+          aria-label={cancelLabel}
+          title={cancelLabel}
+          className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/75 transition-[background-color,color,transform] duration-150 hover:bg-black/5 hover:text-foreground active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
+          data-testid="chat-user-message-edit-cancel"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+        <button
+          type="submit"
+          disabled={!canSubmit}
+          aria-label={sendLabel}
+          title={sendLabel}
+          className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/75 transition-[background-color,color,transform] duration-150 hover:bg-black/5 hover:text-foreground active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
+          data-testid="chat-user-message-edit-send"
+        >
+          <Send className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </form>
+  );
+}
 
 function UserMessageBubble({
   text,
@@ -771,7 +1139,7 @@ function UserMessageBubble({
   text: string;
 }) {
   return (
-    <div className="relative rounded-2xl px-4 py-3 bg-brand text-white shadow-sm">
+    <div className="relative rounded-2xl bg-surface-input px-3.5 py-2.5 text-foreground transition-colors duration-150" data-testid="chat-user-message-bubble">
       <p className="whitespace-pre-wrap break-words text-sm">{text}</p>
     </div>
   );

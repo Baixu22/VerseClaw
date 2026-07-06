@@ -7,6 +7,7 @@ import {
   buildRuntimeMemoryEpisodeFixture,
   buildRuntimeMemoryTemporalFactCandidateFixture,
   buildRuntimeMemoryTemporalFactFixture,
+  closeRuntimeMemoryHydrationShadowDatabasesForTest,
   hydrateRuntimeMemoryShadowContext,
   readRuntimeMemoryHydrationShadow,
   type RuntimeMemoryEpisodeRecord,
@@ -18,9 +19,10 @@ import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/st
 const tempDirs: string[] = [];
 
 afterEach(() => {
+  closeRuntimeMemoryHydrationShadowDatabasesForTest();
   closeOpenClawStateDatabaseForTest();
   for (const dir of tempDirs.splice(0)) {
-    rmSync(dir, { recursive: true, force: true });
+    rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
 });
 

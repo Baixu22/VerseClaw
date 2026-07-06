@@ -9,6 +9,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import type { createJiti } from "jiti/static";
+import * as bundledPicomatch from "picomatch";
 import * as bundledLlm from "openclaw/plugin-sdk/llm";
 // Static imports of packages that extensions may use.
 // These MUST be static so Bun bundles them into the compiled binary.
@@ -41,6 +42,7 @@ import type {
   RegisteredCommand,
   ToolDefinition,
 } from "./types.js";
+import { assertWriteRiskProfileForTool } from "../../../shared/tool-registration.js";
 
 /** Modules available to extensions via virtualModules (for compiled Bun binary) */
 const VIRTUAL_MODULES: Record<string, unknown> = {
@@ -52,6 +54,7 @@ const VIRTUAL_MODULES: Record<string, unknown> = {
   "@sinclair/typebox/compile": bundledTypeboxCompile,
   "@sinclair/typebox/format": bundledTypeboxFormat,
   "@sinclair/typebox/value": bundledTypeboxValue,
+  picomatch: bundledPicomatch,
   "openclaw/plugin-sdk/agent-core": bundledAgentCore,
   "@openclaw/plugin-sdk/agent-core": bundledAgentCore,
   "openclaw/plugin-sdk/llm": bundledLlm,
@@ -100,6 +103,7 @@ function getExtensionLoaderAliases(): Record<string, string> {
   const typeboxCompileEntry = require.resolve("typebox/compile");
   const typeboxFormatEntry = require.resolve("typebox/format");
   const typeboxValueEntry = require.resolve("typebox/value");
+  const picomatchEntry = require.resolve("picomatch");
   const loaderModulePath = fileURLToPath(import.meta.url);
 
   aliases = {
@@ -116,6 +120,7 @@ function getExtensionLoaderAliases(): Record<string, string> {
     "@sinclair/typebox/compile": typeboxCompileEntry,
     "@sinclair/typebox/format": typeboxFormatEntry,
     "@sinclair/typebox/value": typeboxValueEntry,
+    picomatch: picomatchEntry,
   };
 
   return aliases;
@@ -226,6 +231,11 @@ function createExtensionAPI(
 
     registerTool(tool: ToolDefinition): void {
       runtime.assertActive();
+      // A1 Round 2 Stage 2 (acceptance 2.2): enforce writeRiskProfile on
+      // write-capable tools. Throws MissingWriteRiskProfileError (with
+      // field='writeRiskProfile') when a write/destructive tool lacks a
+      // valid profile. Readonly tools (default when `risk` omitted) skip.
+      assertWriteRiskProfileForTool(tool.risk ?? 'readonly', tool.writeRiskProfile);
       extension.tools.set(tool.name, {
         definition: tool,
         sourceInfo: extension.sourceInfo,

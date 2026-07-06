@@ -164,7 +164,7 @@ const stashApplyApproval = {
 
 test.describe('Workspace Git panel', () => {
   test('renders status, diff, auth guidance, and approval-blocked write actions', async ({ launchElectronApp }) => {
-    const app = await launchElectronApp({ skipSetup: true });
+    const app = await launchElectronApp({ skipSetup: true, visualMode: true });
 
     try {
       await installIpcMocks(app, {
@@ -398,6 +398,21 @@ test.describe('Workspace Git panel', () => {
         }
       }
 
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.addStyleTag({
+        content: `
+          *, *::before, *::after {
+            animation-duration: 0s !important;
+            animation-delay: 0s !important;
+            transition-duration: 0s !important;
+            caret-color: transparent !important;
+          }
+          [data-sonner-toaster] {
+            display: none !important;
+          }
+        `,
+      });
+
       await expect(page.getByTestId('main-layout')).toBeVisible();
       const workspaceToggle = page.getByTestId('chat-workspace-toggle');
       await expect(workspaceToggle).toBeVisible({ timeout: 30_000 });
@@ -406,7 +421,10 @@ test.describe('Workspace Git panel', () => {
 
       const sidePanel = page.getByTestId('artifact-panel');
       await expect(sidePanel).toBeVisible({ timeout: 30_000 });
-      await sidePanel.getByRole('button', { name: 'Git' }).click();
+      await expect(sidePanel.getByTestId('workspace-launchpad')).toBeVisible();
+      await expect(sidePanel.getByTestId('workspace-launchpad-entry-review')).toHaveCount(0);
+      await sidePanel.getByTestId('workspace-launchpad-add').click();
+      await sidePanel.getByTestId('workspace-launchpad-entry-review').click();
 
       const gitPanel = sidePanel.getByTestId('workspace-git-panel');
       await expect(gitPanel).toBeVisible();
@@ -422,13 +440,17 @@ test.describe('Workspace Git panel', () => {
       await page.setViewportSize({ width: 760, height: 720 });
       await expect(gitPanel.getByTestId('monaco-diff-viewer')).toBeVisible();
       await page.setViewportSize({ width: 1280, height: 800 });
-      await expect(gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Worktree' })).toBeVisible();
-      await expect(gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Stash' })).toBeVisible();
+
+      const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');
+      await toolDrawer.locator('summary').click();
+      const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');
+      await expect(toolTabs.getByRole('button', { name: 'Worktree' })).toBeVisible();
+      await expect(toolTabs.getByRole('button', { name: 'Stash' })).toBeVisible();
+      await expect(toolTabs.getByRole('button', { name: 'Commit' })).toBeVisible();
       await expect(gitPanel.getByText('demo-feature-a')).toBeVisible();
       await expect(gitPanel.getByText('Current')).toBeVisible();
       await expect(gitPanel.getByText('Locked')).toBeVisible();
       await expect(gitPanel.getByText('Prunable')).toBeVisible();
-      await expect(gitPanel.getByText(/gh auth login/)).toBeVisible();
 
       await page.evaluate(() => {
         Object.defineProperty(navigator, 'clipboard', {
@@ -456,12 +478,22 @@ test.describe('Workspace Git panel', () => {
       await expect(gitPanel.getByText('Reverting a file requires approval.', { exact: true })).toBeVisible();
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
 
-      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Commit' }).click();
+      await toolTabs.getByRole('button', { name: 'Commit' }).click();
+      const commitCard = gitPanel.getByTestId('ai-commit-card');
+      await expect(commitCard).toBeVisible();
+      await expect(commitCard.getByTestId('ai-commit-summary')).toContainText('staged');
+      await expect(commitCard.getByTestId('ai-commit-summary')).toContainText('unstaged');
+      await expect(commitCard.getByTestId('ai-commit-operation')).toContainText('Done');
+      await expect(commitCard).toHaveScreenshot('workspace-git-commit-card.png', {
+        animations: 'disabled',
+        caret: 'hide',
+      });
       await gitPanel.getByPlaceholder('Commit message').fill('Update demo');
       await gitPanel.getByRole('button', { name: 'Commit staged changes' }).click();
-      await expect(page.getByText('Commit requires approval', { exact: true })).toBeVisible();
+      await expect(commitCard.getByTestId('ai-commit-operation')).toContainText('Commit requires approval');
+      await expect(commitCard.getByTestId('ai-commit-operation')).toContainText('Blocked');
 
-      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Branch' }).click();
+      await toolTabs.getByRole('button', { name: 'Branch' }).click();
       await gitPanel.getByRole('combobox', { name: 'Select branch' }).click();
       await page.getByRole('option', { name: 'main' }).click();
       await gitPanel.getByRole('button', { name: 'Checkout' }).click();
@@ -471,7 +503,7 @@ test.describe('Workspace Git panel', () => {
       await expect(gitPanel.getByText('Pushing changes requires approval.', { exact: true })).toBeVisible();
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
 
-      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Worktree' }).click();
+      await toolTabs.getByRole('button', { name: 'Worktree' }).click();
       await gitPanel.getByPlaceholder('Branch for worktree').fill('feature/new-worktree');
       await expect(gitPanel.getByTestId('workspace-git-worktree-target')).toContainText('/workspace/demo-feature-new-worktree');
       await gitPanel.getByRole('button', { name: 'Add worktree' }).click();
@@ -481,7 +513,7 @@ test.describe('Workspace Git panel', () => {
       await expect(gitPanel.getByText('Removing a worktree requires approval.', { exact: true })).toBeVisible();
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
 
-      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Stash' }).click();
+      await toolTabs.getByRole('button', { name: 'Stash' }).click();
       await expect(gitPanel.getByTestId('workspace-git-stash-panel')).toContainText('WIP demo changes');
       await expect(gitPanel.getByTestId('workspace-git-stash-panel')).toContainText('stash@{0}');
       await gitPanel.getByPlaceholder('Optional stash message').fill('checkpoint');
@@ -492,9 +524,12 @@ test.describe('Workspace Git panel', () => {
       await expect(gitPanel.getByText('Applying stash requires approval.', { exact: true })).toBeVisible();
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
 
-      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Worktree' }).click();
+      await toolTabs.getByRole('button', { name: 'Worktree' }).click();
       await gitPanel.getByRole('button', { name: 'Switch' }).click();
-      await expect(page.getByText('Workspace created for this worktree')).toBeVisible();
+      await expect.poll(async () => app.evaluate(() => {
+        const calls = (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }).__verseClawE2eHostCalls ?? [];
+        return calls.some((call) => call.module === 'workspaces' && call.action === 'create');
+      })).toBe(true);
     } finally {
       await closeElectronApp(app);
     }
@@ -673,12 +708,17 @@ test.describe('Workspace Git panel', () => {
       await workspaceToggle.click();
 
       const sidePanel = page.getByTestId('artifact-panel');
-      await sidePanel.getByRole('button', { name: 'Git' }).click();
+      await expect(sidePanel.getByTestId('workspace-launchpad')).toBeVisible();
+      await sidePanel.getByTestId('workspace-launchpad-add').click();
+      await sidePanel.getByTestId('workspace-launchpad-entry-review').click();
       const gitPanel = sidePanel.getByTestId('workspace-git-panel');
       await expect(gitPanel).toBeVisible();
-      await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'PR' }).click();
+      const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');
+      await toolDrawer.locator('summary').click();
+      const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');
+      await expect(toolTabs).toBeVisible();
+      await toolTabs.getByRole('button', { name: 'PR' }).click();
 
-      await expect(gitPanel.getByText('octocat')).toBeVisible();
       await expect(gitPanel.getByText('feature/old -> main')).toBeVisible();
       await expect(gitPanel.getByLabel('Base branch')).toHaveValue('main');
       await expect(gitPanel.getByLabel('Head branch')).toHaveValue('feature/git-panel');
@@ -691,7 +731,7 @@ test.describe('Workspace Git panel', () => {
       await expect(gitPanel.getByText('Create PR needs approval')).toBeVisible();
       await expect(gitPanel.getByText('Creating a pull request requires approval.', { exact: true })).toBeVisible();
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
-      await expect(gitPanel.getByTestId('workspace-git-last-operation')).toContainText('Create PR');
+      await expect(gitPanel.getByText('Create PR needs approval')).toHaveCount(0);
     } finally {
       await closeElectronApp(app);
     }

@@ -39,7 +39,7 @@ export interface SandboxDockerAvailability {
 export interface SandboxExecPolicy {
   host: 'auto' | 'sandbox' | 'gateway' | 'node';
   security: 'deny' | 'allowlist' | 'full';
-  ask: 'always' | 'dangerous' | 'off';
+  ask: 'always' | 'on-miss' | 'off';
 }
 
 export interface SandboxOpenClawConfig {

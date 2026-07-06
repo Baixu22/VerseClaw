@@ -35,6 +35,7 @@ type SearchResult = {
   label: string;
   activityMs: number;
   workspaceName?: string;
+  workgroupName?: string;
 };
 
 function getAgentIdFromSessionKey(sessionKey: string): string {
@@ -98,14 +99,18 @@ export function SessionSearchModal({
   // Build a flat searchable list (current agent only)
   const results = useMemo<SearchResult[]>(() => {
     const currentAgentId = getAgentIdFromSessionKey(currentSessionKey);
-    const workspaceByName = new Map<string, WorkspaceProfile>();
     const sessionToWorkspace = new Map<string, string>();
+    const sessionToWorkgroup = new Map<string, string>();
     for (const ws of workspaces) {
-      workspaceByName.set(ws.id, ws);
       for (const key of Object.keys(ws.sessionStates ?? {})) sessionToWorkspace.set(key, ws.name);
       if (ws.activeSessionKey) sessionToWorkspace.set(ws.activeSessionKey, ws.name);
       for (const binding of Object.values(ws.agentBindings ?? {})) {
         if (binding.sessionKey) sessionToWorkspace.set(binding.sessionKey, ws.name);
+      }
+      const workgroupById = new Map((ws.sessionFolders ?? []).map((folder) => [folder.id, folder.name]));
+      for (const [sessionKey, folderId] of Object.entries(ws.sessionFolderAssignments ?? {})) {
+        const workgroupName = workgroupById.get(folderId);
+        if (workgroupName) sessionToWorkgroup.set(sessionKey, workgroupName);
       }
     }
 
@@ -115,7 +120,8 @@ export function SessionSearchModal({
         const label = getSessionLabel(session, sessionLabels);
         const activityMs = getSessionActivityMs(session, sessionLastActivity);
         const workspaceName = sessionToWorkspace.get(session.key);
-        return { session, label, activityMs, workspaceName };
+        const workgroupName = sessionToWorkgroup.get(session.key);
+        return { session, label, activityMs, workspaceName, workgroupName };
       })
       .sort((a, b) => b.activityMs - a.activityMs);
 
@@ -125,7 +131,8 @@ export function SessionSearchModal({
       (r) =>
         r.label.toLowerCase().includes(q) ||
         r.session.key.toLowerCase().includes(q) ||
-        (r.workspaceName?.toLowerCase().includes(q) ?? false),
+        (r.workspaceName?.toLowerCase().includes(q) ?? false) ||
+        (r.workgroupName?.toLowerCase().includes(q) ?? false),
     );
   }, [sessions, currentSessionKey, sessionLabels, sessionLastActivity, workspaces, query]);
 
@@ -284,11 +291,15 @@ export function SessionSearchModal({
                           {result.workspaceName && (
                             <span className="truncate">{result.workspaceName}</span>
                           )}
-                          {result.workspaceName && agentName && <span>·</span>}
+                          {result.workspaceName && result.workgroupName && <span>/</span>}
+                          {result.workgroupName && (
+                            <span className="truncate">{result.workgroupName}</span>
+                          )}
+                          {(result.workspaceName || result.workgroupName) && agentName && <span>/</span>}
                           {agentName && <span className="truncate">{agentName}</span>}
                           {result.activityMs > 0 && (
                             <>
-                              <span>·</span>
+                              <span>/</span>
                               <span>{formatRelative(result.activityMs, t)}</span>
                             </>
                           )}

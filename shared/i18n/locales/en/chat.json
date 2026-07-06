@@ -8,7 +8,8 @@
     "askQuestionsDesc": "Work on task-oriented requests",
     "creativeTasks": "Continuous Execution",
     "creativeTasksDesc": "Keep running through multi-step work",
-    "brainstorming": "Multi-Agent Parallel"
+    "brainstorming": "Multi-Agent Parallel",
+    "brainstormingDesc": "Split work across coordinated agents"
   },
   "noLogs": "(No logs available yet)",
   "scrollToLatest": "Back to bottom",
@@ -19,14 +20,68 @@
     "currentAgent": "Talking to {{agent}}",
     "workspace": "Workspace",
     "saveToKnowledge": "Save to Knowledge",
-    "workContext": "Work context",
     "addWorkspaceDialogTitle": "Choose workspace directory",
-    "addWorkspaceDialogButton": "Set as Workspace"
+    "addWorkspaceDialogButton": "Set as Workspace",
+    "promptCache": {
+      "ariaLabel": "Prompt cache status: {{status}}",
+      "title": "Prompt cache: {{status}}",
+      "hitRate": "Hit rate {{value}}",
+      "lastTurnHitRate": "Last turn {{value}}",
+      "warmTurnHitRate": "Warm turns {{value}}",
+      "tokens": "Read {{read}} · Write {{write}}",
+      "confidence": "Confidence {{value}}",
+      "saved": "Estimated saved {{value}}",
+      "extraCost": "Estimated extra {{value}}",
+      "reason": "Recent reason: {{reason}}",
+      "ledger": "{{warnings}} warnings · {{cancelled}} cancelled",
+      "status": {
+        "warm": "Warm",
+        "warming": "Warming",
+        "cold": "Cold",
+        "at-risk": "At risk",
+        "ineligible": "Ineligible",
+        "unknown": "Unknown"
+      },
+      "short": {
+        "warm": "Warm",
+        "warming": "Cache",
+        "cold": "Cold",
+        "at-risk": "Risk",
+        "ineligible": "No cache",
+        "unknown": "Cache"
+      },
+      "reasonValue": {
+        "model-switch": "model switch",
+        "manual-compaction": "manual compaction",
+        "skill-enable": "skill enable",
+        "mcp-register": "MCP registration",
+        "mcp-reload": "MCP reload",
+        "system-prompt-change": "system prompt change",
+        "context-reset": "context reset",
+        "ineligible": "prefix below cache threshold",
+        "provider-unknown": "provider support unknown"
+      },
+      "confidenceValue": {
+        "high": "high",
+        "medium": "medium",
+        "low": "low",
+        "unknown": "unknown"
+      }
+    }
   },
   "markdown": {
     "codeBlock": "Code",
     "copyCode": "Copy code",
     "copiedCode": "Copied"
+  },
+  "messageActions": {
+    "copy": "Copy message",
+    "copied": "Copied",
+    "edit": "Edit",
+    "editInputLabel": "Edit message",
+    "cancelEdit": "Cancel",
+    "sendEdit": "Send",
+    "resendFailed": "Failed to resend message"
   },
   "approvals": {
     "title": "Approvals & Audit",
@@ -166,6 +221,69 @@
       "copy": "Copy",
       "copied": "Copied"
     },
+    "testResults": {
+      "label": "Test results",
+      "total": "total",
+      "passed": "passed",
+      "failed": "failed",
+      "skipped": "skipped",
+      "running": "running",
+      "empty": "No test suites were reported.",
+      "suiteCount": "{{count}} tests",
+      "status": {
+        "passed": "Passed",
+        "failed": "Failed",
+        "skipped": "Skipped",
+        "running": "Running"
+      }
+    },
+    "stackTrace": {
+      "label": "Stack trace",
+      "empty": "No stack frames were reported.",
+      "lineColumn": "L{{line}}:C{{column}}",
+      "source": {
+        "app": "App",
+        "web-preview": "Web preview",
+        "tool": "Tool"
+      }
+    },
+    "chainOfThought": {
+      "label": "Reasoning steps",
+      "title": "Reasoning",
+      "progress": "{{complete}} complete, {{active}} active",
+      "empty": "No reasoning steps were reported.",
+      "status": {
+        "complete": "Complete",
+        "active": "Active",
+        "pending": "Pending"
+      }
+    },
+    "task": {
+      "label": "Task",
+      "itemCount": "{{count}} items",
+      "empty": "No task items were reported."
+    },
+    "reasoning": {
+      "label": "Reasoning",
+      "thinking": "Thinking",
+      "empty": "No reasoning summary was provided."
+    },
+    "commit": {
+      "label": "Commit",
+      "detached": "Detached HEAD",
+      "staged": "staged",
+      "unstaged": "unstaged",
+      "untracked": "untracked",
+      "conflicted": "conflicted",
+      "operationWithAction": "{{action}}: {{status}}",
+      "operation": {
+        "ready": "Ready",
+        "running": "Running",
+        "success": "Done",
+        "blocked": "Blocked",
+        "failed": "Failed"
+      }
+    },
     "tokenUsage": {
       "input": "Input tokens",
       "output": "Output tokens",
@@ -196,6 +314,23 @@
   "runError": {
     "title": "Model call failed"
   },
+  "knowledgeGuard": {
+    "title": "Known pitfall may apply",
+    "confidence": "{{confidence}}%",
+    "rootCause": "Root cause:",
+    "whyMatched": "Matched:",
+    "matchFallback": "similar failure signal",
+    "dismiss": "Dismiss",
+    "use": "Use",
+    "usedToast": "Knowledge guidance added to the composer.",
+    "composerPrefix": "Use this prior experience before retrying: {{title}}",
+    "severity": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "blocking": "Blocking"
+    }
+  },
   "artifactPanel": {
     "tabs": {
       "changes": "Changes",
@@ -206,9 +341,37 @@
     "workspaceTabs": {
       "files": "Files",
       "terminal": "Terminal",
-      "git": "Git",
+      "git": "Review",
       "web": "Web",
       "audit": "Audit"
+    },
+    "workspaceLaunchpad": {
+      "title": "ClawX workspace",
+      "subtitle": "Pinned entries",
+      "moreHint": "Use + for review, preview, and audit tools.",
+      "actions": {
+        "open": "Open entry launcher",
+        "back": "Back to entries",
+        "moreEntries": "More entries"
+      },
+      "sections": {
+        "highFrequency": "High-frequency",
+        "projectTools": "Project tools",
+        "reviewAndSafety": "Review and safety"
+      },
+      "entries": {
+        "files": "Browse files and preview selected content.",
+        "terminal": "Start an interactive shell for this workspace.",
+        "review": "Review changes, branches, stashes, and PRs.",
+        "reviewBranch": "Review changes on {{branch}}.",
+        "web": "Open a local preview or inspect a URL.",
+        "audit": "Inspect permission requests and recent approvals."
+      },
+      "badges": {
+        "changes": "{{count}} changes",
+        "conflicts": "{{count}} conflicts",
+        "clean": "Clean"
+      }
     },
     "actions": {
       "back": "Back to list"
@@ -297,6 +460,16 @@
       "rowRange": "Rows {{from}}-{{to}} / {{total}}",
       "prevPage": "Previous rows",
       "nextPage": "Next rows"
+    },
+    "office": {
+      "title": "Office preview: {{fileName}}",
+      "loading": "Loading Office preview...",
+      "notInstalledTitle": "OfficeCLI is not installed",
+      "notInstalledHint": "Install OfficeCLI, then retry the preview.",
+      "failedTitle": "Office preview failed",
+      "install": "Install OfficeCLI",
+      "installing": "Installing...",
+      "retry": "Retry"
     }
   },
   "workspace": {
@@ -380,14 +553,19 @@
         "clearSelection": "Clear selection",
         "sendToComposer": "Send to composer",
         "captureAndSend": "Capture and send",
-        "capturing": "Capturing"
+        "capturing": "Capturing",
+        "refresh": "Refresh",
+        "openExternal": "Open externally",
+        "openAgentBrowser": "Open in Agent Browser",
+        "locateAgentBrowser": "Locate Agent Browser"
       },
       "tooltips": {
         "captureAndSend": "Send the selected component with a preview screenshot."
       },
       "browser": {
         "placeholder": "Start a preview to load a URL",
-        "title": "Workspace preview"
+        "title": "Workspace preview",
+        "agentBrowserActive": "Agent"
       },
       "selection": {
         "selected": "Selected"
@@ -400,7 +578,10 @@
         "sent": "Sent to the composer",
         "screenshotUnavailable": "Screenshot is unavailable; sent component details only",
         "screenshotFailed": "Screenshot failed; sent component details only",
-        "screenshotSent": "Screenshot and component details sent"
+        "screenshotSent": "Screenshot and component details sent",
+        "agentBrowserNoUrl": "Start a preview or enter a URL first",
+        "agentBrowserOpened": "Agent Browser opened",
+        "agentBrowserLocated": "Agent Browser located"
       },
       "prompt": {
         "title": "Please adjust the component selected in the Web preview.",
@@ -648,6 +829,16 @@
       "followup": "Follow-up",
       "reroute": "Reroute"
     },
+    "diagnostics": {
+      "title": "Diagnostics",
+      "recommendations": "Recommendations",
+      "nextSteps": "Next steps",
+      "taskLoopUpgrade": "Task Loop is available only after explicit confirmation.",
+      "status": {
+        "ok": "OK",
+        "needs_attention": "Needs attention"
+      }
+    },
     "status": {
       "running": "Running",
       "planned": "Planned",
@@ -691,6 +882,7 @@
   },
   "composer": {
     "attachFiles": "Attach files",
+    "placeholder": "Message...  / for commands and skills",
     "pickSkill": "Choose skill",
     "pickTool": "Choose tool",
     "skillButton": "Skills",
@@ -702,6 +894,71 @@
     "skillEmpty": "No matching skills found",
     "pickAgent": "Choose agent",
     "pickModel": "Choose model",
+    "actions": {
+      "add": "Add",
+      "context": "Add context",
+      "skills": "Skills",
+      "office": "Office",
+      "session": "Session",
+      "attachFiles": "Attach files",
+      "knowledge": "Search knowledge",
+      "model": "Model",
+      "compact": "Compact session",
+      "fork": "Fork session",
+      "handoff": "Handoff session"
+    },
+    "office": {
+      "excel": "Excel",
+      "word": "Word Document",
+      "ppt": "Presentation",
+      "pdf": "PDF",
+      "pitchDeck": "Pitch Deck",
+      "morph": "Morph Animation",
+      "morph3d": "3D Morph",
+      "academic": "Academic Paper",
+      "financial": "Financial Model",
+      "dashboard": "Data Dashboard",
+      "setupRequired": "Enable {{action}} in Skills > Feature packs first.",
+      "prompts": {
+        "excel": "Create an Excel workbook with the following requirements:\n\n[describe your data, tables, formulas, and charts here]",
+        "word": "Create a Word document with the following requirements:\n\n[describe your document content, structure, and formatting here]",
+        "ppt": "Create a PowerPoint presentation with the following requirements:\n\n[describe your slides, content, and design here]",
+        "pdf": "Read, summarize, or transform a PDF document.",
+        "pitchDeck": "Create a fundraising pitch deck with the following requirements:\n\n[describe your company, funding round, and key metrics here]",
+        "morph": "Create a presentation with Morph transition animations:\n\n[describe your presentation topic and desired visual effects here]",
+        "morph3d": "Create a 3D Morph presentation with GLB models and camera moves:\n\n[describe your topic and 3D visual concept here]",
+        "academic": "Write an academic paper in Word with the following requirements:\n\n[describe your research topic, methodology, and key findings here]",
+        "financial": "Create a financial model in Excel with the following requirements:\n\n[describe your financial statements, projections, and analysis here]",
+        "dashboard": "Create a data dashboard in Excel with the following requirements:\n\n[describe your data source, KPIs, and charts here]"
+      }
+    },
+    "promptCacheGuard": {
+      "title": "This may cool the prompt cache",
+      "description": "{{action}} can force the next turn to rebuild about {{tokens}} prompt tokens. Current cache hit rate: {{hitRate}}. {{reason}}",
+      "continue": "Continue",
+      "cancel": "Cancel",
+      "action": {
+        "model-switch": "Switching models",
+        "manual-compaction": "Manual compaction",
+        "skill-enable": "Enabling a skill",
+        "mcp-register": "Registering MCP tools",
+        "mcp-reload": "Reloading MCP tools",
+        "system-prompt-change": "Changing the system prompt",
+        "context-reset": "Resetting context"
+      },
+      "reason": {
+        "model-switch": "Model caches are isolated per model.",
+        "manual-compaction": "Compaction rewrites the visible conversation prefix.",
+        "skill-enable": "Skill changes can alter the tool and prompt prefix.",
+        "mcp-register": "New MCP tools can alter the tool schema prefix.",
+        "mcp-reload": "Reloading MCP can alter the available tool schema.",
+        "system-prompt-change": "System prompt changes alter the cached prefix.",
+        "context-reset": "Context resets alter the cached prefix.",
+        "provider-unknown": "This provider has unknown cache support.",
+        "ineligible": "The current prefix may be below the cache threshold.",
+        "default": "The next request may miss the current cache."
+      }
+    },
     "knowledgeScopeTitle": "Knowledge scope",
     "knowledgeScope": {
       "none": "No knowledge",
@@ -725,7 +982,20 @@
       "suggestion": "Found {{count}} possibly relevant knowledge item(s)",
       "attach": "Attach",
       "open": "Open",
+      "inspect": "Inspect",
       "dismiss": "Dismiss"
+    },
+    "knowledgePreflight": {
+      "title": "Knowledge Preflight",
+      "summary": "{{docs}} related docs, {{pitfalls}} prior pitfalls, {{rules}} rules may apply.",
+      "confidence": "{{confidence}}%",
+      "whyMatched": "Why: {{reason}}",
+      "source": "{{corpus}} ? {{source}}",
+      "groups": {
+        "docs": "Related docs",
+        "pitfalls": "Prior pitfalls",
+        "rules": "Rules"
+      }
     },
     "knowledgeQuick": {
       "enable": "Use wiki knowledge",
@@ -744,12 +1014,12 @@
       "messageRefTitle": "Knowledge reference: {{title}}"
     },
     "slashCommands": {
-      "menuLabel": "Slash commands",
-      "title": "Quick actions",
-      "subtitle": "Pick an action for this message or session. Each action explains what it will do before it runs.",
-      "contextButton": "Open context palette",
-      "contextButtonShort": "Context",
-      "contextButtonTooltip": "Type / to attach knowledge, set scope, or run a session action.",
+      "menuLabel": "ClawX slash commands",
+      "title": "ClawX commands",
+      "subtitle": "Choose a targeted action for knowledge, code work, workflow, or the current session.",
+      "contextButton": "Open commands",
+      "contextButtonShort": "Commands",
+      "contextButtonTooltip": "Type / to search targeted ClawX commands.",
       "promptArgs": "Scope: {{args}}",
       "unknownTitle": "Unknown command",
       "unknownDescription": "{{command}} is not a Verse Claw quick action. Press Escape to keep editing.",
@@ -757,10 +1027,18 @@
       "ledgerNodeDescription": "Created from the Chat slash command.",
       "ledgerSessionSummary": "Linked from Chat slash command: {{title}}",
       "groups": {
+        "skills": "Skills",
         "knowledge": "Knowledge",
         "coding": "Coding",
         "workflow": "Workflow",
         "session": "Session"
+      },
+      "groupDescriptions": {
+        "skills": "Reusable agent behaviors from your workspace and runtime.",
+        "knowledge": "Attach sources and shape what this turn can read.",
+        "coding": "Ask for focused engineering work on the current change.",
+        "workflow": "Move the task into a planning or tracking flow.",
+        "session": "Manage continuity, compression, and handoff."
       },
       "commands": {
         "wiki": {
@@ -838,6 +1116,11 @@
           "description": "Draft a pull request summary and validation notes.",
           "argumentHint": "[audience]"
         },
+        "goal": {
+          "label": "Goal",
+          "description": "Open or guide a long-goal Mission Control flow.",
+          "argumentHint": "[goal]"
+        },
         "mission": {
           "label": "Mission Control",
           "description": "Open or guide a long-goal Mission Control flow.",
@@ -880,7 +1163,7 @@
         "wikiOpened": "Wiki search opened. Pick pages to attach as read-only context.",
         "scopeOpened": "Knowledge scope picker opened.",
         "scopeChanged": "Knowledge scope set to {{scope}}.",
-        "typeSlash": "Type / at the start of an empty composer to open the context palette.",
+        "typeSlash": "Type / at the start of an empty composer to open commands.",
         "knowledgeModeOpened": "Knowledge mode picker opened.",
         "knowledgeModeChanged": "Knowledge mode set to {{mode}}.",
         "stewardAuditStarted": "Knowledge governance audit started.",
@@ -896,6 +1179,14 @@
     "agentPickerTitle": "Route the next message to another agent",
     "modelPickerTitle": "Switch model for this chat",
     "modelSwitchFailed": "Failed to switch model: {{error}}",
+    "modelScope": {
+      "turn": "This message",
+      "session": "This session",
+      "persistent": "Always"
+    },
+    "clearTurnModel": "Clear turn model override",
+    "turnModelChip": "via {{model}}",
+    "modelSourceDefault": "Default model",
     "inputModeTitle": "Input mode",
     "inputModeHint": "Applies to this message only",
     "guideInjected": "Injected as guidance into the active run",
@@ -908,6 +1199,19 @@
     "gatewayConnected": "connected",
     "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
     "contextStatusTitle": "Context and token status",
+    "contextMenu": {
+      "button": "Context",
+      "title": "Context status",
+      "tooltip": "Show context, token, and routing status",
+      "toolsSection": "Tools and routing",
+      "statusSection": "Status",
+      "attachedSection": "Attached context",
+      "emptyDiagnostics": "No extra context attached",
+      "close": "Close context controls",
+      "target": "@{{agent}}",
+      "knowledgeRefs": "{{count}} refs",
+      "skillTokens": "{{count}} skills"
+    },
     "messageCount": "{{count}} messages",
     "tokenUsage": "{{tokens}} tokens",
     "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
@@ -950,6 +1254,15 @@
         "no_transcript": "Transcript not found",
         "gateway_unavailable": "Gateway unavailable"
       }
+    },
+    "taskLoopUpgrade": {
+      "title": "Task Loop available",
+      "summary": "Project-scale execution with checkpoints.",
+      "confirm": "Start Task Loop",
+      "starting": "Starting Task Loop",
+      "toastUpdated": "Task Loop run updated: {{status}}",
+      "toastFailed": "Failed to start Task Loop",
+      "unknownStatus": "unknown"
     },
     "longTaskControl": {
       "queued": "{{count}} queued",
@@ -1179,6 +1492,7 @@
     "intervention": {
       "guide": "Guide",
       "guideTooltip": "Inject non-interrupting guidance into the active run.",
+      "queueDefault": "Running: Enter queues this message",
       "queue": "Queue",
       "queueTooltip": "Keep the active run intact and replay this follow-up later.",
       "interrupt": "Interrupt",
@@ -1262,40 +1576,6 @@
         "reviewNotice": "Review-only recovery memory proposal. Do not apply durable memory until the user verifies the facts, scope, and source evidence.",
         "emptyBody": "Session {{sessionKey}} has no rendered recovery transcript yet. Capture only verified recovery facts, decisions, blockers, and evidence references before applying."
       }
-    },
-    "git": {
-      "loading": "Loading Git",
-      "branchLabel": "Branch",
-      "worktreeLabel": "Worktree",
-      "clean": "Clean",
-      "dirty": "{{count}} changes",
-      "conflicts": "{{count}} conflicts",
-      "detached": "Detached",
-      "unknownBranch": "Unknown branch",
-      "sync": "ahead {{ahead}} / behind {{behind}}",
-      "openPanel": "Open Git Panel",
-      "refresh": "Refresh",
-      "branches": "Branches",
-      "searchBranches": "Search branches",
-      "checkout": "Checkout",
-      "createBranch": "Create branch",
-      "branchName": "Branch name",
-      "startPoint": "Start point",
-      "worktrees": "Worktrees",
-      "current": "Current",
-      "locked": "Locked",
-      "prunable": "Prunable",
-      "switchWorktree": "Switch",
-      "addWorktree": "Add worktree",
-      "newBranch": "New branch",
-      "existingBranch": "Existing branch",
-      "defaultPath": "Default path",
-      "defaultPathUnavailable": "Enter a branch to preview the path",
-      "branchExists": "Branch already exists",
-      "branchCheckedOut": "Branch checked out at {{path}}",
-      "operationBlocked": "{{reason}}",
-      "operationFailed": "{{error}}",
-      "operationSuccess": "{{action}} complete"
     }
   },
   "historyBuckets": {
@@ -1310,14 +1590,14 @@
     "work": "Work"
   },
   "sessionView": {
-    "project": "Project",
+    "project": "Workgroups",
     "time": "Time"
   },
   "sidebar": {
     "searchSessions": "Search conversations",
     "clearSearch": "Clear search",
     "searchNoResults": "No conversations found",
-    "searchModalPlaceholder": "Search conversations by name, workspace, or agent...",
+    "searchModalPlaceholder": "Search conversations by name, workgroup, workspace, or agent...",
     "searchEmptyHint": "Start typing to search your conversations",
     "searchCurrent": "Current",
     "searchRelativeNow": "just now",
@@ -1327,6 +1607,45 @@
     "searchHintNavigate": "navigate",
     "searchHintSelect": "select",
     "searchHintClose": "close"
+  },
+  "folders": {
+    "create": "New folder",
+    "namePlaceholder": "Folder name",
+    "rename": "Rename folder",
+    "delete": "Delete folder",
+    "moveTo": "Move to folder",
+    "noFolder": "No folder"
+  },
+  "workgroups": {
+    "create": "New workgroup",
+    "namePlaceholder": "Workgroup name",
+    "rename": "Rename workgroup",
+    "delete": "Delete workgroup",
+    "moveTo": "Move to workgroup",
+    "noWorkgroup": "No workgroup",
+    "ungrouped": "Ungrouped",
+    "sessionCount": "{{count}} conversations",
+    "status": {
+      "running": "Running",
+      "waiting": "Waiting",
+      "attention": "Needs attention",
+      "done": "Done",
+      "stopped": "Stopped",
+      "idle": "Idle"
+    }
+  },
+  "archive": {
+    "title": "Archived conversations",
+    "open": "Archive",
+    "empty": "No archived conversations",
+    "loading": "Loading archived conversations...",
+    "restore": "Restore",
+    "deletePermanently": "Delete",
+    "deleteTitle": "Delete conversation",
+    "deleteMessage": "Choose how to remove \"{{label}}\". Archive moves it to the recycle bin (restorable); Delete permanently removes it.",
+    "archiveAction": "Archive",
+    "emptyAll": "Empty archive",
+    "emptyAllConfirm": "Click again to permanently delete all archived conversations"
   },
   "questionDirectory": {
     "title": "Question directory",
@@ -1443,42 +1762,18 @@
     "aborted": "Stopped",
     "dismissCompleted": "Hide completed status"
   },
-  "workContext": {
-    "title": "Work context",
-    "sections": {
-      "plan": "Task log / plan",
-      "ledger": "Task Ledger",
-      "environment": "Environment",
-      "artifacts": "Artifacts",
-      "sources": "Sources"
+  "turnSummary": {
+    "titleFallback": "Work completed",
+    "toggle": "Toggle work summary",
+    "status": {
+      "completed": "Work completed",
+      "error": "Needs attention"
     },
-    "environment": {
-      "workspace": "Workspace",
-      "branch": "Branch",
-      "changes": "Changes",
-      "unknownWorkspace": "Workspace",
-      "changeCounts": "{{count}} changes",
-      "delta": "+{{added}} -{{removed}}"
-    },
-    "actions": {
-      "viewChanges": "View changes",
-      "commitOrPush": "Commit or push",
-      "createPr": "Create PR"
-    },
-    "ledger": {
-      "noCurrentGoal": "No current goal",
-      "counts": "{{active}} active / {{review}} review / {{blocked}} blocked",
-      "active": "Active",
-      "review": "Review",
-      "blocked": "Blocked"
-    },
-    "git": {
-      "clean": "Clean",
-      "detached": "Detached HEAD",
-      "unknownBranch": "Unknown branch"
-    },
-    "empty": {
-      "sources": "No sources yet"
+    "counts": {
+      "tasks": "{{count}} tasks",
+      "reports": "{{count}} files",
+      "sources": "{{count}} sources",
+      "orchestrations": "{{count}} teams"
     }
   },
   "turnWork": {

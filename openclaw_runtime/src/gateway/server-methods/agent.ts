@@ -23,7 +23,7 @@ import {
   validateAgentParams,
   validateAgentWaitParams,
 } from "../../../packages/gateway-protocol/src/index.js";
-import { readAcpSessionMeta } from "../../acp/runtime/session-meta.js";
+import { readAcpSessionMeta } from "../../runtime/session-meta.ts";
 import { listAgentIds, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import { resolveTrustedGroupId } from "../../agents/agent-tools.policy.js";
 import {
@@ -162,6 +162,14 @@ import type {
   GatewayRequestHandlerOptions,
   GatewayRequestHandlers,
 } from "./types.js";
+// Area 4 §3.4: chat-turn memory injection pilot seam (default-off).
+// When the pilot is off, computeMemoryExtraSystemPrompt returns the original
+// extraSystemPrompt unchanged — prompt bytes are byte-identical (comms parity).
+import { computeMemoryExtraSystemPrompt } from "../../context-engine/chat-turn-memory-injection.js";
+import {
+  createMemoryContextProviders,
+  defaultMainSessionRoleResolver,
+} from "../../context-engine/register-memory-providers.js";
 
 const RESET_COMMAND_RE = /^\/(new|reset)(?:\s+([\s\S]*))?$/i;
 
@@ -2522,6 +2530,24 @@ export const agentHandlers: GatewayRequestHandlers = {
           const execApprovalFollowupElevatedDefaults =
             execApprovalFollowupRuntimeHandoff?.bashElevated;
 
+          // Area 4 §3.4: chat-turn memory injection pilot (default-off).
+          // When the pilot is off (default), computeMemoryExtraSystemPrompt
+          // returns the original extraSystemPrompt unchanged — prompt bytes are
+          // byte-identical (comms replay parity, §8). The providerFactory is
+          // only called when the flag is on, so construction is lazy.
+          const memoryExtraSystemPrompt = await computeMemoryExtraSystemPrompt(
+            request.extraSystemPrompt,
+            cfgForAgent ?? cfg,
+            resolvedSessionKey,
+            () =>
+              createMemoryContextProviders({
+                roleMemory: {
+                  resolveRoleName: defaultMainSessionRoleResolver,
+                },
+              }),
+            (message, ctx) => context.logGateway.warn(message, ctx),
+          );
+
           dispatchAgentRunFromGateway({
             ingressOpts: {
               message,
@@ -2561,7 +2587,7 @@ export const agentHandlers: GatewayRequestHandlers = {
               lane: request.lane,
               modelRun: request.modelRun === true,
               promptMode: request.promptMode,
-              extraSystemPrompt: request.extraSystemPrompt,
+              extraSystemPrompt: memoryExtraSystemPrompt,
               bootstrapContextMode: request.bootstrapContextMode,
               bootstrapContextRunKind: request.bootstrapContextRunKind,
               acpTurnSource: request.acpTurnSource,

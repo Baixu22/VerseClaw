@@ -9,6 +9,11 @@ const setSkillsEnabledMock = vi.fn();
 const searchSkillsMock = vi.fn();
 const installSkillMock = vi.fn();
 const uninstallSkillMock = vi.fn();
+const fetchSkillPacksMock = vi.fn();
+const installSkillPackMock = vi.fn();
+const setSkillPackEnabledMock = vi.fn();
+const syncSkillPackMock = vi.fn();
+const readSkillPackSkillMock = vi.fn();
 const fetchMcpServersMock = vi.fn();
 const createMcpServerMock = vi.fn();
 const updateMcpServerMock = vi.fn();
@@ -16,10 +21,18 @@ const deleteMcpServerMock = vi.fn();
 const testMcpServerMock = vi.fn();
 const clawhubCapabilityMock = vi.fn();
 const clawhubOpenSkillPathMock = vi.fn();
+const officeToolsDetectMock = vi.fn();
+const officeToolsInstallMock = vi.fn();
+const officeToolsUninstallMock = vi.fn();
+const officeToolsListSkillsMock = vi.fn();
+const officeToolsSyncSkillsMock = vi.fn();
+const officeToolsListAllSkillInstallStatusesMock = vi.fn();
+const officeToolsApplySkillLinksMock = vi.fn();
+const agentsListMock = vi.fn();
 const openclawGetSkillsDirMock = vi.fn();
 const shellOpenExternalMock = vi.fn();
 
-const { gatewayState, skillsState, mcpState } = vi.hoisted(() => ({
+const { gatewayState, skillsState, skillPacksState, mcpState } = vi.hoisted(() => ({
   gatewayState: {
     status: { state: 'running', port: 18789, gatewayReady: true } as {
       state: string;
@@ -29,6 +42,12 @@ const { gatewayState, skillsState, mcpState } = vi.hoisted(() => ({
   },
   skillsState: {
     skills: [] as Array<Record<string, unknown>>,
+  },
+  skillPacksState: {
+    packs: [] as Array<Record<string, unknown>>,
+    loading: false,
+    busy: {} as Record<string, boolean>,
+    error: null as string | null,
   },
   mcpState: {
     servers: [] as Array<Record<string, unknown>>,
@@ -51,6 +70,20 @@ vi.mock('@/stores/skills', () => ({
     searching: false,
     searchError: null,
     installing: {},
+  }),
+}));
+
+vi.mock('@/stores/skill-packs', () => ({
+  useSkillPacksStore: () => ({
+    packs: skillPacksState.packs,
+    loading: skillPacksState.loading,
+    busy: skillPacksState.busy,
+    error: skillPacksState.error,
+    fetchPacks: fetchSkillPacksMock,
+    installPack: installSkillPackMock,
+    setPackEnabled: setSkillPackEnabledMock,
+    syncPack: syncSkillPackMock,
+    readSkill: readSkillPackSkillMock,
   }),
 }));
 
@@ -83,6 +116,24 @@ vi.mock('@/lib/host-api', () => ({
       clawhubCapability: () => clawhubCapabilityMock(),
       clawhubOpenSkillPath: (...args: unknown[]) => clawhubOpenSkillPathMock(...args),
     },
+    agents: {
+      list: () => agentsListMock(),
+    },
+    officeTools: {
+      detect: () => officeToolsDetectMock(),
+      install: (...args: unknown[]) => officeToolsInstallMock(...args),
+      uninstall: () => officeToolsUninstallMock(),
+      listSkills: () => officeToolsListSkillsMock(),
+      syncSkills: () => officeToolsSyncSkillsMock(),
+      listAllSkillInstallStatuses: () => officeToolsListAllSkillInstallStatusesMock(),
+      applySkillLinks: (...args: unknown[]) => officeToolsApplySkillLinksMock(...args),
+    },
+  },
+}));
+
+vi.mock('@/lib/host-events', () => ({
+  hostEvents: {
+    onOfficeToolsInstallEvent: vi.fn(() => () => undefined),
   },
 }));
 
@@ -117,12 +168,90 @@ describe('Skills page gateway readiness', () => {
     vi.clearAllMocks();
     gatewayState.status = { state: 'running', port: 18789, gatewayReady: true };
     skillsState.skills = [];
+    skillPacksState.packs = [
+      {
+        id: 'superpowers',
+        name: 'Superpowers',
+        description: 'Curated expert workflows',
+        status: 'notInstalled',
+        enabled: false,
+        skills: [],
+      },
+      {
+        id: 'officecli',
+        name: 'Office CLI',
+        description: 'Office document workflows',
+        status: 'installed',
+        enabled: false,
+        skills: [{ id: 'officecli-docx', name: 'Word', description: 'Word documents', enabled: false, installed: true }],
+      },
+    ];
+    skillPacksState.loading = false;
+    skillPacksState.busy = {};
+    skillPacksState.error = null;
     mcpState.servers = [];
     openclawGetSkillsDirMock.mockResolvedValue('/tmp/.openclaw/skills');
     shellOpenExternalMock.mockResolvedValue(undefined);
     clawhubCapabilityMock.mockResolvedValue({ success: true, capability: { canSearch: false, canInstall: false } });
     clawhubOpenSkillPathMock.mockResolvedValue({ success: true });
+    officeToolsDetectMock.mockResolvedValue({
+      installed: true,
+      version: 'officecli 1.2.3',
+      path: 'C:/tools/officecli.exe',
+      runtimeError: null,
+    });
+    officeToolsInstallMock.mockResolvedValue({
+      installed: true,
+      version: 'officecli 1.2.3',
+      path: 'C:/tools/officecli.exe',
+      runtimeError: null,
+    });
+    officeToolsUninstallMock.mockResolvedValue({
+      installed: false,
+      version: null,
+      path: null,
+      runtimeError: null,
+    });
+    officeToolsListSkillsMock.mockResolvedValue([]);
+    officeToolsSyncSkillsMock.mockResolvedValue({ synced: 1, errors: [] });
+    agentsListMock.mockResolvedValue({
+      success: true,
+      agents: [
+        {
+          id: 'main',
+          name: 'Main Agent',
+          isDefault: true,
+          modelDisplay: 'Not configured',
+          inheritedModel: false,
+          workspace: '/workspace',
+          agentDir: '/agents/main',
+          mainSessionKey: 'agent:main:main',
+          channelTypes: [],
+        },
+      ],
+    });
+    officeToolsListAllSkillInstallStatusesMock.mockResolvedValue([
+      {
+        expertId: 'officecli-docx',
+        skillId: 'officecli-docx',
+        agentId: 'main',
+        agentType: 'main',
+        agentName: 'Main Agent',
+        state: 'not_linked',
+        linkPath: 'agent:main:defaultSkillIds',
+        targetPath: null,
+        expectedTargetPath: '/skills/officecli-docx',
+        copyMode: false,
+        installedCentrally: true,
+      },
+    ]);
+    officeToolsApplySkillLinksMock.mockResolvedValue([]);
     fetchSkillsMock.mockResolvedValue(true);
+    fetchSkillPacksMock.mockResolvedValue(undefined);
+    installSkillPackMock.mockResolvedValue(undefined);
+    setSkillPackEnabledMock.mockResolvedValue(undefined);
+    syncSkillPackMock.mockResolvedValue(undefined);
+    readSkillPackSkillMock.mockResolvedValue('---\nname: officecli-docx\n---\nWord skill');
     fetchMcpServersMock.mockResolvedValue(undefined);
     createMcpServerMock.mockResolvedValue(undefined);
     updateMcpServerMock.mockResolvedValue(undefined);
@@ -315,5 +444,69 @@ describe('Skills page gateway readiness', () => {
       scope: 'global',
       enabled: true,
     }));
+  });
+
+  it('shows managed skill packs and routes pack actions through the skill packs store', async () => {
+    render(<Skills />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(1_600);
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'packs.tab' }));
+
+    expect(fetchSkillPacksMock).toHaveBeenCalled();
+    expect(screen.getByTestId('skill-packs-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('skill-pack-card-superpowers')).toHaveTextContent('Superpowers');
+    expect(screen.getByTestId('skill-pack-card-officecli')).toHaveTextContent('Office CLI');
+
+    fireEvent.click(screen.getByTestId('skill-pack-install-superpowers'));
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(installSkillPackMock).toHaveBeenCalledWith('superpowers');
+
+    fireEvent.click(screen.getByTestId('skill-pack-enable-officecli'));
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(setSkillPackEnabledMock).toHaveBeenCalledWith('officecli', true);
+  });
+
+  it('surfaces OfficeCLI detect diagnostics and partial sync recovery in skill packs', async () => {
+    officeToolsDetectMock.mockResolvedValue({
+      installed: true,
+      version: 'officecli 1.2.3',
+      path: 'C:/tools/officecli.exe',
+      runtimeError: 'Missing libicu. Install ICU runtime libraries.',
+    });
+    officeToolsSyncSkillsMock.mockResolvedValue({
+      synced: 8,
+      errors: ['officecli-pptx: Missing libicu. Install ICU runtime libraries.'],
+    });
+
+    render(<Skills />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(1_600);
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'packs.tab' }));
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(screen.getByTestId('officecli-detection-card')).toHaveTextContent('Missing libicu');
+    expect(screen.getByTestId('officecli-detection-card')).toHaveTextContent('officecli 1.2.3');
+
+    fireEvent.click(screen.getByTestId('skill-pack-sync-officecli'));
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(officeToolsSyncSkillsMock).toHaveBeenCalled();
+    expect(screen.getByTestId('officecli-sync-report')).toHaveTextContent('officecli-pptx');
   });
 });

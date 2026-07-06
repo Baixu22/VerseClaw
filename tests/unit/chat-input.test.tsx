@@ -1,4 +1,4 @@
-﻿import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { ChatInput } from '@/pages/Chat/ChatInput';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -91,6 +91,12 @@ vi.mock('@/lib/host-api', () => ({
         body: JSON.stringify(updates),
       }),
     },
+    capabilities: {
+      publications: (input: unknown) => hostApiFetchMock('/api/capabilities/publications', {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+    },
     mcp: {
       listServers: () => hostApiFetchMock('/api/mcp/list', { method: 'GET' }),
       createServer: (input: unknown) => hostApiFetchMock('/api/mcp/create', {
@@ -142,16 +148,38 @@ vi.mock('@/lib/host-api', () => ({
         body: JSON.stringify(input),
       }),
     },
+    usage: {
+      promptCacheStatus: () => Promise.resolve({
+        success: true,
+        assessment: {
+          sessionKey: 'agent:main:main',
+          shouldWarn: false,
+          severity: 'none',
+          status: 'unknown',
+          confidence: 'unknown',
+          providerStrategy: 'unknown',
+          hitRate: null,
+          promptTokens: 0,
+          cacheReadTokens: 0,
+          cacheWriteTokens: 0,
+          costEstimateReliable: false,
+          warningCount: 0,
+          cancelledBreakCount: 0,
+          updatedAt: 0,
+        },
+      }),
+      recordPromptCacheRiskEvent: () => Promise.resolve({ success: true, event: null }),
+    },
   },
 }));
 
 const slashCommandTranslations: Record<string, string> = {
   'composer.slashCommands.menuLabel': 'Slash commands',
-  'composer.slashCommands.title': 'Quick actions',
-  'composer.slashCommands.subtitle': 'Pick an action for this message or session.',
-  'composer.slashCommands.contextButton': 'Open context palette',
-  'composer.slashCommands.contextButtonShort': 'Context',
-  'composer.slashCommands.contextButtonTooltip': 'Type / to attach knowledge, set scope, or run a session action.',
+  'composer.slashCommands.title': 'ClawX commands',
+  'composer.slashCommands.subtitle': 'Choose a targeted action for knowledge, code work, workflow, or the current session.',
+  'composer.slashCommands.contextButton': 'Open commands',
+  'composer.slashCommands.contextButtonShort': 'Commands',
+  'composer.slashCommands.contextButtonTooltip': 'Type / to search targeted ClawX commands.',
   'composer.slashCommands.promptArgs': 'Scope: {{args}}',
   'composer.slashCommands.unknownTitle': 'Unknown command',
   'composer.slashCommands.unknownDescription': '{{command}} is not a Verse Claw quick action. Press Escape to keep editing.',
@@ -162,6 +190,10 @@ const slashCommandTranslations: Record<string, string> = {
   'composer.slashCommands.groups.coding': 'Coding',
   'composer.slashCommands.groups.workflow': 'Workflow',
   'composer.slashCommands.groups.session': 'Session',
+  'composer.slashCommands.groupDescriptions.knowledge': 'Attach sources and shape what this turn can read.',
+  'composer.slashCommands.groupDescriptions.coding': 'Ask for focused engineering work on the current change.',
+  'composer.slashCommands.groupDescriptions.workflow': 'Move the task into a planning or tracking flow.',
+  'composer.slashCommands.groupDescriptions.session': 'Manage continuity, compression, and handoff.',
   'composer.slashCommands.commands.wiki.label': 'Search wiki',
   'composer.slashCommands.commands.wiki.description': 'Find source-backed wiki pages and attach them as read-only context.',
   'composer.slashCommands.commands.wiki.argumentHint': '[query]',
@@ -207,6 +239,9 @@ const slashCommandTranslations: Record<string, string> = {
   'composer.slashCommands.commands.pr-summary.label': 'PR summary',
   'composer.slashCommands.commands.pr-summary.description': 'Draft a pull request summary and validation notes.',
   'composer.slashCommands.commands.pr-summary.argumentHint': '[audience]',
+  'composer.slashCommands.commands.goal.label': 'Goal',
+  'composer.slashCommands.commands.goal.description': 'Open or guide a long-goal Mission Control flow.',
+  'composer.slashCommands.commands.goal.argumentHint': '[goal]',
   'composer.slashCommands.commands.mission.label': 'Mission Control',
   'composer.slashCommands.commands.mission.description': 'Open or guide a long-goal Mission Control flow.',
   'composer.slashCommands.commands.mission.argumentHint': '[goal]',
@@ -235,7 +270,7 @@ const slashCommandTranslations: Record<string, string> = {
   'composer.slashCommands.toasts.wikiOpened': 'Wiki search opened. Pick pages to attach as read-only context.',
   'composer.slashCommands.toasts.scopeOpened': 'Knowledge scope picker opened.',
   'composer.slashCommands.toasts.scopeChanged': 'Knowledge scope set to {{scope}}.',
-  'composer.slashCommands.toasts.typeSlash': 'Type / at the start of an empty composer to open the context palette.',
+  'composer.slashCommands.toasts.typeSlash': 'Type / at the start of an empty composer to open commands.',
   'composer.slashCommands.toasts.knowledgeModeOpened': 'Knowledge mode picker opened.',
   'composer.slashCommands.toasts.knowledgeModeChanged': 'Knowledge mode set to {{mode}}.',
   'composer.slashCommands.toasts.stewardAuditStarted': 'Knowledge governance audit started.',
@@ -257,6 +292,8 @@ function translate(key: string, vars?: Record<string, unknown>): string {
   switch (key) {
     case 'composer.attachFiles':
       return 'Attach files';
+    case 'composer.placeholder':
+      return 'Message...  / for commands and skills';
     case 'composer.pickSkill':
       return 'Choose skill';
     case 'composer.pickTool':
@@ -275,6 +312,64 @@ function translate(key: string, vars?: Record<string, unknown>): string {
       return 'Loading skills...';
     case 'composer.skillEmpty':
       return 'No matching skills found';
+    case 'composer.actions.add':
+      return 'Add';
+    case 'composer.actions.context':
+      return 'Add context';
+    case 'composer.actions.skills':
+      return 'Skills';
+    case 'composer.actions.office':
+      return 'Office';
+    case 'composer.actions.session':
+      return 'Session';
+    case 'composer.actions.attachFiles':
+      return 'Attach files';
+    case 'composer.actions.knowledge':
+      return 'Search knowledge';
+    case 'composer.actions.model':
+      return 'Model';
+    case 'composer.actions.compact':
+      return 'Compact session';
+    case 'composer.actions.fork':
+      return 'Fork session';
+    case 'composer.actions.handoff':
+      return 'Handoff session';
+    case 'composer.office.excel':
+      return 'Excel';
+    case 'composer.office.word':
+      return 'Word Document';
+    case 'composer.office.ppt':
+      return 'Presentation';
+    case 'composer.office.pitchDeck':
+      return 'Pitch Deck';
+    case 'composer.office.morph':
+      return 'Morph Animation';
+    case 'composer.office.morph3d':
+      return '3D Morph';
+    case 'composer.office.academic':
+      return 'Academic Paper';
+    case 'composer.office.financial':
+      return 'Financial Model';
+    case 'composer.office.dashboard':
+      return 'Data Dashboard';
+    case 'composer.office.prompts.word':
+      return 'Create a Word document with the following requirements:\n\n[describe your document content, structure, and formatting here]';
+    case 'composer.office.prompts.excel':
+      return 'Create an Excel workbook with the following requirements:\n\n[describe your data, tables, formulas, and charts here]';
+    case 'composer.office.prompts.ppt':
+      return 'Create a PowerPoint presentation with the following requirements:\n\n[describe your slides, content, and design here]';
+    case 'composer.office.prompts.pitchDeck':
+      return 'Create a fundraising pitch deck with the following requirements:\n\n[describe your company, funding round, and key metrics here]';
+    case 'composer.office.prompts.morph':
+      return 'Create a presentation with Morph transition animations:\n\n[describe your presentation topic and desired visual effects here]';
+    case 'composer.office.prompts.morph3d':
+      return 'Create a 3D Morph presentation with GLB models and camera moves:\n\n[describe your topic and 3D visual concept here]';
+    case 'composer.office.prompts.academic':
+      return 'Write an academic paper in Word with the following requirements:\n\n[describe your research topic, methodology, and key findings here]';
+    case 'composer.office.prompts.financial':
+      return 'Create a financial model in Excel with the following requirements:\n\n[describe your financial statements, projections, and analysis here]';
+    case 'composer.office.prompts.dashboard':
+      return 'Create a data dashboard in Excel with the following requirements:\n\n[describe your data source, KPIs, and charts here]';
     case 'composer.pickAgent':
       return 'Choose agent';
     case 'composer.knowledgeScopeTitle':
@@ -309,8 +404,26 @@ function translate(key: string, vars?: Record<string, unknown>): string {
       return 'Attach';
     case 'composer.knowledgeRoute.open':
       return 'Open';
+    case 'composer.knowledgeRoute.inspect':
+      return 'Inspect';
     case 'composer.knowledgeRoute.dismiss':
       return 'Dismiss';
+    case 'composer.knowledgePreflight.title':
+      return 'Knowledge Preflight';
+    case 'composer.knowledgePreflight.summary':
+      return `${String(vars?.docs ?? '')} related docs, ${String(vars?.pitfalls ?? '')} prior pitfalls, ${String(vars?.rules ?? '')} rules may apply.`;
+    case 'composer.knowledgePreflight.confidence':
+      return `${String(vars?.confidence ?? '')}%`;
+    case 'composer.knowledgePreflight.whyMatched':
+      return `Why: ${String(vars?.reason ?? '')}`;
+    case 'composer.knowledgePreflight.source':
+      return `${String(vars?.corpus ?? '')} · ${String(vars?.source ?? '')}`;
+    case 'composer.knowledgePreflight.groups.docs':
+      return 'Related docs';
+    case 'composer.knowledgePreflight.groups.pitfalls':
+      return 'Prior pitfalls';
+    case 'composer.knowledgePreflight.groups.rules':
+      return 'Rules';
     case 'composer.knowledgeQuick.enable':
       return 'Use wiki knowledge';
     case 'composer.knowledgeQuick.disable':
@@ -333,6 +446,24 @@ function translate(key: string, vars?: Record<string, unknown>): string {
       return 'Failed to search knowledge.';
     case 'composer.knowledgeAttach.defaultPrompt':
       return 'Use the selected knowledge references to answer.';
+    case 'composer.intervention.guide':
+      return 'Guide';
+    case 'composer.intervention.guideTooltip':
+      return 'Inject non-interrupting guidance into the active run.';
+    case 'composer.intervention.queue':
+      return 'Queue';
+    case 'composer.intervention.queueDefault':
+      return 'Running: Enter queues this message';
+    case 'composer.intervention.queueTooltip':
+      return 'Keep the active run intact and replay this follow-up later.';
+    case 'composer.intervention.interrupt':
+      return 'Interrupt';
+    case 'composer.intervention.interruptTooltip':
+      return 'Abort or steer away from the active run before risky rollback.';
+    case 'composer.slashCommands.groups.skills':
+      return 'Skills';
+    case 'composer.slashCommands.groupDescriptions.skills':
+      return 'Reusable agent behaviors from your workspace and runtime.';
     case 'composer.knowledgeAttach.messageRefTitle':
       return `Knowledge reference: ${String(vars?.title ?? '')}`;
     case 'composer.clearTarget':
@@ -345,6 +476,14 @@ function translate(key: string, vars?: Record<string, unknown>): string {
       return 'Gateway not connected...';
     case 'composer.send':
       return 'Send';
+    case 'composer.taskLoopUpgrade.title':
+      return 'Task Loop available';
+    case 'composer.taskLoopUpgrade.summary':
+      return 'Move this project task into the constrained execution loop.';
+    case 'composer.taskLoopUpgrade.confirm':
+      return 'Start Task Loop';
+    case 'composer.taskLoopUpgrade.starting':
+      return 'Starting Task Loop';
     case 'composer.stop':
       return 'Stop';
     case 'composer.gatewayConnected':
@@ -507,6 +646,15 @@ function workspace(overrides: Partial<WorkspaceProfile> = {}): WorkspaceProfile 
   };
 }
 
+function openComposerActionMenu() {
+  fireEvent.click(screen.getByTestId('chat-composer-actions'));
+}
+
+function openKnowledgeMenuFromActions() {
+  openComposerActionMenu();
+  fireEvent.click(screen.getByTestId('chat-composer-action-knowledge'));
+}
+
 describe('ChatInput draft persistence', () => {
   beforeEach(() => {
     agentsState.agents = [];
@@ -563,9 +711,39 @@ describe('ChatInput draft persistence', () => {
 
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('send this draft', undefined, null, 'none', 'suggest', undefined, null);
+    expect(onSend).toHaveBeenCalledWith('send this draft', expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest' }));
     expect(onDraftChange).toHaveBeenCalledWith('');
     expect(screen.getByTestId('chat-composer-input')).toHaveValue('');
+  });
+
+  it('surfaces Task Loop upgrade for complex project work without auto-sending', async () => {
+    const onSend = vi.fn();
+    const onConfirmTaskLoopUpgrade = vi.fn().mockResolvedValue(undefined);
+    renderChatInput(onSend, {
+      onConfirmTaskLoopUpgrade,
+    });
+
+    fireEvent.change(screen.getByTestId('chat-composer-input'), {
+      target: {
+        value: '请按照顺序修复鉴权矩阵问题，补充单元测试和 e2e，跑 typecheck，失败要修复到通过再继续。',
+      },
+    });
+
+    const suggestion = await screen.findByTestId('chat-task-loop-upgrade-suggestion');
+    expect(suggestion).toHaveTextContent('Task Loop available');
+    expect(onSend).not.toHaveBeenCalled();
+    expect(onConfirmTaskLoopUpgrade).not.toHaveBeenCalled();
+
+    fireEvent.click(within(suggestion).getByTestId('chat-task-loop-upgrade-confirm'));
+
+    await waitFor(() => {
+      expect(onConfirmTaskLoopUpgrade).toHaveBeenCalledWith(expect.objectContaining({
+        kind: 'task-loop-upgrade-suggestion',
+        taskTitle: expect.stringContaining('修复鉴权矩阵问题'),
+        requiresUserConfirmation: true,
+      }));
+    });
+    expect(onSend).not.toHaveBeenCalled();
   });
 
   it('sends the selected knowledge scope with the composer payload', () => {
@@ -581,12 +759,10 @@ describe('ChatInput draft persistence', () => {
       </TooltipProvider>,
     );
 
-    fireEvent.click(screen.getByTitle('Knowledge scope'));
+    openKnowledgeMenuFromActions();
     fireEvent.click(screen.getByText('Wiki'));
 
     expect(onKnowledgeScopeChange).toHaveBeenCalledWith('wiki');
-    fireEvent.click(screen.getByTestId('chat-knowledge-quick-toggle'));
-    expect(onKnowledgeScopeChange).toHaveBeenLastCalledWith('wiki');
 
     rerender(
       <TooltipProvider>
@@ -597,7 +773,8 @@ describe('ChatInput draft persistence', () => {
         />
       </TooltipProvider>,
     );
-    fireEvent.click(screen.getByTestId('chat-knowledge-quick-toggle'));
+    openKnowledgeMenuFromActions();
+    fireEvent.click(screen.getByText('No knowledge'));
     expect(onKnowledgeScopeChange).toHaveBeenLastCalledWith('none');
 
     rerender(
@@ -612,7 +789,7 @@ describe('ChatInput draft persistence', () => {
     fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: 'Use notes' } });
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Use notes', undefined, null, 'wiki', 'suggest', undefined, null);
+    expect(onSend).toHaveBeenCalledWith('Use notes', expect.objectContaining({ targetAgentId: null, knowledgeScope: 'wiki', knowledgeMode: 'suggest' }));
   });
 
   it('changes knowledge invocation mode from the knowledge menu', () => {
@@ -630,7 +807,7 @@ describe('ChatInput draft persistence', () => {
       </TooltipProvider>,
     );
 
-    fireEvent.click(screen.getByTitle('Knowledge scope'));
+    openKnowledgeMenuFromActions();
     fireEvent.click(screen.getByTestId('chat-knowledge-mode-auto-read'));
 
     expect(onKnowledgeModeChange).toHaveBeenCalledWith('auto-read');
@@ -650,6 +827,7 @@ describe('ChatInput draft persistence', () => {
             lookup: 'knowledge/suggested.md',
             corpus: 'wiki',
             attachKind: 'suggested',
+            routeGroup: 'pitfalls',
             routingReason: 'project knowledge intent detected',
             confidence: 0.88,
             pagePath: 'knowledge/suggested.md',
@@ -679,17 +857,16 @@ describe('ChatInput draft persistence', () => {
     });
 
     const suggestion = await screen.findByTestId('chat-knowledge-suggestion', {}, { timeout: 2000 });
-    expect(suggestion).toHaveTextContent('Found 1 possibly relevant knowledge item');
+    expect(suggestion).toHaveTextContent('Knowledge Preflight');
+    expect(suggestion).toHaveTextContent('0 related docs, 1 prior pitfalls, 0 rules may apply.');
+    fireEvent.click(within(suggestion).getByTestId('chat-knowledge-suggestion-open'));
+    expect(screen.getByTestId('chat-knowledge-preflight-group-pitfalls')).toHaveTextContent('Prior pitfalls');
+    expect(screen.getByTestId('chat-knowledge-preflight-inspect')).toHaveTextContent('Why: project knowledge intent detected');
 
     fireEvent.click(screen.getByTitle('Send'));
     expect(onSend).toHaveBeenCalledWith(
       'What was the previous architecture decision for the wiki router?',
-      undefined,
-      null,
-      'wiki',
-      'suggest',
-      undefined,
-      null,
+      expect.objectContaining({ targetAgentId: null, knowledgeScope: 'wiki', knowledgeMode: 'suggest' }),
     );
 
     fireEvent.change(screen.getByTestId('chat-composer-input'), {
@@ -698,6 +875,77 @@ describe('ChatInput draft persistence', () => {
     const suggestionAgain = await screen.findByTestId('chat-knowledge-suggestion', {}, { timeout: 2000 });
     fireEvent.click(within(suggestionAgain).getByTestId('chat-knowledge-suggestion-attach'));
     expect(screen.getByTestId('chat-knowledge-selected')).toHaveTextContent('Suggested Decision');
+  });
+
+  it('dismisses knowledge preflight for the same input and still sends if routing fails', async () => {
+    const onSend = vi.fn();
+    hostApiFetchMock.mockImplementation(async (url) => {
+      if (url === '/api/knowledge/route-context') {
+        return {
+          success: true,
+          decision: 'suggest',
+          reason: 'project knowledge intent detected',
+          candidates: [{
+            id: 'route-rule',
+            title: 'Renderer boundary rule',
+            lookup: 'harness/specs/rules/chat-loop-boundary.md',
+            corpus: 'wiki',
+            attachKind: 'suggested',
+            routeGroup: 'rules',
+            routingReason: 'project knowledge intent detected',
+            confidence: 0.91,
+            pagePath: 'harness/specs/rules/chat-loop-boundary.md',
+          }],
+          candidateGroups: [{
+            key: 'rules',
+            candidates: [{
+              id: 'route-rule',
+              title: 'Renderer boundary rule',
+              lookup: 'harness/specs/rules/chat-loop-boundary.md',
+              corpus: 'wiki',
+              attachKind: 'suggested',
+              routeGroup: 'rules',
+              routingReason: 'project knowledge intent detected',
+              confidence: 0.91,
+              pagePath: 'harness/specs/rules/chat-loop-boundary.md',
+            }],
+          }],
+          budget: { maxReferences: 3, maxSnippetChars: 800 },
+        };
+      }
+      return { success: true };
+    });
+
+    render(
+      <TooltipProvider>
+        <ChatInput onSend={onSend} knowledgeScope="wiki" knowledgeMode="suggest" />
+      </TooltipProvider>,
+    );
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, {
+      target: { value: 'Use previous project knowledge about renderer boundaries before coding' },
+    });
+    const suggestion = await screen.findByTestId('chat-knowledge-suggestion', {}, { timeout: 2000 });
+    expect(suggestion).toHaveTextContent('1 rules may apply');
+    fireEvent.click(within(suggestion).getByTestId('chat-knowledge-suggestion-dismiss'));
+    expect(screen.queryByTestId('chat-knowledge-suggestion')).not.toBeInTheDocument();
+
+    fireEvent.change(textbox, {
+      target: { value: 'Use previous project knowledge about renderer boundaries before coding ' },
+    });
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    expect(screen.queryByTestId('chat-knowledge-suggestion')).not.toBeInTheDocument();
+
+    hostApiFetchMock.mockRejectedValueOnce(new Error('route failed'));
+    fireEvent.change(textbox, {
+      target: { value: 'Use previous project knowledge about routeContext failure handling' },
+    });
+    fireEvent.click(screen.getByTitle('Send'));
+    expect(onSend).toHaveBeenCalledWith(
+      'Use previous project knowledge about routeContext failure handling',
+      expect.objectContaining({ targetAgentId: null, knowledgeScope: 'wiki', knowledgeMode: 'suggest' }),
+    );
   });
 
   it('searches and attaches specific knowledge references before sending', async () => {
@@ -731,7 +979,7 @@ describe('ChatInput draft persistence', () => {
       </TooltipProvider>,
     );
 
-    fireEvent.click(screen.getByTitle('Knowledge scope'));
+    openKnowledgeMenuFromActions();
     fireEvent.change(screen.getByTestId('chat-knowledge-search-input'), { target: { value: 'decision' } });
     fireEvent.click(screen.getByTestId('chat-knowledge-search-submit'));
 
@@ -745,15 +993,20 @@ describe('ChatInput draft persistence', () => {
     fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: 'Use this context' } });
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Use this context', undefined, null, 'wiki', 'suggest', [{
-      id: 'decision-page',
-      title: 'Knowledge Hub decision',
-      lookup: 'notes/decision.md',
-      corpus: 'wiki',
-      pageId: 'decision-page',
-      pagePath: 'notes/decision.md',
-      snippet: 'Keep Obsidian optional.',
-    }], null);
+    expect(onSend).toHaveBeenCalledWith('Use this context', expect.objectContaining({
+      targetAgentId: null,
+      knowledgeScope: 'wiki',
+      knowledgeMode: 'suggest',
+      knowledgeReferences: [{
+        id: 'decision-page',
+        title: 'Knowledge Hub decision',
+        lookup: 'notes/decision.md',
+        corpus: 'wiki',
+        pageId: 'decision-page',
+        pagePath: 'notes/decision.md',
+        snippet: 'Keep Obsidian optional.',
+      }],
+    }));
     await waitFor(() => expect(hostApiFetchMock).toHaveBeenCalledWith('/api/knowledge/reference', expect.objectContaining({
       method: 'POST',
     })));
@@ -774,7 +1027,7 @@ describe('ChatInput draft persistence', () => {
     fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: 'Sketch the rollout' } });
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Sketch the rollout', undefined, null, 'none', 'suggest', undefined, null);
+    expect(onSend).toHaveBeenCalledWith('Sketch the rollout', expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest' }));
   });
 });
 
@@ -787,10 +1040,12 @@ describe('ChatInput slash commands', () => {
     fireEvent.change(textbox, { target: { value: '/' } });
 
     expect(screen.getByTestId('chat-slash-command-menu')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-slash-command-menu')).toHaveTextContent('Pick an action for this message or session.');
+    expect(screen.getByTestId('chat-slash-command-menu')).toHaveTextContent('Choose a targeted action for knowledge, code work, workflow, or the current session.');
+    expect(screen.getByTestId('chat-slash-command-group-knowledge')).toHaveTextContent('Attach sources and shape what this turn can read.');
     expect(screen.getByTestId('chat-slash-command-option-wiki')).toHaveTextContent('/wiki');
     expect(screen.getByTestId('chat-slash-command-option-wiki')).toHaveTextContent('Find source-backed wiki pages');
     expect(screen.getByTestId('chat-slash-command-option-wiki')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByTestId('chat-slash-command-icon-wiki')).toBeInTheDocument();
 
     fireEvent.keyDown(textbox, { key: 'ArrowDown' });
     expect(screen.getByTestId('chat-slash-command-option-memory')).toHaveAttribute('aria-selected', 'true');
@@ -807,14 +1062,23 @@ describe('ChatInput slash commands', () => {
     await waitFor(() => {
       expect(onSend).toHaveBeenCalledWith(
         expect.stringContaining('Write focused tests for the current change.'),
-        undefined,
-        null,
-        'none',
-        'suggest',
-        undefined,
-        null,
+        expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest' }),
       );
     });
+  });
+
+  it('filters slash commands by command prefix without matching descriptions', () => {
+    renderChatInput();
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/go' } });
+
+    expect(screen.getByTestId('chat-slash-command-option-goal')).toHaveTextContent('/goal');
+    expect(screen.getByTestId('chat-slash-command-option-goal')).toHaveTextContent('Goal');
+    expect(screen.getByTestId('chat-slash-command-icon-goal')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-slash-command-option-review')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-slash-command-option-compact')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-slash-command-option-knowledge-mode')).not.toBeInTheDocument();
   });
 
   it('closes the slash menu with Escape', () => {
@@ -889,15 +1153,20 @@ describe('ChatInput slash commands', () => {
     expect(screen.getByTestId('chat-knowledge-selected')).toHaveTextContent('Context Palette Notes');
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Use the selected knowledge references to answer.', undefined, null, 'wiki', 'suggest', [{
-      id: 'wiki-context-page',
-      title: 'Context Palette Notes',
-      lookup: 'knowledge/context-palette.md',
-      corpus: 'wiki',
-      pageId: 'wiki-context-page',
-      pagePath: 'knowledge/context-palette.md',
-      snippet: 'Use slash commands to keep the composer clean.',
-    }], null);
+    expect(onSend).toHaveBeenCalledWith('Use the selected knowledge references to answer.', expect.objectContaining({
+      targetAgentId: null,
+      knowledgeScope: 'wiki',
+      knowledgeMode: 'suggest',
+      knowledgeReferences: [{
+        id: 'wiki-context-page',
+        title: 'Context Palette Notes',
+        lookup: 'knowledge/context-palette.md',
+        corpus: 'wiki',
+        pageId: 'wiki-context-page',
+        pagePath: 'knowledge/context-palette.md',
+        snippet: 'Use slash commands to keep the composer clean.',
+      }],
+    }));
   });
 
   it('changes knowledge scope from slash commands without sending', async () => {
@@ -959,12 +1228,7 @@ describe('ChatInput slash commands', () => {
     await waitFor(() => {
       expect(onSend).toHaveBeenCalledWith(
         expect.stringContaining('Review the current changes as a code reviewer.'),
-        undefined,
-        null,
-        'none',
-        'suggest',
-        undefined,
-        null,
+        expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest' }),
       );
     });
     expect(onSend.mock.calls[0][0]).toContain('Scope: auth changes');
@@ -1118,12 +1382,30 @@ describe('ChatInput capability action preflight', () => {
   it('confirms a local skill enable action before sending trusted metadata', async () => {
     const onSend = vi.fn();
     vi.mocked(hostApiFetchMock).mockImplementation(async (path: string) => {
-      if (path === '/api/skills/local') {
+      if (path === '/api/capabilities/publications') {
         return {
           success: true,
-          skills: [
-            { id: 'create-skill', name: 'create-skill', description: 'Create reusable skills', enabled: false },
+          source: 'local-fallback',
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          publications: [
+            {
+              id: 'skill:create-skill',
+              kind: 'skill',
+              sourceId: 'create-skill',
+              name: 'create-skill',
+              owner: { type: 'unknown' },
+              scope: 'unknown',
+              source: 'local',
+              state: 'disabled',
+              exposure: { promptVisible: false, runtimeVisible: false, userInvocable: true },
+              useModes: ['adminAction'],
+              runtime: { status: 'disabled', method: 'fallback', source: 'local-fallback' },
+              reasons: ['test'],
+              diagnostics: [],
+              skillId: 'create-skill',
+            },
           ],
+          diagnostics: [],
         };
       }
       if (path === '/api/skills/configs') return { success: true };
@@ -1157,12 +1439,30 @@ describe('ChatInput capability action preflight', () => {
   it('cancels a capability action without sending or changing configuration', async () => {
     const onSend = vi.fn();
     vi.mocked(hostApiFetchMock).mockImplementation(async (path: string) => {
-      if (path === '/api/skills/local') {
+      if (path === '/api/capabilities/publications') {
         return {
           success: true,
-          skills: [
-            { id: 'create-skill', name: 'create-skill', description: 'Create reusable skills', enabled: false },
+          source: 'local-fallback',
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          publications: [
+            {
+              id: 'skill:create-skill',
+              kind: 'skill',
+              sourceId: 'create-skill',
+              name: 'create-skill',
+              owner: { type: 'unknown' },
+              scope: 'unknown',
+              source: 'local',
+              state: 'disabled',
+              exposure: { promptVisible: false, runtimeVisible: false, userInvocable: true },
+              useModes: ['adminAction'],
+              runtime: { status: 'disabled', method: 'fallback', source: 'local-fallback' },
+              reasons: ['test'],
+              diagnostics: [],
+              skillId: 'create-skill',
+            },
           ],
+          diagnostics: [],
         };
       }
       return { success: true };
@@ -1368,26 +1668,76 @@ describe('ChatInput read-only context status', () => {
     });
   });
 
-  it('sends explicit active-run intervention mode through the typed send path', async () => {
+  it('defaults active-run drafts to queued follow-up and keeps guide and interrupt as explicit strategies', async () => {
     const onSend = vi.fn();
-    renderChatInput(onSend, {
+    const view = renderChatInput(onSend, {
       sending: true,
-      draftValue: 'please keep the current validation evidence',
+      draftValue: 'please keep the current validation evidence queued',
     });
 
     expect(screen.getByTestId('chat-intervention-controls')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-intervention-queue')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('title', 'Queue');
+    fireEvent.click(screen.getByTestId('chat-composer-send'));
+
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith(
+        'please keep the current validation evidence queued',
+        expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest', inputMode: 'queue' }),
+      );
+    });
+
+    view.rerender(
+      <TooltipProvider>
+        <ChatInput
+          onSend={onSend}
+          sending
+          draftValue="please keep the current validation evidence"
+        />
+      </TooltipProvider>,
+    );
     fireEvent.click(screen.getByTestId('chat-intervention-guide'));
 
     await waitFor(() => {
       expect(onSend).toHaveBeenCalledWith(
         'please keep the current validation evidence',
-        undefined,
-        null,
-        'none',
-        'suggest',
-        undefined,
-        null,
-        'guide',
+        expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest', inputMode: 'guide' }),
+      );
+    });
+
+    view.rerender(
+      <TooltipProvider>
+        <ChatInput
+          onSend={onSend}
+          sending
+          draftValue="guide the active run from the keyboard"
+        />
+      </TooltipProvider>,
+    );
+    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter', ctrlKey: true });
+
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith(
+        'guide the active run from the keyboard',
+        expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest', inputMode: 'guide' }),
+      );
+    });
+
+    view.rerender(
+      <TooltipProvider>
+        <ChatInput
+          onSend={onSend}
+          sending
+          draftValue="replace the current run direction"
+        />
+      </TooltipProvider>,
+    );
+    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter', shiftKey: true });
+
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith(
+        'replace the current run direction',
+        expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest', inputMode: 'interrupt' }),
       );
     });
   });
@@ -1579,7 +1929,7 @@ describe('ChatInput agent targeting', () => {
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Hello direct agent' } });
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Hello direct agent', undefined, 'research', 'none', 'suggest', undefined, null);
+    expect(onSend).toHaveBeenCalledWith('Hello direct agent', expect.objectContaining({ targetAgentId: 'research', knowledgeScope: 'none', knowledgeMode: 'suggest' }));
   });
 
   it('disables the input while gateway is running but not yet ready', () => {
@@ -1634,8 +1984,9 @@ describe('ChatInput agent targeting', () => {
     renderChatInput();
 
     expect(screen.getByTestId('chat-composer-input')).toBeDisabled();
-    expect(screen.getByTestId('chat-composer-skill')).toBeDisabled();
-    expect(screen.getByTestId('chat-model-picker-button')).toBeDisabled();
+    expect(screen.queryByTestId('chat-composer-skill')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-model-picker-button')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-composer-actions')).toBeDisabled();
   });
 
   it('shows gateway readiness as a read-only composer status while starting', () => {
@@ -1660,25 +2011,25 @@ describe('ChatInput agent targeting', () => {
     expect(screen.getByText(/gateway starting \| port: 18789/i)).toBeInTheDocument();
   });
 
-  it('routes permission mode changes through the workspace actions menu', async () => {
+  it('routes permission mode changes through the direct permission menu', async () => {
     const onPermissionModeChange = vi.fn();
     renderChatInput(vi.fn(), {
       workspace: workspace({ permissionMode: 'fullAccess' }),
       onPermissionModeChange,
     });
 
-    const trigger = screen.getByTestId('chat-composer-workspace-actions');
-    expect(trigger).toHaveAttribute('title', 'Workspace actions');
+    const trigger = screen.getByTestId('chat-composer-permission-mode');
+    expect(trigger).toHaveAttribute('title', 'Permission mode');
     expect(trigger).toBeEnabled();
 
     fireEvent.click(trigger);
-    expect(await screen.findByTestId('chat-composer-workspace-actions-menu')).toBeInTheDocument();
+    expect(await screen.findByTestId('chat-composer-permission-menu')).toBeInTheDocument();
     fireEvent.click(screen.getByTestId('chat-composer-permission-option-readOnly'));
 
     expect(onPermissionModeChange).toHaveBeenCalledWith('readOnly');
   });
 
-  it('routes workspace folder and new session actions through the workspace actions menu', async () => {
+  it('routes workspace folder and new session actions through the permission menu', async () => {
     const onPickWorkspaceFolder = vi.fn();
     const onNewSession = vi.fn();
     renderChatInput(vi.fn(), {
@@ -1687,11 +2038,11 @@ describe('ChatInput agent targeting', () => {
       onNewSession,
     });
 
-    fireEvent.click(screen.getByTestId('chat-composer-workspace-actions'));
+    fireEvent.click(screen.getByTestId('chat-composer-permission-mode'));
     fireEvent.click(await screen.findByTestId('chat-composer-pick-workspace'));
     expect(onPickWorkspaceFolder).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByTestId('chat-composer-workspace-actions'));
+    fireEvent.click(screen.getByTestId('chat-composer-permission-mode'));
     fireEvent.click(await screen.findByTestId('chat-composer-new-session'));
     expect(onNewSession).toHaveBeenCalledTimes(1);
   });
@@ -1729,14 +2080,14 @@ describe('ChatInput agent targeting', () => {
     });
 
     expect(screen.getByTestId('chat-composer-agent')).toBeInTheDocument();
-    fireEvent.click(screen.getByTestId('chat-composer-workspace-actions'));
+    fireEvent.click(screen.getByTestId('chat-composer-permission-mode'));
     fireEvent.click(await screen.findByTestId('chat-composer-switch-agent-research'));
 
     expect(onSwitchAgent).toHaveBeenCalledWith('research');
   });
 
 
-  it('renders the skill trigger after the @ agent picker', () => {
+  it('keeps skill access in the slash palette instead of a toolbar trigger', async () => {
     agentsState.agents = [
       {
         id: 'main',
@@ -1761,17 +2112,190 @@ describe('ChatInput agent targeting', () => {
         channelTypes: [],
       },
     ];
+    vi.mocked(hostApiFetchMock).mockResolvedValue({
+      success: true,
+      skills: [
+        {
+          name: 'create-skill',
+          description: 'Create and refine reusable skills.',
+          source: 'workspace',
+          sourceLabel: 'Workspace',
+          manifestPath: '/tmp/workspace/skill/create-skill/SKILL.md',
+          baseDir: '/tmp/workspace/skill/create-skill',
+        },
+        {
+          name: 'officecli-docx',
+          description: 'Work with Word documents.',
+          source: 'openclaw',
+          sourceLabel: 'OpenClaw',
+          manifestPath: '/tmp/openclaw/skills/officecli-docx/SKILL.md',
+          baseDir: '/tmp/openclaw/skills/officecli-docx',
+        },
+      ],
+    });
 
     renderChatInput();
 
-    const agentTrigger = screen.getByTestId('chat-composer-agent');
-    const skillTrigger = screen.getByTestId('chat-composer-skill');
+    const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
 
-    expect(skillTrigger).toHaveTextContent('Skill');
-    expect(agentTrigger.compareDocumentPosition(skillTrigger) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByTestId('chat-composer-agent')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-composer-skill')).not.toBeInTheDocument();
+    expect(textbox).toHaveAttribute('placeholder', 'Message...  / for commands and skills');
+
+    fireEvent.change(textbox, { target: { value: '/' } });
+
+    expect(await screen.findByTestId('chat-slash-command-group-skills')).toHaveTextContent('Skills');
+    expect(await screen.findByTestId('chat-composer-skill-option-create-skill')).toHaveTextContent('/create-skill');
   });
 
-  it('inserts the selected skill at the current cursor position and prefixes sends', async () => {
+  it('groups non-primary composer actions inside the add menu', async () => {
+    agentsState.agents = [
+      {
+        id: 'main',
+        name: 'Main',
+        isDefault: true,
+        modelDisplay: 'MiniMax',
+        inheritedModel: true,
+        workspace: '~/.openclaw/workspace',
+        agentDir: '~/.openclaw/agents/main/agent',
+        mainSessionKey: 'agent:main:main',
+        channelTypes: [],
+      },
+      {
+        id: 'research',
+        name: 'Research',
+        isDefault: false,
+        modelDisplay: 'Claude',
+        inheritedModel: false,
+        workspace: '~/.openclaw/workspace-research',
+        agentDir: '~/.openclaw/agents/research/agent',
+        mainSessionKey: 'agent:research:desk',
+        channelTypes: [],
+      },
+    ];
+    vi.mocked(hostApiFetchMock).mockResolvedValue({
+      success: true,
+      skills: [
+        {
+          name: 'create-skill',
+          description: 'Create and refine reusable skills.',
+          source: 'workspace',
+          sourceLabel: 'Workspace',
+          manifestPath: '/tmp/workspace/skill/create-skill/SKILL.md',
+          baseDir: '/tmp/workspace/skill/create-skill',
+        },
+        {
+          name: 'officecli-docx',
+          description: 'Work with Word documents.',
+          source: 'openclaw',
+          sourceLabel: 'OpenClaw',
+          manifestPath: '/tmp/openclaw/skills/officecli-docx/SKILL.md',
+          baseDir: '/tmp/openclaw/skills/officecli-docx',
+        },
+      ],
+    });
+
+    renderChatInput(vi.fn(), {
+      workspace: workspace(),
+      onManualCompact: vi.fn().mockResolvedValue(undefined),
+      onForkSession: vi.fn().mockResolvedValue(undefined),
+      onHandoffSession: vi.fn().mockResolvedValue(undefined),
+    });
+
+    fireEvent.click(screen.getByTestId('chat-composer-actions'));
+
+    expect(await screen.findByTestId('chat-composer-actions-menu')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-composer-action-group-context')).toHaveTextContent('Add context');
+    expect(screen.getByTestId('chat-composer-action-attach-files')).toHaveTextContent('Attach files');
+    expect(screen.getByTestId('chat-composer-action-knowledge')).toHaveTextContent('Search knowledge');
+    expect(screen.getByTestId('chat-composer-action-group-skills')).toHaveTextContent('Skills');
+    expect(await screen.findByTestId('chat-composer-action-skill-create-skill')).toHaveTextContent('/create-skill');
+    expect(screen.getByTestId('chat-composer-action-group-office')).toHaveTextContent('Office');
+    expect(screen.getByTestId('chat-composer-action-office-word')).toHaveTextContent('Word');
+    expect(screen.getByTestId('chat-composer-action-group-session')).toHaveTextContent('Session');
+    expect(screen.getByTestId('chat-composer-action-compact')).toHaveTextContent('Compact session');
+  });
+
+  it('keeps Office actions visible and routes to setup when no enabled Office skill is available', async () => {
+    agentsState.agents = [
+      {
+        id: 'main',
+        name: 'Main',
+        isDefault: true,
+        modelDisplay: 'MiniMax',
+        inheritedModel: true,
+        workspace: '~/.openclaw/workspace',
+        agentDir: '~/.openclaw/agents/main/agent',
+        mainSessionKey: 'agent:main:main',
+        channelTypes: [],
+      },
+    ];
+    vi.mocked(hostApiFetchMock).mockResolvedValue({
+      success: true,
+      skills: [
+        {
+          name: 'create-skill',
+          description: 'Create and refine reusable skills.',
+          source: 'workspace',
+          sourceLabel: 'Workspace',
+          manifestPath: '/tmp/workspace/skill/create-skill/SKILL.md',
+          baseDir: '/tmp/workspace/skill/create-skill',
+        },
+      ],
+    });
+
+    renderChatInput();
+
+    fireEvent.click(screen.getByTestId('chat-composer-actions'));
+
+    expect(await screen.findByTestId('chat-composer-actions-menu')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-composer-action-group-office')).toHaveTextContent('Office');
+    expect(screen.getByTestId('chat-composer-action-office-word')).toHaveTextContent('Word');
+
+    fireEvent.click(screen.getByTestId('chat-composer-action-office-word'));
+
+    expect(window.location.hash).toBe('#/settings/skills?tab=packs');
+  });
+
+  it('inserts an office action as a skill token plus a prompt template', async () => {
+    agentsState.agents = [
+      {
+        id: 'main',
+        name: 'Main',
+        isDefault: true,
+        modelDisplay: 'MiniMax',
+        inheritedModel: true,
+        workspace: '~/.openclaw/workspace',
+        agentDir: '~/.openclaw/agents/main/agent',
+        mainSessionKey: 'agent:main:main',
+        channelTypes: [],
+      },
+    ];
+    vi.mocked(hostApiFetchMock).mockResolvedValue({
+      success: true,
+      skills: [
+        {
+          name: 'officecli-docx',
+          description: 'Work with Word documents.',
+          source: 'openclaw',
+          sourceLabel: 'OpenClaw',
+          manifestPath: '/tmp/openclaw/skills/officecli-docx/SKILL.md',
+          baseDir: '/tmp/openclaw/skills/officecli-docx',
+        },
+      ],
+    });
+
+    renderChatInput();
+
+    const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('chat-composer-actions'));
+    fireEvent.click(await screen.findByTestId('chat-composer-action-office-word'));
+
+    expect(textbox).toHaveValue('/officecli-docx  Create a Word document with the following requirements:\n\n[describe your document content, structure, and formatting here]');
+    expect(screen.getByTestId('chat-composer-skill-token')).toHaveTextContent('/officecli-docx');
+  });
+
+  it('inserts the selected skill from a slash query and prefixes sends', async () => {
     const onSend = vi.fn();
     agentsState.agents = [
       {
@@ -1803,21 +2327,17 @@ describe('ChatInput agent targeting', () => {
     renderChatInput(onSend);
 
     const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
-    fireEvent.change(textbox, { target: { value: 'Draft a new helper' } });
-    textbox.focus();
-    textbox.setSelectionRange('Draft '.length, 'Draft '.length);
+    fireEvent.change(textbox, { target: { value: '/create Draft a new helper' } });
+    expect(await screen.findByTestId('chat-composer-skill-option-create-skill')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByTitle('Choose skill'));
-    expect(await screen.findByText('/create-skill')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByText('/create-skill'));
-    expect(screen.getByTestId('chat-composer-skill')).toHaveTextContent('Skill');
-    expect(textbox).toHaveValue('Draft /create-skill  a new helper');
+    fireEvent.click(screen.getByTestId('chat-composer-skill-option-create-skill'));
+    expect(screen.queryByTestId('chat-composer-skill')).not.toBeInTheDocument();
+    expect(textbox).toHaveValue('/create-skill  Draft a new helper');
     expect(screen.getByTestId('chat-composer-skill-token')).toHaveTextContent('/create-skill');
 
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('Draft /create-skill  a new helper', undefined, null, 'none', 'suggest', undefined, null);
+    expect(onSend).toHaveBeenCalledWith('/create-skill  Draft a new helper', expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest' }));
     expect(hostApiFetchMock).toHaveBeenCalledWith(
       '/api/skills/quick-access',
       expect.objectContaining({
@@ -1859,19 +2379,15 @@ describe('ChatInput agent targeting', () => {
     renderChatInput(onSend);
 
     const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
-    fireEvent.change(textbox, { target: { value: 'Draft a new helper' } });
-    textbox.focus();
-    textbox.setSelectionRange(0, 0);
-
-    fireEvent.click(screen.getByTitle('Choose skill'));
-    fireEvent.click(await screen.findByText('/create-skill'));
+    fireEvent.change(textbox, { target: { value: '/create-skill Draft a new helper' } });
+    fireEvent.click(await screen.findByTestId('chat-composer-skill-option-create-skill'));
 
     expect(textbox).toHaveValue('/create-skill  Draft a new helper');
     expect(screen.queryByTestId('chat-slash-command-menu')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTitle('Send'));
 
-    expect(onSend).toHaveBeenCalledWith('/create-skill  Draft a new helper', undefined, null, 'none', 'suggest', undefined, null);
+    expect(onSend).toHaveBeenCalledWith('/create-skill  Draft a new helper', expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest' }));
   });
 
   it('removes the full inline skill token with one backspace', async () => {
@@ -1905,18 +2421,14 @@ describe('ChatInput agent targeting', () => {
     renderChatInput();
 
     const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
-    fireEvent.change(textbox, { target: { value: 'Draft a new helper' } });
-    textbox.focus();
-    textbox.setSelectionRange('Draft '.length, 'Draft '.length);
+    fireEvent.change(textbox, { target: { value: 'Draft /create' } });
+    fireEvent.click(await screen.findByTestId('chat-composer-skill-option-create-skill'));
 
-    fireEvent.click(screen.getByTitle('Choose skill'));
-    fireEvent.click(await screen.findByText('/create-skill'));
-
-    expect(textbox).toHaveValue('Draft /create-skill  a new helper');
+    expect(textbox).toHaveValue('Draft /create-skill  ');
     textbox.setSelectionRange('Draft /create-skill  '.length, 'Draft /create-skill  '.length);
     fireEvent.keyDown(textbox, { key: 'Backspace' });
 
-    expect(textbox).toHaveValue('Draft a new helper');
+    expect(textbox).toHaveValue('Draft ');
   });
 
   it('skips across the inline skill block with arrow keys', async () => {
@@ -1950,12 +2462,8 @@ describe('ChatInput agent targeting', () => {
     renderChatInput();
 
     const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
-    fireEvent.change(textbox, { target: { value: 'Draft a new helper' } });
-    textbox.focus();
-    textbox.setSelectionRange('Draft '.length, 'Draft '.length);
-
-    fireEvent.click(screen.getByTitle('Choose skill'));
-    fireEvent.click(await screen.findByText('/create-skill'));
+    fireEvent.change(textbox, { target: { value: 'Draft /create' } });
+    fireEvent.click(await screen.findByTestId('chat-composer-skill-option-create-skill'));
 
     textbox.setSelectionRange('Draft '.length, 'Draft '.length);
     fireEvent.keyDown(textbox, { key: 'ArrowRight' });
@@ -1998,14 +2506,10 @@ describe('ChatInput agent targeting', () => {
     renderChatInput();
 
     const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
-    fireEvent.change(textbox, { target: { value: '鍝堝搱鍝堝搱浣犲ソ' } });
-    textbox.focus();
-    textbox.setSelectionRange('鍝堝搱鍝堝搱'.length, '鍝堝搱鍝堝搱'.length);
+    fireEvent.change(textbox, { target: { value: 'Draft /doc' } });
+    fireEvent.click(await screen.findByTestId('chat-composer-skill-option-docx'));
 
-    fireEvent.click(screen.getByTitle('Choose skill'));
-    fireEvent.click(await screen.findByText('/docx'));
-
-    expect(textbox).toHaveValue('鍝堝搱鍝堝搱 /docx  浣犲ソ');
+    expect(textbox).toHaveValue('Draft /docx  ');
   });
 
   it('allows inserting the same skill multiple times as separate blocks', async () => {
@@ -2039,11 +2543,10 @@ describe('ChatInput agent targeting', () => {
     renderChatInput();
 
     const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
-    fireEvent.click(screen.getByTitle('Choose skill'));
+    fireEvent.change(textbox, { target: { value: '/create-rule' } });
     fireEvent.click(await screen.findByTestId('chat-composer-skill-option-create-rule'));
 
-    textbox.setSelectionRange(textbox.value.length, textbox.value.length);
-    fireEvent.click(screen.getByTitle('Choose skill'));
+    fireEvent.change(textbox, { target: { value: `${textbox.value}/create-rule` } });
     fireEvent.click(await screen.findByTestId('chat-composer-skill-option-create-rule'));
 
     expect(textbox).toHaveValue('/create-rule  /create-rule  ');
@@ -2081,12 +2584,8 @@ describe('ChatInput agent targeting', () => {
     renderChatInput();
 
     const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
-    fireEvent.change(textbox, { target: { value: 'Draft a new helper' } });
-    textbox.focus();
-    textbox.setSelectionRange('Draft '.length, 'Draft '.length);
-
-    fireEvent.click(screen.getByTitle('Choose skill'));
-    fireEvent.click(await screen.findByText('/create-skill'));
+    fireEvent.change(textbox, { target: { value: 'Draft /create' } });
+    fireEvent.click(await screen.findByTestId('chat-composer-skill-option-create-skill'));
 
     fireEvent.click(screen.getByTestId('chat-composer-skill-token'));
 

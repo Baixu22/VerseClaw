@@ -1,6 +1,21 @@
 {
   "nav": "Knowledge",
   "title": "Knowledge",
+  "assistant": {
+    "title": "Knowledge Assistant",
+    "subtitle": "Читайте документы, которые уже есть в хранилище, ищите источники и превращайте полезные находки в проверенные знания, не начиная с аудиторских отчетов.",
+    "browse": "Открыть документы",
+    "docs": "Читаемые документы",
+    "docsHint": "Начинайте со страниц и категорий, а не с технических проверок.",
+    "pending": "Ждет проверки",
+    "pendingHint": "Идеи, которые можно сохранить, отредактировать или отклонить.",
+    "drafts": "Редактируемые черновики",
+    "draftsHint": "Здесь заметки превращаются в устойчивые знания.",
+    "health": "Сигналы здоровья",
+    "healthHint": "Предупреждения и аудит находятся в центре аудита.",
+    "mapTitle": "Что внутри",
+    "mapHint": "Откройте тему, чтобы искать по хранилищу и просматривать найденные страницы."
+  },
   "subtitle": "Управление wiki-контекстом с источниками, черновиками на проверке и изменениями знаний под ролевым контролем.",
   "tabs": {
     "library": "Library",
@@ -8,7 +23,8 @@
     "drafts": "Draft Inbox",
     "runtime": "Runtime Lessons",
     "review": "Review",
-    "governance": "Governance"
+    "governance": "Governance",
+    "sources": "Источники"
   },
   "actions": {
     "configure": "Configure",
@@ -61,7 +77,138 @@
   },
   "library": {
     "title": "Library",
+    "countLabel": "{{count}} стр.",
     "typeHint": "Фильтровать и просматривать этот тип знаний"
+  },
+  "workspace": {
+    "vault": "Vault",
+    "localVault": "Локальное хранилище знаний",
+    "documents": "Документы",
+    "emptyDocuments": "Выполните поиск по хранилищу или создайте новую Markdown-заметку.",
+    "types": "Типы",
+    "untitled": "Безымянная заметка",
+    "localDraft": "локальный черновик",
+    "characters": "симв.",
+    "tagsPlaceholder": "теги, псевдонимы, проект",
+    "submitReview": "Отправить",
+    "reviewReason": "Markdown-заметка, написанная пользователем в рабочей области знаний, отправлена на проверку.",
+    "emptyPreview": "Пока нечего показывать.",
+    "modes": {
+      "edit": "Редактировать",
+      "preview": "Предпросмотр",
+      "split": "Разделить"
+    }
+  },
+  "librarian": {
+    "title": "Knowledge Librarian",
+    "roleId": "knowledge-librarian",
+    "currentDocument": "Текущий документ",
+    "noSummary": "Напишите или откройте Markdown-документ, чтобы дать контекст библиотекарю.",
+    "openAssistant": "Открыть библиотекаря",
+    "askSteward": "Попросить steward",
+    "related": "Связанные страницы",
+    "noRelated": "Результаты поиска и связанные страницы появятся здесь.",
+    "boundaries": "Границы роли",
+    "boundaryRead": "Может искать и отвечать с цитированием источников.",
+    "boundaryDraft": "Может готовить черновики и предложения, но не пишет в хранилище без подтверждения.",
+    "boundarySources": "Должен показывать отсутствующие источники, конфликты и устаревшие утверждения.",
+    "modalTitle": "Knowledge Librarian",
+    "modalSubtitle": "Задавайте вопросы, организуйте и проверяйте Markdown-базу знаний.",
+    "writeBoundary": "Библиотекарь помогает организовывать и готовить знания, но постоянные записи проходят через проверку черновика и явное подтверждение.",
+    "askPlaceholder": "Спросите о хранилище или текущем документе",
+    "askButton": "Спросить",
+    "askHint": "Ответы сначала используют локальный поиск по базе знаний и предпросмотр страниц; постоянные записи по-прежнему проходят review.",
+    "checkpointSaved": "Контрольная точка сохранена в {{time}}",
+    "noCheckpoint": "Локальной контрольной точки пока нет",
+    "clearThread": "Очистить thread",
+    "threadEmpty": "Задайте вопрос, чтобы найти страницы в базе знаний, получить краткий ответ и сохранить этот thread как локальную контрольную точку.",
+    "you": "Вы",
+    "answerIntro": "Я поискал в базе знаний и нашел {{count}} релевантных источника(ов):",
+    "answerBoundary": "Это локальный retrieval-ответ. Перед превращением в постоянное знание используйте steward review.",
+    "answerError": "Не удалось запросить базу знаний: {{error}}",
+    "noAnswer": "Я не нашел подходящую страницу. Попробуйте более точный запрос или сначала откройте документ.",
+    "emptyCitation": "Для этого источника нет читаемого фрагмента.",
+    "copy": "Копировать сообщение",
+    "copied": "Скопировано",
+    "copyFailed": "Не удалось скопировать сообщение.",
+    "citations": "Источники",
+    "searching": "Ищу в локальной базе знаний и читаю превью страниц...",
+    "errorTitle": "Knowledge Librarian столкнулся с локальной ошибкой поиска",
+    "retry": "Повторить",
+    "dismissError": "Закрыть",
+    "sections": {
+      "answer": "Ответ",
+      "sources": "Использованные источники",
+      "unknowns": "Неизвестно / нет источников",
+      "nextAction": "Рекомендуемый следующий шаг",
+      "retrieval": "Инспектор поиска"
+    },
+    "retrieval": {
+      "query": "Запрос",
+      "corpus": "Корпус",
+      "roleTag": "Тег роли",
+      "resultCount": "Число результатов",
+      "selectedSources": "Выбранные источники",
+      "selectedReason": "Выбрано локальным keyword-поиском"
+    },
+    "unknowns": {
+      "noSources": "Для этого ответа не найден подтверждающий источник.",
+      "pageSnippetLevel": "Grounding сейчас на уровне страницы/фрагмента; проверка по разделам пока недоступна."
+    },
+    "groundingStatus": {
+      "grounded": "С источниками",
+      "partial": "Частично",
+      "missingSources": "Нет источников"
+    },
+    "confidence": "Уверенность",
+    "candidate": {
+      "draftTitlePrefix": "Ответ Librarian",
+      "errorExperienceTitlePrefix": "Опыт ошибки",
+      "stewardTitlePrefix": "Проверка Steward"
+    },
+    "suggestions": {
+      "summarize": {
+        "label": "Кратко о текущей заметке",
+        "prompt": "Суммируй текущую заметку \"{{title}}\" с выводами, подтвержденными источниками, и открытыми вопросами."
+      },
+      "related": {
+        "label": "Найти связанные страницы",
+        "prompt": "Найди страницы, связанные с \"{{title}}\", и объясни, как они связаны."
+      },
+      "gaps": {
+        "label": "Проверить пробелы",
+        "prompt": "Проверь \"{{title}}\" на недостающие источники, устаревшие утверждения и полезные черновики для продолжения."
+      },
+      "next": {
+        "saveDraft": "Сохранить ответ с источниками как черновик для проверки.",
+        "createErrorExperience": "Создать кандидата error-experience, если это повторяемая ловушка.",
+        "sendToSteward": "Попросить Knowledge Steward проверить ответ перед продвижением.",
+        "broadenSearch": "Расширить поиск или сначала открыть исходный документ."
+      }
+    },
+    "capabilities": {
+      "ask": {
+        "title": "Спросить хранилище",
+        "body": "Отвечает на простые вопросы по страницам знаний и показывает источники."
+      },
+      "organize": {
+        "title": "Организовать заметки",
+        "body": "Предлагает заголовки, теги, ссылки и frontmatter для текущей Markdown-страницы."
+      },
+      "review": {
+        "title": "Проверить изменения",
+        "body": "Передает черновики steward для проверки источников, конфликтов и актуальности."
+      }
+    },
+    "actions": {
+      "saveDraft": "Сохранить как черновик",
+      "createErrorExperience": "Создать Error Experience",
+      "sendToSteward": "Отправить Steward",
+      "searchRelated": "Найти связанные",
+      "stewardReview": "Проверка steward",
+      "openInbox": "Открыть inbox",
+      "submitDraft": "Отправить черновик"
+    }
   },
   "inbox": {
     "title": "Knowledge Inbox",
@@ -149,6 +296,27 @@
       "okf": "OKF",
       "manual": "Manual",
       "wiki-result": "Wiki"
+    },
+    "triage": {
+      "title": "????? Steward",
+      "confidence": "{{confidence}}%",
+      "duplicateOf": "????????",
+      "conflictWith": "??????????? ?",
+      "suggestedEdits": "???????????? ??????",
+      "groups": {
+        "needs-decision": "????? ???????",
+        "ready-for-review": "?????? ? ????????",
+        "possible-duplicate": "????????? ????????",
+        "observe": "?????????",
+        "reject-low-value": "?????? ????????"
+      },
+      "actions": {
+        "needs-decision": "????? ???????",
+        "ready-for-review": "?????? ? ????????",
+        "possible-duplicate": "????????? ????????",
+        "observe": "?????????",
+        "reject-low-value": "?????? ????????"
+      }
     }
   },
   "provenance": {
@@ -192,7 +360,27 @@
     "noProposal": "proposal не выбран.",
     "confirmationBoundary": "Agent и Knowledge Steward могут только подготовить draft или proposal. Применение знаний требует явного подтверждения пользователя.",
     "approveAndApply": "Approve and Apply",
-    "reject": "Reject"
+    "reject": "Reject",
+    "steward": {
+      "section": "Проверка Steward",
+      "queue": "Очередь Steward",
+      "queueEmpty": "Нет черновиков, ожидающих проверки Steward.",
+      "variant": "Вариант",
+      "classifiedAs": "Классифицирован как {type}",
+      "warnings": "Предупреждения",
+      "notes": "Заметки",
+      "noReview": "Для этого черновика ещё нет проверки Steward.",
+      "configure": "Настроить Steward",
+      "configureTitle": "Варианты Steward",
+      "activeVariant": "Активен",
+      "setActive": "Сделать активным",
+      "boundaryNotice": "Steward никогда не может применять изменения напрямую. Эта граница обеспечивается механически.",
+      "classification": "Режим классификации",
+      "heuristic": "Эвристический",
+      "semantic": "Семантический",
+      "defaultRole": "Роль по умолчанию",
+      "close": "Закрыть"
+    }
   },
   "runtime": {
     "title": "Runtime Lessons",
@@ -214,6 +402,8 @@
   },
   "governance": {
     "title": "Governance",
+    "openAudit": "Центр аудита",
+    "backToLibrary": "Назад в библиотеку",
     "readOnlyBadge": "Agent по умолчанию только читает",
     "steward": "Knowledge Steward",
     "stewardDescription": "Role-first слот для классификации, проверки источников, поиска конфликтов и предложений изменений без прямого apply.",
@@ -229,8 +419,36 @@
     "stale": "Устаревшие страницы",
     "dangling": "Изолированные страницы",
     "noIssues": "Проблем не обнаружено",
+    "qualityMetrics": {
+      "title": "Метрики качества",
+      "description": "Краткие сигналы здоровья для качества поиска и карточек повторяющихся ошибок.",
+      "pendingAudit": "Запустить проверку",
+      "sourceAudit": "Результат аудита",
+      "affected": "Затронуто: {{count}}",
+      "severity": {
+        "info": "Инфо",
+        "warning": "Предупреждение",
+        "error": "Ошибка"
+      },
+      "kinds": {
+        "stale_cards": "Устаревшие карточки",
+        "duplicate_clusters": "Кластеры дублей",
+        "source_gaps": "Пробелы источников",
+        "unreferenced_pages": "Страницы без ссылок",
+        "low_confidence_high_hit_cards": "Частые карточки с низкой уверенностью",
+        "high_dismissal_cards": "Часто отклоняемые карточки"
+      },
+      "hints": {
+        "stale_cards": "Карточки или страницы с сигналами устаревания.",
+        "duplicate_clusters": "Возможные дубли знаний.",
+        "source_gaps": "Элементы без пригодных источников или provenance.",
+        "unreferenced_pages": "Страницы, не связанные с другими проверенными знаниями.",
+        "low_confidence_high_hit_cards": "Experience-карточки, которые часто срабатывают при низкой уверенности.",
+        "high_dismissal_cards": "Experience-карточки, которые чаще отклоняют, чем принимают."
+      }
+    },
     "suggestions": "Предложения хранителя",
-    "lastCheck": "Последняя проверка: {time}",
+    "lastCheck": "Последняя проверка: {{time}}",
     "dismissAll": "Закрыть все",
     "allClear": "Всё в порядке",
     "allClearHint": "Проблем не обнаружено. Запустите проверку для подтверждения.",
@@ -257,7 +475,10 @@
     "dismissInbox": "Inbox item dismissed",
     "stewardReview": "Steward review updated",
     "applyReviewedChange": "Reviewed change applied",
-    "rejectDraft": "Draft rejected"
+    "rejectDraft": "Draft rejected",
+    "librarianDraft": "Черновик Librarian создан",
+    "librarianErrorExperience": "Кандидат error-experience создан",
+    "librarianSteward": "Проверка Steward подготовлена"
   },
   "errors": {
     "status": "Не удалось загрузить состояние знаний.",
@@ -266,5 +487,31 @@
     "okfImport": "OKF import failed.",
     "search": "Поиск не выполнен.",
     "get": "Не удалось загрузить страницу знаний."
+  },
+  "sources": {
+    "title": "Источники",
+    "typeHint": "Фильтруйте и просматривайте этот тип источников",
+    "countLabel": "{{count}} страниц"
+  },
+  "sourceSet": {
+    "title": "Текущий Source Set",
+    "empty": "Добавьте источники из поиска или текущего документа.",
+    "count": "{{count}} источников",
+    "save": "Сохранить Source Set",
+    "clear": "Очистить",
+    "titlePlaceholder": "Название Source Set",
+    "defaultTitle": "Безымянный Source Set",
+    "addResult": "В Source Set",
+    "saved": "Source Set сохранен",
+    "answerBoundary": "Ответы сначала используют выбранные источники; долговременная запись требует ревью черновика и явного подтверждения."
+  },
+  "studio": {
+    "title": "Studio Assistant",
+    "summary": "Сводка",
+    "faq": "FAQ",
+    "decisionMemo": "Мемо решения",
+    "troubleshootingRecipe": "Диагностика",
+    "artifactCreated": "Studio-черновик создан",
+    "question": "Создайте {{artifact}} из текущего Source Set."
   }
 }

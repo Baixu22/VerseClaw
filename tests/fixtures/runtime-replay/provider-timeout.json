@@ -1,0 +1,72 @@
+{
+  "replayCase": {
+    "id": "runtime-replay-provider-timeout",
+    "title": "Fixture-backed provider timeout replay",
+    "scenario": "provider_timeout",
+    "input": {
+      "userMessage": "Handle a provider timeout from fixture data.",
+      "providerFixture": "runtime-replay/providers/provider-timeout",
+      "toolFixture": "runtime-replay/tools/noop",
+      "workspaceFixture": "runtime-replay/workspaces/clean"
+    },
+    "expected": {
+      "terminalStatus": "failed",
+      "allowedFailureKinds": [
+        "timeout"
+      ],
+      "touchedPaths": []
+    },
+    "budgets": {
+      "maxPromptBytes": 4096,
+      "maxToolCalls": 1,
+      "maxDurationMs": 120000
+    }
+  },
+  "fixtures": {
+    "provider": {
+      "ref": "runtime-replay/providers/provider-timeout",
+      "mode": "fixture",
+      "status": "timeout",
+      "summary": "Provider fixture timed out before completion."
+    },
+    "tool": {
+      "ref": "runtime-replay/tools/noop",
+      "mode": "fixture",
+      "status": "ok",
+      "summary": "No tool call was executed.",
+      "toolCalls": 0
+    },
+    "workspace": {
+      "ref": "runtime-replay/workspaces/clean",
+      "mode": "fixture",
+      "status": "clean",
+      "summary": "No workspace mutation occurred."
+    },
+    "failureSignals": [
+      {
+        "id": "failure-provider-timeout",
+        "runId": "run-provider-timeout",
+        "source": "provider.openai.fixture",
+        "occurredAt": "2026-07-01T11:59:00.000Z",
+        "signal": {
+          "timedOut": true,
+          "statusCode": 504,
+          "message": "OpenAI provider request timed out with providerPayload={\"messages\":[\"raw prompt should not survive\"]}."
+        },
+        "evidenceRefs": [
+          "provider-timeout-fixture"
+        ]
+      }
+    ]
+  },
+  "expectedFailureKinds": [
+    "timeout"
+  ],
+  "expectedEvidenceDecisions": [
+    {
+      "kind": "failure_summary",
+      "accepted": true,
+      "authority": "none"
+    }
+  ]
+}

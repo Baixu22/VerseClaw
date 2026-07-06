@@ -272,6 +272,10 @@ describe('knowledge host API', () => {
         reason: 'Mission completed with reusable evidence-backed knowledge.',
         evidenceRefs: ['task-1'],
         captureKey: 'mission:mission-1:tick:1:knowledge:abcdef0123456789',
+        triage: expect.objectContaining({
+          action: 'needs-decision',
+          reason: expect.stringContaining('warnings'),
+        }),
       }),
     });
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
@@ -304,6 +308,9 @@ describe('knowledge host API', () => {
 
     const listed = await api.listInboxItems({ status: 'pending' });
     expect(listed.items).toHaveLength(1);
+    expect(listed.items[0].metadata?.triage).toMatchObject({
+      action: 'needs-decision',
+    });
 
     const promoted = await api.promoteInboxItemToDraft({ id: created.item!.id });
     expect(promoted.success).toBe(true);
@@ -367,6 +374,55 @@ describe('knowledge host API', () => {
     const proposals = await api.listProposals({ status: 'all' });
     expect(proposals.proposals).toHaveLength(0);
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
+  it('triages inbox candidates as duplicate, incomplete, or ready for review', async () => {
+    const { triageKnowledgeInboxItem } = await import('@electron/services/knowledge-api');
+    const baseItem = {
+      id: 'inbox-base',
+      title: 'Renderer boundary',
+      body: 'Renderer code must call host-api instead of direct IPC for knowledge routes.',
+      kind: 'manual',
+      type: 'architecture',
+      status: 'pending',
+      sourceIds: ['source-1'],
+      sourceRefs: [{ id: 'source-1', kind: 'manual' }],
+      tags: [],
+      workspaceId: null,
+      agentId: null,
+      createdBy: 'agent',
+      warnings: [],
+      createdAt: '2026-06-20T00:00:00.000Z',
+      updatedAt: '2026-06-20T00:00:00.000Z',
+    } as const;
+
+    expect(triageKnowledgeInboxItem(baseItem as never)).toMatchObject({
+      action: 'ready-for-review',
+    });
+
+    expect(triageKnowledgeInboxItem({
+      ...baseItem,
+      id: 'inbox-empty',
+      title: '',
+      body: '',
+      sourceIds: [],
+      sourceRefs: [],
+      createdAt: '2026-06-21T00:00:00.000Z',
+      updatedAt: '2026-06-21T00:00:00.000Z',
+    } as never)).toMatchObject({
+      action: 'reject-low-value',
+    });
+
+    expect(triageKnowledgeInboxItem({
+      ...baseItem,
+      id: 'inbox-duplicate',
+      title: 'Renderer boundary',
+      createdAt: '2026-06-21T00:00:00.000Z',
+      updatedAt: '2026-06-21T00:00:00.000Z',
+    } as never, [baseItem as never])).toMatchObject({
+      action: 'possible-duplicate',
+      duplicateOf: 'inbox-base',
+    });
   });
 
   it('forces watched-directory automation to remain review-gated', async () => {
@@ -487,19 +543,89 @@ describe('knowledge host API', () => {
     }), 120000);
   });
 
+  it('converts legacy applyDraft calls into review-gated drafts without direct wiki apply', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    const result = await api.applyDraft({
+      title: 'Legacy save request',
+      body: 'Capture this as reusable knowledge after review.',
+      sourceIds: ['notes/source.md'],
+      claims: [{ text: 'A claim preserved for review.' }],
+      confidence: 0.72,
+      status: 'draft',
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      changed: false,
+      operation: 'review_required',
+      reviewRequired: true,
+      draft: expect.objectContaining({
+        title: 'Legacy save request',
+        status: 'draft',
+        sourceIds: ['notes/source.md'],
+        metadata: expect.objectContaining({
+          reviewGate: 'applyDraft',
+          directApplyDisabled: true,
+        }),
+      }),
+      proposal: expect.objectContaining({
+        operation: 'create',
+        status: 'proposed',
+        requiresUserConfirmation: true,
+      }),
+    });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+
+    await expect(api.listDrafts({ status: 'all' })).resolves.toMatchObject({
+      drafts: [expect.objectContaining({ id: result.draft?.id })],
+    });
+    await expect(api.listProposals({ status: 'all' })).resolves.toMatchObject({
+      proposals: [expect.objectContaining({ id: result.proposal?.id, draftId: result.draft?.id })],
+    });
+  });
+
   it('routes knowledge context only when scope and mode allow read-only search', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
         if (method === 'wiki.search') {
           return {
-            results: [{
-              id: 'route-1',
-              title: 'Architecture Decision',
-              lookup: 'architecture/decision.md',
-              pagePath: 'architecture/decision.md',
-              snippet: 'Use the managed wiki as read-only context.',
-              score: 0.82,
-            }],
+            results: [
+              {
+                id: 'route-1',
+                title: 'Architecture Decision',
+                lookup: 'architecture/decision.md',
+                pagePath: 'architecture/decision.md',
+                snippet: 'Use the managed wiki as read-only context.',
+                score: 0.82,
+              },
+              {
+                id: 'pitfall-1',
+                title: 'Route context pitfall',
+                lookup: 'troubleshooting/route-context.md',
+                pagePath: 'troubleshooting/route-context.md',
+                type: 'troubleshooting',
+                snippet: 'routeContext failures must not block chat send.',
+                score: 0.78,
+                metadata: { knowledgeKind: 'error-experience', errorExperience: { schemaVersion: 1 } },
+              },
+              {
+                id: 'rule-1',
+                title: 'Chat loop boundary',
+                lookup: 'harness/specs/rules/chat-loop-boundary.md',
+                pagePath: 'harness/specs/rules/chat-loop-boundary.md',
+                type: 'rule',
+                snippet: 'Knowledge writes are best-effort side effects.',
+                score: 0.7,
+                metadata: { knowledgeKind: 'rule' },
+              },
+            ],
           };
         }
         throw new Error(`unexpected rpc ${method}`);
@@ -538,17 +664,301 @@ describe('knowledge host API', () => {
     expect(suggest).toMatchObject({
       success: true,
       decision: 'suggest',
-      candidates: [expect.objectContaining({
-        attachKind: 'suggested',
-        lookup: 'architecture/decision.md',
-        confidence: 0.82,
-      })],
+      retrievalDiagnostics: expect.objectContaining({
+        query: expect.any(String),
+        corpus: 'wiki',
+        backend: 'fallback-keyword',
+        resultCount: 3,
+        selectedCount: 3,
+        items: expect.arrayContaining([
+          expect.objectContaining({
+            id: 'route-1',
+            sourceKind: 'wiki-page',
+            reason: expect.any(String),
+          }),
+        ]),
+      }),
+      candidates: expect.arrayContaining([
+        expect.objectContaining({
+          attachKind: 'suggested',
+          lookup: 'architecture/decision.md',
+          routeGroup: 'docs',
+          confidence: 0.82,
+        }),
+        expect.objectContaining({
+          lookup: 'troubleshooting/route-context.md',
+          routeGroup: 'pitfalls',
+        }),
+        expect.objectContaining({
+          lookup: 'harness/specs/rules/chat-loop-boundary.md',
+          routeGroup: 'rules',
+        }),
+      ]),
+      candidateGroups: [
+        expect.objectContaining({ key: 'docs', candidates: [expect.objectContaining({ id: 'route-1' })] }),
+        expect.objectContaining({ key: 'pitfalls', candidates: [expect.objectContaining({ id: 'pitfall-1' })] }),
+        expect.objectContaining({ key: 'rules', candidates: [expect.objectContaining({ id: 'rule-1' })] }),
+      ],
+      groupedCandidates: expect.objectContaining({
+        docs: [expect.objectContaining({ id: 'route-1' })],
+        pitfalls: [expect.objectContaining({ id: 'pitfall-1' })],
+        rules: [expect.objectContaining({ id: 'rule-1' })],
+      }),
     });
     expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.search', expect.objectContaining({
       corpus: 'wiki',
       maxResults: 3,
     }), 30000);
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+  });
+
+  it('adds retrieval diagnostics to search without replacing legacy results', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'wiki.search') {
+          return {
+            results: [
+              {
+                id: 'search-1',
+                title: 'Route context notes',
+                lookup: 'notes/route-context.md',
+                pagePath: 'notes/route-context.md',
+                snippet: 'Knowledge side effects are best effort.',
+                score: 0.91,
+                metadata: { knowledgeKind: 'rule' },
+              },
+            ],
+          };
+        }
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    const result = await api.search({ query: 'routeContext failure', corpus: 'wiki', maxResults: 5 });
+
+    expect(result.success).toBe(true);
+    expect(result.results).toEqual([
+      expect.objectContaining({ id: 'search-1', lookup: 'notes/route-context.md' }),
+    ]);
+    expect(result.retrievalDiagnostics).toMatchObject({
+      query: 'routeContext failure',
+      corpus: 'wiki',
+      mode: 'keyword',
+      backend: 'fallback-keyword',
+      resultCount: 1,
+      selectedCount: 1,
+      items: [
+        expect.objectContaining({
+          id: 'search-1',
+          lookup: 'notes/route-context.md',
+          sourceKind: 'rule',
+          score: 0.91,
+        }),
+      ],
+    });
+  });
+
+  it('matches error-experience advisories and updates effectiveness counters', async () => {
+    const gatewayManager = { rpc: vi.fn() };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    const created = await api.createInboxItem({
+      title: 'Route context failure handling',
+      body: 'routeContext failures must not block ordinary chat send.',
+      kind: 'manual',
+      type: 'troubleshooting',
+      sourceIds: ['notes/route-context.md'],
+      sourceRefs: [{ id: 'notes/route-context.md', kind: 'wiki', path: 'notes/route-context.md' }],
+      tags: ['error-experience'],
+      createdBy: 'user',
+      metadata: {
+        knowledgeKind: 'error-experience',
+        errorExperience: {
+          schemaVersion: 1,
+          id: 'ee-route-context',
+          title: 'Route context failure handling',
+          summary: 'routeContext failures must not block ordinary chat send.',
+          triggerPattern: {
+            errorType: 'test',
+            keywords: ['routeContext', 'knowledge side effect'],
+            filePatterns: ['src/pages/Chat/**'],
+            stackTraceSignature: 'RouteContextFailure',
+            commandSignature: 'pnpm test',
+            scenarioDescription: 'routeContext failure',
+            routeQueries: ['route context failure'],
+          },
+          rootCause: {
+            summary: 'Knowledge side effects were coupled to Chat send.',
+            contributingFactors: ['routeContext failure was not best-effort'],
+          },
+          resolution: {
+            steps: ['Catch knowledge guard errors.', 'Keep Chat send independent.'],
+            verificationCommands: ['pnpm exec vitest run tests/unit/chat-input.test.tsx'],
+          },
+          applicability: {
+            projectScopes: ['current-workspace'],
+            modules: ['src/pages/Chat'],
+            roles: ['knowledge-librarian'],
+            confidence: 0.7,
+            severity: 'high',
+          },
+          provenance: {
+            createdFrom: { kind: 'manual', id: 'unit-test' },
+            sourceRefs: [{ id: 'notes/route-context.md', kind: 'wiki', path: 'notes/route-context.md' }],
+            createdAt: '2026-07-04T00:00:00.000Z',
+          },
+          effectiveness: {
+            hitCount: 0,
+            acceptedCount: 0,
+            dismissedCount: 0,
+            preventedFailureCount: 0,
+            staleCount: 0,
+          },
+        },
+      },
+    });
+    expect(created.success).toBe(true);
+
+    const matched = await api.matchErrorExperience({
+      signal: {
+        kind: 'test-failure',
+        text: 'RouteContextFailure: routeContext knowledge side effect failed',
+        command: 'pnpm test',
+        stackTrace: 'RouteContextFailure',
+        filePaths: ['src/pages/Chat/index.tsx'],
+      },
+      limit: 1,
+    });
+
+    expect(matched).toMatchObject({
+      success: true,
+      advisories: [
+        expect.objectContaining({
+          targetKind: 'inbox',
+          targetId: created.item?.id,
+          title: 'Route context failure handling',
+          rootCause: 'Knowledge side effects were coupled to Chat send.',
+          recommendedResolution: ['Catch knowledge guard errors.', 'Keep Chat send independent.'],
+        }),
+      ],
+    });
+
+    const updated = await api.updateErrorExperienceEffectiveness({
+      targetKind: 'inbox',
+      targetId: created.item!.id,
+      action: 'accepted',
+      note: 'unit test accepted advisory',
+    });
+
+    expect(updated).toMatchObject({
+      success: true,
+      effectiveness: expect.objectContaining({
+        hitCount: 1,
+        acceptedCount: 1,
+      }),
+    });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
+  it('aggregates governance quality metrics from audit issues and error-experience counters', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'wiki.compile') {
+          return {
+            freshnessReports: [
+              { pageId: 'old-1', pagePath: 'old.md', pageTitle: 'Old note', reason: 'Last verified too long ago' },
+            ],
+          };
+        }
+        if (method === 'wiki.lint') {
+          return {
+            provenanceGaps: [
+              { pageId: 'gap-1', pagePath: 'gap.md', pageTitle: 'Gap note', description: 'Missing source refs' },
+            ],
+            danglingPages: [
+              { pageId: 'orphan-1', pagePath: 'orphan.md', pageTitle: 'Orphan note' },
+            ],
+            duplicates: [
+              { topic: 'Duplicate route notes', pageIds: ['dup-a', 'dup-b'] },
+            ],
+          };
+        }
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    await api.createInboxItem({
+      title: 'Low-confidence repeated card',
+      body: 'Route context failures are repeatedly dismissed.',
+      kind: 'manual',
+      type: 'troubleshooting',
+      createdBy: 'user',
+      metadata: {
+        knowledgeKind: 'error-experience',
+        errorExperience: {
+          schemaVersion: 1,
+          id: 'ee-low-confidence',
+          title: 'Low-confidence repeated card',
+          summary: 'Route context failures are repeatedly dismissed.',
+          triggerPattern: {
+            errorType: 'logic',
+            keywords: ['routeContext'],
+            filePatterns: ['src/pages/Chat/**'],
+            scenarioDescription: 'routeContext repeated failure',
+            routeQueries: ['routeContext'],
+          },
+          rootCause: { summary: 'The card needs review.', contributingFactors: [] },
+          resolution: { steps: ['Review and tighten the trigger.'], verificationCommands: [] },
+          applicability: {
+            projectScopes: ['current-workspace'],
+            modules: ['src/pages/Chat'],
+            roles: ['knowledge-librarian'],
+            confidence: 0.4,
+            severity: 'medium',
+          },
+          provenance: {
+            createdFrom: { kind: 'manual', id: 'unit-test' },
+            sourceRefs: [{ id: 'unit-test', kind: 'manual' }],
+            createdAt: '2026-07-04T00:00:00.000Z',
+          },
+          effectiveness: {
+            hitCount: 4,
+            acceptedCount: 1,
+            dismissedCount: 4,
+            preventedFailureCount: 0,
+            staleCount: 1,
+          },
+        },
+      },
+    });
+
+    const result = await api.governanceAudit();
+
+    expect(result.success).toBe(true);
+    expect(result.summaries).toMatchObject({
+      stale: 1,
+      dangling: 1,
+      duplicates: 1,
+      provenanceGaps: 1,
+    });
+    expect(result.qualityMetrics).toMatchObject({
+      staleCards: 2,
+      duplicateClusters: 1,
+      sourceGaps: 1,
+      unreferencedPages: 1,
+      lowConfidenceHighHitCards: 1,
+      highDismissalCards: 1,
+    });
+    expect(result.qualityMetrics?.metrics).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'source_gaps', count: 1 }),
+      expect.objectContaining({ kind: 'low_confidence_high_hit_cards', count: 1 }),
+      expect.objectContaining({ kind: 'high_dismissal_cards', count: 1 }),
+    ]));
   });
 
   it('auto-read routes only high-confidence fresh non-contradicted candidates', async () => {
@@ -732,5 +1142,111 @@ describe('knowledge host API', () => {
       pageId: 'page-Alpha Architecture',
       frontmatter: expect.objectContaining({ extra_key: 'preserved' }),
     });
+  });
+
+  it('persists source sets and answers from their selected sources without applying durable wiki changes', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'wiki.get') {
+          return {
+            lookup: params.lookup,
+            title: params.lookup === 'notes/decision.md' ? 'Decision note' : 'Procedure note',
+            pagePath: params.lookup,
+            body: params.lookup === 'notes/decision.md'
+              ? 'Use source-backed drafts before durable Knowledge writes.'
+              : 'Review generated artifacts before applying them.',
+          };
+        }
+        if (method === 'wiki.apply') throw new Error('wiki.apply must not be called');
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    const saved = await api.saveSourceSet({
+      title: 'NotebookLM slice',
+      sourceRefs: [
+        { id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision note' },
+        { id: 'notes/procedure.md', kind: 'wiki', path: 'notes/procedure.md', label: 'Procedure note' },
+      ],
+      metadata: { workspaceId: 'workspace-a' },
+    });
+
+    expect(saved.success).toBe(true);
+    expect(saved.sourceSet).toMatchObject({
+      title: 'NotebookLM slice',
+      sourceRefs: [
+        expect.objectContaining({ id: 'notes/decision.md', kind: 'wiki' }),
+        expect.objectContaining({ id: 'notes/procedure.md', kind: 'wiki' }),
+      ],
+      metadata: { workspaceId: 'workspace-a' },
+    });
+
+    await expect(api.listSourceSets()).resolves.toMatchObject({
+      success: true,
+      sourceSets: [expect.objectContaining({ id: saved.sourceSet!.id, title: 'NotebookLM slice' })],
+    });
+
+    const answer = await api.answerFromSourceSet({
+      question: 'Why keep review before durable writes?',
+      sourceRefs: saved.sourceSet!.sourceRefs,
+    });
+
+    expect(answer.success).toBe(true);
+    expect(answer.groundingStatus).toBe('grounded');
+    expect(answer.answer).toContain('Decision note');
+    expect(answer.sources.map((source) => source.lookup)).toEqual(['notes/decision.md', 'notes/procedure.md']);
+    expect(answer.unknowns).toContain('Grounding is page/snippet level.');
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.get', expect.objectContaining({
+      lookup: 'notes/decision.md',
+      lineCount: 80,
+      corpus: 'wiki',
+    }), 30000);
+    expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+  });
+
+  it('creates reviewable studio artifact drafts from selected source sets', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'wiki.get') {
+          return {
+            lookup: params.lookup,
+            title: 'Decision note',
+            pagePath: params.lookup,
+            body: 'Notebook artifacts must remain drafts until the user confirms apply.',
+          };
+        }
+        if (method === 'wiki.apply') throw new Error('wiki.apply must not be called');
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    const result = await api.createArtifactDraft({
+      artifactType: 'decision-memo',
+      title: 'Decision memo',
+      question: 'What should the user approve?',
+      sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision note' }],
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.draft).toMatchObject({
+      title: 'Decision memo',
+      type: 'decision',
+      status: 'draft',
+      sourceIds: ['notes/decision.md'],
+      sourceRefs: [expect.objectContaining({ id: 'notes/decision.md', kind: 'wiki' })],
+      tags: ['studio-artifact', 'decision-memo'],
+      metadata: {
+        knowledgeKind: 'studio-artifact',
+        artifactType: 'decision-memo',
+        groundingStatus: 'grounded',
+      },
+    });
+    expect(result.draft?.body).toContain('## Sources used');
+    expect(result.draft?.body).toContain('Decision note');
+    expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 });

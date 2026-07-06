@@ -4,9 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { testHome, testUserData } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
+  const root = process.env.CLAWX_TEST_TMPDIR ?? `${process.cwd()}/.tmp/vitest`;
   return {
-    testHome: `/tmp/clawx-openclaw-image-gen-${suffix}`,
-    testUserData: `/tmp/clawx-openclaw-image-gen-user-data-${suffix}`,
+    testHome: `${root}/clawx-openclaw-image-gen-${suffix}`,
+    testUserData: `${root}/clawx-openclaw-image-gen-user-data-${suffix}`,
   };
 });
 

@@ -93,6 +93,10 @@ const loadChannelsHandlers = lazyHandlerModule(
   () => import("./server-methods/channels.js"),
   (module) => module.channelsHandlers,
 );
+const loadCapabilitiesHandlers = lazyHandlerModule(
+  () => import("./server-methods/capabilities.js"),
+  (module) => module.capabilitiesHandlers,
+);
 const loadCommandsHandlers = lazyHandlerModule(
   () => import("./server-methods/commands.js"),
   (module) => module.commandsHandlers,
@@ -451,6 +455,10 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...createLazyCoreHandlers({
     methods: ["tools.effective"],
     loadHandlers: loadToolsEffectiveHandlers,
+  }),
+  ...createLazyCoreHandlers({
+    methods: ["capabilities.publications"],
+    loadHandlers: loadCapabilitiesHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: ["tools.invoke"],

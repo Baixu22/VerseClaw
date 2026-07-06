@@ -1,0 +1,90 @@
+{
+  "replayCase": {
+    "id": "runtime-replay-test-failure-after-repair",
+    "title": "Fixture-backed test failure after repair replay",
+    "scenario": "test_failure",
+    "input": {
+      "userMessage": "Repair a failing test using fixture data.",
+      "providerFixture": "runtime-replay/providers/test-failure-after-repair",
+      "toolFixture": "runtime-replay/tools/test-failure-after-repair",
+      "workspaceFixture": "runtime-replay/workspaces/test-repair"
+    },
+    "expected": {
+      "terminalStatus": "completed",
+      "allowedFailureKinds": [
+        "test_failure"
+      ],
+      "touchedPaths": [
+        "src/repair-target.ts",
+        "tests/unit/repair-target.test.ts"
+      ]
+    },
+    "budgets": {
+      "maxPromptBytes": 8192,
+      "maxToolCalls": 4,
+      "maxDurationMs": 120000
+    }
+  },
+  "fixtures": {
+    "provider": {
+      "ref": "runtime-replay/providers/test-failure-after-repair",
+      "mode": "fixture",
+      "status": "ok",
+      "summary": "Provider fixture selected a repair."
+    },
+    "tool": {
+      "ref": "runtime-replay/tools/test-failure-after-repair",
+      "mode": "fixture",
+      "status": "ok",
+      "summary": "First vitest fixture failed, repair fixture passed.",
+      "toolCalls": 2
+    },
+    "workspace": {
+      "ref": "runtime-replay/workspaces/test-repair",
+      "mode": "fixture",
+      "status": "clean",
+      "summary": "Fixture repair touched source and test summaries only.",
+      "touchedPaths": [
+        {
+          "path": "src/repair-target.ts",
+          "status": "modified",
+          "summary": "Adjusted fixture implementation after failing assertion."
+        },
+        {
+          "path": "tests/unit/repair-target.test.ts",
+          "status": "modified",
+          "summary": "Updated fixture expectation summary."
+        }
+      ]
+    },
+    "failureSignals": [
+      {
+        "id": "failure-test-after-repair",
+        "runId": "run-test-repair",
+        "source": "vitest.fixture",
+        "occurredAt": "2026-07-01T11:59:00.000Z",
+        "signal": {
+          "message": "Vitest assertion failed before repair: expected 200 received 500.",
+          "status": "failed"
+        },
+        "evidenceRefs": [
+          "test-failure-fixture"
+        ]
+      }
+    ]
+  },
+  "expectedFailureKinds": [
+    "test_failure"
+  ],
+  "expectedEvidenceDecisions": [
+    {
+      "kind": "failure_summary",
+      "accepted": true,
+      "authority": "none"
+    }
+  ],
+  "expectedTouchedPathSummaries": [
+    "src/repair-target.ts",
+    "tests/unit/repair-target.test.ts"
+  ]
+}

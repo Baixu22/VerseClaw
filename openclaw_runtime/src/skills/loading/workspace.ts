@@ -29,7 +29,7 @@ import type {
 } from "../types.js";
 import { resolveBundledSkillsDir } from "./bundled-dir.js";
 import { resolveBundledAllowlist, shouldIncludeSkill } from "./config.js";
-import { resolveOpenClawMetadata, resolveSkillInvocationPolicy } from "./frontmatter.js";
+import { resolveOpenClawMetadata, resolveSkillInvocationPolicy, resolveSkillKey } from "./frontmatter.js";
 import { loadSkillsFromDirSafe, readSkillFrontmatterSafe } from "./local-loader.js";
 import { resolvePluginSkillDirs } from "./plugin-skills.js";
 import { serializeByKey } from "./serialize.js";
@@ -128,7 +128,9 @@ function filterSkillEntries(
     skillsLogger.debug(`Applying skill filter: ${label}`);
     if (normalized.length > 0) {
       const allowed = new Set(normalized);
-      filtered = filtered.filter((entry) => allowed.has(entry.skill.name));
+      filtered = filtered.filter((entry) =>
+        allowed.has(entry.skill.name) || allowed.has(resolveSkillKey(entry.skill, entry))
+      );
     } else {
       filtered = [];
     }
@@ -1317,16 +1319,26 @@ function applySkillsPromptLimits(params: {
   config?: OpenClawConfig;
   agentId?: string;
   remoteNote?: string;
+  transientLimits?: SkillsPromptTransientLimits;
 }): {
   skillsForPrompt: Skill[];
   compact: boolean;
 } {
   const limits = resolveSkillsLimits(params.config, params.agentId);
   const total = params.skills.length;
-  const byCount = params.skills.slice(0, Math.max(0, limits.maxSkillsInPrompt));
+  const transientMaxSkills =
+    typeof params.transientLimits?.maxSkillsInPrompt === "number" &&
+    Number.isFinite(params.transientLimits.maxSkillsInPrompt)
+      ? Math.max(0, Math.floor(params.transientLimits.maxSkillsInPrompt))
+      : undefined;
+  const maxSkillsInPrompt =
+    transientMaxSkills === undefined
+      ? limits.maxSkillsInPrompt
+      : Math.min(limits.maxSkillsInPrompt, transientMaxSkills);
+  const byCount = params.skills.slice(0, Math.max(0, maxSkillsInPrompt));
 
   let skillsForPrompt = byCount;
-  let compact = false;
+  let compact = params.transientLimits?.preferCompact === true;
 
   const fitsFull = (skills: Skill[]): boolean =>
     buildRenderedSkillsPrompt({
@@ -1344,7 +1356,19 @@ function applySkillsPromptLimits(params: {
       compact: true,
     }).length <= limits.maxSkillsPromptChars;
 
-  if (!fitsFull(skillsForPrompt)) {
+  if (compact && !fitsCompact(skillsForPrompt)) {
+    let lo = 0;
+    let hi = skillsForPrompt.length;
+    while (lo < hi) {
+      const mid = Math.ceil((lo + hi) / 2);
+      if (fitsCompact(skillsForPrompt.slice(0, mid))) {
+        lo = mid;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    skillsForPrompt = skillsForPrompt.slice(0, lo);
+  } else if (!compact && !fitsFull(skillsForPrompt)) {
     // Full format exceeds budget. Try compact (name + location, no description)
     // to preserve awareness of all skills before dropping any.
     if (fitsCompact(skillsForPrompt)) {
@@ -1405,9 +1429,15 @@ type WorkspaceSkillBuildOptions = {
   bundledSkillsDir?: string;
   entries?: SkillEntry[];
   agentId?: string;
+  transientLimits?: SkillsPromptTransientLimits;
   /** If provided, only include skills with these names */
   skillFilter?: string[];
   eligibility?: SkillEligibilityContext;
+};
+
+export type SkillsPromptTransientLimits = {
+  maxSkillsInPrompt?: number;
+  preferCompact?: boolean;
 };
 
 function resolveEffectiveWorkspaceSkillFilter(
@@ -1456,6 +1486,7 @@ function resolveWorkspaceSkillPromptState(
     config: opts?.config,
     agentId: opts?.agentId,
     remoteNote,
+    transientLimits: opts?.transientLimits,
   });
   const prompt = buildRenderedSkillsPrompt({
     remoteNote,
@@ -1473,7 +1504,22 @@ export function resolveSkillsPromptForRun(params: {
   workspaceDir: string;
   agentId?: string;
   eligibility?: SkillEligibilityContext;
+  transientLimits?: SkillsPromptTransientLimits;
 }): string {
+  const hasTransientLimits =
+    params.transientLimits !== undefined &&
+    (typeof params.transientLimits.maxSkillsInPrompt === "number" ||
+      params.transientLimits.preferCompact === true);
+  if (hasTransientLimits && params.entries && params.entries.length > 0) {
+    const prompt = buildWorkspaceSkillsPrompt(params.workspaceDir, {
+      entries: params.entries,
+      config: params.config,
+      agentId: params.agentId,
+      eligibility: params.eligibility,
+      transientLimits: params.transientLimits,
+    });
+    return prompt.trim() ? prompt : "";
+  }
   const snapshotPrompt = params.skillsSnapshot?.prompt?.trim();
   if (snapshotPrompt) {
     return snapshotPrompt;
@@ -1484,6 +1530,7 @@ export function resolveSkillsPromptForRun(params: {
       config: params.config,
       agentId: params.agentId,
       eligibility: params.eligibility,
+      transientLimits: params.transientLimits,
     });
     return prompt.trim() ? prompt : "";
   }

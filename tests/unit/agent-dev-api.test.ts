@@ -1,4 +1,6 @@
 import { EventEmitter } from 'node:events';
+import { mkdir, readFile, rm } from 'node:fs/promises';
+import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@electron/utils/store', () => ({
@@ -126,5 +128,60 @@ describe('agent dev api', () => {
       success: true,
       requiredAttributes: ['data-testid'],
     });
+    await expect(api.workbenchEvidence()).resolves.toMatchObject({
+      success: true,
+      evidence: {
+        scenarioCount: expect.any(Number),
+        hostApi: {
+          missingFacadeActions: [],
+          missingServiceActions: [],
+        },
+        contracts: {
+          traceTimeline: true,
+          costReport: true,
+          skillSandboxReport: true,
+          selectorContract: true,
+        },
+      },
+    });
+  });
+
+  it('records redacted scenario artifacts with a human promotion checklist', async () => {
+    process.env.VERSE_CLAW_E2E = '1';
+    const cwd = process.cwd();
+    const root = join(cwd, 'artifacts', `agent-dev-recording-test-${Date.now()}`);
+    const { createAgentDevApi } = await import('@electron/services/agent-dev-api');
+    const api = createAgentDevApi({ gatewayManager: new GatewayManagerStub() as never });
+
+    try {
+      await mkdir(root, { recursive: true });
+      process.chdir(root);
+      await api.seedState({
+        scenario: 'doctor-failed',
+        metadata: {
+          apiKey: 'sk_should_not_survive',
+          visible: 'Authorization: Bearer abcdefghijklmnop',
+        },
+      });
+      const result = await api.recordScenario({
+        slug: 'redaction-smoke',
+        route: '/settings/advanced',
+        visibleState: {
+          token: 'plain-token',
+          note: 'password=super-secret',
+        },
+      });
+      const text = await readFile(result.artifactPath, 'utf8');
+
+      expect(text).toContain('clawx.agent-dev.scenario-recording.v1');
+      expect(text).toContain('promotionTargets');
+      expect(text).toContain('[redacted]');
+      expect(text).not.toContain('sk_should_not_survive');
+      expect(text).not.toContain('abcdefghijklmnop');
+      expect(text).not.toContain('super-secret');
+    } finally {
+      process.chdir(cwd);
+      await rm(root, { recursive: true, force: true });
+    }
   });
 });

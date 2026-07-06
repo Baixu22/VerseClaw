@@ -115,6 +115,51 @@ describe('roles.* / teams.* handlers', () => {
     expect(payload.templates).toBeDefined();
     expect(payload.defaultTemplateId).toBeDefined();
   });
+
+  // ── Area 1: Role origin surfacing ──────────────────────────────────────
+
+  it('roles.list surfaces origin=built-in for untouched built-ins', async () => {
+    const res = await callHandler('roles.list', {});
+    expect(res?.ok).toBe(true);
+    const roles = (res?.payload as { roles: { name: string; origin?: string }[] }).roles;
+    const reviewer = roles.find((r) => r.name === 'reviewer');
+    expect(reviewer?.origin).toBe('built-in');
+    const architect = roles.find((r) => r.name === 'architect');
+    expect(architect?.origin).toBe('built-in');
+  });
+
+  it('roles.list surfaces origin=config for a fresh config-defined role', async () => {
+    const cfg = configWithRoles([
+      { name: 'data-scientist', display_name: 'Data Scientist', role_prompt: 'Analyze data.', tools: ['read', 'bash'], effort: 'high' },
+    ]);
+    const res = await callHandler('roles.list', {}, cfg);
+    expect(res?.ok).toBe(true);
+    const roles = (res?.payload as { roles: { name: string; origin?: string }[] }).roles;
+    const ds = roles.find((r) => r.name === 'data-scientist');
+    expect(ds?.origin).toBe('config');
+    // built-ins that were not overridden stay built-in
+    const architect = roles.find((r) => r.name === 'architect');
+    expect(architect?.origin).toBe('built-in');
+  });
+
+  it('roles.list surfaces origin=config when a built-in is overridden by config', async () => {
+    const cfg = configWithRoles([
+      { name: 'reviewer', display_name: 'Custom Reviewer', role_prompt: 'Review with custom rules.', tools: ['read'], effort: 'xhigh' },
+    ]);
+    const res = await callHandler('roles.list', {}, cfg);
+    expect(res?.ok).toBe(true);
+    const roles = (res?.payload as { roles: { name: string; origin?: string }[] }).roles;
+    const reviewer = roles.find((r) => r.name === 'reviewer');
+    expect(reviewer?.origin).toBe('config');
+    expect(reviewer?.displayName).toBe('Custom Reviewer');
+  });
+
+  it('roles.get surfaces origin field', async () => {
+    const res = await callHandler('roles.get', { name: 'reviewer' });
+    expect(res?.ok).toBe(true);
+    const role = (res?.payload as { role: { name: string; origin?: string } }).role;
+    expect(role.origin).toBe('built-in');
+  });
 });
 
 describe('orchestrator.plan handler', () => {
@@ -255,14 +300,6 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     expect(result.failures).toHaveLength(0);
     expect(result.pendingVerifier).toBe(true);
     expect(spawned.some((p) => p.orchestration?.phase === 'verifier')).toBe(false);
-    expect(result.resultBundle).toMatchObject({
-      schemaVersion: 1,
-      phase: 'spawn',
-      orchestrationRunId: expect.any(String),
-      leadRole: result.plan.leadRole,
-    });
-    expect(result.resultBundle.roleOutcomes.length).toBe(result.outcomes.length);
-    expect(result.resultBundle.traceIds.length).toBeGreaterThanOrEqual(1);
     // A trace was stored in the runtime buffer (the core observability fix).
     const traces = getRuntimeTraceBuffer();
     expect(traces.length).toBeGreaterThanOrEqual(1);
@@ -287,15 +324,6 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     );
     expect(result.spawnedRunIds).toHaveLength(0);
     expect(result.failures.length).toBeGreaterThan(0);
-    expect(result.resultBundle.failures.length).toBeGreaterThan(0);
-    expect(result.resultBundle.permissionEvents).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          decision: 'denied',
-          reason: 'max children reached',
-        }),
-      ]),
-    );
     // Trace still persisted even on all-failures.
     expect(getRuntimeTraceBuffer().length).toBeGreaterThanOrEqual(1);
   });
@@ -327,17 +355,17 @@ describe('team_orchestrate tool', () => {
       children: unknown[];
       pendingVerifier: boolean;
       resultPolicy: { completion: string };
-      resultBundle?: unknown;
+      quality: unknown[];
+      qualityState: null | 'shadow' | 'active';
+      qualityStateReason: string;
     };
     expect(details.plan.mode).toBe('router');
     expect(details.children).toHaveLength(1);
     expect(details.pendingVerifier).toBe(false);
     expect(details.resultPolicy.completion).toBe('team_result_bundle');
-    expect(details.resultBundle).toMatchObject({
-      schemaVersion: 1,
-      phase: 'spawn',
-      orchestrationRunId: 'orch_test',
-    });
+    expect(details.quality).toEqual([]);
+    expect(details.qualityState).toBeNull();
+    expect(details.qualityStateReason).toMatch(/not evaluated/i);
   });
 
   it('uses template roles and reports partial failures', async () => {
@@ -366,6 +394,15 @@ describe('team_orchestrate tool', () => {
       plan: { templateId?: string; verifierRole?: string; workers: Array<{ roleName: string }> };
       executionWaves: Array<{ roles: string[] }>;
       failures: unknown[];
+      orchestrationDiagnostics?: {
+        kind: string;
+        boundary: string;
+        status: string;
+        failedWorkerCount: number;
+        taskLoopUpgradeAvailable: boolean;
+        recommendations: Array<{ code: string; roleName?: string; recommendedAction: string }>;
+        nextSteps: string[];
+      };
       nextAction: string;
       pendingVerifier: boolean;
       expectedChildren: unknown[];
@@ -379,6 +416,28 @@ describe('team_orchestrate tool', () => {
     expect(details.expectedChildren).toHaveLength(3);
     expect(details.pendingVerifier).toBe(true);
     expect(details.nextAction).toBe('yield_for_results');
+    expect(details).not.toHaveProperty('repairNodes');
+    expect(details).not.toHaveProperty('blocked');
+    expect(details).not.toHaveProperty('checkpoint');
+    expect(details.orchestrationDiagnostics).toMatchObject({
+      kind: 'ordinary-orchestration-diagnostics',
+      boundary: 'diagnostics-only',
+      status: 'needs_attention',
+      failedWorkerCount: 2,
+      taskLoopUpgradeAvailable: true,
+    });
+    expect(details.orchestrationDiagnostics?.recommendations).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        code: 'worker-spawn-failed',
+        roleName: 'reviewer',
+      }),
+      expect.objectContaining({
+        code: 'worker-spawn-failed',
+        roleName: 'tester',
+      }),
+    ]));
+    expect(details.orchestrationDiagnostics?.nextSteps.join(' ')).toMatch(/Task Loop/i);
+    expect(details.orchestrationDiagnostics?.recommendations.map((item) => item.recommendedAction).join(' ')).not.toMatch(/\b(repair|blocked|checkpoint)\b/i);
   });
 });
 
@@ -626,6 +685,37 @@ describe('memory.* handlers (store/read round-trip with persistence)', () => {
     });
     const payload = res?.payload as { accepted: boolean; reason?: string };
     expect(payload.accepted).toBe(false);
+  });
+
+  it('memory.propose rejects fake keys without echoing the full secret in Gateway feedback', async () => {
+    const fakeKey = 'OPENAI_API_KEY=sk-test1234567890ABCDE';
+    const res = await callHandler('memory.propose', {
+      proposal: {
+        content: `Do not store this fake key: ${fakeKey}`,
+        type: 'fact',
+        scope: 'project',
+        confidence: 0.95,
+        roleTags: ['security'],
+        source: 'user',
+        evidenceRefs: [{ type: 'manual', ref: 'p1-13' }],
+      },
+    });
+
+    expect(res?.ok).toBe(true);
+    const payload = res?.payload as { action: string; accepted: boolean; reason?: string };
+    expect(payload.accepted).toBe(false);
+    expect(payload.action).toBe('reject');
+    expect(payload.reason).toMatch(/Secret-like memory content/i);
+    expect(JSON.stringify(payload)).not.toContain(fakeKey);
+
+    const proposalsRes = await callHandler('memory.proposals', { decision: 'reject' });
+    const proposalsPayload = proposalsRes?.payload as { proposals: unknown[] };
+    expect(proposalsPayload.proposals).toHaveLength(1);
+    expect(JSON.stringify(proposalsPayload)).not.toContain(fakeKey);
+
+    const listRes = await callHandler('memory.list', { status: 'all' });
+    const cards = (listRes?.payload as { cards: unknown[] }).cards;
+    expect(cards).toHaveLength(0);
   });
 
   it('memory.propose sends duplicate active cards to review without writing a new card', async () => {

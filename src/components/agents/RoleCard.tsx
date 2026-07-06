@@ -24,6 +24,8 @@ export type RoleCardData = {
   effort: string;
   permissions?: { filesystem?: string; network?: string; commands?: string[] };
   tags?: string[];
+  /** Role origin (Area 1): 'built-in' ships with the runtime, 'config' is user-defined. */
+  origin?: 'built-in' | 'config';
 };
 
 type RoleCardProps = {
@@ -91,6 +93,21 @@ export function RoleCard({ role, selected, onSelect, tt }: RoleCardProps) {
         <div className="flex items-center gap-1.5 min-w-0">
           <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', dotClasses.dot)} />
           <span className="font-medium text-sm truncate">{role.displayName}</span>
+          {role.origin && (
+            <span
+              data-testid={`role-origin-badge-${role.origin}`}
+              className={cn(
+                'text-2xs rounded-md px-1 py-0.5 shrink-0',
+                role.origin === 'config'
+                  ? 'bg-primary/10 text-primary'
+                  : 'bg-surface-input text-muted-foreground',
+              )}
+            >
+              {role.origin === 'config'
+                ? tt('roles.originCustom', 'Custom')
+                : tt('roles.originBuiltIn', 'Built-in')}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           <span className="text-2xs text-muted-foreground tabular-nums">

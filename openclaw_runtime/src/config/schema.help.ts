@@ -1992,6 +1992,14 @@ export const FIELD_HELP: Record<string, string> = {
     "Tool protocol migration flags. These are compatibility shadows and must not alter tool response semantics.",
   "runtime.toolProtocol.mcpShadow":
     "Emit MCP ToolCallRequest/ToolCallResult shadows without changing MCP callTool response shape (default: false).",
+  "runtime.toolGovernance":
+    "Default-off runtime tool governance pilot flags. These flags do not change TaskLoop, provider transport, Gateway payloads, prompts, retry, approval, rollback, completion, checkpoint, lifecycle, or renderer behavior by default.",
+  "runtime.toolGovernance.destructiveOperationGuard":
+    "Default-off destructive_operation_guard pilot settings. This guard is limited to mutation-capable tool invocation preflight and never enables broad shell pattern blocking.",
+  "runtime.toolGovernance.destructiveOperationGuard.preflight":
+    "Mutation-capable tool invocation preflight gate for destructive_operation_guard. Omitted settings preserve legacy tool behavior.",
+  "runtime.toolGovernance.destructiveOperationGuard.preflight.enabled":
+    "Explicit opt-in for the default-off destructive_operation_guard preflight pilot (default: false). It may block only with accepted preflight ownership, deleted touched-path metadata, failing wrong_file_edit or unnecessary_edit scorecard metadata, Phase 5 future block candidate metadata, requiresAcceptedSpec=true, and passing false-block corpus metadata.",
   "runtime.evidenceVerifier":
     "Warning-only evidence verifier shadow settings. These reports are diagnostics and do not change legacy task-loop or mission decisions.",
   "runtime.evidenceVerifier.shadow":
@@ -2014,6 +2022,16 @@ export const FIELD_HELP: Record<string, string> = {
     "Allow candidate memory fact proposals only when the shadow path is explicitly enabled (default: false). This does not promote facts, enable durable facts, or bypass verifier, human, or deterministic-rule evidence requirements.",
   "runtime.memory.persist":
     "Default-off gate for the local sanitized persistence foundation and explicit adapter paths (default: false). The TaskLoop sanitized episode pilot requires this flag plus runtime.memory.shadow; persist alone does not enable TaskLoop writes, Gateway cutover, provider output, default-on memory, fact extraction or promotion, user-facing persistence flows, or runtime authority.",
+  "runtime.memory.injectPilot":
+    "Area 4 chat-turn memory injection pilot gate (default off). When enabled, the agent gateway queries registered memory context providers and appends a `## Memory Context` block to extraSystemPrompt for matching sessions. When disabled (or omitted), prompt bytes are byte-identical to today (comms replay parity).",
+  "runtime.memory.injectPilot.enabled":
+    "Explicit opt-in for the chat-turn memory injection pilot (default: false). When false or omitted, no memory context is injected into chat turns and prompts are byte-identical to today. When true, the configured providers are queried for matching sessions and their output is appended to extraSystemPrompt.",
+  "runtime.memory.injectPilot.providers":
+    "Memory provider ids to query during the injection pilot (default: ['role-memory']). Unknown ids are filtered. 'role-memory' exposes curated Role Memory cards; 'runtime-memory' exposes extracted Runtime Memory facts (gated by its own maturity gates per the design spec).",
+  "runtime.memory.injectPilot.totalTokenBudget":
+    "Total token budget across all injected providers for a single chat turn (default: 768). Providers cannot exceed this budget, preserving the context engine's budget discipline.",
+  "runtime.memory.injectPilot.sessions":
+    "Session scope for the injection pilot (default: 'main-only'). 'main-only' injects only into agent:<id>:main sessions; 'all' injects into every session. Subagent sessions already receive role-memory via role-spawn.ts, so 'main-only' avoids double-injection during the pilot.",
   "runtime.agentMap":
     "Default-off AgentMap readiness flags for explicit readonly shadow provider validation and prompt assembly experiments. These flags do not register AgentMap by default, change provider ordering, alter prompts, replace read/grep/find/ls, or grant runtime authority.",
   "runtime.agentMap.provider":
@@ -2038,6 +2056,16 @@ export const FIELD_HELP: Record<string, string> = {
     "Record Evidence Kernel v0 coverage and missing-evidence summaries without changing completion, repair, or blocked decisions (default: false).",
   "runtime.localControlPlane.missionReport":
     "Record Mission/Task Loop lifecycle summaries without changing phase transitions, repair counts, or next-action decisions (default: false).",
+  "runtime.orchestration":
+    "Multi-agent orchestration pilot flags (Area 3). All default off; legacy orchestration is byte-identical when omitted. Pilots are workspace-scoped, additive, and disable-only (no promotion without explicit config change).",
+  "runtime.orchestration.routingMemoPilot":
+    "Routing memo store pilot (Area 3 §3.1). 'off' (default) = no memos recorded/recalled. 'shadow' = memos recorded/recalled; would-be score adjustment written into RouteDiagnostics.reasons as 'memo-shadow:...' but scores unchanged (byte-identical routing). 'active' = memos apply bounded ±2/−1 score adjustment to matching lead role (keyword evidence stays dominant). Gate to active: ≥20 shadow runs + ≥70% divergence improvement. Memo store is per-workspace JSONL under .clawx/orchestration/routing-memos.jsonl, capped at 500 entries, digest-only (no raw task text).",
+  "runtime.orchestration.handoffArtifacts":
+    "Handoff artifacts pilot (Area 3 §3.4). 'off' (default) = no injection. 'on' = dependent workers receive predecessor's expected outputSchema.sections in extraSystemPrompt along handoff graph edges. Adds prompt text only — never tools or permissions (§9 boundary). Ships default-off for one release alongside the memo pilot.",
+  "runtime.resilience":
+    "Runtime resilience pilot flags (Area 3 Round 2). All default off; when omitted, MissionReviewerInput.anomalyPattern is undefined and the Mission reviewer behaves exactly as before (flag-off parity).",
+  "runtime.resilience.anomalyClassifierPilot":
+    "Anomaly classifier pilot (Area 3 Round 2 §1.2). 'off' (default) = anomalyPattern always undefined. 'shadow' = classifyAnomalyPattern invoked before Mission reviewer; result injected as anomalyPattern? (advisory only — reviewer MAY ignore it, observe-only honesty §9.1). Does NOT trigger executeReplayRollback; that requires an explicit Mission decision of repair + repairStrategy: 'replay_rollback'.",
   "agents.list.*.heartbeat.directPolicy":
     'Per-agent override for heartbeat direct/DM delivery policy; use "block" for agents that should only send heartbeat alerts to non-DM destinations.',
   "agents.list.*.heartbeat.skipWhenBusy":

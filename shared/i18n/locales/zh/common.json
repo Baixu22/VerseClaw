@@ -67,5 +67,38 @@
         "notRunningDesc": "OpenClaw 网关需要运行才能使用此功能。它将自动启动，或者您可以从设置中启动。",
         "restarting": "Gateway 重启中",
         "warning": "网关未运行。"
+    },
+    "storageHealth": {
+        "ramLow": "内存不足",
+        "diskLow": "磁盘空间不足",
+        "bannerLow": "存储不足 — 点击清理"
+    },
+    "resourceTracker": {
+        "chip": {
+            "ariaLabel": "{{count}} 个运行中的资源",
+            "tooltip": "{{count}} 个运行中的资源",
+            "warningCount": "{{count}} 个空闲"
+        },
+        "popover": {
+            "title": "运行中的资源",
+            "close": "关闭资源列表",
+            "empty": "暂无跟踪资源",
+            "stopAll": "全部终止",
+            "autoCleanup": "空闲资源会在 {{minutes}} 分钟后自动清理。"
+        },
+        "status": {
+            "healthy": "活跃",
+            "idle": "空闲",
+            "unreachable": "离线"
+        },
+        "timeAgo": {
+            "justNow": "刚刚",
+            "m": "{{count}} 分钟",
+            "h": "{{count}} 小时"
+        },
+        "pid": "pid {{pid}}",
+        "fromSession": "来自 {{session}}",
+        "stop": "终止",
+        "stopResource": "终止 {{label}}"
     }
 }

@@ -5,7 +5,7 @@
  * Used by `ArtifactPanel`'s browser tab (split-pane on the chat page).
  */
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import { ChevronRight, FolderOpen, RefreshCw } from 'lucide-react';
+import { FolderOpen, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ import { hostApi } from '@/lib/host-api';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import {
   isHtmlPreviewExt,
+  isOfficePreviewExt,
   isPdfPreviewExt,
   isSheetPreviewExt,
   supportsInlineDocumentPreview,
@@ -29,6 +30,7 @@ import {
   type WorkspaceTreeNode,
 } from '@/lib/workspace-tree';
 import type { AgentSummary } from '@/types/agent';
+import { FileTree } from '@/components/ai-elements/file-tree';
 import { FilePreviewIcon } from './file-card-utils';
 import { formatFileSize } from './format';
 import {
@@ -38,6 +40,7 @@ import {
 import MarkdownPreview from './MarkdownPreview';
 import HtmlPreview from './HtmlPreview';
 import ImageViewer from './ImageViewer';
+import OfficePreview from './OfficePreview';
 
 const MonacoViewerLazy = lazy(() => import('./MonacoViewer'));
 const PdfViewerLazy = lazy(() => import('./PdfViewer'));
@@ -289,13 +292,21 @@ export function WorkspaceBrowserBody({
           {t('workspace.title', 'Workspace')}
           {workspaceLabel ? <span className="ml-1 text-foreground/60">/ {workspaceLabel}</span> : null}
         </div>
-        <FileTreeNodeList
+        <FileTree
           nodes={state.root.children ?? []}
-          depth={0}
           expanded={expanded}
           selectedRel={selectedRel}
           onToggle={toggleNode}
           onSelect={selectRelPath}
+          freshLabel={t('workspace.freshBadge', 'Added this run')}
+          renderIcon={(node) => (
+            <FilePreviewIcon
+              contentType={node.contentType}
+              mimeType={node.mimeType}
+              ext={node.ext}
+              className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
+            />
+          )}
         />
         {state.truncated && (
           <div className="mt-2 px-3 py-2 text-2xs text-muted-foreground/80">
@@ -316,6 +327,9 @@ export function WorkspaceBrowserBody({
     }
     if (selectedNode.contentType === 'snapshot') {
       return <ImageViewer filePath={selectedNode.absPath} fileName={selectedNode.name} />;
+    }
+    if (isOfficePreviewExt(selectedNode.ext)) {
+      return <OfficePreview filePath={selectedNode.absPath} fileName={selectedNode.name} />;
     }
     if (isPdfPreviewExt(selectedNode.ext)) {
       return (
@@ -568,106 +582,6 @@ export function WorkspaceBrowserBody({
         </section>
       </div>
     </div>
-  );
-}
-
-interface FileTreeNodeListProps {
-  nodes: WorkspaceTreeNode[];
-  depth: number;
-  expanded: Set<string>;
-  selectedRel: string | null;
-  onToggle: (relPath: string) => void;
-  onSelect: (relPath: string) => void;
-}
-
-function FileTreeNodeList({ nodes, depth, expanded, selectedRel, onToggle, onSelect }: FileTreeNodeListProps) {
-  return (
-    <ul className="space-y-0.5">
-      {nodes.map((node) => (
-        <FileTreeNodeRow
-          key={node.relPath || node.name}
-          node={node}
-          depth={depth}
-          expanded={expanded}
-          selectedRel={selectedRel}
-          onToggle={onToggle}
-          onSelect={onSelect}
-        />
-      ))}
-    </ul>
-  );
-}
-
-interface FileTreeNodeRowProps extends Omit<FileTreeNodeListProps, 'nodes'> {
-  node: WorkspaceTreeNode;
-}
-
-function FileTreeNodeRow({ node, depth, expanded, selectedRel, onToggle, onSelect }: FileTreeNodeRowProps) {
-  const isOpen = node.isDir && expanded.has(node.relPath);
-  const isSelected = selectedRel === node.relPath;
-  const indent = 12 + depth * 14;
-
-  if (node.isDir) {
-    return (
-      <li>
-        <button
-          type="button"
-          onClick={() => onToggle(node.relPath)}
-          className={cn(
-            'flex w-full items-center gap-1 rounded-md px-2 py-1 text-left text-xs transition-colors',
-            'hover:bg-black/5 dark:hover:bg-white/10',
-          )}
-          style={{ paddingLeft: indent }}
-          title={node.relPath || node.name}
-        >
-          <ChevronRight
-            className={cn(
-              'h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform',
-              isOpen && 'rotate-90',
-            )}
-          />
-          <span className="truncate font-medium">{node.name}</span>
-        </button>
-        {isOpen && node.children && node.children.length > 0 && (
-          <FileTreeNodeList
-            nodes={node.children}
-            depth={depth + 1}
-            expanded={expanded}
-            selectedRel={selectedRel}
-            onToggle={onToggle}
-            onSelect={onSelect}
-          />
-        )}
-      </li>
-    );
-  }
-
-  return (
-    <li>
-      <button
-        type="button"
-        onClick={() => onSelect(node.relPath)}
-        className={cn(
-          'flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-xs transition-colors',
-          isSelected
-            ? 'bg-primary/10 text-foreground'
-            : 'hover:bg-black/5 dark:hover:bg-white/10',
-        )}
-        style={{ paddingLeft: indent + 16 }}
-        title={node.relPath || node.name}
-      >
-        <FilePreviewIcon
-          contentType={node.contentType}
-          mimeType={node.mimeType}
-          ext={node.ext}
-          className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
-        />
-        <span className="truncate">{node.name}</span>
-        {node.isFresh && (
-          <span className="ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
-        )}
-      </button>
-    </li>
   );
 }
 

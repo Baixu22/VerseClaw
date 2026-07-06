@@ -39,6 +39,23 @@ type ResolveOpenClawPluginToolsOptions = OpenClawPluginToolOptions & {
   authProfileStore?: AuthProfileStore;
 };
 
+function isTruthyEnvValue(value: unknown): boolean {
+  return (
+    typeof value === "string" &&
+    ["1", "true", "yes", "on"].includes(value.trim().toLowerCase())
+  );
+}
+
+function shouldSkipDefaultPluginTools(params: {
+  options?: ResolveOpenClawPluginToolsOptions;
+  env?: NodeJS.ProcessEnv;
+}): boolean {
+  if (!isTruthyEnvValue((params.env ?? process.env).OPENCLAW_SKIP_AGENT_PLUGIN_TOOLS)) {
+    return false;
+  }
+  return (params.options?.pluginToolAllowlist?.length ?? 0) === 0;
+}
+
 function resolveApplicablePluginRuntimeConfig(
   inputConfig?: OpenClawConfig,
 ): OpenClawConfig | undefined {
@@ -67,6 +84,9 @@ export function resolveOpenClawPluginToolsForOptions(params: {
   existingToolNames?: Set<string>;
 }): AnyAgentTool[] {
   if (params.options?.disablePluginTools) {
+    return [];
+  }
+  if (shouldSkipDefaultPluginTools({ options: params.options })) {
     return [];
   }
 

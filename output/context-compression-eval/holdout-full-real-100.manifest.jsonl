@@ -1,0 +1,2579 @@
+{
+  "version": 1,
+  "seed": "context-compression-eval-v1",
+  "requestedSampleCount": 100,
+  "sampleSelectionHash": "be0bc10da7c5eb0ed751591c8315c82fa32156790a35f3943f349f1431afc745",
+  "samples": [
+    {
+      "key": "50ca734bfa1dfed2fe30b89c8c7c72394a2d49ca53912bb951a266450808ea15",
+      "id": "R1",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "955dafa2a0c8bc8532b7340032cb9c7c2336f29f4ffbc9cb7e68e3ec2a7f6e7a",
+        "basename": "rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl",
+        "size": 2962319,
+        "mtimeMs": 1780553263573
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:62",
+        "rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:45",
+        "rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:37",
+        "rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:16",
+        "rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:16"
+      ]
+    },
+    {
+      "key": "0398604ca28c7f117b56b0230c6ba758fffed389a70c7db6916dbb122f314d6e",
+      "id": "R2",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "b1db266f5534ec38b4b574e9e70d1e3387590aad550720b5f93d1f769d91ea57",
+        "basename": "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl",
+        "size": 1203794,
+        "mtimeMs": 1780668530502
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:334",
+        "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:188",
+        "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:106",
+        "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:228",
+        "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30",
+        "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30",
+        "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30",
+        "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:32",
+        "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:42"
+      ]
+    },
+    {
+      "key": "e227bcb2d6a0d9c563ec78707d67ec35f8076a8ec529ad3c3dfebbf5c03e0bc5",
+      "id": "R3",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "2b51180594cda84e6c87a73eca528285e686a0af81cbf5d15eb637c40a71f750",
+        "basename": "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl",
+        "size": 8418628,
+        "mtimeMs": 1781252899205
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:1284",
+        "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:1441",
+        "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:1284",
+        "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:1430",
+        "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:1299",
+        "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:1294",
+        "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:1294",
+        "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:1294",
+        "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:1315",
+        "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:1330"
+      ]
+    },
+    {
+      "key": "9c45e937838b3fb2bd432cda0bc0b323340847a2eb9ad538c82b6c21889bc215",
+      "id": "R4",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "ca4920ed66bd6f7e5933afeccf613bf3bd0906f982fafa2d3cb4aa3a91ddd4c6",
+        "basename": "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl",
+        "size": 2982320,
+        "mtimeMs": 1781278485646
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:143",
+        "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:115",
+        "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:109",
+        "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:93",
+        "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:75",
+        "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:76",
+        "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:77",
+        "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:78",
+        "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:78"
+      ]
+    },
+    {
+      "key": "dbe683850e897f334176336aa6f34c74fcc3ce59d5fb81f45632d271887c4836",
+      "id": "R5",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "76fca5c2a87e615bec948926b08f1e3b7fb3640770a66876b874ff8015250840",
+        "basename": "rollout-2026-06-15T17-30-34-019eca9e-3fcd-7b61-a5a0-4b04744db4b7.jsonl",
+        "size": 6009852,
+        "mtimeMs": 1781520667856
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-15T17-30-34-019eca9e-3fcd-7b61-a5a0-4b04744db4b7.jsonl:367",
+        "rollout-2026-06-15T17-30-34-019eca9e-3fcd-7b61-a5a0-4b04744db4b7.jsonl:379",
+        "rollout-2026-06-15T17-30-34-019eca9e-3fcd-7b61-a5a0-4b04744db4b7.jsonl:371",
+        "rollout-2026-06-15T17-30-34-019eca9e-3fcd-7b61-a5a0-4b04744db4b7.jsonl:384"
+      ]
+    },
+    {
+      "key": "d01cdddaa07ab5bc91bd23985c0613a4bb4f949e1b49a3978d5f96985f1fd4bf",
+      "id": "R6",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "7bf6c74383995ad9671ce6dba4ae24e5fe0bd61e99978eb5e6dd5041066484b6",
+        "basename": "rollout-2026-06-15T18-39-19-019ecadd-337c-76e1-8c80-73f1016ba518.jsonl",
+        "size": 229140,
+        "mtimeMs": 1781520209345
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-15T18-39-19-019ecadd-337c-76e1-8c80-73f1016ba518.jsonl:6",
+        "rollout-2026-06-15T18-39-19-019ecadd-337c-76e1-8c80-73f1016ba518.jsonl:119",
+        "rollout-2026-06-15T18-39-19-019ecadd-337c-76e1-8c80-73f1016ba518.jsonl:46",
+        "rollout-2026-06-15T18-39-19-019ecadd-337c-76e1-8c80-73f1016ba518.jsonl:53",
+        "rollout-2026-06-15T18-39-19-019ecadd-337c-76e1-8c80-73f1016ba518.jsonl:25",
+        "rollout-2026-06-15T18-39-19-019ecadd-337c-76e1-8c80-73f1016ba518.jsonl:119",
+        "rollout-2026-06-15T18-39-19-019ecadd-337c-76e1-8c80-73f1016ba518.jsonl:17",
+        "rollout-2026-06-15T18-39-19-019ecadd-337c-76e1-8c80-73f1016ba518.jsonl:17",
+        "rollout-2026-06-15T18-39-19-019ecadd-337c-76e1-8c80-73f1016ba518.jsonl:17"
+      ]
+    },
+    {
+      "key": "0d422ff39dfbf29831b352238c04f302e55934d042042a0c83933e5476026374",
+      "id": "R7",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "a43d28018735152f6982710d2dd5172d20f45c3d22fc79429891166eedc3d2fa",
+        "basename": "rollout-2026-06-15T19-10-05-019ecaf9-5b3e-7573-9647-6b360760b035.jsonl",
+        "size": 378171,
+        "mtimeMs": 1781522963930
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-15T19-10-05-019ecaf9-5b3e-7573-9647-6b360760b035.jsonl:83",
+        "rollout-2026-06-15T19-10-05-019ecaf9-5b3e-7573-9647-6b360760b035.jsonl:107",
+        "rollout-2026-06-15T19-10-05-019ecaf9-5b3e-7573-9647-6b360760b035.jsonl:83",
+        "rollout-2026-06-15T19-10-05-019ecaf9-5b3e-7573-9647-6b360760b035.jsonl:111",
+        "rollout-2026-06-15T19-10-05-019ecaf9-5b3e-7573-9647-6b360760b035.jsonl:98",
+        "rollout-2026-06-15T19-10-05-019ecaf9-5b3e-7573-9647-6b360760b035.jsonl:98",
+        "rollout-2026-06-15T19-10-05-019ecaf9-5b3e-7573-9647-6b360760b035.jsonl:98"
+      ]
+    },
+    {
+      "key": "b9df36531bb93d9ba1363ba7183d5423a54eae6383ddec80133dcb8df84e78a1",
+      "id": "R8",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "12584dc39686efdddd747dccb9d4fbd4a271d148281fe3b8c30400ae07341e66",
+        "basename": "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl",
+        "size": 340200,
+        "mtimeMs": 1781526928322
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:6",
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:96",
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:6",
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:70",
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:64",
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:80",
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:106",
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:24",
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:24",
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:24",
+        "rollout-2026-06-15T20-21-26-019ecb3a-b0bc-7fa0-8182-77243a634f6b.jsonl:26"
+      ]
+    },
+    {
+      "key": "329a34a429fdac0129e422b540c27bacfe499ef2e4fd64ecbc095ed54170cf41",
+      "id": "R9",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "cac6a8dafbc66270b8bb9002905ef4bf7ed538b7226c6a2b0bebbf2389b4db9d",
+        "basename": "rollout-2026-06-16T18-23-59-019ecff5-974c-7d72-a714-eaeb10f55d0b.jsonl",
+        "size": 603023,
+        "mtimeMs": 1781605526235
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-16T18-23-59-019ecff5-974c-7d72-a714-eaeb10f55d0b.jsonl:30",
+        "rollout-2026-06-16T18-23-59-019ecff5-974c-7d72-a714-eaeb10f55d0b.jsonl:30",
+        "rollout-2026-06-16T18-23-59-019ecff5-974c-7d72-a714-eaeb10f55d0b.jsonl:12",
+        "rollout-2026-06-16T18-23-59-019ecff5-974c-7d72-a714-eaeb10f55d0b.jsonl:12"
+      ]
+    },
+    {
+      "key": "5b7c44930334af40ed5aef13bcf98049c4488e0086098bf1eb8bc10c50daa6b7",
+      "id": "R10",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "9d3f09f9253f11682d7248370b1c661e9377b8a50f3ae04d4ccbd3b190363167",
+        "basename": "rollout-2026-06-19T00-55-53-019edba9-1a70-72f1-afb8-814eca5157da.jsonl",
+        "size": 422399,
+        "mtimeMs": 1781804460699
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-19T00-55-53-019edba9-1a70-72f1-afb8-814eca5157da.jsonl:143",
+        "rollout-2026-06-19T00-55-53-019edba9-1a70-72f1-afb8-814eca5157da.jsonl:147",
+        "rollout-2026-06-19T00-55-53-019edba9-1a70-72f1-afb8-814eca5157da.jsonl:147",
+        "rollout-2026-06-19T00-55-53-019edba9-1a70-72f1-afb8-814eca5157da.jsonl:147",
+        "rollout-2026-06-19T00-55-53-019edba9-1a70-72f1-afb8-814eca5157da.jsonl:147",
+        "rollout-2026-06-19T00-55-53-019edba9-1a70-72f1-afb8-814eca5157da.jsonl:147"
+      ]
+    },
+    {
+      "key": "a6ece467e11cbe60efd2f57e077d5bb8038e72f37c36fc64bb1c753b2011e5dc",
+      "id": "R11",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "fffebf2cadf869fea1d7c07c9342996690bc81e8503994eabf90197ee4b45a3d",
+        "basename": "rollout-2026-06-19T01-41-28-019edbd2-d554-7cb0-aa15-655331be0dec.jsonl",
+        "size": 462282,
+        "mtimeMs": 1781804505580
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-19T01-41-28-019edbd2-d554-7cb0-aa15-655331be0dec.jsonl:144",
+        "rollout-2026-06-19T01-41-28-019edbd2-d554-7cb0-aa15-655331be0dec.jsonl:148",
+        "rollout-2026-06-19T01-41-28-019edbd2-d554-7cb0-aa15-655331be0dec.jsonl:148",
+        "rollout-2026-06-19T01-41-28-019edbd2-d554-7cb0-aa15-655331be0dec.jsonl:148",
+        "rollout-2026-06-19T01-41-28-019edbd2-d554-7cb0-aa15-655331be0dec.jsonl:148",
+        "rollout-2026-06-19T01-41-28-019edbd2-d554-7cb0-aa15-655331be0dec.jsonl:148"
+      ]
+    },
+    {
+      "key": "11406e4b0a19762f378d64be7a2f21e7ba7ff3ace5703c13b9a6f20c95f26913",
+      "id": "R12",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "efdb689003ce3f2281b8976fef5e089d6c285bb4aa7c99d421d7e404dc579e81",
+        "basename": "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl",
+        "size": 273530,
+        "mtimeMs": 1781925885589
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl:6",
+        "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl:203",
+        "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl:32",
+        "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl:16",
+        "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl:203",
+        "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl:60",
+        "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl:60",
+        "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl:60",
+        "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl:58",
+        "rollout-2026-06-20T11-09-42-019ee301-5c40-7912-9dd0-9b2bf700eee9.jsonl:58"
+      ]
+    },
+    {
+      "key": "a1a876cab6b096617264daa2d7b6f70373dc5cd998c202a28c2f7bf463b24743",
+      "id": "R13",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "c828e6426da2d710862bf1e14f031c07d49c2778efa90cdc82db8ed3020b1af2",
+        "basename": "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl",
+        "size": 2277504,
+        "mtimeMs": 1781929337701
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:917",
+        "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:10",
+        "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:90",
+        "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:35",
+        "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:917",
+        "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:67",
+        "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:67",
+        "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:67",
+        "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:26",
+        "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:26"
+      ]
+    },
+    {
+      "key": "caf0a9454497306f4882fcd898cbbdf0e1401a732e7790667787562cdb43290c",
+      "id": "R14",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "d82e4049178fb5bb2f8bb3adc498532d26512377256906268c3a42af5a477105",
+        "basename": "rollout-2026-06-21T00-26-17-019ee5da-a7ac-78d3-b0ac-acc47f1b454b.jsonl",
+        "size": 2993045,
+        "mtimeMs": 1781977447500
+      },
+      "evidenceMessageIds": [
+        "msg_0e469b996f575171016a36c3ac5be48191a7653be2fbef1487",
+        "msg_04763efc1f44f3b2016a36c2441160819188dbc3364aa9fa5c",
+        "rollout-2026-06-21T00-26-17-019ee5da-a7ac-78d3-b0ac-acc47f1b454b.jsonl:287",
+        "rollout-2026-06-21T00-26-17-019ee5da-a7ac-78d3-b0ac-acc47f1b454b.jsonl:287",
+        "rollout-2026-06-21T00-26-17-019ee5da-a7ac-78d3-b0ac-acc47f1b454b.jsonl:287",
+        "fc_04763efc1f44f3b2016a36c24416488191b820fe5061e92dad",
+        "rollout-2026-06-21T00-26-17-019ee5da-a7ac-78d3-b0ac-acc47f1b454b.jsonl:298",
+        "rollout-2026-06-21T00-26-17-019ee5da-a7ac-78d3-b0ac-acc47f1b454b.jsonl:298"
+      ]
+    },
+    {
+      "key": "41848df02d8a6b639c6ae7f4d500c53da26622770fe88b1ea018abdf97d33f5e",
+      "id": "R15",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "4a8934ba2c73da51159caf08a1fb69bdcac5feb3eb0cebd7222591c1fac4e94b",
+        "basename": "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl",
+        "size": 2018712,
+        "mtimeMs": 1781978203032
+      },
+      "evidenceMessageIds": [
+        "msg_09fdf6fab62ce949016a36ceaeb1ac81918ca679aff463c3f1",
+        "msg_0a12859e5e4feb86016a36cdf99fa4819198a6f8466170d979",
+        "msg_0c30030517e26cb8016a36cb697fb08191b1a937cc13fafc5a",
+        "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:417",
+        "msg_0f28dcfc34894d81016a36ce86dfa4819184725d4a1961d768",
+        "msg_00fcb1ebcea8ddac016a36cef038c4819181020b89790d3afc",
+        "fc_09297b6beeed46c0016a36c8f444108191a8593ad8810e6c67",
+        "fc_09297b6beeed46c0016a36c8f444248191b144af387c66d877",
+        "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:371",
+        "fc_02a3ffe47430c8ce016a36cb39e504819192e81fd0a27b0fdc",
+        "fc_0d8ec556a36d6c91016a36ccad958c8191a7bf0246794e285b"
+      ]
+    },
+    {
+      "key": "28fcad06b362c7e65bf6ac0f00edd6c87542da0d4efd667f0362b0ec0501af54",
+      "id": "R16",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "cafafa403d3c2ceff6e59b490962e43c54c125b6890448f6b824d01826586729",
+        "basename": "rollout-2026-06-21T00-27-45-019ee5db-fee2-7ae0-82f4-571f12eafcb5.jsonl",
+        "size": 1640681,
+        "mtimeMs": 1781975406565
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-21T00-27-45-019ee5db-fee2-7ae0-82f4-571f12eafcb5.jsonl:211",
+        "msg_0f196952b1c4aa68016a36c9620e58819194b60f04f2efc247",
+        "msg_0fdf5fbff5255461016a36c8f88dd88191baf5865de1bebb4e",
+        "rollout-2026-06-21T00-27-45-019ee5db-fee2-7ae0-82f4-571f12eafcb5.jsonl:482",
+        "msg_0f196952b1c4aa68016a36c9620e58819194b60f04f2efc247",
+        "rollout-2026-06-21T00-27-45-019ee5db-fee2-7ae0-82f4-571f12eafcb5.jsonl:211",
+        "rollout-2026-06-21T00-27-45-019ee5db-fee2-7ae0-82f4-571f12eafcb5.jsonl:211",
+        "rollout-2026-06-21T00-27-45-019ee5db-fee2-7ae0-82f4-571f12eafcb5.jsonl:229",
+        "rollout-2026-06-21T00-27-45-019ee5db-fee2-7ae0-82f4-571f12eafcb5.jsonl:211",
+        "rollout-2026-06-21T00-27-45-019ee5db-fee2-7ae0-82f4-571f12eafcb5.jsonl:211"
+      ]
+    },
+    {
+      "key": "91cce282c45544185cbdab98cc081daaf12a064647b192c5e8d91523b0d1bcf0",
+      "id": "R17",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "1260c3600ccffec3f2be493207a79ff4e49d1006e63804d4af08a2a4d096c39c",
+        "basename": "rollout-2026-06-21T00-28-12-019ee5dc-6945-7591-82ec-f2557d8c9ca0.jsonl",
+        "size": 976918,
+        "mtimeMs": 1781974597304
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-21T00-28-12-019ee5dc-6945-7591-82ec-f2557d8c9ca0.jsonl:133",
+        "msg_0dd74cd3d8df4223016a36c3a2268481918212e231278cf628",
+        "rollout-2026-06-21T00-28-12-019ee5dc-6945-7591-82ec-f2557d8c9ca0.jsonl:152",
+        "rollout-2026-06-21T00-28-12-019ee5dc-6945-7591-82ec-f2557d8c9ca0.jsonl:133",
+        "rollout-2026-06-21T00-28-12-019ee5dc-6945-7591-82ec-f2557d8c9ca0.jsonl:133",
+        "rollout-2026-06-21T00-28-12-019ee5dc-6945-7591-82ec-f2557d8c9ca0.jsonl:133"
+      ]
+    },
+    {
+      "key": "b8d9e29692baf731b4cb2ffd39c833ee230bc4eeaf934da8d16dcf9ad0f4d730",
+      "id": "R18",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "0ebfa8ede92f46630c39eb5e538d1abbd972f09636b6a36ef8be01061ad24d8a",
+        "basename": "rollout-2026-06-21T00-30-07-019ee5de-283a-72e2-8940-5e72816b3534.jsonl",
+        "size": 697820,
+        "mtimeMs": 1781974747209
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-21T00-30-07-019ee5de-283a-72e2-8940-5e72816b3534.jsonl:156",
+        "msg_0bdcfc036eab9ce4016a36c6d3533081919adc4bce8c2ebdaa",
+        "rollout-2026-06-21T00-30-07-019ee5de-283a-72e2-8940-5e72816b3534.jsonl:156",
+        "msg_0fb26be2770fecf3016a36c4a049908191bc9bfe2b01bbf16c",
+        "msg_0bdcfc036eab9ce4016a36c6d3533081919adc4bce8c2ebdaa",
+        "rollout-2026-06-21T00-30-07-019ee5de-283a-72e2-8940-5e72816b3534.jsonl:180",
+        "rollout-2026-06-21T00-30-07-019ee5de-283a-72e2-8940-5e72816b3534.jsonl:180",
+        "rollout-2026-06-21T00-30-07-019ee5de-283a-72e2-8940-5e72816b3534.jsonl:180"
+      ]
+    },
+    {
+      "key": "84aa7c6ac6cca67d096e474153dbb410fdef4b875d91d7062392996e7eea8de3",
+      "id": "R19",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "351bcdf315f03336adb5aa854a844069c0838369464f49125b18a75251629299",
+        "basename": "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl",
+        "size": 2124154,
+        "mtimeMs": 1781976076827
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:249",
+        "msg_0d6298d22c72edfc016a36cc0a79f48191b09295866d9ef50a",
+        "msg_0a727cf1276c8726016a36c4218a8c819197b9251abd4ffcaf",
+        "msg_03598a3d846bf8e4016a36c51956348194bd5b40e1f26d2dde",
+        "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:339",
+        "msg_06a8b15deb67262a016a36ca1a71348191ac522d047909cacc",
+        "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:269",
+        "fc_082fe8bb4ec82a68016a36c43387ac81918fbcef212570ca24",
+        "fc_082fe8bb4ec82a68016a36c43387bc8191936856d279201963",
+        "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:249",
+        "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:249"
+      ]
+    },
+    {
+      "key": "9c0ceff05fc37fdf6269c9f3b72920fd4b7833a4965c927dff1ad07e7857f804",
+      "id": "R20",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "60148159c5c725d8cf94a63fa4cacbc72b415c9345a94a140107f2bbfffcbce7",
+        "basename": "rollout-2026-06-21T11-02-15-019ee820-e5e1-7b73-802b-8d7819c4d57e.jsonl",
+        "size": 418929,
+        "mtimeMs": 1782011354431
+      },
+      "evidenceMessageIds": [
+        "msg_07d08d0f31611a89016a37558f58e88191a0f87012fdaf1a0f",
+        "msg_0f93d44d1708257f016a3754c2ad2c81918822aa42931a5b0d",
+        "rollout-2026-06-21T11-02-15-019ee820-e5e1-7b73-802b-8d7819c4d57e.jsonl:70",
+        "msg_08fb04356a020664016a37557366f88191b651bec391c9c91f",
+        "rollout-2026-06-21T11-02-15-019ee820-e5e1-7b73-802b-8d7819c4d57e.jsonl:78",
+        "rollout-2026-06-21T11-02-15-019ee820-e5e1-7b73-802b-8d7819c4d57e.jsonl:78",
+        "rollout-2026-06-21T11-02-15-019ee820-e5e1-7b73-802b-8d7819c4d57e.jsonl:78",
+        "rollout-2026-06-21T11-02-15-019ee820-e5e1-7b73-802b-8d7819c4d57e.jsonl:105",
+        "rollout-2026-06-21T11-02-15-019ee820-e5e1-7b73-802b-8d7819c4d57e.jsonl:105"
+      ]
+    },
+    {
+      "key": "98ac7f4023d6f8aa2c56c17951bd825333c96caaa6298b711f6a349d4e5e962a",
+      "id": "R21",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "1fa2f1103c7938a05a11363578fe3d197630d0c8d3679b68ad65fcb28d612157",
+        "basename": "rollout-2026-06-21T16-52-46-019ee961-ce51-73c0-b282-dbda6d195904.jsonl",
+        "size": 112139,
+        "mtimeMs": 1782032003175
+      },
+      "evidenceMessageIds": [
+        "resp_6ed39bc0-68d1-41e3-a86c-aaddbe8fc694_msg",
+        "rollout-2026-06-21T16-52-46-019ee961-ce51-73c0-b282-dbda6d195904.jsonl:45",
+        "resp_6ed39bc0-68d1-41e3-a86c-aaddbe8fc694_msg",
+        "rollout-2026-06-21T16-52-46-019ee961-ce51-73c0-b282-dbda6d195904.jsonl:13",
+        "rollout-2026-06-21T16-52-46-019ee961-ce51-73c0-b282-dbda6d195904.jsonl:13",
+        "rollout-2026-06-21T16-52-46-019ee961-ce51-73c0-b282-dbda6d195904.jsonl:13",
+        "rollout-2026-06-21T16-52-46-019ee961-ce51-73c0-b282-dbda6d195904.jsonl:12",
+        "rollout-2026-06-21T16-52-46-019ee961-ce51-73c0-b282-dbda6d195904.jsonl:12"
+      ]
+    },
+    {
+      "key": "d283ec93006f728e0cb30f326156391164d9b3fca50c64f1ca513b147a32a8ae",
+      "id": "R22",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "2b70dc24f395c899284e2624c08cac1fa68f8698936d89df742e0d8a520c70b8",
+        "basename": "rollout-2026-06-21T23-48-25-019eeade-5758-7663-9455-022b7797a3bb.jsonl",
+        "size": 254185,
+        "mtimeMs": 1782057054053
+      },
+      "evidenceMessageIds": [
+        "resp_b8810caf-9bca-4c35-9e3d-5c004a1dc4bd_msg",
+        "resp_b8810caf-9bca-4c35-9e3d-5c004a1dc4bd_msg",
+        "rollout-2026-06-21T23-48-25-019eeade-5758-7663-9455-022b7797a3bb.jsonl:24",
+        "rollout-2026-06-21T23-48-25-019eeade-5758-7663-9455-022b7797a3bb.jsonl:14",
+        "rollout-2026-06-21T23-48-25-019eeade-5758-7663-9455-022b7797a3bb.jsonl:14",
+        "rollout-2026-06-21T23-48-25-019eeade-5758-7663-9455-022b7797a3bb.jsonl:14",
+        "rollout-2026-06-21T23-48-25-019eeade-5758-7663-9455-022b7797a3bb.jsonl:15",
+        "rollout-2026-06-21T23-48-25-019eeade-5758-7663-9455-022b7797a3bb.jsonl:15"
+      ]
+    },
+    {
+      "key": "250055ebdd7bfde153f5ca391f02c71e23beaed7987443fc290a855a52511a20",
+      "id": "R23",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "12f60ea1c28a605a193c38146994b7898d14764e8e4d67a8e90a65069baf78d0",
+        "basename": "rollout-2026-06-22T10-32-26-019eed2b-f377-7081-afd3-32f291e31111.jsonl",
+        "size": 1036097,
+        "mtimeMs": 1782097384224
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-22T10-32-26-019eed2b-f377-7081-afd3-32f291e31111.jsonl:470",
+        "resp_a536cefe-9625-4552-b507-cd40790632c8_msg",
+        "resp_eb10e8fe-c7eb-4529-904d-bcb6910f080b_msg",
+        "rollout-2026-06-22T10-32-26-019eed2b-f377-7081-afd3-32f291e31111.jsonl:481",
+        "rollout-2026-06-22T10-32-26-019eed2b-f377-7081-afd3-32f291e31111.jsonl:503",
+        "rollout-2026-06-22T10-32-26-019eed2b-f377-7081-afd3-32f291e31111.jsonl:503",
+        "rollout-2026-06-22T10-32-26-019eed2b-f377-7081-afd3-32f291e31111.jsonl:503",
+        "rollout-2026-06-22T10-32-26-019eed2b-f377-7081-afd3-32f291e31111.jsonl:476",
+        "rollout-2026-06-22T10-32-26-019eed2b-f377-7081-afd3-32f291e31111.jsonl:520"
+      ]
+    },
+    {
+      "key": "b38b47164dfa51edb7d87184550558911a5bf639d6af5700cda1666fe945dd49",
+      "id": "R24",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "5f751f2301052ec687ac2e062e6f714c9395a6a6c869d515305f34cbed7bde58",
+        "basename": "rollout-2026-06-22T11-07-56-019eed4c-73ed-7a83-b446-60082a7c7125.jsonl",
+        "size": 284539,
+        "mtimeMs": 1782098044095
+      },
+      "evidenceMessageIds": [
+        "resp_aa5d23cf-13a7-4d16-8c0c-20849728a1d7_msg",
+        "rollout-2026-06-22T11-07-56-019eed4c-73ed-7a83-b446-60082a7c7125.jsonl:55",
+        "resp_aa5d23cf-13a7-4d16-8c0c-20849728a1d7_msg",
+        "fc_call_00_8aUnmMFqHxLGoumK7zqn0968",
+        "rollout-2026-06-22T11-07-56-019eed4c-73ed-7a83-b446-60082a7c7125.jsonl:95",
+        "rollout-2026-06-22T11-07-56-019eed4c-73ed-7a83-b446-60082a7c7125.jsonl:95",
+        "fc_call_01_HzvgllfOWTT5U0KF9QCy7794"
+      ]
+    },
+    {
+      "key": "05e9c1331457536c86a9b89e22db84d7d98a9448bded8ec000762030aafb18f1",
+      "id": "R25",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "d50135d9328f9c32215f4cbfd553bdfbb7a15cd748f0fbca21a9eab08ad76a71",
+        "basename": "rollout-2026-06-22T14-00-44-019eedea-b75b-7783-a55b-83802bc6815c.jsonl",
+        "size": 905579,
+        "mtimeMs": 1782110505757
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-22T14-00-44-019eedea-b75b-7783-a55b-83802bc6815c.jsonl:122",
+        "resp_e1674024-5b4c-4168-9f8b-1ff465014c31_msg",
+        "rollout-2026-06-22T14-00-44-019eedea-b75b-7783-a55b-83802bc6815c.jsonl:159",
+        "rollout-2026-06-22T14-00-44-019eedea-b75b-7783-a55b-83802bc6815c.jsonl:145",
+        "rollout-2026-06-22T14-00-44-019eedea-b75b-7783-a55b-83802bc6815c.jsonl:145",
+        "rollout-2026-06-22T14-00-44-019eedea-b75b-7783-a55b-83802bc6815c.jsonl:145",
+        "rollout-2026-06-22T14-00-44-019eedea-b75b-7783-a55b-83802bc6815c.jsonl:428",
+        "rollout-2026-06-22T14-00-44-019eedea-b75b-7783-a55b-83802bc6815c.jsonl:428"
+      ]
+    },
+    {
+      "key": "68ed5f73bab52ecb77c4e657c0427687b0e8d589feeef3c7e7f45d24bfec161b",
+      "id": "R26",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "34c0f073ca3f839de5d5fe701ac166c5e7d3785d0606d732c10717c3f20d31c0",
+        "basename": "rollout-2026-06-22T14-54-59-019eee1c-549a-76a3-ae0e-5c8dc7fe26cc.jsonl",
+        "size": 3858834,
+        "mtimeMs": 1782111677540
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-22T14-54-59-019eee1c-549a-76a3-ae0e-5c8dc7fe26cc.jsonl:6",
+        "resp_7e09198b-6c78-41c8-9b04-3970e9f751ca_msg",
+        "rollout-2026-06-22T14-54-59-019eee1c-549a-76a3-ae0e-5c8dc7fe26cc.jsonl:257",
+        "rollout-2026-06-22T14-54-59-019eee1c-549a-76a3-ae0e-5c8dc7fe26cc.jsonl:18",
+        "rollout-2026-06-22T14-54-59-019eee1c-549a-76a3-ae0e-5c8dc7fe26cc.jsonl:25",
+        "rollout-2026-06-22T14-54-59-019eee1c-549a-76a3-ae0e-5c8dc7fe26cc.jsonl:25",
+        "rollout-2026-06-22T14-54-59-019eee1c-549a-76a3-ae0e-5c8dc7fe26cc.jsonl:50"
+      ]
+    },
+    {
+      "key": "955c185f879b0106aa36bfe3176c8f29e4974c8f749db7afe82c0b89a933a44e",
+      "id": "R27",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "e3deb8c7ababa1a664e7c356d671ab49e71a089a8946ef8a00f5a4873ee02b36",
+        "basename": "rollout-2026-06-23T00-50-12-019ef03d-43c7-7221-8828-31bdb95abfea.jsonl",
+        "size": 479552,
+        "mtimeMs": 1782148160788
+      },
+      "evidenceMessageIds": [
+        "msg_0209aa8772941d1f016a396b2a49608191815bd94e58268396",
+        "msg_01ee6adcdde986a8016a3968d3fcc8819183645854dda42d96",
+        "rollout-2026-06-23T00-50-12-019ef03d-43c7-7221-8828-31bdb95abfea.jsonl:22",
+        "rollout-2026-06-23T00-50-12-019ef03d-43c7-7221-8828-31bdb95abfea.jsonl:22",
+        "rollout-2026-06-23T00-50-12-019ef03d-43c7-7221-8828-31bdb95abfea.jsonl:22",
+        "rollout-2026-06-23T00-50-12-019ef03d-43c7-7221-8828-31bdb95abfea.jsonl:14",
+        "rollout-2026-06-23T00-50-12-019ef03d-43c7-7221-8828-31bdb95abfea.jsonl:14"
+      ]
+    },
+    {
+      "key": "1d5fe18e6eb45b949c5ce555e141c34103721e714c73d17aedbd62d932760ec6",
+      "id": "R28",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "713b734376f2806140641a91f5ee50f24727b7dfac42c5de0486d22a55730c54",
+        "basename": "rollout-2026-06-24T00-02-39-019ef538-1731-72c0-bd17-6a91d1938225.jsonl",
+        "size": 904650,
+        "mtimeMs": 1782231961828
+      },
+      "evidenceMessageIds": [
+        "msg_00bb4f11a22d2ccc016a3ab2a1ce34819186ba3b87091d7519",
+        "msg_01d632e993ef8c2b016a3ab2612d7481919a83320a6d28f7d0",
+        "msg_07d1d1993ec2a938016a3aaf28c0248191a86da9988c0831e6",
+        "rollout-2026-06-24T00-02-39-019ef538-1731-72c0-bd17-6a91d1938225.jsonl:48",
+        "rollout-2026-06-24T00-02-39-019ef538-1731-72c0-bd17-6a91d1938225.jsonl:30",
+        "rollout-2026-06-24T00-02-39-019ef538-1731-72c0-bd17-6a91d1938225.jsonl:30",
+        "rollout-2026-06-24T00-02-39-019ef538-1731-72c0-bd17-6a91d1938225.jsonl:30",
+        "rollout-2026-06-24T00-02-39-019ef538-1731-72c0-bd17-6a91d1938225.jsonl:37",
+        "rollout-2026-06-24T00-02-39-019ef538-1731-72c0-bd17-6a91d1938225.jsonl:37"
+      ]
+    },
+    {
+      "key": "663f1866d06fc7ae7dd149843174cd7c845aabca065923cda0e3ebbe00567523",
+      "id": "R29",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "b4f1c9f96eaf65a8cdfc7fbc7eabba7a1c4ab1232916d969e9e86fd87c747d45",
+        "basename": "rollout-2026-06-24T00-03-06-019ef538-823c-72a0-bee7-8424a125fd38.jsonl",
+        "size": 1226106,
+        "mtimeMs": 1782233312237
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T00-03-06-019ef538-823c-72a0-bee7-8424a125fd38.jsonl:6",
+        "msg_04b1cb821663a6d4016a3ab87768348191ba51e32825fce29b",
+        "rollout-2026-06-24T00-03-06-019ef538-823c-72a0-bee7-8424a125fd38.jsonl:44",
+        "msg_04b1cb821663a6d4016a3ab87768348191ba51e32825fce29b",
+        "fc_0da657a1530207e0016a3aae51f2708191b81212bedba1aa9d",
+        "fc_0da657a1530207e0016a3aae51f2748191923de28979d16a6c",
+        "fc_0da657a1530207e0016a3aae51f27c819184890c69f6cb72b4",
+        "rollout-2026-06-24T00-03-06-019ef538-823c-72a0-bee7-8424a125fd38.jsonl:19",
+        "rollout-2026-06-24T00-03-06-019ef538-823c-72a0-bee7-8424a125fd38.jsonl:21"
+      ]
+    },
+    {
+      "key": "5e2e3297937377f9de3a31f065844ce1867bc18682bcb58142ee5f72d5236fb7",
+      "id": "R30",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "1c349c24b1ca58c1e9344fec7ca01b37f5c21433e009831e75f2ebc8d4bc8125",
+        "basename": "rollout-2026-06-24T00-03-21-019ef538-bb8b-7562-80e2-b426b01082b6.jsonl",
+        "size": 998044,
+        "mtimeMs": 1782232100901
+      },
+      "evidenceMessageIds": [
+        "msg_00de7bbe3d9814d8016a3ab2dfcfe48191b25c125e5bbc8426",
+        "msg_01c41c938e0956d1016a3ab2eb7eb481918a0418e3efafebba",
+        "rollout-2026-06-24T00-03-21-019ef538-bb8b-7562-80e2-b426b01082b6.jsonl:244",
+        "msg_0a9405300e758aa9016a3ab304d6708191b5c47ef9eaf8f96d",
+        "fc_01309d3f5d2cf1c1016a3ab241b6648191ab6a4b8b64550f66",
+        "rollout-2026-06-24T00-03-21-019ef538-bb8b-7562-80e2-b426b01082b6.jsonl:207",
+        "rollout-2026-06-24T00-03-21-019ef538-bb8b-7562-80e2-b426b01082b6.jsonl:238",
+        "fc_00de7bbe3d9814d8016a3ab2dfd37c8191b08413acfcbf597d",
+        "rollout-2026-06-24T00-03-21-019ef538-bb8b-7562-80e2-b426b01082b6.jsonl:247"
+      ]
+    },
+    {
+      "key": "d64d869e5706b921af3f5b6ac8ab43bc715df4da9954e10abb56745ca8154aa8",
+      "id": "R31",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "87400a1e8dd7244b7ae267f9a7b84fbdc510fcd36fc0c72ffcc6c5adc3298e3b",
+        "basename": "rollout-2026-06-24T00-03-45-019ef539-1829-7300-8cb0-19376c65419b.jsonl",
+        "size": 1424298,
+        "mtimeMs": 1782232510342
+      },
+      "evidenceMessageIds": [
+        "msg_078c8af655bb0b55016a3ab2b845e081919b98a3631170dd7b",
+        "rollout-2026-06-24T00-03-45-019ef539-1829-7300-8cb0-19376c65419b.jsonl:62",
+        "msg_001bedb6a46d0524016a3ab29d4c0c8191a9f9b888ee05df08",
+        "fc_09163d9a49398443016a3aaeb94350819183c851a916890e10",
+        "fc_09163d9a49398443016a3aaeb9436c8191931a6ddde22becc9",
+        "rollout-2026-06-24T00-03-45-019ef539-1829-7300-8cb0-19376c65419b.jsonl:61",
+        "rollout-2026-06-24T00-03-45-019ef539-1829-7300-8cb0-19376c65419b.jsonl:61",
+        "rollout-2026-06-24T00-03-45-019ef539-1829-7300-8cb0-19376c65419b.jsonl:61"
+      ]
+    },
+    {
+      "key": "8aab60861809ebb718fe0db8ede3226b894260e38259fded5938ca52b4ffa788",
+      "id": "R32",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "b5d80bdfcdcf710bba34d67362dff5b05143504f616fe05fdec76f9fb7b6a7b6",
+        "basename": "rollout-2026-06-24T00-04-41-019ef539-f57d-7f91-9c85-8da827225cd5.jsonl",
+        "size": 1049103,
+        "mtimeMs": 1782232155281
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T00-04-41-019ef539-f57d-7f91-9c85-8da827225cd5.jsonl:6",
+        "msg_0a7d2554566c494b016a3ab3ea4c7c819185e94e58446ebde8",
+        "rollout-2026-06-24T00-04-41-019ef539-f57d-7f91-9c85-8da827225cd5.jsonl:6",
+        "msg_0518a8fd86d421eb016a3ab3525db88191a36794acebe5f8c1",
+        "rollout-2026-06-24T00-04-41-019ef539-f57d-7f91-9c85-8da827225cd5.jsonl:19",
+        "msg_0a7d2554566c494b016a3ab3ea4c7c819185e94e58446ebde8",
+        "rollout-2026-06-24T00-04-41-019ef539-f57d-7f91-9c85-8da827225cd5.jsonl:6",
+        "rollout-2026-06-24T00-04-41-019ef539-f57d-7f91-9c85-8da827225cd5.jsonl:6",
+        "rollout-2026-06-24T00-04-41-019ef539-f57d-7f91-9c85-8da827225cd5.jsonl:6",
+        "rollout-2026-06-24T00-04-41-019ef539-f57d-7f91-9c85-8da827225cd5.jsonl:16",
+        "rollout-2026-06-24T00-04-41-019ef539-f57d-7f91-9c85-8da827225cd5.jsonl:16"
+      ]
+    },
+    {
+      "key": "d100937541caeb2d1bc969885ce2f4cbe5560990230e3d1cdb2df733674f409d",
+      "id": "R33",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "5eadbd3513b6a15f0717b923799d932da9f13ae03f343c22ec48ccfa35379be2",
+        "basename": "rollout-2026-06-24T00-05-12-019ef53a-6b48-7b43-bf0d-a80b67c92b0f.jsonl",
+        "size": 729728,
+        "mtimeMs": 1782231907100
+      },
+      "evidenceMessageIds": [
+        "msg_08eff0db83552425016a3ab0d858408191984e14587b981406",
+        "msg_0792bd3df555d0ba016a3ab0fd14208191af49cf2b48883b34",
+        "rollout-2026-06-24T00-05-12-019ef53a-6b48-7b43-bf0d-a80b67c92b0f.jsonl:108",
+        "msg_06da627fb30146f4016a3ab148db748191be9155cf421246c0",
+        "msg_0c8fe03f3820c5fd016a3aaf82e1c4819180e7c3e6ab877218",
+        "rollout-2026-06-24T00-05-12-019ef53a-6b48-7b43-bf0d-a80b67c92b0f.jsonl:76",
+        "rollout-2026-06-24T00-05-12-019ef53a-6b48-7b43-bf0d-a80b67c92b0f.jsonl:83",
+        "fc_05febc4ddebbcd6b016a3ab0e8d7d081919a84450e44a594ab",
+        "rollout-2026-06-24T00-05-12-019ef53a-6b48-7b43-bf0d-a80b67c92b0f.jsonl:111"
+      ]
+    },
+    {
+      "key": "c7687509a7a2ad2f82d7106cd351f57e9b5b41865730bc3fabd22706218d1d52",
+      "id": "R34",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "2e0455f59bc70565ced8fe4060d8c0ae5d05359a9870acbade4916350b071636",
+        "basename": "rollout-2026-06-24T00-48-53-019ef562-6a11-7430-b1f4-c2ec68587fd6.jsonl",
+        "size": 1736258,
+        "mtimeMs": 1782233347953
+      },
+      "evidenceMessageIds": [
+        "msg_0d5baf2ed10e6ddf016a3a92524cdc8190b7118ac2b9fac398",
+        "msg_0549082c33dd40a3016a3a9042adac81958eb1f79093cf3a50",
+        "msg_015d116b6b677bca016a3a90bf716881908f5074ff2d6b3230",
+        "rollout-2026-06-24T00-48-53-019ef562-6a11-7430-b1f4-c2ec68587fd6.jsonl:35",
+        "rollout-2026-06-24T00-48-53-019ef562-6a11-7430-b1f4-c2ec68587fd6.jsonl:25",
+        "rollout-2026-06-24T00-48-53-019ef562-6a11-7430-b1f4-c2ec68587fd6.jsonl:25",
+        "rollout-2026-06-24T00-48-53-019ef562-6a11-7430-b1f4-c2ec68587fd6.jsonl:25",
+        "rollout-2026-06-24T00-48-53-019ef562-6a11-7430-b1f4-c2ec68587fd6.jsonl:26",
+        "rollout-2026-06-24T00-48-53-019ef562-6a11-7430-b1f4-c2ec68587fd6.jsonl:26"
+      ]
+    },
+    {
+      "key": "6c125a335bb8f910cfb4bbb4c2ef57376f5053d88c025cca749195010273afae",
+      "id": "R35",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "b29d26df1a6ec15b832b2eff1cd07345b642bf6281f368c113abb2df5036309b",
+        "basename": "rollout-2026-06-24T01-06-48-019ef572-c282-7db2-af10-bafc796f0f28.jsonl",
+        "size": 3960700,
+        "mtimeMs": 1782263145469
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T01-06-48-019ef572-c282-7db2-af10-bafc796f0f28.jsonl:1414",
+        "msg_0234204b154b9193016a3b2d6768f48191bac35045279b0108",
+        "msg_0234204b154b9193016a3b2d6768f48191bac35045279b0108",
+        "rollout-2026-06-24T01-06-48-019ef572-c282-7db2-af10-bafc796f0f28.jsonl:1417"
+      ]
+    },
+    {
+      "key": "1acbf23ef757f4c488541d29dc4e5cb9917c60177617945d03b240bbec070747",
+      "id": "R36",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "74f8e2a438fe88ed2c7f45d712b0bac550c7e4d444d10f6c40943478d01922b2",
+        "basename": "rollout-2026-06-24T08-59-37-019ef723-a4ba-7ad0-b58c-b939ac155d12.jsonl",
+        "size": 152134,
+        "mtimeMs": 1782262882917
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T08-59-37-019ef723-a4ba-7ad0-b58c-b939ac155d12.jsonl:6",
+        "msg_0f70bf09dfc2e813016a3b2c4f10108191b8bb7d90b4560130",
+        "rollout-2026-06-24T08-59-37-019ef723-a4ba-7ad0-b58c-b939ac155d12.jsonl:6",
+        "rollout-2026-06-24T08-59-37-019ef723-a4ba-7ad0-b58c-b939ac155d12.jsonl:24",
+        "msg_09c3287e4c3932d7016a3b2c2fd7748191b95d0fec45cfcf2d",
+        "rollout-2026-06-24T08-59-37-019ef723-a4ba-7ad0-b58c-b939ac155d12.jsonl:36",
+        "rollout-2026-06-24T08-59-37-019ef723-a4ba-7ad0-b58c-b939ac155d12.jsonl:36",
+        "rollout-2026-06-24T08-59-37-019ef723-a4ba-7ad0-b58c-b939ac155d12.jsonl:36",
+        "rollout-2026-06-24T08-59-37-019ef723-a4ba-7ad0-b58c-b939ac155d12.jsonl:35",
+        "rollout-2026-06-24T08-59-37-019ef723-a4ba-7ad0-b58c-b939ac155d12.jsonl:35"
+      ]
+    },
+    {
+      "key": "1e8d79673ba1bb71a5a5e021322fe7b0dda7b07bb5dba36fce9d3357e8c95682",
+      "id": "R37",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "cd298716822b4aebfc9d8610e795f83daf18b084550753b5f68d4776e8bf7036",
+        "basename": "rollout-2026-06-24T09-02-39-019ef726-65fa-72e1-86fc-b835950525ec.jsonl",
+        "size": 1629018,
+        "mtimeMs": 1782264807493
+      },
+      "evidenceMessageIds": [
+        "msg_00b34ec3a56d5b06016a3b33999f5c8191a23c064d0f37356f",
+        "msg_06f65650ddbb12b2016a3b308158f88191859f0b6af514e288",
+        "msg_04b6122f5a0118fe016a3b2fa5437c81918f2cd4a7eaddfda9",
+        "msg_05432eb8c1d0b7f2016a3b33870f608191807f7ad999786125",
+        "fc_04b6122f5a0118fe016a3b2fa5476481919fe59bde2903faba",
+        "fc_005ae78fe530a53b016a3b2fb0abe8819195fa7de0b6ae84dd",
+        "rollout-2026-06-24T09-02-39-019ef726-65fa-72e1-86fc-b835950525ec.jsonl:262",
+        "rollout-2026-06-24T09-02-39-019ef726-65fa-72e1-86fc-b835950525ec.jsonl:502",
+        "rollout-2026-06-24T09-02-39-019ef726-65fa-72e1-86fc-b835950525ec.jsonl:502"
+      ]
+    },
+    {
+      "key": "9f939611270fed7d3a08a2da82e683031be01a206a39a673c1ec594b37ac5313",
+      "id": "R38",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "0a59917b481c35d60d37a3cea2c3886a52a33f9c372387306ae7715a682b832c",
+        "basename": "rollout-2026-06-24T09-03-13-019ef727-02e9-78a2-b160-053c89ca735d.jsonl",
+        "size": 1650691,
+        "mtimeMs": 1782263773541
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T09-03-13-019ef727-02e9-78a2-b160-053c89ca735d.jsonl:6",
+        "msg_0fdb3f4ed0fba3eb016a3b2fda4db08190a5f8483a86816e05",
+        "rollout-2026-06-24T09-03-13-019ef727-02e9-78a2-b160-053c89ca735d.jsonl:6",
+        "msg_048c818197fc9cad016a3b2d9d069c81919752b2a17f9bcedc",
+        "rollout-2026-06-24T09-03-13-019ef727-02e9-78a2-b160-053c89ca735d.jsonl:90",
+        "rollout-2026-06-24T09-03-13-019ef727-02e9-78a2-b160-053c89ca735d.jsonl:6",
+        "rollout-2026-06-24T09-03-13-019ef727-02e9-78a2-b160-053c89ca735d.jsonl:6",
+        "rollout-2026-06-24T09-03-13-019ef727-02e9-78a2-b160-053c89ca735d.jsonl:33",
+        "rollout-2026-06-24T09-03-13-019ef727-02e9-78a2-b160-053c89ca735d.jsonl:33"
+      ]
+    },
+    {
+      "key": "0c5cf09a1bfbfd2d5a1144df46920a3792610c50a6deb3aeee9941922497ea82",
+      "id": "R39",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "ef743834d34840f522352745d0f1f37d35b4a953e22b48e7518895a7b65b6f5d",
+        "basename": "rollout-2026-06-24T09-03-39-019ef727-5b52-70f1-8d08-06e2b5e952d4.jsonl",
+        "size": 704170,
+        "mtimeMs": 1782263635411
+      },
+      "evidenceMessageIds": [
+        "msg_07a87ca0c938fdb7016a3b2d20e9308191b4f18be2b71aee22",
+        "msg_008e63f8e6497bc5016a3b2d721a10819191857b5c728a37b5",
+        "rollout-2026-06-24T09-03-39-019ef727-5b52-70f1-8d08-06e2b5e952d4.jsonl:39",
+        "msg_02112ee2febcfec1016a3b2d5aa71481918a81581460e7a9b0",
+        "msg_07a87ca0c938fdb7016a3b2d20e9308191b4f18be2b71aee22",
+        "msg_02e1226540f0fda9016a3b2d2f90a881918ce8f75686f855d5",
+        "msg_02e1226540f0fda9016a3b2d2f90a881918ce8f75686f855d5",
+        "rollout-2026-06-24T09-03-39-019ef727-5b52-70f1-8d08-06e2b5e952d4.jsonl:38",
+        "rollout-2026-06-24T09-03-39-019ef727-5b52-70f1-8d08-06e2b5e952d4.jsonl:38"
+      ]
+    },
+    {
+      "key": "c67fd47d3dac7a9d0fceb9a1313143a6ccb3e4db14091104d4bc72494fc59eae",
+      "id": "R40",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "6d3a64934061343dbc2406eaa52aef3946462a6ccc958f0504a85fdbbd9cad51",
+        "basename": "rollout-2026-06-24T09-04-03-019ef727-cf38-7332-97c4-72b14dc711c1.jsonl",
+        "size": 1828850,
+        "mtimeMs": 1782264335084
+      },
+      "evidenceMessageIds": [
+        "msg_0d6b1b0abe87a058016a3b304b885481918acb07e9d36eba00",
+        "msg_045cf576276f7921016a3b2ef81118819199d36f4e2bbf8bda",
+        "msg_02b13411bcb2bcf5016a3b2e30f1c0819188c17594d4f1b2b1",
+        "rollout-2026-06-24T09-04-03-019ef727-cf38-7332-97c4-72b14dc711c1.jsonl:90",
+        "msg_07c063b1f22d9cbc016a3b2f5f10e88191ac4b4b006f5b13fb",
+        "msg_0cfc1e8a7c375fa3016a3b304243608191a2697ed846dfed0b",
+        "fc_0998081095879413016a3b2dd984c08191b2f09aa2bfeb652a",
+        "fc_0998081095879413016a3b2dd984e88191ae104bbbc38c14dd",
+        "fc_0998081095879413016a3b2dd984e88191ae104bbbc38c14dd",
+        "rollout-2026-06-24T09-04-03-019ef727-cf38-7332-97c4-72b14dc711c1.jsonl:166",
+        "rollout-2026-06-24T09-04-03-019ef727-cf38-7332-97c4-72b14dc711c1.jsonl:172"
+      ]
+    },
+    {
+      "key": "c7d7e5a1a3b7188dc337ef6f1dac907016ab9c5399c2f97e0663eb6318a62e58",
+      "id": "R41",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "ea9b814cbd809ff202d9e3c8e338c088a9b717ea42a78f1bd23d4539d32bf9c4",
+        "basename": "rollout-2026-06-24T09-04-33-019ef728-2c3d-7fa3-8d28-6d7b8895e4ba.jsonl",
+        "size": 1804595,
+        "mtimeMs": 1782264843435
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T09-04-33-019ef728-2c3d-7fa3-8d28-6d7b8895e4ba.jsonl:6",
+        "msg_08cdd1298cedaca9016a3b3409bd988191b6893bfd7fd4f377",
+        "rollout-2026-06-24T09-04-33-019ef728-2c3d-7fa3-8d28-6d7b8895e4ba.jsonl:6",
+        "rollout-2026-06-24T09-04-33-019ef728-2c3d-7fa3-8d28-6d7b8895e4ba.jsonl:64",
+        "rollout-2026-06-24T09-04-33-019ef728-2c3d-7fa3-8d28-6d7b8895e4ba.jsonl:20",
+        "rollout-2026-06-24T09-04-33-019ef728-2c3d-7fa3-8d28-6d7b8895e4ba.jsonl:20",
+        "rollout-2026-06-24T09-04-33-019ef728-2c3d-7fa3-8d28-6d7b8895e4ba.jsonl:43",
+        "rollout-2026-06-24T09-04-33-019ef728-2c3d-7fa3-8d28-6d7b8895e4ba.jsonl:43"
+      ]
+    },
+    {
+      "key": "bfff46edf6efa544ae51dda423eb4d25d7d029d165d7e7d08c7a66007a93f6aa",
+      "id": "R42",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "6a5306e89d734330beb7bf3d36031f84008baa3a6f35effd51a890691c1be4cb",
+        "basename": "rollout-2026-06-24T09-04-49-019ef728-7e50-7c61-89de-ff7d0ce71527.jsonl",
+        "size": 709264,
+        "mtimeMs": 1782263793861
+      },
+      "evidenceMessageIds": [
+        "msg_0fb25de7f17d4549016a3b2e1b62bc8191806ae72d7a743154",
+        "msg_034fbfeefef24564016a3b2e2d7e5481918b6e72913bee144e",
+        "msg_0e48c3a5cbef2c43016a3b2e0713a88191ba5b47503e9d8f93",
+        "fc_0a126977aebdce10016a3b2dd5a02881918e1599d561b1edd6",
+        "fc_00f8898423b401f2016a3b2de69bfc8191b9772330aef78dc1",
+        "fc_00f8898423b401f2016a3b2de69c148191bdfc5adeb31185cc",
+        "rollout-2026-06-24T09-04-49-019ef728-7e50-7c61-89de-ff7d0ce71527.jsonl:123",
+        "rollout-2026-06-24T09-04-49-019ef728-7e50-7c61-89de-ff7d0ce71527.jsonl:123"
+      ]
+    },
+    {
+      "key": "05ee0941456c8634e29ada899e8dabcb81595206976ccbd6303bb83832abf40a",
+      "id": "R43",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "b906403da2d0eb3a659cbe7a31c1e1ac9fbef5d80c03ba0a842a5f90efebe5df",
+        "basename": "rollout-2026-06-24T09-55-39-019ef756-fc9f-7a93-9bbe-c2ff3dcdb587.jsonl",
+        "size": 1693329,
+        "mtimeMs": 1782272898921
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T09-55-39-019ef756-fc9f-7a93-9bbe-c2ff3dcdb587.jsonl:287",
+        "rollout-2026-06-24T09-55-39-019ef756-fc9f-7a93-9bbe-c2ff3dcdb587.jsonl:287",
+        "rollout-2026-06-24T09-55-39-019ef756-fc9f-7a93-9bbe-c2ff3dcdb587.jsonl:321",
+        "msg_06b6f9ecf3f8dd50016a3b4b40cac481918a320b78045850c3",
+        "msg_039f668a97ac907c016a3b4c49207481939240e6c5bab3c5de",
+        "rollout-2026-06-24T09-55-39-019ef756-fc9f-7a93-9bbe-c2ff3dcdb587.jsonl:287",
+        "rollout-2026-06-24T09-55-39-019ef756-fc9f-7a93-9bbe-c2ff3dcdb587.jsonl:296",
+        "rollout-2026-06-24T09-55-39-019ef756-fc9f-7a93-9bbe-c2ff3dcdb587.jsonl:296",
+        "rollout-2026-06-24T09-55-39-019ef756-fc9f-7a93-9bbe-c2ff3dcdb587.jsonl:311",
+        "rollout-2026-06-24T09-55-39-019ef756-fc9f-7a93-9bbe-c2ff3dcdb587.jsonl:311"
+      ]
+    },
+    {
+      "key": "7ef08a10dc734aab29022b78743b26201718f5f4cc3f2dc99d9059d75565831b",
+      "id": "R44",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "fabe0df2cfd11d883ca2a3831e1c6a7fcd7beb242f1f75ae08cc73777987fc82",
+        "basename": "rollout-2026-06-24T09-55-51-019ef757-2a0e-7e92-b74f-6f0b19962f4b.jsonl",
+        "size": 1320920,
+        "mtimeMs": 1782276215353
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T09-55-51-019ef757-2a0e-7e92-b74f-6f0b19962f4b.jsonl:146",
+        "msg_0d825f18638e30f6016a3b606cebfc8191838629c62333984e",
+        "rollout-2026-06-24T09-55-51-019ef757-2a0e-7e92-b74f-6f0b19962f4b.jsonl:146",
+        "msg_03da4e162bf03bbf016a3b5e6304148191a931de74a01a4e3a",
+        "msg_0d825f18638e30f6016a3b606cebfc8191838629c62333984e",
+        "rollout-2026-06-24T09-55-51-019ef757-2a0e-7e92-b74f-6f0b19962f4b.jsonl:146",
+        "rollout-2026-06-24T09-55-51-019ef757-2a0e-7e92-b74f-6f0b19962f4b.jsonl:146",
+        "fc_0f18501168320eae016a3b5c02a14081999826ca11b02e8084",
+        "rollout-2026-06-24T09-55-51-019ef757-2a0e-7e92-b74f-6f0b19962f4b.jsonl:155",
+        "rollout-2026-06-24T09-55-51-019ef757-2a0e-7e92-b74f-6f0b19962f4b.jsonl:155"
+      ]
+    },
+    {
+      "key": "1a070f4ce69de693992d4d56fde4d0f2428724647b0416c0fec17a21de744e94",
+      "id": "R45",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "e2c4986d185bc52955ed6b0d2c2d19f39110149046e70764ac1bec46d95a009f",
+        "basename": "rollout-2026-06-24T09-56-01-019ef757-6203-7f42-8dc8-990ac3a8752f.jsonl",
+        "size": 1927477,
+        "mtimeMs": 1782274917315
+      },
+      "evidenceMessageIds": [
+        "msg_0a647c98bc1954c0016a3b3da703088191aeff75844fd9a237",
+        "msg_0e08038ace515a57016a3b3dd77e4c819195396f5c60f1005b",
+        "msg_0aceca5fea5137e8016a3b3dc8a7988195a9d6726d8a3636ed",
+        "msg_002f38143ebf2300016a3b3e2bcaec819199aed0119f9ed5f4",
+        "rollout-2026-06-24T09-56-01-019ef757-6203-7f42-8dc8-990ac3a8752f.jsonl:248",
+        "rollout-2026-06-24T09-56-01-019ef757-6203-7f42-8dc8-990ac3a8752f.jsonl:263",
+        "rollout-2026-06-24T09-56-01-019ef757-6203-7f42-8dc8-990ac3a8752f.jsonl:270"
+      ]
+    },
+    {
+      "key": "06a944524010af567ef7e6f9c2ab51d8a1a291a1484b33b4d4640a7910a3a3cd",
+      "id": "R46",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "053a9f5695947e4d7df94d4d3451ac307393e28203e833801622f235fdd687d8",
+        "basename": "rollout-2026-06-24T09-56-17-019ef757-901a-7093-ac90-f3559f6f78ea.jsonl",
+        "size": 1675658,
+        "mtimeMs": 1782278629464
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T09-56-17-019ef757-901a-7093-ac90-f3559f6f78ea.jsonl:155",
+        "msg_0ecd65b108d1d681016a3b66fde7748191a21341ce5ab8a0ab",
+        "rollout-2026-06-24T09-56-17-019ef757-901a-7093-ac90-f3559f6f78ea.jsonl:155",
+        "msg_01671098e98cd262016a3b66c9369c8193803b8c73f8b5df00",
+        "fc_003c5313b5841bb5016a3b64f4d87881919857df444878a77a",
+        "fc_003c5313b5841bb5016a3b64f4d87881919857df444878a77a",
+        "fc_003c5313b5841bb5016a3b64f4d87881919857df444878a77a",
+        "rollout-2026-06-24T09-56-17-019ef757-901a-7093-ac90-f3559f6f78ea.jsonl:183",
+        "rollout-2026-06-24T09-56-17-019ef757-901a-7093-ac90-f3559f6f78ea.jsonl:183"
+      ]
+    },
+    {
+      "key": "591f3f1399fe89b5a2ee63b341a6bcdad1da96d596c9749346842826f9af7fa1",
+      "id": "R47",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "9c3f129ecd7f72585ab4e0b2373c657bb2254ed0d24079eac53a906346a5d461",
+        "basename": "rollout-2026-06-24T09-56-28-019ef757-bc27-77d3-9718-7cf851255808.jsonl",
+        "size": 1240706,
+        "mtimeMs": 1782276373840
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T09-56-28-019ef757-bc27-77d3-9718-7cf851255808.jsonl:134",
+        "msg_0338c42d250445de016a3b610450208191b12ad6c1ac9c883f",
+        "msg_0138168918e6c8b5016a3b5fe17fe48191a42db76c2979ae35",
+        "rollout-2026-06-24T09-56-28-019ef757-bc27-77d3-9718-7cf851255808.jsonl:180",
+        "msg_0338c42d250445de016a3b610450208191b12ad6c1ac9c883f",
+        "rollout-2026-06-24T09-56-28-019ef757-bc27-77d3-9718-7cf851255808.jsonl:134",
+        "rollout-2026-06-24T09-56-28-019ef757-bc27-77d3-9718-7cf851255808.jsonl:134",
+        "rollout-2026-06-24T09-56-28-019ef757-bc27-77d3-9718-7cf851255808.jsonl:134",
+        "rollout-2026-06-24T09-56-28-019ef757-bc27-77d3-9718-7cf851255808.jsonl:166",
+        "rollout-2026-06-24T09-56-28-019ef757-bc27-77d3-9718-7cf851255808.jsonl:168"
+      ]
+    },
+    {
+      "key": "d6cb72307f1f2edf3627bc0e382cf88e0251bc35a813a4f40426f852b43330fa",
+      "id": "R48",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "76ccf90473be5a4470b77e5de81d634241e91ef20095fb991349be24bc9d40b3",
+        "basename": "rollout-2026-06-24T09-56-36-019ef757-e0a3-7d33-b4b2-fec546d7564e.jsonl",
+        "size": 643117,
+        "mtimeMs": 1782271040280
+      },
+      "evidenceMessageIds": [
+        "msg_0b42b395432c66e5016a3b3c32a9048191a90ecb5423d6ac8b",
+        "msg_06c58e62e083d105016a3b3ad004fc8191b493728e8e5cd58d",
+        "fc_07c3aac6c52f7a8b016a3b3ab87fbc8191a0e6f713aa007d86",
+        "fc_07c3aac6c52f7a8b016a3b3ab87fbc8191a0e6f713aa007d86",
+        "fc_07c3aac6c52f7a8b016a3b3ab87fbc8191a0e6f713aa007d86",
+        "rollout-2026-06-24T09-56-36-019ef757-e0a3-7d33-b4b2-fec546d7564e.jsonl:16",
+        "rollout-2026-06-24T09-56-36-019ef757-e0a3-7d33-b4b2-fec546d7564e.jsonl:16"
+      ]
+    },
+    {
+      "key": "c54f1c70018d88b521e5b4634641602f0a95bfa103be600f393a9e4cb13de0df",
+      "id": "R49",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "b030cd35d930ec7884bf03924249ca3f4e495a1228c6209425a6df393d20723a",
+        "basename": "rollout-2026-06-24T11-10-48-019ef79b-bee5-78a0-adf3-0e384bc7f47e.jsonl",
+        "size": 200763,
+        "mtimeMs": 1782270780865
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T11-10-48-019ef79b-bee5-78a0-adf3-0e384bc7f47e.jsonl:6",
+        "msg_0c71d3bfd69905a6016a3b4b3cd3d08190a4100bc1b29a59d4",
+        "rollout-2026-06-24T11-10-48-019ef79b-bee5-78a0-adf3-0e384bc7f47e.jsonl:6",
+        "rollout-2026-06-24T11-10-48-019ef79b-bee5-78a0-adf3-0e384bc7f47e.jsonl:6",
+        "rollout-2026-06-24T11-10-48-019ef79b-bee5-78a0-adf3-0e384bc7f47e.jsonl:6",
+        "rollout-2026-06-24T11-10-48-019ef79b-bee5-78a0-adf3-0e384bc7f47e.jsonl:6",
+        "rollout-2026-06-24T11-10-48-019ef79b-bee5-78a0-adf3-0e384bc7f47e.jsonl:13",
+        "rollout-2026-06-24T11-10-48-019ef79b-bee5-78a0-adf3-0e384bc7f47e.jsonl:13"
+      ]
+    },
+    {
+      "key": "0c152e05ee7c41927e14a09cc6b3f28df6b6beb2d9cb714f7035498ffb7483e4",
+      "id": "R50",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "75a91c5228c88b7a952529f71634a43ad9cfd1527547281a18aad94d024e71a5",
+        "basename": "rollout-2026-06-24T12-58-36-019ef7fe-8004-7e52-8439-1571d0d5a6eb.jsonl",
+        "size": 1618732,
+        "mtimeMs": 1782279506620
+      },
+      "evidenceMessageIds": [
+        "msg_0ef8398f4bb9ed79016a3b6c9113588191b3c125676cceec32",
+        "msg_05a58837e15bdf80016a3b6c6296708195b9f977f8246d02d9",
+        "rollout-2026-06-24T12-58-36-019ef7fe-8004-7e52-8439-1571d0d5a6eb.jsonl:385",
+        "rollout-2026-06-24T12-58-36-019ef7fe-8004-7e52-8439-1571d0d5a6eb.jsonl:399",
+        "rollout-2026-06-24T12-58-36-019ef7fe-8004-7e52-8439-1571d0d5a6eb.jsonl:405"
+      ]
+    },
+    {
+      "key": "e35063c13afa3ec12c2658aa5f3583b13bca202c36b31a92cea0626f4c917010",
+      "id": "R51",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "4a1b95fffe716ea01a4bb1d5e11dc29170c1eb14f4e4c12d1e9ab60d0c7c5cbf",
+        "basename": "rollout-2026-06-24T13-24-03-019ef815-cb2a-7a32-8d4a-fa2013d2aa3e.jsonl",
+        "size": 1432611,
+        "mtimeMs": 1782282261554
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T13-24-03-019ef815-cb2a-7a32-8d4a-fa2013d2aa3e.jsonl:297",
+        "msg_0ea64e4387392e94016a3b74b51260819195f2a57ce51077b4",
+        "msg_0da6844e9f59bd8d016a3b722d39b081918be978676a858535",
+        "rollout-2026-06-24T13-24-03-019ef815-cb2a-7a32-8d4a-fa2013d2aa3e.jsonl:313",
+        "msg_0ea64e4387392e94016a3b74b51260819195f2a57ce51077b4",
+        "fc_0901cd85fc8e2fe6016a3b723ff9408191a927d76cbce01498",
+        "fc_0901cd85fc8e2fe6016a3b723ff9408191a927d76cbce01498",
+        "fc_0901cd85fc8e2fe6016a3b723ff9408191a927d76cbce01498",
+        "fc_032541aee2748cc1016a3b729affbc819ab4ae7a5cf1834426",
+        "fc_0e9348dcae4a9812016a3b72bd1f9481988d71050fc995da78"
+      ]
+    },
+    {
+      "key": "42a97541b5aece9e1f7f435cbbf1f5301dda4e42dd9eacab29bf03919f6c6a60",
+      "id": "R52",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "4c5c252296092167784b220dd17a48fc5747f33b4747aea03c20e47b377ab357",
+        "basename": "rollout-2026-06-24T14-23-03-019ef84b-bdf5-7f00-a4eb-64bd2145ad9a.jsonl",
+        "size": 1506314,
+        "mtimeMs": 1782284947558
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T14-23-03-019ef84b-bdf5-7f00-a4eb-64bd2145ad9a.jsonl:55",
+        "msg_0228bcf3650028f4016a3b825544ac8190b00d19558263edb8",
+        "msg_010a62a7c459bea1016a3b7e692ba4819196293c4738a34086",
+        "rollout-2026-06-24T14-23-03-019ef84b-bdf5-7f00-a4eb-64bd2145ad9a.jsonl:112",
+        "msg_0228bcf3650028f4016a3b825544ac8190b00d19558263edb8",
+        "rollout-2026-06-24T14-23-03-019ef84b-bdf5-7f00-a4eb-64bd2145ad9a.jsonl:55",
+        "rollout-2026-06-24T14-23-03-019ef84b-bdf5-7f00-a4eb-64bd2145ad9a.jsonl:55",
+        "rollout-2026-06-24T14-23-03-019ef84b-bdf5-7f00-a4eb-64bd2145ad9a.jsonl:55",
+        "rollout-2026-06-24T14-23-03-019ef84b-bdf5-7f00-a4eb-64bd2145ad9a.jsonl:55",
+        "rollout-2026-06-24T14-23-03-019ef84b-bdf5-7f00-a4eb-64bd2145ad9a.jsonl:55"
+      ]
+    },
+    {
+      "key": "39a6f15401604ae2a3c7d508540f5e0aaf95000fefafb67c17b6abe4bdbb8c9f",
+      "id": "R53",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "57918f7e9ce345f3488575a0c0eb2ee61158d636c04628c37fc2640075f30ada",
+        "basename": "rollout-2026-06-24T14-23-12-019ef84b-fe5b-7803-829e-553271afaf36.jsonl",
+        "size": 1824161,
+        "mtimeMs": 1782285743901
+      },
+      "evidenceMessageIds": [
+        "msg_0a92a161ef83e37e016a3b8413d01481919253a3599522d0fa",
+        "msg_0102fd484c5d791d016a3b84372e3c81978b8f0d8d4fddc1ac",
+        "fc_0790f9aacf1edb7d016a3b8285401081999109492e6a87fe16",
+        "fc_0790f9aacf1edb7d016a3b828540188199bbdd32dd52e59ff1",
+        "fc_0790f9aacf1edb7d016a3b828540288199ad4f21d52923aee1",
+        "rollout-2026-06-24T14-23-12-019ef84b-fe5b-7803-829e-553271afaf36.jsonl:480",
+        "rollout-2026-06-24T14-23-12-019ef84b-fe5b-7803-829e-553271afaf36.jsonl:482"
+      ]
+    },
+    {
+      "key": "2be2aae64051dbf230074a23d36eb43354fd5cd5381350e4e29fd1a83d17f900",
+      "id": "R54",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "f1560eeb54bdf37568749b6a46bfa798083f53d8b3693416441752e233a6d3ad",
+        "basename": "rollout-2026-06-24T14-29-21-019ef851-976c-7623-9a98-660c79828ade.jsonl",
+        "size": 1643724,
+        "mtimeMs": 1782285875293
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T14-29-21-019ef851-976c-7623-9a98-660c79828ade.jsonl:366",
+        "msg_0a30fe8ef9f9030c016a3b862337ac8193a3dcb187e68287ce",
+        "rollout-2026-06-24T14-29-21-019ef851-976c-7623-9a98-660c79828ade.jsonl:366",
+        "msg_0a30fe8ef9f9030c016a3b862337ac8193a3dcb187e68287ce",
+        "rollout-2026-06-24T14-29-21-019ef851-976c-7623-9a98-660c79828ade.jsonl:366",
+        "rollout-2026-06-24T14-29-21-019ef851-976c-7623-9a98-660c79828ade.jsonl:366",
+        "fc_08061f3c065235f7016a3b828190f08191b31d3fa38a048211",
+        "rollout-2026-06-24T14-29-21-019ef851-976c-7623-9a98-660c79828ade.jsonl:366",
+        "fc_044949bf14186949016a3b8413e300819199a3e403f682601c"
+      ]
+    },
+    {
+      "key": "f90db472065323820dcaad9c0c1f3a2933a66ecea36e9cb56cbd2cb95fc73c0a",
+      "id": "R55",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "2c7835d5ddbff0771687e3cc05d4fca5dccb28e3eb8d7c6645e36030415f7ea4",
+        "basename": "rollout-2026-06-24T14-29-50-019ef851-fb62-7263-abc5-38076f4b1017.jsonl",
+        "size": 3323765,
+        "mtimeMs": 1782288806308
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T14-29-50-019ef851-fb62-7263-abc5-38076f4b1017.jsonl:457",
+        "msg_0917772250132c28016a3b91995a688191ab35ec8133367d54",
+        "msg_0f7db4b9a7bc6e92016a3b87c350c08191a8316b9903502847",
+        "rollout-2026-06-24T14-29-50-019ef851-fb62-7263-abc5-38076f4b1017.jsonl:558",
+        "msg_0917772250132c28016a3b91995a688191ab35ec8133367d54",
+        "rollout-2026-06-24T14-29-50-019ef851-fb62-7263-abc5-38076f4b1017.jsonl:457",
+        "rollout-2026-06-24T14-29-50-019ef851-fb62-7263-abc5-38076f4b1017.jsonl:457",
+        "fc_027bcb61621a6cd2016a3b86e1b7c4819190fda4d9969317ba",
+        "rollout-2026-06-24T14-29-50-019ef851-fb62-7263-abc5-38076f4b1017.jsonl:457",
+        "fc_00a95758db4e278a016a3b865894248193b6429a43e2744f18"
+      ]
+    },
+    {
+      "key": "fd066de6c69b6bb756502f7cf035b3c4304a7263ce56deae6d8b3b58ec11815a",
+      "id": "R56",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "9581488249d2223f4d004b473be77f66805a525a787993b8dd1603638958fa36",
+        "basename": "rollout-2026-06-24T14-30-42-019ef852-d954-7342-b62c-8a7d4d4ac70e.jsonl",
+        "size": 1594099,
+        "mtimeMs": 1782290019202
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-24T14-30-42-019ef852-d954-7342-b62c-8a7d4d4ac70e.jsonl:411",
+        "rollout-2026-06-24T14-30-42-019ef852-d954-7342-b62c-8a7d4d4ac70e.jsonl:411",
+        "rollout-2026-06-24T14-30-42-019ef852-d954-7342-b62c-8a7d4d4ac70e.jsonl:411",
+        "rollout-2026-06-24T14-30-42-019ef852-d954-7342-b62c-8a7d4d4ac70e.jsonl:411",
+        "rollout-2026-06-24T14-30-42-019ef852-d954-7342-b62c-8a7d4d4ac70e.jsonl:411",
+        "rollout-2026-06-24T14-30-42-019ef852-d954-7342-b62c-8a7d4d4ac70e.jsonl:411"
+      ]
+    },
+    {
+      "key": "82bed3a83dcd248b2cff31a487a52b51336e1a6b39c5c8406de7a2308fdcd4af",
+      "id": "R57",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "68a94d45048616e582029bfba592cdbd491c636000e148e88587f638a573db7d",
+        "basename": "rollout-2026-06-26T01-28-11-019effd3-331f-7022-89fc-0a85121094c3.jsonl",
+        "size": 1070512,
+        "mtimeMs": 1782411736535
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T01-28-11-019effd3-331f-7022-89fc-0a85121094c3.jsonl:285",
+        "msg_0637846c0bef9c27016a3d70ec8b6c819191dd59b6d183a8bc",
+        "rollout-2026-06-26T01-28-11-019effd3-331f-7022-89fc-0a85121094c3.jsonl:285",
+        "msg_00b3dd599aa265df016a3d6b6753488191890f9547e5dce137",
+        "msg_0955cf6e508dc02b016a3d6d7c26f481919605dc6174c02a55",
+        "msg_0637846c0bef9c27016a3d70ec8b6c819191dd59b6d183a8bc",
+        "rollout-2026-06-26T01-28-11-019effd3-331f-7022-89fc-0a85121094c3.jsonl:285",
+        "rollout-2026-06-26T01-28-11-019effd3-331f-7022-89fc-0a85121094c3.jsonl:285",
+        "rollout-2026-06-26T01-28-11-019effd3-331f-7022-89fc-0a85121094c3.jsonl:285",
+        "rollout-2026-06-26T01-28-11-019effd3-331f-7022-89fc-0a85121094c3.jsonl:362",
+        "fc_09a82222da78f9f4016a3d6e7017e08191bcedaad806cbd7c7"
+      ]
+    },
+    {
+      "key": "cc03e1d55429f3f6380ffecff815e3594c02bb9fdfabea36a3ad4da927d2fc69",
+      "id": "R58",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "1f60a4e6c9d080545d4c14d45ec98e76758c1d07a49f984493e65fb62752c37f",
+        "basename": "rollout-2026-06-26T01-28-16-019effd3-4720-7522-9fc7-3ded76b7f56d.jsonl",
+        "size": 1184760,
+        "mtimeMs": 1782430174615
+      },
+      "evidenceMessageIds": [
+        "msg_017218fef8b4d63d016a3d68e9f7348191a58ee0cad7e9a52e",
+        "rollout-2026-06-26T01-28-16-019effd3-4720-7522-9fc7-3ded76b7f56d.jsonl:182",
+        "msg_0b4a390528c5a4b4016a3d68d5f414819185f1348c11c9f12e",
+        "rollout-2026-06-26T01-28-16-019effd3-4720-7522-9fc7-3ded76b7f56d.jsonl:185",
+        "fc_032fe6f3dec556fd016a3d6898f9b48191876a752380c916a9",
+        "rollout-2026-06-26T01-28-16-019effd3-4720-7522-9fc7-3ded76b7f56d.jsonl:192",
+        "rollout-2026-06-26T01-28-16-019effd3-4720-7522-9fc7-3ded76b7f56d.jsonl:185",
+        "rollout-2026-06-26T01-28-16-019effd3-4720-7522-9fc7-3ded76b7f56d.jsonl:191"
+      ]
+    },
+    {
+      "key": "948ab69ba2d17bfb412c810694222365ba5f6e1758ff39af6aeab1c742ddf515",
+      "id": "R59",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "2e46cd1189f7209adfe27a4c2e4686cfb97f1d7d9824a2152eaf8655cce6f3d7",
+        "basename": "rollout-2026-06-26T01-28-22-019effd3-5bbb-7af1-94d4-949ab7be1124.jsonl",
+        "size": 2111101,
+        "mtimeMs": 1782430183894
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T01-28-22-019effd3-5bbb-7af1-94d4-949ab7be1124.jsonl:949",
+        "msg_067c95f04f6ea5e3016a3db724d62881919521233dba799b62",
+        "rollout-2026-06-26T01-28-22-019effd3-5bbb-7af1-94d4-949ab7be1124.jsonl:949",
+        "rollout-2026-06-26T01-28-22-019effd3-5bbb-7af1-94d4-949ab7be1124.jsonl:949",
+        "rollout-2026-06-26T01-28-22-019effd3-5bbb-7af1-94d4-949ab7be1124.jsonl:949",
+        "fc_0da4194818141b6e016a3db71b8aa48191add3326b8706225d",
+        "rollout-2026-06-26T01-28-22-019effd3-5bbb-7af1-94d4-949ab7be1124.jsonl:957"
+      ]
+    },
+    {
+      "key": "35dc0b67225d4a9891912f5fc0fcef7810d7a41ea86979e00960d32f0b6ab287",
+      "id": "R60",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "b00e52f7c322bdd3057bd85a1acc06bb28ea27638d95beb0f255c4ea2c4404e1",
+        "basename": "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl",
+        "size": 2244937,
+        "mtimeMs": 1782432529492
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:533",
+        "msg_07e9e7b120db1266016a3dc306827c8191b8167d8c35bbf19b",
+        "msg_0e4bdce51a863a45016a3dba7bd91481918fca6019d75a548f",
+        "msg_0529dc9a1bb8c0a4016a3dc094165c8191a7b6e8dcc63b65f8",
+        "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:554",
+        "msg_07e9e7b120db1266016a3dc306827c8191b8167d8c35bbf19b",
+        "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:533",
+        "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:533",
+        "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:533",
+        "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:543",
+        "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:543"
+      ]
+    },
+    {
+      "key": "af7621b5a8185bda361a09e5b983635089223bdcb7ee7f8899e1a7c01125f019",
+      "id": "R61",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "8b52c94808bd495d9aa7d3995fb979bb69881ec4afa70e6e7abb7be5b3cb563d",
+        "basename": "rollout-2026-06-26T12-19-15-019f0227-442e-79c2-b6e9-8744375296ce.jsonl",
+        "size": 979449,
+        "mtimeMs": 1782450356964
+      },
+      "evidenceMessageIds": [
+        "msg_0e04f58316b789af016a3e05b6e89481919f7ab8a08a1063c4",
+        "msg_04a144e67e46ee5d016a3e04f62ae48191b0542fe3154e09b3",
+        "rollout-2026-06-26T12-19-15-019f0227-442e-79c2-b6e9-8744375296ce.jsonl:284",
+        "msg_063582dc2a07e786016a3e054d118c8191913db1d6bc3544a0",
+        "msg_01daad382b589d3a016a3e05cf9c8081919dd5157feb6196ab",
+        "rollout-2026-06-26T12-19-15-019f0227-442e-79c2-b6e9-8744375296ce.jsonl:291",
+        "fc_024d1e140fe53296016a3e05091a5c81919c219a279af77c2e",
+        "rollout-2026-06-26T12-19-15-019f0227-442e-79c2-b6e9-8744375296ce.jsonl:303",
+        "fc_0cb3c127a1de9c6f016a3e04dde6d88198a05d6e725a872d5f",
+        "fc_0cb3c127a1de9c6f016a3e04dde6d88198a05d6e725a872d5f"
+      ]
+    },
+    {
+      "key": "422bd7a1353f6553073e01c877b4d84f55cdc82c6ef2ed9d44b87aecf5da9b83",
+      "id": "R62",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "c8d1e7712868747945dd7713b70ea04c71457764123c3f55c9df4db5f4eefc41",
+        "basename": "rollout-2026-06-26T13-06-08-019f0252-30f3-79b0-ac6c-eea971ac408e.jsonl",
+        "size": 733514,
+        "mtimeMs": 1782452222748
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T13-06-08-019f0252-30f3-79b0-ac6c-eea971ac408e.jsonl:6",
+        "msg_047b53d3017b2904016a3e0fed3a5c819190851c2c61929b18",
+        "rollout-2026-06-26T13-06-08-019f0252-30f3-79b0-ac6c-eea971ac408e.jsonl:6",
+        "rollout-2026-06-26T13-06-08-019f0252-30f3-79b0-ac6c-eea971ac408e.jsonl:19",
+        "msg_047b53d3017b2904016a3e0fed3a5c819190851c2c61929b18",
+        "rollout-2026-06-26T13-06-08-019f0252-30f3-79b0-ac6c-eea971ac408e.jsonl:19",
+        "fc_0aa122f7e1f8a4af016a3e096c04a88190aa88b96755506c49",
+        "fc_0aa122f7e1f8a4af016a3e096c04b481908734e6e1a16eccfc",
+        "rollout-2026-06-26T13-06-08-019f0252-30f3-79b0-ac6c-eea971ac408e.jsonl:6",
+        "rollout-2026-06-26T13-06-08-019f0252-30f3-79b0-ac6c-eea971ac408e.jsonl:21"
+      ]
+    },
+    {
+      "key": "00946ff8d80e2bbadd8e9e7cb477534a6fe051feee932f750c99ed817ef14f99",
+      "id": "R63",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "37bfd0e2a1b139b593484ab94b15ad7da3893cb244bfa3a70085a12a367488fc",
+        "basename": "rollout-2026-06-26T13-06-19-019f0252-5a1d-7100-9016-49ecb6c3e75b.jsonl",
+        "size": 782745,
+        "mtimeMs": 1782451469083
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T13-06-19-019f0252-5a1d-7100-9016-49ecb6c3e75b.jsonl:6",
+        "msg_0f8a0133f2fdcb0b016a3e0cfbf4d88191a3ac65dbbb8960f0",
+        "rollout-2026-06-26T13-06-19-019f0252-5a1d-7100-9016-49ecb6c3e75b.jsonl:6",
+        "msg_0fb32bd01838bfec016a3e093cb1b08191b73a71dd5e57af96",
+        "rollout-2026-06-26T13-06-19-019f0252-5a1d-7100-9016-49ecb6c3e75b.jsonl:16",
+        "msg_0f8a0133f2fdcb0b016a3e0cfbf4d88191a3ac65dbbb8960f0",
+        "rollout-2026-06-26T13-06-19-019f0252-5a1d-7100-9016-49ecb6c3e75b.jsonl:16",
+        "rollout-2026-06-26T13-06-19-019f0252-5a1d-7100-9016-49ecb6c3e75b.jsonl:18",
+        "rollout-2026-06-26T13-06-19-019f0252-5a1d-7100-9016-49ecb6c3e75b.jsonl:18",
+        "rollout-2026-06-26T13-06-19-019f0252-5a1d-7100-9016-49ecb6c3e75b.jsonl:6",
+        "fc_04f36bfe8ebb3b2f016a3e0929a7248191ae1c55e96937605a"
+      ]
+    },
+    {
+      "key": "364eed6e4855fcb80a517d9e65c0f23240b31b25a84448930fe4c8ded9c590e7",
+      "id": "R64",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "784fe010467b624e9c2bebc354d3d3495f8fc4f2fff26f92b7826601f808c1cb",
+        "basename": "rollout-2026-06-26T13-06-44-019f0252-be49-70c3-8901-e795420ea91e.jsonl",
+        "size": 573085,
+        "mtimeMs": 1782451540359
+      },
+      "evidenceMessageIds": [
+        "msg_00f8b40c2a3b24e7016a3e098c70908191adcfe5712401892d",
+        "msg_0e5739bbd1656b72016a3e090fa4c48191acfca6f6bef39000",
+        "msg_05b8935f945de426016a3e093a95308191aab1337810df1c45",
+        "rollout-2026-06-26T13-06-44-019f0252-be49-70c3-8901-e795420ea91e.jsonl:23",
+        "rollout-2026-06-26T13-06-44-019f0252-be49-70c3-8901-e795420ea91e.jsonl:35",
+        "msg_0049a496033963f8016a3e097c7d8081918878f302a71f6a07",
+        "rollout-2026-06-26T13-06-44-019f0252-be49-70c3-8901-e795420ea91e.jsonl:23",
+        "fc_0e5739bbd1656b72016a3e090fa8e08191a281ba9e8426a522",
+        "rollout-2026-06-26T13-06-44-019f0252-be49-70c3-8901-e795420ea91e.jsonl:34",
+        "fc_0e5739bbd1656b72016a3e090fa8e88191896cd5b394891c69",
+        "rollout-2026-06-26T13-06-44-019f0252-be49-70c3-8901-e795420ea91e.jsonl:34"
+      ]
+    },
+    {
+      "key": "639a17db144a942068ab65b4361d58566a216037eed73df78a9cc6cb07035a62",
+      "id": "R65",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "96700996d96710bac00cca963f5fb74fdca387284b72846ef533176c17455b0c",
+        "basename": "rollout-2026-06-26T13-37-40-019f026f-0d90-7072-b4ee-f4da6440452e.jsonl",
+        "size": 806698,
+        "mtimeMs": 1782453640713
+      },
+      "evidenceMessageIds": [
+        "msg_0560cd90144f40ff016a3e1482a9ac819090160bed33a42ae1",
+        "msg_086ddf4b5f1425bc016a3e10afad248190b388069c4a4baf45",
+        "rollout-2026-06-26T13-37-40-019f026f-0d90-7072-b4ee-f4da6440452e.jsonl:27",
+        "msg_03668d5a75be961e016a3e121b48dc81949b7712849525a716",
+        "fc_000783ef4c331bb0016a3e1077bdc48195a983b80db5794861",
+        "fc_000783ef4c331bb0016a3e1077bdc48195a983b80db5794861",
+        "fc_000783ef4c331bb0016a3e1077bdc48195a983b80db5794861",
+        "fc_03ce4e8229c5051c016a3e1068cab8819396bd55831d5b4718",
+        "rollout-2026-06-26T13-37-40-019f026f-0d90-7072-b4ee-f4da6440452e.jsonl:64"
+      ]
+    },
+    {
+      "key": "4e439be507eb6e37f4fa52aba659e613efca1115f35df3257b7babe2d13fd826",
+      "id": "R66",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "d9fcd59a06c883fca12f063571c19b2cd18aa71ce27accdc81160f6eafc7f4d6",
+        "basename": "rollout-2026-06-26T14-00-55-019f0284-57cb-7541-b442-81430700c82f.jsonl",
+        "size": 1048869,
+        "mtimeMs": 1782456489391
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T14-00-55-019f0284-57cb-7541-b442-81430700c82f.jsonl:283",
+        "msg_0ca36a32fe052bbd016a3e2092ef348191bfad53c47d1d575d",
+        "msg_0ca36a32fe052bbd016a3e2092ef348191bfad53c47d1d575d",
+        "rollout-2026-06-26T14-00-55-019f0284-57cb-7541-b442-81430700c82f.jsonl:296",
+        "msg_0ca36a32fe052bbd016a3e2092ef348191bfad53c47d1d575d",
+        "rollout-2026-06-26T14-00-55-019f0284-57cb-7541-b442-81430700c82f.jsonl:299",
+        "rollout-2026-06-26T14-00-55-019f0284-57cb-7541-b442-81430700c82f.jsonl:299",
+        "rollout-2026-06-26T14-00-55-019f0284-57cb-7541-b442-81430700c82f.jsonl:299",
+        "fc_03019b4ac01e2a25016a3e1f6284c8819bb96e2b17f3c32ea5"
+      ]
+    },
+    {
+      "key": "1b0cdc44f0666d7f1513cdd2c76fc5c2769168e0a0eec376077a294523423d9a",
+      "id": "R67",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "b755051c1279957b5a715ff8562668a482b721fb211c71404b9e17d74f4541ab",
+        "basename": "rollout-2026-06-26T16-00-51-019f02f2-2611-71e2-a8c9-e4b3beae7a64.jsonl",
+        "size": 728098,
+        "mtimeMs": 1782462800397
+      },
+      "evidenceMessageIds": [
+        "msg_072f676de004daff016a3e3276144881909a7dc2c29d891234",
+        "msg_0c16f06071061566016a3e32ac11d88191b4aad0a9eb502c4d",
+        "rollout-2026-06-26T16-00-51-019f02f2-2611-71e2-a8c9-e4b3beae7a64.jsonl:20",
+        "rollout-2026-06-26T16-00-51-019f02f2-2611-71e2-a8c9-e4b3beae7a64.jsonl:40",
+        "msg_05a5d48469a9bed0016a3e32dc5384819180a552cc6ffb7c74",
+        "rollout-2026-06-26T16-00-51-019f02f2-2611-71e2-a8c9-e4b3beae7a64.jsonl:20",
+        "rollout-2026-06-26T16-00-51-019f02f2-2611-71e2-a8c9-e4b3beae7a64.jsonl:32",
+        "rollout-2026-06-26T16-00-51-019f02f2-2611-71e2-a8c9-e4b3beae7a64.jsonl:32",
+        "rollout-2026-06-26T16-00-51-019f02f2-2611-71e2-a8c9-e4b3beae7a64.jsonl:33",
+        "rollout-2026-06-26T16-00-51-019f02f2-2611-71e2-a8c9-e4b3beae7a64.jsonl:33"
+      ]
+    },
+    {
+      "key": "c2069cc01f1ca3cf3bb9120917e791802103137f5af6ac9559ba58a5d42e7cad",
+      "id": "R68",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "e0cf70bafbd7fe89d590dfb99968c90cec6a0ef6c4ff1d2962cf50d282491547",
+        "basename": "rollout-2026-06-26T16-26-33-019f0309-ac72-76b0-8774-2c0a70487188.jsonl",
+        "size": 936515,
+        "mtimeMs": 1782463797677
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T16-26-33-019f0309-ac72-76b0-8774-2c0a70487188.jsonl:177",
+        "msg_0d9432eff80fd155016a3e3ccd3370819189cb73298cd37392",
+        "msg_0d9432eff80fd155016a3e3ccd3370819189cb73298cd37392",
+        "rollout-2026-06-26T16-26-33-019f0309-ac72-76b0-8774-2c0a70487188.jsonl:180",
+        "rollout-2026-06-26T16-26-33-019f0309-ac72-76b0-8774-2c0a70487188.jsonl:180",
+        "rollout-2026-06-26T16-26-33-019f0309-ac72-76b0-8774-2c0a70487188.jsonl:180",
+        "rollout-2026-06-26T16-26-33-019f0309-ac72-76b0-8774-2c0a70487188.jsonl:180",
+        "rollout-2026-06-26T16-26-33-019f0309-ac72-76b0-8774-2c0a70487188.jsonl:180"
+      ]
+    },
+    {
+      "key": "8a90d8f7b7dcaf4dd5a9d4130b0c1c3e176f718a558a4f20d28f34870ae2d9b2",
+      "id": "R69",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "5d689a57255756f06028640fb2c89792dd22cc210fcaf487163f94b558fe5987",
+        "basename": "rollout-2026-06-26T16-51-09-019f0320-3223-7b60-a9c6-14f095d5174b.jsonl",
+        "size": 793686,
+        "mtimeMs": 1782465207799
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T16-51-09-019f0320-3223-7b60-a9c6-14f095d5174b.jsonl:6",
+        "msg_0c6b2c035edded66016a3e42a147048194b6bef476159ff7cf",
+        "rollout-2026-06-26T16-51-09-019f0320-3223-7b60-a9c6-14f095d5174b.jsonl:6",
+        "msg_07c2a32bb962f0e9016a3e3e4ffd2c81919137df91df876724",
+        "rollout-2026-06-26T16-51-09-019f0320-3223-7b60-a9c6-14f095d5174b.jsonl:14",
+        "msg_0c6b2c035edded66016a3e42a147048194b6bef476159ff7cf",
+        "rollout-2026-06-26T16-51-09-019f0320-3223-7b60-a9c6-14f095d5174b.jsonl:6",
+        "rollout-2026-06-26T16-51-09-019f0320-3223-7b60-a9c6-14f095d5174b.jsonl:6",
+        "rollout-2026-06-26T16-51-09-019f0320-3223-7b60-a9c6-14f095d5174b.jsonl:6",
+        "rollout-2026-06-26T16-51-09-019f0320-3223-7b60-a9c6-14f095d5174b.jsonl:6",
+        "rollout-2026-06-26T16-51-09-019f0320-3223-7b60-a9c6-14f095d5174b.jsonl:6"
+      ]
+    },
+    {
+      "key": "c312af4d71d4e5faa8298999371d0aef677a5471da2f395b848c2e381bc010dd",
+      "id": "R70",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "2f69af9c3d74a8caf9a46d3a4217016db1a35c210e0d598a5368472368dc41d1",
+        "basename": "rollout-2026-06-26T17-13-45-019f0334-e13e-7af1-982f-8f45e7db2d4e.jsonl",
+        "size": 610766,
+        "mtimeMs": 1782466251802
+      },
+      "evidenceMessageIds": [
+        "msg_0cae6f39a31e8679016a3e45a2c11881919a00ac1cdad2bbdc",
+        "rollout-2026-06-26T17-13-45-019f0334-e13e-7af1-982f-8f45e7db2d4e.jsonl:94",
+        "rollout-2026-06-26T17-13-45-019f0334-e13e-7af1-982f-8f45e7db2d4e.jsonl:95",
+        "rollout-2026-06-26T17-13-45-019f0334-e13e-7af1-982f-8f45e7db2d4e.jsonl:95",
+        "rollout-2026-06-26T17-13-45-019f0334-e13e-7af1-982f-8f45e7db2d4e.jsonl:95",
+        "fc_08fb3ebd52ef5bcd016a3e4507430c819191a63cb164b14ce0",
+        "fc_08fb3ebd52ef5bcd016a3e4507431881918971a08e96134d28"
+      ]
+    },
+    {
+      "key": "240750e8dad59bf23792323d36b4505010da162177e3e97a76c6ff246d0b699c",
+      "id": "R71",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "25729d52f48ceff15916694b0c8a11b5514cfd463e154c8a8c227d7d91a0554c",
+        "basename": "rollout-2026-06-26T17-30-40-019f0344-60f9-7212-86f8-cd88178a5b9b.jsonl",
+        "size": 630900,
+        "mtimeMs": 1782467241477
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T17-30-40-019f0344-60f9-7212-86f8-cd88178a5b9b.jsonl:153",
+        "msg_08875b62bd67c60f016a3e4aa417e88191890c562ad6583964",
+        "msg_08875b62bd67c60f016a3e4aa417e88191890c562ad6583964",
+        "rollout-2026-06-26T17-30-40-019f0344-60f9-7212-86f8-cd88178a5b9b.jsonl:156",
+        "rollout-2026-06-26T17-30-40-019f0344-60f9-7212-86f8-cd88178a5b9b.jsonl:156",
+        "rollout-2026-06-26T17-30-40-019f0344-60f9-7212-86f8-cd88178a5b9b.jsonl:156",
+        "rollout-2026-06-26T17-30-40-019f0344-60f9-7212-86f8-cd88178a5b9b.jsonl:156",
+        "rollout-2026-06-26T17-30-40-019f0344-60f9-7212-86f8-cd88178a5b9b.jsonl:156"
+      ]
+    },
+    {
+      "key": "a395f19fd543696f62bc88176ccdbcf95d9b9735d0e2c2c428440c128976cd13",
+      "id": "R72",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "96a324ca5c04ba0d34b55a6ef9d8f49893f5c90603e26e29d3c8cf9e43a8c66c",
+        "basename": "rollout-2026-06-26T17-47-52-019f0354-1ec1-76b3-a5ff-6900be7c79ce.jsonl",
+        "size": 1340089,
+        "mtimeMs": 1782469408756
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T17-47-52-019f0354-1ec1-76b3-a5ff-6900be7c79ce.jsonl:6",
+        "msg_0d9e6e87232f25c4016a3e52b9d2448191a1a10fde364faa31",
+        "msg_02199e27fa16bb3f016a3e4b2b855c819187e7364ef5c11391",
+        "rollout-2026-06-26T17-47-52-019f0354-1ec1-76b3-a5ff-6900be7c79ce.jsonl:25",
+        "msg_0d9e6e87232f25c4016a3e52b9d2448191a1a10fde364faa31",
+        "rollout-2026-06-26T17-47-52-019f0354-1ec1-76b3-a5ff-6900be7c79ce.jsonl:6",
+        "rollout-2026-06-26T17-47-52-019f0354-1ec1-76b3-a5ff-6900be7c79ce.jsonl:6",
+        "rollout-2026-06-26T17-47-52-019f0354-1ec1-76b3-a5ff-6900be7c79ce.jsonl:6",
+        "rollout-2026-06-26T17-47-52-019f0354-1ec1-76b3-a5ff-6900be7c79ce.jsonl:6",
+        "rollout-2026-06-26T17-47-52-019f0354-1ec1-76b3-a5ff-6900be7c79ce.jsonl:6"
+      ]
+    },
+    {
+      "key": "85178822965fef945049f3d9cde14f9450627737b2deba76cf908798e8bc006f",
+      "id": "R73",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "64050cdf094e2022ac11ef91f8e8e0764a407d8f43f3951d6e2a1f58b1ceef8f",
+        "basename": "rollout-2026-06-26T17-48-02-019f0354-4590-7a13-b1ba-2b50cad87ad1.jsonl",
+        "size": 735336,
+        "mtimeMs": 1782468163012
+      },
+      "evidenceMessageIds": [
+        "msg_0cf44ecceeb5ea7c016a3e4c75feb081919a246c7ae9c8be89",
+        "msg_0d589829d79b88e4016a3e4c36c4f081918b164a6d616357f0",
+        "fc_0807670077fb1c71016a3e4b8fdfb8819182fb88b8025261ce",
+        "fc_0807670077fb1c71016a3e4b8fdfc0819188e857ade46c1d34",
+        "fc_0807670077fb1c71016a3e4b8fdfc8819193187d62470220fc",
+        "rollout-2026-06-26T17-48-02-019f0354-4590-7a13-b1ba-2b50cad87ad1.jsonl:72",
+        "rollout-2026-06-26T17-48-02-019f0354-4590-7a13-b1ba-2b50cad87ad1.jsonl:72"
+      ]
+    },
+    {
+      "key": "91dcfbcfc1413c4be25def21368c6472281c24d663d8cebd22ab2c080565acfc",
+      "id": "R74",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "51d803c20eac5e8457dc43811acbce600939a8bee6882710b0aede3af6548ba8",
+        "basename": "rollout-2026-06-26T17-48-11-019f0354-6a65-7802-89c6-81f199d57c42.jsonl",
+        "size": 964080,
+        "mtimeMs": 1782469174409
+      },
+      "evidenceMessageIds": [
+        "msg_010fe6e229aa9a82016a3e5108f3948191a676e6574eae1e4c",
+        "msg_0044402407a2f296016a3e4e924a208191a9599f4c9a944475",
+        "msg_06ad5657e55df708016a3e4d005fa08191b46cacd5b1fa832c",
+        "rollout-2026-06-26T17-48-11-019f0354-6a65-7802-89c6-81f199d57c42.jsonl:73",
+        "msg_0b9df2bcfd8d7535016a3e512eeaf0819189d46d0493ba5708",
+        "rollout-2026-06-26T17-48-11-019f0354-6a65-7802-89c6-81f199d57c42.jsonl:62",
+        "rollout-2026-06-26T17-48-11-019f0354-6a65-7802-89c6-81f199d57c42.jsonl:62",
+        "rollout-2026-06-26T17-48-11-019f0354-6a65-7802-89c6-81f199d57c42.jsonl:64",
+        "fc_0399f777fbff85a8016a3e4ced6ecc8191a966e1bd67c48d8c",
+        "rollout-2026-06-26T17-48-11-019f0354-6a65-7802-89c6-81f199d57c42.jsonl:73"
+      ]
+    },
+    {
+      "key": "ece38f6e17eddccc4af8e7431f20d714f0bd53cda5ca1a976e029be06bd37ccc",
+      "id": "R75",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "cfe4b21046ef492d156cd291a7f78d04473446009ddb93cd6cf7887faf0b501d",
+        "basename": "rollout-2026-06-26T18-21-55-019f0373-4b4b-7602-80af-9a672d386bd8.jsonl",
+        "size": 1160848,
+        "mtimeMs": 1782478466616
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T18-21-55-019f0373-4b4b-7602-80af-9a672d386bd8.jsonl:434",
+        "msg_02350d7dd2101fba016a3e76770af08191b3ba0b13169f93dd",
+        "msg_0030d0217371cbea016a3e5f5118088191abd08c00198e291f",
+        "rollout-2026-06-26T18-21-55-019f0373-4b4b-7602-80af-9a672d386bd8.jsonl:452",
+        "msg_02350d7dd2101fba016a3e76770af08191b3ba0b13169f93dd",
+        "msg_0030d0217371cbea016a3e5f5118088191abd08c00198e291f",
+        "msg_0030d0217371cbea016a3e5f5118088191abd08c00198e291f",
+        "msg_0030d0217371cbea016a3e5f5118088191abd08c00198e291f",
+        "rollout-2026-06-26T18-21-55-019f0373-4b4b-7602-80af-9a672d386bd8.jsonl:437",
+        "rollout-2026-06-26T18-21-55-019f0373-4b4b-7602-80af-9a672d386bd8.jsonl:437"
+      ]
+    },
+    {
+      "key": "c0c9106597aada3bec24a8101b11e894d329252727fc6095693e4287b37a11ee",
+      "id": "R76",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "2487f2f21513d0862a09ed28169f879d988de9911cc1b234546c607ee091c3e7",
+        "basename": "rollout-2026-06-26T19-41-41-019f03bc-5466-7e32-a767-721687dcb20f.jsonl",
+        "size": 550879,
+        "mtimeMs": 1782475428633
+      },
+      "evidenceMessageIds": [
+        "msg_08d8b21da45a95c6016a3e69b3f5bc8191bd07e249ab4b4ada",
+        "msg_050c601c86e31462016a3e68a9527c8191b0d03aeb0e1188db",
+        "msg_08567e2bd12043d2016a3e69496b108191add3df11d9e76d4b",
+        "rollout-2026-06-26T19-41-41-019f03bc-5466-7e32-a767-721687dcb20f.jsonl:82",
+        "msg_0d8127f43613c565016a3e699aa64c819194c7c185ca53af5a",
+        "rollout-2026-06-26T19-41-41-019f03bc-5466-7e32-a767-721687dcb20f.jsonl:80",
+        "rollout-2026-06-26T19-41-41-019f03bc-5466-7e32-a767-721687dcb20f.jsonl:80",
+        "rollout-2026-06-26T19-41-41-019f03bc-5466-7e32-a767-721687dcb20f.jsonl:80",
+        "rollout-2026-06-26T19-41-41-019f03bc-5466-7e32-a767-721687dcb20f.jsonl:85",
+        "fc_07243f0b53be69ce016a3e688edaec8196bf7d47145d653b4b"
+      ]
+    },
+    {
+      "key": "a78dcac85fe23d23fd66d0b78867983367745966ba158eb20ae086a35cb618b6",
+      "id": "R77",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "5a49fd2ed456d00387a66472b8532b3729ae17ac65f4f5db15e27f2d90a4c03a",
+        "basename": "rollout-2026-06-26T20-05-22-019f03d2-038e-7510-8132-ca244a309b78.jsonl",
+        "size": 394192,
+        "mtimeMs": 1782476205076
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T20-05-22-019f03d2-038e-7510-8132-ca244a309b78.jsonl:6",
+        "msg_05d31dbc81cd01f2016a3e6d86ca74819195812a9e0015ef31",
+        "rollout-2026-06-26T20-05-22-019f03d2-038e-7510-8132-ca244a309b78.jsonl:26",
+        "rollout-2026-06-26T20-05-22-019f03d2-038e-7510-8132-ca244a309b78.jsonl:14",
+        "rollout-2026-06-26T20-05-22-019f03d2-038e-7510-8132-ca244a309b78.jsonl:14",
+        "rollout-2026-06-26T20-05-22-019f03d2-038e-7510-8132-ca244a309b78.jsonl:14",
+        "rollout-2026-06-26T20-05-22-019f03d2-038e-7510-8132-ca244a309b78.jsonl:6",
+        "rollout-2026-06-26T20-05-22-019f03d2-038e-7510-8132-ca244a309b78.jsonl:16"
+      ]
+    },
+    {
+      "key": "503551a9c888b9218dbea3a09edb4a71dc317669701a7478628731aac8a3e9a9",
+      "id": "R78",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "c1fb627168c5516486615f13e6ea9a68d77c5c4be31c02c918211d275fed68db",
+        "basename": "rollout-2026-06-26T20-17-42-019f03dd-4e24-7932-8f8e-ac35c707d5d0.jsonl",
+        "size": 790792,
+        "mtimeMs": 1782477831258
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T20-17-42-019f03dd-4e24-7932-8f8e-ac35c707d5d0.jsonl:6",
+        "msg_03b3022fb76de591016a3e73fb8a3481919740658eb1bfef22",
+        "msg_01674ddaaced1681016a3e71f273208191b639ac6a1e1d3352",
+        "rollout-2026-06-26T20-17-42-019f03dd-4e24-7932-8f8e-ac35c707d5d0.jsonl:27",
+        "msg_03b3022fb76de591016a3e73fb8a3481919740658eb1bfef22",
+        "rollout-2026-06-26T20-17-42-019f03dd-4e24-7932-8f8e-ac35c707d5d0.jsonl:18",
+        "rollout-2026-06-26T20-17-42-019f03dd-4e24-7932-8f8e-ac35c707d5d0.jsonl:18",
+        "rollout-2026-06-26T20-17-42-019f03dd-4e24-7932-8f8e-ac35c707d5d0.jsonl:18",
+        "rollout-2026-06-26T20-17-42-019f03dd-4e24-7932-8f8e-ac35c707d5d0.jsonl:6",
+        "rollout-2026-06-26T20-17-42-019f03dd-4e24-7932-8f8e-ac35c707d5d0.jsonl:20"
+      ]
+    },
+    {
+      "key": "31fe986b3e37ff2f49e1542f91ef15b044eeac9913233f911c9a7ddf93275822",
+      "id": "R79",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "4ac4fc39b13b348748039788628a4bd3deecc211dc3721de3a90796ef557505b",
+        "basename": "rollout-2026-06-26T20-55-17-019f03ff-b53e-7e00-a333-ccfed0e2e541.jsonl",
+        "size": 755371,
+        "mtimeMs": 1782479657607
+      },
+      "evidenceMessageIds": [
+        "msg_0a80182582138706016a3e7999cda481919c10ef73e3320d1b",
+        "msg_028ad92e50bf2137016a3e78fbbef48191be88867bdd07c6a8",
+        "rollout-2026-06-26T20-55-17-019f03ff-b53e-7e00-a333-ccfed0e2e541.jsonl:126",
+        "msg_02e7e672d5e2dbd2016a3e79b91f008191bb10d405e6965d59",
+        "rollout-2026-06-26T20-55-17-019f03ff-b53e-7e00-a333-ccfed0e2e541.jsonl:133",
+        "rollout-2026-06-26T20-55-17-019f03ff-b53e-7e00-a333-ccfed0e2e541.jsonl:133",
+        "rollout-2026-06-26T20-55-17-019f03ff-b53e-7e00-a333-ccfed0e2e541.jsonl:133",
+        "rollout-2026-06-26T20-55-17-019f03ff-b53e-7e00-a333-ccfed0e2e541.jsonl:130",
+        "fc_028ad92e50bf2137016a3e78fbc29c81918b8501ae838f2d5b"
+      ]
+    },
+    {
+      "key": "b570357402fb7e911281d96a04d776ee79b576a0adedc3b620fe286c2d2a04a4",
+      "id": "R80",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "c299713d355fe867ba602b717dff286ba8fd86c2ba809762bdf020e86f4b46f3",
+        "basename": "rollout-2026-06-26T20-56-09-019f0400-7e6b-7d40-85bd-5276962cb0c8.jsonl",
+        "size": 811237,
+        "mtimeMs": 1782479785980
+      },
+      "evidenceMessageIds": [
+        "msg_08c3682ff3216336016a3e79e4854c8191b6f3ecaa90208449",
+        "msg_02e654cd75da23cd016a3e7862ab148191a997d01c0e7cf4d1",
+        "rollout-2026-06-26T20-56-09-019f0400-7e6b-7d40-85bd-5276962cb0c8.jsonl:44",
+        "fc_0f8ccd33a9f45d4a016a3e77d088bc8191b2f59377acb52b82",
+        "fc_0f8ccd33a9f45d4a016a3e77d088e48191a0b99be759571149",
+        "fc_0f8ccd33a9f45d4a016a3e77d088f88191af49ce7b7dd5aee3",
+        "rollout-2026-06-26T20-56-09-019f0400-7e6b-7d40-85bd-5276962cb0c8.jsonl:262",
+        "fc_07cac03d5fde2c8f016a3e79cb45fc819189ee0b0bf1922b18"
+      ]
+    },
+    {
+      "key": "a1da5375e52606d158f6a239bb8f36e1e3c865dd28b71d97330f2a220dd02480",
+      "id": "R81",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "cd180dfee0c7df387f689b0521e52322f1cfd6c765a05ca23e318ab73d6fa061",
+        "basename": "rollout-2026-06-26T21-16-37-019f0413-3c08-78f3-bcd2-6420ad05cc6b.jsonl",
+        "size": 580627,
+        "mtimeMs": 1782480624294
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T21-16-37-019f0413-3c08-78f3-bcd2-6420ad05cc6b.jsonl:6",
+        "msg_0df351194f647a5f016a3e7eec04608191a71ecae2a873f4db",
+        "rollout-2026-06-26T21-16-37-019f0413-3c08-78f3-bcd2-6420ad05cc6b.jsonl:6",
+        "msg_06dffc15d726beea016a3e7bec84608191aa2dc79f13c52093",
+        "rollout-2026-06-26T21-16-37-019f0413-3c08-78f3-bcd2-6420ad05cc6b.jsonl:29",
+        "rollout-2026-06-26T21-16-37-019f0413-3c08-78f3-bcd2-6420ad05cc6b.jsonl:6",
+        "rollout-2026-06-26T21-16-37-019f0413-3c08-78f3-bcd2-6420ad05cc6b.jsonl:6",
+        "rollout-2026-06-26T21-16-37-019f0413-3c08-78f3-bcd2-6420ad05cc6b.jsonl:6",
+        "rollout-2026-06-26T21-16-37-019f0413-3c08-78f3-bcd2-6420ad05cc6b.jsonl:6",
+        "rollout-2026-06-26T21-16-37-019f0413-3c08-78f3-bcd2-6420ad05cc6b.jsonl:17"
+      ]
+    },
+    {
+      "key": "7d0d4ad49aa856b208f9e15f114a41426b464550b3b26a0dd92ab8769f349953",
+      "id": "R82",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "7469dbcee02bc77b8a8858fea996fb7fbf14cfff3e92cb961e177dd0db1baf65",
+        "basename": "rollout-2026-06-26T21-36-47-019f0425-b569-7860-9b1c-4d0b05efa456.jsonl",
+        "size": 954943,
+        "mtimeMs": 1782492975123
+      },
+      "evidenceMessageIds": [
+        "msg_0324f4c2a0d3b673016a3e80a7e6b0819190ff28ba2c451813",
+        "rollout-2026-06-26T21-36-47-019f0425-b569-7860-9b1c-4d0b05efa456.jsonl:29",
+        "msg_0c87eca49d8b60c7016a3e80df039881918ddd2b159e193e5d",
+        "rollout-2026-06-26T21-36-47-019f0425-b569-7860-9b1c-4d0b05efa456.jsonl:16",
+        "rollout-2026-06-26T21-36-47-019f0425-b569-7860-9b1c-4d0b05efa456.jsonl:16",
+        "rollout-2026-06-26T21-36-47-019f0425-b569-7860-9b1c-4d0b05efa456.jsonl:16",
+        "rollout-2026-06-26T21-36-47-019f0425-b569-7860-9b1c-4d0b05efa456.jsonl:16",
+        "rollout-2026-06-26T21-36-47-019f0425-b569-7860-9b1c-4d0b05efa456.jsonl:16"
+      ]
+    },
+    {
+      "key": "849d9e11339be4a57121c28161c6f02742b66499a1482ee4a480758e614653a0",
+      "id": "R83",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "933f5a595d8e40dc3d43370549978f5307d7aa5185f499992d73b26ca5369532",
+        "basename": "rollout-2026-06-26T23-05-21-019f0476-c923-7c33-b9fa-2a9b2c696c85.jsonl",
+        "size": 393734,
+        "mtimeMs": 1782495380712
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T23-05-21-019f0476-c923-7c33-b9fa-2a9b2c696c85.jsonl:147",
+        "msg_0d555c042772d4e9016a3eb890c8c48191857ecaaa9d78d1c9",
+        "rollout-2026-06-26T23-05-21-019f0476-c923-7c33-b9fa-2a9b2c696c85.jsonl:147",
+        "rollout-2026-06-26T23-05-21-019f0476-c923-7c33-b9fa-2a9b2c696c85.jsonl:150"
+      ]
+    },
+    {
+      "key": "2f043b658a651b62989fabe90e43895d440ad14724aded45a57db7977ee9874b",
+      "id": "R84",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "33c3dc47f2f7cbcc14ba93151f5aab8ea41d5c7596dedb531de41a7f01e9dbbe",
+        "basename": "rollout-2026-06-26T23-07-22-019f0478-a3cb-7832-a6e2-84556faad100.jsonl",
+        "size": 1212658,
+        "mtimeMs": 1782491595262
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-26T23-07-22-019f0478-a3cb-7832-a6e2-84556faad100.jsonl:60",
+        "rollout-2026-06-26T23-07-22-019f0478-a3cb-7832-a6e2-84556faad100.jsonl:60",
+        "msg_04d1ce3188cb887b016a3ea37b044c81919bea7dac4cfc5b63",
+        "rollout-2026-06-26T23-07-22-019f0478-a3cb-7832-a6e2-84556faad100.jsonl:85",
+        "rollout-2026-06-26T23-07-22-019f0478-a3cb-7832-a6e2-84556faad100.jsonl:85",
+        "rollout-2026-06-26T23-07-22-019f0478-a3cb-7832-a6e2-84556faad100.jsonl:85",
+        "rollout-2026-06-26T23-07-22-019f0478-a3cb-7832-a6e2-84556faad100.jsonl:60",
+        "rollout-2026-06-26T23-07-22-019f0478-a3cb-7832-a6e2-84556faad100.jsonl:87"
+      ]
+    },
+    {
+      "key": "413eddced0b6117ab499d5b513caaacf7d4fa884edd3e0448dd48c5834dc152a",
+      "id": "R85",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "113c016329d3b7863acab010ed2352b3c5a73f7bde2213bc913608304482af97",
+        "basename": "rollout-2026-06-27T00-01-42-019f04aa-6115-7a12-8a6e-dc50ea15619e.jsonl",
+        "size": 1179985,
+        "mtimeMs": 1782495497318
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-27T00-01-42-019f04aa-6115-7a12-8a6e-dc50ea15619e.jsonl:381",
+        "msg_0ae4cf5a05d8eec6016a3eb8cccd948191bca4558568849a5e",
+        "rollout-2026-06-27T00-01-42-019f04aa-6115-7a12-8a6e-dc50ea15619e.jsonl:456",
+        "msg_093b10eee8d719d2016a3eb8b9b0608191be4d820c784dc31e",
+        "msg_088f29e6086ab229016a3eb85c47548191833cd99fb241dbee",
+        "fc_064a6ab1db754d63016a3eb7b553848191bf14d354cdf50db6",
+        "fc_064a6ab1db754d63016a3eb7b5538c8191b24bbeed140c90ff",
+        "fc_064a6ab1db754d63016a3eb7b5539481919e2cd99dc8607bfa",
+        "rollout-2026-06-27T00-01-42-019f04aa-6115-7a12-8a6e-dc50ea15619e.jsonl:406",
+        "rollout-2026-06-27T00-01-42-019f04aa-6115-7a12-8a6e-dc50ea15619e.jsonl:406"
+      ]
+    },
+    {
+      "key": "a63f33d041693c5dbf9d1ce90026471840f98935f491004f5a20952fb76870d8",
+      "id": "R86",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "63eb4a46169a7ca2995641acded7cee52defa9c54bc40dcb90b1f48a5f126a49",
+        "basename": "rollout-2026-06-27T00-02-34-019f04ab-2a04-7270-b5bb-b050adc07f8c.jsonl",
+        "size": 640847,
+        "mtimeMs": 1782495553542
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-27T00-02-34-019f04ab-2a04-7270-b5bb-b050adc07f8c.jsonl:6",
+        "msg_079085d161880060016a3eb93f1328819186e07c3c2a78b870",
+        "rollout-2026-06-27T00-02-34-019f04ab-2a04-7270-b5bb-b050adc07f8c.jsonl:6",
+        "msg_0a4a9b8593408f3c016a3ea30012bc8191a921ebd70fd4e765",
+        "rollout-2026-06-27T00-02-34-019f04ab-2a04-7270-b5bb-b050adc07f8c.jsonl:26",
+        "msg_0f1dc5ac044f62d2016a3ea60f234c8191b2af27e9870f2d75",
+        "rollout-2026-06-27T00-02-34-019f04ab-2a04-7270-b5bb-b050adc07f8c.jsonl:6",
+        "rollout-2026-06-27T00-02-34-019f04ab-2a04-7270-b5bb-b050adc07f8c.jsonl:6",
+        "rollout-2026-06-27T00-02-34-019f04ab-2a04-7270-b5bb-b050adc07f8c.jsonl:6",
+        "rollout-2026-06-27T00-02-34-019f04ab-2a04-7270-b5bb-b050adc07f8c.jsonl:59",
+        "rollout-2026-06-27T00-02-34-019f04ab-2a04-7270-b5bb-b050adc07f8c.jsonl:59"
+      ]
+    },
+    {
+      "key": "216cee0849dc46a115e988fe42950960cd71e50166408a613a2535f4e52f37d8",
+      "id": "R87",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "562080e885d229b2c46c71351c9ce22b8f19b6ab06fff8c8a4564fc237ff702c",
+        "basename": "rollout-2026-06-27T00-32-59-019f04c7-051b-7490-a1d2-0270fd0d4519.jsonl",
+        "size": 936217,
+        "mtimeMs": 1782495531918
+      },
+      "evidenceMessageIds": [
+        "msg_0f5654fcce0f3cbb016a3eaa637fc4819186187392bf38e177",
+        "rollout-2026-06-27T00-32-59-019f04c7-051b-7490-a1d2-0270fd0d4519.jsonl:88",
+        "msg_02dbf3874c885036016a3eaa44634081919a7a48e652480a18",
+        "fc_0a9ddc3b1a86c924016a3eaa1b82808191993be86e2153ec67",
+        "fc_0a9ddc3b1a86c924016a3eaa1b828c81919900d6477bf3b38f",
+        "fc_0a9ddc3b1a86c924016a3eaa1b82988191a8eb2099b11e5253",
+        "rollout-2026-06-27T00-32-59-019f04c7-051b-7490-a1d2-0270fd0d4519.jsonl:78",
+        "rollout-2026-06-27T00-32-59-019f04c7-051b-7490-a1d2-0270fd0d4519.jsonl:78"
+      ]
+    },
+    {
+      "key": "ac2386bc4e01827add8f4687c4fdf79be515e784bf5321bb0577ec7547a91e5c",
+      "id": "R88",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "9f789c5ae83b8bd369c0e698019558bb95ac0a89f80c1f51422bcbbfe4708edb",
+        "basename": "rollout-2026-06-27T00-44-17-019f04d1-5e5a-73b1-aaf0-6f4ab77ebdd8.jsonl",
+        "size": 1088998,
+        "mtimeMs": 1782495222501
+      },
+      "evidenceMessageIds": [
+        "msg_0157c0ec1249d545016a3eb12b653081918878f6bb778bb3a6",
+        "msg_089270b14ff9a43d016a3eaf20d8b88191bab0d1f4137464b9",
+        "rollout-2026-06-27T00-44-17-019f04d1-5e5a-73b1-aaf0-6f4ab77ebdd8.jsonl:35",
+        "fc_0a626b376e43b8d5016a3eacc6e844819190b3d3167b0fca03",
+        "rollout-2026-06-27T00-44-17-019f04d1-5e5a-73b1-aaf0-6f4ab77ebdd8.jsonl:48",
+        "rollout-2026-06-27T00-44-17-019f04d1-5e5a-73b1-aaf0-6f4ab77ebdd8.jsonl:50",
+        "rollout-2026-06-27T00-44-17-019f04d1-5e5a-73b1-aaf0-6f4ab77ebdd8.jsonl:48",
+        "rollout-2026-06-27T00-44-17-019f04d1-5e5a-73b1-aaf0-6f4ab77ebdd8.jsonl:48"
+      ]
+    },
+    {
+      "key": "1a48c698dbb4288748281c40aeaf8b1234533e3edf214dbd41e9c0aea6726125",
+      "id": "R89",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "6e12d74c9507a649e1ceefbb3cdb6d9a57b91fed3377390b132289e0e925e992",
+        "basename": "rollout-2026-06-27T01-06-05-019f04e5-50ea-74b3-861b-ca2e443d958b.jsonl",
+        "size": 567006,
+        "mtimeMs": 1782496514358
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-27T01-06-05-019f04e5-50ea-74b3-861b-ca2e443d958b.jsonl:78",
+        "msg_0c3a1c147c6c8ae9016a3ebd0169b081918d5c59f313fceb63",
+        "rollout-2026-06-27T01-06-05-019f04e5-50ea-74b3-861b-ca2e443d958b.jsonl:96",
+        "msg_0c3a1c147c6c8ae9016a3ebd0169b081918d5c59f313fceb63",
+        "rollout-2026-06-27T01-06-05-019f04e5-50ea-74b3-861b-ca2e443d958b.jsonl:95",
+        "rollout-2026-06-27T01-06-05-019f04e5-50ea-74b3-861b-ca2e443d958b.jsonl:95",
+        "rollout-2026-06-27T01-06-05-019f04e5-50ea-74b3-861b-ca2e443d958b.jsonl:95",
+        "rollout-2026-06-27T01-06-05-019f04e5-50ea-74b3-861b-ca2e443d958b.jsonl:97",
+        "rollout-2026-06-27T01-06-05-019f04e5-50ea-74b3-861b-ca2e443d958b.jsonl:97"
+      ]
+    },
+    {
+      "key": "19b4db95d294e9f6bea4095d506043608cbf97e1e3dfe5df7c3194d9125b5ad3",
+      "id": "R90",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "ebeb992f506423e4e119a3e4cd94df3fc5fabc3e86de9f6a6bd7ea7eb07cfd8b",
+        "basename": "rollout-2026-06-27T01-23-04-019f04f4-e068-75b1-b550-12a8c0d2a478.jsonl",
+        "size": 1696712,
+        "mtimeMs": 1782496585781
+      },
+      "evidenceMessageIds": [
+        "msg_07ce178dc4ca0fbb016a3eb706eb1081919c56e169938ef48a",
+        "msg_0ce3546f28ba8972016a3eb71e1bdc8191a3b81d702f84fdc4",
+        "rollout-2026-06-27T01-23-04-019f04f4-e068-75b1-b550-12a8c0d2a478.jsonl:106",
+        "fc_0106c2c5acc5312f016a3eb6a183208191b73984ff6f718d21",
+        "fc_0106c2c5acc5312f016a3eb6a183288191b4b6775da817e023",
+        "fc_05abcd7ecf6ac242016a3eb6b607b48191ba89c669c1826bb1",
+        "rollout-2026-06-27T01-23-04-019f04f4-e068-75b1-b550-12a8c0d2a478.jsonl:96",
+        "rollout-2026-06-27T01-23-04-019f04f4-e068-75b1-b550-12a8c0d2a478.jsonl:96"
+      ]
+    },
+    {
+      "key": "5afd82946fd393de67a8d8b066f03272b801b8b37279828ee679c6bf4e226a96",
+      "id": "R91",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "b4de85e81e194113d6ddccbed5f68de9376c73f11ce0218d6002b9d4252b1722",
+        "basename": "rollout-2026-06-27T01-23-30-019f04f5-432b-7ef3-95d0-211553db324a.jsonl",
+        "size": 840276,
+        "mtimeMs": 1782495308482
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-27T01-23-30-019f04f5-432b-7ef3-95d0-211553db324a.jsonl:6",
+        "msg_09ee03ecab4f183d016a3eb844f4e881919dac5df44f9c58bb",
+        "rollout-2026-06-27T01-23-30-019f04f5-432b-7ef3-95d0-211553db324a.jsonl:6",
+        "msg_0d92ffcdf80ab9b4016a3eb6c00d0c8191b3377183a7e6d0cb",
+        "rollout-2026-06-27T01-23-30-019f04f5-432b-7ef3-95d0-211553db324a.jsonl:30",
+        "rollout-2026-06-27T01-23-30-019f04f5-432b-7ef3-95d0-211553db324a.jsonl:6",
+        "rollout-2026-06-27T01-23-30-019f04f5-432b-7ef3-95d0-211553db324a.jsonl:6",
+        "rollout-2026-06-27T01-23-30-019f04f5-432b-7ef3-95d0-211553db324a.jsonl:6",
+        "rollout-2026-06-27T01-23-30-019f04f5-432b-7ef3-95d0-211553db324a.jsonl:20",
+        "rollout-2026-06-27T01-23-30-019f04f5-432b-7ef3-95d0-211553db324a.jsonl:20"
+      ]
+    },
+    {
+      "key": "0055f020b8a678a63a77c6527b96e98e15db6429e7e03304ed6454bea26cc20f",
+      "id": "R92",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "87bb852a66ffe88a12548f949a96c3e7da6fdbc5170ad31454226d4b22394e92",
+        "basename": "rollout-2026-06-27T01-23-46-019f04f5-82ef-7052-b87e-ca4088ea2d51.jsonl",
+        "size": 811064,
+        "mtimeMs": 1782495335260
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-27T01-23-46-019f04f5-82ef-7052-b87e-ca4088ea2d51.jsonl:6",
+        "msg_0206c6687e8cddb0016a3eb85b93488191aec4ab6cc5a332e5",
+        "rollout-2026-06-27T01-23-46-019f04f5-82ef-7052-b87e-ca4088ea2d51.jsonl:6",
+        "rollout-2026-06-27T01-23-46-019f04f5-82ef-7052-b87e-ca4088ea2d51.jsonl:23",
+        "rollout-2026-06-27T01-23-46-019f04f5-82ef-7052-b87e-ca4088ea2d51.jsonl:6",
+        "rollout-2026-06-27T01-23-46-019f04f5-82ef-7052-b87e-ca4088ea2d51.jsonl:6",
+        "rollout-2026-06-27T01-23-46-019f04f5-82ef-7052-b87e-ca4088ea2d51.jsonl:6",
+        "rollout-2026-06-27T01-23-46-019f04f5-82ef-7052-b87e-ca4088ea2d51.jsonl:16",
+        "rollout-2026-06-27T01-23-46-019f04f5-82ef-7052-b87e-ca4088ea2d51.jsonl:16"
+      ]
+    },
+    {
+      "key": "0c56c6eaae08251d822515f6d002e8b7ed7ce52cd5b2145285f0a9a5783ffd73",
+      "id": "R93",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "7fe08fee90872d3d9a1ca68019a23588ab733a2336734c599cc1ea4852ef778b",
+        "basename": "rollout-2026-06-27T09-23-27-019f06ac-ae5a-78a0-8c21-cc9267a7aeb0.jsonl",
+        "size": 345697,
+        "mtimeMs": 1782523769112
+      },
+      "evidenceMessageIds": [
+        "msg_09354836d2114d4a016a3f266090ec8191be78c38c6d3bc3da",
+        "rollout-2026-06-27T09-23-27-019f06ac-ae5a-78a0-8c21-cc9267a7aeb0.jsonl:42",
+        "msg_093ec545111cd125016a3f268f26a48191b227536f696e637f",
+        "rollout-2026-06-27T09-23-27-019f06ac-ae5a-78a0-8c21-cc9267a7aeb0.jsonl:16",
+        "rollout-2026-06-27T09-23-27-019f06ac-ae5a-78a0-8c21-cc9267a7aeb0.jsonl:16",
+        "rollout-2026-06-27T09-23-27-019f06ac-ae5a-78a0-8c21-cc9267a7aeb0.jsonl:16",
+        "rollout-2026-06-27T09-23-27-019f06ac-ae5a-78a0-8c21-cc9267a7aeb0.jsonl:18",
+        "rollout-2026-06-27T09-23-27-019f06ac-ae5a-78a0-8c21-cc9267a7aeb0.jsonl:18"
+      ]
+    },
+    {
+      "key": "4eb2bc720e66995962222f79aae7970e173aee2cd66db36c06482a3945263b12",
+      "id": "R94",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "fdfe71ed74d430f862bd2ab78bc8ff2238543d8154c0d88d912609a511260771",
+        "basename": "rollout-2026-06-27T09-51-59-019f06c6-cde6-7291-a46e-509391d2be66.jsonl",
+        "size": 319011,
+        "mtimeMs": 1782525855046
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-27T09-51-59-019f06c6-cde6-7291-a46e-509391d2be66.jsonl:6",
+        "msg_0a911aee40bb0ddd016a3f2f7e7b2c819182b44fc3da85c0aa",
+        "rollout-2026-06-27T09-51-59-019f06c6-cde6-7291-a46e-509391d2be66.jsonl:6",
+        "rollout-2026-06-27T09-51-59-019f06c6-cde6-7291-a46e-509391d2be66.jsonl:43",
+        "msg_0a5c26d3a72dafae016a3f2eca59e081918c0f349c6306f972",
+        "rollout-2026-06-27T09-51-59-019f06c6-cde6-7291-a46e-509391d2be66.jsonl:6",
+        "rollout-2026-06-27T09-51-59-019f06c6-cde6-7291-a46e-509391d2be66.jsonl:6",
+        "rollout-2026-06-27T09-51-59-019f06c6-cde6-7291-a46e-509391d2be66.jsonl:6",
+        "rollout-2026-06-27T09-51-59-019f06c6-cde6-7291-a46e-509391d2be66.jsonl:23",
+        "rollout-2026-06-27T09-51-59-019f06c6-cde6-7291-a46e-509391d2be66.jsonl:23"
+      ]
+    },
+    {
+      "key": "e15f238b30416466afc30ec4f85e58043efb8ef564a233338f6cd623de54208e",
+      "id": "R95",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "a87e02aec183351e571e3ac1e8ed982c8d6daa095ddd6d375594284bac3d51cd",
+        "basename": "rollout-2026-06-27T09-52-42-019f06c7-75e2-7b60-866c-e38208feab24.jsonl",
+        "size": 286182,
+        "mtimeMs": 1782525538909
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-27T09-52-42-019f06c7-75e2-7b60-866c-e38208feab24.jsonl:6",
+        "msg_0493d5fcb62f6ce8016a3f2e5c2ad481919dcd5eab7f706121",
+        "rollout-2026-06-27T09-52-42-019f06c7-75e2-7b60-866c-e38208feab24.jsonl:6",
+        "rollout-2026-06-27T09-52-42-019f06c7-75e2-7b60-866c-e38208feab24.jsonl:48",
+        "rollout-2026-06-27T09-52-42-019f06c7-75e2-7b60-866c-e38208feab24.jsonl:6",
+        "rollout-2026-06-27T09-52-42-019f06c7-75e2-7b60-866c-e38208feab24.jsonl:6",
+        "rollout-2026-06-27T09-52-42-019f06c7-75e2-7b60-866c-e38208feab24.jsonl:6",
+        "rollout-2026-06-27T09-52-42-019f06c7-75e2-7b60-866c-e38208feab24.jsonl:20",
+        "rollout-2026-06-27T09-52-42-019f06c7-75e2-7b60-866c-e38208feab24.jsonl:20"
+      ]
+    },
+    {
+      "key": "1e20f6a6f9aae28cd4564595ac3f9a4fefba732feefdf502feab0b169195fec8",
+      "id": "R96",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.6"
+      },
+      "transcript": {
+        "fileHash": "9cc883cec3987cb53f6ada41885fc4f62f2792fb5d4eff5ef14ef0760553502f",
+        "basename": "rollout-2026-06-27T09-52-57-019f06c7-ad8a-7490-9eca-13833ca69224.jsonl",
+        "size": 345442,
+        "mtimeMs": 1782526301165
+      },
+      "evidenceMessageIds": [
+        "msg_0971dc6c4ca0fdef016a3f2fd66100819193430d9bc3776fbd",
+        "msg_015724a59a702513016a3f2d98ebf881919cbdc3bde544b0c5",
+        "rollout-2026-06-27T09-52-57-019f06c7-ad8a-7490-9eca-13833ca69224.jsonl:28",
+        "msg_097fe7697703a1c9016a3f2df344688191bef47414776e5b46",
+        "msg_0fc0dc5e735c5271016a3f2f90056c8191a0a78908233bfeca",
+        "rollout-2026-06-27T09-52-57-019f06c7-ad8a-7490-9eca-13833ca69224.jsonl:42",
+        "rollout-2026-06-27T09-52-57-019f06c7-ad8a-7490-9eca-13833ca69224.jsonl:42",
+        "rollout-2026-06-27T09-52-57-019f06c7-ad8a-7490-9eca-13833ca69224.jsonl:42",
+        "rollout-2026-06-27T09-52-57-019f06c7-ad8a-7490-9eca-13833ca69224.jsonl:55",
+        "rollout-2026-06-27T09-52-57-019f06c7-ad8a-7490-9eca-13833ca69224.jsonl:73"
+      ]
+    },
+    {
+      "key": "141625e57a0de99d856c1d549626dd3c4f3858f0650ac8f1000602752abd886b",
+      "id": "R97",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "0.75"
+      },
+      "transcript": {
+        "fileHash": "0565102fe938ad73c47d2f62795cab3594ba31b6ea193dd1b15e7481a4ff38a8",
+        "basename": "rollout-2026-06-27T11-12-31-019f0710-88c5-7ba2-bdee-57057c9e4494.jsonl",
+        "size": 1076161,
+        "mtimeMs": 1782532291196
+      },
+      "evidenceMessageIds": [
+        "msg_06efbdfb9115a846016a3f47a8f5c4819186425138bb379e2d",
+        "msg_0733611c9647a3c6016a3f43e4b4c48191886d86542afea85d",
+        "msg_0a46ed0eedc54eeb016a3f441e9764819199fea8852e0f77ae",
+        "rollout-2026-06-27T11-12-31-019f0710-88c5-7ba2-bdee-57057c9e4494.jsonl:135",
+        "msg_06cbf84f99e2fa48016a3f475414408191a573a69679a09d27",
+        "msg_074e558a980b435b016a3f47f0b7cc819194b027866747e3b7",
+        "rollout-2026-06-27T11-12-31-019f0710-88c5-7ba2-bdee-57057c9e4494.jsonl:57",
+        "rollout-2026-06-27T11-12-31-019f0710-88c5-7ba2-bdee-57057c9e4494.jsonl:57",
+        "rollout-2026-06-27T11-12-31-019f0710-88c5-7ba2-bdee-57057c9e4494.jsonl:57",
+        "rollout-2026-06-27T11-12-31-019f0710-88c5-7ba2-bdee-57057c9e4494.jsonl:57",
+        "rollout-2026-06-27T11-12-31-019f0710-88c5-7ba2-bdee-57057c9e4494.jsonl:57"
+      ]
+    },
+    {
+      "key": "cf016b72b0f39a7a658b5beb970d09f1d5014437a7619d2ace08f909db0015b9",
+      "id": "R98",
+      "source": "real",
+      "cohort": {
+        "turn": 1000,
+        "pressure": "0.85"
+      },
+      "transcript": {
+        "fileHash": "68cf25610fe96c49cfbe78f7aaff6ba190c78b2f2efbfbdeaecf2e1fc5d424bb",
+        "basename": "rollout-2026-06-27T11-12-49-019f0710-cd73-7d12-b1fc-987723bedc9d.jsonl",
+        "size": 1144064,
+        "mtimeMs": 1782532249865
+      },
+      "evidenceMessageIds": [
+        "rollout-2026-06-27T11-12-49-019f0710-cd73-7d12-b1fc-987723bedc9d.jsonl:6",
+        "msg_092024058228499a016a3f4890e7e48191b0072dc5b106e860",
+        "rollout-2026-06-27T11-12-49-019f0710-cd73-7d12-b1fc-987723bedc9d.jsonl:6",
+        "msg_0d4573846eb69d74016a3f453cb2bc8191907965d2fc3324b4",
+        "rollout-2026-06-27T11-12-49-019f0710-cd73-7d12-b1fc-987723bedc9d.jsonl:26",
+        "msg_092024058228499a016a3f4890e7e48191b0072dc5b106e860",
+        "rollout-2026-06-27T11-12-49-019f0710-cd73-7d12-b1fc-987723bedc9d.jsonl:6",
+        "rollout-2026-06-27T11-12-49-019f0710-cd73-7d12-b1fc-987723bedc9d.jsonl:6",
+        "rollout-2026-06-27T11-12-49-019f0710-cd73-7d12-b1fc-987723bedc9d.jsonl:6",
+        "rollout-2026-06-27T11-12-49-019f0710-cd73-7d12-b1fc-987723bedc9d.jsonl:17",
+        "rollout-2026-06-27T11-12-49-019f0710-cd73-7d12-b1fc-987723bedc9d.jsonl:17"
+      ]
+    },
+    {
+      "key": "74349283dd438319af2f877ef5528727cd441e715e8f27a6d426ccdd8b4be098",
+      "id": "R99",
+      "source": "real",
+      "cohort": {
+        "turn": 50,
+        "pressure": "0.95"
+      },
+      "transcript": {
+        "fileHash": "d598c1f55b8f998e34f7fb3e3c091c8a589b3ff4772a7df3b61229504f6f2bb0",
+        "basename": "rollout-2026-06-27T11-13-07-019f0711-1469-7243-8c20-44e65e70cd18.jsonl",
+        "size": 815029,
+        "mtimeMs": 1782531097374
+      },
+      "evidenceMessageIds": [
+        "msg_0cd6dc72fbfd84f8016a3f405c7b488191ac057d6ce10c2521",
+        "rollout-2026-06-27T11-13-07-019f0711-1469-7243-8c20-44e65e70cd18.jsonl:70",
+        "msg_00ce7d1dd3e1b1c2016a3f40d82600819181f19561c191c0f1",
+        "fc_0851dbd92595fa77016a3f3ffaa3288191bdb5906e76bd9256",
+        "fc_0851dbd92595fa77016a3f3ffaa330819193a919150c6ba0cc",
+        "fc_0851dbd92595fa77016a3f3ffaa3388191b45729f718ada58d",
+        "rollout-2026-06-27T11-13-07-019f0711-1469-7243-8c20-44e65e70cd18.jsonl:45",
+        "rollout-2026-06-27T11-13-07-019f0711-1469-7243-8c20-44e65e70cd18.jsonl:45"
+      ]
+    },
+    {
+      "key": "f6337d76e6167ee1776fb000d1ef96dc9662dbba0b03053595722500a13a4bb5",
+      "id": "R100",
+      "source": "real",
+      "cohort": {
+        "turn": 200,
+        "pressure": "emergency"
+      },
+      "transcript": {
+        "fileHash": "715315bd3c4f6cb8e70b85b1811ad7b69d687ee4f1e7f0bc698f538ea13edeb5",
+        "basename": "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl",
+        "size": 680318,
+        "mtimeMs": 1782531482675
+      },
+      "evidenceMessageIds": [
+        "msg_040325dbb5645af8016a3f449a6a6c8191acf9280309cac039",
+        "msg_0cd7ff4b86dda920016a3f40820c588191804a2e4f8b5c735f",
+        "msg_0efe32ed0b803f8e016a3f41b57ec08191b71042019b5dc89c",
+        "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:53",
+        "msg_0ece11cc1c2d3eab016a3f443460e48191a4856935c0eb4c39",
+        "msg_028d7c4fb93636cc016a3f44d0c9d08191b69e49c75f6024e2",
+        "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54",
+        "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54",
+        "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54",
+        "fc_0db77f93c0757722016a3f403cc6988191b017398787a6c448",
+        "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:123"
+      ]
+    }
+  ]
+}

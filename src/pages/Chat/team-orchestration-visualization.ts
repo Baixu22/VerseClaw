@@ -25,6 +25,21 @@ export type TeamOrchestrationAlertView = {
   detail?: string;
 };
 
+export type TeamOrchestrationDiagnosticsRecommendationView = {
+  code?: string;
+  roleName?: string;
+  message?: string;
+  recommendedAction?: string;
+};
+
+export type TeamOrchestrationDiagnosticsView = {
+  status?: string;
+  summary?: string;
+  taskLoopUpgradeAvailable: boolean;
+  recommendations: TeamOrchestrationDiagnosticsRecommendationView[];
+  nextSteps: string[];
+};
+
 export type TeamOrchestrationView = {
   id: string;
   toolCallId?: string;
@@ -44,6 +59,7 @@ export type TeamOrchestrationView = {
   failureCount: number;
   pendingCount: number;
   routeReasons: string[];
+  diagnostics?: TeamOrchestrationDiagnosticsView;
   raw?: AnyRecord;
 };
 
@@ -94,6 +110,7 @@ function hasOrchestrationShape(record: AnyRecord): boolean {
     || record.children != null
     || record.pendingVerifier != null
     || record.routeDiagnostics != null
+    || record.orchestrationDiagnostics != null
     || record.repairNodes != null
     || record.rerouteRecommendations != null;
 }
@@ -221,10 +238,30 @@ function routeReasons(payload: AnyRecord | null): string[] {
   return stringArray(route?.reasons).slice(0, 3);
 }
 
+function toDiagnostics(payload: AnyRecord | null): TeamOrchestrationDiagnosticsView | undefined {
+  const diagnostics = asRecord(payload?.orchestrationDiagnostics);
+  if (!diagnostics) return undefined;
+  const recommendations = arrayOfRecords(diagnostics.recommendations).map((recommendation) => ({
+    code: readString(recommendation, 'code'),
+    roleName: readString(recommendation, 'roleName'),
+    message: readString(recommendation, 'message'),
+    recommendedAction: readString(recommendation, 'recommendedAction'),
+  }));
+  const nextSteps = stringArray(diagnostics.nextSteps);
+  return {
+    status: readString(diagnostics, 'status'),
+    summary: readString(diagnostics, 'summary'),
+    taskLoopUpgradeAvailable: diagnostics.taskLoopUpgradeAvailable === true,
+    recommendations,
+    nextSteps,
+  };
+}
+
 function viewFromPayload(payload: AnyRecord | null, fallback: Partial<TeamOrchestrationView>): TeamOrchestrationView {
   const nodes = toNodes(payload);
   const waves = toWaves(payload);
   const alerts = toAlerts(payload);
+  const diagnostics = toDiagnostics(payload);
   const graph = asRecord(payload?.taskGraph);
   const runId = readString(payload, 'orchestrationRunId') ?? readString(payload, 'runId') ?? fallback.orchestrationRunId;
   const verifierCount = nodes.filter((node) => node.isVerifier).length
@@ -254,6 +291,7 @@ function viewFromPayload(payload: AnyRecord | null, fallback: Partial<TeamOrches
     failureCount: arrayOfRecords(payload?.failures).length,
     pendingCount: arrayOfRecords(payload?.pendingGraphNodes).length,
     routeReasons: routeReasons(payload),
+    diagnostics,
     raw: payload ?? fallback.raw,
   };
 }

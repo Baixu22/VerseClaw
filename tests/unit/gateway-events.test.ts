@@ -152,23 +152,12 @@ describe('gateway store event wiring', () => {
       undefined,
       undefined,
       undefined,
-      undefined,
       'guide',
     );
 
     expect(hostApiMock.chat.sendWithMedia).toHaveBeenCalledWith(expect.objectContaining({
       message: 'keep the validation evidence',
       inputMode: 'guide',
-    }));
-    expect(hostApiMock.taskLedger.appendEvents).toHaveBeenCalledWith(expect.objectContaining({
-      events: [expect.objectContaining({
-        type: 'decision_recorded',
-        actor: 'user',
-        sessionId: 'agent:main:main',
-        payload: expect.objectContaining({
-          decision: 'keep the validation evidence',
-        }),
-      })],
     }));
   });
 

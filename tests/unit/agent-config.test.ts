@@ -1,12 +1,14 @@
 import { access, mkdir, readFile, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { AgentRoleProfile } from '@shared/types/agent';
 
 const { testHome, testUserData } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
+  const root = process.env.CLAWX_TEST_TMPDIR ?? `${process.cwd()}/.tmp/vitest`;
   return {
-    testHome: `/tmp/clawx-agent-config-${suffix}`,
-    testUserData: `/tmp/clawx-agent-config-user-data-${suffix}`,
+    testHome: `${root}/clawx-agent-config-${suffix}`,
+    testUserData: `${root}/clawx-agent-config-user-data-${suffix}`,
   };
 });
 
@@ -213,7 +215,7 @@ describe('agent config lifecycle', () => {
     let config = await readOpenClawJson();
     let coder = ((config.agents as { list: Array<{ id: string; reasoningEffort?: string; thinkingDefault?: string }> }).list)
       .find((agent) => agent.id === 'coder');
-    expect(coder?.reasoningEffort).toBe('high');
+    expect(coder?.reasoningEffort).toBeUndefined();
     expect(coder?.thinkingDefault).toBe('high');
 
     let snapshot = await listAgentsSnapshot();
@@ -572,5 +574,131 @@ describe('agent config lifecycle', () => {
 
     await expect(readFile(join(testHome, '.openclaw', 'workspace-research', 'IDENTITY.md'), 'utf8')).resolves.toContain('Verse Claw');
     await expect(readFile(join(testHome, '.openclaw', 'workspace-research', '.verse-claw', 'harness', 'README.md'), 'utf8')).resolves.toContain('Verse Claw Agent Harness');
+  });
+});
+
+// ── Area 1: Persona sidecar round-trip ───────────────────────────────────
+//
+// Validates that writeAgentRoleProfile → readAgentRoleProfile is identity when
+// the sidecar is present (lossless), and falls back to heuristic parse when
+// the sidecar is deleted (regression guard, with the known customStyle drop
+// documented as an expected exception).
+describe('role profile sidecar round-trip (Area 1 §3.3)', () => {
+  beforeEach(async () => {
+    vi.resetModules();
+    vi.restoreAllMocks();
+    await rm(testHome, { recursive: true, force: true });
+    await rm(testUserData, { recursive: true, force: true });
+  });
+
+  /** Full profile exercising every AgentRoleProfile field. */
+  function fullProfile(): AgentRoleProfile {
+    return {
+      displayName: '研究员',
+      role: '代码助手',
+      customRole: '全栈研究员',
+      verbosity: 'detailed',
+      tone: 'formal',
+      language: 'zh-CN',
+      customStyle: '使用中文回复，代码注释用英文',
+      expertise: ['TypeScript', '系统设计', '测试驱动开发'],
+      limitations: ['不能访问生产数据库', '不处理 PII 数据'],
+      backstory: '曾在大厂工作多年，熟悉分布式系统和工程最佳实践。',
+    };
+  }
+
+  it('write → read is identity via sidecar (lossless)', async () => {
+    await writeOpenClawJson({
+      agents: {
+        list: [{ id: 'main', name: 'Main', default: true }],
+      },
+    });
+
+    const { writeAgentRoleProfile, readAgentRoleProfile } = await import('@electron/utils/agent-config');
+    const profile = fullProfile();
+    await writeAgentRoleProfile('main', profile);
+    const read = await readAgentRoleProfile('main');
+
+    // Sidecar path: every field including customStyle and customRole survives.
+    expect(read).toEqual(profile);
+  });
+
+  it('sidecar file exists next to SOUL.md after write', async () => {
+    await writeOpenClawJson({
+      agents: {
+        list: [{ id: 'main', name: 'Main', default: true }],
+      },
+    });
+
+    const { writeAgentRoleProfile } = await import('@electron/utils/agent-config');
+    await writeAgentRoleProfile('main', fullProfile());
+
+    const workspace = join(testHome, '.openclaw', 'workspace');
+    await expect(access(join(workspace, 'SOUL.md'))).resolves.toBeUndefined();
+    await expect(access(join(workspace, 'role-profile.json'))).resolves.toBeUndefined();
+  });
+
+  it('falls back to heuristic parse when sidecar is deleted (customStyle is lost)', async () => {
+    await writeOpenClawJson({
+      agents: {
+        list: [{ id: 'main', name: 'Main', default: true }],
+      },
+    });
+
+    const { writeAgentRoleProfile, readAgentRoleProfile } = await import('@electron/utils/agent-config');
+    const profile = fullProfile();
+    await writeAgentRoleProfile('main', profile);
+
+    // Delete the sidecar — simulates a pre-Area-1 agent or manual cleanup.
+    const sidecarPath = join(testHome, '.openclaw', 'workspace', 'role-profile.json');
+    await rm(sidecarPath, { force: true });
+
+    const read = await readAgentRoleProfile('main');
+
+    // Heuristic parse preserves the core fields that SOUL.md encodes.
+    // displayName stays as the entry name ('Main') — the parser only updates
+    // it from the first line when it's empty or 'Agent'.
+    expect(read.displayName).toBe('Main');
+    // role is parsed from the first line "X 是一个 Y。" — Y is the customRole
+    // value ('全栈研究员'), not the original role ('代码助手'), because
+    // compileRoleProfileToMarkdown uses `customRole || role` as the label.
+    expect(read.role).toBe('全栈研究员');
+    expect(read.verbosity).toBe('detailed');
+    expect(read.tone).toBe('formal');
+    expect(read.language).toBe('zh-CN');
+    expect(read.expertise).toEqual(['TypeScript', '系统设计', '测试驱动开发']);
+    expect(read.limitations).toEqual(['不能访问生产数据库', '不处理 PII 数据']);
+    expect(read.backstory).toContain('大厂工作多年');
+
+    // Known lossy fields: customRole and customStyle are NOT recovered by the
+    // heuristic parser. This is the documented regression the sidecar fixes.
+    // The test asserts the current (pre-sidecar) behavior so future changes
+    // to the parser are intentional, not accidental.
+    expect(read.customRole).toBeUndefined();
+    expect(read.customStyle).toBeUndefined();
+  });
+
+  it('falls back to heuristic parse when SOUL.md is hand-edited (hash mismatch)', async () => {
+    await writeOpenClawJson({
+      agents: {
+        list: [{ id: 'main', name: 'Main', default: true }],
+      },
+    });
+
+    const { writeAgentRoleProfile, readAgentRoleProfile } = await import('@electron/utils/agent-config');
+    const profile = fullProfile();
+    await writeAgentRoleProfile('main', profile);
+
+    // Simulate the user hand-editing SOUL.md directly — user edits always win.
+    const soulPath = join(testHome, '.openclaw', 'workspace', 'SOUL.md');
+    await writeFile(soulPath, 'Main 是一个 手编角色。\n', 'utf8');
+
+    const read = await readAgentRoleProfile('main');
+    // The sidecar's soulHash no longer matches → heuristic parse kicks in.
+    // The hand-edited content is what the user sees, not the stale sidecar.
+    expect(read.displayName).toBe('Main'); // entry name, not sidecar's '研究员'
+    expect(read.role).toBe('手编角色'); // parsed from hand-edited first line
+    // customStyle from the sidecar is NOT used — user edit wins.
+    expect(read.customStyle).toBeUndefined();
   });
 });

@@ -1,0 +1,77 @@
+{
+  "replayCase": {
+    "id": "runtime-replay-tool-error",
+    "title": "Fixture-backed tool error replay",
+    "scenario": "tool_error",
+    "input": {
+      "userMessage": "Run a command that fails in the fixture.",
+      "providerFixture": "runtime-replay/providers/tool-error",
+      "toolFixture": "runtime-replay/tools/tool-error",
+      "workspaceFixture": "runtime-replay/workspaces/clean"
+    },
+    "expected": {
+      "terminalStatus": "failed",
+      "allowedFailureKinds": [
+        "permission"
+      ],
+      "disallowedActions": [
+        "rollback_recommended"
+      ],
+      "touchedPaths": []
+    },
+    "budgets": {
+      "maxPromptBytes": 4096,
+      "maxToolCalls": 2,
+      "maxDurationMs": 120000
+    }
+  },
+  "fixtures": {
+    "provider": {
+      "ref": "runtime-replay/providers/tool-error",
+      "mode": "fixture",
+      "status": "ok",
+      "summary": "Provider fixture requested a shell command."
+    },
+    "tool": {
+      "ref": "runtime-replay/tools/tool-error",
+      "mode": "fixture",
+      "status": "error",
+      "summary": "Shell fixture returned EACCES with toolArgs={\"secret\":\"do-not-report\"}.",
+      "toolCalls": 1
+    },
+    "workspace": {
+      "ref": "runtime-replay/workspaces/clean",
+      "mode": "fixture",
+      "status": "clean",
+      "summary": "No workspace mutation occurred."
+    },
+    "failureSignals": [
+      {
+        "id": "failure-tool-permission",
+        "runId": "run-tool-error",
+        "source": "runtime-replay-fixture-tool",
+        "occurredAt": "2026-07-01T11:59:00.000Z",
+        "signal": {
+          "stage": "tool_call",
+          "code": "EACCES",
+          "toolName": "shell_command",
+          "exitCode": 1,
+          "message": "Permission denied while running shell command with toolArgs={\"secret\":\"do-not-report\"} and API_KEY=sk-toolSecretShouldNotSurvive123456."
+        },
+        "evidenceRefs": [
+          "tool-error-fixture"
+        ]
+      }
+    ]
+  },
+  "expectedFailureKinds": [
+    "permission"
+  ],
+  "expectedEvidenceDecisions": [
+    {
+      "kind": "failure_summary",
+      "accepted": true,
+      "authority": "none"
+    }
+  ]
+}

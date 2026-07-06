@@ -212,4 +212,46 @@ describe('code review center service', () => {
       }),
     ], expect.stringContaining('code-review:'));
   });
+
+  it('redacts secret-like diff content before sending the code review prompt to runtime', async () => {
+    const fakeKey = 'OPENAI_API_KEY=sk-test1234567890ABCDE';
+    const patch = [
+      'diff --git a/src/app.ts b/src/app.ts',
+      '@@ -1,1 +1,1 @@',
+      '-export const key = "placeholder";',
+      `+export const key = "${fakeKey}";`,
+      '',
+    ].join('\n');
+    mockRepoWithPatch(patch);
+    const gatewayManager = new EventEmitter() as EventEmitter & {
+      rpc: ReturnType<typeof vi.fn>;
+    };
+    gatewayManager.rpc = vi.fn(async (method: string, params?: unknown) => {
+      if (method === 'agent') {
+        const message = (params as { message?: string }).message ?? '';
+        expect(message).not.toContain(fakeKey);
+        expect(message).toContain('OPENAI_API_KEY');
+        return { runId: 'model-run-redacted', sessionKey: 'agent:main:code-review' };
+      }
+      if (method === 'agent.wait') return { status: 'ok' };
+      if (method === 'chat.history') {
+        return {
+          messages: [{
+            role: 'assistant',
+            content: JSON.stringify({ summary: 'No issues', findings: [] }),
+          }],
+        };
+      }
+      return {};
+    });
+    const { createCodeReviewApi } = await import('@electron/services/code-review-api');
+    const api = createCodeReviewApi({ gatewayManager: gatewayManager as never });
+
+    const result = await api.run({ target: { kind: 'uncommitted' } });
+
+    expect(result.success).toBe(true);
+    const agentCall = gatewayManager.rpc.mock.calls.find(([method]) => method === 'agent');
+    const message = (agentCall?.[1] as { message?: string } | undefined)?.message ?? '';
+    expect(message).not.toContain(fakeKey);
+  });
 });

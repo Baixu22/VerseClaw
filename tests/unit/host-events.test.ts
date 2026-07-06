@@ -103,6 +103,18 @@ describe('hostEvents', () => {
     expect(handler).toHaveBeenCalledWith({ type: 'trace.started', trace: { id: 'trace-1' } });
   });
 
+  it('subscribes to Office Tools install events over IPC', async () => {
+    const { hostEvents } = await import('@/lib/host-events');
+    const handler = vi.fn();
+
+    hostEvents.onOfficeToolsInstallEvent(handler);
+    const callback = on.mock.calls[0]?.[1] as ((payload: unknown) => void) | undefined;
+    callback?.({ taskId: 'task-1', kind: 'log', payload: 'Downloading officecli' });
+
+    expect(on).toHaveBeenCalledWith('office-tools:install-event', expect.any(Function));
+    expect(handler).toHaveBeenCalledWith({ taskId: 'task-1', kind: 'log', payload: 'Downloading officecli' });
+  });
+
   it('subscribes to dynamic channel QR events', async () => {
     const { hostEvents } = await import('@/lib/host-events');
     const handler = vi.fn();

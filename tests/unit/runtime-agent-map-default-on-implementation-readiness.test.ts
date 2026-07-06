@@ -310,12 +310,16 @@ function assertNoDefaultAuthority(
   expect(result.candidate.insertedIntoGateway, name).toBe(false);
   expect(result.candidate.insertedIntoModelMessages, name).toBe(false);
   expect(result.candidate.insertedIntoProviderTransport, name).toBe(false);
+  expect(result.candidate.insertedIntoCheckpointPayload, name).toBe(false);
+  expect(result.candidate.insertedIntoLifecyclePayload, name).toBe(false);
   expect(result.candidate.persisted, name).toBe(false);
   expect(result.metadata.noDefaultPromptCutover, name).toBe(true);
   expect(result.metadata.noDefaultTaskLoopReviewerPromptCutover, name).toBe(true);
   expect(result.metadata.noGatewayCutover, name).toBe(true);
   expect(result.metadata.noProviderTransportCutover, name).toBe(true);
   expect(result.metadata.noModelMessageCutover, name).toBe(true);
+  expect(result.metadata.noCheckpointPayloadCutover, name).toBe(true);
+  expect(result.metadata.noLifecyclePayloadCutover, name).toBe(true);
   expect(result.metadata.noRuntimeAuthority, name).toBe(true);
   expect(result.metadata.noToolAuthority, name).toBe(true);
   expect(result.metadata.noPersistence, name).toBe(true);

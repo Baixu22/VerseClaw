@@ -141,7 +141,7 @@ describe('chat target routing', () => {
       thinkingLevel: null,
     });
 
-    await useChatStore.getState().sendMessage('Hello direct agent', undefined, 'research');
+    await useChatStore.getState().sendMessage('Hello direct agent', { targetAgentId: 'research' });
 
     const state = useChatStore.getState();
     expect(state.currentSessionKey).toBe('agent:research:desk');
@@ -190,16 +190,18 @@ describe('chat target routing', () => {
 
     await useChatStore.getState().sendMessage(
       '',
-      [
-        {
-          fileName: 'design.png',
-          mimeType: 'image/png',
-          fileSize: 128,
-          stagedPath: '/tmp/design.png',
-          preview: 'data:image/png;base64,abc',
-        },
-      ],
-      'research',
+      {
+        attachments: [
+          {
+            fileName: 'design.png',
+            mimeType: 'image/png',
+            fileSize: 128,
+            stagedPath: '/tmp/design.png',
+            preview: 'data:image/png;base64,abc',
+          },
+        ],
+        targetAgentId: 'research',
+      },
     );
 
     expect(useChatStore.getState().currentSessionKey).toBe('agent:research:desk');
@@ -249,7 +251,7 @@ describe('chat target routing', () => {
       thinkingLevel: null,
     });
 
-    await useChatStore.getState().sendMessage('Use wiki context', undefined, null, 'wiki');
+    await useChatStore.getState().sendMessage('Use wiki context', { knowledgeScope: 'wiki' });
 
     const sendCall = hostApiFetchMock.mock.calls.find(([url]) => url === '/api/chat/send-with-media');
     const payload = JSON.parse((sendCall?.[1] as { body: string }).body) as Record<string, unknown>;
@@ -258,5 +260,71 @@ describe('chat target routing', () => {
       message: 'Use wiki context',
       knowledgeScope: 'wiki',
     });
+  });
+
+  it('forwards turn-scoped modelRefOverride to host chat send (Area 2 §3.2)', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+
+    useChatStore.setState({
+      currentSessionKey: 'agent:main:main',
+      currentAgentId: 'main',
+      sessions: [{ key: 'agent:main:main' }],
+      messages: [],
+      sessionLabels: {},
+      sessionLastActivity: {},
+      sending: false,
+      activeRunId: null,
+      streamingText: '',
+      streamingMessage: null,
+      streamingTools: [],
+      pendingFinal: false,
+      lastUserMessageAt: null,
+      pendingToolImages: [],
+      error: null,
+      loading: false,
+      thinkingLevel: null,
+    });
+
+    await useChatStore.getState().sendMessage('Turn override test', {
+      modelRefOverride: 'provider/cheap-model',
+    });
+
+    const sendCall = hostApiFetchMock.mock.calls.find(([url]) => url === '/api/chat/send-with-media');
+    const payload = JSON.parse((sendCall?.[1] as { body: string }).body) as Record<string, unknown>;
+    expect(payload).toMatchObject({
+      sessionKey: 'agent:main:main',
+      message: 'Turn override test',
+      modelRef: 'provider/cheap-model',
+    });
+  });
+
+  it('omits modelRef when no turn override is set (default path parity, Area 2 §6)', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+
+    useChatStore.setState({
+      currentSessionKey: 'agent:main:main',
+      currentAgentId: 'main',
+      sessions: [{ key: 'agent:main:main' }],
+      messages: [],
+      sessionLabels: {},
+      sessionLastActivity: {},
+      sending: false,
+      activeRunId: null,
+      streamingText: '',
+      streamingMessage: null,
+      streamingTools: [],
+      pendingFinal: false,
+      lastUserMessageAt: null,
+      pendingToolImages: [],
+      error: null,
+      loading: false,
+      thinkingLevel: null,
+    });
+
+    await useChatStore.getState().sendMessage('No override');
+
+    const sendCall = hostApiFetchMock.mock.calls.find(([url]) => url === '/api/chat/send-with-media');
+    const payload = JSON.parse((sendCall?.[1] as { body: string }).body) as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('modelRef');
   });
 });

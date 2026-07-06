@@ -1,4 +1,5 @@
 import type { ChatRuntimeEvent } from '../chat-runtime-events';
+import type { OfficecliInstallEvent } from '../host-api/contract';
 import type { ClawGraphRunEvent, ClawGraphRunSnapshot } from '../types/clawgraph';
 import type {
   LongConversationControlSignal,
@@ -200,6 +201,9 @@ export type HostEventContract = {
   observability: {
     runtimeEvent: (payload: ObservabilityRuntimeEvent) => void;
   };
+  officeTools: {
+    installEvent: (payload: OfficecliInstallEvent) => void;
+  };
   oauth: {
     code: (payload: OAuthCodeEvent) => void;
     success: (payload: OAuthSuccessEvent) => void;
@@ -269,6 +273,9 @@ export const HOST_EVENT_CHANNELS = {
   },
   observability: {
     runtimeEvent: 'observability:runtime-event',
+  },
+  officeTools: {
+    installEvent: 'office-tools:install-event',
   },
   oauth: {
     code: 'oauth:code',

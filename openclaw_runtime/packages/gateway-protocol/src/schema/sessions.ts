@@ -57,8 +57,71 @@ export const SessionCompactionCheckpointSchema = Type.Object(
     tokensAfter: Type.Optional(Type.Integer({ minimum: 0 })),
     summary: Type.Optional(Type.String()),
     firstKeptEntryId: Type.Optional(NonEmptyString),
+    details: Type.Optional(Type.Unknown()),
     preCompaction: SessionCompactionTranscriptReferenceSchema,
     postCompaction: SessionCompactionTranscriptReferenceSchema,
+  },
+  { additionalProperties: false },
+);
+
+export const CompressionArtifactQualitySchema = Type.Object(
+  {
+    score: Type.Number({ minimum: 0, maximum: 1 }),
+    level: Type.Union([Type.Literal("high"), Type.Literal("medium"), Type.Literal("low")]),
+    fieldCoverage: Type.Number({ minimum: 0, maximum: 1 }),
+    evidenceCoverage: Type.Number({ minimum: 0, maximum: 1 }),
+    artifactTokens: Type.Integer({ minimum: 0 }),
+    projectionTokens: Type.Integer({ minimum: 0 }),
+    warnings: Type.Array(Type.String()),
+  },
+  { additionalProperties: false },
+);
+
+export const CompressionEvidenceRefSchema = Type.Object(
+  {
+    type: Type.String(),
+    ref: NonEmptyString,
+    label: Type.Optional(Type.String()),
+  },
+  { additionalProperties: false },
+);
+
+export const CompressionFactSchema = Type.Object(
+  {
+    text: Type.String(),
+    evidenceRefs: Type.Array(CompressionEvidenceRefSchema),
+  },
+  { additionalProperties: false },
+);
+
+export const CompressionArtifactSchema = Type.Object(
+  {
+    schemaVersion: Type.Literal(1),
+    objective: Type.String(),
+    constraints: Type.Array(CompressionFactSchema),
+    currentState: Type.String(),
+    done: Type.Array(CompressionFactSchema),
+    inProgress: Type.Array(CompressionFactSchema),
+    blocked: Type.Array(CompressionFactSchema),
+    decisions: Type.Array(CompressionFactSchema),
+    filesTouched: Type.Array(CompressionFactSchema),
+    testsRun: Type.Array(CompressionFactSchema),
+    failedAttempts: Type.Array(CompressionFactSchema),
+    deviations: Type.Array(CompressionFactSchema),
+    nextAction: Type.String(),
+    reviewNeeded: Type.Array(CompressionFactSchema),
+    evidenceRefs: Type.Array(CompressionEvidenceRefSchema),
+    unverifiedClaims: Type.Array(Type.String()),
+    quality: CompressionArtifactQualitySchema,
+    tier: Type.Optional(Type.String()),
+    strategy: Type.Optional(Type.String()),
+    compressionRatio: Type.Optional(Type.Number({ minimum: 0 })),
+    tokensBefore: Type.Optional(Type.Integer({ minimum: 0 })),
+    tokensAfter: Type.Optional(Type.Integer({ minimum: 0 })),
+    rehydratedFiles: Type.Optional(Type.Array(Type.String())),
+    staleExcludedCount: Type.Optional(Type.Integer({ minimum: 0 })),
+    causalAnchorCount: Type.Optional(Type.Integer({ minimum: 0 })),
+    warnings: Type.Optional(Type.Array(Type.String())),
   },
   { additionalProperties: false },
 );
@@ -345,6 +408,12 @@ export const SessionsCompactionHistoryEntrySchema = Type.Object(
     tokensAfter: Type.Optional(Type.Integer({ minimum: 0 })),
     firstKeptEntryId: Type.Optional(NonEmptyString),
     trigger: SessionCompactionCheckpointReasonSchema,
+    quality: Type.Optional(CompressionArtifactQualitySchema),
+    artifactTokens: Type.Optional(Type.Integer({ minimum: 0 })),
+    projectionTokens: Type.Optional(Type.Integer({ minimum: 0 })),
+    evidenceCoverage: Type.Optional(Type.Number({ minimum: 0, maximum: 1 })),
+    unverifiedCount: Type.Optional(Type.Integer({ minimum: 0 })),
+    warnings: Type.Optional(Type.Array(Type.String())),
   },
   { additionalProperties: false },
 );
@@ -378,6 +447,52 @@ export const SessionsCompactionHistoryResultSchema = Type.Object(
     ok: Type.Literal(true),
     key: NonEmptyString,
     entries: Type.Array(SessionsCompactionHistoryEntrySchema),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsCompressionArtifactParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    checkpointId: Type.Optional(NonEmptyString),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsRecoveryContextParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    checkpointId: Type.Optional(NonEmptyString),
+    budgetTokens: Type.Optional(Type.Integer({ minimum: 1 })),
+    purpose: Type.Optional(Type.String()),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsCompressionArtifactResultSchema = Type.Object(
+  {
+    ok: Type.Literal(true),
+    key: NonEmptyString,
+    checkpointId: Type.Optional(NonEmptyString),
+    artifact: Type.Optional(CompressionArtifactSchema),
+    quality: Type.Optional(CompressionArtifactQualitySchema),
+    warnings: Type.Array(Type.String()),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsRecoveryContextResultSchema = Type.Object(
+  {
+    ok: Type.Literal(true),
+    key: NonEmptyString,
+    checkpointId: Type.Optional(NonEmptyString),
+    context: Type.String(),
+    projectionTokens: Type.Integer({ minimum: 0 }),
+    artifact: Type.Optional(CompressionArtifactSchema),
+    quality: Type.Optional(CompressionArtifactQualitySchema),
+    warnings: Type.Array(Type.String()),
   },
   { additionalProperties: false },
 );

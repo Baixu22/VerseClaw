@@ -7,6 +7,7 @@ import {
   buildRuntimeMemoryEpisodeFixture,
   buildRuntimeMemoryTemporalFactCandidateFixture,
   buildRuntimeMemoryTemporalFactFixture,
+  closeRuntimeMemoryHydrationShadowDatabasesForTest,
   readRuntimeMemoryHydrationShadow,
   type RuntimeMemoryEpisodeRecord,
   type RuntimeMemoryHydrationShadowFactProjection,
@@ -19,9 +20,10 @@ const tempDirs: string[] = [];
 const EVALUATION_TIME = 100;
 
 afterEach(() => {
+  closeRuntimeMemoryHydrationShadowDatabasesForTest();
   closeOpenClawStateDatabaseForTest();
   for (const dir of tempDirs.splice(0)) {
-    rmSync(dir, { recursive: true, force: true });
+    rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
 });
 

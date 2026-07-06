@@ -9,7 +9,6 @@ import {
   Download,
   FolderOpen,
   GitBranch,
-  GitCommitHorizontal,
   GitPullRequest,
   GitPullRequestCreate,
   GitCompareArrows,
@@ -30,6 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { CommitSummary, type CommitOperationState } from '@/components/ai-elements/commit';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
 import { basenameFromPath, compactCommit, defaultWorktreeTargetPath, pathEquals } from '@/lib/git-ui';
@@ -63,6 +63,12 @@ type ApprovalRetry = {
   approval: PermissionApprovalEvent;
   action: string;
   retry: (approvalId: string) => Promise<GitOperationResult>;
+};
+
+type LastGitOperation = {
+  action: string;
+  state: CommitOperationState;
+  detail?: string | null;
 };
 
 type WorktreeMode = 'new' | 'existing';
@@ -105,7 +111,7 @@ function sumKnownStats(changes: GitFileChange[], key: 'additions' | 'deletions')
 
 export function WorkspaceGitPanel({
   selectedPath,
-  diffMode = 'unstaged',
+  diffMode: controlledDiffMode,
   onSelectedPathChange,
   onDiffModeChange,
 }: WorkspaceGitPanelProps) {
@@ -118,9 +124,12 @@ export function WorkspaceGitPanel({
   const [githubRepo, setGithubRepo] = useState<GithubRepository | null>(null);
   const [pullRequests, setPullRequests] = useState<GithubPrSummary[]>([]);
   const [diff, setDiff] = useState<GitDiffResult | null>(null);
+  const [internalSelectedPath, setInternalSelectedPath] = useState<string | null>(null);
+  const [internalDiffMode, setInternalDiffMode] = useState<GitDiffMode>('unstaged');
   const [loading, setLoading] = useState(false);
   const [diffLoading, setDiffLoading] = useState(false);
   const [operationLoading, setOperationLoading] = useState<string | null>(null);
+  const [lastGitOperation, setLastGitOperation] = useState<LastGitOperation | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [pendingApproval, setPendingApproval] = useState<ApprovalRetry | null>(null);
@@ -143,7 +152,8 @@ export function WorkspaceGitPanel({
   const switchWorkspace = useWorkspacesStore((state) => state.switchWorkspace);
 
   const changes = useMemo(() => status?.changes ?? [], [status?.changes]);
-  const effectiveSelectedPath = selectedPath || changes[0]?.path || null;
+  const effectiveSelectedPath = selectedPath ?? internalSelectedPath ?? changes[0]?.path ?? null;
+  const effectiveDiffMode = controlledDiffMode ?? internalDiffMode;
   const selectedChange = changes.find((change) => change.path === effectiveSelectedPath) ?? null;
   const currentWorktree = useMemo(
     () => worktrees.find((worktree) => pathEquals(worktree.path, status?.repoRoot) || pathEquals(worktree.path, status?.workspaceRoot)),
@@ -198,11 +208,13 @@ export function WorkspaceGitPanel({
   }, [refresh]);
 
   useEffect(() => {
-    if (!selectedPath && changes[0]?.path) {
+    if (!selectedPath && !internalSelectedPath && changes[0]?.path) {
+      setInternalSelectedPath(changes[0].path);
+      setInternalDiffMode(modeForChange(changes[0]));
       onSelectedPathChange?.(changes[0].path);
       onDiffModeChange?.(modeForChange(changes[0]));
     }
-  }, [changes, onDiffModeChange, onSelectedPathChange, selectedPath]);
+  }, [changes, internalSelectedPath, onDiffModeChange, onSelectedPathChange, selectedPath]);
 
   useEffect(() => {
     if (!effectiveSelectedPath || !status?.isRepository) {
@@ -211,7 +223,7 @@ export function WorkspaceGitPanel({
     }
     let disposed = false;
     setDiffLoading(true);
-    hostApi.git.fileDiff({ path: effectiveSelectedPath, mode: diffMode })
+    hostApi.git.fileDiff({ path: effectiveSelectedPath, mode: effectiveDiffMode })
       .then((result) => {
         if (!disposed) setDiff(result);
       })
@@ -219,7 +231,7 @@ export function WorkspaceGitPanel({
         if (!disposed) {
           setDiff({
             path: effectiveSelectedPath,
-            mode: diffMode,
+            mode: effectiveDiffMode,
             patch: err instanceof Error ? err.message : String(err),
           });
         }
@@ -230,7 +242,7 @@ export function WorkspaceGitPanel({
     return () => {
       disposed = true;
     };
-  }, [diffMode, effectiveSelectedPath, status?.isRepository]);
+  }, [effectiveDiffMode, effectiveSelectedPath, status?.isRepository]);
 
   useEffect(() => {
     if (!prBase && githubRepo?.defaultBranch) {
@@ -257,24 +269,33 @@ export function WorkspaceGitPanel({
     retry?: (approvalId: string) => Promise<GitOperationResult>,
   ) => {
     setOperationLoading(key);
+    setLastGitOperation({ action, state: 'running', detail: null });
     setNotice(null);
     setPendingApproval(null);
     try {
       const result = await operation();
       if (result.success) {
+        setLastGitOperation({
+          action,
+          state: 'success',
+          detail: operationReason(result) ?? t('workspace.git.operation.completed'),
+        });
         await refresh();
         return result;
       }
       if (result.blocked || result.approvalRequired) {
+        setLastGitOperation({ action, state: 'blocked', detail: operationReason(result) });
         showBlocked(action, result, retry);
       } else {
         const reason = operationReason(result) ?? t('workspace.git.toast.failed');
+        setLastGitOperation({ action, state: 'failed', detail: reason });
         setNotice(reason);
         toast.error(reason);
       }
       return result;
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
+      setLastGitOperation({ action, state: 'failed', detail: message });
       setNotice(message);
       toast.error(message);
       return { success: false, reason: message };
@@ -286,6 +307,7 @@ export function WorkspaceGitPanel({
   const approveAndRetry = useCallback(async () => {
     if (!pendingApproval) return;
     setOperationLoading('approval');
+    setLastGitOperation({ action: pendingApproval.action, state: 'running', detail: null });
     try {
       const decision = await hostApi.permissions.decideApproval({
         id: pendingApproval.approval.id,
@@ -297,15 +319,24 @@ export function WorkspaceGitPanel({
       }
       const result = await pendingApproval.retry(pendingApproval.approval.id);
       if (result.success) {
+        setLastGitOperation({
+          action: pendingApproval.action,
+          state: 'success',
+          detail: operationReason(result) ?? t('workspace.git.operation.completed'),
+        });
         setPendingApproval(null);
         setNotice(null);
         await refresh();
       } else if (result.blocked || result.approvalRequired) {
+        setLastGitOperation({ action: pendingApproval.action, state: 'blocked', detail: operationReason(result) });
         showBlocked(pendingApproval.action, result, pendingApproval.retry);
       } else {
-        setNotice(operationReason(result) ?? t('workspace.git.toast.failed'));
+        const reason = operationReason(result) ?? t('workspace.git.toast.failed');
+        setLastGitOperation({ action: pendingApproval.action, state: 'failed', detail: reason });
+        setNotice(reason);
       }
     } catch {
+      setLastGitOperation({ action: pendingApproval.action, state: 'failed', detail: t('workspace.git.toast.approvalFailed') });
       toast.error(t('workspace.git.toast.approvalFailed'));
     } finally {
       setOperationLoading(null);
@@ -313,8 +344,11 @@ export function WorkspaceGitPanel({
   }, [pendingApproval, refresh, showBlocked, t]);
 
   const selectChange = (change: GitFileChange) => {
+    const nextMode = modeForChange(change);
+    if (selectedPath === undefined) setInternalSelectedPath(change.path);
+    if (controlledDiffMode === undefined) setInternalDiffMode(nextMode);
     onSelectedPathChange?.(change.path);
-    onDiffModeChange?.(modeForChange(change));
+    onDiffModeChange?.(nextMode);
   };
 
   const stageSelected = () => {
@@ -624,6 +658,9 @@ export function WorkspaceGitPanel({
     && Boolean(prBase.trim())
     && Boolean(prHead.trim())
     && operationLoading !== 'prCreate';
+  const commitOperation = operationLoading === 'commit'
+    ? { action: t('workspace.git.actions.commit'), state: 'running' as CommitOperationState, detail: null }
+    : lastGitOperation ?? { state: 'ready' as CommitOperationState, detail: t('workspace.git.operation.empty') };
   const toolTabs: Array<{ id: ToolPanel; label: string }> = [
     { id: 'worktrees', label: t('workspace.git.toolTabs.worktrees') },
     { id: 'commit', label: t('workspace.git.toolTabs.commit') },
@@ -767,7 +804,7 @@ export function WorkspaceGitPanel({
             <div className="min-w-0">
               <p className="truncate font-mono text-xs text-slate-100">{effectiveSelectedPath || t('workspace.git.diff.empty')}</p>
               <p className="mt-0.5 text-2xs text-slate-400">
-                {diffMode === 'staged' ? t('workspace.git.diff.staged') : t('workspace.git.diff.unstaged')}
+                {effectiveDiffMode === 'staged' ? t('workspace.git.diff.staged') : t('workspace.git.diff.unstaged')}
               </p>
             </div>
             <div className="inline-flex shrink-0 rounded-md border border-white/10 bg-white/5 p-0.5">
@@ -777,9 +814,12 @@ export function WorkspaceGitPanel({
                   type="button"
                   className={cn(
                     'rounded px-2 py-1 text-2xs text-slate-400',
-                    diffMode === mode && 'bg-white/10 text-white',
+                    effectiveDiffMode === mode && 'bg-white/10 text-white',
                   )}
-                  onClick={() => onDiffModeChange?.(mode)}
+                  onClick={() => {
+                    if (controlledDiffMode === undefined) setInternalDiffMode(mode);
+                    onDiffModeChange?.(mode);
+                  }}
                 >
                   {t(`workspace.git.diff.${mode}`)}
                 </button>
@@ -999,8 +1039,17 @@ export function WorkspaceGitPanel({
           ) : null}
 
           {activeToolPanel === 'commit' ? (
-            <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
-              <PanelTitle icon={<GitCommitHorizontal className="h-3.5 w-3.5" />} title={t('workspace.git.commit.title')} />
+            <section className="min-w-0" data-testid="workspace-git-commit-panel">
+              <CommitSummary
+                staged={status?.stagedCount ?? changes.filter((change) => change.staged).length}
+                unstaged={status?.unstagedCount ?? changes.filter((change) => change.unstaged).length}
+                untracked={status?.untrackedCount ?? changes.filter((change) => change.untracked).length}
+                conflicted={status?.conflictedCount ?? changes.filter((change) => change.conflicted).length}
+                additions={totalAdditions}
+                deletions={totalDeletions}
+                branch={status?.detached ? t('workspace.git.detached') : status?.branch}
+                operation={commitOperation}
+              >
               <Textarea
                 value={commitMessage}
                 onChange={(event) => setCommitMessage(event.target.value)}
@@ -1011,6 +1060,7 @@ export function WorkspaceGitPanel({
                 {operationLoading === 'commit' ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : null}
                 {t('workspace.git.actions.commit')}
               </Button>
+              </CommitSummary>
             </section>
           ) : null}
 
@@ -1259,4 +1309,3 @@ function PanelTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
     </p>
   );
 }
-

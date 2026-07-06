@@ -5,7 +5,17 @@
  */
 import type { TSchema } from "typebox";
 import type { AgentTool } from "../../runtime/index.js";
+import type { WriteRiskProfile } from "../../../shared/tool-registration.js";
 import type { ExtensionContext, ToolDefinition } from "../extensions/types.js";
+
+/** Extended AgentTool that carries A1 write-risk metadata. */
+export type AgentToolWithWriteRisk<TParams extends TSchema = TSchema, TDetails = unknown> =
+  AgentTool<TParams, TDetails> & {
+    /** A1 Stage 2: tool risk level (defaults to "readonly"). */
+    risk?: "readonly" | "write" | "destructive";
+    /** A1 Stage 2: static write-path declaration. */
+    writeRiskProfile?: WriteRiskProfile;
+  };
 
 /** Wrap a ToolDefinition into an AgentTool for the core runtime. */
 export function wrapToolDefinition<
@@ -15,7 +25,7 @@ export function wrapToolDefinition<
 >(
   definition: ToolDefinition<TParams, TDetails, TState>,
   ctxFactory?: () => ExtensionContext,
-): AgentTool<TParams, TDetails> {
+): AgentToolWithWriteRisk<TParams, TDetails> {
   return {
     name: definition.name,
     label: definition.label,
@@ -23,6 +33,10 @@ export function wrapToolDefinition<
     parameters: definition.parameters,
     prepareArguments: definition.prepareArguments,
     executionMode: definition.executionMode,
+    // A1 Stage 2: pass through write-risk metadata so the snapshotter can
+    // consume it at runtime (acceptance 2.1).
+    risk: definition.risk,
+    writeRiskProfile: definition.writeRiskProfile,
     execute: (toolCallId, params, signal, onUpdate) =>
       definition.execute(toolCallId, params, signal, onUpdate, ctxFactory?.() as ExtensionContext),
   };
@@ -41,8 +55,16 @@ export function wrapToolDefinitions(
  *
  * This keeps AgentSession's internal registry definition-first even when a caller
  * provides plain AgentTool overrides that do not include prompt metadata or renderers.
+ *
+ * Preserves A1 write-risk metadata (`risk`/`writeRiskProfile`) when present on the
+ * source tool (e.g., tools produced by `wrapToolDefinition`).
  */
 export function createToolDefinitionFromAgentTool(tool: AgentTool): ToolDefinition {
+  // A1 Stage 2: read optional write-risk metadata if the tool carries it.
+  const withRisk = tool as AgentTool & {
+    risk?: ToolDefinition["risk"];
+    writeRiskProfile?: ToolDefinition["writeRiskProfile"];
+  };
   return {
     name: tool.name,
     label: tool.label,
@@ -50,6 +72,9 @@ export function createToolDefinitionFromAgentTool(tool: AgentTool): ToolDefiniti
     parameters: tool.parameters,
     prepareArguments: tool.prepareArguments,
     executionMode: tool.executionMode,
+    // A1 Stage 2: preserve write-risk metadata when round-tripping.
+    risk: withRisk.risk,
+    writeRiskProfile: withRisk.writeRiskProfile,
     execute: async (toolCallId, params, signal, onUpdate) =>
       tool.execute(toolCallId, params, signal, onUpdate),
   };

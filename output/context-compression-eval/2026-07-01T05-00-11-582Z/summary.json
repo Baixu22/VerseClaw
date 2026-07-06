@@ -1,0 +1,1665 @@
+{
+  "runId": "2026-07-01T05-00-11-582Z",
+  "target": "C:\\Users\\27933\\Desktop\\verseshell\\graphiti-main",
+  "generatedAt": "2026-07-01T05:02:28.589Z",
+  "suite": "full",
+  "sampleSource": "real",
+  "requestedSampleCount": 500,
+  "sampleCount": 399,
+  "semanticMatching": false,
+  "cache": {
+    "enabled": true,
+    "dir": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.cache\\context-compression-eval",
+    "version": "context-compression-eval-cache-v3",
+    "hits": 203,
+    "misses": 1,
+    "writes": 1,
+    "byNamespace": {
+      "real-samples": {
+        "hits": 0,
+        "misses": 1,
+        "writes": 1
+      },
+      "transcript-parse": {
+        "hits": 203,
+        "misses": 0,
+        "writes": 0
+      }
+    },
+    "secretScan": {
+      "pass": true,
+      "scannedFiles": 677,
+      "leaks": []
+    }
+  },
+  "manifest": {
+    "input": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\output\\context-compression-eval\\holdout-full-real-500.manifest.jsonl",
+    "hash": "c450f77667cc4c3f489bb04c58645e54029c0677859be5566920d7c76b355a32",
+    "requested": 500,
+    "resolved": 399,
+    "missing": [
+      {
+        "key": "50ca734bfa1dfed2fe30b89c8c7c72394a2d49ca53912bb951a266450808ea15",
+        "id": "R1",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "0d422ff39dfbf29831b352238c04f302e55934d042042a0c83933e5476026374",
+        "id": "R7",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "a6ece467e11cbe60efd2f57e077d5bb8038e72f37c36fc64bb1c753b2011e5dc",
+        "id": "R11",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "91cce282c45544185cbdab98cc081daaf12a064647b192c5e8d91523b0d1bcf0",
+        "id": "R17",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "98ac7f4023d6f8aa2c56c17951bd825333c96caaa6298b711f6a349d4e5e962a",
+        "id": "R21",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "05e9c1331457536c86a9b89e22db84d7d98a9448bded8ec000762030aafb18f1",
+        "id": "R25",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "8aab60861809ebb718fe0db8ede3226b894260e38259fded5938ca52b4ffa788",
+        "id": "R32",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "1e8d79673ba1bb71a5a5e021322fe7b0dda7b07bb5dba36fce9d3357e8c95682",
+        "id": "R37",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "bfff46edf6efa544ae51dda423eb4d25d7d029d165d7e7d08c7a66007a93f6aa",
+        "id": "R42",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "591f3f1399fe89b5a2ee63b341a6bcdad1da96d596c9749346842826f9af7fa1",
+        "id": "R47",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "39a6f15401604ae2a3c7d508540f5e0aaf95000fefafb67c17b6abe4bdbb8c9f",
+        "id": "R53",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "82bed3a83dcd248b2cff31a487a52b51336e1a6b39c5c8406de7a2308fdcd4af",
+        "id": "R57",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "422bd7a1353f6553073e01c877b4d84f55cdc82c6ef2ed9d44b87aecf5da9b83",
+        "id": "R62",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "1b0cdc44f0666d7f1513cdd2c76fc5c2769168e0a0eec376077a294523423d9a",
+        "id": "R67",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "a395f19fd543696f62bc88176ccdbcf95d9b9735d0e2c2c428440c128976cd13",
+        "id": "R72",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "a78dcac85fe23d23fd66d0b78867983367745966ba158eb20ae086a35cb618b6",
+        "id": "R77",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "7d0d4ad49aa856b208f9e15f114a41426b464550b3b26a0dd92ab8769f349953",
+        "id": "R82",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "a63f33d041693c5dbf9d1ce90026471840f98935f491004f5a20952fb76870d8",
+        "id": "R86",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "5afd82946fd393de67a8d8b066f03272b801b8b37279828ee679c6bf4e226a96",
+        "id": "R91",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "1e20f6a6f9aae28cd4564595ac3f9a4fefba732feefdf502feab0b169195fec8",
+        "id": "R96",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "eadf334ef31e576f8f885c4d39f6289c7d563aa484e06ce0e172c0fe4fbdddf2",
+        "id": "R101",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "c8f9c4268b26a45b81115da5500531d1cdb91aca500c1691b0ed29e32b40612e",
+        "id": "R105",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "8db4674d7bb519f8af1b413df9c45954ca7f14f9af1734d91f7a4db3b12715aa",
+        "id": "R110",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "9ec344ed8ec29188bf910c27e91414a6414f57423e0d4a4a0b6a16a81fbb38f2",
+        "id": "R115",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "47b606fe15f2225e9538d8cdcb345deda64506146965c203e9df00a8685a0780",
+        "id": "R119",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "3ffe9c1dd1e875fb906c14f9f6d119169a85f464c1e1a52065e0f7b8713371bb",
+        "id": "R124",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "c311302f37708ad33d1f218727bcce8140c5ef62fa8c052ea203ffd77bf204c5",
+        "id": "R129",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "8773d6cb4a7eba65bee930a0071f536bf10054ab56d4a431ec6010542b9d1db3",
+        "id": "R134",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "bc9f895cb2701906e2a1339f7afcea34a693e68b3b80ecbe862a7d79311ad3cd",
+        "id": "R139",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "c5efdbe7b610874d9e8c66eed3a89fdaa4f79945afe232a23d6bd9524276a4f5",
+        "id": "R143",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "48d361d5a8ad404a38f5b4a85b3ca1034ab23eb00b313321e1f860f7e938193d",
+        "id": "R148",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "fb144d3881508c3736092679cdacf4b801b521230a16e3a2702e65a9d9bd7fca",
+        "id": "R153",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "c675ad41b2eefd28dc8f57a4e5efd5821d99325b94c0ec67c9c693d7175971c9",
+        "id": "R158",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "a9965507c6813a1cd58bab62e6f7ba01e45bade0acd1c6aca3da01ca3469c22d",
+        "id": "R163",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "6a7e813b5b81ff1619c7b7da8c551f7f91cec61fe6e04eeaa27677f6f3b13e92",
+        "id": "R168",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "82c701c2d61b32e8b7020ad39a320523f2e11c92aeb1e324e25497191b50055d",
+        "id": "R169",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "6778cea0d9d70b9d9b14549d88e69c652b462ac076bf02b2176f552b345310c8",
+        "id": "R173",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "ebac6c2812693b88fad5a4a03b532a94d3df0bd7b1ed560886316417a176484a",
+        "id": "R176",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "b8c113f23d3e12ca7c91e5a77d41f2deb72ea3026a451e87662bc5a4e6f9ae17",
+        "id": "R180",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "e5cf608c1074438e32a4dadc92599333625d95b6beaa96f2540e04b05e38dd6f",
+        "id": "R182",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "83e1ec405a0832a7e428a8cdd6581931d5f6c1b8fa94915ec14c5b7f89a14532",
+        "id": "R184",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "85fcbcf009544d70660b22c0b51354eec85a86012355e15d00f7d4df2a6b0759",
+        "id": "R189",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "93f49d667cca0dc64cf42618b8911065ae282d9e03900a74169cd6556d0b44a5",
+        "id": "R200",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "db563d49185e89f04c0f2908c4c2154645f107e89a243e7e68b3819befe933d9",
+        "id": "R205",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "6a06c30d92bc3423a77304599cb26b2409a0afbc9c5e379dc9ecfc1a4fc92d36",
+        "id": "R210",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "14c0985686cdb8e5c6a68a8b730e4d0460475168b1f6ae8e427ab9ef93514050",
+        "id": "R215",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "693bbd088148b23ab72927a42d080e2965a9965541f255efb5708eb882dab394",
+        "id": "R220",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "e22465410674cdd8bbcf21862d4326eafb88cd6b0391954ce5c12f6b98a3c14e",
+        "id": "R221",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "2527f9fa4a59317faf16eed73af04c71f1aee3f483eff3cb29d1bbee593b8e6b",
+        "id": "R225",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "697278d832a8f7344f019fd683ab7029821a43ee1cbd74c20839ebc9aef77dc6",
+        "id": "R229",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "a88865ac9e592ba0855bc76b7a00a21240d7d001181bbf2def8152e48627387a",
+        "id": "R234",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "cce14a11ce6f2ad3f6d356d6b694045cf3b67b74fe06f257b46efd327e37db7e",
+        "id": "R239",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "0597ccb0cb9bc18473c92e81286f909d74ba9348888714ef6de85a33955f3ef2",
+        "id": "R244",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "8857217f859211b497bd4e94f2a6550847e18a80523f79f9500f8fdc581cfea6",
+        "id": "R249",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "c735766088046f8c96c15740666dbe014fc10f015b065c48c27f56e01e157e84",
+        "id": "R254",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "7e8eefc98a8bc6b84c0d0ff761a48b54e3b5ae143af3fd183986dc745174e11b",
+        "id": "R259",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "b5eb0c29194ac6576ce63196324d8662a9f5010faf5eab2c869299de9998ece2",
+        "id": "R264",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "1d6e85a82b9f974c4de7f2c47e896d9877001613c8dc7a3ade738ddc87de00b8",
+        "id": "R269",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "3456cddb62c6e148ddbfb8d598e4a4fe791760552f5e213e97b5fa5cdb98077a",
+        "id": "R274",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "115fa3e2d5bab87897d9a20717379343588c93626c9b80153fd68939adc81d72",
+        "id": "R278",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "8071f2c7e4389da3acc473acc8ff1859a934bc525789ee9831a575863e3da1f1",
+        "id": "R283",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "caa47bbfb86237ad07f4796a18b9446c67eadf6238c68fe055184804b6183696",
+        "id": "R288",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "2993703d8aed35aad54d0aff60a9ef3a236d356f43501bfc63f0ea26c6958c6f",
+        "id": "R292",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "690620022656c333a17e10103a10bfae93eb9a5f93c7d591164004c786df548c",
+        "id": "R297",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "18dd7c281efc614670b9432feca6d60711f3eb433122452ea9795c97e2ba4466",
+        "id": "R302",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "36354782ab806b8f7795889f5ecaab3a9c3fbd78d89d819b894cb22b5afce920",
+        "id": "R307",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "a89ab7748c3098274be331c70c391afd1d52a4c49c30ef72a4498fd2f9d9d0de",
+        "id": "R312",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "380db964502edb6db2792c0a0f7224266ddff2eab69dc370cedb3a95d9c23b31",
+        "id": "R317",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "0848307b8015c4e73df37c875585c8869626d8259c2c69d33ec5d67ecf6ee7d9",
+        "id": "R322",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "fe92b6a4fcf1ee4890d539d7ee4d898e3f8df1548ef4eccd9bb04deb512d12a9",
+        "id": "R327",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "b4d8d6ddb11d289a40c148f3a096231651ec6374a2663e740ffbab6d6120ce74",
+        "id": "R332",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "b4ead6f8f452557cd2ef73fb15de4ba24317c7053dc62d57554e87e6ec3baad1",
+        "id": "R337",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "6348408ad282e0d86578ce6f393f329fd7c63b8e8e8665659e713827156dfb05",
+        "id": "R342",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "1751585d3cc7bc893748c1bf30616fd056b66f75bed9d7558c63d21a09639f15",
+        "id": "R354",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "9bb495e5db0dce90a505854fb29068c85a3314ba03e7d753be84aacbdd25aa13",
+        "id": "R360",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "04aff8c2589a75cb742672002e5828f821aef6e4849727282f11763fc1db0bf4",
+        "id": "R368",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "8970afde45c5921c0b1f4bc977b2317a235b4d58309ecb8331234e7c20f5f63f",
+        "id": "R372",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "770a3dc1cf4ab86fe2cf8a48832d9f7f2dcb7c0257a8107e4154577c9e7bc713",
+        "id": "R376",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "27b0493d43696450769018782dec2fd39a3bebe2a929960863088aa84a366d80",
+        "id": "R380",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "86ce4a68d7ba1b37f3906c8f971c78db734a6c219cd153939441cbe34f28e0b4",
+        "id": "R385",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "3719989a885bbfa27dfe9f44054f9820a56ea037d5f0f8fed285e0d7c22524fe",
+        "id": "R390",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "761b6d3edb427a6cc4289bd85a8aea13c0e742b07f726582ca8a48ff9c32dc46",
+        "id": "R396",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "bf75332fd04a1b34f67561515c9aa5ed72161fb7404057adfa00083fa8367a15",
+        "id": "R405",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "21cbe569dcdaff8c3a6f9adbb27e21dca5ca7f354272a8fb771880ff26cc84b2",
+        "id": "R410",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "cb3233b50cf265e9775d2f912834825be4e2180980180d782df57499dc37a823",
+        "id": "R415",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "3b2d2892a0139e4561c79ec616175f5399cdaecde1521f6de35e4b7d8f7d9795",
+        "id": "R420",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "0a1dae9123d3100a8bcf765c9497d88cf8447f4840ea375924821041bd15603f",
+        "id": "R425",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "00c9da1b1c7835dab84fbf15a4643d345329f1ca37522213aa0b3a347ac7c769",
+        "id": "R430",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "29f0f88acb40f452944e92efc970b9b2d2f6d59009ee839435a4e65c75ccb6f8",
+        "id": "R435",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "f5617f2038ee75ddd9fa34e4e2eb4b02a6d3f3f719f1ea930f1b0faf08bcec76",
+        "id": "R440",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "d0f2f773bd123f1bb35d0daeefea3f58fa958b827e7ae526d66d7873f3c5ed52",
+        "id": "R445",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "39ef994dbffd87fd39bb111ef71612c033f6d1eefcfb03607be88059b3a823b9",
+        "id": "R454",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "a83755ca9de4dd94703d206919665fa672008e5ba8b01f3fd356336d73067717",
+        "id": "R459",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "de9e1dda5bbb96aa649f10c35aacfe35e55345db7d1e191c792ca7c1f8b71f38",
+        "id": "R463",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "611209be9fd2aac093c06a887a48b587d71b1445b40dc66cfd9aeb8d73428e5d",
+        "id": "R468",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "bf119f8c09a78492c9afac46c6cc6bc93baec6e49abd54d89a1f959fc59de80d",
+        "id": "R473",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "220339ab210209cc8c5cc2ffaeb6952c2ab3989105443921e85fb28008f9581e",
+        "id": "R478",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "c5b9fbc71e2da8322e1541e474f904b712947cd2fce2eeebcf55e6bba6cd139a",
+        "id": "R483",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "16910df498e546fdb7f49fddaa2e7c485e2838d8a448ff817bbf6b714a5327c6",
+        "id": "R488",
+        "source": "real",
+        "cohort": {
+          "turn": 1000,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "1c5066849a1a17173ce90386883b7bae13c9c1d5300c539a1acf2b42271cc901",
+        "id": "R493",
+        "source": "real",
+        "cohort": {
+          "turn": 200,
+          "pressure": "0.6"
+        }
+      },
+      {
+        "key": "27b8470111b473b210fd181a130a93a7a029cc0de5e681945188fad8da896367",
+        "id": "R498",
+        "source": "real",
+        "cohort": {
+          "turn": 50,
+          "pressure": "0.6"
+        }
+      }
+    ]
+  },
+  "reproducibility": {
+    "seed": "context-compression-eval-v1",
+    "sampleSelectionHash": "c450f77667cc4c3f489bb04c58645e54029c0677859be5566920d7c76b355a32",
+    "promptVersions": {
+      "judge": "judge-prompt-v4",
+      "continuation": "continuation-prompt-v3"
+    },
+    "extractorVersion": "real-fact-extractor-v3",
+    "parserVersion": "transcript-parser-v3",
+    "redactionVersion": "redaction-v4"
+  },
+  "realInventory": {
+    "transcriptRoot": "C:\\\\Users\\\\27933\\\\.codex\\\\archived_sessions",
+    "filesFound": 203,
+    "transcriptsParsed": 203,
+    "entriesParsed": 52669
+  },
+  "sampleMix": {
+    "realRequested": 500,
+    "syntheticRequested": 0,
+    "realActual": 399,
+    "syntheticActual": 0,
+    "realShortfall": 0,
+    "evidenceInsufficient": false
+  },
+  "llmJudge": {
+    "requested": false,
+    "executed": false,
+    "reason": "LLM judge was not requested. Pass --llm-judge to enable it.",
+    "results": []
+  },
+  "llmContinuation": {
+    "requested": false,
+    "executed": false,
+    "reason": "LLM continuation was not requested. Pass --llm-continuation to enable it.",
+    "results": []
+  },
+  "layer0": {
+    "rounds": 399,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": null,
+    "informationDensityMean": null,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 3470,
+    "expectedTotal": 3470
+  },
+  "layer1": {
+    "rounds": 399,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": 0.155,
+    "informationDensityMean": 6.7226,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 3470,
+    "expectedTotal": 3470
+  },
+  "layer1Gate": {
+    "pass": true,
+    "thresholds": {
+      "recallCriticalMean": ">= 0.95",
+      "recallImportantMean": ">= 0.75",
+      "weightedRecallMean": ">= 0.90",
+      "precisionMean": "= 1",
+      "forbiddenFoundTotal": "= 0",
+      "staleExclusionMean": ">= 0.99",
+      "compressionRatioMean": "0.15..0.35",
+      "informationDensityMean": ">= 2"
+    }
+  },
+  "layer2": {
+    "total": 399,
+    "judgeScoreMean": 10,
+    "judgeScoreMin": 10,
+    "completenessRate": 1,
+    "accuracyRate": 1,
+    "causalChainPreservation": 1,
+    "causalChainRate": 1,
+    "noFabricationRate": 1,
+    "actionabilityRate": 1
+  },
+  "layer2Gate": {
+    "pass": true
+  },
+  "layer3": {
+    "total": 399,
+    "firstActionMatchRate": 1,
+    "criticalActionMatchRate": 1,
+    "noRepeatedWorkRate": 1,
+    "noContradictoryActionRate": 1,
+    "decisionConsistencyRate": 1,
+    "taskCompletionDelta": 0
+  },
+  "layer3Gate": {
+    "pass": true,
+    "thresholds": {
+      "firstActionMatchRate": ">= 0.85",
+      "criticalActionMatchRate": ">= 0.90",
+      "noRepeatedWorkRate": ">= 0.95",
+      "noContradictoryActionRate": ">= 0.95",
+      "decisionConsistencyRate": ">= 0.90",
+      "taskCompletionDelta": "<= 0.08"
+    }
+  },
+  "cohorts": {
+    "real": {
+      "sampleCount": 399,
+      "layer0": {
+        "rounds": 399,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 3470,
+        "expectedTotal": 3470
+      },
+      "layer1": {
+        "rounds": 399,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.155,
+        "informationDensityMean": 6.7226,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 3470,
+        "expectedTotal": 3470
+      },
+      "layer3": {
+        "total": 399,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.75": {
+        "rounds": 99,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1583,
+        "informationDensityMean": 6.6458,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 868,
+        "expectedTotal": 868
+      },
+      "0.85": {
+        "rounds": 100,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1508,
+        "informationDensityMean": 6.9409,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 858,
+        "expectedTotal": 858
+      },
+      "0.95": {
+        "rounds": 103,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.154,
+        "informationDensityMean": 6.694,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 894,
+        "expectedTotal": 894
+      },
+      "emergency": {
+        "rounds": 97,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1571,
+        "informationDensityMean": 6.6064,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 850,
+        "expectedTotal": 850
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 130,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.165,
+        "informationDensityMean": 6.3676,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 1015,
+        "expectedTotal": 1015
+      },
+      "200": {
+        "rounds": 137,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1511,
+        "informationDensityMean": 6.8361,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 1261,
+        "expectedTotal": 1261
+      },
+      "1000": {
+        "rounds": 132,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1493,
+        "informationDensityMean": 6.9545,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 1194,
+        "expectedTotal": 1194
+      }
+    },
+    "byPressureContinuation": {
+      "0.75": {
+        "total": 99,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.85": {
+        "total": 100,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.95": {
+        "total": 103,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "emergency": {
+        "total": 97,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    }
+  },
+  "cohortBreakdown": {
+    "real": {
+      "sampleCount": 399,
+      "layer0": {
+        "rounds": 399,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 3470,
+        "expectedTotal": 3470
+      },
+      "layer1": {
+        "rounds": 399,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.155,
+        "informationDensityMean": 6.7226,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 3470,
+        "expectedTotal": 3470
+      },
+      "layer3": {
+        "total": 399,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.75": {
+        "rounds": 99,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1583,
+        "informationDensityMean": 6.6458,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 868,
+        "expectedTotal": 868
+      },
+      "0.85": {
+        "rounds": 100,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1508,
+        "informationDensityMean": 6.9409,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 858,
+        "expectedTotal": 858
+      },
+      "0.95": {
+        "rounds": 103,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.154,
+        "informationDensityMean": 6.694,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 894,
+        "expectedTotal": 894
+      },
+      "emergency": {
+        "rounds": 97,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1571,
+        "informationDensityMean": 6.6064,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 850,
+        "expectedTotal": 850
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 130,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.165,
+        "informationDensityMean": 6.3676,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 1015,
+        "expectedTotal": 1015
+      },
+      "200": {
+        "rounds": 137,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1511,
+        "informationDensityMean": 6.8361,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 1261,
+        "expectedTotal": 1261
+      },
+      "1000": {
+        "rounds": 132,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1493,
+        "informationDensityMean": 6.9545,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 1194,
+        "expectedTotal": 1194
+      }
+    }
+  },
+  "worstCases": [],
+  "regressionExamples": [],
+  "redactionSummary": {
+    "mode": "strict",
+    "replacements": {
+      "apiKeys": 35,
+      "authTokens": 27,
+      "authHeaders": 34,
+      "providerKeys": 35,
+      "urlTokens": 0,
+      "usernames": 23207
+    },
+    "filesScanned": 203,
+    "linesScanned": 77751
+  },
+  "acceptance": {
+    "status": "FAIL",
+    "checks": [
+      {
+        "id": "sampleCount.exact",
+        "pass": false,
+        "actual": 399,
+        "expected": "= 500"
+      },
+      {
+        "id": "samplesJsonl.exact",
+        "pass": false,
+        "actual": 399,
+        "expected": "= 500"
+      },
+      {
+        "id": "l0.recallMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l0.staleExclusionMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l1.gate",
+        "pass": true,
+        "actual": 1,
+        "expected": "all L1 thresholds"
+      },
+      {
+        "id": "l2.deterministicGate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 thresholds"
+      },
+      {
+        "id": "l3.deterministicGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "L3 thresholds"
+      },
+      {
+        "id": "realCohort.notMasked",
+        "pass": true,
+        "actual": 1,
+        "expected": "real L1 gate passes independently when real samples exist"
+      },
+      {
+        "id": "manifest.exactResolve",
+        "pass": false,
+        "actual": "399/500",
+        "expected": "all manifest samples resolved"
+      },
+      {
+        "id": "cache.noSecretLeak",
+        "pass": true,
+        "actual": 0,
+        "expected": "= 0 cache secret leaks"
+      },
+      {
+        "id": "full.realMinCount",
+        "pass": false,
+        "actual": 399,
+        "expected": ">= 500"
+      },
+      {
+        "id": "full.realCoverage",
+        "pass": true,
+        "actual": 399,
+        "expected": "500 real samples"
+      },
+      {
+        "id": "full.pressureCoverage",
+        "pass": false,
+        "actual": 4,
+        "expected": "0.60,0.75,0.85,0.95,emergency"
+      }
+    ],
+    "evidenceInsufficient": false
+  }
+}

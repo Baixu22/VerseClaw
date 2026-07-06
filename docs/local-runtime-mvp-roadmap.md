@@ -331,6 +331,10 @@ Phase 1 design closure:
   active context pruning, active model routing, active evidence gating, and
   stronger Skill/MCP isolation each require a separate follow-up spec, feature
   flag, parity tests, rollback path, and comms checks.
+- The Skill/MCP capability publication layer is the active follow-up read model
+  for capability exposure. It unifies Skill and MCP consumption through
+  `hostApi.capabilities.publications`, while activation remains tied to explicit
+  user configuration and existing runtime ownership paths.
 
 Remaining design points after MVP:
 

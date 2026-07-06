@@ -1,4 +1,7 @@
 import { app } from 'electron';
+import { existsSync } from 'node:fs';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import type {
   AgentDevCreateConversationPayload,
   AgentDevCreateProviderConfigPayload,
@@ -14,14 +17,27 @@ import type {
   AgentDevTransportTraceEvent,
   AgentDevTransportTracePayload,
   AgentDevVisualPreset,
+  AgentDevWorkbenchEvidence,
   JsonRecord,
   SettingsSnapshot,
 } from '@shared/host-api/contract';
 import {
+  createEmptyCostUsage,
+  type AgentDevCostReport,
+  type AgentDevCostUsage,
+  type AgentDevSkillSandboxReport,
+} from '@shared/agent-dev/trace-contract';
+import {
   assertAgentDevFeatureFlagsPayload,
   assertAgentDevMockReplayConfig,
+  assertAgentDevRecordScenarioPayload,
   assertAgentDevSeedStatePayload,
 } from '@shared/host-api/agent-dev-schemas';
+import {
+  getAgentDevScenario,
+  isAgentDevScenarioId,
+  listAgentDevScenarios,
+} from '@shared/agent-dev/scenarios';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
 import { getAllSettings, setSetting } from '../utils/store';
@@ -34,59 +50,13 @@ type AgentDevApiContext = {
 
 const MAX_CALLS = 500;
 const MAX_TRANSPORT_EVENTS = 500;
-
-const SCENARIOS: AgentDevScenario[] = [
-  {
-    id: 'chat-empty',
-    route: '/',
-    description: 'Empty chat session with setup skipped and no provider key.',
-    seed: { conversations: [], providers: [] },
-  },
-  {
-    id: 'chat-streaming',
-    route: '/',
-    description: 'Chat page with a synthetic in-progress assistant turn.',
-    seed: { gatewayStatus: { state: 'running', gatewayReady: true } },
-  },
-  {
-    id: 'models-heavy-usage',
-    route: '/settings/models',
-    description: 'Models page with dense token usage buckets for chart validation.',
-    seed: { usageWindowDays: 30, modelCount: 12 },
-  },
-  {
-    id: 'settings-provider-error',
-    route: '/settings/models',
-    description: 'Provider settings page with a validation error state.',
-    seed: { providerError: 'invalid_api_key' },
-  },
-  {
-    id: 'doctor-failed',
-    route: '/settings/advanced',
-    description: 'Advanced settings with a failed OpenClaw Doctor payload.',
-    seed: { doctorExitCode: 1 },
-  },
-  {
-    id: 'gateway-connecting',
-    route: '/',
-    description: 'Gateway connecting banner and retry affordances.',
-    seed: { gatewayStatus: { state: 'starting', gatewayReady: false } },
-  },
-  {
-    id: 'knowledge-drafts',
-    route: '/knowledge',
-    description: 'Knowledge hub with draft/proposal queues populated.',
-    seed: { draftCount: 3, proposalCount: 2 },
-  },
-  {
-    id: 'observability-trace-errors',
-    route: '/observability',
-    description: 'Observability page with errored traces and node diagnostics.',
-    seed: { traceStatus: 'failed', diagnosticCount: 4 },
-  },
+const REDACTED = '[redacted]';
+const SENSITIVE_KEY_PATTERN = /(api[-_]?key|token|authorization|secret|password)/i;
+const SENSITIVE_VALUE_PATTERNS = [
+  /\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+/=-]{8,}/gi,
+  /\b(?:sk|rk|pk|ghp|github_pat)_[A-Za-z0-9_=-]{8,}\b/g,
+  /\b(?:api[-_ ]?key|token|secret|password|authorization)\s*[:=]\s*['"]?[^'"\s,;}]+/gi,
 ];
-
-const scenarioIds = new Set<string>(SCENARIOS.map((scenario) => scenario.id));
 
 let seedState: AgentDevSeedState = createEmptySeedState();
 let mockReplayMode: AgentDevMockReplayMode = 'off';
@@ -127,9 +97,7 @@ function readFlagEnv(): string[] {
 }
 
 function normalizeScenario(value: unknown): AgentDevScenarioId | undefined {
-  return typeof value === 'string' && scenarioIds.has(value)
-    ? value as AgentDevScenarioId
-    : undefined;
+  return isAgentDevScenarioId(value) ? value : undefined;
 }
 
 function uniqueFlags(flags: string[]): string[] {
@@ -206,6 +174,222 @@ function safeJsonRecord(value: unknown): JsonRecord {
     : {};
 }
 
+function slugify(value: unknown): string {
+  const slug = String(value || 'scenario')
+    .trim()
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase();
+  return slug || 'scenario';
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function sanitizeStringForArtifact(value: string): string {
+  let output = value;
+  for (const pattern of SENSITIVE_VALUE_PATTERNS) {
+    output = output.replace(pattern, REDACTED);
+  }
+  const home = app.getPath('home');
+  if (home) {
+    output = output.replace(new RegExp(escapeRegExp(home), 'gi'), '~');
+    output = output.replace(new RegExp(escapeRegExp(home.replaceAll('\\', '/')), 'gi'), '~');
+  }
+  return output;
+}
+
+function sanitizeForArtifact(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sanitizeForArtifact);
+  if (!value || typeof value !== 'object') {
+    if (typeof value === 'string') return sanitizeStringForArtifact(value);
+    return value;
+  }
+  const output: JsonRecord = {};
+  for (const [key, entry] of Object.entries(value as JsonRecord)) {
+    if (SENSITIVE_KEY_PATTERN.test(key)) {
+      output[key] = REDACTED;
+    } else {
+      output[key] = sanitizeForArtifact(entry);
+    }
+  }
+  return output;
+}
+
+function addUsage(target: AgentDevCostUsage, usage: Partial<AgentDevCostUsage>): void {
+  target.inputTokens += usage.inputTokens ?? 0;
+  target.outputTokens += usage.outputTokens ?? 0;
+  target.cacheTokens += usage.cacheTokens ?? 0;
+  target.totalTokens += usage.totalTokens ?? 0;
+  target.estimatedCost += usage.estimatedCost ?? 0;
+}
+
+function numberFromMetadata(metadata: JsonRecord | undefined, key: keyof AgentDevCostUsage): number {
+  const value = metadata?.[key];
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+}
+
+function buildCostReport(): AgentDevCostReport {
+  const totals = createEmptyCostUsage();
+  const byAgent: AgentDevCostReport['byAgent'] = {};
+  const bySkill: AgentDevCostReport['bySkill'] = {};
+  const hotPath: AgentDevCostReport['hotPath'] = [];
+
+  for (const event of transportTraceEvents) {
+    const usage = {
+      inputTokens: numberFromMetadata(event.metadata, 'inputTokens'),
+      outputTokens: numberFromMetadata(event.metadata, 'outputTokens'),
+      cacheTokens: numberFromMetadata(event.metadata, 'cacheTokens'),
+      totalTokens: numberFromMetadata(event.metadata, 'totalTokens'),
+      estimatedCost: numberFromMetadata(event.metadata, 'estimatedCost'),
+    };
+    if (usage.totalTokens === 0) {
+      usage.totalTokens = usage.inputTokens + usage.outputTokens + usage.cacheTokens;
+    }
+    if (usage.totalTokens === 0 && usage.estimatedCost === 0) continue;
+    addUsage(totals, usage);
+
+    const agent = typeof event.metadata?.agentId === 'string' ? event.metadata.agentId : 'unknown';
+    byAgent[agent] ??= createEmptyCostUsage();
+    addUsage(byAgent[agent], usage);
+
+    const skill = typeof event.metadata?.skillId === 'string' ? event.metadata.skillId : undefined;
+    if (skill) {
+      bySkill[skill] ??= createEmptyCostUsage();
+      addUsage(bySkill[skill], usage);
+    }
+
+    hotPath.push({
+      label: event.label,
+      requestId: event.requestId,
+      totalTokens: usage.totalTokens,
+      estimatedCost: usage.estimatedCost,
+    });
+  }
+
+  hotPath.sort((left, right) => right.totalTokens - left.totalTokens);
+  return {
+    generatedAt: new Date().toISOString(),
+    totals,
+    byAgent,
+    bySkill,
+    hotPath: hotPath.slice(0, 20),
+  };
+}
+
+function buildSkillSandboxReport(): AgentDevSkillSandboxReport {
+  return {
+    generatedAt: new Date().toISOString(),
+    capabilityGate: {
+      network: false,
+      filesystem: false,
+      'model-call': false,
+      'channel-send': false,
+    },
+    budget: {
+      tokenLimit: 10000,
+      apiCallLimit: 25,
+      executionMsLimit: 30000,
+      memoryMbLimit: 256,
+    },
+    effects: transportTraceEvents
+      .filter((event) => event.layer === 'tool' || event.layer === 'runtime')
+      .slice(-50)
+      .map((event) => ({
+        id: event.id,
+        at: event.at,
+        capability: event.layer === 'tool' ? 'filesystem' : 'model-call',
+        label: event.label,
+        allowed: false,
+        metadata: event.metadata,
+      })),
+  };
+}
+
+async function readProjectFile(path: string): Promise<string> {
+  try {
+    return await readFile(resolve(process.cwd(), path), 'utf8');
+  } catch {
+    return '';
+  }
+}
+
+function extractAgentDevContractActions(contractText: string): string[] {
+  const match = contractText.match(/agentDev:\s*\{([\s\S]*?)^\s{2}\};/m);
+  if (!match) return [];
+  return [...match[1].matchAll(/^\s{4}([A-Za-z][A-Za-z0-9]*):/gm)]
+    .map((entry) => entry[1])
+    .sort();
+}
+
+function extractAgentDevFacadeActions(hostApiText: string): string[] {
+  const match = hostApiText.match(/^\s{2}agentDev:\s*\{([\s\S]*?)^\s{2}\},/m);
+  if (!match) return [];
+  return [...match[1].matchAll(/^\s{4}([A-Za-z][A-Za-z0-9]*):/gm)]
+    .map((entry) => entry[1])
+    .sort();
+}
+
+function extractAgentDevServiceActions(serviceText: string): string[] {
+  return [...serviceText.matchAll(/^\s{4}([A-Za-z][A-Za-z0-9]*):\s*(?:async\s*)?(?:\(|\()/gm)]
+    .map((entry) => entry[1])
+    .sort();
+}
+
+async function buildWorkbenchEvidence(): Promise<AgentDevWorkbenchEvidence> {
+  const [contractText, hostApiText, serviceText, traceContractText] = await Promise.all([
+    readProjectFile('shared/host-api/contract.ts'),
+    readProjectFile('src/lib/host-api.ts'),
+    readProjectFile('electron/services/agent-dev-api.ts'),
+    readProjectFile('shared/agent-dev/trace-contract.ts'),
+  ]);
+  const contractActions = extractAgentDevContractActions(contractText);
+  const facadeActions = extractAgentDevFacadeActions(hostApiText);
+  const serviceActions = extractAgentDevServiceActions(serviceText);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    scenarioCount: listAgentDevScenarios().length,
+    artifactStatus: {
+      workbench: existsSync(resolve(process.cwd(), 'artifacts', 'agent-dev-workbench')),
+      quality: existsSync(resolve(process.cwd(), 'artifacts', 'agent-dev-quality')),
+      channelConformance: existsSync(resolve(process.cwd(), 'artifacts', 'channel-conformance')),
+      scenarioRecordings: existsSync(resolve(process.cwd(), 'artifacts', 'agent-dev-scenarios')),
+    },
+    hostApi: {
+      contractActions,
+      facadeActions,
+      serviceActions,
+      missingFacadeActions: contractActions.filter((action) => !facadeActions.includes(action)),
+      missingServiceActions: contractActions.filter((action) => !serviceActions.includes(action)),
+    },
+    contracts: {
+      traceTimeline: traceContractText.includes('AgentDevTraceEvent'),
+      costReport: traceContractText.includes('AgentDevCostReport'),
+      skillSandboxReport: traceContractText.includes('AgentDevSkillSandboxReport'),
+      selectorContract: serviceText.includes('selectorContract:'),
+    },
+    gateCommands: {
+      fastPr: [
+        'pnpm agent-dev:fast',
+      ],
+      fullLocal: [
+        'pnpm agent-dev:full-local',
+        'pnpm run test:e2e:agent-dev-quality:run',
+        'pnpm channel:conformance <channel-name>',
+      ],
+      nightlyRelease: [
+        'pnpm agent-dev:deep-test',
+        'pnpm run comms:replay',
+        'pnpm run comms:compare',
+        'pnpm run test:e2e',
+      ],
+    },
+  };
+}
+
 function getVisualPreset(override?: AgentDevVisualPreset): AgentDevVisualPreset {
   const envEnabled = process.env.CLAWX_VISUAL_MODE === '1' || process.env.VERSE_CLAW_VISUAL_MODE === '1';
   return {
@@ -248,7 +432,7 @@ export function createAgentDevApi(ctx: AgentDevApiContext): CompleteHostServiceR
     status: () => ({
       success: true,
       enabled: isEnabled(),
-      scenarios: SCENARIOS,
+      scenarios: listAgentDevScenarios() as AgentDevScenario[],
       state: seedState,
       flags: seedState.featureFlags,
       mockReplay: {
@@ -257,16 +441,14 @@ export function createAgentDevApi(ctx: AgentDevApiContext): CompleteHostServiceR
         callCount: hostApiCalls.length,
       },
     }),
-    scenarios: () => SCENARIOS,
+    scenarios: () => listAgentDevScenarios() as AgentDevScenario[],
     seedState: async (payload) => {
       requireEnabled();
       assertAgentDevSeedStatePayload(payload);
       const body = payload ?? {};
       const applied = await applySettingsPatch(body.settings);
       const scenario = normalizeScenario(body.scenario);
-      const scenarioSeed = scenario
-        ? SCENARIOS.find((entry) => entry.id === scenario)?.seed ?? {}
-        : {};
+      const scenarioSeed = scenario ? getAgentDevScenario(scenario).seed : {};
       const next = touchState({
         scenario,
         settings: body.settings ?? seedState.settings,
@@ -393,6 +575,62 @@ export function createAgentDevApi(ctx: AgentDevApiContext): CompleteHostServiceR
         ? Math.max(1, Math.min(Math.floor(payload.limit), MAX_TRANSPORT_EVENTS))
         : 100;
       return { success: true, events: transportTraceEvents.slice(-limit) };
+    },
+    traceTimeline: (payload) => {
+      const limit = typeof payload?.limit === 'number'
+        ? Math.max(1, Math.min(Math.floor(payload.limit), MAX_TRANSPORT_EVENTS))
+        : 100;
+      const events = payload?.requestId
+        ? transportTraceEvents.filter((event) => event.requestId === payload.requestId)
+        : transportTraceEvents;
+      return { success: true, events: events.slice(-limit) };
+    },
+    costReport: () => ({ success: true, report: buildCostReport() }),
+    skillSandboxReport: () => ({ success: true, report: buildSkillSandboxReport() }),
+    workbenchEvidence: async () => ({ success: true, evidence: await buildWorkbenchEvidence() }),
+    recordScenario: async (payload = {}) => {
+      requireEnabled();
+      assertAgentDevRecordScenarioPayload(payload);
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const slug = slugify(payload.slug ?? seedState.scenario ?? 'scenario');
+      const outDir = resolve(process.cwd(), 'artifacts', 'agent-dev-scenarios');
+      const artifactPath = resolve(outDir, `${timestamp}-${slug}.scenario.json`);
+      const scenario = sanitizeForArtifact({
+        schema: 'clawx.agent-dev.scenario-recording.v1',
+        capturedAt: new Date().toISOString(),
+        route: payload.route ?? getAgentDevScenario(seedState.scenario ?? 'chat-empty').route,
+        seedState,
+        hostApiCalls: hostApiCalls.slice(-100),
+        transportTrace: transportTraceEvents.slice(-100),
+        featureFlags: seedState.featureFlags,
+        language: payload.language,
+        theme: payload.theme,
+        visibleState: payload.visibleState,
+        diagnostics: ctx.gatewayManager.getDiagnostics?.() ?? {},
+        review: {
+          required: true,
+          promotionTargets: [
+            'shared/agent-dev/scenarios.ts seed',
+            'tests/e2e/<scenario>.spec.ts snapshot-backed E2E',
+            'harness/specs/scenarios/<scenario>.md',
+            'optional fixture under tests/e2e/fixtures when replay data is stable',
+          ],
+          validation: [
+            'pnpm contract:check',
+            'pnpm i18n:lint',
+            'pnpm agent-dev:workbench',
+            'targeted Playwright spec for the promoted scenario',
+          ],
+          redactionRules: [
+            'keys matching token/apiKey/secret/password/authorization are replaced with [redacted]',
+            'Bearer/Basic credentials and common API key prefixes in string values are replaced with [redacted]',
+            'local home directory paths are rewritten to ~',
+          ],
+        },
+      }) as JsonRecord;
+      await mkdir(outDir, { recursive: true });
+      await writeFile(artifactPath, `${JSON.stringify(scenario, null, 2)}\n`, 'utf8');
+      return { success: true, artifactPath, scenario };
     },
     selectorContract: () => ({
       success: true,

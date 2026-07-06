@@ -11,6 +11,10 @@ const { gatewayState, agentsState } = vi.hoisted(() => ({
   },
 }));
 
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => vi.fn(),
+}));
+
 vi.mock('@/stores/gateway', () => ({
   useGatewayStore: (selector: (state: typeof gatewayState) => unknown) => selector(gatewayState),
 }));
@@ -30,6 +34,8 @@ vi.mock('@/lib/host-api', () => ({
     usage: {
       contextRange: vi.fn().mockResolvedValue({ success: true }),
       live: vi.fn().mockResolvedValue({ success: true }),
+      promptCacheStatus: vi.fn().mockResolvedValue({ success: true, assessment: null }),
+      recordPromptCacheRiskEvent: vi.fn().mockResolvedValue({ success: true, event: null }),
     },
     sessions: {
       compactionStatus: vi.fn().mockResolvedValue({ success: true }),

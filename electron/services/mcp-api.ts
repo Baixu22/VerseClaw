@@ -16,11 +16,16 @@ import type {
   McpServerUpdatePayload,
 } from '@shared/host-api/contract';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
+import type { SystemScanCategoryId } from '@shared/host-api/contract';
 import type { GatewayManager } from '../gateway/manager';
 import { isRecord } from './payload-utils';
 import { readAgentBootstrapTools } from '../utils/agent-config';
+import { readOpenClawConfig, writeOpenClawConfig } from '../utils/channel-config';
+import { withConfigLock } from '../utils/config-mutex';
+import { getDataDir } from '../utils/paths';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createGitApi } from './git-api';
+import { createSystemApi } from './system-api';
 import {
   createMcpToolCallRequestShadow,
   createMcpToolCallResultShadow,
@@ -412,18 +417,108 @@ const VERSE_CLAW_GIT_MCP_TOOLS = [
   },
 ];
 
+const VERSE_CLAW_STORAGE_MCP_SERVER_ID = 'clawx-storage';
+
+const VERSE_CLAW_STORAGE_MCP_SERVER: McpServerConfig = {
+  id: VERSE_CLAW_STORAGE_MCP_SERVER_ID,
+  name: 'Verse Claw Storage',
+  localAddress: 'clawx://mcp/clawx-storage',
+  transport: 'stdio',
+  canonicalTransport: 'stdio',
+  enabled: true,
+  scope: 'workspace',
+  ownerId: '*',
+  networkPolicy: 'disabled',
+  runtimeStatus: 'connected',
+  toolCount: 4,
+  createdAt: 1,
+  updatedAt: 1,
+};
+
+const VERSE_CLAW_STORAGE_MCP_TOOLS = [
+  {
+    name: 'storage_info',
+    description: 'Read a snapshot of system RAM, disk, and CPU usage. Use this first to assess resource pressure.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    serverId: VERSE_CLAW_STORAGE_MCP_SERVER_ID,
+  },
+  {
+    name: 'storage_scan',
+    description: 'Scan app-owned data directories (logs, sessions, trajectories, media, uv cache, electron cache, trash) and return categorized item lists with sizes. Pass categories to filter.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        categories: {
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: ['logs', 'sessions', 'trajectories', 'mediaOutbound', 'mediaThumbs', 'uvCache', 'electronCache', 'trash'],
+          },
+        },
+      },
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_STORAGE_MCP_SERVER_ID,
+  },
+  {
+    name: 'storage_delete',
+    description: 'Delete selected storage items. Always call with dryRun=true first to obtain an approvalId, then call again with dryRun=false and the approvalId to perform the real deletion. Real deletion requires a valid approvalId from a dry-run within the last 60 seconds.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        items: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              path: { type: 'string' },
+            },
+            required: ['id', 'path'],
+          },
+        },
+        dryRun: { type: 'boolean' },
+        approvalId: { type: 'string' },
+      },
+      required: ['items', 'dryRun'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_STORAGE_MCP_SERVER_ID,
+  },
+  {
+    name: 'storage_recommend',
+    description: 'Scan storage and return a ranked list of recommended items to delete (largest first). Use this to help the user decide what to clean up.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number' },
+      },
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_STORAGE_MCP_SERVER_ID,
+  },
+];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mcpStoreInstance: any = null;
 
 async function getMcpStore() {
   if (!mcpStoreInstance) {
     const Store = (await import('electron-store')).default;
-    mcpStoreInstance = new Store<McpStoreDocument>({
+    const options = {
       name: 'mcp-servers',
+      projectName: 'Verse Claw',
+      cwd: getDataDir(),
       defaults: {
         servers: [],
       },
-    });
+    };
+    mcpStoreInstance = new Store<McpStoreDocument>(
+      // electron-store forwards this to conf, which requires projectName
+      // outside Electron. The published types do not expose that option.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      options as any,
+    );
   }
   return mcpStoreInstance;
 }
@@ -460,6 +555,16 @@ function normalizeStringArray(value: unknown): string[] | undefined {
   if (!Array.isArray(value)) return undefined;
   const values = value.map((entry) => normalizeString(entry)).filter((entry): entry is string => Boolean(entry));
   return values.length > 0 ? values : undefined;
+}
+
+function normalizeExposure(value: unknown): McpServerConfig['exposure'] {
+  if (!isRecord(value)) return undefined;
+  const exposure = {
+    agents: normalizeStringArray(value.agents),
+    workspaces: normalizeStringArray(value.workspaces),
+    roles: normalizeStringArray(value.roles),
+  };
+  return exposure.agents || exposure.workspaces || exposure.roles ? exposure : undefined;
 }
 
 function normalizeEnv(value: unknown): Record<string, string> | undefined {
@@ -548,6 +653,7 @@ function buildServer(
     enabled: payload.enabled !== false,
     scope: normalizeScope(payload.scope),
     ownerId: normalizeString(payload.ownerId),
+    exposure: normalizeExposure(payload.exposure),
     toolAllowlist: normalizeStringArray(payload.toolAllowlist),
     toolDenylist: normalizeStringArray(payload.toolDenylist),
     permissionMode: payload.permissionMode,
@@ -580,6 +686,7 @@ function updateServer(current: McpServerConfig, payload: McpServerUpdatePayload)
     enabled: payload.enabled === undefined ? current.enabled : payload.enabled !== false,
     scope: payload.scope === undefined ? current.scope : normalizeScope(payload.scope),
     ownerId: payload.ownerId === undefined ? current.ownerId : normalizeString(payload.ownerId),
+    exposure: payload.exposure === undefined ? current.exposure : normalizeExposure(payload.exposure),
     toolAllowlist: payload.toolAllowlist === undefined ? current.toolAllowlist : normalizeStringArray(payload.toolAllowlist),
     toolDenylist: payload.toolDenylist === undefined ? current.toolDenylist : normalizeStringArray(payload.toolDenylist),
     permissionMode: payload.permissionMode === undefined ? current.permissionMode : payload.permissionMode,
@@ -609,8 +716,121 @@ async function writeServers(servers: McpServerConfig[]): Promise<void> {
   store.set('servers', hydrateMcpServerAddresses(servers).slice(0, MAX_MCP_SERVERS));
 }
 
+function normalizeRuntimeMcpTransport(server: McpServerConfig): 'sse' | 'streamable-http' | undefined {
+  const transport = server.canonicalTransport ?? server.transport;
+  if (transport === 'sse') return 'sse';
+  if (transport === 'http' || transport === 'streamable-http') return 'streamable-http';
+  return undefined;
+}
+
+function withMembership(values: string[] | undefined, value: string, enabled: boolean): string[] | undefined {
+  const set = new Set((values ?? []).map((entry) => entry.trim()).filter(Boolean));
+  if (enabled) {
+    set.add(value);
+  } else {
+    set.delete(value);
+  }
+  const next = [...set].sort((a, b) => a.localeCompare(b));
+  return next.length > 0 ? next : undefined;
+}
+
+function projectServerToRuntimeConfig(
+  server: McpServerConfig,
+  current: Record<string, unknown> | undefined,
+): Record<string, unknown> {
+  const next: Record<string, unknown> = { ...(current ?? {}) };
+  next.enabled = server.enabled !== false;
+  if (server.transport === 'stdio') {
+    next.command = server.command;
+    next.args = server.args;
+    next.cwd = server.cwd;
+    delete next.url;
+    delete next.transport;
+  } else {
+    next.url = server.url;
+    const transport = normalizeRuntimeMcpTransport(server);
+    if (transport) {
+      next.transport = transport;
+    }
+    delete next.command;
+    delete next.args;
+  }
+  if (server.env) {
+    next.env = server.env;
+  } else {
+    delete next.env;
+  }
+  if (server.toolAllowlist || server.toolDenylist) {
+    next.toolFilter = {
+      ...(server.toolAllowlist ? { include: server.toolAllowlist } : {}),
+      ...(server.toolDenylist ? { exclude: server.toolDenylist } : {}),
+    };
+  } else {
+    delete next.toolFilter;
+  }
+  return next;
+}
+
+export async function syncAgentMcpExposureToOpenClawConfig(
+  agentId: string,
+  defaultMcpServerIds: string[],
+): Promise<void> {
+  const selectedIds = new Set(defaultMcpServerIds);
+  selectedIds.delete(VERSE_CLAW_GIT_MCP_SERVER_ID);
+  selectedIds.delete(VERSE_CLAW_STORAGE_MCP_SERVER_ID);
+  const servers = await readServers();
+  await withConfigLock(async () => {
+    const config = await readOpenClawConfig();
+    const mcp = isRecord(config.mcp) ? { ...config.mcp } as Record<string, unknown> : {};
+    const currentServers = isRecord(mcp.servers)
+      ? { ...(mcp.servers as Record<string, unknown>) }
+      : {};
+    for (const server of servers) {
+      const selected = selectedIds.has(server.id);
+      const existing = isRecord(currentServers[server.id])
+        ? { ...(currentServers[server.id] as Record<string, unknown>) }
+        : undefined;
+      if (!selected && !existing) {
+        continue;
+      }
+      const next = selected
+        ? projectServerToRuntimeConfig(server, existing)
+        : { ...(existing ?? {}) };
+      const exposure = isRecord(next.exposure) ? { ...next.exposure } as Record<string, unknown> : {};
+      const agents = withMembership(normalizeStringArray(exposure.agents), agentId, selected);
+      if (agents) {
+        exposure.agents = agents;
+      } else {
+        delete exposure.agents;
+      }
+      if (!selected && Object.keys(exposure).length === 0) {
+        exposure.agents = [];
+      }
+      next.exposure = exposure;
+      currentServers[server.id] = next;
+    }
+    mcp.servers = currentServers;
+    config.mcp = mcp;
+    await writeOpenClawConfig(config);
+  });
+}
+
 function listResult(servers: McpServerConfig[]) {
-  return { success: true, servers: [VERSE_CLAW_GIT_MCP_SERVER, ...hydrateMcpServerAddresses(servers)] };
+  return { success: true, servers: [VERSE_CLAW_GIT_MCP_SERVER, VERSE_CLAW_STORAGE_MCP_SERVER, ...hydrateMcpServerAddresses(servers)] };
+}
+
+export async function listMcpServersForCapabilityPublication(input: {
+  workspaceId?: string | null;
+  agentId?: string | null;
+  includeCandidates?: boolean;
+}): Promise<McpServerConfig[]> {
+  if (input.includeCandidates) {
+    return listResult(await readServers()).servers;
+  }
+  return await resolveMcpServersForContext({
+    workspaceId: input.workspaceId,
+    agentId: input.agentId,
+  });
 }
 
 function matchesContext(server: McpServerConfig, workspaceId?: string | null, agentId?: string | null): boolean {
@@ -651,7 +871,7 @@ export async function resolveMcpServersForContext(input: {
     matchesContext(server, input.workspaceId, input.agentId)
     || (server.enabled && defaultIdSet.has(server.id))
   ));
-  return [VERSE_CLAW_GIT_MCP_SERVER, ...orderResolvedServers(resolved, defaultIdSet)];
+  return [VERSE_CLAW_GIT_MCP_SERVER, VERSE_CLAW_STORAGE_MCP_SERVER, ...orderResolvedServers(resolved, defaultIdSet)];
 }
 
 function parsePayload<T>(payload: unknown): T {
@@ -718,6 +938,7 @@ async function updateServerRuntimeFields(id: string, patch: Partial<McpServerCon
 
 async function findServer(id: string): Promise<McpServerConfig> {
   if (id === VERSE_CLAW_GIT_MCP_SERVER_ID) return VERSE_CLAW_GIT_MCP_SERVER;
+  if (id === VERSE_CLAW_STORAGE_MCP_SERVER_ID) return VERSE_CLAW_STORAGE_MCP_SERVER;
   const server = (await readServers()).find((entry) => entry.id === id);
   if (!server) throw new Error(`MCP 服务 "${id}" 不存在`);
   return server;
@@ -858,6 +1079,60 @@ async function callClawxGitTool(toolName: string, args: Record<string, unknown>)
   }
 }
 
+async function callClawxStorageTool(toolName: string, args: Record<string, unknown>) {
+  const systemApi = createSystemApi();
+  switch (toolName) {
+    case 'storage_info':
+      return await systemApi.info();
+
+    case 'storage_scan': {
+      const categories = Array.isArray(args.categories)
+        ? args.categories.filter((c): c is string => typeof c === 'string')
+        : undefined;
+      return await systemApi.scan({ categories: categories as SystemScanCategoryId[] | undefined });
+    }
+
+    case 'storage_delete': {
+      const items = Array.isArray(args.items)
+        ? args.items
+            .filter((i): i is Record<string, unknown> => isRecord(i) && typeof i.path === 'string')
+            .map((i) => ({
+              id: typeof i.id === 'string' ? i.id : '',
+              path: typeof i.path === 'string' ? i.path : '',
+            }))
+        : [];
+      const dryRun = args.dryRun !== false;
+      const approvalId = normalizeString(args.approvalId);
+      return await systemApi.deleteItems({ items, dryRun, approvalId });
+    }
+
+    case 'storage_recommend': {
+      const limit = typeof args.limit === 'number' && args.limit > 0 ? Math.min(args.limit, 50) : 10;
+      const scan = await systemApi.scan({});
+      const allItems = scan.categories.flatMap((cat) =>
+        cat.items.map((item) => ({
+          category: cat.id,
+          id: item.id,
+          path: item.path,
+          sizeBytes: item.sizeBytes,
+          mtime: item.mtime,
+          safeToDelete: item.safeToDelete,
+        })),
+      );
+      allItems.sort((a, b) => b.sizeBytes - a.sizeBytes);
+      return {
+        success: true,
+        system: scan.system,
+        recommendations: allItems.slice(0, limit),
+        totalScannedBytes: allItems.reduce((sum, i) => sum + i.sizeBytes, 0),
+      };
+    }
+
+    default:
+      throw new Error(`Unknown Verse Claw Storage tool "${toolName}"`);
+  }
+}
+
 async function tryGatewayMcpRpc<T>(
   gatewayManager: GatewayManager | undefined,
   method: string,
@@ -947,10 +1222,14 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         } else {
           server = buildServer(parsePayload<McpServerCreatePayload>(body.server), new Set());
         }
-        if (server.id !== VERSE_CLAW_GIT_MCP_SERVER_ID) validateServer(server);
+        const isBuiltin = server.id === VERSE_CLAW_GIT_MCP_SERVER_ID
+          || server.id === VERSE_CLAW_STORAGE_MCP_SERVER_ID;
+        if (!isBuiltin) validateServer(server);
         const heartbeat = server.id === VERSE_CLAW_GIT_MCP_SERVER_ID
           ? { message: 'Verse Claw Git tools are available through the host Git service.', latencyMs: 0 }
-          : await checkMcpHeartbeat(server);
+          : server.id === VERSE_CLAW_STORAGE_MCP_SERVER_ID
+            ? { message: 'Verse Claw Storage tools are available through the host System service.', latencyMs: 0 }
+            : await checkMcpHeartbeat(server);
         return {
           success: true,
           server,
@@ -985,6 +1264,16 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           status: 'connected',
           latencyMs: 0,
           message: 'Verse Claw Git tools are available through the host Git service.',
+          server,
+        };
+      }
+      if (id === VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
+        return {
+          success: true,
+          serverId: id,
+          status: 'connected',
+          latencyMs: 0,
+          message: 'Verse Claw Storage tools are available through the host System service.',
           server,
         };
       }
@@ -1042,6 +1331,15 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           tools: VERSE_CLAW_GIT_MCP_TOOLS,
           status: 'connected',
           message: 'Verse Claw Git host tools',
+        };
+      }
+      if (id === VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
+        return {
+          success: true,
+          serverId: id,
+          tools: VERSE_CLAW_STORAGE_MCP_TOOLS,
+          status: 'connected',
+          message: 'Verse Claw Storage host tools',
         };
       }
       const runtime = await tryGatewayMcpRpc<McpListToolsResult>(ctx.gatewayManager, 'mcp.listTools', { serverId: id });
@@ -1107,6 +1405,28 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
             serverId,
             toolName,
             result: await callClawxGitTool(toolName, gitArgs),
+          });
+        } catch (error) {
+          return finish({
+            success: false,
+            serverId,
+            toolName,
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+      }
+
+      if (serverId === VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
+        const storageArgs = { ...args };
+        if (approvalId && !normalizeString(storageArgs.approvalId)) {
+          storageArgs.approvalId = approvalId;
+        }
+        try {
+          return finish({
+            success: true,
+            serverId,
+            toolName,
+            result: await callClawxStorageTool(toolName, storageArgs),
           });
         } catch (error) {
           return finish({

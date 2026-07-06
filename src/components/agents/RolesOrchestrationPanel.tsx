@@ -41,7 +41,10 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { buildOrchestrationPlanLedgerEvents } from '@/lib/task-ledger-plan-projection';
 import { useSettingsStore } from '@/stores/settings';
+import { useWorkspacesStore } from '@/stores/workspaces';
+import type { MemoryProposal } from '@shared/host-api/contract';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
 import type { TaskLoopLifecycleEvent } from '@shared/host-events/contract';
 import type { MissionLifecycleEvent, MissionStatus } from '@shared/types/mission-control';
@@ -130,6 +133,45 @@ type MissionPanelResult = {
   blockedReason?: string;
   traceId?: string;
   taskLoopRunId?: string;
+};
+
+type RoutingMemoDashboardView = {
+  pilotMode?: string;
+  authority?: string;
+  authorityReason?: string;
+  sampleCount?: number;
+  outcomes?: {
+    graphStatus?: Record<string, number>;
+    qualityOverall?: Record<string, number>;
+  };
+  shadow?: {
+    sampleCount?: number;
+    divergenceCount?: number;
+    outcomes?: Record<string, number>;
+    divergenceSuccessRate?: number | null;
+  };
+  activeGate?: {
+    eligible?: boolean;
+    reasons?: string[];
+    minShadowSamples?: number;
+    minDivergenceSuccessRate?: number;
+    shadowSampleCount?: number;
+    divergenceCount?: number;
+    divergenceSuccessRate?: number | null;
+  };
+  recentSamples?: Array<{
+    id?: string;
+    leadRole?: string;
+    graphStatus?: string;
+    qualityOverall?: string;
+    shadow?: {
+      actualLeadRole?: string;
+      memoLeadRole?: string;
+      diverged?: boolean;
+      outcome?: string;
+      similarity?: number;
+    };
+  }>;
 };
 
 type MemoryCardView = {
@@ -450,6 +492,8 @@ function draftFromProposal(proposal: Record<string, unknown>, roleName?: string 
 export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[] }) {
   const { t } = useTranslation('agents');
   const roleMemoryEnabled = useSettingsStore((state) => state.roleMemoryEnabled);
+  const activeWorkspaceId = useWorkspacesStore((state) => state.activeWorkspaceId);
+  const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
   const tt = useCallback(
     (key: string, defaultValue: string, vars?: Record<string, unknown>) =>
       t(key, { defaultValue, ...(vars ?? {}) }),
@@ -466,6 +510,8 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
   const [running, setRunning] = useState(false);
   const [pendingApproval, setPendingApproval] = useState<PermissionApprovalEvent | null>(null);
   const [runResult, setRunResult] = useState<RunResult | null>(null);
+  const [routingMemoDashboard, setRoutingMemoDashboard] = useState<RoutingMemoDashboardView | null>(null);
+  const [routingMemoLoading, setRoutingMemoLoading] = useState(false);
   const [lifecycleEvents, setLifecycleEvents] = useState<Record<string, LifecycleEntry>>({});
   const [taskLoopEvents, setTaskLoopEvents] = useState<Record<string, TaskLoopLifecycleEvent>>({});
   const [taskLoopRunning, setTaskLoopRunning] = useState(false);
@@ -587,11 +633,39 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     }
   }, []);
 
+  const loadRoutingMemoDashboard = useCallback(async () => {
+    const workspaceDir = activeWorkspace?.rootPath;
+    if (!workspaceDir) {
+      setRoutingMemoDashboard(null);
+      return;
+    }
+    setRoutingMemoLoading(true);
+    try {
+      const result = await hostApi.gateway.rpc('routing_memo.summary', { workspaceDir });
+      const unwrapped = unwrapRpc(result);
+      if (!unwrapped.ok) {
+        toast.error(unwrapped.message);
+        return;
+      }
+      setRoutingMemoDashboard(unwrapped.data as RoutingMemoDashboardView);
+    } catch (err) {
+      toast.error(String(err));
+    } finally {
+      setRoutingMemoLoading(false);
+    }
+  }, [activeWorkspace?.rootPath]);
+
   useEffect(() => {
     if (expanded && roles.length === 0 && !loading) {
       void loadRoles();
     }
   }, [expanded, roles.length, loading, loadRoles]);
+
+  useEffect(() => {
+    if (expanded) {
+      void loadRoutingMemoDashboard();
+    }
+  }, [expanded, loadRoutingMemoDashboard]);
 
   const loadRoleMemory = useCallback(async () => {
     if (!selectedRole) return;
@@ -610,28 +684,40 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     }
     setMemoryLoading(true);
     try {
-      const listResult = await hostApi.gateway.rpc('memory.list', { roleName: selectedRole, status: 'all' });
-      const listUnwrapped = unwrapRpc(listResult);
-      if (listUnwrapped.ok) {
-        setMemoryCards(Array.isArray(listUnwrapped.data.cards) ? (listUnwrapped.data.cards as MemoryCardView[]) : []);
-      }
-      setMemoryLoading(false);
-
-      const [proposalsSettled, conflictsSettled, injectionsSettled, statsSettled, retentionSettled, healthSettled, utilitySettled] = await Promise.allSettled([
+      // Migrated: typed facade calls (throw on error -> rejected in allSettled).
+      // Blocked methods stay on gateway.rpc (envelope error model).
+      const [
+        listSettled, injectionsSettled, healthSettled,
+        proposalsSettled, conflictsSettled, statsSettled, retentionSettled, utilitySettled,
+      ] = await Promise.allSettled([
+        hostApi.memory.list({ roleName: selectedRole, status: 'all' }),
+        hostApi.memory.explainInjection({ roleName: selectedRole, limit: 10 }),
+        hostApi.memory.health(),
         hostApi.gateway.rpc('memory.proposals', { roleName: selectedRole, limit: 50 }),
         hostApi.gateway.rpc('memory.conflicts', { status: 'open' }),
-        hostApi.gateway.rpc('memory.explainInjection', { roleName: selectedRole, limit: 10 }),
         hostApi.gateway.rpc('memory.stats'),
         hostApi.gateway.rpc('memory.retentionCandidates', { roleName: selectedRole, limit: 8 }),
-        hostApi.gateway.rpc('memory.health'),
         hostApi.gateway.rpc('memory.utilityReport', { roleName: selectedRole, limit: 12 }),
       ]);
+
+      // Typed facade results
+      if (listSettled.status === 'fulfilled') {
+        setMemoryCards(Array.isArray(listSettled.value.cards) ? (listSettled.value.cards as MemoryCardView[]) : []);
+      }
+      setMemoryLoading(false);
+      if (injectionsSettled.status === 'fulfilled') {
+        setMemoryInjections(Array.isArray(injectionsSettled.value.injections) ? (injectionsSettled.value.injections as MemoryInjectionView[]) : []);
+      }
+      if (healthSettled.status === 'fulfilled') {
+        // Typed facade flattens health fields to top level (result.ok, result.checks, ...).
+        setMemoryHealth(healthSettled.value as unknown as MemoryHealthView);
+      }
+
+      // Gateway RPC results (blocked methods - keep unwrapRpc envelope pattern)
       const proposalsResult = proposalsSettled.status === 'fulfilled' ? proposalsSettled.value : undefined;
       const conflictsResult = conflictsSettled.status === 'fulfilled' ? conflictsSettled.value : undefined;
-      const injectionsResult = injectionsSettled.status === 'fulfilled' ? injectionsSettled.value : undefined;
       const statsResult = statsSettled.status === 'fulfilled' ? statsSettled.value : undefined;
       const retentionResult = retentionSettled.status === 'fulfilled' ? retentionSettled.value : undefined;
-      const healthResult = healthSettled.status === 'fulfilled' ? healthSettled.value : undefined;
       const utilityResult = utilitySettled.status === 'fulfilled' ? utilitySettled.value : undefined;
       const conflictsUnwrapped = unwrapRpc(conflictsResult);
       if (conflictsUnwrapped.ok) {
@@ -643,10 +729,6 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
       if (proposalsUnwrapped.ok) {
         setMemoryProposals(Array.isArray(proposalsUnwrapped.data.proposals) ? (proposalsUnwrapped.data.proposals as MemoryProposalView[]) : []);
       }
-      const injectionsUnwrapped = unwrapRpc(injectionsResult);
-      if (injectionsUnwrapped.ok) {
-        setMemoryInjections(Array.isArray(injectionsUnwrapped.data.injections) ? (injectionsUnwrapped.data.injections as MemoryInjectionView[]) : []);
-      }
       const statsUnwrapped = unwrapRpc(statsResult);
       if (statsUnwrapped.ok && isRecord(statsUnwrapped.data.stats)) {
         setMemoryStats(statsUnwrapped.data.stats as Record<string, number>);
@@ -654,10 +736,6 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
       const retentionUnwrapped = unwrapRpc(retentionResult);
       if (retentionUnwrapped.ok) {
         setMemoryRetention(Array.isArray(retentionUnwrapped.data.candidates) ? (retentionUnwrapped.data.candidates as MemoryRetentionView[]) : []);
-      }
-      const healthUnwrapped = unwrapRpc(healthResult);
-      if (healthUnwrapped.ok && isRecord(healthUnwrapped.data.health)) {
-        setMemoryHealth(healthUnwrapped.data.health as MemoryHealthView);
       }
       const utilityUnwrapped = unwrapRpc(utilityResult);
       if (utilityUnwrapped.ok && isRecord(utilityUnwrapped.data.report)) {
@@ -765,23 +843,39 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     }
     setMemoryLoading(true);
     try {
-      const proposal = buildMemoryProposal();
-      const result = memoryDraftTarget?.mode === 'update'
-        ? await hostApi.gateway.rpc('memory.update', { id: memoryDraftTarget.id, patch: proposal })
-        : memoryDraftTarget?.mode === 'supersede'
-          ? await hostApi.gateway.rpc('memory.supersede', { id: memoryDraftTarget.id, proposal })
-          : await hostApi.gateway.rpc('memory.propose', { proposal });
-      const unwrapped = unwrapRpc(result);
-      if (!unwrapped.ok) {
-        toast.error(unwrapped.message);
-        return;
+      const proposal = buildMemoryProposal() as unknown as MemoryProposal;
+      // Migrated: update + propose use typed facade; supersede stays on gateway.rpc (blocked).
+      // Typed facade throws on error (caught by try/catch); gateway.rpc returns envelope.
+      if (memoryDraftTarget?.mode === 'update') {
+        const result = await hostApi.memory.update({ id: memoryDraftTarget.id, patch: proposal });
+        const accepted = result.accepted === true;
+        toast[accepted ? 'success' : 'message'](
+          accepted
+            ? tt('roles.memorySaved', 'Role memory saved')
+            : String(result.reason ?? tt('roles.memoryNeedsReview', 'Memory needs review')),
+        );
+      } else if (memoryDraftTarget?.mode === 'supersede') {
+        const result = await hostApi.gateway.rpc('memory.supersede', { id: memoryDraftTarget.id, proposal });
+        const unwrapped = unwrapRpc(result);
+        if (!unwrapped.ok) {
+          toast.error(unwrapped.message);
+          return;
+        }
+        const accepted = unwrapped.data.accepted === true;
+        toast[accepted ? 'success' : 'message'](
+          accepted
+            ? tt('roles.memorySaved', 'Role memory saved')
+            : String(unwrapped.data.reason ?? tt('roles.memoryNeedsReview', 'Memory needs review')),
+        );
+      } else {
+        const result = await hostApi.memory.propose(proposal);
+        const accepted = result.accepted === true;
+        toast[accepted ? 'success' : 'message'](
+          accepted
+            ? tt('roles.memorySaved', 'Role memory saved')
+            : String(result.reason ?? tt('roles.memoryNeedsReview', 'Memory needs review')),
+        );
       }
-      const accepted = unwrapped.data.accepted === true;
-      toast[accepted ? 'success' : 'message'](
-        accepted
-          ? tt('roles.memorySaved', 'Role memory saved')
-        : String(unwrapped.data.reason ?? tt('roles.memoryNeedsReview', 'Memory needs review')),
-      );
       setMemoryDraft(defaultMemoryDraft(selectedRole));
       setMemoryDraftTarget(null);
       setMemoryPreview(null);
@@ -1024,13 +1118,10 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     setMemoryDetailOpen(true);
     setMemoryDetailLoading(true);
     try {
-      const result = await hostApi.gateway.rpc('memory.detail', { id, kind });
-      const unwrapped = unwrapRpc(result);
-      if (!unwrapped.ok) {
-        toast.error(unwrapped.message);
-        return;
-      }
-      const nextDetail = unwrapped.data as MemoryDetailView;
+      // Migrated: memory.detail uses typed facade (throws on error, caught by try/catch).
+      // conflictDetail stays on gateway.rpc (blocked method).
+      const detailResult = await hostApi.memory.detail({ id, kind });
+      const nextDetail = detailResult as unknown as MemoryDetailView;
       if (kind === 'conflict') {
         const conflictResult = await hostApi.gateway.rpc('memory.conflictDetail', { id });
         const conflictUnwrapped = unwrapRpc(conflictResult);
@@ -1127,12 +1218,30 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
       }
       const nextPlan = isRecord(unwrapped.data.plan) ? (unwrapped.data.plan as unknown as PlanView) : null;
       setPlan(nextPlan);
+      if (nextPlan) {
+        const events = buildOrchestrationPlanLedgerEvents({
+          task: task.trim(),
+          plan: nextPlan,
+          sessionKey: anchorSession || null,
+        });
+        if (events.length > 0) {
+          try {
+            await hostApi.taskLedger.appendEvents({
+              workspaceId: activeWorkspaceId,
+              events,
+              idempotencyKey: events[0].idempotencyKey,
+            });
+          } catch {
+            // Task Ledger projection is best-effort; planning should remain usable.
+          }
+        }
+      }
     } catch (err) {
       toast.error(String(err));
     } finally {
       setPlanning(false);
     }
-  }, [task, selectedRole, tt]);
+  }, [activeWorkspaceId, anchorSession, task, selectedRole, tt]);
 
   const executeRun = useCallback(
     async (approvalId?: string) => {
@@ -2220,6 +2329,84 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
           {/* Section B: orchestration task */}
           <div className="space-y-3 border-t border-border/60 pt-4">
             <span className="text-sm font-medium">{tt('roles.orchestrate', 'Orchestrate task')}</span>
+            <div
+              data-testid="routing-memo-dashboard"
+              className="rounded-md border border-border/60 bg-surface-input px-3 py-3"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex min-w-0 items-center gap-2">
+                  <Eye className="h-4 w-4 text-blue-700 dark:text-blue-400" />
+                  <span className="text-xs font-medium text-foreground">
+                    {tt('roles.routingMemoTitle', 'Routing Memo evidence')}
+                  </span>
+                  <Badge
+                    data-testid="routing-memo-authority"
+                    variant="outline"
+                    className="rounded-full text-2xs"
+                  >
+                    {tt('roles.routingMemoAuthority', 'Authority')}: {routingMemoDashboard?.authority ?? 'off'}
+                  </Badge>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7"
+                  onClick={() => void loadRoutingMemoDashboard()}
+                  disabled={routingMemoLoading}
+                >
+                  <RefreshCw className={cn('h-3.5 w-3.5', routingMemoLoading && 'animate-spin')} />
+                </Button>
+              </div>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="rounded-md bg-background/70 px-2.5 py-2" data-testid="routing-memo-samples">
+                  <p className="text-2xs text-muted-foreground">{tt('roles.routingMemoSamples', 'Shadow samples')}</p>
+                  <p className="mt-0.5 text-sm font-medium text-foreground">
+                    {routingMemoDashboard?.shadow?.sampleCount ?? 0}
+                    <span className="ml-1 text-2xs font-normal text-muted-foreground">
+                      / {routingMemoDashboard?.sampleCount ?? 0}
+                    </span>
+                  </p>
+                </div>
+                <div className="rounded-md bg-background/70 px-2.5 py-2" data-testid="routing-memo-divergence">
+                  <p className="text-2xs text-muted-foreground">{tt('roles.routingMemoDivergence', 'Divergences')}</p>
+                  <p className="mt-0.5 text-sm font-medium text-foreground">
+                    {routingMemoDashboard?.shadow?.divergenceCount ?? 0}
+                  </p>
+                </div>
+                <div className="rounded-md bg-background/70 px-2.5 py-2" data-testid="routing-memo-outcomes">
+                  <p className="text-2xs text-muted-foreground">{tt('roles.routingMemoOutcomes', 'Outcomes')}</p>
+                  <p className="mt-0.5 text-xs font-medium text-foreground">
+                    {tt('roles.routingMemoOutcomeSummary', '{{completed}} complete / {{partial}} partial', {
+                      completed: routingMemoDashboard?.outcomes?.graphStatus?.completed ?? 0,
+                      partial: routingMemoDashboard?.outcomes?.graphStatus?.partial ?? 0,
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-md bg-background/70 px-2.5 py-2" data-testid="routing-memo-active-gate">
+                  <p className="text-2xs text-muted-foreground">{tt('roles.routingMemoActiveGate', 'Active gate')}</p>
+                  <p className={cn(
+                    'mt-0.5 text-xs font-medium',
+                    routingMemoDashboard?.activeGate?.eligible
+                      ? 'text-emerald-700 dark:text-emerald-400'
+                      : 'text-amber-700 dark:text-amber-400',
+                  )}>
+                    {routingMemoDashboard?.activeGate?.eligible
+                      ? tt('roles.routingMemoGateMet', 'Gate met')
+                      : tt('roles.routingMemoGateNotMet', 'Gate not met')}
+                  </p>
+                </div>
+              </div>
+              {routingMemoDashboard?.recentSamples?.[0] && (
+                <p className="mt-2 truncate text-2xs text-muted-foreground" data-testid="routing-memo-recent-sample">
+                  {tt('roles.routingMemoRecentSample', 'Latest')}: {routingMemoDashboard.recentSamples[0].leadRole ?? '-'}
+                  {' / '}
+                  {routingMemoDashboard.recentSamples[0].graphStatus ?? '-'}
+                  {routingMemoDashboard.recentSamples[0].shadow?.outcome
+                    ? ` / ${routingMemoDashboard.recentSamples[0].shadow?.outcome}`
+                    : ''}
+                </p>
+              )}
+            </div>
             <div className="flex gap-2">
               <Input
                 data-testid="role-orchestration-task-input"

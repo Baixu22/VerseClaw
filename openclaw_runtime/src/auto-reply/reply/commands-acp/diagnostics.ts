@@ -5,9 +5,9 @@ import {
   normalizeOptionalString,
 } from "@openclaw/normalization-core/string-coerce";
 import { getAcpSessionManager } from "../../../acp/control-plane/manager.js";
-import { toAcpRuntimeError } from "../../../acp/runtime/errors.js";
-import { getAcpRuntimeBackend, requireAcpRuntimeBackend } from "../../../acp/runtime/registry.js";
-import { listAcpSessionEntries } from "../../../acp/runtime/session-meta.js";
+import { toAcpRuntimeError } from "../../../runtime/errors.ts";
+import { getAcpRuntimeBackend, requireAcpRuntimeBackend } from "../../../runtime/registry.ts";
+import { listAcpSessionEntries } from "../../../runtime/session-meta.ts";
 import type { SessionEntry } from "../../../config/sessions/types.js";
 import type { SessionAcpMeta } from "../../../config/sessions/types.js";
 import { getSessionBindingService } from "../../../infra/outbound/session-binding-service.js";

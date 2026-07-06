@@ -32,6 +32,7 @@ import { hostApi } from '@/lib/host-api';
 import type { FilePreviewTarget } from './types';
 import {
   isHtmlPreviewExt,
+  isOfficePreviewExt,
   isPdfPreviewExt,
   isSheetPreviewExt,
   supportsInlineDiff,
@@ -47,6 +48,7 @@ import {
 import MarkdownPreview from './MarkdownPreview';
 import HtmlPreview from './HtmlPreview';
 import ImageViewer from './ImageViewer';
+import OfficePreview from './OfficePreview';
 
 const MonacoViewerLazy = lazy(() => import('./MonacoViewer'));
 const MonacoDiffViewerLazy = lazy(() => import('./MonacoDiffViewer'));
@@ -568,6 +570,8 @@ export function FilePreviewBody({
             <TabsContent value="preview" className="m-0 h-full overflow-auto">
               {file.contentType === 'snapshot' ? (
                 <ImageViewer filePath={file.filePath} fileName={file.fileName} />
+              ) : isOfficePreviewExt(file.ext) ? (
+                <OfficePreview filePath={file.filePath} fileName={file.fileName} />
               ) : isPdfPreviewExt(file.ext) ? (
                 <Suspense
                   fallback={

@@ -61,6 +61,16 @@
         "available": "利用可能なロール",
         "tools": "ツール",
         "orchestrate": "タスクをオーケストレーション",
+        "routingMemoTitle": "Routing Memo の証拠",
+        "routingMemoAuthority": "権限",
+        "routingMemoSamples": "Shadow サンプル",
+        "routingMemoDivergence": "分岐",
+        "routingMemoOutcomes": "結果",
+        "routingMemoOutcomeSummary": "{{completed}} 完了 / {{partial}} 一部",
+        "routingMemoActiveGate": "Active ゲート",
+        "routingMemoGateMet": "ゲート達成",
+        "routingMemoGateNotMet": "ゲート未達",
+        "routingMemoRecentSample": "最新",
         "taskPlaceholder": "オーケストレーションするタスクを説明してください。例：このモジュールをリファクタリングしてテストを追加",
         "taskRequired": "先にタスク説明を入力してください",
         "noSession": "オーケストレーションに使用できるセッションがありません。先に Agent を作成または選択してください。",
@@ -75,6 +85,8 @@
         "cancel": "キャンセル",
         "approveFailed": "承認に失敗しました",
         "toolsUnit": "ツール",
+        "originBuiltIn": "組み込み",
+        "originCustom": "カスタム",
         "viewContract": "契約を表示",
         "soulEmpty": "（コンパイル出力なし）",
         "worker": "実行",
@@ -300,6 +312,7 @@
         "defaultSkills": "既定スキル",
         "noDefaultSkills": "既定スキルはありません",
         "noAgentMcp": "Agent スコープの MCP サービスはありません",
+        "agentMcp": "Agent MCP",
         "defaultSkillIds": "既定スキル ID",
         "defaultSkillIdsPlaceholder": "1 行に 1 つの skill id。ワークスペースで上書きできます。",
         "defaultMcpIds": "既定 MCP サービス ID",
@@ -318,6 +331,87 @@
             "user": "ユーザープロファイルと好み",
             "identity": "アイデンティティ情報（名前、emoji、アバター）",
             "heartbeat": "定期的なバックグラウンド動作"
+        },
+        "publication": {
+            "title": "能力公開",
+            "workbenchTitle": "能力管理ワークベンチ",
+            "sourceRuntime": "Runtime の公開データを利用できます。",
+            "sourceFallback": "Runtime を利用できないため、ローカル fallback を表示しています。",
+            "refresh": "公開状態を更新",
+            "loadFailed": "能力公開の読み込みに失敗しました: {{error}}",
+            "diagnosticSummary": "{{blocked}} 件ブロック / {{warnings}} 件警告",
+            "skills": "スキル",
+            "mcp": "MCP サービス",
+            "empty": "能力が見つかりません。",
+            "searchPlaceholder": "能力を検索",
+            "rolePreviewPlaceholder": "ロールポリシーのプレビュー",
+            "advancedIds": "高度な能力 ID",
+            "add": "追加",
+            "remove": "削除",
+            "blocked": "ブロック",
+            "discard": "破棄",
+            "apply": "能力変更を適用",
+            "pendingSummary": "{{adds}} 件追加 / {{removes}} 件削除",
+            "noPendingChanges": "保留中の能力変更はありません",
+            "kind": {
+                "skill": "スキル",
+                "mcp": "MCP"
+            },
+            "filter": {
+                "all": "すべて",
+                "anyState": "すべての状態",
+                "selected": "選択済み",
+                "diagnostics": "診断あり",
+                "changed": "変更あり"
+            },
+            "change": {
+                "add": "追加",
+                "remove": "削除"
+            },
+            "diagnosticLevel": {
+                "info": "情報",
+                "warning": "警告",
+                "blocked": "ブロック"
+            },
+            "metric": {
+                "selected": "選択済み",
+                "published": "公開済み",
+                "skills": "スキル",
+                "mcp": "MCP",
+                "add": "追加",
+                "remove": "削除",
+                "diagnostics": "診断"
+            },
+            "state": {
+                "published": "公開済み",
+                "available": "追加可能",
+                "disabled": "無効",
+                "blocked": "ブロック",
+                "missing": "不足",
+                "runtimeUnavailable": "Runtime 利用不可"
+            },
+            "detail": {
+                "open": "能力詳細を開く",
+                "exposure": "公開範囲",
+                "exposureAgents": "Agent",
+                "exposureWorkspaces": "ワークスペース",
+                "exposureRoles": "ロール",
+                "runtime": "Runtime",
+                "useModes": "使用モード",
+                "diagnostics": "診断",
+                "none": "なし",
+                "reasons": "理由",
+                "mcpRuntime": "MCP Runtime",
+                "reload": "Runtime を再読み込み",
+                "heartbeat": "Heartbeat",
+                "listTools": "ツール一覧",
+                "toolsLoaded": "{{count}} 件のツールを読み込みました",
+                "runtimeReloaded": "Runtime を再読み込みしました"
+            },
+            "toast": {
+                "saved": "能力変更を適用しました",
+                "saveFailed": "能力変更の適用に失敗しました: {{error}}"
+            }
         },
         "toast": {
             "loadFailed": "Agent 設定の読み込みに失敗しました: {{error}}",

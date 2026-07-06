@@ -9,7 +9,7 @@ export type ChatGet = () => ChatState;
 
 export type SessionHistoryActions = Pick<
   ChatState,
-  'loadSessions' | 'switchSession' | 'newSession' | 'deleteSession' | 'renameSession' | 'cleanupEmptySession' | 'loadHistory' | 'loadMoreHistory'
+  'loadSessions' | 'switchSession' | 'newSession' | 'deleteSession' | 'renameSession' | 'archiveSession' | 'restoreSession' | 'permanentDeleteSession' | 'loadArchivedSessions' | 'cleanupEmptySession' | 'loadHistory' | 'loadMoreHistory'
 >;
 
 export type RuntimeActions = Pick<

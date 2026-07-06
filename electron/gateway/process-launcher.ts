@@ -5,6 +5,10 @@ import type { GatewayLaunchContext } from './config-sync';
 import type { GatewayLifecycleState } from './process-policy';
 import { logger } from '../utils/logger';
 import { appendNodeRequireToNodeOptions } from '../utils/paths';
+import {
+  prependOfficeCliPathToEnv,
+  type OfficeCliPathOptions,
+} from '../utils/officecli-path';
 
 const GATEWAY_FETCH_PRELOAD_SOURCE = `'use strict';
 (function () {
@@ -90,6 +94,34 @@ function ensureGatewayFetchPreload(): string {
   return dest;
 }
 
+export function buildGatewayRuntimeEnv(
+  forkEnv: Record<string, string | undefined>,
+  officeCliOptions?: OfficeCliPathOptions,
+): Record<string, string | undefined> {
+  const runtimeEnv = prependOfficeCliPathToEnv({ ...forkEnv }, officeCliOptions).env;
+
+  // Disable OpenClaw's mDNS/Bonjour gateway advertiser unconditionally.
+  //
+  // The OpenClaw gateway advertises `_openclaw-gw._tcp.local` on every
+  // active network interface using a hardcoded `openclaw.local` hostname,
+  // which causes:
+  //   - cross-machine name collisions when multiple OpenClaw/Verse Claw peers
+  //     share a LAN (each falls back to "<name> (OpenClaw) (2)")
+  //   - self-collisions on multi-homed hosts (Wi-Fi + Tailscale + utun ...)
+  //   - "ghost" record collisions after an unclean Verse Claw exit, because
+  //     SIGKILL prevents ciao from emitting the mDNS goodbye record.
+  //
+  // Verse Claw has no UI for LAN gateway discovery today, so the advertiser is
+  // pure log noise.  `OPENCLAW_DISABLE_BONJOUR=1` short-circuits
+  // `startGatewayBonjourAdvertiser()` (openclaw `src/infra/bonjour.ts`,
+  // `isDisabledByEnv()`).  Set after the `forkEnv` spread so any
+  // pre-existing value inherited from the user shell cannot re-enable it.
+  runtimeEnv.OPENCLAW_DISABLE_BONJOUR = '1';
+  runtimeEnv.CLAWX_AGENT_BROWSER_BRIDGE = '1';
+
+  return runtimeEnv;
+}
+
 export async function launchGatewayProcess(options: {
   port: number;
   launchContext: GatewayLaunchContext;
@@ -123,26 +155,7 @@ export async function launchGatewayProcess(options: {
   );
   const lastSpawnSummary = `mode=${mode}, runtime=${runtimeMode}, entry="${entryScript}", args="${sanitizedArgs.join(' ')}", execArgv="${execArgv.join(' ')}", cwd="${openclawDir}"`;
 
-  const runtimeEnv = { ...forkEnv };
-
-  // Disable OpenClaw's mDNS/Bonjour gateway advertiser unconditionally.
-  //
-  // The OpenClaw gateway advertises `_openclaw-gw._tcp.local` on every
-  // active network interface using a hardcoded `openclaw.local` hostname,
-  // which causes:
-  //   - cross-machine name collisions when multiple OpenClaw/Verse Claw peers
-  //     share a LAN (each falls back to "<name> (OpenClaw) (2)")
-  //   - self-collisions on multi-homed hosts (Wi-Fi + Tailscale + utun ...)
-  //   - "ghost" record collisions after an unclean Verse Claw exit, because
-  //     SIGKILL prevents ciao from emitting the mDNS goodbye record.
-  //
-  // Verse Claw has no UI for LAN gateway discovery today, so the advertiser is
-  // pure log noise.  `OPENCLAW_DISABLE_BONJOUR=1` short-circuits
-  // `startGatewayBonjourAdvertiser()` (openclaw `src/infra/bonjour.ts`,
-  // `isDisabledByEnv()`).  Set after the `forkEnv` spread so any
-  // pre-existing value inherited from the user shell cannot re-enable it.
-  runtimeEnv.OPENCLAW_DISABLE_BONJOUR = '1';
-  runtimeEnv.CLAWX_AGENT_BROWSER_BRIDGE = '1';
+  const runtimeEnv = buildGatewayRuntimeEnv(forkEnv);
 
   // Only apply the fetch/child_process preload in dev mode.
   // In packaged builds Electron's UtilityProcess rejects NODE_OPTIONS

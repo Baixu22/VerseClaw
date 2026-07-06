@@ -21,8 +21,13 @@ import { buildRolePermissionDenyList } from '../../openclaw_runtime/src/agents/r
 import {
   buildAgentMapResultFixture,
   buildAgentMapRankedTagFixture,
+  buildCodeTaskEvidenceGateInternalShadowObservationResult,
+  buildCodeTaskEvidenceGateRuntimeShadowCollectionResult,
+  evaluateEvidenceVerifier,
+  buildEvidenceVerifierInputFixture,
   isRuntimeTaskEvent,
   isRuntimeTraceSpan,
+  type CodeTaskEvidenceGateRuntimeShadowCollectionResult,
   type RuntimeMemoryEpisodeRecord,
   type RuntimeRegistryDiagnostic,
   type RuntimeTaskEvent,
@@ -1456,6 +1461,361 @@ describe('runTaskLoop', () => {
     ]));
   });
 
+  it('keeps code-task evidence gate runtime shadow collection disabled by default', async () => {
+    const sink = vi.fn();
+    const builder = vi.fn(() => {
+      throw new Error('disabled code-task collection must not run');
+    });
+
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_code_task_collection_disabled`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_collection_disabled'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['manual review'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getStructuredEvidenceRun as never,
+        codeTaskEvidenceGateRuntimeShadowCollectionSink: sink,
+        codeTaskEvidenceGateRuntimeShadowCollectionBuilder: builder as never,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result.status).toBe('complete');
+    expect(result.phase).toBe('complete');
+    expect(builder).not.toHaveBeenCalled();
+    expect(sink).not.toHaveBeenCalled();
+  });
+
+  it('emits code-task evidence gate runtime shadow collection only in explicit shadow mode', async () => {
+    const collections: CodeTaskEvidenceGateRuntimeShadowCollectionResult[] = [];
+    const recordCheckpoint = vi.fn();
+    const lifecycle: unknown[] = [];
+
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      { runtime: { evidenceVerifier: { shadow: true } } },
+      {
+        idFactory: (prefix) => `${prefix}_code_task_collection_shadow`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_collection_shadow'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['manual review'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getFileOnlyEvidenceRun as never,
+        codeTaskEvidenceGateRuntimeShadowCollectionMode: 'shadow_only',
+        codeTaskEvidenceGateRuntimeShadowCollectionMaxSamples: 1,
+        codeTaskEvidenceGateRuntimeShadowCollectionSink: (collection) => {
+          collections.push(collection);
+        },
+        lifecycle: (event) => lifecycle.push(event),
+        recordCheckpoint: recordCheckpoint as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result).toMatchObject({
+      status: 'complete',
+      phase: 'complete',
+      finalSummary: 'done',
+    });
+    expect(collections).toHaveLength(1);
+    expect(collections[0]).toMatchObject({
+      collectorId: 'task_loop.code_task_evidence_gate.runtime_shadow_collection',
+      mode: 'shadow_only',
+      outcome: 'collected',
+      requestedSampleCount: 1,
+      acceptedSampleCount: 1,
+      droppedSampleCount: 0,
+      sampledCount: 1,
+      replaySampleCount: 1,
+      completionAuthority: false,
+      runtimeDecisionUnaffected: true,
+      legacyDecisionUnaffected: true,
+      replayReadiness: {
+        decision: 'blocked',
+        activePilotRequiresFreshSpec: true,
+      },
+    });
+    expect(collections[0]?.entries[0]?.producerResult).toMatchObject({
+      mode: 'shadow_only',
+      outcome: 'sampled',
+      sampled: true,
+      taskId: 'loop_code_task_collection_shadow',
+      shadowDecision: 'would_block',
+      blockReason: 'verifier_insufficient_evidence',
+      completionAuthority: false,
+      runtimeDecisionUnaffected: true,
+    });
+    expect(JSON.stringify(recordCheckpoint.mock.calls)).not.toContain(
+      'code_task_evidence_gate.runtime_shadow_collection',
+    );
+    expect(JSON.stringify(lifecycle)).not.toContain(
+      'code_task_evidence_gate.runtime_shadow_collection',
+    );
+  });
+
+  it('fails closed for invalid explicit code-task collection wiring without changing completion', async () => {
+    const collections: CodeTaskEvidenceGateRuntimeShadowCollectionResult[] = [];
+
+    const result = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_code_task_collection_invalid`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_collection_invalid'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['manual review'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getStructuredEvidenceRun as never,
+        codeTaskEvidenceGateRuntimeShadowCollectionMode: 'shadow_only',
+        codeTaskEvidenceGateRuntimeShadowCollectionMaxSamples: 0,
+        codeTaskEvidenceGateRuntimeShadowCollectionSink: (collection) => {
+          collections.push(collection);
+        },
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(result).toMatchObject({ status: 'complete', phase: 'complete' });
+    expect(collections).toHaveLength(1);
+    expect(collections[0]).toMatchObject({
+      mode: 'shadow_only',
+      outcome: 'invalid_input',
+      requestedSampleCount: 1,
+      acceptedSampleCount: 0,
+      sampledCount: 0,
+      replaySampleCount: 0,
+      diagnosticCodes: ['runtime_shadow_collection_invalid_input'],
+      completionAuthority: false,
+      runtimeDecisionUnaffected: true,
+      legacyDecisionUnaffected: true,
+    });
+  });
+
+  it('accumulates multiple code-task shadow collections through an injected in-memory sink', async () => {
+    const collections: CodeTaskEvidenceGateRuntimeShadowCollectionResult[] = [];
+    const runObserved = (async (request) => fakeResult(request.templateId)) as never;
+    const selfCheck = (async () => ({
+      decision: 'complete',
+      confidence: 0.9,
+      missingEvidence: [],
+      verificationGaps: [],
+      risks: [],
+      validationState: { status: 'passed', checks: ['manual review'], evidenceRefs: [] },
+      contextSummary: 'done',
+    })) as never;
+
+    const valid = await runTaskLoop(
+      { task: 'implement validated feature', sessionKey: 'agent:main:abc' },
+      { runtime: { evidenceVerifier: { shadow: true } } },
+      {
+        idFactory: (prefix) => `${prefix}_code_task_observation_valid`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_observation_valid'),
+        runObserved,
+        selfCheck,
+        getSubagentRun: getStructuredEvidenceRun as never,
+        codeTaskEvidenceGateRuntimeShadowCollectionMode: 'shadow_only',
+        codeTaskEvidenceGateRuntimeShadowCollectionSink: (collection) => {
+          collections.push(collection);
+        },
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    const missingEvidence = await runTaskLoop(
+      { task: 'implement unvalidated feature', sessionKey: 'agent:main:abc' },
+      { runtime: { evidenceVerifier: { shadow: true } } },
+      {
+        idFactory: (prefix) => `${prefix}_code_task_observation_missing`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_observation_missing'),
+        runObserved,
+        selfCheck,
+        getSubagentRun: getFileOnlyEvidenceRun as never,
+        codeTaskEvidenceGateRuntimeShadowCollectionMode: 'shadow_only',
+        codeTaskEvidenceGateRuntimeShadowCollectionSink: (collection) => {
+          collections.push(collection);
+        },
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    const riskyAllow = await runTaskLoop(
+      { task: 'implement semantically risky feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_code_task_observation_risky`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_observation_risky'),
+        runObserved,
+        selfCheck,
+        getSubagentRun: getStructuredEvidenceRun as never,
+        codeTaskEvidenceGateRuntimeShadowCollectionMode: 'shadow_only',
+        codeTaskEvidenceGateRuntimeShadowCollectionBuilder: (() =>
+          buildCodeTaskEvidenceGateRuntimeShadowCollectionResult({
+            collectorId: 'task_loop.code_task_evidence_gate.runtime_shadow_collection',
+            mode: 'shadow_only',
+            samples: [{
+              collectionSampleId: 'task-loop:risky',
+              producerInput: {
+                producerId: 'task_loop.code_task_evidence_gate.runtime_shadow_producer',
+                completionEventId: 'task-loop:risky',
+                mode: 'shadow_only',
+                samplerId: 'task_loop.code_task_evidence_gate.runtime_shadow_sampler',
+                sampleId: 'task-loop:risky',
+                completion: {
+                  taskId: 'loop_code_task_observation_risky',
+                  objective: 'implement semantically risky feature',
+                  taskKind: 'code_edit',
+                  legacyTerminalStatus: 'complete',
+                  verifierReport: evaluateEvidenceVerifier(
+                    buildEvidenceVerifierInputFixture({
+                      taskId: 'loop_code_task_observation_risky',
+                    }),
+                  ),
+                  metadata: {
+                    changedFiles: ['src/risky-observation.ts'],
+                    semanticRegressionRisk: true,
+                  },
+                },
+              },
+            }],
+          })) as never,
+        codeTaskEvidenceGateRuntimeShadowCollectionSink: (collection) => {
+          collections.push(collection);
+        },
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect([valid.status, missingEvidence.status, riskyAllow.status]).toEqual([
+      'complete',
+      'complete',
+      'complete',
+    ]);
+    expect(collections).toHaveLength(3);
+    expect(collections.map((collection) => collection.entries[0]?.producerResult.shadowDecision))
+      .toEqual(['would_allow', 'would_block', 'would_allow']);
+    expect(collections[1]?.entries[0]?.producerResult.blockReason).toBe(
+      'verifier_insufficient_evidence',
+    );
+    expect(collections[2]?.entries[0]?.producerResult.allowRiskTier).toBe(
+      'risky_allow',
+    );
+
+    const observation = buildCodeTaskEvidenceGateInternalShadowObservationResult({
+      observerId: 'task_loop.internal_shadow_observer',
+      mode: 'shadow_only',
+      collections,
+    });
+
+    expect(observation).toMatchObject({
+      outcome: 'observed',
+      requestedCollectionCount: 3,
+      acceptedCollectionCount: 3,
+      collectedCollectionCount: 3,
+      sampledCount: 3,
+      replaySampleCount: 3,
+      wouldBlockCount: 1,
+      riskyAllowCount: 1,
+      completionAuthority: false,
+      runtimeDecisionUnaffected: true,
+      legacyDecisionUnaffected: true,
+      activePilotRequiresFreshSpec: true,
+    });
+    expect([
+      'ready_for_limited_default_off_internal_shadow_observation_review',
+      'continue_internal_shadow_observation_hardening',
+      'stop_or_freeze_route',
+    ]).toContain(observation.observationDecision);
+  });
+
+  it('isolates code-task shadow collection builder and sink failures from completion', async () => {
+    const builderFailure = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_code_task_collection_builder_failure`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_collection_builder_failure'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['manual review'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getStructuredEvidenceRun as never,
+        codeTaskEvidenceGateRuntimeShadowCollectionMode: 'shadow_only',
+        codeTaskEvidenceGateRuntimeShadowCollectionBuilder: (() => {
+          throw new Error('collection builder unavailable');
+        }) as never,
+        codeTaskEvidenceGateRuntimeShadowCollectionSink: () => {
+          throw new Error('sink should not run after builder failure');
+        },
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    const sinkFailure = await runTaskLoop(
+      { task: 'implement feature', sessionKey: 'agent:main:abc' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_code_task_collection_sink_failure`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_collection_sink_failure'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['manual review'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getStructuredEvidenceRun as never,
+        codeTaskEvidenceGateRuntimeShadowCollectionMode: 'shadow_only',
+        codeTaskEvidenceGateRuntimeShadowCollectionSink: () => {
+          throw new Error('collection sink unavailable');
+        },
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+
+    expect(builderFailure).toMatchObject({ status: 'complete', phase: 'complete' });
+    expect(sinkFailure).toMatchObject({ status: 'complete', phase: 'complete' });
+  });
+
   it('emits RuntimeTaskEvent lifecycle and checkpoint shadows for a complete TaskLoop', async () => {
     const shadows: RuntimeTaskEvent[] = [];
 
@@ -1598,20 +1958,38 @@ describe('runTaskLoop', () => {
     expect(JSON.stringify(checkpointArg ?? {})).not.toContain('runtime-registry:');
     expect(checkpointArg?.checkpoint?.metadata).not.toHaveProperty('registryDiagnostics');
 
-    const registryEvidenceRef = 'runtime-registry:context:legacy-context-engine:legacy_authoritative';
+    const registryEvidenceRef = 'runtime-registry-evidence:context:legacy-context-engine:legacy_authoritative:0';
+    const registryDiagnosticRef = 'runtime-registry:context:legacy-context-engine:legacy_authoritative';
     const completedEvent = shadows.find((event) => event.kind === 'completed');
     expect(completedEvent?.evidenceRefs).toEqual(expect.arrayContaining([
       expect.objectContaining({
         type: 'other',
         ref: registryEvidenceRef,
+        label: 'Runtime registry evidence',
         metadata: expect.objectContaining({
           source: 'task_loop.registry_shadow',
           registryReason: 'legacy_authoritative',
+          redactionStatus: 'sanitized',
+          legacyDecisionUnaffected: true,
+          finalTaskStatusUnaffected: true,
+        }),
+      }),
+      expect.objectContaining({
+        type: 'other',
+        ref: registryDiagnosticRef,
+        label: 'Runtime registry diagnostic',
+        metadata: expect.objectContaining({
+          source: 'task_loop.registry_shadow',
+          reason: 'legacy_authoritative',
           legacyDecisionUnaffected: true,
           finalTaskStatusUnaffected: true,
         }),
       }),
     ]));
+    expect(JSON.stringify(completedEvent ?? {}))
+      .not.toContain('Compatibility provider stayed shadow-only.');
+    expect(JSON.stringify(completedEvent ?? {}))
+      .not.toContain('Legacy context remains authoritative during the registry pilot.');
     expect((completedEvent?.payload as { metadata?: Record<string, unknown> } | undefined)?.metadata)
       .toMatchObject({
         registryDiagnostics: expect.objectContaining({
@@ -1625,6 +2003,10 @@ describe('runTaskLoop', () => {
               providerId: 'legacy-context-engine',
               status: 'fallback',
               reason: 'legacy_authoritative',
+              metadata: expect.objectContaining({
+                redactionStatus: 'sanitized',
+                source: 'runtime_registry.diagnostic_projection',
+              }),
             }),
           ],
         }),
@@ -1633,10 +2015,12 @@ describe('runTaskLoop', () => {
     const checkpointEvent = shadows.find((event) => event.kind === 'checkpoint');
     expect(checkpointEvent?.evidenceRefs).toEqual(expect.arrayContaining([
       expect.objectContaining({ ref: registryEvidenceRef }),
+      expect.objectContaining({ ref: registryDiagnosticRef }),
     ]));
     expect((checkpointEvent?.payload as { checkpoint?: { evidenceRefs?: Array<{ ref: string }> } })?.checkpoint?.evidenceRefs)
       .not.toEqual(expect.arrayContaining([
         expect.objectContaining({ ref: registryEvidenceRef }),
+        expect.objectContaining({ ref: registryDiagnosticRef }),
       ]));
   });
 

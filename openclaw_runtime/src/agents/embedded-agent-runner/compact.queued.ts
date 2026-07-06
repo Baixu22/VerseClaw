@@ -440,6 +440,7 @@ export async function compactEmbeddedAgentSession(
                 firstKeptEntryId: result.result?.firstKeptEntryId,
                 tokensBefore: result.result?.tokensBefore,
                 tokensAfter: result.result?.tokensAfter,
+                details: result.result?.details,
                 postSessionFile: postCompactionSessionFile,
                 postLeafId,
                 postEntryId: postLeafId,

@@ -21,39 +21,6 @@ capture.finish_trajectory(trajectoryId, "success");
 
 For failures, pass the raw error to `finish_trajectory`. The capture layer extracts and caches a deterministic signature such as `ConnectionError::db_connection_refused::postgresql`.
 
-## Runtime Hook Integration v0.2
-
-SEKB can be attached to an AgentHarness-like runtime with
-`installSekbHarnessHooks(target, options)`. The installer is explicit and
-default-off: callers must pass `enabled: true` plus a `TrajectoryCapture` and
-`ContextInjector`.
-
-The stable OpenClaw runtime owner seam is the plugin hook registration/runner
-surface, not the `AgentHarness` capability object itself. Runtime owners enable
-SEKB by calling `installSekbHarnessHooks(api, ...)` or an equivalent target that
-implements the plugin-style `on(hookName, handler)` contract. The real hook
-events used by the v0.2 adapter are:
-
-- `before_agent_start` starts an L3 trajectory and returns bounded SEKB task
-  advice as visible `appendContext` for real OpenClaw hook events. Legacy custom
-  targets that provide an explicit `systemPrompt` still receive a `systemPrompt`
-  result for compatibility.
-- `before_tool_call` records the pending tool call and always returns no
-  blocking or parameter rewrite.
-- `tool_result_persist` records the tool result and, for failed results,
-  returns a replacement tool-result message whose visible text content has SEKB
-  historical error advice appended.
-- `agent_end` finishes the trajectory as success or failure.
-- Aborted OpenClaw runs are represented by `agent_end` with `success: false`
-  and no error; SEKB records those as partial. Custom adapter targets may still
-  emit `abort` through `subscribe(...)` for the same partial outcome.
-
-SEKB hook failures are swallowed and reported through the optional `onError`
-callback so knowledge capture cannot break the agent run.
-
-No v0.2 path pauses tools, retries work, blocks tool calls, silently rewrites
-tool output, or writes L2 principles without `DistillationTool.confirm_and_save()`.
-
 ## Manual Distillation
 
 MVP distillation is explicit:
@@ -80,31 +47,6 @@ Embeddings are stored as nullable JSON arrays. When embeddings are missing, retr
 
 The L1 index is derived from active L2 principles and bounded to an approximate 2K-token budget.
 
-## Operator Report
-
-`buildSekbOperatorReport(store)` returns a read-only snapshot for manual
-distillation review. It includes total trajectory counts, undistilled
-trajectory summaries, active principle summaries, and the current L1 index
-preview. The report does not write principles, reject suggestions, or mark
-trajectories distilled.
-
-## Runtime Integration Verification
-
-The focused integration proof for runtime owners is:
-
-```powershell
-cd openclaw_runtime
-node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/knowledge/sekb/sekb.test.ts
-```
-
-The `installSekbHarnessHooks` coverage uses the real OpenClaw plugin hook
-runner event shapes for `before_agent_start`, `before_tool_call`,
-`tool_result_persist`, and `agent_end`. It verifies that task advice is visible
-context, error advice is appended to visible tool-result content, tool calls and
-results become L3 trajectory steps, error signatures are persisted, success and
-failure finish states are recorded, abort fallback records partial, and SEKB
-hook failures only reach optional `onError`.
-
 ## Stage 2 Decisions
 
 The MVP leaves these decisions open:
@@ -113,18 +55,4 @@ The MVP leaves these decisions open:
 - Verifier model policy: independent LLM or the same model with different parameters.
 - Curator scoring: evaluation cadence and weights for retrieval, adoption, and post-adoption success.
 
-README translation updates are not required for v0.2 because the branch adds
-runtime-side explicit hook integration and a read-only operator report, with no
-new renderer page, visible navigation, or end-user desktop workflow.
-
-## Long Task Continuation
-
-Future `/goal` work should start from
-`harness/specs/tasks/sekb-runtime-long-task-development.md`. That task spec
-links the SEKB development-loop rule, stage guide, roadmap, required tests, and
-closure gates so long-running agents do not invent a parallel plan.
-
-The recommended next package is runtime integration closure: prove the explicit
-SEKB hook adapter against real runtime hook/event shapes, keep the integration
-default-off and advisory, and update docs with the exact enablement and proof
-workflow.
+README translation updates are not required for this slice because no renderer workflow, visible desktop page, or user-facing navigation changed.

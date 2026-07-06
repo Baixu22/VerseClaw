@@ -22,6 +22,11 @@ const workspace = {
   sessionStates: {},
 };
 
+const runnableWorkspace = {
+  ...workspace,
+  permissionMode: 'acceptEdits',
+};
+
 test.describe('Workspace terminal panel', () => {
   test('renders compact terminal chrome and permission block state', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
@@ -78,6 +83,12 @@ test.describe('Workspace terminal panel', () => {
             status: 'idle',
             sessionId: null,
           },
+          [stableStringify(['git', 'status', null])]: {
+            ok: true,
+            status: {
+              isRepository: false,
+            },
+          },
         },
       });
 
@@ -91,17 +102,137 @@ test.describe('Workspace terminal panel', () => {
       }
 
       await expect(page.getByTestId('main-layout')).toBeVisible();
-      await page.getByRole('button', { name: 'Workspace' }).first().click();
+      const workspaceToggle = page.getByTestId('chat-workspace-toggle');
+      await expect(workspaceToggle).toBeVisible({ timeout: 30_000 });
+      await expect(workspaceToggle).toBeEnabled({ timeout: 30_000 });
+      await workspaceToggle.click();
 
       const sidePanel = page.getByTestId('artifact-panel');
       await expect(sidePanel).toBeVisible();
-      await sidePanel.getByRole('button', { name: 'Terminal' }).click();
+      await expect(sidePanel.getByTestId('workspace-launchpad')).toBeVisible();
+      await expect(sidePanel.getByTestId('workspace-launchpad-entry-files')).toBeVisible();
+      await expect(sidePanel.getByTestId('workspace-launchpad-entry-terminal')).toBeVisible();
+      await expect(sidePanel.getByTestId('workspace-launchpad-entry-review')).toHaveCount(0);
+      await expect(sidePanel.getByTestId('workspace-launchpad-entry-web')).toHaveCount(0);
+      await expect(sidePanel.getByTestId('workspace-launchpad-entry-audit')).toHaveCount(0);
+      await sidePanel.getByTestId('workspace-launchpad-add').click();
+      await expect(sidePanel.getByTestId('workspace-entry-menu')).toBeVisible();
+      await expect(sidePanel.getByTestId('workspace-launchpad-entry-review')).toHaveCount(0);
+      await expect(sidePanel.getByTestId('workspace-launchpad-entry-web')).toBeVisible();
+      await expect(sidePanel.getByTestId('workspace-launchpad-entry-audit')).toBeVisible();
+      await sidePanel.getByTestId('workspace-launchpad-entry-terminal').click();
 
       await expect(sidePanel.getByText('Workspace terminal')).toBeVisible();
       await expect(sidePanel.getByText('/workspace/demo').first()).toBeVisible();
       await expect(sidePanel.getByText('Interactive terminal is disabled in this permission mode')).toBeVisible();
       await expect(sidePanel.getByRole('button', { name: 'Start' })).toBeDisabled();
       await expect(sidePanel.locator('.xterm')).toBeVisible();
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
+  test('starts a live workspace terminal from the launchpad', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', {}])]: {
+            success: true,
+            result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 1000, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+        },
+        hostApi: {
+          [stableStringify(['agents', 'list', null])]: {
+            success: true,
+            agents: [{
+              id: 'main',
+              name: 'Main',
+              isDefault: true,
+              workspace: '/workspace/demo',
+              mainSessionKey: SESSION_KEY,
+              channelTypes: [],
+            }],
+            defaultAgentId: 'main',
+            configuredChannelTypes: [],
+            channelOwners: {},
+            channelAccountOwners: {},
+          },
+          [stableStringify(['workspaces', 'list', null])]: {
+            profiles: [runnableWorkspace],
+            activeWorkspaceId: WORKSPACE_ID,
+            activeWorkspace: runnableWorkspace,
+          },
+          [stableStringify(['workspaces', 'getActive', null])]: {
+            activeWorkspaceId: WORKSPACE_ID,
+            activeWorkspace: runnableWorkspace,
+          },
+          [stableStringify(['workspaces', 'saveState', {
+            id: WORKSPACE_ID,
+            sessionKey: SESSION_KEY,
+            state: { artifactPanel: { workspaceView: 'terminal' } },
+          }])]: { success: true },
+          [stableStringify(['workspaces', 'saveState', null])]: { success: true },
+          [stableStringify(['terminal', 'status', { workspaceId: WORKSPACE_ID, sessionKey: SESSION_KEY }])]: {
+            success: true,
+            status: 'idle',
+            sessionId: null,
+          },
+          [stableStringify(['terminal', 'open', null])]: {
+            success: true,
+            blocked: false,
+            status: 'running',
+            sessionId: 'terminal-1',
+            cwd: '/workspace/demo',
+            cols: 80,
+            rows: 24,
+            pid: 1234,
+          },
+          [stableStringify(['git', 'status', null])]: {
+            ok: true,
+            status: {
+              isRepository: false,
+            },
+          },
+        },
+      });
+
+      const page = await getStableWindow(app);
+      try {
+        await page.reload();
+      } catch (error) {
+        if (!String(error).includes('ERR_FILE_NOT_FOUND')) {
+          throw error;
+        }
+      }
+
+      await expect(page.getByTestId('main-layout')).toBeVisible();
+      const workspaceToggle = page.getByTestId('chat-workspace-toggle');
+      await expect(workspaceToggle).toBeVisible({ timeout: 30_000 });
+      await workspaceToggle.click();
+
+      const sidePanel = page.getByTestId('artifact-panel');
+      await expect(sidePanel.getByTestId('workspace-launchpad')).toBeVisible();
+      await expect(sidePanel.getByTestId('workspace-launchpad-entry-web')).toHaveCount(0);
+      await sidePanel.getByTestId('workspace-launchpad-entry-terminal').click();
+      await expect(sidePanel.getByRole('button', { name: 'Start' })).toBeEnabled();
+      await sidePanel.getByRole('button', { name: 'Start' }).click();
+
+      await expect.poll(async () => app.evaluate(() => {
+        const calls = (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }).__verseClawE2eHostCalls ?? [];
+        return calls.some((call) => call.module === 'terminal' && call.action === 'open');
+      })).toBe(true);
+      await expect(sidePanel.getByText('Running').first()).toBeVisible();
     } finally {
       await closeElectronApp(app);
     }

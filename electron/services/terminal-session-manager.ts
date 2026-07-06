@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import * as pty from '@lydell/node-pty';
 import { HOST_EVENT_CHANNELS } from '@shared/host-events/contract';
 import type { WorkspaceProfile } from '@shared/types/workspace';
+import { prependOfficeCliPathToEnv } from '../utils/officecli-path';
 import { isPathInsideWorkspace } from './workspace-permissions';
 
 export type TerminalSessionKind = 'interactive' | 'webPreviewDevServer';
@@ -83,7 +84,12 @@ function buildEnvironment(): Record<string, string> {
   }
   env.TERM = env.TERM || 'xterm-256color';
   env.COLORTERM = env.COLORTERM || 'truecolor';
-  return env;
+  const patched = prependOfficeCliPathToEnv(env, { existsSync }).env;
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(patched)) {
+    if (typeof value === 'string') result[key] = value;
+  }
+  return result;
 }
 
 function appendScrollback(current: string, chunk: string): string {

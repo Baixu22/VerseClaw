@@ -59,7 +59,15 @@ exports.clearParserCache = clearParserCache;
 exports.getUnavailableGrammarErrors = getUnavailableGrammarErrors;
 exports.getLanguageDisplayName = getLanguageDisplayName;
 const path = __importStar(require("path"));
-const web_tree_sitter_1 = require("web-tree-sitter");
+const fs = __importStar(require("fs"));
+function loadWebTreeSitter() {
+    const runtimeRoot = path.resolve(__dirname, '..', '..', '..', '..');
+    const pinnedRuntimePath = path.join(runtimeRoot, 'node_modules', '.pnpm', 'web-tree-sitter@0.25.10', 'node_modules', 'web-tree-sitter', 'tree-sitter.cjs');
+    if (fs.existsSync(pinnedRuntimePath))
+        return require(pinnedRuntimePath);
+    return require("web-tree-sitter");
+}
+const web_tree_sitter_1 = loadWebTreeSitter();
 /**
  * WASM filename map — maps each language to its .wasm grammar file
  * in the tree-sitter-wasms package.
@@ -210,6 +218,33 @@ const parserCache = new Map();
 const languageCache = new Map();
 const unavailableGrammarErrors = new Map();
 let parserInitialized = false;
+function resolveTreeSitterWasm(wasmFile) {
+    const packagePath = `tree-sitter-wasms/out/${wasmFile}`;
+    const runtimeRoot = path.resolve(__dirname, '..', '..', '..', '..');
+    const copilotWasmPath = path.join(runtimeRoot, 'node_modules', '.pnpm', '@github+copilot@1.0.55', 'node_modules', '@github', 'copilot', wasmFile);
+    if (fs.existsSync(copilotWasmPath))
+        return copilotWasmPath;
+    const resolutionRoots = [
+        path.resolve(__dirname, '..', '..'),
+        runtimeRoot,
+        process.cwd(),
+    ];
+    try {
+        return require.resolve(packagePath, { paths: resolutionRoots });
+    }
+    catch {
+        // pnpm does not always hoist extension-only dependencies into a visible
+        // node_modules symlink when this bundled extension is executed from the
+        // desktop workspace. Fall back to the runtime lockfile store location.
+    }
+    const pnpmStorePath = path.join(runtimeRoot, 'node_modules', '.pnpm', 'tree-sitter-wasms@0.1.13', 'node_modules', 'tree-sitter-wasms', 'out', wasmFile);
+    if (fs.existsSync(pnpmStorePath))
+        return pnpmStorePath;
+    const vendoredPath = path.join(__dirname, 'wasm', wasmFile);
+    if (fs.existsSync(vendoredPath))
+        return vendoredPath;
+    return require.resolve(packagePath);
+}
 /**
  * Initialize the tree-sitter WASM runtime. Must be called before loading grammars.
  * Does NOT load any grammar WASM files — use loadGrammarsForLanguages() for that.
@@ -257,7 +292,7 @@ async function loadGrammarsForLanguages(languages) {
             // primary constructors natively.
             const wasmPath = (lang === 'pascal' || lang === 'scala' || lang === 'lua' || lang === 'luau' || lang === 'csharp' || lang === 'r')
                 ? path.join(__dirname, 'wasm', wasmFile)
-                : require.resolve(`tree-sitter-wasms/out/${wasmFile}`);
+                : resolveTreeSitterWasm(wasmFile);
             const language = await web_tree_sitter_1.Language.load(wasmPath);
             languageCache.set(lang, language);
         }

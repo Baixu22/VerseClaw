@@ -120,7 +120,7 @@ describe('workspace runtime permission sync', () => {
         exec: {
           host: 'auto',
           security: 'allowlist',
-          ask: 'dangerous',
+          ask: 'on-miss',
         },
       },
     });

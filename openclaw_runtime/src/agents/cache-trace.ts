@@ -9,10 +9,18 @@ import { resolveUserPath } from "../utils.js";
 import { parseBooleanValue } from "../utils/boolean.js";
 import { safeJsonStringify } from "../utils/safe-json.js";
 import { sanitizeDiagnosticPayload } from "./payload-redaction.js";
+import {
+  canonicalizeOpenAIProviderPayload,
+  summarizeProviderPayloadCacheShape,
+} from "./provider-payload-cache-shape.js";
 import { getQueuedFileWriter, type QueuedFileWriter } from "./queued-file-writer.js";
 import type { AgentMessage, StreamFn } from "./runtime/index.js";
 import { stableStringify } from "./stable-stringify.js";
 import { buildAgentTraceBase } from "./trace-base.js";
+
+export const CACHE_TRACE_PROVIDER_PAYLOAD_RECORDER = Symbol.for(
+  "openclaw.cacheTrace.providerPayloadRecorder",
+);
 
 // Payloads are redacted before JSONL output while stable digests preserve
 // correlation across prompt/session/cache stages.
@@ -26,6 +34,7 @@ type CacheTraceStage =
   | "prompt:before"
   | "prompt:images"
   | "stream:context"
+  | "provider:payload"
   | "session:after";
 
 type CacheTraceEvent = {
@@ -49,6 +58,14 @@ type CacheTraceEvent = {
   messageFingerprints?: string[];
   messagesDigest?: string;
   systemDigest?: string;
+  providerSystemDigest?: string;
+  providerMessagesDigest?: string;
+  providerToolsDigest?: string;
+  providerPrefixShapeDigest?: string;
+  providerParamsDigest?: string;
+  providerToolCount?: number;
+  providerToolNames?: string[];
+  providerPayloadSource?: string;
   note?: string;
   error?: string;
 };
@@ -82,6 +99,8 @@ type CacheTraceConfig = {
 };
 
 type CacheTraceWriter = QueuedFileWriter;
+
+type CacheTraceProviderPayloadRecorder = (payload: unknown, source?: string) => void;
 
 const writers = new Map<string, CacheTraceWriter>();
 
@@ -133,6 +152,55 @@ function summarizeMessages(messages: AgentMessage[]): {
     messageFingerprints,
     messagesDigest: digest(messageFingerprints.join("|")),
   };
+}
+
+function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
+  return Boolean(value) && typeof (value as { then?: unknown }).then === "function";
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function mergePayloadReplacement(payload: unknown, replacement: unknown): unknown {
+  if (replacement === undefined) {
+    return payload;
+  }
+  if (isRecord(payload) && isRecord(replacement)) {
+    return canonicalizeOpenAIProviderPayload({
+      ...payload,
+      ...replacement,
+    });
+  }
+  return replacement;
+}
+
+function buildProviderLikePayloadFromStreamContext(params: {
+  model: Parameters<StreamFn>[0];
+  context: Parameters<StreamFn>[1];
+}): Record<string, unknown> {
+  const traceContext = params.context as {
+    messages?: AgentMessage[];
+    system?: unknown;
+    systemPrompt?: unknown;
+    tools?: unknown;
+  };
+  const messages: unknown[] = [];
+  const system = traceContext.systemPrompt ?? traceContext.system;
+  if (system !== undefined && system !== null && system !== "") {
+    messages.push({ role: "system", content: system });
+  }
+  if (Array.isArray(traceContext.messages)) {
+    messages.push(...traceContext.messages);
+  }
+  const payload: Record<string, unknown> = {
+    model: (params.model as { id?: unknown } | undefined)?.id,
+    messages,
+  };
+  if (Array.isArray(traceContext.tools)) {
+    payload.tools = traceContext.tools;
+  }
+  return canonicalizeOpenAIProviderPayload(payload);
 }
 
 /** Create a cache trace recorder when diagnostics config/env enables it. */
@@ -189,6 +257,32 @@ export function createCacheTrace(params: CacheTraceInit): CacheTrace | null {
     if (payload.error) {
       event.error = payload.error;
     }
+    if (payload.providerSystemDigest) {
+      event.providerSystemDigest = payload.providerSystemDigest;
+    }
+    if (payload.providerMessagesDigest) {
+      event.providerMessagesDigest = payload.providerMessagesDigest;
+    }
+    if (payload.providerToolsDigest) {
+      event.providerToolsDigest = payload.providerToolsDigest;
+    }
+    if (payload.providerPrefixShapeDigest) {
+      event.providerPrefixShapeDigest = payload.providerPrefixShapeDigest;
+    }
+    if (payload.providerParamsDigest) {
+      event.providerParamsDigest = payload.providerParamsDigest;
+    }
+    if (typeof payload.providerToolCount === "number") {
+      event.providerToolCount = payload.providerToolCount;
+    }
+    if (Array.isArray(payload.providerToolNames)) {
+      event.providerToolNames = payload.providerToolNames.filter(
+        (name): name is string => typeof name === "string",
+      );
+    }
+    if (typeof payload.providerPayloadSource === "string") {
+      event.providerPayloadSource = payload.providerPayloadSource;
+    }
 
     const line = safeJsonStringify(event);
     if (!line) {
@@ -197,13 +291,57 @@ export function createCacheTrace(params: CacheTraceInit): CacheTrace | null {
     writer.write(`${line}\n`);
   };
 
+  const recordProviderPayloadShape: CacheTraceProviderPayloadRecorder = (
+    payload,
+    source = "onPayload",
+  ) => {
+    const shape = summarizeProviderPayloadCacheShape(payload);
+    recordStage("provider:payload", {
+      providerSystemDigest: shape.systemHash,
+      providerMessagesDigest: shape.messagesHash,
+      providerToolsDigest: shape.toolsHash,
+      providerPrefixShapeDigest: shape.prefixShapeHash,
+      providerParamsDigest: shape.paramsHash,
+      providerToolCount: shape.toolCount,
+      providerToolNames: shape.toolNames,
+      providerPayloadSource: source,
+    });
+  };
+
   const wrapStreamFn: CacheTrace["wrapStreamFn"] = (streamFn) => {
     const wrapped: StreamFn = (model, context, options) => {
+      let providerPayloadRecorded = false;
+      const recordProviderPayloadShapeForCall: CacheTraceProviderPayloadRecorder = (
+        payload,
+        source = "onPayload",
+      ) => {
+        providerPayloadRecorded = true;
+        recordProviderPayloadShape(payload, source);
+      };
       const traceContext = context as {
         messages?: AgentMessage[];
         system?: unknown;
         systemPrompt?: unknown;
       };
+      const originalOnPayload = options?.onPayload;
+      const onPayload = originalOnPayload
+        ? (payload: unknown, modelValue: Parameters<NonNullable<typeof originalOnPayload>>[1]) => {
+            const result = originalOnPayload(payload, modelValue);
+            if (isPromiseLike(result)) {
+              return result.then((replacement) => {
+                const finalPayload = mergePayloadReplacement(payload, replacement);
+                recordProviderPayloadShapeForCall(finalPayload, "onPayload");
+                return replacement;
+              });
+            }
+            const finalPayload = mergePayloadReplacement(payload, result);
+            recordProviderPayloadShapeForCall(finalPayload, "onPayload");
+            return result;
+          }
+        : (payload: unknown) => {
+            recordProviderPayloadShapeForCall(payload, "onPayload");
+            return undefined;
+          };
       recordStage("stream:context", {
         model: {
           id: model?.id,
@@ -214,7 +352,20 @@ export function createCacheTrace(params: CacheTraceInit): CacheTrace | null {
         messages: traceContext.messages ?? [],
         options: (options ?? {}) as Record<string, unknown>,
       });
-      return streamFn(model, context, options);
+      queueMicrotask(() => {
+        if (providerPayloadRecorded) {
+          return;
+        }
+        recordProviderPayloadShapeForCall(
+          buildProviderLikePayloadFromStreamContext({ model, context }),
+          "stream-context-fallback",
+        );
+      });
+      return streamFn(model, context, {
+        ...options,
+        [CACHE_TRACE_PROVIDER_PAYLOAD_RECORDER]: recordProviderPayloadShapeForCall,
+        onPayload,
+      });
     };
     return wrapped;
   };

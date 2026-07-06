@@ -11,7 +11,7 @@ import {
   normalizeOptionalString,
 } from "@openclaw/normalization-core/string-coerce";
 import { resolveAcpAgentPolicyError, resolveAcpDispatchPolicyError } from "../../acp/policy.js";
-import { AcpRuntimeError, toAcpRuntimeError } from "../../acp/runtime/errors.js";
+import { AcpRuntimeError, toAcpRuntimeError } from "../../runtime/errors.ts";
 import { resolveAgentDir, resolveAgentWorkspaceDir } from "../../agents/agent-scope.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { TtsAutoMode } from "../../config/types.tts.js";

@@ -1,7 +1,7 @@
 import { hostApi } from '@/lib/host-api';
 import { clearPendingOptimisticUserMessages, getCanonicalPrefixFromSessions, getMessageText, toMs } from './helpers';
 import { pickStartupSessionFallback } from './session-selection';
-import { DEFAULT_CANONICAL_PREFIX, DEFAULT_SESSION_KEY, type ChatSession, type RawMessage } from './types';
+import { DEFAULT_CANONICAL_PREFIX, DEFAULT_SESSION_KEY, type ChatSession, type ChatState, type RawMessage } from './types';
 import type { ChatGet, ChatSet, SessionHistoryActions } from './store-api';
 
 import {
@@ -113,7 +113,7 @@ function reconcileCurrentSessionIdleFromBackend(set: ChatSet, get: ChatGet, sess
 export function createSessionActions(
   set: ChatSet,
   get: ChatGet,
-): Pick<SessionHistoryActions, 'loadSessions' | 'switchSession' | 'newSession' | 'deleteSession' | 'renameSession' | 'cleanupEmptySession'> {
+): Pick<SessionHistoryActions, 'loadSessions' | 'switchSession' | 'newSession' | 'deleteSession' | 'renameSession' | 'archiveSession' | 'restoreSession' | 'permanentDeleteSession' | 'loadArchivedSessions' | 'cleanupEmptySession'> {
   return {
     loadSessions: async () => {
       try {
@@ -460,6 +460,113 @@ export function createSessionActions(
           Object.entries(s.sessionLastActivity).filter(([k]) => k !== currentSessionKey),
         ),
       }));
+    },
+
+    // ── Archive / restore / permanent delete (recycle bin) ──
+    //
+    // Archiving renames <id>.jsonl → <id>.archived.jsonl on disk and removes
+    // the entry from sessions.json so sessions.list stops surfacing it. The
+    // Main process keeps a Verse-Claw-owned index (sessions.archives.json)
+    // beside sessions.json so the session can be restored verbatim later.
+    // Permanent delete runs the same sweepSessionArtefacts path as hard-delete
+    // but targets the .archived.jsonl base id.
+
+    archiveSession: async (key, options) => {
+      clearSessionLabelHydrationTracking(key);
+      clearPendingOptimisticUserMessages(key);
+      try {
+        const result = await hostApi.sessions.archive({
+          id: key,
+          originalWorkspaceId: options?.workspaceId ?? null,
+          originalFolderId: options?.folderId ?? null,
+        });
+        if (!result.success) {
+          console.warn(`[archiveSession] IPC reported failure for ${key}:`, result.error);
+        }
+      } catch (err) {
+        console.warn(`[archiveSession] IPC call failed for ${key}:`, err);
+      }
+
+      const { currentSessionKey, sessions } = get();
+      const remaining = sessions.filter((s) => s.key !== key);
+      const dropState = (state: ChatState) => ({
+        sessions: remaining,
+        sessionLabels: Object.fromEntries(Object.entries(state.sessionLabels).filter(([k]) => k !== key)),
+        sessionLastActivity: Object.fromEntries(Object.entries(state.sessionLastActivity).filter(([k]) => k !== key)),
+      });
+
+      if (currentSessionKey === key) {
+        const next = remaining[0];
+        set((s) => ({
+          ...dropState(s),
+          messages: [],
+          streamingText: '',
+          streamingMessage: null,
+          streamingTools: [],
+          activeRunId: null,
+          error: null,
+          pendingFinal: false,
+          lastUserMessageAt: null,
+          pendingToolImages: [],
+          currentSessionKey: next?.key ?? DEFAULT_SESSION_KEY,
+          currentAgentId: getAgentIdFromSessionKey(next?.key ?? DEFAULT_SESSION_KEY),
+        }));
+        if (next) {
+          get().loadHistory();
+        }
+      } else {
+        set(dropState);
+      }
+      // Best-effort: refresh the recycle bin view so the new entry appears.
+      void get().loadArchivedSessions();
+    },
+
+    restoreSession: async (sessionKey) => {
+      try {
+        const result = await hostApi.sessions.restore({ id: sessionKey });
+        if (!result.success) {
+          console.warn(`[restoreSession] IPC reported failure for ${sessionKey}:`, result.error);
+          return;
+        }
+      } catch (err) {
+        console.warn(`[restoreSession] IPC call failed for ${sessionKey}:`, err);
+        return;
+      }
+      // Drop the restored entry from the archive list immediately; the
+      // sessions.list refresh in loadSessions will surface it again.
+      set((s) => ({
+        archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey),
+      }));
+      void get().loadSessions();
+    },
+
+    permanentDeleteSession: async (sessionKey) => {
+      try {
+        const result = await hostApi.sessions.permanentDelete({ id: sessionKey });
+        if (!result.success) {
+          console.warn(`[permanentDeleteSession] IPC reported failure for ${sessionKey}:`, result.error);
+          return;
+        }
+      } catch (err) {
+        console.warn(`[permanentDeleteSession] IPC call failed for ${sessionKey}:`, err);
+        return;
+      }
+      set((s) => ({
+        archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey),
+      }));
+    },
+
+    loadArchivedSessions: async (agentId) => {
+      set({ archivedSessionsLoading: true });
+      try {
+        const result = await hostApi.sessions.listArchived(agentId ? { agentId } : undefined);
+        set({ archivedSessions: result.entries ?? [] });
+      } catch (err) {
+        console.warn(`[loadArchivedSessions] IPC call failed:`, err);
+        set({ archivedSessions: [] });
+      } finally {
+        set({ archivedSessionsLoading: false });
+      }
     },
 
     // ── Load chat history ──

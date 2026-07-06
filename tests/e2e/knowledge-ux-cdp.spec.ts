@@ -10,7 +10,7 @@
  * work without CDP as well — they validate the DOM shape and class presence
  * which is what the user actually sees.
  */
-import { completeSetup, expect, installIpcMocks, test } from './fixtures/electron';
+import { completeSetup, expect, getAgentDevHostCalls, installIpcMocks, test } from './fixtures/electron';
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -70,6 +70,14 @@ test.describe('Knowledge Hub UX', () => {
               agentId: null,
               createdBy: 'agent',
               warnings: ['Needs user review before writing.'],
+              metadata: {
+                triage: {
+                  action: 'needs-decision',
+                  confidence: 0.78,
+                  reason: 'Candidate has warnings that should be reviewed before promotion.',
+                  suggestedEdits: ['Resolve warning notes before promotion.'],
+                },
+              },
               createdAt: '2026-06-20T00:00:00.000Z',
               updatedAt: '2026-06-20T00:00:00.000Z',
             },
@@ -87,6 +95,13 @@ test.describe('Knowledge Hub UX', () => {
               agentId: null,
               createdBy: 'agent',
               warnings: [],
+              metadata: {
+                triage: {
+                  action: 'ready-for-review',
+                  confidence: 0.76,
+                  reason: 'Candidate has a clear type and source evidence for manual draft review.',
+                },
+              },
               createdAt: '2026-06-19T00:00:00.000Z',
               updatedAt: '2026-06-19T00:00:00.000Z',
             },
@@ -105,6 +120,77 @@ test.describe('Knowledge Hub UX', () => {
           proposals: [
             { id: 'proposal-1', operation: 'create', status: 'proposed', draftId: 'draft-1', reason: 'New RAG pipeline architecture', sources: [], requiresUserConfirmation: true, createdAt: '2026-06-18T00:00:00.000Z', updatedAt: '2026-06-18T00:00:00.000Z' },
           ],
+        },
+        [typed('knowledge', 'search', { query: 'What is this note about?', maxResults: 4, corpus: 'wiki', roleTag: 'knowledge-librarian' })]: {
+          success: true,
+          results: [
+            { pagePath: 'notes/local-operating-notes.md', title: 'Local operating notes', snippet: 'Keep reusable notes in Markdown.' },
+          ],
+        },
+        [typed('knowledge', 'get', { lookup: 'notes/local-operating-notes.md', lineCount: 80, corpus: 'wiki' })]: {
+          success: true,
+          content: '# Local operating notes\n\nKeep reusable notes in Markdown.',
+        },
+        [typed('knowledge', 'createDraft', null)]: {
+          success: true,
+          draft: {
+            id: 'draft-librarian',
+            title: 'Librarian answer',
+            body: 'Grounded answer',
+            type: 'synthesis',
+            status: 'draft',
+            sourceIds: ['notes/local-operating-notes.md'],
+            sourceRefs: [],
+            tags: ['librarian'],
+            workspaceId: null,
+            agentId: null,
+            createdBy: 'user',
+            createdAt: '2026-07-04T00:00:00.000Z',
+            updatedAt: '2026-07-04T00:00:00.000Z',
+          },
+        },
+        [typed('knowledge', 'createInboxItem', null)]: {
+          success: true,
+          item: {
+            id: 'inbox-librarian-error',
+            title: 'Error experience: What is this note about?',
+            body: 'Grounded answer',
+            kind: 'manual',
+            type: 'troubleshooting',
+            status: 'pending',
+            sourceIds: ['notes/local-operating-notes.md'],
+            sourceRefs: [],
+            tags: ['error-experience'],
+            workspaceId: null,
+            agentId: null,
+            createdBy: 'user',
+            warnings: [],
+            metadata: { knowledgeKind: 'error-experience' },
+            createdAt: '2026-07-04T00:00:00.000Z',
+            updatedAt: '2026-07-04T00:00:00.000Z',
+          },
+        },
+        [typed('knowledge', 'governanceAudit', null)]: {
+          success: true,
+          runAt: '2026-07-04T00:00:00.000Z',
+          issues: [],
+          summaries: { contradictions: 0, stale: 1, dangling: 2, duplicates: 3, provenanceGaps: 4 },
+          qualityMetrics: {
+            staleCards: 1,
+            duplicateClusters: 3,
+            sourceGaps: 4,
+            unreferencedPages: 2,
+            lowConfidenceHighHitCards: 5,
+            highDismissalCards: 6,
+            metrics: [
+              { kind: 'stale_cards', count: 1, severity: 'warning', affectedIds: ['old-note'] },
+              { kind: 'duplicate_clusters', count: 3, severity: 'warning', affectedIds: ['dup-note'] },
+              { kind: 'source_gaps', count: 4, severity: 'warning', affectedIds: ['gap-note'] },
+              { kind: 'unreferenced_pages', count: 2, severity: 'info', affectedIds: ['orphan-note'] },
+              { kind: 'low_confidence_high_hit_cards', count: 5, severity: 'warning', affectedIds: ['low-card'] },
+              { kind: 'high_dismissal_cards', count: 6, severity: 'warning', affectedIds: ['dismiss-card'] },
+            ],
+          },
         },
       },
     });
@@ -141,12 +227,13 @@ test.describe('Knowledge Hub UX', () => {
   test('workbench tabs render with icons for each tab', async ({ page }) => {
     const tabsContainer = page.getByTestId('knowledge-workbench-tabs');
     const tabs = tabsContainer.getByRole('button');
-    await expect(tabs).toHaveCount(5);
+    await expect(tabs).toHaveCount(4);
 
     // Every tab should have an SVG icon
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
       await expect(tabs.nth(i).locator('svg')).toBeVisible();
     }
+    await expect(page.getByTestId('knowledge-audit-center-button')).toBeVisible();
   });
 
   test('clicking a tab selects it with distinct visual state', async ({ page }) => {
@@ -167,8 +254,10 @@ test.describe('Knowledge Hub UX', () => {
     await page.getByTestId('knowledge-tab-library').click();
     const library = page.getByTestId('knowledge-library');
     await expect(library).toBeVisible();
+    await expect(page.getByTestId('knowledge-markdown-workspace')).toBeVisible();
+    await expect(page.getByTestId('knowledge-librarian-panel')).toBeVisible();
 
-    const typeCards = library.getByRole('button');
+    const typeCards = page.locator('[data-testid^="knowledge-type-"]');
     await expect(typeCards).toHaveCount(8);
 
     // Each card has an icon
@@ -189,6 +278,40 @@ test.describe('Knowledge Hub UX', () => {
     await expect(architectureCard).toHaveClass(/border-violet/);
   });
 
+  test('markdown workspace supports editing, preview mode, and librarian modal', async ({ page }) => {
+    await page.getByTestId('knowledge-tab-library').click();
+    await page.getByTestId('knowledge-new-note').click();
+    await page.getByTestId('knowledge-editor-title').fill('Local operating notes');
+    await page.getByTestId('knowledge-markdown-editor').fill('# Local operating notes\n\nKeep reusable notes in Markdown.');
+    await page.getByTestId('knowledge-editor-mode-preview').click();
+    await expect(page.getByTestId('knowledge-markdown-preview')).toContainText('Keep reusable notes in Markdown.');
+
+    await page.getByTestId('knowledge-librarian-fab').click();
+    await expect(page.getByTestId('knowledge-librarian-modal')).toBeVisible();
+    await expect(page.getByTestId('knowledge-librarian-capability-ask')).toBeVisible();
+    await expect(page.getByTestId('knowledge-librarian-composer')).toBeVisible();
+    await expect(page.getByTestId('knowledge-librarian-suggestions')).toContainText('Summarize');
+    await page.getByTestId('knowledge-librarian-question').fill('What is this note about?');
+    await expect(page.getByTestId('knowledge-librarian-ask')).toBeEnabled();
+    await page.getByTestId('knowledge-librarian-ask').click();
+    await expect(page.getByTestId('knowledge-librarian-message-assistant')).toContainText('Local operating notes');
+    await expect(page.getByTestId('knowledge-librarian-grounded-answer')).toContainText('Answer');
+    await expect(page.getByTestId('knowledge-librarian-sources-section')).toContainText('Local operating notes');
+    await expect(page.getByTestId('knowledge-librarian-unknowns-section')).toBeVisible();
+    await expect(page.getByTestId('knowledge-librarian-retrieval-inspector')).toContainText('What is this note about?');
+    await expect(page.getByTestId('knowledge-librarian-citation')).toContainText('notes/local-operating-notes.md');
+    await page.getByTestId('knowledge-librarian-create-error-experience').click();
+    await expect.poll(async () => {
+      const calls = await getAgentDevHostCalls(page);
+      return calls.some((call) => (
+        typeof call === 'object'
+        && call != null
+        && (call as { module?: string; action?: string }).module === 'knowledge'
+        && (call as { module?: string; action?: string }).action === 'createInboxItem'
+      ));
+    }).toBe(true);
+  });
+
   // ── Inbox tab ─────────────────────────────────────────────────────
 
   test('inbox panel shows pending items with source and warning info', async ({ page }) => {
@@ -200,6 +323,9 @@ test.describe('Knowledge Hub UX', () => {
 
     // The first item has warnings and should show them
     await expect(inboxRows.first()).toContainText('Architecture decision');
+    await expect(page.getByTestId('knowledge-inbox-group-needs-decision')).toContainText('Needs decision');
+    await expect(page.getByTestId('knowledge-inbox-group-ready-for-review')).toContainText('Ready for review');
+    await expect(inboxRows.first()).toContainText('Needs decision');
 
     // Select the first row
     await inboxRows.first().click();
@@ -224,21 +350,18 @@ test.describe('Knowledge Hub UX', () => {
     await expect(firstDraft).toContainText('RAG pipeline design');
   });
 
-  // ── Governance tab ────────────────────────────────────────────────
+  // ── Audit center ────────────────────────────────────────────────
 
-  test('governance tab has three card sections with descriptive text', async ({ page }) => {
-    await page.getByTestId('knowledge-tab-governance').click();
+  test('audit center button opens governance sections with descriptive text', async ({ page }) => {
+    await page.getByTestId('knowledge-audit-center-button').click();
     const governance = page.getByTestId('knowledge-governance');
     await expect(governance).toBeVisible();
 
-    // Three cards
-    const cards = governance.locator('> *');
-    await expect(cards).toHaveCount(3);
-
-    // Each card should have an icon
-    for (let i = 0; i < 3; i++) {
-      await expect(cards.nth(i).locator('svg').first()).toBeVisible();
-    }
+    await expect(page.getByTestId('knowledge-quality-metrics')).toContainText('Quality Metrics');
+    await page.getByTestId('knowledge-governance-run').click();
+    await expect(page.getByTestId('knowledge-quality-metric-stale_cards')).toContainText('1');
+    await expect(page.getByTestId('knowledge-quality-metric-source_gaps')).toContainText('4');
+    await expect(page.getByTestId('knowledge-quality-metric-high_dismissal_cards')).toContainText('6');
   });
 
   // ── Search ─────────────────────────────────────────────────────────
@@ -269,40 +392,185 @@ test.describe('Chat Knowledge Attachment UX', () => {
           result: { sessions: [] },
         },
       },
-      hostApi: {},
+      hostApi: {
+        [typed('knowledge', 'routeContext', null)]: {
+          success: true,
+          decision: 'suggest',
+          reason: 'project knowledge intent detected',
+          candidates: [{
+            id: 'pitfall-route-context',
+            title: 'Route context failure handling',
+            lookup: 'troubleshooting/route-context.md',
+            corpus: 'wiki',
+            attachKind: 'suggested',
+            routeGroup: 'pitfalls',
+            routingReason: 'project knowledge intent detected',
+            confidence: 0.88,
+            pagePath: 'troubleshooting/route-context.md',
+            snippet: 'routeContext failure must not block ordinary chat send.',
+          }],
+          candidateGroups: [{
+            key: 'pitfalls',
+            candidates: [{
+              id: 'pitfall-route-context',
+              title: 'Route context failure handling',
+              lookup: 'troubleshooting/route-context.md',
+              corpus: 'wiki',
+              attachKind: 'suggested',
+              routeGroup: 'pitfalls',
+              routingReason: 'project knowledge intent detected',
+              confidence: 0.88,
+              pagePath: 'troubleshooting/route-context.md',
+              snippet: 'routeContext failure must not block ordinary chat send.',
+            }],
+          }],
+          budget: { maxReferences: 3, maxSnippetChars: 800 },
+        },
+        [typed('knowledge', 'recordKnowledgeReference', null)]: {
+          success: true,
+        },
+        [typed('knowledge', 'matchErrorExperience', null)]: {
+          success: true,
+          advisories: [{
+            id: 'advisory_inbox_inbox-route_ee-route',
+            targetKind: 'inbox',
+            targetId: 'inbox-route',
+            cardId: 'ee-route',
+            title: 'Route context failure handling',
+            summary: 'routeContext failures must not block ordinary chat send.',
+            whyMatched: ['keyword: routeContext', 'user correction signal'],
+            rootCause: 'Knowledge side effects were coupled to Chat send.',
+            recommendedResolution: ['Keep knowledge matching best-effort.', 'Route renderer calls through hostApi.'],
+            confidence: 0.84,
+            severity: 'high',
+            sourceRefs: [{ id: 'notes/route-context.md', kind: 'wiki', path: 'notes/route-context.md' }],
+            provenance: {
+              createdFrom: { kind: 'manual', id: 'route-context-card' },
+              source: 'knowledge-error-experience',
+            },
+          }],
+        },
+        [typed('knowledge', 'updateErrorExperienceEffectiveness', null)]: {
+          success: true,
+          effectiveness: {
+            hitCount: 1,
+            acceptedCount: 1,
+            dismissedCount: 1,
+            preventedFailureCount: 0,
+            staleCount: 0,
+          },
+        },
+        [typed('chat', 'sendWithMedia', null)]: {
+          success: true,
+          result: {
+            runId: 'run-knowledge-advisory',
+            source: 'mock',
+            message: { content: [{ type: 'text', text: 'Mock assistant response.' }] },
+          },
+        },
+      },
     });
     await completeSetup(page);
     await expect(page.getByTestId('chat-composer-input')).toBeVisible();
   });
 
-  test('quick wiki toggle is present and toggles active state on click', async ({ page }) => {
-    const toggleBtn = page.getByTestId('chat-knowledge-quick-toggle');
-    await expect(toggleBtn).toBeVisible();
+  test('knowledge scope picker replaces the standalone quick wiki icon', async ({ page }) => {
+    await expect(page.getByTestId('chat-knowledge-quick-toggle')).toHaveCount(0);
+    const scopeBtn = page.getByTestId('chat-knowledge-scope-button');
+    await expect(scopeBtn).toBeVisible();
 
     // Before click — should be in muted state
-    await expect(toggleBtn).toHaveClass(/text-muted-foreground/);
+    await expect(scopeBtn).toContainText('No knowledge');
 
     // Click to activate wiki knowledge
-    await toggleBtn.click();
+    await scopeBtn.click();
+    await page.getByTestId('chat-knowledge-scope-wiki').click();
 
     // After click — title should indicate it's enabled
-    await expect(toggleBtn).toHaveAttribute('title', 'Disable wiki knowledge');
+    await expect(scopeBtn).toContainText('Wiki');
 
     // The button should now have an active background treatment
-    const activeClass = await toggleBtn.evaluate((el) => el.className);
     // Verify active state visually — the bg-black/5 or bg-emerald-500/10 class
-    expect(activeClass).toMatch(/bg-(black\/5|emerald-500\/10)/);
   });
 
-  test('quick wiki toggle can be deactivated', async ({ page }) => {
-    const toggleBtn = page.getByTestId('chat-knowledge-quick-toggle');
+  test('knowledge scope picker can switch wiki off again', async ({ page }) => {
+    const scopeBtn = page.getByTestId('chat-knowledge-scope-button');
 
     // Activate then deactivate
-    await toggleBtn.click();
-    await expect(toggleBtn).toHaveAttribute('title', 'Disable wiki knowledge');
+    await scopeBtn.click();
+    await page.getByTestId('chat-knowledge-scope-wiki').click();
+    await expect(scopeBtn).toContainText('Wiki');
 
-    await toggleBtn.click();
-    await expect(toggleBtn).toHaveAttribute('title', 'Use wiki knowledge');
+    await scopeBtn.click();
+    await page.getByTestId('chat-knowledge-scope-none').click();
+    await expect(scopeBtn).toContainText('No knowledge');
+  });
+
+  test('knowledge preflight can inspect, dismiss, and attach suggestions', async ({ page }) => {
+    await page.getByTestId('chat-knowledge-scope-button').click();
+    await page.getByTestId('chat-knowledge-scope-wiki').click();
+
+    const input = page.getByTestId('chat-composer-input');
+    await input.fill('Use previous routeContext pitfall before coding');
+    await expect(page.getByTestId('chat-knowledge-suggestion')).toContainText('Knowledge Preflight');
+    await page.getByTestId('chat-knowledge-suggestion-open').click();
+    await expect(page.getByTestId('chat-knowledge-preflight-group-pitfalls')).toContainText('Prior pitfalls');
+
+    await page.getByTestId('chat-knowledge-suggestion-dismiss').click();
+    await expect(page.getByTestId('chat-knowledge-suggestion')).not.toBeVisible();
+
+    await input.fill('Use previous routeContext pitfall before coding ');
+    await page.waitForTimeout(800);
+    await expect(page.getByTestId('chat-knowledge-suggestion')).not.toBeVisible();
+
+    await input.fill('Use previous routeContext pitfall before coding with explicit context');
+    await expect(page.getByTestId('chat-knowledge-suggestion')).toBeVisible();
+    await page.getByTestId('chat-knowledge-suggestion-attach').click();
+    await expect(page.getByTestId('chat-knowledge-selected')).toContainText('Route context failure handling');
+  });
+
+  test('advisory error guard can be used and dismissed without blocking chat', async ({ page }) => {
+    await page.keyboard.press('Escape');
+    const input = page.getByTestId('chat-composer-input');
+    await input.fill('wrong redo routeContext failure in src/pages/Chat/index.tsx');
+    await expect(page.getByTestId('chat-composer-send')).toBeEnabled();
+    await page.getByTestId('chat-composer-send').click();
+    await expect.poll(async () => {
+      const calls = await getAgentDevHostCalls(page);
+      return calls.filter((call) => (
+        typeof call === 'object'
+        && call != null
+        && (call as { module?: string; action?: string }).module === 'knowledge'
+        && (call as { module?: string; action?: string }).action === 'matchErrorExperience'
+      )).length;
+    }).toBeGreaterThan(0);
+
+    const advisory = page.getByTestId('chat-knowledge-error-advisory');
+    await expect(advisory).toContainText('Known pitfall may apply');
+    await expect(advisory).toContainText('Route context failure handling');
+    await expect(advisory).toContainText('Knowledge side effects were coupled to Chat send.');
+
+    await page.getByTestId('chat-knowledge-error-advisory-use').click();
+    await expect(input).toHaveValue(/Use this prior experience before retrying/);
+    await expect(input).toHaveValue(/Route renderer calls through hostApi/);
+    await expect(advisory).not.toBeVisible();
+
+    await input.fill('wrong redo routeContext failure again in src/pages/Chat/index.tsx');
+    await expect(page.getByTestId('chat-composer-send')).toBeEnabled();
+    await page.getByTestId('chat-composer-send').click();
+    await expect(page.getByTestId('chat-knowledge-error-advisory')).toBeVisible();
+    await page.getByTestId('chat-knowledge-error-advisory-dismiss').click();
+    await expect(page.getByTestId('chat-knowledge-error-advisory')).not.toBeVisible();
+
+    await expect.poll(async () => {
+      const calls = await getAgentDevHostCalls(page);
+      return calls.filter((call) => (
+        typeof call === 'object'
+        && call != null
+        && (call as { module?: string; action?: string }).module === 'knowledge'
+        && (call as { module?: string; action?: string }).action === 'updateErrorExperienceEffectiveness'
+      )).length;
+    }).toBeGreaterThanOrEqual(2);
   });
 
   test('knowledge scope picker opens and shows all scope options', async ({ page }) => {
@@ -349,10 +617,8 @@ test.describe('Chat Knowledge Attachment UX', () => {
     await expect(scopeBtn).toContainText('Wiki');
   });
 
-  test('both knowledge widgets coexist side by side in the composer', async ({ page }) => {
-    // Quick toggle icon
-    const quickToggle = page.getByTestId('chat-knowledge-quick-toggle');
-    await expect(quickToggle).toBeVisible();
+  test('knowledge scope is the only visible knowledge entry in the composer controls', async ({ page }) => {
+    await expect(page.getByTestId('chat-knowledge-quick-toggle')).toHaveCount(0);
 
     // Scope button with scope label
     const scopeBtn = page.getByTestId('chat-knowledge-scope-button');
@@ -360,8 +626,6 @@ test.describe('Chat Knowledge Attachment UX', () => {
     // Default scope label is 'No knowledge' (i18n: 'none' scope)
     await expect(scopeBtn).toContainText('No knowledge');
 
-    // Verify both have BookOpen icon (svg is valid, but there are two: BookOpen + ChevronDown)
-    await expect(quickToggle.locator('svg.lucide-book-open')).toBeVisible();
     await expect(scopeBtn.locator('svg.lucide-book-open')).toBeVisible();
   });
 });

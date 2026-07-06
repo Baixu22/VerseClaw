@@ -1,23 +1,25 @@
-﻿import { shell } from 'electron';
+import { shell } from 'electron';
 import { createHash, randomUUID } from 'node:crypto';
 import { existsSync, watch as fsWatch, type Dirent, type FSWatcher } from 'node:fs';
-import { mkdir, readFile, readdir, writeFile, appendFile, stat } from 'node:fs/promises';
+import { mkdir, readFile, readdir, writeFile, appendFile, stat, unlink } from 'node:fs/promises';
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
-import { expandPath, getOpenClawConfigDir, getOpenClawRuntimeDir } from '../utils/paths';
+import { expandPath, getOpenClawConfigDir } from '../utils/paths';
 import { isRecord } from './payload-utils';
 import type {
   HostSuccess,
   ChatKnowledgeReference,
+  KnowledgeAnswerFromSourceSetResult,
+  KnowledgeArtifactType,
   KnowledgeRouteCandidate,
   KnowledgeRouteContextPayload,
   KnowledgeRouteContextResult,
   KnowledgeChangeOperation,
   KnowledgeChangeProposal,
   KnowledgeCreateDraftPayload,
+  KnowledgeCreateArtifactDraftPayload,
   KnowledgeCreateInboxItemPayload,
   KnowledgeDraft,
   KnowledgeDraftActor,
@@ -36,16 +38,36 @@ import type {
   KnowledgeReferenceEvent,
   KnowledgeReferenceKind,
   KnowledgeSourceRef,
+  KnowledgeSourceSet,
+  KnowledgeSourceSetAnswerSource,
   KnowledgeStewardConfig,
+  KnowledgeRolePlayerConfig,
+  KnowledgeRoleRegistryFile,
+  KnowledgeStewardConfigGetResult,
+  KnowledgeStewardConfigUpdatePayload,
+  KnowledgeStewardConfigUpdateResult,
+  StewardSemanticReview,
+  KnowledgeRouteCandidateGroup,
+  KnowledgeRouteCandidateGroupKey,
+  KnowledgeStewardTriage,
   KnowledgeGovernanceIssue,
   KnowledgeGovernanceResult,
-  KnowledgeRuntimeLessonsReportResult,
+  KnowledgeErrorExperienceCard,
+  KnowledgeErrorExperienceEffectivenessAction,
+  KnowledgeErrorGuardSignal,
+  KnowledgeRetrievalDiagnostics,
   KnowledgeCompileResult,
   KnowledgeLintResult,
   KnowledgeListWatchedDirectoryEventsPayload,
   KnowledgeWatchedDirectoryConfig,
   KnowledgeWatchedDirectoryEvent,
 } from '../../shared/host-api/contract';
+import {
+  matchErrorExperienceCards,
+  normalizeErrorExperienceCard,
+  updateErrorExperienceEffectiveness,
+} from '../../shared/knowledge/error-experience';
+import { aggregateKnowledgeQualityMetrics } from '../../shared/knowledge/quality-metrics';
 
 const DEFAULT_MAX_FILES = 80;
 const DEFAULT_MAX_BYTES_PER_FILE = 512 * 1024;
@@ -107,15 +129,6 @@ type KnowledgeIngestItemRecord = {
   created?: boolean;
 };
 
-type RuntimeLessonsReporter = () => Promise<KnowledgeRuntimeLessonsReportResult>;
-
-const EMPTY_RUNTIME_LESSONS_REPORT: Omit<KnowledgeRuntimeLessonsReportResult, 'success' | 'available' | 'reason'> = {
-  counts: { trajectories: 0, undistilledTrajectories: 0, activePrinciples: 0 },
-  undistilled: [],
-  activePrinciples: [],
-  indexPreview: '',
-};
-
 type OkfMarkdownFile = {
   filePath: string;
   relativePath: string;
@@ -141,6 +154,13 @@ const KNOWLEDGE_DRAFT_TYPES = new Set<KnowledgeDraftType>([
   'troubleshooting',
   'glossary',
   'procedure',
+]);
+const KNOWLEDGE_ARTIFACT_TYPES = new Set<KnowledgeArtifactType>([
+  'summary',
+  'faq',
+  'decision-memo',
+  'troubleshooting-recipe',
+  'concept-map',
 ]);
 const KNOWLEDGE_CHANGE_OPERATIONS = new Set<KnowledgeChangeOperation>([
   'create',
@@ -218,6 +238,223 @@ const DEFAULT_STEWARD_CONFIG: KnowledgeStewardConfig = {
   },
 };
 
+/**
+ * Area 5 §3.1 — KB role registry. The default registry is byte-identical to
+ * today's `DEFAULT_STEWARD_CONFIG` so missing/corrupt file → today's behavior
+ * (zero-harm). The file lives at `<OpenClaw config dir>/knowledge/steward-roles.json`
+ * (KB-local, next to `watched-directories.json`). Loaded lazily on first
+ * steward operation per process; cached in `cachedRoleRegistry`.
+ *
+ * Boundary preservation: `capabilities.canApplyDirectly` MUST stay literal
+ * `false`. Hand-edited files attempting `canApplyDirectly: true` are rejected
+ * at load time with a logged issue and the entry skipped (§9 boundary). The
+ * semantic pass (§3.2) is opt-in per-variant; the default steward ships with
+ * `classification: 'heuristic'` — today's behavior.
+ */
+const DEFAULT_REGISTRY: KnowledgeRoleRegistryFile = {
+  version: 1,
+  defaultRoleId: DEFAULT_STEWARD_CONFIG.roleId,
+  roles: [{ ...DEFAULT_STEWARD_CONFIG, classification: 'heuristic' }],
+};
+
+let cachedRoleRegistry: KnowledgeRoleRegistryFile | null = null;
+let roleRegistryLoadFailed = false;
+
+function getStewardRolesPath(): string {
+  return join(getKnowledgeDir(), 'steward-roles.json');
+}
+
+function normalizeReviewFocus(value: unknown): Array<'classification' | 'duplicates' | 'freshness' | 'conflicts'> {
+  if (!Array.isArray(value)) return [];
+  const allowed: ReadonlySet<'classification' | 'duplicates' | 'freshness' | 'conflicts'> = new Set([
+    'classification',
+    'duplicates',
+    'freshness',
+    'conflicts',
+  ]);
+  const seen = new Set<'classification' | 'duplicates' | 'freshness' | 'conflicts'>();
+  for (const item of value) {
+    if (typeof item === 'string' && allowed.has(item as 'classification' | 'duplicates' | 'freshness' | 'conflicts')) {
+      seen.add(item as 'classification' | 'duplicates' | 'freshness' | 'conflicts');
+    }
+  }
+  return [...seen];
+}
+
+/**
+ * Normalize one registry entry. Returns `undefined` and pushes an issue when:
+ *   - missing `roleId` or `enabled` flag
+ *   - `capabilities.canApplyDirectly` is anything but literal `false` (§9 boundary)
+ *   - `capabilities` block is otherwise malformed
+ *   - duplicate `roleId` of an already-accepted entry
+ *
+ * The literal-false check is the JSON parse-level enforcement the design doc
+ * specifies (the type can't express it for hand-edited files). A hand-edited
+ * entry with `canApplyDirectly: true` is rejected at load with a logged issue
+ * and the entry skipped — the steward remains mechanically write-incapable.
+ */
+function normalizeRolePlayerConfig(
+  value: unknown,
+  acceptedRoleIds: Set<string>,
+  issues: Array<{ path: string; message: string }>,
+  pathPrefix: string,
+): KnowledgeRolePlayerConfig | undefined {
+  if (!isRecord(value)) {
+    issues.push({ path: pathPrefix, message: 'role entry must be an object' });
+    return undefined;
+  }
+  const roleId = getString(value.roleId);
+  if (!roleId) {
+    issues.push({ path: `${pathPrefix}.roleId`, message: 'roleId is required' });
+    return undefined;
+  }
+  if (acceptedRoleIds.has(roleId)) {
+    issues.push({ path: `${pathPrefix}.roleId`, message: `duplicate roleId: ${roleId}` });
+    return undefined;
+  }
+  const enabled = typeof value.enabled === 'boolean' ? value.enabled : undefined;
+  if (typeof enabled === 'undefined') {
+    issues.push({ path: `${pathPrefix}.enabled`, message: 'enabled (boolean) is required' });
+    return undefined;
+  }
+  const capabilities = isRecord(value.capabilities) ? value.capabilities : {};
+  // Boundary preservation (§9): canApplyDirectly must be literal false.
+  if (capabilities.canApplyDirectly !== false) {
+    issues.push({
+      path: `${pathPrefix}.capabilities.canApplyDirectly`,
+      message: `canApplyDirectly must be literal false (got ${JSON.stringify(capabilities.canApplyDirectly)}); entry skipped`,
+    });
+    return undefined;
+  }
+  const scope = isRecord(value.scope) ? value.scope : {};
+  const normalized: KnowledgeRolePlayerConfig = {
+    enabled,
+    roleId,
+    capabilities: {
+      canSearch: typeof capabilities.canSearch === 'boolean' ? capabilities.canSearch : false,
+      canRead: typeof capabilities.canRead === 'boolean' ? capabilities.canRead : false,
+      canProposeDraft: typeof capabilities.canProposeDraft === 'boolean' ? capabilities.canProposeDraft : false,
+      canClassify: typeof capabilities.canClassify === 'boolean' ? capabilities.canClassify : false,
+      canSuggestMerge: typeof capabilities.canSuggestMerge === 'boolean' ? capabilities.canSuggestMerge : false,
+      canSuggestArchive: typeof capabilities.canSuggestArchive === 'boolean' ? capabilities.canSuggestArchive : false,
+      canApplyDirectly: false,
+    },
+    scope: {
+      workspace: typeof scope.workspace === 'boolean' ? scope.workspace : false,
+      agent: typeof scope.agent === 'boolean' ? scope.agent : false,
+      global: typeof scope.global === 'boolean' ? scope.global : false,
+    },
+    ...(getString(value.displayName) ? { displayName: getString(value.displayName) } : {}),
+    ...(getString(value.description) ? { description: getString(value.description) } : {}),
+    ...(value.classification === 'heuristic' || value.classification === 'semantic'
+      ? { classification: value.classification }
+      : {}),
+    ...(Array.isArray(value.reviewFocus)
+      ? { reviewFocus: normalizeReviewFocus(value.reviewFocus) }
+      : {}),
+    ...(getString(value.contractRef) ? { contractRef: getString(value.contractRef) } : {}),
+  };
+  acceptedRoleIds.add(roleId);
+  return normalized;
+}
+
+function normalizeRoleRegistry(value: unknown): { registry: KnowledgeRoleRegistryFile; issues: Array<{ path: string; message: string }> } {
+  const issues: Array<{ path: string; message: string }> = [];
+  if (!isRecord(value)) {
+    return { registry: DEFAULT_REGISTRY, issues: [{ path: 'root', message: 'registry file is not an object; using default' }] };
+  }
+  if (value.version !== 1) {
+    return { registry: DEFAULT_REGISTRY, issues: [{ path: 'version', message: `unsupported version ${JSON.stringify(value.version)}; using default` }] };
+  }
+  const defaultRoleId = getString(value.defaultRoleId);
+  if (!defaultRoleId) {
+    return { registry: DEFAULT_REGISTRY, issues: [{ path: 'defaultRoleId', message: 'defaultRoleId is required; using default' }] };
+  }
+  const rawRoles = Array.isArray(value.roles) ? value.roles : [];
+  if (rawRoles.length === 0) {
+    return { registry: DEFAULT_REGISTRY, issues: [{ path: 'roles', message: 'roles array is empty; using default' }] };
+  }
+  const acceptedRoleIds = new Set<string>();
+  const acceptedRoles: KnowledgeRolePlayerConfig[] = [];
+  rawRoles.forEach((entry, index) => {
+    const normalized = normalizeRolePlayerConfig(entry, acceptedRoleIds, issues, `roles[${index}]`);
+    if (normalized) acceptedRoles.push(normalized);
+  });
+  if (acceptedRoles.length === 0) {
+    return { registry: DEFAULT_REGISTRY, issues: [...issues, { path: 'roles', message: 'no valid role entries; using default' }] };
+  }
+  if (!acceptedRoleIds.has(defaultRoleId)) {
+    return { registry: DEFAULT_REGISTRY, issues: [...issues, { path: 'defaultRoleId', message: `defaultRoleId ${defaultRoleId} not present in accepted roles; using default` }] };
+  }
+  return { registry: { version: 1, defaultRoleId, roles: acceptedRoles }, issues };
+}
+
+/**
+ * Load the KB role registry. Missing/corrupt file → `DEFAULT_REGISTRY`
+ * (byte-identical to today's `DEFAULT_STEWARD_CONFIG`). All parse issues are
+ * logged to console (offline-safe; no telemetry dependency). Once a file has
+ * been read successfully, the result is cached in `cachedRoleRegistry`.
+ */
+async function loadRoleRegistry(): Promise<KnowledgeRoleRegistryFile> {
+  if (cachedRoleRegistry) return cachedRoleRegistry;
+  if (roleRegistryLoadFailed) return DEFAULT_REGISTRY;
+  const path = getStewardRolesPath();
+  try {
+    const raw = await readFile(path, 'utf8');
+    const parsed = JSON.parse(raw) as unknown;
+    const { registry, issues } = normalizeRoleRegistry(parsed);
+    if (issues.length > 0) {
+      // eslint-disable-next-line no-console
+      console.warn(`[knowledge] steward-roles.json issues:`, issues);
+    }
+    cachedRoleRegistry = registry;
+    return registry;
+  } catch (error) {
+    roleRegistryLoadFailed = true;
+    // Missing file is the expected initial state — log debug, not warn.
+    const code = (error as NodeJS.ErrnoException)?.code;
+    if (code !== 'ENOENT') {
+      // eslint-disable-next-line no-console
+      console.warn(`[knowledge] steward-roles.json load failed (${code ?? 'unknown'}); using default`);
+    }
+    return DEFAULT_REGISTRY;
+  }
+}
+
+async function writeRoleRegistry(registry: KnowledgeRoleRegistryFile): Promise<void> {
+  const path = getStewardRolesPath();
+  await mkdir(dirname(path), { recursive: true });
+  await writeFile(path, JSON.stringify(registry, null, 2), 'utf8');
+  cachedRoleRegistry = registry;
+  roleRegistryLoadFailed = false;
+}
+
+/**
+ * Resolve the active KB role player for a steward review. Falls back to the
+ * registry's default role if `roleId` is absent or unknown. Never throws —
+ * any failure returns the default steward (today's behavior).
+ */
+async function resolveStewardRole(roleId?: string): Promise<KnowledgeRolePlayerConfig> {
+  const registry = await loadRoleRegistry();
+  if (roleId) {
+    const match = registry.roles.find((role) => role.roleId === roleId && role.enabled);
+    if (match) return match;
+  }
+  const fallback = registry.roles.find((role) => role.roleId === registry.defaultRoleId && role.enabled);
+  return fallback ?? registry.roles[0] ?? DEFAULT_REGISTRY.roles[0];
+}
+
+/**
+ * Test-only: reset the in-memory registry cache so the next read reloads
+ * from disk. Production code never needs this — the cache is process-scoped
+ * and updates flow through `writeRoleRegistry`. Used by Area 5 §3.1 unit
+ * tests for per-test isolation.
+ */
+export function __resetRoleRegistryCacheForTests(): void {
+  cachedRoleRegistry = null;
+  roleRegistryLoadFailed = false;
+}
+
 function clampPositiveInt(value: unknown, fallback: number, max: number): number {
   if (typeof value !== 'number' || !Number.isFinite(value)) return fallback;
   return Math.max(1, Math.min(Math.floor(value), max));
@@ -251,6 +488,10 @@ function getProvenanceDir(): string {
   return join(getKnowledgeDir(), 'provenance');
 }
 
+function getSourceSetsDir(): string {
+  return join(getKnowledgeDir(), 'source-sets');
+}
+
 function getOkfBundlesDir(): string {
   return join(getKnowledgeDir(), 'okf', 'bundles');
 }
@@ -280,6 +521,10 @@ function getProvenancePath(targetKind: string, targetId: string): string {
   return join(getProvenanceDir(), `${provenanceRecordId(targetKind, targetId)}.json`);
 }
 
+function getSourceSetPath(id: string): string {
+  return join(getSourceSetsDir(), `${encodeURIComponent(id)}.json`);
+}
+
 function getOkfBundleMappingPath(bundleId: string): string {
   return join(getOkfBundlesDir(), `${bundleId}.json`);
 }
@@ -289,6 +534,7 @@ async function ensureKnowledgeDirs(): Promise<void> {
   await mkdir(getInboxDir(), { recursive: true });
   await mkdir(getProposalsDir(), { recursive: true });
   await mkdir(getProvenanceDir(), { recursive: true });
+  await mkdir(getSourceSetsDir(), { recursive: true });
   await mkdir(getOkfBundlesDir(), { recursive: true });
 }
 
@@ -383,6 +629,26 @@ function normalizeConfidence(value: unknown): number | undefined {
     : undefined;
 }
 
+/**
+ * Area 5 §3.4 — stable ranking shaping. When `roleTag` is set, entries whose
+ * `roleTags` array contains the tag are moved to the front; entries without
+ * the tag (or with no roleTags at all) remain in their original relative
+ * order after the tagged block. The sort is stable (Array.prototype.sort is
+ * stable in Node ≥ 12), so within each block the prior order is preserved.
+ *
+ * Ranking-only — no entry is filtered out. The KB is a single user's wiki;
+ * per-role ACLs are explicitly off-spec (§9 boundary).
+ */
+function rankByRoleTag<T extends { roleTags?: string[] }>(entries: T[], roleTag: string | undefined): T[] {
+  if (!roleTag || roleTag.length === 0) return entries;
+  const tag = roleTag;
+  return [...entries].sort((a, b) => {
+    const aHas = Array.isArray(a.roleTags) && a.roleTags.includes(tag) ? 0 : 1;
+    const bHas = Array.isArray(b.roleTags) && b.roleTags.includes(tag) ? 0 : 1;
+    return aHas - bHas;
+  });
+}
+
 function hasDraftShape(value: unknown): value is KnowledgeDraft {
   if (!isRecord(value)) return false;
   return typeof value.id === 'string'
@@ -437,6 +703,15 @@ function hasProvenanceShape(value: unknown): value is KnowledgeProvenanceRecord 
     && typeof value.updatedAt === 'string';
 }
 
+function hasSourceSetShape(value: unknown): value is KnowledgeSourceSet {
+  if (!isRecord(value)) return false;
+  return typeof value.id === 'string'
+    && typeof value.title === 'string'
+    && Array.isArray(value.sourceRefs)
+    && typeof value.createdAt === 'string'
+    && typeof value.updatedAt === 'string';
+}
+
 async function appendAudit(event: Record<string, unknown>): Promise<void> {
   await mkdir(getKnowledgeDir(), { recursive: true });
   await appendFile(getAuditPath(), `${JSON.stringify({ ...event, timestamp: nowIso() })}\n`, 'utf8');
@@ -465,9 +740,19 @@ async function readInboxItem(id: string): Promise<KnowledgeInboxItem | null> {
   return readJsonFile(getInboxPath(id.trim()), hasInboxShape);
 }
 
+async function readSourceSet(id: string): Promise<KnowledgeSourceSet | null> {
+  if (!id.trim()) return null;
+  return readJsonFile(getSourceSetPath(id.trim()), hasSourceSetShape);
+}
+
 async function writeDraft(draft: KnowledgeDraft): Promise<void> {
   await ensureKnowledgeDirs();
   await writeJsonFile(getDraftPath(draft.id), draft);
+}
+
+async function writeSourceSet(sourceSet: KnowledgeSourceSet): Promise<void> {
+  await ensureKnowledgeDirs();
+  await writeJsonFile(getSourceSetPath(sourceSet.id), sourceSet);
 }
 
 async function writeInboxItem(item: KnowledgeInboxItem): Promise<void> {
@@ -486,6 +771,95 @@ async function listDraftRecords(): Promise<KnowledgeDraft[]> {
     .sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt));
 }
 
+async function listSourceSetRecords(): Promise<KnowledgeSourceSet[]> {
+  await ensureKnowledgeDirs();
+  const names = await readdir(getSourceSetsDir()).catch(() => []);
+  const sourceSets = await Promise.all(names
+    .filter((name) => name.endsWith('.json'))
+    .map((name) => readJsonFile(join(getSourceSetsDir(), name), hasSourceSetShape)));
+  return sourceSets
+    .filter((sourceSet): sourceSet is KnowledgeSourceSet => Boolean(sourceSet))
+    .sort((left, right) => Date.parse(right.lastUsedAt ?? right.updatedAt) - Date.parse(left.lastUsedAt ?? left.updatedAt));
+}
+
+/**
+ * Area 5 §3.3 — Lookup persisted steward notes for chat-injected references.
+ *
+ * For each reference (matched by `lookup` or `title` against draft titles),
+ * returns the draft's persisted review state: warnings, review status, and
+ * any steward suggestion encoded in `stewardNotes`. No LLM call at send
+ * time — reads only persisted state, keeping the chat send path fast and
+ * offline-safe.
+ *
+ * Matching is intentionally conservative: a reference matches a draft only
+ * when their titles are equal (case-insensitive, trimmed) OR the reference's
+ * `lookup` equals the draft's `id`. This avoids false matches on partial
+ * text. Lookup failure for any reference → no note for that reference.
+ *
+ * The steward variant's `roleId` is filled from the active registry role
+ * (default: 'knowledge-steward'). Per-variant attribution lets the model
+ * weigh conflicting opinions from different steward variants in future.
+ *
+ * Never throws — any error returns an empty array (no block injected).
+ */
+export type StewardNoteForReference = {
+  referenceId: string;
+  roleId: string;
+  warnings: string[];
+  reviewStatus: 'steward_reviewed' | 'unreviewed';
+  suggestion: 'merge' | 'archive' | null;
+};
+
+export async function findStewardNotesForReferences(
+  references: ReadonlyArray<{
+    id: string;
+    lookup?: string;
+    title?: string;
+    pageId?: string;
+  }>,
+): Promise<StewardNoteForReference[]> {
+  if (references.length === 0) return [];
+  try {
+    const drafts = await listDraftRecords();
+    if (drafts.length === 0) return [];
+    // Resolve active steward role id for attribution.
+    const registry = await loadRoleRegistry();
+    const activeRoleId = registry.defaultRoleId;
+    const notes: StewardNoteForReference[] = [];
+    for (const reference of references) {
+      // Conservative match: title equal (case-insensitive) or lookup === draft.id.
+      const refTitle = (reference.title ?? '').trim().toLowerCase();
+      const refLookup = (reference.lookup ?? '').trim();
+      const matchedDraft = drafts.find((draft) => (
+        (refTitle && draft.title.trim().toLowerCase() === refTitle)
+        || (refLookup && draft.id === refLookup)
+      ));
+      if (!matchedDraft) continue;
+      // Only surface notes for drafts that completed a steward review.
+      if (matchedDraft.status !== 'steward_reviewed' && matchedDraft.status !== 'approved' && matchedDraft.status !== 'applied') {
+        continue;
+      }
+      // Parse suggestion from stewardNotes (free-form text). Conservative:
+      // detect explicit "merge" or "archive" keywords at start of a line.
+      const notesText = matchedDraft.stewardNotes ?? '';
+      let suggestion: 'merge' | 'archive' | null = null;
+      if (/\bmerge\b/i.test(notesText)) suggestion = 'merge';
+      else if (/\barchive\b/i.test(notesText)) suggestion = 'archive';
+      notes.push({
+        referenceId: reference.id,
+        roleId: activeRoleId,
+        warnings: Array.isArray(matchedDraft.warnings) ? matchedDraft.warnings.slice(0, 5) : [],
+        reviewStatus: matchedDraft.status === 'steward_reviewed' ? 'steward_reviewed' : 'unreviewed',
+        suggestion,
+      });
+    }
+    return notes;
+  } catch {
+    // Lookup is best-effort — never break the chat send path.
+    return [];
+  }
+}
+
 async function listInboxRecords(): Promise<KnowledgeInboxItem[]> {
   await ensureKnowledgeDirs();
   const names = await readdir(getInboxDir()).catch(() => []);
@@ -495,6 +869,161 @@ async function listInboxRecords(): Promise<KnowledgeInboxItem[]> {
   return items
     .filter((item): item is KnowledgeInboxItem => Boolean(item))
     .sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt));
+}
+
+function normalizedInboxText(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/giu, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function inboxTokens(value: string): Set<string> {
+  return new Set(normalizedInboxText(value).split(' ').filter((token) => token.length >= 3));
+}
+
+function inboxTextSimilarity(left: string, right: string): number {
+  const leftTokens = inboxTokens(left);
+  const rightTokens = inboxTokens(right);
+  if (leftTokens.size === 0 || rightTokens.size === 0) return 0;
+  let intersection = 0;
+  for (const token of leftTokens) {
+    if (rightTokens.has(token)) intersection += 1;
+  }
+  return intersection / (leftTokens.size + rightTokens.size - intersection);
+}
+
+function inboxMetadataList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.flatMap((entry) => (typeof entry === 'string' && entry.trim() ? [entry.trim()] : []));
+  }
+  return typeof value === 'string' && value.trim() ? [value.trim()] : [];
+}
+
+function inboxConflictRefs(item: KnowledgeInboxItem): string[] {
+  const metadata = isRecord(item.metadata) ? item.metadata : {};
+  return Array.from(new Set([
+    ...inboxMetadataList(metadata.conflictWith),
+    ...inboxMetadataList(metadata.conflicts),
+  ]));
+}
+
+function inboxSourceCount(item: KnowledgeInboxItem): number {
+  return Math.max(item.sourceRefs.length, item.sourceIds.length);
+}
+
+function findDuplicateInboxItem(item: KnowledgeInboxItem, existingItems: KnowledgeInboxItem[]): KnowledgeInboxItem | null {
+  const currentCreatedAt = Date.parse(item.createdAt) || 0;
+  const currentText = `${item.title}\n${item.body}`;
+  const normalizedTitle = normalizedInboxText(item.title);
+  const normalizedBody = normalizedInboxText(item.body);
+  const candidates = existingItems
+    .filter((candidate) => candidate.id !== item.id && candidate.status !== 'dismissed')
+    .filter((candidate) => {
+      const candidateCreatedAt = Date.parse(candidate.createdAt) || 0;
+      return candidateCreatedAt < currentCreatedAt || (candidateCreatedAt === currentCreatedAt && candidate.id < item.id);
+    });
+  for (const candidate of candidates) {
+    if (normalizedTitle && normalizedTitle === normalizedInboxText(candidate.title)) return candidate;
+    if (normalizedBody && normalizedBody === normalizedInboxText(candidate.body)) return candidate;
+    if (inboxTextSimilarity(currentText, `${candidate.title}\n${candidate.body}`) >= 0.72) return candidate;
+  }
+  return null;
+}
+
+function clampTriageConfidence(value: number): number {
+  return Math.max(0, Math.min(1, Number(value.toFixed(2))));
+}
+
+export function triageKnowledgeInboxItem(
+  item: KnowledgeInboxItem,
+  existingItems: KnowledgeInboxItem[] = [],
+): KnowledgeStewardTriage {
+  const title = item.title.trim();
+  const body = item.body.trim();
+  const sourceCount = inboxSourceCount(item);
+  const conflicts = inboxConflictRefs(item);
+  const duplicate = findDuplicateInboxItem(item, existingItems);
+
+  if (!title || !body || (body.length < 24 && sourceCount === 0)) {
+    return {
+      action: 'reject-low-value',
+      confidence: 0.8,
+      reason: 'Candidate is too sparse to promote without more context.',
+      suggestedEdits: ['Add a concrete title, reusable body, and at least one source reference.'],
+    };
+  }
+
+  if ((item.warnings ?? []).length > 0 || conflicts.length > 0) {
+    return {
+      action: 'needs-decision',
+      confidence: clampTriageConfidence(conflicts.length > 0 ? 0.86 : 0.78),
+      ...(conflicts.length > 0 ? { conflictWith: conflicts } : {}),
+      reason: conflicts.length > 0
+        ? 'Candidate declares possible conflicts that need human resolution.'
+        : 'Candidate has warnings that should be reviewed before promotion.',
+      suggestedEdits: ['Resolve warning or conflict notes before promoting to a draft.'],
+    };
+  }
+
+  if (duplicate) {
+    return {
+      action: 'possible-duplicate',
+      confidence: 0.74,
+      duplicateOf: duplicate.id,
+      reason: `Candidate overlaps with "${duplicate.title}".`,
+      suggestedEdits: ['Compare with the existing candidate and dismiss or merge during draft review.'],
+    };
+  }
+
+  if (sourceCount === 0) {
+    return {
+      action: 'observe',
+      confidence: 0.62,
+      reason: 'Candidate has reusable content but no source reference yet.',
+      suggestedEdits: ['Attach a chat, file, task, trace, or wiki source before promotion.'],
+    };
+  }
+
+  return {
+    action: 'ready-for-review',
+    confidence: 0.76,
+    reason: 'Candidate has a clear type and source evidence for manual draft review.',
+  };
+}
+
+function withInboxTriage(item: KnowledgeInboxItem, existingItems: KnowledgeInboxItem[] = []): KnowledgeInboxItem {
+  const metadata = isRecord(item.metadata) ? item.metadata : {};
+  return {
+    ...item,
+    metadata: {
+      ...metadata,
+      triage: triageKnowledgeInboxItem(item, existingItems),
+    },
+  };
+}
+
+function sameTriage(left: unknown, right: unknown): boolean {
+  return JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
+}
+
+const INBOX_TRIAGE_ORDER: Record<KnowledgeStewardTriage['action'], number> = {
+  'needs-decision': 0,
+  'ready-for-review': 1,
+  'possible-duplicate': 2,
+  observe: 3,
+  'reject-low-value': 4,
+};
+
+function sortInboxByTriagePriority(items: KnowledgeInboxItem[]): KnowledgeInboxItem[] {
+  return [...items].sort((left, right) => {
+    const leftTriage = isRecord(left.metadata) && isRecord(left.metadata.triage)
+      ? left.metadata.triage as KnowledgeStewardTriage
+      : triageKnowledgeInboxItem(left, items);
+    const rightTriage = isRecord(right.metadata) && isRecord(right.metadata.triage)
+      ? right.metadata.triage as KnowledgeStewardTriage
+      : triageKnowledgeInboxItem(right, items);
+    const byTriage = (INBOX_TRIAGE_ORDER[leftTriage.action] ?? 99) - (INBOX_TRIAGE_ORDER[rightTriage.action] ?? 99);
+    if (byTriage !== 0) return byTriage;
+    return Date.parse(right.updatedAt) - Date.parse(left.updatedAt);
+  });
 }
 
 async function readProposal(id: string): Promise<KnowledgeChangeProposal | null> {
@@ -528,11 +1057,75 @@ async function writeProvenance(record: KnowledgeProvenanceRecord): Promise<void>
   await writeJsonFile(getProvenancePath(record.targetKind, record.targetId), record);
 }
 
+function errorExperienceFromMetadata(metadata: unknown): KnowledgeErrorExperienceCard | null {
+  const record = isRecord(metadata) ? metadata : {};
+  return normalizeErrorExperienceCard(record.errorExperience);
+}
+
+async function listErrorExperienceTargets(): Promise<Array<{
+  targetKind: 'inbox' | 'draft';
+  targetId: string;
+  sourceRefs: KnowledgeSourceRef[];
+  card: KnowledgeErrorExperienceCard;
+}>> {
+  const [inbox, drafts] = await Promise.all([listInboxRecords(), listDraftRecords()]);
+  return [
+    ...inbox.flatMap((item) => {
+      const card = errorExperienceFromMetadata(item.metadata);
+      return card ? [{ targetKind: 'inbox' as const, targetId: item.id, sourceRefs: item.sourceRefs, card }] : [];
+    }),
+    ...drafts.flatMap((draft) => {
+      const card = errorExperienceFromMetadata(draft.metadata);
+      return card ? [{ targetKind: 'draft' as const, targetId: draft.id, sourceRefs: draft.sourceRefs, card }] : [];
+    }),
+  ];
+}
+
+async function updateStoredErrorExperienceCard(
+  targetKind: 'inbox' | 'draft',
+  targetId: string,
+  action: KnowledgeErrorExperienceEffectivenessAction,
+): Promise<KnowledgeErrorExperienceCard['effectiveness'] | null> {
+  if (targetKind === 'inbox') {
+    const item = await readInboxItem(targetId);
+    const card = item ? errorExperienceFromMetadata(item.metadata) : null;
+    if (!item || !card) return null;
+    const nextCard = updateErrorExperienceEffectiveness(card, action);
+    const nextItem: KnowledgeInboxItem = {
+      ...item,
+      metadata: {
+        ...(item.metadata ?? {}),
+        errorExperience: nextCard,
+      },
+      updatedAt: nowIso(),
+    };
+    await writeInboxItem(nextItem);
+    return nextCard.effectiveness;
+  }
+  const draft = await readDraft(targetId);
+  const card = draft ? errorExperienceFromMetadata(draft.metadata) : null;
+  if (!draft || !card) return null;
+  const nextCard = updateErrorExperienceEffectiveness(card, action);
+  const nextDraft: KnowledgeDraft = {
+    ...draft,
+    metadata: {
+      ...(draft.metadata ?? {}),
+      errorExperience: nextCard,
+    },
+    updatedAt: nowIso(),
+  };
+  await writeDraft(nextDraft);
+  return nextCard.effectiveness;
+}
+
 function createDraftFromPayload(payload: KnowledgeCreateDraftPayload): KnowledgeDraft | null {
   const title = getString(payload.title);
   const body = getString(payload.body);
   if (!title || !body) return null;
   const timestamp = nowIso();
+  // Area 5 §3.4 — normalize roleTags (dedupe/trim/filter-empty). Absent or
+  // empty payload field → omitted from the draft (ranking-only, default-off).
+  const roleTags = normalizeStringList(payload.roleTags);
   return {
     id: `kd_${randomUUID()}`,
     title,
@@ -544,12 +1137,65 @@ function createDraftFromPayload(payload: KnowledgeCreateDraftPayload): Knowledge
     tags: normalizeStringList(payload.tags),
     workspaceId: typeof payload.workspaceId === 'string' ? payload.workspaceId : payload.workspaceId ?? null,
     agentId: typeof payload.agentId === 'string' ? payload.agentId : payload.agentId ?? null,
+    ...(roleTags.length > 0 ? { roleTags } : {}),
     createdBy: normalizeDraftActor(payload.createdBy),
     ...(normalizeConfidence(payload.confidence) != null ? { confidence: normalizeConfidence(payload.confidence) } : {}),
     warnings: [],
+    ...(isRecord(payload.metadata) ? { metadata: payload.metadata } : {}),
     createdAt: timestamp,
     updatedAt: timestamp,
   };
+}
+
+function normalizeArtifactType(value: unknown): KnowledgeArtifactType {
+  return typeof value === 'string' && KNOWLEDGE_ARTIFACT_TYPES.has(value as KnowledgeArtifactType)
+    ? value as KnowledgeArtifactType
+    : 'summary';
+}
+
+function draftTypeForArtifact(artifactType: KnowledgeArtifactType): KnowledgeDraftType {
+  if (artifactType === 'decision-memo') return 'decision';
+  if (artifactType === 'troubleshooting-recipe') return 'troubleshooting';
+  return 'synthesis';
+}
+
+function defaultArtifactTitle(artifactType: KnowledgeArtifactType): string {
+  switch (artifactType) {
+    case 'faq':
+      return 'FAQ';
+    case 'decision-memo':
+      return 'Decision memo';
+    case 'troubleshooting-recipe':
+      return 'Troubleshooting recipe';
+    case 'concept-map':
+      return 'Concept map';
+    case 'summary':
+    default:
+      return 'Summary';
+  }
+}
+
+async function normalizeSourceSetPayload(payload: unknown): Promise<KnowledgeSourceSet | null> {
+  const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+  const title = getString(body.title);
+  if (!title) return null;
+  const sourceRefs = normalizeSourceRefs(body.sourceRefs);
+  const id = getString(body.id) ?? `ks_${randomUUID()}`;
+  const existing = await readSourceSet(id);
+  const timestamp = nowIso();
+  return {
+    id,
+    title,
+    sourceRefs,
+    createdAt: existing?.createdAt ?? timestamp,
+    updatedAt: timestamp,
+    ...(existing?.lastUsedAt ? { lastUsedAt: existing.lastUsedAt } : {}),
+    ...(isRecord(body.metadata) ? { metadata: body.metadata } : existing?.metadata ? { metadata: existing.metadata } : {}),
+  };
+}
+
+function sourceIdsFromRefs(sourceRefs: KnowledgeSourceRef[]): string[] {
+  return Array.from(new Set(sourceRefs.map((ref) => ref.id).filter(Boolean)));
 }
 
 function createInboxItemFromPayload(payload: KnowledgeCreateInboxItemPayload): KnowledgeInboxItem | null {
@@ -566,7 +1212,8 @@ function createInboxItemFromPayload(payload: KnowledgeCreateInboxItemPayload): K
     ...normalizeStringList(payload.warnings),
     ...rulesGuardWarningsForRefs(sourceRefs),
   ]));
-  return {
+  const roleTags = normalizeStringList(payload.roleTags);
+  const item: KnowledgeInboxItem = {
     id: `ki_${randomUUID()}`,
     title,
     body,
@@ -578,12 +1225,14 @@ function createInboxItemFromPayload(payload: KnowledgeCreateInboxItemPayload): K
     tags: normalizeStringList(payload.tags),
     workspaceId: typeof payload.workspaceId === 'string' ? payload.workspaceId : payload.workspaceId ?? null,
     agentId: typeof payload.agentId === 'string' ? payload.agentId : payload.agentId ?? null,
+    ...(roleTags.length > 0 ? { roleTags } : {}),
     createdBy: normalizeDraftActor(payload.createdBy),
     warnings,
     ...(isRecord(payload.metadata) ? { metadata: payload.metadata } : {}),
     createdAt: timestamp,
     updatedAt: timestamp,
   };
+  return withInboxTriage(item);
 }
 
 function draftFromInboxItem(item: KnowledgeInboxItem): KnowledgeDraft {
@@ -599,8 +1248,11 @@ function draftFromInboxItem(item: KnowledgeInboxItem): KnowledgeDraft {
     tags: item.tags,
     workspaceId: item.workspaceId,
     agentId: item.agentId,
+    // Area 5 §3.4 — carry role-tag binding forward when promoting inbox → draft.
+    ...(Array.isArray(item.roleTags) && item.roleTags.length > 0 ? { roleTags: item.roleTags } : {}),
     createdBy: item.createdBy,
     warnings: item.warnings ?? [],
+    ...(isRecord(item.metadata) ? { metadata: item.metadata } : {}),
     createdAt: timestamp,
     updatedAt: timestamp,
   };
@@ -1141,6 +1793,56 @@ const ROUTER_BUDGET = {
   maxSnippetChars: 800,
 } as const;
 
+function retrievalSourceKindFromRow(row: Record<string, unknown>): KnowledgeRetrievalDiagnostics['items'][number]['sourceKind'] {
+  const metadata = routeMetadataFromRow(row);
+  const knowledgeKind = routeStringFromRecord(metadata, ['knowledgeKind', 'kind']).toLowerCase();
+  const type = (rowString(row, ['type', 'draftType', 'okfType']) || routeStringFromRecord(metadata, ['type', 'draftType', 'okfType'])).toLowerCase();
+  if (knowledgeKind === 'error-experience' || isRecord(metadata.errorExperience) || isRecord(row.errorExperience)) return 'error-experience';
+  if (knowledgeKind === 'rule' || type === 'rule') return 'rule';
+  if (type === 'draft') return 'draft';
+  if (type === 'inbox') return 'inbox';
+  if (type === 'memory' || type === 'memory-card') return 'memory-card';
+  if (rowString(row, ['lookup', 'pagePath', 'path', 'id', 'pageId'])) return 'wiki-page';
+  return 'unknown';
+}
+
+function buildRetrievalDiagnostics(input: {
+  query: string;
+  corpus: 'wiki' | 'memory' | 'all';
+  mode: string;
+  rows: Record<string, unknown>[];
+  selectedLookups?: Set<string>;
+  reason: string;
+  backend?: KnowledgeRetrievalDiagnostics['backend'];
+}): KnowledgeRetrievalDiagnostics {
+  const selectedLookups = input.selectedLookups ?? new Set(input.rows.map((row) => rowString(row, ['lookup', 'pagePath', 'path', 'id', 'pageId'])));
+  const items = input.rows.map((row) => {
+    const lookup = rowString(row, ['lookup', 'pagePath', 'path', 'id', 'pageId']);
+    const score = rowNumber(row, ['score', 'rank', 'similarity'], 0);
+    const confidence = score > 0 ? Math.max(0, Math.min(1, score > 1 ? score / 100 : score)) : undefined;
+    return {
+      id: rowString(row, ['id', 'pageId']) || lookup || rowString(row, ['title', 'name']) || 'unknown',
+      title: rowString(row, ['title', 'name', 'pageTitle']) || lookup || 'Untitled',
+      lookup,
+      sourceKind: retrievalSourceKindFromRow(row),
+      reason: lookup && selectedLookups.has(lookup) ? input.reason : 'available search result',
+      ...(score > 0 ? { score } : {}),
+      ...(confidence != null ? { confidence } : {}),
+      ...(rowString(row, ['sourcePath', 'pagePath', 'path']) ? { path: rowString(row, ['sourcePath', 'pagePath', 'path']) } : {}),
+    };
+  });
+  return {
+    query: input.query,
+    corpus: input.corpus,
+    mode: input.mode,
+    backend: input.backend ?? 'fallback-keyword',
+    resultCount: input.rows.length,
+    selectedCount: items.filter((item) => item.lookup && selectedLookups.has(item.lookup)).length,
+    reason: input.reason,
+    items,
+  };
+}
+
 const KNOWLEDGE_INTENT_PATTERN = /(之前|以往|历史|项目里|项目中|规范|架构|为什么|决策|约定|排障|故障|知识库|wiki|memory|context|architecture|decision|convention|troubleshoot|previous|history|project notes|knowledge)/i;
 
 function normalizeRouteMode(value: unknown): 'manual' | 'suggest' | 'auto-read' {
@@ -1193,6 +1895,46 @@ function rowString(row: Record<string, unknown>, keys: string[]): string {
   return '';
 }
 
+function routeMetadataFromRow(row: Record<string, unknown>): Record<string, unknown> {
+  const metadata = isRecord(row.metadata) ? row.metadata : {};
+  const frontmatter = isRecord(row.frontmatter) ? row.frontmatter : {};
+  const okf = isRecord(row.okf) ? row.okf : {};
+  return { ...okf, ...frontmatter, ...metadata };
+}
+
+function routeStringFromRecord(record: Record<string, unknown>, keys: string[]): string {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+}
+
+function routeGroupForRow(row: Record<string, unknown>): KnowledgeRouteCandidateGroupKey {
+  const metadata = routeMetadataFromRow(row);
+  const knowledgeKind = routeStringFromRecord(metadata, ['knowledgeKind', 'kind']).toLowerCase();
+  const type = (rowString(row, ['type', 'draftType', 'okfType']) || routeStringFromRecord(metadata, ['type', 'draftType', 'okfType'])).toLowerCase();
+  const sourcePath = rowString(row, ['sourcePath', 'pagePath', 'path', 'lookup']).replace(/\\/g, '/').toLowerCase();
+  const hasErrorExperience = isRecord(metadata.errorExperience) || isRecord(row.errorExperience);
+
+  if (
+    knowledgeKind === 'error-experience'
+    || hasErrorExperience
+    || (type === 'troubleshooting' && (hasErrorExperience || /error|failure|pitfall|troubleshoot|incident/u.test(sourcePath)))
+  ) {
+    return 'pitfalls';
+  }
+  if (
+    knowledgeKind === 'rule'
+    || type === 'rule'
+    || isGovernedRulesPath(sourcePath)
+    || /(^|\/)(rules?|conventions?)\//u.test(sourcePath)
+  ) {
+    return 'rules';
+  }
+  return 'docs';
+}
+
 function routeCandidateFromRow(row: Record<string, unknown>, corpus: 'wiki' | 'memory' | 'all', attachKind: 'suggested' | 'auto', reason: string): KnowledgeRouteCandidate | null {
   const lookup = rowString(row, ['lookup', 'pagePath', 'path', 'id', 'pageId']);
   if (!lookup) return null;
@@ -1209,6 +1951,7 @@ function routeCandidateFromRow(row: Record<string, unknown>, corpus: 'wiki' | 'm
     corpus,
     attachKind,
     routingReason: reason,
+    routeGroup: routeGroupForRow(row),
     confidence,
     ...(rowString(row, ['pageId']) ? { pageId: rowString(row, ['pageId']) } : {}),
     ...(rowString(row, ['pagePath', 'path']) ? { pagePath: rowString(row, ['pagePath', 'path']) } : {}),
@@ -1235,47 +1978,206 @@ function routeCandidatesFromSearch(result: unknown, corpus: 'wiki' | 'memory' | 
   return filtered.slice(0, ROUTER_BUDGET.maxReferences);
 }
 
-async function defaultRuntimeLessonsReporter(): Promise<KnowledgeRuntimeLessonsReportResult> {
-  const runtimeDir = getOpenClawRuntimeDir();
-  const entryPath = join(runtimeDir, 'dist', 'knowledge', 'sekb', 'index.js');
-  if (!existsSync(entryPath)) {
-    return {
-      success: true,
-      available: false,
-      reason: 'runtimeUnavailable',
-      ...EMPTY_RUNTIME_LESSONS_REPORT,
-    };
+function groupedRouteCandidates(candidates: KnowledgeRouteCandidate[]): KnowledgeRouteCandidateGroup[] {
+  const groups: Record<KnowledgeRouteCandidateGroupKey, KnowledgeRouteCandidate[]> = {
+    docs: [],
+    pitfalls: [],
+    rules: [],
+  };
+  for (const candidate of candidates) {
+    groups[candidate.routeGroup ?? 'docs'].push(candidate);
   }
-
-  try {
-    const sekb = await import(pathToFileURL(entryPath).href) as {
-      KnowledgeStore: new () => unknown;
-      buildSekbOperatorReport: (
-        store: unknown,
-      ) => Omit<KnowledgeRuntimeLessonsReportResult, 'success' | 'available' | 'reason'>;
-    };
-    const report = sekb.buildSekbOperatorReport(new sekb.KnowledgeStore());
-    return { success: true, available: true, ...report };
-  } catch (error) {
-    return {
-      success: false,
-      available: false,
-      reason: 'reportFailed',
-      error: error instanceof Error ? error.message : String(error),
-      ...EMPTY_RUNTIME_LESSONS_REPORT,
-    };
-  }
+  return (['docs', 'pitfalls', 'rules'] as KnowledgeRouteCandidateGroupKey[])
+    .flatMap((key) => (groups[key].length > 0 ? [{ key, candidates: groups[key] }] : []));
 }
 
-export function createKnowledgeApi({
-  gatewayManager,
-  runtimeLessonsReporter = defaultRuntimeLessonsReporter,
-}: {
-  gatewayManager: GatewayManager;
-  runtimeLessonsReporter?: RuntimeLessonsReporter;
-}): CompleteHostServiceRegistry['knowledge'] {
+function routeCandidateGroupRecord(candidates: KnowledgeRouteCandidate[]): Partial<Record<KnowledgeRouteCandidateGroupKey, KnowledgeRouteCandidate[]>> {
+  const record: Partial<Record<KnowledgeRouteCandidateGroupKey, KnowledgeRouteCandidate[]>> = {};
+  for (const group of groupedRouteCandidates(candidates)) {
+    record[group.key] = group.candidates;
+  }
+  return record;
+}
+
+// ── Area 5 §3.2 — Semantic Steward pass (opt-in, default-off) ──
+
+/**
+ * Context gathered for the semantic steward pass: draft fields + top-K wiki
+ * search results. The invoker receives this and returns a structured review
+ * or null on failure.
+ */
+export type SemanticStewardContext = {
+  title: string;
+  body: string;
+  tags: string[];
+  sourceIds: string[];
+  searchResults: Array<{ title: string; snippet: string; pagePath?: string }>;
+};
+
+/**
+ * Pluggable LLM invoker for the semantic steward pass. In production this is
+ * wired to a `chat.send` / `spawnRoleSubagent` call with the steward contract
+ * as system prompt. In tests it is mocked. Default is null (no LLM available)
+ * → semantic pass degrades to heuristic-only with a "semantic pass unavailable" note.
+ */
+export type SemanticStewardInvoker = (context: SemanticStewardContext) => Promise<StewardSemanticReview | null>;
+
+let semanticStewardInvoker: SemanticStewardInvoker | null = null;
+
+export function setSemanticStewardInvoker(invoker: SemanticStewardInvoker | null): void {
+  semanticStewardInvoker = invoker;
+}
+
+export function getSemanticStewardInvoker(): SemanticStewardInvoker | null {
+  return semanticStewardInvoker;
+}
+
+/**
+ * Pure merge of heuristic + semantic review results. Exported for unit testing.
+ * - Semantic type overrides heuristic when confidence >= 0.7 (spec: "below threshold → keep heuristic result").
+ * - Tags are unioned and deduped.
+ * - Warnings are concatenated; semantic warnings are prefixed with [kind].
+ * - Notes append a semantic pass summary line.
+ */
+export function mergeSemanticReview(
+  heuristic: { type: KnowledgeDraftType; tags: string[]; warnings: string[]; notes: string },
+  semantic: StewardSemanticReview,
+): { type: KnowledgeDraftType; tags: string[]; warnings: string[]; notes: string } {
+  const mergedType = semantic.confidence >= 0.7 ? semantic.type : heuristic.type;
+  const mergedTags = Array.from(new Set([...heuristic.tags, ...semantic.tags]));
+  const semanticWarnings = semantic.warnings.map((w) =>
+    `[${w.kind}] ${w.message}${w.relatedPageId ? ` (→ ${w.relatedPageId})` : ''}`,
+  );
+  const mergedWarnings = [...heuristic.warnings, ...semanticWarnings];
+  const mergedNotes = `${heuristic.notes}\nSemantic steward pass: confidence=${semantic.confidence.toFixed(2)}, type=${semantic.type}.`;
+  return { type: mergedType, tags: mergedTags, warnings: mergedWarnings, notes: mergedNotes };
+}
+
+export function createKnowledgeApi({ gatewayManager }: { gatewayManager: GatewayManager }): CompleteHostServiceRegistry['knowledge'] {
   const rpc = <T>(method: string, params: unknown = {}, timeoutMs = 30_000) =>
     gatewayManager.rpc(method, params, timeoutMs) as Promise<T>;
+
+  async function readSourceSetAnswerSource(ref: KnowledgeSourceRef): Promise<KnowledgeSourceSetAnswerSource | null> {
+    const lookup = ref.path || ref.id;
+    if (!lookup) return null;
+    try {
+      const page = await rpc<Record<string, unknown>>('wiki.get', { lookup, lineCount: 80, corpus: 'wiki' }, 30_000);
+      const title = rowString(page, ['title', 'name', 'pageTitle']) || ref.label || lookup;
+      const pagePath = rowString(page, ['pagePath', 'path', 'sourcePath']) || ref.path;
+      const body = rowString(page, ['body', 'content', 'text', 'snippet', 'bodyPreview']);
+      return {
+        id: ref.id,
+        lookup,
+        title,
+        excerpt: bodyPreview(body || ref.label || lookup),
+        ...(pagePath ? { path: pagePath } : {}),
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  async function buildAnswerFromSourceSet(input: {
+    question: string;
+    sourceRefs: KnowledgeSourceRef[];
+    artifactType?: KnowledgeArtifactType;
+    sourceSetId?: string;
+  }): Promise<KnowledgeAnswerFromSourceSetResult> {
+    const question = input.question.trim();
+    const sourceRefs = normalizeSourceRefs(input.sourceRefs);
+    const sources = (await Promise.all(sourceRefs.map((ref) => readSourceSetAnswerSource(ref))))
+      .filter((source): source is KnowledgeSourceSetAnswerSource => Boolean(source));
+    const rows = sources.length > 0
+      ? sources.map((source) => ({
+        id: source.id,
+        title: source.title,
+        lookup: source.lookup,
+        pagePath: source.path ?? source.lookup,
+      }))
+      : sourceRefs.map((ref) => ({
+        id: ref.id,
+        title: ref.label ?? ref.id,
+        lookup: ref.path ?? ref.id,
+        pagePath: ref.path ?? ref.id,
+      }));
+    const selectedLookups = new Set(rows.map((row) => row.lookup));
+    const retrievalDiagnostics = buildRetrievalDiagnostics({
+      query: question,
+      corpus: 'wiki',
+      mode: 'source-set',
+      rows,
+      selectedLookups,
+      reason: 'explicit Source Set selection',
+      backend: 'fallback-keyword',
+    });
+    const missingCount = Math.max(0, sourceRefs.length - sources.length);
+    const groundingStatus: KnowledgeAnswerFromSourceSetResult['groundingStatus'] = sources.length === 0
+      ? 'missing_sources'
+      : missingCount > 0
+        ? 'partial'
+        : 'grounded';
+    const unknowns = [
+      'Grounding is page/snippet level.',
+      ...(missingCount > 0 ? [`${missingCount} selected source(s) could not be read.`] : []),
+      ...(sources.length === 0 ? ['No selected sources were readable.'] : []),
+    ];
+    const suggestedNextActions = groundingStatus === 'missing_sources'
+      ? ['Add readable sources to the Source Set.', 'Broaden the search and save a new Source Set.']
+      : ['Review this answer before creating a durable draft.', 'Create a Studio artifact draft when the synthesis looks useful.'];
+    const artifactHint = input.artifactType ? ` Artifact focus: ${input.artifactType}.` : '';
+    const sourceLines = sources.map((source, index) => (
+      `${index + 1}. ${source.title}: ${source.excerpt}`
+    ));
+    const answer = sources.length > 0
+      ? [
+        `Answer grounded in ${sources.length} selected source(s).${artifactHint}`,
+        `Question: ${question}`,
+        '',
+        ...sourceLines,
+      ].join('\n')
+      : [
+        'I could not answer from the selected Source Set because no selected source was readable.',
+        `Question: ${question}`,
+      ].join('\n');
+    if (input.sourceSetId) {
+      const sourceSet = await readSourceSet(input.sourceSetId);
+      if (sourceSet) await writeSourceSet({ ...sourceSet, lastUsedAt: nowIso(), updatedAt: nowIso() });
+    }
+    return {
+      success: true,
+      question,
+      answer,
+      sources,
+      unknowns,
+      suggestedNextActions,
+      groundingStatus,
+      confidence: groundingStatus === 'grounded' ? 0.78 : groundingStatus === 'partial' ? 0.48 : 0,
+      retrievalDiagnostics,
+    };
+  }
+
+  function artifactDraftBody(answer: KnowledgeAnswerFromSourceSetResult, artifactType: KnowledgeArtifactType): string {
+    const sourceLines = answer.sources.length > 0
+      ? answer.sources.map((source) => `- ${source.title} (${source.lookup})\n  ${source.excerpt}`).join('\n')
+      : '- No readable selected sources.';
+    return [
+      `# ${defaultArtifactTitle(artifactType)}`,
+      '',
+      `Artifact type: ${artifactType}`,
+      '',
+      '## Answer',
+      answer.answer,
+      '',
+      '## Sources used',
+      sourceLines,
+      '',
+      '## Unknowns / missing sources',
+      answer.unknowns.map((unknown) => `- ${unknown}`).join('\n'),
+      '',
+      '## Suggested next action',
+      answer.suggestedNextActions.map((action) => `- ${action}`).join('\n'),
+    ].join('\n');
+  }
 
 
   // ── Inbox item helper ──
@@ -1296,7 +2198,9 @@ export function createKnowledgeApi({
       ...(sourcePath ? { sourcePath } : {}),
       ...(sourcePath && isGovernedRulesPath(sourcePath) ? { rulesGuarded: true } : {}),
     };
-    return {
+    // Area 5 §3.4 — pass through roleTags if present in the input.
+    const roleTags = normalizeStringList(input.roleTags);
+    const item: KnowledgeInboxItem = {
       id: `ki_${randomUUID()}`,
       title,
       body,
@@ -1308,12 +2212,14 @@ export function createKnowledgeApi({
       tags: normalizeStringList(input.tags),
       workspaceId: null,
       agentId: null,
+      ...(roleTags.length > 0 ? { roleTags } : {}),
       createdBy: normalizeDraftActor(input.createdBy),
       warnings,
       metadata,
       createdAt: timestamp,
       updatedAt: timestamp,
     };
+    return withInboxTriage(item);
   }
 
   // ── Watched Directory Helpers ──
@@ -1405,11 +2311,12 @@ export function createKnowledgeApi({
                     requiresReview: config.requiresReview,
                     metadata: { watchedConfigId: config.id },
                   });
-                  await writeInboxItem(inboxItem);
+                  const triagedInboxItem = withInboxTriage(inboxItem, await listInboxRecords());
+                  await writeInboxItem(triagedInboxItem);
                   await appendAudit({
                     type: 'inbox_created',
-                    inboxId: inboxItem.id,
-                    kind: inboxItem.kind,
+                    inboxId: triagedInboxItem.id,
+                    kind: triagedInboxItem.kind,
                     createdBy: 'system',
                     watchedConfigId: config.id,
                     rulesGuarded: isGovernedRulesPath(fullPath),
@@ -1692,13 +2599,54 @@ export function createKnowledgeApi({
         const body: Record<string, unknown> = isRecord(payload) ? payload : {};
         const query = getString(body.query);
         if (!query) return { success: false, error: 'query is required', results: [] };
+        const roleTag = typeof body.roleTag === 'string' ? body.roleTag.trim() : undefined;
+        const corpus = body.corpus === 'memory' || body.corpus === 'all' || body.corpus === 'wiki' ? body.corpus : 'wiki';
+        const mode = typeof body.mode === 'string' && body.mode ? body.mode : 'keyword';
         const result = await rpc<Record<string, unknown>>('wiki.search', {
           query,
           maxResults: clampPositiveInt(body.maxResults, 10, 50),
-          ...(body.corpus === 'memory' || body.corpus === 'all' || body.corpus === 'wiki' ? { corpus: body.corpus } : {}),
-          ...(typeof body.mode === 'string' && body.mode ? { mode: body.mode } : {}),
+          corpus,
+          ...(mode !== 'keyword' ? { mode } : {}),
         }, 30_000);
-        return { success: true, ...result };
+        const rows = getRouteSearchRows(result);
+        // Area 5 §3.4 — best-effort ranking shaping. Compiled wiki pages may
+        // carry `roleTags` forward from their source drafts; when present and
+        // a roleTag filter was requested, results matching the tag rank first.
+        // Results without roleTags metadata remain visible (ranking-only).
+        if (roleTag && Array.isArray(result.results)) {
+          const ranked = rankByRoleTag(
+            (result.results as Array<Record<string, unknown>>).map((entry) => ({
+              ...entry,
+              roleTags: Array.isArray((entry as { roleTags?: unknown }).roleTags)
+                ? ((entry as { roleTags: unknown[] }).roleTags as string[])
+                : undefined,
+            })),
+            roleTag,
+          );
+          return {
+            success: true,
+            ...result,
+            results: ranked,
+            retrievalDiagnostics: buildRetrievalDiagnostics({
+              query,
+              corpus,
+              mode,
+              rows: ranked,
+              reason: 'keyword fallback via wiki.search with role-tag ranking',
+            }),
+          };
+        }
+        return {
+          success: true,
+          ...result,
+          retrievalDiagnostics: buildRetrievalDiagnostics({
+            query,
+            corpus,
+            mode,
+            rows,
+            reason: 'keyword fallback via wiki.search',
+          }),
+        };
       } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : String(error), results: [] };
       }
@@ -1748,19 +2696,43 @@ export function createKnowledgeApi({
         if (!title || !draftBody || sourceIds.length === 0) {
           return { success: false, error: 'title, body, and sourceIds are required' };
         }
-        const result = await rpc<Record<string, unknown>>('wiki.apply', {
-          op: 'create_synthesis',
+        const draft = createDraftFromPayload({
           title,
           body: draftBody,
+          type: 'synthesis',
           sourceIds,
-          ...(Array.isArray(body.claims) ? { claims: body.claims } : {}),
-          ...(Array.isArray(body.contradictions) ? { contradictions: body.contradictions } : {}),
-          ...(Array.isArray(body.questions) ? { questions: body.questions } : {}),
+          createdBy: 'user',
           ...(typeof body.confidence === 'number' ? { confidence: body.confidence } : {}),
-          ...(typeof body.status === 'string' ? { status: body.status } : {}),
-        }, 120_000);
-        await appendAudit({ type: 'wiki_apply_direct', title, sourceIds, actor: 'user_confirmed' });
-        return { success: true, ...result };
+          metadata: {
+            reviewGate: 'applyDraft',
+            directApplyDisabled: true,
+            ...(Array.isArray(body.claims) ? { claims: body.claims } : {}),
+            ...(Array.isArray(body.contradictions) ? { contradictions: body.contradictions } : {}),
+            ...(Array.isArray(body.questions) ? { questions: body.questions } : {}),
+            ...(typeof body.status === 'string' ? { requestedStatus: body.status } : {}),
+          },
+        });
+        if (!draft) return { success: false, error: 'title and body are required' };
+        const proposal = createProposalForDraft(
+          draft,
+          'Legacy applyDraft request converted to a review-gated proposal; explicit review is required before durable wiki apply.',
+        );
+        await writeDraft(draft);
+        await writeProposal(proposal);
+        await appendAudit({
+          type: 'apply_draft_review_gated',
+          draftId: draft.id,
+          proposalId: proposal.id,
+          sourceIds,
+        });
+        return {
+          success: true,
+          changed: false,
+          operation: 'review_required',
+          reviewRequired: true,
+          draft,
+          proposal,
+        };
       } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : String(error) };
       }
@@ -1784,11 +2756,12 @@ export function createKnowledgeApi({
       const captureKey = knowledgeCaptureKey(item.metadata);
       if (captureKey) {
         const existing = await findInboxItemByCaptureKey(captureKey);
-        if (existing) return { success: true, item: existing };
+        if (existing) return { success: true, item: withInboxTriage(existing, await listInboxRecords()) };
       }
-      await writeInboxItem(item);
-      await appendAudit({ type: 'inbox_created', inboxId: item.id, kind: item.kind, createdBy: item.createdBy });
-      return { success: true, item };
+      const triagedItem = withInboxTriage(item, await listInboxRecords());
+      await writeInboxItem(triagedItem);
+      await appendAudit({ type: 'inbox_created', inboxId: triagedItem.id, kind: triagedItem.kind, createdBy: triagedItem.createdBy });
+      return { success: true, item: triagedItem };
     },
 
     listInboxItems: async (payload) => {
@@ -1797,7 +2770,17 @@ export function createKnowledgeApi({
       const kind = typeof body.kind === 'string' ? body.kind : 'all';
       const workspaceId = typeof body.workspaceId === 'string' ? body.workspaceId : null;
       const limit = clampPositiveInt(body.limit, 50, 200);
-      const items = (await listInboxRecords())
+      const records = await listInboxRecords();
+      const triagedRecords = records.map((item) => withInboxTriage(item, records));
+      await Promise.all(triagedRecords.map((item, index) => {
+        const previous = records[index];
+        const previousTriage = isRecord(previous.metadata) ? previous.metadata.triage : undefined;
+        const nextTriage = isRecord(item.metadata) ? item.metadata.triage : undefined;
+        return sameTriage(previousTriage, nextTriage) ? Promise.resolve() : writeInboxItem(item);
+      })).catch(() => {
+        // Triage persistence is best-effort; list still returns computed metadata.
+      });
+      const items = sortInboxByTriagePriority(triagedRecords)
         .filter((item) => status === 'all' || item.status === normalizeInboxStatus(status))
         .filter((item) => kind === 'all' || item.kind === normalizeInboxKind(kind))
         .filter((item) => !workspaceId || item.workspaceId === workspaceId)
@@ -1815,7 +2798,12 @@ export function createKnowledgeApi({
       const sourceIds = Array.isArray(body.sourceIds)
         ? Array.from(new Set([...normalizeStringList(body.sourceIds), ...sourceRefs.map((ref) => ref.id)]))
         : item.sourceIds;
-      const updated: KnowledgeInboxItem = {
+      // Area 5 §3.4 — roleTags update. Explicit array (even empty) replaces;
+      // absent payload field preserves existing. Empty array drops the field.
+      const roleTagsUpdate = Array.isArray(body.roleTags)
+        ? normalizeStringList(body.roleTags)
+        : undefined;
+      const updatedBase: KnowledgeInboxItem = {
         ...item,
         ...(getString(body.title) ? { title: getString(body.title)! } : {}),
         ...(getString(body.body) ? { body: getString(body.body)! } : {}),
@@ -1828,8 +2816,13 @@ export function createKnowledgeApi({
         sourceIds,
         workspaceId: typeof body.workspaceId === 'string' ? body.workspaceId : item.workspaceId,
         agentId: typeof body.agentId === 'string' ? body.agentId : item.agentId,
+        ...(roleTagsUpdate !== undefined && roleTagsUpdate.length > 0 ? { roleTags: roleTagsUpdate } : {}),
         updatedAt: nowIso(),
       };
+      const updated = withInboxTriage(updatedBase, (await listInboxRecords()).filter((candidate) => candidate.id !== item.id));
+      if (roleTagsUpdate !== undefined && roleTagsUpdate.length === 0) {
+        delete (updated as { roleTags?: string[] }).roleTags;
+      }
       await writeInboxItem(updated);
       await appendAudit({ type: 'inbox_updated', inboxId: updated.id });
       return { success: true, item: updated };
@@ -1897,15 +2890,115 @@ export function createKnowledgeApi({
       return { success: true, draft };
     },
 
+    listSourceSets: async () => {
+      const sourceSets = await listSourceSetRecords();
+      return { success: true, sourceSets };
+    },
+
+    saveSourceSet: async (payload) => {
+      const sourceSet = await normalizeSourceSetPayload(payload);
+      if (!sourceSet) return { success: false, error: 'title is required' };
+      await writeSourceSet(sourceSet);
+      await appendAudit({ type: 'source_set_saved', sourceSetId: sourceSet.id, sourceCount: sourceSet.sourceRefs.length });
+      return { success: true, sourceSet };
+    },
+
+    deleteSourceSet: async (payload) => {
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+      const id = getString(body.id);
+      if (!id) return { success: false, error: 'id is required' };
+      try {
+        await unlink(getSourceSetPath(id));
+        await appendAudit({ type: 'source_set_deleted', sourceSetId: id });
+        return { success: true };
+      } catch {
+        return { success: false, error: 'source set not found' };
+      }
+    },
+
+    answerFromSourceSet: async (payload) => {
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+      const question = getString(body.question);
+      if (!question) {
+        return {
+          success: false,
+          error: 'question is required',
+          question: '',
+          answer: '',
+          sources: [],
+          unknowns: ['Question is required.'],
+          suggestedNextActions: ['Ask a question about the selected sources.'],
+          groundingStatus: 'missing_sources',
+          confidence: 0,
+          retrievalDiagnostics: buildRetrievalDiagnostics({
+            query: '',
+            corpus: 'wiki',
+            mode: 'source-set',
+            rows: [],
+            reason: 'missing question',
+          }),
+        };
+      }
+      return buildAnswerFromSourceSet({
+        question,
+        sourceRefs: normalizeSourceRefs(body.sourceRefs),
+        artifactType: normalizeArtifactType(body.artifactType),
+        sourceSetId: getString(body.sourceSetId),
+      });
+    },
+
+    createArtifactDraft: async (payload: KnowledgeCreateArtifactDraftPayload) => {
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+      const artifactType = normalizeArtifactType(body.artifactType);
+      const sourceRefs = normalizeSourceRefs(body.sourceRefs);
+      const title = getString(body.title) ?? defaultArtifactTitle(artifactType);
+      const question = getString(body.question) ?? `Create a ${artifactType} from the selected sources.`;
+      const answer = await buildAnswerFromSourceSet({
+        question,
+        sourceRefs,
+        artifactType,
+        sourceSetId: getString(body.sourceSetId),
+      });
+      const draft = createDraftFromPayload({
+        title,
+        body: artifactDraftBody(answer, artifactType),
+        type: draftTypeForArtifact(artifactType),
+        sourceIds: sourceIdsFromRefs(sourceRefs),
+        sourceRefs,
+        tags: ['studio-artifact', artifactType],
+        createdBy: 'agent',
+        confidence: answer.confidence,
+        metadata: {
+          knowledgeKind: 'studio-artifact',
+          artifactType,
+          groundingStatus: answer.groundingStatus,
+          retrievalDiagnostics: answer.retrievalDiagnostics,
+          ...(isRecord(body.metadata) ? body.metadata : {}),
+        },
+      });
+      if (!draft) return { success: false, error: 'artifact draft could not be created' };
+      await writeDraft(draft);
+      await appendAudit({
+        type: 'studio_artifact_draft_created',
+        draftId: draft.id,
+        artifactType,
+        groundingStatus: answer.groundingStatus,
+      });
+      return { success: true, draft };
+    },
+
     listDrafts: async (payload) => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
       const status = typeof body.status === 'string' ? body.status : 'all';
       const workspaceId = typeof body.workspaceId === 'string' ? body.workspaceId : null;
       const limit = clampPositiveInt(body.limit, 50, 200);
-      const drafts = (await listDraftRecords())
-        .filter((draft) => status === 'all' || draft.status === status)
-        .filter((draft) => !workspaceId || draft.workspaceId === workspaceId)
-        .slice(0, limit);
+      const roleTag = typeof body.roleTag === 'string' ? body.roleTag.trim() : undefined;
+      const drafts = rankByRoleTag(
+        (await listDraftRecords())
+          .filter((draft) => status === 'all' || draft.status === status)
+          .filter((draft) => !workspaceId || draft.workspaceId === workspaceId),
+        roleTag,
+      ).slice(0, limit);
       return { success: true, drafts };
     },
 
@@ -1921,6 +3014,11 @@ export function createKnowledgeApi({
       const draft = id ? await readDraft(id) : null;
       if (!draft) return { success: false, error: 'draft not found' };
       if (draft.status === 'applied') return { success: false, error: 'applied drafts cannot be edited' };
+      // Area 5 §3.4 — roleTags update. Explicit array (even empty) replaces;
+      // absent payload field preserves existing. Empty array drops the field.
+      const roleTagsUpdate = Array.isArray(body.roleTags)
+        ? normalizeStringList(body.roleTags)
+        : undefined;
       const updated: KnowledgeDraft = {
         ...draft,
         ...(getString(body.title) ? { title: getString(body.title)! } : {}),
@@ -1930,11 +3028,18 @@ export function createKnowledgeApi({
         ...(Array.isArray(body.sourceRefs) ? { sourceRefs: normalizeSourceRefs(body.sourceRefs) } : {}),
         ...(Array.isArray(body.tags) ? { tags: normalizeStringList(body.tags) } : {}),
         ...(normalizeConfidence(body.confidence) != null ? { confidence: normalizeConfidence(body.confidence) } : {}),
+        ...(isRecord(body.metadata) ? { metadata: body.metadata } : {}),
         workspaceId: typeof body.workspaceId === 'string' ? body.workspaceId : draft.workspaceId,
         agentId: typeof body.agentId === 'string' ? body.agentId : draft.agentId,
+        ...(roleTagsUpdate !== undefined
+          ? (roleTagsUpdate.length > 0 ? { roleTags: roleTagsUpdate } : { roleTags: undefined })
+          : {}),
         status: draft.status === 'approved' ? 'draft' : draft.status,
         updatedAt: nowIso(),
       };
+      if (roleTagsUpdate !== undefined && roleTagsUpdate.length === 0) {
+        delete (updated as { roleTags?: string[] }).roleTags;
+      }
       await writeDraft(updated);
       await appendAudit({ type: 'draft_updated', draftId: updated.id });
       return { success: true, draft: updated };
@@ -2070,12 +3175,68 @@ export function createKnowledgeApi({
     stewardReview: async (payload) => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
       const draft = getString(body.draftId) ? await readDraft(getString(body.draftId)!) : null;
-      const review = stewardReviewDraft({
+
+      // Area 5 §3.1: resolve the active KB role player from the registry
+      // instead of returning the hardcoded constant. Missing/corrupt registry
+      // → DEFAULT_REGISTRY → byte-identical to today's DEFAULT_STEWARD_CONFIG.
+      const activeRole = await resolveStewardRole(getString(body.roleId));
+
+      // Pass 1: heuristic (instant, offline-safe, always runs)
+      let review = stewardReviewDraft({
         title: draft?.title ?? getString(body.title),
         body: draft?.body ?? getString(body.body),
         sourceIds: draft?.sourceIds ?? normalizeStringList(body.sourceIds),
         tags: draft?.tags ?? normalizeStringList(body.tags),
       });
+
+      // Area 5 §3.2: semantic pass (opt-in, default-off). Only runs when the
+      // active role has classification: 'semantic' AND an LLM invoker is
+      // registered. Failure/timeout → heuristic result stands, notes record
+      // "semantic pass unavailable".
+      if (activeRole.classification === 'semantic') {
+        const invoker = getSemanticStewardInvoker();
+        if (invoker) {
+          try {
+            // Gather top-5 wiki search results for context (best-effort).
+            let searchResults: Array<{ title: string; snippet: string; pagePath?: string }> = [];
+            try {
+              const searchResponse = await rpc<Record<string, unknown>>('wiki.search', {
+                query: draft?.title ?? getString(body.title) ?? '',
+                maxResults: 5,
+              }, 10_000);
+              if (Array.isArray(searchResponse.results)) {
+                searchResults = (searchResponse.results as Array<Record<string, unknown>>).map((r) => ({
+                  title: String(r.title ?? r.pagePath ?? ''),
+                  snippet: String(r.snippet ?? ''),
+                  pagePath: typeof r.pagePath === 'string' ? r.pagePath : undefined,
+                }));
+              }
+            } catch {
+              // Search failure is non-fatal; semantic pass proceeds with empty context.
+            }
+
+            const semantic = await invoker({
+              title: draft?.title ?? getString(body.title) ?? '',
+              body: draft?.body ?? getString(body.body) ?? '',
+              tags: draft?.tags ?? normalizeStringList(body.tags),
+              sourceIds: draft?.sourceIds ?? normalizeStringList(body.sourceIds),
+              searchResults,
+            });
+
+            if (semantic) {
+              review = mergeSemanticReview(review, semantic);
+            } else {
+              review = { ...review, notes: `${review.notes}\nSemantic steward pass unavailable: invoker returned null.` };
+            }
+          } catch (error) {
+            const reason = error instanceof Error ? error.message : String(error);
+            review = { ...review, notes: `${review.notes}\nSemantic steward pass unavailable: ${reason}.` };
+          }
+        } else {
+          review = { ...review, notes: `${review.notes}\nSemantic steward pass unavailable: no LLM invoker configured.` };
+        }
+      }
+
       if (draft) {
         const updated: KnowledgeDraft = {
           ...draft,
@@ -2090,7 +3251,55 @@ export function createKnowledgeApi({
         await writeDraft(updated);
         await appendAudit({ type: 'steward_reviewed', draftId: updated.id });
       }
-      return { success: true, config: DEFAULT_STEWARD_CONFIG, ...review };
+      return { success: true, config: activeRole, ...review };
+    },
+
+    stewardConfigGet: async (): Promise<KnowledgeStewardConfigGetResult> => {
+      const registry = await loadRoleRegistry();
+      const activeRole = registry.roles.find((role) => role.roleId === registry.defaultRoleId && role.enabled)
+        ?? registry.roles[0];
+      return { success: true, registry, ...(activeRole ? { activeRole } : {}) };
+    },
+
+    stewardConfigUpdate: async (payload: KnowledgeStewardConfigUpdatePayload): Promise<KnowledgeStewardConfigUpdateResult> => {
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+      // Update path: caller provides a full new registry (validated through
+      // normalizeRoleRegistry — issues returned to caller, never thrown) and/or
+      // a new defaultRoleId. The default steward is never removed silently:
+      // if the new registry has zero accepted roles, the call refuses to
+      // write and returns today's registry unchanged.
+      const newRegistryRaw = body.registry;
+      const newDefaultRoleId = getString(body.defaultRoleId);
+      const currentRegistry = await loadRoleRegistry();
+      let nextRegistry: KnowledgeRoleRegistryFile = currentRegistry;
+      const issues: Array<{ path: string; message: string }> = [];
+      if (newRegistryRaw !== undefined) {
+        const { registry, issues: parseIssues } = normalizeRoleRegistry(newRegistryRaw);
+        if (registry === DEFAULT_REGISTRY && parseIssues.length > 0) {
+          // Refuse to persist a no-op default; surface issues to the caller.
+          return { success: false, registry: currentRegistry, issues: parseIssues, error: 'registry validation failed; no changes written' };
+        }
+        nextRegistry = registry;
+        issues.push(...parseIssues);
+      }
+      if (newDefaultRoleId) {
+        const hasRole = nextRegistry.roles.some((role) => role.roleId === newDefaultRoleId);
+        if (!hasRole) {
+          return {
+            success: false,
+            registry: currentRegistry,
+            issues: [...issues, { path: 'defaultRoleId', message: `defaultRoleId ${newDefaultRoleId} not present in registry; no changes written` }],
+            error: 'defaultRoleId not present in registry',
+          };
+        }
+        nextRegistry = { ...nextRegistry, defaultRoleId: newDefaultRoleId };
+      }
+      try {
+        await writeRoleRegistry(nextRegistry);
+        return { success: true, registry: nextRegistry, ...(issues.length > 0 ? { issues } : {}) };
+      } catch (error) {
+        return { success: false, registry: currentRegistry, error: error instanceof Error ? error.message : String(error) };
+      }
     },
 
     routeContext: async (payload: KnowledgeRouteContextPayload): Promise<KnowledgeRouteContextResult> => {
@@ -2108,6 +3317,15 @@ export function createKnowledgeApi({
           decision: 'skip',
           reason: decision.reason,
           candidates: [],
+          candidateGroups: [],
+          groupedCandidates: {},
+          retrievalDiagnostics: buildRetrievalDiagnostics({
+            query: decision.query ?? message,
+            corpus: scope === 'memory' ? 'memory' : scope === 'all' ? 'all' : 'wiki',
+            mode,
+            rows: [],
+            reason: decision.reason,
+          }),
           budget: ROUTER_BUDGET,
         };
       }
@@ -2119,7 +3337,10 @@ export function createKnowledgeApi({
           maxResults: ROUTER_BUDGET.maxReferences,
           corpus,
         }, 30_000);
+        const rows = getRouteSearchRows(result);
         const candidates = routeCandidatesFromSearch(result, corpus, mode, decision.reason);
+        const selectedLookups = new Set(candidates.map((candidate) => candidate.lookup));
+        const candidateGroups = groupedRouteCandidates(candidates);
         const routeDecision = mode === 'auto-read' && candidates.length > 0
           ? 'auto_attach'
           : candidates.length > 0
@@ -2141,6 +3362,16 @@ export function createKnowledgeApi({
           reason: candidates.length > 0 ? decision.reason : 'no relevant knowledge candidates found',
           query: decision.query,
           candidates,
+          candidateGroups,
+          groupedCandidates: routeCandidateGroupRecord(candidates),
+          retrievalDiagnostics: buildRetrievalDiagnostics({
+            query: decision.query,
+            corpus,
+            mode,
+            rows,
+            selectedLookups,
+            reason: candidates.length > 0 ? decision.reason : 'no relevant knowledge candidates found',
+          }),
           budget: ROUTER_BUDGET,
         };
       } catch (error) {
@@ -2150,12 +3381,89 @@ export function createKnowledgeApi({
           decision: 'skip',
           reason: 'knowledge routing search failed',
           candidates: [],
+          candidateGroups: [],
+          groupedCandidates: {},
+          retrievalDiagnostics: buildRetrievalDiagnostics({
+            query: decision.query,
+            corpus: scope === 'memory' ? 'memory' : scope === 'all' ? 'all' : 'wiki',
+            mode,
+            rows: [],
+            reason: 'knowledge routing search failed',
+          }),
           budget: ROUTER_BUDGET,
         };
       }
     },
 
-    runtimeLessonsReport: async (): Promise<KnowledgeRuntimeLessonsReportResult> => runtimeLessonsReporter(),
+    matchErrorExperience: async (payload) => {
+      try {
+        const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+        const rawSignal = isRecord(body.signal) ? body.signal : {};
+        const text = getString(rawSignal.text);
+        if (!text) return { success: true, advisories: [] };
+        const signal: KnowledgeErrorGuardSignal = {
+          text,
+          ...(rawSignal.kind === 'command-failure'
+            || rawSignal.kind === 'test-failure'
+            || rawSignal.kind === 'lint-failure'
+            || rawSignal.kind === 'build-failure'
+            || rawSignal.kind === 'runtime-error'
+            || rawSignal.kind === 'user-correction'
+            ? { kind: rawSignal.kind }
+            : {}),
+          ...(getString(rawSignal.command) ? { command: getString(rawSignal.command) } : {}),
+          ...(getString(rawSignal.stackTrace) ? { stackTrace: getString(rawSignal.stackTrace) } : {}),
+          ...(Array.isArray(rawSignal.filePaths) ? { filePaths: normalizeStringList(rawSignal.filePaths) } : {}),
+          ...(getString(rawSignal.sessionKey) ? { sessionKey: getString(rawSignal.sessionKey) } : {}),
+          ...(typeof rawSignal.workspaceId === 'string' ? { workspaceId: rawSignal.workspaceId } : rawSignal.workspaceId === null ? { workspaceId: null } : {}),
+        };
+        const limit = clampPositiveInt(body.limit, 3, 10);
+        const advisories = matchErrorExperienceCards(await listErrorExperienceTargets(), signal, limit);
+        await Promise.all(advisories.map((advisory) => (
+          updateStoredErrorExperienceCard(advisory.targetKind, advisory.targetId, 'hit').catch(() => null)
+        )));
+        if (advisories.length > 0) {
+          await appendAudit({
+            type: 'error_experience_advisory_matched',
+            count: advisories.length,
+            topTargetId: advisories[0].targetId,
+            sessionKey: signal.sessionKey,
+            workspaceId: signal.workspaceId ?? null,
+          });
+        }
+        return { success: true, advisories };
+      } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : String(error), advisories: [] };
+      }
+    },
+
+    updateErrorExperienceEffectiveness: async (payload) => {
+      try {
+        const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+        const targetKind = body.targetKind === 'draft' ? 'draft' : body.targetKind === 'inbox' ? 'inbox' : null;
+        const targetId = getString(body.targetId);
+        const action = body.action === 'hit'
+          || body.action === 'accepted'
+          || body.action === 'dismissed'
+          || body.action === 'prevented-failure'
+          || body.action === 'stale'
+          ? body.action
+          : null;
+        if (!targetKind || !targetId || !action) return { success: false, error: 'targetKind, targetId, and action are required' };
+        const effectiveness = await updateStoredErrorExperienceCard(targetKind, targetId, action);
+        if (!effectiveness) return { success: false, error: 'error-experience card not found' };
+        await appendAudit({
+          type: 'error_experience_effectiveness_updated',
+          targetKind,
+          targetId,
+          action,
+          note: getString(body.note),
+        });
+        return { success: true, effectiveness };
+      } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : String(error) };
+      }
+    },
 
     recordKnowledgeReference: async (payload) => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
@@ -2313,9 +3621,17 @@ export function createKnowledgeApi({
       // Sort: errors first, then warnings, then info
       const severityOrder: Record<string, number> = { error: 0, warning: 1, info: 2 };
       issues.sort((a, b) => (severityOrder[a.severity] ?? 9) - (severityOrder[b.severity] ?? 9));
+      const qualityMetrics = aggregateKnowledgeQualityMetrics({
+        summaries,
+        issues,
+        errorExperienceCards: (await listErrorExperienceTargets()).map((target) => ({
+          id: `${target.targetKind}:${target.targetId}`,
+          card: target.card,
+        })),
+      });
 
-      await appendAudit({ type: 'governance_audit', issues: issues.length, contradictions: summaries.contradictions, stale: summaries.stale, dangling: summaries.dangling, duplicates: summaries.duplicates, provenanceGaps: summaries.provenanceGaps });
-      return { success: true, runAt: now, issues, summaries };
+      await appendAudit({ type: 'governance_audit', issues: issues.length, contradictions: summaries.contradictions, stale: summaries.stale, dangling: summaries.dangling, duplicates: summaries.duplicates, provenanceGaps: summaries.provenanceGaps, qualityMetrics: qualityMetrics.metrics.length });
+      return { success: true, runAt: now, issues, summaries, qualityMetrics };
     },
 
     listWatchedDirectories: async (): Promise<KnowledgeWatchedDirectoryConfig[]> => {

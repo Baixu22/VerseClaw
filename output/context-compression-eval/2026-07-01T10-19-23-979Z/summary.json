@@ -1,0 +1,1909 @@
+{
+  "runId": "2026-07-01T10-19-23-979Z",
+  "target": "C:\\Users\\27933\\Desktop\\verseshell\\graphiti-main",
+  "generatedAt": "2026-07-01T10:20:26.010Z",
+  "suite": "full",
+  "sampleSource": "real",
+  "requestedSampleCount": 30,
+  "sampleCount": 30,
+  "semanticMatching": false,
+  "cache": {
+    "enabled": false,
+    "dir": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.cache\\context-compression-eval",
+    "version": "context-compression-eval-cache-v3",
+    "hits": 0,
+    "misses": 41,
+    "writes": 0,
+    "byNamespace": {
+      "real-samples": {
+        "hits": 0,
+        "misses": 1,
+        "writes": 0
+      },
+      "transcript-parse": {
+        "hits": 0,
+        "misses": 30,
+        "writes": 0
+      },
+      "llm-schema-free": {
+        "hits": 0,
+        "misses": 10,
+        "writes": 0
+      }
+    },
+    "secretScan": {
+      "pass": true,
+      "scannedFiles": 1042,
+      "leaks": []
+    }
+  },
+  "manifest": {
+    "input": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\output\\context-compression-eval\\holdout-adversarial-real-30.manifest.jsonl",
+    "hash": "2af2a9b719143d67ee15cc7720c5a2c9dd450b45bbe136122e1012c7ab8f1229",
+    "requested": 30,
+    "resolved": 30,
+    "missing": []
+  },
+  "reproducibility": {
+    "seed": "context-compression-eval-v1",
+    "sampleSelectionHash": "2af2a9b719143d67ee15cc7720c5a2c9dd450b45bbe136122e1012c7ab8f1229",
+    "promptVersions": {
+      "judge": "judge-prompt-v7",
+      "continuation": "continuation-prompt-v4"
+    },
+    "extractorVersion": "real-fact-extractor-v12",
+    "parserVersion": "transcript-parser-v3",
+    "redactionVersion": "redaction-v4"
+  },
+  "realInventory": {
+    "transcriptRoot": "C:\\\\Users\\\\27933\\\\.codex\\\\archived_sessions",
+    "filesFound": 212,
+    "transcriptsParsed": 30,
+    "entriesParsed": 12962
+  },
+  "sampleMix": {
+    "realRequested": 30,
+    "syntheticRequested": 0,
+    "realActual": 30,
+    "syntheticActual": 0,
+    "realShortfall": 0,
+    "evidenceInsufficient": false
+  },
+  "llmJudge": {
+    "requested": false,
+    "executed": false,
+    "reason": "LLM judge was not requested. Pass --llm-judge to enable it.",
+    "results": []
+  },
+  "llmJudgeCalibration": {
+    "requested": false,
+    "executed": false,
+    "reason": "Judge calibration was not requested. Pass --llm-judge-calibration to enable it."
+  },
+  "llmJudgeLiveRerun": {
+    "requested": false,
+    "executed": false,
+    "reason": "Live uncached judge rerun was not requested. Pass --llm-judge-live-rerun-ratio 0.1 to enable it."
+  },
+  "llmSchemaFree": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 10,
+    "liveCount": 10,
+    "cacheHitCount": 0,
+    "results": [
+      {
+        "sampleId": "R15",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context captures all essential information: the goal (slash commands MVP), key decisions (locale updates, test additions, E2E fork split), blockers (shell quoting failures, E2E fork state issue), validation state (unit tests 42/42 pass, E2E 3/3 pass, i18n parity 164/164 pass, typecheck pass, harness spec valid), and next action (rerun with corrected shell quoting). No omission would cause a competent engineer to repeat wrong work or misdiagnose a failure.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context captures all essential information: the goal (slash commands MVP), key decisions (locale updates, test additions, E2E fork split), blockers (shell quoting failures, E2E fork state issue), validation state (unit tests 42/42 pass, E2E 3/3 pass, i18n parity 164/164 pass, typecheck pass, harness spec valid), and next action (rerun with corrected shell quotin"
+      },
+      {
+        "sampleId": "R60",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the actionable error (environment_or_invocation_failure with missing stdout/stderr), root cause (invocation failed without diagnostic output), validation state (submission validated, tests green, typecheck passed, boundary scans clean), and next step (submission written). No omission would cause a competent engineer to repeat wrong work, miss a blocker, misdiagnose a failure, or take the wrong next action.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the actionable error (environment_or_invocation_failure with missing stdout/stderr), root cause (invocation failed without diagnostic output), validation state (submission validated, tests green, typecheck passed, boundary scans clean), and next step (submission written). No omission would cause a competent engineer to repeat wrong work, miss a"
+      },
+      {
+        "sampleId": "R13",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 9,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the original objective, the constraint to use existing i18n patterns, the list of decisions (which areas to fix), the failure chains (type errors, test failures, lint noise), the final outcome (hardcoded Chinese replaced and locales completed), and the next action (prepare final report). A competent engineer can understand what was done, what went wrong, and what to do next without repeating work or misdiagnosing. The only minor omission is the exact list of files changed, but the key files are mentioned and the diff is summarized. No critical debugging info is missing.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 9,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the original objective, the constraint to use existing i18n patterns, the list of decisions (which areas to fix), the failure chains (type errors, test failures, lint noise), the final outcome (hardcoded Chinese replaced and locales completed), and the next action (prepare final report). A competent engineer can understand what was done, what we"
+      },
+      {
+        "sampleId": "R19",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the objective, key decisions, failure chains with root cause classification, validation state, and next action. It includes the harness task spec, runtime changes, UI component, i18n updates, tests, and documentation. The environment failures (harness validate blocked by external dirty files) are clearly documented and do not affect the correctness of the implementation. A competent engineer can proceed without repeating wrong work or missing blockers.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the objective, key decisions, failure chains with root cause classification, validation state, and next action. It includes the harness task spec, runtime changes, UI component, i18n updates, tests, and documentation. The environment failures (harness validate blocked by external dirty files) are clearly documented and do not affect the correct"
+      },
+      {
+        "sampleId": "R100",
+        "omitsKeyDebuggingInfo": true,
+        "severity": "major",
+        "score": 4,
+        "missingInformation": [
+          "The specific TypeScript compilation error (TS2552: Cannot find name 'RuntimeTraceSpan') and its location (grounding.ts:565) are mentioned, but the compressed context does not include the actual error output or the code context needed to understand why the type is missing. A competent engineer would need to see the error message and surrounding code to diagnose whether it's a missing import, a renamed type, or a broken reference.",
+          "The compressed context omits the full output of the failing command (exit code 1 with no captured stdout/stderr). The source transcript shows a git command failure ('git' not recognized) and a TypeScript compilation error, but the compressed version only summarizes them without the raw output. This makes it impossible to verify the exact failure or reproduce it.",
+          "The compressed context does not include the content of the new test file (runtime-grounding-retention-boundary.test.ts) or the changes made to existing files. Without seeing the actual test code and modifications, a next engineer cannot assess correctness, completeness, or potential side effects.",
+          "The compressed context lacks the full list of files touched and their current state. It only mentions three spec files, but the source transcript shows many more files were read (e.g., evidence.ts, trace-context.ts, etc.). The engineer needs to know which files were modified and which were only read.",
+          "The compressed context does not include the exact command that failed with the TypeScript error. The source transcript shows a Vitest run that passed tests but had a TypeScript compilation error, but the compressed version does not specify the command or its arguments, making it hard to rerun.",
+          "The compressed context omits the 'nextAction' details from the failure chains. For example, the first failure chain suggests 'restore the trace/event-log types and query bounds', but the compressed context does not explain what specific types or bounds need to be restored, nor does it provide the code context to do so."
+        ],
+        "rationale": "The compressed context omits critical debugging information that would likely cause a competent engineer to misdiagnose the failure or take the wrong next action. The TypeScript compilation error is summarized without the actual error output or code context, making it impossible to understand why 'RuntimeTraceSpan' is missing. The failing command's raw output is missing, so the engineer cannot verify the failure or reproduce it. The new test file and modifications are not included, so the engineer cannot assess the work done. The next actions from failure chains are vague without the supporting code context. These omissions are major because they would lead to wasted effort in re-diagnosing the issue or making incorrect fixes.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": true,\n  \"severity\": \"major\",\n  \"score\": 4,\n  \"missing_information\": [\n    \"The specific TypeScript compilation error (TS2552: Cannot find name 'RuntimeTraceSpan') and its location (grounding.ts:565) are mentioned, but the compressed context does not include the actual error output or the code context needed to understand why the type is missing. A competent engineer would need to see the error message and surrounding code to diagnose whether it's a missing import,"
+      },
+      {
+        "sampleId": "R108",
+        "omitsKeyDebuggingInfo": true,
+        "severity": "major",
+        "score": 3,
+        "missingInformation": [
+          "The actual command that failed with exit code 1 and its full output (stdout/stderr) are missing. The compressed context only shows 'Exit code: 1 Wall time: 0.5 seconds Output:' without any output content.",
+          "The root cause of the environment_or_invocation_failure is not identified; the context only states 'raw failure output is missing' but does not provide the raw output or any diagnostic details.",
+          "The specific test or command that failed is not named; the context references 'command=unknown' and does not specify which test or script produced the failure.",
+          "The validation state after the failure is unclear; the context claims 'Everything requested is now implemented and verified' and 'Status: accepted' despite unresolved failures, which is contradictory.",
+          "The next action 'Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code' is stated but no evidence that this was done or that the failure was resolved."
+        ],
+        "rationale": "The compressed context omits critical debugging information: the actual command output for the failures is missing, the root cause is not identified, and the context claims completion despite unresolved failures. A competent engineer would likely repeat wrong work or misdiagnose the failure without the raw output and command details. The severity is major because the missing information would likely lead to incorrect next actions.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": true,\n  \"severity\": \"major\",\n  \"score\": 3,\n  \"missing_information\": [\n    \"The actual command that failed with exit code 1 and its full output (stdout/stderr) are missing. The compressed context only shows 'Exit code: 1 Wall time: 0.5 seconds Output:' without any output content.\",\n    \"The root cause of the environment_or_invocation_failure is not identified; the context only states 'raw failure output is missing' but does not provide the raw output or any diagnos"
+      },
+      {
+        "sampleId": "R123",
+        "omitsKeyDebuggingInfo": true,
+        "severity": "major",
+        "score": 4,
+        "missingInformation": [
+          "The content of the pasted text file (pasted-text-1.txt) which contains the full task brief in Chinese (mojibake-encoded). The compressed context only references it but does not include its content, making it impossible to verify the exact requirements.",
+          "The actual diff or changes made to memory-context-provider.ts and the test file. The compressed context only mentions that changes were made but does not show the code, so a reviewer cannot verify correctness or boundary compliance.",
+          "The full output of boundary scans (e.g., renderer transport, persistence, authority scans). The compressed context only provides summary statements without raw results, making it impossible to independently confirm that no forbidden patterns were introduced.",
+          "The exact TypeScript errors and the resolution attempt details. The compressed context mentions pre-existing errors but does not include the full error output or the steps taken to diagnose them, which could lead to misdiagnosis.",
+          "The status of the implementation-synthesis.md file. The compressed context mentions it should be created but does not confirm whether it was actually written or what it contains."
+        ],
+        "rationale": "The compressed context omits the actual task brief (pasted text), the code changes, and raw scan outputs. A competent engineer would need to see the exact requirements and implementation to verify correctness and avoid repeating wrong work or missing blockers. The TypeScript errors are documented as pre-existing, but without full error details, the next engineer might waste time re-diagnosing or incorrectly attribute them to the changes. The missing synthesis file status could lead to taking the wrong next action (e.g., proceeding to next phase without proper sign-off).",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": true,\n  \"severity\": \"major\",\n  \"score\": 4,\n  \"missing_information\": [\n    \"The content of the pasted text file (pasted-text-1.txt) which contains the full task brief in Chinese (mojibake-encoded). The compressed context only references it but does not include its content, making it impossible to verify the exact requirements.\",\n    \"The actual diff or changes made to memory-context-provider.ts and the test file. The compressed context only mentions that changes we"
+      },
+      {
+        "sampleId": "R128",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the actionable error (test failure due to metadata drift), root cause (authority-grant sentinel not sanitized), validation state (test passes after fix, all specs valid, 90 tests green, TypeScript passes), and next step (rerun failed command with raw output). No omission would cause a competent engineer to repeat wrong work or misdiagnose.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the actionable error (test failure due to metadata drift), root cause (authority-grant sentinel not sanitized), validation state (test passes after fix, all specs valid, 90 tests green, TypeScript passes), and next step (rerun failed command with raw output). No omission would cause a competent engineer to repeat wrong work or misdiagnose.\"\n}"
+      },
+      {
+        "sampleId": "R132",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the actionable error (shell quoting failures), root cause (PowerShell quoting issues), validation state (core proofs green, scans pending), and next step (rerun corrected commands). No omission would cause a competent engineer to repeat wrong work or misdiagnose.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the actionable error (shell quoting failures), root cause (PowerShell quoting issues), validation state (core proofs green, scans pending), and next step (rerun corrected commands). No omission would cause a competent engineer to repeat wrong work or misdiagnose.\"\n}"
+      },
+      {
+        "sampleId": "R138",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the objective (Phase 26 narrow proof), constraints (no product path changes), validation state (tests pass, builds blocked by unrelated error), and next action (finalize synthesis). No omission would cause a competent engineer to repeat wrong work or misdiagnose.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the objective (Phase 26 narrow proof), constraints (no product path changes), validation state (tests pass, builds blocked by unrelated error), and next action (finalize synthesis). No omission would cause a competent engineer to repeat wrong work or misdiagnose.\"\n}"
+      }
+    ],
+    "aggregate": {
+      "judgeScoreMean": 8,
+      "judgeScoreMin": 3,
+      "judgeScoreMax": 10,
+      "judgeScoreMedian": 10,
+      "judgeScoreStdDev": 2.8636,
+      "scoreHistogram": {
+        "10": 6,
+        "0-4.99": 3,
+        "5-6.99": 0,
+        "7-7.99": 0,
+        "8-8.99": 0,
+        "9-9.99": 1
+      },
+      "scoreDistributionWarning": null,
+      "omissionRate": 0.3,
+      "majorOrCriticalOmissionRate": 0.3
+    }
+  },
+  "llmContinuation": {
+    "requested": false,
+    "executed": false,
+    "reason": "LLM continuation was not requested. Pass --llm-continuation to enable it.",
+    "results": []
+  },
+  "layer0": {
+    "rounds": 30,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": null,
+    "informationDensityMean": null,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 309,
+    "expectedTotal": 309
+  },
+  "informationLoss": {
+    "totalVerifiedClaims": 499,
+    "retainedVerifiedClaims": 499,
+    "droppedVerifiedClaims": 0,
+    "verifiedClaimsRetentionRate": 1,
+    "informationLossRate": 0,
+    "criticalDroppedVerifiedClaims": 0,
+    "importantDroppedVerifiedClaims": 0,
+    "niceToHaveDroppedVerifiedClaims": 0,
+    "bySeverity": {
+      "critical": {
+        "total": 206,
+        "retained": 206,
+        "retentionRate": 1
+      },
+      "important": {
+        "total": 293,
+        "retained": 293,
+        "retentionRate": 1
+      },
+      "nice_to_have": {
+        "total": 0,
+        "retained": 0,
+        "retentionRate": 1
+      }
+    }
+  },
+  "layer1": {
+    "rounds": 30,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": 0.2004,
+    "informationDensityMean": 5.9084,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 499,
+    "expectedTotal": 499
+  },
+  "layer1Gate": {
+    "pass": true,
+    "thresholds": {
+      "recallCriticalMean": ">= 0.95",
+      "recallImportantMean": ">= 0.75",
+      "weightedRecallMean": ">= 0.90",
+      "precisionMean": "= 1",
+      "forbiddenFoundTotal": "= 0",
+      "staleExclusionMean": ">= 0.99",
+      "compressionRatioMean": "0.15..0.35",
+      "informationDensityMean": ">= 2"
+    }
+  },
+  "layer2": {
+    "total": 30,
+    "judgeScoreMean": 10,
+    "judgeScoreMin": 10,
+    "judgeScoreMax": 10,
+    "judgeScoreMedian": 10,
+    "judgeScoreStdDev": 0,
+    "scoreHistogram": {
+      "10": 30,
+      "0-4.99": 0,
+      "5-6.99": 0,
+      "7-7.99": 0,
+      "8-8.99": 0,
+      "9-9.99": 0
+    },
+    "scoreDistributionWarning": "all_scores_identical_check_judge_calibration_or_sample_difficulty",
+    "completenessRate": 1,
+    "accuracyRate": 1,
+    "causalChainPreservation": 1,
+    "causalChainRate": 1,
+    "noFabricationRate": 1,
+    "actionabilityRate": 1
+  },
+  "layer2Gate": {
+    "pass": true
+  },
+  "layer3": {
+    "total": 30,
+    "firstActionMatchRate": 1,
+    "criticalActionMatchRate": 1,
+    "noRepeatedWorkRate": 1,
+    "noContradictoryActionRate": 1,
+    "decisionConsistencyRate": 1,
+    "taskCompletionDelta": 0
+  },
+  "layer3Gate": {
+    "pass": true,
+    "thresholds": {
+      "firstActionMatchRate": ">= 0.85",
+      "criticalActionMatchRate": ">= 0.90",
+      "noRepeatedWorkRate": ">= 0.95",
+      "noContradictoryActionRate": ">= 0.95",
+      "decisionConsistencyRate": ">= 0.90",
+      "taskCompletionDelta": "<= 0.08"
+    }
+  },
+  "cohorts": {
+    "real": {
+      "sampleCount": 30,
+      "layer0": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 309,
+        "expectedTotal": 309
+      },
+      "layer1": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2004,
+        "informationDensityMean": 5.9084,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 499,
+        "expectedTotal": 499
+      },
+      "layer3": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.95": {
+        "rounds": 14,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1916,
+        "informationDensityMean": 5.8398,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 230,
+        "expectedTotal": 230
+      },
+      "0.85": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1328,
+        "informationDensityMean": 8.4307,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 52,
+        "expectedTotal": 52
+      },
+      "emergency": {
+        "rounds": 11,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2286,
+        "informationDensityMean": 5.4531,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 193,
+        "expectedTotal": 193
+      },
+      "0.75": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2589,
+        "informationDensityMean": 3.8631,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 17,
+        "expectedTotal": 17
+      },
+      "0.6": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1573,
+        "informationDensityMean": 6.356,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 7,
+        "expectedTotal": 7
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 6,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.3794,
+        "informationDensityMean": 3.2802,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 88,
+        "expectedTotal": 88
+      },
+      "200": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1578,
+        "informationDensityMean": 6.3456,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 203,
+        "expectedTotal": 203
+      },
+      "1000": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1534,
+        "informationDensityMean": 6.7854,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 208,
+        "expectedTotal": 208
+      }
+    },
+    "byPressureContinuation": {
+      "0.95": {
+        "total": 14,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.85": {
+        "total": 3,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "emergency": {
+        "total": 11,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.75": {
+        "total": 1,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.6": {
+        "total": 1,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    }
+  },
+  "cohortBreakdown": {
+    "real": {
+      "sampleCount": 30,
+      "layer0": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 309,
+        "expectedTotal": 309
+      },
+      "layer1": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2004,
+        "informationDensityMean": 5.9084,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 499,
+        "expectedTotal": 499
+      },
+      "layer3": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.95": {
+        "rounds": 14,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1916,
+        "informationDensityMean": 5.8398,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 230,
+        "expectedTotal": 230
+      },
+      "0.85": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1328,
+        "informationDensityMean": 8.4307,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 52,
+        "expectedTotal": 52
+      },
+      "emergency": {
+        "rounds": 11,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2286,
+        "informationDensityMean": 5.4531,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 193,
+        "expectedTotal": 193
+      },
+      "0.75": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2589,
+        "informationDensityMean": 3.8631,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 17,
+        "expectedTotal": 17
+      },
+      "0.6": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1573,
+        "informationDensityMean": 6.356,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 7,
+        "expectedTotal": 7
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 6,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.3794,
+        "informationDensityMean": 3.2802,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 88,
+        "expectedTotal": 88
+      },
+      "200": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1578,
+        "informationDensityMean": 6.3456,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 203,
+        "expectedTotal": 203
+      },
+      "1000": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1534,
+        "informationDensityMean": 6.7854,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 208,
+        "expectedTotal": 208
+      }
+    }
+  },
+  "degradationCurve": {
+    "points": [
+      {
+        "pressure": "0.6",
+        "sampleCount": 1,
+        "compressionRatioMean": 0.1573,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "0.75",
+        "sampleCount": 1,
+        "compressionRatioMean": 0.2589,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "0.85",
+        "sampleCount": 3,
+        "compressionRatioMean": 0.1328,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "0.95",
+        "sampleCount": 14,
+        "compressionRatioMean": 0.1916,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "emergency",
+        "sampleCount": 11,
+        "compressionRatioMean": 0.2286,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      }
+    ],
+    "firstQualityDropPressure": null,
+    "monotonicityNote": "Quality should degrade gradually as pressure increases; abrupt drops indicate compression fragility."
+  },
+  "latencyCost": {
+    "timing": {
+      "startedAt": "2026-07-01T10:19:23.978Z",
+      "phasesMs": {
+        "projectSnippets": 1,
+        "buildSamples": 11673,
+        "deterministicLayers": 2350,
+        "llmJudge": 0,
+        "llmJudgeCalibration": 0,
+        "llmJudgeLiveRerun": 0,
+        "llmSchemaFree": 46470,
+        "llmContinuation": 0,
+        "cacheSecretScan": 1062
+      },
+      "totalMs": 62032,
+      "finishedAt": "2026-07-01T10:20:26.010Z",
+      "samplesPerSecond": 0.4836
+    },
+    "tokenEconomics": {
+      "sampleCount": 30,
+      "totals": {
+        "originalInputTokens": 1486568,
+        "compressedInputTokens": 231934,
+        "inputTokenDelta": -1254634,
+        "inputTokenSavings": 1254634,
+        "uncompressedOutputTokens": 2335,
+        "compressedOutputTokens": 2335,
+        "outputTokenDelta": 0,
+        "netTokenDelta": -1254634
+      },
+      "means": {
+        "originalInputTokens": 49552.2667,
+        "compressedInputTokens": 7731.1333,
+        "inputTokenDelta": -41821.1333,
+        "inputTokenSavings": 41821.1333,
+        "uncompressedOutputTokens": 77.8333,
+        "compressedOutputTokens": 77.8333,
+        "outputTokenDelta": 0,
+        "netTokenDelta": -41821.1333
+      },
+      "inputCompressionRatioMean": 0.2004,
+      "outputTokenDeltaMean": 0,
+      "outputExpansionRate": 0,
+      "netTokenSavings": 1254634,
+      "netTokenDelta": -1254634,
+      "warning": null,
+      "examples": []
+    },
+    "note": "Token counts are heuristic estimates; use model tokenizer/pricing for billing-grade cost."
+  },
+  "failureChainSchemaRisk": {
+    "chainCount": 107,
+    "meanChainExtractionConfidence": 0.7607,
+    "lowConfidenceChainCount": 2,
+    "mediumConfidenceChainCount": 36,
+    "highConfidenceChainCount": 69,
+    "hallucinationRisk": "some_failure_chains_have_missing_evidence_links",
+    "examples": [
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-1",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-2",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-3",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-4",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R60",
+        "factId": "R60-failure-chain-2",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "validation"
+        ]
+      },
+      {
+        "sampleId": "R19",
+        "factId": "R19-failure-chain-4",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R100",
+        "factId": "R100-failure-chain-3",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R100",
+        "factId": "R100-failure-chain-4",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R123",
+        "factId": "R123-failure-chain-4",
+        "classification": "product_or_code_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R128",
+        "factId": "R128-failure-chain-2",
+        "classification": "product_or_code_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      }
+    ]
+  },
+  "hunkRehydrationAb": {
+    "executed": true,
+    "sampleCount": 30,
+    "compared": {
+      "withoutRehydratedFileContext": {
+        "total": 30,
+        "firstActionMatchRate": 0.8667,
+        "criticalActionMatchRate": 0.4333,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 0.4333,
+        "taskCompletionDelta": 1,
+        "nextActionSpecificity": 1
+      },
+      "withRehydratedFileContext": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0,
+        "nextActionSpecificity": 1
+      }
+    },
+    "gate": {
+      "pass": true
+    },
+    "statisticalTests": {
+      "criticalActionMatch": {
+        "metric": "criticalActionMatch",
+        "pairedSamples": 30,
+        "meanDifference": 0.5667,
+        "medianDifference": 1,
+        "positiveDifferences": 17,
+        "negativeDifferences": 0,
+        "zeroDifferences": 13,
+        "tStatistic": 6.2634,
+        "wilcoxonDirection": "with_hunk_better",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "sample_size_ok"
+      },
+      "firstActionMatch": {
+        "metric": "firstActionMatch",
+        "pairedSamples": 30,
+        "meanDifference": 0.1333,
+        "medianDifference": 0,
+        "positiveDifferences": 4,
+        "negativeDifferences": 0,
+        "zeroDifferences": 26,
+        "tStatistic": 2.1483,
+        "wilcoxonDirection": "with_hunk_better",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "sample_size_ok"
+      },
+      "noRepeatedWork": {
+        "metric": "noRepeatedWork",
+        "pairedSamples": 30,
+        "meanDifference": 0,
+        "medianDifference": 0,
+        "positiveDifferences": 0,
+        "negativeDifferences": 0,
+        "zeroDifferences": 30,
+        "tStatistic": null,
+        "wilcoxonDirection": "tie",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "sample_size_ok"
+      },
+      "noContradictoryAction": {
+        "metric": "noContradictoryAction",
+        "pairedSamples": 30,
+        "meanDifference": 0,
+        "medianDifference": 0,
+        "positiveDifferences": 0,
+        "negativeDifferences": 0,
+        "zeroDifferences": 30,
+        "tStatistic": null,
+        "wilcoxonDirection": "tie",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "sample_size_ok"
+      }
+    },
+    "robustness": {
+      "mode": "deterministic_action_perturbation_proxy",
+      "note": "Use live temperature>0 continuation calls for stronger stochastic robustness evidence.",
+      "sampleCount": 30,
+      "deterministicTrialsPerSample": 3,
+      "actionSequenceConsistencyMean": 0.4,
+      "criticalActionStableRate": 1,
+      "firstActionStableRate": 0,
+      "fullSignatureMatchRateMean": 0.3333
+    },
+    "evidence": [
+      {
+        "sampleId": "R15",
+        "hunks": [
+          {
+            "path": "shared/i18n/locales/ja/chat.json",
+            "lineWindow": {
+              "start": 360,
+              "end": 366
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:a2f3908035c355b2",
+            "evidenceRefs": [
+              "fc_09297b6beeed46c0016a36c8f444108191a8593ad8810e6c67@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:363"
+            ]
+          },
+          {
+            "path": "shared/i18n/locales/ru/chat.json",
+            "lineWindow": {
+              "start": 361,
+              "end": 367
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:d8c3109d268b3cc1",
+            "evidenceRefs": [
+              "fc_09297b6beeed46c0016a36c8f444248191b144af387c66d877@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:364"
+            ]
+          },
+          {
+            "path": "Desktop/clawx/ClawX/shared/i18n/locales/en/chat.json",
+            "lineWindow": {
+              "start": 368,
+              "end": 374
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:ef522e1937f49d48",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:371@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:371"
+            ]
+          },
+          {
+            "path": "Desktop/clawx/ClawX/shared/i18n/locales/zh/chat.json",
+            "lineWindow": {
+              "start": 373,
+              "end": 379
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:0c163d719277c396",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:376@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:376"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R60",
+        "hunks": [
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/agent-runtime-index.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/implementation-roadmap.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/migration-execution-plan.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R13",
+        "hunks": [
+          {
+            "path": "shared/i18n/resources.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/workspace-task-ledger.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/tighten-host-events-contract-types.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/tighten-host-api-contract-types.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R19",
+        "hunks": [
+          {
+            "path": "src/styles/globals.css",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "src/lib/host-api.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "src/lib/api-client.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "docs/a2a-adaptation-plan.md",
+            "lineWindow": {
+              "start": 14,
+              "end": 20
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:f5919b2392dd3d90",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:17@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:17"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R100",
+        "hunks": [
+          {
+            "path": "src/example.ts",
+            "lineWindow": {
+              "start": 48,
+              "end": 54
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:8dca1955547b156b",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:51@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:51"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/line-c-evidence-trace-grounding-spine.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b7c21c5adec11b49",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          },
+          {
+            "path": "harness/specs/scenarios/gateway-backend-communication.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b7c21c5adec11b49",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          },
+          {
+            "path": "harness/specs/rules/active-config-guards.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b7c21c5adec11b49",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R108",
+        "hunks": [
+          {
+            "path": "openclaw_runtime/src/runtime-core/grounding.ts",
+            "lineWindow": {
+              "start": 175,
+              "end": 181
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:337bef6ed21fd88d",
+            "evidenceRefs": [
+              "fc_0fe78f0b6befa071016a3f5e0d8ff481919808c3c68010aac1@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:178"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/registries.ts",
+            "lineWindow": {
+              "start": 176,
+              "end": 182
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:67d0e98d70681c47",
+            "evidenceRefs": [
+              "fc_0fe78f0b6befa071016a3f5e0d90088191a123299d7f2fbdf4@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:179"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/types.ts",
+            "lineWindow": {
+              "start": 177,
+              "end": 183
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:69bee6a5a265f2f2",
+            "evidenceRefs": [
+              "fc_0fe78f0b6befa071016a3f5e0d90108191997dcae52268e919@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:180"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/types.ts",
+            "lineWindow": {
+              "start": 183,
+              "end": 189
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:4a5afd76f3a4112d",
+            "evidenceRefs": [
+              "fc_0baf3df1bbffd094016a3f5e1dd3f8819180e428ae177581fb@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:186"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R123",
+        "hunks": [
+          {
+            "path": ".codex/attachments/9abb1779-d9df-45ba-bbf2-da30cef90a91/pasted-text-1.txt",
+            "lineWindow": {
+              "start": 4,
+              "end": 10
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:3fa8cdf9bbee0238",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:7@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:7"
+            ]
+          },
+          {
+            "path": ".codex/attachments/9abb1779-d9df-45ba-bbf2-da30cef90a91/pasted-text-1.txt",
+            "lineWindow": {
+              "start": 5,
+              "end": 11
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:3fa8cdf9bbee0238",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:8@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:8"
+            ]
+          },
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5e9c400afab30f7d",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/AGENTS.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5e9c400afab30f7d",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R128",
+        "hunks": [
+          {
+            "path": "extensions/telegram/src/index.ts",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          },
+          {
+            "path": "src/agents/agent-run-terminal-outcome.ts",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          },
+          {
+            "path": "scripts/run-vitest.mjs",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          },
+          {
+            "path": "scripts/crabbox-wrapper.mjs",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R132",
+        "hunks": [
+          {
+            "path": ".codex/attachments/aef93b4c-144f-41ec-95a9-660f8c4cafa0/pasted-text.txt",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:99b8679df24c7cba",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:6@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:6"
+            ]
+          },
+          {
+            "path": ".codex/attachments/aef93b4c-144f-41ec-95a9-660f8c4cafa0/pasted-text.txt",
+            "lineWindow": {
+              "start": 4,
+              "end": 10
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:99b8679df24c7cba",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:7@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:7"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/memory-read-hydration-shadow.ts",
+            "lineWindow": {
+              "start": 16,
+              "end": 22
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e8fa21b4d7da3550",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19"
+            ]
+          },
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 16,
+              "end": 22
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e8fa21b4d7da3550",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R138",
+        "hunks": [
+          {
+            "path": ".codex/attachments/a117ed94-966a-4270-99f4-195a143a9388/pasted-text.txt",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b6685cc4c09b91d8",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:6@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:6"
+            ]
+          },
+          {
+            "path": ".codex/attachments/a117ed94-966a-4270-99f4-195a143a9388/pasted-text.txt",
+            "lineWindow": {
+              "start": 4,
+              "end": 10
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b6685cc4c09b91d8",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:7@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:7"
+            ]
+          },
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 12,
+              "end": 18
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e6a4a81da8f5d53c",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/AGENTS.md",
+            "lineWindow": {
+              "start": 12,
+              "end": 18
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e6a4a81da8f5d53c",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "humanEvaluation": {
+    "required": true,
+    "minimumRaters": 2,
+    "minimumSamples": 20,
+    "packSampleCount": 20,
+    "ratingsPath": null,
+    "status": "missing_ratings",
+    "message": "Human evaluation pack is available, but real developer ratings were not provided. Provide --human-eval-ratings <json|jsonl> to compute human-auto correlation.",
+    "packPath": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\output\\context-compression-eval\\2026-07-01T10-19-23-979Z\\human-eval-pack.jsonl"
+  },
+  "worstCases": [],
+  "regressionExamples": [],
+  "redactionSummary": {
+    "mode": "strict",
+    "replacements": {
+      "apiKeys": 2,
+      "authTokens": 8,
+      "authHeaders": 10,
+      "providerKeys": 5,
+      "urlTokens": 0,
+      "usernames": 5832
+    },
+    "filesScanned": 30,
+    "linesScanned": 19238
+  },
+  "acceptance": {
+    "status": "FAIL",
+    "checks": [
+      {
+        "id": "sampleCount.exact",
+        "pass": true,
+        "actual": 30,
+        "expected": "= 30"
+      },
+      {
+        "id": "samplesJsonl.exact",
+        "pass": true,
+        "actual": 30,
+        "expected": "= 30"
+      },
+      {
+        "id": "l0.recallMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l0.staleExclusionMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l1.gate",
+        "pass": true,
+        "actual": 1,
+        "expected": "all L1 thresholds"
+      },
+      {
+        "id": "informationLoss.verifiedClaimsRetentionRate",
+        "pass": true,
+        "actual": 1,
+        "expected": ">= 0.95 retained verified claims"
+      },
+      {
+        "id": "informationLoss.criticalDroppedVerifiedClaims",
+        "pass": true,
+        "actual": 0,
+        "expected": "= 0 critical verified claims dropped"
+      },
+      {
+        "id": "l2.deterministicGate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 thresholds"
+      },
+      {
+        "id": "l3.deterministicGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "L3 thresholds"
+      },
+      {
+        "id": "realCohort.notMasked",
+        "pass": true,
+        "actual": 1,
+        "expected": "real L1 gate passes independently when real samples exist"
+      },
+      {
+        "id": "manifest.exactResolve",
+        "pass": true,
+        "actual": "30/30",
+        "expected": "all manifest samples resolved"
+      },
+      {
+        "id": "cache.noSecretLeak",
+        "pass": true,
+        "actual": 0,
+        "expected": "= 0 cache secret leaks"
+      },
+      {
+        "id": "hunkRehydration.abGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "with hunk continuation metrics do not regress"
+      },
+      {
+        "id": "full.realMinCount",
+        "pass": true,
+        "actual": 30,
+        "expected": ">= 30"
+      },
+      {
+        "id": "full.realCoverage",
+        "pass": true,
+        "actual": 30,
+        "expected": "30 real samples"
+      },
+      {
+        "id": "full.pressureCoverage",
+        "pass": true,
+        "actual": 5,
+        "expected": "0.6,0.75,0.85,0.95,emergency"
+      },
+      {
+        "id": "l2.schemaFree.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "schema-free omission judge executed"
+      },
+      {
+        "id": "l2.schemaFree.majorOmissionRate",
+        "pass": false,
+        "actual": 0.3,
+        "expected": "<= 0.1 major/critical omission rate"
+      }
+    ],
+    "evidenceInsufficient": false
+  }
+}

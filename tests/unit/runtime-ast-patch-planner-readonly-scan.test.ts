@@ -42,6 +42,22 @@ describe("AST patch planner readonly scan and preview diff", () => {
     expect(result.previewDiff?.text).toContain("--- a/tests/fixtures/ast-patch-planner/alpha.ts");
     expect(result.previewDiff?.text).toContain("+  const result = useModern(input);");
     expect(result.previewDiff?.text).toContain("--- a/tests/fixtures/ast-patch-planner/beta.ts");
+    expect(result.previewDiff?.files).toEqual([
+      expect.objectContaining({
+        filePath: "tests/fixtures/ast-patch-planner/alpha.ts",
+        previewText: expect.stringContaining("useModern(input)"),
+        previewTextByteLength: expect.any(Number),
+        truncated: false,
+        replacementCount: 1,
+      }),
+      expect.objectContaining({
+        filePath: "tests/fixtures/ast-patch-planner/beta.ts",
+        previewText: expect.stringContaining("useModern(seed)"),
+        previewTextByteLength: expect.any(Number),
+        truncated: false,
+        replacementCount: 1,
+      }),
+    ]);
     expect(result.previewDiff?.hash).toMatch(/^[a-f0-9]{64}$/u);
     expect(result.checkpoint).toMatchObject({
       matchCount: 2,
@@ -129,4 +145,3 @@ function target(fileName: string) {
 function fixture(fileName: string): string {
   return readFileSync(path.join(process.cwd(), "tests/fixtures/ast-patch-planner", fileName), "utf8");
 }
-

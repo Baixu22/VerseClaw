@@ -36,6 +36,7 @@ const hostApiMock = vi.hoisted(() => ({
   workspaces: {
     update: vi.fn(),
     getActive: vi.fn(),
+    moveSessionToFolder: vi.fn(),
   },
   sessions: {
     fork: vi.fn(),
@@ -97,6 +98,7 @@ describe('workspace session helpers', () => {
     };
     workspaceState.fetchWorkspaces.mockResolvedValue(undefined);
     hostApiMock.workspaces.update.mockResolvedValue({ success: true });
+    hostApiMock.workspaces.moveSessionToFolder.mockResolvedValue({ success: true });
     hostApiMock.sessions.fork.mockResolvedValue({
       success: true,
       sessionKey: 'agent:reviewer:dashboard:fork',
@@ -164,6 +166,35 @@ describe('workspace session helpers', () => {
     expect(workspaceState.fetchWorkspaces).toHaveBeenCalledTimes(1);
     expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:session-1711111111111-4fzyo8');
     expect(chatState.newSession).not.toHaveBeenCalled();
+  });
+
+  it('keeps a newly created session in the current workgroup', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(1711111111111);
+    vi.spyOn(Math, 'random').mockReturnValue(0.123456);
+    workspaceState.activeWorkspace = {
+      ...baseWorkspace,
+      sessionFolders: [{
+        id: 'current-workgroup',
+        name: 'Current workgroup',
+        parentId: null,
+        order: 0,
+        kind: 'workgroup',
+        createdAt: 1,
+        updatedAt: 1,
+      }],
+      sessionFolderAssignments: {
+        'agent:reviewer:old': 'current-workgroup',
+      },
+    } as never;
+    const { createWorkspaceScopedNewSession } = await import('@/lib/workspace-session');
+
+    await expect(createWorkspaceScopedNewSession()).resolves.toBe('agent:reviewer:session-1711111111111-4fzyo8');
+
+    expect(hostApiMock.workspaces.moveSessionToFolder).toHaveBeenCalledWith({
+      workspaceId: 'workspace-a',
+      sessionKey: 'agent:reviewer:session-1711111111111-4fzyo8',
+      folderId: 'current-workgroup',
+    });
   });
 
   it('forks sessions through Host API and preserves non-running workspace state', async () => {

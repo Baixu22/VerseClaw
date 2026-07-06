@@ -52,6 +52,7 @@ test.describe('Verse Claw effort & intensity smoke', () => {
           id?: string;
           module?: string;
           action?: string;
+          payload?: Record<string, unknown>;
         }) => {
           const makeResponse = (data: unknown) => ({
             id: typeof request.id === 'string' ? request.id : undefined,
@@ -62,6 +63,13 @@ test.describe('Verse Claw effort & intensity smoke', () => {
             return makeResponse({ state: 'running', port: 18789, pid: 12345, gatewayReady: true });
           }
           if (request.module === 'gateway' && request.action === 'rpc') {
+            const method = typeof request.payload?.method === 'string' ? request.payload.method : '';
+            if (method === 'sessions.list') {
+              return makeResponse({ success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } });
+            }
+            if (method === 'chat.history') {
+              return makeResponse({ success: true, result: { messages: [] } });
+            }
             return makeResponse({ success: true, result: {} });
           }
           if (request.module === 'settings' && request.action === 'get') {
@@ -108,6 +116,12 @@ test.describe('Verse Claw effort & intensity smoke', () => {
       });
 
       const page = await getStableWindow(app);
+      await page.reload();
+      await expect(page.getByTestId('main-layout')).toBeVisible();
+      await app.evaluate(({ BrowserWindow }) => {
+        const win = BrowserWindow.getAllWindows()[0];
+        win?.webContents.send('gateway:status-changed', { state: 'running', port: 18789, pid: 12345, gatewayReady: true });
+      });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
       // Effort button should be visible
@@ -124,7 +138,7 @@ test.describe('Verse Claw effort & intensity smoke', () => {
 
       // 7 tick labels should be visible under the track
       const popover = page.getByTestId('chat-agent-effort-popover');
-      const tickContainer = popover.locator('.mt-2.flex.justify-between');
+      const tickContainer = popover.getByTestId('chat-agent-effort-ticks');
       await expect(tickContainer.locator('span')).toHaveCount(7);
 
       // Close with Escape
@@ -174,6 +188,13 @@ test.describe('Verse Claw effort & intensity smoke', () => {
             return makeResponse({ state: 'running', port: 18789, pid: 12345, gatewayReady: true });
           }
           if (request.module === 'gateway' && request.action === 'rpc') {
+            const method = typeof request.payload?.method === 'string' ? request.payload.method : '';
+            if (method === 'sessions.list') {
+              return makeResponse({ success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } });
+            }
+            if (method === 'chat.history') {
+              return makeResponse({ success: true, result: { messages: [] } });
+            }
             return makeResponse({ success: true, result: {} });
           }
           if (request.module === 'settings' && request.action === 'get') {
@@ -229,6 +250,12 @@ test.describe('Verse Claw effort & intensity smoke', () => {
       });
 
       const page = await getStableWindow(app);
+      await page.reload();
+      await expect(page.getByTestId('main-layout')).toBeVisible();
+      await app.evaluate(({ BrowserWindow }) => {
+        const win = BrowserWindow.getAllWindows()[0];
+        win?.webContents.send('gateway:status-changed', { state: 'running', port: 18789, pid: 12345, gatewayReady: true });
+      });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
       // Send a message; legacy Work Mode prompt overrides should no longer be

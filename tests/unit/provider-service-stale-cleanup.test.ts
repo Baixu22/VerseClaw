@@ -167,6 +167,65 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
     expect(result).toHaveLength(1);
   });
 
+  it('preserves the runtime default model when seeding a DeepSeek account from openclaw.json', async () => {
+    mocks.listProviderAccounts.mockResolvedValue([]);
+    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['deepseek']));
+    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+      providers: { deepseek: { baseUrl: 'https://api.deepseek.com/v1' } },
+      defaultModel: 'deepseek/deepseek-v4-flash',
+    });
+    mocks.getProviderDefinition.mockReturnValue({
+      id: 'deepseek',
+      name: 'DeepSeek',
+      defaultAuthMode: 'api_key',
+      defaultModelId: 'deepseek-v4-pro',
+      providerConfig: {
+        baseUrl: 'https://api.deepseek.com/v1',
+        api: 'openai-completions',
+      },
+    });
+
+    const result = await service.listAccounts();
+
+    expect(mocks.saveProviderAccount).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'deepseek',
+        vendorId: 'deepseek',
+        model: 'deepseek/deepseek-v4-flash',
+      }),
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(expect.objectContaining({
+      id: 'deepseek',
+      model: 'deepseek/deepseek-v4-flash',
+    }));
+  });
+
+  it('does not overwrite a configured account model from a stale runtime default model', async () => {
+    mocks.listProviderAccounts.mockResolvedValue([
+      makeAccount({
+        id: 'deepseek',
+        vendorId: 'deepseek' as ProviderAccount['vendorId'],
+        label: 'DeepSeek',
+        model: 'deepseek/deepseek-v4-flash',
+      }),
+    ]);
+    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['deepseek']));
+    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+      providers: { deepseek: { baseUrl: 'https://api.deepseek.com/v1' } },
+      defaultModel: 'deepseek/deepseek-v4-pro',
+    });
+
+    const result = await service.listAccounts();
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(expect.objectContaining({
+      id: 'deepseek',
+      model: 'deepseek/deepseek-v4-flash',
+    }));
+    expect(mocks.saveProviderAccount).not.toHaveBeenCalled();
+  });
+
   it('uses store metadata when match exists (does not re-seed)', async () => {
     mocks.listProviderAccounts.mockResolvedValue([
       makeAccount({ id: 'moonshot', vendorId: 'moonshot' as ProviderAccount['vendorId'], label: 'My Moonshot' }),

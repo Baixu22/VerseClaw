@@ -35,6 +35,10 @@
 
 ---
 
+## Capability Claim Boundary
+
+Product capability statements must be checked against the canonical matrix in `shared/capability-claims.ts` and the generated status table in `artifacts/capability-claims/status-table.json` before being described as implemented, productized, stable, or end-to-end verified. The local gate `node scripts/check-capability-claims.mjs <files>` warns when high-confidence claims lack matrix, E2E, or real-runtime evidence.
+
 ## 概要
 
 **Verse Claw**は、強力なAIエージェントと日常のユーザーとの間のギャップを埋めます。[OpenClaw](https://github.com/OpenClaw)をベースに構築されており、コマンドラインによるAIオーケストレーションを、アクセスしやすく美しいデスクトップ体験に変換します。ターミナルは不要です。
@@ -104,8 +108,6 @@ Verse Clawは公式の**OpenClaw**コアを直接ベースに構築されてい�
 
 開発者モードを有効にすると、サイドバーにはネイティブの Dreams ページも表示され、Verse Claw 内で OpenClaw の記憶レビュー、夢日記、基本メンテナンス操作を扱えます。詳細な診断が必要な場合は、そのページから完全版の OpenClaw Dreams UI も開けます。
 
-`plugins.slots.contextEngine` が明示されていない場合、OpenClaw runtime はバックエンドの Context Runtime Kit を既定で使用します。CRK は selector に基づく有界な prompt / recovery 診断を追加しつつ、`legacy` を fallback として保持します。UI 変更なしで戻すには `runtime.contextRuntimeKit.enabled: false`、または `plugins.slots.contextEngine: "legacy"` を設定します。Tool-call gate の診断は report-only のままです。
-
 ---
 
 ## 機能
@@ -115,7 +117,10 @@ Verse Clawは公式の**OpenClaw**コアを直接ベースに構築されてい�
 
 ### 💬 インテリジェントチャットインターフェース
 モダンなチャット体験を通じてAIエージェントとコミュニケーションできます。複数の会話コンテキスト、メッセージ履歴、Markdownによるリッチコンテンツレンダリング（GitHub 風テーブルや KaTeX による LaTeX 数式 `$インライン$`、`$$ブロック$$`、`\(インライン\)`、`\[ブロック\]` を含む）、計画・選択肢リスト・質問フロー・設定向けの構造化 Tool UI カードに加え、マルチエージェント構成ではメイン入力欄の `@agent` から対象エージェントへ直接ルーティングできます。
+推論強度はランタイムポリシーとしても使われます。minimal/low は prompt、Skill、tool result の注入密度を下げて低コストで簡潔なターンにし、high/xhigh は明示的な `/loop`、ClawGraph、role/subagent、multi-model workflow を提案できますが、権限やツール authority は変更しません。
+左サイドバーには Workgroups ビューがあり、workspace 単位のタスクグループで会話を整理し、実行中・待機中・要対応などの集約状態を表示し、未分類の会話も残したまま、新しい workspace スコープの会話に現在のワークグループを継承させます。
 設定 → 作業モード では Plan、Build、Review、Docs/Data の作業モードを管理できます。モードは workspace session ごとに保存され、レポート、表計算、スライド、PDF、調査、Webサイト、デザイン、日常業務向けの成果物中心の Work Kits を設定できます。Kit 状態はローカル skill の準備状況、Main 所有の軽量 Office/Search Work Provider 状態、内蔵 Office skill の明示的なインストール操作を表示します。Work Provider は内蔵ライブラリ、任意パッケージ、外部サービス、Custom HTTP、外部バイナリ、runtime skill、MCP server、OpenClaw plugin を同じ source model で扱えます。Search はユーザーが provider を明示設定するまで `missingConfig` のままで、重い変換、crawler、OCR、dataframe runtime は任意のインターフェースとして扱います。次のメッセージには軽量な未信頼の意図 metadata だけが添付されます。workspace permission を自動変更したり、OpenClaw runtime のツールポリシーを上書きしたりはしません。
+OfficeCLI も 設定 -> スキル -> 機能プラグイン から管理できます。Verse Claw はバイナリを検出し、インストールログをストリーミングし、Codeg 互換の `/officecli-*` スキルを同期し、`officecli watch` で `.docx`、`.xlsx`、`.pptx` をライブプレビューします。
 コンポーザーから挿入した Skill は `/skill-name` 形式のチップとして表示され、チップをクリックすると右側のプレビュー側欄でその Skill の `SKILL.md` を開けます。
 コンポーザーで `/` を入力すると、Context Palette が開き、Wiki 検索、読み取り専用ナレッジ範囲の変更、レビュー、CI 修復、テスト作成、diff 説明、Task Ledger、Mission Control、圧縮、セッション fork のクイックアクションを使えます。いずれも既存の Chat / Session フローを使います。
 `@agent` で別のエージェントを選ぶと、Verse Claw はデフォルトエージェントを経由せず、そのエージェント自身の会話コンテキストへ直接切り替えます。各エージェントのワークスペースは既定で分離されていますが、より強い実行時分離は OpenClaw の sandbox 設定に依存します。
@@ -123,7 +128,7 @@ Verse Claw は既定で軽量な `policy-light` サンドボックス層を使�
 Settings、Doctor、diagnostics は同じ effective sandbox policy を表示し、要求/有効 provider、runtime level、exec/network policy、Docker の利用可否、縮退理由を確認できます。
 Settings → System & Runtime には Project Rules Center もあり、現在の workspace の `AGENTS.md` を確認し、`.clawx/rules/*.md` を一覧表示し、決定的な検証 warning を示し、欠落時には新しいルール真実源を作らずに保守的な `AGENTS.md` テンプレートを作成できます。
 各 Agent は `provider/model` の実行時設定を個別に上書きできます。上書きしていない Agent は引き続きグローバルの既定モデルを継承します。
-コンポーザーのコンテキスト状態には、確認付きの「現在のセッションを圧縮」操作が追加され、トークン圧力、非表示メッセージ数、前回の圧縮時刻、圧縮品質を確認できます。長期タスク状態は巨大な transcript に依存せず、Task Ledger / Context Pack に保持します。圧縮は高密度 recovery artifact も保存し、Handoff は transcript 証拠へ戻る前にそれを優先して使います。
+コンポーザーのコンテキスト状態には、確認付きの「現在のセッションを圧縮」操作が追加され、トークン圧力、非表示メッセージ数、前回の圧縮時刻、圧縮品質を確認できます。長期タスク状態は巨大な transcript に依存せず、Task Ledger / Context Pack に保持します。圧縮は高密度 recovery artifact も保存し、Handoff は transcript 証拠へ戻る前にそれを優先して使います。Runtime はまず手動または明示 opt-in の圧縮で段階的な tiered compression plan を使い、自動圧縮は品質ゲートで安定が確認されるまで telemetry を記録するだけです。
 コンポーザーは長い会話の checkpoint 回復状態も表示します。キュー済みフォローアップ、最新の介入/checkpoint、回復警告、そしてセッションがアイドルのときに永続化されたキューを今送信する操作を確認でき、これらのキューは Gateway 再起動後も復元できます。
 Chat のロールバック計画はレビュー優先の復旧パネルとして、安全/確認/危険の件数、チェックポイント、キュー、コンテキスト、ターミナル、Git、Task Ledger、メモリ信号を表示します。破壊的操作は承認付きツールへ誘導し、メモリ事実は Knowledge draft または proposal にします。
 
@@ -147,7 +152,7 @@ Observability ページは、Verse Claw 管理のローカル JSON/JSONL trace �
 Runtime には、Gateway から見える `tools.invoke` 呼び出しと runtime validation input 向けの security / verification shadow layer もあります。既定では無効で、ポリシーで有効にすると、マスク済みのインメモリ security decision、tool-call/event-log/checkpoint の deterministic verification summary、runId で相関できる result filter、集計 health count を `security.*` / `verification.*` RPC と追加 Observability span に記録します。ツールをブロックせず、外部テストや LLM judge を実行せず、raw tool args/result/events/checkpoints も永続化しません。
 
 ### タスク台帳
-Task Ledger ページは、長期作業のために workspace 単位かつ Agent 中立の構造化記録を保持します。目標、サブタスク、依存関係、ブロック、レビュー対象、決定、逸脱、セッションリンクを append-only JSONL イベントとしてローカル OpenClaw 設定ディレクトリに保存し、Chat のワークコンテキストバーに要約を表示し、Tree、DAG、History、Review を含む単一のオフライン HTML として出力できます。
+Task Ledger ページは、長期作業のために workspace 単位かつ Agent 中立の構造化記録を保持します。目標、サブタスク、依存関係、ブロック、レビュー対象、決定、逸脱、セッションリンクを append-only JSONL イベントとしてローカル OpenClaw 設定ディレクトリに保存し、Chat の横に要約を表示し、Tree、DAG、History、Review を含む単一のオフライン HTML として出力できます。
 
 ### リモートタスク
 Remote Tasks ページは、メッセージ、OpenClaw Doctor、設定パッチの構造化タスクを扱うローカル優先の受信箱です。設定パッチは変更プレビューを表示し、ユーザーが明示的に承認した後にだけ Main プロセスが許可リスト内の設定更新を適用します。
@@ -156,12 +161,11 @@ Remote Tasks ページは、メッセージ、OpenClaw Doctor、設定パッチ�
 Review Center は、未コミット変更、ベースブランチとの差分、または指定 commit に対して読み取り専用の AI review を実行します。severity 付きの findings、file/line アンカー、サニタイズ済み review trace を生成し、finding または review 全体を Task Ledger review node に変換できます。stage、commit、ファイル編集は行いません。
 
 ### Knowledge Hub
-Knowledge には、SEKB の trajectories、未蒸留の runs、有効な principles、index preview を確認する読み取り専用の Runtime Lessons ビューが含まれます。
-
 Knowledge ページは OpenClaw `memory-wiki` を通じて、出典付き wiki コンテキストを管理します。既定では Verse Claw 管理の隔離 native vault を使い、unsafe local-vault モードへ切り替えずに、制限されたテキストファイルやフォルダーを取り込めます。また、ローカル OKF v0.1 Markdown bundle を検証して `wiki.ingest` 上の薄い互換アダプターとしてインポートできます。状態確認、検索、結果確認、compile、lint、Knowledge Inbox、draft/proposal レビュー、provenance、ガバナンスの流れを備えています。Inbox は Chat、Task Ledger、ファイル、OKF、ClawGraph、agent 由来の候補知識を正式な wiki の外に保持し、ユーザーがドラフトへ昇格または破棄するまで書き込みません。provenance は出典参照と読み取り/参照イベントだけを記録し、wiki ページを変更しません。Chat の知識範囲（`None`、`Memory`、`Wiki`、`All`）は読み取り範囲だけを表します。Agent は search/get で文脈を読めますが、scope が有効でも書き込み、更新、アーカイブ、削除、マージ、apply はできません。Chat では `/wiki` で検索し、明示的な wiki 参照を visible chip として添付してから送信できます。`/memory`、`/all`、`/none`、`/scope` は読み取り範囲だけを変更し、書き込み権限にはなりません。知識呼び出しモードの既定は Suggest で、関連知識は任意の chip として表示されます。Auto-read は明示的に有効化した場合のみ、少数の新しく高信頼な読み取り専用参照を添付します。セッション由来の知識や agent/Knowledge Steward の提案は編集可能な draft/proposal に入り、ユーザーの明示的な確認後にだけ wiki へ適用されます。Obsidian は任意の拡張であり、必須依存ではありません。ガバナンスダッシュボードはオンデマンドの健全性チェックにより矛盾、陳腐化、未解決参照を可視化します。監視ディレクトリはプロジェクト文書を pending Inbox にだけ入れ、正式な wiki への direct-ingest や synthesis 作成は自動実行しません。
 
 ### Workspace Git コントロール
-現在の workspace が Git リポジトリの場合、Chat 入力欄にはコンパクトな Git strip が表示され、branch、clean/dirty/conflict 状態、ahead/behind 数、現在の worktree フォルダーを確認できます。ドロップダウンではリポジトリ状態の更新、branch 検索と checkout、新しい branch の作成と checkout、既定パスプレビュー付きの兄弟 worktree 追加、worktree workspace profile への切り替え、完全な Git ワークベンチの表示ができます。Workspace サイドバーの Git ワークベンチは、リポジトリ状態、side-by-side ファイル diff、stage、patch コピー、承認付きのファイル revert、commit、branch、stash、worktree、GitHub Pull Request の完全な操作面として残ります。同じ Main プロセスの Git service が UI と組み込み `clawx-git` MCP server を支えるため、Agent は shell コマンドを直接組み立てず、Verse Claw の権限管理を通じて制御された Git / PR ツールを呼び出します。revert、pull、push、worktree remove/prune、PR 作成など状態を書き換えたり公開したりする操作は承認付きです。
+Workspace サイドバーはまずコンパクトな入口ランチャーを開きます。現在の workspace が Git リポジトリの場合だけ Review 入口が表示され、Git ではないプロジェクトには Git コントロールを表示しません。
+Workspace サイドバーには Git ワークベンチがあり、リポジトリ状態、side-by-side ファイル diff、stage、patch コピー、承認付きのファイル revert、commit、branch、stash、worktree、GitHub Pull Request を扱えます。上部の readiness strip はローカル Git、組み込み Agent Git tools、worktree 数、`gh` 認証状態を数値化し、今使える能力をその場で確認できます。Worktree 追加は新規 branch と既存 branch の両方に対応し、新しい worktree は既定でリポジトリの隣に作られます。同じ Main プロセスの Git service が組み込み `clawx-git` MCP server も支えるため、Agent は shell コマンドを直接組み立てず、Verse Claw の権限管理を通じて制御された Git / PR ツールを呼び出します。revert、pull、push、worktree remove/prune、PR 作成など状態を書き換えたり公開したりする操作は承認付きです。
 
 ### 📡 マルチチャネル管理
 複数のAIチャネルを同時に設定・監視できます。各チャネルは独立して動作するため、異なるタスクに特化したエージェントを実行できます。
@@ -421,7 +425,24 @@ pnpm harness context --spec harness/specs/tasks/connect-clawx-to-openclaw-runtim
 pnpm harness validate --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 
 # Agent dev/test control plane
-pnpm agent-dev:make e2e my-scenario
+pnpm agent-dev:make <page|e2e|host-route|skill|channel|plugin|scenario> my-scenario
+# scenario scaffolds register shared/agent-dev/scenarios.ts and generate snapshot-backed E2E
+pnpm contract:check
+pnpm i18n:lint
+pnpm channel:conformance my-channel
+pnpm agent-dev:workbench
+pnpm agent-dev:promote-scenario artifacts/agent-dev-scenarios/example.scenario.json my-scenario
+pnpm agent-dev:deep-test
+pnpm agent-dev:deep-test:reuse     # 日常ループ: build 再利用、cached typecheck、Workbench E2E smoke
+pnpm agent-dev:deep-test:reuse:full  # build と cached typecheck を再利用しつつ full Agent Dev E2E を実行
+pnpm agent-dev:audit               # 既存 evidence から Agent Dev maturity を採点
+pnpm agent-dev:audit:report        # 同じ audit report を生成するが shell は失敗させない
+pnpm agent-dev:unit:fast           # 日常ユニット高速パス。レビュー証跡は agent-dev:unit を使用
+pnpm run typecheck:agent-dev       # node+web typecheck を並列実行する日常ループ
+pnpm run test:e2e:agent-dev-quality:smoke  # Workbench E2E smoke ループのみ
+pnpm run typecheck:cached          # Fingerprint-cached repeat typecheck for local diagnosis
+pnpm run typecheck:force           # Force a fresh uncached typecheck cache refresh
+pnpm agent-dev:validate
 
 # ビルド＆パッケージ
 pnpm run build:vite       # フロントエンドのみビルド
@@ -434,7 +455,7 @@ pnpm package:linux        # Linux向けにパッケージ化
 
 Verse Claw は active project workspace と OpenClaw agent workspace に `.clawx/harness/` の project harness ドキュメント骨格を生成します。rules、scenarios、task contracts、guides、layers、context-pack recipes、Task Ledger bridge docs を Verse Claw 独自の構造で扱い、並行する `.trellis/` や Markdown タスク状態の事実源は作りません。
 
-Agent が作成するページ開発と機能テストでは、typed `hostApi.agentDev` control plane を使って state seed、`?devScenario=...`、host-api record/replay、diagnostics snapshot、transport trace、visual preset、selector contract を扱えます。詳しくは [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md) を参照してください。
+Agent が作成するページ開発と機能テストでは、typed `hostApi.agentDev` control plane を使って state seed、`?devScenario=...`、host-api record/replay、diagnostics snapshot、transport trace、visual preset、selector contract を扱えます。deep-test report には machine-readable な `decision` と rolling timing history evidence も含まれます。詳しくは [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md) を参照してください。
 
 ヘッドレス Linux では Electron テストに表示サーバーが必要です。`xvfb-run -a pnpm run test:e2e` を利用してください。
 

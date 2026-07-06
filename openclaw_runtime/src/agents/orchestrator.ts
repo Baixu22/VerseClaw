@@ -16,6 +16,14 @@ import {
   type RouteDiagnostics,
   type WorkerCommunicationPolicy,
 } from "./orchestration-protocol.js";
+import {
+  buildMemoShadowReason,
+  computeTaskDigest,
+  recallRoutingMemos,
+  resolveRoutingMemoAuthority,
+  resolveRoutingMemoPilotMode,
+  type OrchestrationQualityState,
+} from "./routing-memo.js";
 
 export type OrchestratorRequest = {
   task: string;
@@ -34,11 +42,20 @@ export type OrchestratorRequest = {
   /** Config carrier used to resolve config-defined team templates. */
   cfg?: { agents?: { teams?: unknown } };
   qualityPolicy?: OrchestrationQualityPolicy;
+  qualityState?: OrchestrationQualityState | null;
   repairPolicy?: OrchestrationRepairPolicy;
   workerCommunication?: WorkerCommunicationPolicy;
   allowFollowupPlanning?: boolean;
   graphMode?: OrchestrationGraphMode;
   allowAutoRepair?: boolean;
+  /**
+   * Area 3 §3.1: workspace directory for the routing memo store. When present
+   * and the routing memo pilot is enabled (`runtime.orchestration.routingMemoPilot`),
+   * `createOrchestratorPlan` recalls similar-task memos and either writes
+   * `memo-shadow:...` reasons (shadow phase) or adjusts scores (active phase).
+   * Undefined → memo recall/record is skipped (degrade to today).
+   */
+  workspaceDir?: string;
 };
 
 export type OrchestratorWorkerPlan = {
@@ -282,12 +299,37 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
   if (template) {
     return createTemplatePlan(request, template);
   }
+  // Area 3 §3.1: recall routing memos for similar tasks. Shadow phase writes
+  // `memo-shadow:...` reasons only (scores unchanged, byte-identical routing);
+  // active phase applies bounded ±2/−1 score adjustments to the primary match
+  // inside scoreRole. Both phases degrade to today's routing when the pilot is
+  // off, workspaceDir is absent, or recall returns no matches.
+  const memoPilotMode = resolveRoutingMemoPilotMode(request.cfg);
+  const memoAuthority = resolveRoutingMemoAuthority({
+    pilotMode: memoPilotMode,
+    qualityState: request.qualityState ?? null,
+  });
+  const effectiveMemoMode = memoAuthority.authority;
+  const memoMatches = effectiveMemoMode !== "off" && request.workspaceDir
+    ? recallRoutingMemos(
+        computeTaskDigest(request.task, request.fileHints ?? []),
+        request.workspaceDir,
+      )
+    : [];
+  const memoSignal = effectiveMemoMode !== "off" && memoMatches.length > 0
+    ? { matches: memoMatches, mode: effectiveMemoMode }
+    : undefined;
   const route = routeRole({
     task: request.task,
     fileHints: request.fileHints,
     important: request.important,
     availableRoles,
+    memoSignal,
   });
+  // Shadow phase: append `memo-shadow:...` reasons (scores already unchanged).
+  const memoShadowReasons = effectiveMemoMode === "shadow"
+    ? memoMatches.map((match) => buildMemoShadowReason(match))
+    : [];
   // Honor a caller-pinned lead role when it exists in the available pool.
   // In router mode it replaces the primary worker; in team mode it only
   // overrides the leadRole attribution (workers stay as routed).
@@ -297,6 +339,7 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
   const reasons = [
     `primary:${route.primary.role.name}`,
     ...route.primary.reasons,
+    ...memoShadowReasons,
   ];
   if (preferredLeadKnown) {
     reasons.push(`preferred-lead:${preferredLeadRole}`);

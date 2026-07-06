@@ -1,16 +1,10 @@
-import { Type, type Static } from '@sinclair/typebox';
+import { Type, type Static, type TSchema } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
+import { AGENT_DEV_SCENARIO_IDS } from '@shared/agent-dev/scenarios';
 
-const ScenarioIdSchema = Type.Union([
-  Type.Literal('chat-empty'),
-  Type.Literal('chat-streaming'),
-  Type.Literal('models-heavy-usage'),
-  Type.Literal('settings-provider-error'),
-  Type.Literal('doctor-failed'),
-  Type.Literal('gateway-connecting'),
-  Type.Literal('knowledge-drafts'),
-  Type.Literal('observability-trace-errors'),
-]);
+const ScenarioIdSchema = Type.Union(
+  AGENT_DEV_SCENARIO_IDS.map((id) => Type.Literal(id)) as unknown as [TSchema, TSchema, ...TSchema[]],
+);
 
 const JsonRecordSchema = Type.Record(Type.String(), Type.Unknown());
 
@@ -69,9 +63,18 @@ export const AgentDevFeatureFlagsPayloadSchema = Type.Object({
   merge: Type.Optional(Type.Boolean()),
 }, { additionalProperties: false });
 
+export const AgentDevRecordScenarioPayloadSchema = Type.Partial(Type.Object({
+  slug: Type.String(),
+  route: Type.String(),
+  language: Type.String(),
+  theme: Type.String(),
+  visibleState: JsonRecordSchema,
+}, { additionalProperties: false }));
+
 export type AgentDevSeedStatePayloadSchemaType = Static<typeof AgentDevSeedStatePayloadSchema>;
 export type AgentDevMockReplayConfigSchemaType = Static<typeof AgentDevMockReplayConfigSchema>;
 export type AgentDevFeatureFlagsPayloadSchemaType = Static<typeof AgentDevFeatureFlagsPayloadSchema>;
+export type AgentDevRecordScenarioPayloadSchemaType = Static<typeof AgentDevRecordScenarioPayloadSchema>;
 
 function formatValueErrors(schema: unknown, value: unknown): string {
   return [...Value.Errors(schema as never, value)]
@@ -95,5 +98,11 @@ export function assertAgentDevMockReplayConfig(value: unknown): asserts value is
 export function assertAgentDevFeatureFlagsPayload(value: unknown): asserts value is AgentDevFeatureFlagsPayloadSchemaType {
   if (!Value.Check(AgentDevFeatureFlagsPayloadSchema, value ?? {})) {
     throw new Error(`Invalid agentDev.setFeatureFlags payload: ${formatValueErrors(AgentDevFeatureFlagsPayloadSchema, value ?? {})}`);
+  }
+}
+
+export function assertAgentDevRecordScenarioPayload(value: unknown): asserts value is AgentDevRecordScenarioPayloadSchemaType {
+  if (!Value.Check(AgentDevRecordScenarioPayloadSchema, value ?? {})) {
+    throw new Error(`Invalid agentDev.recordScenario payload: ${formatValueErrors(AgentDevRecordScenarioPayloadSchema, value ?? {})}`);
   }
 }

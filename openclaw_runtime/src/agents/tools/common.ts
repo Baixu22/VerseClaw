@@ -21,6 +21,7 @@ import type {
   AgentToolUpdateCallback,
 } from "../runtime/index.js";
 import { sanitizeToolResultImages } from "../tool-images.js";
+import type { WriteRiskProfile } from "../../shared/tool-registration.js";
 
 export type AgentToolWithMeta<TParameters extends TSchema, TResult> = AgentTool<
   TParameters,
@@ -32,6 +33,16 @@ export type AgentToolWithMeta<TParameters extends TSchema, TResult> = AgentTool<
     ctx: { toolCallId?: string; hookContext?: unknown; signal?: AbortSignal },
   ) => unknown;
   finalizeBeforeToolCallParams?: (params: unknown, preparedParams: unknown) => unknown;
+  /**
+   * A1 Stage 2 (acceptance 2.1): tool risk level for write-path enforcement.
+   * Optional — defaults to "readonly" when omitted.
+   */
+  risk?: "readonly" | "write" | "destructive";
+  /**
+   * A1 Stage 2 (acceptance 2.1): static declaration of write paths.
+   * Required when `risk` is "write" or "destructive".
+   */
+  writeRiskProfile?: WriteRiskProfile;
 };
 
 type ErasedAgentToolExecute = {
@@ -55,6 +66,10 @@ export type AnyAgentTool = Omit<AgentTool, "execute"> &
       TSchema,
       unknown
     >["finalizeBeforeToolCallParams"];
+    /** A1 Stage 2: tool risk level (defaults to "readonly"). */
+    risk?: "readonly" | "write" | "destructive";
+    /** A1 Stage 2: static write-path declaration. */
+    writeRiskProfile?: WriteRiskProfile;
   };
 
 export function asToolParamsRecord(params: unknown): Record<string, unknown> {

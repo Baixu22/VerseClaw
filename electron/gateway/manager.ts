@@ -7,6 +7,7 @@ import path from 'path';
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
 import { PORTS } from '../utils/config';
+import { getSetting } from '../utils/store';
 import { JsonRpcNotification, isNotification, isResponse } from './protocol';
 import { logger } from '../utils/logger';
 import { captureTelemetryEvent, trackMetric } from '../utils/telemetry';
@@ -390,6 +391,24 @@ export class GatewayManager extends EventEmitter {
     const message = error instanceof Error ? error.message : String(error);
     return /unknown method:\s*shutdown/i.test(message);
   }
+
+  private async refreshConfiguredPort(): Promise<void> {
+    try {
+      const configuredPort = await getSetting('gatewayPort');
+      if (
+        typeof configuredPort === 'number'
+        && Number.isInteger(configuredPort)
+        && configuredPort > 0
+        && configuredPort <= 65535
+        && configuredPort !== this.status.port
+      ) {
+        this.setStatus({ port: configuredPort });
+      }
+    } catch (error) {
+      logger.warn('Failed to read configured Gateway port:', error);
+    }
+  }
+
   /**
    * Get current Gateway status
    */
@@ -437,6 +456,7 @@ export class GatewayManager extends EventEmitter {
 
     this.startLock = true;
     const startEpoch = this.lifecycleController.bump('start');
+    await this.refreshConfiguredPort();
     logger.info(`Gateway start requested (port=${this.status.port})`);
     this.lastSpawnSummary = null;
     this.shouldReconnect = true;
@@ -993,6 +1013,9 @@ export class GatewayManager extends EventEmitter {
 
       // Set timeout for request
       const timeout = setTimeout(() => {
+        if (method === 'chat.send') {
+          logger.warn(`[gateway-rpc] chat.send timeout id=${id} timeoutMs=${timeoutMs}`);
+        }
         rejectPendingGatewayRequest(this.pendingRequests, id, new Error(`RPC timeout: ${method}`));
       }, timeoutMs);
 
@@ -1018,11 +1041,28 @@ export class GatewayManager extends EventEmitter {
             frame: redactGatewayFrameForTrace(request),
           });
         }
-        this.ws.send(JSON.stringify(request));
+        const serializedRequest = JSON.stringify(request);
+        if (method === 'chat.send') {
+          logger.info(
+            `[gateway-rpc] chat.send serialized id=${id} timeoutMs=${timeoutMs} bytes=${Buffer.byteLength(serializedRequest)}`,
+          );
+        }
+        this.ws.send(serializedRequest, (error) => {
+          if (method === 'chat.send') {
+            if (error) {
+              logger.error(`[gateway-rpc] chat.send ws.send callback error id=${id}: ${String(error)}`);
+            } else {
+              logger.info(`[gateway-rpc] chat.send ws.send callback ok id=${id}`);
+            }
+          }
+        });
       } catch (error) {
         rejectPendingGatewayRequest(this.pendingRequests, id, new Error(`Failed to send RPC request: ${error}`));
       }
     }).then((result) => {
+      if (method === 'chat.send') {
+        logger.info(`[gateway-rpc] chat.send response id received durationMs=${Date.now() - startedAt}`);
+      }
       this.recordRpcSuccess();
       if (isCoreRpcMethod(method)) {
         this.capabilityMonitor.recordCoreProbe({

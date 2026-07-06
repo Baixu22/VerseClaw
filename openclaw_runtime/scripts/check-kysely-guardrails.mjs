@@ -46,6 +46,11 @@ const rawSqliteAllowPathGroups = {
   ],
   "backup snapshot maintenance": ["src/commands/backup-verify.ts", "src/infra/backup-create.ts"],
   "doctor legacy state migration": ["src/infra/state-migrations.ts"],
+  "runtime memory SQLite boundaries pending Kysely migration": [
+    "src/memory/memory-store.ts",
+    "src/runtime-core/memory-persistence.ts",
+    "src/runtime-core/memory-read-hydration-shadow.ts",
+  ],
   "Kysely-backed stores that own a DatabaseSync boundary": [
     "src/acp/event-ledger.ts",
     "src/agents/subagent-registry.store.ts",

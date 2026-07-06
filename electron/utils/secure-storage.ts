@@ -140,14 +140,18 @@ export async function saveProvider(config: ProviderConfig): Promise<void> {
  */
 export async function getProvider(providerId: string): Promise<ProviderConfig | null> {
   await ensureProviderStoreMigrated();
+  const account = await getProviderAccount(providerId);
+  if (account) {
+    return providerAccountToConfig(account);
+  }
+
   const s = await getClawXProviderStore();
   const providers = s.get('providers') as Record<string, ProviderConfig>;
   if (providers[providerId]) {
     return providers[providerId];
   }
 
-  const account = await getProviderAccount(providerId);
-  return account ? providerAccountToConfig(account) : null;
+  return null;
 }
 
 /**
@@ -155,15 +159,15 @@ export async function getProvider(providerId: string): Promise<ProviderConfig | 
  */
 export async function getAllProviders(): Promise<ProviderConfig[]> {
   await ensureProviderStoreMigrated();
+  const accounts = await listProviderAccounts();
+  if (accounts.length > 0) {
+    return accounts.map(providerAccountToConfig);
+  }
+
   const s = await getClawXProviderStore();
   const providers = s.get('providers') as Record<string, ProviderConfig>;
   const legacyProviders = Object.values(providers);
-  if (legacyProviders.length > 0) {
-    return legacyProviders;
-  }
-
-  const accounts = await listProviderAccounts();
-  return accounts.map(providerAccountToConfig);
+  return legacyProviders;
 }
 
 /**

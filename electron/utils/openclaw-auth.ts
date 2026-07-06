@@ -2435,6 +2435,25 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     const config: Record<string, unknown> = rawConfig;
     let modified = false;
 
+    // agents.list[].reasoningEffort was a Verse Claw UI key from an older
+    // mapping. OpenClaw's strict agent schema accepts thinkingDefault instead.
+    const agents = config.agents;
+    if (agents && typeof agents === 'object' && !Array.isArray(agents)) {
+      const agentsObj = agents as Record<string, unknown>;
+      if (Array.isArray(agentsObj.list)) {
+        for (const entry of agentsObj.list) {
+          if (entry && typeof entry === 'object' && !Array.isArray(entry)) {
+            const agentEntry = entry as Record<string, unknown>;
+            if ('reasoningEffort' in agentEntry) {
+              console.log('[sanitize] Removing legacy agents.list[].reasoningEffort from openclaw.json');
+              delete agentEntry.reasoningEffort;
+              modified = true;
+            }
+          }
+        }
+      }
+    }
+
     // ── skills section ──────────────────────────────────────────────
     // OpenClaw's Zod schema uses .strict() on the skills object, accepting
     // only: allowBundled, load, install, limits, entries.

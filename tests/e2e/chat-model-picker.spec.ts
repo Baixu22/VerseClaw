@@ -162,6 +162,7 @@ test.describe('Verse Claw chat model picker', () => {
         win?.webContents.send('gateway:status-changed', { state: 'running', port: 18789, pid: 12345, gatewayReady: true });
       });
 
+      await expect(page.getByTestId('chat-model-picker-button')).toBeVisible();
       await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-alpha');
       await page.getByTestId('chat-model-picker-button').click();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();

@@ -1,0 +1,22 @@
+{
+  "source": "output/imagegen/clawx-clawling-app-icon-master-v1.png",
+  "generatedAt": "2026-06-30T15:52:13.254Z",
+  "rule": "Clawling mascot app icon system. Light and dark assets share the same colorful self-contained rounded-square icon for consistent recognition across themes.",
+  "variants": {
+    "clawling-app-icon-master-1024.png": "Clean generated app icon master with transparent rounded corners.",
+    "logo-app-1024.png": "General app icon master.",
+    "logo-dock-1024.png": "Dock/taskbar source used by scripts/generate-icons.mjs.",
+    "logo-sidebar-256.png": "In-app sidebar/setup source.",
+    "logo-menubar-128.png": "Tray/menu source.",
+    "logo-favicon-64.png": "64px favicon/web preview.",
+    "logo-favicon-32.png": "32px favicon.",
+    "logo-favicon-16.png": "16px favicon.",
+    "logo-app.ico": "Windows icon container generated from app master.",
+    "logo-app.icns": "macOS icon container generated from app master."
+  },
+  "theme": {
+    "light": "full-color Clawling icon on transparent rounded-square canvas",
+    "dark": "same full-color icon for recognition on dark UI"
+  },
+  "sourceBoard": "output/imagegen/clawx-logo-silhouette-system-v1.png"
+}

@@ -6,6 +6,7 @@ import type {
   LongConversationValidationState,
 } from "../long-conversation-control-signals.js";
 import type { TaskLoopRunResult } from "../task-loop-controller.js";
+import type { AnomalyPattern } from "../anomaly-classifier.js";
 import type { MissionContextPack } from "./context.js";
 
 export type MissionStatus =
@@ -209,6 +210,16 @@ export type MissionReviewerInput = {
   reviewer?: MissionConfig["reviewer"];
   cfg?: unknown;
   agentId?: string;
+  /**
+   * A3 Round 2: classified anomaly pattern, injected by `classifyAnomalyPattern`
+   * (pure function). OPTIONAL and advisory — the reviewer MAY ignore it
+   * (observe-only honesty, area-3-runtime-resilience.md §9.1).
+   *
+   * Flag-off parity: when the A3 flag is off, this field is `undefined` and
+   * the reviewer behaves exactly as before. When non-null, the reviewer SHOULD
+   * consider the pattern in its reasoning but is NOT required to act on it.
+   */
+  anomalyPattern?: AnomalyPattern;
 };
 
 export type MissionReviewerDeps = {

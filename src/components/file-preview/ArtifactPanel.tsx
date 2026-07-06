@@ -16,9 +16,9 @@
  * `useArtifactPanel` zustand store so any part of the page (file cards,
  * toolbar buttons, "View file changes →" links) can drive it.
  */
-import { useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Eye, FileEdit, FolderOpen, FolderTree, GitBranch, Globe, History, Layers, TerminalSquare, X } from 'lucide-react';
+import { ArrowLeft, Eye, FileEdit, FolderOpen, FolderTree, GitBranch, Globe, History, Layers, Plus, TerminalSquare, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,7 @@ import { supportsRichDocumentPreview, type GeneratedFile } from '@/lib/generated
 import { hostApi } from '@/lib/host-api';
 import type { AgentSummary } from '@/types/agent';
 import { useArtifactPanel } from '@/stores/artifact-panel';
+import { useWorkspacesStore } from '@/stores/workspaces';
 import type { FilePreviewTarget } from './types';
 import { FilePreviewBody } from './FilePreviewBody';
 import { WorkspaceBrowserBody } from './WorkspaceBrowserBody';
@@ -34,6 +35,7 @@ import { WORKSPACE_BROWSER_ENABLED } from './workspace-browser-config';
 import { ArtifactView } from './ArtifactView';
 import type { WorkArtifact } from '@shared/types/work-artifact';
 import type { WorkspaceArtifactPanelState } from '@shared/types/workspace';
+import type { GitRepositoryStatus } from '@shared/types/git';
 
 export interface ArtifactPanelProps {
   artifacts?: WorkArtifact[];
@@ -178,7 +180,15 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
   );
 }
 
-type WorkspaceSubView = 'files' | 'terminal' | 'web' | 'audit' | 'git';
+type WorkspaceSubView = 'home' | 'files' | 'terminal' | 'web' | 'audit' | 'git';
+
+type GitLaunchpadState = {
+  loading: boolean;
+  isRepository: boolean;
+  branch: string | null;
+  dirtyCount: number;
+  conflictedCount: number;
+};
 
 function WorkspaceTabContent({
   agent,
@@ -190,25 +200,105 @@ function WorkspaceTabContent({
   onAppendComposerDraft,
 }: Pick<ArtifactPanelProps, 'agent' | 'runStartedAt' | 'refreshSignal' | 'sessionState' | 'onSessionStateChange' | 'onOpenWorkspaceWebView' | 'onAppendComposerDraft'>) {
   const { t } = useTranslation('chat');
+  const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
   const view = normalizeWorkspaceSubView(sessionState?.workspaceView);
+  const [entryMenuOpen, setEntryMenuOpen] = useState(false);
+  const [gitState, setGitState] = useState<GitLaunchpadState>({
+    loading: true,
+    isRepository: false,
+    branch: null,
+    dirtyCount: 0,
+    conflictedCount: 0,
+  });
 
   const selectView = (nextView: WorkspaceSubView) => {
+    setEntryMenuOpen(false);
     onSessionStateChange?.({ workspaceView: nextView });
   };
 
+  useEffect(() => {
+    let cancelled = false;
+    setGitState((previous) => ({ ...previous, loading: true }));
+    void hostApi.git.status()
+      .then((result) => {
+        if (cancelled) return;
+        const status = result.status;
+        setGitState(summarizeGitStatus(status));
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setGitState({
+          loading: false,
+          isRepository: false,
+          branch: null,
+          dirtyCount: 0,
+          conflictedCount: 0,
+        });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeWorkspace?.id, activeWorkspace?.rootPath]);
+
+  const viewTitle = view === 'home'
+    ? t('artifactPanel.workspaceLaunchpad.title', 'ClawX workspace')
+    : t(`artifactPanel.workspaceTabs.${view}`, view);
+  const workspacePath = activeWorkspace?.rootPath || agent?.workspace || '';
+
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="shrink-0 border-b border-black/5 bg-surface-modal px-2 py-2 dark:border-white/10">
-        <div className="flex w-full items-center gap-1 rounded-md bg-surface-input p-1">
-        <WorkspaceSubTab icon={<FolderTree className="h-3.5 w-3.5" />} label={t('artifactPanel.workspaceTabs.files', 'Files')} active={view === 'files'} onClick={() => selectView('files')} />
-        <WorkspaceSubTab icon={<TerminalSquare className="h-3.5 w-3.5" />} label={t('artifactPanel.workspaceTabs.terminal', 'Terminal')} active={view === 'terminal'} onClick={() => selectView('terminal')} />
-        <WorkspaceSubTab icon={<GitBranch className="h-3.5 w-3.5" />} label={t('artifactPanel.workspaceTabs.git', 'Git')} active={view === 'git'} onClick={() => selectView('git')} />
-        <WorkspaceSubTab icon={<Globe className="h-3.5 w-3.5" />} label={t('artifactPanel.workspaceTabs.web', 'Web')} active={view === 'web'} onClick={() => selectView('web')} />
-        <WorkspaceSubTab icon={<History className="h-3.5 w-3.5" />} label={t('artifactPanel.workspaceTabs.audit', 'Audit')} active={view === 'audit'} onClick={() => selectView('audit')} />
+      <div className="shrink-0 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
+        <div className="flex min-w-0 items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2">
+            {view !== 'home' && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 shrink-0"
+                onClick={() => selectView('home')}
+                aria-label={t('artifactPanel.workspaceLaunchpad.actions.back', 'Back to entries')}
+                data-testid="workspace-view-back"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+              </Button>
+            )}
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-foreground">{viewTitle}</p>
+              {workspacePath && (
+                <p className="truncate font-mono text-[11px] text-muted-foreground">{workspacePath}</p>
+              )}
+            </div>
+          </div>
+          <div className="relative shrink-0">
+            <Button
+              type="button"
+              variant={entryMenuOpen ? 'outline' : 'ghost'}
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => setEntryMenuOpen((open) => !open)}
+              aria-label={t('artifactPanel.workspaceLaunchpad.actions.open', 'Open entry launcher')}
+              aria-expanded={entryMenuOpen}
+              title={t('artifactPanel.workspaceLaunchpad.actions.open', 'Open entry launcher')}
+              data-testid="workspace-launchpad-add"
+            >
+              <Plus className="h-3.5 w-3.5" />
+            </Button>
+            {entryMenuOpen && (
+              <WorkspaceEntryMenu
+                gitState={gitState}
+                onSelect={selectView}
+              />
+            )}
+          </div>
         </div>
       </div>
       <div className="min-h-0 flex-1 overflow-hidden">
-        {view === 'files' ? (
+        {view === 'home' ? (
+          <WorkspaceLaunchpad
+            onSelect={selectView}
+          />
+        ) : view === 'files' ? (
           <WorkspaceBrowserBody
             agent={agent}
             runStartedAt={runStartedAt}
@@ -234,35 +324,200 @@ function WorkspaceTabContent({
 }
 
 function normalizeWorkspaceSubView(value: string | null | undefined): WorkspaceSubView {
-  return value === 'terminal' || value === 'web' || value === 'audit' || value === 'files' || value === 'git'
+  return value === 'home' || value === 'terminal' || value === 'web' || value === 'audit' || value === 'files' || value === 'git'
     ? value
-    : 'files';
+    : 'home';
 }
 
-function WorkspaceSubTab({
+function summarizeGitStatus(status: GitRepositoryStatus | undefined): GitLaunchpadState {
+  if (!status?.isRepository) {
+    return {
+      loading: false,
+      isRepository: false,
+      branch: null,
+      dirtyCount: 0,
+      conflictedCount: 0,
+    };
+  }
+  const dirtyCount = status.stagedCount + status.unstagedCount + status.untrackedCount + status.conflictedCount;
+  return {
+    loading: false,
+    isRepository: true,
+    branch: status.branch || (status.detached ? 'detached' : null),
+    dirtyCount,
+    conflictedCount: status.conflictedCount,
+  };
+}
+
+function makeGitBadge(t: ReturnType<typeof useTranslation>['t'], gitState: GitLaunchpadState): string {
+  if (gitState.conflictedCount > 0) {
+    return t('artifactPanel.workspaceLaunchpad.badges.conflicts', '{{count}} conflicts', { count: gitState.conflictedCount });
+  }
+  if (gitState.dirtyCount > 0) {
+    return t('artifactPanel.workspaceLaunchpad.badges.changes', '{{count}} changes', { count: gitState.dirtyCount });
+  }
+  return t('artifactPanel.workspaceLaunchpad.badges.clean', 'Clean');
+}
+
+function WorkspaceEntryMenu({
+  gitState,
+  onSelect,
+}: {
+  gitState: GitLaunchpadState;
+  onSelect: (view: WorkspaceSubView) => void;
+}) {
+  const { t } = useTranslation('chat');
+  const gitBadge = makeGitBadge(t, gitState);
+
+  return (
+    <div
+      data-testid="workspace-entry-menu"
+      className="absolute right-0 top-8 z-50 w-72 overflow-hidden rounded-md border border-black/10 bg-surface-modal shadow-lg dark:border-white/10"
+    >
+      <div className="border-b border-black/5 px-3 py-2 dark:border-white/10">
+        <p className="text-xs font-medium text-foreground">{t('artifactPanel.workspaceLaunchpad.actions.moreEntries', 'More entries')}</p>
+      </div>
+      <div className="py-1">
+        {gitState.isRepository && (
+          <WorkspaceLaunchpadEntry
+            testId="workspace-launchpad-entry-review"
+            icon={<GitBranch className="h-4 w-4" />}
+            title={t('artifactPanel.workspaceTabs.git', 'Review')}
+            description={gitState.branch
+              ? t('artifactPanel.workspaceLaunchpad.entries.reviewBranch', 'Review changes on {{branch}}.', { branch: gitState.branch })
+              : t('artifactPanel.workspaceLaunchpad.entries.review', 'Review changes, branches, stashes, and PRs.')}
+            badge={gitBadge}
+            shortcut="R"
+            compact
+            onClick={() => onSelect('git')}
+          />
+        )}
+        <WorkspaceLaunchpadEntry
+          testId="workspace-launchpad-entry-web"
+          icon={<Globe className="h-4 w-4" />}
+          title={t('artifactPanel.workspaceTabs.web', 'Web')}
+          description={t('artifactPanel.workspaceLaunchpad.entries.web', 'Open a local preview or inspect a URL.')}
+          shortcut="W"
+          compact
+          onClick={() => onSelect('web')}
+        />
+        <WorkspaceLaunchpadEntry
+          testId="workspace-launchpad-entry-audit"
+          icon={<History className="h-4 w-4" />}
+          title={t('artifactPanel.workspaceTabs.audit', 'Audit')}
+          description={t('artifactPanel.workspaceLaunchpad.entries.audit', 'Inspect permission requests and recent approvals.')}
+          shortcut="A"
+          compact
+          onClick={() => onSelect('audit')}
+        />
+      </div>
+    </div>
+  );
+}
+
+function WorkspaceLaunchpad({
+  onSelect,
+}: {
+  onSelect: (view: WorkspaceSubView) => void;
+}) {
+  const { t } = useTranslation('chat');
+
+  return (
+    <div data-testid="workspace-launchpad" className="h-full overflow-y-auto bg-background px-3 py-3">
+      <div className="mb-4">
+        <p className="text-xs font-medium uppercase tracking-normal text-muted-foreground">
+          {t('artifactPanel.workspaceLaunchpad.subtitle', 'Pinned entries')}
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {t('artifactPanel.workspaceLaunchpad.moreHint', 'Use + for review, preview, and audit tools.')}
+        </p>
+      </div>
+
+      <WorkspaceLaunchpadSection title={t('artifactPanel.workspaceLaunchpad.sections.highFrequency', 'High-frequency')}>
+        <WorkspaceLaunchpadEntry
+          testId="workspace-launchpad-entry-files"
+          icon={<FolderTree className="h-4 w-4" />}
+          title={t('artifactPanel.workspaceTabs.files', 'Files')}
+          description={t('artifactPanel.workspaceLaunchpad.entries.files', 'Browse files and preview selected content.')}
+          shortcut="F"
+          onClick={() => onSelect('files')}
+        />
+        <WorkspaceLaunchpadEntry
+          testId="workspace-launchpad-entry-terminal"
+          icon={<TerminalSquare className="h-4 w-4" />}
+          title={t('artifactPanel.workspaceTabs.terminal', 'Terminal')}
+          description={t('artifactPanel.workspaceLaunchpad.entries.terminal', 'Start an interactive shell for this workspace.')}
+          shortcut="T"
+          onClick={() => onSelect('terminal')}
+        />
+      </WorkspaceLaunchpadSection>
+    </div>
+  );
+}
+
+function WorkspaceLaunchpadSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="mb-5">
+      <h3 className="mb-1.5 px-1 text-[11px] font-semibold uppercase tracking-normal text-muted-foreground">{title}</h3>
+      <div className="divide-y divide-black/5 border-y border-black/5 dark:divide-white/10 dark:border-white/10">
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function WorkspaceLaunchpadEntry({
+  testId,
   icon,
-  label,
-  active,
+  title,
+  description,
+  badge,
+  shortcut,
+  compact = false,
   onClick,
 }: {
+  testId: string;
   icon: React.ReactNode;
-  label: string;
-  active: boolean;
+  title: string;
+  description: string;
+  badge?: string;
+  shortcut: string;
+  compact?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
+      data-testid={testId}
       className={cn(
-        'inline-flex h-7 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-sm px-1.5 text-xs font-medium transition-colors',
-        active
-          ? 'bg-background text-foreground shadow-sm'
-          : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+        'flex w-full items-center gap-3 text-left transition-colors hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10',
+        compact ? 'min-h-12 px-3 py-2' : 'min-h-14 px-2 py-2.5',
       )}
       onClick={onClick}
     >
-      {icon}
-      <span className="truncate">{label}</span>
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-input text-muted-foreground">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-medium text-foreground">{title}</span>
+        <span className="block truncate text-xs text-muted-foreground">{description}</span>
+      </span>
+      <span className="flex shrink-0 items-center gap-1.5">
+        {badge && (
+          <span className="max-w-24 truncate rounded-sm bg-black/5 px-1.5 py-0.5 text-[11px] text-muted-foreground dark:bg-white/10">
+            {badge}
+          </span>
+        )}
+        <span className="min-w-5 rounded-sm border border-black/10 px-1.5 py-0.5 text-center text-[11px] text-muted-foreground dark:border-white/15">
+          {shortcut}
+        </span>
+      </span>
     </button>
   );
 }

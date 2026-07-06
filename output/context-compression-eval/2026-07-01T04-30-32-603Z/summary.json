@@ -1,0 +1,808 @@
+{
+  "runId": "2026-07-01T04-30-32-603Z",
+  "target": "C:\\Users\\27933\\Desktop\\verseshell\\graphiti-main",
+  "generatedAt": "2026-07-01T04:31:21.336Z",
+  "suite": "full",
+  "sampleSource": "real",
+  "requestedSampleCount": 100,
+  "sampleCount": 100,
+  "semanticMatching": false,
+  "cache": {
+    "enabled": true,
+    "dir": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.cache\\context-compression-eval",
+    "version": "context-compression-eval-cache-v2",
+    "hits": 0,
+    "misses": 204,
+    "writes": 204,
+    "byNamespace": {
+      "real-samples": {
+        "hits": 0,
+        "misses": 1,
+        "writes": 1
+      },
+      "transcript-parse": {
+        "hits": 0,
+        "misses": 203,
+        "writes": 203
+      }
+    },
+    "secretScan": {
+      "pass": false,
+      "scannedFiles": 272,
+      "leaks": [
+        {
+          "file": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.cache\\context-compression-eval\\transcript-parse\\dfe6676334e2fcf0e817cfa6bd84b1fc15a4a3fd2faf7ca33f7c2f3c73cb8c2f.json",
+          "pattern": "authorization\\s*[:=]"
+        },
+        {
+          "file": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.cache\\context-compression-eval\\transcript-parse\\15b5595901585b34584eead4a71d3f54a1707cef69a274e5dc96ec8708384f11.json",
+          "pattern": "authorization\\s*[:=]"
+        }
+      ]
+    }
+  },
+  "manifest": {
+    "hash": "0f43a10961f5e81e076c73bc772bda9b0ddc1cf267e397653b73dde05df18fcc",
+    "requested": 100,
+    "resolved": 100,
+    "missing": []
+  },
+  "reproducibility": {
+    "seed": "context-compression-eval-v1",
+    "sampleSelectionHash": "0f43a10961f5e81e076c73bc772bda9b0ddc1cf267e397653b73dde05df18fcc",
+    "promptVersions": {
+      "judge": "judge-prompt-v4",
+      "continuation": "continuation-prompt-v3"
+    },
+    "extractorVersion": "real-fact-extractor-v3",
+    "parserVersion": "transcript-parser-v3",
+    "redactionVersion": "redaction-v3"
+  },
+  "realInventory": {
+    "transcriptRoot": "C:\\\\Users\\\\27933\\\\.codex\\\\archived_sessions",
+    "filesFound": 203,
+    "transcriptsParsed": 203,
+    "entriesParsed": 52669
+  },
+  "sampleMix": {
+    "realRequested": 100,
+    "syntheticRequested": 0,
+    "realActual": 100,
+    "syntheticActual": 0,
+    "realShortfall": 0,
+    "evidenceInsufficient": false
+  },
+  "llmJudge": {
+    "requested": false,
+    "executed": false,
+    "reason": "LLM judge was not requested. Pass --llm-judge to enable it.",
+    "results": []
+  },
+  "llmContinuation": {
+    "requested": false,
+    "executed": false,
+    "reason": "LLM continuation was not requested. Pass --llm-continuation to enable it.",
+    "results": []
+  },
+  "layer0": {
+    "rounds": 100,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": null,
+    "informationDensityMean": null,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 871,
+    "expectedTotal": 871
+  },
+  "layer1": {
+    "rounds": 100,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": 0.155,
+    "informationDensityMean": 6.8409,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 871,
+    "expectedTotal": 871
+  },
+  "layer1Gate": {
+    "pass": true,
+    "thresholds": {
+      "recallCriticalMean": ">= 0.95",
+      "recallImportantMean": ">= 0.75",
+      "weightedRecallMean": ">= 0.90",
+      "precisionMean": "= 1",
+      "forbiddenFoundTotal": "= 0",
+      "staleExclusionMean": ">= 0.99",
+      "compressionRatioMean": "0.15..0.35",
+      "informationDensityMean": ">= 2"
+    }
+  },
+  "layer2": {
+    "total": 100,
+    "judgeScoreMean": 10,
+    "judgeScoreMin": 10,
+    "completenessRate": 1,
+    "accuracyRate": 1,
+    "causalChainPreservation": 1,
+    "causalChainRate": 1,
+    "noFabricationRate": 1,
+    "actionabilityRate": 1
+  },
+  "layer2Gate": {
+    "pass": true
+  },
+  "layer3": {
+    "total": 100,
+    "firstActionMatchRate": 1,
+    "criticalActionMatchRate": 1,
+    "noRepeatedWorkRate": 1,
+    "noContradictoryActionRate": 1,
+    "decisionConsistencyRate": 1,
+    "taskCompletionDelta": 0
+  },
+  "layer3Gate": {
+    "pass": true,
+    "thresholds": {
+      "firstActionMatchRate": ">= 0.85",
+      "criticalActionMatchRate": ">= 0.90",
+      "noRepeatedWorkRate": ">= 0.95",
+      "noContradictoryActionRate": ">= 0.95",
+      "decisionConsistencyRate": ">= 0.90",
+      "taskCompletionDelta": "<= 0.08"
+    }
+  },
+  "cohorts": {
+    "real": {
+      "sampleCount": 100,
+      "layer0": {
+        "rounds": 100,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 871,
+        "expectedTotal": 871
+      },
+      "layer1": {
+        "rounds": 100,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.155,
+        "informationDensityMean": 6.8409,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 871,
+        "expectedTotal": 871
+      },
+      "layer3": {
+        "total": 100,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.6": {
+        "rounds": 20,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1511,
+        "informationDensityMean": 6.7504,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 173,
+        "expectedTotal": 173
+      },
+      "0.75": {
+        "rounds": 20,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1562,
+        "informationDensityMean": 7.157,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 177,
+        "expectedTotal": 177
+      },
+      "0.85": {
+        "rounds": 22,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1534,
+        "informationDensityMean": 6.9871,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 186,
+        "expectedTotal": 186
+      },
+      "0.95": {
+        "rounds": 21,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1553,
+        "informationDensityMean": 6.7137,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 182,
+        "expectedTotal": 182
+      },
+      "emergency": {
+        "rounds": 17,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1598,
+        "informationDensityMean": 6.5432,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 153,
+        "expectedTotal": 153
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 33,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1671,
+        "informationDensityMean": 6.4788,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 263,
+        "expectedTotal": 263
+      },
+      "200": {
+        "rounds": 33,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1499,
+        "informationDensityMean": 6.9354,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 290,
+        "expectedTotal": 290
+      },
+      "1000": {
+        "rounds": 34,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1481,
+        "informationDensityMean": 7.1005,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 318,
+        "expectedTotal": 318
+      }
+    },
+    "byPressureContinuation": {
+      "0.6": {
+        "total": 20,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.75": {
+        "total": 20,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.85": {
+        "total": 22,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.95": {
+        "total": 21,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "emergency": {
+        "total": 17,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    }
+  },
+  "cohortBreakdown": {
+    "real": {
+      "sampleCount": 100,
+      "layer0": {
+        "rounds": 100,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 871,
+        "expectedTotal": 871
+      },
+      "layer1": {
+        "rounds": 100,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.155,
+        "informationDensityMean": 6.8409,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 871,
+        "expectedTotal": 871
+      },
+      "layer3": {
+        "total": 100,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.6": {
+        "rounds": 20,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1511,
+        "informationDensityMean": 6.7504,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 173,
+        "expectedTotal": 173
+      },
+      "0.75": {
+        "rounds": 20,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1562,
+        "informationDensityMean": 7.157,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 177,
+        "expectedTotal": 177
+      },
+      "0.85": {
+        "rounds": 22,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1534,
+        "informationDensityMean": 6.9871,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 186,
+        "expectedTotal": 186
+      },
+      "0.95": {
+        "rounds": 21,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1553,
+        "informationDensityMean": 6.7137,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 182,
+        "expectedTotal": 182
+      },
+      "emergency": {
+        "rounds": 17,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1598,
+        "informationDensityMean": 6.5432,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 153,
+        "expectedTotal": 153
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 33,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1671,
+        "informationDensityMean": 6.4788,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 263,
+        "expectedTotal": 263
+      },
+      "200": {
+        "rounds": 33,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1499,
+        "informationDensityMean": 6.9354,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 290,
+        "expectedTotal": 290
+      },
+      "1000": {
+        "rounds": 34,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1481,
+        "informationDensityMean": 7.1005,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 318,
+        "expectedTotal": 318
+      }
+    }
+  },
+  "worstCases": [],
+  "regressionExamples": [],
+  "redactionSummary": {
+    "mode": "strict",
+    "replacements": {
+      "apiKeys": 20559,
+      "authTokens": 27,
+      "authHeaders": 34,
+      "providerKeys": 35,
+      "urlTokens": 0,
+      "usernames": 23207
+    },
+    "filesScanned": 203,
+    "linesScanned": 77751
+  },
+  "acceptance": {
+    "status": "FAIL",
+    "checks": [
+      {
+        "id": "sampleCount.exact",
+        "pass": true,
+        "actual": 100,
+        "expected": "= 100"
+      },
+      {
+        "id": "samplesJsonl.exact",
+        "pass": true,
+        "actual": 100,
+        "expected": "= 100"
+      },
+      {
+        "id": "l0.recallMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l0.staleExclusionMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l1.gate",
+        "pass": true,
+        "actual": 1,
+        "expected": "all L1 thresholds"
+      },
+      {
+        "id": "l2.deterministicGate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 thresholds"
+      },
+      {
+        "id": "l3.deterministicGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "L3 thresholds"
+      },
+      {
+        "id": "realCohort.notMasked",
+        "pass": true,
+        "actual": 1,
+        "expected": "real L1 gate passes independently when real samples exist"
+      },
+      {
+        "id": "manifest.exactResolve",
+        "pass": true,
+        "actual": "not-used",
+        "expected": "not-used"
+      },
+      {
+        "id": "cache.noSecretLeak",
+        "pass": false,
+        "actual": 2,
+        "expected": "= 0 cache secret leaks"
+      },
+      {
+        "id": "full.realMinCount",
+        "pass": true,
+        "actual": 100,
+        "expected": ">= 100"
+      },
+      {
+        "id": "full.realCoverage",
+        "pass": true,
+        "actual": 100,
+        "expected": "100 real samples"
+      },
+      {
+        "id": "full.pressureCoverage",
+        "pass": true,
+        "actual": 5,
+        "expected": "0.6,0.75,0.85,0.95,emergency"
+      }
+    ],
+    "evidenceInsufficient": false
+  }
+}

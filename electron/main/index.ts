@@ -2,14 +2,16 @@
  * Electron Main Process Entry
  * Manages window creation, system tray, and IPC handlers
  */
-import { app, BrowserWindow, nativeImage, session, shell } from 'electron';
+import { app, BrowserWindow, nativeTheme, session, shell } from 'electron';
 import { join } from 'path';
 import { GatewayManager } from '../gateway/manager';
 import { registerIpcHandlers } from './ipc-handlers';
 import { HostApiRegistry } from './ipc/host-invoke';
-import { createTray } from './tray';
+import { getResourceTracker } from '../services/resource-tracker';
+import { createTray, syncTrayIconWithSystemTheme } from './tray';
 import { createMenu } from './menu';
 import { registerZoomShortcuts } from './zoom-shortcuts';
+import { applySystemThemeIcons, getWindowIcon } from './theme-icons';
 
 import { logger } from '../utils/logger';
 import { warmupNetworkOptimization } from '../utils/uv-env';
@@ -51,6 +53,7 @@ import { browserOAuthManager } from '../utils/browser-oauth';
 import { whatsAppLoginManager } from '../utils/whatsapp-login';
 import { syncAllProviderAuthToRuntime } from '../services/providers/provider-runtime-sync';
 import { applyChatRuntimeEvent, enrichTraceTokenUsage } from '../services/observability-adapter';
+import { stopAllOfficeWatches } from '../services/office-tools-api';
 import { resolveRemoteDebuggingLaunchPort } from '../utils/remote-control';
 import { appendTaskLedgerEvents } from '../services/task-ledger-service';
 import type { TaskLedgerEventInput, TaskLedgerNodeStatus } from '../../shared/types/task-ledger';
@@ -122,6 +125,7 @@ let clawHubService!: ClawHubService;
 const hostApiRegistry = new HostApiRegistry();
 const mainWindowFocusState = createMainWindowFocusState();
 const quitLifecycleState = createQuitLifecycleState();
+let systemThemeIconListenerRegistered = false;
 const taskLoopLedgerSeen = new Set<string>();
 const missionLedgerSeen = new Set<string>();
 const clawGraphLedgerSeen = new Set<string>();
@@ -781,33 +785,6 @@ function sendMainWindowEvent(channel: string, payload: unknown): void {
 }
 
 /**
- * Resolve the icons directory path (works in both dev and packaged mode)
- */
-function getIconsDir(): string {
-  if (app.isPackaged) {
-    // Packaged: icons are in extraResources → process.resourcesPath/resources/icons
-    return join(process.resourcesPath, 'resources', 'icons');
-  }
-  // Development: relative to dist-electron/main/
-  return join(__dirname, '../../resources/icons');
-}
-
-/**
- * Get the app icon for the current platform
- */
-function getAppIcon(): Electron.NativeImage | undefined {
-  if (process.platform === 'darwin') return undefined; // macOS uses the app bundle icon
-
-  const iconsDir = getIconsDir();
-  const iconPath =
-    process.platform === 'win32'
-      ? join(iconsDir, 'icon.ico')
-      : join(iconsDir, 'icon.png');
-  const icon = nativeImage.createFromPath(iconPath);
-  return icon.isEmpty() ? undefined : icon;
-}
-
-/**
  * Create the main application window
  */
 function createWindow(): BrowserWindow {
@@ -821,7 +798,7 @@ function createWindow(): BrowserWindow {
     height: 800,
     minWidth: 960,
     minHeight: 600,
-    icon: getAppIcon(),
+    icon: getWindowIcon(),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       nodeIntegration: false,
@@ -908,6 +885,7 @@ function focusMainWindow(): void {
 
 function createMainWindow(): BrowserWindow {
   const win = createWindow();
+  applySystemThemeIcons(win);
 
   win.once('ready-to-show', () => {
     if (mainWindow !== win) {
@@ -953,6 +931,10 @@ async function initialize(): Promise<void> {
   // Initialize logger first
   logger.init();
   logger.info('=== Verse Claw Application Starting ===');
+
+  // Start resource tracker for port/heartbeat monitoring and auto-cleanup
+  getResourceTracker().start();
+
   logger.debug(
     `Runtime: platform=${process.platform}/${process.arch}, electron=${process.versions.electron}, node=${process.versions.node}, packaged=${app.isPackaged}, pid=${process.pid}, ppid=${process.ppid}`
   );
@@ -980,6 +962,16 @@ async function initialize(): Promise<void> {
   // Create system tray
   if (!isE2EMode) {
     createTray(window);
+  }
+  applySystemThemeIcons(window);
+  syncTrayIconWithSystemTheme();
+
+  if (!systemThemeIconListenerRegistered) {
+    systemThemeIconListenerRegistered = true;
+    nativeTheme.on('updated', () => {
+      applySystemThemeIcons(mainWindow);
+      syncTrayIconWithSystemTheme();
+    });
   }
 
   // Override security headers ONLY for the OpenClaw Gateway Control UI.
@@ -1256,6 +1248,8 @@ if (gotTheLock) {
   process.once('SIGTERM', () => requestQuitOnSignal('SIGTERM'));
 
   app.on('will-quit', () => {
+    stopAllOfficeWatches();
+    getResourceTracker().stop();
     releaseProcessInstanceFileLock();
   });
 

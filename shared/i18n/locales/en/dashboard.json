@@ -146,6 +146,8 @@
             "description": "Models are ranked by total tokens in the selected window."
         },
         "heatmap": {
+            "less": "Less",
+            "more": "More",
             "title": "Usage rhythm",
             "description": "Each square is a day, shaded by total token volume."
         },

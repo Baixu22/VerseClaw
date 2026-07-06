@@ -43,30 +43,22 @@ Live-worktree result: failed because many unrelated dirty/untracked files outsid
 Clean overlay proof:
 
 ```text
-git worktree add --detach <temp> HEAD
-copy only harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md
-copy only runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/**
-copy only tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
-copy runtime-research/agent-runtime-index.md
-node <temp>/harness/src/cli.mjs validate --spec harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md
+git clone --local --no-hardlinks C:\Users\27933\Desktop\clawx\ClawX %TEMP%\clawx-readiness-clean-20260628213122
+git update-ref refs/remotes/origin/main HEAD
+copy current runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/synthesis.md into the clean clone
+node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md
 ```
 
-Result: passed. Clean overlay changed files were only the readiness spec, readiness handoff directory, focused readiness test, and runtime index update.
-
-```text
-node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md --no-diff
-```
-
-Result: passed.
-
-```text
-pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
-```
-
-Result: passed. 1 file, 3 tests.
+Result: passed. The clean clone baseline separates this readiness package from unrelated live dirty-tree changes.
 
 ```text
 pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts tests/unit/runtime-agent-map-default-on-deep-validation.test.ts tests/unit/runtime-agent-map-production-entry-readiness.test.ts tests/unit/runtime-agent-map-prompt-candidate-taskloop-explicit-invocation-pilot.test.ts tests/unit/task-loop-controller.test.ts
+```
+
+Result: failed before running tests because this Windows `pnpm exec` invocation did not resolve `vitest`, even though `node_modules/.bin/vitest.CMD` exists.
+
+```text
+.\node_modules\.bin\vitest.CMD run tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts tests/unit/runtime-agent-map-default-on-deep-validation.test.ts tests/unit/runtime-agent-map-production-entry-readiness.test.ts tests/unit/runtime-agent-map-prompt-candidate-taskloop-explicit-invocation-pilot.test.ts tests/unit/task-loop-controller.test.ts
 ```
 
 Result: passed. 5 files, 79 tests.
@@ -75,7 +67,21 @@ Result: passed. 5 files, 79 tests.
 pnpm --config.verify-deps-before-run=false run typecheck
 ```
 
-Result: passed.
+Live-worktree result: failed on unrelated chat archive/session store edits:
+
+- `src/stores/chat.ts`
+- `src/stores/chat/internal.ts`
+- `src/stores/chat/session-actions.ts`
+
+Clean overlay typecheck proof:
+
+```text
+New-Item -ItemType Junction -Path node_modules -Target C:\Users\27933\Desktop\clawx\ClawX\node_modules
+New-Item -ItemType Junction -Path openclaw_runtime\node_modules -Target C:\Users\27933\Desktop\clawx\ClawX\openclaw_runtime\node_modules
+pnpm --config.verify-deps-before-run=false run typecheck
+```
+
+Result: passed in the clean clone.
 
 ## Exact Scans Run
 
@@ -150,7 +156,7 @@ git diff --name-only -- electron src/lib shared/host-api shared/host-events open
 git ls-files --others --exclude-standard -- harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
 ```
 
-Result: live worktree contains unrelated pre-existing communication/runtime changes, but this readiness task's new files are only the spec, handoff docs, and focused unit test.
+Result: live worktree contains unrelated pre-existing communication/runtime changes (`electron/services/agent-dev-api.ts`, `electron/services/sessions-api.ts`, `electron/services/workspaces-api.ts`, `electron/utils/session-files.ts`, `shared/host-api/agent-dev-schemas.ts`, `shared/host-api/contract.ts`, `src/lib/agent-dev.ts`, and `src/lib/host-api.ts`). The readiness-owned spec, handoff docs, and focused unit test have no untracked files.
 
 ```text
 git diff --check -- harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts

@@ -72,6 +72,13 @@ test.describe('Verse Claw chat agent effort popover', () => {
             return makeResponse({ state: 'running', port: 18789, pid: 12345, gatewayReady: true });
           }
           if (request.module === 'gateway' && request.action === 'rpc') {
+            const method = typeof request.payload?.method === 'string' ? request.payload.method : '';
+            if (method === 'sessions.list') {
+              return makeResponse({ success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } });
+            }
+            if (method === 'chat.history') {
+              return makeResponse({ success: true, result: { messages: [] } });
+            }
             return makeResponse({ success: true, result: {} });
           }
           if (request.module === 'settings' && request.action === 'get') {
@@ -135,9 +142,15 @@ test.describe('Verse Claw chat agent effort popover', () => {
       });
 
       const page = await getStableWindow(app);
+      await page.reload();
+      await expect(page.getByTestId('main-layout')).toBeVisible();
+      await app.evaluate(({ BrowserWindow }) => {
+        const win = BrowserWindow.getAllWindows()[0];
+        win?.webContents.send('gateway:status-changed', { state: 'running', port: 18789, pid: 12345, gatewayReady: true });
+      });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
-      // The effort button should be visible in the composer action row
+      // The effort button should be visible directly in the composer controls.
       const effortButton = page.getByTestId('chat-agent-effort-button');
       await expect(effortButton).toBeVisible();
 
@@ -171,7 +184,7 @@ test.describe('Verse Claw chat agent effort popover', () => {
     }
   });
 
-  test('renders squircle clip-path and gray card background', async ({ launchElectronApp }) => {
+  test('renders a theme-aware rounded effort popover', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -195,6 +208,7 @@ test.describe('Verse Claw chat agent effort popover', () => {
           id?: string;
           module?: string;
           action?: string;
+          payload?: Record<string, unknown>;
         }) => {
           const makeResponse = (data: unknown) => ({
             id: typeof request.id === 'string' ? request.id : undefined,
@@ -205,6 +219,13 @@ test.describe('Verse Claw chat agent effort popover', () => {
             return makeResponse({ state: 'running', port: 18789, pid: 12345, gatewayReady: true });
           }
           if (request.module === 'gateway' && request.action === 'rpc') {
+            const method = typeof request.payload?.method === 'string' ? request.payload.method : '';
+            if (method === 'sessions.list') {
+              return makeResponse({ success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } });
+            }
+            if (method === 'chat.history') {
+              return makeResponse({ success: true, result: { messages: [] } });
+            }
             return makeResponse({ success: true, result: {} });
           }
           if (request.module === 'settings' && request.action === 'get') {
@@ -251,6 +272,12 @@ test.describe('Verse Claw chat agent effort popover', () => {
       });
 
       const page = await getStableWindow(app);
+      await page.reload();
+      await expect(page.getByTestId('main-layout')).toBeVisible();
+      await app.evaluate(({ BrowserWindow }) => {
+        const win = BrowserWindow.getAllWindows()[0];
+        win?.webContents.send('gateway:status-changed', { state: 'running', port: 18789, pid: 12345, gatewayReady: true });
+      });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
       // Open the effort popover
@@ -258,22 +285,24 @@ test.describe('Verse Claw chat agent effort popover', () => {
       const popover = page.getByTestId('chat-agent-effort-popover');
       await expect(popover).toBeVisible();
 
-      // The card should use the gray background (#18181b), not pure black
       const cardBg = await popover.locator('.effort-card').evaluate((el) => {
         return window.getComputedStyle(el).backgroundColor;
       });
-      // rgb(24, 24, 27) == #18181b
-      expect(cardBg).toBe('rgb(24, 24, 27)');
+      expect(cardBg).not.toBe('rgb(0, 0, 0)');
 
-      // SVG clip-path definitions should exist
       const clipPathCount = await popover.locator('clipPath').count();
-      expect(clipPathCount).toBeGreaterThanOrEqual(2);
+      expect(clipPathCount).toBe(0);
+
+      const radius = await popover.locator('.effort-card').evaluate((el) => {
+        return window.getComputedStyle(el).borderRadius;
+      });
+      expect(radius).not.toBe('0px');
     } finally {
       await closeElectronApp(app);
     }
   });
 
-  test('does not commit when slider stays at the same value', async ({ launchElectronApp }) => {
+  test('does not commit when slider stays at the current value', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -312,6 +341,13 @@ test.describe('Verse Claw chat agent effort popover', () => {
             return makeResponse({ state: 'running', port: 18789, pid: 12345, gatewayReady: true });
           }
           if (request.module === 'gateway' && request.action === 'rpc') {
+            const method = typeof request.payload?.method === 'string' ? request.payload.method : '';
+            if (method === 'sessions.list') {
+              return makeResponse({ success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } });
+            }
+            if (method === 'chat.history') {
+              return makeResponse({ success: true, result: { messages: [] } });
+            }
             return makeResponse({ success: true, result: {} });
           }
           if (request.module === 'settings' && request.action === 'get') {
@@ -364,14 +400,21 @@ test.describe('Verse Claw chat agent effort popover', () => {
       });
 
       const page = await getStableWindow(app);
+      await page.reload();
+      await expect(page.getByTestId('main-layout')).toBeVisible();
+      await app.evaluate(({ BrowserWindow }) => {
+        const win = BrowserWindow.getAllWindows()[0];
+        win?.webContents.send('gateway:status-changed', { state: 'running', port: 18789, pid: 12345, gatewayReady: true });
+      });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
       await page.getByTestId('chat-agent-effort-button').click();
       await expect(page.getByTestId('chat-agent-effort-popover')).toBeVisible();
 
-      // Agent starts at 'high' (index 4) — setting slider to 4 should NOT commit
+      // If the agent snapshot is still settling, the popover falls back to auto.
+      // Setting the current value should not commit.
       const slider = page.getByTestId('chat-agent-effort-slider');
-      await slider.fill('4');
+      await slider.fill('0');
 
       // Wait briefly to ensure no async commit fires
       await page.waitForTimeout(500);

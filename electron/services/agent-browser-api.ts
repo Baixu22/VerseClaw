@@ -36,6 +36,10 @@ export function createAgentBrowserApi(
       success: true,
       session: await service.navigate(payload),
     }),
+    focus: async (payload) => ({
+      success: true,
+      session: await service.focus(payload.sessionId),
+    }),
     waitForSelector: async (payload) => ({
       success: true,
       session: await service.waitForSelector(payload),

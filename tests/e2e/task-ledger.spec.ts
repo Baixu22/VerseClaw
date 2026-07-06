@@ -59,6 +59,19 @@ const snapshot = {
       createdAt: '2026-06-16T09:30:00.000Z',
       updatedAt: '2026-06-16T10:00:00.000Z',
     },
+    {
+      id: 'plan-projection',
+      title: 'planner: Plan the stabilization',
+      kind: 'task',
+      status: 'todo',
+      parentId: 'goal-1',
+      createdAt: '2026-06-16T09:35:00.000Z',
+      updatedAt: '2026-06-16T10:00:00.000Z',
+      metadata: {
+        readonlyProjection: true,
+        source: 'orchestrator.plan',
+      },
+    },
   ],
   edges: [
     {
@@ -237,6 +250,7 @@ test.describe('Task ledger', () => {
       await page.getByTestId('sidebar-nav-task-ledger').click();
       await expect(page.getByTestId('task-ledger-page')).toBeVisible();
       await expect(page.getByTestId('task-ledger-tree')).toContainText('Ship long task ledger');
+      await expect(page.getByTestId('task-ledger-status-plan-projection')).toBeDisabled();
       await page.getByRole('tab', { name: /DAG/ }).click();
       await expect(page.getByTestId('task-ledger-dag')).toContainText('depends on');
       await page.getByRole('tab', { name: 'History' }).click();

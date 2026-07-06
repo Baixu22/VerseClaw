@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   assertAgentDevFeatureFlagsPayload,
   assertAgentDevMockReplayConfig,
+  assertAgentDevRecordScenarioPayload,
   assertAgentDevSeedStatePayload,
 } from '@shared/host-api/agent-dev-schemas';
 
@@ -23,11 +24,19 @@ describe('agent dev host-api schemas', () => {
     })).not.toThrow();
 
     expect(() => assertAgentDevFeatureFlagsPayload({ flags: ['a', 'b'], merge: true })).not.toThrow();
+    expect(() => assertAgentDevRecordScenarioPayload({
+      slug: 'doctor-failed',
+      route: '/settings/advanced',
+      language: 'en',
+      theme: 'dark',
+      visibleState: { modal: false },
+    })).not.toThrow();
   });
 
   it('rejects unknown scenario ids, malformed replay modes, and non-string flags', () => {
     expect(() => assertAgentDevSeedStatePayload({ scenario: 'not-a-scenario' })).toThrow(/Invalid agentDev\.seedState/);
     expect(() => assertAgentDevMockReplayConfig({ mode: 'capture' })).toThrow(/Invalid agentDev\.configureMockReplay/);
     expect(() => assertAgentDevFeatureFlagsPayload({ flags: ['ok', 1] })).toThrow(/Invalid agentDev\.setFeatureFlags/);
+    expect(() => assertAgentDevRecordScenarioPayload({ visibleState: [] })).toThrow(/Invalid agentDev\.recordScenario/);
   });
 });

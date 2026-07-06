@@ -1,0 +1,3460 @@
+{
+  "runId": "2026-07-01T10-22-44-091Z",
+  "target": "C:\\Users\\27933\\Desktop\\verseshell\\graphiti-main",
+  "generatedAt": "2026-07-01T10:27:12.462Z",
+  "suite": "full",
+  "sampleSource": "real",
+  "requestedSampleCount": 30,
+  "sampleCount": 30,
+  "semanticMatching": false,
+  "cache": {
+    "enabled": false,
+    "dir": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.cache\\context-compression-eval",
+    "version": "context-compression-eval-cache-v3",
+    "hits": 0,
+    "misses": 106,
+    "writes": 0,
+    "byNamespace": {
+      "real-samples": {
+        "hits": 0,
+        "misses": 1,
+        "writes": 0
+      },
+      "transcript-parse": {
+        "hits": 0,
+        "misses": 30,
+        "writes": 0
+      },
+      "llm-judge": {
+        "hits": 0,
+        "misses": 35,
+        "writes": 0
+      },
+      "llm-schema-free": {
+        "hits": 0,
+        "misses": 10,
+        "writes": 0
+      },
+      "llm-continuation": {
+        "hits": 0,
+        "misses": 30,
+        "writes": 0
+      }
+    },
+    "secretScan": {
+      "pass": true,
+      "scannedFiles": 1044,
+      "leaks": []
+    }
+  },
+  "manifest": {
+    "input": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\output\\context-compression-eval\\holdout-adversarial-real-30.manifest.jsonl",
+    "hash": "2af2a9b719143d67ee15cc7720c5a2c9dd450b45bbe136122e1012c7ab8f1229",
+    "requested": 30,
+    "resolved": 30,
+    "missing": []
+  },
+  "reproducibility": {
+    "seed": "context-compression-eval-v1",
+    "sampleSelectionHash": "2af2a9b719143d67ee15cc7720c5a2c9dd450b45bbe136122e1012c7ab8f1229",
+    "promptVersions": {
+      "judge": "judge-prompt-v7",
+      "continuation": "continuation-prompt-v4"
+    },
+    "extractorVersion": "real-fact-extractor-v12",
+    "parserVersion": "transcript-parser-v3",
+    "redactionVersion": "redaction-v4"
+  },
+  "realInventory": {
+    "transcriptRoot": "C:\\\\Users\\\\27933\\\\.codex\\\\archived_sessions",
+    "filesFound": 212,
+    "transcriptsParsed": 30,
+    "entriesParsed": 12962
+  },
+  "sampleMix": {
+    "realRequested": 30,
+    "syntheticRequested": 0,
+    "realActual": 30,
+    "syntheticActual": 0,
+    "realShortfall": 0,
+    "evidenceInsufficient": false
+  },
+  "llmJudge": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 30,
+    "liveCount": 30,
+    "cacheHitCount": 0,
+    "results": [
+      {
+        "sampleId": "R15",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies detected; the summary correctly reflects the transcript evidence.",
+          "The causal chain from implementation to test failures and decisions is intact.",
+          "No fabricated facts are present; all statements are traceable to evidence lines.",
+          "The next action 'Rerun with corrected shell quoting or use a fixed-string scan' is actionable and clearly stated."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies detected; the summary correctly reflects the transcript evidence.\",\n    \"The causal chain from implementation to test failures and decisions is intact.\",\n    \"No fabricated facts are present; all statement"
+      },
+      {
+        "sampleId": "R60",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, blocker details, test results, and file contexts.",
+          "The summary accurately reflects the original transcript without contradictions or misrepresentations.",
+          "The causal chain from the objective to the decision to the implementation and validation steps is clearly maintained.",
+          "No fabricated facts are present; all information is traceable to the original transcript evidence.",
+          "The next actions are clearly actionable, with specific steps and evidence references provided."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, blocker details, test results, and file contexts.\",\n    \"The summary accurately reflects the original transcript without contradictions or misrepresentations.\",\n    \"The causal chain from the objective to the decis"
+      },
+      {
+        "sampleId": "R13",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, test results, blockers, and file contexts.",
+          "The summary accurately reflects the transcript evidence without introducing errors or misrepresentations.",
+          "The causal chain of failures and adjustments is clearly documented, showing the progression from type errors to test failures to final validation.",
+          "No fabricated facts are present; all information is traceable to the original transcript evidence lines.",
+          "The next action is actionable and clearly derived from the validated outcome, enabling continuation of the task."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 9.5,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, test results, blockers, and file contexts.\",\n    \"The summary accurately reflects the transcript evidence without introducing errors or misrepresentations.\",\n    \"The causal chain of failures and adjustments is cl"
+      },
+      {
+        "sampleId": "R19",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, blockers, test results, and file contexts.",
+          "The summary accurately reflects the transcript evidence without distortion or hallucination.",
+          "The causal chain from initial spec creation through harness context, implementation, failures, and validation is clearly maintained.",
+          "No fabricated facts are present; all statements are traceable to transcript evidence.",
+          "The next action is actionable and derived from the failure chain, providing a clear follow-up step."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, blockers, test results, and file contexts.\",\n    \"The summary accurately reflects the transcript evidence without distortion or hallucination.\",\n    \"The causal chain from initial spec creation through harness cont"
+      },
+      {
+        "sampleId": "R100",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies detected; the summary faithfully reflects the transcript evidence.",
+          "The causal chain from attempts to failures to next actions is preserved in the failure chain entries and next actions section.",
+          "No fabricated facts are present; all claims are traceable to evidence lines.",
+          "The next action is clearly actionable: 'Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code.'"
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies detected; the summary faithfully reflects the transcript evidence.\",\n    \"The causal chain from attempts to failures to next actions is preserved in the failure chain entries and next actions section.\",\n    "
+      },
+      {
+        "sampleId": "R108",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "The summary accurately reflects the transcript evidence without distortion.",
+          "The causal chain from the initial plan through implementation, failures, and final acceptance is preserved.",
+          "No fabricated facts are introduced; all statements are traceable to the transcript.",
+          "The next action is clearly stated and actionable."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"The summary accurately reflects the transcript evidence without distortion.\",\n    \"The causal chain from the initial plan through implementation, failures, and final acceptance is preserved.\",\n    \"No fabricated facts are introduce"
+      },
+      {
+        "sampleId": "R123",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies or contradictions with the original transcript.",
+          "The causal chain from objective through implementation to TypeScript blocker is preserved.",
+          "No fabricated facts or hallucinated details.",
+          "Next actions are clearly stated and actionable based on the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain from objective through implementation to TypeScript blocker is preserved.\",\n    \"No fabricated facts or hallucinated details.\",\n    \"Ne"
+      },
+      {
+        "sampleId": "R128",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies or contradictions with the original transcript.",
+          "The causal chain from test failure to sanitizer fix to passing tests is preserved.",
+          "No fabricated facts; all statements are traceable to evidence lines.",
+          "Next actions are actionable and clearly derived from the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain from test failure to sanitizer fix to passing tests is preserved.\",\n    \"No fabricated facts; all statements are traceable to evidence "
+      },
+      {
+        "sampleId": "R132",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, blockers, test results, and file contexts.",
+          "The summary accurately reflects the original transcript without introducing errors or contradictions.",
+          "The causal chain from Phase 22 acceptance to Phase 23 command proof is clearly maintained.",
+          "No fabricated facts are present; all statements are directly supported by the transcript evidence.",
+          "The next actions are actionable and clearly derived from the summary content."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, blockers, test results, and file contexts.\",\n    \"The summary accurately reflects the original transcript without introducing errors or contradictions.\",\n    \"The causal chain from Phase 22 acceptance to Phase 23 command proof is "
+      },
+      {
+        "sampleId": "R138",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, either verbatim or as clear paraphrases.",
+          "No inaccuracies or contradictions with the original transcript.",
+          "The causal chain from Phase 26 objective through constraint, attempts, failures, and final outcome is maintained.",
+          "No fabricated facts are introduced; all statements are traceable to evidence lines.",
+          "The next action is clearly actionable and derived from the validated outcome."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain from Phase 26 objective through constraint, attempts, failures, and final outcome is maintained.\",\n    \"No fabricated facts are introduced; a"
+      },
+      {
+        "sampleId": "R40",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved verbatim or via clear paraphrase in the compressed summary.",
+          "No factual inaccuracies or contradictions with the original transcript.",
+          "The causal chain from failures to next actions is clearly maintained.",
+          "No fabricated facts; all content is traceable to evidence lines.",
+          "Next actions are actionable and derived from the failure chains."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved verbatim or via clear paraphrase in the compressed summary.\",\n    \"No factual inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain from failures to next actions is clearly maintained.\",\n    \"No fabricated facts; all content is traceable to evidence lines.\",\n    \"Next acti"
+      },
+      {
+        "sampleId": "R16",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, blockers, test results, and file contexts.",
+          "The summary accurately reflects the transcript evidence without contradictions or misrepresentations.",
+          "The causal chain from initial exploration through implementation, testing, and final validation is clearly maintained.",
+          "No fabricated facts are present; all statements are traceable to the original transcript.",
+          "The next action is clearly actionable: 'Prepare the final report or run the broader gate after this validation result.'"
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, blockers, test results, and file contexts.\",\n    \"The summary accurately reflects the transcript evidence without contradictions or misrepresentations.\",\n    \"The causal chain from initial exploration through imple"
+      },
+      {
+        "sampleId": "R3",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies or contradictions with the original transcript.",
+          "The causal chain from the initial failure (module not found) through the fixes (tsx CLI, build script, chunk splitting) to the remaining hang is preserved.",
+          "No fabricated facts or events not supported by the evidence.",
+          "The next action is clearly actionable: 'Fix the environment or command invocation, then rerun.'"
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain from the initial failure (module not found) through the fixes (tsx CLI, build script, chunk splitting) to the remaining hang is preserv"
+      },
+      {
+        "sampleId": "R51",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, failure chains, tool/test failures, blockers, test results, and file contexts.",
+          "The summary accurately reflects the original transcript without introducing errors or contradictions.",
+          "The causal chain of failures and resolutions is clearly maintained, showing the progression from initial blockers to final readiness for Phase 3.",
+          "No fabricated facts are present; all information is directly supported by the transcript evidence.",
+          "The summary provides actionable next steps, specifically the validated outcome and the follow-up action to prepare the final report or run the broader gate."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, failure chains, tool/test failures, blockers, test results, and file contexts.\",\n    \"The summary accurately reflects the original transcript without introducing errors or contradictions.\",\n    \"The causal chain of failures and resolutions is"
+      },
+      {
+        "sampleId": "R52",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, test results, and file contexts.",
+          "The summary accurately reflects the original transcript without introducing errors or contradictions.",
+          "The causal chain of failures and subsequent fixes is clearly documented, showing the progression from initial test failures to successful validation.",
+          "No fabricated facts are present; all information is directly traceable to the original transcript evidence.",
+          "The summary includes clear next actions and the final validated outcome, enabling continuation of the work."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, test results, and file contexts.\",\n    \"The summary accurately reflects the original transcript without introducing errors or contradictions.\",\n    \"The causal chain of failures and subsequent fixes is clearly docu"
+      },
+      {
+        "sampleId": "R55",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, blockers, test results, and file contexts.",
+          "The summary accurately reflects the transcript evidence without introducing errors or contradictions.",
+          "The causal chain from objective through implementation to validation is clearly maintained.",
+          "No fabricated facts are present; all claims are backed by transcript evidence.",
+          "The summary provides actionable next steps and clear status for handoff."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, blockers, test results, and file contexts.\",\n    \"The summary accurately reflects the transcript evidence without introducing errors or contradictions.\",\n    \"The causal chain from objective through implementation to validation is"
+      },
+      {
+        "sampleId": "R61",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No inaccuracies or contradictions with the original transcript.",
+          "The causal chain from initial test failure through classifier ordering fix, typecheck errors, and boundary scan failure is preserved.",
+          "No fabricated facts; all statements are traceable to the transcript.",
+          "Next actions are clearly stated and actionable based on the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain from initial test failure through classifier ordering fix, typecheck errors, and boundary scan failure is preserved.\",\n    \"No fabricated facts"
+      },
+      {
+        "sampleId": "R76",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies or contradictions with the original transcript.",
+          "The causal chain of failures and decisions is preserved, including the progression from attempt to failure to next action.",
+          "No fabricated facts or hallucinated details beyond the original transcript.",
+          "The next action is clearly stated and actionable, derived from the failure analysis."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain of failures and decisions is preserved, including the progression from attempt to failure to next action.\",\n    \"No fabricated facts or"
+      },
+      {
+        "sampleId": "R4",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No inaccuracies or contradictions with the original transcript.",
+          "The causal chain of failures and decisions is preserved, including the progression from shell quoting errors to harness validation failure.",
+          "No fabricated facts; all statements are traceable to evidence lines.",
+          "The next action is actionable and clearly derived from the failure analysis."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain of failures and decisions is preserved, including the progression from shell quoting errors to harness validation failure.\",\n    \"No fabricated"
+      },
+      {
+        "sampleId": "R137",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual errors or contradictions with the original transcript.",
+          "The causal chain from objective to failure to next action is preserved.",
+          "No fabricated facts or unsupported claims.",
+          "The next action is actionable and clearly derived from the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual errors or contradictions with the original transcript.\",\n    \"The causal chain from objective to failure to next action is preserved.\",\n    \"No fabricated facts or unsupported claims.\",\n    \"The next action is actionable"
+      },
+      {
+        "sampleId": "R75",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chain, boundary reminder, test results, and file contexts.",
+          "The summary accurately reflects the original transcript's evidence without distortion or contradiction.",
+          "The causal chain from Phase 9 Lane E validation to Phase 10 parallel lane execution is clearly maintained.",
+          "No fabricated facts are present; all statements are traceable to the original transcript evidence lines.",
+          "The summary provides actionable next steps (parallel execution of Lane B and C) and clear status (Lane A accepted)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chain, boundary reminder, test results, and file contexts.\",\n    \"The summary accurately reflects the original transcript's evidence without distortion or contradiction.\",\n    \"The causal chain from Phase 9 Lane E validati"
+      },
+      {
+        "sampleId": "R81",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, tool/test failure summaries, blockers, file contexts, and test results.",
+          "The summary accurately reflects the original transcript without introducing errors or contradictions.",
+          "The causal chain from the objective through validation steps to the final decision is clearly maintained.",
+          "No fabricated facts are present; all information is traceable to the original transcript evidence.",
+          "The next actions are actionable and derived from the transcript, enabling continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, tool/test failure summaries, blockers, file contexts, and test results.\",\n    \"The summary accurately reflects the original transcript without introducing errors or contradictions.\",\n    \"The causal chain from the "
+      },
+      {
+        "sampleId": "R85",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decisions, failure chains, test results, and file contexts.",
+          "The summary accurately reflects the transcript evidence without distortion or contradiction.",
+          "The causal chain from objective to decision to failure chains to next actions is clearly maintained.",
+          "No fabricated facts are present; all statements are traceable to the transcript.",
+          "The next action is explicitly stated and actionable, enabling continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decisions, failure chains, test results, and file contexts.\",\n    \"The summary accurately reflects the transcript evidence without distortion or contradiction.\",\n    \"The causal chain from objective to decision to failure chains to next actions is clea"
+      },
+      {
+        "sampleId": "R94",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies or contradictions with the original transcript.",
+          "The causal chain from objective to failures to next actions is preserved.",
+          "No fabricated facts or hallucinated details.",
+          "Next actions are actionable and derived from the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain from objective to failures to next actions is preserved.\",\n    \"No fabricated facts or hallucinated details.\",\n    \"Next actions are ac"
+      },
+      {
+        "sampleId": "R20",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies or contradictions with the original transcript.",
+          "The causal chain from the initial failure through the renderer fix attempt, build, and e2e test is preserved.",
+          "No fabricated facts or claims not supported by the evidence.",
+          "The next action is clearly stated and actionable based on the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain from the initial failure through the renderer fix attempt, build, and e2e test is preserved.\",\n    \"No fabricated facts or claims not s"
+      },
+      {
+        "sampleId": "R30",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the decision to add projection tests, the failure chains with environment issues, the tool/test failure summaries, the decision to use bundled Node, and the file contexts.",
+          "The summary accurately reflects the transcript evidence without distortion or contradiction.",
+          "The causal chain from adding tests to encountering node not found errors to diagnosing the environment issue and deciding to use bundled Node is clearly preserved.",
+          "No fabricated facts are present; all statements are traceable to the transcript.",
+          "The next action to fix the environment and rerun is actionable and clearly stated."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the decision to add projection tests, the failure chains with environment issues, the tool/test failure summaries, the decision to use bundled Node, and the file contexts.\",\n    \"The summary accurately reflects the transcript evidence without distortion or contradict"
+      },
+      {
+        "sampleId": "R65",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, including the critical decision about rtk path, the constraint to avoid touching existing code, all four failure chains, the tool/test failure summaries, the blocker line, the test result, and the file contexts.",
+          "The summary accurately reflects the transcript evidence without distortion or misrepresentation.",
+          "The causal chain from rtk not being on PATH to the failure chains and subsequent adjustments is preserved.",
+          "No fabricated facts are introduced; all claims are traceable to the evidence lines.",
+          "The next actions are actionable and clearly derived from the failures, enabling continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, including the critical decision about rtk path, the constraint to avoid touching existing code, all four failure chains, the tool/test failure summaries, the blocker line, the test result, and the file contexts.\",\n    \"The summary accurately reflects the transcript evidence with"
+      },
+      {
+        "sampleId": "R1",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved verbatim or via clear paraphrase in the compressed summary.",
+          "No factual inaccuracies detected; the summary matches the evidence lines.",
+          "The causal chain from the decision about ACP env propagation to the shell quoting failure is intact.",
+          "No fabricated facts; all content is traceable to evidence.",
+          "The next action is clearly actionable: rerun corrected command or use fixed-string scan."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved verbatim or via clear paraphrase in the compressed summary.\",\n    \"No factual inaccuracies detected; the summary matches the evidence lines.\",\n    \"The causal chain from the decision about ACP env propagation to the shell quoting failure is intact.\",\n    \"No fabricated facts; all content is traceable to"
+      },
+      {
+        "sampleId": "R114",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, including the decision, constraint, failure chains, tool failures, test results, and file contexts.",
+          "The summary accurately reflects the transcript evidence without distortion or misrepresentation.",
+          "The causal chain of failures (RTK not found, PATH issues, shell quoting failures) and subsequent actions is preserved.",
+          "No fabricated facts are introduced; all claims are traceable to transcript evidence.",
+          "The next action is actionable: 'Prepare the final report or run the broader gate after this validation result: Harness validate passed for the new spec.'"
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, including the decision, constraint, failure chains, tool failures, test results, and file contexts.\",\n    \"The summary accurately reflects the transcript evidence without distortion or misrepresentation.\",\n    \"The causal chain of failures (RTK not found, PATH issues, shell quot"
+      },
+      {
+        "sampleId": "R122",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No inaccuracies or contradictions with the original transcript.",
+          "The causal chain from dirty worktree to narrow additive changes, through scan failures and quoting issues, to the decision to switch to fixed-string scans is preserved.",
+          "No fabricated facts; all statements are traceable to the transcript evidence.",
+          "Next actions are clearly stated and actionable, e.g., rerun one-pattern/fixed-string scans."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain from dirty worktree to narrow additive changes, through scan failures and quoting issues, to the decision to switch to fixed-string scans is pr"
+      }
+    ],
+    "aggregate": {
+      "judgeScoreMean": 10,
+      "judgeScoreMin": 10,
+      "judgeScoreMax": 10,
+      "judgeScoreMedian": 10,
+      "judgeScoreStdDev": 0,
+      "scoreHistogram": {
+        "10": 30,
+        "0-4.99": 0,
+        "5-6.99": 0,
+        "7-7.99": 0,
+        "8-8.99": 0,
+        "9-9.99": 0
+      },
+      "scoreDistributionWarning": "all_scores_identical_check_judge_calibration_or_sample_difficulty",
+      "completenessRate": 1,
+      "accuracyRate": 1,
+      "causalChainRate": 1,
+      "noFabricationRate": 1,
+      "actionabilityRate": 1
+    }
+  },
+  "llmJudgeCalibration": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 5,
+    "liveCount": 5,
+    "cacheHitCount": 0,
+    "results": [
+      {
+        "sampleId": "R15-calibration-loss-1",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 4,
+        "justifications": [
+          "Completeness false: The compressed summary omits nearly all expected facts, including the implementation of Chat slash commands MVP, the failure chains, the test results, and the decisions. Only vague placeholders are present.",
+          "Accuracy true: The summary does not contain any factual errors; it simply lacks content.",
+          "Causal chain false: The summary does not preserve any causal chain from the transcript, such as the sequence of failures and adjustments.",
+          "No fabrication true: The summary does not introduce any fabricated facts.",
+          "Actionability false: The next action 'Continue generally from the current state' is too vague and does not enable a new agent to proceed with the task based on the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 3,\n  \"justifications\": [\n    \"Completeness false: The compressed summary omits nearly all expected facts, including the implementation of Chat slash commands MVP, the failure chains, the test results, and the decisions. Only vague placeholders are present.\",\n    \"Accuracy true: The summary does not contain any factual errors; it simply lacks content.\",\n    \"Causa"
+      },
+      {
+        "sampleId": "R60-calibration-loss-2",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 10,
+        "justifications": [
+          "Completeness false: The compressed summary omits nearly all expected facts, including the Lane D objective, the key decision about nesting verifier output, and all failure chains and test results.",
+          "Accuracy false: The summary states 'Some work happened, but concrete debugging evidence has been omitted' and 'Important implementation, failure, validation, and next-action details are missing', which is not accurate because the original transcript contains detailed evidence and decisions.",
+          "Causal chain false: The summary does not preserve any causal chain from the transcript; it lacks the sequence of attempts, failures, and adjustments.",
+          "No fabrication true: The summary does not introduce any fabricated facts; it simply omits information.",
+          "Actionability false: The next action 'Continue generally from the current state' is vague and not actionable based on the transcript's specific next steps."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 1,\n  \"justifications\": [\n    \"Completeness false: The compressed summary omits nearly all expected facts, including the Lane D objective, the key decision about nesting verifier output, and all failure chains and test results.\",\n    \"Accuracy false: The summary states 'Some work happened, but concrete debugging evidence has been omitted' and 'Important implement"
+      },
+      {
+        "sampleId": "R13-calibration-loss-3",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 2,
+        "justifications": [
+          "Completeness false: The compressed summary omits all critical expected facts, including the user's objective to fix hardcoded Chinese, the decision to localize Chat workspace headers/toasts, the constraint to use existing i18n patterns, and all failure chains and test results.",
+          "Accuracy false: The summary states 'Some work happened, but concrete debugging evidence has been omitted' and 'Important implementation, failure, validation, and next-action details are missing', which contradicts the detailed evidence in the transcript showing specific actions, failures, and resolutions.",
+          "Causal_chain false: The summary does not preserve any of the failure chains from the expected facts, such as the typecheck error, the Playwright test failure, and the subsequent fixes. The causal relationships between attempts, failures, and adjustments are entirely missing.",
+          "No_fabrication true: The summary does not introduce any fabricated facts; it simply omits nearly all relevant information.",
+          "Actionability false: The next action 'Continue generally from the current state' is vague and does not provide any specific, actionable steps based on the transcript evidence. The expected facts include concrete next actions like inspecting/fixing failing tests, which are absent."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 2,\n  \"justifications\": [\n    \"Completeness false: The compressed summary omits all critical expected facts, including the user's objective to fix hardcoded Chinese, the decision to localize Chat workspace headers/toasts, the constraint to use existing i18n patterns, and all failure chains and test results.\",\n    \"Accuracy false: The summary states 'Some work hap"
+      },
+      {
+        "sampleId": "R19-calibration-loss-4",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 4,
+        "justifications": [
+          "Completeness false: The compressed summary omits nearly all expected facts, including the objective, decision to add harness task spec, constraint about running harness context, all failure chains, important blockers, test results, and file contexts. Only vague placeholders remain.",
+          "Accuracy true: The summary does not contain any factually incorrect statements; it simply lacks content.",
+          "Causal_chain false: The summary does not preserve any of the failure chains or the sequence of attempts, failures, adjustments, and validations from the transcript.",
+          "No_fabrication true: The summary does not introduce any fabricated facts.",
+          "Actionability false: The next actions are too vague ('Continue generally from the current state') and do not reflect the specific follow-ups from the transcript, such as rerunning commands or fixing environment issues."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 3,\n  \"justifications\": [\n    \"Completeness false: The compressed summary omits nearly all expected facts, including the objective, decision to add harness task spec, constraint about running harness context, all failure chains, important blockers, test results, and file contexts. Only vague placeholders remain.\",\n    \"Accuracy true: The summary does not contain a"
+      },
+      {
+        "sampleId": "R100-calibration-loss-5",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 4,
+        "justifications": [
+          "Completeness false: The compressed summary omits all expected facts, including critical decisions, constraints, blockers, test results, and file contexts. It only contains generic placeholder text.",
+          "Accuracy true: The summary does not contain any factual errors; it simply lacks content.",
+          "Causal_chain false: The summary does not preserve any causal chain from the transcript, such as the failure chain or the progression of actions.",
+          "No_fabrication true: The summary does not introduce any fabricated facts.",
+          "Actionability false: The next actions are too vague ('Continue generally from the current state') and do not provide actionable steps based on the transcript."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 3,\n  \"justifications\": [\n    \"Completeness false: The compressed summary omits all expected facts, including critical decisions, constraints, blockers, test results, and file contexts. It only contains generic placeholder text.\",\n    \"Accuracy true: The summary does not contain any factual errors; it simply lacks content.\",\n    \"Causal_chain false: The summary do"
+      }
+    ],
+    "aggregate": {
+      "judgeScoreMean": 4.8,
+      "judgeScoreMin": 2,
+      "judgeScoreMax": 10,
+      "judgeScoreMedian": 4,
+      "judgeScoreStdDev": 2.7129,
+      "scoreHistogram": {
+        "10": 1,
+        "0-4.99": 4,
+        "5-6.99": 0,
+        "7-7.99": 0,
+        "8-8.99": 0,
+        "9-9.99": 0
+      },
+      "scoreDistributionWarning": null,
+      "completenessRate": 0,
+      "accuracyRate": 0.6,
+      "causalChainRate": 0,
+      "noFabricationRate": 1,
+      "actionabilityRate": 0
+    },
+    "expectedBehavior": "known-loss calibration samples should score below 8 on average and below 10 at minimum",
+    "gate": {
+      "pass": true,
+      "actual": {
+        "judgeScoreMean": 4.8,
+        "judgeScoreMin": 2
+      }
+    }
+  },
+  "llmJudgeLiveRerun": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 3,
+    "liveCount": 3,
+    "cacheHitCount": 0,
+    "results": [
+      {
+        "sampleId": "R15",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies or contradictions with the original transcript.",
+          "Causal chain is intact: the objective, decisions, failures, and next actions are logically connected.",
+          "No fabricated facts; all content is traceable to evidence lines.",
+          "Next actions are actionable and clearly derived from the failure chains."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies or contradictions with the original transcript.\",\n    \"Causal chain is intact: the objective, decisions, failures, and next actions are logically connected.\",\n    \"No fabricated facts; all content is trace"
+      },
+      {
+        "sampleId": "R60",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, blocker details, test results, and file contexts.",
+          "The summary accurately reflects the original transcript without introducing errors or contradictions.",
+          "The causal chain from the objective to the decision to the implementation and validation steps is clearly maintained.",
+          "No fabricated facts are present; all information is traceable to the original transcript evidence.",
+          "The summary includes clear next actions and sufficient context for a future agent to continue the work."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, blocker details, test results, and file contexts.\",\n    \"The summary accurately reflects the original transcript without introducing errors or contradictions.\",\n    \"The causal chain from the objective to the decis"
+      },
+      {
+        "sampleId": "R13",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, test results, blockers, and file contexts.",
+          "The summary accurately reflects the transcript evidence without introducing errors or contradictions.",
+          "The causal chain of failures and adjustments is clearly represented, showing the progression from type errors to test failures to final validation.",
+          "No fabricated facts are present; all statements are traceable to the original transcript or are structural elements.",
+          "The next action is actionable and clearly derived from the validated outcome, enabling continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 9.5,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, test results, blockers, and file contexts.\",\n    \"The summary accurately reflects the transcript evidence without introducing errors or contradictions.\",\n    \"The causal chain of failures and adjustments is clearl"
+      }
+    ],
+    "aggregate": {
+      "judgeScoreMean": 10,
+      "judgeScoreMin": 10,
+      "judgeScoreMax": 10,
+      "judgeScoreMedian": 10,
+      "judgeScoreStdDev": 0,
+      "scoreHistogram": {
+        "10": 3,
+        "0-4.99": 0,
+        "5-6.99": 0,
+        "7-7.99": 0,
+        "8-8.99": 0,
+        "9-9.99": 0
+      },
+      "scoreDistributionWarning": null,
+      "completenessRate": 1,
+      "accuracyRate": 1,
+      "causalChainRate": 1,
+      "noFabricationRate": 1,
+      "actionabilityRate": 1
+    },
+    "ratio": 0.1,
+    "requestedCount": 3,
+    "cacheBypassed": true,
+    "cacheArgumentWasPresent": true,
+    "consistency": {
+      "comparableSamples": 3,
+      "maxAbsScoreDelta": 0,
+      "meanAbsScoreDelta": 0,
+      "comparisons": [
+        {
+          "sampleId": "R15",
+          "cachedScore": 10,
+          "liveScore": 10,
+          "scoreDelta": 0
+        },
+        {
+          "sampleId": "R60",
+          "cachedScore": 10,
+          "liveScore": 10,
+          "scoreDelta": 0
+        },
+        {
+          "sampleId": "R13",
+          "cachedScore": 10,
+          "liveScore": 10,
+          "scoreDelta": 0
+        }
+      ]
+    }
+  },
+  "llmSchemaFree": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 10,
+    "liveCount": 10,
+    "cacheHitCount": 0,
+    "results": [
+      {
+        "sampleId": "R15",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves all actionable information: the goal (Chat slash commands MVP), key decisions (locale updates, test additions, E2E fork split), failure chains (shell quoting failures with clear classification and next action), test results (42 unit tests pass, 3 E2E pass, i18n parity fixed), and the next action (rerun with corrected shell quoting). No critical debugging info is omitted; the shell quoting failures are correctly attributed to invocation issues, not product code, and the context directs the next engineer to rerun with proper quoting. The evidence refs and file contexts provide sufficient pointers to retrieve details if needed.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves all actionable information: the goal (Chat slash commands MVP), key decisions (locale updates, test additions, E2E fork split), failure chains (shell quoting failures with clear classification and next action), test results (42 unit tests pass, 3 E2E pass, i18n parity fixed), and the next action (rerun with corrected shell quoting). No critical"
+      },
+      {
+        "sampleId": "R60",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the objective, key decisions, failure chains (including the missing raw output with explicit follow-up to rerun), validation state (all tests green, typecheck passed, boundary scans clean), and next action (submission written). The missing raw stdout/stderr is explicitly noted and the next engineer is directed to rerun with raw output, so it is not an omission by the compressor. All critical information for the next correct engineering action is present.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the objective, key decisions, failure chains (including the missing raw output with explicit follow-up to rerun), validation state (all tests green, typecheck passed, boundary scans clean), and next action (submission written). The missing raw stdout/stderr is explicitly noted and the next engineer is directed to rerun with raw output, so it is"
+      },
+      {
+        "sampleId": "R13",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the objective, key decisions, failure chains, test results, file references, and next actions. It includes enough detail for a competent engineer to understand the state and continue without repeating wrong work or misdiagnosing failures. The missing raw stdout/stderr for one failure is explicitly noted and the next action directs rerunning with raw output, which is acceptable per the evaluation criteria.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the objective, key decisions, failure chains, test results, file references, and next actions. It includes enough detail for a competent engineer to understand the state and continue without repeating wrong work or misdiagnosing failures. The missing raw stdout/stderr for one failure is explicitly noted and the next action directs rerunning wit"
+      },
+      {
+        "sampleId": "R19",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the objective, key decisions, failure chains with classifications and next actions, current state, and next action. It includes evidence references and rehydrated file context. The missing raw stdout/stderr for some failures is explicitly noted with a directive to rerun with raw output, which is acceptable per the evaluation criteria. No omission would cause a competent engineer to repeat wrong work, miss a blocker, misdiagnose, or take the wrong next action.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the objective, key decisions, failure chains with classifications and next actions, current state, and next action. It includes evidence references and rehydrated file context. The missing raw stdout/stderr for some failures is explicitly noted with a directive to rerun with raw output, which is acceptable per the evaluation criteria. No omissi"
+      },
+      {
+        "sampleId": "R100",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 9,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the actionable error (TypeScript compilation error with file/line, git not found, missing raw output), root cause (environment/invocation failure), validation state (test results, scans), and next action (rerun with raw output). The missing raw stdout/stderr is explicitly noted and the next action directs to rerun with raw output, so it is not an omission by the compressor. The context is sufficient for a competent engineer to proceed without repeating wrong work or misdiagnosing.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 9,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the actionable error (TypeScript compilation error with file/line, git not found, missing raw output), root cause (environment/invocation failure), validation state (test results, scans), and next action (rerun with raw output). The missing raw stdout/stderr is explicitly noted and the next action directs to rerun with raw output, so it is not a"
+      },
+      {
+        "sampleId": "R108",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the actionable error (exit code 1 with no captured stdout/stderr), root cause (environment/invocation failure), validation state (harness validation and typecheck clean, latest outcome accepted), and next step (rerun with raw/unfiltered output). It also provides file paths, line references, excerpt hashes, and evidence refs for rehydration. The missing raw output is explicitly noted and the next action directs to rerun, so no important omission is present.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the actionable error (exit code 1 with no captured stdout/stderr), root cause (environment/invocation failure), validation state (harness validation and typecheck clean, latest outcome accepted), and next step (rerun with raw/unfiltered output). It also provides file paths, line references, excerpt hashes, and evidence refs for rehydration. The"
+      },
+      {
+        "sampleId": "R123",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the objective, constraints, failure chains, test results, and next actions. The missing raw stdout/stderr for some failures is explicitly noted and the follow-up action is to rerun with raw output, which is acceptable per the evaluation criteria. All critical information for the next engineer to proceed is present.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the objective, constraints, failure chains, test results, and next actions. The missing raw stdout/stderr for some failures is explicitly noted and the follow-up action is to rerun with raw output, which is acceptable per the evaluation criteria. All critical information for the next engineer to proceed is present.\"\n}"
+      },
+      {
+        "sampleId": "R128",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves all actionable information: the test failure (1 test failed in runtime-grounding-shadow-consumers.test.ts), the root cause (authority-like metadata drift), the validation state (test passes after sanitizer fix, all 90 tests green, TypeScript passes), and the next action (inspect/fix the failing test). Missing raw stdout/stderr is explicitly noted with a directive to rerun with raw output, which is acceptable per evaluation rules. No omission would cause a competent engineer to repeat wrong work or misdiagnose.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves all actionable information: the test failure (1 test failed in runtime-grounding-shadow-consumers.test.ts), the root cause (authority-like metadata drift), the validation state (test passes after sanitizer fix, all 90 tests green, TypeScript passes), and the next action (inspect/fix the failing test). Missing raw stdout/stderr is explicitly not"
+      },
+      {
+        "sampleId": "R132",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the objective, key decisions, failure chains with classifications and next actions, validation state, and evidence references. The missing raw stdout/stderr for some failures is explicitly noted and the next action directs rerunning with raw output, which is acceptable per the evaluation criteria. No omission would cause a competent engineer to repeat wrong work or misdiagnose.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the objective, key decisions, failure chains with classifications and next actions, validation state, and evidence references. The missing raw stdout/stderr for some failures is explicitly noted and the next action directs rerunning with raw output, which is acceptable per the evaluation criteria. No omission would cause a competent engineer to"
+      },
+      {
+        "sampleId": "R138",
+        "omitsKeyDebuggingInfo": false,
+        "severity": "none",
+        "score": 10,
+        "missingInformation": [],
+        "rationale": "The compressed context preserves the objective, constraints, failure chains (including missing raw output with explicit rerun instruction), validation results, and next actions. All critical information for the next engineer is present; no omission would cause wrong work or misdiagnosis.",
+        "rawTextPreview": "{\n  \"omits_key_debugging_info\": false,\n  \"severity\": \"none\",\n  \"score\": 10,\n  \"missing_information\": [],\n  \"rationale\": \"The compressed context preserves the objective, constraints, failure chains (including missing raw output with explicit rerun instruction), validation results, and next actions. All critical information for the next engineer is present; no omission would cause wrong work or misdiagnosis.\"\n}"
+      }
+    ],
+    "aggregate": {
+      "judgeScoreMean": 9.9,
+      "judgeScoreMin": 9,
+      "judgeScoreMax": 10,
+      "judgeScoreMedian": 10,
+      "judgeScoreStdDev": 0.3,
+      "scoreHistogram": {
+        "10": 9,
+        "0-4.99": 0,
+        "5-6.99": 0,
+        "7-7.99": 0,
+        "8-8.99": 0,
+        "9-9.99": 1
+      },
+      "scoreDistributionWarning": null,
+      "omissionRate": 0,
+      "majorOrCriticalOmissionRate": 0
+    }
+  },
+  "llmContinuation": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 30,
+    "liveCount": 30,
+    "cacheHitCount": 0,
+    "results": [
+      {
+        "sampleId": "R15",
+        "actions": [
+          {
+            "id": "R15-continue",
+            "kind": "decision",
+            "decision": "Rerun with corrected shell quoting or use a fixed-string scan.",
+            "critical": true,
+            "label": "Fix shell quoting and re-run failed commands"
+          }
+        ],
+        "completed": true,
+        "rationale": "The most critical next action is to address the shell quoting failures that blocked reading key files (ChatInput.tsx, READMEs). The decision to rerun with corrected quoting is already recorded and should be executed to unblock progress.",
+        "evaluation": {
+          "taskId": "R15-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R15-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"shell_quoting_failure\",\n      \"decision\": \"Rerun with corrected shell quoting or use a fixed-string scan.\",\n      \"label\": \"Fix shell quoting and re-run failed commands\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The most critical next action is to address the shell quoting failures that blocked reading key files (ChatInput.tsx, READMEs). The decision to rerun with corrected quoting is already rec"
+      },
+      {
+        "sampleId": "R60",
+        "actions": [
+          {
+            "id": "R60-read",
+            "kind": "read_file",
+            "target": "openclaw_runtime/src/agents/task-loop-controller.ts",
+            "critical": true,
+            "label": "Read TaskLoop controller to understand current evidence verifier integration"
+          }
+        ],
+        "completed": true,
+        "rationale": "The latest outcome shows validation passed for the lane D submission, but the compressed context indicates the task is to wire the standalone Evidence Verifier into TaskLoop. The current state shows the submission is written and validated, but the actual code changes may still need to be reviewed or finalized. The candidate action to read the TaskLoop controller file is the most relevant next step to verify the integration is complete and correct, as the file is the primary target for changes. The other candidate actions are either stale, redundant, or not aligned with the current progress.",
+        "evaluation": {
+          "taskId": "R60-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R60-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"openclaw_runtime/src/agents/task-loop-controller.ts\",\n      \"decision\": \"\",\n      \"label\": \"Read TaskLoop controller to understand current evidence verifier integration\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest outcome shows validation passed for the lane D submission, but the compressed context indicates the task is to wire the standalone Evidence Verifier into TaskLoop. The current sta"
+      },
+      {
+        "sampleId": "R13",
+        "actions": [
+          {
+            "id": "R13-fix-settings-build",
+            "kind": "edit_file",
+            "target": "src/pages/Settings/index.tsx",
+            "decision": "fix_build_error",
+            "label": "Fix syntax error at line 1362: Expected ')' but found 'className'"
+          }
+        ],
+        "completed": false,
+        "rationale": "The latest test failure shows a build error in src/pages/Settings/index.tsx:1362:21: Expected ')' but found 'className'. This is a syntax error that must be fixed before any further testing. The error is likely from a recent edit that introduced a JSX syntax issue. Fixing this will unblock the build and allow the Playwright tests to run.",
+        "evaluation": {
+          "taskId": "R13-real-continuation",
+          "firstActionMatch": false,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R13-fix-settings-build\",\n      \"kind\": \"edit_file\",\n      \"target\": \"src/pages/Settings/index.tsx\",\n      \"decision\": \"fix_build_error\",\n      \"label\": \"Fix syntax error at line 1362: Expected ')' but found 'className'\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest test failure shows a build error in src/pages/Settings/index.tsx:1362:21: Expected ')' but found 'className'. This is a syntax error that must be fixed before any further testing. The "
+      },
+      {
+        "sampleId": "R19",
+        "actions": [
+          {
+            "id": "R19-continue",
+            "kind": "decision",
+            "decision": "Fix environment/invocation and rerun: pnpm --filter @clawx/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/lightweight-subagent-runner-mvp.md\"",
+            "critical": true,
+            "label": "Rerun harness validate after fixing environment"
+          }
+        ],
+        "completed": true,
+        "rationale": "The latest outcome shows harness validate failed due to environment/invocation issue (node_modules missing). The spec structure is valid per --no-diff run. The next action is to fix the environment and rerun the full validate command to confirm the task spec passes all checks.",
+        "evaluation": {
+          "taskId": "R19-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R19-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"harness/specs/tasks/lightweight-subagent-runner-mvp.md\",\n      \"decision\": \"Fix environment/invocation and rerun: pnpm --filter @clawx/harness start -- \\\"validate\\\" \\\"--spec\\\" \\\"harness/specs/tasks/lightweight-subagent-runner-mvp.md\\\"\",\n      \"label\": \"Rerun harness validate after fixing environment\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest outcome shows harness validate failed due to"
+      },
+      {
+        "sampleId": "R100",
+        "actions": [
+          {
+            "id": "R100-continue",
+            "kind": "decision",
+            "decision": "Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code.",
+            "critical": true,
+            "label": "Rerun failing command with raw output"
+          }
+        ],
+        "completed": true,
+        "rationale": "The active failure focus indicates a command exited non-zero with no captured output. The next action from the failure chain is to rerun with raw/unfiltered stdout/stderr to diagnose the root cause. This is the highest priority uncompleted action.",
+        "evaluation": {
+          "taskId": "R100-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R100-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code.\",\n      \"label\": \"Rerun failing command with raw output\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The active failure focus indicates a command exited non-zero with no captured output. The next action from the failure chain is to rerun with raw/unfiltered stdout/stderr to diagnose the ro"
+      },
+      {
+        "sampleId": "R108",
+        "actions": [
+          {
+            "id": "R108-continue",
+            "kind": "decision",
+            "decision": "The synthesis is written with `Status: accepted` as the final line. I’m doing a last sanity pass: validate the spec again, check the final status line, and rerun the touched-file boundary scans with the synthesis included.",
+            "critical": true,
+            "label": "Final sanity pass"
+          }
+        ],
+        "completed": true,
+        "rationale": "The task is nearly complete with 'Status: accepted' in the synthesis. The next action is to perform a final sanity pass as explicitly stated in the next actions section, validating the spec, checking the final status line, and rerunning boundary scans. This ensures all work is verified before marking complete.",
+        "evaluation": {
+          "taskId": "R108-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R108-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"The synthesis is written with `Status: accepted` as the final line. I’m doing a last sanity pass: validate the spec again, check the final status line, and rerun the touched-file boundary scans with the synthesis included.\",\n      \"label\": \"Final sanity pass\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The task is nearly complete with 'Status: accepted' in the synthesis. The "
+      },
+      {
+        "sampleId": "R123",
+        "actions": [
+          {
+            "id": "R123-read",
+            "kind": "read_file",
+            "target": ".codex/attachments/9abb1779-d9df-45ba-bbf2-da30cef90a91/pasted-text-1.txt",
+            "critical": true,
+            "label": "Read the pasted objective text to understand the task goal"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that the task is to complete a fresh accepted task spec, design research, cross-consumer diagnostics audit, deep tests, and final synthesis for GroundingRef/GroundingQuery in Runtime Memory Diagnostics Consumer. The pasted text file contains the objective but hasn't been read yet in this session. Reading it is the critical first step to understand the exact requirements before proceeding with any implementation or validation.",
+        "evaluation": {
+          "taskId": "R123-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R123-read\",\n      \"kind\": \"read_file\",\n      \"target\": \".codex/attachments/9abb1779-d9df-45ba-bbf2-da30cef90a91/pasted-text-1.txt\",\n      \"decision\": \"\",\n      \"label\": \"Read the pasted objective text to understand the task goal\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that the task is to complete a fresh accepted task spec, design research, cross-consumer diagnostics audit, deep tests, and final synthesis for GroundingRef"
+      },
+      {
+        "sampleId": "R128",
+        "actions": [
+          {
+            "id": "R128-continue",
+            "kind": "decision",
+            "decision": "Rerun corrected command or use fixed-string scan for: rg: openclaw_runtime/src/context-engine/*.ts: 文件名、目录名或卷标语法不正确。 (os error 123)",
+            "critical": true,
+            "label": "Rerun rg scan with corrected path (no glob) for context-engine"
+          }
+        ],
+        "completed": true,
+        "rationale": "The last action was a rg scan that failed due to Windows glob quoting. The compressed context indicates the user intended to rerun that scan with a corrected command. All other candidate actions are either stale, already completed, or distractors. The focused test and TypeScript have already passed; the remaining step is to fix the shell quoting failure and then proceed to README review and synthesis.",
+        "evaluation": {
+          "taskId": "R128-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R128-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"openclaw_runtime/src/context-engine\",\n      \"decision\": \"Rerun corrected command or use fixed-string scan for: rg: openclaw_runtime/src/context-engine/*.ts: 文件名、目录名或卷标语法不正确。 (os error 123)\",\n      \"label\": \"Rerun rg scan with corrected path (no glob) for context-engine\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The last action was a rg scan that failed due to Windows glob quoting. The compressed"
+      },
+      {
+        "sampleId": "R132",
+        "actions": [
+          {
+            "id": "R132-read",
+            "kind": "read_file",
+            "target": ".codex/attachments/aef93b4c-144f-41ec-95a9-660f8c4cafa0/pasted-text.txt",
+            "critical": true,
+            "label": "Read user's request to understand Phase 22 scope"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that the user's request (pasted-text.txt) has not been fully read yet. The latest outcome indicates the need to prove an explicit command entry point for the shadow helper. Reading the attachment is the first step to understand the exact requirements before proceeding with implementation or testing.",
+        "evaluation": {
+          "taskId": "R132-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R132-read\",\n      \"kind\": \"read_file\",\n      \"target\": \".codex/attachments/aef93b4c-144f-41ec-95a9-660f8c4cafa0/pasted-text.txt\",\n      \"decision\": \"\",\n      \"label\": \"Read user's request to understand Phase 22 scope\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that the user's request (pasted-text.txt) has not been fully read yet. The latest outcome indicates the need to prove an explicit command entry point for the shadow hel"
+      },
+      {
+        "sampleId": "R138",
+        "actions": [
+          {
+            "id": "R138-read",
+            "kind": "read_file",
+            "target": ".codex/attachments/a117ed94-966a-4270-99f4-195a143a9388/pasted-text.txt",
+            "critical": true,
+            "label": "Read user's original request to confirm scope"
+          }
+        ],
+        "completed": true,
+        "rationale": "Phase 26 is already completed and validated per the latest outcome. The only remaining action is to read the original user request to confirm the scope matches what was done, then mark the task as complete.",
+        "evaluation": {
+          "taskId": "R138-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R138-read\",\n      \"kind\": \"read_file\",\n      \"target\": \".codex/attachments/a117ed94-966a-4270-99f4-195a143a9388/pasted-text.txt\",\n      \"decision\": \"\",\n      \"label\": \"Read user's original request to confirm scope\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"Phase 26 is already completed and validated per the latest outcome. The only remaining action is to read the original user request to confirm the scope matches what was done, then mark the task as com"
+      },
+      {
+        "sampleId": "R40",
+        "actions": [
+          {
+            "id": "R40-continue",
+            "kind": "decision",
+            "decision": "Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code.",
+            "critical": true,
+            "label": "Write submission file"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that evidence gathering is complete and the decision has been made to write the submission file. The next action is to confirm the submissions directory and lane D file status, then write the output file.",
+        "evaluation": {
+          "taskId": "R40-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R40-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"lane-d-evidence-verifier\",\n      \"decision\": \"证据面已经足够了。我先确认 submissions 目录和 lane D 文件状态，然后只写 `lane-d-evidence-verifier.md`。\",\n      \"label\": \"Write submission file\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that evidence gathering is complete and the decision has been made to write the submission file. The next action is to confirm the submissions directory and lane D"
+      },
+      {
+        "sampleId": "R16",
+        "actions": [
+          {
+            "id": "R16-read",
+            "kind": "read_file",
+            "target": "harness/specs/tasks/project-rules-center-mvp.md",
+            "critical": true,
+            "label": "Read task spec to understand remaining validation steps"
+          }
+        ],
+        "completed": true,
+        "rationale": "The implementation is complete (contract, service, UI, i18n, tests), but harness validation failed due to environment issues. The next step is to read the task spec to understand the expected validation criteria, then fix the environment and rerun harness validation.",
+        "evaluation": {
+          "taskId": "R16-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R16-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"harness/specs/tasks/project-rules-center-mvp.md\",\n      \"decision\": \"\",\n      \"label\": \"Read task spec to understand remaining validation steps\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The implementation is complete (contract, service, UI, i18n, tests), but harness validation failed due to environment issues. The next step is to read the task spec to understand the expected validation criteria, th"
+      },
+      {
+        "sampleId": "R3",
+        "actions": [
+          {
+            "id": "R3-continue",
+            "kind": "decision",
+            "decision": "Fix the environment or command invocation, then rerun.",
+            "critical": true,
+            "label": "Continue fixing Gateway startup hang"
+          }
+        ],
+        "completed": true,
+        "rationale": "The Gateway still hangs after 'control-ui.seed' and before 'plugins.bootstrap'. The next step is to add temporary trace to pinpoint the exact module initialization causing the hang, then fix it.",
+        "evaluation": {
+          "taskId": "R3-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R3-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Fix the environment or command invocation, then rerun.\",\n      \"label\": \"Continue fixing Gateway startup hang\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The Gateway still hangs after 'control-ui.seed' and before 'plugins.bootstrap'. The next step is to add temporary trace to pinpoint the exact module initialization causing the hang, then fix it.\"\n}"
+      },
+      {
+        "sampleId": "R51",
+        "actions": [
+          {
+            "id": "R51-read",
+            "kind": "read_file",
+            "target": "electron/services/mcp-api.ts",
+            "critical": true,
+            "label": "Inspect MCP API source for codegraph references and catalog behavior"
+          }
+        ],
+        "completed": true,
+        "rationale": "The latest outcome states '已完成进入 Phase 3 前的准备收敛', but the compressed context shows unresolved blockers: MCP 'clawx-codegraph' catalog visibility gap, environment failures (node not found, rg file not found), and lane-c/lane-f status needs revision. The objective is to complete functions and tests for Phase 3 readiness. The most critical next step is to inspect the MCP API source to understand the codegraph catalog issue and determine minimal fixes. Running the already-passed validation again would be redundant.",
+        "evaluation": {
+          "taskId": "R51-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R51-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"electron/services/mcp-api.ts\",\n      \"decision\": \"\",\n      \"label\": \"Inspect MCP API source for codegraph references and catalog behavior\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest outcome states '已完成进入 Phase 3 前的准备收敛', but the compressed context shows unresolved blockers: MCP 'clawx-codegraph' catalog visibility gap, environment failures (node not found, rg file not found), and lane-c/la"
+      },
+      {
+        "sampleId": "R52",
+        "actions": [
+          {
+            "id": "R52-read",
+            "kind": "read_file",
+            "target": "runtime-research/handoffs/phase-3-provider-tool-registry-pilot/submissions/lane-a-registry-contracts-and-flags.md",
+            "critical": true,
+            "label": "Read submission file to verify final state"
+          }
+        ],
+        "completed": true,
+        "rationale": "The lane is marked as completed, but the submission file may need final verification. Reading it ensures the evidence is consistent and no further corrections are needed.",
+        "evaluation": {
+          "taskId": "R52-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R52-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"runtime-research/handoffs/phase-3-provider-tool-registry-pilot/submissions/lane-a-registry-contracts-and-flags.md\",\n      \"decision\": \"\",\n      \"label\": \"Read submission file to verify final state\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The lane is marked as completed, but the submission file may need final verification. Reading it ensures the evidence is consistent and no further corrections are"
+      },
+      {
+        "sampleId": "R55",
+        "actions": [
+          {
+            "id": "R55-read",
+            "kind": "read_file",
+            "target": "runtime-research/handoffs/phase-3-provider-tool-registry-pilot/submissions/lane-d-taskloop-registry-shadow-integration.md",
+            "critical": true,
+            "label": "Read the Lane D submission file to verify completion and content"
+          }
+        ],
+        "completed": true,
+        "rationale": "The latest outcome indicates Lane D is completed, but the submission file should be read to confirm the handoff is properly written and to ensure no follow-up actions are needed. The other candidate actions are either stale or repeat already completed work.",
+        "evaluation": {
+          "taskId": "R55-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R55-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"runtime-research/handoffs/phase-3-provider-tool-registry-pilot/submissions/lane-d-taskloop-registry-shadow-integration.md\",\n      \"decision\": \"\",\n      \"label\": \"Read the Lane D submission file to verify completion and content\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest outcome indicates Lane D is completed, but the submission file should be read to confirm the handoff is properly written "
+      },
+      {
+        "sampleId": "R61",
+        "actions": [
+          {
+            "id": "R61-continue",
+            "kind": "decision",
+            "decision": "Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code.",
+            "critical": true,
+            "label": "Rerun failing command with raw output"
+          }
+        ],
+        "completed": true,
+        "rationale": "The last failure chain indicates a command exited non-zero with no captured stdout/stderr. The next action is to rerun with raw output to diagnose the root cause. The typecheck is green and the classifier ordering is fixed, but the boundary scan command failed without output, so we need to capture that before proceeding.",
+        "evaluation": {
+          "taskId": "R61-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R61-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code.\",\n      \"label\": \"Rerun failing command with raw output\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The last failure chain indicates a command exited non-zero with no captured stdout/stderr. The next action is to rerun with raw output to diagnose the root cause. The typecheck is green and "
+      },
+      {
+        "sampleId": "R76",
+        "actions": [
+          {
+            "id": "R76-continue",
+            "kind": "decision",
+            "decision": "Fix the environment or command invocation, then rerun.",
+            "critical": true,
+            "label": "Fix environment and rerun"
+          }
+        ],
+        "completed": true,
+        "rationale": "The latest outcome indicates the submission note has been added and validation passed, but the final diff check was not completed due to an environment failure ('Status:' not recognized). The critical next action is to fix the environment or command invocation and rerun the diff check to confirm no unintended changes to README files.",
+        "evaluation": {
+          "taskId": "R76-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R76-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"Fix the environment or command invocation, then rerun.\",\n      \"decision\": \"Fix the environment or command invocation, then rerun.\",\n      \"label\": \"Fix environment and rerun\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest outcome indicates the submission note has been added and validation passed, but the final diff check was not completed due to an environment failure ('Status:' not recogn"
+      },
+      {
+        "sampleId": "R4",
+        "actions": [
+          {
+            "id": "R4-continue",
+            "kind": "decision",
+            "decision": "Rerun with corrected shell quoting or use a fixed-string scan.",
+            "critical": true,
+            "label": "Fix shell quoting and rerun rg commands"
+          }
+        ],
+        "completed": true,
+        "rationale": "The latest failure is a shell quoting issue with rg commands. The next action should fix the quoting and rerun the scan to verify the configuration filtering changes.",
+        "evaluation": {
+          "taskId": "R4-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R4-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Rerun with corrected shell quoting or use a fixed-string scan.\",\n      \"label\": \"Fix shell quoting and rerun rg commands\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest failure is a shell quoting issue with rg commands. The next action should fix the quoting and rerun the scan to verify the configuration filtering changes.\"\n}"
+      },
+      {
+        "sampleId": "R137",
+        "actions": [
+          {
+            "id": "R137-read",
+            "kind": "read_file",
+            "target": "runtime-research/agent-runtime-index.md",
+            "critical": true,
+            "label": "Read agent-runtime-index.md to verify current Line C status and identify next steps"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that Line C has been accepted up to 'diagnostics authority sentinel effectiveness evaluation' but is still restricted to explicit/default-off, diagnostics-only, metadata-only, non-authoritative. The next action is to read the index file to understand the current state and determine what is needed to advance to 'Controlled Internal Opt-in Readiness' with deep test validation, while respecting the constraint that Line C must not affect production runtime behavior.",
+        "evaluation": {
+          "taskId": "R137-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R137-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"runtime-research/agent-runtime-index.md\",\n      \"decision\": \"\",\n      \"label\": \"Read agent-runtime-index.md to verify current Line C status and identify next steps\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that Line C has been accepted up to 'diagnostics authority sentinel effectiveness evaluation' but is still restricted to explicit/default-off, diagnostics-only, meta"
+      },
+      {
+        "sampleId": "R75",
+        "actions": [
+          {
+            "id": "R75-read",
+            "kind": "read_file",
+            "target": ".codex/RTK.md",
+            "critical": true,
+            "label": "Read RTK rules for command prefix requirements"
+          }
+        ],
+        "completed": true,
+        "rationale": "Phase 10 Lane A is accepted. Next step is to start parallel Lane B and Lane C as per the decision. Need to read RTK.md first to ensure commands are properly prefixed.",
+        "evaluation": {
+          "taskId": "R75-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R75-read\",\n      \"kind\": \"read_file\",\n      \"target\": \".codex/RTK.md\",\n      \"decision\": \"\",\n      \"label\": \"Read RTK rules for command prefix requirements\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"Phase 10 Lane A is accepted. Next step is to start parallel Lane B and Lane C as per the decision. Need to read RTK.md first to ensure commands are properly prefixed.\"\n}"
+      },
+      {
+        "sampleId": "R81",
+        "actions": [
+          {
+            "id": "R81-continue",
+            "kind": "decision",
+            "decision": "Rerun corrected command or use fixed-string scan for: rg: runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/submissions/lane-*.md: IO error for operation on runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/submissions/lane-*.",
+            "critical": true,
+            "label": "Fix rg command quoting and rerun"
+          }
+        ],
+        "completed": true,
+        "rationale": "The most critical pending action is to fix the rg command that failed due to shell quoting issues. The failure chain indicates a shell_quoting_failure with rg on the lane-*.md pattern. Rerunning with corrected quoting will allow verification of submission statuses and progress the validation.",
+        "evaluation": {
+          "taskId": "R81-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R81-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"rg: runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/submissions/lane-*.md\",\n      \"decision\": \"Rerun corrected command or use fixed-string scan for: rg: runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/submissions/lane-*.md: IO error for operation on runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/submissions/lane-*.\",\n      \"l"
+      },
+      {
+        "sampleId": "R85",
+        "actions": [
+          {
+            "id": "R85-continue",
+            "kind": "decision",
+            "decision": "Focused AgentMap tests 全部通过，10 个断言覆盖了 contract、TS/TSX extraction、ranking boosts、snapshot render 和 budget monotonicity。接下来我做边界扫描和 harness validate，确认 submission 的 status 可以据实写。",
+            "critical": true,
+            "label": "补写 Lane A submission"
+          }
+        ],
+        "completed": true,
+        "rationale": "根据目标，需要补写 Lane A submission。现有证据显示 AgentMap 代码和测试已通过，但 submission 文件尚未创建。下一步应基于现有证据补写 submission 文档，并确保 status 据实填写。",
+        "evaluation": {
+          "taskId": "R85-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R85-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"submission\",\n      \"decision\": \"Focused AgentMap tests 全部通过，10 个断言覆盖了 contract、TS/TSX extraction、ranking boosts、snapshot render 和 budget monotonicity。接下来我做边界扫描和 harness validate，确认 submission 的 status 可以据实写。\",\n      \"label\": \"补写 Lane A submission\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"根据目标，需要补写 Lane A submission。现有证据显示 AgentMap 代码和测试已通过，但 submission 文件尚未创建。下一步应基于现有证据补写 submission 文档，并确保 statu"
+      },
+      {
+        "sampleId": "R94",
+        "actions": [
+          {
+            "id": "R94-continue",
+            "kind": "decision",
+            "decision": "Rerun corrected command or use fixed-string scan for: Node.js v24.15.0",
+            "critical": true,
+            "label": "Fix shell quoting and rerun validation"
+          }
+        ],
+        "completed": true,
+        "rationale": "The draft has been created but validation commands failed due to shell quoting issues. The next action is to rerun the corrected command or use a fixed-string scan to verify the draft content, as indicated by the active failure focus.",
+        "evaluation": {
+          "taskId": "R94-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R94-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"Node.js v24.15.0\",\n      \"decision\": \"Rerun corrected command or use fixed-string scan for: Node.js v24.15.0\",\n      \"label\": \"Fix shell quoting and rerun validation\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The draft has been created but validation commands failed due to shell quoting issues. The next action is to rerun the corrected command or use a fixed-string scan to verify the draft conten"
+      },
+      {
+        "sampleId": "R20",
+        "actions": [
+          {
+            "id": "R20-continue",
+            "kind": "decision",
+            "decision": "Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code.",
+            "critical": true,
+            "label": "Rerun failing command with raw output"
+          }
+        ],
+        "completed": true,
+        "rationale": "The latest failure is an environment/invocation failure with exit code 1 and no captured output. The next action from the failure chain is to rerun with raw/unfiltered stdout/stderr to diagnose the root cause. This is the highest priority action.",
+        "evaluation": {
+          "taskId": "R20-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R20-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code.\",\n      \"label\": \"Rerun failing command with raw output\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest failure is an environment/invocation failure with exit code 1 and no captured output. The next action from the failure chain is to rerun with raw/unfiltered stdout/stderr to diagn"
+      },
+      {
+        "sampleId": "R30",
+        "actions": [
+          {
+            "id": "R30-continue",
+            "kind": "decision",
+            "decision": "Fix environment/invocation and rerun: [WARN] The \"pnpm\" field in package.json is no longer read by pnpm. The following keys were ignored: \"pnpm.onlyBuiltDependencies\", \"pnpm.overrides\", \"pnpm.supportedArchitectures\". See https://pnpm.io/settings for the new ",
+            "critical": true,
+            "label": "Fix environment and rerun tests"
+          }
+        ],
+        "completed": true,
+        "rationale": "The current blocker is an environment/invocation failure where 'node' is not recognized. The latest decision is to fix the PATH by adding the bundled Node directory and using bundled pnpm.cmd. This action directly addresses the blocker and should be executed next.",
+        "evaluation": {
+          "taskId": "R30-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R30-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Fix environment/invocation and rerun: [WARN] The \\\"pnpm\\\" field in package.json is no longer read by pnpm. The following keys were ignored: \\\"pnpm.onlyBuiltDependencies\\\", \\\"pnpm.overrides\\\", \\\"pnpm.supportedArchitectures\\\". See https://pnpm.io/settings for the new \",\n      \"label\": \"Fix environment and rerun tests\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The current block"
+      },
+      {
+        "sampleId": "R65",
+        "actions": [
+          {
+            "id": "R65-continue",
+            "kind": "decision",
+            "decision": "Rerun corrected command or use fixed-string scan for: rg: runtime-research/handoffs/phase-7-runtime-memory-provider/submissions/lane-*.md: IO error for operation on runtime-research/handoffs/phase-7-runtime-memory-provider/submissions/lane-*.md: 文件名、目录名或卷标语法不正确。 (os error 1",
+            "critical": true,
+            "label": "Fix shell quoting and rerun rg scan for lane submissions"
+          }
+        ],
+        "completed": true,
+        "rationale": "The active failure focus indicates a shell quoting failure when running rg with a wildcard pattern. The next action is to rerun the corrected command (e.g., using fixed-string scan or proper quoting) to resolve the environment/invocation failure. The other candidate actions are either stale, already completed, or not addressing the current blocker.",
+        "evaluation": {
+          "taskId": "R65-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R65-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"runtime-research/handoffs/phase-7-runtime-memory-provider/submissions/lane-*.md\",\n      \"decision\": \"Rerun corrected command or use fixed-string scan for: rg: runtime-research/handoffs/phase-7-runtime-memory-provider/submissions/lane-*.md: IO error for operation on runtime-research/handoffs/phase-7-runtime-memory-provider/submissions/lane-*.md: 文件名、目录名或卷标语法不正确。 (os error 1\",\n      \"label\": \"Fix shell qu"
+      },
+      {
+        "sampleId": "R1",
+        "actions": [
+          {
+            "id": "R1-continue",
+            "kind": "decision",
+            "decision": "Rerun corrected command or use fixed-string scan for: rg: src\\process\\agent\\acp\\*.ts: 文件名、目录名或卷标语法不正确。 (os error 123)",
+            "critical": true,
+            "label": "Fix shell quoting failure and rerun rg scan"
+          }
+        ],
+        "completed": true,
+        "rationale": "The active failure is a shell quoting error when running rg on acp files. The next action must fix the command and rerun it to continue investigating the API key propagation issue. Other candidate actions are either stale, already completed, or less critical.",
+        "evaluation": {
+          "taskId": "R1-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R1-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"rg: src\\\\process\\\\agent\\\\acp\\\\*.ts\",\n      \"decision\": \"Rerun corrected command or use fixed-string scan for: rg: src\\\\process\\\\agent\\\\acp\\\\*.ts: 文件名、目录名或卷标语法不正确。 (os error 123)\",\n      \"label\": \"Fix shell quoting failure and rerun rg scan\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The active failure is a shell quoting error when running rg on acp files. The next action must fix the command and re"
+      },
+      {
+        "sampleId": "R114",
+        "actions": [
+          {
+            "id": "R114-read",
+            "kind": "read_file",
+            "target": "src/styles/globals.css",
+            "critical": true,
+            "label": "Read globals.css for context"
+          }
+        ],
+        "completed": true,
+        "rationale": "The harness validation has already passed, so repeating it is unnecessary. The stale branch decision is rejected. The most relevant next action is to read the file src/styles/globals.css, which is listed as a relevant file and has not been read yet, to continue understanding the codebase for the replay proof task.",
+        "evaluation": {
+          "taskId": "R114-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R114-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"src/styles/globals.css\",\n      \"decision\": \"\",\n      \"label\": \"Read globals.css for context\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The harness validation has already passed, so repeating it is unnecessary. The stale branch decision is rejected. The most relevant next action is to read the file src/styles/globals.css, which is listed as a relevant file and has not been read yet, to continue unde"
+      },
+      {
+        "sampleId": "R122",
+        "actions": [
+          {
+            "id": "R122-continue",
+            "kind": "decision",
+            "decision": "Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code.",
+            "critical": true,
+            "label": "Rerun failing command with raw output"
+          }
+        ],
+        "completed": true,
+        "rationale": "The active failure focus indicates that the command exited non-zero with no captured stdout/stderr. The next action is to rerun with raw/unfiltered output to diagnose the environment/invocation failure. This aligns with the critical fact ledger and the candidate actions.",
+        "evaluation": {
+          "taskId": "R122-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R122-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Rerun the failing command with raw/unfiltered stdout and stderr before diagnosing code.\",\n      \"label\": \"Rerun failing command with raw output\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The active failure focus indicates that the command exited non-zero with no captured stdout/stderr. The next action is to rerun with raw/unfiltered output to diagnose the environment/invoca"
+      }
+    ],
+    "aggregate": {
+      "total": 30,
+      "firstActionMatchRate": 0.9667,
+      "criticalActionMatchRate": 0.9667,
+      "noRepeatedWorkRate": 1,
+      "noContradictoryActionRate": 1,
+      "decisionConsistencyRate": 0.9667,
+      "taskCompletionDelta": 0.0333
+    },
+    "gate": {
+      "pass": true,
+      "thresholds": {
+        "firstActionMatchRate": ">= 0.85",
+        "criticalActionMatchRate": ">= 0.90",
+        "noRepeatedWorkRate": ">= 0.95",
+        "noContradictoryActionRate": ">= 0.95",
+        "decisionConsistencyRate": ">= 0.90",
+        "taskCompletionDelta": "<= 0.08"
+      }
+    }
+  },
+  "layer0": {
+    "rounds": 30,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": null,
+    "informationDensityMean": null,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 309,
+    "expectedTotal": 309
+  },
+  "informationLoss": {
+    "totalVerifiedClaims": 499,
+    "retainedVerifiedClaims": 499,
+    "droppedVerifiedClaims": 0,
+    "verifiedClaimsRetentionRate": 1,
+    "informationLossRate": 0,
+    "criticalDroppedVerifiedClaims": 0,
+    "importantDroppedVerifiedClaims": 0,
+    "niceToHaveDroppedVerifiedClaims": 0,
+    "bySeverity": {
+      "critical": {
+        "total": 206,
+        "retained": 206,
+        "retentionRate": 1
+      },
+      "important": {
+        "total": 293,
+        "retained": 293,
+        "retentionRate": 1
+      },
+      "nice_to_have": {
+        "total": 0,
+        "retained": 0,
+        "retentionRate": 1
+      }
+    }
+  },
+  "layer1": {
+    "rounds": 30,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": 0.2004,
+    "informationDensityMean": 5.9084,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 499,
+    "expectedTotal": 499
+  },
+  "layer1Gate": {
+    "pass": true,
+    "thresholds": {
+      "recallCriticalMean": ">= 0.95",
+      "recallImportantMean": ">= 0.75",
+      "weightedRecallMean": ">= 0.90",
+      "precisionMean": "= 1",
+      "forbiddenFoundTotal": "= 0",
+      "staleExclusionMean": ">= 0.99",
+      "compressionRatioMean": "0.15..0.35",
+      "informationDensityMean": ">= 2"
+    }
+  },
+  "layer2": {
+    "total": 30,
+    "judgeScoreMean": 10,
+    "judgeScoreMin": 10,
+    "judgeScoreMax": 10,
+    "judgeScoreMedian": 10,
+    "judgeScoreStdDev": 0,
+    "scoreHistogram": {
+      "10": 30,
+      "0-4.99": 0,
+      "5-6.99": 0,
+      "7-7.99": 0,
+      "8-8.99": 0,
+      "9-9.99": 0
+    },
+    "scoreDistributionWarning": "all_scores_identical_check_judge_calibration_or_sample_difficulty",
+    "completenessRate": 1,
+    "accuracyRate": 1,
+    "causalChainPreservation": 1,
+    "causalChainRate": 1,
+    "noFabricationRate": 1,
+    "actionabilityRate": 1
+  },
+  "layer2Gate": {
+    "pass": true
+  },
+  "layer3": {
+    "total": 30,
+    "firstActionMatchRate": 1,
+    "criticalActionMatchRate": 1,
+    "noRepeatedWorkRate": 1,
+    "noContradictoryActionRate": 1,
+    "decisionConsistencyRate": 1,
+    "taskCompletionDelta": 0
+  },
+  "layer3Gate": {
+    "pass": true,
+    "thresholds": {
+      "firstActionMatchRate": ">= 0.85",
+      "criticalActionMatchRate": ">= 0.90",
+      "noRepeatedWorkRate": ">= 0.95",
+      "noContradictoryActionRate": ">= 0.95",
+      "decisionConsistencyRate": ">= 0.90",
+      "taskCompletionDelta": "<= 0.08"
+    }
+  },
+  "cohorts": {
+    "real": {
+      "sampleCount": 30,
+      "layer0": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 309,
+        "expectedTotal": 309
+      },
+      "layer1": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2004,
+        "informationDensityMean": 5.9084,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 499,
+        "expectedTotal": 499
+      },
+      "layer3": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.95": {
+        "rounds": 14,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1916,
+        "informationDensityMean": 5.8398,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 230,
+        "expectedTotal": 230
+      },
+      "0.85": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1328,
+        "informationDensityMean": 8.4307,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 52,
+        "expectedTotal": 52
+      },
+      "emergency": {
+        "rounds": 11,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2286,
+        "informationDensityMean": 5.4531,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 193,
+        "expectedTotal": 193
+      },
+      "0.75": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2589,
+        "informationDensityMean": 3.8631,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 17,
+        "expectedTotal": 17
+      },
+      "0.6": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1573,
+        "informationDensityMean": 6.356,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 7,
+        "expectedTotal": 7
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 6,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.3794,
+        "informationDensityMean": 3.2802,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 88,
+        "expectedTotal": 88
+      },
+      "200": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1578,
+        "informationDensityMean": 6.3456,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 203,
+        "expectedTotal": 203
+      },
+      "1000": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1534,
+        "informationDensityMean": 6.7854,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 208,
+        "expectedTotal": 208
+      }
+    },
+    "byPressureContinuation": {
+      "0.95": {
+        "total": 14,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.85": {
+        "total": 3,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "emergency": {
+        "total": 11,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.75": {
+        "total": 1,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.6": {
+        "total": 1,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    }
+  },
+  "cohortBreakdown": {
+    "real": {
+      "sampleCount": 30,
+      "layer0": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 309,
+        "expectedTotal": 309
+      },
+      "layer1": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2004,
+        "informationDensityMean": 5.9084,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 499,
+        "expectedTotal": 499
+      },
+      "layer3": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.95": {
+        "rounds": 14,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1916,
+        "informationDensityMean": 5.8398,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 230,
+        "expectedTotal": 230
+      },
+      "0.85": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1328,
+        "informationDensityMean": 8.4307,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 52,
+        "expectedTotal": 52
+      },
+      "emergency": {
+        "rounds": 11,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2286,
+        "informationDensityMean": 5.4531,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 193,
+        "expectedTotal": 193
+      },
+      "0.75": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2589,
+        "informationDensityMean": 3.8631,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 17,
+        "expectedTotal": 17
+      },
+      "0.6": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1573,
+        "informationDensityMean": 6.356,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 7,
+        "expectedTotal": 7
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 6,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.3794,
+        "informationDensityMean": 3.2802,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 88,
+        "expectedTotal": 88
+      },
+      "200": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1578,
+        "informationDensityMean": 6.3456,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 203,
+        "expectedTotal": 203
+      },
+      "1000": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1534,
+        "informationDensityMean": 6.7854,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 208,
+        "expectedTotal": 208
+      }
+    }
+  },
+  "degradationCurve": {
+    "points": [
+      {
+        "pressure": "0.6",
+        "sampleCount": 1,
+        "compressionRatioMean": 0.1573,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "0.75",
+        "sampleCount": 1,
+        "compressionRatioMean": 0.2589,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "0.85",
+        "sampleCount": 3,
+        "compressionRatioMean": 0.1328,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "0.95",
+        "sampleCount": 14,
+        "compressionRatioMean": 0.1916,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "emergency",
+        "sampleCount": 11,
+        "compressionRatioMean": 0.2286,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      }
+    ],
+    "firstQualityDropPressure": null,
+    "monotonicityNote": "Quality should degrade gradually as pressure increases; abrupt drops indicate compression fragility."
+  },
+  "latencyCost": {
+    "timing": {
+      "startedAt": "2026-07-01T10:22:44.090Z",
+      "phasesMs": {
+        "projectSnippets": 1,
+        "buildSamples": 11570,
+        "deterministicLayers": 2316,
+        "llmJudge": 108489,
+        "llmJudgeCalibration": 14890,
+        "llmJudgeLiveRerun": 7226,
+        "llmSchemaFree": 23162,
+        "llmContinuation": 99088,
+        "cacheSecretScan": 1107
+      },
+      "totalMs": 268372,
+      "finishedAt": "2026-07-01T10:27:12.462Z",
+      "samplesPerSecond": 0.1118
+    },
+    "tokenEconomics": {
+      "sampleCount": 30,
+      "totals": {
+        "originalInputTokens": 1486568,
+        "compressedInputTokens": 231934,
+        "inputTokenDelta": -1254634,
+        "inputTokenSavings": 1254634,
+        "uncompressedOutputTokens": 2335,
+        "compressedOutputTokens": 934,
+        "outputTokenDelta": -1401,
+        "netTokenDelta": -1256035
+      },
+      "means": {
+        "originalInputTokens": 49552.2667,
+        "compressedInputTokens": 7731.1333,
+        "inputTokenDelta": -41821.1333,
+        "inputTokenSavings": 41821.1333,
+        "uncompressedOutputTokens": 77.8333,
+        "compressedOutputTokens": 31.1333,
+        "outputTokenDelta": -46.7,
+        "netTokenDelta": -41867.8333
+      },
+      "inputCompressionRatioMean": 0.2004,
+      "outputTokenDeltaMean": -46.7,
+      "outputExpansionRate": 0,
+      "netTokenSavings": 1256035,
+      "netTokenDelta": -1256035,
+      "warning": null,
+      "examples": []
+    },
+    "note": "Token counts are heuristic estimates; use model tokenizer/pricing for billing-grade cost."
+  },
+  "failureChainSchemaRisk": {
+    "chainCount": 107,
+    "meanChainExtractionConfidence": 0.7607,
+    "lowConfidenceChainCount": 2,
+    "mediumConfidenceChainCount": 36,
+    "highConfidenceChainCount": 69,
+    "hallucinationRisk": "some_failure_chains_have_missing_evidence_links",
+    "examples": [
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-1",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-2",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-3",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-4",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R60",
+        "factId": "R60-failure-chain-2",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "validation"
+        ]
+      },
+      {
+        "sampleId": "R19",
+        "factId": "R19-failure-chain-4",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R100",
+        "factId": "R100-failure-chain-3",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R100",
+        "factId": "R100-failure-chain-4",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R123",
+        "factId": "R123-failure-chain-4",
+        "classification": "product_or_code_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R128",
+        "factId": "R128-failure-chain-2",
+        "classification": "product_or_code_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      }
+    ]
+  },
+  "hunkRehydrationAb": {
+    "executed": true,
+    "sampleCount": 30,
+    "compared": {
+      "withoutRehydratedFileContext": {
+        "total": 30,
+        "firstActionMatchRate": 0.8667,
+        "criticalActionMatchRate": 0.4333,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 0.4333,
+        "taskCompletionDelta": 1,
+        "nextActionSpecificity": 1
+      },
+      "withRehydratedFileContext": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0,
+        "nextActionSpecificity": 1
+      }
+    },
+    "gate": {
+      "pass": true
+    },
+    "statisticalTests": {
+      "criticalActionMatch": {
+        "metric": "criticalActionMatch",
+        "pairedSamples": 30,
+        "meanDifference": 0.5667,
+        "medianDifference": 1,
+        "positiveDifferences": 17,
+        "negativeDifferences": 0,
+        "zeroDifferences": 13,
+        "tStatistic": 6.2634,
+        "wilcoxonDirection": "with_hunk_better",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "sample_size_ok"
+      },
+      "firstActionMatch": {
+        "metric": "firstActionMatch",
+        "pairedSamples": 30,
+        "meanDifference": 0.1333,
+        "medianDifference": 0,
+        "positiveDifferences": 4,
+        "negativeDifferences": 0,
+        "zeroDifferences": 26,
+        "tStatistic": 2.1483,
+        "wilcoxonDirection": "with_hunk_better",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "sample_size_ok"
+      },
+      "noRepeatedWork": {
+        "metric": "noRepeatedWork",
+        "pairedSamples": 30,
+        "meanDifference": 0,
+        "medianDifference": 0,
+        "positiveDifferences": 0,
+        "negativeDifferences": 0,
+        "zeroDifferences": 30,
+        "tStatistic": null,
+        "wilcoxonDirection": "tie",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "sample_size_ok"
+      },
+      "noContradictoryAction": {
+        "metric": "noContradictoryAction",
+        "pairedSamples": 30,
+        "meanDifference": 0,
+        "medianDifference": 0,
+        "positiveDifferences": 0,
+        "negativeDifferences": 0,
+        "zeroDifferences": 30,
+        "tStatistic": null,
+        "wilcoxonDirection": "tie",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "sample_size_ok"
+      }
+    },
+    "robustness": {
+      "mode": "deterministic_action_perturbation_proxy",
+      "note": "Use live temperature>0 continuation calls for stronger stochastic robustness evidence.",
+      "sampleCount": 30,
+      "deterministicTrialsPerSample": 3,
+      "actionSequenceConsistencyMean": 0.4,
+      "criticalActionStableRate": 1,
+      "firstActionStableRate": 0,
+      "fullSignatureMatchRateMean": 0.3333
+    },
+    "evidence": [
+      {
+        "sampleId": "R15",
+        "hunks": [
+          {
+            "path": "shared/i18n/locales/ja/chat.json",
+            "lineWindow": {
+              "start": 360,
+              "end": 366
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:a2f3908035c355b2",
+            "evidenceRefs": [
+              "fc_09297b6beeed46c0016a36c8f444108191a8593ad8810e6c67@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:363"
+            ]
+          },
+          {
+            "path": "shared/i18n/locales/ru/chat.json",
+            "lineWindow": {
+              "start": 361,
+              "end": 367
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:d8c3109d268b3cc1",
+            "evidenceRefs": [
+              "fc_09297b6beeed46c0016a36c8f444248191b144af387c66d877@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:364"
+            ]
+          },
+          {
+            "path": "Desktop/clawx/ClawX/shared/i18n/locales/en/chat.json",
+            "lineWindow": {
+              "start": 368,
+              "end": 374
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:ef522e1937f49d48",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:371@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:371"
+            ]
+          },
+          {
+            "path": "Desktop/clawx/ClawX/shared/i18n/locales/zh/chat.json",
+            "lineWindow": {
+              "start": 373,
+              "end": 379
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:0c163d719277c396",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:376@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:376"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R60",
+        "hunks": [
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/agent-runtime-index.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/implementation-roadmap.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/migration-execution-plan.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R13",
+        "hunks": [
+          {
+            "path": "shared/i18n/resources.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/workspace-task-ledger.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/tighten-host-events-contract-types.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/tighten-host-api-contract-types.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R19",
+        "hunks": [
+          {
+            "path": "src/styles/globals.css",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "src/lib/host-api.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "src/lib/api-client.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "docs/a2a-adaptation-plan.md",
+            "lineWindow": {
+              "start": 14,
+              "end": 20
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:f5919b2392dd3d90",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:17@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:17"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R100",
+        "hunks": [
+          {
+            "path": "src/example.ts",
+            "lineWindow": {
+              "start": 48,
+              "end": 54
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:8dca1955547b156b",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:51@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:51"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/line-c-evidence-trace-grounding-spine.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b7c21c5adec11b49",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          },
+          {
+            "path": "harness/specs/scenarios/gateway-backend-communication.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b7c21c5adec11b49",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          },
+          {
+            "path": "harness/specs/rules/active-config-guards.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b7c21c5adec11b49",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R108",
+        "hunks": [
+          {
+            "path": "openclaw_runtime/src/runtime-core/grounding.ts",
+            "lineWindow": {
+              "start": 175,
+              "end": 181
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:337bef6ed21fd88d",
+            "evidenceRefs": [
+              "fc_0fe78f0b6befa071016a3f5e0d8ff481919808c3c68010aac1@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:178"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/registries.ts",
+            "lineWindow": {
+              "start": 176,
+              "end": 182
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:67d0e98d70681c47",
+            "evidenceRefs": [
+              "fc_0fe78f0b6befa071016a3f5e0d90088191a123299d7f2fbdf4@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:179"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/types.ts",
+            "lineWindow": {
+              "start": 177,
+              "end": 183
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:69bee6a5a265f2f2",
+            "evidenceRefs": [
+              "fc_0fe78f0b6befa071016a3f5e0d90108191997dcae52268e919@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:180"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/types.ts",
+            "lineWindow": {
+              "start": 183,
+              "end": 189
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:4a5afd76f3a4112d",
+            "evidenceRefs": [
+              "fc_0baf3df1bbffd094016a3f5e1dd3f8819180e428ae177581fb@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:186"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R123",
+        "hunks": [
+          {
+            "path": ".codex/attachments/9abb1779-d9df-45ba-bbf2-da30cef90a91/pasted-text-1.txt",
+            "lineWindow": {
+              "start": 4,
+              "end": 10
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:3fa8cdf9bbee0238",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:7@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:7"
+            ]
+          },
+          {
+            "path": ".codex/attachments/9abb1779-d9df-45ba-bbf2-da30cef90a91/pasted-text-1.txt",
+            "lineWindow": {
+              "start": 5,
+              "end": 11
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:3fa8cdf9bbee0238",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:8@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:8"
+            ]
+          },
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5e9c400afab30f7d",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/AGENTS.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5e9c400afab30f7d",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R128",
+        "hunks": [
+          {
+            "path": "extensions/telegram/src/index.ts",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          },
+          {
+            "path": "src/agents/agent-run-terminal-outcome.ts",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          },
+          {
+            "path": "scripts/run-vitest.mjs",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          },
+          {
+            "path": "scripts/crabbox-wrapper.mjs",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R132",
+        "hunks": [
+          {
+            "path": ".codex/attachments/aef93b4c-144f-41ec-95a9-660f8c4cafa0/pasted-text.txt",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:99b8679df24c7cba",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:6@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:6"
+            ]
+          },
+          {
+            "path": ".codex/attachments/aef93b4c-144f-41ec-95a9-660f8c4cafa0/pasted-text.txt",
+            "lineWindow": {
+              "start": 4,
+              "end": 10
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:99b8679df24c7cba",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:7@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:7"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/memory-read-hydration-shadow.ts",
+            "lineWindow": {
+              "start": 16,
+              "end": 22
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e8fa21b4d7da3550",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19"
+            ]
+          },
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 16,
+              "end": 22
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e8fa21b4d7da3550",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R138",
+        "hunks": [
+          {
+            "path": ".codex/attachments/a117ed94-966a-4270-99f4-195a143a9388/pasted-text.txt",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b6685cc4c09b91d8",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:6@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:6"
+            ]
+          },
+          {
+            "path": ".codex/attachments/a117ed94-966a-4270-99f4-195a143a9388/pasted-text.txt",
+            "lineWindow": {
+              "start": 4,
+              "end": 10
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b6685cc4c09b91d8",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:7@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:7"
+            ]
+          },
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 12,
+              "end": 18
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e6a4a81da8f5d53c",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/AGENTS.md",
+            "lineWindow": {
+              "start": 12,
+              "end": 18
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e6a4a81da8f5d53c",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "humanEvaluation": {
+    "required": true,
+    "minimumRaters": 2,
+    "minimumSamples": 20,
+    "packSampleCount": 20,
+    "ratingsPath": null,
+    "status": "missing_ratings",
+    "message": "Human evaluation pack is available, but real developer ratings were not provided. Provide --human-eval-ratings <json|jsonl> to compute human-auto correlation.",
+    "packPath": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\output\\context-compression-eval\\2026-07-01T10-22-44-091Z\\human-eval-pack.jsonl"
+  },
+  "worstCases": [],
+  "regressionExamples": [],
+  "redactionSummary": {
+    "mode": "strict",
+    "replacements": {
+      "apiKeys": 2,
+      "authTokens": 8,
+      "authHeaders": 10,
+      "providerKeys": 5,
+      "urlTokens": 0,
+      "usernames": 5832
+    },
+    "filesScanned": 30,
+    "linesScanned": 19238
+  },
+  "acceptance": {
+    "status": "PASS",
+    "checks": [
+      {
+        "id": "sampleCount.exact",
+        "pass": true,
+        "actual": 30,
+        "expected": "= 30"
+      },
+      {
+        "id": "samplesJsonl.exact",
+        "pass": true,
+        "actual": 30,
+        "expected": "= 30"
+      },
+      {
+        "id": "l0.recallMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l0.staleExclusionMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l1.gate",
+        "pass": true,
+        "actual": 1,
+        "expected": "all L1 thresholds"
+      },
+      {
+        "id": "informationLoss.verifiedClaimsRetentionRate",
+        "pass": true,
+        "actual": 1,
+        "expected": ">= 0.95 retained verified claims"
+      },
+      {
+        "id": "informationLoss.criticalDroppedVerifiedClaims",
+        "pass": true,
+        "actual": 0,
+        "expected": "= 0 critical verified claims dropped"
+      },
+      {
+        "id": "l2.deterministicGate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 thresholds"
+      },
+      {
+        "id": "l3.deterministicGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "L3 thresholds"
+      },
+      {
+        "id": "realCohort.notMasked",
+        "pass": true,
+        "actual": 1,
+        "expected": "real L1 gate passes independently when real samples exist"
+      },
+      {
+        "id": "manifest.exactResolve",
+        "pass": true,
+        "actual": "30/30",
+        "expected": "all manifest samples resolved"
+      },
+      {
+        "id": "cache.noSecretLeak",
+        "pass": true,
+        "actual": 0,
+        "expected": "= 0 cache secret leaks"
+      },
+      {
+        "id": "hunkRehydration.abGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "with hunk continuation metrics do not regress"
+      },
+      {
+        "id": "full.realMinCount",
+        "pass": true,
+        "actual": 30,
+        "expected": ">= 30"
+      },
+      {
+        "id": "full.realCoverage",
+        "pass": true,
+        "actual": 30,
+        "expected": "30 real samples"
+      },
+      {
+        "id": "full.pressureCoverage",
+        "pass": true,
+        "actual": 5,
+        "expected": "0.6,0.75,0.85,0.95,emergency"
+      },
+      {
+        "id": "l2.realJudge.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed"
+      },
+      {
+        "id": "l2.realJudge.gate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 real judge thresholds"
+      },
+      {
+        "id": "l2.judgeCalibration.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed on known-loss calibration samples"
+      },
+      {
+        "id": "l2.judgeCalibration.discriminatesLoss",
+        "pass": true,
+        "actual": 4.8,
+        "expected": "< 8 mean on known-loss samples"
+      },
+      {
+        "id": "l2.judgeLiveRerun.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "uncached live rerun executed"
+      },
+      {
+        "id": "l2.judgeLiveRerun.consistency",
+        "pass": true,
+        "actual": 0,
+        "expected": "<= 2 max absolute score delta vs cached judge"
+      },
+      {
+        "id": "l2.schemaFree.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "schema-free omission judge executed"
+      },
+      {
+        "id": "l2.schemaFree.majorOmissionRate",
+        "pass": true,
+        "actual": 0,
+        "expected": "<= 0.1 major/critical omission rate"
+      },
+      {
+        "id": "l3.realContinuation.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed"
+      },
+      {
+        "id": "l3.realContinuation.gate",
+        "pass": true,
+        "actual": 0.9667,
+        "expected": "L3 real continuation thresholds"
+      }
+    ],
+    "evidenceInsufficient": false
+  }
+}

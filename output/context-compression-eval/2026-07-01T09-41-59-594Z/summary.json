@@ -1,0 +1,1324 @@
+{
+  "runId": "2026-07-01T09-41-59-594Z",
+  "target": "C:\\Users\\27933\\Desktop\\verseshell\\graphiti-main",
+  "generatedAt": "2026-07-01T09:42:05.039Z",
+  "suite": "daily",
+  "sampleSource": "real",
+  "requestedSampleCount": 5,
+  "sampleCount": 5,
+  "semanticMatching": false,
+  "cache": {
+    "enabled": false,
+    "dir": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.cache\\context-compression-eval",
+    "version": "context-compression-eval-cache-v3",
+    "hits": 0,
+    "misses": 213,
+    "writes": 0,
+    "byNamespace": {
+      "real-samples": {
+        "hits": 0,
+        "misses": 1,
+        "writes": 0
+      },
+      "transcript-parse": {
+        "hits": 0,
+        "misses": 212,
+        "writes": 0
+      }
+    },
+    "secretScan": {
+      "pass": true,
+      "scannedFiles": 997,
+      "leaks": []
+    }
+  },
+  "manifest": {
+    "hash": "52db5864df15339d3f526cf9f9df3129229699c3ba0e58ce47aad7e28cb9fbb2",
+    "requested": 5,
+    "resolved": 5,
+    "missing": []
+  },
+  "reproducibility": {
+    "seed": "context-compression-eval-v1",
+    "sampleSelectionHash": "52db5864df15339d3f526cf9f9df3129229699c3ba0e58ce47aad7e28cb9fbb2",
+    "promptVersions": {
+      "judge": "judge-prompt-v4",
+      "continuation": "continuation-prompt-v4"
+    },
+    "extractorVersion": "real-fact-extractor-v12",
+    "parserVersion": "transcript-parser-v3",
+    "redactionVersion": "redaction-v4"
+  },
+  "realInventory": {
+    "transcriptRoot": "C:\\\\Users\\\\27933\\\\.codex\\\\archived_sessions",
+    "filesFound": 212,
+    "transcriptsParsed": 212,
+    "entriesParsed": 54981
+  },
+  "sampleMix": {
+    "realRequested": 5,
+    "syntheticRequested": 0,
+    "realActual": 5,
+    "syntheticActual": 0,
+    "realShortfall": 0,
+    "evidenceInsufficient": false
+  },
+  "llmJudge": {
+    "requested": false,
+    "executed": false,
+    "reason": "LLM judge was not requested. Pass --llm-judge to enable it.",
+    "results": []
+  },
+  "llmJudgeCalibration": {
+    "requested": false,
+    "executed": false,
+    "reason": "Judge calibration was not requested. Pass --llm-judge-calibration to enable it."
+  },
+  "llmJudgeLiveRerun": {
+    "requested": false,
+    "executed": false,
+    "reason": "Live uncached judge rerun was not requested. Pass --llm-judge-live-rerun-ratio 0.1 to enable it."
+  },
+  "llmSchemaFree": {
+    "requested": false,
+    "executed": false,
+    "reason": "Schema-free omission judge was not requested. Pass --llm-schema-free to enable it.",
+    "results": []
+  },
+  "llmContinuation": {
+    "requested": false,
+    "executed": false,
+    "reason": "LLM continuation was not requested. Pass --llm-continuation to enable it.",
+    "results": []
+  },
+  "layer0": {
+    "rounds": 5,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": null,
+    "informationDensityMean": null,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 37,
+    "expectedTotal": 37
+  },
+  "informationLoss": {
+    "totalVerifiedClaims": 61,
+    "retainedVerifiedClaims": 61,
+    "droppedVerifiedClaims": 0,
+    "verifiedClaimsRetentionRate": 1,
+    "informationLossRate": 0,
+    "criticalDroppedVerifiedClaims": 0,
+    "importantDroppedVerifiedClaims": 0,
+    "niceToHaveDroppedVerifiedClaims": 0,
+    "bySeverity": {
+      "critical": {
+        "total": 22,
+        "retained": 22,
+        "retentionRate": 1
+      },
+      "important": {
+        "total": 39,
+        "retained": 39,
+        "retentionRate": 1
+      },
+      "nice_to_have": {
+        "total": 0,
+        "retained": 0,
+        "retentionRate": 1
+      }
+    }
+  },
+  "layer1": {
+    "rounds": 5,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": 0.1705,
+    "informationDensityMean": 6.0477,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 61,
+    "expectedTotal": 61
+  },
+  "layer1Gate": {
+    "pass": true,
+    "thresholds": {
+      "recallCriticalMean": ">= 0.95",
+      "recallImportantMean": ">= 0.75",
+      "weightedRecallMean": ">= 0.90",
+      "precisionMean": "= 1",
+      "forbiddenFoundTotal": "= 0",
+      "staleExclusionMean": ">= 0.99",
+      "compressionRatioMean": "0.15..0.35",
+      "informationDensityMean": ">= 2"
+    }
+  },
+  "layer2": {
+    "total": 5,
+    "judgeScoreMean": 10,
+    "judgeScoreMin": 10,
+    "judgeScoreMax": 10,
+    "judgeScoreMedian": 10,
+    "judgeScoreStdDev": 0,
+    "scoreHistogram": {
+      "10": 5,
+      "0-4.99": 0,
+      "5-6.99": 0,
+      "7-7.99": 0,
+      "8-8.99": 0,
+      "9-9.99": 0
+    },
+    "scoreDistributionWarning": null,
+    "completenessRate": 1,
+    "accuracyRate": 1,
+    "causalChainPreservation": 1,
+    "causalChainRate": 1,
+    "noFabricationRate": 1,
+    "actionabilityRate": 1
+  },
+  "layer2Gate": {
+    "pass": true
+  },
+  "layer3": {
+    "total": 5,
+    "firstActionMatchRate": 1,
+    "criticalActionMatchRate": 1,
+    "noRepeatedWorkRate": 1,
+    "noContradictoryActionRate": 1,
+    "decisionConsistencyRate": 1,
+    "taskCompletionDelta": 0
+  },
+  "layer3Gate": {
+    "pass": true,
+    "thresholds": {
+      "firstActionMatchRate": ">= 0.85",
+      "criticalActionMatchRate": ">= 0.90",
+      "noRepeatedWorkRate": ">= 0.95",
+      "noContradictoryActionRate": ">= 0.95",
+      "decisionConsistencyRate": ">= 0.90",
+      "taskCompletionDelta": "<= 0.08"
+    }
+  },
+  "cohorts": {
+    "real": {
+      "sampleCount": 5,
+      "layer0": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 37,
+        "expectedTotal": 37
+      },
+      "layer1": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1705,
+        "informationDensityMean": 6.0477,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 61,
+        "expectedTotal": 61
+      },
+      "layer3": {
+        "total": 5,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.6": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1852,
+        "informationDensityMean": 5.7884,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 24,
+        "expectedTotal": 24
+      },
+      "0.85": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1614,
+        "informationDensityMean": 6.1941,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 14,
+        "expectedTotal": 14
+      },
+      "emergency": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1604,
+        "informationDensityMean": 6.2338,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 23,
+        "expectedTotal": 23
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1769,
+        "informationDensityMean": 5.9375,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 38,
+        "expectedTotal": 38
+      },
+      "200": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.161,
+        "informationDensityMean": 6.213,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 23,
+        "expectedTotal": 23
+      }
+    },
+    "byPressureContinuation": {
+      "0.6": {
+        "total": 2,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.85": {
+        "total": 1,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "emergency": {
+        "total": 2,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    }
+  },
+  "cohortBreakdown": {
+    "real": {
+      "sampleCount": 5,
+      "layer0": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 37,
+        "expectedTotal": 37
+      },
+      "layer1": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1705,
+        "informationDensityMean": 6.0477,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 61,
+        "expectedTotal": 61
+      },
+      "layer3": {
+        "total": 5,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.6": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1852,
+        "informationDensityMean": 5.7884,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 24,
+        "expectedTotal": 24
+      },
+      "0.85": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1614,
+        "informationDensityMean": 6.1941,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 14,
+        "expectedTotal": 14
+      },
+      "emergency": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1604,
+        "informationDensityMean": 6.2338,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 23,
+        "expectedTotal": 23
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1769,
+        "informationDensityMean": 5.9375,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 38,
+        "expectedTotal": 38
+      },
+      "200": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.161,
+        "informationDensityMean": 6.213,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 23,
+        "expectedTotal": 23
+      }
+    }
+  },
+  "degradationCurve": {
+    "points": [
+      {
+        "pressure": "0.6",
+        "sampleCount": 2,
+        "compressionRatioMean": 0.1852,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "0.85",
+        "sampleCount": 1,
+        "compressionRatioMean": 0.1614,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "emergency",
+        "sampleCount": 2,
+        "compressionRatioMean": 0.1604,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      }
+    ],
+    "firstQualityDropPressure": null,
+    "monotonicityNote": "Quality should degrade gradually as pressure increases; abrupt drops indicate compression fragility."
+  },
+  "latencyCost": {
+    "timing": {
+      "startedAt": "2026-07-01T09:41:59.594Z",
+      "phasesMs": {
+        "projectSnippets": 3,
+        "buildSamples": 3936,
+        "deterministicLayers": 128,
+        "llmJudge": 0,
+        "llmJudgeCalibration": 0,
+        "llmJudgeLiveRerun": 1,
+        "llmSchemaFree": 0,
+        "llmContinuation": 0,
+        "cacheSecretScan": 1330
+      },
+      "totalMs": 5444,
+      "finishedAt": "2026-07-01T09:42:05.038Z",
+      "samplesPerSecond": 0.9184
+    },
+    "tokenEconomics": {
+      "sampleCount": 5,
+      "totals": {
+        "originalInputTokens": 120776,
+        "compressedInputTokens": 19343,
+        "inputTokenDelta": -101433,
+        "inputTokenSavings": 101433,
+        "uncompressedOutputTokens": 422,
+        "compressedOutputTokens": 422,
+        "outputTokenDelta": 0,
+        "netTokenDelta": -101433
+      },
+      "means": {
+        "originalInputTokens": 24155.2,
+        "compressedInputTokens": 3868.6,
+        "inputTokenDelta": -20286.6,
+        "inputTokenSavings": 20286.6,
+        "uncompressedOutputTokens": 84.4,
+        "compressedOutputTokens": 84.4,
+        "outputTokenDelta": 0,
+        "netTokenDelta": -20286.6
+      },
+      "inputCompressionRatioMean": 0.1705,
+      "outputTokenDeltaMean": 0,
+      "outputExpansionRate": 0,
+      "netTokenSavings": 101433,
+      "netTokenDelta": -101433,
+      "warning": null,
+      "examples": []
+    },
+    "note": "Token counts are heuristic estimates; use model tokenizer/pricing for billing-grade cost."
+  },
+  "failureChainSchemaRisk": {
+    "chainCount": 14,
+    "meanChainExtractionConfidence": 0.6286,
+    "lowConfidenceChainCount": 4,
+    "mediumConfidenceChainCount": 5,
+    "highConfidenceChainCount": 5,
+    "hallucinationRisk": "some_failure_chains_have_missing_evidence_links",
+    "examples": [
+      {
+        "sampleId": "R2",
+        "factId": "R2-failure-chain-1",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R2",
+        "factId": "R2-failure-chain-2",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R2",
+        "factId": "R2-failure-chain-3",
+        "classification": "product_or_code_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R2",
+        "factId": "R2-failure-chain-4",
+        "classification": "product_or_code_failure",
+        "evidencedLinks": 2,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.4,
+        "confidenceBand": "low",
+        "missingLinks": [
+          "adjustment",
+          "validation",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R3",
+        "factId": "R3-failure-chain-3",
+        "classification": "product_or_code_failure",
+        "evidencedLinks": 2,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.4,
+        "confidenceBand": "low",
+        "missingLinks": [
+          "adjustment",
+          "validation",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R4",
+        "factId": "R4-failure-chain-1",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R4",
+        "factId": "R4-failure-chain-2",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 2,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.4,
+        "confidenceBand": "low",
+        "missingLinks": [
+          "adjustment",
+          "validation",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R5",
+        "factId": "R5-failure-chain-3",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R5",
+        "factId": "R5-failure-chain-4",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 2,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.4,
+        "confidenceBand": "low",
+        "missingLinks": [
+          "adjustment",
+          "validation",
+          "next"
+        ]
+      }
+    ]
+  },
+  "hunkRehydrationAb": {
+    "executed": true,
+    "sampleCount": 5,
+    "compared": {
+      "withoutRehydratedFileContext": {
+        "total": 5,
+        "firstActionMatchRate": 0.8,
+        "criticalActionMatchRate": 0.4,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 0.4,
+        "taskCompletionDelta": 1,
+        "nextActionSpecificity": 1
+      },
+      "withRehydratedFileContext": {
+        "total": 5,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0,
+        "nextActionSpecificity": 1
+      }
+    },
+    "gate": {
+      "pass": true
+    },
+    "statisticalTests": {
+      "criticalActionMatch": {
+        "metric": "criticalActionMatch",
+        "pairedSamples": 5,
+        "meanDifference": 0.6,
+        "medianDifference": 1,
+        "positiveDifferences": 3,
+        "negativeDifferences": 0,
+        "zeroDifferences": 2,
+        "tStatistic": 2.7386,
+        "wilcoxonDirection": "with_hunk_better",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "underpowered"
+      },
+      "firstActionMatch": {
+        "metric": "firstActionMatch",
+        "pairedSamples": 5,
+        "meanDifference": 0.2,
+        "medianDifference": 0,
+        "positiveDifferences": 1,
+        "negativeDifferences": 0,
+        "zeroDifferences": 4,
+        "tStatistic": 1.118,
+        "wilcoxonDirection": "with_hunk_better",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "underpowered"
+      },
+      "noRepeatedWork": {
+        "metric": "noRepeatedWork",
+        "pairedSamples": 5,
+        "meanDifference": 0,
+        "medianDifference": 0,
+        "positiveDifferences": 0,
+        "negativeDifferences": 0,
+        "zeroDifferences": 5,
+        "tStatistic": null,
+        "wilcoxonDirection": "tie",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "underpowered"
+      },
+      "noContradictoryAction": {
+        "metric": "noContradictoryAction",
+        "pairedSamples": 5,
+        "meanDifference": 0,
+        "medianDifference": 0,
+        "positiveDifferences": 0,
+        "negativeDifferences": 0,
+        "zeroDifferences": 5,
+        "tStatistic": null,
+        "wilcoxonDirection": "tie",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "underpowered"
+      }
+    },
+    "robustness": {
+      "mode": "deterministic_action_perturbation_proxy",
+      "note": "Use live temperature>0 continuation calls for stronger stochastic robustness evidence.",
+      "sampleCount": 5,
+      "deterministicTrialsPerSample": 3,
+      "actionSequenceConsistencyMean": 0.4,
+      "criticalActionStableRate": 1,
+      "firstActionStableRate": 0,
+      "fullSignatureMatchRateMean": 0.3333
+    },
+    "evidence": [
+      {
+        "sampleId": "R1",
+        "hunks": [
+          {
+            "path": ".agents/skills/tool-ui/SKILL.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:c9676978d6d5572e",
+            "evidenceRefs": [
+              "rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:16@rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:16"
+            ]
+          },
+          {
+            "path": "src/server.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:c9676978d6d5572e",
+            "evidenceRefs": [
+              "rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:16@rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:16"
+            ]
+          },
+          {
+            "path": "docs/agent-queue-acp-plan.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:c9676978d6d5572e",
+            "evidenceRefs": [
+              "rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:16@rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:16"
+            ]
+          },
+          {
+            "path": ".agents/skills/pr-review/SKILL.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:c9676978d6d5572e",
+            "evidenceRefs": [
+              "rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:16@rollout-2026-06-04T00-04-26-019e8e3a-9eaa-7510-ad66-b8d5e0129d1d.jsonl:16"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R2",
+        "hunks": [
+          {
+            "path": "references/renderer.md",
+            "lineWindow": {
+              "start": 27,
+              "end": 33
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:3cc3327036e92052",
+            "evidenceRefs": [
+              "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30@rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30"
+            ]
+          },
+          {
+            "path": "references/process.md",
+            "lineWindow": {
+              "start": 27,
+              "end": 33
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:3cc3327036e92052",
+            "evidenceRefs": [
+              "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30@rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30"
+            ]
+          },
+          {
+            "path": "references/project-layout.md",
+            "lineWindow": {
+              "start": 27,
+              "end": 33
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:3cc3327036e92052",
+            "evidenceRefs": [
+              "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30@rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30"
+            ]
+          },
+          {
+            "path": "src/preload.ts",
+            "lineWindow": {
+              "start": 27,
+              "end": 33
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:3cc3327036e92052",
+            "evidenceRefs": [
+              "rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30@rollout-2026-06-05T21-18-34-019e97ef-79d0-74f3-a9a1-8ad2506bf5f6.jsonl:30"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R3",
+        "hunks": [
+          {
+            "path": "electron/utils/paths.ts",
+            "lineWindow": {
+              "start": 46,
+              "end": 52
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b66c66da8a8a2751",
+            "evidenceRefs": [
+              "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:49@rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:49"
+            ]
+          },
+          {
+            "path": "electron/gateway/ws-client.ts",
+            "lineWindow": {
+              "start": 48,
+              "end": 54
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:dbcb65209bb061c1",
+            "evidenceRefs": [
+              "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:51@rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:51"
+            ]
+          },
+          {
+            "path": "../preload/index.js",
+            "lineWindow": {
+              "start": 50,
+              "end": 56
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:53f6c772bd672c66",
+            "evidenceRefs": [
+              "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:53@rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:53"
+            ]
+          },
+          {
+            "path": "src/entry.ts",
+            "lineWindow": {
+              "start": 50,
+              "end": 56
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:53f6c772bd672c66",
+            "evidenceRefs": [
+              "rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:53@rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl:53"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R4",
+        "hunks": [
+          {
+            "path": "./AGENTS.md",
+            "lineWindow": {
+              "start": 23,
+              "end": 29
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:ebe31cc8b6289f88",
+            "evidenceRefs": [
+              "rollout-2026-06-12T19-36-16-019ebb9e-439d-7462-9f50-9f16e28a8df4.jsonl:26@rollout-2026-06-12T19-36-16-019ebb9e-439d-7462-9f50-9f16e28a8df4.jsonl:26"
+            ]
+          },
+          {
+            "path": "./package.json",
+            "lineWindow": {
+              "start": 23,
+              "end": 29
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:ebe31cc8b6289f88",
+            "evidenceRefs": [
+              "rollout-2026-06-12T19-36-16-019ebb9e-439d-7462-9f50-9f16e28a8df4.jsonl:26@rollout-2026-06-12T19-36-16-019ebb9e-439d-7462-9f50-9f16e28a8df4.jsonl:26"
+            ]
+          },
+          {
+            "path": "scripts/generate-ext-bridge.mjs",
+            "lineWindow": {
+              "start": 23,
+              "end": 29
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:ebe31cc8b6289f88",
+            "evidenceRefs": [
+              "rollout-2026-06-12T19-36-16-019ebb9e-439d-7462-9f50-9f16e28a8df4.jsonl:26@rollout-2026-06-12T19-36-16-019ebb9e-439d-7462-9f50-9f16e28a8df4.jsonl:26"
+            ]
+          },
+          {
+            "path": "scripts/build-openclaw-runtime.mjs",
+            "lineWindow": {
+              "start": 23,
+              "end": 29
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:ebe31cc8b6289f88",
+            "evidenceRefs": [
+              "rollout-2026-06-12T19-36-16-019ebb9e-439d-7462-9f50-9f16e28a8df4.jsonl:26@rollout-2026-06-12T19-36-16-019ebb9e-439d-7462-9f50-9f16e28a8df4.jsonl:26"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R5",
+        "hunks": [
+          {
+            "path": "electron/gateway/config-sync.ts",
+            "lineWindow": {
+              "start": 93,
+              "end": 99
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:1dfd091b1d425ea6",
+            "evidenceRefs": [
+              "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:96@rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:96"
+            ]
+          },
+          {
+            "path": "tests/unit/config-sync-source-runtime.test.ts",
+            "lineWindow": {
+              "start": 99,
+              "end": 105
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:db20c2feda932261",
+            "evidenceRefs": [
+              "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:102@rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:102"
+            ]
+          },
+          {
+            "path": "electron/gateway/config-sync.ts",
+            "lineWindow": {
+              "start": 103,
+              "end": 109
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:7f1ffd5689a6defb",
+            "evidenceRefs": [
+              "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:106@rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:106"
+            ]
+          },
+          {
+            "path": "electron/main/single-instance-lock.ts",
+            "lineWindow": {
+              "start": 109,
+              "end": 115
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:cf143cba2b0cf865",
+            "evidenceRefs": [
+              "rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:112@rollout-2026-06-12T21-14-04-019ebbf7-cac1-77f2-9e4e-c5a8200ebadf.jsonl:112"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "humanEvaluation": {
+    "required": true,
+    "minimumRaters": 2,
+    "minimumSamples": 20,
+    "packSampleCount": 5,
+    "ratingsPath": null,
+    "status": "missing_ratings",
+    "message": "Human evaluation pack is available, but real developer ratings were not provided. Provide --human-eval-ratings <json|jsonl> to compute human-auto correlation.",
+    "packPath": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\output\\context-compression-eval\\2026-07-01T09-41-59-594Z\\human-eval-pack.jsonl"
+  },
+  "worstCases": [],
+  "regressionExamples": [],
+  "redactionSummary": {
+    "mode": "strict",
+    "replacements": {
+      "apiKeys": 42,
+      "authTokens": 27,
+      "authHeaders": 37,
+      "providerKeys": 35,
+      "urlTokens": 0,
+      "usernames": 23786
+    },
+    "filesScanned": 212,
+    "linesScanned": 81219
+  },
+  "acceptance": {
+    "status": "PASS",
+    "checks": [
+      {
+        "id": "sampleCount.exact",
+        "pass": true,
+        "actual": 5,
+        "expected": "= 5"
+      },
+      {
+        "id": "samplesJsonl.exact",
+        "pass": true,
+        "actual": 5,
+        "expected": "= 5"
+      },
+      {
+        "id": "l0.recallMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l0.staleExclusionMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l1.gate",
+        "pass": true,
+        "actual": 1,
+        "expected": "all L1 thresholds"
+      },
+      {
+        "id": "informationLoss.verifiedClaimsRetentionRate",
+        "pass": true,
+        "actual": 1,
+        "expected": ">= 0.95 retained verified claims"
+      },
+      {
+        "id": "informationLoss.criticalDroppedVerifiedClaims",
+        "pass": true,
+        "actual": 0,
+        "expected": "= 0 critical verified claims dropped"
+      },
+      {
+        "id": "l2.deterministicGate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 thresholds"
+      },
+      {
+        "id": "l3.deterministicGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "L3 thresholds"
+      },
+      {
+        "id": "realCohort.notMasked",
+        "pass": true,
+        "actual": 1,
+        "expected": "daily real recall/precision/stale checks pass independently"
+      },
+      {
+        "id": "manifest.exactResolve",
+        "pass": true,
+        "actual": "not-used",
+        "expected": "not-used"
+      },
+      {
+        "id": "cache.noSecretLeak",
+        "pass": true,
+        "actual": 0,
+        "expected": "= 0 cache secret leaks"
+      },
+      {
+        "id": "hunkRehydration.abGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "with hunk continuation metrics do not regress"
+      },
+      {
+        "id": "daily.evidenceSufficiency",
+        "pass": true,
+        "actual": 1,
+        "expected": "daily may degrade but must mark evidenceInsufficient"
+      }
+    ],
+    "evidenceInsufficient": false
+  }
+}

@@ -8,7 +8,7 @@ import { resolveRuntimeConfigCacheKey } from "../../config/runtime-snapshot.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { logVerbose } from "../../globals.js";
 import { normalizeAgentId } from "../../routing/session-key.js";
-import { AcpRuntimeError, withAcpRuntimeErrorBoundary } from "../runtime/errors.js";
+import { AcpRuntimeError, withAcpRuntimeErrorBoundary } from "../../runtime/errors.ts";
 import type { ManagerRuntimeHandleCache } from "./manager.runtime-handle-cache.js";
 import type {
   AcpInitializeSessionInput,

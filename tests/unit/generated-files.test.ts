@@ -62,12 +62,14 @@ describe('generated-files utilities', () => {
     expect(supportsInlineDiff({ ext: '.html', contentType: 'document' })).toBe(true);
   });
 
-  it('routes pdf/spreadsheet to rich-doc preview but never to text diff', () => {
+  it('routes pdf/spreadsheet/office documents to rich-doc preview but never to text diff', () => {
     expect(supportsInlineDocumentPreview('.md')).toBe(true);
-    // PDFs and spreadsheets now render through dedicated viewers, so they
+    // PDFs, spreadsheets, Word docs, and presentations render through dedicated viewers, so they
     // qualify for inline preview...
     expect(supportsInlineDocumentPreview('.pdf')).toBe(true);
     expect(supportsInlineDocumentPreview('.xlsx')).toBe(true);
+    expect(supportsInlineDocumentPreview('.docx')).toBe(true);
+    expect(supportsInlineDocumentPreview('.pptx')).toBe(true);
     // ...but diffing binary content is still meaningless, so the diff
     // tab stays hidden for these formats.
     expect(supportsInlineDiff({ ext: '.pdf', contentType: 'document' })).toBe(false);

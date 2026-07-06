@@ -7,6 +7,7 @@ import { formatErrorMessage } from "../../infra/errors.js";
 import type { TextContent } from "../../llm/types.js";
 import { emitSessionTranscriptUpdate } from "../../sessions/transcript-events.js";
 import { resolveAgentContextLimits } from "../agent-scope.js";
+import type { RuntimeIntensityPolicy } from "../intensity-policy.js";
 import type { AgentMessage } from "../runtime/index.js";
 import {
   acquireSessionWriteLock,
@@ -232,8 +233,13 @@ export function resolveAutoLiveToolResultMaxChars(contextWindowTokens: number): 
 export function calculateMaxToolResultCharsWithCap(
   contextWindowTokens: number,
   hardCapChars: number,
+  contextShare = MAX_TOOL_RESULT_CONTEXT_SHARE,
 ): number {
-  const maxTokens = Math.floor(contextWindowTokens * MAX_TOOL_RESULT_CONTEXT_SHARE);
+  const normalizedShare =
+    typeof contextShare === "number" && Number.isFinite(contextShare) && contextShare > 0
+      ? Math.min(contextShare, MAX_TOOL_RESULT_CONTEXT_SHARE)
+      : MAX_TOOL_RESULT_CONTEXT_SHARE;
+  const maxTokens = Math.floor(contextWindowTokens * normalizedShare);
   // Rough conversion: ~4 chars per token on average
   const maxChars = maxTokens * 4;
   return Math.min(maxChars, Math.max(1, hardCapChars));
@@ -243,10 +249,15 @@ export function resolveLiveToolResultMaxChars(params: {
   contextWindowTokens: number;
   cfg?: OpenClawConfig;
   agentId?: string | null;
+  intensityPolicy?: RuntimeIntensityPolicy;
 }): number {
   const configuredCap = resolveAgentContextLimits(params.cfg, params.agentId)?.toolResultMaxChars;
   const cap = configuredCap ?? resolveAutoLiveToolResultMaxChars(params.contextWindowTokens);
-  return calculateMaxToolResultCharsWithCap(params.contextWindowTokens, cap);
+  const contextShare =
+    params.intensityPolicy?.toolResults.mode === "tighten"
+      ? params.intensityPolicy.toolResults.singleToolResultContextShare
+      : undefined;
+  return calculateMaxToolResultCharsWithCap(params.contextWindowTokens, cap, contextShare);
 }
 
 /**

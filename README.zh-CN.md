@@ -35,6 +35,10 @@
 
 ---
 
+## Capability Claim Boundary
+
+Product capability statements must be checked against the canonical matrix in `shared/capability-claims.ts` and the generated status table in `artifacts/capability-claims/status-table.json` before being described as implemented, productized, stable, or end-to-end verified. The local gate `node scripts/check-capability-claims.mjs <files>` warns when high-confidence claims lack matrix, E2E, or real-runtime evidence.
+
 ## 概述
 
 **Verse Claw** 是连接强大 AI 智能体与普通用户之间的桥梁。基于 [OpenClaw](https://github.com/OpenClaw) 构建，它将命令行式的 AI 编排转变为易用、美观的桌面体验——无需使用终端。
@@ -105,8 +109,6 @@ Verse Claw 直接基于官方 **OpenClaw** 核心构建。无需单独安装，�
 
 打开开发者模式后，侧边栏还会提供原生 Dreams 页面，可在 Verse Claw 内查看 OpenClaw 记忆回顾、梦境日记，并执行基础维护操作；需要更深诊断时仍可从该页面打开完整 OpenClaw Dreams UI。
 
-当未显式配置 `plugins.slots.contextEngine` 时，OpenClaw runtime 现在默认使用后端 Context Runtime Kit。CRK 会提供有界、基于 selector 的 prompt 与 recovery 诊断，同时保留 `legacy` 作为 fallback；如需无 UI 回滚，可设置 `runtime.contextRuntimeKit.enabled: false`，或显式设置 `plugins.slots.contextEngine: "legacy"`。Tool-call gate 诊断仍保持 report-only。
-
 ---
 
 ## 功能特性
@@ -116,7 +118,10 @@ Verse Claw 直接基于官方 **OpenClaw** 核心构建。无需单独安装，�
 
 ### 💬 智能聊天界面
 通过现代化的聊天体验与 AI 智能体交互。支持多会话上下文、消息历史记录、Markdown 富文本渲染（包括 GitHub 风格表格以及由 KaTeX 渲染的 LaTeX 数学公式：`$行内$`、`$$块级$$`、`\(行内\)` 和 `\[块级\]`）、用于计划、选项列表、问题流和偏好设置的结构化 Tool UI 卡片，以及在多 Agent 场景下通过主输入框中的 `@agent` 直接路由到目标智能体。
+推理强度也会作为运行时策略生效：minimal/low 会降低 prompt、skill 和工具结果注入密度，让普通回合更省 token、更简洁；high/xhigh 可建议显式 `/loop`、ClawGraph、角色/子 Agent 或多模型协作，但不会改变权限或工具授权边界。
+左侧栏提供 Workgroups 视图，可按 workspace 级任务组组织会话，显示运行、等待、需处理等聚合状态，保留未归组会话，并让新的 workspace 作用域会话继承当前工作组。
 设置 → 工作模式 中提供 Plan、Build、Review 和 Docs/Data 管理。模式会按 workspace session 保存，并通过面向产物的 Work Kits 管理报告、表格、演示、PDF、调研、网站、设计和日常事务能力。Kit 状态会显示本地 skill 可用性、由主进程拥有的轻量 Office/Search Work Provider 状态，并为内置 Office skill 提供显式安装入口；下一条消息只会携带轻量的不可信意图 metadata。Work Provider 可以由内置库、可选包、外部服务、Custom HTTP、外部二进制、runtime skill、MCP server 或 OpenClaw plugin 通过同一来源模型承接。Search 在用户显式配置 provider 前保持 `missingConfig`，重型格式转换、爬虫、OCR 和 dataframe runtime 只作为可选接口。工作模式不会自动改变 workspace permission，也不会覆盖 OpenClaw runtime 的工具策略。
+OfficeCLI 也可在 设置 -> 技能 -> 功能插件 中管理：Verse Claw 会检测二进制文件、流式显示安装日志、同步与 Codeg 兼容的 `/officecli-*` 技能，并用 `officecli watch` 实时预览 `.docx`、`.xlsx` 和 `.pptx` 文件。
 从输入框插入的技能会以 `/技能名` 卡片形式显示；点击卡片可在右侧预览栏打开并阅读该技能的 `SKILL.md`。
 在输入框输入 `/` 会打开 Context Palette，可发现 Wiki 搜索、只读知识范围切换、审查、修复 CI、补测试、解释 diff、Task Ledger、Mission Control、压缩和会话 fork；这些动作都会复用现有 Chat 和 Session 流程。
 当你使用 `@agent` 选择其他智能体时，Verse Claw 会直接切换到该智能体自己的对话上下文，而不是经过默认智能体转发。各 Agent 工作区默认彼此分离，但更强的运行时隔离仍取决于 OpenClaw 的 sandbox 配置。
@@ -124,7 +129,7 @@ Verse Claw 默认使用轻量 `policy-light` 沙盒层，由主进程权限门�
 Settings、Doctor 和 diagnostics 现在展示同一份 effective sandbox policy，包括请求/生效 provider、runtime level、exec 与 network policy、Docker 可用性和降级原因。
 Settings → System & Runtime 还提供 Project Rules Center，可检查当前 workspace 的 `AGENTS.md`，列出 `.clawx/rules/*.md`，展示确定性校验 warning，并在缺失时创建保守的 `AGENTS.md` 模板，而不会引入新的规则真相源。
 每个 Agent 还可以单独覆盖自己的 `provider/model` 运行时设置；未覆盖的 Agent 会继续继承全局默认模型。
-输入框的上下文状态现在提供需要确认的“压缩当前会话”操作，可展示 token 压力、已隐藏消息数量、上次压缩时间和压缩质量；长期任务状态仍进入 Task Ledger / Context Pack，而不是依赖无限增长的 transcript。压缩还会保存高密度 recovery artifact，接力到新对话时会优先使用它，再回退到 transcript 证据。
+输入框的上下文状态现在提供需要确认的“压缩当前会话”操作，可展示 token 压力、已隐藏消息数量、上次压缩时间和压缩质量；长期任务状态仍进入 Task Ledger / Context Pack，而不是依赖无限增长的 transcript。压缩还会保存高密度 recovery artifact，接力到新对话时会优先使用它，再回退到 transcript 证据。运行时会先在手动/显式 opt-in 压缩中使用分层渐进式压缩计划；自动压缩路径先记录遥测，等质量门禁证明稳定后再接管。
 输入框还会显示长对话的 checkpoint 恢复状态：排队后续、最近一次人工介入/checkpoint、恢复警告，以及在会话空闲时立即发送已持久化排队后续的操作；这些排队消息可在 Gateway 重启后继续恢复。
 Chat 回滚方案现在提供复核优先的恢复面板，显示安全/复核/高风险计数，以及检查点、队列、上下文、终端、Git、Task Ledger、记忆信号；破坏性操作会进入带审批的工具链，记忆事实会变成 Knowledge 草稿或提案。
 
@@ -148,7 +153,7 @@ Observability 页面会维护 Verse Claw 自有的本地 JSON/JSONL trace 索引
 Runtime 还包含默认关闭的安全与验证影子层，覆盖 Gateway 可见的 `tools.invoke` 调用和 runtime 验证输入。启用策略后，它会通过 `security.*` 和 `verification.*` RPC 记录脱敏的内存态安全决策、确定性的 tool-call/event-log/checkpoint 验证摘要、按 runId 关联的结果筛选和聚合健康计数，并写入增量 Observability span；它不会阻断工具、运行外部测试、调用 LLM judge，也不会持久化原始 tool args/result/events/checkpoints。
 
 ### 任务账本
-Task Ledger 页面为长期任务维护 workspace 级、Agent 中立的结构化记录：长期目标、子任务、依赖、阻塞、待复核节点、决策、偏差和会话链接。它在本地 OpenClaw 配置目录中保存 append-only JSONL 事件，在 Chat 工作上下文栏中展示紧凑摘要，并可导出单文件离线 HTML，包含树视图、DAG、历史和复核视图。
+Task Ledger 页面为长期任务维护 workspace 级、Agent 中立的结构化记录：长期目标、子任务、依赖、阻塞、待复核节点、决策、偏差和会话链接。它在本地 OpenClaw 配置目录中保存 append-only JSONL 事件，在 Chat 旁展示紧凑摘要，并可导出单文件离线 HTML，包含树视图、DAG、历史和复核视图。
 
 ### 远程任务
 Remote Tasks 页面提供本地优先的结构化任务收件箱，可接收消息、OpenClaw Doctor 和设置补丁任务。设置补丁会展示变更预览，并且只有用户明确批准后，主进程才会应用白名单内的配置更新。
@@ -157,12 +162,11 @@ Remote Tasks 页面提供本地优先的结构化任务收件箱，可接收消�
 Review Center 可以对未提交改动、相对基准分支的 diff 或指定 commit 运行只读 AI 审查。它会按 severity 结构化 findings，保留 file/line 锚点，写入脱敏 review trace，并可把单条 finding 或整次 review 转成 Task Ledger review node，不会暂存、提交或编辑文件。
 
 ### Knowledge Hub
-Knowledge 现在包含只读的 Runtime Lessons 视图，用于查看 SEKB 轨迹、未蒸馏运行、已激活原则和索引预览。
-
 Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上下文。默认使用 Verse Claw 托管的隔离 native vault，可在不切换到 unsafe local-vault 模式的情况下导入受限的文本文件或文件夹，也可以验证并导入本地 OKF v0.1 Markdown bundle，作为覆盖在 `wiki.ingest` 之上的轻量兼容适配层。它提供状态、搜索、查看、compile、lint、Knowledge Inbox、draft/proposal 审查、provenance 和治理流程。Inbox 会把 Chat、任务账本、文件、OKF、ClawGraph 或 agent 提出的候选知识暂存在正式 wiki 之外，直到用户选择提升为草稿或忽略；provenance 只记录来源引用和读取/引用事件，不修改 wiki 页面。Chat 的知识范围（`None`、`Memory`、`Wiki` 或 `All`）只代表读取范围：agent 可以 search/get 上下文，但不能因为启用 scope 就写入、修改、归档、删除、合并或 apply 知识。在 Chat 中，`/wiki` 会搜索并以可见 chip 挂载明确的 wiki 引用后再发送，`/memory`、`/all`、`/none` 和 `/scope` 只调整读取范围，不会变成写权限。知识调用模式默认是 Suggest：相关知识只显示为可选 chip；Auto-read 需要用户显式开启，并且只会附加少量新鲜、高置信、只读引用。会话知识以及 agent/知识管理员建议都会先进入可编辑 draft/proposal，只有用户明确确认后才写入 wiki。Obsidian 是可选增强，不是必需依赖。治理仪表盘按需运行健康检查，呈现矛盾条目、陈旧页面和无主引用；监控目录只会把项目文档放入 pending Inbox，不会自动 direct-ingest 到正式 wiki，也不会自动生成 synthesis。
 
 ### Workspace Git 控制
-当当前 workspace 是 Git 仓库时，Chat 输入框会显示紧凑的 Git 条，展示分支、clean/dirty/conflict 状态、ahead/behind 数量以及当前 worktree 文件夹。下拉菜单可刷新仓库上下文、搜索并切换分支、创建并检出新分支、按默认路径预览添加同级 worktree、切换到对应 worktree workspace profile，并打开完整 Git 工作台。Workspace 侧栏的 Git 工作台仍负责仓库状态、side-by-side 文件 diff、暂存、复制 patch、带审批的文件还原、提交、分支、stash、worktree 和 GitHub Pull Request。同一套 Main 进程 Git service 同时驱动这些 UI 和内置 `clawx-git` MCP server，让 Agent 通过 Verse Claw 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令；revert、pull、push、worktree remove/prune、创建 PR 等会改写或发布状态的操作仍需要审批。
+Workspace 侧栏现在会先打开精简入口面板；只有当前 workspace 是 Git 仓库时才显示“审查”入口，非 Git 项目不会暴露 Git 控件。
+Workspace 侧栏提供 Git 工作台，可查看仓库状态、side-by-side 文件 diff、暂存、复制 patch、带审批的文件还原、提交、分支、stash、worktree 和 GitHub Pull Request。顶部 readiness 条会量化本机 Git、内置 Agent Git 工具、worktree 数量和 `gh` 登录状态，让面板直接显示当前哪些能力可用。Worktree 添加支持新分支和已有分支两种流程，新 worktree 默认放在仓库同级目录。同一套 Main 进程 Git service 也驱动内置 `clawx-git` MCP server，让 Agent 通过 Verse Claw 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令；revert、pull、push、worktree remove/prune、创建 PR 等会改写或发布状态的操作仍需要审批。
 
 ### 📡 多频道管理
 同时配置和监控多个 AI 频道。每个频道独立运行，允许你为不同任务运行专门的智能体。
@@ -425,7 +429,24 @@ pnpm harness context --spec harness/specs/tasks/connect-clawx-to-openclaw-runtim
 pnpm harness validate --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 
 # Agent dev/test control plane
-pnpm agent-dev:make e2e my-scenario
+pnpm agent-dev:make <page|e2e|host-route|skill|channel|plugin|scenario> my-scenario
+# scenario scaffolds register shared/agent-dev/scenarios.ts and generate snapshot-backed E2E
+pnpm contract:check
+pnpm i18n:lint
+pnpm channel:conformance my-channel
+pnpm agent-dev:workbench
+pnpm agent-dev:promote-scenario artifacts/agent-dev-scenarios/example.scenario.json my-scenario
+pnpm agent-dev:deep-test
+pnpm agent-dev:deep-test:reuse     # 日常循环：复用构建、缓存 typecheck、只跑 Workbench E2E 烟测
+pnpm agent-dev:deep-test:reuse:full  # 复用构建和缓存 typecheck，但运行完整 Agent Dev E2E
+pnpm agent-dev:audit               # 根据现有 evidence 评估 Agent Dev 成熟度
+pnpm agent-dev:audit:report        # 生成同一份审计报告，但不让 shell 失败退出
+pnpm agent-dev:unit:fast           # 日常单测快路径；评审证据仍使用 agent-dev:unit
+pnpm run typecheck:agent-dev       # 并行运行 node+web typecheck 的日常循环
+pnpm run test:e2e:agent-dev-quality:smoke  # 仅 Workbench E2E 冒烟循环
+pnpm run typecheck:cached          # Fingerprint-cached repeat typecheck for local diagnosis
+pnpm run typecheck:force           # Force a fresh uncached typecheck cache refresh
+pnpm agent-dev:validate
 
 # 构建与打包
 pnpm run build:vite       # 仅构建前端
@@ -438,7 +459,7 @@ pnpm package:linux        # 为 Linux 打包
 
 Verse Claw 现在会在 active project workspace 和 OpenClaw agent workspace 中播种 `.clawx/harness/` 项目 harness 文档骨架，用 Verse Claw 自有结构承载 rules、scenarios、task contracts、guides、layers、context-pack recipes 和 Task Ledger bridge docs，而不是引入并行的 `.trellis/` 或 Markdown 任务状态事实源。
 
-Agent 编写的页面开发和功能测试可以使用 typed `hostApi.agentDev` 控制面来完成状态种子、`?devScenario=...`、host-api record/replay、诊断快照、transport trace、视觉 preset 和 selector contract。详见 [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md)。
+Agent 编写的页面开发和功能测试可以使用 typed `hostApi.agentDev` 控制面来完成状态种子、`?devScenario=...`、host-api record/replay、诊断快照、transport trace、视觉 preset 和 selector contract。deep-test 报告现在也包含机器可读的 `decision` 和滚动耗时历史 evidence。详见 [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md)。
 
 在无头 Linux 环境下，Electron 测试需要显示服务；可使用 `xvfb-run -a pnpm run test:e2e`。
 

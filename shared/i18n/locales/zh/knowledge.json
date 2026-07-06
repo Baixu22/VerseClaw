@@ -2,13 +2,29 @@
   "nav": "知识",
   "title": "知识",
   "subtitle": "管理有来源支撑的 wiki 上下文、待审草稿和按角色治理的知识变更。",
+  "assistant": {
+    "title": "知识库助手",
+    "subtitle": "先阅读知识库里已经有的文档，搜索来源内容，再把有价值的发现整理成经过审查的知识，而不是一上来就面对审计报告。",
+    "browse": "浏览文档",
+    "docs": "可读文档",
+    "docsHint": "从页面和分类开始，而不是维护输出。",
+    "pending": "待确认",
+    "pendingHint": "捕获到的想法，等待你保留、编辑或忽略。",
+    "drafts": "可编辑草稿",
+    "draftsHint": "草稿用于把笔记变成长期知识。",
+    "health": "健康信号",
+    "healthHint": "警告和审计检查统一放在审计中心。",
+    "mapTitle": "里面有什么",
+    "mapHint": "打开一个主题即可搜索知识库并预览匹配页面。"
+  },
   "tabs": {
     "library": "知识库",
     "inbox": "收件箱",
     "drafts": "草稿箱",
     "runtime": "运行经验",
     "review": "审查",
-    "governance": "治理"
+    "governance": "治理",
+    "sources": "来源"
   },
   "actions": {
     "configure": "配置",
@@ -61,7 +77,138 @@
   },
   "library": {
     "title": "知识库",
-    "typeHint": "筛选并浏览此类知识"
+    "typeHint": "筛选并浏览此类知识",
+    "countLabel": "{{count}} 个页面"
+  },
+  "workspace": {
+    "vault": "知识库",
+    "localVault": "本地知识库",
+    "documents": "文档",
+    "emptyDocuments": "搜索知识库，或新建一个 Markdown 笔记开始。",
+    "types": "类型",
+    "untitled": "未命名笔记",
+    "localDraft": "本地草稿",
+    "characters": "字",
+    "tagsPlaceholder": "标签、别名、项目",
+    "submitReview": "提交",
+    "reviewReason": "用户在知识库工作台编写的 Markdown 笔记，提交进入审查。",
+    "emptyPreview": "还没有可预览的内容。",
+    "modes": {
+      "edit": "编辑",
+      "preview": "预览",
+      "split": "分屏"
+    }
+  },
+  "librarian": {
+    "title": "知识库管理员",
+    "roleId": "knowledge-librarian",
+    "currentDocument": "当前文档",
+    "noSummary": "写一篇 Markdown 或打开一篇文档，管理员就能获得上下文。",
+    "openAssistant": "打开管理员",
+    "askSteward": "请求审查",
+    "related": "相关页面",
+    "noRelated": "搜索结果和相关页面会显示在这里。",
+    "boundaries": "角色边界",
+    "boundaryRead": "可以搜索并基于引用回答。",
+    "boundaryDraft": "可以准备草稿和 proposal，但不能静默写入知识库。",
+    "boundarySources": "必须暴露缺失来源、冲突和过期声明。",
+    "modalTitle": "知识库管理员",
+    "modalSubtitle": "提问、整理并审查你的 Markdown 知识库。",
+    "writeBoundary": "管理员可以帮助整理和起草知识，但持久写入仍需进入草稿审查并由你明确确认。",
+    "askPlaceholder": "询问这个知识库或当前文档",
+    "askButton": "提问",
+    "askHint": "回答会优先使用本地知识库搜索和页面预览；持久写入仍然需要进入审核。",
+    "checkpointSaved": "断点已保存于 {{time}}",
+    "noCheckpoint": "还没有本地断点",
+    "clearThread": "清空会话",
+    "threadEmpty": "提问后会搜索知识库、总结匹配页面，并把这条会话作为本地断点保留。",
+    "you": "你",
+    "answerIntro": "我搜索了知识库，找到 {{count}} 个相关来源：",
+    "answerBoundary": "这是本地检索回答。要写入长期知识前，请先进行 steward 审核。",
+    "answerError": "我暂时无法查询知识库：{{error}}",
+    "noAnswer": "我没有找到匹配页面。可以换一个更具体的词，或先打开一篇文档。",
+    "emptyCitation": "这个来源没有可读摘要。",
+    "copy": "复制消息",
+    "copied": "已复制",
+    "copyFailed": "无法复制消息。",
+    "citations": "引用来源",
+    "searching": "正在检索本地知识并读取页面预览...",
+    "errorTitle": "知识库管理员遇到了本地检索错误",
+    "retry": "重试",
+    "dismissError": "关闭",
+    "sections": {
+      "answer": "回答",
+      "sources": "使用的来源",
+      "unknowns": "未知 / 缺失来源",
+      "nextAction": "建议下一步",
+      "retrieval": "检索检查器"
+    },
+    "retrieval": {
+      "query": "查询",
+      "corpus": "语料",
+      "roleTag": "角色标签",
+      "resultCount": "结果数",
+      "selectedSources": "已选来源",
+      "selectedReason": "来自本地关键词检索"
+    },
+    "unknowns": {
+      "noSources": "没有找到能支撑这个回答的来源。",
+      "pageSnippetLevel": "当前 grounding 是页面/片段级；暂未提供章节级验证。"
+    },
+    "groundingStatus": {
+      "grounded": "已 grounding",
+      "partial": "部分 grounding",
+      "missingSources": "缺失来源"
+    },
+    "confidence": "置信度",
+    "candidate": {
+      "draftTitlePrefix": "Librarian 回答",
+      "errorExperienceTitlePrefix": "错误经验",
+      "stewardTitlePrefix": "Steward 审查"
+    },
+    "suggestions": {
+      "summarize": {
+        "label": "总结当前笔记",
+        "prompt": "请总结当前笔记「{{title}}」，给出有来源支撑的要点和待澄清问题。"
+      },
+      "related": {
+        "label": "查找相关页面",
+        "prompt": "请查找与「{{title}}」相关的知识库页面，并说明它们之间的关系。"
+      },
+      "gaps": {
+        "label": "检查缺口",
+        "prompt": "请检查「{{title}}」是否缺少来源、存在过期表述，以及是否值得生成后续草稿。"
+      },
+      "next": {
+        "saveDraft": "将 grounded 回答保存为待审草稿。",
+        "createErrorExperience": "如果这里记录了可复现的坑，创建错误经验候选。",
+        "sendToSteward": "让 Knowledge Steward 在提升前先审查该回答。",
+        "broadenSearch": "扩大搜索范围，或先打开一个来源文档。"
+      }
+    },
+    "capabilities": {
+      "ask": {
+        "title": "询问知识库",
+        "body": "从知识页面回答简单问题，并展示来源引用。"
+      },
+      "organize": {
+        "title": "整理笔记",
+        "body": "为当前 Markdown 页面建议标题、标签、双链和 frontmatter。"
+      },
+      "review": {
+        "title": "审查变更",
+        "body": "把草稿交给 steward 检查来源、冲突和时效性。"
+      }
+    },
+    "actions": {
+      "saveDraft": "保存为草稿",
+      "createErrorExperience": "创建错误经验",
+      "sendToSteward": "发送给 Steward",
+      "searchRelated": "查找相关",
+      "stewardReview": "Steward 审查",
+      "openInbox": "打开收件箱",
+      "submitDraft": "提交草稿"
+    }
   },
   "inbox": {
     "title": "知识收件箱",
@@ -149,6 +296,27 @@
       "okf": "OKF",
       "manual": "手动",
       "wiki-result": "Wiki"
+    },
+    "triage": {
+      "title": "Steward ??",
+      "confidence": "{{confidence}}%",
+      "duplicateOf": "???",
+      "conflictWith": "???",
+      "suggestedEdits": "????",
+      "groups": {
+        "needs-decision": "????",
+        "ready-for-review": "????",
+        "possible-duplicate": "????",
+        "observe": "??",
+        "reject-low-value": "???"
+      },
+      "actions": {
+        "needs-decision": "????",
+        "ready-for-review": "????",
+        "possible-duplicate": "????",
+        "observe": "??",
+        "reject-low-value": "???"
+      }
     }
   },
   "provenance": {
@@ -192,7 +360,27 @@
     "noProposal": "未选择 proposal。",
     "confirmationBoundary": "Agent 和知识管理员只能准备草稿或 proposal。写入知识库必须由用户在这里明确确认。",
     "approveAndApply": "批准并应用",
-    "reject": "拒绝"
+    "reject": "拒绝",
+    "steward": {
+      "section": "Steward 审查",
+      "queue": "Steward 队列",
+      "queueEmpty": "没有等待 Steward 审查的草稿。",
+      "variant": "变体",
+      "classifiedAs": "分类为 {type}",
+      "warnings": "警告",
+      "notes": "备注",
+      "noReview": "此草稿尚未经过 Steward 审查。",
+      "configure": "配置 Steward",
+      "configureTitle": "Steward 变体",
+      "activeVariant": "活跃",
+      "setActive": "设为活跃",
+      "boundaryNotice": "Steward 永远不能直接应用变更。此边界由机制强制执行。",
+      "classification": "分类模式",
+      "heuristic": "启发式",
+      "semantic": "语义",
+      "defaultRole": "默认角色",
+      "close": "关闭"
+    }
   },
   "runtime": {
     "title": "运行经验",
@@ -214,6 +402,8 @@
   },
   "governance": {
     "title": "治理",
+    "openAudit": "审计中心",
+    "backToLibrary": "返回知识库",
     "readOnlyBadge": "Agent 默认只读",
     "steward": "知识管理员",
     "stewardDescription": "一个 role-first 角色槽位，用于分类、检查来源、发现冲突并提出变更建议，但不能直接应用。",
@@ -229,8 +419,36 @@
     "stale": "过期页面",
     "dangling": "孤立页面",
     "noIssues": "未发现异常",
+    "qualityMetrics": {
+      "title": "质量指标",
+      "description": "检索质量和重复错误卡片的紧凑健康信号。",
+      "pendingAudit": "运行健康检查",
+      "sourceAudit": "审计结果",
+      "affected": "{{count}} 个受影响项",
+      "severity": {
+        "info": "信息",
+        "warning": "警告",
+        "error": "错误"
+      },
+      "kinds": {
+        "stale_cards": "过期卡片",
+        "duplicate_clusters": "重复簇",
+        "source_gaps": "来源缺口",
+        "unreferenced_pages": "未引用页面",
+        "low_confidence_high_hit_cards": "低置信高命中卡片",
+        "high_dismissal_cards": "高忽略卡片"
+      },
+      "hints": {
+        "stale_cards": "带有过期信号的卡片或页面。",
+        "duplicate_clusters": "可能重复的知识条目。",
+        "source_gaps": "缺少可用来源或 provenance 的条目。",
+        "unreferenced_pages": "未连接到其他已审知识的页面。",
+        "low_confidence_high_hit_cards": "经常触发但置信度偏低的经验卡。",
+        "high_dismissal_cards": "用户忽略次数明显高于接受次数的经验卡。"
+      }
+    },
     "suggestions": "知识管理员建议",
-    "lastCheck": "上次检查：{time}",
+    "lastCheck": "上次检查：{{time}}",
     "dismissAll": "全部忽略",
     "allClear": "一切正常",
     "allClearHint": "未检测到治理问题。运行健康检查以确认。",
@@ -257,7 +475,10 @@
     "dismissInbox": "收件箱条目已忽略",
     "stewardReview": "知识管理员审查已更新",
     "applyReviewedChange": "已应用审查后的变更",
-    "rejectDraft": "草稿已拒绝"
+    "rejectDraft": "草稿已拒绝",
+    "librarianDraft": "Librarian 草稿已创建",
+    "librarianErrorExperience": "错误经验候选已创建",
+    "librarianSteward": "已准备 Steward 审查"
   },
   "errors": {
     "status": "无法加载知识状态。",
@@ -266,5 +487,31 @@
     "okfImport": "OKF 导入失败。",
     "search": "搜索失败。",
     "get": "无法加载知识页面。"
+  },
+  "sources": {
+    "title": "来源",
+    "typeHint": "筛选并浏览此类来源",
+    "countLabel": "{{count}} 个页面"
+  },
+  "sourceSet": {
+    "title": "当前 Source Set",
+    "empty": "从搜索结果或当前文档添加来源。",
+    "count": "{{count}} 个来源",
+    "save": "保存 Source Set",
+    "clear": "清空",
+    "titlePlaceholder": "Source Set 标题",
+    "defaultTitle": "未命名 Source Set",
+    "addResult": "加入 Source Set",
+    "saved": "Source Set 已保存",
+    "answerBoundary": "回答优先使用已选来源；持久写入仍需要草稿审查和明确确认。"
+  },
+  "studio": {
+    "title": "Studio 助手",
+    "summary": "摘要",
+    "faq": "FAQ",
+    "decisionMemo": "决策备忘录",
+    "troubleshootingRecipe": "排障",
+    "artifactCreated": "Studio 草稿已创建",
+    "question": "基于当前 Source Set 创建 {{artifact}}。"
   }
 }

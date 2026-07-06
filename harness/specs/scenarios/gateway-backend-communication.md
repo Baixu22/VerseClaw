@@ -41,10 +41,14 @@ forbiddenPatterns:
   - fetch("http://127.0.0.1:18789 in src/**
   - fetch('http://localhost:18789 in src/**
   - fetch("http://localhost:18789 in src/**
+  - fetch('http://[::1]:18789 in src/**
+  - fetch("http://[::1]:18789 in src/**
   - new WebSocket('ws://127.0.0.1:18789 in src/**
   - new WebSocket("ws://127.0.0.1:18789 in src/**
   - new WebSocket('ws://localhost:18789 in src/**
   - new WebSocket("ws://localhost:18789 in src/**
+  - new WebSocket('ws://[::1]:18789 in src/**
+  - new WebSocket("ws://[::1]:18789 in src/**
 ---
 
 Gateway backend communication covers all Verse Claw paths that move data between the visual desktop UI and OpenClaw runtime/backend services.

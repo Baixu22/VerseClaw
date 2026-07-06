@@ -32,6 +32,7 @@ import { getActiveWorkspaceProfile } from './workspaces-api';
 import { isPathInsideWorkspace, requireWorkspace } from './workspace-permissions';
 import { appendTaskLedgerEvents } from './task-ledger-service';
 import { upsertObservabilityTrace } from './observability-service';
+import { redactSecrets } from '../../openclaw_runtime/src/logging/redact.js';
 
 type ExecResult = {
   exitCode: number | null;
@@ -276,6 +277,7 @@ export async function collectCodeReviewDiffForTarget(target: CodeReviewTarget): 
 
 function buildReviewPrompt(bundle: ReviewDiffBundle, focus?: string): string {
   const focusText = normalizeString(focus);
+  const promptPatch = redactSecrets(bundle.patch);
   return [
     'You are reviewing a Git diff for Verse Claw.',
     'This is a read-only code review. Do not suggest applying patches, staging, committing, or editing files directly.',
@@ -287,7 +289,7 @@ function buildReviewPrompt(bundle: ReviewDiffBundle, focus?: string): string {
     `Changed files: ${bundle.files.join(', ') || 'none'}`,
     'Diff:',
     '```diff',
-    bundle.patch,
+    promptPatch,
     '```',
   ].join('\n');
 }

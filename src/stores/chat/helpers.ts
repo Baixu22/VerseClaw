@@ -624,6 +624,7 @@ function looksLikeTeamOrchestrationResult(value: unknown): boolean {
     || record.taskGraph != null
     || record.executionWaves != null
     || record.pendingVerifier != null
+    || record.orchestrationDiagnostics != null
     || record.repairNodes != null
     || record.rerouteRecommendations != null;
 }
@@ -641,9 +642,10 @@ function unwrapTeamOrchestrationResult(value: unknown): unknown {
 }
 
 /**
- * History hides toolResult rows from the chat stream. Keep team_orchestrate's
- * structured result attached to the visible assistant tool-call turn so the
- * chat UI can render a task graph card when users revisit the session.
+ * History hides toolResult rows from the chat stream. Keep their payloads
+ * attached to the visible assistant tool-call turn so the execution graph can
+ * still locate tool outputs when users revisit the session. team_orchestrate
+ * keeps its structured result unwrapped for the orchestration card path.
  */
 function enrichWithTeamOrchestrationToolResults(messages: RawMessage[]): RawMessage[] {
   const resultsByToolCallId = new Map<string, { toolCallId?: string; toolName?: string; result: unknown }>();
@@ -653,9 +655,15 @@ function enrichWithTeamOrchestrationToolResults(messages: RawMessage[]): RawMess
     const toolName = typeof msg.toolName === 'string' ? msg.toolName : undefined;
     const toolCallId = typeof msg.toolCallId === 'string' ? msg.toolCallId : undefined;
     if ((role !== 'toolresult' && role !== 'tool_result') || !toolCallId) continue;
-    const result = unwrapTeamOrchestrationResult(msg.details ?? msg.content);
-    if (toolName !== 'team_orchestrate' && !looksLikeTeamOrchestrationResult(result)) continue;
-    resultsByToolCallId.set(toolCallId, { toolCallId, toolName: toolName ?? 'team_orchestrate', result });
+    const rawResult = msg.details ?? msg.content;
+    const unwrappedResult = unwrapTeamOrchestrationResult(rawResult);
+    const isTeamOrchestration = toolName === 'team_orchestrate' || looksLikeTeamOrchestrationResult(unwrappedResult);
+    const result = isTeamOrchestration ? unwrappedResult : rawResult;
+    resultsByToolCallId.set(toolCallId, {
+      toolCallId,
+      toolName: toolName ?? (isTeamOrchestration ? 'team_orchestrate' : undefined),
+      result,
+    });
   }
 
   if (resultsByToolCallId.size === 0) return messages;
@@ -667,7 +675,7 @@ function enrichWithTeamOrchestrationToolResults(messages: RawMessage[]): RawMess
     const foldedResults: NonNullable<RawMessage['_toolResults']> = [];
     for (const block of content as ContentBlock[]) {
       if (block.type !== 'tool_use' && block.type !== 'toolCall') continue;
-      if (block.name !== 'team_orchestrate' || !block.id) continue;
+      if (!block.id) continue;
       const result = resultsByToolCallId.get(block.id);
       if (result) foldedResults.push(result);
     }

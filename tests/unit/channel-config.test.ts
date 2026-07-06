@@ -5,9 +5,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { testHome, testUserData, mockLoggerWarn, mockLoggerInfo, mockLoggerError } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
+  const root = process.env.CLAWX_TEST_TMPDIR ?? `${process.cwd()}/.tmp/vitest`;
   return {
-    testHome: `/tmp/clawx-channel-config-${suffix}`,
-    testUserData: `/tmp/clawx-channel-config-user-data-${suffix}`,
+    testHome: `${root}/clawx-channel-config-${suffix}`,
+    testUserData: `${root}/clawx-channel-config-user-data-${suffix}`,
     mockLoggerWarn: vi.fn(),
     mockLoggerInfo: vi.fn(),
     mockLoggerError: vi.fn(),
@@ -31,7 +32,7 @@ vi.mock('electron', () => ({
     isPackaged: false,
     getPath: () => testUserData,
     getVersion: () => '0.0.0-test',
-    getAppPath: () => '/tmp',
+    getAppPath: () => process.env.CLAWX_TEST_TMPDIR ?? `${process.cwd()}/.tmp/vitest`,
   },
 }));
 

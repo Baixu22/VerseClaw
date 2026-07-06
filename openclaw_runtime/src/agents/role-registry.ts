@@ -25,6 +25,31 @@ export type RoleRegistryConfigCarrier = {
   };
 };
 
+/**
+ * Origin of a RoleContract. Mirrors `shared/types/role-identity.ts` `RoleOrigin`
+ * (kept local so the runtime package stays free of cross-package imports).
+ *
+ * - `built-in`: ships with BUILT_IN_ROLE_CONTRACTS.
+ * - `config`:   authored in cfg.agents.roles[]; may override a built-in name.
+ */
+export type RoleOrigin = "built-in" | "config";
+
+/**
+ * Correlated read model for a concrete realization of a RoleContract at
+ * orchestration time. Mirrors `shared/types/role-identity.ts`
+ * `RoleInstanceDescriptor`. Assembled at spawn time from data that already
+ * exists — no new store, no new lifecycle. Assembly is best-effort.
+ */
+export type RoleInstanceDescriptor = {
+  roleName: string;
+  roleOrigin: RoleOrigin;
+  contractVersion?: string;
+  roleInstanceId: string;
+  agentId: string;
+  childSessionKey: string;
+  spawnedAt: string;
+};
+
 export type RoleRegistryIssue = RoleContractValidationIssue & {
   /** Index of the offending entry in cfg.agents.roles. */
   index: number;
@@ -98,4 +123,14 @@ export function resolveRoleContract(
     return undefined;
   }
   return buildRoleRegistry(cfg).byName.get(name);
+}
+
+/**
+ * Report whether a role name is `built-in` or `config`-defined, using the
+ * registry's already-computed `configRoleNames` set. A config entry that
+ * overrides a built-in name reports `config` (that is exactly the signal a
+ * maintainer needs when debugging surprising role behavior).
+ */
+export function roleOrigin(name: string, registry: RoleRegistry): RoleOrigin {
+  return registry.configRoleNames.includes(name) ? "config" : "built-in";
 }

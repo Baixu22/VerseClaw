@@ -1,3 +1,6 @@
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   clearTaskLoopRunsForTests,
@@ -5,10 +8,12 @@ import {
   type TaskLoopControllerDeps,
 } from '../../openclaw_runtime/src/agents/task-loop-controller';
 import {
+  createRuntimeTaskEventLogSqliteStorage,
   isRuntimeTaskEvent,
   RuntimeTaskEventLogStore,
   type RuntimeTaskEvent,
 } from '../../openclaw_runtime/src/runtime-core';
+import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 
 function fakeResult() {
   const workers = [
@@ -92,8 +97,14 @@ function baseDeps(loopSuffix: string): TaskLoopControllerDeps {
   };
 }
 
+const tempDirs: string[] = [];
+
 afterEach(() => {
   clearTaskLoopRunsForTests();
+  closeOpenClawStateDatabaseForTest();
+  for (const dir of tempDirs.splice(0)) {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 describe('TaskLoop RuntimeTaskEvent event-log dual-write shadow', () => {
@@ -294,4 +305,105 @@ describe('TaskLoop RuntimeTaskEvent event-log dual-write shadow', () => {
     expect(JSON.stringify(checkpointInput)).not.toContain('eventLog');
     expect(JSON.stringify(checkpointInput)).not.toContain('runtimeTaskEvent');
   });
+
+  it('does not create SQLite persistence for shadow-only flags without persist', async () => {
+    await withTempOpenClawState(async (stateRoot) => {
+      const result = await runTaskLoop(
+        { task: 'implement feature', sessionKey: 'agent:main:abc', workspaceId: 'workspace-a' },
+        {
+          runtime: { eventLog: { shadow: true } },
+          agents: { defaults: { taskLoop: { runtimeTaskEventLogShadow: true } } },
+        },
+        baseDeps('event_log_shadow_only_no_sqlite'),
+      );
+
+      expect(result).toMatchObject({ status: 'complete', phase: 'complete' });
+      expect(existsSync(path.join(stateRoot, 'state', 'openclaw.sqlite'))).toBe(false);
+    });
+  });
+
+  it('uses the default SQLite writer when event-log persistence is explicitly enabled', async () => {
+    await withTempOpenClawState(async (stateRoot) => {
+      const result = await runTaskLoop(
+        { task: 'implement feature', sessionKey: 'agent:main:abc', workspaceId: 'workspace-a' },
+        {
+          runtime: { eventLog: { persist: true } },
+          agents: { defaults: { taskLoop: { runtimeTaskEventLogShadow: true } } },
+        },
+        baseDeps('event_log_default_sqlite_writer'),
+      );
+
+      const store = new RuntimeTaskEventLogStore(createRuntimeTaskEventLogSqliteStorage({
+        database: { env: { ...process.env, OPENCLAW_STATE_DIR: stateRoot } },
+        scope: { taskId: result.loopRunId },
+      }));
+      const written = store.search({ taskId: result.loopRunId }).records;
+
+      expect(result).toMatchObject({
+        loopRunId: 'loop_event_log_default_sqlite_writer',
+        status: 'complete',
+        phase: 'complete',
+      });
+      expect(written.map((record) => record.event.kind)).toEqual(expect.arrayContaining([
+        'created',
+        'running',
+        'completed',
+        'checkpoint',
+      ]));
+      expect(written.every((record) => record.metadata?.sessionKey === 'agent:main:abc')).toBe(true);
+      expect(written.every((record) => record.metadata?.runId === result.loopRunId)).toBe(true);
+      expect(written.at(-1)?.metadata).not.toHaveProperty('eventLog');
+      expect(written.at(-1)?.metadata).not.toHaveProperty('runtimeTaskEvent');
+    });
+  });
+
+  it('swallows default SQLite writer failures without changing the TaskLoop outcome', async () => {
+    await withOpenClawStateDir(createInvalidStateRootFile(), async () => {
+      const result = await runTaskLoop(
+        { task: 'implement feature', sessionKey: 'agent:main:abc', workspaceId: 'workspace-a' },
+        {
+          runtime: { eventLog: { persist: true } },
+          agents: { defaults: { taskLoop: { runtimeTaskEventLogShadow: true } } },
+        },
+        baseDeps('event_log_default_sqlite_failure'),
+      );
+
+      expect(result).toMatchObject({
+        loopRunId: 'loop_event_log_default_sqlite_failure',
+        status: 'complete',
+        phase: 'complete',
+      });
+    });
+  });
 });
+
+async function withTempOpenClawState<T>(operation: (stateRoot: string) => Promise<T>): Promise<T> {
+  const stateRoot = mkdtempSync(path.join(os.tmpdir(), 'task-loop-event-log-shadow-'));
+  tempDirs.push(stateRoot);
+  return withOpenClawStateDir(stateRoot, operation);
+}
+
+async function withOpenClawStateDir<T>(
+  stateRoot: string,
+  operation: (stateRoot: string) => Promise<T>,
+): Promise<T> {
+  const previous = process.env.OPENCLAW_STATE_DIR;
+  process.env.OPENCLAW_STATE_DIR = stateRoot;
+  try {
+    return await operation(stateRoot);
+  } finally {
+    if (previous === undefined) {
+      delete process.env.OPENCLAW_STATE_DIR;
+    } else {
+      process.env.OPENCLAW_STATE_DIR = previous;
+    }
+  }
+}
+
+function createInvalidStateRootFile(): string {
+  const dir = mkdtempSync(path.join(os.tmpdir(), 'task-loop-event-log-shadow-invalid-'));
+  tempDirs.push(dir);
+  const stateRoot = path.join(dir, 'state-root-file');
+  writeFileSync(stateRoot, 'not a directory');
+  return stateRoot;
+}

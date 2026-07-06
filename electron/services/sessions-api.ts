@@ -1,5 +1,5 @@
 import { openSync, closeSync, fstatSync, readSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { RawMessage } from '@shared/chat/types';
 import type { AgentReasoningEffort } from '@shared/types/agent';
@@ -23,13 +23,23 @@ import type {
 } from '../../shared/host-api/contract';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
 import { readCurrentGitStatus } from './git-api';
+import { getResourceTracker } from './resource-tracker';
 import { getObservabilityTraceBuffer } from './observability-service';
 import {
   removeSessionEntry,
   resolveSessionTranscriptPath,
   sweepSessionArtefacts,
+  snapshotSessionEntry,
+  restoreSessionEntry,
+  archiveSessionTranscript,
+  restoreSessionTranscript,
+  readArchiveIndex,
+  upsertArchiveEntry,
+  removeArchiveEntry,
+  writeArchiveIndex,
 } from '../utils/session-files';
 import { isRecord } from './payload-utils';
+import type { SessionArchiveEntry } from '@shared/types/workspace';
 
 const SAFE_SESSION_SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
 const RECENT_TRANSCRIPT_INITIAL_READ_BYTES = 256 * 1024;
@@ -65,6 +75,9 @@ type SessionPayload = {
   checkpointId?: unknown;
   budgetTokens?: unknown;
   purpose?: unknown;
+  originalWorkspaceId?: unknown;
+  originalFolderId?: unknown;
+  messageId?: unknown;
 };
 
 const MANUAL_COMPACTION_DEFAULT_INSTRUCTIONS = [
@@ -234,6 +247,128 @@ function parseSessionKey(sessionKey: string): { agentId: string; suffix: string 
   return { agentId, suffix };
 }
 
+function parseTranscriptEntry(line: string): Record<string, unknown> | null {
+  try {
+    const parsed = JSON.parse(line) as unknown;
+    return isRecord(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function getTranscriptEntryMessageId(entry: Record<string, unknown>): string | null {
+  if (entry.type !== 'message') return null;
+  if (typeof entry.id === 'string' && entry.id.trim()) return entry.id;
+  const message = entry.message;
+  if (isRecord(message) && typeof message.id === 'string' && message.id.trim()) {
+    return message.id;
+  }
+  return null;
+}
+
+function isTranscriptMessageEntry(line: string): boolean {
+  const entry = parseTranscriptEntry(line);
+  return entry?.type === 'message';
+}
+
+async function truncateSessionTranscriptBeforeMessage(
+  sessionKey: string,
+  messageId: string,
+  agentIdOverride?: string | null,
+): Promise<{
+  success: boolean;
+  error?: string;
+  sessionKey?: string;
+  messageId?: string;
+  truncated?: boolean;
+  removedMessageCount?: number;
+  retainedLineCount?: number;
+}> {
+  const parsed = parseSessionKey(sessionKey);
+  const agentId = agentIdOverride?.trim() || parsed?.agentId || '';
+  const normalizedMessageId = messageId.trim();
+  if (!parsed || !agentId || !SAFE_SESSION_SEGMENT.test(agentId)) {
+    return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
+  }
+  if (!normalizedMessageId) {
+    return { success: false, error: 'messageId is required' };
+  }
+
+  const fsP = await import('node:fs/promises');
+  const sessionsDir = join(getOpenClawConfigDir(), 'agents', agentId, 'sessions');
+  let sessionsJson: Record<string, unknown>;
+  try {
+    sessionsJson = await readSessionsJson(agentId);
+  } catch (error) {
+    return { success: false, error: `Could not read sessions.json: ${String(error)}` };
+  }
+
+  const resolution = resolveSessionTranscriptPath(sessionsJson, sessionsDir, sessionKey);
+  if (!resolution.ok) {
+    return {
+      success: false,
+      error: resolution.failure.kind === 'not-found'
+        ? 'Transcript not found'
+        : `Transcript path escapes sessions dir: ${resolution.failure.resolvedPath}`,
+    };
+  }
+
+  let raw: string;
+  try {
+    raw = await fsP.readFile(resolution.resolvedSrcPath, 'utf8');
+  } catch (error) {
+    return { success: false, error: `Could not read transcript: ${String(error)}` };
+  }
+
+  const lines = raw.split(/\r?\n/);
+  if (lines.at(-1) === '') lines.pop();
+  const targetIndex = lines.findIndex((line) => {
+    const entry = parseTranscriptEntry(line);
+    return entry ? getTranscriptEntryMessageId(entry) === normalizedMessageId : false;
+  });
+  if (targetIndex < 0) {
+    return {
+      success: false,
+      error: 'Message not found in transcript',
+      sessionKey,
+      messageId: normalizedMessageId,
+      truncated: false,
+    };
+  }
+
+  const retainedLines = lines.slice(0, targetIndex);
+  const removedLines = lines.slice(targetIndex);
+  const removedMessageCount = removedLines.filter(isTranscriptMessageEntry).length;
+  const nextContent = retainedLines.length > 0 ? `${retainedLines.join('\n')}\n` : '';
+  const tempPath = `${resolution.resolvedSrcPath}.truncate-${process.pid}-${Date.now()}.tmp`;
+  try {
+    await fsP.writeFile(tempPath, nextContent, 'utf8');
+    await fsP.rename(tempPath, resolution.resolvedSrcPath);
+  } catch (error) {
+    try {
+      await fsP.unlink(tempPath);
+    } catch {
+      // Ignore temp cleanup failures; the write/rename error is the useful one.
+    }
+    return { success: false, error: `Could not truncate transcript: ${String(error)}` };
+  }
+
+  logger.info('[session:truncate]', {
+    sessionKey,
+    messageId: normalizedMessageId,
+    transcriptPath: resolution.resolvedSrcPath,
+    removedMessageCount,
+  });
+  return {
+    success: true,
+    sessionKey,
+    messageId: normalizedMessageId,
+    truncated: true,
+    removedMessageCount,
+    retainedLineCount: retainedLines.length,
+  };
+}
+
 function getSessionKey(payload: unknown): string {
   const body = isRecord(payload) ? payload as SessionPayload : {};
   const value = body.sessionKey ?? body.id ?? payload;
@@ -256,6 +391,21 @@ function getThinkingLevel(payload: unknown): AgentReasoningEffort | null {
     return value as AgentReasoningEffort;
   }
   throw new Error(`Invalid thinkingLevel: ${String(value)}`);
+}
+
+/**
+ * Area 2 §3.3: extract turn/session model override from host-api payload.
+ * `null` clears the override (reset to agent default). Empty strings are
+ * normalized to `null` so the runtime `sessions.patch` clears the field.
+ */
+function getModelRef(payload: unknown): string | null {
+  const value = isRecord(payload) ? (payload as { modelRef?: unknown }).modelRef : undefined;
+  if (value == null) return null;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed ? trimmed : null;
+  }
+  throw new Error(`Invalid modelRef: ${String(value)}`);
 }
 
 function getOptionalWorkspaceId(payload: unknown): string | null {
@@ -858,9 +1008,243 @@ async function renameSession(sessionKey: string, label: string): Promise<{ succe
   return { success: true };
 }
 
+function getArchiveIndexPath(agentId: string): string {
+  return join(getOpenClawConfigDir(), 'agents', agentId, 'sessions', 'sessions.archives.json');
+}
+
+function getOptionalString(value: unknown): string | null {
+  return typeof value === 'string' && value.trim() ? value.trim() : null;
+}
+
+/**
+ * Archive a session: rename the live transcript to `.archived.jsonl`, drop
+ * the entry from `sessions.json` (so `sessions.list` stops surfacing it),
+ * and record a Verse-Claw-owned archive index entry so the session can be
+ * restored exactly. The renderer passes `originalWorkspaceId` /
+ * `originalFolderId` so the index is self-contained without the main
+ * process needing to read workspace profiles.
+ */
+async function archiveSession(payload: SessionPayload): Promise<{ success: boolean; error?: string }> {
+  const sessionKey = getSessionKey(payload);
+  const parsed = parseSessionKey(sessionKey);
+  if (!parsed) {
+    return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
+  }
+  const { agentId } = parsed;
+  const sessionsDir = join(getOpenClawConfigDir(), 'agents', agentId, 'sessions');
+  const sessionsJsonPath = join(sessionsDir, 'sessions.json');
+  const archiveIndexPath = getArchiveIndexPath(agentId);
+  logger.info(`[session:archive] key=${sessionKey} agentId=${agentId}`);
+
+  const fsP = await import('node:fs/promises');
+  let sessionsJson: Record<string, unknown>;
+  try {
+    const raw = await fsP.readFile(sessionsJsonPath, 'utf8');
+    sessionsJson = JSON.parse(raw) as Record<string, unknown>;
+  } catch (error) {
+    logger.warn(`[session:archive] Could not read sessions.json: ${String(error)}`);
+    return { success: false, error: `Could not read sessions.json: ${String(error)}` };
+  }
+
+  const resolution = resolveSessionTranscriptPath(sessionsJson, sessionsDir, sessionKey);
+  if (!resolution.ok) {
+    if (resolution.failure.kind === 'not-found') {
+      return { success: false, error: `Cannot resolve file for session: ${sessionKey}` };
+    }
+    return { success: false, error: `Resolved session path is outside the agent sessions dir: ${resolution.failure.resolvedPath}` };
+  }
+  const { sessionsDirAbs, baseId } = resolution;
+
+  // Snapshot the sessions.json entry BEFORE mutating so restore can re-insert
+  // it verbatim. Fall back to a minimal `{ key }` entry when sessions.json
+  // has no explicit row (e.g. the session was only ever a live .jsonl file).
+  const snapshot = snapshotSessionEntry(sessionsJson, sessionKey) ?? { key: sessionKey };
+
+  const archive = await archiveSessionTranscript(sessionsDirAbs, baseId);
+  if (!archive.renamed) {
+    logger.warn(`[session:archive] Could not rename transcript for ${sessionKey}: ${archive.error}`);
+    return { success: false, error: archive.error ?? 'Failed to archive transcript' };
+  }
+
+  // Remove from sessions.json so sessions.list stops returning it. Tolerate
+  // a missing/rewritten sessions.json (e.g. OpenClaw runtime rewrote it
+  // concurrently) — the .archived.jsonl rename is the source of truth for
+  // hiding the session, this just keeps the index consistent.
+  try {
+    const raw2 = await fsP.readFile(sessionsJsonPath, 'utf8');
+    const json2 = JSON.parse(raw2) as Record<string, unknown>;
+    removeSessionEntry(json2, sessionKey);
+    await fsP.writeFile(sessionsJsonPath, JSON.stringify(json2, null, 2), 'utf8');
+  } catch (error) {
+    logger.warn(`[session:archive] Could not update sessions.json: ${String(error)}`);
+  }
+
+  const entry: SessionArchiveEntry = {
+    sessionKey,
+    agentId,
+    transcriptPath: archive.archivedPath,
+    label: getOptionalString(payload.label) ?? sessionKey,
+    archivedAt: Date.now(),
+    originalWorkspaceId: getOptionalString(payload.originalWorkspaceId),
+    originalFolderId: getOptionalString(payload.originalFolderId),
+    sessionsJsonSnapshot: snapshot,
+  };
+  await upsertArchiveEntry(archiveIndexPath, entry);
+  logger.info(`[session:archive] Archived ${sessionKey} -> ${archive.archivedPath}`);
+  return { success: true };
+}
+
+/**
+ * Restore an archived session: rename `.archived.jsonl` back to `.jsonl`,
+ * re-insert the snapshotted sessions.json entry, and drop the archive index
+ * entry. Returns success even if the transcript was already restored
+ * (idempotent) — the only hard failure is a missing archive index entry,
+ * which means we don't know which sessions.json row to restore.
+ */
+async function restoreSession(payload: SessionPayload): Promise<{ success: boolean; error?: string }> {
+  const sessionKey = getSessionKey(payload);
+  const parsed = parseSessionKey(sessionKey);
+  if (!parsed) {
+    return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
+  }
+  const { agentId } = parsed;
+  const sessionsDir = join(getOpenClawConfigDir(), 'agents', agentId, 'sessions');
+  const sessionsJsonPath = join(sessionsDir, 'sessions.json');
+  const archiveIndexPath = getArchiveIndexPath(agentId);
+  logger.info(`[session:restore] key=${sessionKey} agentId=${agentId}`);
+
+  const { removed } = await removeArchiveEntry(archiveIndexPath, sessionKey);
+  if (!removed) {
+    return { success: false, error: `Session is not in the archive index: ${sessionKey}` };
+  }
+
+  const restore = await restoreSessionTranscript(sessionsDir, basename(removed.transcriptPath).replace(/\.archived\.jsonl$/, ''));
+  if (!restore.restored) {
+    // The transcript file is gone (permanently deleted out from under us, or
+    // already restored by a prior call). Re-add the index entry so the user
+    // can retry / investigate, then surface the failure.
+    await upsertArchiveEntry(archiveIndexPath, removed);
+    return { success: false, error: restore.error ?? 'Archived transcript not found' };
+  }
+
+  try {
+    const fsP = await import('node:fs/promises');
+    const raw = await fsP.readFile(sessionsJsonPath, 'utf8');
+    const json = JSON.parse(raw) as Record<string, unknown>;
+    restoreSessionEntry(json, sessionKey, removed.sessionsJsonSnapshot);
+    await fsP.writeFile(sessionsJsonPath, JSON.stringify(json, null, 2), 'utf8');
+  } catch (error) {
+    logger.warn(`[session:restore] Could not update sessions.json: ${String(error)}`);
+  }
+
+  logger.info(`[session:restore] Restored ${sessionKey}`);
+  return { success: true };
+}
+
+/**
+ * Permanently delete an archived session: run the full artefact sweep on the
+ * archived transcript's base id (unlinks `.archived.jsonl`, trajectory
+ * sidecars, reset snapshots) and remove the archive index entry. This is the
+ * "empty recycle bin" per-item action and shares the same disk contract as
+ * the live hard-delete.
+ */
+async function permanentDeleteSession(payload: SessionPayload): Promise<{ success: boolean; error?: string }> {
+  const sessionKey = getSessionKey(payload);
+  const parsed = parseSessionKey(sessionKey);
+  if (!parsed) {
+    return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
+  }
+  const { agentId } = parsed;
+  const archiveIndexPath = getArchiveIndexPath(agentId);
+  logger.info(`[session:permanentDelete] key=${sessionKey} agentId=${agentId}`);
+
+  const { removed } = await removeArchiveEntry(archiveIndexPath, sessionKey);
+  if (!removed) {
+    return { success: false, error: `Session is not in the archive index: ${sessionKey}` };
+  }
+
+  const transcriptPath = removed.transcriptPath;
+  const sessionsDirAbs = dirname(transcriptPath);
+  const baseId = basename(transcriptPath).replace(/\.archived\.jsonl$/, '');
+  const sweep = await sweepSessionArtefacts(sessionsDirAbs, baseId);
+  for (const removedPath of sweep.removed) {
+    logger.info(`[session:permanentDelete] Unlinked ${removedPath}`);
+  }
+  for (const { path: failedPath, error } of sweep.errors) {
+    logger.warn(`[session:permanentDelete] Failed to unlink ${failedPath}: ${String(error)}`);
+  }
+  logger.info(`[session:permanentDelete] Hard-deleted ${sweep.removed.length} file(s) for ${baseId}`);
+  return { success: true };
+}
+
+/**
+ * List every archived session for an agent (or for the active agent when
+ * `agentId` is omitted). The renderer uses this to populate the recycle bin
+ * panel. Reads only the Verse-Claw-owned archive index — does not consult
+ * sessions.json, since archived entries are deliberately absent from it.
+ */
+async function listArchivedSessions(payload: SessionPayload): Promise<{ success: boolean; entries: SessionArchiveEntry[] }> {
+  const agentId = typeof payload.agentId === 'string' && payload.agentId.trim()
+    ? payload.agentId.trim()
+    : 'main';
+  if (!SAFE_SESSION_SEGMENT.test(agentId)) {
+    return { success: false, entries: [] };
+  }
+  const archiveIndexPath = getArchiveIndexPath(agentId);
+  const index = await readArchiveIndex(archiveIndexPath);
+  return { success: true, entries: index.entries };
+}
+
+/**
+ * Empty the recycle bin for an agent: permanently delete every archived
+ * session. Iterates the index entries and sweeps each one. Errors are
+ * accumulated but do not abort the loop — the goal is to clear as much as
+ * possible, then report the first failure.
+ */
+async function emptyArchive(payload: SessionPayload): Promise<{ success: boolean; error?: string }> {
+  const agentId = typeof payload.agentId === 'string' && payload.agentId.trim()
+    ? payload.agentId.trim()
+    : 'main';
+  if (!SAFE_SESSION_SEGMENT.test(agentId)) {
+    return { success: false, error: `Invalid agentId: ${agentId}` };
+  }
+  const archiveIndexPath = getArchiveIndexPath(agentId);
+  const index = await readArchiveIndex(archiveIndexPath);
+  if (index.entries.length === 0) return { success: true };
+
+  let firstError: string | undefined;
+  for (const entry of index.entries) {
+    try {
+      const sessionsDirAbs = dirname(entry.transcriptPath);
+      const baseId = basename(entry.transcriptPath).replace(/\.archived\.jsonl$/, '');
+      const sweep = await sweepSessionArtefacts(sessionsDirAbs, baseId);
+      for (const removedPath of sweep.removed) {
+        logger.info(`[session:emptyArchive] Unlinked ${removedPath}`);
+      }
+      if (sweep.errors.length > 0 && !firstError) {
+        firstError = String(sweep.errors[0].error);
+      }
+    } catch (error) {
+      if (!firstError) firstError = String(error);
+      logger.warn(`[session:emptyArchive] Failed for ${entry.sessionKey}: ${String(error)}`);
+    }
+  }
+
+  await writeArchiveIndex(archiveIndexPath, { version: 1, entries: [] });
+  logger.info(`[session:emptyArchive] Cleared ${index.entries.length} archive entries for ${agentId}`);
+  return firstError ? { success: true, error: firstError } : { success: true };
+}
+
 export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {}): CompleteHostServiceRegistry['sessions'] {
   return {
-    delete: async (payload) => deleteSession(getSessionKey(payload)),
+    delete: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const result = await deleteSession(sessionKey);
+      if (result.success) {
+        await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
+      }
+      return result;
+    },
     rename: async (payload) => {
       const body = isRecord(payload) ? payload as SessionPayload : {};
       const sessionKey = getSessionKey(payload);
@@ -921,6 +1305,19 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
         thinkingLevel,
       }, 10_000);
       logger.info('[session:patchThinking]', { sessionKey, thinkingLevel });
+      return { success: true, result };
+    },
+    patchRuntimeModel: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const modelRef = getModelRef(payload);
+      if (!ctx.gatewayManager) {
+        return { success: false, error: 'Gateway manager unavailable' };
+      }
+      const result = await ctx.gatewayManager.rpc('sessions.patch', {
+        key: sessionKey,
+        model: modelRef,
+      }, 10_000);
+      logger.info('[session:patchRuntimeModel]', { sessionKey, modelRef });
       return { success: true, result };
     },
     compactionStatus: async (payload) => {
@@ -1163,6 +1560,15 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
       }, 120_000);
       const compactResult = isRecord(result.result) ? result.result : {};
       const compactDetails = isRecord(compactResult.details) ? compactResult.details : {};
+      const compressionDetails = isRecord(compactDetails.compression) ? compactDetails.compression : {};
+      const detailWarnings = [
+        ...(Array.isArray(compactDetails.warnings)
+          ? compactDetails.warnings.filter((item): item is string => typeof item === 'string')
+          : []),
+        ...(Array.isArray(compressionDetails.warnings)
+          ? compressionDetails.warnings.filter((item): item is string => typeof item === 'string')
+          : []),
+      ];
       const compacted = result.compacted === true;
       const nextSessionKey = typeof result.key === 'string' ? result.key : sessionKey;
       return {
@@ -1177,9 +1583,7 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
         sessionKey: nextSessionKey,
         ...(typeof compactResult.sessionId === 'string' ? { sessionId: compactResult.sessionId } : {}),
         ...(nextSessionKey !== sessionKey ? { rotatedSessionKey: nextSessionKey } : {}),
-        warnings: Array.isArray(compactDetails.warnings)
-          ? compactDetails.warnings.filter((item): item is string => typeof item === 'string')
-          : [],
+        warnings: [...new Set(detailWarnings)],
       };
     },
     prepareHandoff: async (payload) => {
@@ -1458,6 +1862,47 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
         forkedFromParent: result.forkedFromParent === true,
         warnings: [],
       };
+    },
+    truncate: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const body = isRecord(payload) ? payload as SessionPayload : {};
+      const messageId = typeof body.messageId === 'string' ? body.messageId.trim() : '';
+      return truncateSessionTranscriptBeforeMessage(
+        sessionKey,
+        messageId,
+        getOptionalAgentId(payload) ?? parseSessionKey(sessionKey)?.agentId ?? null,
+      );
+    },
+    archive: async (payload) => {
+      const body = isRecord(payload) ? payload as SessionPayload : {};
+      const sessionKey = getSessionKey(payload);
+      const result = await archiveSession({
+        id: sessionKey,
+        label: body.label,
+        originalWorkspaceId: body.originalWorkspaceId,
+        originalFolderId: body.originalFolderId,
+      });
+      if (result.success) {
+        await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
+      }
+      return result;
+    },
+    restore: async (payload) => restoreSession({ id: getSessionKey(payload) }),
+    permanentDelete: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const result = await permanentDeleteSession({ id: sessionKey });
+      if (result.success) {
+        await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
+      }
+      return result;
+    },
+    listArchived: async (payload) => {
+      const body = isRecord(payload) ? payload as SessionPayload : {};
+      return listArchivedSessions({ agentId: body.agentId });
+    },
+    emptyArchive: async (payload) => {
+      const body = isRecord(payload) ? payload as SessionPayload : {};
+      return emptyArchive({ agentId: body.agentId });
     },
   };
 }

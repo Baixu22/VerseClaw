@@ -8,7 +8,8 @@
     "askQuestionsDesc": "タスク指向の依頼に対応します",
     "creativeTasks": "連続実行",
     "creativeTasksDesc": "複数ステップの作業を継続して進めます",
-    "brainstorming": "マルチエージェント並列実行"
+    "brainstorming": "マルチエージェント並列実行",
+    "brainstormingDesc": "複数のエージェントで作業を分担します"
   },
   "noLogs": "（ログはまだありません）",
   "scrollToLatest": "最下部に戻る",
@@ -19,14 +20,68 @@
     "currentAgent": "現在の会話相手: {{agent}}",
     "workspace": "ワークスペース",
     "saveToKnowledge": "ナレッジに保存",
-    "workContext": "作業コンテキスト",
     "addWorkspaceDialogTitle": "ワークスペースディレクトリを選択",
-    "addWorkspaceDialogButton": "ワークスペースに設定"
+    "addWorkspaceDialogButton": "ワークスペースに設定",
+    "promptCache": {
+      "ariaLabel": "プロンプトキャッシュ状態: {{status}}",
+      "title": "プロンプトキャッシュ: {{status}}",
+      "hitRate": "命中率 {{value}}",
+      "lastTurnHitRate": "直近ターン {{value}}",
+      "warmTurnHitRate": "ウォームターン {{value}}",
+      "tokens": "読取 {{read}} · 書込 {{write}}",
+      "confidence": "信頼度 {{value}}",
+      "saved": "推定節約 {{value}}",
+      "extraCost": "推定追加 {{value}}",
+      "reason": "最近の理由: {{reason}}",
+      "ledger": "{{warnings}} 件の警告 · {{cancelled}} 件のキャンセル",
+      "status": {
+        "warm": "ウォーム",
+        "warming": "書き込み中",
+        "cold": "コールド",
+        "at-risk": "リスクあり",
+        "ineligible": "対象外",
+        "unknown": "不明"
+      },
+      "short": {
+        "warm": "Warm",
+        "warming": "Cache",
+        "cold": "Cold",
+        "at-risk": "Risk",
+        "ineligible": "No cache",
+        "unknown": "Cache"
+      },
+      "reasonValue": {
+        "model-switch": "モデル切り替え",
+        "manual-compaction": "手動圧縮",
+        "skill-enable": "Skill 有効化",
+        "mcp-register": "MCP 登録",
+        "mcp-reload": "MCP 再読み込み",
+        "system-prompt-change": "システムプロンプト変更",
+        "context-reset": "コンテキストリセット",
+        "ineligible": "プレフィックスがキャッシュ閾値未満",
+        "provider-unknown": "Provider サポート不明"
+      },
+      "confidenceValue": {
+        "high": "高",
+        "medium": "中",
+        "low": "低",
+        "unknown": "不明"
+      }
+    }
   },
   "markdown": {
     "codeBlock": "コード",
     "copyCode": "コードをコピー",
     "copiedCode": "コピー済み"
+  },
+  "messageActions": {
+    "copy": "メッセージをコピー",
+    "copied": "コピーしました",
+    "edit": "編集",
+    "editInputLabel": "メッセージを編集",
+    "cancelEdit": "キャンセル",
+    "sendEdit": "送信",
+    "resendFailed": "メッセージを再送信できませんでした"
   },
   "approvals": {
     "title": "承認と監査",
@@ -166,6 +221,69 @@
       "copy": "コピー",
       "copied": "コピー済み"
     },
+    "testResults": {
+      "label": "Test results",
+      "total": "total",
+      "passed": "passed",
+      "failed": "failed",
+      "skipped": "skipped",
+      "running": "running",
+      "empty": "No test suites were reported.",
+      "suiteCount": "{{count}} tests",
+      "status": {
+        "passed": "Passed",
+        "failed": "Failed",
+        "skipped": "Skipped",
+        "running": "Running"
+      }
+    },
+    "stackTrace": {
+      "label": "Stack trace",
+      "empty": "No stack frames were reported.",
+      "lineColumn": "L{{line}}:C{{column}}",
+      "source": {
+        "app": "App",
+        "web-preview": "Web preview",
+        "tool": "Tool"
+      }
+    },
+    "chainOfThought": {
+      "label": "Reasoning steps",
+      "title": "Reasoning",
+      "progress": "{{complete}} complete, {{active}} active",
+      "empty": "No reasoning steps were reported.",
+      "status": {
+        "complete": "Complete",
+        "active": "Active",
+        "pending": "Pending"
+      }
+    },
+    "task": {
+      "label": "Task",
+      "itemCount": "{{count}} items",
+      "empty": "No task items were reported."
+    },
+    "reasoning": {
+      "label": "Reasoning",
+      "thinking": "Thinking",
+      "empty": "No reasoning summary was provided."
+    },
+    "commit": {
+      "label": "Commit",
+      "detached": "Detached HEAD",
+      "staged": "staged",
+      "unstaged": "unstaged",
+      "untracked": "untracked",
+      "conflicted": "conflicted",
+      "operationWithAction": "{{action}}: {{status}}",
+      "operation": {
+        "ready": "Ready",
+        "running": "Running",
+        "success": "Done",
+        "blocked": "Blocked",
+        "failed": "Failed"
+      }
+    },
     "tokenUsage": {
       "input": "入力トークン",
       "output": "出力トークン",
@@ -196,6 +314,23 @@
   "runError": {
     "title": "モデル呼び出しに失敗しました"
   },
+  "knowledgeGuard": {
+    "title": "既知の落とし穴が関係している可能性があります",
+    "confidence": "{{confidence}}%",
+    "rootCause": "原因:",
+    "whyMatched": "一致:",
+    "matchFallback": "類似の失敗シグナル",
+    "dismiss": "閉じる",
+    "use": "使用",
+    "usedToast": "ナレッジの提案をコンポーザーに追加しました。",
+    "composerPrefix": "再試行前にこの過去の経験を使ってください: {{title}}",
+    "severity": {
+      "low": "低",
+      "medium": "中",
+      "high": "高",
+      "blocking": "ブロック"
+    }
+  },
   "artifactPanel": {
     "tabs": {
       "changes": "変更",
@@ -206,9 +341,37 @@
     "workspaceTabs": {
       "files": "ファイル",
       "terminal": "ターミナル",
-      "git": "Git",
+      "git": "レビュー",
       "web": "Web",
       "audit": "監査"
+    },
+    "workspaceLaunchpad": {
+      "title": "ClawX ワークスペース",
+      "subtitle": "固定入口",
+      "moreHint": "+ からレビュー、プレビュー、監査ツールを開けます。",
+      "actions": {
+        "open": "入口ランチャーを開く",
+        "back": "入口に戻る",
+        "moreEntries": "その他の入口"
+      },
+      "sections": {
+        "highFrequency": "高頻度",
+        "projectTools": "プロジェクトツール",
+        "reviewAndSafety": "レビューと安全"
+      },
+      "entries": {
+        "files": "ファイルを参照し、選択した内容をプレビューします。",
+        "terminal": "このワークスペースの対話型シェルを開始します。",
+        "review": "変更、ブランチ、stash、PR をレビューします。",
+        "reviewBranch": "{{branch}} の変更をレビューします。",
+        "web": "ローカルプレビューを開くか URL を確認します。",
+        "audit": "権限リクエストと最近の承認を確認します。"
+      },
+      "badges": {
+        "changes": "{{count}} 件の変更",
+        "conflicts": "{{count}} 件の競合",
+        "clean": "クリーン"
+      }
     },
     "actions": {
       "back": "一覧に戻る"
@@ -297,6 +460,16 @@
       "rowRange": "行 {{from}}-{{to}} / {{total}}",
       "prevPage": "前のページ",
       "nextPage": "次のページ"
+    },
+    "office": {
+      "title": "Office プレビュー: {{fileName}}",
+      "loading": "Office プレビューを読み込み中...",
+      "notInstalledTitle": "OfficeCLI がインストールされていません",
+      "notInstalledHint": "OfficeCLI をインストールしてからプレビューを再試行してください。",
+      "failedTitle": "Office プレビューに失敗しました",
+      "install": "OfficeCLI をインストール",
+      "installing": "インストール中...",
+      "retry": "再試行"
     }
   },
   "workspace": {
@@ -380,14 +553,19 @@
         "clearSelection": "選択解除",
         "sendToComposer": "入力欄へ送信",
         "captureAndSend": "撮影して送信",
-        "capturing": "撮影中"
+        "capturing": "撮影中",
+        "refresh": "更新",
+        "openExternal": "外部で開く",
+        "openAgentBrowser": "Agent Browser で開く",
+        "locateAgentBrowser": "Agent Browser を表示"
       },
       "tooltips": {
         "captureAndSend": "選択したコンポーネントとプレビュー画像を入力欄へ送ります。"
       },
       "browser": {
         "placeholder": "プレビュー開始後に URL を読み込みます",
-        "title": "ワークスペースプレビュー"
+        "title": "ワークスペースプレビュー",
+        "agentBrowserActive": "Agent"
       },
       "selection": {
         "selected": "選択中"
@@ -400,7 +578,10 @@
         "sent": "入力欄へ送信しました",
         "screenshotUnavailable": "スクリーンショットを使えません。コンポーネント情報のみ送信しました",
         "screenshotFailed": "スクリーンショットに失敗しました。コンポーネント情報のみ送信しました",
-        "screenshotSent": "スクリーンショットとコンポーネント情報を送信しました"
+        "screenshotSent": "スクリーンショットとコンポーネント情報を送信しました",
+        "agentBrowserNoUrl": "先にプレビューを開始するか URL を入力してください",
+        "agentBrowserOpened": "Agent Browser を開きました",
+        "agentBrowserLocated": "Agent Browser を表示しました"
       },
       "prompt": {
         "title": "Web プレビューで選択したコンポーネントを調整してください。",
@@ -648,6 +829,16 @@
       "followup": "フォローアップ",
       "reroute": "再ルーティング"
     },
+    "diagnostics": {
+      "title": "診断",
+      "recommendations": "推奨事項",
+      "nextSteps": "次の手順",
+      "taskLoopUpgrade": "Task Loop は明示的な確認後にのみ利用できます。",
+      "status": {
+        "ok": "OK",
+        "needs_attention": "要確認"
+      }
+    },
     "status": {
       "running": "実行中",
       "planned": "計画済み",
@@ -691,6 +882,7 @@
   },
   "composer": {
     "attachFiles": "ファイルを添付",
+    "placeholder": "メッセージ...  / でコマンドと Skill",
     "pickSkill": "Skill を選択",
     "pickTool": "ツールを選択",
     "skillButton": "Skills",
@@ -702,6 +894,71 @@
     "skillEmpty": "一致する Skill がありません",
     "pickAgent": "Agent を選択",
     "pickModel": "モデルを選択",
+    "actions": {
+      "add": "追加",
+      "context": "コンテキストを追加",
+      "skills": "Skills",
+      "office": "Office",
+      "session": "セッション",
+      "attachFiles": "ファイルを添付",
+      "knowledge": "ナレッジを検索",
+      "model": "モデル",
+      "compact": "セッションを圧縮",
+      "fork": "セッションを分岐",
+      "handoff": "セッションを引き継ぎ"
+    },
+    "office": {
+      "excel": "Excel",
+      "word": "Word",
+      "ppt": "PPT",
+      "pdf": "PDF",
+      "pitchDeck": "Pitch Deck",
+      "morph": "Morph Animation",
+      "morph3d": "3D Morph",
+      "academic": "Academic Paper",
+      "financial": "Financial Model",
+      "dashboard": "Data Dashboard",
+      "setupRequired": "まず「Skills > Feature packs」で {{action}} を有効にしてください。",
+      "prompts": {
+        "pitchDeck": "次の要件で資金調達のピッチデックを作成してください：\n\n[会社・調達ラウンド・主要指標をここに記述]",
+        "morph": "Morph トランジションアニメーション付きのプレゼンを作成してください：\n\n[プレゼンのテーマと希望する視覚効果をここに記述]",
+        "morph3d": "GLB モデルとカメラワーク付きの 3D Morph プレゼンを作成してください：\n\n[テーマと 3D ビジュアルの構想をここに記述]",
+        "academic": "次の要件で Word の学術論文を執筆してください：\n\n[研究テーマ・手法・主要な発見をここに記述]",
+        "financial": "次の要件で Excel の財務モデルを作成してください：\n\n[財務諸表・予測・分析をここに記述]",
+        "dashboard": "次の要件で Excel のデータダッシュボードを作成してください：\n\n[データソース・KPI・グラフをここに記述]",
+        "excel": "Excel ブックを作成または分析してください。",
+        "word": "プロ品質の Word 文書を作成または編集してください。",
+        "ppt": "洗練されたプレゼンテーションを作成してください。",
+        "pdf": "PDF 文書を読解、要約、または変換してください。"
+      }
+    },
+    "promptCacheGuard": {
+      "title": "プロンプトキャッシュが冷える可能性があります",
+      "description": "{{action}} により、次のターンで約 {{tokens}} 個のプロンプト token を再構築する可能性があります。現在の命中率: {{hitRate}}。{{reason}}",
+      "continue": "続行",
+      "cancel": "キャンセル",
+      "action": {
+        "model-switch": "モデル切り替え",
+        "manual-compaction": "手動圧縮",
+        "skill-enable": "Skill 有効化",
+        "mcp-register": "MCP ツール登録",
+        "mcp-reload": "MCP ツール再読み込み",
+        "system-prompt-change": "システムプロンプト変更",
+        "context-reset": "コンテキストリセット"
+      },
+      "reason": {
+        "model-switch": "モデルごとにキャッシュは分離されています。",
+        "manual-compaction": "圧縮は表示中の会話プレフィックスを書き換えます。",
+        "skill-enable": "Skill 変更はツールとプロンプトのプレフィックスを変える可能性があります。",
+        "mcp-register": "新しい MCP ツールはツール schema のプレフィックスを変える可能性があります。",
+        "mcp-reload": "MCP 再読み込みは利用可能なツール schema を変える可能性があります。",
+        "system-prompt-change": "システムプロンプト変更はキャッシュ済みプレフィックスを変えます。",
+        "context-reset": "コンテキストリセットはキャッシュ済みプレフィックスを変えます。",
+        "provider-unknown": "この Provider のキャッシュ対応は不明です。",
+        "ineligible": "現在のプレフィックスはキャッシュ閾値未満の可能性があります。",
+        "default": "次のリクエストは現在のキャッシュを外す可能性があります。"
+      }
+    },
     "knowledgeScopeTitle": "ナレッジ範囲",
     "knowledgeScope": {
       "none": "ナレッジなし",
@@ -725,7 +982,8 @@
       "suggestion": "関連しそうなナレッジが {{count}} 件見つかりました",
       "attach": "添付",
       "open": "開く",
-      "dismiss": "閉じる"
+      "dismiss": "閉じる",
+      "inspect": "??"
     },
     "knowledgeQuick": {
       "enable": "wiki ナレッジを使う",
@@ -744,12 +1002,12 @@
       "messageRefTitle": "ナレッジ参照: {{title}}"
     },
     "slashCommands": {
-      "menuLabel": "スラッシュコマンド",
-      "title": "クイックアクション",
-      "subtitle": "このメッセージまたはセッションに使う操作を選びます。各操作は実行前に内容を説明します。",
-      "contextButton": "コンテキストパレットを開く",
-      "contextButtonShort": "Context",
-      "contextButtonTooltip": "/ を入力すると、ナレッジ添付、スコープ設定、セッション操作を選べます。",
+      "menuLabel": "ClawX スラッシュコマンド",
+      "title": "ClawX コマンド",
+      "subtitle": "ナレッジ、コード作業、ワークフロー、現在のセッション向けの操作を選びます。",
+      "contextButton": "コマンドを開く",
+      "contextButtonShort": "Commands",
+      "contextButtonTooltip": "/ を入力して ClawX の目的別コマンドを検索します。",
       "promptArgs": "範囲: {{args}}",
       "unknownTitle": "不明なコマンド",
       "unknownDescription": "{{command}} は Verse Claw のクイックアクションではありません。Escape で編集に戻れます。",
@@ -757,10 +1015,18 @@
       "ledgerNodeDescription": "Chat のスラッシュコマンドから作成されました。",
       "ledgerSessionSummary": "Chat のスラッシュコマンドからリンク: {{title}}",
       "groups": {
+        "skills": "Skills",
         "knowledge": "ナレッジ",
         "coding": "コーディング",
         "workflow": "ワークフロー",
         "session": "セッション"
+      },
+      "groupDescriptions": {
+        "skills": "ワークスペースとランタイムの再利用できる Agent 動作です。",
+        "knowledge": "ソースを添付し、このターンで読める内容を調整します。",
+        "coding": "現在の変更に対する focused なエンジニアリング作業を依頼します。",
+        "workflow": "タスクを計画や追跡の流れへ進めます。",
+        "session": "継続性、圧縮、引き継ぎを管理します。"
       },
       "commands": {
         "wiki": {
@@ -838,6 +1104,11 @@
           "description": "Pull Request の説明と検証メモを下書きします。",
           "argumentHint": "[audience]"
         },
+        "goal": {
+          "label": "Goal",
+          "description": "長期目標の Mission Control フローを開く、または案内します。",
+          "argumentHint": "[goal]"
+        },
         "mission": {
           "label": "Mission Control",
           "description": "長期目標の Mission Control フローを開く、または案内します。",
@@ -880,7 +1151,7 @@
         "wikiOpened": "Wiki 検索を開きました。読み取り専用コンテキストとして添付するページを選んでください。",
         "scopeOpened": "ナレッジ範囲ピッカーを開きました。",
         "scopeChanged": "ナレッジ範囲を {{scope}} に設定しました。",
-        "typeSlash": "空の入力欄の先頭に / を入力するとコンテキストパレットを開けます。",
+        "typeSlash": "空の入力欄の先頭に / を入力するとコマンドを開けます。",
         "knowledgeModeOpened": "ナレッジモードピッカーを開きました。",
         "knowledgeModeChanged": "ナレッジモードを {{mode}} に設定しました。",
         "stewardAuditStarted": "ナレッジガバナンス監査を開始しました。",
@@ -893,6 +1164,14 @@
     },
     "modelPickerTitle": "モデルを切り替え",
     "modelSwitchFailed": "モデルの切り替えに失敗しました: {{error}}",
+    "modelScope": {
+      "turn": "このメッセージのみ",
+      "session": "このセッション",
+      "persistent": "常に"
+    },
+    "clearTurnModel": "ターンモデルオーバーライドをクリア",
+    "turnModelChip": "{{model}} で送信",
+    "modelSourceDefault": "デフォルトモデル",
     "inputModeTitle": "入力モード",
     "inputModeHint": "このメッセージにのみ適用",
     "guideInjected": "アクティブな実行にガイドとして注入しました",
@@ -907,6 +1186,19 @@
     "stop": "停止",
     "gatewayConnected": "接続済み",
     "gatewayStatus": "ゲートウェイ {{state}} | ポート: {{port}} {{pid}}",
+    "contextMenu": {
+      "button": "Context",
+      "title": "コンテキスト状態",
+      "tooltip": "コンテキスト、トークン、ルーティングの状態を表示",
+      "toolsSection": "ツールとルーティング",
+      "statusSection": "状態",
+      "attachedSection": "添付済みコンテキスト",
+      "emptyDiagnostics": "追加コンテキストはありません",
+      "close": "コンテキスト制御を閉じる",
+      "target": "@{{agent}}",
+      "knowledgeRefs": "{{count}} 件の参照",
+      "skillTokens": "{{count}} 件の Skill"
+    },
     "contextStatusTitle": "コンテキストとトークンの状態",
     "messageCount": "{{count}} 件のメッセージ",
     "tokenUsage": "{{tokens}} tokens",
@@ -950,6 +1242,15 @@
         "no_transcript": "Transcript が見つかりません",
         "gateway_unavailable": "Gateway を利用できません"
       }
+    },
+    "taskLoopUpgrade": {
+      "title": "Task Loop を利用できます",
+      "summary": "チェックポイント付きのプロジェクト実行。",
+      "confirm": "Task Loop を開始",
+      "starting": "Task Loop を開始中",
+      "toastUpdated": "Task Loop の状態を更新しました: {{status}}",
+      "toastFailed": "Task Loop を開始できません",
+      "unknownStatus": "不明"
     },
     "longTaskControl": {
       "queued": "{{count}} 件キュー済み",
@@ -1179,6 +1480,7 @@
     "intervention": {
       "guide": "誘導",
       "guideTooltip": "実行中のランに非中断のガイダンスを注入します。",
+      "queueDefault": "実行中: Enter でキュー",
       "queue": "キュー",
       "queueTooltip": "現在のランを保ち、この追加入力を後で再生します。",
       "interrupt": "中断",
@@ -1263,39 +1565,17 @@
         "emptyBody": "セッション {{sessionKey}} にはまだ表示可能な復旧 transcript がありません。適用前に確認済みの復旧事実、決定、ブロッカー、証拠参照だけを記録してください。"
       }
     },
-    "git": {
-      "loading": "Gitを読み込み中",
-      "branchLabel": "ブランチ",
-      "worktreeLabel": "ワークツリー",
-      "clean": "クリーン",
-      "dirty": "{{count}} 件の変更",
-      "conflicts": "{{count}} 件の競合",
-      "detached": "Detached",
-      "unknownBranch": "不明なブランチ",
-      "sync": "{{ahead}} ahead / {{behind}} behind",
-      "openPanel": "Gitパネルを開く",
-      "refresh": "更新",
-      "branches": "ブランチ",
-      "searchBranches": "ブランチを検索",
-      "checkout": "Checkout",
-      "createBranch": "ブランチを作成",
-      "branchName": "ブランチ名",
-      "startPoint": "開始点",
-      "worktrees": "ワークツリー",
-      "current": "現在",
-      "locked": "ロック中",
-      "prunable": "整理可能",
-      "switchWorktree": "切り替え",
-      "addWorktree": "ワークツリーを追加",
-      "newBranch": "新規ブランチ",
-      "existingBranch": "既存ブランチ",
-      "defaultPath": "既定のパス",
-      "defaultPathUnavailable": "ブランチを入力するとパスをプレビューできます",
-      "branchExists": "ブランチは既に存在します",
-      "branchCheckedOut": "ブランチは {{path}} で checkout 済みです",
-      "operationBlocked": "{{reason}}",
-      "operationFailed": "{{error}}",
-      "operationSuccess": "{{action}} が完了しました"
+    "knowledgePreflight": {
+      "title": "????????",
+      "summary": "{{docs}} ???????????{{pitfalls}} ??????????{{rules}} ???????????????????",
+      "confidence": "{{confidence}}%",
+      "whyMatched": "??: {{reason}}",
+      "source": "{{corpus}} ? {{source}}",
+      "groups": {
+        "docs": "????????",
+        "pitfalls": "???????",
+        "rules": "???"
+      }
     }
   },
   "historyBuckets": {
@@ -1310,14 +1590,14 @@
     "work": "タスク"
   },
   "sessionView": {
-    "project": "プロジェクト",
+    "project": "ワークグループ",
     "time": "時間"
   },
   "sidebar": {
     "searchSessions": "会話を検索",
     "clearSearch": "検索をクリア",
     "searchNoResults": "会話が見つかりません",
-    "searchModalPlaceholder": "名前、ワークスペース、エージェントで会話を検索...",
+    "searchModalPlaceholder": "名前、ワークグループ、ワークスペース、エージェントで会話を検索...",
     "searchEmptyHint": "入力して会話を検索してください",
     "searchCurrent": "現在",
     "searchRelativeNow": "たった今",
@@ -1327,6 +1607,45 @@
     "searchHintNavigate": "移動",
     "searchHintSelect": "選択",
     "searchHintClose": "閉じる"
+  },
+  "folders": {
+    "create": "新規フォルダ",
+    "namePlaceholder": "フォルダ名",
+    "rename": "フォルダ名を変更",
+    "delete": "フォルダを削除",
+    "moveTo": "フォルダへ移動",
+    "noFolder": "フォルダなし"
+  },
+  "workgroups": {
+    "create": "新しいワークグループ",
+    "namePlaceholder": "ワークグループ名",
+    "rename": "ワークグループ名を変更",
+    "delete": "ワークグループを削除",
+    "moveTo": "ワークグループへ移動",
+    "noWorkgroup": "ワークグループなし",
+    "ungrouped": "未分類",
+    "sessionCount": "{{count}} 件の会話",
+    "status": {
+      "running": "実行中",
+      "waiting": "待機中",
+      "attention": "要対応",
+      "done": "完了",
+      "stopped": "停止",
+      "idle": "待機"
+    }
+  },
+  "archive": {
+    "title": "アーカイブされた会話",
+    "open": "アーカイブ",
+    "empty": "アーカイブされた会話はありません",
+    "loading": "アーカイブを読み込み中...",
+    "restore": "復元",
+    "deletePermanently": "削除",
+    "deleteTitle": "会話を削除",
+    "deleteMessage": "削除方法を選択してください。アーカイブはゴミ箱に移動（復元可能）、削除は完全に削除します「{{label}}」",
+    "archiveAction": "アーカイブ",
+    "emptyAll": "アーカイブを空にする",
+    "emptyAllConfirm": "もう一度クリックしてアーカイブされたすべての会話を完全に削除"
   },
   "questionDirectory": {
     "title": "質問目次",
@@ -1443,42 +1762,18 @@
     "aborted": "停止しました",
     "dismissCompleted": "完了状態を非表示"
   },
-  "workContext": {
-    "title": "作業コンテキスト",
-    "sections": {
-      "plan": "タスクログ / 計画",
-      "ledger": "Task Ledger",
-      "environment": "環境情報",
-      "artifacts": "成果物",
-      "sources": "ソース"
+  "turnSummary": {
+    "titleFallback": "作業が完了しました",
+    "toggle": "作業サマリーを展開または折りたたむ",
+    "status": {
+      "completed": "作業完了",
+      "error": "対応が必要"
     },
-    "environment": {
-      "workspace": "ワークスペース",
-      "branch": "ブランチ",
-      "changes": "変更",
-      "unknownWorkspace": "ワークスペース",
-      "changeCounts": "{{count}} 件の変更",
-      "delta": "+{{added}} -{{removed}}"
-    },
-    "actions": {
-      "viewChanges": "変更を見る",
-      "commitOrPush": "コミットまたはプッシュ",
-      "createPr": "プルリクエストを作成"
-    },
-    "ledger": {
-      "noCurrentGoal": "現在の目標なし",
-      "counts": "{{active}} 件進行中 / {{review}} 件レビュー / {{blocked}} 件ブロック",
-      "active": "進行中",
-      "review": "レビュー",
-      "blocked": "ブロック"
-    },
-    "git": {
-      "clean": "クリーン",
-      "detached": "Detached HEAD",
-      "unknownBranch": "不明なブランチ"
-    },
-    "empty": {
-      "sources": "ソースはまだありません"
+    "counts": {
+      "tasks": "{{count}} 件のタスク",
+      "reports": "{{count}} 件のファイル",
+      "sources": "{{count}} 件のソース",
+      "orchestrations": "{{count}} 件のチーム"
     }
   },
   "turnWork": {

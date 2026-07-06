@@ -252,6 +252,32 @@ pnpm run comms:replay
 pnpm run comms:compare
 ```
 
+### P0 landing notes
+
+The P0 landing keeps this plan inside the existing harness and host-api boundaries:
+
+- `shared/agent-dev/scenarios.ts` is the single Agent Dev scenario registry for the eight existing scenarios.
+- `shared/agent-dev/scenario-composer.ts` parses `?devScenario=a+b`, ignores unknown ids safely, applies later scenario seed values over earlier ones, and carries non-`devScenario` query params as override metadata.
+- `electron/services/agent-dev-api.ts`, `src/lib/agent-dev.ts`, `scripts/agent-dev-workbench.mjs`, and `scripts/agent-dev-benefit-eval.mjs` now read scenario ids from that shared registry.
+- `pnpm contract:check` validates basic host-api contract/facade/service consistency, Agent Dev registry drift, and runtime validation coverage.
+- `pnpm i18n:lint` validates four-locale namespace/key coverage and literal `useTranslation('namespace')` references.
+- `pnpm agent-dev:validate` runs the P0 gates in this order: `contract:check`, `i18n:lint`, `harness:ci`, `test:e2e:agent-dev-quality`.
+- The P0 task spec is `harness/specs/tasks/agent-dev-ecosystem-p0.md`.
+
+P0 intentionally does not add P1/P2/P3 scope such as skill/channel scaffold expansion, Scenario Recorder, Workbench productization, trace timeline, cost simulator, or skill sandbox runtime.
+
+P1 scaffold hardening keeps generated scenarios attached to the existing registry: `pnpm agent-dev:make scenario <name>` now inserts the scenario seed into `shared/agent-dev/scenarios.ts`, refuses to overwrite existing files, and generates an E2E spec that asserts the Agent Dev snapshot contains the registered scenario id.
+
+### Current product alignment update
+
+The Workbench now has two coordinated product forms: a static developer artifact for offline audit and a Settings > Developer panel for daily diagnosis. Static Workbench output must not show fake data: it reads the shared scenario registry, host-api contract, renderer facade, Main service actions, trace/cost/sandbox contracts, package validation scripts, and report artifact presence, then writes both HTML and `artifacts/agent-dev-workbench/evidence.json`. The in-app panel reads the same class of evidence through host-api.
+
+Scenario Recorder artifacts are intentionally review-only. `recordScenario()` writes redacted evidence plus promotion guidance; a developer must promote reviewed content into `shared/agent-dev/scenarios.ts`, `harness/specs/scenarios/**`, fixtures, or snapshot-backed E2E before it becomes durable source truth. Redaction covers sensitive keys, credential-like string values, and local home paths.
+
+Gate ownership is layered instead of duplicated: fast PR gates run contract/i18n/targeted unit/Workbench, full local gates add `agent-dev:validate`, targeted E2E, and relevant channel conformance, and nightly/release gates add comms replay/compare plus broader E2E/report evidence.
+
+P2 productization now has a first in-app landing: Settings > Developer includes a host-api-backed Agent Dev Workbench panel using four-locale i18n. The static artifact remains the offline audit form, while the renderer panel is the daily diagnosis entry. Scenario Recorder promotion is explicit through `pnpm agent-dev:promote-scenario <artifact> <name>`, and quantitative gate timing is repeatable through `pnpm agent-dev:deep-test`.
+
 ## 6. P1：扩展开发脚手架
 
 ### 6.1 统一 Scaffold

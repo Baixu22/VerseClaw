@@ -132,28 +132,6 @@ import {
   graphHitsToRRFHits,
   mergeWithGraphRRF,
 } from "./helpers/memory-weighted-graph-traversal";
-// Week 7-8 WP2/WP3: Bridge Discovery (multi_hop targeted, default off)
-// 有明确目标的桥接发现: query → entity pair (e1, e2) → bridge fact
-// 与 weighted graph traversal 不同: 后者盲目扩张, 前者有明确 e1→bridge→e2 目标
-import {
-  discoverBridges,
-  extractEntityPairFromQuery,
-} from "../../openclaw_runtime/src/runtime-core/memory-bridge-discovery";
-// P1/P2/P3 SOTA integration (2026-07-06): only P2-3 Temporal RRF Arm kept.
-// P1-3 Topic Schema and P2-1 Mental Model were rolled back (Round 2 -0.8pp:
-// they added noise to the prompt and hurt multi_hop/open_domain generation).
-import { temporalRRFArm } from "./helpers/temporal-rrf-arm";
-// Lifecycle integration (2026-07-06): enable AUDN conflict resolution at
-// load time. Previously the test ran "全 ADD" strategy — all extracted facts
-// were kept, and conflicts were left for retrieval-time ranking to resolve.
-// Now we post-curate cached facts: same subject+predicate → check conflict
-// (SUPERSEDE marks old fact invalid_at), exact duplicates → dropped.
-// Source: openclaw_runtime/src/runtime-core/memory-write-curation.ts.
-import {
-  decideAUDN,
-  DEFAULT_WRITE_CURATION_CONFIG,
-  type AUDNDecision,
-} from "../../openclaw_runtime/src/runtime-core/memory-write-curation";
 import {
   consolidateObservations,
   applyObservationsToFacts,
@@ -650,114 +628,6 @@ function enrichEvidenceRefs(
   }
 }
 
-// Lifecycle: AUDN conflict resolution at load time.
-//
-// Previously the test ran "全 ADD" — every extracted fact was kept, and
-// conflicts (e.g. "Alice lives in NYC" vs "Alice moved to LA") were left
-// for retrieval-time ranking to resolve. This caused temporal/single_hop
-// questions to retrieve BOTH the old and new answer, confusing the generator.
-//
-// This function post-curates loaded facts using the existing decideAUDN
-// logic from memory-write-curation.ts. It runs AFTER enrichEvidenceRefs
-// so evidence links are established before curation.
-//
-// Algorithm (per conversation):
-//   1. Sort facts by valid_at ascending (oldest first).
-//   2. Iterate facts in chronological order; for each, run decideAUDN
-//      against already-accepted facts with the same subject.
-//   3. ADD → keep the fact.
-//      NONE (exact_duplicate) → drop it.
-//      UPDATE/SUPERSEDE → mark the old fact's invalid_at = new fact's valid_at,
-//      and keep the new fact. This is "soft invalidation" — the old fact
-//      stays in the index but applyFinalBoost (-20%) and isRuntimeMemoryFactValidAt
-//      will penalize/filter it at retrieval time.
-//
-// Stats are logged so we can verify curation is working.
-function applyAUDNCuration(
-  factsByConversation: Map<string, RuntimeMemoryQueryableFact[]>,
-): {
-  totalAdd: number;
-  totalNone: number;
-  totalUpdate: number;
-  totalSupersede: number;
-} {
-  const stats = { totalAdd: 0, totalNone: 0, totalUpdate: 0, totalSupersede: 0 };
-
-  for (const [convId, facts] of factsByConversation) {
-    // Sort by valid_at ascending (oldest first) so later facts supersede earlier.
-    const sorted = [...facts].sort(
-      (a, b) => (a.valid_at ?? 0) - (b.valid_at ?? 0),
-    );
-
-    const accepted: RuntimeMemoryQueryableFact[] = [];
-    const drop = new Set<string>();
-    const invalidateAt = new Map<string, number>();
-
-    for (const candidate of sorted) {
-      // Scope existing facts to same subject (AUDN caller responsibility).
-      const sameSubject = accepted.filter((f) => f.subject === candidate.subject);
-
-      // decideAUDN expects RuntimeMemoryTemporalFactCandidate; our facts are
-      // RuntimeMemoryQueryableFact (a superset). Cast through unknown.
-      const decision = decideAUDN(
-        candidate as unknown as Parameters<typeof decideAUDN>[0],
-        sameSubject as unknown as Parameters<typeof decideAUDN>[1],
-        DEFAULT_WRITE_CURATION_CONFIG,
-      ) as AUDNDecision;
-
-      switch (decision.action) {
-        case "ADD":
-          accepted.push(candidate);
-          stats.totalAdd += 1;
-          break;
-        case "NONE":
-          drop.add(candidate.factId);
-          stats.totalNone += 1;
-          break;
-        case "UPDATE":
-          // Mark old fact for invalidation, keep new fact.
-          invalidateAt.set(decision.supersedes, candidate.valid_at ?? Date.now());
-          accepted.push(candidate);
-          stats.totalUpdate += 1;
-          break;
-        case "SUPERSEDE":
-          invalidateAt.set(decision.supersedes, candidate.valid_at ?? Date.now());
-          accepted.push(candidate);
-          stats.totalSupersede += 1;
-          break;
-        case "DELETE":
-          // Not produced by decideAUDN with current config.
-          drop.add(candidate.factId);
-          break;
-      }
-    }
-
-    // Apply invalid_at to the original fact objects (mutate in place).
-    for (const f of facts) {
-      const newInvalidAt = invalidateAt.get(f.factId);
-      if (newInvalidAt !== undefined) {
-        // Only set if not already set (don't overwrite extraction-time invalid_at).
-        if (f.invalid_at === undefined) {
-          f.invalid_at = newInvalidAt;
-        }
-      }
-    }
-
-    // Remove dropped (exact duplicate) facts from the array in place.
-    if (drop.size > 0) {
-      const kept = facts.filter((f) => !drop.has(f.factId));
-      facts.length = 0;
-      facts.push(...kept);
-    }
-
-    console.log(
-      `[LoCoMo-Full] ${convId} AUDN: ${accepted.length} accepted, ${drop.size} dropped (exact dup), ${invalidateAt.size} superseded (invalid_at set)`,
-    );
-  }
-
-  return stats;
-}
-
 // Item 3: Convert an ObservationFact (cross-session merged) into a
 // RuntimeMemoryQueryableFact for retrieval. Observations carry
 // source_memory_ids → evidenceRefs and proof_count for applyFinalBoost.
@@ -1165,17 +1035,6 @@ async function loadOrExtractFacts(
   // works. Fresh facts from buffered extraction already have evidenceRefs.
   enrichEvidenceRefs(factsByConversation);
 
-  // Lifecycle: AUDN conflict resolution. Replaces "全 ADD" strategy with
-  // proper curation: exact duplicates dropped, contradictions → old fact
-  // marked invalid_at (soft invalidation, applyFinalBoost penalizes -20%).
-  // Only runs when ENABLE_AUDN_CURATION=1 (default off for A/B comparison).
-  if (process.env.ENABLE_AUDN_CURATION === "1") {
-    const audnStats = applyAUDNCuration(factsByConversation);
-    console.log(
-      `[LoCoMo-Full] AUDN curation: ADD=${audnStats.totalAdd} NONE=${audnStats.totalNone} UPDATE=${audnStats.totalUpdate} SUPERSEDE=${audnStats.totalSupersede}`,
-    );
-  }
-
   return factsByConversation;
 }
 
@@ -1453,14 +1312,12 @@ async function generateDualTrackAnswer(
     profileContext,
     options,
   );
-  // Stage 3.2 (2026-07-04): maxTokens kept at 384 for temporal — the
+  // Stage 3.2 (2026-07-04): maxTokens kept at 384 for multi_hop — the
   // simplified prompt (brief reasoning + "Final answer:") fits in 384.
-  // Multi-hop alignment (2026-07-07): multi_hop bumped to 512 — the failure
-  // analysis found answers truncated BEFORE the "Final answer:" line, which
-  // leaks the full CoT to the judge (extractFinalAnswer falls back to the
-  // whole text). 512 gives the world-knowledge reasoning enough headroom.
+  // The previous 512 was for the verbose "Hop N -> sub-answer" format
+  // which truncated before reaching "Final answer:".
   const maxTokens =
-    category === "multi_hop" ? 512 : category === "temporal" ? 384 : 256;
+    category === "temporal" || category === "multi_hop" ? 384 : 256;
   const response = await callTrackedDeepSeek(system, user, {
     temperature: 0,
     maxTokens,
@@ -2063,36 +1920,6 @@ describe.skipIf(
           totalBoostedExisting: 0,
           totalNewCandidates: 0,
           armWeight: 0.8,
-          samples: [],
-        };
-        // Week 7-8 WP2: Bridge Discovery stats — tracks how often bridge
-        // discovery fires, how many candidates it finds, and whether the
-        // bridge fact improves multi_hop retrieval. Default off; enable via
-        // ENABLE_BRIDGE_DISCOVERY=1.
-        const bridgeDiscoveryStats: {
-          triggered: number;
-          entityPairExtracted: number;
-          candidatesFound: number;
-          bridgeFactInjected: number;
-          byCategory: Record<string, number>;
-          pathExistenceCount: number;
-          timeFilteredOutTotal: number;
-          samples: Array<{
-            questionId: string;
-            entityPair: { e1: string; e2: string } | null;
-            candidateCount: number;
-            selectedBridgeFactId: string | null;
-            pathExistence: boolean;
-            timeFilteredOutCount: number;
-          }>;
-        } = {
-          triggered: 0,
-          entityPairExtracted: 0,
-          candidatesFound: 0,
-          bridgeFactInjected: 0,
-          byCategory: {},
-          pathExistenceCount: 0,
-          timeFilteredOutTotal: 0,
           samples: [],
         };
         // Phase 4: Unified Judge stats — runs the new unified judge IN
@@ -2747,27 +2574,21 @@ describe.skipIf(
             // This replaces the previous +10% temporal boost with a stronger,
             // more principled RRF signal. Window: ±90d for absolute, ±365d for relative.
             if (queryTimeConstraint.mode !== "unknown" && referenceTime !== undefined) {
-              // P2-3: Replace inline temporal logic with dedicated RRF arm module.
-              // The module uses 8 time buckets + greedy coverage bonus (Hindsight §2.5),
-              // providing more principled temporal diversity than the previous vector-sort.
-              const temporalArmHits = temporalRRFArm(
-                filteredHits.map((h) => h.fact),
-                {
-                  referenceTime,
-                  queryTime: referenceTime,
-                  topK: 30,
-                },
-              );
-              // Merge temporal arm RRF scores into existing hits (additive).
-              const armScoreById = new Map<string, number>();
-              for (const armHit of temporalArmHits) {
-                armScoreById.set(armHit.fact.factId, armHit.rrfScore);
-              }
-              for (const hit of filteredHits) {
-                const armScore = armScoreById.get(hit.fact.factId);
-                if (armScore !== undefined) {
-                  hit.rrfScore += armScore;
-                }
+              const windowMs =
+                queryTimeConstraint.mode === "absolute"
+                  ? 90 * 24 * 60 * 60 * 1000
+                  : 365 * 24 * 60 * 60 * 1000;
+              const windowStart = referenceTime - windowMs;
+              const windowEnd = referenceTime + windowMs;
+              const temporalRrfK = 60; // same k as other RRF arms
+              const temporalHits = filteredHits
+                .filter((hit) => {
+                  const va = hit.fact.valid_at;
+                  return va >= windowStart && va <= windowEnd;
+                })
+                .sort((a, b) => b.vectorScore - a.vectorScore);
+              for (let i = 0; i < temporalHits.length; i += 1) {
+                temporalHits[i].rrfScore += 1 / (temporalRrfK + i + 1);
               }
               filteredHits.sort((a, b) => b.rrfScore - a.rrfScore);
             }
@@ -2814,81 +2635,6 @@ describe.skipIf(
               }
             }
 
-            // === Week 7-8 WP2: Bridge Discovery (multi_hop targeted) ===
-            // 有明确目标的桥接发现: query → entity pair (e1, e2) → bridge fact.
-            // 与 weighted graph traversal 的区别: 后者盲目扩张 (从 top hits 沿
-            // causal 边扩张, 无明确终点), 前者有明确 e1→bridge→e2 目标.
-            // 通过 ENABLE_BRIDGE_DISCOVERY=1 env var 控制, 默认关.
-            if (
-              process.env.ENABLE_BRIDGE_DISCOVERY === "1" &&
-              category === "multi_hop" &&
-              rerankedHits.length > 0
-            ) {
-              const factsForBridge = factsByConversation.get(conversationId) ?? [];
-              if (factsForBridge.length > 0) {
-                const entityPair = extractEntityPairFromQuery(qa.question);
-                bridgeDiscoveryStats.triggered += 1;
-                bridgeDiscoveryStats.byCategory[category] =
-                  (bridgeDiscoveryStats.byCategory[category] ?? 0) + 1;
-                if (entityPair) {
-                  bridgeDiscoveryStats.entityPairExtracted += 1;
-                  const bridgeResult = discoverBridges(
-                    entityPair,
-                    factsForBridge,
-                    "strict_current",
-                    referenceTime ?? Date.now(),
-                    { topK: 5, maxPathLength: 3 },
-                  );
-                  const diag = bridgeResult.diagnostics;
-                  bridgeDiscoveryStats.candidatesFound +=
-                    bridgeResult.candidates.length;
-                  bridgeDiscoveryStats.timeFilteredOutTotal +=
-                    diag.timeFilteredOutCount;
-                  if (diag.pathExistence) {
-                    bridgeDiscoveryStats.pathExistenceCount += 1;
-                  }
-                  if (bridgeResult.candidates.length > 0) {
-                    bridgeDiscoveryStats.bridgeFactInjected += 1;
-                    // 将桥 fact 注入到 rerankedHits: 桥 fact 在前 (提升优先级),
-                    // 其他在后 (去重). 桥 fact 给予中等 rrfScore (介于 top-3 之间).
-                    const bridgeFactIds = new Set(
-                      bridgeResult.candidates.map((c) => c.factId),
-                    );
-                    const topScore = rerankedHits[0]?.rrfScore ?? 1.0;
-                    const bridgeHits = bridgeResult.candidates.map((c) => {
-                      const existing = rerankedHits.find(
-                        (h) => h.fact.factId === c.factId,
-                      );
-                      if (existing) {
-                        // 已在 hits 中: 提升 rrfScore 到 topScore 的 90%
-                        return { ...existing, rrfScore: topScore * 0.9 };
-                      }
-                      // 新桥 fact: 构造 hit, rrfScore = topScore 的 80%
-                      return {
-                        fact: c.fact,
-                        rrfScore: topScore * 0.8,
-                      };
-                    });
-                    const nonBridgeHits = rerankedHits.filter(
-                      (h) => !bridgeFactIds.has(h.fact.factId),
-                    );
-                    rerankedHits = [...bridgeHits, ...nonBridgeHits].slice(0, 50);
-                    rerankedHits.sort((a, b) => b.rrfScore - a.rrfScore);
-                  }
-                  if (bridgeDiscoveryStats.samples.length < 10) {
-                    bridgeDiscoveryStats.samples.push({
-                      questionId: qa.questionId,
-                      entityPair,
-                      candidateCount: bridgeResult.candidates.length,
-                      selectedBridgeFactId: diag.selectedBridgeFactId,
-                      pathExistence: diag.pathExistence,
-                      timeFilteredOutCount: diag.timeFilteredOutCount,
-                    });
-                  }
-                }
-              }
-            }
-
             // P0-D / Item 5 v2: Hindsight-style weighted graph traversal.
             //
             // Status (2026-07-04): ROLLED BACK after 2 tuning attempts.
@@ -2907,13 +2653,6 @@ describe.skipIf(
             //
             // Falling back to original chainedRetrievalExpand (depth=2/1, cap=5).
             let expandedHits = rerankedHits;
-            // Multi-hop alignment (2026-07-07): single shared predicate for
-            // all uncached multi-hop retrieval gates (graph depth, expansion
-            // depth, self-ask). Regex OR LLM classifier — the narrow regex
-            // alone missed most GT multi_hop questions (68/96 classified
-            // single_hop meant they got NO multi-hop treatment at all).
-            const multiHopRetrieval =
-              isMultiHopQuestion(qa.question) || queryPlan.type === "multi_hop";
             const useWeightedGraph =
               process.env.DISABLE_WEIGHTED_GRAPH !== "1" &&
               process.env.ENABLE_WEIGHTED_GRAPH === "1";
@@ -2937,7 +2676,7 @@ describe.skipIf(
                     factEmbeddings,
                     {
                       budget: 15,
-                      maxDepth: multiHopRetrieval ? 3 : 2,
+                      maxDepth: isMultiHopQuestion(qa.question) ? 3 : 2,
                       minEntityScore: 0.76,
                       entityWeight: 1.0,
                       semanticWeight: 1.0,
@@ -2972,7 +2711,7 @@ describe.skipIf(
               const factsByIdMap = new Map(
                 factsForExpansion.map((f) => [f.factId, f] as const),
               );
-              const expansionDepth = multiHopRetrieval ? 2 : 1;
+              const expansionDepth = isMultiHopQuestion(qa.question) ? 2 : 1;
               const expansion = chainedRetrievalExpand(
                 rerankedHits,
                 relationMap,
@@ -2995,16 +2734,8 @@ describe.skipIf(
             // where self-ask computed hop1 answer but discarded it.
             let selfAskHopAnswers: string[] = [];
             const stage2MultihopMode = process.env.P3_MULTIHOP ?? "sequential-self-ask";
-            // Multi-hop alignment (2026-07-07): Widened self-ask gate from
-            // regex-only to the shared multiHopRetrieval predicate (regex OR
-            // LLM classifier). The narrow regex missed most GT multi_hop
-            // questions (LoCoMo multi-hop often has a single-hop surface form
-            // like "What gift did X get from the friend she met at yoga?").
-            // classifyQuery's rewritten prompt now catches chained-fact
-            // questions; the decomposer's escape valve (1 sub-question ->
-            // used:false) protects misfired questions.
             if (
-              multiHopRetrieval &&
+              isMultiHopQuestion(qa.question) &&
               stage2MultihopMode === "sequential-self-ask"
             ) {
               try {

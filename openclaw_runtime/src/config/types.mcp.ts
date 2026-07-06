@@ -21,6 +21,15 @@ export type McpServerToolFilterConfig = {
   exclude?: string[];
 };
 
+export type McpServerExposureConfig = {
+  /** OpenClaw agent ids that may receive this server in scoped runtime contexts. */
+  agents?: string[];
+  /** Workspace ids/paths that may receive this server in scoped runtime contexts. */
+  workspaces?: string[];
+  /** RoleContract names that may receive this server in scoped runtime contexts. */
+  roles?: string[];
+};
+
 export type McpServerConfig = {
   /** Set false to keep the saved definition while excluding it from runtime/probe sessions. */
   enabled?: boolean;
@@ -72,6 +81,8 @@ export type McpServerConfig = {
   client_key?: string;
   /** Optional per-server OpenClaw MCP tool selection. */
   toolFilter?: McpServerToolFilterConfig;
+  /** Optional runtime exposure filter. Omitted keeps legacy global availability. */
+  exposure?: McpServerExposureConfig;
   /** Codex-specific projection controls for Codex app-server/runtime config. */
   codex?: McpServerCodexConfig;
   [key: string]: unknown;

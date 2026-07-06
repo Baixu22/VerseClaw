@@ -23,8 +23,12 @@ import type { AgentBrowserRunner } from './agent-browser-cli-runner';
 type AgentBrowserWindow = Pick<
   BrowserWindow,
   | 'close'
+  | 'focus'
   | 'isDestroyed'
+  | 'isMinimized'
+  | 'isVisible'
   | 'loadURL'
+  | 'restore'
   | 'setBounds'
   | 'show'
   | 'webContents'
@@ -528,6 +532,20 @@ export class AgentBrowserService {
     const wait = waitForWebContents(window.webContents, waitUntil);
     await window.loadURL(url);
     await wait;
+    return await this.refresh(record);
+  }
+
+  async focus(sessionId: string): Promise<AgentBrowserSession> {
+    const record = this.getRecord(sessionId);
+    if (record.engine === 'agent-browser-cli') {
+      return { ...record.session };
+    }
+    const window = this.requireWindow(record);
+    if (!window.isDestroyed()) {
+      if (!window.isVisible()) window.show();
+      if (window.isMinimized()) window.restore();
+      window.focus();
+    }
     return await this.refresh(record);
   }
 

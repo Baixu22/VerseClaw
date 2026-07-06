@@ -26,6 +26,30 @@ export function getWorkspaceAgentSessionKey(
   return { sessionKey: createFreshWorkspaceSessionKey(normalizedAgentId), isFresh: true };
 }
 
+function getSessionWorkgroupId(workspace: WorkspaceProfile, sessionKey: string): string | null {
+  const folderId = workspace.sessionFolderAssignments?.[sessionKey];
+  if (!folderId) return null;
+  return (workspace.sessionFolders ?? []).some((folder) => folder.id === folderId) ? folderId : null;
+}
+
+async function inheritSessionWorkgroup(
+  workspace: WorkspaceProfile,
+  sourceSessionKey: string,
+  targetSessionKey: string,
+): Promise<void> {
+  const folderId = getSessionWorkgroupId(workspace, sourceSessionKey);
+  if (!folderId) return;
+  try {
+    await hostApi.workspaces.moveSessionToFolder({
+      workspaceId: workspace.id,
+      sessionKey: targetSessionKey,
+      folderId,
+    });
+  } catch (error) {
+    console.warn('Failed to inherit session workgroup:', error);
+  }
+}
+
 export async function ensureActiveWorkspaceForSession(): Promise<WorkspaceProfile | null> {
   const workspaceState = useWorkspacesStore.getState();
   if (workspaceState.activeWorkspace) return workspaceState.activeWorkspace;
@@ -46,6 +70,7 @@ export async function ensureActiveWorkspaceForSession(): Promise<WorkspaceProfil
 export async function createWorkspaceScopedNewSession(): Promise<string> {
   const chatState = useChatStore.getState();
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(chatState.currentSessionKey);
+  const sourceSessionKey = chatState.currentSessionKey;
   const workspace = await ensureActiveWorkspaceForSession();
 
   if (!workspace?.id) {
@@ -60,6 +85,7 @@ export async function createWorkspaceScopedNewSession(): Promise<string> {
     sessionKey,
     state: { activeTopicId: null },
   });
+  await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
   chatState.resetSessionView(sessionKey);
   return sessionKey;
@@ -68,6 +94,7 @@ export async function createWorkspaceScopedNewSession(): Promise<string> {
 export async function createWorkspaceScopedHandoffSession(draftInput: string): Promise<string> {
   const chatState = useChatStore.getState();
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(chatState.currentSessionKey);
+  const sourceSessionKey = chatState.currentSessionKey;
   const workspace = await ensureActiveWorkspaceForSession();
 
   if (!workspace?.id) {
@@ -82,6 +109,7 @@ export async function createWorkspaceScopedHandoffSession(draftInput: string): P
     sessionKey,
     state: { activeTopicId: null, draftInput },
   });
+  await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
   chatState.resetSessionView(sessionKey);
   return sessionKey;
@@ -124,6 +152,7 @@ export async function createWorkspaceScopedForkSession(sourceSessionKey: string)
     sessionKey: result.sessionKey,
     state: cloneForkableWorkspaceState(sourceState),
   });
+  await inheritSessionWorkgroup(workspace, sourceSessionKey, result.sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
   try {
     await hostApi.taskLedger.linkSession({

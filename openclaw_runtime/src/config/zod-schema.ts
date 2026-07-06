@@ -119,6 +119,22 @@ const RuntimeFeatureSchema = z
       })
       .strict()
       .optional(),
+    toolGovernance: z
+      .object({
+        destructiveOperationGuard: z
+          .object({
+            preflight: z
+              .object({
+                enabled: z.boolean().optional(),
+              })
+              .strict()
+              .optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
     evidenceVerifier: z
       .object({
         shadow: z.boolean().optional(),
@@ -544,6 +560,14 @@ const McpServerSchema = z
       .object({
         include: z.array(z.string().trim().min(1)).min(1).optional(),
         exclude: z.array(z.string().trim().min(1)).min(1).optional(),
+      })
+      .strict()
+      .optional(),
+    exposure: z
+      .object({
+        agents: z.array(z.string().trim().min(1)).optional(),
+        workspaces: z.array(z.string().trim().min(1)).optional(),
+        roles: z.array(z.string().trim().min(1)).optional(),
       })
       .strict()
       .optional(),

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
-import { Check, Circle, ShieldAlert } from 'lucide-react';
+import { Check, Circle, Play, ShieldAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,16 @@ function statusLabel(t: (key: string, fallback: string) => string, status: Termi
     case 'blocked': return t('workspace.terminal.status.blocked', 'Blocked');
     case 'idle': return t('workspace.terminal.status.idle', 'Idle');
     default: return t('workspace.terminal.status.idle', 'Idle');
+  }
+}
+
+function permissionLabel(t: (key: string, fallback: string) => string, mode: string | undefined): string {
+  switch (mode) {
+    case 'readOnly': return t('workspace.terminal.permission.readOnly', 'Read only');
+    case 'acceptEdits': return t('workspace.terminal.permission.acceptEdits', 'Accept edits');
+    case 'plan': return t('workspace.terminal.permission.plan', 'Plan');
+    case 'fullAccess': return t('workspace.terminal.permission.fullAccess', 'Full access');
+    default: return t('workspace.terminal.permission.acceptEdits', 'Accept edits');
   }
 }
 
@@ -223,13 +233,54 @@ export function WorkspaceTerminalPanel() {
   };
 
   const blocked = permissionMode === 'plan' || permissionMode === 'readOnly';
+  const startDisabled = blocked || busy || status === 'running' || status === 'starting' || !workspaceId;
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#0a0a0a]">
+      <div className="shrink-0 border-b border-white/10 bg-[#111111] px-3 py-2">
+        <div className="flex min-w-0 items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-white">{t('workspace.terminal.title', 'Workspace terminal')}</p>
+            <p className="truncate font-mono text-[11px] text-white/45">
+              {workspaceRootPath || t('workspace.terminal.noWorkspace', 'No workspace selected')}
+            </p>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <span className="hidden max-w-28 truncate rounded-sm border border-white/10 px-1.5 py-0.5 text-[11px] text-white/50 sm:inline">
+              {permissionLabel(t, permissionMode)}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-sm border border-white/10 px-1.5 py-0.5 text-[11px] text-white/65">
+              <Circle
+                className={cn(
+                  'h-1.5 w-1.5 fill-current stroke-0',
+                  status === 'running' ? 'text-emerald-400' : status === 'blocked' ? 'text-amber-400' : 'text-white/25',
+                )}
+              />
+              {statusLabel(t, blocked ? 'blocked' : status)}
+            </span>
+            <Button
+              type="button"
+              size="sm"
+              className="h-7"
+              disabled={startDisabled}
+              onClick={() => void openTerminal()}
+            >
+              <Play className="mr-1.5 h-3 w-3" />
+              {t('workspace.terminal.actions.start', 'Start')}
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {blocked && (
         <div className="mx-3 mt-3 flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 p-2.5 text-xs">
           <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
-          <p className="text-amber-800 dark:text-amber-300">{t('workspace.terminal.blocked.body', 'Switch to Accept edits or Full access before starting a live terminal.')}</p>
+          <div className="min-w-0">
+            <p className="font-medium text-amber-800 dark:text-amber-300">
+              {t('workspace.terminal.blocked.title', 'Interactive terminal is disabled in this permission mode')}
+            </p>
+            <p className="mt-0.5 text-amber-800 dark:text-amber-300">{t('workspace.terminal.blocked.body', 'Switch to Accept edits or Full access before starting a live terminal.')}</p>
+          </div>
         </div>
       )}
 

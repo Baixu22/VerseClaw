@@ -4,7 +4,7 @@ import { clampTimerTimeoutMs } from "@openclaw/normalization-core/number-coercio
 import { resolveAgentTimeoutMs } from "../../agents/timeout.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { logVerbose } from "../../globals.js";
-import { AcpRuntimeError } from "../runtime/errors.js";
+import { AcpRuntimeError } from "../../runtime/errors.ts";
 import type { ActiveTurnState, SessionAcpMeta } from "./manager.types.js";
 import { resolveRuntimeOptionsFromMeta } from "./runtime-options.js";
 

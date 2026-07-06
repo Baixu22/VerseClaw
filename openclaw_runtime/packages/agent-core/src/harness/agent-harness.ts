@@ -441,19 +441,27 @@ export class CoreAgentHarness<
         turnState.sessionId,
         snapshotOptions,
       );
-      return resolveAgentCoreStreamFn(this.runtime)(model, context, {
+      const providerOptions: AgentHarnessStreamOptions & Record<PropertyKey, unknown> = {
         cacheRetention: requestOptions.cacheRetention,
         headers: requestOptions.headers,
         maxRetries: requestOptions.maxRetries,
         maxRetryDelayMs: requestOptions.maxRetryDelayMs,
         metadata: requestOptions.metadata,
-        onPayload: async (payload) => await this.emitBeforeProviderPayload(model, payload),
+        onPayload: async (payload, payloadModel) => {
+          const harnessPayload = await this.emitBeforeProviderPayload(model, payload);
+          const outerPayload = await streamOptions?.onPayload?.(
+            harnessPayload ?? payload,
+            payloadModel,
+          );
+          return outerPayload !== undefined ? outerPayload : harnessPayload;
+        },
         onResponse: async (response) => {
           const headers = { ...response.headers };
           await this.emitOwn(
             { type: "after_provider_response", status: response.status, headers },
             streamOptions?.signal,
           );
+          await streamOptions?.onResponse?.(response, model);
         },
         reasoning: streamOptions?.reasoning,
         signal: streamOptions?.signal,
@@ -461,7 +469,11 @@ export class CoreAgentHarness<
         timeoutMs: requestOptions.timeoutMs,
         transport: requestOptions.transport,
         apiKey: auth?.apiKey,
-      });
+      };
+      for (const symbol of Object.getOwnPropertySymbols(streamOptions ?? {})) {
+        providerOptions[symbol] = (streamOptions as Record<PropertyKey, unknown>)[symbol];
+      }
+      return resolveAgentCoreStreamFn(this.runtime)(model, context, providerOptions);
     };
   }
 

@@ -13,7 +13,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { roleTone, toneClasses } from '@/lib/role-visuals';
-import type { TeamOrchestrationAlertView, TeamOrchestrationNodeView, TeamOrchestrationView } from './team-orchestration-visualization';
+import type {
+  TeamOrchestrationAlertView,
+  TeamOrchestrationDiagnosticsView,
+  TeamOrchestrationNodeView,
+  TeamOrchestrationView,
+} from './team-orchestration-visualization';
 
 interface TeamOrchestrationCardProps {
   orchestration: TeamOrchestrationView;
@@ -117,9 +122,65 @@ function AlertRow({ alert }: { alert: TeamOrchestrationAlertView }) {
   );
 }
 
+function DiagnosticsPanel({ diagnostics }: { diagnostics: TeamOrchestrationDiagnosticsView }) {
+  const { t } = useTranslation('chat');
+  const hasRecommendations = diagnostics.recommendations.length > 0;
+  const hasNextSteps = diagnostics.nextSteps.length > 0;
+
+  return (
+    <div
+      data-testid="chat-team-orchestration-diagnostics"
+      className="mt-3 rounded-md border border-amber-500/20 bg-amber-500/10 px-2.5 py-2 text-xs text-amber-700 dark:text-amber-400"
+    >
+      <div className="flex min-w-0 items-center gap-1.5">
+        <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+        <p className="font-medium">{t('teamOrchestration.diagnostics.title')}</p>
+        {diagnostics.status && (
+          <span className="rounded-md bg-black/5 px-1.5 py-0.5 text-2xs dark:bg-white/10">
+            {t(`teamOrchestration.diagnostics.status.${diagnostics.status}`, { defaultValue: diagnostics.status })}
+          </span>
+        )}
+      </div>
+      {diagnostics.summary && <p className="mt-1 leading-5 opacity-90">{diagnostics.summary}</p>}
+      {hasRecommendations && (
+        <div className="mt-2 space-y-1.5">
+          <p className="font-medium">{t('teamOrchestration.diagnostics.recommendations')}</p>
+          {diagnostics.recommendations.map((recommendation, index) => (
+            <div key={`${recommendation.code ?? 'diagnostic'}-${recommendation.roleName ?? index}`} className="rounded-md bg-background/45 px-2 py-1.5">
+              <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                {recommendation.roleName && <RoleChip role={recommendation.roleName} />}
+                {recommendation.code && (
+                  <span className="font-mono text-2xs opacity-75">{recommendation.code}</span>
+                )}
+              </div>
+              {recommendation.message && <p className="mt-1 leading-5">{recommendation.message}</p>}
+              {recommendation.recommendedAction && <p className="mt-0.5 leading-5 opacity-85">{recommendation.recommendedAction}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+      {hasNextSteps && (
+        <div className="mt-2">
+          <p className="font-medium">{t('teamOrchestration.diagnostics.nextSteps')}</p>
+          <ul className="mt-1 space-y-1">
+            {diagnostics.nextSteps.map((step, index) => (
+              <li key={`${step}-${index}`} className="leading-5">{step}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {diagnostics.taskLoopUpgradeAvailable && (
+        <p className="mt-2 leading-5 opacity-85">{t('teamOrchestration.diagnostics.taskLoopUpgrade')}</p>
+      )}
+    </div>
+  );
+}
+
 export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardProps) {
   const { t } = useTranslation('chat');
-  const [expanded, setExpanded] = useState(orchestration.status === 'running');
+  const [expanded, setExpanded] = useState(
+    orchestration.status === 'running' || (orchestration.diagnostics?.status != null && orchestration.diagnostics.status !== 'ok'),
+  );
   const visibleNodes = useMemo(
     () => orchestration.nodes.slice(0, expanded ? orchestration.nodes.length : 4),
     [expanded, orchestration.nodes],
@@ -214,6 +275,10 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
             ))}
           </ul>
         </div>
+      )}
+
+      {expanded && orchestration.diagnostics && (
+        <DiagnosticsPanel diagnostics={orchestration.diagnostics} />
       )}
 
       {orchestration.alerts.length > 0 && (

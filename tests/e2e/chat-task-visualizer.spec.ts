@@ -370,7 +370,7 @@ test.describe('Verse Claw chat execution graph', () => {
     }
   });
 
-  test('renders internal yield status and linked subagent branch from mocked IPC', async ({ launchElectronApp }) => {
+  test('renders internal yield status and linked subagent branch from mocked IPC', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -487,6 +487,12 @@ test.describe('Verse Claw chat execution graph', () => {
       await expect(execRow.locator('pre')).toBeVisible();
       await expect(page.locator('[data-testid="chat-execution-graph"]')).toContainText('I asked coder to break down the core blocks of ~/Velaria uncommitted changes; will give you the conclusion when it returns.');
       await expect(page.getByText('CHECKLIST.md')).toHaveCount(0);
+      const screenshotPath = testInfo.outputPath('assistant-ui-ghost-execution-graph.png');
+      await graph.screenshot({ path: screenshotPath });
+      await testInfo.attach('assistant-ui-ghost-execution-graph', {
+        path: screenshotPath,
+        contentType: 'image/png',
+      });
     } finally {
       await closeElectronApp(app);
     }

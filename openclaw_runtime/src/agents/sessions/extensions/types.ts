@@ -523,6 +523,38 @@ export interface ToolDefinition<
    */
   executionMode?: ToolExecutionMode;
 
+  /**
+   * A1 Round 2 Stage 2: tool risk level for write-path enforcement.
+   *
+   * - "readonly": tool does not write to the filesystem (default when omitted).
+   * - "write": tool writes to the filesystem; `writeRiskProfile` is REQUIRED.
+   * - "destructive": tool performs irreversible operations; `writeRiskProfile`
+   *   is REQUIRED and must be `dynamic_writes` (full fs-diff).
+   *
+   * When omitted, defaults to "readonly" (no `writeRiskProfile` required).
+   * The tool registry enforces this at registration time via
+   * `assertWriteRiskProfileForTool` (Stage 2 acceptance 2.2).
+   */
+  risk?: "readonly" | "write" | "destructive";
+
+  /**
+   * A1 Round 2 Stage 2: static declaration of write paths for `write` and
+   * `destructive` tools. Required when `risk` is "write" or "destructive".
+   *
+   * - "no_writes": tool does not actually write (override for "write" risk).
+   * - "declared_paths": tool writes only to the listed paths (preferred).
+   * - "pattern_writes": tool writes to paths matching a glob pattern.
+   * - "dynamic_writes": tool writes to arbitrary paths (full fs-diff required).
+   *
+   * See: openclaw_runtime/src/shared/tool-registration.ts
+   *      net use/designs/development-manual.md §1.1 (A1), Stage 2 Stream 2A
+   */
+  writeRiskProfile?:
+    | { kind: "no_writes" }
+    | { kind: "declared_paths"; writePaths: string[] }
+    | { kind: "pattern_writes"; writePattern: string }
+    | { kind: "dynamic_writes"; requiresApproval: true };
+
   /** Execute the tool. */
   execute(
     toolCallId: string,

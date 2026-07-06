@@ -1,12 +1,16 @@
 import { hostApi } from '@/lib/host-api';
 import { auditMcpServerForAction, auditSkillForAction } from '@/lib/capability-audit';
-import type { CapabilityRegistryEntry } from '@shared/host-api/contract';
+import type {
+  CapabilityAuditFinding,
+  CapabilityAuditResult,
+  CapabilityPublicationEntry,
+  CapabilityRegistryEntry,
+} from '@shared/host-api/contract';
 import type { McpServerConfig } from '@shared/types/mcp';
 import type { Skill } from '@/types/skill';
 
 type CapabilityRegistryHostApi = {
-  skills: Pick<typeof hostApi.skills, 'local'>;
-  mcp: Pick<typeof hostApi.mcp, 'listServers'>;
+  capabilities: Pick<typeof hostApi.capabilities, 'publications'>;
 };
 
 function skillSource(skill: Skill): CapabilityRegistryEntry['source'] {
@@ -61,23 +65,78 @@ export function mcpRegistryEntry(server: McpServerConfig): CapabilityRegistryEnt
   };
 }
 
+function publicationAudit(publication: CapabilityPublicationEntry): CapabilityAuditResult {
+  const blocked = publication.diagnostics.filter((entry) => entry.severity === 'blocked');
+  const warnings = publication.diagnostics.filter((entry) => entry.severity === 'warning');
+  const findings: CapabilityAuditFinding[] = publication.diagnostics.map((entry) => ({
+    id: entry.code,
+    severity: entry.severity === 'blocked' ? 'blocked' : entry.severity === 'warning' ? 'warning' : 'info',
+    title: entry.message,
+    detail: entry.details ? JSON.stringify(entry.details) : undefined,
+  }));
+  if (blocked.length > 0 || publication.state === 'blocked') {
+    return {
+      status: 'blocked',
+      summary: blocked[0]?.message ?? 'Capability is blocked in this context.',
+      findings,
+      auditedAt: new Date().toISOString(),
+      source: publication.source === 'registered' ? 'registered' : 'unknown',
+    };
+  }
+  if (warnings.length > 0 || publication.state === 'runtimeUnavailable') {
+    return {
+      status: 'warning',
+      summary: warnings[0]?.message ?? 'Capability has publication diagnostics.',
+      findings,
+      auditedAt: new Date().toISOString(),
+      source: publication.source === 'registered' ? 'registered' : 'unknown',
+    };
+  }
+  return {
+    status: 'passed',
+    summary: publication.state === 'published'
+      ? 'Capability is published for this context.'
+      : 'Capability is available for explicit management.',
+    findings,
+    auditedAt: new Date().toISOString(),
+    source: publication.source === 'registered' ? 'registered' : 'unknown',
+  };
+}
+
+function registrySource(publication: CapabilityPublicationEntry): CapabilityRegistryEntry['source'] {
+  if (publication.source === 'bundled') return 'bundled';
+  if (publication.source === 'workspace') return 'workspace';
+  if (publication.source === 'registered') return 'registered';
+  if (publication.source === 'mcp-json') return 'mcp-json';
+  if (publication.source === 'local') return 'local';
+  return 'unknown';
+}
+
+export function publicationRegistryEntry(publication: CapabilityPublicationEntry): CapabilityRegistryEntry {
+  const enabled = publication.state === 'published';
+  const verified = ['ready', 'configured', 'warm'].includes(publication.runtime.status);
+  return {
+    id: publication.id,
+    kind: publication.kind,
+    name: publication.name,
+    source: registrySource(publication),
+    installed: publication.state !== 'missing',
+    enabled,
+    verified,
+    lastAuditResult: publicationAudit(publication),
+    skillId: publication.skillId ?? (publication.kind === 'skill' ? publication.sourceId : undefined),
+    serverId: publication.serverId ?? (publication.kind === 'mcp' ? publication.sourceId : undefined),
+    publication,
+  };
+}
+
 export async function loadCapabilityRegistry(
   api: CapabilityRegistryHostApi = hostApi,
 ): Promise<CapabilityRegistryEntry[]> {
-  const [skillsResult, serversResult] = await Promise.allSettled([
-    api.skills.local(),
-    api.mcp.listServers(),
-  ]);
-
-  const skills = skillsResult.status === 'fulfilled' && skillsResult.value.success && Array.isArray(skillsResult.value.skills)
-    ? skillsResult.value.skills
-    : [];
-  const servers = serversResult.status === 'fulfilled' && Array.isArray(serversResult.value.servers)
-    ? serversResult.value.servers
-    : [];
-
-  return [
-    ...skills.map(skillRegistryEntry),
-    ...servers.map(mcpRegistryEntry),
-  ];
+  const result = await api.capabilities.publications({
+    includeDiagnostics: true,
+    includeCandidates: true,
+    includeToolCatalog: 'warmOnly',
+  });
+  return result.publications.map(publicationRegistryEntry);
 }

@@ -61,6 +61,16 @@
         "available": "可用角色",
         "tools": "工具",
         "orchestrate": "编排任务",
+        "routingMemoTitle": "Routing Memo 证据",
+        "routingMemoAuthority": "权限",
+        "routingMemoSamples": "Shadow 样本",
+        "routingMemoDivergence": "分歧",
+        "routingMemoOutcomes": "结果",
+        "routingMemoOutcomeSummary": "{{completed}} 完成 / {{partial}} 部分",
+        "routingMemoActiveGate": "Active 闸门",
+        "routingMemoGateMet": "闸门已满足",
+        "routingMemoGateNotMet": "闸门未满足",
+        "routingMemoRecentSample": "最新",
         "taskPlaceholder": "描述要编排的任务，例如：重构这个模块并补充测试",
         "taskRequired": "请先输入任务描述",
         "noSession": "没有可用于编排的会话，请先创建或选择一个 Agent",
@@ -75,6 +85,8 @@
         "cancel": "取消",
         "approveFailed": "审批失败",
         "toolsUnit": "个工具",
+        "originBuiltIn": "内置",
+        "originCustom": "自定义",
         "viewContract": "查看角色契约",
         "soulEmpty": "（无编译输出）",
         "worker": "执行",
@@ -300,6 +312,7 @@
         "defaultSkills": "默认技能",
         "noDefaultSkills": "暂无默认技能",
         "noAgentMcp": "暂无 Agent 作用域 MCP 服务",
+        "agentMcp": "Agent MCP",
         "defaultSkillIds": "默认技能 ID",
         "defaultSkillIdsPlaceholder": "每行一个 skill id，可由工作区覆盖",
         "defaultMcpIds": "默认 MCP 服务 ID",
@@ -318,6 +331,87 @@
             "user": "用户画像和偏好",
             "identity": "身份标识（名称、emoji、头像）",
             "heartbeat": "定期后台行为"
+        },
+        "publication": {
+            "title": "能力发布",
+            "workbenchTitle": "能力管理工作台",
+            "sourceRuntime": "Runtime 发布数据可用。",
+            "sourceFallback": "Runtime 不可用，当前显示本地回退数据。",
+            "refresh": "刷新发布状态",
+            "loadFailed": "加载能力发布失败：{{error}}",
+            "diagnosticSummary": "{{blocked}} 个阻止 / {{warnings}} 个警告",
+            "skills": "技能",
+            "mcp": "MCP 服务",
+            "empty": "未找到能力。",
+            "searchPlaceholder": "搜索能力",
+            "rolePreviewPlaceholder": "角色策略预览",
+            "advancedIds": "高级能力 ID",
+            "add": "添加",
+            "remove": "移除",
+            "blocked": "被阻止",
+            "discard": "放弃",
+            "apply": "应用能力变更",
+            "pendingSummary": "{{adds}} 个待添加 / {{removes}} 个待移除",
+            "noPendingChanges": "没有待应用的能力变更",
+            "kind": {
+                "skill": "技能",
+                "mcp": "MCP"
+            },
+            "filter": {
+                "all": "全部",
+                "anyState": "任意状态",
+                "selected": "已选择",
+                "diagnostics": "有诊断",
+                "changed": "有变更"
+            },
+            "change": {
+                "add": "添加",
+                "remove": "移除"
+            },
+            "diagnosticLevel": {
+                "info": "信息",
+                "warning": "警告",
+                "blocked": "阻止"
+            },
+            "metric": {
+                "selected": "已选择",
+                "published": "已发布",
+                "skills": "技能",
+                "mcp": "MCP",
+                "add": "添加",
+                "remove": "移除",
+                "diagnostics": "诊断"
+            },
+            "state": {
+                "published": "已发布",
+                "available": "可添加",
+                "disabled": "已禁用",
+                "blocked": "被阻止",
+                "missing": "缺失",
+                "runtimeUnavailable": "Runtime 不可用"
+            },
+            "detail": {
+                "open": "打开能力详情",
+                "exposure": "暴露范围",
+                "exposureAgents": "Agent",
+                "exposureWorkspaces": "工作区",
+                "exposureRoles": "角色",
+                "runtime": "Runtime",
+                "useModes": "使用模式",
+                "diagnostics": "诊断",
+                "none": "无",
+                "reasons": "原因",
+                "mcpRuntime": "MCP Runtime",
+                "reload": "重载 Runtime",
+                "heartbeat": "心跳",
+                "listTools": "列出工具",
+                "toolsLoaded": "已加载 {{count}} 个工具",
+                "runtimeReloaded": "Runtime 已重载"
+            },
+            "toast": {
+                "saved": "能力变更已应用",
+                "saveFailed": "应用能力变更失败：{{error}}"
+            }
         },
         "toast": {
             "loadFailed": "加载 Agent 配置失败: {{error}}",

@@ -47,9 +47,13 @@ test-results/
 # Local session transcript fixtures (may contain private conversation data)
 tests/fixtures/transcripts/
 
+# LoCoMo extracted-facts cache (regenerated; lives in artifacts/ in P3-B+)
+tests/fixtures/locomo/extracted-facts-cache*.json
+
 # Cache
 .cache/
 .turbo/
+l1-*/
 .codegraph/
 .codex-dev-logs/
 .tmp/
@@ -71,7 +75,9 @@ resources/bin
 *.key
 
 build/
-artifacts/
+artifacts/*
+!artifacts/capability-claims/
+!artifacts/capability-claims/status-table.json
 .delivery/
 docs/pr-session-notes-*.md
 

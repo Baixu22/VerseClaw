@@ -39,6 +39,10 @@
     "billing": {
       "title": "課金",
       "description": "トークン使用履歴、コスト見積もり、利用アクティビティのグラフ。"
+    },
+    "storage": {
+      "title": "ストレージとメモリ",
+      "description": "アプリのキャッシュ、ログ、セッション成果物をスキャンして整理します。"
     }
   },
   "appearance": {
@@ -212,6 +216,13 @@
     "disableEffect": "オフにすると Role Memory の注入と書き込みを停止します。既存カードはディスクに残り、OpenClaw のネイティブメモリは変更されません。",
     "enabled": "有効",
     "disabled": "無効"
+  },
+  "memoryEmbedding": {
+    "title": "メモリ Embedding",
+    "description": "デフォルトの文字 n-gram 曖昧一致の代わりに、実際のベクトル embedding をメモリ検索に使用します。言い換えや語形変化のあるクエリのセマンティック再現率を向上させます。",
+    "disableEffect": "オフにすると、メモリ検索はローカル 3-gram TF-IDF 一致にフォールバックし、回帰なし。少なくとも1つの embedding provider を設定後に有効化してください。",
+    "enabled": "有効",
+    "disabled": "オフ"
   },
   "knowledgeHub": {
     "watched": {
@@ -391,11 +402,100 @@
     "telemetryEmpty": "テレメトリはまだありません",
     "telemetryCopied": "テレメトリをコピーしました",
     "telemetryCleared": "テレメトリをクリアしました",
+    "agentDevWorkbench": {
+      "title": "Agent Dev Workbench",
+      "description": "host-api 経由で実際の Agent Dev registry、contract、trace、cost、sandbox、conformance、recording 証拠を確認します。",
+      "scenarios": "シナリオ",
+      "contractGaps": "Contract ギャップ",
+      "traceEvents": "Trace イベント",
+      "totalTokens": "総 tokens",
+      "contracts": "Contracts",
+      "artifacts": "Artifacts",
+      "record": "シナリオを記録",
+      "recorded": "シナリオ記録を書き込みました: {{path}}",
+      "recordFailed": "シナリオ記録に失敗しました: {{error}}",
+      "loadFailed": "Agent Dev Workbench の読み込みに失敗しました: {{error}}",
+      "diagnostics": "Host calls: {{mockCalls}} / sandbox effects: {{sandboxEffects}} / selector surfaces: {{selectorSurfaces}}",
+      "contractLabels": {
+        "traceTimeline": "Trace timeline",
+        "costReport": "Cost report",
+        "skillSandboxReport": "Skill sandbox",
+        "selectorContract": "Selector contract"
+      },
+      "artifactLabels": {
+        "workbench": "Workbench",
+        "quality": "Quality",
+        "channelConformance": "Channel conformance",
+        "scenarioRecordings": "Recordings"
+      },
+      "gates": {
+        "fastPr": "Fast PR",
+        "fullLocal": "Full local",
+        "nightlyRelease": "Nightly / release"
+      }
+    },
     "installCmd": "\"openclaw\" コマンドをインストール",
     "installCmdDesc": "~/.local/bin/openclaw をインストール（管理者権限不要）",
     "installTitle": "OpenClaw コマンドをインストール",
     "installMessage": "\"openclaw\" コマンドをインストールしますか？",
     "installDetail": "~/.local/bin/openclaw が作成されます。グローバルに実行するには ~/.local/bin が PATH に含まれていることを確認してください。"
+  },
+  "storage": {
+    "title": "ストレージとメモリ",
+    "description": "アプリのキャッシュ、ログ、セッション成果物をスキャンして整理します。",
+    "systemInfo": {
+      "ram": "メモリ (RAM)",
+      "disk": "ディスク容量",
+      "cpu": "CPU",
+      "used": "使用量",
+      "free": "空き",
+      "total": "合計",
+      "cores": "{{count}} コア",
+      "load": "{{percent}}% 負荷",
+      "notAvailable": "利用不可"
+    },
+    "categories": {
+      "logs": { "label": "ログ", "description": "アプリケーションログファイル" },
+      "sessions": { "label": "セッション", "description": "会話トランスクリプト" },
+      "trajectories": { "label": "軌跡", "description": "エージェント実行軌跡とフライトレコーダー" },
+      "mediaOutbound": { "label": "送信メディア", "description": "生成されたメディア成果物" },
+      "mediaThumbs": { "label": "メディアサムネイル", "description": "キャッシュされたメディアサムネイル（再生成可能）" },
+      "uvCache": { "label": "UV キャッシュ", "description": "Python uv ツールキャッシュ（再生成可能）" },
+      "electronCache": { "label": "Electron キャッシュ", "description": "Electron ランタイムキャッシュ（再生成可能）" },
+      "trash": { "label": "ゴミ箱", "description": "クリーンアップ待ちのソフト削除項目" }
+    },
+    "actions": {
+      "refresh": "更新",
+      "scan": "今すぐスキャン",
+      "deleteSelected": "選択項目を削除",
+      "askAgent": "エージェントに推奨を依頼",
+      "confirmDelete": "削除を確認",
+      "cancel": "キャンセル",
+      "dryRun": "ドライラン",
+      "itemsSelected": "{{count}} 件選択中"
+    },
+    "status": {
+      "scanning": "スキャン中...",
+      "deleting": "削除中...",
+      "empty": "項目が見つかりません",
+      "truncated": "最初の {{count}} 件を表示（切り捨て）",
+      "safeToDelete": "削除可能",
+      "notDeletable": "削除不可",
+      "regenerable": "再生成可能"
+    },
+    "toast": {
+      "deleteSucceeded": "{{count}} 件削除、{{bytes}} 解放",
+      "deleteFailed": "削除失敗：{{error}}",
+      "scanFailed": "スキャン失敗：{{error}}",
+      "ramLow": "メモリが不足しています。設定 > ストレージ でクリーンアップを検討してください。",
+      "diskLow": "ディスク容量が不足しています。設定 > ストレージ でクリーンアップを検討してください。"
+    },
+    "agent": {
+      "recommendPrompt": "アプリのストレージをスキャンし、安全に削除できる項目を推奨して容量を解放してください。clawx-storage ツールでスキャンと推奨を行い、tool-ui OptionListCard として推奨内容を提示して、どの項目を削除するか確認できるようにしてください。"
+    },
+    "riskNote": {
+      "activeSession": "アクティブセッション — 削除できません"
+    }
   },
   "about": {
     "title": "バージョン情報",

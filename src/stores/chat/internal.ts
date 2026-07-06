@@ -22,6 +22,8 @@ export const initialChatState: Pick<
   | 'currentAgentId'
   | 'sessionLabels'
   | 'sessionLastActivity'
+  | 'archivedSessions'
+  | 'archivedSessionsLoading'
   | 'thinkingLevel'
 > = {
   messages: [],
@@ -43,6 +45,8 @@ export const initialChatState: Pick<
   currentAgentId: 'main',
   sessionLabels: {},
   sessionLastActivity: {},
+  archivedSessions: [],
+  archivedSessionsLoading: false,
 
   thinkingLevel: null,
 };
@@ -57,6 +61,10 @@ export function createChatActions(
   | 'newSession'
   | 'deleteSession'
   | 'renameSession'
+  | 'archiveSession'
+  | 'restoreSession'
+  | 'permanentDeleteSession'
+  | 'loadArchivedSessions'
   | 'cleanupEmptySession'
   | 'loadHistory'
   | 'sendMessage'

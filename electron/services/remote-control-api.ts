@@ -135,13 +135,17 @@ async function getSelectorCenter(
   send: (method: string, params?: Record<string, unknown>) => Promise<unknown>,
   selector: string,
 ): Promise<{ x: number; y: number }> {
-  const expression = `(() => {
+  const expression = `(async () => {
     const el = document.querySelector(${JSON.stringify(selector)});
     if (!el) return null;
+    if (typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ block: 'center', inline: 'center' });
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    }
     const rect = el.getBoundingClientRect();
     return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
   })()`;
-  const result = extractRemoteObjectValue(await send('Runtime.evaluate', { expression, returnByValue: true }));
+  const result = extractRemoteObjectValue(await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }));
   if (!isRecord(result.value)) {
     throw new Error(`未找到选择器: ${selector}`);
   }

@@ -1,4 +1,6 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { mkdirSync } from 'node:fs';
+import { join } from 'node:path';
 
 const SESSION_KEY = 'agent:main:main';
 const OTHER_SESSION_KEY = 'agent:main:other-project';
@@ -66,7 +68,7 @@ const MAIN_HISTORY = [
 ];
 
 test.describe('Verse Claw chat workspace header', () => {
-  test('shows workspace and conversation without the legacy topic selector', async ({ launchElectronApp }) => {
+  test('shows workspace and conversation without the legacy topic selector', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -161,6 +163,22 @@ test.describe('Verse Claw chat workspace header', () => {
         }
       }, SESSION_KEY);
       await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveAttribute('data-state', 'running');
+      await expect(page.getByTestId('chat-current-session-status')).toHaveAttribute('data-state', 'streaming');
+      await expect(page.getByTestId('assistant-stream-status-dot')).toHaveAttribute('data-state', 'thinking');
+      await expect(page.getByTestId('assistant-status-dot-matrix')).toHaveCount(0);
+
+      const screenshotPath = testInfo.outputPath('chat-dot-matrix-running-status.png');
+      await page.screenshot({ path: screenshotPath, fullPage: false });
+      await testInfo.attach('chat-dot-matrix-running-status', {
+        path: screenshotPath,
+        contentType: 'image/png',
+      });
+      const screenshotDir = process.env.CLAWX_DOT_MATRIX_SCREENSHOT_DIR;
+      if (screenshotDir) {
+        const resolvedDir = join(process.cwd(), screenshotDir);
+        mkdirSync(resolvedDir, { recursive: true });
+        await page.screenshot({ path: join(resolvedDir, 'chat-dot-matrix-running-status.png'), fullPage: false });
+      }
 
       await app.evaluate(({ BrowserWindow }, sessionKey) => {
         for (const win of BrowserWindow.getAllWindows()) {

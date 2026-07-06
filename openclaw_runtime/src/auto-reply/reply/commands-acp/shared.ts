@@ -6,7 +6,7 @@ import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
 } from "@openclaw/normalization-core/string-coerce";
-import type { AcpRuntimeError } from "../../../acp/runtime/errors.js";
+import type { AcpRuntimeError } from "../../../runtime/errors.ts";
 import { supportsAutomaticThreadBindingSpawn } from "../../../channels/thread-bindings-policy.js";
 import type { AcpSessionRuntimeOptions } from "../../../config/sessions/types.js";
 import { normalizeAgentId } from "../../../routing/session-key.js";

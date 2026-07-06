@@ -27,16 +27,78 @@ function getExtensionPackages(): Set<string> {
 }
 
 const extensionPackages = getExtensionPackages();
+export const localOpenClawRuntimeAliases = {
+  '@openclaw/normalization-core': resolve(__dirname, 'openclaw_runtime/packages/normalization-core/src'),
+  '@openclaw/acp-core': resolve(__dirname, 'openclaw_runtime/packages/acp-core/src'),
+};
+const bundledMainRuntimeDependencies = new Set([
+  'json5',
+]);
 const alias = {
   '@': resolve(__dirname, 'src'),
   '@electron': resolve(__dirname, 'electron'),
   '@shared': resolve(__dirname, 'shared'),
+  ...localOpenClawRuntimeAliases,
 };
 
-function isMainProcessExternal(id: string): boolean {
+function packageNameFromModuleId(id: string): string | null {
+  const normalized = id.replace(/\\/g, '/');
+  const marker = '/node_modules/';
+  const index = normalized.lastIndexOf(marker);
+  if (index < 0) return null;
+  const parts = normalized.slice(index + marker.length).split('/');
+  if (parts[0]?.startsWith('@')) {
+    return parts[0] && parts[1] ? `${parts[0]}/${parts[1]}` : null;
+  }
+  return parts[0] || null;
+}
+
+function rendererManualChunks(id: string): string | undefined {
+  const normalized = id.replace(/\\/g, '/');
+  const packageName = packageNameFromModuleId(normalized);
+
+  if (normalized.includes('/src/lib/monaco/')) return 'editor';
+  if (!packageName) return undefined;
+  if (packageName === 'monaco-editor' || packageName === '@monaco-editor/react') return 'editor';
+  if (packageName === 'xlsx' || packageName === 'pdfjs-dist') return 'document-viewers';
+  if (packageName === 'katex') return 'math-rendering';
+  if (packageName === 'react' || packageName === 'react-dom' || packageName === 'scheduler') return 'react-vendor';
+  if (
+    packageName === 'react-markdown'
+    || packageName.startsWith('remark-')
+    || packageName.startsWith('rehype-')
+    || packageName.startsWith('micromark')
+    || packageName.startsWith('mdast-')
+    || packageName.startsWith('hast-')
+    || packageName.startsWith('unist-')
+    || packageName === 'unified'
+    || packageName === 'vfile'
+  ) {
+    return 'markdown-rendering';
+  }
+  if (
+    packageName.startsWith('@radix-ui/')
+    || packageName === 'lucide-react'
+    || packageName === 'class-variance-authority'
+    || packageName === 'clsx'
+    || packageName === 'tailwind-merge'
+    || packageName === 'sonner'
+  ) {
+    return 'ui-vendor';
+  }
+  return undefined;
+}
+
+function isLocalOpenClawRuntimeImport(id: string): boolean {
+  return Object.keys(localOpenClawRuntimeAliases).some((pkg) => id === pkg || id.startsWith(pkg + '/'));
+}
+
+export function isMainProcessExternal(id: string): boolean {
   if (!id || id.startsWith('\0')) return false;
   if (id.startsWith('.') || id.startsWith('/') || /^[A-Za-z]:[\\/]/.test(id)) return false;
   if (id.startsWith('@/') || id.startsWith('@electron/') || id.startsWith('@shared/')) return false;
+  if (isLocalOpenClawRuntimeImport(id)) return false;
+  if (bundledMainRuntimeDependencies.has(id)) return false;
   for (const pkg of extensionPackages) {
     if (id === pkg || id.startsWith(pkg + '/')) return false;
   }
@@ -63,6 +125,7 @@ export default defineConfig({
           resolve: { alias },
           build: {
             outDir: 'dist-electron/main',
+            reportCompressedSize: false,
             rollupOptions: {
               external: isMainProcessExternal,
             },
@@ -79,6 +142,7 @@ export default defineConfig({
           resolve: { alias },
           build: {
             outDir: 'dist-electron/preload',
+            reportCompressedSize: false,
             rollupOptions: {
               external: ['electron'],
             },
@@ -98,5 +162,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    reportCompressedSize: false,
+    rollupOptions: {
+      output: {
+        manualChunks: rendererManualChunks,
+      },
+    },
   },
 });

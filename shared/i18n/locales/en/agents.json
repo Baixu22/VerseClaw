@@ -61,6 +61,16 @@
         "available": "Available roles",
         "tools": "Tools",
         "orchestrate": "Orchestrate task",
+        "routingMemoTitle": "Routing Memo evidence",
+        "routingMemoAuthority": "Authority",
+        "routingMemoSamples": "Shadow samples",
+        "routingMemoDivergence": "Divergences",
+        "routingMemoOutcomes": "Outcomes",
+        "routingMemoOutcomeSummary": "{{completed}} complete / {{partial}} partial",
+        "routingMemoActiveGate": "Active gate",
+        "routingMemoGateMet": "Gate met",
+        "routingMemoGateNotMet": "Gate not met",
+        "routingMemoRecentSample": "Latest",
         "taskPlaceholder": "Describe the task to orchestrate, e.g. refactor this module and add tests",
         "taskRequired": "Enter a task description first",
         "noSession": "No session available for orchestration. Create or select an Agent first.",
@@ -136,6 +146,8 @@
         "cancel": "Cancel",
         "approveFailed": "Approval failed",
         "toolsUnit": "tools",
+        "originBuiltIn": "Built-in",
+        "originCustom": "Custom",
         "viewContract": "View contract",
         "soulEmpty": "(no compiled output)",
         "worker": "Worker",
@@ -300,6 +312,7 @@
         "defaultSkills": "Default Skills",
         "noDefaultSkills": "No default skills",
         "noAgentMcp": "No agent-scoped MCP services",
+        "agentMcp": "Agent MCP",
         "defaultSkillIds": "Default Skill IDs",
         "defaultSkillIdsPlaceholder": "One skill id per line. Workspaces can override them.",
         "defaultMcpIds": "Default MCP Service IDs",
@@ -318,6 +331,87 @@
             "user": "User profile and preferences",
             "identity": "Identity markers (name, emoji, avatar)",
             "heartbeat": "Scheduled background behavior"
+        },
+        "publication": {
+            "title": "Capability publication",
+            "workbenchTitle": "Capability Management Workbench",
+            "sourceRuntime": "Runtime publication is available.",
+            "sourceFallback": "Runtime is unavailable; showing local fallback.",
+            "refresh": "Refresh publications",
+            "loadFailed": "Failed to load capability publications: {{error}}",
+            "diagnosticSummary": "{{blocked}} blocked / {{warnings}} warnings",
+            "skills": "Skills",
+            "mcp": "MCP services",
+            "empty": "No capabilities found.",
+            "searchPlaceholder": "Search capabilities",
+            "rolePreviewPlaceholder": "Role policy preview",
+            "advancedIds": "Advanced capability IDs",
+            "add": "Add",
+            "remove": "Remove",
+            "blocked": "Blocked",
+            "discard": "Discard",
+            "apply": "Apply capability changes",
+            "pendingSummary": "{{adds}} to add / {{removes}} to remove",
+            "noPendingChanges": "No pending capability changes",
+            "kind": {
+                "skill": "Skill",
+                "mcp": "MCP"
+            },
+            "filter": {
+                "all": "All",
+                "anyState": "Any state",
+                "selected": "Selected",
+                "diagnostics": "Diagnostics",
+                "changed": "Changed"
+            },
+            "change": {
+                "add": "Add",
+                "remove": "Remove"
+            },
+            "diagnosticLevel": {
+                "info": "Info",
+                "warning": "Warning",
+                "blocked": "Blocked"
+            },
+            "metric": {
+                "selected": "Selected",
+                "published": "Published",
+                "skills": "Skills",
+                "mcp": "MCP",
+                "add": "Add",
+                "remove": "Remove",
+                "diagnostics": "Diagnostics"
+            },
+            "state": {
+                "published": "Published",
+                "available": "Available",
+                "disabled": "Disabled",
+                "blocked": "Blocked",
+                "missing": "Missing",
+                "runtimeUnavailable": "Runtime unavailable"
+            },
+            "detail": {
+                "open": "Open capability details",
+                "exposure": "Exposure",
+                "exposureAgents": "Agents",
+                "exposureWorkspaces": "Workspaces",
+                "exposureRoles": "Roles",
+                "runtime": "Runtime",
+                "useModes": "Use modes",
+                "diagnostics": "Diagnostics",
+                "none": "None",
+                "reasons": "Reasons",
+                "mcpRuntime": "MCP runtime",
+                "reload": "Reload runtime",
+                "heartbeat": "Heartbeat",
+                "listTools": "List tools",
+                "toolsLoaded": "{{count}} tools loaded",
+                "runtimeReloaded": "Runtime reloaded"
+            },
+            "toast": {
+                "saved": "Capability changes applied",
+                "saveFailed": "Failed to apply capability changes: {{error}}"
+            }
         },
         "toast": {
             "loadFailed": "Failed to load Agent configuration: {{error}}",

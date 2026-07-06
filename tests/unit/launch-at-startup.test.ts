@@ -10,15 +10,16 @@ const {
   setLoginItemSettingsMock,
 } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
+  const root = process.env.CLAWX_TEST_TMPDIR ?? `${process.cwd()}/.tmp/vitest`;
   const setLoginItemSettingsMock = vi.fn();
   const electronAppMock = {
     isPackaged: true,
-    getPath: (name: string) => (name === 'home' ? `/tmp/verse-claw-launch-startup-${suffix}` : '/tmp'),
+    getPath: (name: string) => (name === 'home' ? `${root}/verse-claw-launch-startup-${suffix}` : root),
     setLoginItemSettings: setLoginItemSettingsMock,
   };
 
   return {
-    testHome: `/tmp/verse-claw-launch-startup-${suffix}`,
+    testHome: `${root}/verse-claw-launch-startup-${suffix}`,
     electronAppMock,
     setLoginItemSettingsMock,
   };

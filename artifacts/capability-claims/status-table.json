@@ -1,0 +1,1416 @@
+{
+  "schemaVersion": 1,
+  "source": "shared/capability-claims.ts",
+  "generatedAt": "2026-07-05T00:49:26.475Z",
+  "matrixReport": "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md",
+  "total": 44,
+  "items": [
+    {
+      "id": "capability-01",
+      "reportItem": 1,
+      "title": "User input entering an explicit Plan state machine",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "real-runtime",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "reports/real-runtime-task-validation-2026-07-04.md",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/real-runtime-task-validation-2026-07-04.md",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Chat",
+        "entrypoint": "Send a normal chat message",
+        "boundary": "Plan mode affects permissions; it does not create a complete editable plan workflow."
+      },
+      "knownExclusions": [
+        "No verified standalone editable Plan state machine for ordinary Chat.",
+        "Plan/read-only should not be described as full plan orchestration."
+      ],
+      "relatedTaskIds": [
+        "P1-01",
+        "P1-02"
+      ]
+    },
+    {
+      "id": "capability-02",
+      "reportItem": 2,
+      "title": "Automatic decomposition and multi-role assignment",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/agents/orchestrator.ts",
+        "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Chat or Agents",
+        "entrypoint": "Use explicit orchestration or Task Loop entrypoints",
+        "boundary": "Ordinary Chat is not forced through multi-role orchestration."
+      },
+      "knownExclusions": [
+        "No claim that simple Chat always invokes multiple role workers.",
+        "No default automatic role assignment guarantee for all prompts."
+      ],
+      "relatedTaskIds": [
+        "P1-04",
+        "P1-05"
+      ]
+    },
+    {
+      "id": "capability-03",
+      "reportItem": 3,
+      "title": "Workspace automatically creates projects, installs dependencies, and executes",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/workspace-permissions.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/workspace-permissions.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Workspace tools",
+        "entrypoint": "Agent tool use with workspace permissions",
+        "boundary": "Automation depends on tool calls and permissions; there is no single guaranteed project bootstrap flow."
+      },
+      "knownExclusions": [
+        "No guarantee that every task installs dependencies automatically.",
+        "No guarantee that workspace bootstrap succeeds without explicit tool execution."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-04",
+      "reportItem": 4,
+      "title": "Trace and event graph existence",
+      "classification": "TP-SRC + FP-NOT-RUNNABLE",
+      "status": "not-runnable",
+      "evidenceLevels": [
+        "source",
+        "negative-runtime"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/observability/trace-recorder.ts",
+        "shared/types/observability.ts",
+        "reports/real-runtime-task-validation-2026-07-04.md",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/real-runtime-task-validation-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Observability or trace UI/API",
+        "entrypoint": "Query traces by runId, sessionKey, or workspace",
+        "boundary": "The source exists, but real runtime queryability failed in the latest validation."
+      },
+      "knownExclusions": [
+        "Do not claim real task traces are currently queryable.",
+        "Trace source existence is not runtime proof."
+      ],
+      "relatedTaskIds": [
+        "P0-06",
+        "P0-07"
+      ]
+    },
+    {
+      "id": "capability-05",
+      "reportItem": 5,
+      "title": "Work panel displays plan or execution graph with status updates",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "src/pages/Chat/ExecutionGraphCard.tsx",
+        "src/pages/Chat/execution-projection.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Chat work panel",
+        "entrypoint": "Open a chat run that emits graph/projection events",
+        "boundary": "The graph can show partial state but is not full runtime audit proof."
+      },
+      "knownExclusions": [
+        "No full audit-chain guarantee.",
+        "No claim that every tool result and final assistant response is graph-bound."
+      ],
+      "relatedTaskIds": [
+        "P0-09"
+      ]
+    },
+    {
+      "id": "capability-06",
+      "reportItem": 6,
+      "title": "Completion writes final assistant message and completion state",
+      "classification": "TP-RUN + PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "real-runtime",
+        "negative-runtime"
+      ],
+      "lastVerifiedAt": "2026-07-05",
+      "evidenceRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Chat history",
+        "entrypoint": "Read current session history after a run",
+        "boundary": "Post-run transcript proof exists and can recover startup-window observation; direct Gateway startup history can still be unavailable."
+      },
+      "knownExclusions": [
+        "No guarantee that chat.history is immediately readable during Gateway startup.",
+        "Transcript artifact recovery should be distinguished from direct RPC immediacy."
+      ],
+      "relatedTaskIds": [
+        "P0-08"
+      ]
+    },
+    {
+      "id": "capability-07",
+      "reportItem": 7,
+      "title": "Editable Chat task DAG",
+      "classification": "FP-OVERCLAIM",
+      "status": "not-guaranteed",
+      "evidenceLevels": [
+        "documented-boundary",
+        "source"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md",
+        "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "src/pages/Chat/index.tsx"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Chat",
+        "entrypoint": "View orchestration plan rendering",
+        "boundary": "Chat does not expose editable DAG dependency controls."
+      },
+      "knownExclusions": [
+        "Chat does not expose editable DAG add/remove edge controls.",
+        "Task Ledger graph concepts must not be represented as Chat DAG editing."
+      ],
+      "relatedTaskIds": [
+        "P1-01",
+        "P1-02"
+      ]
+    },
+    {
+      "id": "capability-08",
+      "reportItem": 8,
+      "title": "Confirmed plan persists and can be restored",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/task-loop-controller.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/task-loop-controller.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Task Loop",
+        "entrypoint": "Run an explicit long task or loop",
+        "boundary": "Ordinary Chat plan persistence as editable DAG is not proven."
+      },
+      "knownExclusions": [
+        "No editable Chat DAG restore guarantee.",
+        "No claim that every displayed Chat plan is durable workflow state."
+      ],
+      "relatedTaskIds": [
+        "P1-01",
+        "P1-03"
+      ]
+    },
+    {
+      "id": "capability-09",
+      "reportItem": 9,
+      "title": "Plan stage supports structured diff and incremental editing",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/agents/long-task-control/store.ts",
+        "openclaw_runtime/src/agents/task-loop-controller.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Long task controls",
+        "entrypoint": "Guide, queue, interrupt, or revise a long task",
+        "boundary": "These controls are not a general Chat plan diff editor."
+      },
+      "knownExclusions": [
+        "No general plan diff editor in Chat.",
+        "No verified dependency-edit persistence for Chat plans."
+      ],
+      "relatedTaskIds": [
+        "P1-02"
+      ]
+    },
+    {
+      "id": "capability-10",
+      "reportItem": 10,
+      "title": "Built-in roles and responsibilities exist",
+      "classification": "TP-SRC/TP-TEST",
+      "status": "test-verified",
+      "evidenceLevels": [
+        "source",
+        "unit-test"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/agents/role-registry.ts",
+        "openclaw_runtime/src/agents/role-contract.ts",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/role-spawn.test.ts"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/role-spawn.test.ts"
+      ],
+      "userPath": {
+        "surface": "Agents and orchestration",
+        "entrypoint": "Invoke role orchestration or role-aware tools",
+        "boundary": "Role existence is not the same as mandatory role use for every Chat turn."
+      },
+      "knownExclusions": [
+        "No claim that every prompt uses every role.",
+        "No automatic role quality learning claim from this evidence."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-11",
+      "reportItem": 11,
+      "title": "Dynamic role elimination or learning from performance",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/routing-memo.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/routing-memo.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Routing Memo diagnostics",
+        "entrypoint": "Enable or inspect routing memo behavior",
+        "boundary": "Default-off scoring is not automatic live role learning."
+      },
+      "knownExclusions": [
+        "No default automatic role elimination.",
+        "No fully wired qualityOverall producer for all role runs."
+      ],
+      "relatedTaskIds": [
+        "P1-06",
+        "P1-07"
+      ]
+    },
+    {
+      "id": "capability-12",
+      "reportItem": 12,
+      "title": "Subagents isolate context and avoid full leakage",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/agents/acp-spawn.ts",
+        "openclaw_runtime/src/context-engine/memory-context-provider.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Role or subagent orchestration",
+        "entrypoint": "Spawn or route work to role workers",
+        "boundary": "Isolation mechanisms exist, but minimal leakage is not globally proven."
+      },
+      "knownExclusions": [
+        "No absolute guarantee of least possible context.",
+        "No full-chain sensitive data non-disclosure guarantee."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-13",
+      "reportItem": 13,
+      "title": "Role-level tool permissions intercept tool use",
+      "classification": "TP-TEST + PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/role-orchestration-methods.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Role orchestration",
+        "entrypoint": "Run tools under a role contract",
+        "boundary": "Tool-level policy is verified; semantic and audit coverage remain partial."
+      },
+      "knownExclusions": [
+        "No complete command-argument semantic permission guarantee.",
+        "No unified permission audit event across all permission systems yet."
+      ],
+      "relatedTaskIds": [
+        "P0-13"
+      ]
+    },
+    {
+      "id": "capability-14",
+      "reportItem": 14,
+      "title": "User custom or temporary roles exist",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "e2e"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "src/components/agents/RoleCard.tsx",
+        "shared/types/agent.ts",
+        "tests/e2e/role-origin-badge.spec.ts"
+      ],
+      "runtimeProofRefs": [
+        "tests/e2e/role-origin-badge.spec.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Agents roles UI",
+        "entrypoint": "View configured roles and their origin badges",
+        "boundary": "Configuration and badges are not a complete role management product."
+      },
+      "knownExclusions": [
+        "No complete create/edit/delete/test role manager proof.",
+        "No automatic temporary role lifecycle guarantee."
+      ],
+      "relatedTaskIds": [
+        "P2-05"
+      ]
+    },
+    {
+      "id": "capability-15",
+      "reportItem": 15,
+      "title": "Worker outputs have quality scores that feed routing",
+      "classification": "PARTIAL/FP-OVERCLAIM",
+      "status": "partial",
+      "evidenceLevels": [
+        "unit-test",
+        "negative-runtime"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/task-loop-controller.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/task-loop-controller.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Task Loop or team orchestration",
+        "entrypoint": "Run explicit Task Loop for richer evidence, or team_orchestrate for ordinary orchestration",
+        "boundary": "Task Loop quality paths must not be projected onto ordinary orchestration."
+      },
+      "knownExclusions": [
+        "No complete ordinary team_orchestrate quality array guarantee.",
+        "No verified routing feedback loop from ordinary worker quality."
+      ],
+      "relatedTaskIds": [
+        "P1-04",
+        "P1-05",
+        "P1-07"
+      ]
+    },
+    {
+      "id": "capability-16",
+      "reportItem": 16,
+      "title": "Electron starts and manages Gateway",
+      "classification": "TP-RUN",
+      "status": "real-runtime-verified",
+      "evidenceLevels": [
+        "real-runtime",
+        "source"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "reports/real-runtime-task-validation-2026-07-04.md",
+        "electron/gateway/manager.ts"
+      ],
+      "runtimeProofRefs": [
+        "reports/real-runtime-task-validation-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Application startup",
+        "entrypoint": "Launch the Electron app",
+        "boundary": "Startup readiness is not evidence for unrelated advanced claims."
+      },
+      "knownExclusions": [
+        "No claim that all Gateway methods are fully validated.",
+        "No claim that observability query worked."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-17",
+      "reportItem": 17,
+      "title": "Exit cleans Gateway, extensions, and connections",
+      "classification": "TP-SRC",
+      "status": "source-verified",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "electron/gateway/manager.ts",
+        "electron/main/index.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Application shutdown",
+        "entrypoint": "Quit the Electron app",
+        "boundary": "Best-effort cleanup is not crash-grade cleanup proof."
+      },
+      "knownExclusions": [
+        "No crash recovery cleanup E2E proof.",
+        "No guarantee every extension process is always cleaned in abnormal exits."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-18",
+      "reportItem": 18,
+      "title": "Avoid Workspace and Runtime dependency cycles",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "src/lib/host-api.ts",
+        "openclaw_runtime/src/agents/acp-spawn.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Runtime and workspace integration",
+        "entrypoint": "Use host API mediated calls",
+        "boundary": "Architectural boundaries reduce risk but are not formal no-cycle proof."
+      },
+      "knownExclusions": [
+        "No formal acyclic dependency proof.",
+        "No global guarantee that future integrations cannot introduce cycles."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-19",
+      "reportItem": 19,
+      "title": "Communication is async JSON-RPC with timeout",
+      "classification": "TP-RUN",
+      "status": "real-runtime-verified",
+      "evidenceLevels": [
+        "source",
+        "real-runtime"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "electron/gateway/manager.ts",
+        "reports/real-runtime-task-validation-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/real-runtime-task-validation-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Chat/Gateway RPC",
+        "entrypoint": "Send chat.send through Gateway",
+        "boundary": "Validated path is core chat RPC, not every possible transport path."
+      },
+      "knownExclusions": [
+        "No claim of global uniform retry semantics.",
+        "No claim that all plugin or external channel calls share identical timeout policy."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-20",
+      "reportItem": 20,
+      "title": "Observability failure does not block task execution",
+      "classification": "TP-RUN",
+      "status": "real-runtime-verified",
+      "evidenceLevels": [
+        "real-runtime"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "reports/real-runtime-task-validation-2026-07-04.md",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/real-runtime-task-validation-2026-07-04.md",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Core agent execution",
+        "entrypoint": "Run a real repair task",
+        "boundary": "Core execution can pass while observability remains incomplete."
+      },
+      "knownExclusions": [
+        "Do not convert execution success into trace completeness.",
+        "Do not hide observability failures behind core execution success."
+      ],
+      "relatedTaskIds": [
+        "P0-06",
+        "P0-10"
+      ]
+    },
+    {
+      "id": "capability-21",
+      "reportItem": 21,
+      "title": "Task failure automatically performs full rollback",
+      "classification": "FP-OVERCLAIM",
+      "status": "not-guaranteed",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "src/pages/Chat/rollback-plan.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Task recovery helpers",
+        "entrypoint": "Use review, restore, or replay-oriented flows where available",
+        "boundary": "There is no global file transaction snapshot rollback."
+      },
+      "knownExclusions": [
+        "No global file transaction snapshot.",
+        "No automatic rollback guarantee for arbitrary failed commands or edits."
+      ],
+      "relatedTaskIds": [
+        "P2-02"
+      ]
+    },
+    {
+      "id": "capability-22",
+      "reportItem": 22,
+      "title": "Global idempotency strategy",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/gateway/session-compaction-checkpoints.ts",
+        "openclaw_runtime/src/agents/long-task-control/store.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Chat and long-task recovery",
+        "entrypoint": "Use checkpoint or intervention flows",
+        "boundary": "Local idempotency does not cover arbitrary file/command side effects."
+      },
+      "knownExclusions": [
+        "No global command idempotency guarantee.",
+        "No global filesystem mutation idempotency guarantee."
+      ],
+      "relatedTaskIds": [
+        "P2-06"
+      ]
+    },
+    {
+      "id": "capability-23",
+      "reportItem": 23,
+      "title": "User intervention during long tasks",
+      "classification": "TP-SRC/TP-TEST",
+      "status": "test-verified",
+      "evidenceLevels": [
+        "source",
+        "unit-test"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/agents/long-task-control/store.ts",
+        "tests/e2e/chat-long-task-control.spec.ts",
+        "tests/unit/task-loop-controller.test.ts"
+      ],
+      "runtimeProofRefs": [
+        "tests/e2e/chat-long-task-control.spec.ts",
+        "tests/unit/task-loop-controller.test.ts"
+      ],
+      "userPath": {
+        "surface": "Long-task controls",
+        "entrypoint": "Interact with an active long task",
+        "boundary": "The claim is scoped to explicit long-task or Task Loop contexts."
+      },
+      "knownExclusions": [
+        "No claim that every ordinary Chat request is interruptible through long-task semantics.",
+        "No claim that ClawGraph active node rewrite is automatic."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-24",
+      "reportItem": 24,
+      "title": "Checkpoint stores full context and file snapshot",
+      "classification": "FP-OVERCLAIM",
+      "status": "not-guaranteed",
+      "evidenceLevels": [
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/task-loop-controller.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Task Loop checkpoint recovery",
+        "entrypoint": "Resume from checkpoint or inspect recovery context",
+        "boundary": "Recovery anchor is not a full context or filesystem snapshot."
+      },
+      "knownExclusions": [
+        "No complete tool history storage guarantee.",
+        "No filesystem snapshot guarantee."
+      ],
+      "relatedTaskIds": [
+        "P2-01"
+      ]
+    },
+    {
+      "id": "capability-25",
+      "reportItem": 25,
+      "title": "Approval automatically passes without feedback",
+      "classification": "TP-SRC",
+      "status": "source-verified",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "electron/services/permissions-api.ts",
+        "electron/utils/workspace-runtime-permissions.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Approval prompts",
+        "entrypoint": "Trigger a permissioned action that requires approval",
+        "boundary": "Needs real UI scenario proof; no silent auto-pass claim."
+      },
+      "knownExclusions": [
+        "No verified UI scenario for all approval timeouts.",
+        "No claim of auto-approval on silence."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-26",
+      "reportItem": 26,
+      "title": "Unified retry and fallback",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "electron/gateway/manager.ts",
+        "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Runtime communication and provider calls",
+        "entrypoint": "Use chat or provider backed execution",
+        "boundary": "Local fallback should not be described as global policy."
+      },
+      "knownExclusions": [
+        "No system-wide retry policy contract.",
+        "No uniform fallback semantics across files, commands, providers, and UI."
+      ],
+      "relatedTaskIds": [
+        "P2-06"
+      ]
+    },
+    {
+      "id": "capability-27",
+      "reportItem": 27,
+      "title": "Unified token, timeout, and tool-count limits with new-session advice",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "electron/utils/token-usage.ts",
+        "tests/unit/context-window.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Chat budget and runtime settings",
+        "entrypoint": "Run chats with token/timeout constraints",
+        "boundary": "Budget primitives are not yet a complete user-facing guidance loop."
+      },
+      "knownExclusions": [
+        "No unified tool-count limit product proof.",
+        "No guaranteed new-session recommendation loop."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-28",
+      "reportItem": 28,
+      "title": "Context pressure threshold exists",
+      "classification": "TP-SRC/TP-TEST",
+      "status": "test-verified",
+      "evidenceLevels": [
+        "source",
+        "unit-test"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts",
+        "tests/unit/context-window.test.ts",
+        "tests/unit/compression-artifact.test.ts"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/context-window.test.ts",
+        "tests/unit/compression-artifact.test.ts"
+      ],
+      "userPath": {
+        "surface": "Chat context management",
+        "entrypoint": "Approach context pressure and trigger compaction/pruning behavior",
+        "boundary": "Thresholds are not lossless guarantees."
+      },
+      "knownExclusions": [
+        "No lossless compaction guarantee.",
+        "No guarantee that every old detail survives pruning."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-29",
+      "reportItem": 29,
+      "title": "Compaction retention priorities",
+      "classification": "TP-SRC",
+      "status": "source-verified",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Compaction and recovery context",
+        "entrypoint": "Inspect compacted session artifact where available",
+        "boundary": "Retention priority is not complete preservation."
+      },
+      "knownExclusions": [
+        "No no-loss compaction guarantee.",
+        "Older tool content can be summarized or omitted."
+      ],
+      "relatedTaskIds": [
+        "P2-04"
+      ]
+    },
+    {
+      "id": "capability-30",
+      "reportItem": 30,
+      "title": "Compaction guarantees no drift",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/compression-artifact.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/compression-artifact.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Compaction",
+        "entrypoint": "Trigger or inspect compaction output",
+        "boundary": "Safeguards reduce risk but do not guarantee zero drift."
+      },
+      "knownExclusions": [
+        "No zero-drift guarantee.",
+        "No lossless compression guarantee."
+      ],
+      "relatedTaskIds": [
+        "P2-04"
+      ]
+    },
+    {
+      "id": "capability-31",
+      "reportItem": 31,
+      "title": "User can see, confirm, and restore compaction summary",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/gateway/session-compaction-checkpoints.ts",
+        "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Chat context controls",
+        "entrypoint": "Open compaction status or manual compaction dialog",
+        "boundary": "Automatic per-compaction confirmation is not verified."
+      },
+      "knownExclusions": [
+        "No proof of automatic compaction confirmation every time.",
+        "No full restore guarantee from compacted summaries."
+      ],
+      "relatedTaskIds": [
+        "P2-04"
+      ]
+    },
+    {
+      "id": "capability-32",
+      "reportItem": 32,
+      "title": "Repeated compaction summarizes previous summaries",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Long conversation compaction",
+        "entrypoint": "Run repeated compaction over a long session",
+        "boundary": "Repeated compaction can be handled, but accumulated loss is not ruled out."
+      },
+      "knownExclusions": [
+        "No hard upper bound proof for summary degradation.",
+        "No guarantee that repeated summaries preserve every detail."
+      ],
+      "relatedTaskIds": [
+        "P2-04"
+      ]
+    },
+    {
+      "id": "capability-33",
+      "reportItem": 33,
+      "title": "Memory confidence, conflict, and overwrite policy",
+      "classification": "TP-TEST",
+      "status": "test-verified",
+      "evidenceLevels": [
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/memory-api.test.ts",
+        "tests/unit/runtime-memory-store.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/memory-api.test.ts",
+        "tests/unit/runtime-memory-store.test.ts"
+      ],
+      "userPath": {
+        "surface": "Memory management",
+        "entrypoint": "Propose, review, approve, or reject memory entries",
+        "boundary": "Reviewed proposal flow is not automatic overwrite."
+      },
+      "knownExclusions": [
+        "No automatic overwrite guarantee.",
+        "No claim that every session summary is instantly committed to long-term memory."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-34",
+      "reportItem": 34,
+      "title": "Memory retention scoring",
+      "classification": "TP-SRC/TP-TEST",
+      "status": "test-verified",
+      "evidenceLevels": [
+        "source",
+        "unit-test"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/runtime-core/memory-store.ts",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts",
+        "tests/unit/runtime-memory-store.test.ts"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/runtime-memory-store.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Memory runtime",
+        "entrypoint": "Evaluate or persist memory records",
+        "boundary": "Scoring does not guarantee perfect recall or curation."
+      },
+      "knownExclusions": [
+        "No perfect memory quality guarantee.",
+        "No automatic safe overwrite guarantee."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-35",
+      "reportItem": 35,
+      "title": "Cross-session experience migration",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/role-memory-context-provider.test.ts",
+        "tests/unit/runtime-memory-store.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Memory context",
+        "entrypoint": "Load memory context for a later session",
+        "boundary": "Memory reuse is partial; routing learning is separate and default-off."
+      },
+      "knownExclusions": [
+        "No default active dynamic routing learning.",
+        "No guarantee every useful experience migrates across sessions."
+      ],
+      "relatedTaskIds": [
+        "P2-03"
+      ]
+    },
+    {
+      "id": "capability-36",
+      "reportItem": 36,
+      "title": "Every task automatically summarizes into memory",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Memory proposal/review",
+        "entrypoint": "Review memory proposals created from session sources",
+        "boundary": "Proposal-first does not mean automatic long-term write activation."
+      },
+      "knownExclusions": [
+        "No automatic memory commit for every task.",
+        "No guarantee every session ends with an approved long-term memory entry."
+      ],
+      "relatedTaskIds": [
+        "P2-03"
+      ]
+    },
+    {
+      "id": "capability-37",
+      "reportItem": 37,
+      "title": "Task edit transaction rollback",
+      "classification": "FP-OVERCLAIM",
+      "status": "not-guaranteed",
+      "evidenceLevels": [
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Chat plan/task editing",
+        "entrypoint": "No verified ordinary Chat task transaction editor",
+        "boundary": "Task editing transaction rollback is not a current Chat capability."
+      },
+      "knownExclusions": [
+        "No ordinary Chat task edit transaction model.",
+        "No rollback guarantee for plan editing."
+      ],
+      "relatedTaskIds": [
+        "P1-02",
+        "P2-02"
+      ]
+    },
+    {
+      "id": "capability-38",
+      "reportItem": 38,
+      "title": "Execution Graph and Trace fold, filter, and search",
+      "classification": "PARTIAL/FP-NOT-RUNNABLE",
+      "status": "not-runnable",
+      "evidenceLevels": [
+        "source",
+        "negative-runtime"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "src/pages/Chat/ExecutionGraphCard.tsx",
+        "reports/real-runtime-task-validation-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/real-runtime-task-validation-2026-07-04.md",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Execution Graph or Trace UI",
+        "entrypoint": "Open graph/trace controls for a run",
+        "boundary": "UI interactions do not prove real trace-backed completeness."
+      },
+      "knownExclusions": [
+        "No full real trace-backed search guarantee.",
+        "No claim that every graph node maps to runtime tool result today."
+      ],
+      "relatedTaskIds": [
+        "P0-06",
+        "P0-09"
+      ]
+    },
+    {
+      "id": "capability-39",
+      "reportItem": 39,
+      "title": "UI automatically switches simplified or advanced view by user capability",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "src/pages/Settings/index.tsx",
+        "src/pages/Chat/index.tsx",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Application UI",
+        "entrypoint": "Use available simple or advanced surfaces manually",
+        "boundary": "No verified automatic capability inference or mode switching."
+      },
+      "knownExclusions": [
+        "No automatic user skill inference.",
+        "No automatic basic/advanced switching policy proof."
+      ],
+      "relatedTaskIds": [
+        "P2-07"
+      ]
+    },
+    {
+      "id": "capability-40",
+      "reportItem": 40,
+      "title": "Observability and Memory sensitive content protection",
+      "classification": "TP-TEST",
+      "status": "test-verified",
+      "evidenceLevels": [
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/observability-namespace.test.ts",
+        "tests/unit/memory-api.test.ts",
+        "tests/unit/sensitive-content-boundary.test.ts",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/code-review-center.test.ts",
+        "tests/unit/compression-artifact.test.ts",
+        "tests/integration/p1-sensitive-content-boundary.integration.test.ts",
+        "shared/sensitive-content-boundary.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/observability-namespace.test.ts",
+        "tests/unit/memory-api.test.ts",
+        "tests/unit/sensitive-content-boundary.test.ts",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/code-review-center.test.ts",
+        "tests/unit/compression-artifact.test.ts",
+        "tests/integration/p1-sensitive-content-boundary.integration.test.ts",
+        "shared/sensitive-content-boundary.ts"
+      ],
+      "userPath": {
+        "surface": "Observability and Memory",
+        "entrypoint": "Record traces or propose memory entries",
+        "boundary": "Protection is local to these systems and does not cover the full chain."
+      },
+      "knownExclusions": [
+        "No full-chain secret-free guarantee.",
+        "No guarantee that raw files, raw Git diffs/copy-patch UI, raw transcripts with redaction disabled, provider payloads, or model echoes are redacted."
+      ],
+      "relatedTaskIds": [
+        "P1-10",
+        "P1-11",
+        "P1-12",
+        "P1-13",
+        "P1-14"
+      ]
+    },
+    {
+      "id": "capability-41",
+      "reportItem": 41,
+      "title": "Transcript, files, and model echoes are guaranteed plaintext-free",
+      "classification": "FP-OVERCLAIM",
+      "status": "not-guaranteed",
+      "evidenceLevels": [
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "shared/sensitive-content-boundary.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md",
+        "shared/sensitive-content-boundary.ts"
+      ],
+      "userPath": {
+        "surface": "Security and privacy boundary",
+        "entrypoint": "Use chat, files, transcripts, traces, memory, compaction, or model output",
+        "boundary": "Each storage/projection surface has a separate guarantee level."
+      },
+      "knownExclusions": [
+        "Raw file surfaces can contain sensitive content by design.",
+        "Raw transcript surfaces are governed by local redaction policy and config, not a global plaintext-free guarantee.",
+        "Compaction artifacts/projections have local fake-key redaction evidence, but provider-generated summaries and model echo surfaces are not globally guaranteed to redact every secret."
+      ],
+      "relatedTaskIds": [
+        "P1-10",
+        "P1-11",
+        "P1-12",
+        "P1-14"
+      ]
+    },
+    {
+      "id": "capability-42",
+      "reportItem": 42,
+      "title": "Low confidence automatically pauses and requests confirmation",
+      "classification": "PARTIAL/FP-OVERCLAIM",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/agents/task-loop-controller.ts",
+        "openclaw_runtime/src/runtime-core/memory-store.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Memory review or Task Loop review",
+        "entrypoint": "Use paths that emit review or evidence signals",
+        "boundary": "Local review signals are not a global ordinary Chat pause behavior."
+      },
+      "knownExclusions": [
+        "No global low-confidence pause threshold for ordinary Chat.",
+        "No guarantee that all uncertain outputs request confirmation."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-43",
+      "reportItem": 43,
+      "title": "Unified plan self-review and skeptic role",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "source",
+        "unit-test"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "openclaw_runtime/src/agents/role-registry.ts",
+        "openclaw_runtime/src/agents/task-loop-controller.ts",
+        "tests/unit/task-loop-controller.test.ts"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/task-loop-controller.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Task Loop or role orchestration",
+        "entrypoint": "Use explicit long-task or review-oriented role flows",
+        "boundary": "Roles exist, but ordinary Chat is not forced through them."
+      },
+      "knownExclusions": [
+        "No universal ordinary Chat self-review enforcement.",
+        "No guarantee that every plan includes a skeptic role."
+      ],
+      "relatedTaskIds": []
+    },
+    {
+      "id": "capability-44",
+      "reportItem": 44,
+      "title": "Failure automatically enters repair or blocked state",
+      "classification": "PARTIAL",
+      "status": "partial",
+      "evidenceLevels": [
+        "unit-test",
+        "documented-boundary"
+      ],
+      "lastVerifiedAt": "2026-07-04",
+      "evidenceRefs": [
+        "tests/unit/task-loop-controller.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "runtimeProofRefs": [
+        "tests/unit/task-loop-controller.test.ts",
+        "reports/report-authenticity-true-false-positive-matrix-2026-07-04.md"
+      ],
+      "userPath": {
+        "surface": "Task Loop",
+        "entrypoint": "Run an explicit Task Loop that can repair or block",
+        "boundary": "Do not apply Task Loop repair semantics to all ordinary Chat failures."
+      },
+      "knownExclusions": [
+        "No global automatic repair for every ordinary Chat failure.",
+        "No guarantee that team_orchestrate failures become UI-visible repair nodes."
+      ],
+      "relatedTaskIds": [
+        "P1-05",
+        "P1-09"
+      ]
+    }
+  ]
+}

@@ -124,7 +124,7 @@ describe("runtime memory local episode/fact store", () => {
   });
 
   it("keeps default retention bounded at 256 episodes, 512 facts, and 256 invalidations", () => {
-    const store = new RuntimeMemoryStore();
+    const store = new RuntimeMemoryStore({ evictionPolicy: "fifo" });
 
     for (let index = 0; index < 257; index += 1) {
       store.appendEpisode(buildEpisode({

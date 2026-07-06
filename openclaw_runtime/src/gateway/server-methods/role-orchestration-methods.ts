@@ -10,7 +10,7 @@
 import crypto from "node:crypto";
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
 import { compileRoleContractToSoul } from "../../agents/role-contract.js";
-import { listRoleContracts, resolveRoleContract } from "../../agents/role-registry.js";
+import { buildRoleRegistry, listRoleContracts, resolveRoleContract, roleOrigin } from "../../agents/role-registry.js";
 import { getTeamTemplateSnapshot, resolveTeamTemplate } from "../../agents/team-template.js";
 import { createOrchestratorPlan, type OrchestratorWorkerPlan } from "../../agents/orchestrator.js";
 import { runOrchestrationObserved, type OrchestrationLifecycleEvent } from "../../agents/orchestrator-run-observed.js";
@@ -21,6 +21,10 @@ import {
   normalizeWorkerCommunication,
   summarizeQuality,
 } from "../../agents/orchestration-protocol.js";
+import {
+  readRoutingMemoDashboard,
+  type OrchestrationQualityState,
+} from "../../agents/routing-memo.js";
 import { spawnSubagentDirect } from "../../agents/subagent-spawn.js";
 import { getTaskLoopRun, runTaskLoop, type TaskLoopLifecycleEvent } from "../../agents/task-loop-controller.js";
 import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from "../../config/agent-limits.js";
@@ -82,6 +86,23 @@ function readBoolean(value: unknown): boolean | undefined {
   return typeof value === "boolean" ? value : undefined;
 }
 
+function readQualityState(value: unknown): OrchestrationQualityState | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  const source = typeof record.source === "string" ? record.source : undefined;
+  const qualityOverall = record.qualityOverall === "good"
+    || record.qualityOverall === "needs_attention"
+    || record.qualityOverall === "poor_attempt"
+    ? record.qualityOverall
+    : undefined;
+  if (!source) return null;
+  return {
+    source,
+    qualityOverall: qualityOverall ?? null,
+    scorecardBacked: record.scorecardBacked === true,
+  };
+}
+
 function readMemoryFeedbackOutcome(value: unknown): MemoryFeedbackOutcome | undefined {
   return value === "helpful" || value === "neutral" || value === "harmful" || value === "missing_needed" || value === "user_corrected"
     ? value
@@ -120,6 +141,18 @@ function respondMissingTask(respond: RespondFn, method: string): void {
 }
 
 const ROLE_MEMORY_DISABLED_MESSAGE = "Role memory is disabled in Settings.";
+const ORCHESTRATOR_RUN_QUALITY_STATE_REASON =
+  "Ordinary orchestrator.run quality is not evaluated by a scorecard yet; Task Loop owns active repair quality semantics.";
+
+function resolveOrchestratorRunStatus(spawnedCount: number, failureCount: number): "accepted" | "partial" | "error" {
+  if (spawnedCount > 0 && failureCount === 0) {
+    return "accepted";
+  }
+  if (spawnedCount > 0) {
+    return "partial";
+  }
+  return "error";
+}
 
 function disabledMemoryHealthReport() {
   return {
@@ -224,7 +257,11 @@ function readExplicitWorkers(
 export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   "roles.list": async ({ respond, context }) => {
     const cfg = context.getRuntimeConfig();
-    const roles = listRoleContracts(rolesConfig(cfg));
+    const registry = buildRoleRegistry(rolesConfig(cfg));
+    const roles = registry.roles.map((role) => ({
+      ...role,
+      origin: roleOrigin(role.name, registry),
+    }));
     respond(true, { roles, count: roles.length }, undefined);
   },
 
@@ -239,12 +276,13 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       return;
     }
     const cfg = context.getRuntimeConfig();
-    const role = resolveRoleContract(name, rolesConfig(cfg));
+    const registry = buildRoleRegistry(rolesConfig(cfg));
+    const role = registry.byName.get(name);
     if (!role) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, `unknown role "${name}"`));
       return;
     }
-    respond(true, { role, soul: compileRoleContractToSoul(role) }, undefined);
+    respond(true, { role: { ...role, origin: roleOrigin(role.name, registry) }, soul: compileRoleContractToSoul(role) }, undefined);
   },
 
   "teams.list": async ({ respond, context }) => {
@@ -283,6 +321,8 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       repairPolicy: normalizeRepairPolicy(params.repairPolicy),
       workerCommunication: readWorkerCommunication(params.workerCommunication),
       allowFollowupPlanning: readBoolean(params.allowFollowupPlanning) ?? false,
+      workspaceDir: readString(params.workspaceDir),
+      qualityState: readQualityState(params.qualityState),
     });
     respond(true, {
       plan,
@@ -354,6 +394,8 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           allowFollowupPlanning: readBoolean(params.allowFollowupPlanning) ?? false,
           orchestrationRunId,
           patchRegistryMetadata: true,
+          workspaceDir: readString(params.workspaceDir),
+          qualityState: readQualityState(params.qualityState),
         },
         {
           agentSessionKey: sessionKey,
@@ -367,9 +409,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       context.logGateway.info(
         `[role-audit] orchestrator.run ${formatControlPlaneActor(actor)} lead=${leadRoleHint} mode=${result.plan.mode} workers=${result.spawnedRunIds.length} failures=${result.failures.length} sessionKey=${sessionKey}`,
       );
+      const status = resolveOrchestratorRunStatus(result.spawnedRunIds.length, result.failures.length);
       respond(
         true,
         {
+          status,
           orchestrationRunId,
           plan: result.plan,
           resultBundle: result.resultBundle,
@@ -391,11 +435,13 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           pendingVerifier: result.pendingVerifier,
           attempts: result.attempts,
           pendingGraphNodes: result.pendingGraphNodes,
-          repairNodes: result.repairNodes,
+          orchestrationDiagnostics: result.orchestrationDiagnostics,
           rerouteRecommendations: result.rerouteRecommendations,
           capabilityGaps: result.plan.capabilityGaps,
           estimatedRepairPolicy: result.plan.estimatedRepairPolicy,
           quality: [],
+          qualityState: null,
+          qualityStateReason: ORCHESTRATOR_RUN_QUALITY_STATE_REASON,
           qualitySummary: summarizeQuality([]),
           followupCandidates: [],
           memoryCandidates: [],
@@ -429,6 +475,18 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   },
 
   // ── Observability bridge ──
+  "routing_memo.summary": async ({ params, respond, context }) => {
+    respond(
+      true,
+      readRoutingMemoDashboard(
+        readString(params.workspaceDir),
+        context.getRuntimeConfig(),
+        { qualityState: readQualityState(params.qualityState) },
+      ),
+      undefined,
+    );
+  },
+
   "task_loop.run": async ({ params, respond, context, client }) => {
     const task = readString(params.task);
     if (!task) {

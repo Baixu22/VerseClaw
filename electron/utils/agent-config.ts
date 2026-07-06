@@ -1,5 +1,6 @@
 import { access, copyFile, mkdir, readFile, readdir, rm, writeFile } from 'fs/promises';
 import { constants } from 'fs';
+import { createHash } from 'crypto';
 import { join, normalize } from 'path';
 import { deleteAgentChannelAccounts, listConfiguredChannels, readOpenClawConfig, writeOpenClawConfig } from './channel-config';
 import type { OpenClawConfig } from './channel-config';
@@ -55,8 +56,10 @@ interface AgentListEntry extends Record<string, unknown> {
   workspace?: string;
   agentDir?: string;
   model?: string | AgentModelConfig;
+  // Legacy Verse Claw-only key. Runtime config schema uses thinkingDefault.
   reasoningEffort?: AgentReasoningEffort;
   thinkingDefault?: AgentReasoningEffort;
+  skills?: string[];
 }
 
 interface AgentsConfig extends Record<string, unknown> {
@@ -589,7 +592,7 @@ async function buildSnapshotFromConfig(config: AgentConfigDocument, preloadedCha
       modelRef: explicitModelRef || defaultModelRef || null,
       overrideModelRef: explicitModelRef,
       inheritedModel,
-      reasoningEffort: normalizeReasoningEffort(entry.reasoningEffort ?? entry.thinkingDefault),
+      reasoningEffort: normalizeReasoningEffort(entry.thinkingDefault ?? entry.reasoningEffort),
       workspace: entry.workspace || (entry.id === MAIN_AGENT_ID ? getDefaultWorkspacePath(config) : `~/.openclaw/workspace-${entry.id}`),
       agentDir: entry.agentDir || getDefaultAgentDirPath(entry.id),
       mainSessionKey: buildAgentMainSessionKey(config, entry.id),
@@ -803,12 +806,81 @@ function parseRoleProfileFromMarkdown(soulMd: string, displayName: string): Agen
   return profile;
 }
 
+// ── Role profile sidecar (Area 1: lossless persona round-trip) ────────────
+//
+// SOUL.md stays free-form and hand-editable (the model-facing artifact). The
+// structured `AgentRoleProfile` is mirrored to `role-profile.json` next to it,
+// keyed by a `soulHash` of the SOUL.md it compiled from. On read, if the hash
+// matches, the sidecar is authoritative (lossless); if the user hand-edited
+// SOUL.md, the hash mismatches and the system falls back to heuristic parse —
+// user edits always win.
+
+const ROLE_PROFILE_SIDECAR_FILENAME = 'role-profile.json';
+
+type RoleProfileSidecar = {
+  version: 1;
+  profile: AgentRoleProfile;
+  /** sha256 of the SOUL.md this profile compiled to. */
+  soulHash: string;
+  /** ISO timestamp of the compilation. */
+  compiledAt: string;
+};
+
+function computeSoulHash(soulMd: string): string {
+  return createHash('sha256').update(soulMd, 'utf8').digest('hex');
+}
+
+async function readRoleProfileSidecar(
+  workspacePath: string,
+): Promise<RoleProfileSidecar | undefined> {
+  const sidecarPath = join(workspacePath, ROLE_PROFILE_SIDECAR_FILENAME);
+  try {
+    const raw = await readFile(sidecarPath, 'utf8');
+    const parsed = JSON.parse(raw) as Partial<RoleProfileSidecar>;
+    if (parsed.version !== 1 || !parsed.profile || typeof parsed.profile !== 'object') {
+      return undefined;
+    }
+    if (typeof parsed.soulHash !== 'string' || typeof parsed.compiledAt !== 'string') {
+      return undefined;
+    }
+    return parsed as RoleProfileSidecar;
+  } catch {
+    return undefined;
+  }
+}
+
+async function writeRoleProfileSidecar(
+  workspacePath: string,
+  profile: AgentRoleProfile,
+  soulMd: string,
+): Promise<void> {
+  const sidecarPath = join(workspacePath, ROLE_PROFILE_SIDECAR_FILENAME);
+  const sidecar: RoleProfileSidecar = {
+    version: 1,
+    profile,
+    soulHash: computeSoulHash(soulMd),
+    compiledAt: new Date().toISOString(),
+  };
+  await writeFile(sidecarPath, JSON.stringify(sidecar, null, 2), 'utf8');
+}
+
 export async function readAgentRoleProfile(agentId: string): Promise<AgentRoleProfile> {
   const entry = await findAgentEntry(agentId);
   const displayName = entry.name || agentId;
   const { soulMd } = await readAgentSoul(agentId);
   if (!soulMd.trim()) {
     return { ...DEFAULT_ROLE_PROFILE, displayName };
+  }
+  // Prefer the structured sidecar when its soulHash matches the current SOUL.md;
+  // a mismatch means the user hand-edited SOUL.md directly, and their edit wins.
+  try {
+    const workspacePath = await resolveAgentWorkspacePath(agentId);
+    const sidecar = await readRoleProfileSidecar(workspacePath);
+    if (sidecar && sidecar.soulHash === computeSoulHash(soulMd)) {
+      return sidecar.profile;
+    }
+  } catch {
+    // Sidecar read failure → silent fallback to heuristic parse (today's behavior).
   }
   return parseRoleProfileFromMarkdown(soulMd, displayName);
 }
@@ -818,7 +890,18 @@ export async function writeAgentRoleProfile(
   profile: AgentRoleProfile,
 ): Promise<{ soulMd: string; path: string }> {
   const markdown = compileRoleProfileToMarkdown(profile);
-  return writeAgentSoul(agentId, markdown);
+  const result = await writeAgentSoul(agentId, markdown);
+  // Best-effort structured sidecar for lossless round-trip. Write failure is
+  // non-fatal — SOUL.md is already written and is the only artifact the runtime reads.
+  try {
+    const workspacePath = await resolveAgentWorkspacePath(agentId);
+    await writeRoleProfileSidecar(workspacePath, profile, result.soulMd);
+  } catch (error) {
+    logger.warn(
+      `Failed to write role-profile sidecar for agent ${agentId}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+  return result;
 }
 
 export async function readAgentBootstrapTools(agentId: string): Promise<AgentBootstrapToolsConfig> {
@@ -848,7 +931,34 @@ export async function writeAgentBootstrapTools(
     ...agents,
     [agentId]: next,
   });
+  await syncAgentDefaultSkillsToOpenClawConfig(agentId, next.defaultSkillIds);
   return next;
+}
+
+async function syncAgentDefaultSkillsToOpenClawConfig(
+  agentId: string,
+  defaultSkillIds: string[],
+): Promise<void> {
+  await withConfigLock(async () => {
+    const config = await readOpenClawConfig() as AgentConfigDocument;
+    const { agentsConfig, entries, syntheticMain } = normalizeAgentsConfig(config);
+    const nextEntries = syntheticMain
+      ? entries.map((entry) => ({ ...entry }))
+      : [...entries];
+    const index = nextEntries.findIndex((entry) => entry.id === agentId);
+    if (index === -1) {
+      throw new Error(`Agent "${agentId}" not found`);
+    }
+    nextEntries[index] = {
+      ...nextEntries[index],
+      skills: normalizeIdList(defaultSkillIds),
+    };
+    config.agents = {
+      ...agentsConfig,
+      list: nextEntries,
+    };
+    await writeOpenClawConfig(config);
+  });
 }
 
 /**
@@ -999,7 +1109,7 @@ export async function updateAgentReasoningEffort(agentId: string, reasoningEffor
       delete nextEntry.reasoningEffort;
       delete nextEntry.thinkingDefault;
     } else {
-      nextEntry.reasoningEffort = normalizedEffort;
+      delete nextEntry.reasoningEffort;
       nextEntry.thinkingDefault = normalizedEffort;
     }
 

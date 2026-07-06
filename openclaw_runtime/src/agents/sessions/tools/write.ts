@@ -378,6 +378,9 @@ export function createWriteToolDefinition(
       "Write content to a file. Creates the file if it doesn't exist, overwrites if it does. Automatically creates parent directories.",
     promptSnippet: "Create or overwrite files",
     promptGuidelines: ["Use write only for new files or complete rewrites."],
+    // A1 Stage 2 (acceptance 2.1): write tool writes to LLM-provided paths.
+    risk: "write",
+    writeRiskProfile: { kind: "dynamic_writes", requiresApproval: true },
     parameters: writeSchema,
     async execute(
       toolCallId,

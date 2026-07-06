@@ -13,6 +13,63 @@
         "marketplaceLocalOnly": "Local only — marketplace coming soon",
         "marketplaceLocalOnlyAria": "Marketplace (Local only — marketplace coming soon)"
     },
+    "packs": {
+        "tab": "Feature Plugins",
+        "skillCounts": "{{enabled}} enabled / {{installed}} installed / {{total}} total",
+        "status": {
+            "notInstalled": "Not installed",
+            "installing": "Installing",
+            "installed": "Installed",
+            "enabled": "Enabled",
+            "syncNeeded": "Sync needed",
+            "error": "Error"
+        },
+        "actions": {
+            "install": "Install",
+            "downloadInstall": "Download & Install",
+            "sync": "Sync",
+            "enable": "Enable",
+            "disable": "Disable",
+            "previewSkill": "Preview {{skill}}",
+            "uninstall": "Uninstall"
+        },
+        "skill": {
+            "enabled": "Enabled",
+            "notInstalled": "Not installed"
+        },
+        "office": {
+            "detecting": "Checking",
+            "installed": "Installed",
+            "notRunnable": "Installed but not runnable",
+            "notInstalled": "Not installed",
+            "installHint": "Install OfficeCLI to enable Office skill sync and Office document previews.",
+            "installSuccess": "OfficeCLI installed and skills synced",
+            "installFailed": "OfficeCLI install failed: {{error}}",
+            "syncSuccess": "Synced {{synced}} Office skills",
+            "syncFailed": "Office skill sync failed: {{error}}",
+            "syncPartial": "Synced {{synced}} Office skills; {{errors}} failed",
+            "uninstallSuccess": "OfficeCLI uninstalled",
+            "uninstallFailed": "OfficeCLI uninstall failed: {{error}}",
+            "agentMatrix": {
+                "title": "Agent assignments",
+                "skill": "Skill",
+                "emptyAgents": "No agents available",
+                "notSynced": "Sync first",
+                "cellLabel": "{{skill}} for {{agent}}",
+                "enableSuccess": "Office skill enabled for agent",
+                "disableSuccess": "Office skill disabled for agent",
+                "applyFailed": "Office skill assignment failed: {{error}}",
+                "applyPartial": "{{failed}} Office skill assignment failed"
+            }
+        },
+        "toast": {
+            "installed": "Feature plugin installed",
+            "synced": "Feature plugin synced",
+            "enabled": "Feature plugin enabled",
+            "disabled": "Feature plugin disabled",
+            "failed": "Feature plugin action failed: {{error}}"
+        }
+    },
     "filter": {
         "all": "All ({{count}})",
         "builtIn": "Built-in ({{count}})",

@@ -35,6 +35,7 @@ const PROVIDER_AUTH_PREWARM_START_DELAY_MS = 5_000;
 const PROVIDER_AUTH_REWARM_DELAY_MS = 1_000;
 const AGENT_RUNTIME_PLUGIN_PREWARM_START_DELAY_MS = 10_000;
 const DEFERRED_SIDECAR_START_DELAY_MS = 10_000;
+const DEFERRED_SIDECAR_START_DELAY_ENV = "OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS";
 const SESSION_LOCK_CLEANUP_CONCURRENCY = 4;
 const SKIP_STARTUP_MODEL_PREWARM_ENV = "OPENCLAW_SKIP_STARTUP_MODEL_PREWARM";
 const QMD_STARTUP_IDLE_DELAY_MS = 120_000;
@@ -149,6 +150,28 @@ function shouldCheckRestartSentinel(env: NodeJS.ProcessEnv = process.env): boole
 function shouldSkipStartupModelPrewarm(env: NodeJS.ProcessEnv = process.env): boolean {
   const raw = env[SKIP_STARTUP_MODEL_PREWARM_ENV]?.trim().toLowerCase();
   return raw === "1" || raw === "true" || raw === "yes" || raw === "on";
+}
+
+function resolveDeferredSidecarStartDelayMs(env: NodeJS.ProcessEnv = process.env): number {
+  const raw = env[DEFERRED_SIDECAR_START_DELAY_ENV]?.trim();
+  if (!raw) {
+    return DEFERRED_SIDECAR_START_DELAY_MS;
+  }
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return DEFERRED_SIDECAR_START_DELAY_MS;
+  }
+  return Math.floor(parsed);
+}
+
+function startGatewayUpdateCheckAfterDeferredDelay(
+  updateCheck: { start: () => void },
+  env: NodeJS.ProcessEnv = process.env,
+): void {
+  const timer = setTimeout(() => {
+    updateCheck.start();
+  }, resolveDeferredSidecarStartDelayMs(env));
+  timer.unref?.();
 }
 
 function resolveGatewayMemoryStartupPolicy(cfg: OpenClawConfig): GatewayMemoryStartupPolicy {
@@ -604,7 +627,7 @@ async function waitForAcpRuntimeBackendReady(params: {
   timeoutMs?: number;
   pollMs?: number;
 }): Promise<boolean> {
-  const { getAcpRuntimeBackend } = await import("../acp/runtime/registry.js");
+  const { getAcpRuntimeBackend } = await import("../runtime/registry.ts");
   const timeoutMs = params.timeoutMs ?? ACP_BACKEND_READY_TIMEOUT_MS;
   const pollMs = params.pollMs ?? ACP_BACKEND_READY_POLL_MS;
   const deadline = Date.now() + timeoutMs;
@@ -1272,7 +1295,7 @@ export async function startGatewayPostAttachRuntime(
       if (params.deferSidecars === true) {
         // Give startup logging and bind observers a deterministic head start
         // when tests or callers request deferred sidecar startup.
-        const timer = setTimeout(resolve, DEFERRED_SIDECAR_START_DELAY_MS);
+        const timer = setTimeout(resolve, resolveDeferredSidecarStartDelayMs());
         timer.unref?.();
         return;
       }
@@ -1427,7 +1450,7 @@ export async function startGatewayPostAttachRuntime(
   }
 
   const [, tailscaleCleanup] = await Promise.all([startupLogPromise, tailscaleCleanupPromise]);
-  updateCheck.start();
+  startGatewayUpdateCheckAfterDeferredDelay(updateCheck);
 
   return {
     stopGatewayUpdateCheck: updateCheck.stop,
@@ -1447,6 +1470,8 @@ export const testing = {
   scheduleProviderAuthStatePrewarm,
   schedulePrimaryModelPrewarm,
   shouldSkipStartupModelPrewarm,
+  resolveDeferredSidecarStartDelayMs,
+  startGatewayUpdateCheckAfterDeferredDelay,
   stopPostReadySidecarsAfterCloseStarted,
 };
 export { testing as __testing };

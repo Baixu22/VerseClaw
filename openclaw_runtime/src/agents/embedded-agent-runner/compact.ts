@@ -4,6 +4,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import { isAcpRuntimeSpawnAvailable } from "../../acp/runtime/availability.js";
+import { finalizeCompressionTelemetry } from "../../../packages/agent-core/src/harness/compaction/compression-planner.js";
 import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import { resolveAgentModelFallbackValues } from "../../config/model-input.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
@@ -1428,6 +1429,24 @@ async function compactEmbeddedAgentSessionDirectOnce(
             fullSessionTokensBefore,
             estimateTokensFn: estimateTokens,
           });
+          const compactionDetails =
+            result.details && typeof result.details === "object" && !Array.isArray(result.details)
+              ? {
+                  ...(result.details as Record<string, unknown>),
+                  ...(
+                    (result.details as { compression?: unknown }).compression &&
+                    typeof (result.details as { compression?: unknown }).compression === "object"
+                      ? {
+                          compression: finalizeCompressionTelemetry(
+                            (result.details as { compression: Parameters<typeof finalizeCompressionTelemetry>[0] })
+                              .compression,
+                            tokensAfter,
+                          ),
+                        }
+                      : {}
+                  ),
+                }
+              : result.details;
           const messageCountAfter = session.messages.length;
           const compactedCount = Math.max(0, messageCountCompactionInput - messageCountAfter);
           let transcriptRotation: CompactionTranscriptRotation = { rotated: false };
@@ -1473,6 +1492,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
                 firstKeptEntryId: effectiveFirstKeptEntryId,
                 tokensBefore: observedTokenCount ?? result.tokensBefore,
                 tokensAfter,
+                details: compactionDetails,
                 postSessionFile: activeSessionFile,
                 postLeafId: activePostLeafId,
                 postEntryId: activePostLeafId,
@@ -1527,7 +1547,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
               firstKeptEntryId: effectiveFirstKeptEntryId,
               tokensBefore: observedTokenCount ?? result.tokensBefore,
               tokensAfter,
-              details: result.details,
+              details: compactionDetails,
               sessionId: transcriptRotation.sessionId,
               sessionFile: transcriptRotation.sessionFile,
             },

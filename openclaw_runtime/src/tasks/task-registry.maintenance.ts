@@ -9,7 +9,7 @@ import {
   listAcpSessionEntries,
   readAcpSessionEntry,
   type AcpSessionStoreEntry,
-} from "../acp/runtime/session-meta.js";
+} from "../runtime/session-meta.ts";
 import {
   formatSubagentRecoveryWedgedReason,
   isSubagentRecoveryWedgedEntry,

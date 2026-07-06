@@ -1,0 +1,2720 @@
+{
+  "runId": "2026-07-01T07-19-49-740Z",
+  "target": "C:\\Users\\27933\\Desktop\\verseshell\\graphiti-main",
+  "generatedAt": "2026-07-01T07:22:44.036Z",
+  "suite": "full",
+  "sampleSource": "real",
+  "requestedSampleCount": 30,
+  "sampleCount": 30,
+  "semanticMatching": false,
+  "cache": {
+    "enabled": true,
+    "dir": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.cache\\context-compression-eval",
+    "version": "context-compression-eval-cache-v3",
+    "hits": 237,
+    "misses": 36,
+    "writes": 36,
+    "byNamespace": {
+      "real-samples": {
+        "hits": 0,
+        "misses": 1,
+        "writes": 1
+      },
+      "transcript-parse": {
+        "hits": 209,
+        "misses": 3,
+        "writes": 3
+      },
+      "llm-judge": {
+        "hits": 14,
+        "misses": 16,
+        "writes": 16
+      },
+      "llm-continuation": {
+        "hits": 14,
+        "misses": 16,
+        "writes": 16
+      }
+    },
+    "secretScan": {
+      "pass": true,
+      "scannedFiles": 810,
+      "leaks": []
+    }
+  },
+  "manifest": {
+    "input": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\output\\context-compression-eval\\holdout-adversarial-real-30.manifest.jsonl",
+    "hash": "67e051c1d594894234a116e6083c484a56d885af21666c493f3f63bf89a29c1e",
+    "requested": 30,
+    "resolved": 30,
+    "missing": []
+  },
+  "reproducibility": {
+    "seed": "context-compression-eval-v1",
+    "sampleSelectionHash": "67e051c1d594894234a116e6083c484a56d885af21666c493f3f63bf89a29c1e",
+    "promptVersions": {
+      "judge": "judge-prompt-v4",
+      "continuation": "continuation-prompt-v4"
+    },
+    "extractorVersion": "real-fact-extractor-v5",
+    "parserVersion": "transcript-parser-v3",
+    "redactionVersion": "redaction-v4"
+  },
+  "realInventory": {
+    "transcriptRoot": "C:\\\\Users\\\\27933\\\\.codex\\\\archived_sessions",
+    "filesFound": 212,
+    "transcriptsParsed": 212,
+    "entriesParsed": 54981
+  },
+  "sampleMix": {
+    "realRequested": 30,
+    "syntheticRequested": 0,
+    "realActual": 30,
+    "syntheticActual": 0,
+    "realShortfall": 0,
+    "evidenceInsufficient": false
+  },
+  "llmJudge": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 30,
+    "liveCount": 16,
+    "cacheHitCount": 14,
+    "results": [
+      {
+        "sampleId": "R15",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved: the decision to focus on ChatInput/locale/test files, the handoff summary progress, the shell quoting failure chain with next actions, the blocker about taskType and i18n parity, the decision to use single quotes, and the file/test references.",
+          "Accuracy is maintained; no contradictions with evidence lines.",
+          "Causal chain is intact: failures lead to next actions, decisions follow from analysis.",
+          "No fabricated facts; all claims are backed by evidence or are structural notes.",
+          "Actionability is clear: next actions are specified (rerun with corrected quoting, etc.)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved: the decision to focus on ChatInput/locale/test files, the handoff summary progress, the shell quoting failure chain with next actions, the blocker about taskType and i18n parity, the decision to use single quotes, and the file/test references.\",\n    \"Accuracy is maintained; no contradictions with evide"
+      },
+      {
+        "sampleId": "R60",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "Completeness: All expected facts are preserved, including the Lane D goal, the nested verifier report decision, the use of collector helpers, the failure chains, the test results, and the touched files.",
+          "Accuracy: The summary accurately reflects the transcript evidence, including the specific implementation details and validation outcomes.",
+          "Causal chain: The summary correctly traces the progression from the Lane D prompt through implementation, test failures, fixes, and final validation passes.",
+          "No fabrication: All claims are directly supported by the provided evidence lines; no unsupported facts are introduced.",
+          "Actionability: The next actions are clearly stated and consistent with the evidence, enabling continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"Completeness: All expected facts are preserved, including the Lane D goal, the nested verifier report decision, the use of collector helpers, the failure chains, the test results, and the touched files.\",\n    \"Accuracy: The summary accurately reflects the transcript evidence, including the specific implementation details and validation"
+      },
+      {
+        "sampleId": "R13",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "Completeness: All critical expected facts are preserved, including the decision to use existing i18n namespaces, the constraint to not introduce new mechanisms, the failure chains (build errors, test failures, JSX syntax issues), and the final outcome of converting hardcoded Chinese to i18n keys with four locale files.",
+          "Accuracy: The summary accurately reflects the transcript evidence. The failure chains, tool failures, and test results are correctly attributed. The 'no concrete X was promoted' line is treated as structure, not a fabricated fact.",
+          "Causal chain: The causal chain is preserved: initial problem -> scan for hardcoded Chinese -> convert to i18n keys -> fix JSX syntax -> update tests -> verify with typecheck and locale parity tests. The failures and their resolutions are logically connected.",
+          "No fabrication: All statements are backed by evidence from the transcript. The synthetic canary facts (S<number>_*) are not present, so no fabrication occurs. The summary does not invent any project facts.",
+          "Actionability: The next action is clearly stated: 'Prepare the final report or run the broader gate after this validation result.' This is actionable and derived from the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 9,\n  \"justifications\": [\n    \"Completeness: All critical expected facts are preserved, including the decision to use existing i18n namespaces, the constraint to not introduce new mechanisms, the failure chains (build errors, test failures, JSX syntax issues), and the final outcome of converting hardcoded Chinese to i18n keys with four locale files.\",\n    \"Accuracy: ",
+        "cached": true
+      },
+      {
+        "sampleId": "R19",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All critical expected facts are preserved: the plan objective, new harness task spec, harness context usage, and failure chains are included.",
+          "Accuracy is high: evidence-backed facts match the transcript, and no unsupported claims are promoted.",
+          "Causal chain is intact: the sequence from spec creation, harness context, implementation, test failures, and final validation is clearly traceable.",
+          "No fabrication: all statements are directly supported by transcript evidence lines or the evidence-backed ledger.",
+          "Actionability is strong: the summary includes next actions, failure follow-ups, and the current state, enabling a successor to continue work."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 9.5,\n  \"justifications\": [\n    \"All critical expected facts are preserved: the plan objective, new harness task spec, harness context usage, and failure chains are included.\",\n    \"Accuracy is high: evidence-backed facts match the transcript, and no unsupported claims are promoted.\",\n    \"Causal chain is intact: the sequence from spec creation, harness context, impl",
+        "cached": true
+      },
+      {
+        "sampleId": "R100",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "Completeness: All critical expected facts are preserved, including the decision to run final Vitest and scans, the constraint to keep edits narrow, the blocker about pre-existing TypeScript error in Lane C code, the failure chains with exit code 1, and the next action to write submission.",
+          "Accuracy: The summary accurately reflects the transcript evidence, including the Vitest pass (2 files, 17 tests), the TypeScript error in grounding.ts, the dirty worktree, and the scan results showing only expected hits.",
+          "Causal chain: The causal chain is preserved: Lane A accepted -> proceed with Lane E test-only -> add retention-boundary test -> Vitest passes -> TypeScript fails in pre-existing code -> scans show expected hits -> write submission.",
+          "No fabrication: No fabricated facts are present. All claims are directly supported by the evidence lines, including the specific error messages and scan outputs.",
+          "Actionability: The next action is clearly stated: 'The refreshed scans have only expected hits... I’ll run the authority scan current-state too, then write the submission.' This is actionable and consistent with the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 9,\n  \"justifications\": [\n    \"Completeness: All critical expected facts are preserved, including the decision to run final Vitest and scans, the constraint to keep edits narrow, the blocker about pre-existing TypeScript error in Lane C code, the failure chains with exit code 1, and the next action to write submission.\",\n    \"Accuracy: The summary accurately reflects"
+      },
+      {
+        "sampleId": "R108",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved: the implementation is verified and accepted, the synthesis ends with Status: accepted, the constraint to avoid concurrent Vitest cache races is noted, the failure chains are correctly captured as exit code 1 with the explanation that some scans exit 1 for no matches, and the next action to inspect the failure is included.",
+          "Accuracy is maintained: the summary correctly reflects that the task is complete and verified, the failure chains are accurately described, and the evidence refs match the transcript.",
+          "The causal chain is preserved: the transcript shows the progression from initial plan, through implementation, testing, boundary scans, and final acceptance, and the summary captures this flow.",
+          "No fabrication: all statements are directly supported by the transcript evidence, including the exit code 1 failures and the final acceptance.",
+          "Actionability is high: the next action to inspect the product/code failure around exit code 1 is clearly stated, and the summary provides sufficient context for continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved: the implementation is verified and accepted, the synthesis ends with Status: accepted, the constraint to avoid concurrent Vitest cache races is noted, the failure chains are correctly captured as exit code 1 with the explanation that some scans exit 1 for no matches, and the next action to inspect the "
+      },
+      {
+        "sampleId": "R123",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "Completeness: All expected critical facts are preserved: the goal, the key decision/constraint about no new provider registration/ordering/prompt assembly, the predecessor spec checks being green, the TypeScript failure chain with exact errors and attempts, and the tool/test failure summaries. The summary also includes the latest outcome and next actions.",
+          "Accuracy: The summary accurately reflects the transcript evidence. The failure chain details match the transcript lines, and the constraint about forbidden boundary crossings is correctly quoted. No factual errors detected.",
+          "Causal chain: The causal chain is preserved: the agent reads the pasted text, encounters rtk not found, reads specs, creates spec, validates, encounters TypeScript errors, attempts pnpm install, retries TypeScript, fails again, and proceeds to write synthesis. The sequence is clear and logical.",
+          "No fabrication: All statements are directly supported by the evidence lines. The summary does not introduce any unsupported facts or hallucinated details. The synthetic canary facts (S<number>_*) are not present in the transcript, so no fabrication issue.",
+          "Actionability: The summary clearly identifies the next action: 'Prepare the final report or run the broader gate after this validation result'. The blocker (TypeScript failure) is documented, and the synthesis is written. The summary enables a subsequent agent to understand the current state and proceed."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 9.5,\n  \"justifications\": [\n    \"Completeness: All expected critical facts are preserved: the goal, the key decision/constraint about no new provider registration/ordering/prompt assembly, the predecessor spec checks being green, the TypeScript failure chain with exact errors and attempts, and the tool/test failure summaries. The summary also includes the latest outc",
+        "cached": true
+      },
+      {
+        "sampleId": "R128",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected critical facts are preserved: the renderer scan found only existing code, the boundary constraints are recorded, the test failure and fix chain is fully captured, the spec validation results are present, and the next action to inspect the failing test is actionable.",
+          "Accuracy is high: every claim in the summary is directly supported by the transcript evidence lines, including the specific failure messages, fix description, and validation outcomes.",
+          "Causal chain is intact: the test failure led to a metadata sanitization fix, which resolved the test, and subsequent validations passed. The chain of failures and adjustments is clearly documented.",
+          "No fabrication: all statements are traceable to the provided evidence lines; no unsupported facts are introduced.",
+          "Actionability is strong: the next action to inspect/fix the failing test is clearly stated and directly follows from the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected critical facts are preserved: the renderer scan found only existing code, the boundary constraints are recorded, the test failure and fix chain is fully captured, the spec validation results are present, and the next action to inspect the failing test is actionable.\",\n    \"Accuracy is high: every claim in the summary is di",
+        "cached": true
+      },
+      {
+        "sampleId": "R132",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All critical expected facts are preserved: the objective (Phase 22 narrow build proof), key files (RTK.md, memory-read-hydration-shadow.ts), constraints (structural validates passed, shell quoting failures noted), and test results (core proof green, focused tests passed).",
+          "Accuracy is maintained; the summary correctly reflects the transcript's focus on Phase 22 build proof, the explicit flag approach, and the blocked full build due to unrelated EOF error.",
+          "Causal chain is intact: the assistant reads context, adds build flag and test, creates spec/handoff, runs validations, encounters shell quoting issues, and plans further scans.",
+          "No fabricated facts; all statements are directly supported by evidence lines or the compressed summary.",
+          "Actionability is high: the next actions (run structural validates, focused tests, boundary scans) are clearly stated and feasible."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All critical expected facts are preserved: the objective (Phase 22 narrow build proof), key files (RTK.md, memory-read-hydration-shadow.ts), constraints (structural validates passed, shell quoting failures noted), and test results (core proof green, focused tests passed).\",\n    \"Accuracy is maintained; the summary correctly reflects th"
+      },
+      {
+        "sampleId": "R138",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All critical expected facts are preserved: the Phase 26 objective, constraints (no product path integration, no implicit SQLite), failure chains, test results, and file contexts are accurately captured.",
+          "Accuracy is maintained; every stated fact is directly supported by the evidence lines, with no contradictions or misrepresentations.",
+          "The causal chain from Phase 26 objective through constraint confirmation, Phase 25 validation, test execution, failure handling, to final acceptance and next-phase prompt is fully preserved.",
+          "No fabricated facts are present; all information is traceable to the provided transcript evidence.",
+          "The summary includes the next action (Phase 27 prompt) and all necessary context for continuation, ensuring actionability."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All critical expected facts are preserved: the Phase 26 objective, constraints (no product path integration, no implicit SQLite), failure chains, test results, and file contexts are accurately captured.\",\n    \"Accuracy is maintained; every stated fact is directly supported by the evidence lines, with no contradictions or misrepresentat"
+      },
+      {
+        "sampleId": "R40",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected critical decisions and constraints are preserved, including the decision to write lane-d-evidence-verifier.md and the constraint on first-round research only.",
+          "All failure chains are accurately captured with correct evidence references and next actions.",
+          "The causal chain from tool failures to the decision to switch to rtk rg -n -C is preserved.",
+          "No fabricated facts; all statements are backed by evidence lines or are structural notes.",
+          "The next action to rerun with corrected shell quoting is actionable and derived from the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected critical decisions and constraints are preserved, including the decision to write lane-d-evidence-verifier.md and the constraint on first-round research only.\",\n    \"All failure chains are accurately captured with correct evidence references and next actions.\",\n    \"The causal chain from tool failures to the decision to sw"
+      },
+      {
+        "sampleId": "R16",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All critical expected facts are preserved: the plan to implement Project Rules Center MVP in Settings → System & Runtime, the new projectRules typed host-api and Main service, and the harness task spec.",
+          "Accuracy is high: the summary correctly reflects that harness validate/dry-run failures are due to pre-existing dirty files, not the task's own code.",
+          "Causal chain is intact: the summary shows the progression from reading AGENTS.md and design overview, to creating the task spec, implementing the host-api, UI, i18n, tests, and documentation updates.",
+          "No fabricated facts: all statements are directly supported by evidence lines, including the specific file paths and test results.",
+          "Actionability is clear: the next action to prepare the final report or run the broader gate is directly derived from the validated outcome."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 9.5,\n  \"justifications\": [\n    \"All critical expected facts are preserved: the plan to implement Project Rules Center MVP in Settings → System & Runtime, the new projectRules typed host-api and Main service, and the harness task spec.\",\n    \"Accuracy is high: the summary correctly reflects that harness validate/dry-run failures are due to pre-existing dirty files, n",
+        "cached": true
+      },
+      {
+        "sampleId": "R3",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All critical expected facts are preserved: the objective, key decisions, blockers, file contexts, and test results are present.",
+          "Accuracy is maintained; the summary correctly reflects the transcript evidence without contradiction.",
+          "The causal chain from failure to resolution is intact: module-not-found -> tsx CLI fork -> compiled runtime -> legacy migration hang -> skip env var -> successful validation.",
+          "No fabricated facts; all statements are traceable to evidence lines or expected facts.",
+          "Actionability is high: the next actions (rebuild, run typecheck, final dev validation) are clearly stated and feasible."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All critical expected facts are preserved: the objective, key decisions, blockers, file contexts, and test results are present.\",\n    \"Accuracy is maintained; the summary correctly reflects the transcript evidence without contradiction.\",\n    \"The causal chain from failure to resolution is intact: module-not-found -> tsx CLI fork -> co"
+      },
+      {
+        "sampleId": "R51",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "Completeness: All critical expected facts are preserved, including the objective to prepare for Phase 3, the key decision file lane-c-tool-protocol-shadow.md, the failure chain resolving clawx-codegraph blocker, the E2E test pass, and the final validated state of Phase 2 readiness.",
+          "Accuracy: Every claim in the summary is directly supported by evidence lines from the original transcript, such as the full MCP test passing (12 tests), the E2E test passing (1 test), and the lane statuses all accepted.",
+          "Causal chain: The summary correctly traces the failure chain from the clawx-codegraph discrepancy to the resolution by re-running tests, then to the E2E build issue, and finally to the successful validation and index update.",
+          "No fabrication: No unsupported facts are introduced; all statements are grounded in the provided evidence lines, including the specific file paths and test results.",
+          "Actionability: The summary clearly states that Phase 2 is ready for Phase 3, with the next action being to proceed to Phase 3, which is directly actionable from the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 9.5,\n  \"justifications\": [\n    \"Completeness: All critical expected facts are preserved, including the objective to prepare for Phase 3, the key decision file lane-c-tool-protocol-shadow.md, the failure chain resolving clawx-codegraph blocker, the E2E test pass, and the final validated state of Phase 2 readiness.\",\n    \"Accuracy: Every claim in the summary is direct"
+      },
+      {
+        "sampleId": "R52",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved: lane ID, title, output file, implementation paths, test paths, commands run, and final status.",
+          "Accuracy is maintained: evidence-backed facts match the transcript (e.g., test results, boundary scans, file modifications).",
+          "Causal chain is intact: the summary follows the logical flow from reading docs, implementing, testing, fixing failures, to final validation.",
+          "No fabrication: every claim is supported by transcript evidence; no unsupported facts are introduced.",
+          "Actionability is high: the summary clearly states the completed lane, output file, and next recommended slice for Lane B."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved: lane ID, title, output file, implementation paths, test paths, commands run, and final status.\",\n    \"Accuracy is maintained: evidence-backed facts match the transcript (e.g., test results, boundary scans, file modifications).\",\n    \"Causal chain is intact: the summary follows the logical flow from rea",
+        "cached": true
+      },
+      {
+        "sampleId": "R55",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "Completeness: All expected facts (lane objective, key files, test results, failure chains, and final outcome) are preserved.",
+          "Accuracy: Evidence-backed facts match the original transcript; no contradictions found.",
+          "Causal chain: The progression from reading docs, implementing, testing, to writing submission is clearly traceable.",
+          "No fabrication: All claims are directly supported by evidence lines; no unsupported facts are introduced.",
+          "Actionability: The summary clearly states the completed lane, modified files, and next actions for synthesis."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 9.5,\n  \"justifications\": [\n    \"Completeness: All expected facts (lane objective, key files, test results, failure chains, and final outcome) are preserved.\",\n    \"Accuracy: Evidence-backed facts match the original transcript; no contradictions found.\",\n    \"Causal chain: The progression from reading docs, implementing, testing, to writing submission is clearly trac",
+        "cached": true
+      },
+      {
+        "sampleId": "R61",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved: the critical decision that the exact required focused Vitest command passes, the failure chain about tracestate ordering and its fix, the typecheck errors and their resolution, the boundary scan exit code 1, and the file contexts.",
+          "Every fact in the summary is directly supported by verbatim evidence lines from the transcript; no contradictions or unsupported claims.",
+          "The causal chain is intact: initial test failure due to temp-root → temporary config → classifier ordering fix → typecheck errors → type guard fix → all tests pass → typecheck green → boundary scan.",
+          "No fabricated facts are present; all statements trace back to evidence lines or are structural (section headings, 'no concrete X was promoted').",
+          "The next action is clearly stated: inspect the product/code failure around Exit code: 1, which is actionable from the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved: the critical decision that the exact required focused Vitest command passes, the failure chain about tracestate ordering and its fix, the typecheck errors and their resolution, the boundary scan exit code 1, and the file contexts.\",\n    \"Every fact in the summary is directly supported by verbatim evide",
+        "cached": true
+      },
+      {
+        "sampleId": "R76",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected critical facts are preserved: the decision to only modify Phase 9 text in agent-runtime-index.md, the constraint that READMEs were already dirty, the failure chain with blocked items, and the tool failures.",
+          "Accuracy is maintained; the summary correctly reflects the transcript's evidence lines and does not contradict any expected facts.",
+          "The causal chain is preserved: the failure chain from attempt to failure to validation to next action is clearly represented.",
+          "No fabrication: all claims are directly supported by the transcript evidence lines or expected facts; no synthetic facts are introduced.",
+          "Actionability is high: the next action to inspect product/code failures is clearly stated and actionable based on the summary."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected critical facts are preserved: the decision to only modify Phase 9 text in agent-runtime-index.md, the constraint that READMEs were already dirty, the failure chain with blocked items, and the tool failures.\",\n    \"Accuracy is maintained; the summary correctly reflects the transcript's evidence lines and does not contradict",
+        "cached": true
+      },
+      {
+        "sampleId": "R4",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved, including the critical decision about harness failure due to workspace clutter, the constraint on single-instance lock fallback, and the failure chain with shell quoting issues.",
+          "Accuracy is maintained: the summary correctly reflects the transcript evidence, including the specific failure chains and the decision to filter fields causing Gateway schema failures.",
+          "The causal chain is preserved: the summary shows the progression from initial attempts, through failures (rg error, harness failure, shell quoting errors), to the subsequent decisions and next actions.",
+          "No fabrication: all statements are directly supported by the provided evidence lines or the compressed summary, with no invented details.",
+          "Actionability is high: the next action 'Rerun with corrected shell quoting or use a fixed-string scan' is clearly stated and directly follows from the shell quoting failures."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved, including the critical decision about harness failure due to workspace clutter, the constraint on single-instance lock fallback, and the failure chain with shell quoting issues.\",\n    \"Accuracy is maintained: the summary correctly reflects the transcript evidence, including the specific failure chains "
+      },
+      {
+        "sampleId": "R137",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved: the objective '请你实现', the decision to work in the ClawX repo, the constraint that Line C is not production-ready (explicit/default-off, diagnostics-only, metadata-only, non-authoritative), the failure chain with apply_patch UTF-8 issue and the workaround using Latin-1, the test result about controlled internal opt-in readiness, and the relevant files (agent-runtime-index.md, agent-runtime-core-spec.md, implementation-roadmap.md).",
+          "Accuracy is maintained: every fact in the summary is directly supported by the evidence lines, including the specific status 'accepted_line_c_grounding_diagnostics_authority_sentinel_effectiveness_evaluation_default_off_metadata_only' and the constraint details.",
+          "The causal chain is clear: user asks to implement -> assistant reads index -> apply_patch fails due to non-UTF-8 bytes -> assistant uses Latin-1 workaround -> successfully updates index -> user asks about production readiness -> assistant explains current limitations and provides next-step prompt.",
+          "No fabrication: all statements are traceable to the transcript evidence; no unsupported claims are made.",
+          "Actionability is high: the summary ends with a concrete next action (the full prompt for controlled internal opt-in readiness) and clearly states what is needed for production deployment."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved: the objective '请你实现', the decision to work in the ClawX repo, the constraint that Line C is not production-ready (explicit/default-off, diagnostics-only, metadata-only, non-authoritative), the failure chain with apply_patch UTF-8 issue and the workaround using Latin-1, the test result about controlled "
+      },
+      {
+        "sampleId": "R75",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved: the objective to provide phased prompts, the decision to run Lane B and C in parallel after Lane A accepted, the constraint to not skip Phase 9 synthesis, the blocker about rg wildcard failure, the test results about Phase 10 status and scans, and the file contexts.",
+          "Accuracy is high: every fact matches the original transcript evidence lines, including the specific rg error, the parallel execution plan, and the pnpm gate fallback.",
+          "Causal chain is intact: the summary correctly traces from the user request for prompts, through the decision to parallelize, to the constraint and blocker details, and ends with actionable next steps.",
+          "No fabrication: all statements are directly supported by the provided evidence lines; no extra or invented facts are introduced.",
+          "Actionability is clear: the next action to prepare the final report or run the broader gate is directly derived from the validated outcome."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved: the objective to provide phased prompts, the decision to run Lane B and C in parallel after Lane A accepted, the constraint to not skip Phase 9 synthesis, the blocker about rg wildcard failure, the test results about Phase 10 status and scans, and the file contexts.\",\n    \"Accuracy is high: every fact ",
+        "cached": true
+      },
+      {
+        "sampleId": "R81",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved: Lane D completed, A/B/C submissions exist with single Status:accepted, all required validations/scans passed, config help update flagged.",
+          "Accuracy is high: summary matches transcript evidence (e.g., rtk PATH issue, scans, comms replay/compare, final Status:accepted).",
+          "Causal chain is intact: prerequisites checked, failures handled (rtk not in PATH, rg glob error), scans run, conclusion reached.",
+          "No fabrication: all claims are traceable to transcript lines; no invented facts.",
+          "Actionability is clear: next actions (inspect failures, update config help) are derived from evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved: Lane D completed, A/B/C submissions exist with single Status:accepted, all required validations/scans passed, config help update flagged.\",\n    \"Accuracy is high: summary matches transcript evidence (e.g., rtk PATH issue, scans, comms replay/compare, final Status:accepted).\",\n    \"Causal chain is intac",
+        "cached": true
+      },
+      {
+        "sampleId": "R85",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All critical expected facts are preserved: objective (no new code, write Lane A submission), decision (target file doesn't exist, reference Lane D), blocker failure chains, test results (focused tests passed), and file contexts.",
+          "Accuracy is maintained: the summary correctly reflects the transcript's evidence lines, including the failure chains, test outcomes, and decisions without distortion.",
+          "Causal chain is preserved: the summary shows the progression from initial git failures, to using full Git path, to reading planning docs, to running tests, to deciding to write submission.",
+          "No fabrication: all claims are directly supported by the transcript evidence lines; no invented facts or stale facts are introduced.",
+          "Actionability is clear: the next action '补写 Lane A submission' is explicitly stated and supported by the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All critical expected facts are preserved: objective (no new code, write Lane A submission), decision (target file doesn't exist, reference Lane D), blocker failure chains, test results (focused tests passed), and file contexts.\",\n    \"Accuracy is maintained: the summary correctly reflects the transcript's evidence lines, including the",
+        "cached": true
+      },
+      {
+        "sampleId": "R94",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved: workspace, draft creation, constraints, failure chains, tool failures, and next actions.",
+          "Accuracy is high; the summary correctly reflects the transcript evidence without contradiction.",
+          "Causal chain is intact: failures led to adjustments, and the draft was created and validated.",
+          "No fabricated facts; all statements are traceable to evidence lines.",
+          "Actionability is clear: next actions are specified (rerun corrected command, inspect product failure)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved: workspace, draft creation, constraints, failure chains, tool failures, and next actions.\",\n    \"Accuracy is high; the summary correctly reflects the transcript evidence without contradiction.\",\n    \"Causal chain is intact: failures led to adjustments, and the draft was created and validated.\",\n    \"No ",
+        "cached": true
+      },
+      {
+        "sampleId": "R20",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the summary, including the critical decisions, blocker chains, file contexts, and test results.",
+          "The summary accurately reflects the evidence lines without contradiction or error.",
+          "The causal chain from the ErrorBoundary attempt through failures to the build and e2e test is clearly maintained.",
+          "No fabricated facts are present; all claims are traceable to evidence lines.",
+          "The next action is explicitly listed and actionable, enabling continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the summary, including the critical decisions, blocker chains, file contexts, and test results.\",\n    \"The summary accurately reflects the evidence lines without contradiction or error.\",\n    \"The causal chain from the ErrorBoundary attempt through failures to the build and e2e test is clearly mainta"
+      },
+      {
+        "sampleId": "R30",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved: the decision to add projection tests, the failure chain with node not recognized, the adjustment to use bundled Node, and the next action to run tests with bundled pnpm.",
+          "Accuracy is maintained; the summary correctly reflects the transcript evidence, including the failure messages and the decision to locate Node/pnpm.",
+          "Causal chain is intact: adding tests -> failure due to node not found -> attempt to use pnpm directly -> failure again -> decision to use bundled Node/pnpm.",
+          "No fabrication: all statements are directly supported by the transcript evidence lines.",
+          "Actionability is high: the next action to add bundled Node to PATH and run tests is clearly stated and feasible."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved: the decision to add projection tests, the failure chain with node not recognized, the adjustment to use bundled Node, and the next action to run tests with bundled pnpm.\",\n    \"Accuracy is maintained; the summary correctly reflects the transcript evidence, including the failure messages and the decisio"
+      },
+      {
+        "sampleId": "R65",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved, including the rtk PATH issue, the constraint to avoid touching existing code, the failure chains, test results, and file contexts.",
+          "Every claim in the summary is directly supported by the evidence lines; no contradictions or unsupported assertions.",
+          "The causal chain from initial failures (rtk not found, IO errors) through adjustments (using direct commands, finding rtk.exe) to final validation and handoff writing is clearly maintained.",
+          "No fabricated facts are present; all statements trace back to the provided transcript evidence.",
+          "The next action (writing the Lane E handoff) is clearly stated and consistent with the evidence, making the summary actionable."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved, including the rtk PATH issue, the constraint to avoid touching existing code, the failure chains, test results, and file contexts.\",\n    \"Every claim in the summary is directly supported by the evidence lines; no contradictions or unsupported assertions.\",\n    \"The causal chain from initial failures (r"
+      },
+      {
+        "sampleId": "R89",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved: the objective to audit/validate ignoring Phase 0, the decision to write synthesis.md and update agent-runtime-index.md, the failure chains with classifications and next actions, the tool/test failure summaries, the exit code 1 output, the final outcome that Phase 1-4 submissions each have exactly one Status line and were reclassified as accepted, and the touched files (docs/clawx-design-overview.md, electron/main/index.ts, electron/main/ipc-handlers.ts).",
+          "Accuracy is high: every claim in the summary is directly supported by verbatim evidence lines from the transcript. No contradictions or misstatements.",
+          "Causal chain is preserved: the initial objective leads to the failure chains, which lead to the tool/test failures, which lead to the final outcome and file updates. The sequence is logical and complete.",
+          "No fabrication: all facts are traceable to specific evidence lines. No invented details.",
+          "Actionability is strong: the summary clearly states the final outcome and the next action (prepare final report or run broader gate), and includes all necessary context for continuation."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved: the objective to audit/validate ignoring Phase 0, the decision to write synthesis.md and update agent-runtime-index.md, the failure chains with classifications and next actions, the tool/test failure summaries, the exit code 1 output, the final outcome that Phase 1-4 submissions each have exactly one S"
+      },
+      {
+        "sampleId": "R114",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected critical/important facts are preserved, including the decision to add the focused replay test, the RTK PATH failure chains, shell quoting failures, harness validation pass, and relevant file contexts.",
+          "Accuracy is maintained: every fact in the summary is directly supported by the transcript evidence lines, with no contradictions or misrepresentations.",
+          "Causal chain is intact: the summary correctly traces the sequence from RTK failures to shell quoting issues to reading context and adding the replay test, with proper next actions.",
+          "No fabrication: all claims are backed by evidence; section headings and 'no concrete X was promoted' are treated as structure, not fabricated facts.",
+          "Actionability is high: the next action 'I’m adding the focused replay test now' is clearly stated and supported by the preceding context and evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected critical/important facts are preserved, including the decision to add the focused replay test, the RTK PATH failure chains, shell quoting failures, harness validation pass, and relevant file contexts.\",\n    \"Accuracy is maintained: every fact in the summary is directly supported by the transcript evidence lines, with no co",
+        "cached": true
+      },
+      {
+        "sampleId": "R122",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 6,
+        "justifications": [
+          "Completeness: The summary omits the critical decision that the new helper delegates to inspectRuntimeMemorySanitizedEpisodes, which is an expected fact. It also omits the specific failure details from the failure chains (e.g., the exact command that failed and the exit code 1). The summary includes some failure chains but not all expected facts.",
+          "Accuracy: The summary accurately reflects the transcript's content, including the dirty worktree, shell quoting issues, and the blocked full validate. No inaccuracies detected.",
+          "Causal chain: The causal chain is preserved: the dirty worktree leads to narrow additive changes, shell quoting issues lead to fallback to fixed-string scans, and the blocked full validate leads to running --no-diff structural validate. The failure chains are also causally linked.",
+          "No fabrication: The summary does not introduce any fabricated facts. All statements are traceable to the transcript evidence.",
+          "Actionability: The summary does not provide a clear next action. The expected next action (e.g., 'Continue from the current evidence-backed state') is vague and not actionable. The summary should include a concrete next step, such as 'Run the Phase 17 --no-diff structural validate' or 'Inspect the product/code failure around Exit code: 1'."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 6,\n  \"justifications\": [\n    \"Completeness: The summary omits the critical decision that the new helper delegates to inspectRuntimeMemorySanitizedEpisodes, which is an expected fact. It also omits the specific failure details from the failure chains (e.g., the exact command that failed and the exit code 1). The summary includes some failure chains but not all expe"
+      }
+    ],
+    "aggregate": {
+      "judgeScoreMean": 9.8667,
+      "judgeScoreMin": 6,
+      "completenessRate": 0.9667,
+      "accuracyRate": 1,
+      "causalChainRate": 1,
+      "noFabricationRate": 1,
+      "actionabilityRate": 0.9667
+    }
+  },
+  "llmContinuation": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 30,
+    "liveCount": 16,
+    "cacheHitCount": 14,
+    "results": [
+      {
+        "sampleId": "R15",
+        "actions": [
+          {
+            "id": "R15-continue",
+            "kind": "decision",
+            "decision": "Rerun with corrected shell quoting or use a fixed-string scan.",
+            "critical": true,
+            "label": "Fix shell quoting and re-run failed commands"
+          }
+        ],
+        "completed": false,
+        "rationale": "The most recent failure chain shows shell quoting errors when trying to read file slices. The next action is to rerun those commands with corrected quoting (single quotes) to get the file content needed for review.",
+        "evaluation": {
+          "taskId": "R15-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R15-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"shell_quoting_failure\",\n      \"decision\": \"Rerun with corrected shell quoting or use a fixed-string scan.\",\n      \"label\": \"Fix shell quoting and re-run failed commands\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The most recent failure chain shows shell quoting errors when trying to read file slices. The next action is to rerun those commands with corrected quoting (single quotes) to get the file"
+      },
+      {
+        "sampleId": "R60",
+        "actions": [
+          {
+            "id": "R60-read",
+            "kind": "read_file",
+            "target": "openclaw_runtime/src/agents/task-loop-controller.ts",
+            "critical": true,
+            "label": "Read the current TaskLoop controller to understand the existing evidence verifier integration"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that Lane D (taskloop-evidence-verifier-integration) has been implemented and validated, but the current state indicates a need to inspect the source file to confirm the integration details and ensure consistency with the latest changes. The test run is already completed, so reading the file is the next logical step to verify the implementation.",
+        "evaluation": {
+          "taskId": "R60-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R60-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"openclaw_runtime/src/agents/task-loop-controller.ts\",\n      \"decision\": \"\",\n      \"label\": \"Read the current TaskLoop controller to understand the existing evidence verifier integration\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that Lane D (taskloop-evidence-verifier-integration) has been implemented and validated, but the current state indicates a need to inspect the s"
+      },
+      {
+        "sampleId": "R13",
+        "actions": [
+          {
+            "id": "R13-read",
+            "kind": "read_file",
+            "target": "src/pages/Skills/index.tsx",
+            "critical": true,
+            "label": "Inspect Skills page for remaining hardcoded Chinese"
+          }
+        ],
+        "completed": true,
+        "rationale": "The latest outcome indicates that the i18n changes are mostly done, but there is a pending build error in Settings/index.tsx (JSX bracket mismatch) that needs to be fixed before running E2E tests. The candidate action to read Skills/index.tsx is relevant to verify the i18n changes, but the immediate priority is to fix the build error. However, the compressed context shows that the build error was already addressed in later entries (line 854). The current state shows that the build error has been fixed and the next step is to run the build and typecheck. Therefore, the next action should be to run the build to confirm the fix.",
+        "evaluation": {
+          "taskId": "R13-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R13-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"src/pages/Skills/index.tsx\",\n      \"decision\": \"\",\n      \"label\": \"Inspect Skills page for remaining hardcoded Chinese\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest outcome indicates that the i18n changes are mostly done, but there is a pending build error in Settings/index.tsx (JSX bracket mismatch) that needs to be fixed before running E2E tests. The candidate action to read Skills/index.t",
+        "cached": true
+      },
+      {
+        "sampleId": "R19",
+        "actions": [
+          {
+            "id": "R19-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: ELIFECYCLE Command failed with exit code 1.",
+            "critical": true,
+            "label": "Inspect harness validate failure"
+          }
+        ],
+        "completed": false,
+        "rationale": "The latest harness validate (without --no-diff) failed with exit code 1, likely due to unrelated dirty files. The spec itself is valid (--no-diff passed). Need to inspect the failure to confirm it's external and not a new issue from recent i18n changes.",
+        "evaluation": {
+          "taskId": "R19-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R19-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"Inspect the product/code failure around: ELIFECYCLE Command failed with exit code 1.\",\n      \"decision\": \"Inspect the product/code failure around: ELIFECYCLE Command failed with exit code 1.\",\n      \"label\": \"Inspect harness validate failure\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest harness validate (without --no-diff) failed with exit code 1, likely due to unrelated dirty files. The ",
+        "cached": true
+      },
+      {
+        "sampleId": "R100",
+        "actions": [
+          {
+            "id": "R100-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: Exit code: 1",
+            "critical": true,
+            "label": "Inspect grounding.ts checkpointId type mismatch"
+          }
+        ],
+        "completed": false,
+        "rationale": "The TypeScript compilation fails due to a pre-existing type mismatch in grounding.ts (checkpointId not in GroundingRefBuildInput). This must be resolved before proceeding with Lane E tests. The next action is to inspect and fix this code failure.",
+        "evaluation": {
+          "taskId": "R100-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R100-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"openclaw_runtime/src/runtime-core/grounding.ts\",\n      \"decision\": \"Inspect the product/code failure around: Exit code: 1\",\n      \"label\": \"Inspect grounding.ts checkpointId type mismatch\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The TypeScript compilation fails due to a pre-existing type mismatch in grounding.ts (checkpointId not in GroundingRefBuildInput). This must be resolved before proceed"
+      },
+      {
+        "sampleId": "R108",
+        "actions": [
+          {
+            "id": "R108-continue",
+            "kind": "decision",
+            "decision": "The synthesis is written with `Status: accepted` as the final line. I’m doing a last sanity pass: validate the spec again, check the final status line, and rerun the touched-file boundary scans with the synthesis include",
+            "critical": true,
+            "label": "Final sanity pass"
+          }
+        ],
+        "completed": false,
+        "rationale": "The task is nearly complete with all implementation and tests passing. The next action is to perform the final sanity pass as described in the compressed context: validate the spec, check the final status line, and rerun boundary scans. This ensures everything is clean before marking complete.",
+        "evaluation": {
+          "taskId": "R108-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R108-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"The synthesis is written with `Status: accepted` as the final line. I’m doing a last sanity pass: validate the spec again, check the final status line, and rerun the touched-file boundary scans with the synthesis include\",\n      \"label\": \"Final sanity pass\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The task is nearly complete with all implementation and tests passing. The n"
+      },
+      {
+        "sampleId": "R123",
+        "actions": [
+          {
+            "id": "R123-read",
+            "kind": "read_file",
+            "target": ".codex/attachments/9abb1779-d9df-45ba-bbf2-da30cef90a91/pasted-text-1.txt",
+            "critical": true,
+            "label": "Read the pasted objective text to understand the next phase goal"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows the previous task (Runtime Memory Diagnostics Consumer) is complete and accepted. The next phase is a cross-consumer boundary audit. The first action is to read the pasted objective text to understand the new goal, as indicated by the evidence at line 343-344.",
+        "evaluation": {
+          "taskId": "R123-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R123-read\",\n      \"kind\": \"read_file\",\n      \"target\": \".codex/attachments/9abb1779-d9df-45ba-bbf2-da30cef90a91/pasted-text-1.txt\",\n      \"decision\": \"\",\n      \"label\": \"Read the pasted objective text to understand the next phase goal\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows the previous task (Runtime Memory Diagnostics Consumer) is complete and accepted. The next phase is a cross-consumer boundary audit. The first action ",
+        "cached": true
+      },
+      {
+        "sampleId": "R128",
+        "actions": [
+          {
+            "id": "R128-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: rg: openclaw_runtime/src/context-engine/*.ts: 文件名、目录名或卷标语法不正确。 (os error 123)",
+            "critical": true,
+            "label": "Rerun rg with correct directory path instead of glob"
+          }
+        ],
+        "completed": false,
+        "rationale": "The latest state shows TypeScript passed and all tests green, but a product/code failure remains from a Windows-hostile glob in rg. The next action is to rerun the rg command with a proper directory path to complete the boundary scan.",
+        "evaluation": {
+          "taskId": "R128-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R128-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Inspect the product/code failure around: rg: openclaw_runtime/src/context-engine/*.ts: 文件名、目录名或卷标语法不正确。 (os error 123)\",\n      \"label\": \"Rerun rg with correct directory path instead of glob\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest state shows TypeScript passed and all tests green, but a product/code failure remains from a Windows-hostile glob in rg. The next ac",
+        "cached": true
+      },
+      {
+        "sampleId": "R132",
+        "actions": [
+          {
+            "id": "R132-read",
+            "kind": "read_file",
+            "target": ".codex/attachments/aef93b4c-144f-41ec-95a9-660f8c4cafa0/pasted-text.txt",
+            "critical": true,
+            "label": "Read the pasted task text to understand the exact scope of Phase 22"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that structural validates passed and the core proof is green. The next step is to run boundary scans to ensure no unintended product code hits. However, the candidate actions include reading the pasted text which is critical for understanding the task scope. Since the context indicates scanning is next, but the pasted text hasn't been read yet (only referenced), reading it first is necessary to confirm the exact boundaries before scanning. The other candidate actions are either stale or repeat completed work.",
+        "evaluation": {
+          "taskId": "R132-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R132-read\",\n      \"kind\": \"read_file\",\n      \"target\": \".codex/attachments/aef93b4c-144f-41ec-95a9-660f8c4cafa0/pasted-text.txt\",\n      \"decision\": \"\",\n      \"label\": \"Read the pasted task text to understand the exact scope of Phase 22\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that structural validates passed and the core proof is green. The next step is to run boundary scans to ensure no unintended product code hits. Howev"
+      },
+      {
+        "sampleId": "R138",
+        "actions": [
+          {
+            "id": "R138-read",
+            "kind": "read_file",
+            "target": ".codex/attachments/a117ed94-966a-4270-99f4-195a143a9388/pasted-text.txt",
+            "critical": true,
+            "label": "Read the original task attachment to understand the goal"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows Phase 26 is completed and validated, but the task likely expects a final report or broader gate. The candidate actions include reading the original attachment (which may contain the next phase prompt) and running a test that is already done. Since the context indicates 'completed' but the task may have a follow-up, reading the attachment is the most logical next step to determine what to do next.",
+        "evaluation": {
+          "taskId": "R138-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R138-read\",\n      \"kind\": \"read_file\",\n      \"target\": \".codex/attachments/a117ed94-966a-4270-99f4-195a143a9388/pasted-text.txt\",\n      \"decision\": \"\",\n      \"label\": \"Read the original task attachment to understand the goal\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows Phase 26 is completed and validated, but the task likely expects a final report or broader gate. The candidate actions include reading the original attachment ("
+      },
+      {
+        "sampleId": "R40",
+        "actions": [
+          {
+            "id": "R40-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: Exit code: 1",
+            "critical": true,
+            "label": "Inspect failure in task-loop-controller.ts"
+          }
+        ],
+        "completed": false,
+        "rationale": "The compressed context shows repeated 'Exit code: 1' failures in task-loop-controller.ts, and the latest outcome indicates evidence gathering is sufficient. The next logical step is to inspect the code failure around the exit code to resolve the product/code failure before writing the lane-d-evidence-verifier.md document.",
+        "evaluation": {
+          "taskId": "R40-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R40-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"openclaw_runtime/src/agents/task-loop-controller.ts\",\n      \"decision\": \"Inspect the product/code failure around: Exit code: 1\",\n      \"label\": \"Inspect failure in task-loop-controller.ts\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows repeated 'Exit code: 1' failures in task-loop-controller.ts, and the latest outcome indicates evidence gathering is sufficient. The next lo"
+      },
+      {
+        "sampleId": "R16",
+        "actions": [
+          {
+            "id": "R16-read",
+            "kind": "read_file",
+            "target": "harness/specs/tasks/project-rules-center-mvp.md",
+            "critical": true,
+            "label": "Read task spec to understand validation requirements"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that the implementation is complete and most tests pass, but the harness validate and dry-run steps failed due to pre-existing dirty files in the worktree. The next logical step is to read the task spec to understand what validation is required and whether the harness failures are expected or need further investigation. The other candidate actions are either stale decisions or repeat already completed validations.",
+        "evaluation": {
+          "taskId": "R16-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R16-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"harness/specs/tasks/project-rules-center-mvp.md\",\n      \"decision\": \"\",\n      \"label\": \"Read task spec to understand validation requirements\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that the implementation is complete and most tests pass, but the harness validate and dry-run steps failed due to pre-existing dirty files in the worktree. The next logical step is to read ",
+        "cached": true
+      },
+      {
+        "sampleId": "R3",
+        "actions": [
+          {
+            "id": "R3-continue",
+            "kind": "decision",
+            "decision": "Fix the environment or command invocation, then rerun.",
+            "critical": true,
+            "label": "Rebuild runtime and run final dev validation"
+          }
+        ],
+        "completed": false,
+        "rationale": "The direct runtime now listens on port 18790 after adding OPENCLAW_SKIP_LEGACY_STATE_MIGRATION. The full pnpm dev validation also succeeded with 18789 listening and connect.challenge received. However, temporary diagnostic traces remain in dist. The next step is to rebuild the runtime (pnpm run build:runtime) to clean dist, then run typecheck:node and a final pnpm dev validation to confirm the fix is complete and stable.",
+        "evaluation": {
+          "taskId": "R3-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R3-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"Fix the environment or command invocation, then rerun.\",\n      \"decision\": \"Fix the environment or command invocation, then rerun.\",\n      \"label\": \"Rebuild runtime and run final dev validation\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The direct runtime now listens on port 18790 after adding OPENCLAW_SKIP_LEGACY_STATE_MIGRATION. The full pnpm dev validation also succeeded with 18789 listening an"
+      },
+      {
+        "sampleId": "R51",
+        "actions": [
+          {
+            "id": "R51-read",
+            "kind": "read_file",
+            "target": "electron/services/mcp-api.ts",
+            "critical": true,
+            "label": "Read MCP API source to verify no clawx-codegraph references"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context indicates that Phase 3 readiness preparation is complete, but the latest outcome '已完成进入 Phase 3 前的准备收敛' is a claim that needs verification. The candidate action to read the MCP API source file is the most direct way to confirm that the clawx-codegraph blocker is truly resolved, as earlier failures cited its presence. Running a test again would be redundant since tests already passed. The stale and repeat actions are rejected. Therefore, reading the source file is the appropriate next step to validate the claim before marking Phase 3 entry.",
+        "evaluation": {
+          "taskId": "R51-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R51-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"electron/services/mcp-api.ts\",\n      \"decision\": \"\",\n      \"label\": \"Read MCP API source to verify no clawx-codegraph references\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context indicates that Phase 3 readiness preparation is complete, but the latest outcome '已完成进入 Phase 3 前的准备收敛' is a claim that needs verification. The candidate action to read the MCP API source file is the most di"
+      },
+      {
+        "sampleId": "R52",
+        "actions": [
+          {
+            "id": "R52-read",
+            "kind": "read_file",
+            "target": "runtime-research/handoffs/phase-3-provider-tool-registry-pilot/submissions/lane-a-registry-contracts-and-flags.md",
+            "critical": true,
+            "label": "Read submission file to verify final state"
+          }
+        ],
+        "completed": true,
+        "rationale": "The lane is marked as completed with all tests and validations passing. The only remaining action is to read the submission file to confirm the final state, but the task is effectively done.",
+        "evaluation": {
+          "taskId": "R52-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R52-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"runtime-research/handoffs/phase-3-provider-tool-registry-pilot/submissions/lane-a-registry-contracts-and-flags.md\",\n      \"decision\": \"\",\n      \"label\": \"Read submission file to verify final state\"\n    }\n  ],\n  \"completed\": true,\n  \"rationale\": \"The lane is marked as completed with all tests and validations passing. The only remaining action is to read the submission file to confirm the final state, but th",
+        "cached": true
+      },
+      {
+        "sampleId": "R55",
+        "actions": [
+          {
+            "id": "R55-read",
+            "kind": "read_file",
+            "target": "runtime-research/handoffs/phase-3-provider-tool-registry-pilot/submissions/lane-d-taskloop-registry-shadow-integration.md",
+            "critical": true,
+            "label": "Read Lane D submission to verify completion"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context indicates Lane D is completed, but the final submission file should be read to confirm it contains all required sections and is properly formatted. No further implementation or testing is needed.",
+        "evaluation": {
+          "taskId": "R55-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R55-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"runtime-research/handoffs/phase-3-provider-tool-registry-pilot/submissions/lane-d-taskloop-registry-shadow-integration.md\",\n      \"decision\": \"\",\n      \"label\": \"Read Lane D submission to verify completion\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context indicates Lane D is completed, but the final submission file should be read to confirm it contains all required sections and is pr",
+        "cached": true
+      },
+      {
+        "sampleId": "R61",
+        "actions": [
+          {
+            "id": "R61-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: Exit code: 1",
+            "critical": true,
+            "label": "Inspect product/code failure"
+          }
+        ],
+        "completed": false,
+        "rationale": "The latest failure shows exit code 1 with no clear output, likely a TypeScript error. The previous typecheck fix was applied but the command still fails. Need to inspect the actual error output to determine next steps.",
+        "evaluation": {
+          "taskId": "R61-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R61-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Inspect the product/code failure around: Exit code: 1\",\n      \"label\": \"Inspect product/code failure\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest failure shows exit code 1 with no clear output, likely a TypeScript error. The previous typecheck fix was applied but the command still fails. Need to inspect the actual error output to determine next steps.\"\n}",
+        "cached": true
+      },
+      {
+        "sampleId": "R76",
+        "actions": [
+          {
+            "id": "R76-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: 'Status:' is not recognized as an internal or external command,",
+            "critical": true,
+            "label": "Investigate command parsing error"
+          }
+        ],
+        "completed": false,
+        "rationale": "The latest outcome indicates a submission note was added, but the failure chain shows a persistent 'Status:' command error. The most critical next step is to inspect this product/code failure to resolve the command parsing issue before proceeding with validation or diff review.",
+        "evaluation": {
+          "taskId": "R76-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R76-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Inspect the product/code failure around: 'Status:' is not recognized as an internal or external command,\",\n      \"label\": \"Investigate command parsing error\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest outcome indicates a submission note was added, but the failure chain shows a persistent 'Status:' command error. The most critical next step is to inspect this produc",
+        "cached": true
+      },
+      {
+        "sampleId": "R4",
+        "actions": [
+          {
+            "id": "R4-continue",
+            "kind": "decision",
+            "decision": "Rerun with corrected shell quoting or use a fixed-string scan.",
+            "critical": true,
+            "label": "Fix shell quoting and rerun test"
+          }
+        ],
+        "completed": false,
+        "rationale": "The latest failure is a shell quoting error (os error 123) when running rg with glob patterns. The next action is to fix the quoting and rerun the test, as indicated by the failure chain and candidate actions.",
+        "evaluation": {
+          "taskId": "R4-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R4-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Rerun with corrected shell quoting or use a fixed-string scan.\",\n      \"label\": \"Fix shell quoting and rerun test\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest failure is a shell quoting error (os error 123) when running rg with glob patterns. The next action is to fix the quoting and rerun the test, as indicated by the failure chain and candidate actions.\"\n}"
+      },
+      {
+        "sampleId": "R137",
+        "actions": [
+          {
+            "id": "R137-read",
+            "kind": "read_file",
+            "target": "runtime-research/agent-runtime-index.md",
+            "critical": true,
+            "label": "Read agent-runtime-index.md to understand current Line C status and plan next steps"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows that the previous attempt to update agent-runtime-index.md failed due to non-UTF-8 bytes. The current goal is to advance Line C to 'Controlled Internal Opt-in Readiness' and perform deep test validation. The first step is to read the index file to understand its current state and plan the minimal ASCII-only update needed, avoiding the encoding issue.",
+        "evaluation": {
+          "taskId": "R137-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R137-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"runtime-research/agent-runtime-index.md\",\n      \"decision\": \"\",\n      \"label\": \"Read agent-runtime-index.md to understand current Line C status and plan next steps\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that the previous attempt to update agent-runtime-index.md failed due to non-UTF-8 bytes. The current goal is to advance Line C to 'Controlled Internal Opt-in Readin"
+      },
+      {
+        "sampleId": "R75",
+        "actions": [
+          {
+            "id": "R75-read",
+            "kind": "read_file",
+            "target": ".codex/RTK.md",
+            "critical": true,
+            "label": "Read RTK rules before proceeding"
+          }
+        ],
+        "completed": true,
+        "rationale": "The compressed context shows Phase 9 Lane E is complete and synthesis-ready. The user now asks for phased prompts to submit to agents for development. The next logical step is to read the RTK rules to ensure compliance, then prepare the prompts. The candidate action to read RTK.md is critical and not yet completed.",
+        "evaluation": {
+          "taskId": "R75-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R75-read\",\n      \"kind\": \"read_file\",\n      \"target\": \".codex/RTK.md\",\n      \"decision\": \"\",\n      \"label\": \"Read RTK rules before proceeding\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows Phase 9 Lane E is complete and synthesis-ready. The user now asks for phased prompts to submit to agents for development. The next logical step is to read the RTK rules to ensure compliance, then prepare the prompts. The candidate action to re",
+        "cached": true
+      },
+      {
+        "sampleId": "R81",
+        "actions": [
+          {
+            "id": "R81-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: rg: runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/submissions/lane-*.md: IO error for operation on runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/submissions/lane-*.md: 文件名、目录名或卷标语法不正确。 (os error 123)",
+            "critical": true,
+            "label": "Inspect rg IO error for lane-* glob"
+          }
+        ],
+        "completed": false,
+        "rationale": "The latest blocker is an rg IO error when globbing lane-*.md files. This needs source-level inspection to resolve the path issue before proceeding with validation. Other candidate actions are either stale, already completed, or less critical.",
+        "evaluation": {
+          "taskId": "R81-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R81-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Inspect the product/code failure around: rg: runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/submissions/lane-*.md: IO error for operation on runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/submissions/lane-*.md: 文件名、目录名或卷标语法不正确。 (os error 123)\",\n      \"label\": \"Inspect rg IO error for lane-* glob\"\n    }\n  ],\n  \"completed\": false,",
+        "cached": true
+      },
+      {
+        "sampleId": "R85",
+        "actions": [
+          {
+            "id": "R85-continue",
+            "kind": "decision",
+            "decision": "Focused AgentMap tests 全部通过，10 个断言覆盖了 contract、TS/TSX extraction、ranking boosts、snapshot render 和 budget monotonicity。接下来我做边界扫描和 harness validate，确认 submission 的 status 可以据实写。",
+            "critical": true,
+            "label": "Continue with boundary scan and harness validate"
+          }
+        ],
+        "completed": false,
+        "rationale": "The compressed context shows that focused AgentMap tests have passed, and the next action is to perform boundary scanning and harness validation to confirm the submission status. This aligns with the goal of writing Lane A submission based on existing evidence. The other candidate actions are either stale, repeated, or less critical at this stage.",
+        "evaluation": {
+          "taskId": "R85-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R85-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Focused AgentMap tests 全部通过，10 个断言覆盖了 contract、TS/TSX extraction、ranking boosts、snapshot render 和 budget monotonicity。接下来我做边界扫描和 harness validate，确认 submission 的 status 可以据实写。\",\n      \"label\": \"Continue with boundary scan and harness validate\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows that focused AgentMap tests have passed, and the next action i",
+        "cached": true
+      },
+      {
+        "sampleId": "R94",
+        "actions": [
+          {
+            "id": "R94-continue",
+            "kind": "decision",
+            "decision": "Rerun corrected command or use fixed-string scan for: Node.js v24.15.0",
+            "critical": true,
+            "label": "Rerun corrected command or use fixed-string scan"
+          }
+        ],
+        "completed": false,
+        "rationale": "The latest failure is a shell quoting issue when running a Node.js validation command. The draft file has been created and updated, but the validation step failed due to quoting. The next action is to rerun the corrected command or use a fixed-string scan to verify the draft content, as indicated by the failure chain and next actions.",
+        "evaluation": {
+          "taskId": "R94-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R94-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"Node.js v24.15.0\",\n      \"decision\": \"Rerun corrected command or use fixed-string scan for: Node.js v24.15.0\",\n      \"label\": \"Rerun corrected command or use fixed-string scan\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest failure is a shell quoting issue when running a Node.js validation command. The draft file has been created and updated, but the validation step failed due to quoting. T",
+        "cached": true
+      },
+      {
+        "sampleId": "R20",
+        "actions": [
+          {
+            "id": "R20-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: Exit code: 1",
+            "critical": true,
+            "label": "Investigate exit code 1 failure"
+          }
+        ],
+        "completed": false,
+        "rationale": "The latest failure is 'Exit code: 1' with no output. The next action from the context is to inspect this failure. The candidate action R20-continue matches this need. Other candidates are either stale, distractor, or not directly addressing the current blocker.",
+        "evaluation": {
+          "taskId": "R20-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R20-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Inspect the product/code failure around: Exit code: 1\",\n      \"label\": \"Investigate exit code 1 failure\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest failure is 'Exit code: 1' with no output. The next action from the context is to inspect this failure. The candidate action R20-continue matches this need. Other candidates are either stale, distractor, or not directly "
+      },
+      {
+        "sampleId": "R30",
+        "actions": [
+          {
+            "id": "R30-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: 'node' is not recognized as an internal or external command,",
+            "critical": true
+          }
+        ],
+        "completed": false,
+        "rationale": "The current blocker is that 'node' is not recognized in the environment. The next action is to inspect this failure, as indicated by the failure chain and next actions. The candidate action R30-continue directly addresses this.",
+        "evaluation": {
+          "taskId": "R30-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R30-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Inspect the product/code failure around: 'node' is not recognized as an internal or external command,\",\n      \"label\": \"\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The current blocker is that 'node' is not recognized in the environment. The next action is to inspect this failure, as indicated by the failure chain and next actions. The candidate action R30-continue directly a"
+      },
+      {
+        "sampleId": "R65",
+        "actions": [
+          {
+            "id": "R65-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: rg: runtime-research/handoffs/phase-7-runtime-memory-provider/submissions/lane-*.md: IO error for operation on runtime-research/handoffs/phase-7-runtime-memory-provider/submissions/lane-*.md: 文件名、目录名或卷标语法不正确。 (os error 123)",
+            "critical": true,
+            "label": "Inspect rg IO error for lane-*.md glob"
+          }
+        ],
+        "completed": false,
+        "rationale": "The compressed context shows a failure chain with an IO error when running `rg` on `lane-*.md`. The error indicates a filename/directory syntax issue (os error 123). This is a product/code failure that needs source-level inspection. The candidate action 'Inspect the product/code failure around: ...' is the most critical next step to diagnose and resolve the glob pattern issue. Other actions like re-running tests or reading files are either already completed or less urgent.",
+        "evaluation": {
+          "taskId": "R65-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R65-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Inspect the product/code failure around: rg: runtime-research/handoffs/phase-7-runtime-memory-provider/submissions/lane-*.md: IO error for operation on runtime-research/handoffs/phase-7-runtime-memory-provider/submissions/lane-*.md: 文件名、目录名或卷标语法不正确。 (os error 123)\",\n      \"label\": \"Inspect rg IO error for lane-*.md glob\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compress"
+      },
+      {
+        "sampleId": "R89",
+        "actions": [
+          {
+            "id": "R89-read",
+            "kind": "read_file",
+            "target": "docs/clawx-design-overview.md",
+            "critical": true,
+            "label": "Read design overview to understand project context"
+          }
+        ],
+        "completed": true,
+        "rationale": "The validation of Phase 1-4 submissions is already completed and accepted. The next logical step is to read the design overview to understand the broader project context before proceeding with further actions. The other candidate actions are either stale decisions or repeat completed work.",
+        "evaluation": {
+          "taskId": "R89-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R89-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"docs/clawx-design-overview.md\",\n      \"decision\": \"\",\n      \"label\": \"Read design overview to understand project context\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The validation of Phase 1-4 submissions is already completed and accepted. The next logical step is to read the design overview to understand the broader project context before proceeding with further actions. The other candidate actions "
+      },
+      {
+        "sampleId": "R114",
+        "actions": [
+          {
+            "id": "R114-read",
+            "kind": "read_file",
+            "target": "src/styles/globals.css",
+            "critical": true,
+            "label": "Read globals.css for next action relevance"
+          }
+        ],
+        "completed": true,
+        "rationale": "The latest outcome is 'Harness validate passed for the new spec.' but the agent still needs to read the selected rule docs before implementation. The candidate action to read src/styles/globals.css is relevant as it was identified as next_action_relevant in the compressed context. The other candidates are either stale or repeat completed work.",
+        "evaluation": {
+          "taskId": "R114-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": true,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": true,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R114-read\",\n      \"kind\": \"read_file\",\n      \"target\": \"src/styles/globals.css\",\n      \"decision\": \"\",\n      \"label\": \"Read globals.css for next action relevance\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The latest outcome is 'Harness validate passed for the new spec.' but the agent still needs to read the selected rule docs before implementation. The candidate action to read src/styles/globals.css is relevant as it was identified as next_action_releva",
+        "cached": true
+      },
+      {
+        "sampleId": "R122",
+        "actions": [
+          {
+            "id": "R122-continue",
+            "kind": "decision",
+            "decision": "Inspect the product/code failure around: Exit code: 1",
+            "critical": true,
+            "label": "Investigate exit code 1 failure"
+          }
+        ],
+        "completed": false,
+        "rationale": "The compressed context shows repeated failures with exit code 1 and a CommandNotFoundException for 'RuntimeMemoryInspection'. The most critical next action is to inspect the product/code failure around exit code 1, as indicated by the failure chain and candidate actions. This will help identify the root cause of the command not found error.",
+        "evaluation": {
+          "taskId": "R122-real-continuation",
+          "firstActionMatch": true,
+          "criticalActionMatch": false,
+          "noRepeatedWork": true,
+          "noContradictoryAction": true,
+          "completedWithCompressedContext": false,
+          "completedWithFullContext": true
+        },
+        "rawTextPreview": "{\n  \"actions\": [\n    {\n      \"id\": \"R122-continue\",\n      \"kind\": \"decision\",\n      \"target\": \"\",\n      \"decision\": \"Inspect the product/code failure around: Exit code: 1\",\n      \"label\": \"Investigate exit code 1 failure\"\n    }\n  ],\n  \"completed\": false,\n  \"rationale\": \"The compressed context shows repeated failures with exit code 1 and a CommandNotFoundException for 'RuntimeMemoryInspection'. The most critical next action is to inspect the product/code failure around exit code 1, as indicated b"
+      }
+    ],
+    "aggregate": {
+      "total": 30,
+      "firstActionMatchRate": 1,
+      "criticalActionMatchRate": 0.4333,
+      "noRepeatedWorkRate": 1,
+      "noContradictoryActionRate": 1,
+      "decisionConsistencyRate": 0.4333,
+      "taskCompletionDelta": 0.5667
+    },
+    "gate": {
+      "pass": false,
+      "thresholds": {
+        "firstActionMatchRate": ">= 0.85",
+        "criticalActionMatchRate": ">= 0.90",
+        "noRepeatedWorkRate": ">= 0.95",
+        "noContradictoryActionRate": ">= 0.95",
+        "decisionConsistencyRate": ">= 0.90",
+        "taskCompletionDelta": "<= 0.08"
+      }
+    }
+  },
+  "layer0": {
+    "rounds": 30,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": null,
+    "informationDensityMean": null,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 301,
+    "expectedTotal": 301
+  },
+  "layer1": {
+    "rounds": 30,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": 0.1691,
+    "informationDensityMean": 6.6163,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 487,
+    "expectedTotal": 487
+  },
+  "layer1Gate": {
+    "pass": true,
+    "thresholds": {
+      "recallCriticalMean": ">= 0.95",
+      "recallImportantMean": ">= 0.75",
+      "weightedRecallMean": ">= 0.90",
+      "precisionMean": "= 1",
+      "forbiddenFoundTotal": "= 0",
+      "staleExclusionMean": ">= 0.99",
+      "compressionRatioMean": "0.15..0.35",
+      "informationDensityMean": ">= 2"
+    }
+  },
+  "layer2": {
+    "total": 30,
+    "judgeScoreMean": 10,
+    "judgeScoreMin": 10,
+    "completenessRate": 1,
+    "accuracyRate": 1,
+    "causalChainPreservation": 1,
+    "causalChainRate": 1,
+    "noFabricationRate": 1,
+    "actionabilityRate": 1
+  },
+  "layer2Gate": {
+    "pass": true
+  },
+  "layer3": {
+    "total": 30,
+    "firstActionMatchRate": 1,
+    "criticalActionMatchRate": 1,
+    "noRepeatedWorkRate": 1,
+    "noContradictoryActionRate": 1,
+    "decisionConsistencyRate": 1,
+    "taskCompletionDelta": 0
+  },
+  "layer3Gate": {
+    "pass": true,
+    "thresholds": {
+      "firstActionMatchRate": ">= 0.85",
+      "criticalActionMatchRate": ">= 0.90",
+      "noRepeatedWorkRate": ">= 0.95",
+      "noContradictoryActionRate": ">= 0.95",
+      "decisionConsistencyRate": ">= 0.90",
+      "taskCompletionDelta": "<= 0.08"
+    }
+  },
+  "cohorts": {
+    "real": {
+      "sampleCount": 30,
+      "layer0": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 301,
+        "expectedTotal": 301
+      },
+      "layer1": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1691,
+        "informationDensityMean": 6.6163,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 487,
+        "expectedTotal": 487
+      },
+      "layer3": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.95": {
+        "rounds": 15,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1665,
+        "informationDensityMean": 6.4079,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 232,
+        "expectedTotal": 232
+      },
+      "0.85": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1221,
+        "informationDensityMean": 10.0638,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 50,
+        "expectedTotal": 50
+      },
+      "emergency": {
+        "rounds": 11,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1861,
+        "informationDensityMean": 6.001,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 188,
+        "expectedTotal": 188
+      },
+      "0.75": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1621,
+        "informationDensityMean": 6.1682,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 17,
+        "expectedTotal": 17
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2775,
+        "informationDensityMean": 4.1533,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 80,
+        "expectedTotal": 80
+      },
+      "200": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1483,
+        "informationDensityMean": 6.8541,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 192,
+        "expectedTotal": 192
+      },
+      "1000": {
+        "rounds": 13,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1466,
+        "informationDensityMean": 7.3441,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 215,
+        "expectedTotal": 215
+      }
+    },
+    "byPressureContinuation": {
+      "0.95": {
+        "total": 15,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.85": {
+        "total": 3,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "emergency": {
+        "total": 11,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.75": {
+        "total": 1,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    }
+  },
+  "cohortBreakdown": {
+    "real": {
+      "sampleCount": 30,
+      "layer0": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 301,
+        "expectedTotal": 301
+      },
+      "layer1": {
+        "rounds": 30,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1691,
+        "informationDensityMean": 6.6163,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 487,
+        "expectedTotal": 487
+      },
+      "layer3": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.95": {
+        "rounds": 15,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1665,
+        "informationDensityMean": 6.4079,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 232,
+        "expectedTotal": 232
+      },
+      "0.85": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1221,
+        "informationDensityMean": 10.0638,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 50,
+        "expectedTotal": 50
+      },
+      "emergency": {
+        "rounds": 11,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1861,
+        "informationDensityMean": 6.001,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 188,
+        "expectedTotal": 188
+      },
+      "0.75": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1621,
+        "informationDensityMean": 6.1682,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 17,
+        "expectedTotal": 17
+      }
+    },
+    "byTurnCount": {
+      "50": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.2775,
+        "informationDensityMean": 4.1533,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 80,
+        "expectedTotal": 80
+      },
+      "200": {
+        "rounds": 12,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1483,
+        "informationDensityMean": 6.8541,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 192,
+        "expectedTotal": 192
+      },
+      "1000": {
+        "rounds": 13,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1466,
+        "informationDensityMean": 7.3441,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 215,
+        "expectedTotal": 215
+      }
+    }
+  },
+  "hunkRehydrationAb": {
+    "executed": true,
+    "sampleCount": 30,
+    "compared": {
+      "withoutRehydratedFileContext": {
+        "total": 30,
+        "firstActionMatchRate": 0.8667,
+        "criticalActionMatchRate": 0.4,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 0.4,
+        "taskCompletionDelta": 1,
+        "nextActionSpecificity": 1
+      },
+      "withRehydratedFileContext": {
+        "total": 30,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0,
+        "nextActionSpecificity": 1
+      }
+    },
+    "gate": {
+      "pass": true
+    },
+    "evidence": [
+      {
+        "sampleId": "R15",
+        "hunks": [
+          {
+            "path": "shared/i18n/locales/ja/chat.json",
+            "lineWindow": {
+              "start": 360,
+              "end": 366
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:a6a3c915d1cb6b65",
+            "evidenceRefs": [
+              "fc_09297b6beeed46c0016a36c8f444108191a8593ad8810e6c67@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:363"
+            ]
+          },
+          {
+            "path": "shared/i18n/locales/ru/chat.json",
+            "lineWindow": {
+              "start": 361,
+              "end": 367
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:a6a3c915d1cb6b65",
+            "evidenceRefs": [
+              "fc_09297b6beeed46c0016a36c8f444248191b144af387c66d877@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:364"
+            ]
+          },
+          {
+            "path": "Desktop/clawx/ClawX/shared/i18n/locales/en/chat.json",
+            "lineWindow": {
+              "start": 368,
+              "end": 374
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:ef522e1937f49d48",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:371@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:371"
+            ]
+          },
+          {
+            "path": "Desktop/clawx/ClawX/shared/i18n/locales/zh/chat.json",
+            "lineWindow": {
+              "start": 373,
+              "end": 379
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:0c163d719277c396",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:376@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:376"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R60",
+        "hunks": [
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/agent-runtime-index.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/implementation-roadmap.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/migration-execution-plan.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R13",
+        "hunks": [
+          {
+            "path": "shared/i18n/resources.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:337499b72ece2f3a",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/workspace-task-ledger.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:337499b72ece2f3a",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/tighten-host-events-contract-types.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:337499b72ece2f3a",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/tighten-host-api-contract-types.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:337499b72ece2f3a",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R19",
+        "hunks": [
+          {
+            "path": "src/styles/globals.css",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "src/lib/host-api.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "src/lib/api-client.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "docs/a2a-adaptation-plan.md",
+            "lineWindow": {
+              "start": 14,
+              "end": 20
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:f5919b2392dd3d90",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:17@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:17"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R100",
+        "hunks": [
+          {
+            "path": "src/example.ts",
+            "lineWindow": {
+              "start": 48,
+              "end": 54
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:a0ccf307ef8f46b3",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:51@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:51"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/line-c-evidence-trace-grounding-spine.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:7a0aa9827db2864c",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          },
+          {
+            "path": "harness/specs/scenarios/gateway-backend-communication.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:7a0aa9827db2864c",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          },
+          {
+            "path": "harness/specs/rules/active-config-guards.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:7a0aa9827db2864c",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R108",
+        "hunks": [
+          {
+            "path": "openclaw_runtime/src/runtime-core/grounding.ts",
+            "lineWindow": {
+              "start": 175,
+              "end": 181
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:f16a242994d7615c",
+            "evidenceRefs": [
+              "fc_0fe78f0b6befa071016a3f5e0d8ff481919808c3c68010aac1@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:178"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/registries.ts",
+            "lineWindow": {
+              "start": 176,
+              "end": 182
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:7cf33d6f88b2dbed",
+            "evidenceRefs": [
+              "fc_0fe78f0b6befa071016a3f5e0d90088191a123299d7f2fbdf4@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:179"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/types.ts",
+            "lineWindow": {
+              "start": 177,
+              "end": 183
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:877a27e5f2b5b639",
+            "evidenceRefs": [
+              "fc_0fe78f0b6befa071016a3f5e0d90108191997dcae52268e919@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:180"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/types.ts",
+            "lineWindow": {
+              "start": 183,
+              "end": 189
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:877a27e5f2b5b639",
+            "evidenceRefs": [
+              "fc_0baf3df1bbffd094016a3f5e1dd3f8819180e428ae177581fb@rollout-2026-06-27T13-08-05-019f077a-56a6-7a92-9b75-8f2f787946d1.jsonl:186"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R123",
+        "hunks": [
+          {
+            "path": ".codex/attachments/9abb1779-d9df-45ba-bbf2-da30cef90a91/pasted-text-1.txt",
+            "lineWindow": {
+              "start": 4,
+              "end": 10
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:3fa8cdf9bbee0238",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:7@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:7"
+            ]
+          },
+          {
+            "path": ".codex/attachments/9abb1779-d9df-45ba-bbf2-da30cef90a91/pasted-text-1.txt",
+            "lineWindow": {
+              "start": 5,
+              "end": 11
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:3fa8cdf9bbee0238",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:8@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:8"
+            ]
+          },
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5e9c400afab30f7d",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/AGENTS.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5e9c400afab30f7d",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16@rollout-2026-06-27T18-07-49-019f088c-ac21-71b0-9140-c2a35bc0fdde.jsonl:16"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R128",
+        "hunks": [
+          {
+            "path": "extensions/telegram/src/index.ts",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          },
+          {
+            "path": "src/agents/agent-run-terminal-outcome.ts",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          },
+          {
+            "path": "scripts/run-vitest.mjs",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          },
+          {
+            "path": "scripts/crabbox-wrapper.mjs",
+            "lineWindow": {
+              "start": 54,
+              "end": 60
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:53413d9227395674",
+            "evidenceRefs": [
+              "rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57@rollout-2026-06-27T18-46-38-019f08b0-4327-7013-aa59-2d6c8691b23b.jsonl:57"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R132",
+        "hunks": [
+          {
+            "path": ".codex/attachments/aef93b4c-144f-41ec-95a9-660f8c4cafa0/pasted-text.txt",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:8b2173018be80eeb",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:6@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:6"
+            ]
+          },
+          {
+            "path": ".codex/attachments/aef93b4c-144f-41ec-95a9-660f8c4cafa0/pasted-text.txt",
+            "lineWindow": {
+              "start": 4,
+              "end": 10
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:8b2173018be80eeb",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:7@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:7"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/src/runtime-core/memory-read-hydration-shadow.ts",
+            "lineWindow": {
+              "start": 16,
+              "end": 22
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e8fa21b4d7da3550",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19"
+            ]
+          },
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 16,
+              "end": 22
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e8fa21b4d7da3550",
+            "evidenceRefs": [
+              "rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19@rollout-2026-06-27T22-15-36-019f096f-86cf-7961-97aa-649fa34fee4f.jsonl:19"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R138",
+        "hunks": [
+          {
+            "path": ".codex/attachments/a117ed94-966a-4270-99f4-195a143a9388/pasted-text.txt",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:62c52e01b58bfbc9",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:6@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:6"
+            ]
+          },
+          {
+            "path": ".codex/attachments/a117ed94-966a-4270-99f4-195a143a9388/pasted-text.txt",
+            "lineWindow": {
+              "start": 4,
+              "end": 10
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:62c52e01b58bfbc9",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:7@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:7"
+            ]
+          },
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 12,
+              "end": 18
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e6a4a81da8f5d53c",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15"
+            ]
+          },
+          {
+            "path": "openclaw_runtime/AGENTS.md",
+            "lineWindow": {
+              "start": 12,
+              "end": 18
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:e6a4a81da8f5d53c",
+            "evidenceRefs": [
+              "rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15@rollout-2026-06-28T00-35-53-019f09ef-f996-7cb0-9a46-c6d468926262.jsonl:15"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "worstCases": [
+    {
+      "sampleId": "R122",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-27T18-07-19-019f088c-3636-7af2-a06f-88adc6e3b3c3.jsonl",
+        "transcriptIdentity": {
+          "pathHash": "39894a4d0f330813f3b632bf2860fde6db06a7633cd3f29f977f43339e390bd8",
+          "basename": "rollout-2026-06-27T18-07-19-019f088c-3636-7af2-a06f-88adc6e3b3c3.jsonl",
+          "size": 887664,
+          "mtimeMs": 1782556086246
+        },
+        "evidenceMessageIds": [
+          "msg_0027208e12704713016a3fa3570a08819ba65990b8804773fd",
+          "msg_07cf13739b84bbda016a3fa2d3a15c8198b7dbbe49a6f47d40",
+          "rollout-2026-06-27T18-07-19-019f088c-3636-7af2-a06f-88adc6e3b3c3.jsonl:68",
+          "fc_020d9aa35b5d4d7c016a3fa1332d98819a951a729f3e607d66",
+          "fc_020d9aa35b5d4d7c016a3fa1332da0819a9362fbb1cd06b042",
+          "fc_020d9aa35b5d4d7c016a3fa1332da4819aa3db56f76c6d1dae",
+          "fc_020d9aa35b5d4d7c016a3fa1332d98819a951a729f3e607d66",
+          "fc_020d9aa35b5d4d7c016a3fa1332da4819aa3db56f76c6d1dae"
+        ],
+        "turnCohort": 200,
+        "turnCount": 200,
+        "pressureCohort": "0.95",
+        "transcriptLength": "long"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "Completeness: The summary omits the critical decision that the new helper delegates to inspectRuntimeMemorySanitizedEpisodes, which is an expected fact. It also omits the specific failure details from the failure chains (e.g., the exact command that failed and the exit code 1). The summary includes some failure chains but not all expected facts. Accuracy: The summary accurately reflects the transcript's content, including the dirty worktree, shell quoting issues, and the blocked full validate. No inaccuracies detected. Causal chain: The causal chain is preserved: the dirty worktree leads to narrow additive changes, shell quoting issues lead to fallback to fixed-string scans, and the blocked full validate leads to running --no-diff structural validate. The failure chains are also causally linked. No fabrication: The summary does not introduce any fabricated facts. All statements are traceable to the transcript evidence. Actionability: The summary does not provide a clear next action. The expected next action (e.g., 'Continue from the current evidence-backed state') is vague and not actionable. The summary should include a concrete next step, such as 'Run the Phase 17 --no-diff structural validate' or 'Inspect the product/code failure around Exit code: 1'."
+    }
+  ],
+  "regressionExamples": [
+    {
+      "sampleId": "R122",
+      "cohort": {
+        "sampleSource": "real",
+        "transcriptFile": "C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-27T18-07-19-019f088c-3636-7af2-a06f-88adc6e3b3c3.jsonl",
+        "transcriptIdentity": {
+          "pathHash": "39894a4d0f330813f3b632bf2860fde6db06a7633cd3f29f977f43339e390bd8",
+          "basename": "rollout-2026-06-27T18-07-19-019f088c-3636-7af2-a06f-88adc6e3b3c3.jsonl",
+          "size": 887664,
+          "mtimeMs": 1782556086246
+        },
+        "evidenceMessageIds": [
+          "msg_0027208e12704713016a3fa3570a08819ba65990b8804773fd",
+          "msg_07cf13739b84bbda016a3fa2d3a15c8198b7dbbe49a6f47d40",
+          "rollout-2026-06-27T18-07-19-019f088c-3636-7af2-a06f-88adc6e3b3c3.jsonl:68",
+          "fc_020d9aa35b5d4d7c016a3fa1332d98819a951a729f3e607d66",
+          "fc_020d9aa35b5d4d7c016a3fa1332da0819a9362fbb1cd06b042",
+          "fc_020d9aa35b5d4d7c016a3fa1332da4819aa3db56f76c6d1dae",
+          "fc_020d9aa35b5d4d7c016a3fa1332d98819a951a729f3e607d66",
+          "fc_020d9aa35b5d4d7c016a3fa1332da4819aa3db56f76c6d1dae"
+        ],
+        "turnCohort": 200,
+        "turnCount": 200,
+        "pressureCohort": "0.95",
+        "transcriptLength": "long"
+      },
+      "source": "real",
+      "severity": 2,
+      "missingFacts": [],
+      "leakedStaleFacts": [],
+      "judgeReason": "Completeness: The summary omits the critical decision that the new helper delegates to inspectRuntimeMemorySanitizedEpisodes, which is an expected fact. It also omits the specific failure details from the failure chains (e.g., the exact command that failed and the exit code 1). The summary includes some failure chains but not all expected facts. Accuracy: The summary accurately reflects the transcript's content, including the dirty worktree, shell quoting issues, and the blocked full validate. No inaccuracies detected. Causal chain: The causal chain is preserved: the dirty worktree leads to narrow additive changes, shell quoting issues lead to fallback to fixed-string scans, and the blocked full validate leads to running --no-diff structural validate. The failure chains are also causally linked. No fabrication: The summary does not introduce any fabricated facts. All statements are traceable to the transcript evidence. Actionability: The summary does not provide a clear next action. The expected next action (e.g., 'Continue from the current evidence-backed state') is vague and not actionable. The summary should include a concrete next step, such as 'Run the Phase 17 --no-diff structural validate' or 'Inspect the product/code failure around Exit code: 1'."
+    }
+  ],
+  "redactionSummary": {
+    "mode": "strict",
+    "replacements": {
+      "apiKeys": 42,
+      "authTokens": 27,
+      "authHeaders": 37,
+      "providerKeys": 35,
+      "urlTokens": 0,
+      "usernames": 23786
+    },
+    "filesScanned": 212,
+    "linesScanned": 81219
+  },
+  "acceptance": {
+    "status": "FAIL",
+    "checks": [
+      {
+        "id": "sampleCount.exact",
+        "pass": true,
+        "actual": 30,
+        "expected": "= 30"
+      },
+      {
+        "id": "samplesJsonl.exact",
+        "pass": true,
+        "actual": 30,
+        "expected": "= 30"
+      },
+      {
+        "id": "l0.recallMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l0.staleExclusionMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l1.gate",
+        "pass": true,
+        "actual": 1,
+        "expected": "all L1 thresholds"
+      },
+      {
+        "id": "l2.deterministicGate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 thresholds"
+      },
+      {
+        "id": "l3.deterministicGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "L3 thresholds"
+      },
+      {
+        "id": "realCohort.notMasked",
+        "pass": true,
+        "actual": 1,
+        "expected": "real L1 gate passes independently when real samples exist"
+      },
+      {
+        "id": "manifest.exactResolve",
+        "pass": true,
+        "actual": "30/30",
+        "expected": "all manifest samples resolved"
+      },
+      {
+        "id": "cache.noSecretLeak",
+        "pass": true,
+        "actual": 0,
+        "expected": "= 0 cache secret leaks"
+      },
+      {
+        "id": "hunkRehydration.abGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "with hunk continuation metrics do not regress"
+      },
+      {
+        "id": "full.realMinCount",
+        "pass": true,
+        "actual": 30,
+        "expected": ">= 30"
+      },
+      {
+        "id": "full.realCoverage",
+        "pass": true,
+        "actual": 30,
+        "expected": "30 real samples"
+      },
+      {
+        "id": "full.pressureCoverage",
+        "pass": false,
+        "actual": 4,
+        "expected": "0.6,0.75,0.85,0.95,emergency"
+      },
+      {
+        "id": "l2.realJudge.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed"
+      },
+      {
+        "id": "l2.realJudge.gate",
+        "pass": true,
+        "actual": 9.8667,
+        "expected": "L2 real judge thresholds"
+      },
+      {
+        "id": "l3.realContinuation.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed"
+      },
+      {
+        "id": "l3.realContinuation.gate",
+        "pass": false,
+        "actual": 0.4333,
+        "expected": "L3 real continuation thresholds"
+      }
+    ],
+    "evidenceInsufficient": false
+  }
+}

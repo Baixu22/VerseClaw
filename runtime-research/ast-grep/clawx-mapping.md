@@ -23,3 +23,25 @@ Dependencies: stable AST ranges、diff generator
 Risks: nested rewrite 顺序错会破坏文件。  
 First Implementation Slice: 先只 preview diff；apply 时按非重叠 range 排序并拒绝冲突。  
 Tests Needed: nested match、overlap conflict、empty-line rewrite、resume 后 range drift。
+
+## Route Correction
+
+AST belongs after AgentMap/Symbol scope selection and before Evidence Verifier and any explicit apply gate.
+
+The corrected target is structured code-edit planning:
+
+```text
+AgentMap/Symbol scope
+  -> AST candidate plan
+  -> Evidence Verifier
+  -> explicit apply gate
+```
+
+Do not extend the current TypeScript text-matcher prototype as the production engine. Keep it as a readonly prototype/fallback safety skeleton while the corrected route introduces `EditPlan IR` and a real ast-grep adapter.
+
+Rejected direction:
+
+- AST as runtime intelligence or runtime optimization.
+- AST preview diff as completion evidence.
+- AST automatic TaskLoop/Gateway/provider/prompt integration.
+- Agent-generated rules directly applying patches.

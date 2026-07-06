@@ -30,6 +30,15 @@ export interface TokenUsageSummary {
   totalTokens: number;
   estimatedCostUsd?: number;
   latestTimestamp?: string;
+  lastTurnHitRate: number | null;
+  warmTurnHitRate: number | null;
+  lastTurnCacheReadTokens: number;
+  lastTurnCacheMissTokens: number;
+  lastTurnCacheWriteTokens: number;
+  lastTurnPromptTokens: number;
+  warmTurnPromptTokens: number;
+  warmTurnCacheReadTokens: number;
+  warmTurnCacheMissTokens: number;
   entryCount: number;
   missingEntryCount: number;
   errorEntryCount: number;
@@ -86,6 +95,15 @@ interface TranscriptUsageShape {
   cacheReadTokenCount?: number;
   cacheReadTokens?: number;
   cache_write_token_count?: number;
+  cached_tokens?: number;
+  prompt_cache_hit_tokens?: number;
+  prompt_cache_miss_tokens?: number;
+  input_tokens_details?: {
+    cached_tokens?: number;
+  };
+  prompt_tokens_details?: {
+    cached_tokens?: number;
+  };
   cost?: {
     total?: number;
   };
@@ -128,6 +146,28 @@ function firstUsageNumber(usage: TranscriptUsageShape | undefined, candidates: s
   return undefined;
 }
 
+function nestedCachedTokens(usage: TranscriptUsageShape): number | undefined {
+  return normalizeUsageNumber(usage.input_tokens_details?.cached_tokens)
+    ?? normalizeUsageNumber(usage.prompt_tokens_details?.cached_tokens);
+}
+
+function promptTokensForUsage(entry: {
+  inputTokens: number;
+  cacheReadTokens: number;
+  cacheWriteTokens: number;
+}): number {
+  return entry.inputTokens + entry.cacheReadTokens + entry.cacheWriteTokens;
+}
+
+function hitRateForUsage(entry: {
+  inputTokens: number;
+  cacheReadTokens: number;
+  cacheWriteTokens: number;
+}): number | null {
+  const promptTokens = promptTokensForUsage(entry);
+  return promptTokens > 0 ? entry.cacheReadTokens / promptTokens : null;
+}
+
 function parseUsageFromShape(usage: unknown): ParsedUsageTokens | undefined {
   if (usage === undefined) {
     return undefined;
@@ -146,7 +186,20 @@ function parseUsageFromShape(usage: unknown): ParsedUsageTokens | undefined {
 
   const usageShape = usage as TranscriptUsageShape;
 
-  const inputTokens = firstUsageNumber(usageShape, [
+  const cacheReadTokens = firstUsageNumber(usageShape, [
+    'cacheRead',
+    'cache_read',
+    'cacheReadTokens',
+    'cache_read_tokens',
+    'cacheReadTokenCount',
+    'cache_read_token_count',
+    'prompt_cache_hit_tokens',
+    'cached_tokens',
+  ]) ?? nestedCachedTokens(usageShape);
+  const explicitCacheMissTokens = firstUsageNumber(usageShape, [
+    'prompt_cache_miss_tokens',
+  ]);
+  const rawInputTokens = firstUsageNumber(usageShape, [
     'input',
     'promptTokens',
     'prompt_tokens',
@@ -156,6 +209,20 @@ function parseUsageFromShape(usage: unknown): ParsedUsageTokens | undefined {
     'promptTokenCount',
     'prompt_token_count',
   ]);
+  const usesOpenAiStylePromptTotals =
+    explicitCacheMissTokens === undefined
+    && cacheReadTokens !== undefined
+    && (
+      usageShape.prompt_cache_hit_tokens !== undefined
+      || usageShape.cached_tokens !== undefined
+      || usageShape.input_tokens_details?.cached_tokens !== undefined
+      || usageShape.prompt_tokens_details?.cached_tokens !== undefined
+    );
+  const inputTokens = explicitCacheMissTokens ?? (
+    rawInputTokens !== undefined && usesOpenAiStylePromptTotals
+      ? rawInputTokens - cacheReadTokens
+      : rawInputTokens
+  );
   const outputTokens = firstUsageNumber(usageShape, [
     'output',
     'completionTokens',
@@ -165,14 +232,6 @@ function parseUsageFromShape(usage: unknown): ParsedUsageTokens | undefined {
     'output_token_count',
     'completionTokenCount',
     'completion_token_count',
-  ]);
-  const cacheReadTokens = firstUsageNumber(usageShape, [
-    'cacheRead',
-    'cache_read',
-    'cacheReadTokens',
-    'cache_read_tokens',
-    'cacheReadTokenCount',
-    'cache_read_token_count',
   ]);
   const cacheWriteTokens = firstUsageNumber(usageShape, [
     'cacheWrite',
@@ -374,6 +433,15 @@ export function summarizeUsageEntries(
     cacheReadTokens: 0,
     cacheWriteTokens: 0,
     totalTokens: 0,
+    lastTurnHitRate: null,
+    warmTurnHitRate: null,
+    lastTurnCacheReadTokens: 0,
+    lastTurnCacheMissTokens: 0,
+    lastTurnCacheWriteTokens: 0,
+    lastTurnPromptTokens: 0,
+    warmTurnPromptTokens: 0,
+    warmTurnCacheReadTokens: 0,
+    warmTurnCacheMissTokens: 0,
     entryCount: entries.length,
     missingEntryCount: 0,
     errorEntryCount: 0,
@@ -406,6 +474,27 @@ export function summarizeUsageEntries(
   } else if (summary.errorEntryCount > 0) {
     summary.usageStatus = 'error';
   }
+
+  const availableEntries = entries
+    .filter((entry) => entry.usageStatus === 'available')
+    .toSorted((left, right) => Date.parse(left.timestamp) - Date.parse(right.timestamp));
+  const lastTurn = availableEntries.at(-1);
+  if (lastTurn) {
+    summary.lastTurnCacheReadTokens = lastTurn.cacheReadTokens;
+    summary.lastTurnCacheMissTokens = lastTurn.inputTokens;
+    summary.lastTurnCacheWriteTokens = lastTurn.cacheWriteTokens;
+    summary.lastTurnPromptTokens = promptTokensForUsage(lastTurn);
+    summary.lastTurnHitRate = hitRateForUsage(lastTurn);
+  }
+
+  for (const entry of availableEntries.slice(1)) {
+    summary.warmTurnPromptTokens += promptTokensForUsage(entry);
+    summary.warmTurnCacheReadTokens += entry.cacheReadTokens;
+    summary.warmTurnCacheMissTokens += entry.inputTokens;
+  }
+  summary.warmTurnHitRate = summary.warmTurnPromptTokens > 0
+    ? summary.warmTurnCacheReadTokens / summary.warmTurnPromptTokens
+    : null;
 
   return summary;
 }

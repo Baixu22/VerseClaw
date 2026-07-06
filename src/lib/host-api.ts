@@ -25,6 +25,7 @@ import type {
   AgentDevCreateConversationResult,
   AgentDevCreateProviderConfigPayload,
   AgentDevCreateProviderConfigResult,
+  AgentDevCostReportResult,
   AgentDevDiagnosticsSnapshotResult,
   AgentDevFeatureFlagsPayload,
   AgentDevFeatureFlagsResult,
@@ -32,15 +33,23 @@ import type {
   AgentDevHostApiCallsResult,
   AgentDevMockReplayConfig,
   AgentDevMockReplayResult,
+  AgentDevRecordScenarioPayload,
+  AgentDevRecordScenarioResult,
   AgentDevSeedStatePayload,
   AgentDevSeedStateResult,
   AgentDevSelectorContractResult,
+  AgentDevSkillSandboxReportResult,
+  AgentDevTraceTimelinePayload,
+  AgentDevTraceTimelineResult,
   AgentDevTransportTracePayload,
   AgentDevTransportTraceResult,
   AgentDevVisualPreset,
   AgentDevVisualPresetResult,
+  AgentDevWorkbenchEvidenceResult,
   AgentUpdateReasoningEffortPayload,
   AgentUpdatePayload,
+  CapabilityPublicationQuery,
+  CapabilityPublicationResult,
   ChannelAccountsPayload,
   ChannelSaveConfigPayload,
   ChannelTargetsPayload,
@@ -97,15 +106,20 @@ import type {
   GithubPrViewPayload,
   GithubPrViewResult,
   GithubRepoResult,
+  HostApiContract,
   ImageGenerationSettingsPayload,
   KnowledgeApplyDraftPayload,
   KnowledgeApplyDraftResult,
   KnowledgeApplyReviewedChangePayload,
   KnowledgeApplyReviewedChangeResult,
+  KnowledgeAnswerFromSourceSetPayload,
+  KnowledgeAnswerFromSourceSetResult,
+  KnowledgeCreateArtifactDraftPayload,
   KnowledgeCreateDraftPayload,
   KnowledgeCreateInboxItemPayload,
   KnowledgeCompileResult,
   KnowledgeConfigurePayload,
+  KnowledgeDeleteSourceSetPayload,
   KnowledgeDraftResult,
   KnowledgeGetPayload,
   KnowledgeGetResult,
@@ -121,7 +135,10 @@ import type {
   KnowledgeListInboxItemsResult,
   KnowledgeListProposalsPayload,
   KnowledgeListProposalsResult,
+  KnowledgeListSourceSetsResult,
   KnowledgeLintResult,
+  KnowledgeMatchErrorExperiencePayload,
+  KnowledgeMatchErrorExperienceResult,
   KnowledgeOkfImportResult,
   KnowledgeOkfValidationResult,
   KnowledgeOpenVaultResult,
@@ -135,12 +152,18 @@ import type {
   KnowledgeReviewDraftPayload,
   KnowledgeRouteContextPayload,
   KnowledgeRouteContextResult,
-  KnowledgeRuntimeLessonsReportResult,
   KnowledgeSearchPayload,
   KnowledgeSearchResult,
+  KnowledgeSaveSourceSetPayload,
+  KnowledgeSourceSetResult,
   KnowledgeStewardReviewPayload,
   KnowledgeStewardReviewResult,
+  KnowledgeStewardConfigGetResult,
+  KnowledgeStewardConfigUpdatePayload,
+  KnowledgeStewardConfigUpdateResult,
   KnowledgeStatusResult,
+  KnowledgeUpdateErrorExperienceEffectivenessPayload,
+  KnowledgeUpdateErrorExperienceEffectivenessResult,
   KnowledgeUpdateDraftPayload,
   KnowledgeUpdateInboxItemPayload,
   KnowledgeValidateOkfBundlePayload,
@@ -165,6 +188,10 @@ import type {
   McpServerUpdatePayload,
   OpenClawDoctorMode,
   OpenClawDoctorResult,
+  OfficecliInstallPayload,
+  OfficecliRenderHtmlPayload,
+  OfficecliSkillApplyLinksPayload,
+  OfficecliWatchPayload,
   ProviderAccount,
   ProviderConfig,
   ProviderModelListPayload,
@@ -184,6 +211,9 @@ import type {
   SettingsValue,
   ShellOpenExternalPayload,
   ShellPathPayload,
+  SkillPackId,
+  SkillPackReadSkillResult,
+  SkillPackSummary,
   SkillQuickAccessPayload,
   SkillUpdateConfigPayload,
   SkillUpdatePayload,
@@ -199,6 +229,9 @@ import type {
   TaskLedgerWorkspacePayload,
   PermissionApprovalDecisionPayload,
   PermissionApprovalListPayload,
+  OrchestrationPresetCreatePayload,
+  OrchestrationPresetListPayload,
+  OrchestrationPresetRevokePayload,
   RemoteControlClickPayload,
   RemoteControlEvaluatePayload,
   RemoteControlScreenshotPayload,
@@ -210,29 +243,44 @@ import type {
   RemoteTaskListResult,
   RemoteTaskPreviewResult,
   RemoteTaskRecordResult,
+  SessionArchivePayload,
   SessionCompactionHistoryResult,
   SessionCompactionHistoryPayload,
   SessionCompactionPayload,
   SessionCompactionResult,
   SessionCompactionStatusResult,
+  SessionEmptyArchivePayload,
   SessionForkPayload,
   SessionForkResult,
   SessionHandoffPayload,
   SessionHandoffResult,
+  SessionListArchivedPayload,
+  SessionListArchivedResult,
   SessionLongTaskControlHistoryPayload,
   SessionLongTaskControlHistoryResult,
   SessionLongTaskControlPayload,
+  SessionPermanentDeletePayload,
+  SessionRestorePayload,
   SessionLongTaskControlStatusResult,
   SessionManualCompactPayload,
   SessionPatchThinkingPayload,
+  SessionPatchRuntimeModelPayload,
   SessionQueueDrainResult,
   SessionResumeCheckpointsResult,
+  SessionTruncatePayload,
+  SessionTruncateResult,
   WorkProviderRunPayload,
   WorkProviderRunResult,
   WorkProviderStatusSnapshot,
   WorkProviderValidateArtifactPayload,
   WorkProviderValidateArtifactResult,
+  SystemScanPayload,
+  SystemDeleteItemsPayload,
   WorkspaceCreatePayload,
+  WorkspaceFolderCreatePayload,
+  WorkspaceFolderDeletePayload,
+  WorkspaceFolderMoveSessionPayload,
+  WorkspaceFolderRenamePayload,
   WorkspaceSaveStatePayload,
   WorkspaceTerminalOpenPayload,
   WorkspaceTerminalResizePayload,
@@ -245,6 +293,12 @@ import type {
   WorkspaceWebPreviewStartPayload,
   WorkspaceWebPreviewStatusPayload,
   WorkspaceWebPreviewStopPayload,
+  MemoryDetailPayload,
+  MemoryExplainInjectionPayload,
+  MemoryListPayload,
+  MemoryProposal,
+  MemorySearchPayload,
+  MemoryUpdatePayload,
 } from '@shared/host-api/contract';
 import type { CronJobCreateInput, CronJobUpdateInput } from '@shared/types/cron';
 import type {
@@ -256,6 +310,9 @@ import type {
   ObservabilityTraceQueryResult,
 } from '@shared/types/observability';
 import { invokeHost } from './host-api-client';
+
+type PromptCacheStatusFn = HostApiContract['usage']['promptCacheStatus'];
+type PromptCacheRiskEventFn = HostApiContract['usage']['recordPromptCacheRiskEvent'];
 
 export type { ChatKnowledgeReference } from '@shared/host-api/contract';
 
@@ -272,16 +329,21 @@ export type {
   AgentBrowserValidateResult,
   AgentDevCreateConversationResult,
   AgentDevCreateProviderConfigResult,
+  AgentDevCostReportResult,
   AgentDevDiagnosticsSnapshotResult,
   AgentDevFeatureFlagsResult,
   AgentDevHostApiCallsResult,
   AgentDevMockReplayResult,
+  AgentDevRecordScenarioResult,
   AgentDevScenario,
   AgentDevSeedStateResult,
   AgentDevSelectorContractResult,
+  AgentDevSkillSandboxReportResult,
   AgentDevStatusResult,
+  AgentDevTraceTimelineResult,
   AgentDevTransportTraceResult,
   AgentDevVisualPresetResult,
+  AgentDevWorkbenchEvidenceResult,
   ChannelCredentialValidationResult,
   ChannelFormValuesResult,
   ChannelGroupItem,
@@ -308,7 +370,9 @@ export type {
   ImageGenerationSettingsResult,
   KnowledgeApplyDraftResult,
   KnowledgeApplyReviewedChangeResult,
+  KnowledgeAnswerFromSourceSetResult,
   KnowledgeCompileResult,
+  KnowledgeArtifactType,
   KnowledgeDraft,
   KnowledgeChangeProposal,
   KnowledgeDraftType,
@@ -327,6 +391,7 @@ export type {
   KnowledgeInitResult,
   KnowledgeListDraftsResult,
   KnowledgeListProposalsResult,
+  KnowledgeListSourceSetsResult,
   KnowledgeLintResult,
   KnowledgeOpenVaultResult,
   KnowledgePreviewChangeResult,
@@ -334,10 +399,27 @@ export type {
   KnowledgeProvenanceRecord,
   KnowledgeProvenanceResult,
   KnowledgeRouteCandidate,
+  KnowledgeRouteCandidateGroup,
+  KnowledgeRouteCandidateGroupKey,
   KnowledgeRouteContextResult,
-  KnowledgeRuntimeLessonsReportResult,
+  KnowledgeErrorGuardAdvisory,
+  KnowledgeErrorGuardSignal,
+  KnowledgeMatchErrorExperienceResult,
+  KnowledgeQualityMetric,
+  KnowledgeQualityMetrics,
+  KnowledgeRetrievalDiagnostics,
   KnowledgeSearchResult,
+  KnowledgeSourceSet,
+  KnowledgeSourceSetAnswerSource,
+  KnowledgeSourceSetResult,
+  KnowledgeStewardTriage,
+  KnowledgeStewardTriageAction,
   KnowledgeStewardConfig,
+  KnowledgeStewardConfigGetResult,
+  KnowledgeStewardConfigUpdatePayload,
+  KnowledgeStewardConfigUpdateResult,
+  KnowledgeRolePlayerConfig,
+  KnowledgeRoleRegistryFile,
   KnowledgeStewardReviewResult,
   KnowledgeStatusResult,
   LocalControlPlaneCorrelationFilter,
@@ -384,6 +466,7 @@ export type {
   StagedFileResult,
   TaskLedgerExportHtmlResult,
   TaskLedgerSnapshotResult,
+  PromptCacheRiskAssessment,
   UsageHistoryEntry,
   WorkspaceActiveResult,
   WorkspaceContextRangeResult,
@@ -407,6 +490,13 @@ export type {
   GithubPrListResult,
   GithubPrViewResult,
   GithubPrCreateResult,
+  SystemInfoResult,
+  SystemScanCategory,
+  SystemScanItem,
+  SystemScanResult,
+  SystemScanPayload,
+  SystemDeleteItemsPayload,
+  SystemDeleteItemsResult,
 } from '@shared/host-api/contract';
 
 export const hostApi = {
@@ -463,6 +553,18 @@ export const hostApi = {
     delete: (id: string) => invokeHost('workspaces', 'delete', { id }),
     switch: (id: string) => invokeHost('workspaces', 'switch', { id }),
     saveState: (input: WorkspaceSaveStatePayload) => invokeHost('workspaces', 'saveState', input),
+    createFolder: (input: WorkspaceFolderCreatePayload) => (
+      invokeHost('workspaces', 'createFolder', input)
+    ),
+    renameFolder: (input: WorkspaceFolderRenamePayload) => (
+      invokeHost('workspaces', 'renameFolder', input)
+    ),
+    deleteFolder: (input: WorkspaceFolderDeletePayload) => (
+      invokeHost('workspaces', 'deleteFolder', input)
+    ),
+    moveSessionToFolder: (input: WorkspaceFolderMoveSessionPayload) => (
+      invokeHost('workspaces', 'moveSessionToFolder', input)
+    ),
   },
   projectRules: {
     snapshot: () => invokeHost('projectRules', 'snapshot'),
@@ -513,6 +615,17 @@ export const hostApi = {
       invokeHost('permissions', 'decideApproval', input)
     ),
   },
+  orchestrationPresets: {
+    list: (input?: OrchestrationPresetListPayload) => (
+      invokeHost('orchestrationPresets', 'list', input)
+    ),
+    create: (input: OrchestrationPresetCreatePayload) => (
+      invokeHost('orchestrationPresets', 'create', input)
+    ),
+    revoke: (input: OrchestrationPresetRevokePayload) => (
+      invokeHost('orchestrationPresets', 'revoke', input)
+    ),
+  },
   webPreview: {
     detect: (input?: WorkspaceWebPreviewDetectPayload) => invokeHost('webPreview', 'detect', input),
     start: (input?: WorkspaceWebPreviewStartPayload) => invokeHost('webPreview', 'start', input),
@@ -540,6 +653,11 @@ export const hostApi = {
       invokeHost('localControlPlane', 'correlations', input)
     ),
   },
+  capabilities: {
+    publications: (input?: CapabilityPublicationQuery): Promise<CapabilityPublicationResult> => (
+      invokeHost('capabilities', 'publications', input)
+    ),
+  },
   remoteControl: {
     status: () => invokeHost('remoteControl', 'status'),
     inspect: () => invokeHost('remoteControl', 'inspect'),
@@ -560,6 +678,8 @@ export const hostApi = {
       invokeHost('agentBrowser', 'validate', input),
     navigate: (input: AgentBrowserNavigatePayload): Promise<AgentBrowserActionResult> =>
       invokeHost('agentBrowser', 'navigate', input),
+    focus: (input: AgentBrowserSessionPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'focus', input),
     waitForSelector: (input: AgentBrowserSelectorPayload): Promise<AgentBrowserActionResult> =>
       invokeHost('agentBrowser', 'waitForSelector', input),
     click: (input: AgentBrowserClickPayload): Promise<AgentBrowserActionResult> =>
@@ -603,6 +723,30 @@ export const hostApi = {
     readFile: (path: string, tailLines?: number) => (
       invokeHost('logs', 'readFile', { path, tailLines })
     ),
+  },
+  system: {
+    info: () => invokeHost('system', 'info'),
+    scan: (input?: SystemScanPayload) => invokeHost('system', 'scan', input),
+    deleteItems: (input: SystemDeleteItemsPayload) => invokeHost('system', 'deleteItems', input),
+  },
+  resourceTracker: {
+    list: () => invokeHost('resourceTracker', 'list'),
+    stop: (resourceId: string) => invokeHost('resourceTracker', 'stop', { resourceId }),
+    stopAll: () => invokeHost('resourceTracker', 'stopAll'),
+  },
+  /**
+   * Area 4 §3.3: typed memory facade. Additive — `hostApi.gateway.rpc('memory.*')`
+   * keeps working; callers migrate incrementally.
+   */
+  memory: {
+    list: (input: MemoryListPayload) => invokeHost('memory', 'list', input),
+    search: (input: MemorySearchPayload) => invokeHost('memory', 'search', input),
+    detail: (input: MemoryDetailPayload) => invokeHost('memory', 'detail', input),
+    propose: (input: MemoryProposal) => invokeHost('memory', 'propose', input),
+    update: (input: MemoryUpdatePayload) => invokeHost('memory', 'update', input),
+    health: () => invokeHost('memory', 'health'),
+    explainInjection: (input: MemoryExplainInjectionPayload) =>
+      invokeHost('memory', 'explainInjection', input),
   },
   channels: {
     accounts: (options?: ChannelAccountsPayload) => (
@@ -698,6 +842,17 @@ export const hostApi = {
     ),
     transportTrace: (input?: AgentDevTransportTracePayload): Promise<AgentDevTransportTraceResult> => (
       invokeHost('agentDev', 'transportTrace', input)
+    ),
+    traceTimeline: (input?: AgentDevTraceTimelinePayload): Promise<AgentDevTraceTimelineResult> => (
+      invokeHost('agentDev', 'traceTimeline', input)
+    ),
+    costReport: (): Promise<AgentDevCostReportResult> => invokeHost('agentDev', 'costReport'),
+    skillSandboxReport: (): Promise<AgentDevSkillSandboxReportResult> => (
+      invokeHost('agentDev', 'skillSandboxReport')
+    ),
+    workbenchEvidence: (): Promise<AgentDevWorkbenchEvidenceResult> => invokeHost('agentDev', 'workbenchEvidence'),
+    recordScenario: (input?: AgentDevRecordScenarioPayload): Promise<AgentDevRecordScenarioResult> => (
+      invokeHost('agentDev', 'recordScenario', input)
     ),
     selectorContract: (): Promise<AgentDevSelectorContractResult> => invokeHost('agentDev', 'selectorContract'),
   },
@@ -799,6 +954,7 @@ export const hostApi = {
       invokeHost('sessions', 'history', input)
     ),
     patchThinking: (input: SessionPatchThinkingPayload) => invokeHost('sessions', 'patchThinking', input),
+    patchRuntimeModel: (input: SessionPatchRuntimeModelPayload) => invokeHost('sessions', 'patchRuntimeModel', input),
     compactionStatus: (input: SessionCompactionPayload): Promise<SessionCompactionStatusResult> => (
       invokeHost('sessions', 'compactionStatus', input)
     ),
@@ -831,6 +987,20 @@ export const hostApi = {
     ),
     fork: (input: SessionForkPayload): Promise<SessionForkResult> => (
       invokeHost('sessions', 'fork', input)
+    ),
+    truncate: (input: SessionTruncatePayload): Promise<SessionTruncateResult> => (
+      invokeHost('sessions', 'truncate', input)
+    ),
+    archive: (input: SessionArchivePayload) => invokeHost('sessions', 'archive', input),
+    restore: (input: SessionRestorePayload) => invokeHost('sessions', 'restore', input),
+    permanentDelete: (input: SessionPermanentDeletePayload) => (
+      invokeHost('sessions', 'permanentDelete', input)
+    ),
+    listArchived: (input?: SessionListArchivedPayload): Promise<SessionListArchivedResult> => (
+      invokeHost('sessions', 'listArchived', input)
+    ),
+    emptyArchive: (input: SessionEmptyArchivePayload) => (
+      invokeHost('sessions', 'emptyArchive', input)
     ),
   },
   chat: {
@@ -894,6 +1064,21 @@ export const hostApi = {
     createDraft: (input: KnowledgeCreateDraftPayload): Promise<KnowledgeDraftResult> => (
       invokeHost('knowledge', 'createDraft', input)
     ),
+    listSourceSets: (): Promise<KnowledgeListSourceSetsResult> => (
+      invokeHost('knowledge', 'listSourceSets')
+    ),
+    saveSourceSet: (input: KnowledgeSaveSourceSetPayload): Promise<KnowledgeSourceSetResult> => (
+      invokeHost('knowledge', 'saveSourceSet', input)
+    ),
+    deleteSourceSet: (input: KnowledgeDeleteSourceSetPayload): Promise<HostSuccess> => (
+      invokeHost('knowledge', 'deleteSourceSet', input)
+    ),
+    answerFromSourceSet: (input: KnowledgeAnswerFromSourceSetPayload): Promise<KnowledgeAnswerFromSourceSetResult> => (
+      invokeHost('knowledge', 'answerFromSourceSet', input)
+    ),
+    createArtifactDraft: (input: KnowledgeCreateArtifactDraftPayload): Promise<KnowledgeDraftResult> => (
+      invokeHost('knowledge', 'createArtifactDraft', input)
+    ),
     listDrafts: (input?: KnowledgeListDraftsPayload): Promise<KnowledgeListDraftsResult> => (
       invokeHost('knowledge', 'listDrafts', input)
     ),
@@ -919,11 +1104,20 @@ export const hostApi = {
     stewardReview: (input: KnowledgeStewardReviewPayload): Promise<KnowledgeStewardReviewResult> => (
       invokeHost('knowledge', 'stewardReview', input)
     ),
+    stewardConfigGet: (): Promise<KnowledgeStewardConfigGetResult> => (
+      invokeHost('knowledge', 'stewardConfigGet')
+    ),
+    stewardConfigUpdate: (input: KnowledgeStewardConfigUpdatePayload): Promise<KnowledgeStewardConfigUpdateResult> => (
+      invokeHost('knowledge', 'stewardConfigUpdate', input)
+    ),
     routeContext: (input: KnowledgeRouteContextPayload): Promise<KnowledgeRouteContextResult> => (
       invokeHost('knowledge', 'routeContext', input)
     ),
-    runtimeLessonsReport: (): Promise<KnowledgeRuntimeLessonsReportResult> => (
-      invokeHost('knowledge', 'runtimeLessonsReport')
+    matchErrorExperience: (input: KnowledgeMatchErrorExperiencePayload): Promise<KnowledgeMatchErrorExperienceResult> => (
+      invokeHost('knowledge', 'matchErrorExperience', input)
+    ),
+    updateErrorExperienceEffectiveness: (input: KnowledgeUpdateErrorExperienceEffectivenessPayload): Promise<KnowledgeUpdateErrorExperienceEffectivenessResult> => (
+      invokeHost('knowledge', 'updateErrorExperienceEffectiveness', input)
     ),
     recordKnowledgeReference: (input: KnowledgeRecordReferencePayload): Promise<KnowledgeProvenanceResult> => (
       invokeHost('knowledge', 'recordKnowledgeReference', input)
@@ -970,6 +1164,43 @@ export const hostApi = {
       invokeHost('skills', 'clawhubOpenSkillPath', input)
     ),
   },
+  skillPacks: {
+    list: (): Promise<{ success: boolean; packs?: SkillPackSummary[]; error?: string }> => invokeHost('skillPacks', 'list'),
+    install: (packId: SkillPackId): Promise<{ success: boolean; error?: string }> => invokeHost('skillPacks', 'install', { packId }),
+    sync: (packId: SkillPackId): Promise<{ success: boolean; error?: string }> => invokeHost('skillPacks', 'sync', { packId }),
+    setEnabled: (packId: SkillPackId, enabled: boolean): Promise<{ success: boolean; error?: string }> => (
+      invokeHost('skillPacks', 'setEnabled', { packId, enabled })
+    ),
+    readSkill: (packId: SkillPackId, skillId: string): Promise<SkillPackReadSkillResult> => (
+      invokeHost('skillPacks', 'readSkill', { packId, skillId })
+    ),
+  },
+  officeTools: {
+    detect: () => invokeHost('officeTools', 'detect'),
+    install: (input?: OfficecliInstallPayload) => invokeHost('officeTools', 'install', input),
+    uninstall: () => invokeHost('officeTools', 'uninstall'),
+    listSkills: () => invokeHost('officeTools', 'listSkills'),
+    syncSkills: () => invokeHost('officeTools', 'syncSkills'),
+    linkSkillToAgent: (skillId: string, agentId: string) => (
+      invokeHost('officeTools', 'linkSkillToAgent', { skillId, agentId })
+    ),
+    unlinkSkillFromAgent: (skillId: string, agentId: string) => (
+      invokeHost('officeTools', 'unlinkSkillFromAgent', { skillId, agentId })
+    ),
+    getSkillInstallStatus: (skillId: string) => (
+      invokeHost('officeTools', 'getSkillInstallStatus', { skillId })
+    ),
+    listAllSkillInstallStatuses: () => invokeHost('officeTools', 'listAllSkillInstallStatuses'),
+    applySkillLinks: (input: OfficecliSkillApplyLinksPayload) => (
+      invokeHost('officeTools', 'applySkillLinks', input)
+    ),
+    readSkillContent: (skillId: string) => (
+      invokeHost('officeTools', 'readSkillContent', { skillId })
+    ),
+    renderHtml: (input: OfficecliRenderHtmlPayload) => invokeHost('officeTools', 'renderHtml', input),
+    startWatch: (input: OfficecliWatchPayload) => invokeHost('officeTools', 'startWatch', input),
+    stopWatch: (input: OfficecliWatchPayload) => invokeHost('officeTools', 'stopWatch', input),
+  },
   usage: {
     recentTokenHistory: (limit?: number) => (
       invokeHost('usage', 'recentTokenHistory', { limit })
@@ -979,6 +1210,12 @@ export const hostApi = {
     ),
     contextRange: (input: { sessionKey: string; modelRef?: string | null; messageCount?: number; usedTokens?: number | null }) => (
       invokeHost('usage', 'contextRange', input)
+    ),
+    promptCacheStatus: (input: Parameters<PromptCacheStatusFn>[0]): Promise<ReturnType<PromptCacheStatusFn>> => (
+      invokeHost('usage', 'promptCacheStatus', input)
+    ),
+    recordPromptCacheRiskEvent: (input: Parameters<PromptCacheRiskEventFn>[0]): Promise<ReturnType<PromptCacheRiskEventFn>> => (
+      invokeHost('usage', 'recordPromptCacheRiskEvent', input)
     ),
   },
   topics: {

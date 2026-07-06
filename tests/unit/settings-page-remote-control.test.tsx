@@ -196,7 +196,7 @@ describe('Settings remote control section', () => {
       summary: 'Policy-light / acceptEdits / policy / network=disabled',
       updatedAt: 1,
       docker: { cli: false, daemon: false, image: false },
-      execPolicy: { host: 'gateway', security: 'allowlist', ask: 'dangerous' },
+      execPolicy: { host: 'gateway', security: 'allowlist', ask: 'on-miss' },
       networkPolicy: 'disabled',
       workspaceAccess: 'none',
       providers: [
@@ -228,7 +228,7 @@ describe('Settings remote control section', () => {
           },
         },
         tools: {
-          exec: { host: 'gateway', security: 'allowlist', ask: 'dangerous' },
+          exec: { host: 'gateway', security: 'allowlist', ask: 'on-miss' },
           sandbox: { tools: { alsoAllow: [] } },
         },
       },

@@ -3,6 +3,8 @@ import { Activity, CheckCircle2, ChevronDown, ChevronRight, CircleDashed, GitBra
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
+import { Shimmer } from '@/components/ai-elements/shimmer';
+import { Button } from '@/components/ui/button';
 import type { TaskStep } from './task-visualization';
 
 interface ExecutionGraphCardProps {
@@ -59,7 +61,7 @@ function StepDetailCard({ step }: { step: TaskStep }) {
         'min-w-0 flex-1 text-muted-foreground',
         isFlatRow || isNarration || isThinking
           ? 'px-0 py-0'
-          : 'rounded-xl border border-black/10 bg-white/40 px-3 py-2 dark:border-white/10 dark:bg-white/[0.03]',
+          : 'rounded-md border border-border/70 bg-background/60 px-3 py-2 shadow-sm',
       )}
     >
       <button
@@ -139,7 +141,7 @@ function StepDetailCard({ step }: { step: TaskStep }) {
               formatted = JSON.stringify(JSON.parse(step.detail), null, 2);
             } catch { /* not valid JSON */ }
             return (
-              <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2 dark:border-white/10 dark:bg-white/[0.03]">
+              <div className="mt-3 rounded-md border border-border/70 bg-background/60 px-3 py-2">
                 <pre
                   className="whitespace-pre-wrap break-words text-xs leading-5 text-muted-foreground"
                 >
@@ -149,7 +151,7 @@ function StepDetailCard({ step }: { step: TaskStep }) {
             );
           })()}
           {step.detail && expanded && canExpand && (isNarration || isThinking) && (
-            <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2 dark:border-white/10 dark:bg-white/[0.03]">
+            <div className="mt-3 rounded-md border border-border/70 bg-background/60 px-3 py-2">
               <pre
                 className="whitespace-pre-wrap break-words text-xs leading-5 text-muted-foreground"
               >
@@ -203,26 +205,28 @@ export function ExecutionGraphCard({
         data-collapsed="true"
         className="flex w-full items-center gap-1"
       >
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => setExpanded(true)}
-          className="group flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-muted-foreground dark:hover:bg-white/5"
+          className="group h-auto min-w-0 flex-1 justify-start gap-2 px-2 py-1.5 text-left text-xs font-normal text-muted-foreground hover:text-muted-foreground"
         >
           <ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
           <span className="truncate">
             {t('executionGraph.collapsedSummary', { toolCount, processCount })}
           </span>
-        </button>
+        </Button>
         {traceHref && (
-          <a
-            href={traceHref}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-            aria-label={t('executionGraph.viewTrace')}
-            title={t('executionGraph.viewTrace')}
-            data-testid="chat-view-trace-link"
-          >
-            <Activity className="h-3.5 w-3.5" />
-          </a>
+          <Button asChild variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground">
+            <a
+              href={traceHref}
+              aria-label={t('executionGraph.viewTrace')}
+              title={t('executionGraph.viewTrace')}
+              data-testid="chat-view-trace-link"
+            >
+              <Activity className="h-3.5 w-3.5" />
+            </a>
+          </Button>
         )}
       </div>
     );
@@ -235,27 +239,29 @@ export function ExecutionGraphCard({
       className="w-full px-0 py-0 text-muted-foreground"
     >
       <div className="flex w-full items-center gap-1">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           data-testid="chat-execution-graph-collapse"
           onClick={() => setExpanded(false)}
-          className="group flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-muted-foreground dark:hover:bg-white/5"
+          className="group h-auto min-w-0 flex-1 justify-start gap-2 px-2 py-1.5 text-left text-xs font-normal text-muted-foreground hover:text-muted-foreground"
           aria-label={t('executionGraph.collapseAction')}
           title={t('executionGraph.collapseAction')}
         >
           <ChevronRight className="h-3.5 w-3.5 shrink-0 rotate-90" />
           <span className="truncate">{t('executionGraph.title')}</span>
-        </button>
+        </Button>
         {traceHref && (
-          <a
-            href={traceHref}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-            aria-label={t('executionGraph.viewTrace')}
-            title={t('executionGraph.viewTrace')}
-            data-testid="chat-view-trace-link"
-          >
-            <Activity className="h-3.5 w-3.5" />
-          </a>
+          <Button asChild variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground">
+            <a
+              href={traceHref}
+              aria-label={t('executionGraph.viewTrace')}
+              title={t('executionGraph.viewTrace')}
+              data-testid="chat-view-trace-link"
+            >
+              <Activity className="h-3.5 w-3.5" />
+            </a>
+          </Button>
         )}
       </div>
 
@@ -329,8 +335,7 @@ export function ExecutionGraphCard({
             >
               <div className="w-6 shrink-0" />
               <div className="min-w-0 flex-1 text-sm text-muted-foreground">
-                <span className="font-medium">{t('executionGraph.thinkingLabel')}</span>
-                <DotMatrix state="thinking" label={t('executionGraph.thinkingLabel')} className="ml-1 inline-flex size-3.5 text-primary align-[-2px]" />
+                <Shimmer className="font-medium">{t('executionGraph.thinkingLabel')}</Shimmer>
               </div>
             </div>
           </div>

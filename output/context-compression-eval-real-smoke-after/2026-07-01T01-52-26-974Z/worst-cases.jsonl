@@ -1,0 +1,1 @@
+{"sampleId":"R3","cohort":{"sampleSource":"real","transcriptFile":"C:\\Users\\27933\\.codex\\archived_sessions\\rollout-2026-06-11T23-07-57-019eb739-b390-7973-9cf5-614cdf2f47ae.jsonl","turnCohort":50,"turnCount":50,"pressureCohort":"0.60","transcriptLength":"medium"},"source":"real","severity":1,"missingFacts":[],"leakedStaleFacts":["R3-stale-3"],"judgeReason":""}

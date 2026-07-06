@@ -4,6 +4,7 @@
  */
 import { normalizeConfiguredMcpServers } from "../config/mcp-config-normalize.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeAgentId } from "../routing/session-key.js";
 import {
   loadEnabledBundleMcpConfig,
   type BundleMcpConfig,
@@ -18,6 +19,11 @@ type MergedBundleMcpConfig = {
 };
 
 type BundleMcpServerMapper = (server: BundleMcpServerConfig, name: string) => BundleMcpServerConfig;
+export type BundleMcpExposureContext = {
+  agentId?: string | null;
+  workspaceId?: string | null;
+  roleName?: string | null;
+};
 
 const OPENCLAW_TRANSPORT_TO_CLI_BUNDLE_TYPE: Record<string, string> = {
   "streamable-http": "http",
@@ -54,6 +60,7 @@ export function loadMergedBundleMcpConfig(params: {
   cfg?: OpenClawConfig;
   manifestRegistry?: Pick<PluginManifestRegistry, "plugins">;
   mapConfiguredServer?: BundleMcpServerMapper;
+  exposureContext?: BundleMcpExposureContext;
 }): MergedBundleMcpConfig {
   const bundleMcp = loadEnabledBundleMcpConfig({
     workspaceDir: params.workspaceDir,
@@ -75,20 +82,78 @@ export function loadMergedBundleMcpConfig(params: {
     ),
   );
   const mapConfiguredServer = params.mapConfiguredServer ?? ((server) => server);
+  const filterServer = ([name, server]: [string, BundleMcpServerConfig]) =>
+    isBundleMcpServerExposed(server, params.exposureContext, name);
 
   return {
     config: {
       // OpenClaw config is the owner-managed layer, so it overrides bundle defaults.
       mcpServers: {
-        ...enabledBundleMcp,
         ...Object.fromEntries(
-          Object.entries(enabledConfiguredMcp).map(([name, server]) => [
-            name,
-            mapConfiguredServer(server as BundleMcpServerConfig, name),
-          ]),
+          Object.entries(enabledBundleMcp).filter(filterServer),
+        ),
+        ...Object.fromEntries(
+          Object.entries(enabledConfiguredMcp)
+            .map(([name, server]) => [
+              name,
+              mapConfiguredServer(server as BundleMcpServerConfig, name),
+            ] as [string, BundleMcpServerConfig])
+            .filter(filterServer),
         ),
       } satisfies BundleMcpConfig["mcpServers"],
     },
     diagnostics: bundleMcp.diagnostics,
   };
+}
+
+function normalizeComparable(value: string | undefined | null): string {
+  return value?.trim().toLowerCase() ?? "";
+}
+
+function normalizeList(value: unknown, normalize = normalizeComparable): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value
+    .filter((entry): entry is string => typeof entry === "string")
+    .map((entry) => normalize(entry))
+    .filter(Boolean);
+}
+
+function readExposure(server: BundleMcpServerConfig): Record<string, unknown> | undefined {
+  const exposure = (server as Record<string, unknown>).exposure;
+  return exposure && typeof exposure === "object" && !Array.isArray(exposure)
+    ? exposure as Record<string, unknown>
+    : undefined;
+}
+
+function isBundleMcpServerExposed(
+  server: BundleMcpServerConfig,
+  context: BundleMcpExposureContext | undefined,
+  _name: string,
+): boolean {
+  if (!context) {
+    return true;
+  }
+  const exposure = readExposure(server);
+  if (!exposure) {
+    return true;
+  }
+  const agentIds = normalizeList(exposure.agents, (value) => normalizeAgentId(value));
+  const workspaceIds = normalizeList(exposure.workspaces);
+  const roleNames = normalizeList(exposure.roles);
+  const hasAgentRestriction = Object.hasOwn(exposure, "agents");
+  const hasWorkspaceRestriction = Object.hasOwn(exposure, "workspaces");
+  const hasRoleRestriction = Object.hasOwn(exposure, "roles");
+  if (!hasAgentRestriction && !hasWorkspaceRestriction && !hasRoleRestriction) {
+    return true;
+  }
+  const agentId = context.agentId ? normalizeAgentId(context.agentId) : "";
+  const workspaceId = normalizeComparable(context.workspaceId);
+  const roleName = normalizeComparable(context.roleName);
+  return (
+    (hasAgentRestriction && agentId && agentIds.includes(agentId)) ||
+    (hasWorkspaceRestriction && workspaceId && workspaceIds.includes(workspaceId)) ||
+    (hasRoleRestriction && roleName && roleNames.includes(roleName))
+  );
 }

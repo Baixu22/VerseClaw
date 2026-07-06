@@ -1,6 +1,8 @@
 import { hostApi } from '@/lib/host-api';
 import { isCapabilityAuditBlocked } from '@/lib/capability-audit';
 import type {
+  CapabilityPublicationQuery,
+  CapabilityPublicationResult,
   CapabilityOrchestrationStep,
   CapabilityOrchestrationStepStatus,
   CapabilityOrchestrationSummary,
@@ -11,7 +13,10 @@ import type {
 import type { ObservabilitySpan, ObservabilityTokenUsage, ObservabilityTrace, ObservabilityTraceEvent } from '@shared/types/observability';
 
 export type CapabilityActionHostApi = {
-  skills: Pick<typeof hostApi.skills, 'local' | 'updateConfigs'>;
+  capabilities: {
+    publications: (input?: CapabilityPublicationQuery) => Promise<CapabilityPublicationResult>;
+  };
+  skills: Pick<typeof hostApi.skills, 'updateConfigs'>;
   mcp: Pick<typeof hostApi.mcp, 'listServers' | 'createServer' | 'testServer' | 'heartbeat' | 'listTools' | 'reloadRuntime'>;
   observability?: Pick<typeof hostApi.observability, 'reportTrace'>;
 };

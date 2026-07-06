@@ -9,7 +9,7 @@ import {
   hasOutboundReplyContent,
   resolveSendableOutboundReplyParts,
 } from "openclaw/plugin-sdk/reply-payload";
-import { readAcpSessionMeta } from "../../acp/runtime/session-meta.js";
+import { readAcpSessionMeta } from "../../runtime/session-meta.ts";
 import {
   resolveAgentConfig,
   resolveAgentWorkspaceDir,

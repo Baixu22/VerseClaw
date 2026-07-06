@@ -1,0 +1,1570 @@
+{
+  "runId": "2026-07-01T10-08-57-053Z",
+  "target": "C:\\Users\\27933\\Desktop\\verseshell\\graphiti-main",
+  "generatedAt": "2026-07-01T10:09:46.113Z",
+  "suite": "daily",
+  "sampleSource": "real",
+  "requestedSampleCount": 5,
+  "sampleCount": 5,
+  "semanticMatching": false,
+  "cache": {
+    "enabled": false,
+    "dir": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.cache\\context-compression-eval",
+    "version": "context-compression-eval-cache-v3",
+    "hits": 0,
+    "misses": 16,
+    "writes": 0,
+    "byNamespace": {
+      "real-samples": {
+        "hits": 0,
+        "misses": 1,
+        "writes": 0
+      },
+      "transcript-parse": {
+        "hits": 0,
+        "misses": 5,
+        "writes": 0
+      },
+      "llm-judge": {
+        "hits": 0,
+        "misses": 10,
+        "writes": 0
+      }
+    },
+    "secretScan": {
+      "pass": true,
+      "scannedFiles": 1036,
+      "leaks": []
+    }
+  },
+  "manifest": {
+    "input": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\output\\context-compression-eval\\holdout-adversarial-real-30.manifest.jsonl",
+    "hash": "961181dea06d53ee3ade5ff581a5708894e5b7e03f0dd7282e73295de511bf53",
+    "requested": 5,
+    "resolved": 5,
+    "missing": []
+  },
+  "reproducibility": {
+    "seed": "context-compression-eval-v1",
+    "sampleSelectionHash": "961181dea06d53ee3ade5ff581a5708894e5b7e03f0dd7282e73295de511bf53",
+    "promptVersions": {
+      "judge": "judge-prompt-v7",
+      "continuation": "continuation-prompt-v4"
+    },
+    "extractorVersion": "real-fact-extractor-v12",
+    "parserVersion": "transcript-parser-v3",
+    "redactionVersion": "redaction-v4"
+  },
+  "realInventory": {
+    "transcriptRoot": "C:\\\\Users\\\\27933\\\\.codex\\\\archived_sessions",
+    "filesFound": 212,
+    "transcriptsParsed": 5,
+    "entriesParsed": 2441
+  },
+  "sampleMix": {
+    "realRequested": 5,
+    "syntheticRequested": 0,
+    "realActual": 5,
+    "syntheticActual": 0,
+    "realShortfall": 0,
+    "evidenceInsufficient": false
+  },
+  "llmJudge": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 5,
+    "liveCount": 5,
+    "cacheHitCount": 0,
+    "results": [
+      {
+        "sampleId": "R15",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies detected; the summary correctly reflects the transcript evidence.",
+          "The causal chain from implementation to testing to failure analysis is maintained.",
+          "No fabricated information is present; all statements are traceable to evidence.",
+          "The next action is actionable and clearly derived from the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies detected; the summary correctly reflects the transcript evidence.\",\n    \"The causal chain from implementation to testing to failure analysis is maintained.\",\n    \"No fabricated information is present; all "
+      },
+      {
+        "sampleId": "R60",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, including the objective, decision, constraint, failure chains, and important facts.",
+          "The summary accurately reflects the transcript evidence without distortion or contradiction.",
+          "The causal chain from the objective to the decision to the implementation and validation is preserved.",
+          "No fabricated facts are introduced; all statements are traceable to the transcript.",
+          "The next actions are clearly actionable and derived from the summary content."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, including the objective, decision, constraint, failure chains, and important facts.\",\n    \"The summary accurately reflects the transcript evidence without distortion or contradiction.\",\n    \"The causal chain from the objective to the decision to the implementation and validation"
+      },
+      {
+        "sampleId": "R13",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, test results, blockers, and file contexts.",
+          "The summary accurately reflects the transcript evidence without contradictions or misrepresentations.",
+          "The causal chain of failures and resolutions is clearly maintained, showing the progression from type errors to test failures to final validation.",
+          "No fabricated facts are present; all information is traceable to the provided evidence lines.",
+          "The next action is actionable and directly follows from the validated outcome."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, including the objective, decision, constraint, failure chains, test results, blockers, and file contexts.\",\n    \"The summary accurately reflects the transcript evidence without contradictions or misrepresentations.\",\n    \"The causal chain of failures and resolutions is clearly"
+      },
+      {
+        "sampleId": "R19",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are preserved in the compressed summary, either verbatim or via clear paraphrase.",
+          "No factual inaccuracies or contradictions with the original transcript.",
+          "The causal chain of failures and resolutions is fully captured.",
+          "No fabricated facts or hallucinated details are present.",
+          "The next action is actionable and derived from the evidence."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are preserved in the compressed summary, either verbatim or via clear paraphrase.\",\n    \"No factual inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain of failures and resolutions is fully captured.\",\n    \"No fabricated facts or hallucinated details are present.\",\n    \"The next action"
+      },
+      {
+        "sampleId": "R100",
+        "completeness": true,
+        "accuracy": true,
+        "causal_chain": true,
+        "no_fabrication": true,
+        "actionability": true,
+        "score": 10,
+        "justifications": [
+          "All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.",
+          "No factual inaccuracies or contradictions with the original transcript.",
+          "The causal chain from decisions to actions to outcomes is preserved.",
+          "No fabricated facts or claims not supported by the transcript.",
+          "The next action is clearly stated and actionable."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": true,\n  \"accuracy\": true,\n  \"causal_chain\": true,\n  \"no_fabrication\": true,\n  \"actionability\": true,\n  \"score\": 10,\n  \"justifications\": [\n    \"All expected facts are present in the compressed summary, either verbatim or as clear paraphrases.\",\n    \"No factual inaccuracies or contradictions with the original transcript.\",\n    \"The causal chain from decisions to actions to outcomes is preserved.\",\n    \"No fabricated facts or claims not supported by the transcript.\",\n    \"The ne"
+      }
+    ],
+    "aggregate": {
+      "judgeScoreMean": 10,
+      "judgeScoreMin": 10,
+      "judgeScoreMax": 10,
+      "judgeScoreMedian": 10,
+      "judgeScoreStdDev": 0,
+      "scoreHistogram": {
+        "10": 5,
+        "0-4.99": 0,
+        "5-6.99": 0,
+        "7-7.99": 0,
+        "8-8.99": 0,
+        "9-9.99": 0
+      },
+      "scoreDistributionWarning": null,
+      "completenessRate": 1,
+      "accuracyRate": 1,
+      "causalChainRate": 1,
+      "noFabricationRate": 1,
+      "actionabilityRate": 1
+    }
+  },
+  "llmJudgeCalibration": {
+    "requested": true,
+    "executed": true,
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "baseUrl": "https://api.deepseek.com",
+    "sampleCount": 5,
+    "liveCount": 5,
+    "cacheHitCount": 0,
+    "results": [
+      {
+        "sampleId": "R15-calibration-loss-1",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 4,
+        "justifications": [
+          "Completeness false: The compressed summary omits nearly all expected facts, including the implementation of Chat slash commands MVP, the harness task spec, the typed slash command registry, the shell quoting failures, the i18n parity issues, the E2E fork test blocker, and the decision to read diff fragments. Only vague placeholders like 'Some work happened' are present.",
+          "Accuracy true: The summary does not contain any factually incorrect statements; it simply lacks detail.",
+          "Causal chain false: The summary does not preserve any causal chain from the transcript. For example, the sequence of implementing slash commands, encountering shell quoting failures, identifying i18n parity issues, and planning to fix spec taskType is entirely absent.",
+          "No fabrication true: The summary does not introduce any fabricated facts.",
+          "Actionability false: The next action 'Continue generally from the current state' is too vague to be actionable. It does not specify what to do next, such as fixing the shell quoting, updating the spec taskType, or addressing the E2E fork test."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 3,\n  \"justifications\": [\n    \"Completeness false: The compressed summary omits nearly all expected facts, including the implementation of Chat slash commands MVP, the harness task spec, the typed slash command registry, the shell quoting failures, the i18n parity issues, the E2E fork test blocker, and the decision to read diff fragments. Only vague placeholders l"
+      },
+      {
+        "sampleId": "R60-calibration-loss-2",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 10,
+        "justifications": [
+          "Completeness false: Compressed Summary omits all critical expected facts, including the Lane D goal, the nesting of verifier output, and all failure chains.",
+          "Accuracy false: Summary states 'Some work happened, but concrete debugging evidence has been omitted' which is vague and not equivalent to any expected fact.",
+          "Causal_chain false: No failure chains or causal sequences from the transcript are preserved; the summary lacks any mention of attempts, failures, or adjustments.",
+          "No_fabrication true: Summary does not introduce any fabricated facts beyond the vague statements.",
+          "Actionability false: Next Actions 'Continue generally from the current state' is too vague to be actionable; no specific next steps are provided."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 1,\n  \"justifications\": [\n    \"Completeness false: Compressed Summary omits all critical expected facts, including the Lane D goal, the nesting of verifier output, and all failure chains.\",\n    \"Accuracy false: Summary states 'Some work happened, but concrete debugging evidence has been omitted' which is vague and not equivalent to any expected fact.\",\n    \"Causa"
+      },
+      {
+        "sampleId": "R13-calibration-loss-3",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 2,
+        "justifications": [
+          "Completeness false: The compressed summary omits nearly all expected facts, including the core objective (fix hardcoded Chinese), the constraint to use existing i18n, the failure chains, and the list of modified files.",
+          "Accuracy false: The summary states 'Some work happened' and 'concrete debugging evidence has been omitted', which is misleading because the transcript contains extensive evidence of the work done.",
+          "Causal chain false: The summary does not preserve any of the failure chains or the progression from initial attempt to test failures to final validation.",
+          "No fabrication true: The summary does not introduce any fabricated facts; it simply omits most details.",
+          "Actionability false: The next action 'Continue generally from the current state' is vague and does not reflect the specific next actions from the transcript (e.g., fixing the Settings JSX syntax error, adapting the Russian test)."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 2,\n  \"justifications\": [\n    \"Completeness false: The compressed summary omits nearly all expected facts, including the core objective (fix hardcoded Chinese), the constraint to use existing i18n, the failure chains, and the list of modified files.\",\n    \"Accuracy false: The summary states 'Some work happened' and 'concrete debugging evidence has been omitted', "
+      },
+      {
+        "sampleId": "R19-calibration-loss-4",
+        "completeness": false,
+        "accuracy": false,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 2,
+        "justifications": [
+          "Completeness false: The compressed summary omits nearly all expected facts, including the objective, decision to add harness task spec, constraint to run harness context, all failure chains, and important test results.",
+          "Accuracy false: The summary states 'Some work happened' and 'Important implementation, failure, validation, and next-action details are missing' which is accurate about omission but does not accurately reflect the transcript content.",
+          "Causal chain false: The summary does not preserve any causal chains from the transcript, such as the sequence of failures and adjustments.",
+          "No fabrication true: The summary does not introduce any fabricated facts; it simply omits details.",
+          "Actionability false: The next actions are vague ('Continue generally from the current state') and do not reflect the specific next actions from the transcript."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": false,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 2,\n  \"justifications\": [\n    \"Completeness false: The compressed summary omits nearly all expected facts, including the objective, decision to add harness task spec, constraint to run harness context, all failure chains, and important test results.\",\n    \"Accuracy false: The summary states 'Some work happened' and 'Important implementation, failure, validation, "
+      },
+      {
+        "sampleId": "R100-calibration-loss-5",
+        "completeness": false,
+        "accuracy": true,
+        "causal_chain": false,
+        "no_fabrication": true,
+        "actionability": false,
+        "score": 4,
+        "justifications": [
+          "Completeness false: The compressed summary omits nearly all expected facts, including critical decisions, constraints, blockers, test results, and file contexts. Only vague placeholders are present.",
+          "Accuracy true: The summary does not contain any factually incorrect statements; it simply omits information.",
+          "Causal_chain false: The summary lacks any causal chain linking attempts, failures, and next actions. The original transcript shows a clear sequence of test failures and decisions, but the summary does not preserve it.",
+          "No_fabrication true: The summary does not introduce any fabricated facts; it only states that details are missing.",
+          "Actionability false: The next actions are too vague ('Continue generally from the current state') to be actionable. The original transcript contains specific next steps like running scans and writing submissions."
+        ],
+        "rawTextPreview": "{\n  \"completeness\": false,\n  \"accuracy\": true,\n  \"causal_chain\": false,\n  \"no_fabrication\": true,\n  \"actionability\": false,\n  \"score\": 3,\n  \"justifications\": [\n    \"Completeness false: The compressed summary omits nearly all expected facts, including critical decisions, constraints, blockers, test results, and file contexts. Only vague placeholders are present.\",\n    \"Accuracy true: The summary does not contain any factually incorrect statements; it simply omits information.\",\n    \"Causal_chain "
+      }
+    ],
+    "aggregate": {
+      "judgeScoreMean": 4.4,
+      "judgeScoreMin": 2,
+      "judgeScoreMax": 10,
+      "judgeScoreMedian": 4,
+      "judgeScoreStdDev": 2.9394,
+      "scoreHistogram": {
+        "10": 1,
+        "0-4.99": 4,
+        "5-6.99": 0,
+        "7-7.99": 0,
+        "8-8.99": 0,
+        "9-9.99": 0
+      },
+      "scoreDistributionWarning": null,
+      "completenessRate": 0,
+      "accuracyRate": 0.4,
+      "causalChainRate": 0,
+      "noFabricationRate": 1,
+      "actionabilityRate": 0
+    },
+    "expectedBehavior": "known-loss calibration samples should score below 8 on average and below 10 at minimum",
+    "gate": {
+      "pass": true,
+      "actual": {
+        "judgeScoreMean": 4.4,
+        "judgeScoreMin": 2
+      }
+    }
+  },
+  "llmJudgeLiveRerun": {
+    "requested": false,
+    "executed": false,
+    "reason": "Live uncached judge rerun was not requested. Pass --llm-judge-live-rerun-ratio 0.1 to enable it."
+  },
+  "llmSchemaFree": {
+    "requested": false,
+    "executed": false,
+    "reason": "Schema-free omission judge was not requested. Pass --llm-schema-free to enable it.",
+    "results": []
+  },
+  "llmContinuation": {
+    "requested": false,
+    "executed": false,
+    "reason": "LLM continuation was not requested. Pass --llm-continuation to enable it.",
+    "results": []
+  },
+  "layer0": {
+    "rounds": 5,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": null,
+    "informationDensityMean": null,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 56,
+    "expectedTotal": 56
+  },
+  "informationLoss": {
+    "totalVerifiedClaims": 92,
+    "retainedVerifiedClaims": 92,
+    "droppedVerifiedClaims": 0,
+    "verifiedClaimsRetentionRate": 1,
+    "informationLossRate": 0,
+    "criticalDroppedVerifiedClaims": 0,
+    "importantDroppedVerifiedClaims": 0,
+    "niceToHaveDroppedVerifiedClaims": 0,
+    "bySeverity": {
+      "critical": {
+        "total": 41,
+        "retained": 41,
+        "retentionRate": 1
+      },
+      "important": {
+        "total": 51,
+        "retained": 51,
+        "retentionRate": 1
+      },
+      "nice_to_have": {
+        "total": 0,
+        "retained": 0,
+        "retentionRate": 1
+      }
+    }
+  },
+  "layer1": {
+    "rounds": 5,
+    "recallMean": 1,
+    "recallMin": 1,
+    "recallMax": 1,
+    "precisionMean": 1,
+    "f1Mean": 1,
+    "staleExclusionMean": 1,
+    "weightedRecallMean": 1,
+    "recallCriticalMean": 1,
+    "recallImportantMean": 1,
+    "recallNiceToHaveMean": 1,
+    "compressionRatioMean": 0.1604,
+    "informationDensityMean": 6.2362,
+    "forbiddenFoundTotal": 0,
+    "expectedFoundTotal": 92,
+    "expectedTotal": 92
+  },
+  "layer1Gate": {
+    "pass": true,
+    "thresholds": {
+      "recallCriticalMean": ">= 0.95",
+      "recallImportantMean": ">= 0.75",
+      "weightedRecallMean": ">= 0.90",
+      "precisionMean": "= 1",
+      "forbiddenFoundTotal": "= 0",
+      "staleExclusionMean": ">= 0.99",
+      "compressionRatioMean": "0.15..0.35",
+      "informationDensityMean": ">= 2"
+    }
+  },
+  "layer2": {
+    "total": 5,
+    "judgeScoreMean": 10,
+    "judgeScoreMin": 10,
+    "judgeScoreMax": 10,
+    "judgeScoreMedian": 10,
+    "judgeScoreStdDev": 0,
+    "scoreHistogram": {
+      "10": 5,
+      "0-4.99": 0,
+      "5-6.99": 0,
+      "7-7.99": 0,
+      "8-8.99": 0,
+      "9-9.99": 0
+    },
+    "scoreDistributionWarning": null,
+    "completenessRate": 1,
+    "accuracyRate": 1,
+    "causalChainPreservation": 1,
+    "causalChainRate": 1,
+    "noFabricationRate": 1,
+    "actionabilityRate": 1
+  },
+  "layer2Gate": {
+    "pass": true
+  },
+  "layer3": {
+    "total": 5,
+    "firstActionMatchRate": 1,
+    "criticalActionMatchRate": 1,
+    "noRepeatedWorkRate": 1,
+    "noContradictoryActionRate": 1,
+    "decisionConsistencyRate": 1,
+    "taskCompletionDelta": 0
+  },
+  "layer3Gate": {
+    "pass": true,
+    "thresholds": {
+      "firstActionMatchRate": ">= 0.85",
+      "criticalActionMatchRate": ">= 0.90",
+      "noRepeatedWorkRate": ">= 0.95",
+      "noContradictoryActionRate": ">= 0.95",
+      "decisionConsistencyRate": ">= 0.90",
+      "taskCompletionDelta": "<= 0.08"
+    }
+  },
+  "cohorts": {
+    "real": {
+      "sampleCount": 5,
+      "layer0": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 56,
+        "expectedTotal": 56
+      },
+      "layer1": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1604,
+        "informationDensityMean": 6.2362,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 92,
+        "expectedTotal": 92
+      },
+      "layer3": {
+        "total": 5,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.95": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1603,
+        "informationDensityMean": 6.2391,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 57,
+        "expectedTotal": 57
+      },
+      "0.85": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1601,
+        "informationDensityMean": 6.2444,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 18,
+        "expectedTotal": 18
+      },
+      "emergency": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1608,
+        "informationDensityMean": 6.2194,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 17,
+        "expectedTotal": 17
+      }
+    },
+    "byTurnCount": {
+      "200": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1606,
+        "informationDensityMean": 6.2278,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 37,
+        "expectedTotal": 37
+      },
+      "1000": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1602,
+        "informationDensityMean": 6.2419,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 55,
+        "expectedTotal": 55
+      }
+    },
+    "byPressureContinuation": {
+      "0.95": {
+        "total": 3,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "0.85": {
+        "total": 1,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      },
+      "emergency": {
+        "total": 1,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    }
+  },
+  "cohortBreakdown": {
+    "real": {
+      "sampleCount": 5,
+      "layer0": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 56,
+        "expectedTotal": 56
+      },
+      "layer1": {
+        "rounds": 5,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1604,
+        "informationDensityMean": 6.2362,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 92,
+        "expectedTotal": 92
+      },
+      "layer3": {
+        "total": 5,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "synthetic": {
+      "sampleCount": 0,
+      "layer0": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer1": {
+        "rounds": 0,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": null,
+        "informationDensityMean": null,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 0,
+        "expectedTotal": 0
+      },
+      "layer3": {
+        "total": 0,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0
+      }
+    },
+    "byPressure": {
+      "0.95": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1603,
+        "informationDensityMean": 6.2391,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 57,
+        "expectedTotal": 57
+      },
+      "0.85": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1601,
+        "informationDensityMean": 6.2444,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 18,
+        "expectedTotal": 18
+      },
+      "emergency": {
+        "rounds": 1,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1608,
+        "informationDensityMean": 6.2194,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 17,
+        "expectedTotal": 17
+      }
+    },
+    "byTurnCount": {
+      "200": {
+        "rounds": 2,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1606,
+        "informationDensityMean": 6.2278,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 37,
+        "expectedTotal": 37
+      },
+      "1000": {
+        "rounds": 3,
+        "recallMean": 1,
+        "recallMin": 1,
+        "recallMax": 1,
+        "precisionMean": 1,
+        "f1Mean": 1,
+        "staleExclusionMean": 1,
+        "weightedRecallMean": 1,
+        "recallCriticalMean": 1,
+        "recallImportantMean": 1,
+        "recallNiceToHaveMean": 1,
+        "compressionRatioMean": 0.1602,
+        "informationDensityMean": 6.2419,
+        "forbiddenFoundTotal": 0,
+        "expectedFoundTotal": 55,
+        "expectedTotal": 55
+      }
+    }
+  },
+  "degradationCurve": {
+    "points": [
+      {
+        "pressure": "0.85",
+        "sampleCount": 1,
+        "compressionRatioMean": 0.1601,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "0.95",
+        "sampleCount": 3,
+        "compressionRatioMean": 0.1603,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      },
+      {
+        "pressure": "emergency",
+        "sampleCount": 1,
+        "compressionRatioMean": 0.1608,
+        "verifiedClaimsRetentionRate": 1,
+        "weightedRecallMean": 1,
+        "informationLossRate": 0,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "taskCompletionDelta": 0
+      }
+    ],
+    "firstQualityDropPressure": null,
+    "monotonicityNote": "Quality should degrade gradually as pressure increases; abrupt drops indicate compression fragility."
+  },
+  "latencyCost": {
+    "timing": {
+      "startedAt": "2026-07-01T10:08:57.053Z",
+      "phasesMs": {
+        "projectSnippets": 3,
+        "buildSamples": 5199,
+        "deterministicLayers": 660,
+        "llmJudge": 25576,
+        "llmJudgeCalibration": 16317,
+        "llmJudgeLiveRerun": 1,
+        "llmSchemaFree": 0,
+        "llmContinuation": 0,
+        "cacheSecretScan": 1138
+      },
+      "totalMs": 49059,
+      "finishedAt": "2026-07-01T10:09:46.112Z",
+      "samplesPerSecond": 0.1019
+    },
+    "tokenEconomics": {
+      "sampleCount": 5,
+      "totals": {
+        "originalInputTokens": 426196,
+        "compressedInputTokens": 68298,
+        "inputTokenDelta": -357898,
+        "inputTokenSavings": 357898,
+        "uncompressedOutputTokens": 369,
+        "compressedOutputTokens": 369,
+        "outputTokenDelta": 0,
+        "netTokenDelta": -357898
+      },
+      "means": {
+        "originalInputTokens": 85239.2,
+        "compressedInputTokens": 13659.6,
+        "inputTokenDelta": -71579.6,
+        "inputTokenSavings": 71579.6,
+        "uncompressedOutputTokens": 73.8,
+        "compressedOutputTokens": 73.8,
+        "outputTokenDelta": 0,
+        "netTokenDelta": -71579.6
+      },
+      "inputCompressionRatioMean": 0.1604,
+      "outputTokenDeltaMean": 0,
+      "outputExpansionRate": 0,
+      "netTokenSavings": 357898,
+      "netTokenDelta": -357898,
+      "warning": null,
+      "examples": []
+    },
+    "note": "Token counts are heuristic estimates; use model tokenizer/pricing for billing-grade cost."
+  },
+  "failureChainSchemaRisk": {
+    "chainCount": 20,
+    "meanChainExtractionConfidence": 0.74,
+    "lowConfidenceChainCount": 0,
+    "mediumConfidenceChainCount": 8,
+    "highConfidenceChainCount": 12,
+    "hallucinationRisk": "no_low_confidence_failure_chains_detected",
+    "examples": [
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-1",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-2",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-3",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R15",
+        "factId": "R15-failure-chain-4",
+        "classification": "shell_quoting_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R60",
+        "factId": "R60-failure-chain-2",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "validation"
+        ]
+      },
+      {
+        "sampleId": "R19",
+        "factId": "R19-failure-chain-4",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R100",
+        "factId": "R100-failure-chain-3",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      },
+      {
+        "sampleId": "R100",
+        "factId": "R100-failure-chain-4",
+        "classification": "environment_or_invocation_failure",
+        "evidencedLinks": 3,
+        "possibleLinks": 5,
+        "chainExtractionConfidence": 0.6,
+        "confidenceBand": "medium",
+        "missingLinks": [
+          "adjustment",
+          "next"
+        ]
+      }
+    ]
+  },
+  "hunkRehydrationAb": {
+    "executed": true,
+    "sampleCount": 5,
+    "compared": {
+      "withoutRehydratedFileContext": {
+        "total": 5,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 0.6,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 0.6,
+        "taskCompletionDelta": 1,
+        "nextActionSpecificity": 1
+      },
+      "withRehydratedFileContext": {
+        "total": 5,
+        "firstActionMatchRate": 1,
+        "criticalActionMatchRate": 1,
+        "noRepeatedWorkRate": 1,
+        "noContradictoryActionRate": 1,
+        "decisionConsistencyRate": 1,
+        "taskCompletionDelta": 0,
+        "nextActionSpecificity": 1
+      }
+    },
+    "gate": {
+      "pass": true
+    },
+    "statisticalTests": {
+      "criticalActionMatch": {
+        "metric": "criticalActionMatch",
+        "pairedSamples": 5,
+        "meanDifference": 0.4,
+        "medianDifference": 0,
+        "positiveDifferences": 2,
+        "negativeDifferences": 0,
+        "zeroDifferences": 3,
+        "tStatistic": 1.8257,
+        "wilcoxonDirection": "with_hunk_better",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "underpowered"
+      },
+      "firstActionMatch": {
+        "metric": "firstActionMatch",
+        "pairedSamples": 5,
+        "meanDifference": 0,
+        "medianDifference": 0,
+        "positiveDifferences": 0,
+        "negativeDifferences": 0,
+        "zeroDifferences": 5,
+        "tStatistic": null,
+        "wilcoxonDirection": "tie",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "underpowered"
+      },
+      "noRepeatedWork": {
+        "metric": "noRepeatedWork",
+        "pairedSamples": 5,
+        "meanDifference": 0,
+        "medianDifference": 0,
+        "positiveDifferences": 0,
+        "negativeDifferences": 0,
+        "zeroDifferences": 5,
+        "tStatistic": null,
+        "wilcoxonDirection": "tie",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "underpowered"
+      },
+      "noContradictoryAction": {
+        "metric": "noContradictoryAction",
+        "pairedSamples": 5,
+        "meanDifference": 0,
+        "medianDifference": 0,
+        "positiveDifferences": 0,
+        "negativeDifferences": 0,
+        "zeroDifferences": 5,
+        "tStatistic": null,
+        "wilcoxonDirection": "tie",
+        "minimumUsefulPairedSamples": 30,
+        "statisticalPowerStatus": "underpowered"
+      }
+    },
+    "robustness": {
+      "mode": "deterministic_action_perturbation_proxy",
+      "note": "Use live temperature>0 continuation calls for stronger stochastic robustness evidence.",
+      "sampleCount": 5,
+      "deterministicTrialsPerSample": 3,
+      "actionSequenceConsistencyMean": 0.4,
+      "criticalActionStableRate": 1,
+      "firstActionStableRate": 0,
+      "fullSignatureMatchRateMean": 0.3333
+    },
+    "evidence": [
+      {
+        "sampleId": "R15",
+        "hunks": [
+          {
+            "path": "shared/i18n/locales/ja/chat.json",
+            "lineWindow": {
+              "start": 360,
+              "end": 366
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:a2f3908035c355b2",
+            "evidenceRefs": [
+              "fc_09297b6beeed46c0016a36c8f444108191a8593ad8810e6c67@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:363"
+            ]
+          },
+          {
+            "path": "shared/i18n/locales/ru/chat.json",
+            "lineWindow": {
+              "start": 361,
+              "end": 367
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:d8c3109d268b3cc1",
+            "evidenceRefs": [
+              "fc_09297b6beeed46c0016a36c8f444248191b144af387c66d877@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:364"
+            ]
+          },
+          {
+            "path": "Desktop/clawx/ClawX/shared/i18n/locales/en/chat.json",
+            "lineWindow": {
+              "start": 368,
+              "end": 374
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:ef522e1937f49d48",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:371@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:371"
+            ]
+          },
+          {
+            "path": "Desktop/clawx/ClawX/shared/i18n/locales/zh/chat.json",
+            "lineWindow": {
+              "start": 373,
+              "end": 379
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:0c163d719277c396",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:376@rollout-2026-06-21T00-26-43-019ee5db-0be3-7e81-8848-1dc69fd41fcc.jsonl:376"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R60",
+        "hunks": [
+          {
+            "path": ".codex/RTK.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/agent-runtime-index.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/implementation-roadmap.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          },
+          {
+            "path": "runtime-research/migration-execution-plan.md",
+            "lineWindow": {
+              "start": 3,
+              "end": 9
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:5ad2fbbdc74ca288",
+            "evidenceRefs": [
+              "rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6@rollout-2026-06-26T01-28-27-019effd3-6f57-7283-9f0b-fa2ccf6de4a3.jsonl:6"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R13",
+        "hunks": [
+          {
+            "path": "shared/i18n/resources.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/workspace-task-ledger.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/tighten-host-events-contract-types.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/tighten-host-api-contract-types.md",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:087426699d682d16",
+            "evidenceRefs": [
+              "rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16@rollout-2026-06-20T11-27-23-019ee311-8cd5-7382-8bcd-0e6e207df6fd.jsonl:16"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R19",
+        "hunks": [
+          {
+            "path": "src/styles/globals.css",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "src/lib/host-api.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "src/lib/api-client.ts",
+            "lineWindow": {
+              "start": 13,
+              "end": 19
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:aa2cccc3942468e9",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:16"
+            ]
+          },
+          {
+            "path": "docs/a2a-adaptation-plan.md",
+            "lineWindow": {
+              "start": 14,
+              "end": 20
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:f5919b2392dd3d90",
+            "evidenceRefs": [
+              "rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:17@rollout-2026-06-21T00-30-31-019ee5de-7540-7223-9a0d-f4b1f1892f4e.jsonl:17"
+            ]
+          }
+        ]
+      },
+      {
+        "sampleId": "R100",
+        "hunks": [
+          {
+            "path": "src/example.ts",
+            "lineWindow": {
+              "start": 48,
+              "end": 54
+            },
+            "reason": "next_action_relevant",
+            "excerptHash": "sha256:8dca1955547b156b",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:51@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:51"
+            ]
+          },
+          {
+            "path": "harness/specs/tasks/line-c-evidence-trace-grounding-spine.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b7c21c5adec11b49",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          },
+          {
+            "path": "harness/specs/scenarios/gateway-backend-communication.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b7c21c5adec11b49",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          },
+          {
+            "path": "harness/specs/rules/active-config-guards.md",
+            "lineWindow": {
+              "start": 51,
+              "end": 57
+            },
+            "reason": "file_context",
+            "excerptHash": "sha256:b7c21c5adec11b49",
+            "evidenceRefs": [
+              "rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54@rollout-2026-06-27T11-13-29-019f0711-69a9-76b2-9cde-1fb549c6f8d9.jsonl:54"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "humanEvaluation": {
+    "required": true,
+    "minimumRaters": 2,
+    "minimumSamples": 20,
+    "packSampleCount": 5,
+    "ratingsPath": null,
+    "status": "missing_ratings",
+    "message": "Human evaluation pack is available, but real developer ratings were not provided. Provide --human-eval-ratings <json|jsonl> to compute human-auto correlation.",
+    "packPath": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\output\\context-compression-eval\\2026-07-01T10-08-57-053Z\\human-eval-pack.jsonl"
+  },
+  "worstCases": [],
+  "regressionExamples": [],
+  "redactionSummary": {
+    "mode": "strict",
+    "replacements": {
+      "apiKeys": 0,
+      "authTokens": 0,
+      "authHeaders": 0,
+      "providerKeys": 0,
+      "urlTokens": 0,
+      "usernames": 1076
+    },
+    "filesScanned": 5,
+    "linesScanned": 3799
+  },
+  "acceptance": {
+    "status": "PASS",
+    "checks": [
+      {
+        "id": "sampleCount.exact",
+        "pass": true,
+        "actual": 5,
+        "expected": "= 5"
+      },
+      {
+        "id": "samplesJsonl.exact",
+        "pass": true,
+        "actual": 5,
+        "expected": "= 5"
+      },
+      {
+        "id": "l0.recallMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l0.staleExclusionMean",
+        "pass": true,
+        "actual": 1,
+        "expected": "= 1.0"
+      },
+      {
+        "id": "l1.gate",
+        "pass": true,
+        "actual": 1,
+        "expected": "all L1 thresholds"
+      },
+      {
+        "id": "informationLoss.verifiedClaimsRetentionRate",
+        "pass": true,
+        "actual": 1,
+        "expected": ">= 0.95 retained verified claims"
+      },
+      {
+        "id": "informationLoss.criticalDroppedVerifiedClaims",
+        "pass": true,
+        "actual": 0,
+        "expected": "= 0 critical verified claims dropped"
+      },
+      {
+        "id": "l2.deterministicGate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 thresholds"
+      },
+      {
+        "id": "l3.deterministicGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "L3 thresholds"
+      },
+      {
+        "id": "realCohort.notMasked",
+        "pass": true,
+        "actual": 1,
+        "expected": "daily real recall/precision/stale checks pass independently"
+      },
+      {
+        "id": "manifest.exactResolve",
+        "pass": true,
+        "actual": "5/5",
+        "expected": "all manifest samples resolved"
+      },
+      {
+        "id": "cache.noSecretLeak",
+        "pass": true,
+        "actual": 0,
+        "expected": "= 0 cache secret leaks"
+      },
+      {
+        "id": "hunkRehydration.abGate",
+        "pass": true,
+        "actual": 1,
+        "expected": "with hunk continuation metrics do not regress"
+      },
+      {
+        "id": "daily.evidenceSufficiency",
+        "pass": true,
+        "actual": 1,
+        "expected": "daily may degrade but must mark evidenceInsufficient"
+      },
+      {
+        "id": "l2.realJudge.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed"
+      },
+      {
+        "id": "l2.realJudge.gate",
+        "pass": true,
+        "actual": 10,
+        "expected": "L2 real judge thresholds"
+      },
+      {
+        "id": "l2.judgeCalibration.executed",
+        "pass": true,
+        "actual": 1,
+        "expected": "executed on known-loss calibration samples"
+      },
+      {
+        "id": "l2.judgeCalibration.discriminatesLoss",
+        "pass": true,
+        "actual": 4.4,
+        "expected": "< 8 mean on known-loss samples"
+      }
+    ],
+    "evidenceInsufficient": false
+  }
+}

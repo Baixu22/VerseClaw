@@ -67,5 +67,38 @@
         "notRunningDesc": "この機能を使用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
         "restarting": "ゲートウェイを再起動中",
         "warning": "ゲートウェイが停止中です。"
+    },
+    "storageHealth": {
+        "ramLow": "メモリが不足しています",
+        "diskLow": "ディスク容量が不足しています",
+        "bannerLow": "ストレージ不足 — クリックして整理"
+    },
+    "resourceTracker": {
+        "chip": {
+            "ariaLabel": "実行中のリソース {{count}} 件",
+            "tooltip": "実行中のリソース {{count}} 件",
+            "warningCount": "アイドル {{count}} 件"
+        },
+        "popover": {
+            "title": "実行中のリソース",
+            "close": "リソース一覧を閉じる",
+            "empty": "追跡中のリソースはありません",
+            "stopAll": "すべて停止",
+            "autoCleanup": "アイドル状態のリソースは {{minutes}} 分後に自動クリーンアップされます。"
+        },
+        "status": {
+            "healthy": "アクティブ",
+            "idle": "アイドル",
+            "unreachable": "停止中"
+        },
+        "timeAgo": {
+            "justNow": "たった今",
+            "m": "{{count}} 分",
+            "h": "{{count}} 時間"
+        },
+        "pid": "pid {{pid}}",
+        "fromSession": "{{session}} から",
+        "stop": "停止",
+        "stopResource": "{{label}} を停止"
     }
 }

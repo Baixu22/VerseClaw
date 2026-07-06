@@ -258,17 +258,8 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
       await expect(page.getByTestId('assistant-reasoning-panel')).toBeVisible();
       await expect(page.getByTestId('assistant-tool-fallback')).toContainText('very_long_unknown_tool_name');
       await expect(page.getByTestId('assistant-attachment-card')).toContainText('assistant-rendering-output');
-      await expect(page.getByTestId('assistant-token-usage-roll')).toContainText('1.6k');
-      await expect(page.getByTestId('assistant-status-dot-matrix')).toBeVisible();
-      const statusMatrixDots = page.getByTestId('assistant-status-dot-matrix').locator('[data-slot="dot-matrix-dot"]');
-      await expect(statusMatrixDots).toHaveCount(25);
-      const statusMatrixDotPhases = await statusMatrixDots.evaluateAll((nodes) =>
-        nodes.map((node) => node.getAttribute('data-phase') ?? ''),
-      );
-      expect(new Set(statusMatrixDotPhases).size).toBeGreaterThan(5);
-      await page.getByTestId('assistant-status-dot-matrix').hover();
-      await expect(page.getByTestId('assistant-dot-matrix-status')).toBeVisible();
-      await page.mouse.move(0, 0);
+      await expect(page.getByTestId('assistant-token-usage-roll')).toHaveCount(0);
+      await expect(page.getByTestId('assistant-status-dot-matrix')).toHaveCount(0);
 
       await page.setViewportSize({ width: 1280, height: 900 });
       await expect(scrollContainer).toHaveScreenshot('assistant-render-chat-desktop-light.png', {
@@ -339,8 +330,8 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
 
       await page.getByTestId('sidebar-nav-settings').click();
       await expect(page.getByTestId('settings-page')).toBeVisible();
-      await expect(page.getByTestId('settings-work-heatgraph')).toBeVisible();
-      await expect(page.getByTestId('settings-work-heatgraph-day')).toHaveCount(35);
+      await expect(page.getByTestId('settings-overview')).toBeVisible();
+      await expect(page.getByTestId('settings-work-heatgraph')).not.toBeVisible();
     } finally {
       await closeElectronApp(app);
     }
