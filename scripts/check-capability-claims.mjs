@@ -2,7 +2,7 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CAPABILITY_CLAIM_MATRIX } from '../shared/capability-claims.ts';
-import { PRODUCT_SEMANTIC_UNSAFE_CLAIMS } from '../shared/product-semantics.ts';
+import { PRODUCT_SEMANTIC_UNSAFE_CLAIMS } from '../shared/product-semantic-unsafe-claims.ts';
 
 const HIGH_CONFIDENCE_PATTERNS = [
   { id: 'implemented', pattern: /\bimplemented\b/i },
