@@ -229,6 +229,8 @@ import type {
   TaskLedgerWorkspacePayload,
   PermissionApprovalDecisionPayload,
   PermissionApprovalListPayload,
+  PermissionDecisionEventListPayload,
+  PermissionDecisionEventListResult,
   OrchestrationPresetCreatePayload,
   OrchestrationPresetListPayload,
   OrchestrationPresetRevokePayload,
@@ -438,6 +440,7 @@ export type {
   OpenClawStatusResult,
   PermissionApprovalDecisionResult,
   PermissionApprovalListResult,
+  PermissionDecisionEventListResult,
   SandboxDetectProvidersResult,
   SandboxExplainResult,
   SandboxStatusResult,
@@ -611,6 +614,9 @@ export const hostApi = {
   },
   permissions: {
     approvals: (input?: PermissionApprovalListPayload) => invokeHost('permissions', 'approvals', input),
+    decisionEvents: (input?: PermissionDecisionEventListPayload): Promise<PermissionDecisionEventListResult> => (
+      invokeHost('permissions', 'decisionEvents', input)
+    ),
     decideApproval: (input: PermissionApprovalDecisionPayload) => (
       invokeHost('permissions', 'decideApproval', input)
     ),

@@ -139,10 +139,12 @@
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",
     "@assistant-ui/react-markdown": "^0.14.4",
+    "@ast-grep/napi": "0.44.0",
     "@chenglou/pretext": "^0.0.8",
     "@lydell/node-pty": "1.2.0-beta.12",
     "@xterm/addon-fit": "^0.11.0",
     "@xterm/xterm": "^6.0.0",
+    "chalk": "5.6.2",
     "electron-store": "^11.0.2",
     "electron-updater": "^6.8.3",
     "heat-graph": "0.0.12",

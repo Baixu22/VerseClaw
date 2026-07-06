@@ -267,6 +267,22 @@ describe('role-driven spawn mapping', () => {
     // architect has filesystem=read → deny write/edit/apply_patch/exec/bash
     expect(roleCtx.inheritedToolDenylist).toContain('write');
     expect(roleCtx.inheritedToolDenylist).toContain('exec');
+    expect(roleCtx.permissionDecisionEvents).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        kind: 'permission-decision',
+        role: 'architect',
+        tool: 'write',
+        boundary: 'role-tool',
+        decision: 'deny',
+      }),
+      expect.objectContaining({
+        kind: 'permission-decision',
+        role: 'architect',
+        tool: 'exec',
+        boundary: 'role-tool',
+        decision: 'deny',
+      }),
+    ]));
   });
 
   it('spawns through an injected spawn fn and reports role-not-found', async () => {

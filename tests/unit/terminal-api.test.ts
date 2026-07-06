@@ -3,6 +3,7 @@ import type { WorkspaceProfile } from '@shared/types/workspace';
 
 const storeState = vi.hoisted(() => ({
   approvals: [] as unknown[],
+  decisionEvents: [] as unknown[],
 }));
 
 const activeWorkspace = vi.hoisted(() => ({
@@ -35,19 +36,27 @@ vi.mock('node:child_process', async (importOriginal) => {
 
 vi.mock('electron-store', () => {
   class MockStore {
-    constructor(options?: { defaults?: { approvals?: unknown[] } }) {
+    constructor(options?: { defaults?: { approvals?: unknown[]; decisionEvents?: unknown[] } }) {
       if (storeState.approvals.length === 0 && options?.defaults?.approvals) {
         storeState.approvals = [...options.defaults.approvals];
+      }
+      if (storeState.decisionEvents.length === 0 && options?.defaults?.decisionEvents) {
+        storeState.decisionEvents = [...options.defaults.decisionEvents];
       }
     }
 
     get(key: string) {
-      return key === 'approvals' ? storeState.approvals : undefined;
+      if (key === 'approvals') return storeState.approvals;
+      if (key === 'decisionEvents') return storeState.decisionEvents;
+      return undefined;
     }
 
     set(key: string, value: unknown) {
       if (key === 'approvals') {
         storeState.approvals = Array.isArray(value) ? [...value] : [];
+      }
+      if (key === 'decisionEvents') {
+        storeState.decisionEvents = Array.isArray(value) ? [...value] : [];
       }
     }
   }
@@ -83,6 +92,7 @@ function gatewayManager(rpc = vi.fn()) {
 describe('terminal api OpenClaw exec integration', () => {
   beforeEach(() => {
     storeState.approvals = [];
+    storeState.decisionEvents = [];
     activeWorkspace.profile = workspace();
     fsMocks.existsSync.mockReturnValue(true);
     fsMocks.existsSync.mockClear();
@@ -177,6 +187,7 @@ describe('terminal api OpenClaw exec integration', () => {
     activeWorkspace.profile = workspace('readOnly');
     const rpc = vi.fn();
     const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const { listPermissionDecisionEvents } = await import('@electron/services/permissions-api');
     const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
 
     await expect(api.run({ command: 'pnpm install' })).resolves.toMatchObject({
@@ -187,5 +198,14 @@ describe('terminal api OpenClaw exec integration', () => {
 
     expect(rpc).not.toHaveBeenCalled();
     expect(childProcessMocks.spawn).not.toHaveBeenCalled();
+    await expect(listPermissionDecisionEvents(10)).resolves.toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        kind: 'permission-decision',
+        workspaceMode: 'readOnly',
+        tool: 'terminal.run',
+        boundary: 'workspace-command',
+        decision: 'deny',
+      }),
+    ]));
   });
 });

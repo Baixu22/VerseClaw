@@ -11,10 +11,12 @@ import { isRecord } from './payload-utils';
 import {
   consumeApprovedPermissionApproval,
   createPermissionApproval,
+  recordPermissionDecisionEvent,
   recordPermissionAudit,
 } from './permissions-api';
 import { TerminalSessionManager } from './terminal-session-manager';
 import { getActiveWorkspaceProfile } from './workspaces-api';
+import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
 import {
   decideWorkspaceCommand,
   isApprovalRisk,
@@ -251,6 +253,13 @@ export function createTerminalApi({
       const approvalId = normalizeApprovalId(body.approvalId);
       const workspace = requireWorkspace(await getActiveWorkspaceProfile());
       const decision = decideWorkspaceCommand(command, workspace.permissionMode);
+      void recordPermissionDecisionEvent(createWorkspacePermissionDecisionEvent({
+        workspaceMode: workspace.permissionMode,
+        tool: 'terminal.run',
+        boundary: 'workspace-command',
+        requestId: approvalId ?? buildTerminalRequestHash(command, workspace.rootPath),
+        decision,
+      }));
 
       if (!decision.allowed) {
         if (decision.requiresApproval && isApprovalRisk(decision.risk)) {
