@@ -21,6 +21,32 @@ export type CompressionArtifactQuality = {
   warnings: string[];
 };
 
+export type CompressionCvkEvidenceRef = {
+  resourceId: string;
+  selector: string;
+  checksum?: string;
+  label?: string;
+  kind?: "skill" | "toolset" | "document" | "project_rule" | "codebase" | "trace" | "memory" | "other";
+};
+
+export type CompressionRetrievalTraceEntry = CompressionCvkEvidenceRef & {
+  chunkId?: string;
+  tokenCount?: number;
+  reason: "prefetch" | "tool_call_gate" | "hard_claim" | "recovery" | "user_requested" | "model_requested";
+};
+
+export type CompressionCapabilityActivation = {
+  kind: "skill" | "tool" | "project_rule" | "other";
+  name: string;
+  resourceId?: string;
+  selector?: string;
+};
+
+export type CompressionLargeDurableFactRef = {
+  evidenceRef: CompressionCvkEvidenceRef;
+  text: string;
+};
+
 export type CompressionArtifact = {
   schemaVersion: 1;
   objective: string;
@@ -38,6 +64,11 @@ export type CompressionArtifact = {
   reviewNeeded: CompressionFact[];
   evidenceRefs: CompressionEvidenceRef[];
   unverifiedClaims: string[];
+  retrievedContext?: CompressionCvkEvidenceRef[];
+  requiredSelectors?: CompressionCvkEvidenceRef[];
+  capabilityActivations?: CompressionCapabilityActivation[];
+  staleReferences?: CompressionCvkEvidenceRef[];
+  retrievalTrace?: CompressionRetrievalTraceEntry[];
   quality: CompressionArtifactQuality;
 };
 
@@ -48,6 +79,15 @@ export type CompressionArtifactInput = {
   readFiles?: string[];
   modifiedFiles?: string[];
   targetArtifactTokens?: number;
+  contextRuntimeKit?: {
+    retrievedContext?: CompressionCvkEvidenceRef[];
+    requiredSelectors?: CompressionCvkEvidenceRef[];
+    capabilityActivations?: CompressionCapabilityActivation[];
+    staleReferences?: CompressionCvkEvidenceRef[];
+    retrievalTrace?: CompressionRetrievalTraceEntry[];
+    unverifiedClaims?: string[];
+    largeDurableFacts?: CompressionLargeDurableFactRef[];
+  };
 };
 
 const DEFAULT_TARGET_ARTIFACT_TOKENS = 1800;
@@ -61,6 +101,26 @@ const EVIDENCE_TYPES = new Set<CompressionEvidenceRef["type"]>([
   "clawgraph",
   "manual",
   "other",
+]);
+
+const CVK_KINDS = new Set<NonNullable<CompressionCvkEvidenceRef["kind"]>>([
+  "skill",
+  "toolset",
+  "document",
+  "project_rule",
+  "codebase",
+  "trace",
+  "memory",
+  "other",
+]);
+
+const RETRIEVAL_REASONS = new Set<CompressionRetrievalTraceEntry["reason"]>([
+  "prefetch",
+  "tool_call_gate",
+  "hard_claim",
+  "recovery",
+  "user_requested",
+  "model_requested",
 ]);
 
 function normalizeText(value: unknown, maxChars = 600): string {
@@ -182,6 +242,77 @@ function trimFacts(items: CompressionFact[], maxItems: number): CompressionFact[
     text: normalizeText(item.text, 360),
     evidenceRefs: item.evidenceRefs.slice(0, 4),
   }));
+}
+
+function normalizeCvkEvidenceRefs(value: unknown, maxItems = 24): CompressionCvkEvidenceRef[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const record = item as Partial<CompressionCvkEvidenceRef>;
+    const resourceId = normalizeText(record.resourceId, 240);
+    const selector = normalizeText(record.selector, 240);
+    if (!resourceId || !selector) return [];
+    const checksum = normalizeText(record.checksum, 90);
+    const label = normalizeText(record.label, 160);
+    const kind = typeof record.kind === "string" && CVK_KINDS.has(record.kind as NonNullable<CompressionCvkEvidenceRef["kind"]>)
+      ? record.kind as NonNullable<CompressionCvkEvidenceRef["kind"]>
+      : undefined;
+    return [{
+      resourceId,
+      selector,
+      ...(checksum ? { checksum } : {}),
+      ...(label ? { label } : {}),
+      ...(kind ? { kind } : {}),
+    }];
+  }).slice(0, maxItems);
+}
+
+function normalizeRetrievalTraceEntries(value: unknown, maxItems = 40): CompressionRetrievalTraceEntry[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const record = item as Partial<CompressionRetrievalTraceEntry>;
+    const evidenceRef = normalizeCvkEvidenceRefs([record], 1)[0];
+    if (!evidenceRef) return [];
+    const reason = typeof record.reason === "string" && RETRIEVAL_REASONS.has(record.reason as CompressionRetrievalTraceEntry["reason"])
+      ? record.reason as CompressionRetrievalTraceEntry["reason"]
+      : "recovery";
+    const chunkId = normalizeText(record.chunkId, 200);
+    const tokenCount = Number.isFinite(record.tokenCount) && Number(record.tokenCount) >= 0
+      ? Math.floor(Number(record.tokenCount))
+      : undefined;
+    return [{
+      ...evidenceRef,
+      ...(chunkId ? { chunkId } : {}),
+      ...(tokenCount !== undefined ? { tokenCount } : {}),
+      reason,
+    }];
+  }).slice(0, maxItems);
+}
+
+function normalizeCapabilityActivations(value: unknown, maxItems = 24): CompressionCapabilityActivation[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const record = item as Partial<CompressionCapabilityActivation>;
+    const name = normalizeText(record.name, 160);
+    if (!name) return [];
+    const kind = record.kind === "skill" || record.kind === "tool" || record.kind === "project_rule"
+      ? record.kind
+      : "other";
+    const resourceId = normalizeText(record.resourceId, 240);
+    const selector = normalizeText(record.selector, 240);
+    return [{
+      kind,
+      name,
+      ...(resourceId ? { resourceId } : {}),
+      ...(selector ? { selector } : {}),
+    }];
+  }).slice(0, maxItems);
+}
+
+function optionalArray<T>(items: T[]): T[] | undefined {
+  return items.length ? items : undefined;
 }
 
 function buildQuality(artifact: Omit<CompressionArtifact, "quality">, targetTokens: number): CompressionArtifactQuality {
@@ -311,7 +442,26 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
     nextAction,
     reviewNeeded: [],
     evidenceRefs: [...evidence, ...fileFacts.flatMap((item) => item.evidenceRefs)].slice(0, 24),
-    unverifiedClaims: [],
+    unverifiedClaims: [
+      ...normalizeCvkEvidenceRefs(input.contextRuntimeKit?.staleReferences, 8)
+        .map((ref) => `Stale reference must be revalidated: ${ref.resourceId} ${ref.selector}`),
+      ...(input.contextRuntimeKit?.unverifiedClaims ?? []).map((item) => normalizeText(item, 300)).filter(Boolean),
+    ].slice(0, 8),
+    ...(optionalArray(normalizeCvkEvidenceRefs(input.contextRuntimeKit?.retrievedContext)) ? {
+      retrievedContext: optionalArray(normalizeCvkEvidenceRefs(input.contextRuntimeKit?.retrievedContext)),
+    } : {}),
+    ...(optionalArray(normalizeCvkEvidenceRefs(input.contextRuntimeKit?.requiredSelectors)) ? {
+      requiredSelectors: optionalArray(normalizeCvkEvidenceRefs(input.contextRuntimeKit?.requiredSelectors)),
+    } : {}),
+    ...(optionalArray(normalizeCapabilityActivations(input.contextRuntimeKit?.capabilityActivations)) ? {
+      capabilityActivations: optionalArray(normalizeCapabilityActivations(input.contextRuntimeKit?.capabilityActivations)),
+    } : {}),
+    ...(optionalArray(normalizeCvkEvidenceRefs(input.contextRuntimeKit?.staleReferences)) ? {
+      staleReferences: optionalArray(normalizeCvkEvidenceRefs(input.contextRuntimeKit?.staleReferences)),
+    } : {}),
+    ...(optionalArray(normalizeRetrievalTraceEntries(input.contextRuntimeKit?.retrievalTrace)) ? {
+      retrievalTrace: optionalArray(normalizeRetrievalTraceEntries(input.contextRuntimeKit?.retrievalTrace)),
+    } : {}),
   };
   const quality = buildQuality(artifactWithoutQuality, targetTokens);
   return { ...artifactWithoutQuality, quality };
@@ -320,6 +470,27 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
 function formatFactList(items: CompressionFact[], empty = "- none"): string {
   if (items.length === 0) return empty;
   return items.map((item) => `- ${item.text}`).join("\n");
+}
+
+function formatCvkRefList(items: CompressionCvkEvidenceRef[] | undefined, empty = "- none"): string {
+  if (!items?.length) return empty;
+  return items.map((item) => (
+    `- ${item.resourceId} ${item.selector}${item.checksum ? ` ${item.checksum}` : ""}${item.label ? ` (${item.label})` : ""}`
+  )).join("\n");
+}
+
+function formatRetrievalTrace(items: CompressionRetrievalTraceEntry[] | undefined, empty = "- none"): string {
+  if (!items?.length) return empty;
+  return items.map((item) => (
+    `- ${item.reason}: ${item.resourceId} ${item.selector}${item.checksum ? ` ${item.checksum}` : ""}`
+  )).join("\n");
+}
+
+function formatCapabilityActivations(items: CompressionCapabilityActivation[] | undefined, empty = "- none"): string {
+  if (!items?.length) return empty;
+  return items.map((item) => (
+    `- ${item.kind}:${item.name}${item.resourceId ? ` ${item.resourceId}` : ""}${item.selector ? ` ${item.selector}` : ""}`
+  )).join("\n");
 }
 
 export function renderCompressionArtifactSummary(artifact: CompressionArtifact): string {
@@ -371,6 +542,21 @@ export function renderRecoveryContextProjection(
     artifact.reviewNeeded.length ? `reviewNeeded:\n${formatFactList(artifact.reviewNeeded.slice(0, 4))}` : "",
     artifact.evidenceRefs.length
       ? `evidenceRefs:\n${artifact.evidenceRefs.slice(0, 12).map((ref) => `- ${ref.type}:${ref.ref}${ref.label ? ` (${ref.label})` : ""}`).join("\n")}`
+      : "",
+    artifact.retrievedContext?.length
+      ? `retrievedContext:\n${formatCvkRefList(artifact.retrievedContext.slice(0, 12))}`
+      : "",
+    artifact.requiredSelectors?.length
+      ? `requiredSelectors:\n${formatCvkRefList(artifact.requiredSelectors.slice(0, 12))}`
+      : "",
+    artifact.retrievalTrace?.length
+      ? `retrievalTrace:\n${formatRetrievalTrace(artifact.retrievalTrace.slice(0, 12))}`
+      : "",
+    artifact.capabilityActivations?.length
+      ? `capabilityActivations:\n${formatCapabilityActivations(artifact.capabilityActivations.slice(0, 8))}`
+      : "",
+    artifact.staleReferences?.length
+      ? `staleReferences:\n${formatCvkRefList(artifact.staleReferences.slice(0, 8))}`
       : "",
     artifact.unverifiedClaims.length
       ? `unverifiedClaims:\n${artifact.unverifiedClaims.slice(0, 4).map((item) => `- ${item}`).join("\n")}`
@@ -436,6 +622,46 @@ export function normalizeCompressionArtifact(value: unknown): CompressionArtifac
     unverifiedClaims: Array.isArray(record.unverifiedClaims)
       ? record.unverifiedClaims.map((item) => normalizeText(item, 300)).filter(Boolean).slice(0, 8)
       : [],
+    ...(optionalArray(normalizeCvkEvidenceRefs(record.retrievedContext)) ? {
+      retrievedContext: optionalArray(normalizeCvkEvidenceRefs(record.retrievedContext)),
+    } : {}),
+    ...(optionalArray(normalizeCvkEvidenceRefs(record.requiredSelectors)) ? {
+      requiredSelectors: optionalArray(normalizeCvkEvidenceRefs(record.requiredSelectors)),
+    } : {}),
+    ...(optionalArray(normalizeCapabilityActivations(record.capabilityActivations)) ? {
+      capabilityActivations: optionalArray(normalizeCapabilityActivations(record.capabilityActivations)),
+    } : {}),
+    ...(optionalArray(normalizeCvkEvidenceRefs(record.staleReferences)) ? {
+      staleReferences: optionalArray(normalizeCvkEvidenceRefs(record.staleReferences)),
+    } : {}),
+    ...(optionalArray(normalizeRetrievalTraceEntries(record.retrievalTrace)) ? {
+      retrievalTrace: optionalArray(normalizeRetrievalTraceEntries(record.retrievalTrace)),
+    } : {}),
   };
   return { ...artifactWithoutQuality, quality: buildQuality(artifactWithoutQuality, DEFAULT_TARGET_ARTIFACT_TOKENS) };
+}
+
+function cvkRefKey(ref: CompressionCvkEvidenceRef): string {
+  return `${ref.resourceId}\u0000${ref.selector}\u0000${ref.checksum ?? ""}`;
+}
+
+export function calculateCompressionEvidenceRetentionRate(artifact: CompressionArtifact): {
+  required: number;
+  retained: number;
+  rate: number;
+} {
+  const requiredSelectors = artifact.requiredSelectors ?? [];
+  if (requiredSelectors.length === 0) {
+    return { required: 0, retained: 0, rate: 1 };
+  }
+  const retainedKeys = new Set([
+    ...(artifact.retrievedContext ?? []).map(cvkRefKey),
+    ...(artifact.retrievalTrace ?? []).map(cvkRefKey),
+  ]);
+  const retained = requiredSelectors.filter((ref) => retainedKeys.has(cvkRefKey(ref))).length;
+  return {
+    required: requiredSelectors.length,
+    retained,
+    rate: retained / requiredSelectors.length,
+  };
 }

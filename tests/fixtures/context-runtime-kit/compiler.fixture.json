@@ -1,0 +1,92 @@
+{
+  "sources": [
+    {
+      "kind": "toolset",
+      "id": "local.shell",
+      "version": "v1",
+      "title": "Local shell tools",
+      "tools": [
+        {
+          "name": "run_shell",
+          "description": "Run a local shell command.",
+          "inputSchema": {
+            "type": "object",
+            "required": ["command", "mode"],
+            "properties": {
+              "command": {
+                "type": "string",
+                "description": "Command to execute."
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["read", "write"],
+                "default": "read",
+                "description": "Execution mode."
+              },
+              "cwd": {
+                "type": ["string", "null"],
+                "default": null,
+                "description": "Working directory."
+              }
+            }
+          },
+          "permissions": ["workspace:command"],
+          "sideEffects": ["May start local processes when mode is write."]
+        }
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "context-runtime-kit",
+      "version": "v1",
+      "title": "Context Runtime Kit Skill",
+      "summary": "Build verifiable context resources and selectors.",
+      "triggers": ["context runtime", "selector evidence", "compact recovery"],
+      "requiredWorkflow": [
+        "Read the active phase constraint.",
+        "Write a failing focused test.",
+        "Run harness validation before review."
+      ],
+      "safetyRules": [
+        "Do not change live prompt behavior before shadow routing.",
+        "Do not use compact prose as a hard fact source."
+      ],
+      "examples": [
+        "Expand schema:tool.run_shell.required before relying on required args."
+      ],
+      "source": "# Context Runtime Kit Skill\n\nUse selectors and checksums for hard claims."
+    },
+    {
+      "kind": "project_rule",
+      "id": "agents",
+      "version": "v1",
+      "title": "AGENTS.md",
+      "rules": [
+        {
+          "selector": "rule:agents.corepack-pnpm",
+          "text": "Use the project pinned pnpm through corepack pnpm."
+        },
+        {
+          "selector": "rule:agents.no-parallel-truth",
+          "text": "Do not introduce a parallel durable source of truth."
+        }
+      ]
+    },
+    {
+      "kind": "project_rule",
+      "id": "context-runtime-kit-boundary",
+      "version": "v1",
+      "title": "Context Runtime Kit Boundary",
+      "rules": [
+        {
+          "selector": "rule:context-runtime-boundary.hard-claim-evidence",
+          "text": "A hard claim must cite a resolvable resource_id, selector, and checksum."
+        },
+        {
+          "selector": "rule:context-runtime-boundary.shadow-first",
+          "text": "Context Runtime Kit rollout is shadow-first and must not change prompt or tool behavior before promotion."
+        }
+      ]
+    }
+  ]
+}
