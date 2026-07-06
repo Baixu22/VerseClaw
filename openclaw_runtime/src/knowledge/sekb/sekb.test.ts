@@ -5,6 +5,7 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
 import { DistillationTool } from "./distillation-tool.js";
+import { installSekbHarnessHooks } from "./harness-integration.js";
 import { KnowledgeStore } from "./knowledge-store.js";
 import { RetrievalEngine } from "./retrieval-engine.js";
 import { TrajectoryCapture } from "./trajectory-capture.js";
@@ -114,6 +115,59 @@ describe("SEKB-MVP", () => {
       .toContain("[SEKB historical error advice]");
   });
 
+  it("installs explicit SEKB harness hooks without blocking tool execution", async () => {
+    const store = createStore();
+    const capture = new TrajectoryCapture({ store, now: fixedClock() });
+    const engine = new RetrievalEngine({ store });
+    const target = createHookTarget();
+
+    store.save_principle(postgresPrinciple());
+
+    const uninstall = installSekbHarnessHooks(target, {
+      enabled: true,
+      capture,
+      injector: engine.create_context_injector(),
+      classifyTask: ({ prompt }) => ({
+        task_intent: prompt,
+        task_type: "config/db",
+        context_tags: ["postgresql"],
+      }),
+    });
+
+    const before = await target.emitHook("before_agent_start", {
+      type: "before_agent_start",
+      prompt: "configure database connection",
+      systemPrompt: "system",
+      resources: {},
+    });
+    expect(before?.systemPrompt).toContain("[Relevant SEKB principle 1]");
+
+    await target.emitHook("tool_call", {
+      type: "tool_call",
+      toolCallId: "call-1",
+      toolName: "shell",
+      input: { command: "psql" },
+    });
+    const patch = await target.emitHook("tool_result", {
+      type: "tool_result",
+      toolCallId: "call-1",
+      toolName: "shell",
+      input: { command: "psql" },
+      content: [{ type: "text", text: "could not connect to server: Connection refused (port 5432)" }],
+      details: {},
+      isError: true,
+    });
+    expect(patch?.content?.[0]).toMatchObject({
+      type: "text",
+      text: expect.stringContaining("[SEKB historical error advice]"),
+    });
+
+    await target.emitEvent({ type: "agent_end", messages: [] });
+    expect(store.query_trajectories({ task_type: "config/db", context_tags: ["postgresql"] }))
+      .toHaveLength(1);
+    uninstall();
+  });
+
   it("keeps distillation manual and marks trajectories only after confirmation", () => {
     const store = createStore();
     const capture = new TrajectoryCapture({ store, now: fixedClock() });
@@ -163,6 +217,38 @@ function createStore(): KnowledgeStore {
 
 function fixedClock(date = new Date("2026-07-06T08:00:00.000Z")): () => Date {
   return () => new Date(date);
+}
+
+function createHookTarget() {
+  const hooks = new Map<string, Array<(event: unknown) => unknown>>();
+  const subscribers: Array<(event: unknown) => unknown> = [];
+  return {
+    on(type: string, handler: (event: unknown) => unknown) {
+      hooks.set(type, [...(hooks.get(type) ?? []), handler]);
+      return () => hooks.set(type, (hooks.get(type) ?? []).filter((entry) => entry !== handler));
+    },
+    subscribe(listener: (event: unknown) => unknown) {
+      subscribers.push(listener);
+      return () => {
+        const index = subscribers.indexOf(listener);
+        if (index >= 0) {
+          subscribers.splice(index, 1);
+        }
+      };
+    },
+    async emitHook(type: string, event: unknown) {
+      let latest;
+      for (const handler of hooks.get(type) ?? []) {
+        latest = await handler(event);
+      }
+      return latest as { systemPrompt?: string; content?: Array<{ type: "text"; text: string }> } | undefined;
+    },
+    async emitEvent(event: unknown) {
+      for (const listener of subscribers) {
+        await listener(event);
+      }
+    },
+  };
 }
 
 function postgresPrinciple(overrides: Partial<Principle> = {}): Principle {

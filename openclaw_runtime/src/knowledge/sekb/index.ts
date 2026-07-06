@@ -5,6 +5,13 @@ export {
   type ErrorSignatureExtractor,
 } from "./error-signature.js";
 export { DistillationTool, type DistillationToolOptions } from "./distillation-tool.js";
+export {
+  installSekbHarnessHooks,
+  type InstallSekbHarnessHooksOptions,
+  type SekbHarnessHookTarget,
+  type SekbTaskClassification,
+  type SekbTaskClassifier,
+} from "./harness-integration.js";
 export { KnowledgeStore, type KnowledgeStoreOptions } from "./knowledge-store.js";
 export { ContextInjector, RetrievalEngine, type RetrievalEngineOptions } from "./retrieval-engine.js";
 export { TrajectoryCapture, capture_trajectory, type TrajectoryCaptureOptions } from "./trajectory-capture.js";
