@@ -1,4 +1,10 @@
+import {
+  createTaskLedgerReference as createCanonicalTaskLedgerReference,
+  type TaskLedgerReference,
+} from './types/task-ledger-reference';
 import type { WorkspacePermissionMode } from './types/workspace';
+
+export type { TaskLedgerReference } from './types/task-ledger-reference';
 
 export type ProductSemanticConceptId =
   | 'chat'
@@ -624,29 +630,12 @@ export function createPermissionDecisionEvent(input: {
   };
 }
 
-export type TaskLedgerReference = {
-  direction: 'workboard-to-task-ledger';
-  taskLedgerNodeId: string;
-  workboardCardId?: string;
-  source: 'workboard' | 'plugin' | 'runtime';
-};
-
 export function createTaskLedgerReference(input: {
   taskLedgerNodeId: string;
   workboardCardId?: string | null;
   source?: TaskLedgerReference['source'];
 }): TaskLedgerReference {
-  const taskLedgerNodeId = input.taskLedgerNodeId.trim();
-  if (!taskLedgerNodeId) {
-    throw new Error('TaskLedgerReference requires a taskLedgerNodeId');
-  }
-  const workboardCardId = normalizeOptionalText(input.workboardCardId);
-  return {
-    direction: 'workboard-to-task-ledger',
-    taskLedgerNodeId,
-    ...(workboardCardId ? { workboardCardId } : {}),
-    source: input.source ?? 'workboard',
-  };
+  return createCanonicalTaskLedgerReference(input);
 }
 
 export type TaskLoopUpgradeSuggestion = {
