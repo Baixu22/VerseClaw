@@ -142,7 +142,7 @@ function respondMissingTask(respond: RespondFn, method: string): void {
 
 const ROLE_MEMORY_DISABLED_MESSAGE = "Role memory is disabled in Settings.";
 const ORCHESTRATOR_RUN_QUALITY_STATE_REASON =
-  "Ordinary orchestrator.run quality is not evaluated by a scorecard yet; Task Loop owns active repair quality semantics.";
+  "Ordinary orchestrator.run quality is scored from shadow evidence; Task Loop owns active repair quality semantics.";
 
 function resolveOrchestratorRunStatus(spawnedCount: number, failureCount: number): "accepted" | "partial" | "error" {
   if (spawnedCount > 0 && failureCount === 0) {
@@ -410,6 +410,8 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         `[role-audit] orchestrator.run ${formatControlPlaneActor(actor)} lead=${leadRoleHint} mode=${result.plan.mode} workers=${result.spawnedRunIds.length} failures=${result.failures.length} sessionKey=${sessionKey}`,
       );
       const status = resolveOrchestratorRunStatus(result.spawnedRunIds.length, result.failures.length);
+      const qualityScorecard = result.qualityScorecard ?? null;
+      const quality = qualityScorecard?.workerScores ?? [];
       respond(
         true,
         {
@@ -439,10 +441,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           rerouteRecommendations: result.rerouteRecommendations,
           capabilityGaps: result.plan.capabilityGaps,
           estimatedRepairPolicy: result.plan.estimatedRepairPolicy,
-          quality: [],
-          qualityState: null,
-          qualityStateReason: ORCHESTRATOR_RUN_QUALITY_STATE_REASON,
-          qualitySummary: summarizeQuality([]),
+          quality,
+          qualityState: qualityScorecard?.state ?? null,
+          qualityStateReason: qualityScorecard?.reason ?? ORCHESTRATOR_RUN_QUALITY_STATE_REASON,
+          qualityScorecard,
+          qualitySummary: qualityScorecard?.summary ?? summarizeQuality([]),
           followupCandidates: [],
           memoryCandidates: [],
           outcomes: result.outcomes.map((outcome) => ({

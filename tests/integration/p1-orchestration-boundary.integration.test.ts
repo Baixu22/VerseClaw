@@ -47,6 +47,13 @@ describe('P1 ordinary orchestration boundary', () => {
     const payload = captured[0]?.payload as Record<string, unknown>;
     expect(captured[0]?.ok).toBe(true);
     expect(payload.status).toBe('error');
+    expect(payload.qualityState).toBe('shadow');
+    expect(payload.qualityState).not.toBe('active');
+    expect(payload.qualityScorecard).toMatchObject({
+      overall: 'needs_attention',
+      worst: 'poor_attempt',
+      scorecardBacked: true,
+    });
     expect(payload.orchestrationDiagnostics).toMatchObject({
       kind: 'ordinary-orchestration-diagnostics',
       boundary: 'diagnostics-only',

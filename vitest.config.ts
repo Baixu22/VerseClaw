@@ -117,6 +117,7 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       '@electron': resolve(__dirname, 'electron'),
       '@shared': resolve(__dirname, 'shared'),
+      rastermill: resolve(__dirname, 'tests/fixtures/rastermill.ts'),
     },
   },
 });
