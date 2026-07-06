@@ -7,6 +7,7 @@ import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db
 import { DistillationTool } from "./distillation-tool.js";
 import { installSekbHarnessHooks } from "./harness-integration.js";
 import { KnowledgeStore } from "./knowledge-store.js";
+import { buildSekbOperatorReport } from "./operator-report.js";
 import { RetrievalEngine } from "./retrieval-engine.js";
 import { TrajectoryCapture } from "./trajectory-capture.js";
 import type { Principle } from "./types.js";
@@ -206,6 +207,40 @@ describe("SEKB-MVP", () => {
       confidence: 0.1,
     }, "not actionable");
     expect(store.list_distillation_rejections()).toHaveLength(1);
+  });
+
+  it("builds a read-only SEKB operator report for manual distillation", () => {
+    const store = createStore();
+    const trajectoryId = randomUUID();
+    store.save_trajectory({
+      trajectory_id: trajectoryId,
+      created_at: "2026-07-06T08:00:00.000Z",
+      task_intent: "connect PostgreSQL",
+      task_type: "config/db",
+      context_fingerprint: ["postgresql"],
+      steps: [],
+      outcome: "failure",
+      error_signature: "ConnectionError::db_connection_refused::postgresql",
+      cost: { tokens: 0, duration_seconds: 1, retries: 0 },
+      distilled: false,
+      distilled_into: [],
+      expires_at: null,
+      metadata: {},
+    });
+    store.save_principle(postgresPrinciple({ source_trajectories: [trajectoryId] }));
+
+    const report = buildSekbOperatorReport(store);
+    expect(report.counts).toMatchObject({
+      trajectories: 1,
+      undistilledTrajectories: 1,
+      activePrinciples: 1,
+    });
+    expect(report.undistilled[0]).toMatchObject({
+      trajectory_id: trajectoryId,
+      task_type: "config/db",
+      outcome: "failure",
+    });
+    expect(report.indexPreview).toContain("Check PG access");
   });
 });
 
