@@ -3,6 +3,10 @@ import { mkdtempSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+import type { AgentMessage } from "../../agents/runtime/index.js";
+import type { GlobalHookRunnerRegistry } from "../../plugins/hook-registry.types.js";
+import type { PluginHookName, PluginHookRegistration } from "../../plugins/hook-types.js";
+import { createHookRunner } from "../../plugins/hooks.js";
 import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
 import { DistillationTool } from "./distillation-tool.js";
 import { installSekbHarnessHooks } from "./harness-integration.js";
@@ -169,6 +173,180 @@ describe("SEKB-MVP", () => {
     uninstall();
   });
 
+  it("adapts real OpenClaw plugin hook events into visible SEKB capture and advice", async () => {
+    const store = createStore();
+    const capture = new TrajectoryCapture({ store, now: fixedClock() });
+    const engine = new RetrievalEngine({ store });
+    const { target, runner, emitAdapterEvent } = createPluginHookHarness();
+
+    store.save_principle(postgresPrinciple());
+
+    const errors: unknown[] = [];
+    const uninstall = installSekbHarnessHooks(target, {
+      enabled: true,
+      capture,
+      injector: engine.create_context_injector(),
+      classifyTask: ({ prompt }) => ({
+        task_intent: prompt,
+        task_type: "config/db",
+        context_tags: ["postgresql"],
+      }),
+      onError: (error) => errors.push(error),
+    });
+
+    const before = await runner.runBeforeAgentStart(
+      {
+        prompt: "configure database connection",
+        messages: [],
+      },
+      { runId: "run-failure" },
+    );
+    expect(before?.appendContext).toContain("[Relevant SEKB principle 1]");
+    expect(before?.systemPrompt).toBeUndefined();
+
+    const beforeTool = await runner.runBeforeToolCall(
+      {
+        toolName: "shell",
+        params: { command: "psql" },
+        runId: "run-failure",
+        toolCallId: "call-1",
+      },
+      {
+        toolName: "shell",
+        runId: "run-failure",
+        toolCallId: "call-1",
+      },
+    );
+    expect(beforeTool?.block).not.toBe(true);
+
+    const failedMessage = runner.runToolResultPersist(
+      {
+        toolName: "shell",
+        toolCallId: "call-1",
+        message: toolResultMessage({
+          toolCallId: "call-1",
+          toolName: "shell",
+          text: "could not connect to server: Connection refused (port 5432)",
+          isError: true,
+        }),
+      },
+      {
+        toolName: "shell",
+        toolCallId: "call-1",
+      },
+    )?.message;
+    expect(toolResultText(failedMessage)).toContain("[SEKB historical error advice]");
+
+    await runner.runAgentEnd(
+      {
+        messages: failedMessage ? [failedMessage] : [],
+        success: false,
+        error: "could not connect to server: Connection refused (port 5432)",
+        durationMs: 12,
+      },
+      { runId: "run-failure" },
+    );
+
+    const failedTrajectory = store.query_trajectories({
+      task_type: "config/db",
+      context_tags: ["postgresql"],
+      outcome: "failure",
+    })[0];
+    expect(failedTrajectory?.error_signature).toBe(
+      "ConnectionError::db_connection_refused::postgresql",
+    );
+    expect(failedTrajectory?.steps.map((step) => step.action)).toEqual([
+      "tool.call",
+      "tool.result",
+    ]);
+
+    await runner.runBeforeAgentStart(
+      {
+        prompt: "configure database connection",
+        messages: [],
+      },
+      { runId: "run-success" },
+    );
+    await runner.runBeforeToolCall(
+      {
+        toolName: "shell",
+        params: { command: "psql --version" },
+        runId: "run-success",
+        toolCallId: "call-2",
+      },
+      {
+        toolName: "shell",
+        runId: "run-success",
+        toolCallId: "call-2",
+      },
+    );
+    const successfulMessage = runner.runToolResultPersist(
+      {
+        toolName: "shell",
+        toolCallId: "call-2",
+        message: toolResultMessage({
+          toolCallId: "call-2",
+          toolName: "shell",
+          text: "psql 16.0",
+          isError: false,
+        }),
+      },
+      {
+        toolName: "shell",
+        toolCallId: "call-2",
+      },
+    )?.message;
+    expect(toolResultText(successfulMessage)).not.toContain("[SEKB historical error advice]");
+    await runner.runAgentEnd(
+      {
+        messages: successfulMessage ? [successfulMessage] : [],
+        success: true,
+        durationMs: 7,
+      },
+      { runId: "run-success" },
+    );
+
+    await runner.runBeforeAgentStart(
+      {
+        prompt: "configure database connection",
+        messages: [],
+      },
+      { runId: "run-abort" },
+    );
+    await emitAdapterEvent({ type: "abort" });
+
+    expect(store.query_trajectories({ outcome: "success" })).toHaveLength(1);
+    expect(store.query_trajectories({ outcome: "partial" })).toHaveLength(1);
+
+    uninstall();
+
+    const throwingHarness = createPluginHookHarness();
+    const throwingUninstall = installSekbHarnessHooks(throwingHarness.target, {
+      enabled: true,
+      capture,
+      injector: {
+        for_task() {
+          throw new Error("boom");
+        },
+        for_error() {
+          throw new Error("boom");
+        },
+      },
+      onError: (error) => errors.push(error),
+    });
+    const isolated = await throwingHarness.runner.runBeforeAgentStart(
+      {
+        prompt: "will not break the run",
+        messages: [],
+      },
+      { runId: "run-isolated" },
+    );
+    expect(isolated).toBeUndefined();
+    expect(errors).toHaveLength(1);
+
+    throwingUninstall();
+  });
+
   it("keeps distillation manual and marks trajectories only after confirmation", () => {
     const store = createStore();
     const capture = new TrajectoryCapture({ store, now: fixedClock() });
@@ -284,6 +462,84 @@ function createHookTarget() {
       }
     },
   };
+}
+
+function createPluginHookHarness() {
+  const registry: GlobalHookRunnerRegistry = {
+    plugins: [{ id: "sekb-test", status: "loaded" }],
+    hooks: [],
+    typedHooks: [],
+  };
+  const subscribers: Array<(event: unknown) => unknown | Promise<unknown>> = [];
+  const target = {
+    on(type: string, handler: (event: unknown, context?: unknown) => unknown | Promise<unknown>) {
+      const registration = {
+        pluginId: "sekb-test",
+        hookName: type as PluginHookName,
+        handler,
+        source: "unit-test",
+      } as PluginHookRegistration;
+      registry.typedHooks.push(registration);
+      return () => {
+        const index = registry.typedHooks.indexOf(registration);
+        if (index >= 0) {
+          registry.typedHooks.splice(index, 1);
+        }
+      };
+    },
+    subscribe(listener: (event: unknown) => unknown | Promise<unknown>) {
+      subscribers.push(listener);
+      return () => {
+        const index = subscribers.indexOf(listener);
+        if (index >= 0) {
+          subscribers.splice(index, 1);
+        }
+      };
+    },
+  };
+  const runner = createHookRunner(registry, {
+    logger: {
+      info() {},
+      warn() {},
+      error() {},
+    },
+  });
+  return {
+    target,
+    runner,
+    async emitAdapterEvent(event: unknown) {
+      for (const subscriber of subscribers) {
+        await subscriber(event);
+      }
+    },
+  };
+}
+
+function toolResultMessage(params: {
+  toolCallId: string;
+  toolName: string;
+  text: string;
+  isError: boolean;
+}): Extract<AgentMessage, { role: "toolResult" }> {
+  return {
+    role: "toolResult",
+    toolCallId: params.toolCallId,
+    toolName: params.toolName,
+    content: [{ type: "text", text: params.text }],
+    details: {},
+    isError: params.isError,
+    timestamp: Date.parse("2026-07-06T08:00:00.000Z"),
+  };
+}
+
+function toolResultText(message: AgentMessage | undefined): string {
+  if (!message || message.role !== "toolResult") {
+    return "";
+  }
+  return message.content
+    .filter((block): block is { type: "text"; text: string } => block.type === "text")
+    .map((block) => block.text)
+    .join("\n");
 }
 
 function postgresPrinciple(overrides: Partial<Principle> = {}): Principle {

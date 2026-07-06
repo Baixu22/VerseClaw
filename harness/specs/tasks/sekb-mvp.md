@@ -23,6 +23,8 @@ expectedUserBehavior:
 requiredProfiles:
   - fast
   - comms
+requiredRules:
+  - sekb-runtime-development-loop
 requiredTests:
   - openclaw_runtime/src/knowledge/sekb/*.test.ts
 acceptance:
