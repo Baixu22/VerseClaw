@@ -1,6 +1,6 @@
-# P0 Acceptance and Test Matrix
+# Multi-Agent Orchestration Acceptance and Test Matrix
 
-## 1. Required Commands
+## 1. P0 Required Commands
 
 Run before implementation when possible:
 
@@ -78,4 +78,81 @@ Before marking P0 complete:
 - No open A2A channel is added.
 - No UI/i18n/E2E work is hidden in P0.
 - All new runtime decisions are represented in typed data, not only prompt text.
+- Every success/failure claim in the final report is backed by a command result.
+
+## 5. P1 Required Commands
+
+Run before implementation when possible:
+
+```powershell
+pnpm harness context --spec harness/specs/tasks/role-first-p1-resource-aware-scheduler.md
+pnpm harness validate --spec harness/specs/tasks/role-first-p1-resource-aware-scheduler.md --no-diff
+git status --short
+```
+
+Run during implementation as tasks land:
+
+```powershell
+pnpm exec vitest run tests/unit/orchestration-resource-scheduler.test.ts
+pnpm exec vitest run tests/unit/agency-role-importer.test.ts
+pnpm exec vitest run tests/unit/role-orchestration-methods.test.ts
+pnpm exec vitest run tests/unit/orchestration-protocol-v3.test.ts
+```
+
+Run before review:
+
+```powershell
+pnpm harness validate --spec harness/specs/tasks/role-first-p1-resource-aware-scheduler.md
+pnpm exec vitest run tests/unit/orchestration-resource-scheduler.test.ts tests/unit/agency-role-importer.test.ts tests/unit/orchestration-result-bundle.test.ts tests/unit/orchestration-gates.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/orchestration-protocol-v3.test.ts
+pnpm run comms:replay
+pnpm run comms:compare
+```
+
+If P1 implementation does not touch Gateway/tool return payloads or runtime communication paths, `comms:replay` and `comms:compare` may be reported as not required with justification. If `team_orchestrate`, gateway handlers, delivery, or renderer projection changes, they are required.
+
+## 6. P1 Acceptance Matrix
+
+| Acceptance item | Primary test | Evidence required |
+| --- | --- | --- |
+| Scheduler produces deterministic waves | `tests/unit/orchestration-resource-scheduler.test.ts` | Same input produces equal `waves` and `metrics` |
+| Scheduler respects dependencies | `tests/unit/orchestration-resource-scheduler.test.ts` | Dependent verifier/review nodes run after required workers |
+| max active roles are runtime-enforced | `tests/unit/orchestration-resource-scheduler.test.ts` | wave sizes never exceed `concurrencyCap` |
+| Tool contention splits conflicting roles | `tests/unit/orchestration-resource-scheduler.test.ts` | conflicting roles appear in different waves with reason text |
+| Scheduler metrics are complete | `tests/unit/orchestration-resource-scheduler.test.ts` | queued/running/completed/skipped, concurrency cap, budget estimate, role cost summary |
+| Orchestration run exposes scheduler metrics when enabled | `tests/unit/role-orchestration-methods.test.ts` | `schedulerMetrics` present without removing `resultBundle` |
+| Agency importer emits draft-only entries | `tests/unit/agency-role-importer.test.ts` | entry `status: draft` by default |
+| Agency draft entries cannot spawn | `tests/unit/agency-role-importer.test.ts` | `canSpawnAgencyDraft(entry)` is `false` |
+| Draft promotion requires RoleContract validation | `tests/unit/agency-role-importer.test.ts` | invalid candidate returns validation issues |
+| Tool hints do not grant runtime tools | `tests/unit/agency-role-importer.test.ts` | hints remain `toolHints`, not active `tools` unless candidate validates |
+| Existing P0 verification loop does not regress | P0 unit suite | current P0 tests green |
+| P2-P4 remain absent | final report plus grep/diff review | no ComplexityGate/RunbookTemplate/blackboard/synthesizer implementation |
+
+## 7. P1 Minimum Fixture Scenarios
+
+Create or update tests to cover:
+
+- deterministic scheduling for identical graph input,
+- three ready workers with max active roles of two,
+- two roles contending for shell/write tools,
+- verifier node delayed until worker nodes complete,
+- scheduler metrics with skipped count zero for a valid graph,
+- malformed graph or unschedulable cycle reported as skipped/failure data,
+- Agency division with one agent and tool hints imported as draft,
+- invalid Agency agent name normalized with validation issues,
+- handoff text preserved as hints only,
+- draft candidate validation pass and fail,
+- draft entry not present in active role registry.
+
+## 8. P1 Review Checklist
+
+Before marking P1 complete:
+
+- `RoleContract` remains the runtime role authority.
+- Scheduler does not mutate role permissions or tools.
+- max active roles enforcement is in runtime scheduling.
+- Agency imported entries remain draft-only by default.
+- No Agency markdown prompt becomes a runtime system prompt.
+- No open A2A channel is added.
+- No UI/i18n/E2E work is hidden in P1.
+- Existing P0 gates and bundle behavior remain intact.
 - Every success/failure claim in the final report is backed by a command result.
