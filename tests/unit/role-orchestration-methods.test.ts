@@ -361,6 +361,41 @@ describe('orchestrator.run handler', () => {
       },
     });
   });
+
+  it('returns P4 synthesis in the gateway run payload without removing existing metadata', async () => {
+    vi.mocked(spawnSubagentDirect).mockResolvedValue({
+      status: 'accepted',
+      runId: 'run_gateway_p4',
+      childSessionKey: 'child_gateway_p4',
+    });
+
+    const res = await callHandler('orchestrator.run', {
+      task: 'implement and verify a bounded orchestration result',
+      sessionKey: 'agent:main:gateway-p4',
+      maxWorkers: 2,
+    });
+
+    expect(res?.ok).toBe(true);
+    expect(res?.payload).toMatchObject({
+      resultBundle: {
+        schemaVersion: 1,
+        phase: 'spawn',
+      },
+      schedulerMetrics: {
+        concurrencyCap: 2,
+      },
+      synthesis: {
+        schemaVersion: 1,
+        orchestrationRunId: expect.any(String),
+        status: expect.any(String),
+        policy: {
+          toolAccess: 'none',
+          verifierAuthority: 'preserved',
+          memoryWrite: 'none',
+        },
+      },
+    });
+  });
 });
 
 describe('runOrchestrationObserved (observed execution + tracing)', () => {
@@ -586,6 +621,45 @@ describe('team_orchestrate tool', () => {
     expect(details.runbookSelection?.selected).toMatchObject({ runbookId: 'test-repair' });
     expect(details.schedulerMetrics?.concurrencyCap).toBe(2);
     expect(details.resultBundle?.schemaVersion).toBe(1);
+  });
+
+  it('exposes P4 synthesis from team_orchestrate details without granting tools', async () => {
+    const fakeSpawn = async (): Promise<FakeSpawnResult> => ({
+      status: 'accepted',
+      runId: 'run_p4_tool',
+      childSessionKey: 'child_p4_tool',
+    });
+    const tool = createTeamOrchestrateTool({
+      agentSessionKey: 'agent:main:abc',
+      config: emptyConfig(),
+      deps: {
+        spawn: fakeSpawn as unknown as never,
+        idFactory: () => 'orch_tool_p4',
+      },
+    });
+    const result = await tool.execute('call_1', {
+      task: 'summarize verified orchestration evidence',
+      maxWorkers: 2,
+    });
+    const details = result.details as {
+      resultBundle?: { schemaVersion: number };
+      schedulerMetrics?: { concurrencyCap: number };
+      synthesis?: {
+        orchestrationRunId: string;
+        policy: { toolAccess: string; verifierAuthority: string; memoryWrite: string };
+      };
+    };
+
+    expect(details.resultBundle?.schemaVersion).toBe(1);
+    expect(details.schedulerMetrics?.concurrencyCap).toBe(2);
+    expect(details.synthesis).toMatchObject({
+      orchestrationRunId: 'orch_tool_p4',
+      policy: {
+        toolAccess: 'none',
+        verifierAuthority: 'preserved',
+        memoryWrite: 'none',
+      },
+    });
   });
 });
 

@@ -281,6 +281,71 @@ If P3 implementation does not touch Gateway/tool return payloads or runtime comm
 | Existing P0/P1/P2 tests do not regress | P0/P1/P2 unit suites | current P0/P1/P2 tests green |
 | P4/UI/open-chat/memory persistence remain absent | final report plus grep/diff review | no synthesizer/UI/open worker chat/new memory persistence implementation |
 
+## 14. P4 Required Commands
+
+Run before implementation when possible:
+
+```powershell
+corepack pnpm harness context --spec harness/specs/tasks/role-first-p4-synthesizer-dynamic-dag.md
+corepack pnpm harness validate --spec harness/specs/tasks/role-first-p4-synthesizer-dynamic-dag.md --no-diff
+git status --short
+```
+
+Run during implementation as tasks land:
+
+```powershell
+corepack pnpm exec vitest run tests/unit/orchestration-synthesizer.test.ts
+corepack pnpm exec vitest run tests/unit/orchestration-dynamic-dag.test.ts
+corepack pnpm exec vitest run tests/unit/role-orchestration-methods.test.ts -t "synthesis"
+```
+
+Run before review:
+
+```powershell
+corepack pnpm harness validate --spec harness/specs/tasks/role-first-p4-synthesizer-dynamic-dag.md
+corepack pnpm exec vitest run tests/unit/orchestration-synthesizer.test.ts tests/unit/orchestration-dynamic-dag.test.ts tests/unit/role-orchestration-methods.test.ts
+corepack pnpm exec vitest run tests/unit/orchestration-blackboard.test.ts tests/unit/orchestration-blackboard-verifier.test.ts tests/unit/orchestration-blackboard-trace.test.ts tests/unit/complexity-gate.test.ts tests/unit/runbook-template.test.ts tests/unit/runbook-task-graph.test.ts tests/unit/orchestration-resource-scheduler.test.ts tests/unit/orchestration-result-bundle.test.ts tests/unit/orchestration-gates.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/orchestration-protocol-v3.test.ts
+corepack pnpm run test:e2e tests/e2e/role-orchestration-synthesis.spec.ts
+corepack pnpm run comms:replay
+corepack pnpm run comms:compare
+```
+
+P4 touches existing Gateway result payloads and visible UI projection, so comms replay/compare and Electron E2E are required.
+
+## 15. P4 Acceptance Matrix
+
+| Acceptance item | Primary test | Evidence required |
+| --- | --- | --- |
+| Synthesizer returns stable output | `tests/unit/orchestration-synthesizer.test.ts` | Same input produces equal synthesis |
+| Synthesizer preserves role contributions and evidence | `tests/unit/orchestration-synthesizer.test.ts` | Role rows include status, evidence refs, and output previews |
+| Verifier failures remain visible | `tests/unit/orchestration-synthesizer.test.ts` | `status: failed` and visible failure reasons are present |
+| Synthesizer has no tool access | `tests/unit/orchestration-synthesizer.test.ts` | `policy.toolAccess` is `none` |
+| Blackboard summary remains summary data | `tests/unit/orchestration-synthesizer.test.ts` | Conflict/question/risk/proposal counts are copied, no memory write occurs |
+| Dynamic DAG rejects unauthorized roles | `tests/unit/orchestration-dynamic-dag.test.ts` | Unknown role proposal returns issue and graph is unchanged |
+| Dynamic DAG rejects unsafe fields | `tests/unit/orchestration-dynamic-dag.test.ts` | `tools`, `permissions`, `prompt`, or `memoryWrite` are rejected |
+| Dynamic DAG rejects unknown dependencies | `tests/unit/orchestration-dynamic-dag.test.ts` | Unknown dependency returns issue and graph is unchanged |
+| Dynamic DAG rejects out-of-scope capabilities | `tests/unit/orchestration-dynamic-dag.test.ts` | Capability not present on source/authorized list is rejected |
+| Dynamic DAG records source/reason/scope/attempt | `tests/unit/orchestration-dynamic-dag.test.ts` | Refinement metadata includes all four fields |
+| Dynamic DAG preserves scheduler limits | `tests/unit/orchestration-dynamic-dag.test.ts` | Scheduled waves do not exceed max active roles |
+| Gateway returns synthesis | `tests/unit/role-orchestration-methods.test.ts` | `orchestrator.run` payload includes `synthesis` while existing metadata remains |
+| Team tool returns synthesis | `tests/unit/role-orchestration-methods.test.ts` | `team_orchestrate` details include `synthesis` |
+| UI displays synthesis details | `tests/e2e/role-orchestration-synthesis.spec.ts` | Result view shows summary, verifier decision, evidence count, trace count, and visible failure |
+| P0-P3 do not regress | P0/P1/P2/P3 unit suites | current regression suites green |
+
+## 16. P4 Review Checklist
+
+Before marking P4 complete:
+
+- Synthesizer remains a pure projection and has no tool access.
+- Verifier fail/repair decisions are never converted into success.
+- Dynamic DAG can only add local scoped nodes and cannot mutate existing graph nodes.
+- Dynamic DAG cannot grant tools or permissions.
+- Dynamic DAG scheduling goes through P1 resource scheduler.
+- Renderer uses `hostApi.gateway.rpc` only.
+- UI exposes failures, verifier decisions, evidence refs, and trace refs.
+- Locale coverage exists for en, zh, ja, and ru.
+- Every success/failure claim in the final report is backed by a command result.
+
 ## 15. P3 Minimum Fixture Scenarios
 
 Create or update tests to cover:
