@@ -9,7 +9,36 @@ vi.mock('../../openclaw_runtime/src/agents/subagent-spawn', () => ({
   spawnSubagentDirect: vi.fn(),
 }));
 
-// Gateway handlers — the integration surface under test.
+vi.mock('../../openclaw_runtime/src/media/image-ops.js', () => ({
+  IMAGE_REDUCE_QUALITY_STEPS: [85, 75, 65, 55, 45, 35],
+  ImageProcessorUnavailableError: class ImageProcessorUnavailableError extends Error {},
+  buildImageResizeSideGrid: vi.fn(() => []),
+  convertHeicToJpeg: vi.fn(async (buffer: Buffer) => buffer),
+  createImageProcessor: vi.fn(),
+  getImageMetadata: vi.fn(async () => null),
+  hasAlphaChannel: vi.fn(async () => false),
+  isImageProcessorUnavailableError: vi.fn(() => false),
+  normalizeExifOrientation: vi.fn(async (buffer: Buffer) => buffer),
+  optimizeImageToPng: vi.fn(),
+  readImageMetadataFromHeader: vi.fn(() => null),
+  readImageProbeFromHeader: vi.fn(() => null),
+  resizeToJpeg: vi.fn(async ({ buffer }: { buffer: Buffer }) => buffer),
+  resizeToPng: vi.fn(async ({ buffer }: { buffer: Buffer }) => buffer),
+}));
+
+vi.mock('rastermill', () => ({
+  createRastermill: () => ({
+    probe: vi.fn(),
+    encode: vi.fn(),
+  }),
+  isRastermillUnavailableError: () => false,
+  RastermillError: class RastermillError extends Error {},
+  RastermillUnavailableError: class RastermillUnavailableError extends Error {},
+  readImageProbeFromHeader: vi.fn(),
+  readImageMetadataFromHeader: vi.fn(),
+}), { virtual: true });
+
+// Gateway handlers â€?the integration surface under test.
 import { roleOrchestrationHandlers } from '../../openclaw_runtime/src/gateway/server-methods/role-orchestration-methods';
 // Role-first execution + observability.
 import { runOrchestrationObserved } from '../../openclaw_runtime/src/agents/orchestrator-run-observed';
@@ -144,7 +173,7 @@ describe('orchestrator.plan handler', () => {
     const res = await callHandler('orchestrator.plan', { task: 'explain this', leadRole: 'ghost-role' });
     expect(res?.ok).toBe(true);
     const plan = (res?.payload as { plan: { leadRole: string; reasons: string[] } }).plan;
-    // router mode → leadRole is the routed primary, not the ghost role.
+    // router mode â†?leadRole is the routed primary, not the ghost role.
     expect(plan.leadRole).not.toBe('ghost-role');
     expect(plan.reasons.some((r) => String(r).includes('preferred-lead'))).toBe(false);
   });
@@ -244,7 +273,7 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     };
     clearRuntimeTraceBuffer();
     const result = await runOrchestrationObserved(
-      { task: '重构这个模块并补充测试', fileHints: ['a.ts', 'b.ts', 'c.ts'] },
+      { task: 'Refactor this module and add focused tests', fileHints: ['a.ts', 'b.ts', 'c.ts'] },
       baseCtx,
       { spawn: fakeSpawn as unknown as never },
       { sessionKey: 'agent:main:abc' },
@@ -255,6 +284,14 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     expect(result.failures).toHaveLength(0);
     expect(result.pendingVerifier).toBe(true);
     expect(spawned.some((p) => p.orchestration?.phase === 'verifier')).toBe(false);
+    expect(result.resultBundle).toMatchObject({
+      schemaVersion: 1,
+      phase: 'spawn',
+      orchestrationRunId: expect.any(String),
+      leadRole: result.plan.leadRole,
+    });
+    expect(result.resultBundle.roleOutcomes.length).toBe(result.outcomes.length);
+    expect(result.resultBundle.traceIds.length).toBeGreaterThanOrEqual(1);
     // A trace was stored in the runtime buffer (the core observability fix).
     const traces = getRuntimeTraceBuffer();
     expect(traces.length).toBeGreaterThanOrEqual(1);
@@ -279,6 +316,15 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     );
     expect(result.spawnedRunIds).toHaveLength(0);
     expect(result.failures.length).toBeGreaterThan(0);
+    expect(result.resultBundle.failures.length).toBeGreaterThan(0);
+    expect(result.resultBundle.permissionEvents).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          decision: 'denied',
+          reason: 'max children reached',
+        }),
+      ]),
+    );
     // Trace still persisted even on all-failures.
     expect(getRuntimeTraceBuffer().length).toBeGreaterThanOrEqual(1);
   });
@@ -305,11 +351,22 @@ describe('team_orchestrate tool', () => {
       runId: 'orch_test',
       nextAction: 'yield_for_results',
     });
-    const details = result.details as { plan: { mode: string }; children: unknown[]; pendingVerifier: boolean; resultPolicy: { completion: string } };
+    const details = result.details as {
+      plan: { mode: string };
+      children: unknown[];
+      pendingVerifier: boolean;
+      resultPolicy: { completion: string };
+      resultBundle?: unknown;
+    };
     expect(details.plan.mode).toBe('router');
     expect(details.children).toHaveLength(1);
     expect(details.pendingVerifier).toBe(false);
     expect(details.resultPolicy.completion).toBe('team_result_bundle');
+    expect(details.resultBundle).toMatchObject({
+      schemaVersion: 1,
+      phase: 'spawn',
+      orchestrationRunId: 'orch_test',
+    });
   });
 
   it('uses template roles and reports partial failures', async () => {
@@ -356,7 +413,7 @@ describe('team_orchestrate tool', () => {
 
 describe('SECURITY: role.tools allowlist is enforced at the policy gate', () => {
   // This is the load-bearing security assertion: a non-empty allowlist is a
-  // TRUE allowlist — tools not listed are denied by isToolAllowedByPolicyName.
+  // TRUE allowlist â€?tools not listed are denied by isToolAllowedByPolicyName.
   it('a role with tools=[read] cannot use write/edit/exec/bash', () => {
     const architect = getBuiltInRoleContract('architect')!;
     // architect.tools = [read, glob, grep] (read-only role)
@@ -436,7 +493,7 @@ describe('SECURITY: role.tools allowlist is enforced at the policy gate', () => 
     };
     const ctx = buildRoleSpawnContext(role, { agentSessionKey: 'agent:main:x' });
     const policy = { allow: ctx.inheritedToolAllowlist, deny: ctx.inheritedToolDenylist };
-    // A non-empty command allowlist with read-only fs → shell denied at tool level
+    // A non-empty command allowlist with read-only fs â†?shell denied at tool level
     expect(isToolAllowedByPolicyName('exec', policy)).toBe(false);
     expect(isToolAllowedByPolicyName('bash', policy)).toBe(false);
   });

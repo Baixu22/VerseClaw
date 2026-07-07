@@ -38,6 +38,11 @@ import {
 import type { ObservabilityTraceRecorder } from "../observability/trace-recorder.js";
 import { storeRuntimeTrace } from "../observability/trace-buffer.js";
 import type { ObservabilitySpanKind } from "../observability/types.js";
+import {
+  buildSpawnPhaseResultBundle,
+  type OrchestrationResultBundle,
+  type RoleOutcomeBundle,
+} from "./orchestration-result-bundle.js";
 
 export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
   cfg?: RoleRegistryConfigCarrier;
@@ -73,6 +78,7 @@ export type OrchestrationRunResult = {
   rerouteRecommendations: OrchestrationRerouteRecommendation[];
   /** Worker tasks that failed to spawn (status !== "accepted"). */
   failures: Array<{ roleName: string; status: string; error?: string }>;
+  resultBundle: OrchestrationResultBundle;
 };
 
 export type ObservedOrchestrationTraceAttrs = {
@@ -167,6 +173,46 @@ function orchestrationFraming(
     "- Do not use sessions_send for worker-to-worker coordination in this v1 flow.",
   ];
   return lines.join("\n");
+}
+
+function bundleOutcome(outcome: OrchestrationWorkerOutcome): RoleOutcomeBundle {
+  const runId = outcome.spawn.result?.runId;
+  const taskId = outcome.ledger.taskNodeId ?? outcome.ledger.taskId;
+  const evidenceRefs = runId
+    ? [{
+        type: "run" as const,
+        ref: runId,
+        roleName: outcome.roleName,
+        taskId,
+      }]
+    : [];
+  return {
+    roleName: outcome.roleName,
+    task: outcome.task,
+    phase: outcome.isVerifier ? "verifier" : "worker",
+    taskId,
+    roleInstanceId: outcome.ledger.roleInstanceId,
+    attempt: outcome.ledger.attempt,
+    status: outcome.spawn.status === "accepted" ? "accepted" : outcome.spawn.status,
+    ...(runId ? { childRunId: runId } : {}),
+    ...(outcome.spawn.result?.childSessionKey ? { childSessionKey: outcome.spawn.result.childSessionKey } : {}),
+    evidenceRefs,
+    ...(outcome.spawn.error ?? outcome.spawn.result?.error
+      ? { error: outcome.spawn.error ?? outcome.spawn.result?.error }
+      : {}),
+  };
+}
+
+function permissionEventsFromFailures(
+  failures: readonly OrchestrationRunResult["failures"][number][],
+): OrchestrationResultBundle["permissionEvents"] {
+  return failures
+    .filter((failure) => /permission|forbidden|max children/i.test(`${failure.status} ${failure.error ?? ""}`))
+    .map((failure) => ({
+      roleName: failure.roleName,
+      decision: "denied" as const,
+      reason: failure.error ?? failure.status,
+    }));
 }
 
 async function patchExpectedWorkerRunIds(
@@ -498,6 +544,16 @@ export async function runOrchestrationWithRecorder(
     routeDiagnostics: plan.routeDiagnostics,
     attempts: failures,
   });
+  const resultBundle = buildSpawnPhaseResultBundle({
+    orchestrationRunId,
+    taskGraphId: plan.taskGraph.graphRunId,
+    leadRole: plan.leadRole,
+    selectedRoles: plan.routeDiagnostics.selectedRoles,
+    outcomes: outcomes.map(bundleOutcome),
+    failures: failures.map((failure) => ({ ...failure })),
+    permissionEvents: permissionEventsFromFailures(failures),
+    traceIds: [trace.id],
+  });
   return {
     plan,
     outcomes,
@@ -512,6 +568,7 @@ export async function runOrchestrationWithRecorder(
     repairNodes,
     rerouteRecommendations,
     failures,
+    resultBundle,
   };
 }
 
