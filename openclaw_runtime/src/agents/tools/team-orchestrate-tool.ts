@@ -231,6 +231,7 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         resultBundle: result.resultBundle,
         graphStatus: result.graphStatus,
         executionWaves: result.executionWaves,
+        schedulerMetrics: result.schedulerMetrics,
         pendingGraphNodes: result.pendingGraphNodes,
         repairNodes: result.repairNodes,
         rerouteRecommendations: result.rerouteRecommendations,

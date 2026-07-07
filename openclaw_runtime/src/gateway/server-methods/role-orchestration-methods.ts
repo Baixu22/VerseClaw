@@ -377,6 +377,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           taskGraph: result.taskGraph,
           graphStatus: result.graphStatus,
           executionWaves: result.executionWaves,
+          schedulerMetrics: result.schedulerMetrics,
           spawnedRunIds: result.spawnedRunIds,
           expectedChildren: result.outcomes
             .filter((outcome) => !outcome.isVerifier)

@@ -40,6 +40,7 @@ vi.mock('rastermill', () => ({
 
 // Gateway handlers â€?the integration surface under test.
 import { roleOrchestrationHandlers } from '../../openclaw_runtime/src/gateway/server-methods/role-orchestration-methods';
+import { spawnSubagentDirect } from '../../openclaw_runtime/src/agents/subagent-spawn';
 // Role-first execution + observability.
 import { runOrchestrationObserved } from '../../openclaw_runtime/src/agents/orchestrator-run-observed';
 import { createTeamOrchestrateTool } from '../../openclaw_runtime/src/agents/tools/team-orchestrate-tool';
@@ -255,9 +256,36 @@ describe('orchestrator.run handler', () => {
     expect(res?.ok).toBe(false);
     expect(res?.error?.message).toMatch(/sessionKey/);
   });
-  // NOTE: full spawn execution is covered via runOrchestrationObserved below
-  // (the handler hard-injects the native spawnSubagentDirect at module scope,
-  // so a controlled fake spawn is exercised through the observed runner).
+
+  it('returns scheduler metrics in the gateway run payload', async () => {
+    vi.mocked(spawnSubagentDirect).mockResolvedValue({
+      status: 'accepted',
+      runId: 'run_gateway_1',
+      childSessionKey: 'child_gateway_1',
+    });
+
+    const res = await callHandler('orchestrator.run', {
+      task: 'security review',
+      sessionKey: 'agent:main:gateway',
+      templateId: 'security-audit',
+      maxWorkers: 2,
+    });
+
+    expect(res?.ok).toBe(true);
+    expect(res?.payload).toMatchObject({
+      schedulerMetrics: {
+        concurrencyCap: 2,
+        queued: expect.any(Number),
+        completed: expect.any(Number),
+        skipped: 0,
+        roleCostSummary: expect.any(Array),
+      },
+      resultBundle: {
+        schemaVersion: 1,
+        phase: 'spawn',
+      },
+    });
+  });
 });
 
 describe('runOrchestrationObserved (observed execution + tracing)', () => {
@@ -292,6 +320,13 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     });
     expect(result.resultBundle.roleOutcomes.length).toBe(result.outcomes.length);
     expect(result.resultBundle.traceIds.length).toBeGreaterThanOrEqual(1);
+    expect(result.schedulerMetrics).toMatchObject({
+      concurrencyCap: expect.any(Number),
+      queued: expect.any(Number),
+      completed: expect.any(Number),
+      skipped: 0,
+    });
+    expect(result.schedulerMetrics.roleCostSummary.length).toBeGreaterThan(0);
     // A trace was stored in the runtime buffer (the core observability fix).
     const traces = getRuntimeTraceBuffer();
     expect(traces.length).toBeGreaterThanOrEqual(1);
@@ -327,6 +362,33 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     );
     // Trace still persisted even on all-failures.
     expect(getRuntimeTraceBuffer().length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('uses resolved role contracts for scheduler contention when request roles are omitted', async () => {
+    const fakeSpawn = async (): Promise<FakeSpawnResult> => ({
+      status: 'accepted',
+      runId: 'run_conflict',
+      childSessionKey: 'child_conflict',
+    });
+
+    const result = await runOrchestrationObserved(
+      {
+        task: 'write release notes and implementation code',
+        workers: [
+          { roleName: 'implementer', task: 'Implement the change' },
+          { roleName: 'docs-writer', task: 'Document the change' },
+        ],
+        maxWorkers: 2,
+      },
+      baseCtx,
+      { spawn: fakeSpawn as unknown as never },
+    );
+
+    expect(result.schedulerMetrics.concurrencyCap).toBe(2);
+    expect(result.executionWaves.map((wave) => wave.roles)).toEqual([
+      ['implementer'],
+      ['docs-writer'],
+    ]);
   });
 });
 
@@ -394,6 +456,7 @@ describe('team_orchestrate tool', () => {
       status: string;
       plan: { templateId?: string; verifierRole?: string; workers: Array<{ roleName: string }> };
       executionWaves: Array<{ roles: string[] }>;
+      schedulerMetrics?: { concurrencyCap: number; roleCostSummary: unknown[] };
       failures: unknown[];
       nextAction: string;
       pendingVerifier: boolean;
@@ -404,6 +467,10 @@ describe('team_orchestrate tool', () => {
     expect(details.plan.verifierRole).toBe('skeptic');
     expect(details.plan.workers.map((worker) => worker.roleName)).toEqual(['security-reviewer', 'reviewer', 'tester']);
     expect(details.executionWaves.every((wave) => wave.roles.length <= 2)).toBe(true);
+    expect(details.schedulerMetrics).toMatchObject({
+      concurrencyCap: 2,
+      roleCostSummary: expect.any(Array),
+    });
     expect(details.failures).toHaveLength(2);
     expect(details.expectedChildren).toHaveLength(3);
     expect(details.pendingVerifier).toBe(true);
