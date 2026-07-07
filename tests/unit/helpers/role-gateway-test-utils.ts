@@ -37,7 +37,13 @@ export type HandlerArgs = {
   respond: (...args: unknown[]) => void;
   context: {
     getRuntimeConfig: () => OpenClawConfig;
+    broadcast: () => void;
+    logGateway: {
+      info: () => void;
+      warn: () => void;
+    };
   };
+  client: null;
 };
 
 /** Builds handler args with a captured respond and a controlled config. */
@@ -49,7 +55,15 @@ export function buildHandlerArgs(
   return {
     params,
     respond: captureRespond(respondTarget).respond,
-    context: { getRuntimeConfig: () => cfg },
+    context: {
+      getRuntimeConfig: () => cfg,
+      broadcast: () => undefined,
+      logGateway: {
+        info: () => undefined,
+        warn: () => undefined,
+      },
+    },
+    client: null,
   };
 }
 

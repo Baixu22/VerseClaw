@@ -30,12 +30,14 @@ touchedAreas:
   - openclaw_runtime/src/agents/orchestrator-run-observed.ts
   - openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts
   - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
+  - tests/unit/helpers/role-gateway-test-utils.ts
   - tests/unit/orchestration-resource-scheduler.test.ts
   - tests/unit/agency-role-importer.test.ts
   - tests/unit/agent-steering-team-bundle.test.ts
   - tests/unit/orchestration-gates.test.ts
   - tests/unit/orchestration-result-bundle.test.ts
   - tests/unit/role-orchestration-methods.test.ts
+  - tests/unit/orchestration-task-graph.test.ts
   - tests/unit/orchestration-protocol-v3.test.ts
 expectedUserBehavior:
   - Existing role-first orchestration still selects roles through RoleContract-backed router and team templates.
@@ -69,6 +71,7 @@ requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/role-first-p1-resource-aware-scheduler.md --no-diff
   - pnpm harness validate --spec harness/specs/tasks/role-first-p1-resource-aware-scheduler.md
   - pnpm exec vitest run tests/unit/orchestration-resource-scheduler.test.ts tests/unit/agency-role-importer.test.ts tests/unit/orchestration-result-bundle.test.ts tests/unit/orchestration-gates.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/orchestration-protocol-v3.test.ts
+  - pnpm exec vitest run tests/unit/orchestration-task-graph.test.ts tests/unit/role-spawn.test.ts tests/unit/role-runtime-mvp.test.ts tests/unit/chat-page-execution-graph.test.tsx
   - pnpm run comms:replay
   - pnpm run comms:compare
 acceptance:
