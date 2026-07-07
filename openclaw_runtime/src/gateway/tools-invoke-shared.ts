@@ -23,7 +23,7 @@ import type {
   RuntimeErrorType,
   ToolCallRequest,
   ToolCallResult,
-} from "../runtime-core/index.js";
+} from "../runtime-core/types.js";
 import {
   isSecurityVerificationShadowEnabled,
   recordSecurityVerificationShadow,

@@ -2,6 +2,98 @@ import { describe, expect, it } from 'vitest';
 import { buildRollbackPlan } from '@/pages/Chat/rollback-plan';
 
 describe('rollback plan', () => {
+  it('labels checkpoint handoff as evidence-backed when fingerprints and tool results are available', () => {
+    const plan = buildRollbackPlan({
+      activeRun: false,
+      gatewayAvailable: true,
+      queueDrainBusy: false,
+      compactionBusy: false,
+      handoffDisabled: false,
+      contextRange: null,
+      compactionStatus: null,
+      longTaskControlStatus: {
+        available: true,
+        queueCount: 0,
+        warnings: [],
+        latestCheckpoint: {
+          id: 'checkpoint-evidence',
+          sessionKey: 'agent:main:main',
+          trigger: 'manual_review',
+          status: 'active',
+          checkpoint: {
+            schemaVersion: 1,
+            trigger: 'manual_review',
+            openBlockers: [],
+            decisions: [],
+            deviations: [],
+            filesTouched: ['src/a.ts', 'src/b.ts'],
+            testsRun: [],
+            reviewNeededItems: [],
+            evidenceRefs: [{ type: 'session', ref: 'agent:main:main' }],
+            createdAt: '2026-06-23T00:00:00.000Z',
+            metadata: {
+              fileHashes: {
+                'src/a.ts': 'a'.repeat(64),
+                'src/b.ts': 'b'.repeat(64),
+              },
+              toolResults: [{ callId: 'task_loop.subagent:run_acceptance', status: 'success' }],
+            },
+          },
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+    });
+
+    expect(plan.actions.find((action) => action.kind === 'checkpoint-handoff')).toMatchObject({
+      detailKey: 'composer.rollbackPlan.actions.checkpoint-handoff.detailEvidenceBacked',
+      detailValues: { trigger: 'manual_review', fileCount: 2, toolCount: 1 },
+      risk: 'safe',
+    });
+  });
+
+  it('degrades checkpoint handoff copy when fingerprint or tool evidence is missing', () => {
+    const plan = buildRollbackPlan({
+      activeRun: false,
+      gatewayAvailable: true,
+      queueDrainBusy: false,
+      compactionBusy: false,
+      handoffDisabled: false,
+      contextRange: null,
+      compactionStatus: null,
+      longTaskControlStatus: {
+        available: true,
+        queueCount: 0,
+        warnings: [],
+        latestCheckpoint: {
+          id: 'checkpoint-legacy',
+          sessionKey: 'agent:main:main',
+          trigger: 'interrupt',
+          status: 'active',
+          checkpoint: {
+            schemaVersion: 1,
+            trigger: 'interrupt',
+            openBlockers: [],
+            decisions: [],
+            deviations: [],
+            filesTouched: [],
+            testsRun: [],
+            reviewNeededItems: [],
+            evidenceRefs: [{ type: 'session', ref: 'agent:main:main' }],
+            createdAt: '2026-06-23T00:00:00.000Z',
+          },
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+    });
+
+    expect(plan.actions.find((action) => action.kind === 'checkpoint-handoff')).toMatchObject({
+      detailKey: 'composer.rollbackPlan.actions.checkpoint-handoff.detailNoEvidence',
+      detailValues: { trigger: 'interrupt', fileCount: 0, toolCount: 0 },
+    });
+  });
+
   it('prioritizes active-run interruption and checkpoint handoff before destructive rollback', () => {
     const plan = buildRollbackPlan({
       activeRun: true,

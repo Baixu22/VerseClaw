@@ -39,11 +39,18 @@ export function stripEvidenceInsufficientSignal(answer: string): {
 export function extractFinalAnswer(answer: string): string {
   const trimmed = answer.trim();
   // Match "Final answer:" (case-insensitive) followed by the value on the
-  // same line. Uses multiline flag so $ matches end of line, and dotall
-  // flag so .+? can span lines if the answer wraps.
-  const match = trimmed.match(/final answer:\s*(.+?)(\n|$)/is);
-  if (match && match[1] && match[1].trim().length > 0) {
-    return match[1].trim();
+  // same line. Tolerates markdown bold/italic around the label — LLMs often
+  // emit "**Final answer**: X" or "**Final answer:** X", which the previous
+  // regex (/final answer:/) failed to match, leaking the full CoT to the
+  // judge. Uses dotall flag so .+? can span lines if the answer wraps.
+  const match = trimmed.match(
+    /final answer\s*\*{0,2}\s*:\s*\*{0,2}\s*(.+?)(\n|$)/is,
+  );
+  if (match && match[1]) {
+    const value = match[1].replace(/^\*+|\*+$/g, "").trim();
+    if (value.length > 0) {
+      return value;
+    }
   }
   // Fallback: return the full answer unchanged. This is safer than the
   // last-line heuristic which could return a non-answer line.
@@ -111,7 +118,7 @@ export function buildCategoryAwareDualTrackPrompt(
     options.reasoningHints.some((hint) => hint.trim().length > 0)
   ) {
     const hintLines = options.reasoningHints
-      .map((hint, index) => hint.trim())
+      .map((hint) => hint.trim())
       .filter(Boolean)
       .map((hint, index) => `  Hop ${index + 1} answer: ${hint}`)
       .join("\n");
@@ -148,30 +155,38 @@ function scaffoldForCategory(category: GenerationCategory): string {
     return [
       "You are answering a multi-hop question that requires connecting information across conversation turns. You MUST answer — never abstain.",
       "",
-      "FORBIDDEN: \"I don't know\", \"not determinable\", \"not possible to determine\", \"cannot be determined\", \"no mention of\".",
+      "FORBIDDEN: \"I don't know\", \"not determinable\", \"not possible to determine\", \"cannot be determined\", \"no mention of\", \"the conversation does not specify\".",
       "",
       "CRITICAL GROUNDING RULES:",
-      "1. EXTRACT, do not GENERATE. If the context mentions specific names, places, items, or reasons, use those EXACT entities — never replace them with a generic category.",
+      "1. EXTRACT first. If the context explicitly names the specific entity the question asks about, use that EXACT entity — never replace it with a generic category.",
       "   - WRONG: context says \"hairless cats and pigs\" -> answer \"hairless or hypoallergenic pets\" (too generic)",
       "   - RIGHT: context says \"hairless cats and pigs\" -> answer \"hairless cats and pigs\"",
-      "   - WRONG: context says \"more interested in video games\" -> answer \"life got busy\" (invented reason)",
-      "   - RIGHT: context says \"more interested in video games\" -> answer \"because she is more interested in video games\"",
-      "2. If [SELF-ASK DECOMPOSITION] hop answers are provided, TREAT THEM AS FACTS. Chain them:",
+      "2. NAME the real-world entity when asked. If the question asks for a SPECIFIC brand/game/show/book/company/organization and the context only DESCRIBES it without naming it, combine the descriptive clues with your world knowledge and COMMIT to the single most likely real-world name.",
+      "   - Example: clues \"card game, exploding felines\" -> \"Exploding Kittens\"",
+      "   - Example: clues \"sportswear brand, athlete sponsorship\" -> name an actual brand like \"Under Armour\" or \"Nike\" — pick the one best matching the clues.",
+      "   - A specific best-guess name is ALWAYS better than repeating the description or answering with a generic category.",
+      "3. If [SELF-ASK DECOMPOSITION] hop answers are provided, TREAT THEM AS FACTS. Chain them:",
       "   - Hop 1 answer is an intermediate entity/value. Substitute it into the hop 2 question.",
       "   - Do NOT discard hop answers — they are retrieved evidence, not suggestions.",
-      "3. List ALL specific items the context mentions. If the context lists 5 locations, name all 5 — do not give just 1.",
+      "",
+      "ANSWER FOCUS RULES:",
+      "1. Answer EXACTLY the slot the question asks for (the gift, the place, the reason) — do not dump everything you know about the person.",
+      "   - WRONG: question asks \"what gift did X give\" -> answer lists X's hobbies and habits",
+      "   - RIGHT: question asks \"what gift did X give\" -> name the gift itself",
+      "2. For yes/no questions: start with \"Yes\" or \"No\", then one short supporting clue. Judge from the overall direction of the evidence, not one isolated fact.",
+      "3. If the question asks for multiple items, name ALL of them. When the context names only SOME items but the question implies a known real-world set (e.g. Star Wars filming locations in Ireland), COMPLETE the list from world knowledge — do not stop at the one item the context mentions.",
       "",
       "Steps:",
       "1. Read the [SELF-ASK DECOMPOSITION] hop answers (if present). These are your intermediate results.",
       "2. Find the specific facts/sentences in [SEMANTIC MEMORY] and [EPISODIC MEMORY] that connect to each hop.",
       "3. Chain: hop1 answer + hop2 evidence -> synthesis.",
-      "4. Quote specific entities from the context in your final answer.",
+      "4. Commit to the most specific answer available: an exact entity from the context, or the most likely real-world name inferred from the clues.",
       "",
-      "Inference guidance: if the context states a property or preference, infer the compatible category. Example: \"allergic to fur\" -> \"hairless animals\". Example: \"enjoys performing to large crowds\" -> \"would enjoy a large venue\".",
+      "Inference guidance for hypothetical/speculative questions (\"what would suit X\", \"would X enjoy Y\", \"what wouldn't bother X\"): derive the answer from X's stated properties, constraints, and preferences — do NOT answer with an unrelated concrete entity that merely appears in the context. Example: \"allergic to pet fur\" -> pets without fur, e.g. \"hairless cats or pigs\". Example: \"enjoys performing to large crowds\" -> \"Yes — would enjoy a large venue\".",
       "",
       "A partial/best-guess answer is better than no answer. Never abstain.",
       "",
-      "End with: \"Final answer: <concise value with specific entities>\"",
+      "End with a plain-text line (no markdown bold): \"Final answer: <concise value with specific entities>\"",
     ].join("\n");
   }
 

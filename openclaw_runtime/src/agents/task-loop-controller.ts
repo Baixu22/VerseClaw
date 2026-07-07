@@ -7,18 +7,22 @@ import { createRoleFirstTrace, completeObservedRun } from "../observability/role
 import type { ObservabilityTraceRecorder } from "../observability/trace-recorder.js";
 import {
   resolveRuntimeEventLogFeatureFlags,
-  resolveRuntimeRegistryFeatureFlags,
-  type EvidenceRef,
   type RuntimeEventLogFeatureFlags,
-  type RuntimeRegistryDiagnostic,
-  type RuntimeRegistryFeatureFlags,
-  type RuntimeCoreJsonObject,
-  type RuntimeCoreJsonValue,
   type RuntimeTaskEventLogAppendOptions,
   type RuntimeTaskEventLogAppendResult,
-  type RuntimeTaskEvent,
-  type RuntimeTaskStatus,
-} from "../runtime-core/index.js";
+} from "../runtime-core/event-log.js";
+import type { EvidenceRef } from "../runtime-core/evidence.js";
+import type {
+  RuntimeCoreJsonObject,
+  RuntimeCoreJsonValue,
+  RuntimeTaskEvent,
+  RuntimeTaskStatus,
+} from "../runtime-core/types.js";
+import {
+  resolveRuntimeRegistryFeatureFlags,
+  type RuntimeRegistryDiagnostic,
+  type RuntimeRegistryFeatureFlags,
+} from "../runtime-core/registries.js";
 import type {
   ObservedOrchestrationRunRequest,
   OrchestrationLifecycleEvent,
