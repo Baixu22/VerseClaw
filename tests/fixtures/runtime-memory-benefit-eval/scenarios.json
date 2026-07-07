@@ -1,0 +1,20 @@
+[
+  {
+    "arm": "baseline",
+    "description": "No memory hydration. Returned facts are always empty. Memory-dependent scenarios fail; memory-irrelevant scenarios succeed vacuously.",
+    "usesMemory": false,
+    "guarded": false
+  },
+  {
+    "arm": "naiveMemory",
+    "description": "Direct same-key match without guards, sorted by confidence, capped at limit. Negative control: returns required facts alongside stale/conflict/hazard material.",
+    "usesMemory": true,
+    "guarded": false
+  },
+  {
+    "arm": "guardedMemory",
+    "description": "consumeRuntimeMemoryHydrationFacts result. Positive control: only verified, valid, non-conflicting, non-hazard facts within budget.",
+    "usesMemory": true,
+    "guarded": true
+  }
+]

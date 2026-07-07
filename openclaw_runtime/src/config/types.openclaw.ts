@@ -107,6 +107,13 @@ export type RuntimeFeatureConfig = {
     /** Run context provider registry pilot diagnostics without changing prompt/message output. */
     registryPilot?: boolean;
   };
+  /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
+  contextRuntimeKit?: {
+    /** Set false to roll backend context engine selection back to legacy without UI changes. */
+    enabled?: boolean;
+    /** Preserve shadow diagnostics compatibility for pre-promotion CRK pilots. */
+    shadow?: boolean;
+  };
   /** Append-only RuntimeTaskEvent event-log shadow flags. Defaults off. */
   eventLog?: {
     /** Allow event-log diagnostics/envelopes to be created without changing runtime behavior. */

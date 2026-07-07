@@ -37,7 +37,6 @@ import {
   type SessionContinuityRecommendation,
 } from './session-continuity';
 import { buildRollbackPlan } from './rollback-plan';
-import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
 import { extractText, extractThinking, extractToolUse, normalizeMessageRole } from './message-utils';
 import { parseSubagentCompletionInfo } from './task-visualization';
 import {
@@ -71,7 +70,7 @@ import { extractGeneratedFiles, generatedFileHasDiffPayload, isHtmlPreviewExt, t
 import { AssistantErrorCard, AssistantStatusIndicator, SelectionQuoteToolbar, TokenUsageRoll } from '@/components/assistant-render/AssistantRender';
 import { buildStatusDimensions, buildUsageModel } from '@/components/assistant-render/model';
 import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
-import { TurnWorkPanel } from '@/components/assistant-render/TurnWorkPanel';
+import { WorkContextBar } from '@/components/assistant-render/WorkContextBar';
 import { buildTurnWorkModel } from '@/components/assistant-render/turn-work-model';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -93,6 +92,7 @@ import type {
   WorkspaceUiState,
 } from '@shared/types/workspace';
 import type { WorkArtifact } from '@shared/types/work-artifact';
+import type { GitRepositoryStatus } from '@shared/types/git';
 import type { ChatSession, ChatRuntimeRunState } from '@/stores/chat/types';
 import { toast } from 'sonner';
 
@@ -619,7 +619,7 @@ export function Chat() {
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
 
-  const { messages, currentSessionKey, currentAgentId, sessions, sessionLabels, loading, loadingMoreHistory, hasMoreHistory, sending, error, runError, streamingMessage, streamingTools, pendingFinal, activeRunId, runtimeRuns, lastUserMessageAt } = useChatStore(useShallow((s) => ({
+  const { messages, currentSessionKey, currentAgentId, sessions, sessionLabels, loading, loadingMoreHistory, hasMoreHistory, sending, error, runError, streamingMessage, streamingTools, pendingFinal, activeRunId, runtimeRuns, lastUserMessageAt, taskLedgerSnapshot } = useChatStore(useShallow((s) => ({
     messages: s.messages,
     currentSessionKey: s.currentSessionKey,
     currentAgentId: s.currentAgentId,
@@ -637,6 +637,7 @@ export function Chat() {
     activeRunId: s.activeRunId,
     runtimeRuns: s.runtimeRuns ?? {},
     lastUserMessageAt: s.lastUserMessageAt,
+    taskLedgerSnapshot: s.taskLedgerSnapshot,
   })));
   const switchSession = useChatStore((s) => s.switchSession);
   const resetSessionView = useChatStore((s) => s.resetSessionView);
@@ -669,11 +670,8 @@ export function Chat() {
   const [knowledgeDraftTitle, setKnowledgeDraftTitle] = useState('');
   const [knowledgeDraftBody, setKnowledgeDraftBody] = useState('');
   const [knowledgeDraftApplying, setKnowledgeDraftApplying] = useState(false);
-  const [taskLedgerSummaryVisible, setTaskLedgerSummaryVisible] = useState(true);
-
-  useEffect(() => {
-    setTaskLedgerSummaryVisible(true);
-  }, [activeWorkspaceId, currentSessionKey]);
+  const [workContextVisible, setWorkContextVisible] = useState(true);
+  const [gitStatus, setGitStatus] = useState<GitRepositoryStatus | null>(null);
 
   // Refresh Task Ledger snapshot when workspace changes
   const refreshTaskLedger = useChatStore((s) => s.refreshTaskLedger);
@@ -740,7 +738,9 @@ export function Chat() {
   // card pick a default from its own `active` prop."
   const [graphExpandedOverrides, setGraphExpandedOverrides] = useState<Record<string, boolean>>({});
   const captureCurrentWorkspaceSessionState = useCallback((draft = composerDraft): WorkspaceUiState => {
-    const previousArtifactPanel = getWorkspaceSessionState(activeWorkspace, currentSessionKey).artifactPanel ?? {};
+    const previousSessionState = getWorkspaceSessionState(activeWorkspace, currentSessionKey);
+    const previousArtifactPanel = previousSessionState.artifactPanel ?? {};
+    const previousChatFooter = previousSessionState.chatFooter ?? {};
     return {
       draftInput: draft,
       activeTopicId: null,
@@ -751,9 +751,13 @@ export function Chat() {
         open: panelOpen,
         activeTab: artifactTab,
       },
+      chatFooter: {
+        ...previousChatFooter,
+        workContextVisible,
+      },
       graphExpanded: graphExpandedOverrides,
     };
-  }, [activeWorkspace, artifactTab, composerDraft, currentSessionKey, graphExpandedOverrides, knowledgeMode, knowledgeScope, panelOpen]);
+  }, [activeWorkspace, artifactTab, composerDraft, currentSessionKey, graphExpandedOverrides, knowledgeMode, knowledgeScope, panelOpen, workContextVisible]);
 
   const persistCurrentWorkspaceSessionState = useCallback(async (options?: {
     activeSessionKey?: string;
@@ -1008,6 +1012,7 @@ export function Chat() {
     setGraphExpandedOverrides(sessionState.graphExpanded ?? {});
     setKnowledgeScope(sessionState.knowledgeScope ?? 'none');
     setKnowledgeMode(sessionState.knowledgeMode ?? 'suggest');
+    setWorkContextVisible(sessionState.chatFooter?.workContextVisible ?? true);
     void clearActiveTopicMarker(activeWorkspace.rootPath);
     restoreArtifactPanelState(sessionState.artifactPanel ?? { open: false });
   }, [activeWorkspace, clearActiveTopicMarker, currentSessionKey, restoreArtifactPanelState]);
@@ -1175,6 +1180,41 @@ export function Chat() {
       },
     });
   }, [activeWorkspaceId, currentSessionKey, openBrowser, saveWorkspaceState]);
+
+  const handleToggleWorkContext = useCallback(() => {
+    const nextVisible = !workContextVisible;
+    setWorkContextVisible(nextVisible);
+    if (!activeWorkspaceId) return;
+    const previousChatFooter = getWorkspaceSessionState(activeWorkspace, currentSessionKey).chatFooter ?? {};
+    void saveWorkspaceState({
+      id: activeWorkspaceId,
+      sessionKey: currentSessionKey,
+      state: {
+        ...captureCurrentWorkspaceSessionState(composerDraft),
+        chatFooter: {
+          ...previousChatFooter,
+          workContextVisible: nextVisible,
+        },
+      },
+    });
+  }, [
+    activeWorkspace,
+    activeWorkspaceId,
+    captureCurrentWorkspaceSessionState,
+    composerDraft,
+    currentSessionKey,
+    saveWorkspaceState,
+    workContextVisible,
+  ]);
+
+  const handleOpenWorkReport = useCallback((report: { file: GeneratedFile }) => {
+    const target = generatedFileToTarget(report.file);
+    if (isHtmlPreviewExt(report.file.ext)) {
+      openPreview(target);
+      return;
+    }
+    openChanges(target);
+  }, [openChanges, openPreview]);
 
   const handleInterruptTerminal = useCallback(async () => {
     openBrowser();
@@ -1847,13 +1887,12 @@ export function Chat() {
   const shouldClearStoreLifecycleFromHistory = executionProjection.shouldClearStoreLifecycleFromHistory;
   const inputRunActive = executionProjection.inputRunActive;
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
-  const showTaskLedgerSummaryPanel = !isEmpty && !!activeWorkspaceId && taskLedgerSummaryVisible;
   const showRollbackPlanPanel = rollbackPlan.actions.length > 0
     && (!isEmpty || !!longTaskControlStatus || !!compactionStatus);
   const showChatAssistiveRail = chatAssistiveRailVisible
     && !isEmpty
     && !questionDirectoryVisible
-    && (showTaskLedgerSummaryPanel || showRollbackPlanPanel);
+    && showRollbackPlanPanel;
 
   useEffect(() => {
     if (!shouldClearStoreLifecycleFromHistory) return;
@@ -1948,6 +1987,20 @@ export function Chat() {
     for (const files of filesByRun.values()) all.push(...files);
     return all;
   }, [filesByRun]);
+  const workContextRunCard = useMemo(
+    () => userRunCards.find((card) => card.active) ?? userRunCards[userRunCards.length - 1] ?? null,
+    [userRunCards],
+  );
+  const workContextModel = useMemo(() => {
+    if (!workContextRunCard) return null;
+    const generatedFiles = filesByRun.get(workContextRunCard.triggerIndex) ?? [];
+    return buildTurnWorkModel({
+      id: workContextRunCard.runKey,
+      active: workContextRunCard.active,
+      steps: workContextRunCard.steps,
+      reports: generatedFiles,
+    });
+  }, [filesByRun, workContextRunCard]);
 
   // Derive WorkArtifacts from generated files (docx/xlsx/pdf/html/csv/md)
   const artifacts = useMemo(() => {
@@ -1987,6 +2040,27 @@ export function Chat() {
     if (sending) return undefined;
     return lastUserMessageAt ?? 0;
   }, [sending, lastUserMessageAt]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!activeWorkspaceId) {
+      setGitStatus(null);
+      return () => {
+        cancelled = true;
+      };
+    }
+    void hostApi.git.status()
+      .then((result) => {
+        if (cancelled) return;
+        setGitStatus(result.status?.isRepository ? result.status : null);
+      })
+      .catch(() => {
+        if (!cancelled) setGitStatus(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeWorkspaceId, activeWorkspace?.rootPath, refreshSignal]);
 
   const autoCollapsedRunKeys = useMemo(() => {
     const keys = new Set<string>();
@@ -2081,6 +2155,8 @@ export function Chat() {
         </div>
         <div data-testid="chat-toolbar-actions" className="no-drag relative z-10">
           <ChatToolbar
+            workContextVisible={workContextVisible}
+            onToggleWorkContext={handleToggleWorkContext}
             questionDirectoryOpen={questionDirectoryVisible}
             questionDirectoryCount={questionDirectoryItems.length}
             onSaveToKnowledge={handleOpenKnowledgeDraft}
@@ -2096,6 +2172,15 @@ export function Chat() {
       {/* Messages Area */}
       <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-4">
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
+        <WorkContextBar
+          visible={workContextVisible}
+          workspace={activeWorkspace ? { name: activeWorkspace.name, rootPath: activeWorkspace.rootPath } : null}
+          gitStatus={gitStatus}
+          workModel={workContextModel}
+          taskLedgerSnapshot={taskLedgerSnapshot}
+          onOpenGit={handleOpenGitPanel}
+          onOpenReport={handleOpenWorkReport}
+        />
         <div
           className={cn(
             'mx-auto flex h-full min-h-0 w-full flex-col gap-4 xl:items-stretch',
@@ -2177,26 +2262,8 @@ export function Chat() {
                           const expanded = userOverride != null
                             ? userOverride
                             : !autoCollapsedRunKeys.has(runKey);
-                          const generatedFiles = filesByRun.get(card.triggerIndex) ?? [];
-                          const turnWorkModel = buildTurnWorkModel({
-                            id: runKey,
-                            active: card.active,
-                            steps: card.steps,
-                            reports: generatedFiles,
-                          });
                           return (
                             <div key={`run-${currentSessionKey}:${card.triggerIndex}`} className="space-y-3">
-                              <TurnWorkPanel
-                                model={turnWorkModel}
-                                onOpenReport={(report) => {
-                                  const target = generatedFileToTarget(report.file);
-                                  if (isHtmlPreviewExt(report.file.ext)) {
-                                    openPreview(target);
-                                    return;
-                                  }
-                                  openChanges(target);
-                                }}
-                              />
                               <ExecutionGraphCard
                                 key={`graph-${currentSessionKey}:${card.triggerIndex}`}
                                 agentLabel={card.agentLabel}
@@ -2286,15 +2353,6 @@ export function Chat() {
             data-testid="chat-assistive-rail"
             className="flex w-full shrink-0 flex-col gap-3 xl:w-72"
           >
-              {showTaskLedgerSummaryPanel && (
-                <TaskLedgerSummaryPanel
-                  workspaceId={activeWorkspace?.id}
-                  compact
-                  hideWhenEmpty
-                  className="w-full lg:w-full xl:w-full"
-                  onVisibilityChange={setTaskLedgerSummaryVisible}
-                />
-              )}
               {showRollbackPlanPanel && (
                 <RollbackPlanPanel
                   plan={rollbackPlan}

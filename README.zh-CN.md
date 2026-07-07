@@ -105,6 +105,8 @@ Verse Claw 直接基于官方 **OpenClaw** 核心构建。无需单独安装，�
 
 打开开发者模式后，侧边栏还会提供原生 Dreams 页面，可在 Verse Claw 内查看 OpenClaw 记忆回顾、梦境日记，并执行基础维护操作；需要更深诊断时仍可从该页面打开完整 OpenClaw Dreams UI。
 
+当未显式配置 `plugins.slots.contextEngine` 时，OpenClaw runtime 现在默认使用后端 Context Runtime Kit。CRK 会提供有界、基于 selector 的 prompt 与 recovery 诊断，同时保留 `legacy` 作为 fallback；如需无 UI 回滚，可设置 `runtime.contextRuntimeKit.enabled: false`，或显式设置 `plugins.slots.contextEngine: "legacy"`。Tool-call gate 诊断仍保持 report-only。
+
 ---
 
 ## 功能特性
@@ -146,7 +148,7 @@ Observability 页面会维护 Verse Claw 自有的本地 JSON/JSONL trace 索引
 Runtime 还包含默认关闭的安全与验证影子层，覆盖 Gateway 可见的 `tools.invoke` 调用和 runtime 验证输入。启用策略后，它会通过 `security.*` 和 `verification.*` RPC 记录脱敏的内存态安全决策、确定性的 tool-call/event-log/checkpoint 验证摘要、按 runId 关联的结果筛选和聚合健康计数，并写入增量 Observability span；它不会阻断工具、运行外部测试、调用 LLM judge，也不会持久化原始 tool args/result/events/checkpoints。
 
 ### 任务账本
-Task Ledger 页面为长期任务维护 workspace 级、Agent 中立的结构化记录：长期目标、子任务、依赖、阻塞、待复核节点、决策、偏差和会话链接。它在本地 OpenClaw 配置目录中保存 append-only JSONL 事件，在 Chat 旁展示紧凑摘要，并可导出单文件离线 HTML，包含树视图、DAG、历史和复核视图。
+Task Ledger 页面为长期任务维护 workspace 级、Agent 中立的结构化记录：长期目标、子任务、依赖、阻塞、待复核节点、决策、偏差和会话链接。它在本地 OpenClaw 配置目录中保存 append-only JSONL 事件，在 Chat 工作上下文栏中展示紧凑摘要，并可导出单文件离线 HTML，包含树视图、DAG、历史和复核视图。
 
 ### 远程任务
 Remote Tasks 页面提供本地优先的结构化任务收件箱，可接收消息、OpenClaw Doctor 和设置补丁任务。设置补丁会展示变更预览，并且只有用户明确批准后，主进程才会应用白名单内的配置更新。

@@ -104,6 +104,8 @@ We are committed to maintaining strict alignment with the upstream OpenClaw proj
 
 When Developer Mode is enabled, the sidebar also provides a native Dreams page for OpenClaw memory review, dream diary inspection, and basic maintenance actions. The full upstream OpenClaw Dreams UI remains available from that page when deeper diagnostics are needed.
 
+OpenClaw runtime context now defaults to the backend Context Runtime Kit when no explicit `plugins.slots.contextEngine` is configured. CRK adds bounded selector-backed prompt and recovery diagnostics while preserving `legacy` as the fallback; operators can roll back without UI changes by setting `runtime.contextRuntimeKit.enabled: false` or `plugins.slots.contextEngine: "legacy"`. Tool-call gate diagnostics remain report-only.
+
 ---
 
 ## Features
@@ -144,7 +146,7 @@ The Observability page keeps a Verse Claw-owned local JSON/JSONL trace index for
 The runtime also includes a default-off security and verification shadow layer for Gateway-visible `tools.invoke` calls and runtime validation inputs. When enabled by policy, it records sanitized in-memory security decisions, deterministic tool-call/event-log/checkpoint verification summaries, runId-correlated result filters, and aggregate health counts through `security.*` and `verification.*` RPCs plus additive Observability spans; it does not block tools, run external tests, call an LLM judge, or persist raw tool arguments/results/events/checkpoints.
 
 ### Task Ledger
-The Task Ledger page keeps a workspace-scoped, agent-neutral record for long-running work: goals, subtasks, dependencies, blockers, review nodes, decisions, deviations, and session links. It stores append-only JSONL events under the local OpenClaw config directory, shows a compact summary beside active chats, and exports a single offline HTML file with Tree, DAG, History, and Review views.
+The Task Ledger page keeps a workspace-scoped, agent-neutral record for long-running work: goals, subtasks, dependencies, blockers, review nodes, decisions, deviations, and session links. It stores append-only JSONL events under the local OpenClaw config directory, shows a compact summary in the Chat work context bar, and exports a single offline HTML file with Tree, DAG, History, and Review views.
 
 ### Remote Tasks
 The Remote Tasks page provides a local-first inbox for structured message, OpenClaw Doctor, and settings patch envelopes. Settings patches show a change preview and require explicit approval before the Main process applies a whitelisted configuration update.

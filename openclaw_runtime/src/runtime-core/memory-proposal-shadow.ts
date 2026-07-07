@@ -1,0 +1,357 @@
+import {
+  isEvidenceRef,
+  type EvidenceRef,
+} from "./evidence.js";
+import {
+  isFiniteNumber,
+  isOptionalFiniteNumber,
+  isOptionalString,
+  isRecord,
+  isRuntimeCoreJsonObject,
+  type RuntimeCoreJsonObject,
+} from "./types.js";
+import {
+  findRuntimeMemoryFacts,
+  isRuntimeMemoryInvalidationProposal,
+  isRuntimeMemorySourceEpisodeRef,
+  isRuntimeMemoryTemporalFact,
+  isRuntimeMemoryTemporalFactCandidate,
+  rejectRawRuntimeMemoryInput,
+  resolveRuntimeMemoryFeatureFlags,
+  sanitizeRuntimeMemoryInvalidationProposal,
+  sanitizeRuntimeMemoryTemporalFact,
+  sanitizeRuntimeMemoryTemporalFactCandidate,
+  type RuntimeMemoryFactSource,
+  type RuntimeMemoryFeatureFlags,
+  type RuntimeMemoryInvalidationProposal,
+  type RuntimeMemoryRawInputRejectionReason,
+  type RuntimeMemorySourceEpisodeRef,
+  type RuntimeMemoryTemporalFact,
+  type RuntimeMemoryTemporalFactCandidate,
+  type RuntimeMemoryTemporalFields,
+} from "./memory-context.js";
+
+export const RUNTIME_MEMORY_FACT_PROPOSAL_INPUT_SOURCES = [
+  "task_event",
+  "tool_result",
+  "test_output",
+  "verifier_summary",
+  "trace_summary",
+  "human_confirmation",
+  "deterministic_rule",
+] as const satisfies readonly RuntimeMemoryFactSource[];
+
+export type RuntimeMemoryFactProposalInputSource =
+  typeof RUNTIME_MEMORY_FACT_PROPOSAL_INPUT_SOURCES[number];
+
+export const RUNTIME_MEMORY_FACT_PROPOSAL_REJECTION_REASONS = [
+  "raw_input",
+  "unsupported_source",
+  "accepted_fact_input",
+  "invalid_shape",
+] as const;
+
+export type RuntimeMemoryFactProposalRejectionReason =
+  typeof RUNTIME_MEMORY_FACT_PROPOSAL_REJECTION_REASONS[number];
+
+export type RuntimeMemoryFactProposalInput = RuntimeMemoryTemporalFields & {
+  schemaVersion: 1;
+  factId: string;
+  taskId?: string;
+  subject: string;
+  predicate: string;
+  objectSummary: string;
+  confidence?: number;
+  source: RuntimeMemoryFactSource;
+  sourceEpisodeRefs: RuntimeMemorySourceEpisodeRef[];
+  evidenceRefs: EvidenceRef[];
+  proposedAt?: number;
+  metadata?: RuntimeCoreJsonObject;
+};
+
+export type RuntimeMemoryFactProposalRejection = {
+  accepted: false;
+  reason: RuntimeMemoryFactProposalRejectionReason;
+  inputId?: string;
+  rawReason?: RuntimeMemoryRawInputRejectionReason;
+  message: string;
+};
+
+export type RuntimeMemoryFactProposalShadowParams = {
+  config?: unknown;
+  inputs?: readonly unknown[];
+  acceptedFacts?: readonly RuntimeMemoryTemporalFact[];
+};
+
+export type RuntimeMemoryFactProposalShadowResult = {
+  enabled: boolean;
+  disabledReason?: "runtime_memory_flags_disabled";
+  flags: RuntimeMemoryFeatureFlags;
+  proposalOnly: true;
+  readonly: true;
+  candidates: RuntimeMemoryTemporalFactCandidate[];
+  acceptedFacts: [];
+  invalidationProposals: RuntimeMemoryInvalidationProposal[];
+  rejectedInputs: RuntimeMemoryFactProposalRejection[];
+};
+
+const PROPOSAL_SOURCE_SET = new Set<RuntimeMemoryFactSource>(
+  RUNTIME_MEMORY_FACT_PROPOSAL_INPUT_SOURCES,
+);
+
+export function buildRuntimeMemoryFactProposalShadow(
+  params: RuntimeMemoryFactProposalShadowParams = {},
+): RuntimeMemoryFactProposalShadowResult {
+  const flags = resolveRuntimeMemoryFeatureFlags(params.config);
+  if (!flags.shadow || !flags.proposeFacts) {
+    return emptyProposalShadowResult(flags, "runtime_memory_flags_disabled");
+  }
+
+  const acceptedFacts = sanitizeAcceptedFacts(params.acceptedFacts ?? []);
+  const candidates: RuntimeMemoryTemporalFactCandidate[] = [];
+  const rejectedInputs: RuntimeMemoryFactProposalRejection[] = [];
+
+  for (const input of params.inputs ?? []) {
+    const candidate = sanitizeRuntimeMemoryFactProposalInput(input);
+    if (candidate.accepted) {
+      candidates.push(candidate.value);
+    } else {
+      rejectedInputs.push(candidate);
+    }
+  }
+
+  return {
+    enabled: true,
+    flags,
+    proposalOnly: true,
+    readonly: true,
+    candidates,
+    acceptedFacts: [],
+    invalidationProposals: proposeRuntimeMemoryInvalidations(
+      candidates,
+      acceptedFacts,
+    ),
+    rejectedInputs,
+  };
+}
+
+export function sanitizeRuntimeMemoryFactProposalInput(
+  input: unknown,
+):
+  | { accepted: true; value: RuntimeMemoryTemporalFactCandidate }
+  | RuntimeMemoryFactProposalRejection {
+  const rawRejection = rejectRawRuntimeMemoryInput(input);
+  if (rawRejection) {
+    return makeProposalRejection("raw_input", input, rawRejection.reason);
+  }
+  if (isAcceptedFactInput(input)) {
+    return makeProposalRejection("accepted_fact_input", input);
+  }
+  if (!isRuntimeMemoryFactProposalInput(input)) {
+    return makeProposalRejection("invalid_shape", input);
+  }
+  if (!PROPOSAL_SOURCE_SET.has(input.source)) {
+    return makeProposalRejection("unsupported_source", input);
+  }
+
+  const candidate: RuntimeMemoryTemporalFactCandidate = {
+    schemaVersion: 1,
+    factId: input.factId,
+    ...(input.taskId ? { taskId: input.taskId } : {}),
+    subject: input.subject,
+    predicate: input.predicate,
+    objectSummary: input.objectSummary,
+    confidence: input.confidence ?? defaultProposalConfidence(input.source),
+    source: input.source,
+    verificationStatus: "candidate",
+    valid_at: input.valid_at,
+    ...(input.invalid_at !== undefined ? { invalid_at: input.invalid_at } : {}),
+    ...(input.expired_at !== undefined ? { expired_at: input.expired_at } : {}),
+    reference_time: input.reference_time,
+    sourceEpisodeRefs: input.sourceEpisodeRefs,
+    evidenceRefs: input.evidenceRefs,
+    proposedAt: input.proposedAt ?? input.reference_time,
+    ...(input.metadata ? { metadata: input.metadata } : {}),
+  };
+  const sanitized = sanitizeRuntimeMemoryTemporalFactCandidate(candidate);
+  if (
+    sanitized.accepted &&
+    isRuntimeMemoryTemporalFactCandidate(sanitized.value)
+  ) {
+    return sanitized;
+  }
+  return makeProposalRejection("invalid_shape", input);
+}
+
+export function proposeRuntimeMemoryInvalidations(
+  candidates: readonly RuntimeMemoryTemporalFactCandidate[],
+  acceptedFacts: readonly RuntimeMemoryTemporalFact[],
+): RuntimeMemoryInvalidationProposal[] {
+  const proposals: RuntimeMemoryInvalidationProposal[] = [];
+  const seen = new Set<string>();
+
+  for (const candidate of candidates) {
+    const currentFacts = findRuntimeMemoryFacts(acceptedFacts, {
+      subject: candidate.subject,
+      predicate: candidate.predicate,
+      reference_time: candidate.valid_at,
+    }).filter(isRuntimeMemoryTemporalFact);
+
+    for (const fact of currentFacts) {
+      if (!runtimeMemoryFactsConflict(candidate, fact)) {
+        continue;
+      }
+      const key = `${fact.factId}\n${candidate.factId}`;
+      if (seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
+      const sanitized = sanitizeRuntimeMemoryInvalidationProposal({
+        schemaVersion: 1,
+        invalidationId: `runtime-memory-invalidation:${fact.factId}:${candidate.factId}`,
+        factId: fact.factId,
+        reason: "contradicted",
+        invalid_at: candidate.valid_at,
+        reference_time: candidate.reference_time,
+        proposedBy: candidate.source,
+        verificationStatus: "candidate",
+        sourceEpisodeRefs: candidate.sourceEpisodeRefs,
+        evidenceRefs: candidate.evidenceRefs,
+        replacementFactId: candidate.factId,
+        metadata: {
+          candidateFactId: candidate.factId,
+          proposalOnly: true,
+        },
+      });
+      if (
+        sanitized.accepted &&
+        isRuntimeMemoryInvalidationProposal(sanitized.value)
+      ) {
+        proposals.push(sanitized.value);
+      }
+    }
+  }
+
+  return proposals;
+}
+
+function emptyProposalShadowResult(
+  flags: RuntimeMemoryFeatureFlags,
+  disabledReason: "runtime_memory_flags_disabled",
+): RuntimeMemoryFactProposalShadowResult {
+  return {
+    enabled: false,
+    disabledReason,
+    flags,
+    proposalOnly: true,
+    readonly: true,
+    candidates: [],
+    acceptedFacts: [],
+    invalidationProposals: [],
+    rejectedInputs: [],
+  };
+}
+
+function sanitizeAcceptedFacts(
+  facts: readonly RuntimeMemoryTemporalFact[],
+): RuntimeMemoryTemporalFact[] {
+  return facts.flatMap((fact) => {
+    if (!isRuntimeMemoryTemporalFact(fact)) {
+      return [];
+    }
+    const sanitized = sanitizeRuntimeMemoryTemporalFact(fact);
+    return sanitized.accepted && isRuntimeMemoryTemporalFact(sanitized.value)
+      ? [sanitized.value]
+      : [];
+  });
+}
+
+function isRuntimeMemoryFactProposalInput(
+  value: unknown,
+): value is RuntimeMemoryFactProposalInput {
+  if (!isRecord(value)) {
+    return false;
+  }
+  return (
+    value.schemaVersion === 1 &&
+    nonEmptyString(value.factId) &&
+    isOptionalString(value.taskId) &&
+    nonEmptyString(value.subject) &&
+    nonEmptyString(value.predicate) &&
+    nonEmptyString(value.objectSummary) &&
+    (value.confidence === undefined || isFiniteNumber(value.confidence)) &&
+    typeof value.source === "string" &&
+    isFiniteNumber(value.valid_at) &&
+    isOptionalFiniteNumber(value.invalid_at) &&
+    isOptionalFiniteNumber(value.expired_at) &&
+    isFiniteNumber(value.reference_time) &&
+    (value.proposedAt === undefined || isFiniteNumber(value.proposedAt)) &&
+    Array.isArray(value.sourceEpisodeRefs) &&
+    value.sourceEpisodeRefs.length > 0 &&
+    value.sourceEpisodeRefs.every(isRuntimeMemorySourceEpisodeRef) &&
+    Array.isArray(value.evidenceRefs) &&
+    value.evidenceRefs.length > 0 &&
+    value.evidenceRefs.every(isEvidenceRef) &&
+    (value.metadata === undefined || isRuntimeCoreJsonObject(value.metadata))
+  );
+}
+
+function isAcceptedFactInput(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    value.verificationStatus !== undefined &&
+    value.verificationStatus !== "candidate"
+  );
+}
+
+function runtimeMemoryFactsConflict(
+  candidate: RuntimeMemoryTemporalFactCandidate,
+  fact: RuntimeMemoryTemporalFact,
+): boolean {
+  if (
+    candidate.taskId !== undefined &&
+    fact.taskId !== undefined &&
+    candidate.taskId !== fact.taskId
+  ) {
+    return false;
+  }
+  return (
+    normalizeFactText(candidate.objectSummary) !==
+      normalizeFactText(fact.objectSummary)
+  );
+}
+
+function makeProposalRejection(
+  reason: RuntimeMemoryFactProposalRejectionReason,
+  input: unknown,
+  rawReason?: RuntimeMemoryRawInputRejectionReason,
+): RuntimeMemoryFactProposalRejection {
+  const inputId = isRecord(input) && typeof input.factId === "string"
+    ? input.factId
+    : undefined;
+  return {
+    accepted: false,
+    reason,
+    ...(inputId ? { inputId } : {}),
+    ...(rawReason ? { rawReason } : {}),
+    message: `Runtime memory fact proposal rejected: ${reason}.`,
+  };
+}
+
+function defaultProposalConfidence(
+  source: RuntimeMemoryFactSource,
+): number {
+  if (source === "human_confirmation") return 0.9;
+  if (source === "deterministic_rule") return 0.85;
+  if (source === "verifier_summary") return 0.75;
+  if (source === "test_output" || source === "tool_result") return 0.7;
+  return 0.6;
+}
+
+function normalizeFactText(value: string): string {
+  return value.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function nonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}

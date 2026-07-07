@@ -19,6 +19,7 @@
     "currentAgent": "Общение с {{agent}}",
     "workspace": "Рабочая область",
     "saveToKnowledge": "Сохранить в знания",
+    "workContext": "Рабочий контекст",
     "addWorkspaceDialogTitle": "Выберите каталог рабочей области",
     "addWorkspaceDialogButton": "Сделать рабочей областью"
   },
@@ -1407,6 +1408,44 @@
     "error": "Требует внимания",
     "aborted": "Остановлено",
     "dismissCompleted": "Скрыть завершенный статус"
+  },
+  "workContext": {
+    "title": "Рабочий контекст",
+    "sections": {
+      "plan": "Журнал задач / план",
+      "ledger": "Task Ledger",
+      "environment": "Среда",
+      "artifacts": "Артефакты",
+      "sources": "Источники"
+    },
+    "environment": {
+      "workspace": "Рабочая область",
+      "branch": "Ветка",
+      "changes": "Изменения",
+      "unknownWorkspace": "Рабочая область",
+      "changeCounts": "{{count}} изменений",
+      "delta": "+{{added}} -{{removed}}"
+    },
+    "actions": {
+      "viewChanges": "Показать изменения",
+      "commitOrPush": "Коммит или push",
+      "createPr": "Создать PR"
+    },
+    "ledger": {
+      "noCurrentGoal": "Нет текущей цели",
+      "counts": "{{active}} активных / {{review}} на проверке / {{blocked}} заблокировано",
+      "active": "Активно",
+      "review": "Проверка",
+      "blocked": "Блок"
+    },
+    "git": {
+      "clean": "Чисто",
+      "detached": "Detached HEAD",
+      "unknownBranch": "Неизвестная ветка"
+    },
+    "empty": {
+      "sources": "Источников пока нет"
+    }
   },
   "turnWork": {
     "title": "Панель работы",

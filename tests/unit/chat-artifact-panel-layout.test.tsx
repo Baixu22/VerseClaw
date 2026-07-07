@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { Chat } from '@/pages/Chat';
 
 vi.mock('react-i18next', () => ({
@@ -39,6 +40,9 @@ const chatState = {
   loadMoreHistory: vi.fn(),
   loadHistory: vi.fn(),
   refresh: vi.fn(),
+  refreshTaskLedger: vi.fn(),
+  taskLedgerSnapshot: null,
+  taskLedgerLoaded: true,
   cleanupEmptySession: vi.fn(),
   lastUserMessageAt: null,
 };
@@ -102,10 +106,18 @@ describe('Chat artifact panel layout', () => {
     artifactPanelState.open = true;
   });
 
+  function renderChat() {
+    return render(
+      <MemoryRouter>
+        <Chat />
+      </MemoryRouter>,
+    );
+  }
+
   it('keeps the chat toolbar background draggable while actions remain clickable', async () => {
     window.electron.platform = 'darwin';
 
-    render(<Chat />);
+    renderChat();
 
     const dragRegion = await screen.findByTestId('chat-toolbar-drag-region');
     const actions = await screen.findByTestId('chat-toolbar-actions');
@@ -117,7 +129,7 @@ describe('Chat artifact panel layout', () => {
   it('stacks the chat page above the macOS main drag strip', async () => {
     window.electron.platform = 'darwin';
 
-    render(<Chat />);
+    renderChat();
 
     const chatPage = await screen.findByTestId('chat-page');
     expect(chatPage).toHaveClass('z-20');
@@ -126,7 +138,7 @@ describe('Chat artifact panel layout', () => {
   it('layers the right artifact panel above the macOS drag strip', async () => {
     window.electron.platform = 'darwin';
 
-    render(<Chat />);
+    renderChat();
 
     const panel = await screen.findByTestId('artifact-panel');
     const aside = panel.closest('aside');
@@ -141,7 +153,7 @@ describe('Chat artifact panel layout', () => {
   it('hides the chat assistive rail while the artifact panel is open', async () => {
     window.electron.platform = 'win32';
 
-    render(<Chat />);
+    renderChat();
 
     expect(await screen.findByTestId('artifact-panel')).toBeInTheDocument();
     expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();
@@ -153,7 +165,7 @@ describe('Chat artifact panel layout', () => {
     window.electron.platform = 'win32';
     artifactPanelState.open = false;
 
-    render(<Chat />);
+    renderChat();
 
     expect(await screen.findByTestId('chat-page')).toBeInTheDocument();
     expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();

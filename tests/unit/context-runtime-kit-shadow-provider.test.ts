@@ -12,7 +12,7 @@ import {
   isRuntimeContextProviderManifest,
   isRuntimeContextProviderResult,
   isRuntimeRegistryDiagnostic,
-} from '../../openclaw_runtime/src/runtime-core';
+} from '../../openclaw_runtime/src/runtime-core/registries';
 
 function loadFixture(): CvkCompilerFixtureInput {
   const fixturePath = join(process.cwd(), 'tests/fixtures/context-runtime-kit/compiler.fixture.json');

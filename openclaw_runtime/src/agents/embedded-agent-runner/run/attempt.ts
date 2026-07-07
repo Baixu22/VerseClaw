@@ -26,7 +26,11 @@ import {
   OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST,
 } from "../../../context-engine/host-compat.js";
 import { resolveContextEngineOwnerPluginId } from "../../../context-engine/registry.js";
-import type { AssembleResult } from "../../../context-engine/types.js";
+import type {
+  AssembleResult,
+  ContextEngineProjectContextFile,
+  ContextEngineSkillMetadata,
+} from "../../../context-engine/types.js";
 import { emitTrustedDiagnosticEvent } from "../../../infra/diagnostic-events.js";
 import { resolveDiagnosticModelContentCapturePolicy } from "../../../infra/diagnostic-llm-content.js";
 import {
@@ -3017,6 +3021,9 @@ export async function runEmbeddedAttempt(
               messages: activeSession.messages,
               tokenBudget: params.contextTokenBudget,
               availableTools: new Set(effectiveTools.map((tool) => tool.name)),
+              activeTools: effectiveTools,
+              projectContextFiles: mapContextEngineProjectContextFiles(contextFiles),
+              skillsMetadata: mapContextEngineSkillMetadata(promptSkillEntries),
               citationsMode: params.config?.memory?.citations,
               modelId: params.modelId,
               ...(params.prompt !== undefined ? { prompt: params.prompt } : {}),
@@ -5406,4 +5413,43 @@ function toLintErrorObject(value: unknown, fallbackMessage: string): Error {
     Object.assign(error, value);
   }
   return error;
+}
+
+function mapContextEngineProjectContextFiles(
+  files: readonly { path: string; name?: string; content?: string }[],
+): ContextEngineProjectContextFile[] {
+  return files
+    .filter((file) => typeof file.path === "string" && file.path.trim())
+    .map((file) => ({
+      path: file.path.trim(),
+      content: typeof file.content === "string" ? file.content : "",
+      ...(typeof file.name === "string" && file.name.trim() ? { title: file.name.trim() } : {}),
+    }));
+}
+
+function mapContextEngineSkillMetadata(
+  entries: readonly {
+    skill: {
+      name: string;
+      description: string;
+      promptVersion?: string;
+      source?: string;
+      filePath?: string;
+    };
+    metadata?: {
+      skillKey?: string;
+    };
+  }[] | undefined,
+): ContextEngineSkillMetadata[] {
+  return (entries ?? [])
+    .filter((entry) => entry.skill.name.trim())
+    .map((entry) => ({
+      id: entry.metadata?.skillKey ?? entry.skill.name,
+      name: entry.skill.name,
+      title: entry.skill.name,
+      ...(entry.skill.promptVersion ? { version: entry.skill.promptVersion } : {}),
+      summary: entry.skill.description,
+      description: entry.skill.description,
+      source: entry.skill.source ?? entry.skill.filePath ?? entry.skill.description,
+    }));
 }

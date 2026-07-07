@@ -1,4 +1,4 @@
-import { BookOpenCheck, RefreshCw, FolderTree, ListTree } from 'lucide-react';
+import { BookOpenCheck, RefreshCw, FolderTree, ListTree, PanelTop } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useChatStore } from '@/stores/chat';
@@ -12,6 +12,8 @@ import { useMemo } from 'react';
 type ChatToolbarProps = {
   questionDirectoryOpen?: boolean;
   questionDirectoryCount?: number;
+  workContextVisible?: boolean;
+  onToggleWorkContext?: () => void;
   onToggleQuestionDirectory?: () => void;
   onSaveToKnowledge?: () => void;
 };
@@ -19,6 +21,8 @@ type ChatToolbarProps = {
 export function ChatToolbar({
   questionDirectoryOpen = false,
   questionDirectoryCount = 0,
+  workContextVisible = true,
+  onToggleWorkContext,
   onToggleQuestionDirectory,
   onSaveToKnowledge,
 }: ChatToolbarProps = {}) {
@@ -38,9 +42,32 @@ export function ChatToolbar({
 
   const browserActive = WORKSPACE_BROWSER_ENABLED && panelOpen && panelTab === 'browser';
   const questionDirectoryAvailable = questionDirectoryCount > 1 && !!onToggleQuestionDirectory;
+  const workContextAvailable = !!onToggleWorkContext;
 
   return (
     <div className="flex items-center gap-2">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            data-testid="chat-work-context-toggle"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
+              workContextVisible && 'bg-foreground/10 text-foreground',
+            )}
+            onClick={onToggleWorkContext}
+            disabled={!workContextAvailable}
+            aria-label={t('toolbar.workContext')}
+            aria-pressed={workContextVisible}
+          >
+            <PanelTop className="h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{t('toolbar.workContext')}</p>
+        </TooltipContent>
+      </Tooltip>
       {WORKSPACE_BROWSER_ENABLED && (
         <Tooltip>
           <TooltipTrigger asChild>

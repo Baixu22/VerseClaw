@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Chat } from '@/pages/Chat';
 
@@ -51,6 +52,9 @@ const chatState = {
   loadMoreHistory: vi.fn(),
   loadHistory: vi.fn(),
   refresh: vi.fn(),
+  refreshTaskLedger: vi.fn(),
+  taskLedgerSnapshot: null,
+  taskLedgerLoaded: true,
   cleanupEmptySession: vi.fn(),
   lastUserMessageAt: null,
 };
@@ -114,9 +118,11 @@ vi.mock('@/pages/Chat/ExecutionGraphCard', () => ({
 describe('Chat question directory', () => {
   it('keeps real repeated questions as separate directory entries', async () => {
     render(
-      <TooltipProvider>
-        <Chat />
-      </TooltipProvider>,
+      <MemoryRouter>
+        <TooltipProvider>
+          <Chat />
+        </TooltipProvider>
+      </MemoryRouter>,
     );
 
     fireEvent.click(await screen.findByTestId('chat-question-directory-toggle'));

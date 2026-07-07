@@ -555,3 +555,72 @@
   - `openclaw_runtime/src/knowledge/sekb/sekb.test.ts`
   - `openclaw_runtime/src/knowledge/sekb/harness-integration.ts`
 - Completion decision: Context Runtime Kit Phase 1-10 now has a complete RED -> GREEN -> verification -> review ledger, with fresh focused, regression, harness, typecheck, and diff-check evidence.
+
+## Default-On Promotion: Backend Context/Prompt/Recovery
+
+- Status: complete for backend default-on promotion; broad typecheck remains blocked by unrelated workspace drift.
+- Task spec: `harness/specs/tasks/context-runtime-kit-default-on.md`.
+- Scope:
+  - Default context engine selection promotes to `context-runtime-kit` only when `plugins.slots.contextEngine` is absent and `runtime.contextRuntimeKit.enabled !== false`.
+  - Explicit context engine slots remain authoritative.
+  - `runtime.contextRuntimeKit.enabled: false` rolls back to `legacy` without UI.
+  - Tool-call gate remains `report_only`; no active blocking.
+  - No renderer, host-api UI, i18n, or Electron E2E changes.
+- Changed files:
+  - `harness/specs/tasks/context-runtime-kit-default-on.md`: follow-up promotion task spec.
+  - `harness/specs/rules/context-runtime-kit-boundary.md`: promotion carve-out for backend default-on only.
+  - `harness/specs/scenarios/context-runtime-kit.md`: scenario default-on promotion note.
+  - `openclaw_runtime/src/context-engine/types.ts`: read-only assemble metadata for active tools, project context files, and skill metadata.
+  - `openclaw_runtime/src/context-engine/cvk/runtime-adapter.ts`: deterministic runtime-to-CVK compiler input adapter.
+  - `openclaw_runtime/src/context-engine/cvk/engine.ts`: core-owned active CRK context engine with bounded selector-backed prompt addition.
+  - `openclaw_runtime/src/context-engine/cvk/registration.ts`: built-in CRK engine registration.
+  - `openclaw_runtime/src/context-engine/init.ts`: built-in CRK registration during context-engine initialization.
+  - `openclaw_runtime/src/context-engine/registry.ts`: default-on selection, rollback, and legacy fallback preservation.
+  - `openclaw_runtime/src/context-engine/cvk/recovery-default.ts`: Level 2-gated selector-backed recovery promotion helper.
+  - `openclaw_runtime/src/config/types.openclaw.ts`: `runtime.contextRuntimeKit.enabled` and `shadow`.
+  - `openclaw_runtime/src/config/zod-schema.ts`: config schema for the rollback/shadow flags.
+  - `openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts`: metadata passthrough to context engines.
+  - `openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts`: active runtime metadata mapping for CRK assemble.
+  - `tests/unit/context-runtime-kit-runtime-adapter.test.ts`: runtime adapter coverage.
+  - `tests/unit/context-runtime-kit-active-engine.test.ts`: active engine prompt boundary coverage.
+  - `tests/unit/context-engine-registry-default-on.test.ts`: default selection, rollback, schema, and quarantine coverage.
+  - `tests/unit/context-runtime-kit-recovery-default.test.ts`: Level 2 recovery gate and fallback coverage.
+  - `docs/context-runtime-kit/README.md`: default-on/rollback documentation.
+  - `docs/context-runtime-kit/goal-progress.md`: this promotion ledger.
+- RED evidence:
+  - Command: `corepack pnpm exec vitest run tests/unit/context-runtime-kit-runtime-adapter.test.ts tests/unit/context-runtime-kit-active-engine.test.ts tests/unit/context-engine-registry-default-on.test.ts tests/unit/context-runtime-kit-recovery-default.test.ts --reporter=verbose`
+  - Result: failed with missing `runtime-adapter`, `engine`, `registration`, and `recovery-default` modules after test typo correction, confirming missing default-on implementation.
+- GREEN evidence:
+  - Command: `corepack pnpm exec vitest run tests/unit/context-runtime-kit-runtime-adapter.test.ts tests/unit/context-runtime-kit-active-engine.test.ts tests/unit/context-engine-registry-default-on.test.ts tests/unit/context-runtime-kit-recovery-default.test.ts --reporter=verbose`
+  - Result: passed, 4 test files, 9 tests.
+- Regression evidence:
+  - Command: `corepack pnpm exec vitest run tests/unit/context-runtime-kit-contracts.test.ts tests/unit/context-runtime-kit-compiler.test.ts tests/unit/context-runtime-kit-resolver.test.ts tests/unit/context-runtime-kit-views.test.ts tests/unit/context-runtime-kit-shadow-provider.test.ts tests/unit/context-runtime-kit-tool-call-gate.test.ts tests/unit/context-runtime-kit-compression-artifact.test.ts tests/unit/context-runtime-kit-recovery-context.test.ts tests/unit/context-runtime-kit-codebase-index.test.ts tests/unit/context-runtime-kit-eval-report.test.ts tests/unit/context-runtime-kit-runtime-adapter.test.ts tests/unit/context-runtime-kit-active-engine.test.ts tests/unit/context-engine-registry-default-on.test.ts tests/unit/context-runtime-kit-recovery-default.test.ts tests/unit/context-compression-eval.test.ts tests/unit/compression-artifact.test.ts --reporter=verbose`
+  - Result: passed, 16 test files, 53 tests.
+- Spec gate evidence:
+  - Command: `corepack pnpm harness context --spec harness/specs/tasks/context-runtime-kit-default-on.md`
+  - Result: passed and returned the default-on task, CRK scenario, required rules, and runtime/harness layers.
+  - Command: `corepack pnpm harness validate --spec harness/specs/tasks/context-runtime-kit-default-on.md`
+  - Result: passed with `Spec is valid: harness\specs\tasks\context-runtime-kit-default-on.md`.
+- Whitespace evidence:
+  - Command: `git diff --check -- <tracked default-on files>`
+  - Result: passed with no whitespace errors; Git emitted LF-to-CRLF working-copy warnings.
+  - Command: `git -c core.autocrlf=false diff --check --no-index -- <empty-temp-file> <untracked new file>` for each new default-on file.
+  - Result: passed with no whitespace errors.
+- Broad typecheck evidence:
+  - Command: `corepack pnpm run typecheck`
+  - Result: failed before `typecheck:web` because `typecheck:node` reports pre-existing/unrelated dependency and TS lib drift: missing `@openclaw/normalization-core/*`, missing `@openclaw/acp-core/runtime/types`, missing `@ast-grep/napi`, missing `../infra/circuit-breaker.js` and `../infra/lru-cache.js` from `runtime-core/memory-read-hydration-shadow.ts`, missing exports from `shared/number-coercion.ts`, and ES2022 lib errors for `toSorted`/`findLast` in unrelated runtime/logging/state files.
+  - Narrowing note: the CRK regression bundle and focused default-on tests compile and execute successfully; the broad typecheck blockers are outside this promotion's touched files and were left untouched.
+- Review notes so far:
+  - Prompt addition is bounded and selector/diagnostic-oriented; it does not embed raw large chunks.
+  - Active engine returns the original message array.
+  - CRK recovery is selected only when Level 2 gate passes and selector refs resolve.
+  - Missing refs, stale refs, secret-scan failures, and evidence gate failures fall back to legacy projection with diagnostics.
+  - Existing unrelated runtime-memory/SEK dirty changes remain untouched.
+- Completion audit, 2026-07-06:
+  - `corepack pnpm harness context --spec harness/specs/tasks/context-runtime-kit-default-on.md`: passed.
+  - `corepack pnpm harness validate --spec harness/specs/tasks/context-runtime-kit-default-on.md`: passed.
+  - `corepack pnpm exec vitest run tests/unit/context-runtime-kit-runtime-adapter.test.ts tests/unit/context-runtime-kit-active-engine.test.ts tests/unit/context-engine-registry-default-on.test.ts tests/unit/context-runtime-kit-recovery-default.test.ts --reporter=verbose`: passed, 4 files and 9 tests.
+  - `corepack pnpm exec vitest run tests/unit/context-runtime-kit-contracts.test.ts tests/unit/context-runtime-kit-compiler.test.ts tests/unit/context-runtime-kit-resolver.test.ts tests/unit/context-runtime-kit-views.test.ts tests/unit/context-runtime-kit-shadow-provider.test.ts tests/unit/context-runtime-kit-tool-call-gate.test.ts tests/unit/context-runtime-kit-compression-artifact.test.ts tests/unit/context-runtime-kit-recovery-context.test.ts tests/unit/context-runtime-kit-codebase-index.test.ts tests/unit/context-runtime-kit-eval-report.test.ts tests/unit/context-runtime-kit-runtime-adapter.test.ts tests/unit/context-runtime-kit-active-engine.test.ts tests/unit/context-engine-registry-default-on.test.ts tests/unit/context-runtime-kit-recovery-default.test.ts tests/unit/context-compression-eval.test.ts tests/unit/compression-artifact.test.ts --reporter=verbose`: passed, 16 files and 53 tests.
+  - `git diff --check`: passed with LF-to-CRLF working-copy warnings only.
+  - `git -c core.autocrlf=false diff --check --no-index -- <empty-temp-file> <untracked default-on file>`: passed with no whitespace errors.
+  - `corepack pnpm run typecheck`: still fails in `typecheck:node` before web typecheck on unrelated existing drift: missing `@openclaw/normalization-core/*`, missing `@openclaw/acp-core/runtime/types`, missing `@ast-grep/napi`, missing runtime-memory infra modules, missing `shared/number-coercion.ts` exports, and ES lib errors for `toSorted`/`findLast` in unrelated files.

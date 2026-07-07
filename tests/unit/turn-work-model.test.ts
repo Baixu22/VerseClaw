@@ -37,7 +37,7 @@ describe('turn work model', () => {
     expect(model?.sources[0]).toMatchObject({ domain: 'example.com', status: 'running' });
   });
 
-  it('uses reports as the primary completed view when files are present', () => {
+  it('keeps completed task plans primary when files are also present', () => {
     const model = buildTurnWorkModel({
       id: 'run-2',
       active: false,
@@ -48,8 +48,20 @@ describe('turn work model', () => {
     });
 
     expect(model?.status).toBe('completed');
-    expect(model?.primaryKind).toBe('reports');
+    expect(model?.primaryKind).toBe('tasks');
     expect(model?.reports[0]?.action).toBe('modified');
+  });
+
+  it('uses reports as the completed primary view only when no task plan exists', () => {
+    const model = buildTurnWorkModel({
+      id: 'run-3',
+      active: false,
+      steps: [],
+      reports: [generatedFile({ action: 'created' })],
+    });
+
+    expect(model?.status).toBe('completed');
+    expect(model?.primaryKind).toBe('reports');
   });
 
   it('returns null when no task, report, or source data exists', () => {

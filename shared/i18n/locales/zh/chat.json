@@ -19,6 +19,7 @@
     "currentAgent": "当前对话对象：{{agent}}",
     "workspace": "工作空间",
     "saveToKnowledge": "保存到知识库",
+    "workContext": "工作上下文",
     "addWorkspaceDialogTitle": "选择工作区目录",
     "addWorkspaceDialogButton": "设为工作区"
   },
@@ -1407,6 +1408,44 @@
     "error": "需要注意",
     "aborted": "已停止",
     "dismissCompleted": "隐藏已完成状态"
+  },
+  "workContext": {
+    "title": "工作上下文",
+    "sections": {
+      "plan": "任务日志 / 计划",
+      "ledger": "Task Ledger",
+      "environment": "环境信息",
+      "artifacts": "产物",
+      "sources": "来源"
+    },
+    "environment": {
+      "workspace": "工作空间",
+      "branch": "分支",
+      "changes": "变更",
+      "unknownWorkspace": "工作空间",
+      "changeCounts": "{{count}} 项变更",
+      "delta": "+{{added}} -{{removed}}"
+    },
+    "actions": {
+      "viewChanges": "查看变更",
+      "commitOrPush": "提交或推送",
+      "createPr": "创建拉取请求"
+    },
+    "ledger": {
+      "noCurrentGoal": "暂无当前目标",
+      "counts": "{{active}} 进行中 / {{review}} 待复核 / {{blocked}} 阻塞",
+      "active": "进行中",
+      "review": "复核",
+      "blocked": "阻塞"
+    },
+    "git": {
+      "clean": "干净",
+      "detached": "Detached HEAD",
+      "unknownBranch": "未知分支"
+    },
+    "empty": {
+      "sources": "暂无来源"
+    }
   },
   "turnWork": {
     "title": "工作面板",
