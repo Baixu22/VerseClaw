@@ -203,6 +203,44 @@ describe('orchestrator.plan handler', () => {
     expect(payload.executionWaves.every((wave) => wave.roles.length <= 2)).toBe(true);
   });
 
+  it('returns structured P2 complexity and runbook metadata without dropping scheduler fields', async () => {
+    const res = await callHandler('orchestrator.plan', {
+      task: 'fix failing test suite after repeated failures',
+      priorFailureCount: 2,
+      runbookId: 'test-repair',
+      maxWorkers: 2,
+    });
+
+    expect(res?.ok).toBe(true);
+    const payload = res?.payload as {
+      plan: {
+        complexityDecision?: { mode: string; selectedRunbookId?: string; reasons: string[] };
+        runbookSelection?: {
+          selected?: { runbookId: string; reasons: string[] };
+          unselected: Array<{ runbookId: string; reasons: string[] }>;
+        };
+        taskGraph: { graphRunId: string };
+      };
+      complexityDecision?: { mode: string; selectedRunbookId?: string };
+      runbookSelection?: { selected?: { runbookId: string }; unselected: unknown[] };
+      taskGraph: { graphRunId: string };
+      executionWaves: unknown[];
+    };
+    expect(payload.complexityDecision).toMatchObject({
+      mode: 'runbook-orchestrated',
+      selectedRunbookId: 'test-repair',
+    });
+    expect(payload.runbookSelection?.selected).toMatchObject({
+      runbookId: 'test-repair',
+      reasons: expect.arrayContaining(['explicit-runbook-match']),
+    });
+    expect(payload.runbookSelection?.unselected.length).toBeGreaterThan(0);
+    expect(payload.plan.complexityDecision).toEqual(payload.complexityDecision);
+    expect(payload.plan.runbookSelection).toEqual(payload.runbookSelection);
+    expect(payload.taskGraph.graphRunId).toBe('test-repair');
+    expect(payload.executionWaves).toEqual(expect.any(Array));
+  });
+
   it('accepts explicit duplicate workers and preserves labels', async () => {
     const res = await callHandler('orchestrator.plan', {
       task: 'compare implementation approaches',
@@ -279,6 +317,43 @@ describe('orchestrator.run handler', () => {
         completed: expect.any(Number),
         skipped: 0,
         roleCostSummary: expect.any(Array),
+      },
+      resultBundle: {
+        schemaVersion: 1,
+        phase: 'spawn',
+      },
+    });
+  });
+
+  it('returns P2 metadata in gateway run payload alongside P0/P1 data', async () => {
+    vi.mocked(spawnSubagentDirect).mockResolvedValue({
+      status: 'accepted',
+      runId: 'run_gateway_p2',
+      childSessionKey: 'child_gateway_p2',
+    });
+
+    const res = await callHandler('orchestrator.run', {
+      task: 'fix failing test suite after repeated failures',
+      sessionKey: 'agent:main:gateway-p2',
+      priorFailureCount: 2,
+      runbookId: 'test-repair',
+      maxWorkers: 2,
+    });
+
+    expect(res?.ok).toBe(true);
+    expect(res?.payload).toMatchObject({
+      complexityDecision: {
+        mode: 'runbook-orchestrated',
+        selectedRunbookId: 'test-repair',
+      },
+      runbookSelection: {
+        selected: {
+          runbookId: 'test-repair',
+        },
+        unselected: expect.any(Array),
+      },
+      schedulerMetrics: {
+        concurrencyCap: 2,
       },
       resultBundle: {
         schemaVersion: 1,
@@ -475,6 +550,42 @@ describe('team_orchestrate tool', () => {
     expect(details.expectedChildren).toHaveLength(3);
     expect(details.pendingVerifier).toBe(true);
     expect(details.nextAction).toBe('yield_for_results');
+  });
+
+  it('exposes P2 metadata from team_orchestrate details without granting permissions', async () => {
+    const fakeSpawn = async (): Promise<FakeSpawnResult> => ({
+      status: 'accepted',
+      runId: 'run_p2_tool',
+      childSessionKey: 'child_p2_tool',
+    });
+    const tool = createTeamOrchestrateTool({
+      agentSessionKey: 'agent:main:abc',
+      config: emptyConfig(),
+      deps: {
+        spawn: fakeSpawn as unknown as never,
+        idFactory: () => 'orch_tool_p2',
+      },
+    });
+    const result = await tool.execute('call_1', {
+      task: 'fix failing test suite after repeated failures',
+      priorFailureCount: 2,
+      runbookId: 'test-repair',
+      maxWorkers: 2,
+    });
+    const details = result.details as {
+      complexityDecision?: { mode: string; selectedRunbookId?: string };
+      runbookSelection?: { selected?: { runbookId: string }; unselected: unknown[] };
+      schedulerMetrics?: { concurrencyCap: number };
+      resultBundle?: { schemaVersion: number };
+    };
+
+    expect(details.complexityDecision).toMatchObject({
+      mode: 'runbook-orchestrated',
+      selectedRunbookId: 'test-repair',
+    });
+    expect(details.runbookSelection?.selected).toMatchObject({ runbookId: 'test-repair' });
+    expect(details.schedulerMetrics?.concurrencyCap).toBe(2);
+    expect(details.resultBundle?.schemaVersion).toBe(1);
   });
 });
 
