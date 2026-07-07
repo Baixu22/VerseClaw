@@ -372,6 +372,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         {
           orchestrationRunId,
           plan: result.plan,
+          resultBundle: result.resultBundle,
           routeDiagnostics: result.plan.routeDiagnostics,
           taskGraph: result.taskGraph,
           graphStatus: result.graphStatus,

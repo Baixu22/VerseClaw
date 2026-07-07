@@ -1,8 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import {
   leasePendingAgentSteeringItemsFromSubagentRuns,
   listPendingAgentSteeringItemsFromSubagentRuns,
 } from '../../openclaw_runtime/src/agents/agent-steering-queue';
+import {
+  clearMemoryCards,
+  getMemoryCards,
+} from '../../openclaw_runtime/src/memory/memory-store';
 import type {
   SubagentRunRecord,
   TeamOrchestrationMetadata,
@@ -75,6 +79,10 @@ function runRecord(params: {
 }
 
 describe('agent steering team result bundles', () => {
+  afterEach(() => {
+    clearMemoryCards();
+  });
+
   it('holds worker completions until the deferred verifier is complete', () => {
     const runs = new Map<string, SubagentRunRecord>();
     runs.set('run_worker_1', runRecord({ runId: 'run_worker_1', roleName: 'implementer' }));
@@ -130,5 +138,97 @@ describe('agent steering team result bundles', () => {
     expect(leased?.prompt).toContain('workers:');
     expect(leased?.prompt).toContain('verifier:');
     expect(leased?.prompt).toContain('verified with caveats');
+    expect(leased?.prompt).toContain('OrchestrationResultBundle');
+    expect(leased?.prompt).toContain('schemaVersion: 1');
+    expect(leased?.prompt).toContain('schemaGate:');
+    expect(leased?.prompt).toContain('verifierGate:');
+    expect(leased?.prompt).toContain('memoryProposals:');
+  });
+
+  it('renders schema gate failure when successful worker evidence is missing', () => {
+    const runs = new Map<string, SubagentRunRecord>();
+    runs.set(
+      'run_worker_1',
+      runRecord({
+        runId: 'run_worker_1',
+        roleName: 'implementer',
+        resultText: 'ok',
+        verifierStartedRunId: 'run_verifier',
+      }),
+    );
+    runs.set(
+      'run_worker_2',
+      runRecord({
+        runId: 'run_worker_2',
+        roleName: 'tester',
+        resultText: 'ok',
+        verifierStartedRunId: 'run_verifier',
+      }),
+    );
+    runs.set(
+      'run_verifier',
+      runRecord({
+        runId: 'run_verifier',
+        roleName: 'reviewer',
+        phase: 'verifier',
+        resultText: 'repair required: worker evidence is missing',
+        verifierStartedRunId: 'run_verifier',
+      }),
+    );
+
+    const leased = leasePendingAgentSteeringItemsFromSubagentRuns({
+      runs,
+      requesterSessionKey: 'agent:main:abc',
+      leaseId: 'lease_missing_evidence',
+    });
+
+    expect(leased?.prompt).toContain('schemaGate: fail');
+    expect(leased?.prompt).toContain('missing_evidence');
+  });
+
+  it('renders memory proposals from structured bundle data without writing role memory', () => {
+    const runs = new Map<string, SubagentRunRecord>();
+    runs.set(
+      'run_worker_1',
+      runRecord({
+        runId: 'run_worker_1',
+        roleName: 'implementer',
+        resultText: [
+          'Implemented the feature and verified tests/unit/example.test.ts passed.',
+          'Memory Candidates:',
+          '- scopeKey: orch_bundle; importance: 0.8; durability: stable; content: Keep implementation evidence tied to exact test files.',
+        ].join('\n'),
+        verifierStartedRunId: 'run_verifier',
+      }),
+    );
+    runs.set(
+      'run_worker_2',
+      runRecord({
+        runId: 'run_worker_2',
+        roleName: 'tester',
+        resultText: 'tests/unit/example.test.ts passed',
+        verifierStartedRunId: 'run_verifier',
+      }),
+    );
+    runs.set(
+      'run_verifier',
+      runRecord({
+        runId: 'run_verifier',
+        roleName: 'reviewer',
+        phase: 'verifier',
+        resultText: 'verified with tests/unit/example.test.ts',
+        verifierStartedRunId: 'run_verifier',
+      }),
+    );
+
+    const leased = leasePendingAgentSteeringItemsFromSubagentRuns({
+      runs,
+      requesterSessionKey: 'agent:main:abc',
+      leaseId: 'lease_memory_proposal',
+    });
+
+    expect(leased?.prompt).toContain('memoryProposals: 1');
+    expect(leased?.prompt).toContain('- memoryProposal: roleName: implementer; scopeKey: orch_bundle; evidenceRefs: run:run_worker_1; content: Keep implementation evidence tied to exact test files.');
+    expect(getMemoryCards({ status: 'all' })).toHaveLength(0);
   });
 });
