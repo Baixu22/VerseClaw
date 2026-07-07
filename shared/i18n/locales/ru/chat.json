@@ -1207,6 +1207,8 @@
     "compaction": {
       "compress": "Сжать текущую сессию",
       "compressTooltip": "Сжать историю текущей сессии",
+      "viewEvidence": "Посмотреть доказательства сжатия",
+      "viewEvidenceTooltip": "Проверить доказательства сжатия перед продолжением",
       "dialogTitle": "Сжать текущую сессию",
       "dialogDescription": "После подтверждения старые сообщения активной сессии будут summarized. Долгосрочное состояние задач остается в ссылках Task Ledger и Context Pack.",
       "tokenUsage": "Использование токенов",
@@ -1234,6 +1236,30 @@
       "toastSuccessWithTokens": "Сессия сжата: {{before}} -> {{after}} токенов{{quality}}",
       "toastNoop": "Сжатие не выполнено: {{reason}}",
       "toastFailed": "Не удалось сжать сессию",
+      "artifactViewer": {
+        "title": "Доказательства сжатия",
+        "description": "Проверьте ограниченный артефакт сжатия перед подготовкой контекста восстановления или ветвлением сессии.",
+        "summary": "Сводка",
+        "objective": "Цель",
+        "currentState": "Текущее состояние",
+        "identifiers": "Идентификаторы",
+        "quality": "Качество",
+        "warnings": "Предупреждения",
+        "unverifiedClaims": "Непроверенные утверждения",
+        "reviewNeeded": "Требуется проверка",
+        "empty": "Доказательства сжатия пока недоступны.",
+        "noWarnings": "Предупреждений нет.",
+        "noUnverifiedClaims": "Непроверенных утверждений нет.",
+        "noReviewNeeded": "Пунктов для проверки нет.",
+        "prepareRecovery": "Подготовить контекст восстановления",
+        "forkSession": "Fork/branch session",
+        "close": "Закрыть",
+        "qualityScore": "Оценка {{score}}%",
+        "qualityCoverage": "Доказательства {{evidence}}% · поля {{fields}}% · восстановление {{tokens}} токенов",
+        "checkpointId": "Checkpoint {{checkpointId}}",
+        "sessionKey": "Session {{sessionKey}}",
+        "loadFailed": "Не удалось загрузить доказательства сжатия"
+      },
       "reason": {
         "active_run": "Будет доступно после завершения текущего запуска",
         "already_compacted": "Уже сжато",
@@ -1484,10 +1510,10 @@
       "queue": "В очередь",
       "queueTooltip": "Не прерывать запуск и воспроизвести это сообщение позже.",
       "interrupt": "Прервать",
-      "interruptTooltip": "Остановить или перенаправить активный запуск перед рискованным откатом."
+      "interruptTooltip": "Остановить или направить активный запуск перед рискованными действиями восстановления."
     },
     "rollbackPlan": {
-      "title": "План отката и восстановления",
+      "title": "Помощь восстановления",
       "open": "Открыть",
       "risk": {
         "safe": "безопасно",
@@ -1508,15 +1534,17 @@
         "queue": "Очередь",
         "context": "Контекст",
         "terminal": "Терминал",
-        "git": "Git откат",
+        "git": "Проверка Git",
         "taskLedger": "Task Ledger",
         "memory": "Память"
       },
-      "destructiveWarning": "Разрушающий откат должен идти через Git, файловые или терминальные действия с подтверждением.",
+      "destructiveWarning": "Рискованные действия Git, файлов или терминала являются только предложениями и требуют явного подтверждения.",
       "actions": {
         "checkpoint-handoff": {
           "title": "Подготовить handoff из checkpoint",
-          "detail": "Продолжить с checkpoint {{trigger}} без полного replay transcript."
+          "detail": "Подготовить проверяемый контекст handoff из checkpoint {{trigger}}.",
+          "detailEvidenceBacked": "Подготовить handoff из checkpoint {{trigger}} с {{fileCount}} file fingerprint(s) и {{toolCount}} результатом(ами) инструментов как evidence.",
+          "detailNoEvidence": "Подготовить handoff из checkpoint {{trigger}}; fingerprint или tool evidence отсутствуют, проверьте вручную перед продолжением."
         },
         "drain-queue": {
           "title": "Отправить очередь follow-up",
@@ -1528,8 +1556,8 @@
           "detailDefault": "Создать свежий ограниченный контекст перед рискованным продолжением."
         },
         "review-git": {
-          "title": "Проверить варианты отката файлов",
-          "detail": "Используйте revert/stash в Git панели с подтверждением, а не тихое удаление правок."
+          "title": "Проверить варианты восстановления файлов",
+          "detail": "Используйте revert или stash в Git панели только после подтверждения; не удаляйте правки тихо."
         },
         "task-ledger-review": {
           "title": "Записать evidence в Task Ledger",
@@ -1540,8 +1568,8 @@
           "detail": "Полезные факты восстановления переводятся в Knowledge drafts или предложения памяти, без автозаписи."
         },
         "terminal-interrupt": {
-          "title": "Прервать перед разрушающим откатом",
-          "detail": "Остановить или направить активный запуск перед terminal, Git или file rollback."
+          "title": "Прервать перед рискованными действиями восстановления",
+          "detail": "Остановить или направить активный запуск перед действиями terminal, Git или file."
         },
         "terminal-control": {
           "title": "Открыть терминальное вмешательство",
@@ -1549,10 +1577,10 @@
         }
       },
       "summary": {
-        "checkpoint": "Доступно восстановление из checkpoint {{trigger}}.",
+        "checkpoint": "Checkpoint {{trigger}} доступен для помощи восстановления.",
         "queue": "Ожидает {{count}} follow-up в очереди.",
         "truncated": "Уже усечено {{count}} сообщений transcript; предпочтите handoff или compact.",
-        "default": "Срочного давления отката нет; перед разрушающими действиями используйте review-first восстановление."
+        "default": "Срочного давления восстановления нет; проверяйте предложенные действия перед рискованными controls."
       },
       "terminal": {
         "interrupted": "Прерывание терминала отправлено.",

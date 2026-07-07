@@ -5,7 +5,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import type { ComponentProps } from 'react';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 const hostApiFetchMock = vi.hoisted(() => vi.fn());
-const { agentsState, chatState, gatewayState, providersState, mcpState, artifactPanelMocks, permissionMocks, taskLedgerMocks } = vi.hoisted(() => ({
+const { agentsState, chatState, gatewayState, providersState, mcpState, artifactPanelMocks, permissionMocks, taskLedgerMocks, settingsState } = vi.hoisted(() => ({
   agentsState: {
     agents: [] as Array<Record<string, unknown>>,
     defaultModelRef: null as string | null,
@@ -41,6 +41,9 @@ const { agentsState, chatState, gatewayState, providersState, mcpState, artifact
     createNode: vi.fn(),
     linkSession: vi.fn(),
   },
+  settingsState: {
+    uiDepthMode: 'basic' as 'basic' | 'advanced',
+  },
 }));
 
 vi.mock('@/stores/agents', () => ({
@@ -61,6 +64,10 @@ vi.mock('@/stores/providers', () => ({
 
 vi.mock('@/stores/mcp', () => ({
   useMcpStore: (selector: (state: typeof mcpState) => unknown) => selector(mcpState),
+}));
+
+vi.mock('@/stores/settings', () => ({
+  useSettingsStore: (selector: (state: typeof settingsState) => unknown) => selector(settingsState),
 }));
 
 vi.mock('@/stores/artifact-panel', () => ({
@@ -504,6 +511,10 @@ function translate(key: string, vars?: Record<string, unknown>): string {
       return 'Compress current session';
     case 'composer.compaction.compressTooltip':
       return 'Compress the current session history';
+    case 'composer.compaction.viewEvidence':
+      return 'View compression evidence';
+    case 'composer.compaction.viewEvidenceTooltip':
+      return 'Review compression evidence before continuing';
     case 'composer.compaction.dialogTitle':
       return 'Compress Current Session';
     case 'composer.compaction.dialogDescription':
@@ -657,6 +668,7 @@ function openKnowledgeMenuFromActions() {
 
 describe('ChatInput draft persistence', () => {
   beforeEach(() => {
+    settingsState.uiDepthMode = 'basic';
     agentsState.agents = [];
     chatState.currentAgentId = 'main';
     gatewayState.status = { state: 'running', port: 18789 };
@@ -1779,6 +1791,7 @@ describe('ChatInput read-only context status', () => {
   });
 
   it('shows compression quality when the latest compaction has artifact metrics', () => {
+    settingsState.uiDepthMode = 'advanced';
     renderChatInput(vi.fn(), {
       messageCount: 4,
       compactionStatus: {
@@ -1808,6 +1821,92 @@ describe('ChatInput read-only context status', () => {
     });
 
     expect(screen.getByTestId('chat-compaction-quality')).toBeInTheDocument();
+  });
+
+  it('offers a manual compression evidence viewer entry when artifact metadata exists', () => {
+    settingsState.uiDepthMode = 'advanced';
+    const onViewCompactionArtifact = vi.fn();
+    renderChatInput(vi.fn(), {
+      messageCount: 4,
+      compactionStatus: {
+        available: true,
+        canCompact: true,
+        inProgress: false,
+        pressure: 'low',
+        truncatedMessageCount: 0,
+        lastCompaction: {
+          id: 'cp-1',
+          timestamp: Date.now(),
+          trigger: 'manual',
+          quality: {
+            score: 0.78,
+            level: 'medium',
+            fieldCoverage: 0.9,
+            evidenceCoverage: 0.75,
+            artifactTokens: 900,
+            projectionTokens: 420,
+            warnings: ['review source metadata'],
+          },
+          unverifiedCount: 1,
+        },
+        warnings: [],
+      },
+      onManualCompact: vi.fn(),
+      onViewCompactionArtifact,
+    });
+
+    fireEvent.click(screen.getByTestId('chat-compaction-view-artifact'));
+
+    expect(onViewCompactionArtifact).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText(/lossless|无损/i)).not.toBeInTheDocument();
+  });
+
+  it('keeps compaction diagnostics hidden in basic mode while preserving send payload', async () => {
+    const onSend = vi.fn();
+    settingsState.uiDepthMode = 'basic';
+    renderChatInput(onSend, {
+      messageCount: 4,
+      compactionStatus: {
+        available: true,
+        canCompact: true,
+        inProgress: false,
+        pressure: 'low',
+        truncatedMessageCount: 0,
+        lastCompaction: {
+          id: 'cp-1',
+          timestamp: Date.now(),
+          trigger: 'manual',
+          quality: {
+            score: 0.78,
+            level: 'medium',
+            fieldCoverage: 0.9,
+            evidenceCoverage: 0.75,
+            artifactTokens: 900,
+            projectionTokens: 420,
+            warnings: ['review source metadata'],
+          },
+          unverifiedCount: 1,
+        },
+        warnings: [],
+      },
+      onManualCompact: vi.fn(),
+      onViewCompactionArtifact: vi.fn(),
+    });
+
+    expect(screen.queryByTestId('chat-compaction-quality')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-compaction-view-artifact')).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByTestId('chat-composer-input'), {
+      target: { value: 'ship the same payload' },
+    });
+    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith(
+        'ship the same payload',
+        expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest' }),
+      );
+    });
   });
 
   it('disables manual compaction while the session is sending', () => {

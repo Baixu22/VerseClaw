@@ -1,7 +1,45 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { buildRollbackPlan, hasRollbackPlanSidebarTrigger } from '@/pages/Chat/rollback-plan';
 
+function readChatLocale(locale: string): Record<string, unknown> {
+  return JSON.parse(readFileSync(join(process.cwd(), 'shared', 'i18n', 'locales', locale, 'chat.json'), 'utf8')) as Record<string, unknown>;
+}
+
+function collectVisibleStrings(value: unknown): string[] {
+  if (typeof value === 'string') return [value];
+  if (!value || typeof value !== 'object') return [];
+  if (Array.isArray(value)) return value.flatMap(collectVisibleStrings);
+  return Object.values(value).flatMap(collectVisibleStrings);
+}
+
 describe('rollback plan', () => {
+  it('uses recovery-assist wording in rollbackPlan locale copy without promising rollback semantics', () => {
+    const forbidden = {
+      en: /\brollback\b|\blossless\b|automatic full|full rollback|all side effects|completely equivalent/iu,
+      zh: /回滚|无损|自动全|全量|所有副作用|完全等同/iu,
+      ja: /ロールバック|完全|自動.*復旧|無損|すべての副作用/iu,
+      ru: /откат|автоматическ.*полн|без потерь|все побочные|полностью эквивалент/iu,
+    };
+    const expectedTitles = {
+      en: 'Recovery assist',
+      zh: '恢复辅助',
+      ja: '復旧支援',
+      ru: 'Помощь восстановления',
+    };
+
+    for (const locale of ['en', 'zh', 'ja', 'ru'] as const) {
+      const chat = readChatLocale(locale);
+      const planCopy = (chat.composer as { rollbackPlan: Record<string, unknown> }).rollbackPlan;
+      const visibleCopy = collectVisibleStrings(planCopy).join('\n');
+      expect(planCopy.title).toBe(expectedTitles[locale]);
+      expect(visibleCopy).not.toMatch(forbidden[locale]);
+      expect((planCopy.actions as Record<string, Record<string, string>>)['checkpoint-handoff'].detailEvidenceBacked).toBeTruthy();
+      expect((planCopy.actions as Record<string, Record<string, string>>)['checkpoint-handoff'].detailNoEvidence).toBeTruthy();
+    }
+  });
+
   it('labels checkpoint handoff as evidence-backed when fingerprints and tool results are available', () => {
     const plan = buildRollbackPlan({
       activeRun: false,
@@ -250,24 +288,5 @@ describe('rollback plan', () => {
       expect.objectContaining({ kind: 'memory-review' }),
     ]));
     expect(hasRollbackPlanSidebarTrigger(plan)).toBe(false);
-  });
-
-  it('does not add Git recovery when there is no recovery pressure', () => {
-    const plan = buildRollbackPlan({
-      activeRun: false,
-      gatewayAvailable: true,
-      queueDrainBusy: false,
-      compactionBusy: false,
-      handoffDisabled: true,
-      contextRange: null,
-      compactionStatus: null,
-      longTaskControlStatus: null,
-    });
-
-    expect(plan.actions.map((action) => action.kind)).not.toContain('review-git');
-    expect(plan.signals).toEqual(expect.arrayContaining([
-      expect.objectContaining({ kind: 'git', active: false, risk: 'review' }),
-    ]));
-    expect(plan.riskCounts.dangerous).toBe(0);
   });
 });

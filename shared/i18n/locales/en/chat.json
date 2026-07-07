@@ -1219,6 +1219,8 @@
     "compaction": {
       "compress": "Compress current session",
       "compressTooltip": "Compress the current session history",
+      "viewEvidence": "View compression evidence",
+      "viewEvidenceTooltip": "Review compression evidence before continuing",
       "dialogTitle": "Compress Current Session",
       "dialogDescription": "This will summarize older chat history for the active session after confirmation. Long-task state stays in Task Ledger and Context Pack references.",
       "tokenUsage": "Token usage",
@@ -1246,6 +1248,30 @@
       "toastSuccessWithTokens": "Session compressed: {{before}} -> {{after}} tokens{{quality}}",
       "toastNoop": "Nothing compressed: {{reason}}",
       "toastFailed": "Failed to compress session",
+      "artifactViewer": {
+        "title": "Compression Evidence",
+        "description": "Review the bounded compression artifact before preparing recovery context or branching the session.",
+        "summary": "Summary",
+        "objective": "Objective",
+        "currentState": "Current state",
+        "identifiers": "Identifiers",
+        "quality": "Quality",
+        "warnings": "Warnings",
+        "unverifiedClaims": "Unverified claims",
+        "reviewNeeded": "Review needed",
+        "empty": "No compression evidence is available yet.",
+        "noWarnings": "No warnings reported.",
+        "noUnverifiedClaims": "No unverified claims reported.",
+        "noReviewNeeded": "No review items reported.",
+        "prepareRecovery": "Prepare recovery context",
+        "forkSession": "Fork/branch session",
+        "close": "Close",
+        "qualityScore": "Score {{score}}%",
+        "qualityCoverage": "Evidence {{evidence}}% · fields {{fields}}% · recovery {{tokens}} tokens",
+        "checkpointId": "Checkpoint {{checkpointId}}",
+        "sessionKey": "Session {{sessionKey}}",
+        "loadFailed": "Failed to load compression evidence"
+      },
       "reason": {
         "active_run": "Available after the current run finishes",
         "already_compacted": "Already compacted",
@@ -1496,10 +1522,10 @@
       "queue": "Queue",
       "queueTooltip": "Keep the active run intact and replay this follow-up later.",
       "interrupt": "Interrupt",
-      "interruptTooltip": "Abort or steer away from the active run before risky rollback."
+      "interruptTooltip": "Abort or steer the active run before risky recovery actions."
     },
     "rollbackPlan": {
-      "title": "Rollback & recovery plan",
+      "title": "Recovery assist",
       "open": "Open",
       "risk": {
         "safe": "safe",
@@ -1520,15 +1546,17 @@
         "queue": "Queue",
         "context": "Context",
         "terminal": "Terminal",
-        "git": "Git rollback",
+        "git": "Git review",
         "taskLedger": "Task Ledger",
         "memory": "Memory"
       },
-      "destructiveWarning": "Destructive rollback must go through approval-backed Git, file, or terminal actions.",
+      "destructiveWarning": "Risky Git, file, or terminal actions are suggestions only and require explicit confirmation.",
       "actions": {
         "checkpoint-handoff": {
           "title": "Prepare checkpoint handoff",
-          "detail": "Resume from {{trigger}} checkpoint without replaying the full transcript."
+          "detail": "Prepare a handoff from the {{trigger}} checkpoint for review.",
+          "detailEvidenceBacked": "Prepare a handoff from the {{trigger}} checkpoint with {{fileCount}} file fingerprint(s) and {{toolCount}} tool result(s) as evidence.",
+          "detailNoEvidence": "Prepare a handoff from the {{trigger}} checkpoint; no fingerprint or tool evidence is available, so review manually before continuing."
         },
         "drain-queue": {
           "title": "Drain queued follow-ups",
@@ -1540,8 +1568,8 @@
           "detailDefault": "Create a fresh bounded context before continuing risky work."
         },
         "review-git": {
-          "title": "Review file rollback options",
-          "detail": "Use Git panel revert/stash actions with approval instead of silently discarding edits."
+          "title": "Review file recovery options",
+          "detail": "Use Git panel revert or stash actions only after confirmation; do not silently discard edits."
         },
         "task-ledger-review": {
           "title": "Mark recovery evidence in Task Ledger",
@@ -1552,8 +1580,8 @@
           "detail": "Convert useful recovery facts into Knowledge drafts or memory proposals; do not auto-write durable memory."
         },
         "terminal-interrupt": {
-          "title": "Interrupt before destructive rollback",
-          "detail": "Stop or steer the active run before applying terminal, Git, or file rollback actions."
+          "title": "Interrupt before risky recovery actions",
+          "detail": "Stop or steer the active run before applying terminal, Git, or file actions."
         },
         "terminal-control": {
           "title": "Open terminal intervention controls",
@@ -1564,7 +1592,7 @@
         "checkpoint": "Recovery checkpoint available from {{trigger}}.",
         "queue": "{{count}} queued follow-up(s) pending.",
         "truncated": "{{count}} transcript message(s) already truncated; prefer handoff or compaction.",
-        "default": "No urgent rollback pressure detected; use review-first recovery before destructive actions."
+        "default": "No urgent recovery pressure detected; review suggested actions before using risky controls."
       },
       "terminal": {
         "interrupted": "Terminal interrupt sent.",

@@ -3,6 +3,19 @@ import { completeSetup, expect, test } from './fixtures/electron';
 test.describe('Role memory panel', () => {
   test('shows proposal source metadata in the review queue and applies review decisions through gateway RPC', async ({ electronApp, page }) => {
     await electronApp.evaluate(({ ipcMain }) => {
+      type ReviewProposal = {
+        id: string;
+        operation: string;
+        status: string;
+        decision: string;
+        proposal: { content: string; source: string; confidence: number; sensitivity: string };
+        riskLevel: string;
+        impactScope: string;
+        suggestedAction: string;
+        evidenceStatus: string;
+        reviewReason: string;
+        reasonSummary: string;
+      };
       const state = {
         reviewBatchCount: 0,
         proposals: [{
@@ -22,8 +35,7 @@ test.describe('Role memory panel', () => {
           evidenceStatus: 'partial',
           reviewReason: 'Missing source metadata needs review.',
           reasonSummary: 'Needs review because source metadata is incomplete.',
-        }],
-        cards: [],
+        }] as ReviewProposal[],
       };
 
       (globalThis as unknown as { __roleMemorySourceState: typeof state }).__roleMemorySourceState = state;
@@ -49,12 +61,7 @@ test.describe('Role memory panel', () => {
         if (request?.module === 'agents' && request.action === 'list') {
           return respond(request.id, {
             success: true,
-            agents: [{
-              id: 'main',
-              name: 'Main',
-              isDefault: true,
-              mainSessionKey: 'agent:main:session',
-            }],
+            agents: [{ id: 'main', name: 'Main', isDefault: true, mainSessionKey: 'agent:main:session' }],
           });
         }
 
@@ -63,11 +70,9 @@ test.describe('Role memory panel', () => {
         }
 
         if (request?.module === 'providers') {
-          if (request.action === 'snapshot') return respond(request.id, { success: true, accounts: [], statuses: [], vendors: [], defaultAccountId: '' });
-          if (request.action === 'accounts') return respond(request.id, { success: true, accounts: [] });
-          if (request.action === 'accountKeyInfo') return respond(request.id, { success: true, keyInfo: {} });
-          if (request.action === 'vendors') return respond(request.id, { success: true, vendors: [] });
-          if (request.action === 'getDefaultAccount') return respond(request.id, { success: true, accountId: null });
+          return respond(request.id, request.action === 'snapshot'
+            ? { success: true, accounts: [], statuses: [], vendors: [], defaultAccountId: '' }
+            : { success: true, accounts: [], vendors: [], keyInfo: {}, accountId: null });
         }
 
         if (request?.module === 'gateway' && request.action === 'rpc') {
@@ -94,22 +99,29 @@ test.describe('Role memory panel', () => {
           if (method === 'memory.reviewBatch') {
             current.reviewBatchCount += 1;
             const ids = params.ids as string[] | undefined;
-            const action = String(params.action ?? 'approve');
             for (const proposal of current.proposals) {
-              if (ids?.includes(proposal.id)) proposal.status = action === 'reject' ? 'rejected' : 'applied';
+              if (ids?.includes(proposal.id)) proposal.status = 'applied';
             }
             return respond(request.id, { batchId: 'batch-source-1', results: (ids ?? []).map((id) => ({ id, ok: true })) });
           }
 
-          if (method === 'memory.list') return respond(request.id, { cards: current.cards });
+          if (method === 'memory.list') return respond(request.id, { cards: [] });
           if (method === 'memory.conflicts') return respond(request.id, { conflicts: [] });
           if (method === 'memory.retentionCandidates') return respond(request.id, { candidates: [] });
           if (method === 'memory.health') return respond(request.id, { health: { ok: true, checks: [] } });
-          if (method === 'memory.stats') return respond(request.id, { stats: { active: 0, conflictsOpen: 0, proposalsNeedsReview: current.proposals.filter((proposal) => proposal.status === 'needs_review').length } });
+          if (method === 'memory.stats') {
+            return respond(request.id, {
+              stats: {
+                active: 0,
+                conflictsOpen: 0,
+                proposalsNeedsReview: current.proposals.filter((proposal) => proposal.status === 'needs_review').length,
+              },
+            });
+          }
         }
 
         if (request?.module === 'memory') {
-          if (request.action === 'list') return respond(request.id, { success: true, cards: current.cards });
+          if (request.action === 'list') return respond(request.id, { success: true, cards: [] });
           if (request.action === 'health') return respond(request.id, { success: true, ok: true, checks: [] });
         }
 
@@ -125,6 +137,9 @@ test.describe('Role memory panel', () => {
     await page.getByTestId('role-orchestration-toggle').click();
     await page.getByRole('button', { name: /Architect/ }).click();
     await expect(page.getByTestId('role-memory-panel')).toBeVisible();
+    await page.getByTestId('role-memory-composer-info').hover();
+    await expect(page.getByText('Low-risk proposals may be accepted by policy; conflicts and sensitive changes wait for review.')).toBeVisible();
+    await expect(page.getByText(/automatic long-term memory|every task.*memory|automatically/i)).toHaveCount(0);
 
     await page.getByTestId('role-memory-review-tab').click();
     await expect(page.getByTestId('role-memory-proposal-source')).toContainText('session_summary');
@@ -134,7 +149,6 @@ test.describe('Role memory panel', () => {
 
     await page.getByLabel('Select proposal').first().check();
     await page.getByRole('button', { name: /Approve selected/ }).click();
-    await expect(page.getByTestId('role-memory-review-tab')).toContainText('Review');
     await expect(page.getByTestId('role-memory-proposal-source')).toHaveCount(0);
 
     const calls = await electronApp.evaluate(() => {

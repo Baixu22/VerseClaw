@@ -55,7 +55,13 @@
     "language": "言語",
     "menuLanguageUpdated": "メニューの言語を更新しました",
     "launchAtStartup": "システム起動時に自動起動",
-    "launchAtStartupDesc": "ログイン時に Verse Claw を自動的に起動します"
+    "launchAtStartupDesc": "ログイン時に Verse Claw を自動的に起動します",
+    "uiDepthMode": {
+      "title": "表示の詳しさ",
+      "description": "Basic は通常画面を簡潔に保ちます。Advanced は checkpoint 証拠、圧縮警告、ロール契約、診断をより多く表示します。",
+      "basic": "Basic",
+      "advanced": "Advanced"
+    }
   },
   "aiProviders": {
     "title": "AI プロバイダー",

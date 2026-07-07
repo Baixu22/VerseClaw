@@ -46,6 +46,7 @@ import { cn } from '@/lib/utils';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
+import { useSettingsStore } from '@/stores/settings';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import { TaskNodeSelector } from '@/components/task-ledger/TaskNodeSelector';
 import { buildPreviewTarget } from '@/components/file-preview/build-preview-target';
@@ -130,6 +131,7 @@ interface ChatInputProps {
   compactionStatus?: SessionCompactionStatus | null;
   compactionBusy?: boolean;
   onManualCompact?: (customInstructions?: string) => Promise<void>;
+  onViewCompactionArtifact?: () => void;
   longTaskControlStatus?: LongTaskControlStatus | null;
   queueDrainBusy?: boolean;
   onDrainQueuedFollowup?: () => Promise<void>;
@@ -841,6 +843,7 @@ export function ChatInput({
   compactionStatus,
   compactionBusy = false,
   onManualCompact,
+  onViewCompactionArtifact,
   longTaskControlStatus,
   queueDrainBusy = false,
   onDrainQueuedFollowup,
@@ -848,6 +851,8 @@ export function ChatInput({
   onConfirmTaskLoopUpgrade,
 }: ChatInputProps) {
   const { t } = useTranslation('chat');
+  const uiDepthMode = useSettingsStore((state) => state.uiDepthMode);
+  const showAdvancedDetails = uiDepthMode === 'advanced';
   const [input, setInput] = useState(() => draftValue ?? '');
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [targetAgentId, setTargetAgentId] = useState<string | null>(null);
@@ -3660,7 +3665,7 @@ export function ChatInput({
                   )}
                 </>
               )}
-              {compactionQuality && (
+              {showAdvancedDetails && compactionQuality && (
                 <Badge
                   variant="outline"
                   className={cn(
@@ -3682,6 +3687,28 @@ export function ChatInput({
                     score: Math.round(compactionQuality.score * 100),
                   })}
                 </Badge>
+              )}
+              {showAdvancedDetails && compactionQuality && onViewCompactionArtifact && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        data-testid="chat-compaction-view-artifact"
+                        onClick={onViewCompactionArtifact}
+                        className="h-6 w-6 rounded-md text-muted-foreground transition-colors hover:text-foreground"
+                        aria-label={t('composer.compaction.viewEvidence')}
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs text-xs">
+                    {t('composer.compaction.viewEvidenceTooltip')}
+                  </TooltipContent>
+                </Tooltip>
               )}
               {onManualCompact && (
                 <Tooltip>

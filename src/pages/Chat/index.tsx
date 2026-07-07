@@ -18,7 +18,7 @@ import {
   type ChatModelAdapter,
   type SuggestionConfig,
 } from '@assistant-ui/react';
-import type { KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
+import type { CompressionArtifact, KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
 import { useChatStore, type RawMessage } from '@/stores/chat';
@@ -38,6 +38,7 @@ import { hostEvents } from '@/lib/host-events';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
+import { CompactionArtifactViewer } from './CompactionArtifactViewer';
 import { ExecutionGraphCard } from './ExecutionGraphCard';
 import { TeamOrchestrationCard } from './TeamOrchestrationCard';
 import { ChatToolbar } from './ChatToolbar';
@@ -884,6 +885,11 @@ export function Chat() {
   const [promptCacheStatus, setPromptCacheStatus] = useState<PromptCacheRiskAssessment | null>(null);
   const [compactionStatus, setCompactionStatus] = useState<SessionCompactionStatus | null>(null);
   const [compactionBusy, setCompactionBusy] = useState(false);
+  const [compactionArtifactOpen, setCompactionArtifactOpen] = useState(false);
+  const [compactionArtifactBusy, setCompactionArtifactBusy] = useState(false);
+  const [compactionArtifact, setCompactionArtifact] = useState<CompressionArtifact | null>(null);
+  const [compactionArtifactCheckpointId, setCompactionArtifactCheckpointId] = useState<string | null>(null);
+  const [compactionArtifactWarnings, setCompactionArtifactWarnings] = useState<string[]>([]);
   const [longTaskControlStatus, setLongTaskControlStatus] = useState<LongTaskControlStatus | null>(null);
   const [queueDrainBusy, setQueueDrainBusy] = useState(false);
   const [taskLoopUpgradeBusy, setTaskLoopUpgradeBusy] = useState(false);
@@ -1774,6 +1780,33 @@ export function Chat() {
       setCompactionBusy(false);
     }
   }, [currentAgentId, currentModelRef, currentSessionKey, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
+
+  const handleViewCompactionArtifact = useCallback(async () => {
+    setCompactionArtifactOpen(true);
+    setCompactionArtifactBusy(true);
+    setCompactionArtifact(null);
+    setCompactionArtifactCheckpointId(null);
+    setCompactionArtifactWarnings([]);
+    try {
+      const result = await hostApi.sessions.compressionArtifact({
+        sessionKey: currentSessionKey,
+        agentId: currentAgentId,
+      });
+      setCompactionArtifact(result.artifact ?? null);
+      setCompactionArtifactCheckpointId(result.checkpointId ?? null);
+      setCompactionArtifactWarnings(result.warnings ?? []);
+      if (!result.success) {
+        toast.message(result.error || t('composer.compaction.artifactViewer.loadFailed'));
+      }
+    } catch (error) {
+      setCompactionArtifactWarnings([
+        error instanceof Error ? error.message : t('composer.compaction.artifactViewer.loadFailed'),
+      ]);
+      toast.message(error instanceof Error ? error.message : t('composer.compaction.artifactViewer.loadFailed'));
+    } finally {
+      setCompactionArtifactBusy(false);
+    }
+  }, [currentAgentId, currentSessionKey, t]);
 
   const continuityRunActive = sending || pendingFinal || Boolean(streamingMessage) || Boolean(activeRunId);
   const gatewayAvailable = isGatewayRunning && gatewayStatus.gatewayReady !== false;
@@ -2776,11 +2809,24 @@ export function Chat() {
         compactionStatus={compactionStatus}
         compactionBusy={compactionBusy}
         onManualCompact={handleManualCompact}
+        onViewCompactionArtifact={handleViewCompactionArtifact}
         longTaskControlStatus={longTaskControlStatus}
         queueDrainBusy={queueDrainBusy}
         onDrainQueuedFollowup={handleDrainQueuedFollowup}
         taskLoopUpgradeBusy={taskLoopUpgradeBusy}
         onConfirmTaskLoopUpgrade={handleConfirmTaskLoopUpgrade}
+      />
+      <CompactionArtifactViewer
+        open={compactionArtifactOpen}
+        onOpenChange={setCompactionArtifactOpen}
+        sessionKey={currentSessionKey}
+        checkpointId={compactionArtifactCheckpointId}
+        artifact={compactionArtifact}
+        warnings={compactionArtifactWarnings}
+        onPrepareRecovery={handlePrepareHandoff}
+        onForkSession={handleForkSession}
+        prepareRecoveryBusy={handoffBusy || compactionArtifactBusy}
+        forkBusy={forkBusy}
       />
       <Dialog open={handoffDialogOpen} onOpenChange={setHandoffDialogOpen}>
         <DialogContent

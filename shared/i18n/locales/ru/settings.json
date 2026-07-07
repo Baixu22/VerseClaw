@@ -55,7 +55,13 @@
     "language": "Язык",
     "menuLanguageUpdated": "Язык меню обновлён",
     "launchAtStartup": "Запуск при старте системы",
-    "launchAtStartupDesc": "Автоматически запускать Verse Claw при входе в систему"
+    "launchAtStartupDesc": "Автоматически запускать Verse Claw при входе в систему",
+    "uiDepthMode": {
+      "title": "Глубина интерфейса",
+      "description": "Basic делает обычные экраны проще. Advanced показывает больше checkpoint evidence, предупреждений сжатия, role contracts и diagnostics.",
+      "basic": "Basic",
+      "advanced": "Advanced"
+    }
   },
   "aiProviders": {
     "title": "AI-провайдеры",

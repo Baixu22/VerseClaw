@@ -1207,6 +1207,8 @@
     "compaction": {
       "compress": "压缩当前会话",
       "compressTooltip": "压缩当前会话历史",
+      "viewEvidence": "查看压缩证据",
+      "viewEvidenceTooltip": "继续前查看压缩证据",
       "dialogTitle": "压缩当前会话",
       "dialogDescription": "确认后会总结当前会话中较早的聊天历史。长期任务状态仍由 Task Ledger 和 Context Pack 引用承载。",
       "tokenUsage": "Token 使用量",
@@ -1234,6 +1236,30 @@
       "toastSuccessWithTokens": "会话已压缩：{{before}} -> {{after}} tokens{{quality}}",
       "toastNoop": "未执行压缩：{{reason}}",
       "toastFailed": "压缩会话失败",
+      "artifactViewer": {
+        "title": "压缩证据",
+        "description": "在准备恢复上下文或分支会话前，查看有边界的压缩产物。",
+        "summary": "摘要",
+        "objective": "目标",
+        "currentState": "当前状态",
+        "identifiers": "标识",
+        "quality": "质量",
+        "warnings": "警告",
+        "unverifiedClaims": "未验证声明",
+        "reviewNeeded": "需要复核",
+        "empty": "还没有可用的压缩证据。",
+        "noWarnings": "没有报告警告。",
+        "noUnverifiedClaims": "没有报告未验证声明。",
+        "noReviewNeeded": "没有报告复核项。",
+        "prepareRecovery": "准备恢复上下文",
+        "forkSession": "Fork/branch session",
+        "close": "关闭",
+        "qualityScore": "评分 {{score}}%",
+        "qualityCoverage": "证据 {{evidence}}% · 字段 {{fields}}% · 恢复 {{tokens}} tokens",
+        "checkpointId": "Checkpoint {{checkpointId}}",
+        "sessionKey": "Session {{sessionKey}}",
+        "loadFailed": "加载压缩证据失败"
+      },
       "reason": {
         "active_run": "当前运行结束后可用",
         "already_compacted": "已经压缩过",
@@ -1484,10 +1510,10 @@
       "queue": "排队",
       "queueTooltip": "保持当前运行不变，稍后重放这条后续输入。",
       "interrupt": "打断",
-      "interruptTooltip": "在高风险回滚前中止或改向当前运行。"
+      "interruptTooltip": "在高风险恢复动作前中止或引导当前运行。"
     },
     "rollbackPlan": {
-      "title": "回滚与恢复方案",
+      "title": "恢复辅助",
       "open": "打开",
       "risk": {
         "safe": "安全",
@@ -1508,15 +1534,17 @@
         "queue": "队列",
         "context": "上下文",
         "terminal": "终端",
-        "git": "Git 回滚",
+        "git": "Git 复核",
         "taskLedger": "Task Ledger",
         "memory": "记忆"
       },
-      "destructiveWarning": "破坏性回滚必须通过带审批的 Git、文件或终端动作执行。",
+      "destructiveWarning": "高风险 Git、文件或终端动作只是建议，执行前必须显式确认。",
       "actions": {
         "checkpoint-handoff": {
           "title": "准备 checkpoint 接力",
-          "detail": "从 {{trigger}} checkpoint 恢复，避免重放完整 transcript。"
+          "detail": "基于 {{trigger}} checkpoint 准备可复核的接力上下文。",
+          "detailEvidenceBacked": "基于 {{trigger}} checkpoint 准备接力上下文；已有 {{fileCount}} 条文件 fingerprint 和 {{toolCount}} 条工具结果作为证据。",
+          "detailNoEvidence": "基于 {{trigger}} checkpoint 准备接力上下文；缺少 fingerprint 或工具证据，继续前需要人工复核。"
         },
         "drain-queue": {
           "title": "发送排队后续",
@@ -1528,8 +1556,8 @@
           "detailDefault": "继续高风险工作前创建新的有边界上下文。"
         },
         "review-git": {
-          "title": "复核文件回滚选项",
-          "detail": "使用 Git 面板的 revert/stash 审批动作，避免静默丢弃修改。"
+          "title": "复核文件恢复选项",
+          "detail": "只有在确认后才使用 Git 面板的 revert 或 stash 动作；不要静默丢弃修改。"
         },
         "task-ledger-review": {
           "title": "在 Task Ledger 标记恢复证据",
@@ -1540,8 +1568,8 @@
           "detail": "把有用恢复事实转成 Knowledge 草稿或记忆提案，不自动写入持久记忆。"
         },
         "terminal-interrupt": {
-          "title": "破坏性回滚前先打断",
-          "detail": "执行终端、Git 或文件回滚前，先停止或引导当前运行。"
+          "title": "高风险恢复动作前先打断",
+          "detail": "执行终端、Git 或文件动作前，先停止或引导当前运行。"
         },
         "terminal-control": {
           "title": "打开终端介入控制",
@@ -1549,10 +1577,10 @@
         }
       },
       "summary": {
-        "checkpoint": "可从 {{trigger}} checkpoint 恢复。",
+        "checkpoint": "可使用 {{trigger}} checkpoint 辅助恢复。",
         "queue": "还有 {{count}} 条排队后续待处理。",
         "truncated": "已有 {{count}} 条 transcript 消息被截断；优先使用接力或压缩。",
-        "default": "未检测到紧急回滚压力；破坏性操作前先走复核式恢复。"
+        "default": "未检测到紧急恢复压力；使用高风险控制前先复核建议动作。"
       },
       "terminal": {
         "interrupted": "已发送终端中断。",

@@ -1,12 +1,26 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import RolesOrchestrationPanel from '@/components/agents/RolesOrchestrationPanel';
 
-const { gatewayRpcMock, appendEventsMock, translate } = vi.hoisted(() => ({
+const {
+  gatewayRpcMock,
+  appendEventsMock,
+  upsertConfigRoleMock,
+  memoryListMock,
+  memoryExplainInjectionMock,
+  memoryHealthMock,
+  translate,
+  settingsState,
+} = vi.hoisted(() => ({
   gatewayRpcMock: vi.fn(),
   appendEventsMock: vi.fn(),
+  upsertConfigRoleMock: vi.fn(),
+  memoryListMock: vi.fn(),
+  memoryExplainInjectionMock: vi.fn(),
+  memoryHealthMock: vi.fn(),
   translate: (key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key,
+  settingsState: { roleMemoryEnabled: false },
 }));
 
 vi.mock('@/components/agents/SubagentRunnerPanel', () => ({
@@ -21,10 +35,13 @@ vi.mock('@/lib/host-api', () => ({
     taskLedger: {
       appendEvents: (...args: unknown[]) => appendEventsMock(...args),
     },
+    roles: {
+      upsertConfigRole: (...args: unknown[]) => upsertConfigRoleMock(...args),
+    },
     memory: {
-      list: vi.fn(),
-      explainInjection: vi.fn(),
-      health: vi.fn(),
+      list: (...args: unknown[]) => memoryListMock(...args),
+      explainInjection: (...args: unknown[]) => memoryExplainInjectionMock(...args),
+      health: (...args: unknown[]) => memoryHealthMock(...args),
       detail: vi.fn(),
       propose: vi.fn(),
       feedback: vi.fn(),
@@ -51,7 +68,7 @@ vi.mock('@/lib/host-events', () => ({
 }));
 
 vi.mock('@/stores/settings', () => ({
-  useSettingsStore: (selector: (state: { roleMemoryEnabled: boolean }) => unknown) => selector({ roleMemoryEnabled: false }),
+  useSettingsStore: (selector: (state: { roleMemoryEnabled: boolean }) => unknown) => selector(settingsState),
 }));
 
 vi.mock('@/stores/workspaces', () => ({
@@ -85,10 +102,17 @@ function renderPanel() {
 describe('RolesOrchestrationPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    settingsState.roleMemoryEnabled = false;
+    memoryListMock.mockResolvedValue({ success: true, cards: [] });
+    memoryExplainInjectionMock.mockResolvedValue({ success: true, injections: [] });
+    memoryHealthMock.mockResolvedValue({ success: true, ok: true, checks: [] });
     gatewayRpcMock.mockImplementation(async (method: string) => {
       if (method === 'roles.list') {
         return {
-          roles: [{ name: 'planner', displayName: 'Planner', tools: ['read'], effort: 'medium' }],
+          roles: [
+            { name: 'planner', displayName: 'Planner', rolePrompt: 'Plan work', tools: ['read'], effort: 'medium', origin: 'built-in' },
+            { name: 'docs-helper', displayName: 'Docs Helper', rolePrompt: 'Write docs', tools: ['read'], effort: 'low', origin: 'config', tags: ['docs'] },
+          ],
         };
       }
       if (method === 'orchestrator.plan') {
@@ -116,9 +140,41 @@ describe('RolesOrchestrationPanel', () => {
           },
         };
       }
+      if (method === 'memory.proposals') {
+        return {
+          proposals: [{
+            id: 'prop-session-summary',
+            operation: 'create',
+            status: 'needs_review',
+            decision: 'needs_review',
+            reviewReason: 'Missing source metadata needs review.',
+            reasonSummary: 'Needs review because source metadata is incomplete.',
+            proposal: {
+              content: 'Use pnpm run i18n:lint after changing locale files.',
+              confidence: 0.71,
+              source: 'session_summary',
+            },
+            evidenceStatus: 'unchecked',
+          }],
+        };
+      }
       return {};
     });
     appendEventsMock.mockResolvedValue({ success: true, snapshot: { nodes: [] } });
+    upsertConfigRoleMock.mockResolvedValue({
+      success: true,
+      pendingRuntimeRefresh: true,
+      role: {
+        name: 'qa-helper',
+        displayName: 'QA Helper',
+        rolePrompt: 'Check risky paths',
+        tools: ['read', 'shell'],
+        effort: 'medium',
+        permissions: { filesystem: 'read', network: 'none', commands: [] },
+        tags: ['qa'],
+        origin: 'config',
+      },
+    });
   });
 
   it('records successful orchestration plan previews to Task Ledger as read-only projections', async () => {
@@ -189,5 +245,91 @@ describe('RolesOrchestrationPanel', () => {
       }));
     });
     expect(screen.queryByTestId('orchestration-plan-edge-editor')).toBeNull();
+  });
+
+  it('creates a config-backed role through the typed host API and shows pending runtime refresh state', async () => {
+    renderPanel();
+
+    fireEvent.click(screen.getByTestId('role-orchestration-toggle'));
+    fireEvent.click(await screen.findByTestId('role-config-create'));
+    fireEvent.change(screen.getByTestId('role-config-name'), { target: { value: 'qa-helper' } });
+    fireEvent.change(screen.getByTestId('role-config-display-name'), { target: { value: 'QA Helper' } });
+    fireEvent.change(screen.getByTestId('role-config-prompt'), { target: { value: 'Check risky paths' } });
+    fireEvent.change(screen.getByTestId('role-config-tools'), { target: { value: 'read, shell' } });
+    fireEvent.change(screen.getByTestId('role-config-tags'), { target: { value: 'qa' } });
+    fireEvent.click(screen.getByTestId('role-config-save'));
+
+    await waitFor(() => {
+      expect(upsertConfigRoleMock).toHaveBeenCalledWith(expect.objectContaining({
+        name: 'qa-helper',
+        displayName: 'QA Helper',
+        rolePrompt: 'Check risky paths',
+        tools: ['read', 'shell'],
+        effort: 'medium',
+        permissions: expect.objectContaining({
+          filesystem: 'read',
+          network: 'none',
+          commands: [],
+        }),
+        tags: ['qa'],
+      }));
+    });
+    expect(await screen.findByTestId('role-config-pending-runtime')).toHaveTextContent('Saved to config');
+  });
+
+  it('edits only config roles from the selected role detail', async () => {
+    renderPanel();
+
+    fireEvent.click(screen.getByTestId('role-orchestration-toggle'));
+    fireEvent.click(await screen.findByText('Docs Helper'));
+    fireEvent.click(screen.getByTestId('role-config-edit-selected'));
+    expect(screen.getByTestId('role-config-name')).toBeDisabled();
+    expect(screen.getByTestId('role-config-name')).toHaveValue('docs-helper');
+    expect(screen.getByTestId('role-config-display-name')).toHaveValue('Docs Helper');
+
+    fireEvent.change(screen.getByTestId('role-config-display-name'), { target: { value: 'Docs Lead' } });
+    fireEvent.change(screen.getByTestId('role-config-prompt'), { target: { value: 'Keep docs polished' } });
+    fireEvent.click(screen.getByTestId('role-config-save'));
+
+    await waitFor(() => {
+      expect(upsertConfigRoleMock).toHaveBeenCalledWith(expect.objectContaining({
+        name: 'docs-helper',
+        displayName: 'Docs Lead',
+        rolePrompt: 'Keep docs polished',
+      }));
+    });
+  });
+
+  it('does not offer editing for built-in roles', async () => {
+    renderPanel();
+
+    fireEvent.click(screen.getByTestId('role-orchestration-toggle'));
+    fireEvent.click(await screen.findByText('Planner'));
+
+    expect(screen.queryByTestId('role-config-edit-selected')).toBeNull();
+  });
+
+  it('shows memory proposal source metadata in the review queue without claiming automatic writes', async () => {
+    settingsState.roleMemoryEnabled = true;
+    renderPanel();
+
+    fireEvent.click(screen.getByTestId('role-orchestration-toggle'));
+    fireEvent.click(await screen.findByText('Planner'));
+    await waitFor(() => {
+      expect(gatewayRpcMock).toHaveBeenCalledWith('memory.proposals', expect.objectContaining({ roleName: 'planner' }));
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('role-memory-review-tab')).toHaveTextContent('Review (1)');
+    });
+    const reviewTab = screen.getByTestId('role-memory-review-tab');
+    await act(async () => {
+      reviewTab.focus();
+      fireEvent.keyDown(reviewTab, { key: 'Enter' });
+    });
+
+    expect(await screen.findByTestId('role-memory-proposal-source')).toHaveTextContent('session_summary');
+    expect(screen.getByTestId('role-memory-proposal-confidence')).toHaveTextContent('71%');
+    expect(screen.getByTestId('role-memory-proposal-needs-review')).toHaveTextContent('Needs review because source metadata is incomplete.');
+    expect(screen.queryByText(/automatic|automatically|auto write|long-term memory for every task/i)).not.toBeInTheDocument();
   });
 });

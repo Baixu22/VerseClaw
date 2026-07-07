@@ -559,6 +559,52 @@ describe('hostApi facade', () => {
     }));
   });
 
+  it('calls roles.upsertConfigRole through hostInvoke', async () => {
+    hostInvoke.mockResolvedValueOnce({
+      id: 'req',
+      ok: true,
+      data: {
+        success: true,
+        pendingRuntimeRefresh: true,
+        role: {
+          name: 'research-helper',
+          displayName: 'Research Helper',
+          rolePrompt: 'Review evidence.',
+          tools: [],
+          effort: 'medium',
+          permissions: { filesystem: 'read', network: 'limited', commands: [] },
+          tags: [],
+          origin: 'config',
+        },
+      },
+    });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await hostApi.roles.upsertConfigRole({
+      name: 'research-helper',
+      displayName: 'Research Helper',
+      rolePrompt: 'Review evidence.',
+      tools: [],
+      effort: 'medium',
+      permissions: { filesystem: 'read', network: 'limited', commands: [] },
+      tags: [],
+    });
+
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
+      module: 'roles',
+      action: 'upsertConfigRole',
+      payload: {
+        name: 'research-helper',
+        displayName: 'Research Helper',
+        rolePrompt: 'Review evidence.',
+        tools: [],
+        effort: 'medium',
+        permissions: { filesystem: 'read', network: 'limited', commands: [] },
+        tags: [],
+      },
+    }));
+  });
+
   it('calls providers.list through hostInvoke', async () => {
     hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: [] });
     const { hostApi } = await import('@/lib/host-api');
@@ -730,8 +776,10 @@ describe('hostApi facade', () => {
       .mockResolvedValueOnce({ id: 'req-5', ok: true, data: { success: true, checkpoints: [] } })
       .mockResolvedValueOnce({ id: 'req-6', ok: true, data: { success: true, drained: false, queueCount: 0 } })
       .mockResolvedValueOnce({ id: 'req-7', ok: true, data: { success: true, compacted: true } })
-      .mockResolvedValueOnce({ id: 'req-8', ok: true, data: { success: true, draft: 'handoff' } })
-      .mockResolvedValueOnce({ id: 'req-9', ok: true, data: { success: true, sessionKey: 'agent:main:fork' } });
+      .mockResolvedValueOnce({ id: 'req-8', ok: true, data: { success: true, warnings: [], artifact: { schemaVersion: 1, objective: 'ship', constraints: [], currentState: 'ready', done: [], inProgress: [], blocked: [], decisions: [], filesTouched: [], testsRun: [], failedAttempts: [], deviations: [], nextAction: 'continue', reviewNeeded: [], evidenceRefs: [], unverifiedClaims: [], quality: { level: 'medium', score: 0.7, evidenceCoverage: 0.8, fieldCoverage: 0.9, projectionTokens: 120 } } } })
+      .mockResolvedValueOnce({ id: 'req-9', ok: true, data: { success: true, context: 'recovery context', warnings: [] } })
+      .mockResolvedValueOnce({ id: 'req-10', ok: true, data: { success: true, draft: 'handoff' } })
+      .mockResolvedValueOnce({ id: 'req-11', ok: true, data: { success: true, sessionKey: 'agent:main:fork' } });
     const { hostApi } = await import('@/lib/host-api');
 
     await hostApi.sessions.compactionStatus({ sessionKey: 'agent:main:main' });
@@ -741,6 +789,8 @@ describe('hostApi facade', () => {
     await hostApi.sessions.resumeCheckpoints({ sessionKey: 'agent:main:main', limit: 2 });
     await hostApi.sessions.queueDrain({ sessionKey: 'agent:main:main' });
     await hostApi.sessions.compact({ sessionKey: 'agent:main:main', customInstructions: 'preserve decisions' });
+    await hostApi.sessions.compressionArtifact({ sessionKey: 'agent:main:main' });
+    await hostApi.sessions.recoveryContext({ sessionKey: 'agent:main:main', purpose: 'session_handoff' });
     await hostApi.sessions.prepareHandoff({ sessionKey: 'agent:main:main', workspaceId: 'default' });
     await hostApi.sessions.fork({ sessionKey: 'agent:main:main', workspaceId: 'default' });
 
@@ -781,10 +831,20 @@ describe('hostApi facade', () => {
     }));
     expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
       module: 'sessions',
+      action: 'compressionArtifact',
+      payload: { sessionKey: 'agent:main:main' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
+      module: 'sessions',
+      action: 'recoveryContext',
+      payload: { sessionKey: 'agent:main:main', purpose: 'session_handoff' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(10, expect.objectContaining({
+      module: 'sessions',
       action: 'prepareHandoff',
       payload: { sessionKey: 'agent:main:main', workspaceId: 'default' },
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(11, expect.objectContaining({
       module: 'sessions',
       action: 'fork',
       payload: { sessionKey: 'agent:main:main', workspaceId: 'default' },

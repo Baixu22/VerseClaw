@@ -72,6 +72,7 @@ export type CapabilityClaimMatrixEntry = {
 const MATRIX_REPORT = 'reports/report-authenticity-true-false-positive-matrix-2026-07-04.md';
 const RUNTIME_REPORT = 'reports/real-runtime-task-validation-2026-07-04.md';
 const SENSITIVE_BOUNDARY_MATRIX = 'shared/sensitive-content-boundary.ts';
+const RELIABILITY_BOUNDARY_MATRIX = 'shared/reliability-boundaries.ts';
 
 function evidence(
   level: CapabilityClaimEvidenceLevel,
@@ -711,6 +712,7 @@ export const CAPABILITY_CLAIM_MATRIX = [
     },
     evidence: [
       evidence('source', 'Checkpoint and intervention source paths exist.', ['openclaw_runtime/src/gateway/session-compaction-checkpoints.ts', 'openclaw_runtime/src/agents/long-task-control/store.ts']),
+      evidence('source', 'P2-06 reliability matrix scopes local idempotency and excludes global file/command guarantees.', [RELIABILITY_BOUNDARY_MATRIX]),
       evidence('documented-boundary', 'The report says file and command operations do not have global idempotency.', [MATRIX_REPORT]),
     ],
     userPath: {
@@ -721,7 +723,7 @@ export const CAPABILITY_CLAIM_MATRIX = [
     runtimeProof: {
       status: 'partial',
       summary: 'Local mechanisms exist; global idempotency is not proven.',
-      refs: [MATRIX_REPORT],
+      refs: [MATRIX_REPORT, RELIABILITY_BOUNDARY_MATRIX],
     },
     knownExclusions: [
       'No global command idempotency guarantee.',
@@ -827,6 +829,7 @@ export const CAPABILITY_CLAIM_MATRIX = [
     },
     evidence: [
       evidence('source', 'Gateway manager and provider transport fallback-related source paths exist.', ['electron/gateway/manager.ts', 'openclaw_runtime/src/agents/provider-transport-fetch.ts']),
+      evidence('source', 'P2-06 reliability matrix separates Gateway startup, provider fallback, host API, recovery, file write, approval, and Task Loop retry boundaries.', [RELIABILITY_BOUNDARY_MATRIX]),
       evidence('documented-boundary', 'The report scopes this to local mechanisms.', [MATRIX_REPORT]),
     ],
     userPath: {
@@ -837,7 +840,7 @@ export const CAPABILITY_CLAIM_MATRIX = [
     runtimeProof: {
       status: 'partial',
       summary: 'Local fallback mechanisms exist; unified policy is not proven.',
-      refs: [MATRIX_REPORT],
+      refs: [MATRIX_REPORT, RELIABILITY_BOUNDARY_MATRIX],
     },
     knownExclusions: [
       'No system-wide retry policy contract.',
