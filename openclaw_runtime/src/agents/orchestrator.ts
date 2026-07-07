@@ -1,5 +1,9 @@
 import { routeRole, type RoleRouteMode } from "./role-router.js";
 import { BUILT_IN_ROLE_CONTRACTS, type RoleContract } from "./role-contract.js";
+import {
+  classifyComplexity,
+  type ComplexityGateDecision,
+} from "./complexity-gate.js";
 import { resolveTeamTemplate, type TeamTemplate } from "./team-template.js";
 import {
   buildExecutionWaves,
@@ -16,6 +20,11 @@ import {
   type RouteDiagnostics,
   type WorkerCommunicationPolicy,
 } from "./orchestration-protocol.js";
+import {
+  selectRunbookCandidates,
+  type RunbookSelectionResult,
+} from "./runbook-registry.js";
+import { buildTaskGraphFromRunbook } from "./runbook-task-graph.js";
 
 export type OrchestratorRequest = {
   task: string;
@@ -29,6 +38,12 @@ export type OrchestratorRequest = {
   /** Optional team template id. `teamTemplateId` is accepted by gateway/tool callers as an alias. */
   templateId?: string;
   teamTemplateId?: string;
+  explicitRunbookId?: string;
+  runbookId?: string;
+  riskHints?: readonly string[];
+  capabilityHints?: readonly string[];
+  toolHints?: readonly string[];
+  priorFailureCount?: number;
   /** Max non-verifier workers to plan. Existing subagent depth/children limits still apply at spawn time. */
   maxWorkers?: number;
   /** Config carrier used to resolve config-defined team templates. */
@@ -62,6 +77,8 @@ export type OrchestratorPlan = {
   executionWaves: OrchestrationExecutionWave[];
   capabilityGaps: RouteDiagnostics["capabilityGaps"];
   estimatedRepairPolicy: OrchestrationRepairPolicy;
+  complexityDecision: ComplexityGateDecision;
+  runbookSelection: RunbookSelectionResult;
 };
 
 function taskForRole(roleName: string, task: string): string {
@@ -138,7 +155,95 @@ function buildPlanGraph(params: {
   return { taskGraph, executionWaves, estimatedRepairPolicy: repairPolicy, projectedWorkers };
 }
 
+function buildP2Metadata(request: OrchestratorRequest): {
+  complexityDecision: ComplexityGateDecision;
+  runbookSelection: RunbookSelectionResult;
+} {
+  const explicitRunbookId = request.explicitRunbookId?.trim() || request.runbookId?.trim() || undefined;
+  const complexityDecision = classifyComplexity({
+    task: request.task,
+    fileHints: request.fileHints,
+    explicitTeamRequested: Boolean(request.templateId || request.teamTemplateId || request.workers?.length),
+    explicitRunbookId,
+    riskHints: request.riskHints ?? (request.important ? ["important"] : []),
+    capabilityHints: request.capabilityHints,
+    toolHints: request.toolHints,
+    priorFailureCount: request.priorFailureCount,
+  });
+  const runbookSelection = selectRunbookCandidates({
+    task: request.task,
+    explicitRunbookId: complexityDecision.selectedRunbookId ?? explicitRunbookId,
+    suppressSelection: complexityDecision.mode !== "runbook-orchestrated",
+    priorFailureCount: request.priorFailureCount,
+    riskHints: request.riskHints,
+    fileHints: request.fileHints,
+  });
+  return { complexityDecision, runbookSelection };
+}
+
+function attachP2Metadata(
+  plan: Omit<OrchestratorPlan, "complexityDecision" | "runbookSelection">,
+  metadata: ReturnType<typeof buildP2Metadata>,
+): OrchestratorPlan {
+  return { ...plan, ...metadata };
+}
+
+function createRunbookPlan(
+  request: OrchestratorRequest,
+  metadata: ReturnType<typeof buildP2Metadata>,
+): OrchestratorPlan | null {
+  const selected = metadata.runbookSelection.selected;
+  if (!selected) {
+    return null;
+  }
+  const availableRoles = request.roles ?? BUILT_IN_ROLE_CONTRACTS;
+  const graphResult = buildTaskGraphFromRunbook({
+    template: selected.template,
+    task: request.task,
+    graphRunId: selected.template.id,
+    knownRoleNames: availableRoles.map((role) => role.name),
+    selectionTrace: metadata.runbookSelection,
+  });
+  const taskGraph = graphResult.graph;
+  const workerNodes = taskGraphWorkerNodes(taskGraph);
+  const verifierNode = taskGraph.nodes.find((node) => node.isVerifier);
+  const leadRole = selected.template.requiredRoles[0] ?? workerNodes[0]?.roleName ?? "planner";
+  const routeDiagnostics = buildRouteDiagnostics({
+    task: request.task,
+    fileHints: request.fileHints,
+    important: request.important,
+    mode: "lead-workers",
+    selectedRoleNames: [...new Set(taskGraph.nodes.map((node) => node.roleName))],
+    reasons: [`runbook:${selected.template.id}`, ...selected.reasons],
+    roles: availableRoles,
+    templateId: selected.template.id,
+  });
+  const repairPolicy = request.repairPolicy ?? normalizeRepairPolicy(undefined);
+  return attachP2Metadata(
+    {
+      mode: "lead-workers",
+      leadRole,
+      workers: workerNodes.map((node) => ({
+        roleName: node.roleName,
+        task: node.task,
+        modelRef: node.modelRef,
+      })),
+      ...(verifierNode ? { verifierRole: verifierNode.roleName } : {}),
+      templateId: selected.template.id,
+      reasons: [`runbook:${selected.template.id}`, ...selected.reasons],
+      routeDiagnostics,
+      taskGraph,
+      graphStatus: taskGraph.status,
+      executionWaves: buildExecutionWaves(taskGraph, normalizeMaxWorkers(request.maxWorkers)),
+      capabilityGaps: routeDiagnostics.capabilityGaps,
+      estimatedRepairPolicy: repairPolicy,
+    },
+    metadata,
+  );
+}
+
 function createExplicitWorkersPlan(request: OrchestratorRequest): OrchestratorPlan | null {
+  const metadata = buildP2Metadata(request);
   const requestedWorkers = request.workers?.filter((worker) => worker.roleName.trim() && worker.task.trim()) ?? [];
   if (requestedWorkers.length === 0) {
     return null;
@@ -178,18 +283,21 @@ function createExplicitWorkersPlan(request: OrchestratorRequest): OrchestratorPl
     routeDiagnostics,
     graphRunId: "explicit-workers",
   });
-  return {
-    mode: "lead-workers",
-    leadRole,
-    workers: graph.projectedWorkers,
-    reasons,
-    routeDiagnostics,
-    taskGraph: graph.taskGraph,
-    graphStatus: graph.taskGraph.status,
-    executionWaves: graph.executionWaves,
-    capabilityGaps: routeDiagnostics.capabilityGaps,
-    estimatedRepairPolicy: graph.estimatedRepairPolicy,
-  };
+  return attachP2Metadata(
+    {
+      mode: "lead-workers",
+      leadRole,
+      workers: graph.projectedWorkers,
+      reasons,
+      routeDiagnostics,
+      taskGraph: graph.taskGraph,
+      graphStatus: graph.taskGraph.status,
+      executionWaves: graph.executionWaves,
+      capabilityGaps: routeDiagnostics.capabilityGaps,
+      estimatedRepairPolicy: graph.estimatedRepairPolicy,
+    },
+    metadata,
+  );
 }
 
 function templateRoleKnown(template: TeamTemplate, roleName: string | undefined): roleName is string {
@@ -204,6 +312,7 @@ function createTemplatePlan(
   request: OrchestratorRequest,
   template: TeamTemplate,
 ): OrchestratorPlan {
+  const metadata = buildP2Metadata(request);
   const availableRoles = request.roles ?? BUILT_IN_ROLE_CONTRACTS;
   const preferredLead = request.preferredLeadRole?.trim();
   const leadRole = templateRoleKnown(template, preferredLead)
@@ -254,25 +363,29 @@ function createTemplatePlan(
     routeDiagnostics,
     graphRunId: template.id,
   });
-  return {
-    mode: template.mode,
-    leadRole,
-    workers: graph.projectedWorkers,
-    ...(verifierRole ? { verifierRole } : {}),
-    ...(verifierBinding ? { verifierModelRef: verifierBinding.modelRef ?? null } : {}),
-    templateId: template.id,
-    reasons,
-    routeDiagnostics,
-    taskGraph: graph.taskGraph,
-    graphStatus: graph.taskGraph.status,
-    executionWaves: graph.executionWaves,
-    capabilityGaps: routeDiagnostics.capabilityGaps,
-    estimatedRepairPolicy: graph.estimatedRepairPolicy,
-  };
+  return attachP2Metadata(
+    {
+      mode: template.mode,
+      leadRole,
+      workers: graph.projectedWorkers,
+      ...(verifierRole ? { verifierRole } : {}),
+      ...(verifierBinding ? { verifierModelRef: verifierBinding.modelRef ?? null } : {}),
+      templateId: template.id,
+      reasons,
+      routeDiagnostics,
+      taskGraph: graph.taskGraph,
+      graphStatus: graph.taskGraph.status,
+      executionWaves: graph.executionWaves,
+      capabilityGaps: routeDiagnostics.capabilityGaps,
+      estimatedRepairPolicy: graph.estimatedRepairPolicy,
+    },
+    metadata,
+  );
 }
 
 export function createOrchestratorPlan(request: OrchestratorRequest): OrchestratorPlan {
   const availableRoles = request.roles ?? BUILT_IN_ROLE_CONTRACTS;
+  const metadata = buildP2Metadata(request);
   const explicitPlan = createExplicitWorkersPlan(request);
   if (explicitPlan) {
     return explicitPlan;
@@ -281,6 +394,10 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
   const template = resolveTeamTemplate(templateId, request.cfg);
   if (template) {
     return createTemplatePlan(request, template);
+  }
+  const runbookPlan = createRunbookPlan(request, metadata);
+  if (runbookPlan) {
+    return runbookPlan;
   }
   const route = routeRole({
     task: request.task,
@@ -324,18 +441,21 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
       routeDiagnostics,
       graphRunId: "router",
     });
-    return {
-      mode: route.mode,
-      leadRole: leadName,
-      workers: graph.projectedWorkers,
-      reasons,
-      routeDiagnostics,
-      taskGraph: graph.taskGraph,
-      graphStatus: graph.taskGraph.status,
-      executionWaves: graph.executionWaves,
-      capabilityGaps: routeDiagnostics.capabilityGaps,
-      estimatedRepairPolicy: graph.estimatedRepairPolicy,
-    };
+    return attachP2Metadata(
+      {
+        mode: route.mode,
+        leadRole: leadName,
+        workers: graph.projectedWorkers,
+        reasons,
+        routeDiagnostics,
+        taskGraph: graph.taskGraph,
+        graphStatus: graph.taskGraph.status,
+        executionWaves: graph.executionWaves,
+        capabilityGaps: routeDiagnostics.capabilityGaps,
+        estimatedRepairPolicy: graph.estimatedRepairPolicy,
+      },
+      metadata,
+    );
   }
   const workerNames = [...new Set(route.supporting.map((match) => match.role.name))];
   const verifierRole = route.mode === "adversarial-review" ? "skeptic" : "reviewer";
@@ -366,19 +486,22 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
     routeDiagnostics,
     graphRunId: route.mode,
   });
-  return {
-    mode: route.mode,
-    leadRole,
-    workers: graph.projectedWorkers,
-    verifierRole,
-    reasons: finalReasons,
-    routeDiagnostics,
-    taskGraph: graph.taskGraph,
-    graphStatus: graph.taskGraph.status,
-    executionWaves: graph.executionWaves,
-    capabilityGaps: routeDiagnostics.capabilityGaps,
-    estimatedRepairPolicy: graph.estimatedRepairPolicy,
-  };
+  return attachP2Metadata(
+    {
+      mode: route.mode,
+      leadRole,
+      workers: graph.projectedWorkers,
+      verifierRole,
+      reasons: finalReasons,
+      routeDiagnostics,
+      taskGraph: graph.taskGraph,
+      graphStatus: graph.taskGraph.status,
+      executionWaves: graph.executionWaves,
+      capabilityGaps: routeDiagnostics.capabilityGaps,
+      estimatedRepairPolicy: graph.estimatedRepairPolicy,
+    },
+    metadata,
+  );
 }
 
 export function shouldUpgradeToTeam(plan: OrchestratorPlan): boolean {
