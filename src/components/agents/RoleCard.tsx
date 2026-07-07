@@ -78,11 +78,18 @@ export function RoleCard({ role, selected, onSelect, tt }: RoleCardProps) {
   };
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onSelect}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect();
+        }
+      }}
       className={cn(
-        'text-left rounded-xl border p-3 transition-colors w-full',
+        'text-left rounded-xl border p-3 transition-colors w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         selected
           ? 'border-primary bg-primary/5'
           : 'border-transparent bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10',
@@ -182,7 +189,7 @@ export function RoleCard({ role, selected, onSelect, tt }: RoleCardProps) {
           )}
         </div>
       )}
-    </button>
+    </div>
   );
 }
 

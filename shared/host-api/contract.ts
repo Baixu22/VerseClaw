@@ -1191,6 +1191,45 @@ export type AgentUpdateModelPayload = { id: string; modelRef: string | null };
 export type AgentUpdateReasoningEffortPayload = { id: string; reasoningEffort: AgentReasoningEffort };
 export type AgentIdPayload = { id: string };
 export type AgentChannelPayload = { id: string; channelType: string };
+export type RoleConfigEffort = 'low' | 'medium' | 'high';
+export type RoleConfigPermissions = {
+  filesystem?: 'none' | 'read' | 'write' | 'admin';
+  network?: 'none' | 'limited' | 'full';
+  commands?: string[];
+  readPaths?: string[];
+  writePaths?: string[];
+};
+export type RoleUpsertConfigRolePayload = {
+  name: string;
+  displayName: string;
+  description?: string;
+  rolePrompt: string;
+  tools?: string[];
+  effort: RoleConfigEffort;
+  permissions?: RoleConfigPermissions;
+  tags?: string[];
+};
+export type RoleConfigRoleSummary = {
+  name: string;
+  displayName: string;
+  description?: string;
+  rolePrompt: string;
+  tools: string[];
+  effort: RoleConfigEffort;
+  permissions: {
+    filesystem: 'none' | 'read' | 'write' | 'admin';
+    network: 'none' | 'limited' | 'full';
+    commands: string[];
+    readPaths?: string[];
+    writePaths?: string[];
+  };
+  tags: string[];
+  origin: 'config';
+};
+export type RoleUpsertConfigRoleResult = HostSuccess & {
+  role: RoleConfigRoleSummary;
+  pendingRuntimeRefresh: boolean;
+};
 export type AgentBootstrapResult = HostSuccess & {
   agentId: string;
   soulMd: string;
@@ -3674,6 +3713,9 @@ export type HostApiContract = {
     delete: (payload: AgentIdPayload) => AgentSnapshotResult;
     assignChannel: (payload: AgentChannelPayload) => AgentSnapshotResult;
     removeChannel: (payload: AgentChannelPayload) => AgentSnapshotResult;
+  };
+  roles: {
+    upsertConfigRole: (payload: RoleUpsertConfigRolePayload) => RoleUpsertConfigRoleResult;
   };
   diagnostics: {
     gatewaySnapshot: () => DiagnosticsGatewaySnapshotResult;

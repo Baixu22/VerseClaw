@@ -1207,6 +1207,8 @@
     "compaction": {
       "compress": "現在のセッションを圧縮",
       "compressTooltip": "現在のセッション履歴を圧縮",
+      "viewEvidence": "圧縮エビデンスを表示",
+      "viewEvidenceTooltip": "続行前に圧縮エビデンスを確認",
       "dialogTitle": "現在のセッションを圧縮",
       "dialogDescription": "確認後、アクティブなセッションの古いチャット履歴を要約します。長期タスクの状態は Task Ledger と Context Pack の参照に残ります。",
       "tokenUsage": "トークン使用量",
@@ -1234,6 +1236,30 @@
       "toastSuccessWithTokens": "セッションを圧縮しました: {{before}} -> {{after}} tokens{{quality}}",
       "toastNoop": "圧縮しませんでした: {{reason}}",
       "toastFailed": "セッションの圧縮に失敗しました",
+      "artifactViewer": {
+        "title": "圧縮エビデンス",
+        "description": "復旧コンテキストの準備やセッション分岐の前に、境界付きの圧縮アーティファクトを確認します。",
+        "summary": "要約",
+        "objective": "目的",
+        "currentState": "現在の状態",
+        "identifiers": "識別子",
+        "quality": "品質",
+        "warnings": "警告",
+        "unverifiedClaims": "未検証の主張",
+        "reviewNeeded": "レビューが必要",
+        "empty": "利用できる圧縮エビデンスはまだありません。",
+        "noWarnings": "警告は報告されていません。",
+        "noUnverifiedClaims": "未検証の主張は報告されていません。",
+        "noReviewNeeded": "レビュー項目は報告されていません。",
+        "prepareRecovery": "復旧コンテキストを準備",
+        "forkSession": "Fork/branch session",
+        "close": "閉じる",
+        "qualityScore": "スコア {{score}}%",
+        "qualityCoverage": "エビデンス {{evidence}}% · フィールド {{fields}}% · 復旧 {{tokens}} tokens",
+        "checkpointId": "Checkpoint {{checkpointId}}",
+        "sessionKey": "Session {{sessionKey}}",
+        "loadFailed": "圧縮エビデンスの読み込みに失敗しました"
+      },
       "reason": {
         "active_run": "現在の実行が終了すると利用できます",
         "already_compacted": "すでに圧縮済みです",
@@ -1484,10 +1510,10 @@
       "queue": "キュー",
       "queueTooltip": "現在のランを保ち、この追加入力を後で再生します。",
       "interrupt": "中断",
-      "interruptTooltip": "危険なロールバック前に現在のランを止めるか方向転換します。"
+      "interruptTooltip": "リスクのある復旧操作の前に現在のランを止めるか誘導します。"
     },
     "rollbackPlan": {
-      "title": "ロールバックと復旧計画",
+      "title": "復旧支援",
       "open": "開く",
       "risk": {
         "safe": "安全",
@@ -1508,15 +1534,17 @@
         "queue": "キュー",
         "context": "コンテキスト",
         "terminal": "ターミナル",
-        "git": "Git ロールバック",
+        "git": "Git 確認",
         "taskLedger": "Task Ledger",
         "memory": "メモリ"
       },
-      "destructiveWarning": "破壊的なロールバックは承認付きの Git、ファイル、またはターミナル操作を通してください。",
+      "destructiveWarning": "リスクのある Git、ファイル、ターミナル操作は提案のみで、実行には明示的な確認が必要です。",
       "actions": {
         "checkpoint-handoff": {
           "title": "チェックポイント Handoff を準備",
-          "detail": "完全な transcript を再生せず、{{trigger}} チェックポイントから再開します。"
+          "detail": "{{trigger}} チェックポイントから確認可能な handoff コンテキストを準備します。",
+          "detailEvidenceBacked": "{{trigger}} チェックポイントから handoff コンテキストを準備します。{{fileCount}} 件のファイル fingerprint と {{toolCount}} 件のツール結果が証拠としてあります。",
+          "detailNoEvidence": "{{trigger}} チェックポイントから handoff コンテキストを準備します。fingerprint またはツール証拠がないため、続行前に手動確認してください。"
         },
         "drain-queue": {
           "title": "キュー済みフォローアップを送信",
@@ -1528,8 +1556,8 @@
           "detailDefault": "危険な作業を続ける前に新しい境界付きコンテキストを作ります。"
         },
         "review-git": {
-          "title": "ファイルロールバックを確認",
-          "detail": "編集を黙って破棄せず、Git パネルの revert/stash 承認操作を使います。"
+          "title": "ファイル復旧オプションを確認",
+          "detail": "Git パネルの revert または stash は確認後にのみ使い、編集を黙って破棄しません。"
         },
         "task-ledger-review": {
           "title": "Task Ledger に復旧証拠を記録",
@@ -1540,8 +1568,8 @@
           "detail": "有用な復旧事実は Knowledge 下書きまたはメモリ提案にし、永続メモリへ自動保存しません。"
         },
         "terminal-interrupt": {
-          "title": "破壊的ロールバック前に中断",
-          "detail": "ターミナル、Git、ファイルのロールバック前に現在のランを止めるか誘導します。"
+          "title": "リスクのある復旧操作前に中断",
+          "detail": "ターミナル、Git、ファイル操作の前に現在のランを止めるか誘導します。"
         },
         "terminal-control": {
           "title": "ターミナル介入操作を開く",
@@ -1549,10 +1577,10 @@
         }
       },
       "summary": {
-        "checkpoint": "{{trigger}} チェックポイントから復旧できます。",
+        "checkpoint": "{{trigger}} チェックポイントを復旧支援に使えます。",
         "queue": "{{count}} 件のフォローアップがキュー済みです。",
         "truncated": "{{count}} 件の transcript メッセージが切り詰め済みです。Handoff または圧縮を優先してください。",
-        "default": "緊急のロールバック圧力はありません。破壊的操作の前に確認優先で復旧してください。"
+        "default": "緊急の復旧圧力はありません。リスクのある操作の前に提案内容を確認してください。"
       },
       "terminal": {
         "interrupted": "ターミナル中断を送信しました。",

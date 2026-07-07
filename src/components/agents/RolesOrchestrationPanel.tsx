@@ -19,7 +19,9 @@ import {
   ListChecks,
   Loader2,
   PauseCircle,
+  Pencil,
   Play,
+  Plus,
   RefreshCw,
   ShieldAlert,
   SlidersHorizontal,
@@ -50,7 +52,7 @@ import {
 import { buildOrchestrationPlanLedgerEvents } from '@/lib/task-ledger-plan-projection';
 import { useSettingsStore } from '@/stores/settings';
 import { useWorkspacesStore } from '@/stores/workspaces';
-import type { MemoryProposal } from '@shared/host-api/contract';
+import type { MemoryProposal, RoleConfigEffort, RoleConfigPermissions } from '@shared/host-api/contract';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
 import type { TaskLoopLifecycleEvent } from '@shared/host-events/contract';
 import type { MissionLifecycleEvent, MissionStatus } from '@shared/types/mission-control';
@@ -217,7 +219,17 @@ type MemoryProposalView = {
   batchId?: string | null;
   evidenceStatus?: string;
   retentionReason?: string | null;
-  proposal?: { content?: string; roleTags?: string[]; sensitivity?: string; confidence?: number; importance?: number; applicableRoles?: string[] };
+  source?: string;
+  confidence?: number;
+  proposal?: {
+    content?: string;
+    roleTags?: string[];
+    sensitivity?: string;
+    confidence?: number;
+    importance?: number;
+    applicableRoles?: string[];
+    source?: string;
+  };
 };
 
 type MemoryDraftState = {
@@ -235,6 +247,19 @@ type MemoryDraftState = {
   expiresAt: string;
   evidenceRef: string;
   evidenceExcerpt: string;
+};
+
+type RoleConfigDraftState = {
+  name: string;
+  displayName: string;
+  description: string;
+  rolePrompt: string;
+  tools: string;
+  effort: RoleConfigEffort;
+  filesystem: NonNullable<RoleConfigPermissions['filesystem']>;
+  network: NonNullable<RoleConfigPermissions['network']>;
+  commands: string;
+  tags: string;
 };
 
 type MemoryProposalPreviewView = {
@@ -434,6 +459,25 @@ function joinMemoryList(value?: string[]): string {
   return (value ?? []).join(', ');
 }
 
+function defaultRoleConfigDraft(role?: RoleCardData | null): RoleConfigDraftState {
+  return {
+    name: role?.name ?? '',
+    displayName: role?.displayName ?? '',
+    description: role?.description ?? '',
+    rolePrompt: role?.rolePrompt ?? '',
+    tools: joinMemoryList(role?.tools),
+    effort: (role?.effort === 'low' || role?.effort === 'medium' || role?.effort === 'high') ? role.effort : 'medium',
+    filesystem: role?.permissions?.filesystem === 'none' || role?.permissions?.filesystem === 'read' || role?.permissions?.filesystem === 'write' || role?.permissions?.filesystem === 'admin'
+      ? role.permissions.filesystem
+      : 'read',
+    network: role?.permissions?.network === 'none' || role?.permissions?.network === 'limited' || role?.permissions?.network === 'full'
+      ? role.permissions.network
+      : 'none',
+    commands: joinMemoryList(role?.permissions?.commands),
+    tags: joinMemoryList(role?.tags),
+  };
+}
+
 function defaultMemoryDraft(roleName?: string | null): MemoryDraftState {
   return {
     type: 'procedure',
@@ -495,6 +539,23 @@ function draftFromProposal(proposal: Record<string, unknown>, roleName?: string 
   };
 }
 
+function proposalSourceLabel(proposal: MemoryProposalView): string {
+  return proposal.proposal?.source || proposal.source || 'metadata-missing';
+}
+
+function proposalConfidenceScore(proposal: MemoryProposalView): number | null {
+  const value = typeof proposal.proposal?.confidence === 'number'
+    ? proposal.proposal.confidence
+    : typeof proposal.confidence === 'number'
+      ? proposal.confidence
+      : null;
+  return value === null ? null : scoreToPercent(value);
+}
+
+function proposalReviewReason(proposal: MemoryProposalView): string | null {
+  return proposal.reasonSummary || proposal.reviewReason || proposal.permissionReason || proposal.retentionReason || null;
+}
+
 export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[] }) {
   const { t } = useTranslation('agents');
   const roleMemoryEnabled = useSettingsStore((state) => state.roleMemoryEnabled);
@@ -510,6 +571,11 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [roleConfigMode, setRoleConfigMode] = useState<'create' | 'edit' | null>(null);
+  const [roleConfigDraft, setRoleConfigDraft] = useState<RoleConfigDraftState>(() => defaultRoleConfigDraft());
+  const [roleConfigSaving, setRoleConfigSaving] = useState(false);
+  const [roleConfigError, setRoleConfigError] = useState<string | null>(null);
+  const [roleConfigPendingName, setRoleConfigPendingName] = useState<string | null>(null);
   const [task, setTask] = useState('');
   const [plan, setPlan] = useState<PlanView | null>(null);
   const [planEditDraft, setPlanEditDraft] = useState<PlanEditDraft | null>(null);
@@ -623,23 +689,105 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     toast.message(tt('roles.memoryDisabledToast', 'Role Memory is disabled in Settings.'));
   }, [tt]);
 
-  const loadRoles = useCallback(async () => {
+  const loadRoles = useCallback(async (): Promise<RoleCardData[]> => {
     setLoading(true);
     try {
       const result = await hostApi.gateway.rpc('roles.list');
       const unwrapped = unwrapRpc(result);
       if (!unwrapped.ok) {
         toast.error(unwrapped.message);
-        return;
+        return [];
       }
       const list = Array.isArray(unwrapped.data.roles) ? (unwrapped.data.roles as RoleCardData[]) : [];
       setRoles(list);
+      return list;
     } catch (err) {
       toast.error(String(err));
+      return [];
     } finally {
       setLoading(false);
     }
   }, []);
+
+  const selectedRoleConfig = useMemo(
+    () => roles.find((role) => role.name === selectedRole && role.origin === 'config') ?? null,
+    [roles, selectedRole],
+  );
+  const roleConfigNameValid = /^[a-z][a-z0-9-]{1,63}$/.test(roleConfigDraft.name.trim());
+  const roleConfigCanSave =
+    roleConfigNameValid &&
+    roleConfigDraft.displayName.trim().length > 0 &&
+    roleConfigDraft.rolePrompt.trim().length > 0 &&
+    !roleConfigSaving;
+
+  const updateRoleConfigDraft = useCallback((patch: Partial<RoleConfigDraftState>) => {
+    setRoleConfigDraft((prev) => ({ ...prev, ...patch }));
+    setRoleConfigError(null);
+  }, []);
+
+  const startCreateConfigRole = useCallback(() => {
+    setRoleConfigMode('create');
+    setRoleConfigDraft(defaultRoleConfigDraft());
+    setRoleConfigError(null);
+    setRoleConfigPendingName(null);
+  }, []);
+
+  const startEditConfigRole = useCallback(() => {
+    if (!selectedRoleConfig) return;
+    setRoleConfigMode('edit');
+    setRoleConfigDraft(defaultRoleConfigDraft(selectedRoleConfig));
+    setRoleConfigError(null);
+    setRoleConfigPendingName(null);
+  }, [selectedRoleConfig]);
+
+  const cancelRoleConfigEdit = useCallback(() => {
+    setRoleConfigMode(null);
+    setRoleConfigDraft(defaultRoleConfigDraft());
+    setRoleConfigError(null);
+  }, []);
+
+  const saveRoleConfig = useCallback(async () => {
+    if (!roleConfigCanSave) {
+      setRoleConfigError(tt('roles.configValidationError', 'Name, display name, and role prompt are required.'));
+      return;
+    }
+    const roleName = roleConfigDraft.name.trim();
+    setRoleConfigSaving(true);
+    setRoleConfigError(null);
+    try {
+      const result = await hostApi.roles.upsertConfigRole({
+        name: roleName,
+        displayName: roleConfigDraft.displayName.trim(),
+        description: roleConfigDraft.description.trim() || undefined,
+        rolePrompt: roleConfigDraft.rolePrompt.trim(),
+        tools: splitMemoryList(roleConfigDraft.tools),
+        effort: roleConfigDraft.effort,
+        permissions: {
+          filesystem: roleConfigDraft.filesystem,
+          network: roleConfigDraft.network,
+          commands: splitMemoryList(roleConfigDraft.commands),
+        },
+        tags: splitMemoryList(roleConfigDraft.tags),
+      });
+      const refreshedRoles = await loadRoles();
+      const runtimeHasRole = refreshedRoles.some((role) => role.name === roleName);
+      if (result.pendingRuntimeRefresh || !runtimeHasRole) {
+        setRoleConfigPendingName(roleName);
+        toast.message(tt('roles.configPendingRuntimeToast', 'Saved to config. It will be available after the runtime refreshes.'));
+      } else {
+        setRoleConfigPendingName(null);
+        toast.success(tt('roles.configSaved', 'Role saved'));
+      }
+      setSelectedRole(roleName);
+      setRoleConfigMode(null);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setRoleConfigError(message);
+      toast.error(tt('roles.configSaveFailed', 'Failed to save role: {{error}}', { error: message }));
+    } finally {
+      setRoleConfigSaving(false);
+    }
+  }, [loadRoles, roleConfigCanSave, roleConfigDraft, tt]);
 
   const loadRoutingMemoDashboard = useCallback(async () => {
     const workspaceDir = activeWorkspace?.rootPath;
@@ -1548,11 +1696,196 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
           {/* Section A: available roles */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{tt('roles.available', 'Available roles')}</span>
-              <Button variant="ghost" size="sm" onClick={() => void loadRoles()} disabled={loading}>
-                <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
-              </Button>
+              <div className="min-w-0">
+                <span className="text-sm font-medium">{tt('roles.available', 'Available roles')}</span>
+                <p className="text-2xs text-muted-foreground">
+                  {tt('roles.configBoundaryHint', 'Built-in roles are read-only; custom roles are saved to OpenClaw config.')}
+                </p>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {selectedRoleConfig && (
+                  <Button
+                    data-testid="role-config-edit-selected"
+                    variant="outline"
+                    size="sm"
+                    onClick={startEditConfigRole}
+                  >
+                    <Pencil className="mr-1 h-3.5 w-3.5" />
+                    {tt('roles.configEdit', 'Edit')}
+                  </Button>
+                )}
+                <Button
+                  data-testid="role-config-create"
+                  variant="outline"
+                  size="sm"
+                  onClick={startCreateConfigRole}
+                >
+                  <Plus className="mr-1 h-3.5 w-3.5" />
+                  {tt('roles.configCreate', 'New role')}
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => void loadRoles()} disabled={loading}>
+                  <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+                </Button>
+              </div>
             </div>
+            {roleConfigPendingName && (
+              <div
+                data-testid="role-config-pending-runtime"
+                className="rounded-md border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400"
+              >
+                {tt('roles.configPendingRuntime', 'Saved to config. It will be available after the runtime refreshes.')}
+              </div>
+            )}
+            {roleConfigMode && (
+              <div className="rounded-md border border-border/60 bg-surface-input p-3" data-testid="role-config-form">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium">
+                      {roleConfigMode === 'edit'
+                        ? tt('roles.configEditTitle', 'Edit config role')
+                        : tt('roles.configCreateTitle', 'Create config role')}
+                    </p>
+                    <p className="text-2xs text-muted-foreground">
+                      {tt('roles.configFormHint', 'This saves a config role only. Runtime availability depends on the next role refresh.')}
+                    </p>
+                  </div>
+                  <Badge variant="outline" className="w-fit rounded-full text-2xs">
+                    {tt('roles.originCustom', 'Custom')}
+                  </Badge>
+                </div>
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <label className="space-y-1 text-2xs font-medium text-muted-foreground">
+                    {tt('roles.configName', 'Name')}
+                    <Input
+                      data-testid="role-config-name"
+                      value={roleConfigDraft.name}
+                      onChange={(event) => updateRoleConfigDraft({ name: event.target.value })}
+                      disabled={roleConfigMode === 'edit'}
+                      placeholder="qa-helper"
+                      className="h-8 text-xs"
+                    />
+                  </label>
+                  <label className="space-y-1 text-2xs font-medium text-muted-foreground">
+                    {tt('roles.configDisplayName', 'Display name')}
+                    <Input
+                      data-testid="role-config-display-name"
+                      value={roleConfigDraft.displayName}
+                      onChange={(event) => updateRoleConfigDraft({ displayName: event.target.value })}
+                      placeholder={tt('roles.configDisplayNamePlaceholder', 'QA Helper')}
+                      className="h-8 text-xs"
+                    />
+                  </label>
+                  <label className="space-y-1 text-2xs font-medium text-muted-foreground md:col-span-2">
+                    {tt('roles.configDescription', 'Description')}
+                    <Input
+                      data-testid="role-config-description"
+                      value={roleConfigDraft.description}
+                      onChange={(event) => updateRoleConfigDraft({ description: event.target.value })}
+                      placeholder={tt('roles.configDescriptionPlaceholder', 'Short role catalog description')}
+                      className="h-8 text-xs"
+                    />
+                  </label>
+                  <label className="space-y-1 text-2xs font-medium text-muted-foreground md:col-span-2">
+                    {tt('roles.configRolePrompt', 'Role prompt')}
+                    <Textarea
+                      data-testid="role-config-prompt"
+                      value={roleConfigDraft.rolePrompt}
+                      onChange={(event) => updateRoleConfigDraft({ rolePrompt: event.target.value })}
+                      placeholder={tt('roles.configPromptPlaceholder', 'Describe the role boundary and expected behavior')}
+                      className="min-h-[84px] text-xs"
+                    />
+                  </label>
+                  <label className="space-y-1 text-2xs font-medium text-muted-foreground">
+                    {tt('roles.configTools', 'Tools')}
+                    <Input
+                      data-testid="role-config-tools"
+                      value={roleConfigDraft.tools}
+                      onChange={(event) => updateRoleConfigDraft({ tools: event.target.value })}
+                      placeholder="read, shell"
+                      className="h-8 text-xs"
+                    />
+                  </label>
+                  <label className="space-y-1 text-2xs font-medium text-muted-foreground">
+                    {tt('roles.configTags', 'Tags')}
+                    <Input
+                      data-testid="role-config-tags"
+                      value={roleConfigDraft.tags}
+                      onChange={(event) => updateRoleConfigDraft({ tags: event.target.value })}
+                      placeholder="qa, docs"
+                      className="h-8 text-xs"
+                    />
+                  </label>
+                  <div className="grid gap-2 sm:grid-cols-3 md:col-span-2">
+                    <label className="space-y-1 text-2xs font-medium text-muted-foreground">
+                      {tt('roles.configEffort', 'Effort')}
+                      <Select value={roleConfigDraft.effort} onValueChange={(value) => updateRoleConfigDraft({ effort: value as RoleConfigEffort })}>
+                        <SelectTrigger size="sm" data-testid="role-config-effort"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="low">low</SelectItem>
+                          <SelectItem value="medium">medium</SelectItem>
+                          <SelectItem value="high">high</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </label>
+                    <label className="space-y-1 text-2xs font-medium text-muted-foreground">
+                      {tt('roles.configFilesystem', 'Filesystem')}
+                      <Select value={roleConfigDraft.filesystem} onValueChange={(value) => updateRoleConfigDraft({ filesystem: value as RoleConfigDraftState['filesystem'] })}>
+                        <SelectTrigger size="sm" data-testid="role-config-filesystem"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">none</SelectItem>
+                          <SelectItem value="read">read</SelectItem>
+                          <SelectItem value="write">write</SelectItem>
+                          <SelectItem value="admin">admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </label>
+                    <label className="space-y-1 text-2xs font-medium text-muted-foreground">
+                      {tt('roles.configNetwork', 'Network')}
+                      <Select value={roleConfigDraft.network} onValueChange={(value) => updateRoleConfigDraft({ network: value as RoleConfigDraftState['network'] })}>
+                        <SelectTrigger size="sm" data-testid="role-config-network"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">none</SelectItem>
+                          <SelectItem value="limited">limited</SelectItem>
+                          <SelectItem value="full">full</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </label>
+                  </div>
+                  <label className="space-y-1 text-2xs font-medium text-muted-foreground md:col-span-2">
+                    {tt('roles.configCommands', 'Commands')}
+                    <Input
+                      data-testid="role-config-commands"
+                      value={roleConfigDraft.commands}
+                      onChange={(event) => updateRoleConfigDraft({ commands: event.target.value })}
+                      placeholder="pnpm, git"
+                      className="h-8 text-xs"
+                    />
+                  </label>
+                </div>
+                {!roleConfigNameValid && roleConfigDraft.name.trim() && (
+                  <p className="mt-2 text-2xs text-amber-700 dark:text-amber-400">
+                    {tt('roles.configNamePattern', 'Use lowercase letters, numbers, and hyphens; start with a letter.')}
+                  </p>
+                )}
+                {roleConfigError && (
+                  <p className="mt-2 text-2xs text-red-700 dark:text-red-400">{roleConfigError}</p>
+                )}
+                <div className="mt-3 flex flex-wrap justify-end gap-2">
+                  <Button size="sm" variant="ghost" onClick={cancelRoleConfigEdit}>
+                    {tt('roles.cancel', 'Cancel')}
+                  </Button>
+                  <Button
+                    data-testid="role-config-save"
+                    size="sm"
+                    onClick={() => void saveRoleConfig()}
+                    disabled={!roleConfigCanSave}
+                  >
+                    {roleConfigSaving && <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />}
+                    {tt('roles.configSave', 'Save role')}
+                  </Button>
+                </div>
+              </div>
+            )}
             {loading && roles.length === 0 ? (
               <div className="flex justify-center py-4"><LoadingSpinner /></div>
             ) : (
@@ -1662,12 +1995,12 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                             : tt('roles.memoryComposerTitle', 'New memory proposal')}
                         </span>
                       </div>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground" data-testid="role-memory-composer-info" />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs text-xs">
-                          {tt('roles.memoryComposerHint', 'Low-risk proposals become active automatically; conflicts and sensitive changes wait for review.')}
+                          {tt('roles.memoryComposerHint', 'Low-risk proposals may be accepted by policy; conflicts and sensitive changes wait for review.')}
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -1880,7 +2213,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                         <Layers3 className="h-3.5 w-3.5" />
                         {tt('roles.memoryTabActive', 'Active')}
                       </TabsTrigger>
-                      <TabsTrigger value="review" className="gap-1.5 text-xs">
+                      <TabsTrigger value="review" className="gap-1.5 text-xs" data-testid="role-memory-review-tab">
                         <Clock3 className="h-3.5 w-3.5" />
                         {tt('roles.memoryTabReview', 'Review')} {reviewMemoryProposals.length ? `(${reviewMemoryProposals.length})` : ''}
                       </TabsTrigger>
@@ -2022,6 +2355,24 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                                 )}
                               </div>
                               <p className="line-clamp-3 text-sm leading-5 text-foreground">{proposal.proposal?.content}</p>
+                              <div className="grid gap-2 rounded-md border border-border/60 bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground md:grid-cols-3">
+                                <div data-testid="role-memory-proposal-source">
+                                  <span className="font-medium text-foreground">{tt('roles.memoryProposalSource', 'Source')}</span>
+                                  <span className="ml-1">{proposalSourceLabel(proposal)}</span>
+                                </div>
+                                <div data-testid="role-memory-proposal-confidence">
+                                  <span className="font-medium text-foreground">{tt('roles.memoryProposalConfidence', 'Confidence')}</span>
+                                  <span className="ml-1">
+                                    {proposalConfidenceScore(proposal) === null
+                                      ? tt('roles.memoryProposalMetadataMissing', 'metadata missing')
+                                      : `${proposalConfidenceScore(proposal)}%`}
+                                  </span>
+                                </div>
+                                <div data-testid="role-memory-proposal-needs-review">
+                                  <span className="font-medium text-foreground">{tt('roles.memoryProposalReviewState', 'Review')}</span>
+                                  <span className="ml-1">{proposalReviewReason(proposal) || tt('roles.memoryNoReason', 'No reason provided')}</span>
+                                </div>
+                              </div>
                               <div className="rounded-md bg-background/70 px-2.5 py-2">
                                 <p className="text-2xs font-medium text-muted-foreground">{tt('roles.memoryReviewReason', 'Gatekeeper reason')}</p>
                                 <p className="mt-1 text-xs text-foreground">{proposal.reasonSummary || proposal.reviewReason || tt('roles.memoryNoReason', 'No reason provided')}</p>

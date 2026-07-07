@@ -10,6 +10,7 @@ import { resolveSupportedLanguage } from '@shared/language';
 import type { WorkProviderConfig, WorkProviderId } from '@shared/types/work-provider';
 
 type Theme = 'light' | 'dark' | 'system';
+export type UiDepthMode = 'basic' | 'advanced';
 
 interface SettingsState {
   // General
@@ -37,6 +38,7 @@ interface SettingsState {
   sidebarCollapsed: boolean;
   sidebarWidth: number;
   devModeUnlocked: boolean;
+  uiDepthMode: UiDepthMode;
   workProviders: WorkProviderConfig;
 
   // Setup
@@ -64,6 +66,7 @@ interface SettingsState {
   setSidebarCollapsed: (value: boolean) => void;
   setSidebarWidth: (value: number) => void;
   setDevModeUnlocked: (value: boolean) => void;
+  setUiDepthMode: (value: UiDepthMode) => void;
   setWorkProviderEnabled: (providerId: WorkProviderId, enabled: boolean) => void;
   markSetupComplete: () => void;
   resetSettings: () => void;
@@ -90,6 +93,7 @@ const defaultSettings = {
   sidebarCollapsed: false,
   sidebarWidth: 280,
   devModeUnlocked: false,
+  uiDepthMode: 'basic' as UiDepthMode,
   workProviders: {} as WorkProviderConfig,
   setupComplete: false,
 };
@@ -104,12 +108,13 @@ export const useSettingsStore = create<SettingsState>()(
       init: async () => {
         try {
           const settings = await hostApi.settings.getAll();
+          const { uiDepthMode: _hostUiDepthMode, ...hostSettings } = settings as Record<string, unknown>;
           const resolvedLanguage = settings.language
             ? resolveSupportedLanguage(settings.language)
             : undefined;
           set((state) => ({
             ...state,
-            ...settings,
+            ...hostSettings,
             ...(resolvedLanguage ? { language: resolvedLanguage } : {}),
             ...(typeof settings.sidebarWidth === 'number'
               ? { sidebarWidth: clampSidebarWidth(settings.sidebarWidth) }
@@ -179,6 +184,7 @@ export const useSettingsStore = create<SettingsState>()(
         set({ devModeUnlocked });
         void hostApi.settings.set('devModeUnlocked', devModeUnlocked).catch(() => { });
       },
+      setUiDepthMode: (uiDepthMode) => set({ uiDepthMode }),
       setWorkProviderEnabled: (providerId, enabled) => {
         set((state) => {
           const workProviders = {

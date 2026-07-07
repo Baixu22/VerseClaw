@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { stat } from "node:fs/promises";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { AgentConfig } from "../config/types.agents.js";
 import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from "../config/agent-limits.js";
@@ -81,6 +82,7 @@ import {
   runtimeEvidenceRefsFromResumeCheckpoint,
   type RuntimeResumeCheckpoint,
 } from "./long-task-control/store.js";
+import { computeCheckpointFileHashes } from "./long-task-control/file-fingerprint.js";
 import {
   ensureLongTaskLedgerRoot,
   type LongTaskLedgerRootInput,
@@ -2243,6 +2245,7 @@ function emitTaskLoopCheckpointShadow(
   deps: TaskLoopControllerDeps,
   checkpoint: RuntimeResumeCheckpoint,
   reviewNeededItems: string[],
+  fileHashes: Record<string, string>,
 ): void {
   const checkpointId = checkpoint.id ?? `task-loop:${record.loopRunId}:iteration:${record.iteration}:${record.phase}`;
   emitRuntimeTaskEventShadow(record, deps, () => {
@@ -2257,6 +2260,8 @@ function emitTaskLoopCheckpointShadow(
       checkpoint,
       openObligations: reviewNeededItems,
       contextSummary: record.finalSummary ?? checkpoint.nextAction ?? checkpoint.activeTask,
+      toolResults: record.subagentEvidence.map(verifierToolResultForSubagent),
+      fileHashes,
     });
     return {
       schemaVersion: 1,
@@ -2315,6 +2320,25 @@ function emitTaskLoopCheckpointShadow(
   }));
 }
 
+async function computeTaskLoopCheckpointFileHashes(
+  filesTouched: readonly string[],
+): Promise<Record<string, string>> {
+  try {
+    const candidates = (await Promise.all(uniqueStrings(filesTouched).map(async (file) => {
+      try {
+        const stats = await stat(file);
+        return stats.isFile() ? file : undefined;
+      } catch {
+        return undefined;
+      }
+    }))).filter((file): file is string => Boolean(file));
+    if (candidates.length === 0) return {};
+    return await computeCheckpointFileHashes(candidates);
+  } catch {
+    return {};
+  }
+}
+
 async function recordTaskLoopCheckpoint(
   record: TaskLoopRunRecord,
   deps: TaskLoopControllerDeps,
@@ -2325,6 +2349,21 @@ async function recordTaskLoopCheckpoint(
   }
   try {
     const reviewNeededItems = checkpointReviewNeededItems(record, selfCheck);
+    const checkpointFileHashes = await computeTaskLoopCheckpointFileHashes(
+      record.evidenceGate?.filesTouched ?? [],
+    );
+    const checkpointMetadata = {
+      loopRunId: record.loopRunId,
+      taskLedgerRootId: record.taskLedgerRootId,
+      iteration: record.iteration,
+      phase: record.phase,
+      status: record.status,
+      evidenceGate: record.evidenceGate,
+      ...(Object.keys(checkpointFileHashes).length > 0 ? { fileHashes: checkpointFileHashes } : {}),
+      ...(record.evidenceVerifierReport ? { evidenceVerifierReport: record.evidenceVerifierReport } : {}),
+      roleQualitySummary: record.roleQualitySummary,
+      selfCheckDecision: selfCheck?.decision,
+    };
     const checkpoint: RuntimeResumeCheckpoint = {
       schemaVersion: 1,
       id: `task-loop:${record.loopRunId}:iteration:${record.iteration}:${record.phase}`,
@@ -2345,17 +2384,7 @@ async function recordTaskLoopCheckpoint(
       ...(record.validationState ? { validationState: record.validationState } : {}),
       ...(selfCheck?.acceptanceStatus ? { acceptanceStatus: selfCheck.acceptanceStatus } : {}),
       createdAt: new Date(record.updatedAt).toISOString(),
-      metadata: {
-        loopRunId: record.loopRunId,
-        taskLedgerRootId: record.taskLedgerRootId,
-        iteration: record.iteration,
-        phase: record.phase,
-        status: record.status,
-        evidenceGate: record.evidenceGate,
-        ...(record.evidenceVerifierReport ? { evidenceVerifierReport: record.evidenceVerifierReport } : {}),
-        roleQualitySummary: record.roleQualitySummary,
-        selfCheckDecision: selfCheck?.decision,
-      },
+      metadata: checkpointMetadata,
     };
     const writer = deps.recordCheckpoint
       ?? (await import("./long-task-control/store.js")).recordLongTaskCheckpoint;
@@ -2381,7 +2410,7 @@ async function recordTaskLoopCheckpoint(
       acceptanceStatus: selfCheck?.acceptanceStatus,
       metadata: checkpoint.metadata,
     });
-    emitTaskLoopCheckpointShadow(record, deps, checkpoint, reviewNeededItems);
+    emitTaskLoopCheckpointShadow(record, deps, checkpoint, reviewNeededItems, checkpointFileHashes);
   } catch {
     // Checkpoints improve resume quality but must not flip loop execution state.
   }

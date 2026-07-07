@@ -53,6 +53,28 @@ const SIDEBAR_TRIGGER_ACTIONS = new Set<RollbackPlanActionKind>([
   'terminal-interrupt',
 ]);
 
+function getRecordSize(value: unknown): number {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return 0;
+  return Object.values(value as Record<string, unknown>)
+    .filter((item) => typeof item === 'string' && item.trim().length > 0)
+    .length;
+}
+
+function getArraySize(value: unknown): number {
+  return Array.isArray(value) ? value.length : 0;
+}
+
+function checkpointEvidenceCounts(checkpoint: LongTaskControlStatus['latestCheckpoint']): {
+  fileCount: number;
+  toolCount: number;
+} {
+  const checkpointRecord = checkpoint?.checkpoint as unknown as Record<string, unknown> | undefined;
+  const metadata = checkpointRecord?.metadata as Record<string, unknown> | undefined;
+  const fileCount = getRecordSize(checkpointRecord?.fileHashes) || getRecordSize(metadata?.fileHashes);
+  const toolCount = getArraySize(checkpointRecord?.toolResults) || getArraySize(metadata?.toolResults);
+  return { fileCount, toolCount };
+}
+
 export function hasRollbackPlanSidebarTrigger(plan: RollbackPlan): boolean {
   return plan.actions.some((action) => SIDEBAR_TRIGGER_ACTIONS.has(action.kind));
 }
@@ -84,11 +106,15 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
   );
 
   if (checkpoint && !input.handoffDisabled) {
+    const evidence = checkpointEvidenceCounts(checkpoint);
+    const hasCheckpointEvidence = evidence.fileCount > 0 && evidence.toolCount > 0;
     actions.push({
       kind: 'checkpoint-handoff',
       titleKey: 'composer.rollbackPlan.actions.checkpoint-handoff.title',
-      detailKey: 'composer.rollbackPlan.actions.checkpoint-handoff.detail',
-      detailValues: { trigger: checkpoint.trigger },
+      detailKey: hasCheckpointEvidence
+        ? 'composer.rollbackPlan.actions.checkpoint-handoff.detailEvidenceBacked'
+        : 'composer.rollbackPlan.actions.checkpoint-handoff.detailNoEvidence',
+      detailValues: { trigger: checkpoint.trigger, ...evidence },
       risk: 'safe',
       command: 'handoff',
     });

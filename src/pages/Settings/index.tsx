@@ -154,6 +154,8 @@ export function Settings() {
     setDevModeUnlocked,
     telemetryEnabled,
     setTelemetryEnabled,
+    uiDepthMode,
+    setUiDepthMode,
   } = useSettingsStore();
 
   const { status: gatewayStatus, restart: restartGateway } = useGatewayStore();
@@ -1488,6 +1490,32 @@ export function Settings() {
                       {lang.label}
                     </Button>
                   ))}
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-sm font-medium text-foreground/80">{t('appearance.uiDepthMode.title')}</Label>
+                  <p className="text-meta text-muted-foreground mt-1">
+                    {t('appearance.uiDepthMode.description')}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2" data-testid="settings-ui-depth-mode">
+                  <Button
+                    variant={uiDepthMode === 'basic' ? 'secondary' : 'outline'}
+                    className={cn("rounded-full px-5 h-10 border-black/10 dark:border-white/10", uiDepthMode === 'basic' ? "bg-black/5 dark:bg-white/10 text-foreground" : "bg-transparent text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5")}
+                    onClick={() => setUiDepthMode('basic')}
+                    data-testid="settings-ui-depth-basic"
+                  >
+                    {t('appearance.uiDepthMode.basic')}
+                  </Button>
+                  <Button
+                    variant={uiDepthMode === 'advanced' ? 'secondary' : 'outline'}
+                    className={cn("rounded-full px-5 h-10 border-black/10 dark:border-white/10", uiDepthMode === 'advanced' ? "bg-black/5 dark:bg-white/10 text-foreground" : "bg-transparent text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5")}
+                    onClick={() => setUiDepthMode('advanced')}
+                    data-testid="settings-ui-depth-advanced"
+                  >
+                    {t('appearance.uiDepthMode.advanced')}
+                  </Button>
                 </div>
               </div>
               <div className="flex items-center justify-between">

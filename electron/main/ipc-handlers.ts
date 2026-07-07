@@ -58,6 +58,7 @@ import { createLogsApi } from '../services/logs-api';
 import { createSettingsApi } from '../services/settings-api';
 import { createChannelsApi } from '../services/channels-api';
 import { createAgentsApi } from '../services/agents-api';
+import { createRolesApi } from '../services/roles-api';
 import { createChatApi } from '../services/chat-api';
 import { createCodeReviewApi } from '../services/code-review-api';
 import { createWorkProvidersApi } from '../services/work-providers-api';
@@ -203,6 +204,7 @@ function registerTypedHostHandlers(
     logs: createLogsApi(),
     channels: createChannelsApi({ gatewayManager, mainWindow }),
     agents: createAgentsApi({ gatewayManager }),
+    roles: createRolesApi(),
     providers: createProvidersApi({ gatewayManager, mainWindow }),
     files: createFilesApi(),
     media: createMediaApi(),

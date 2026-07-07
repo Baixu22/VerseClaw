@@ -55,7 +55,13 @@
     "language": "Language",
     "menuLanguageUpdated": "Menu language updated",
     "launchAtStartup": "Launch at system startup",
-    "launchAtStartupDesc": "Automatically launch Verse Claw when you log in"
+    "launchAtStartupDesc": "Automatically launch Verse Claw when you log in",
+    "uiDepthMode": {
+      "title": "Interface depth",
+      "description": "Basic keeps routine screens quieter. Advanced shows more checkpoint evidence, compaction warnings, role contracts, and diagnostics.",
+      "basic": "Basic",
+      "advanced": "Advanced"
+    }
   },
   "aiProviders": {
     "title": "AI Providers",

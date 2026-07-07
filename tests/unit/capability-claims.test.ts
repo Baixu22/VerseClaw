@@ -7,6 +7,7 @@ import {
   CAPABILITY_CLAIM_RUNTIME_STATUSES,
   findCapabilityClaim,
 } from '@shared/capability-claims';
+import { RELIABILITY_BOUNDARIES } from '@shared/reliability-boundaries';
 import { analyzeCapabilityClaimText } from '../../scripts/check-capability-claims.mjs';
 
 describe('capability claim matrix', () => {
@@ -165,5 +166,27 @@ describe('capability claim matrix', () => {
         filePath: 'docs/product-copy.md',
       }),
     ]);
+  });
+
+  it('links P2-06 reliability claims to the machine-readable boundary matrix', () => {
+    const reliabilityRef = 'shared/reliability-boundaries.ts';
+    const matrixSubsystems = new Set(RELIABILITY_BOUNDARIES.map((entry) => entry.subsystem));
+
+    for (const claimId of ['capability-22', 'capability-26']) {
+      const claim = findCapabilityClaim(claimId);
+      expect(claim?.relatedTaskIds).toContain('P2-06');
+      expect(claim?.evidence.some((item) => item.refs.includes(reliabilityRef)), claimId).toBe(true);
+      expect(claim?.runtimeProof.refs).toContain(reliabilityRef);
+    }
+
+    expect(matrixSubsystems).toEqual(new Set([
+      'gateway-startup',
+      'provider-fallback',
+      'host-api-api-client',
+      'session-restore-replay',
+      'file-writes',
+      'dangerous-approvals',
+      'task-loop-repair-retry',
+    ]));
   });
 });

@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -1883,6 +1883,100 @@ describe('runTaskLoop', () => {
         }),
       ]),
     });
+  });
+
+  it('adds touched file fingerprints to RuntimeTaskEvent checkpoint shadows', async () => {
+    const shadows: RuntimeTaskEvent[] = [];
+    const dir = mkdtempSync(path.join(os.tmpdir(), 'task-loop-fingerprint-'));
+    taskLoopRuntimeMemoryTempDirs.push(dir);
+    const touchedFile = path.join(dir, 'fingerprinted.ts');
+    writeFileSync(touchedFile, 'export const checkpointFingerprint = true;\n', 'utf8');
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    try {
+      const result = await runTaskLoop(
+        { task: 'implement feature', sessionKey: 'agent:main:abc', workspaceId: 'workspace-a' },
+        { agents: { defaults: { taskLoop: { runtimeTaskEventLogShadow: true } } } },
+        {
+          idFactory: (prefix) => `${prefix}_shadow_fingerprint`,
+          now: () => 1_700_000_000_000,
+          ensureTaskLedgerRoot: vi.fn(() => 'tlroot_shadow_fingerprint'),
+          runObserved: (async () => ({
+            plan: {
+              mode: 'lead-workers',
+              leadRole: 'planner',
+              templateId: 'quick-development',
+              verifierRole: 'reviewer',
+              reasons: ['template:quick-development'],
+              workers: [{ roleName: 'implementer', task: 'implement' }],
+            },
+            outcomes: [{
+              roleName: 'implementer',
+              task: 'implement',
+              isVerifier: false,
+              spawn: { status: 'accepted', result: { runId: 'run_fingerprint', childSessionKey: 'child_fingerprint' } },
+            }],
+            spawnedRunIds: ['run_fingerprint'],
+            expectedWorkerRunIds: ['run_fingerprint'],
+            pendingVerifier: true,
+            failures: [],
+          })) as never,
+          selfCheck: (async () => ({
+            decision: 'complete',
+            confidence: 0.9,
+            missingEvidence: [],
+            verificationGaps: [],
+            risks: [],
+            validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+            contextSummary: 'done',
+          })) as never,
+          getSubagentRun: (() => ({
+            runId: 'run_fingerprint',
+            childSessionKey: 'child_fingerprint',
+            requesterSessionKey: 'agent:main:abc',
+            requesterDisplayKey: 'Main',
+            task: 'task',
+            cleanup: 'delete',
+            createdAt: 1,
+            endedAt: 2,
+            outcome: { status: 'ok' },
+            completion: {
+              required: true,
+              capturedAt: 2,
+              resultText: [
+                '```task_loop_evidence',
+                JSON.stringify({
+                  summary: 'Fingerprint evidence.',
+                  filesTouched: [touchedFile],
+                  testsRun: ['pnpm exec vitest run tests/unit/fingerprint.test.ts'],
+                }),
+                '```',
+              ].join('\n'),
+            },
+          })) as never,
+          recordCheckpoint: vi.fn() as never,
+          runtimeTaskEventShadowSink: (event) => shadows.push(event),
+          storeTrace: vi.fn() as never,
+        },
+      );
+
+      expect(result).toMatchObject({ loopRunId: 'loop_shadow_fingerprint', status: 'complete' });
+      const checkpointEvent = shadows.find((event) => event.kind === 'checkpoint');
+      const checkpoint = checkpointEvent?.payload && 'checkpoint' in checkpointEvent.payload
+        ? checkpointEvent.payload.checkpoint
+        : undefined;
+      expect(checkpoint?.fileHashes).toHaveProperty(touchedFile);
+      expect(checkpoint?.fileHashes?.[touchedFile]).toMatch(/^[a-f0-9]{64}$/u);
+      expect(checkpoint?.toolResults).toEqual([
+        expect.objectContaining({
+          callId: 'task_loop.subagent:run_fingerprint',
+          status: 'success',
+        }),
+      ]);
+      expect(warnSpy).not.toHaveBeenCalled();
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 
   it('attaches registry diagnostics to TaskLoop shadow events without changing legacy decisions', async () => {

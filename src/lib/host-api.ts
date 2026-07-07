@@ -245,7 +245,11 @@ import type {
   RemoteTaskListResult,
   RemoteTaskPreviewResult,
   RemoteTaskRecordResult,
+  RoleUpsertConfigRolePayload,
+  RoleUpsertConfigRoleResult,
   SessionArchivePayload,
+  SessionCompressionArtifactPayload,
+  SessionCompressionArtifactResult,
   SessionCompactionHistoryResult,
   SessionCompactionHistoryPayload,
   SessionCompactionPayload,
@@ -268,6 +272,8 @@ import type {
   SessionPatchThinkingPayload,
   SessionPatchRuntimeModelPayload,
   SessionQueueDrainResult,
+  SessionRecoveryContextPayload,
+  SessionRecoveryContextResult,
   SessionResumeCheckpointsResult,
   SessionTruncatePayload,
   SessionTruncateResult,
@@ -364,6 +370,9 @@ export type {
   ClawHubListResult,
   ClawHubSearchResult,
   CronSessionHistoryResult,
+  CompressionArtifact,
+  CompressionEvidenceRef,
+  CompressionFact,
   DeliveryChannelAccount,
   DeliveryChannelGroup,
   DeliveryTargetsResult,
@@ -810,6 +819,11 @@ export const hostApi = {
       invokeHost('agents', 'removeChannel', { id, channelType })
     ),
   },
+  roles: {
+    upsertConfigRole: (input: RoleUpsertConfigRolePayload): Promise<RoleUpsertConfigRoleResult> => (
+      invokeHost('roles', 'upsertConfigRole', input)
+    ),
+  },
   diagnostics: {
     gatewaySnapshot: () => invokeHost('diagnostics', 'gatewaySnapshot'),
   },
@@ -966,6 +980,16 @@ export const hostApi = {
     ),
     compactionHistory: (input: SessionCompactionHistoryPayload): Promise<SessionCompactionHistoryResult> => (
       invokeHost('sessions', 'compactionHistory', input)
+    ),
+    compressionArtifact: (
+      input: SessionCompressionArtifactPayload,
+    ): Promise<SessionCompressionArtifactResult> => (
+      invokeHost('sessions', 'compressionArtifact', input)
+    ),
+    recoveryContext: (
+      input: SessionRecoveryContextPayload,
+    ): Promise<SessionRecoveryContextResult> => (
+      invokeHost('sessions', 'recoveryContext', input)
     ),
     longTaskControlStatus: (
       input: SessionLongTaskControlPayload,
