@@ -255,6 +255,14 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     expect(result.failures).toHaveLength(0);
     expect(result.pendingVerifier).toBe(true);
     expect(spawned.some((p) => p.orchestration?.phase === 'verifier')).toBe(false);
+    expect(result.resultBundle).toMatchObject({
+      schemaVersion: 1,
+      phase: 'spawn',
+      orchestrationRunId: expect.any(String),
+      leadRole: result.plan.leadRole,
+    });
+    expect(result.resultBundle.roleOutcomes.length).toBe(result.outcomes.length);
+    expect(result.resultBundle.traceIds.length).toBeGreaterThanOrEqual(1);
     // A trace was stored in the runtime buffer (the core observability fix).
     const traces = getRuntimeTraceBuffer();
     expect(traces.length).toBeGreaterThanOrEqual(1);
@@ -279,6 +287,15 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     );
     expect(result.spawnedRunIds).toHaveLength(0);
     expect(result.failures.length).toBeGreaterThan(0);
+    expect(result.resultBundle.failures.length).toBeGreaterThan(0);
+    expect(result.resultBundle.permissionEvents).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          decision: 'denied',
+          reason: 'max children reached',
+        }),
+      ]),
+    );
     // Trace still persisted even on all-failures.
     expect(getRuntimeTraceBuffer().length).toBeGreaterThanOrEqual(1);
   });
@@ -305,11 +322,22 @@ describe('team_orchestrate tool', () => {
       runId: 'orch_test',
       nextAction: 'yield_for_results',
     });
-    const details = result.details as { plan: { mode: string }; children: unknown[]; pendingVerifier: boolean; resultPolicy: { completion: string } };
+    const details = result.details as {
+      plan: { mode: string };
+      children: unknown[];
+      pendingVerifier: boolean;
+      resultPolicy: { completion: string };
+      resultBundle?: unknown;
+    };
     expect(details.plan.mode).toBe('router');
     expect(details.children).toHaveLength(1);
     expect(details.pendingVerifier).toBe(false);
     expect(details.resultPolicy.completion).toBe('team_result_bundle');
+    expect(details.resultBundle).toMatchObject({
+      schemaVersion: 1,
+      phase: 'spawn',
+      orchestrationRunId: 'orch_test',
+    });
   });
 
   it('uses template roles and reports partial failures', async () => {

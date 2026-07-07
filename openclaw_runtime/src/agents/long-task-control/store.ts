@@ -6,8 +6,10 @@ import {
   type Checkpoint,
   type EvidenceRef,
   type EvidenceRefType,
-  type RuntimeTaskStatus,
-} from "../../runtime-core/index.js";
+} from "../../runtime-core/evidence.js";
+import type {
+  RuntimeTaskStatus,
+} from "../../runtime-core/types.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../../state/openclaw-state-db.generated.js";
 import {
   openOpenClawStateDatabase,

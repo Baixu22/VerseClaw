@@ -228,6 +228,7 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         plan,
         routeDiagnostics: result.plan.routeDiagnostics,
         taskGraph: result.taskGraph,
+        resultBundle: result.resultBundle,
         graphStatus: result.graphStatus,
         executionWaves: result.executionWaves,
         pendingGraphNodes: result.pendingGraphNodes,

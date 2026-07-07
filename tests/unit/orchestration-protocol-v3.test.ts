@@ -4,6 +4,18 @@ vi.mock('../../openclaw_runtime/src/agents/subagent-spawn', () => ({
   spawnSubagentDirect: vi.fn(),
 }));
 
+vi.mock('rastermill', () => ({
+  createRastermill: () => ({
+    probe: vi.fn(),
+    encode: vi.fn(),
+  }),
+  isRastermillUnavailableError: () => false,
+  RastermillError: class RastermillError extends Error {},
+  RastermillUnavailableError: class RastermillUnavailableError extends Error {},
+  readImageProbeFromHeader: vi.fn(),
+  readImageMetadataFromHeader: vi.fn(),
+}));
+
 import { createOrchestratorPlan } from '../../openclaw_runtime/src/agents/orchestrator';
 import { runOrchestration } from '../../openclaw_runtime/src/agents/orchestrator-run';
 import {

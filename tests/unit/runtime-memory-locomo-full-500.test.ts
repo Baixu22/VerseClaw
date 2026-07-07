@@ -1453,12 +1453,14 @@ async function generateDualTrackAnswer(
     profileContext,
     options,
   );
-  // Stage 3.2 (2026-07-04): maxTokens kept at 384 for multi_hop — the
+  // Stage 3.2 (2026-07-04): maxTokens kept at 384 for temporal — the
   // simplified prompt (brief reasoning + "Final answer:") fits in 384.
-  // The previous 512 was for the verbose "Hop N -> sub-answer" format
-  // which truncated before reaching "Final answer:".
+  // Multi-hop alignment (2026-07-07): multi_hop bumped to 512 — the failure
+  // analysis found answers truncated BEFORE the "Final answer:" line, which
+  // leaks the full CoT to the judge (extractFinalAnswer falls back to the
+  // whole text). 512 gives the world-knowledge reasoning enough headroom.
   const maxTokens =
-    category === "temporal" || category === "multi_hop" ? 384 : 256;
+    category === "multi_hop" ? 512 : category === "temporal" ? 384 : 256;
   const response = await callTrackedDeepSeek(system, user, {
     temperature: 0,
     maxTokens,
@@ -2905,6 +2907,13 @@ describe.skipIf(
             //
             // Falling back to original chainedRetrievalExpand (depth=2/1, cap=5).
             let expandedHits = rerankedHits;
+            // Multi-hop alignment (2026-07-07): single shared predicate for
+            // all uncached multi-hop retrieval gates (graph depth, expansion
+            // depth, self-ask). Regex OR LLM classifier — the narrow regex
+            // alone missed most GT multi_hop questions (68/96 classified
+            // single_hop meant they got NO multi-hop treatment at all).
+            const multiHopRetrieval =
+              isMultiHopQuestion(qa.question) || queryPlan.type === "multi_hop";
             const useWeightedGraph =
               process.env.DISABLE_WEIGHTED_GRAPH !== "1" &&
               process.env.ENABLE_WEIGHTED_GRAPH === "1";
@@ -2928,7 +2937,7 @@ describe.skipIf(
                     factEmbeddings,
                     {
                       budget: 15,
-                      maxDepth: isMultiHopQuestion(qa.question) ? 3 : 2,
+                      maxDepth: multiHopRetrieval ? 3 : 2,
                       minEntityScore: 0.76,
                       entityWeight: 1.0,
                       semanticWeight: 1.0,
@@ -2963,7 +2972,7 @@ describe.skipIf(
               const factsByIdMap = new Map(
                 factsForExpansion.map((f) => [f.factId, f] as const),
               );
-              const expansionDepth = isMultiHopQuestion(qa.question) ? 2 : 1;
+              const expansionDepth = multiHopRetrieval ? 2 : 1;
               const expansion = chainedRetrievalExpand(
                 rerankedHits,
                 relationMap,
@@ -2986,8 +2995,16 @@ describe.skipIf(
             // where self-ask computed hop1 answer but discarded it.
             let selfAskHopAnswers: string[] = [];
             const stage2MultihopMode = process.env.P3_MULTIHOP ?? "sequential-self-ask";
+            // Multi-hop alignment (2026-07-07): Widened self-ask gate from
+            // regex-only to the shared multiHopRetrieval predicate (regex OR
+            // LLM classifier). The narrow regex missed most GT multi_hop
+            // questions (LoCoMo multi-hop often has a single-hop surface form
+            // like "What gift did X get from the friend she met at yoga?").
+            // classifyQuery's rewritten prompt now catches chained-fact
+            // questions; the decomposer's escape valve (1 sub-question ->
+            // used:false) protects misfired questions.
             if (
-              isMultiHopQuestion(qa.question) &&
+              multiHopRetrieval &&
               stage2MultihopMode === "sequential-self-ask"
             ) {
               try {

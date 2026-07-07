@@ -1,6 +1,149 @@
 import { completeSetup, expect, test } from './fixtures/electron';
 
 test.describe('Role memory panel', () => {
+  test('shows proposal source metadata in the review queue and applies review decisions through gateway RPC', async ({ electronApp, page }) => {
+    await electronApp.evaluate(({ ipcMain }) => {
+      const state = {
+        reviewBatchCount: 0,
+        proposals: [{
+          id: 'proposal-source-1',
+          operation: 'create',
+          status: 'needs_review',
+          decision: 'needs_review',
+          proposal: {
+            content: 'Record migration notes only after user-visible review.',
+            source: 'session_summary',
+            confidence: 0.71,
+            sensitivity: 'low',
+          },
+          riskLevel: 'medium',
+          impactScope: 'role',
+          suggestedAction: 'approve',
+          evidenceStatus: 'partial',
+          reviewReason: 'Missing source metadata needs review.',
+          reasonSummary: 'Needs review because source metadata is incomplete.',
+        }],
+        cards: [],
+      };
+
+      (globalThis as unknown as { __roleMemorySourceState: typeof state }).__roleMemorySourceState = state;
+
+      const originalHostInvoke = (ipcMain as unknown as {
+        _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+      })._invokeHandlers?.get('host:invoke');
+      const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
+
+      ipcMain.removeHandler('host:invoke');
+      ipcMain.handle('host:invoke', async (event, request: {
+        id?: string;
+        module?: string;
+        action?: string;
+        payload?: { method?: string; params?: Record<string, unknown> };
+      }) => {
+        const current = (globalThis as unknown as { __roleMemorySourceState: typeof state }).__roleMemorySourceState;
+
+        if (request?.module === 'gateway' && request.action === 'status') {
+          return respond(request.id, { state: 'running', port: 18789 });
+        }
+
+        if (request?.module === 'agents' && request.action === 'list') {
+          return respond(request.id, {
+            success: true,
+            agents: [{
+              id: 'main',
+              name: 'Main',
+              isDefault: true,
+              mainSessionKey: 'agent:main:session',
+            }],
+          });
+        }
+
+        if (request?.module === 'channels' && request.action === 'accounts') {
+          return respond(request.id, { success: true, channels: [] });
+        }
+
+        if (request?.module === 'providers') {
+          if (request.action === 'snapshot') return respond(request.id, { success: true, accounts: [], statuses: [], vendors: [], defaultAccountId: '' });
+          if (request.action === 'accounts') return respond(request.id, { success: true, accounts: [] });
+          if (request.action === 'accountKeyInfo') return respond(request.id, { success: true, keyInfo: {} });
+          if (request.action === 'vendors') return respond(request.id, { success: true, vendors: [] });
+          if (request.action === 'getDefaultAccount') return respond(request.id, { success: true, accountId: null });
+        }
+
+        if (request?.module === 'gateway' && request.action === 'rpc') {
+          const method = request.payload?.method;
+          const params = request.payload?.params ?? {};
+
+          if (method === 'roles.list') {
+            return respond(request.id, {
+              roles: [{
+                name: 'architect',
+                displayName: 'Architect',
+                description: 'Designs the system shape.',
+                rolePrompt: 'Designs the system shape.',
+                tools: ['read'],
+                effort: 'high',
+              }],
+            });
+          }
+
+          if (method === 'memory.proposals') {
+            return respond(request.id, { proposals: current.proposals.filter((proposal) => proposal.status === 'needs_review') });
+          }
+
+          if (method === 'memory.reviewBatch') {
+            current.reviewBatchCount += 1;
+            const ids = params.ids as string[] | undefined;
+            const action = String(params.action ?? 'approve');
+            for (const proposal of current.proposals) {
+              if (ids?.includes(proposal.id)) proposal.status = action === 'reject' ? 'rejected' : 'applied';
+            }
+            return respond(request.id, { batchId: 'batch-source-1', results: (ids ?? []).map((id) => ({ id, ok: true })) });
+          }
+
+          if (method === 'memory.list') return respond(request.id, { cards: current.cards });
+          if (method === 'memory.conflicts') return respond(request.id, { conflicts: [] });
+          if (method === 'memory.retentionCandidates') return respond(request.id, { candidates: [] });
+          if (method === 'memory.health') return respond(request.id, { health: { ok: true, checks: [] } });
+          if (method === 'memory.stats') return respond(request.id, { stats: { active: 0, conflictsOpen: 0, proposalsNeedsReview: current.proposals.filter((proposal) => proposal.status === 'needs_review').length } });
+        }
+
+        if (request?.module === 'memory') {
+          if (request.action === 'list') return respond(request.id, { success: true, cards: current.cards });
+          if (request.action === 'health') return respond(request.id, { success: true, ok: true, checks: [] });
+        }
+
+        return originalHostInvoke?.(event, request) ?? respond(request?.id, {});
+      });
+    });
+
+    await completeSetup(page);
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-agents').click();
+    await expect(page.getByTestId('agents-page')).toBeVisible();
+
+    await page.getByTestId('role-orchestration-toggle').click();
+    await page.getByRole('button', { name: /Architect/ }).click();
+    await expect(page.getByTestId('role-memory-panel')).toBeVisible();
+
+    await page.getByTestId('role-memory-review-tab').click();
+    await expect(page.getByTestId('role-memory-proposal-source')).toContainText('session_summary');
+    await expect(page.getByTestId('role-memory-proposal-confidence')).toContainText('71%');
+    await expect(page.getByTestId('role-memory-proposal-needs-review')).toContainText('Needs review because source metadata is incomplete.');
+    await expect(page.getByText(/automatic long-term memory|every task.*memory|automatically/i)).toHaveCount(0);
+
+    await page.getByLabel('Select proposal').first().check();
+    await page.getByRole('button', { name: /Approve selected/ }).click();
+    await expect(page.getByTestId('role-memory-review-tab')).toContainText('Review');
+    await expect(page.getByTestId('role-memory-proposal-source')).toHaveCount(0);
+
+    const calls = await electronApp.evaluate(() => {
+      const state = (globalThis as unknown as { __roleMemorySourceState?: { reviewBatchCount: number } }).__roleMemorySourceState;
+      return { reviewBatchCount: state?.reviewBatchCount ?? 0 };
+    });
+    expect(calls).toEqual({ reviewBatchCount: 1 });
+  });
+
   test('creates and archives role memory through gateway RPC', async ({ electronApp, page }) => {
     await electronApp.evaluate(({ ipcMain }) => {
       const state = {

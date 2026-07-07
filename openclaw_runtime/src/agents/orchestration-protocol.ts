@@ -546,6 +546,10 @@ export function extractFollowupCandidates(params: {
   }));
 }
 
+function memoryCandidateField(line: string, key: "content" | "scopeKey"): string | undefined {
+  return line.match(new RegExp(`(?:^|;)\\s*${key}\\s*:\\s*([^;]+)`, "iu"))?.[1]?.trim();
+}
+
 export function extractMemoryCandidates(params: {
   text?: string;
   roleName: string;
@@ -553,8 +557,8 @@ export function extractMemoryCandidates(params: {
   scopeKey?: string;
 }): OrchestrationMemoryCandidate[] {
   return sectionLines(params.text ?? "", "Memory Candidates").map((line) => ({
-    content: line,
-    scopeKey: params.scopeKey ?? params.childRunId,
+    content: memoryCandidateField(line, "content") ?? line,
+    scopeKey: memoryCandidateField(line, "scopeKey") ?? params.scopeKey ?? params.childRunId,
     roleName: params.roleName,
     evidenceRefs: [params.childRunId],
     importance: /important|critical|must|必须|重要/i.test(line) ? "high" : "medium",
