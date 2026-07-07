@@ -81,9 +81,9 @@ function primaryKind(input: {
   sources: TurnSourceItem[];
 }): TurnWorkPrimaryKind {
   if (input.status === 'running' && input.tasks.length > 0) return 'tasks';
+  if (input.tasks.length > 0) return 'tasks';
   if (input.reports.length > 0) return 'reports';
   if (input.sources.length > 0) return 'sources';
-  if (input.tasks.length > 0) return 'tasks';
   return null;
 }
 

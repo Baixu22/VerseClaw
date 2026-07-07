@@ -1,4 +1,5 @@
 // Context-engine initialization registers built-in engines before plugin resolution.
+import { registerContextRuntimeKitContextEngine } from "./cvk/registration.js";
 import { registerLegacyContextEngine } from "./legacy.registration.js";
 
 /**
@@ -21,4 +22,5 @@ export function ensureContextEnginesInitialized(): void {
 
   // Always available – safe fallback for the "legacy" slot default.
   registerLegacyContextEngine();
+  registerContextRuntimeKitContextEngine();
 }

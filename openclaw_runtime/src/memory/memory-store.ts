@@ -10,6 +10,7 @@ import type { DatabaseSync, SQLInputValue } from "node:sqlite";
 import { randomUUID } from "node:crypto";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import { resolveStateDir } from "../config/paths.js";
+import { redactSecrets } from "../logging/redact.js";
 import { normalizeMemoryProposal, reviewMemoryProposal } from "./gatekeeper.js";
 import { evaluateMemoryPolicy, evaluateRetentionCandidate, getMemoryPolicySnapshot, roleAppliesToCard } from "./memory-policy.js";
 import { buildContextPack } from "./context-pack.js";
@@ -488,7 +489,7 @@ function insertAudit(action: string, cardId: string | null, payload: unknown, ac
   db.prepare(
     `INSERT INTO role_memory_audit_events (id, action, card_id, actor_json, reason, payload_json, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
-  ).run(randomUUID(), action, cardId, json(actor ?? { type: "system" }), reason ?? null, json(payload), now);
+  ).run(randomUUID(), action, cardId, json(actor ?? { type: "system" }), reason ?? null, json(redactSecrets(payload)), now);
 }
 
 function proposalStatusForDecision(decision: MemoryGatekeeperDecision): MemoryProposalStatus {
@@ -612,12 +613,13 @@ function makeProposalRecord(params: {
   policySnapshot?: unknown;
 }): MemoryProposalRecord {
   const now = new Date().toISOString();
+  const normalized = normalizeMemoryProposal(params.proposal);
   return {
     id: `prop_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     operation: params.operation,
     targetId: params.targetId ?? params.proposal.targetId ?? null,
-    proposal: params.proposal,
-    normalized: normalizeMemoryProposal(params.proposal),
+    proposal: redactSecrets(params.proposal),
+    normalized: redactSecrets(normalized),
     decision: params.decision.action,
     status: proposalStatusForDecision(params.decision),
     reviewReason: params.decision.reason ?? null,

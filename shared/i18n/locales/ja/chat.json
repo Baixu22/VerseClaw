@@ -19,6 +19,7 @@
     "currentAgent": "現在の会話相手: {{agent}}",
     "workspace": "ワークスペース",
     "saveToKnowledge": "ナレッジに保存",
+    "workContext": "作業コンテキスト",
     "addWorkspaceDialogTitle": "ワークスペースディレクトリを選択",
     "addWorkspaceDialogButton": "ワークスペースに設定"
   },
@@ -1407,6 +1408,44 @@
     "error": "確認が必要",
     "aborted": "停止しました",
     "dismissCompleted": "完了状態を非表示"
+  },
+  "workContext": {
+    "title": "作業コンテキスト",
+    "sections": {
+      "plan": "タスクログ / 計画",
+      "ledger": "Task Ledger",
+      "environment": "環境情報",
+      "artifacts": "成果物",
+      "sources": "ソース"
+    },
+    "environment": {
+      "workspace": "ワークスペース",
+      "branch": "ブランチ",
+      "changes": "変更",
+      "unknownWorkspace": "ワークスペース",
+      "changeCounts": "{{count}} 件の変更",
+      "delta": "+{{added}} -{{removed}}"
+    },
+    "actions": {
+      "viewChanges": "変更を見る",
+      "commitOrPush": "コミットまたはプッシュ",
+      "createPr": "プルリクエストを作成"
+    },
+    "ledger": {
+      "noCurrentGoal": "現在の目標なし",
+      "counts": "{{active}} 件進行中 / {{review}} 件レビュー / {{blocked}} 件ブロック",
+      "active": "進行中",
+      "review": "レビュー",
+      "blocked": "ブロック"
+    },
+    "git": {
+      "clean": "クリーン",
+      "detached": "Detached HEAD",
+      "unknownBranch": "不明なブランチ"
+    },
+    "empty": {
+      "sources": "ソースはまだありません"
+    }
   },
   "turnWork": {
     "title": "作業パネル",

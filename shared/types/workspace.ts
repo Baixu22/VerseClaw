@@ -98,6 +98,7 @@ export interface WorkspaceAgentBinding {
 export interface WorkspaceChatFooterState {
   contextRangeVisible?: boolean;
   tokenUsageVisible?: boolean;
+  workContextVisible?: boolean;
 }
 
 export type WorkspaceKnowledgeScope = 'none' | 'memory' | 'wiki' | 'all';

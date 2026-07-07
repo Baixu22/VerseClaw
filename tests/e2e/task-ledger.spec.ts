@@ -165,11 +165,27 @@ function baseHostApiMocks() {
       kitCapabilities: [],
       summary: { ready: 0, missingDependency: 0, missingConfig: 0, disabled: 0, externalUnavailable: 0 },
     },
+    [stableStringify(['git', 'status', null])]: {
+      success: true,
+      status: {
+        isRepository: false,
+        workspaceRoot: WORKSPACE.rootPath,
+        ahead: 0,
+        behind: 0,
+        clean: true,
+        hasConflicts: false,
+        changes: [],
+        stagedCount: 0,
+        unstagedCount: 0,
+        untrackedCount: 0,
+        conflictedCount: 0,
+      },
+    },
   };
 }
 
 test.describe('Task ledger', () => {
-  test('shows task ledger page tabs and chat summary panel', async ({ launchElectronApp }) => {
+  test('shows task ledger page tabs and chat work context summary', async ({ launchElectronApp }) => {
     const electronApp = await launchElectronApp({ skipSetup: true });
     try {
       await installIpcMocks(electronApp, {
@@ -232,8 +248,9 @@ test.describe('Task ledger', () => {
         window.location.hash = '/';
       });
       await expect(page.getByTestId('chat-page')).toBeVisible();
-      await expect(page.getByTestId('task-ledger-summary')).toContainText('Ship long task ledger');
-      await expect(page.getByTestId('task-ledger-summary')).toContainText('Resolve export blocker');
+      await expect(page.getByTestId('work-context-bar')).toContainText('Task Ledger');
+      await expect(page.getByTestId('work-context-bar')).toContainText('Ship long task ledger');
+      await expect(page.getByTestId('work-context-bar')).toContainText('2 active / 1 review / 1 blocked');
     } finally {
       await closeElectronApp(electronApp);
     }

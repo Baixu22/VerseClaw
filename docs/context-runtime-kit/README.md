@@ -33,6 +33,26 @@ The active phase file is binding. If the phase file conflicts with a later desig
 - `phase-09-codebase-index.md`
 - `phase-10-eval-reporting.md`
 
+## Default-On Promotion
+
+After Phase 1-10, default runtime promotion is governed by
+`harness/specs/tasks/context-runtime-kit-default-on.md`.
+
+Backend context, prompt addition, and recovery may use the core-owned
+`context-runtime-kit` engine by default when `plugins.slots.contextEngine` is
+absent and `runtime.contextRuntimeKit.enabled !== false`. Explicit context
+engine slots remain authoritative, including `legacy`.
+
+Rollback is config-only:
+
+- set `runtime.contextRuntimeKit.enabled: false`, or
+- set `plugins.slots.contextEngine: "legacy"`.
+
+The default fallback engine remains `legacy`. CRK failures are quarantined for
+the current process and downgraded to legacy behavior. Tool-call gate output
+stays `report_only`; active tool-call blocking and frontend settings UI are not
+part of the default-on promotion.
+
 ## Default Gates
 
 Every phase must finish with:

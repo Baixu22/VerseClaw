@@ -3,6 +3,7 @@ import { sanitizeForLog } from "../../packages/terminal-core/src/ansi.js";
 import type { OpenClawConfig } from "../config/types.js";
 import { defaultSlotIdForKey } from "../plugins/slots.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
+import { CONTEXT_RUNTIME_KIT_ENGINE_ID } from "./cvk/engine.js";
 import type {
   AssembleResult,
   BootstrapResult,
@@ -869,12 +870,30 @@ export type ResolveContextEngineOptions = {
   workspaceDir?: string;
 };
 
+function hasExplicitContextEngineSlot(config?: OpenClawConfig): boolean {
+  return Boolean(config?.plugins?.slots && Object.hasOwn(config.plugins.slots, "contextEngine"));
+}
+
+function resolveConfiguredContextEngineId(config?: OpenClawConfig): string {
+  const defaultEngineId = defaultSlotIdForKey("contextEngine");
+  if (hasExplicitContextEngineSlot(config)) {
+    const slotValue = config?.plugins?.slots?.contextEngine;
+    return typeof slotValue === "string" && slotValue.trim()
+      ? slotValue.trim()
+      : defaultEngineId;
+  }
+  return config?.runtime?.contextRuntimeKit?.enabled === false
+    ? defaultEngineId
+    : CONTEXT_RUNTIME_KIT_ENGINE_ID;
+}
+
 /**
  * Resolve which ContextEngine to use based on plugin slot configuration.
  *
  * Resolution order:
- *   1. `config.plugins.slots.contextEngine` (explicit slot override)
- *   2. Default slot value ("legacy")
+ *   1. `config.plugins.slots.contextEngine` when explicitly present
+ *   2. `context-runtime-kit` when the slot is absent and CRK is not disabled
+ *   3. Default fallback slot value ("legacy")
  *
  * When `config` is provided it is forwarded to the factory as part of a
  * {@link ContextEngineFactoryContext}. Additional runtime paths can be
@@ -889,12 +908,7 @@ export async function resolveContextEngine(
   config?: OpenClawConfig,
   options?: ResolveContextEngineOptions,
 ): Promise<ContextEngine> {
-  const slotValue = config?.plugins?.slots?.contextEngine;
-  const engineId =
-    typeof slotValue === "string" && slotValue.trim()
-      ? slotValue.trim()
-      : defaultSlotIdForKey("contextEngine");
-
+  const engineId = resolveConfiguredContextEngineId(config);
   const defaultEngineId = defaultSlotIdForKey("contextEngine");
   const isDefaultEngine = engineId === defaultEngineId;
 

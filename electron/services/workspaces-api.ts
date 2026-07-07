@@ -290,6 +290,7 @@ function makeDefaultProfile(): WorkspaceProfile {
     chatFooter: {
       contextRangeVisible: true,
       tokenUsageVisible: true,
+      workContextVisible: true,
     },
   };
   return {
@@ -386,6 +387,7 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
         chatFooter: {
           contextRangeVisible: true,
           tokenUsageVisible: true,
+          workContextVisible: true,
         },
       };
       const profile: WorkspaceProfile = {

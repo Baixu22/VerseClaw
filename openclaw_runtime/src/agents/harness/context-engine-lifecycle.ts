@@ -5,7 +5,10 @@ import type { MemoryCitationsMode } from "../../config/types.memory.js";
 import type {
   AssembleResult,
   ContextEngine,
+  ContextEngineProjectContextFile,
   ContextEngineRuntimeContext,
+  ContextEngineSkillMetadata,
+  ContextEngineToolMetadata,
 } from "../../context-engine/types.js";
 import { runContextEngineMaintenance } from "../embedded-agent-runner/context-engine-maintenance.js";
 import {
@@ -72,6 +75,9 @@ export async function assembleHarnessContextEngine(params: {
   messages: AgentMessage[];
   tokenBudget?: number;
   availableTools?: Set<string>;
+  activeTools?: ContextEngineToolMetadata[];
+  projectContextFiles?: ContextEngineProjectContextFile[];
+  skillsMetadata?: ContextEngineSkillMetadata[];
   citationsMode?: MemoryCitationsMode;
   modelId: string;
   prompt?: string;
@@ -86,6 +92,9 @@ export async function assembleHarnessContextEngine(params: {
     messages,
     tokenBudget: params.tokenBudget,
     ...(params.availableTools ? { availableTools: params.availableTools } : {}),
+    ...(params.activeTools ? { activeTools: params.activeTools } : {}),
+    ...(params.projectContextFiles ? { projectContextFiles: params.projectContextFiles } : {}),
+    ...(params.skillsMetadata ? { skillsMetadata: params.skillsMetadata } : {}),
     ...(params.citationsMode ? { citationsMode: params.citationsMode } : {}),
     model: params.modelId,
     ...(params.prompt !== undefined ? { prompt: params.prompt } : {}),

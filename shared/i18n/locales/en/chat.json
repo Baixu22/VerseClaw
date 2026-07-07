@@ -19,6 +19,7 @@
     "currentAgent": "Talking to {{agent}}",
     "workspace": "Workspace",
     "saveToKnowledge": "Save to Knowledge",
+    "workContext": "Work context",
     "addWorkspaceDialogTitle": "Choose workspace directory",
     "addWorkspaceDialogButton": "Set as Workspace"
   },
@@ -1407,6 +1408,44 @@
     "error": "Needs attention",
     "aborted": "Stopped",
     "dismissCompleted": "Hide completed status"
+  },
+  "workContext": {
+    "title": "Work context",
+    "sections": {
+      "plan": "Task log / plan",
+      "ledger": "Task Ledger",
+      "environment": "Environment",
+      "artifacts": "Artifacts",
+      "sources": "Sources"
+    },
+    "environment": {
+      "workspace": "Workspace",
+      "branch": "Branch",
+      "changes": "Changes",
+      "unknownWorkspace": "Workspace",
+      "changeCounts": "{{count}} changes",
+      "delta": "+{{added}} -{{removed}}"
+    },
+    "actions": {
+      "viewChanges": "View changes",
+      "commitOrPush": "Commit or push",
+      "createPr": "Create PR"
+    },
+    "ledger": {
+      "noCurrentGoal": "No current goal",
+      "counts": "{{active}} active / {{review}} review / {{blocked}} blocked",
+      "active": "Active",
+      "review": "Review",
+      "blocked": "Blocked"
+    },
+    "git": {
+      "clean": "Clean",
+      "detached": "Detached HEAD",
+      "unknownBranch": "Unknown branch"
+    },
+    "empty": {
+      "sources": "No sources yet"
+    }
   },
   "turnWork": {
     "title": "Work panel",

@@ -4,7 +4,7 @@ import {
   type RuntimeContextProviderResult,
   type RuntimeCoreJsonObject,
   type RuntimeRegistryDiagnostic,
-} from '../../runtime-core/index.js';
+} from '../../runtime-core/registries.js';
 import {
   compileCvkFixtureSources,
   type CvkCompilerFixtureInput,

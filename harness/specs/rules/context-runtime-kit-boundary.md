@@ -5,6 +5,7 @@ type: ai-coding-rule
 appliesTo:
   - context-runtime-kit
   - context-runtime-kit-phase-0
+  - context-runtime-kit-default-on
   - context-runtime-boundary
 ---
 
@@ -16,7 +17,7 @@ Hard rules:
 - A hard claim about a rule, schema, source document, code range, tool result, trace, memory item, or task outcome must cite a resolvable `resource_id`, `selector`, and `checksum`.
 - Before a tool call can be considered valid under Context Runtime Kit gates, the runtime must have expanded hard selectors for required fields, enum values, field types, default values, nullable semantics, permission notes, and side-effect notes.
 - Compact and `CompressionArtifact` state must preserve dynamic state, blockers, failed attempts, next action, uncertainty, and evidence refs. They must not absorb large durable facts, project rules, tool schemas, code chunks, docs, memory, or task truth as unverified prose.
-- Context Runtime Kit rollout is shadow-first. Until a later task spec explicitly promotes behavior, it must not change prompt text, prompt assembly order, tool invocation, approval, retry, error mapping, or return payload behavior.
+- Context Runtime Kit rollout is shadow-first. Until a later task spec explicitly promotes behavior, it must not change prompt text, prompt assembly order, tool invocation, approval, retry, error mapping, or return payload behavior. The `context-runtime-kit-default-on` task is such a promotion spec for backend context/prompt/recovery defaults only; it does not authorize UI changes or active tool-call blocking.
 - Do not create a parallel durable source of truth such as `.trellis/`, an independent task database, a second rule tree, or a hidden context policy store. Reusable policy belongs in `AGENTS.md` and `harness/specs/**`.
 - Context Runtime Kit must not replace Task Ledger, ClawGraph, Observability, Memory, Knowledge, `CompressionArtifact v1`, `LoopContextPack`, or existing Context Pack injection. It may reference those surfaces through evidence refs and bounded projections only.
 - Search or registry views may discover candidates. Resolved chunks with matching checksums provide evidence.

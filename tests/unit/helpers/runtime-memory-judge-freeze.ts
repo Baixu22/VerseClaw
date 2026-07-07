@@ -1,0 +1,125 @@
+export const FROZEN_JUDGE_CONFIG = {
+  model: process.env.DEEPSEEK_MODEL ?? "deepseek-chat",
+  temperature: 0,
+  promptVersion: "frozen-v2-generous-2026-07-04",
+  promptTemplate: [
+    "You are an impartial judge. Compare a predicted answer to the ground truth.",
+    "",
+    "Rules:",
+    "- Answer CORRECT if the predicted answer conveys the same meaning, even if worded differently.",
+    "- Date format differences (e.g., \"2023-05\" vs \"May 2023\") are acceptable.",
+    "- Paraphrases (e.g., \"oat milk\" vs \"oat milk instead\") are acceptable.",
+    "- Partial credit: if the predicted answer covers part of the ground truth, answer CORRECT.",
+    "- If the ground truth is a list, the predicted answer must cover at least 50% of items.",
+    "- Time tolerance: if dates are within 14 days of each other, treat as CORRECT.",
+    "- If the predicted answer is a superstring or substring of the ground truth (case-insensitive), answer CORRECT.",
+    "- If both answers refer to the same entity (e.g., synonyms, aliases), answer CORRECT.",
+    "",
+    "Respond with ONLY \"CORRECT\" or \"WRONG\".",
+  ].join("\n"),
+} as const;
+
+export type JudgeSanitySample = {
+  questionId: string;
+  category?: string;
+  question: string;
+  groundTruth: string;
+  predictedAnswer: string;
+  manualVerdict: "truly_wrong" | "actually_correct" | "unreviewed";
+};
+
+export type JudgeSanityReport = {
+  version: "judge-sanity-v1";
+  generatedAt: string;
+  sourceReport?: string;
+  targetSampleSize: number;
+  reviewedCount: number;
+  falseNegativeRate: number;
+  requiresPromptReview: boolean;
+  judgeConfig: typeof FROZEN_JUDGE_CONFIG;
+  samples: JudgeSanitySample[];
+};
+
+export type EvalReportSampleResult = {
+  questionId?: string;
+  category?: string;
+  question?: string;
+  judgeScore?: number;
+  predictedAnswer?: string;
+  groundTruth?: string;
+};
+
+export function buildFrozenJudgePrompt(
+  question: string,
+  groundTruth: string | number,
+  predictedAnswer: string,
+): { system: string; user: string } {
+  return {
+    system: FROZEN_JUDGE_CONFIG.promptTemplate,
+    user: `Question: ${question}
+
+Ground truth answer: ${groundTruth}
+
+Predicted answer: ${predictedAnswer}
+
+Is the predicted answer semantically correct? (CORRECT/WRONG):`,
+  };
+}
+
+export function parseFrozenJudgeVerdict(content: string): number {
+  const trimmed = content.trim().toLowerCase();
+  // Accept "yes" (legacy) and "correct" (v2 generous)
+  if (trimmed.startsWith("yes") || trimmed.startsWith("correct")) {
+    return 1;
+  }
+  return 0;
+}
+
+export function computeJudgeFalseNegativeRate(
+  samples: readonly JudgeSanitySample[],
+): number {
+  const reviewed = samples.filter((sample) => sample.manualVerdict !== "unreviewed");
+  if (reviewed.length === 0) return 0;
+  const falseNegatives = reviewed.filter(
+    (sample) => sample.manualVerdict === "actually_correct",
+  ).length;
+  return falseNegatives / reviewed.length;
+}
+
+export function buildJudgeSanityReport(
+  sampleResults: readonly EvalReportSampleResult[],
+  options: {
+    sourceReport?: string;
+    targetSampleSize?: number;
+    now?: () => Date;
+  } = {},
+): JudgeSanityReport {
+  const targetSampleSize = options.targetSampleSize ?? 50;
+  const samples = sampleResults
+    .filter((sample) => sample.judgeScore === 0)
+    .slice(0, targetSampleSize)
+    .map((sample, index): JudgeSanitySample => ({
+      questionId: sample.questionId ?? `unidentified_${index}`,
+      category: sample.category,
+      question: sample.question ?? "",
+      groundTruth: sample.groundTruth ?? "",
+      predictedAnswer: sample.predictedAnswer ?? "",
+      manualVerdict: "unreviewed",
+    }));
+  const falseNegativeRate = computeJudgeFalseNegativeRate(samples);
+  const reviewedCount = samples.filter(
+    (sample) => sample.manualVerdict !== "unreviewed",
+  ).length;
+
+  return {
+    version: "judge-sanity-v1",
+    generatedAt: (options.now ?? (() => new Date()))().toISOString(),
+    sourceReport: options.sourceReport,
+    targetSampleSize,
+    reviewedCount,
+    falseNegativeRate,
+    requiresPromptReview: reviewedCount > 0 && falseNegativeRate > 0.15,
+    judgeConfig: FROZEN_JUDGE_CONFIG,
+    samples,
+  };
+}

@@ -1,0 +1,93 @@
+{
+  "thresholds": {
+    "guardedRecallAtK": {
+      "min": 0.95
+    },
+    "guardedPrecision": {
+      "min": 0.98
+    },
+    "staleInvalidSuppressionRate": {
+      "min": 1,
+      "max": 1
+    },
+    "candidateRejectedSuppressionRate": {
+      "min": 1,
+      "max": 1
+    },
+    "conflictSuppressionRate": {
+      "min": 1,
+      "max": 1
+    },
+    "taskSubjectPredicateIsolationRate": {
+      "min": 1,
+      "max": 1
+    },
+    "rawLeakRate": {
+      "min": 0,
+      "max": 0
+    },
+    "promptInjectionReturnRate": {
+      "min": 0,
+      "max": 0
+    },
+    "wrongConflictWinnerRate": {
+      "min": 0,
+      "max": 0.02
+    },
+    "emptyNoOpSafetyRate": {
+      "min": 1,
+      "max": 1
+    },
+    "guardedVsBaselineLiftMemoryDependent": {
+      "min": 0.15
+    },
+    "guardedMemoryIrrelevantReductionVsBaseline": {
+      "min": 0,
+      "max": 0
+    },
+    "guardedVsNaiveHazardReduction": {
+      "min": 0.9,
+      "max": 1
+    },
+    "pureConsumerLatencyP95Ms": {
+      "min": 0,
+      "max": 50
+    },
+    "tempSqliteHydrationConsumerLatencyP95Ms": {
+      "min": 0,
+      "max": 500
+    }
+  },
+  "expected": {
+    "guardedRecallAtK": 1,
+    "guardedPrecision": 1,
+    "staleInvalidSuppressionRate": 1,
+    "candidateRejectedSuppressionRate": 1,
+    "conflictSuppressionRate": 1,
+    "taskSubjectPredicateIsolationRate": 1,
+    "rawLeakRate": 0,
+    "promptInjectionReturnRate": 0,
+    "wrongConflictWinnerRate": 0,
+    "emptyNoOpSafetyRate": 1,
+    "baselineTaskSuccessRate": 0.16666666666666666,
+    "naiveMemoryTaskSuccessRate": 0,
+    "guardedMemoryTaskSuccessRate": 1,
+    "guardedVsBaselineLiftMemoryDependent": 1,
+    "guardedMemoryIrrelevantReductionVsBaseline": 0,
+    "guardedVsNaiveHazardReduction": 1
+  },
+  "corpus": {
+    "provenance": "controlled_fixture",
+    "sanitized": true,
+    "noUserRealData": true,
+    "reproducible": true,
+    "referenceTime": 1000,
+    "memoryDependentGroups": 100,
+    "memoryIrrelevantGroups": 20,
+    "auditRefs": [
+      "harness/specs/tasks/phase-35-runtime-memory-read-hydration-benefit-evaluation-design.md",
+      "tests/unit/runtime-memory-read-hydration-benefit-evaluation.test.ts",
+      "tests/fixtures/runtime-memory-benefit-eval/generate.mjs"
+    ]
+  }
+}

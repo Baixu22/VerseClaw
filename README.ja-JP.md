@@ -104,6 +104,8 @@ Verse Clawは公式の**OpenClaw**コアを直接ベースに構築されてい�
 
 開発者モードを有効にすると、サイドバーにはネイティブの Dreams ページも表示され、Verse Claw 内で OpenClaw の記憶レビュー、夢日記、基本メンテナンス操作を扱えます。詳細な診断が必要な場合は、そのページから完全版の OpenClaw Dreams UI も開けます。
 
+`plugins.slots.contextEngine` が明示されていない場合、OpenClaw runtime はバックエンドの Context Runtime Kit を既定で使用します。CRK は selector に基づく有界な prompt / recovery 診断を追加しつつ、`legacy` を fallback として保持します。UI 変更なしで戻すには `runtime.contextRuntimeKit.enabled: false`、または `plugins.slots.contextEngine: "legacy"` を設定します。Tool-call gate の診断は report-only のままです。
+
 ---
 
 ## 機能
@@ -145,7 +147,7 @@ Observability ページは、Verse Claw 管理のローカル JSON/JSONL trace �
 Runtime には、Gateway から見える `tools.invoke` 呼び出しと runtime validation input 向けの security / verification shadow layer もあります。既定では無効で、ポリシーで有効にすると、マスク済みのインメモリ security decision、tool-call/event-log/checkpoint の deterministic verification summary、runId で相関できる result filter、集計 health count を `security.*` / `verification.*` RPC と追加 Observability span に記録します。ツールをブロックせず、外部テストや LLM judge を実行せず、raw tool args/result/events/checkpoints も永続化しません。
 
 ### タスク台帳
-Task Ledger ページは、長期作業のために workspace 単位かつ Agent 中立の構造化記録を保持します。目標、サブタスク、依存関係、ブロック、レビュー対象、決定、逸脱、セッションリンクを append-only JSONL イベントとしてローカル OpenClaw 設定ディレクトリに保存し、Chat の横に要約を表示し、Tree、DAG、History、Review を含む単一のオフライン HTML として出力できます。
+Task Ledger ページは、長期作業のために workspace 単位かつ Agent 中立の構造化記録を保持します。目標、サブタスク、依存関係、ブロック、レビュー対象、決定、逸脱、セッションリンクを append-only JSONL イベントとしてローカル OpenClaw 設定ディレクトリに保存し、Chat のワークコンテキストバーに要約を表示し、Tree、DAG、History、Review を含む単一のオフライン HTML として出力できます。
 
 ### リモートタスク
 Remote Tasks ページは、メッセージ、OpenClaw Doctor、設定パッチの構造化タスクを扱うローカル優先の受信箱です。設定パッチは変更プレビューを表示し、ユーザーが明示的に承認した後にだけ Main プロセスが許可リスト内の設定更新を適用します。

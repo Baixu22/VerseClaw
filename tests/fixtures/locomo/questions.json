@@ -1,0 +1,142 @@
+[
+  {
+    "questionId": "q_0",
+    "conversationId": "conv_0",
+    "question": "What is Alice's current job title?",
+    "answer": "Senior software engineer on the cloud infrastructure team.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_1",
+    "conversationId": "conv_0",
+    "question": "Where does Alice live?",
+    "answer": "Chapel Hill.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_2",
+    "conversationId": "conv_0",
+    "question": "What breed of dog does Alice want to adopt?",
+    "answer": "Golden retriever.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_3",
+    "conversationId": "conv_0",
+    "question": "Where did Alice get the cedar posts for her fence?",
+    "answer": "The hardware store on Broad Street.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_4",
+    "conversationId": "conv_0",
+    "question": "Why did Alice stop playing tennis?",
+    "answer": "Because of a knee injury.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_5",
+    "conversationId": "conv_0",
+    "question": "Where does Alice swim now?",
+    "answer": "The YMCA pool on Rosemary Street.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_6",
+    "conversationId": "conv_0",
+    "question": "What did Alice study at UNC?",
+    "answer": "She got her master's in computer science.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_7",
+    "conversationId": "conv_0",
+    "question": "Why did Alice leave her previous job at the startup?",
+    "answer": "The startup ran out of funding last March.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_8",
+    "conversationId": "conv_0",
+    "question": "What herbs did Alice plant this season?",
+    "answer": "Basil and rosemary.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_9",
+    "conversationId": "conv_0",
+    "question": "Where did Alice grow up?",
+    "answer": "Raleigh.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_10",
+    "conversationId": "conv_0",
+    "question": "How did Alice's career change from the startup to her current job, and why?",
+    "answer": "She left the startup because it ran out of funding and took a more stable senior software engineer position at a tech company downtown.",
+    "category": "multi_hop"
+  },
+  {
+    "questionId": "q_11",
+    "conversationId": "conv_0",
+    "question": "What exercise changes has Alice made recently and what caused them?",
+    "answer": "She stopped playing tennis due to a knee injury and switched to swimming at the YMCA pool on Rosemary Street.",
+    "category": "multi_hop"
+  },
+  {
+    "questionId": "q_12",
+    "conversationId": "conv_0",
+    "question": "How is Alice's gardening connected to her fence-building project?",
+    "answer": "She built a cedar fence from the hardware store on Broad Street to protect her tomatoes, basil, and rosemary.",
+    "category": "multi_hop"
+  },
+  {
+    "questionId": "q_13",
+    "conversationId": "conv_0",
+    "question": "What is Alice's background and how did it lead to her current life in Chapel Hill?",
+    "answer": "She grew up in Raleigh, got her master's in computer science at UNC, moved to Chapel Hill, and now works as a senior software engineer after her previous startup lost funding.",
+    "category": "open_ended"
+  },
+  {
+    "questionId": "q_14",
+    "conversationId": "conv_0",
+    "question": "Describe Alice's hobbies and interests based on the conversation.",
+    "answer": "Alice enjoys gardening (tomatoes, basil, rosemary), used to play tennis, now swims at the YMCA, wants to adopt a golden retriever, and built a cedar fence for her garden.",
+    "category": "open_ended"
+  },
+  {
+    "questionId": "q_15",
+    "conversationId": "conv_0",
+    "question": "Is Alice still working at the startup on 5th Street?",
+    "answer": "No, the startup ran out of funding last March. She now works at a tech company downtown.",
+    "category": "adversarial"
+  },
+  {
+    "questionId": "q_16",
+    "conversationId": "conv_0",
+    "question": "Does Alice still play tennis every weekend?",
+    "answer": "No, she stopped last month due to a knee injury and now swims at the YMCA pool instead.",
+    "category": "adversarial"
+  },
+  {
+    "questionId": "q_17",
+    "conversationId": "conv_1",
+    "question": "What is Carol's PhD dissertation topic?",
+    "answer": "Marine biology, studying the impact of ocean acidification on coral reef ecosystems in the Caribbean.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_18",
+    "conversationId": "conv_1",
+    "question": "Where did Carol do her undergraduate studies?",
+    "answer": "UNC Wilmington.",
+    "category": "single_hop"
+  },
+  {
+    "questionId": "q_19",
+    "conversationId": "conv_1",
+    "question": "Describe Carol's academic journey and where she'll be working next.",
+    "answer": "She studied at UNC Wilmington, interned at NOAA in Beaufort, got her PhD at Duke studying coral reefs, and will start a postdoc at the marine lab in Wilmington in September.",
+    "category": "multi_hop"
+  }
+]

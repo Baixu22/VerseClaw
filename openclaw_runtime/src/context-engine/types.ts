@@ -1,5 +1,5 @@
 // Context-engine public types define the pluggable context-management lifecycle.
-import type { AgentMessage } from "../agents/runtime/index.js";
+import type { AgentMessage, AgentTool } from "../agents/runtime/index.js";
 import type { MemoryCitationsMode } from "../config/types.memory.js";
 import type { ContextItem } from "../runtime-core/types.js";
 
@@ -232,6 +232,36 @@ export type ContextEngineRuntimeContext = Record<string, unknown> & {
   };
 };
 
+export type ContextEngineToolMetadata = Pick<
+  AgentTool,
+  "name" | "description" | "parameters"
+> & {
+  label?: string;
+  permissions?: string[];
+  sideEffects?: string[];
+};
+
+export type ContextEngineProjectContextFile = {
+  path: string;
+  content: string;
+  title?: string;
+};
+
+export type ContextEngineSkillMetadata = {
+  id?: string;
+  name?: string;
+  title?: string;
+  version?: string;
+  summary?: string;
+  description?: string;
+  triggers?: string[];
+  requiredWorkflow?: string[];
+  safetyRules?: string[];
+  examples?: string[];
+  source?: string;
+  content?: string;
+};
+
 /**
  * ContextEngine defines the pluggable contract for context management.
  *
@@ -319,6 +349,12 @@ export interface ContextEngine {
     tokenBudget?: number;
     /** Tool names available for this run so engines can align prompt guidance with runtime tool access. */
     availableTools?: Set<string>;
+    /** Read-only active tool metadata for engines that compile selector-backed tool schema context. */
+    activeTools?: ContextEngineToolMetadata[];
+    /** Read-only project context files already selected by the runtime for this turn. */
+    projectContextFiles?: ContextEngineProjectContextFile[];
+    /** Read-only skill metadata already selected by the runtime for this turn. */
+    skillsMetadata?: ContextEngineSkillMetadata[];
     /** Active memory citation mode when engines want to mirror memory prompt guidance. */
     citationsMode?: MemoryCitationsMode;
     /** Current model identifier (e.g. "claude-opus-4", "gpt-4o", "qwen2.5-7b").

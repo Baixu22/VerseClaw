@@ -136,8 +136,30 @@ export type RuntimeTaskEventLogExportResult = Iterable<RuntimeTaskEventLogRecord
   diagnostics: RuntimeTaskEventLogDiagnostic[];
 };
 
+export type RuntimeTaskEventLogLoadResult = {
+  records: unknown[];
+  diagnostics: RuntimeTaskEventLogDiagnostic[];
+};
+
+export type RuntimeTaskEventLogAppendContextQuery = {
+  taskId: string;
+  eventId: string;
+  idempotencyKey?: string;
+};
+
+export type RuntimeTaskEventLogAppendContextResult = {
+  maxSequence: number;
+  duplicateEventRecord?: unknown;
+  duplicateIdempotencyRecord?: unknown;
+  diagnostics: RuntimeTaskEventLogDiagnostic[];
+};
+
 export type RuntimeTaskEventLogStorage = {
   load(): unknown[];
+  loadResult?(): RuntimeTaskEventLogLoadResult;
+  loadAppendContext?(
+    query: RuntimeTaskEventLogAppendContextQuery,
+  ): RuntimeTaskEventLogAppendContextResult;
   append(record: RuntimeTaskEventLogRecord): void;
 };
 
@@ -147,6 +169,13 @@ export type RuntimeTaskEventLogStoreOptions = {
 
 type ReadRecordsResult = {
   records: RuntimeTaskEventLogRecord[];
+  diagnostics: RuntimeTaskEventLogDiagnostic[];
+};
+
+type ReadAppendContextResult = {
+  maxSequence: number;
+  duplicateEventRecord?: RuntimeTaskEventLogRecord;
+  duplicateIdempotencyRecord?: RuntimeTaskEventLogRecord;
   diagnostics: RuntimeTaskEventLogDiagnostic[];
 };
 
@@ -197,7 +226,7 @@ export class RuntimeTaskEventLogStore {
       };
     }
 
-    const read = this.#readRecords();
+    const read = this.#readAppendContext(normalized);
     if (read.diagnostics.some((diagnostic) => diagnostic.code === "store_read_failure")) {
       return {
         appended: false,
@@ -206,50 +235,15 @@ export class RuntimeTaskEventLogStore {
       };
     }
 
-    const duplicateIdempotencyRecord = findDuplicateIdempotencyRecord(
-      read.records,
-      normalized.idempotencyKey,
-    );
-    if (duplicateIdempotencyRecord) {
-      return {
-        record: duplicateIdempotencyRecord,
-        appended: false,
-        duplicate: true,
-        diagnostics: [
-          ...read.diagnostics,
-          diagnostic({
-            code: "duplicate_idempotency_key",
-            message: `RuntimeTaskEvent idempotency key already exists: ${normalized.idempotencyKey}`,
-            eventId: duplicateIdempotencyRecord.event.eventId,
-            idempotencyKey: normalized.idempotencyKey,
-          }),
-        ],
-      };
-    }
-
-    const duplicateEventRecord = read.records.find(
-      (record) => record.event.eventId === normalized.event.eventId,
-    );
-    if (duplicateEventRecord) {
-      return {
-        record: duplicateEventRecord,
-        appended: false,
-        duplicate: true,
-        diagnostics: [
-          ...read.diagnostics,
-          diagnostic({
-            code: "duplicate_event_id",
-            message: `RuntimeTaskEvent id already exists: ${normalized.event.eventId}`,
-            eventId: normalized.event.eventId,
-          }),
-        ],
-      };
+    const duplicate = duplicateAppendResult(normalized, read);
+    if (duplicate) {
+      return duplicate;
     }
 
     const record: RuntimeTaskEventLogRecord = {
       schemaVersion: RUNTIME_TASK_EVENT_LOG_SCHEMA_VERSION,
       schemaMarker: RUNTIME_TASK_EVENT_LOG_SCHEMA_MARKER,
-      sequence: nextSequence(read.records),
+      sequence: Math.max(-1, Math.trunc(read.maxSequence)) + 1,
       appendedAt: options.appendedAt ?? Date.now(),
       event: cloneJson(normalized.event),
       ...(normalized.idempotencyKey ? { idempotencyKey: normalized.idempotencyKey } : {}),
@@ -259,18 +253,23 @@ export class RuntimeTaskEventLogStore {
     try {
       this.#storage.append(record);
     } catch (error) {
+      const writeDiagnostic = diagnostic({
+        code: "store_write_failure",
+        message: `RuntimeTaskEvent log append failed: ${errorMessage(error)}`,
+        eventId: normalized.event.eventId,
+        idempotencyKey: normalized.idempotencyKey,
+      });
+      const afterWriteRead = this.#readAppendContext(normalized);
+      if (!afterWriteRead.diagnostics.some((item) => item.code === "store_read_failure")) {
+        const duplicateAfterWrite = duplicateAppendResult(normalized, afterWriteRead);
+        if (duplicateAfterWrite) {
+          return duplicateAfterWrite;
+        }
+      }
       return {
         appended: false,
         duplicate: false,
-        diagnostics: [
-          ...read.diagnostics,
-          diagnostic({
-            code: "store_write_failure",
-            message: `RuntimeTaskEvent log append failed: ${errorMessage(error)}`,
-            eventId: normalized.event.eventId,
-            idempotencyKey: normalized.idempotencyKey,
-          }),
-        ],
+        diagnostics: [...read.diagnostics, writeDiagnostic, ...afterWriteRead.diagnostics],
       };
     }
 
@@ -366,10 +365,69 @@ export class RuntimeTaskEventLogStore {
     };
   }
 
-  #readRecords(): ReadRecordsResult {
-    let values: unknown[];
+  #readAppendContext(input: NormalizedAppendInput): ReadAppendContextResult {
+    if (!this.#storage.loadAppendContext) {
+      const read = this.#readRecords();
+      const duplicateEventRecord = read.records.find(
+        (record) => record.event.eventId === input.event.eventId,
+      );
+      const duplicateIdempotencyRecord = findDuplicateIdempotencyRecord(
+        read.records,
+        input.idempotencyKey,
+      );
+      return {
+        maxSequence: maxSequence(read.records),
+        ...(duplicateEventRecord ? { duplicateEventRecord } : {}),
+        ...(duplicateIdempotencyRecord ? { duplicateIdempotencyRecord } : {}),
+        diagnostics: read.diagnostics,
+      };
+    }
+
+    let result: RuntimeTaskEventLogAppendContextResult;
     try {
-      values = this.#storage.load();
+      result = this.#storage.loadAppendContext({
+        taskId: input.event.taskId,
+        eventId: input.event.eventId,
+        ...(input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : {}),
+      });
+    } catch (error) {
+      return {
+        maxSequence: -1,
+        diagnostics: [
+          diagnostic({
+            code: "store_read_failure",
+            message: `RuntimeTaskEvent log read failed: ${errorMessage(error)}`,
+            eventId: input.event.eventId,
+            idempotencyKey: input.idempotencyKey,
+          }),
+        ],
+      };
+    }
+
+    const diagnostics = [...result.diagnostics];
+    const duplicateEventRecord = normalizeOptionalStoredRecord(
+      result.duplicateEventRecord,
+      diagnostics,
+    );
+    const duplicateIdempotencyRecord = normalizeOptionalStoredRecord(
+      result.duplicateIdempotencyRecord,
+      diagnostics,
+    );
+
+    return {
+      maxSequence: Number.isFinite(result.maxSequence) ? Math.trunc(result.maxSequence) : -1,
+      ...(duplicateEventRecord ? { duplicateEventRecord } : {}),
+      ...(duplicateIdempotencyRecord ? { duplicateIdempotencyRecord } : {}),
+      diagnostics,
+    };
+  }
+
+  #readRecords(): ReadRecordsResult {
+    let read: RuntimeTaskEventLogLoadResult;
+    try {
+      read = this.#storage.loadResult
+        ? this.#storage.loadResult()
+        : { records: this.#storage.load(), diagnostics: [] };
     } catch (error) {
       return {
         records: [],
@@ -382,7 +440,7 @@ export class RuntimeTaskEventLogStore {
       };
     }
 
-    if (!Array.isArray(values)) {
+    if (!Array.isArray(read.records)) {
       return {
         records: [],
         diagnostics: [
@@ -395,8 +453,8 @@ export class RuntimeTaskEventLogStore {
     }
 
     const records: RuntimeTaskEventLogRecord[] = [];
-    const diagnostics: RuntimeTaskEventLogDiagnostic[] = [];
-    for (const value of values) {
+    const diagnostics: RuntimeTaskEventLogDiagnostic[] = [...read.diagnostics];
+    for (const value of read.records) {
       const normalized = normalizeStoredRecord(value);
       if ("diagnostic" in normalized) {
         diagnostics.push(normalized.diagnostic);
@@ -407,6 +465,63 @@ export class RuntimeTaskEventLogStore {
 
     return { records, diagnostics };
   }
+}
+
+function duplicateAppendResult(
+  input: NormalizedAppendInput,
+  read: ReadAppendContextResult,
+): RuntimeTaskEventLogAppendResult | undefined {
+  const duplicateIdempotencyRecord = read.duplicateIdempotencyRecord;
+  if (duplicateIdempotencyRecord) {
+    return {
+      record: duplicateIdempotencyRecord,
+      appended: false,
+      duplicate: true,
+      diagnostics: [
+        ...read.diagnostics,
+        diagnostic({
+          code: "duplicate_idempotency_key",
+          message: `RuntimeTaskEvent idempotency key already exists: ${input.idempotencyKey}`,
+          eventId: duplicateIdempotencyRecord.event.eventId,
+          idempotencyKey: input.idempotencyKey,
+        }),
+      ],
+    };
+  }
+
+  const duplicateEventRecord = read.duplicateEventRecord;
+  if (duplicateEventRecord) {
+    return {
+      record: duplicateEventRecord,
+      appended: false,
+      duplicate: true,
+      diagnostics: [
+        ...read.diagnostics,
+        diagnostic({
+          code: "duplicate_event_id",
+          message: `RuntimeTaskEvent id already exists: ${input.event.eventId}`,
+          eventId: input.event.eventId,
+        }),
+      ],
+    };
+  }
+
+  return undefined;
+}
+
+function normalizeOptionalStoredRecord(
+  value: unknown,
+  diagnostics: RuntimeTaskEventLogDiagnostic[],
+): RuntimeTaskEventLogRecord | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  const normalized = normalizeStoredRecord(value);
+  if ("diagnostic" in normalized) {
+    diagnostics.push(normalized.diagnostic);
+    return undefined;
+  }
+  return normalized.record;
 }
 
 export function createRuntimeTaskEventLogEnvelope(
@@ -646,8 +761,8 @@ function findDuplicateIdempotencyRecord(
   return records.find((record) => record.idempotencyKey === idempotencyKey);
 }
 
-function nextSequence(records: RuntimeTaskEventLogRecord[]): number {
-  return records.reduce((highest, record) => Math.max(highest, record.sequence), -1) + 1;
+function maxSequence(records: RuntimeTaskEventLogRecord[]): number {
+  return records.reduce((highest, record) => Math.max(highest, record.sequence), -1);
 }
 
 function idempotencyKeyFromEvent(event: RuntimeTaskEvent): string | undefined {

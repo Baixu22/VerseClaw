@@ -115,4 +115,23 @@ describe('rollback plan', () => {
       expect.objectContaining({ kind: 'git', active: true, risk: 'dangerous' }),
     ]));
   });
+
+  it('does not add Git recovery when there is no recovery pressure', () => {
+    const plan = buildRollbackPlan({
+      activeRun: false,
+      gatewayAvailable: true,
+      queueDrainBusy: false,
+      compactionBusy: false,
+      handoffDisabled: true,
+      contextRange: null,
+      compactionStatus: null,
+      longTaskControlStatus: null,
+    });
+
+    expect(plan.actions.map((action) => action.kind)).not.toContain('review-git');
+    expect(plan.signals).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'git', active: false, risk: 'review' }),
+    ]));
+    expect(plan.riskCounts.dangerous).toBe(0);
+  });
 });

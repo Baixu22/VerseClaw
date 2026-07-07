@@ -1,0 +1,3362 @@
+[
+  {
+    "queryId": "q001",
+    "taskId": "task_repo_conventions_001",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g001_useful"
+    ],
+    "mustRejectFactIds": [
+      "g001_stale",
+      "g001_invalid",
+      "g001_future",
+      "g001_candidate",
+      "g001_rejected",
+      "g001_conflict_a",
+      "g001_conflict_b",
+      "g001_injection",
+      "g001_raw_leak",
+      "g001_distractor_task",
+      "g001_distractor_subject",
+      "g001_distractor_predicate"
+    ],
+    "scenarioId": "g001",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q002",
+    "taskId": "task_user_preferences_002",
+    "subject": "UserPreference",
+    "predicate": "response_style",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g002_useful"
+    ],
+    "mustRejectFactIds": [
+      "g002_stale",
+      "g002_invalid",
+      "g002_future",
+      "g002_candidate",
+      "g002_rejected",
+      "g002_conflict_a",
+      "g002_conflict_b",
+      "g002_injection",
+      "g002_raw_leak",
+      "g002_distractor_task",
+      "g002_distractor_subject",
+      "g002_distractor_predicate"
+    ],
+    "scenarioId": "g002",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q003",
+    "taskId": "task_project_architecture_003",
+    "subject": "BoundaryPolicy",
+    "predicate": "runtime_helper",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g003_useful"
+    ],
+    "mustRejectFactIds": [
+      "g003_stale",
+      "g003_invalid",
+      "g003_future",
+      "g003_candidate",
+      "g003_rejected",
+      "g003_conflict_a",
+      "g003_conflict_b",
+      "g003_injection",
+      "g003_raw_leak",
+      "g003_distractor_task",
+      "g003_distractor_subject",
+      "g003_distractor_predicate"
+    ],
+    "scenarioId": "g003",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q004",
+    "taskId": "task_task_history_004",
+    "subject": "TaskHistory",
+    "predicate": "previous_failed_approach",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g004_useful"
+    ],
+    "mustRejectFactIds": [
+      "g004_stale",
+      "g004_invalid",
+      "g004_future",
+      "g004_candidate",
+      "g004_rejected",
+      "g004_conflict_a",
+      "g004_conflict_b",
+      "g004_injection",
+      "g004_raw_leak",
+      "g004_distractor_task",
+      "g004_distractor_subject",
+      "g004_distractor_predicate"
+    ],
+    "scenarioId": "g004",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q005",
+    "taskId": "task_negative_memory_005",
+    "subject": "TemporalPolicy",
+    "predicate": "invalidated_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g005_useful"
+    ],
+    "mustRejectFactIds": [
+      "g005_stale",
+      "g005_invalid",
+      "g005_future",
+      "g005_candidate",
+      "g005_rejected",
+      "g005_conflict_a",
+      "g005_conflict_b",
+      "g005_injection",
+      "g005_raw_leak",
+      "g005_distractor_task",
+      "g005_distractor_subject",
+      "g005_distractor_predicate"
+    ],
+    "scenarioId": "g005",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q006",
+    "taskId": "task_conflict_memory_006",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g006_useful"
+    ],
+    "mustRejectFactIds": [
+      "g006_stale",
+      "g006_invalid",
+      "g006_future",
+      "g006_candidate",
+      "g006_rejected",
+      "g006_conflict_a",
+      "g006_conflict_b",
+      "g006_injection",
+      "g006_raw_leak",
+      "g006_distractor_task",
+      "g006_distractor_subject",
+      "g006_distractor_predicate"
+    ],
+    "scenarioId": "g006",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q007",
+    "taskId": "task_hazard_memory_007",
+    "subject": "HazardPolicy",
+    "predicate": "prompt_injection",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g007_useful"
+    ],
+    "mustRejectFactIds": [
+      "g007_stale",
+      "g007_invalid",
+      "g007_future",
+      "g007_candidate",
+      "g007_rejected",
+      "g007_conflict_a",
+      "g007_conflict_b",
+      "g007_injection",
+      "g007_raw_leak",
+      "g007_distractor_task",
+      "g007_distractor_subject",
+      "g007_distractor_predicate"
+    ],
+    "scenarioId": "g007",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q008",
+    "taskId": "task_distractor_memory_008",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_subject",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g008_useful"
+    ],
+    "mustRejectFactIds": [
+      "g008_stale",
+      "g008_invalid",
+      "g008_future",
+      "g008_candidate",
+      "g008_rejected",
+      "g008_conflict_a",
+      "g008_conflict_b",
+      "g008_injection",
+      "g008_raw_leak",
+      "g008_distractor_task",
+      "g008_distractor_subject",
+      "g008_distractor_predicate"
+    ],
+    "scenarioId": "g008",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q009",
+    "taskId": "task_repo_conventions_009",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g009_useful"
+    ],
+    "mustRejectFactIds": [
+      "g009_stale",
+      "g009_invalid",
+      "g009_future",
+      "g009_candidate",
+      "g009_rejected",
+      "g009_conflict_a",
+      "g009_conflict_b",
+      "g009_injection",
+      "g009_raw_leak",
+      "g009_distractor_task",
+      "g009_distractor_subject",
+      "g009_distractor_predicate"
+    ],
+    "scenarioId": "g009",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q010",
+    "taskId": "task_user_preferences_010",
+    "subject": "UserPreference",
+    "predicate": "reply_language",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g010_useful"
+    ],
+    "mustRejectFactIds": [
+      "g010_stale",
+      "g010_invalid",
+      "g010_future",
+      "g010_candidate",
+      "g010_rejected",
+      "g010_conflict_a",
+      "g010_conflict_b",
+      "g010_injection",
+      "g010_raw_leak",
+      "g010_distractor_task",
+      "g010_distractor_subject",
+      "g010_distractor_predicate"
+    ],
+    "scenarioId": "g010",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q011",
+    "taskId": "task_project_architecture_011",
+    "subject": "BoundaryPolicy",
+    "predicate": "gateway_proxy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g011_useful"
+    ],
+    "mustRejectFactIds": [
+      "g011_stale",
+      "g011_invalid",
+      "g011_future",
+      "g011_candidate",
+      "g011_rejected",
+      "g011_conflict_a",
+      "g011_conflict_b",
+      "g011_injection",
+      "g011_raw_leak",
+      "g011_distractor_task",
+      "g011_distractor_subject",
+      "g011_distractor_predicate"
+    ],
+    "scenarioId": "g011",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q012",
+    "taskId": "task_task_history_012",
+    "subject": "TaskHistory",
+    "predicate": "tests_already_run",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g012_useful"
+    ],
+    "mustRejectFactIds": [
+      "g012_stale",
+      "g012_invalid",
+      "g012_future",
+      "g012_candidate",
+      "g012_rejected",
+      "g012_conflict_a",
+      "g012_conflict_b",
+      "g012_injection",
+      "g012_raw_leak",
+      "g012_distractor_task",
+      "g012_distractor_subject",
+      "g012_distractor_predicate"
+    ],
+    "scenarioId": "g012",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q013",
+    "taskId": "task_negative_memory_013",
+    "subject": "TemporalPolicy",
+    "predicate": "expired_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g013_useful"
+    ],
+    "mustRejectFactIds": [
+      "g013_stale",
+      "g013_invalid",
+      "g013_future",
+      "g013_candidate",
+      "g013_rejected",
+      "g013_conflict_a",
+      "g013_conflict_b",
+      "g013_injection",
+      "g013_raw_leak",
+      "g013_distractor_task",
+      "g013_distractor_subject",
+      "g013_distractor_predicate"
+    ],
+    "scenarioId": "g013",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q014",
+    "taskId": "task_conflict_memory_014",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g014_useful"
+    ],
+    "mustRejectFactIds": [
+      "g014_stale",
+      "g014_invalid",
+      "g014_future",
+      "g014_candidate",
+      "g014_rejected",
+      "g014_conflict_a",
+      "g014_conflict_b",
+      "g014_injection",
+      "g014_raw_leak",
+      "g014_distractor_task",
+      "g014_distractor_subject",
+      "g014_distractor_predicate"
+    ],
+    "scenarioId": "g014",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q015",
+    "taskId": "task_hazard_memory_015",
+    "subject": "HazardPolicy",
+    "predicate": "secret_handling",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g015_useful"
+    ],
+    "mustRejectFactIds": [
+      "g015_stale",
+      "g015_invalid",
+      "g015_future",
+      "g015_candidate",
+      "g015_rejected",
+      "g015_conflict_a",
+      "g015_conflict_b",
+      "g015_injection",
+      "g015_raw_leak",
+      "g015_distractor_task",
+      "g015_distractor_subject",
+      "g015_distractor_predicate"
+    ],
+    "scenarioId": "g015",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q016",
+    "taskId": "task_distractor_memory_016",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_task",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g016_useful"
+    ],
+    "mustRejectFactIds": [
+      "g016_stale",
+      "g016_invalid",
+      "g016_future",
+      "g016_candidate",
+      "g016_rejected",
+      "g016_conflict_a",
+      "g016_conflict_b",
+      "g016_injection",
+      "g016_raw_leak",
+      "g016_distractor_task",
+      "g016_distractor_subject",
+      "g016_distractor_predicate"
+    ],
+    "scenarioId": "g016",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q017",
+    "taskId": "task_repo_conventions_017",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g017_useful"
+    ],
+    "mustRejectFactIds": [
+      "g017_stale",
+      "g017_invalid",
+      "g017_future",
+      "g017_candidate",
+      "g017_rejected",
+      "g017_conflict_a",
+      "g017_conflict_b",
+      "g017_injection",
+      "g017_raw_leak",
+      "g017_distractor_task",
+      "g017_distractor_subject",
+      "g017_distractor_predicate"
+    ],
+    "scenarioId": "g017",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q018",
+    "taskId": "task_user_preferences_018",
+    "subject": "UserPreference",
+    "predicate": "forbidden_action",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g018_useful"
+    ],
+    "mustRejectFactIds": [
+      "g018_stale",
+      "g018_invalid",
+      "g018_future",
+      "g018_candidate",
+      "g018_rejected",
+      "g018_conflict_a",
+      "g018_conflict_b",
+      "g018_injection",
+      "g018_raw_leak",
+      "g018_distractor_task",
+      "g018_distractor_subject",
+      "g018_distractor_predicate"
+    ],
+    "scenarioId": "g018",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q019",
+    "taskId": "task_project_architecture_019",
+    "subject": "BoundaryPolicy",
+    "predicate": "backend_entrypoint",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g019_useful"
+    ],
+    "mustRejectFactIds": [
+      "g019_stale",
+      "g019_invalid",
+      "g019_future",
+      "g019_candidate",
+      "g019_rejected",
+      "g019_conflict_a",
+      "g019_conflict_b",
+      "g019_injection",
+      "g019_raw_leak",
+      "g019_distractor_task",
+      "g019_distractor_subject",
+      "g019_distractor_predicate"
+    ],
+    "scenarioId": "g019",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q020",
+    "taskId": "task_task_history_020",
+    "subject": "TaskHistory",
+    "predicate": "validated_file",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g020_useful"
+    ],
+    "mustRejectFactIds": [
+      "g020_stale",
+      "g020_invalid",
+      "g020_future",
+      "g020_candidate",
+      "g020_rejected",
+      "g020_conflict_a",
+      "g020_conflict_b",
+      "g020_injection",
+      "g020_raw_leak",
+      "g020_distractor_task",
+      "g020_distractor_subject",
+      "g020_distractor_predicate"
+    ],
+    "scenarioId": "g020",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q021",
+    "taskId": "task_negative_memory_021",
+    "subject": "TemporalPolicy",
+    "predicate": "future_valid_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g021_useful"
+    ],
+    "mustRejectFactIds": [
+      "g021_stale",
+      "g021_invalid",
+      "g021_future",
+      "g021_candidate",
+      "g021_rejected",
+      "g021_conflict_a",
+      "g021_conflict_b",
+      "g021_injection",
+      "g021_raw_leak",
+      "g021_distractor_task",
+      "g021_distractor_subject",
+      "g021_distractor_predicate"
+    ],
+    "scenarioId": "g021",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q022",
+    "taskId": "task_conflict_memory_022",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g022_useful"
+    ],
+    "mustRejectFactIds": [
+      "g022_stale",
+      "g022_invalid",
+      "g022_future",
+      "g022_candidate",
+      "g022_rejected",
+      "g022_conflict_a",
+      "g022_conflict_b",
+      "g022_injection",
+      "g022_raw_leak",
+      "g022_distractor_task",
+      "g022_distractor_subject",
+      "g022_distractor_predicate"
+    ],
+    "scenarioId": "g022",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q023",
+    "taskId": "task_hazard_memory_023",
+    "subject": "HazardPolicy",
+    "predicate": "raw_leak",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g023_useful"
+    ],
+    "mustRejectFactIds": [
+      "g023_stale",
+      "g023_invalid",
+      "g023_future",
+      "g023_candidate",
+      "g023_rejected",
+      "g023_conflict_a",
+      "g023_conflict_b",
+      "g023_injection",
+      "g023_raw_leak",
+      "g023_distractor_task",
+      "g023_distractor_subject",
+      "g023_distractor_predicate"
+    ],
+    "scenarioId": "g023",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q024",
+    "taskId": "task_distractor_memory_024",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_predicate",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g024_useful"
+    ],
+    "mustRejectFactIds": [
+      "g024_stale",
+      "g024_invalid",
+      "g024_future",
+      "g024_candidate",
+      "g024_rejected",
+      "g024_conflict_a",
+      "g024_conflict_b",
+      "g024_injection",
+      "g024_raw_leak",
+      "g024_distractor_task",
+      "g024_distractor_subject",
+      "g024_distractor_predicate"
+    ],
+    "scenarioId": "g024",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q025",
+    "taskId": "task_repo_conventions_025",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g025_useful"
+    ],
+    "mustRejectFactIds": [
+      "g025_stale",
+      "g025_invalid",
+      "g025_future",
+      "g025_candidate",
+      "g025_rejected",
+      "g025_conflict_a",
+      "g025_conflict_b",
+      "g025_injection",
+      "g025_raw_leak",
+      "g025_distractor_task",
+      "g025_distractor_subject",
+      "g025_distractor_predicate"
+    ],
+    "scenarioId": "g025",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q026",
+    "taskId": "task_user_preferences_026",
+    "subject": "UserPreference",
+    "predicate": "response_style",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g026_useful"
+    ],
+    "mustRejectFactIds": [
+      "g026_stale",
+      "g026_invalid",
+      "g026_future",
+      "g026_candidate",
+      "g026_rejected",
+      "g026_conflict_a",
+      "g026_conflict_b",
+      "g026_injection",
+      "g026_raw_leak",
+      "g026_distractor_task",
+      "g026_distractor_subject",
+      "g026_distractor_predicate"
+    ],
+    "scenarioId": "g026",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q027",
+    "taskId": "task_project_architecture_027",
+    "subject": "BoundaryPolicy",
+    "predicate": "runtime_helper",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g027_useful"
+    ],
+    "mustRejectFactIds": [
+      "g027_stale",
+      "g027_invalid",
+      "g027_future",
+      "g027_candidate",
+      "g027_rejected",
+      "g027_conflict_a",
+      "g027_conflict_b",
+      "g027_injection",
+      "g027_raw_leak",
+      "g027_distractor_task",
+      "g027_distractor_subject",
+      "g027_distractor_predicate"
+    ],
+    "scenarioId": "g027",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q028",
+    "taskId": "task_task_history_028",
+    "subject": "TaskHistory",
+    "predicate": "previous_failed_approach",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g028_useful"
+    ],
+    "mustRejectFactIds": [
+      "g028_stale",
+      "g028_invalid",
+      "g028_future",
+      "g028_candidate",
+      "g028_rejected",
+      "g028_conflict_a",
+      "g028_conflict_b",
+      "g028_injection",
+      "g028_raw_leak",
+      "g028_distractor_task",
+      "g028_distractor_subject",
+      "g028_distractor_predicate"
+    ],
+    "scenarioId": "g028",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q029",
+    "taskId": "task_negative_memory_029",
+    "subject": "TemporalPolicy",
+    "predicate": "invalidated_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g029_useful"
+    ],
+    "mustRejectFactIds": [
+      "g029_stale",
+      "g029_invalid",
+      "g029_future",
+      "g029_candidate",
+      "g029_rejected",
+      "g029_conflict_a",
+      "g029_conflict_b",
+      "g029_injection",
+      "g029_raw_leak",
+      "g029_distractor_task",
+      "g029_distractor_subject",
+      "g029_distractor_predicate"
+    ],
+    "scenarioId": "g029",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q030",
+    "taskId": "task_conflict_memory_030",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g030_useful"
+    ],
+    "mustRejectFactIds": [
+      "g030_stale",
+      "g030_invalid",
+      "g030_future",
+      "g030_candidate",
+      "g030_rejected",
+      "g030_conflict_a",
+      "g030_conflict_b",
+      "g030_injection",
+      "g030_raw_leak",
+      "g030_distractor_task",
+      "g030_distractor_subject",
+      "g030_distractor_predicate"
+    ],
+    "scenarioId": "g030",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q031",
+    "taskId": "task_hazard_memory_031",
+    "subject": "HazardPolicy",
+    "predicate": "prompt_injection",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g031_useful"
+    ],
+    "mustRejectFactIds": [
+      "g031_stale",
+      "g031_invalid",
+      "g031_future",
+      "g031_candidate",
+      "g031_rejected",
+      "g031_conflict_a",
+      "g031_conflict_b",
+      "g031_injection",
+      "g031_raw_leak",
+      "g031_distractor_task",
+      "g031_distractor_subject",
+      "g031_distractor_predicate"
+    ],
+    "scenarioId": "g031",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q032",
+    "taskId": "task_distractor_memory_032",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_subject",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g032_useful"
+    ],
+    "mustRejectFactIds": [
+      "g032_stale",
+      "g032_invalid",
+      "g032_future",
+      "g032_candidate",
+      "g032_rejected",
+      "g032_conflict_a",
+      "g032_conflict_b",
+      "g032_injection",
+      "g032_raw_leak",
+      "g032_distractor_task",
+      "g032_distractor_subject",
+      "g032_distractor_predicate"
+    ],
+    "scenarioId": "g032",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q033",
+    "taskId": "task_repo_conventions_033",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g033_useful"
+    ],
+    "mustRejectFactIds": [
+      "g033_stale",
+      "g033_invalid",
+      "g033_future",
+      "g033_candidate",
+      "g033_rejected",
+      "g033_conflict_a",
+      "g033_conflict_b",
+      "g033_injection",
+      "g033_raw_leak",
+      "g033_distractor_task",
+      "g033_distractor_subject",
+      "g033_distractor_predicate"
+    ],
+    "scenarioId": "g033",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q034",
+    "taskId": "task_user_preferences_034",
+    "subject": "UserPreference",
+    "predicate": "reply_language",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g034_useful"
+    ],
+    "mustRejectFactIds": [
+      "g034_stale",
+      "g034_invalid",
+      "g034_future",
+      "g034_candidate",
+      "g034_rejected",
+      "g034_conflict_a",
+      "g034_conflict_b",
+      "g034_injection",
+      "g034_raw_leak",
+      "g034_distractor_task",
+      "g034_distractor_subject",
+      "g034_distractor_predicate"
+    ],
+    "scenarioId": "g034",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q035",
+    "taskId": "task_project_architecture_035",
+    "subject": "BoundaryPolicy",
+    "predicate": "gateway_proxy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g035_useful"
+    ],
+    "mustRejectFactIds": [
+      "g035_stale",
+      "g035_invalid",
+      "g035_future",
+      "g035_candidate",
+      "g035_rejected",
+      "g035_conflict_a",
+      "g035_conflict_b",
+      "g035_injection",
+      "g035_raw_leak",
+      "g035_distractor_task",
+      "g035_distractor_subject",
+      "g035_distractor_predicate"
+    ],
+    "scenarioId": "g035",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q036",
+    "taskId": "task_task_history_036",
+    "subject": "TaskHistory",
+    "predicate": "tests_already_run",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g036_useful"
+    ],
+    "mustRejectFactIds": [
+      "g036_stale",
+      "g036_invalid",
+      "g036_future",
+      "g036_candidate",
+      "g036_rejected",
+      "g036_conflict_a",
+      "g036_conflict_b",
+      "g036_injection",
+      "g036_raw_leak",
+      "g036_distractor_task",
+      "g036_distractor_subject",
+      "g036_distractor_predicate"
+    ],
+    "scenarioId": "g036",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q037",
+    "taskId": "task_negative_memory_037",
+    "subject": "TemporalPolicy",
+    "predicate": "expired_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g037_useful"
+    ],
+    "mustRejectFactIds": [
+      "g037_stale",
+      "g037_invalid",
+      "g037_future",
+      "g037_candidate",
+      "g037_rejected",
+      "g037_conflict_a",
+      "g037_conflict_b",
+      "g037_injection",
+      "g037_raw_leak",
+      "g037_distractor_task",
+      "g037_distractor_subject",
+      "g037_distractor_predicate"
+    ],
+    "scenarioId": "g037",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q038",
+    "taskId": "task_conflict_memory_038",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g038_useful"
+    ],
+    "mustRejectFactIds": [
+      "g038_stale",
+      "g038_invalid",
+      "g038_future",
+      "g038_candidate",
+      "g038_rejected",
+      "g038_conflict_a",
+      "g038_conflict_b",
+      "g038_injection",
+      "g038_raw_leak",
+      "g038_distractor_task",
+      "g038_distractor_subject",
+      "g038_distractor_predicate"
+    ],
+    "scenarioId": "g038",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q039",
+    "taskId": "task_hazard_memory_039",
+    "subject": "HazardPolicy",
+    "predicate": "secret_handling",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g039_useful"
+    ],
+    "mustRejectFactIds": [
+      "g039_stale",
+      "g039_invalid",
+      "g039_future",
+      "g039_candidate",
+      "g039_rejected",
+      "g039_conflict_a",
+      "g039_conflict_b",
+      "g039_injection",
+      "g039_raw_leak",
+      "g039_distractor_task",
+      "g039_distractor_subject",
+      "g039_distractor_predicate"
+    ],
+    "scenarioId": "g039",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q040",
+    "taskId": "task_distractor_memory_040",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_task",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g040_useful"
+    ],
+    "mustRejectFactIds": [
+      "g040_stale",
+      "g040_invalid",
+      "g040_future",
+      "g040_candidate",
+      "g040_rejected",
+      "g040_conflict_a",
+      "g040_conflict_b",
+      "g040_injection",
+      "g040_raw_leak",
+      "g040_distractor_task",
+      "g040_distractor_subject",
+      "g040_distractor_predicate"
+    ],
+    "scenarioId": "g040",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q041",
+    "taskId": "task_repo_conventions_041",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g041_useful"
+    ],
+    "mustRejectFactIds": [
+      "g041_stale",
+      "g041_invalid",
+      "g041_future",
+      "g041_candidate",
+      "g041_rejected",
+      "g041_conflict_a",
+      "g041_conflict_b",
+      "g041_injection",
+      "g041_raw_leak",
+      "g041_distractor_task",
+      "g041_distractor_subject",
+      "g041_distractor_predicate"
+    ],
+    "scenarioId": "g041",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q042",
+    "taskId": "task_user_preferences_042",
+    "subject": "UserPreference",
+    "predicate": "forbidden_action",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g042_useful"
+    ],
+    "mustRejectFactIds": [
+      "g042_stale",
+      "g042_invalid",
+      "g042_future",
+      "g042_candidate",
+      "g042_rejected",
+      "g042_conflict_a",
+      "g042_conflict_b",
+      "g042_injection",
+      "g042_raw_leak",
+      "g042_distractor_task",
+      "g042_distractor_subject",
+      "g042_distractor_predicate"
+    ],
+    "scenarioId": "g042",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q043",
+    "taskId": "task_project_architecture_043",
+    "subject": "BoundaryPolicy",
+    "predicate": "backend_entrypoint",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g043_useful"
+    ],
+    "mustRejectFactIds": [
+      "g043_stale",
+      "g043_invalid",
+      "g043_future",
+      "g043_candidate",
+      "g043_rejected",
+      "g043_conflict_a",
+      "g043_conflict_b",
+      "g043_injection",
+      "g043_raw_leak",
+      "g043_distractor_task",
+      "g043_distractor_subject",
+      "g043_distractor_predicate"
+    ],
+    "scenarioId": "g043",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q044",
+    "taskId": "task_task_history_044",
+    "subject": "TaskHistory",
+    "predicate": "validated_file",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g044_useful"
+    ],
+    "mustRejectFactIds": [
+      "g044_stale",
+      "g044_invalid",
+      "g044_future",
+      "g044_candidate",
+      "g044_rejected",
+      "g044_conflict_a",
+      "g044_conflict_b",
+      "g044_injection",
+      "g044_raw_leak",
+      "g044_distractor_task",
+      "g044_distractor_subject",
+      "g044_distractor_predicate"
+    ],
+    "scenarioId": "g044",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q045",
+    "taskId": "task_negative_memory_045",
+    "subject": "TemporalPolicy",
+    "predicate": "future_valid_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g045_useful"
+    ],
+    "mustRejectFactIds": [
+      "g045_stale",
+      "g045_invalid",
+      "g045_future",
+      "g045_candidate",
+      "g045_rejected",
+      "g045_conflict_a",
+      "g045_conflict_b",
+      "g045_injection",
+      "g045_raw_leak",
+      "g045_distractor_task",
+      "g045_distractor_subject",
+      "g045_distractor_predicate"
+    ],
+    "scenarioId": "g045",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q046",
+    "taskId": "task_conflict_memory_046",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g046_useful"
+    ],
+    "mustRejectFactIds": [
+      "g046_stale",
+      "g046_invalid",
+      "g046_future",
+      "g046_candidate",
+      "g046_rejected",
+      "g046_conflict_a",
+      "g046_conflict_b",
+      "g046_injection",
+      "g046_raw_leak",
+      "g046_distractor_task",
+      "g046_distractor_subject",
+      "g046_distractor_predicate"
+    ],
+    "scenarioId": "g046",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q047",
+    "taskId": "task_hazard_memory_047",
+    "subject": "HazardPolicy",
+    "predicate": "raw_leak",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g047_useful"
+    ],
+    "mustRejectFactIds": [
+      "g047_stale",
+      "g047_invalid",
+      "g047_future",
+      "g047_candidate",
+      "g047_rejected",
+      "g047_conflict_a",
+      "g047_conflict_b",
+      "g047_injection",
+      "g047_raw_leak",
+      "g047_distractor_task",
+      "g047_distractor_subject",
+      "g047_distractor_predicate"
+    ],
+    "scenarioId": "g047",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q048",
+    "taskId": "task_distractor_memory_048",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_predicate",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g048_useful"
+    ],
+    "mustRejectFactIds": [
+      "g048_stale",
+      "g048_invalid",
+      "g048_future",
+      "g048_candidate",
+      "g048_rejected",
+      "g048_conflict_a",
+      "g048_conflict_b",
+      "g048_injection",
+      "g048_raw_leak",
+      "g048_distractor_task",
+      "g048_distractor_subject",
+      "g048_distractor_predicate"
+    ],
+    "scenarioId": "g048",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q049",
+    "taskId": "task_repo_conventions_049",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g049_useful"
+    ],
+    "mustRejectFactIds": [
+      "g049_stale",
+      "g049_invalid",
+      "g049_future",
+      "g049_candidate",
+      "g049_rejected",
+      "g049_conflict_a",
+      "g049_conflict_b",
+      "g049_injection",
+      "g049_raw_leak",
+      "g049_distractor_task",
+      "g049_distractor_subject",
+      "g049_distractor_predicate"
+    ],
+    "scenarioId": "g049",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q050",
+    "taskId": "task_user_preferences_050",
+    "subject": "UserPreference",
+    "predicate": "response_style",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g050_useful"
+    ],
+    "mustRejectFactIds": [
+      "g050_stale",
+      "g050_invalid",
+      "g050_future",
+      "g050_candidate",
+      "g050_rejected",
+      "g050_conflict_a",
+      "g050_conflict_b",
+      "g050_injection",
+      "g050_raw_leak",
+      "g050_distractor_task",
+      "g050_distractor_subject",
+      "g050_distractor_predicate"
+    ],
+    "scenarioId": "g050",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q051",
+    "taskId": "task_project_architecture_051",
+    "subject": "BoundaryPolicy",
+    "predicate": "runtime_helper",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g051_useful"
+    ],
+    "mustRejectFactIds": [
+      "g051_stale",
+      "g051_invalid",
+      "g051_future",
+      "g051_candidate",
+      "g051_rejected",
+      "g051_conflict_a",
+      "g051_conflict_b",
+      "g051_injection",
+      "g051_raw_leak",
+      "g051_distractor_task",
+      "g051_distractor_subject",
+      "g051_distractor_predicate"
+    ],
+    "scenarioId": "g051",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q052",
+    "taskId": "task_task_history_052",
+    "subject": "TaskHistory",
+    "predicate": "previous_failed_approach",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g052_useful"
+    ],
+    "mustRejectFactIds": [
+      "g052_stale",
+      "g052_invalid",
+      "g052_future",
+      "g052_candidate",
+      "g052_rejected",
+      "g052_conflict_a",
+      "g052_conflict_b",
+      "g052_injection",
+      "g052_raw_leak",
+      "g052_distractor_task",
+      "g052_distractor_subject",
+      "g052_distractor_predicate"
+    ],
+    "scenarioId": "g052",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q053",
+    "taskId": "task_negative_memory_053",
+    "subject": "TemporalPolicy",
+    "predicate": "invalidated_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g053_useful"
+    ],
+    "mustRejectFactIds": [
+      "g053_stale",
+      "g053_invalid",
+      "g053_future",
+      "g053_candidate",
+      "g053_rejected",
+      "g053_conflict_a",
+      "g053_conflict_b",
+      "g053_injection",
+      "g053_raw_leak",
+      "g053_distractor_task",
+      "g053_distractor_subject",
+      "g053_distractor_predicate"
+    ],
+    "scenarioId": "g053",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q054",
+    "taskId": "task_conflict_memory_054",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g054_useful"
+    ],
+    "mustRejectFactIds": [
+      "g054_stale",
+      "g054_invalid",
+      "g054_future",
+      "g054_candidate",
+      "g054_rejected",
+      "g054_conflict_a",
+      "g054_conflict_b",
+      "g054_injection",
+      "g054_raw_leak",
+      "g054_distractor_task",
+      "g054_distractor_subject",
+      "g054_distractor_predicate"
+    ],
+    "scenarioId": "g054",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q055",
+    "taskId": "task_hazard_memory_055",
+    "subject": "HazardPolicy",
+    "predicate": "prompt_injection",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g055_useful"
+    ],
+    "mustRejectFactIds": [
+      "g055_stale",
+      "g055_invalid",
+      "g055_future",
+      "g055_candidate",
+      "g055_rejected",
+      "g055_conflict_a",
+      "g055_conflict_b",
+      "g055_injection",
+      "g055_raw_leak",
+      "g055_distractor_task",
+      "g055_distractor_subject",
+      "g055_distractor_predicate"
+    ],
+    "scenarioId": "g055",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q056",
+    "taskId": "task_distractor_memory_056",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_subject",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g056_useful"
+    ],
+    "mustRejectFactIds": [
+      "g056_stale",
+      "g056_invalid",
+      "g056_future",
+      "g056_candidate",
+      "g056_rejected",
+      "g056_conflict_a",
+      "g056_conflict_b",
+      "g056_injection",
+      "g056_raw_leak",
+      "g056_distractor_task",
+      "g056_distractor_subject",
+      "g056_distractor_predicate"
+    ],
+    "scenarioId": "g056",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q057",
+    "taskId": "task_repo_conventions_057",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g057_useful"
+    ],
+    "mustRejectFactIds": [
+      "g057_stale",
+      "g057_invalid",
+      "g057_future",
+      "g057_candidate",
+      "g057_rejected",
+      "g057_conflict_a",
+      "g057_conflict_b",
+      "g057_injection",
+      "g057_raw_leak",
+      "g057_distractor_task",
+      "g057_distractor_subject",
+      "g057_distractor_predicate"
+    ],
+    "scenarioId": "g057",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q058",
+    "taskId": "task_user_preferences_058",
+    "subject": "UserPreference",
+    "predicate": "reply_language",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g058_useful"
+    ],
+    "mustRejectFactIds": [
+      "g058_stale",
+      "g058_invalid",
+      "g058_future",
+      "g058_candidate",
+      "g058_rejected",
+      "g058_conflict_a",
+      "g058_conflict_b",
+      "g058_injection",
+      "g058_raw_leak",
+      "g058_distractor_task",
+      "g058_distractor_subject",
+      "g058_distractor_predicate"
+    ],
+    "scenarioId": "g058",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q059",
+    "taskId": "task_project_architecture_059",
+    "subject": "BoundaryPolicy",
+    "predicate": "gateway_proxy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g059_useful"
+    ],
+    "mustRejectFactIds": [
+      "g059_stale",
+      "g059_invalid",
+      "g059_future",
+      "g059_candidate",
+      "g059_rejected",
+      "g059_conflict_a",
+      "g059_conflict_b",
+      "g059_injection",
+      "g059_raw_leak",
+      "g059_distractor_task",
+      "g059_distractor_subject",
+      "g059_distractor_predicate"
+    ],
+    "scenarioId": "g059",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q060",
+    "taskId": "task_task_history_060",
+    "subject": "TaskHistory",
+    "predicate": "tests_already_run",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g060_useful"
+    ],
+    "mustRejectFactIds": [
+      "g060_stale",
+      "g060_invalid",
+      "g060_future",
+      "g060_candidate",
+      "g060_rejected",
+      "g060_conflict_a",
+      "g060_conflict_b",
+      "g060_injection",
+      "g060_raw_leak",
+      "g060_distractor_task",
+      "g060_distractor_subject",
+      "g060_distractor_predicate"
+    ],
+    "scenarioId": "g060",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q061",
+    "taskId": "task_negative_memory_061",
+    "subject": "TemporalPolicy",
+    "predicate": "expired_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g061_useful"
+    ],
+    "mustRejectFactIds": [
+      "g061_stale",
+      "g061_invalid",
+      "g061_future",
+      "g061_candidate",
+      "g061_rejected",
+      "g061_conflict_a",
+      "g061_conflict_b",
+      "g061_injection",
+      "g061_raw_leak",
+      "g061_distractor_task",
+      "g061_distractor_subject",
+      "g061_distractor_predicate"
+    ],
+    "scenarioId": "g061",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q062",
+    "taskId": "task_conflict_memory_062",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g062_useful"
+    ],
+    "mustRejectFactIds": [
+      "g062_stale",
+      "g062_invalid",
+      "g062_future",
+      "g062_candidate",
+      "g062_rejected",
+      "g062_conflict_a",
+      "g062_conflict_b",
+      "g062_injection",
+      "g062_raw_leak",
+      "g062_distractor_task",
+      "g062_distractor_subject",
+      "g062_distractor_predicate"
+    ],
+    "scenarioId": "g062",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q063",
+    "taskId": "task_hazard_memory_063",
+    "subject": "HazardPolicy",
+    "predicate": "secret_handling",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g063_useful"
+    ],
+    "mustRejectFactIds": [
+      "g063_stale",
+      "g063_invalid",
+      "g063_future",
+      "g063_candidate",
+      "g063_rejected",
+      "g063_conflict_a",
+      "g063_conflict_b",
+      "g063_injection",
+      "g063_raw_leak",
+      "g063_distractor_task",
+      "g063_distractor_subject",
+      "g063_distractor_predicate"
+    ],
+    "scenarioId": "g063",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q064",
+    "taskId": "task_distractor_memory_064",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_task",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g064_useful"
+    ],
+    "mustRejectFactIds": [
+      "g064_stale",
+      "g064_invalid",
+      "g064_future",
+      "g064_candidate",
+      "g064_rejected",
+      "g064_conflict_a",
+      "g064_conflict_b",
+      "g064_injection",
+      "g064_raw_leak",
+      "g064_distractor_task",
+      "g064_distractor_subject",
+      "g064_distractor_predicate"
+    ],
+    "scenarioId": "g064",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q065",
+    "taskId": "task_repo_conventions_065",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g065_useful"
+    ],
+    "mustRejectFactIds": [
+      "g065_stale",
+      "g065_invalid",
+      "g065_future",
+      "g065_candidate",
+      "g065_rejected",
+      "g065_conflict_a",
+      "g065_conflict_b",
+      "g065_injection",
+      "g065_raw_leak",
+      "g065_distractor_task",
+      "g065_distractor_subject",
+      "g065_distractor_predicate"
+    ],
+    "scenarioId": "g065",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q066",
+    "taskId": "task_user_preferences_066",
+    "subject": "UserPreference",
+    "predicate": "forbidden_action",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g066_useful"
+    ],
+    "mustRejectFactIds": [
+      "g066_stale",
+      "g066_invalid",
+      "g066_future",
+      "g066_candidate",
+      "g066_rejected",
+      "g066_conflict_a",
+      "g066_conflict_b",
+      "g066_injection",
+      "g066_raw_leak",
+      "g066_distractor_task",
+      "g066_distractor_subject",
+      "g066_distractor_predicate"
+    ],
+    "scenarioId": "g066",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q067",
+    "taskId": "task_project_architecture_067",
+    "subject": "BoundaryPolicy",
+    "predicate": "backend_entrypoint",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g067_useful"
+    ],
+    "mustRejectFactIds": [
+      "g067_stale",
+      "g067_invalid",
+      "g067_future",
+      "g067_candidate",
+      "g067_rejected",
+      "g067_conflict_a",
+      "g067_conflict_b",
+      "g067_injection",
+      "g067_raw_leak",
+      "g067_distractor_task",
+      "g067_distractor_subject",
+      "g067_distractor_predicate"
+    ],
+    "scenarioId": "g067",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q068",
+    "taskId": "task_task_history_068",
+    "subject": "TaskHistory",
+    "predicate": "validated_file",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g068_useful"
+    ],
+    "mustRejectFactIds": [
+      "g068_stale",
+      "g068_invalid",
+      "g068_future",
+      "g068_candidate",
+      "g068_rejected",
+      "g068_conflict_a",
+      "g068_conflict_b",
+      "g068_injection",
+      "g068_raw_leak",
+      "g068_distractor_task",
+      "g068_distractor_subject",
+      "g068_distractor_predicate"
+    ],
+    "scenarioId": "g068",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q069",
+    "taskId": "task_negative_memory_069",
+    "subject": "TemporalPolicy",
+    "predicate": "future_valid_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g069_useful"
+    ],
+    "mustRejectFactIds": [
+      "g069_stale",
+      "g069_invalid",
+      "g069_future",
+      "g069_candidate",
+      "g069_rejected",
+      "g069_conflict_a",
+      "g069_conflict_b",
+      "g069_injection",
+      "g069_raw_leak",
+      "g069_distractor_task",
+      "g069_distractor_subject",
+      "g069_distractor_predicate"
+    ],
+    "scenarioId": "g069",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q070",
+    "taskId": "task_conflict_memory_070",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g070_useful"
+    ],
+    "mustRejectFactIds": [
+      "g070_stale",
+      "g070_invalid",
+      "g070_future",
+      "g070_candidate",
+      "g070_rejected",
+      "g070_conflict_a",
+      "g070_conflict_b",
+      "g070_injection",
+      "g070_raw_leak",
+      "g070_distractor_task",
+      "g070_distractor_subject",
+      "g070_distractor_predicate"
+    ],
+    "scenarioId": "g070",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q071",
+    "taskId": "task_hazard_memory_071",
+    "subject": "HazardPolicy",
+    "predicate": "raw_leak",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g071_useful"
+    ],
+    "mustRejectFactIds": [
+      "g071_stale",
+      "g071_invalid",
+      "g071_future",
+      "g071_candidate",
+      "g071_rejected",
+      "g071_conflict_a",
+      "g071_conflict_b",
+      "g071_injection",
+      "g071_raw_leak",
+      "g071_distractor_task",
+      "g071_distractor_subject",
+      "g071_distractor_predicate"
+    ],
+    "scenarioId": "g071",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q072",
+    "taskId": "task_distractor_memory_072",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_predicate",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g072_useful"
+    ],
+    "mustRejectFactIds": [
+      "g072_stale",
+      "g072_invalid",
+      "g072_future",
+      "g072_candidate",
+      "g072_rejected",
+      "g072_conflict_a",
+      "g072_conflict_b",
+      "g072_injection",
+      "g072_raw_leak",
+      "g072_distractor_task",
+      "g072_distractor_subject",
+      "g072_distractor_predicate"
+    ],
+    "scenarioId": "g072",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q073",
+    "taskId": "task_repo_conventions_073",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g073_useful"
+    ],
+    "mustRejectFactIds": [
+      "g073_stale",
+      "g073_invalid",
+      "g073_future",
+      "g073_candidate",
+      "g073_rejected",
+      "g073_conflict_a",
+      "g073_conflict_b",
+      "g073_injection",
+      "g073_raw_leak",
+      "g073_distractor_task",
+      "g073_distractor_subject",
+      "g073_distractor_predicate"
+    ],
+    "scenarioId": "g073",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q074",
+    "taskId": "task_user_preferences_074",
+    "subject": "UserPreference",
+    "predicate": "response_style",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g074_useful"
+    ],
+    "mustRejectFactIds": [
+      "g074_stale",
+      "g074_invalid",
+      "g074_future",
+      "g074_candidate",
+      "g074_rejected",
+      "g074_conflict_a",
+      "g074_conflict_b",
+      "g074_injection",
+      "g074_raw_leak",
+      "g074_distractor_task",
+      "g074_distractor_subject",
+      "g074_distractor_predicate"
+    ],
+    "scenarioId": "g074",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q075",
+    "taskId": "task_project_architecture_075",
+    "subject": "BoundaryPolicy",
+    "predicate": "runtime_helper",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g075_useful"
+    ],
+    "mustRejectFactIds": [
+      "g075_stale",
+      "g075_invalid",
+      "g075_future",
+      "g075_candidate",
+      "g075_rejected",
+      "g075_conflict_a",
+      "g075_conflict_b",
+      "g075_injection",
+      "g075_raw_leak",
+      "g075_distractor_task",
+      "g075_distractor_subject",
+      "g075_distractor_predicate"
+    ],
+    "scenarioId": "g075",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q076",
+    "taskId": "task_task_history_076",
+    "subject": "TaskHistory",
+    "predicate": "previous_failed_approach",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g076_useful"
+    ],
+    "mustRejectFactIds": [
+      "g076_stale",
+      "g076_invalid",
+      "g076_future",
+      "g076_candidate",
+      "g076_rejected",
+      "g076_conflict_a",
+      "g076_conflict_b",
+      "g076_injection",
+      "g076_raw_leak",
+      "g076_distractor_task",
+      "g076_distractor_subject",
+      "g076_distractor_predicate"
+    ],
+    "scenarioId": "g076",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q077",
+    "taskId": "task_negative_memory_077",
+    "subject": "TemporalPolicy",
+    "predicate": "invalidated_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g077_useful"
+    ],
+    "mustRejectFactIds": [
+      "g077_stale",
+      "g077_invalid",
+      "g077_future",
+      "g077_candidate",
+      "g077_rejected",
+      "g077_conflict_a",
+      "g077_conflict_b",
+      "g077_injection",
+      "g077_raw_leak",
+      "g077_distractor_task",
+      "g077_distractor_subject",
+      "g077_distractor_predicate"
+    ],
+    "scenarioId": "g077",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q078",
+    "taskId": "task_conflict_memory_078",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g078_useful"
+    ],
+    "mustRejectFactIds": [
+      "g078_stale",
+      "g078_invalid",
+      "g078_future",
+      "g078_candidate",
+      "g078_rejected",
+      "g078_conflict_a",
+      "g078_conflict_b",
+      "g078_injection",
+      "g078_raw_leak",
+      "g078_distractor_task",
+      "g078_distractor_subject",
+      "g078_distractor_predicate"
+    ],
+    "scenarioId": "g078",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q079",
+    "taskId": "task_hazard_memory_079",
+    "subject": "HazardPolicy",
+    "predicate": "prompt_injection",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g079_useful"
+    ],
+    "mustRejectFactIds": [
+      "g079_stale",
+      "g079_invalid",
+      "g079_future",
+      "g079_candidate",
+      "g079_rejected",
+      "g079_conflict_a",
+      "g079_conflict_b",
+      "g079_injection",
+      "g079_raw_leak",
+      "g079_distractor_task",
+      "g079_distractor_subject",
+      "g079_distractor_predicate"
+    ],
+    "scenarioId": "g079",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q080",
+    "taskId": "task_distractor_memory_080",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_subject",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g080_useful"
+    ],
+    "mustRejectFactIds": [
+      "g080_stale",
+      "g080_invalid",
+      "g080_future",
+      "g080_candidate",
+      "g080_rejected",
+      "g080_conflict_a",
+      "g080_conflict_b",
+      "g080_injection",
+      "g080_raw_leak",
+      "g080_distractor_task",
+      "g080_distractor_subject",
+      "g080_distractor_predicate"
+    ],
+    "scenarioId": "g080",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q081",
+    "taskId": "task_repo_conventions_081",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g081_useful"
+    ],
+    "mustRejectFactIds": [
+      "g081_stale",
+      "g081_invalid",
+      "g081_future",
+      "g081_candidate",
+      "g081_rejected",
+      "g081_conflict_a",
+      "g081_conflict_b",
+      "g081_injection",
+      "g081_raw_leak",
+      "g081_distractor_task",
+      "g081_distractor_subject",
+      "g081_distractor_predicate"
+    ],
+    "scenarioId": "g081",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q082",
+    "taskId": "task_user_preferences_082",
+    "subject": "UserPreference",
+    "predicate": "reply_language",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g082_useful"
+    ],
+    "mustRejectFactIds": [
+      "g082_stale",
+      "g082_invalid",
+      "g082_future",
+      "g082_candidate",
+      "g082_rejected",
+      "g082_conflict_a",
+      "g082_conflict_b",
+      "g082_injection",
+      "g082_raw_leak",
+      "g082_distractor_task",
+      "g082_distractor_subject",
+      "g082_distractor_predicate"
+    ],
+    "scenarioId": "g082",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q083",
+    "taskId": "task_project_architecture_083",
+    "subject": "BoundaryPolicy",
+    "predicate": "gateway_proxy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g083_useful"
+    ],
+    "mustRejectFactIds": [
+      "g083_stale",
+      "g083_invalid",
+      "g083_future",
+      "g083_candidate",
+      "g083_rejected",
+      "g083_conflict_a",
+      "g083_conflict_b",
+      "g083_injection",
+      "g083_raw_leak",
+      "g083_distractor_task",
+      "g083_distractor_subject",
+      "g083_distractor_predicate"
+    ],
+    "scenarioId": "g083",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q084",
+    "taskId": "task_task_history_084",
+    "subject": "TaskHistory",
+    "predicate": "tests_already_run",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g084_useful"
+    ],
+    "mustRejectFactIds": [
+      "g084_stale",
+      "g084_invalid",
+      "g084_future",
+      "g084_candidate",
+      "g084_rejected",
+      "g084_conflict_a",
+      "g084_conflict_b",
+      "g084_injection",
+      "g084_raw_leak",
+      "g084_distractor_task",
+      "g084_distractor_subject",
+      "g084_distractor_predicate"
+    ],
+    "scenarioId": "g084",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q085",
+    "taskId": "task_negative_memory_085",
+    "subject": "TemporalPolicy",
+    "predicate": "expired_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g085_useful"
+    ],
+    "mustRejectFactIds": [
+      "g085_stale",
+      "g085_invalid",
+      "g085_future",
+      "g085_candidate",
+      "g085_rejected",
+      "g085_conflict_a",
+      "g085_conflict_b",
+      "g085_injection",
+      "g085_raw_leak",
+      "g085_distractor_task",
+      "g085_distractor_subject",
+      "g085_distractor_predicate"
+    ],
+    "scenarioId": "g085",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q086",
+    "taskId": "task_conflict_memory_086",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g086_useful"
+    ],
+    "mustRejectFactIds": [
+      "g086_stale",
+      "g086_invalid",
+      "g086_future",
+      "g086_candidate",
+      "g086_rejected",
+      "g086_conflict_a",
+      "g086_conflict_b",
+      "g086_injection",
+      "g086_raw_leak",
+      "g086_distractor_task",
+      "g086_distractor_subject",
+      "g086_distractor_predicate"
+    ],
+    "scenarioId": "g086",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q087",
+    "taskId": "task_hazard_memory_087",
+    "subject": "HazardPolicy",
+    "predicate": "secret_handling",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g087_useful"
+    ],
+    "mustRejectFactIds": [
+      "g087_stale",
+      "g087_invalid",
+      "g087_future",
+      "g087_candidate",
+      "g087_rejected",
+      "g087_conflict_a",
+      "g087_conflict_b",
+      "g087_injection",
+      "g087_raw_leak",
+      "g087_distractor_task",
+      "g087_distractor_subject",
+      "g087_distractor_predicate"
+    ],
+    "scenarioId": "g087",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q088",
+    "taskId": "task_distractor_memory_088",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_task",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g088_useful"
+    ],
+    "mustRejectFactIds": [
+      "g088_stale",
+      "g088_invalid",
+      "g088_future",
+      "g088_candidate",
+      "g088_rejected",
+      "g088_conflict_a",
+      "g088_conflict_b",
+      "g088_injection",
+      "g088_raw_leak",
+      "g088_distractor_task",
+      "g088_distractor_subject",
+      "g088_distractor_predicate"
+    ],
+    "scenarioId": "g088",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q089",
+    "taskId": "task_repo_conventions_089",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g089_useful"
+    ],
+    "mustRejectFactIds": [
+      "g089_stale",
+      "g089_invalid",
+      "g089_future",
+      "g089_candidate",
+      "g089_rejected",
+      "g089_conflict_a",
+      "g089_conflict_b",
+      "g089_injection",
+      "g089_raw_leak",
+      "g089_distractor_task",
+      "g089_distractor_subject",
+      "g089_distractor_predicate"
+    ],
+    "scenarioId": "g089",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q090",
+    "taskId": "task_user_preferences_090",
+    "subject": "UserPreference",
+    "predicate": "forbidden_action",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g090_useful"
+    ],
+    "mustRejectFactIds": [
+      "g090_stale",
+      "g090_invalid",
+      "g090_future",
+      "g090_candidate",
+      "g090_rejected",
+      "g090_conflict_a",
+      "g090_conflict_b",
+      "g090_injection",
+      "g090_raw_leak",
+      "g090_distractor_task",
+      "g090_distractor_subject",
+      "g090_distractor_predicate"
+    ],
+    "scenarioId": "g090",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q091",
+    "taskId": "task_project_architecture_091",
+    "subject": "BoundaryPolicy",
+    "predicate": "backend_entrypoint",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g091_useful"
+    ],
+    "mustRejectFactIds": [
+      "g091_stale",
+      "g091_invalid",
+      "g091_future",
+      "g091_candidate",
+      "g091_rejected",
+      "g091_conflict_a",
+      "g091_conflict_b",
+      "g091_injection",
+      "g091_raw_leak",
+      "g091_distractor_task",
+      "g091_distractor_subject",
+      "g091_distractor_predicate"
+    ],
+    "scenarioId": "g091",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q092",
+    "taskId": "task_task_history_092",
+    "subject": "TaskHistory",
+    "predicate": "validated_file",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g092_useful"
+    ],
+    "mustRejectFactIds": [
+      "g092_stale",
+      "g092_invalid",
+      "g092_future",
+      "g092_candidate",
+      "g092_rejected",
+      "g092_conflict_a",
+      "g092_conflict_b",
+      "g092_injection",
+      "g092_raw_leak",
+      "g092_distractor_task",
+      "g092_distractor_subject",
+      "g092_distractor_predicate"
+    ],
+    "scenarioId": "g092",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q093",
+    "taskId": "task_negative_memory_093",
+    "subject": "TemporalPolicy",
+    "predicate": "future_valid_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g093_useful"
+    ],
+    "mustRejectFactIds": [
+      "g093_stale",
+      "g093_invalid",
+      "g093_future",
+      "g093_candidate",
+      "g093_rejected",
+      "g093_conflict_a",
+      "g093_conflict_b",
+      "g093_injection",
+      "g093_raw_leak",
+      "g093_distractor_task",
+      "g093_distractor_subject",
+      "g093_distractor_predicate"
+    ],
+    "scenarioId": "g093",
+    "category": "negative_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q094",
+    "taskId": "task_conflict_memory_094",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g094_useful"
+    ],
+    "mustRejectFactIds": [
+      "g094_stale",
+      "g094_invalid",
+      "g094_future",
+      "g094_candidate",
+      "g094_rejected",
+      "g094_conflict_a",
+      "g094_conflict_b",
+      "g094_injection",
+      "g094_raw_leak",
+      "g094_distractor_task",
+      "g094_distractor_subject",
+      "g094_distractor_predicate"
+    ],
+    "scenarioId": "g094",
+    "category": "conflict_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q095",
+    "taskId": "task_hazard_memory_095",
+    "subject": "HazardPolicy",
+    "predicate": "raw_leak",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g095_useful"
+    ],
+    "mustRejectFactIds": [
+      "g095_stale",
+      "g095_invalid",
+      "g095_future",
+      "g095_candidate",
+      "g095_rejected",
+      "g095_conflict_a",
+      "g095_conflict_b",
+      "g095_injection",
+      "g095_raw_leak",
+      "g095_distractor_task",
+      "g095_distractor_subject",
+      "g095_distractor_predicate"
+    ],
+    "scenarioId": "g095",
+    "category": "hazard_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q096",
+    "taskId": "task_distractor_memory_096",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_predicate",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g096_useful"
+    ],
+    "mustRejectFactIds": [
+      "g096_stale",
+      "g096_invalid",
+      "g096_future",
+      "g096_candidate",
+      "g096_rejected",
+      "g096_conflict_a",
+      "g096_conflict_b",
+      "g096_injection",
+      "g096_raw_leak",
+      "g096_distractor_task",
+      "g096_distractor_subject",
+      "g096_distractor_predicate"
+    ],
+    "scenarioId": "g096",
+    "category": "distractor_memory",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q097",
+    "taskId": "task_repo_conventions_097",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g097_useful"
+    ],
+    "mustRejectFactIds": [
+      "g097_stale",
+      "g097_invalid",
+      "g097_future",
+      "g097_candidate",
+      "g097_rejected",
+      "g097_conflict_a",
+      "g097_conflict_b",
+      "g097_injection",
+      "g097_raw_leak",
+      "g097_distractor_task",
+      "g097_distractor_subject",
+      "g097_distractor_predicate"
+    ],
+    "scenarioId": "g097",
+    "category": "repo_conventions",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q098",
+    "taskId": "task_user_preferences_098",
+    "subject": "UserPreference",
+    "predicate": "response_style",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g098_useful"
+    ],
+    "mustRejectFactIds": [
+      "g098_stale",
+      "g098_invalid",
+      "g098_future",
+      "g098_candidate",
+      "g098_rejected",
+      "g098_conflict_a",
+      "g098_conflict_b",
+      "g098_injection",
+      "g098_raw_leak",
+      "g098_distractor_task",
+      "g098_distractor_subject",
+      "g098_distractor_predicate"
+    ],
+    "scenarioId": "g098",
+    "category": "user_preferences",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q099",
+    "taskId": "task_project_architecture_099",
+    "subject": "BoundaryPolicy",
+    "predicate": "runtime_helper",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g099_useful"
+    ],
+    "mustRejectFactIds": [
+      "g099_stale",
+      "g099_invalid",
+      "g099_future",
+      "g099_candidate",
+      "g099_rejected",
+      "g099_conflict_a",
+      "g099_conflict_b",
+      "g099_injection",
+      "g099_raw_leak",
+      "g099_distractor_task",
+      "g099_distractor_subject",
+      "g099_distractor_predicate"
+    ],
+    "scenarioId": "g099",
+    "category": "project_architecture",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q100",
+    "taskId": "task_task_history_100",
+    "subject": "TaskHistory",
+    "predicate": "previous_failed_approach",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [
+      "g100_useful"
+    ],
+    "mustRejectFactIds": [
+      "g100_stale",
+      "g100_invalid",
+      "g100_future",
+      "g100_candidate",
+      "g100_rejected",
+      "g100_conflict_a",
+      "g100_conflict_b",
+      "g100_injection",
+      "g100_raw_leak",
+      "g100_distractor_task",
+      "g100_distractor_subject",
+      "g100_distractor_predicate"
+    ],
+    "scenarioId": "g100",
+    "category": "task_history",
+    "memoryRelevant": true
+  },
+  {
+    "queryId": "q101",
+    "taskId": "task_negative_memory_101",
+    "subject": "TemporalPolicy",
+    "predicate": "expired_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g101_stale",
+      "g101_invalid",
+      "g101_future",
+      "g101_candidate",
+      "g101_rejected",
+      "g101_injection",
+      "g101_raw_leak",
+      "g101_distractor_task"
+    ],
+    "scenarioId": "g101",
+    "category": "negative_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q102",
+    "taskId": "task_conflict_memory_102",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g102_stale",
+      "g102_invalid",
+      "g102_future",
+      "g102_candidate",
+      "g102_rejected",
+      "g102_injection",
+      "g102_raw_leak",
+      "g102_distractor_task"
+    ],
+    "scenarioId": "g102",
+    "category": "conflict_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q103",
+    "taskId": "task_hazard_memory_103",
+    "subject": "HazardPolicy",
+    "predicate": "secret_handling",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g103_stale",
+      "g103_invalid",
+      "g103_future",
+      "g103_candidate",
+      "g103_rejected",
+      "g103_injection",
+      "g103_raw_leak",
+      "g103_distractor_task"
+    ],
+    "scenarioId": "g103",
+    "category": "hazard_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q104",
+    "taskId": "task_distractor_memory_104",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_task",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g104_stale",
+      "g104_invalid",
+      "g104_future",
+      "g104_candidate",
+      "g104_rejected",
+      "g104_injection",
+      "g104_raw_leak",
+      "g104_distractor_task"
+    ],
+    "scenarioId": "g104",
+    "category": "distractor_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q105",
+    "taskId": "task_repo_conventions_105",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g105_stale",
+      "g105_invalid",
+      "g105_future",
+      "g105_candidate",
+      "g105_rejected",
+      "g105_injection",
+      "g105_raw_leak",
+      "g105_distractor_task"
+    ],
+    "scenarioId": "g105",
+    "category": "repo_conventions",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q106",
+    "taskId": "task_user_preferences_106",
+    "subject": "UserPreference",
+    "predicate": "forbidden_action",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g106_stale",
+      "g106_invalid",
+      "g106_future",
+      "g106_candidate",
+      "g106_rejected",
+      "g106_injection",
+      "g106_raw_leak",
+      "g106_distractor_task"
+    ],
+    "scenarioId": "g106",
+    "category": "user_preferences",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q107",
+    "taskId": "task_project_architecture_107",
+    "subject": "BoundaryPolicy",
+    "predicate": "backend_entrypoint",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g107_stale",
+      "g107_invalid",
+      "g107_future",
+      "g107_candidate",
+      "g107_rejected",
+      "g107_injection",
+      "g107_raw_leak",
+      "g107_distractor_task"
+    ],
+    "scenarioId": "g107",
+    "category": "project_architecture",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q108",
+    "taskId": "task_task_history_108",
+    "subject": "TaskHistory",
+    "predicate": "validated_file",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g108_stale",
+      "g108_invalid",
+      "g108_future",
+      "g108_candidate",
+      "g108_rejected",
+      "g108_injection",
+      "g108_raw_leak",
+      "g108_distractor_task"
+    ],
+    "scenarioId": "g108",
+    "category": "task_history",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q109",
+    "taskId": "task_negative_memory_109",
+    "subject": "TemporalPolicy",
+    "predicate": "future_valid_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g109_stale",
+      "g109_invalid",
+      "g109_future",
+      "g109_candidate",
+      "g109_rejected",
+      "g109_injection",
+      "g109_raw_leak",
+      "g109_distractor_task"
+    ],
+    "scenarioId": "g109",
+    "category": "negative_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q110",
+    "taskId": "task_conflict_memory_110",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g110_stale",
+      "g110_invalid",
+      "g110_future",
+      "g110_candidate",
+      "g110_rejected",
+      "g110_injection",
+      "g110_raw_leak",
+      "g110_distractor_task"
+    ],
+    "scenarioId": "g110",
+    "category": "conflict_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q111",
+    "taskId": "task_hazard_memory_111",
+    "subject": "HazardPolicy",
+    "predicate": "raw_leak",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g111_stale",
+      "g111_invalid",
+      "g111_future",
+      "g111_candidate",
+      "g111_rejected",
+      "g111_injection",
+      "g111_raw_leak",
+      "g111_distractor_task"
+    ],
+    "scenarioId": "g111",
+    "category": "hazard_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q112",
+    "taskId": "task_distractor_memory_112",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_predicate",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g112_stale",
+      "g112_invalid",
+      "g112_future",
+      "g112_candidate",
+      "g112_rejected",
+      "g112_injection",
+      "g112_raw_leak",
+      "g112_distractor_task"
+    ],
+    "scenarioId": "g112",
+    "category": "distractor_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q113",
+    "taskId": "task_repo_conventions_113",
+    "subject": "RepoPreference",
+    "predicate": "package_manager",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g113_stale",
+      "g113_invalid",
+      "g113_future",
+      "g113_candidate",
+      "g113_rejected",
+      "g113_injection",
+      "g113_raw_leak",
+      "g113_distractor_task"
+    ],
+    "scenarioId": "g113",
+    "category": "repo_conventions",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q114",
+    "taskId": "task_user_preferences_114",
+    "subject": "UserPreference",
+    "predicate": "response_style",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g114_stale",
+      "g114_invalid",
+      "g114_future",
+      "g114_candidate",
+      "g114_rejected",
+      "g114_injection",
+      "g114_raw_leak",
+      "g114_distractor_task"
+    ],
+    "scenarioId": "g114",
+    "category": "user_preferences",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q115",
+    "taskId": "task_project_architecture_115",
+    "subject": "BoundaryPolicy",
+    "predicate": "runtime_helper",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g115_stale",
+      "g115_invalid",
+      "g115_future",
+      "g115_candidate",
+      "g115_rejected",
+      "g115_injection",
+      "g115_raw_leak",
+      "g115_distractor_task"
+    ],
+    "scenarioId": "g115",
+    "category": "project_architecture",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q116",
+    "taskId": "task_task_history_116",
+    "subject": "TaskHistory",
+    "predicate": "previous_failed_approach",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g116_stale",
+      "g116_invalid",
+      "g116_future",
+      "g116_candidate",
+      "g116_rejected",
+      "g116_injection",
+      "g116_raw_leak",
+      "g116_distractor_task"
+    ],
+    "scenarioId": "g116",
+    "category": "task_history",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q117",
+    "taskId": "task_negative_memory_117",
+    "subject": "TemporalPolicy",
+    "predicate": "invalidated_fact",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g117_stale",
+      "g117_invalid",
+      "g117_future",
+      "g117_candidate",
+      "g117_rejected",
+      "g117_injection",
+      "g117_raw_leak",
+      "g117_distractor_task"
+    ],
+    "scenarioId": "g117",
+    "category": "negative_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q118",
+    "taskId": "task_conflict_memory_118",
+    "subject": "ConflictSet",
+    "predicate": "test_strategy",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g118_stale",
+      "g118_invalid",
+      "g118_future",
+      "g118_candidate",
+      "g118_rejected",
+      "g118_injection",
+      "g118_raw_leak",
+      "g118_distractor_task"
+    ],
+    "scenarioId": "g118",
+    "category": "conflict_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q119",
+    "taskId": "task_hazard_memory_119",
+    "subject": "HazardPolicy",
+    "predicate": "prompt_injection",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g119_stale",
+      "g119_invalid",
+      "g119_future",
+      "g119_candidate",
+      "g119_rejected",
+      "g119_injection",
+      "g119_raw_leak",
+      "g119_distractor_task"
+    ],
+    "scenarioId": "g119",
+    "category": "hazard_memory",
+    "memoryRelevant": false
+  },
+  {
+    "queryId": "q120",
+    "taskId": "task_distractor_memory_120",
+    "subject": "DistractorPolicy",
+    "predicate": "near_miss_subject",
+    "referenceTime": 1000,
+    "tokenBudget": 512,
+    "limit": 16,
+    "expectedFactIds": [],
+    "mustRejectFactIds": [
+      "g120_stale",
+      "g120_invalid",
+      "g120_future",
+      "g120_candidate",
+      "g120_rejected",
+      "g120_injection",
+      "g120_raw_leak",
+      "g120_distractor_task"
+    ],
+    "scenarioId": "g120",
+    "category": "distractor_memory",
+    "memoryRelevant": false
+  }
+]

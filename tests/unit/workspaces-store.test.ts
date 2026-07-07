@@ -118,6 +118,73 @@ describe('workspaces store session state', () => {
     expect(active?.sessionStates?.['agent:main:feature']).toEqual({ draftInput: 'feature draft' });
   });
 
+  it('persists work context visibility inside the addressed chat footer session state', async () => {
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({
+      profiles: [profile({
+        activeSessionKey: 'agent:main:feature',
+        state: {
+          draftInput: 'feature draft',
+          chatFooter: { contextRangeVisible: true, tokenUsageVisible: true, workContextVisible: true },
+        },
+        sessionStates: {
+          'agent:main:main': {
+            draftInput: 'main draft',
+            chatFooter: { contextRangeVisible: true, tokenUsageVisible: false, workContextVisible: true },
+          },
+          'agent:main:feature': {
+            draftInput: 'feature draft',
+            chatFooter: { contextRangeVisible: true, tokenUsageVisible: true, workContextVisible: true },
+          },
+        },
+      })],
+      activeWorkspaceId: 'workspace-1',
+      activeWorkspace: profile({
+        activeSessionKey: 'agent:main:feature',
+        state: {
+          draftInput: 'feature draft',
+          chatFooter: { contextRangeVisible: true, tokenUsageVisible: true, workContextVisible: true },
+        },
+        sessionStates: {
+          'agent:main:main': {
+            draftInput: 'main draft',
+            chatFooter: { contextRangeVisible: true, tokenUsageVisible: false, workContextVisible: true },
+          },
+          'agent:main:feature': {
+            draftInput: 'feature draft',
+            chatFooter: { contextRangeVisible: true, tokenUsageVisible: true, workContextVisible: true },
+          },
+        },
+      }),
+      loading: false,
+      error: null,
+    });
+
+    await useWorkspacesStore.getState().saveWorkspaceState({
+      id: 'workspace-1',
+      sessionKey: 'agent:main:main',
+      state: {
+        chatFooter: { workContextVisible: false },
+      },
+    });
+
+    const active = useWorkspacesStore.getState().activeWorkspace;
+    expect(active?.state.chatFooter).toEqual({
+      contextRangeVisible: true,
+      tokenUsageVisible: true,
+      workContextVisible: true,
+    });
+    expect(active?.sessionStates?.['agent:main:main']).toEqual({
+      draftInput: 'main draft',
+      chatFooter: { contextRangeVisible: true, tokenUsageVisible: false, workContextVisible: false },
+    });
+    expect(active?.sessionStates?.['agent:main:feature']?.chatFooter).toEqual({
+      contextRangeVisible: true,
+      tokenUsageVisible: true,
+      workContextVisible: true,
+    });
+  });
+
   it('drops legacy work mode from workspace session state', async () => {
     const { useWorkspacesStore } = await import('@/stores/workspaces');
     useWorkspacesStore.setState({

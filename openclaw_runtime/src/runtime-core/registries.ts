@@ -21,6 +21,7 @@ export const RUNTIME_REGISTRY_FLAG_PATHS = {
   providerRegistryShadow: "runtime.providerRegistry.shadow",
   contextProviderRegistryPilot: "runtime.contextProviders.registryPilot",
   toolRegistryShadow: "runtime.toolRegistry.shadow",
+  registryDiagnosticsCollector: "runtime.registryDiagnostics.collector",
 } as const;
 
 export type RuntimeRegistryFeatureFlag = keyof typeof RUNTIME_REGISTRY_FLAG_PATHS;
@@ -32,6 +33,7 @@ export const DEFAULT_RUNTIME_REGISTRY_FEATURE_FLAGS = {
   providerRegistryShadow: false,
   contextProviderRegistryPilot: false,
   toolRegistryShadow: false,
+  registryDiagnosticsCollector: false,
 } as const satisfies RuntimeRegistryFeatureFlags;
 
 export const RUNTIME_REGISTRY_SURFACES = ["context", "tool"] as const;
@@ -61,7 +63,9 @@ export const RUNTIME_REGISTRY_DIAGNOSTIC_STATUSES = [
   "ok",
   "skipped",
   "fallback",
+  "waiting",
   "denied",
+  "cancelled",
   "error",
 ] as const;
 export type RuntimeRegistryDiagnosticStatus =
@@ -76,7 +80,13 @@ export const RUNTIME_REGISTRY_DIAGNOSTIC_REASONS = [
   "unknown_provider",
   "provider_disabled",
   "capability_unsupported",
+  "unsupported_content",
   "policy_denied",
+  "policy_waiting",
+  "tool_cancelled",
+  "tool_error",
+  "provider_exception",
+  "runtime_unavailable",
   "provider_error",
   "timeout",
   "no_result",
@@ -198,6 +208,146 @@ export type RuntimeRegistryIsolatedError = {
   error: RuntimeError;
 };
 
+export const RUNTIME_REGISTRY_DIAGNOSTIC_COLLECTOR_SCHEMA_VERSION = 1;
+export const DEFAULT_RUNTIME_REGISTRY_DIAGNOSTIC_COLLECTOR_LIMIT = 32;
+export const RUNTIME_REGISTRY_CONTROLLED_DIAGNOSTIC_CONSUMER_SCHEMA_VERSION = 1;
+export const RUNTIME_REGISTRY_CONTROLLED_DIAGNOSTIC_CONSUMER_MODE =
+  "controlled_internal_sanitized" as const;
+
+export type RuntimeRegistryDiagnosticCollectorInput = {
+  enabled?: boolean;
+  limit?: number;
+  prioritize?: boolean;
+  sanitize?: boolean;
+  contextDiagnostics?: readonly RuntimeRegistryDiagnostic[];
+  toolDiagnostics?: readonly RuntimeRegistryDiagnostic[];
+  diagnostics?: readonly RuntimeRegistryDiagnostic[];
+  metadata?: RuntimeCoreJsonObject;
+};
+
+export type RuntimeRegistryControlledDiagnosticConsumerGateReason =
+  | "consumer_disabled"
+  | "feature_flags_missing"
+  | "registry_diagnostics_collector_disabled"
+  | "registry_pilot_disabled"
+  | "provider_registry_shadow_disabled"
+  | "context_provider_registry_pilot_disabled"
+  | "tool_registry_shadow_disabled";
+
+export type RuntimeRegistryControlledDiagnosticConsumerInput = Omit<
+  RuntimeRegistryDiagnosticCollectorInput,
+  "enabled" | "prioritize" | "sanitize"
+> & {
+  enabled?: boolean;
+  featureFlags?: RuntimeRegistryFeatureFlags;
+};
+
+export type RuntimeRegistryOmittedDiagnosticSummary = {
+  diagnosticCount: number;
+  contextDiagnosticCount: number;
+  toolDiagnosticCount: number;
+  byStatus: Partial<Record<RuntimeRegistryDiagnosticStatus, number>>;
+  byReason: Partial<Record<RuntimeRegistryDiagnosticReason, number>>;
+};
+
+export type RuntimeRegistryDiagnosticCollectorOutput = {
+  schemaVersion: typeof RUNTIME_REGISTRY_DIAGNOSTIC_COLLECTOR_SCHEMA_VERSION;
+  enabled: boolean;
+  diagnostics: RuntimeRegistryDiagnostic[];
+  omittedDiagnosticCount: number;
+  omittedSummary: RuntimeRegistryOmittedDiagnosticSummary;
+  evidenceRefs: EvidenceRef[];
+  summary: {
+    totalDiagnosticCount: number;
+    includedDiagnosticCount: number;
+    contextDiagnosticCount: number;
+    toolDiagnosticCount: number;
+    byStatus: Partial<Record<RuntimeRegistryDiagnosticStatus, number>>;
+    byReason: Partial<Record<RuntimeRegistryDiagnosticReason, number>>;
+  };
+  metadata?: RuntimeCoreJsonObject;
+};
+
+export type RuntimeRegistryControlledDiagnosticConsumerOutput =
+  RuntimeRegistryDiagnosticCollectorOutput & {
+    consumer: {
+      schemaVersion: typeof RUNTIME_REGISTRY_CONTROLLED_DIAGNOSTIC_CONSUMER_SCHEMA_VERSION;
+      mode: typeof RUNTIME_REGISTRY_CONTROLLED_DIAGNOSTIC_CONSUMER_MODE;
+      enabled: boolean;
+      gateStatus: "open" | "closed";
+      blockedReasons: RuntimeRegistryControlledDiagnosticConsumerGateReason[];
+      sanitized: true;
+      prioritized: true;
+      inMemoryOnly: true;
+      diagnosticsOnly: true;
+      authoritativeness: "none";
+      legacyDecisionUnaffected: true;
+      finalTaskStatusUnaffected: true;
+      limit: number;
+      requiredFlags: RuntimeRegistryFeatureFlag[];
+    };
+  };
+
+export type RuntimeRegistryControlledDiagnosticActionability =
+  | "actionable"
+  | "noise"
+  | "review_required";
+
+export type RuntimeRegistryControlledDiagnosticConsumerReportStatus =
+  | "disabled"
+  | "no_diagnostics"
+  | "diagnostics_only_operator_summary";
+
+export type RuntimeRegistryControlledDiagnosticConsumerReportInput = {
+  enabled?: boolean;
+  featureFlags?: RuntimeRegistryFeatureFlags;
+  limit?: number;
+  contextDiagnostics?: readonly unknown[];
+  toolDiagnostics?: readonly unknown[];
+  diagnostics?: readonly unknown[];
+  metadata?: RuntimeCoreJsonObject;
+  maxEvidenceRefs?: number;
+};
+
+export type RuntimeRegistryControlledDiagnosticConsumerAuthority = {
+  noProviderOrderingChange: true;
+  noToolAuthority: true;
+  noTaskLoopAuthority: true;
+  noGatewayAuthority: true;
+  noProviderTransportAuthority: true;
+  noPromptOrModelMessageInsertion: true;
+  noPersistence: true;
+  notTaskCompletionEvidence: true;
+};
+
+export type RuntimeRegistryControlledDiagnosticConsumerReport = {
+  schemaVersion: typeof RUNTIME_REGISTRY_CONTROLLED_DIAGNOSTIC_CONSUMER_SCHEMA_VERSION;
+  decision: {
+    status: RuntimeRegistryControlledDiagnosticConsumerReportStatus;
+    diagnosticsOnly: true;
+    operatorSummaryOnly: true;
+    authoritative: false;
+  };
+  enabled: boolean;
+  gateStatus: "open" | "closed";
+  blockedReasons: RuntimeRegistryControlledDiagnosticConsumerGateReason[];
+  totalDiagnosticCount: number;
+  includedDiagnosticCount: number;
+  omittedDiagnosticCount: number;
+  invalidDiagnosticCount: number;
+  byStatus: Partial<Record<RuntimeRegistryDiagnosticStatus, number>>;
+  byReason: Partial<Record<RuntimeRegistryDiagnosticReason, number>>;
+  actionability: {
+    actionableDiagnosticCount: number;
+    noiseDiagnosticCount: number;
+    reviewRequiredDiagnosticCount: number;
+    byCategory: Partial<Record<RuntimeRegistryControlledDiagnosticActionability, number>>;
+  };
+  evidenceRefs: EvidenceRef[];
+  metadata?: RuntimeCoreJsonObject;
+  authority: RuntimeRegistryControlledDiagnosticConsumerAuthority;
+};
+
 const PROVIDER_SOURCE_SET = new Set<RuntimeRegistryProviderSource>(
   RUNTIME_REGISTRY_PROVIDER_SOURCES,
 );
@@ -216,6 +366,103 @@ const CONTEXT_RESULT_STATUS_SET = new Set<RuntimeContextProviderResultStatus>(
 const TOOL_RESULT_STATUS_SET = new Set<ToolCallResultStatus>(TOOL_CALL_RESULT_STATUSES);
 const SURFACE_SET = new Set<RuntimeRegistrySurface>(RUNTIME_REGISTRY_SURFACES);
 const RUNTIME_REGISTRY_ID_PATTERN = /^[A-Za-z][A-Za-z0-9._:-]*$/;
+
+const DIAGNOSTIC_STATUS_PRIORITY: Record<RuntimeRegistryDiagnosticStatus, number> = {
+  error: 100,
+  denied: 90,
+  waiting: 80,
+  cancelled: 70,
+  fallback: 50,
+  skipped: 30,
+  ok: 10,
+};
+
+const DIAGNOSTIC_REASON_PRIORITY: Record<RuntimeRegistryDiagnosticReason, number> = {
+  provider_exception: 100,
+  runtime_unavailable: 98,
+  policy_denied: 96,
+  policy_waiting: 94,
+  tool_error: 92,
+  provider_error: 90,
+  timeout: 88,
+  manifest_invalid: 86,
+  unsupported_content: 70,
+  tool_cancelled: 65,
+  unknown_provider: 60,
+  capability_unsupported: 55,
+  provider_disabled: 40,
+  duplicate_provider: 40,
+  flag_disabled: 40,
+  no_result: 35,
+  legacy_authoritative: 10,
+  registered: 0,
+};
+
+const RUNTIME_REGISTRY_CONTROLLED_CONSUMER_REQUIRED_FLAGS: RuntimeRegistryFeatureFlag[] = [
+  "registryDiagnosticsCollector",
+  "registryPilotEnabled",
+  "providerRegistryShadow",
+  "contextProviderRegistryPilot",
+  "toolRegistryShadow",
+];
+
+const RUNTIME_REGISTRY_SANITIZED_PROVIDER_ID = "redacted-provider";
+const RUNTIME_REGISTRY_PROVIDER_ID_MAX_LENGTH = 128;
+const RUNTIME_REGISTRY_SANITIZED_REDACTED_FIELDS = [
+  "message",
+  "metadata",
+  "evidenceRefs.ref",
+  "evidenceRefs.label",
+  "evidenceRefs.summary",
+  "evidenceRefs.metadata",
+];
+
+const RUNTIME_REGISTRY_SENSITIVE_TEXT_PATTERNS: RegExp[] = [
+  /\bsk-(?:proj-)?[A-Za-z0-9_-]{24,}\b/u,
+  /\bBearer\s+[A-Za-z0-9._-]{24,}\b/u,
+  /\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b/u,
+  /-----BEGIN [A-Z ]*PRIVATE KEY-----/u,
+  /\b[A-Z]:\\Users\\[^\\\s]+\\[^\s"]+/u,
+  /\b[A-Z0-9_]*(?:TOKEN|SECRET|KEY)=\S{8,}/u,
+  /RAW_TOOL_PAYLOAD_SECRET_[A-Z0-9_]+/u,
+];
+
+const RUNTIME_REGISTRY_CONTROLLED_REPORT_MAX_EVIDENCE_REFS = 16;
+
+const RUNTIME_REGISTRY_CONTROLLED_ACTIONABILITY_BY_REASON = {
+  provider_exception: "actionable",
+  runtime_unavailable: "actionable",
+  policy_denied: "actionable",
+  policy_waiting: "actionable",
+  tool_error: "actionable",
+  provider_error: "actionable",
+  timeout: "actionable",
+  manifest_invalid: "actionable",
+  unsupported_content: "actionable",
+  tool_cancelled: "review_required",
+  unknown_provider: "review_required",
+  capability_unsupported: "review_required",
+  provider_disabled: "review_required",
+  duplicate_provider: "review_required",
+  flag_disabled: "review_required",
+  no_result: "review_required",
+  legacy_authoritative: "noise",
+  registered: "noise",
+} as const satisfies Record<
+  RuntimeRegistryDiagnosticReason,
+  RuntimeRegistryControlledDiagnosticActionability
+>;
+
+const RUNTIME_REGISTRY_CONTROLLED_REPORT_AUTHORITY = {
+  noProviderOrderingChange: true,
+  noToolAuthority: true,
+  noTaskLoopAuthority: true,
+  noGatewayAuthority: true,
+  noProviderTransportAuthority: true,
+  noPromptOrModelMessageInsertion: true,
+  noPersistence: true,
+  notTaskCompletionEvidence: true,
+} as const satisfies RuntimeRegistryControlledDiagnosticConsumerAuthority;
 
 function isEvidenceRefShape(value: unknown): value is EvidenceRef {
   if (!isRecord(value)) {
@@ -236,6 +483,90 @@ function isEvidenceRefs(value: unknown): value is EvidenceRef[] {
 
 function isRegistryIdentifier(value: unknown): value is string {
   return typeof value === "string" && RUNTIME_REGISTRY_ID_PATTERN.test(value);
+}
+
+function containsRuntimeRegistrySensitiveText(value: string): boolean {
+  return RUNTIME_REGISTRY_SENSITIVE_TEXT_PATTERNS.some((pattern) => pattern.test(value));
+}
+
+function sanitizeRuntimeRegistryProviderId(providerId: string | undefined): string | undefined {
+  if (providerId === undefined) {
+    return undefined;
+  }
+  const trimmed = providerId.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  if (
+    trimmed.length > RUNTIME_REGISTRY_PROVIDER_ID_MAX_LENGTH ||
+    !RUNTIME_REGISTRY_ID_PATTERN.test(trimmed) ||
+    containsRuntimeRegistrySensitiveText(trimmed)
+  ) {
+    return RUNTIME_REGISTRY_SANITIZED_PROVIDER_ID;
+  }
+  return trimmed;
+}
+
+function sanitizeRuntimeRegistryEvidenceRef(
+  ref: EvidenceRef,
+  diagnostic: RuntimeRegistryDiagnostic,
+  evidenceIndex: number,
+): EvidenceRef {
+  const providerId = sanitizeRuntimeRegistryProviderId(diagnostic.providerId) ?? "unknown";
+  return {
+    type: ref.type,
+    ref: `runtime-registry-evidence:${diagnostic.surface}:${providerId}:${diagnostic.reason}:${evidenceIndex}`,
+    label: "Runtime registry evidence",
+    metadata: {
+      redactionStatus: "sanitized",
+      source: "runtime_registry.diagnostic_projection",
+      originalType: ref.type,
+      evidenceIndex,
+    },
+  };
+}
+
+export function sanitizeRuntimeRegistryDiagnostic(
+  diagnostic: RuntimeRegistryDiagnostic,
+): RuntimeRegistryDiagnostic {
+  const providerId = sanitizeRuntimeRegistryProviderId(diagnostic.providerId);
+  return {
+    surface: diagnostic.surface,
+    ...(providerId ? { providerId } : {}),
+    status: diagnostic.status,
+    reason: diagnostic.reason,
+    ...(diagnostic.retryable === undefined ? {} : { retryable: diagnostic.retryable }),
+    evidenceRefs: diagnostic.evidenceRefs.map((ref, index) =>
+      sanitizeRuntimeRegistryEvidenceRef(ref, diagnostic, index)
+    ),
+    metadata: {
+      redactionStatus: "sanitized",
+      source: "runtime_registry.diagnostic_projection",
+      originalEvidenceRefCount: diagnostic.evidenceRefs.length,
+      redactedFields: RUNTIME_REGISTRY_SANITIZED_REDACTED_FIELDS,
+      ...(diagnostic.message === undefined ? {} : { messageRedacted: true }),
+      ...(diagnostic.metadata === undefined ? {} : { metadataRedacted: true }),
+    },
+  };
+}
+
+export function sanitizeRuntimeRegistryDiagnostics(
+  diagnostics: readonly RuntimeRegistryDiagnostic[],
+): RuntimeRegistryDiagnostic[] {
+  return diagnostics.map(sanitizeRuntimeRegistryDiagnostic);
+}
+
+function sanitizeRuntimeRegistryCollectorMetadata(
+  metadata: RuntimeCoreJsonObject | undefined,
+): RuntimeCoreJsonObject | undefined {
+  if (metadata === undefined) {
+    return undefined;
+  }
+  return {
+    redactionStatus: "sanitized",
+    source: "runtime_registry.diagnostic_projection",
+    metadataRedacted: true,
+  };
 }
 
 function isRegistryIdentifierArray(value: unknown): value is string[] {
@@ -443,6 +774,7 @@ export function resolveRuntimeRegistryFeatureFlags(
     providerRegistryShadow: strictFlag(runtime?.providerRegistry, "shadow"),
     contextProviderRegistryPilot: strictFlag(runtime?.contextProviders, "registryPilot"),
     toolRegistryShadow: strictFlag(runtime?.toolRegistry, "shadow"),
+    registryDiagnosticsCollector: strictFlag(runtime?.registryDiagnostics, "collector"),
   };
 }
 
@@ -627,6 +959,280 @@ export function isolateRuntimeRegistryError(params: {
       retryable: params.retryable === true,
       evidenceRefs,
     },
+  };
+}
+
+function positiveCollectorLimit(value: unknown): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return DEFAULT_RUNTIME_REGISTRY_DIAGNOSTIC_COLLECTOR_LIMIT;
+  }
+  return Math.max(0, Math.min(128, Math.floor(value)));
+}
+
+function countBy<T extends string>(values: readonly T[]): Partial<Record<T, number>> {
+  const counts: Partial<Record<T, number>> = {};
+  for (const value of values) {
+    counts[value] = (counts[value] ?? 0) + 1;
+  }
+  return counts;
+}
+
+function summarizeRegistryDiagnostics(
+  diagnostics: readonly RuntimeRegistryDiagnostic[],
+): RuntimeRegistryOmittedDiagnosticSummary {
+  return {
+    diagnosticCount: diagnostics.length,
+    contextDiagnosticCount: diagnostics.filter((diagnostic) => diagnostic.surface === "context")
+      .length,
+    toolDiagnosticCount: diagnostics.filter((diagnostic) => diagnostic.surface === "tool").length,
+    byStatus: countBy(diagnostics.map((diagnostic) => diagnostic.status)),
+    byReason: countBy(diagnostics.map((diagnostic) => diagnostic.reason)),
+  };
+}
+
+function compareRuntimeRegistryDiagnosticPriority(
+  left: RuntimeRegistryDiagnostic,
+  right: RuntimeRegistryDiagnostic,
+): number {
+  const reasonPriority = DIAGNOSTIC_REASON_PRIORITY[right.reason] -
+    DIAGNOSTIC_REASON_PRIORITY[left.reason];
+  if (reasonPriority !== 0) {
+    return reasonPriority;
+  }
+  const statusPriority = DIAGNOSTIC_STATUS_PRIORITY[right.status] -
+    DIAGNOSTIC_STATUS_PRIORITY[left.status];
+  return statusPriority;
+}
+
+function prioritizeRuntimeRegistryDiagnostics(
+  diagnostics: readonly RuntimeRegistryDiagnostic[],
+): RuntimeRegistryDiagnostic[] {
+  return diagnostics
+    .map((diagnostic, index) => ({ diagnostic, index }))
+    .sort((left, right) =>
+      compareRuntimeRegistryDiagnosticPriority(left.diagnostic, right.diagnostic) ||
+      left.index - right.index
+    )
+    .map((item) => item.diagnostic);
+}
+
+function dedupeRegistryEvidenceRefs(refs: readonly EvidenceRef[]): EvidenceRef[] {
+  const seen = new Set<string>();
+  const out: EvidenceRef[] = [];
+  for (const ref of refs) {
+    const key = `${ref.type}:${ref.ref}:${ref.label ?? ""}`;
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    out.push(ref);
+  }
+  return out;
+}
+
+export function collectRuntimeRegistryDiagnostics(
+  input: RuntimeRegistryDiagnosticCollectorInput = {},
+): RuntimeRegistryDiagnosticCollectorOutput {
+  const allDiagnostics = [
+    ...(input.contextDiagnostics ?? []),
+    ...(input.toolDiagnostics ?? []),
+    ...(input.diagnostics ?? []),
+  ].filter(isRuntimeRegistryDiagnostic);
+  const limit = positiveCollectorLimit(input.limit);
+  const enabled = input.enabled === true;
+  const candidateDiagnostics = input.prioritize === true
+    ? prioritizeRuntimeRegistryDiagnostics(allDiagnostics)
+    : allDiagnostics;
+  const rawDiagnostics = enabled ? candidateDiagnostics.slice(0, limit) : [];
+  const diagnostics = input.sanitize === true
+    ? sanitizeRuntimeRegistryDiagnostics(rawDiagnostics)
+    : rawDiagnostics;
+  const omittedDiagnostics = enabled ? candidateDiagnostics.slice(limit) : candidateDiagnostics;
+
+  return {
+    schemaVersion: RUNTIME_REGISTRY_DIAGNOSTIC_COLLECTOR_SCHEMA_VERSION,
+    enabled,
+    diagnostics,
+    omittedDiagnosticCount: omittedDiagnostics.length,
+    omittedSummary: summarizeRegistryDiagnostics(omittedDiagnostics),
+    evidenceRefs: dedupeRegistryEvidenceRefs(
+      diagnostics.flatMap((diagnostic) => diagnostic.evidenceRefs),
+    ),
+    summary: {
+      totalDiagnosticCount: allDiagnostics.length,
+      includedDiagnosticCount: diagnostics.length,
+      contextDiagnosticCount: diagnostics.filter((diagnostic) => diagnostic.surface === "context")
+        .length,
+      toolDiagnosticCount: diagnostics.filter((diagnostic) => diagnostic.surface === "tool")
+        .length,
+      byStatus: countBy(diagnostics.map((diagnostic) => diagnostic.status)),
+      byReason: countBy(diagnostics.map((diagnostic) => diagnostic.reason)),
+    },
+    metadata: input.sanitize === true
+      ? sanitizeRuntimeRegistryCollectorMetadata(input.metadata)
+      : input.metadata,
+  };
+}
+
+function controlledDiagnosticConsumerBlockedReasons(
+  input: RuntimeRegistryControlledDiagnosticConsumerInput,
+): RuntimeRegistryControlledDiagnosticConsumerGateReason[] {
+  const reasons: RuntimeRegistryControlledDiagnosticConsumerGateReason[] = [];
+  if (input.enabled !== true) {
+    reasons.push("consumer_disabled");
+  }
+  const flags = input.featureFlags;
+  if (!flags) {
+    reasons.push("feature_flags_missing");
+    return reasons;
+  }
+  if (!flags.registryDiagnosticsCollector) {
+    reasons.push("registry_diagnostics_collector_disabled");
+  }
+  if (!flags.registryPilotEnabled) {
+    reasons.push("registry_pilot_disabled");
+  }
+  if (!flags.providerRegistryShadow) {
+    reasons.push("provider_registry_shadow_disabled");
+  }
+  if (!flags.contextProviderRegistryPilot) {
+    reasons.push("context_provider_registry_pilot_disabled");
+  }
+  if (!flags.toolRegistryShadow) {
+    reasons.push("tool_registry_shadow_disabled");
+  }
+  return reasons;
+}
+
+function normalizeRuntimeRegistryDiagnostics(
+  diagnostics: readonly unknown[] | undefined,
+): RuntimeRegistryDiagnostic[] {
+  return (diagnostics ?? []).filter(isRuntimeRegistryDiagnostic);
+}
+
+function countInvalidRuntimeRegistryDiagnostics(
+  diagnostics: readonly unknown[] | undefined,
+): number {
+  return (diagnostics ?? []).filter((diagnostic) => !isRuntimeRegistryDiagnostic(diagnostic))
+    .length;
+}
+
+function boundedRuntimeRegistryEvidenceRefLimit(value: unknown): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return RUNTIME_REGISTRY_CONTROLLED_REPORT_MAX_EVIDENCE_REFS;
+  }
+  return Math.max(0, Math.min(32, Math.floor(value)));
+}
+
+function summarizeControlledDiagnosticActionability(
+  diagnostics: readonly RuntimeRegistryDiagnostic[],
+): RuntimeRegistryControlledDiagnosticConsumerReport["actionability"] {
+  const byCategory: Partial<Record<RuntimeRegistryControlledDiagnosticActionability, number>> = {};
+  for (const diagnostic of diagnostics) {
+    const category = RUNTIME_REGISTRY_CONTROLLED_ACTIONABILITY_BY_REASON[diagnostic.reason];
+    byCategory[category] = (byCategory[category] ?? 0) + 1;
+  }
+
+  return {
+    actionableDiagnosticCount: byCategory.actionable ?? 0,
+    noiseDiagnosticCount: byCategory.noise ?? 0,
+    reviewRequiredDiagnosticCount: byCategory.review_required ?? 0,
+    byCategory,
+  };
+}
+
+function controlledDiagnosticConsumerReportStatus(
+  output: RuntimeRegistryControlledDiagnosticConsumerOutput,
+): RuntimeRegistryControlledDiagnosticConsumerReportStatus {
+  if (!output.enabled) {
+    return "disabled";
+  }
+  if (output.summary.totalDiagnosticCount === 0) {
+    return "no_diagnostics";
+  }
+  return "diagnostics_only_operator_summary";
+}
+
+export function collectRuntimeRegistryDiagnosticsForControlledConsumer(
+  input: RuntimeRegistryControlledDiagnosticConsumerInput = {},
+): RuntimeRegistryControlledDiagnosticConsumerOutput {
+  const blockedReasons = controlledDiagnosticConsumerBlockedReasons(input);
+  const enabled = blockedReasons.length === 0;
+  const limit = positiveCollectorLimit(input.limit);
+  const collectorOutput = collectRuntimeRegistryDiagnostics({
+    enabled,
+    limit,
+    prioritize: true,
+    sanitize: true,
+    contextDiagnostics: input.contextDiagnostics,
+    toolDiagnostics: input.toolDiagnostics,
+    diagnostics: input.diagnostics,
+    metadata: input.metadata,
+  });
+
+  return {
+    ...collectorOutput,
+    consumer: {
+      schemaVersion: RUNTIME_REGISTRY_CONTROLLED_DIAGNOSTIC_CONSUMER_SCHEMA_VERSION,
+      mode: RUNTIME_REGISTRY_CONTROLLED_DIAGNOSTIC_CONSUMER_MODE,
+      enabled,
+      gateStatus: enabled ? "open" : "closed",
+      blockedReasons,
+      sanitized: true,
+      prioritized: true,
+      inMemoryOnly: true,
+      diagnosticsOnly: true,
+      authoritativeness: "none",
+      legacyDecisionUnaffected: true,
+      finalTaskStatusUnaffected: true,
+      limit,
+      requiredFlags: [...RUNTIME_REGISTRY_CONTROLLED_CONSUMER_REQUIRED_FLAGS],
+    },
+  };
+}
+
+export function buildProviderToolRegistryControlledDiagnosticConsumerReport(
+  input: RuntimeRegistryControlledDiagnosticConsumerReportInput = {},
+): RuntimeRegistryControlledDiagnosticConsumerReport {
+  const contextDiagnostics = normalizeRuntimeRegistryDiagnostics(input.contextDiagnostics);
+  const toolDiagnostics = normalizeRuntimeRegistryDiagnostics(input.toolDiagnostics);
+  const diagnostics = normalizeRuntimeRegistryDiagnostics(input.diagnostics);
+  const invalidDiagnosticCount =
+    countInvalidRuntimeRegistryDiagnostics(input.contextDiagnostics) +
+    countInvalidRuntimeRegistryDiagnostics(input.toolDiagnostics) +
+    countInvalidRuntimeRegistryDiagnostics(input.diagnostics);
+  const output = collectRuntimeRegistryDiagnosticsForControlledConsumer({
+    enabled: input.enabled,
+    featureFlags: input.featureFlags,
+    limit: input.limit,
+    contextDiagnostics,
+    toolDiagnostics,
+    diagnostics,
+    metadata: input.metadata,
+  });
+  const maxEvidenceRefs = boundedRuntimeRegistryEvidenceRefLimit(input.maxEvidenceRefs);
+
+  return {
+    schemaVersion: RUNTIME_REGISTRY_CONTROLLED_DIAGNOSTIC_CONSUMER_SCHEMA_VERSION,
+    decision: {
+      status: controlledDiagnosticConsumerReportStatus(output),
+      diagnosticsOnly: true,
+      operatorSummaryOnly: true,
+      authoritative: false,
+    },
+    enabled: output.enabled,
+    gateStatus: output.consumer.gateStatus,
+    blockedReasons: output.consumer.blockedReasons,
+    totalDiagnosticCount: output.summary.totalDiagnosticCount,
+    includedDiagnosticCount: output.summary.includedDiagnosticCount,
+    omittedDiagnosticCount: output.omittedDiagnosticCount,
+    invalidDiagnosticCount,
+    byStatus: output.summary.byStatus,
+    byReason: output.summary.byReason,
+    actionability: summarizeControlledDiagnosticActionability(output.diagnostics),
+    evidenceRefs: output.evidenceRefs.slice(0, maxEvidenceRefs),
+    metadata: output.metadata,
+    authority: RUNTIME_REGISTRY_CONTROLLED_REPORT_AUTHORITY,
   };
 }
 

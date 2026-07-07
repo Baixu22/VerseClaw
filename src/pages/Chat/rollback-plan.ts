@@ -63,6 +63,14 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
   const queueCount = input.longTaskControlStatus?.queueCount ?? 0;
   const pressure = input.compactionStatus?.pressure;
   const truncated = input.compactionStatus?.truncatedMessageCount ?? input.contextRange?.truncatedMessageCount ?? 0;
+  const gitRecoveryPressure = Boolean(
+    input.activeRun
+    || checkpoint
+    || queueCount > 0
+    || input.compactionStatus?.canCompact
+    || pressure === 'high'
+    || truncated > 0,
+  );
 
   if (checkpoint && !input.handoffDisabled) {
     actions.push({
@@ -106,13 +114,15 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
     command: 'interruptTerminal',
   });
 
-  actions.push({
-    kind: 'review-git',
-    titleKey: 'composer.rollbackPlan.actions.review-git.title',
-    detailKey: 'composer.rollbackPlan.actions.review-git.detail',
-    risk: 'dangerous',
-    command: 'openGit',
-  });
+  if (gitRecoveryPressure) {
+    actions.push({
+      kind: 'review-git',
+      titleKey: 'composer.rollbackPlan.actions.review-git.title',
+      detailKey: 'composer.rollbackPlan.actions.review-git.detail',
+      risk: 'dangerous',
+      command: 'openGit',
+    });
+  }
 
   actions.push({
     kind: 'task-ledger-review',
@@ -168,8 +178,8 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
     {
       kind: 'git',
       titleKey: 'composer.rollbackPlan.signals.git',
-      active: true,
-      risk: 'dangerous',
+      active: gitRecoveryPressure,
+      risk: gitRecoveryPressure ? 'dangerous' : 'review',
     },
     {
       kind: 'task-ledger',

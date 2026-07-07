@@ -1,0 +1,54 @@
+[
+  {
+    "conversationId": "conv_0",
+    "speakers": ["Alice", "Bob"],
+    "turns": [
+      { "turnId": 0, "speaker": "Alice", "text": "Hi Bob, I just started my new job at the tech company downtown." },
+      { "turnId": 1, "speaker": "Bob", "text": "That's great Alice! What role are you in?" },
+      { "turnId": 2, "speaker": "Alice", "text": "I'm a senior software engineer working on the cloud infrastructure team." },
+      { "turnId": 3, "speaker": "Bob", "text": "Nice. I remember you used to work at the startup on 5th Street. Why did you leave?" },
+      { "turnId": 4, "speaker": "Alice", "text": "The startup ran out of funding last March. I was looking for something more stable." },
+      { "turnId": 5, "speaker": "Bob", "text": "Makes sense. How's the commute from Chapel Hill?" },
+      { "turnId": 6, "speaker": "Alice", "text": "About 30 minutes by bus. I moved to Chapel Hill last year after finishing my master's at UNC." },
+      { "turnId": 7, "speaker": "Bob", "text": "Oh right, your master's in computer science. Congrats again on that!" },
+      { "turnId": 8, "speaker": "Alice", "text": "Thanks! I'm also thinking about adopting a dog. I've been looking at the shelter on Maple Street." },
+      { "turnId": 9, "speaker": "Bob", "text": "A dog would be great company. What breed are you thinking?" },
+      { "turnId": 10, "speaker": "Alice", "text": "I'd love a golden retriever. My family had one when I was growing up in Raleigh." },
+      { "turnId": 11, "speaker": "Bob", "text": "Golden retrievers are wonderful. How's your garden doing? You mentioned planting tomatoes." },
+      { "turnId": 12, "speaker": "Alice", "text": "The tomatoes are doing great! I also planted some basil and rosemary this season." },
+      { "turnId": 13, "speaker": "Bob", "text": "Nice. I tried gardening last summer but the deer kept eating everything." },
+      { "turnId": 14, "speaker": "Alice", "text": "You should try a fence. I built one with cedar posts from the hardware store on Broad Street." },
+      { "turnId": 15, "speaker": "Bob", "text": "Good idea. By the way, are you still playing tennis on weekends?" },
+      { "turnId": 16, "speaker": "Alice", "text": "I stopped last month because of a knee injury. I've been swimming at the YMCA pool instead." },
+      { "turnId": 17, "speaker": "Bob", "text": "Sorry about the knee. Swimming is good low-impact exercise though." },
+      { "turnId": 18, "speaker": "Alice", "text": "Yeah, I actually prefer it now. The YMCA on Rosemary Street has a great lap pool." },
+      { "turnId": 19, "speaker": "Bob", "text": "I should join you sometime. I've been meaning to exercise more." }
+    ]
+  },
+  {
+    "conversationId": "conv_1",
+    "speakers": ["Carol", "Dave"],
+    "turns": [
+      { "turnId": 0, "speaker": "Carol", "text": "Dave, I finally finished my PhD dissertation on marine biology at Duke University." },
+      { "turnId": 1, "speaker": "Dave", "text": "Congratulations Carol! That's a huge achievement. What was your research focus?" },
+      { "turnId": 2, "speaker": "Carol", "text": "I studied coral reef ecosystems in the Caribbean, specifically the impact of ocean acidification." },
+      { "turnId": 3, "speaker": "Dave", "text": "Fascinating. Are you planning to continue in academia?" },
+      { "turnId": 4, "speaker": "Carol", "text": "I accepted a postdoc position at the marine lab in Wilmington. I start next September." },
+      { "turnId": 5, "speaker": "Dave", "text": "Wilmington is beautiful. Will you still be living in Durham?" },
+      { "turnId": 6, "speaker": "Carol", "text": "I'm moving to Wilmington in August. I already found an apartment near Wrightsville Beach." },
+      { "turnId": 7, "speaker": "Dave", "text": "Living near the beach sounds amazing. I remember you used to surf every weekend." },
+      { "turnId": 8, "speaker": "Carol", "text": "Yes! I learned to surf when I was studying abroad in Costa Rica during my undergrad at UNC Wilmington." },
+      { "turnId": 9, "speaker": "Dave", "text": "You've had quite the academic journey. UNC Wilmington to Duke for your PhD." },
+      { "turnId": 10, "speaker": "Carol", "text": "Indeed. I also did a summer internship at the NOAA lab in Beaufort between my undergrad and grad school." },
+      { "turnId": 11, "speaker": "Dave", "text": "That must have been valuable experience. What about your dog, Biscuit?" },
+      { "turnId": 12, "speaker": "Carol", "text": "Biscuit is coming with me! He's a border collie I adopted from the Durham Animal Shelter two years ago." },
+      { "turnId": 13, "speaker": "Dave", "text": "He'll love the beach. Are you still cooking those amazing Thai curries?" },
+      { "turnId": 14, "speaker": "Carol", "text": "Absolutely. I actually started growing my own lemongrass and Thai basil in my garden." },
+      { "turnId": 15, "speaker": "Dave", "text": "Impressive! I tried growing herbs but my apartment doesn't get enough sunlight." },
+      { "turnId": 16, "speaker": "Carol", "text": "You could try grow lights. I got mine from the garden center on Ninth Street." },
+      { "turnId": 17, "speaker": "Dave", "text": "Good tip. By the way, I heard you switched from coffee to tea recently." },
+      { "turnId": 18, "speaker": "Carol", "text": "Yes, my doctor recommended cutting back on caffeine. I've been drinking green tea from the shop on Foster Street." },
+      { "turnId": 19, "speaker": "Dave", "text": "I should try that too. My New Year's resolution was to eat healthier." }
+    ]
+  }
+]

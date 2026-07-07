@@ -75,6 +75,13 @@ const RuntimeFeatureSchema = z
       })
       .strict()
       .optional(),
+    contextRuntimeKit: z
+      .object({
+        enabled: z.boolean().optional(),
+        shadow: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
     eventLog: z
       .object({
         shadow: z.boolean().optional(),
