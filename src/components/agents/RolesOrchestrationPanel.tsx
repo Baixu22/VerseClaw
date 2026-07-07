@@ -120,6 +120,17 @@ type RunResult =
   | { kind: 'success'; spawnedRunIds: string[] }
   | { kind: 'failure'; failures: Array<{ roleName: string; error?: string }> };
 
+type OrchestrationSynthesisView = {
+  status?: string;
+  summary?: string;
+  roleContributions?: Array<{ roleName?: string; status?: string; task?: string }>;
+  evidenceRefs?: unknown[];
+  visibleFailures?: Array<{ code?: string; message?: string; roleName?: string }>;
+  verifier?: { decision?: string };
+  traceIds?: string[];
+  policy?: { toolAccess?: string; verifierAuthority?: string; memoryWrite?: string };
+};
+
 type MissionPanelResult = {
   missionId: string;
   status: MissionStatus | string;
@@ -466,6 +477,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
   const [running, setRunning] = useState(false);
   const [pendingApproval, setPendingApproval] = useState<PermissionApprovalEvent | null>(null);
   const [runResult, setRunResult] = useState<RunResult | null>(null);
+  const [synthesis, setSynthesis] = useState<OrchestrationSynthesisView | null>(null);
   const [lifecycleEvents, setLifecycleEvents] = useState<Record<string, LifecycleEntry>>({});
   const [taskLoopEvents, setTaskLoopEvents] = useState<Record<string, TaskLoopLifecycleEvent>>({});
   const [taskLoopRunning, setTaskLoopRunning] = useState(false);
@@ -1161,6 +1173,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
         ? (unwrapped.data.failures as Array<{ roleName: string; error?: string }>)
         : [];
       setRunResult(ids.length > 0 ? { kind: 'success', spawnedRunIds: ids } : { kind: 'failure', failures });
+      setSynthesis(isRecord(unwrapped.data.synthesis) ? (unwrapped.data.synthesis as OrchestrationSynthesisView) : null);
       toast.success(tt('roles.runStarted', 'Orchestration started: {{count}} subagents', { count: ids.length }));
       setPendingApproval(null);
       return true;
@@ -1179,6 +1192,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     }
     setPendingApproval(null);
     setRunResult(null);
+    setSynthesis(null);
     setLifecycleEvents({});
     setRunning(true);
     try {
@@ -2516,6 +2530,75 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {synthesis && (
+              <div
+                data-testid="role-orchestration-synthesis"
+                className="rounded-xl border border-border/60 bg-surface-input p-3"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-2">
+                    <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-foreground">
+                        {tt('roles.synthesisTitle', 'Synthesis')}
+                      </p>
+                      {synthesis.summary && (
+                        <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                          {synthesis.summary}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {synthesis.status && (
+                    <Badge variant="outline" className="shrink-0 rounded-full text-2xs">
+                      {synthesis.status}
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
+                    {tt('roles.synthesisVerifier', 'Verifier')}: <span className="font-medium text-foreground">{synthesis.verifier?.decision ?? '-'}</span>
+                  </div>
+                  <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
+                    {tt('roles.synthesisEvidence', 'Evidence')}: <span className="font-medium text-foreground">{synthesis.evidenceRefs?.length ?? 0}</span>
+                  </div>
+                  <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
+                    {tt('roles.synthesisTraces', 'Traces')}: <span className="font-medium text-foreground">{synthesis.traceIds?.length ?? 0}</span>
+                  </div>
+                  <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
+                    {tt('roles.synthesisRoles', 'Roles')}: <span className="font-medium text-foreground">{synthesis.roleContributions?.length ?? 0}</span>
+                  </div>
+                </div>
+
+                {synthesis.visibleFailures?.length ? (
+                  <div className="mt-3 rounded-md border border-red-500/20 bg-red-500/5 px-2.5 py-2">
+                    <p className="text-2xs font-medium text-red-700 dark:text-red-400">
+                      {tt('roles.synthesisFailures', 'Failures')}
+                    </p>
+                    <ul className="mt-1 space-y-1">
+                      {synthesis.visibleFailures.slice(0, 4).map((failure, index) => (
+                        <li key={`${failure.code ?? 'failure'}-${index}`} className="text-2xs text-muted-foreground">
+                          {failure.roleName && <span className="font-mono text-foreground">{failure.roleName}: </span>}
+                          {failure.message || failure.code || '-'}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {synthesis.policy && (
+                  <p className="mt-2 text-2xs text-muted-foreground">
+                    {tt('roles.synthesisPolicy', 'Policy')}: {tt('roles.synthesisPolicyValue', 'tools {{tools}} / verifier {{verifier}} / memory {{memory}}', {
+                      tools: synthesis.policy.toolAccess ?? '-',
+                      verifier: synthesis.policy.verifierAuthority ?? '-',
+                      memory: synthesis.policy.memoryWrite ?? '-',
+                    })}
+                  </p>
+                )}
               </div>
             )}
 

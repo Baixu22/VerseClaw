@@ -22,6 +22,7 @@ import {
   normalizeWorkerCommunication,
   summarizeQuality,
 } from "../orchestration-protocol.js";
+import { synthesizeOrchestrationResult } from "../orchestration-synthesizer.js";
 import type { RoleRegistryConfigCarrier } from "../role-registry.js";
 import { listRoleContracts } from "../role-registry.js";
 import type { SpawnFn } from "../role-spawn.js";
@@ -233,6 +234,7 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
       const spawnedCount = result.spawnedRunIds.length;
       const status = resolveStatus(spawnedCount, result.failures.length);
       const nextAction = resolveNextAction(spawnedCount);
+      const synthesis = synthesizeOrchestrationResult({ bundle: result.resultBundle });
       const quality: unknown[] = [];
       return jsonResult({
         status,
@@ -240,6 +242,7 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         routeDiagnostics: result.plan.routeDiagnostics,
         taskGraph: result.taskGraph,
         resultBundle: result.resultBundle,
+        synthesis,
         complexityDecision: result.plan.complexityDecision,
         runbookSelection: result.plan.runbookSelection,
         graphStatus: result.graphStatus,

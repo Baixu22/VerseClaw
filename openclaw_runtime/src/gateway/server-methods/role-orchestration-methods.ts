@@ -14,6 +14,7 @@ import { listRoleContracts, resolveRoleContract } from "../../agents/role-regist
 import { getTeamTemplateSnapshot, resolveTeamTemplate } from "../../agents/team-template.js";
 import { createOrchestratorPlan, type OrchestratorWorkerPlan } from "../../agents/orchestrator.js";
 import { runOrchestrationObserved, type OrchestrationLifecycleEvent } from "../../agents/orchestrator-run-observed.js";
+import { synthesizeOrchestrationResult } from "../../agents/orchestration-synthesizer.js";
 import {
   normalizeQualityPolicy,
   normalizeGraphMode,
@@ -375,6 +376,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         { sessionKey, runId: orchestrationRunId },
         broadcastLifecycle,
       );
+      const synthesis = synthesizeOrchestrationResult({ bundle: result.resultBundle });
       // Audit log: structured record for enterprise compliance/observability.
       context.logGateway.info(
         `[role-audit] orchestrator.run ${formatControlPlaneActor(actor)} lead=${leadRoleHint} mode=${result.plan.mode} workers=${result.spawnedRunIds.length} failures=${result.failures.length} sessionKey=${sessionKey}`,
@@ -385,6 +387,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           orchestrationRunId,
           plan: result.plan,
           resultBundle: result.resultBundle,
+          synthesis,
           complexityDecision: result.plan.complexityDecision,
           runbookSelection: result.plan.runbookSelection,
           routeDiagnostics: result.plan.routeDiagnostics,
