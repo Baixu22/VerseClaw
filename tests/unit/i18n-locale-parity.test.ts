@@ -168,6 +168,20 @@ describe('i18n locale parity', () => {
   });
 
   it.each(locales.filter((l) => l !== REFERENCE_LOCALE))(
+    'locale "%s" has real composer Git translations',
+    (locale) => {
+      const data = readJson(path.join(LOCALES_DIR, locale, 'chat.json'));
+      const composerGit = getValueAtPath(data, 'composer.git');
+      const keys = collectLeafKeys(composerGit ?? {});
+      const corrupted = [...keys]
+        .map((key) => ({ key, value: getValueAtPath(composerGit ?? {}, key) }))
+        .filter((entry) => typeof entry.value === 'string' && /\?{2,}/.test(entry.value));
+
+      expect(corrupted).toEqual([]);
+    },
+  );
+
+  it.each(locales.filter((l) => l !== REFERENCE_LOCALE))(
     'locale "%s" ships the same namespace files as the reference',
     (locale) => {
       const namespaces = listNamespaces(locale);
