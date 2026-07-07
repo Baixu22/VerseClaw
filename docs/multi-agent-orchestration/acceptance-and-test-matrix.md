@@ -156,3 +156,79 @@ Before marking P1 complete:
 - No UI/i18n/E2E work is hidden in P1.
 - Existing P0 gates and bundle behavior remain intact.
 - Every success/failure claim in the final report is backed by a command result.
+
+## 9. P2 Required Commands
+
+Run before implementation when possible:
+
+```powershell
+pnpm harness context --spec harness/specs/tasks/role-first-p2-runbook-complexity-gate.md
+pnpm harness validate --spec harness/specs/tasks/role-first-p2-runbook-complexity-gate.md --no-diff
+git status --short
+```
+
+Run during implementation as tasks land:
+
+```powershell
+pnpm exec vitest run tests/unit/complexity-gate.test.ts
+pnpm exec vitest run tests/unit/runbook-template.test.ts
+pnpm exec vitest run tests/unit/runbook-task-graph.test.ts
+pnpm exec vitest run tests/unit/role-orchestration-methods.test.ts
+```
+
+Run before review:
+
+```powershell
+pnpm harness validate --spec harness/specs/tasks/role-first-p2-runbook-complexity-gate.md
+pnpm exec vitest run tests/unit/complexity-gate.test.ts tests/unit/runbook-template.test.ts tests/unit/runbook-task-graph.test.ts
+pnpm exec vitest run tests/unit/orchestration-resource-scheduler.test.ts tests/unit/orchestration-result-bundle.test.ts tests/unit/orchestration-gates.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/orchestration-protocol-v3.test.ts
+pnpm run comms:replay
+pnpm run comms:compare
+```
+
+If P2 implementation does not touch Gateway/tool return payloads or runtime communication paths, `comms:replay` and `comms:compare` may be reported as not required with justification. If `team_orchestrate`, gateway handlers, delivery, or renderer projection changes, they are required.
+
+## 10. P2 Acceptance Matrix
+
+| Acceptance item | Primary test | Evidence required |
+| --- | --- | --- |
+| ComplexityGate classifies simple tasks as single-agent | `tests/unit/complexity-gate.test.ts` | Simple task fixture returns `single-agent` |
+| ComplexityGate classifies high-risk or multi-file tasks as team/runbook candidates | `tests/unit/complexity-gate.test.ts` | Risk/file/capability table cases return expected modes |
+| Explicit team selection is not blocked | `tests/unit/complexity-gate.test.ts` | Explicit team input returns team decision with warning/reason |
+| RunbookTemplate validation rejects malformed templates | `tests/unit/runbook-template.test.ts` | Unknown roles, duplicate nodes, missing evidence, and bad deps fail |
+| Runbook prose cannot grant permissions | `tests/unit/runbook-template.test.ts` | Unsafe `tools`, `permissions`, or prompt-like fields fail validation |
+| Built-in runbook fixtures validate | `tests/unit/runbook-template.test.ts` | All fixture templates return `ok: true` |
+| Runbook-to-task-graph uses existing RoleContract names only | `tests/unit/runbook-task-graph.test.ts` | Generated nodes reference known roles |
+| Runbook-to-task-graph preserves scheduler/verifier boundaries | `tests/unit/runbook-task-graph.test.ts` | Generated graph schedules through P1 scheduler and has verifier boundary |
+| Selection trace is structured | `tests/unit/runbook-task-graph.test.ts` or `tests/unit/role-orchestration-methods.test.ts` | selected/unselected reasons are data fields |
+| Existing P0/P1 tests do not regress | P0/P1 unit suites | current P0/P1 tests green |
+| P3-P4 remain absent | final report plus grep/diff review | no blackboard/synthesizer/UI/open-A2A implementation |
+
+## 11. P2 Minimum Fixture Scenarios
+
+Create or update tests to cover:
+
+- short one-line task stays single-agent,
+- explicit team request is honored,
+- multi-file security task enters team orchestration,
+- repeated test failure task selects test-repair runbook,
+- explicit runbook id selects that runbook or returns an invalid selection reason,
+- missing expected evidence fails runbook validation,
+- duplicate graph node ids fail validation,
+- unknown dependency fails validation,
+- unsafe permission/tool fields fail validation,
+- selected and unselected runbook reasons appear in structured trace/detail data.
+
+## 12. P2 Review Checklist
+
+Before marking P2 complete:
+
+- `RoleContract` remains the runtime role authority.
+- ComplexityGate does not grant permissions.
+- RunbookTemplate is structured planning data, not prompt text.
+- Runbook graphs still pass through P1 scheduler.
+- P0 schema/verifier gates remain intact.
+- No runbook prose grants tools, filesystem, network, commands, or memory writes.
+- No typed blackboard or synthesizer is hidden in P2.
+- No open A2A channel is added.
+- Every success/failure claim in the final report is backed by a command result.
