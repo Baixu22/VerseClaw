@@ -32,6 +32,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
+import { basenameFromPath, compactCommit, defaultWorktreeTargetPath, pathEquals } from '@/lib/git-ui';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type {
   GitBranch as GitBranchInfo,
@@ -67,39 +68,6 @@ type ApprovalRetry = {
 type WorktreeMode = 'new' | 'existing';
 type ToolPanel = 'worktrees' | 'commit' | 'branch' | 'stash' | 'github';
 const CHANGE_GROUPS: GitChangeBucket[] = ['conflicted', 'staged', 'unstaged', 'untracked'];
-
-function basename(path: string): string {
-  const normalized = path.replace(/\\/g, '/').replace(/\/$/, '');
-  return normalized.split('/').pop() || normalized;
-}
-
-function parentDir(path: string): string {
-  const normalized = path.replace(/\\/g, '/').replace(/\/$/, '');
-  const index = normalized.lastIndexOf('/');
-  return index > 0 ? normalized.slice(0, index) : '';
-}
-
-function worktreeBranchSlug(branch: string): string {
-  return branch.trim().replace(/[^a-z0-9._-]+/gi, '-').replace(/^-|-$/g, '') || 'worktree';
-}
-
-function defaultWorktreeTargetPath(repoRoot: string | undefined, branch: string): string | null {
-  const name = branch.trim();
-  if (!repoRoot || !name) return null;
-  const repoFolder = basename(repoRoot) || 'workspace';
-  const parent = parentDir(repoRoot);
-  return parent ? `${parent}/${repoFolder}-${worktreeBranchSlug(name)}` : `${repoFolder}-${worktreeBranchSlug(name)}`;
-}
-
-function pathEquals(left: string | undefined, right: string | undefined): boolean {
-  if (!left || !right) return false;
-  return left.replace(/\\/g, '/').replace(/\/$/, '').toLowerCase()
-    === right.replace(/\\/g, '/').replace(/\/$/, '').toLowerCase();
-}
-
-function compactCommit(value: string | undefined): string {
-  return value ? value.slice(0, 7) : 'HEAD';
-}
 
 function changeBadge(change: GitFileChange): { label: string; variant: 'destructive' | 'outline' | 'warning' | 'secondary' } {
   if (change.conflicted) return { label: change.status || '!!', variant: 'destructive' };
@@ -507,7 +475,7 @@ export function WorkspaceGitPanel({
       if (existingWorkspace) {
         await switchWorkspace(existingWorkspace.id);
       } else {
-        await createWorkspace({ name: basename(worktree.path), rootPath: worktree.path });
+        await createWorkspace({ name: basenameFromPath(worktree.path), rootPath: worktree.path });
       }
       toast.success(detail);
     } catch (err) {
@@ -912,7 +880,7 @@ export function WorkspaceGitPanel({
                     <div key={worktree.path} className="rounded bg-background px-2 py-1 dark:bg-white/5">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="min-w-[120px] flex-1">
-                          <p className="truncate font-mono text-2xs text-foreground">{basename(worktree.path)}</p>
+                          <p className="truncate font-mono text-2xs text-foreground">{basenameFromPath(worktree.path)}</p>
                           <p className="truncate text-2xs text-muted-foreground">{worktree.branch || compactCommit(worktree.head)}</p>
                         </div>
                         <div className="flex shrink-0 flex-wrap items-center justify-end gap-1">

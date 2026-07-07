@@ -9,6 +9,7 @@ import { useShallow } from 'zustand/shallow';
 import { ArrowDownToLine, Check, ChevronDown, FileText, Folder, FolderPlus, GitBranchPlus, Laptop, Loader2, Pencil, Sparkles } from 'lucide-react';
 import type { SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus, LongTaskInputMode } from '@shared/types/long-task-control';
+import type { GitWorktree } from '@shared/types/git';
 import { useChatStore, type RawMessage } from '@/stores/chat';
 import { isInternalMessage } from '@/stores/chat/helpers';
 import { buildBaselineRunKey, getBaseline } from '@/stores/baseline-cache';
@@ -55,6 +56,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { basenameFromPath, pathEquals } from '@/lib/git-ui';
 import { buildConfiguredModelOptions } from '@/lib/model-options';
 import {
   createFreshWorkspaceSessionKey,
@@ -212,16 +214,6 @@ function getWorkspaceSessionState(
     return workspace.sessionStates[sessionKey] ?? {};
   }
   return workspace.state ?? {};
-}
-
-function basenameFromPath(path: string | null | undefined): string {
-  if (!path) return '';
-  const normalized = path.replace(/[\\/]+$/, '');
-  return normalized.split(/[\\/]/).pop() || normalized;
-}
-
-function normalizeComparablePath(path: string): string {
-  return path.replace(/\\/g, '/').replace(/\/+$/g, '').toLowerCase();
 }
 
 function getSessionDisplayName(sessionKey: string, sessions: ChatSession[], labels: Record<string, string>): string {
@@ -917,8 +909,7 @@ export function Chat() {
     });
     if (result.canceled || !result.filePaths[0]) return;
     const rootPath = result.filePaths[0];
-    const normalizedRootPath = normalizeComparablePath(rootPath);
-    const existing = workspaceProfiles.find((profile) => normalizeComparablePath(profile.rootPath) === normalizedRootPath);
+    const existing = workspaceProfiles.find((profile) => pathEquals(profile.rootPath, rootPath));
     try {
       await persistCurrentWorkspaceSessionState({
         activeSessionKey: currentSessionKey,
@@ -1180,6 +1171,28 @@ export function Chat() {
       },
     });
   }, [activeWorkspaceId, currentSessionKey, openBrowser, saveWorkspaceState]);
+
+  const handleSwitchWorktreeWorkspace = useCallback(async (worktree: GitWorktree) => {
+    await persistCurrentWorkspaceSessionState({
+      activeSessionKey: currentSessionKey,
+      sessionKey: currentSessionKey,
+    });
+    const existingWorkspace = workspaceProfiles.find((profile) => pathEquals(profile.rootPath, worktree.path));
+    if (existingWorkspace) {
+      await handleSwitchWorkspace(existingWorkspace.id);
+      toast.success(t('workspace.git.toast.worktreeWorkspaceSwitched'));
+      return;
+    }
+    const nextWorkspace = await createWorkspace({
+      name: basenameFromPath(worktree.path),
+      rootPath: worktree.path,
+      agentId: currentAgentId,
+    });
+    if (nextWorkspace?.id) {
+      await handleSwitchWorkspace(nextWorkspace.id);
+    }
+    toast.success(t('workspace.git.toast.worktreeWorkspaceCreated'));
+  }, [createWorkspace, currentAgentId, currentSessionKey, handleSwitchWorkspace, persistCurrentWorkspaceSessionState, t, workspaceProfiles]);
 
   const handleToggleWorkContext = useCallback(() => {
     const nextVisible = !workContextVisible;
@@ -2407,6 +2420,8 @@ export function Chat() {
         disabled={!isGatewayRunning}
         sending={inputRunActive}
         workspace={activeWorkspace}
+        onOpenGitPanel={handleOpenGitPanel}
+        onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace}
         contextRange={contextRange}
         liveUsage={liveUsage}
         messageCount={messages.length}

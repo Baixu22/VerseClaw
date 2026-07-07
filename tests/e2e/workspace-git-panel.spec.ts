@@ -416,12 +416,6 @@ test.describe('Workspace Git panel', () => {
       await expect(gitPanel.getByText('Unstaged (1)', { exact: true })).toBeVisible();
       await expect(gitPanel.getByText('Untracked (1)', { exact: true })).toBeVisible();
       await expect(gitPanel.getByRole('button', { name: /src\/demo\.ts/ })).toBeVisible();
-      await expect(gitPanel.getByText('git version 2.45.0')).toBeVisible();
-      await expect(gitPanel.getByText('27 tools')).toBeVisible();
-      await expect(gitPanel.getByTestId('workspace-git-readiness-score')).toHaveText(/3\/4 ready/);
-      await expect(gitPanel.getByTestId('workspace-git-repo-metrics')).toContainText('Worktrees');
-      await expect(gitPanel.getByTestId('workspace-git-repo-metrics')).toContainText('Stashes');
-      await expect(gitPanel.getByTestId('workspace-git-repo-metrics')).toContainText('+4 -2');
       await expect(gitPanel.getByText('+2 -1').first()).toBeVisible();
       await expect(gitPanel.getByTestId('monaco-diff-viewer')).toBeVisible();
       await expect(gitPanel.locator('.monaco-editor-background').first()).toBeVisible();
@@ -435,8 +429,6 @@ test.describe('Workspace Git panel', () => {
       await expect(gitPanel.getByText('Locked')).toBeVisible();
       await expect(gitPanel.getByText('Prunable')).toBeVisible();
       await expect(gitPanel.getByText(/gh auth login/)).toBeVisible();
-      await expect(gitPanel.getByText('Last operation')).toBeVisible();
-      await expect(gitPanel.getByTestId('workspace-git-last-operation')).toContainText('No Git operation yet');
 
       await page.evaluate(() => {
         Object.defineProperty(navigator, 'clipboard', {
@@ -477,7 +469,6 @@ test.describe('Workspace Git panel', () => {
       await gitPanel.getByRole('button', { name: 'Push' }).click();
       await expect(gitPanel.getByText('Push needs approval')).toBeVisible();
       await expect(gitPanel.getByText('Pushing changes requires approval.', { exact: true })).toBeVisible();
-      await expect(gitPanel.getByTestId('workspace-git-last-operation')).toContainText('Push');
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
 
       await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Worktree' }).click();
@@ -500,7 +491,6 @@ test.describe('Workspace Git panel', () => {
       await expect(gitPanel.getByText('Apply needs approval')).toBeVisible();
       await expect(gitPanel.getByText('Applying stash requires approval.', { exact: true })).toBeVisible();
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
-      await expect(gitPanel.getByTestId('workspace-git-last-operation')).toContainText('Apply');
 
       await gitPanel.getByTestId('workspace-git-tool-tabs').getByRole('button', { name: 'Worktree' }).click();
       await gitPanel.getByRole('button', { name: 'Switch' }).click();

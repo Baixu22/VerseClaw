@@ -64,6 +64,8 @@ import { isCapabilityAuditBlocked } from '@/lib/capability-audit';
 import type { KnowledgeInvocationMode, LiveTokenUsage, WorkspaceContextRange, WorkspaceKnowledgeScope, WorkspacePermissionMode, WorkspaceProfile } from '@shared/types/workspace';
 import type { ChatCapabilityActionPlan, ChatCapabilityActionResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus, LongTaskInputMode } from '@shared/types/long-task-control';
+import type { GitWorktree } from '@shared/types/git';
+import { ComposerGitStrip } from './ComposerGitStrip';
 import type { SessionContinuityPreflight, SessionContinuityRecommendation } from './session-continuity';
 
 // ── Types ────────────────────────────────────────────────────────
@@ -85,6 +87,8 @@ interface ChatInputProps {
   disabled?: boolean;
   sending?: boolean;
   workspace?: WorkspaceProfile | null;
+  onOpenGitPanel?: () => void;
+  onSwitchWorktreeWorkspace?: (worktree: GitWorktree) => Promise<void>;
   contextRange?: WorkspaceContextRange | null;
   liveUsage?: LiveTokenUsage | null;
   messageCount?: number;
@@ -431,6 +435,8 @@ export function ChatInput({
   draftValue,
   onDraftChange,
   workspace,
+  onOpenGitPanel,
+  onSwitchWorktreeWorkspace,
   onPermissionModeChange,
   onPickWorkspaceFolder,
   onSwitchAgent,
@@ -2132,6 +2138,15 @@ export function ChatInput({
               rows={1}
             />
           </div>
+
+          {workspace && onOpenGitPanel && onSwitchWorktreeWorkspace && (
+            <ComposerGitStrip
+              workspace={workspace}
+              disabled={inputDisabled || sending}
+              onOpenGitPanel={onOpenGitPanel}
+              onSwitchWorktreeWorkspace={onSwitchWorktreeWorkspace}
+            />
+          )}
 
           {/* Action Row — icons on their own line */}
           <div className="mt-1.5 flex items-center gap-1">
