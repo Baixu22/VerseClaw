@@ -232,3 +232,86 @@ Before marking P2 complete:
 - No typed blackboard or synthesizer is hidden in P2.
 - No open A2A channel is added.
 - Every success/failure claim in the final report is backed by a command result.
+
+## 13. P3 Required Commands
+
+Run before implementation when possible:
+
+```powershell
+pnpm harness context --spec harness/specs/tasks/role-first-p3-typed-blackboard.md
+pnpm harness validate --spec harness/specs/tasks/role-first-p3-typed-blackboard.md --no-diff
+git status --short
+```
+
+Run during implementation as tasks land:
+
+```powershell
+pnpm exec vitest run tests/unit/orchestration-blackboard.test.ts
+pnpm exec vitest run tests/unit/orchestration-blackboard-verifier.test.ts
+pnpm exec vitest run tests/unit/orchestration-blackboard-trace.test.ts
+pnpm exec vitest run tests/unit/role-orchestration-methods.test.ts
+```
+
+Run before review:
+
+```powershell
+pnpm harness validate --spec harness/specs/tasks/role-first-p3-typed-blackboard.md
+pnpm exec vitest run tests/unit/orchestration-blackboard.test.ts tests/unit/orchestration-blackboard-verifier.test.ts tests/unit/orchestration-blackboard-trace.test.ts
+pnpm exec vitest run tests/unit/complexity-gate.test.ts tests/unit/runbook-template.test.ts tests/unit/runbook-task-graph.test.ts tests/unit/orchestration-resource-scheduler.test.ts tests/unit/orchestration-result-bundle.test.ts tests/unit/orchestration-gates.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/orchestration-protocol-v3.test.ts
+pnpm run comms:replay
+pnpm run comms:compare
+```
+
+If P3 implementation does not touch Gateway/tool return payloads or runtime communication paths, `comms:replay` and `comms:compare` may be reported as not required with justification. If `team_orchestrate`, gateway handlers, delivery, or renderer projection changes, they are required.
+
+## 14. P3 Acceptance Matrix
+
+| Acceptance item | Primary test | Evidence required |
+| --- | --- | --- |
+| Blackboard entry validation covers supported types | `tests/unit/orchestration-blackboard.test.ts` | Fixtures for `fact`, `claim`, `question`, `risk`, `decision`, `artifact`, `conflict`, `handoff`, and `memory_proposal` |
+| Validation rejects malformed entries | `tests/unit/orchestration-blackboard.test.ts` | Unknown roles, invalid confidence, missing required evidence, invalid visibility/status, unsafe permission fields, and direct memory writes fail |
+| Append preserves stable metadata | `tests/unit/orchestration-blackboard.test.ts` | Version 1, timestamps, author role, task id, evidence refs, and trust boundary assertions |
+| Versioned update preserves history | `tests/unit/orchestration-blackboard.test.ts` | Old and new versions remain reconstructable; immutable fields cannot be patched |
+| Conflicting claims create conflict entries | `tests/unit/orchestration-blackboard.test.ts` | Conflict entry references both claim ids and originals remain present |
+| Handoffs are structured data | `tests/unit/orchestration-blackboard.test.ts` | Handoff entry requires from/to role, summary, and evidence refs; text does not grant permissions |
+| Untrusted content remains data | `tests/unit/orchestration-blackboard.test.ts` | Prompt-injection fixture is marked with trust-boundary metadata and no permission fields |
+| Verifier can read blackboard evidence | `tests/unit/orchestration-blackboard-verifier.test.ts` | Read-only verifier projection includes evidence refs, confidence, trust boundary, and status |
+| P0 gates remain authoritative | `tests/unit/orchestration-blackboard-verifier.test.ts` or `tests/unit/orchestration-gates.test.ts` | Blackboard evidence does not bypass schema/verifier pass/fail checks |
+| Trace replay reconstructs blackboard history | `tests/unit/orchestration-blackboard-trace.test.ts` | Append/update/conflict events rebuild deterministic state |
+| Existing P0/P1/P2 tests do not regress | P0/P1/P2 unit suites | current P0/P1/P2 tests green |
+| P4/UI/open-chat/memory persistence remain absent | final report plus grep/diff review | no synthesizer/UI/open worker chat/new memory persistence implementation |
+
+## 15. P3 Minimum Fixture Scenarios
+
+Create or update tests to cover:
+
+- valid entry fixtures for every supported entry type,
+- unknown role rejected,
+- invalid confidence rejected,
+- missing evidence rejected for evidence-required types,
+- unsafe `tools`, `permissions`, `prompt`, or `memoryWrite` content rejected,
+- append creates version 1 and preserves trust boundary,
+- update creates a new version and preserves prior history,
+- two incompatible claims on the same subject create a conflict entry,
+- unresolved conflict remains visible to verifier projection,
+- prompt-injection-like text is stored as untrusted data,
+- handoff entry stays structured and does not become direct worker chat,
+- trace replay reconstructs append, update, and conflict events.
+
+## 16. P3 Review Checklist
+
+Before marking P3 complete:
+
+- `RoleContract` remains the runtime role authority.
+- Blackboard does not grant permissions.
+- Blackboard is structured orchestration data, not direct chat.
+- P1 scheduler still enforces max active roles and tool contention.
+- P2 runbook graph boundaries remain intact.
+- P0 schema/verifier gates remain intact.
+- Conflicts are preserved rather than silently overwritten.
+- Untrusted content is not interpreted as system, developer, role, or tool instructions.
+- Blackboard entries do not automatically become long-term memory.
+- Workers do not directly write long-term memory.
+- No synthesizer or Role Catalog UI is hidden in P3.
+- No open A2A channel is added.
+- Every success/failure claim in the final report is backed by a command result.
