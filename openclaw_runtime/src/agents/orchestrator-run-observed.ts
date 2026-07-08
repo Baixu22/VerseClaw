@@ -47,6 +47,13 @@ import {
   type OrchestrationResultBundle,
   type RoleOutcomeBundle,
 } from "./orchestration-result-bundle.js";
+import type { BlackboardState } from "./orchestration-blackboard.js";
+import type { BlackboardTraceEvent } from "./orchestration-blackboard-trace.js";
+import {
+  buildRuntimeBlackboard,
+  type RuntimeBlackboardFailure,
+} from "./orchestration-runtime-blackboard.js";
+import type { BlackboardSynthesisSummary } from "./orchestration-synthesizer.js";
 
 export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
   cfg?: RoleRegistryConfigCarrier;
@@ -84,6 +91,9 @@ export type OrchestrationRunResult = {
   /** Worker tasks that failed to spawn (status !== "accepted"). */
   failures: Array<{ roleName: string; status: string; error?: string }>;
   resultBundle: OrchestrationResultBundle;
+  blackboardState: BlackboardState;
+  blackboardSummary: BlackboardSynthesisSummary;
+  blackboardTraceEvents: BlackboardTraceEvent[];
 };
 
 export type ObservedOrchestrationTraceAttrs = {
@@ -577,6 +587,12 @@ export async function runOrchestrationWithRecorder(
     permissionEvents: permissionEventsFromFailures(failures),
     traceIds: [trace.id],
   });
+  const blackboard = buildRuntimeBlackboard({
+    resultBundle,
+    failures: failures satisfies RuntimeBlackboardFailure[],
+    knownRoleNames: plan.taskGraph.nodes.map((node) => node.roleName),
+    now: new Date().toISOString(),
+  });
   return {
     plan,
     outcomes,
@@ -593,6 +609,9 @@ export async function runOrchestrationWithRecorder(
     rerouteRecommendations,
     failures,
     resultBundle,
+    blackboardState: blackboard.state,
+    blackboardSummary: blackboard.summary,
+    blackboardTraceEvents: blackboard.traceEvents,
   };
 }
 

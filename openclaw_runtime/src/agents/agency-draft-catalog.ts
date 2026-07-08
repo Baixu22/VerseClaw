@@ -36,3 +36,29 @@ export function validateAgencyDraftPromotion(entry: AgencyDraftRoleEntry): RoleC
   }
   return validateRoleContract(entry.roleCandidate);
 }
+
+export type AgencyDraftPromotionReviewInput = {
+  reviewer: string;
+  reviewedAt: string;
+};
+
+export type AgencyDraftPromotionReview = {
+  draftId: string;
+  reviewer: string;
+  reviewedAt: string;
+  approvedForRuntime: false;
+  validation: RoleContractValidationResult;
+};
+
+export function reviewAgencyDraftPromotion(
+  entry: AgencyDraftRoleEntry,
+  input: AgencyDraftPromotionReviewInput,
+): AgencyDraftPromotionReview {
+  return {
+    draftId: entry.id,
+    reviewer: input.reviewer,
+    reviewedAt: input.reviewedAt,
+    approvedForRuntime: false,
+    validation: validateAgencyDraftPromotion(entry),
+  };
+}

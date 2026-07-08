@@ -94,6 +94,15 @@ describe('orchestration synthesizer', () => {
       },
       blackboardSummary,
     });
+    expect(first.blackboardSummary).toMatchObject({
+      entryCount: 5,
+      trustBoundaries: ['role-output', 'tool-output'],
+    });
+    expect(first.policy).toEqual({
+      toolAccess: 'none',
+      verifierAuthority: 'preserved',
+      memoryWrite: 'none',
+    });
     expect(first.roleContributions).toEqual([
       expect.objectContaining({
         roleName: 'implementer',

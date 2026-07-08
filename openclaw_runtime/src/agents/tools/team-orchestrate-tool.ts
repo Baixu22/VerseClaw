@@ -234,7 +234,10 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
       const spawnedCount = result.spawnedRunIds.length;
       const status = resolveStatus(spawnedCount, result.failures.length);
       const nextAction = resolveNextAction(spawnedCount);
-      const synthesis = synthesizeOrchestrationResult({ bundle: result.resultBundle });
+      const synthesis = synthesizeOrchestrationResult({
+        bundle: result.resultBundle,
+        blackboardSummary: result.blackboardSummary,
+      });
       const quality: unknown[] = [];
       return jsonResult({
         status,
@@ -242,6 +245,8 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         routeDiagnostics: result.plan.routeDiagnostics,
         taskGraph: result.taskGraph,
         resultBundle: result.resultBundle,
+        blackboardState: result.blackboardState,
+        blackboardSummary: result.blackboardSummary,
         synthesis,
         complexityDecision: result.plan.complexityDecision,
         runbookSelection: result.plan.runbookSelection,
@@ -286,7 +291,7 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
           verifier: result.pendingVerifier ? "deferred_until_workers_terminal" : "none",
           workerCommunication,
           requestedWorkerCommunication,
-          boundedA2aEnabled: false,
+          boundedA2aEnabled: true,
           repairPolicy,
           qualityPolicy,
         },

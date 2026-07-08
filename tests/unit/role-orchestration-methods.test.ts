@@ -430,6 +430,12 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     });
     expect(result.resultBundle.roleOutcomes.length).toBe(result.outcomes.length);
     expect(result.resultBundle.traceIds.length).toBeGreaterThanOrEqual(1);
+    expect(result.blackboardState.entries.length).toBe(result.outcomes.length);
+    expect(result.blackboardSummary).toMatchObject({
+      entryCount: result.outcomes.length,
+      unresolvedConflicts: 0,
+      trustBoundaries: ['role-output'],
+    });
     expect(result.schedulerMetrics).toMatchObject({
       concurrencyCap: expect.any(Number),
       queued: expect.any(Number),
@@ -470,6 +476,11 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
         }),
       ]),
     );
+    expect(result.blackboardSummary).toMatchObject({
+      entryCount: result.outcomes.length + result.failures.length,
+      openRisks: result.failures.length,
+      trustBoundaries: ['role-output'],
+    });
     // Trace still persisted even on all-failures.
     expect(getRuntimeTraceBuffer().length).toBeGreaterThanOrEqual(1);
   });
@@ -527,13 +538,16 @@ describe('team_orchestrate tool', () => {
       plan: { mode: string };
       children: unknown[];
       pendingVerifier: boolean;
-      resultPolicy: { completion: string };
+      resultPolicy: { completion: string; boundedA2aEnabled: boolean };
       resultBundle?: unknown;
+      blackboardSummary?: { entryCount: number };
     };
     expect(details.plan.mode).toBe('router');
     expect(details.children).toHaveLength(1);
     expect(details.pendingVerifier).toBe(false);
     expect(details.resultPolicy.completion).toBe('team_result_bundle');
+    expect(details.resultPolicy.boundedA2aEnabled).toBe(true);
+    expect(details.blackboardSummary?.entryCount).toBe(1);
     expect(details.resultBundle).toMatchObject({
       schemaVersion: 1,
       phase: 'spawn',
