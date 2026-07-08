@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { buildRuntimeBlackboard } from '../../openclaw_runtime/src/agents/orchestration-runtime-blackboard';
 import type { BlackboardTraceEvent } from '../../openclaw_runtime/src/agents/orchestration-blackboard-trace';
 import { replayBlackboardTrace } from '../../openclaw_runtime/src/agents/orchestration-blackboard-trace';
 
@@ -116,5 +117,43 @@ describe('orchestration blackboard trace replay', () => {
 
     expect(replayed.state.entries.map((entry) => entry.id)).toEqual(['bb_claim_a']);
     expect(replayed.issues.map((issue) => issue.path)).toContain('events.4.authorRole');
+  });
+
+  it('replays runtime blackboard events into the same verifier-visible state', () => {
+    const projection = buildRuntimeBlackboard({
+      resultBundle: {
+        schemaVersion: 1,
+        phase: 'spawn',
+        orchestrationRunId: 'orch_replay_runtime',
+        taskGraphId: 'graph_replay_runtime',
+        attempt: 1,
+        status: 'partial',
+        leadRole: 'planner',
+        selectedRoles: ['implementer', 'tester'],
+        roleOutcomes: [{
+          roleName: 'implementer',
+          task: 'Implement replay',
+          phase: 'worker',
+          taskId: 'impl-replay',
+          attempt: 1,
+          status: 'completed',
+          evidenceRefs: [{ type: 'trace', ref: 'trace:impl-replay' }],
+        }],
+        artifacts: [],
+        evidenceRefs: [{ type: 'trace', ref: 'trace:impl-replay' }],
+        permissionEvents: [],
+        failures: [{ roleName: 'tester', status: 'forbidden', error: 'max children reached' }],
+        memoryProposals: [],
+        traceIds: ['trace_runtime_replay'],
+      },
+      failures: [{ roleName: 'tester', status: 'forbidden', error: 'max children reached' }],
+      knownRoleNames: ['planner', 'implementer', 'tester'],
+      now: '2026-07-08T00:00:00.000Z',
+    });
+
+    const replayed = replayBlackboardTrace(projection.traceEvents, ['planner', 'implementer', 'tester']);
+
+    expect(replayed.issues).toEqual([]);
+    expect(replayed.state.entries).toEqual(projection.state.entries);
   });
 });

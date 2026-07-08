@@ -123,11 +123,32 @@ type RunResult =
 type OrchestrationSynthesisView = {
   status?: string;
   summary?: string;
-  roleContributions?: Array<{ roleName?: string; status?: string; task?: string }>;
-  evidenceRefs?: unknown[];
-  visibleFailures?: Array<{ code?: string; message?: string; roleName?: string }>;
-  verifier?: { decision?: string };
+  roleContributions?: Array<{
+    roleName?: string;
+    status?: string;
+    task?: string;
+    phase?: string;
+    outputPreview?: string;
+    evidenceRefs?: Array<{ type?: string; ref?: string }>;
+  }>;
+  evidenceRefs?: Array<{ type?: string; ref?: string; roleName?: string; taskId?: string }>;
+  visibleFailures?: Array<{ code?: string; message?: string; roleName?: string; evidenceRefs?: Array<{ type?: string; ref?: string }> }>;
+  verifier?: {
+    decision?: string;
+    verifierRole?: string;
+    evidenceRefs?: Array<{ type?: string; ref?: string }>;
+    reasons?: Array<{ code?: string; message?: string }>;
+  };
   traceIds?: string[];
+  blackboardSummary?: {
+    entryCount?: number;
+    unresolvedConflicts?: number;
+    openQuestions?: number;
+    openRisks?: number;
+    memoryProposals?: number;
+    evidenceRefs?: string[];
+    trustBoundaries?: string[];
+  };
   policy?: { toolAccess?: string; verifierAuthority?: string; memoryWrite?: string };
 };
 
@@ -391,6 +412,21 @@ const MEMORY_SCOPE_OPTIONS = ['role', 'task', 'session', 'project', 'workspace',
 const MEMORY_SENSITIVITY_OPTIONS = ['normal', 'sensitive', 'secret_adjacent', 'secret'] as const;
 function splitMemoryList(value: string): string[] {
   return value.split(',').map((entry) => entry.trim()).filter(Boolean);
+}
+
+function displayEvidenceRef(ref: { type?: string; ref?: string } | string | undefined): string {
+  if (!ref) return '-';
+  if (typeof ref === 'string') return ref;
+  const value = ref.ref || '-';
+  return ref.type ? `${ref.type}:${value}` : value;
+}
+
+function compactList<T>(items: T[] | undefined, limit = 6): T[] {
+  return (items ?? []).slice(0, limit);
+}
+
+function remainingCount<T>(items: T[] | undefined, limit = 6): number {
+  return Math.max(0, (items?.length ?? 0) - limit);
 }
 
 function joinMemoryList(value?: string[]): string {
@@ -2538,57 +2574,134 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                 data-testid="role-orchestration-synthesis"
                 className="rounded-xl border border-border/60 bg-surface-input p-3"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex min-w-0 items-start gap-2">
-                    <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium text-foreground">
-                        {tt('roles.synthesisTitle', 'Synthesis')}
-                      </p>
-                      {synthesis.summary && (
-                        <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                          {synthesis.summary}
-                        </p>
+                <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.85fr)]">
+                  <div className="min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex min-w-0 items-start gap-2">
+                        <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium text-foreground">
+                            {tt('roles.synthesisTitle', 'Synthesis')}
+                          </p>
+                          {synthesis.summary && (
+                            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                              {synthesis.summary}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      {synthesis.status && (
+                        <Badge variant="outline" className="shrink-0 rounded-full text-2xs">
+                          {synthesis.status}
+                        </Badge>
                       )}
                     </div>
-                  </div>
-                  {synthesis.status && (
-                    <Badge variant="outline" className="shrink-0 rounded-full text-2xs">
-                      {synthesis.status}
-                    </Badge>
-                  )}
-                </div>
 
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
-                    {tt('roles.synthesisVerifier', 'Verifier')}: <span className="font-medium text-foreground">{synthesis.verifier?.decision ?? '-'}</span>
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
+                        {tt('roles.synthesisVerifier', 'Verifier')}: <span className="font-medium text-foreground">{synthesis.verifier?.decision ?? '-'}</span>
+                      </div>
+                      <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
+                        {tt('roles.synthesisEvidence', 'Evidence')}: <span className="font-medium text-foreground">{synthesis.evidenceRefs?.length ?? 0}</span>
+                      </div>
+                      <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
+                        {tt('roles.synthesisTraces', 'Traces')}: <span className="font-medium text-foreground">{synthesis.traceIds?.length ?? 0}</span>
+                      </div>
+                      <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
+                        {tt('roles.synthesisRoles', 'Roles')}: <span className="font-medium text-foreground">{synthesis.roleContributions?.length ?? 0}</span>
+                      </div>
+                    </div>
+
+                    {synthesis.roleContributions?.length ? (
+                      <div className="mt-3">
+                        <p className="text-2xs font-medium text-muted-foreground">{tt('roles.synthesisRoleOutcomes', 'Role outcomes')}</p>
+                        <ul className="mt-1 space-y-1">
+                          {compactList(synthesis.roleContributions, 5).map((role, index) => (
+                            <li key={`${role.roleName ?? 'role'}-${index}`} className="rounded-md bg-background/60 px-2.5 py-2 text-2xs text-muted-foreground">
+                              <span className="font-mono text-foreground">{role.roleName ?? '-'}</span>
+                              <span> · {role.status ?? '-'}</span>
+                              {role.phase ? <span> · {role.phase}</span> : null}
+                              {role.task ? <span className="block truncate">{role.task}</span> : null}
+                              {role.evidenceRefs?.length ? (
+                                <span className="block truncate font-mono text-muted-foreground">
+                                  {compactList(role.evidenceRefs, 2).map(displayEvidenceRef).join(', ')}
+                                </span>
+                              ) : null}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
                   </div>
-                  <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
-                    {tt('roles.synthesisEvidence', 'Evidence')}: <span className="font-medium text-foreground">{synthesis.evidenceRefs?.length ?? 0}</span>
-                  </div>
-                  <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
-                    {tt('roles.synthesisTraces', 'Traces')}: <span className="font-medium text-foreground">{synthesis.traceIds?.length ?? 0}</span>
-                  </div>
-                  <div className="rounded-md bg-background/70 px-2.5 py-2 text-2xs text-muted-foreground">
-                    {tt('roles.synthesisRoles', 'Roles')}: <span className="font-medium text-foreground">{synthesis.roleContributions?.length ?? 0}</span>
+
+                  <div className="min-w-0 rounded-md border border-border/60 bg-background/50 p-2.5">
+                    <div className="grid gap-2">
+                      <div className="text-2xs text-muted-foreground">
+                        <span className="font-medium text-foreground">{tt('roles.synthesisVerifier', 'Verifier')}</span>
+                        <div className="mt-1 font-mono">{synthesis.verifier?.decision ?? '-'}</div>
+                        {synthesis.verifier?.evidenceRefs?.length ? (
+                          <div className="mt-1 truncate font-mono">{compactList(synthesis.verifier.evidenceRefs, 3).map(displayEvidenceRef).join(', ')}</div>
+                        ) : null}
+                      </div>
+
+                      {synthesis.evidenceRefs?.length ? (
+                        <div className="text-2xs text-muted-foreground">
+                          <span className="font-medium text-foreground">{tt('roles.synthesisEvidenceRefs', 'Evidence refs')}</span>
+                          <ul className="mt-1 space-y-0.5">
+                            {compactList(synthesis.evidenceRefs, 6).map((ref, index) => (
+                              <li key={`${displayEvidenceRef(ref)}-${index}`} className="truncate font-mono">{displayEvidenceRef(ref)}</li>
+                            ))}
+                          </ul>
+                          {remainingCount(synthesis.evidenceRefs, 6) > 0 && <p className="mt-1">+{remainingCount(synthesis.evidenceRefs, 6)}</p>}
+                        </div>
+                      ) : null}
+
+                      {synthesis.traceIds?.length ? (
+                        <div className="text-2xs text-muted-foreground">
+                          <span className="font-medium text-foreground">{tt('roles.synthesisTraceIds', 'Trace ids')}</span>
+                          <div className="mt-1 space-y-0.5">
+                            {compactList(synthesis.traceIds, 4).map((traceId) => (
+                              <p key={traceId} className="truncate font-mono">{traceId}</p>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
+
+                      {synthesis.blackboardSummary ? (
+                        <div className="text-2xs text-muted-foreground">
+                          <span className="font-medium text-foreground">
+                            {tt('roles.synthesisBlackboard', 'Blackboard')}: {synthesis.blackboardSummary.entryCount ?? 0}
+                          </span>
+                          <div className="mt-1 grid grid-cols-2 gap-1">
+                            <span>{tt('roles.synthesisBlackboardRisks', 'Risks')}: {synthesis.blackboardSummary.openRisks ?? 0}</span>
+                            <span>{tt('roles.synthesisBlackboardConflicts', 'Conflicts')}: {synthesis.blackboardSummary.unresolvedConflicts ?? 0}</span>
+                            <span>{tt('roles.synthesisBlackboardQuestions', 'Questions')}: {synthesis.blackboardSummary.openQuestions ?? 0}</span>
+                            <span>{tt('roles.synthesisBlackboardMemory', 'Memory')}: {synthesis.blackboardSummary.memoryProposals ?? 0}</span>
+                          </div>
+                          {synthesis.blackboardSummary.trustBoundaries?.length ? (
+                            <p className="mt-1 truncate font-mono">{synthesis.blackboardSummary.trustBoundaries.join(', ')}</p>
+                          ) : null}
+                        </div>
+                      ) : null}
+
+                      {synthesis.visibleFailures?.length ? (
+                        <div className="rounded-md border border-red-500/20 bg-red-500/5 px-2.5 py-2">
+                          <p className="text-2xs font-medium text-red-700 dark:text-red-400">
+                            {tt('roles.synthesisFailures', 'Failures')}
+                          </p>
+                          <ul className="mt-1 space-y-1">
+                            {synthesis.visibleFailures.slice(0, 4).map((failure, index) => (
+                              <li key={`${failure.code ?? 'failure'}-${index}`} className="text-2xs text-muted-foreground">
+                                {failure.roleName && <span className="font-mono text-foreground">{failure.roleName}: </span>}
+                                {failure.message || failure.code || '-'}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
-
-                {synthesis.visibleFailures?.length ? (
-                  <div className="mt-3 rounded-md border border-red-500/20 bg-red-500/5 px-2.5 py-2">
-                    <p className="text-2xs font-medium text-red-700 dark:text-red-400">
-                      {tt('roles.synthesisFailures', 'Failures')}
-                    </p>
-                    <ul className="mt-1 space-y-1">
-                      {synthesis.visibleFailures.slice(0, 4).map((failure, index) => (
-                        <li key={`${failure.code ?? 'failure'}-${index}`} className="text-2xs text-muted-foreground">
-                          {failure.roleName && <span className="font-mono text-foreground">{failure.roleName}: </span>}
-                          {failure.message || failure.code || '-'}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
 
                 {synthesis.policy && (
                   <p className="mt-2 text-2xs text-muted-foreground">

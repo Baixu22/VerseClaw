@@ -6,6 +6,7 @@ import {
 import { runSchemaComplianceGate, runVerifierGate } from '../../openclaw_runtime/src/agents/orchestration-gates';
 import type { OrchestrationResultBundle } from '../../openclaw_runtime/src/agents/orchestration-result-bundle';
 import { readBlackboardVerifierEvidence } from '../../openclaw_runtime/src/agents/orchestration-blackboard-verifier';
+import { buildRuntimeBlackboard } from '../../openclaw_runtime/src/agents/orchestration-runtime-blackboard';
 
 const knownRoles = ['planner', 'implementer', 'tester', 'reviewer'];
 
@@ -126,5 +127,60 @@ describe('orchestration blackboard verifier evidence projection', () => {
     expect(readBlackboardVerifierEvidence(state)).toHaveLength(1);
     expect(runSchemaComplianceGate(bundleWithoutWorkerEvidence()).decision).toBe('fail');
     expect(runVerifierGate(bundleWithoutWorkerEvidence()).decision).toBe('fail');
+  });
+
+  it('projects runtime blackboard evidence for verifier but still marks it unverified', () => {
+    const projection = buildRuntimeBlackboard({
+      resultBundle: {
+        schemaVersion: 1,
+        phase: 'spawn',
+        orchestrationRunId: 'orch_blackboard_gate',
+        taskGraphId: 'graph_blackboard_gate',
+        attempt: 1,
+        status: 'verified',
+        leadRole: 'planner',
+        selectedRoles: ['implementer'],
+        roleOutcomes: [{
+          roleName: 'implementer',
+          task: 'Implement without evidence',
+          phase: 'worker',
+          taskId: 'impl-no-evidence',
+          attempt: 1,
+          status: 'completed',
+          evidenceRefs: [],
+        }],
+        artifacts: [],
+        evidenceRefs: [],
+        permissionEvents: [],
+        failures: [],
+        memoryProposals: [],
+        traceIds: ['trace_blackboard_gate'],
+      },
+      failures: [],
+      knownRoleNames: ['planner', 'implementer'],
+      now: '2026-07-08T00:00:00.000Z',
+    });
+
+    const verifierEvidence = readBlackboardVerifierEvidence(projection.state);
+
+    expect(verifierEvidence).toHaveLength(1);
+    expect(verifierEvidence[0]).toMatchObject({ verified: false, trustBoundary: 'role-output' });
+    expect(runSchemaComplianceGate({
+      ...bundleWithoutWorkerEvidence(),
+      orchestrationRunId: 'orch_blackboard_gate',
+      taskGraphId: 'graph_blackboard_gate',
+      leadRole: 'planner',
+      selectedRoles: ['implementer'],
+      roleOutcomes: [{
+        roleName: 'implementer',
+        task: 'Implement without evidence',
+        phase: 'worker',
+        taskId: 'impl-no-evidence',
+        attempt: 1,
+        status: 'completed',
+        evidenceRefs: [],
+      }],
+      traceIds: ['trace_blackboard_gate'],
+    }).decision).toBe('fail');
   });
 });

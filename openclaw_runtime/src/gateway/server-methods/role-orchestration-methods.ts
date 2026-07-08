@@ -376,7 +376,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         { sessionKey, runId: orchestrationRunId },
         broadcastLifecycle,
       );
-      const synthesis = synthesizeOrchestrationResult({ bundle: result.resultBundle });
+      const synthesis = synthesizeOrchestrationResult({
+        bundle: result.resultBundle,
+        blackboardSummary: result.blackboardSummary,
+      });
       // Audit log: structured record for enterprise compliance/observability.
       context.logGateway.info(
         `[role-audit] orchestrator.run ${formatControlPlaneActor(actor)} lead=${leadRoleHint} mode=${result.plan.mode} workers=${result.spawnedRunIds.length} failures=${result.failures.length} sessionKey=${sessionKey}`,
@@ -387,6 +390,8 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           orchestrationRunId,
           plan: result.plan,
           resultBundle: result.resultBundle,
+          blackboardState: result.blackboardState,
+          blackboardSummary: result.blackboardSummary,
           synthesis,
           complexityDecision: result.plan.complexityDecision,
           runbookSelection: result.plan.runbookSelection,
