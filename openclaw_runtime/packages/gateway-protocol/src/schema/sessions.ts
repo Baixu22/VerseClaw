@@ -451,26 +451,62 @@ export const SessionsCompactionHistoryResultSchema = Type.Object(
   { additionalProperties: false },
 );
 
-export const SessionsCompressionArtifactParamsSchema = Type.Object(
+export const ArchiveHandleSchema = Type.Object(
   {
-    key: NonEmptyString,
-    agentId: Type.Optional(NonEmptyString),
-    checkpointId: Type.Optional(NonEmptyString),
+    uri: NonEmptyString,
+    checksum: NonEmptyString,
+    byteLength: Type.Integer({ minimum: 0 }),
+    source: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
+    createdAt: Type.Optional(Type.String()),
   },
   { additionalProperties: false },
 );
 
+export const SessionRecallDiagnosticSchema = Type.Object(
+  {
+    code: NonEmptyString,
+    message: Type.String(),
+    ref: Type.Optional(Type.String()),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsRecallOriginalParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    archiveHandle: ArchiveHandleSchema,
+export const SessionsCompressionArtifactParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    checkpointId: Type.Optional(NonEmptyString),  },
+  { additionalProperties: false },
+);
+
+export const SessionsRecallOriginalResultSchema = Type.Object(
+  {
+    ok: Type.Boolean(),
+    payload: Type.Optional(Type.Unknown()),
+    archiveHandle: Type.Optional(ArchiveHandleSchema),
+    diagnostics: Type.Array(SessionRecallDiagnosticSchema),
 export const SessionsRecoveryContextParamsSchema = Type.Object(
   {
     key: NonEmptyString,
     agentId: Type.Optional(NonEmptyString),
     checkpointId: Type.Optional(NonEmptyString),
     budgetTokens: Type.Optional(Type.Integer({ minimum: 1 })),
-    purpose: Type.Optional(Type.String()),
-  },
+    purpose: Type.Optional(Type.String()),  },
   { additionalProperties: false },
 );
 
+export const SessionsExpandSelectorParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    resourceId: NonEmptyString,
+    selector: NonEmptyString,
+    checksum: Type.Optional(NonEmptyString),
 export const SessionsCompressionArtifactResultSchema = Type.Object(
   {
     ok: Type.Literal(true),
@@ -478,11 +514,18 @@ export const SessionsCompressionArtifactResultSchema = Type.Object(
     checkpointId: Type.Optional(NonEmptyString),
     artifact: Type.Optional(CompressionArtifactSchema),
     quality: Type.Optional(CompressionArtifactQualitySchema),
-    warnings: Type.Array(Type.String()),
-  },
+    warnings: Type.Array(Type.String()),  },
   { additionalProperties: false },
 );
 
+export const SessionsExpandSelectorResultSchema = Type.Object(
+  {
+    ok: Type.Boolean(),
+    content: Type.Optional(Type.String()),
+    resourceId: Type.Optional(Type.String()),
+    selector: Type.Optional(Type.String()),
+    checksum: Type.Optional(Type.String()),
+    diagnostics: Type.Array(SessionRecallDiagnosticSchema),
 export const SessionsRecoveryContextResultSchema = Type.Object(
   {
     ok: Type.Literal(true),
@@ -492,8 +535,7 @@ export const SessionsRecoveryContextResultSchema = Type.Object(
     projectionTokens: Type.Integer({ minimum: 0 }),
     artifact: Type.Optional(CompressionArtifactSchema),
     quality: Type.Optional(CompressionArtifactQualitySchema),
-    warnings: Type.Array(Type.String()),
-  },
+    warnings: Type.Array(Type.String()),  },
   { additionalProperties: false },
 );
 
@@ -610,6 +652,7 @@ export const LongTaskCheckpointRecordSchema = Type.Object(
     trigger: ResumeCheckpointTriggerSchema,
     status: Type.String(),
     checkpoint: ResumeCheckpointSchema,
+    archiveHandle: Type.Optional(ArchiveHandleSchema),
     createdAt: Type.Integer({ minimum: 0 }),
     updatedAt: Type.Integer({ minimum: 0 }),
   },

@@ -57,7 +57,7 @@ describe("Phase 2.2: Background consolidation", () => {
   // === Prune tests ===
 
   describe("prune", () => {
-    it("invalidates low-importance facts that are stale", () => {
+    it("invalidates low-importance facts that are stale", async () => {
       const now = 100000 + 20 * DAY_MS;
       let clock = 100000;
       const store = new RuntimeMemoryStore({ now: () => clock });
@@ -81,13 +81,13 @@ describe("Phase 2.2: Background consolidation", () => {
 
       // Advance time past stale threshold (14 days)
       clock = now;
-      const result = runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
+      const result = await runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
 
       expect(result.prunedFactIds).toContain("stale1");
       expect(result.prunedFactIds).not.toContain("imp1");
     });
 
-    it("does not prune low-importance facts that were recently accessed", () => {
+    it("does not prune low-importance facts that were recently accessed", async () => {
       const now = 100000 + 20 * DAY_MS;
       let clock = 100000;
       const store = new RuntimeMemoryStore({ now: () => clock });
@@ -105,12 +105,12 @@ describe("Phase 2.2: Background consolidation", () => {
       store.recordFactAccess("recent1");
 
       clock = now;
-      const result = runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
+      const result = await runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
 
       expect(result.prunedFactIds).not.toContain("recent1");
     });
 
-    it("does not prune high-importance facts even when stale", () => {
+    it("does not prune high-importance facts even when stale", async () => {
       const now = 100000 + 30 * DAY_MS;
       const store = new RuntimeMemoryStore({ now: () => 100000 });
 
@@ -122,7 +122,7 @@ describe("Phase 2.2: Background consolidation", () => {
       });
       store.appendFact(highImportance);
 
-      const result = runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
+      const result = await runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
 
       expect(result.prunedFactIds).not.toContain("hi1");
     });
@@ -131,7 +131,7 @@ describe("Phase 2.2: Background consolidation", () => {
   // === Merge tests ===
 
   describe("merge", () => {
-    it("merges near-duplicate same-subject facts, keeping higher confidence", () => {
+    it("merges near-duplicate same-subject facts, keeping higher confidence", async () => {
       const now = 100000;
       const store = new RuntimeMemoryStore({ now: () => now });
 
@@ -156,7 +156,7 @@ describe("Phase 2.2: Background consolidation", () => {
         ...DEFAULT_CONSOLIDATION_CONFIG,
         mergeSimilarityThreshold: 0.88,
       };
-      const result = runConsolidation(store, config, now);
+      const result = await runConsolidation(store, config, now);
 
       expect(result.mergedPairs).toHaveLength(1);
       const pair = result.mergedPairs[0];
@@ -165,7 +165,7 @@ describe("Phase 2.2: Background consolidation", () => {
       expect(pair.similarity).toBeGreaterThanOrEqual(0.88);
     });
 
-    it("does not merge facts with different subjects", () => {
+    it("does not merge facts with different subjects", async () => {
       const now = 100000;
       const store = new RuntimeMemoryStore({ now: () => now });
 
@@ -186,12 +186,12 @@ describe("Phase 2.2: Background consolidation", () => {
       store.appendFact(factA);
       store.appendFact(factB);
 
-      const result = runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
+      const result = await runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
 
       expect(result.mergedPairs).toHaveLength(0);
     });
 
-    it("does not merge facts with low similarity", () => {
+    it("does not merge facts with low similarity", async () => {
       const now = 100000;
       const store = new RuntimeMemoryStore({ now: () => now });
 
@@ -212,7 +212,7 @@ describe("Phase 2.2: Background consolidation", () => {
       store.appendFact(factA);
       store.appendFact(factB);
 
-      const result = runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
+      const result = await runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
 
       expect(result.mergedPairs).toHaveLength(0);
     });
@@ -221,7 +221,7 @@ describe("Phase 2.2: Background consolidation", () => {
   // === Strengthen tests ===
 
   describe("strengthen", () => {
-    it("identifies high-usage facts above P75", () => {
+    it("identifies high-usage facts above P75", async () => {
       const now = 100000;
       const store = new RuntimeMemoryStore({ now: () => now });
 
@@ -243,7 +243,7 @@ describe("Phase 2.2: Background consolidation", () => {
         }
       }
 
-      const result = runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
+      const result = await runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
 
       // P75 of [0, 0, 1, 2, 3, 4, 5, 6] at index 6 = 5
       // Facts with count > 5: u5 (count=6)
@@ -252,7 +252,7 @@ describe("Phase 2.2: Background consolidation", () => {
       expect(result.strengthenedFactIds).not.toContain("u0");
     });
 
-    it("returns empty strengthen list when no facts have usage", () => {
+    it("returns empty strengthen list when no facts have usage", async () => {
       const now = 100000;
       const store = new RuntimeMemoryStore({ now: () => now });
 
@@ -264,7 +264,7 @@ describe("Phase 2.2: Background consolidation", () => {
         }),
       );
 
-      const result = runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
+      const result = await runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
 
       expect(result.strengthenedFactIds).toHaveLength(0);
     });
@@ -273,7 +273,7 @@ describe("Phase 2.2: Background consolidation", () => {
   // === Batch size tests ===
 
   describe("batch size", () => {
-    it("only processes up to batchSize facts", () => {
+    it("only processes up to batchSize facts", async () => {
       const now = 100000 + 30 * DAY_MS;
       const store = new RuntimeMemoryStore({ now: () => 100000 });
 
@@ -293,7 +293,7 @@ describe("Phase 2.2: Background consolidation", () => {
         ...DEFAULT_CONSOLIDATION_CONFIG,
         batchSize: 5,
       };
-      const result = runConsolidation(store, config, now);
+      const result = await runConsolidation(store, config, now);
 
       // Only 5 facts processed (the first 5 in the batch)
       expect(result.prunedFactIds).toHaveLength(5);
@@ -303,9 +303,9 @@ describe("Phase 2.2: Background consolidation", () => {
   // === Edge cases ===
 
   describe("edge cases", () => {
-    it("returns empty result for empty store", () => {
+    it("returns empty result for empty store", async () => {
       const store = new RuntimeMemoryStore();
-      const result = runConsolidation(store);
+      const result = await runConsolidation(store);
 
       expect(result.prunedFactIds).toHaveLength(0);
       expect(result.mergedPairs).toHaveLength(0);
@@ -313,7 +313,7 @@ describe("Phase 2.2: Background consolidation", () => {
       expect(result.durationMs).toBeGreaterThanOrEqual(0);
     });
 
-    it("does not re-process facts that were already merged", () => {
+    it("does not re-process facts that were already merged", async () => {
       const now = 100000;
       const store = new RuntimeMemoryStore({ now: () => now });
 
@@ -334,7 +334,7 @@ describe("Phase 2.2: Background consolidation", () => {
         }),
       );
 
-      const result = runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
+      const result = await runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
 
       // m_c should be the ultimate survivor (highest confidence), m_a and m_b absorbed.
       // m_b is a temporary survivor when paired with m_a, then absorbed by m_c.
@@ -349,7 +349,7 @@ describe("Phase 2.2: Background consolidation", () => {
   // === Integration: 200-fact mixed scenario ===
 
   describe("200-fact mixed scenario", () => {
-    it("prunes, merges, and strengthens correctly at scale", () => {
+    it("prunes, merges, and strengthens correctly at scale", async () => {
       const now = 500000 + 20 * DAY_MS;
       let clock = 500000;
       const store = new RuntimeMemoryStore({
@@ -415,7 +415,7 @@ describe("Phase 2.2: Background consolidation", () => {
       }
 
       clock = now;
-      const result = runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
+      const result = await runConsolidation(store, DEFAULT_CONSOLIDATION_CONFIG, now);
 
       // 50 low-importance stale facts should be pruned
       expect(result.prunedFactIds.length).toBe(50);

@@ -59,6 +59,9 @@ function createStreamingWriter(dbPath: string) {
     config: RUNTIME_MEMORY_EVAL_CONFIG,
     database: { path: dbPath },
     now: () => now++,
+    // 显式使用 FIFO — 本测试组验证 "1000 轮后 FIFO 保留最后 512 条" 的语义.
+    // 默认 policy 已切为 importance (会批量驱逐到 85% 容量), 不符合测试原意.
+    evictionPolicy: "fifo" as const,
   });
   const migrateResult = persistence.migrate();
   if (migrateResult.status !== "migrated") {
@@ -79,6 +82,7 @@ function loadSurvivingFactIds(dbPath: string): Set<string> {
   const persistence = createRuntimeMemoryPersistenceStore({
     config: RUNTIME_MEMORY_EVAL_CONFIG,
     database: { path: dbPath },
+    evictionPolicy: "fifo" as const,
   });
   const loaded = persistence.loadStore();
   if (loaded.status !== "loaded") throw new Error("loadSurvivingFactIds: load failed");

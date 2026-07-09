@@ -19,7 +19,10 @@ import type {
 import type {
   CompressionArtifact,
   CompressionArtifactQuality,
+  SessionExpandSelectorResult,
   SessionHandoffSource,
+  SessionRecallDiagnostic,
+  SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
 import { readCurrentGitStatus } from './git-api';
@@ -29,6 +32,7 @@ import {
   removeSessionEntry,
   resolveSessionTranscriptPath,
   sweepSessionArtefacts,
+  cleanupContextArchiveArtifacts,
   snapshotSessionEntry,
   restoreSessionEntry,
   archiveSessionTranscript,
@@ -36,8 +40,7 @@ import {
   readArchiveIndex,
   upsertArchiveEntry,
   removeArchiveEntry,
-  writeArchiveIndex,
-} from '../utils/session-files';
+  writeArchiveIndex,} from '../utils/session-files';
 import { isRecord } from './payload-utils';
 import type { SessionArchiveEntry } from '@shared/types/workspace';
 
@@ -419,6 +422,12 @@ function compactLine(value: string, maxLength = 220): string {
   return `${singleLine.slice(0, maxLength - 3)}...`;
 }
 
+function limitText(value: string, maxLength = 4_000): string {
+  const trimmed = value.trim();
+  if (trimmed.length <= maxLength) return trimmed;
+  return `${trimmed.slice(0, maxLength - 3)}...`;
+}
+
 function uniqueStrings(values: string[], limit: number): string[] {
   const seen = new Set<string>();
   const result: string[] = [];
@@ -576,6 +585,7 @@ function renderHandoffDraft(
   checkpoint: ResumeCheckpoint,
   sources: SessionHandoffSource[],
   recoveryContext?: string,
+  recallContext?: string,
 ): string {
   const sourceLines = sources.map((source) => (
     `- ${source.label}: ${source.available ? 'included' : 'unavailable'}${source.summary ? ` - ${source.summary}` : ''}${source.warning ? ` (${source.warning})` : ''}`
@@ -624,6 +634,13 @@ function renderHandoffDraft(
       ? [
         '## Recovery context projection',
         recoveryContext,
+        '',
+      ]
+      : []),
+    ...(recallContext
+      ? [
+        '## Read-only context recall',
+        recallContext,
         '',
       ]
       : []),
@@ -729,6 +746,29 @@ function mapCompressionArtifact(value: unknown): CompressionArtifact | undefined
   };
 }
 
+function mapRecallDiagnostics(value: unknown): SessionRecallDiagnostic[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is Record<string, unknown> => isRecord(item))
+    .map((item) => ({
+      code: typeof item.code === 'string'
+        ? item.code as SessionRecallDiagnostic['code']
+        : 'read_error',
+      message: typeof item.message === 'string' ? item.message : 'Recall diagnostic unavailable.',
+      ...(typeof item.ref === 'string' ? { ref: item.ref } : {}),
+    }));
+}
+
+function renderRecallPayload(value: unknown): string {
+  if (typeof value === 'string') return limitText(value);
+  if (value == null) return '';
+  try {
+    return limitText(JSON.stringify(value, null, 2));
+  } catch {
+    return compactLine(String(value), 1_000);
+  }
+}
+
 function mapCompactionHistoryEntry(entry: unknown) {
   const record = isRecord(entry) ? entry : {};
   const id = typeof record.id === 'string' ? record.id : '';
@@ -772,6 +812,9 @@ function mapLongTaskCheckpointRecord(value: unknown): LongTaskCheckpointRecord |
     trigger: trigger as LongTaskCheckpointRecord['trigger'],
     status: typeof value.status === 'string' ? value.status : 'active',
     checkpoint: value.checkpoint as ResumeCheckpoint,
+    ...(isRecord(value.archiveHandle)
+      ? { archiveHandle: value.archiveHandle as LongTaskCheckpointRecord['archiveHandle'] }
+      : {}),
     createdAt: toNumber(value.createdAt) ?? Date.now(),
     updatedAt: toNumber(value.updatedAt) ?? Date.now(),
   };
@@ -949,6 +992,15 @@ async function deleteSession(sessionKey: string): Promise<{ success: boolean; er
     logger.warn(`[session:delete] Failed to unlink ${failedPath}: ${String(error)}`);
   }
   logger.info(`[session:delete] Hard-deleted ${sweep.removed.length} file(s) for ${baseId}`);
+  const archiveCleanup = await cleanupContextArchiveArtifacts({
+    sessionIds: [baseId],
+  });
+  for (const removedPath of archiveCleanup.removed) {
+    logger.info(`[session:delete] Unlinked context archive ${removedPath}`);
+  }
+  for (const { path: failedPath, error } of archiveCleanup.errors) {
+    logger.warn(`[session:delete] Failed to unlink context archive ${failedPath}: ${error}`);
+  }
 
   try {
     const raw2 = await fsP.readFile(sessionsJsonPath, 'utf8');
@@ -1444,6 +1496,68 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
           : [],
       };
     },
+    recallOriginal: async (payload): Promise<SessionRecallOriginalResult> => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      if (!ctx.gatewayManager) {
+        return {
+          success: false,
+          error: 'Gateway manager unavailable',
+          ok: false,
+          archiveHandle: payload.archiveHandle,
+          diagnostics: [{ code: 'read_error', message: 'Gateway manager unavailable.' }],
+        };
+      }
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.recallOriginal', {
+        key: sessionKey,
+        ...(agentId ? { agentId } : {}),
+        archiveHandle: payload.archiveHandle,
+      }, 10_000);
+      return {
+        success: true,
+        ok: result.ok === true,
+        ...(result.payload !== undefined ? { payload: result.payload } : {}),
+        archiveHandle: isRecord(result.archiveHandle)
+          ? result.archiveHandle as SessionRecallOriginalResult['archiveHandle']
+          : payload.archiveHandle,
+        diagnostics: mapRecallDiagnostics(result.diagnostics),
+      };
+    },
+    expandSelector: async (payload): Promise<SessionExpandSelectorResult> => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      if (!ctx.gatewayManager) {
+        return {
+          success: false,
+          error: 'Gateway manager unavailable',
+          ok: false,
+          resourceId: payload.resourceId,
+          selector: payload.selector,
+          ...(payload.checksum ? { checksum: payload.checksum } : {}),
+          diagnostics: [{ code: 'read_error', message: 'Gateway manager unavailable.' }],
+        };
+      }
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.expandSelector', {
+        key: sessionKey,
+        ...(agentId ? { agentId } : {}),
+        resourceId: payload.resourceId,
+        selector: payload.selector,
+        ...(payload.checksum ? { checksum: payload.checksum } : {}),
+      }, 10_000);
+      return {
+        success: true,
+        ok: result.ok === true,
+        ...(typeof result.content === 'string' ? { content: result.content } : {}),
+        resourceId: typeof result.resourceId === 'string' ? result.resourceId : payload.resourceId,
+        selector: typeof result.selector === 'string' ? result.selector : payload.selector,
+        ...(typeof result.checksum === 'string'
+          ? { checksum: result.checksum }
+          : payload.checksum
+            ? { checksum: payload.checksum }
+            : {}),
+        diagnostics: mapRecallDiagnostics(result.diagnostics),
+      };
+    },
     longTaskControlStatus: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const agentId = getOptionalAgentId(payload);
@@ -1594,6 +1708,8 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
       const sources: SessionHandoffSource[] = [];
       let runtimeCheckpoint: ResumeCheckpoint | null = null;
       let recoveryContext = '';
+      let recallContext = '';
+      let recallArchiveRef: string | undefined;
       let recoveryCheckpointId: string | undefined;
       let recoveryArtifact: CompressionArtifact | undefined;
 
@@ -1653,6 +1769,47 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
               available: true,
               summary: `${latestCheckpoint.trigger} checkpoint`,
             });
+            if (latestCheckpoint.archiveHandle) {
+              recallArchiveRef = latestCheckpoint.archiveHandle.uri;
+              try {
+                const recall = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.recallOriginal', {
+                  key: sessionKey,
+                  ...(agentId ? { agentId } : {}),
+                  archiveHandle: latestCheckpoint.archiveHandle,
+                }, 10_000);
+                const diagnostics = mapRecallDiagnostics(recall.diagnostics);
+                if (recall.ok === true) {
+                  recallContext = renderRecallPayload(recall.payload);
+                  sources.push({
+                    id: 'context_recall',
+                    label: 'Context recall',
+                    available: true,
+                    summary: diagnostics.length
+                      ? `Verified archive recall (${diagnostics.map((diagnostic) => diagnostic.code).join(', ')})`
+                      : 'Verified archive recall',
+                  });
+                } else {
+                  const codes = diagnostics.map((diagnostic) => diagnostic.code).join(', ') || 'recall_failed';
+                  const warning = `Context recall unavailable: ${codes}`;
+                  warnings.push(warning);
+                  sources.push({
+                    id: 'context_recall',
+                    label: 'Context recall',
+                    available: false,
+                    warning,
+                  });
+                }
+              } catch (error) {
+                const warning = `Context recall unavailable: ${error instanceof Error ? error.message : String(error)}`;
+                warnings.push(warning);
+                sources.push({
+                  id: 'context_recall',
+                  label: 'Context recall',
+                  available: false,
+                  warning,
+                });
+              }
+            }
           }
         } catch (error) {
           warnings.push(`Runtime checkpoint unavailable: ${error instanceof Error ? error.message : String(error)}`);
@@ -1766,6 +1923,7 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
         { type: 'session', ref: sessionKey, label: 'Source conversation' },
         ...(workspaceId ? [{ type: 'task_ledger' as const, ref: workspaceId, label: 'Workspace Task Ledger' }] : []),
         ...(recoveryCheckpointId ? [{ type: 'other' as const, ref: recoveryCheckpointId, label: 'Recovery context checkpoint' }] : []),
+        ...(recallArchiveRef ? [{ type: 'other' as const, ref: recallArchiveRef, label: 'Read-only context recall archive' }] : []),
         ...traceEvidence,
       ];
       const checkpoint = buildResumeCheckpoint({
@@ -1805,6 +1963,7 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
           source: runtimeCheckpoint ? 'clawx-session-handoff-ecosystem' : 'clawx-session-handoff-mvp',
           runtimeCheckpoint: Boolean(runtimeCheckpoint),
           recoveryContext: Boolean(recoveryContext),
+          contextRecall: Boolean(recallContext),
           recoveryCheckpointId,
           sourceCount: sources.filter((source) => source.available).length,
         },
@@ -1813,7 +1972,7 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
       return {
         success: true,
         checkpoint,
-        draft: renderHandoffDraft(checkpoint, sources, recoveryContext),
+        draft: renderHandoffDraft(checkpoint, sources, recoveryContext, recallContext),
         sources,
         warnings,
       };

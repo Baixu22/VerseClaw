@@ -6,6 +6,9 @@ const HANDOFF_DRAFT = [
   '',
   '## Resume checkpoint',
   'Objective: implement the handoff MVP.',
+  '',
+  '## Read-only context recall',
+  'Verified archive recall restored the last compacted observation.',
 ].join('\n');
 
 const handoffHistory = [
@@ -121,6 +124,7 @@ function baseHostApiMocks() {
       draft: HANDOFF_DRAFT,
       sources: [
         { id: 'runtime_checkpoint', label: 'Runtime checkpoint', available: true, summary: 'session_rotation checkpoint' },
+        { id: 'context_recall', label: 'Context recall', available: true, summary: 'Verified archive recall' },
         { id: 'transcript', label: 'Recent transcript', available: true, summary: '2 recent messages' },
         { id: 'task_ledger', label: 'Task Ledger', available: true, summary: '1 node' },
         { id: 'git', label: 'Git status', available: true, summary: 'main: clean' },
@@ -322,12 +326,16 @@ test.describe('Verse Claw chat session handoff', () => {
       await expect(page.getByTestId('chat-handoff-recommendation-note')).toBeVisible();
       await expect(page.getByTestId('chat-handoff-dialog').getByText('Runtime checkpoint', { exact: true }))
         .toBeVisible();
+      await expect(page.getByTestId('chat-handoff-dialog').getByText('Context recall', { exact: true }))
+        .toBeVisible();
       await expect(page.getByTestId('chat-handoff-dialog').getByText('Recent transcript', { exact: true }))
         .toBeVisible();
       await expect(page.getByTestId('chat-handoff-dialog').getByText('Task Ledger', { exact: true }))
         .toBeVisible();
       await expect(page.getByTestId('chat-handoff-draft'))
         .toHaveValue(/Handoff: continue this Verse Claw conversation/);
+      await expect(page.getByTestId('chat-handoff-draft'))
+        .toHaveValue(/Verified archive recall restored the last compacted observation/);
 
       const editedDraft = `${HANDOFF_DRAFT}\n\nContinue by running the targeted tests.`;
       await page.getByTestId('chat-handoff-draft').fill(editedDraft);

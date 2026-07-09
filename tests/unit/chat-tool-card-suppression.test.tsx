@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
   gatewayState: {
@@ -138,7 +139,7 @@ describe('Chat tool card suppression', () => {
     });
 
     const { Chat } = await import('@/pages/Chat/index');
-    render(<Chat />);
+    render(<MemoryRouter><Chat /></MemoryRouter>);
 
     await waitFor(() => {
       expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();

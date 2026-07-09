@@ -90,6 +90,20 @@ export type BuildRollbackPlanInput = {
   longTaskControlStatus: LongTaskControlStatus | null;
 };
 
+function countCheckpointEvidence(checkpoint: NonNullable<LongTaskControlStatus['latestCheckpoint']>): {
+  fileCount: number;
+  toolCount: number;
+} {
+  const metadata = checkpoint.checkpoint.metadata;
+  const fileHashes = metadata?.fileHashes;
+  const toolResults = metadata?.toolResults;
+  const fileCount = fileHashes && typeof fileHashes === 'object' && !Array.isArray(fileHashes)
+    ? Object.keys(fileHashes).length
+    : 0;
+  const toolCount = Array.isArray(toolResults) ? toolResults.length : 0;
+  return { fileCount, toolCount };
+}
+
 export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
   const actions: RollbackPlanAction[] = [];
   const checkpoint = input.longTaskControlStatus?.latestCheckpoint;
@@ -106,6 +120,19 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
   );
 
   if (checkpoint && !input.handoffDisabled) {
+    const evidence = countCheckpointEvidence(checkpoint);
+    const hasEvidence = evidence.fileCount > 0 && evidence.toolCount > 0;
+    actions.push({
+      kind: 'checkpoint-handoff',
+      titleKey: 'composer.rollbackPlan.actions.checkpoint-handoff.title',
+      detailKey: hasEvidence
+        ? 'composer.rollbackPlan.actions.checkpoint-handoff.detailEvidenceBacked'
+        : 'composer.rollbackPlan.actions.checkpoint-handoff.detailNoEvidence',
+      detailValues: {
+        trigger: checkpoint.trigger,
+        fileCount: evidence.fileCount,
+        toolCount: evidence.toolCount,
+      },
     const evidence = checkpointEvidenceCounts(checkpoint);
     const hasCheckpointEvidence = evidence.fileCount > 0 && evidence.toolCount > 0;
     actions.push({
@@ -114,8 +141,7 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
       detailKey: hasCheckpointEvidence
         ? 'composer.rollbackPlan.actions.checkpoint-handoff.detailEvidenceBacked'
         : 'composer.rollbackPlan.actions.checkpoint-handoff.detailNoEvidence',
-      detailValues: { trigger: checkpoint.trigger, ...evidence },
-      risk: 'safe',
+      detailValues: { trigger: checkpoint.trigger, ...evidence },      risk: 'safe',
       command: 'handoff',
     });
   }

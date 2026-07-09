@@ -255,8 +255,9 @@ import type {
   SessionCompactionPayload,
   SessionCompactionResult,
   SessionCompactionStatusResult,
-  SessionEmptyArchivePayload,
-  SessionForkPayload,
+  SessionExpandSelectorPayload,
+  SessionExpandSelectorResult,
+  SessionEmptyArchivePayload,  SessionForkPayload,
   SessionForkResult,
   SessionHandoffPayload,
   SessionHandoffResult,
@@ -272,9 +273,10 @@ import type {
   SessionPatchThinkingPayload,
   SessionPatchRuntimeModelPayload,
   SessionQueueDrainResult,
+  SessionRecallOriginalPayload,
+  SessionRecallOriginalResult,
   SessionRecoveryContextPayload,
-  SessionRecoveryContextResult,
-  SessionResumeCheckpointsResult,
+  SessionRecoveryContextResult,  SessionResumeCheckpointsResult,
   SessionTruncatePayload,
   SessionTruncateResult,
   WorkProviderRunPayload,
@@ -981,6 +983,11 @@ export const hostApi = {
     compactionHistory: (input: SessionCompactionHistoryPayload): Promise<SessionCompactionHistoryResult> => (
       invokeHost('sessions', 'compactionHistory', input)
     ),
+    recallOriginal: (input: SessionRecallOriginalPayload): Promise<SessionRecallOriginalResult> => (
+      invokeHost('sessions', 'recallOriginal', input)
+    ),
+    expandSelector: (input: SessionExpandSelectorPayload): Promise<SessionExpandSelectorResult> => (
+      invokeHost('sessions', 'expandSelector', input)
     compressionArtifact: (
       input: SessionCompressionArtifactPayload,
     ): Promise<SessionCompressionArtifactResult> => (
@@ -989,8 +996,7 @@ export const hostApi = {
     recoveryContext: (
       input: SessionRecoveryContextPayload,
     ): Promise<SessionRecoveryContextResult> => (
-      invokeHost('sessions', 'recoveryContext', input)
-    ),
+      invokeHost('sessions', 'recoveryContext', input)    ),
     longTaskControlStatus: (
       input: SessionLongTaskControlPayload,
     ): Promise<SessionLongTaskControlStatusResult> => (

@@ -159,6 +159,12 @@ import {
   type JudgeCategory,
   type JudgeResult,
 } from "./helpers/unified-judge";
+import {
+  runAgentRetrieval,
+  buildSemanticKnnGraph,
+  type AgentRetrievalFact,
+  type AgentRetrievalExpansionMaps,
+} from "./helpers/runtime-memory-agent-retrieval";
 
 // === Types ===
 
@@ -1671,6 +1677,22 @@ describe.skipIf(
           `[LoCoMo-Full] All ${indexByConversation.size} conversation indexes built`,
         );
 
+        // Pre-build semantic kNN graphs per conversation (Hindsight alignment).
+        // Cached once per conversation to avoid O(n²) rebuild on every question.
+        const knnGraphByConversation = new Map<string, ReturnType<typeof buildSemanticKnnGraph>>();
+        if (process.env.ENABLE_AGENT_RETRIEVAL === "1") {
+          for (const [convId, index] of indexByConversation) {
+            const factEmbs = index.getFactEmbeddings();
+            if (factEmbs.size > 0) {
+              const knnGraph = buildSemanticKnnGraph(factEmbs, 5, 0.7);
+              knnGraphByConversation.set(convId, knnGraph);
+            }
+          }
+          console.log(
+            `[LoCoMo-Full] Built ${knnGraphByConversation.size} semantic kNN graphs`,
+          );
+        }
+
         // === Item 4: Build EntityStore for entity-based retrieval boost ===
         // Hindsight §2.4: Map<entityName, Set<factId>> for entity self-join.
         // Applied as post-rerank boost using tanh(sharedCount * 0.5) formula.
@@ -2959,7 +2981,120 @@ describe.skipIf(
               }
             }
 
-            const retrievedFacts = finalHits.map((h) => h.fact);
+            let retrievedFacts = finalHits.map((h) => h.fact);
+
+            // === Agent Multi-Round Retrieval (Hindsight alignment, 2026-07-07) ===
+            // Final round: maxRounds=5, 3-signal expansion (semantic kNN + entity + causal),
+            // and broadened trigger (all non-temporal questions, not just classified multi_hop).
+            // This bypasses the 53% classifier misclassification rate — instead of relying
+            // on a pre-classification that misses 51/96 multi_hop questions, the agent itself
+            // decides whether multi-round retrieval is needed based on evidence sufficiency.
+            //
+            // Hindsight alignment:
+            // - maxRounds=5 (Hindsight uses 10, but we trade depth for cost)
+            // - 3-signal additive fusion: tanh(entity*0.5) + semantic_sim + causal_weight
+            // - Semantic kNN graph precomputed from fact embeddings (top-5, sim >= 0.7)
+            // - Causal relations extracted from fact relation fields
+            const agentTrigger =
+              process.env.ENABLE_AGENT_RETRIEVAL === "1" &&
+              index &&
+              category !== "temporal";
+            if (agentTrigger) {
+              try {
+                const existingFactIds = new Set(retrievedFacts.map((f) => f.factId));
+                const convFacts = factsByConversation.get(conversationId) ?? [];
+                const factsByIdMap = new Map(
+                  convFacts.map((f) => [f.factId, f] as const),
+                );
+
+                // Use cached semantic kNN graph (built once per conversation).
+                const semanticKnn = knnGraphByConversation.get(conversationId);
+
+                // Build causal relation map from fact relations.
+                const causalRelations = new Map<string, Array<{ factId: string; weight: number }>>();
+                for (const f of convFacts) {
+                  const relations = (f as Record<string, unknown>).relations as
+                    | Array<{ targetFactId: string; relationType: string; confidence?: number }>
+                    | undefined;
+                  if (relations && relations.length > 0) {
+                    const causal = relations
+                      .filter((r) =>
+                        ["causes", "caused_by", "enables", "prevents"].includes(r.relationType),
+                      )
+                      .map((r) => ({
+                        factId: r.targetFactId,
+                        weight: r.confidence ?? 1.0,
+                      }));
+                    if (causal.length > 0) {
+                      causalRelations.set(f.factId, causal);
+                    }
+                  }
+                }
+
+                // Build entity relation map (already exists as buildEntityRelationMap).
+                const entityRelations = buildEntityRelationMap(convFacts);
+
+                // AgentRetrievalFact map for expansion lookups.
+                const agentFactsById = new Map<string, AgentRetrievalFact>();
+                for (const f of convFacts) {
+                  agentFactsById.set(f.factId, {
+                    factId: f.factId,
+                    objectSummary: f.objectSummary,
+                    subject: f.subject,
+                    confidence: f.confidence,
+                  });
+                }
+
+                const expansionMaps: AgentRetrievalExpansionMaps = {
+                  semanticKnn,
+                  entityRelations,
+                  causalRelations,
+                  factsById: agentFactsById,
+                };
+
+                const agentResult = await runAgentRetrieval(
+                  qa.question,
+                  async (query, topK) => {
+                    const sqEmbArr = await withRetry(() =>
+                      embeddingProvider.embedQuery(query),
+                    );
+                    const sqHits = index.searchWithEmbedding(
+                      query,
+                      new Float32Array(sqEmbArr),
+                      topK,
+                      OPTIMAL_HYBRID_FUSION,
+                    );
+                    return sqHits.map((hit) => ({
+                      factId: hit.fact.factId,
+                      objectSummary: hit.fact.objectSummary,
+                      subject: hit.fact.subject,
+                      confidence: hit.fact.confidence,
+                    }));
+                  },
+                  {
+                    maxRounds: 5,
+                    maxFacts: 15,
+                    maxFactsPerRound: 10,
+                    category,
+                    expansionMaps,
+                  },
+                );
+                // Merge agent-discovered facts into retrievedFacts.
+                for (const agentFact of agentResult.facts) {
+                  if (!existingFactIds.has(agentFact.factId)) {
+                    const fullFact = factsByIdMap.get(agentFact.factId);
+                    if (fullFact) {
+                      retrievedFacts.push(fullFact);
+                      existingFactIds.add(agentFact.factId);
+                    }
+                  }
+                }
+              } catch (err) {
+                console.log(
+                  `[LoCoMo-Full] Agent retrieval failed: ${(err as Error).message.slice(0, 80)}`,
+                );
+              }
+            }
 
             // === Phase 5 (P0): Episodic Track search ===
             // Run episodic search in parallel conceptually with the semantic

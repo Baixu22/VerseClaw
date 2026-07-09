@@ -94,6 +94,11 @@ import {
   type TaskLoopSelfCheckDeps,
   type TaskLoopSelfCheckResult,
 } from "./task-loop-self-check.js";
+import {
+  buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics,
+  type TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics,
+  type TaskLoopRuntimeMemoryReadHydrationShadowOnlyOptions,
+} from "./task-loop-runtime-memory-read-hydration-shadow.js";
 
 export type TaskLoopPhase =
   | "intake"
@@ -314,6 +319,7 @@ export type TaskLoopRunRecord = {
   createdAt: number;
   updatedAt: number;
   iterations: TaskLoopIterationSnapshot[];
+  runtimeMemoryReadHydrationShadowOnlyDiagnostics?: TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics;
 };
 
 export type TaskLoopRunResult = TaskLoopRunRecord;
@@ -351,6 +357,7 @@ export type TaskLoopControllerDeps = {
     tracestate?: string;
     baggage?: string;
   };
+  runtimeMemoryReadHydrationShadowOnly?: TaskLoopRuntimeMemoryReadHydrationShadowOnlyOptions;
 };
 
 export type TaskLoopCheckpointRecordInput = {
@@ -3028,6 +3035,16 @@ export async function runTaskLoop(
     record.traceId = trace.id;
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
     recordTaskLoopRuntimeMemoryEpisode(record, cfg, deps);
+    if (deps.runtimeMemoryReadHydrationShadowOnly) {
+      record.runtimeMemoryReadHydrationShadowOnlyDiagnostics =
+        buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
+          config: cfg,
+          options: deps.runtimeMemoryReadHydrationShadowOnly,
+          loopRunId: record.loopRunId,
+          sessionKey: record.sessionKey,
+          iteration: record.iteration,
+        });
+    }
     return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -3044,6 +3061,16 @@ export async function runTaskLoop(
     record.traceId = trace.id;
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
     recordTaskLoopRuntimeMemoryEpisode(record, cfg, deps);
+    if (deps.runtimeMemoryReadHydrationShadowOnly) {
+      record.runtimeMemoryReadHydrationShadowOnlyDiagnostics =
+        buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
+          config: cfg,
+          options: deps.runtimeMemoryReadHydrationShadowOnly,
+          loopRunId: record.loopRunId,
+          sessionKey: record.sessionKey,
+          iteration: record.iteration,
+        });
+    }
     return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
   }
 }

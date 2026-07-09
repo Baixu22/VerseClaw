@@ -82,6 +82,25 @@ const RuntimeFeatureSchema = z
       })
       .strict()
       .optional(),
+    contextFamily: z
+      .object({
+        observationMasking: z
+          .object({
+            enabled: z.boolean().optional(),
+            minChars: z.number().int().min(1).max(1_000_000).optional(),
+            preserveNewestObservationCount: z.number().int().min(0).max(100).optional(),
+          })
+          .strict()
+          .optional(),
+        contextStatus: z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
     eventLog: z
       .object({
         shadow: z.boolean().optional(),

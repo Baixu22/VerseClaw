@@ -70,6 +70,14 @@ export type SessionCompactionTranscriptReference = {
   entryId?: string;
 };
 
+export type SessionArchiveHandle = {
+  uri: string;
+  checksum: string;
+  byteLength: number;
+  source?: Record<string, unknown>;
+  createdAt?: string;
+};
+
 export type SessionCompactionCheckpoint = {
   checkpointId: string;
   sessionKey: string;
@@ -83,10 +91,17 @@ export type SessionCompactionCheckpoint = {
   details?: unknown;
   preCompaction: SessionCompactionTranscriptReference;
   postCompaction: SessionCompactionTranscriptReference;
+  archiveHandle?: SessionArchiveHandle;
+  lifecycleAudit?: {
+    eventIds: string[];
+    role: "recovery_index";
+    losslessArchive: false;
+  };
 };
 
 export type SessionContextBudgetStatusRoute =
   | "fits"
+  | "observation_masking"
   | "compact_only"
   | "truncate_tool_results_only"
   | "compact_then_truncate";

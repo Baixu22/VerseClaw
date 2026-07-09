@@ -144,6 +144,35 @@ export function isRuntimeMemoryType(value: unknown): value is RuntimeMemoryType 
 
 export const DEFAULT_RUNTIME_MEMORY_TYPE: RuntimeMemoryType = "semantic";
 
+// === COMPASS 2.0: Sensitivity levels (REDACT 合规门) ===
+//
+// sensitivity ∈ {secret, secret_adjacent, normal}:
+//   - secret: 敏感数据, 驱逐时走 REDACT 合规删除 (而非 silent eviction)
+//   - secret_adjacent: 临近敏感, 同样走 REDACT
+//   - normal: 普通数据, 走 silent eviction (invalidateFact)
+//
+// 默认 "normal" (字段未设置时等价于 "normal").
+// Source: COMPASS 2.0 × ClawX 融合设计 — REDACT 合规门.
+export const RUNTIME_MEMORY_SENSITIVITY_LEVELS = [
+  "secret",
+  "secret_adjacent",
+  "normal",
+] as const;
+
+export type RuntimeMemorySensitivity =
+  (typeof RUNTIME_MEMORY_SENSITIVITY_LEVELS)[number];
+
+export function isRuntimeMemorySensitivity(
+  value: unknown,
+): value is RuntimeMemorySensitivity {
+  return (
+    typeof value === "string" &&
+    (RUNTIME_MEMORY_SENSITIVITY_LEVELS as readonly string[]).includes(value)
+  );
+}
+
+export const DEFAULT_RUNTIME_MEMORY_SENSITIVITY: RuntimeMemorySensitivity = "normal";
+
 export const RUNTIME_MEMORY_CONTEXT_FLAG_PATHS = {
   shadow: "runtime.memory.shadow",
   provider: "runtime.memory.provider",
@@ -229,6 +258,11 @@ export type RuntimeMemoryTemporalFactCandidate = RuntimeMemoryTemporalFields & {
   evidenceRefs: EvidenceRef[];
   proposedAt: number;
   memoryType?: RuntimeMemoryType;
+  // COMPASS 2.0: Sensitivity level (REDACT 合规门).
+  //   - secret / secret_adjacent: 驱逐时走 REDACT 合规删除
+  //   - normal (默认): 走 silent eviction (invalidateFact)
+  // 字段未设置时等价于 "normal", 向后兼容.
+  sensitivity?: RuntimeMemorySensitivity;
   metadata?: RuntimeCoreJsonObject;
   // S0-1: Schema 字段回流 — 让组件之间的信息流动起来.
   // entities: LLM-extracted entity list (Person/Preference/Location/Event/Topic/...).

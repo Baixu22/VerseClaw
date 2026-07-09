@@ -60,6 +60,7 @@ import {
 import { cleanToolSchemaForGemini, normalizeToolParameters } from "./agent-tools.schema.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
 import { createApplyPatchTool } from "./apply-patch.js";
+import { createMemoryQueryTool } from "../runtime-core/memory-query-tool.js";
 import type { AuthProfileStore } from "./auth-profiles/types.js";
 import { describeExecTool, describeProcessTool } from "./bash-tools.descriptions.js";
 import type { ExecToolDefaults } from "./bash-tools.exec-types.js";
@@ -800,6 +801,13 @@ export function createOpenClawCodingTools(options?: {
     }
   }
   options?.recordToolPrepStage?.("base-coding-tools");
+
+  // COMPASS: memory_query tool — agent 可主动查询长期记忆 (受 persist + COMPASS 门控).
+  // factory 返回 null 时跳过注册 (persist 未开启或 COMPASS disabled).
+  const memoryQueryTool = createMemoryQueryTool({ config: options?.config });
+  if (memoryQueryTool) {
+    base.push(memoryQueryTool);
+  }
   const { cleanupMs: cleanupMsOverride, ...execDefaults } = options?.exec ?? {};
   const effectiveExecPolicy = applyExecPolicyLayer(execConfig, options?.exec);
   const execTool = includeShellTools

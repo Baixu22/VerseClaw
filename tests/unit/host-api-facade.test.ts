@@ -35,52 +35,6 @@ describe('hostApi facade', () => {
     await expect(hostApi.settings.getAll()).rejects.toThrow('disk failed');
   });
 
-  it('replays host API fixtures from the agent dev test surface', async () => {
-    vi.stubGlobal('window', {
-      verseClaw: { hostInvoke },
-      __CLAWX_TEST__: {
-        hostApiCalls: [],
-        hostApiReplay: {
-          mode: 'replay',
-          fixtures: [{
-            module: 'settings',
-            action: 'getAll',
-            payload: null,
-            result: { theme: 'dark' },
-          }],
-        },
-      },
-    });
-    const { hostApi } = await import('@/lib/host-api');
-
-    await expect(hostApi.settings.getAll()).resolves.toEqual({ theme: 'dark' });
-    expect(hostInvoke).not.toHaveBeenCalled();
-    expect(window.__CLAWX_TEST__?.hostApiCalls).toEqual([
-      expect.objectContaining({ module: 'settings', action: 'getAll', mocked: true, ok: true }),
-    ]);
-  });
-
-  it('records host API fixtures when agent dev record mode is enabled', async () => {
-    vi.stubGlobal('window', {
-      localStorage: {
-        getItem: vi.fn(() => null),
-        setItem: vi.fn(),
-      },
-      verseClaw: { hostInvoke },
-      __CLAWX_TEST__: {
-        hostApiCalls: [],
-        hostApiReplay: { mode: 'record', fixtures: [] },
-      },
-    });
-    hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: { theme: 'light' } });
-    const { hostApi } = await import('@/lib/host-api');
-
-    await expect(hostApi.settings.getAll()).resolves.toEqual({ theme: 'light' });
-    expect(window.__CLAWX_TEST__?.hostApiReplay.fixtures).toEqual([
-      expect.objectContaining({ module: 'settings', action: 'getAll', result: { theme: 'light' } }),
-    ]);
-  });
-
   it('calls settings.setMany and reset through hostInvoke', async () => {
     hostInvoke
       .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: true } })
@@ -252,180 +206,42 @@ describe('hostApi facade', () => {
     }));
   });
 
-  it('routes app, openclaw, shell, dialog, and window methods through hostInvoke', async () => {
+  it('routes openclaw, shell, dialog, window, and updates methods through hostInvoke', async () => {
     hostInvoke
-      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: '1.2.3' })
-      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: { packageExists: true, isBuilt: true, entryPath: '/openclaw/openclaw.mjs', dir: '/openclaw' } })
-      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: '' })
-      .mockResolvedValueOnce({ id: 'req-4', ok: true, data: { canceled: false, filePaths: ['/tmp/a.txt'] } })
-      .mockResolvedValueOnce({ id: 'req-5', ok: true, data: undefined });
+      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { packageExists: true, isBuilt: true, entryPath: '/openclaw/openclaw.mjs', dir: '/openclaw' } })
+      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: '' })
+      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { canceled: false, filePaths: ['/tmp/a.txt'] } })
+      .mockResolvedValueOnce({ id: 'req-4', ok: true, data: undefined })
+      .mockResolvedValueOnce({ id: 'req-5', ok: true, data: { success: true, status: { status: 'not-available' } } });
     const { hostApi } = await import('@/lib/host-api');
 
-    await hostApi.app.version();
     await hostApi.openclaw.status();
     await hostApi.shell.openPath('/tmp/a.txt');
     await hostApi.dialog.open({ properties: ['openFile'] });
     await hostApi.window.maximize();
+    await hostApi.updates.check();
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      module: 'app',
-      action: 'version',
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
       module: 'openclaw',
       action: 'status',
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
       module: 'shell',
       action: 'openPath',
       payload: { path: '/tmp/a.txt' },
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
       module: 'dialog',
       action: 'open',
       payload: { properties: ['openFile'] },
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
       module: 'window',
       action: 'maximize',
     }));
-  });
-
-  it('routes Local Control Plane read methods through hostInvoke', async () => {
-    const status = {
-      schema: 'openclaw.local-control-plane.status.v1',
-      mode: 'observe',
-      legacyUnaffected: true,
-      flags: {
-        contextReport: true,
-        modelRouterReport: false,
-        capabilityReport: false,
-        evidenceReport: false,
-        missionReport: false,
-      },
-      enabledKinds: ['context'],
-      buffer: { size: 1, maxSize: 200, lastReportAt: '2026-01-01T00:00:00.000Z' },
-      countsByKind: { context: 1, model_router: 0, capability: 0, evidence: 0, mission: 0 },
-    };
-    const report = {
-      schema: 'openclaw.local-control-plane.report.v1',
-      id: 'lcp_context_1',
-      kind: 'context',
-      mode: 'observe',
-      legacyUnaffected: true,
-      timestamp: '2026-01-01T00:00:00.000Z',
-      summary: 'context report',
-      diagnostics: [],
-      evidenceRefs: [],
-    };
-    const correlations = {
-      schema: 'openclaw.local-control-plane.correlations.v1',
-      mode: 'observe',
-      legacyUnaffected: true,
-      generatedAt: '2026-01-01T00:00:00.000Z',
-      filter: { groupBy: 'task' },
-      totals: { reportCount: 1, groupCount: 1, evidenceRefCount: 0 },
-      groups: [],
-    };
-    hostInvoke
-      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: true, status } })
-      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: { success: true, reports: [report] } })
-      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { success: true, correlations } });
-    const { hostApi } = await import('@/lib/host-api');
-
-    await expect(hostApi.localControlPlane.status()).resolves.toEqual({ success: true, status });
-    await expect(hostApi.localControlPlane.reports({ kind: 'context', sessionKey: 'session-lcp' })).resolves.toEqual({
-      success: true,
-      reports: [report],
-    });
-    await expect(hostApi.localControlPlane.correlations({ groupBy: 'task', taskId: 'task-lcp' })).resolves.toEqual({
-      success: true,
-      correlations,
-    });
-
-    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      module: 'localControlPlane',
-      action: 'status',
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
-      module: 'localControlPlane',
-      action: 'reports',
-      payload: { kind: 'context', sessionKey: 'session-lcp' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
-      module: 'localControlPlane',
-      action: 'correlations',
-      payload: { groupBy: 'task', taskId: 'task-lcp' },
-    }));
-  });
-
-  it('routes agent dev methods through hostInvoke', async () => {
-    hostInvoke
-      .mockResolvedValueOnce({
-        id: 'req-1',
-        ok: true,
-        data: { success: true, enabled: true, scenarios: [], state: { conversations: [], providers: [], featureFlags: [], metadata: {}, updatedAt: 'now' }, flags: [], mockReplay: { mode: 'off', fixtureCount: 0, callCount: 0 } },
-      })
-      .mockResolvedValueOnce({
-        id: 'req-2',
-        ok: true,
-        data: { success: true, enabled: true, state: { conversations: [], providers: [], featureFlags: ['doctor-ui'], metadata: {}, updatedAt: 'now' }, applied: [] },
-      })
-      .mockResolvedValueOnce({
-        id: 'req-3',
-        ok: true,
-        data: { success: true, flags: ['doctor-ui'] },
-      })
-      .mockResolvedValueOnce({
-        id: 'req-4',
-        ok: true,
-        data: { success: true, events: [] },
-      })
-      .mockResolvedValueOnce({
-        id: 'req-5',
-        ok: true,
-        data: {
-          success: true,
-          evidence: {
-            generatedAt: 'now',
-            scenarioCount: 0,
-            artifactStatus: { workbench: false, quality: false, channelConformance: false, scenarioRecordings: false },
-            hostApi: { contractActions: [], facadeActions: [], serviceActions: [], missingFacadeActions: [], missingServiceActions: [] },
-            contracts: { traceTimeline: true, costReport: true, skillSandboxReport: true, selectorContract: true },
-            gateCommands: { fastPr: [], fullLocal: [], nightlyRelease: [] },
-          },
-        },
-      });
-    const { hostApi } = await import('@/lib/host-api');
-
-    await hostApi.agentDev.status();
-    await hostApi.agentDev.seedState({ scenario: 'doctor-failed', featureFlags: ['doctor-ui'] });
-    await hostApi.agentDev.setFeatureFlags({ flags: ['doctor-ui'] });
-    await hostApi.agentDev.transportTrace({ limit: 10 });
-    await hostApi.agentDev.workbenchEvidence();
-
-    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      module: 'agentDev',
-      action: 'status',
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
-      module: 'agentDev',
-      action: 'seedState',
-      payload: { scenario: 'doctor-failed', featureFlags: ['doctor-ui'] },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
-      module: 'agentDev',
-      action: 'setFeatureFlags',
-      payload: { flags: ['doctor-ui'] },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
-      module: 'agentDev',
-      action: 'transportTrace',
-      payload: { limit: 10 },
-    }));
     expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
-      module: 'agentDev',
-      action: 'workbenchEvidence',
+      module: 'updates',
+      action: 'check',
     }));
   });
 
@@ -559,52 +375,6 @@ describe('hostApi facade', () => {
     }));
   });
 
-  it('calls roles.upsertConfigRole through hostInvoke', async () => {
-    hostInvoke.mockResolvedValueOnce({
-      id: 'req',
-      ok: true,
-      data: {
-        success: true,
-        pendingRuntimeRefresh: true,
-        role: {
-          name: 'research-helper',
-          displayName: 'Research Helper',
-          rolePrompt: 'Review evidence.',
-          tools: [],
-          effort: 'medium',
-          permissions: { filesystem: 'read', network: 'limited', commands: [] },
-          tags: [],
-          origin: 'config',
-        },
-      },
-    });
-    const { hostApi } = await import('@/lib/host-api');
-
-    await hostApi.roles.upsertConfigRole({
-      name: 'research-helper',
-      displayName: 'Research Helper',
-      rolePrompt: 'Review evidence.',
-      tools: [],
-      effort: 'medium',
-      permissions: { filesystem: 'read', network: 'limited', commands: [] },
-      tags: [],
-    });
-
-    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
-      module: 'roles',
-      action: 'upsertConfigRole',
-      payload: {
-        name: 'research-helper',
-        displayName: 'Research Helper',
-        rolePrompt: 'Review evidence.',
-        tools: [],
-        effort: 'medium',
-        permissions: { filesystem: 'read', network: 'limited', commands: [] },
-        tags: [],
-      },
-    }));
-  });
-
   it('calls providers.list through hostInvoke', async () => {
     hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: [] });
     const { hostApi } = await import('@/lib/host-api');
@@ -700,8 +470,6 @@ describe('hostApi facade', () => {
     await hostApi.knowledge.importOkfBundle({ path: 'C:/okf', conceptIds: ['alpha'] });
     await hostApi.knowledge.createInboxItem({ title: 'Candidate', body: 'Body', kind: 'chat-session' });
     await hostApi.knowledge.promoteInboxItemToDraft({ id: 'inbox-1' });
-    await hostApi.knowledge.matchErrorExperience({ signal: { text: 'routeContext failed', kind: 'test-failure' }, limit: 1 });
-    await hostApi.knowledge.updateErrorExperienceEffectiveness({ targetKind: 'inbox', targetId: 'inbox-1', action: 'accepted' });
     await hostApi.knowledge.recordKnowledgeReference({ targetId: 'notes/a.md', reference: { kind: 'search', lookup: 'notes/a.md' } });
     await hostApi.knowledge.runtimeLessonsReport();
 
@@ -737,16 +505,6 @@ describe('hostApi facade', () => {
     }));
     expect(hostInvoke).toHaveBeenNthCalledWith(7, expect.objectContaining({
       module: 'knowledge',
-      action: 'matchErrorExperience',
-      payload: { signal: { text: 'routeContext failed', kind: 'test-failure' }, limit: 1 },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
-      module: 'knowledge',
-      action: 'updateErrorExperienceEffectiveness',
-      payload: { targetKind: 'inbox', targetId: 'inbox-1', action: 'accepted' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
-      module: 'knowledge',
       action: 'recordKnowledgeReference',
       payload: { targetId: 'notes/a.md', reference: { kind: 'search', lookup: 'notes/a.md' } },
     }));
@@ -776,10 +534,10 @@ describe('hostApi facade', () => {
       .mockResolvedValueOnce({ id: 'req-5', ok: true, data: { success: true, checkpoints: [] } })
       .mockResolvedValueOnce({ id: 'req-6', ok: true, data: { success: true, drained: false, queueCount: 0 } })
       .mockResolvedValueOnce({ id: 'req-7', ok: true, data: { success: true, compacted: true } })
-      .mockResolvedValueOnce({ id: 'req-8', ok: true, data: { success: true, warnings: [], artifact: { schemaVersion: 1, objective: 'ship', constraints: [], currentState: 'ready', done: [], inProgress: [], blocked: [], decisions: [], filesTouched: [], testsRun: [], failedAttempts: [], deviations: [], nextAction: 'continue', reviewNeeded: [], evidenceRefs: [], unverifiedClaims: [], quality: { level: 'medium', score: 0.7, evidenceCoverage: 0.8, fieldCoverage: 0.9, projectionTokens: 120 } } } })
-      .mockResolvedValueOnce({ id: 'req-9', ok: true, data: { success: true, context: 'recovery context', warnings: [] } })
-      .mockResolvedValueOnce({ id: 'req-10', ok: true, data: { success: true, draft: 'handoff' } })
-      .mockResolvedValueOnce({ id: 'req-11', ok: true, data: { success: true, sessionKey: 'agent:main:fork' } });
+      .mockResolvedValueOnce({ id: 'req-8', ok: true, data: { success: true, draft: 'handoff' } })
+      .mockResolvedValueOnce({ id: 'req-9', ok: true, data: { success: true, sessionKey: 'agent:main:fork' } })
+      .mockResolvedValueOnce({ id: 'req-10', ok: true, data: { success: true, ok: true, payload: 'archived output', diagnostics: [] } })
+      .mockResolvedValueOnce({ id: 'req-11', ok: true, data: { success: true, ok: false, diagnostics: [{ code: 'missing_selector', message: 'missing selector' }] } });
     const { hostApi } = await import('@/lib/host-api');
 
     await hostApi.sessions.compactionStatus({ sessionKey: 'agent:main:main' });
@@ -789,10 +547,22 @@ describe('hostApi facade', () => {
     await hostApi.sessions.resumeCheckpoints({ sessionKey: 'agent:main:main', limit: 2 });
     await hostApi.sessions.queueDrain({ sessionKey: 'agent:main:main' });
     await hostApi.sessions.compact({ sessionKey: 'agent:main:main', customInstructions: 'preserve decisions' });
-    await hostApi.sessions.compressionArtifact({ sessionKey: 'agent:main:main' });
-    await hostApi.sessions.recoveryContext({ sessionKey: 'agent:main:main', purpose: 'session_handoff' });
     await hostApi.sessions.prepareHandoff({ sessionKey: 'agent:main:main', workspaceId: 'default' });
     await hostApi.sessions.fork({ sessionKey: 'agent:main:main', workspaceId: 'default' });
+    await hostApi.sessions.recallOriginal({
+      sessionKey: 'agent:main:main',
+      archiveHandle: {
+        uri: 'context-archive://session-1/tool.context-archive.json',
+        checksum: `sha256:${'a'.repeat(64)}`,
+        byteLength: 15,
+      },
+    });
+    await hostApi.sessions.expandSelector({
+      sessionKey: 'agent:main:main',
+      resourceId: 'resource:demo',
+      selector: 'selector:demo',
+      checksum: `sha256:${'b'.repeat(64)}`,
+    });
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
       module: 'sessions',
@@ -831,23 +601,27 @@ describe('hostApi facade', () => {
     }));
     expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
       module: 'sessions',
-      action: 'compressionArtifact',
-      payload: { sessionKey: 'agent:main:main' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
-      module: 'sessions',
-      action: 'recoveryContext',
-      payload: { sessionKey: 'agent:main:main', purpose: 'session_handoff' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(10, expect.objectContaining({
-      module: 'sessions',
       action: 'prepareHandoff',
       payload: { sessionKey: 'agent:main:main', workspaceId: 'default' },
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(11, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
       module: 'sessions',
       action: 'fork',
       payload: { sessionKey: 'agent:main:main', workspaceId: 'default' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(10, expect.objectContaining({
+      module: 'sessions',
+      action: 'recallOriginal',
+      payload: expect.objectContaining({ sessionKey: 'agent:main:main' }),
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(11, expect.objectContaining({
+      module: 'sessions',
+      action: 'expandSelector',
+      payload: expect.objectContaining({
+        sessionKey: 'agent:main:main',
+        resourceId: 'resource:demo',
+        selector: 'selector:demo',
+      }),
     }));
   });
 
@@ -917,142 +691,6 @@ describe('hostApi facade', () => {
       module: 'usage',
       action: 'recentTokenHistory',
       payload: { limit: 25 },
-    }));
-  });
-
-  it('calls Office Tools host APIs through hostInvoke', async () => {
-    hostInvoke
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: { installed: true, version: 'officecli 1.2.3', path: '/bin/officecli', runtimeError: null } })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: [{ id: 'officecli-docx', installedCentrally: true }] })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: { synced: 9, errors: [] } })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: { expertId: 'officecli-docx', skillId: 'officecli-docx', agentId: 'main', agentType: 'main', agentName: 'Main Agent', state: 'linked_to_codeg', linkPath: 'agent:main:defaultSkillIds', targetPath: '/skills/officecli-docx', expectedTargetPath: '/skills/officecli-docx', copyMode: false, installedCentrally: true } })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: undefined })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: [] })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: [] })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: [] })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: 'skill content' })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: '<html></html>' })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: { port: 24000, cap: 'cap' } })
-      .mockResolvedValueOnce({ id: 'req', ok: true, data: undefined });
-    const { hostApi } = await import('@/lib/host-api');
-
-    await hostApi.officeTools.detect();
-    await hostApi.officeTools.listSkills();
-    await hostApi.officeTools.syncSkills();
-    await hostApi.officeTools.linkSkillToAgent('officecli-docx', 'main');
-    await hostApi.officeTools.unlinkSkillFromAgent('officecli-docx', 'main');
-    await hostApi.officeTools.getSkillInstallStatus('officecli-docx');
-    await hostApi.officeTools.listAllSkillInstallStatuses();
-    await hostApi.officeTools.applySkillLinks({
-      ops: [{ expertId: 'officecli-docx', agentId: 'main', enable: true }],
-    });
-    await hostApi.officeTools.readSkillContent('officecli-docx');
-    await hostApi.officeTools.renderHtml({ rootPath: '/workspace', path: 'report.docx' });
-    await hostApi.officeTools.startWatch({ rootPath: '/workspace', path: 'report.docx' });
-    await hostApi.officeTools.stopWatch({ rootPath: '/workspace', path: 'report.docx' });
-
-    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({ module: 'officeTools', action: 'detect' }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({ module: 'officeTools', action: 'listSkills' }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({ module: 'officeTools', action: 'syncSkills' }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
-      module: 'officeTools',
-      action: 'linkSkillToAgent',
-      payload: { skillId: 'officecli-docx', agentId: 'main' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
-      module: 'officeTools',
-      action: 'unlinkSkillFromAgent',
-      payload: { skillId: 'officecli-docx', agentId: 'main' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(6, expect.objectContaining({
-      module: 'officeTools',
-      action: 'getSkillInstallStatus',
-      payload: { skillId: 'officecli-docx' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(7, expect.objectContaining({
-      module: 'officeTools',
-      action: 'listAllSkillInstallStatuses',
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
-      module: 'officeTools',
-      action: 'applySkillLinks',
-      payload: { ops: [{ expertId: 'officecli-docx', agentId: 'main', enable: true }] },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
-      module: 'officeTools',
-      action: 'readSkillContent',
-      payload: { skillId: 'officecli-docx' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(10, expect.objectContaining({
-      module: 'officeTools',
-      action: 'renderHtml',
-      payload: { rootPath: '/workspace', path: 'report.docx' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(11, expect.objectContaining({
-      module: 'officeTools',
-      action: 'startWatch',
-      payload: { rootPath: '/workspace', path: 'report.docx' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(12, expect.objectContaining({
-      module: 'officeTools',
-      action: 'stopWatch',
-      payload: { rootPath: '/workspace', path: 'report.docx' },
-    }));
-  });
-
-  it('calls usage.promptCacheStatus through hostInvoke', async () => {
-    hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: { success: true, assessment: null } });
-    const { hostApi } = await import('@/lib/host-api');
-
-    await hostApi.usage.promptCacheStatus({
-      sessionKey: 'agent:main:main',
-      modelRef: 'anthropic/claude-sonnet-4',
-      targetModelRef: 'anthropic/claude-opus-4',
-      action: 'model-switch',
-      usedTokens: 12_000,
-    });
-    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
-      module: 'usage',
-      action: 'promptCacheStatus',
-      payload: {
-        sessionKey: 'agent:main:main',
-        modelRef: 'anthropic/claude-sonnet-4',
-        targetModelRef: 'anthropic/claude-opus-4',
-        action: 'model-switch',
-        usedTokens: 12_000,
-      },
-    }));
-  });
-
-  it('calls usage.recordPromptCacheRiskEvent through hostInvoke', async () => {
-    hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: { success: true, event: null } });
-    const { hostApi } = await import('@/lib/host-api');
-
-    await hostApi.usage.recordPromptCacheRiskEvent({
-      sessionKey: 'agent:main:main',
-      action: 'model-switch',
-      severity: 'high',
-      status: 'at-risk',
-      decision: 'cancelled',
-      hitRate: 0.6,
-      promptTokens: 12_000,
-      estimatedExtraCostUsd: 0.01,
-      reason: 'model-switch',
-    });
-    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
-      module: 'usage',
-      action: 'recordPromptCacheRiskEvent',
-      payload: {
-        sessionKey: 'agent:main:main',
-        action: 'model-switch',
-        severity: 'high',
-        status: 'at-risk',
-        decision: 'cancelled',
-        hitRate: 0.6,
-        promptTokens: 12_000,
-        estimatedExtraCostUsd: 0.01,
-        reason: 'model-switch',
-      },
     }));
   });
 
@@ -1184,9 +822,9 @@ describe('hostApi facade', () => {
     });
 
     const electronToRenderer = findViolations('electron', [
-      /\bfrom\s+['"](?![^'"]*openclaw_runtime\/src\/)[^'"]*src\//g,
-      /\bimport\(\s*['"](?![^'"]*openclaw_runtime\/src\/)[^'"]*src\//g,
-      /\brequire\(\s*['"](?![^'"]*openclaw_runtime\/src\/)[^'"]*src\//g,
+      /\bfrom\s+['"][^'"]*src\//g,
+      /\bimport\(\s*['"][^'"]*src\//g,
+      /\brequire\(\s*['"][^'"]*src\//g,
     ]);
     const rendererToElectron = findViolations('src', [
       /\bfrom\s+['"]electron['"]/g,

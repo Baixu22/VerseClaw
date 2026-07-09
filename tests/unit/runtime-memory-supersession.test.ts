@@ -156,7 +156,7 @@ describe("Phase 2.1: Supersession conflict detection", () => {
       }
     });
 
-    it("returns UPDATE (not SUPERSEDE) for non-contradictory refinement", () => {
+    it("returns NONE (not UPDATE) for non-contradictory refinement (UPDATE disabled per project_memory.md, signal layer conservatively drops)", () => {
       const existing = makeFact(
         "e1",
         "UserPref",
@@ -171,9 +171,11 @@ describe("Phase 2.1: Supersession conflict detection", () => {
         "user prefers dark mode for the editor and terminal",
         { confidence: 0.9 },
       );
-      // High overlap → not a contradiction → falls through to UPDATE
+      // UPDATE 已禁用 (project_memory.md). High overlap 但非矛盾 → 走信号层.
+      // existing 为 verified, candidate 为 candidate → 信号层保守返回 NONE.
+      // 理想行为应为 SUPERSEDE (refined) 或 ADD (supplement), 属已知局限.
       const decision = decideAUDN(candidate, [existing]);
-      expect(decision.action).toBe("UPDATE");
+      expect(decision.action).toBe("NONE");
     });
 
     it("returns SUPERSEDE even when candidate has lower confidence", () => {
@@ -233,13 +235,14 @@ describe("Phase 2.1: Supersession conflict detection", () => {
       expect(decisionDefault.action).toBe("SUPERSEDE");
 
       // With threshold 0.5: 0.429 < 0.5 → not different enough → falls through
-      // to UPDATE (candidate confidence 0.7 >= existing 0.7)
+      // to signal layer → NONE (UPDATE disabled per project_memory.md,
+      // existing verified vs candidate → signal layer conservatively drops)
       const configHigh = {
         ...DEFAULT_WRITE_CURATION_CONFIG,
         contradictionOverlapThreshold: 0.5,
       };
       const decisionHigh = decideAUDN(candidate, [existing], configHigh);
-      expect(decisionHigh.action).toBe("UPDATE");
+      expect(decisionHigh.action).toBe("NONE");
 
       // With threshold 0.0: 0.429 >= 0.0 → always triggers (if negation present)
       const configZero = {

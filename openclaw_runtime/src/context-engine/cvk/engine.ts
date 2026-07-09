@@ -1,4 +1,5 @@
 import { delegateCompactionToRuntime } from '../delegate.js';
+import type { ContextStatusSnapshot } from '../../../../shared/types/context-family.js';
 import type {
   AssembleResult,
   CompactResult,
@@ -26,6 +27,8 @@ export const CONTEXT_RUNTIME_KIT_ENGINE_ID = 'context-runtime-kit';
 export type ContextRuntimeKitContextEngineOptions = {
   fixtureInput?: CvkCompilerFixtureInput;
   maxPromptAdditionChars?: number;
+  contextStatusEnabled?: boolean;
+  contextStatusSnapshot?: ContextStatusSnapshot;
 };
 
 const DEFAULT_MAX_PROMPT_ADDITION_CHARS = 8_000;
@@ -71,10 +74,47 @@ function boundedLines(lines: string[], maxChars: number): string {
   return `${prompt.slice(0, Math.max(0, maxChars - suffix.length))}${suffix}`;
 }
 
+function formatCountMap(counts: Record<string, number | undefined> | undefined): string {
+  const entries = Object.entries(counts ?? {})
+    .filter(([, value]) => typeof value === 'number' && Number.isFinite(value) && value > 0)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, value]) => `${key}=${Math.floor(value as number)}`);
+  return entries.length > 0 ? entries.join(' ') : 'none';
+}
+
+function truncateStatusText(text: string, maxChars: number): string {
+  if (text.length <= maxChars) {
+    return text;
+  }
+  return `${text.slice(0, Math.max(0, maxChars - 3))}...`;
+}
+
+function formatContextStatusProjection(params: {
+  sessionId: string;
+  tokenBudget?: number;
+  messageCount: number;
+  snapshot?: ContextStatusSnapshot;
+}): string[] {
+  const snapshot = params.snapshot;
+  const warnings = (snapshot?.warnings ?? ['registry snapshot unavailable'])
+    .slice(0, 4)
+    .map((warning) => truncateStatusText(warning, 160));
+  return [
+    '[Context Status]',
+    `pressure: tokenBudget=${Math.max(0, Math.floor(params.tokenBudget ?? 0))} messages=${params.messageCount}`,
+    `lifecycle: ${formatCountMap(snapshot?.countsByLifecycleState)}`,
+    `kinds: ${formatCountMap(snapshot?.countsByKind)}`,
+    `archive: available=${String(snapshot?.archiveAvailable ?? false)} recovery=${String(snapshot?.recoveryAvailable ?? false)}`,
+    `warnings: ${warnings.length > 0 ? warnings.join(' | ') : 'none'}`,
+    '',
+  ];
+}
+
 function formatPromptAddition(params: {
   artifact: CvkFixtureArtifact;
   input: CvkCompilerFixtureInput;
   maxChars: number;
+  contextStatusLines?: string[];
 }): string {
   const viewProjection = generateCvkViews(params.artifact, {
     selectedSkillResourceIds: selectedSkillResourceIds(params.input),
@@ -82,6 +122,7 @@ function formatPromptAddition(params: {
   const toolNames = activeToolNames(params.input);
   const diagnostics = toolGateDiagnostics(params.artifact, toolNames);
   const lines = [
+    ...(params.contextStatusLines ?? []),
     '[Context Runtime Kit]',
     'Use selector-backed context surfaces below as navigation and diagnostics. Do not treat compact views as raw source evidence for hard claims.',
     `artifact: ${params.artifact.buildReport.artifactHash}`,
@@ -141,6 +182,14 @@ export class ContextRuntimeKitContextEngine implements ContextEngine {
       artifact,
       input: fixtureInput,
       maxChars: this.options.maxPromptAdditionChars ?? DEFAULT_MAX_PROMPT_ADDITION_CHARS,
+      contextStatusLines: this.options.contextStatusEnabled
+        ? formatContextStatusProjection({
+            sessionId: params.sessionId,
+            tokenBudget: params.tokenBudget,
+            messageCount: params.messages.length,
+            snapshot: this.options.contextStatusSnapshot,
+          })
+        : undefined,
     });
     return {
       messages: params.messages,

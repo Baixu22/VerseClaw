@@ -27,6 +27,7 @@ import {
   type RuntimeMemoryVerificationStatus,
 } from "./memory-context.js";
 import type { EvidenceRef } from "./evidence.js";
+import type { RecallTrace } from "./memory-trace.js";
 
 export const RUNTIME_MEMORY_STORE_DEFAULT_MAX_EPISODES = 256;
 export const RUNTIME_MEMORY_STORE_DEFAULT_MAX_FACTS = 512;
@@ -74,7 +75,32 @@ export type RuntimeMemoryStoreOptions = {
    */
   evictionPolicy?: "fifo" | "importance";
   now?: () => number;
+  /**
+   * COMPASS 2.0: Eviction compliance hook (REDACT 合规门).
+   *
+   * 当 fact 被驱逐时调用. 调用方可在 hook 内检查 fact.sensitivity:
+   *   - secret / secret_adjacent: 触发 REDACT 事件 (合规删除)
+   *   - normal: silent eviction (默认行为, 无需额外操作)
+   *
+   * hook 在 invalidateFact 之前调用, 确保 REDACT 事件先于 invalidation 记录.
+   * 未提供时, 所有 fact 走 silent eviction (向后兼容).
+   */
+  evictionComplianceHook?: EvictionComplianceHook;
+  /**
+   * COMPASS 2.0 v2: 启用成本感知驱逐 v2 (value 用 U_decision).
+   * 默认 false. 启用后 computeEvictionScore 的 value 来源切换到 U_decision
+   * (当 recallTrace 可用时).
+   */
+  enableCostAwareEvictionV2?: boolean;
 };
+
+/**
+ * COMPASS 2.0: Eviction compliance hook.
+ *
+ * 调用方传入此 hook, 在 fact 被驱逐时检查 sensitivity 并触发 REDACT.
+ * hook 接收被驱逐的 fact, 不返回值 (副作用: 触发 REDACT 事件).
+ */
+export type EvictionComplianceHook = (fact: RuntimeMemoryQueryableFact) => void;
 
 export type RuntimeMemoryStoreRejectionReason =
   | RuntimeMemoryRawInputRejectionReason
@@ -141,6 +167,10 @@ export class RuntimeMemoryStore {
   private readonly maxInvalidations: number;
   private readonly evictionPolicy: "fifo" | "importance";
   private readonly now: () => number;
+  // COMPASS 2.0: Eviction compliance hook (REDACT 合规门)
+  private readonly evictionComplianceHook?: EvictionComplianceHook;
+  // COMPASS 2.0 v2: 成本感知驱逐 v2 (value 用 U_decision)
+  private readonly enableCostAwareEvictionV2: boolean;
   private readonly episodesById = new Map<string, RuntimeMemoryEpisodeRecord>();
   private readonly episodeIdByIdempotencyKey = new Map<string, string>();
   private readonly episodeOrder: string[] = [];
@@ -174,6 +204,10 @@ export class RuntimeMemoryStore {
       ? "fifo"
       : "importance";
     this.now = options.now ?? Date.now;
+    // COMPASS 2.0: 保存 eviction compliance hook (可选)
+    this.evictionComplianceHook = options.evictionComplianceHook;
+    // COMPASS 2.0 v2: 成本感知驱逐 v2 (默认 false)
+    this.enableCostAwareEvictionV2 = options.enableCostAwareEvictionV2 ?? false;
   }
 
   recordFactAccess(factId: string): void {
@@ -526,8 +560,11 @@ export class RuntimeMemoryStore {
    * importance(0.60) + recency-sigmoid(0.25) + usage(0.15). High-confidence,
    * well-evidenced, recently-accepted facts survive; the FIFO tail is no
    * longer blindly dropped.
+   *
+   * COMPASS 2.0 v2: 当 recallTrace 提供且 enableCostAwareEvictionV2=true 时,
+   * value 用 U_decision (决策效用). 无 trace 时降级到 v1 (importance-based).
    */
-  private trimFactsByImportance(): void {
+  private trimFactsByImportance(recallTrace?: RecallTrace): void {
     if (this.factOrder.length <= this.maxFacts) return;
     const targetSize = Math.floor(this.maxFacts * 0.85);
     const toEvict = this.factOrder.length - targetSize;
@@ -537,19 +574,39 @@ export class RuntimeMemoryStore {
     const scored = this.factOrder
       .map((factId) => {
         const fact = this.factsById.get(factId);
-        if (!fact) return { factId, score: -1 };
-        return { factId, score: this.computeEvictionScore(fact, now) };
+        if (!fact) return { factId, score: -1, fact: undefined };
+        return { factId, score: this.computeEvictionScore(fact, now, recallTrace), fact };
       })
       .sort((a, b) => a.score - b.score);
 
     for (let i = 0; i < toEvict; i++) {
-      const { factId } = scored[i];
+      const { factId, fact } = scored[i];
+      // COMPASS 2.0: REDACT 合规门 — 在驱逐前调用 compliance hook.
+      // hook 检查 fact.sensitivity, 若为 secret/secret_adjacent 则触发 REDACT 事件.
+      if (fact && this.evictionComplianceHook) {
+        try {
+          this.evictionComplianceHook(fact);
+        } catch {
+          // 合规 hook 失败不阻断驱逐流程
+        }
+      }
       this.factsById.delete(factId);
       this.usageCounts.delete(factId);
       this.lastAccessedAt.delete(factId);
       const idx = this.factOrder.indexOf(factId);
       if (idx !== -1) this.factOrder.splice(idx, 1);
     }
+  }
+
+  /**
+   * COMPASS 2.0 v2: 带 recallTrace 的主动驱逐.
+   *
+   * 当 enableCostAwareEvictionV2=true 时, value 用 U_decision (决策效用).
+   * 无 trace 中无该 fact 时降级到 v1 (importance-based).
+   * 供外部 post-retrieval 主动驱逐调用.
+   */
+  trimFactsWithTrace(recallTrace: RecallTrace): void {
+    this.trimFactsByImportance(recallTrace);
   }
 
   private computeImportanceScore(
@@ -583,6 +640,7 @@ export class RuntimeMemoryStore {
   private computeEvictionScore(
     fact: RuntimeMemoryQueryableFact,
     now: number,
+    recallTrace?: RecallTrace,
   ): number {
     const importance = this.computeImportanceScore(fact);
 
@@ -598,11 +656,81 @@ export class RuntimeMemoryStore {
     const weights = EVICTION_WEIGHTS_BY_TYPE[
       fact.memoryType ?? DEFAULT_RUNTIME_MEMORY_TYPE
     ];
-    return (
-      importance * weights.importance +
-      recencyScore * weights.recency +
-      usageScore * weights.usage
-    );
+    // COMPASS 2.0: 成本感知驱逐
+    //   keep_score = value_of_keeping / cost_to_keep
+    //   cost = tokenCost × expectedRemainingTurns
+    //   tokenCost ≈ objectSummary.length / 4 (近似)
+    //   expectedRemainingTurns 基于 usageCount 衰减
+    //
+    //   v1 (默认): value = importance + recency + usage (加权 score)
+    //   v2 (enableCostAwareEvictionV2=true 且 recallTrace 可用):
+    //     value = U_decision (决策效用, 从 recallTrace 派生)
+    //     无 trace 中无此 fact 时降级到 v1
+    const v2UDecision =
+      this.enableCostAwareEvictionV2 && recallTrace
+        ? this.computeUDecisionFromTrace(fact.factId, recallTrace)
+        : undefined;
+    const valueScore =
+      v2UDecision !== undefined
+        ? v2UDecision
+        : importance * weights.importance +
+          recencyScore * weights.recency +
+          usageScore * weights.usage;
+    const tokenCost = Math.max(1, Math.ceil((fact.objectSummary?.length ?? 0) / 4));
+    const expectedRemainingTurns = this.estimateRemainingTurns(fact, now);
+    // COMPASS 2.0: 成本感知驱逐
+    //   keep_score = value_of_keeping / cost_to_keep
+    //   value = valueScore × expectedRemainingTurns (预期使用次数是收益)
+    //   cost  = tokenCost (仅 token 占用是成本)
+    //
+    //   修复: 原公式 valueScore / (tokenCost × expectedRemainingTurns) 把 usage
+    //   信号反向 — 高 usage → 高 expectedRemainingTurns → 高 cost → 低 score →
+    //   被优先驱逐. expectedRemainingTurns 代表"预期还会被用几次", 是保留价值
+    //   (收益) 而非成本. 改为乘数后: 高 usage → 高 value → 保留.
+    const value = valueScore * expectedRemainingTurns;
+    return tokenCost > 0 ? value / tokenCost : value;
+  }
+
+  /**
+   * COMPASS 2.0 v2: 从 recallTrace 中查找 fact 的 U_decision.
+   * @returns U_decision 值, 或 undefined (trace 中无此 fact 或无 uDecision)
+   */
+  private computeUDecisionFromTrace(
+    factId: string,
+    recallTrace: RecallTrace,
+  ): number | undefined {
+    for (const recalled of recallTrace.recalledFacts) {
+      if (recalled.factId === factId) {
+        return typeof recalled.uDecision === "number"
+          ? recalled.uDecision
+          : undefined;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * COMPASS 2.0: 估算 fact 的预期剩余使用轮次.
+   *
+   * 基于 usageCount 衰减: 高使用频率的 fact 预期还会被使用更多次.
+   * v1 简化模型: max(1, 10 - proofCount) 或基于 usageCount 推算.
+   * 最近访问的 fact (在 USAGE_HALF_LIFE_MS 内) 额外 +1 轮次.
+   */
+  private estimateRemainingTurns(
+    fact: RuntimeMemoryQueryableFact,
+    now: number,
+  ): number {
+    const usageCount = this.usageCounts.get(fact.factId) ?? 0;
+    const proofCount = typeof fact.proofCount === "number" ? fact.proofCount : 0;
+    // 高 proofCount 的 fact 更稳定, 预期剩余轮次更多
+    const baseTurns = Math.max(1, 10 - Math.min(proofCount, 8));
+    // 高 usageCount 的 fact 近期被频繁使用, 预期还会被使用
+    const usageBonus = Math.min(usageCount, 5);
+    // 最近访问的 fact (在半衰期内) 预期还会被使用, 额外 +1
+    const lastAccess = this.lastAccessedAt.get(fact.factId);
+    const recencyBonus =
+      lastAccess !== undefined && now - lastAccess < USAGE_HALF_LIFE_MS ? 1 : 0;
+    return baseTurns + usageBonus + recencyBonus;
   }
 
   private computeUsageScore(factId: string, now: number): number {

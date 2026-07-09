@@ -60,6 +60,13 @@ export type Observation = {
   };
   /** 可选 summary, 严格限长 ≤200 chars, 仅用于 UI 或 bridge discovery 辅助 */
   summary?: string;
+  /**
+   * COMPASS 2.0: Structured fidelity (四级保真度之 Structured 层).
+   *
+   * 紧凑 JSON 三元组: {"s":"<subject>","p":"<predicate>","k":"<key>"}
+   * 限长 ≤150 chars. 确定性模板生成 (非 LLM).
+   */
+  structuredSummary?: string;
 };
 
 // === Memory Mutation Event (Week 6 完整实现, 这里最小化) ===
@@ -226,6 +233,74 @@ export class ObservationStore {
     } else {
       obs.summary = trimmed.slice(0, 197) + "...";
     }
+  }
+
+  /**
+   * COMPASS 2.0: 设置 structuredSummary (Structured fidelity, 限长 ≤150 chars).
+   *
+   * 用于四级保真度之 Structured 层: 紧凑 JSON 三元组.
+   * 超长的截断到 150 chars 并加 "..." 后缀.
+   */
+  setStructuredSummary(observationKey: string, structuredSummary: string): void {
+    const obs = this.observations.get(observationKey);
+    if (!obs) return;
+    const trimmed = structuredSummary.trim();
+    if (trimmed.length <= 150) {
+      obs.structuredSummary = trimmed;
+    } else {
+      obs.structuredSummary = trimmed.slice(0, 147) + "...";
+    }
+  }
+
+  /**
+   * COMPASS 2.0: 冷启动 — 为缺少 canonicalFactId 的 observation 加权分配.
+   *
+   * 按 confidence/sum(confidence) 加权分配 (确定性: 取累积概率 >= 0.5 的第一个).
+   * 仅在 canonicalFactId 未设置且 supportFactIds 非空时执行.
+   *
+   * @param observationKey observation 键
+   * @param factsById fact ID → fact 映射 (用于查询 confidence)
+   */
+  bootstrapCanonicalFactId(
+    observationKey: string,
+    factsById: ReadonlyMap<string, { confidence?: number }>,
+  ): void {
+    const obs = this.observations.get(observationKey);
+    if (!obs) return;
+    if (obs.canonicalFactId || obs.supportFactIds.length === 0) return;
+
+    // 按 confidence/sum(confidence) 加权分配
+    const facts = obs.supportFactIds
+      .map((id) => factsById.get(id))
+      .filter((f): f is { confidence?: number } => f !== undefined);
+
+    if (facts.length === 0) {
+      obs.canonicalFactId = obs.supportFactIds[0];
+      return;
+    }
+
+    const totalConf = facts.reduce(
+      (sum, f) => sum + (typeof f.confidence === "number" ? f.confidence : 0),
+      0,
+    );
+
+    if (totalConf <= 0) {
+      obs.canonicalFactId = obs.supportFactIds[0];
+      return;
+    }
+
+    // 确定性: 取累积概率 >= 0.5 的第一个
+    let cumulative = 0;
+    for (let i = 0; i < facts.length; i++) {
+      const conf = typeof facts[i].confidence === "number" ? facts[i].confidence! : 0;
+      cumulative += conf / totalConf;
+      if (cumulative >= 0.5) {
+        obs.canonicalFactId = obs.supportFactIds[i];
+        return;
+      }
+    }
+    // fallback: 取第一个
+    obs.canonicalFactId = obs.supportFactIds[0];
   }
 
   // === 内部: apply 单个事件 ===
