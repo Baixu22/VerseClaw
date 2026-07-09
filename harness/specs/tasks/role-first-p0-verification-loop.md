@@ -6,10 +6,14 @@ taskType: runtime-bridge
 intent: Harden the existing role-first multi-agent result path with structured OrchestrationResultBundle data, schema compliance gate, verifier gate, max-one repair/replan accounting, and trace/bundle evidence while preserving RoleContract and existing Gateway communication boundaries.
 ownedPaths:
   - harness/specs/tasks/role-first-p0-verification-loop.md
+
+  - docs/role-first-design.md
   - docs/multi-agent-orchestration/**
   - docs/superpowers/plans/2026-07-07-role-first-p0-verification-loop.md
 touchedAreas:
   - docs/multi-agent-orchestration-development-plan.md
+
+  - docs/role-first-design.md
   - docs/multi-agent-orchestration/**
   - docs/superpowers/plans/2026-07-07-role-first-p0-verification-loop.md
   - harness/specs/tasks/role-first-p0-verification-loop.md

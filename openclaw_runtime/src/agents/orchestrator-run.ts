@@ -26,6 +26,11 @@ import {
   type OrchestrationTaskNode,
 } from "./orchestration-protocol.js";
 import {
+
+  scheduleResourceAwareWaves,
+  type ResourceSchedulerMetrics,
+} from "./orchestration-resource-scheduler.js";
+import {
   buildSpawnPhaseResultBundle,
   type OrchestrationResultBundle,
   type RoleOutcomeBundle,
@@ -60,6 +65,7 @@ export type OrchestrationRunResult = {
   taskGraph: OrchestrationTaskGraph;
   graphStatus: OrchestrationTaskGraph["status"];
   executionWaves: OrchestratorPlan["executionWaves"];
+  schedulerMetrics: ResourceSchedulerMetrics;
   pendingGraphNodes: OrchestrationTaskNode[];
   repairNodes: OrchestrationRepairNode[];
   rerouteRecommendations: OrchestrationRerouteRecommendation[];
@@ -73,6 +79,17 @@ function resolvePlanRole(
   request: OrchestrationRunRequest,
 ): RoleContract | undefined {
   return request.roles?.find((role) => role.name === roleName) ?? resolveRoleContract(roleName, request.cfg);
+}
+
+function resolvePlanRoles(
+  plan: OrchestratorPlan,
+  request: OrchestrationRunRequest,
+): RoleContract[] {
+  const roleNames = new Set(plan.taskGraph.nodes.map((node) => node.roleName));
+  return [...roleNames].flatMap((roleName) => {
+    const role = resolvePlanRole(roleName, request);
+    return role ? [role] : [];
+  });
 }
 
 function formatRoleOutput(role: RoleContract | undefined): string {
@@ -204,6 +221,11 @@ export async function runOrchestration(
   deps: { spawn: SpawnFn },
 ): Promise<OrchestrationRunResult> {
   const plan = createOrchestratorPlan(request);
+  const schedule = scheduleResourceAwareWaves({
+    graph: plan.taskGraph,
+    roles: resolvePlanRoles(plan, request),
+    options: { maxActiveRoles: request.maxWorkers },
+  });
   const outcomes: OrchestrationWorkerOutcome[] = [];
   const spawnedRunIds: string[] = [];
   const expectedWorkerRunIds: string[] = [];
@@ -271,7 +293,7 @@ export async function runOrchestration(
                 followupOf: ledger.followupOf,
                 executionWave: ledger.executionWave,
                 taskGraph: plan.taskGraph,
-                executionWaves: plan.executionWaves,
+                executionWaves: schedule.waves,
                 routeDiagnostics: plan.routeDiagnostics,
                 qualityPolicy: request.qualityPolicy,
                 repairPolicy: request.repairPolicy,
@@ -304,7 +326,7 @@ export async function runOrchestration(
   const workerNodes = taskGraphWorkerNodes(plan.taskGraph);
   const workerNodeById = new Map(workerNodes.map((node) => [node.taskNodeId, node]));
   const fallbackIndex = new Map(workerNodes.map((node, index) => [node.taskNodeId, index]));
-  for (const wave of plan.executionWaves) {
+  for (const wave of schedule.waves) {
     const nodes = wave.taskNodeIds
       .map((taskNodeId) => workerNodeById.get(taskNodeId))
       .filter((node): node is OrchestrationTaskNode => Boolean(node));
@@ -368,7 +390,8 @@ export async function runOrchestration(
     attempts: outcomes.map((outcome) => outcome.ledger),
     taskGraph: plan.taskGraph,
     graphStatus: failures.length > 0 ? "partial" : "completed",
-    executionWaves: plan.executionWaves,
+    executionWaves: schedule.waves,
+    schedulerMetrics: schedule.metrics,
     pendingGraphNodes: [],
     repairNodes,
     rerouteRecommendations,

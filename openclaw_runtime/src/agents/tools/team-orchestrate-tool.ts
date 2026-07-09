@@ -22,6 +22,7 @@ import {
   normalizeWorkerCommunication,
   summarizeQuality,
 } from "../orchestration-protocol.js";
+import { synthesizeOrchestrationResult } from "../orchestration-synthesizer.js";
 import type { RoleRegistryConfigCarrier } from "../role-registry.js";
 import { listRoleContracts } from "../role-registry.js";
 import type { SpawnFn } from "../role-spawn.js";
@@ -137,7 +138,13 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
       task: Type.String(),
       templateId: Type.Optional(Type.String()),
       teamTemplateId: Type.Optional(Type.String()),
+      runbookId: Type.Optional(Type.String()),
+      explicitRunbookId: Type.Optional(Type.String()),
       fileHints: Type.Optional(Type.Array(Type.String())),
+      riskHints: Type.Optional(Type.Array(Type.String())),
+      capabilityHints: Type.Optional(Type.Array(Type.String())),
+      toolHints: Type.Optional(Type.Array(Type.String())),
+      priorFailureCount: Type.Optional(Type.Number()),
       important: Type.Optional(Type.Boolean()),
       leadRole: Type.Optional(Type.String()),
       preferredLeadRole: Type.Optional(Type.String()),
@@ -189,6 +196,11 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         preferredLeadRole:
           readStringParam(params, "leadRole") ?? readStringParam(params, "preferredLeadRole"),
         templateId,
+        explicitRunbookId: readStringParam(params, "runbookId") ?? readStringParam(params, "explicitRunbookId"),
+        riskHints: readStringArray(params.riskHints),
+        capabilityHints: readStringArray(params.capabilityHints),
+        toolHints: readStringArray(params.toolHints),
+        priorFailureCount: readPositiveIntegerParam(params, "priorFailureCount"),
         maxWorkers: resolveMaxWorkers(params, cfg),
         graphMode: normalizeGraphMode(params.graphMode),
         allowAutoRepair: readBoolean(params.allowAutoRepair) ?? true,
@@ -235,6 +247,11 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
       // worker output schemas. `undefined` for single-worker router-mode plans
       // (no synthesis needed) — callers degrade to today's free-form behavior.
       const synthesisContract = buildSynthesisContract(plan, cfgCarrier);
+      const synthesis = synthesizeOrchestrationResult({
+        bundle: result.resultBundle,
+        blackboardSummary: result.blackboardSummary,
+      });
+      const quality: unknown[] = [];
       return jsonResult({
         status,
         plan,
@@ -242,8 +259,15 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         routeDiagnostics: result.plan.routeDiagnostics,
         taskGraph: result.taskGraph,
         resultBundle: result.resultBundle,
+
+        blackboardState: result.blackboardState,
+        blackboardSummary: result.blackboardSummary,
+        synthesis,
+        complexityDecision: result.plan.complexityDecision,
+        runbookSelection: result.plan.runbookSelection,
         graphStatus: result.graphStatus,
         executionWaves: result.executionWaves,
+        schedulerMetrics: result.schedulerMetrics,
         pendingGraphNodes: result.pendingGraphNodes,
         orchestrationDiagnostics: result.orchestrationDiagnostics,
         rerouteRecommendations: result.rerouteRecommendations,
@@ -285,7 +309,7 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
           verifier: result.pendingVerifier ? "deferred_until_workers_terminal" : "none",
           workerCommunication,
           requestedWorkerCommunication,
-          boundedA2aEnabled: false,
+          boundedA2aEnabled: true,
           repairPolicy,
           qualityPolicy,
         },

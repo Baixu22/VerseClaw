@@ -9,8 +9,38 @@ vi.mock('../../openclaw_runtime/src/agents/subagent-spawn', () => ({
   spawnSubagentDirect: vi.fn(),
 }));
 
-// Gateway handlers — the integration surface under test.
+vi.mock('../../openclaw_runtime/src/media/image-ops.js', () => ({
+  IMAGE_REDUCE_QUALITY_STEPS: [85, 75, 65, 55, 45, 35],
+  ImageProcessorUnavailableError: class ImageProcessorUnavailableError extends Error {},
+  buildImageResizeSideGrid: vi.fn(() => []),
+  convertHeicToJpeg: vi.fn(async (buffer: Buffer) => buffer),
+  createImageProcessor: vi.fn(),
+  getImageMetadata: vi.fn(async () => null),
+  hasAlphaChannel: vi.fn(async () => false),
+  isImageProcessorUnavailableError: vi.fn(() => false),
+  normalizeExifOrientation: vi.fn(async (buffer: Buffer) => buffer),
+  optimizeImageToPng: vi.fn(),
+  readImageMetadataFromHeader: vi.fn(() => null),
+  readImageProbeFromHeader: vi.fn(() => null),
+  resizeToJpeg: vi.fn(async ({ buffer }: { buffer: Buffer }) => buffer),
+  resizeToPng: vi.fn(async ({ buffer }: { buffer: Buffer }) => buffer),
+}));
+
+vi.mock('rastermill', () => ({
+  createRastermill: () => ({
+    probe: vi.fn(),
+    encode: vi.fn(),
+  }),
+  isRastermillUnavailableError: () => false,
+  RastermillError: class RastermillError extends Error {},
+  RastermillUnavailableError: class RastermillUnavailableError extends Error {},
+  readImageProbeFromHeader: vi.fn(),
+  readImageMetadataFromHeader: vi.fn(),
+}), { virtual: true });
+
+// Gateway handlers â€?the integration surface under test.
 import { roleOrchestrationHandlers } from '../../openclaw_runtime/src/gateway/server-methods/role-orchestration-methods';
+import { spawnSubagentDirect } from '../../openclaw_runtime/src/agents/subagent-spawn';
 // Role-first execution + observability.
 import { runOrchestrationObserved } from '../../openclaw_runtime/src/agents/orchestrator-run-observed';
 import { createTeamOrchestrateTool } from '../../openclaw_runtime/src/agents/tools/team-orchestrate-tool';
@@ -190,7 +220,7 @@ describe('orchestrator.plan handler', () => {
     const res = await callHandler('orchestrator.plan', { task: 'explain this', leadRole: 'ghost-role' });
     expect(res?.ok).toBe(true);
     const plan = (res?.payload as { plan: { leadRole: string; reasons: string[] } }).plan;
-    // router mode → leadRole is the routed primary, not the ghost role.
+    // router mode â†?leadRole is the routed primary, not the ghost role.
     expect(plan.leadRole).not.toBe('ghost-role');
     expect(plan.reasons.some((r) => String(r).includes('preferred-lead'))).toBe(false);
   });
@@ -217,6 +247,44 @@ describe('orchestrator.plan handler', () => {
     expect(plan.verifierRole).toBe('skeptic');
     expect(plan.workers.map((worker) => worker.roleName)).toEqual(['security-reviewer', 'reviewer', 'tester']);
     expect(payload.executionWaves.every((wave) => wave.roles.length <= 2)).toBe(true);
+  });
+
+  it('returns structured P2 complexity and runbook metadata without dropping scheduler fields', async () => {
+    const res = await callHandler('orchestrator.plan', {
+      task: 'fix failing test suite after repeated failures',
+      priorFailureCount: 2,
+      runbookId: 'test-repair',
+      maxWorkers: 2,
+    });
+
+    expect(res?.ok).toBe(true);
+    const payload = res?.payload as {
+      plan: {
+        complexityDecision?: { mode: string; selectedRunbookId?: string; reasons: string[] };
+        runbookSelection?: {
+          selected?: { runbookId: string; reasons: string[] };
+          unselected: Array<{ runbookId: string; reasons: string[] }>;
+        };
+        taskGraph: { graphRunId: string };
+      };
+      complexityDecision?: { mode: string; selectedRunbookId?: string };
+      runbookSelection?: { selected?: { runbookId: string }; unselected: unknown[] };
+      taskGraph: { graphRunId: string };
+      executionWaves: unknown[];
+    };
+    expect(payload.complexityDecision).toMatchObject({
+      mode: 'runbook-orchestrated',
+      selectedRunbookId: 'test-repair',
+    });
+    expect(payload.runbookSelection?.selected).toMatchObject({
+      runbookId: 'test-repair',
+      reasons: expect.arrayContaining(['explicit-runbook-match']),
+    });
+    expect(payload.runbookSelection?.unselected.length).toBeGreaterThan(0);
+    expect(payload.plan.complexityDecision).toEqual(payload.complexityDecision);
+    expect(payload.plan.runbookSelection).toEqual(payload.runbookSelection);
+    expect(payload.taskGraph.graphRunId).toBe('test-repair');
+    expect(payload.executionWaves).toEqual(expect.any(Array));
   });
 
   it('accepts explicit duplicate workers and preserves labels', async () => {
@@ -272,9 +340,108 @@ describe('orchestrator.run handler', () => {
     expect(res?.ok).toBe(false);
     expect(res?.error?.message).toMatch(/sessionKey/);
   });
-  // NOTE: full spawn execution is covered via runOrchestrationObserved below
-  // (the handler hard-injects the native spawnSubagentDirect at module scope,
-  // so a controlled fake spawn is exercised through the observed runner).
+
+  it('returns scheduler metrics in the gateway run payload', async () => {
+    vi.mocked(spawnSubagentDirect).mockResolvedValue({
+      status: 'accepted',
+      runId: 'run_gateway_1',
+      childSessionKey: 'child_gateway_1',
+    });
+
+    const res = await callHandler('orchestrator.run', {
+      task: 'security review',
+      sessionKey: 'agent:main:gateway',
+      templateId: 'security-audit',
+      maxWorkers: 2,
+    });
+
+    expect(res?.ok).toBe(true);
+    expect(res?.payload).toMatchObject({
+      schedulerMetrics: {
+        concurrencyCap: 2,
+        queued: expect.any(Number),
+        completed: expect.any(Number),
+        skipped: 0,
+        roleCostSummary: expect.any(Array),
+      },
+      resultBundle: {
+        schemaVersion: 1,
+        phase: 'spawn',
+      },
+    });
+  });
+
+  it('returns P2 metadata in gateway run payload alongside P0/P1 data', async () => {
+    vi.mocked(spawnSubagentDirect).mockResolvedValue({
+      status: 'accepted',
+      runId: 'run_gateway_p2',
+      childSessionKey: 'child_gateway_p2',
+    });
+
+    const res = await callHandler('orchestrator.run', {
+      task: 'fix failing test suite after repeated failures',
+      sessionKey: 'agent:main:gateway-p2',
+      priorFailureCount: 2,
+      runbookId: 'test-repair',
+      maxWorkers: 2,
+    });
+
+    expect(res?.ok).toBe(true);
+    expect(res?.payload).toMatchObject({
+      complexityDecision: {
+        mode: 'runbook-orchestrated',
+        selectedRunbookId: 'test-repair',
+      },
+      runbookSelection: {
+        selected: {
+          runbookId: 'test-repair',
+        },
+        unselected: expect.any(Array),
+      },
+      schedulerMetrics: {
+        concurrencyCap: 2,
+      },
+      resultBundle: {
+        schemaVersion: 1,
+        phase: 'spawn',
+      },
+    });
+  });
+
+  it('returns P4 synthesis in the gateway run payload without removing existing metadata', async () => {
+    vi.mocked(spawnSubagentDirect).mockResolvedValue({
+      status: 'accepted',
+      runId: 'run_gateway_p4',
+      childSessionKey: 'child_gateway_p4',
+    });
+
+    const res = await callHandler('orchestrator.run', {
+      task: 'implement and verify a bounded orchestration result',
+      sessionKey: 'agent:main:gateway-p4',
+      maxWorkers: 2,
+    });
+
+    expect(res?.ok).toBe(true);
+    expect(res?.payload).toMatchObject({
+      resultBundle: {
+        schemaVersion: 1,
+        phase: 'spawn',
+      },
+      schedulerMetrics: {
+        concurrencyCap: 2,
+      },
+      synthesis: {
+        schemaVersion: 1,
+        orchestrationRunId: expect.any(String),
+        status: expect.any(String),
+        policy: {
+          toolAccess: 'none',
+          verifierAuthority: 'preserved',
+          memoryWrite: 'none',
+        },
+      },
+    });
+  });
 });
 
 describe('runOrchestrationObserved (observed execution + tracing)', () => {
@@ -290,7 +457,7 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     };
     clearRuntimeTraceBuffer();
     const result = await runOrchestrationObserved(
-      { task: '重构这个模块并补充测试', fileHints: ['a.ts', 'b.ts', 'c.ts'] },
+      { task: 'Refactor this module and add focused tests', fileHints: ['a.ts', 'b.ts', 'c.ts'] },
       baseCtx,
       { spawn: fakeSpawn as unknown as never },
       { sessionKey: 'agent:main:abc' },
@@ -301,6 +468,27 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     expect(result.failures).toHaveLength(0);
     expect(result.pendingVerifier).toBe(true);
     expect(spawned.some((p) => p.orchestration?.phase === 'verifier')).toBe(false);
+    expect(result.resultBundle).toMatchObject({
+      schemaVersion: 1,
+      phase: 'spawn',
+      orchestrationRunId: expect.any(String),
+      leadRole: result.plan.leadRole,
+    });
+    expect(result.resultBundle.roleOutcomes.length).toBe(result.outcomes.length);
+    expect(result.resultBundle.traceIds.length).toBeGreaterThanOrEqual(1);
+    expect(result.blackboardState.entries.length).toBe(result.outcomes.length);
+    expect(result.blackboardSummary).toMatchObject({
+      entryCount: result.outcomes.length,
+      unresolvedConflicts: 0,
+      trustBoundaries: ['role-output'],
+    });
+    expect(result.schedulerMetrics).toMatchObject({
+      concurrencyCap: expect.any(Number),
+      queued: expect.any(Number),
+      completed: expect.any(Number),
+      skipped: 0,
+    });
+    expect(result.schedulerMetrics.roleCostSummary.length).toBeGreaterThan(0);
     // A trace was stored in the runtime buffer (the core observability fix).
     const traces = getRuntimeTraceBuffer();
     expect(traces.length).toBeGreaterThanOrEqual(1);
@@ -325,8 +513,49 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     );
     expect(result.spawnedRunIds).toHaveLength(0);
     expect(result.failures.length).toBeGreaterThan(0);
+    expect(result.resultBundle.failures.length).toBeGreaterThan(0);
+    expect(result.resultBundle.permissionEvents).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          decision: 'denied',
+          reason: 'max children reached',
+        }),
+      ]),
+    );
+    expect(result.blackboardSummary).toMatchObject({
+      entryCount: result.outcomes.length + result.failures.length,
+      openRisks: result.failures.length,
+      trustBoundaries: ['role-output'],
+    });
     // Trace still persisted even on all-failures.
     expect(getRuntimeTraceBuffer().length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('uses resolved role contracts for scheduler contention when request roles are omitted', async () => {
+    const fakeSpawn = async (): Promise<FakeSpawnResult> => ({
+      status: 'accepted',
+      runId: 'run_conflict',
+      childSessionKey: 'child_conflict',
+    });
+
+    const result = await runOrchestrationObserved(
+      {
+        task: 'write release notes and implementation code',
+        workers: [
+          { roleName: 'implementer', task: 'Implement the change' },
+          { roleName: 'docs-writer', task: 'Document the change' },
+        ],
+        maxWorkers: 2,
+      },
+      baseCtx,
+      { spawn: fakeSpawn as unknown as never },
+    );
+
+    expect(result.schedulerMetrics.concurrencyCap).toBe(2);
+    expect(result.executionWaves.map((wave) => wave.roles)).toEqual([
+      ['implementer'],
+      ['docs-writer'],
+    ]);
   });
 });
 
@@ -371,6 +600,9 @@ describe('team_orchestrate tool', () => {
         scorecardBacked: boolean;
         evidenceRefs: string[];
       };
+      resultPolicy: { completion: string; boundedA2aEnabled: boolean };
+      resultBundle?: unknown;
+      blackboardSummary?: { entryCount: number };
     };
     expect(details.plan.mode).toBe('router');
     expect(details.children).toHaveLength(1);
@@ -391,6 +623,13 @@ describe('team_orchestrate tool', () => {
       evidenceRefs: expect.arrayContaining([expect.stringMatching(/trace:|run:|orchestration:/)]),
     });
     expect(details.qualityStateReason).toMatch(/score/i);
+    expect(details.resultPolicy.boundedA2aEnabled).toBe(true);
+    expect(details.blackboardSummary?.entryCount).toBe(1);
+    expect(details.resultBundle).toMatchObject({
+      schemaVersion: 1,
+      phase: 'spawn',
+      orchestrationRunId: 'orch_test',
+    });
   });
 
   it('uses template roles and reports partial failures', async () => {
@@ -418,6 +657,7 @@ describe('team_orchestrate tool', () => {
       status: string;
       plan: { templateId?: string; verifierRole?: string; workers: Array<{ roleName: string }> };
       executionWaves: Array<{ roles: string[] }>;
+      schedulerMetrics?: { concurrencyCap: number; roleCostSummary: unknown[] };
       failures: unknown[];
       orchestrationDiagnostics?: {
         kind: string;
@@ -444,6 +684,10 @@ describe('team_orchestrate tool', () => {
     expect(details.plan.verifierRole).toBe('skeptic');
     expect(details.plan.workers.map((worker) => worker.roleName)).toEqual(['security-reviewer', 'reviewer', 'tester']);
     expect(details.executionWaves.every((wave) => wave.roles.length <= 2)).toBe(true);
+    expect(details.schedulerMetrics).toMatchObject({
+      concurrencyCap: 2,
+      roleCostSummary: expect.any(Array),
+    });
     expect(details.failures).toHaveLength(2);
     expect(details.expectedChildren).toHaveLength(3);
     expect(details.pendingVerifier).toBe(true);
@@ -483,11 +727,86 @@ describe('team_orchestrate tool', () => {
     expect(details.orchestrationDiagnostics?.nextSteps.join(' ')).toMatch(/Task Loop/i);
     expect(details.orchestrationDiagnostics?.recommendations.map((item) => item.recommendedAction).join(' ')).not.toMatch(/\b(repair|blocked|checkpoint)\b/i);
   });
+
+  it('exposes P2 metadata from team_orchestrate details without granting permissions', async () => {
+    const fakeSpawn = async (): Promise<FakeSpawnResult> => ({
+      status: 'accepted',
+      runId: 'run_p2_tool',
+      childSessionKey: 'child_p2_tool',
+    });
+    const tool = createTeamOrchestrateTool({
+      agentSessionKey: 'agent:main:abc',
+      config: emptyConfig(),
+      deps: {
+        spawn: fakeSpawn as unknown as never,
+        idFactory: () => 'orch_tool_p2',
+      },
+    });
+    const result = await tool.execute('call_1', {
+      task: 'fix failing test suite after repeated failures',
+      priorFailureCount: 2,
+      runbookId: 'test-repair',
+      maxWorkers: 2,
+    });
+    const details = result.details as {
+      complexityDecision?: { mode: string; selectedRunbookId?: string };
+      runbookSelection?: { selected?: { runbookId: string }; unselected: unknown[] };
+      schedulerMetrics?: { concurrencyCap: number };
+      resultBundle?: { schemaVersion: number };
+    };
+
+    expect(details.complexityDecision).toMatchObject({
+      mode: 'runbook-orchestrated',
+      selectedRunbookId: 'test-repair',
+    });
+    expect(details.runbookSelection?.selected).toMatchObject({ runbookId: 'test-repair' });
+    expect(details.schedulerMetrics?.concurrencyCap).toBe(2);
+    expect(details.resultBundle?.schemaVersion).toBe(1);
+  });
+
+  it('exposes P4 synthesis from team_orchestrate details without granting tools', async () => {
+    const fakeSpawn = async (): Promise<FakeSpawnResult> => ({
+      status: 'accepted',
+      runId: 'run_p4_tool',
+      childSessionKey: 'child_p4_tool',
+    });
+    const tool = createTeamOrchestrateTool({
+      agentSessionKey: 'agent:main:abc',
+      config: emptyConfig(),
+      deps: {
+        spawn: fakeSpawn as unknown as never,
+        idFactory: () => 'orch_tool_p4',
+      },
+    });
+    const result = await tool.execute('call_1', {
+      task: 'summarize verified orchestration evidence',
+      maxWorkers: 2,
+    });
+    const details = result.details as {
+      resultBundle?: { schemaVersion: number };
+      schedulerMetrics?: { concurrencyCap: number };
+      synthesis?: {
+        orchestrationRunId: string;
+        policy: { toolAccess: string; verifierAuthority: string; memoryWrite: string };
+      };
+    };
+
+    expect(details.resultBundle?.schemaVersion).toBe(1);
+    expect(details.schedulerMetrics?.concurrencyCap).toBe(2);
+    expect(details.synthesis).toMatchObject({
+      orchestrationRunId: 'orch_tool_p4',
+      policy: {
+        toolAccess: 'none',
+        verifierAuthority: 'preserved',
+        memoryWrite: 'none',
+      },
+    });
+  });
 });
 
 describe('SECURITY: role.tools allowlist is enforced at the policy gate', () => {
   // This is the load-bearing security assertion: a non-empty allowlist is a
-  // TRUE allowlist — tools not listed are denied by isToolAllowedByPolicyName.
+  // TRUE allowlist â€?tools not listed are denied by isToolAllowedByPolicyName.
   it('a role with tools=[read] cannot use write/edit/exec/bash', () => {
     const architect = getBuiltInRoleContract('architect')!;
     // architect.tools = [read, glob, grep] (read-only role)
@@ -567,7 +886,7 @@ describe('SECURITY: role.tools allowlist is enforced at the policy gate', () => 
     };
     const ctx = buildRoleSpawnContext(role, { agentSessionKey: 'agent:main:x' });
     const policy = { allow: ctx.inheritedToolAllowlist, deny: ctx.inheritedToolDenylist };
-    // A non-empty command allowlist with read-only fs → shell denied at tool level
+    // A non-empty command allowlist with read-only fs â†?shell denied at tool level
     expect(isToolAllowedByPolicyName('exec', policy)).toBe(false);
     expect(isToolAllowedByPolicyName('bash', policy)).toBe(false);
   });

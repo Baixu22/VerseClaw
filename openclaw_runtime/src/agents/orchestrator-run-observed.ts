@@ -35,6 +35,9 @@ import {
   buildOrdinaryOrchestrationQualityScorecard,
   type OrdinaryOrchestrationQualityScorecard,
 } from "./orchestration-quality-scorecard.js";
+  scheduleResourceAwareWaves,
+  type ResourceSchedulerMetrics,
+} from "./orchestration-resource-scheduler.js";
 import {
   createRoleFirstTrace,
   completeObservedRun,
@@ -47,6 +50,14 @@ import {
   type OrchestrationResultBundle,
   type RoleOutcomeBundle,
 } from "./orchestration-result-bundle.js";
+
+import type { BlackboardState } from "./orchestration-blackboard.js";
+import type { BlackboardTraceEvent } from "./orchestration-blackboard-trace.js";
+import {
+  buildRuntimeBlackboard,
+  type RuntimeBlackboardFailure,
+} from "./orchestration-runtime-blackboard.js";
+import type { BlackboardSynthesisSummary } from "./orchestration-synthesizer.js";
 
 export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
   cfg?: RoleRegistryConfigCarrier;
@@ -77,6 +88,7 @@ export type OrchestrationRunResult = {
   taskGraph: OrchestrationTaskGraph;
   graphStatus: OrchestrationTaskGraph["status"];
   executionWaves: OrchestratorPlan["executionWaves"];
+  schedulerMetrics: ResourceSchedulerMetrics;
   pendingGraphNodes: OrchestrationTaskNode[];
   repairNodes: OrchestrationRepairNode[];
   rerouteRecommendations: OrchestrationRerouteRecommendation[];
@@ -84,6 +96,10 @@ export type OrchestrationRunResult = {
   /** Worker tasks that failed to spawn (status !== "accepted"). */
   failures: Array<{ roleName: string; status: string; error?: string }>;
   resultBundle: OrchestrationResultBundle;
+
+  blackboardState: BlackboardState;
+  blackboardSummary: BlackboardSynthesisSummary;
+  blackboardTraceEvents: BlackboardTraceEvent[];
 };
 
 export type ObservedOrchestrationTraceAttrs = {
@@ -115,6 +131,17 @@ function resolvePlanRole(
   request: ObservedOrchestrationRunRequest,
 ): RoleContract | undefined {
   return request.roles?.find((role) => role.name === roleName) ?? resolveRoleContract(roleName, request.cfg);
+}
+
+function resolvePlanRoles(
+  plan: OrchestratorPlan,
+  request: ObservedOrchestrationRunRequest,
+): RoleContract[] {
+  const roleNames = new Set(plan.taskGraph.nodes.map((node) => node.roleName));
+  return [...roleNames].flatMap((roleName) => {
+    const role = resolvePlanRole(roleName, request);
+    return role ? [role] : [];
+  });
 }
 
 function formatRoleOutput(role: RoleContract | undefined): string {
@@ -289,6 +316,7 @@ export async function runOrchestrationWithRecorder(
   const orchestrationRunId = request.orchestrationRunId ?? `orch_${Date.now().toString(36)}`;
 
   let plan: OrchestratorPlan;
+  let schedule: ReturnType<typeof scheduleResourceAwareWaves>;
   try {
     const planSpan = recorder.startSpan({
       name: "orchestrator",
@@ -296,14 +324,20 @@ export async function runOrchestrationWithRecorder(
       input: request.task,
     });
     plan = createOrchestratorPlan(request);
+    schedule = scheduleResourceAwareWaves({
+      graph: plan.taskGraph,
+      roles: resolvePlanRoles(plan, request),
+      options: { maxActiveRoles: request.maxWorkers },
+    });
     recorder.endSpan(planSpan.id, {
       output: plan.mode,
-      metrics: { workers: plan.workers.length },
+      metrics: { workers: plan.workers.length, ...schedule.metrics },
       attributes: {
         leadRole: plan.leadRole,
         verifierRole: plan.verifierRole,
         reasons: plan.reasons,
         routeDiagnostics: plan.routeDiagnostics,
+        schedulerMetrics: schedule.metrics,
       },
     });
   } catch (error) {
@@ -396,7 +430,7 @@ export async function runOrchestrationWithRecorder(
                   followupOf: ledger.followupOf,
                   executionWave: ledger.executionWave,
                   taskGraph: plan.taskGraph,
-                  executionWaves: plan.executionWaves,
+                  executionWaves: schedule.waves,
                   routeDiagnostics: plan.routeDiagnostics,
                   qualityPolicy: request.qualityPolicy,
                   repairPolicy: request.repairPolicy,
@@ -487,7 +521,7 @@ export async function runOrchestrationWithRecorder(
   const workerNodes = taskGraphWorkerNodes(plan.taskGraph);
   const workerNodeById = new Map(workerNodes.map((node) => [node.taskNodeId, node]));
   const fallbackIndex = new Map(workerNodes.map((node, index) => [node.taskNodeId, index]));
-  for (const wave of plan.executionWaves) {
+  for (const wave of schedule.waves) {
     const nodes = wave.taskNodeIds
       .map((taskNodeId) => workerNodeById.get(taskNodeId))
       .filter((node): node is OrchestrationTaskNode => Boolean(node));
@@ -585,6 +619,13 @@ export async function runOrchestrationWithRecorder(
     permissionEvents: permissionEventsFromFailures(failures),
     traceIds: [trace.id],
   });
+
+  const blackboard = buildRuntimeBlackboard({
+    resultBundle,
+    failures: failures satisfies RuntimeBlackboardFailure[],
+    knownRoleNames: plan.taskGraph.nodes.map((node) => node.roleName),
+    now: new Date().toISOString(),
+  });
   return {
     plan,
     outcomes,
@@ -594,13 +635,18 @@ export async function runOrchestrationWithRecorder(
     attempts: outcomes.map((outcome) => outcome.ledger),
     taskGraph: plan.taskGraph,
     graphStatus: failures.length > 0 ? "partial" : "completed",
-    executionWaves: plan.executionWaves,
+    executionWaves: schedule.waves,
+    schedulerMetrics: schedule.metrics,
     pendingGraphNodes: [],
     repairNodes,
     rerouteRecommendations,
     qualityScorecard,
     failures,
     resultBundle,
+
+    blackboardState: blackboard.state,
+    blackboardSummary: blackboard.summary,
+    blackboardTraceEvents: blackboard.traceEvents,
   };
 }
 
