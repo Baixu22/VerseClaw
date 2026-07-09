@@ -1,12 +1,16 @@
 import type { McpCallToolResult } from '@shared/types/mcp';
 import type {
+  RuntimeShadowRegistryDiagnostic,
+  RuntimeShadowToolCallRequest,
+  RuntimeShadowToolCallResult,
+  RuntimeShadowToolProviderManifest,
+} from '@shared/types/runtime-tool-shadow';
   RuntimeCoreJsonObject,
   RuntimeRegistryDiagnostic,
   RuntimeToolProviderManifest,
   ToolCallRequest,
   ToolCallResult,
-} from '../../openclaw_runtime/src/runtime-core';
-import type {
+} from '../../openclaw_runtime/src/runtime-core';import type {
   McpToolCallRequestShadow,
   McpToolCallResultShadow,
 } from './tool-protocol-shadow';
@@ -17,7 +21,7 @@ export const BUILTIN_HOST_TOOL_DIAGNOSTIC_PROVIDER_ID = 'builtin-host-tool-compa
 const VERSE_CLAW_GIT_MCP_SERVER_ID = 'clawx-git';
 const SUPPORTED_MCP_CONTENT_TYPES = new Set(['text', 'resource']);
 
-export const MCP_CALL_TOOL_COMPAT_PROVIDER_MANIFEST: RuntimeToolProviderManifest = {
+export const MCP_CALL_TOOL_COMPAT_PROVIDER_MANIFEST: RuntimeShadowToolProviderManifest = {
   id: MCP_CALL_TOOL_COMPAT_PROVIDER_ID,
   kind: 'tool',
   title: 'MCP callTool compatibility provider',
@@ -77,20 +81,20 @@ export type McpToolProviderRegistryShadowRuntimeFlags = {
 export type McpToolProviderRegistryRequestShadow = {
   kind: 'tool_provider.request';
   schemaVersion: 1;
-  provider: RuntimeToolProviderManifest;
+  provider: RuntimeShadowToolProviderManifest;
   operation: 'mcp.callTool';
-  request: ToolCallRequest;
-  diagnostics: RuntimeRegistryDiagnostic[];
+  request: RuntimeShadowToolCallRequest;
+  diagnostics: RuntimeShadowRegistryDiagnostic[];
 };
 
 export type McpToolProviderRegistryResultShadow = {
   kind: 'tool_provider.result';
   schemaVersion: 1;
-  provider: RuntimeToolProviderManifest;
+  provider: RuntimeShadowToolProviderManifest;
   operation: 'mcp.callTool';
-  request: ToolCallRequest;
-  result: ToolCallResult;
-  diagnostics: RuntimeRegistryDiagnostic[];
+  request: RuntimeShadowToolCallRequest;
+  result: RuntimeShadowToolCallResult;
+  diagnostics: RuntimeShadowRegistryDiagnostic[];
   shadow: {
     legacyResponseShape: 'McpCallToolResult';
     legacyAuthoritative: true;
@@ -144,6 +148,7 @@ function providerEvidenceRef(callId: string) {
   };
 }
 
+function requestDiagnostic(request: RuntimeShadowToolCallRequest): RuntimeShadowRegistryDiagnostic {
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
@@ -248,8 +253,7 @@ function resultDiagnosticClassification(
   };
 }
 
-function requestDiagnostic(request: ToolCallRequest): RuntimeRegistryDiagnostic {
-  return {
+function requestDiagnostic(request: ToolCallRequest): RuntimeRegistryDiagnostic {  return {
     surface: 'tool',
     providerId: MCP_CALL_TOOL_COMPAT_PROVIDER_ID,
     status: 'ok',
@@ -267,9 +271,9 @@ function requestDiagnostic(request: ToolCallRequest): RuntimeRegistryDiagnostic 
 function resultDiagnostic(
   resultShadow: McpToolCallResultShadow,
   legacyResult?: McpCallToolResult,
+): RuntimeShadowRegistryDiagnostic {
 ): RuntimeRegistryDiagnostic {
-  const classification = resultDiagnosticClassification(resultShadow, legacyResult);
-  return {
+  const classification = resultDiagnosticClassification(resultShadow, legacyResult);  return {
     surface: 'tool',
     providerId: MCP_CALL_TOOL_COMPAT_PROVIDER_ID,
     status: classification.status,

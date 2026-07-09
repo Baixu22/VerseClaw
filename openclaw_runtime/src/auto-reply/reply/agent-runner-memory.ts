@@ -38,6 +38,10 @@ import { emitAgentEvent, registerAgentRunContext } from "../../infra/agent-event
 import { formatErrorMessage } from "../../infra/errors.js";
 import { isAbortError } from "../../infra/unhandled-rejections.js";
 import { resolveMemoryFlushPlan } from "../../plugins/memory-state.js";
+import {
+  clearCompassFactsCache,
+  triggerSSPVersionBump,
+} from "../../runtime-core/memory-pre-reply-injection.js";
 import { CommandLane } from "../../process/lanes.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
 import type { TemplateContext } from "../templating.js";
@@ -1352,6 +1356,12 @@ export async function runMemoryFlushIfNeeded(params: {
           });
         }
       }
+    }
+    // COMPASS 协同: flush 成功后清除 facts 缓存 + bump SSP version.
+    // 确保下一轮 pre-reply 立即看到新写入的 facts + 强制 I-frame 刷新.
+    if (memoryCompactionCompleted && params.sessionKey) {
+      clearCompassFactsCache();
+      void triggerSSPVersionBump(params.sessionKey).catch(() => {});
     }
     if (params.storePath && params.sessionKey) {
       try {

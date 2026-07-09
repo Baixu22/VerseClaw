@@ -198,7 +198,7 @@ describe("Phase 6: Relation chain", () => {
   // === AUDN auto-generation ===
 
   describe("AUDN auto-generates relations", () => {
-    it("AUDN UPDATE generates supersedes relation (confidence 0.9)", () => {
+    it("AUDN UPDATE disabled — refinement candidate is skipped, no relation generated (project_memory.md constraint)", () => {
       const dbPath = createTempDbPath();
       const integration = createRuntimeMemoryRuntimeIntegration({
         config: { runtime: { memory: { persist: true } } },
@@ -210,11 +210,6 @@ describe("Phase 6: Relation chain", () => {
       integration.migrate();
 
       // Write an existing fact (verified)
-      const existing = makeCandidate("old_fact", "User", "prefers dark theme", {
-        verificationStatus: "verified",
-        acceptedAt: 100,
-        promotion: { promotedBy: "verifier", evidenceRefs: [] },
-      });
       // Convert to a full fact for direct append (bypass curation)
       integration.appendFact(buildRuntimeMemoryTemporalFactFixture({
         factId: "old_fact",
@@ -226,7 +221,9 @@ describe("Phase 6: Relation chain", () => {
         acceptedAt: 100,
       }));
 
-      // Write a candidate that triggers UPDATE (same subject+predicate, high overlap)
+      // Write a refinement candidate (high overlap, non-contradictory).
+      // UPDATE 已禁用 (project_memory.md). 信号层对 verified-existing vs candidate
+      // 保守返回 NONE → candidate 被 skipped, 不持久化, 不生成 relation.
       const candidate = makeCandidate("new_fact", "User", "prefers dark theme with serif fonts", {
         proposedAt: 200,
         valid_at: 200,
@@ -234,14 +231,13 @@ describe("Phase 6: Relation chain", () => {
       });
 
       const result = integration.appendFact(candidate);
-      expect(result.status).toBe("persisted");
+      expect(result.status).toBe("skipped");
 
       const loaded = integration.loadStore();
       expect(loaded.status).toBe("loaded");
       const relations = loaded.store.queryRelations("new_fact");
       const supersedes = relations.filter((r) => r.relationType === "supersedes");
-      expect(supersedes.length).toBeGreaterThanOrEqual(1);
-      expect(supersedes[0].targetFactId).toBe("old_fact");
+      expect(supersedes.length).toBe(0);
     });
 
     it("AUDN SUPERSEDE generates supersedes (1.0) + contradicts (0.8) relations", () => {

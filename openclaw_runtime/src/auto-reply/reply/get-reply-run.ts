@@ -106,6 +106,15 @@ import { buildSessionStartupContextPrelude, shouldApplyStartupContext } from "./
 import { resolveTypingMode } from "./typing-mode.js";
 import { resolveRunTypingPolicy } from "./typing-policy.js";
 import type { TypingController } from "./typing.js";
+// COMPASS 2.0: Pre-reply injection (SSP + Hybrid Retrieval).
+// 生产路径启用: SSP 默认开启 (256 tokens 有界状态), retrieval 需配合 runtime.memory.persist.
+// 环境变量 escape hatch: OPENCLAW_COMPASS_DISABLE=1 全部关闭.
+import {
+  buildPreReplyInjection,
+  resolveCompassConfig,
+  loadCompassFacts,
+  observePostReplyInjection,
+} from "../../runtime-core/memory-pre-reply-injection.js";
 
 type InternalGetReplyOptions = GetReplyOptions & {
   /**
@@ -614,7 +623,24 @@ export async function runPreparedReply(
     isNewSession ? sessionCtx : { ...sessionCtx, ThreadStarterBody: undefined },
     { includeFormattingHints: !useFastReplyRuntime },
   );
+  // COMPASS 2.0: Pre-reply injection (SSP + Hybrid Retrieval top-5).
+  // 方案 D — unshift 到 extraSystemPromptParts 最前, 绕过 context-engine.
+  // 生产路径启用: resolveCompassConfig 从 cfg + 环境变量解析 flags (SSP 默认开, retrieval 默认关).
+  const compassUserInputText =
+    ctx.Body ?? ctx.RawBody ?? ctx.CommandBody ?? sessionCtx.Body ?? "";
+  const compassConfig = resolveCompassConfig(cfg);
+  const compassFacts = compassConfig.featureFlags.enablePreReplyRetrieval
+    ? loadCompassFacts(cfg)
+    : [];
+  const compassInjection = await buildPreReplyInjection({
+    sessionKey: runtimePolicySessionKey ?? sessionKey ?? sessionId,
+    userInputText: typeof compassUserInputText === "string" ? compassUserInputText : "",
+    config: compassConfig,
+    facts: compassFacts,
+  });
   const extraSystemPromptParts = [
+    compassInjection.sspString,        // COMPASS: SSP 注入 (最前)
+    compassInjection.top5FactsString,  // COMPASS: Hybrid retrieval top-5
     inboundMetaPrompt,
     directChatContext,
     groupChatContext,
@@ -1361,7 +1387,7 @@ export async function runPreparedReply(
         }
       : undefined;
 
-  return runReplyAgent({
+  const compassReply = await runReplyAgent({
     commandBody: prefixedCommandBody,
     transcriptCommandBody,
     followupRun,
@@ -1402,4 +1428,17 @@ export async function runPreparedReply(
     replyThreadingOverride,
     replyOperation: providedReplyOperation,
   });
+  // P0: post-reply injection outcome observation (fire-and-forget, 不阻塞 reply 返回).
+  // 从 compassReply 提取可见文本, 计算 injectionEfficiency, 补充 SSP decisionHistory.
+  // 降级: injectedFactIds 为空 / reply 文本为空 / facts 为空 → observePostReplyInjection 返回 null.
+  void observePostReplyInjection({
+    reply: compassReply,
+    injectedFactIds: compassInjection.injectedFactIds,
+    facts: compassFacts,
+    sessionKey: runtimePolicySessionKey ?? sessionKey ?? sessionId,
+    turn: (compassInjection.updatedSSP?.decisionHistory.length ?? 0) + 1,
+  }).catch(() => {
+    // 降级: 观测失败不影响 reply 返回
+  });
+  return compassReply;
 }

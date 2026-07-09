@@ -40,6 +40,7 @@
  */
 
 import { promises as fsP } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import type { SessionArchiveEntry, SessionArchiveIndex } from '@shared/types/workspace';
 
@@ -140,6 +141,13 @@ export interface SweepResult {
   removed: string[];
   errors: Array<{ path: string; error: NodeJS.ErrnoException }>;
 }
+
+export interface ContextArchiveCleanupResult {
+  removed: string[];
+  errors: Array<{ path: string; error: string }>;
+}
+
+const CONTEXT_ARCHIVE_FILE_SUFFIX = '.context-archive.json';
 
 /**
  * Schema marker written by OpenClaw's `writeTrajectoryPointerBestEffort`.
@@ -267,6 +275,53 @@ export async function sweepSessionArtefacts(
   return result;
 }
 
+export async function cleanupContextArchiveArtifacts(params: {
+  sessionIds: string[];
+  archiveRoot?: string;
+}): Promise<ContextArchiveCleanupResult> {
+  const root = path.resolve(
+    params.archiveRoot
+      ?? process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR
+      ?? path.join(os.tmpdir(), 'openclaw-context-archive'),
+  );
+  const removed: string[] = [];
+  const errors: Array<{ path: string; error: string }> = [];
+
+  for (const sessionId of params.sessionIds.map(sanitizeArchivePathSegment)) {
+    if (!sessionId) continue;
+    const sessionDir = path.join(root, sessionId);
+    try {
+      const entries = await fsP.readdir(sessionDir);
+      await Promise.all(entries.map(async (entry) => {
+        if (!entry.endsWith(CONTEXT_ARCHIVE_FILE_SUFFIX)) return;
+        const filePath = path.join(sessionDir, entry);
+        try {
+          await fsP.unlink(filePath);
+          removed.push(filePath);
+        } catch (error) {
+          errors.push({
+            path: filePath,
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+      }));
+      await fsP.rmdir(sessionDir).catch(() => undefined);
+    } catch (error) {
+      if ((error as { code?: unknown }).code !== 'ENOENT') {
+        errors.push({
+          path: sessionDir,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+  }
+
+  return {
+    removed: removed.sort(),
+    errors: errors.sort((a, b) => a.path.localeCompare(b.path)),
+  };
+}
+
 /**
  * Remove `sessionKey` from a parsed sessions.json object (mutates in place).
  * Handles both the array-shape (`{ sessions: [...] }`) and the object-keyed
@@ -284,6 +339,12 @@ export function removeSessionEntry(
   }
 }
 
+function sanitizeArchivePathSegment(value: string): string {
+  return value
+    .trim()
+    .replace(/[^A-Za-z0-9._-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
 /**
  * Snapshot the sessions.json entry for `sessionKey` so it can be re-inserted
  * verbatim on restore. Returns the raw entry value (object or string) or
@@ -468,5 +529,4 @@ export async function removeArchiveEntry(
   });
   const next: SessionArchiveIndex = { version: 1, entries };
   await writeArchiveIndex(archiveIndexPath, next);
-  return { index: next, removed };
-}
+  return { index: next, removed };}

@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { Lang, parse, type SgNode } from "@ast-grep/napi";
+import { createRequire } from "node:module";
 import type { EvidenceRef } from "./evidence.js";
 import {
   EDIT_PLAN_AUTHORITY_BOUNDARY,
@@ -162,6 +162,28 @@ type Replacement = {
   text: string;
 };
 
+type AstGrepNode = {
+  text(): string;
+  kind(): unknown;
+  range(): {
+    start: { index: number; line: number; column: number };
+    end: { index: number; line: number; column: number };
+  };
+  getMatch(name: string): AstGrepNode | null | undefined;
+};
+
+type AstGrepModule = {
+  Lang: {
+    Tsx: unknown;
+    TypeScript: unknown;
+  };
+  parse(language: unknown, content: string): {
+    root(): {
+      findAll(pattern: string): AstGrepNode[];
+    };
+  };
+};
+
 const AST_GREP_ADAPTER_EVIDENCE_REF: EvidenceRef = {
   type: "file",
   ref: "openclaw_runtime/src/runtime-core/ast-grep-edit-plan-adapter.ts",
@@ -170,6 +192,9 @@ const AST_GREP_ADAPTER_EVIDENCE_REF: EvidenceRef = {
 
 const METAVARIABLE_RE = /\$([A-Z_][A-Z0-9_]*)/gu;
 const UNSUPPORTED_RULE_KEYS = ["transform", "transforms", "rewriters", "utils"] as const;
+const requireAstGrep = createRequire(import.meta.url);
+let cachedAstGrep: AstGrepModule | undefined;
+let astGrepLoadAttempted = false;
 
 export function generateAstGrepEditPlanReadonlyCandidates(
   input: AstGrepEditPlanAdapterInput,
@@ -514,6 +539,10 @@ function scanTargets(
   rule: AstGrepEditPlanRule,
   validation: Extract<RuleValidation, { status: "accepted" }>,
 ): CandidateMatch[] {
+  const astGrep = loadAstGrepModule();
+  if (!astGrep) {
+    throw new Error("@ast-grep/napi is not installed");
+  }
   const constraints = parseConstraintMatchers(
     rule.constraints,
     new Set(validation.patternMetavariables),
@@ -521,7 +550,7 @@ function scanTargets(
   );
   const matches: CandidateMatch[] = [];
   for (const target of targets) {
-    const root = parse(langFor(target.language), target.content);
+    const root = astGrep.parse(langFor(astGrep, target.language), target.content);
     for (const node of root.root().findAll(rule.pattern)) {
       const metavariables = metavariableHashes(node, validation.patternMetavariables);
       if (!constraintsPass(metavariables, constraints)) {
@@ -1056,7 +1085,7 @@ function constraintsPass(
 }
 
 function metavariableHashes(
-  node: SgNode,
+  node: AstGrepNode,
   names: readonly string[],
 ): Record<string, { text: string; textHash: string }> {
   return Object.fromEntries(names.map((name) => {
@@ -1066,11 +1095,11 @@ function metavariableHashes(
   }));
 }
 
-function renderReplacement(fix: string, node: SgNode): string {
+function renderReplacement(fix: string, node: AstGrepNode): string {
   return fix.replace(METAVARIABLE_RE, (_match, name: string) => node.getMatch(name)?.text() ?? "");
 }
 
-function rangeFromNode(node: SgNode): AstPatchPlannerRange {
+function rangeFromNode(node: AstGrepNode): AstPatchPlannerRange {
   const range = node.range();
   return {
     start: range.start.index,
@@ -1234,8 +1263,21 @@ function languageFromFilePath(filePath: string): AstPatchPlannerLanguage | undef
   return undefined;
 }
 
-function langFor(language: AstPatchPlannerLanguage): Lang {
-  return language === "tsx" ? Lang.Tsx : Lang.TypeScript;
+function langFor(astGrep: AstGrepModule, language: AstPatchPlannerLanguage): unknown {
+  return language === "tsx" ? astGrep.Lang.Tsx : astGrep.Lang.TypeScript;
+}
+
+function loadAstGrepModule(): AstGrepModule | undefined {
+  if (cachedAstGrep || astGrepLoadAttempted) {
+    return cachedAstGrep;
+  }
+  astGrepLoadAttempted = true;
+  try {
+    cachedAstGrep = requireAstGrep("@ast-grep/napi") as AstGrepModule;
+  } catch {
+    cachedAstGrep = undefined;
+  }
+  return cachedAstGrep;
 }
 
 function isOverbroadPattern(pattern: string): boolean {

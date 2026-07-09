@@ -9,6 +9,11 @@ import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import { resolveAgentModelFallbackValues } from "../../config/model-input.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import {
+  createContextItemId,
+  createTransformationLifecycleEvents,
+  recordContextFamilyLifecycleEvents,
+} from "../../context-engine/registry/context-item-registry.js";
+import {
   captureCompactionCheckpointSnapshotAsync,
   cleanupCompactionCheckpointSnapshot,
   persistSessionCompactionCheckpoint,
@@ -65,6 +70,7 @@ import {
   isSilentOverflowProneModel,
 } from "../agent-settings.js";
 import { createOpenClawCodingTools, resolveProcessToolScopeKey } from "../agent-tools.js";
+import type { LifecycleEvent } from "../../../../shared/types/context-family.js";
 import { listActiveProcessSessionReferences } from "../bash-process-references.js";
 import {
   makeBootstrapWarn,
@@ -418,6 +424,46 @@ function fallbackFailureToCompactionResult(err: unknown): EmbeddedAgentCompactRe
     compacted: false,
     reason,
   };
+}
+
+export function buildCompactionLifecycleEvents(params: {
+  sessionId: string;
+  checkpointId: string;
+  sourceItemCount?: number;
+  derivedItemIds?: string[];
+  tokensBefore?: number;
+  tokensAfter?: number;
+  summaryChars?: number;
+  reason?: string;
+}): LifecycleEvent[] {
+  const sourceItemCount =
+    typeof params.sourceItemCount === "number" && Number.isFinite(params.sourceItemCount)
+      ? Math.max(0, Math.floor(params.sourceItemCount))
+      : undefined;
+  return createTransformationLifecycleEvents({
+    sessionId: params.sessionId,
+    itemId: createContextItemId(params.sessionId, "derived", params.checkpointId),
+    from: "active",
+    to: "compacted",
+    reason: "runtime_compaction",
+    actor: "compact",
+    source: {
+      type: "compaction",
+      sessionId: params.sessionId,
+      ownerId: params.checkpointId,
+    },
+    derivedItemIds: (params.derivedItemIds ?? []).map((id) =>
+      createContextItemId(params.sessionId, "derived", id),
+    ),
+    metadata: {
+      checkpointId: params.checkpointId,
+      compactionReason: params.reason,
+      sourceItemCount,
+      tokensBefore: params.tokensBefore,
+      tokensAfter: params.tokensAfter,
+      summaryChars: params.summaryChars,
+    },
+  });
 }
 
 /**
@@ -1522,6 +1568,17 @@ async function compactEmbeddedAgentSessionDirectOnce(
                 `delta.estTokens=${typeof preMetrics.estTokens === "number" && typeof postMetrics.estTokens === "number" ? postMetrics.estTokens - preMetrics.estTokens : "unknown"}`,
             );
           }
+          recordContextFamilyLifecycleEvents(buildCompactionLifecycleEvents({
+            sessionId: activeSessionId,
+            checkpointId: activePostLeafId ?? params.sessionKey ?? 'compaction',
+            sourceItemCount: messageCountCompactionInput,
+            tokensBefore: observedTokenCount ?? result.tokensBefore,
+            tokensAfter,
+            summaryChars: typeof result.summary === "string" ? result.summary.length : undefined,
+            reason: resolveSessionCompactionCheckpointReason({
+              trigger: params.trigger,
+            }),
+          }));
           await runAfterCompactionHooks({
             hookRunner,
             sessionId: activeSessionId,

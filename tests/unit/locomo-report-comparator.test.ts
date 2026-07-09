@@ -414,11 +414,11 @@ describe("loadReportFromFile", () => {
     const m = loadReportFromFile(path, "current");
     expect(m.source).toBe("current");
     expect(m.version).toBe("10.0-stage2-adaptive-retrieval");
-    expect(m.overallJ).toBeCloseTo(0.718, 6);
+    expect(m.overallJ).toBeCloseTo(0.752, 6);
     expect(m.overallContextRecall).toBeCloseTo(0.008, 6);
     // 新 schema — byCategory snake_case
-    expect(m.byCategoryJ.temporal).toBeCloseTo(0.7866666666666666, 14);
-    expect(m.byCategoryJ.multi_hop).toBeCloseTo(0.5208333333333334, 14);
+    expect(m.byCategoryJ.temporal).toBeCloseTo(0.8066666666666666, 14);
+    expect(m.byCategoryJ.multi_hop).toBeCloseTo(0.6145833333333334, 14);
     expect(m.byCategoryContextRecall?.temporal).toBe(0);
     expect(m.byCategoryContextRecall?.multi_hop).toBeCloseTo(0.041666666666666664, 14);
   });
@@ -590,8 +590,8 @@ describe("集成测试: 真实 baseline reports", () => {
     expect(phase3).not.toBeNull();
     expect(current).not.toBeNull();
     const delta = compareReports(phase3!, current!);
-    // overall J: 0.452 → 0.718 = +0.266
-    expect(delta.overallJ).toBeCloseTo(0.266, 4);
+    // overall J: 0.452 -> 0.752 = +0.300
+    expect(delta.overallJ).toBeCloseTo(0.300, 4);
     expect(delta.hasRegression).toBe(false);
     expect(delta.improvedCategories.length).toBe(4);
     expect(delta.regressedCategories).toEqual([]);
@@ -623,8 +623,8 @@ describe("集成测试: 真实 baseline reports", () => {
     expect(phase4).not.toBeNull();
     expect(current).not.toBeNull();
     const delta = compareReports(phase4!, current!);
-    // overall J: 0.386 → 0.718 = +0.332
-    expect(delta.overallJ).toBeCloseTo(0.332, 4);
+    // overall J: 0.386 -> 0.752 = +0.366
+    expect(delta.overallJ).toBeCloseTo(0.366, 4);
     expect(delta.hasRegression).toBe(false);
     expect(delta.improvedCategories.length).toBe(4);
   });

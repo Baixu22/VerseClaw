@@ -3,7 +3,14 @@
  */
 import { isRecord } from "@openclaw/normalization-core/record-coerce";
 import type { SessionContextBudgetStatus } from "../../../config/sessions.js";
+import {
+  createContextArchiveHandleForPayload,
+  createContextItemId,
+  createTransformationLifecycleEvents,
+  verifyContextArchiveHandle,
+} from "../../../context-engine/registry/context-item-registry.js";
 import { estimateStringChars } from "../../../utils/cjk-chars.js";
+import type { ArchiveHandle, LifecycleEvent } from "../../../../../shared/types/context-family.js";
 import {
   MIN_PROMPT_BUDGET_RATIO,
   MIN_PROMPT_BUDGET_TOKENS,
@@ -36,6 +43,11 @@ export type PreemptiveCompactionDecision = {
   overflowTokens: number;
   toolResultReducibleChars: number;
   effectiveReserveTokens: number;
+  observationMasking?: {
+    verifiedMaskedCount: number;
+    projectedPromptTokens: number;
+    tokenReduction: number;
+  };
 };
 
 /** Token pressure reported by the rendered provider-boundary prompt when available. */
@@ -43,6 +55,42 @@ export type LlmBoundaryTokenPressure = {
   estimatedPromptTokens: number;
   source: string;
   renderedChars?: number;
+};
+
+export type ObservationMaskingRouteInput = {
+  enabled: boolean;
+  verifiedMaskedCount: number;
+  projectedPromptTokens: number;
+};
+
+export type ObservationMaskingProjectionResult = {
+  messages: AgentMessage[];
+  maskedCount: number;
+  estimatedTokenReduction: number;
+  diagnostics: string[];
+  archiveHandles: ArchiveHandle[];
+};
+
+export type ContextFamilyPolicyPromotionMetrics = {
+  behavior: "observation_masking_projection";
+  rollbackFlag: "runtime.contextFamily.observationMasking.enabled=false";
+  baselineRoute: PreemptiveCompactionRoute;
+  promotedRoute: PreemptiveCompactionRoute;
+  tokenReduction: {
+    baselinePromptTokens: number;
+    projectedPromptTokens: number;
+    reductionTokens: number;
+    reductionRatio: number;
+  };
+  evidenceRetention: {
+    archivedHandleCount: number;
+    verifiedMaskedCount: number;
+  };
+  recoveryFidelity: {
+    recallable: boolean;
+    diagnostics: string[];
+  };
+  failureModes: string[];
 };
 
 function estimateStringTokenPressure(text: string, charsPerToken = ESTIMATED_CHARS_PER_TOKEN) {
@@ -148,6 +196,223 @@ function estimateContentTokenPressure(content: unknown): number {
 function isToolResultMessage(message: AgentMessage): boolean {
   const record = message as unknown as { role?: unknown; type?: unknown };
   return record.role === "toolResult" || record.role === "tool" || record.type === "toolResult";
+}
+
+function getToolResultTextLength(message: AgentMessage): number {
+  const content = (message as unknown as { content?: unknown }).content;
+  if (typeof content === "string") {
+    return content.length;
+  }
+  if (!Array.isArray(content)) {
+    return 0;
+  }
+  return content.reduce((sum, block) => {
+    if (isRecord(block) && block.type === "text" && typeof block.text === "string") {
+      return sum + block.text.length;
+    }
+    return sum;
+  }, 0);
+}
+
+function getMessageStableId(message: AgentMessage, index: number): string {
+  const record = message as unknown as Record<string, unknown>;
+  const value = record.id ?? record.toolCallId ?? record.tool_call_id ?? record.callId ?? record.toolUseId;
+  return typeof value === "string" && value.trim() ? value.trim() : `message-${index}`;
+}
+
+function replaceToolResultTextWithPlaceholder(message: AgentMessage, placeholder: string): AgentMessage {
+  const content = (message as unknown as { content?: unknown }).content;
+  if (typeof content === "string") {
+    return {
+      ...(message as unknown as Record<string, unknown>),
+      content: placeholder,
+    } as AgentMessage;
+  }
+  if (!Array.isArray(content)) {
+    return message;
+  }
+  let replaced = false;
+  const nextContent = content.map((block) => {
+    if (!isRecord(block) || block.type !== "text" || typeof block.text !== "string") {
+      return block;
+    }
+    if (replaced) {
+      return { ...block, text: "" };
+    }
+    replaced = true;
+    return { ...block, text: placeholder };
+  });
+  return {
+    ...(message as unknown as Record<string, unknown>),
+    content: nextContent,
+  } as AgentMessage;
+}
+
+function formatObservationMaskPlaceholder(params: {
+  itemId: string;
+  archiveHandle: ArchiveHandle;
+  originalChars: number;
+}): string {
+  return [
+    "[Context observation masked]",
+    `itemId: ${params.itemId}`,
+    `archive: ${params.archiveHandle.uri}`,
+    `checksum: ${params.archiveHandle.checksum}`,
+    `originalChars: ${params.originalChars}`,
+    "Recall through the read-only Context Family recall surface before relying on omitted details.",
+  ].join("\n");
+}
+
+export async function buildObservationMaskingProjection(params: {
+  enabled: boolean;
+  messages: AgentMessage[];
+  sessionId?: string;
+  minChars?: number;
+  preserveNewestObservationCount?: number;
+  archiveRoot?: string;
+}): Promise<ObservationMaskingProjectionResult> {
+  if (!params.enabled) {
+    return {
+      messages: params.messages,
+      maskedCount: 0,
+      estimatedTokenReduction: 0,
+      diagnostics: [],
+      archiveHandles: [],
+    };
+  }
+  const sessionId = params.sessionId?.trim();
+  if (!sessionId) {
+    return {
+      messages: params.messages,
+      maskedCount: 0,
+      estimatedTokenReduction: 0,
+      diagnostics: ["missing_session_id"],
+      archiveHandles: [],
+    };
+  }
+  const minChars = Math.max(1, Math.floor(params.minChars ?? 8_000));
+  const preserveNewestObservationCount = Math.max(
+    0,
+    Math.floor(params.preserveNewestObservationCount ?? 1),
+  );
+  const candidates = params.messages
+    .map((message, index) => ({
+      message,
+      index,
+      textLength: getToolResultTextLength(message),
+    }))
+    .filter((candidate) => isToolResultMessage(candidate.message) && candidate.textLength >= minChars);
+  const maskable = candidates.slice(0, Math.max(0, candidates.length - preserveNewestObservationCount));
+  if (maskable.length === 0) {
+    return {
+      messages: params.messages,
+      maskedCount: 0,
+      estimatedTokenReduction: 0,
+      diagnostics: [],
+      archiveHandles: [],
+    };
+  }
+
+  const replacements = new Map<number, AgentMessage>();
+  const diagnostics: string[] = [];
+  const archiveHandles: ArchiveHandle[] = [];
+  let estimatedTokenReduction = 0;
+
+  for (const candidate of maskable) {
+    const entryId = getMessageStableId(candidate.message, candidate.index);
+    const itemId = createContextItemId(sessionId, "observation", entryId);
+    const archiveHandle = await createContextArchiveHandleForPayload({
+      sessionId,
+      itemId,
+      payload: (candidate.message as unknown as { content?: unknown }).content ?? candidate.message,
+      archiveRoot: params.archiveRoot,
+      source: {
+        type: "transcript",
+        sessionId,
+        entryId,
+      },
+    });
+    const verified = await verifyContextArchiveHandle(archiveHandle);
+    if (!verified.ok) {
+      diagnostics.push(`archive_${verified.reason}:${entryId}`);
+      continue;
+    }
+    const placeholder = formatObservationMaskPlaceholder({
+      itemId,
+      archiveHandle,
+      originalChars: candidate.textLength,
+    });
+    replacements.set(candidate.index, replaceToolResultTextWithPlaceholder(candidate.message, placeholder));
+    archiveHandles.push(archiveHandle);
+    estimatedTokenReduction += Math.max(
+      0,
+      estimateToolResultContentTokenPressure((candidate.message as unknown as { content?: unknown }).content) -
+        estimateToolResultContentTokenPressure([{ type: "text", text: placeholder }]),
+    );
+  }
+
+  if (replacements.size === 0) {
+    return {
+      messages: params.messages,
+      maskedCount: 0,
+      estimatedTokenReduction: 0,
+      diagnostics,
+      archiveHandles: [],
+    };
+  }
+
+  return {
+    messages: params.messages.map((message, index) => replacements.get(index) ?? message),
+    maskedCount: replacements.size,
+    estimatedTokenReduction,
+    diagnostics,
+    archiveHandles,
+  };
+}
+
+export function buildContextFamilyPolicyPromotionMetrics(params: {
+  behavior: "observation_masking_projection";
+  baseline: PreemptiveCompactionDecision;
+  promoted: PreemptiveCompactionDecision;
+  projection: ObservationMaskingProjectionResult;
+}): ContextFamilyPolicyPromotionMetrics {
+  const baselinePromptTokens = Math.max(0, Math.ceil(params.baseline.estimatedPromptTokens));
+  const projectedPromptTokens = Math.max(
+    0,
+    Math.ceil(
+      params.promoted.observationMasking?.projectedPromptTokens ??
+        params.baseline.estimatedPromptTokens - params.projection.estimatedTokenReduction,
+    ),
+  );
+  const reductionTokens = Math.max(0, baselinePromptTokens - projectedPromptTokens);
+  const failureModes = [...params.projection.diagnostics];
+  const recallable =
+    params.projection.maskedCount > 0 &&
+    params.projection.archiveHandles.length >= params.projection.maskedCount &&
+    failureModes.length === 0;
+  return {
+    behavior: params.behavior,
+    rollbackFlag: "runtime.contextFamily.observationMasking.enabled=false",
+    baselineRoute: params.baseline.route,
+    promotedRoute: params.promoted.route,
+    tokenReduction: {
+      baselinePromptTokens,
+      projectedPromptTokens,
+      reductionTokens,
+      reductionRatio: baselinePromptTokens > 0
+        ? Number((reductionTokens / baselinePromptTokens).toFixed(4))
+        : 0,
+    },
+    evidenceRetention: {
+      archivedHandleCount: params.projection.archiveHandles.length,
+      verifiedMaskedCount: params.projection.maskedCount,
+    },
+    recoveryFidelity: {
+      recallable,
+      diagnostics: failureModes,
+    },
+    failureModes,
+  };
 }
 
 function estimateMessageTokenPressure(message: AgentMessage): number {
@@ -269,6 +534,7 @@ export function shouldPreemptivelyCompactBeforePrompt(params: {
   reserveTokens: number;
   toolResultMaxChars?: number;
   llmBoundaryTokenPressure?: LlmBoundaryTokenPressure;
+  observationMasking?: ObservationMaskingRouteInput;
 }): PreemptiveCompactionDecision {
   let messagesForPressure = params.messages;
   const llmBoundaryTokenPressure = normalizeLlmBoundaryTokenPressure(
@@ -321,9 +587,26 @@ export function shouldPreemptivelyCompactBeforePrompt(params: {
   const toolResultReducibleChars = toolResultPotential.maxReducibleChars;
 
   let route: PreemptiveCompactionRoute = "fits";
+  let observationMaskingDecision: PreemptiveCompactionDecision["observationMasking"];
   if (overflowTokens > 0) {
+    const masking = params.observationMasking;
+    if (
+      masking?.enabled &&
+      masking.verifiedMaskedCount > 0 &&
+      Number.isFinite(masking.projectedPromptTokens) &&
+      Math.max(0, Math.ceil(masking.projectedPromptTokens)) <= promptBudgetBeforeReserve
+    ) {
+      route = "observation_masking";
+      observationMaskingDecision = {
+        verifiedMaskedCount: Math.max(0, Math.floor(masking.verifiedMaskedCount)),
+        projectedPromptTokens: Math.max(0, Math.ceil(masking.projectedPromptTokens)),
+        tokenReduction: Math.max(
+          0,
+          estimatedPromptTokens - Math.max(0, Math.ceil(masking.projectedPromptTokens)),
+        ),
+      };
     // Choose truncate-only only when available reduction comfortably exceeds the overflow.
-    if (toolResultReducibleChars <= 0) {
+    } else if (toolResultReducibleChars <= 0) {
       route = "compact_only";
     } else if (toolResultReducibleChars >= truncateOnlyThresholdChars) {
       route = "truncate_tool_results_only";
@@ -340,6 +623,7 @@ export function shouldPreemptivelyCompactBeforePrompt(params: {
     overflowTokens,
     toolResultReducibleChars,
     effectiveReserveTokens,
+    ...(observationMaskingDecision ? { observationMasking: observationMaskingDecision } : {}),
   };
 }
 
@@ -416,4 +700,51 @@ export function buildPrePromptContextBudgetStatus(params: {
     ),
     ...(params.sessionId ? { sessionId: params.sessionId } : {}),
   };
+}
+
+export function buildPreemptiveRouteLifecycleEvents(params: {
+  result: PreemptiveCompactionDecision;
+  sessionId?: string;
+  provider: string;
+  modelId: string;
+  messageCount: number;
+  unwindowedMessageCount?: number;
+  contextTokenBudget: number;
+  reserveTokens: number;
+}): LifecycleEvent[] {
+  const sessionId = params.sessionId?.trim();
+  if (!sessionId) {
+    return [];
+  }
+  return createTransformationLifecycleEvents({
+    sessionId,
+    itemId: createContextItemId(sessionId, "ledger", "preemptive-route"),
+    to: "active",
+    reason: "preemptive_route_decision",
+    actor: "preemptive-compaction",
+    source: {
+      type: "other",
+      sessionId,
+      label: "pre-prompt-estimate",
+    },
+    metadata: {
+      route: params.result.route,
+      shouldCompact: params.result.shouldCompact,
+      estimatedPromptTokens: params.result.estimatedPromptTokens,
+      pressureSource: params.result.pressureSource,
+      promptBudgetBeforeReserve: params.result.promptBudgetBeforeReserve,
+      overflowTokens: params.result.overflowTokens,
+      toolResultReducibleChars: params.result.toolResultReducibleChars,
+      effectiveReserveTokens: params.result.effectiveReserveTokens,
+      provider: params.provider,
+      modelId: params.modelId,
+      messageCount: Math.max(0, Math.floor(params.messageCount)),
+      unwindowedMessageCount: Math.max(
+        0,
+        Math.floor(params.unwindowedMessageCount ?? params.messageCount),
+      ),
+      contextTokenBudget: Math.max(1, Math.floor(params.contextTokenBudget)),
+      reserveTokens: Math.max(0, Math.floor(params.reserveTokens)),
+    },
+  });
 }

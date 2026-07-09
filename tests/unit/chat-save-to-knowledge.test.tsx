@@ -126,6 +126,7 @@ vi.mock('@/lib/host-api', () => ({
       compactionStatus: vi.fn(async () => ({ success: true, status: null })),
       compactionHistory: vi.fn(async () => ({ success: true, entries: [] })),
       compact: vi.fn(async () => ({ success: true })),
+      history: vi.fn(async () => ({ success: true, messages: [] })),
       longTaskControlStatus: vi.fn(async () => ({
         success: true,
         available: false,
@@ -133,6 +134,14 @@ vi.mock('@/lib/host-api', () => ({
         queueCount: 0,
         warnings: [],
       })),
+      prepareHandoff: vi.fn(async () => ({ success: true, draft: '', sources: [], warnings: [] })),
+      queueDrain: vi.fn(async () => ({ success: true, drained: false })),
+    },
+    taskLedger: {
+      linkSession: vi.fn(async () => ({ success: true })),
+    },
+    git: {
+      status: vi.fn(async () => ({ success: true, status: null })),
     },
   },
 }));

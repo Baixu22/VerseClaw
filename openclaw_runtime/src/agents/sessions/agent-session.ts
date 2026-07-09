@@ -94,12 +94,42 @@ import type { BashOperations } from "./tools/bash-operations.js";
 import { createLocalBashOperations } from "./tools/bash.js";
 import { createAllToolDefinitions } from "./tools/index.js";
 import { createToolDefinitionFromAgentTool } from "./tools/tool-definition-wrapper.js";
+import {
+  createShadowContextItemRegistry,
+  createShadowIngestion,
+} from "../../context-engine/registry/context-item-registry.js";
 
 function unwrapCoreResult<T>(result: { ok: true; value: T } | { ok: false; error: Error }): T {
   if (result.ok) {
     return result.value;
   }
   throw result.error;
+}
+
+function readStringField(value: unknown, field: string): string | undefined {
+  if (!value || typeof value !== "object") {
+    return undefined;
+  }
+  const fieldValue = (value as Record<string, unknown>)[field];
+  return typeof fieldValue === "string" && fieldValue.trim() ? fieldValue : undefined;
+}
+
+function extractContextFamilyMessageContent(message: AgentMessage): unknown {
+  return (message as unknown as Record<string, unknown>).content;
+}
+
+function getContextFamilyMessageEntryId(message: AgentMessage): string {
+  return readStringField(message, "id") ?? readStringField(message, "messageId") ??
+    `${message.role}-${readStringField(message, "timestamp") ?? Date.now().toString(36)}`;
+}
+
+function getContextFamilyToolCallId(message: AgentMessage, fallback: string): string {
+  return readStringField(message, "toolCallId") ?? fallback;
+}
+
+function measureShadowContentBytes(content: unknown): number {
+  const text = typeof content === "string" ? content : JSON.stringify(content ?? "");
+  return Buffer.byteLength(text, "utf8");
 }
 
 function normalizeBranchSummaryResult(
@@ -376,6 +406,7 @@ export class AgentSession {
   private baseSystemPrompt = "";
   private baseSystemPromptOptions!: BuildSystemPromptOptions;
   private exactBaseSystemPrompt: string | undefined;
+  private contextFamilyShadowIngestion = createShadowIngestion(createShadowContextItemRegistry());
 
   constructor(config: AgentSessionConfig) {
     this.agent = config.agent;
@@ -606,6 +637,7 @@ export class AgentSession {
       ) {
         // Regular LLM message - persist as SessionMessageEntry
         this.sessionManager.appendMessage(event.message);
+        this.observeContextFamilyMessage(event.message);
       }
       // Other message types (bashExecution, compactionSummary, branchSummary) are persisted elsewhere
 
@@ -1025,6 +1057,7 @@ export class AgentSession {
         toolSnippets,
         promptGuidelines,
       };
+      this.observeContextFamilySystemPrompt(this.exactBaseSystemPrompt);
       return this.exactBaseSystemPrompt;
     }
 
@@ -1045,7 +1078,65 @@ export class AgentSession {
       toolSnippets,
       promptGuidelines,
     };
-    return buildSystemPrompt(this.baseSystemPromptOptions);
+    const systemPrompt = buildSystemPrompt(this.baseSystemPromptOptions);
+    this.observeContextFamilySystemPrompt(systemPrompt);
+    return systemPrompt;
+  }
+
+  private observeContextFamilySystemPrompt(systemPrompt: string): void {
+    void this.contextFamilyShadowIngestion.registerInstructionFile({
+      sessionId: this.sessionId,
+      path: "system-prompt",
+      content: systemPrompt,
+      byteLength: systemPrompt.length,
+    });
+  }
+
+  private observeContextFamilyMessage(message: AgentMessage): void {
+    const content = extractContextFamilyMessageContent(message);
+    const entryId = getContextFamilyMessageEntryId(message);
+    if (message.role === "toolResult") {
+      void this.contextFamilyShadowIngestion.registerToolResult({
+        sessionId: this.sessionId,
+        toolCallId: getContextFamilyToolCallId(message, entryId),
+        content,
+        byteLength: measureShadowContentBytes(content),
+      });
+      return;
+    }
+    if (message.role === "user") {
+      void this.contextFamilyShadowIngestion.registerUserMessage({
+        sessionId: this.sessionId,
+        entryId,
+        content,
+        byteLength: measureShadowContentBytes(content),
+      });
+      return;
+    }
+    if (message.role === "assistant") {
+      void this.contextFamilyShadowIngestion.registerAssistantMessage({
+        sessionId: this.sessionId,
+        entryId,
+        content,
+        byteLength: measureShadowContentBytes(content),
+      });
+    }
+  }
+
+  private observeContextFamilyCompaction(entry: CompactionEntry): void {
+    void this.contextFamilyShadowIngestion.registerCompactionSummary({
+      sessionId: this.sessionId,
+      checkpointId: entry.id,
+      content: entry.summary,
+      byteLength: entry.summary.length,
+    });
+    if (entry.details !== undefined) {
+      void this.contextFamilyShadowIngestion.registerCompressionArtifact({
+        sessionId: this.sessionId,
+        artifactId: `${entry.id}/details`,
+        content: entry.details,
+      });
+    }
   }
 
   // =========================================================================
@@ -1951,6 +2042,9 @@ export class AgentSession {
     const savedCompactionEntry = newEntries.find(
       (e) => e.type === "compaction" && e.summary === compactionResult.summary,
     ) as CompactionEntry | undefined;
+    if (savedCompactionEntry) {
+      this.observeContextFamilyCompaction(savedCompactionEntry);
+    }
 
     if (this.currentExtensionRunner && savedCompactionEntry) {
       await this.currentExtensionRunner.emit({

@@ -3,6 +3,7 @@ import { useMemo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ToolUiPlanView, type ToolUiPlanTodo } from '@/components/tool-ui/plan-view';
+import { computeLineStats } from '@/lib/generated-files';
 import { hostApi } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
 import type { GitRepositoryStatus } from '@shared/types/git';
@@ -169,22 +170,31 @@ export function WorkContextBar({
         {hasArtifacts && (
           <Section title={t('workContext.sections.artifacts')} testId="work-context-artifacts">
             <div className="flex flex-wrap gap-2">
-              {artifacts.slice(0, 6).map((report) => (
-                <button
-                  key={report.id}
-                  type="button"
-                  className="inline-flex min-w-0 max-w-full items-center gap-2 rounded-md border border-border bg-surface-input px-2.5 py-2 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
-                  title={report.filePath}
-                  onClick={() => onOpenReport(report)}
-                  data-testid={`work-context-artifact-${report.id}`}
-                >
-                  <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                  <span className="min-w-0">
-                    <span className="block truncate text-xs font-medium text-foreground">{report.fileName}</span>
-                    <span className="block truncate text-2xs text-muted-foreground">{t(`turnWork.report.${report.action}`)}</span>
-                  </span>
-                </button>
-              ))}
+              {artifacts.slice(0, 6).map((report) => {
+                const stats = computeLineStats(report.file);
+                return (
+                  <button
+                    key={report.id}
+                    type="button"
+                    className="inline-flex min-w-0 max-w-full items-center gap-2 rounded-md border border-border bg-surface-input px-2.5 py-2 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                    title={report.filePath}
+                    onClick={() => onOpenReport(report)}
+                    data-testid={`work-context-artifact-${report.id}`}
+                  >
+                    <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                    <span className="min-w-0">
+                      <span className="block truncate text-xs font-medium text-foreground">{report.fileName}</span>
+                      <span className="block truncate text-2xs text-muted-foreground">{t(`turnWork.report.${report.action}`)}</span>
+                    </span>
+                    {stats && (
+                      <span className="ml-auto shrink-0 font-mono text-2xs">
+                        <span className="text-emerald-600 dark:text-emerald-400">+{stats.added}</span>
+                        <span className="ml-1 text-rose-600 dark:text-rose-400">-{stats.removed}</span>
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </Section>
         )}

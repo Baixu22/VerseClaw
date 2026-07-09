@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
   gatewayState: { status: { state: 'running', port: 18789 } },
@@ -114,7 +115,7 @@ describe('Chat leading orphan tool folding', () => {
     });
 
     const { Chat } = await import('@/pages/Chat/index');
-    render(<Chat />);
+    render(<MemoryRouter><Chat /></MemoryRouter>);
 
     await waitFor(() => {
       expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();

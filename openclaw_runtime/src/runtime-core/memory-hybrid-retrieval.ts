@@ -112,6 +112,13 @@ export type HybridSearchHit = {
   // FinalBoost coupling break (mem-status §3 断裂点 2).
   // When undefined (no reranker run), applyFinalBoost falls back to rrfScore.
   ceScore?: number;
+  /**
+   * COMPASS 2.0: Expansion rank (0-based).
+   * - undefined: initial hit (直接来自 BM25/Vector/Entity 检索)
+   * - 0, 1, 2, ...: expansion hit 的排名 (来自 chained retrieval 扩展)
+   * 用于 U_decision 公式: expansionFactor = 1/(1+expansionRank).
+   */
+  expansionRank?: number;
 };
 
 export type HybridSearchFusionOptions = {

@@ -328,10 +328,11 @@ import {
   SessionsCompactionRestoreParamsSchema,
   type SessionsCompactionStatusParams,
   SessionsCompactionStatusParamsSchema,
+  type SessionsExpandSelectorParams,
+  SessionsExpandSelectorParamsSchema,
   type SessionsRecoveryContextParams,
   SessionsRecoveryContextParamsSchema,
-  SessionsRecoveryContextResultSchema,
-  type LongTaskCheckpointRecord,
+  SessionsRecoveryContextResultSchema,  type LongTaskCheckpointRecord,
   LongTaskCheckpointRecordSchema,
   type LongTaskInterventionEvent,
   LongTaskInterventionEventSchema,
@@ -351,6 +352,8 @@ import {
   SessionsQueueDrainParamsSchema,
   type SessionsQueueDrainResult,
   SessionsQueueDrainResultSchema,
+  type SessionsRecallOriginalParams,
+  SessionsRecallOriginalParamsSchema,
   type SessionsResumeCheckpointsParams,
   SessionsResumeCheckpointsParamsSchema,
   type SessionsResumeCheckpointsResult,
@@ -699,11 +702,14 @@ export const validateSessionsCompactionStatusParams =
   lazyCompile<SessionsCompactionStatusParams>(SessionsCompactionStatusParamsSchema);
 export const validateSessionsCompactionHistoryParams =
   lazyCompile<SessionsCompactionHistoryParams>(SessionsCompactionHistoryParamsSchema);
+export const validateSessionsRecallOriginalParams =
+  lazyCompile<SessionsRecallOriginalParams>(SessionsRecallOriginalParamsSchema);
+export const validateSessionsExpandSelectorParams =
+  lazyCompile<SessionsExpandSelectorParams>(SessionsExpandSelectorParamsSchema);
 export const validateSessionsCompressionArtifactParams =
   lazyCompile<SessionsCompressionArtifactParams>(SessionsCompressionArtifactParamsSchema);
 export const validateSessionsRecoveryContextParams =
-  lazyCompile<SessionsRecoveryContextParams>(SessionsRecoveryContextParamsSchema);
-export const validateSessionsLongTaskControlStatusParams =
+  lazyCompile<SessionsRecoveryContextParams>(SessionsRecoveryContextParamsSchema);export const validateSessionsLongTaskControlStatusParams =
   lazyCompile<SessionsLongTaskControlStatusParams>(SessionsLongTaskControlStatusParamsSchema);
 export const validateSessionsLongTaskControlHistoryParams =
   lazyCompile<SessionsLongTaskControlHistoryParams>(SessionsLongTaskControlHistoryParamsSchema);

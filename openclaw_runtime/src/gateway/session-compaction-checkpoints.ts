@@ -18,6 +18,13 @@ import { isCompactionCheckpointTranscriptFileName } from "../config/sessions/art
 import { streamSessionTranscriptLines } from "../config/sessions/transcript-stream.js";
 import { CURRENT_SESSION_VERSION } from "../config/sessions/version.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import {
+  createContextArchiveHandleForPayload,
+  createContextItemId,
+  createTransformationLifecycleEvents,
+  recordContextFamilyLifecycleEvents,
+} from "../context-engine/registry/context-item-registry.js";
+import type { ArchiveHandle } from "../../../shared/types/context-family.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { resolveGatewaySessionStoreTarget } from "./session-utils.js";
 
@@ -30,6 +37,7 @@ export type CapturedCompactionCheckpointSnapshot = {
   sessionId: string;
   sessionFile?: string;
   leafId: string;
+  archiveHandle?: ArchiveHandle;
 };
 
 type ForkedCompactionCheckpointTranscript = {
@@ -420,9 +428,30 @@ export async function captureCompactionCheckpointSnapshotAsync(params: {
   if (!sessionId || !leafId) {
     return null;
   }
+  let archiveHandle: ArchiveHandle | undefined;
+  try {
+    const payload = await fs.readFile(sessionFile, "utf-8");
+    archiveHandle = await createContextArchiveHandleForPayload({
+      sessionId,
+      itemId: createContextItemId(sessionId, "derived", "pre-compaction", leafId),
+      payload,
+      source: {
+        type: "transcript",
+        sessionId,
+        path: sessionFile,
+        range: { end: payload.length },
+      },
+    });
+  } catch (error) {
+    log.warn("failed to archive pre-compaction transcript snapshot", {
+      sessionFile,
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
+  }
   return {
     sessionId,
     leafId,
+    ...(archiveHandle ? { archiveHandle } : {}),
   };
 }
 
@@ -504,8 +533,33 @@ export async function persistSessionCompactionCheckpoint(params: {
     key: params.sessionKey,
   });
   const createdAt = params.createdAt ?? Date.now();
+  const checkpointId = randomUUID();
+  const lifecycleEvents = createTransformationLifecycleEvents({
+    sessionId: params.sessionId,
+    itemId: createContextItemId(params.sessionId, "ledger", params.sessionKey, "checkpoint", checkpointId),
+    to: "active",
+    reason: "compaction_checkpoint_created",
+    actor: "session-compaction-checkpoints",
+    occurredAt: new Date(createdAt).toISOString(),
+    source: {
+      type: "resume_checkpoint",
+      sessionId: params.sessionId,
+      ownerId: checkpointId,
+    },
+    metadata: {
+      checkpointId,
+      checkpointRole: "recovery_index",
+      losslessArchive: false,
+      preCompactionSessionId: params.snapshot.sessionId,
+      preCompactionLeafId: params.snapshot.leafId,
+      postCompactionSessionId: params.sessionId,
+      postCompactionLeafId: params.postLeafId?.trim() || params.postEntryId?.trim(),
+      ...(params.snapshot.archiveHandle ? { archiveHandle: params.snapshot.archiveHandle } : {}),
+    },
+  });
+  recordContextFamilyLifecycleEvents(lifecycleEvents);
   const checkpoint: SessionCompactionCheckpoint = {
-    checkpointId: randomUUID(),
+    checkpointId,
     sessionKey: target.canonicalKey,
     sessionId: params.sessionId,
     createdAt,
@@ -529,6 +583,12 @@ export async function persistSessionCompactionCheckpoint(params: {
       ...(postSessionFile ? { sessionFile: postSessionFile } : {}),
       ...(params.postLeafId?.trim() ? { leafId: params.postLeafId.trim() } : {}),
       ...(params.postEntryId?.trim() ? { entryId: params.postEntryId.trim() } : {}),
+    },
+    ...(params.snapshot.archiveHandle ? { archiveHandle: params.snapshot.archiveHandle } : {}),
+    lifecycleAudit: {
+      eventIds: lifecycleEvents.map((event) => event.id),
+      role: "recovery_index",
+      losslessArchive: false,
     },
   };
 

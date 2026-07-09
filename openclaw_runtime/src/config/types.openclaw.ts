@@ -114,6 +114,23 @@ export type RuntimeFeatureConfig = {
     /** Preserve shadow diagnostics compatibility for pre-promotion CRK pilots. */
     shadow?: boolean;
   };
+  /** Context Family rollout flags. Defaults off unless a promotion spec changes the default. */
+  contextFamily?: {
+    /** Projection-only observation masking. Transcript files remain unchanged. */
+    observationMasking?: {
+      /** Enable archive-backed prompt projection masking for old large observations. */
+      enabled?: boolean;
+      /** Minimum observation text characters before masking can be considered. */
+      minChars?: number;
+      /** Keep this many newest observations verbatim in the prompt projection. */
+      preserveNewestObservationCount?: number;
+    };
+    /** Bounded Context Status prompt projection. */
+    contextStatus?: {
+      /** Enable the prompt projection. Omitted or false preserves prompt parity. */
+      enabled?: boolean;
+    };
+  };
   /** Append-only RuntimeTaskEvent event-log shadow flags. Defaults off. */
   eventLog?: {
     /** Allow event-log diagnostics/envelopes to be created without changing runtime behavior. */

@@ -25,6 +25,7 @@ import {
   type RuntimeMemoryFeatureFlags,
   type RuntimeMemoryInvalidationProposal,
   type RuntimeMemoryRawInputRejectionReason,
+  type RuntimeMemorySensitivity,
   type RuntimeMemorySourceEpisodeRef,
   type RuntimeMemoryTemporalFact,
   type RuntimeMemoryTemporalFactCandidate,
@@ -67,6 +68,8 @@ export type RuntimeMemoryFactProposalInput = RuntimeMemoryTemporalFields & {
   evidenceRefs: EvidenceRef[];
   proposedAt?: number;
   metadata?: RuntimeCoreJsonObject;
+  // COMPASS 2.0: Sensitivity level (REDACT 合规门). 可选, 向后兼容.
+  sensitivity?: RuntimeMemorySensitivity;
 };
 
 export type RuntimeMemoryFactProposalRejection = {
@@ -172,6 +175,8 @@ export function sanitizeRuntimeMemoryFactProposalInput(
     evidenceRefs: input.evidenceRefs,
     proposedAt: input.proposedAt ?? input.reference_time,
     ...(input.metadata ? { metadata: input.metadata } : {}),
+    // COMPASS 2.0: Sensitivity level (REDACT 合规门).
+    ...(input.sensitivity ? { sensitivity: input.sensitivity } : {}),
   };
   const sanitized = sanitizeRuntimeMemoryTemporalFactCandidate(candidate);
   if (

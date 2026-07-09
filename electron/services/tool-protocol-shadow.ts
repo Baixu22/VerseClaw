@@ -1,12 +1,12 @@
 import type { McpCallToolPayload } from '@shared/host-api/contract';
 import type { McpCallToolResult } from '@shared/types/mcp';
 import type {
-  RuntimeCoreJsonObject,
-  RuntimeCoreJsonValue,
-  RuntimeErrorType,
-  ToolCallRequest,
-  ToolCallResult,
-} from '../../openclaw_runtime/src/runtime-core';
+  RuntimeShadowErrorType,
+  RuntimeShadowJsonObject,
+  RuntimeShadowJsonValue,
+  RuntimeShadowToolCallRequest,
+  RuntimeShadowToolCallResult,
+} from '@shared/types/runtime-tool-shadow';
 
 export type ToolProtocolShadowRuntimeFlags = {
   runtime?: {
@@ -49,7 +49,7 @@ export type McpToolCallRequestShadow = {
   protocol: 'mcp';
   operation: 'mcp.callTool';
   target: McpToolCallShadowTarget;
-  request: ToolCallRequest;
+  request: RuntimeShadowToolCallRequest;
 };
 
 export type McpToolCallResultShadow = {
@@ -58,7 +58,7 @@ export type McpToolCallResultShadow = {
   protocol: 'mcp';
   operation: 'mcp.callTool';
   target: McpToolCallShadowTarget;
-  result: ToolCallResult;
+  result: RuntimeShadowToolCallResult;
   shadow: {
     status: McpToolCallBridgeState;
     reason: McpToolCallShadowReason;
@@ -105,7 +105,7 @@ function createTaskId(payload: McpCallToolPayload): string {
   return `mcp:${payload.serverId}`;
 }
 
-function toRuntimeCoreJsonValue(value: unknown, arrayFallback = null): RuntimeCoreJsonValue {
+function toRuntimeCoreJsonValue(value: unknown, arrayFallback = null): RuntimeShadowJsonValue {
   if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
   if (typeof value === 'number') return Number.isFinite(value) ? value : null;
   if (typeof value === 'bigint') return value.toString();
@@ -120,8 +120,8 @@ function toRuntimeCoreJsonValue(value: unknown, arrayFallback = null): RuntimeCo
   return arrayFallback;
 }
 
-function toRuntimeCoreJsonObject(value: Record<string, unknown>): RuntimeCoreJsonObject {
-  const output: RuntimeCoreJsonObject = {};
+function toRuntimeCoreJsonObject(value: Record<string, unknown>): RuntimeShadowJsonObject {
+  const output: RuntimeShadowJsonObject = {};
   for (const [key, item] of Object.entries(value)) {
     if (item === undefined || typeof item === 'function' || typeof item === 'symbol') continue;
     output[key] = toRuntimeCoreJsonValue(item);
@@ -129,7 +129,7 @@ function toRuntimeCoreJsonObject(value: Record<string, unknown>): RuntimeCoreJso
   return output;
 }
 
-function toOptionalRuntimeCoreJsonValue(value: unknown): RuntimeCoreJsonValue | undefined {
+function toOptionalRuntimeCoreJsonValue(value: unknown): RuntimeShadowJsonValue | undefined {
   return value === undefined ? undefined : toRuntimeCoreJsonValue(value);
 }
 
@@ -155,10 +155,10 @@ function readApprovalInfo(result: McpCallToolResult): { required: boolean; appro
 
 function createBaseResult(
   request: McpToolCallRequestShadow,
-  status: ToolCallResult['status'],
-  structuredData?: RuntimeCoreJsonValue,
-  error?: ToolCallResult['error'],
-): ToolCallResult {
+  status: RuntimeShadowToolCallResult['status'],
+  structuredData?: RuntimeShadowJsonValue,
+  error?: RuntimeShadowToolCallResult['error'],
+): RuntimeShadowToolCallResult {
   const timestamp = Date.now();
   return {
     callId: request.request.callId,
@@ -172,7 +172,7 @@ function createBaseResult(
   };
 }
 
-function createRuntimeError(type: RuntimeErrorType, message: string, retryable: boolean): ToolCallResult['error'] {
+function createRuntimeError(type: RuntimeShadowErrorType, message: string, retryable: boolean): RuntimeShadowToolCallResult['error'] {
   return {
     type,
     message,
@@ -183,7 +183,7 @@ function createRuntimeError(type: RuntimeErrorType, message: string, retryable: 
 
 function createBridgeResult(
   request: McpToolCallRequestShadow,
-  result: ToolCallResult,
+  result: RuntimeShadowToolCallResult,
   status: McpToolCallBridgeState,
   reason: McpToolCallShadowReason,
   approval?: McpToolCallShadowApproval,
@@ -208,7 +208,7 @@ function createDiagnosticData(
   reason: McpToolCallShadowReason,
   legacyResult?: unknown,
   approval?: McpToolCallShadowApproval,
-): RuntimeCoreJsonObject {
+): RuntimeShadowJsonObject {
   return {
     shadowState: state,
     reasonCode: reason.code,
@@ -242,7 +242,7 @@ export function createMcpToolCallRequestShadow(payload: McpCallToolPayload): Mcp
   const approvalId = normalizeOptionalString(payload.approvalId);
   const workspaceId = normalizeOptionalString(payload.workspaceId);
   const agentId = normalizeOptionalString(payload.agentId);
-  const permissionContext: RuntimeCoreJsonObject = {
+  const permissionContext: RuntimeShadowJsonObject = {
     protocol: 'mcp',
     operation: 'mcp.callTool',
     serverId: target.serverId,
@@ -252,7 +252,7 @@ export function createMcpToolCallRequestShadow(payload: McpCallToolPayload): Mcp
     ...(agentId ? { agentId } : {}),
   };
   const callId = createCallId(target);
-  const request: ToolCallRequest = {
+  const request: RuntimeShadowToolCallRequest = {
     callId,
     taskId: createTaskId(payload),
     toolName: payload.toolName,

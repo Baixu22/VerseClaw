@@ -1,3 +1,5 @@
+import type { ArchiveHandle } from './context-family';
+
 export type LongTaskInputMode = 'interrupt' | 'guide' | 'queue' | 'revise-goal';
 
 export type ResumeCheckpointTrigger =
@@ -122,6 +124,7 @@ export type LongTaskCheckpointRecord = {
   trigger: ResumeCheckpointTrigger;
   status: string;
   checkpoint: ResumeCheckpoint;
+  archiveHandle?: ArchiveHandle;
   createdAt: number;
   updatedAt: number;
 };

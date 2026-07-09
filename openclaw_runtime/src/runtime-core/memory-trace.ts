@@ -38,6 +38,18 @@ export type RecallTraceFact = {
   recencyBoost?: number;
   temporalBoost?: number;
   proofCount?: number;
+  /**
+   * COMPASS 2.0: Expansion rank (0-based).
+   * - undefined: initial hit (非 expansion), expansionFactor 用 armRanks.finalScore
+   * - 0, 1, 2, ...: expansion hit 的排名, expansionFactor = 1/(1+expansionRank)
+   */
+  expansionRank?: number;
+  /**
+   * COMPASS 2.0: 决策效用 U_decision.
+   * U = expansionFactor × finalScore × actionCoupling
+   * 仅在 enableUDecisionRanking=true 时计算.
+   */
+  uDecision?: number;
 };
 
 /**
@@ -258,6 +270,88 @@ export function createRecallTraceBuilder(init: {
  */
 export function serializeRecallTrace(trace: RecallTrace): string {
   return JSON.stringify(trace);
+}
+
+// === COMPASS 2.0: U_decision (决策效用排序) ===
+//
+// U_decision = expansionFactor × finalScore × actionCoupling
+//
+// - expansionFactor: initial hits 用 armRanks.finalScore, expansion hits 用 1/(1+expansionRank)
+// - finalScore: 现有 ceScore 或 finalScore
+// - actionCoupling: 从 evidence discipline 派生 (enableEvidenceDiscipline=true 时)
+//   - 被引用 fact = 1.0
+//   - 未被引用 fact = 0.3 (不归零, 保留探索价值)
+//   - evidence discipline 关闭时 = 1.0 (降级)
+
+/**
+ * COMPASS 2.0: 计算单个 fact 的决策效用 U_decision.
+ *
+ * @param fact RecallTraceFact 条目
+ * @param usedFactIds 被 LLM 引用的 fact IDs 集合 (来自 evidence discipline)
+ * @param evidenceDisciplineEnabled 是否启用 evidence discipline
+ * @returns U_decision 值
+ */
+export function computeUDecision(
+  fact: RecallTraceFact,
+  usedFactIds?: ReadonlySet<string>,
+  evidenceDisciplineEnabled?: boolean,
+): number {
+  // expansionFactor: initial hits 用 finalScore, expansion hits 用 1/(1+expansionRank)
+  const expansionFactor =
+    fact.expansionRank === undefined
+      ? fact.armRanks?.temporal ?? fact.finalScore ?? 1.0
+      : 1 / (1 + fact.expansionRank);
+
+  // finalScore: 现有 ceScore 或 finalScore
+  const finalScore = fact.ceScore ?? fact.finalScore ?? 0;
+
+  // actionCoupling: 从 evidence discipline 派生
+  const actionCoupling = computeActionCoupling(
+    fact.factId,
+    usedFactIds,
+    evidenceDisciplineEnabled,
+  );
+
+  return expansionFactor * finalScore * actionCoupling;
+}
+
+/**
+ * COMPASS 2.0: 计算 actionCoupling (决策耦合度).
+ *
+ * - 被引用 fact = 1.0 (直接参与决策)
+ * - 未被引用 fact = 0.3 (不归零, 保留探索价值)
+ * - evidence discipline 关闭时 = 1.0 (降级, 无 usedFactIds 数据)
+ */
+export function computeActionCoupling(
+  factId: string,
+  usedFactIds?: ReadonlySet<string>,
+  evidenceDisciplineEnabled?: boolean,
+): number {
+  if (!evidenceDisciplineEnabled || !usedFactIds) return 1.0; // 降级
+  return usedFactIds.has(factId) ? 1.0 : 0.3;
+}
+
+/**
+ * COMPASS 2.0: 批量计算 U_decision 并排序.
+ *
+ * 当 enableUDecisionRanking=true 时, 用 U_decision 替代 finalScore 排序.
+ * 返回新的排序后数组 (不修改原数组).
+ */
+export function rankByUDecision(
+  facts: readonly RecallTraceFact[],
+  usedFactIds?: ReadonlySet<string>,
+  evidenceDisciplineEnabled?: boolean,
+): RecallTraceFact[] {
+  return facts
+    .map((fact) => ({
+      fact: {
+        ...fact,
+        uDecision: computeUDecision(fact, usedFactIds, evidenceDisciplineEnabled),
+      },
+      score: computeUDecision(fact, usedFactIds, evidenceDisciplineEnabled),
+    }))
+    .sort((a, b) => b.score - a.score)
+    .map((x) => x.fact);
 }
 
 /**

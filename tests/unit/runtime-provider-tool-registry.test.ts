@@ -9,8 +9,6 @@ import {
   buildRuntimeToolProviderManifestFixture,
   buildToolCallRequestFixture,
   buildToolCallResultFixture,
-  collectRuntimeRegistryDiagnostics,
-  collectRuntimeRegistryDiagnosticsForControlledConsumer,
   isContextItem,
   isolateRuntimeRegistryError,
   isRuntimeContextProviderManifest,
@@ -21,12 +19,8 @@ import {
   isRuntimeToolProviderResult,
   resolveRuntimeRegistryFeatureFlags,
   runtimeRegistryFlagEnabled,
-  sanitizeRuntimeRegistryDiagnostic,
   validateRuntimeContextProviderManifest,
   validateRuntimeToolProviderManifest,
-  type RuntimeRegistryDiagnostic,
-  type RuntimeRegistryDiagnosticReason,
-  type RuntimeRegistryDiagnosticStatus,
   type RuntimeContextProvider,
   type RuntimeToolProvider,
 } from "../../openclaw_runtime/src/runtime-core";
@@ -72,7 +66,6 @@ describe("runtime provider/tool registry contracts and flags", () => {
     expect(runtimeRegistryFlagEnabled({}, "providerRegistryShadow")).toBe(false);
     expect(runtimeRegistryFlagEnabled({}, "contextProviderRegistryPilot")).toBe(false);
     expect(runtimeRegistryFlagEnabled({}, "toolRegistryShadow")).toBe(false);
-    expect(runtimeRegistryFlagEnabled({}, "registryDiagnosticsCollector")).toBe(false);
 
     const flags = resolveRuntimeRegistryFeatureFlags({
       config: {
@@ -81,7 +74,6 @@ describe("runtime provider/tool registry contracts and flags", () => {
           providerRegistry: { shadow: true },
           contextProviders: { registryPilot: true },
           toolRegistry: { shadow: true },
-          registryDiagnostics: { collector: true },
         },
       },
     });
@@ -91,7 +83,7 @@ describe("runtime provider/tool registry contracts and flags", () => {
       providerRegistryShadow: true,
       contextProviderRegistryPilot: true,
       toolRegistryShadow: true,
-      registryDiagnosticsCollector: true,
+      registryDiagnosticsCollector: false,
     });
   });
 
@@ -179,264 +171,15 @@ describe("runtime provider/tool registry contracts and flags", () => {
         providerRegistry: { shadow: true },
         contextProviders: { shadow: true, loopPackShadow: true, registryPilot: true },
         toolRegistry: { shadow: true },
-        registryDiagnostics: { collector: true },
         toolProtocol: { mcpShadow: true },
       },
     });
 
     expect(parsed.runtime?.registryPilot?.enabled).toBe(true);
-    expect(parsed.runtime?.registryDiagnostics?.collector).toBe(true);
     expect(OpenClawSchema.parse({}).runtime).toBeUndefined();
     expect(() =>
       OpenClawSchema.parse({ runtime: { toolRegistry: { shadow: true, enabled: true } } }),
     ).toThrow();
-  });
-
-  it("collects context and tool registry diagnostics into bounded shadow output only when enabled", () => {
-    const contextDiagnostic = isolateRuntimeRegistryError({
-      surface: "context",
-      providerId: "context-provider",
-      error: new Error("context boom"),
-    }).diagnostic;
-    const toolDiagnostic = isolateRuntimeRegistryError({
-      surface: "tool",
-      providerId: "tool-provider",
-      error: new Error("tool boom"),
-    }).diagnostic;
-
-    const disabled = collectRuntimeRegistryDiagnostics({
-      contextDiagnostics: [contextDiagnostic],
-      toolDiagnostics: [toolDiagnostic],
-    });
-
-    expect(disabled).toMatchObject({
-      enabled: false,
-      diagnostics: [],
-      omittedDiagnosticCount: 2,
-      summary: {
-        totalDiagnosticCount: 2,
-        includedDiagnosticCount: 0,
-        contextDiagnosticCount: 0,
-        toolDiagnosticCount: 0,
-      },
-    });
-
-    const enabled = collectRuntimeRegistryDiagnostics({
-      enabled: true,
-      limit: 1,
-      contextDiagnostics: [contextDiagnostic],
-      toolDiagnostics: [toolDiagnostic],
-      metadata: { shadowOnly: true },
-    });
-
-    expect(enabled).toMatchObject({
-      enabled: true,
-      diagnostics: [expect.objectContaining({ surface: "context", providerId: "context-provider" })],
-      omittedDiagnosticCount: 1,
-      metadata: { shadowOnly: true },
-      summary: {
-        totalDiagnosticCount: 2,
-        includedDiagnosticCount: 1,
-        contextDiagnosticCount: 1,
-        toolDiagnosticCount: 0,
-        byStatus: { error: 1 },
-        byReason: { provider_error: 1 },
-      },
-    });
-    expect(enabled.evidenceRefs.length).toBeGreaterThan(0);
-  });
-
-  it("keeps default collector order while opt-in prioritization preserves high-value diagnostics", () => {
-    const lowRegistered = registryDiagnostic("tool", "tool-registered", "ok", "registered");
-    const lowLegacy = registryDiagnostic("context", "context-legacy", "fallback", "legacy_authoritative");
-    const runtimeUnavailable = registryDiagnostic(
-      "tool",
-      "tool-runtime-unavailable",
-      "error",
-      "runtime_unavailable",
-    );
-    const policyDenied = registryDiagnostic("tool", "tool-policy-denied", "denied", "policy_denied");
-    const diagnostics = [lowRegistered, lowLegacy, runtimeUnavailable, policyDenied];
-
-    const defaultCollected = collectRuntimeRegistryDiagnostics({
-      enabled: true,
-      limit: 2,
-      diagnostics,
-    });
-
-    expect(defaultCollected.diagnostics.map((diagnostic) => diagnostic.providerId)).toEqual([
-      "tool-registered",
-      "context-legacy",
-    ]);
-    expect(defaultCollected.omittedSummary).toMatchObject({
-      diagnosticCount: 2,
-      contextDiagnosticCount: 0,
-      toolDiagnosticCount: 2,
-      byStatus: { error: 1, denied: 1 },
-      byReason: { runtime_unavailable: 1, policy_denied: 1 },
-    });
-
-    const prioritized = collectRuntimeRegistryDiagnostics({
-      enabled: true,
-      prioritize: true,
-      limit: 2,
-      diagnostics,
-    });
-
-    expect(prioritized.diagnostics.map((diagnostic) => diagnostic.providerId)).toEqual([
-      "tool-runtime-unavailable",
-      "tool-policy-denied",
-    ]);
-    expect(prioritized.omittedSummary).toMatchObject({
-      diagnosticCount: 2,
-      contextDiagnosticCount: 1,
-      toolDiagnosticCount: 1,
-      byStatus: { ok: 1, fallback: 1 },
-      byReason: { registered: 1, legacy_authoritative: 1 },
-    });
-  });
-
-  it("projects registry diagnostics into sanitized diagnostics-only payloads", () => {
-    const apiKey = ["sk", "proj", "registrysanitizer1234567890abcdef"].join("-");
-    const bearer = `Bearer ${["registry", "sanitizer", "token", "1234567890abcdef"].join("_")}`;
-    const rawDiagnostic: RuntimeRegistryDiagnostic = {
-      surface: "tool",
-      providerId: apiKey,
-      status: "error",
-      reason: "provider_error",
-      message: `Provider returned ${apiKey}.`,
-      retryable: true,
-      evidenceRefs: [{
-        type: "tool",
-        ref: `tool:${apiKey}`,
-        label: `Leaky ${apiKey}`,
-        summary: "Adapter referenced C:\\Users\\alice\\.ssh\\id_rsa.",
-        metadata: {
-          authorization: bearer,
-          env: `OPENAI_API_${"KEY"}=${apiKey}`,
-        },
-      }],
-      metadata: {
-        rawToolPayload: "RAW_TOOL_PAYLOAD_SECRET_REGISTRY_SANITIZER",
-        authorization: bearer,
-      },
-    };
-
-    const sanitized = sanitizeRuntimeRegistryDiagnostic(rawDiagnostic);
-    const serialized = JSON.stringify(sanitized);
-
-    expect(isRuntimeRegistryDiagnostic(sanitized)).toBe(true);
-    expect(sanitized).toMatchObject({
-      surface: "tool",
-      providerId: "redacted-provider",
-      status: "error",
-      reason: "provider_error",
-      retryable: true,
-      metadata: {
-        redactionStatus: "sanitized",
-        source: "runtime_registry.diagnostic_projection",
-        messageRedacted: true,
-        metadataRedacted: true,
-      },
-    });
-    expect(sanitized.message).toBeUndefined();
-    expect(sanitized.evidenceRefs).toEqual([expect.objectContaining({
-      type: "tool",
-      ref: "runtime-registry-evidence:tool:redacted-provider:provider_error:0",
-      label: "Runtime registry evidence",
-      metadata: expect.objectContaining({ redactionStatus: "sanitized" }),
-    })]);
-    expect(serialized).not.toContain(apiKey);
-    expect(serialized).not.toContain(bearer);
-    expect(serialized).not.toContain("RAW_TOOL_PAYLOAD_SECRET_REGISTRY_SANITIZER");
-    expect(serialized).not.toContain("C:\\Users\\alice");
-  });
-
-  it("keeps controlled diagnostic consumer fail-closed and forces sanitized prioritized output", () => {
-    const lowRegistered = registryDiagnostic("tool", "tool-registered", "ok", "registered");
-    const runtimeUnavailable = registryDiagnostic(
-      "tool",
-      "tool-runtime-unavailable",
-      "error",
-      "runtime_unavailable",
-    );
-    const secret = ["sk", "proj", "controlledconsumer1234567890abcdef"].join("-");
-    const leakyDiagnostic: RuntimeRegistryDiagnostic = {
-      ...runtimeUnavailable,
-      message: `runtime unavailable ${secret}`,
-      metadata: { authorization: `Bearer ${["controlled", "consumer", "1234567890abcdef"].join("_")}` },
-      evidenceRefs: [{
-        type: "tool",
-        ref: `leaky:${secret}`,
-        summary: `C:\\Users\\alice\\.ssh\\id_rsa ${secret}`,
-      }],
-    };
-
-    const missingFlags = collectRuntimeRegistryDiagnosticsForControlledConsumer({
-      enabled: true,
-      diagnostics: [leakyDiagnostic],
-      metadata: { raw: secret },
-    });
-
-    expect(missingFlags).toMatchObject({
-      enabled: false,
-      diagnostics: [],
-      omittedDiagnosticCount: 1,
-      consumer: {
-        enabled: false,
-        gateStatus: "closed",
-        blockedReasons: ["feature_flags_missing"],
-        sanitized: true,
-        prioritized: true,
-        authoritativeness: "none",
-      },
-    });
-    expect(JSON.stringify(missingFlags)).not.toContain(secret);
-
-    const featureFlags = resolveRuntimeRegistryFeatureFlags({
-      config: {
-        runtime: {
-          registryPilot: { enabled: true },
-          providerRegistry: { shadow: true },
-          contextProviders: { registryPilot: true },
-          toolRegistry: { shadow: true },
-          registryDiagnostics: { collector: true },
-        },
-      },
-    });
-    const opened = collectRuntimeRegistryDiagnosticsForControlledConsumer({
-      enabled: true,
-      featureFlags,
-      limit: 1,
-      diagnostics: [lowRegistered, leakyDiagnostic],
-      metadata: { raw: secret },
-    });
-
-    expect(opened).toMatchObject({
-      enabled: true,
-      omittedDiagnosticCount: 1,
-      consumer: {
-        enabled: true,
-        gateStatus: "open",
-        blockedReasons: [],
-        sanitized: true,
-        prioritized: true,
-        diagnosticsOnly: true,
-        inMemoryOnly: true,
-        authoritativeness: "none",
-      },
-    });
-    expect(opened.diagnostics.map((diagnostic) => diagnostic.reason)).toEqual([
-      "runtime_unavailable",
-    ]);
-    expect(opened.diagnostics[0]?.metadata).toMatchObject({
-      redactionStatus: "sanitized",
-      source: "runtime_registry.diagnostic_projection",
-      messageRedacted: true,
-      metadataRedacted: true,
-    });
-    expect(JSON.stringify(opened)).not.toContain(secret);
-    expect(JSON.stringify(opened)).not.toContain("C:\\Users\\alice");
   });
 
   it("keeps provider errors isolated as diagnostics and typed RuntimeError evidence", () => {
@@ -477,22 +220,3 @@ describe("runtime provider/tool registry contracts and flags", () => {
     expect(result).toMatchObject({ callId: "call-1", status: "success" });
   });
 });
-
-function registryDiagnostic(
-  surface: RuntimeRegistryDiagnostic["surface"],
-  providerId: string,
-  status: RuntimeRegistryDiagnosticStatus,
-  reason: RuntimeRegistryDiagnosticReason,
-): RuntimeRegistryDiagnostic {
-  return {
-    surface,
-    providerId,
-    status,
-    reason,
-    message: `${providerId}:${reason}`,
-    evidenceRefs: [{
-      type: surface === "tool" ? "tool" : "other",
-      ref: `registry-priority:${providerId}`,
-    }],
-  };
-}

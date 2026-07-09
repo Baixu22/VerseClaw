@@ -3,6 +3,7 @@ import type { PermissionDecisionEvent } from '../product-semantics';
 import type { AgentReasoningEffort, AgentsSnapshot } from '../types/agent';
 import type { CronJob, CronJobCreateInput, CronJobUpdateInput } from '../types/cron';
 import type { GatewayHealth, GatewayStatus } from '../types/gateway';
+import type { ArchiveHandle } from '../types/context-family';
 import type {
   MemoryCard,
   MemoryCardScope,
@@ -1881,6 +1882,42 @@ export type SessionRecoveryContextPayload = SessionCompressionArtifactPayload & 
   budgetTokens?: number;
   purpose?: string;
 };
+export type SessionRecallDiagnosticCode =
+  | 'missing_archive'
+  | 'checksum_mismatch'
+  | 'read_error'
+  | 'invalid_handle'
+  | 'missing_selector'
+  | 'stale_selector'
+  | 'ambiguous_selector'
+  | 'checksum_unavailable';
+export type SessionRecallDiagnostic = {
+  code: SessionRecallDiagnosticCode;
+  message: string;
+  ref?: string;
+};
+export type SessionRecallOriginalPayload = SessionCompactionPayload & {
+  archiveHandle: ArchiveHandle;
+};
+export type SessionRecallOriginalResult = HostSuccess & {
+  ok: boolean;
+  payload?: unknown;
+  archiveHandle?: ArchiveHandle;
+  diagnostics: SessionRecallDiagnostic[];
+};
+export type SessionExpandSelectorPayload = SessionCompactionPayload & {
+  resourceId: string;
+  selector: string;
+  checksum?: string;
+};
+export type SessionExpandSelectorResult = HostSuccess & {
+  ok: boolean;
+  content?: string;
+  resourceId?: string;
+  selector?: string;
+  checksum?: string;
+  diagnostics: SessionRecallDiagnostic[];
+};
 export type SessionLongTaskControlPayload = SessionCompactionPayload;
 export type SessionLongTaskControlHistoryPayload = SessionCompactionPayload & {
   limit?: number;
@@ -1977,7 +2014,7 @@ export type SessionHandoffPayload = {
   workspaceId?: string | null;
 };
 export type SessionHandoffSource = {
-  id: 'compression_artifact' | 'runtime_checkpoint' | 'transcript' | 'task_ledger' | 'git' | 'observability';
+  id: 'compression_artifact' | 'context_recall' | 'runtime_checkpoint' | 'transcript' | 'task_ledger' | 'git' | 'observability';
   label: string;
   available: boolean;
   summary?: string;
@@ -3800,6 +3837,8 @@ export type HostApiContract = {
     compactionHistory: (payload: SessionCompactionHistoryPayload) => SessionCompactionHistoryResult;
     compressionArtifact: (payload: SessionCompressionArtifactPayload) => SessionCompressionArtifactResult;
     recoveryContext: (payload: SessionRecoveryContextPayload) => SessionRecoveryContextResult;
+    recallOriginal: (payload: SessionRecallOriginalPayload) => SessionRecallOriginalResult;
+    expandSelector: (payload: SessionExpandSelectorPayload) => SessionExpandSelectorResult;
     longTaskControlStatus: (payload: SessionLongTaskControlPayload) => SessionLongTaskControlStatusResult;
     longTaskControlHistory: (payload: SessionLongTaskControlHistoryPayload) => SessionLongTaskControlHistoryResult;
     resumeCheckpoints: (payload: SessionLongTaskControlHistoryPayload) => SessionResumeCheckpointsResult;

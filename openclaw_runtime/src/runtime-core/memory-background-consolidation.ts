@@ -18,6 +18,11 @@ import {
   type RuntimeMemoryQueryableFact,
 } from "./memory-context.js";
 import type { RuntimeMemoryStore } from "./memory-store.js";
+import {
+  computeObservationKey,
+  type ObservationStore,
+} from "./memory-observation-store.js";
+import { triggerSSPVersionBump } from "./memory-pre-reply-injection.js";
 
 export type ConsolidationConfig = {
   /** Facts with importance below this are prune candidates. Default 0.15. */
@@ -48,18 +53,93 @@ export type ConsolidationResult = {
   mergedPairs: ConsolidationMergePair[];
   strengthenedFactIds: string[];
   durationMs: number;
+  /** COMPASS 2.0 诊断: 更新了多少个 observation 的 structuredSummary */
+  structuredSummaryUpdated?: number;
+  /** COMPASS 2.0 诊断: 是否触发了 SSP version++ */
+  versionBumpTriggered?: boolean;
 };
+
+/**
+ * COMPASS 2.0: Consolidation 可选参数.
+ *
+ * - observationStore + factsById: merge 后为受影响 observation 重新生成 structuredSummary
+ * - sessionKey: consolidation 末尾触发 SSP version++ (fire-and-forget)
+ * - hooks: COMPASS 2.0 hook 集合, 优先级高于上述兼容字段
+ */
+export type ConsolidationOptions = {
+  /** @deprecated-migrate-to-hooks 请通过 hooks.afterPruneAndMerge 注入 */
+  observationStore?: ObservationStore;
+  /** @deprecated-migrate-to-hooks 请通过 hooks.afterPruneAndMerge 注入 */
+  factsById?: ReadonlyMap<string, RuntimeMemoryQueryableFact>;
+  /** @deprecated-migrate-to-hooks 请通过 hooks.afterConsolidation 注入 */
+  sessionKey?: string;
+  /** COMPASS 2.0 hooks, 优先级高于上述三个兼容字段 */
+  hooks?: ConsolidationHooks;
+};
+
+/** consolidation 统计, 用于 hook 判断是否有实质变更 */
+export interface ConsolidationStats {
+  prunedCount: number;
+  mergedPairCount: number;
+  strengthenedCount: number;
+  hadChanges: boolean;
+}
+
+/**
+ * COMPASS 2.0 向 consolidation 注入的 hook 集合.
+ * 基础设施层不感知 COMPASS 的具体逻辑, 只负责在正确时机调用 hook.
+ *
+ * 设计原则: hook 失败不应中断 consolidation 主流程 (实现层需 try/catch).
+ */
+export interface ConsolidationHooks {
+  /**
+   * Step 4 hook: 在 prune/merge 完成后, 对受影响的 observations 执行额外处理.
+   * COMPASS 用途: 更新 structuredSummary + bootstrapCanonicalFactId.
+   */
+  afterPruneAndMerge?: (affectedObservationIds: ReadonlySet<string>) => Promise<void>;
+  /**
+   * Step 5 hook: 在 consolidation 产生实质变更后触发.
+   * COMPASS 用途: triggerSSPVersionBump, 强制下一轮 pre-reply I-frame 刷新.
+   */
+  afterConsolidation?: (stats: ConsolidationStats) => Promise<void>;
+}
+
+/**
+ * COMPASS 2.0: 生成 Structured fidelity 级别的紧凑 JSON 三元组.
+ *
+ * 确定性模板 (非 LLM), 限长 ≤150 chars.
+ * - 完整模式: {"s":"<subject>","p":"<predicate>","k":"<key>"}
+ * - 降级模式 (无 subject/predicate): {"k":"<key>","n":<supportCount>}
+ */
+export function generateStructuredSummary(params: {
+  subject?: string;
+  predicate?: string;
+  key: string;
+  supportCount?: number;
+}): string {
+  const { subject, predicate, key, supportCount } = params;
+  let json: string;
+  if (subject && predicate) {
+    json = JSON.stringify({ s: subject, p: predicate, k: key });
+  } else {
+    json = JSON.stringify({ k: key, n: supportCount ?? 0 });
+  }
+  // 限长 ≤150 chars, 超长截断
+  if (json.length <= 150) return json;
+  return json.slice(0, 147) + "...";
+}
 
 /**
  * Run background consolidation against a store. Mutates the store by adding
  * invalidation proposals for pruned and merged facts. Returns a report of
  * what was done.
  */
-export function runConsolidation(
+export async function runConsolidation(
   store: RuntimeMemoryStore,
   config: ConsolidationConfig = DEFAULT_CONSOLIDATION_CONFIG,
   now: number = Date.now(),
-): ConsolidationResult {
+  options?: ConsolidationOptions,
+): Promise<ConsolidationResult> {
   const startTime = Date.now();
 
   const allFacts = store.queryFacts() as readonly RuntimeMemoryQueryableFact[];
@@ -163,11 +243,95 @@ export function runConsolidation(
     }
   }
 
+  // === COMPASS 2.0 Step 4: Generate structuredSummary for affected observations ===
+  let structuredSummaryUpdated = 0;
+
+  // 收集受影响 observation keys (pruned + merged 的 subject → observation key)
+  const affectedObsKeys = new Set<string>();
+  if (options?.factsById) {
+    for (const fid of prunedFactIds) {
+      const f = options.factsById.get(fid);
+      if (f) affectedObsKeys.add(computeObservationKey(f.subject, f.predicate));
+    }
+    for (const pair of mergedPairs) {
+      const f = options.factsById.get(pair.survivorId);
+      if (f) affectedObsKeys.add(computeObservationKey(f.subject, f.predicate));
+    }
+  }
+
+  if (options?.hooks?.afterPruneAndMerge && affectedObsKeys.size > 0) {
+    // Hook 模式: COMPASS 通过 hook 注入处理逻辑
+    try {
+      await options.hooks.afterPruneAndMerge(affectedObsKeys);
+      structuredSummaryUpdated = affectedObsKeys.size;
+    } catch {
+      // hook 失败不中断 consolidation 主流程
+    }
+  } else if (options?.observationStore && options?.factsById && mergedPairs.length > 0) {
+    // 兼容旧调用方式 (COMPASS 2.0 过渡期)
+    const obsStore = options.observationStore;
+    const factsById = options.factsById;
+    // 收集受影响 subject (mergedPairs 中 survivor 对应的 fact)
+    const affectedSubjects = new Set<string>();
+    for (const pair of mergedPairs) {
+      const survivorFact = factsById.get(pair.survivorId);
+      if (survivorFact) affectedSubjects.add(survivorFact.subject);
+    }
+    // 为每个受影响 subject 对应的 observation 重新生成 structuredSummary
+    for (const subject of affectedSubjects) {
+      for (const fact of activeSurvivors) {
+        if (fact.subject !== subject) continue;
+        const key = computeObservationKey(fact.subject, fact.predicate);
+        const obs = obsStore.getByKey(key);
+        if (!obs) continue;
+        const structured = generateStructuredSummary({
+          subject: fact.subject,
+          predicate: fact.predicate,
+          key: obs.key,
+          supportCount: obs.supportFactIds.length,
+        });
+        obsStore.setStructuredSummary(obs.key, structured);
+        // 冷启动修复: 若 canonicalFactId 缺失, 加权分配
+        obsStore.bootstrapCanonicalFactId(obs.key, factsById);
+        structuredSummaryUpdated += 1;
+        break; // 每个 subject 只处理第一个匹配 fact
+      }
+    }
+  }
+
+  // === COMPASS 2.0 Step 5: Projection Cache invariant — trigger SSP version++ ===
+  let versionBumpTriggered = false;
+  const consolidationStats: ConsolidationStats = {
+    prunedCount: prunedFactIds.length,
+    mergedPairCount: mergedPairs.length,
+    strengthenedCount: strengthenedFactIds.length,
+    hadChanges: prunedFactIds.length > 0 || mergedPairs.length > 0,
+  };
+
+  if (options?.hooks?.afterConsolidation) {
+    // Hook 模式: COMPASS 通过 hook 注入 version bump 逻辑
+    try {
+      await options.hooks.afterConsolidation(consolidationStats);
+      versionBumpTriggered = consolidationStats.hadChanges;
+    } catch {
+      // hook 失败不中断 consolidation 主流程
+    }
+  } else if (options?.sessionKey && consolidationStats.hadChanges) {
+    // 兼容旧调用方式 (COMPASS 2.0 过渡期)
+    // fire-and-forget: version++ 是 best-effort 信号, 失败时 pre-reply 使用现有 version
+    void triggerSSPVersionBump(options.sessionKey).catch(() => {
+      // 错误吞咽: 不阻断 consolidation 流程
+    });
+    versionBumpTriggered = true;
+  }
+
   return {
     prunedFactIds,
     mergedPairs,
     strengthenedFactIds,
     durationMs: Date.now() - startTime,
+    ...(structuredSummaryUpdated > 0 ? { structuredSummaryUpdated } : {}),
+    ...(versionBumpTriggered ? { versionBumpTriggered } : {}),
   };
 }
 

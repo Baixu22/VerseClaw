@@ -6,6 +6,13 @@ import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import type { TextContent } from "../../llm/types.js";
 import { emitSessionTranscriptUpdate } from "../../sessions/transcript-events.js";
+import {
+  createContextArchiveHandleForPayloadSync,
+  createContextItemId,
+  createTransformationLifecycleEvents,
+  recordContextFamilyLifecycleEvents,
+} from "../../context-engine/registry/context-item-registry.js";
+import type { ArchiveHandle, LifecycleEvent } from "../../../../shared/types/context-family.js";
 import { resolveAgentContextLimits } from "../agent-scope.js";
 import type { RuntimeIntensityPolicy } from "../intensity-policy.js";
 import type { AgentMessage } from "../runtime/index.js";
@@ -351,7 +358,8 @@ export function truncateOversizedToolResultsInMessages(
   contextWindowTokens: number,
   maxCharsOverride?: number,
   aggregateMaxCharsOverride?: number,
-): { messages: AgentMessage[]; truncatedCount: number } {
+  options: { sessionId?: string } = {},
+): { messages: AgentMessage[]; truncatedCount: number; auditEvents?: LifecycleEvent[] } {
   const maxChars = Math.max(
     1,
     maxCharsOverride ?? calculateMaxToolResultChars(contextWindowTokens),
@@ -371,6 +379,7 @@ export function truncateOversizedToolResultsInMessages(
     maxChars,
     aggregateBudgetChars,
     minKeepChars: RECOVERY_MIN_KEEP_CHARS,
+    sessionId: options.sessionId,
   });
   if (plan.replacements.length === 0) {
     return { messages, truncatedCount: 0 };
@@ -378,9 +387,17 @@ export function truncateOversizedToolResultsInMessages(
 
   const replacementIds = new Set(plan.replacements.map((replacement) => replacement.entryId));
   const replacedBranch = applyToolResultReplacementsToBranch(branch, plan.replacements);
+  const auditEvents = buildToolResultTruncationLifecycleEvents({
+    sessionId: options.sessionId,
+    replacements: plan.replacements,
+    maxChars,
+    aggregateBudgetChars,
+  });
+  recordContextFamilyLifecycleEvents(auditEvents);
   return {
     messages: replacedBranch.map((entry) => entry.message as AgentMessage),
     truncatedCount: replacementIds.size,
+    auditEvents,
   };
 }
 
@@ -417,12 +434,47 @@ type ToolResultBranchEntry = {
 type ToolResultReplacement = {
   entryId: string;
   message: AgentMessage;
+  originalChars?: number;
+  projectedChars?: number;
+  replacementKind?: "oversized" | "aggregate";
+  archiveHandle?: ArchiveHandle;
 };
+
+function archiveOriginalToolResultPayload(params: {
+  sessionId?: string;
+  entryId: string;
+  message: AgentMessage;
+}): ArchiveHandle | undefined {
+  const sessionId = params.sessionId?.trim();
+  if (!sessionId) {
+    return undefined;
+  }
+  try {
+    return createContextArchiveHandleForPayloadSync({
+      sessionId,
+      itemId: createContextItemId(sessionId, "observation", params.entryId),
+      payload: (params.message as { content?: unknown }).content ?? params.message,
+      source: {
+        type: "transcript",
+        sessionId,
+        entryId: params.entryId,
+      },
+    });
+  } catch (error) {
+    log.warn("[tool-result-truncation] failed to archive original tool result", {
+      sessionId,
+      entryId: params.entryId,
+      errorMessage: formatErrorMessage(error),
+    });
+    return undefined;
+  }
+}
 
 function buildAggregateToolResultReplacements(params: {
   branch: ToolResultBranchEntry[];
   aggregateBudgetChars: number;
   minKeepChars?: number;
+  sessionId?: string;
 }): ToolResultReplacement[] {
   const minKeepChars = params.minKeepChars ?? MIN_KEEP_CHARS;
   const candidates = params.branch
@@ -492,7 +544,18 @@ function buildAggregateToolResultReplacements(params: {
       continue;
     }
 
-    replacements.push({ entryId: candidate.entryId, message: truncatedMessage });
+    replacements.push({
+      entryId: candidate.entryId,
+      message: truncatedMessage,
+      originalChars: candidate.textLength,
+      projectedChars: newLength,
+      replacementKind: "aggregate",
+      archiveHandle: archiveOriginalToolResultPayload({
+        sessionId: params.sessionId,
+        entryId: candidate.entryId,
+        message: candidate.message,
+      }),
+    });
     remainingReduction -= actualReduction;
   }
 
@@ -503,6 +566,7 @@ function buildOversizedToolResultReplacements(params: {
   branch: ToolResultBranchEntry[];
   maxChars: number;
   minKeepChars?: number;
+  sessionId?: string;
 }): ToolResultReplacement[] {
   const minKeepChars = params.minKeepChars ?? MIN_KEEP_CHARS;
   const replacements: ToolResultReplacement[] = [];
@@ -518,15 +582,64 @@ function buildOversizedToolResultReplacements(params: {
     if (getToolResultTextLength(msg) <= params.maxChars) {
       continue;
     }
+    const truncatedMessage = truncateToolResultMessage(msg, params.maxChars, {
+      minKeepChars,
+    });
     replacements.push({
       entryId: entry.id,
-      message: truncateToolResultMessage(msg, params.maxChars, {
-        minKeepChars,
+      message: truncatedMessage,
+      originalChars: getToolResultTextLength(msg),
+      projectedChars: getToolResultTextLength(truncatedMessage),
+      replacementKind: "oversized",
+      archiveHandle: archiveOriginalToolResultPayload({
+        sessionId: params.sessionId,
+        entryId: entry.id,
+        message: msg,
       }),
     });
   }
 
   return replacements;
+}
+
+function buildToolResultTruncationLifecycleEvents(params: {
+  sessionId?: string;
+  replacements: ToolResultReplacement[];
+  maxChars: number;
+  aggregateBudgetChars: number;
+}): LifecycleEvent[] {
+  const sessionId = params.sessionId?.trim();
+  if (!sessionId) {
+    return [];
+  }
+  return params.replacements.flatMap((replacement) =>
+    createTransformationLifecycleEvents({
+      sessionId,
+      itemId: createContextItemId(sessionId, "observation", replacement.entryId),
+      from: "active",
+      to: "evicted",
+      reason: "tool_result_truncation",
+      actor: "tool-result-truncation",
+      source: {
+        type: "transcript",
+        sessionId,
+        entryId: replacement.entryId,
+      },
+      metadata: {
+        originalChars: replacement.originalChars,
+        projectedChars: replacement.projectedChars,
+        truncatedChars:
+          typeof replacement.originalChars === "number" &&
+          typeof replacement.projectedChars === "number"
+            ? Math.max(0, replacement.originalChars - replacement.projectedChars)
+            : undefined,
+        maxChars: params.maxChars,
+        aggregateBudgetChars: params.aggregateBudgetChars,
+        replacementKind: replacement.replacementKind,
+        archiveHandle: replacement.archiveHandle,
+      },
+    }),
+  );
 }
 
 function calculateReplacementReduction(
@@ -580,6 +693,7 @@ function buildToolResultReplacementPlan(params: {
   maxChars: number;
   aggregateBudgetChars: number;
   minKeepChars?: number;
+  sessionId?: string;
 }): {
   replacements: ToolResultReplacement[];
   oversizedReplacementCount: number;
@@ -592,6 +706,7 @@ function buildToolResultReplacementPlan(params: {
     branch: params.branch,
     maxChars: params.maxChars,
     minKeepChars,
+    sessionId: params.sessionId,
   });
   const oversizedReducibleChars = calculateReplacementReduction(
     params.branch,
@@ -605,6 +720,7 @@ function buildToolResultReplacementPlan(params: {
     branch: oversizedTrimmedBranch,
     aggregateBudgetChars: params.aggregateBudgetChars,
     minKeepChars,
+    sessionId: params.sessionId,
   });
   const aggregateReducibleChars = calculateReplacementReduction(
     oversizedTrimmedBranch,
@@ -659,6 +775,7 @@ export function estimateToolResultReductionPotential(params: {
     maxChars,
     aggregateBudgetChars,
     minKeepChars: RECOVERY_MIN_KEEP_CHARS,
+    sessionId: params.sessionId,
   });
   const maxReducibleChars = plan.oversizedReducibleChars + plan.aggregateReducibleChars;
 
@@ -683,7 +800,7 @@ function truncateOversizedToolResultsInExistingSessionManager(params: {
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
-}): { truncated: boolean; truncatedCount: number; reason?: string } {
+}): { truncated: boolean; truncatedCount: number; reason?: string; auditEvents?: LifecycleEvent[] } {
   const { sessionManager, contextWindowTokens } = params;
   const maxChars = Math.max(
     1,
@@ -705,6 +822,7 @@ function truncateOversizedToolResultsInExistingSessionManager(params: {
     maxChars,
     aggregateBudgetChars,
     minKeepChars: RECOVERY_MIN_KEEP_CHARS,
+    sessionId: params.sessionId,
   });
   if (plan.replacements.length === 0) {
     return {
@@ -732,10 +850,18 @@ function truncateOversizedToolResultsInExistingSessionManager(params: {
       `sessionKey=${params.sessionKey ?? params.sessionId ?? "unknown"}`,
   );
 
+  const auditEvents = buildToolResultTruncationLifecycleEvents({
+    sessionId: params.sessionId,
+    replacements: plan.replacements,
+    maxChars,
+    aggregateBudgetChars,
+  });
+  recordContextFamilyLifecycleEvents(auditEvents);
   return {
     truncated: rewriteResult.changed,
     truncatedCount: rewriteResult.rewrittenEntries,
     reason: rewriteResult.reason,
+    auditEvents,
   };
 }
 
@@ -749,7 +875,7 @@ async function truncateOversizedToolResultsInTranscriptState(params: {
   sessionKey?: string;
   agentId?: string;
   config?: SessionWriteLockAcquireTimeoutConfig;
-}): Promise<{ truncated: boolean; truncatedCount: number; reason?: string }> {
+}): Promise<{ truncated: boolean; truncatedCount: number; reason?: string; auditEvents?: LifecycleEvent[] }> {
   const { state, contextWindowTokens } = params;
   const maxChars = Math.max(
     1,
@@ -771,6 +897,7 @@ async function truncateOversizedToolResultsInTranscriptState(params: {
     maxChars,
     aggregateBudgetChars,
     minKeepChars: RECOVERY_MIN_KEEP_CHARS,
+    sessionId: params.sessionId,
   });
   if (plan.replacements.length === 0) {
     return {
@@ -803,10 +930,18 @@ async function truncateOversizedToolResultsInTranscriptState(params: {
       `sessionKey=${params.sessionKey ?? params.sessionId ?? "unknown"}`,
   );
 
+  const auditEvents = buildToolResultTruncationLifecycleEvents({
+    sessionId: params.sessionId,
+    replacements: plan.replacements,
+    maxChars,
+    aggregateBudgetChars,
+  });
+  recordContextFamilyLifecycleEvents(auditEvents);
   return {
     truncated: rewriteResult.changed,
     truncatedCount: rewriteResult.rewrittenEntries,
     reason: rewriteResult.reason,
+    auditEvents,
   };
 }
 
@@ -819,7 +954,7 @@ export function truncateOversizedToolResultsInSessionManager(params: {
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
-}): { truncated: boolean; truncatedCount: number; reason?: string } {
+}): { truncated: boolean; truncatedCount: number; reason?: string; auditEvents?: LifecycleEvent[] } {
   try {
     return truncateOversizedToolResultsInExistingSessionManager(params);
   } catch (err) {
@@ -838,7 +973,7 @@ export async function truncateOversizedToolResultsInSession(params: {
   sessionKey?: string;
   agentId?: string;
   config?: SessionWriteLockAcquireTimeoutConfig;
-}): Promise<{ truncated: boolean; truncatedCount: number; reason?: string }> {
+}): Promise<{ truncated: boolean; truncatedCount: number; reason?: string; auditEvents?: LifecycleEvent[] }> {
   const { sessionFile, contextWindowTokens } = params;
   let sessionLock: Awaited<ReturnType<typeof acquireSessionWriteLock>> | undefined;
 

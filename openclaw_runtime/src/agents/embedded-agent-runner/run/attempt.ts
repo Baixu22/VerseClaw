@@ -461,11 +461,14 @@ import {
 } from "./midturn-precheck.js";
 import {
   PREEMPTIVE_OVERFLOW_ERROR_TEXT,
+  buildObservationMaskingProjection,
+  buildPreemptiveRouteLifecycleEvents,
   buildPrePromptContextBudgetStatus,
   estimateLlmBoundaryTokenPressure,
   formatPrePromptPrecheckLog,
   shouldPreemptivelyCompactBeforePrompt,
 } from "./preemptive-compaction.js";
+import { recordContextFamilyLifecycleEvents } from "../../../context-engine/registry/context-item-registry.js";
 import {
   buildCurrentInboundPrompt,
   buildRuntimeContextCustomMessage,
@@ -4328,6 +4331,32 @@ export async function runEmbeddedAttempt(
             systemPrompt: systemPromptForHook,
             prompt: llmBoundaryPromptForPrecheck,
           });
+          const observationMaskingConfig =
+            params.config?.runtime?.contextFamily?.observationMasking;
+          const observationMaskingProjection = observationMaskingConfig?.enabled
+            ? await buildObservationMaskingProjection({
+                enabled: true,
+                messages: hookMessagesForCurrentPrompt,
+                sessionId: params.sessionId,
+                ...(typeof observationMaskingConfig.minChars === "number"
+                  ? { minChars: observationMaskingConfig.minChars }
+                  : {}),
+                ...(typeof observationMaskingConfig.preserveNewestObservationCount === "number"
+                  ? {
+                      preserveNewestObservationCount:
+                        observationMaskingConfig.preserveNewestObservationCount,
+                    }
+                  : {}),
+              })
+            : undefined;
+          const observationMaskingProjectedPromptTokens =
+            observationMaskingProjection && observationMaskingProjection.maskedCount > 0
+              ? estimateLlmBoundaryTokenPressure({
+                  messages: observationMaskingProjection.messages,
+                  systemPrompt: systemPromptForHook,
+                  prompt: llmBoundaryPromptForPrecheck,
+                })
+              : undefined;
           const preemptiveCompaction = skipPromptSubmission
             ? null
             : shouldPreemptivelyCompactBeforePrompt({
@@ -4345,8 +4374,31 @@ export async function runEmbeddedAttempt(
                   source: "llm_boundary_normalized_prompt",
                   renderedChars: llmBoundaryPromptForPrecheck.length,
                 },
+                ...(observationMaskingConfig
+                  ? {
+                      observationMasking: {
+                        enabled: observationMaskingConfig.enabled === true,
+                        verifiedMaskedCount: observationMaskingProjection?.maskedCount ?? 0,
+                        projectedPromptTokens:
+                          observationMaskingProjectedPromptTokens ?? llmBoundaryTokenPressure,
+                      },
+                    }
+                  : {}),
               });
           if (preemptiveCompaction) {
+            recordContextFamilyLifecycleEvents(buildPreemptiveRouteLifecycleEvents({
+              result: preemptiveCompaction,
+              sessionId: params.sessionId,
+              provider: params.provider,
+              modelId: params.modelId,
+              messageCount: activeSession.messages.length,
+              contextTokenBudget,
+              reserveTokens,
+              ...(contextEnginePromptAuthority === "preassembly_may_overflow" &&
+              unwindowedContextEngineMessagesForPrecheck
+                ? { unwindowedMessageCount: unwindowedContextEngineMessagesForPrecheck.length }
+                : {}),
+            }));
             contextBudgetStatus = buildPrePromptContextBudgetStatus({
               result: preemptiveCompaction,
               provider: params.provider,
@@ -4425,6 +4477,18 @@ export async function runEmbeddedAttempt(
               skipPromptSubmission = true;
             }
           }
+          if (
+            preemptiveCompaction?.route === "observation_masking" &&
+            observationMaskingProjection &&
+            observationMaskingProjection.maskedCount > 0
+          ) {
+            log.info(
+              `[context-observation-masking] projection-only masking selected ` +
+                `maskedCount=${observationMaskingProjection.maskedCount} ` +
+                `estimatedTokenReduction=${observationMaskingProjection.estimatedTokenReduction} ` +
+                `sessionKey=${params.sessionKey ?? params.sessionId ?? "unknown"}`,
+            );
+          }
           if (preemptiveCompaction?.shouldCompact) {
             preflightRecovery =
               preemptiveCompaction.route === "compact_then_truncate"
@@ -4459,11 +4523,19 @@ export async function runEmbeddedAttempt(
               const providerPromptStreamFn = wrapStreamFnWithMessageTransform(
                 baseStreamFn,
                 (messages) => {
+                  if (
+                    preemptiveCompaction?.route === "observation_masking" &&
+                    observationMaskingProjection &&
+                    observationMaskingProjection.maskedCount > 0
+                  ) {
+                    return observationMaskingProjection.messages;
+                  }
                   const providerPromptHistoryTruncation = truncateOversizedToolResultsInMessages(
                     messages,
                     contextTokenBudget,
                     promptToolResultMaxChars,
                     promptToolResultMaxChars * PROMPT_TOOL_RESULT_AGGREGATE_CAP_MULTIPLIER,
+                    { sessionId: params.sessionId },
                   );
                   return providerPromptHistoryTruncation.truncatedCount > 0
                     ? providerPromptHistoryTruncation.messages

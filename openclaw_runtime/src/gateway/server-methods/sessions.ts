@@ -23,10 +23,11 @@ import {
   validateSessionsCompactionListParams,
   validateSessionsCompactionRestoreParams,
   validateSessionsCompactionStatusParams,
-  validateSessionsRecoveryContextParams,
-  validateSessionsLongTaskControlHistoryParams,
+  validateSessionsExpandSelectorParams,
+  validateSessionsRecoveryContextParams,  validateSessionsLongTaskControlHistoryParams,
   validateSessionsLongTaskControlStatusParams,
   validateSessionsQueueDrainParams,
+  validateSessionsRecallOriginalParams,
   validateSessionsResumeCheckpointsParams,
   validateSessionsCreateParams,
   validateSessionsDeleteParams,
@@ -78,6 +79,8 @@ import {
 import { resolveAgentMainSessionKey } from "../../config/sessions/main-session.js";
 import { CURRENT_SESSION_VERSION } from "../../config/sessions/version.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { verifyContextArchiveHandle } from "../../context-engine/registry/context-item-registry.js";
+import { normalizeArchiveHandle } from "../../../../shared/types/context-family.js";
 import {
   createInternalHookEvent,
   hasInternalHookListeners,
@@ -1573,13 +1576,18 @@ export const sessionsHandlers: GatewayRequestHandlers = {
       undefined,
     );
   },
+  "sessions.recallOriginal": async ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsRecallOriginalParams,
+        "sessions.recallOriginal",
   "sessions.compressionArtifact": ({ params, respond, context }) => {
     if (
       !assertValidParams(
         params,
         validateSessionsCompressionArtifactParams,
-        "sessions.compressionArtifact",
-        respond,
+        "sessions.compressionArtifact",        respond,
       )
     ) {
       return;
@@ -1593,6 +1601,49 @@ export const sessionsHandlers: GatewayRequestHandlers = {
     const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
     if (!requestedAgent.ok) {
       respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    let archiveHandle: ReturnType<typeof normalizeArchiveHandle>;
+    try {
+      archiveHandle = normalizeArchiveHandle(p.archiveHandle);
+    } catch (error) {
+      respond(
+        true,
+        {
+          ok: false,
+          archiveHandle: p.archiveHandle,
+          diagnostics: [{
+            code: "invalid_handle",
+            message: formatErrorMessage(error),
+            ref: typeof p.archiveHandle?.uri === "string" ? p.archiveHandle.uri : undefined,
+          }],
+        },
+        undefined,
+      );
+      return;
+    }
+    const verified = await verifyContextArchiveHandle(archiveHandle);
+    if (!verified.ok) {
+      const code = verified.reason === "missing"
+        ? "missing_archive"
+        : verified.reason === "checksum_mismatch"
+          ? "checksum_mismatch"
+          : verified.reason === "invalid_uri"
+            ? "invalid_handle"
+            : "read_error";
+      respond(
+        true,
+        {
+          ok: false,
+          archiveHandle,
+          diagnostics: [{
+            code,
+            message: `Archive recall failed: ${verified.reason}`,
+            ref: archiveHandle.uri,
+          }],
+        },
+        undefined,
+      );
       return;
     }
     const { entry, canonicalKey } = loadSessionEntry(key, {
@@ -1608,26 +1659,32 @@ export const sessionsHandlers: GatewayRequestHandlers = {
       respond(true, { ok: true, key: canonicalKey, warnings }, undefined);
       return;
     }
-    const artifact = compressionArtifactFromCheckpoint(checkpoint);
-    respond(
+    const artifact = compressionArtifactFromCheckpoint(checkpoint);    respond(
       true,
       {
         ok: true,
+        payload: verified.payload,
+        archiveHandle,
+        diagnostics: [],
         key: canonicalKey,
         checkpointId: checkpoint.checkpointId,
         ...(artifact ? { artifact, quality: artifact.quality } : {}),
-        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],
-      },
+        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],      },
       undefined,
     );
   },
+  "sessions.expandSelector": ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsExpandSelectorParams,
+        "sessions.expandSelector",
   "sessions.recoveryContext": ({ params, respond, context }) => {
     if (
       !assertValidParams(
         params,
         validateSessionsRecoveryContextParams,
-        "sessions.recoveryContext",
-        respond,
+        "sessions.recoveryContext",        respond,
       )
     ) {
       return;
@@ -1643,6 +1700,32 @@ export const sessionsHandlers: GatewayRequestHandlers = {
       respond(false, undefined, requestedAgent.error);
       return;
     }
+    const ambiguous = /[*{},]|\.\.$/u.test(p.selector);
+    const diagnostic = ambiguous
+      ? {
+          code: "ambiguous_selector",
+          message: "Selector matched an ambiguous range and was not expanded.",
+          ref: `${p.resourceId}#${p.selector}`,
+        }
+      : p.checksum
+        ? {
+            code: "stale_selector",
+            message: "Selector content could not be resolved for the supplied checksum.",
+            ref: `${p.resourceId}#${p.selector}`,
+          }
+        : {
+            code: "missing_selector",
+            message: "No selector-backed content resolver is available for this resource.",
+            ref: `${p.resourceId}#${p.selector}`,
+          };
+    respond(
+      true,
+      {
+        ok: false,
+        resourceId: p.resourceId,
+        selector: p.selector,
+        ...(p.checksum ? { checksum: p.checksum } : {}),
+        diagnostics: [diagnostic],
     const { entry, canonicalKey } = loadSessionEntry(key, {
       agentId: requestedAgent.agentId,
     });
@@ -1686,8 +1769,7 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         context: projection,
         projectionTokens: estimateProjectionTokens(projection),
         ...(artifact ? { artifact, quality: artifact.quality } : {}),
-        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],
-      },
+        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],      },
       undefined,
     );
   },

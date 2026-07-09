@@ -10,6 +10,12 @@ import {
   resolveContextEngine,
 } from '../../openclaw_runtime/src/context-engine/registry';
 import type { ContextEngine } from '../../openclaw_runtime/src/context-engine/types';
+import {
+  createContextItemId,
+  createTransformationLifecycleEvents,
+  recordContextFamilyLifecycleEvents,
+  resetContextFamilyLifecycleAudit,
+} from '../../openclaw_runtime/src/context-engine/registry/context-item-registry';
 
 function legacyTestEngine(): ContextEngine {
   return {
@@ -44,6 +50,7 @@ function registerTestBuiltins(): void {
 
 describe('Context engine registry default-on CRK resolution', () => {
   beforeEach(() => {
+    resetContextFamilyLifecycleAudit();
     registerTestBuiltins();
   });
 
@@ -77,6 +84,38 @@ describe('Context engine registry default-on CRK resolution', () => {
     const engine = await resolveContextEngine(parsed);
 
     expect(engine.info.id).toBe('legacy');
+  });
+
+  it('wires runtime.contextFamily.contextStatus into the registered CRK engine', async () => {
+    recordContextFamilyLifecycleEvents(createTransformationLifecycleEvents({
+      sessionId: 'session-status',
+      itemId: createContextItemId('session-status', 'observation', 'tool-1'),
+      from: 'active',
+      to: 'evicted',
+      reason: 'tool_result_truncation',
+      actor: 'test',
+    }));
+    const parsed = OpenClawSchema.parse({
+      runtime: {
+        contextFamily: {
+          contextStatus: {
+            enabled: true,
+          },
+        },
+      },
+    });
+    const engine = await resolveContextEngine(parsed);
+
+    const assembled = await engine.assemble({
+      sessionId: 'session-status',
+      messages: [{ role: 'user', content: 'status please' }] as AgentMessage[],
+      tokenBudget: 2_000,
+      prompt: 'continue',
+    });
+
+    expect(assembled.systemPromptAddition).toContain('[Context Status]');
+    expect(assembled.systemPromptAddition).toContain('lifecycle: evicted=1');
+    expect(assembled.systemPromptAddition).toContain('kinds: observation=1');
   });
 
   it('quarantines a default-on CRK assemble failure and falls back to legacy', async () => {
