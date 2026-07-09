@@ -601,7 +601,7 @@ function UsageHeatmap({
             style={{ width: `${weekCount * 12 + Math.max(0, weekCount - 1) * 3}px` }}
           >
             <HeatGraph.MonthLabels>
-              {({ label }) => {
+              {({ label }: { label: { column: number; month: number; year: number } }) => {
                 if (label.column === 0) return null;
                 return (
                   <span
@@ -622,7 +622,7 @@ function UsageHeatmap({
             }}
           >
             <HeatGraph.DayLabels>
-              {({ label }) => {
+              {({ label }: { label: { row: number; dayOfWeek: number } }) => {
                 const showLabel = label.dayOfWeek === 1 || label.dayOfWeek === 3 || label.dayOfWeek === 5;
                 return (
                   <span
@@ -642,7 +642,7 @@ function UsageHeatmap({
               gridTemplateRows: 'repeat(7, 12px)',
             }}
           >
-            {({ cell }) => {
+            {({ cell }: { cell: { date: Date; count: number } }) => {
               const dateKey = dayKey(cell.date);
               const bucket = bucketByDate.get(dateKey);
               const label = bucket?.label ?? formatDayLabel(cell.date);
