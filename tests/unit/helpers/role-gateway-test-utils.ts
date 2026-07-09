@@ -41,8 +41,13 @@ export type HandlerArgs = {
     logGateway: {
       info: (...args: unknown[]) => void;
       warn: (...args: unknown[]) => void;
+    broadcast: () => void;
+    logGateway: {
+      info: () => void;
+      warn: () => void;
     };
   };
+  client: null;
 };
 
 /** Builds handler args with a captured respond and a controlled config. */
@@ -62,6 +67,8 @@ export function buildHandlerArgs(
         warn: () => undefined,
       },
     },
+
+    client: null,
   };
 }
 

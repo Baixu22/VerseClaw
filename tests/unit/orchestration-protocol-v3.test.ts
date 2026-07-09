@@ -4,6 +4,24 @@ vi.mock('../../openclaw_runtime/src/agents/subagent-spawn', () => ({
   spawnSubagentDirect: vi.fn(),
 }));
 
+
+vi.mock('../../openclaw_runtime/src/media/image-ops.js', () => ({
+  IMAGE_REDUCE_QUALITY_STEPS: [85, 75, 65, 55, 45, 35],
+  ImageProcessorUnavailableError: class ImageProcessorUnavailableError extends Error {},
+  buildImageResizeSideGrid: vi.fn(() => []),
+  convertHeicToJpeg: vi.fn(async (buffer: Buffer) => buffer),
+  createImageProcessor: vi.fn(),
+  getImageMetadata: vi.fn(async () => null),
+  hasAlphaChannel: vi.fn(async () => false),
+  isImageProcessorUnavailableError: vi.fn(() => false),
+  normalizeExifOrientation: vi.fn(async (buffer: Buffer) => buffer),
+  optimizeImageToPng: vi.fn(),
+  readImageMetadataFromHeader: vi.fn(() => null),
+  readImageProbeFromHeader: vi.fn(() => null),
+  resizeToJpeg: vi.fn(async ({ buffer }: { buffer: Buffer }) => buffer),
+  resizeToPng: vi.fn(async ({ buffer }: { buffer: Buffer }) => buffer),
+}));
+
 vi.mock('rastermill', () => ({
   createRastermill: () => ({
     probe: vi.fn(),
@@ -15,6 +33,7 @@ vi.mock('rastermill', () => ({
   readImageProbeFromHeader: vi.fn(),
   readImageMetadataFromHeader: vi.fn(),
 }));
+}), { virtual: true });
 
 import { createOrchestratorPlan } from '../../openclaw_runtime/src/agents/orchestrator';
 import { runOrchestration } from '../../openclaw_runtime/src/agents/orchestrator-run';
