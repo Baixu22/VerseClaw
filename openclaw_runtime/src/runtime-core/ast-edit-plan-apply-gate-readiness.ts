@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { EvidenceRef } from "./evidence.js";
 import type { EditPlan, EditPlanAuthorityBoundary, EditPlanVerifierRequirement } from "./ast-edit-plan.js";
+import { recordAstEditPlanSpineDrift } from "./ast-edit-plan.js";
 import {
   isEditPlanForEvidenceVerifierReadiness,
   type AstEditPlanEvidenceVerifierReadinessReport,
@@ -236,6 +237,8 @@ export function buildAstEditPlanApplyGateReadiness(
       : diagnostics,
     limits.maxDiagnostics,
   );
+  // [SPINE] Drift diagnostics are mirrored to runtime-spine without changing the readiness decision.
+  recordAstEditPlanSpineDrift(plan, boundedDiagnostics, "apply_gate_readiness");
 
   return report({
     decision: decide(readinessReport, boundedDiagnostics),
