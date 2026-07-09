@@ -103,3 +103,4 @@ resources/openclaw-plugins/skillshub/
 # Local upstream/runtime reference checkout
 openclaw_mit/
 openclaw_runtime/.artifacts/
+.trae/
