@@ -24,6 +24,7 @@ import {
   type RuntimeContextProvider,
   type RuntimeToolProvider,
 } from "../../openclaw_runtime/src/runtime-core";
+import { eventBus, evidenceLedger, lifecycleEngine } from "../../openclaw_runtime/src/runtime-spine";
 
 const contextProvider = (id: string, priority: number): RuntimeContextProvider => ({
   manifest: buildRuntimeContextProviderManifestFixture({
@@ -83,6 +84,7 @@ describe("runtime provider/tool registry contracts and flags", () => {
       providerRegistryShadow: true,
       contextProviderRegistryPilot: true,
       toolRegistryShadow: true,
+      registryDiagnosticsCollector: false,
     });
   });
 
@@ -217,5 +219,60 @@ describe("runtime provider/tool registry contracts and flags", () => {
     expect(contexts.contextItems.every(isContextItem)).toBe(true);
     expect(isRuntimeToolProviderResult(result)).toBe(true);
     expect(result).toMatchObject({ callId: "call-1", status: "success" });
+  });
+
+  it("records tool invocation spine diagnostics without changing provider result shape", async () => {
+    eventBus.clear();
+    const registry = new ToolProviderRegistry([toolProvider("tool-a", 0)]);
+    const request = buildToolCallRequestFixture({
+      callId: "call-spine-1",
+      toolName: "mcp.callTool",
+      permissionContext: { toolPolicy: { deny: ["mcp.callTool"] } },
+    });
+    const beforeEntities = lifecycleEngine.getByType("tool_invocation").length;
+
+    const result = await registry.invokeTool(request);
+
+    expect(result).toEqual(buildToolCallResultFixture({ callId: "call-spine-1" }));
+    const entity = lifecycleEngine.getByType("tool_invocation").slice(beforeEntities).at(-1);
+    expect(entity).toBeDefined();
+    expect(entity?.metadata).toMatchObject({
+      callId: "call-spine-1",
+      toolName: "mcp.callTool",
+      providerId: "tool-a",
+    });
+
+    const events = eventBus.getByEntity(entity!.entityId);
+    expect(events.map((event) => event.kind)).toEqual([
+      "gate_decision",
+      "tool.invoked",
+      "tool.result",
+    ]);
+    expect(events[0].payload).toMatchObject({
+      gateType: "pre_execution",
+      authority: "diagnostic_only",
+      status: "approved",
+      checkerResults: [
+        expect.objectContaining({
+          checkerId: "tool-policy-checker",
+          passed: false,
+        }),
+      ],
+    });
+    expect(events.at(-1)?.payload).toMatchObject({
+      evidenceKind: "execution_evidence",
+      isCompletionProof: false,
+      status: "success",
+    });
+
+    expect(evidenceLedger.getByEntity(entity!.entityId)).toContainEqual(
+      expect.objectContaining({
+        kind: "diagnostic_snapshot",
+        metadata: expect.objectContaining({
+          evidenceKind: "execution_evidence",
+          isCompletionProof: false,
+        }),
+      }),
+    );
   });
 });

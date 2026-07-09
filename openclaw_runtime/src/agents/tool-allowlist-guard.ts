@@ -1,3 +1,5 @@
+// Deprecated: Runtime-spine WP3 adds diagnostic-only tool policy observation; this guard remains legacy-authoritative.
+// @deprecated [SPINE] Legacy explicit allowlist guard retained; Runtime Spine checker is diagnostic-only.
 /**
  * Explicit tool allowlist guard.
  *

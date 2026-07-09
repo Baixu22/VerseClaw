@@ -1,5 +1,13 @@
 import { createHash } from "node:crypto";
 import type { EvidenceRef } from "./evidence.js";
+import {
+  eventBus,
+  evidenceLedger,
+  failureContract,
+  gateEngine,
+  lifecycleEngine,
+  type GateDecision,
+} from "../runtime-spine/index.js";
 import type {
   AstPatchPlannerDiagnostic,
   AstPatchPlannerDiagnosticCode,
@@ -191,6 +199,228 @@ export const EDIT_PLAN_AUTHORITY_BOUNDARY: EditPlanAuthorityBoundary = {
   editPlanIsNotTaskCompletionEvidence: true,
 };
 
+const astEditPlanSpineEntities = new Map<string, string>();
+
+// [SPINE] Runtime-spine AST hooks are diagnostic-only and never participate in EditPlan validity.
+export function ensureAstEditPlanSpineEntity(
+  plan: Pick<EditPlan, "planId" | "engineId" | "mode" | "source">,
+  stage: string,
+): string {
+  const existing = astEditPlanSpineEntities.get(plan.planId);
+  if (existing) {
+    return existing;
+  }
+  const entity = lifecycleEngine.create("ast_edit_plan", {
+    planId: plan.planId,
+    engineId: plan.engineId,
+    mode: plan.mode,
+    sourceKind: plan.source.kind,
+    authority: "diagnostic_only",
+    stage,
+  });
+  astEditPlanSpineEntities.set(plan.planId, entity.entityId);
+  eventBus.emit(
+    "ast.plan_created",
+    entity.entityId,
+    "ast_edit_plan",
+    { sourceId: "runtime-core.ast-edit-plan", sourceType: "ast", stage },
+    {
+      planId: plan.planId,
+      engineId: plan.engineId,
+      sourceKind: plan.source.kind,
+      diagnosticOnly: true,
+      isCompletionProof: false,
+    },
+  );
+  return entity.entityId;
+}
+
+// [SPINE] Scan evidence is recorded as a diagnostic snapshot, not completion evidence.
+function recordAstEditPlanSpineScan(plan: EditPlan, scan: AstPatchPlannerReadonlyScanResult): void {
+  const entityId = ensureAstEditPlanSpineEntity(plan, "readonly_scan");
+  const envelope = evidenceLedger.collect(
+    entityId,
+    "diagnostic_snapshot",
+    "runtime.ast_edit_plan.scan",
+    [
+      {
+        itemId: `${plan.planId}:scan`,
+        label: "AST readonly scan evidence",
+        value: {
+          planId: plan.planId,
+          scanStatus: scan.status,
+          matchCount: scan.matches.length,
+          diagnosticCount: scan.diagnostics.length,
+          targetFileCount: plan.targetFiles.length,
+        },
+        capturedAt: Date.now(),
+        metadata: { evidenceKind: "scan_evidence", isCompletionProof: false },
+      },
+    ],
+    { metadata: { evidenceKind: "scan_evidence", isCompletionProof: false } },
+  );
+  lifecycleEngine.transition(entityId, "planned", {
+    actor: "runtime-core.ast-edit-plan",
+    reason: "readonly scan completed",
+    metadata: { planId: plan.planId, scanStatus: scan.status },
+  });
+  eventBus.emit(
+    "ast.scanned",
+    entityId,
+    "ast_edit_plan",
+    { sourceId: "runtime-core.ast-edit-plan", sourceType: "ast", stage: "readonly_scan" },
+    {
+      planId: plan.planId,
+      scanStatus: scan.status,
+      evidenceKind: "scan_evidence",
+      isCompletionProof: false,
+    },
+    [evidenceLedger.toRef(envelope)],
+  );
+}
+
+// [SPINE] Drift is reported diagnostically; old drift diagnostics still drive legacy decisions.
+export function recordAstEditPlanSpineDrift(
+  plan: Pick<EditPlan, "planId" | "engineId" | "mode" | "source">,
+  diagnostics: readonly { code: string; severity: "info" | "warning" | "error"; message: string }[],
+  stage: string,
+): void {
+  const driftDiagnostics = diagnostics.filter((diagnostic) => diagnostic.code.includes("drift"));
+  if (driftDiagnostics.length === 0) {
+    return;
+  }
+  const entityId = ensureAstEditPlanSpineEntity(plan, stage);
+  eventBus.emit(
+    "ast.drift_detected",
+    entityId,
+    "ast_edit_plan",
+    { sourceId: "runtime-core.ast-edit-plan", sourceType: "ast", stage },
+    {
+      planId: plan.planId,
+      diagnosticCodes: driftDiagnostics.map((diagnostic) => diagnostic.code),
+      diagnostics: driftDiagnostics.map((diagnostic) => ({
+        code: diagnostic.code,
+        severity: diagnostic.severity,
+        message: diagnostic.message,
+      })),
+      diagnosticOnly: true,
+      isCompletionProof: false,
+    },
+  );
+  if (driftDiagnostics.some((diagnostic) => diagnostic.severity === "error")) {
+    lifecycleEngine.transition(entityId, "failed", {
+      actor: "runtime-core.ast-edit-plan",
+      reason: "drift detected",
+      metadata: { planId: plan.planId, stage },
+    });
+  }
+}
+
+// [SPINE] Pre-mutation gate decisions are recorded only; the controlled apply path remains authoritative.
+export function recordAstEditPlanSpinePreMutationGate(
+  plan: Pick<EditPlan, "planId" | "engineId" | "mode" | "source">,
+  payload: Record<string, unknown>,
+): void {
+  const entityId = ensureAstEditPlanSpineEntity(plan, "pre_mutation");
+  void gateEngine
+    .check({
+      gateType: "pre_mutation",
+      entityId,
+      entityType: "ast_edit_plan",
+      source: { sourceId: "runtime-core.ast-edit-plan", sourceType: "ast", stage: "pre_mutation" },
+      payload: { planId: plan.planId, ...payload },
+      metadata: { diagnosticOnly: true, planId: plan.planId },
+    })
+    .then((decision: GateDecision) => {
+      eventBus.emit(
+        "gate_decision",
+        entityId,
+        "ast_edit_plan",
+        { sourceId: "runtime-spine.gate-engine", sourceType: "runtime_spine", stage: "pre_mutation" },
+        decision,
+        [{ refType: "gate_decision", gateId: decision.gateId, gateType: decision.gateType, status: decision.status, authority: decision.authority }],
+      );
+    });
+}
+
+// [SPINE] Mutation evidence is explicitly segregated from completion evidence.
+export function recordAstEditPlanSpineMutation(
+  plan: Pick<EditPlan, "planId" | "engineId" | "mode" | "source">,
+  payload: Record<string, unknown>,
+): void {
+  const entityId = ensureAstEditPlanSpineEntity(plan, "controlled_apply");
+  const envelope = evidenceLedger.collect(
+    entityId,
+    "mutation_evidence",
+    "runtime-core.ast-edit-plan-controlled-apply-pilot",
+    [
+      {
+        itemId: `${plan.planId}:mutation`,
+        label: "AST controlled apply mutation evidence",
+        value: payload,
+        capturedAt: Date.now(),
+        metadata: { evidenceKind: "mutation_evidence", isCompletionProof: false },
+      },
+    ],
+    { metadata: { evidenceKind: "mutation_evidence", isCompletionProof: false } },
+  );
+  lifecycleEngine.transition(entityId, "planned", {
+    actor: "runtime-core.ast-edit-plan-controlled-apply-pilot",
+    reason: "controlled apply diagnostic path prepared",
+    metadata: { planId: plan.planId },
+  });
+  lifecycleEngine.transition(entityId, "running", {
+    actor: "runtime-core.ast-edit-plan-controlled-apply-pilot",
+    reason: "controlled apply diagnostic path running",
+    metadata: { planId: plan.planId },
+  });
+  lifecycleEngine.transition(entityId, "evidence_collected", {
+    actor: "runtime-core.ast-edit-plan-controlled-apply-pilot",
+    reason: "controlled apply mutation evidence collected",
+    metadata: { planId: plan.planId, evidenceKind: "mutation_evidence", isCompletionProof: false },
+  });
+  eventBus.emit(
+    "ast.applied",
+    entityId,
+    "ast_edit_plan",
+    { sourceId: "runtime-core.ast-edit-plan-controlled-apply-pilot", sourceType: "ast", stage: "controlled_apply" },
+    {
+      planId: plan.planId,
+      ...payload,
+      evidenceKind: "mutation_evidence",
+      isCompletionProof: false,
+    },
+    [evidenceLedger.toRef(envelope)],
+  );
+}
+
+// [SPINE] Apply failures are classified for diagnostics without replacing legacy failure handling.
+export function recordAstEditPlanSpineApplyFailure(
+  plan: Pick<EditPlan, "planId" | "engineId" | "mode" | "source">,
+  error: unknown,
+  context: Record<string, unknown>,
+): void {
+  const entityId = ensureAstEditPlanSpineEntity(plan, "controlled_apply");
+  const failure = failureContract.create(entityId, error, "apply", undefined, {
+    planId: plan.planId,
+    ...context,
+    diagnosticOnly: true,
+  });
+  lifecycleEngine.transition(entityId, "failed", {
+    actor: "runtime-core.ast-edit-plan-controlled-apply-pilot",
+    reason: "controlled apply diagnostic failure",
+    metadata: { planId: plan.planId, failureId: failure.failureId },
+  });
+  eventBus.emit(
+    "failure_classified",
+    entityId,
+    "ast_edit_plan",
+    { sourceId: "runtime-spine.failure-contract", sourceType: "failure", stage: "apply" },
+    failure,
+    [failureContract.toRef(failure)],
+  );
+}
+
 export function editPlanFromReadonlyAstPatchPlannerScan(
   scan: AstPatchPlannerReadonlyScanResult,
   options: EditPlanFromReadonlyScanOptions = {},
@@ -243,7 +473,7 @@ export function editPlanFromReadonlyAstPatchPlannerScan(
     previewDiffHash: previewDiff.hash ?? "",
   };
 
-  return {
+  const plan: EditPlan = {
     schemaVersion: 1,
     planId: `edit_plan_${digest(stableStringify(planCore)).slice(0, 24)}`,
     engineId: planCore.engineId,
@@ -267,6 +497,9 @@ export function editPlanFromReadonlyAstPatchPlannerScan(
     authority: EDIT_PLAN_AUTHORITY_BOUNDARY,
     evidenceRefs,
   };
+  // [SPINE] Plan creation from a completed readonly scan records diagnostic lifecycle data only.
+  recordAstEditPlanSpineScan(plan, scan);
+  return plan;
 }
 
 function targetFilesFromScan(scan: AstPatchPlannerReadonlyScanResult): EditPlanTargetFile[] {
