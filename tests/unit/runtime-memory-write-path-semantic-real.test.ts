@@ -23,7 +23,7 @@ const tempDirs: string[] = [];
 const NOW = () => 1_000;
 
 function makeDbPath(prefix: string): string {
-  const dir = mkdtempSync(prefix);
+  const dir = mkdtempSync(path.join(os.tmpdir(), prefix));
   tempDirs.push(dir);
   return path.join(dir, "openclaw.sqlite");
 }
