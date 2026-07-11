@@ -1,0 +1,13 @@
+{
+  "title": "浏览器",
+  "subtitle": "管理 Electron 会话、自动化任务、Profile 与受保护凭据",
+  "tabs": { "sessions": "会话", "tasks": "任务", "profiles": "Profile", "vault": "凭据库", "runs": "运行记录" },
+  "summary": { "sessions": "{{count}} 个会话", "running": "{{count}} 个运行中" },
+  "actions": { "refresh": "刷新", "takeOver": "接管", "hide": "隐藏", "stop": "停止", "retry": "重试", "cancel": "取消" },
+  "modes": { "headless": "无头", "visible": "可见" },
+  "sessions": { "empty": "暂无活动浏览器会话", "untitled": "无标题页面", "blank": "空白页面" },
+  "tasks": { "name": "任务名称", "url": "目标地址", "objective": "任务目标", "runNow": "立即运行", "empty": "暂无浏览器任务" },
+  "profiles": { "localState": "持久化 Electron 站点状态", "active": "{{count}} 个活动会话" },
+  "vault": { "protected": "密码由操作系统保护，且不会向 Agent 展示。", "empty": "暂无已保存凭据" },
+  "status": { "queued": "排队中", "running": "运行中", "waiting-approval": "等待授权", "paused": "已暂停", "completed": "已完成", "failed": "失败", "cancelled": "已取消" }
+}

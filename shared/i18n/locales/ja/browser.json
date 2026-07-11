@@ -1,0 +1,13 @@
+{
+  "title": "ブラウザ",
+  "subtitle": "Electron セッション、自動化タスク、プロファイル、保護された認証情報",
+  "tabs": { "sessions": "セッション", "tasks": "タスク", "profiles": "プロファイル", "vault": "保管庫", "runs": "実行履歴" },
+  "summary": { "sessions": "{{count}} セッション", "running": "{{count}} 実行中" },
+  "actions": { "refresh": "更新", "takeOver": "引き継ぐ", "hide": "隠す", "stop": "停止", "retry": "再試行", "cancel": "キャンセル" },
+  "modes": { "headless": "ヘッドレス", "visible": "表示" },
+  "sessions": { "empty": "アクティブなブラウザセッションはありません", "untitled": "無題のページ", "blank": "空白ページ" },
+  "tasks": { "name": "タスク名", "url": "対象 URL", "objective": "目的", "runNow": "今すぐ実行", "empty": "ブラウザタスクはありません" },
+  "profiles": { "localState": "永続 Electron サイト状態", "active": "{{count}} 件アクティブ" },
+  "vault": { "protected": "パスワードは OS により保護され、Agent には表示されません。", "empty": "保存された認証情報はありません" },
+  "status": { "queued": "待機中", "running": "実行中", "waiting-approval": "承認待ち", "paused": "一時停止", "completed": "完了", "failed": "失敗", "cancelled": "キャンセル済み" }
+}
