@@ -25,7 +25,7 @@ export {
 } from "../globals.js";
 export * from "../logging.js";
 export { waitForAbortSignal } from "../infra/abort-signal.js";
-// Removed: createBackupArchive — backup module was removed with CLI deletion. No gateway equivalent.
+export { createBackupArchive } from "../infra/backup-create.js";
 export {
   detectPluginInstallPathIssue,
   formatPluginInstallPathIssue,
