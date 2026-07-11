@@ -284,6 +284,7 @@ type ToolHandlerState = Pick<
   EmbeddedAgentSubscribeState,
   | "toolMetaById"
   | "toolMetas"
+  | "browserAutomationEvents"
   | "acceptedSessionSpawns"
   | "toolSummaryById"
   | "execLiveUpdateStateById"

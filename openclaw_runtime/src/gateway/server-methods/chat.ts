@@ -3151,9 +3151,9 @@ export const chatHandlers: GatewayRequestHandlers = {
         content?: unknown;
       }>;
       timeoutMs?: number;
-      workspaceId?: unknown;
+      workspaceId?: string;
       inputMode?: unknown;
-      promptMode?: unknown;
+      promptMode?: "full" | "minimal" | "none";
       systemInputProvenance?: InputProvenance;
       systemProvenanceReceipt?: string;
       suppressCommandInterpretation?: boolean;

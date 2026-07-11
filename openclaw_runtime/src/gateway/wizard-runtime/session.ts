@@ -1,6 +1,13 @@
 // Wizard session helpers track onboarding session ids and state.
 import { randomUUID } from "node:crypto";
-import { WizardCancelledError, type WizardProgress, type WizardPrompter } from "./prompts.js";
+import {
+  WizardCancelledError,
+  type WizardProgress,
+  type WizardProgressParams,
+  type WizardPrompter,
+  type WizardPrompterMultiselectParams,
+  type WizardPrompterSelectParams,
+} from "./prompts.js";
 
 // WizardSession exposes interactive setup as a step/answer protocol for remote
 // clients while reusing the same WizardPrompter contract as the local CLI.
@@ -77,17 +84,13 @@ class WizardSessionPrompter implements WizardPrompter {
     await this.prompt({ type: "note", message, format: "plain", executor: "client" });
   }
 
-  async select<T>(params: {
-    message: string;
-    options: Array<{ value: T; label: string; hint?: string }>;
-    initialValue?: T;
-  }): Promise<T> {
+  async select<T>(params: WizardPrompterSelectParams<T>): Promise<T> {
     const res = await this.prompt({
       type: "select",
       message: params.message,
       options: params.options.map((opt) => ({
         value: opt.value,
-        label: opt.label,
+        label: opt.label ?? String(opt.value),
         hint: opt.hint,
       })),
       initialValue: params.initialValue,
@@ -96,20 +99,16 @@ class WizardSessionPrompter implements WizardPrompter {
     return res as T;
   }
 
-  async multiselect<T>(params: {
-    message: string;
-    options: Array<{ value: T; label: string; hint?: string }>;
-    initialValues?: T[];
-  }): Promise<T[]> {
+  async multiselect<T>(params: WizardPrompterMultiselectParams<T>): Promise<T[]> {
     const res = await this.prompt({
       type: "multiselect",
       message: params.message,
       options: params.options.map((opt) => ({
         value: opt.value,
-        label: opt.label,
+        label: opt.label ?? String(opt.value),
         hint: opt.hint,
       })),
-      initialValue: params.initialValues,
+      initialValue: params.initialValues ?? params.initialValue,
       executor: "client",
     });
     return (Array.isArray(res) ? res : []) as T[];
@@ -155,10 +154,10 @@ class WizardSessionPrompter implements WizardPrompter {
     return Boolean(res);
   }
 
-  progress(_label: string): WizardProgress {
+  progress(_params: WizardProgressParams): WizardProgress {
     return {
-      update: (_message) => {},
-      stop: (_message) => {},
+      update: (_message: string) => {},
+      stop: (_message?: string) => {},
     };
   }
 

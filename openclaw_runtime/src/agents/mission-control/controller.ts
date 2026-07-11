@@ -691,7 +691,7 @@ function proposeMemoryCandidates(record: MissionRunRecord, candidates: readonly 
       reason: `Mission ${record.missionId} memory candidate`,
     };
     try {
-      propose(proposal, { actor: { kind: "system", id: "mission-control" } });
+      propose(proposal, { actor: { type: "system", id: "mission-control" } });
       proposed += 1;
     } catch {
       // Memory proposals are best-effort; Mission state remains authoritative.
@@ -944,7 +944,7 @@ export async function tickMission(
       repairTicksUsed: record.repairTicks,
       maxRepairTicks: record.maxRepairTicks,
       maxTicks: record.maxTicks,
-      ...(anomalyPattern !== undefined ? { anomalyPattern } : {}),
+      ...(anomalyPattern != null ? { anomalyPattern } : {}),
     }, deps.reviewerDeps);
     const reviewer = gateMissionReviewerCompletion(rawReviewer, record);
 
@@ -1090,7 +1090,7 @@ export async function tickMission(
     });
     const { trace, scorecard } = completeObservedRun(
       recorder as ObservabilityTraceRecorder,
-      record.status === "error" ? "error" : record.status === "blocked" || record.status === "cancelled" ? "aborted" : "completed",
+      record.status === "blocked" ? "aborted" : "completed",
       record.blockedReason,
     );
     record.traceId = trace.id;

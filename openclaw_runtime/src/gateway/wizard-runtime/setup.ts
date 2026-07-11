@@ -11,7 +11,7 @@
 // Hosts that previously relied on the CLI setup wizard (e.g. to prompt
 // for first-time API keys) must provide a custom `wizardRunner` via
 // `GatewayServerOptions.wizardRunner`.
-import type { RuntimeEnv } from "../runtime.js";
+import type { RuntimeEnv } from "../../runtime.js";
 import type { WizardPrompter } from "./prompts.js";
 
 export type OnboardOptions = {

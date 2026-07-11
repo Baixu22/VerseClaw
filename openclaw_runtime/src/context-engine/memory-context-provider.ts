@@ -27,6 +27,7 @@ import {
   type RuntimeRegistryDiagnostic,
 } from "../runtime-core/index.js";
 import { hybridSearchFactsWithEmbedding } from "../runtime-core/memory-hybrid-retrieval.js";
+import { CAUSAL_EDGE_WEIGHT } from "../runtime-core/memory-weighted-traversal.js";
 
 export const RUNTIME_MEMORY_CONTEXT_PROVIDER_ID = "runtime-memory";
 
@@ -72,7 +73,11 @@ const MAX_RELATION_EXPANSIONS = 2;
 const RELATION_TYPE_PRIORITY: Record<RuntimeMemoryRelationType, number> = {
   supersedes: 3,
   contradicts: 2,
-  related_to: 1,
+  causes: CAUSAL_EDGE_WEIGHT.causes,
+  caused_by: CAUSAL_EDGE_WEIGHT.caused_by,
+  enables: CAUSAL_EDGE_WEIGHT.enables,
+  prevents: CAUSAL_EDGE_WEIGHT.prevents,
+  related_to: CAUSAL_EDGE_WEIGHT.related_to,
 };
 const PROVIDER_EVIDENCE_REF: EvidenceRef = {
   type: "other",
@@ -188,11 +193,12 @@ export function createRuntimeMemoryContextProvider(
 
       const providerQuery = memoryProviderQuery(options, query, extras);
       const facts = await readFacts(options, providerQuery);
+      const embeddingProvider = options.embeddingProvider;
       const useEmbedding = options.embeddingEnabled === true &&
-        options.embeddingProvider !== undefined &&
-        isEmbeddingProviderAvailable(options.embeddingProvider);
+        embeddingProvider !== undefined &&
+        isEmbeddingProviderAvailable(embeddingProvider);
       const matchedFacts = useEmbedding
-        ? await findFactsWithEmbedding(options.embeddingProvider, facts, providerQuery)
+        ? await findFactsWithEmbedding(embeddingProvider, facts, providerQuery)
         : findRuntimeMemoryFacts(facts, { ...providerQuery, limit: undefined });
       const rankedFacts = applyTypeAwareSlots(matchedFacts, providerQuery);
       const expandedFacts = options.queryRelations
@@ -259,11 +265,12 @@ export async function createRuntimeMemoryProviderResult(
 ): Promise<RuntimeMemoryContextProviderResult> {
   const providerQuery = memoryProviderQuery(options, query, extras);
   const facts = await readFacts(options, providerQuery);
+  const embeddingProvider = options.embeddingProvider;
   const useEmbedding = options.embeddingEnabled === true &&
-    options.embeddingProvider !== undefined &&
-    isEmbeddingProviderAvailable(options.embeddingProvider);
+    embeddingProvider !== undefined &&
+    isEmbeddingProviderAvailable(embeddingProvider);
   const matchedFacts = useEmbedding
-    ? await findFactsWithEmbedding(options.embeddingProvider, facts, providerQuery)
+    ? await findFactsWithEmbedding(embeddingProvider, facts, providerQuery)
     : findRuntimeMemoryFacts(facts, { ...providerQuery, limit: undefined });
   const rankedFacts = applyTypeAwareSlots(matchedFacts, providerQuery);
   const expandedFacts = options.queryRelations
@@ -392,10 +399,8 @@ function groundingDiagnosticsMetadata(
 function groundingDiagnosticsQueryMetadata(
   query: GroundingQuery,
 ): RuntimeCoreJsonObject {
-  return {
+  const metadata: RuntimeCoreJsonObject = {
     readonly: true,
-    ...(query.kind !== undefined ? { kind: query.kind as never } : {}),
-    ...(query.trust !== undefined ? { trust: query.trust as never } : {}),
     ...(query.taskId !== undefined ? { taskId: query.taskId } : {}),
     ...(query.traceId !== undefined ? { traceId: query.traceId } : {}),
     ...(query.spanId !== undefined ? { spanId: query.spanId } : {}),
@@ -409,6 +414,13 @@ function groundingDiagnosticsQueryMetadata(
     includeRaw: false,
     includeUntrusted: false,
   };
+  if (query.kind !== undefined) {
+    metadata.kind = Array.isArray(query.kind) ? [...query.kind] : query.kind;
+  }
+  if (query.trust !== undefined) {
+    metadata.trust = Array.isArray(query.trust) ? [...query.trust] : query.trust;
+  }
+  return metadata;
 }
 
 function providerConfig(

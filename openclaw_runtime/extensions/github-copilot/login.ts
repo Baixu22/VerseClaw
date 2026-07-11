@@ -1,7 +1,10 @@
 // Github Copilot plugin module implements login behavior.
 import { intro, note, outro, spinner } from "@clack/prompts";
 import { stylePromptTitle } from "openclaw/plugin-sdk/cli-runtime";
-import { logConfigUpdated, updateConfig } from "openclaw/plugin-sdk/config-mutation";
+import {
+  logConfigUpdated,
+  transformConfigFile,
+} from "openclaw/plugin-sdk/config-mutation";
 import {
   resolveExpiresAtMsFromDurationMs,
   nonNegativeSecondsToSafeMilliseconds,
@@ -356,13 +359,15 @@ export async function githubCopilotLoginCommand(
     agentDir: opts.agentDir,
   });
 
-  await updateConfig((cfg) =>
-    applyAuthProfileConfig(cfg, {
-      provider: "github-copilot",
-      profileId,
-      mode: "token",
+  await transformConfigFile({
+    transform: (cfg) => ({
+      nextConfig: applyAuthProfileConfig(cfg, {
+        provider: "github-copilot",
+        profileId,
+        mode: "token",
+      }),
     }),
-  );
+  });
 
   logConfigUpdated(runtime);
   runtime.log(`Auth profile: ${profileId} (github-copilot/token)`);

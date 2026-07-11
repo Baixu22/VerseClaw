@@ -1,10 +1,8 @@
 import { routeRole, type RoleRouteMode } from "./role-router.js";
 import { BUILT_IN_ROLE_CONTRACTS, type RoleContract } from "./role-contract.js";
-import {
-  classifyComplexity,
-  type ComplexityGateDecision,
-} from "./complexity-gate.js";
-import { resolveTeamTemplate, type TeamTemplate } from "./team-template.js";
+import { classifyComplexity, type ComplexityGateDecision } from "./complexity-gate.js";
+import { resolveTeamTemplate } from "./team-template.js";
+import type { TeamTemplate } from "./team-template.types.js";
 import {
   buildExecutionWaves,
   buildRouteDiagnostics,
@@ -28,9 +26,7 @@ import {
   resolveRoutingMemoPilotMode,
   type OrchestrationQualityState,
 } from "./routing-memo.js";
-  selectRunbookCandidates,
-  type RunbookSelectionResult,
-} from "./runbook-registry.js";
+import { selectRunbookCandidates, type RunbookSelectionResult } from "./runbook-registry.js";
 import { buildTaskGraphFromRunbook } from "./runbook-task-graph.js";
 
 export type OrchestratorRequest = {
@@ -153,12 +149,17 @@ function buildPlanGraph(params: {
     graphMode,
     workers: params.workers,
     verifierRole: params.verifierRole,
-    verifierTask: params.verifierRole ? taskForRole(params.verifierRole, params.request.task) : undefined,
+    verifierTask: params.verifierRole
+      ? taskForRole(params.verifierRole, params.request.task)
+      : undefined,
     verifierModelRef: params.verifierModelRef,
     requiredCapabilities: params.routeDiagnostics.requiredCapabilities,
     repairPolicy,
   });
-  const executionWaves = buildExecutionWaves(taskGraph, normalizeMaxWorkers(params.request.maxWorkers));
+  const executionWaves = buildExecutionWaves(
+    taskGraph,
+    normalizeMaxWorkers(params.request.maxWorkers),
+  );
   const projectedWorkers = taskGraphWorkerNodes(taskGraph).map((node, index) => {
     const source = params.workers[index];
     return {
@@ -175,11 +176,14 @@ function buildP2Metadata(request: OrchestratorRequest): {
   complexityDecision: ComplexityGateDecision;
   runbookSelection: RunbookSelectionResult;
 } {
-  const explicitRunbookId = request.explicitRunbookId?.trim() || request.runbookId?.trim() || undefined;
+  const explicitRunbookId =
+    request.explicitRunbookId?.trim() || request.runbookId?.trim() || undefined;
   const complexityDecision = classifyComplexity({
     task: request.task,
     fileHints: request.fileHints,
-    explicitTeamRequested: Boolean(request.templateId || request.teamTemplateId || request.workers?.length),
+    explicitTeamRequested: Boolean(
+      request.templateId || request.teamTemplateId || request.workers?.length,
+    ),
     explicitRunbookId,
     riskHints: request.riskHints ?? (request.important ? ["important"] : []),
     capabilityHints: request.capabilityHints,
@@ -260,7 +264,8 @@ function createRunbookPlan(
 
 function createExplicitWorkersPlan(request: OrchestratorRequest): OrchestratorPlan | null {
   const metadata = buildP2Metadata(request);
-  const requestedWorkers = request.workers?.filter((worker) => worker.roleName.trim() && worker.task.trim()) ?? [];
+  const requestedWorkers =
+    request.workers?.filter((worker) => worker.roleName.trim() && worker.task.trim()) ?? [];
   if (requestedWorkers.length === 0) {
     return null;
   }
@@ -316,7 +321,10 @@ function createExplicitWorkersPlan(request: OrchestratorRequest): OrchestratorPl
   );
 }
 
-function templateRoleKnown(template: TeamTemplate, roleName: string | undefined): roleName is string {
+function templateRoleKnown(
+  template: TeamTemplate,
+  roleName: string | undefined,
+): roleName is string {
   const normalized = roleName?.trim();
   if (!normalized) {
     return false;
@@ -422,15 +430,17 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
     qualityState: request.qualityState ?? null,
   });
   const effectiveMemoMode = memoAuthority.authority;
-  const memoMatches = effectiveMemoMode !== "off" && request.workspaceDir
-    ? recallRoutingMemos(
-        computeTaskDigest(request.task, request.fileHints ?? []),
-        request.workspaceDir,
-      )
-    : [];
-  const memoSignal = effectiveMemoMode !== "off" && memoMatches.length > 0
-    ? { matches: memoMatches, mode: effectiveMemoMode }
-    : undefined;
+  const memoMatches =
+    effectiveMemoMode !== "off" && request.workspaceDir
+      ? recallRoutingMemos(
+          computeTaskDigest(request.task, request.fileHints ?? []),
+          request.workspaceDir,
+        )
+      : [];
+  const memoSignal =
+    effectiveMemoMode !== "off" && memoMatches.length > 0
+      ? { matches: memoMatches, mode: effectiveMemoMode }
+      : undefined;
   const runbookPlan = createRunbookPlan(request, metadata);
   if (runbookPlan) {
     return runbookPlan;
@@ -443,9 +453,8 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
     memoSignal,
   });
   // Shadow phase: append `memo-shadow:...` reasons (scores already unchanged).
-  const memoShadowReasons = effectiveMemoMode === "shadow"
-    ? memoMatches.map((match) => buildMemoShadowReason(match))
-    : [];
+  const memoShadowReasons =
+    effectiveMemoMode === "shadow" ? memoMatches.map((match) => buildMemoShadowReason(match)) : [];
   // Honor a caller-pinned lead role when it exists in the available pool.
   // In router mode it replaces the primary worker; in team mode it only
   // overrides the leadRole attribution (workers stay as routed).
@@ -501,13 +510,15 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
   }
   const workerNames = [...new Set(route.supporting.map((match) => match.role.name))];
   const verifierRole = route.mode === "adversarial-review" ? "skeptic" : "reviewer";
-  const leadRole =
-    preferredLeadKnown
-      ? preferredLeadRole!
-      : workerNames.includes("planner")
-        ? "planner"
-        : route.primary.role.name;
-  const allWorkers = workerNames.map((roleName) => ({ roleName, task: taskForRole(roleName, request.task) }));
+  const leadRole = preferredLeadKnown
+    ? preferredLeadRole!
+    : workerNames.includes("planner")
+      ? "planner"
+      : route.primary.role.name;
+  const allWorkers = workerNames.map((roleName) => ({
+    roleName,
+    task: taskForRole(roleName, request.task),
+  }));
   const workers = capWorkers(allWorkers, maxWorkers);
   const finalReasons = [...reasons, `mode:${route.mode}`, `verifier:${verifierRole}`];
   const selectedRoleNames = [leadRole, ...workers.map((worker) => worker.roleName), verifierRole];

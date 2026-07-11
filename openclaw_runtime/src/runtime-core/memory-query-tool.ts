@@ -178,6 +178,6 @@ function mapHitToItem(hit: HybridSearchHit): MemoryQueryFactItem {
     predicate: fact.predicate,
     objectSummary: fact.objectSummary,
     confidence: typeof fact.confidence === "number" ? fact.confidence : 0,
-    validAt: fact.validAt,
+    validAt: fact.valid_at,
   };
 }

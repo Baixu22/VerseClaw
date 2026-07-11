@@ -92,6 +92,9 @@ export type SessionMcpRuntimeManager = {
     sessionKey?: string;
     workspaceDir: string;
     cfg?: OpenClawConfig;
+    agentId?: string | null;
+    workspaceId?: string | null;
+    roleName?: string | null;
   }) => Promise<SessionMcpRuntime>;
   bindSessionKey: (sessionKey: string, sessionId: string) => void;
   resolveSessionId: (sessionKey: string) => string | undefined;

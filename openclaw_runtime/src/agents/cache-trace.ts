@@ -101,6 +101,9 @@ type CacheTraceConfig = {
 type CacheTraceWriter = QueuedFileWriter;
 
 type CacheTraceProviderPayloadRecorder = (payload: unknown, source?: string) => void;
+type CacheTraceStreamOptions = NonNullable<Parameters<StreamFn>[2]> & {
+  [CACHE_TRACE_PROVIDER_PAYLOAD_RECORDER]: CacheTraceProviderPayloadRecorder;
+};
 
 const writers = new Map<string, CacheTraceWriter>();
 
@@ -361,11 +364,12 @@ export function createCacheTrace(params: CacheTraceInit): CacheTrace | null {
           "stream-context-fallback",
         );
       });
-      return streamFn(model, context, {
+      const tracedOptions: CacheTraceStreamOptions = {
         ...options,
         [CACHE_TRACE_PROVIDER_PAYLOAD_RECORDER]: recordProviderPayloadShapeForCall,
         onPayload,
-      });
+      };
+      return streamFn(model, context, tracedOptions);
     };
     return wrapped;
   };

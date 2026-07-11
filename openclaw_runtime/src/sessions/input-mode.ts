@@ -1,13 +1,15 @@
 import type { AgentMessage } from "../agents/runtime/index.js";
 import { resolveInputMode, type InputMode } from "../agents/input-classifier.js";
 
+type UserAgentMessage = Extract<AgentMessage, { role: "user" }>;
+
 export type InputModeAction =
   | { mode: "interrupt"; abort: true; message: AgentMessage }
   | { mode: "revise-goal"; abort: true; message: AgentMessage }
   | { mode: "guide"; abort: false; steeringMessages: AgentMessage[] }
   | { mode: "queue"; abort: false; followUpMessages: AgentMessage[] };
 
-function userMessage(text: string): AgentMessage {
+function userMessage(text: string): UserAgentMessage {
   return {
     role: "user",
     content: [{ type: "text", text }],

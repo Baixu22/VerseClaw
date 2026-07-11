@@ -301,9 +301,6 @@ function roleOutcomeStatus(item: AgentSteeringQueueItem): RoleOutcomeBundle["sta
   if (status === "timeout") {
     return "timeout";
   }
-  if (status === "forbidden") {
-    return "forbidden";
-  }
   return "error";
 }
 

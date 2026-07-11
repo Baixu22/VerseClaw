@@ -8,6 +8,7 @@ import { build } from "esbuild";
 
 const modulePath = fileURLToPath(import.meta.url);
 const repoRoot = path.resolve(path.dirname(modulePath), "..");
+const pnpmHoistedNodeModules = path.join(repoRoot, "node_modules", ".pnpm", "node_modules");
 const pierreDiffsEmptySideEffectNamespace = "openclaw-diffs-empty-side-effect";
 const pierreDiffsEmptySideEffectPath = "pierre-diffs-parse-decorations-side-effect";
 
@@ -86,6 +87,7 @@ export async function buildDiffsViewerRuntime(targetName) {
     legalComments: "none",
     outfile: outputPath,
     write: false,
+    nodePaths: [pnpmHoistedNodeModules],
     plugins: [
       createPierreDiffsSideEffectImportPlugin(),
       ...(target.shikiAlias

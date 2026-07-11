@@ -7,11 +7,18 @@
 // unchanged, which is safe for a headless runtime that has no
 // localized prompt strings of its own.
 
-export function t(key: string, params?: Record<string, string | number>): string {
+export type WizardI18nParams = Record<string, string | number>;
+export type SetupTranslator = (key: string, params?: WizardI18nParams) => string;
+
+export function t(key: string, params?: WizardI18nParams): string {
   if (!params) return key;
   return key.replace(/\{(\w+)\}/g, (_m, name) =>
     name in params ? String(params[name]) : `{${name}}`,
   );
+}
+
+export function createSetupTranslator(): SetupTranslator {
+  return t;
 }
 
 export type WizardI18nKey = string;

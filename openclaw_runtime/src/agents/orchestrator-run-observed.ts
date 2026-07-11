@@ -23,9 +23,11 @@ import type { RoleContract } from "./role-contract.js";
 import {
   buildRepairNodes,
   buildRerouteRecommendations,
+  buildOrchestrationDiagnostics,
   makeTaskLedgerEntry,
   taskGraphWorkerNodes,
   type OrchestrationRepairNode,
+  type OrchestrationDiagnostics,
   type OrchestrationRerouteRecommendation,
   type OrchestrationTaskGraph,
   type OrchestrationTaskLedgerEntry,
@@ -35,13 +37,11 @@ import {
   buildOrdinaryOrchestrationQualityScorecard,
   type OrdinaryOrchestrationQualityScorecard,
 } from "./orchestration-quality-scorecard.js";
+import {
   scheduleResourceAwareWaves,
   type ResourceSchedulerMetrics,
 } from "./orchestration-resource-scheduler.js";
-import {
-  createRoleFirstTrace,
-  completeObservedRun,
-} from "../observability/role-first-observer.js";
+import { createRoleFirstTrace, completeObservedRun } from "../observability/role-first-observer.js";
 import type { ObservabilityTraceRecorder } from "../observability/trace-recorder.js";
 import { storeRuntimeTrace } from "../observability/trace-buffer.js";
 import type { ObservabilitySpanKind } from "../observability/types.js";
@@ -92,6 +92,7 @@ export type OrchestrationRunResult = {
   pendingGraphNodes: OrchestrationTaskNode[];
   repairNodes: OrchestrationRepairNode[];
   rerouteRecommendations: OrchestrationRerouteRecommendation[];
+  orchestrationDiagnostics: OrchestrationDiagnostics;
   qualityScorecard?: OrdinaryOrchestrationQualityScorecard | null;
   /** Worker tasks that failed to spawn (status !== "accepted"). */
   failures: Array<{ roleName: string; status: string; error?: string }>;
@@ -130,7 +131,10 @@ function resolvePlanRole(
   roleName: string,
   request: ObservedOrchestrationRunRequest,
 ): RoleContract | undefined {
-  return request.roles?.find((role) => role.name === roleName) ?? resolveRoleContract(roleName, request.cfg);
+  return (
+    request.roles?.find((role) => role.name === roleName) ??
+    resolveRoleContract(roleName, request.cfg)
+  );
 }
 
 function resolvePlanRoles(
@@ -186,7 +190,9 @@ function orchestrationFraming(
       : "- Blocking marker: non-blocking worker; return scoped evidence for lead synthesis.",
     "",
     "## Role Scope",
-    role?.rolePrompt ? `- Role responsibility: ${role.rolePrompt}` : "- Role responsibility: follow the assigned role contract",
+    role?.rolePrompt
+      ? `- Role responsibility: ${role.rolePrompt}`
+      : "- Role responsibility: follow the assigned role contract",
     formatRolePermissions(role),
     "",
     "## Expected Output",
@@ -211,12 +217,14 @@ function bundleOutcome(outcome: OrchestrationWorkerOutcome): RoleOutcomeBundle {
   const runId = outcome.spawn.result?.runId;
   const taskId = outcome.ledger.taskNodeId ?? outcome.ledger.taskId;
   const evidenceRefs = runId
-    ? [{
-        type: "run" as const,
-        ref: runId,
-        roleName: outcome.roleName,
-        taskId,
-      }]
+    ? [
+        {
+          type: "run" as const,
+          ref: runId,
+          roleName: outcome.roleName,
+          taskId,
+        },
+      ]
     : [];
   return {
     roleName: outcome.roleName,
@@ -225,11 +233,18 @@ function bundleOutcome(outcome: OrchestrationWorkerOutcome): RoleOutcomeBundle {
     taskId,
     roleInstanceId: outcome.ledger.roleInstanceId,
     attempt: outcome.ledger.attempt,
-    status: outcome.spawn.status === "accepted" ? "accepted" : outcome.spawn.status,
+    status:
+      outcome.spawn.status === "accepted"
+        ? "accepted"
+        : outcome.spawn.status === "role-not-found"
+          ? "error"
+          : outcome.spawn.status,
     ...(runId ? { childRunId: runId } : {}),
-    ...(outcome.spawn.result?.childSessionKey ? { childSessionKey: outcome.spawn.result.childSessionKey } : {}),
+    ...(outcome.spawn.result?.childSessionKey
+      ? { childSessionKey: outcome.spawn.result.childSessionKey }
+      : {}),
     evidenceRefs,
-    ...(outcome.spawn.error ?? outcome.spawn.result?.error
+    ...((outcome.spawn.error ?? outcome.spawn.result?.error)
       ? { error: outcome.spawn.error ?? outcome.spawn.result?.error }
       : {}),
   };
@@ -239,7 +254,9 @@ function permissionEventsFromFailures(
   failures: readonly OrchestrationRunResult["failures"][number][],
 ): OrchestrationResultBundle["permissionEvents"] {
   return failures
-    .filter((failure) => /permission|forbidden|max children/i.test(`${failure.status} ${failure.error ?? ""}`))
+    .filter((failure) =>
+      /permission|forbidden|max children/i.test(`${failure.status} ${failure.error ?? ""}`),
+    )
     .map((failure) => ({
       roleName: failure.roleName,
       decision: "denied" as const,
@@ -329,15 +346,17 @@ export async function runOrchestrationWithRecorder(
       roles: resolvePlanRoles(plan, request),
       options: { maxActiveRoles: request.maxWorkers },
     });
+    const { roleCostSummary, ...numericSchedulerMetrics } = schedule.metrics;
     recorder.endSpan(planSpan.id, {
       output: plan.mode,
-      metrics: { workers: plan.workers.length, ...schedule.metrics },
+      metrics: { workers: plan.workers.length, ...numericSchedulerMetrics },
       attributes: {
         leadRole: plan.leadRole,
         verifierRole: plan.verifierRole,
         reasons: plan.reasons,
         routeDiagnostics: plan.routeDiagnostics,
         schedulerMetrics: schedule.metrics,
+        roleCostSummary,
       },
     });
   } catch (error) {
@@ -376,14 +395,17 @@ export async function runOrchestrationWithRecorder(
         isVerifier,
         ts: Date.now(),
       });
-    } catch { /* lifecycle callback is best-effort */ }
+    } catch {
+      /* lifecycle callback is best-effort */
+    }
     const ledger = makeTaskLedgerEntry({
       orchestrationRunId,
       roleName,
       task,
       index,
       phase: isVerifier ? "verifier" : "worker",
-      requiredCapabilities: node?.requiredCapabilities ?? plan.routeDiagnostics.requiredCapabilities,
+      requiredCapabilities:
+        node?.requiredCapabilities ?? plan.routeDiagnostics.requiredCapabilities,
       taskNodeId: node?.taskNodeId,
       graphRunId: plan.taskGraph.graphRunId,
       dependsOn: node?.dependsOn,
@@ -497,7 +519,9 @@ export async function runOrchestrationWithRecorder(
             ts: Date.now(),
           });
         }
-      } catch { /* best-effort */ }
+      } catch {
+        /* best-effort */
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       failures.push({ roleName, status: "error", error: message });
@@ -511,7 +535,9 @@ export async function runOrchestrationWithRecorder(
           error: message,
           ts: Date.now(),
         });
-      } catch { /* best-effort */ }
+      } catch {
+        /* best-effort */
+      }
     }
   };
 
@@ -547,20 +573,30 @@ export async function runOrchestrationWithRecorder(
     );
   }
 
-  if (orchestrationRunId && request.patchRegistryMetadata === true && expectedWorkerRunIds.length > 0) {
+  if (
+    orchestrationRunId &&
+    request.patchRegistryMetadata === true &&
+    expectedWorkerRunIds.length > 0
+  ) {
     await patchExpectedWorkerRunIds(expectedWorkerRunIds, expectedWorkerRunIds);
   }
 
   // Bug fix: correctly report "error" status when workers failed (was always "completed").
   const status = failures.length === 0 ? "completed" : "error";
-  const errorSummary = failures.length > 0
-    ? `${failures.length} worker(s) failed: ${failures.map((f) => f.roleName).join(", ")}`
-    : undefined;
+  const errorSummary =
+    failures.length > 0
+      ? `${failures.length} worker(s) failed: ${failures.map((f) => f.roleName).join(", ")}`
+      : undefined;
   const { trace, scorecard } = completeObservedRun(recorder, status, errorSummary);
   storeRuntimeTrace(trace, scorecard);
-  const outcomeFailureKeys = new Set(outcomes
-    .filter((outcome) => outcome.spawn.status !== "accepted")
-    .map((outcome) => `${outcome.roleName}:${outcome.spawn.status}:${outcome.spawn.error ?? outcome.spawn.result?.error ?? ""}`));
+  const outcomeFailureKeys = new Set(
+    outcomes
+      .filter((outcome) => outcome.spawn.status !== "accepted")
+      .map(
+        (outcome) =>
+          `${outcome.roleName}:${outcome.spawn.status}:${outcome.spawn.error ?? outcome.spawn.result?.error ?? ""}`,
+      ),
+  );
   const qualityScorecard = buildOrdinaryOrchestrationQualityScorecard({
     orchestrationRunId,
     attempts: [
@@ -574,7 +610,10 @@ export async function runOrchestrationWithRecorder(
         resultText: outcome.spawn.result?.note,
       })),
       ...failures
-        .filter((failure) => !outcomeFailureKeys.has(`${failure.roleName}:${failure.status}:${failure.error ?? ""}`))
+        .filter(
+          (failure) =>
+            !outcomeFailureKeys.has(`${failure.roleName}:${failure.status}:${failure.error ?? ""}`),
+        )
         .map((failure) => ({
           roleName: failure.roleName,
           status: failure.status,
@@ -585,7 +624,10 @@ export async function runOrchestrationWithRecorder(
     allowActive: false,
   });
 
-  const pendingVerifier = request.includeVerifier !== false && Boolean(plan.verifierRole) && expectedWorkerRunIds.length > 0;
+  const pendingVerifier =
+    request.includeVerifier !== false &&
+    Boolean(plan.verifierRole) &&
+    expectedWorkerRunIds.length > 0;
   const repairNodes = buildRepairNodes({
     taskGraph: plan.taskGraph,
     attempts: [
@@ -608,6 +650,10 @@ export async function runOrchestrationWithRecorder(
     taskGraph: plan.taskGraph,
     routeDiagnostics: plan.routeDiagnostics,
     attempts: failures,
+  });
+  const orchestrationDiagnostics = buildOrchestrationDiagnostics({
+    failures,
+    rerouteRecommendations,
   });
   const resultBundle = buildSpawnPhaseResultBundle({
     orchestrationRunId,
@@ -640,6 +686,7 @@ export async function runOrchestrationWithRecorder(
     pendingGraphNodes: [],
     repairNodes,
     rerouteRecommendations,
+    orchestrationDiagnostics,
     qualityScorecard,
     failures,
     resultBundle,
@@ -663,7 +710,10 @@ async function withWorkerTimeout(
   const timeoutMs = ORCHESTRATION_WORKER_TIMEOUT_MS;
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeoutPromise = new Promise<never>((_, reject) => {
-    timer = setTimeout(() => reject(new Error(`Worker "${roleName}" timed out after ${timeoutMs / 1000}s`)), timeoutMs);
+    timer = setTimeout(
+      () => reject(new Error(`Worker "${roleName}" timed out after ${timeoutMs / 1000}s`)),
+      timeoutMs,
+    );
   });
   try {
     await Promise.race([spawnPromise, timeoutPromise]);

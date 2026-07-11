@@ -36,7 +36,7 @@ export type RoleSpawnParams = {
   agentId?: string;
   model?: string;
   thinking?: string;
-  mode?: string;
+  mode?: "run" | "session";
   cwd?: string;
   runTimeoutSeconds?: number;
   roleSystemPrompt?: string;
@@ -67,7 +67,7 @@ export type RoleSpawnResultShape = {
   status: "accepted" | "forbidden" | "error";
   runId?: string;
   childSessionKey?: string;
-  mode?: string;
+  mode?: "run" | "session";
   taskName?: string;
   note?: string;
   error?: string;
@@ -89,7 +89,7 @@ export type RoleSpawnRequest = {
   cfg?: RoleRegistryConfigCarrier;
   /** Explicit model ref overriding the role's default model. */
   modelOverride?: string;
-  mode?: string;
+  mode?: "run" | "session";
   cwd?: string;
   runTimeoutSeconds?: number;
   /** Extra context appended after the role SOUL (e.g. orchestration framing). */

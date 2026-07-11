@@ -12,6 +12,9 @@ touchedAreas:
   - artifacts/runtime-utf8-recovery/baseline-scan-final.log
   - artifacts/runtime-utf8-recovery/baseline-scan-git-blobs.log
   - artifacts/runtime-utf8-recovery/baseline-scan.log
+  - artifacts/runtime-utf8-recovery/final-inventory.json
+  - artifacts/runtime-utf8-recovery/final-inventory.log
+  - artifacts/runtime-utf8-recovery/final-inventory-run.json
   - artifacts/runtime-utf8-recovery/inventory-summary.md
   - artifacts/runtime-utf8-recovery/inventory.json
   - artifacts/runtime-utf8-recovery/local-evidence/report.json
@@ -22,6 +25,10 @@ touchedAreas:
   - artifacts/runtime-utf8-recovery/manifest/partition-map.json
   - artifacts/runtime-utf8-recovery/manifest/repair-manifest.json
   - artifacts/runtime-utf8-recovery/manifest/update-task-touched-areas.mjs
+  - artifacts/runtime-utf8-recovery/partition-results/partition-a.md
+  - artifacts/runtime-utf8-recovery/partition-results/partition-b.md
+  - artifacts/runtime-utf8-recovery/partition-results/partition-c.md
+  - artifacts/runtime-utf8-recovery/partition-results/partition-d.md
   - artifacts/runtime-utf8-recovery/red-green/w1-green-01.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-02.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-03.log
@@ -33,6 +40,83 @@ touchedAreas:
   - artifacts/runtime-utf8-recovery/red-green/w1-green-09-variable-span.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-10-git-index-apply.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-final.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-build-contract-feishu-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-build-contract-feishu-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-full-build-after-feishu.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-full-build-cli-support.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-full-build-help-support.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-full-build-after-declaration-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-full-build-after-retained-sdk-capabilities.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-provider-auth-login-red-setup-failure.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-provider-auth-login-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-provider-auth-login-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-provider-auth-login.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-backup-create-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-backup-create-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-backup-create-windows-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-boundary.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-nodes-media.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-protocol-types.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-verseshell.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-agent-bundle.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-canonical-type-drift.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-canonical-type-drift-2.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-contract-owners.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-message-secret-scope.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-context-contracts.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-command-secrets.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-orchestration-compression.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-memory-context-provider.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-memory-pre-reply.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-agent-steering.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-picomatch-types.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-verseshell-exec-env.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-cache-trace.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-tool-result-truncation.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-browser-automation-events.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-mission-control.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-task-loop-checkpoint.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-get-reply.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-status-link-channel.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-gateway-agent.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-gateway-chat.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-gateway-agent-memory-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-gateway-agent-memory-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-status-link-channel-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-status-link-channel-green-test-reader-failure.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-status-link-channel-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-status-link-channel-red-setup-failure.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-mission-control-declaration-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-task-loop-checkpoint-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-task-loop-checkpoint-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-verseshell-exec-env-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-verseshell-exec-env-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-verseshell-exec-env-red-no-tests.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-verseshell-exec-env-red-setup-failure.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-memory-config-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-memory-context-provider-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-memory-context-provider-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-memory-context-provider-red-2.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-memory-context-provider-red-3.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-memory-context-provider-red-4.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-memory-context-provider-red-5.log
+  - artifacts/runtime-utf8-recovery/red-green/message-secret-scope-green.log
+  - artifacts/runtime-utf8-recovery/red-green/message-secret-scope-red.log
+  - artifacts/runtime-utf8-recovery/red-green/command-secret-contract-red.log
+  - artifacts/runtime-utf8-recovery/red-green/command-secret-contract-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-public-roots.log
+  - artifacts/runtime-utf8-recovery/red-green/pruned-cli-runtime-green.log
+  - artifacts/runtime-utf8-recovery/red-green/pruned-cli-runtime-red.log
+  - artifacts/runtime-utf8-recovery/red-green/pruned-cli-runtime-red-2.log
+  - artifacts/runtime-utf8-recovery/red-green/plugin-sdk-source-dts-green.log
+  - artifacts/runtime-utf8-recovery/red-green/plugin-sdk-source-dts-red.log
+  - artifacts/runtime-utf8-recovery/red-green/plugin-sdk-public-roots-green.log
+  - artifacts/runtime-utf8-recovery/red-green/plugin-sdk-public-roots-red.log
+  - artifacts/runtime-utf8-recovery/red-green/nodes-media-runtime-green.log
+  - artifacts/runtime-utf8-recovery/red-green/nodes-media-runtime-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-tsdown-missing-exports-red.log
+  - artifacts/runtime-utf8-recovery/red-green/setup-translator-green.log
+  - artifacts/runtime-utf8-recovery/red-green/setup-translator-red.log
   - artifacts/runtime-utf8-recovery/red-green/w1-red-01.log
   - artifacts/runtime-utf8-recovery/red-green/w1-red-02.log
   - artifacts/runtime-utf8-recovery/red-green/w1-red-03.log
@@ -77,6 +161,7 @@ touchedAreas:
   - openclaw_runtime/extensions/browser/src/browser/snapshot-roles.ts
   - openclaw_runtime/extensions/browser/src/cli/browser-cli-actions-input/register.element.ts
   - openclaw_runtime/extensions/chutes/index.ts
+  - openclaw_runtime/extensions/chutes/api.ts
   - openclaw_runtime/extensions/codex/src/app-server/event-projector.ts
   - openclaw_runtime/extensions/codex/src/app-server/rate-limits.ts
   - openclaw_runtime/extensions/codex/src/command-account.ts
@@ -124,6 +209,8 @@ touchedAreas:
   - openclaw_runtime/extensions/feishu/src/docx-color-text.ts
   - openclaw_runtime/extensions/feishu/src/docx-table-ops.ts
   - openclaw_runtime/extensions/feishu/src/docx.ts
+  - openclaw_runtime/extensions/feishu/api.ts
+  - openclaw_runtime/extensions/feishu/src/channel.ts
   - openclaw_runtime/extensions/feishu/src/media.ts
   - openclaw_runtime/extensions/feishu/src/probe.ts
   - openclaw_runtime/extensions/feishu/src/reply-dispatcher.ts
@@ -143,6 +230,7 @@ touchedAreas:
   - openclaw_runtime/extensions/github-copilot/models.ts
   - openclaw_runtime/extensions/google/gemini-cli-provider.ts
   - openclaw_runtime/extensions/google/transport-stream.ts
+  - openclaw_runtime/extensions/github-copilot/login.ts
   - openclaw_runtime/extensions/googlechat/src/doctor-contract.ts
   - openclaw_runtime/extensions/imessage/src/accounts.ts
   - openclaw_runtime/extensions/imessage/src/actions.runtime.ts
@@ -425,8 +513,115 @@ touchedAreas:
   - openclaw_runtime/extensions/xai/xai-oauth.ts
   - openclaw_runtime/extensions/zalouser/src/doctor-contract.ts
   - openclaw_runtime/extensions/zalouser/src/monitor.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.recall.test.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/types.ts
+  - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.test.ts
+  - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts
+  - openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts
+  - openclaw_runtime/packages/agent-core/src/harness/agent-harness.ts
+  - openclaw_runtime/package.json
+  - openclaw_runtime/pnpm-lock.yaml
+  - openclaw_runtime/scripts/build-all.mjs
+  - openclaw_runtime/scripts/build-diffs-viewer-runtime.mjs
+  - openclaw_runtime/scripts/build-plugin-sdk-source-dts.test.mjs
+  - openclaw_runtime/scripts/build-plugin-sdk-source-dts.mjs
+  - openclaw_runtime/scripts/check-cli-bootstrap-imports.mjs
+  - openclaw_runtime/scripts/prepare-extension-package-boundary-artifacts.mjs
   - openclaw_runtime/scripts/runtime-utf8-inventory.mjs
   - openclaw_runtime/scripts/runtime-utf8-inventory.test.mjs
+  - openclaw_runtime/scripts/write-cli-compat.ts
+  - openclaw_runtime/scripts/write-cli-startup-metadata.ts
+  - openclaw_runtime/src/agents/orchestrator-run-observed.ts
+  - openclaw_runtime/src/agents/agent-steering-queue.ts
+  - openclaw_runtime/src/agents/bash-tools.exec.resolve-env.test.ts
+  - openclaw_runtime/src/agents/bash-tools.exec.ts
+  - openclaw_runtime/src/agents/cache-trace.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/tool-result-truncation.ts
+  - openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.types.ts
+  - openclaw_runtime/src/agents/sessions/extensions/loader.ts
+  - openclaw_runtime/src/agents/orchestrator-run.ts
+  - openclaw_runtime/src/agents/orchestrator.ts
+  - openclaw_runtime/src/agents/role-spawn.ts
+  - openclaw_runtime/src/agents/role-permission-audit.ts
+  - openclaw_runtime/src/agents/agent-bundle-mcp-types.ts
+  - openclaw_runtime/src/agents/apply-patch.ts
+  - openclaw_runtime/src/agents/bundle-mcp-config.ts
+  - openclaw_runtime/src/agents/mission-control/controller.ts
+  - openclaw_runtime/src/agents/mission-control/reviewer.ts
+  - openclaw_runtime/src/agents/long-task-control/task-ledger.ts
+  - openclaw_runtime/src/agents/long-task-control/store.runtime-core-checkpoint.test.ts
+  - openclaw_runtime/src/agents/long-task-control/store.ts
+  - openclaw_runtime/src/agents/task-loop-self-check.ts
+  - openclaw_runtime/src/agents/task-loop-controller.ts
+  - openclaw_runtime/src/agents/verseshell-runtime.ts
+  - openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts
+  - openclaw_runtime/src/context-engine/pruned-runtime-build-contract.test.ts
+  - openclaw_runtime/src/context-engine/chat-turn-memory-injection.test.ts
+  - openclaw_runtime/src/context-engine/chat-turn-memory-injection.ts
+  - openclaw_runtime/src/context-engine/memory-context-provider.test.ts
+  - openclaw_runtime/src/context-engine/memory-context-provider.ts
+  - openclaw_runtime/src/gateway/health-runtime/status.summary.runtime.test.ts
+  - openclaw_runtime/src/gateway/health-runtime/status.summary.runtime.ts
+  - openclaw_runtime/src/gateway/health-runtime/status.link-channel.test.ts
+  - openclaw_runtime/src/gateway/health-runtime/status.link-channel.ts
+  - openclaw_runtime/src/gateway/health-runtime/status.summary.ts
+  - openclaw_runtime/src/gateway/health-runtime/health.types.ts
+  - openclaw_runtime/src/gateway/cli-runtime/nodes-camera.ts
+  - openclaw_runtime/src/gateway/cli-runtime/nodes-media-utils.ts
+  - openclaw_runtime/src/gateway/cli-runtime/nodes-media.test.ts
+  - openclaw_runtime/src/gateway/cli-runtime/nodes-screen.ts
+  - openclaw_runtime/src/gateway/cli-runtime/action-reparse.ts
+  - openclaw_runtime/src/gateway/cli-runtime/argv-invocation.ts
+  - openclaw_runtime/src/gateway/cli-runtime/argv.ts
+  - openclaw_runtime/src/gateway/cli-runtime/command-registration-policy.ts
+  - openclaw_runtime/src/gateway/cli-runtime/command-secret-gateway.test.ts
+  - openclaw_runtime/src/gateway/cli-runtime/command-secret-gateway.ts
+  - openclaw_runtime/src/gateway/cli-runtime/command-secret-targets.test.ts
+  - openclaw_runtime/src/gateway/cli-runtime/command-secret-targets.ts
+  - openclaw_runtime/src/gateway/cli-runtime/command-options.ts
+  - openclaw_runtime/src/gateway/cli-runtime/command-tree.ts
+  - openclaw_runtime/src/gateway/cli-runtime/gateway-rpc.ts
+  - openclaw_runtime/src/gateway/cli-runtime/helpers.ts
+  - openclaw_runtime/src/gateway/cli-runtime/message-secret-scope.test.ts
+  - openclaw_runtime/src/gateway/cli-runtime/message-secret-scope.ts
+  - openclaw_runtime/src/gateway/cli-runtime/register-command-groups.ts
+  - openclaw_runtime/src/gateway/cli-runtime/register-lazy-command.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.ts
+  - openclaw_runtime/src/gateway/server-methods/agent.ts
+  - openclaw_runtime/src/gateway/server-methods/chat.ts
+  - openclaw_runtime/src/auto-reply/reply/get-reply.ts
+  - openclaw_runtime/src/gateway/wizard-runtime/i18n.ts
+  - openclaw_runtime/src/gateway/wizard-runtime/session.ts
+  - openclaw_runtime/src/gateway/wizard-runtime/setup.ts
+  - openclaw_runtime/src/infra/backup-create.test.ts
+  - openclaw_runtime/src/infra/backup-create.ts
+  - openclaw_runtime/src/infra/backup-create.windows.test.ts
+  - openclaw_runtime/src/llm/utils/oauth/openai-chatgpt.ts
+  - openclaw_runtime/src/plugin-sdk/health.test.ts
+  - openclaw_runtime/src/plugin-sdk/health.ts
+  - openclaw_runtime/src/plugin-sdk/cli-runtime.ts
+  - openclaw_runtime/src/plugin-sdk/config-mutation.ts
+  - openclaw_runtime/src/plugin-sdk/gateway-runtime.ts
+  - openclaw_runtime/src/plugin-sdk/pruned-cli-runtime-contract.test.ts
+  - openclaw_runtime/src/plugin-sdk/provider-auth-login.runtime.test.ts
+  - openclaw_runtime/src/plugin-sdk/provider-auth-login.runtime.ts
+  - openclaw_runtime/src/plugin-sdk/runtime.ts
+  - openclaw_runtime/src/plugin-sdk/setup-runtime.test.ts
+  - openclaw_runtime/src/plugin-sdk/setup-runtime.ts
+  - openclaw_runtime/src/plugin-sdk/setup.ts
+  - openclaw_runtime/src/runtime-core/capability-publications.ts
+  - openclaw_runtime/src/runtime-core/ast-patch-planner.ts
+  - openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts
+  - openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts
+  - openclaw_runtime/src/runtime-core/memory-query-tool.ts
+  - openclaw_runtime/src/runtime-core/memory-runtime-config.test.ts
+  - openclaw_runtime/src/runtime-core/memory-runtime-config.ts
+  - openclaw_runtime/src/runtime-core/task-loop-memory-shadow-diagnostics.ts
+  - openclaw_runtime/src/sessions/input-mode.ts
+  - openclaw_runtime/tsconfig.plugin-sdk.dts.json
+  - openclaw_runtime/tsdown.config.ts
+  - openclaw_runtime/src/cli/help-format.ts
 expectedUserBehavior:
   - The user's original workspace and mixed DCS closure clone remain byte-for-byte untouched by remediation work and recoverable from verified bundles, patches, untracked-file copies, and SHA-256 inventories.
   - Every tracked textual file in the pruned Runtime is valid UTF-8 after remediation, while retained runtime, plugin, channel, provider, protocol, and build behavior remains intact.
@@ -439,6 +634,14 @@ requiredRules:
   - contract-first-boundary
   - comms-regression
 requiredTests:
+  - pnpm --dir openclaw_runtime exec tsc -p tsconfig.plugin-sdk.dts.json --pretty false --noEmit
+  - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.plugin-sdk.config.ts src/plugin-sdk/provider-auth-login.runtime.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.unit-fast.config.ts src/infra/backup-create.test.ts src/infra/backup-create.windows.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.agents-core.config.ts src/agents/long-task-control/store.runtime-core-checkpoint.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.unit-src.config.ts src/context-engine/chat-turn-memory-injection.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.gateway-core.config.ts src/gateway/health-runtime/status.link-channel.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.unit-src.config.ts src/context-engine/memory-context-provider.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.unit-src.config.ts src/runtime-core/memory-runtime-config.test.ts
   - node --test openclaw_runtime/scripts/runtime-utf8-inventory.test.mjs
   - node openclaw_runtime/scripts/runtime-utf8-inventory.mjs --root . --pathspec openclaw_runtime --output artifacts/runtime-utf8-recovery/final-inventory.json
   - pnpm --dir openclaw_runtime build
@@ -463,6 +666,8 @@ acceptance:
   - No lossy decoder, U+FFFD substitution, guessed punctuation, guessed CJK text, guessed emoji, blanket conversion, blanket skip, assertion deletion, or weakened gate is used.
   - Repair workers edit pairwise-disjoint frozen path allowlists, and integration verifies each worker's changed-file list is a subset of its allowlist.
   - Retained src/entry.ts bootstrap, plugin SDK health API, Gateway protocol schemas, status runtime entry, plugin/channel/provider behavior, and pruned build ownership are covered by focused tests.
+  - The deprecated provider-auth-login SDK subpath resolves its retained Chutes login helper through the provider-owned implementation without copying provider policy into core or weakening lazy loading.
+  - The runtime SDK exposes the real retained backup archive capability required by Matrix migration snapshots, including volatile-state filtering, SQLite-safe capture, output containment, and Windows path behavior, without restoring the removed CLI command tree.
   - Renderer, Electron Main, host API, Gateway transport policy, DCS working-memory behavior, COMPASS, task_state, knowledge, notes, and handoff are not modified by this remediation.
   - Strict final inventory reports invalidFiles 0, invalidUnits 0, worktreeMismatches 0, and unresolved repairs 0.
   - All required tests and the real pnpm --dir openclaw_runtime build exit 0, and independent review reports Critical 0 and Important 0 before this baseline is used by DCS Stage 1.

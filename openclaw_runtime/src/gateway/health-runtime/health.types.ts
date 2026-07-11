@@ -64,7 +64,7 @@ export type HealthSummary = {
   ok: true;
   ts: number;
   durationMs: number;
-  eventLoop?: import("../gateway/server/event-loop-health.js").GatewayEventLoopHealth;
+  eventLoop?: import("../server/event-loop-health.js").GatewayEventLoopHealth;
   plugins?: PluginHealthSummary;
   contextEngines?: ContextEngineHealthSummary;
   modelPricing?: ModelPricingHealthSummary;

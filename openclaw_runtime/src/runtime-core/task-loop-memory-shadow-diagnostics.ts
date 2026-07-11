@@ -190,11 +190,11 @@ export type TaskLoopRuntimeMemoryReadHydrationShadowOnlyMetrics = {
   tokenOverhead: number;
   latencyOverheadMs: number;
   defaultPathNoOpRate: number;
-  taskLoopDecisionDeltaCount: 0;
-  toolCallDeltaCount: 0;
-  providerOrderingDeltaCount: 0;
-  promptContextModelMessageInjectionCount: 0;
-  durableMemoryWriteCount: 0;
+  taskLoopDecisionDeltaCount: number;
+  toolCallDeltaCount: number;
+  providerOrderingDeltaCount: number;
+  promptContextModelMessageInjectionCount: number;
+  durableMemoryWriteCount: number;
   runtimeAuthorityCount: 0;
   thresholdViolations: string[];
 };

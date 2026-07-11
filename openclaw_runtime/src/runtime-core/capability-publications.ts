@@ -280,9 +280,13 @@ function mcpPublications(params: {
     const contextRoleName = normalizeComparable(params.roleName);
     const exposed = !exposure
       || (!hasAgentRestriction && !hasWorkspaceRestriction && !hasRoleRestriction)
-      || (hasAgentRestriction && contextAgentId && agentIds.includes(contextAgentId))
-      || (hasWorkspaceRestriction && contextWorkspaceId && workspaceIds.includes(contextWorkspaceId))
-      || (hasRoleRestriction && contextRoleName && roleNames.includes(contextRoleName));
+      || (hasAgentRestriction && contextAgentId.length > 0 && agentIds.includes(contextAgentId))
+      || (
+        hasWorkspaceRestriction
+        && contextWorkspaceId.length > 0
+        && workspaceIds.includes(contextWorkspaceId)
+      )
+      || (hasRoleRestriction && contextRoleName.length > 0 && roleNames.includes(contextRoleName));
     if (!params.includeCandidates && !exposed) {
       return null;
     }

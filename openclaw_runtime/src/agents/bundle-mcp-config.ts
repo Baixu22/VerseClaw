@@ -152,8 +152,8 @@ function isBundleMcpServerExposed(
   const workspaceId = normalizeComparable(context.workspaceId);
   const roleName = normalizeComparable(context.roleName);
   return (
-    (hasAgentRestriction && agentId && agentIds.includes(agentId)) ||
-    (hasWorkspaceRestriction && workspaceId && workspaceIds.includes(workspaceId)) ||
-    (hasRoleRestriction && roleName && roleNames.includes(roleName))
+    (hasAgentRestriction && agentId.length > 0 && agentIds.includes(agentId)) ||
+    (hasWorkspaceRestriction && workspaceId.length > 0 && workspaceIds.includes(workspaceId)) ||
+    (hasRoleRestriction && roleName.length > 0 && roleNames.includes(roleName))
   );
 }

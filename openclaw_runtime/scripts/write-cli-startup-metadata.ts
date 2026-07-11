@@ -1,7 +1,7 @@
 // Write Cli Startup Metadata script supports OpenClaw repository automation.
 import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import type { RootHelpRenderOptions } from "../src/cli/program/root-help.js";
@@ -802,6 +802,14 @@ export const testing = {
 export { testing as __testing };
 
 if (process.argv[1] && path.resolve(process.argv[1]) === scriptPath) {
-  await writeCliStartupMetadata();
+  const cliStartupEntryPath = path.join(rootDir, "src/cli/run-main.ts");
+  if (!existsSync(cliStartupEntryPath)) {
+    rmSync(outputPath, { force: true });
+    console.log(
+      "[cli-startup-metadata] skipped: CLI startup sources are unavailable in this pruned runtime.",
+    );
+  } else {
+    await writeCliStartupMetadata();
+  }
   process.exit(0);
 }

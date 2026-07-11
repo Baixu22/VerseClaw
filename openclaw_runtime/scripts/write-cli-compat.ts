@@ -1,17 +1,28 @@
 // Write Cli Compat script supports OpenClaw repository automation.
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import {
-  LEGACY_DAEMON_CLI_EXPORTS,
-  resolveLegacyDaemonCliAccessors,
-  resolveLegacyDaemonCliRegisterAccessor,
-  resolveLegacyDaemonCliRunnerAccessors,
-} from "../src/cli/daemon-cli-compat.ts";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = path.join(rootDir, "dist");
 const cliDir = path.join(distDir, "cli");
+const daemonCliCompatSourcePath = path.join(rootDir, "src/cli/daemon-cli-compat.ts");
+const legacyDaemonCliShimPath = path.join(cliDir, "daemon-cli.js");
+
+if (!fs.existsSync(daemonCliCompatSourcePath)) {
+  fs.rmSync(legacyDaemonCliShimPath, { force: true });
+  console.log(
+    "[cli-compat] skipped: legacy daemon CLI sources are unavailable in this pruned runtime.",
+  );
+  process.exit(0);
+}
+
+const {
+  LEGACY_DAEMON_CLI_EXPORTS,
+  resolveLegacyDaemonCliAccessors,
+  resolveLegacyDaemonCliRegisterAccessor,
+  resolveLegacyDaemonCliRunnerAccessors,
+} = await import(pathToFileURL(daemonCliCompatSourcePath).href);
 
 const findCandidates = () =>
   fs.readdirSync(distDir).filter((entry) => {

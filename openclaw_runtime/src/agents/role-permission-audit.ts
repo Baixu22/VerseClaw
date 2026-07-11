@@ -10,7 +10,6 @@ export function buildRolePermissionDecisionEvents(input: {
   reason: string;
 }): PermissionDecisionEvent[] {
   return input.deniedTools.map((tool) => createPermissionDecisionEvent({
-    workspaceMode: 'unknown',
     role: input.roleName,
     tool,
     boundary: 'role-tool',

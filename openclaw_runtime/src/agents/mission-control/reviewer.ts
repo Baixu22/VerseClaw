@@ -52,11 +52,12 @@ function normalizeMemoryCandidates(value: unknown): MissionMemoryCandidate[] {
     const kind = record.kind === "knowledge_draft" ? "knowledge_draft" : record.kind === "role_memory" ? "role_memory" : undefined;
     const summary = typeof record.summary === "string" ? record.summary.trim().slice(0, 1_000) : "";
     if (!kind || !summary) return [];
-    return [{
+    const candidate: MissionMemoryCandidate = {
       kind,
       summary,
       evidenceRefs: stringArray(record.evidenceRefs, 20),
-    }];
+    };
+    return [candidate];
   }).slice(0, 20);
 }
 
@@ -368,7 +369,9 @@ async function modelComplete(prompt: string, input: MissionReviewerInput): Promi
       model: prepared.model,
       auth: prepared.auth,
       cfg,
-      context: [{ role: "user", content: prompt }],
+      context: {
+        messages: [{ role: "user", content: prompt, timestamp: Date.now() }],
+      },
       options: { maxTokens: 900, temperature: 0, signal: controller.signal },
     });
     return extractAssistantText(result);

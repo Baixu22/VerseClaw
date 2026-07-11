@@ -1,63 +1,82 @@
-// P5-2 CLI/TUI Deletion: CLI command group registry stub.
-//
-// The original `cli/program/register-command-groups.ts` was retired
-// along with the `cli/` directory. This stub preserves the public
-// surface used by plugins to register, lookup, and unregister lazy
-// CLI command groups. At runtime, no groups are registered (the
-// runtime does not host a CLI), so the registry is permanently empty
-// and the call sites fall through to their eager/no-op paths.
-
 import type { Command } from "commander";
+import { removeCommandByName } from "./command-tree.js";
+import { registerLazyCommand } from "./register-lazy-command.js";
 
-export type CommandGroupEntry = {
-  // `name` and `load` are optional because plugin-sdk consumers
-  // produce entries via `buildPluginCliCommandGroupEntries` which
-  // uses `pluginId` (not `name`) and defers loading to `register`.
-  name?: string;
-  parentPath?: readonly string[];
-  description?: string;
-  load?: (program: Command) => Promise<void> | void;
-  register: (program: Command) => Promise<void> | void;
-  // Placeholders are intentionally typed as `unknown[]` to remain
-  // compatible with descriptor-shaped callers in the plugin SDK; the
-  // registrar re-asserts the descriptor type at the call site.
-  placeholders: readonly unknown[];
+export type CommandGroupPlaceholder = {
+  name: string;
+  description: string;
+  options?: readonly { flags: string; description: string }[];
 };
 
-const lazyGroups = new Map<string, CommandGroupEntry>();
+export type CommandGroupEntry = {
+  register: (program: Command) => Promise<void> | void;
+  placeholders: readonly CommandGroupPlaceholder[];
+  names?: readonly string[];
+};
 
 export function registerLazyCommandGroup(
-  _program: Command,
+  program: Command,
   entry: CommandGroupEntry,
-  _placeholder: unknown,
+  placeholder: CommandGroupPlaceholder,
 ): void {
-  lazyGroups.set(entry.name ?? "", entry);
+  registerLazyCommand({
+    program,
+    name: placeholder.name,
+    description: placeholder.description,
+    options: placeholder.options,
+    removeNames: [...new Set(getCommandGroupNames(entry))],
+    register: async () => await entry.register(program),
+  });
 }
 
 export function findCommandGroupEntry(
   entries: readonly CommandGroupEntry[],
   name: string,
 ): CommandGroupEntry | undefined {
-  return entries.find((e) => (e.name ?? (e as { pluginId?: string }).pluginId) === name);
+  return entries.find((entry) => getCommandGroupNames(entry).includes(name));
 }
 
 export function getCommandGroupNames(entry: CommandGroupEntry): readonly string[] {
-  // Prefer the descriptor-shape `names` field when present (used by
-  // the plugin registrar); fall back to placeholders-as-strings or
-  // the entry's own name/pluginId.
-  const fromNames = (entry as { names?: readonly string[] }).names;
-  if (fromNames && fromNames.length > 0) return fromNames;
-  if (entry.placeholders.length > 0) {
-    return entry.placeholders.map((p) =>
-      typeof p === "string" ? p : (p as { name?: string }).name ?? entry.name ?? "",
-    );
-  }
-  return [entry.name ?? ""];
+  return entry.names ?? entry.placeholders.map((placeholder) => placeholder.name);
 }
 
 export function removeCommandGroupNames(
-  _program: Command,
+  program: Command,
   entry: CommandGroupEntry,
 ): void {
-  lazyGroups.delete(entry.name ?? "");
+  for (const name of new Set(getCommandGroupNames(entry))) {
+    removeCommandByName(program, name);
+  }
+}
+
+export function registerCommandGroups(
+  program: Command,
+  entries: readonly CommandGroupEntry[],
+  params: {
+    eager: boolean;
+    primary: string | null;
+    registerPrimaryOnly: boolean;
+  },
+): void {
+  if (params.eager) {
+    for (const entry of entries) {
+      void entry.register(program);
+    }
+    return;
+  }
+  if (params.primary && params.registerPrimaryOnly) {
+    const entry = findCommandGroupEntry(entries, params.primary);
+    const placeholder = entry?.placeholders.find(
+      (candidate) => candidate.name === params.primary,
+    );
+    if (entry && placeholder) {
+      registerLazyCommandGroup(program, entry, placeholder);
+    }
+    return;
+  }
+  for (const entry of entries) {
+    for (const placeholder of entry.placeholders) {
+      registerLazyCommandGroup(program, entry, placeholder);
+    }
+  }
 }

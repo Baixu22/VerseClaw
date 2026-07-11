@@ -23,6 +23,7 @@ import { logWarn, logInfo } from "../logger.js";
 // ── Types ────────────────────────────────────────────────────────────────
 
 export type VerseShellExecResult = {
+  id: string;
   ok: boolean;
   value?: unknown;
   error?: {
@@ -244,11 +245,11 @@ let degradeState: DegradeState = {
 const DEGRADED_ERROR = new Error(
   "VerseShell is degraded; caller should use native shell fallback",
 );
-(DEGRADED_ERROR as Record<string, unknown>).code = "E_VERSESHELL_DEGRADED";
+Object.assign(DEGRADED_ERROR, { code: "E_VERSESHELL_DEGRADED" });
 
 function errorFingerprint(err: unknown): string {
   if (err instanceof Error) {
-    const code = (err as Record<string, unknown>).code ?? "";
+    const code = (err as Error & { code?: unknown }).code ?? "";
     return `${code}:${err.message}`;
   }
   return String(err);
@@ -983,7 +984,7 @@ export async function verseshellBatchEval(
       if (entry) {
         clearTimeout(entry.timer);
         pendingRequests.delete(id);
-        entry.reject(err);
+        entry.reject(err instanceof Error ? err : new Error(String(err)));
       }
     });
     throw err;

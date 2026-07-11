@@ -1267,6 +1267,7 @@ function languageFromFilePath(filePath: string): AstPatchPlannerLanguage | undef
   if (filePath.endsWith(".ts")) {
     return "typescript";
   }
+  return undefined;
 }
 
 function normalizeFilePath(filePath: string): string {
@@ -1319,6 +1320,7 @@ function findFirstOverlap(matches: readonly AstPatchPlannerMatchEvidence[]):
       }
     }
   }
+  return undefined;
 }
 
 function hashRuleConfig(rule: unknown): string {
@@ -1426,6 +1428,7 @@ function firstDuplicate(values: readonly string[]): string | undefined {
     }
     seen.add(value);
   }
+  return undefined;
 }
 
 function digest(value: string): string {

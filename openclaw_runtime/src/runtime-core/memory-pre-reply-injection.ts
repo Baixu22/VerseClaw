@@ -16,7 +16,12 @@ import {
   DEFAULT_MEMORY_RUNTIME_CONFIG,
   type MemoryRuntimeConfig,
 } from "./memory-runtime-config.js";
-import { runtimeMemoryFlagEnabled, type RuntimeMemoryQueryableFact } from "./memory-context.js";
+import {
+  isRuntimeMemoryTemporalFact,
+  isRuntimeMemoryTemporalFactCandidate,
+  runtimeMemoryFlagEnabled,
+  type RuntimeMemoryQueryableFact,
+} from "./memory-context.js";
 import { createRuntimeMemoryRuntimeIntegration } from "./memory-runtime-integration.js";
 import {
   createInitialSSP,
@@ -764,7 +769,7 @@ export function loadCompassFacts(
   try {
     const integration = createRuntimeMemoryRuntimeIntegration({ config: cfg });
     const result = integration.loadStore();
-    const facts = result.store.queryFacts();
+    const facts = result.store.queryFacts().map(cloneQueryableFact);
     compassFactsCache.set(cacheKey, { facts, loadedAt: now });
     return facts;
   } catch {
@@ -775,4 +780,15 @@ export function loadCompassFacts(
 /** 清除 facts 缓存 (测试用). */
 export function clearCompassFactsCache(): void {
   compassFactsCache.clear();
+}
+
+function cloneQueryableFact(fact: unknown): RuntimeMemoryQueryableFact {
+  const clone: unknown = structuredClone(fact);
+  if (
+    isRuntimeMemoryTemporalFact(clone) ||
+    isRuntimeMemoryTemporalFactCandidate(clone)
+  ) {
+    return clone;
+  }
+  throw new Error("Runtime memory store returned an invalid fact.");
 }

@@ -39,8 +39,8 @@ import {
 import {
   computeHistoryPenalty,
   passesTemporalPolicy,
-  type TemporalPolicy,
 } from "./memory-temporal-policy.js";
+import type { TemporalPolicy } from "./memory-trace.js";
 
 export type HybridSearchQuery = {
   queryText: string;
