@@ -31,10 +31,6 @@ import {
   createBashTool,
   createCodingTools,
   createEditTool,
-  createFindTool,
-  createGrepTool,
-  createLsTool,
-  createReadOnlyTools,
   createReadTool,
   createWriteTool,
   type ToolName,
@@ -117,18 +113,18 @@ export type { PromptTemplate } from "./prompt-templates.js";
 export type { Skill } from "../../skills/loading/session.js";
 export type { Tool } from "./tools/index.js";
 
+// Tool factories re-exported for callers that build sessions with a custom cwd.
+// The read-only discovery factories (createGrepTool/createFindTool/createLsTool/
+// createReadOnlyTools) are intentionally NOT surfaced here: they have no
+// production consumers. Their implementations remain in ./tools for test-support
+// and are still reachable via the lower-level ./tools/index barrel.
 export {
   withFileMutationQueue,
-  // Tool factories (for custom cwd)
   createCodingTools,
-  createReadOnlyTools,
   createReadTool,
   createBashTool,
   createEditTool,
   createWriteTool,
-  createGrepTool,
-  createFindTool,
-  createLsTool,
 };
 
 // Helper Functions
