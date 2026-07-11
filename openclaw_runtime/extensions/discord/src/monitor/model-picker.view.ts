@@ -178,7 +178,7 @@ function buildBucketSelectRow(params: {
   // The bucket select uses `action: "bucket"` so the interaction handler
   // can route the chosen value (interaction.values[0]) into providerBucket
   // or modelBucket and re-render. page resets to 1. providerBucket is
-  // intentionally omitted from the customId â€?when view=models the handler
+  // intentionally omitted from the customId â€” when view=models the handler
   // derives the provider bucket from `params.provider` via
   // findProviderBucketId, keeping the customId under Discord's 100-char
   // cap for long provider ids + 20-digit user ids.
@@ -395,7 +395,7 @@ function buildPaginationRow(params: {
     customId: DISCORD_MODEL_PICKER_PAGE_INDICATOR_CUSTOM_ID,
   });
   const nextButton = createModelPickerButton({
-    label: "Next â–?,
+    label: "Next â–¶",
     style: ButtonStyle.Secondary,
     disabled: !params.hasNext,
     customId: buildDiscordModelPickerCustomId({
@@ -884,7 +884,7 @@ function formatRecentsButtonLabel(modelRef: string, suffix?: string): string {
     return label;
   }
   const trimmed = suffix
-    ? `${modelRef.slice(0, maxLen - suffix.length - 2)}â€?${suffix}`
+    ? `${modelRef.slice(0, maxLen - suffix.length - 2)}â€¦ ${suffix}`
     : `${modelRef.slice(0, maxLen - 1)}â€¦`;
   return trimmed;
 }
@@ -898,7 +898,7 @@ export function renderDiscordModelPickerRecentsView(
   // Dedupe: filter recents that match the default model.
   const dedupedQuickModels = params.quickModels.filter((modelRef) => modelRef !== defaultModelRef);
 
-  // Default model button â€?slot 1.
+  // Default model button â€” slot 1.
   rows.push(
     new Row([
       createModelPickerButton({
@@ -920,7 +920,7 @@ export function renderDiscordModelPickerRecentsView(
     ]),
   );
 
-  // Recent model buttons â€?slot 2+.
+  // Recent model buttons â€” slot 2+.
   for (let i = 0; i < dedupedQuickModels.length; i++) {
     const modelRef = dedupedQuickModels[i];
     rows.push(

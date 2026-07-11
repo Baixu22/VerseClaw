@@ -1,5 +1,5 @@
 /**
- * JSONL parser â€?splits on `\n`, parses each non-empty line as JSONC
+ * JSONL parser â€” splits on `\n`, parses each non-empty line as JSONC
  * (allowing comments/trailing-comma is harmless and matches what
  * openclaw session logs actually emit). Soft-error policy: malformed
  * lines surface as `kind: 'malformed'` AST entries plus a diagnostic.
@@ -21,7 +21,7 @@ export function parseJsonl(raw: string): JsonlParseResult {
   // Detect the line-ending convention from the input. Windows-authored
   // datasets use CRLF; Unix and most cross-platform tooling use LF. We
   // count CRLF occurrences and call CRLF if the majority of newlines
-  // are CRLF â€?this handles mixed-ending files (e.g., a Unix log
+  // are CRLF â€” this handles mixed-ending files (e.g., a Unix log
   // edited once on Windows) by picking the dominant convention.
   // Without this, `setJsonlOcPath` rebuilds a CRLF input via render
   // mode which joins with `\n`, producing mixed endings on a

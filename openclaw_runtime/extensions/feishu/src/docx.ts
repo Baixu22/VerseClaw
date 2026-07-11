@@ -576,7 +576,7 @@ async function resolveUploadInput(
   // Absolute paths (/...) are supported but must exist on disk. If an absolute
   // path does not exist we throw immediately rather than falling through to
   // base64 decoding, which would silently upload garbage bytes.
-  // Note: JPEG base64 starts with "/9j/" â€?pass as data:image/jpeg;base64,...
+  // Note: JPEG base64 starts with "/9j/" â€” pass as data:image/jpeg;base64,...
   // to avoid ambiguity with absolute paths.
   if (imageInput) {
     const candidate = imageInput.startsWith("~") ? imageInput.replace(/^~/, homedir()) : imageInput;

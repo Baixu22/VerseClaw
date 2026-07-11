@@ -192,7 +192,7 @@ export function createMattermostConnectOnce(
             if (!protocolKeepaliveEnabled || settled) {
               return;
             }
-            opts.runtime.error?.("mattermost websocket pong timeout â€?reconnecting");
+            opts.runtime.error?.("mattermost websocket pong timeout â€” reconnecting");
             stopHealthChecks();
             ws.terminate();
           }, pongTimeoutMs);
@@ -244,7 +244,7 @@ export function createMattermostConnectOnce(
             }
             if (current !== initialUpdateAt) {
               opts.runtime.log?.(
-                `mattermost: bot account updated (update_at changed: ${initialUpdateAt} â†?${current}) â€?reconnecting`,
+                `mattermost: bot account updated (update_at changed: ${initialUpdateAt} â†’ ${current}) â€” reconnecting`,
               );
               stopHealthChecks();
               ws.terminate();

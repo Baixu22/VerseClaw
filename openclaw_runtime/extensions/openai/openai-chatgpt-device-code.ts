@@ -267,7 +267,7 @@ export async function loginOpenAICodexDeviceCode(params: {
 }): Promise<OpenAICodexDeviceCodeCredentials> {
   const fetchFn = params.fetchFn ?? fetch;
 
-  params.onProgress?.("Requesting device codeâ€?);
+  params.onProgress?.("Requesting device codeâ€¦");
   const deviceCode = await requestOpenAICodexDeviceCode(fetchFn);
 
   await params.onVerification({
@@ -276,7 +276,7 @@ export async function loginOpenAICodexDeviceCode(params: {
     expiresInMs: OPENAI_CODEX_DEVICE_CODE_TIMEOUT_MS,
   });
 
-  params.onProgress?.("Waiting for device authorizationâ€?);
+  params.onProgress?.("Waiting for device authorizationâ€¦");
   const authorization = await pollOpenAICodexDeviceCode({
     fetchFn,
     deviceAuthId: deviceCode.deviceAuthId,
@@ -284,7 +284,7 @@ export async function loginOpenAICodexDeviceCode(params: {
     intervalMs: deviceCode.intervalMs,
   });
 
-  params.onProgress?.("Exchanging device codeâ€?);
+  params.onProgress?.("Exchanging device codeâ€¦");
   return await exchangeOpenAICodexDeviceCode({
     fetchFn,
     authorizationCode: authorization.authorizationCode,

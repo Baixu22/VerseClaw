@@ -72,7 +72,7 @@ export function hasConfiguredMSTeamsCredentials(cfg?: MSTeamsConfig): boolean {
     return hasAppId && hasTenantId && (hasCert || hasManagedIdentity);
   }
 
-  // "secret" (default) â€?original logic
+  // "secret" (default) â€” original logic
   return Boolean(
     normalizeSecretInputString(cfg?.appId) &&
     hasConfiguredSecretInput(cfg?.appPassword) &&
@@ -126,7 +126,7 @@ export function resolveMSTeamsCredentials(cfg?: MSTeamsConfig): MSTeamsCredentia
     };
   }
 
-  // "secret" (default) â€?original logic
+  // "secret" (default) â€” original logic
   const appPassword =
     normalizeResolvedSecretInputString({
       value: cfg?.appPassword,

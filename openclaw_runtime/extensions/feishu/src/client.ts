@@ -58,7 +58,7 @@ let feishuClientSdk: FeishuClientSdk = defaultFeishuClientSdk;
 // Override the SDK's default User-Agent interceptor.
 // The Lark SDK registers an axios request interceptor that sets
 // 'oapi-node-sdk/1.0.0'. Axios request interceptors execute in LIFO order
-// (last-registered runs first), so simply appending ours doesn't work â€?the
+// (last-registered runs first), so simply appending ours doesn't work â€” the
 // SDK's interceptor would run last and overwrite our UA. We must clear
 // handlers[] first, then register our own as the sole interceptor.
 //

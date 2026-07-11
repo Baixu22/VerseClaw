@@ -151,7 +151,7 @@ export function resolveGroupName(
 interface GroupSettings {
   /** Merged group config (specific > wildcard > defaults). */
   config: GroupConfig;
-  /** Display name â€?`config.name` or the first 8 chars of the openid. */
+  /** Display name â€” `config.name` or the first 8 chars of the openid. */
   name: string;
   /** Raw mentionPatterns (agent > global > []). */
   mentionPatterns: string[];

@@ -1,20 +1,20 @@
 /**
- * Group history cache â€?buffer non-@ messages and inject them as context
+ * Group history cache â€” buffer non-@ messages and inject them as context
  * the next time the bot is @-ed in the same group.
  *
  * Lifecycle (per group):
- *   1. `recordPendingHistoryEntry` â€?called for every non-@ message that
+ *   1. `recordPendingHistoryEntry` â€” called for every non-@ message that
  *      should be remembered (the gate returns `skip_no_mention` /
  *      `drop_other_mention`).
- *   2. `buildPendingHistoryContext` â€?called when the bot IS @-ed; wraps
+ *   2. `buildPendingHistoryContext` â€” called when the bot IS @-ed; wraps
  *      the cached entries in context tags and prepends them to the
  *      current user message.
- *   3. `clearPendingHistory` â€?called after the reply has been attempted
+ *   3. `clearPendingHistory` â€” called after the reply has been attempted
  *      (success, timeout, or error) so the next @ starts fresh.
  *
  * The cache itself is a simple `Map<groupOpenid, HistoryEntry[]>` with an
  * LRU eviction policy both on the number of keys and on the per-key
- * length. No I/O, no external dependencies â€?the module is pure and
+ * length. No I/O, no external dependencies â€” the module is pure and
  * portable between the built-in and standalone plugin builds.
  */
 
@@ -35,12 +35,12 @@ export { formatAttachmentTags } from "../utils/attachment-tags.js";
  * instructions more reliably in English) parse the block structure
  * unambiguously, regardless of the user/bot conversation language.
  */
-const HISTORY_CTX_START = "[Chat messages since your last reply â€?CONTEXT ONLY]";
-const HISTORY_CTX_END = "[CURRENT MESSAGE â€?reply to this]";
+const HISTORY_CTX_START = "[Chat messages since your last reply â€” CONTEXT ONLY]";
+const HISTORY_CTX_END = "[CURRENT MESSAGE â€” reply to this]";
 
 /** Tags wrapping merged sub-messages from the queue. */
-const MERGED_CTX_START = "[Merged earlier messages â€?CONTEXT ONLY]";
-const MERGED_CTX_END = "[CURRENT MESSAGE â€?reply using the context above]";
+const MERGED_CTX_START = "[Merged earlier messages â€” CONTEXT ONLY]";
+const MERGED_CTX_END = "[CURRENT MESSAGE â€” reply using the context above]";
 
 /**
  * Upper bound on the number of concurrent group histories the cache will
@@ -85,7 +85,7 @@ export interface HistoryEntry {
 /** Parameters for {@link formatMessageContent}. */
 interface FormatMessageContentParams {
   content: string;
-  /** Message channel â€?`stripMentionText` only fires for `"group"`. */
+  /** Message channel â€” `stripMentionText` only fires for `"group"`. */
   chatType?: string;
   mentions?: RawMention[];
   attachments?: RawAttachment[];
@@ -140,11 +140,11 @@ export function toAttachmentSummaries(
 }
 
 /**
- * Format one sub-message: emoji parsing â†?mention cleanup â†?attachment tags.
+ * Format one sub-message: emoji parsing â†’ mention cleanup â†’ attachment tags.
  *
  * Used for the merged-message path where several queued messages are
  * rendered together. `parseFaceTags` and `stripMentionText` are imported
- * directly â€?both are pure utilities inside the same engine and do not
+ * directly â€” both are pure utilities inside the same engine and do not
  * warrant DI overhead.
  */
 export function formatMessageContent(params: FormatMessageContentParams): string {

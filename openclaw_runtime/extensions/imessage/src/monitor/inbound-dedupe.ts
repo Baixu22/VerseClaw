@@ -32,7 +32,7 @@ export const IMESSAGE_STALE_INBOUND_THRESHOLD_MS = 15 * 60 * 1000;
 
 // Recovery (catchup): on startup imsg replays rows that landed while the gateway
 // was down. Those replayed rows are deliberately requested, so they use a wider
-// age window than the live fence â€?deliver a missed message up to this old,
+// age window than the live fence â€” deliver a missed message up to this old,
 // suppress anything older so a long downtime cannot dump ancient history.
 export const IMESSAGE_RECOVERY_MAX_AGE_MS = 2 * 60 * 60 * 1000;
 // Cap the replay span so a months-down gateway does not stream its whole

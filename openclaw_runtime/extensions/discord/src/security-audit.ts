@@ -179,7 +179,7 @@ export async function collectDiscordSecurityAuditFindings(params: {
       severity: "critical",
       title: "Discord slash commands are unrestricted",
       detail:
-        "commands.useAccessGroups=false disables sender allowlists for Discord slash commands unless a per-guild/channel users allowlist is configured; with no users allowlist, any user in allowed guild channels can invoke /â€?commands.",
+        "commands.useAccessGroups=false disables sender allowlists for Discord slash commands unless a per-guild/channel users allowlist is configured; with no users allowlist, any user in allowed guild channels can invoke /â€¦ commands.",
       remediation:
         "Set commands.useAccessGroups=true (recommended), or configure channels.discord.guilds.<id>.users (or channels.discord.guilds.<id>.channels.<channel>.users).",
     });
@@ -195,7 +195,7 @@ export async function collectDiscordSecurityAuditFindings(params: {
       severity: "warn",
       title: "Discord slash commands have no allowlists",
       detail:
-        "Discord slash commands are enabled, but neither an owner allowFrom list nor any per-guild/channel users allowlist is configured; /â€?commands will be rejected for everyone.",
+        "Discord slash commands are enabled, but neither an owner allowFrom list nor any per-guild/channel users allowlist is configured; /â€¦ commands will be rejected for everyone.",
       remediation:
         "Add your user id to channels.discord.allowFrom (or approve yourself via pairing), or configure channels.discord.guilds.<id>.users.",
     });

@@ -153,7 +153,7 @@ export async function deliverWebReply(params: {
     }
     // Use replyToId (not msg.id) so batched payloads quote the correct
     // per-message target.  Look up cached metadata for the specific
-    // message being quoted â€?msg.body may be a combined batch body.
+    // message being quoted â€” msg.body may be a combined batch body.
     const cached = lookupInboundMessageMeta(msg.accountId, msg.chatId, replyResult.replyToId);
     return buildQuotedMessageOptions({
       messageId: replyResult.replyToId,

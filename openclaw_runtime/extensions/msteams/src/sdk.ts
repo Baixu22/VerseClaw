@@ -37,10 +37,10 @@ type TeamsSdkModules = {
 };
 
 /**
- * Borrow the SDK's `IRoutes` map so `app.on("<route-name>", (ctx) => â€?`
+ * Borrow the SDK's `IRoutes` map so `app.on("<route-name>", (ctx) => â€¦)`
  * gets route-name validation and ctx inference. We define our own `on`
  * signature instead of borrowing the SDK's free function (which is bound to
- * `this: App<TPlugin>`), because our `MSTeamsApp` is a structural alias â€?
+ * `this: App<TPlugin>`), because our `MSTeamsApp` is a structural alias â€”
  * not a real `App` instance.
  */
 type MSTeamsRoutes = import("@microsoft/teams.apps/dist/routes/index.js").IRoutes;
@@ -51,10 +51,10 @@ export type MSTeamsCardActionResponse =
 
 /**
  * Typed `on` registration. The route-specific overloads below are tsgo
- * workarounds â€?every typed SDK route is affected to some degree.
+ * workarounds â€” every typed SDK route is affected to some degree.
  *
  * Real tsc resolves `IRoutes["<route>"]` to the route-specific
- * `RouteHandler<X, InvokeResponse | â€?` declared in the SDK (verified in
+ * `RouteHandler<X, InvokeResponse | â€¦>` declared in the SDK (verified in
  * VS Code), but tsgo collapses `@microsoft/teams.api`'s `Activity`
  * discriminated union to `any` because its hashed declarations don't
  * resolve cleanly across deep subpaths. That turns
@@ -70,7 +70,7 @@ export type MSTeamsCardActionResponse =
  * new typed route, add a matching overload. The generic fallback at the
  * end keeps route-name validation for everything else.
  *
- * Tracking upstream â€?same family of tsgo discriminated-union resolution
+ * Tracking upstream â€” same family of tsgo discriminated-union resolution
  * bugs: https://github.com/microsoft/typescript-go/issues/1057 (Post-7.0).
  */
 /** Per-route ctx aliases. Pulled from SDK subpaths that don't go through the broken `Activity` union resolution. */
@@ -111,14 +111,14 @@ type MSTeamsAppOn = {
   // delegates back into the SDK handlers after OpenClaw sender policy passes.
   (name: "signin.token-exchange", cb: (ctx: SigninTokenExchangeCtx) => unknown): MSTeamsApp;
   (name: "signin.verify-state", cb: (ctx: SigninVerifyStateCtx) => unknown): MSTeamsApp;
-  // Feedback (thumbs up/down) on AI-generated messages â€?Teams delivers
+  // Feedback (thumbs up/down) on AI-generated messages â€” Teams delivers
   // this as a `message/submitAction` invoke with `actionName === "feedback"`.
   // Typed return is `InvokeResponse | void`, so a void-returning cb works.
   (name: "message.submit", cb: (ctx: MessageSubmitCtx) => void | Promise<void>): MSTeamsApp;
-  // Activity catch-all. Default void return â€?used as our dispatch into
+  // Activity catch-all. Default void return â€” used as our dispatch into
   // the BotBuilder-shaped handler.
   (name: "activity", cb: (ctx: ActivityCtx) => void | Promise<void>): MSTeamsApp;
-  // Generic fallback â€?any other route name validates against IRoutes.
+  // Generic fallback â€” any other route name validates against IRoutes.
   <
     Name extends Exclude<
       keyof MSTeamsRoutes,
@@ -140,7 +140,7 @@ type MSTeamsAppOn = {
  * Structural interface for the Teams SDK App. Most of the surface is kept
  * loose to avoid tsgo resolution bugs with @microsoft/teams.api hashed
  * declaration files, but `on` mirrors the SDK's typed-route generic so
- * handlers (e.g. `app.on("file.consent.accept", (ctx) => â€?`) get proper
+ * handlers (e.g. `app.on("file.consent.accept", (ctx) => â€¦)`) get proper
  * route-name validation and ctx inference.
  */
 export type MSTeamsApp = {
@@ -275,8 +275,8 @@ export type CreateMSTeamsAppOptions = {
  * acquisition, JWT validation, and the HTTP server lifecycle.
  *
  * Auth modes:
- * - Secret: clientId + clientSecret â†?MSAL client credential flow (SDK built-in)
- * - Managed identity: clientId + managedIdentityClientId â†?SDK built-in MI support
+ * - Secret: clientId + clientSecret â†’ MSAL client credential flow (SDK built-in)
+ * - Managed identity: clientId + managedIdentityClientId â†’ SDK built-in MI support
  * - Certificate: clientId + custom token provider via @azure/identity
  */
 export async function createMSTeamsApp(
@@ -322,7 +322,7 @@ function createFederatedApp(
   appOptions: Record<string, unknown>,
 ): MSTeamsApp {
   if (creds.useManagedIdentity) {
-    // The SDK handles managed identity natively â€?pass managedIdentityClientId
+    // The SDK handles managed identity natively â€” pass managedIdentityClientId
     // and it selects the right credential flow (system MI, user MI, or FIC).
     return new App({
       clientId: creds.appId,
@@ -332,7 +332,7 @@ function createFederatedApp(
     } as unknown as ConstructorParameters<typeof App>[0]) as unknown as MSTeamsApp;
   }
 
-  // Certificate-based auth â€?the SDK doesn't have built-in cert support,
+  // Certificate-based auth â€” the SDK doesn't have built-in cert support,
   // so we use AppOptions.token with @azure/identity's ClientCertificateCredential.
   if (!creds.certificatePath) {
     throw new Error("Federated credentials require either a certificate path or managed identity.");

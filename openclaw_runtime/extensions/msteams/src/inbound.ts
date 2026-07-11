@@ -15,7 +15,7 @@ export function decodeHtmlEntities(html: string): string {
     .replace(/&#39;/g, "'")
     .replace(/&#x27;/g, "'")
     .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&"); // must be last to prevent double-decoding (e.g. &amp;lt; â†?&lt; not <)
+    .replace(/&amp;/g, "&"); // must be last to prevent double-decoding (e.g. &amp;lt; â†’ &lt; not <)
 }
 
 /**

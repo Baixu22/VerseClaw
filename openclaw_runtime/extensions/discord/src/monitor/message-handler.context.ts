@@ -240,7 +240,7 @@ export async function buildDiscordMessageProcessContext(params: {
     }
     const parentName = threadParentName ?? "parent";
     threadLabel = threadName
-      ? `Discord thread #${normalizeDiscordSlug(parentName)} â€?${threadName}`
+      ? `Discord thread #${normalizeDiscordSlug(parentName)} â€º ${threadName}`
       : `Discord thread #${normalizeDiscordSlug(parentName)}`;
     if (threadParentId) {
       parentSessionKey = buildAgentSessionKey({

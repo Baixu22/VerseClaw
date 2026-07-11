@@ -19,7 +19,7 @@ export function resolveMSTeamsRouteSessionKey(params: {
   // already thread-qualified (e.g. a `route.sessionKey` mutated in place by a
   // prior turn whose object is still held in the resolved-route cache, see
   // src/routing/resolve-route.ts cache-miss return), naively appending the
-  // current thread id would compound into `â€?thread:OLD:thread:NEW` and route
+  // current thread id would compound into `â€¦:thread:OLD:thread:NEW` and route
   // the turn to a malformed lane that splits same-thread context across turns.
   // Stripping makes this helper idempotent regardless of caller hygiene. (#66771)
   const cleanBase = params.baseSessionKey.replace(TRAILING_THREAD_SUFFIX, "");

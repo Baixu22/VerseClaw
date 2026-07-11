@@ -132,7 +132,7 @@ function detectTelegramMessageCacheLegacyStateMigration(params: {
       maxEntries: TELEGRAM_MESSAGE_CACHE_PERSISTENT_MAX_MESSAGES,
       scopeKey,
       cleanupSource: "rename",
-      preview: `- Telegram prompt-context message cache: ${persistedPath} â†?plugin state (${TELEGRAM_MESSAGE_CACHE_PERSISTENT_NAMESPACE})`,
+      preview: `- Telegram prompt-context message cache: ${persistedPath} â†’ plugin state (${TELEGRAM_MESSAGE_CACHE_PERSISTENT_NAMESPACE})`,
       readEntries: () => {
         return listTelegramLegacyMessageCacheEntries({
           persistedPath,
@@ -162,7 +162,7 @@ function detectTelegramBotInfoCacheLegacyStateMigration(params: {
       maxEntries: TELEGRAM_BOT_INFO_CACHE_MAX_ENTRIES,
       scopeKey: "",
       cleanupSource: "rename",
-      preview: `- Telegram startup bot info cache: ${persistedPath} â†?plugin state (${TELEGRAM_BOT_INFO_CACHE_NAMESPACE})`,
+      preview: `- Telegram startup bot info cache: ${persistedPath} â†’ plugin state (${TELEGRAM_BOT_INFO_CACHE_NAMESPACE})`,
       readEntries: () => {
         return listTelegramLegacyBotInfoCacheEntries({
           accountId,
@@ -210,7 +210,7 @@ function detectTelegramUpdateOffsetLegacyStateMigration(params: {
       maxEntries: TELEGRAM_UPDATE_OFFSET_MAX_ENTRIES,
       scopeKey: "",
       cleanupSource: "rename",
-      preview: `- Telegram update offset: ${persistedPath} â†?plugin state (${TELEGRAM_UPDATE_OFFSET_NAMESPACE})`,
+      preview: `- Telegram update offset: ${persistedPath} â†’ plugin state (${TELEGRAM_UPDATE_OFFSET_NAMESPACE})`,
       readEntries: () => listTelegramLegacyUpdateOffsetEntries({ accountId, persistedPath }),
       shouldReplaceExistingEntry: ({ existingValue, incomingValue }) =>
         shouldReplaceTelegramUpdateOffsetEntry({
@@ -242,7 +242,7 @@ function detectTelegramStickerCacheLegacyStateMigration(params: {
       maxEntries: TELEGRAM_STICKER_CACHE_MAX_ENTRIES,
       scopeKey: "",
       cleanupSource: "rename",
-      preview: `- Telegram sticker cache: ${persistedPath} â†?plugin state (${TELEGRAM_STICKER_CACHE_NAMESPACE})`,
+      preview: `- Telegram sticker cache: ${persistedPath} â†’ plugin state (${TELEGRAM_STICKER_CACHE_NAMESPACE})`,
       readEntries: () => listTelegramLegacyStickerCacheEntries({ persistedPath }),
     },
   ];
@@ -273,7 +273,7 @@ function detectTelegramSentMessageCacheLegacyStateMigration(params: {
       maxEntries: TELEGRAM_SENT_MESSAGE_CACHE_MAX_ENTRIES,
       scopeKey: "",
       cleanupSource: "rename",
-      preview: `- Telegram sent-message cache: ${source.sourcePath} â†?plugin state (${TELEGRAM_SENT_MESSAGE_CACHE_NAMESPACE})`,
+      preview: `- Telegram sent-message cache: ${source.sourcePath} â†’ plugin state (${TELEGRAM_SENT_MESSAGE_CACHE_NAMESPACE})`,
       readEntries: () =>
         listTelegramLegacySentMessageCacheEntries({
           cfg: { session: { store: source.targetStorePath } },
@@ -309,7 +309,7 @@ function detectTelegramThreadBindingLegacyStateMigration(params: {
       maxEntries: TELEGRAM_THREAD_BINDINGS_MAX_ENTRIES,
       scopeKey: "",
       cleanupSource: "rename",
-      preview: `- Telegram thread bindings: ${persistedPath} â†?plugin state (${TELEGRAM_THREAD_BINDINGS_NAMESPACE})`,
+      preview: `- Telegram thread bindings: ${persistedPath} â†’ plugin state (${TELEGRAM_THREAD_BINDINGS_NAMESPACE})`,
       readEntries: () => listTelegramLegacyThreadBindingEntries({ accountId, persistedPath }),
     };
   });
@@ -345,7 +345,7 @@ function detectTelegramMessageDispatchLegacyStateMigration(params: {
         maxEntries: TELEGRAM_MESSAGE_DISPATCH_DEDUPE_MAX_ENTRIES,
         scopeKey: "",
         cleanupSource: "rename",
-        preview: `- Telegram message dispatch dedupe: ${sourcePath} â†?plugin state (${TELEGRAM_MESSAGE_DISPATCH_DEDUPE_NAMESPACE})`,
+        preview: `- Telegram message dispatch dedupe: ${sourcePath} â†’ plugin state (${TELEGRAM_MESSAGE_DISPATCH_DEDUPE_NAMESPACE})`,
         readEntries: () =>
           listTelegramLegacyMessageDispatchDedupeEntries({
             storePath: source.targetStorePath,
@@ -411,7 +411,7 @@ function detectTelegramTopicNameCacheLegacyStateMigration(params: {
       maxEntries: TELEGRAM_TOPIC_NAME_CACHE_MAX_ENTRIES,
       scopeKey: "",
       cleanupSource: "rename",
-      preview: `- Telegram forum topic-name cache: ${source.sourcePath} â†?plugin state (${source.namespace})`,
+      preview: `- Telegram forum topic-name cache: ${source.sourcePath} â†’ plugin state (${source.namespace})`,
       readEntries: () => {
         return listTelegramLegacyTopicNameCacheEntries({
           persistedPath: source.sourcePath,

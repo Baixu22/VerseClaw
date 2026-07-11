@@ -141,7 +141,7 @@ function truncateSummary(text: string, max = 50): string {
 }
 
 function hasNaturalStreamingBoundary(text: string): boolean {
-  return /[\n。！�??�?�?]$/.test(text);
+  return /[\n。！？!?；;：:]$/.test(text);
 }
 
 function shouldPushStreamingUpdate(previousText: string, nextText: string): boolean {
@@ -179,7 +179,7 @@ export function mergeStreamingText(
     return previous;
   }
 
-  // Merge partial overlaps, e.g. "�? + "这是" => "这是".
+  // Merge partial overlaps, e.g. "这" + "这是" => "这是".
   const maxOverlap = Math.min(previous.length, next.length);
   for (let overlap = maxOverlap; overlap > 0; overlap -= 1) {
     if (previous.slice(-overlap) === next.slice(0, overlap)) {
@@ -287,7 +287,7 @@ export class FeishuStreamingSession {
     const cardId = createData.data.card_id;
     const cardContent = JSON.stringify({ type: "card", data: { card_id: cardId } });
 
-    // Prefer message.reply when we have a reply target �?reply_in_thread
+    // Prefer message.reply when we have a reply target — reply_in_thread
     // reliably routes streaming cards into Feishu topics, whereas
     // message.create with root_id may silently ignore root_id for card
     // references (card_id format).

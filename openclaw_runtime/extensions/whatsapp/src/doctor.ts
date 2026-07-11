@@ -47,7 +47,7 @@ export function normalizeCompatibilityConfig({
       },
     },
     changes: [
-      `Copied messages.ackReaction â†?channels.whatsapp.ackReaction (scope: ${legacyScope}).`,
+      `Copied messages.ackReaction â†’ channels.whatsapp.ackReaction (scope: ${legacyScope}).`,
     ],
   };
 }

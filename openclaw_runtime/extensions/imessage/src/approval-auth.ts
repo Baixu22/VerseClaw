@@ -17,7 +17,7 @@ export function normalizeIMessageApproverId(value: string | number): string | un
   // `sms:+...`, `auto:+...`) are stripped to their bare identifier before we
   // decide whether to reject the entry. After normalization only the
   // conversation-target prefixes (chat_id / chat_guid / chat_identifier) remain
-  // as illegal approver shapes â€?service-prefixed direct handles are valid
+  // as illegal approver shapes â€” service-prefixed direct handles are valid
   // approver values that map to a specific phone/email.
   const normalized = normalizeIMessageHandle(raw);
   if (
