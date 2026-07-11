@@ -45,4 +45,21 @@ describe("provider auth login runtime compatibility", () => {
     });
     expect(facadeMocks.loginChutes).toHaveBeenCalledWith(params);
   });
+
+  it("preserves Chutes login errors from the plugin public facade", async () => {
+    const error = new Error("Chutes login failed");
+    facadeMocks.loginChutes.mockRejectedValue(error);
+    facadeMocks.load.mockReturnValue({
+      loginChutes: facadeMocks.loginChutes,
+    });
+
+    const runtime = await import("./provider-auth-login.runtime.js");
+    const loginChutes = Reflect.get(runtime, "loginChutes");
+    expect(loginChutes).toBeTypeOf("function");
+    if (typeof loginChutes !== "function") {
+      throw new Error("provider auth login runtime did not export loginChutes");
+    }
+
+    await expect(Reflect.apply(loginChutes, undefined, [{}])).rejects.toBe(error);
+  });
 });

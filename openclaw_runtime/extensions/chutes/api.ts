@@ -15,3 +15,4 @@ export {
   applyChutesConfig,
   applyChutesProviderConfig,
 } from "./onboard.js";
+export { loginChutes } from "./oauth.js";
