@@ -6,11 +6,11 @@
  * union, and predicate expansion belong to `findOcPaths`; `resolveOcPath`
  * and `setOcPath` require concrete paths.
  *
- *   oc://FILE/section/item/field   â†?leaf address
- *   oc://FILE/section/+            â†?end-insertion
- *   oc://FILE/section/+key         â†?keyed insertion
- *   oc://FILE/section/+0           â†?indexed insertion
- *   oc://FILE/+                    â†?file-root insertion
+ *   oc://FILE/section/item/field   â†’ leaf address
+ *   oc://FILE/section/+            â†’ end-insertion
+ *   oc://FILE/section/+key         â†’ keyed insertion
+ *   oc://FILE/section/+0           â†’ indexed insertion
+ *   oc://FILE/+                    â†’ file-root insertion
  *
  * @module @openclaw/oc-path/universal
  */
@@ -47,7 +47,7 @@ import { resolveYamlOcPath } from "./yaml/resolve.js";
 export type OcAst = MdAst | JsoncAst | JsonlAst | YamlAst;
 
 /**
- * Universal resolve result â€?same shape across AST kinds. `leaf` values
+ * Universal resolve result â€” same shape across AST kinds. `leaf` values
  * are string-coerced (numbers/bools stringified deterministically).
  * `line` is 1-based; root/synthetic nodes use `1`.
  */
@@ -497,7 +497,7 @@ export function setOcPath(
   return { ok: false, reason: "not-writable" };
 }
 
-// Resolve â†?reject root/line â†?coerce by existing leaf type â†?set â†?
+// Resolve â†’ reject root/line â†’ coerce by existing leaf type â†’ set â†’
 // wrap. The optional `onLine` handles jsonl's whole-line replacement.
 function setStructuredLeaf<A extends OcAst>(
   ast: A,
@@ -584,7 +584,7 @@ function setMdInsertion(ast: MdAst, info: InsertionInfo, value: string): SetResu
     return { ok: true, ast: rebuildMdRaw(newAst) };
   }
 
-  // [frontmatter] â€?keyed insertion only
+  // [frontmatter] â€” keyed insertion only
   if (p.section === "[frontmatter]") {
     if (typeof info.marker !== "object" || info.marker.kind !== "keyed") {
       return {
@@ -790,7 +790,7 @@ function parseYamlInput(value: string): unknown {
   return parsed === undefined ? value : parsed;
 }
 
-// Preserve the existing source line on coerced replacements â€?same
+// Preserve the existing source line on coerced replacements â€” same
 // semantic node, only the bytes change.
 function coerceJsoncLeaf(valueText: string, existing: JsoncValue): JsoncValue | null {
   const lineExt = existing.line !== undefined ? { line: existing.line } : {};
@@ -813,7 +813,7 @@ function coerceJsoncLeaf(valueText: string, existing: JsoncValue): JsoncValue | 
   if (existing.kind === "null") {
     return valueText === "null" ? { kind: "null", ...lineExt } : null;
   }
-  // Object/array â€?caller should use insertion or full-replace.
+  // Object/array â€” caller should use insertion or full-replace.
   return null;
 }
 
@@ -826,7 +826,7 @@ function tryParseJson(value: string): unknown {
 }
 
 function jsonToJsoncValue(v: unknown): JsoncValue | null {
-  // Synthetic values omit `line` â€?only the parser sets line metadata.
+  // Synthetic values omit `line` â€” only the parser sets line metadata.
   if (v === null) {
     return { kind: "null" };
   }

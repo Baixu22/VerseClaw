@@ -60,7 +60,7 @@ function truncateTelegramCommandText(value: string, maxLength: number): string {
     return "";
   }
 
-  const suffix = maxLength > 1 ? "â€? : "";
+  const suffix = maxLength > 1 ? "â€¦" : "";
   const prefixLimit = maxLength - countTelegramCommandText(suffix);
   let count = 0;
   let prefixEnd = 0;

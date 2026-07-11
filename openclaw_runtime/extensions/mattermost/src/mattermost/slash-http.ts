@@ -687,7 +687,7 @@ export function createSlashCommandHttpHandler(params: SlashHttpHandlerParams) {
       `mattermost: slash command /${sanitizeMattermostLogValue(trigger)} from ${sanitizeMattermostLogValue(senderName)} in ${sanitizeMattermostLogValue(channelId)}`,
     );
 
-    // Acknowledge immediately â€?we'll send the actual reply asynchronously
+    // Acknowledge immediately â€” we'll send the actual reply asynchronously
     sendJsonResponse(res, 200, {
       response_type: "ephemeral",
       text: "Processing...",
@@ -831,7 +831,7 @@ async function handleSlashCommandAsync(params: {
     return;
   }
 
-  // Build inbound context â€?the command text is the body
+  // Build inbound context â€” the command text is the body
   const ctxPayload = core.channel.reply.finalizeInboundContext({
     Body: commandText,
     BodyForAgent: commandText,

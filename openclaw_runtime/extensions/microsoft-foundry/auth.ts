@@ -36,12 +36,12 @@ import {
 export const entraIdAuthMethod: ProviderAuthMethod = {
   id: "entra-id",
   label: "Entra ID (az login)",
-  hint: "Use your Azure login â€?no API key needed",
+  hint: "Use your Azure login â€” no API key needed",
   kind: "custom",
   wizard: {
     choiceId: "microsoft-foundry-entra",
     choiceLabel: "Microsoft Foundry (Entra ID / az login)",
-    choiceHint: "Use your Azure login â€?no API key needed",
+    choiceHint: "Use your Azure login â€” no API key needed",
     groupId: "microsoft-foundry",
     groupLabel: "Microsoft Foundry",
     groupHint: "Entra ID + API key",

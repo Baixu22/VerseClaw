@@ -63,7 +63,7 @@ export function migrateMemoryWikiLegacyConfig(config: OpenClawConfig): {
           "Removed legacy plugins.entries.memory-wiki.config.bridge.readMemoryCore; kept explicit plugins.entries.memory-wiki.config.bridge.readMemoryArtifacts.",
         ]
       : [
-          "Moved plugins.entries.memory-wiki.config.bridge.readMemoryCore â†?plugins.entries.memory-wiki.config.bridge.readMemoryArtifacts.",
+          "Moved plugins.entries.memory-wiki.config.bridge.readMemoryCore â†’ plugins.entries.memory-wiki.config.bridge.readMemoryArtifacts.",
         ],
   };
 }

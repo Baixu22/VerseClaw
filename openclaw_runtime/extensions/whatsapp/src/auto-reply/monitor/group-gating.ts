@@ -149,7 +149,7 @@ export async function applyGroupGating(params: ApplyGroupGatingParams) {
       const groupsPath = resolveWhatsAppGroupsConfigPath({ cfg: params.cfg, accountId });
       params.replyLogger.warn(
         { conversationId: params.conversationId, accountId, groupsPath },
-        `WhatsApp group ${params.conversationId} not in ${groupsPath} â€?inbound dropped. Add the group JID to ${groupsPath} (or add "*" there to admit all groups). Sender authorization still applies.`,
+        `WhatsApp group ${params.conversationId} not in ${groupsPath} â€” inbound dropped. Add the group JID to ${groupsPath} (or add "*" there to admit all groups). Sender authorization still applies.`,
       );
     }
     params.logVerbose(

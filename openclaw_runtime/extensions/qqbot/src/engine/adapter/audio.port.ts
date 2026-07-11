@@ -1,5 +1,5 @@
 /**
- * Audio port â€?abstracts inbound + outbound audio conversion operations.
+ * Audio port â€” abstracts inbound + outbound audio conversion operations.
  *
  * The engine defines this interface; the bridge layer provides an
  * implementation backed by `engine/utils/audio.js` functions.

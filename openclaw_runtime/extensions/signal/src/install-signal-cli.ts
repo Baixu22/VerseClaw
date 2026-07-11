@@ -100,7 +100,7 @@ export function pickAsset(
     if (arch === "x64") {
       return byName(/linux-native/) || byName(/linux/) || archives[0];
     }
-    // No native release for this arch â€?caller should fall back.
+    // No native release for this arch â€” caller should fall back.
     return undefined;
   }
 

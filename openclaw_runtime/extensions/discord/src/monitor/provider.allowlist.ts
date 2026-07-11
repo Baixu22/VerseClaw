@@ -50,7 +50,7 @@ function formatResolvedBase(input: string, target: string | undefined): string {
   if (!target) {
     return input;
   }
-  return input === target ? input : `${input}â†?{target}`;
+  return input === target ? input : `${input}â†’${target}`;
 }
 
 function formatAliasSummary(aliases: string[]): string | undefined {

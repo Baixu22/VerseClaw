@@ -27,7 +27,7 @@ type BedrockEmbeddingClient = {
 /** Default Bedrock embedding model used when no explicit model is configured. */
 export const DEFAULT_BEDROCK_EMBEDDING_MODEL = "amazon.titan-embed-text-v2:0";
 
-/** Request/response format family â€?each has a different API shape. */
+/** Request/response format family â€” each has a different API shape. */
 type Family = "titan-v1" | "titan-v2" | "cohere-v3" | "cohere-v4" | "nova" | "twelvelabs";
 
 interface ModelSpec {
@@ -105,7 +105,7 @@ function inferFamily(modelId: string): Family {
   if (id.startsWith("twelvelabs.")) {
     return "twelvelabs";
   }
-  return "titan-v1"; // safest default â€?simplest request format
+  return "titan-v1"; // safest default â€” simplest request format
 }
 
 // ---------------------------------------------------------------------------

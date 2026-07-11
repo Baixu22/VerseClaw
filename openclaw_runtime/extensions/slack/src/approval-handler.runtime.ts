@@ -123,7 +123,7 @@ function buildSlackMetadataContextElements(metadata: readonly SlackMetadataItem[
   if (lines.length > SLACK_CONTEXT_ELEMENTS_MAX) {
     elements.push({
       type: "mrkdwn",
-      text: `â€?${lines.length - visibleLineCount} more`,
+      text: `â€¦+${lines.length - visibleLineCount} more`,
     });
   }
   return elements;

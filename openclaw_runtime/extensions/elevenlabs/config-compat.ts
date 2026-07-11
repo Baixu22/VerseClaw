@@ -138,7 +138,7 @@ export function migrateElevenLabsLegacyTalkConfig<T>(raw: T): { config: T; chang
   return {
     config: nextRoot as T,
     changes: [
-      `Moved talk legacy fields (${movedKeys.join(", ")}) â†?talk.providers.${providerId} (filled missing provider fields only).`,
+      `Moved talk legacy fields (${movedKeys.join(", ")}) â†’ talk.providers.${providerId} (filled missing provider fields only).`,
     ],
   };
 }

@@ -349,12 +349,12 @@ export async function isChromeReachable(
   try {
     await assertCdpEndpointAllowed(cdpUrl, ssrfPolicy);
     if (isDirectCdpWebSocketEndpoint(cdpUrl)) {
-      // Handshake-ready direct WS endpoint â€?probe via WS handshake.
+      // Handshake-ready direct WS endpoint â€” probe via WS handshake.
       return await canOpenWebSocket(cdpUrl, timeoutMs);
     }
     // Either an http(s) discovery URL or a bare ws/wss root. Try
     // /json/version discovery first. For bare ws/wss URLs, fall back to a
-    // direct WS handshake when discovery is unavailable â€?some providers
+    // direct WS handshake when discovery is unavailable â€” some providers
     // (e.g. Browserless/Browserbase) expose a direct WebSocket root without
     // a /json/version endpoint.
     const discoveryUrl = isWebSocketUrl(cdpUrl)
@@ -393,7 +393,7 @@ export async function getChromeWebSocketUrl(
 ): Promise<string | null> {
   await assertCdpEndpointAllowed(cdpUrl, ssrfPolicy);
   if (isDirectCdpWebSocketEndpoint(cdpUrl)) {
-    // Handshake-ready direct WebSocket endpoint â€?the cdpUrl is already
+    // Handshake-ready direct WebSocket endpoint â€” the cdpUrl is already
     // the WebSocket URL.
     return cdpUrl;
   }
@@ -666,7 +666,7 @@ export async function launchOpenClawChrome(
         headlessSource: headlessMode.source,
       };
     } finally {
-      // Chrome started successfully or launch failed â€?detach the stderr listener
+      // Chrome started successfully or launch failed â€” detach the stderr listener
       // and release the buffer.
       proc.stderr?.off("data", onStderr);
       stderrChunks.length = 0;

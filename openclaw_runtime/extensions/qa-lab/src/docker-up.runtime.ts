@@ -83,7 +83,7 @@ export async function runQaDockerUp(
       repoRoot,
     );
   } catch {
-    // First run or already stopped â€?ignore.
+    // First run or already stopped â€” ignore.
   }
 
   const composeArgs = ["compose", "-f", composeFile, "up"];

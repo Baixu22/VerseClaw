@@ -6,13 +6,13 @@ export { DEEPINFRA_BASE_URL };
 
 export const DEEPINFRA_NATIVE_BASE_URL = "https://api.deepinfra.com/v1/inference";
 
-// Structural capability shapes â€?not model IDs.
+// Structural capability shapes â€” not model IDs.
 export const DEFAULT_DEEPINFRA_IMAGE_SIZE = "1024x1024";
 export const DEFAULT_DEEPINFRA_TTS_VOICE = "af_bella";
 export const DEEPINFRA_VIDEO_ASPECT_RATIOS = ["16:9", "4:3", "1:1", "3:4", "9:16"] as const;
 export const DEEPINFRA_VIDEO_DURATIONS = [5, 8] as const;
 
-// Per-surface fallback lists â€?used when no discovered/static catalog is
+// Per-surface fallback lists â€” used when no discovered/static catalog is
 // supplied. First entry is the default. Prefer discoverDeepInfraSurfaces().
 export const DEEPINFRA_IMAGE_FALLBACK_MODELS = [
   "black-forest-labs/FLUX-1-schnell",

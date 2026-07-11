@@ -168,7 +168,7 @@ export const evaluateTelegramGroupPolicyAccess = (params: {
     }
     // The chat is explicitly allowed when it has a dedicated entry in the groups
     // config (groupConfig is set).  A wildcard ("*") match alone does not count
-    // because it only enables the group â€?sender-level filtering still applies.
+    // because it only enables the group â€” sender-level filtering still applies.
     if (groupAllowlist.allowlistEnabled && groupAllowlist.allowed && groupAllowlist.groupConfig) {
       chatExplicitlyAllowed = true;
     }

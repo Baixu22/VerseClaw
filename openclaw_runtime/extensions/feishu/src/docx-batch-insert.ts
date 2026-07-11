@@ -141,7 +141,7 @@ export async function insertBlocksInBatches(
 ): Promise<{ children: FeishuDocxBlockChild[]; skipped: string[] }> {
   const allChildren: FeishuDocxBlockChild[] = [];
 
-  // Build batches ensuring each batch has â‰?000 total descendants
+  // Build batches ensuring each batch has â‰¤1000 total descendants
   const batches: Array<{ firstLevelIds: string[]; blocks: FeishuDocxBlock[] }> = [];
   let currentBatch: { firstLevelIds: string[]; blocks: FeishuDocxBlock[] } = {
     firstLevelIds: [],

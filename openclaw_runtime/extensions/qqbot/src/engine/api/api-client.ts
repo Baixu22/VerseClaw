@@ -2,7 +2,7 @@
  * Core HTTP client for the QQ Open Platform REST API.
  *
  * Key improvements over the old `src/api.ts#apiRequest`:
- * - `ApiClient` is an **instance** �?config (baseUrl, timeout, logger, UA)
+ * - `ApiClient` is an **instance** — config (baseUrl, timeout, logger, UA)
  *   is injected via the constructor, eliminating module-level globals.
  * - Throws structured `ApiError` with httpStatus, bizCode, and path fields.
  * - Detects HTML error pages from CDN/gateway and returns user-friendly messages.
@@ -160,11 +160,11 @@ export class ApiClient {
       if (isHtmlResponse) {
         const statusHint =
           res.status === 502 || res.status === 503 || res.status === 504
-            ? "调用发生异常，请稍候重�?
+            ? "调用发生异常，请稍候重试"
             : res.status === 429
-              ? "请求过于频繁，已被限�?
-              : `开放平台返�?HTTP ${res.status}`;
-        throw new ApiError(`${statusHint}�?{path}），请稍后重试`, res.status, path);
+              ? "请求过于频繁，已被限流"
+              : `开放平台返回 HTTP ${res.status}`;
+        throw new ApiError(`${statusHint}（${path}），请稍后重试`, res.status, path);
       }
 
       // JSON error response.
@@ -197,7 +197,7 @@ export class ApiClient {
     // Successful response but not JSON (extreme edge case).
     if (isHtmlResponse) {
       throw new ApiError(
-        `QQ 服务端返回了�?JSON 响应�?{path}），可能是临时故障，请稍后重试`,
+        `QQ 服务端返回了非 JSON 响应（${path}），可能是临时故障，请稍后重试`,
         res.status,
         path,
       );

@@ -37,7 +37,7 @@ const DEFAULT_MAX_TOKENS = 4096;
 
 /**
  * Bedrock's ListFoundationModels and GetFoundationModel APIs return no token
- * limit information â€?only model ID, name, modalities, and lifecycle status.
+ * limit information â€” only model ID, name, modalities, and lifecycle status.
  * There is currently no Bedrock API to discover context windows or max output
  * tokens programmatically.
  *
@@ -353,11 +353,11 @@ function toModelDefinition(
  * Resolve the base foundation model ID from an inference profile.
  *
  * System-defined profiles use a region prefix:
- *   "us.anthropic.claude-sonnet-4-6" â†?"anthropic.claude-sonnet-4-6"
+ *   "us.anthropic.claude-sonnet-4-6" â†’ "anthropic.claude-sonnet-4-6"
  *
  * Application profiles carry the model ARN in their models[] array:
  *   models[0].modelArn = "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-sonnet-4-6"
- *   â†?"anthropic.claude-sonnet-4-6"
+ *   â†’ "anthropic.claude-sonnet-4-6"
  */
 function resolveBaseModelId(profile: InferenceProfileSummary): string | undefined {
   const firstArn = profile.models?.[0]?.modelArn;
@@ -413,7 +413,7 @@ async function fetchInferenceProfileSummaries(
  * Each profile inherits capabilities (modalities, reasoning, context window,
  * cost) from its underlying foundation model. This ensures that
  * "us.anthropic.claude-sonnet-4-6" has the same capabilities as
- * "anthropic.claude-sonnet-4-6" â€?including image input, reasoning support,
+ * "anthropic.claude-sonnet-4-6" â€” including image input, reasoning support,
  * and token limits.
  *
  * When the foundation model isn't found in the map (e.g. the model is only
@@ -538,7 +538,7 @@ export async function discoverBedrockModels(params: {
   const discoveryPromise = (async () => {
     // Discover foundation models and inference profiles in parallel.
     // Both API calls are independent, but we need the foundation model data
-    // to resolve inference profile capabilities â€?so we fetch in parallel,
+    // to resolve inference profile capabilities â€” so we fetch in parallel,
     // then build the lookup map before processing profiles.
     const [rawFoundationResponse, profileSummaries] = await Promise.all([
       client.send(sdk.createListFoundationModelsCommand() as never),
@@ -552,7 +552,7 @@ export async function discoverBedrockModels(params: {
     const seenIds = new Set<string>();
     const foundationModels = new Map<string, ModelDefinitionConfig>();
 
-    // Foundation models first â€?build both the results list and the lookup map.
+    // Foundation models first â€” build both the results list and the lookup map.
     for (const summary of foundationResponse.modelSummaries ?? []) {
       if (!shouldIncludeSummary(summary, providerFilter)) {
         continue;
@@ -567,7 +567,7 @@ export async function discoverBedrockModels(params: {
       foundationModels.set(normalizedId, def);
     }
 
-    // Merge inference profiles â€?inherit capabilities from foundation models.
+    // Merge inference profiles â€” inherit capabilities from foundation models.
     const inferenceProfiles = resolveInferenceProfiles(
       profileSummaries,
       { contextWindow: defaultContextWindow, maxTokens: defaultMaxTokens },
@@ -582,7 +582,7 @@ export async function discoverBedrockModels(params: {
       }
     }
 
-    // Sort: global cross-region profiles first (recommended for most users â€?
+    // Sort: global cross-region profiles first (recommended for most users â€”
     // better capacity, automatic failover, no data sovereignty constraints),
     // then remaining profiles/models alphabetically.
     return discovered.toSorted((a, b) => {
