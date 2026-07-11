@@ -233,6 +233,10 @@ async function installAssistantRenderingMocks(app: Parameters<typeof installIpcM
       [stableStringify(['usage', 'contextRange', { sessionKey: SESSION_KEY, modelRef: null, messageCount: 1, usedTokens: null }])]: contextRange,
       [stableStringify(['usage', 'contextRange', { sessionKey: SESSION_KEY, modelRef: null, messageCount: 1, usedTokens: 1645 }])]: contextRange,
       [stableStringify(['usage', 'recentTokenHistory', { limit: 500 }])]: usageHistory,
+      [stableStringify(['system', 'info', null])]: {
+        ram: { totalBytes: 16_000_000_000, freeBytes: 8_000_000_000 },
+        disk: [{ mount: 'C:', totalBytes: 1_000_000_000_000, freeBytes: 500_000_000_000 }],
+      },
     },
   });
 }
@@ -262,6 +266,10 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
       await expect(page.getByTestId('assistant-status-dot-matrix')).toHaveCount(0);
 
       await page.setViewportSize({ width: 1280, height: 900 });
+      await expect(page.getByTestId('chat-page')).toHaveScreenshot('codex-chat-page-desktop-light.png', {
+        animations: 'disabled',
+        caret: 'hide',
+      });
       await expect(scrollContainer).toHaveScreenshot('assistant-render-chat-desktop-light.png', {
         animations: 'disabled',
         caret: 'hide',
@@ -269,6 +277,10 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
       await page.evaluate(() => {
         document.documentElement.classList.remove('light');
         document.documentElement.classList.add('dark');
+      });
+      await expect(page.getByTestId('chat-page')).toHaveScreenshot('codex-chat-page-desktop-dark.png', {
+        animations: 'disabled',
+        caret: 'hide',
       });
       await expect(scrollContainer).toHaveScreenshot('assistant-render-chat-desktop-dark.png', {
         animations: 'disabled',
@@ -280,6 +292,10 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
         document.documentElement.classList.add('light');
       });
       await expect(scrollContainer).toBeVisible();
+      await expect(page.getByTestId('chat-page')).toHaveScreenshot('codex-chat-page-narrow-light.png', {
+        animations: 'disabled',
+        caret: 'hide',
+      });
       await expect(scrollContainer).toHaveScreenshot('assistant-render-chat-narrow-light.png', {
         animations: 'disabled',
         caret: 'hide',

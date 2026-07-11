@@ -24,7 +24,8 @@ import {
   validateSessionsCompactionRestoreParams,
   validateSessionsCompactionStatusParams,
   validateSessionsExpandSelectorParams,
-  validateSessionsRecoveryContextParams,  validateSessionsLongTaskControlHistoryParams,
+  validateSessionsRecoveryContextParams,
+  validateSessionsLongTaskControlHistoryParams,
   validateSessionsLongTaskControlStatusParams,
   validateSessionsQueueDrainParams,
   validateSessionsRecallOriginalParams,
@@ -835,7 +836,7 @@ function compressionArtifactFromCheckpoint(
         : {}),
     },
   });
-  return {
+  return normalizeCompressionArtifact({
     ...artifact,
     ...(typeof telemetry?.tier === "string" ? { tier: telemetry.tier } : {}),
     ...(typeof telemetry?.strategy === "string" ? { strategy: telemetry.strategy } : {}),
@@ -854,7 +855,7 @@ function compressionArtifactFromCheckpoint(
     ...(Array.isArray(telemetry?.warnings)
       ? { warnings: telemetry.warnings.filter((item): item is string => typeof item === "string") }
       : {}),
-  };
+  });
 }
 
 function estimateProjectionTokens(text: string): number {
@@ -1582,12 +1583,7 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         params,
         validateSessionsRecallOriginalParams,
         "sessions.recallOriginal",
-  "sessions.compressionArtifact": ({ params, respond, context }) => {
-    if (
-      !assertValidParams(
-        params,
-        validateSessionsCompressionArtifactParams,
-        "sessions.compressionArtifact",        respond,
+        respond,
       )
     ) {
       return;
@@ -1612,11 +1608,13 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         {
           ok: false,
           archiveHandle: p.archiveHandle,
-          diagnostics: [{
-            code: "invalid_handle",
-            message: formatErrorMessage(error),
-            ref: typeof p.archiveHandle?.uri === "string" ? p.archiveHandle.uri : undefined,
-          }],
+          diagnostics: [
+            {
+              code: "invalid_handle",
+              message: formatErrorMessage(error),
+              ref: typeof p.archiveHandle?.uri === "string" ? p.archiveHandle.uri : undefined,
+            },
+          ],
         },
         undefined,
       );
@@ -1624,26 +1622,62 @@ export const sessionsHandlers: GatewayRequestHandlers = {
     }
     const verified = await verifyContextArchiveHandle(archiveHandle);
     if (!verified.ok) {
-      const code = verified.reason === "missing"
-        ? "missing_archive"
-        : verified.reason === "checksum_mismatch"
-          ? "checksum_mismatch"
-          : verified.reason === "invalid_uri"
-            ? "invalid_handle"
-            : "read_error";
+      const code =
+        verified.reason === "missing"
+          ? "missing_archive"
+          : verified.reason === "checksum_mismatch"
+            ? "checksum_mismatch"
+            : verified.reason === "invalid_uri"
+              ? "invalid_handle"
+              : "read_error";
       respond(
         true,
         {
           ok: false,
           archiveHandle,
-          diagnostics: [{
-            code,
-            message: `Archive recall failed: ${verified.reason}`,
-            ref: archiveHandle.uri,
-          }],
+          diagnostics: [
+            {
+              code,
+              message: `Archive recall failed: ${verified.reason}`,
+              ref: archiveHandle.uri,
+            },
+          ],
         },
         undefined,
       );
+      return;
+    }
+    respond(
+      true,
+      {
+        ok: true,
+        payload: verified.payload,
+        archiveHandle,
+        diagnostics: [],
+      },
+      undefined,
+    );
+  },
+  "sessions.compressionArtifact": ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsCompressionArtifactParams,
+        "sessions.compressionArtifact",
+        respond,
+      )
+    ) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
       return;
     }
     const { entry, canonicalKey } = loadSessionEntry(key, {
@@ -1659,17 +1693,16 @@ export const sessionsHandlers: GatewayRequestHandlers = {
       respond(true, { ok: true, key: canonicalKey, warnings }, undefined);
       return;
     }
-    const artifact = compressionArtifactFromCheckpoint(checkpoint);    respond(
+    const artifact = compressionArtifactFromCheckpoint(checkpoint);
+    respond(
       true,
       {
         ok: true,
-        payload: verified.payload,
-        archiveHandle,
-        diagnostics: [],
         key: canonicalKey,
         checkpointId: checkpoint.checkpointId,
         ...(artifact ? { artifact, quality: artifact.quality } : {}),
-        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],      },
+        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],
+      },
       undefined,
     );
   },
@@ -1679,12 +1712,7 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         params,
         validateSessionsExpandSelectorParams,
         "sessions.expandSelector",
-  "sessions.recoveryContext": ({ params, respond, context }) => {
-    if (
-      !assertValidParams(
-        params,
-        validateSessionsRecoveryContextParams,
-        "sessions.recoveryContext",        respond,
+        respond,
       )
     ) {
       return;
@@ -1726,6 +1754,32 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         selector: p.selector,
         ...(p.checksum ? { checksum: p.checksum } : {}),
         diagnostics: [diagnostic],
+      },
+      undefined,
+    );
+  },
+  "sessions.recoveryContext": ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsRecoveryContextParams,
+        "sessions.recoveryContext",
+        respond,
+      )
+    ) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
     const { entry, canonicalKey } = loadSessionEntry(key, {
       agentId: requestedAgent.agentId,
     });
@@ -1769,7 +1823,8 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         context: projection,
         projectionTokens: estimateProjectionTokens(projection),
         ...(artifact ? { artifact, quality: artifact.quality } : {}),
-        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],      },
+        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],
+      },
       undefined,
     );
   },

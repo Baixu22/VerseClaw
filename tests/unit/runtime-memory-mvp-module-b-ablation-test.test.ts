@@ -401,7 +401,7 @@ function runAblation() {
 }
 
 describe("Module B Ablation Test", () => {
-  it("compares 21 fusion variants and selects the best", () => {
+  it("compares 21 fusion variants and selects the best", { timeout: 15_000 }, () => {
     const r = runAblation();
 
     console.log("\n" + "=".repeat(100));

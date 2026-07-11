@@ -99,7 +99,7 @@ describe('ArtifactPanel', () => {
     expect(screen.getAllByTestId('file-preview-body')[1]).toHaveTextContent('SKILL.md');
 
     fireEvent.click(screen.getByRole('button', { name: 'Workspace' }));
-    expect(screen.getByTestId('workspace-browser')).toBeInTheDocument();
+    expect(screen.getByTestId('workspace-launchpad')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Preview' }));
     expect(screen.getAllByTestId('file-preview-body')[1]).toHaveTextContent('SKILL.md');

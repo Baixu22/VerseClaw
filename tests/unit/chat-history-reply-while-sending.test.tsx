@@ -10,7 +10,8 @@ const { gatewayState, agentsState } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...await importOriginal<typeof import('react-router-dom')>(),
   useNavigate: () => vi.fn(),
 }));
 

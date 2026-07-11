@@ -123,7 +123,8 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...await importOriginal<typeof import('react-router-dom')>(),
   useNavigate: () => vi.fn(),
 }));
 
@@ -714,6 +715,7 @@ describe('Chat execution graph lifecycle', () => {
     expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     expect(screen.queryByText('+1')).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    fireEvent.click(screen.getByRole('button', { name: /turnWork\.tabs\.reports/ }));
     expect(screen.getByText('+1')).toBeInTheDocument();
     expect(screen.getByText('-1')).toBeInTheDocument();
   });

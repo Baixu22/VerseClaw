@@ -1899,7 +1899,7 @@ export async function monitorMattermostProvider(opts: MonitorMattermostOpts = {}
                           },
                           onReasoningStream: async () => {
                             if (!lastPartialText) {
-                              draftStream.update("Thinkingâ€?);
+                              draftStream.update("Thinking...");
                             }
                           },
                           onToolStart: async (payloadValue) => {
@@ -2001,7 +2001,7 @@ export async function monitorMattermostProvider(opts: MonitorMattermostOpts = {}
     // Resolve the channel from broadcast or post to route to the correct agent session
     const channelId = resolveMattermostReactionChannelId(payload);
     if (!channelId) {
-      // Without a channel id we cannot verify DM/group policies â€?drop to be safe
+      // Without a channel id we cannot verify DM/group policies ï¿½?drop to be safe
       logVerboseMessage(
         `mattermost: drop reaction (no channel_id in broadcast, cannot enforce policy)`,
       );
@@ -2009,7 +2009,7 @@ export async function monitorMattermostProvider(opts: MonitorMattermostOpts = {}
     }
     const channelInfo = await resolveChannelInfo(channelId);
     if (!channelInfo?.type) {
-      // Cannot determine channel type â€?drop to avoid policy bypass
+      // Cannot determine channel type ï¿½?drop to avoid policy bypass
       logVerboseMessage(`mattermost: drop reaction (cannot resolve channel type for ${channelId})`);
       return;
     }

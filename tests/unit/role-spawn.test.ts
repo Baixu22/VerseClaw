@@ -76,13 +76,31 @@ afterEach(() => {
 });
 
 describe('role registry', () => {
-  it('exposes built-in roles when no config roles are present', () => {
+  it('exposes the stable built-in core when no config roles are present', () => {
     const names = listRoleContracts().map((role) => role.name);
     expect(names).toContain('planner');
     expect(names).toContain('skeptic');
-    expect(names).toContain('knowledge-librarian');
+    expect(names).not.toContain('knowledge-librarian');
     expect(resolveRoleContract('implementer')?.tools).toContain('edit');
-    expect(resolveRoleContract('knowledge-librarian')?.tools).toEqual(
+  });
+
+  it('loads knowledge-librarian through the config-defined role-pack boundary', () => {
+    const cfg = {
+      agents: {
+        roles: [{
+          name: 'knowledge-librarian',
+          display_name: 'Knowledge Librarian',
+          role_prompt: 'Answer from source-backed knowledge and prepare reviewed drafts.',
+          tools: ['knowledge.search', 'knowledge.get', 'knowledge.createDraft', 'knowledge.stewardReview'],
+          capabilities: ['knowledge-search', 'citation-answering'],
+          tool_requirements: ['knowledge.search', 'knowledge.get'],
+          permissions: { filesystem: 'read', network: 'none', commands: [] },
+          effort: 'medium',
+        }],
+      },
+    };
+
+    expect(resolveRoleContract('knowledge-librarian', cfg)?.tools).toEqual(
       expect.arrayContaining(['knowledge.search', 'knowledge.get']),
     );
   });

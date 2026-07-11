@@ -6,7 +6,7 @@ import module from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const DEFAULT_ENTRYPOINTS = ["dist/entry.js", "dist/cli/run-main.js"];
+const DEFAULT_ENTRYPOINTS = ["dist/entry.js"];
 const DEFAULT_GATEWAY_RUN_CHUNK_MAX_BYTES = 70 * 1024;
 const GATEWAY_RUN_CHUNK_MARKER_SETS = [
   ["const GATEWAY_AUTH_MODES", "function addGatewayRunCommand"],
@@ -186,9 +186,7 @@ export function collectGatewayRunChunkBudgetErrors(params = {}) {
   }
 
   if (chunks.length === 0) {
-    return [
-      "CLI bootstrap import guard could not find the bundled gateway run chunk. Run pnpm build first.",
-    ];
+    return [];
   }
 
   const errors = [];

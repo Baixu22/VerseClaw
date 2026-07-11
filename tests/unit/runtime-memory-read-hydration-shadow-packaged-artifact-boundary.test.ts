@@ -89,10 +89,12 @@ describe("runtime memory read hydration shadow packaged artifact boundary", () =
     expect(buildScript).not.toMatch(IMPLICIT_SQLITE_FLAGS);
   });
 
-  it("keeps product runtime paths free of hydration imports and cutover hooks", () => {
+  it("allows only the audited explicit TaskLoop hydration adapter", () => {
     const matches = scanProductRuntimeForHydrationTerms();
 
-    expect(matches).toEqual([]);
+    expect(matches).toEqual([
+      "openclaw_runtime/src/agents/task-loop-controller.ts",
+    ]);
   });
 });
 

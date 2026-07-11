@@ -49,6 +49,7 @@ const {
   writeAgentBootstrapToolsMock,
   writeAgentRoleProfileMock,
   writeAgentSoulMock,
+  writeOpenClawConfigMock,
 } = vi.hoisted(() => ({
   applyProxySettingsMock: vi.fn(),
   assignChannelAccountToAgentMock: vi.fn(),
@@ -125,6 +126,7 @@ const {
   writeAgentBootstrapToolsMock: vi.fn(),
   writeAgentRoleProfileMock: vi.fn(),
   writeAgentSoulMock: vi.fn(),
+  writeOpenClawConfigMock: vi.fn(),
 }));
 
 vi.mock('@electron/utils/store', () => ({
@@ -177,6 +179,7 @@ vi.mock('@electron/utils/channel-config', () => ({
   setChannelEnabled: vi.fn(),
   validateChannelConfig: vi.fn(),
   validateChannelCredentials: vi.fn(),
+  writeOpenClawConfig: (...args: unknown[]) => writeOpenClawConfigMock(...args),
 }));
 
 vi.mock('@electron/utils/agent-config', () => ({
@@ -280,6 +283,7 @@ vi.mock('@electron/utils/whatsapp-login', () => ({
 }));
 
 vi.mock('@electron/utils/paths', () => ({
+  getDataDir: () => testOpenClawConfigDir,
   getOpenClawConfigDir: () => testOpenClawConfigDir,
   getOpenClawDir: () => testOpenClawConfigDir,
   getOpenClawResolvedDir: () => testOpenClawConfigDir,
@@ -814,6 +818,11 @@ describe('host services', () => {
       defaultSkillIds: ['browser', 'docs'],
       defaultMcpServerIds: ['filesystem', 'db'],
     });
+    expect(writeOpenClawConfigMock).toHaveBeenCalledWith(expect.objectContaining({
+      mcp: expect.objectContaining({
+        servers: expect.any(Object),
+      }),
+    }));
     expect(gatewayManager.debouncedReload).toHaveBeenCalledTimes(1);
   });
 

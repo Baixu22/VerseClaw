@@ -330,15 +330,18 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
     // -----------------------------------------------------------------------
     // Stage C: Retrieval — can we find each accepted fact via hybridSearchFacts?
     // -----------------------------------------------------------------------
-    // Use the store's queryFacts() to get the live fact set (with invalidations
-    // overlaid), then run hybridSearchFacts on it — same path the production
-    // context provider uses.
-    const liveFacts = store.queryFacts() as readonly RuntimeMemoryQueryableFact[];
+    // Source every accepted lifecycle state from the store, then let
+    // hybridSearchFacts enforce candidate and temporal visibility per query.
+    const liveFacts = store.queryFacts({
+      includeCandidates: true,
+      includeInvalidated: true,
+    }) as readonly RuntimeMemoryQueryableFact[];
+    const retrievalEligible = accepted.filter((ef) => !ef.isCandidate);
 
     let N_RETRIEVED = 0;
     const notRetrieved: Array<{ id: string; subject: string; reason: string }> = [];
 
-    for (const ef of accepted) {
+    for (const ef of retrievalEligible) {
       // For invalidated facts, query at a time when they were still valid.
       // For normal facts, query at RETRIEVAL_REF_TIME.
       const queryRefTime = ef.invalidAt !== undefined
@@ -360,16 +363,14 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
         notRetrieved.push({
           id: ef.id,
           subject: ef.subject,
-          reason: ef.isCandidate
-            ? "candidate excluded (includeCandidates=false default)"
-            : ef.invalidAt !== undefined && queryRefTime >= ef.invalidAt
+          reason: ef.invalidAt !== undefined && queryRefTime >= ef.invalidAt
               ? "invalidated and filtered by temporalMode=filter"
               : "not in BM25 top-10 (lexical mismatch or low score)",
         });
       }
     }
 
-    const retrievalRate = N_RETRIEVED / N_EXTRACTED;
+    const retrievalRate = N_RETRIEVED / retrievalEligible.length;
 
     // -----------------------------------------------------------------------
     // Report
@@ -378,6 +379,7 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
     console.log(`Stage 0 (Extracted):          ${N_EXTRACTED}`);
     console.log(`Stage A (Accepted by store):  ${N_ACCEPTED}  (${(acceptanceRate * 100).toFixed(1)}%)`);
     console.log(`Stage B (Persisted in store): ${N_STORED}  (${(persistenceRate * 100).toFixed(1)}%)`);
+    console.log(`Stage C (Eligible facts):      ${retrievalEligible.length}`);
     console.log(`Stage C (Retrievable):         ${N_RETRIEVED}  (${(retrievalRate * 100).toFixed(1)}%)`);
     console.log(`Invalidations applied:        ${invalidationsApplied}`);
     console.log(`End-to-end survival rate:     ${(retrievalRate * 100).toFixed(1)}%`);
@@ -401,9 +403,10 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
     // The leaky-bucket gate: if <80%, optimizations are wasted.
     expect(
       retrievalRate,
-      `End-to-end survival rate ${(retrievalRate * 100).toFixed(1)}% < 80%. ` +
+      `Eligible retrieval survival rate ${(retrievalRate * 100).toFixed(1)}% < 80%. ` +
       `Leaks: ${rejected.length} rejected at store, ${N_ACCEPTED - N_STORED} evicted, ` +
-      `${N_ACCEPTED - N_RETRIEVED} not retrievable. Fix the leaks before optimizing.`,
+      `${retrievalEligible.length - N_RETRIEVED} eligible facts not retrievable. ` +
+      `Candidates are measured separately because default retrieval intentionally excludes them.`,
     ).toBeGreaterThanOrEqual(0.8);
   });
 
@@ -483,10 +486,12 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
     const liveFacts = store.queryFacts() as readonly RuntimeMemoryQueryableFact[];
     const RETRIEVAL_REF_TIME = T0 + 700 * DAY;
 
+    const retrievalEligibleVerified = verified.filter(
+      (ef) => ef.invalidAt === undefined,
+    );
     let found = 0;
     const missed: string[] = [];
-    for (const ef of verified) {
-      if (ef.invalidAt !== undefined) continue; // skip invalidated for this diagnostic
+    for (const ef of retrievalEligibleVerified) {
       const hits = hybridSearchFacts(liveFacts, {
         queryText: ef.query,
         topK: 10,
@@ -501,8 +506,8 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
       }
     }
 
-    const rate = found / verified.length;
-    console.log(`\nStage C (verified only): ${found}/${verified.length} retrievable (${(rate * 100).toFixed(1)}%)`);
+    const rate = found / retrievalEligibleVerified.length;
+    console.log(`\nStage C (verified only): ${found}/${retrievalEligibleVerified.length} retrievable (${(rate * 100).toFixed(1)}%)`);
     if (missed.length > 0) {
       console.log(`Missed: ${missed.join(", ")}`);
     }
@@ -516,7 +521,9 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
       store.appendFact(buildCandidateFact(ef));
     }
 
-    const liveFacts = store.queryFacts() as readonly RuntimeMemoryQueryableFact[];
+    const liveFacts = store.queryFacts({
+      includeCandidates: true,
+    }) as readonly RuntimeMemoryQueryableFact[];
     const RETRIEVAL_REF_TIME = T0 + 700 * DAY;
 
     // Default: includeCandidates is undefined/false → candidates filtered.
@@ -547,8 +554,10 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
     }
 
     console.log(`\nStage C (candidates): default=${foundDefault}/${extracted.length}, includeCandidates=true=${foundWithFlag}/${extracted.length}`);
-    // Document the leak: candidates are invisible by default.
+    // Candidates remain invisible by default but are recoverable with explicit
+    // lifecycle opt-in.
     expect(foundDefault).toBe(0);
+    expect(foundWithFlag).toBe(extracted.length);
   });
 
   it("Stage C diagnostic: invalidated facts are retrievable at pre-invalidation time but filtered after", () => {
@@ -567,7 +576,9 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
       }));
     }
 
-    const liveFacts = store.queryFacts() as readonly RuntimeMemoryQueryableFact[];
+    const liveFacts = store.queryFacts({
+      includeInvalidated: true,
+    }) as readonly RuntimeMemoryQueryableFact[];
 
     // Query BEFORE invalidation → should be retrievable.
     let foundBefore = 0;
@@ -596,6 +607,7 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
     }
 
     console.log(`\nStage C (invalidated): before_invalid=${foundBefore}/${extracted.length}, after_invalid=${foundAfter}/${extracted.length}`);
+    expect(foundBefore).toBe(extracted.length);
     expect(foundAfter).toBe(0);
   });
 });

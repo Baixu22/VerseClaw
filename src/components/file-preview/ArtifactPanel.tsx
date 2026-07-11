@@ -78,7 +78,7 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
 
   return (
     <div data-testid="artifact-panel" className={cn('flex h-full min-h-0 flex-col bg-background', isMac && 'no-drag')}>
-      <div className="relative z-30 flex shrink-0 items-center justify-between gap-2 border-b border-black/5 bg-background px-3 py-2 dark:border-white/10">
+      <div className="relative z-30 flex min-h-12 shrink-0 items-center justify-between gap-2 border-b border-border bg-background px-2.5 py-1.5">
         {isMac && (
           <div
             data-testid="artifact-panel-drag-region"
@@ -86,7 +86,7 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
             aria-hidden="true"
           />
         )}
-        <div className={cn('flex min-w-0 items-center gap-1', isMac && 'no-drag relative z-10')}>
+        <div className={cn('flex min-w-0 items-center gap-0.5 rounded-md bg-muted/70 p-0.5', isMac && 'no-drag relative z-10')}>
           {richFocusedFile ? (
             <PanelTabButton
               testId="artifact-panel-action-open-folder"
@@ -218,6 +218,8 @@ function WorkspaceTabContent({
 
   useEffect(() => {
     let cancelled = false;
+    // Each workspace change starts a new async status request and must expose loading immediately.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGitState((previous) => ({ ...previous, loading: true }));
     void hostApi.git.status()
       .then((result) => {
@@ -247,7 +249,7 @@ function WorkspaceTabContent({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="shrink-0 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
+      <div className="shrink-0 border-b border-border bg-background px-3 py-2.5">
         <div className="flex min-w-0 items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2">
             {view !== 'home' && (
@@ -264,9 +266,15 @@ function WorkspaceTabContent({
               </Button>
             )}
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-foreground">{viewTitle}</p>
+              <p className="truncate text-sm font-semibold text-foreground">{viewTitle}</p>
               {workspacePath && (
-                <p className="truncate font-mono text-[11px] text-muted-foreground">{workspacePath}</p>
+                <p
+                  className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground"
+                  data-testid="workspace-panel-path"
+                  title={workspacePath}
+                >
+                  {workspacePath}
+                </p>
               )}
             </div>
           </div>
@@ -372,7 +380,7 @@ function WorkspaceEntryMenu({
   return (
     <div
       data-testid="workspace-entry-menu"
-      className="absolute right-0 top-8 z-50 w-72 overflow-hidden rounded-md border border-black/10 bg-surface-modal shadow-lg dark:border-white/10"
+      className="absolute right-0 top-8 z-50 w-72 overflow-hidden rounded-md border border-border bg-surface-modal shadow-lg"
     >
       <div className="border-b border-black/5 px-3 py-2 dark:border-white/10">
         <p className="text-xs font-medium text-foreground">{t('artifactPanel.workspaceLaunchpad.actions.moreEntries', 'More entries')}</p>
@@ -424,11 +432,11 @@ function WorkspaceLaunchpad({
 
   return (
     <div data-testid="workspace-launchpad" className="h-full overflow-y-auto bg-background px-3 py-3">
-      <div className="mb-4">
+      <div className="mb-3 border-b border-border pb-3">
         <p className="text-xs font-medium uppercase tracking-normal text-muted-foreground">
           {t('artifactPanel.workspaceLaunchpad.subtitle', 'Pinned entries')}
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">
           {t('artifactPanel.workspaceLaunchpad.moreHint', 'Use + for review, preview, and audit tools.')}
         </p>
       </div>
@@ -463,9 +471,9 @@ function WorkspaceLaunchpadSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mb-5">
+    <section className="mb-4">
       <h3 className="mb-1.5 px-1 text-[11px] font-semibold uppercase tracking-normal text-muted-foreground">{title}</h3>
-      <div className="divide-y divide-black/5 border-y border-black/5 dark:divide-white/10 dark:border-white/10">
+      <div className="divide-y divide-border border-y border-border">
         {children}
       </div>
     </section>
@@ -497,11 +505,11 @@ function WorkspaceLaunchpadEntry({
       data-testid={testId}
       className={cn(
         'flex w-full items-center gap-3 text-left transition-colors hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10',
-        compact ? 'min-h-12 px-3 py-2' : 'min-h-14 px-2 py-2.5',
+        compact ? 'min-h-11 px-2.5 py-1.5' : 'min-h-12 px-2 py-2',
       )}
       onClick={onClick}
     >
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-input text-muted-foreground">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground">
         {icon}
       </span>
       <span className="min-w-0 flex-1">
@@ -551,10 +559,10 @@ function PanelTabButton({ testId, icon, label, active, onClick }: PanelTabButton
         onClick();
       }}
       className={cn(
-        'relative z-40 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
+        'relative z-40 flex h-7 items-center gap-1.5 rounded px-2 text-xs font-medium transition-colors',
         active
-          ? 'bg-foreground/10 text-foreground'
-          : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
+          ? 'bg-background text-foreground shadow-sm'
+          : 'text-muted-foreground hover:bg-background/70 hover:text-foreground',
       )}
     >
       {icon}

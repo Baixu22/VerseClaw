@@ -7,7 +7,20 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['dist/**', 'dist-electron/**', 'openclaw/**', 'release/**', 'build/**'],
+    ignores: [
+      '.tmp/**',
+      'artifacts/**',
+      'coverage/**',
+      '**/dist/**',
+      'dist-electron/**',
+      'openclaw/**',
+      'openclaw_runtime/**',
+      'prototypes/**',
+      'release/**',
+      'build/**',
+      'resources/verseshell-mcp/**',
+      'tests/fixtures/**',
+    ],
   },
   {
     files: ['**/*.{ts,tsx}'],
@@ -32,12 +45,27 @@ export default [
       ...reactHooks.configs.recommended.rules,
       // TypeScript handles these checks natively, disable ESLint duplicates
       'no-undef': 'off',
+      // Keep dependency-added hygiene rules visible without turning existing
+      // non-contract cleanup into a release blocker.
+      'no-empty': 'warn',
+      'no-unassigned-vars': 'warn',
+      'no-useless-assignment': 'warn',
+      'no-useless-escape': 'warn',
+      'preserve-caught-error': 'warn',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-empty-object-type': 'warn',
+    },
+  },
+  {
+    files: ['tests/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' }],
+      '@typescript-eslint/no-require-imports': 'warn',
     },
   },
   {

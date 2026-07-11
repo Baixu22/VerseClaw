@@ -50,3 +50,11 @@ export {
   createDelegatedTextInputShouldPrompt,
 } from "../channels/plugins/setup-wizard-binary.js";
 export { createDelegatedSetupWizardProxy } from "../channels/plugins/setup-wizard-proxy.js";
+
+
+export type WizardI18nParams = Record<string, unknown>;
+export type SetupTranslator = (key: string, params?: WizardI18nParams) => string;
+
+export function createSetupTranslator(): SetupTranslator {
+  return (key: string) => key;
+}

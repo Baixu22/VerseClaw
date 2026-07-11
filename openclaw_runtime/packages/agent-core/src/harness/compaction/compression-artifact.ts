@@ -47,6 +47,15 @@ export type CompressionLargeDurableFactRef = {
   text: string;
 };
 
+export type CompressionRehydratedFileContext = {
+  path: string;
+  reason: string;
+  lineStart?: number;
+  lineEnd?: number;
+  excerptHash?: string;
+  evidenceRefs: CompressionEvidenceRef[];
+};
+
 export type CompressionArtifact = {
   schemaVersion: 1;
   objective: string;
@@ -69,6 +78,16 @@ export type CompressionArtifact = {
   capabilityActivations?: CompressionCapabilityActivation[];
   staleReferences?: CompressionCvkEvidenceRef[];
   retrievalTrace?: CompressionRetrievalTraceEntry[];
+  tier?: "tier0" | "tier1" | "tier2" | "tier3" | "tier4";
+  strategy?: "hot-context" | "micro-compact" | "token-pruning" | "semantic-handoff" | "emergency-collapse";
+  compressionRatio?: number;
+  tokensBefore?: number;
+  tokensAfter?: number;
+  rehydratedFiles?: string[];
+  rehydratedFileContext?: CompressionRehydratedFileContext[];
+  staleExcludedCount?: number;
+  causalAnchorCount?: number;
+  warnings?: string[];
   quality: CompressionArtifactQuality;
 };
 
@@ -79,6 +98,18 @@ export type CompressionArtifactInput = {
   readFiles?: string[];
   modifiedFiles?: string[];
   targetArtifactTokens?: number;
+  telemetry?: {
+    tier?: unknown;
+    strategy?: unknown;
+    compressionRatio?: unknown;
+    tokensBefore?: unknown;
+    tokensAfter?: unknown;
+    rehydratedFiles?: unknown;
+    staleExcludedCount?: unknown;
+    causalAnchorCount?: unknown;
+    warnings?: unknown;
+  };
+  rehydratedFileContext?: CompressionRehydratedFileContext[];
   contextRuntimeKit?: {
     retrievedContext?: CompressionCvkEvidenceRef[];
     requiredSelectors?: CompressionCvkEvidenceRef[];
@@ -123,9 +154,39 @@ const RETRIEVAL_REASONS = new Set<CompressionRetrievalTraceEntry["reason"]>([
   "model_requested",
 ]);
 
+const COMPRESSION_TIERS = new Set<NonNullable<CompressionArtifact["tier"]>>([
+  "tier0",
+  "tier1",
+  "tier2",
+  "tier3",
+  "tier4",
+]);
+
+const COMPRESSION_STRATEGIES = new Set<NonNullable<CompressionArtifact["strategy"]>>([
+  "hot-context",
+  "micro-compact",
+  "token-pruning",
+  "semantic-handoff",
+  "emergency-collapse",
+]);
+
+const COMPRESSION_ENV_SECRET_RE =
+  /\b([A-Z][A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD))\b(\s*[=:]\s*)(["']?)([^\s"',;]+)\3/giu;
+const COMPRESSION_BEARER_SECRET_RE =
+  /\b(Authorization\s*[:=]\s*Bearer\s+)[A-Za-z0-9._\-+=]+/giu;
+const COMPRESSION_PREFIX_SECRET_RE =
+  /\b(?:sk-(?:proj-)?|ghp_|github_pat_|xox[baprs]-|gsk_|pplx-|npm_)[A-Za-z0-9_-]{8,}\b/giu;
+
+function redactCompressionText(value: string): string {
+  return value
+    .replace(COMPRESSION_ENV_SECRET_RE, "$1$2[redacted]")
+    .replace(COMPRESSION_BEARER_SECRET_RE, "$1[redacted]")
+    .replace(COMPRESSION_PREFIX_SECRET_RE, "[redacted-secret]");
+}
+
 function normalizeText(value: unknown, maxChars = 600): string {
   if (typeof value !== "string") return "";
-  const compact = value.replace(/\s+/g, " ").trim();
+  const compact = redactCompressionText(value).replace(/\s+/g, " ").trim();
   if (compact.length <= maxChars) return compact;
   return `${compact.slice(0, Math.max(0, maxChars - 24)).trim()} [truncated]`;
 }
@@ -297,7 +358,8 @@ function normalizeCapabilityActivations(value: unknown, maxItems = 24): Compress
     const record = item as Partial<CompressionCapabilityActivation>;
     const name = normalizeText(record.name, 160);
     if (!name) return [];
-    const kind = record.kind === "skill" || record.kind === "tool" || record.kind === "project_rule"
+    const kind: CompressionCapabilityActivation["kind"] =
+      record.kind === "skill" || record.kind === "tool" || record.kind === "project_rule"
       ? record.kind
       : "other";
     const resourceId = normalizeText(record.resourceId, 240);
@@ -311,11 +373,114 @@ function normalizeCapabilityActivations(value: unknown, maxItems = 24): Compress
   }).slice(0, maxItems);
 }
 
+function normalizeEvidenceRefs(value: unknown, maxItems = 24): CompressionEvidenceRef[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const entry = item as Partial<CompressionEvidenceRef>;
+    const ref = normalizeText(entry.ref, 300);
+    if (!ref) return [];
+    const type = typeof entry.type === "string" && EVIDENCE_TYPES.has(entry.type as CompressionEvidenceRef["type"])
+      ? entry.type as CompressionEvidenceRef["type"]
+      : "other";
+    const label = normalizeText(entry.label, 120);
+    return [{
+      type,
+      ref,
+      ...(label ? { label } : {}),
+    }];
+  }).slice(0, maxItems);
+}
+
+function normalizeStringList(value: unknown, maxItems = 24, maxChars = 300): string[] {
+  if (!Array.isArray(value)) return [];
+  return [...new Set(value.map((item) => normalizeText(item, maxChars)).filter(Boolean))].slice(0, maxItems);
+}
+
+function normalizeNonNegativeNumber(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0 ? value : undefined;
+}
+
+function normalizeNonNegativeInteger(value: unknown): number | undefined {
+  const normalized = normalizeNonNegativeNumber(value);
+  return normalized === undefined ? undefined : Math.floor(normalized);
+}
+
+function normalizeCompressionTelemetry(value: unknown): Pick<
+  CompressionArtifact,
+  | "tier"
+  | "strategy"
+  | "compressionRatio"
+  | "tokensBefore"
+  | "tokensAfter"
+  | "rehydratedFiles"
+  | "staleExcludedCount"
+  | "causalAnchorCount"
+  | "warnings"
+> {
+  if (!value || typeof value !== "object") return {};
+  const record = value as Record<string, unknown>;
+  const tier = typeof record.tier === "string" && COMPRESSION_TIERS.has(record.tier as NonNullable<CompressionArtifact["tier"]>)
+    ? record.tier as NonNullable<CompressionArtifact["tier"]>
+    : undefined;
+  const strategy = typeof record.strategy === "string"
+    && COMPRESSION_STRATEGIES.has(record.strategy as NonNullable<CompressionArtifact["strategy"]>)
+    ? record.strategy as NonNullable<CompressionArtifact["strategy"]>
+    : undefined;
+  const compressionRatio = normalizeNonNegativeNumber(record.compressionRatio);
+  const tokensBefore = normalizeNonNegativeInteger(record.tokensBefore);
+  const tokensAfter = normalizeNonNegativeInteger(record.tokensAfter);
+  const rehydratedFiles = normalizeStringList(record.rehydratedFiles, 24, 400);
+  const staleExcludedCount = normalizeNonNegativeInteger(record.staleExcludedCount);
+  const causalAnchorCount = normalizeNonNegativeInteger(record.causalAnchorCount);
+  const warnings = normalizeStringList(record.warnings, 16, 200);
+  return {
+    ...(tier ? { tier } : {}),
+    ...(strategy ? { strategy } : {}),
+    ...(compressionRatio !== undefined ? { compressionRatio } : {}),
+    ...(tokensBefore !== undefined ? { tokensBefore } : {}),
+    ...(tokensAfter !== undefined ? { tokensAfter } : {}),
+    ...(rehydratedFiles.length ? { rehydratedFiles } : {}),
+    ...(staleExcludedCount !== undefined ? { staleExcludedCount } : {}),
+    ...(causalAnchorCount !== undefined ? { causalAnchorCount } : {}),
+    ...(warnings.length ? { warnings } : {}),
+  };
+}
+
+function normalizeRehydratedFileContext(
+  value: unknown,
+  maxItems = 16,
+): CompressionRehydratedFileContext[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const record = item as Partial<CompressionRehydratedFileContext>;
+    const path = normalizeText(record.path, 400);
+    const reason = normalizeText(record.reason, 120);
+    if (!path || !reason) return [];
+    const lineStart = normalizeNonNegativeInteger(record.lineStart);
+    const lineEnd = normalizeNonNegativeInteger(record.lineEnd);
+    const excerptHash = normalizeText(record.excerptHash, 120);
+    return [{
+      path,
+      reason,
+      ...(lineStart !== undefined ? { lineStart } : {}),
+      ...(lineEnd !== undefined ? { lineEnd } : {}),
+      ...(excerptHash ? { excerptHash } : {}),
+      evidenceRefs: normalizeEvidenceRefs(record.evidenceRefs, 8),
+    }];
+  }).slice(0, maxItems);
+}
+
 function optionalArray<T>(items: T[]): T[] | undefined {
   return items.length ? items : undefined;
 }
 
-function buildQuality(artifact: Omit<CompressionArtifact, "quality">, targetTokens: number): CompressionArtifactQuality {
+function buildQuality(
+  artifact: Omit<CompressionArtifact, "quality">,
+  targetTokens: number,
+  additionalWarnings: unknown = [],
+): CompressionArtifactQuality {
   const required: Array<keyof Omit<CompressionArtifact, "quality">> = [
     "objective",
     "currentState",
@@ -360,6 +525,7 @@ function buildQuality(artifact: Omit<CompressionArtifact, "quality">, targetToke
   if (evidenceCoverage < 0.7) warnings.push("low_evidence_coverage");
   if (artifactTokens > targetTokens) warnings.push("artifact_over_token_budget");
   if (artifact.unverifiedClaims.length > 0) warnings.push("contains_unverified_claims");
+  warnings.push(...normalizeStringList(additionalWarnings, 16, 200));
   const score = Math.max(
     0,
     Math.min(1, fieldCoverage * 0.45 + evidenceCoverage * 0.35 + (artifactTokens <= targetTokens ? 0.2 : 0.05)),
@@ -371,7 +537,7 @@ function buildQuality(artifact: Omit<CompressionArtifact, "quality">, targetToke
     evidenceCoverage: Math.round(evidenceCoverage * 100) / 100,
     artifactTokens,
     projectionTokens,
-    warnings,
+    warnings: [...new Set(warnings)],
   };
 }
 
@@ -420,6 +586,8 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
   if (inProgress.length === 0) {
     pushUniqueFact(inProgress, fact(nextAction, evidence));
   }
+  const telemetry = normalizeCompressionTelemetry(input.telemetry);
+  const rehydratedFileContext = normalizeRehydratedFileContext(input.rehydratedFileContext);
 
   const artifactWithoutQuality: Omit<CompressionArtifact, "quality"> = {
     schemaVersion: 1,
@@ -462,8 +630,10 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
     ...(optionalArray(normalizeRetrievalTraceEntries(input.contextRuntimeKit?.retrievalTrace)) ? {
       retrievalTrace: optionalArray(normalizeRetrievalTraceEntries(input.contextRuntimeKit?.retrievalTrace)),
     } : {}),
+    ...telemetry,
+    ...(rehydratedFileContext.length ? { rehydratedFileContext } : {}),
   };
-  const quality = buildQuality(artifactWithoutQuality, targetTokens);
+  const quality = buildQuality(artifactWithoutQuality, targetTokens, telemetry.warnings);
   return { ...artifactWithoutQuality, quality };
 }
 
@@ -494,7 +664,7 @@ function formatCapabilityActivations(items: CompressionCapabilityActivation[] | 
 }
 
 export function renderCompressionArtifactSummary(artifact: CompressionArtifact): string {
-  return [
+  return redactCompressionText([
     "## Goal",
     artifact.objective || "Continue the current task.",
     "",
@@ -519,7 +689,7 @@ export function renderCompressionArtifactSummary(artifact: CompressionArtifact):
     "",
     "## Critical Context",
     formatFactList([...artifact.filesTouched, ...artifact.testsRun, ...artifact.failedAttempts].slice(0, 12)),
-  ].join("\n");
+  ].join("\n"));
 }
 
 export function renderRecoveryContextProjection(
@@ -529,6 +699,20 @@ export function renderRecoveryContextProjection(
   const sections = [
     "Recovery Context Projection",
     `quality: ${artifact.quality.level} score=${artifact.quality.score}`,
+    artifact.tier || artifact.strategy
+      ? `compression: ${artifact.tier ?? "unknown"} / ${artifact.strategy ?? "unknown"}`
+      : "",
+    artifact.tokensBefore !== undefined || artifact.tokensAfter !== undefined
+      ? `tokens: before=${artifact.tokensBefore ?? "unknown"} after=${artifact.tokensAfter ?? "unknown"} ratio=${artifact.compressionRatio ?? "unknown"}`
+      : "",
+    artifact.rehydratedFileContext?.length
+      ? `rehydratedFileContext:\n${artifact.rehydratedFileContext.slice(0, 8).map((item) => {
+          const lineRange = item.lineStart !== undefined
+            ? `:${item.lineStart}${item.lineEnd !== undefined ? `-${item.lineEnd}` : ""}`
+            : "";
+          return `- ${item.path}${lineRange} reason=${item.reason}${item.excerptHash ? ` hash=${item.excerptHash}` : ""}`;
+        }).join("\n")}`
+      : "",
     `objective: ${artifact.objective}`,
     `currentState: ${artifact.currentState}`,
     artifact.constraints.length ? `constraints:\n${formatFactList(artifact.constraints.slice(0, 5))}` : "",
@@ -567,31 +751,13 @@ export function renderRecoveryContextProjection(
   if (text.length > maxChars) {
     text = `${text.slice(0, Math.max(0, maxChars - 80)).trim()}\n[projection truncated to budget]`;
   }
-  return text;
+  return redactCompressionText(text);
 }
 
 export function normalizeCompressionArtifact(value: unknown): CompressionArtifact | undefined {
   if (!value || typeof value !== "object") return undefined;
   const record = value as Partial<CompressionArtifact>;
   if (record.schemaVersion !== 1) return undefined;
-  const normalizeEvidence = (refs: unknown): CompressionEvidenceRef[] => (
-    Array.isArray(refs)
-      ? refs.flatMap((item) => {
-          if (!item || typeof item !== "object") return [];
-          const entry = item as Partial<CompressionEvidenceRef>;
-          const ref = normalizeText(entry.ref, 300);
-          if (!ref) return [];
-          const type = typeof entry.type === "string" && EVIDENCE_TYPES.has(entry.type as CompressionEvidenceRef["type"])
-            ? entry.type as CompressionEvidenceRef["type"]
-            : "other";
-          return [{
-            type,
-            ref,
-            ...(entry.label ? { label: normalizeText(entry.label, 120) } : {}),
-          }];
-        })
-      : []
-  );
   const normalizeFacts = (items: unknown, maxItems: number): CompressionFact[] => (
     Array.isArray(items)
       ? items.flatMap((item) => {
@@ -599,10 +765,12 @@ export function normalizeCompressionArtifact(value: unknown): CompressionArtifac
           const entry = item as Partial<CompressionFact>;
           const text = normalizeText(entry.text, 360);
           if (!text) return [];
-          return [{ text, evidenceRefs: normalizeEvidence(entry.evidenceRefs) }];
+          return [{ text, evidenceRefs: normalizeEvidenceRefs(entry.evidenceRefs) }];
         }).slice(0, maxItems)
       : []
   );
+  const telemetry = normalizeCompressionTelemetry(record);
+  const rehydratedFileContext = normalizeRehydratedFileContext(record.rehydratedFileContext);
   const artifactWithoutQuality: Omit<CompressionArtifact, "quality"> = {
     schemaVersion: 1,
     objective: normalizeText(record.objective, 700) || "Continue the current task from compressed context.",
@@ -618,7 +786,7 @@ export function normalizeCompressionArtifact(value: unknown): CompressionArtifac
     deviations: normalizeFacts(record.deviations, 6),
     nextAction: normalizeText(record.nextAction, 500) || "Continue from compressed recovery context.",
     reviewNeeded: normalizeFacts(record.reviewNeeded, 6),
-    evidenceRefs: normalizeEvidence(record.evidenceRefs).slice(0, 24),
+    evidenceRefs: normalizeEvidenceRefs(record.evidenceRefs),
     unverifiedClaims: Array.isArray(record.unverifiedClaims)
       ? record.unverifiedClaims.map((item) => normalizeText(item, 300)).filter(Boolean).slice(0, 8)
       : [],
@@ -637,8 +805,20 @@ export function normalizeCompressionArtifact(value: unknown): CompressionArtifac
     ...(optionalArray(normalizeRetrievalTraceEntries(record.retrievalTrace)) ? {
       retrievalTrace: optionalArray(normalizeRetrievalTraceEntries(record.retrievalTrace)),
     } : {}),
+    ...telemetry,
+    ...(rehydratedFileContext.length ? { rehydratedFileContext } : {}),
   };
-  return { ...artifactWithoutQuality, quality: buildQuality(artifactWithoutQuality, DEFAULT_TARGET_ARTIFACT_TOKENS) };
+  return {
+    ...artifactWithoutQuality,
+    quality: buildQuality(
+      artifactWithoutQuality,
+      DEFAULT_TARGET_ARTIFACT_TOKENS,
+      [
+        ...(record.quality?.warnings ?? []),
+        ...(telemetry.warnings ?? []),
+      ],
+    ),
+  };
 }
 
 function cvkRefKey(ref: CompressionCvkEvidenceRef): string {

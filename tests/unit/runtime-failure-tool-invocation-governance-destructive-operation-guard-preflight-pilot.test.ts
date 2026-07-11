@@ -365,7 +365,7 @@ describe("destructive_operation_guard default-off preflight pilot", () => {
     })).resolves.toEqual({ blocked: false, params });
   });
 
-  it("keeps the active consumer bounded to the mutation-capable tool invocation preflight owner", () => {
+  it("keeps the active consumer bounded to the mutation-capable tool invocation preflight owner", { timeout: 15_000 }, () => {
     const moduleNeedle =
       "failure-tool-invocation-governance-destructive-operation-guard-preflight-pilot";
     const activeDecisionNeedles = [

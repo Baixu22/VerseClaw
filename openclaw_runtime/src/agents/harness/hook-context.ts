@@ -2,6 +2,10 @@
  * Builds plugin hook context metadata for native agent harness events.
  */
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type {
+  BlockStoreApi,
+  ContextBlockSink,
+} from "../../context-engine/block.js";
 import type { DiagnosticTraceContext } from "../../infra/diagnostic-trace-context.js";
 import type {
   PluginHookAgentContext,
@@ -30,6 +34,7 @@ export type AgentHarnessHookContext = {
   contextTokenBudget?: number;
   contextWindowSource?: PluginHookContextWindowSource;
   contextWindowReferenceTokens?: number;
+  contextBlockSink?: ContextBlockSink;
   config?: OpenClawConfig;
 };
 
@@ -53,5 +58,16 @@ export function buildAgentHookContext(params: AgentHarnessHookContext): PluginHo
     ...(params.contextWindowReferenceTokens
       ? { contextWindowReferenceTokens: params.contextWindowReferenceTokens }
       : {}),
+    ...(params.contextBlockSink ? { contextBlockSink: params.contextBlockSink } : {}),
+  };
+}
+
+export function createContextBlockSink(blockStore: Pick<BlockStoreApi, "upsert">): ContextBlockSink {
+  return async (writes) => {
+    const results = [];
+    for (const write of writes) {
+      results.push(await blockStore.upsert(write.block, write.admission));
+    }
+    return results;
   };
 }

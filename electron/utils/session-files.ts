@@ -345,6 +345,8 @@ function sanitizeArchivePathSegment(value: string): string {
     .replace(/[^A-Za-z0-9._-]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
 /**
  * Snapshot the sessions.json entry for `sessionKey` so it can be re-inserted
  * verbatim on restore. Returns the raw entry value (object or string) or
@@ -529,4 +531,5 @@ export async function removeArchiveEntry(
   });
   const next: SessionArchiveIndex = { version: 1, entries };
   await writeArchiveIndex(archiveIndexPath, next);
-  return { index: next, removed };}
+  return { index: next, removed };
+}

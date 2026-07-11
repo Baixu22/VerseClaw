@@ -10,6 +10,8 @@ import type { FinalizedMsgContext } from "../auto-reply/templating.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { TtsAutoMode } from "../config/types.tts.js";
 import type { DiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
+import type { ContextBlockSink } from "../context-engine/block.js";
+import type { RuntimeTaskStatus } from "../runtime-core/types.js";
 import type {
   PluginHookBeforeAgentStartEvent,
   PluginHookBeforeAgentStartResult,
@@ -84,6 +86,7 @@ export type PluginHookName =
   | "llm_output"
   | "before_agent_finalize"
   | "agent_end"
+  | "task_phase_change"
   | "before_compaction"
   | "after_compaction"
   | "before_reset"
@@ -131,6 +134,7 @@ export const PLUGIN_HOOK_NAMES = [
   "llm_output",
   "before_agent_finalize",
   "agent_end",
+  "task_phase_change",
   "before_compaction",
   "after_compaction",
   "before_reset",
@@ -253,6 +257,7 @@ export type PluginHookAgentContext = {
   contextWindowSource?: PluginHookContextWindowSource;
   /** Native/configured reference window when a lower cap wins. */
   contextWindowReferenceTokens?: number;
+  contextBlockSink?: ContextBlockSink;
 };
 
 export type PluginHookContextWindowSource =
@@ -356,6 +361,13 @@ export type PluginHookAgentEndEvent = {
   success: boolean;
   error?: string;
   durationMs?: number;
+};
+
+export type PluginHookTaskPhaseChangeEvent = {
+  sessionId: string;
+  taskId: string;
+  fromStatus: RuntimeTaskStatus;
+  toStatus: RuntimeTaskStatus;
 };
 
 export type PluginHookBeforeAgentFinalizeEvent = {
@@ -1019,6 +1031,10 @@ export type PluginHookHandlerMap = {
     | PluginHookBeforeAgentFinalizeResult
     | void;
   agent_end: (event: PluginHookAgentEndEvent, ctx: PluginHookAgentContext) => Promise<void> | void;
+  task_phase_change: (
+    event: PluginHookTaskPhaseChangeEvent,
+    ctx: PluginHookAgentContext,
+  ) => Promise<void> | void;
   before_compaction: (
     event: PluginHookBeforeCompactionEvent,
     ctx: PluginHookAgentContext,

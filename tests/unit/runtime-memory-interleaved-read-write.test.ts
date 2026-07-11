@@ -56,6 +56,7 @@ function createStreamingWriter(dbPath: string) {
   const persistence = createRuntimeMemoryPersistenceStore({
     config: RUNTIME_MEMORY_EVAL_CONFIG,
     database: { path: dbPath },
+    evictionPolicy: "fifo",
     now: () => now++,
   });
   const migrateResult = persistence.migrate();
@@ -90,6 +91,7 @@ function loadAllFacts(dbPath: string): RuntimeMemoryTemporalFact[] {
   const persistence = createRuntimeMemoryPersistenceStore({
     config: RUNTIME_MEMORY_EVAL_CONFIG,
     database: { path: dbPath },
+    evictionPolicy: "fifo",
   });
   const loaded = persistence.loadStore();
   if (loaded.status !== "loaded") throw new Error("loadAllFacts: load failed");
@@ -105,6 +107,7 @@ function loadStats(dbPath: string): { facts: number; invalidations: number; fact
   const persistence = createRuntimeMemoryPersistenceStore({
     config: RUNTIME_MEMORY_EVAL_CONFIG,
     database: { path: dbPath },
+    evictionPolicy: "fifo",
   });
   const loaded = persistence.loadStore();
   if (loaded.status !== "loaded") throw new Error("loadStats: load failed");

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Knowledge } from '@/pages/Knowledge';
 
 const hostApiMock = vi.hoisted(() => ({
@@ -993,10 +993,11 @@ describe('Knowledge page', () => {
     await waitFor(() => expect(screen.getByTestId('knowledge-source-set-panel')).toHaveTextContent('Decision'));
     await waitFor(() => expect(screen.getByTestId('knowledge-source-set-panel')).toHaveTextContent('1 sources'));
 
-    fireEvent.change(screen.getByTestId('knowledge-source-set-title'), { target: { value: 'Decision sources' } });
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('knowledge-source-set-title'), { target: { value: 'Decision sources' } });
+    });
     await waitFor(() => expect(screen.getByTestId('knowledge-source-set-title')).toHaveValue('Decision sources'));
     await waitFor(() => expect(screen.getByTestId('knowledge-source-set-save')).not.toBeDisabled());
-    await new Promise((resolve) => setTimeout(resolve, 0));
     fireEvent.click(screen.getByTestId('knowledge-source-set-save'));
 
     await waitFor(() => expect(hostApiMock.saveSourceSet).toHaveBeenCalledWith({
@@ -1004,7 +1005,10 @@ describe('Knowledge page', () => {
       sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
     }));
 
-    fireEvent.click(screen.getByTestId('knowledge-studio-artifact-decision-memo'));
+    expect(await screen.findByTestId('knowledge-source-set-saved')).toHaveTextContent('Decision sources');
+    const decisionMemoButton = screen.getByTestId('knowledge-studio-artifact-decision-memo');
+    await waitFor(() => expect(decisionMemoButton).not.toBeDisabled());
+    fireEvent.click(decisionMemoButton);
     await waitFor(() => expect(hostApiMock.createArtifactDraft).toHaveBeenCalledWith({
       artifactType: 'decision-memo',
       title: 'Decision Memo',

@@ -204,6 +204,12 @@ describe('execution projection', () => {
         kind: 'tool',
         url: 'https://example.test',
       }),
+      expect.objectContaining({
+        id: 'assistant-final-final-turn',
+        label: 'Assistant Final',
+        status: 'completed',
+        kind: 'system',
+      }),
     ]);
   });
 

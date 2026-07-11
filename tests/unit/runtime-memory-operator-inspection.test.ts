@@ -1,5 +1,14 @@
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
@@ -15,8 +24,10 @@ import { buildRuntimeMemoryEpisodeFixture } from "../../openclaw_runtime/src/run
 
 const tempDirs: string[] = [];
 let runtimeBuilt = false;
+let runtimeSandboxRoot: string | undefined;
 
 beforeAll(() => {
+  runtimeSandboxRoot = createRuntimeSandbox();
   execFileSync(
     process.execPath,
     [
@@ -24,7 +35,7 @@ beforeAll(() => {
       "--memory-operator-inspection-only",
     ],
     {
-      cwd: repoRoot(),
+      cwd: runtimeSandboxRoot,
       stdio: "pipe",
     },
   );
@@ -33,6 +44,10 @@ beforeAll(() => {
 
 afterAll(() => {
   runtimeBuilt = false;
+  if (runtimeSandboxRoot) {
+    rmSync(runtimeSandboxRoot, { recursive: true, force: true });
+    runtimeSandboxRoot = undefined;
+  }
 });
 
 afterEach(() => {
@@ -678,6 +693,73 @@ function repoRoot(): string {
   return process.cwd();
 }
 
+function createRuntimeSandbox(): string {
+  const sandboxRoot = mkdtempSync(
+    path.join(os.tmpdir(), "runtime-memory-operator-build-"),
+  );
+  const sandboxRuntimeRoot = path.join(sandboxRoot, "openclaw_runtime");
+
+  try {
+    mkdirSync(path.join(sandboxRoot, "scripts"), { recursive: true });
+    mkdirSync(path.join(sandboxRuntimeRoot, "scripts"), { recursive: true });
+
+    for (const directory of ["src", "packages", "node_modules"]) {
+      symlinkSync(
+        path.join(repoRoot(), "openclaw_runtime", directory),
+        path.join(sandboxRuntimeRoot, directory),
+        process.platform === "win32" ? "junction" : "dir",
+      );
+    }
+
+    copyFileSync(
+      path.join(repoRoot(), "openclaw_runtime", "tsconfig.json"),
+      path.join(sandboxRuntimeRoot, "tsconfig.json"),
+    );
+    copyFileSync(
+      path.join(repoRoot(), "scripts", "build-openclaw-runtime.mjs"),
+      path.join(sandboxRoot, "scripts", "build-openclaw-runtime.mjs"),
+    );
+    copyFileSync(
+      path.join(
+        repoRoot(),
+        "openclaw_runtime",
+        "scripts",
+        "inspect-runtime-memory-episodes.mjs",
+      ),
+      path.join(
+        sandboxRuntimeRoot,
+        "scripts",
+        "inspect-runtime-memory-episodes.mjs",
+      ),
+    );
+    writeFileSync(
+      path.join(sandboxRoot, "package.json"),
+      JSON.stringify(
+        {
+          private: true,
+          scripts: {
+            "runtime:memory:inspect": packageScript("runtime:memory:inspect"),
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    return sandboxRoot;
+  } catch (error) {
+    rmSync(sandboxRoot, { recursive: true, force: true });
+    throw error;
+  }
+}
+
+function sandboxRoot(): string {
+  if (!runtimeSandboxRoot) {
+    throw new Error("Runtime Memory operator inspection sandbox is not ready");
+  }
+  return runtimeSandboxRoot;
+}
+
 function runInspectionUtility(args: string[]): {
   status: number | null;
   stdout: string;
@@ -687,7 +769,7 @@ function runInspectionUtility(args: string[]): {
     process.execPath,
     [
       path.join(
-        repoRoot(),
+        sandboxRoot(),
         "openclaw_runtime",
         "scripts",
         "inspect-runtime-memory-episodes.mjs",
@@ -695,7 +777,7 @@ function runInspectionUtility(args: string[]): {
       ...args,
     ],
     {
-      cwd: repoRoot(),
+      cwd: sandboxRoot(),
       encoding: "utf8",
     },
   );
@@ -721,7 +803,7 @@ function runPackageInspectionUtility(args: string[]): {
       ...args,
     ],
     {
-      cwd: repoRoot(),
+      cwd: sandboxRoot(),
       encoding: "utf8",
       env: {
         ...process.env,

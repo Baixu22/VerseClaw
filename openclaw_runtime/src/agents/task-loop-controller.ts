@@ -14,6 +14,7 @@ import {
   type LocalControlPlaneReportTraceEvent,
 } from "../local-control-plane/index.js";
 import {
+  buildCodeTaskEvidenceGateRuntimeShadowCollectionResult,
   evaluateCollectedEvidenceVerifier,
   buildAgentMapPromptCandidateRuntimeShadowReport,
   isAgentMapResult,
@@ -24,9 +25,12 @@ import {
   resolveRuntimeTraceContextFeatureFlags,
   resolveRuntimeAgentMapPromptCandidateRuntimeShadowFlags,
   sanitizeExternalRuntimeTraceContext,
+  sanitizeRuntimeRegistryDiagnostic,
   sanitizeRuntimeTraceSpan,
   type AgentMapPromptCandidateRuntimeShadowReport,
   type AgentMapResult,
+  type CodeTaskEvidenceGateRuntimeShadowCollectionResult,
+  type CodeTaskEvidenceGateShadowSamplerMode,
   type EvidenceVerifierReport,
   type EvidenceRef,
   type RuntimeMemoryEpisodeRecord,
@@ -43,6 +47,7 @@ import {
   type RuntimeTaskStatus,
   type ToolCallResult,
 } from "../runtime-core/index.js";
+import { createRuntimeTaskEventLogRuntimeIntegration } from "../runtime-core/event-log-persistence.js";
 import {
   createRuntimeMemoryRuntimeIntegration,
   type RuntimeMemoryRuntimeIntegrationOptions,
@@ -59,6 +64,7 @@ import { listRoleContracts } from "./role-registry.js";
 import type { RoleSpawnContext, SpawnFn } from "./role-spawn.js";
 import {
   buildTaskLoopContextPack,
+  taskLoopContextBudgetPressureLevel,
   type TaskLoopContextPack,
   type TaskLoopEvidenceRef,
   type TaskLoopSubagentEvidenceForContext,
@@ -144,6 +150,12 @@ export type TaskLoopAgentMapPromptCandidateRuntimeShadowResultProvider =
     record: TaskLoopRunRecord;
     contextPack: TaskLoopContextPack;
   }) => AgentMapResult | undefined);
+export type TaskLoopCodeTaskEvidenceGateRuntimeShadowCollectionSink = (
+  result: CodeTaskEvidenceGateRuntimeShadowCollectionResult,
+) => void;
+export type TaskLoopCodeTaskEvidenceGateRuntimeShadowCollectionBuilder = (
+  input: unknown,
+) => CodeTaskEvidenceGateRuntimeShadowCollectionResult;
 
 export type TaskLoopRunRequest = {
   task: string;
@@ -351,6 +363,10 @@ export type TaskLoopControllerDeps = {
   agentMapPromptCandidateRuntimeShadowResult?: TaskLoopAgentMapPromptCandidateRuntimeShadowResultProvider;
   agentMapPromptCandidateRuntimeShadowTokenBudget?: number;
   agentMapPromptCandidateRuntimeShadowPromptPresentFiles?: string[];
+  codeTaskEvidenceGateRuntimeShadowCollectionMode?: CodeTaskEvidenceGateShadowSamplerMode;
+  codeTaskEvidenceGateRuntimeShadowCollectionMaxSamples?: number;
+  codeTaskEvidenceGateRuntimeShadowCollectionSink?: TaskLoopCodeTaskEvidenceGateRuntimeShadowCollectionSink;
+  codeTaskEvidenceGateRuntimeShadowCollectionBuilder?: TaskLoopCodeTaskEvidenceGateRuntimeShadowCollectionBuilder;
   storeTrace?: typeof storeRuntimeTrace;
   externalTraceContext?: {
     traceparent?: string;
@@ -409,6 +425,10 @@ const runtimeEventShadowFlags = new WeakMap<
 const runtimeEventShadowSequences = new WeakMap<TaskLoopRunRecord, number>();
 const runtimeTraceSpanShadowSequences = new WeakMap<TaskLoopRunRecord, number>();
 const localControlPlaneConfigs = new WeakMap<TaskLoopRunRecord, OpenClawConfig | undefined>();
+const runtimeTaskEventLogDefaultWriters = new WeakMap<
+  TaskLoopRunRecord,
+  TaskLoopRuntimeTaskEventLogWriter
+>();
 
 function defaultId(prefix: string): string {
   return `${prefix}_${crypto.randomUUID()}`;
@@ -1154,9 +1174,11 @@ function runtimeRegistryDiagnosticShadowEnabled(
 function runtimeRegistryDiagnosticsForShadow(record: TaskLoopRunRecord): RuntimeRegistryDiagnostic[] {
   const shadow = runtimeEventShadowFlags.get(record);
   const diagnostics = shadow?.runtimeRegistryDiagnostics?.() ?? [];
-  return diagnostics.filter((diagnostic) =>
-    runtimeRegistryDiagnosticShadowEnabled(shadow?.runtimeRegistryFlags, diagnostic)
-  );
+  return diagnostics
+    .filter((diagnostic) =>
+      runtimeRegistryDiagnosticShadowEnabled(shadow?.runtimeRegistryFlags, diagnostic)
+    )
+    .map(sanitizeRuntimeRegistryDiagnostic);
 }
 
 function registryDiagnosticShadowEvidenceRef(
@@ -1504,6 +1526,98 @@ function buildTaskLoopEvidenceVerifierShadowReport(params: {
   };
 }
 
+function codeTaskEvidenceGateRuntimeShadowCollectionMode(
+  deps: TaskLoopControllerDeps,
+): CodeTaskEvidenceGateShadowSamplerMode {
+  return deps.codeTaskEvidenceGateRuntimeShadowCollectionMode === "shadow_only"
+    ? "shadow_only"
+    : "disabled";
+}
+
+function codeTaskEvidenceGateTaskKindForTaskLoop(
+  record: TaskLoopRunRecord,
+): "code_edit" | "unknown" {
+  return (record.evidenceGate?.filesTouched.length ?? 0) > 0
+    ? "code_edit"
+    : "unknown";
+}
+
+function codeTaskEvidenceGateLegacyStatusForTaskLoop(
+  status: TaskLoopStatus,
+): "complete" | "blocked" | "error" | "unknown" {
+  if (status === "complete") return "complete";
+  if (status === "blocked") return "blocked";
+  if (status === "error") return "error";
+  return "unknown";
+}
+
+function emitCodeTaskEvidenceGateRuntimeShadowCollection(params: {
+  record: TaskLoopRunRecord;
+  deps: TaskLoopControllerDeps;
+}): void {
+  const mode = codeTaskEvidenceGateRuntimeShadowCollectionMode(params.deps);
+  const sink = params.deps.codeTaskEvidenceGateRuntimeShadowCollectionSink;
+  if (mode === "disabled" || !sink) return;
+
+  try {
+    const record = params.record;
+    const collectionSampleId =
+      `task-loop:${record.loopRunId}:iteration:${record.iteration}:${record.phase}`;
+    const builder = params.deps.codeTaskEvidenceGateRuntimeShadowCollectionBuilder
+      ?? buildCodeTaskEvidenceGateRuntimeShadowCollectionResult;
+    const result = builder({
+      collectorId: "task_loop.code_task_evidence_gate.runtime_shadow_collection",
+      mode,
+      ...(params.deps.codeTaskEvidenceGateRuntimeShadowCollectionMaxSamples !== undefined
+        ? { maxSamples: params.deps.codeTaskEvidenceGateRuntimeShadowCollectionMaxSamples }
+        : {}),
+      samples: [
+        {
+          collectionSampleId,
+          producerInput: {
+            producerId: "task_loop.code_task_evidence_gate.runtime_shadow_producer",
+            completionEventId: collectionSampleId,
+            mode,
+            samplerId: "task_loop.code_task_evidence_gate.runtime_shadow_sampler",
+            sampleId: collectionSampleId,
+            completion: {
+              taskId: record.loopRunId,
+              objective: record.task,
+              taskKind: codeTaskEvidenceGateTaskKindForTaskLoop(record),
+              legacyTerminalStatus: codeTaskEvidenceGateLegacyStatusForTaskLoop(record.status),
+              ...(record.evidenceVerifierReport?.verifierReport
+                ? { verifierReport: record.evidenceVerifierReport.verifierReport }
+                : {}),
+              metadata: runtimeCoreJsonObject({
+                source: "task_loop.code_task_evidence_gate.runtime_shadow_collection",
+                loopRunId: record.loopRunId,
+                sessionKey: record.sessionKey,
+                iteration: record.iteration,
+                phase: record.phase,
+                status: record.status,
+                evidenceGateStatus: record.evidenceGate?.status,
+                filesTouchedCount: record.evidenceGate?.filesTouched.length ?? 0,
+                testsRunCount: record.evidenceGate?.testsRun.length ?? 0,
+                changedFiles: uniqueStrings(record.evidenceGate?.filesTouched ?? [], 30),
+                legacyDecisionUnaffected: true,
+              }),
+            },
+          },
+        },
+      ],
+      metadata: runtimeCoreJsonObject({
+        source: "task_loop",
+        loopRunId: record.loopRunId,
+        sessionKey: record.sessionKey,
+        legacyDecisionUnaffected: true,
+      }),
+    });
+    sink(result);
+  } catch {
+    // Diagnostic shadow collection must never perturb TaskLoop completion.
+  }
+}
+
 function evidenceVerifierShadowEnabled(record: TaskLoopRunRecord): boolean {
   return runtimeEventShadowFlags.get(record)?.evidenceVerifierShadow === true;
 }
@@ -1556,13 +1670,6 @@ function resolveTaskLoopAgentMapPromptCandidateRuntimeShadowResult(params: {
   return isAgentMapResult(result) ? result : undefined;
 }
 
-function budgetPressureLevel(estimatedTokens: number, totalTokens: number): "low" | "medium" | "high" {
-  const ratio = totalTokens > 0 ? estimatedTokens / totalTokens : 0;
-  if (ratio >= 1 || estimatedTokens > totalTokens) return "high";
-  if (ratio >= 0.85) return "medium";
-  return "low";
-}
-
 function recordTaskLoopContextEngineeringReport(params: {
   cfg: OpenClawConfig | undefined;
   record: TaskLoopRunRecord;
@@ -1580,7 +1687,10 @@ function recordTaskLoopContextEngineeringReport(params: {
     const dynamicSuffixCandidates = pack.sections
       .filter((section) => section.items.some((item) => item.priority !== "P0" && !item.protected))
       .map((section) => section.id);
-    const pressure = budgetPressureLevel(pack.estimatedTokens, pack.budget.totalTokens);
+    const pressure = taskLoopContextBudgetPressureLevel(
+      pack.estimatedTokens,
+      pack.budget.totalTokens,
+    );
     const diagnostics: LocalControlPlaneDiagnostic[] = [
       {
         code: "context.p0_preserved",
@@ -2114,10 +2224,14 @@ function emitRuntimeTaskEventLogShadow(
   deps: TaskLoopControllerDeps,
   event: RuntimeTaskEvent,
 ): void {
-  if (!runtimeEventLogDualWriteEnabled(record) || !deps.runtimeTaskEventLogWriter) return;
   const flags = runtimeEventShadowFlags.get(record);
+  if (!runtimeEventLogDualWriteEnabled(record)) return;
+  const writer = deps.runtimeTaskEventLogWriter
+    ?? defaultRuntimeTaskEventLogWriter(record, flags);
+  if (!writer) return;
   try {
-    const result = deps.runtimeTaskEventLogWriter(cloneRuntimeTaskEvent(event), {
+    const result = writer(cloneRuntimeTaskEvent(event), {
+      metadata: runtimeTaskEventLogMetadata(record),
       shadow: flags?.runtimeEventLogFlags.eventLogShadow === true
         ? { enabled: true, runId: record.loopRunId, source: "verification.run", trigger: "event-log-append" }
         : false,
@@ -2130,6 +2244,36 @@ function emitRuntimeTaskEventLogShadow(
   } catch {
     // Event-log dual-write is shadow-only; writer failures must stay diagnostic-only.
   }
+}
+
+function defaultRuntimeTaskEventLogWriter(
+  record: TaskLoopRunRecord,
+  flags: { runtimeEventLogFlags: RuntimeEventLogFeatureFlags } | undefined,
+): TaskLoopRuntimeTaskEventLogWriter | undefined {
+  if (flags?.runtimeEventLogFlags.eventLogPersist !== true) {
+    return undefined;
+  }
+  const existing = runtimeTaskEventLogDefaultWriters.get(record);
+  if (existing) {
+    return existing;
+  }
+  const integration = createRuntimeTaskEventLogRuntimeIntegration({
+    config: localControlPlaneConfigs.get(record),
+  });
+  const writer = integration.append.bind(integration);
+  runtimeTaskEventLogDefaultWriters.set(record, writer);
+  return writer;
+}
+
+function runtimeTaskEventLogMetadata(record: TaskLoopRunRecord): RuntimeCoreJsonObject {
+  return runtimeCoreJsonObject({
+    source: "task_loop.event_log_persistence",
+    sessionKey: record.sessionKey,
+    workspaceId: record.workspaceId,
+    runId: record.loopRunId,
+    taskLedgerRootId: record.taskLedgerRootId,
+    traceId: taskLoopRuntimeTraceId(record),
+  });
 }
 
 function cloneRuntimeTaskEvent(event: RuntimeTaskEvent): RuntimeTaskEvent {
@@ -2969,6 +3113,7 @@ export async function runTaskLoop(
         record.status = "complete";
         record.finalSummary = selfCheck.contextSummary || "Task loop completed.";
         record.nextActions = ["synthesize_final_response"];
+        emitCodeTaskEvidenceGateRuntimeShadowCollection({ record, deps });
         snapshot(record, selfCheck);
         await recordTaskLoopCheckpoint(record, deps, selfCheck);
         recordCheckpointTraceEvent(recorder, record);

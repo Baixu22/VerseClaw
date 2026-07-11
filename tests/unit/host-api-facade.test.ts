@@ -206,20 +206,20 @@ describe('hostApi facade', () => {
     }));
   });
 
-  it('routes openclaw, shell, dialog, window, and updates methods through hostInvoke', async () => {
+  it('routes app, openclaw, shell, dialog, and window methods through hostInvoke', async () => {
     hostInvoke
       .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { packageExists: true, isBuilt: true, entryPath: '/openclaw/openclaw.mjs', dir: '/openclaw' } })
       .mockResolvedValueOnce({ id: 'req-2', ok: true, data: '' })
       .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { canceled: false, filePaths: ['/tmp/a.txt'] } })
       .mockResolvedValueOnce({ id: 'req-4', ok: true, data: undefined })
-      .mockResolvedValueOnce({ id: 'req-5', ok: true, data: { success: true, status: { status: 'not-available' } } });
+      .mockResolvedValueOnce({ id: 'req-5', ok: true, data: '0.4.9-alpha.0' });
     const { hostApi } = await import('@/lib/host-api');
 
     await hostApi.openclaw.status();
     await hostApi.shell.openPath('/tmp/a.txt');
     await hostApi.dialog.open({ properties: ['openFile'] });
     await hostApi.window.maximize();
-    await hostApi.updates.check();
+    await hostApi.app.version();
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
       module: 'openclaw',
@@ -240,8 +240,8 @@ describe('hostApi facade', () => {
       action: 'maximize',
     }));
     expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
-      module: 'updates',
-      action: 'check',
+      module: 'app',
+      action: 'version',
     }));
   });
 
@@ -471,7 +471,6 @@ describe('hostApi facade', () => {
     await hostApi.knowledge.createInboxItem({ title: 'Candidate', body: 'Body', kind: 'chat-session' });
     await hostApi.knowledge.promoteInboxItemToDraft({ id: 'inbox-1' });
     await hostApi.knowledge.recordKnowledgeReference({ targetId: 'notes/a.md', reference: { kind: 'search', lookup: 'notes/a.md' } });
-    await hostApi.knowledge.runtimeLessonsReport();
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
       module: 'knowledge',
@@ -507,10 +506,6 @@ describe('hostApi facade', () => {
       module: 'knowledge',
       action: 'recordKnowledgeReference',
       payload: { targetId: 'notes/a.md', reference: { kind: 'search', lookup: 'notes/a.md' } },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
-      module: 'knowledge',
-      action: 'runtimeLessonsReport',
     }));
   });
 

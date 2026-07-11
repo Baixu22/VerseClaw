@@ -107,6 +107,12 @@ export type RuntimeFeatureConfig = {
     /** Run context provider registry pilot diagnostics without changing prompt/message output. */
     registryPilot?: boolean;
   };
+  /** DCS context block runtime feature gates. Defaults off. */
+  contextBlock?: {
+    "working-memory"?: {
+      enabled?: boolean;
+    };
+  };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
   contextRuntimeKit?: {
     /** Set false to roll backend context engine selection back to legacy without UI changes. */

@@ -1031,7 +1031,7 @@ export function Knowledge() {
         setGovernanceQualityMetrics((result as { qualityMetrics?: KnowledgeQualityMetrics }).qualityMetrics ?? null);
         setGovernanceLastChecked((result as any).runAt ?? null);
       }
-    } catch (err) {
+    } catch {
       toast.error(t('errors.action'));
     } finally {
       setGovernanceRunning(false);

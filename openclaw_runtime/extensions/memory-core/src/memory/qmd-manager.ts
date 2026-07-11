@@ -1390,7 +1390,7 @@ export class QmdMemoryManager implements MemorySearchManager {
       log.debug("qmd sync ignoring targeted sessionFiles hint; running regular update");
     }
     if (params?.progress) {
-      params.progress({ completed: 0, total: 1, label: "Updating QMD indexâ€? });
+      params.progress({ completed: 0, total: 1, label: "Updating QMD index..." });
     }
     await this.runUpdate(params?.reason ?? "manual", params?.force);
     if (params?.progress) {
@@ -1971,7 +1971,7 @@ export class QmdMemoryManager implements MemorySearchManager {
    * is a no-op.
    */
   private async symlinkSharedModels(): Promise<void> {
-    // process.env is never modified â€?only this.env (passed to child_process
+    // process.env is never modified ï¿½?only this.env (passed to child_process
     // spawn) overrides XDG_CACHE_HOME.  So reading it here gives us the
     // user's original value, which is where `qmd` downloaded its models.
     //
@@ -1999,10 +1999,10 @@ export class QmdMemoryManager implements MemorySearchManager {
       // Check if something already exists at the target path
       try {
         await fs.lstat(targetModelsDir);
-        // Already exists (directory, symlink, or file) â€?leave it alone
+        // Already exists (directory, symlink, or file) ï¿½?leave it alone
         return;
       } catch {
-        // Does not exist â€?proceed to create symlink
+        // Does not exist ï¿½?proceed to create symlink
       }
       // On Windows, creating directory symlinks requires either Administrator
       // privileges or Developer Mode.  Fall back to a directory junction which
@@ -2018,7 +2018,7 @@ export class QmdMemoryManager implements MemorySearchManager {
           throw symlinkErr;
         }
       }
-      log.debug(`symlinked qmd models: ${defaultModelsDir} â†?${targetModelsDir}`);
+      log.debug(`symlinked qmd models: ${defaultModelsDir} ï¿½?${targetModelsDir}`);
     } catch (err) {
       // Non-fatal: if we can't symlink, qmd will fall back to downloading
       log.warn(`failed to symlink qmd models directory: ${String(err)}`);
@@ -2107,7 +2107,7 @@ export class QmdMemoryManager implements MemorySearchManager {
           ? "vector_search"
           : "deep_search";
     }
-    // Not yet probed â€?default to v2 (current QMD).
+    // Not yet probed ï¿½?default to v2 (current QMD).
     // If the call fails with "not found", markQmdV1Fallback() will retry with v1 names.
     return "query";
   }
@@ -2232,7 +2232,7 @@ export class QmdMemoryManager implements MemorySearchManager {
       ? {
           // QMD 1.1+ "query" tool accepts typed sub-queries via `searches` array.
           // Derive sub-query types from searchCommand to respect searchMode config.
-          // Note: minScore is intentionally omitted â€?QMD 1.1+'s query tool uses
+          // Note: minScore is intentionally omitted ï¿½?QMD 1.1+'s query tool uses
           // its own reranking pipeline and does not accept a minScore parameter.
           searches: this.buildV2Searches(params.query, params.searchCommand),
           limit: params.limit,
@@ -2280,13 +2280,13 @@ export class QmdMemoryManager implements MemorySearchManager {
       }
     } catch (err) {
       // If the v2 "query" tool is not found, fall back to v1 tool names.
-      // No need to guard on qmdMcpToolVersion !== "v1" here â€?if the version
+      // No need to guard on qmdMcpToolVersion !== "v1" here ï¿½?if the version
       // were already "v1", effectiveTool would have been resolved to a v1 tool
       // name at the top of this function (not "query"). The effectiveTool ===
       // "query" check alone prevents infinite retry loops since the recursive
       // call passes a v1 tool name. Removing the version guard also fixes a
       // race condition where concurrent searches both probe with "query" while
-      // the version is null â€?the second call would otherwise fail after the
+      // the version is null ï¿½?the second call would otherwise fail after the
       // first sets the version to "v1".
       if (useUnifiedQueryTool && this.isQueryToolNotFoundError(err)) {
         this.markQmdV1Fallback();

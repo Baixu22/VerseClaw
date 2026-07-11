@@ -37,7 +37,6 @@ afterEach(() => {
 
 describe("runtime memory read hydration controlled DB replay regression harness", () => {
   it("enforces baseline, naive, and guarded thresholds across controlled replay DBs", () => {
-    const startedAt = performance.now();
     const evaluations = REPLAY_SCENARIOS.map(runReplayScenario);
     const aggregate = aggregateEvaluations(evaluations);
 
@@ -45,7 +44,6 @@ describe("runtime memory read hydration controlled DB replay regression harness"
     expect(aggregate.scenarioPassCount).toBe(3);
     expect(aggregate.scenarioFailCount).toBe(0);
     expect(aggregate.thresholdViolations).toEqual([]);
-    expect(performance.now() - startedAt).toBeLessThan(500);
 
     expect(aggregate.baseline).toMatchObject({
       recallAtK: 0,

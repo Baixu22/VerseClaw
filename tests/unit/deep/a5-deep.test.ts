@@ -7,7 +7,7 @@ import {
   ResumeContractVerifier,
 } from '../../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js';
 import { ResourceAwareWaveScheduler } from '../../../openclaw_runtime/src/agents/resource-aware-wave-scheduler.js';
-import { budgetPressureLevel } from '../../../openclaw_runtime/src/agents/task-loop-controller.js';
+import { taskLoopContextBudgetPressureLevel } from '../../../openclaw_runtime/src/agents/task-loop-context.js';
 
 /**
  * A5 deep tests — Adaptive Context Budget.
@@ -16,7 +16,7 @@ import { budgetPressureLevel } from '../../../openclaw_runtime/src/agents/task-l
  * - agents/cross-area/cross-area-facades.ts (ContextBudgetPlanner,
  *   ResumeContractVerifier, FingerprintLeaseCoordinator)
  * - agents/resource-aware-wave-scheduler.ts (ResourceAwareWaveScheduler)
- * - agents/task-loop-controller.ts (budgetPressureLevel — S6 fix: now exported)
+ * - agents/task-loop-context.ts (taskLoopContextBudgetPressureLevel)
  *
  * Note on import depth: tests live in tests/unit/deep/, so the relative path to
  * the runtime tree is ../../../openclaw_runtime/src/... (three levels up to root).
@@ -233,13 +233,13 @@ describe('A5 deep — adaptive context budget planner', () => {
   // 6. 压力测试 (1 test)
   // -------------------------------------------------------------------------
   describe('压力测试', () => {
-    it('100 plan + replanOnResume cycles yield resumeReexecutions === 100', () => {
+    it('deduplicates 100 identical resume budgets after the first accepted replan', () => {
       const planner = new ContextBudgetPlanner(makeGraph(5), 2);
       for (let i = 0; i < 100; i++) {
         planner.plan();
         planner.replanOnResume(4);
       }
-      expect(planner.resumeReexecutions).toBe(100);
+      expect(planner.resumeReexecutions).toBe(1);
       expect(planner.hasReexecuted).toBe(true);
     });
   });
@@ -273,36 +273,36 @@ describe('A5 deep — adaptive context budget planner', () => {
   });
 
   // -------------------------------------------------------------------------
-  // 8. budgetPressureLevel 边界测试 (S6 fix — direct unit tests)
+  // 8. TaskLoop context budget pressure boundary tests
   // -------------------------------------------------------------------------
-  describe('budgetPressureLevel 边界值 (S6)', () => {
+  describe('taskLoopContextBudgetPressureLevel 边界值', () => {
     it('returns "low" when ratio < 0.85', () => {
-      expect(budgetPressureLevel(0, 1000)).toBe('low');
-      expect(budgetPressureLevel(1, 1000)).toBe('low');
-      expect(budgetPressureLevel(499, 1000)).toBe('low');
-      expect(budgetPressureLevel(849, 1000)).toBe('low'); // ratio = 0.849
+      expect(taskLoopContextBudgetPressureLevel(0, 1000)).toBe('low');
+      expect(taskLoopContextBudgetPressureLevel(1, 1000)).toBe('low');
+      expect(taskLoopContextBudgetPressureLevel(499, 1000)).toBe('low');
+      expect(taskLoopContextBudgetPressureLevel(849, 1000)).toBe('low'); // ratio = 0.849
     });
 
     it('returns "medium" when 0.85 <= ratio < 1.0', () => {
-      expect(budgetPressureLevel(850, 1000)).toBe('medium'); // exactly 0.85
-      expect(budgetPressureLevel(900, 1000)).toBe('medium');
-      expect(budgetPressureLevel(999, 1000)).toBe('medium');
+      expect(taskLoopContextBudgetPressureLevel(850, 1000)).toBe('medium'); // exactly 0.85
+      expect(taskLoopContextBudgetPressureLevel(900, 1000)).toBe('medium');
+      expect(taskLoopContextBudgetPressureLevel(999, 1000)).toBe('medium');
     });
 
     it('returns "high" when ratio >= 1.0 or estimated > total', () => {
-      expect(budgetPressureLevel(1000, 1000)).toBe('high'); // exactly 1.0
-      expect(budgetPressureLevel(1001, 1000)).toBe('high'); // estimated > total
-      expect(budgetPressureLevel(2000, 1000)).toBe('high');
+      expect(taskLoopContextBudgetPressureLevel(1000, 1000)).toBe('high'); // exactly 1.0
+      expect(taskLoopContextBudgetPressureLevel(1001, 1000)).toBe('high'); // estimated > total
+      expect(taskLoopContextBudgetPressureLevel(2000, 1000)).toBe('high');
     });
 
     it('returns "low" when totalTokens is 0 and estimatedTokens is 0 (avoids divide-by-zero, ratio defaults to 0)', () => {
       // ratio = 0, estimatedTokens(0) > totalTokens(0)? No. ratio >= 1? No. → "low"
-      expect(budgetPressureLevel(0, 0)).toBe('low');
+      expect(taskLoopContextBudgetPressureLevel(0, 0)).toBe('low');
     });
 
     it('returns "high" when totalTokens=0 but estimated > total (estimated > 0)', () => {
       // ratio = 0 (totalTokens=0), but estimatedTokens(100) > totalTokens(0) → "high"
-      expect(budgetPressureLevel(100, 0)).toBe('high');
+      expect(taskLoopContextBudgetPressureLevel(100, 0)).toBe('high');
     });
   });
 });

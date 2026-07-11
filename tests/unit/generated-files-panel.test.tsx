@@ -91,27 +91,29 @@ describe('GeneratedFilesPanel', () => {
     expect(onRevealInFileManager).toHaveBeenNthCalledWith(2, expect.objectContaining({ filePath: files[1].filePath }));
   });
 
-  it('keeps unsupported non-preview document formats non-clickable', () => {
+  it('reveals rich document formats in the file manager', () => {
     const onOpen = vi.fn();
+    const onRevealInFileManager = vi.fn();
+    const file = makeFile({
+      filePath: '/tmp/report.docx',
+      fileName: 'report.docx',
+      ext: '.docx',
+      mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      contentType: 'document',
+    });
     render(
       <GeneratedFilesPanel
-        files={[
-          makeFile({
-            filePath: '/tmp/report.docx',
-            fileName: 'report.docx',
-            ext: '.docx',
-            mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            contentType: 'document',
-          }),
-        ]}
+        files={[file]}
         onOpen={onOpen}
+        onRevealInFileManager={onRevealInFileManager}
       />,
     );
 
     const button = screen.getByRole('button', { name: /report\.docx/ });
-    expect(button).toBeDisabled();
+    expect(button).toBeEnabled();
     fireEvent.click(button);
     expect(onOpen).not.toHaveBeenCalled();
+    expect(onRevealInFileManager).toHaveBeenCalledWith(expect.objectContaining({ filePath: file.filePath }));
   });
 
   it('keeps supported text/code formats clickable', () => {

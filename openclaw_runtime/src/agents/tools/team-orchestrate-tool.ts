@@ -251,7 +251,6 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         bundle: result.resultBundle,
         blackboardSummary: result.blackboardSummary,
       });
-      const quality: unknown[] = [];
       return jsonResult({
         status,
         plan,
@@ -309,7 +308,7 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
           verifier: result.pendingVerifier ? "deferred_until_workers_terminal" : "none",
           workerCommunication,
           requestedWorkerCommunication,
-          boundedA2aEnabled: true,
+          boundedA2aEnabled: false,
           repairPolicy,
           qualityPolicy,
         },

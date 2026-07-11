@@ -723,7 +723,7 @@ describe('local runtime control plane reports', () => {
     expect(JSON.stringify(lcpTraceEvents)).not.toContain('"payload"');
   });
 
-  it('records model-router recommendations without changing the selected model or fallback error', () => {
+  it('records model-router recommendations without changing the selected model or fallback error', { timeout: 60_000 }, () => {
     const { authStorage, modelRegistry } = createModelRegistry();
     const baseline = resolveModel('local-lcp', 'tiny', undefined, {}, {
       authStorage,

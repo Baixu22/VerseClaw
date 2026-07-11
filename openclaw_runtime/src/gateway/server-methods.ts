@@ -535,6 +535,8 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "sessions.compactionHistory",
       "sessions.recallOriginal",
       "sessions.expandSelector",
+      "sessions.compressionArtifact",
+      "sessions.recoveryContext",
       "sessions.longTaskControlStatus",
       "sessions.longTaskControlHistory",
       "sessions.resumeCheckpoints",

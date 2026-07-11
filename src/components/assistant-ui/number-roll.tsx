@@ -250,6 +250,8 @@ function NumberRoll({
   const [enhanced, setEnhanced] = useState(false);
 
   useEffect(() => {
+    // Hydration must render the static fallback before enabling client-only animation.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (canAnimate()) setEnhanced(true);
   }, []);
 

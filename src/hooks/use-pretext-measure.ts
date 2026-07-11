@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useLayoutEffect, useMemo, useRef } from 'react';
 import { prepare, layout, clearCache, type PrepareOptions } from '@chenglou/pretext';
 
 type PretextMeasure = {
@@ -47,8 +47,10 @@ export function usePretextMeasure(
 ): PretextMeasure {
   const fontRef = useRef(font);
   const optionsRef = useRef(options);
-  fontRef.current = font;
-  optionsRef.current = options;
+  useLayoutEffect(() => {
+    fontRef.current = font;
+    optionsRef.current = options;
+  }, [font, options]);
 
   const measure = useMemo<PretextMeasure>(() => {
     const fn = (text: string, maxWidth: number, lineHeight: number) => {

@@ -601,7 +601,7 @@ function UsageHeatmap({
             style={{ width: `${weekCount * 12 + Math.max(0, weekCount - 1) * 3}px` }}
           >
             <HeatGraph.MonthLabels>
-              {({ label }: { label: { column: number; month: number; year: number } }) => {
+              {({ label }) => {
                 if (label.column === 0) return null;
                 return (
                   <span

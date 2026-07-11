@@ -146,7 +146,8 @@ test.describe('Verse Claw chat workspace header', () => {
       await expect(page.getByTestId('sidebar-session-view-time')).toBeVisible();
       await expect(page.getByTestId('sidebar-session-project-workspace-1')).toContainText('Demo Workspace');
       await expect(page.getByTestId('sidebar-session-project-workspace-2')).toContainText('Other Workspace');
-      await expect(page.getByText('/tmp/demo-workspace')).toHaveCount(0);
+      await expect(page.getByTestId('chat-workspace-path')).toHaveText('/tmp/demo-workspace');
+      await expect(page.getByTestId('chat-workspace-path')).toHaveAttribute('title', '/tmp/demo-workspace');
       await expect(page.getByText('/tmp/other-workspace')).toHaveCount(0);
 
       await expect(page.getByTestId('sidebar-session-project-toggle-workspace-1')).toHaveAttribute('aria-expanded', 'true');

@@ -39,7 +39,7 @@ export type OrchestrationPresetMatchResult = {
   preset?: TrustedOrchestrationPreset;
 };
 
-let presetStoreInstance: /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ any = null;
+let presetStoreInstance: any = null;
 
 async function getPresetStore() {
   if (!presetStoreInstance) {

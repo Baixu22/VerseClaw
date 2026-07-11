@@ -254,13 +254,10 @@ const FIELD_WEIGHTS = { subject: 3, predicate: 2, objectSummary: 1 } as const;
  */
 export const OPTIMAL_HYBRID_FUSION: HybridSearchFusionOptions = {
   normalizeByPathCount: true,
-  // P2-3 (2026-07-04): k=0 → k=60. With cross-encoder ceScore now driving
-  // final ranking (S0-3), RRF only shapes the candidate pool. k=60 produces
-  // a more diverse candidate pool (BM25/entity-only matches get closer scores
-  // to Vector matches), letting the cross-encoder see more candidates. k=0
-  // was optimal pre-cross-encoder because it amplified rank gaps for stable
-  // MRR, but that's now the cross-encoder's job.
-  rrfK: 60,
+  // Direct production consumers return hybrid hits without invoking the
+  // optional cross-encoder reranker. Keep the ablation-selected k=0 so vector
+  // rank gaps remain visible in the final ordering.
+  rrfK: 0,
   wBm25: 0.5,
   wVector: 1.0,
   wEntity: 0.5,

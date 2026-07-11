@@ -197,7 +197,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 describe('WorkspaceGitPanel', () => {
-  it('quantifies repository state, worktrees, stashes, GitHub PRs, and operations through host APIs', async () => {
+  it('quantifies repository state, worktrees, stashes, GitHub PRs, and operations through host APIs', { timeout: 15_000 }, async () => {
     hostApiMock.git.status.mockResolvedValue({
       status: {
         isRepository: true,

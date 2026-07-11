@@ -32,7 +32,6 @@ import { getActiveWorkspaceProfile } from './workspaces-api';
 import { isPathInsideWorkspace, requireWorkspace } from './workspace-permissions';
 import { appendTaskLedgerEvents } from './task-ledger-service';
 import { upsertObservabilityTrace } from './observability-service';
-import { redactSecrets } from '../../openclaw_runtime/src/logging/redact.js';
 
 type ExecResult = {
   exitCode: number | null;
@@ -62,6 +61,7 @@ type RuntimeReviewOutput = {
 
 const MAX_PATCH_CHARS = 120_000;
 const DEFAULT_REVIEW_TIMEOUT_MS = 120_000;
+const REVIEW_PROMPT_REDACTED = '[redacted]';
 const SEVERITY_ORDER: Record<CodeReviewSeverity, number> = {
   critical: 0,
   high: 1,
@@ -71,6 +71,22 @@ const SEVERITY_ORDER: Record<CodeReviewSeverity, number> = {
 };
 
 const reviewRuns = new Map<string, CodeReviewRun>();
+
+function redactReviewPrompt(value: string): string {
+  return value
+    .replace(
+      /\b([A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD))\b(\s*[=:]\s*)(["']?)([^\s"'\\]+)\3/gu,
+      (_match, key: string, separator: string, quote: string) => (
+        `${key}${separator}${quote}${REVIEW_PROMPT_REDACTED}${quote}`
+      ),
+    )
+    .replace(
+      /(["'](?:apiKey|token|secret|password|accessToken|refreshToken)["']\s*:\s*["'])[^"']+(["'])/giu,
+      `$1${REVIEW_PROMPT_REDACTED}$2`,
+    )
+    .replace(/\bAuthorization\s*[:=]\s*Bearer\s+[A-Za-z0-9._\-+=]+/giu, `Authorization: Bearer ${REVIEW_PROMPT_REDACTED}`)
+    .replace(/\b(?:sk-|ghp_|github_pat_|xox[baprs]-|gsk_|pplx-|npm_)[A-Za-z0-9_-]{8,}\b/giu, REVIEW_PROMPT_REDACTED);
+}
 
 function trimOutput(value: string, limit = MAX_PATCH_CHARS): { text: string; truncated: boolean } {
   if (value.length <= limit) return { text: value, truncated: false };
@@ -277,7 +293,7 @@ export async function collectCodeReviewDiffForTarget(target: CodeReviewTarget): 
 
 function buildReviewPrompt(bundle: ReviewDiffBundle, focus?: string): string {
   const focusText = normalizeString(focus);
-  const promptPatch = redactSecrets(bundle.patch);
+  const promptPatch = redactReviewPrompt(bundle.patch);
   return [
     'You are reviewing a Git diff for Verse Claw.',
     'This is a read-only code review. Do not suggest applying patches, staging, committing, or editing files directly.',
