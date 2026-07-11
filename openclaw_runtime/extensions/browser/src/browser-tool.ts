@@ -822,7 +822,7 @@ export function createBrowserTool(opts?: {
                   : "media image understanding";
               const headerLines = [`[analyzed by ${analyzedBy}]`];
               // Vision model descriptions contain web page content which is
-              // untrusted external input â€?wrap it the same way snapshot and
+              // untrusted external input â€” wrap it the same way snapshot and
               // tabs results are wrapped to mitigate prompt injection.
               const wrappedDescription = wrapExternalContent(
                 neutralizeMediaDirectives(described.text.trim()),
@@ -836,7 +836,7 @@ export function createBrowserTool(opts?: {
                 content: [{ type: "text", text }],
                 details: {
                   ...(result as Record<string, unknown>),
-                  // Do NOT include details.media here â€?the vision path returns
+                  // Do NOT include details.media here â€” the vision path returns
                   // a text description as the deliverable output. Exposing the raw
                   // screenshot as media would cause channel delivery to auto-send
                   // potentially sensitive page content. The local screenshot file

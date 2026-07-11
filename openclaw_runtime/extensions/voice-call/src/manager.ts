@@ -133,7 +133,7 @@ export class CallManager {
         const elapsed = Date.now() - call.answeredAt;
         const maxDurationMs = resolveVoiceCallSecondsTimerDelayMs(this.config.maxDurationSeconds);
         if (elapsed >= maxDurationMs) {
-          // Already expired â€?remove instead of keeping
+          // Already expired â€” remove instead of keeping
           verified.delete(callId);
           if (call.providerCallId) {
             this.providerCallIdMap.delete(call.providerCallId);
@@ -188,7 +188,7 @@ export class CallManager {
     let keptVerificationFailures = 0;
 
     for (const [callId, call] of candidates) {
-      // Skip calls without a provider ID â€?can't verify
+      // Skip calls without a provider ID â€” can't verify
       if (!call.providerCallId) {
         skippedNoProviderCallId += 1;
         continue;
@@ -233,7 +233,7 @@ export class CallManager {
             }
           })
           .catch(() => {
-            // Verification failed entirely â€?keep the call, rely on timer
+            // Verification failed entirely â€” keep the call, rely on timer
             keptVerificationFailures += 1;
             verified.set(callId, call);
           }),

@@ -342,8 +342,8 @@ export function convertLinksToFlexBubble(links: MarkdownLink[]): FlexBubble {
 
 /**
  * Main function: Process text for LINE output
- * - Extracts tables â†?Flex Messages
- * - Extracts code blocks â†?Flex Messages
+ * - Extracts tables â†’ Flex Messages
+ * - Extracts code blocks â†’ Flex Messages
  * - Strips remaining markdown
  * - Returns processed text + Flex Messages
  */

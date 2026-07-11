@@ -1,5 +1,5 @@
 /**
- * Text parsing utilities �?zero external dependency.
+ * Text parsing utilities — zero external dependency.
  *
  * Contains pure functions for message text processing.
  */
@@ -20,7 +20,7 @@ export function filterInternalMarkers(text: string | undefined | null): string {
 
 // ============ Ref indices ============
 
-/** QQ 引用（回复）消息类型常量�?*/
+/** QQ 引用（回复）消息类型常量。 */
 export const MSG_TYPE_QUOTE = 103;
 
 /**
@@ -32,7 +32,7 @@ export const MSG_TYPE_QUOTE = 103;
  *
  * When `messageType` equals `MSG_TYPE_QUOTE` (103) and `msgElements` is
  * provided, `msgElements[0].msg_idx` takes precedence over the ext-parsed
- * `refMsgIdx` value �?the element-level index is more authoritative for
+ * `refMsgIdx` value — the element-level index is more authoritative for
  * quote messages.
  */
 export function parseRefIndices(

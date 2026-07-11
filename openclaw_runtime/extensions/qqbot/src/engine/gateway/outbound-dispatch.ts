@@ -1,10 +1,10 @@
 /**
- * Outbound dispatcher â€?manage AI reply delivery, tool fallback, and timeouts.
+ * Outbound dispatcher â€” manage AI reply delivery, tool fallback, and timeouts.
  *
  * Responsibilities:
  * 1. Build ctxPayload and call runtime.dispatchReply
  * 2. Tool deliver collection + fallback timeout
- * 3. Block deliver pipeline (consumeQuoteRef â†?media tags â†?structured payload â†?plain text)
+ * 3. Block deliver pipeline (consumeQuoteRef â†’ media tags â†’ structured payload â†’ plain text)
  * 4. Timeout / error handling
  *
  * Separated from gateway.ts for testability and to keep handleMessage thin.
@@ -48,7 +48,7 @@ import type {
 // Historical floor for the QQBot outbound response watchdog (5 min). The
 // effective wait budget is now derived from existing
 // `agents.defaults.timeoutSeconds` and `models.providers.<id>.timeoutSeconds`
-// via `resolveResponseTimeoutMs(cfg)` â€?see issue #85267, where a slow
+// via `resolveResponseTimeoutMs(cfg)` â€” see issue #85267, where a slow
 // local ollama/qwen3.5:27b turn was capped at 5 min despite a configured
 // 1800s provider timeout.
 const TOOL_ONLY_TIMEOUT = 60_000;

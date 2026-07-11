@@ -5,7 +5,7 @@ import { getMSTeamsRuntime } from "../runtime.js";
 import type { MSTeamsTurnContext } from "../sdk-types.js";
 import { resolveMSTeamsSenderAccess } from "./access.js";
 
-/** Teams reaction type names �?Unicode emoji. */
+/** Teams reaction type names → Unicode emoji. */
 const TEAMS_REACTION_EMOJI: Record<string, string> = {
   like: "👍",
   heart: "❤️",

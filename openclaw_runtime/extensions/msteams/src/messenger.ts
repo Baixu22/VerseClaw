@@ -345,7 +345,7 @@ export async function buildActivity(
       if (!isPersonal && !isImage && tokenProvider && sharePointSiteId) {
         // Non-image in group chat/channel with SharePoint site configured:
         // Upload to SharePoint and use native file card attachment.
-        // Use the cached Graph-native chat ID when available â€?Bot Framework conversation IDs
+        // Use the cached Graph-native chat ID when available â€” Bot Framework conversation IDs
         // for personal DMs use a format (e.g. `a:1xxx`) that Graph API rejects.
         const chatId = conversationRef.graphChatId ?? conversationRef.conversation?.id;
 
@@ -581,7 +581,7 @@ export async function sendMSTeamsMessages(params: {
     return messageIds;
   }
 
-  // replyStyle === "top-level" â€?explicit "post at the top of the channel"
+  // replyStyle === "top-level" â€” explicit "post at the top of the channel"
   // intent. Do NOT add the thread suffix even when the stored ref has a
   // threadId; threading on a top-level send would defeat the operator's
   // explicit choice. Threaded sends route through the `replyStyle === "thread"`

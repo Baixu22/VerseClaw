@@ -589,9 +589,9 @@ const MEMORY_TRIGGERS = [
   /my\s+\w+\s+is|is\s+my/i,
   /i (like|prefer|hate|love|want|need)/i,
   /always|never|important/i,
-  /记住|記住|记下|記下|�?喜欢|喜歡|偏好|讨厌|討厭|爱|愛|想要|需�?|我的.*是|以后都用这个|以後都用這個|决定|決定|总是|總是|从不|永远|永遠|重要/i,
-  /覚えて|記憶して|忘れないで|私は.*(好き|嫌い|必要|欲し�?|好み|いつも|絶対|重要/i,
-  /기억해|기억해줘|잊지 마|나는.*(좋아|싫어|원해|필요)|�?*(이야|입니�?|항상|절대|중요/i,
+  /记住|記住|记下|記下|我(喜欢|喜歡|偏好|讨厌|討厭|爱|愛|想要|需要)|我的.*是|以后都用这个|以後都用這個|决定|決定|总是|總是|从不|永远|永遠|重要/i,
+  /覚えて|記憶して|忘れないで|私は.*(好き|嫌い|必要|欲しい)|好み|いつも|絶対|重要/i,
+  /기억해|기억해줘|잊지 마|나는.*(좋아|싫어|원해|필요)|내.*(이야|입니다)|항상|절대|중요/i,
 ];
 
 const CJK_TEXT = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
@@ -1391,7 +1391,7 @@ export function detectCategory(text: string): MemoryCategory {
   ) {
     return "preference";
   }
-  if (/rozhodli|decided|will use|budeme|决定|決定|以后都用|以後都用|これから|앞으�?i.test(lower)) {
+  if (/rozhodli|decided|will use|budeme|决定|決定|以后都用|以後都用|これから|앞으로/i.test(lower)) {
     return "decision";
   }
   if (/\+\d{10,}|@[\w.-]+\.\w+|is called|jmenuje se/i.test(lower)) {

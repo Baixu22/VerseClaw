@@ -2,7 +2,7 @@
  * Cross-platform path and detection helpers for core/ modules.
  *
  * Provides home/data/media directory helpers, platform detection,
- * silk-wasm availability checks â€?all without importing `openclaw/plugin-sdk`.
+ * silk-wasm availability checks â€” all without importing `openclaw/plugin-sdk`.
  * The temp-directory fallback is delegated to the PlatformAdapter.
  */
 

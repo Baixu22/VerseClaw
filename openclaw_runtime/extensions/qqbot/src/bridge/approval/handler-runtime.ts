@@ -88,14 +88,14 @@ const qqbotApprovalRuntimeSpec: ChannelApprovalNativeRuntimeSpec<
       if (resolveQQBotExecApprovalConfig({ cfg, accountId }) !== undefined) {
         const result = isQQBotExecApprovalClientEnabled({ cfg, accountId });
         getBridgeLogger().debug?.(
-          `[qqbot:approval-runtime] isConfigured(profile) accountId=${accountId} â†?${result}`,
+          `[qqbot:approval-runtime] isConfigured(profile) accountId=${accountId} â†’ ${result}`,
         );
         return result;
       }
       const account = resolveQQBotAccount(cfg, accountId ?? undefined);
       const result = account.enabled && account.secretSource !== "none";
       getBridgeLogger().debug?.(
-        `[qqbot:approval-runtime] isConfigured(fallback) accountId=${accountId} enabled=${account.enabled} secretSource=${account.secretSource} â†?${result}`,
+        `[qqbot:approval-runtime] isConfigured(fallback) accountId=${accountId} enabled=${account.enabled} secretSource=${account.secretSource} â†’ ${result}`,
       );
       return result;
     },
@@ -103,14 +103,14 @@ const qqbotApprovalRuntimeSpec: ChannelApprovalNativeRuntimeSpec<
       if (resolveQQBotExecApprovalConfig({ cfg, accountId }) !== undefined) {
         const result = shouldHandleQQBotExecApprovalRequest({ cfg, accountId, request });
         getBridgeLogger().debug?.(
-          `[qqbot:approval-runtime] shouldHandle(profile) accountId=${accountId} â†?${result}`,
+          `[qqbot:approval-runtime] shouldHandle(profile) accountId=${accountId} â†’ ${result}`,
         );
         return result;
       }
       const target = resolveQQTarget(request as ApprovalRequest);
       if (target === null) {
         getBridgeLogger().debug?.(
-          `[qqbot:approval-runtime] shouldHandle(fallback) accountId=${accountId} target=null â†?false`,
+          `[qqbot:approval-runtime] shouldHandle(fallback) accountId=${accountId} target=null â†’ false`,
         );
         return false;
       }
@@ -122,7 +122,7 @@ const qqbotApprovalRuntimeSpec: ChannelApprovalNativeRuntimeSpec<
       getBridgeLogger().debug?.(
         `[qqbot:approval-runtime] shouldHandle(fallback) accountId=${accountId} target=${JSON.stringify(
           target,
-        )} accountMatches=${accountMatches} â†?${accountMatches}`,
+        )} accountMatches=${accountMatches} â†’ ${accountMatches}`,
       );
       return accountMatches;
     },
@@ -160,7 +160,7 @@ const qqbotApprovalRuntimeSpec: ChannelApprovalNativeRuntimeSpec<
     },
 
     deliverPending: async ({ cfg, accountId, preparedTarget, pendingPayload }) => {
-      // Ensure the PlatformAdapter is registered â€?resolveQQBotAccount below
+      // Ensure the PlatformAdapter is registered â€” resolveQQBotAccount below
       // calls getPlatformAdapter() to resolve secret inputs.
       ensurePlatformAdapter();
       const account = resolveQQBotAccount(cfg, accountId ?? undefined);

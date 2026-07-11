@@ -33,7 +33,7 @@ export const QQBOT_PLUGIN_VERSION_UNKNOWN = "unknown";
 /**
  * Resolve the QQBot plugin version from `package.json`.
  *
- * @param startUrl â€?pass `import.meta.url` from the call site so the
+ * @param startUrl â€” pass `import.meta.url` from the call site so the
  *   lookup begins at the caller's file regardless of where this helper
  *   itself lives. Falls back to this module's own location when omitted.
  */

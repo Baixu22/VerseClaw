@@ -37,7 +37,7 @@ export function pickInformativeStatusText(
 // The SDK throws StreamCancelledError synchronously from stream.emit/update
 // when the user pressed Stop in Teams (Teams replies 403 to the next chunk
 // update and the SDK flips _canceled). Match by `name` rather than importing
-// the class â€?tsgo can't resolve the re-export chain through
+// the class â€” tsgo can't resolve the re-export chain through
 // @microsoft/teams.apps/dist/types/streamer, and the SDK's own code at
 // utils/promises/retry.js falls back to this same name check.
 function isStreamCancelledError(err: unknown): boolean {
@@ -54,7 +54,7 @@ function isStreamCancelledError(err: unknown): boolean {
  *   chunk goes onto the live preview card in Teams.
  * - "progress": no per-token streaming; the preview card carries an
  *   informative status that updates as tools run (e.g. "Looking up the
- *   schema..." â†?"Generating SQL..."). When tool-progress streaming is also
+ *   schema..." â†’ "Generating SQL..."). When tool-progress streaming is also
  *   enabled, raw tool names appear as bullets above the label.
  * - "block": disable native streaming entirely; the reply lands as a regular
  *   block message. We bypass the controller in that case.
@@ -88,7 +88,7 @@ export function createTeamsReplyStreamController(params: {
   // already started streaming. Differentiates "user pressed Stop" from "the
   // stream broke under us"; the second case wants block-delivery fallback so
   // the user gets the full reply instead of a truncated streamed prefix.
-  // Matches the pre-migration `TeamsHttpStream.hasContent â†?false` recovery.
+  // Matches the pre-migration `TeamsHttpStream.hasContent â†’ false` recovery.
   let streamFailed = false;
   let lastInformativeText = "";
   let progressLines: Array<string | ChannelProgressDraftLine> = [];
@@ -141,7 +141,7 @@ export function createTeamsReplyStreamController(params: {
 
   // Gate informative updates so they only start firing once meaningful work
   // has begun (avoids flickering "Thinking..." before the first real tool
-  // call). The gate is shape-agnostic â€?it just calls `onStart` once when the
+  // call). The gate is shape-agnostic â€” it just calls `onStart` once when the
   // first noteWork() arrives.
   const progressDraftGate = createChannelProgressDraftGate({
     onStart: renderInformativeUpdate,
@@ -156,7 +156,7 @@ export function createTeamsReplyStreamController(params: {
 
     onPartialReply(payload: { text?: string }): void {
       // Partial-token streaming only fires in "partial" mode. In "progress"
-      // mode, openclaw's pipeline doesn't deliver tokens â€?the model output
+      // mode, openclaw's pipeline doesn't deliver tokens â€” the model output
       // arrives as a single payload at preparePayload time.
       if (
         !stream ||
@@ -168,7 +168,7 @@ export function createTeamsReplyStreamController(params: {
         return;
       }
       // Convert cumulative-text from the pipeline into deltas for the SDK's
-      // appending sink. Without this, "Here's a" â†?"Here's a sonnet" â†?...
+      // appending sink. Without this, "Here's a" â†’ "Here's a sonnet" â†’ ...
       // gets emitted as full repeats and the SDK concatenates the lot.
       const fullText = payload.text;
       // If the pipeline ever sends shorter text than we've emitted (e.g.
@@ -189,7 +189,7 @@ export function createTeamsReplyStreamController(params: {
         // Non-cancel failure: latch streamFailed so `preparePayload` lets
         // block delivery happen even though tokens were already emitted.
         // The user may see a duplicate (streamed prefix + full block reply)
-        // â€?that's intentional and matches the pre-migration recovery
+        // â€” that's intentional and matches the pre-migration recovery
         // behavior; truncated-only is the worse outcome.
         streamFailed = true;
         params.log?.warn?.(
@@ -199,7 +199,7 @@ export function createTeamsReplyStreamController(params: {
     },
 
     /**
-     * Note that the agent is working â€?bumps the progress-draft gate so the
+     * Note that the agent is working â€” bumps the progress-draft gate so the
      * informative status starts (or refreshes) on the next render. Called
      * from the reply-dispatcher's typing callbacks.
      */
@@ -217,7 +217,7 @@ export function createTeamsReplyStreamController(params: {
       }
       const hadStarted = progressDraftGate.hasStarted;
       const progressActive = await progressDraftGate.noteWork();
-      // If the gate was already started, the call above is a no-op â€?refresh
+      // If the gate was already started, the call above is a no-op â€” refresh
       // the informative line manually so the latest progress lines render.
       if ((hadStarted || progressActive) && progressDraftGate.hasStarted) {
         renderInformativeUpdate();
@@ -263,7 +263,7 @@ export function createTeamsReplyStreamController(params: {
       if (!stream) {
         return payload;
       }
-      // User pressed Stop (or Teams ended the stream) â€?the streamed prefix
+      // User pressed Stop (or Teams ended the stream) â€” the streamed prefix
       // is already visible to the user. Dropping the payload here prevents a
       // second block message from re-delivering the rest, which would override
       // the explicit cancel intent.
@@ -282,7 +282,7 @@ export function createTeamsReplyStreamController(params: {
         tokensEmitted = false;
         return hasMedia ? { ...payload, text: undefined } : undefined;
       }
-      // Progress mode (or partial mode that received no tokens â€?e.g. a
+      // Progress mode (or partial mode that received no tokens â€” e.g. a
       // tool-only response): emit the final text into the stream so the
       // preview card transitions in place to the final reply. The SDK's
       // HttpStream accumulates the text and the next `finalize()` close()
@@ -355,7 +355,7 @@ export function createTeamsReplyStreamController(params: {
         // prefix is already visible to the user; the only loss is the
         // closing activity (AI-Generated marker, feedback channelData).
         // Latch streamFailed for parity with the mid-stream path and
-        // swallow the error â€?a thrown finalize would otherwise blow up
+        // swallow the error â€” a thrown finalize would otherwise blow up
         // the reply pipeline after the user already saw the response.
         streamFailed = true;
         streamFinalizationPending = false;

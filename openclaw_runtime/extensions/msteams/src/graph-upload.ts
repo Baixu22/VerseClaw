@@ -299,7 +299,7 @@ export async function resolveGraphChatId(params: {
   const fetchFn = params.fetchFn ?? fetch;
 
   // If the conversation ID already looks like a valid Graph chat ID, return it directly.
-  // Graph chat IDs start with "19:" â€?Bot Framework group chat IDs already use this format.
+  // Graph chat IDs start with "19:" â€” Bot Framework group chat IDs already use this format.
   if (botFrameworkConversationId.startsWith("19:")) {
     return botFrameworkConversationId;
   }

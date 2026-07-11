@@ -698,7 +698,7 @@ export function registerShortTermPromotionDreaming(api: OpenClawPluginApi): void
   let resolveStartupCron: (() => CronServiceLike | null) | null = null;
   // Hold a live reference to the gateway context so we can retry cron resolution at runtime.
   // The startup capture may fail if the cron service isn't available yet (race condition in
-  // startGatewaySidecars â€?the startup event fires via setTimeout(250ms) before deps.cron is
+  // startGatewaySidecars â€” the startup event fires via setTimeout(250ms) before deps.cron is
   // attached). By keeping the context, we can call getCron() again on later reconciliation
   // attempts when the service is guaranteed to be ready.  Fixes #67362.
   let gatewayContext: { getCron?: () => CronServiceLike | null } | null = null;
@@ -793,7 +793,7 @@ export function registerShortTermPromotionDreaming(api: OpenClawPluginApi): void
           resolveStartupCron = () => cron;
         }
       } catch {
-        // Ignore â€?fall through with cron = null
+        // Ignore â€” fall through with cron = null
       }
     }
     const configKey = runtimeConfigKey(config);

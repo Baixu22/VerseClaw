@@ -11,7 +11,7 @@ import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
  * `taskTimeoutMs` bounds how long the queue will block subsequent same-key
  * tasks behind a single in-flight task. After the cap, the in-flight task
  * is evicted from the blocking chain so newer messages for the same key
- * can proceed. The original task is NOT aborted â€?it continues running in
+ * can proceed. The original task is NOT aborted â€” it continues running in
  * the background; it just stops starving the queue.
  *
  * Without this cap, a single hung dispatch (e.g. an agent call that never

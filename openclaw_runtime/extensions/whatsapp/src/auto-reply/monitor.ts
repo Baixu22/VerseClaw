@@ -465,7 +465,7 @@ export async function monitorWebChannel(
             "web reconnect: setup status error; retrying",
           );
           runtime.error(
-            `WhatsApp Web connection closed during setup (status ${setupDecision.normalized.statusLabel}). Retry ${setupDecision.reconnectAttempts}/${reconnectPolicy.maxAttempts || "âˆ?} in ${formatDurationPrecise(setupDecision.delayMs ?? 0)}.`,
+            `WhatsApp Web connection closed during setup (status ${setupDecision.normalized.statusLabel}). Retry ${setupDecision.reconnectAttempts}/${reconnectPolicy.maxAttempts || "âˆž"} in ${formatDurationPrecise(setupDecision.delayMs ?? 0)}.`,
           );
           try {
             await controller.waitBeforeRetry(setupDecision.delayMs ?? 0);
@@ -508,7 +508,7 @@ export async function monitorWebChannel(
           "web reconnect: auth state still stabilizing during inbox attach; retrying",
         );
         runtime.error(
-          `WhatsApp auth state is still stabilizing. Retry ${retryDecision.reconnectAttempts}/${reconnectPolicy.maxAttempts || "âˆ?} for inbox attach in ${formatDurationPrecise(retryDecision.delayMs ?? 0)}.`,
+          `WhatsApp auth state is still stabilizing. Retry ${retryDecision.reconnectAttempts}/${reconnectPolicy.maxAttempts || "âˆž"} for inbox attach in ${formatDurationPrecise(retryDecision.delayMs ?? 0)}.`,
         );
         try {
           await controller.waitBeforeRetry(retryDecision.delayMs ?? 0);
@@ -731,8 +731,8 @@ export async function monitorWebChannel(
         "web reconnect: scheduling retry",
       );
       const reconnectMessage = isWatchdogRecoveryReconnect
-        ? `WhatsApp Web watchdog is recovering a stale connection (status ${decision.normalized.statusLabel}). Retry ${decision.reconnectAttempts}/${reconnectPolicy.maxAttempts || "âˆ?} in ${formatDurationPrecise(decision.delayMs ?? 0)}.`
-        : `WhatsApp Web connection closed (status ${decision.normalized.statusLabel}). Retry ${decision.reconnectAttempts}/${reconnectPolicy.maxAttempts || "âˆ?} in ${formatDurationPrecise(decision.delayMs ?? 0)}â€?(${decision.normalized.errorText})`;
+        ? `WhatsApp Web watchdog is recovering a stale connection (status ${decision.normalized.statusLabel}). Retry ${decision.reconnectAttempts}/${reconnectPolicy.maxAttempts || "âˆž"} in ${formatDurationPrecise(decision.delayMs ?? 0)}.`
+        : `WhatsApp Web connection closed (status ${decision.normalized.statusLabel}). Retry ${decision.reconnectAttempts}/${reconnectPolicy.maxAttempts || "âˆž"} in ${formatDurationPrecise(decision.delayMs ?? 0)}â€¦ (${decision.normalized.errorText})`;
       if (isWatchdogRecoveryReconnect) {
         runtime.log(warn(reconnectMessage));
       } else {

@@ -245,7 +245,7 @@ function parseXaiOAuthTokenResponse(
       ? json.id_token
       : undefined;
   // RFC 6749 expires_in preferred; access-token JWT exp is the only legitimate
-  // fallback for an access-token expiry â€?id_token exp reflects the OIDC
+  // fallback for an access-token expiry â€” id_token exp reflects the OIDC
   // session, not the access token, and may extend it past actual expiry.
   const expires = normalizeExpires(json.expires_in, now) ?? deriveExpiresFromJwt(accessToken);
   return {

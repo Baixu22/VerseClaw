@@ -202,7 +202,7 @@ function resolveIMessageAccountSourceOwner(params: {
  * another enabled account that targets the same local Messages source. Used
  * by the iMessage gateway lifecycle to skip starting redundant `imsg rpc`
  * watchers (openclaw/openclaw#65141) without otherwise marking the duplicate
- * disabled â€?outbound selection, status surfaces, and capability listings
+ * disabled â€” outbound selection, status surfaces, and capability listings
  * keep treating both accounts normally.
  */
 export function resolveIMessageDuplicateSourceOwner(params: {

@@ -47,7 +47,7 @@ function buildTelegramLink(link: MarkdownLinkSpan, text: string) {
   if (link.start === link.end) {
     return null;
   }
-  // Suppress auto-linkified file references (e.g. README.md â†?http://README.md)
+  // Suppress auto-linkified file references (e.g. README.md â†’ http://README.md)
   const label = text.slice(link.start, link.end);
   if (isAutoLinkedFileRef(href, label)) {
     return null;
@@ -93,7 +93,7 @@ function leadingWhitespaceLength(line: string): number {
 }
 
 function isTelegramBulletLine(line: string): boolean {
-  return /^[ \t]*(?:[â€?+-])[ \t]+\S/.test(line);
+  return /^[ \t]*(?:[â€¢*+-])[ \t]+\S/.test(line);
 }
 
 function isTelegramListBoundaryLine(line: string): boolean {

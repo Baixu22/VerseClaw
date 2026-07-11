@@ -78,7 +78,7 @@ import { buildSlackThreadingToolContext } from "./threading-tool-context.js";
 // module id and typed by a hand-written structural alias so TypeScript does
 // not have to crawl the SDK module's type graph just to type the loader.
 //
-// `openclaw/plugin-sdk/channel-policy` is intentionally NOT lazy here â€?
+// `openclaw/plugin-sdk/channel-policy` is intentionally NOT lazy here â€”
 // `./group-policy.js` already imports it eagerly, so deferring it from
 // `channel.ts` would not change the load graph.
 

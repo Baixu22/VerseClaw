@@ -546,7 +546,7 @@ export abstract class MemoryManagerSyncOps {
       return;
     }
     if (this.watcher || this.nativeMemoryWatchPairs.length > 0) {
-      // Already initialized â€?preserve idempotence.
+      // Already initialized â€” preserve idempotence.
       return;
     }
     // Core paths preserve original symlink-follow behavior (chokidar/fs.watch
@@ -581,7 +581,7 @@ export abstract class MemoryManagerSyncOps {
       this.dirty = true;
       this.scheduleWatchSync();
     };
-    // Native recursive fs.watch for directory paths â€?one watcher per
+    // Native recursive fs.watch for directory paths â€” one watcher per
     // directory on macOS (FSEvents) and Windows (ReadDirectoryChangesW).
     // Avoids chokidar's per-file fs.watch fan-out on large memory trees.
     //
@@ -602,7 +602,7 @@ export abstract class MemoryManagerSyncOps {
           ? this.attachLinuxMemoryDirectoryTreeWatchForDir(dir, markDirty)
           : false;
       if (!attached) {
-        // Native creation failed (dir missing, unsupported FS, throw) â€?
+        // Native creation failed (dir missing, unsupported FS, throw) â€”
         // fall back to chokidar so directory coverage isn't dropped.
         fileWatchPaths.add(dir);
       }
@@ -790,7 +790,7 @@ export abstract class MemoryManagerSyncOps {
             // parent watcher closed over the new recordedInode). If the
             // helper's own statSync races with the dir disappearing
             // between our inode check and its own check, it returns
-            // false â€?fall back to chokidar so coverage isn't lost.
+            // false â€” fall back to chokidar so coverage isn't lost.
             if (!this.attachNativeMemoryWatchForDir(dir, markDirty)) {
               this.attachMemoryChokidarFallback(dir, markDirty);
             }
@@ -811,7 +811,7 @@ export abstract class MemoryManagerSyncOps {
         if (pair.parent === parentWatcher) {
           pair.parent = null;
         }
-        // Main watcher still alive â€?root-replacement detection is lost
+        // Main watcher still alive â€” root-replacement detection is lost
         // but normal events still flow. No fallback needed.
       });
       pair.parent = parentWatcher;
@@ -1122,13 +1122,13 @@ export abstract class MemoryManagerSyncOps {
     markDirty: (watchPath?: string, stats?: MemoryWatchEventStats) => void,
   ): void {
     if (this.closed) {
-      // Manager teardown started â€?don't create new watcher resources.
+      // Manager teardown started â€” don't create new watcher resources.
       return;
     }
     try {
       if (this.watcher) {
         // Existing chokidar watcher (handling MEMORY.md and/or other file
-        // paths) â€?extend it to cover this directory too.
+        // paths) â€” extend it to cover this directory too.
         this.watcher.add(dir);
         return;
       }
@@ -1265,7 +1265,7 @@ export abstract class MemoryManagerSyncOps {
       // written once by the archive rotation and then never touched again.
       // They carry no incremental `append` semantics, so the delta-bytes /
       // delta-messages thresholds (designed for live transcripts accumulating
-      // appended messages) cannot gate them correctly â€?a short archive
+      // appended messages) cannot gate them correctly â€” a short archive
       // below the threshold would simply never reindex. Mark them dirty
       // directly and skip the delta accounting.
       const baseName = path.basename(sessionFile);
@@ -1554,7 +1554,7 @@ export abstract class MemoryManagerSyncOps {
       params.progress.report({
         completed: params.progress.completed,
         total: params.progress.total,
-        label: this.batch.enabled ? "Indexing memory files (batch)..." : "Indexing memory filesâ€?,
+        label: this.batch.enabled ? "Indexing memory files (batch)..." : "Indexing memory filesâ€¦",
       });
     }
 
@@ -1654,7 +1654,7 @@ export abstract class MemoryManagerSyncOps {
       params.progress.report({
         completed: params.progress.completed,
         total: params.progress.total,
-        label: this.batch.enabled ? "Indexing session files (batch)..." : "Indexing session filesâ€?,
+        label: this.batch.enabled ? "Indexing session files (batch)..." : "Indexing session filesâ€¦",
       });
     }
 
@@ -1809,7 +1809,7 @@ export abstract class MemoryManagerSyncOps {
       progress.report({
         completed: progress.completed,
         total: progress.total,
-        label: "Loading vector extensionâ€?,
+        label: "Loading vector extensionâ€¦",
       });
     }
     const vectorReady = await this.ensureVectorReady();
