@@ -70,12 +70,12 @@ export async function resolveGraphConversationId(to: string): Promise<string> {
   const isUserTarget = /^user:/i.test(trimmed);
   const cleaned = stripTargetPrefix(trimmed);
 
-  // teamId/channelId or already a conversation ID (19:xxx) â€?use directly
+  // teamId/channelId or already a conversation ID (19:xxx) â€” use directly
   if (!isUserTarget) {
     return cleaned;
   }
 
-  // user:<aadId> â€?look up the conversation store for the real chat ID
+  // user:<aadId> â€” look up the conversation store for the real chat ID
   const store = createMSTeamsConversationStoreState();
   const found = await store.findPreferredDmByUserId(cleaned);
   if (!found) {
@@ -186,7 +186,7 @@ export async function pinMessageMSTeams(
   const conv = resolveConversationPath(conversationId);
 
   if (conv.kind === "channel") {
-    // Graph v1.0 does not expose pinnedMessages on channels â€?only on chats.
+    // Graph v1.0 does not expose pinnedMessages on channels â€” only on chats.
     // Attempting this would 404.
     throw new Error(
       "Pin/unpin is not supported for channel messages on Graph v1.0. " +
@@ -364,7 +364,7 @@ export type ListReactionsMSTeamsResult = {
 /**
  * Normalize a reaction type string. Graph setReaction/unsetReaction accepts
  * the well-known legacy names (like, heart, laugh, surprised, sad, angry)
- * as well as Unicode emoji values â€?so we pass unknown types through rather
+ * as well as Unicode emoji values â€” so we pass unknown types through rather
  * than rejecting them.
  */
 function normalizeReactionType(raw: string): string {

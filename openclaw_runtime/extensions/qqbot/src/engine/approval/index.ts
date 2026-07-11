@@ -1,5 +1,5 @@
 /**
- * Approval helpers â€?pure functions, zero framework dependencies.
+ * Approval helpers â€” pure functions, zero framework dependencies.
  *
  * - Build approval message text + inline keyboard
  * - Resolve delivery target from session metadata

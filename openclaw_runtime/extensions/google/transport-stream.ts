@@ -598,7 +598,7 @@ function convertGoogleMessages(model: GoogleTransportModel, context: Context) {
               : undefined;
           // Use a block's own same-route signature first; otherwise fall back
           // to a same-route replayed value from already-converted context.
-          // Never replay signatures from foreign providers â€?Gemini requires
+          // Never replay signatures from foreign providers â€” Gemini requires
           // its own signatures returned exactly as issued.
           const ownSignature = isSameRoute
             ? sanitizeGeminiThoughtSignature(block.thoughtSignature)

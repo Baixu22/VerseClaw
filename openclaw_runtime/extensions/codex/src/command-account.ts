@@ -207,7 +207,7 @@ function resolveActiveProfileId(params: {
   // authoritative for the status display and overrides `lastGood`/usage
   // heuristics, matching the core `resolveAuthProfileOrder` precedence so the
   // display does not silently disagree with the runtime resolver. When no
-  // fully-usable candidate exists return undefined â€?marking an ineligible
+  // fully-usable candidate exists return undefined â€” marking an ineligible
   // profile as active would misrepresent what the runtime resolver can use.
   if (params.explicitOrder) {
     return params.order.find(

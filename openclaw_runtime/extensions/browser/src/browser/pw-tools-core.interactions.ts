@@ -88,9 +88,9 @@ function reconcileRemoteDialogAfterActionSettled(page: Page, signal?: AbortSigna
 const resolveInteractionTimeoutMs = resolveActInteractionTimeoutMs;
 
 // Returns true only when the URL change indicates a cross-document navigation
-// (i.e., a real network fetch occurred). Same-document hash-only mutations â€?
+// (i.e., a real network fetch occurred). Same-document hash-only mutations â€”
 // anchor clicks and history.pushState/replaceState that change only the
-// fragment â€?do not cause a network request and must not trigger SSRF checks.
+// fragment â€” do not cause a network request and must not trigger SSRF checks.
 function didCrossDocumentUrlChange(page: { url(): string }, previousUrl: string): boolean {
   const currentUrl = page.url();
   if (currentUrl === previousUrl) {
@@ -104,7 +104,7 @@ function didCrossDocumentUrlChange(page: { url(): string }, previousUrl: string)
       prev.pathname === curr.pathname &&
       prev.search === curr.search
     ) {
-      // Only the fragment changed â€?same-document navigation, no fetch.
+      // Only the fragment changed â€” same-document navigation, no fetch.
       return false;
     }
   } catch {
@@ -115,7 +115,7 @@ function didCrossDocumentUrlChange(page: { url(): string }, previousUrl: string)
 
 // Returns true when a framenavigated event represents only a hash-only
 // same-document mutation (no network request). Used in event-driven checks
-// where the event itself is the navigation signal â€?unlike URL polling, we
+// where the event itself is the navigation signal â€” unlike URL polling, we
 // cannot use identical URLs as a "no navigation" sentinel because same-URL
 // reloads and form submits also fire framenavigated with an unchanged URL.
 function isHashOnlyNavigation(currentUrl: string, previousUrl: string): boolean {

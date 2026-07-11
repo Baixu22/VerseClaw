@@ -1,11 +1,11 @@
 /**
- * OcPath â†?MdAst node. Walks an in-memory AST; the file slot is
+ * OcPath â†’ MdAst node. Walks an in-memory AST; the file slot is
  * informational (callers verify file matching upstream).
  *
- *   { file }                         â†?root
- *   { file, section }                â†?block
- *   { file, section, item }          â†?item
- *   { file, section, item, field }   â†?kv.value
+ *   { file }                         â†’ root
+ *   { file, section }                â†’ block
+ *   { file, section, item }          â†’ item
+ *   { file, section, item, field }   â†’ kv.value
  *
  * @module @openclaw/oc-path/resolve
  */

@@ -43,7 +43,7 @@ export function isWebSocketUrl(url: string): boolean {
 
 /**
  * Returns true when `url` is a ws/wss URL with a `/devtools/<kind>/<id>`
- * path segment â€?i.e. a handshake-ready per-browser or per-target CDP
+ * path segment â€” i.e. a handshake-ready per-browser or per-target CDP
  * endpoint that can be opened directly without HTTP discovery.
  *
  * Bare ws roots (`ws://host:port`, `ws://host:port/`) and any other

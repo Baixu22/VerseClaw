@@ -104,8 +104,8 @@ export async function handleFileWrite(
     return err("INVALID_BASE64", "contentBase64 is required");
   }
 
-  // 2. Decode base64 â†?Buffer.
-  //    Buffer.from(s, "base64") in Node never throws â€?it silently drops
+  // 2. Decode base64 â†’ Buffer.
+  //    Buffer.from(s, "base64") in Node never throws â€” it silently drops
   //    non-base64 characters and returns whatever it could decode. That
   //    means a typo or truncated input would land garbage on disk if we
   //    accepted whatever decoded. Defense: round-trip the decoded buffer
@@ -222,7 +222,7 @@ export async function handleFileWrite(
   //    supplied expectedSha256 and it doesn't match, refuse outright so
   //    a bad caller hash with overwrite=true can't replace + delete the
   //    original. Computing from the buffer (not a re-read) is the right
-  //    source of truth â€?the caller asked us to write THESE bytes.
+  //    source of truth â€” the caller asked us to write THESE bytes.
   const computedSha256 = sha256Hex(buf);
   if (expectedSha256 && expectedSha256.toLowerCase() !== computedSha256) {
     return err(

@@ -202,7 +202,7 @@ export async function sendPhoto(
     return { channel: "qqbot", error: `Unsupported image source: ${mediaPath.slice(0, 50)}` };
   }
 
-  // Remote URL or data: URL â€?try direct upload first, fall back to
+  // Remote URL or data: URL â€” try direct upload first, fall back to
   // download-then-local on failure.
   try {
     const creds = accountToCreds(ctx.account);
@@ -649,7 +649,7 @@ async function downloadToFallbackDir(httpUrl: string, caller: string): Promise<s
       debugError(`${caller} fallback: download also failed for ${httpUrl.slice(0, 80)}`);
       return null;
     }
-    debugLog(`${caller} fallback: downloaded â†?${localFile}`);
+    debugLog(`${caller} fallback: downloaded â†’ ${localFile}`);
     return localFile;
   } catch (err) {
     debugError(`${caller} fallback download error:`, err);

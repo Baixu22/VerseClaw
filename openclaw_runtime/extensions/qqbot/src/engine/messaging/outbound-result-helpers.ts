@@ -37,7 +37,7 @@ export function buildDailyLimitExceededResult(err: UploadDailyLimitExceededError
   const size = formatFileSize(err.fileSize);
   return {
     channel: "qqbot",
-    error: `QQBot每天发送文件有累计2G的限制，如果着急的话，可以直接来我的主机copy下载，文件目录\`${dir}/${name}\`�?{size}）`,
+    error: `QQBot每天发送文件有累计2G的限制，如果着急的话，可以直接来我的主机copy下载，文件目录\`${dir}/${name}\`（${size}）`,
     errorCode: OUTBOUND_ERROR_CODES.UPLOAD_DAILY_LIMIT_EXCEEDED,
     qqBizCode: UPLOAD_PREPARE_FALLBACK_CODE,
   };
@@ -49,7 +49,7 @@ export function buildFileTooLargeResult(fileType: MediaFileType, fileSize: numbe
   const limitMB = Math.round(limit / (1024 * 1024));
   return {
     channel: "qqbot",
-    error: `${typeName}过大�?{formatFileSize(fileSize)}），超过�?{limitMB}M，暂时不能通过QQ直接发给你。`,
+    error: `${typeName}过大（${formatFileSize(fileSize)}），超过了${limitMB}M，暂时不能通过QQ直接发给你。`,
     errorCode: OUTBOUND_ERROR_CODES.FILE_TOO_LARGE,
   };
 }

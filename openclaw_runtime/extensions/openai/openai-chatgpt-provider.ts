@@ -427,7 +427,7 @@ async function runOpenAICodexOAuth(ctx: OpenAICodexOAuthContext) {
     openUrl: ctx.openUrl,
     signal: ctx.signal,
     onManualCodeInput: ctx.onManualCodeInput,
-    localBrowserMessage: "Complete sign-in in browserâ€?,
+    localBrowserMessage: "Complete sign-in in browserâ€¦",
   });
   if (!creds) {
     return { profiles: [] };
@@ -452,7 +452,7 @@ async function runOpenAICodexOAuth(ctx: OpenAICodexOAuthContext) {
 }
 
 async function runOpenAICodexDeviceCode(ctx: ProviderAuthContext) {
-  const spin = ctx.prompter.progress("Starting device code flowâ€?);
+  const spin = ctx.prompter.progress("Starting device code flowâ€¦");
   try {
     const creds = await loginOpenAICodexDeviceCode({
       onProgress: (message) => spin.update(message),

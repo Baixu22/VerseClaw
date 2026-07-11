@@ -54,7 +54,7 @@ export function isBotMentionedFromTargets(
   // `isSelfChatMode` is a config-shaped check ("is the bot's own E.164 in
   // allowFrom?"), not a conversation-shaped check, so it returns true even
   // for group conversations whenever the operator put their own number in
-  // allowFrom â€?which is the common config. The original mention-skip path
+  // allowFrom â€” which is the common config. The original mention-skip path
   // was designed to prevent owner-mentioning-self in a true 1:1 self DM
   // from falsely triggering the bot, so when we derive the flag implicitly
   // from `allowFrom`, confine the suppression to non-group conversations

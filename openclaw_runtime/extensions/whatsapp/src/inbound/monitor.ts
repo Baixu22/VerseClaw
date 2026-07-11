@@ -597,7 +597,7 @@ export async function attachWebInboxToSocket(
 
     const group = isGroupJid(remoteJid);
     // Drop echoes of messages the gateway itself sent (tracked by sendTrackedMessage).
-    // Applies to both groups and DMs/self-chat â€?without this, self-chat mode
+    // Applies to both groups and DMs/self-chat â€” without this, self-chat mode
     // re-processes the bot's own replies as new inbound user messages.
     if (
       Boolean(msg.key?.fromMe) &&

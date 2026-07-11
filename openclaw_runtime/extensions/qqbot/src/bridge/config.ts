@@ -104,7 +104,7 @@ export function resolveQQBotAccount(
   const qqbot = cfg.channels?.qqbot as QQBotChannelConfig | undefined;
   /**
    * Legacy top-level account uses `channels.qqbot` as the base, but per-account
-   * fields (allowFrom, streaming, â€? often live under `accounts.default`.
+   * fields (allowFrom, streaming, â€¦) often live under `accounts.default`.
    * Merge that slice so runtime sees `config.streaming` etc.
    */
   const accountConfig: QQBotAccountConfig =

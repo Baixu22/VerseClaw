@@ -267,7 +267,7 @@ export function createDiscordVoiceCommand(params: VoiceCommandContext): CommandW
         return;
       }
       const lines = sessions.map(
-        (entry) => `â€?${formatMention({ channelId: entry.channelId })} (guild ${entry.guildId})`,
+        (entry) => `â€¢ ${formatMention({ channelId: entry.channelId })} (guild ${entry.guildId})`,
       );
       await interaction.reply({ content: lines.join("\n"), ephemeral: true });
     }

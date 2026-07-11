@@ -120,7 +120,7 @@ export function formatSlackSocketReconnectMessage(params: {
   delayMs: number;
   error?: unknown;
 }) {
-  const maxAttempts = params.maxAttempts > 0 ? String(params.maxAttempts) : "âˆ?;
+  const maxAttempts = params.maxAttempts > 0 ? String(params.maxAttempts) : "âˆž";
   const suffix = params.error ? ` (${formatUnknownError(params.error)})` : "";
   return `slack socket disconnected (${params.event}); reconnecting in ${Math.round(params.delayMs / 1000)}s (attempt ${params.attempt}/${maxAttempts})${suffix}`;
 }
@@ -132,7 +132,7 @@ export function formatSlackSocketStartRetryMessage(params: {
   error: unknown;
   sdkContext?: string;
 }) {
-  const maxAttempts = params.maxAttempts > 0 ? String(params.maxAttempts) : "âˆ?;
+  const maxAttempts = params.maxAttempts > 0 ? String(params.maxAttempts) : "âˆž";
   const reason = formatUnknownError(
     params.error,
     "Slack Socket Mode start failed without error detail",
@@ -571,7 +571,7 @@ export async function monitorSlackProvider(opts: MonitorSlackOpts = {}) {
           // Bail immediately on non-recoverable auth errors during reconnect too.
           if (disconnect.error && isNonRecoverableSlackAuthError(disconnect.error)) {
             runtime.error?.(
-              `slack socket mode disconnected due to non-recoverable auth error â€?skipping channel (${formatUnknownError(disconnect.error)})`,
+              `slack socket mode disconnected due to non-recoverable auth error â€” skipping channel (${formatUnknownError(disconnect.error)})`,
             );
             throw disconnect.error instanceof Error
               ? disconnect.error
@@ -607,11 +607,11 @@ export async function monitorSlackProvider(opts: MonitorSlackOpts = {}) {
             break;
           }
         } catch (err) {
-          // Auth errors (account_inactive, invalid_auth, etc.) are permanent â€?
+          // Auth errors (account_inactive, invalid_auth, etc.) are permanent â€”
           // retrying will never succeed and blocks the entire gateway.  Fail fast.
           if (isNonRecoverableSlackAuthError(err)) {
             runtime.error?.(
-              `slack socket mode failed to start due to non-recoverable auth error â€?skipping channel (${formatUnknownError(err)})`,
+              `slack socket mode failed to start due to non-recoverable auth error â€” skipping channel (${formatUnknownError(err)})`,
             );
             throw err;
           }

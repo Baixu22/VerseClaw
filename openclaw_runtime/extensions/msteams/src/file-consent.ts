@@ -77,7 +77,7 @@ export async function validateConsentUploadUrl(
     throw new Error(`Consent upload URL hostname "${hostname}" is not in the allowed domains`);
   }
 
-  // 3. DNS resolution â€?reject private/reserved IPs.
+  // 3. DNS resolution â€” reject private/reserved IPs.
   // Check all resolved addresses to avoid SSRF bypass via mixed public/private answers.
   const resolveFn = opts?.resolveFn ?? ((name: string) => lookup(name, { all: true }));
   let resolved: { address: string }[];
@@ -198,7 +198,7 @@ export async function uploadToConsentUrl(params: {
   buffer: Buffer;
   contentType?: string;
   fetchFn?: typeof fetch;
-  /** Override for testing â€?custom allowlist and DNS resolver */
+  /** Override for testing â€” custom allowlist and DNS resolver */
   validationOpts?: {
     allowlist?: readonly string[];
     resolveFn?: (hostname: string) => Promise<{ address: string } | { address: string }[]>;

@@ -211,7 +211,7 @@ async function downloadGraphHostedContent(params: {
         continue;
       }
     } else if (item.id) {
-      // contentBytes not inline â€?fetch from the individual $value endpoint.
+      // contentBytes not inline â€” fetch from the individual $value endpoint.
       try {
         const valueUrl = `${params.messageUrl}/hostedContents/${encodeURIComponent(item.id)}/$value`;
         const { response: valRes, release } = await fetchWithSsrFGuard({
