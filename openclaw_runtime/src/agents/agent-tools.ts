@@ -745,7 +745,14 @@ export function createOpenClawCodingTools(options?: {
 
   const base: AnyAgentTool[] = [];
   if (includeBaseCodingTools) {
-    for (const tool of createCodingTools(codingRoot) as unknown as AnyAgentTool[]) {
+    // The ported bash tool is never used here (the shell surface is the native
+    // exec/process family below), so skip constructing it at all.
+    const baseCodingTools = createCodingTools(codingRoot, undefined, [
+      "read",
+      "edit",
+      "write",
+    ]) as unknown as AnyAgentTool[];
+    for (const tool of baseCodingTools) {
       if (tool.name === "read") {
         if (sandboxRoot) {
           const sandboxed = createSandboxedReadTool({
