@@ -1,0 +1,17 @@
+W1 canonical Git-index apply GREEN
+Date: 2026-07-11
+Command: node --test openclaw_runtime/scripts/runtime-utf8-inventory.test.mjs
+Exit: 0
+
+Result:
+- tests: 23
+- pass: 23
+- fail: 0
+
+Covered behavior:
+- index blob bytes are the canonical offset/hash preimage;
+- worktree bytes must clean-filter to the exact index blob OID;
+- canonical repaired output must match expected postimage SHA-256;
+- worktree output is produced through git cat-file --filters with the real path;
+- CRLF checkout bytes remain CRLF;
+- substantive worktree drift is rejected before any source write.

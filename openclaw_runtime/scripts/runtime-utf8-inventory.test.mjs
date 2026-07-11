@@ -606,6 +606,84 @@ test("prepares every repair before writing any file", (t) => {
   assert.deepEqual(fs.readFileSync(secondPath), original);
 });
 
+test("applies canonical Git-index spans through the real worktree filters", (t) => {
+  const repoRoot = createGitFixture(t);
+  runGit(repoRoot, ["config", "core.autocrlf", "true"]);
+  const filePath = path.join(repoRoot, "broken.ts");
+  const canonicalOriginal = Buffer.from("610ae2863f620a", "hex");
+  const canonicalExpected = Buffer.from("610ae28692620a", "hex");
+  fs.writeFileSync(filePath, canonicalOriginal);
+  runGit(repoRoot, ["add", "broken.ts"]);
+  runGit(repoRoot, ["commit", "--quiet", "-m", "fixture"]);
+  const crlfOriginal = Buffer.from("610d0ae2863f620d0a", "hex");
+  const crlfExpected = Buffer.from("610d0ae28692620d0a", "hex");
+  fs.writeFileSync(filePath, crlfOriginal);
+  assert.equal(
+    runGit(repoRoot, ["hash-object", "--path=broken.ts", "broken.ts"]),
+    runGit(repoRoot, ["rev-parse", ":broken.ts"]),
+  );
+
+  const manifest = recoveryManifest(
+    recoveryEntry({
+      original: canonicalOriginal,
+      expected: canonicalExpected,
+      replacements: [
+        sourceSpan({
+          currentOffset: 2,
+          removeHex: "e2863f",
+          insertHex: "e28692",
+          leftAnchorHex: "610a",
+          rightAnchorHex: "620a",
+        }),
+      ],
+    }),
+  );
+  manifest.preimageMode = "git-index";
+
+  const [result] = applyRecoveryManifest({ repoRoot, manifest });
+
+  assert.deepEqual(fs.readFileSync(filePath), crlfExpected);
+  assert.equal(
+    result.postimageSha256,
+    createHash("sha256").update(canonicalExpected).digest("hex"),
+  );
+});
+
+test("rejects substantive worktree drift in Git-index mode before writing", (t) => {
+  const repoRoot = createGitFixture(t);
+  runGit(repoRoot, ["config", "core.autocrlf", "true"]);
+  const filePath = path.join(repoRoot, "broken.ts");
+  const canonicalOriginal = Buffer.from("610ae2863f620a", "hex");
+  const canonicalExpected = Buffer.from("610ae28692620a", "hex");
+  fs.writeFileSync(filePath, canonicalOriginal);
+  runGit(repoRoot, ["add", "broken.ts"]);
+  runGit(repoRoot, ["commit", "--quiet", "-m", "fixture"]);
+  const drifted = Buffer.from("7a0d0ae2863f620d0a", "hex");
+  fs.writeFileSync(filePath, drifted);
+  const manifest = recoveryManifest(
+    recoveryEntry({
+      original: canonicalOriginal,
+      expected: canonicalExpected,
+      replacements: [
+        sourceSpan({
+          currentOffset: 2,
+          removeHex: "e2863f",
+          insertHex: "e28692",
+          leftAnchorHex: "610a",
+          rightAnchorHex: "620a",
+        }),
+      ],
+    }),
+  );
+  manifest.preimageMode = "git-index";
+
+  assert.throws(
+    () => applyRecoveryManifest({ repoRoot, manifest }),
+    /worktree clean-filter identity mismatch/,
+  );
+  assert.deepEqual(fs.readFileSync(filePath), drifted);
+});
+
 test("CLI writes inventory evidence and exits nonzero while invalid UTF-8 remains", (t) => {
   const repoRoot = createGitFixture(t);
   const runtimeDir = path.join(repoRoot, "runtime");
