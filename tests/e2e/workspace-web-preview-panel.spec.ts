@@ -21,14 +21,14 @@ const workspace = {
   activeSessionKey: SESSION_KEY,
   state: {
     webPreview: {
-      mode: 'externalUrl',
+      mode: 'devServer',
       targetUrl: 'http://localhost:8082/',
     },
   },
   sessionStates: {
     [SESSION_KEY]: {
       webPreview: {
-        mode: 'externalUrl',
+        mode: 'devServer',
         targetUrl: 'http://localhost:8082/',
       },
     },
@@ -97,7 +97,7 @@ test.describe('Workspace Web preview panel', () => {
             success: true,
             running: true,
             status: 'running',
-            mode: 'externalUrl',
+            mode: 'devServer',
             previewId: PREVIEW_ID,
             previewUrl,
             url: previewUrl,
@@ -184,6 +184,21 @@ test.describe('Workspace Web preview panel', () => {
       await page.keyboard.press('Escape');
       await expect(webPreview.getByTestId('ai-web-preview-browser')).toBeVisible();
       await expect(webPreview.locator('iframe[title="Workspace preview"]')).toBeVisible();
+      await webPreview.getByTestId('ai-web-preview-mode-select').click();
+      await page.getByRole('option', { name: 'External URL' }).click();
+      await expect(sidePanel.getByRole('button', { name: 'Pick component' })).toHaveCount(0);
+      await webPreview.getByTestId('ai-web-preview-mode-select').click();
+      await page.getByRole('option', { name: 'Dev server' }).click();
+      await expect(sidePanel.getByRole('button', { name: 'Pick component' })).toBeVisible();
+
+      await webPreview.getByTestId('ai-web-preview-browser-menu').click();
+      await expect(page.getByRole('menu')).toBeVisible();
+      await expect(page.getByRole('menuitem', { name: 'Open externally' })).toBeVisible();
+      await expect(page).toHaveScreenshot('workspace-web-preview-browser-menu.png', {
+        animations: 'disabled',
+        caret: 'hide',
+      });
+      await page.keyboard.press('Escape');
 
       await webPreview.getByTestId('ai-web-preview-agent-browser-open').click();
       await expect.poll(async () => {

@@ -83,7 +83,7 @@ export function ArchiveModal({ open, onClose }: ArchiveModalProps) {
     <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
       <DialogContent
         data-testid="archive-modal"
-        className="flex max-h-[80vh] w-[calc(100%-2rem)] max-w-lg flex-col gap-0 overflow-hidden rounded-lg border bg-surface-modal p-0 shadow-lg"
+        className="flex max-h-[80vh] w-[calc(100%-2rem)] max-w-lg flex-col gap-0 overflow-hidden rounded-lg border bg-surface-modal p-0 shadow-lg motion-reduce:animate-none"
       >
         <div className="flex items-center justify-between border-b border-black/5 px-4 py-3 dark:border-white/10">
           <div className="flex items-center gap-2">
@@ -125,7 +125,7 @@ export function ArchiveModal({ open, onClose }: ArchiveModalProps) {
                 <li
                   key={entry.sessionKey}
                   data-testid={`archive-modal-item-${entry.sessionKey}`}
-                  className="group flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-black/5 dark:hover:bg-white/5"
+                  className="group flex min-h-12 items-center gap-2 rounded-md px-2 py-1.5 transition-[background-color,opacity,transform] duration-150 hover:bg-black/5 dark:hover:bg-white/5 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-reduce:transition-none"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-xs font-medium text-foreground/80">
@@ -135,7 +135,7 @@ export function ArchiveModal({ open, onClose }: ArchiveModalProps) {
                       {new Date(entry.archivedAt).toLocaleString()}
                     </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-0.5">
+                  <div className="flex min-w-[10.5rem] shrink-0 items-center justify-end gap-0.5">
                     <Button
                       data-testid={`archive-modal-restore-${entry.sessionKey}`}
                       variant="ghost"

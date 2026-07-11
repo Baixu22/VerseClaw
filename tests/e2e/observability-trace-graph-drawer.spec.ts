@@ -330,5 +330,6 @@ test.describe('Observability trace graph drawer', () => {
 
     await page.getByRole('tab', { name: 'Attributes' }).click();
     await expect(page.getByTestId('observability-diagnostics-attributes')).toContainText('exitCode');
+    await expect(page.getByTestId('observability-detail-panel').getByRole('tab')).toHaveCount(5);
   });
 });

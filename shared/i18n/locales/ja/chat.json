@@ -554,6 +554,8 @@
         "sendToComposer": "入力欄へ送信",
         "captureAndSend": "撮影して送信",
         "capturing": "撮影中",
+        "back": "戻る",
+        "forward": "進む",
         "refresh": "更新",
         "openExternal": "外部で開く",
         "openAgentBrowser": "Agent Browser で開く",
@@ -565,7 +567,9 @@
       "browser": {
         "placeholder": "プレビュー開始後に URL を読み込みます",
         "title": "ワークスペースプレビュー",
-        "agentBrowserActive": "Agent"
+        "agentBrowserActive": "Agent",
+        "menu": "ブラウザメニュー",
+        "pageActions": "ページ操作"
       },
       "selection": {
         "selected": "選択中"

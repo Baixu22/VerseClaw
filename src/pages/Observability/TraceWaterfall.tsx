@@ -55,10 +55,10 @@ export function TraceWaterfall({ trace }: { trace: ObservabilityTrace }) {
   const spans = useMemo(() => [...trace.spans].sort((a, b) => a.startedAt - b.startedAt), [trace.spans]);
 
   return (
-    <div className="space-y-3 p-4 bg-black/[0.02] dark:bg-white/[0.02] rounded-xl">
+    <div className="space-y-3 rounded-md border border-border bg-background p-3">
       {/* Header: name + status + duration + span count + tokens */}
       <div className="space-y-1">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+        <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
           <span className="font-medium text-foreground">{trace.name}</span>
           {trace.mode && (
             <Badge variant="secondary" className="rounded-full text-2xs">{trace.mode}</Badge>
