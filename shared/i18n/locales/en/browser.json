@@ -1,0 +1,13 @@
+{
+  "title": "Browser",
+  "subtitle": "Electron sessions, automation tasks, profiles, and protected credentials",
+  "tabs": { "sessions": "Sessions", "tasks": "Tasks", "profiles": "Profiles", "vault": "Vault", "runs": "Runs" },
+  "summary": { "sessions": "{{count}} sessions", "running": "{{count}} running" },
+  "actions": { "refresh": "Refresh", "takeOver": "Take over", "hide": "Hide", "stop": "Stop", "retry": "Retry", "cancel": "Cancel" },
+  "modes": { "headless": "Headless", "visible": "Visible" },
+  "sessions": { "empty": "No active browser sessions", "untitled": "Untitled page", "blank": "Blank page" },
+  "tasks": { "name": "Task name", "url": "Target URL", "objective": "Objective", "runNow": "Run now", "empty": "No browser tasks yet" },
+  "profiles": { "localState": "Persistent Electron site state", "active": "{{count}} active" },
+  "vault": { "protected": "Passwords are protected by the operating system and never shown to agents.", "empty": "No saved credentials" },
+  "status": { "queued": "Queued", "running": "Running", "waiting-approval": "Waiting approval", "paused": "Paused", "completed": "Completed", "failed": "Failed", "cancelled": "Cancelled" }
+}
