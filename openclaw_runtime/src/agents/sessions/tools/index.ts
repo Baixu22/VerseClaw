@@ -199,13 +199,29 @@ export function createAllToolDefinitions(
 }
 
 /** Creates the mutable coding tools used by local agent sessions. */
-export function createCodingTools(cwd: string, options?: ToolsOptions): Tool[] {
-  return [
-    createReadTool(cwd, options?.read),
-    createBashTool(cwd, options?.bash),
-    createEditTool(cwd, options?.edit),
-    createWriteTool(cwd, options?.write),
-  ];
+export function createCodingTools(
+  cwd: string,
+  options?: ToolsOptions,
+  only?: readonly ToolName[],
+): Tool[] {
+  // `only` lets callers materialize a subset without constructing (then
+  // discarding) the tools they will replace downstream. Omitting it preserves
+  // the historical [read, bash, edit, write] set and order.
+  const includeTool = (name: ToolName): boolean => only === undefined || only.includes(name);
+  const tools: Tool[] = [];
+  if (includeTool("read")) {
+    tools.push(createReadTool(cwd, options?.read));
+  }
+  if (includeTool("bash")) {
+    tools.push(createBashTool(cwd, options?.bash));
+  }
+  if (includeTool("edit")) {
+    tools.push(createEditTool(cwd, options?.edit));
+  }
+  if (includeTool("write")) {
+    tools.push(createWriteTool(cwd, options?.write));
+  }
+  return tools;
 }
 
 /** Creates read-only discovery tools for restricted sessions. */
