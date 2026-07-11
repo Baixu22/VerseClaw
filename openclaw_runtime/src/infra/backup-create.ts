@@ -20,6 +20,7 @@ import { requireNodeSqlite } from "./node-sqlite.js";
 import { isPathInside } from "./path-guards.js";
 
 const loadTarRuntime = createLazyRuntimeModule(() => import("tar"));
+const SQLITE_DATABASE_SUFFIXES = [".sqlite", ".sqlite3"] as const;
 const SQLITE_SIDECAR_SUFFIXES = ["-wal", "-shm", "-journal"] as const;
 
 type BackupAssetKind = "state" | "config" | "credentials" | "workspace";
@@ -187,6 +188,18 @@ function archiveEntryPath(archiveRoot: string, sourcePath: string): string {
   return path.posix.join(archiveRoot, "payload", encodeSourcePath(sourcePath));
 }
 
+function isRuntimeSqliteDatabasePath(entryPath: string): boolean {
+  const filename = path.basename(entryPath).toLowerCase();
+  return SQLITE_DATABASE_SUFFIXES.some((suffix) => filename.endsWith(suffix));
+}
+
+function isRuntimeSqlitePath(entryPath: string): boolean {
+  const filename = path.basename(entryPath).toLowerCase();
+  const sidecarSuffix = SQLITE_SIDECAR_SUFFIXES.find((suffix) => filename.endsWith(suffix));
+  const databaseFilename = sidecarSuffix ? filename.slice(0, -sidecarSuffix.length) : filename;
+  return SQLITE_DATABASE_SUFFIXES.some((suffix) => databaseFilename.endsWith(suffix));
+}
+
 async function listSqliteFiles(stateDir: string): Promise<string[]> {
   const sqliteFiles: string[] = [];
   async function visit(directory: string): Promise<void> {
@@ -208,7 +221,7 @@ async function listSqliteFiles(stateDir: string): Promise<string[]> {
         if (entry.name !== "node_modules") {
           await visit(entryPath);
         }
-      } else if (entry.isFile() && entry.name.endsWith(".sqlite")) {
+      } else if (entry.isFile() && isRuntimeSqliteDatabasePath(entry.name)) {
         sqliteFiles.push(path.resolve(entryPath));
       }
     }
@@ -244,10 +257,7 @@ function isSqliteSourcePath(entryPath: string, stateDir: string): boolean {
   if (!isPathWithin(resolved, stateDir)) {
     return false;
   }
-  return (
-    resolved.endsWith(".sqlite") ||
-    SQLITE_SIDECAR_SUFFIXES.some((suffix) => resolved.endsWith(`.sqlite${suffix}`))
-  );
+  return isRuntimeSqlitePath(resolved);
 }
 
 export async function writeArchiveStreamToFile(params: {

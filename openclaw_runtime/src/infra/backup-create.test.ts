@@ -190,6 +190,46 @@ describe("createBackupArchive", () => {
     }
   });
 
+  it("captures a WAL-backed Matrix crypto .sqlite3 database under its original name", async () => {
+    const fixture = await createFixture();
+    const cryptoDir = path.join(fixture.stateDir, "matrix", "crypto");
+    const sqlitePath = path.join(cryptoDir, "matrix-sdk-crypto.sqlite3");
+    await fs.mkdir(cryptoDir, { recursive: true });
+    const sqlite = requireNodeSqlite();
+    const liveDb = new sqlite.DatabaseSync(sqlitePath);
+    liveDb.exec("PRAGMA journal_mode = WAL;");
+    liveDb.exec("PRAGMA wal_autocheckpoint = 0;");
+    liveDb.exec("CREATE TABLE crypto_state (value TEXT NOT NULL);");
+    liveDb.prepare("INSERT INTO crypto_state (value) VALUES (?)").run("latest-from-wal");
+    const createBackupArchive = await loadCreateBackupArchive();
+
+    try {
+      const result = await createBackupArchive({
+        output: fixture.outputDir,
+        includeWorkspace: false,
+      });
+      const extractDir = await extractArchive(result.archivePath, fixture.root);
+      const entries = await listArchiveEntries(result.archivePath);
+      const sqliteEntry = entries.find((entry) =>
+        entry.endsWith("/matrix/crypto/matrix-sdk-crypto.sqlite3"),
+      );
+      expect(sqliteEntry).toBeDefined();
+      const snapshot = new sqlite.DatabaseSync(path.join(extractDir, sqliteEntry ?? ""));
+      try {
+        expect(snapshot.prepare("SELECT value FROM crypto_state").get()).toEqual({
+          value: "latest-from-wal",
+        });
+      } finally {
+        snapshot.close();
+      }
+      expect(
+        entries.some((entry) => /matrix-sdk-crypto\.sqlite3-(?:wal|shm|journal)$/u.test(entry)),
+      ).toBe(false);
+    } finally {
+      liveDb.close();
+    }
+  });
+
   it("cleans staged files when SQLite snapshotting fails", async () => {
     const fixture = await createFixture();
     await fs.writeFile(path.join(fixture.stateDir, "broken.sqlite"), "not sqlite");
