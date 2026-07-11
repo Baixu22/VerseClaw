@@ -161,6 +161,47 @@ test("uses Git blob bytes and clean-filter identity on a CRLF checkout", (t) => 
   assert.equal(manifest.files[0].invalidRanges[0].contextHex, "610ae2863f");
 });
 
+function recoveryManifest(repair) {
+  return {
+    schemaVersion: 2,
+    spanModel: "source-aligned-variable-length",
+    repairs: [repair],
+  };
+}
+
+function recoveryEntry({
+  original,
+  expected,
+  confidence = "exact",
+  replacements,
+  path: repairPath = "broken.ts",
+}) {
+  return {
+    path: repairPath,
+    preimageSha256: createHash("sha256").update(original).digest("hex"),
+    expectedPostimageSha256: createHash("sha256").update(expected).digest("hex"),
+    confidence,
+    replacements,
+  };
+}
+
+function sourceSpan({
+  currentOffset,
+  removeHex,
+  insertHex,
+  leftAnchorHex = "",
+  rightAnchorHex = "",
+}) {
+  return {
+    currentOffset,
+    removeHex,
+    insertHex,
+    leftAnchorHex,
+    rightAnchorHex,
+    evidenceIds: ["upstream:e993"],
+  };
+}
+
 test("rejects unresolved recovery entries before writing any file", (t) => {
   const repoRoot = createGitFixture(t);
   const filePath = path.join(repoRoot, "broken.ts");
@@ -171,17 +212,13 @@ test("rejects unresolved recovery entries before writing any file", (t) => {
     () =>
       applyRecoveryManifest({
         repoRoot,
-        manifest: {
-          schemaVersion: 1,
-          repairs: [
-            {
-              path: "broken.ts",
-              preimageSha256: "0".repeat(64),
-              confidence: "unresolved",
-              replacements: [],
-            },
-          ],
-        },
+        manifest: recoveryManifest({
+          path: "broken.ts",
+          preimageSha256: "0".repeat(64),
+          expectedPostimageSha256: "0".repeat(64),
+          confidence: "unresolved",
+          replacements: [],
+        }),
       }),
     /unresolved/,
   );
@@ -198,24 +235,19 @@ test("rejects a changed preimage before applying an exact repair", (t) => {
     () =>
       applyRecoveryManifest({
         repoRoot,
-        manifest: {
-          schemaVersion: 1,
-          repairs: [
-            {
-              path: "broken.ts",
-              preimageSha256: "f".repeat(64),
-              confidence: "exact",
-              replacements: [
-                {
-                  offset: 0,
-                  removeHex: "e2863f",
-                  insertHex: "e28692",
-                  evidenceIds: ["upstream:e993"],
-                },
-              ],
-            },
+        manifest: recoveryManifest({
+          path: "broken.ts",
+          preimageSha256: "f".repeat(64),
+          expectedPostimageSha256: "0".repeat(64),
+          confidence: "exact",
+          replacements: [
+            sourceSpan({
+              currentOffset: 0,
+              removeHex: "e2863f",
+              insertHex: "e28692",
+            }),
           ],
-        },
+        }),
       }),
     /preimage SHA-256 mismatch/,
   );
@@ -231,24 +263,21 @@ test("applies a hash-guarded exact repair and reports postimage evidence", (t) =
 
   const results = applyRecoveryManifest({
     repoRoot,
-    manifest: {
-      schemaVersion: 1,
-      repairs: [
-        {
-          path: "broken.ts",
-          preimageSha256,
-          confidence: "exact",
-          replacements: [
-            {
-              offset: 1,
-              removeHex: "e2863f",
-              insertHex: "e28692",
-              evidenceIds: ["upstream:e993"],
-            },
-          ],
-        },
+    manifest: recoveryManifest({
+      path: "broken.ts",
+      preimageSha256,
+      expectedPostimageSha256: createHash("sha256").update("a\u2192b").digest("hex"),
+      confidence: "exact",
+      replacements: [
+        sourceSpan({
+          currentOffset: 1,
+          removeHex: "e2863f",
+          insertHex: "e28692",
+          leftAnchorHex: "61",
+          rightAnchorHex: "62",
+        }),
       ],
-    },
+    }),
   });
 
   assert.equal(fs.readFileSync(filePath, "utf8"), "a\u2192b");
@@ -256,6 +285,325 @@ test("applies a hash-guarded exact repair and reports postimage evidence", (t) =
   assert.equal(results[0].path, "broken.ts");
   assert.equal(results[0].preimageSha256, preimageSha256);
   assert.match(results[0].postimageSha256, /^[0-9a-f]{64}$/);
+});
+
+test("expands a source-aligned span that swallowed a closing quote", (t) => {
+  const repoRoot = createGitFixture(t);
+  const filePath = path.join(repoRoot, "broken.ts");
+  const original = Buffer.from("22e3813f2c", "hex");
+  const expected = Buffer.from("22e3818c222c", "hex");
+  fs.writeFileSync(filePath, original);
+
+  applyRecoveryManifest({
+    repoRoot,
+    manifest: recoveryManifest(
+      recoveryEntry({
+        original,
+        expected,
+        replacements: [
+          sourceSpan({
+            currentOffset: 1,
+            removeHex: "e3813f",
+            insertHex: "e3818c22",
+            leftAnchorHex: "22",
+            rightAnchorHex: "2c",
+          }),
+        ],
+      }),
+    ),
+  });
+
+  assert.deepEqual(fs.readFileSync(filePath), expected);
+});
+
+test("contracts a source-aligned span", (t) => {
+  const repoRoot = createGitFixture(t);
+  const filePath = path.join(repoRoot, "broken.ts");
+  const original = Buffer.from("61e2863f3f62", "hex");
+  const expected = Buffer.from("61e2869262", "hex");
+  fs.writeFileSync(filePath, original);
+
+  applyRecoveryManifest({
+    repoRoot,
+    manifest: recoveryManifest(
+      recoveryEntry({
+        original,
+        expected,
+        replacements: [
+          sourceSpan({
+            currentOffset: 1,
+            removeHex: "e2863f3f",
+            insertHex: "e28692",
+            leftAnchorHex: "61",
+            rightAnchorHex: "62",
+          }),
+        ],
+      }),
+    ),
+  });
+
+  assert.deepEqual(fs.readFileSync(filePath), expected);
+});
+
+test("applies multiple variable-length spans against original offsets", (t) => {
+  const repoRoot = createGitFixture(t);
+  const filePath = path.join(repoRoot, "broken.ts");
+  const original = Buffer.from("61e3813f2c62e2863f3f63", "hex");
+  const expected = Buffer.from("61e3818c222c62e2869263", "hex");
+  fs.writeFileSync(filePath, original);
+
+  applyRecoveryManifest({
+    repoRoot,
+    manifest: recoveryManifest(
+      recoveryEntry({
+        original,
+        expected,
+        replacements: [
+          sourceSpan({
+            currentOffset: 1,
+            removeHex: "e3813f",
+            insertHex: "e3818c22",
+            leftAnchorHex: "61",
+            rightAnchorHex: "2c",
+          }),
+          sourceSpan({
+            currentOffset: 6,
+            removeHex: "e2863f3f",
+            insertHex: "e28692",
+            leftAnchorHex: "62",
+            rightAnchorHex: "63",
+          }),
+        ],
+      }),
+    ),
+  });
+
+  assert.deepEqual(fs.readFileSync(filePath), expected);
+});
+
+test("rejects overlapping source spans before writing", (t) => {
+  const repoRoot = createGitFixture(t);
+  const filePath = path.join(repoRoot, "broken.ts");
+  const original = Buffer.from("61e2863f62", "hex");
+  fs.writeFileSync(filePath, original);
+
+  assert.throws(
+    () =>
+      applyRecoveryManifest({
+        repoRoot,
+        manifest: recoveryManifest(
+          recoveryEntry({
+            original,
+            expected: original,
+            replacements: [
+              sourceSpan({ currentOffset: 1, removeHex: "e2863f", insertHex: "e28692" }),
+              sourceSpan({ currentOffset: 2, removeHex: "863f", insertHex: "86" }),
+            ],
+          }),
+        ),
+      }),
+    /overlap/,
+  );
+  assert.deepEqual(fs.readFileSync(filePath), original);
+});
+
+test("rejects mismatched source-span anchors", (t) => {
+  const repoRoot = createGitFixture(t);
+  const filePath = path.join(repoRoot, "broken.ts");
+  const original = Buffer.from("61e2863f62", "hex");
+  const expected = Buffer.from("61e2869262", "hex");
+  fs.writeFileSync(filePath, original);
+
+  for (const anchors of [
+    { leftAnchorHex: "7a", rightAnchorHex: "62" },
+    { leftAnchorHex: "61", rightAnchorHex: "7a" },
+  ]) {
+    assert.throws(
+      () =>
+        applyRecoveryManifest({
+          repoRoot,
+          manifest: recoveryManifest(
+            recoveryEntry({
+              original,
+              expected,
+              replacements: [
+                sourceSpan({
+                  currentOffset: 1,
+                  removeHex: "e2863f",
+                  insertHex: "e28692",
+                  ...anchors,
+                }),
+              ],
+            }),
+          ),
+        }),
+      /anchor mismatch/,
+    );
+  }
+  assert.deepEqual(fs.readFileSync(filePath), original);
+});
+
+test("rejects missing or mismatched expected postimage hashes", (t) => {
+  const repoRoot = createGitFixture(t);
+  const filePath = path.join(repoRoot, "broken.ts");
+  const original = Buffer.from("e2863f", "hex");
+  const expected = Buffer.from("e28692", "hex");
+  fs.writeFileSync(filePath, original);
+  const repair = recoveryEntry({
+    original,
+    expected,
+    replacements: [
+      sourceSpan({ currentOffset: 0, removeHex: "e2863f", insertHex: "e28692" }),
+    ],
+  });
+
+  assert.throws(
+    () =>
+      applyRecoveryManifest({
+        repoRoot,
+        manifest: recoveryManifest({ ...repair, expectedPostimageSha256: undefined }),
+      }),
+    /expected postimage SHA-256/,
+  );
+  assert.throws(
+    () =>
+      applyRecoveryManifest({
+        repoRoot,
+        manifest: recoveryManifest({ ...repair, expectedPostimageSha256: "0".repeat(64) }),
+      }),
+    /postimage SHA-256 mismatch/,
+  );
+  assert.deepEqual(fs.readFileSync(filePath), original);
+});
+
+test("rejects every non-applicable confidence classification", (t) => {
+  const repoRoot = createGitFixture(t);
+  const filePath = path.join(repoRoot, "broken.ts");
+  const original = Buffer.from("e2863f", "hex");
+  fs.writeFileSync(filePath, original);
+
+  for (const confidence of ["candidate", "conflict", "unresolved"]) {
+    assert.throws(
+      () =>
+        applyRecoveryManifest({
+          repoRoot,
+          manifest: recoveryManifest({
+            path: "broken.ts",
+            preimageSha256: "0".repeat(64),
+            expectedPostimageSha256: "0".repeat(64),
+            confidence,
+            replacements: [],
+          }),
+        }),
+      /unresolved/,
+    );
+  }
+  assert.deepEqual(fs.readFileSync(filePath), original);
+});
+
+test("rejects remove-byte mismatch, empty spans, and missing evidence", (t) => {
+  const repoRoot = createGitFixture(t);
+  const filePath = path.join(repoRoot, "broken.ts");
+  const original = Buffer.from("61e2863f62", "hex");
+  const expected = Buffer.from("61e2869262", "hex");
+  fs.writeFileSync(filePath, original);
+
+  const invalidSpans = [
+    {
+      ...sourceSpan({ currentOffset: 1, removeHex: "e2863e", insertHex: "e28692" }),
+      expectedError: /remove bytes mismatch/,
+    },
+    {
+      ...sourceSpan({ currentOffset: 1, removeHex: "", insertHex: "e28692" }),
+      expectedError: /removeHex must not be empty/,
+    },
+    {
+      ...sourceSpan({ currentOffset: 1, removeHex: "e2863f", insertHex: "e28692" }),
+      evidenceIds: [],
+      expectedError: /missing evidence IDs/,
+    },
+  ];
+
+  for (const { expectedError, ...replacement } of invalidSpans) {
+    assert.throws(
+      () =>
+        applyRecoveryManifest({
+          repoRoot,
+          manifest: recoveryManifest(
+            recoveryEntry({ original, expected, replacements: [replacement] }),
+          ),
+        }),
+      expectedError,
+    );
+  }
+  assert.deepEqual(fs.readFileSync(filePath), original);
+});
+
+test("rejects repair paths outside the repository", (t) => {
+  const repoRoot = createGitFixture(t);
+  const original = Buffer.from("e2863f", "hex");
+  const expected = Buffer.from("e28692", "hex");
+
+  assert.throws(
+    () =>
+      applyRecoveryManifest({
+        repoRoot,
+        manifest: recoveryManifest(
+          recoveryEntry({
+            original,
+            expected,
+            path: "../outside.ts",
+            replacements: [
+              sourceSpan({ currentOffset: 0, removeHex: "e2863f", insertHex: "e28692" }),
+            ],
+          }),
+        ),
+      }),
+    /escapes repository root/,
+  );
+});
+
+test("prepares every repair before writing any file", (t) => {
+  const repoRoot = createGitFixture(t);
+  const firstPath = path.join(repoRoot, "first.ts");
+  const secondPath = path.join(repoRoot, "second.ts");
+  const original = Buffer.from("e2863f", "hex");
+  const expected = Buffer.from("e28692", "hex");
+  fs.writeFileSync(firstPath, original);
+  fs.writeFileSync(secondPath, original);
+  const validRepair = recoveryEntry({
+    original,
+    expected,
+    path: "first.ts",
+    replacements: [
+      sourceSpan({ currentOffset: 0, removeHex: "e2863f", insertHex: "e28692" }),
+    ],
+  });
+  const invalidRepair = {
+    ...recoveryEntry({
+      original,
+      expected,
+      path: "second.ts",
+      replacements: [
+        sourceSpan({ currentOffset: 0, removeHex: "e2863f", insertHex: "e28692" }),
+      ],
+    }),
+    expectedPostimageSha256: "0".repeat(64),
+  };
+
+  assert.throws(
+    () =>
+      applyRecoveryManifest({
+        repoRoot,
+        manifest: {
+          ...recoveryManifest(validRepair),
+          repairs: [validRepair, invalidRepair],
+        },
+      }),
+    /postimage SHA-256 mismatch/,
+  );
+  assert.deepEqual(fs.readFileSync(firstPath), original);
+  assert.deepEqual(fs.readFileSync(secondPath), original);
 });
 
 test("CLI writes inventory evidence and exits nonzero while invalid UTF-8 remains", (t) => {

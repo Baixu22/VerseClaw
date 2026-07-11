@@ -383,6 +383,13 @@ function decodeReplacementHex(value, label) {
   return Buffer.from(value, "hex");
 }
 
+function requireSha256(value, label, repairPath) {
+  if (typeof value !== "string" || !/^[0-9a-f]{64}$/i.test(value)) {
+    throw new Error(`${label} must be a SHA-256 hash: ${repairPath}`);
+  }
+  return value.toLowerCase();
+}
+
 function prepareRepair(repoRoot, repair) {
   if (repair.confidence !== "exact" && repair.confidence !== "corroborated") {
     throw new Error(`repair remains unresolved: ${repair.path}`);
@@ -391,12 +398,25 @@ function prepareRepair(repoRoot, repair) {
   const absolutePath = resolveRepairPath(repoRoot, repair.path);
   const original = fs.readFileSync(absolutePath);
   const actualSha256 = hashBytes(original);
-  if (actualSha256 !== repair.preimageSha256) {
+  const expectedPreimageSha256 = requireSha256(
+    repair.preimageSha256,
+    "preimage SHA-256",
+    repair.path,
+  );
+  const expectedPostimageSha256 = requireSha256(
+    repair.expectedPostimageSha256,
+    "expected postimage SHA-256",
+    repair.path,
+  );
+  if (actualSha256 !== expectedPreimageSha256) {
     throw new Error(
-      `preimage SHA-256 mismatch for ${repair.path}: expected ${repair.preimageSha256}, got ${actualSha256}`,
+      `preimage SHA-256 mismatch for ${repair.path}: expected ${expectedPreimageSha256}, got ${actualSha256}`,
     );
   }
 
+  if (!Array.isArray(repair.replacements) || repair.replacements.length === 0) {
+    throw new Error(`repair has no source-aligned spans: ${repair.path}`);
+  }
   const replacements = repair.replacements.map((replacement) => {
     if (!Array.isArray(replacement.evidenceIds) || replacement.evidenceIds.length === 0) {
       throw new Error(`replacement is missing evidence IDs: ${repair.path}`);
@@ -405,40 +425,68 @@ function prepareRepair(repoRoot, repair) {
       ...replacement,
       remove: decodeReplacementHex(replacement.removeHex, "removeHex"),
       insert: decodeReplacementHex(replacement.insertHex, "insertHex"),
+      leftAnchor: decodeReplacementHex(replacement.leftAnchorHex, "leftAnchorHex"),
+      rightAnchor: decodeReplacementHex(replacement.rightAnchorHex, "rightAnchorHex"),
     };
   });
 
-  const ascending = replacements.toSorted((left, right) => left.offset - right.offset);
+  const ascending = replacements.toSorted(
+    (left, right) => left.currentOffset - right.currentOffset,
+  );
   for (let index = 0; index < ascending.length; index += 1) {
     const replacement = ascending[index];
-    if (!Number.isInteger(replacement.offset) || replacement.offset < 0) {
+    if (!Number.isInteger(replacement.currentOffset) || replacement.currentOffset < 0) {
       throw new Error(`replacement offset is invalid: ${repair.path}`);
     }
-    if (replacement.offset + replacement.remove.length > original.length) {
+    if (replacement.remove.length === 0) {
+      throw new Error(`removeHex must not be empty: ${repair.path}`);
+    }
+    if (replacement.currentOffset + replacement.remove.length > original.length) {
       throw new Error(`replacement exceeds preimage: ${repair.path}`);
     }
     if (
       index > 0 &&
-      replacement.offset < ascending[index - 1].offset + ascending[index - 1].remove.length
+      replacement.currentOffset <
+        ascending[index - 1].currentOffset + ascending[index - 1].remove.length
     ) {
       throw new Error(`replacement ranges overlap: ${repair.path}`);
     }
     const actual = original.subarray(
-      replacement.offset,
-      replacement.offset + replacement.remove.length,
+      replacement.currentOffset,
+      replacement.currentOffset + replacement.remove.length,
     );
     if (!actual.equals(replacement.remove)) {
       throw new Error(`remove bytes mismatch for ${repair.path}`);
+    }
+    const actualLeftAnchor = original.subarray(
+      replacement.currentOffset - replacement.leftAnchor.length,
+      replacement.currentOffset,
+    );
+    const actualRightAnchor = original.subarray(
+      replacement.currentOffset + replacement.remove.length,
+      replacement.currentOffset + replacement.remove.length + replacement.rightAnchor.length,
+    );
+    if (
+      !actualLeftAnchor.equals(replacement.leftAnchor) ||
+      !actualRightAnchor.equals(replacement.rightAnchor)
+    ) {
+      throw new Error(`source-span anchor mismatch for ${repair.path}`);
     }
   }
 
   let output = original;
   for (const replacement of ascending.toReversed()) {
     output = Buffer.concat([
-      output.subarray(0, replacement.offset),
+      output.subarray(0, replacement.currentOffset),
       replacement.insert,
-      output.subarray(replacement.offset + replacement.remove.length),
+      output.subarray(replacement.currentOffset + replacement.remove.length),
     ]);
+  }
+  const postimageSha256 = hashBytes(output);
+  if (postimageSha256 !== expectedPostimageSha256) {
+    throw new Error(
+      `postimage SHA-256 mismatch for ${repair.path}: expected ${expectedPostimageSha256}, got ${postimageSha256}`,
+    );
   }
 
   return {
@@ -446,12 +494,16 @@ function prepareRepair(repoRoot, repair) {
     absolutePath,
     output,
     preimageSha256: actualSha256,
-    postimageSha256: hashBytes(output),
+    postimageSha256,
   };
 }
 
 export function applyRecoveryManifest({ repoRoot, manifest }) {
-  if (manifest?.schemaVersion !== 1 || !Array.isArray(manifest.repairs)) {
+  if (
+    manifest?.schemaVersion !== 2 ||
+    manifest.spanModel !== "source-aligned-variable-length" ||
+    !Array.isArray(manifest.repairs)
+  ) {
     throw new Error("invalid recovery manifest");
   }
 
