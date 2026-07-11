@@ -15,7 +15,7 @@ describe("append upsert handling (#20952)", () => {
     const onMessage = vi.fn(async () => {});
     const { listener, sock } = await startInboxMonitor(onMessage);
 
-    // Timestamp ~5 seconds ago â€?recent, should be processed.
+    // Timestamp ~5 seconds ago â€” recent, should be processed.
     const recentTs = Math.floor(Date.now() / 1000) - 5;
     sock.ev.emit("messages.upsert", {
       type: "append",
@@ -39,7 +39,7 @@ describe("append upsert handling (#20952)", () => {
     const onMessage = vi.fn(async () => {});
     const { listener, sock } = await startInboxMonitor(onMessage);
 
-    // Timestamp 5 minutes ago â€?stale history sync, should be skipped.
+    // Timestamp 5 minutes ago â€” stale history sync, should be skipped.
     const staleTs = Math.floor(Date.now() / 1000) - 300;
     sock.ev.emit("messages.upsert", {
       type: "append",
@@ -135,7 +135,7 @@ describe("append upsert handling (#20952)", () => {
     const onMessage = vi.fn(async () => {});
     const { listener, sock } = await startInboxMonitor(onMessage);
 
-    // Very old timestamp but type=notify â€?should always be processed.
+    // Very old timestamp but type=notify â€” should always be processed.
     const oldTs = Math.floor(Date.now() / 1000) - 86400;
     sock.ev.emit("messages.upsert", {
       type: "notify",

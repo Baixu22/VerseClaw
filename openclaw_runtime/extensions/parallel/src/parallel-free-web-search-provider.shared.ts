@@ -6,7 +6,7 @@ export function createParallelFreeWebSearchProviderBase() {
   return {
     id: "parallel-free",
     label: "Parallel Search (Free)",
-    hint: "Free web search via Parallel's hosted Search MCP â€?no API key required",
+    hint: "Free web search via Parallel's hosted Search MCP â€” no API key required",
     onboardingScopes: [...PARALLEL_FREE_ONBOARDING_SCOPES],
     // Keyless: always uses Parallel's free hosted Search MCP. This is the
     // zero-config default web_search provider (autoDetectOrder 76 keeps it ahead

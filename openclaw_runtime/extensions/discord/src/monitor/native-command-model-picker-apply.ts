@@ -114,7 +114,7 @@ export async function applyDiscordModelPickerSelection(params: {
     if (!dispatchResult.accepted) {
       return {
         status: "rejected",
-        noticeMessage: `‚ù?Failed to apply ${params.resolvedModelRef}. Try /model ${params.resolvedModelRef} directly.`,
+        noticeMessage: `‚ùå Failed to apply ${params.resolvedModelRef}. Try /model ${params.resolvedModelRef} directly.`,
       };
     }
 
@@ -147,7 +147,7 @@ export async function applyDiscordModelPickerSelection(params: {
 
     if (!persisted) {
       logVerbose(
-        `discord: model picker override mismatch ‚Ä?expected ${params.resolvedModelRef} but read ${effectiveModelRef} from session key ${fallbackRoute.sessionKey}; attempting direct session override persist`,
+        `discord: model picker override mismatch ‚Äî expected ${params.resolvedModelRef} but read ${effectiveModelRef} from session key ${fallbackRoute.sessionKey}; attempting direct session override persist`,
       );
       try {
         const directlyPersisted = await persistDiscordModelPickerOverride({
@@ -167,7 +167,7 @@ export async function applyDiscordModelPickerSelection(params: {
         persisted = effectiveModelRef === params.resolvedModelRef;
         if (!persisted) {
           logVerbose(
-            `discord: direct session override persist failed ‚Ä?expected ${params.resolvedModelRef} but read ${effectiveModelRef} from session key ${fallbackRoute.sessionKey}`,
+            `discord: direct session override persist failed ‚Äî expected ${params.resolvedModelRef} but read ${effectiveModelRef} from session key ${fallbackRoute.sessionKey}`,
           );
         } else if (!directlyPersisted) {
           logVerbose(
@@ -194,7 +194,7 @@ export async function applyDiscordModelPickerSelection(params: {
       ? {
           status: "success",
           effectiveModelRef,
-          noticeMessage: `‚ú?Model set to ${params.resolvedModelRef}.`,
+          noticeMessage: `‚úÖ Model set to ${params.resolvedModelRef}.`,
         }
       : {
           status: "mismatch",
@@ -205,12 +205,12 @@ export async function applyDiscordModelPickerSelection(params: {
     if (error instanceof Error && error.message === "timeout") {
       return {
         status: "timeout",
-        noticeMessage: `‚è?Model change to ${params.resolvedModelRef} is still processing. Check /status in a few seconds.`,
+        noticeMessage: `‚è≥ Model change to ${params.resolvedModelRef} is still processing. Check /status in a few seconds.`,
       };
     }
     return {
       status: "failed",
-      noticeMessage: `‚ù?Failed to apply ${params.resolvedModelRef}. Try /model ${params.resolvedModelRef} directly.`,
+      noticeMessage: `‚ùå Failed to apply ${params.resolvedModelRef}. Try /model ${params.resolvedModelRef} directly.`,
     };
   }
 }

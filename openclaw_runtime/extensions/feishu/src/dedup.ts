@@ -7,7 +7,7 @@ import {
 } from "./processing-claims.js";
 import { getFeishuRuntime } from "./runtime.js";
 
-// Persistent TTL: 24 hours â€?survives restarts & WebSocket reconnects.
+// Persistent TTL: 24 hours â€” survives restarts & WebSocket reconnects.
 const DEDUP_TTL_MS = 24 * 60 * 60 * 1000;
 const MEMORY_MAX_SIZE = 1_000;
 const STORE_MAX_ENTRIES = 10_000;

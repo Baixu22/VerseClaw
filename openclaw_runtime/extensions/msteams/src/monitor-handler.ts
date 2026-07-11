@@ -195,7 +195,7 @@ export function registerMSTeamsHandlers<T extends MSTeamsActivityHandler>(
 
     for (const member of membersAdded) {
       if (member.id === botId) {
-        // Bot was added to a conversation â€?send welcome card if configured.
+        // Bot was added to a conversation â€” send welcome card if configured.
         const conversationType =
           normalizeOptionalLowercaseString(ctx.activity?.conversation?.conversationType) ??
           "personal";

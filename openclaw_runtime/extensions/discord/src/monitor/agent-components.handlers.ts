@@ -174,7 +174,7 @@ async function handleDiscordComponentEvent(params: {
     });
 
   try {
-    await params.interaction.reply({ content: "âœ?, ...replyOpts });
+    await params.interaction.reply({ content: "âœ“", ...replyOpts });
   } catch (err) {
     logError(`${params.label}: failed to acknowledge interaction: ${String(err)}`);
   }

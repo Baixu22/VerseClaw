@@ -191,7 +191,7 @@ export default definePluginEntry({
           if (resp.status === 409) {
             const body = (await resp.json()) as { owner?: string };
             api.logger.info?.(
-              `thread-ownership: cancelled send to ${channelId}:${threadTs} â€?owned by ${body.owner}`,
+              `thread-ownership: cancelled send to ${channelId}:${threadTs} â€” owned by ${body.owner}`,
             );
             return { cancel: true };
           }

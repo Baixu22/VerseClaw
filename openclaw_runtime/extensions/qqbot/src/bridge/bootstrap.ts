@@ -5,12 +5,12 @@
  *
  * The adapter is registered via two complementary mechanisms:
  *
- * 1. **Factory registration** (`registerPlatformAdapterFactory`) â€?a lightweight
+ * 1. **Factory registration** (`registerPlatformAdapterFactory`) â€” a lightweight
  *    callback stored in `adapter/index.ts` that is invoked lazily by
  *    `getPlatformAdapter()` on first access. This guarantees the adapter is
  *    available regardless of module evaluation order or bundler chunk splitting.
  *
- * 2. **Eager side-effect** (`ensurePlatformAdapter()`) â€?called at module
+ * 2. **Eager side-effect** (`ensurePlatformAdapter()`) â€” called at module
  *    evaluation time when `channel.ts` imports this file. Provides the adapter
  *    immediately for code that runs synchronously during startup.
  *
@@ -125,7 +125,7 @@ function createBuiltinAdapter(): PlatformAdapter {
 /**
  * Ensure the built-in PlatformAdapter is registered.
  *
- * Safe to call multiple times â€?only registers on the first invocation.
+ * Safe to call multiple times â€” only registers on the first invocation.
  * Exported for backward compatibility with code that calls it explicitly.
  */
 export function ensurePlatformAdapter(): void {

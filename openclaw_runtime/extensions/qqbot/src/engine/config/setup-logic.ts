@@ -1,6 +1,6 @@
 /**
  * QQBot setup business logic (pure layer).
- * QQBot setup 相关纯业务逻辑�?
+ * QQBot setup 相关纯业务逻辑。
  *
  * Token parsing, input validation, and setup config application.
  * All functions are framework-agnostic and operate on plain objects.

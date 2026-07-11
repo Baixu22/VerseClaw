@@ -445,7 +445,7 @@ function hasInteractiveResponseContent(message: proto.IMessage | undefined): boo
   }
   // Button/list/template/interactive selections that the existing four
   // extractors do not cover. Treat any presence of these keys as user
-  // content â€?Baileys never delivers these as receipts or protocol
+  // content â€” Baileys never delivers these as receipts or protocol
   // envelopes, only as explicit user choices.
   return Boolean(
     message.buttonsResponseMessage ||
@@ -475,7 +475,7 @@ export function hasInboundUserContent(rawMessage: proto.IMessage | undefined): b
   if (extractLocationData(rawMessage)) {
     return true;
   }
-  // Walk wrappers (ephemeral, viewOnce, etc.) â€?interactive responses
+  // Walk wrappers (ephemeral, viewOnce, etc.) â€” interactive responses
   // can arrive nested.
   for (const candidate of buildMessageChain(rawMessage)) {
     if (hasInteractiveResponseContent(candidate)) {

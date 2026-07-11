@@ -161,7 +161,7 @@ async function assertExistingSessionPostInteractionNavigationAllowed(params: {
         return;
       }
     } catch {
-      // Probe failed â€?fall through to throw
+      // Probe failed â€” fall through to throw
     }
   }
 

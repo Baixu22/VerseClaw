@@ -32,7 +32,7 @@ export class TelegramPollingTransportState {
     // When the dirty flag triggered a rebuild, release the old transport's
     // dispatchers. Without this, each network stall / recoverable error
     // leaves a full pool of keep-alive sockets to api.telegram.org dangling
-    // forever â€?which over long-running sessions accumulates into the
+    // forever â€” which over long-running sessions accumulates into the
     // hundreds of ESTABLISHED connections that choke per-IP upstream quotas.
     if (this.#transportDirty && previous && nextTransport !== previous) {
       this.opts.log("[telegram][diag] closing stale transport before rebuild");

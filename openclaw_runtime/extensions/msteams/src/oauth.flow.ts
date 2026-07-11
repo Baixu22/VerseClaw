@@ -28,7 +28,7 @@ export function buildMSTeamsAuthUrl(params: {
   tenantId: string;
   clientId: string;
   challenge: string;
-  /** Opaque CSRF state token â€?must NOT be the PKCE verifier. */
+  /** Opaque CSRF state token â€” must NOT be the PKCE verifier. */
   state: string;
   scopes?: readonly string[];
 }): string {

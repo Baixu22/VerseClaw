@@ -1,7 +1,7 @@
 /**
  * Media path decoding utility.
  *
- * Extracted from `outbound-deliver.ts` â€?handles tilde expansion,
+ * Extracted from `outbound-deliver.ts` â€” handles tilde expansion,
  * octal escape / UTF-8 byte-sequence decoding, and backslash unescaping that
  * media tags require.
  *

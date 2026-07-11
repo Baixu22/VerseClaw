@@ -157,7 +157,7 @@ export async function collectTelegramSecurityAuditFindings(params: {
       severity: "critical",
       title: "Telegram group allowlist contains wildcard",
       detail:
-        'Telegram group sender allowlist contains "*", which allows any group member to run /â€?commands and control directives.',
+        'Telegram group sender allowlist contains "*", which allows any group member to run /â€¦ commands and control directives.',
       remediation:
         'Remove "*" from channels.telegram.groupAllowFrom and pairing store; prefer explicit numeric Telegram user IDs.',
     });
@@ -176,7 +176,7 @@ export async function collectTelegramSecurityAuditFindings(params: {
       severity: "critical",
       title: "Telegram group commands have no sender allowlist",
       detail:
-        `Telegram group access is enabled but no sender allowlist is configured; this allows any group member to invoke /â€?commands` +
+        `Telegram group access is enabled but no sender allowlist is configured; this allows any group member to invoke /â€¦ commands` +
         (skillsEnabled ? " (including skill commands)." : "."),
       remediation:
         "Approve yourself via pairing (recommended), or set channels.telegram.groupAllowFrom (or per-group groups.<id>.allowFrom).",

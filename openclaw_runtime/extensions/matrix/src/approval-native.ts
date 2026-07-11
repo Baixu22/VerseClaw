@@ -314,7 +314,7 @@ export const matrixApprovalCapability = createChannelApprovalCapability({
     ) {
       return {
         authorized: false,
-        reason: "‚ù?Matrix plugin approvals are not enabled for this bot account.",
+        reason: "‚ùå Matrix plugin approvals are not enabled for this bot account.",
       } as const;
     }
     return matrixApprovalAuth.authorizeActorAction(params);

@@ -87,7 +87,7 @@ function migrateLegacyTrustedDmPolicy(params: {
   const nextPolicy: "allowlist" | "pairing" = allowFromEntries > 0 ? "allowlist" : "pairing";
   const nextDm = { ...dm, policy: nextPolicy };
   params.changes.push(
-    `Migrated ${params.pathPrefix}.dm.policy "trusted" â†?"${nextPolicy}" (legacy alias removed; ` +
+    `Migrated ${params.pathPrefix}.dm.policy "trusted" â†’ "${nextPolicy}" (legacy alias removed; ` +
       `${allowFromEntries > 0 ? `preserved ${allowFromEntries} ${params.pathPrefix}.dm.allowFrom ${allowFromEntries === 1 ? "entry" : "entries"}` : "no allowFrom entries present, defaulting to pairing for safety"}).`,
   );
   return { entry: { ...params.entry, dm: nextDm }, changed: true };
@@ -113,7 +113,7 @@ function normalizeMatrixRoomAllowAliases(params: {
     nextRooms[roomId] = nextRoom;
     changed = true;
     params.changes.push(
-      `Moved ${params.pathPrefix}.${roomId}.allow â†?${params.pathPrefix}.${roomId}.enabled (${String(nextRoom.enabled)}).`,
+      `Moved ${params.pathPrefix}.${roomId}.allow â†’ ${params.pathPrefix}.${roomId}.enabled (${String(nextRoom.enabled)}).`,
     );
   }
   return { rooms: nextRooms, changed };

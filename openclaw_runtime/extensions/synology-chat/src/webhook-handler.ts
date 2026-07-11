@@ -534,7 +534,7 @@ async function resolveSynologyReplyDeliveryUserId(params: {
     return String(resolvedChatApiUserId);
   }
   params.log?.warn(
-    `Could not resolve Chat API user_id for "${params.payload.username}" â€?falling back to webhook user_id ${params.payload.user_id}. Reply delivery may fail.`,
+    `Could not resolve Chat API user_id for "${params.payload.username}" â€” falling back to webhook user_id ${params.payload.user_id}. Reply delivery may fail.`,
   );
   return params.payload.user_id;
 }

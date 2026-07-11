@@ -1,5 +1,5 @@
 /**
- * Outbound messaging â€?aggregates reply limits, audio port, media sends, and text orchestration.
+ * Outbound messaging â€” aggregates reply limits, audio port, media sends, and text orchestration.
  */
 
 export { setOutboundAudioPort } from "./outbound-audio-port.js";

@@ -1,5 +1,5 @@
 /**
- * Markdown AST â€?addressing index for workspace files.
+ * Markdown AST â€” addressing index for workspace files.
  *
  * Pure addressing structure; no per-file opinions (those live in lint
  * rules). Byte-fidelity: `emitMd(parse(raw)) === raw`; `raw` on the
@@ -38,7 +38,7 @@ export interface AstItem {
  * H2-delimited block. `bodyText` is the verbatim prose between this
  * heading and the next; `items` are extracted for addressing.
  *
- * Tables and code blocks aren't first-class â€?addressing into them is
+ * Tables and code blocks aren't first-class â€” addressing into them is
  * out of scope. Lint rules re-tokenize `bodyText` if needed.
  */
 export interface AstBlock {

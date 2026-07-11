@@ -337,7 +337,7 @@ export function createTelegramBotCore(
   // Global sendChatAction handler with 401 backoff / circuit breaker (issue #27092).
   // Created BEFORE the message processor so it can be injected into every message context.
   // Shared across all message contexts for this account so that consecutive 401s
-  // from ANY chat are tracked together â€?prevents infinite retry storms.
+  // from ANY chat are tracked together â€” prevents infinite retry storms.
   const sendChatActionHandler = createTelegramSendChatActionHandler({
     sendChatActionFn: (chatId, action, threadParams) =>
       bot.api.sendChatAction(chatId, action, threadParams),
