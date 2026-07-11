@@ -4,6 +4,15 @@
 > superpowers:subagent-driven-development (recommended) or
 > superpowers:executing-plans to implement this plan task-by-task. Steps use
 > checkbox (`- [ ]`) syntax for tracking.
+>
+> **2026-07-11 safety hold:** The W5-W8 source-repair prompts in this document
+> are suspended. Evidence discovered that malformed UTF-8 units may also have
+> swallowed adjacent delimiter or sequence bytes, so equal-length code-point
+> replacements are not apply-ready. Use
+> `docs/superpowers/plans/2026-07-11-runtime-utf8-recovery-window-launch-pack.md`
+> for the current W0-W4 prompts. Do not create W5-W8 until W0 freezes a
+> variable-length source-span manifest with zero candidate, conflict, or
+> unresolved records.
 
 **Goal:** Safely restore the pruned Runtime's committed UTF-8/build baseline,
 then complete DCS Stage 1 with attributable diffs and full acceptance evidence.
