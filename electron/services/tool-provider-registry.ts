@@ -1,16 +1,12 @@
 import type { McpCallToolResult } from '@shared/types/mcp';
 import type {
+  RuntimeShadowJsonObject,
   RuntimeShadowRegistryDiagnostic,
   RuntimeShadowToolCallRequest,
   RuntimeShadowToolCallResult,
   RuntimeShadowToolProviderManifest,
 } from '@shared/types/runtime-tool-shadow';
-  RuntimeCoreJsonObject,
-  RuntimeRegistryDiagnostic,
-  RuntimeToolProviderManifest,
-  ToolCallRequest,
-  ToolCallResult,
-} from '../../openclaw_runtime/src/runtime-core';import type {
+import type {
   McpToolCallRequestShadow,
   McpToolCallResultShadow,
 } from './tool-protocol-shadow';
@@ -148,7 +144,6 @@ function providerEvidenceRef(callId: string) {
   };
 }
 
-function requestDiagnostic(request: RuntimeShadowToolCallRequest): RuntimeShadowRegistryDiagnostic {
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
@@ -177,9 +172,9 @@ function messageMatchesCancel(message?: string): boolean {
 function resultDiagnosticClassification(
   resultShadow: McpToolCallResultShadow,
   legacyResult?: McpCallToolResult,
-): Pick<RuntimeRegistryDiagnostic, 'status' | 'reason' | 'message'> & {
+): Pick<RuntimeShadowRegistryDiagnostic, 'status' | 'reason' | 'message'> & {
   errorCategory: string;
-  metadata?: RuntimeCoreJsonObject;
+  metadata?: RuntimeShadowJsonObject;
 } {
   const reasonCode = resultShadow.shadow.reason.code;
   const unsupportedContentTypes = unsupportedMcpContentTypes(legacyResult);
@@ -253,7 +248,10 @@ function resultDiagnosticClassification(
   };
 }
 
-function requestDiagnostic(request: ToolCallRequest): RuntimeRegistryDiagnostic {  return {
+function requestDiagnostic(
+  request: RuntimeShadowToolCallRequest,
+): RuntimeShadowRegistryDiagnostic {
+  return {
     surface: 'tool',
     providerId: MCP_CALL_TOOL_COMPAT_PROVIDER_ID,
     status: 'ok',
@@ -272,8 +270,8 @@ function resultDiagnostic(
   resultShadow: McpToolCallResultShadow,
   legacyResult?: McpCallToolResult,
 ): RuntimeShadowRegistryDiagnostic {
-): RuntimeRegistryDiagnostic {
-  const classification = resultDiagnosticClassification(resultShadow, legacyResult);  return {
+  const classification = resultDiagnosticClassification(resultShadow, legacyResult);
+  return {
     surface: 'tool',
     providerId: MCP_CALL_TOOL_COMPAT_PROVIDER_ID,
     status: classification.status,
@@ -296,7 +294,7 @@ function resultDiagnostic(
 function builtInHostToolDiagnostic(
   requestShadow: McpToolCallRequestShadow,
   resultShadow: McpToolCallResultShadow,
-): RuntimeRegistryDiagnostic | undefined {
+): RuntimeShadowRegistryDiagnostic | undefined {
   if (requestShadow.target.serverId !== VERSE_CLAW_GIT_MCP_SERVER_ID) {
     return undefined;
   }

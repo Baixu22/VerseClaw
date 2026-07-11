@@ -30,7 +30,7 @@ export function buildCommandsPaginationKeyboard(
 
   if (currentPage < totalPages) {
     buttons.push({
-      text: "Next â–?,
+      text: "Next",
       callback_data: `commands_page_${currentPage + 1}${suffix}`,
     });
   }

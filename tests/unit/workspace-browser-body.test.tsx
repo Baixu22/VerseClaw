@@ -112,11 +112,14 @@ describe('WorkspaceBrowserBody', () => {
     });
 
     expect(screen.getByTestId('ai-file-tree')).toBeInTheDocument();
+    expect(screen.getByTestId('ai-file-tree')).toHaveAttribute('data-density', 'compact');
+    expect(screen.getByTestId('workspace-file-tree-pane')).toBeInTheDocument();
 
     fireEvent.click(screen.getByText('dashboard.html'));
 
     const frame = await screen.findByTestId('html-preview-frame');
     expect(frame).toBeVisible();
+    expect(screen.getByTestId('workspace-file-preview-path')).toHaveTextContent('dashboard.html');
     expect(frame).toHaveAttribute(
       'sandbox',
       'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-downloads',

@@ -6,6 +6,7 @@ import {
   type Checkpoint,
   type EvidenceRef,
   type EvidenceRefType,
+  type ToolCallResult,
 } from "../../runtime-core/evidence.js";
 import type {
   RuntimeTaskStatus,
@@ -287,8 +288,10 @@ export function buildRuntimeCoreCheckpointFromResumeCheckpoint(input: {
    * function, then passes the resulting `Record<path, sha256>` here.
    *
    * When omitted, `fileHashes` is `{}` (legacy behavior — flag-off parity).
-   */
+  */
   fileHashes?: Record<string, string>;
+  /** Supplied TaskLoop tool evidence to preserve in the canonical checkpoint. */
+  toolResults?: ToolCallResult[];
 }): Checkpoint {
   return {
     checkpointId: input.checkpointId,
@@ -303,7 +306,7 @@ export function buildRuntimeCoreCheckpointFromResumeCheckpoint(input: {
       ?? input.checkpoint.nextAction
       ?? input.checkpoint.activeTask
       ?? "",
-    toolResults: [],
+    toolResults: input.toolResults ?? [],
     fileHashes: input.fileHashes ?? {},
     evidenceRefs: runtimeEvidenceRefsFromResumeCheckpoint(input.checkpoint, input.checkpointId),
     schemaVersion: 1,

@@ -41,10 +41,6 @@ export type HandlerArgs = {
     logGateway: {
       info: (...args: unknown[]) => void;
       warn: (...args: unknown[]) => void;
-    broadcast: () => void;
-    logGateway: {
-      info: () => void;
-      warn: () => void;
     };
   };
   client: null;

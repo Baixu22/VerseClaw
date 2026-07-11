@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
@@ -10,7 +10,8 @@ const { gatewayState, agentsState } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...await importOriginal<typeof import('react-router-dom')>(),
   useNavigate: () => vi.fn(),
 }));
 
@@ -117,12 +118,12 @@ describe('Chat leading orphan tool folding', () => {
     const { Chat } = await import('@/pages/Chat/index');
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
-    await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
-    });
+    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
 
     expect(screen.queryByTestId('chat-message-0')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-message-1')).not.toBeInTheDocument();
-    expect(screen.getByText('Finished.')).toBeInTheDocument();
+    expect(screen.getAllByText('Finished.').length).toBeGreaterThan(0);
   }, 10_000);
 });

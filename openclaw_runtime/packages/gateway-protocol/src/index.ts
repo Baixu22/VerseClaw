@@ -329,10 +329,12 @@ import {
   type SessionsCompactionStatusParams,
   SessionsCompactionStatusParamsSchema,
   type SessionsExpandSelectorParams,
+  type SessionsExpandSelectorResult,
   SessionsExpandSelectorParamsSchema,
   type SessionsRecoveryContextParams,
   SessionsRecoveryContextParamsSchema,
-  SessionsRecoveryContextResultSchema,  type LongTaskCheckpointRecord,
+  SessionsRecoveryContextResultSchema,
+  type LongTaskCheckpointRecord,
   LongTaskCheckpointRecordSchema,
   type LongTaskInterventionEvent,
   LongTaskInterventionEventSchema,
@@ -353,6 +355,7 @@ import {
   type SessionsQueueDrainResult,
   SessionsQueueDrainResultSchema,
   type SessionsRecallOriginalParams,
+  type SessionsRecallOriginalResult,
   SessionsRecallOriginalParamsSchema,
   type SessionsResumeCheckpointsParams,
   SessionsResumeCheckpointsParamsSchema,
@@ -709,7 +712,8 @@ export const validateSessionsExpandSelectorParams =
 export const validateSessionsCompressionArtifactParams =
   lazyCompile<SessionsCompressionArtifactParams>(SessionsCompressionArtifactParamsSchema);
 export const validateSessionsRecoveryContextParams =
-  lazyCompile<SessionsRecoveryContextParams>(SessionsRecoveryContextParamsSchema);export const validateSessionsLongTaskControlStatusParams =
+  lazyCompile<SessionsRecoveryContextParams>(SessionsRecoveryContextParamsSchema);
+export const validateSessionsLongTaskControlStatusParams =
   lazyCompile<SessionsLongTaskControlStatusParams>(SessionsLongTaskControlStatusParamsSchema);
 export const validateSessionsLongTaskControlHistoryParams =
   lazyCompile<SessionsLongTaskControlHistoryParams>(SessionsLongTaskControlHistoryParamsSchema);
@@ -1408,6 +1412,10 @@ export type {
   SessionsPreviewParams,
   SessionsDescribeParams,
   SessionsResolveParams,
+  SessionsRecallOriginalParams,
+  SessionsRecallOriginalResult,
+  SessionsExpandSelectorParams,
+  SessionsExpandSelectorResult,
   SessionOperationEvent,
   ResumeCheckpoint,
   LongTaskCheckpointRecord,

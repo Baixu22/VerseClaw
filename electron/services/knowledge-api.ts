@@ -404,7 +404,6 @@ async function loadRoleRegistry(): Promise<KnowledgeRoleRegistryFile> {
     const parsed = JSON.parse(raw) as unknown;
     const { registry, issues } = normalizeRoleRegistry(parsed);
     if (issues.length > 0) {
-      // eslint-disable-next-line no-console
       console.warn(`[knowledge] steward-roles.json issues:`, issues);
     }
     cachedRoleRegistry = registry;
@@ -414,7 +413,6 @@ async function loadRoleRegistry(): Promise<KnowledgeRoleRegistryFile> {
     // Missing file is the expected initial state — log debug, not warn.
     const code = (error as NodeJS.ErrnoException)?.code;
     if (code !== 'ENOENT') {
-      // eslint-disable-next-line no-console
       console.warn(`[knowledge] steward-roles.json load failed (${code ?? 'unknown'}); using default`);
     }
     return DEFAULT_REGISTRY;

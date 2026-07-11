@@ -2648,9 +2648,7 @@ export function ChatInput({
 
   return (
     <div
-      className={cn(
-        "p-4 pb-6 w-full mx-auto max-w-3xl"
-      )}
+      className="mx-auto w-full max-w-[52rem] px-3 pb-4 pt-2 sm:px-5"
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -2670,7 +2668,10 @@ export function ChatInput({
         )}
 
         {/* Input Container */}
-        <div className={`relative bg-surface-modal rounded-2xl shadow-sm border px-3 pt-2.5 pb-1.5 transition-all ${dragOver ? 'border-primary ring-1 ring-primary' : 'border-black/10 dark:border-white/10'}`}>
+        <div
+          data-testid="chat-composer-shell"
+          className={`relative rounded-lg border bg-background px-3 pb-1.5 pt-2.5 transition-[border-color,box-shadow] ${dragOver ? 'border-primary ring-2 ring-primary/15' : 'border-border shadow-[0_1px_2px_hsl(var(--foreground)/0.04)]'}`}
+        >
           {slashMenuOpen && (
             <SlashCommandPalette
               items={slashItems}
@@ -3528,7 +3529,7 @@ export function ChatInput({
               disabled={sending ? !(canIntervene || canStop) : !canSend}
               size="icon"
               data-testid="chat-composer-send"
-              className={`ml-auto shrink-0 h-8 w-8 rounded-lg transition-colors ${
+              className={`ml-auto h-8 w-8 shrink-0 rounded-md transition-colors ${
                 (sending || canSend)
                   ? 'bg-black/5 dark:bg-white/10 text-foreground hover:bg-black/10 dark:hover:bg-white/20'
                   : 'text-muted-foreground/50 hover:bg-transparent bg-transparent'

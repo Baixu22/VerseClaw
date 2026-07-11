@@ -33,7 +33,11 @@ export function FileTree<TNode extends AiFileTreeNode>({
   freshLabel,
 }: FileTreeProps<TNode>) {
   return (
-    <ul className="space-y-0.5" data-testid={depth === 0 ? 'ai-file-tree' : undefined}>
+    <ul
+      className="space-y-px"
+      data-density={depth === 0 ? 'compact' : undefined}
+      data-testid={depth === 0 ? 'ai-file-tree' : undefined}
+    >
       {nodes.map((node) => (
         <FileTreeRow
           key={node.relPath || node.name}
@@ -63,7 +67,7 @@ function FileTreeRow<TNode extends AiFileTreeNode>({
 }: Omit<FileTreeProps<TNode>, 'nodes' | 'depth'> & { node: TNode; depth: number }) {
   const isOpen = node.isDir && expanded.has(node.relPath);
   const isSelected = selectedRel === node.relPath;
-  const indent = 12 + depth * 14;
+  const indent = 8 + depth * 12;
 
   if (node.isDir) {
     return (
@@ -71,13 +75,13 @@ function FileTreeRow<TNode extends AiFileTreeNode>({
         <button
           type="button"
           onClick={() => onToggle(node.relPath)}
-          className="flex w-full items-center gap-1 rounded-md px-2 py-1 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+          className="flex h-7 w-full items-center gap-1 rounded-sm px-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/10"
           style={{ paddingLeft: indent }}
           title={node.relPath || node.name}
         >
           <ChevronRight className={cn('h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform', isOpen && 'rotate-90')} />
           <Folder className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          <span className="truncate font-medium text-foreground">{node.name}</span>
+          <span className="truncate text-foreground">{node.name}</span>
         </button>
         {isOpen && node.children?.length ? (
           <FileTree
@@ -101,8 +105,8 @@ function FileTreeRow<TNode extends AiFileTreeNode>({
         type="button"
         onClick={() => onSelect(node.relPath)}
         className={cn(
-          'flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-xs transition-colors',
-          isSelected ? 'bg-black/5 text-foreground dark:bg-white/10' : 'hover:bg-black/5 dark:hover:bg-white/10',
+          'flex h-7 w-full items-center gap-1.5 rounded-sm px-1.5 text-left text-xs transition-colors',
+          isSelected ? 'bg-primary/10 text-foreground' : 'hover:bg-black/5 dark:hover:bg-white/10',
         )}
         style={{ paddingLeft: indent + 16 }}
         title={node.relPath || node.name}

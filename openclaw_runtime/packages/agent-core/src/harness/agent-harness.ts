@@ -441,7 +441,8 @@ export class CoreAgentHarness<
         turnState.sessionId,
         snapshotOptions,
       );
-      const providerOptions: AgentHarnessStreamOptions & Record<PropertyKey, unknown> = {
+      const providerOptions: NonNullable<Parameters<StreamFn>[2]> &
+        Record<PropertyKey, unknown> = {
         cacheRetention: requestOptions.cacheRetention,
         headers: requestOptions.headers,
         maxRetries: requestOptions.maxRetries,

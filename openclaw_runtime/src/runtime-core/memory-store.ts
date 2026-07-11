@@ -69,9 +69,9 @@ export type RuntimeMemoryStoreOptions = {
   maxInvalidations?: number;
   /**
    * Eviction policy when fact capacity is exceeded.
-   * - "fifo" (default): evict oldest by insertion order. Original behavior.
-   * - "importance": evict by lowest eviction score (importance + recency +
-   *   usage), batch-evicting ~15% to avoid boundary churn.
+   * - "fifo": evict oldest by insertion order. Original behavior.
+   * - "importance" (default): evict by lowest eviction score (importance +
+   *   recency + usage), batch-evicting ~15% to avoid boundary churn.
    */
   evictionPolicy?: "fifo" | "importance";
   now?: () => number;

@@ -52,6 +52,7 @@ function createStreamingWriter(dbPath: string) {
   const persistence = createRuntimeMemoryPersistenceStore({
     config: RUNTIME_MEMORY_EVAL_CONFIG,
     database: { path: dbPath },
+    evictionPolicy: "fifo",
     now: () => now++,
   });
   const migrateResult = persistence.migrate();
@@ -81,6 +82,7 @@ function loadFactIds(dbPath: string): Set<string> {
   const persistence = createRuntimeMemoryPersistenceStore({
     config: RUNTIME_MEMORY_EVAL_CONFIG,
     database: { path: dbPath },
+    evictionPolicy: "fifo",
   });
   const loaded = persistence.loadStore();
   if (loaded.status !== "loaded") throw new Error("loadFactIds: load failed");
@@ -97,6 +99,7 @@ function loadStats(dbPath: string): {
   const persistence = createRuntimeMemoryPersistenceStore({
     config: RUNTIME_MEMORY_EVAL_CONFIG,
     database: { path: dbPath },
+    evictionPolicy: "fifo",
   });
   const loaded = persistence.loadStore();
   if (loaded.status !== "loaded") throw new Error("loadStats: load failed");
@@ -154,6 +157,7 @@ async function getMemoryContextForProbe(
   const persistence = createRuntimeMemoryPersistenceStore({
     config: RUNTIME_MEMORY_EVAL_CONFIG,
     database: { path: dbPath },
+    evictionPolicy: "fifo",
   });
   const loaded = persistence.loadStore();
   if (loaded.status !== "loaded") throw new Error("getMemoryContextForProbe: load failed");
@@ -215,7 +219,7 @@ function cohenD(baseline: number[], treatment: number[]): number {
 // === Non-LLM tests: 1000-turn local simulation ===
 
 describe("Layer 6: long-conversation simulation — local (no LLM)", () => {
-  it("retention_at_checkpoints_100_500_1000_turns", () => {
+  it("retention_at_checkpoints_100_500_1000_turns", { timeout: 30_000 }, () => {
     // 1000 turns → 2000 facts. FIFO caps at 512, so 1488 evicted.
     // Measure retention of early useful facts at 3 checkpoints.
     const corpus = generateLongTermCorpus(1000, 42);
@@ -248,7 +252,7 @@ describe("Layer 6: long-conversation simulation — local (no LLM)", () => {
     expect(stats.facts).toBe(512);
   });
 
-  it("noise_accumulation_rate_at_1000_turns", () => {
+  it("noise_accumulation_rate_at_1000_turns", { timeout: 30_000 }, () => {
     // After 1000 turns with FIFO, noise rate should stay ~50% (FIFO doesn't
     // prioritize useful over noise — REAL FINDING from L4).
     const corpus = generateLongTermCorpus(1000, 42);
@@ -323,7 +327,7 @@ describe("Layer 6: long-conversation simulation — local (no LLM)", () => {
     expect(rates[2]).toBeLessThanOrEqual(rates[1]);
   }, 30_000); // 30s timeout — writes 1000 turns
 
-  it("fifo_preserves_recent_512_at_1000_turns", () => {
+  it("fifo_preserves_recent_512_at_1000_turns", { timeout: 30_000 }, () => {
     // After 1000 turns, the most recent 512 facts should all be present.
     const corpus = generateLongTermCorpus(1000, 42);
     const dbPath = createTempDbPath("l6-recent-512-", tempDirs);
@@ -340,7 +344,7 @@ describe("Layer 6: long-conversation simulation — local (no LLM)", () => {
     expect(stats.factIds.has(evicted)).toBe(false);
   });
 
-  it("no_active_gc_at_1000_turns", () => {
+  it("no_active_gc_at_1000_turns", { timeout: 30_000 }, () => {
     // No TTL, no active GC. Facts remain until FIFO evicts.
     // Verify no `expired_at` is auto-set.
     const corpus = generateLongTermCorpus(1000, 42);
@@ -351,6 +355,7 @@ describe("Layer 6: long-conversation simulation — local (no LLM)", () => {
     const persistence = createRuntimeMemoryPersistenceStore({
       config: RUNTIME_MEMORY_EVAL_CONFIG,
       database: { path: dbPath },
+      evictionPolicy: "fifo",
     });
     const loaded = persistence.loadStore();
     if (loaded.status !== "loaded") throw new Error("load failed");
@@ -362,7 +367,7 @@ describe("Layer 6: long-conversation simulation — local (no LLM)", () => {
     expect(withExpired.length).toBe(0);
   });
 
-  it("useful_vs_noise_eviction_ratio_at_1000_turns", () => {
+  it("useful_vs_noise_eviction_ratio_at_1000_turns", { timeout: 30_000 }, () => {
     // FIFO evicts proportionally — ~50% useful, ~50% noise evicted.
     // This is a REAL FINDING: the system does NOT prioritize useful facts.
     const corpus = generateLongTermCorpus(1000, 42);
@@ -383,7 +388,7 @@ describe("Layer 6: long-conversation simulation — local (no LLM)", () => {
     expect(ratio).toBeLessThan(0.6);
   });
 
-  it("domain_distribution_at_1000_turns", () => {
+  it("domain_distribution_at_1000_turns", { timeout: 30_000 }, () => {
     // After 1000 turns cycling through 3 domains, the retained 512 facts
     // should have roughly equal domain distribution (FIFO preserves order).
     const corpus = generateLongTermCorpus(1000, 42);

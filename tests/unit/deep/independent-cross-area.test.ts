@@ -528,7 +528,6 @@ describe('跨领域 — 性能数值采集', () => {
       const p95 = percentile(samples, 95);
       const p99 = percentile(samples, 99);
       const max = samples[samples.length - 1];
-      // eslint-disable-next-line no-console
       console.log(`A1 beginSnapshot: p50=${p50.toFixed(2)}ms p95=${p95.toFixed(2)}ms p99=${p99.toFixed(2)}ms max=${max.toFixed(2)}ms`);
       await rm(tempDir, { recursive: true, force: true });
       // 性能预算: p99 ≤ 200ms（flag-off 时是 no-op，应该很快）
@@ -552,7 +551,6 @@ describe('跨领域 — 性能数值采集', () => {
       const p95 = percentile(samples, 95);
       const p99 = percentile(samples, 99);
       const max = samples[samples.length - 1];
-      // eslint-disable-next-line no-console
       console.log(`A2 rePlan: p50=${p50.toFixed(4)}ms p95=${p95.toFixed(4)}ms p99=${p99.toFixed(4)}ms max=${max.toFixed(4)}ms`);
       // 性能预算: ≤ 80ms
       expect(p99).toBeLessThan(80);
@@ -574,7 +572,6 @@ describe('跨领域 — 性能数值采集', () => {
       const p95 = percentile(samples, 95);
       const p99 = percentile(samples, 99);
       const max = samples[samples.length - 1];
-      // eslint-disable-next-line no-console
       console.log(`A5 budget planning: p50=${p50.toFixed(4)}ms p95=${p95.toFixed(4)}ms p99=${p99.toFixed(4)}ms max=${max.toFixed(4)}ms`);
       // 性能预算: p99 ≤ 30ms
       expect(p99).toBeLessThan(30);
@@ -599,7 +596,6 @@ describe('跨领域 — 性能数值采集', () => {
       const p50 = percentile(samples, 50);
       const p95 = percentile(samples, 95);
       const p99 = percentile(samples, 99);
-      // eslint-disable-next-line no-console
       console.log(`A3 classifyAnomalyPattern: p50=${p50.toFixed(5)}ms p95=${p95.toFixed(5)}ms p99=${p99.toFixed(5)}ms`);
       // 性能预算: ≤ 15ms
       expect(p99).toBeLessThan(15);

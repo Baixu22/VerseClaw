@@ -110,3 +110,11 @@ export {
 } from "../channels/plugins/setup-wizard-binary.js";
 
 export { formatResolvedUnresolvedNote } from "./resolution-notes.js";
+
+
+export type WizardI18nParams = Record<string, unknown>;
+export type SetupTranslator = (key: string, params?: WizardI18nParams) => string;
+
+export function createSetupTranslator(): SetupTranslator {
+  return (key: string) => key;
+}

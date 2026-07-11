@@ -660,17 +660,14 @@ export async function writeAgentSoul(agentId: string, soulMd: string): Promise<{
 
 // ── Generic bootstrap file read/write ──────────────────────────────────────
 
-const ALL_BOOTSTRAP_FILES = [
-  'AGENTS.md',
-  'SOUL.md',
-  'TOOLS.md',
-  'USER.md',
-  'IDENTITY.md',
-  'HEARTBEAT.md',
-  'BOOT.md',
-] as const;
-
-type BootstrapFileName = typeof ALL_BOOTSTRAP_FILES[number];
+type BootstrapFileName =
+  | 'AGENTS.md'
+  | 'SOUL.md'
+  | 'TOOLS.md'
+  | 'USER.md'
+  | 'IDENTITY.md'
+  | 'HEARTBEAT.md'
+  | 'BOOT.md';
 
 async function resolveAgentWorkspacePath(agentId: string): Promise<string> {
   const entry = await findAgentEntry(agentId);

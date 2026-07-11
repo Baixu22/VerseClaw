@@ -18,7 +18,7 @@ import { slugify } from "./slug.js";
 type Token = ReturnType<MarkdownIt["parse"]>[number];
 
 const FENCE = "---";
-const BOM = "ï»?;
+const BOM = "\ufeff";
 const KV_RE = /^([^:]+?)\s*:\s*(.+)$/;
 
 const md = new MarkdownIt({ html: true });

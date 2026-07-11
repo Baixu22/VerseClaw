@@ -28,6 +28,8 @@ export function useResolvedTheme(): ResolvedTheme {
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => resolveThemePreference(theme));
 
   useEffect(() => {
+    // Store preference changes must update the derived theme before subscribing to system changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setResolvedTheme(resolveThemePreference(theme));
 
     if (theme !== 'system' || typeof window === 'undefined') return;

@@ -27,6 +27,16 @@ export const TASK_LOOP_EVIDENCE_MAX_CHARS = 12_000;
 export const TASK_LOOP_REPAIR_BRIEF_MAX_CHARS = 4_000;
 export const TASK_LOOP_CONTEXT_SUMMARY_MAX_CHARS = 4_000;
 
+export function taskLoopContextBudgetPressureLevel(
+  estimatedTokens: number,
+  totalTokens: number,
+): "low" | "medium" | "high" {
+  const ratio = totalTokens > 0 ? estimatedTokens / totalTokens : 0;
+  if (ratio >= 1 || estimatedTokens > totalTokens) return "high";
+  if (ratio >= 0.85) return "medium";
+  return "low";
+}
+
 export type TaskLoopEvidenceRef = {
   type: "trace" | "subagent" | "tool" | "manual" | "other";
   ref: string;

@@ -41,3 +41,27 @@ export {
 export { ErrorCodes, errorShape } from "../../packages/gateway-protocol/src/index.js";
 export type { EventFrame } from "../../packages/gateway-protocol/src/index.js";
 export type { GatewayRequestHandlerOptions } from "../gateway/server-methods/types.js";
+
+
+export type GatewayRpcOpts = {
+  timeout?: number;
+  timeoutMs?: number;
+  transportTimeoutMs?: number;
+  json?: boolean;
+  [key: string]: unknown;
+};
+
+export function addGatewayClientOptions<T>(command: T): T {
+  return command;
+}
+
+export async function callGatewayFromCli(
+  method: string,
+  _opts: GatewayRpcOpts = {},
+  _params?: unknown,
+  _callOpts?: { transportTimeoutMs?: number },
+): Promise<never> {
+  throw new Error(
+    `Gateway CLI call for ${method} is unavailable in the pruned OpenClaw runtime.`,
+  );
+}

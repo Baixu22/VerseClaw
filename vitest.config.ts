@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { resolve, join, dirname, isAbsolute } from 'path';
+import { resolve, join } from 'path';
 import { readFileSync, existsSync, statSync } from 'fs';
 import type { Plugin } from 'vite';
 
@@ -64,7 +64,7 @@ function runtimePathAliasPlugin(): Plugin {
     // Runtime tsconfig missing — plugin is a no-op.
   }
 
-  function resolveImport(importPath: string, importer: string | undefined): string | null {
+  function resolveImport(importPath: string, _importer: string | undefined): string | null {
     // Only rewrite @openclaw/* and openclaw/* bare specifiers.
     if (!importPath.startsWith('@openclaw/') && !importPath.startsWith('openclaw/')) {
       return null;
@@ -107,6 +107,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./tests/setup.ts'],
     include: ['tests/unit/**/*.{test,spec}.{ts,tsx}', 'tests/integration/**/*.{test,spec}.{ts,tsx}'],
+    maxWorkers: 4,
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', 'tests/'],

@@ -481,12 +481,13 @@ function ProjectSessionHeader({
   };
 
   return (
-    <div ref={rootRef} className="flex min-w-0 items-center gap-1.5 text-sm" data-testid="chat-project-session-header">
-      <Laptop className="h-4 w-4 shrink-0 text-foreground/80" />
-      <div className="relative min-w-0">
+    <div ref={rootRef} className="flex min-w-0 flex-col gap-0.5" data-testid="chat-project-session-header">
+      <div className="flex min-w-0 items-center gap-1 text-sm">
+        <Laptop className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        <div className="relative min-w-0">
         <button
           type="button"
-          className="inline-flex max-w-[220px] items-center gap-1 rounded-md px-1.5 py-1 font-semibold text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+          className="inline-flex h-7 max-w-[220px] items-center gap-1 rounded px-1.5 font-semibold text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
           title={projectPath}
           onClick={() => setOpen((current) => current === 'workspace' ? null : 'workspace')}
         >
@@ -494,7 +495,7 @@ function ProjectSessionHeader({
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </button>
         {open === 'workspace' && (
-          <div className="absolute left-0 top-full z-30 mt-1 w-72 overflow-hidden rounded-lg border border-black/10 bg-surface-modal p-1 shadow-md dark:border-white/10">
+          <div className="absolute left-0 top-full z-30 mt-1 w-72 overflow-hidden rounded-md border border-border bg-surface-modal p-1 shadow-lg">
             <div className="px-2 pb-0.5 pt-1.5 text-2xs font-medium uppercase tracking-wide text-muted-foreground/60">{t('workspace.recent')}</div>
             {sortedWorkspaces.map((workspace) => (
               <button
@@ -531,9 +532,9 @@ function ProjectSessionHeader({
             </div>
           </div>
         )}
-      </div>
-      <span className="text-foreground/35">/</span>
-      <div className="relative min-w-0">
+        </div>
+        <span className="text-foreground/25">/</span>
+        <div className="relative min-w-0">
         {editingSession ? (
           <div className="inline-flex max-w-[380px] items-center gap-1 rounded-md bg-black/5 px-1 py-0.5 dark:bg-white/10">
             <input
@@ -556,7 +557,7 @@ function ProjectSessionHeader({
         ) : (
           <button
             type="button"
-            className="inline-flex max-w-[360px] items-center gap-1 rounded-md px-1.5 py-1 font-semibold text-foreground/80 transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+            className="inline-flex h-7 max-w-[360px] items-center gap-1 rounded px-1.5 font-medium text-foreground/80 transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
             onClick={() => setOpen((current) => current === 'session' ? null : 'session')}
             onDoubleClick={(event) => {
               event.preventDefault();
@@ -577,7 +578,7 @@ function ProjectSessionHeader({
           </button>
         )}
         {open === 'session' && (
-          <div className="absolute left-0 top-full z-30 mt-1 w-80 overflow-hidden rounded-lg border border-black/10 bg-surface-modal p-1 shadow-md dark:border-white/10">
+          <div className="absolute left-0 top-full z-30 mt-1 w-80 overflow-hidden rounded-md border border-border bg-surface-modal p-1 shadow-lg">
             <button
               type="button"
               className="mb-0.5 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
@@ -679,7 +680,20 @@ function ProjectSessionHeader({
             })}
           </div>
         )}
+        </div>
       </div>
+      {projectPath && (
+        <div className="flex min-w-0 items-center gap-1.5 pl-0.5 text-2xs text-muted-foreground">
+          <Folder className="h-3 w-3 shrink-0" />
+          <span
+            className="truncate font-mono"
+            data-testid="chat-workspace-path"
+            title={projectPath}
+          >
+            {projectPath}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -2426,8 +2440,7 @@ export function Chat() {
       ref={splitContainerRef}
       data-testid="chat-page"
       className={cn(
-        'relative flex min-h-0 -m-6 overflow-hidden transition-colors duration-500',
-        'bg-background',
+        'relative flex min-h-0 -m-6 overflow-hidden bg-card transition-colors duration-300',
         // Stack above MainLayout's mac-main-drag-region (z-10) so the right-hand
         // artifact/preview pane stays clickable; window drag is handled by the
         // sidebar + chat-toolbar drag strips instead.
@@ -2439,7 +2452,7 @@ export function Chat() {
       {/* Left column: chat */}
       <div className="flex min-w-0 flex-1 flex-col">
       {/* Toolbar */}
-      <div className="relative flex shrink-0 items-center justify-between gap-3 px-4 py-2">
+      <div className="relative flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-border/70 bg-background/85 px-4 py-1.5 backdrop-blur-sm">
         <div data-testid="chat-toolbar-drag-region" className="drag-region absolute inset-0 z-0" aria-hidden="true" />
         <div className="no-drag relative z-10 min-w-0">
           {!isEmpty && (
@@ -2489,7 +2502,7 @@ export function Chat() {
       </div>
 
       {/* Messages Area */}
-      <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-4">
+      <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-3 py-5 sm:px-5">
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
         <div
           className={cn(
@@ -2502,8 +2515,8 @@ export function Chat() {
             <div
               ref={contentRef}
               className={cn(
-                "mx-auto space-y-4",
-                isEmpty ? "w-full max-w-3xl" : "max-w-4xl",
+                "mx-auto space-y-6",
+                isEmpty ? "w-full max-w-3xl" : "max-w-[52rem]",
               )}
             >
               {isEmpty ? (
@@ -2544,7 +2557,7 @@ export function Chat() {
                     return (
                     <div
                       key={row.key}
-                      className="space-y-3"
+                      className="space-y-4"
                       style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 200px' }}
                       id={`chat-message-${row.index}`}
                       data-testid={`chat-message-${row.index}`}
@@ -2914,7 +2927,7 @@ export function Chat() {
           <aside
             data-testid="artifact-panel-aside"
             className={cn(
-              'absolute inset-y-0 right-0 z-30 flex shrink-0 flex-col border-l border-black/5 shadow-2xl dark:border-white/10 xl:relative xl:z-20 xl:shadow-none',
+               'absolute inset-y-0 right-0 z-30 flex shrink-0 flex-col border-l border-border bg-background shadow-xl xl:relative xl:z-20 xl:shadow-none',
               isMac && 'no-drag',
             )}
             style={{ width: `min(100%, clamp(22rem, ${boundedPanelWidthPct}%, 44rem))` }}

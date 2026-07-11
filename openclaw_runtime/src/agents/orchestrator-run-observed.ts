@@ -21,10 +21,12 @@ import {
 import { resolveRoleContract } from "./role-registry.js";
 import type { RoleContract } from "./role-contract.js";
 import {
+  buildOrchestrationDiagnostics,
   buildRepairNodes,
   buildRerouteRecommendations,
   makeTaskLedgerEntry,
   taskGraphWorkerNodes,
+  type OrchestrationDiagnostics,
   type OrchestrationRepairNode,
   type OrchestrationRerouteRecommendation,
   type OrchestrationTaskGraph,
@@ -35,6 +37,7 @@ import {
   buildOrdinaryOrchestrationQualityScorecard,
   type OrdinaryOrchestrationQualityScorecard,
 } from "./orchestration-quality-scorecard.js";
+import {
   scheduleResourceAwareWaves,
   type ResourceSchedulerMetrics,
 } from "./orchestration-resource-scheduler.js";
@@ -92,6 +95,7 @@ export type OrchestrationRunResult = {
   pendingGraphNodes: OrchestrationTaskNode[];
   repairNodes: OrchestrationRepairNode[];
   rerouteRecommendations: OrchestrationRerouteRecommendation[];
+  orchestrationDiagnostics: OrchestrationDiagnostics;
   qualityScorecard?: OrdinaryOrchestrationQualityScorecard | null;
   /** Worker tasks that failed to spawn (status !== "accepted"). */
   failures: Array<{ roleName: string; status: string; error?: string }>;
@@ -609,6 +613,10 @@ export async function runOrchestrationWithRecorder(
     routeDiagnostics: plan.routeDiagnostics,
     attempts: failures,
   });
+  const orchestrationDiagnostics = buildOrchestrationDiagnostics({
+    failures,
+    rerouteRecommendations,
+  });
   const resultBundle = buildSpawnPhaseResultBundle({
     orchestrationRunId,
     taskGraphId: plan.taskGraph.graphRunId,
@@ -640,6 +648,7 @@ export async function runOrchestrationWithRecorder(
     pendingGraphNodes: [],
     repairNodes,
     rerouteRecommendations,
+    orchestrationDiagnostics,
     qualityScorecard,
     failures,
     resultBundle,

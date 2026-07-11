@@ -113,8 +113,10 @@ describe("runtime memory read hydration shadow packaged output inspection proof"
     }
   });
 
-  it("keeps product runtime boundaries free of hydration imports or cutover hooks", () => {
-    expect(scanProductRuntimeForHydrationTerms()).toEqual([]);
+  it("allows only the audited explicit TaskLoop hydration adapter", () => {
+    expect(scanProductRuntimeForHydrationTerms()).toEqual([
+      "openclaw_runtime/src/agents/task-loop-controller.ts",
+    ]);
   });
 
   it("keeps the helper and command readonly, no-default-db, and sanitized-only", () => {

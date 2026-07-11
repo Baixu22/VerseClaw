@@ -148,11 +148,7 @@ describe('gateway store event wiring', () => {
 
     await useChatStore.getState().sendMessage(
       'keep the validation evidence',
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      'guide',
+      { inputMode: 'guide' },
     );
 
     expect(hostApiMock.chat.sendWithMedia).toHaveBeenCalledWith(expect.objectContaining({

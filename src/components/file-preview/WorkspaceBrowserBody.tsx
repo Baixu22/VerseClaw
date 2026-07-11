@@ -500,9 +500,10 @@ export function WorkspaceBrowserBody({
   return (
     <div className="flex h-full min-h-0 flex-col">
       <header
+        data-testid="workspace-browser-header"
         className={cn(
-          'flex items-center justify-between gap-3 border-b border-black/5 dark:border-white/10',
-          compact ? 'px-3 py-1.5' : 'px-4 py-2',
+          'flex items-center justify-between gap-3 border-b border-border bg-background',
+          compact ? 'px-3 py-2' : 'px-4 py-2.5',
         )}
       >
         <div className="flex min-w-0 items-center gap-3">
@@ -511,7 +512,7 @@ export function WorkspaceBrowserBody({
             {workspaceLabel ? <span className="ml-2 font-normal text-foreground/70">/ {workspaceLabel}</span> : null}
           </h2>
           {workspace && !compact ? (
-            <code className="hidden truncate rounded bg-black/5 px-2 py-0.5 text-2xs text-muted-foreground dark:bg-white/10 sm:inline">
+            <code className="hidden truncate text-2xs text-muted-foreground sm:inline">
               {workspace}
             </code>
           ) : null}
@@ -553,14 +554,17 @@ export function WorkspaceBrowserBody({
       </header>
       <div
         className="grid min-h-0 flex-1"
-        style={{ gridTemplateColumns: `${treeWidth ?? (compact ? 220 : 280)}px 1fr` }}
+        style={{ gridTemplateColumns: `${treeWidth ?? (compact ? 180 : 260)}px minmax(0, 1fr)` }}
       >
-        <aside className="min-h-0 overflow-hidden border-r border-black/5 dark:border-white/10">
-          <div className="h-full overflow-y-auto py-2 text-sm">{renderTree()}</div>
+        <aside
+          className="min-h-0 overflow-hidden border-r border-border bg-muted/20"
+          data-testid="workspace-file-tree-pane"
+        >
+          <div className="h-full overflow-y-auto py-1.5 text-sm">{renderTree()}</div>
         </aside>
         <section className="min-h-0 overflow-hidden">
           {selectedNode && !selectedNode.isDir && (
-            <div className="flex items-center justify-between gap-3 border-b border-black/5 px-4 py-1.5 text-xs text-muted-foreground dark:border-white/10">
+            <div className="flex h-8 items-center justify-between gap-3 border-b border-border bg-background px-3 text-xs text-muted-foreground">
               <div className="flex min-w-0 items-center gap-2">
                 <FilePreviewIcon
                   contentType={selectedNode.contentType}
@@ -568,7 +572,13 @@ export function WorkspaceBrowserBody({
                   ext={selectedNode.ext}
                   className="h-4 w-4 shrink-0"
                 />
-                <span className="truncate font-mono">{selectedNode.relPath || selectedNode.name}</span>
+                <span
+                  className="truncate font-mono"
+                  data-testid="workspace-file-preview-path"
+                  title={selectedNode.absPath}
+                >
+                  {selectedNode.relPath || selectedNode.name}
+                </span>
                 {selectedNode.isFresh && (
                   <Badge variant="default" className="ml-1 text-2xs px-1.5 py-0">
                     {t('workspace.freshBadge', 'Added this run')}

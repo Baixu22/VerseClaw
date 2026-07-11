@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "fallback": {
+    "emoji": "",
+    "detailKeys": [
+      "command",
+      "path",
+      "url",
+      "targetUrl",
+      "targetId",
+      "ref",
+      "element",
+      "node",
+      "nodeId",
+      "id",
+      "requestId",
+      "to",
+      "channelId",
+      "guildId",
+      "userId",
+      "name",
+      "query",
+      "pattern",
+      "messageId"
+    ]
+  },
+  "tools": {
+    "bash": {
+      "title": "Bash",
+      "detailKeys": [
+        "command"
+      ]
+    },
+    "read": {
+      "title": "Read",
+      "detailKeys": [
+        "path"
+      ]
+    },
+    "write": {
+      "title": "Write",
+      "detailKeys": [
+        "path"
+      ]
+    },
+    "edit": {
+      "title": "Edit",
+      "detailKeys": [
+        "path"
+      ]
+    },
+    "browser": {
+      "title": "Browser",
+      "detailKeys": [
+        "url",
+        "targetUrl"
+      ]
+    },
+    "search": {
+      "title": "Search",
+      "detailKeys": [
+        "query"
+      ]
+    },
+    "tool_result": {
+      "title": "Tool result",
+      "detailKeys": [
+        "message",
+        "summary"
+      ]
+    }
+  }
+}

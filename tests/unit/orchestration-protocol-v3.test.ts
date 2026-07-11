@@ -32,7 +32,6 @@ vi.mock('rastermill', () => ({
   RastermillUnavailableError: class RastermillUnavailableError extends Error {},
   readImageProbeFromHeader: vi.fn(),
   readImageMetadataFromHeader: vi.fn(),
-}));
 }), { virtual: true });
 
 import { createOrchestratorPlan } from '../../openclaw_runtime/src/agents/orchestrator';

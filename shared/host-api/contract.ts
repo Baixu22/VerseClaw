@@ -1847,6 +1847,14 @@ export type CompressionArtifactQuality = {
   projectionTokens: number;
   warnings: string[];
 };
+export type CompressionRehydratedFileContext = {
+  path: string;
+  reason: string;
+  lineStart?: number;
+  lineEnd?: number;
+  excerptHash?: string;
+  evidenceRefs: CompressionEvidenceRef[];
+};
 export type CompressionArtifact = {
   schemaVersion: 1;
   objective: string;
@@ -1871,6 +1879,7 @@ export type CompressionArtifact = {
   tokensBefore?: number;
   tokensAfter?: number;
   rehydratedFiles?: string[];
+  rehydratedFileContext?: CompressionRehydratedFileContext[];
   staleExcludedCount?: number;
   causalAnchorCount?: number;
   warnings?: string[];

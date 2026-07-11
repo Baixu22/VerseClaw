@@ -1397,6 +1397,42 @@ CREATE INDEX IF NOT EXISTS idx_flow_runs_status ON flow_runs(status);
 CREATE INDEX IF NOT EXISTS idx_flow_runs_owner_key ON flow_runs(owner_key);
 CREATE INDEX IF NOT EXISTS idx_flow_runs_updated_at ON flow_runs(updated_at);
 
+CREATE TABLE IF NOT EXISTS context_blocks (
+  block_id TEXT NOT NULL PRIMARY KEY,
+  block_type TEXT NOT NULL,
+  source_system TEXT NOT NULL,
+  session_id TEXT,
+  summary TEXT NOT NULL,
+  full_content TEXT,
+  presence_json TEXT NOT NULL,
+  mutability TEXT NOT NULL,
+  role_scope TEXT,
+  entities_json TEXT,
+  entity_extraction_status TEXT DEFAULT 'pending',
+  compression_depth INTEGER NOT NULL DEFAULT 0,
+  fallback_mode TEXT,
+  retention_confidence REAL,
+  valid_at INTEGER NOT NULL,
+  invalid_at INTEGER,
+  created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS block_entity_map (
+  block_id TEXT NOT NULL REFERENCES context_blocks(block_id),
+  entity TEXT NOT NULL COLLATE NOCASE,
+  PRIMARY KEY (block_id, entity)
+);
+
+CREATE INDEX IF NOT EXISTS idx_entity ON block_entity_map(entity);
+CREATE INDEX IF NOT EXISTS idx_block_type_valid
+  ON context_blocks(block_type, valid_at, invalid_at);
+CREATE INDEX IF NOT EXISTS idx_session ON context_blocks(session_id, block_type);
+CREATE INDEX IF NOT EXISTS idx_source ON context_blocks(source_system);
+CREATE INDEX IF NOT EXISTS idx_block_type_source
+  ON context_blocks(block_type, source_system);
+CREATE INDEX IF NOT EXISTS idx_invalid
+  ON context_blocks(invalid_at) WHERE invalid_at IS NULL;
+
 CREATE TABLE IF NOT EXISTS migration_runs (
   id TEXT NOT NULL PRIMARY KEY,
   started_at INTEGER NOT NULL,

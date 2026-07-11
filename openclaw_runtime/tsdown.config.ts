@@ -35,6 +35,8 @@ type ExternalOptionFunction = (
   isResolved: boolean,
 ) => boolean | null | undefined;
 
+type RolldownPlugin = NonNullable<InputOptionsArg extends { plugins?: infer Plugins } ? Plugins : never>;
+
 const env = {
   NODE_ENV: "production",
 };
@@ -46,6 +48,28 @@ const SUPPRESSED_EVAL_WARNING_PATHS = [
   "bottleneck/lib/IORedisConnection.js",
   "bottleneck/lib/RedisConnection.js",
 ] as const;
+
+const EXTENSION_SOURCE_RE = /(?:^|[\\/])extensions[\\/].+\.(?:[cm]?[jt]s)$/u;
+
+function isExtensionSource(id: string): boolean {
+  return EXTENSION_SOURCE_RE.test(id.split("?")[0] ?? id);
+}
+
+function extensionSourceUtf8FallbackPlugin(): RolldownPlugin {
+  return {
+    name: "openclaw-extension-source-utf8-fallback",
+    async load(id: string) {
+      if (!isExtensionSource(id)) {
+        return null;
+      }
+      const filePath = id.split("?")[0] ?? id;
+      if (!fs.existsSync(filePath)) {
+        return null;
+      }
+      return await fs.promises.readFile(filePath, "utf8");
+    },
+  } as RolldownPlugin;
+}
 
 function normalizedLogHaystack(log: { message?: string; id?: string; importer?: string }): string {
   return [log.message, log.id, log.importer].filter(Boolean).join("\n").replaceAll("\\", "/");
@@ -113,6 +137,7 @@ function buildInputOptions(options: InputOptionsArg): InputOptionsReturn {
 
   return {
     ...options,
+    plugins: [extensionSourceUtf8FallbackPlugin(), options.plugins].filter(Boolean),
     external(id: string, parentId: string | undefined, isResolved: boolean) {
       return (
         shouldNeverBundleDependency(id) ||
@@ -254,7 +279,6 @@ function buildCoreDistEntries(): Record<string, string> {
     index: "src/index.ts",
     entry: "src/entry.ts",
     // Ensure this module is bundled as an entry so legacy CLI shims can resolve its exports.
-    "cli/daemon-cli": "src/cli/daemon-cli.ts",
     // Keep long-lived lazy runtime boundaries on stable filenames so rebuilt
     // dist/ trees do not strand already-running gateways on stale hashed chunks.
     "agents/auth-profiles.runtime": "src/agents/auth-profiles.runtime.ts",
@@ -264,7 +288,6 @@ function buildCoreDistEntries(): Record<string, string> {
     "agents/compaction-planning.worker": "src/agents/compaction-planning.worker.ts",
     "agents/model-provider-auth.worker": "src/agents/model-provider-auth.worker.ts",
     "acp/control-plane/manager": "src/acp/control-plane/manager.ts",
-    "cli/gateway-lifecycle.runtime": "src/cli/gateway-cli/lifecycle.runtime.ts",
     "provider-dispatcher.runtime": "src/auto-reply/reply/provider-dispatcher.runtime.ts",
     "server-close.runtime": "src/gateway/server-close.runtime.ts",
     "plugins/hook-runner-global": "src/plugins/hook-runner-global.ts",
@@ -274,9 +297,7 @@ function buildCoreDistEntries(): Record<string, string> {
     "task-registry-control.runtime": "src/tasks/task-registry-control.runtime.ts",
     "link-understanding/apply.runtime": "src/link-understanding/apply.runtime.ts",
     "media-understanding/apply.runtime": "src/media-understanding/apply.runtime.ts",
-    "commands/doctor/shared/plugin-registry-migration":
-      "src/commands/doctor/shared/plugin-registry-migration.ts",
-    "commands/status.summary.runtime": "src/commands/status.summary.runtime.ts",
+    "commands/status.summary.runtime": "src/gateway/health-runtime/status.summary.runtime.ts",
     "infra/boundary-file-read": "src/infra/boundary-file-read.ts",
     "plugins/provider-discovery.runtime": "src/plugins/provider-discovery.runtime.ts",
     "plugins/provider-runtime.runtime": "src/plugins/provider-runtime.runtime.ts",
@@ -311,13 +332,9 @@ function buildDockerE2eHarnessEntries(): Record<string, string> {
     "agents/embedded-agent-runner/tool-split": "src/agents/embedded-agent-runner/tool-split.ts",
     "agents/embedded-agent-runner/run/runtime-context-prompt":
       "src/agents/embedded-agent-runner/run/runtime-context-prompt.ts",
-    "auto-reply/reply/commands-crestodian": "src/auto-reply/reply/commands-crestodian.ts",
-    "cli/run-main": "src/cli/run-main.ts",
     "commitments/runtime": "src/commitments/runtime.ts",
     "commitments/store": "src/commitments/store.ts",
     "config/config": "src/config/config.ts",
-    "crestodian/crestodian": "src/crestodian/crestodian.ts",
-    "crestodian/rescue-message": "src/crestodian/rescue-message.ts",
     "gateway/protocol/index": "packages/gateway-protocol/src/index.ts",
     "infra/errors": "src/infra/errors.ts",
     "infra/ws": "src/infra/ws.ts",
@@ -617,8 +634,20 @@ function shouldExternalizeTerminalCoreDependency(id: string): boolean {
 
 const coreDistEntries = buildCoreDistEntries();
 const dockerE2eHarnessEntries = buildDockerE2eHarnessEntries();
+const rootPackageExcludedExtensionDirs = new Set<string>();
+for (const entry of JSON.parse(fs.readFileSync("package.json", "utf8")).files ?? []) {
+  if (typeof entry !== "string") {
+    continue;
+  }
+  const match = /^!dist\/extensions\/([^/]+)\/\*\*$/u.exec(entry);
+  if (match?.[1]) {
+    rootPackageExcludedExtensionDirs.add(match[1]);
+  }
+}
 const rootBundledPluginBuildEntries = bundledPluginBuildEntries.filter(
-  ({ id }) => shouldBuildPrivateQaEntries || !NON_PACKAGED_BUNDLED_PLUGIN_DIRS.has(id),
+  ({ id }) =>
+    (shouldBuildPrivateQaEntries || !NON_PACKAGED_BUNDLED_PLUGIN_DIRS.has(id)) &&
+    !rootPackageExcludedExtensionDirs.has(id),
 );
 
 function buildUnifiedDistEntries(): Record<string, string> {

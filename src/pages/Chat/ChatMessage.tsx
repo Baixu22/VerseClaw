@@ -494,7 +494,7 @@ export const ChatMessage = memo(function ChatMessage({
   return (
     <div
       className={cn(
-        'flex gap-3 group',
+        'group flex gap-2.5',
         isUser ? 'flex-row-reverse' : 'flex-row',
       )}
     >
@@ -506,9 +506,9 @@ export const ChatMessage = memo(function ChatMessage({
           sit alongside a single line of text. */}
       {!isUser && (
         <div className="flex h-6 shrink-0 items-center">
-          <div className="flex h-8 w-8 items-center justify-center">
-            <img src={characterImg} alt="Verse" className="h-8 w-8 rounded-full object-cover dark:hidden" />
-            <img src={characterDarkImg} alt="Verse" className="hidden h-8 w-8 rounded-full object-cover dark:block" />
+          <div className="flex h-7 w-7 items-center justify-center">
+            <img src={characterImg} alt="Verse" className="h-7 w-7 rounded-md object-cover dark:hidden" />
+            <img src={characterDarkImg} alt="Verse" className="hidden h-7 w-7 rounded-md object-cover dark:block" />
           </div>
         </div>
       )}
@@ -516,8 +516,8 @@ export const ChatMessage = memo(function ChatMessage({
       {/* Content */}
       <div
         className={cn(
-          'flex flex-col w-full min-w-0 space-y-2',
-          isUser && isEditingUserMessage ? 'max-w-full' : 'max-w-[80%]',
+          'flex min-w-0 flex-col space-y-2.5',
+          isUser && isEditingUserMessage ? 'w-full max-w-full' : isUser ? 'max-w-[min(78%,42rem)]' : 'w-full max-w-none',
           isUser ? 'items-end' : 'items-start',
         )}
       >
@@ -1139,8 +1139,8 @@ function UserMessageBubble({
   text: string;
 }) {
   return (
-    <div className="relative rounded-2xl bg-surface-input px-3.5 py-2.5 text-foreground transition-colors duration-150" data-testid="chat-user-message-bubble">
-      <p className="whitespace-pre-wrap break-words text-sm">{text}</p>
+    <div className="relative rounded-lg border border-border/70 bg-muted/60 px-3.5 py-2.5 text-foreground transition-colors duration-150" data-testid="chat-user-message-bubble">
+      <p className="whitespace-pre-wrap break-words text-sm leading-6">{text}</p>
     </div>
   );
 }
@@ -1160,7 +1160,7 @@ function MarkdownCodeHeader({ language, code }: CodeHeaderProps) {
 
   return (
     <div
-      className="mt-4 flex items-center justify-between gap-3 rounded-t-lg border border-black/5 bg-black/[0.04] px-3 py-2 text-xs text-muted-foreground dark:border-white/10 dark:bg-white/[0.06]"
+      className="mt-4 flex items-center justify-between gap-3 rounded-t-md border border-border bg-muted/60 px-3 py-1.5 text-xs text-muted-foreground"
       data-testid="assistant-code-header"
     >
       <span className="min-w-0 truncate font-mono uppercase tracking-wide">{label}</span>
@@ -1189,7 +1189,7 @@ function AssistantMarkdown({
     <>
       <TextMessagePartProvider text={text} isRunning={isStreaming}>
         <MarkdownTextPrimitive
-          className="prose prose-sm dark:prose-invert w-full max-w-none break-words text-foreground"
+          className="prose prose-sm w-full max-w-none break-words text-foreground dark:prose-invert"
           smooth={false}
           defer={isStreaming}
           preprocess={normalizeLatexDelimiters}
@@ -1228,7 +1228,7 @@ function AssistantMarkdown({
                     overflowWrap: 'break-word',
                   }}
                   className={cn(
-                    'rounded-b-lg rounded-t-none border border-t-0 border-black/5 bg-black/5 p-4 overflow-x-auto whitespace-pre-wrap break-words dark:border-white/10 dark:bg-white/5',
+                    'overflow-x-auto whitespace-pre-wrap break-words rounded-b-md rounded-t-none border border-t-0 border-border bg-muted/50 p-4',
                     className,
                   )}
                 >
@@ -1333,7 +1333,7 @@ function FileCard({ file, onOpen }: { file: AttachedFileMeta; onOpen?: (file: At
   return (
     <AttachmentRoot
       className={cn(
-        'flex min-h-14 w-[min(260px,100%)] items-center gap-3 rounded-lg border border-border bg-background/70 px-3 py-2.5 shadow-sm',
+        'flex min-h-14 w-[min(260px,100%)] items-center gap-3 rounded-md border border-border bg-background/70 px-3 py-2.5',
         file.filePath && 'cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/10',
       )}
       onClick={handleOpen}

@@ -83,7 +83,7 @@ describe('ShadowSafetyBoundary', () => {
 
   it('swallows non-Error throws and records Unknown errorType', async () => {
     const result = await runShadow('A5', 'non_io', 'shadow-string-throw', async () => {
-      throw 'string error'; // eslint-disable-line no-throw-literal
+      throw 'string error';
     });
     expect(result.ok).toBe(false);
     if (!result.ok) {

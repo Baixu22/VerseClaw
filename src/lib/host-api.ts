@@ -988,6 +988,7 @@ export const hostApi = {
     ),
     expandSelector: (input: SessionExpandSelectorPayload): Promise<SessionExpandSelectorResult> => (
       invokeHost('sessions', 'expandSelector', input)
+    ),
     compressionArtifact: (
       input: SessionCompressionArtifactPayload,
     ): Promise<SessionCompressionArtifactResult> => (
@@ -996,7 +997,8 @@ export const hostApi = {
     recoveryContext: (
       input: SessionRecoveryContextPayload,
     ): Promise<SessionRecoveryContextResult> => (
-      invokeHost('sessions', 'recoveryContext', input)    ),
+      invokeHost('sessions', 'recoveryContext', input)
+    ),
     longTaskControlStatus: (
       input: SessionLongTaskControlPayload,
     ): Promise<SessionLongTaskControlStatusResult> => (

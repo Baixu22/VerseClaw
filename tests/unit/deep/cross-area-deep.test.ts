@@ -87,7 +87,7 @@ describe('Cross-Area deep — composition and real-world workloads', () => {
         recorder.startSpan({ name: `turn-${i}`, kind: 'tool' });
       }
 
-      // A5: 100 plan + replanOnResume cycles.
+      // A5: one accepted resume replan followed by 99 identical no-ops.
       const planner = new ContextBudgetPlanner(makeGraph(5), 4);
       planner.plan();
       for (let i = 0; i < 100; i++) {
@@ -108,7 +108,7 @@ describe('Cross-Area deep — composition and real-world workloads', () => {
       expect(elapsed).toBeLessThan(5000);
       // Verify no crash — all operations produced results.
       expect(recorder.snapshot().spans.length).toBe(100);
-      expect(planner.resumeReexecutions).toBe(100);
+      expect(planner.resumeReexecutions).toBe(1);
     });
 
     it('memory increment after 100-turn session is < 50 MB', () => {
