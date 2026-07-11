@@ -974,19 +974,26 @@ export async function performGatewaySessionReset(params: {
     agentId: target.agentId,
     reason: "reset",
   });
-  fs.mkdirSync(path.dirname(next.sessionFile as string), { recursive: true });
-  if (!fs.existsSync(next.sessionFile as string)) {
-    const header = {
-      type: "session",
-      version: CURRENT_SESSION_VERSION,
-      id: next.sessionId,
-      timestamp: new Date().toISOString(),
-      cwd: process.cwd(),
-    };
-    fs.writeFileSync(next.sessionFile as string, `${JSON.stringify(header)}\n`, {
+  await fs.promises.mkdir(path.dirname(next.sessionFile as string), { recursive: true });
+  const header = {
+    type: "session",
+    version: CURRENT_SESSION_VERSION,
+    id: next.sessionId,
+    timestamp: new Date().toISOString(),
+    cwd: process.cwd(),
+  };
+  try {
+    // "wx" makes the create-if-missing atomic; a concurrent creator winning
+    // the race (EEXIST) leaves the existing header in place, same as before.
+    await fs.promises.writeFile(next.sessionFile as string, `${JSON.stringify(header)}\n`, {
       encoding: "utf-8",
       mode: 0o600,
+      flag: "wx",
     });
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException)?.code !== "EEXIST") {
+      throw err;
+    }
   }
   emitGatewaySessionEndPluginHook({
     cfg,
