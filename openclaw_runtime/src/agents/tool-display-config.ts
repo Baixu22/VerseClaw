@@ -142,6 +142,51 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
         },
       },
     },
+    agent_browser: {
+      title: "Agent Browser",
+      detailKeys: ["action", "url", "sessionId", "selector", "args"],
+      actions: {
+        open: {
+          label: "open",
+          detailKeys: ["url", "profile", "mode"],
+        },
+        status: {
+          label: "status",
+        },
+        navigate: {
+          label: "navigate",
+          detailKeys: ["url", "sessionId"],
+        },
+        waitForSelector: {
+          label: "wait",
+          detailKeys: ["selector", "sessionId", "timeoutMs"],
+        },
+        click: {
+          label: "click",
+          detailKeys: ["selector", "sessionId"],
+        },
+        type: {
+          label: "type",
+          detailKeys: ["selector", "sessionId"],
+        },
+        evaluate: {
+          label: "evaluate",
+          detailKeys: ["expression", "sessionId"],
+        },
+        screenshot: {
+          label: "screenshot",
+          detailKeys: ["sessionId"],
+        },
+        command: {
+          label: "command",
+          detailKeys: ["args", "sessionId", "profile"],
+        },
+        close: {
+          label: "close",
+          detailKeys: ["sessionId"],
+        },
+      },
+    },
     canvas: {
       emoji: "🖼️",
       title: "Canvas",
