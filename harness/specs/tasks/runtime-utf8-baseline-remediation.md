@@ -29,6 +29,8 @@ touchedAreas:
   - artifacts/runtime-utf8-recovery/red-green/w1-red-07-git-blob-crlf.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-07-git-blob-crlf.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-08-git-blob-buffer.log
+  - artifacts/runtime-utf8-recovery/red-green/w1-red-09-variable-span.log
+  - artifacts/runtime-utf8-recovery/red-green/w1-green-09-variable-span.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-final.log
 expectedUserBehavior:
   - The user's original workspace and mixed DCS closure clone remain byte-for-byte untouched by remediation work and recoverable from verified bundles, patches, untracked-file copies, and SHA-256 inventories.
@@ -56,8 +58,11 @@ requiredTests:
 acceptance:
   - Before any Runtime production source is edited, this task's touchedAreas is amended to list every frozen repair allowlist, every exact production source or test path, and every evidence report, then Harness context and validate both exit 0 without --no-diff.
   - The canonical inventory scans Git blob bytes, records Git object identity and SHA-256 preimages, reports deterministic malformed byte ranges and bounded context, and distinguishes clean-filter-equivalent Windows worktrees from real drift.
-  - Recovery apply refuses unresolved confidence, missing evidence, changed preimages, mismatched remove bytes, overlapping ranges, and paths outside the repository before writing any file.
-  - Every repaired byte range has exact or independently corroborated evidence, preimage and postimage hashes, and a nonempty evidence source list; unresolved recovery entry count is zero.
+  - Recovery manifests use the version 2 source-aligned-variable-length span model; current remove spans and source insert spans may differ in length and offsets always address the immutable preimage.
+  - Every span records matching left and right preserved-byte anchors so swallowed delimiters, punctuation, variation selectors, zero-width joiners, and adjacent sequence bytes cannot be omitted from reconstruction.
+  - Recovery apply refuses unresolved, candidate, or conflict confidence, missing evidence, changed preimages, missing or mismatched expected postimage hashes, mismatched remove bytes or anchors, empty remove spans, overlapping ranges, and paths outside the repository before writing any file.
+  - Recovery prepares and validates every file before writing any file, so a later invalid repair cannot leave an earlier file partially updated.
+  - Every repaired byte range has exact or independently corroborated evidence, preimage and expected postimage hashes, matching anchors, and a nonempty evidence source list; unresolved recovery entry count is zero.
   - Upstream trees are evidence only; no file is replaced wholesale unless all bytes outside the damaged ranges are proven identical.
   - No lossy decoder, U+FFFD substitution, guessed punctuation, guessed CJK text, guessed emoji, blanket conversion, blanket skip, assertion deletion, or weakened gate is used.
   - Repair workers edit pairwise-disjoint frozen path allowlists, and integration verifies each worker's changed-file list is a subset of its allowlist.
@@ -121,7 +126,14 @@ unacceptable. Matching GREEN logs record the smallest passing implementation.
 ## Recovery Evidence Standard
 
 An `exact` replacement requires byte alignment against a source with identical
-undamaged context. A `corroborated` replacement requires at least two
-independent evidence sources and a focused behavior test when the bytes affect
-runtime strings, regexes, schemas, identifiers, vocabularies, or protocol
-content. Anything else remains `unresolved` and blocks source repair.
+undamaged context. The recovery unit is a complete, source-aligned,
+variable-length byte span, not one malformed UTF-8 unit or one replacement
+code point. Its current offset addresses the immutable preimage; `removeHex`
+and `insertHex` may differ in length; left and right anchors prove the
+preserved boundaries; and the complete reconstructed file must match the
+expected postimage SHA-256.
+
+A `corroborated` replacement requires at least two independent evidence sources
+and a focused behavior test when the bytes affect runtime strings, regexes,
+schemas, identifiers, vocabularies, or protocol content. Anything else remains
+`candidate`, `conflict`, or `unresolved` and blocks source repair.
