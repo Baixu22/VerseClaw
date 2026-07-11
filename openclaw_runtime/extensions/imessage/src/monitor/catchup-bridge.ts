@@ -15,7 +15,7 @@ import type { IMessagePayload } from "./types.js";
 
 // Per-chat history fetch budget. messages.history is per-chat; we cap each
 // chat's fetch to the global perRunLimit so a single noisy group cannot
-// dominate the cursor advance â€?the cross-chat sort + final slice still
+// dominate the cursor advance â€” the cross-chat sort + final slice still
 // caps the global pass at perRunLimit.
 const PER_CHAT_HISTORY_LIMIT_CAP = 500;
 
@@ -85,7 +85,7 @@ export async function runIMessageCatchup(
   const warnLog = (msg: string) => runtime?.log?.(warn(msg));
 
   // Map keyed by guid so the dispatch adapter can recover the full payload
-  // the fetcher pulled from `messages.history`. Local to this catchup pass â€?
+  // the fetcher pulled from `messages.history`. Local to this catchup pass â€”
   // discarded when the function returns.
   const payloadByGuid = new Map<string, IMessagePayload>();
 
@@ -113,7 +113,7 @@ export async function runIMessageCatchup(
     // Track the highest rowid / date the imsg bridge actually returned across
     // all chats, regardless of whether each row passed the parser. The catchup
     // loop uses this as a cursor-advance floor so an unparseable row (corrupt
-    // text column, schema drift, etc.) cannot stall catchup forever â€?without
+    // text column, schema drift, etc.) cannot stall catchup forever â€” without
     // this, the same broken row would be re-fetched and re-dropped on every
     // gateway startup.
     let rawWatermarkRowid = -Infinity;
@@ -146,7 +146,7 @@ export async function runIMessageCatchup(
         );
       } catch (err) {
         // Best-effort per chat. A single broken chat must not poison the
-        // whole pass â€?drop and continue.
+        // whole pass â€” drop and continue.
         historyFetchFailed = true;
         warnLog(`imessage catchup: messages.history failed for chat_id=${chatId}: ${String(err)}`);
         continue;
@@ -156,7 +156,7 @@ export async function runIMessageCatchup(
       for (const raw of messages) {
         // Best-effort raw-watermark probe BEFORE we run the parser, so even
         // rows we drop still let the cursor advance past them. We only trust
-        // numeric `id` / parseable `created_at` â€?if the row is so malformed
+        // numeric `id` / parseable `created_at` â€” if the row is so malformed
         // that we cannot even read those, leave the watermark unchanged for
         // this row (same forward-progress behavior as today, just no worse).
         const rawRecord = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : null;
@@ -222,7 +222,7 @@ export async function runIMessageCatchup(
     // Clamp the raw watermark when cap-truncation hits so the catchup loop
     // cannot persist a cursor past undispatched valid rows. Without this,
     // a `messages.history` page wider than `perRunLimit` would silently
-    // skip the cap-truncated tail forever â€?the WARN above promises the
+    // skip the cap-truncated tail forever â€” the WARN above promises the
     // next startup picks up the rest, and that promise relies on the
     // cursor staying at the last dispatched rowid. When no truncation
     // happens, the watermark covers parse-rejected rows interspersed

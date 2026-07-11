@@ -341,7 +341,7 @@ async function pollXaiVideo(params: {
       );
     }
     // Any other status (queued, processing, submitted, pending, in_progress,
-    // empty, â€? is non-terminal: keep polling.
+    // empty, â€¦) is non-terminal: keep polling.
     await waitProviderOperationPollInterval({ deadline, pollIntervalMs: POLL_INTERVAL_MS });
   }
   throw new Error(`xAI video generation task ${params.requestId} did not finish in time`);

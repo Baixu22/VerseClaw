@@ -39,7 +39,7 @@ export function getFrameworkCommands(): QQBotFrameworkCommand[] {
   return registry.getFrameworkCommands();
 }
 
-// Slash command entry point â€?delegates to core/ registry.
+// Slash command entry point â€” delegates to core/ registry.
 
 /**
  * Try to match and execute a plugin-level slash command.

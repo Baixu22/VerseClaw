@@ -1,5 +1,5 @@
 /**
- * QQ Bot Approval Capability â€?entry point.
+ * QQ Bot Approval Capability â€” entry point.
  *
  * QQBot uses a simpler approval model than Telegram/Slack: when no
  * approver list is configured, the bot sends the approval message to the
@@ -34,7 +34,7 @@ import { getBridgeLogger } from "../logger.js";
  * check.  Otherwise fall back to target-resolvability plus the shared
  * per-account ownership rule in `matchesQQBotApprovalAccount` so that
  * each QQBot account handler only delivers approvals that originated
- * from its own account (openids are account-scoped â€?cross-account
+ * from its own account (openids are account-scoped â€” cross-account
  * delivery fails with 500 on the QQ Bot API).
  */
 function shouldHandleRequest(params: {
@@ -148,7 +148,7 @@ function createQQBotApprovalCapability(): ChannelApprovalCapability {
           normalizeOptionalString(input.request?.request?.turnSourceAccountId);
         const result = isNativeDeliveryEnabled({ cfg: input.cfg, accountId });
         getBridgeLogger().debug?.(
-          `[qqbot:approval] shouldSuppressForwardingFallback channel=${channel} accountId=${accountId} â†?${result}`,
+          `[qqbot:approval] shouldSuppressForwardingFallback channel=${channel} accountId=${accountId} â†’ ${result}`,
         );
         return result;
       },
@@ -187,7 +187,7 @@ function createQQBotApprovalCapability(): ChannelApprovalCapability {
       isConfigured: ({ cfg, accountId }) => {
         const result = isNativeDeliveryEnabled({ cfg, accountId });
         getBridgeLogger().debug?.(
-          `[qqbot:approval] nativeRuntime.isConfigured accountId=${accountId} â†?${result}`,
+          `[qqbot:approval] nativeRuntime.isConfigured accountId=${accountId} â†’ ${result}`,
         );
         return result;
       },
@@ -198,7 +198,7 @@ function createQQBotApprovalCapability(): ChannelApprovalCapability {
           request: request as never,
         });
         getBridgeLogger().debug?.(
-          `[qqbot:approval] nativeRuntime.shouldHandle accountId=${accountId} â†?${result}`,
+          `[qqbot:approval] nativeRuntime.shouldHandle accountId=${accountId} â†’ ${result}`,
         );
         return result;
       },

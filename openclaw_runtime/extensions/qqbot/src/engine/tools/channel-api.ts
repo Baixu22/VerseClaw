@@ -1,6 +1,6 @@
 /**
  * QQ Channel API proxy tool core logic.
- * QQ 频道 API 代理工具核心逻辑�?
+ * QQ 频道 API 代理工具核心逻辑。
  *
  * Provides an authenticated HTTP proxy for the QQ Open Platform channel
  * APIs. The caller (old tools/channel.ts shell) resolves the access
@@ -16,7 +16,7 @@ const DEFAULT_TIMEOUT_MS = 30000;
 
 /**
  * Channel API call parameters.
- * 频道 API 调用参数�?
+ * 频道 API 调用参数。
  */
 export interface ChannelApiParams {
   method: string;
@@ -27,7 +27,7 @@ export interface ChannelApiParams {
 
 /**
  * JSON Schema for AI tool parameters (used by framework registration).
- * AI Tool 参数�?JSON Schema 定义（供框架注册使用）�?
+ * AI Tool 参数的 JSON Schema 定义（供框架注册使用）。
  */
 export const ChannelApiSchema = {
   type: "object",
@@ -61,7 +61,7 @@ export const ChannelApiSchema = {
 
 /**
  * Build the full API URL from base + path + query params.
- * 拼接 API 基地址 + 路径 + 查询参数�?
+ * 拼接 API 基地址 + 路径 + 查询参数。
  */
 function buildUrl(path: string, query?: Record<string, string>): string {
   let url = `${API_BASE}${path}`;
@@ -82,7 +82,7 @@ function buildUrl(path: string, query?: Record<string, string>): string {
 
 /**
  * Validate API path format; returns an error string or null if valid.
- * 校验 API 路径格式，返回错误描述或 null（合法）�?
+ * 校验 API 路径格式，返回错误描述或 null（合法）。
  */
 function validatePath(path: string): string | null {
   if (!path.startsWith("/")) {
@@ -106,7 +106,7 @@ function json(data: unknown) {
 
 /**
  * Options provided by the caller when executing a channel API request.
- * 执行频道 API 请求时由调用方提供的选项�?
+ * 执行频道 API 请求时由调用方提供的选项。
  */
 interface ChannelApiExecuteOptions {
   accessToken: string;
@@ -114,7 +114,7 @@ interface ChannelApiExecuteOptions {
 
 /**
  * Execute a channel API proxy request.
- * 执行频道 API 代理请求�?
+ * 执行频道 API 代理请求。
  *
  * The caller provides the access token; this function handles
  * URL building, path validation, HTTP fetch, and structured

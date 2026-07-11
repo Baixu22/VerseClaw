@@ -16,7 +16,7 @@ import type { RefAttachmentSummary } from "./types.js";
 
 // ============ Injected dependency ============
 
-/** Attachment download & voice transcription â€?injected from the outer layer. */
+/** Attachment download & voice transcription â€” injected from the outer layer. */
 export interface AttachmentProcessor {
   processAttachments(
     attachments:
@@ -47,7 +47,7 @@ export interface AttachmentProcessor {
 /**
  * Format a quoted message reference into human-readable text for model context.
  *
- * This mirrors the independent version's `formatMessageReferenceForAgent` â€?
+ * This mirrors the independent version's `formatMessageReferenceForAgent` â€”
  * processing attachments (download + STT) and combining them with parsed text.
  *
  * @param ref - The msg_elements[0] data from the QQ push event.

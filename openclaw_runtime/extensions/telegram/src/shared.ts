@@ -101,7 +101,7 @@ function isBlockedByMultiBotGuard(cfg: OpenClawConfig, accountId: string): boole
   }
   // Use resolveNormalizedAccountEntry (same as resolveTelegramToken in token.ts)
   // instead of resolveAccountEntry to handle keys that require full normalization
-  // (e.g. "Carey Notifications" â†?"carey-notifications").
+  // (e.g. "Carey Notifications" â†’ "carey-notifications").
   return !resolveNormalizedAccountEntry(accounts, accountId, normalizeAccountId);
 }
 
@@ -199,7 +199,7 @@ export function createTelegramPluginBase(params: {
           return false;
         }
         const inspected = inspectTelegramAccount({ cfg, accountId: account.accountId });
-        // Gate on actually available token, not just "configured" â€?the latter
+        // Gate on actually available token, not just "configured" â€” the latter
         // includes "configured_unavailable" (unreadable tokenFile, unresolved
         // SecretRef) which would pass here but fail at runtime.
         if (!inspected.token?.trim()) {

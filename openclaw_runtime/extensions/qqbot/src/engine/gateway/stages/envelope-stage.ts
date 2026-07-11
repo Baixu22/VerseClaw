@@ -1,5 +1,5 @@
 /**
- * Envelope stage â€?render the Web UI body, the dynamic-context block,
+ * Envelope stage â€” render the Web UI body, the dynamic-context block,
  * the final group system prompt, and the media classification arrays.
  *
  * All logic here is presentation-layer glue: it combines fields built by

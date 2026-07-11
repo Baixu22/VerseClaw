@@ -115,7 +115,7 @@ export function registerSlackChannelEvents(params: {
         });
 
         ctx.runtime.log?.(
-          warn(`[slack] Channel ID changed: ${oldChannelId} â†?${newChannelId} (${label})`),
+          warn(`[slack] Channel ID changed: ${oldChannelId} â†’ ${newChannelId} (${label})`),
         );
 
         if (

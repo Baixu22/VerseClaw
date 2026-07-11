@@ -149,7 +149,7 @@ function formatAccountAuthOverview(overview: CodexAccountAuthOverview): string {
   if (overview.rows.length > 0) {
     lines.push(overview.orderTitle);
     for (const [index, row] of overview.rows.entries()) {
-      lines.push(`  ${index + 1}. ${row.label}   ${row.kind}   â€?${formatAuthRowStatus(row)}`);
+      lines.push(`  ${index + 1}. ${row.label}   ${row.kind}   â€” ${formatAuthRowStatus(row)}`);
     }
   }
   while (lines.at(-1) === "") {

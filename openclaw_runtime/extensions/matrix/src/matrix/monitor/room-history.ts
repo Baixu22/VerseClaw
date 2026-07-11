@@ -5,8 +5,8 @@
  * each agent independently tracks which messages it has already consumed. This design
  * lets multiple agents in the same room see independent history windows:
  *
- * - dev replies to @dev msgB (watermark advances to B) â†?room queue still has [A, B]
- * - spark replies to @spark msgC â†?spark watermark starts at 0 and sees [A, B, C]
+ * - dev replies to @dev msgB (watermark advances to B) â†’ room queue still has [A, B]
+ * - spark replies to @spark msgC â†’ spark watermark starts at 0 and sees [A, B, C]
  *
  * Race-condition safety: the watermark only advances to the snapshot index taken at
  * dispatch time, NOT to the queue's end at reply time.  Messages that land in the queue
@@ -136,7 +136,7 @@ type RoomHistoryTrackerTestApi = RoomHistoryTracker & {
 
 type HistoryQueue = {
   entries: QueuedHistoryEntry[];
-  /** Absolute index of entries[0] â€?increases as old entries are trimmed. */
+  /** Absolute index of entries[0] â€” increases as old entries are trimmed. */
   baseIndex: number;
   generation: number;
   preparedTriggers: Map<string, PreparedTriggerResult>;
@@ -153,7 +153,7 @@ function createRoomHistoryTrackerInternal(
   maxPreparedTriggerEntries = MAX_PREPARED_TRIGGER_ENTRIES,
 ): RoomHistoryTrackerTestApi {
   const roomQueues = new Map<string, RoomQueue>();
-  /** Maps `{agentId, roomId, scope}` â†?absolute consumed-up-to index */
+  /** Maps `{agentId, roomId, scope}` â†’ absolute consumed-up-to index */
   const agentWatermarks = new Map<string, number>();
   let nextQueueGeneration = 1;
 

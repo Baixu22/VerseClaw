@@ -1,5 +1,5 @@
 /**
- * Bridge-layer logger â€?holds the framework logger injected at gateway startup.
+ * Bridge-layer logger â€” holds the framework logger injected at gateway startup.
  *
  * Bridge modules (approval, tools, etc.) use this instead of `console.log` or
  * engine's `debugLog` so that all logs flow through the OpenClaw log system.

@@ -2579,7 +2579,7 @@ export function createMatrixRoomMessageHandler(params: MatrixMonitorHandlerParam
         return;
       }
       // Advance the per-agent watermark now that the reply succeeded (or no reply was needed).
-      // Only advance to the snapshot position â€?messages added during async processing remain
+      // Only advance to the snapshot position â€” messages added during async processing remain
       // visible for the next trigger.
       if (isRoom && triggerSnapshot) {
         roomHistoryTracker.consumeHistory(

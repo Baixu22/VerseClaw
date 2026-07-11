@@ -1,8 +1,8 @@
 /**
  * Mutate `MdAst` at an OcPath. Returns a new AST; original unchanged.
  *
- *   oc://FILE/[frontmatter]/key   â†?frontmatter value
- *   oc://FILE/section/item/field  â†?item.kv.value
+ *   oc://FILE/[frontmatter]/key   â†’ frontmatter value
+ *   oc://FILE/section/item/field  â†’ item.kv.value
  *
  * Section bodies aren't writable through this primitive.
  *

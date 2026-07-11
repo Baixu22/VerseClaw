@@ -124,10 +124,10 @@ export function resolveTelegramToken(
   // decide whether to fall through to channel-level defaults based on whether
   // the config has an explicit accounts section (multi-bot setup).
   //
-  // Multi-bot: accounts section exists with entries â†?block fallthrough to prevent
+  // Multi-bot: accounts section exists with entries â†’ block fallthrough to prevent
   // routing via the wrong bot's token.
   //
-  // Single-bot: no accounts section (or empty) â†?allow fallthrough so that
+  // Single-bot: no accounts section (or empty) â†’ allow fallthrough so that
   // binding-created accountIds inherit the channel-level token.
   // See: https://github.com/openclaw/openclaw/issues/53876
   if (accountId !== DEFAULT_ACCOUNT_ID && !accountCfg) {
@@ -139,7 +139,7 @@ export function resolveTelegramToken(
       Object.keys(accounts).length > 0;
     if (hasConfiguredAccounts) {
       opts.logMissingFile?.(
-        `channels.telegram.accounts: unknown accountId "${accountId}" â€?not found in config, refusing channel-level fallback`,
+        `channels.telegram.accounts: unknown accountId "${accountId}" â€” not found in config, refusing channel-level fallback`,
       );
       return { token: "", source: "none" };
     }

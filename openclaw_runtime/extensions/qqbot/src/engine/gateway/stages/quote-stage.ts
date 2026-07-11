@@ -1,10 +1,10 @@
 /**
- * Quote stage â€?resolve the quoted-reply (`refMsgIdx`) if any.
+ * Quote stage â€” resolve the quoted-reply (`refMsgIdx`) if any.
  *
  * Three-level fallback mirrors the standalone build:
- *   1. RefIndex cache hit â†?rich ReplyToInfo
- *   2. `msg_elements[0]` present â†?re-process the quoted body
- *   3. Otherwise â†?id-only placeholder so the pipeline still knows it's a reply
+ *   1. RefIndex cache hit â†’ rich ReplyToInfo
+ *   2. `msg_elements[0]` present â†’ re-process the quoted body
+ *   3. Otherwise â†’ id-only placeholder so the pipeline still knows it's a reply
  */
 
 import {

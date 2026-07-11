@@ -1,19 +1,19 @@
 /**
  * General formatting and string utilities.
- * 通用格式化与字符串工具�?
+ * 通用格式化与字符串工具。
  *
  * Pure utility functions with zero external dependencies.
  * Replaces `openclaw/plugin-sdk/error-runtime` and `text-runtime`
  * helpers for use inside engine/.
  *
  * NOTE: The framework `formatErrorMessage` also applies `redactSensitiveText()`
- * for token masking. We intentionally omit that here �?the framework's log
+ * for token masking. We intentionally omit that here — the framework's log
  * pipeline handles redaction at a higher level.
  */
 
 /**
  * Format any error object into a readable string.
- * 将任意错误对象格式化为可读字符串�?
+ * 将任意错误对象格式化为可读字符串。
  *
  * Traverses the `.cause` chain for nested Error objects to include
  * the full error context (e.g. network errors wrapped inside HTTP errors).

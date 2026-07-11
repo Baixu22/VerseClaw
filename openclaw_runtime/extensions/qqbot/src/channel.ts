@@ -109,7 +109,7 @@ async function sendQQBotMedia(params: {
   accountId?: string | null;
   replyToId?: string | null;
 }) {
-  // Same guard as sendText â€?ensure adapters are registered.
+  // Same guard as sendText â€” ensure adapters are registered.
   await loadGatewayModule();
   const account = resolveQQBotAccount(params.cfg, params.accountId);
   const { sendMedia } = await loadOutboundMessagingModule();
@@ -324,7 +324,7 @@ export const qqbotPlugin: ChannelPlugin<ResolvedQQBotAccount> = {
       const { startGateway } = await loadGatewayModule();
 
       log?.info(
-        `[qqbot:${account.accountId}] Starting gateway â€?appId=${account.appId}, enabled=${account.enabled}, name=${account.name ?? "unnamed"}`,
+        `[qqbot:${account.accountId}] Starting gateway â€” appId=${account.appId}, enabled=${account.enabled}, name=${account.name ?? "unnamed"}`,
       );
 
       await startGateway({

@@ -4,21 +4,21 @@ import type { CopilotClientOptions } from "@github/copilot-sdk";
 // Telemetry bridge for the GitHub Copilot agent runtime.
 //
 // SDK surface:
-//   - `CopilotClientOptions.telemetry?: TelemetryConfig` â€?OpenTelemetry
+//   - `CopilotClientOptions.telemetry?: TelemetryConfig` â€” OpenTelemetry
 //     configuration applied to the spawned CLI process via env vars.
-//   - `CopilotClientOptions.onGetTraceContext?: TraceContextProvider` â€?
+//   - `CopilotClientOptions.onGetTraceContext?: TraceContextProvider` â€”
 //     async callback returning a W3C `{traceparent?, tracestate?}` that the
 //     SDK injects into `session.create`, `session.resume`, and
 //     `session.send` RPCs for distributed trace propagation.
 //
 // Host-side back-pointers (NOT imported here to keep the package boundary
-// clean â€?the wiring layer injects these via callbacks):
-//   - `src/infra/diagnostic-trace-context.ts` â€?`getActiveDiagnosticTraceContext`,
+// clean â€” the wiring layer injects these via callbacks):
+//   - `src/infra/diagnostic-trace-context.ts` â€” `getActiveDiagnosticTraceContext`,
 //     `formatDiagnosticTraceparent`, `DiagnosticTraceContext`.
-//   - `src/infra/diagnostic-events.ts` â€?`formatDiagnosticTraceparentForPropagation`
+//   - `src/infra/diagnostic-events.ts` â€” `formatDiagnosticTraceparentForPropagation`
 //     for trusted-only propagation.
 //
-// IMPORTANT â€?pool reuse caveat:
+// IMPORTANT â€” pool reuse caveat:
 //   `CopilotClientPool` keys on `{agentId, copilotHome, authMode,
 //   authProfileId, authProfileVersion}`. Client-level telemetry and
 //   `onGetTraceContext` are NOT part of the pool key. Two callers that
@@ -113,8 +113,8 @@ function isNonEmptyString(value: unknown): value is string {
  *
  * Resolution order on each invocation:
  *   1. If `getTraceContext` is supplied and returns a non-undefined value,
- *      return it as-is. Errors from this source â†?return `{}` and notify.
- *   2. Otherwise call `getTraceparent` (if supplied). On error â†?return
+ *      return it as-is. Errors from this source â†’ return `{}` and notify.
+ *   2. Otherwise call `getTraceparent` (if supplied). On error â†’ return
  *      `{}` and notify (no traceparent = no propagation).
  *   3. If traceparent is non-empty, call `getTracestate` (if supplied)
  *      and attach the result. Errors on tracestate are partial-success:
@@ -191,7 +191,7 @@ export interface CopilotTelemetryOptions {
  * still partially configure the CLI's OTel env layout.
  *
  * Any explicitly-set value (including `false` for `captureContent`) is
- * preserved â€?only `undefined` is treated as "no opinion".
+ * preserved â€” only `undefined` is treated as "no opinion".
  */
 export function createTelemetryConfig(
   options?: CopilotTelemetryOptions,

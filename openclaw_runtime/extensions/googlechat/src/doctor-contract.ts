@@ -44,7 +44,7 @@ function normalizeGoogleChatGroups(params: {
     if (nextGroup.enabled === undefined) {
       nextGroup.enabled = group.allow;
       params.changes.push(
-        `Moved ${params.pathPrefix}.${groupId}.allow â†?${params.pathPrefix}.${groupId}.enabled.`,
+        `Moved ${params.pathPrefix}.${groupId}.allow â†’ ${params.pathPrefix}.${groupId}.enabled.`,
       );
     } else {
       params.changes.push(

@@ -112,7 +112,7 @@ function chatListCacheSet(
 /**
  * Strip the iMessage;-;/SMS;-;/any;-; service prefix that Messages uses
  * for direct DM chats. Different layers report direct DMs in different
- * forms â€?the action surface synthesizes `iMessage;-;<phone>` from a
+ * forms â€” the action surface synthesizes `iMessage;-;<phone>` from a
  * handle target, while imsg's chats.list returns `identifier: <phone>`
  * and `guid: any;-;<phone>`. Comparing the raw strings would falsely
  * miss the match. Mirror of the same helper in monitor-reply-cache.ts.
@@ -439,7 +439,7 @@ export const imessageActionsRuntime = {
     // Optional attachment as an in-memory buffer that we stage to a temp
     // file before invoking imsg. The buffer must already have been loaded
     // by the outbound media resolver (mediaLocalRoots/sandbox/size limits)
-    // â€?this runtime intentionally does not accept a raw filesystem path,
+    // â€” this runtime intentionally does not accept a raw filesystem path,
     // because that would let an attacker-controlled path bypass the
     // resolver and let imsg send any host-readable file. Requires an imsg
     // build that accepts `send-rich --file` (openclaw/imsg#114); callers

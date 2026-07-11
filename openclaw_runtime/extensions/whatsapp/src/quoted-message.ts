@@ -3,7 +3,7 @@ import type { MiscMessageGenerationOptions } from "baileys";
 import { jidToE164 } from "./text-runtime.js";
 
 // ── Inbound message metadata cache ──────────────────────────────────────
-// Maps messageId �?{ participant, participantE164, body, fromMe } so the
+// Maps messageId → { participant, participantE164, body, fromMe } so the
 // outbound adapter can
 // populate the quote key with the sender JID and preview text even though
 // the outbound path only receives a bare messageId string.
@@ -163,7 +163,7 @@ export function buildQuotedMessageOptions(params: {
   remoteJid?: string | null;
   fromMe?: boolean;
   participant?: string;
-  /** Original message text �?shown in the quote preview bubble. */
+  /** Original message text — shown in the quote preview bubble. */
   messageText?: string;
 }): MiscMessageGenerationOptions | undefined {
   const id = params.messageId?.trim();
