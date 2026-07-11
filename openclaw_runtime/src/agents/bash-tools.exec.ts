@@ -1429,6 +1429,9 @@ export function createExecTool(
     } catch {
       return params;
     }
+    if (host === "verseshell") {
+      return markResolveExecEnvPrepared(params, { host });
+    }
     const rawPluginEnv = await hookRunner.runResolveExecEnv(
       {
         sessionKey: defaults?.sessionKey ?? context?.hookContext?.sessionKey,

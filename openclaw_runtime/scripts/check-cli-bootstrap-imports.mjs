@@ -28,6 +28,14 @@ function isMainModule() {
   return process.argv[1] ? path.resolve(process.argv[1]) === fileURLToPath(import.meta.url) : false;
 }
 
+function hasCliStartupSource(rootDir, fsImpl = fs) {
+  try {
+    return fsImpl.statSync(path.join(rootDir, "src/cli/run-main.ts")).isFile();
+  } catch {
+    return false;
+  }
+}
+
 function isBuiltinSpecifier(specifier) {
   return specifier.startsWith("node:") || module.isBuiltin(specifier);
 }
@@ -119,8 +127,10 @@ function walkStaticImportGraph(params) {
  */
 export function collectCliBootstrapExternalImportErrors(params = {}) {
   const rootDir = params.rootDir ?? process.cwd();
-  const entrypoints = params.entrypoints ?? DEFAULT_ENTRYPOINTS;
   const fsImpl = params.fs ?? fs;
+  const entrypoints =
+    params.entrypoints ??
+    (hasCliStartupSource(rootDir, fsImpl) ? DEFAULT_ENTRYPOINTS : [DEFAULT_ENTRYPOINTS[0]]);
   const errors = walkStaticImportGraph({
     fsImpl,
     rootDir,
@@ -186,6 +196,9 @@ export function collectGatewayRunChunkBudgetErrors(params = {}) {
   }
 
   if (chunks.length === 0) {
+    if (!hasCliStartupSource(rootDir, fsImpl)) {
+      return [];
+    }
     return [
       "CLI bootstrap import guard could not find the bundled gateway run chunk. Run pnpm build first.",
     ];

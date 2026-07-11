@@ -1,52 +1,128 @@
-// P5-2 CLI/TUI Deletion: nodes camera action stub.
-//
-// The original `cli/nodes-camera.ts` was retired along with the `cli/`
-// directory. This stub preserves the public surface used by the
-// `agents/tools/nodes-tool-media.ts` tool. At runtime, node camera
-// media capture is not part of the headless gateway path, so the
-// helpers all throw a "not implemented" error, but the symbols are
-// importable so the module graph resolves cleanly.
-
-import crypto from "node:crypto";
+import path from "node:path";
+import { asFiniteNumber } from "@openclaw/normalization-core/number-coercion";
+import { asRecord } from "@openclaw/normalization-core/record-coerce";
+import { readStringValue } from "@openclaw/normalization-core/string-coerce";
+import { asBoolean } from "../../utils/boolean.js";
+import { resolveCliName } from "./cli-name.js";
+import {
+  resolveTempPathParts,
+  writeBase64ToFile,
+  writeUrlToFile,
+} from "./nodes-media-utils.js";
 
 export type CameraFacing = "front" | "back" | "environment" | "user";
 
-export function cameraTempPath(prefix: string, facing: CameraFacing): string {
-  const safePrefix = String(prefix ?? "camera").replace(/[^a-z0-9_-]/gi, "_");
-  return `nodes-camera-${safePrefix}-${facing}-${crypto.randomUUID()}.bin`;
+export type CameraTempPathOptions = {
+  kind: "snap" | "clip";
+  ext: string;
+  facing?: CameraFacing;
+  id?: string;
+  tmpDir?: string;
+};
+
+export function cameraTempPath(opts: CameraTempPathOptions): string {
+  const { tmpDir, id, ext } = resolveTempPathParts(opts);
+  const facingPart = opts.facing ? `-${opts.facing}` : "";
+  return path.join(
+    tmpDir,
+    `${resolveCliName()}-camera-${opts.kind}${facingPart}-${id}${ext}`,
+  );
 }
 
 export type ParsedCameraSnapPayload = {
-  format: "jpeg" | "png";
-  bytes: Uint8Array;
-  width?: number;
-  height?: number;
+  format: string;
+  base64?: string;
+  url?: string;
+  width: number;
+  height: number;
 };
 
-export function parseCameraSnapPayload(input: unknown): ParsedCameraSnapPayload | null {
-  return null;
+export function parseCameraSnapPayload(value: unknown): ParsedCameraSnapPayload {
+  const object = asRecord(value);
+  const format = readStringValue(object.format);
+  const base64 = readStringValue(object.base64);
+  const url = readStringValue(object.url);
+  const width = asFiniteNumber(object.width);
+  const height = asFiniteNumber(object.height);
+  if (!format || (!base64 && !url) || width === undefined || height === undefined) {
+    throw new Error("invalid camera.snap payload");
+  }
+  return {
+    format,
+    ...(base64 ? { base64 } : {}),
+    ...(url ? { url } : {}),
+    width,
+    height,
+  };
 }
 
 export type ParsedCameraClipPayload = {
-  format: "mp4" | "mov";
-  bytes: Uint8Array;
-  durationMs?: number;
+  format: string;
+  base64?: string;
+  url?: string;
+  durationMs: number;
+  hasAudio: boolean;
 };
 
-export function parseCameraClipPayload(input: unknown): ParsedCameraClipPayload | null {
-  return null;
+export function parseCameraClipPayload(value: unknown): ParsedCameraClipPayload {
+  const object = asRecord(value);
+  const format = readStringValue(object.format);
+  const base64 = readStringValue(object.base64);
+  const url = readStringValue(object.url);
+  const durationMs = asFiniteNumber(object.durationMs);
+  const hasAudio = asBoolean(object.hasAudio);
+  if (!format || (!base64 && !url) || durationMs === undefined || hasAudio === undefined) {
+    throw new Error("invalid camera.clip payload");
+  }
+  return {
+    format,
+    ...(base64 ? { base64 } : {}),
+    ...(url ? { url } : {}),
+    durationMs,
+    hasAudio,
+  };
 }
 
-export async function writeCameraPayloadToFile(
-  _payload: ParsedCameraSnapPayload,
-  _filePath: string,
-): Promise<void> {
-  throw new Error("nodes-camera: writeCameraPayloadToFile is not implemented in the P5-2 headless runtime");
+export async function writeCameraPayloadToFile(params: {
+  filePath: string;
+  payload: Pick<ParsedCameraSnapPayload, "base64" | "url">;
+  expectedHost?: string;
+  invalidPayloadMessage?: string;
+}): Promise<void> {
+  if (params.payload.url) {
+    const expectedHost = params.expectedHost?.trim();
+    if (!expectedHost) {
+      throw new Error("camera URL payload requires node remoteIp");
+    }
+    await writeUrlToFile(params.filePath, params.payload.url, { expectedHost });
+    return;
+  }
+  if (params.payload.base64) {
+    await writeBase64ToFile(params.filePath, params.payload.base64);
+    return;
+  }
+  throw new Error(params.invalidPayloadMessage ?? "invalid camera payload");
 }
 
-export async function writeCameraClipPayloadToFile(
-  _payload: ParsedCameraClipPayload,
-  _filePath: string,
-): Promise<void> {
-  throw new Error("nodes-camera: writeCameraClipPayloadToFile is not implemented in the P5-2 headless runtime");
+export async function writeCameraClipPayloadToFile(params: {
+  payload: ParsedCameraClipPayload;
+  facing: CameraFacing;
+  expectedHost?: string;
+  id?: string;
+  tmpDir?: string;
+}): Promise<string> {
+  const filePath = cameraTempPath({
+    kind: "clip",
+    facing: params.facing,
+    ext: params.payload.format,
+    tmpDir: params.tmpDir,
+    id: params.id,
+  });
+  await writeCameraPayloadToFile({
+    filePath,
+    payload: params.payload,
+    expectedHost: params.expectedHost,
+    invalidPayloadMessage: "invalid camera.clip payload",
+  });
+  return filePath;
 }

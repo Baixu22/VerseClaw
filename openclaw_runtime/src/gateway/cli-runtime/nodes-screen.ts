@@ -1,34 +1,51 @@
-// P5-2 CLI/TUI Deletion: nodes screen action stub.
-//
-// The original `cli/nodes-screen.ts` was retired along with the `cli/`
-// directory. This stub preserves the public surface used by the
-// `agents/tools/nodes-tool-media.ts` tool. At runtime, node screen
-// capture is not part of the headless gateway path, so the helpers
-// all throw a "not implemented" error, but the symbols are importable
-// so the module graph resolves cleanly.
-
-import crypto from "node:crypto";
+import path from "node:path";
+import { asRecord } from "@openclaw/normalization-core/record-coerce";
+import { readStringValue } from "@openclaw/normalization-core/string-coerce";
+import {
+  resolveTempPathParts,
+  writeBase64ToFile,
+  type MediaWriteResult,
+} from "./nodes-media-utils.js";
 
 export type ParsedScreenRecordPayload = {
-  format: "mp4" | "webm";
-  bytes: Uint8Array;
+  format: string;
+  base64: string;
   durationMs?: number;
-  width?: number;
-  height?: number;
+  fps?: number;
+  screenIndex?: number;
+  hasAudio?: boolean;
 };
 
-export function parseScreenRecordPayload(input: unknown): ParsedScreenRecordPayload | null {
-  return null;
+export function parseScreenRecordPayload(value: unknown): ParsedScreenRecordPayload {
+  const object = asRecord(value);
+  const format = readStringValue(object.format);
+  const base64 = readStringValue(object.base64);
+  if (!format || !base64) {
+    throw new Error("invalid screen.record payload");
+  }
+  return {
+    format,
+    base64,
+    durationMs: typeof object.durationMs === "number" ? object.durationMs : undefined,
+    fps: typeof object.fps === "number" ? object.fps : undefined,
+    screenIndex: typeof object.screenIndex === "number" ? object.screenIndex : undefined,
+    hasAudio: typeof object.hasAudio === "boolean" ? object.hasAudio : undefined,
+  };
 }
 
-export function screenRecordTempPath(prefix: string): string {
-  const safePrefix = String(prefix ?? "screen").replace(/[^a-z0-9_-]/gi, "_");
-  return `nodes-screen-${safePrefix}-${crypto.randomUUID()}.bin`;
+export function screenRecordTempPath(opts: {
+  ext: string;
+  id?: string;
+  tmpDir?: string;
+}): string {
+  const { tmpDir, id, ext } = resolveTempPathParts(opts);
+  return path.join(tmpDir, `openclaw-screen-record-${id}${ext}`);
 }
 
 export async function writeScreenRecordToFile(
-  _payload: ParsedScreenRecordPayload,
-  _filePath: string,
-): Promise<void> {
-  throw new Error("nodes-screen: writeScreenRecordToFile is not implemented in the P5-2 headless runtime");
+  filePath: string,
+  base64: string,
+  opts?: { maxBytes?: number },
+): Promise<MediaWriteResult> {
+  return await writeBase64ToFile(filePath, base64, opts);
 }

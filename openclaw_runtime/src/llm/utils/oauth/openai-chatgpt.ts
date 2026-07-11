@@ -43,8 +43,15 @@ function createLegacyPrompter(callbacks: OAuthLoginCallbacks): WizardPrompter {
     intro: async () => {},
     outro: async () => {},
     note: async (message) => callbacks.onProgress?.(message),
-    select: async (params) => params.options[0]?.value,
-    multiselect: async (params) => params.initialValues ?? [],
+    plain: async (message) => callbacks.onProgress?.(message),
+    select: async (params) => {
+      const selected = params.options[0];
+      if (!selected) {
+        throw new Error("OAuth prompt did not provide any selectable options.");
+      }
+      return selected.value;
+    },
+    multiselect: async (params) => [...(params.initialValues ?? params.initialValue ?? [])],
     text: async (prompt) => {
       const input = callbacks.onPrompt({
         message: prompt.message,
@@ -54,7 +61,7 @@ function createLegacyPrompter(callbacks: OAuthLoginCallbacks): WizardPrompter {
     },
     confirm: async () => false,
     progress: () => progress,
-  } as WizardPrompter;
+  };
 }
 
 async function refreshViaProviderRuntime(refreshToken: string): Promise<OAuthCredentials> {

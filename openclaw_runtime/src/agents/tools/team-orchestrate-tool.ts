@@ -30,12 +30,7 @@ import { spawnSubagentDirect } from "../subagent-spawn.js";
 import { buildSynthesisContract } from "../synthesis-contract.js";
 import { resolveTeamTemplate } from "../team-template.js";
 import type { AnyAgentTool } from "./common.js";
-import {
-  jsonResult,
-  readPositiveIntegerParam,
-  readStringParam,
-  ToolInputError,
-} from "./common.js";
+import { jsonResult, readPositiveIntegerParam, readStringParam, ToolInputError } from "./common.js";
 
 const TEAM_ORCHESTRATE_NEXT_ACTIONS = ["yield_for_results", "synthesize_now"] as const;
 const TEAM_ORCHESTRATE_STATUSES = ["accepted", "partial", "error"] as const;
@@ -150,29 +145,32 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
       preferredLeadRole: Type.Optional(Type.String()),
       includeVerifier: Type.Optional(Type.Boolean()),
       maxWorkers: Type.Optional(Type.Number()),
-      graphMode: Type.Optional(Type.Union([
-        Type.Literal("auto"),
-        Type.Literal("flat"),
-        Type.Literal("staged"),
-      ])),
+      graphMode: Type.Optional(
+        Type.Union([Type.Literal("auto"), Type.Literal("flat"), Type.Literal("staged")]),
+      ),
       allowAutoRepair: Type.Optional(Type.Boolean()),
       qualityPolicy: Type.Optional(Type.Union([Type.Literal("standard"), Type.Literal("strict")])),
-      repairPolicy: Type.Optional(Type.Object({
-        maxRepairAttempts: Type.Optional(Type.Number()),
-        maxRedoAttempts: Type.Optional(Type.Number()),
-        maxFollowupRuns: Type.Optional(Type.Number()),
-      })),
-      workerCommunication: Type.Optional(Type.Union([
-        Type.Literal("none"),
-        Type.Literal("lead_mediated"),
-        Type.Literal("bounded_a2a"),
-      ])),
+      repairPolicy: Type.Optional(
+        Type.Object({
+          maxRepairAttempts: Type.Optional(Type.Number()),
+          maxRedoAttempts: Type.Optional(Type.Number()),
+          maxFollowupRuns: Type.Optional(Type.Number()),
+        }),
+      ),
+      workerCommunication: Type.Optional(
+        Type.Union([
+          Type.Literal("none"),
+          Type.Literal("lead_mediated"),
+          Type.Literal("bounded_a2a"),
+        ]),
+      ),
       allowFollowupPlanning: Type.Optional(Type.Boolean()),
     }),
     execute: async (_toolCallId, args) => {
-      const params = args && typeof args === "object" && !Array.isArray(args)
-        ? (args as Record<string, unknown>)
-        : {};
+      const params =
+        args && typeof args === "object" && !Array.isArray(args)
+          ? (args as Record<string, unknown>)
+          : {};
       const task = readStringParam(params, "task", { required: true });
       const cfg = opts?.config ?? getRuntimeConfig();
       const cfgCarrier = rolesConfig(cfg);
@@ -196,7 +194,8 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         preferredLeadRole:
           readStringParam(params, "leadRole") ?? readStringParam(params, "preferredLeadRole"),
         templateId,
-        explicitRunbookId: readStringParam(params, "runbookId") ?? readStringParam(params, "explicitRunbookId"),
+        explicitRunbookId:
+          readStringParam(params, "runbookId") ?? readStringParam(params, "explicitRunbookId"),
         riskHints: readStringArray(params.riskHints),
         capabilityHints: readStringArray(params.capabilityHints),
         toolHints: readStringArray(params.toolHints),
@@ -251,7 +250,6 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         bundle: result.resultBundle,
         blackboardSummary: result.blackboardSummary,
       });
-      const quality: unknown[] = [];
       return jsonResult({
         status,
         plan,
@@ -315,7 +313,8 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         },
         failures: result.failures,
         nextAction,
-        yieldMessage: nextAction === "yield_for_results" ? buildYieldMessage(orchestrationRunId) : undefined,
+        yieldMessage:
+          nextAction === "yield_for_results" ? buildYieldMessage(orchestrationRunId) : undefined,
       });
     },
   };

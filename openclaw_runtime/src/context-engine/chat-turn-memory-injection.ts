@@ -210,6 +210,7 @@ export async function assembleChatTurnMemoryInjection(
  *
  * Returns the original `extraSystemPrompt` unchanged when:
  * - the pilot flag is off (default) → byte-identical prompts (comms parity)
+ * - the session key has not been resolved → no memory scope is available
  * - the pilot is on but no providers returned items → no-op
  * - any error is thrown → suppressed, falls back to the original value
  *
@@ -219,14 +220,14 @@ export async function assembleChatTurnMemoryInjection(
 export async function computeMemoryExtraSystemPrompt(
   extraSystemPrompt: string | undefined,
   cfg: unknown,
-  sessionKey: string,
+  sessionKey: string | undefined,
   providerFactory: () => readonly RuntimeContextProvider[],
-  log?: (message: string, context?: unknown) => void,
+  log?: (message: string, context?: Record<string, unknown>) => void,
 ): Promise<string | undefined> {
   let result = extraSystemPrompt;
   try {
     const pilotConfig = resolveMemoryInjectPilotConfig(cfg);
-    if (pilotConfig.enabled) {
+    if (pilotConfig.enabled && sessionKey) {
       const providers = providerFactory();
       const memoryResult = await assembleChatTurnMemoryInjection(
         { sessionKey, metadata: { roleName: "main" } },

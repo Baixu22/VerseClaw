@@ -17,9 +17,11 @@ import type { RoleContract } from "./role-contract.js";
 import {
   buildRepairNodes,
   buildRerouteRecommendations,
+  buildOrchestrationDiagnostics,
   makeTaskLedgerEntry,
   taskGraphWorkerNodes,
   type OrchestrationRepairNode,
+  type OrchestrationDiagnostics,
   type OrchestrationRerouteRecommendation,
   type OrchestrationTaskGraph,
   type OrchestrationTaskLedgerEntry,
@@ -69,6 +71,7 @@ export type OrchestrationRunResult = {
   pendingGraphNodes: OrchestrationTaskNode[];
   repairNodes: OrchestrationRepairNode[];
   rerouteRecommendations: OrchestrationRerouteRecommendation[];
+  orchestrationDiagnostics: OrchestrationDiagnostics;
   /** Worker tasks that failed to spawn (status !== "accepted"). */
   failures: Array<{ roleName: string; status: string; error?: string }>;
   resultBundle: OrchestrationResultBundle;
@@ -371,6 +374,10 @@ export async function runOrchestration(
     routeDiagnostics: plan.routeDiagnostics,
     attempts: failures,
   });
+  const orchestrationDiagnostics = buildOrchestrationDiagnostics({
+    failures,
+    rerouteRecommendations,
+  });
   const resultBundle = buildSpawnPhaseResultBundle({
     orchestrationRunId: orchestrationRunId ?? "orch_inline",
     taskGraphId: plan.taskGraph.graphRunId,
@@ -395,6 +402,7 @@ export async function runOrchestration(
     pendingGraphNodes: [],
     repairNodes,
     rerouteRecommendations,
+    orchestrationDiagnostics,
     failures,
     resultBundle,
   };

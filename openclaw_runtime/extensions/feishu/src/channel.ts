@@ -78,7 +78,7 @@ import { createFeishuSendReceipt } from "./send-result.js";
 import { resolveFeishuSessionConversation } from "./session-conversation.js";
 import { resolveFeishuOutboundSessionRoute } from "./session-route.js";
 import { feishuSetupAdapter } from "./setup-core.js";
-import { feishuSetupWizard, runFeishuLogin } from "./setup-surface.js";
+import { feishuSetupWizard } from "./setup-surface.js";
 import { looksLikeFeishuId, normalizeFeishuTarget } from "./targets.js";
 import type { FeishuConfig, FeishuProbeResult, ResolvedFeishuAccount } from "./types.js";
 
@@ -1207,20 +1207,6 @@ export const feishuPlugin: ChannelPlugin<ResolvedFeishuAccount, FeishuProbeResul
             commandTo,
             fallbackTo,
           }),
-      },
-      auth: {
-        login: async ({ cfg }) => {
-          const { createClackPrompter } = await import("openclaw/plugin-sdk/setup-runtime");
-          const { replaceConfigFile } = await import("openclaw/plugin-sdk/config-mutation");
-          const prompter = createClackPrompter();
-          const nextCfg = await runFeishuLogin({ cfg, prompter });
-          if (nextCfg !== cfg) {
-            await replaceConfigFile({
-              nextConfig: nextCfg,
-              afterWrite: { mode: "auto" },
-            });
-          }
-        },
       },
       setup: feishuSetupAdapter,
       setupWizard: feishuSetupWizard,

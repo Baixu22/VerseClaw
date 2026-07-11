@@ -283,11 +283,16 @@ function ledgerEvidenceRefs(
 ): TaskLedgerEvidenceRef[] {
   const out: TaskLedgerEvidenceRef[] = [taskLedgerEvidence(rootId)];
   for (const ref of refs) {
-    if (ref.type === "clawgraph" || ref.type === "task_ledger") {
-      out.push({ type: "other", ref: ref.ref, ...(ref.label ? { label: ref.label } : {}) });
-    } else {
-      out.push({ type: ref.type, ref: ref.ref, ...(ref.label ? { label: ref.label } : {}) });
-    }
+    const type: TaskLedgerEvidenceRef["type"] =
+      ref.type === "session" ||
+      ref.type === "trace" ||
+      ref.type === "file" ||
+      ref.type === "memory" ||
+      ref.type === "manual" ||
+      ref.type === "tool"
+        ? ref.type
+        : "other";
+    out.push({ type, ref: ref.ref, ...(ref.label ? { label: ref.label } : {}) });
   }
   return out;
 }

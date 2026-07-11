@@ -332,7 +332,9 @@ async function modelComplete(prompt: string, input: TaskLoopSelfCheckInput): Pro
       model: prepared.model,
       auth: prepared.auth,
       cfg,
-      context: [{ role: "user", content: prompt }],
+      context: {
+        messages: [{ role: "user", content: prompt, timestamp: Date.now() }],
+      },
       options: { maxTokens: 700, temperature: 0, signal: controller.signal },
     });
     return extractAssistantText(result);

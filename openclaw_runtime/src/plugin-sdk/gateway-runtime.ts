@@ -1,8 +1,11 @@
 // Public gateway/client helpers for plugins that talk to the host gateway surface.
 
 export * from "../gateway/channel-status-patches.js";
-// Removed: addGatewayClientOptions, callGatewayFromCli — CLI gateway RPC helpers. No gateway equivalent.
-// Removed: GatewayRpcOpts — CLI-specific type.
+export {
+  addGatewayClientOptions,
+  callGatewayFromCli,
+  type GatewayRpcOpts,
+} from "../gateway/cli-runtime/gateway-rpc.js";
 export { isLoopbackHost } from "../gateway/net.js";
 export { resolveHostedPluginSurfaceUrl } from "../gateway/hosted-plugin-surface-url.js";
 export type { HostedPluginSurfaceUrlParams } from "../gateway/hosted-plugin-surface-url.js";

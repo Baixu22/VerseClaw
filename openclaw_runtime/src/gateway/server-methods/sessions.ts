@@ -24,7 +24,8 @@ import {
   validateSessionsCompactionRestoreParams,
   validateSessionsCompactionStatusParams,
   validateSessionsExpandSelectorParams,
-  validateSessionsRecoveryContextParams,  validateSessionsLongTaskControlHistoryParams,
+  validateSessionsRecoveryContextParams,
+  validateSessionsLongTaskControlHistoryParams,
   validateSessionsLongTaskControlStatusParams,
   validateSessionsQueueDrainParams,
   validateSessionsRecallOriginalParams,
@@ -63,7 +64,10 @@ import {
 } from "../../agents/embedded-agent-runner/runs.js";
 import { compactEmbeddedAgentSession } from "../../agents/embedded-agent.js";
 import { clearSessionQueues } from "../../auto-reply/reply/queue/cleanup.js";
-import { forkSessionFromParent, resolveParentForkDecision } from "../../auto-reply/reply/session-fork.js";
+import {
+  forkSessionFromParent,
+  resolveParentForkDecision,
+} from "../../auto-reply/reply/session-fork.js";
 import { normalizeReasoningLevel, normalizeThinkLevel } from "../../auto-reply/thinking.js";
 import {
   loadSessionStore,
@@ -139,7 +143,11 @@ import {
 import { applySessionsPatchToStore } from "../sessions-patch.js";
 import { resolveSessionKeyFromResolveParams } from "../sessions-resolve.js";
 import { setGatewayDedupeEntry } from "./agent-wait-dedupe.js";
-import { drainQueuedUserMessagesForSession, installQueueDrainCallback, chatHandlers } from "./chat.js";
+import {
+  drainQueuedUserMessagesForSession,
+  installQueueDrainCallback,
+  chatHandlers,
+} from "./chat.js";
 import { loadOptionalServerMethodModelCatalog } from "./optional-model-catalog.js";
 import { hasTrackedActiveSessionRun } from "./session-active-runs.js";
 import { emitSessionsChanged } from "./session-change-event.js";
@@ -794,8 +802,25 @@ function telemetryFromCheckpoint(
   checkpoint: ReturnType<typeof listSessionCompactionCheckpoints>[number],
 ): Record<string, unknown> | undefined {
   const compression = compressionDetailsFromCheckpoint(checkpoint)?.compression;
-  if (!compression || typeof compression !== "object" || Array.isArray(compression)) return undefined;
+  if (!compression || typeof compression !== "object" || Array.isArray(compression))
+    return undefined;
   return compression as Record<string, unknown>;
+}
+
+function isCompressionTier(value: unknown): value is "tier0" | "tier1" | "tier2" | "tier3" | "tier4" {
+  return value === "tier0" || value === "tier1" || value === "tier2" || value === "tier3" || value === "tier4";
+}
+
+function isCompressionStrategy(
+  value: unknown,
+): value is "hot-context" | "micro-compact" | "token-pruning" | "semantic-handoff" | "emergency-collapse" {
+  return (
+    value === "hot-context" ||
+    value === "micro-compact" ||
+    value === "token-pruning" ||
+    value === "semantic-handoff" ||
+    value === "emergency-collapse"
+  );
 }
 
 function compressionArtifactFromCheckpoint(
@@ -810,40 +835,64 @@ function compressionArtifactFromCheckpoint(
   const modifiedFiles = Array.isArray(details?.modifiedFiles)
     ? details.modifiedFiles.filter((item): item is string => typeof item === "string")
     : [];
-  const artifact = storedArtifact ?? buildDeterministicCompressionArtifact({
-    messages: [],
-    summary: checkpoint.summary,
-    readFiles,
-    modifiedFiles,
-    telemetry: {
-      ...(typeof telemetry?.tier === "string" ? { tier: telemetry.tier } : {}),
-      ...(typeof telemetry?.strategy === "string" ? { strategy: telemetry.strategy } : {}),
-      ...(typeof telemetry?.compressionRatio === "number" ? { compressionRatio: telemetry.compressionRatio } : {}),
-      ...(typeof checkpoint.tokensBefore === "number" ? { tokensBefore: checkpoint.tokensBefore } : {}),
-      ...(typeof checkpoint.tokensAfter === "number" ? { tokensAfter: checkpoint.tokensAfter } : {}),
-      ...(Array.isArray(telemetry?.rehydratedFiles)
-        ? { rehydratedFiles: telemetry.rehydratedFiles.filter((item): item is string => typeof item === "string") }
-        : {}),
-      ...(typeof telemetry?.staleExcludedCount === "number"
-        ? { staleExcludedCount: telemetry.staleExcludedCount }
-        : {}),
-      ...(typeof telemetry?.causalAnchorCount === "number"
-        ? { causalAnchorCount: telemetry.causalAnchorCount }
-        : {}),
-      ...(Array.isArray(telemetry?.warnings)
-        ? { warnings: telemetry.warnings.filter((item): item is string => typeof item === "string") }
-        : {}),
-    },
-  });
+  const artifact =
+    storedArtifact ??
+    buildDeterministicCompressionArtifact({
+      messages: [],
+      summary: checkpoint.summary,
+      readFiles,
+      modifiedFiles,
+      telemetry: {
+        ...(isCompressionTier(telemetry?.tier) ? { tier: telemetry.tier } : {}),
+        ...(isCompressionStrategy(telemetry?.strategy) ? { strategy: telemetry.strategy } : {}),
+        ...(typeof telemetry?.compressionRatio === "number"
+          ? { compressionRatio: telemetry.compressionRatio }
+          : {}),
+        ...(typeof checkpoint.tokensBefore === "number"
+          ? { tokensBefore: checkpoint.tokensBefore }
+          : {}),
+        ...(typeof checkpoint.tokensAfter === "number"
+          ? { tokensAfter: checkpoint.tokensAfter }
+          : {}),
+        ...(Array.isArray(telemetry?.rehydratedFiles)
+          ? {
+              rehydratedFiles: telemetry.rehydratedFiles.filter(
+                (item): item is string => typeof item === "string",
+              ),
+            }
+          : {}),
+        ...(typeof telemetry?.staleExcludedCount === "number"
+          ? { staleExcludedCount: telemetry.staleExcludedCount }
+          : {}),
+        ...(typeof telemetry?.causalAnchorCount === "number"
+          ? { causalAnchorCount: telemetry.causalAnchorCount }
+          : {}),
+        ...(Array.isArray(telemetry?.warnings)
+          ? {
+              warnings: telemetry.warnings.filter(
+                (item): item is string => typeof item === "string",
+              ),
+            }
+          : {}),
+      },
+    });
   return {
     ...artifact,
     ...(typeof telemetry?.tier === "string" ? { tier: telemetry.tier } : {}),
     ...(typeof telemetry?.strategy === "string" ? { strategy: telemetry.strategy } : {}),
-    ...(typeof telemetry?.compressionRatio === "number" ? { compressionRatio: telemetry.compressionRatio } : {}),
-    ...(typeof checkpoint.tokensBefore === "number" ? { tokensBefore: checkpoint.tokensBefore } : {}),
+    ...(typeof telemetry?.compressionRatio === "number"
+      ? { compressionRatio: telemetry.compressionRatio }
+      : {}),
+    ...(typeof checkpoint.tokensBefore === "number"
+      ? { tokensBefore: checkpoint.tokensBefore }
+      : {}),
     ...(typeof checkpoint.tokensAfter === "number" ? { tokensAfter: checkpoint.tokensAfter } : {}),
     ...(Array.isArray(telemetry?.rehydratedFiles)
-      ? { rehydratedFiles: telemetry.rehydratedFiles.filter((item): item is string => typeof item === "string") }
+      ? {
+          rehydratedFiles: telemetry.rehydratedFiles.filter(
+            (item): item is string => typeof item === "string",
+          ),
+        }
       : {}),
     ...(typeof telemetry?.staleExcludedCount === "number"
       ? { staleExcludedCount: telemetry.staleExcludedCount }
@@ -861,13 +910,17 @@ function estimateProjectionTokens(text: string): number {
   return Math.max(0, Math.ceil(text.length / 4));
 }
 
-function compactionHistoryEntryFromCheckpoint(checkpoint: ReturnType<typeof listSessionCompactionCheckpoints>[number]) {
+function compactionHistoryEntryFromCheckpoint(
+  checkpoint: ReturnType<typeof listSessionCompactionCheckpoints>[number],
+) {
   const artifact = compressionArtifactFromCheckpoint(checkpoint);
   return {
     id: checkpoint.checkpointId,
     timestamp: checkpoint.createdAt,
     ...(checkpoint.summary ? { summary: checkpoint.summary } : {}),
-    ...(typeof checkpoint.tokensBefore === "number" ? { tokensBefore: checkpoint.tokensBefore } : {}),
+    ...(typeof checkpoint.tokensBefore === "number"
+      ? { tokensBefore: checkpoint.tokensBefore }
+      : {}),
     ...(typeof checkpoint.tokensAfter === "number" ? { tokensAfter: checkpoint.tokensAfter } : {}),
     ...(checkpoint.firstKeptEntryId ? { firstKeptEntryId: checkpoint.firstKeptEntryId } : {}),
     trigger: checkpoint.reason,
@@ -1460,7 +1513,8 @@ export const sessionsHandlers: GatewayRequestHandlers = {
     const checkpoints = listCompactionHistoryEntries(entry, 1);
     const budget = entry?.contextBudgetStatus;
     const usedTokens =
-      typeof budget?.estimatedPromptTokens === "number" && Number.isFinite(budget.estimatedPromptTokens)
+      typeof budget?.estimatedPromptTokens === "number" &&
+      Number.isFinite(budget.estimatedPromptTokens)
         ? Math.max(0, Math.floor(budget.estimatedPromptTokens))
         : typeof entry?.totalTokens === "number" && Number.isFinite(entry.totalTokens)
           ? Math.max(0, Math.floor(entry.totalTokens))
@@ -1582,12 +1636,7 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         params,
         validateSessionsRecallOriginalParams,
         "sessions.recallOriginal",
-  "sessions.compressionArtifact": ({ params, respond, context }) => {
-    if (
-      !assertValidParams(
-        params,
-        validateSessionsCompressionArtifactParams,
-        "sessions.compressionArtifact",        respond,
+        respond,
       )
     ) {
       return;
@@ -1612,11 +1661,13 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         {
           ok: false,
           archiveHandle: p.archiveHandle,
-          diagnostics: [{
-            code: "invalid_handle",
-            message: formatErrorMessage(error),
-            ref: typeof p.archiveHandle?.uri === "string" ? p.archiveHandle.uri : undefined,
-          }],
+          diagnostics: [
+            {
+              code: "invalid_handle",
+              message: formatErrorMessage(error),
+              ref: typeof p.archiveHandle?.uri === "string" ? p.archiveHandle.uri : undefined,
+            },
+          ],
         },
         undefined,
       );
@@ -1624,26 +1675,62 @@ export const sessionsHandlers: GatewayRequestHandlers = {
     }
     const verified = await verifyContextArchiveHandle(archiveHandle);
     if (!verified.ok) {
-      const code = verified.reason === "missing"
-        ? "missing_archive"
-        : verified.reason === "checksum_mismatch"
-          ? "checksum_mismatch"
-          : verified.reason === "invalid_uri"
-            ? "invalid_handle"
-            : "read_error";
+      const code =
+        verified.reason === "missing"
+          ? "missing_archive"
+          : verified.reason === "checksum_mismatch"
+            ? "checksum_mismatch"
+            : verified.reason === "invalid_uri"
+              ? "invalid_handle"
+              : "read_error";
       respond(
         true,
         {
           ok: false,
           archiveHandle,
-          diagnostics: [{
-            code,
-            message: `Archive recall failed: ${verified.reason}`,
-            ref: archiveHandle.uri,
-          }],
+          diagnostics: [
+            {
+              code,
+              message: `Archive recall failed: ${verified.reason}`,
+              ref: archiveHandle.uri,
+            },
+          ],
         },
         undefined,
       );
+      return;
+    }
+    respond(
+      true,
+      {
+        ok: true,
+        payload: verified.payload,
+        archiveHandle,
+        diagnostics: [],
+      },
+      undefined,
+    );
+  },
+  "sessions.compressionArtifact": ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsCompressionArtifactParams,
+        "sessions.compressionArtifact",
+        respond,
+      )
+    ) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
       return;
     }
     const { entry, canonicalKey } = loadSessionEntry(key, {
@@ -1659,17 +1746,16 @@ export const sessionsHandlers: GatewayRequestHandlers = {
       respond(true, { ok: true, key: canonicalKey, warnings }, undefined);
       return;
     }
-    const artifact = compressionArtifactFromCheckpoint(checkpoint);    respond(
+    const artifact = compressionArtifactFromCheckpoint(checkpoint);
+    respond(
       true,
       {
         ok: true,
-        payload: verified.payload,
-        archiveHandle,
-        diagnostics: [],
         key: canonicalKey,
         checkpointId: checkpoint.checkpointId,
         ...(artifact ? { artifact, quality: artifact.quality } : {}),
-        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],      },
+        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],
+      },
       undefined,
     );
   },
@@ -1679,12 +1765,7 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         params,
         validateSessionsExpandSelectorParams,
         "sessions.expandSelector",
-  "sessions.recoveryContext": ({ params, respond, context }) => {
-    if (
-      !assertValidParams(
-        params,
-        validateSessionsRecoveryContextParams,
-        "sessions.recoveryContext",        respond,
+        respond,
       )
     ) {
       return;
@@ -1726,6 +1807,32 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         selector: p.selector,
         ...(p.checksum ? { checksum: p.checksum } : {}),
         diagnostics: [diagnostic],
+      },
+      undefined,
+    );
+  },
+  "sessions.recoveryContext": ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsRecoveryContextParams,
+        "sessions.recoveryContext",
+        respond,
+      )
+    ) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
     const { entry, canonicalKey } = loadSessionEntry(key, {
       agentId: requestedAgent.agentId,
     });
@@ -1756,7 +1863,7 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         : 1400;
     const projection = artifact
       ? renderRecoveryContextProjection(artifact, budgetTokens)
-      : checkpoint.summary ?? "";
+      : (checkpoint.summary ?? "");
     if (!artifact) {
       warnings.push("legacy_summary_fallback");
     }
@@ -1769,7 +1876,8 @@ export const sessionsHandlers: GatewayRequestHandlers = {
         context: projection,
         projectionTokens: estimateProjectionTokens(projection),
         ...(artifact ? { artifact, quality: artifact.quality } : {}),
-        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],      },
+        warnings: [...warnings, ...(artifact?.quality.warnings ?? [])],
+      },
       undefined,
     );
   },
@@ -1888,12 +1996,7 @@ export const sessionsHandlers: GatewayRequestHandlers = {
   },
   "sessions.queueDrain": async ({ params, respond, context }) => {
     if (
-      !assertValidParams(
-        params,
-        validateSessionsQueueDrainParams,
-        "sessions.queueDrain",
-        respond,
-      )
+      !assertValidParams(params, validateSessionsQueueDrainParams, "sessions.queueDrain", respond)
     ) {
       return;
     }
@@ -2407,7 +2510,10 @@ export const sessionsHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, "cannot fork while the source session has an active run"),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "cannot fork while the source session has an active run",
+        ),
       );
       return;
     }

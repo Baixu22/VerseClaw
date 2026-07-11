@@ -476,11 +476,7 @@ export const SessionsRecallOriginalParamsSchema = Type.Object(
     key: NonEmptyString,
     agentId: Type.Optional(NonEmptyString),
     archiveHandle: ArchiveHandleSchema,
-export const SessionsCompressionArtifactParamsSchema = Type.Object(
-  {
-    key: NonEmptyString,
-    agentId: Type.Optional(NonEmptyString),
-    checkpointId: Type.Optional(NonEmptyString),  },
+  },
   { additionalProperties: false },
 );
 
@@ -490,13 +486,7 @@ export const SessionsRecallOriginalResultSchema = Type.Object(
     payload: Type.Optional(Type.Unknown()),
     archiveHandle: Type.Optional(ArchiveHandleSchema),
     diagnostics: Type.Array(SessionRecallDiagnosticSchema),
-export const SessionsRecoveryContextParamsSchema = Type.Object(
-  {
-    key: NonEmptyString,
-    agentId: Type.Optional(NonEmptyString),
-    checkpointId: Type.Optional(NonEmptyString),
-    budgetTokens: Type.Optional(Type.Integer({ minimum: 1 })),
-    purpose: Type.Optional(Type.String()),  },
+  },
   { additionalProperties: false },
 );
 
@@ -507,14 +497,7 @@ export const SessionsExpandSelectorParamsSchema = Type.Object(
     resourceId: NonEmptyString,
     selector: NonEmptyString,
     checksum: Type.Optional(NonEmptyString),
-export const SessionsCompressionArtifactResultSchema = Type.Object(
-  {
-    ok: Type.Literal(true),
-    key: NonEmptyString,
-    checkpointId: Type.Optional(NonEmptyString),
-    artifact: Type.Optional(CompressionArtifactSchema),
-    quality: Type.Optional(CompressionArtifactQualitySchema),
-    warnings: Type.Array(Type.String()),  },
+  },
   { additionalProperties: false },
 );
 
@@ -526,6 +509,42 @@ export const SessionsExpandSelectorResultSchema = Type.Object(
     selector: Type.Optional(Type.String()),
     checksum: Type.Optional(Type.String()),
     diagnostics: Type.Array(SessionRecallDiagnosticSchema),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsCompressionArtifactParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    checkpointId: Type.Optional(NonEmptyString),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsRecoveryContextParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    checkpointId: Type.Optional(NonEmptyString),
+    budgetTokens: Type.Optional(Type.Integer({ minimum: 1 })),
+    purpose: Type.Optional(Type.String()),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsCompressionArtifactResultSchema = Type.Object(
+  {
+    ok: Type.Literal(true),
+    key: NonEmptyString,
+    checkpointId: Type.Optional(NonEmptyString),
+    artifact: Type.Optional(CompressionArtifactSchema),
+    quality: Type.Optional(CompressionArtifactQualitySchema),
+    warnings: Type.Array(Type.String()),
+  },
+  { additionalProperties: false },
+);
+
 export const SessionsRecoveryContextResultSchema = Type.Object(
   {
     ok: Type.Literal(true),
@@ -535,7 +554,8 @@ export const SessionsRecoveryContextResultSchema = Type.Object(
     projectionTokens: Type.Integer({ minimum: 0 }),
     artifact: Type.Optional(CompressionArtifactSchema),
     quality: Type.Optional(CompressionArtifactQualitySchema),
-    warnings: Type.Array(Type.String()),  },
+    warnings: Type.Array(Type.String()),
+  },
   { additionalProperties: false },
 );
 

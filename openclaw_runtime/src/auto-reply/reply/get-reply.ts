@@ -856,7 +856,6 @@ export async function getReplyFromConfig(
       elevatedFailures,
       defaultActivation: () => defaultActivation,
       resolvedThinkLevel,
-      resolvedPromptMode,
       resolvedVerboseLevel,
       resolvedReasoningLevel,
       resolvedElevatedLevel,

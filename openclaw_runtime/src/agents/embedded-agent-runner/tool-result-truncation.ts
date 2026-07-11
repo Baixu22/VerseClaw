@@ -515,7 +515,7 @@ function buildAggregateToolResultReplacements(params: {
   }
 
   let remainingReduction = totalChars - params.aggregateBudgetChars;
-  const replacements: Array<{ entryId: string; message: AgentMessage }> = [];
+  const replacements: ToolResultReplacement[] = [];
 
   // Spend aggregate reduction on older entries first so fresh tool output stays intact.
   for (const candidate of candidates.toSorted((a, b) => {
@@ -775,7 +775,6 @@ export function estimateToolResultReductionPotential(params: {
     maxChars,
     aggregateBudgetChars,
     minKeepChars: RECOVERY_MIN_KEEP_CHARS,
-    sessionId: params.sessionId,
   });
   const maxReducibleChars = plan.oversizedReducibleChars + plan.aggregateReducibleChars;
 

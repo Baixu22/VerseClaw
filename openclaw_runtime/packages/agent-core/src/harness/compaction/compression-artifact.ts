@@ -1,4 +1,5 @@
 import type { AgentMessage } from "../../types.js";
+import type { CompressionTelemetry } from "./compression-planner.js";
 
 export type CompressionEvidenceRef = {
   type: "session" | "trace" | "file" | "tool" | "task_ledger" | "clawgraph" | "manual" | "other";
@@ -69,6 +70,7 @@ export type CompressionArtifact = {
   capabilityActivations?: CompressionCapabilityActivation[];
   staleReferences?: CompressionCvkEvidenceRef[];
   retrievalTrace?: CompressionRetrievalTraceEntry[];
+  telemetry?: Partial<CompressionTelemetry>;
   quality: CompressionArtifactQuality;
 };
 
@@ -79,6 +81,7 @@ export type CompressionArtifactInput = {
   readFiles?: string[];
   modifiedFiles?: string[];
   targetArtifactTokens?: number;
+  telemetry?: Partial<CompressionTelemetry>;
   contextRuntimeKit?: {
     retrievedContext?: CompressionCvkEvidenceRef[];
     requiredSelectors?: CompressionCvkEvidenceRef[];
@@ -297,7 +300,8 @@ function normalizeCapabilityActivations(value: unknown, maxItems = 24): Compress
     const record = item as Partial<CompressionCapabilityActivation>;
     const name = normalizeText(record.name, 160);
     if (!name) return [];
-    const kind = record.kind === "skill" || record.kind === "tool" || record.kind === "project_rule"
+    const kind: CompressionCapabilityActivation["kind"] =
+      record.kind === "skill" || record.kind === "tool" || record.kind === "project_rule"
       ? record.kind
       : "other";
     const resourceId = normalizeText(record.resourceId, 240);
@@ -447,6 +451,7 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
         .map((ref) => `Stale reference must be revalidated: ${ref.resourceId} ${ref.selector}`),
       ...(input.contextRuntimeKit?.unverifiedClaims ?? []).map((item) => normalizeText(item, 300)).filter(Boolean),
     ].slice(0, 8),
+    ...(input.telemetry ? { telemetry: { ...input.telemetry } } : {}),
     ...(optionalArray(normalizeCvkEvidenceRefs(input.contextRuntimeKit?.retrievedContext)) ? {
       retrievedContext: optionalArray(normalizeCvkEvidenceRefs(input.contextRuntimeKit?.retrievedContext)),
     } : {}),

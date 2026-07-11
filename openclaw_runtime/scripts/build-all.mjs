@@ -54,6 +54,7 @@ const PLUGIN_SDK_ENTRY_DTS_CACHE_INPUTS = [
   "scripts/lib/plugin-sdk-private-local-only-subpaths.json",
   "scripts/lib/plugin-sdk-deprecated-public-subpaths.json",
   "scripts/lib/plugin-sdk-deprecated-barrel-subpaths.json",
+  "scripts/build-plugin-sdk-source-dts.mjs",
   ...PLUGIN_SDK_DTS_CACHE_INPUTS,
 ];
 const PLUGIN_SDK_ENTRY_DTS_CACHE_OUTPUTS = [
@@ -66,7 +67,7 @@ const PNPM_STEP_NODE_FALLBACKS = new Map([
   ["plugins:assets:build", ["scripts/bundled-plugin-assets.mjs", "--phase", "build"]],
   [
     "build:plugin-sdk:dts",
-    ["scripts/run-tsgo.mjs", "-p", "tsconfig.plugin-sdk.dts.json", "--declaration", "true"],
+    ["scripts/build-plugin-sdk-source-dts.mjs"],
   ],
   ["plugins:assets:copy", ["scripts/bundled-plugin-assets.mjs", "--phase", "copy"]],
   ["ui:build", ["scripts/ui.js", "build"]],
@@ -93,7 +94,7 @@ export const BUILD_ALL_STEPS = [
     windowsNodeOptions: `--max-old-space-size=${WINDOWS_BUILD_MAX_OLD_SPACE_MB}`,
     cache: {
       inputs: PLUGIN_SDK_DTS_CACHE_INPUTS,
-      outputs: ["dist/plugin-sdk/.tsbuildinfo", "dist/plugin-sdk/packages", "dist/plugin-sdk/src"],
+      outputs: ["dist/plugin-sdk/packages", "dist/plugin-sdk/src", "dist/shared"],
     },
   },
   {

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "baseCommit": "101dd345ea3a514bbb6b8fa210e492e2fa024c42",
+  "objectFormat": "sha1",
+  "pathspec": "openclaw_runtime",
+  "summary": {
+    "trackedFiles": 11277,
+    "textFiles": 11247,
+    "binaryFiles": 30,
+    "invalidFiles": 0,
+    "invalidUnits": 0,
+    "worktreeMismatches": 0
+  },
+  "files": []
+}

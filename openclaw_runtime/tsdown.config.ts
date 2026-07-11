@@ -253,8 +253,6 @@ function buildCoreDistEntries(): Record<string, string> {
   return {
     index: "src/index.ts",
     entry: "src/entry.ts",
-    // Ensure this module is bundled as an entry so legacy CLI shims can resolve its exports.
-    "cli/daemon-cli": "src/cli/daemon-cli.ts",
     // Keep long-lived lazy runtime boundaries on stable filenames so rebuilt
     // dist/ trees do not strand already-running gateways on stale hashed chunks.
     "agents/auth-profiles.runtime": "src/agents/auth-profiles.runtime.ts",
@@ -264,7 +262,6 @@ function buildCoreDistEntries(): Record<string, string> {
     "agents/compaction-planning.worker": "src/agents/compaction-planning.worker.ts",
     "agents/model-provider-auth.worker": "src/agents/model-provider-auth.worker.ts",
     "acp/control-plane/manager": "src/acp/control-plane/manager.ts",
-    "cli/gateway-lifecycle.runtime": "src/cli/gateway-cli/lifecycle.runtime.ts",
     "provider-dispatcher.runtime": "src/auto-reply/reply/provider-dispatcher.runtime.ts",
     "server-close.runtime": "src/gateway/server-close.runtime.ts",
     "plugins/hook-runner-global": "src/plugins/hook-runner-global.ts",
@@ -274,9 +271,7 @@ function buildCoreDistEntries(): Record<string, string> {
     "task-registry-control.runtime": "src/tasks/task-registry-control.runtime.ts",
     "link-understanding/apply.runtime": "src/link-understanding/apply.runtime.ts",
     "media-understanding/apply.runtime": "src/media-understanding/apply.runtime.ts",
-    "commands/doctor/shared/plugin-registry-migration":
-      "src/commands/doctor/shared/plugin-registry-migration.ts",
-    "commands/status.summary.runtime": "src/commands/status.summary.runtime.ts",
+    "commands/status.summary.runtime": "src/gateway/health-runtime/status.summary.runtime.ts",
     "infra/boundary-file-read": "src/infra/boundary-file-read.ts",
     "plugins/provider-discovery.runtime": "src/plugins/provider-discovery.runtime.ts",
     "plugins/provider-runtime.runtime": "src/plugins/provider-runtime.runtime.ts",
@@ -312,12 +307,9 @@ function buildDockerE2eHarnessEntries(): Record<string, string> {
     "agents/embedded-agent-runner/run/runtime-context-prompt":
       "src/agents/embedded-agent-runner/run/runtime-context-prompt.ts",
     "auto-reply/reply/commands-crestodian": "src/auto-reply/reply/commands-crestodian.ts",
-    "cli/run-main": "src/cli/run-main.ts",
     "commitments/runtime": "src/commitments/runtime.ts",
     "commitments/store": "src/commitments/store.ts",
     "config/config": "src/config/config.ts",
-    "crestodian/crestodian": "src/crestodian/crestodian.ts",
-    "crestodian/rescue-message": "src/crestodian/rescue-message.ts",
     "gateway/protocol/index": "packages/gateway-protocol/src/index.ts",
     "infra/errors": "src/infra/errors.ts",
     "infra/ws": "src/infra/ws.ts",

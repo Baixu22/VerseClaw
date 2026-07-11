@@ -125,7 +125,7 @@ export const DEFAULT_MEMORY_RUNTIME_CONFIG: MemoryRuntimeConfig = {
  *   });
  */
 export function createMemoryRuntimeConfig(
-  override: Partial<MemoryRuntimeConfig> & {
+  override: Omit<Partial<MemoryRuntimeConfig>, "featureFlags"> & {
     featureFlags?: Partial<MemoryFeatureFlags>;
   } = {},
 ): MemoryRuntimeConfig {

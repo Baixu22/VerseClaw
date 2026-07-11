@@ -3,6 +3,7 @@ import type {
   AssistantMessage,
   ImageContent,
   Model,
+  SimpleStreamOptions,
   UserMessage,
 } from "../../../llm-core/src/index.js";
 import { runAgentLoop } from "../agent-loop.js";
@@ -447,7 +448,10 @@ export class CoreAgentHarness<
         maxRetries: requestOptions.maxRetries,
         maxRetryDelayMs: requestOptions.maxRetryDelayMs,
         metadata: requestOptions.metadata,
-        onPayload: async (payload, payloadModel) => {
+        onPayload: async (
+          payload: Parameters<NonNullable<SimpleStreamOptions["onPayload"]>>[0],
+          payloadModel: Parameters<NonNullable<SimpleStreamOptions["onPayload"]>>[1],
+        ) => {
           const harnessPayload = await this.emitBeforeProviderPayload(model, payload);
           const outerPayload = await streamOptions?.onPayload?.(
             harnessPayload ?? payload,
@@ -455,7 +459,9 @@ export class CoreAgentHarness<
           );
           return outerPayload !== undefined ? outerPayload : harnessPayload;
         },
-        onResponse: async (response) => {
+        onResponse: async (
+          response: Parameters<NonNullable<SimpleStreamOptions["onResponse"]>>[0],
+        ) => {
           const headers = { ...response.headers };
           await this.emitOwn(
             { type: "after_provider_response", status: response.status, headers },

@@ -621,7 +621,7 @@ async function main(argv = process.argv.slice(2)) {
         });
         prerequisiteSteps.push({
           label: "plugin-sdk boundary dts",
-          args: [runTsgoScript, "-p", "tsconfig.plugin-sdk.dts.json", "--declaration", "true"],
+          args: ["scripts/build-plugin-sdk-source-dts.mjs"],
           env: { OPENCLAW_TSGO_HEAVY_CHECK_LOCK_HELD: "1" },
           timeoutMs: 300_000,
           stampPath: ROOT_DTS_STAMP,

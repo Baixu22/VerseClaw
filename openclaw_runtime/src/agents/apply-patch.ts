@@ -12,7 +12,7 @@ import { root as fsRoot } from "../infra/fs-safe.js";
 import { PATH_ALIAS_POLICIES, type PathAliasPolicy } from "../infra/path-alias-guards.js";
 import { applyUpdateHunk } from "./apply-patch-update.js";
 import { toRelativeSandboxPath, resolvePathFromInput } from "./path-policy.js";
-import type { AgentTool } from "./runtime/index.js";
+import type { AgentToolWithMeta } from "./tools/common.js";
 import { assertSandboxPath } from "./sandbox-paths.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 
@@ -90,7 +90,7 @@ const applyPatchSchema = Type.Object({
 /** Create the agent tool wrapper for applying patch-envelope input. */
 export function createApplyPatchTool(
   options: { cwd?: string; sandbox?: SandboxApplyPatchConfig; workspaceOnly?: boolean } = {},
-): AgentTool<typeof applyPatchSchema, ApplyPatchToolDetails> {
+): AgentToolWithMeta<typeof applyPatchSchema, ApplyPatchToolDetails> {
   const cwd = options.cwd ?? process.cwd();
   const sandbox = options.sandbox;
   const workspaceOnly = options.workspaceOnly !== false;

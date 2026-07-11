@@ -3,9 +3,11 @@
  */
 export type { OpenClawConfig } from "../config/config.js";
 export type { WizardPrompter } from "../gateway/wizard-runtime/prompts.js";
-// Removed: createClackPrompter — Clack CLI prompt framework. No gateway equivalent.
-// Removed: createSetupTranslator, SetupTranslator, WizardI18nParams — CLI-only setup wizard i18n.
-// The gateway stub (gateway/wizard-runtime/i18n.ts) exports `t()` and `WizardI18nKey` only.
+export {
+  createSetupTranslator,
+  type SetupTranslator,
+  type WizardI18nParams,
+} from "../gateway/wizard-runtime/i18n.js";
 export type { ChannelSetupAdapter } from "../channels/plugins/types.adapters.js";
 export type {
   ChannelSetupDmPolicy,
