@@ -42,7 +42,7 @@ interface TrackedSession {
   sessionConfig: CopilotSessionConfig;
   // Compatibility fingerprint of the params that created the SDK
   // session. We only reuse the tracked SDK session when the next
-  // attempt's fingerprint matches â€?different provider/model/cwd/auth
+  // attempt's fingerprint matches â€” different provider/model/cwd/auth
   // configurations should start a fresh SDK session rather than resume
   // one bound to incompatible state. Mismatch falls back to
   // `createSession` (no resume injection) and the new sdkSessionId
@@ -293,7 +293,7 @@ async function compactTrackedSdkSession(params: {
 // produces a new fingerprint so we don't replay a session against a
 // stale credential.
 //
-// Auth identity is derived from `resolveCopilotAuth(...)` â€?the same
+// Auth identity is derived from `resolveCopilotAuth(...)` â€” the same
 // function `resolvePoolAcquire` uses to build the pool key. That
 // ensures the compat key tracks the EFFECTIVE auth (which can come
 // from the legacy `auth.*` subobject, the contract-resolved
@@ -349,7 +349,7 @@ function computeSessionKey(
   // is supplied without profileId + profileVersion (the existing
   // pool-key safety invariant). That same error would surface
   // immediately afterwards from `resolvePoolAcquire` inside
-  // `runCopilotAttempt`, so we don't want to mask it here â€?but
+  // `runCopilotAttempt`, so we don't want to mask it here â€” but
   // we also can't include random / time-based data in the compat key
   // (would break the deterministic equality check). Use a stable
   // sentinel that will never match any previously-tracked compat key.
@@ -470,7 +470,7 @@ export function createCopilotAgentHarness(
         // the same OpenClaw session so that the GitHub Copilot agent runtime's prompt
         // cache, tool-call history, and any server-side compaction state
         // survive turn boundaries. Without this, every turn called
-        // `createSession()` and lost cache + thread continuity â€?the
+        // `createSession()` and lost cache + thread continuity â€” the
         // smoking gun was distinct `${sdkSessionId}` scopes per turn in
         // the playground transcript.
         //
@@ -479,7 +479,7 @@ export function createCopilotAgentHarness(
         //     current attempt's fingerprint (provider/model/cwd/auth).
         //     Mismatch falls through to `createSession` and the new SDK
         //     session replaces the tracked entry below.
-        //   - Preserve any caller-provided `replayInvalid: true` â€?never
+        //   - Preserve any caller-provided `replayInvalid: true` â€” never
         //     downgrade an orchestrator-issued safety signal to false.
         //     `decideReplayAction` treats undefined as resumable already.
         //   - On resume failure, `attempt.ts` recovers via the

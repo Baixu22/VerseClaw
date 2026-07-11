@@ -494,7 +494,7 @@ export async function testFoundryConnection(params: {
           "Connection Test",
         );
       } else {
-        await params.ctx.prompter.note("Connection test successful!", "âœ?);
+        await params.ctx.prompter.note("Connection test successful!", "âœ“");
       }
     } finally {
       await release();

@@ -1,5 +1,5 @@
 /**
- * JSONL AST types â€?JSON-Lines: one JSON value per line, separated by
+ * JSONL AST types â€” JSON-Lines: one JSON value per line, separated by
  * `\n`. The shape used by openclaw session-event logs, audit trails,
  * and LKG checkpoints (which is why JSONL is part of the universal
  * OcPath addressing scheme).
@@ -9,7 +9,7 @@
  *
  * **Byte-fidelity**: `raw` is preserved on the root for round-trip
  * emit. JSONL is line-oriented, so blank lines and per-line comments
- * (we don't strip them in render mode either â€?we preserve them as
+ * (we don't strip them in render mode either â€” we preserve them as
  * "raw" line entries) live in the AST.
  *
  * @module @openclaw/oc-path/jsonl/ast
@@ -26,7 +26,7 @@ export interface JsonlAst {
    * Line-ending convention detected at parse time. Used by render mode
    * to reconstruct the original convention (Windows-authored datasets
    * use CRLF; Unix uses LF). Optional for back-compat with synthetic
-   * ASTs that don't track this â€?render mode falls back to LF when
+   * ASTs that don't track this â€” render mode falls back to LF when
    * undefined.
    */
   readonly lineEnding?: "\r\n" | "\n";

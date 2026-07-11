@@ -7,7 +7,7 @@ export const MAX_PARSE_DEPTH = 256;
 
 /**
  * Hard cap on jsonc input size. `parseTree` is iterative and stack-safe
- * but allocates a tree node per token regardless of depth â€?a 16 MiB
+ * but allocates a tree node per token regardless of depth â€” a 16 MiB
  * input expanding to millions of nodes hits memory pressure long before
  * `nodeToJsoncValue`'s `MAX_PARSE_DEPTH` walk would notice. Cap at the
  * source level so allocation is bounded by file size, not token count.
@@ -16,7 +16,7 @@ export const MAX_PARSE_DEPTH = 256;
  * (gateway.jsonc / openclaw.json / .openclaw/* are all <100 KiB in
  * practice; the largest LKG-tracked configs we've seen sit at single-
  * digit MB). Operators with legitimate larger inputs can lift the cap
- * by patching this constant â€?no SDK affordance because it isn't a
+ * by patching this constant â€” no SDK affordance because it isn't a
  * supported configuration.
  */
 export const MAX_JSONC_INPUT_BYTES = 16 * 1024 * 1024;

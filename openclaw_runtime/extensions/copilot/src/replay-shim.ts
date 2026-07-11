@@ -14,10 +14,10 @@
 //
 // Host back-pointers (NOT imported here to keep the package boundary
 // clean):
-//   - `src/agents/pi-embedded-runner/replay-state.ts` â€?canonical
+//   - `src/agents/pi-embedded-runner/replay-state.ts` â€” canonical
 //     `EmbeddedRunReplayState` / `EmbeddedRunReplayMetadata` shapes
 //     and `replayMetadataFromState`.
-//   - `src/agents/pi-embedded-runner/run/types.ts` â€?
+//   - `src/agents/pi-embedded-runner/run/types.ts` â€”
 //     `AgentHarnessAttemptResult.replayMetadata` field requirement.
 
 export type ReplayDecision =
@@ -50,11 +50,11 @@ function normalizeSdkSessionId(value: unknown): string | undefined {
  * createSession?
  *
  * Rules:
- *   - No input                            â†?create (no-replay-state)
- *   - No (trimmed) sdkSessionId          â†?create (no-sdk-session-id)
- *   - sdkSessionId + replayInvalid=true   â†?create (replay-invalid),
+ *   - No input                            â†’ create (no-replay-state)
+ *   - No (trimmed) sdkSessionId          â†’ create (no-sdk-session-id)
+ *   - sdkSessionId + replayInvalid=true   â†’ create (replay-invalid),
  *                                            downgradedFromResume=true
- *   - sdkSessionId + replayInvalid=false  â†?resume
+ *   - sdkSessionId + replayInvalid=false  â†’ resume
  */
 export function decideReplayAction(input?: ReplayShimInput): ReplayDecision {
   if (!input) {

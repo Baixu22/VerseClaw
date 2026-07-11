@@ -54,15 +54,15 @@ type DocxTextElement = NonNullable<
  * Parse color markup into segments.
  *
  * Supports:
- *   [red]text[/red]               â†?red text
- *   [bg:yellow]text[/bg]          â†?yellow background
- *   [bold]text[/bold]             â†?bold
- *   [green bold]text[/green]      â†?green + bold
+ *   [red]text[/red]               â†’ red text
+ *   [bg:yellow]text[/bg]          â†’ yellow background
+ *   [bold]text[/bold]             â†’ bold
+ *   [green bold]text[/green]      â†’ green + bold
  */
 function parseColorMarkup(content: string): Segment[] {
   const segments: Segment[] = [];
   // Only [known_tag]...[/...] pairs are treated as markup.  Using an open
-  // pattern like \[([^\]]+)\] would match any bracket token â€?e.g. [Q1] â€?
+  // pattern like \[([^\]]+)\] would match any bracket token â€” e.g. [Q1] â€”
   // and cause it to consume a later real closing tag ([/red]), silently
   // corrupting the surrounding styled spans.  Restricting the opening tag to
   // the set of recognised colour/style names prevents that: [Q1] does not
@@ -70,7 +70,7 @@ function parseColorMarkup(content: string): Segment[] {
   // plain-text alternatives instead.
   //
   // Closing tag name is still not validated against the opening tag:
-  // [red]text[/green] is treated as [red]text[/red] â€?opening style applies
+  // [red]text[/green] is treated as [red]text[/red] â€” opening style applies
   // and the closing tag is consumed regardless of its name.
   const KNOWN = "(?:bg:[a-z]+|bold|red|orange|yellow|green|blue|purple|gr[ae]y)";
   const tagPattern = new RegExp(

@@ -89,9 +89,9 @@ export function resolveMSTeamsProactiveReplyStyle(params: {
 /**
  * Parse the target value into a conversation reference lookup key.
  * Supported formats:
- * - conversation:19:abc@thread.tacv2 â†?lookup by conversation ID
- * - user:aad-object-id â†?lookup by user AAD object ID
- * - 19:abc@thread.tacv2 â†?direct conversation ID
+ * - conversation:19:abc@thread.tacv2 â†’ lookup by conversation ID
+ * - user:aad-object-id â†’ lookup by user AAD object ID
+ * - 19:abc@thread.tacv2 â†’ direct conversation ID
  */
 function parseRecipient(to: string): {
   type: "conversation" | "user";
@@ -254,7 +254,7 @@ export async function resolveMSTeamsSendContext(params: {
 
   // Resolve Graph API-native chat ID if needed for SharePoint per-user sharing.
   // Bot Framework personal DM conversation IDs (e.g. `a:1xxx` or `8:orgid:xxx`) cannot
-  // be used directly with Graph /chats/{chatId} endpoints â€?the Graph API requires the
+  // be used directly with Graph /chats/{chatId} endpoints â€” the Graph API requires the
   // `19:xxx@thread.tacv2` or `19:xxx@unq.gbl.spaces` format.
   // We check the cached value first, then resolve via Graph API and cache for future sends.
   let graphChatId: string | null | undefined = safeRef.graphChatId ?? undefined;

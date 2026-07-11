@@ -1,5 +1,5 @@
 /**
- * Inbound pipeline stages â€?each stage is a pure(-ish) function that
+ * Inbound pipeline stages â€” each stage is a pure(-ish) function that
  * transforms a subset of the pipeline's state. The main `inbound-pipeline`
  * module composes them in order.
  *

@@ -70,7 +70,7 @@ function normalizeTarget(to: string): string {
   }
 
   // Real LINE chat ids are a capital C/U/R followed by 32 lowercase hex chars
-  // (33 chars total) and are case-sensitive â€?push returns HTTP 400 otherwise.
+  // (33 chars total) and are case-sensitive â€” push returns HTTP 400 otherwise.
   // Reject values that match the LINE id shape but lost their leading capital
   // so the failure is surfaced as a permanent error (recovery moves the entry
   // to failed/ immediately instead of silently retrying 5 times). Short test

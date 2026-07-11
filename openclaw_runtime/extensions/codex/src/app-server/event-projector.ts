@@ -317,12 +317,12 @@ export class CodexAppServerEventProjector {
     // shape `${turnId}:${kind}`. The mirror's idempotency key is derived
     // from this identity rather than from snapshot position or content
     // hash, so:
-    //   - Re-mirror of the same turn (retry) â†?same identity â†?no-op.
+    //   - Re-mirror of the same turn (retry) â†’ same identity â†’ no-op.
     //   - Re-emit of a prior turn's entry into a later turn's snapshot
-    //     (the cross-turn drift mode named in #77012) â†?original identity
-    //     is preserved â†?on-disk key still matches â†?also a no-op.
-    //   - Two distinct turns where the user repeats verbatim content â†?
-    //     distinct turnIds â†?distinct identities â†?both kept.
+    //     (the cross-turn drift mode named in #77012) â†’ original identity
+    //     is preserved â†’ on-disk key still matches â†’ also a no-op.
+    //   - Two distinct turns where the user repeats verbatim content â†’
+    //     distinct turnIds â†’ distinct identities â†’ both kept.
     const turnId = this.turnId;
     const messagesSnapshot: AgentMessage[] = this.params.suppressNextUserMessagePersistence
       ? []

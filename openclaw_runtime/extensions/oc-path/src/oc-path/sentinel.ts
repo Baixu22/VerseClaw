@@ -24,7 +24,7 @@ export class OcEmitSentinelError extends Error {
   }
 }
 
-// Substring match (not equality) â€?`prefix__OPENCLAW_REDACTED__suffix`
+// Substring match (not equality) â€” `prefix__OPENCLAW_REDACTED__suffix`
 // still leaks the marker. No-op on non-string input.
 export function guardSentinel(value: unknown, ocPath: string): void {
   if (typeof value === "string" && value.includes(REDACTED_SENTINEL)) {

@@ -74,7 +74,7 @@ export function mergeTelegramAccountConfig(
 
   // Multi-account bots must not inherit channel-level groups unless explicitly set.
   // Single-account bots fall back to root `channels.telegram.groups` when the
-  // account does not declare its own groups â€?including the empty-literal case
+  // account does not declare its own groups â€” including the empty-literal case
   // `accounts.<id>.groups: {}`, which is almost always a config-migration
   // artifact rather than an intentional "block all" declaration (use
   // `groupPolicy: "disabled"` for that).

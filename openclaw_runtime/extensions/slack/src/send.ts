@@ -507,7 +507,7 @@ async function resolveChannelId(
   // Bare Slack user IDs (U-prefix) may arrive with kind="channel" when the
   // target string had no explicit prefix (parseSlackTarget defaults bare IDs
   // to "channel"). chat.postMessage tolerates user IDs directly, but
-  // files.uploadV2 â†?completeUploadExternal validates channel_id against
+  // files.uploadV2 â†’ completeUploadExternal validates channel_id against
   // ^[CGDZ][A-Z0-9]{8,}$ and rejects U-prefixed IDs. Resolve user IDs via
   // conversations.open only for paths that require the concrete DM channel ID.
   if (!isSlackUserRecipient(recipient)) {

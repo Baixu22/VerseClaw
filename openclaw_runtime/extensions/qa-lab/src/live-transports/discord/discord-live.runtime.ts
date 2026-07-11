@@ -864,7 +864,7 @@ function renderDiscordStatusReactionHtml(params: {
 <body>
   <main>
     <h1>${escapeHtml(params.scenarioTitle)}</h1>
-    <div class="sub">Expected: ${params.expectedSequence.map(escapeHtml).join(" �?")} · Seen: ${params.seenSequence.map(escapeHtml).join(" �?") || "none"}</div>
+    <div class="sub">Expected: ${params.expectedSequence.map(escapeHtml).join(" → ")} · Seen: ${params.seenSequence.map(escapeHtml).join(" → ") || "none"}</div>
     <section class="message">
       <div class="author">Mantis Discord QA</div>
       <div class="content">Reaction timeline captured from the real Discord triggering message via REST polling.</div>

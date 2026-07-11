@@ -100,8 +100,8 @@ function lc(s: string): string {
  * Slash command registry.
  *
  * Maintains two maps:
- * - `commands` �?QQBot message-flow commands
- * - `frameworkCommands` �?auth-gated commands that are safe on the framework surface
+ * - `commands` — QQBot message-flow commands
+ * - `frameworkCommands` — auth-gated commands that are safe on the framework surface
  */
 export class SlashCommandRegistry {
   private readonly commands = new Map<string, SlashCommand>();
@@ -185,7 +185,7 @@ export class SlashCommandRegistry {
       );
       const isGroup = ctx.type === "group" || ctx.type === "guild";
       const configHint = isGroup ? "groupAllowFrom" : "allowFrom";
-      return `�?权限不足：请先在 channels.qqbot.${configHint} 中配置明确的发送者列表后再使�?/${cmd.name}。`;
+      return `⛔ 权限不足：请先在 channels.qqbot.${configHint} 中配置明确的发送者列表后再使用 /${cmd.name}。`;
     }
 
     // `/command ?` returns usage help.

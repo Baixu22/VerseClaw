@@ -1,5 +1,5 @@
 /**
- * Ref-index store â€?SQLite KV-backed store for message reference index.
+ * Ref-index store â€” SQLite KV-backed store for message reference index.
  *
  * Legacy JSONL entries are imported once, then deleted after SQLite has the
  * canonical ref-index rows.

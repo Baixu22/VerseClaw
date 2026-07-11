@@ -235,7 +235,7 @@ export function registerBrowserElementCommands(
           endRef,
           targetId: normalizeOptionalString(opts.targetId),
         },
-        successMessage: `dragged ${startRef} â†?${endRef}`,
+        successMessage: `dragged ${startRef} â†’ ${endRef}`,
       });
     });
 

@@ -360,7 +360,7 @@ function formatTime(timestamp: number) {
 
 function formatIso(iso?: string) {
   if (!iso) {
-    return "�?;
+    return "—";
   }
   return new Date(iso).toLocaleString([], {
     month: "short",
@@ -1488,7 +1488,7 @@ function renderInspector(state: UiState, scenario: SeedScenario): string {
                       : '<div class="empty-state">No step data yet.</div>'
                   }
                 </div>`
-              : '<div class="empty-state">Not executed yet �?seed plan only.</div>'
+              : '<div class="empty-state">Not executed yet — seed plan only.</div>'
           }
         </div>
 
@@ -1705,7 +1705,7 @@ function renderCaptureView(state: UiState): string {
   const activeWindowLabel =
     activeWindowStartTs == null || activeWindowEndTs == null
       ? null
-      : `${formatTime(activeWindowStartTs)} �?${formatTime(activeWindowEndTs)} · ${formatDuration(
+      : `${formatTime(activeWindowStartTs)} → ${formatTime(activeWindowEndTs)} · ${formatDuration(
           Math.max(0, activeWindowEndTs - activeWindowStartTs),
         )}`;
   if (activeWindowLabel && state.captureViewMode === "timeline") {
@@ -1845,7 +1845,7 @@ function renderCaptureView(state: UiState): string {
               : minTs + (totalSpanMs * (index + 1)) / binCount;
           const startPct = ((spanStartTs - minTs) / Math.max(1, totalSpanMs)) * 100;
           const endPct = ((spanEndTs - minTs) / Math.max(1, totalSpanMs)) * 100;
-          const binLabel = `${laneId} · ${formatTime(spanStartTs)} �?${formatTime(spanEndTs)} · ${count} events`;
+          const binLabel = `${laneId} · ${formatTime(spanStartTs)} → ${formatTime(spanEndTs)} · ${count} events`;
           return `<button
             class="capture-timeline-sparkline-bar"
             data-capture-sparkline-window="${esc(laneId)}:${index}"
@@ -2545,7 +2545,7 @@ function renderCaptureView(state: UiState): string {
         <div class="capture-inline-actions">
           <label class="capture-saved-view-filter">Saved view
             <select id="capture-saved-view">
-              <option value="">apply saved view�?/option>
+              <option value="">apply saved view…</option>
               ${state.captureSavedViews
                 .map((view) => `<option value="${esc(view.id)}">${esc(view.name)}</option>`)
                 .join("")}
@@ -2827,7 +2827,7 @@ function renderCaptureView(state: UiState): string {
                 }
                 ${
                   state.captureViewMode === "timeline"
-                    ? '<div class="capture-summary-note text-dimmed text-sm">Keys: 1-4 views · �?�?markers · Home/End jump · Esc clears brush · drag sparkline bins · Shift+drag widens.</div>'
+                    ? '<div class="capture-summary-note text-dimmed text-sm">Keys: 1-4 views · ←/→ markers · Home/End jump · Esc clears brush · drag sparkline bins · Shift+drag widens.</div>'
                     : ""
                 }
               </div>
@@ -3199,11 +3199,11 @@ function renderCaptureView(state: UiState): string {
                                 <div class="capture-timeline-lane-label${laneSelected ? " selected" : ""}">
                                   <div class="capture-timeline-lane-toolbar">
                                     <button class="capture-timeline-lane-toggle" data-capture-lane-toggle="${esc(lane.id)}" type="button">
-                                      <span class="capture-timeline-lane-chevron">${laneIsCollapsed ? "�? : "�?}</span>
+                                      <span class="capture-timeline-lane-chevron">${laneIsCollapsed ? "▸" : "▾"}</span>
                                       <span class="capture-timeline-lane-title">${esc(lane.label)}</span>
                                     </button>
                                     <button class="capture-timeline-lane-pin${pinned ? " pinned" : ""}" data-capture-lane-pin="${esc(lane.id)}" type="button" title="${pinned ? "Unpin lane" : "Pin lane"}">
-                                      ${pinned ? "�? : "�?}
+                                      ${pinned ? "★" : "☆"}
                                     </button>
                                   </div>
                                   <div class="capture-timeline-lane-meta">${lane.events.length} event${lane.events.length === 1 ? "" : "s"}${
@@ -3364,7 +3364,7 @@ function renderCaptureView(state: UiState): string {
                                               </div>
                                               <div class="capture-event-card-meta-row">
                                                 <span class="text-dimmed text-sm">${cluster.count} events</span>
-                                                <span class="text-dimmed text-sm">${esc(formatTime(cluster.startTs))} �?${esc(formatTime(cluster.endTs))}</span>
+                                                <span class="text-dimmed text-sm">${esc(formatTime(cluster.startTs))} → ${esc(formatTime(cluster.endTs))}</span>
                                                 ${event.status ? `<span class="text-dimmed text-sm">status ${event.status}</span>` : ""}
                                               </div>
                                             </div>

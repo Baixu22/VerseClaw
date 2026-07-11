@@ -112,7 +112,7 @@ export function createMattermostClient(params: {
 
   // Guarded fetch adapter: calls fetchWithSsrFGuard and returns a plain Response.
   // Body is buffered before releasing the dispatcher so callers get a complete Response.
-  // Null-body status codes per Fetch spec â€?Response constructor rejects a body for these.
+  // Null-body status codes per Fetch spec â€” Response constructor rejects a body for these.
   const NULL_BODY_STATUSES = new Set([101, 204, 205, 304]);
 
   const guardedFetchImpl: MattermostFetch = async (input, init) => {

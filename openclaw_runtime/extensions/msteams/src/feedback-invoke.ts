@@ -17,8 +17,8 @@ import type { MSTeamsTurnContext } from "./sdk-types.js";
  * Teams delivers feedback (`actionName === "feedback"`) on AI-generated
  * messages as a `message/submitAction` invoke. The SDK wraps a void return
  * into the HTTP 200 InvokeResponse, so this function intentionally does
- * not ack itself â€?the legacy `ctx.sendActivity({ type: "invokeResponse",
- * â€?})` shape is gone (it became an outbound BF activity on the new SDK
+ * not ack itself â€” the legacy `ctx.sendActivity({ type: "invokeResponse",
+ * â€¦ })` shape is gone (it became an outbound BF activity on the new SDK
  * instead of the HTTP response).
  *
  * Returns `true` if the invoke matched the feedback shape and was
@@ -71,7 +71,7 @@ export async function runMSTeamsFeedbackInvokeHandler(
       const parsed = JSON.parse(value.actionValue.feedback) as { feedbackText?: string };
       userComment = parsed.feedbackText || undefined;
     } catch {
-      // Best effort â€?feedback text is optional
+      // Best effort â€” feedback text is optional
     }
   }
 
@@ -143,7 +143,7 @@ export async function runMSTeamsFeedbackInvokeHandler(
       content: `${JSON.stringify(feedbackEvent)}\n`,
       rejectSymlinkParents: true,
     }).catch(() => {
-      // Best effort â€?transcript dir may not exist yet
+      // Best effort â€” transcript dir may not exist yet
     });
   } catch {
     // Best effort
@@ -174,7 +174,7 @@ export async function runMSTeamsFeedbackInvokeHandler(
   };
 
   // For negative feedback, trigger background reflection (fire-and-forget).
-  // No ack message â€?the reflection follow-up serves as the acknowledgement.
+  // No ack message â€” the reflection follow-up serves as the acknowledgement.
   // Sending anything during the invoke handler causes "unable to reach app" errors.
   if (isNegative && msteamsCfg?.feedbackReflection !== false) {
     // Note: thumbedDownResponse is not populated here because we don't cache

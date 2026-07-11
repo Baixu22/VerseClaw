@@ -143,7 +143,7 @@ export const imessageApprovalNativeRuntime = createChannelApprovalNativeRuntimeA
       });
       // Approval reaction bindings must use the GUID-only id (matches the
       // inbound tapback's `reacted_to_guid`). When the bridge only returned a
-      // numeric ROWID / `ok` / `unknown`, `result.guid` is undefined â€?refuse
+      // numeric ROWID / `ok` / `unknown`, `result.guid` is undefined â€” refuse
       // to bind so the reaction shortcut won't silently miss a real tap.
       const guid = result.guid;
       if (!guid) {
@@ -181,7 +181,7 @@ export const imessageApprovalNativeRuntime = createChannelApprovalNativeRuntimeA
         return null;
       }
       // If the approval is already past expiry by the time we bind (clock skew
-      // or delayed delivery), don't pretend to honor a 1ms TTL â€?refuse the
+      // or delayed delivery), don't pretend to honor a 1ms TTL â€” refuse the
       // binding so callers see an honest "no binding" and the prompt remains
       // resolvable only via the /approve text fallback.
       const ttlMs = view.expiresAtMs - Date.now();

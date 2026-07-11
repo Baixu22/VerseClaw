@@ -25,8 +25,8 @@ type AgentToolResultLike = {
 
 /**
  * Mutable holder populated by `attempt.ts` *after* `client.createSession()`
- * (or `client.resumeSession()`) succeeds, so that the tool bridge â€?which is
- * constructed *before* the SDK session exists â€?can route `onYield` events
+ * (or `client.resumeSession()`) succeeds, so that the tool bridge â€” which is
+ * constructed *before* the SDK session exists â€” can route `onYield` events
  * to the live session's `abort()` later in the run. Bridged tools cannot
  * execute before the SDK session is up, so reading `current === undefined`
  * inside `onYield` is a no-op by design.
@@ -38,12 +38,12 @@ export interface CopilotSessionHolder {
 /**
  * Structural subset of `EmbeddedRunAttemptParams` carried into the tool
  * bridge for PI-parity tool context (see
- * `src/agents/pi-embedded-runner/run/attempt.ts:1029-1117` â€?the
+ * `src/agents/pi-embedded-runner/run/attempt.ts:1029-1117` â€” the
  * authoritative `createOpenClawCodingTools({...})` call shape).
  *
  * Declared as `Partial<EmbeddedRunAttemptParams>` (imported from the
  * `openclaw/plugin-sdk/agent-harness-runtime` boundary, *not* from
- * `attempt.ts` in this extension) to avoid an `attempt.ts` â†?
+ * `attempt.ts` in this extension) to avoid an `attempt.ts` â†”
  * `tool-bridge.ts` import cycle while keeping the field shapes
  * authoritative. Production callers pass the live attempt params; test
  * fixtures may omit this field entirely and fall back to the flat
@@ -101,7 +101,7 @@ export interface CopilotToolBridgeInput {
    * the yield so the final attempt result can carry
    * `yieldDetected: true` (the parent runner uses it to mark
    * liveness as paused and stop_reason as `end_turn`). Mirrors
-   * the PI/codex contract â€?see
+   * the PI/codex contract â€” see
    * `src/agents/pi-embedded-runner/run/attempt.ts:1107-1113` and
    * `extensions/codex/src/app-server/run-attempt.ts:539-541`.
    */
@@ -219,7 +219,7 @@ export async function createCopilotToolBridge(
  * as `overridesBuiltInTool: true, skipPermission: true` (see
  * `convertOpenClawToolToSdkTool` below). That means the wrapped-tool
  * enforcement layer
- * (`src/agents/pi-tools.before-tool-call.ts â†?wrapToolWithBeforeToolCallHook`)
+ * (`src/agents/pi-tools.before-tool-call.ts â†’ wrapToolWithBeforeToolCallHook`)
  * is the single gate for permission, owner-only allowlists, loop
  * detection, trusted-plugin policies, and two-phase plugin approvals.
  * That layer reads its context from the fields forwarded here; missing
@@ -262,7 +262,7 @@ function buildOpenClawCodingToolsOptions(
   // behavior now see the same policy PI provides. Spawn workspace falls
   // through to the caller-provided value when supplied; otherwise we
   // derive it locally from the (possibly sandbox-effective) workspaceDir
-  // â€?sufficient for legacy/test fixtures that didn't pre-compute it.
+  // â€” sufficient for legacy/test fixtures that didn't pre-compute it.
   const sandbox = input.sandbox ?? undefined;
   const spawnWorkspaceDir =
     input.spawnWorkspaceDir ??
@@ -480,13 +480,13 @@ export function convertOpenClawToolToSdkTool(
     parameters: sourceTool.parameters as Record<string, unknown> | undefined,
     // Bridged OpenClaw tools enforce their own permission/policy decisions
     // inside `wrapToolWithBeforeToolCallHook` (see
-    // `src/agents/pi-tools.before-tool-call.ts` â€?the same hook PI itself
+    // `src/agents/pi-tools.before-tool-call.ts` â€” the same hook PI itself
     // uses, providing loop detection, trusted plugin policies,
     // before-tool-call hooks, and two-phase plugin approvals via the
     // gateway). Asking the SDK to fire `onPermissionRequest` for
     // `kind: "custom-tool"` would either short-circuit OpenClaw's richer
     // enforcement (if we allow-all) or block every call (if we
-    // reject-all) â€?neither matches PI parity. The in-tree codex harness
+    // reject-all) â€” neither matches PI parity. The in-tree codex harness
     // takes the same approach: bridged OpenClaw tools are wrapped with
     // `wrapToolWithBeforeToolCallHook` and the SDK gate is bypassed
     // (see `extensions/codex/src/app-server/dynamic-tools.ts`).
