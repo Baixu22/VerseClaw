@@ -9,7 +9,6 @@ import { useShallow } from 'zustand/shallow';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   Clock,
-  ChevronDown,
   ChevronRight,
   Settings as SettingsIcon,
   PanelLeftClose,
@@ -873,24 +872,35 @@ export function Sidebar() {
                       <span className="min-w-0 flex-1 truncate text-sm font-medium tracking-normal">
                         {group.workspace.name}
                       </span>
-                      {collapsed
-                        ? <ChevronRight className="h-3.5 w-3.5 shrink-0" />
-                        : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
-                    </button>
-                    {!collapsed && (
-                      <SessionFolderTree
-                        workspace={group.workspace}
-                        sessions={group.sessions}
-                        collapsedFolders={collapsedFolderIds}
-                        sessionStatusKinds={sessionStatusKinds}
-                        onToggleFolder={toggleFolder}
-                        onCreateFolder={handleCreateFolder}
-                        onRenameFolder={handleRenameFolder}
-                        onDeleteFolder={handleDeleteFolder}
-                        onMoveSession={handleMoveSessionToFolder}
-                        renderSessionRow={renderSessionRow}
+                      <ChevronRight
+                        className={cn(
+                          'h-3.5 w-3.5 shrink-0 transition-transform duration-200 motion-reduce:transition-none',
+                          !collapsed && 'rotate-90',
+                        )}
                       />
-                    )}
+                    </button>
+                    <div
+                      className={cn(
+                        'grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none',
+                        collapsed ? 'grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr] opacity-100',
+                      )}
+                      aria-hidden={collapsed}
+                    >
+                      <div className="min-h-0 overflow-hidden">
+                        <SessionFolderTree
+                          workspace={group.workspace}
+                          sessions={group.sessions}
+                          collapsedFolders={collapsedFolderIds}
+                          sessionStatusKinds={sessionStatusKinds}
+                          onToggleFolder={toggleFolder}
+                          onCreateFolder={handleCreateFolder}
+                          onRenameFolder={handleRenameFolder}
+                          onDeleteFolder={handleDeleteFolder}
+                          onMoveSession={handleMoveSessionToFolder}
+                          renderSessionRow={renderSessionRow}
+                        />
+                      </div>
+                    </div>
                   </div>
                 );
               })
@@ -901,23 +911,26 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="mt-auto flex flex-col gap-1 p-2">
-        {!sidebarCollapsed && (
-          <button
-            data-testid="sidebar-archive"
-            onClick={() => setArchiveModalOpen(true)}
-            className={cn(
-              'sidebar-nav-text flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors',
-              'hover:bg-black/5 dark:hover:bg-white/5 text-foreground/80',
-            )}
-          >
-            <div className="flex shrink-0 items-center justify-center text-current [&_svg]:size-4">
-              <ArchiveIcon className="h-4 w-4" strokeWidth={2} />
-            </div>
+        <button
+          data-testid="sidebar-archive"
+          onClick={() => setArchiveModalOpen(true)}
+          aria-label={t('chat:archive.open')}
+          title={sidebarCollapsed ? t('chat:archive.open') : undefined}
+          className={cn(
+            'sidebar-nav-text flex min-h-8 w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-foreground/80',
+            'transition-[background-color,color,transform] duration-150 hover:bg-black/5 active:scale-[0.98] dark:hover:bg-white/5 motion-reduce:transition-none motion-reduce:active:scale-100',
+            sidebarCollapsed && 'justify-center px-0',
+          )}
+        >
+          <div className="flex h-5 w-5 shrink-0 items-center justify-center text-current [&_svg]:size-4">
+            <ArchiveIcon className="h-4 w-4" strokeWidth={2} />
+          </div>
+          {!sidebarCollapsed && (
             <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
               {t('chat:archive.open')}
             </span>
-          </button>
-        )}
+          )}
+        </button>
         <div
           data-testid="sidebar-gateway-restarting"
           data-state={gatewayRestarting ? 'visible' : 'hidden'}

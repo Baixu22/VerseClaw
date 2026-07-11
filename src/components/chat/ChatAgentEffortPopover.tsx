@@ -8,10 +8,11 @@
  */
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { ChevronDown, Flame, HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAgentsStore } from '@/stores/agents';
 import { cn } from '@/lib/utils';
+import { useWebglFire } from '@/hooks/use-webgl-fire';
 import type { AgentReasoningEffort } from '@/types/agent';
 
 const EFFORT_OPTIONS: ReadonlyArray<AgentReasoningEffort | 'max'> = [
@@ -117,11 +118,14 @@ function ChatAgentEffortPopoverBody({
   const updateAgentReasoningEffort = useAgentsStore((s) => s.updateAgentReasoningEffort);
   const [draftIndex, setDraftIndex] = useState<number>(() => toSliderIndex(initialEffort));
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const fireCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const initialRef = useRef<SavedEffort>(initialEffort ?? 'auto');
   const commitTimerRef = useRef<number | null>(null);
 
   const statusEffort: DisplayEffort = EFFORT_OPTIONS[draftIndex] ?? 'auto';
   const fillPercent = (draftIndex / MAX_SLIDER_VALUE) * 100;
+  const fireActive = draftIndex >= HIGH_INDEX;
+  useWebglFire(fireCanvasRef, draftIndex / MAX_SLIDER_VALUE, fireActive);
 
   const commit = useCallback(
     (idx: number) => {
@@ -214,13 +218,20 @@ function ChatAgentEffortPopoverBody({
     <div
       ref={containerRef}
       data-testid="chat-agent-effort-popover"
-      className="fixed z-50 w-[min(320px,calc(100vw-32px))] select-none"
+      className="fixed z-50 w-[min(344px,calc(100vw-24px))] select-none sm:w-[min(344px,calc(100vw-32px))]"
       style={positionStyle}
     >
-      <div className="effort-card rounded-xl border border-black/10 bg-surface-modal p-3 text-foreground shadow-xl dark:border-white/10">
+      <div className="effort-card rounded-lg border border-black/10 bg-surface-modal p-3 text-foreground shadow-xl motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:zoom-in-95 motion-safe:duration-150 dark:border-white/10">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
+              <Flame
+                className={cn(
+                  'h-4 w-4 text-muted-foreground transition-[color,filter] duration-200',
+                  fireActive && 'text-fuchsia-600 drop-shadow-[0_0_6px_rgba(192,38,211,0.45)] dark:text-fuchsia-300',
+                )}
+                aria-hidden="true"
+              />
               <p className="text-xs font-medium text-foreground">{t('composer.effortTitle')}</p>
               <span
                 className={cn(
@@ -254,19 +265,37 @@ function ChatAgentEffortPopoverBody({
         </div>
 
         <div className="mt-3">
-          <div className="relative h-8 overflow-hidden rounded-lg border border-black/10 bg-surface-input dark:border-white/10">
+          <div
+            className={cn(
+              'effort-track relative h-9 overflow-hidden rounded-lg border border-black/10 bg-surface-input isolation-isolate sm:h-10 dark:border-white/10',
+              fireActive && 'effort-track-active',
+              draftIndex >= MAX_SLIDER_VALUE && 'effort-track-full',
+            )}
+            data-testid="chat-agent-effort-track"
+          >
             <div
               aria-hidden="true"
-              className="absolute inset-y-0 left-0 rounded-lg bg-primary/15 transition-[width] duration-100 dark:bg-primary/20"
+              className="absolute inset-y-0 left-0 z-0 rounded-lg bg-fuchsia-500/10 transition-[width] duration-100 dark:bg-fuchsia-400/10"
               style={{ width: `${fillPercent}%` }}
             />
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-3">
+            <canvas
+              ref={fireCanvasRef}
+              aria-hidden="true"
+              data-testid="chat-agent-effort-fire"
+              className="effort-fire-canvas pointer-events-none absolute inset-0 z-[2] h-full w-full opacity-0 mix-blend-multiply transition-opacity duration-300 motion-reduce:hidden dark:mix-blend-screen"
+              style={{
+                maskImage: `linear-gradient(to right, black 0%, black ${Math.min(fillPercent + 2, 100)}%, transparent ${Math.min(fillPercent + 2, 100)}%)`,
+                WebkitMaskImage: `linear-gradient(to right, black 0%, black ${Math.min(fillPercent + 2, 100)}%, transparent ${Math.min(fillPercent + 2, 100)}%)`,
+              }}
+            />
+            <div className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-between px-3">
               {EFFORT_OPTIONS.map((option) => (
                 <span
                   key={option}
                   className={cn(
-                    'h-1 w-1 rounded-full bg-muted-foreground/35 transition-colors',
-                    EFFORT_OPTIONS[draftIndex] === option && 'bg-primary',
+                    'h-1 w-1 rounded-full bg-muted-foreground/35 transition-[background-color,opacity] duration-200',
+                    fireActive && 'opacity-30',
+                    EFFORT_OPTIONS[draftIndex] === option && 'bg-fuchsia-600 opacity-100 dark:bg-fuchsia-300',
                   )}
                 />
               ))}
@@ -316,6 +345,12 @@ function ChatAgentEffortPopoverBody({
 }
 
 const EFFORT_CSS = `
+  .effort-track-active .effort-fire-canvas {
+    opacity: 0.92;
+  }
+  .effort-track-full .effort-fire-canvas {
+    opacity: 1;
+  }
   .effort-range {
     position: absolute;
     inset: 0;
@@ -339,10 +374,10 @@ const EFFORT_CSS = `
     -webkit-appearance: none;
     width: 18px;
     height: 18px;
-    margin-top: 7px;
-    border-radius: 999px;
+    margin-top: 8px;
+    border-radius: 7px;
     border: 1px solid hsl(var(--border));
-    background: hsl(var(--background));
+    background: linear-gradient(170deg, hsl(var(--background)) 0%, hsl(var(--surface-modal)) 100%);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
     transition: transform 120ms ease, box-shadow 120ms ease;
   }
@@ -358,10 +393,33 @@ const EFFORT_CSS = `
   .effort-range::-moz-range-thumb {
     width: 18px;
     height: 18px;
-    border-radius: 999px;
+    border-radius: 7px;
     border: 1px solid hsl(var(--border));
     background: hsl(var(--background));
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  }
+  .effort-track-active .effort-range::-webkit-slider-thumb {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22), 0 0 22px rgba(192, 38, 211, 0.42);
+  }
+  .effort-track-active .effort-range::-moz-range-thumb {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22), 0 0 22px rgba(192, 38, 211, 0.42);
+  }
+  @media (min-width: 640px) {
+    .effort-range::-webkit-slider-thumb {
+      width: 20px;
+      height: 20px;
+      margin-top: 9px;
+    }
+    .effort-range::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .effort-range::-webkit-slider-thumb,
+    .effort-range::-moz-range-thumb {
+      transition: none;
+    }
   }
 `;
 
@@ -427,6 +485,12 @@ export function ChatAgentEffortButton({
           (open || isHigh) && 'text-foreground',
         )}
       >
+        <Flame
+          className={cn(
+            'h-3.5 w-3.5 shrink-0 transition-colors',
+            isHigh && 'text-fuchsia-600 dark:text-fuchsia-300',
+          )}
+        />
         <span className="shrink-0">{t('composer.effortButton')}:</span>
         <span
           className={cn(

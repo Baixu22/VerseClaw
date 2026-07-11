@@ -196,6 +196,8 @@ export function AgentTraceGraph({
   const [phaseFilter, setPhaseFilter] = useState('all');
   const [focusMode, setFocusMode] = useState<'all' | 'root-cause' | 'critical' | 'tools' | 'artifacts' | 'cost'>('all');
   const [densityMode, setDensityMode] = useState<DensityMode>('focused');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [minimapOpen, setMinimapOpen] = useState(false);
 
   const layout = useMemo(() => layoutGraph(graph), [graph]);
   const nodesById = useMemo(() => new Map(layout.nodes.map((node) => [node.id, node])), [layout.nodes]);
@@ -304,8 +306,8 @@ export function AgentTraceGraph({
   };
 
   return (
-    <div className="flex h-full min-h-[520px] flex-col rounded-md border border-black/10 dark:border-white/10 bg-background" data-testid="observability-trace-graph">
-      <div className="space-y-2 border-b border-black/10 dark:border-white/10 px-3 py-2">
+    <div className="flex h-full min-h-[520px] flex-col bg-background" data-testid="observability-trace-graph">
+      <div className="space-y-2 border-b border-black/10 bg-surface-modal px-3 py-2 dark:border-white/10">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
             <GitBranch className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -325,6 +327,12 @@ export function AgentTraceGraph({
             )}
           </div>
           <div className="flex items-center gap-1">
+            <Button variant={filtersOpen ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setFiltersOpen((value) => !value)} title={t('graph.expand')} data-testid="trace-graph-filter-toggle">
+              <Filter className="h-4 w-4" />
+            </Button>
+            <Button variant={minimapOpen ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setMinimapOpen((value) => !value)} title={t('graph.minimap')} data-testid="trace-graph-minimap-toggle">
+              <MousePointer2 className="h-4 w-4" />
+            </Button>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setZoom((value) => Math.max(MIN_ZOOM, Number((value - 0.1).toFixed(2))))} title={t('graph.zoomOut')}>
               <ZoomOut className="h-4 w-4" />
             </Button>
@@ -341,7 +349,7 @@ export function AgentTraceGraph({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-2 2xl:grid-cols-[minmax(160px,1fr)_repeat(4,130px)_minmax(210px,auto)]">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-2 rounded-md border bg-surface-input px-2">
             <Search className="h-3.5 w-3.5 text-muted-foreground" />
             <Input
@@ -351,6 +359,16 @@ export function AgentTraceGraph({
               className="h-8 border-0 bg-transparent px-0 text-xs focus-visible:ring-0 focus-visible:ring-offset-0"
             />
           </div>
+          <div className="flex h-8 overflow-hidden rounded-md border border-border bg-surface-input/50">
+            {(['root-cause', 'critical', 'all'] as const).map((mode) => (
+              <button key={mode} type="button" className={cn('px-2.5 text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/10', focusMode === mode && 'bg-black/5 font-medium dark:bg-white/10')} onClick={() => setFocusMode(mode)}>
+                {t(mode === 'root-cause' ? 'graph.focusRootCause' : mode === 'critical' ? 'graph.focusCritical' : 'graph.focusAll')}
+              </button>
+            ))}
+          </div>
+        </div>
+        {filtersOpen && (
+        <div className="grid grid-cols-2 gap-2 rounded-md border border-border bg-background p-2 lg:grid-cols-4" data-testid="trace-graph-filters">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger size="sm"><SelectValue placeholder={t('graph.status')} /></SelectTrigger>
             <SelectContent>
@@ -379,17 +397,6 @@ export function AgentTraceGraph({
               ))}
             </SelectContent>
           </Select>
-          <Select value={focusMode} onValueChange={(value) => setFocusMode(value as typeof focusMode)}>
-            <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('graph.focusAll')}</SelectItem>
-              <SelectItem value="root-cause">{t('graph.focusRootCause')}</SelectItem>
-              <SelectItem value="critical">{t('graph.focusCritical')}</SelectItem>
-              <SelectItem value="tools">{t('graph.focusTools')}</SelectItem>
-              <SelectItem value="artifacts">{t('graph.focusArtifacts')}</SelectItem>
-              <SelectItem value="cost">{t('graph.focusCost')}</SelectItem>
-            </SelectContent>
-          </Select>
           <div className="flex h-8 items-center overflow-hidden rounded-md border border-black/10 bg-surface-input/50 dark:border-white/10" title={t('graph.densityHint')}>
             <div className="flex items-center gap-1 px-2 text-2xs text-muted-foreground">
               <Filter className="h-3.5 w-3.5" />
@@ -411,11 +418,12 @@ export function AgentTraceGraph({
             ))}
           </div>
         </div>
+        )}
       </div>
 
       <div
         ref={viewportRef}
-        className="relative flex-1 cursor-grab overflow-hidden bg-black/[0.015] active:cursor-grabbing dark:bg-white/[0.02]"
+        className="relative flex-1 cursor-grab overflow-hidden bg-black/[0.01] active:cursor-grabbing dark:bg-white/[0.015]"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -485,8 +493,8 @@ export function AgentTraceGraph({
                   if (event.key === 'Enter' || event.key === ' ') onSelectNode(node.id);
                 }}
                 className={cn(
-                  'absolute flex h-[40px] w-[168px] items-center gap-2 rounded-md border bg-background px-2.5 text-left shadow-sm transition',
-                  selected ? 'ring-2 ring-primary/45' : 'hover:bg-black/[0.02] dark:hover:bg-white/[0.04]',
+                  'absolute flex h-[40px] w-[168px] items-center gap-2 rounded-md border bg-surface-modal px-2.5 text-left transition-[background-color,border-color,box-shadow,opacity] duration-150',
+                  selected ? 'z-10 shadow-md ring-2 ring-primary/40' : 'hover:border-foreground/15 hover:bg-black/[0.02] dark:hover:bg-white/[0.04]',
                   node.critical && 'border-primary/35',
                   node.status === 'error' && 'border-red-500/45 bg-red-500/5',
                   node.status === 'aborted' && 'border-amber-500/45 bg-amber-500/5',
@@ -520,12 +528,13 @@ export function AgentTraceGraph({
           })}
         </div>
 
-        <div className="absolute bottom-3 right-3 h-28 w-44 rounded-md border border-black/10 bg-background/90 p-2 shadow-sm dark:border-white/10" data-testid="trace-graph-minimap">
+        {minimapOpen && (
+        <div className="absolute bottom-3 right-3 h-24 w-40 rounded-md border border-black/10 bg-surface-modal p-2 shadow-sm dark:border-white/10" data-testid="trace-graph-minimap">
           <div className="mb-1 flex items-center gap-1 text-[10px] text-muted-foreground">
             <MousePointer2 className="h-3 w-3" />
             {t('graph.minimap')}
           </div>
-          <div className="relative h-[86px] overflow-hidden rounded bg-black/[0.04] dark:bg-white/[0.06]">
+          <div className="relative h-[62px] overflow-hidden rounded bg-black/[0.04] dark:bg-white/[0.06]">
             {layout.nodes.map((node) => (
               <button
                 key={node.id}
@@ -548,6 +557,7 @@ export function AgentTraceGraph({
             ))}
           </div>
         </div>
+        )}
       </div>
     </div>
   );

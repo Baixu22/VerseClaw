@@ -554,6 +554,8 @@
         "sendToComposer": "Send to composer",
         "captureAndSend": "Capture and send",
         "capturing": "Capturing",
+        "back": "Back",
+        "forward": "Forward",
         "refresh": "Refresh",
         "openExternal": "Open externally",
         "openAgentBrowser": "Open in Agent Browser",
@@ -565,7 +567,9 @@
       "browser": {
         "placeholder": "Start a preview to load a URL",
         "title": "Workspace preview",
-        "agentBrowserActive": "Agent"
+        "agentBrowserActive": "Agent",
+        "menu": "Browser menu",
+        "pageActions": "Page actions"
       },
       "selection": {
         "selected": "Selected"

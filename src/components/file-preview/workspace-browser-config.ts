@@ -1,3 +1,8 @@
+export {
+  isWebPreviewAnnotationAvailable,
+  isWebPreviewAnnotationEnabled,
+} from '@shared/workspace-preview-policy';
+
 /**
  * Feature gate for the Chat workspace browser UI.
  */

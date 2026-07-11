@@ -350,6 +350,10 @@ test.describe('Observability trace graph workbench', () => {
       window.location.hash = '/observability';
     });
     await expect(page.getByTestId('observability-page')).toBeVisible();
+    await expect(page.getByTestId('observability-primary-metrics')).toBeVisible();
+    await expect(page.getByTestId('observability-secondary-metrics')).toHaveCount(0);
+    await page.getByTestId('observability-metrics-toggle').click();
+    await expect(page.getByTestId('observability-secondary-metrics')).toBeVisible();
 
     await page.getByTestId('observability-trace-row').first().click();
     await expect(page.getByTestId('observability-trace-graph')).toBeVisible();
@@ -364,9 +368,12 @@ test.describe('Observability trace graph workbench', () => {
     // Drawer auto-opens from persisted selectedNodeId; close it so overlay does not block toolbar clicks
     await page.keyboard.press('Escape');
     await expect(page.getByTestId('observability-detail-panel')).toBeHidden();
+    await page.getByTestId('trace-graph-filter-toggle').click();
     await page.getByTestId('trace-graph-density-full').click();
     await expect(page.getByTestId('trace-graph-node-event')).toContainText('runtime.tick');
     await expect(page.getByTestId('observability-trace-graph')).toContainText('6/6');
+    await expect(page.getByTestId('trace-graph-minimap')).toHaveCount(0);
+    await page.getByTestId('trace-graph-minimap-toggle').click();
     await expect(page.getByTestId('trace-graph-minimap')).toBeVisible();
     // Node may be obscured by minimap; dispatch a native click via evaluate
     await page.getByTestId('trace-graph-node-tool').dispatchEvent('click');
@@ -396,24 +403,11 @@ test.describe('Observability trace graph workbench', () => {
     await expect(page.getByTestId('observability-diagnostics-events')).toContainText('shell_command');
     await page.getByRole('tab', { name: 'Artifacts' }).click();
     await expect(page.getByTestId('observability-diagnostics-artifacts')).toContainText('src/App.tsx');
-    await page.getByRole('tab', { name: 'Compare' }).click();
-    await expect(page.getByTestId('observability-compare-panel')).toContainText('Trace compare');
-    await page.getByTestId('observability-compare-panel').getByRole('combobox').click();
-    await page.getByRole('option', { name: 'Agent trace baseline' }).click();
-    await expect(page.getByTestId('observability-compare-panel')).toContainText('$0.00100');
     await page.getByRole('tab', { name: 'Notes' }).click();
     await page.getByPlaceholder('Add a short diagnosis or follow-up...').fill('Needs command exit-code triage');
     await page.getByRole('button', { name: 'Save note' }).click();
     await expect(page.getByTestId('observability-trace-list')).toContainText('Open');
-    await page.getByRole('tab', { name: 'Issues' }).click();
-    await expect(page.getByTestId('observability-diagnostics-issues')).toContainText('Root cause');
     await page.getByRole('tab', { name: 'Attributes' }).click();
     await expect(page.getByTestId('observability-diagnostics-attributes')).toContainText('exitCode');
-
-    await page.getByRole('tab', { name: 'Timeline' }).click();
-    await expect(page.getByTestId('observability-detail-panel')).toContainText('shell_command');
-    await expect(page.getByTestId('observability-detail-panel')).toContainText('Command failed');
-    await page.getByTestId('observability-detail-panel').getByRole('button', { name: /src\/App\.tsx/ }).click();
-    await expect(page.getByTestId('observability-detail-panel')).toContainText('src/App.tsx');
   });
 });

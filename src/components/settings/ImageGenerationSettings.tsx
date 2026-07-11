@@ -220,13 +220,13 @@ export function ImageGenerationSettings() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-12 text-muted-foreground bg-black/5 dark:bg-white/5 rounded-3xl border border-dashed border-transparent">
+        <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface-input py-12 text-muted-foreground">
           <Loader2 className="h-6 w-6 animate-spin" />
         </div>
       ) : (
-        <div className="space-y-8 rounded-3xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] p-6 md:p-8">
+        <div className="space-y-6 rounded-lg border border-black/10 bg-surface-modal p-5 dark:border-white/10 md:p-6">
           <div
-            className="space-y-4 rounded-2xl border border-black/10 dark:border-white/10 p-5"
+            className="space-y-4 border-b border-black/10 pb-5 dark:border-white/10"
             data-testid="image-generation-openai-relay"
           >
             <div>
@@ -339,7 +339,7 @@ export function ImageGenerationSettings() {
           <div className="space-y-3">
             <Label className={labelClasses}>{t('imageGeneration.agentAuthTitle')}</Label>
             <p className="text-meta text-muted-foreground">{t('imageGeneration.agentAuthDesc')}</p>
-            <div className="rounded-2xl border border-black/10 dark:border-white/10 overflow-hidden">
+            <div className="overflow-hidden rounded-lg border border-black/10 dark:border-white/10">
               <table className="w-full text-sm" data-testid="image-generation-agent-auth-table">
                 <thead>
                   <tr className="border-b border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-left text-meta text-muted-foreground">

@@ -554,6 +554,8 @@
         "sendToComposer": "В поле ввода",
         "captureAndSend": "Снимок и отправка",
         "capturing": "Снимок",
+        "back": "Назад",
+        "forward": "Вперёд",
         "refresh": "Обновить",
         "openExternal": "Открыть снаружи",
         "openAgentBrowser": "Открыть в Agent Browser",
@@ -565,7 +567,9 @@
       "browser": {
         "placeholder": "Запустите предпросмотр, чтобы загрузить URL",
         "title": "Предпросмотр рабочей области",
-        "agentBrowserActive": "Agent"
+        "agentBrowserActive": "Agent",
+        "menu": "Меню браузера",
+        "pageActions": "Действия страницы"
       },
       "selection": {
         "selected": "Выбрано"

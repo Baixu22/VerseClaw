@@ -100,9 +100,10 @@ export function WorkContextBar({
   return (
     <aside
       className={cn(
-        'absolute left-1/2 top-2 z-20 w-[calc(100%-1rem)] max-w-4xl -translate-x-1/2',
-        'rounded-lg border border-border bg-surface-modal text-foreground shadow-lg shadow-black/10 dark:shadow-black/30',
-        'max-h-[50vh] overflow-y-auto p-3 backdrop-blur',
+        'absolute left-1/2 top-2 z-40 isolate w-[calc(100%-1rem)] max-w-4xl -translate-x-1/2',
+        'rounded-lg border border-border bg-surface-modal text-foreground shadow-lg shadow-black/10 ring-1 ring-black/[0.025] dark:shadow-black/30 dark:ring-white/[0.035]',
+        'max-h-[min(50vh,32rem)] overflow-y-auto p-3',
+        'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:duration-200',
         className,
       )}
       data-testid="work-context-bar"
