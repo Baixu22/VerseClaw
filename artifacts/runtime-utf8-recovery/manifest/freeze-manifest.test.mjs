@@ -53,6 +53,7 @@ test("deduplicates one source span covering multiple inventory records", () => {
   const frozen = buildFrozenManifest(report);
 
   assert.equal(frozen.manifest.repairs.length, 1);
+  assert.equal(frozen.manifest.preimageMode, "git-index");
   assert.equal(frozen.manifest.repairs[0].replacements.length, 1);
   assert.deepEqual(frozen.manifest.repairs[0].replacements[0].inventoryRecordIds, [
     "a@10",
