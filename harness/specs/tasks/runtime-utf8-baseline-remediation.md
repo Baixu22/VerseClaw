@@ -54,6 +54,8 @@ touchedAreas:
   - artifacts/runtime-utf8-recovery/red-green/runtime-backup-create-red.log
   - artifacts/runtime-utf8-recovery/red-green/runtime-backup-create-green.log
   - artifacts/runtime-utf8-recovery/red-green/runtime-backup-create-windows-green.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-backup-sqlite3-red.log
+  - artifacts/runtime-utf8-recovery/red-green/runtime-backup-sqlite3-green.log
   - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-boundary.log
   - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-nodes-media.log
   - artifacts/runtime-utf8-recovery/red-green/runtime-plugin-sdk-dts-after-protocol-types.log
@@ -556,6 +558,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/task-loop-controller.ts
   - openclaw_runtime/src/agents/verseshell-runtime.ts
   - openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts
+  - openclaw_runtime/src/agents/tool-display-config.ts
   - openclaw_runtime/src/context-engine/pruned-runtime-build-contract.test.ts
   - openclaw_runtime/src/context-engine/chat-turn-memory-injection.test.ts
   - openclaw_runtime/src/context-engine/chat-turn-memory-injection.ts

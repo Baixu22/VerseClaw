@@ -137,6 +137,11 @@ export const BUILD_ALL_STEPS = [
     },
   },
   {
+    label: "tool-display:write",
+    kind: "node",
+    args: ["--import", "tsx", "scripts/tool-display.ts", "--write"],
+  },
+  {
     label: "ui:build",
     kind: "pnpm",
     pnpmArgs: ["ui:build"],

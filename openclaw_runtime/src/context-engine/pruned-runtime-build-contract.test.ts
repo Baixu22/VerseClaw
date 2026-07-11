@@ -10,6 +10,16 @@ const generatedPaths = [
   path.join(runtimeRoot, "dist", "cli-startup-metadata.json"),
   path.join(runtimeRoot, "dist", "cli", "daemon-cli.js"),
   path.join(runtimeRoot, "extensions", "diffs", "assets", "viewer-runtime.js"),
+  path.join(
+    runtimeRoot,
+    "apps",
+    "shared",
+    "OpenClawKit",
+    "Sources",
+    "OpenClawKit",
+    "Resources",
+    "tool-display.json",
+  ),
 ];
 const tempRoots: string[] = [];
 
@@ -95,6 +105,49 @@ describe("pruned runtime build contract", () => {
     );
 
     expect(result.status, result.stderr).toBe(0);
+  });
+
+  it("generates the retained tool display snapshot before building the UI", () => {
+    const moduleUrl = pathToFileURL(path.join(runtimeRoot, "scripts", "build-all.mjs")).href;
+    const source = [
+      `const imported = await import(${JSON.stringify(moduleUrl)});`,
+      "console.log(JSON.stringify(imported.BUILD_ALL_STEPS));",
+    ].join("\n");
+    const result = spawnSync(process.execPath, ["--input-type=module", "--eval", source], {
+      cwd: runtimeRoot,
+      encoding: "utf8",
+    });
+    expect(result.status, result.stderr).toBe(0);
+    const steps: unknown = JSON.parse(result.stdout);
+    expect(Array.isArray(steps)).toBe(true);
+    if (!Array.isArray(steps)) {
+      throw new TypeError("build-all did not export BUILD_ALL_STEPS");
+    }
+
+    const labelOf = (step: unknown) =>
+      typeof step === "object" && step !== null ? Reflect.get(step, "label") : undefined;
+    const toolDisplayIndex = steps.findIndex(
+      (step: unknown) => labelOf(step) === "tool-display:write",
+    );
+    const uiBuildIndex = steps.findIndex((step: unknown) => labelOf(step) === "ui:build");
+
+    expect(toolDisplayIndex).toBeGreaterThanOrEqual(0);
+    expect(uiBuildIndex).toBeGreaterThan(toolDisplayIndex);
+    expect(steps[toolDisplayIndex]).toMatchObject({
+      kind: "node",
+      args: ["--import", "tsx", "scripts/tool-display.ts", "--write"],
+    });
+  });
+
+  it("writes the retained tool display snapshot from current Runtime tools", () => {
+    const result = spawnSync(
+      process.execPath,
+      ["--import", "tsx", path.join(runtimeRoot, "scripts", "tool-display.ts"), "--write"],
+      { cwd: runtimeRoot, encoding: "utf8" },
+    );
+
+    expect(result.status, result.stderr).toBe(0);
+    expect(fs.existsSync(generatedPaths[3])).toBe(true);
   });
 
   it("checks the retained gateway entry without requiring a removed CLI entry or chunk", () => {

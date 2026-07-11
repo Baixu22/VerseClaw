@@ -1,11 +1,12 @@
 ﻿{
     "command":  "node openclaw_runtime/scripts/runtime-utf8-inventory.mjs --root . --pathspec openclaw_runtime --output artifacts/runtime-utf8-recovery/final-inventory.json",
-    "startedAtUtc":  "2026-07-11T13:44:55.1285682Z",
-    "endedAtUtc":  "2026-07-11T13:44:57.1834514Z",
-    "durationSeconds":  2.055,
+    "startedAtUtc":  "2026-07-11T16:19:21.9870902Z",
+    "endedAtUtc":  "2026-07-11T16:19:25.5239973Z",
+    "durationSeconds":  3.537,
     "exitCode":  0,
-    "outputSha256":  "99a13aba5c2ff41b9ab44cad84183ec78d4336ba8366a6a9fc995e67437a648d",
-    "logSha256":  "4087195734c6031c25e65e624ead2f0d3785302f7cca6314436358e54b530352",
+    "outputSha256":  "3a3b28343d5c1b79a27c0f779f96044985f66ad7302075ebc9c16f0563cd03f1",
+    "logSha256":  "e2eb933f132f005257af65947066a1ad767be05b0fb29af03ef78097298d6c83",
     "unresolvedRepairs":  0,
+    "candidateOrConflictRepairs":  0,
     "repairManifestSha256":  "df2e7f392079a4e58ab853a69a5d0b6bcb88c1d5c87b03bdec2f0b67236dad89"
 }
