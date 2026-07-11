@@ -25,7 +25,7 @@ export const OUTBOUND_ERROR_CODES = {
 
 export type OutboundErrorCode = (typeof OUTBOUND_ERROR_CODES)[keyof typeof OUTBOUND_ERROR_CODES];
 
-export const DEFAULT_MEDIA_SEND_ERROR = "发送失败，请稍后重试�?;
+export const DEFAULT_MEDIA_SEND_ERROR = "发送失败，请稍后重试。";
 
 export interface OutboundResult {
   channel: string;

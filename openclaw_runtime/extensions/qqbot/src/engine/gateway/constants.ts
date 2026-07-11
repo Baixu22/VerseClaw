@@ -42,21 +42,21 @@ export const QUICK_DISCONNECT_THRESHOLD = 5000;
 
 /** Gateway opcodes used by the QQ Bot WebSocket protocol. */
 export const GatewayOp = {
-  /** Server â†?Client: Dispatch event (type + data). */
+  /** Server â†’ Client: Dispatch event (type + data). */
   DISPATCH: 0,
-  /** Client â†?Server: Heartbeat. */
+  /** Client â†’ Server: Heartbeat. */
   HEARTBEAT: 1,
-  /** Client â†?Server: Identify (initial auth). */
+  /** Client â†’ Server: Identify (initial auth). */
   IDENTIFY: 2,
-  /** Client â†?Server: Resume a dropped session. */
+  /** Client â†’ Server: Resume a dropped session. */
   RESUME: 6,
-  /** Server â†?Client: Request client to reconnect. */
+  /** Server â†’ Client: Request client to reconnect. */
   RECONNECT: 7,
-  /** Server â†?Client: Invalid session. */
+  /** Server â†’ Client: Invalid session. */
   INVALID_SESSION: 9,
-  /** Server â†?Client: Hello (heartbeat interval). */
+  /** Server â†’ Client: Hello (heartbeat interval). */
   HELLO: 10,
-  /** Server â†?Client: Heartbeat ACK. */
+  /** Server â†’ Client: Heartbeat ACK. */
   HEARTBEAT_ACK: 11,
 } as const;
 
@@ -64,25 +64,25 @@ export const GatewayOp = {
 
 /** WebSocket close codes used by the QQ Gateway. */
 export const GatewayCloseCode = {
-  /** Normal closure â€?do not reconnect. */
+  /** Normal closure â€” do not reconnect. */
   NORMAL: 1000,
-  /** Authentication failed â€?refresh token then reconnect. */
+  /** Authentication failed â€” refresh token then reconnect. */
   AUTH_FAILED: 4004,
-  /** Session invalid â€?clear session, refresh token, reconnect. */
+  /** Session invalid â€” clear session, refresh token, reconnect. */
   INVALID_SESSION: 4006,
-  /** Sequence number out of range â€?clear session, refresh token, reconnect. */
+  /** Sequence number out of range â€” clear session, refresh token, reconnect. */
   SEQ_OUT_OF_RANGE: 4007,
-  /** Rate limited â€?wait before reconnecting. */
+  /** Rate limited â€” wait before reconnecting. */
   RATE_LIMITED: 4008,
-  /** Session timed out â€?clear session, refresh token, reconnect. */
+  /** Session timed out â€” clear session, refresh token, reconnect. */
   SESSION_TIMEOUT: 4009,
-  /** Server internal error (range start) â€?clear session, refresh token, reconnect. */
+  /** Server internal error (range start) â€” clear session, refresh token, reconnect. */
   SERVER_ERROR_START: 4900,
   /** Server internal error (range end). */
   SERVER_ERROR_END: 4913,
-  /** Insufficient intents â€?fatal, do not reconnect. */
+  /** Insufficient intents â€” fatal, do not reconnect. */
   INSUFFICIENT_INTENTS: 4914,
-  /** Disallowed intents â€?fatal, do not reconnect. */
+  /** Disallowed intents â€” fatal, do not reconnect. */
   DISALLOWED_INTENTS: 4915,
 } as const;
 
@@ -110,8 +110,8 @@ export const GatewayEvent = {
 
 /** Interaction sub-types carried in `InteractionEvent.data.type`. */
 export const InteractionType = {
-  /** Remote config query â€?bot reports its current claw_cfg snapshot. */
+  /** Remote config query â€” bot reports its current claw_cfg snapshot. */
   CONFIG_QUERY: 2001,
-  /** Remote config update â€?caller pushes new settings. */
+  /** Remote config update â€” caller pushes new settings. */
   CONFIG_UPDATE: 2002,
 } as const;

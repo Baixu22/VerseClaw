@@ -1,6 +1,6 @@
 /**
  * Credential backup & recovery.
- * 凭证暂存与恢复�?
+ * 凭证暂存与恢复。
  *
  * Solves the "hot-upgrade interrupted, appId/secret vanished from
  * openclaw.json" failure mode.
@@ -15,7 +15,7 @@
  *     SQLite has the canonical copy.
  *
  * Safety notes:
- *   - Only restore when credentials are **actually empty** �?never
+ *   - Only restore when credentials are **actually empty** — never
  *     overwrite a user's intentional config change.
  *   - Per-account key only; not keyed by appId because recovery happens
  *     precisely when appId is unknown.
@@ -117,7 +117,7 @@ export function saveCredentialBackup(accountId: string, appId: string, clientSec
     createCredentialBackupStore().register(credentialBackupKey(accountId), data);
     removeFileQuietly(backupPath);
   } catch {
-    /* best-effort �?ignore */
+    /* best-effort — ignore */
   }
 }
 
@@ -147,7 +147,7 @@ export function loadCredentialBackup(accountId?: string): CredentialBackup | nul
       return legacy.data;
     }
   } catch {
-    /* corrupt file �?ignore */
+    /* corrupt file — ignore */
   }
   return null;
 }

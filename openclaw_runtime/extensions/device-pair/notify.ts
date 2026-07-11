@@ -407,7 +407,7 @@ export async function handleNotifyCommand(params: {
     }
     return {
       text:
-        "âœ?Pair request notifications enabled for this Telegram chat.\n" +
+        "âœ… Pair request notifications enabled for this Telegram chat.\n" +
         "I will ping here when a new device pairing request arrives.",
     };
   }
@@ -420,7 +420,7 @@ export async function handleNotifyCommand(params: {
       state.subscribers.splice(currentIndex, 1);
       await writeNotifyState(params.api, state);
     }
-    return { text: "âœ?Pair request notifications disabled for this Telegram chat." };
+    return { text: "âœ… Pair request notifications disabled for this Telegram chat." };
   }
 
   if (params.action === "once" || params.action === "arm") {
@@ -430,7 +430,7 @@ export async function handleNotifyCommand(params: {
     });
     return {
       text:
-        "âœ?One-shot pairing notification armed for this Telegram chat.\n" +
+        "âœ… One-shot pairing notification armed for this Telegram chat.\n" +
         "I will notify on the next new pairing request, then auto-disable.",
     };
   }

@@ -1,13 +1,13 @@
 /**
- * Content stage â€?build the user-visible message body.
+ * Content stage â€” build the user-visible message body.
  *
  * Responsible for:
- *   1. Parsing QQ emoji tags (`<faceType=...>` â†?`[Emoji: name]`)
+ *   1. Parsing QQ emoji tags (`<faceType=...>` â†’ `[Emoji: name]`)
  *   2. Appending attachment info + voice transcripts
  *   3. Stripping `<@openid>` mention tags in group messages
- *   4. Replacing `<@openid>` â†?`@nickname` in DMs (best-effort)
+ *   4. Replacing `<@openid>` â†’ `@nickname` in DMs (best-effort)
  *
- * Pure function: same input â†?same output, no I/O.
+ * Pure function: same input â†’ same output, no I/O.
  */
 
 import { stripMentionText } from "../../group/mention.js";
@@ -20,7 +20,7 @@ import type { QueuedMention, QueuedMessage } from "../message-queue.js";
 /** Input for {@link buildUserContent}. */
 interface ContentStageInput {
   event: QueuedMessage;
-  /** `attachmentInfo` from the attachment stage â€?appended verbatim. */
+  /** `attachmentInfo` from the attachment stage â€” appended verbatim. */
   attachmentInfo: string;
   /** Voice transcripts collected from the attachment stage. */
   voiceTranscripts: string[];
@@ -50,7 +50,7 @@ export function buildUserContent(input: ContentStageInput): ContentStageOutput {
     ? (parsedContent.trim() ? `${parsedContent}\n${voiceText}` : voiceText) + attachmentInfo
     : parsedContent + attachmentInfo;
 
-  // Mention cleanup â€?only for events with mentions attached.
+  // Mention cleanup â€” only for events with mentions attached.
   if (event.type === "group" && event.mentions?.length) {
     userContent = stripMentionText(userContent, event.mentions as never) ?? userContent;
   } else if (event.mentions?.length) {

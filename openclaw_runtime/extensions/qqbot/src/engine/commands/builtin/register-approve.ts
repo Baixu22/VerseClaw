@@ -31,7 +31,7 @@ export function registerApproveCommands(registry: SlashCommandRegistry): void {
         return [
           `🔐 命令执行审批配置`,
           ``,
-          `�?当前环境不支持在线配置修改，请通过 CLI 手动配置：`,
+          `❌ 当前环境不支持在线配置修改，请通过 CLI 手动配置：`,
           ``,
           `\`\`\`shell`,
           `# 开启审批（白名单模式）`,
@@ -77,11 +77,11 @@ export function registerApproveCommands(registry: SlashCommandRegistry): void {
           `${askIcon} 审批模式 (ask): **${ask}**`,
           ``,
           security === "deny"
-            ? `⚠️ 当前�?deny 模式，所有命令执行被拒绝`
+            ? `⚠️ 当前为 deny 模式，所有命令执行被拒绝`
             : security === "full" && ask === "off"
-              ? `�?所有命令无需审批直接执行`
+              ? `✅ 所有命令无需审批直接执行`
               : security === "allowlist" && ask === "on-miss"
-                ? `🛡�?白名单命令直接执行，其余需审批`
+                ? `🛡️ 白名单命令直接执行，其余需审批`
                 : ask === "always"
                   ? `🔒 每次命令执行都需要人工审批`
                   : `ℹ️ security=${security}, ask=${ask}`,
@@ -116,15 +116,15 @@ export function registerApproveCommands(registry: SlashCommandRegistry): void {
         try {
           await writeExecConfig("allowlist", "on-miss");
           return [
-            `�?审批已开启`,
+            `✅ 审批已开启`,
             ``,
-            `�?security = allowlist（白名单模式）`,
-            `�?ask = on-miss（未命中白名单时需审批）`,
+            `• security = allowlist（白名单模式）`,
+            `• ask = on-miss（未命中白名单时需审批）`,
             ``,
             `已批准的命令自动加入白名单，下次直接执行。`,
           ].join("\n");
         } catch (err: unknown) {
-          return `�?配置更新失败: ${err instanceof Error ? err.message : String(err)}`;
+          return `❌ 配置更新失败: ${err instanceof Error ? err.message : String(err)}`;
         }
       }
 
@@ -132,15 +132,15 @@ export function registerApproveCommands(registry: SlashCommandRegistry): void {
         try {
           await writeExecConfig("full", "off");
           return [
-            `�?审批已关闭`,
+            `✅ 审批已关闭`,
             ``,
-            `�?security = full（允许所有命令）`,
-            `�?ask = off（不需要审批）`,
+            `• security = full（允许所有命令）`,
+            `• ask = off（不需要审批）`,
             ``,
             `⚠️ 所有命令将直接执行，不会弹出审批确认。`,
           ].join("\n");
         } catch (err: unknown) {
-          return `�?配置更新失败: ${err instanceof Error ? err.message : String(err)}`;
+          return `❌ 配置更新失败: ${err instanceof Error ? err.message : String(err)}`;
         }
       }
 
@@ -148,15 +148,15 @@ export function registerApproveCommands(registry: SlashCommandRegistry): void {
         try {
           await writeExecConfig("allowlist", "always");
           return [
-            `�?已切换为严格审批模式`,
+            `✅ 已切换为严格审批模式`,
             ``,
-            `�?security = allowlist`,
-            `�?ask = always（每次执行都需审批）`,
+            `• security = allowlist`,
+            `• ask = always（每次执行都需审批）`,
             ``,
             `每个命令都会弹出审批按钮，需手动确认。`,
           ].join("\n");
         } catch (err: unknown) {
-          return `�?配置更新失败: ${err instanceof Error ? err.message : String(err)}`;
+          return `❌ 配置更新失败: ${err instanceof Error ? err.message : String(err)}`;
         }
       }
 
@@ -179,20 +179,20 @@ export function registerApproveCommands(registry: SlashCommandRegistry): void {
           }
           await configApi.replaceConfigFile({ nextConfig: cfg, afterWrite: { mode: "auto" } });
           return [
-            `�?审批配置已重置`,
+            `✅ 审批配置已重置`,
             ``,
-            `已移�?tools.exec.security �?tools.exec.ask`,
+            `已移除 tools.exec.security 和 tools.exec.ask`,
             `框架将使用默认值（security=deny, ask=on-miss）`,
             ``,
-            `如需开启命令执行，请使�?/bot-approve on`,
+            `如需开启命令执行，请使用 /bot-approve on`,
           ].join("\n");
         } catch (err: unknown) {
-          return `�?配置更新失败: ${err instanceof Error ? err.message : String(err)}`;
+          return `❌ 配置更新失败: ${err instanceof Error ? err.message : String(err)}`;
         }
       }
 
       return [
-        `�?未知参数: ${arg}`,
+        `❌ 未知参数: ${arg}`,
         ``,
         `可用选项: on | off | always | reset | status`,
         `输入 /bot-approve ? 查看详细用法`,

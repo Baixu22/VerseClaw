@@ -112,7 +112,7 @@ function matchesQQBotRequestAccount(params: {
 
 /**
  * Count QQBot accounts that could actually deliver a native approval
- * message â€?i.e. accounts that are enabled and have resolvable secrets.
+ * message â€” i.e. accounts that are enabled and have resolvable secrets.
  * Disabled or unconfigured accounts never spawn a handler, so they
  * must not contribute to the single-account shortcut in the fallback
  * ownership check below.
@@ -125,7 +125,7 @@ function countQQBotFallbackEligibleAccounts(cfg: OpenClawConfig): number {
 }
 
 /**
- * Fallback account-ownership check â€?applied when `execApprovals` is NOT
+ * Fallback account-ownership check â€” applied when `execApprovals` is NOT
  * configured for any QQBot account. In this mode every enabled account
  * handler would otherwise race to deliver the same approval to its own
  * openid namespace, so we must enforce per-account isolation.
@@ -140,7 +140,7 @@ function countQQBotFallbackEligibleAccounts(cfg: OpenClawConfig): number {
  *     unconfigured accounts never deliver anyway, so they shouldn't
  *     block the remaining single account from handling the approval.
  *     Multiple eligible accounts cannot safely race because openids are
- *     account-scoped â€?cross-account delivery hits the QQ Bot API with
+ *     account-scoped â€” cross-account delivery hits the QQ Bot API with
  *     a mismatched token and fails.
  */
 function matchesQQBotFallbackRequestAccount(params: {

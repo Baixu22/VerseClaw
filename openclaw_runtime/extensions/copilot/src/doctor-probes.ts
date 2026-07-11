@@ -10,7 +10,7 @@
  *
  * All probes are pure (no module-level state) and dependency-
  * injectable for tests. They never throw on a probe-negative
- * result â€?failure is surfaced via the `ok: false` shape so the
+ * result â€” failure is surfaced via the `ok: false` shape so the
  * caller can render a structured doctor report.
  */
 

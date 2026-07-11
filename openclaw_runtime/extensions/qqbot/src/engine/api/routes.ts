@@ -60,7 +60,7 @@ export function uploadPartFinishPath(scope: ChatScope, targetId: string): string
 
 /**
  * Build the complete-upload (files) path for C2C or Group.
- * (Same as mediaUploadPath â€?the complete endpoint reuses the files path.)
+ * (Same as mediaUploadPath â€” the complete endpoint reuses the files path.)
  */
 export function uploadCompletePath(scope: ChatScope, targetId: string): string {
   return mediaUploadPath(scope, targetId);

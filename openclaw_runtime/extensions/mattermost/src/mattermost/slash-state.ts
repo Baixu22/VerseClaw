@@ -63,7 +63,7 @@ type SlashCommandAccountState = {
 };
 
 /**
- * Map from accountId â†?per-account slash command state.
+ * Map from accountId â†’ per-account slash command state.
  *
  * Anchored to globalThis so that jiti-loaded (route registration) and
  * native-ESM-loaded (monitor/activation) module instances share the
@@ -266,7 +266,7 @@ export function registerSlashCommandRoute(api: OpenClawPluginApi) {
           callbackPaths.add(urlPath);
         }
       } catch {
-        // Invalid URL â€?ignore, will be caught during registration
+        // Invalid URL â€” ignore, will be caught during registration
       }
     }
   };
@@ -349,7 +349,7 @@ export function registerSlashCommandRoute(api: OpenClawPluginApi) {
         token = new URLSearchParams(bodyStr).get("token");
       }
     } catch {
-      // parse failed â€?will be caught by handler
+      // parse failed â€” will be caught by handler
     }
 
     let match: SlashHandlerMatch = token ? resolveSlashHandlerForToken(token) : { kind: "none" };
@@ -364,7 +364,7 @@ export function registerSlashCommandRoute(api: OpenClawPluginApi) {
     }
 
     if (match.kind === "none") {
-      // No matching account â€?reject
+      // No matching account â€” reject
       res.statusCode = 401;
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       res.end(

@@ -331,7 +331,7 @@ export async function startWebLoginWithQr(
     const selfId = readWebSelfId(account.authDir);
     const who = selfId.e164 ?? selfId.jid ?? "unknown";
     return {
-      message: `WhatsApp is already linked (${who}). Say ‚Äúrelink‚Ä?if you want a fresh QR.`,
+      message: `WhatsApp is already linked (${who}). Say ‚Äúrelink‚Äù if you want a fresh QR.`,
     };
   }
 
@@ -339,7 +339,7 @@ export async function startWebLoginWithQr(
   if (existing && isLoginFresh(existing) && existing.qrDataUrl) {
     return {
       qrDataUrl: existing.qrDataUrl,
-      message: "QR already active. Scan it in WhatsApp ‚Ü?Linked Devices.",
+      message: "QR already active. Scan it in WhatsApp ‚Üí Linked Devices.",
     };
   }
 
@@ -473,7 +473,7 @@ export async function startWebLoginWithQr(
   }
   return {
     qrDataUrl,
-    message: "Scan this QR in WhatsApp ‚Ü?Linked Devices.",
+    message: "Scan this QR in WhatsApp ‚Üí Linked Devices.",
   };
 }
 
@@ -523,7 +523,7 @@ export async function waitForWebLogin(
     }
 
     if (login.connected) {
-      const message = "‚ú?Linked! WhatsApp is ready.";
+      const message = "‚úÖ Linked! WhatsApp is ready.";
       runtime.log(success(message));
       await resetActiveLogin(account.accountId);
       return { connected: true, message };
@@ -532,7 +532,7 @@ export async function waitForWebLogin(
     if (login.qrDataUrl && currentQrDataUrl && login.qrDataUrl !== currentQrDataUrl) {
       return {
         connected: false,
-        message: "QR refreshed. Scan the latest code in WhatsApp ‚Ü?Linked Devices.",
+        message: "QR refreshed. Scan the latest code in WhatsApp ‚Üí Linked Devices.",
         qrDataUrl: login.qrDataUrl,
       };
     }

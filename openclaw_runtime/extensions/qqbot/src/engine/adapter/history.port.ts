@@ -1,5 +1,5 @@
 /**
- * History port â€?abstracts the group history cache operations.
+ * History port â€” abstracts the group history cache operations.
  *
  * The engine defines this interface; the bridge layer provides an
  * implementation backed by SDK `reply-history` functions. The engine's

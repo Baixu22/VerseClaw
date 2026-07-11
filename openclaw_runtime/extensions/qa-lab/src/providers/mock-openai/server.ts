@@ -52,9 +52,9 @@ type StreamEvent =
  * raw model string.
  *
  * Policy:
- * - `openai/*`, `gpt-*`, `o1-*`, anything starting with `gpt-` â†?`"openai"`
- * - `anthropic/*`, `claude-*` â†?`"anthropic"`
- * - Everything else (including empty strings) â†?`"unknown"`
+ * - `openai/*`, `gpt-*`, `o1-*`, anything starting with `gpt-` â†’ `"openai"`
+ * - `anthropic/*`, `claude-*` â†’ `"anthropic"`
+ * - Everything else (including empty strings) â†’ `"unknown"`
  *
  * The `/v1/messages` route always feeds `body.model` straight through,
  * so an Anthropic request with an `openai/gpt-5.5` model string is still
@@ -72,7 +72,7 @@ export function resolveProviderVariant(model: string | undefined): MockOpenAiPro
     return "unknown";
   }
   // Prefer the explicit `provider/model` or `provider:model` prefix when
-  // the caller supplied one â€?that's the most reliable signal.
+  // the caller supplied one â€” that's the most reliable signal.
   const separatorMatch = /^([^/:]+)[/:]/.exec(trimmed);
   const provider = separatorMatch?.[1] ?? trimmed;
   if (provider === "openai") {
@@ -110,7 +110,7 @@ type MockOpenAiRequestSnapshot = {
 };
 
 // Anthropic /v1/messages request/response shapes the mock actually needs.
-// This is a subset of the real Anthropic Messages API â€?just enough so the
+// This is a subset of the real Anthropic Messages API â€” just enough so the
 // QA suite can run its parity pack against a "baseline" Anthropic provider
 // without needing real API keys. The scenarios drive their dispatch through
 // the shared mock scenario logic (buildResponsesPayload), with `model`
@@ -3026,7 +3026,7 @@ function convertAnthropicMessagesToResponsesInput(params: {
     // returns) AFTER the parent role message so extractLastUserText and
     // extractToolOutput walk the array in the order they expect. For a
     // tool_result-only user turn with no text/image blocks, the parent
-    // message is intentionally omitted â€?the function_call_output itself
+    // message is intentionally omitted â€” the function_call_output itself
     // represents the user's "return the tool output" turn.
     for (const toolUse of toolUseItems) {
       items.push(toolUse);
@@ -3067,7 +3067,7 @@ function extractFinalAssistantOutputFromEvents(events: StreamEvent[]): Extracted
             input = parsed as Record<string, unknown>;
           }
         } catch {
-          // keep empty input on malformed args â€?mock dispatcher owns arg shape
+          // keep empty input on malformed args â€” mock dispatcher owns arg shape
         }
       }
       toolCalls.push({

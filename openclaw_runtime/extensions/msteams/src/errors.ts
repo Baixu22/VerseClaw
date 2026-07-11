@@ -234,7 +234,7 @@ export function classifyMSTeamsSendError(err: unknown): MSTeamsSendErrorClassifi
     return { kind: "permanent", statusCode, errorCode };
   }
 
-  // Transport-level errors (no HTTP status code) â€?check for well-known
+  // Transport-level errors (no HTTP status code) â€” check for well-known
   // network error codes that indicate egress is blocked (#77674).
   if (statusCode == null) {
     const networkCode = isRecord(err) && typeof err.code === "string" ? err.code : null;
@@ -288,7 +288,7 @@ export function formatMSTeamsSendErrorHint(
     return "transient Teams/Bot Framework error; retry may succeed";
   }
   if (classification.kind === "network") {
-    return "transport-level failure sending reply to Teams Bot Connector (smba.trafficmanager.net) â€?check egress firewall rules allow outbound HTTPS to smba.trafficmanager.net";
+    return "transport-level failure sending reply to Teams Bot Connector (smba.trafficmanager.net) â€” check egress firewall rules allow outbound HTTPS to smba.trafficmanager.net";
   }
   return undefined;
 }

@@ -120,7 +120,7 @@ export async function monitorMSTeamsProvider(
     }
     const mapping = resolved
       .filter((entry) => entry.resolved && entry.id)
-      .map((entry) => `${entry.input}â†?{entry.id}`);
+      .map((entry) => `${entry.input}â†’${entry.id}`);
     summarizeMapping(label, mapping, unresolved, runtime);
     return { additions, unresolved };
   };
@@ -191,8 +191,8 @@ export async function monitorMSTeamsProvider(
           }
           mapping.push(
             entry.channelId
-              ? `${entry.input}â†?{entry.teamId}/${entry.channelId}`
-              : `${entry.input}â†?{entry.teamId}`,
+              ? `${entry.input}â†’${entry.teamId}/${entry.channelId}`
+              : `${entry.input}â†’${entry.teamId}`,
           );
           const existing = nextTeams[entry.teamId] ?? {};
           const mergedChannels = {
@@ -223,11 +223,11 @@ export async function monitorMSTeamsProvider(
       }
     }
   } catch (err) {
-    // Allowlist Graph resolution is security-sensitive â€?surface failures at
+    // Allowlist Graph resolution is security-sensitive â€” surface failures at
     // error level so operators notice the degraded state where Graph-resolved
     // IDs are missing (#77674).
     runtime.error?.(
-      `msteams resolve failed; falling back to raw config entries â€?allowlist members resolved via Graph may be missing. ${formatUnknownError(err)}`,
+      `msteams resolve failed; falling back to raw config entries â€” allowlist members resolved via Graph may be missing. ${formatUnknownError(err)}`,
     );
   }
 
@@ -314,7 +314,7 @@ export async function monitorMSTeamsProvider(
           warnedLegacyMessagesRoute = true;
           log.warn?.(
             `received request on /api/messages but webhook.path is ${configuredPath}; ` +
-              "update your Azure Bot endpoint â€?this fallback will be removed in a future release",
+              "update your Azure Bot endpoint â€” this fallback will be removed in a future release",
           );
         }
         // Rewrite the URL so the SDK's registered handler picks it up. Express
@@ -473,7 +473,7 @@ export async function monitorMSTeamsProvider(
   });
 
   // File-consent invokes (large-file upload accept/decline). We register
-  // typed handlers so the SDK writes the HTTP InvokeResponse for us â€?the
+  // typed handlers so the SDK writes the HTTP InvokeResponse for us â€” the
   // old `ctx.sendActivity({ type: "invokeResponse" })` shape no longer
   // works on the new SDK because that ctx call becomes an outbound BF
   // activity instead of the HTTP response (Brad #2 / codex #4).
@@ -606,7 +606,7 @@ export async function monitorMSTeamsProvider(
     }
   });
 
-  // Initialize the SDK App â€?registers the POST route on Express and sets up
+  // Initialize the SDK App â€” registers the POST route on Express and sets up
   // JWT validation middleware internally.
   await app.initialize();
 
@@ -748,7 +748,7 @@ function adaptSdkContext(ctx: unknown, app: MSTeamsApp): MSTeamsTurnContext {
     };
   };
   if (typeof sdkCtx.reply !== "function" && typeof sdkCtx.send !== "function") {
-    // Already adapted or old-style context â€?pass through.
+    // Already adapted or old-style context â€” pass through.
     return ctx as MSTeamsTurnContext;
   }
   const conversationId = sdkCtx.activity?.conversation?.id ?? "";
@@ -758,7 +758,7 @@ function adaptSdkContext(ctx: unknown, app: MSTeamsApp): MSTeamsTurnContext {
   // For Teams channels and group chats, use ctx.reply() so the SDK threads the
   // outbound activity to the inbound one (via replyToId + the inbound's
   // serviceUrl/conversation routing). For personal DMs, use ctx.send() instead
-  // because reply() prepends a blockquote of the user's message â€?fine in
+  // because reply() prepends a blockquote of the user's message â€” fine in
   // threaded surfaces where the visual nesting indicates context, but ugly in
   // 1:1 chat. Streaming chunks go through ctx.stream.emit/close separately.
   const sendActivity = (activity: unknown) =>

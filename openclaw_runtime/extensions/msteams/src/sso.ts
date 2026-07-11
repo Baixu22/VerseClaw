@@ -61,7 +61,7 @@ export type MSTeamsSsoDeps = {
 };
 
 type MSTeamsSsoUser = {
-  /** Stable user identifier â€?AAD object ID when available. */
+  /** Stable user identifier â€” AAD object ID when available. */
   userId: string;
   /** Bot Framework channel ID (default: "msteams"). */
   channelId?: string;

@@ -49,10 +49,10 @@ export interface QQBotAccountConfig {
    *
    * Semantics depend on {@link dmPolicy}:
    *   - `dmPolicy="open"` (default when allowFrom is empty or contains `"*"`)
-   *     â€?everyone can DM the bot; the list only influences command gating.
+   *     â€” everyone can DM the bot; the list only influences command gating.
    *   - `dmPolicy="allowlist"` (default when a non-wildcard list is configured)
-   *     â€?only listed openids may DM the bot; other DMs are dropped.
-   *   - `dmPolicy="disabled"` â€?all DMs are dropped regardless of this list.
+   *     â€” only listed openids may DM the bot; other DMs are dropped.
+   *   - `dmPolicy="disabled"` â€” all DMs are dropped regardless of this list.
    *
    * For group access, see {@link groupAllowFrom} / {@link groupPolicy}.
    */
@@ -65,8 +65,8 @@ export interface QQBotAccountConfig {
   groupAllowFrom?: string[];
   /**
    * DM access policy. Defaults:
-   *   - omitted + allowFrom empty/wildcard â†?`"open"`
-   *   - omitted + allowFrom non-wildcard   â†?`"allowlist"`
+   *   - omitted + allowFrom empty/wildcard â†’ `"open"`
+   *   - omitted + allowFrom non-wildcard   â†’ `"allowlist"`
    */
   dmPolicy?: QQBotDmPolicy;
   /**

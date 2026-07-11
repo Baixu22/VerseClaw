@@ -277,15 +277,15 @@ export function buildBotLogsResult(): SlashCommandResult {
     });
     const searched =
       existingDirs.length > 0
-        ? existingDirs.map((d) => `  �?${d}`).join("\n")
+        ? existingDirs.map((d) => `  • ${d}`).join("\n")
         : logDirs
             .slice(0, 6)
-            .map((d) => `  �?${d}`)
-            .join("\n") + (logDirs.length > 6 ? `\n  …以及另�?${logDirs.length - 6} 个路径` : "");
+            .map((d) => `  • ${d}`)
+            .join("\n") + (logDirs.length > 6 ? `\n  …以及另外 ${logDirs.length - 6} 个路径` : "");
     return [
       `⚠️ 未找到日志文件`,
       ``,
-      `已搜索以�?{existingDirs.length > 0 ? "存在�? : ""}路径：`,
+      `已搜索以下${existingDirs.length > 0 ? "存在的" : ""}路径：`,
       searched,
       ``,
       `💡 如果日志存放在自定义路径，请在配置中添加：`,
@@ -332,12 +332,12 @@ export function buildBotLogsResult(): SlashCommandResult {
 
   const fileCount = recentFiles.length;
   const topSources = uniqueStrings(recentFiles.map((item) => item.sourceDir)).slice(0, 3);
-  let summaryText = `�?${fileCount} 个日志文件，包含 ${totalIncluded} 行内容`;
+  let summaryText = `共 ${fileCount} 个日志文件，包含 ${totalIncluded} 行内容`;
   if (truncatedCount > 0) {
-    summaryText += `（其�?${truncatedCount} 个文件已截断为最�?${MAX_LINES_PER_FILE} 行，总计原始 ${totalOriginal} 行）`;
+    summaryText += `（其中 ${truncatedCount} 个文件已截断为最后 ${MAX_LINES_PER_FILE} 行，总计原始 ${totalOriginal} 行）`;
   }
   return {
-    text: `📋 ${summaryText}\n📂 来源�?{topSources.join(" | ")}`,
+    text: `📋 ${summaryText}\n📂 来源：${topSources.join(" | ")}`,
     filePath: tmpFile,
   };
 }

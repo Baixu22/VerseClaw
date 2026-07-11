@@ -193,7 +193,7 @@ interface GatewayGroupOptions {
   isControlCommand?: (content: string) => boolean;
   /**
    * Platform hook that contributes a channel-level group intro hint
-   * (e.g. "当前�? 开发讨论组"). Invoked per-group when building the
+   * (e.g. "当前群: 开发讨论组"). Invoked per-group when building the
    * system prompt.
    */
   resolveIntroHint?: (params: {
@@ -222,10 +222,10 @@ export interface CoreGatewayContext {
   onResumed?: (data: unknown) => void;
   onError?: (error: Error) => void;
   log?: EngineLogger;
-  /** PluginRuntime injected by the framework �?same object in both versions. */
+  /** PluginRuntime injected by the framework — same object in both versions. */
   runtime: GatewayPluginRuntime;
   /** Group-chat tuning options. */
   group?: GatewayGroupOptions;
-  /** Adapter ports �?delegates audio, history, mention gating, commands to bridge implementations. */
+  /** Adapter ports — delegates audio, history, mention gating, commands to bridge implementations. */
   adapters: EngineAdapters;
 }

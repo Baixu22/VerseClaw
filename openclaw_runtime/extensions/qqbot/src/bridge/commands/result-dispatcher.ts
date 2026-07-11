@@ -17,7 +17,7 @@ import { sendDocument, type MediaTargetContext } from "../../engine/messaging/ou
 import type { ResolvedQQBotAccount } from "../../types.js";
 import type { QQBotFromParseResult } from "./from-parser.js";
 
-const UNEXPECTED_RESULT_TEXT = "⚠️ 命令返回了意外结果�?;
+const UNEXPECTED_RESULT_TEXT = "⚠️ 命令返回了意外结果。";
 
 interface FrameworkSlashReply {
   text: string;

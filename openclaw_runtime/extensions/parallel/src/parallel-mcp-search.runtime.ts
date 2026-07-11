@@ -3,7 +3,7 @@ import { createRequire } from "node:module";
 import { readPluginPackageVersion } from "openclaw/plugin-sdk/extension-shared";
 import { withTrustedWebSearchEndpoint } from "openclaw/plugin-sdk/provider-web-search";
 
-// Free hosted Search MCP â€?anonymous-friendly, used when no PARALLEL_API_KEY is
+// Free hosted Search MCP â€” anonymous-friendly, used when no PARALLEL_API_KEY is
 // configured. This is the zero-config default web_search transport. Docs:
 // https://docs.parallel.ai/integrations/mcp/search-mcp
 export const PARALLEL_MCP_SEARCH_URL = "https://search.parallel.ai/mcp";
@@ -228,7 +228,7 @@ async function mcpCall(
   timeoutSeconds: number,
   signal?: AbortSignal,
 ): Promise<McpToolPayload> {
-  // 1. initialize â€?capture the server-assigned session id + negotiated version.
+  // 1. initialize â€” capture the server-assigned session id + negotiated version.
   const initId = randomUUID();
   const init = await postMcp({
     timeoutSeconds,
@@ -258,7 +258,7 @@ async function mcpCall(
       ? initEnvelope.result.protocolVersion
       : undefined) ?? MCP_PROTOCOL_VERSION;
 
-  // 2. notifications/initialized â€?required handshake ack (no response body).
+  // 2. notifications/initialized â€” required handshake ack (no response body).
   await postMcp({
     body: { jsonrpc: "2.0", method: "notifications/initialized" },
     sessionId,
@@ -290,7 +290,7 @@ async function mcpCall(
 }
 
 function normalizeMcpSessionId(value: string | undefined): string {
-  // Use the caller-supplied id verbatim â€?the runtime already applies the
+  // Use the caller-supplied id verbatim â€” the runtime already applies the
   // shared session-id contract before building the cache key, so reusing it
   // here keeps the MCP session, cache key, and reported sessionId in agreement
   // (re-minting a valid id would silently break session grouping). The Search

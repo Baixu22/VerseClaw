@@ -1,7 +1,7 @@
 /**
  * OpenAI-compatible STT (Speech-to-Text) configuration and transcription.
  *
- * Migrated from `src/stt.ts` â€?uses core/utils/string-normalize instead
+ * Migrated from `src/stt.ts` â€” uses core/utils/string-normalize instead
  * of broad SDK text barrels.
  */
 

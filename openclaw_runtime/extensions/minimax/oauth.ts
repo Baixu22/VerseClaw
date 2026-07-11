@@ -268,7 +268,7 @@ export async function loginMiniMaxPortalOAuth(params: {
   const expireTimeMs = oauth.expired_in;
 
   while (Date.now() < expireTimeMs) {
-    params.progress.update("Waiting for MiniMax OAuth approvalâ€?);
+    params.progress.update("Waiting for MiniMax OAuth approvalâ€¦");
     const result = await pollOAuthToken({
       userCode: oauth.user_code,
       verifier,
