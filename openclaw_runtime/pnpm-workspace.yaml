@@ -14,14 +14,3 @@ allowBuilds:
   protobufjs: false
   sharp: false
   tree-sitter-bash: false
-
-ignoredBuiltDependencies:
-  - '@google/genai'
-  - '@matrix-org/matrix-sdk-crypto-nodejs'
-  - '@tloncorp/tlon-skill'
-  - baileys
-  - esbuild
-  - openclaw
-  - protobufjs
-  - sharp
-  - tree-sitter-bash

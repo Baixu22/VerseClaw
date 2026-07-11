@@ -5,19 +5,26 @@ packages:
 overrides:
   isbinaryfile: ^5.0.0
 
-allowBuilds:
-  '@google/genai': set this to true or false
-  '@whiskeysockets/baileys': set this to true or false
-  baileys: set this to true or false
-  electron: set this to true or false
-  electron-winstaller: set this to true or false
-  esbuild: set this to true or false
-  koffi: set this to true or false
-  openclaw: set this to true or false
-  protobufjs: set this to true or false
-  sharp: set this to true or false
-  tree-sitter-bash: set this to true or false
+supportedArchitectures:
+  os:
+    - current
+  cpu:
+    - x64
+    - arm64
 
-ignoredBuiltDependencies:
-  - electron
-  - esbuild
+# electron/esbuild stay false: CI fetches the Electron binary itself
+# (see .github/workflows/electron-e2e.yml), esbuild ships platform binaries.
+allowBuilds:
+  '@discordjs/opus': true
+  '@google/genai': false
+  '@whiskeysockets/baileys': true
+  baileys: false
+  electron: false
+  electron-winstaller: false
+  esbuild: false
+  koffi: true
+  node-llama-cpp: true
+  openclaw: false
+  protobufjs: true
+  sharp: true
+  tree-sitter-bash: false
