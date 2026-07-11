@@ -390,13 +390,44 @@ function requireSha256(value, label, repairPath) {
   return value.toLowerCase();
 }
 
-function prepareRepair(repoRoot, repair) {
+function readRepairPreimage(repoRoot, repair, preimageMode) {
+  const absolutePath = resolveRepairPath(repoRoot, repair.path);
+  if (preimageMode === "worktree") {
+    return {
+      absolutePath,
+      original: fs.readFileSync(absolutePath),
+    };
+  }
+
+  const indexOid = gitOutput(repoRoot, ["rev-parse", `:${repair.path}`]);
+  const cleanedWorktreeOid = gitOutput(repoRoot, [
+    "hash-object",
+    `--path=${repair.path}`,
+    repair.path,
+  ]);
+  if (cleanedWorktreeOid !== indexOid) {
+    throw new Error(
+      `worktree clean-filter identity mismatch for ${repair.path}: expected ${indexOid}, got ${cleanedWorktreeOid}`,
+    );
+  }
+  const original = execFileSync("git", ["cat-file", "blob", indexOid], {
+    cwd: repoRoot,
+    encoding: null,
+    maxBuffer: 64 * 1024 * 1024,
+    windowsHide: true,
+  });
+  return {
+    absolutePath,
+    original,
+  };
+}
+
+function prepareRepair(repoRoot, repair, preimageMode) {
   if (repair.confidence !== "exact" && repair.confidence !== "corroborated") {
     throw new Error(`repair remains unresolved: ${repair.path}`);
   }
 
-  const absolutePath = resolveRepairPath(repoRoot, repair.path);
-  const original = fs.readFileSync(absolutePath);
+  const { absolutePath, original } = readRepairPreimage(repoRoot, repair, preimageMode);
   const actualSha256 = hashBytes(original);
   const expectedPreimageSha256 = requireSha256(
     repair.preimageSha256,
@@ -498,6 +529,36 @@ function prepareRepair(repoRoot, repair) {
   };
 }
 
+function materializeWorktreeOutput(repoRoot, repair, preimageMode) {
+  if (preimageMode === "worktree") {
+    return {
+      ...repair,
+      worktreeOutput: repair.output,
+    };
+  }
+  const outputOid = execFileSync("git", ["hash-object", "-w", "--stdin"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    input: repair.output,
+    maxBuffer: 64 * 1024 * 1024,
+    windowsHide: true,
+  }).trim();
+  const worktreeOutput = execFileSync(
+    "git",
+    ["cat-file", "--filters", `--path=${repair.path}`, outputOid],
+    {
+      cwd: repoRoot,
+      encoding: null,
+      maxBuffer: 64 * 1024 * 1024,
+      windowsHide: true,
+    },
+  );
+  return {
+    ...repair,
+    worktreeOutput,
+  };
+}
+
 export function applyRecoveryManifest({ repoRoot, manifest }) {
   if (
     manifest?.schemaVersion !== 2 ||
@@ -507,11 +568,20 @@ export function applyRecoveryManifest({ repoRoot, manifest }) {
     throw new Error("invalid recovery manifest");
   }
 
-  const prepared = manifest.repairs.map((repair) => prepareRepair(repoRoot, repair));
-  for (const repair of prepared) {
-    fs.writeFileSync(repair.absolutePath, repair.output);
+  const preimageMode = manifest.preimageMode ?? "worktree";
+  if (preimageMode !== "worktree" && preimageMode !== "git-index") {
+    throw new Error(`invalid recovery preimage mode: ${preimageMode}`);
   }
-  return prepared.map(({ path: repairPath, preimageSha256, postimageSha256 }) => ({
+  const prepared = manifest.repairs.map((repair) =>
+    prepareRepair(repoRoot, repair, preimageMode),
+  );
+  const materialized = prepared.map((repair) =>
+    materializeWorktreeOutput(repoRoot, repair, preimageMode),
+  );
+  for (const repair of materialized) {
+    fs.writeFileSync(repair.absolutePath, repair.worktreeOutput);
+  }
+  return materialized.map(({ path: repairPath, preimageSha256, postimageSha256 }) => ({
     path: repairPath,
     preimageSha256,
     postimageSha256,
