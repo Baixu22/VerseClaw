@@ -194,6 +194,7 @@ export function buildFrozenManifest(report) {
     manifest: {
       schemaVersion: 2,
       spanModel: "source-aligned-variable-length",
+      preimageMode: "git-index",
       summary: {
         files: repairs.length,
         uniqueSpans: repairs.reduce((total, repair) => total + repair.replacements.length, 0),

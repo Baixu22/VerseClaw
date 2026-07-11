@@ -31,7 +31,6 @@ touchedAreas:
   - artifacts/runtime-utf8-recovery/red-green/w1-green-07-git-blob-crlf.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-08-git-blob-buffer.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-09-variable-span.log
-  - artifacts/runtime-utf8-recovery/red-green/w1-red-10-git-index-apply.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-10-git-index-apply.log
   - artifacts/runtime-utf8-recovery/red-green/w1-green-final.log
   - artifacts/runtime-utf8-recovery/red-green/w1-red-01.log
@@ -41,6 +40,7 @@ touchedAreas:
   - artifacts/runtime-utf8-recovery/red-green/w1-red-05.log
   - artifacts/runtime-utf8-recovery/red-green/w1-red-07-git-blob-crlf.log
   - artifacts/runtime-utf8-recovery/red-green/w1-red-09-variable-span.log
+  - artifacts/runtime-utf8-recovery/red-green/w1-red-10-git-index-apply.log
   - artifacts/runtime-utf8-recovery/semantic-evidence/anchored-codepoint-report.json
   - artifacts/runtime-utf8-recovery/semantic-evidence/report.json
   - artifacts/runtime-utf8-recovery/semantic-evidence/source-span-evidence.mjs

@@ -1,6 +1,7 @@
 {
   "schemaVersion": 2,
   "spanModel": "source-aligned-variable-length",
+  "preimageMode": "git-index",
   "summary": {
     "files": 370,
     "uniqueSpans": 1504,
