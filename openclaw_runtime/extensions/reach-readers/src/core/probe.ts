@@ -200,44 +200,14 @@ export interface HttpJsonOptions {
 
 /** fetch JSON —— 对齐 channels/* 里的 _get_json。Node 18+ 内置 fetch。 */
 export async function httpJson<T = unknown>(url: string, opts: HttpJsonOptions = {}): Promise<T> {
-  const controller = new AbortController();
-  const timeoutMs = opts.timeoutMs ?? 10_000;
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const headers: Record<string, string> = { 'User-Agent': DEFAULT_UA, ...opts.headers };
-    const resp = await fetchWithProxyControl(url, {
-      headers,
-      signal: controller.signal,
-      noProxy: opts.noProxy,
-    });
-    if (!resp.ok) {
-      throw new Error(`HTTP ${resp.status}: ${url}`);
-    }
-    return (await resp.json()) as T;
-  } finally {
-    clearTimeout(timer);
-  }
+  const { httpJson: guardedHttpJson } = await import('./http.js');
+  return guardedHttpJson<T>(url, opts);
 }
 
 /** fetch text —— 用于 Jina Reader / RSS。 */
 export async function httpText(url: string, opts: HttpJsonOptions = {}): Promise<string> {
-  const controller = new AbortController();
-  const timeoutMs = opts.timeoutMs ?? 30_000;
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const headers: Record<string, string> = { 'User-Agent': DEFAULT_UA, ...opts.headers };
-    const resp = await fetchWithProxyControl(url, {
-      headers,
-      signal: controller.signal,
-      noProxy: opts.noProxy,
-    });
-    if (!resp.ok) {
-      throw new Error(`HTTP ${resp.status}: ${url}`);
-    }
-    return await resp.text();
-  } finally {
-    clearTimeout(timer);
-  }
+  const { httpText: guardedHttpText } = await import('./http.js');
+  return guardedHttpText(url, opts);
 }
 
 /**

@@ -12,7 +12,7 @@ import {
   jsonResult,
   readStringParam,
 } from '../common/tool-shape.js';
-import { httpText } from '../core/probe.js';
+import { httpText } from '../core/http.js';
 import { canHandleAny } from '../core/router.js';
 import type { Availability } from '../types.js';
 

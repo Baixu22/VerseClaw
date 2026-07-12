@@ -16,7 +16,8 @@ import {
   readStringParam,
   readOptionalInt,
 } from '../common/tool-shape.js';
-import { httpJson, probeCommand } from '../core/probe.js';
+import { probeCommand } from '../core/probe.js';
+import { httpJson } from '../core/http.js';
 import { canHandle, orderedBackends, selectBackend } from '../core/router.js';
 import { getConfig } from '../core/config.js';
 import type { Availability, BackendFinding } from '../types.js';
