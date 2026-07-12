@@ -105,3 +105,8 @@ to this section in the same commit as the change.
   runtime configuration, Browser policy, tool inventory, and security
   documentation; added project README and labeler coverage. No second reader
   implementation or source copy was introduced.
+
+- Electron packaging coverage: added an Electron E2E contract that launches
+  the built app and verifies the packaged Reach manifest, default startup,
+  nine tool names, login-handoff skill, and absence of credential identifiers
+  in rendered content.
