@@ -110,3 +110,8 @@ to this section in the same commit as the change.
   the built app and verifies the packaged Reach manifest, default startup,
   nine tool names, login-handoff skill, and absence of credential identifiers
   in rendered content.
+
+- Security boundary coverage: added direct tests for strict versus
+  official-host SSRF policy selection, guarded-resource release after parse or
+  response-limit failures, private target rejection, and bounded command
+  output. No production behavior changed.

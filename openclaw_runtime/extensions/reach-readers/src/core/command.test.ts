@@ -24,4 +24,14 @@ describe('Reach command boundary', () => {
 
     expect(result.termination).toBe('signal');
   });
+
+  it('bounds command output without interpreting user argv', async () => {
+    const result = await runReachCommand(
+      process.execPath,
+      ['-e', 'process.stdout.write("0123456789")'],
+      { timeoutMs: 5_000, maxOutputBytes: 4 },
+    );
+
+    expect(result.stdout).toBe('6789');
+  });
 });
