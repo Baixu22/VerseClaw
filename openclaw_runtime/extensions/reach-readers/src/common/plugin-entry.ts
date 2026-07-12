@@ -1,38 +1,36 @@
 /**
- * definePluginEntry stub —— ClawX openclaw/plugin-sdk/plugin-entry 替身。
+ * OpenClaw plugin entry adapter.
  *
- * 迁移到 ClawX 时：
- *   import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
- *   import { AnyAgentTool } from "openclaw/.../common";
- * 并删除本文件。
- *
- * 对照源：openclaw_runtime/extensions/exa/index.ts (ClawX) 的 register(api) 用法。
+ * Production delegates to the public Plugin SDK. The collecting API remains a
+ * deliberately narrow test helper for registration characterization.
  */
+import {
+  definePluginEntry as defineOpenClawPluginEntry,
+  type OpenClawPluginApi,
+} from 'openclaw/plugin-sdk/plugin-entry';
 import type { AnyAgentTool } from './tool-shape.js';
 
-export interface PluginApi {
-  /** 对齐 ClawX api.registerTool(tool, { names })。 */
-  registerTool(tool: AnyAgentTool, opts?: { names?: string[] }): void;
-}
-
-export interface PluginEntry {
-  id: string;
-  name: string;
-  description: string;
+export type PluginApi = Pick<OpenClawPluginApi, 'registerTool'>;
+export type PluginEntry = Omit<ReturnType<typeof defineOpenClawPluginEntry>, 'register'> & {
   register(api: PluginApi): void;
+};
+
+export function definePluginEntry(
+  entry: Omit<Parameters<typeof defineOpenClawPluginEntry>[0], 'register'> & {
+    register(api: PluginApi): void;
+  },
+): PluginEntry {
+  return defineOpenClawPluginEntry({
+    ...entry,
+    register: entry.register,
+  } as Parameters<typeof defineOpenClawPluginEntry>[0]) as PluginEntry;
 }
 
-/** 简单 stub：把 registerTool 调用收集到一个数组，供 demo runner 检查。 */
-export function definePluginEntry(entry: PluginEntry): PluginEntry {
-  return entry;
-}
-
-/** 测试用：构造一个收集器 api，返回 tools 数组。 */
 export function createCollectingApi(): { api: PluginApi; tools: AnyAgentTool[] } {
   const tools: AnyAgentTool[] = [];
   const api: PluginApi = {
-    registerTool(tool, _opts) {
-      tools.push(tool);
+    registerTool(tool) {
+      if (typeof tool !== 'function') tools.push(tool);
     },
   };
   return { api, tools };
