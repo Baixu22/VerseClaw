@@ -1,3 +1,5 @@
+// Deprecated: Runtime-spine WP3 adds diagnostic-only tool policy observation; this audit path remains legacy-authoritative.
+// @deprecated [SPINE] Legacy tool-policy audit path retained; Runtime Spine checker is diagnostic-only.
 /**
  * Tool policy audit logging helpers.
  * Emits bounded, sanitized logs when allow/deny policy filters remove tools or

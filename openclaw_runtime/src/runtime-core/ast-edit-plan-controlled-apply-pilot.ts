@@ -5,6 +5,13 @@ import type { ApplyGateCurrentFingerprint, ApplyGateReadinessReport } from "./as
 import { fingerprintEditPlanMatchRanges } from "./ast-edit-plan-apply-gate-readiness.js";
 import type { EditPlan, EditPlanAuthorityBoundary, EditPlanOperation } from "./ast-edit-plan.js";
 import {
+  ensureAstEditPlanSpineEntity,
+  recordAstEditPlanSpineApplyFailure,
+  recordAstEditPlanSpineDrift,
+  recordAstEditPlanSpineMutation,
+  recordAstEditPlanSpinePreMutationGate,
+} from "./ast-edit-plan.js";
+import {
   isNonEmptyString,
   isRecord,
   type RuntimeCoreJsonObject,
@@ -193,6 +200,8 @@ export function runAstEditPlanControlledApplyPilot(
   }
 
   const plan = input.editPlan;
+  // [SPINE] Ensure manually supplied EditPlans still have diagnostic lifecycle coverage.
+  ensureAstEditPlanSpineEntity(plan, "controlled_apply");
   const evidenceRefs = limitEvidenceRefs(collectEvidenceRefs(plan, input), limits.maxEvidenceRefs);
   const gateReport = isApplyGateReadinessReport(input.applyGateReadinessReport)
     ? input.applyGateReadinessReport
@@ -225,6 +234,8 @@ export function runAstEditPlanControlledApplyPilot(
   const allDiagnostics = [...diagnostics, ...planningDiagnostics];
   const hasBlockingDiagnostic = allDiagnostics.some((item) => item.severity === "error");
   const boundedDiagnostics = limitDiagnostics(allDiagnostics, limits.maxDiagnostics);
+  // [SPINE] Controlled apply drift remains diagnostic and does not alter legacy blocking checks.
+  recordAstEditPlanSpineDrift(plan, boundedDiagnostics, "controlled_apply");
 
   if (hasBlockingDiagnostic) {
     return buildReport({
@@ -260,7 +271,14 @@ export function runAstEditPlanControlledApplyPilot(
     });
   }
 
-  return applyPlannedFiles({
+  // [SPINE] The pre-mutation gate is observed before write attempts and never blocks this legacy path.
+  recordAstEditPlanSpinePreMutationGate(plan, {
+    dryRun,
+    allowWrite: input.options?.allowWrite === true,
+    operationCount: plan.orderedOperations.length,
+  });
+
+  const report = applyPlannedFiles({
     plan,
     plannedFiles: plannedFiles.files,
     diagnostics: boundedDiagnostics,
@@ -272,6 +290,22 @@ export function runAstEditPlanControlledApplyPilot(
     unsupportedKinds,
     writer: input.options?.writer ?? writeFileSync,
   });
+  if (report.decision === "applied") {
+    // [SPINE] Mutation evidence is not completion evidence.
+    recordAstEditPlanSpineMutation(plan, {
+      decision: report.decision,
+      dryRun: report.dryRun,
+      fileSummaries: report.fileSummaries,
+      operationSummary: report.operationSummary,
+    });
+  } else {
+    // [SPINE] Apply failure diagnostics do not replace the report's existing blocked result.
+    recordAstEditPlanSpineApplyFailure(plan, new Error("Controlled apply pilot did not apply."), {
+      decision: report.decision,
+      diagnostics: report.diagnostics.map((diagnostic) => diagnostic.code),
+    });
+  }
+  return report;
 }
 
 function gateDiagnostics(

@@ -2,6 +2,17 @@ import crypto from "node:crypto";
 import { isAbsolute, relative, resolve } from "node:path";
 import { spawnRoleSubagent, type SpawnFn } from "../role-spawn.js";
 import { listSubagentRunsForRequester, type SubagentRunRecord } from "../subagent-registry.js";
+// [SPINE] Diagnostic-only runtime family hooks for ClawGraph shadow telemetry.
+import {
+  eventBus,
+  evidenceLedger,
+  failureContract,
+  gateEngine,
+  lifecycleEngine,
+  shadowSafetyBoundary,
+  type GateType,
+  type RuntimeSpineRef,
+} from "../../runtime-spine/index.js";
 import type {
   SpawnSubagentContext,
   SpawnSubagentParams,
@@ -27,6 +38,12 @@ type RuntimeNodeState = ClawGraphRunNodeSnapshot & {
   required: boolean;
 };
 
+// [SPINE] Runtime-local diagnostic IDs; ClawGraph snapshots remain authoritative.
+type ClawGraphSpineState = {
+  runEntityId: string;
+  nodeEntities: Map<string, string>;
+};
+
 type RuntimeRun = {
   snapshot: Omit<ClawGraphRunSnapshot, "nodes" | "reviewItems" | "eventsCount" | "progress" | "activeNodeIds" | "blockedNodeIds">;
   ir: ClawGraphIR;
@@ -34,6 +51,7 @@ type RuntimeRun = {
   events: ClawGraphRunEvent[];
   reviewItems: ClawGraphReviewItem[];
   workspaceRoot?: string;
+  spine?: ClawGraphSpineState;
 };
 
 type LifecycleFn = (event: ClawGraphRunEvent, snapshot: ClawGraphRunSnapshot) => void;
@@ -49,6 +67,8 @@ export type ClawGraphRunRequest = {
 };
 
 const runs = new Map<string, RuntimeRun>();
+const SPINE_ACTOR = "clawgraph-runtime";
+const SPINE_MODE = "diagnostic_only";
 
 function now(): number {
   return Date.now();
@@ -56,6 +76,310 @@ function now(): number {
 
 function newId(prefix: string): string {
   return `${prefix}_${crypto.randomUUID()}`;
+}
+
+// [SPINE] Local guard keeps diagnostic hooks non-invasive even if Spine internals throw.
+function spineGuard<T>(context: string, fn: () => T): T | undefined {
+  try {
+    return shadowSafetyBoundary.execute(`clawgraph.${context}`, fn);
+  } catch {
+    return undefined;
+  }
+}
+
+// [SPINE] Async guard is used for review gates so review flow never waits on diagnostics.
+function spineGuardAsync<T>(context: string, fn: () => Promise<T>): Promise<T | undefined> {
+  return shadowSafetyBoundary.executeAsync(`clawgraph.${context}`, fn).catch(() => undefined);
+}
+
+function spineErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+function spineRunRef(run: RuntimeRun): RuntimeSpineRef | undefined {
+  const entityId = run.spine?.runEntityId;
+  if (!entityId) return undefined;
+  const entity = lifecycleEngine.get(entityId);
+  return {
+    refType: "lifecycle_entity",
+    entityId,
+    entityType: "clawgraph_run",
+    phase: entity?.phase ?? "created",
+  };
+}
+
+// [SPINE] Create a diagnostic-only LifecycleEntity for the ClawGraph run.
+function createSpineRunState(request: ClawGraphRunRequest, runId: string, createdAt: number): ClawGraphSpineState | undefined {
+  return spineGuard("run.create", () => {
+    const entity = lifecycleEngine.create("clawgraph_run", {
+      mode: SPINE_MODE,
+      runId,
+      workflowId: request.ir.workflowId,
+      nodeCount: request.ir.nodes.length,
+      maxParallel: request.ir.maxParallel,
+      workspaceId: request.workspaceId ?? null,
+      hasAgentId: Boolean(request.agentId),
+      hasWorkspaceRoot: Boolean(request.workspaceRoot),
+      createdAt,
+    });
+    return {
+      runEntityId: entity.entityId,
+      nodeEntities: new Map<string, string>(),
+    };
+  });
+}
+
+// [SPINE] Mark run execution start in Spine only; original run_started event remains canonical.
+function markSpineRunStarted(run: RuntimeRun): void {
+  const entityId = run.spine?.runEntityId;
+  if (!entityId) return;
+  spineGuard("run.started", () => {
+    lifecycleEngine.transition(entityId, "planned", {
+      actor: SPINE_ACTOR,
+      reason: "clawgraph_run_created",
+      metadata: {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        workflowId: run.ir.workflowId,
+      },
+    });
+    lifecycleEngine.transition(entityId, "running", {
+      actor: SPINE_ACTOR,
+      reason: "clawgraph_run_started",
+      metadata: {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        workflowId: run.ir.workflowId,
+      },
+    });
+    eventBus.emit(
+      "execution.started",
+      entityId,
+      "clawgraph_run",
+      { sourceId: SPINE_ACTOR, sourceType: "clawgraph", stage: "run" },
+      {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        workflowId: run.ir.workflowId,
+        nodeCount: run.nodes.size,
+        maxParallel: run.ir.maxParallel,
+      },
+    );
+  });
+}
+
+// [SPINE] Create a diagnostic-only node entity for each execution attempt.
+function markSpineNodeStarted(run: RuntimeRun, node: RuntimeNodeState, stage: string): void {
+  const spine = run.spine;
+  if (!spine) return;
+  spineGuard("node.started", () => {
+    const entity = lifecycleEngine.create("clawgraph_node", {
+      mode: SPINE_MODE,
+      runId: run.snapshot.runId,
+      workflowId: run.ir.workflowId,
+      nodeId: node.id,
+      nodeType: node.type,
+      attempt: node.attempt,
+      stage,
+      role: node.runtimeRole ?? node.role ?? null,
+      required: node.required,
+    });
+    spine.nodeEntities.set(node.id, entity.entityId);
+    const runRef = spineRunRef(run);
+    eventBus.emit(
+      "execution.started",
+      entity.entityId,
+      "clawgraph_node",
+      { sourceId: SPINE_ACTOR, sourceType: "clawgraph", stage },
+      {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        workflowId: run.ir.workflowId,
+        nodeId: node.id,
+        nodeType: node.type,
+        attempt: node.attempt,
+      },
+      runRef ? [runRef] : undefined,
+    );
+  });
+}
+
+// [SPINE] Record review_gate diagnostics without changing review behavior or blocking progress.
+function checkSpineReviewGate(run: RuntimeRun, node: RuntimeNodeState, review: ClawGraphReviewItem, reason: string): void {
+  const nodeEntityId = run.spine?.nodeEntities.get(node.id);
+  const entityId = nodeEntityId ?? run.spine?.runEntityId;
+  if (!entityId) return;
+  const entityType = nodeEntityId ? "clawgraph_node" : "clawgraph_run";
+  void spineGuardAsync("review.gate", async () => {
+    const decision = await gateEngine.check({
+      gateId: `review_gate:${review.id}`,
+      gateType: "review_gate" as GateType,
+      entityId,
+      entityType,
+      source: { sourceId: SPINE_ACTOR, sourceType: "clawgraph", stage: "review_gate" },
+      payload: {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        reviewId: review.id,
+        nodeId: node.id,
+        reviewKind: review.kind,
+        reasonLength: reason.length,
+      },
+      metadata: {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        nodeId: node.id,
+        reviewId: review.id,
+        reviewKind: review.kind,
+      },
+    });
+    eventBus.emit(
+      "gate_decision",
+      entityId,
+      entityType,
+      { sourceId: SPINE_ACTOR, sourceType: "clawgraph", stage: "review_gate" },
+      {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        reviewId: review.id,
+        nodeId: node.id,
+        gateType: decision.gateType,
+        status: decision.status,
+        authority: decision.authority,
+      },
+      [{
+        refType: "gate_decision",
+        gateId: decision.gateId,
+        gateType: decision.gateType,
+        status: decision.status,
+        authority: decision.authority,
+      }],
+    );
+  });
+}
+
+// [SPINE] Complete the diagnostic run entity after the canonical ClawGraph run completes.
+function completeSpineRun(run: RuntimeRun): void {
+  const entityId = run.spine?.runEntityId;
+  if (!entityId) return;
+  spineGuard("run.completed", () => {
+    lifecycleEngine.transition(entityId, "completed", {
+      actor: SPINE_ACTOR,
+      reason: "clawgraph_run_completed",
+      metadata: {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        workflowId: run.ir.workflowId,
+      },
+    });
+    eventBus.emit(
+      "lifecycle.completed",
+      entityId,
+      "clawgraph_run",
+      { sourceId: SPINE_ACTOR, sourceType: "clawgraph", stage: "run" },
+      {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        workflowId: run.ir.workflowId,
+        status: run.snapshot.status,
+      },
+      [spineRunRef(run)].filter((ref): ref is RuntimeSpineRef => Boolean(ref)),
+    );
+  });
+}
+
+// [SPINE] Collect failure evidence, create a FailureEnvelope, and emit lifecycle.failed.
+function failSpineRun(run: RuntimeRun, error: unknown, stage: string): void {
+  const entityId = run.spine?.runEntityId;
+  if (!entityId) return;
+  spineGuard("run.failed", () => {
+    const capturedAt = now();
+    const evidence = evidenceLedger.collect(
+      entityId,
+      "failure_analysis",
+      SPINE_ACTOR,
+      [
+        {
+          itemId: newId("spine_evidence"),
+          label: "failure_evidence",
+          value: {
+            stage,
+            message: spineErrorMessage(error),
+            errorName: error instanceof Error ? error.name : typeof error,
+          },
+          capturedAt,
+          metadata: { mode: SPINE_MODE },
+        },
+        {
+          itemId: newId("spine_evidence"),
+          label: "run_state",
+          value: {
+            runId: run.snapshot.runId,
+            workflowId: run.ir.workflowId,
+            status: run.snapshot.status,
+            eventsCount: run.events.length,
+          },
+          capturedAt,
+          metadata: { mode: SPINE_MODE },
+        },
+      ],
+      {
+        metadata: {
+          mode: SPINE_MODE,
+          runId: run.snapshot.runId,
+          workflowId: run.ir.workflowId,
+          stage,
+        },
+      },
+    );
+    const evidenceRef = evidenceLedger.toRef(evidence);
+    const failure = failureContract.create(
+      entityId,
+      error,
+      stage,
+      evidenceRef,
+      {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        workflowId: run.ir.workflowId,
+        status: run.snapshot.status,
+      },
+      0,
+      getRetryLimit(run),
+    );
+    lifecycleEngine.transition(entityId, "failed", {
+      actor: SPINE_ACTOR,
+      reason: spineErrorMessage(error),
+      metadata: {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        workflowId: run.ir.workflowId,
+        stage,
+        failureId: failure.failureId,
+      },
+    });
+    eventBus.emit(
+      "lifecycle.failed",
+      entityId,
+      "clawgraph_run",
+      { sourceId: SPINE_ACTOR, sourceType: "clawgraph", stage },
+      {
+        mode: SPINE_MODE,
+        runId: run.snapshot.runId,
+        workflowId: run.ir.workflowId,
+        stage,
+        failure: {
+          failureId: failure.failureId,
+          kind: failure.kind,
+          severity: failure.severity,
+          action: failure.action,
+          message: failure.message,
+        },
+      },
+      [evidenceRef, failureContract.toRef(failure)],
+    );
+  });
 }
 
 function event(run: RuntimeRun, type: ClawGraphRunEvent["type"], patch: Omit<Partial<ClawGraphRunEvent>, "id" | "runId" | "type" | "createdAt"> = {}): ClawGraphRunEvent {
@@ -327,6 +651,8 @@ function requestReview(run: RuntimeRun, node: RuntimeNodeState, kind: ClawGraphR
     createdAt: now(),
   };
   run.reviewItems.push(review);
+  // [SPINE] Review gate is diagnostic-only; its decision never changes review state.
+  checkSpineReviewGate(run, node, review, reason);
   const entry = event(run, "review_requested", { nodeId: node.id, message: reason, payload: { review } });
   emit(run, lifecycle, entry);
 }
@@ -396,6 +722,8 @@ async function startAgentNode(run: RuntimeRun, node: RuntimeNodeState, request: 
   node.attempt += 1;
   node.startedAt = now();
   node.endedAt = undefined;
+  // [SPINE] Node execution start is emitted as shadow telemetry only.
+  markSpineNodeStarted(run, node, "agent_node");
   const entry = event(run, "node_started", { nodeId: node.id, message: `started ${node.runtimeRole ?? node.role ?? node.id}` });
   emit(run, request.lifecycle, entry);
   const result = await spawnRoleSubagent(
@@ -434,6 +762,8 @@ function runAuditNode(run: RuntimeRun, node: RuntimeNodeState, lifecycle?: Lifec
   node.status = "auditing";
   node.attempt += 1;
   node.startedAt = now();
+  // [SPINE] Audit node execution start is emitted as shadow telemetry only.
+  markSpineNodeStarted(run, node, "audit_node");
   emit(run, lifecycle, event(run, "node_started", { nodeId: node.id, message: "audit started" }));
   const depNodes = node.dependsOn.map((depId) => run.nodes.get(depId)).filter((entry): entry is RuntimeNodeState => Boolean(entry));
   const failedDeps = depNodes.filter((dep) => dep.status !== "done" || dep.audit?.passed === false);
@@ -518,6 +848,13 @@ function maybeFinishRun(run: RuntimeRun, lifecycle?: LifecycleFn): void {
     return;
   }
   const type = next === "complete" ? "run_completed" : next === "aborted" ? "run_aborted" : "run_blocked";
+  if (next === "complete") {
+    // [SPINE] Lifecycle completion is diagnostic-only; ClawGraph status remains authoritative.
+    completeSpineRun(run);
+  } else if (next === "failed") {
+    // [SPINE] Defensive failed-run telemetry for any future terminal failed state.
+    failSpineRun(run, new Error("ClawGraph run failed"), "finish");
+  }
   emit(run, lifecycle, event(run, type, { message: `run ${next}` }));
 }
 
@@ -546,6 +883,8 @@ export async function startClawGraphRun(request: ClawGraphRunRequest): Promise<C
     events: [],
     reviewItems: [],
     workspaceRoot: request.workspaceRoot,
+    // [SPINE] Diagnostic-only run entity; not included in ClawGraph snapshots.
+    spine: createSpineRunState(request, runId, createdAt),
     snapshot: {
       runId,
       workflowId: request.ir.workflowId,
@@ -561,27 +900,43 @@ export async function startClawGraphRun(request: ClawGraphRunRequest): Promise<C
     },
   };
   runs.set(runId, run);
+  // [SPINE] Run execution start is shadow telemetry only.
+  markSpineRunStarted(run);
   emit(run, request.lifecycle, event(run, "run_started", { message: request.ir.objective }));
-  await advanceClawGraphRun(runId, request);
+  await advanceClawGraphRunInternal(runId, request, "start");
+  return projectRunSnapshot(run);
+}
+
+async function advanceClawGraphRunInternal(
+  runId: string,
+  request: Pick<ClawGraphRunRequest, "sessionKey" | "agentId" | "workspaceId" | "workspaceRoot" | "deps" | "lifecycle">,
+  spineFailureStage: string,
+): Promise<ClawGraphRunSnapshot | null> {
+  const run = runs.get(runId);
+  if (!run) return null;
+  if (run.snapshot.status === "aborted") return projectRunSnapshot(run);
+  try {
+    await collectCompletedWorkers(run, { sessionKey: request.sessionKey, lifecycle: request.lifecycle });
+    await startReadyNodes(run, {
+      ir: run.ir,
+      sessionKey: request.sessionKey,
+      workspaceId: request.workspaceId ?? run.snapshot.workspaceId,
+      agentId: request.agentId ?? run.snapshot.agentId,
+      workspaceRoot: request.workspaceRoot ?? run.workspaceRoot,
+      deps: request.deps,
+      lifecycle: request.lifecycle,
+    });
+    maybeFinishRun(run, request.lifecycle);
+  } catch (error) {
+    // [SPINE] Failure telemetry is shadow-only; preserve original throw semantics.
+    failSpineRun(run, error, spineFailureStage);
+    throw error;
+  }
   return projectRunSnapshot(run);
 }
 
 export async function advanceClawGraphRun(runId: string, request: Pick<ClawGraphRunRequest, "sessionKey" | "agentId" | "workspaceId" | "workspaceRoot" | "deps" | "lifecycle">): Promise<ClawGraphRunSnapshot | null> {
-  const run = runs.get(runId);
-  if (!run) return null;
-  if (run.snapshot.status === "aborted") return projectRunSnapshot(run);
-  await collectCompletedWorkers(run, { sessionKey: request.sessionKey, lifecycle: request.lifecycle });
-  await startReadyNodes(run, {
-    ir: run.ir,
-    sessionKey: request.sessionKey,
-    workspaceId: request.workspaceId ?? run.snapshot.workspaceId,
-    agentId: request.agentId ?? run.snapshot.agentId,
-    workspaceRoot: request.workspaceRoot ?? run.workspaceRoot,
-    deps: request.deps,
-    lifecycle: request.lifecycle,
-  });
-  maybeFinishRun(run, request.lifecycle);
-  return projectRunSnapshot(run);
+  return advanceClawGraphRunInternal(runId, request, "advance");
 }
 
 export async function getClawGraphRunStatus(runId: string, lifecycle?: LifecycleFn): Promise<ClawGraphRunSnapshot | null> {
@@ -644,13 +999,13 @@ export async function reviewClawGraphRun(params: {
     }
   }
   emit(run, params.lifecycle, event(run, "review_resolved", { nodeId: review.nodeId, payload: { review } }));
-  await advanceClawGraphRun(params.runId, {
+  await advanceClawGraphRunInternal(params.runId, {
     sessionKey: run.snapshot.sessionKey,
     agentId: run.snapshot.agentId,
     workspaceId: run.snapshot.workspaceId,
     workspaceRoot: run.workspaceRoot,
     lifecycle: params.lifecycle,
-  });
+  }, "review");
   return projectRunSnapshot(run);
 }
 
