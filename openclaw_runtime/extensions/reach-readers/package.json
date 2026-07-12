@@ -9,7 +9,11 @@
     "build": "tsc",
     "demo": "tsx demo/runner.ts",
     "demo:probe": "tsx demo/runner.ts --probe",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.3"
   },
   "engines": {
     "node": ">=18.17"
