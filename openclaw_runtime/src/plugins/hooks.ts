@@ -21,6 +21,7 @@ import type {
   PluginHookAfterToolCallEvent,
   PluginHookAgentContext,
   PluginHookAgentEndEvent,
+  PluginHookTaskPhaseChangeEvent,
   PluginHookBeforeAgentFinalizeEvent,
   PluginHookBeforeAgentFinalizeResult,
   PluginHookBeforeAgentReplyEvent,
@@ -97,6 +98,7 @@ import type {
 // Re-export types for consumers
 export type {
   PluginHookAgentContext,
+  PluginHookTaskPhaseChangeEvent,
   PluginHookBeforeAgentReplyEvent,
   PluginHookBeforeAgentReplyResult,
   PluginHookBeforeAgentStartEvent,
@@ -941,6 +943,14 @@ export function createHookRunner(
     return runVoidHook("agent_end", withAgentRunId(event, ctx), ctx, optionsLocal);
   }
 
+  async function runTaskPhaseChange(
+    event: PluginHookTaskPhaseChangeEvent,
+    ctx: PluginHookAgentContext,
+    optionsLocal?: VoidHookRunOptions,
+  ): Promise<void> {
+    return runVoidHook("task_phase_change", event, ctx, optionsLocal);
+  }
+
   /**
    * Run llm_input hook.
    * Allows plugins to observe the exact input payload sent to the LLM.
@@ -1634,6 +1644,7 @@ export function createHookRunner(
     runLlmOutput,
     runBeforeAgentFinalize,
     runAgentEnd,
+    runTaskPhaseChange,
     runBeforeCompaction,
     runAfterCompaction,
     runBeforeReset,

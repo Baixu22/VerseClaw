@@ -75,6 +75,17 @@ const RuntimeFeatureSchema = z
       })
       .strict()
       .optional(),
+    contextBlock: z
+      .object({
+        "working-memory": z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
     contextRuntimeKit: z
       .object({
         enabled: z.boolean().optional(),

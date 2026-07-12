@@ -100,6 +100,11 @@ export interface BackupRuns {
   status: string;
 }
 
+export interface BlockEntityMap {
+  block_id: string;
+  entity: string;
+}
+
 export interface CaptureBlobs {
   blob_id: string;
   content_type: string | null;
@@ -234,6 +239,26 @@ export interface ConfigHealthEntries {
   last_observed_suspicious_signature: string | null;
   last_promoted_good_json: string | null;
   updated_at_ms: number;
+}
+
+export interface ContextBlocks {
+  block_id: string;
+  block_type: string;
+  compression_depth: Generated<number>;
+  created_at: number;
+  entities_json: string | null;
+  entity_extraction_status: Generated<string>;
+  fallback_mode: string | null;
+  full_content: string | null;
+  invalid_at: number | null;
+  mutability: string;
+  presence_json: string;
+  retention_confidence: number | null;
+  role_scope: string | null;
+  session_id: string | null;
+  source_system: string;
+  summary: string;
+  valid_at: number;
 }
 
 export interface CronJobs {
@@ -1124,6 +1149,7 @@ export interface DB {
   auth_profile_state: AuthProfileState;
   auth_profile_stores: AuthProfileStores;
   backup_runs: BackupRuns;
+  block_entity_map: BlockEntityMap;
   capture_blobs: CaptureBlobs;
   capture_events: CaptureEvents;
   capture_sessions: CaptureSessions;
@@ -1133,6 +1159,7 @@ export interface DB {
   command_log_entries: CommandLogEntries;
   commitments: Commitments;
   config_health_entries: ConfigHealthEntries;
+  context_blocks: ContextBlocks;
   cron_jobs: CronJobs;
   cron_run_logs: CronRunLogs;
   current_conversation_bindings: CurrentConversationBindings;

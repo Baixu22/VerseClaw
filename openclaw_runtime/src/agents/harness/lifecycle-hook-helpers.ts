@@ -14,6 +14,7 @@ import type {
   PluginHookBeforeAgentFinalizeResult,
   PluginHookLlmInputEvent,
   PluginHookLlmOutputEvent,
+  PluginHookTaskPhaseChangeEvent,
 } from "../../plugins/hook-types.js";
 import type { VoidHookRunOptions } from "../../plugins/hooks.js";
 import { resolveGlobalSingleton } from "../../shared/global-singleton.js";
@@ -142,6 +143,29 @@ export async function awaitAgentHarnessAgentEndHook(params: {
   hookRunner?: AgentHarnessHookRunner;
 }): Promise<void> {
   await executeAgentHarnessAgentEndHook({ ...params, unrefTimeout: false });
+}
+
+/** 调度 task_phase_change hook，并等待本轮 handler 完成。 */
+export async function runAgentHarnessTaskPhaseChangeHook(params: {
+  event: PluginHookTaskPhaseChangeEvent;
+  ctx: AgentHarnessHookContext;
+  hookRunner?: AgentHarnessHookRunner;
+}): Promise<void> {
+  const hookRunner = params.hookRunner ?? getGlobalHookRunner();
+  if (
+    !hookRunner?.hasHooks("task_phase_change") ||
+    typeof hookRunner.runTaskPhaseChange !== "function"
+  ) {
+    return;
+  }
+  try {
+    await hookRunner.runTaskPhaseChange(
+      params.event,
+      buildAgentHookContext(params.ctx),
+    );
+  } catch (error) {
+    log.warn(`task_phase_change hook failed: ${String(error)}`);
+  }
 }
 
 /** Normalized before-finalize hook decision consumed by harness loops. */

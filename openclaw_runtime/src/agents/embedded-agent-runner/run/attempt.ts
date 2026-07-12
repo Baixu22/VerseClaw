@@ -2193,6 +2193,8 @@ export async function runEmbeddedAttempt(
         provider: params.provider,
         modelId: params.modelId,
         model: params.model,
+        sessionId: params.sessionId,
+        sessionKey: params.sessionKey,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({
         cwd: effectiveCwd,
