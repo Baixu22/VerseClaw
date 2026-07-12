@@ -1,47 +1,42 @@
 /**
- * 极简 schema builder —— typebox 替身。
- *
- * 形状对齐 typebox 的 Type.Object/String/Integer/Boolean/Array/Optional，
- * 仅供 shadow 项目零依赖运行。迁移到 ClawX 时把所有 schema 调用换成：
- *   import { Type } from "typebox";
- * 并删除本文件。ClawX 用法见 openclaw_runtime/src/agents/tools/web-fetch.ts。
+ * 极简 schema builder —— 保留 Agent Reach shadow 的 Schema 调用形状，
+ * 内部使用 OpenClaw 的 TypeBox 与 flat string enum。
  */
+import { Type, type TSchema } from 'typebox';
+import { stringEnum as openClawStringEnum } from 'openclaw/plugin-sdk/channel-actions';
 
-export interface SchemaDescriptor {
-  type: 'object' | 'string' | 'integer' | 'boolean' | 'array' | 'enum' | 'optional' | 'any';
-  description?: string;
-  items?: SchemaDescriptor;
-  properties?: Record<string, SchemaDescriptor>;
-  enumValues?: readonly string[];
-  default?: unknown;
-  minimum?: number;
-}
+export type SchemaDescriptor = TSchema;
 
 export const Schema = {
-  string(description?: string): SchemaDescriptor {
-    return { type: 'string', description };
+  string(description?: string): TSchema {
+    return Type.String(description ? { description } : {});
   },
-  integer(opts: { description?: string; minimum?: number } = {}): SchemaDescriptor {
-    return { type: 'integer', description: opts.description, minimum: opts.minimum };
+  integer(opts: { description?: string; minimum?: number } = {}): TSchema {
+    return Type.Integer(opts);
   },
-  boolean(description?: string): SchemaDescriptor {
-    return { type: 'boolean', description };
+  boolean(description?: string): TSchema {
+    return Type.Boolean(description ? { description } : {});
   },
-  array(items: SchemaDescriptor, description?: string): SchemaDescriptor {
-    return { type: 'array', items, description };
+  array(items: TSchema, description?: string): TSchema {
+    return Type.Array(items, description ? { description } : {});
   },
-  enum(values: readonly string[], description?: string): SchemaDescriptor {
-    return { type: 'enum', enumValues: values, description };
+  enum(values: readonly string[], description?: string): TSchema {
+    return openClawStringEnum(values, description ? { description } : {});
   },
-  optional(inner: SchemaDescriptor): SchemaDescriptor {
-    return { type: 'optional', items: inner, description: inner.description };
+  optional(inner: TSchema): TSchema {
+    return Type.Optional(inner);
   },
-  object(properties: Record<string, SchemaDescriptor>, description?: string): SchemaDescriptor {
-    return { type: 'object', properties, description };
+  object(properties: Record<string, TSchema>, description?: string): TSchema {
+    return Type.Object(properties, {
+      additionalProperties: false,
+      ...(description ? { description } : {}),
+    });
   },
 };
 
-/** stringEnum —— 对齐 ClawX openclaw_runtime/src/agents/schema/string-enum.ts。 */
-export function stringEnum(values: readonly string[], opts: { description?: string } = {}): SchemaDescriptor {
-  return Schema.enum(values, opts.description);
+export function stringEnum(
+  values: readonly string[],
+  opts: { description?: string } = {},
+): TSchema {
+  return openClawStringEnum(values, opts);
 }

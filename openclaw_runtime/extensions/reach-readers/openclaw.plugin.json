@@ -1,0 +1,27 @@
+{
+  "id": "reach-readers",
+  "name": "Reach Readers",
+  "description": "Readonly platform readers with guarded API, CLI, and browser fallback backends.",
+  "enabledByDefault": true,
+  "activation": {
+    "onStartup": true
+  },
+  "contracts": {
+    "tools": [
+      "web_read",
+      "rss_read",
+      "v2ex_read",
+      "xueqiu_read",
+      "bilibili_read",
+      "youtube_read",
+      "github_read",
+      "twitter_read",
+      "xiaohongshu_read"
+    ]
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

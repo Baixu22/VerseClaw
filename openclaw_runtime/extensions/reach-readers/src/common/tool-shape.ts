@@ -1,32 +1,18 @@
 /**
- * ClawX agent 工具形状 —— 对齐 AnyAgentTool。
+ * OpenClaw agent 工具适配层。
  *
- * 对照源：openclaw_runtime/src/agents/tools/common.ts (ClawX)
- * 以及 web-fetch.ts / agent-browser-tool.ts 的实际用法。
- *
- * 迁移到 ClawX 时：
- *   - AnyAgentTool 直接用 ClawX 的导出
- *   - jsonResult / readStringParam / asToolParamsRecord 用 ClawX 的同名导出
- *   - 本文件可整体删除
+ * 参数读取器保留 Agent Reach shadow 的调用结构；工具类型和结果使用公共
+ * Plugin SDK，使所有 reader 返回正式的 AgentToolResult。
  */
-import type { SchemaDescriptor } from './schema.js';
+import type { AnyAgentTool as OpenClawAgentTool } from 'openclaw/plugin-sdk/plugin-entry';
+import { jsonResult as openClawJsonResult } from 'openclaw/plugin-sdk/provider-web-fetch';
 
-/** 工具执行结果：JSON 可序列化的对象。 */
-export type ToolResult = Record<string, unknown>;
+export type AnyAgentTool = OpenClawAgentTool & {
+  risk?: 'readonly' | 'write' | 'destructive';
+};
+export type AgentToolResult = ReturnType<typeof openClawJsonResult>;
+export type ToolResult = AgentToolResult;
 
-/** 工具执行函数签名 —— 对齐 ClawX execute(toolCallId, args)。 */
-export type ToolExecute = (toolCallId: string, args: unknown) => Promise<ToolResult>;
-
-/** AnyAgentTool —— 对齐 ClawX 的 AnyAgentTool。 */
-export interface AnyAgentTool {
-  label: string;
-  name: string;
-  description: string;
-  parameters: SchemaDescriptor;
-  execute: ToolExecute;
-}
-
-/** 把任意值安全转为参数记录。对齐 ClawX asToolParamsRecord。 */
 export function asToolParamsRecord(value: unknown): Record<string, unknown> {
   if (value && typeof value === 'object' && !Array.isArray(value)) {
     return value as Record<string, unknown>;
@@ -34,7 +20,6 @@ export function asToolParamsRecord(value: unknown): Record<string, unknown> {
   return {};
 }
 
-/** 读必填字符串参数。对齐 ClawX readStringParam(required: true)。 */
 export function readStringParam(
   params: Record<string, unknown>,
   key: string,
@@ -48,15 +33,16 @@ export function readStringParam(
   return value;
 }
 
-/** 读可选字符串参数。 */
-export function readOptionalString(params: Record<string, unknown>, key: string): string | undefined {
+export function readOptionalString(
+  params: Record<string, unknown>,
+  key: string,
+): string | undefined {
   const raw = params[key];
   if (typeof raw !== 'string') return undefined;
   const value = raw.trim();
   return value || undefined;
 }
 
-/** 读可选整数参数。 */
 export function readOptionalInt(
   params: Record<string, unknown>,
   key: string,
@@ -64,18 +50,19 @@ export function readOptionalInt(
 ): number | undefined {
   const raw = params[key];
   if (typeof raw !== 'number' || !Number.isFinite(raw)) return undefined;
-  let v = Math.floor(raw);
-  if (opts.min !== undefined) v = Math.max(opts.min, v);
-  if (opts.max !== undefined) v = Math.min(opts.max, v);
-  return v;
-}
-
-/** JSON 结果包装。对齐 ClawX jsonResult。 */
-export function jsonResult(value: ToolResult): ToolResult {
+  let value = Math.floor(raw);
+  if (opts.min !== undefined) value = Math.max(opts.min, value);
+  if (opts.max !== undefined) value = Math.min(opts.max, value);
   return value;
 }
 
-/** 工具失败时的标准返回结构。 */
-export function errorResult(error: string, extra: Record<string, unknown> = {}): ToolResult {
-  return { status: 'error', success: false, error, ...extra };
+export function jsonResult(value: Record<string, unknown>): AgentToolResult {
+  return openClawJsonResult(value);
+}
+
+export function errorResult(
+  error: string,
+  extra: Record<string, unknown> = {},
+): AgentToolResult {
+  return openClawJsonResult({ status: 'error', success: false, error, ...extra });
 }

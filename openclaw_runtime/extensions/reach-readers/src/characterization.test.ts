@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { ALL_TOOLS, reachReadersPlugin, TOOL_BY_NAME } from './index.js';
 import { createCollectingApi } from './common/plugin-entry.js';
+import { Schema } from './common/schema.js';
+import { errorResult, jsonResult } from './common/tool-shape.js';
 import { reinstallHint, utf8Env } from './core/probe.js';
 import {
   canHandle,
@@ -35,6 +37,47 @@ describe('tool registration', () => {
     expect(ALL_TOOLS.map((tool) => tool.name)).toEqual(TOOL_NAMES);
     expect(tools.map((tool) => tool.name)).toEqual(TOOL_NAMES);
     expect(Object.keys(TOOL_BY_NAME)).toEqual(TOOL_NAMES);
+  });
+
+  it('declares every imported reader as readonly', () => {
+    expect(ALL_TOOLS.map((tool) => tool.risk)).toEqual(
+      TOOL_NAMES.map(() => 'readonly'),
+    );
+  });
+});
+
+describe('public SDK adapters', () => {
+  it('produces TypeBox schemas with flat string enums', () => {
+    const schema = Schema.object({
+      action: Schema.enum(['read', 'check'], 'action'),
+      limit: Schema.optional(Schema.integer({ minimum: 1 })),
+    }) as Record<string, unknown>;
+    const properties = schema.properties as Record<string, Record<string, unknown>>;
+
+    expect(schema.type).toBe('object');
+    expect(properties.action).toMatchObject({
+      type: 'string',
+      enum: ['read', 'check'],
+      description: 'action',
+    });
+    expect(properties.action).not.toHaveProperty('anyOf');
+    expect(schema.required).toEqual(['action']);
+  });
+
+  it('returns formal agent tool results with model text and private details', () => {
+    const success = jsonResult({ status: 'ok', value: 1 });
+    const failure = errorResult('failed', { action: 'read' });
+
+    expect(success).toEqual({
+      content: [{ type: 'text', text: '{\n  "status": "ok",\n  "value": 1\n}' }],
+      details: { status: 'ok', value: 1 },
+    });
+    expect(failure.details).toEqual({
+      status: 'error',
+      success: false,
+      error: 'failed',
+      action: 'read',
+    });
   });
 });
 

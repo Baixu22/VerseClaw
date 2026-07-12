@@ -34,7 +34,7 @@ export const ALL_TOOLS: AnyAgentTool[] = [
   githubReadTool,
   twitterReadTool,
   xiaohongshuReadTool,
-];
+].map((tool) => ({ ...tool, risk: 'readonly' as const }));
 
 /** 工具名 → 工具 的查找表（迁移到 ClawX 时由 api.registerTool 自动建立）。 */
 export const TOOL_BY_NAME: Record<string, AnyAgentTool> = Object.fromEntries(
@@ -64,6 +64,8 @@ export const reachReadersPlugin: PluginEntry = definePluginEntry({
     }
   },
 });
+
+export default reachReadersPlugin;
 
 // Re-export everything for programmatic use
 export * from './common/schema.js';

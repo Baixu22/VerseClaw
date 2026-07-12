@@ -47,3 +47,8 @@ to this section in the same commit as the change.
   Xiaohongshu cleaners, and Xueqiu cookie parsing. Declared the previously
   used `tsx` development dependency and Node/DOM types for the package
   TypeScript boundary. No production behavior changed.
+
+- Public plugin boundary: retained the imported `Schema`, tool helper, and
+  plugin-entry import paths while delegating them to TypeBox and the public
+  OpenClaw Plugin SDK. Registered tool instances now declare readonly risk,
+  and the package has a formal manifest and workspace extension entry.
