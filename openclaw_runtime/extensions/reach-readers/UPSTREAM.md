@@ -52,3 +52,8 @@ to this section in the same commit as the change.
   plugin-entry import paths while delegating them to TypeBox and the public
   OpenClaw Plugin SDK. Registered tool instances now declare readonly risk,
   and the package has a formal manifest and workspace extension entry.
+
+- Readonly configuration boundary: removed legacy home-directory JSON reads,
+  directory creation, writes, and mutation methods. Configuration is now an
+  immutable in-memory snapshot with explicit environment compatibility and
+  configured/missing-only secret diagnostics.
