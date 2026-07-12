@@ -13,9 +13,14 @@ touchedAreas:
   - harness/specs/rules/reach-readers-credential-hygiene.md
   - openclaw_runtime/extensions/reach-readers/**
   - openclaw_runtime/src/plugin-sdk/**
+  - openclaw_runtime/src/plugins/runtime/index.ts
+  - openclaw_runtime/src/plugins/runtime/types.ts
   - openclaw_runtime/src/agents/tools/agent-browser-tool.ts
   - openclaw_runtime/src/agents/openclaw-tools.ts
   - openclaw_runtime/scripts/lib/plugin-sdk-entrypoints.json
+  - openclaw_runtime/scripts/build-plugin-sdk-source-dts.mjs
+  - openclaw_runtime/scripts/build-plugin-sdk-source-dts.test.mjs
+  - openclaw_runtime/scripts/prepare-extension-package-boundary-artifacts.mjs
   - openclaw_runtime/package.json
   - openclaw_runtime/pnpm-lock.yaml
   - openclaw_runtime/pnpm-workspace.yaml
