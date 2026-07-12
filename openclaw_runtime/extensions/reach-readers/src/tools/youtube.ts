@@ -7,8 +7,6 @@
  * 形状上把 Python 的 YouTubeChannel.read + transcribe() 合并到一个工具，
  * action: info=视频信息, transcript=字幕, transcribe=音频转写。
  */
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
 import { mkdtemp, readdir, stat, unlink, access } from 'node:fs/promises';
 import { tmpdir, homedir } from 'node:os';
 import path from 'node:path';
@@ -23,6 +21,7 @@ import {
   readStringParam,
 } from '../common/tool-shape.js';
 import { probeCommand, utf8Env, readUtf8Text } from '../core/probe.js';
+import { commandError, runReachCommand } from '../core/command.js';
 import { canHandle } from '../core/router.js';
 import { getConfig } from '../core/config.js';
 import type { Availability } from '../types.js';
@@ -30,7 +29,6 @@ import type { Availability } from '../types.js';
 const DOMAINS = ['youtube.com', 'youtu.be', 'youtube-nocookie.com'] as const;
 const DEFAULT_BACKENDS = ['yt-dlp'] as const;
 
-const execFileP = promisify(execFile);
 
 export function canHandleUrl(url: string): boolean {
   return canHandle(url, DOMAINS);
@@ -181,10 +179,12 @@ interface YtInfo {
 /** 获取视频元信息 —— yt-dlp --dump-json。 */
 export async function getInfo(url: string, timeoutMs = 60_000): Promise<YtInfo> {
   assertSafePublicUrl(url);
-  const { stdout } = await execFileP('yt-dlp', ['--dump-json', '--no-playlist', '--', url], {
-    timeout: timeoutMs, maxBuffer: 10 * 1024 * 1024, windowsHide: true, env: utf8Env(),
+  const argv = ['--dump-json', '--no-playlist', '--', url];
+  const result = await runReachCommand('yt-dlp', argv, {
+    timeoutMs, maxOutputBytes: 10 * 1024 * 1024, env: utf8Env(), packageName: 'yt-dlp',
   });
-  const j = JSON.parse(stdout) as Record<string, unknown>;
+  if (result.code !== 0) throw commandError('yt-dlp', argv, result);
+  const j = JSON.parse(result.stdout) as Record<string, unknown>;
   return {
     title: String(j['title'] ?? ''),
     uploader: String(j['uploader'] ?? j['channel'] ?? ''),
@@ -204,12 +204,12 @@ export async function getTranscript(url: string, lang = 'en', timeoutMs = 120_00
   try {
     // 输出 vtt 文件
     const outTmpl = path.join(workDir, 'sub');
-    await execFileP(
-      'yt-dlp',
-      ['--write-auto-sub', '--write-sub', '--sub-lang', lang, '--sub-format', 'vtt', '--skip-download',
-       '--no-playlist', '-o', outTmpl, '--', url],
-      { timeout: timeoutMs, maxBuffer: 10 * 1024 * 1024, windowsHide: true, env: utf8Env() },
-    );
+    const argv = ['--write-auto-sub', '--write-sub', '--sub-lang', lang, '--sub-format', 'vtt', '--skip-download',
+      '--no-playlist', '-o', outTmpl, '--', url];
+    const result = await runReachCommand('yt-dlp', argv, {
+      timeoutMs, maxOutputBytes: 10 * 1024 * 1024, env: utf8Env(), packageName: 'yt-dlp',
+    });
+    if (result.code !== 0) throw commandError('yt-dlp', argv, result);
     const entries = await readdir(workDir);
     const vtt = entries.find((f: string) => f.endsWith('.vtt'));
     if (!vtt) throw new Error(`no subtitle downloaded for lang=${lang}`);
@@ -397,15 +397,13 @@ async function chunkAudio(src: string, outDir: string): Promise<string[]> {
 }
 
 async function runCmd(cmd: string[], timeoutMs: number): Promise<void> {
-  try {
-    await execFileP(cmd[0]!, cmd.slice(1), { timeout: timeoutMs, maxBuffer: 50 * 1024 * 1024, windowsHide: true, env: utf8Env() });
-  } catch (e) {
-    const err = e as NodeJS.ErrnoException & { stderr?: string; killed?: boolean; signal?: NodeJS.Signals };
-    if (err.message?.includes('TIMEDOUT') || err.killed === true || err.signal === 'SIGTERM') {
-      throw new Error(`${cmd[0]} timed out after ${timeoutMs}ms`);
-    }
-    throw new Error(`${cmd[0]} failed: ${(err.stderr ?? err.message ?? '').slice(0, 300)}`);
-  }
+  const command = cmd[0]!;
+  const argv = cmd.slice(1);
+  const result = await runReachCommand(command, argv, {
+    timeoutMs, maxOutputBytes: 50 * 1024 * 1024, env: utf8Env(),
+  });
+  if (result.termination === 'timeout') throw new Error(`${command} timed out after ${timeoutMs}ms`);
+  if (result.code !== 0) throw commandError(command, argv, result);
 }
 
 async function transcribeWithFallback(chunk: string, order: string[], cfg: ReturnType<typeof getConfig>): Promise<string> {

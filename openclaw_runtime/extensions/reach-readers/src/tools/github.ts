@@ -4,9 +4,6 @@
  * 后端：gh CLI（二进制安装，认证后完整可用）。
  * 健康检查对齐 Python 版：gh 本体能跑就算可用，rc!=0 视为"活着但未认证"（warn）。
  */
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
-
 import { Schema } from '../common/schema.js';
 import {
   type AnyAgentTool,
@@ -17,11 +14,11 @@ import {
   readOptionalInt,
 } from '../common/tool-shape.js';
 import { probeCommand, utf8Env } from '../core/probe.js';
+import { commandError, runReachCommand } from '../core/command.js';
 import { canHandle } from '../core/router.js';
 import type { Availability } from '../types.js';
 
 const DOMAINS = ['github.com'] as const;
-const execFileP = promisify(execFile);
 
 export function canHandleUrl(url: string): boolean {
   return canHandle(url, DOMAINS);
@@ -74,15 +71,14 @@ export async function check(): Promise<Availability> {
 // -------------------- 数据获取 --------------------
 
 async function gh(args: string[], timeoutMs = 30_000): Promise<string> {
-  try {
-    const { stdout } = await execFileP('gh', args, {
-      timeout: timeoutMs, maxBuffer: 20 * 1024 * 1024, windowsHide: true, env: utf8Env(),
-    });
-    return stdout;
-  } catch (e) {
-    const err = e as NodeJS.ErrnoException & { stderr?: string; stdout?: string };
-    throw new Error(`gh ${args.join(' ')} failed: ${(err.stderr ?? err.stdout ?? err.message ?? '').slice(0, 500)}`);
-  }
+  const result = await runReachCommand('gh', args, {
+    timeoutMs,
+    maxOutputBytes: 20 * 1024 * 1024,
+    env: utf8Env(),
+    packageName: 'gh',
+  });
+  if (result.code !== 0) throw commandError('gh', args, result);
+  return result.stdout;
 }
 
 /** 读取仓库文件/目录内容 —— gh api repos/:owner/:repo/contents/:path。 */

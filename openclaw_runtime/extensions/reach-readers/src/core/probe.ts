@@ -8,18 +8,15 @@
  *   - error: 跑了但非零退出
  *   - ok: 零退出
  *
- * Node 实现：execFile 替代 subprocess.run；ENOENT 在 execFile 回调里对应
+ * Node 实现：公共 runtime runner 替代 subprocess.run；ENOENT 对应
  * Python 的 FileNotFoundError。126/127 同 Python 的 _BROKEN_EXIT_CODES。
  */
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import type { ProbeResult } from '../types.js';
-
-const execFileP = promisify(execFile);
+import { runReachCommand } from './command.js';
 
 /** shell 用来表示"找到但不可执行/找不到"的退出码 —— 对齐 Python _BROKEN_EXIT_CODES。 */
 const BROKEN_EXIT_CODES = new Set([126, 127]);
@@ -39,9 +36,11 @@ function which(cmd: string): string | undefined {
   // 优先用 which npm 包（如果环境恰好装了）；否则退回到 PATH 搜索。
   try {
     const whichPkg = require('which');
-    if (typeof whichPkg === 'function') {
+    const syncWhich = whichPkg?.sync;
+    if (typeof syncWhich === 'function') {
       try {
-        return whichPkg(cmd, { nothrow: true }) ?? undefined;
+        const resolved = syncWhich(cmd, { nothrow: true });
+        return typeof resolved === 'string' ? resolved : undefined;
       } catch {
         // fall through
       }
@@ -95,7 +94,7 @@ function statSyncShim(p: string) {
 export async function probeCommand(
   cmd: string,
   args: string[] = ['--version'],
-  opts: { timeoutMs?: number; retries?: number; pkg?: string } = {},
+  opts: { timeoutMs?: number; retries?: number; pkg?: string; signal?: AbortSignal } = {},
 ): Promise<ProbeResult> {
   const timeoutMs = opts.timeoutMs ?? 10_000;
   const retries = opts.retries ?? 0;
@@ -108,7 +107,7 @@ export async function probeCommand(
 
   let last: ProbeResult = { status: 'error', output: '', hint: '' };
   for (let attempt = 0; attempt < retries + 1; attempt++) {
-    last = await runOnce(resolved, args, timeoutMs, pkg);
+    last = await runOnce(resolved, args, timeoutMs, pkg, opts.signal);
     if (last.status === 'ok') return last;
     // missing/broken 不会跨重试自愈，只有 timeout/error 才值得重试
     if (last.status === 'missing' || last.status === 'broken') return last;
@@ -121,18 +120,26 @@ async function runOnce(
   args: string[],
   timeoutMs: number,
   pkg: string,
+  signal?: AbortSignal,
 ): Promise<ProbeResult> {
   try {
-    const { stdout, stderr } = await execFileP(binPath, args, {
-      timeout: timeoutMs,
-      maxBuffer: 1024 * 1024,
-      windowsHide: true,
+    const result = await runReachCommand(binPath, args, {
+      timeoutMs,
+      signal,
+      maxOutputBytes: 1024 * 1024,
       env: utf8Env(),
     });
-    const output = `${stdout ?? ''}${stderr ?? ''}`.trim();
-    return { status: 'ok', output, hint: '' };
+    const output = `${result.stdout}${result.stderr}`.trim();
+    if (result.termination === 'timeout' || result.termination === 'no-output-timeout') {
+      return { status: 'timeout', output, hint: `\`${binPath}\` timed out after ${timeoutMs}ms` };
+    }
+    if (result.code === 0) return { status: 'ok', output, hint: '' };
+    if (result.code !== null && BROKEN_EXIT_CODES.has(result.code)) {
+      return { status: 'broken', output, hint: reinstallHint(pkg) };
+    }
+    return { status: 'error', output, hint: '' };
   } catch (e: unknown) {
-    // execFile 的 reject 错误带 killed/signal/exitCode，但 @types/node 没把它们挂到 ErrnoException
+    // Spawn/resolver errors may carry errno and process termination metadata.
     const err = e as NodeJS.ErrnoException & {
       code?: number | string;
       stdout?: string;
@@ -150,7 +157,7 @@ async function runOnce(
     if (typeof err.code === 'string' && err.code.startsWith('E') && err.code !== 'ENOENT') {
       return { status: 'broken', output: '', hint: reinstallHint(pkg) };
     }
-    // 超时（execFile 的 timeout 会以 err.killed=true + err.signal='SIGTERM' 表现）
+    // Compatibility fallback for runner/resolver errors carrying timeout metadata.
     if (err.killed === true || err.signal === 'SIGTERM') {
       return { status: 'timeout', output: '', hint: `\`${binPath}\` 响应超时（>${timeoutMs}ms）` };
     }
