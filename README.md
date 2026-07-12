@@ -180,6 +180,8 @@ Schedule AI tasks to run automatically. Define triggers, set intervals, and let 
 The Cron page now lets you configure external delivery directly in the task form with separate sender-account and recipient-target selectors. For supported channels, recipient targets are discovered automatically from channel directories or known session history, so you no longer need to edit `jobs.json` by hand.
 Scheduled tasks can also run Agent Browser automations: choose a URL, a browser profile/auth state, safety policy, success/failure conditions, conservative safe-step retry, and diagnostics so jobs such as check-ins, page monitoring, or draft publishing can reuse persisted login state through the internal managed browser and show concise failure evidence.
 
+Verse Claw also includes the readonly Reach Readers plugin for Web, RSS, V2EX, Xueqiu, Bilibili, YouTube, GitHub, Twitter, and Xiaohongshu. Platform API/CLI readers run first; the existing Agent Browser profile provides a guarded page fallback or visible login handoff without exposing cookies or tokens to the model.
+
 
 ### 馃З Extensible Skill System
 Extend your AI agents with pre-built skills. The integrated Skills page is local-first: it scans managed/workspace skill directories, lets you enable or disable skills without depending on the Gateway, and can optionally expose an extension-provided marketplace in enterprise builds.

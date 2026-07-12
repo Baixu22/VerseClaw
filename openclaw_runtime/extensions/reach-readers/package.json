@@ -2,7 +2,7 @@
   "name": "@openclaw/reach-readers",
   "version": "0.1.0",
   "private": true,
-  "description": "TypeScript shadow of Agent Reach's read components, shaped for ClawX tool registration. Not integrated into ClawX — components only.",
+  "description": "Readonly Agent Reach platform readers for OpenClaw with guarded API, CLI, and Agent Browser fallbacks.",
   "type": "module",
   "main": "dist/index.js",
   "openclaw": {
