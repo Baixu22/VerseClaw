@@ -44,6 +44,9 @@ export function createCollectingApi(): { api: PluginApi; tools: AnyAgentTool[] }
     pluginConfig: {},
     runtime: {
       agentBrowser: { invoke: async () => { throw new Error('agent browser unavailable'); } },
+      mediaUnderstanding: {
+        transcribeAudioFile: async () => ({ text: undefined }),
+      },
     } as unknown as PluginApi['runtime'],
     registerTool(tool) {
       if (typeof tool !== 'function') tools.push(tool);

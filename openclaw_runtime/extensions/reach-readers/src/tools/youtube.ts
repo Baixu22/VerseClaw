@@ -7,7 +7,7 @@
  * 形状上把 Python 的 YouTubeChannel.read + transcribe() 合并到一个工具，
  * action: info=视频信息, transcript=字幕, transcribe=音频转写。
  */
-import { mkdtemp, readdir, stat, unlink, access } from 'node:fs/promises';
+import { mkdtemp, readdir, stat, rm, access } from 'node:fs/promises';
 import { tmpdir, homedir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,6 +29,44 @@ import { readBrowserFallbackPage } from '../core/browser-bridge.js';
 
 const DOMAINS = ['youtube.com', 'youtu.be', 'youtube-nocookie.com'] as const;
 const DEFAULT_BACKENDS = ['yt-dlp'] as const;
+
+type MediaTranscribe = (params: {
+  filePath: string;
+  cfg: unknown;
+  mime?: string;
+  timeoutMs?: number;
+}) => Promise<{ text?: string }>;
+
+let mediaTranscribe: MediaTranscribe | undefined;
+let mediaConfig: unknown;
+
+export function configureMediaTranscription(
+  transcribeAudioFile: MediaTranscribe | undefined,
+  config: unknown,
+): void {
+  mediaTranscribe = transcribeAudioFile;
+  mediaConfig = config;
+}
+
+export async function transcribeAudioChunk(chunkPath: string): Promise<string> {
+  if (!mediaTranscribe) throw new Error('OpenClaw media transcription is unavailable');
+  let result: { text?: string };
+  try {
+    result = await mediaTranscribe({
+      filePath: chunkPath,
+      cfg: mediaConfig,
+      mime: 'audio/mp4',
+      timeoutMs: 120_000,
+    });
+  } catch (error) {
+    throw new Error(`${path.basename(chunkPath)}: ${
+      error instanceof Error ? error.message : String(error)
+    }`);
+  }
+  const text = result.text?.trim();
+  if (!text) throw new Error(`transcription returned no text for ${path.basename(chunkPath)}`);
+  return text;
+}
 
 
 export function canHandleUrl(url: string): boolean {
@@ -143,17 +181,13 @@ export async function check(): Promise<Availability> {
     };
   }
   // Surface transcription readiness —— 对齐 youtube.py:66-79
-  const cfg = getConfig();
-  const providers: string[] = [];
-  if (cfg.isConfigured('groq_whisper')) providers.push('groq');
-  if (cfg.isConfigured('openai_whisper')) providers.push('openai');
   let msg = '可提取视频信息和字幕';
-  if (providers.length > 0) {
+  if (mediaTranscribe) {
     const hasFfmpeg = await which('ffmpeg');
     if (!hasFfmpeg) {
       msg += '（音频转写需安装 ffmpeg）';
     } else {
-      msg += `，可转写音频（${providers.join('→')}）`;
+      msg += '，可通过 OpenClaw mediaUnderstanding 转写音频';
     }
   }
   return {
@@ -221,25 +255,17 @@ export async function getTranscript(url: string, lang = 'en', timeoutMs = 120_00
   }
 }
 
-/** 转写音频 —— 重构自 transcribe.py: transcribe()。Groq → OpenAI fallback。 */
+/** 转写音频 —— 保留原下载、压缩与分块流程，转写交给 OpenClaw。 */
 export async function transcribeAudio(
   source: string,
   opts: { provider?: 'auto' | 'groq' | 'openai' } = {},
 ): Promise<string> {
   const provider = opts.provider ?? 'auto';
   // 对齐 transcribe.py: _provider_order —— 未知 provider 入口即拒
-  if (provider !== 'auto' && !(provider in PROVIDERS)) {
+  if (!['auto', 'groq', 'openai'].includes(provider)) {
     throw new Error(`unknown provider: ${provider} (use groq|openai|auto)`);
   }
-  const order = provider === 'auto' ? ['groq', 'openai'] : [provider];
-  const cfg = getConfig();
-
-  // 校验至少一个 provider 有 key —— 对齐 transcribe.py 的提前校验
-  const hasKey = (p: string) => Boolean(getProviderKey(p, cfg));
-  if (!order.some(hasKey)) {
-    const keyFields = order.map((p) => PROVIDERS[p]?.keyField).filter((k): k is string => Boolean(k));
-    throw new Error(`no provider key configured (need one of: ${keyFields.join(', ')})`);
-  }
+  if (!mediaTranscribe) throw new Error('OpenClaw media transcription is unavailable');
 
   const workDir = await mkdtemp(path.join(tmpdir(), 'yt-transcribe-'));
   try {
@@ -261,7 +287,7 @@ export async function transcribeAudio(
     // 4) 逐片转写，fallback
     const pieces: string[] = [];
     for (const chunk of chunks) {
-      pieces.push((await transcribeWithFallback(chunk, order, cfg)).trim());
+      pieces.push(await transcribeAudioChunk(chunk));
     }
     return pieces.filter(Boolean).join('\n');
   } finally {
@@ -273,17 +299,6 @@ export async function transcribeAudio(
 
 const SIZE_LIMIT_BYTES = 24 * 1024 * 1024;
 const CHUNK_SECONDS = 600;
-
-const PROVIDERS: Record<string, { endpoint: string; model: string; keyField: string }> = {
-  groq: { endpoint: 'https://api.groq.com/openai/v1/audio/transcriptions', model: 'whisper-large-v3', keyField: 'groq_api_key' },
-  openai: { endpoint: 'https://api.openai.com/v1/audio/transcriptions', model: 'whisper-1', keyField: 'openai_api_key' },
-};
-
-function getProviderKey(p: string, cfg: ReturnType<typeof getConfig>): string | undefined {
-  const info = PROVIDERS[p];
-  if (!info) return undefined;
-  return cfg.get<string>(info.keyField) || undefined;
-}
 
 const BLOCKED_HOSTS = new Set(['localhost', 'metadata.google.internal']);
 
@@ -407,54 +422,6 @@ async function runCmd(cmd: string[], timeoutMs: number): Promise<void> {
   if (result.code !== 0) throw commandError(command, argv, result);
 }
 
-async function transcribeWithFallback(chunk: string, order: string[], cfg: ReturnType<typeof getConfig>): Promise<string> {
-  let lastErr: unknown;
-  for (const p of order) {
-    if (!getProviderKey(p, cfg)) continue;
-    try {
-      return await transcribeChunk(chunk, p, cfg, 120_000);
-    } catch (e) {
-      lastErr = e;
-    }
-  }
-  throw new Error(`all providers failed for ${path.basename(chunk)}: ${lastErr instanceof Error ? lastErr.message : lastErr}`);
-}
-
-async function transcribeChunk(chunkPath: string, provider: string, cfg: ReturnType<typeof getConfig>, timeoutMs: number): Promise<string> {
-  const info = PROVIDERS[provider];
-  if (!info) throw new Error(`unknown provider: ${provider}`);
-  const key = getProviderKey(provider, cfg);
-  if (!key) throw new Error(`${provider}: missing ${info.keyField}`);
-  // multipart/form-data —— Node 18+ 无内置，手写极简版
-  const boundary = `----shadow${Math.random().toString(16).slice(2)}`;
-  const { readFile } = await import('node:fs/promises');
-  const fileBuf = await readFile(chunkPath);
-  const parts: Buffer[] = [];
-  const enc = (s: string) => Buffer.from(s, 'utf8');
-  parts.push(enc(`--${boundary}\r\nContent-Disposition: form-data; name="model"\r\n\r\n${info.model}\r\n`));
-  parts.push(enc(`--${boundary}\r\nContent-Disposition: form-data; name="response_format"\r\n\r\ntext\r\n`));
-  parts.push(enc(`--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${path.basename(chunkPath)}"\r\nContent-Type: audio/m4a\r\n\r\n`));
-  parts.push(fileBuf, enc('\r\n'));
-  parts.push(enc(`--${boundary}--\r\n`));
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const resp = await fetch(info.endpoint, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${key}`, 'Content-Type': `multipart/form-data; boundary=${boundary}` },
-      body: Buffer.concat(parts),
-      signal: controller.signal,
-    });
-    if (!resp.ok) {
-      const t = await resp.text();
-      throw new Error(`${provider}: HTTP ${resp.status}: ${t.slice(0, 300)}`);
-    }
-    return await resp.text();
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
 // -------------------- 辅助 --------------------
 
 function vttToPlainText(vtt: string): string {
@@ -471,12 +438,7 @@ function vttToPlainText(vtt: string): string {
 }
 
 async function cleanupDir(dir: string): Promise<void> {
-  try {
-    const entries = await readdir(dir);
-    for (const e of entries) {
-      try { await unlink(path.join(dir, e)); } catch { /* ignore */ }
-    }
-  } catch { /* ignore */ }
+  await rm(dir, { recursive: true, force: true });
 }
 
 // -------------------- 工具注册 --------------------
@@ -487,12 +449,12 @@ export const youtubeReadTool: AnyAgentTool = {
   label: 'YouTube Read',
   name: 'youtube_read',
   description:
-    '读取 YouTube 视频。action: info=视频元信息, transcript=字幕（auto-sub）, transcribe=音频转写（yt-dlp+ffmpeg+Whisper，需 groq_api_key 或 openai_api_key）, check=探测 yt-dlp。零配置（除 transcribe）。',
+    '读取 YouTube 视频。action: info=视频元信息, transcript=字幕（auto-sub）, transcribe=音频转写（yt-dlp+ffmpeg+OpenClaw mediaUnderstanding）, check=探测 yt-dlp。',
   parameters: Schema.object({
     action: Schema.enum(ACTIONS, '读取动作（默认 info）'),
     url: Schema.optional(Schema.string('视频 URL（info/transcript/transcribe 必填）')),
     lang: Schema.optional(Schema.string('action=transcript 时的字幕语言（默认 en）')),
-    provider: Schema.optional(Schema.enum(['auto', 'groq', 'openai'], 'action=transcribe 时的 Whisper provider（默认 auto=groq→openai）')),
+    provider: Schema.optional(Schema.enum(['auto', 'groq', 'openai'], '兼容参数；仅作为 OpenClaw provider 偏好提示')),
   }),
   async execute(_id, args, signal) {
     const params = asToolParamsRecord(args);
