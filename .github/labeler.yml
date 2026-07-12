@@ -1,0 +1,6 @@
+reach-readers:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "openclaw_runtime/extensions/reach-readers/**"
+          - "harness/specs/tasks/agent-reach-readers-integration.md"
+          - "harness/specs/rules/agent-reach-*.md"

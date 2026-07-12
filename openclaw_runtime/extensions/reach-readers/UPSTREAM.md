@@ -98,3 +98,10 @@ to this section in the same commit as the change.
   `mediaUnderstanding.transcribeAudioFile` runtime and its configured
   provider credentials and policy. The legacy `provider` argument remains
   accepted for compatibility but cannot bypass runtime policy.
+
+- Packaging and documentation: the imported package is now a formal
+  `extensions/*` workspace member discovered and bundled by the existing
+  OpenClaw extension pipeline. Replaced the upstream shadow README with
+  runtime configuration, Browser policy, tool inventory, and security
+  documentation; added project README and labeler coverage. No second reader
+  implementation or source copy was introduced.
