@@ -19,6 +19,7 @@
       "xiaohongshu_read"
     ]
   },
+  "skills": ["./skills"],
   "configSchema": {
     "type": "object",
     "additionalProperties": false,

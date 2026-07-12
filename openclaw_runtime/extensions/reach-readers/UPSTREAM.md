@@ -83,3 +83,9 @@ to this section in the same commit as the change.
   Twitter and Xiaohongshu return a login handoff instead of scraping DOM.
   Browser errors preserve the original backend diagnostic, and no cookie or
   token is included in tool results.
+
+- Login handoff skill: registered a plugin-local skill that recognizes
+  `browser_login_required`, continues with the returned visible profile and
+  session, and retries the unchanged `retryTool` call after user login. The
+  skill explicitly forbids reading or returning cookies, tokens, or browser
+  storage.
