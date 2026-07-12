@@ -4,9 +4,10 @@
 
 **最后更新**：2026-07-12
 **当前状态**：v1.6 已收敛（致命问题 0），v1.6.1 正式增补已收编；阶段 0
-接口层与 Stage 1 working-memory 已在 main 收口（R1 COMPLETE）。
-DCS working-memory infrastructure ready; production producer coverage = 0（真实
-producer 由 Coding Runtime P0 / R2 交付）。
+接口层与 Stage 1 working-memory 已在 main 收口（R1 COMPLETE）；R2 producer
+envelope vertical slice 已在 main 收口（R2 COMPLETE）。
+DCS working-memory infrastructure ready; production producer coverage = 3/3
+（edit/write/apply_patch 均已产出 `details.working_memory` envelope）。
 
 ---
 
@@ -126,6 +127,30 @@ identity pass-through，零 BlockStore 构造/查询/写入）。
 诚实声明：**DCS working-memory infrastructure ready; production producer
 coverage = 0** —— runtime 中尚无任何生产者产出 `details.working_memory`，
 测试中的合成 envelope 不代表真实 coding 增益。
+
+---
+
+## Stage 1 Producer Envelope（R2 收口）
+
+R2 于 2026-07-12 在 main 分支收口（DCS-ROUND2-COMPLETE）。production
+mutation tools（edit/write/apply_patch）在成功路径上显式产出
+`details.working_memory` envelope，shape 为
+`{ result_summary: string (≤100 chars), significance: "high" }`。
+失败/部分恢复路径不发 envelope。read 等非 mutation 工具不发 envelope。
+
+| 交付物 | 路径 |
+|--------|------|
+| WorkingMemoryEnvelope 类型 + WriteToolDetails | `openclaw_runtime/src/agents/sessions/tools/tool-contracts.ts` |
+| edit producer envelope（success path） | `openclaw_runtime/src/agents/sessions/tools/edit.ts` |
+| write producer envelope（success path） | `openclaw_runtime/src/agents/sessions/tools/write.ts` |
+| apply_patch producer envelope（success path） | `openclaw_runtime/src/agents/apply-patch.ts` |
+| RED→GREEN producer envelope 测试 | `openclaw_runtime/src/agents/dcs-producer-envelope.test.ts` |
+| characterization test 更新 | `openclaw_runtime/src/agents/agent-tools.read.characterization.test.ts` |
+
+诚实声明：**production producer coverage = 3/3**（edit/write/apply_patch）。
+envelope 通过 `wrapToolParamValidation` pass-through 覆盖 host + sandbox 变体。
+workspace authority propagation、session-workspace binding、matched off/on
+replay evidence 由 R3 交付。
 
 ---
 

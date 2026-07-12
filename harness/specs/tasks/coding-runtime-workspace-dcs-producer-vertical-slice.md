@@ -10,20 +10,33 @@ touchedAreas:
   - team/dcs/dcs-v1.6-spec.md
   - team/dcs/dcs-v1.6-review.md
   - team/dcs/dcs-v1.6.1-addendum.md
+  - team/dcs/README.md
+  - team/dcs/DCS-ROUND2-COMPLETE.md
   - src/stores/chat.ts
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
   - electron/services/**
   - openclaw_runtime/src/auto-reply/reply/get-reply.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/**
+  - openclaw_runtime/src/agents/sessions/tools/edit.ts
+  - openclaw_runtime/src/agents/sessions/tools/edit.test.ts
+  - openclaw_runtime/src/agents/sessions/tools/write.ts
+  - openclaw_runtime/src/agents/sessions/tools/write.test.ts
+  - openclaw_runtime/src/agents/sessions/tools/tool-contracts.ts
+  - openclaw_runtime/src/agents/apply-patch.ts
+  - openclaw_runtime/src/agents/apply-patch.test.ts
+  - openclaw_runtime/src/agents/dcs-producer-envelope.test.ts
+  - openclaw_runtime/src/agents/agent-tools.read.characterization.test.ts
+  - openclaw_runtime/src/agents/agent-tools.read.ts
   - openclaw_runtime/src/context-engine/**
   - openclaw_runtime/src/config/**
   - openclaw_runtime/src/**/workspace*.ts
   - openclaw_runtime/src/**/sandbox*.ts
+  - openclaw_runtime/src/sessions/session-key-utils.ts
   - tests/unit/**
   - tests/e2e/**
   - artifacts/**
-  - team/dcs/README.md
+  - package.json
 expectedUserBehavior:
   - A normal Chat turn selecting workspace A runs file tools, shell, sandbox, and DCS against the trusted root for A, and cannot access workspace B through an inherited cwd or stale scope.
   - Changing a session's selected workspace creates a fresh authoritative scope or invalidates the old one; working-memory Blocks from the old workspace are not read.

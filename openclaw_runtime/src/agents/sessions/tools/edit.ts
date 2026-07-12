@@ -436,6 +436,10 @@ export function createEditToolDefinition(
               diff: diffResult.diff,
               patch,
               firstChangedLine: diffResult.firstChangedLine,
+              working_memory: {
+                result_summary: `Edited ${path}: ${edits.length} block(s)`.slice(0, 100),
+                significance: "high",
+              },
             },
           };
         } catch (error: unknown) {

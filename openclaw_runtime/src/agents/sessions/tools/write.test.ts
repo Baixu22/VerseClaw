@@ -32,7 +32,9 @@ describe("write tool: create and overwrite", () => {
     expect(result.content).toEqual([
       { type: "text", text: "Successfully wrote 5 bytes to new.txt" },
     ]);
-    expect(result.details).toBeUndefined();
+    expect(result.details).toMatchObject({
+      working_memory: { significance: "high" },
+    });
     expect(await readFile(join(dir, "new.txt"), "utf-8")).toBe("hello");
   });
 

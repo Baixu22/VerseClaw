@@ -6,6 +6,21 @@
 import type { Edit } from "./edit-diff.js";
 import type { TruncationResult } from "./truncate.js";
 
+/**
+ * DCS working-memory producer envelope.
+ *
+ * Only production mutation tools (edit, write, apply_patch) may emit this
+ * envelope in their `details.working_memory` field. The consumer side
+ * (`readWorkingMemoryEnvelope` in extensions.ts) validates the shape and
+ * enforces the ≤100 char limit on `result_summary`.
+ */
+export interface WorkingMemoryEnvelope {
+  /** Human-readable summary of the mutation, ≤100 characters */
+  result_summary: string;
+  /** "high" for successful mutations, "medium" for partial/uncertain results */
+  significance: "high" | "medium" | "low";
+}
+
 export interface BashToolInput {
   command: string;
   timeout?: number;
@@ -28,6 +43,8 @@ export interface EditToolDetails {
   patch: string;
   /** Line number of the first change in the new file (for editor navigation) */
   firstChangedLine?: number;
+  /** DCS working-memory producer envelope (emitted only by mutation tools) */
+  working_memory?: WorkingMemoryEnvelope;
 }
 
 export interface FindToolInput {
@@ -80,4 +97,9 @@ export interface ReadToolDetails {
 export interface WriteToolInput {
   path: string;
   content: string;
+}
+
+export interface WriteToolDetails {
+  /** DCS working-memory producer envelope (emitted only by mutation tools) */
+  working_memory?: WorkingMemoryEnvelope;
 }

@@ -63,9 +63,13 @@ describe("createHostWorkspaceWriteTool", () => {
       undefined,
     );
     expect(textOf(result)).toBe("Successfully wrote 5 bytes to new.txt");
-    // P0 anchor: details is currently undefined here; freezing that the wrapper
-    // does not itself synthesize a details object (P0 will add one).
-    expect(result.details).toBeUndefined();
+    // P0 envelope: write now emits a details.working_memory envelope.
+    expect(result.details).toMatchObject({
+      working_memory: {
+        significance: "high",
+      },
+    });
+    expect(result.details?.working_memory?.result_summary).toContain("new.txt");
     expect(await readFile(join(dir, "new.txt"), "utf-8")).toBe("hello");
   });
 
