@@ -62,3 +62,8 @@ to this section in the same commit as the change.
   OpenClaw command runner and Windows spawn resolver. Commands now share
   bounded output, UTF-8 environment, timeout, cancellation, and argv-only
   execution while preserving the imported five-state probe classification.
+
+- Guarded HTTP boundary: public reader HTTP helpers now use OpenClaw's
+  SSRF-guarded fetch with pinned DNS, redirect revalidation, bounded response
+  reads, timeout/cancellation, and dispatcher release. Jina keeps a 20 MiB
+  text limit; other JSON/text responses default to 10 MiB.

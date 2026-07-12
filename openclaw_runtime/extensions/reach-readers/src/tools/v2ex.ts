@@ -14,7 +14,7 @@ import {
   readStringParam,
   readOptionalInt,
 } from '../common/tool-shape.js';
-import { httpJson } from '../core/probe.js';
+import { httpJson } from '../core/http.js';
 import { canHandle } from '../core/router.js';
 import type { Availability } from '../types.js';
 
