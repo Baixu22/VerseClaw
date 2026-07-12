@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import type { ContextBlockSink } from "../../context-engine/block.js";
+import { handleConfirmAndSave } from "./experience-block-bridge.js";
 import type { KnowledgeStore } from "./knowledge-store.js";
 import {
   buildPrincipleFullContent,
@@ -11,6 +13,11 @@ import {
 export type DistillationToolOptions = {
   store: KnowledgeStore;
   now?: () => Date;
+};
+
+export type ConfirmAndSaveOptions = {
+  contextBlockSink?: ContextBlockSink;
+  sessionId?: string;
 };
 
 /** Manual SEKB distillation flow: suggestions are advisory until confirmed. */
@@ -58,10 +65,14 @@ export class DistillationTool {
     return suggestions;
   }
 
-  confirm_and_save(suggestion: DistillationSuggestion, edits: Partial<Principle> | null = null): string {
+  confirm_and_save(
+    suggestion: DistillationSuggestion,
+    edits: Partial<Principle> | null = null,
+    options: ConfirmAndSaveOptions = {},
+  ): string {
     const now = this.#now();
     const sourceIds = [...new Set(suggestion.source_trajectory_ids)].toSorted();
-    const suggested = { ...suggestion.suggested_principle, ...(edits ?? {}) };
+    const suggested = { ...suggestion.suggested_principle, ...edits };
     const condition = nonEmpty(suggested.condition) ?? "When a matching historical trajectory exists";
     const action = nonEmpty(suggested.action) ?? "Review the captured trajectory before continuing";
     const reason = nonEmpty(suggested.reason) ?? "Prior outcomes can reveal reusable constraints";
@@ -86,7 +97,7 @@ export class DistillationTool {
       criticality: normalizeCriticality(suggested.criticality),
       pinned: suggested.pinned ?? false,
       metadata: {
-        ...(suggested.metadata ?? {}),
+        ...suggested.metadata,
         distillation_confidence: suggestion.confidence,
         cluster_summary: suggestion.cluster_summary,
       },
@@ -101,6 +112,22 @@ export class DistillationTool {
         expires_at: expiresAt,
       });
     }
+
+    // DCS Stage 5: best-effort experience Block write via ContextBlockSink.
+    // ANTI-8: suggest_principles_from_trajectories does NOT write Blocks;
+    // only confirm_and_save (here) writes experience Blocks.
+    if (options.contextBlockSink && options.sessionId) {
+      void handleConfirmAndSave({
+        principle,
+        suggestion,
+        sessionId: options.sessionId,
+        contextBlockSink: options.contextBlockSink,
+        now,
+      }).catch(() => {
+        // Best-effort: sink failure does not block the SEKB save.
+      });
+    }
+
     return principleId;
   }
 
