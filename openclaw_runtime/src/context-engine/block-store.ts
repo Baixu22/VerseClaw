@@ -587,7 +587,7 @@ function isEntityExtractionStatus(value: unknown): value is EntityExtractionStat
   return value === "pending" || value === "failed" || value === "empty" || value === "success";
 }
 
-function parseHandoffPack(value: string | null): HandoffPack | undefined {
+export function parseHandoffPack(value: string | null): HandoffPack | undefined {
   if (!value) {
     return undefined;
   }

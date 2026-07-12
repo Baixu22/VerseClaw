@@ -5,9 +5,12 @@
 **最后更新**：2026-07-12
 **当前状态**：v1.6 已收敛（致命问题 0），v1.6.1 正式增补已收编；阶段 0
 接口层与 Stage 1 working-memory 已在 main 收口（R1 COMPLETE）；R2 producer
-envelope vertical slice 已在 main 收口（R2 COMPLETE）。
+envelope vertical slice 已在 main 收口（R2 COMPLETE）；R3 Stage 2 task state
+adapter 与 child-session handoff 已在 main 收口（R3 COMPLETE）。
 DCS working-memory infrastructure ready; production producer coverage = 3/3
-（edit/write/apply_patch 均已产出 `details.working_memory` envelope）。
+（edit/write/apply_patch 均已产出 `details.working_memory` envelope）；
+task_state adapter + child handoff + direct-parent authorization + terminal-phase
+SEKB trajectory capture 已就位。
 
 ---
 
@@ -151,6 +154,34 @@ mutation tools（edit/write/apply_patch）在成功路径上显式产出
 envelope 通过 `wrapToolParamValidation` pass-through 覆盖 host + sandbox 变体。
 workspace authority propagation、session-workspace binding、matched off/on
 replay evidence 由 R3 交付。
+
+---
+
+## Stage 2 Task State Adapter 与 Child-Session Handoff（R3 收口）
+
+R3 于 2026-07-12 在 main 分支收口（DCS-ROUND3-COMPLETE）。TaskLoop phase
+transition 持久化一个 system-managed `task_state` Block；parent 在 child
+启动前将 HandoffPack 写入 child session key；child `before_agent_start` 通过
+BlockStore 恢复状态并接收固定 context_read 指令；direct-parent authorization
+验证 requester + child HandoffPack parent_session_id + target；仅 terminal phase
+（completed/failed）触发一次 SEKB trajectory capture。
+
+| 交付物 | 路径 |
+|--------|------|
+| task-loop handler（handleTaskPhaseChange / buildChildHandoffPack / writeChildHandoffPack / restoreChildState / isTerminalPhase / CHILD_CONTEXT_READ_INSTRUCTION） | `openclaw_runtime/src/context-engine/handlers/task-loop-handler.ts` |
+| parseHandoffPack 导出（授权与恢复共用验证器） | `openclaw_runtime/src/context-engine/block-store.ts` |
+| task_phase_change hook 接线 + terminal-phase SEKB trigger | `openclaw_runtime/src/agents/harness/lifecycle-hook-helpers.ts` |
+| buildTaskStateFactory（parent-writes-before-spawn + before_agent_start restoration + context_read instruction） | `openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts` |
+| RED→GREEN task-loop handler 测试（16 tests） | `openclaw_runtime/src/context-engine/handlers/task-loop-handler.test.ts` |
+| RED→GREEN extension wiring 测试（6 tests） | `openclaw_runtime/src/agents/embedded-agent-runner/extensions.task-state.test.ts` |
+| RED→GREEN terminal-phase SEKB 测试（5 tests） | `openclaw_runtime/src/knowledge/sekb/harness-integration.test.ts` |
+
+诚实声明：**task_state adapter + child handoff + direct-parent authorization +
+terminal-phase SEKB trajectory capture 已就位**。direct-parent authorization
+覆盖 self / direct parent / arbitrary target / recursive ancestor / malformed
+HandoffPack 五条路径。context_read 指令为固定字符串，不含 HandoffPack JSON、
+Block ids、transcript excerpt 或 raw tool output。tool registry（M4b+M5a）、
+knowledge unification（M5b）、SEKB closure（M6+T1）由 R4+ 交付。
 
 ---
 
