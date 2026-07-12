@@ -16,6 +16,7 @@ touchedAreas:
   - openclaw_runtime/src/plugin-sdk/**
   - openclaw_runtime/src/plugins/runtime/index.ts
   - openclaw_runtime/src/plugins/runtime/types.ts
+  - openclaw_runtime/src/plugins/runtime/agent-browser.test.ts
   - openclaw_runtime/src/agents/tools/agent-browser-tool.ts
   - openclaw_runtime/src/agents/openclaw-tools.ts
   - openclaw_runtime/scripts/lib/plugin-sdk-entrypoints.json
