@@ -9,13 +9,17 @@ envelope vertical slice 已在 main 收口（R2 COMPLETE）；R3 Stage 2 task st
 adapter 与 child-session handoff 已在 main 收口（R3 COMPLETE）；R4 Stage 3
 tool_registry Block producer 与 Assembler injection 已在 main 收口（R4 COMPLETE）；
 R5 Stage 4 knowledge Block 统一（compass + role-memory）已在 main 收口
-（R5 COMPLETE）。
-DCS working-memory infrastructure ready; production producer coverage = 3/3
-（edit/write/apply_patch 均已产出 `details.working_memory` envelope）；
-task_state adapter + child handoff + direct-parent authorization + terminal-phase
-SEKB trajectory capture 已就位；tool_registry Block producer + Assembler
-injection 已就位（flag-gated, default off）；knowledge Block 统一（compass +
-role-memory 两条路径）已就位（flag-gated, default off）。
+（R5 COMPLETE）；R6 Stage 5 SEKB 蒸馏回写 closure + T1 provider-registry pilot
+disposition 已在 main 收口（R6 COMPLETE）。
+**DCS all stages complete.** DCS working-memory infrastructure ready; production
+producer coverage = 3/3（edit/write/apply_patch 均已产出 `details.working_memory`
+envelope）；task_state adapter + child handoff + direct-parent authorization +
+terminal-phase SEKB trajectory capture 已就位；tool_registry Block producer +
+Assembler injection 已就位（flag-gated, default off）；knowledge Block 统一
+（compass + role-memory 两条路径）已就位（flag-gated, default off）；SEKB
+experience Block 写回桥接 + context_search/context_write 工具已就位
+（best-effort, ANTI-7/ANTI-8 enforced）；T1 provider-registry pilot 已标注
+`@deprecated`（15 个测试文件引用，按增补5 降级）。
 
 ---
 
@@ -251,6 +255,43 @@ Feature flags `runtime.contextBlock.compass.enabled` 和
 （flag-gated, default off）。compass admission context 包含 `verification_status`/
 `confidence`/`audn_state` 以满足 BlockStore 准入门禁。SEKB closure（M6+T1）
 由 R6 交付。
+
+---
+
+## Stage 5 SEKB Closure + T1 Provider-Registry Pilot Disposition（R6 收口）
+
+R6 于 2026-07-12 在 main 分支收口（DCS-ROUND6-COMPLETE）。`DistillationTool.confirm_and_save`
+新增可选第三参数 `{ contextBlockSink?, sessionId? }`，当两者提供时 best-effort
+写入 `experience` Block 到 BlockStore（fire-and-forget，sink 失败不阻塞 SEKB
+保存）。`experience-block-bridge.ts` 提供纯函数 `buildExperienceBlock` +
+`handleConfirmAndSave`。`context_search` 工具按 §第六章实现：实体提取 →
+`queryByEntity`（SAG mode）或 `query`（fallback_mode='vector_only'）→ top-K ≤ 5；
+`query='principles'` 触发 `block_types=["experience"]` 过滤。`context_write`
+工具按 §第六章实现：仅写 `notes` Block（sole agent_writable），操作
+append/replace/clear，role whitelist `planner`/`architect`/`implementer`
+（ANTI-7 enforced via `Set<string>` membership）。ANTI-8 enforced：
+`suggest_principles_from_trajectories` 无 sink 参数，advisory 结果不写 Block。
+T1：`provider-registry.ts` 的 `createContextProviderRegistryPilot` 和
+`runContextProviderRegistryPilot` 标注 `@deprecated`（15 个测试文件引用，按
+增补5 降级，不删除）。`SourceSystem` union 新增 `"agent-notes"`。
+
+| 交付物 | 路径 |
+|--------|------|
+| SEKB → experience Block bridge（buildExperienceBlock / handleConfirmAndSave） | `openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts` |
+| context_search tool（extractEntities / searchContext） | `openclaw_runtime/src/context-engine/tools/context-search-tool.ts` |
+| context_write tool（writeContext / CONTEXT_WRITE_ROLE_WHITELIST） | `openclaw_runtime/src/context-engine/tools/context-write-tool.ts` |
+| distillation-tool 可选 contextBlockSink + sessionId 参数 | `openclaw_runtime/src/knowledge/sekb/distillation-tool.ts` |
+| T1 @deprecated 标注 | `openclaw_runtime/src/context-engine/provider-registry.ts` |
+| SourceSystem += "agent-notes" | `openclaw_runtime/src/context-engine/block.ts` |
+| RED→GREEN experience-block-bridge 测试（14 tests） | `openclaw_runtime/src/knowledge/sekb/experience-block-bridge.test.ts` |
+| RED→GREEN context-search-tool 测试（10 tests） | `openclaw_runtime/src/context-engine/tools/context-search-tool.test.ts` |
+| RED→GREEN context-write-tool 测试（11 tests） | `openclaw_runtime/src/context-engine/tools/context-write-tool.test.ts` |
+
+诚实声明：**SEKB experience Block 写回桥接 + context_search/context_write 工具
+已就位**（best-effort, ANTI-7/ANTI-8 enforced）。T1 provider-registry pilot
+已标注 `@deprecated`（15 个测试文件引用，按增补5 降级）。**DCS v1.6 Stage 0-5
+implementation is now complete.** 所有 feature flag 缺省为 false，等待 flag-gated
+activation 与完整回归证据。T3 codegraph unlock 不属于本 Goal，未实现。
 
 ---
 

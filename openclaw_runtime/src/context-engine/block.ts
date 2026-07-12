@@ -19,7 +19,8 @@ export type SourceSystem =
   | "task-loop"
   | "working-memory"
   | "codegraph"
-  | "agent-map";
+  | "agent-map"
+  | "agent-notes";
 
 export interface BlockPresence {
   always_on: boolean;

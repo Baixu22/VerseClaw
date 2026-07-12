@@ -517,6 +517,13 @@ export function createLoopContextPackProvider(): RuntimeContextProvider {
   };
 }
 
+/**
+ * @deprecated DCS v1.6.1 增补5: provider-registry pilot is marked for deletion
+ * as T1. Zero production callers confirmed. Deletion was downgraded to
+ * @deprecated because 14+ unit test files reference these functions as
+ * registry construction helpers. Do NOT add new production callers.
+ * Tracked for removal once test files migrate to direct registry construction.
+ */
 export function createContextProviderRegistryPilot(
   extraProviders: RuntimeContextProvider[] = [],
 ): RuntimeContextProviderRegistry {
@@ -527,6 +534,13 @@ export function createContextProviderRegistryPilot(
   ]);
 }
 
+/**
+ * @deprecated DCS v1.6.1 增补5: provider-registry pilot is marked for deletion
+ * as T1. Zero production callers confirmed. Deletion was downgraded to
+ * @deprecated because 14+ unit test files reference these functions as
+ * registry construction helpers. Do NOT add new production callers.
+ * Tracked for removal once test files migrate to direct registry construction.
+ */
 export async function runContextProviderRegistryPilot(
   params: ContextProviderRegistryPilotParams,
 ): Promise<ContextProviderRegistryPilotResult> {
