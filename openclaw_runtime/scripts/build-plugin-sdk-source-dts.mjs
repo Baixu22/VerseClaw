@@ -72,6 +72,14 @@ export function resolveStagedDeclarationPath(relativePath) {
   throw new Error(`Declaration path is outside the declaration staging roots: ${relativePath}`);
 }
 
+export function resolvePackageDeclarationPath(relativePath) {
+  const normalized = normalizeRelativePath(relativePath);
+  const prefix = "dist/plugin-sdk/";
+  return normalized.startsWith(prefix)
+    ? `packages/plugin-sdk/dist/${normalized.slice(prefix.length)}`
+    : null;
+}
+
 function listFiles(rootDir) {
   if (!fs.existsSync(rootDir)) {
     return [];
@@ -118,6 +126,26 @@ export function stagePluginSdkDeclarations({ emittedRoot, runtimeRoot }) {
   return staged.sort();
 }
 
+export function stagePluginSdkPackageDeclarations({ runtimeRoot }) {
+  const sourceRoot = path.join(runtimeRoot, "dist", "plugin-sdk");
+  const staged = [];
+  for (const sourcePath of listFiles(sourceRoot)) {
+    if (!sourcePath.endsWith(".d.ts") && !sourcePath.endsWith(".d.ts.map")) {
+      continue;
+    }
+    const relativePath = path.relative(runtimeRoot, sourcePath);
+    const stagedRelativePath = resolvePackageDeclarationPath(relativePath);
+    if (!stagedRelativePath) {
+      continue;
+    }
+    const destinationPath = resolvePathInsideRoot(runtimeRoot, stagedRelativePath);
+    fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
+    fs.copyFileSync(sourcePath, destinationPath);
+    staged.push(stagedRelativePath.replaceAll("\\", "/"));
+  }
+  return staged.sort();
+}
+
 export function buildPluginSdkSourceDeclarations({
   emittedRoot = defaultEmittedRoot,
   runtimeRoot = defaultRuntimeRoot,
@@ -151,11 +179,22 @@ export function buildPluginSdkSourceDeclarations({
   }
 
   const staged = stagePluginSdkDeclarations({ emittedRoot, runtimeRoot });
+  const packageStaged = stagePluginSdkPackageDeclarations({ runtimeRoot });
   process.stdout.write(`[plugin-sdk-source-dts] staged ${staged.length} declaration files\n`);
+  process.stdout.write(
+    `[plugin-sdk-source-dts] staged ${packageStaged.length} package declaration files\n`,
+  );
   return 0;
 }
 
 const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : "";
 if (invokedPath === fileURLToPath(import.meta.url)) {
-  process.exitCode = buildPluginSdkSourceDeclarations();
+  if (process.argv.includes("--stage-package-only")) {
+    const staged = stagePluginSdkPackageDeclarations({ runtimeRoot: defaultRuntimeRoot });
+    process.stdout.write(
+      `[plugin-sdk-source-dts] staged ${staged.length} package declaration files\n`,
+    );
+  } else {
+    process.exitCode = buildPluginSdkSourceDeclarations();
+  }
 }

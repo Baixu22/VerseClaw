@@ -635,13 +635,14 @@ async function main(argv = process.argv.slice(2)) {
         outputPaths: PACKAGE_DTS_REQUIRED_OUTPUTS,
         tsBuildInfoPath: "packages/plugin-sdk/dist/.tsbuildinfo",
       });
-      prerequisiteSteps.push({
+      const packageStep = {
         label: "plugin-sdk package boundary dts",
-        args: [runTsgoScript, "-p", "packages/plugin-sdk/tsconfig.json", "--declaration", "true"],
+        args: ["scripts/build-plugin-sdk-source-dts.mjs", "--stage-package-only"],
         env: { OPENCLAW_TSGO_HEAVY_CHECK_LOCK_HELD: "1" },
         timeoutMs: 300_000,
         stampPath: PACKAGE_DTS_STAMP,
-      });
+      };
+      (rootDtsFresh ? prerequisiteSteps : dependentSteps).push(packageStep);
     } else {
       process.stdout.write("[plugin-sdk package boundary dts] fresh; skipping\n");
     }
