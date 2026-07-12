@@ -132,3 +132,8 @@ to this section in the same commit as the change.
   `agentBrowser.invoke` Gateway method with cancellation and timeout
   propagation, and rejects pre-cancelled calls before RPC. No production
   behavior changed.
+
+- Xueqiu Browser-cookie coverage: added isolated tests proving Browser cookies
+  are injected into the original guarded API path only when `xq_a_token` is
+  present, while a profile without that token retains the imported homepage
+  cookie fallback. Tests use synthetic values and do not snapshot credentials.
