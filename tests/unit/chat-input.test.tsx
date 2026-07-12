@@ -1052,6 +1052,7 @@ describe('ChatInput slash commands', () => {
     fireEvent.change(textbox, { target: { value: '/' } });
 
     expect(screen.getByTestId('chat-slash-command-menu')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-slash-command-menu')).toHaveAttribute('data-layout', 'compact-command-list');
     expect(screen.getByTestId('chat-slash-command-menu')).toHaveTextContent('Choose a targeted action for knowledge, code work, workflow, or the current session.');
     expect(screen.getByTestId('chat-slash-command-group-knowledge')).toHaveTextContent('Attach sources and shape what this turn can read.');
     expect(screen.getByTestId('chat-slash-command-option-wiki')).toHaveTextContent('/wiki');
@@ -2304,6 +2305,7 @@ describe('ChatInput agent targeting', () => {
     fireEvent.click(screen.getByTestId('chat-composer-actions'));
 
     expect(await screen.findByTestId('chat-composer-actions-menu')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-composer-actions-menu')).toHaveAttribute('data-layout', 'compact-command-list');
     expect(screen.getByTestId('chat-composer-action-group-context')).toHaveTextContent('Add context');
     expect(screen.getByTestId('chat-composer-action-attach-files')).toHaveTextContent('Attach files');
     expect(screen.getByTestId('chat-composer-action-knowledge')).toHaveTextContent('Search knowledge');

@@ -154,6 +154,12 @@ test.describe('Billing page', () => {
       await expect(page.getByTestId('billing-usage-heatmap')).toBeVisible();
       expect(await page.getByTestId('billing-usage-heatmap-day').count()).toBeGreaterThanOrEqual(30);
       await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('border-radius', '2px');
+      await page.setViewportSize({ width: 800, height: 760 });
+      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('width', '10px');
+      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('height', '10px');
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('width', '13px');
+      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('height', '13px');
       await page.evaluate(() => document.documentElement.classList.remove('dark'));
       await expect(page.getByTestId('billing-usage-heatmap')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
       await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('background-color', 'rgb(235, 237, 240)');

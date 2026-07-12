@@ -220,7 +220,7 @@ function ModelPicker({
           type="button"
           variant="ghost"
           size="sm"
-          className="h-7 rounded-full px-2.5 text-xs text-muted-foreground hover:text-foreground"
+          className="h-7 rounded-md px-2.5 text-xs text-muted-foreground hover:text-foreground"
           onClick={handleFetch}
           disabled={fetching}
         >
@@ -390,11 +390,11 @@ export function ProvidersSettings() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-12 text-muted-foreground bg-black/5 dark:bg-white/5 rounded-3xl border border-transparent border-dashed">
+        <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface-input py-12 text-muted-foreground">
           <Loader2 className="h-6 w-6 animate-spin" />
         </div>
       ) : displayProviders.length === 0 ? (
-        <div data-testid="providers-empty-state" className="flex flex-col items-center justify-center py-20 text-muted-foreground bg-black/5 dark:bg-white/5 rounded-3xl border border-transparent border-dashed">
+        <div data-testid="providers-empty-state" className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-surface-input py-16 text-muted-foreground">
           <Key className="h-12 w-12 mb-4 opacity-50" />
           <h3 className="text-sm font-medium mb-1 text-foreground">{t('aiProviders.empty.title')}</h3>
           <p className="text-meta text-center mb-6 max-w-sm">
@@ -694,7 +694,7 @@ function ProviderCard({
     <div
       data-testid={`provider-card-${account.id}`}
       className={cn(
-        "group flex flex-col p-4 rounded-2xl transition-all relative overflow-hidden hover:bg-black/5 dark:hover:bg-white/5",
+        "group relative flex flex-col overflow-hidden rounded-lg p-4 transition-[background-color,border-color,transform] duration-150 hover:bg-black/5 active:scale-[0.995] dark:hover:bg-white/5 motion-reduce:transition-none motion-reduce:active:scale-100",
         isDefault
           ? "bg-black/[0.04] dark:bg-white/[0.06] border border-transparent"
           : "bg-transparent border border-transparent"
@@ -1504,7 +1504,7 @@ function AddProviderDialog({
 
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
-      <DialogContent asChild className="w-[calc(100%-2rem)] max-w-2xl max-h-[90vh] flex flex-col rounded-3xl border-0 shadow-2xl bg-surface-modal overflow-hidden">
+      <DialogContent asChild className="flex max-h-[90vh] w-[calc(100%-2rem)] max-w-2xl flex-col overflow-hidden rounded-lg border border-border bg-surface-modal shadow-xl">
         <Card data-testid="add-provider-dialog">
         <CardHeader className="relative pb-2 shrink-0">
           <DialogTitle asChild>

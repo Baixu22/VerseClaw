@@ -218,6 +218,8 @@ export function ObservabilityDashboard() {
         : 0,
   );
   const [viewMode, setViewMode] = useState<ViewMode>('graph');
+  const [metricsExpanded, setMetricsExpanded] = useState(false);
+  const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false);
   const [savedView, setSavedView] = useState<SavedViewKey>('all');
   const [customSavedView, setCustomSavedView] = useState<TraceFilterState | null>(() => loadJson<TraceFilterState | null>(TRACE_SAVED_VIEW_KEY, null));
   const [compareTraceId, setCompareTraceId] = useState<string>('none');
@@ -349,6 +351,9 @@ export function ObservabilityDashboard() {
   const selectedTraceRow = useMemo(() => allTraceRows.find((trace) => trace.id === selectedTraceId) ?? null, [allTraceRows, selectedTraceId]);
   const compareTraceRow = useMemo(() => allTraceRows.find((trace) => trace.id === compareTraceId) ?? null, [allTraceRows, compareTraceId]);
   const selectedAnnotation = selectedTraceId ? annotations[selectedTraceId] : undefined;
+  const primaryMetricIds = new Set(['traces', 'errors', 'avg-duration', 'running']);
+  const primaryMetrics = snapshot?.cards.filter((card) => primaryMetricIds.has(card.id)) ?? [];
+  const secondaryMetrics = snapshot?.cards.filter((card) => !primaryMetricIds.has(card.id)) ?? [];
 
   const applySavedView = (value: SavedViewKey) => {
     setSavedView(value);
@@ -457,11 +462,11 @@ export function ObservabilityDashboard() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4" data-testid="observability-page">
-      <div className="flex items-center justify-between gap-3">
+    <div className="flex h-full min-h-0 flex-col gap-3 bg-background" data-testid="observability-page">
+      <div className="flex items-center justify-between gap-3 border-b border-border pb-3">
         <div>
-          <h2 className="text-2xl font-serif font-normal tracking-tight">{t('title')}</h2>
-          <p className="mt-1 text-meta text-muted-foreground">{t('subtitle')}</p>
+          <h2 className="font-serif text-xl font-normal tracking-tight">{t('title')}</h2>
+          <p className="mt-0.5 max-w-2xl text-xs text-muted-foreground">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => fetchDashboard()} disabled={loading} className="h-9 rounded-md px-4">
@@ -477,40 +482,64 @@ export function ObservabilityDashboard() {
       </div>
 
       {snapshot && (
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
-          {snapshot.cards.map((card) => (
-            <div key={card.id} className={cn('flex flex-col gap-2 rounded-md border p-3', cardTone(card.tone))}>
-              <div className="flex items-center gap-2 text-meta text-muted-foreground">
+        <div className="overflow-hidden rounded-lg border border-border bg-surface-modal">
+        <div className="flex shrink-0 overflow-x-auto divide-x divide-border" data-testid="observability-primary-metrics">
+          {primaryMetrics.map((card) => (
+            <div key={card.id} className="flex min-w-[148px] flex-1 items-center justify-between gap-3 px-3 py-2.5">
+              <div className="min-w-0">
+              <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 {metricIcon(card.id)}
                 <span className="truncate">{card.label}</span>
               </div>
-              <p className="text-xl font-semibold">
+              <p className="mt-1 truncate text-base font-semibold tabular-nums text-foreground">
                 {typeof card.value === 'number' && card.id === 'cost'
                   ? `$${card.value.toFixed(4)}`
                   : card.value}
                 {card.unit && <span className="ml-1 text-xs text-muted-foreground">{card.unit}</span>}
               </p>
+              </div>
+              {card.tone && (
+                <span className={cn('h-2 w-2 shrink-0 rounded-full border', cardTone(card.tone))} aria-hidden="true" />
+              )}
             </div>
           ))}
+          {secondaryMetrics.length > 0 && (
+            <Button type="button" variant="ghost" size="icon" className="m-1 h-8 w-8 shrink-0" onClick={() => setMetricsExpanded((value) => !value)} data-testid="observability-metrics-toggle" title={t('graph.expand')}>
+              <ChevronDown className={cn('h-4 w-4 transition-transform motion-reduce:transition-none', metricsExpanded && 'rotate-180')} />
+            </Button>
+          )}
+        </div>
+        {metricsExpanded && secondaryMetrics.length > 0 && (
+          <div className="flex overflow-x-auto border-t border-border bg-black/[0.015] divide-x divide-border dark:bg-white/[0.02]" data-testid="observability-secondary-metrics">
+            {secondaryMetrics.map((card) => (
+              <div key={card.id} className="flex min-w-[130px] flex-1 items-center gap-2 px-3 py-2 text-xs">
+                <span className="text-muted-foreground">{metricIcon(card.id)}</span>
+                <span className="truncate text-muted-foreground">{card.label}</span>
+                <span className="ml-auto font-mono font-medium">{card.id === 'cost' && typeof card.value === 'number' ? `$${card.value.toFixed(4)}` : card.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
         </div>
       )}
 
       {snapshot?.alerts.length ? (
-        <div className="rounded-md border border-amber-500/20 bg-amber-500/5 p-3">
-          <div className="flex items-center gap-2 text-sm font-medium text-amber-700 dark:text-amber-400">
+        <div className="flex items-center gap-3 rounded-md border border-amber-500/20 bg-amber-500/5 px-3 py-2">
+          <div className="flex shrink-0 items-center gap-2 text-xs font-medium text-amber-700 dark:text-amber-400">
             <AlertTriangle className="h-4 w-4" />
             {t('alerts')}
           </div>
-          <div className="mt-2 space-y-1">
-            {snapshot.alerts.map((alert) => (
-              <p key={alert} className="text-xs text-amber-700 dark:text-amber-300">{alert}</p>
-            ))}
-          </div>
+          <p className="min-w-0 flex-1 truncate text-xs text-amber-700 dark:text-amber-300" title={snapshot.alerts.join(' · ')}>
+            {snapshot.alerts.join(' · ')}
+          </p>
+          <Badge variant="outline" className="shrink-0 rounded-full border-amber-500/25 text-[10px] text-amber-700 dark:text-amber-300">
+            {snapshot.alerts.length}
+          </Badge>
         </div>
       ) : null}
 
-      <div className="grid min-h-[620px] flex-1 grid-cols-1 gap-3 xl:grid-cols-[310px_minmax(480px,1fr)]">
-        <aside className="flex min-h-0 flex-col rounded-md border border-black/10 dark:border-white/10 bg-background" data-testid="observability-trace-list">
+      <div className="grid min-h-[620px] flex-1 grid-cols-1 overflow-hidden rounded-lg border border-border lg:grid-cols-[280px_minmax(0,1fr)]">
+        <aside className="flex min-h-0 flex-col border-b border-border bg-surface-modal xl:border-b-0 xl:border-r" data-testid="observability-trace-list">
           <div className="border-b border-black/10 dark:border-white/10 p-3">
             <div className="flex items-center gap-2 text-sm font-medium">
               <GitBranch className="h-4 w-4 text-muted-foreground" />
@@ -543,7 +572,7 @@ export function ObservabilityDashboard() {
                 <Save className="h-3.5 w-3.5" />
               </Button>
             </div>
-            <div className="mt-2 grid grid-cols-3 gap-2">
+            <div className="mt-2 grid grid-cols-2 gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -562,6 +591,13 @@ export function ObservabilityDashboard() {
                   <SelectItem value="day">{t('filters.lastDay')}</SelectItem>
                 </SelectContent>
               </Select>
+              <Button type="button" variant={toolFilter !== 'all' ? 'secondary' : 'outline'} className="h-8 justify-between px-2 text-xs" onClick={() => setAdvancedFiltersOpen((value) => !value)} data-testid="observability-advanced-filter-toggle">
+                <span className="flex items-center gap-1.5"><Gauge className="h-3.5 w-3.5" />{t('graph.expand')}</span>
+                {toolFilter !== 'all' && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
+              </Button>
+            </div>
+            {advancedFiltersOpen && (
+              <div className="mt-2 rounded-md border border-border bg-background p-2" data-testid="observability-advanced-filters">
               <Select value={toolFilter} onValueChange={setToolFilter}>
                 <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -574,7 +610,8 @@ export function ObservabilityDashboard() {
                   <SelectItem value="warnings">{t('filters.withWarnings')}</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+              </div>
+            )}
           </div>
 
           <div className="min-h-0 flex-1 overflow-auto p-2">
@@ -754,17 +791,17 @@ export function ObservabilityDashboard() {
           <div className="border-b border-black/10 dark:border-white/10 p-3">
             <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
               <TabsTrigger value="summary" className="h-6 px-2 text-xs">{t('tabs.summary')}</TabsTrigger>
-                <TabsTrigger value="issues" className="h-6 px-2 text-xs">{t('tabs.issues')}</TabsTrigger>
-                <TabsTrigger value="events" className="h-6 px-2 text-xs">{t('tabs.events')}</TabsTrigger>
-                <TabsTrigger value="io" className="h-6 px-2 text-xs">{t('tabs.io')}</TabsTrigger>
-                <TabsTrigger value="artifacts" className="h-6 px-2 text-xs">{t('tabs.artifacts')}</TabsTrigger>
-                <TabsTrigger value="compare" className="h-6 px-2 text-xs">{t('tabs.compare')}</TabsTrigger>
-                <TabsTrigger value="annotation" className="h-6 px-2 text-xs">{t('tabs.annotation')}</TabsTrigger>
-                <TabsTrigger value="attributes" className="h-6 px-2 text-xs">{t('tabs.attributes')}</TabsTrigger>
-                <TabsTrigger value="timeline" className="h-6 px-2 text-xs">{t('tabs.timeline')}</TabsTrigger>
-                <TabsTrigger value="score" className="h-6 px-2 text-xs">{t('tabs.score')}</TabsTrigger>
-              </TabsList>
-            </div>
+              <TabsTrigger value="issues" className="h-6 px-2 text-xs">{t('tabs.issues')}</TabsTrigger>
+              <TabsTrigger value="events" className="h-6 px-2 text-xs">{t('tabs.events')}</TabsTrigger>
+              <TabsTrigger value="io" className="h-6 px-2 text-xs">{t('tabs.io')}</TabsTrigger>
+              <TabsTrigger value="artifacts" className="h-6 px-2 text-xs">{t('tabs.artifacts')}</TabsTrigger>
+              <TabsTrigger value="compare" className="h-6 px-2 text-xs">{t('tabs.compare')}</TabsTrigger>
+              <TabsTrigger value="annotation" className="h-6 px-2 text-xs">{t('tabs.annotation')}</TabsTrigger>
+              <TabsTrigger value="attributes" className="h-6 px-2 text-xs">{t('tabs.attributes')}</TabsTrigger>
+              <TabsTrigger value="timeline" className="h-6 px-2 text-xs">{t('tabs.timeline')}</TabsTrigger>
+              <TabsTrigger value="score" className="h-6 px-2 text-xs">{t('tabs.score')}</TabsTrigger>
+            </TabsList>
+          </div>
 
             <TabsContent value="summary" className="m-0 min-h-0 flex-1 overflow-auto p-4">
               {!selectedTrace || !selectedNode ? (
@@ -796,6 +833,8 @@ export function ObservabilityDashboard() {
                   </div>
                   <DiagnosticSections diagnostics={selectedNodeDiagnostics} />
                   <Preview label={t('details.summary')} value={selectedNodeDiagnostics?.summary ?? selectedNode.summary ?? selectedNode.diagnosticPreview} />
+                  <Preview label={t('details.input')} value={selectedNodeDiagnostics?.inputPreview ?? selectedNode?.inputPreview} />
+                  <Preview label={t('details.output')} value={selectedNodeDiagnostics?.outputPreview ?? selectedNode?.outputPreview} />
                   {selectedNode.error && <ErrorPreview value={selectedNodeDiagnostics?.error ?? selectedNode.error} />}
                   <div className="rounded-md bg-surface-input p-3 text-2xs text-muted-foreground">
                     <div>{t('details.traceId')}: <span className="font-mono">{selectedTrace.id}</span></div>
@@ -1029,7 +1068,7 @@ function RunTreeView({
   const { t } = useTranslation('observability');
   const rows = useMemo(() => flattenGraphTree(graph), [graph]);
   return (
-    <div className="min-h-[520px] overflow-auto rounded-md border border-black/10 bg-background p-3 dark:border-white/10" data-testid="observability-run-tree">
+    <div className="min-h-[520px] overflow-auto bg-background p-3" data-testid="observability-run-tree">
       <div className="mb-3 flex items-center gap-2 text-sm font-medium">
         <ListTree className="h-4 w-4 text-muted-foreground" />
         {t('runTree.title')}
@@ -1041,9 +1080,9 @@ function RunTreeView({
             type="button"
             onClick={() => onSelectNode(node.id)}
             className={cn(
-              'grid w-full grid-cols-[minmax(0,1fr)_80px_70px] items-center gap-2 rounded-md border border-transparent px-2 py-2 text-left text-xs transition hover:border-black/10 hover:bg-black/[0.02] dark:hover:border-white/10 dark:hover:bg-white/[0.04]',
-              selectedNodeId === node.id && 'border-primary/35 bg-black/[0.03] dark:bg-white/[0.05]',
-              node.status === 'error' && 'border-red-500/30 bg-red-500/5',
+              'grid w-full grid-cols-[minmax(0,1fr)_80px_70px] items-center gap-2 rounded px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/[0.03] dark:hover:bg-white/[0.05]',
+              selectedNodeId === node.id && 'bg-black/[0.05] dark:bg-white/[0.08]',
+              node.status === 'error' && 'text-red-700 dark:text-red-400',
             )}
             data-testid="observability-run-tree-row"
           >
@@ -1090,7 +1129,7 @@ function SwimlaneView({
   }, [graph.nodes]);
 
   return (
-    <div className="min-h-[520px] overflow-auto rounded-md border border-black/10 bg-background p-3 dark:border-white/10" data-testid="observability-swimlane">
+    <div className="min-h-[520px] overflow-auto bg-background p-3" data-testid="observability-swimlane">
       <div className="mb-3 flex items-center gap-2 text-sm font-medium">
         <SplitSquareHorizontal className="h-4 w-4 text-muted-foreground" />
         {t('swimlane.title')}
@@ -1106,8 +1145,8 @@ function SwimlaneView({
                   type="button"
                   onClick={() => onSelectNode(node.id)}
                   className={cn(
-                    'min-w-[150px] max-w-[220px] rounded-md border border-black/10 bg-background px-3 py-2 text-left text-xs shadow-sm transition hover:bg-black/[0.02] dark:border-white/10 dark:hover:bg-white/[0.04]',
-                    selectedNodeId === node.id && 'ring-2 ring-primary/30',
+                    'min-w-[150px] max-w-[220px] rounded-md border border-border bg-background px-3 py-2 text-left text-xs transition-colors hover:bg-black/[0.03] dark:hover:bg-white/[0.05]',
+                    selectedNodeId === node.id && 'border-primary/40 bg-black/[0.04] dark:bg-white/[0.07]',
                     node.status === 'error' && 'border-red-500/35 bg-red-500/5',
                     node.critical && 'border-primary/30',
                   )}

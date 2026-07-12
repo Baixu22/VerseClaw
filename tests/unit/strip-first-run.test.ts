@@ -198,7 +198,7 @@ describe('ensureVerseClawIdentityFile', () => {
         '- **Vibe:**',
         '  _(how do you come across? sharp? warm? chaotic? calm?)_',
         '- **Emoji:**',
-        '  _(your signature â€?pick one that feels right)_',
+        '  _(your signature -pick one that feels right)_',
       ].join('\n'),
       'utf-8',
     );

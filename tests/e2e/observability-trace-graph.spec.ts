@@ -350,6 +350,10 @@ test.describe('Observability trace graph workbench', () => {
       window.location.hash = '/observability';
     });
     await expect(page.getByTestId('observability-page')).toBeVisible();
+    await expect(page.getByTestId('observability-primary-metrics')).toBeVisible();
+    await expect(page.getByTestId('observability-secondary-metrics')).toHaveCount(0);
+    await page.getByTestId('observability-metrics-toggle').click();
+    await expect(page.getByTestId('observability-secondary-metrics')).toBeVisible();
 
     await page.getByTestId('observability-trace-row').first().click();
     await expect(page.getByTestId('observability-trace-graph')).toBeVisible();
@@ -364,9 +368,12 @@ test.describe('Observability trace graph workbench', () => {
     // Drawer auto-opens from persisted selectedNodeId; close it so overlay does not block toolbar clicks
     await page.keyboard.press('Escape');
     await expect(page.getByTestId('observability-detail-panel')).toBeHidden();
+    await page.getByTestId('trace-graph-filter-toggle').click();
     await page.getByTestId('trace-graph-density-full').click();
     await expect(page.getByTestId('trace-graph-node-event')).toContainText('runtime.tick');
     await expect(page.getByTestId('observability-trace-graph')).toContainText('6/6');
+    await expect(page.getByTestId('trace-graph-minimap')).toHaveCount(0);
+    await page.getByTestId('trace-graph-minimap-toggle').click();
     await expect(page.getByTestId('trace-graph-minimap')).toBeVisible();
     // Node may be obscured by minimap; dispatch a native click via evaluate
     await page.getByTestId('trace-graph-node-tool').dispatchEvent('click');

@@ -28,6 +28,7 @@ import {
   Search,
   SendHorizontal,
   Shield,
+  Sparkles,
   Square,
   Target,
   Wrench,
@@ -393,17 +394,18 @@ function SlashCommandPalette({
       role="listbox"
       aria-label={t('composer.slashCommands.menuLabel')}
       data-testid="chat-slash-command-menu"
-      className="absolute bottom-full left-0 right-0 z-30 mb-2 max-h-[min(420px,calc(100vh-190px))] overflow-hidden rounded-lg border border-black/10 bg-surface-modal shadow-md dark:border-white/10 sm:right-auto sm:w-[520px]"
+      data-layout="compact-command-list"
+      className="absolute bottom-full left-0 right-0 z-30 mb-2 max-h-[min(480px,calc(100vh-168px))] overflow-hidden rounded-lg border border-border bg-surface-modal shadow-xl motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-150 motion-reduce:animate-none sm:right-auto sm:w-[min(680px,calc(100vw-3rem))]"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-black/5 px-3 py-2 dark:border-white/10">
+      <div className="flex items-center justify-between gap-3 border-b border-border px-3 py-2">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-input text-primary">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface-input text-muted-foreground">
               <Wrench className="h-3.5 w-3.5" />
             </span>
             <p className="truncate text-xs font-medium text-foreground">{t('composer.slashCommands.title')}</p>
           </div>
-          <p className="mt-1 truncate text-2xs leading-4 text-muted-foreground">
+          <p className="mt-0.5 truncate text-2xs leading-4 text-muted-foreground">
             {t('composer.slashCommands.subtitle')}
           </p>
         </div>
@@ -420,7 +422,7 @@ function SlashCommandPalette({
           </p>
         </div>
       ) : (
-        <div className="max-h-[340px] overflow-y-auto p-1">
+        <div className="max-h-[398px] overflow-y-auto p-1.5 [scrollbar-gutter:stable]">
           {showSkillFeedback && (
             <div>
               <div className="px-2 pb-1 pt-2" data-testid="chat-slash-command-group-skills">
@@ -450,11 +452,11 @@ function SlashCommandPalette({
             return (
               <div key={item.id}>
                 {showGroup && (
-                  <div className="px-2 pb-1 pt-2" data-testid={`chat-slash-command-group-${item.group}`}>
-                    <div className="text-2xs font-semibold uppercase tracking-wide text-muted-foreground/70">
+                  <div className="sticky top-0 z-10 bg-surface-modal/95 px-2 pb-1 pt-2 backdrop-blur-sm" data-testid={`chat-slash-command-group-${item.group}`}>
+                    <div className="text-2xs font-medium text-muted-foreground">
                       {t(`composer.slashCommands.groups.${item.group}`)}
                     </div>
-                    <div className="mt-0.5 truncate text-2xs leading-4 text-muted-foreground/55">
+                    <div className="sr-only">
                       {t(`composer.slashCommands.groupDescriptions.${item.group}`)}
                     </div>
                   </div>
@@ -472,8 +474,8 @@ function SlashCommandPalette({
                       aria-selected={selected}
                       data-testid={`chat-slash-command-option-${command.id}`}
                       className={cn(
-                        'flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors',
-                        selected ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-foreground hover:bg-black/5 dark:hover:bg-white/5',
+                        'flex min-h-10 w-full items-center gap-3 rounded-md px-2.5 py-1.5 text-left transition-[background-color,color] duration-150',
+                        selected ? 'bg-black/[0.07] text-foreground dark:bg-white/[0.11]' : 'text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
                       )}
                       onMouseEnter={() => onHover(index)}
                       onMouseDown={(event) => event.preventDefault()}
@@ -482,27 +484,27 @@ function SlashCommandPalette({
                       <span
                         data-testid={`chat-slash-command-icon-${command.id}`}
                         className={cn(
-                          'flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-surface-input text-muted-foreground',
+                          'flex h-7 w-7 shrink-0 items-center justify-center text-muted-foreground',
                           selected && 'text-primary',
                         )}
                       >
                         <SlashCommandIcon command={command} />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="flex min-w-0 items-center gap-1.5">
-                          <code className="shrink-0 rounded bg-surface-input px-1 py-0.5 font-mono text-2xs text-foreground">
-                            /{command.id}
-                          </code>
-                          <span className="min-w-0 truncate text-xs font-medium text-foreground">
+                        <span className="flex min-w-0 items-baseline gap-2">
+                          <span className="min-w-0 shrink-0 truncate text-sm font-medium text-foreground">
                             {t(`composer.slashCommands.commands.${command.id}.label`)}
                           </span>
+                          <code className="shrink-0 font-mono text-2xs text-muted-foreground">
+                            /{command.id}
+                          </code>
                           {argumentHint && (
                             <span className="hidden shrink-0 font-mono text-2xs text-muted-foreground sm:inline">
                               {argumentHint}
                             </span>
                           )}
                         </span>
-                        <span className="mt-0.5 block truncate text-2xs leading-4 text-muted-foreground">
+                        <span className="block truncate text-xs leading-4 text-muted-foreground">
                           {t(`composer.slashCommands.commands.${command.id}.description`)}
                         </span>
                       </span>
@@ -2975,8 +2977,9 @@ export function ChatInput({
               </Button>
               {actionMenuOpen && (
                 <div
-                  className="absolute bottom-full left-0 z-30 mb-2 w-[min(360px,calc(100vw-2rem))] overflow-hidden rounded-xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
+                  className="absolute bottom-full left-0 z-30 mb-2 max-h-[min(480px,calc(100vh-168px))] w-[min(680px,calc(100vw-2rem))] overflow-y-auto rounded-lg border border-border bg-surface-modal p-1.5 shadow-xl motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-150 motion-reduce:animate-none [scrollbar-gutter:stable]"
                   data-testid="chat-composer-actions-menu"
+                  data-layout="compact-command-list"
                 >
                   <ComposerActionGroup title={t('composer.actions.context')} testId="chat-composer-action-group-context">
                     <ComposerActionButton
@@ -3022,7 +3025,7 @@ export function ChatInput({
                       quickSkills.slice(0, 8).map((skill) => (
                         <ComposerActionButton
                           key={`${skill.source}:${skill.name}`}
-                          icon={Wrench}
+                          icon={Sparkles}
                           label={`/${skill.name}`}
                           description={skill.description}
                           testId={`chat-composer-action-skill-${skill.name}`}
@@ -4016,8 +4019,8 @@ function ComposerActionGroup({
   children: ReactNode;
 }) {
   return (
-    <section className="border-b border-black/5 py-1.5 last:border-b-0 dark:border-white/10" data-testid={testId}>
-      <div className="px-2.5 pb-1 text-tiny font-medium text-muted-foreground/80">{title}</div>
+    <section className="border-b border-border py-1.5 last:border-b-0" data-testid={testId}>
+      <div className="sticky top-0 z-10 bg-surface-modal/95 px-2.5 pb-1 pt-0.5 text-2xs font-medium text-muted-foreground backdrop-blur-sm">{title}</div>
       <div className="grid gap-0.5">{children}</div>
     </section>
   );
@@ -4042,7 +4045,7 @@ function ComposerActionButton({
     <button
       type="button"
       className={cn(
-        'flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium transition-colors',
+        'flex min-h-10 w-full items-center gap-3 rounded-md px-2.5 py-1.5 text-left text-xs font-medium transition-[background-color,color] duration-150',
         disabled
           ? 'cursor-not-allowed text-muted-foreground/40'
           : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
@@ -4051,10 +4054,12 @@ function ComposerActionButton({
       disabled={disabled}
       onClick={onClick}
     >
-      <Icon className="h-3.5 w-3.5 shrink-0" />
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center text-muted-foreground">
+        <Icon className="h-4 w-4" />
+      </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate">{label}</span>
-        {description && <span className="mt-0.5 block truncate text-tiny font-normal text-muted-foreground/70">{description}</span>}
+        <span className="inline truncate text-sm text-foreground">{label}</span>
+        {description && <span className="ml-2 inline truncate text-xs font-normal text-muted-foreground">{description}</span>}
       </span>
     </button>
   );

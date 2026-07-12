@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { LocateFixed, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,7 @@ export function TraceNodeDrawer({
   children,
 }: TraceNodeDrawerProps) {
   const { t } = useTranslation('observability');
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (!open) return;
@@ -40,23 +41,23 @@ export function TraceNodeDrawer({
       {open && (
         <>
           <motion.div
-            className="fixed inset-0 z-40 bg-black/30"
+            className="fixed inset-0 z-40 bg-black/15 backdrop-blur-[1px] dark:bg-black/40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: reduceMotion ? 0 : 0.18 }}
             onClick={onClose}
             data-testid="trace-drawer-overlay"
           />
           <motion.aside
-            className="fixed right-0 top-0 z-50 flex h-full w-[380px] flex-col border-l border-black/10 bg-background shadow-xl dark:border-white/10"
-            initial={{ x: '100%' }}
+            className="fixed right-0 top-0 z-50 flex h-full w-[min(420px,calc(100vw-16px))] flex-col border-l border-black/10 bg-surface-modal shadow-xl dark:border-white/10"
+            initial={{ x: reduceMotion ? 0 : '100%', opacity: reduceMotion ? 1 : 0.98 }}
             animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+            exit={{ x: reduceMotion ? 0 : '100%', opacity: reduceMotion ? 1 : 0.98 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
             data-testid="observability-detail-panel"
           >
-            <div className="flex items-center justify-between gap-2 border-b border-black/10 px-4 py-3 dark:border-white/10">
+            <div className="flex min-h-14 items-center justify-between gap-2 border-b border-black/10 px-4 py-3 dark:border-white/10">
               <div className="flex min-w-0 items-center gap-2">
                 {statusIcon}
                 <div className="min-w-0">

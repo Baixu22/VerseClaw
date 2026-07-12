@@ -554,6 +554,8 @@
         "sendToComposer": "发送到对话框",
         "captureAndSend": "截图并发送",
         "capturing": "截图中",
+        "back": "后退",
+        "forward": "前进",
         "refresh": "刷新",
         "openExternal": "在外部打开",
         "openAgentBrowser": "用 Agent Browser 打开",
@@ -565,7 +567,9 @@
       "browser": {
         "placeholder": "启动预览后会加载 URL",
         "title": "Workspace 预览",
-        "agentBrowserActive": "Agent"
+        "agentBrowserActive": "Agent",
+        "menu": "浏览器菜单",
+        "pageActions": "页面操作"
       },
       "selection": {
         "selected": "已选择"

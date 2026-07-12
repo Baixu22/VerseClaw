@@ -20,6 +20,18 @@ vi.mock('@/lib/file-preview-client', () => ({
 }));
 
 describe('ChatMessage attachment dedupe', () => {
+  it('renders the assistant avatar in a fully clipped stable slot', () => {
+    render(
+      <ChatMessage
+        message={{ id: 'assistant-avatar', role: 'assistant', content: 'Avatar check' }}
+      />,
+    );
+
+    const avatar = screen.getByTestId('chat-assistant-avatar');
+    expect(avatar).toHaveClass('h-8', 'w-8', 'overflow-hidden', 'rounded-full');
+    expect(avatar.querySelector('img')).toHaveClass('h-full', 'w-full', 'object-cover');
+  });
+
   it('keeps attachment-only assistant replies visible even when process attachments are suppressed', () => {
     const message: RawMessage = {
       role: 'assistant',

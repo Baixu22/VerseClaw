@@ -4,6 +4,9 @@ import type {
   AgentBrowserActionResult,
   AgentBrowserCommandPayload,
   AgentBrowserCommandResult,
+  AgentBrowserCredentialPayload,
+  AgentBrowserCredentialResult,
+  AgentBrowserCredentialSavePayload,
   AgentBrowserEvaluatePayload,
   AgentBrowserEvaluateResult,
   AgentBrowserNavigatePayload,
@@ -17,9 +20,14 @@ import type {
   AgentBrowserSessionPayload,
   AgentBrowserSessionResult,
   AgentBrowserStatusResult,
+  AgentBrowserTaskCreatePayload,
+  AgentBrowserTaskPayload,
+  AgentBrowserTaskResult,
+  AgentBrowserTasksResult,
   AgentBrowserTypePayload,
   AgentBrowserValidatePayload,
   AgentBrowserValidateResult,
+  AgentBrowserVaultResult,
   AgentBootstrapUpdatePayload,
   AgentDevCreateConversationPayload,
   AgentDevCreateConversationResult,
@@ -51,8 +59,13 @@ import type {
   CapabilityPublicationQuery,
   CapabilityPublicationResult,
   ChannelAccountsPayload,
+  ChannelBindingDeletePayload,
+  ChannelBindingSavePayload,
+  ChannelRequiredAccountPayload,
   ChannelSaveConfigPayload,
+  ChannelSetEnabledPayload,
   ChannelTargetsPayload,
+  ChannelTypePayload,
   ChatSendWithMediaPayload,
   ClawGraphAbortPayload,
   ClawGraphCompileHostResult,
@@ -152,6 +165,7 @@ import type {
   KnowledgeReviewDraftPayload,
   KnowledgeRouteContextPayload,
   KnowledgeRouteContextResult,
+  KnowledgeRuntimeLessonsReportResult,
   KnowledgeSearchPayload,
   KnowledgeSearchResult,
   KnowledgeSaveSourceSetPayload,
@@ -171,6 +185,7 @@ import type {
   KnowledgeListWatchedDirectoryEventsPayload,
   KnowledgeWatchedDirectoryConfig,
   KnowledgeWatchedDirectoryEvent,
+  LogMemoryPayload,
   LocalControlPlaneCorrelationFilter,
   LocalControlPlaneCorrelationsResult,
   LocalControlPlaneReportFilter,
@@ -257,7 +272,8 @@ import type {
   SessionCompactionStatusResult,
   SessionExpandSelectorPayload,
   SessionExpandSelectorResult,
-  SessionEmptyArchivePayload,  SessionForkPayload,
+  SessionEmptyArchivePayload,
+  SessionForkPayload,
   SessionForkResult,
   SessionHandoffPayload,
   SessionHandoffResult,
@@ -276,7 +292,8 @@ import type {
   SessionRecallOriginalPayload,
   SessionRecallOriginalResult,
   SessionRecoveryContextPayload,
-  SessionRecoveryContextResult,  SessionResumeCheckpointsResult,
+  SessionRecoveryContextResult,
+  SessionResumeCheckpointsResult,
   SessionTruncatePayload,
   SessionTruncateResult,
   WorkProviderRunPayload,
@@ -415,6 +432,7 @@ export type {
   KnowledgeRouteCandidateGroup,
   KnowledgeRouteCandidateGroupKey,
   KnowledgeRouteContextResult,
+  KnowledgeRuntimeLessonsReportResult,
   KnowledgeErrorGuardAdvisory,
   KnowledgeErrorGuardSignal,
   KnowledgeMatchErrorExperienceResult,
@@ -544,6 +562,11 @@ export const hostApi = {
     maximize: () => invokeHost('window', 'maximize'),
     close: () => invokeHost('window', 'close'),
     isMaximized: () => invokeHost('window', 'isMaximized'),
+  },
+  updates: {
+    check: () => invokeHost('updates', 'check'),
+    download: () => invokeHost('updates', 'download'),
+    install: () => invokeHost('updates', 'install'),
   },
   uv: {
     installAll: () => invokeHost('uv', 'installAll'),
@@ -709,6 +732,24 @@ export const hostApi = {
       invokeHost('agentBrowser', 'screenshot', input),
     command: (input: AgentBrowserCommandPayload): Promise<AgentBrowserCommandResult> =>
       invokeHost('agentBrowser', 'command', input),
+    tasks: (): Promise<AgentBrowserTasksResult> => invokeHost('agentBrowser', 'tasks'),
+    createTask: (input: AgentBrowserTaskCreatePayload): Promise<AgentBrowserTaskResult> =>
+      invokeHost('agentBrowser', 'createTask', input),
+    runTask: (input: AgentBrowserTaskPayload): Promise<AgentBrowserTaskResult> =>
+      invokeHost('agentBrowser', 'runTask', input),
+    retryTask: (input: AgentBrowserTaskPayload): Promise<AgentBrowserTaskResult> =>
+      invokeHost('agentBrowser', 'retryTask', input),
+    cancelTask: (input: AgentBrowserTaskPayload): Promise<AgentBrowserTaskResult> =>
+      invokeHost('agentBrowser', 'cancelTask', input),
+    show: (input: AgentBrowserSessionPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'show', input),
+    hide: (input: AgentBrowserSessionPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'hide', input),
+    vault: (): Promise<AgentBrowserVaultResult> => invokeHost('agentBrowser', 'vault'),
+    saveCredential: (input: AgentBrowserCredentialSavePayload): Promise<AgentBrowserCredentialResult> =>
+      invokeHost('agentBrowser', 'saveCredential', input),
+    deleteCredential: (input: AgentBrowserCredentialPayload) =>
+      invokeHost('agentBrowser', 'deleteCredential', input),
     close: (input: AgentBrowserSessionPayload) => invokeHost('agentBrowser', 'close', input),
   },
   mcp: {
@@ -735,7 +776,9 @@ export const hostApi = {
   },
   logs: {
     recent: (tailLines = 100) => invokeHost('logs', 'recent', { tailLines }),
+    memory: (input?: LogMemoryPayload) => invokeHost('logs', 'memory', input),
     dir: () => invokeHost('logs', 'dir'),
+    filePath: () => invokeHost('logs', 'filePath'),
     listFiles: () => invokeHost('logs', 'listFiles'),
     readFile: (path: string, tailLines?: number) => (
       invokeHost('logs', 'readFile', { path, tailLines })
@@ -773,10 +816,25 @@ export const hostApi = {
       invokeHost('channels', 'targets', input)
     ),
     configured: () => invokeHost('channels', 'configured'),
+    setDefaultAccount: (input: ChannelRequiredAccountPayload) => (
+      invokeHost('channels', 'setDefaultAccount', input)
+    ),
+    bindingSave: (input: ChannelBindingSavePayload) => (
+      invokeHost('channels', 'bindingSave', input)
+    ),
+    bindingDelete: (input: ChannelBindingDeletePayload) => (
+      invokeHost('channels', 'bindingDelete', input)
+    ),
+    validateConfig: (input: ChannelTypePayload) => (
+      invokeHost('channels', 'validateConfig', input)
+    ),
     formValues: (channelType: string, accountId?: string) => (
       invokeHost('channels', 'formValues', { channelType, accountId })
     ),
     saveConfig: (input: ChannelSaveConfigPayload) => invokeHost('channels', 'saveConfig', input),
+    setEnabled: (input: ChannelSetEnabledPayload) => (
+      invokeHost('channels', 'setEnabled', input)
+    ),
     deleteConfig: (channelType: string, accountId?: string) => (
       invokeHost('channels', 'deleteConfig', { channelType, accountId })
     ),
@@ -988,6 +1046,7 @@ export const hostApi = {
     ),
     expandSelector: (input: SessionExpandSelectorPayload): Promise<SessionExpandSelectorResult> => (
       invokeHost('sessions', 'expandSelector', input)
+    ),
     compressionArtifact: (
       input: SessionCompressionArtifactPayload,
     ): Promise<SessionCompressionArtifactResult> => (
@@ -996,7 +1055,8 @@ export const hostApi = {
     recoveryContext: (
       input: SessionRecoveryContextPayload,
     ): Promise<SessionRecoveryContextResult> => (
-      invokeHost('sessions', 'recoveryContext', input)    ),
+      invokeHost('sessions', 'recoveryContext', input)
+    ),
     longTaskControlStatus: (
       input: SessionLongTaskControlPayload,
     ): Promise<SessionLongTaskControlStatusResult> => (
@@ -1148,6 +1208,9 @@ export const hostApi = {
     ),
     routeContext: (input: KnowledgeRouteContextPayload): Promise<KnowledgeRouteContextResult> => (
       invokeHost('knowledge', 'routeContext', input)
+    ),
+    runtimeLessonsReport: (): Promise<KnowledgeRuntimeLessonsReportResult> => (
+      invokeHost('knowledge', 'runtimeLessonsReport')
     ),
     matchErrorExperience: (input: KnowledgeMatchErrorExperiencePayload): Promise<KnowledgeMatchErrorExperienceResult> => (
       invokeHost('knowledge', 'matchErrorExperience', input)

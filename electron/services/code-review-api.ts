@@ -32,7 +32,7 @@ import { getActiveWorkspaceProfile } from './workspaces-api';
 import { isPathInsideWorkspace, requireWorkspace } from './workspace-permissions';
 import { appendTaskLedgerEvents } from './task-ledger-service';
 import { upsertObservabilityTrace } from './observability-service';
-import { redactSecrets } from '../../openclaw_runtime/src/logging/redact.js';
+import { redactSecrets } from '@openclaw/runtime-redaction';
 
 type ExecResult = {
   exitCode: number | null;

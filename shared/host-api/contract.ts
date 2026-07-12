@@ -199,6 +199,13 @@ export type {
 
 export type JsonRecord = Record<string, unknown>;
 export type HostSuccess = { success: boolean; error?: string };
+export type AppUpdateStatus = {
+  status: 'available' | 'not-available' | 'downloaded' | 'error';
+  version?: string;
+};
+export type AppUpdateStatusResult = HostSuccess & {
+  status: AppUpdateStatus;
+};
 export type OptionalHostSuccess = { success?: boolean; error?: string };
 
 export type OpenClawDoctorMode = 'diagnose' | 'fix';
@@ -947,6 +954,60 @@ export type AgentBrowserCommandResult = HostSuccess & {
   stdout: string;
   stderr: string;
   command: string[];
+};
+export type AgentBrowserTaskStatus =
+  | 'queued'
+  | 'running'
+  | 'waiting-approval'
+  | 'paused'
+  | 'completed'
+  | 'failed'
+  | 'cancelled';
+export type AgentBrowserTask = {
+  id: string;
+  name: string;
+  url: string;
+  objective: string;
+  successCondition?: string;
+  profile: string;
+  mode: AgentBrowserSessionMode;
+  allowedDomains?: string[];
+  status: AgentBrowserTaskStatus;
+  retryCount: number;
+  createdAt: string;
+  updatedAt: string;
+  sessionId?: string;
+  runId?: string;
+  error?: string;
+};
+export type AgentBrowserTaskCreatePayload = Pick<
+  AgentBrowserTask,
+  'name' | 'url' | 'objective' | 'successCondition' | 'profile' | 'mode' | 'allowedDomains'
+>;
+export type AgentBrowserTaskPayload = { taskId: string };
+export type AgentBrowserTasksResult = HostSuccess & { tasks: AgentBrowserTask[] };
+export type AgentBrowserTaskResult = HostSuccess & { task: AgentBrowserTask };
+export type AgentBrowserCredentialMetadata = {
+  id: string;
+  profile: string;
+  origin: string;
+  username: string;
+  createdAt: string;
+  updatedAt: string;
+};
+export type AgentBrowserCredentialSavePayload = {
+  id?: string;
+  profile: string;
+  origin: string;
+  username: string;
+  password: string;
+};
+export type AgentBrowserCredentialPayload = { credentialId: string };
+export type AgentBrowserVaultResult = HostSuccess & {
+  credentials: AgentBrowserCredentialMetadata[];
+};
+export type AgentBrowserCredentialResult = HostSuccess & {
+  credential: AgentBrowserCredentialMetadata;
 };
 
 export type McpServerListResult = HostSuccess & {
@@ -2315,6 +2376,35 @@ export type KnowledgeRouteContextResult = HostSuccess & {
   };
 };
 
+export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'reportFailed';
+  counts: {
+    trajectories: number;
+    undistilledTrajectories: number;
+    activePrinciples: number;
+  };
+  undistilled: Array<{
+    trajectory_id: string;
+    created_at: string;
+    task_intent: string;
+    task_type: string;
+    context_fingerprint: string[];
+    outcome: 'success' | 'failure' | 'partial';
+    error_signature: string | null;
+  }>;
+  activePrinciples: Array<{
+    principle_id: string;
+    title: string;
+    task_types: string[];
+    context_tags: string[];
+    criticality: 'low' | 'medium' | 'high' | 'critical';
+    retrieval_count: number;
+    adoption_count: number;
+  }>;
+  indexPreview: string;
+};
+
 export type KnowledgeConfigurePayload = {
   vaultPath?: string;
   renderMode?: 'native' | 'obsidian';
@@ -3568,6 +3658,11 @@ export type HostApiContract = {
     close: () => void;
     isMaximized: () => boolean;
   };
+  updates: {
+    check: () => AppUpdateStatusResult;
+    download: () => AppUpdateStatusResult;
+    install: () => HostSuccess;
+  };
   uv: {
     installAll: () => HostSuccess;
   };
@@ -3695,6 +3790,16 @@ export type HostApiContract = {
     evaluate: (payload: AgentBrowserEvaluatePayload) => AgentBrowserEvaluateResult;
     screenshot: (payload: AgentBrowserScreenshotPayload) => AgentBrowserScreenshotResult;
     command: (payload: AgentBrowserCommandPayload) => AgentBrowserCommandResult;
+    tasks: () => AgentBrowserTasksResult;
+    createTask: (payload: AgentBrowserTaskCreatePayload) => AgentBrowserTaskResult;
+    runTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
+    retryTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
+    cancelTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
+    show: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;
+    hide: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;
+    vault: () => AgentBrowserVaultResult;
+    saveCredential: (payload: AgentBrowserCredentialSavePayload) => AgentBrowserCredentialResult;
+    deleteCredential: (payload: AgentBrowserCredentialPayload) => HostSuccess;
     close: (payload: AgentBrowserSessionPayload) => HostSuccess;
   };
   mcp: {
@@ -3897,6 +4002,7 @@ export type HostApiContract = {
     stewardConfigGet: () => KnowledgeStewardConfigGetResult;
     stewardConfigUpdate: (payload: KnowledgeStewardConfigUpdatePayload) => KnowledgeStewardConfigUpdateResult;
     routeContext: (payload: KnowledgeRouteContextPayload) => KnowledgeRouteContextResult;
+    runtimeLessonsReport: () => KnowledgeRuntimeLessonsReportResult;
     matchErrorExperience: (payload: KnowledgeMatchErrorExperiencePayload) => KnowledgeMatchErrorExperienceResult;
     updateErrorExperienceEffectiveness: (payload: KnowledgeUpdateErrorExperienceEffectivenessPayload) => KnowledgeUpdateErrorExperienceEffectivenessResult;
     recordKnowledgeReference: (payload: KnowledgeRecordReferencePayload) => KnowledgeProvenanceResult;

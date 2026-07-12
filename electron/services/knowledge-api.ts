@@ -3,10 +3,11 @@ import { createHash, randomUUID } from 'node:crypto';
 import { existsSync, watch as fsWatch, type Dirent, type FSWatcher } from 'node:fs';
 import { mkdir, readFile, readdir, writeFile, appendFile, stat, unlink } from 'node:fs/promises';
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
-import { expandPath, getOpenClawConfigDir } from '../utils/paths';
+import { expandPath, getOpenClawConfigDir, getOpenClawRuntimeDir } from '../utils/paths';
 import { isRecord } from './payload-utils';
 import type {
   HostSuccess,
@@ -16,6 +17,7 @@ import type {
   KnowledgeRouteCandidate,
   KnowledgeRouteContextPayload,
   KnowledgeRouteContextResult,
+  KnowledgeRuntimeLessonsReportResult,
   KnowledgeChangeOperation,
   KnowledgeChangeProposal,
   KnowledgeCreateDraftPayload,
@@ -127,6 +129,18 @@ type KnowledgeIngestItemRecord = {
   title?: string;
   bytes?: number;
   created?: boolean;
+};
+
+type RuntimeLessonsReporter = () => Promise<KnowledgeRuntimeLessonsReportResult>;
+
+const EMPTY_RUNTIME_LESSONS_REPORT: Omit<
+  KnowledgeRuntimeLessonsReportResult,
+  'success' | 'available' | 'reason'
+> = {
+  counts: { trajectories: 0, undistilledTrajectories: 0, activePrinciples: 0 },
+  undistilled: [],
+  activePrinciples: [],
+  indexPreview: '',
 };
 
 type OkfMarkdownFile = {
@@ -2053,7 +2067,44 @@ export function mergeSemanticReview(
   return { type: mergedType, tags: mergedTags, warnings: mergedWarnings, notes: mergedNotes };
 }
 
-export function createKnowledgeApi({ gatewayManager }: { gatewayManager: GatewayManager }): CompleteHostServiceRegistry['knowledge'] {
+async function defaultRuntimeLessonsReporter(): Promise<KnowledgeRuntimeLessonsReportResult> {
+  const entryPath = join(getOpenClawRuntimeDir(), 'dist', 'knowledge', 'sekb', 'index.js');
+  if (!existsSync(entryPath)) {
+    return {
+      success: true,
+      available: false,
+      reason: 'runtimeUnavailable',
+      ...EMPTY_RUNTIME_LESSONS_REPORT,
+    };
+  }
+
+  try {
+    const sekb = await import(pathToFileURL(entryPath).href) as {
+      KnowledgeStore: new () => unknown;
+      buildSekbOperatorReport: (
+        store: unknown,
+      ) => Omit<KnowledgeRuntimeLessonsReportResult, 'success' | 'available' | 'reason'>;
+    };
+    const report = sekb.buildSekbOperatorReport(new sekb.KnowledgeStore());
+    return { success: true, available: true, ...report };
+  } catch (error) {
+    return {
+      success: false,
+      available: false,
+      reason: 'reportFailed',
+      error: error instanceof Error ? error.message : String(error),
+      ...EMPTY_RUNTIME_LESSONS_REPORT,
+    };
+  }
+}
+
+export function createKnowledgeApi({
+  gatewayManager,
+  runtimeLessonsReporter = defaultRuntimeLessonsReporter,
+}: {
+  gatewayManager: GatewayManager;
+  runtimeLessonsReporter?: RuntimeLessonsReporter;
+}): CompleteHostServiceRegistry['knowledge'] {
   const rpc = <T>(method: string, params: unknown = {}, timeoutMs = 30_000) =>
     gatewayManager.rpc(method, params, timeoutMs) as Promise<T>;
 
@@ -3394,6 +3445,10 @@ export function createKnowledgeApi({ gatewayManager }: { gatewayManager: Gateway
         };
       }
     },
+
+    runtimeLessonsReport: async (): Promise<KnowledgeRuntimeLessonsReportResult> => (
+      runtimeLessonsReporter()
+    ),
 
     matchErrorExperience: async (payload) => {
       try {

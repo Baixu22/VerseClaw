@@ -163,6 +163,9 @@ describe('WorkContextBar', () => {
 
     const panel = screen.getByTestId('work-context-bar');
     expect(panel).toHaveClass('bg-surface-modal');
+    expect(panel).toHaveClass('isolate');
+    expect(panel).not.toHaveClass('backdrop-blur');
+    expect(panel).toHaveClass('motion-safe:animate-in');
     expect(panel).toHaveTextContent('Environment');
     expect(panel).toHaveTextContent('Demo Workspace');
     expect(panel).toHaveTextContent('feature/context-bar');

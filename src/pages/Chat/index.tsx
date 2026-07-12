@@ -494,7 +494,7 @@ function ProjectSessionHeader({
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </button>
         {open === 'workspace' && (
-          <div className="absolute left-0 top-full z-30 mt-1 w-72 overflow-hidden rounded-lg border border-black/10 bg-surface-modal p-1 shadow-md dark:border-white/10">
+          <div className="absolute left-0 top-full z-30 mt-1 w-72 origin-top-left overflow-hidden rounded-lg border border-black/10 bg-surface-modal p-1 shadow-md motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 dark:border-white/10">
             <div className="px-2 pb-0.5 pt-1.5 text-2xs font-medium uppercase tracking-wide text-muted-foreground/60">{t('workspace.recent')}</div>
             {sortedWorkspaces.map((workspace) => (
               <button
@@ -577,7 +577,7 @@ function ProjectSessionHeader({
           </button>
         )}
         {open === 'session' && (
-          <div className="absolute left-0 top-full z-30 mt-1 w-80 overflow-hidden rounded-lg border border-black/10 bg-surface-modal p-1 shadow-md dark:border-white/10">
+            <div className="absolute left-0 top-full z-30 mt-1 w-80 origin-top-left overflow-hidden rounded-lg border border-black/10 bg-surface-modal p-1 shadow-md motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 dark:border-white/10">
             <button
               type="button"
               className="mb-0.5 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
@@ -1058,7 +1058,7 @@ export function Chat() {
     setKnowledgeScope('none');
   }, [activeWorkspace?.id, activeWorkspace?.permissionMode, currentSessionKey, persistCurrentWorkspaceSessionState]);
 
-  // Callback for file cards in chat messages 鈥?opens the in-app preview
+  // Callback for file cards in chat messages - opens the in-app preview
   // panel instead of the system default editor.
   const handleOpenAttachedFile = useCallback((file: AttachedFileMeta) => {
     if (!file.filePath) return;
@@ -2914,7 +2914,8 @@ export function Chat() {
           <aside
             data-testid="artifact-panel-aside"
             className={cn(
-              'absolute inset-y-0 right-0 z-30 flex shrink-0 flex-col border-l border-black/5 shadow-2xl dark:border-white/10 xl:relative xl:z-20 xl:shadow-none',
+              'absolute inset-y-0 right-0 z-30 flex shrink-0 flex-col border-l border-black/5 bg-surface-modal shadow-2xl dark:border-white/10 xl:relative xl:z-20 xl:shadow-none',
+              'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-4 motion-safe:duration-[250ms] motion-reduce:transition-none',
               isMac && 'no-drag',
             )}
             style={{ width: `min(100%, clamp(22rem, ${boundedPanelWidthPct}%, 44rem))` }}

@@ -110,7 +110,7 @@ describe('ChatAgentEffortButton', () => {
     const popover = await screen.findByTestId('chat-agent-effort-popover');
     const card = popover.querySelector('.effort-card') as HTMLElement;
     expect(card).toBeTruthy();
-    expect(card.className).toContain('rounded-xl');
+    expect(card.className).toContain('rounded-lg');
     expect(card.className).toContain('bg-surface-modal');
     expect(card.className).not.toContain('bg-[#18181b]');
   });
@@ -131,11 +131,21 @@ describe('ChatAgentEffortButton', () => {
     expect(card.style.clipPath).toBe('');
   });
 
+  it('mounts the theme-aware fire trail on the real effort track', async () => {
+    renderButton();
+    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
+    const track = await screen.findByTestId('chat-agent-effort-track');
+    const canvas = screen.getByTestId('chat-agent-effort-fire');
+
+    expect(track).toHaveClass('h-9', 'sm:h-10', 'effort-track-active');
+    expect(canvas).toHaveClass('mix-blend-multiply', 'dark:mix-blend-screen', 'motion-reduce:hidden');
+    expect(canvas.style.maskImage).toContain('linear-gradient');
+  });
+
   it('shows all 7 tick labels under the track', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     await screen.findByTestId('chat-agent-effort-slider');
-    const popover = screen.getByTestId('chat-agent-effort-popover');
     const tickContainer = screen.getByTestId('chat-agent-effort-ticks');
     expect(tickContainer).toBeTruthy();
     const ticks = tickContainer.querySelectorAll('span');

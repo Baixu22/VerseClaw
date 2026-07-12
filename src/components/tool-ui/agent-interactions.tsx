@@ -14,6 +14,10 @@ import { StackTrace, type StackTraceProps } from '@/components/ai-elements/stack
 import { ChainOfThought, type ChainOfThoughtStep } from '@/components/ai-elements/chain-of-thought';
 import { Task as AiTask, type TaskItem } from '@/components/ai-elements/task';
 import { Reasoning } from '@/components/ai-elements/reasoning';
+import { ApprovalCard } from './approval-card';
+import { CodeDiff } from './code-diff';
+import { ProgressTracker } from './progress-tracker';
+import { Terminal } from './terminal';
 
 type PlanTodoStatus = ToolUiPlanTodoStatus;
 
@@ -277,6 +281,53 @@ type ReasoningInteraction = {
   loading?: boolean;
 };
 
+type ApprovalCardInteraction = {
+  type: 'approval-card';
+  id: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  metadata?: Array<{ key: string; value: string }>;
+  variant?: 'default' | 'destructive';
+  confirmLabel?: string;
+  cancelLabel?: string;
+  choice?: 'approved' | 'denied';
+};
+
+type TerminalInteraction = {
+  type: 'terminal';
+  id: string;
+  command: string;
+  stdout?: string;
+  stderr?: string;
+  exitCode?: number;
+  durationMs?: number;
+  cwd?: string;
+  truncated?: boolean;
+};
+
+type CodeDiffInteraction = {
+  type: 'code-diff';
+  id: string;
+  oldCode?: string;
+  newCode?: string;
+  patch?: string;
+  language: string;
+  filename?: string;
+};
+
+type ProgressTrackerInteraction = {
+  type: 'progress-tracker';
+  id: string;
+  steps: Array<{
+    id: string;
+    label: string;
+    description?: string;
+    status: 'pending' | 'in-progress' | 'completed' | 'failed';
+  }>;
+  elapsedTime?: number;
+};
+
 export type ToolUiInteraction =
   | PlanInteraction
   | OptionListInteraction
@@ -297,7 +348,11 @@ export type ToolUiInteraction =
   | StackTraceInteraction
   | ChainOfThoughtInteraction
   | TaskInteraction
-  | ReasoningInteraction;
+  | ReasoningInteraction
+  | ApprovalCardInteraction
+  | TerminalInteraction
+  | CodeDiffInteraction
+  | ProgressTrackerInteraction;
 
 type ToolUseLike = {
   id?: string;
@@ -411,6 +466,10 @@ function normalizeInteractionType(value: unknown, payload: Record<string, unknow
   if (normalized === 'chain-of-thought' || normalized === 'cot' || normalized === 'reasoning-steps' || normalized === 'thought-chain') return 'chain-of-thought';
   if (normalized === 'task' || normalized === 'task-card' || normalized === 'task-report') return 'task';
   if (normalized === 'reasoning' || normalized === 'thinking' || normalized === 'thought') return 'reasoning';
+  if (normalized === 'approval-card' || normalized === 'approval') return 'approval-card';
+  if (normalized === 'terminal' || normalized === 'terminal-output') return 'terminal';
+  if (normalized === 'code-diff' || normalized === 'diff') return 'code-diff';
+  if (normalized === 'progress-tracker' || normalized === 'run-progress') return 'progress-tracker';
   // Shape-based fallbacks
   if (Array.isArray(payload.suites) || (isRecord(payload.summary) && Array.isArray(payload.tests))) return 'test-results';
   if (typeof payload.stack === 'string' || typeof payload.trace === 'string') return 'stack-trace';
@@ -1181,6 +1240,103 @@ function parseReasoning(payload: Record<string, unknown>, fallbackId: string): R
   };
 }
 
+function parseApprovalCard(
+  payload: Record<string, unknown>,
+  fallbackId: string,
+): ApprovalCardInteraction | null {
+  const title = asString(payload.title);
+  if (!title) return null;
+  const metadata = Array.isArray(payload.metadata)
+    ? payload.metadata.flatMap((entry) => {
+      if (!isRecord(entry)) return [];
+      const key = asString(entry.key);
+      const value = asString(entry.value);
+      return key && value != null ? [{ key, value }] : [];
+    })
+    : undefined;
+  const variant = payload.variant === 'destructive' ? 'destructive' : undefined;
+  const choice = payload.choice === 'approved' || payload.choice === 'denied'
+    ? payload.choice
+    : undefined;
+  return {
+    type: 'approval-card',
+    id: asString(payload.id) ?? fallbackId,
+    title,
+    description: asString(payload.description),
+    icon: asString(payload.icon),
+    metadata,
+    variant,
+    confirmLabel: asString(payload.confirmLabel),
+    cancelLabel: asString(payload.cancelLabel),
+    choice,
+  };
+}
+
+function parseTerminal(payload: Record<string, unknown>, fallbackId: string): TerminalInteraction | null {
+  const command = asString(payload.command);
+  if (!command) return null;
+  return {
+    type: 'terminal',
+    id: asString(payload.id) ?? fallbackId,
+    command,
+    stdout: asString(payload.stdout) ?? asString(payload.output),
+    stderr: asString(payload.stderr),
+    exitCode: asNumber(payload.exitCode),
+    durationMs: asNumber(payload.durationMs),
+    cwd: asString(payload.cwd),
+    truncated: asBoolean(payload.truncated),
+  };
+}
+
+function parseCodeDiff(payload: Record<string, unknown>, fallbackId: string): CodeDiffInteraction | null {
+  const patch = asString(payload.patch);
+  const oldCode = asString(payload.oldCode) ?? asString(payload.original);
+  const newCode = asString(payload.newCode) ?? asString(payload.modified);
+  if (!patch && oldCode == null && newCode == null) return null;
+  return {
+    type: 'code-diff',
+    id: asString(payload.id) ?? fallbackId,
+    patch,
+    oldCode,
+    newCode,
+    language: asString(payload.language) ?? 'text',
+    filename: asString(payload.filename) ?? asString(payload.filePath),
+  };
+}
+
+function parseProgressTracker(
+  payload: Record<string, unknown>,
+  fallbackId: string,
+): ProgressTrackerInteraction | null {
+  if (!Array.isArray(payload.steps) || payload.steps.length === 0) return null;
+  const steps = payload.steps.flatMap((entry, index) => {
+    if (!isRecord(entry)) return [];
+    const label = asString(entry.label) ?? asString(entry.title);
+    if (!label) return [];
+    const rawStatus = normalizeType(entry.status);
+    const status = rawStatus === 'running' || rawStatus === 'in-progress'
+      ? 'in-progress'
+      : rawStatus === 'completed' || rawStatus === 'complete' || rawStatus === 'success'
+        ? 'completed'
+        : rawStatus === 'failed' || rawStatus === 'error'
+          ? 'failed'
+          : 'pending';
+    return [{
+      id: asString(entry.id) ?? `step-${index + 1}`,
+      label,
+      description: asString(entry.description),
+      status,
+    }] satisfies ProgressTrackerInteraction['steps'];
+  });
+  if (steps.length === 0) return null;
+  return {
+    type: 'progress-tracker',
+    id: asString(payload.id) ?? fallbackId,
+    steps,
+    elapsedTime: asNumber(payload.elapsedTime) ?? asNumber(payload.durationMs),
+  };
+}
+
 export function parseToolUiInteraction(candidate: unknown, fallbackId = 'tool-ui'): ToolUiInteraction | null {
   const payload = unwrapCandidate(candidate);
   if (!payload) return null;
@@ -1205,6 +1361,10 @@ export function parseToolUiInteraction(candidate: unknown, fallbackId = 'tool-ui
   if (type === 'chain-of-thought') return parseChainOfThought(payload, fallbackId);
   if (type === 'task') return parseTask(payload, fallbackId);
   if (type === 'reasoning') return parseReasoning(payload, fallbackId);
+  if (type === 'approval-card') return parseApprovalCard(payload, fallbackId);
+  if (type === 'terminal') return parseTerminal(payload, fallbackId);
+  if (type === 'code-diff') return parseCodeDiff(payload, fallbackId);
+  if (type === 'progress-tracker') return parseProgressTracker(payload, fallbackId);
   return null;
 }
 
@@ -2936,6 +3096,37 @@ export function AgentInteractionRenderer({
                 {interaction.text}
               </Reasoning>
             );
+          case 'approval-card':
+            return (
+              <div key={key} data-testid="chat-tool-ui-approval">
+                <ApprovalCard
+                  {...interaction}
+                  onConfirm={() => onSubmitResponse?.(JSON.stringify({
+                    type: 'approval-card',
+                    id: interaction.id,
+                    action: 'approved',
+                  }, null, 2))}
+                  onCancel={() => onSubmitResponse?.(JSON.stringify({
+                    type: 'approval-card',
+                    id: interaction.id,
+                    action: 'denied',
+                  }, null, 2))}
+                />
+              </div>
+            );
+          case 'terminal':
+            return <Terminal key={key} {...interaction} />;
+          case 'code-diff':
+            return (
+              <CodeDiff
+                key={key}
+                {...interaction}
+                lineNumbers="visible"
+                diffStyle="unified"
+              />
+            );
+          case 'progress-tracker':
+            return <ProgressTracker key={key} {...interaction} />;
           default:
             return null;
         }

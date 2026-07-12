@@ -30,6 +30,7 @@ const extensionPackages = getExtensionPackages();
 export const localOpenClawRuntimeAliases = {
   '@openclaw/normalization-core': resolve(__dirname, 'openclaw_runtime/packages/normalization-core/src'),
   '@openclaw/acp-core': resolve(__dirname, 'openclaw_runtime/packages/acp-core/src'),
+  '@openclaw/runtime-redaction': resolve(__dirname, 'openclaw_runtime/src/logging/redact.ts'),
 };
 const bundledMainRuntimeDependencies = new Set([
   'json5',

@@ -49,6 +49,7 @@ import { createOpenClawApi } from '../services/openclaw-api';
 import { createShellApi } from '../services/shell-api';
 import { createDialogApi } from '../services/dialog-api';
 import { createWindowApi } from '../services/window-api';
+import { createUpdatesApi } from '../services/updates-api';
 import { createUvApi } from '../services/uv-api';
 import { createGatewayApi } from '../services/gateway-api';
 import { createLocalControlPlaneApi } from '../services/local-control-plane-api';
@@ -182,6 +183,7 @@ function registerTypedHostHandlers(
     shell: createShellApi(),
     dialog: createDialogApi(),
     window: createWindowApi(mainWindow),
+    updates: createUpdatesApi(),
     uv: createUvApi(),
     workspaces: createWorkspacesApi({ gatewayManager, terminalManager, webPreviewManager }),
     projectRules: createProjectRulesApi(),
