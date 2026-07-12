@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import process from 'node:process';
 import { buildContext, formatContext } from './context.mjs';
-import { getChangedFiles } from './git.mjs';
+import { getChangedFiles, resolveDiffBase } from './git.mjs';
 import { PROFILES, selectSteps } from './profiles.mjs';
 import { writeReport } from './report.mjs';
 import { runStep } from './runner.mjs';
@@ -81,7 +81,7 @@ async function validate(specPath, options = {}) {
   const scenario = spec.data.scenario ? await findScenario(spec.data.scenario) : null;
   const shouldCheckDiff = !options.noDiff && (options.checkDiff || Boolean(spec.data.scenario));
   const changedFiles = shouldCheckDiff
-    ? await getChangedFiles(options.since ?? 'origin/main')
+    ? await getChangedFiles(resolveDiffBase(options.since, spec.data.diffBase))
     : [];
   const failures = [];
 
