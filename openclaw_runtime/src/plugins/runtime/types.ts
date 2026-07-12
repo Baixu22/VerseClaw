@@ -76,6 +76,13 @@ export type RuntimeNodeInvokeParams = {
   idempotencyKey?: string;
 };
 
+export type RuntimeAgentBrowserInvokeParams = {
+  action: string;
+  payload: Record<string, unknown>;
+  timeoutMs?: number;
+  signal?: AbortSignal;
+};
+
 /** Trusted in-process runtime surface injected into native plugins. */
 export type PluginRuntime = PluginRuntimeCore & {
   subagent: {
@@ -91,6 +98,9 @@ export type PluginRuntime = PluginRuntimeCore & {
   nodes: {
     list: (params?: RuntimeNodeListParams) => Promise<RuntimeNodeListResult>;
     invoke: (params: RuntimeNodeInvokeParams) => Promise<unknown>;
+  };
+  agentBrowser: {
+    invoke: (params: RuntimeAgentBrowserInvokeParams) => Promise<unknown>;
   };
   channel: PluginRuntimeChannel;
 };

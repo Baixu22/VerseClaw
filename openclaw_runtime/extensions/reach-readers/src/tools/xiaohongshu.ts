@@ -19,6 +19,7 @@ import { commandError, runReachCommand } from '../core/command.js';
 import { canHandle, orderedBackends, selectBackend } from '../core/router.js';
 import { getConfig } from '../core/config.js';
 import type { Availability, BackendFinding } from '../types.js';
+import { createBrowserLoginRequired } from '../core/browser-bridge.js';
 
 const DOMAINS = ['xiaohongshu.com', 'xhslink.com'] as const;
 const DEFAULT_BACKENDS = ['OpenCLI', 'xiaohongshu-mcp', 'xhs-cli (xiaohongshu-cli)'] as const;
@@ -292,7 +293,7 @@ export const xiaohongshuReadTool: AnyAgentTool = {
     note_id: Schema.optional(Schema.string('action=note/comments 时的笔记 ID')),
     limit: Schema.optional(Schema.integer({ description: '最大条数（默认 10）', minimum: 1 })),
   }),
-  async execute(_id, args) {
+  async execute(_id, args, signal) {
     const params = asToolParamsRecord(args);
     const action = (readStringParam(params, 'action') || 'search') as (typeof ACTIONS)[number];
     const limit = readOptionalInt(params, 'limit', { min: 1, max: 50 }) ?? 10;
@@ -320,7 +321,22 @@ export const xiaohongshuReadTool: AnyAgentTool = {
           return errorResult(`unknown action: ${action}`);
       }
     } catch (e) {
-      return errorResult(String(e instanceof Error ? e.message : e), { action });
+      const originalError = String(e instanceof Error ? e.message : e);
+      const policy = getConfig().get<string>('browser_fallback', 'auto');
+      if (policy === 'off') return errorResult(originalError, { action, browserFallback: 'disabled' });
+      try {
+        const handoff = await createBrowserLoginRequired({
+          loginUrl: 'https://www.xiaohongshu.com/login',
+          profile: getConfig().get<string>('browser_profile', 'default') ?? 'default',
+          retryTool: { name: 'xiaohongshu_read', arguments: params },
+          signal,
+        });
+        return handoff
+          ? jsonResult({ success: false, ...handoff })
+          : errorResult(originalError, { action, browserFallback: 'unavailable' });
+      } catch {
+        return errorResult(originalError, { action, browserFallback: 'unavailable' });
+      }
     }
   },
 };

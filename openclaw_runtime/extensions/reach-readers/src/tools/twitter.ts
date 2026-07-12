@@ -18,6 +18,7 @@ import { commandError, runReachCommand } from '../core/command.js';
 import { canHandle, orderedBackends, selectBackend } from '../core/router.js';
 import { getConfig } from '../core/config.js';
 import type { Availability, BackendFinding } from '../types.js';
+import { createBrowserLoginRequired } from '../core/browser-bridge.js';
 
 const DOMAINS = ['x.com', 'twitter.com'] as const;
 const DEFAULT_BACKENDS = ['twitter-cli', 'OpenCLI', 'bird CLI (legacy)'] as const;
@@ -207,7 +208,7 @@ export const twitterReadTool: AnyAgentTool = {
     tweet_id: Schema.optional(Schema.string('action=tweet 时的推文 ID')),
     limit: Schema.optional(Schema.integer({ description: '最大条数（默认 10）', minimum: 1 })),
   }),
-  async execute(_id, args) {
+  async execute(_id, args, signal) {
     const params = asToolParamsRecord(args);
     const action = (readStringParam(params, 'action') || 'search') as (typeof ACTIONS)[number];
     const limit = readOptionalInt(params, 'limit', { min: 1, max: 50 }) ?? 10;
@@ -235,7 +236,22 @@ export const twitterReadTool: AnyAgentTool = {
           return errorResult(`unknown action: ${action}`);
       }
     } catch (e) {
-      return errorResult(String(e instanceof Error ? e.message : e), { action });
+      const originalError = String(e instanceof Error ? e.message : e);
+      const policy = getConfig().get<string>('browser_fallback', 'auto');
+      if (policy === 'off') return errorResult(originalError, { action, browserFallback: 'disabled' });
+      try {
+        const handoff = await createBrowserLoginRequired({
+          loginUrl: 'https://x.com/i/flow/login',
+          profile: getConfig().get<string>('browser_profile', 'default') ?? 'default',
+          retryTool: { name: 'twitter_read', arguments: params },
+          signal,
+        });
+        return handoff
+          ? jsonResult({ success: false, ...handoff })
+          : errorResult(originalError, { action, browserFallback: 'unavailable' });
+      } catch {
+        return errorResult(originalError, { action, browserFallback: 'unavailable' });
+      }
     }
   },
 };

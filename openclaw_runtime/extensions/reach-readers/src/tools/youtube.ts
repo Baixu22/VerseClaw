@@ -25,6 +25,7 @@ import { commandError, runReachCommand } from '../core/command.js';
 import { canHandle } from '../core/router.js';
 import { getConfig } from '../core/config.js';
 import type { Availability } from '../types.js';
+import { readBrowserFallbackPage } from '../core/browser-bridge.js';
 
 const DOMAINS = ['youtube.com', 'youtu.be', 'youtube-nocookie.com'] as const;
 const DEFAULT_BACKENDS = ['yt-dlp'] as const;
@@ -493,14 +494,14 @@ export const youtubeReadTool: AnyAgentTool = {
     lang: Schema.optional(Schema.string('action=transcript 时的字幕语言（默认 en）')),
     provider: Schema.optional(Schema.enum(['auto', 'groq', 'openai'], 'action=transcribe 时的 Whisper provider（默认 auto=groq→openai）')),
   }),
-  async execute(_id, args) {
+  async execute(_id, args, signal) {
     const params = asToolParamsRecord(args);
     const action = (readStringParam(params, 'action') || 'info') as (typeof ACTIONS)[number];
+    const url = readStringParam(params, 'url');
     try {
       if (action === 'check') {
         return jsonResult({ status: 'ok', success: true, action, availability: await check() });
       }
-      const url = readStringParam(params, 'url', { required: true, label: 'url' });
       if (!url) return errorResult('url is required');
       switch (action) {
         case 'info':
@@ -518,7 +519,23 @@ export const youtubeReadTool: AnyAgentTool = {
           return errorResult(`unknown action: ${action}`);
       }
     } catch (e) {
-      return errorResult(String(e instanceof Error ? e.message : e), { action });
+      const originalError = String(e instanceof Error ? e.message : e);
+      const policy = getConfig().get<string>('browser_fallback', 'auto');
+      if (policy !== 'auto') return errorResult(originalError, {
+        action, browserFallback: policy === 'off' ? 'disabled' : 'unavailable',
+      });
+      try {
+        const page = await readBrowserFallbackPage({
+          url,
+          profile: getConfig().get<string>('browser_profile', 'default') ?? 'default',
+          signal,
+        });
+        return page
+          ? jsonResult({ status: 'ok', success: true, action, browserFallback: 'used', ...page })
+          : errorResult(originalError, { action, browserFallback: 'unavailable' });
+      } catch {
+        return errorResult(originalError, { action, browserFallback: 'unavailable' });
+      }
     }
   },
 };

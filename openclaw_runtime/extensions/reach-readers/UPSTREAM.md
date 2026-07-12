@@ -73,3 +73,13 @@ to this section in the same commit as the change.
   now use the guarded HTTP boundary while retaining Set-Cookie renewal.
   Backend array overrides reorder only known imported backends and cannot
   hide unspecified or newly available candidates.
+
+- Agent Browser fallback boundary: added the public runtime
+  `agentBrowser.invoke` helper and an internal bridge that reuses the selected
+  profile/auth state, closes temporary headless sessions, and retains visible
+  login sessions. Web, Bilibili, YouTube, and GitHub can return browser page
+  summaries after their original backends fail; Xueqiu may import filtered
+  `.xueqiu.com` cookies into its in-memory jar only when `xq_a_token` exists.
+  Twitter and Xiaohongshu return a login handoff instead of scraping DOM.
+  Browser errors preserve the original backend diagnostic, and no cookie or
+  token is included in tool results.

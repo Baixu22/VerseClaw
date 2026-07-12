@@ -17,6 +17,8 @@ import { probeCommand, utf8Env } from '../core/probe.js';
 import { commandError, runReachCommand } from '../core/command.js';
 import { canHandle } from '../core/router.js';
 import type { Availability } from '../types.js';
+import { getConfig } from '../core/config.js';
+import { readBrowserFallbackPage } from '../core/browser-bridge.js';
 
 const DOMAINS = ['github.com'] as const;
 
@@ -134,7 +136,7 @@ export const githubReadTool: AnyAgentTool = {
     state: Schema.optional(Schema.enum(['open', 'closed', 'all'], 'issues/prs 的状态（默认 open）')),
     limit: Schema.optional(Schema.integer({ description: '最大条数（默认 10）', minimum: 1 })),
   }),
-  async execute(_id, args) {
+  async execute(_id, args, signal) {
     const params = asToolParamsRecord(args);
     const action = (readStringParam(params, 'action') || 'readme') as (typeof ACTIONS)[number];
     const limit = readOptionalInt(params, 'limit', { min: 1, max: 100 }) ?? 10;
@@ -172,7 +174,29 @@ export const githubReadTool: AnyAgentTool = {
           return errorResult(`unknown action: ${action}`);
       }
     } catch (e) {
-      return errorResult(String(e instanceof Error ? e.message : e), { action });
+      const originalError = String(e instanceof Error ? e.message : e);
+      const policy = getConfig().get<string>('browser_fallback', 'auto');
+      if (policy !== 'auto') return errorResult(originalError, {
+        action, browserFallback: policy === 'off' ? 'disabled' : 'unavailable',
+      });
+      const owner = readStringParam(params, 'owner');
+      const repo = readStringParam(params, 'repo');
+      const query = readStringParam(params, 'query');
+      const url = owner && repo
+        ? `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`
+        : `https://github.com/search?q=${encodeURIComponent(query)}`;
+      try {
+        const page = await readBrowserFallbackPage({
+          url,
+          profile: getConfig().get<string>('browser_profile', 'default') ?? 'default',
+          signal,
+        });
+        return page
+          ? jsonResult({ status: 'ok', success: true, action, browserFallback: 'used', ...page })
+          : errorResult(originalError, { action, browserFallback: 'unavailable' });
+      } catch {
+        return errorResult(originalError, { action, browserFallback: 'unavailable' });
+      }
     }
   },
 };

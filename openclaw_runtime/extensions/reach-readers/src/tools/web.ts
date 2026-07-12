@@ -15,6 +15,8 @@ import {
 import { httpText } from '../core/http.js';
 import { canHandleAny } from '../core/router.js';
 import type { Availability } from '../types.js';
+import { getConfig } from '../core/config.js';
+import { getReachBrowserBridge } from '../core/browser-bridge.js';
 
 const JINA_PREFIX = 'https://r.jina.ai/';
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
@@ -50,7 +52,7 @@ export const webReadTool: AnyAgentTool = {
   parameters: Schema.object({
     url: Schema.string('要读取的网页 URL（http/https 可省略）'),
   }),
-  async execute(_id, args) {
+  async execute(_id, args, signal) {
     const params = asToolParamsRecord(args);
     const url = readStringParam(params, 'url', { required: true, label: 'url' });
     if (!url) return errorResult('url is required');
@@ -65,7 +67,40 @@ export const webReadTool: AnyAgentTool = {
         length: text.length,
       });
     } catch (e) {
-      return errorResult(String(e instanceof Error ? e.message : e), { url });
+      const originalError = String(e instanceof Error ? e.message : e);
+      const policy = getConfig().get<string>('browser_fallback', 'auto');
+      const bridge = getReachBrowserBridge();
+      if (policy === 'off') {
+        return errorResult(originalError, { url, browserFallback: 'disabled' });
+      }
+      if (!bridge) {
+        return errorResult(originalError, { url, browserFallback: 'unavailable' });
+      }
+      try {
+        const profile = getConfig().get<string>('browser_profile', 'default') ?? 'default';
+        if (policy === 'handoff') {
+          const handoff = await bridge.openLoginSession(url, { profile, signal });
+          return jsonResult({
+            status: 'browser_login_required',
+            success: false,
+            ...handoff,
+            retryTool: { name: 'web_read', arguments: params },
+          });
+        }
+        const page = await bridge.readPage(url, { profile, signal });
+        return jsonResult({
+          status: 'ok',
+          success: true,
+          backend: 'agent-browser',
+          browserFallback: 'used',
+          url: page.url,
+          title: page.title,
+          content: page.text,
+          length: page.text.length,
+        });
+      } catch {
+        return errorResult(originalError, { url, browserFallback: 'unavailable' });
+      }
     }
   },
 };

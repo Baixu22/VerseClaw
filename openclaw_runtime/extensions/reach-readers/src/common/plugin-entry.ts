@@ -10,7 +10,18 @@ import {
 } from 'openclaw/plugin-sdk/plugin-entry';
 import type { AnyAgentTool } from './tool-shape.js';
 
-export type PluginApi = Pick<OpenClawPluginApi, 'config' | 'pluginConfig' | 'registerTool'>;
+export type PluginApi = Pick<OpenClawPluginApi, 'config' | 'pluginConfig' | 'registerTool'> & {
+  runtime: OpenClawPluginApi['runtime'] & {
+    agentBrowser: {
+      invoke(params: {
+        action: string;
+        payload: Record<string, unknown>;
+        timeoutMs?: number;
+        signal?: AbortSignal;
+      }): Promise<unknown>;
+    };
+  };
+};
 export type PluginEntry = Omit<ReturnType<typeof defineOpenClawPluginEntry>, 'register'> & {
   register(api: PluginApi): void;
 };
@@ -23,7 +34,7 @@ export function definePluginEntry(
   return defineOpenClawPluginEntry({
     ...entry,
     register: entry.register,
-  } as Parameters<typeof defineOpenClawPluginEntry>[0]) as PluginEntry;
+  } as unknown as Parameters<typeof defineOpenClawPluginEntry>[0]) as unknown as PluginEntry;
 }
 
 export function createCollectingApi(): { api: PluginApi; tools: AnyAgentTool[] } {
@@ -31,6 +42,9 @@ export function createCollectingApi(): { api: PluginApi; tools: AnyAgentTool[] }
   const api: PluginApi = {
     config: {},
     pluginConfig: {},
+    runtime: {
+      agentBrowser: { invoke: async () => { throw new Error('agent browser unavailable'); } },
+    } as unknown as PluginApi['runtime'],
     registerTool(tool) {
       if (typeof tool !== 'function') tools.push(tool);
     },
