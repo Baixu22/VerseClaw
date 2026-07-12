@@ -116,4 +116,60 @@ describe('official Tool UI execution payloads', () => {
     expect(onSubmitResponse.mock.calls[0][0]).toContain('"type": "approval-card"');
     expect(onSubmitResponse.mock.calls[0][0]).toContain('"action": "approved"');
   });
+
+  it('renders all execution surfaces from one assistant message', () => {
+    const parsed = parseToolUiContent([
+      '```tool-ui',
+      JSON.stringify({
+        type: 'approval-card',
+        id: 'approval-1',
+        title: 'Publish?',
+      }),
+      '```',
+      '```tool-ui',
+      JSON.stringify({
+        type: 'terminal',
+        id: 'terminal-1',
+        command: 'pnpm test',
+        stdout: '22 tests passed',
+        exitCode: 0,
+      }),
+      '```',
+      '```tool-ui',
+      JSON.stringify({
+        type: 'code-diff',
+        id: 'diff-1',
+        filePath: 'src/agent.ts',
+        original: 'const state = "pending";',
+        modified: 'const state = "completed";',
+      }),
+      '```',
+      '```tool-ui',
+      JSON.stringify({
+        type: 'progress-tracker',
+        id: 'progress-1',
+        steps: [{ id: 'verify', label: 'Verify UI', status: 'completed' }],
+        status: 'completed',
+        choice: {
+          outcome: 'success',
+          summary: 'Execution surfaces verified',
+          at: '2026-07-12T00:00:00.000Z',
+        },
+      }),
+      '```',
+    ].join('\n'));
+
+    render(
+      <AgentInteractionRenderer
+        interactions={parsed.interactions}
+        canSubmit
+      />,
+    );
+
+    expect(parsed.interactions).toHaveLength(4);
+    expect(screen.getByTestId('chat-tool-ui-approval')).toBeVisible();
+    expect(screen.getByTestId('chat-tool-ui-terminal')).toHaveTextContent('22 tests passed');
+    expect(screen.getByTestId('chat-tool-ui-code-diff')).toHaveTextContent('agent.ts');
+    expect(screen.getByTestId('chat-tool-ui-progress-tracker')).toHaveTextContent('Execution surfaces verified');
+  });
 });

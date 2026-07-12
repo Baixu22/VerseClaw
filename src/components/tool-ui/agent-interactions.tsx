@@ -326,6 +326,12 @@ type ProgressTrackerInteraction = {
     status: 'pending' | 'in-progress' | 'completed' | 'failed';
   }>;
   elapsedTime?: number;
+  choice?: {
+    outcome: 'success' | 'partial' | 'failed' | 'cancelled';
+    summary: string;
+    identifiers?: Record<string, string>;
+    at: string;
+  };
 };
 
 export type ToolUiInteraction =
@@ -1329,11 +1335,30 @@ function parseProgressTracker(
     }] satisfies ProgressTrackerInteraction['steps'];
   });
   if (steps.length === 0) return null;
+  const rawChoice = isRecord(payload.choice) ? payload.choice : undefined;
+  const rawOutcome = rawChoice ? normalizeType(rawChoice.outcome) : '';
+  const choice = rawChoice
+    && ['success', 'partial', 'failed', 'cancelled'].includes(rawOutcome)
+    && asString(rawChoice.summary)
+    && asString(rawChoice.at)
+    ? {
+        outcome: rawOutcome as NonNullable<ProgressTrackerInteraction['choice']>['outcome'],
+        summary: asString(rawChoice.summary)!,
+        identifiers: isRecord(rawChoice.identifiers)
+          ? Object.fromEntries(
+              Object.entries(rawChoice.identifiers)
+                .filter((entry): entry is [string, string] => typeof entry[1] === 'string'),
+            )
+          : undefined,
+        at: asString(rawChoice.at)!,
+      }
+    : undefined;
   return {
     type: 'progress-tracker',
     id: asString(payload.id) ?? fallbackId,
     steps,
     elapsedTime: asNumber(payload.elapsedTime) ?? asNumber(payload.durationMs),
+    choice,
   };
 }
 
@@ -3115,18 +3140,27 @@ export function AgentInteractionRenderer({
               </div>
             );
           case 'terminal':
-            return <Terminal key={key} {...interaction} />;
+            return (
+              <div key={key} data-testid="chat-tool-ui-terminal">
+                <Terminal {...interaction} />
+              </div>
+            );
           case 'code-diff':
             return (
-              <CodeDiff
-                key={key}
-                {...interaction}
-                lineNumbers="visible"
-                diffStyle="unified"
-              />
+              <div key={key} data-testid="chat-tool-ui-code-diff">
+                <CodeDiff
+                  {...interaction}
+                  lineNumbers="visible"
+                  diffStyle="unified"
+                />
+              </div>
             );
           case 'progress-tracker':
-            return <ProgressTracker key={key} {...interaction} />;
+            return (
+              <div key={key} data-testid="chat-tool-ui-progress-tracker">
+                <ProgressTracker {...interaction} />
+              </div>
+            );
           default:
             return null;
         }
