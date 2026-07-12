@@ -137,3 +137,24 @@ to this section in the same commit as the change.
   are injected into the original guarded API path only when `xq_a_token` is
   present, while a profile without that token retains the imported homepage
   cookie fallback. Tests use synthetic values and do not snapshot credentials.
+
+- Web Browser-fallback coverage: added tool-level tests for Jina-first
+  automatic page reading, visible handoff, disabled fallback, temporary
+  session cleanup, and preservation of the original Jina diagnostic when the
+  Browser bridge is unavailable. No production behavior changed.
+
+- Platform Browser-summary coverage: added tool-level tests proving
+  Bilibili, YouTube, and GitHub retain their API/CLI-first behavior and return
+  an `agent-browser` page summary after those original backends fail. The
+  tests use synthetic Browser responses and no authenticated state.
+
+- Authenticated handoff coverage: added tool-level Twitter and Xiaohongshu
+  tests for stable visible-session handoff, unchanged retry arguments,
+  unavailable bridge diagnostics, and exclusion of synthetic Authorization
+  material from model-visible results.
+
+- CLI diagnostic redaction: all command failures now pass the complete
+  command/argv/output diagnostic through the public OpenClaw sensitive-text
+  redactor before becoming a tool error. This intentionally replaces raw
+  credential-bearing CLI output with redacted markers while preserving
+  non-sensitive backend diagnostics.

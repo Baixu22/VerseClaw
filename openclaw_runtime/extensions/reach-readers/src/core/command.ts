@@ -3,6 +3,7 @@ import {
   materializeWindowsSpawnProgram,
   resolveWindowsSpawnProgram,
 } from 'openclaw/plugin-sdk/windows-spawn';
+import { redactSensitiveText } from 'openclaw/plugin-sdk/security-runtime';
 
 export interface ReachCommandOptions {
   timeoutMs: number;
@@ -53,5 +54,8 @@ function truncateUtf8(value: string, maxBytes: number): string {
 
 export function commandError(command: string, argv: readonly string[], result: ReachCommandResult): Error {
   const diagnostic = (result.stderr || result.stdout || `exit ${result.code ?? 'unknown'}`).slice(0, 500);
-  return new Error(`${command} ${argv.join(' ')} failed: ${diagnostic}`);
+  return new Error(redactSensitiveText(
+    `${command} ${argv.join(' ')} failed: ${diagnostic}`,
+    { mode: 'tools' },
+  ));
 }
