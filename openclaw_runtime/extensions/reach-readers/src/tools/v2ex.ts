@@ -127,7 +127,7 @@ export async function getTopic(topicId: number): Promise<V2exTopicDetail> {
       created: x.created ?? 0,
     }));
   } catch {
-    replies = [];
+    // Replies are optional; preserve the empty fallback initialized above.
   }
   const node = topic.node ?? {};
   return {

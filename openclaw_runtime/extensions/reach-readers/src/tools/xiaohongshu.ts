@@ -261,7 +261,7 @@ async function opencli(args: string[], timeoutMs = 60_000): Promise<unknown> {
   return JSON.parse(result.stdout);
 }
 
-export async function searchFeeds(keyword: string, limit = 10): Promise<unknown> {
+export async function searchFeeds(keyword: string, _limit = 10): Promise<unknown> {
   const raw = await opencli(['search', keyword]);
   return formatXhsResult(raw);
 }
