@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createReachBrowserBridge } from './browser-bridge.js';
+import {
+  configureReachBrowserBridge,
+  createBrowserLoginRequired,
+  createReachBrowserBridge,
+} from './browser-bridge.js';
 
 describe('Reach Agent Browser bridge', () => {
   it('reuses profile/auth state and closes a headless page session', async () => {
@@ -65,5 +69,45 @@ describe('Reach Agent Browser bridge', () => {
     expect(invoke).toHaveBeenCalledWith(expect.objectContaining({
       signal: controller.signal,
     }));
+  });
+
+  it('returns a stable login handoff with the original retry tool', async () => {
+    const invoke = vi.fn(async () => ({ session: { id: 'login-42' } }));
+    configureReachBrowserBridge(invoke);
+    const retryTool = {
+      name: 'twitter_read',
+      arguments: { action: 'search', query: 'openclaw' },
+    };
+
+    await expect(createBrowserLoginRequired({
+      loginUrl: 'https://x.com/i/flow/login',
+      profile: 'work',
+      retryTool,
+    })).resolves.toEqual({
+      status: 'browser_login_required',
+      profile: 'work',
+      sessionId: 'login-42',
+      loginUrl: 'https://x.com/i/flow/login',
+      retryTool,
+    });
+    expect(invoke).toHaveBeenCalledTimes(1);
+    expect(invoke).toHaveBeenCalledWith(expect.objectContaining({
+      action: 'open',
+      payload: expect.objectContaining({
+        profile: 'work',
+        authStateName: 'work',
+        mode: 'visible',
+      }),
+    }));
+  });
+
+  it('reports no handoff when the browser bridge is unavailable', async () => {
+    configureReachBrowserBridge(undefined);
+
+    await expect(createBrowserLoginRequired({
+      loginUrl: 'https://www.xiaohongshu.com/login',
+      profile: 'default',
+      retryTool: { name: 'xiaohongshu_read', arguments: { action: 'search' } },
+    })).resolves.toBeUndefined();
   });
 });

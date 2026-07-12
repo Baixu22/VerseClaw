@@ -121,3 +121,8 @@ to this section in the same commit as the change.
   helpers explicitly, removed redundant fallback assignments, and attached
   the original transcription exception as `cause`. Reader behavior, backend
   order, and user-visible diagnostics are unchanged.
+
+- Browser handoff coverage: added deterministic tests for the stable
+  `browser_login_required` payload, profile/auth-state reuse, unchanged retry
+  arguments, visible-session retention, and unavailable bridge behavior. No
+  production behavior changed.
