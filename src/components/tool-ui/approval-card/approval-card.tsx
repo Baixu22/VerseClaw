@@ -206,13 +206,13 @@ export function ApprovalCard({
                 </dl>
               </>
             )}
-          </div>
-          <div className="@container/actions">
-            <ActionButtons
-              actions={actions}
-              onAction={handleAction}
-              className="grid grid-cols-1 min-[520px]:grid-cols-2"
-            />
+            <div className="@container/actions ml-auto w-full max-w-[50%]">
+              <ActionButtons
+                actions={actions}
+                onAction={handleAction}
+                className="grid grid-cols-2 gap-2"
+              />
+            </div>
           </div>
         </article>
       )}
