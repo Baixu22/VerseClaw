@@ -4,6 +4,10 @@ import { ROOT } from './specs.mjs';
 
 const execFileAsync = promisify(execFile);
 
+export function resolveDiffBase(explicitSince, configuredDiffBase) {
+  return explicitSince || configuredDiffBase || 'origin/main';
+}
+
 async function gitLines(args, cwd = ROOT) {
   try {
     const { stdout } = await execFileAsync('git', args, { cwd, encoding: 'utf8' });
