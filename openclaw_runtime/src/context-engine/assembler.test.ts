@@ -35,6 +35,7 @@ describe("DCS Assembler", () => {
       "runtime.contextBlock.compass.enabled": false,
       "runtime.contextBlock.role_memory.enabled": false,
       "runtime.contextBlock.working_memory.enabled": false,
+      "runtime.contextBlock.tool_registry.enabled": false,
     });
     const buildCompass = vi.fn(async () => ({ iFrameRefreshed: false }));
     const buildRoleMemory = vi.fn(() => buildContextPack({}));
@@ -182,12 +183,15 @@ describe("DCS v1.6.1 addendum 1: unique kebab/snake flag mapping", () => {
     expect(contextBlockFlagNameForSourceSystem("working-memory")).toBe(
       "runtime.contextBlock.working_memory.enabled",
     );
+    expect(contextBlockFlagNameForSourceSystem("cvk")).toBe(
+      "runtime.contextBlock.tool_registry.enabled",
+    );
   });
 
   it("covers every default flag key exactly once", () => {
-    const mapped = (["compass", "role-memory", "working-memory"] as const).map((sourceSystem) =>
-      contextBlockFlagNameForSourceSystem(sourceSystem),
-    );
+    const mapped = (
+      ["compass", "role-memory", "working-memory", "cvk"] as const
+    ).map((sourceSystem) => contextBlockFlagNameForSourceSystem(sourceSystem));
     expect([...mapped].sort()).toEqual(Object.keys(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS).sort());
     expect(new Set(mapped).size).toBe(mapped.length);
   });
@@ -267,5 +271,115 @@ function countRecentActionsHeadings(output: unknown): number {
     (message) =>
       typeof (message as { content?: unknown }).content === "string" &&
       /^## Recent Actions$/m.test((message as { content: string }).content),
+  ).length;
+}
+
+describe("DCS Stage 3: tool_registry Assembler injection", () => {
+  const storeWithToolRegistry = () => ({
+    query: vi.fn(async () => [
+      {
+        block_id: "tool-registry:session-a",
+        block_type: "tool_registry" as const,
+        source_system: "cvk" as const,
+        session_id: "session-a",
+        presence: { always_on: true, token_budget: 200, priority: 7 },
+        entities: [],
+        valid_at: new Date("2026-07-12T00:00:00.000Z"),
+        mutability: "system_managed" as const,
+        summary: "## Tools (2 available)",
+        full_content: JSON.stringify({
+          entries: [
+            { resourceId: "edit", kind: "toolset", title: "Edit", purpose: "Edit a file" },
+            { resourceId: "write", kind: "toolset", title: "Write", purpose: "Write a file" },
+          ],
+        }),
+        compression_depth: 0 as const,
+        entity_extraction_status: "empty" as const,
+      },
+    ]),
+    upsert: vi.fn(),
+  });
+
+  it("flag off: no query, no injection, identity pass-through", async () => {
+    const store = storeWithToolRegistry();
+    const assembler = new Assembler({ workingMemoryStore: store });
+    const messages = [{ role: "user" as const, content: "next" }];
+
+    const result = await assembler.assemble(
+      { session_id: "session-a" },
+      { existing_output: messages },
+    );
+
+    expect(result.output).toBe(messages);
+    expect(store.query).not.toHaveBeenCalled();
+  });
+
+  it("flag on: queries BlockStore and injects ## Tools heading", async () => {
+    const store = storeWithToolRegistry();
+    const assembler = new Assembler({ workingMemoryStore: store });
+    const messages = [{ role: "user" as const, content: "next" }];
+
+    const result = await assembler.assemble(
+      { session_id: "session-a" },
+      { existing_output: messages },
+      { "runtime.contextBlock.tool_registry.enabled": true },
+    );
+
+    expect(store.query).toHaveBeenCalledWith({
+      requester_session_id: "session-a",
+      session_id: "session-a",
+      block_types: ["tool_registry"],
+      source_systems: ["cvk"],
+      limit: 1,
+    });
+    expect(JSON.stringify(result.output)).toContain("## Tools (2 available)");
+    expect(JSON.stringify(result.output)).toContain("context_read('tool_registry')");
+  });
+
+  it("exactly-once: does not duplicate ## Tools heading", async () => {
+    const store = storeWithToolRegistry();
+    const assembler = new Assembler({ workingMemoryStore: store });
+    const messages = [
+      { role: "user" as const, content: "## Tools (2 available)\n→ context_read('tool_registry') for full schema" },
+    ];
+
+    const result = await assembler.assemble(
+      { session_id: "session-a" },
+      { existing_output: messages },
+      { "runtime.contextBlock.tool_registry.enabled": true },
+    );
+
+    expect(countToolsHeadings(result.output)).toBe(1);
+  });
+
+  it("empty BlockStore: no injection", async () => {
+    const emptyStore = { query: vi.fn(async () => []), upsert: vi.fn() };
+    const assembler = new Assembler({ workingMemoryStore: emptyStore });
+    const messages = [{ role: "user" as const, content: "next" }];
+
+    const result = await assembler.assemble(
+      { session_id: "session-a" },
+      { existing_output: messages },
+      { "runtime.contextBlock.tool_registry.enabled": true },
+    );
+
+    expect(countToolsHeadings(result.output)).toBe(0);
+  });
+
+  it("cvk maps to runtime.contextBlock.tool_registry.enabled", () => {
+    expect(contextBlockFlagNameForSourceSystem("cvk")).toBe(
+      "runtime.contextBlock.tool_registry.enabled",
+    );
+  });
+});
+
+function countToolsHeadings(output: unknown): number {
+  if (!Array.isArray(output)) {
+    return 0;
+  }
+  return output.filter(
+    (message) =>
+      typeof (message as { content?: unknown }).content === "string" &&
+      /^## Tools \(\d+ available\)$/m.test((message as { content: string }).content),
   ).length;
 }

@@ -722,6 +722,8 @@ export const FIELD_LABELS: Record<string, string> = {
   "runtime.contextBlock": "Runtime Context Blocks",
   "runtime.contextBlock.working-memory": "Working Memory Context Block",
   "runtime.contextBlock.working-memory.enabled": "Working Memory Context Block Enabled",
+  "runtime.contextBlock.tool-registry": "Tool Registry Context Block",
+  "runtime.contextBlock.tool-registry.enabled": "Tool Registry Context Block Enabled",
   "runtime.eventLog": "Runtime Event Log",
   "runtime.eventLog.shadow": "Runtime Event Log Shadow",
   "runtime.eventLog.persist": "Runtime Event Log Persist",

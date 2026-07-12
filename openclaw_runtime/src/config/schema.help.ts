@@ -1972,6 +1972,10 @@ export const FIELD_HELP: Record<string, string> = {
     "Stage 1 working-memory context block controls for recent tool-result action injection.",
   "runtime.contextBlock.working-memory.enabled":
     "Enable DCS Stage 1 working-memory collection and ## Recent Actions prompt injection (default: false).",
+  "runtime.contextBlock.tool-registry":
+    "Stage 3 tool-registry context block controls for tool registry Block production and prompt injection.",
+  "runtime.contextBlock.tool-registry.enabled":
+    "Enable DCS Stage 3 tool-registry Block production on before_agent_start and ## Tools prompt injection on pre_llm_call (default: false).",
   "runtime.eventLog":
     "Append-only RuntimeTaskEvent event-log shadow settings. These flags are default-off and must not wire live TaskLoop execution by themselves.",
   "runtime.eventLog.shadow":

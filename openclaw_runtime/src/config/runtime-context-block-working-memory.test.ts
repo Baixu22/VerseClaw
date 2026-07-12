@@ -11,6 +11,9 @@ describe("runtime.contextBlock working-memory config", () => {
           "working-memory"?: {
             enabled?: boolean;
           };
+          "tool-registry"?: {
+            enabled?: boolean;
+          };
         }
       | undefined
     >();
