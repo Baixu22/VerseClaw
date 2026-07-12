@@ -1,22 +1,24 @@
 /**
- * 配置 —— 重构自 agent_reach/config.py。
+ * Readonly OpenClaw adapter for the imported Agent Reach configuration API.
  *
- * Python 版用 YAML，shadow 改用 JSON（ClawX 生态更偏好 JSON，迁移时无障碍）。
- * 文件位置 ~/.agent-reach/config.json（与 Python 版同目录，便于共存期读老 key）。
- *
- * 严格对齐 Python 的特性：
- *   - get(key) 先看文件，再看大写 env 变量
- *   - 文件权限 0o600（Windows 跳过 chmod）
- *   - is_configured(feature) 检查 FEATURE_REQUIREMENTS 里的所有 key
+ * Values are hydrated once at the plugin boundary. Platform readers retain
+ * their original synchronous get/isConfigured calling structure.
  */
-import { mkdirSync, readFileSync, writeFileSync, chmodSync } from 'node:fs';
-import { homedir } from 'node:os';
-import path from 'node:path';
+import {
+  resolveConfiguredSecretInputString,
+} from 'openclaw/plugin-sdk/secret-input-runtime';
 
-const CONFIG_DIR = path.join(homedir(), '.agent-reach');
-const CONFIG_FILE = path.join(CONFIG_DIR, 'config.json');
+const ENV_BY_KEY: Record<string, string> = {
+  xueqiu_cookie: 'XUEQIU_COOKIE',
+  twitter_auth_token: 'TWITTER_AUTH_TOKEN',
+  twitter_ct0: 'TWITTER_CT0',
+};
 
-/** Python 版 config.py: FEATURE_REQUIREMENTS —— 完整保留。 */
+const DEFAULTS: Record<string, unknown> = {
+  browser_fallback: 'auto',
+  browser_profile: 'default',
+};
+
 const FEATURE_REQUIREMENTS: Record<string, string[]> = {
   exa_search: ['exa_api_key'],
   twitter_xreach: ['twitter_auth_token', 'twitter_ct0'],
@@ -26,99 +28,104 @@ const FEATURE_REQUIREMENTS: Record<string, string[]> = {
 };
 
 export class Config {
-  private data: Record<string, unknown> = {};
-  readonly configPath: string;
+  private readonly data: Readonly<Record<string, unknown>>;
+  private readonly env: Readonly<Record<string, string | undefined>>;
 
-  constructor(configPath: string = CONFIG_FILE) {
-    this.configPath = configPath;
-    this.ensureDir();
-    this.load();
+  constructor(options: {
+    values?: Readonly<Record<string, unknown>>;
+    env?: Readonly<Record<string, string | undefined>>;
+  } = {}) {
+    this.data = Object.freeze({ ...(options.values ?? {}) });
+    this.env = options.env ?? process.env;
   }
 
-  private ensureDir(): void {
-    try {
-      mkdirSync(CONFIG_DIR, { recursive: true, mode: 0o700 });
-      if (process.platform !== 'win32') chmodSync(CONFIG_DIR, 0o700);
-    } catch {
-      // ignore —— 只读场景也允许
-    }
-  }
-
-  load(): void {
-    try {
-      const text = readFileSync(this.configPath, 'utf8');
-      this.data = JSON.parse(text) as Record<string, unknown>;
-    } catch {
-      this.data = {};
-    }
-  }
-
-  save(): void {
-    try {
-      const text = JSON.stringify(this.data, null, 2);
-      writeFileSync(this.configPath, text, { mode: 0o600 });
-      if (process.platform !== 'win32') chmodSync(this.configPath, 0o600);
-    } catch {
-      // shadow 版只读不写也能跑
-    }
-  }
-
-  /** 取值：先文件，再大写 env。对齐 Python get()。 */
   get<T = unknown>(key: string, def?: T): T | undefined {
     if (key in this.data) return this.data[key] as T;
-    const envVal = process.env[key.toUpperCase()];
+    const envVal = this.env[ENV_BY_KEY[key] ?? key.toUpperCase()];
     if (envVal) return envVal as unknown as T;
-    return def;
-  }
-
-  set(key: string, value: unknown): void {
-    this.data[key] = value;
-    this.save();
-  }
-
-  delete(key: string): void {
-    delete this.data[key];
-    this.save();
+    return (DEFAULTS[key] as T | undefined) ?? def;
   }
 
   isConfigured(feature: string): boolean {
     const required = FEATURE_REQUIREMENTS[feature] ?? [];
-    return required.every((k) => this.get(k));
+    return required.every((key) => Boolean(this.get(key)));
   }
 
   configuredFeatures(): Record<string, boolean> {
-    const out: Record<string, boolean> = {};
-    for (const f of Object.keys(FEATURE_REQUIREMENTS)) out[f] = this.isConfigured(f);
-    return out;
+    return Object.fromEntries(
+      Object.keys(FEATURE_REQUIREMENTS).map((feature) => [feature, this.isConfigured(feature)]),
+    );
   }
 
-  /**
-   * 返回脱敏后的配置 dict —— 对齐 Python config.py:108-129 的 to_dict。
-   *
-   * 按 sensitive_markers（key/token/password/proxy/cookie/secret/session/
-   * sessdata/csrf/auth/cred/ct0）匹配键名，敏感值只保留前 8 字符 + "..."。
-   */
   toDict(): Record<string, unknown> {
-    const SENSITIVE_MARKERS = [
-      'key', 'token', 'password', 'proxy', 'cookie',
-      'secret', 'session', 'sessdata', 'csrf', 'auth', 'cred', 'ct0',
+    const sensitiveMarkers = [
+      'key', 'token', 'password', 'proxy', 'cookie', 'secret', 'session',
+      'sessdata', 'csrf', 'auth', 'cred', 'ct0',
     ];
-    const masked: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(this.data)) {
-      const lowerKey = k.toLowerCase();
-      if (SENSITIVE_MARKERS.some((s) => lowerKey.includes(s))) {
-        masked[k] = v ? `${String(v).slice(0, 8)}...` : null;
-      } else {
-        masked[k] = v;
-      }
-    }
-    return masked;
+    return Object.fromEntries(
+      Object.entries(this.data).map(([key, value]) => [
+        key,
+        sensitiveMarkers.some((marker) => key.toLowerCase().includes(marker))
+          ? value ? 'configured' : 'missing'
+          : value,
+      ]),
+    );
   }
 }
 
-/** 单例 —— 供工具按需共享，避免每次 new 都重新读盘。 */
-let _config: Config | undefined;
+let config: Config | undefined;
+
 export function getConfig(): Config {
-  if (!_config) _config = new Config();
-  return _config;
+  config ??= new Config();
+  return config;
+}
+
+export function setConfigSnapshot(values: Readonly<Record<string, unknown>>): void {
+  config = new Config({ values });
+}
+
+type SecretResolver = typeof resolveConfiguredSecretInputString;
+
+export async function hydrateReachConfig(params: {
+  config: Parameters<SecretResolver>[0]['config'];
+  pluginConfig?: Readonly<Record<string, unknown>>;
+  env?: NodeJS.ProcessEnv;
+  resolveSecret?: SecretResolver;
+}): Promise<Config> {
+  const pluginConfig = params.pluginConfig ?? {};
+  const credentials =
+    pluginConfig.credentials && typeof pluginConfig.credentials === 'object'
+      ? pluginConfig.credentials as Record<string, unknown>
+      : {};
+  const values: Record<string, unknown> = {
+    browser_fallback: pluginConfig.browserFallback,
+    browser_profile: pluginConfig.browserProfile,
+    bilibili_backends:
+      (pluginConfig.backends as Record<string, unknown> | undefined)?.bilibili,
+    twitter_backends:
+      (pluginConfig.backends as Record<string, unknown> | undefined)?.twitter,
+    xiaohongshu_backends:
+      (pluginConfig.backends as Record<string, unknown> | undefined)?.xiaohongshu,
+  };
+  const resolver = params.resolveSecret ?? resolveConfiguredSecretInputString;
+  const secretMappings = [
+    ['xueqiuCookie', 'xueqiu_cookie'],
+    ['twitterAuthToken', 'twitter_auth_token'],
+    ['twitterCt0', 'twitter_ct0'],
+  ] as const;
+  for (const [configKey, snapshotKey] of secretMappings) {
+    if (credentials[configKey] === undefined) continue;
+    const resolved = await resolver({
+      config: params.config,
+      env: params.env ?? process.env,
+      value: credentials[configKey],
+      path: `plugins.entries.reach-readers.config.credentials.${configKey}`,
+    });
+    if (resolved.value) values[snapshotKey] = resolved.value;
+  }
+  for (const key of Object.keys(values)) {
+    if (values[key] === undefined) delete values[key];
+  }
+  config = new Config({ values, env: params.env });
+  return config;
 }

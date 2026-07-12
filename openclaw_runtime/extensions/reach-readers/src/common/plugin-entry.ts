@@ -10,7 +10,7 @@ import {
 } from 'openclaw/plugin-sdk/plugin-entry';
 import type { AnyAgentTool } from './tool-shape.js';
 
-export type PluginApi = Pick<OpenClawPluginApi, 'registerTool'>;
+export type PluginApi = Pick<OpenClawPluginApi, 'config' | 'pluginConfig' | 'registerTool'>;
 export type PluginEntry = Omit<ReturnType<typeof defineOpenClawPluginEntry>, 'register'> & {
   register(api: PluginApi): void;
 };
@@ -29,6 +29,8 @@ export function definePluginEntry(
 export function createCollectingApi(): { api: PluginApi; tools: AnyAgentTool[] } {
   const tools: AnyAgentTool[] = [];
   const api: PluginApi = {
+    config: {},
+    pluginConfig: {},
     registerTool(tool) {
       if (typeof tool !== 'function') tools.push(tool);
     },
