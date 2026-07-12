@@ -124,7 +124,7 @@ async function checkBird(): Promise<BackendFinding | undefined> {
 }
 
 export async function check(): Promise<Availability> {
-  const order = orderedBackends('twitter', DEFAULT_BACKENDS, (k) => getConfig().get<string>(k));
+  const order = orderedBackends('twitter', DEFAULT_BACKENDS, (k) => getConfig().get(k));
   const findings: BackendFinding[] = [];
   for (const backend of order) {
     let r: BackendFinding | undefined;

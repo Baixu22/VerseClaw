@@ -228,7 +228,7 @@ async function checkXhsCli(): Promise<BackendFinding | undefined> {
 }
 
 export async function check(): Promise<Availability> {
-  const order = orderedBackends('xiaohongshu', DEFAULT_BACKENDS, (k) => getConfig().get<string>(k));
+  const order = orderedBackends('xiaohongshu', DEFAULT_BACKENDS, (k) => getConfig().get(k));
   const findings: BackendFinding[] = [];
   for (const backend of order) {
     let r: BackendFinding | undefined;
