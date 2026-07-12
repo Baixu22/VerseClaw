@@ -67,3 +67,9 @@ to this section in the same commit as the change.
   SSRF-guarded fetch with pinned DNS, redirect revalidation, bounded response
   reads, timeout/cancellation, and dispatcher release. Jina keeps a 20 MiB
   text limit; other JSON/text responses default to 10 MiB.
+
+- Authenticated reader configuration: Xueqiu consumes the resolved readonly
+  cookie snapshot through its original cookie jar, and all Xueqiu requests
+  now use the guarded HTTP boundary while retaining Set-Cookie renewal.
+  Backend array overrides reorder only known imported backends and cannot
+  hide unspecified or newly available candidates.

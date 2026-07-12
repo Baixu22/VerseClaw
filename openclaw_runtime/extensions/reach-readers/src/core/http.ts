@@ -42,6 +42,19 @@ async function guardedFetch(url: string, opts: HttpJsonOptions, timeoutMs: numbe
   });
 }
 
+export async function withGuardedResponse<T>(
+  url: string,
+  opts: HttpJsonOptions,
+  consume: (response: Response) => Promise<T>,
+): Promise<T> {
+  const guarded = await guardedFetch(url, opts, opts.timeoutMs ?? 30_000);
+  try {
+    return await consume(guarded.response);
+  } finally {
+    await guarded.release();
+  }
+}
+
 export async function httpJson<T = unknown>(url: string, opts: HttpJsonOptions = {}): Promise<T> {
   const guarded = await guardedFetch(url, opts, opts.timeoutMs ?? 10_000);
   try {

@@ -102,6 +102,9 @@ describe('router', () => {
       'third',
     ]);
     expect(orderedBackends('twitter', defaults, () => 'removed')).toEqual(defaults);
+    expect(orderedBackends('twitter', defaults, (key) =>
+      key.endsWith('_backends') ? ['third', 'removed', 'first'] : undefined,
+    )).toEqual(['third', 'first', 'second']);
   });
 
   it('prefers ok over warn and retains broken backend diagnostics', () => {

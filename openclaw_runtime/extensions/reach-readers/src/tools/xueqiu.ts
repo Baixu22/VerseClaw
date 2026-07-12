@@ -24,6 +24,8 @@ import {
 } from '../common/tool-shape.js';
 import { canHandle } from '../core/router.js';
 import { getConfig } from '../core/config.js';
+import { readResponseWithLimit } from 'openclaw/plugin-sdk/response-limit-runtime';
+import { withGuardedResponse } from '../core/http.js';
 import type { Availability } from '../types.js';
 
 const UA =
@@ -89,18 +91,10 @@ async function ensureCookies(): Promise<void> {
   //    手动解析 Set-Cookie 存入 cookieJar，使后续请求能带上 session cookie。
   //    对齐 xueqiu.py:126-128 的 _opener.open(req) + HTTPCookieProcessor(_cookie_jar)。
   try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), TIMEOUT);
-    try {
-      const resp = await fetch(HOME, {
-        headers: { 'User-Agent': UA },
-        signal: controller.signal,
-      });
+    await withGuardedResponse(HOME, { headers: { 'User-Agent': UA }, timeoutMs: TIMEOUT }, async (resp) => {
       // 解析 Set-Cookie 并存入 cookieJar —— 对齐 HTTPCookieProcessor 自动持久化
       parseSetCookie(resp.headers);
-    } finally {
-      clearTimeout(timer);
-    }
+    });
   } catch {
     // ignore —— 首页访问失败不阻塞，后续 API 请求会自然 400/403
   }
@@ -113,19 +107,15 @@ async function getXueqiuJson<T>(url: string): Promise<T> {
   const headers: Record<string, string> = { 'User-Agent': UA, Referer: REFERER };
   const ck = cookieHeader();
   if (ck) headers['Cookie'] = ck;
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TIMEOUT);
-  try {
-    const resp = await fetch(url, { headers, signal: controller.signal });
+  return withGuardedResponse(url, { headers, timeoutMs: TIMEOUT }, async (resp) => {
     // 即使是 API 请求，也把新 Set-Cookie 存入 jar（session 续期）
     parseSetCookie(resp.headers);
     if (!resp.ok) {
       throw new Error(`HTTP ${resp.status}: ${url}`);
     }
-    return (await resp.json()) as T;
-  } finally {
-    clearTimeout(timer);
-  }
+    const body = await readResponseWithLimit(resp, 10 * 1024 * 1024);
+    return JSON.parse(body.toString('utf8')) as T;
+  });
 }
 
 export function canHandleUrl(url: string): boolean {

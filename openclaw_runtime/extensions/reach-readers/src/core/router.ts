@@ -50,17 +50,19 @@ export function safeHostname(url: string): string {
 export function orderedBackends(
   channel: string,
   defaultBackends: readonly string[],
-  configGet?: (key: string) => string | undefined,
+  configGet?: (key: string) => unknown,
 ): string[] {
   const candidates = [...defaultBackends];
   if (!configGet) return candidates;
-  const override = configGet(`${channel}_backend`);
-  if (!override) return candidates;
-  const idx = candidates.findIndex((b) => b === override || b.startsWith(override));
-  if (idx <= 0) return candidates; // 未知值忽略；已在首位则不动
-  const removed = candidates.splice(idx, 1);
-  if (removed[0]) candidates.unshift(removed[0]);
-  return candidates;
+  const configured = configGet(`${channel}_backends`) ?? configGet(`${channel}_backend`);
+  const overrides = Array.isArray(configured)
+    ? configured.filter((value): value is string => typeof value === 'string')
+    : typeof configured === 'string' ? [configured] : [];
+  const selected = overrides.flatMap((override) => {
+    const match = candidates.find((backend) => backend === override || backend.startsWith(override));
+    return match ? [match] : [];
+  });
+  return [...new Set([...selected, ...candidates])];
 }
 
 /**
