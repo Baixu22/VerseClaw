@@ -89,3 +89,12 @@ to this section in the same commit as the change.
   session, and retries the unchanged `retryTool` call after user login. The
   skill explicitly forbids reading or returning cookies, tokens, or browser
   storage.
+
+- Media transcription boundary: retained YouTube's original yt-dlp download,
+  ffmpeg compression, 24 MiB threshold, 600-second chunking, ordered
+  concatenation, and temporary-workspace cleanup. Removed independent
+  Groq/OpenAI keys, endpoints, provider fallback, and multipart requests;
+  every chunk now uses the public OpenClaw
+  `mediaUnderstanding.transcribeAudioFile` runtime and its configured
+  provider credentials and policy. The legacy `provider` argument remains
+  accepted for compatibility but cannot bypass runtime policy.
