@@ -41,3 +41,9 @@ af4da590e0e72cc10025598704dec80922ba18bfa8b3b3103e941ac05d033f2b  src/types.ts
 The verbatim import has no renamed or moved files and no intentional behavior
 differences. Add every later rename, move, or intentional behavior difference
 to this section in the same commit as the change.
+
+- Characterization boundary: added Vitest coverage for imported registration,
+  routing, backend selection, UTF-8 probe environment, RSS parsing,
+  Xiaohongshu cleaners, and Xueqiu cookie parsing. Declared the previously
+  used `tsx` development dependency and Node/DOM types for the package
+  TypeScript boundary. No production behavior changed.
