@@ -1966,6 +1966,12 @@ export const FIELD_HELP: Record<string, string> = {
     "Emit LoopContextPack ContextItem shadows without changing formatted prompt text (default: false).",
   "runtime.contextProviders.registryPilot":
     "Run context provider registry pilot diagnostics while preserving legacy message and prompt output (default: false).",
+  "runtime.contextBlock":
+    "DCS context block runtime feature gates. Keep omitted or disabled unless validating a staged context-block rollout.",
+  "runtime.contextBlock.working-memory":
+    "Stage 1 working-memory context block controls for recent tool-result action injection.",
+  "runtime.contextBlock.working-memory.enabled":
+    "Enable DCS Stage 1 working-memory collection and ## Recent Actions prompt injection (default: false).",
   "runtime.eventLog":
     "Append-only RuntimeTaskEvent event-log shadow settings. These flags are default-off and must not wire live TaskLoop execution by themselves.",
   "runtime.eventLog.shadow":
