@@ -57,3 +57,8 @@ to this section in the same commit as the change.
   directory creation, writes, and mutation methods. Configuration is now an
   immutable in-memory snapshot with explicit environment compatibility and
   configured/missing-only secret diagnostics.
+
+- Runtime command boundary: replaced direct `execFile` calls with the public
+  OpenClaw command runner and Windows spawn resolver. Commands now share
+  bounded output, UTF-8 environment, timeout, cancellation, and argv-only
+  execution while preserving the imported five-state probe classification.

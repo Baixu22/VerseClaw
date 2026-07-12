@@ -4,9 +4,6 @@
  * 多后端：twitter-cli / OpenCLI / bird CLI (legacy)。
  * 需登录态（twitter_auth_token + twitter_ct0，或 opencli 复用浏览器登录）。
  */
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
-
 import { Schema } from '../common/schema.js';
 import {
   type AnyAgentTool,
@@ -17,13 +14,13 @@ import {
   readOptionalInt,
 } from '../common/tool-shape.js';
 import { probeCommand, utf8Env } from '../core/probe.js';
+import { commandError, runReachCommand } from '../core/command.js';
 import { canHandle, orderedBackends, selectBackend } from '../core/router.js';
 import { getConfig } from '../core/config.js';
 import type { Availability, BackendFinding } from '../types.js';
 
 const DOMAINS = ['x.com', 'twitter.com'] as const;
 const DEFAULT_BACKENDS = ['twitter-cli', 'OpenCLI', 'bird CLI (legacy)'] as const;
-const execFileP = promisify(execFile);
 
 export function canHandleUrl(url: string): boolean {
   return canHandle(url, DOMAINS);
@@ -152,27 +149,21 @@ export async function check(): Promise<Availability> {
 // -------------------- 数据获取（委托上游 CLI） --------------------
 
 async function twitterCli(args: string[], timeoutMs = 60_000): Promise<unknown> {
-  try {
-    const { stdout } = await execFileP('twitter', [...args, '-f', 'json'], {
-      timeout: timeoutMs, maxBuffer: 20 * 1024 * 1024, windowsHide: true, env: utf8Env(),
-    });
-    return JSON.parse(stdout);
-  } catch (e) {
-    const err = e as NodeJS.ErrnoException & { stderr?: string; stdout?: string };
-    throw new Error(`twitter ${args.join(' ')} failed: ${(err.stderr ?? err.stdout ?? err.message ?? '').slice(0, 500)}`);
-  }
+  const argv = [...args, '-f', 'json'];
+  const result = await runReachCommand('twitter', argv, {
+    timeoutMs, maxOutputBytes: 20 * 1024 * 1024, env: utf8Env(), packageName: 'twitter-cli',
+  });
+  if (result.code !== 0) throw commandError('twitter', argv, result);
+  return JSON.parse(result.stdout);
 }
 
 async function opencli(args: string[], timeoutMs = 60_000): Promise<unknown> {
-  try {
-    const { stdout } = await execFileP('opencli', ['twitter', ...args, '-f', 'json'], {
-      timeout: timeoutMs, maxBuffer: 20 * 1024 * 1024, windowsHide: true, env: utf8Env(),
-    });
-    return JSON.parse(stdout);
-  } catch (e) {
-    const err = e as NodeJS.ErrnoException & { stderr?: string; stdout?: string };
-    throw new Error(`opencli twitter ${args.join(' ')} failed: ${(err.stderr ?? err.stdout ?? err.message ?? '').slice(0, 500)}`);
-  }
+  const argv = ['twitter', ...args, '-f', 'json'];
+  const result = await runReachCommand('opencli', argv, {
+    timeoutMs, maxOutputBytes: 20 * 1024 * 1024, env: utf8Env(), packageName: 'opencli',
+  });
+  if (result.code !== 0) throw commandError('opencli twitter', argv, result);
+  return JSON.parse(result.stdout);
 }
 
 export async function searchTweets(query: string, limit = 10): Promise<unknown> {

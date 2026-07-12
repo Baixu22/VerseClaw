@@ -5,9 +5,6 @@
  * 核心价值：cleanNote/cleanComment —— 逐行对译 Python 的 _clean_note/_clean_comment，
  * 大幅降低 token 占用（剥离结构冗余 #134）。
  */
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
-
 import { Schema } from '../common/schema.js';
 import {
   type AnyAgentTool,
@@ -18,6 +15,7 @@ import {
   readOptionalInt,
 } from '../common/tool-shape.js';
 import { probeCommand, utf8Env } from '../core/probe.js';
+import { commandError, runReachCommand } from '../core/command.js';
 import { canHandle, orderedBackends, selectBackend } from '../core/router.js';
 import { getConfig } from '../core/config.js';
 import type { Availability, BackendFinding } from '../types.js';
@@ -26,7 +24,6 @@ const DOMAINS = ['xiaohongshu.com', 'xhslink.com'] as const;
 const DEFAULT_BACKENDS = ['OpenCLI', 'xiaohongshu-mcp', 'xhs-cli (xiaohongshu-cli)'] as const;
 const MCP_ENDPOINT = 'http://localhost:18060/mcp';
 const MCP_INSTALL_URL = 'https://github.com/xpzouying/xiaohongshu-mcp';
-const execFileP = promisify(execFile);
 
 export function canHandleUrl(url: string): boolean {
   return canHandle(url, DOMAINS);
@@ -255,15 +252,12 @@ export async function check(): Promise<Availability> {
 // -------------------- 数据获取（委托上游 CLI，返回结果经 cleaner） --------------------
 
 async function opencli(args: string[], timeoutMs = 60_000): Promise<unknown> {
-  try {
-    const { stdout } = await execFileP('opencli', ['xiaohongshu', ...args, '-f', 'json'], {
-      timeout: timeoutMs, maxBuffer: 20 * 1024 * 1024, windowsHide: true, env: utf8Env(),
-    });
-    return JSON.parse(stdout);
-  } catch (e) {
-    const err = e as NodeJS.ErrnoException & { stderr?: string; stdout?: string };
-    throw new Error(`opencli xiaohongshu ${args.join(' ')} failed: ${(err.stderr ?? err.stdout ?? err.message ?? '').slice(0, 500)}`);
-  }
+  const argv = ['xiaohongshu', ...args, '-f', 'json'];
+  const result = await runReachCommand('opencli', argv, {
+    timeoutMs, maxOutputBytes: 20 * 1024 * 1024, env: utf8Env(), packageName: 'opencli',
+  });
+  if (result.code !== 0) throw commandError('opencli xiaohongshu', argv, result);
+  return JSON.parse(result.stdout);
 }
 
 export async function searchFeeds(keyword: string, limit = 10): Promise<unknown> {
