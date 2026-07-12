@@ -18,11 +18,55 @@ import type {
 } from "../../plugins/hook-types.js";
 import type { VoidHookRunOptions } from "../../plugins/hooks.js";
 import { resolveGlobalSingleton } from "../../shared/global-singleton.js";
+import { handleTaskPhaseChange, isTerminalPhase } from "../../context-engine/handlers/task-loop-handler.js";
+import type { ContextBlockSink } from "../../context-engine/block.js";
+import type { BlockStoreApi } from "../../context-engine/block.js";
+import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
 import { buildAgentHookContext, type AgentHarnessHookContext } from "./hook-context.js";
 
 const log = createSubsystemLogger("agents/harness");
 const FINALIZE_RETRY_BUDGET_KEY = Symbol.for("openclaw.pluginFinalizeRetryBudget");
 const FINALIZE_RETRY_BUDGET_MAX_ENTRIES = 2048;
+
+const TASK_STATE_HANDLER_HOLDER_KEY = Symbol.for("openclaw.taskStateHandlerConfigHolder");
+
+/**
+ * Runtime configuration for the DCS Stage 2 task-state handler.
+ *
+ * Stored via the global singleton pattern (same as compaction-safeguard-runtime
+ * and context-pruning-runtime). The config is set by the embedded-agent-runner
+ * extension factory and consumed by `runAgentHarnessTaskPhaseChangeHook` to
+ * produce system-managed task_state Block writes and trigger terminal-phase
+ * SEKB trajectory capture.
+ */
+export interface TaskStateHandlerConfig {
+  contextBlockSink?: ContextBlockSink;
+  workingMemoryStore?: Pick<BlockStoreApi, "query">;
+  trajectoryCapture?: TrajectoryCapture;
+  objective?: string;
+  parentSessionId?: string;
+}
+
+type TaskStateHandlerHolder = { value?: TaskStateHandlerConfig };
+
+function getTaskStateHolder(): TaskStateHandlerHolder {
+  return resolveGlobalSingleton<TaskStateHandlerHolder>(TASK_STATE_HANDLER_HOLDER_KEY, () => ({}));
+}
+
+/** Returns the current global task-state handler config (or undefined). */
+export function getTaskStateHandlerConfig(): TaskStateHandlerConfig | undefined {
+  return getTaskStateHolder().value;
+}
+
+/** Sets the global task-state handler config. */
+export function setTaskStateHandlerConfig(config: TaskStateHandlerConfig): void {
+  getTaskStateHolder().value = config;
+}
+
+/** Clears the global task-state handler config. */
+export function clearTaskStateHandlerConfig(): void {
+  getTaskStateHolder().value = undefined;
+}
 
 type AgentHarnessHookRunner = ReturnType<typeof getGlobalHookRunner>;
 type FinalizeRetryBudget = Map<string, Map<string, number>>;
@@ -153,18 +197,67 @@ export async function runAgentHarnessTaskPhaseChangeHook(params: {
 }): Promise<void> {
   const hookRunner = params.hookRunner ?? getGlobalHookRunner();
   if (
-    !hookRunner?.hasHooks("task_phase_change") ||
-    typeof hookRunner.runTaskPhaseChange !== "function"
+    hookRunner?.hasHooks("task_phase_change") ||
+    typeof hookRunner?.runTaskPhaseChange === "function"
   ) {
-    return;
+    try {
+      await hookRunner.runTaskPhaseChange(
+        params.event,
+        buildAgentHookContext(params.ctx),
+      );
+    } catch (error) {
+      log.warn(`task_phase_change hook failed: ${String(error)}`);
+    }
   }
-  try {
-    await hookRunner.runTaskPhaseChange(
-      params.event,
-      buildAgentHookContext(params.ctx),
-    );
-  } catch (error) {
-    log.warn(`task_phase_change hook failed: ${String(error)}`);
+
+  // DCS Stage 2: produce a system-managed task_state Block write through
+  // the task-loop handler. This runs after plugin hooks so that plugin
+  // observers see the phase transition first, then the handler persists
+  // the authoritative task_state Block via ContextBlockSink/BlockStore.
+  const config = getTaskStateHandlerConfig();
+  if (config?.contextBlockSink) {
+    try {
+      await handleTaskPhaseChange({
+        event: {
+          sessionId: params.event.sessionId,
+          taskId: params.event.taskId,
+          fromStatus: params.event.fromStatus,
+          toStatus: params.event.toStatus,
+        },
+        objective: config.objective ?? "",
+        ...(config.parentSessionId
+          ? { parentSessionId: config.parentSessionId }
+          : {}),
+        ...(config.contextBlockSink
+          ? { contextBlockSink: config.contextBlockSink }
+          : {}),
+        ...(config.workingMemoryStore
+          ? { workingMemoryStore: config.workingMemoryStore }
+          : {}),
+      });
+    } catch (error) {
+      log.warn(`task_phase_change handler failed: ${String(error)}`);
+    }
+  }
+
+  // DCS Stage 2: trigger SEKB trajectory capture only on terminal phase
+  // (completed or failed). This does not duplicate agent_end; the existing
+  // agent_end lifecycle remains singular and unchanged.
+  if (isTerminalPhase(params.event.toStatus) && config?.trajectoryCapture) {
+    try {
+      const trajectoryId = config.trajectoryCapture.start_trajectory(
+        config.objective ?? params.event.taskId,
+        "agent/task",
+        [params.event.toStatus],
+      );
+      config.trajectoryCapture.finish_trajectory(
+        trajectoryId,
+        params.event.toStatus === "completed" ? "success" : "failure",
+        params.event.toStatus === "failed" ? "Task failed" : null,
+      );
+    } catch (error) {
+      log.warn(`task_phase_change SEKB trajectory capture failed: ${String(error)}`);
+    }
   }
 }
 

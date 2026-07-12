@@ -8,8 +8,14 @@ import { Assembler, contextBlockFlagNameForSourceSystem } from "../../context-en
 import type { BlockStoreApi, ContextBlock, ContextBlockSink } from "../../context-engine/block.js";
 import { BlockStore } from "../../context-engine/block-store.js";
 import { handleWorkingMemoryAction } from "../../context-engine/handlers/working-memory-handler.js";
+import { restoreChildState, buildChildHandoffFromParent, writeChildHandoffPack, CHILD_CONTEXT_READ_INSTRUCTION } from "../../context-engine/handlers/task-loop-handler.js";
+import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
+import { isSubagentSessionKey } from "../../sessions/session-key-utils.js";
 import { openOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
+import {
+  setTaskStateHandlerConfig,
+} from "../harness/lifecycle-hook-helpers.js";
 import { setCompactionSafeguardRuntime } from "../agent-hooks/compaction-safeguard-runtime.js";
 import compactionSafeguardExtension from "../agent-hooks/compaction-safeguard.js";
 import contextPruningExtension from "../agent-hooks/context-pruning.js";
@@ -288,6 +294,108 @@ function buildContextPruningFactory(params: {
   return contextPruningExtension;
 }
 
+/**
+ * DCS Stage 2: Build the task-state extension factory.
+ *
+ * Registers a `before_agent_start` handler that restores the child HandoffPack
+ * from BlockStore for subagent sessions. Also sets the global task-state handler
+ * config so that `runAgentHarnessTaskPhaseChangeHook` can produce system-managed
+ * task_state Block writes and trigger terminal-phase SEKB trajectory capture.
+ *
+ * The factory returns undefined when no task-state wiring is applicable (no
+ * sink and no store), so it does not register an empty extension.
+ */
+function buildTaskStateFactory(params: {
+  sessionKey?: string;
+  sessionId?: string;
+  contextBlockSink?: ContextBlockSink;
+  workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
+  trajectoryCapture?: TrajectoryCapture;
+  objective?: string;
+  parentSessionId?: string;
+}): ExtensionFactory | undefined {
+  const sessionKey = params.sessionKey?.trim() || params.sessionId?.trim();
+  const hasSink = Boolean(params.contextBlockSink);
+  const hasStore = Boolean(params.workingMemoryStore);
+  if (!hasSink && !hasStore) {
+    return undefined;
+  }
+
+  // Set the global task-state handler config so that
+  // runAgentHarnessTaskPhaseChangeHook can produce task_state Block writes
+  // and trigger terminal-phase SEKB trajectory capture.
+  setTaskStateHandlerConfig({
+    ...(params.contextBlockSink ? { contextBlockSink: params.contextBlockSink } : {}),
+    ...(params.workingMemoryStore ? { workingMemoryStore: params.workingMemoryStore } : {}),
+    ...(params.trajectoryCapture ? { trajectoryCapture: params.trajectoryCapture } : {}),
+    ...(params.objective ? { objective: params.objective } : {}),
+    ...(params.parentSessionId ? { parentSessionId: params.parentSessionId } : {}),
+  });
+
+  // DCS Stage 2: Parent writes child HandoffPack before spawn.
+  // When this is a subagent session with a sink, parentSessionId, and objective,
+  // the parent writes the child-owned task_state Block to the child session key
+  // before the child agent starts. The write is kicked off during factory
+  // construction and awaited in before_agent_start to ensure ordering.
+  const isChildSession = Boolean(sessionKey && isSubagentSessionKey(sessionKey));
+  let handoffWritePromise: Promise<unknown> | undefined;
+  if (
+    isChildSession &&
+    params.contextBlockSink &&
+    params.parentSessionId &&
+    params.objective &&
+    params.workingMemoryStore
+  ) {
+    handoffWritePromise = buildChildHandoffFromParent({
+      parentSessionKey: params.parentSessionId,
+      objective: params.objective,
+      currentPhase: "running",
+      workingMemoryStore: params.workingMemoryStore,
+    })
+      .then((handoffPack) =>
+        writeChildHandoffPack({
+          childSessionKey: sessionKey!,
+          handoffPack,
+          contextBlockSink: params.contextBlockSink,
+        }),
+      )
+      .catch(() => {
+        // Best-effort write; failure does not block agent start.
+      });
+  }
+
+  return (agent) => {
+    // DCS Stage 2: child before_agent_start restoration.
+    // Reads only the child session's current task_state Block and appends
+    // the fixed context_read instruction to the system prompt.
+    // Non-subagent (main) sessions skip restoration.
+    agent.on("before_agent_start", async (event) => {
+      if (!sessionKey || !isSubagentSessionKey(sessionKey)) {
+        return undefined;
+      }
+      // Await the parent's handoff write before reading
+      if (handoffWritePromise) {
+        await handoffWritePromise;
+      }
+      if (params.workingMemoryStore) {
+        try {
+          await restoreChildState({
+            childSessionKey: sessionKey,
+            store: params.workingMemoryStore,
+          });
+        } catch {
+          // Best-effort restoration; failure does not block agent start.
+        }
+      }
+      // Append the fixed context_read instruction to the existing system prompt.
+      // The instruction contains no HandoffPack JSON, Block ids, transcript
+      // excerpt, or raw tool output.
+      const existingPrompt = (event as { systemPrompt?: string }).systemPrompt ?? "";
+      return { systemPrompt: `${existingPrompt}\n\n${CHILD_CONTEXT_READ_INSTRUCTION}` };
+    });
+  };
+}
+
 export function buildEmbeddedExtensionFactories(params: {
   cfg: OpenClawConfig | undefined;
   sessionManager: SessionManager;
@@ -299,6 +407,9 @@ export function buildEmbeddedExtensionFactories(params: {
   sessionKey?: string;
   contextBlockSink?: ContextBlockSink;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
+  trajectoryCapture?: TrajectoryCapture;
+  objective?: string;
+  parentSessionId?: string;
 }): ExtensionFactory[] {
   const factories: ExtensionFactory[] = [];
   if (resolveEffectiveCompactionMode(params.cfg) === "safeguard") {
@@ -334,6 +445,11 @@ export function buildEmbeddedExtensionFactories(params: {
   const pruningFactory = buildContextPruningFactory(params);
   if (pruningFactory) {
     factories.push(pruningFactory);
+  }
+  // DCS Stage 2: task-state adapter and child-session handoff wiring.
+  const taskStateFactory = buildTaskStateFactory(params);
+  if (taskStateFactory) {
+    factories.push(taskStateFactory);
   }
   factories.push(buildAgentToolResultMiddlewareFactory());
   return factories;

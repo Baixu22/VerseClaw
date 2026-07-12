@@ -25,6 +25,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/embedded-agent-runner/extensions.task-state.test.ts
   - openclaw_runtime/src/knowledge/sekb/harness-integration.ts
   - openclaw_runtime/src/knowledge/sekb/harness-integration.test.ts
+  - eslint.config.mjs
   - package.json
   - team/dcs/README.md
 expectedUserBehavior:
