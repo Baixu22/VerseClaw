@@ -48,10 +48,11 @@ describe("edit tool: successful replacement", () => {
     expect(result.content).toEqual([
       { type: "text", text: "Successfully replaced 1 block(s) in f.txt." },
     ]);
-    expect(result.details).toEqual({
+    expect(result.details).toMatchObject({
       diff: " 1 one\n-2 two\n+2 TWO\n 3 three",
       patch: expect.stringContaining("+TWO"),
       firstChangedLine: 2,
+      working_memory: { significance: "high" },
     });
     expect(await readFile(join(dir, "f.txt"), "utf-8")).toBe("one\nTWO\nthree\n");
   });

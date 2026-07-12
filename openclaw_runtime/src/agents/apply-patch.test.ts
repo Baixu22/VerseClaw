@@ -239,9 +239,12 @@ describe("createApplyPatchTool", () => {
       undefined,
       undefined,
     );
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       content: [{ type: "text", text: "Success. Updated the following files:\nA via-tool.txt" }],
-      details: { summary: { added: ["via-tool.txt"], modified: [], deleted: [] } },
+      details: {
+        summary: { added: ["via-tool.txt"], modified: [], deleted: [] },
+        working_memory: { significance: "high" },
+      },
     });
   });
 

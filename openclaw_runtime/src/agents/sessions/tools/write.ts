@@ -26,6 +26,7 @@ import {
   str,
 } from "./render-utils.js";
 import { wrapToolDefinition } from "./tool-definition-wrapper.js";
+import type { WriteToolDetails } from "./tool-contracts.js";
 
 const writeSchema = Type.Object({
   path: Type.String({ description: "Path to the file to write (relative or absolute)" }),
@@ -369,7 +370,7 @@ async function recoverSuccessfulWrite(params: {
 export function createWriteToolDefinition(
   cwd: string,
   options?: WriteToolOptions,
-): ToolDefinition<typeof writeSchema, undefined> {
+): ToolDefinition<typeof writeSchema, WriteToolDetails | undefined> {
   const ops = options?.operations ?? defaultWriteOperations;
   return {
     name: "write",
@@ -415,7 +416,12 @@ export function createWriteToolDefinition(
                 text: `Successfully wrote ${content.length} bytes to ${path}`,
               },
             ],
-            details: undefined,
+            details: {
+              working_memory: {
+                result_summary: `Wrote ${path}: ${content.length} bytes`.slice(0, 100),
+                significance: "high",
+              },
+            },
           };
         } catch (error: unknown) {
           const recovered = await recoverSuccessfulWrite({

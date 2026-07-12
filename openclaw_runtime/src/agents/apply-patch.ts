@@ -66,6 +66,10 @@ type ApplyPatchResult = {
 
 type ApplyPatchToolDetails = {
   summary: ApplyPatchSummary;
+  working_memory?: {
+    result_summary: string;
+    significance: "high" | "medium" | "low";
+  };
 };
 
 type SandboxApplyPatchConfig = {
@@ -126,7 +130,13 @@ export function createApplyPatchTool(
 
       return {
         content: [{ type: "text", text: result.text }],
-        details: { summary: result.summary },
+        details: {
+          summary: result.summary,
+          working_memory: {
+            result_summary: `Patched: +${result.summary.added.length} ~${result.summary.modified.length} -${result.summary.deleted.length}`.slice(0, 100),
+            significance: "high",
+          },
+        },
       };
     },
   };
