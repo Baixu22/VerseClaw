@@ -13,6 +13,7 @@
 import type { AnyAgentTool } from './common/tool-shape.js';
 import { definePluginEntry, type PluginEntry, type PluginApi } from './common/plugin-entry.js';
 import { hydrateReachConfig } from './core/config.js';
+import { configureReachBrowserBridge } from './core/browser-bridge.js';
 
 import { webReadTool } from './tools/web.js';
 import { rssReadTool } from './tools/rss.js';
@@ -60,6 +61,7 @@ export const reachReadersPlugin: PluginEntry = definePluginEntry({
   name: 'Reach Readers',
   description: 'Per-platform content readers (yt-dlp, gh, bili-cli, opencli, rss, ...) — TS shadow of Agent Reach',
   register(api: PluginApi) {
+    configureReachBrowserBridge(api.runtime.agentBrowser?.invoke);
     let hydration: ReturnType<typeof hydrateReachConfig> | undefined;
     for (const tool of ALL_TOOLS) {
       const configuredTool = {

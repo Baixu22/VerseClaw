@@ -21,6 +21,7 @@ import { httpJson } from '../core/http.js';
 import { canHandle, orderedBackends, selectBackend } from '../core/router.js';
 import { getConfig } from '../core/config.js';
 import type { Availability, BackendFinding } from '../types.js';
+import { readBrowserFallbackPage } from '../core/browser-bridge.js';
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
 const DOMAINS = ['bilibili.com', 'b23.tv'] as const;
@@ -277,7 +278,7 @@ export const bilibiliReadTool: AnyAgentTool = {
     keyword: Schema.optional(Schema.string('action=search 时的搜索关键词')),
     limit: Schema.optional(Schema.integer({ description: '最大条数（默认 10）', minimum: 1 })),
   }),
-  async execute(_id, args) {
+  async execute(_id, args, signal) {
     const params = asToolParamsRecord(args);
     const action = (readStringParam(params, 'action') || 'search') as (typeof ACTIONS)[number];
     const limit = readOptionalInt(params, 'limit', { min: 1, max: 50 }) ?? 10;
@@ -291,7 +292,25 @@ export const bilibiliReadTool: AnyAgentTool = {
       const items = await searchByApi(keyword, limit);
       return jsonResult({ status: 'ok', success: true, action, backend: 'B站搜索 API', count: items.length, items });
     } catch (e) {
-      return errorResult(String(e instanceof Error ? e.message : e), { action });
+      const originalError = String(e instanceof Error ? e.message : e);
+      const policy = getConfig().get<string>('browser_fallback', 'auto');
+      if (policy !== 'auto') return errorResult(originalError, {
+        action, browserFallback: policy === 'off' ? 'disabled' : 'unavailable',
+      });
+      const keyword = readStringParam(params, 'keyword');
+      const url = `https://search.bilibili.com/all?keyword=${encodeURIComponent(keyword)}`;
+      try {
+        const page = await readBrowserFallbackPage({
+          url,
+          profile: getConfig().get<string>('browser_profile', 'default') ?? 'default',
+          signal,
+        });
+        return page
+          ? jsonResult({ status: 'ok', success: true, action, browserFallback: 'used', ...page })
+          : errorResult(originalError, { action, browserFallback: 'unavailable' });
+      } catch {
+        return errorResult(originalError, { action, browserFallback: 'unavailable' });
+      }
     }
   },
 };

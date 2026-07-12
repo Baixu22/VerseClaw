@@ -26,6 +26,7 @@ import { canHandle } from '../core/router.js';
 import { getConfig } from '../core/config.js';
 import { readResponseWithLimit } from 'openclaw/plugin-sdk/response-limit-runtime';
 import { withGuardedResponse } from '../core/http.js';
+import { getReachBrowserBridge } from '../core/browser-bridge.js';
 import type { Availability } from '../types.js';
 
 const UA =
@@ -84,6 +85,26 @@ async function ensureCookies(): Promise<void> {
     injectCookieString(fromConfig);
     cookiesInitialized = true;
     return;
+  }
+  const browserPolicy = getConfig().get<string>('browser_fallback', 'auto');
+  const bridge = getReachBrowserBridge();
+  if (browserPolicy === 'auto' && bridge) {
+    try {
+      const cookies = await bridge.readCookies(
+        ['.xueqiu.com', 'xueqiu.com'],
+        undefined,
+        { profile: getConfig().get<string>('browser_profile', 'default') ?? 'default' },
+      );
+      if (cookies.some((cookie) => cookie.name === 'xq_a_token' && cookie.value)) {
+        for (const cookie of cookies) {
+          if (cookie.name) cookieJar.set(cookie.name, cookie.value);
+        }
+        cookiesInitialized = true;
+        return;
+      }
+    } catch {
+      // Preserve the original homepage fallback when the bridge is unavailable.
+    }
   }
   // 2) 浏览器提取 —— Node 无 rookiepy 等价物；迁移到 ClawX 时可复用 agent_browser 的 cookie store。
   //    这里跳过（对齐 Python 版在无 browser_cookie3 时的 fallback 行为）。
