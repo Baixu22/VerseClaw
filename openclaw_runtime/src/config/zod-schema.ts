@@ -89,6 +89,18 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+        "compass": z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
+        "role-memory": z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),

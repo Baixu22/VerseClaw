@@ -14,6 +14,12 @@ describe("runtime.contextBlock working-memory config", () => {
           "tool-registry"?: {
             enabled?: boolean;
           };
+          "compass"?: {
+            enabled?: boolean;
+          };
+          "role-memory"?: {
+            enabled?: boolean;
+          };
         }
       | undefined
     >();

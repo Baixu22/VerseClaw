@@ -7,12 +7,15 @@
 接口层与 Stage 1 working-memory 已在 main 收口（R1 COMPLETE）；R2 producer
 envelope vertical slice 已在 main 收口（R2 COMPLETE）；R3 Stage 2 task state
 adapter 与 child-session handoff 已在 main 收口（R3 COMPLETE）；R4 Stage 3
-tool_registry Block producer 与 Assembler injection 已在 main 收口（R4 COMPLETE）。
+tool_registry Block producer 与 Assembler injection 已在 main 收口（R4 COMPLETE）；
+R5 Stage 4 knowledge Block 统一（compass + role-memory）已在 main 收口
+（R5 COMPLETE）。
 DCS working-memory infrastructure ready; production producer coverage = 3/3
 （edit/write/apply_patch 均已产出 `details.working_memory` envelope）；
 task_state adapter + child handoff + direct-parent authorization + terminal-phase
 SEKB trajectory capture 已就位；tool_registry Block producer + Assembler
-injection 已就位（flag-gated, default off）。
+injection 已就位（flag-gated, default off）；knowledge Block 统一（compass +
+role-memory 两条路径）已就位（flag-gated, default off）。
 
 ---
 
@@ -214,6 +217,40 @@ flag-gated producer。Feature flag `runtime.contextBlock.tool-registry.enabled`
 （flag-gated, default off）。toolEntries 由 factory closure 参数传入，当前
 无 caller 传入真实 tool list。knowledge unification（M5b）、SEKB closure
 （M6+T1）由 R5+ 交付。
+
+---
+
+## Stage 4 Knowledge Block 统一（R5 收口）
+
+R5 于 2026-07-12 在 main 分支收口（DCS-ROUND5-COMPLETE）。compass（main
+session）和 role-memory（subagent session）两条路径统一为 `knowledge` Block
+类型。两个 handler 包装现有 legacy builder（`buildPreReplyInjection` /
+`buildContextPack`），通过 `ContextBlockSink` 写入 system-managed `knowledge`
+Block。Assembler 的 `#appendKnowledge` 按 flag-guard + exactly-once +
+session-type-aware query + flag-aware source filtering 模式注入 `## Knowledge`
+摘要。ANTI-3 强制：main 只查 compass，subagent 只查 role-memory。两条路径的
+Block 均为 `always_on=false`，`on_demand.expand_tool="context_search"`，
+`background=true`，`mutability="system_managed"`，`compression_depth=0`。
+Feature flags `runtime.contextBlock.compass.enabled` 和
+`runtime.contextBlock.role_memory.enabled` 缺省为 false。
+
+| 交付物 | 路径 |
+|--------|------|
+| compass knowledge handler（buildCompassKnowledgeBlock / handleCompassKnowledge / formatKnowledgeInjection） | `openclaw_runtime/src/context-engine/handlers/compass-handler.ts` |
+| role-memory knowledge handler（buildRoleMemoryKnowledgeBlock / handleRoleMemoryKnowledge） | `openclaw_runtime/src/context-engine/handlers/role-memory-handler.ts` |
+| Assembler #appendKnowledge + flags + mainKey + char budget + exactly-once guard | `openclaw_runtime/src/context-engine/assembler.ts` |
+| isMainSessionKey mainKey 支持（增补 4） | `openclaw_runtime/src/sessions/session-key-utils.ts` |
+| config 面（strict schema/labels/help/types） | `openclaw_runtime/src/config/*` |
+| RED→GREEN compass handler 测试（10 tests） | `openclaw_runtime/src/context-engine/handlers/compass-handler.test.ts` |
+| RED→GREEN role-memory handler 测试（6 tests） | `openclaw_runtime/src/context-engine/handlers/role-memory-handler.test.ts` |
+| RED→GREEN assembler knowledge 测试（12 new tests） | `openclaw_runtime/src/context-engine/assembler.test.ts` |
+| RED→GREEN extension wiring 测试（3 tests） | `openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts` |
+| RED→GREEN config 测试（4 tests） | `openclaw_runtime/src/config/runtime-context-block-compass.test.ts`、`runtime-context-block-role-memory.test.ts` |
+
+诚实声明：**knowledge Block 统一（compass + role-memory 两条路径）已就位**
+（flag-gated, default off）。compass admission context 包含 `verification_status`/
+`confidence`/`audn_state` 以满足 BlockStore 准入门禁。SEKB closure（M6+T1）
+由 R6 交付。
 
 ---
 

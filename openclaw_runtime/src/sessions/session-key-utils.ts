@@ -267,12 +267,16 @@ export function isCronSessionKey(sessionKey: string | undefined | null): boolean
   return normalizeOptionalLowercaseString(parsed.rest)?.startsWith("cron:") === true;
 }
 
-export function isMainSessionKey(sessionKey: string | undefined | null): boolean {
+export function isMainSessionKey(
+  sessionKey: string | undefined | null,
+  mainKey?: string,
+): boolean {
+  const expected = normalizeLowercaseStringOrEmpty(mainKey) || "main";
   const parsed = parseAgentSessionKey(sessionKey);
   if (!parsed) {
-    return normalizeLowercaseStringOrEmpty(sessionKey) === "main";
+    return normalizeLowercaseStringOrEmpty(sessionKey) === expected;
   }
-  return normalizeLowercaseStringOrEmpty(parsed.rest) === "main";
+  return normalizeLowercaseStringOrEmpty(parsed.rest) === expected;
 }
 
 export function isSubagentSessionKey(sessionKey: string | undefined | null): boolean {
