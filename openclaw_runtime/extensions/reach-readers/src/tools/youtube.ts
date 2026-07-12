@@ -28,7 +28,7 @@ import type { Availability } from '../types.js';
 import { readBrowserFallbackPage } from '../core/browser-bridge.js';
 
 const DOMAINS = ['youtube.com', 'youtu.be', 'youtube-nocookie.com'] as const;
-const DEFAULT_BACKENDS = ['yt-dlp'] as const;
+const _DEFAULT_BACKENDS = ['yt-dlp'] as const;
 
 type MediaTranscribe = (params: {
   filePath: string;
@@ -61,7 +61,7 @@ export async function transcribeAudioChunk(chunkPath: string): Promise<string> {
   } catch (error) {
     throw new Error(`${path.basename(chunkPath)}: ${
       error instanceof Error ? error.message : String(error)
-    }`);
+    }`, { cause: error });
   }
   const text = result.text?.trim();
   if (!text) throw new Error(`transcription returned no text for ${path.basename(chunkPath)}`);

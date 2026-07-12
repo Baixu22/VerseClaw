@@ -12,7 +12,7 @@
  * Python 的 FileNotFoundError。126/127 同 Python 的 _BROKEN_EXIT_CODES。
  */
 import { createRequire } from 'node:module';
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 import type { ProbeResult } from '../types.js';
@@ -81,8 +81,6 @@ function statSyncOrNull(p: string) {
 }
 
 function statSyncShim(p: string) {
-  // node:fs.statSync
-  const { statSync } = require('node:fs') as typeof import('node:fs');
   return statSync(p);
 }
 
@@ -188,7 +186,7 @@ export function utf8Env(): NodeJS.ProcessEnv {
 // HTTP helper —— 重构自 channels/v2ex.py / xueqiu.py / bilibili.py 里的 urllib 调用
 // ------------------------------------------------------------------
 
-const DEFAULT_UA =
+const _DEFAULT_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
 export interface HttpJsonOptions {
@@ -218,7 +216,7 @@ export async function httpText(url: string, opts: HttpJsonOptions = {}): Promise
  * noProxy=false 时也直接 fetch（等价于 Python 的默认 opener，但 Node 行为不同——
  * Python 默认读 HTTP_PROXY，Node 默认不读）。这是有意分歧：shadow 版不自动走代理。
  */
-async function fetchWithProxyControl(url: string, init: RequestInit & { noProxy?: boolean }): Promise<Response> {
+async function _fetchWithProxyControl(url: string, init: RequestInit & { noProxy?: boolean }): Promise<Response> {
   // Node fetch 默认不走代理环境变量，noProxy 参数在此实现里是 no-op（但保留 API 兼容）。
   // 迁移到 ClawX 时如需代理支持，可在此处注入 undici ProxyAgent 或 setGlobalDispatcher。
   return fetch(url, init);

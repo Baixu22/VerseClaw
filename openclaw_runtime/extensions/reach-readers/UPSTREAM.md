@@ -115,3 +115,9 @@ to this section in the same commit as the change.
   official-host SSRF policy selection, guarded-resource release after parse or
   response-limit failures, private target rejection, and bounded command
   output. No production behavior changed.
+
+- Runtime lint compatibility: replaced the retained CommonJS filesystem shim
+  with an ESM import, marked retained but currently unused compatibility
+  helpers explicitly, removed redundant fallback assignments, and attached
+  the original transcription exception as `cause`. Reader behavior, backend
+  order, and user-visible diagnostics are unchanged.

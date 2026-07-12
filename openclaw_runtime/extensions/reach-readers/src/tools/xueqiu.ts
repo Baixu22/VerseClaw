@@ -212,7 +212,7 @@ export async function getHotPosts(limit = 20): Promise<{ id: number; title: stri
   const items = data?.list ?? [];
   const out: { id: number; title: string; text: string; author: string; likes: number; url: string }[] = [];
   for (const item of items.slice(0, limit)) {
-    let post: Record<string, unknown> = {};
+    let post: Record<string, unknown>;
     try {
       post = typeof item.data === 'string' ? (JSON.parse(item.data) as Record<string, unknown>) : {};
     } catch {
