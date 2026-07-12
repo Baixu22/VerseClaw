@@ -126,3 +126,9 @@ to this section in the same commit as the change.
   `browser_login_required` payload, profile/auth-state reuse, unchanged retry
   arguments, visible-session retention, and unavailable bridge behavior. No
   production behavior changed.
+
+- Public Gateway bridge coverage: added a runtime test proving the narrow
+  `agentBrowser.invoke` plugin helper routes through the existing
+  `agentBrowser.invoke` Gateway method with cancellation and timeout
+  propagation, and rejects pre-cancelled calls before RPC. No production
+  behavior changed.
