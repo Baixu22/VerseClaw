@@ -14,6 +14,12 @@ describe("runtime.contextBlock tool-registry config", () => {
           "tool-registry"?: {
             enabled?: boolean;
           };
+          "compass"?: {
+            enabled?: boolean;
+          };
+          "role-memory"?: {
+            enabled?: boolean;
+          };
         }
       | undefined
     >();

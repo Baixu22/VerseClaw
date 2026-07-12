@@ -11,7 +11,12 @@ import {
   isMainSessionKey,
   isSubagentSessionKey,
 } from "../sessions/session-key-utils.js";
-import type { BlockStoreApi, ContextBlock, SourceSystem } from "./block.js";
+import type { BlockStoreApi, ContextBlock, ContextBlockSink, SourceSystem } from "./block.js";
+import {
+  formatKnowledgeInjection,
+  handleCompassKnowledge,
+} from "./handlers/compass-handler.js";
+import { handleRoleMemoryKnowledge } from "./handlers/role-memory-handler.js";
 import { formatToolRegistryInjection } from "./handlers/tool-registry-handler.js";
 import { parseWorkingMemoryActions } from "./handlers/working-memory-handler.js";
 
@@ -19,6 +24,8 @@ export interface AssembleRequest {
   session_id: string;
   hint_entities?: string[];
   role_name?: string;
+  /** DCS v1.6.1 addendum 4: config-aware mainKey for session classification. */
+  mainKey?: string;
 }
 
 export type LegacyHandlerId = "compass" | "role_memory";
@@ -52,6 +59,13 @@ const CONTEXT_BLOCK_FLAG_NAME_BY_SOURCE_SYSTEM: Record<
 };
 
 /**
+ * DCS v1.6.1 addendum 6: combined character budget for CVK systemPromptAddition
+ * and DCS transformContext injection points. This constant declares the ceiling;
+ * cross-injection-point dynamic trimming is deferred per addendum 6.
+ */
+export const KNOWLEDGE_INJECTION_CHAR_BUDGET = 2000;
+
+/**
  * DCS v1.6.1 addendum 1: the only sanctioned mapping between canonical kebab
  * source-system names ([P1] flag form) and the assembler-internal snake flag keys.
  */
@@ -78,10 +92,12 @@ export interface AssemblerDependencies {
   buildCompass: typeof buildPreReplyInjection;
   buildRoleMemory: typeof buildContextPack;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
+  /** DCS Stage 4: sink for writing knowledge Blocks after legacy builder calls. */
+  contextBlockSink?: ContextBlockSink;
 }
 
 export function selectHandlers(request: AssembleRequest): LegacyHandlerId[] {
-  if (isMainSessionKey(request.session_id)) {
+  if (isMainSessionKey(request.session_id, request.mainKey)) {
     return ["compass"];
   }
   if (isSubagentSessionKey(request.session_id)) {
@@ -99,6 +115,9 @@ export class Assembler {
       buildRoleMemory: dependencies.buildRoleMemory ?? buildContextPack,
       ...(dependencies.workingMemoryStore
         ? { workingMemoryStore: dependencies.workingMemoryStore }
+        : {}),
+      ...(dependencies.contextBlockSink
+        ? { contextBlockSink: dependencies.contextBlockSink }
         : {}),
     };
   }
@@ -128,6 +147,19 @@ export class Assembler {
         ...inputs.compass,
       });
       result.selected_handlers.push("compass");
+      // DCS Stage 4: produce knowledge Block from compass output.
+      const sink = this.#dependencies.contextBlockSink;
+      if (sink && result.compass) {
+        try {
+          await handleCompassKnowledge({
+            sessionId: request.session_id,
+            injection: result.compass,
+            contextBlockSink: sink,
+          });
+        } catch {
+          // Best-effort write; failure does not block assembly.
+        }
+      }
     }
 
     if (
@@ -137,6 +169,19 @@ export class Assembler {
     ) {
       result.role_memory = this.#dependencies.buildRoleMemory(inputs.role_memory);
       result.selected_handlers.push("role_memory");
+      // DCS Stage 4: produce knowledge Block from role-memory output.
+      const sink = this.#dependencies.contextBlockSink;
+      if (sink && result.role_memory) {
+        try {
+          await handleRoleMemoryKnowledge({
+            sessionId: request.session_id,
+            pack: result.role_memory,
+            contextBlockSink: sink,
+          });
+        } catch {
+          // Best-effort write; failure does not block assembly.
+        }
+      }
     }
 
     if (resolvedFlags["runtime.contextBlock.working_memory.enabled"]) {
@@ -145,6 +190,19 @@ export class Assembler {
 
     if (resolvedFlags["runtime.contextBlock.tool_registry.enabled"]) {
       result.output = (await this.#appendToolRegistry(request, result.output)) as TExistingOutput;
+    }
+
+    // DCS Stage 4: knowledge Block injection (compass for main, role-memory for subagent).
+    if (
+      resolvedFlags["runtime.contextBlock.compass.enabled"] ||
+      resolvedFlags["runtime.contextBlock.role_memory.enabled"]
+    ) {
+      result.output = (await this.#appendKnowledge(
+        request,
+        result.output,
+        eligibleHandlers,
+        resolvedFlags,
+      )) as TExistingOutput;
     }
 
     return result;
@@ -203,10 +261,58 @@ export class Assembler {
     }
     return [...output, { role: "user", content: injection }] as TExistingOutput;
   }
+
+  /**
+   * DCS Stage 4: knowledge Block injection.
+   *
+   * Session-type-aware query — main sessions query compass Blocks, subagent
+   * sessions query role-memory Blocks (ANTI-3). Exactly-once guard via
+   * `## Knowledge` heading (addendum 2).
+   */
+  async #appendKnowledge<TExistingOutput>(
+    request: AssembleRequest,
+    output: TExistingOutput,
+    eligibleHandlers: Set<LegacyHandlerId>,
+    flags: ContextBlockFeatureFlags,
+  ): Promise<TExistingOutput> {
+    const store = this.#dependencies.workingMemoryStore;
+    if (!store || !Array.isArray(output)) {
+      return output;
+    }
+    if (hasKnowledgeHeading(output)) {
+      // DCS v1.6.1 addendum 2: exactly-once.
+      return output;
+    }
+    // ANTI-3: main → compass only; subagent → role-memory only.
+    // Flags must also be ON — a flag-off source must never be injected.
+    const sourceSystems: SourceSystem[] = [];
+    if (eligibleHandlers.has("compass") && flags["runtime.contextBlock.compass.enabled"]) {
+      sourceSystems.push("compass");
+    }
+    if (eligibleHandlers.has("role_memory") && flags["runtime.contextBlock.role_memory.enabled"]) {
+      sourceSystems.push("role-memory");
+    }
+    if (sourceSystems.length === 0) {
+      return output;
+    }
+    const blocks = await store.query({
+      requester_session_id: request.session_id,
+      session_id: request.session_id,
+      block_types: ["knowledge"],
+      source_systems: sourceSystems,
+      limit: 1,
+    });
+    const injection = formatKnowledgeInjection(blocks[0]);
+    if (!injection) {
+      return output;
+    }
+    return [...output, { role: "user", content: injection }] as TExistingOutput;
+  }
 }
 
 const RECENT_ACTIONS_HEADING_PATTERN = /^## Recent Actions$/m;
 const TOOLS_HEADING_PATTERN = /^## Tools \(\d+ available\)$/m;
+const KNOWLEDGE_HEADING_PATTERN = /^## Knowledge$/m;
 
 function hasRecentActionsHeading(output: readonly unknown[]): boolean {
   return output.some((message) => {
@@ -219,6 +325,13 @@ function hasToolsHeading(output: readonly unknown[]): boolean {
   return output.some((message) => {
     const content = (message as { content?: unknown } | undefined)?.content;
     return typeof content === "string" && TOOLS_HEADING_PATTERN.test(content);
+  });
+}
+
+function hasKnowledgeHeading(output: readonly unknown[]): boolean {
+  return output.some((message) => {
+    const content = (message as { content?: unknown } | undefined)?.content;
+    return typeof content === "string" && KNOWLEDGE_HEADING_PATTERN.test(content);
   });
 }
 

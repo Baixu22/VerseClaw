@@ -1976,6 +1976,14 @@ export const FIELD_HELP: Record<string, string> = {
     "Stage 3 tool-registry context block controls for tool registry Block production and prompt injection.",
   "runtime.contextBlock.tool-registry.enabled":
     "Enable DCS Stage 3 tool-registry Block production on before_agent_start and ## Tools prompt injection on pre_llm_call (default: false).",
+  "runtime.contextBlock.compass":
+    "Stage 4 compass knowledge context block controls for main-session knowledge Block production from buildPreReplyInjection.",
+  "runtime.contextBlock.compass.enabled":
+    "Enable DCS Stage 4 compass knowledge Block production and ## Knowledge prompt injection for main sessions (default: false).",
+  "runtime.contextBlock.role-memory":
+    "Stage 4 role-memory knowledge context block controls for subagent-session knowledge Block production from buildContextPack.",
+  "runtime.contextBlock.role-memory.enabled":
+    "Enable DCS Stage 4 role-memory knowledge Block production and ## Knowledge prompt injection for subagent sessions (default: false).",
   "runtime.eventLog":
     "Append-only RuntimeTaskEvent event-log shadow settings. These flags are default-off and must not wire live TaskLoop execution by themselves.",
   "runtime.eventLog.shadow":

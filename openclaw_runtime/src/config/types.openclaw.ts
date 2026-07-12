@@ -115,6 +115,12 @@ export type RuntimeFeatureConfig = {
     "tool-registry"?: {
       enabled?: boolean;
     };
+    "compass"?: {
+      enabled?: boolean;
+    };
+    "role-memory"?: {
+      enabled?: boolean;
+    };
   };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
   contextRuntimeKit?: {
