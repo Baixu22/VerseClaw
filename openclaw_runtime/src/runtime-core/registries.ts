@@ -1,5 +1,14 @@
 import type { EvidenceRef } from "./evidence.js";
 import {
+  eventBus,
+  evidenceLedger,
+  failureContract,
+  gateEngine,
+  lifecycleEngine,
+  type GateDecision,
+} from "../runtime-spine/index.js";
+import { registerToolPolicyCheckerForRuntimeSpine } from "../runtime-spine/checkers/tool-policy-checker.js";
+import {
   TOOL_CALL_RESULT_STATUSES,
   isContextItem,
   isContextItemKind,
@@ -464,6 +473,9 @@ const RUNTIME_REGISTRY_CONTROLLED_REPORT_AUTHORITY = {
   notTaskCompletionEvidence: true,
 } as const satisfies RuntimeRegistryControlledDiagnosticConsumerAuthority;
 
+// [SPINE] Register the diagnostic tool-policy checker when runtime registries initialize.
+registerToolPolicyCheckerForRuntimeSpine();
+
 function isEvidenceRefShape(value: unknown): value is EvidenceRef {
   if (!isRecord(value)) {
     return false;
@@ -918,6 +930,176 @@ export class ToolProviderRegistry {
       .map((manifest) => this.#providers.get(manifest.id))
       .find((provider) => provider?.manifest.toolNames.includes(toolName));
   }
+
+  async invokeTool(request: ToolCallRequest): Promise<ToolCallResult> {
+    const provider = this.resolveByToolName(request.toolName);
+    if (!provider) {
+      throw new Error(`Runtime tool provider not found for tool: ${request.toolName}`);
+    }
+
+    // [SPINE] Tool invocation lifecycle is diagnostic-only; provider callTool remains authoritative.
+    const entity = lifecycleEngine.create("tool_invocation", {
+      callId: request.callId,
+      taskId: request.taskId,
+      toolName: request.toolName,
+      providerId: provider.manifest.id,
+      authority: "diagnostic_only",
+    });
+    const gateDecision = await gateEngine.check({
+      gateType: "pre_execution",
+      entityId: entity.entityId,
+      entityType: "tool_invocation",
+      source: {
+        sourceId: "runtime-core.tool-provider-registry",
+        sourceType: "tool",
+        stage: "pre_execution",
+      },
+      payload: {
+        request,
+        toolName: request.toolName,
+        providerId: provider.manifest.id,
+      },
+      metadata: {
+        diagnosticOnly: true,
+        legacyAllowlistUnaffected: true,
+      },
+    });
+    emitToolInvocationGateDecision(entity.entityId, gateDecision);
+    lifecycleEngine.transition(entity.entityId, "pre_gate", {
+      actor: "runtime-core.tool-provider-registry",
+      reason: "pre-execution diagnostic gate observed",
+      metadata: { callId: request.callId, toolName: request.toolName },
+    });
+    lifecycleEngine.transition(entity.entityId, "gated_approved", {
+      actor: "runtime-core.tool-provider-registry",
+      reason: "diagnostic-only gate cannot block invocation",
+      metadata: { callId: request.callId, gateId: gateDecision.gateId },
+    });
+    lifecycleEngine.transition(entity.entityId, "running", {
+      actor: "runtime-core.tool-provider-registry",
+      reason: "provider invocation started",
+      metadata: { callId: request.callId, toolName: request.toolName },
+    });
+
+    eventBus.emit(
+      "tool.invoked",
+      entity.entityId,
+      "tool_invocation",
+      {
+        sourceId: "runtime-core.tool-provider-registry",
+        sourceType: "tool",
+        stage: "invoke",
+      },
+      {
+        callId: request.callId,
+        toolName: request.toolName,
+        providerId: provider.manifest.id,
+        diagnosticOnly: true,
+        isCompletionProof: false,
+      },
+    );
+
+    try {
+      const result = await provider.callTool(request);
+      const envelope = evidenceLedger.collect(
+        entity.entityId,
+        "diagnostic_snapshot",
+        "runtime-core.tool-provider-registry",
+        [
+          {
+            itemId: `${request.callId}:execution`,
+            label: "Tool invocation execution evidence",
+            value: {
+              callId: result.callId,
+              status: result.status,
+              startedAt: result.startedAt,
+              finishedAt: result.finishedAt,
+              evidenceCount: result.evidence.length,
+            },
+            capturedAt: Date.now(),
+            metadata: { evidenceKind: "execution_evidence", isCompletionProof: false },
+          },
+        ],
+        { metadata: { evidenceKind: "execution_evidence", isCompletionProof: false } },
+      );
+      lifecycleEngine.transition(entity.entityId, "evidence_collected", {
+        actor: "runtime-core.tool-provider-registry",
+        reason: "tool execution evidence collected",
+        metadata: {
+          callId: request.callId,
+          status: result.status,
+          evidenceKind: "execution_evidence",
+          isCompletionProof: false,
+        },
+      });
+      eventBus.emit(
+        "tool.result",
+        entity.entityId,
+        "tool_invocation",
+        {
+          sourceId: "runtime-core.tool-provider-registry",
+          sourceType: "tool",
+          stage: "result",
+        },
+        {
+          callId: result.callId,
+          toolName: request.toolName,
+          providerId: provider.manifest.id,
+          status: result.status,
+          evidenceKind: "execution_evidence",
+          isCompletionProof: false,
+        },
+        [evidenceLedger.toRef(envelope)],
+      );
+      return result;
+    } catch (error) {
+      // [SPINE] Tool invocation failures are diagnostic records; legacy exception behavior is preserved.
+      const failure = failureContract.create(entity.entityId, error, "tool_execution", undefined, {
+        callId: request.callId,
+        toolName: request.toolName,
+        providerId: provider.manifest.id,
+        diagnosticOnly: true,
+      });
+      lifecycleEngine.transition(entity.entityId, "failed", {
+        actor: "runtime-core.tool-provider-registry",
+        reason: "provider invocation failed",
+        metadata: { callId: request.callId, failureId: failure.failureId },
+      });
+      eventBus.emit(
+        "failure_classified",
+        entity.entityId,
+        "tool_invocation",
+        { sourceId: "runtime-spine.failure-contract", sourceType: "failure", stage: "tool_execution" },
+        failure,
+        [failureContract.toRef(failure)],
+      );
+      throw error;
+    }
+  }
+}
+
+function emitToolInvocationGateDecision(entityId: string, decision: GateDecision): void {
+  // [SPINE] Gate decisions are emitted for operator diagnostics only.
+  eventBus.emit(
+    "gate_decision",
+    entityId,
+    "tool_invocation",
+    {
+      sourceId: "runtime-spine.gate-engine",
+      sourceType: "runtime_spine",
+      stage: "pre_execution",
+    },
+    decision,
+    [
+      {
+        refType: "gate_decision",
+        gateId: decision.gateId,
+        gateType: decision.gateType,
+        status: decision.status,
+        authority: decision.authority,
+      },
+    ],
+  );
 }
 
 export function isolateRuntimeRegistryError(params: {

@@ -196,6 +196,7 @@ export function applyToolPolicyPipeline(params: {
     }
     const before = filtered;
     filtered = filterToolsByPolicy(before, expanded);
+    // [SPINE] Legacy policy filtering remains authoritative; runtime-spine observes only diagnostics.
     auditToolPolicyFilter({
       stepLabel: step.label,
       policy: expanded,
