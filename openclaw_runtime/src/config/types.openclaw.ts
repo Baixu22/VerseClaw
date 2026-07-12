@@ -112,6 +112,9 @@ export type RuntimeFeatureConfig = {
     "working-memory"?: {
       enabled?: boolean;
     };
+    "tool-registry"?: {
+      enabled?: boolean;
+    };
   };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
   contextRuntimeKit?: {

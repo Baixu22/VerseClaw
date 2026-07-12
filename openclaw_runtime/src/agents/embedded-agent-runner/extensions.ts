@@ -8,6 +8,7 @@ import { Assembler, contextBlockFlagNameForSourceSystem } from "../../context-en
 import type { BlockStoreApi, ContextBlock, ContextBlockSink } from "../../context-engine/block.js";
 import { BlockStore } from "../../context-engine/block-store.js";
 import { handleWorkingMemoryAction } from "../../context-engine/handlers/working-memory-handler.js";
+import { handleBeforeAgentStartToolRegistry, type ToolRegistryEntry } from "../../context-engine/handlers/tool-registry-handler.js";
 import { restoreChildState, buildChildHandoffFromParent, writeChildHandoffPack, CHILD_CONTEXT_READ_INSTRUCTION } from "../../context-engine/handlers/task-loop-handler.js";
 import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
 import { isSubagentSessionKey } from "../../sessions/session-key-utils.js";
@@ -103,6 +104,10 @@ function buildAgentToolResultMiddlewareFactory(): ExtensionFactory {
 
 function isWorkingMemoryEnabled(cfg: OpenClawConfig | undefined): boolean {
   return cfg?.runtime?.contextBlock?.["working-memory"]?.enabled === true;
+}
+
+function isToolRegistryEnabled(cfg: OpenClawConfig | undefined): boolean {
+  return cfg?.runtime?.contextBlock?.["tool-registry"]?.enabled === true;
 }
 
 function readWorkingMemoryEnvelope(details: unknown):
@@ -295,6 +300,48 @@ function buildContextPruningFactory(params: {
 }
 
 /**
+ * DCS Stage 3: Build the tool-registry extension factory.
+ *
+ * Registers a `before_agent_start` handler that produces one system-managed
+ * `tool_registry` Block through `ContextBlockSink` when the feature flag is on.
+ * The Block carries `always_on=true`, `token_budget=200`, `priority=7`.
+ *
+ * The factory returns undefined when no sink is available or no session key
+ * is provided, so it does not register an empty extension.
+ *
+ * The `toolEntries` are provided by the caller from the agent's tool list.
+ * The existing CVK `ContextRuntimeKitContextEngine.assemble` path is unchanged;
+ * this handler is a parallel, flag-gated producer.
+ */
+function buildToolRegistryFactory(params: {
+  sessionKey?: string;
+  sessionId?: string;
+  contextBlockSink?: ContextBlockSink;
+  toolEntries?: ToolRegistryEntry[];
+}): ExtensionFactory | undefined {
+  const sessionKey = params.sessionKey?.trim() || params.sessionId?.trim();
+  if (!sessionKey || !params.contextBlockSink || !params.toolEntries) {
+    return undefined;
+  }
+  const entries = params.toolEntries;
+  const sink = params.contextBlockSink;
+  return (agent) => {
+    agent.on("before_agent_start", async () => {
+      try {
+        await handleBeforeAgentStartToolRegistry({
+          sessionId: sessionKey,
+          entries,
+          contextBlockSink: sink,
+        });
+      } catch {
+        // Best-effort write; failure does not block agent start.
+      }
+      return undefined;
+    });
+  };
+}
+
+/**
  * DCS Stage 2: Build the task-state extension factory.
  *
  * Registers a `before_agent_start` handler that restores the child HandoffPack
@@ -410,6 +457,7 @@ export function buildEmbeddedExtensionFactories(params: {
   trajectoryCapture?: TrajectoryCapture;
   objective?: string;
   parentSessionId?: string;
+  toolEntries?: ToolRegistryEntry[];
 }): ExtensionFactory[] {
   const factories: ExtensionFactory[] = [];
   if (resolveEffectiveCompactionMode(params.cfg) === "safeguard") {
@@ -441,6 +489,13 @@ export function buildEmbeddedExtensionFactories(params: {
   }
   if (isWorkingMemoryEnabled(params.cfg)) {
     factories.push(buildWorkingMemoryFactory(params));
+  }
+  // DCS Stage 3: tool-registry Block producer on before_agent_start.
+  if (isToolRegistryEnabled(params.cfg)) {
+    const toolRegistryFactory = buildToolRegistryFactory(params);
+    if (toolRegistryFactory) {
+      factories.push(toolRegistryFactory);
+    }
   }
   const pruningFactory = buildContextPruningFactory(params);
   if (pruningFactory) {

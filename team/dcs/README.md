@@ -6,11 +6,13 @@
 **当前状态**：v1.6 已收敛（致命问题 0），v1.6.1 正式增补已收编；阶段 0
 接口层与 Stage 1 working-memory 已在 main 收口（R1 COMPLETE）；R2 producer
 envelope vertical slice 已在 main 收口（R2 COMPLETE）；R3 Stage 2 task state
-adapter 与 child-session handoff 已在 main 收口（R3 COMPLETE）。
+adapter 与 child-session handoff 已在 main 收口（R3 COMPLETE）；R4 Stage 3
+tool_registry Block producer 与 Assembler injection 已在 main 收口（R4 COMPLETE）。
 DCS working-memory infrastructure ready; production producer coverage = 3/3
 （edit/write/apply_patch 均已产出 `details.working_memory` envelope）；
 task_state adapter + child handoff + direct-parent authorization + terminal-phase
-SEKB trajectory capture 已就位。
+SEKB trajectory capture 已就位；tool_registry Block producer + Assembler
+injection 已就位（flag-gated, default off）。
 
 ---
 
@@ -182,6 +184,36 @@ terminal-phase SEKB trajectory capture 已就位**。direct-parent authorization
 HandoffPack 五条路径。context_read 指令为固定字符串，不含 HandoffPack JSON、
 Block ids、transcript excerpt 或 raw tool output。tool registry（M4b+M5a）、
 knowledge unification（M5b）、SEKB closure（M6+T1）由 R4+ 交付。
+
+---
+
+## Stage 3 Tool Registry Block Producer 与 Assembler Injection（R4 收口）
+
+R4 于 2026-07-12 在 main 分支收口（DCS-ROUND4-COMPLETE）。`before_agent_start`
+hook 产出一个 system-managed `tool_registry` Block（`source_system="cvk"`，
+`always_on=true`，`token_budget=200`，`priority=7`，
+`on_demand={ expand_tool: "context_read", auto_register: true }`）。Assembler
+的 `#appendToolRegistry` 按 flag-guard + exactly-once + BlockStore-query 模式
+注入 `## Tools (N available)` 摘要。现有 CVK
+`ContextRuntimeKitContextEngine.assemble` 路径不变；Stage 3 Block 路径为并行的
+flag-gated producer。Feature flag `runtime.contextBlock.tool-registry.enabled`
+缺省为 false。
+
+| 交付物 | 路径 |
+|--------|------|
+| tool-registry handler（buildToolRegistryBlock / handleBeforeAgentStartToolRegistry / formatToolRegistryInjection） | `openclaw_runtime/src/context-engine/handlers/tool-registry-handler.ts` |
+| Assembler #appendToolRegistry + cvk flag mapping + exactly-once guard | `openclaw_runtime/src/context-engine/assembler.ts` |
+| buildToolRegistryFactory（before_agent_start → ContextBlockSink） | `openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts` |
+| config 面（strict schema/labels/help/types） | `openclaw_runtime/src/config/*` |
+| RED→GREEN handler 测试（12 tests） | `openclaw_runtime/src/context-engine/handlers/tool-registry-handler.test.ts` |
+| RED→GREEN assembler 测试（5 new + 2 updated） | `openclaw_runtime/src/context-engine/assembler.test.ts` |
+| RED→GREEN extension wiring 测试（5 tests） | `openclaw_runtime/src/agents/embedded-agent-runner/extensions.tool-registry.test.ts` |
+| RED→GREEN config 测试（2 tests） | `openclaw_runtime/src/config/runtime-context-block-tool-registry.test.ts` |
+
+诚实声明：**tool_registry Block producer + Assembler injection 已就位**
+（flag-gated, default off）。toolEntries 由 factory closure 参数传入，当前
+无 caller 传入真实 tool list。knowledge unification（M5b）、SEKB closure
+（M6+T1）由 R5+ 交付。
 
 ---
 

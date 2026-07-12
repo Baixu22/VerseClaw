@@ -83,6 +83,12 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+        "tool-registry": z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),

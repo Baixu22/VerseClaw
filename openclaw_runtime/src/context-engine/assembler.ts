@@ -12,6 +12,7 @@ import {
   isSubagentSessionKey,
 } from "../sessions/session-key-utils.js";
 import type { BlockStoreApi, ContextBlock, SourceSystem } from "./block.js";
+import { formatToolRegistryInjection } from "./handlers/tool-registry-handler.js";
 import { parseWorkingMemoryActions } from "./handlers/working-memory-handler.js";
 
 export interface AssembleRequest {
@@ -26,6 +27,7 @@ export const DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS = {
   "runtime.contextBlock.compass.enabled": false,
   "runtime.contextBlock.role_memory.enabled": false,
   "runtime.contextBlock.working_memory.enabled": false,
+  "runtime.contextBlock.tool_registry.enabled": false,
 } as const;
 
 export type ContextBlockFeatureFlagName =
@@ -36,7 +38,7 @@ export type ContextBlockFeatureFlags = Partial<Record<ContextBlockFeatureFlagNam
 /** Canonical (kebab) source systems that own a context-block feature flag today. */
 export type FlaggedContextBlockSourceSystem = Extract<
   SourceSystem,
-  "compass" | "role-memory" | "working-memory"
+  "compass" | "role-memory" | "working-memory" | "cvk"
 >;
 
 const CONTEXT_BLOCK_FLAG_NAME_BY_SOURCE_SYSTEM: Record<
@@ -46,6 +48,7 @@ const CONTEXT_BLOCK_FLAG_NAME_BY_SOURCE_SYSTEM: Record<
   compass: "runtime.contextBlock.compass.enabled",
   "role-memory": "runtime.contextBlock.role_memory.enabled",
   "working-memory": "runtime.contextBlock.working_memory.enabled",
+  cvk: "runtime.contextBlock.tool_registry.enabled",
 };
 
 /**
@@ -140,6 +143,10 @@ export class Assembler {
       result.output = (await this.#appendWorkingMemory(request, result.output)) as TExistingOutput;
     }
 
+    if (resolvedFlags["runtime.contextBlock.tool_registry.enabled"]) {
+      result.output = (await this.#appendToolRegistry(request, result.output)) as TExistingOutput;
+    }
+
     return result;
   }
 
@@ -169,14 +176,49 @@ export class Assembler {
     }
     return [...output, { role: "user", content: injection }] as TExistingOutput;
   }
+
+  async #appendToolRegistry<TExistingOutput>(
+    request: AssembleRequest,
+    output: TExistingOutput,
+  ): Promise<TExistingOutput> {
+    const store = this.#dependencies.workingMemoryStore;
+    if (!store || !Array.isArray(output)) {
+      return output;
+    }
+    if (hasToolsHeading(output)) {
+      // DCS v1.6.1 addendum 2: exactly-once — a prior injection point already
+      // projected the tool registry into this call's context; never accumulate.
+      return output;
+    }
+    const blocks = await store.query({
+      requester_session_id: request.session_id,
+      session_id: request.session_id,
+      block_types: ["tool_registry"],
+      source_systems: ["cvk"],
+      limit: 1,
+    });
+    const injection = formatToolRegistryInjection(blocks[0]);
+    if (!injection) {
+      return output;
+    }
+    return [...output, { role: "user", content: injection }] as TExistingOutput;
+  }
 }
 
 const RECENT_ACTIONS_HEADING_PATTERN = /^## Recent Actions$/m;
+const TOOLS_HEADING_PATTERN = /^## Tools \(\d+ available\)$/m;
 
 function hasRecentActionsHeading(output: readonly unknown[]): boolean {
   return output.some((message) => {
     const content = (message as { content?: unknown } | undefined)?.content;
     return typeof content === "string" && RECENT_ACTIONS_HEADING_PATTERN.test(content);
+  });
+}
+
+function hasToolsHeading(output: readonly unknown[]): boolean {
+  return output.some((message) => {
+    const content = (message as { content?: unknown } | undefined)?.content;
+    return typeof content === "string" && TOOLS_HEADING_PATTERN.test(content);
   });
 }
 
