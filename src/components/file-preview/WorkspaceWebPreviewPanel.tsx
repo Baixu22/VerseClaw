@@ -20,6 +20,7 @@ import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type { AgentBrowserSession } from '@shared/host-api/contract';
 import type { WorkspacePreviewMode, WorkspacePreviewSelectedElement, WorkspaceWebPreviewLaunchConfig } from '@shared/types/workspace';
+import { isWebPreviewAnnotationAvailable } from './workspace-browser-config';
 
 type WorkspaceWebPreviewPanelProps = {
   onOpenWorkspaceWebView?: () => void;
@@ -117,6 +118,7 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
 
   const previewId = status?.previewId ?? null;
   const previewUrl = status?.previewUrl ?? status?.url ?? null;
+  const annotationEnabled = isWebPreviewAnnotationAvailable(mode, status?.mode, status?.running);
   const agentBrowserTargetUrl = useMemo(() => {
     const typedExternalUrl = mode === 'externalUrl' ? externalUrl.trim() : '';
     return typedExternalUrl || status?.targetUrl || previewUrl || '';
@@ -205,6 +207,7 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      if (!annotationEnabled) return;
       if (!iframeRef.current?.contentWindow || event.source !== iframeRef.current.contentWindow) return;
       if (!isSelectionMessage(event.data)) return;
       if (previewId && event.data.previewId !== previewId) return;
@@ -215,7 +218,7 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
     };
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [persistWebState, previewId]);
+  }, [annotationEnabled, persistWebState, previewId]);
 
   useEffect(() => {
     if (!iframeRef.current?.contentWindow || !previewId) return;
@@ -223,9 +226,15 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
       type: 'clawx.preview.control',
       version: 1,
       previewId,
-      selectionEnabled,
+      selectionEnabled: annotationEnabled && selectionEnabled,
     }, '*');
-  }, [selectionEnabled, previewId, status?.previewUrl]);
+  }, [annotationEnabled, selectionEnabled, previewId, status?.previewUrl]);
+
+  useEffect(() => {
+    if (annotationEnabled) return;
+    setSelectionEnabled(false);
+    setSelectedElement(null);
+  }, [annotationEnabled]);
 
   const detectConfig = async () => {
     setBusy(true);
@@ -484,7 +493,7 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
             >
               <Square className="h-3 w-3" />
             </Button>
-            <Button
+            {annotationEnabled ? <Button
               variant={selectionEnabled ? 'default' : 'outline'}
               size="icon"
               className="h-7 w-7"
@@ -493,11 +502,11 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
               title={t('workspace.web.actions.pickComponent', 'Pick component')}
             >
               <MousePointer2 className="h-3.5 w-3.5" />
-            </Button>
+            </Button> : null}
           </div>
       </WebPreviewToolbar>
 
-      {selectedElement && (
+      {annotationEnabled && selectedElement && (
         <WebPreviewSelectionBar>
           <div className="flex items-center gap-2">
             <span className="rounded bg-primary/10 px-1.5 py-0.5 text-2xs font-medium text-primary">{t('workspace.web.selection.selected', 'Selected')}</span>
@@ -549,6 +558,8 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
       <WebPreviewBrowser
         previewUrl={previewUrl}
         running={status?.running}
+        onBack={() => iframeRef.current?.contentWindow?.history.back()}
+        onForward={() => iframeRef.current?.contentWindow?.history.forward()}
         onReload={() => setFrameNonce((value) => value + 1)}
         onOpenExternal={previewUrl ? () => void hostApi.shell.openExternal(previewUrl) : undefined}
         agentBrowser={{
@@ -571,7 +582,12 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
               className="min-h-0 flex-1 bg-white"
               onLoad={() => {
                 if (!iframeRef.current?.contentWindow || !previewId) return;
-                iframeRef.current.contentWindow.postMessage({ type: 'clawx.preview.control', version: 1, previewId, selectionEnabled }, '*');
+                iframeRef.current.contentWindow.postMessage({
+                  type: 'clawx.preview.control',
+                  version: 1,
+                  previewId,
+                  selectionEnabled: annotationEnabled && selectionEnabled,
+                }, '*');
               }}
             />
           ) : (

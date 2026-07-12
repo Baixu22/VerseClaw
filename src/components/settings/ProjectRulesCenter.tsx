@@ -92,7 +92,7 @@ export function ProjectRulesCenter() {
   return (
     <div
       data-testid="settings-project-rules-center"
-      className="space-y-5 rounded-2xl border border-black/10 bg-black/[0.03] p-5 dark:border-white/10 dark:bg-white/[0.04]"
+      className="space-y-5 rounded-lg border border-black/10 bg-surface-modal p-5 dark:border-white/10"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">

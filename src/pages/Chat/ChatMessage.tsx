@@ -505,11 +505,12 @@ export const ChatMessage = memo(function ChatMessage({
           overflows ±4px above/below the line, which mirrors how chat avatars
           sit alongside a single line of text. */}
       {!isUser && (
-        <div className="flex h-6 shrink-0 items-center">
-          <div className="flex h-8 w-8 items-center justify-center">
-            <img src={characterImg} alt="Verse" className="h-8 w-8 rounded-full object-cover dark:hidden" />
-            <img src={characterDarkImg} alt="Verse" className="hidden h-8 w-8 rounded-full object-cover dark:block" />
-          </div>
+        <div
+          className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-input ring-1 ring-border"
+          data-testid="chat-assistant-avatar"
+        >
+          <img src={characterImg} alt="Verse" className="block h-full w-full object-cover dark:hidden" />
+          <img src={characterDarkImg} alt="Verse" className="hidden h-full w-full object-cover dark:block" />
         </div>
       )}
 

@@ -16,6 +16,7 @@ import type {
   WorkspaceWebPreviewStatus,
 } from '@shared/types/workspace';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
+import { isWebPreviewAnnotationEnabled } from '@shared/workspace-preview-policy';
 import { isHtmlContentType, injectInspectorScript } from './web-preview-inspector';
 import { isPathInsideWorkspace } from './workspace-permissions';
 import type { TerminalSessionManager } from './terminal-session-manager';
@@ -241,7 +242,7 @@ export class WebPreviewManager {
     const root = info.isDirectory() ? targetPath : resolve(targetPath, '..');
     const previewId = randomUUID();
     const server = createServer((req, res) => {
-      void this.serveStaticRequest(root, previewId, req, res).catch((error) => {
+      void this.serveStaticRequest(root, req, res).catch((error) => {
         res.statusCode = 500;
         res.end(String(error));
       });
@@ -278,7 +279,11 @@ export class WebPreviewManager {
   private async startExternalUrl(input: StartInput): Promise<WebPreviewRuntimeSnapshot> {
     const targetUrl = normalizeExternalUrl(input.url ?? input.launchConfig?.command ?? undefined);
     const previewId = randomUUID();
-    const { server, previewUrl, port } = await this.startProxy(targetUrl, previewId);
+    const { server, previewUrl, port } = await this.startProxy(
+      targetUrl,
+      previewId,
+      isWebPreviewAnnotationEnabled('externalUrl'),
+    );
     const runtime = this.createRuntime({
       workspaceId: input.workspace.id,
       mode: 'externalUrl',
@@ -324,7 +329,11 @@ export class WebPreviewManager {
     const expectedPort = launchConfig.expectedPort ?? null;
     const targetUrl = expectedPort ? `http://127.0.0.1:${expectedPort}/` : null;
     const previewId = randomUUID();
-    const { server, previewUrl, port } = await this.startProxy(targetUrl ?? 'http://127.0.0.1:3000/', previewId);
+    const { server, previewUrl, port } = await this.startProxy(
+      targetUrl ?? 'http://127.0.0.1:3000/',
+      previewId,
+      isWebPreviewAnnotationEnabled('devServer'),
+    );
     const runtime = this.createRuntime({
       workspaceId: input.workspace.id,
       mode: 'devServer',
@@ -371,7 +380,7 @@ export class WebPreviewManager {
     });
   }
 
-  private async serveStaticRequest(root: string, previewId: string, req: IncomingMessage, res: ServerResponse): Promise<void> {
+  private async serveStaticRequest(root: string, req: IncomingMessage, res: ServerResponse): Promise<void> {
     const filePath = await resolveRequestPath(root, req.url);
     if (!filePath || !existsSync(filePath)) {
       res.statusCode = 404;
@@ -389,16 +398,16 @@ export class WebPreviewManager {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     if (isHtmlContentType(contentType)) {
       const html = await readFile(filePath, 'utf8');
-      res.end(injectInspectorScript(html, previewId));
+      res.end(html);
       return;
     }
     createReadStream(filePath).pipe(res);
   }
 
-  private async startProxy(targetUrl: string, previewId: string): Promise<{ server: Server; previewUrl: string; port: number }> {
+  private async startProxy(targetUrl: string, previewId: string, inspectorEnabled: boolean): Promise<{ server: Server; previewUrl: string; port: number }> {
     const baseUrl = new URL(targetUrl);
     const server = createServer((req, res) => {
-      void this.proxyHttpRequest(baseUrl, previewId, req, res).catch((error) => {
+      void this.proxyHttpRequest(baseUrl, previewId, inspectorEnabled, req, res).catch((error) => {
         res.statusCode = 502;
         res.end(String(error));
       });
@@ -427,7 +436,7 @@ export class WebPreviewManager {
     return { server, previewUrl: `http://127.0.0.1:${address.port}/`, port: address.port };
   }
 
-  private async proxyHttpRequest(baseUrl: URL, previewId: string, req: IncomingMessage, res: ServerResponse): Promise<void> {
+  private async proxyHttpRequest(baseUrl: URL, previewId: string, inspectorEnabled: boolean, req: IncomingMessage, res: ServerResponse): Promise<void> {
     const target = new URL(req.url || '/', baseUrl);
     const requestImpl = target.protocol === 'https:' ? httpsRequest : httpRequest;
     await new Promise<void>((resolvePromise) => {
@@ -446,7 +455,7 @@ export class WebPreviewManager {
           delete headers['x-frame-options'];
           const contentType = headers['content-type'];
           const body = Buffer.concat(chunks);
-          if (isHtmlContentType(contentType)) {
+          if (inspectorEnabled && isHtmlContentType(contentType)) {
             delete headers['content-length'];
             res.writeHead(proxyRes.statusCode ?? 200, headers);
             res.end(injectInspectorScript(body.toString('utf8'), previewId));

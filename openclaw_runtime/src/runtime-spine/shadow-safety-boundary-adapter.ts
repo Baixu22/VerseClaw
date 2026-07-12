@@ -12,12 +12,12 @@ function shadowId(context: string): string {
 
 export const shadowSafetyBoundary = {
   execute<T>(context: string, fn: () => T): T {
-    const result = runShadowSync('diagnostic', shadowId(context), fn);
+    const result = runShadowSync('A1', shadowId(context), fn);
     return result.ok ? result.value : (undefined as T);
   },
 
   async executeAsync<T>(context: string, fn: () => Promise<T>): Promise<T> {
-    const result = await runShadow('diagnostic', 'non_io', shadowId(context), async () => fn());
+    const result = await runShadow('A1', 'non_io', shadowId(context), async () => fn());
     return result.ok ? result.value : (undefined as T);
   },
 };

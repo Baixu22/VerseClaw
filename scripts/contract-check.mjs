@@ -1,7 +1,4 @@
 #!/usr/bin/env node
-import { pathToFileURL } from 'node:url';
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
 
 const ROOT = process.cwd();
 const REQUIRED_AGENT_DEV_SCENARIOS = [
@@ -22,6 +19,10 @@ const REQUIRED_AGENT_DEV_SCENARIOS = [
 ];
 
 async function readProjectFile(path) {
+  const [{ readFile }, { resolve }] = await Promise.all([
+    import('node:fs/promises'),
+    import('node:path'),
+  ]);
   return await readFile(resolve(ROOT, path), 'utf8');
 }
 
@@ -30,7 +31,7 @@ function parseContractActions(contractText) {
   if (start === -1) return new Map();
   const block = extractObjectBlock(contractText, contractText.indexOf('{', start));
   const modules = new Map();
-  const moduleMatches = block.matchAll(/^  ([A-Za-z][A-Za-z0-9]*): \{\n([\s\S]*?)^  \};/gm);
+  const moduleMatches = block.matchAll(/^  ([A-Za-z][A-Za-z0-9]*): \{\r?\n([\s\S]*?)^  \};\r?$/gm);
   for (const match of moduleMatches) {
     const moduleName = match[1];
     const actions = [...match[2].matchAll(/^\s{4}([A-Za-z][A-Za-z0-9]*):/gm)].map((entry) => entry[1]);
@@ -44,7 +45,7 @@ function parseFacadeActions(hostApiText) {
   if (start === -1) return new Map();
   const block = extractObjectBlock(hostApiText, hostApiText.indexOf('{', start));
   const modules = new Map();
-  const moduleMatches = block.matchAll(/^  ([A-Za-z][A-Za-z0-9]*): \{\n([\s\S]*?)^  \},?/gm);
+  const moduleMatches = block.matchAll(/^  ([A-Za-z][A-Za-z0-9]*): \{\r?\n([\s\S]*?)^  \},?\r?$/gm);
   for (const match of moduleMatches) {
     const moduleName = match[1];
     const moduleBlock = match[2];
@@ -210,6 +211,9 @@ async function main() {
   console.log('Contract check passed.');
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  await main();
+if (process.argv[1]?.replaceAll('\\', '/').endsWith('/scripts/contract-check.mjs')) {
+  const { pathToFileURL } = await import('node:url');
+  if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+    await main();
+  }
 }

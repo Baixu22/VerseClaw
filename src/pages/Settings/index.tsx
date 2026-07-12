@@ -108,8 +108,8 @@ function resolveSettingsSection(pathname: string): SettingsSectionId {
 
 function SettingsPageShell({ children }: { children: ReactNode }) {
   return (
-    <div data-testid="settings-page" className="flex h-[calc(100vh-2.5rem)] -m-6 flex-col overflow-hidden dark:bg-background">
-      <div className="mx-auto flex h-full w-full max-w-5xl flex-col p-10 pt-12">
+    <div data-testid="settings-page" className="-m-6 flex h-[calc(100vh-2.5rem)] flex-col overflow-hidden bg-background">
+      <div className="mx-auto flex h-full w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:px-10">
         {children}
       </div>
     </div>
@@ -1376,7 +1376,7 @@ export function Settings() {
     <SettingsPageShell>
 
         {/* Header */}
-        <div className="mb-10 flex shrink-0 flex-col justify-between gap-4 md:flex-row md:items-start">
+        <div className="mb-6 flex shrink-0 flex-col justify-between gap-3 border-b border-border pb-5 md:flex-row md:items-start">
           <div>
             {currentSection !== 'overview' && (
               <Button
@@ -1384,7 +1384,7 @@ export function Settings() {
                 variant="outline"
                 onClick={() => navigate('/settings')}
                 data-testid="settings-back-button"
-                className="mb-5 h-9 rounded-lg border-black/10 bg-transparent px-3 text-sm dark:border-white/10"
+                className="mb-4 h-8 border-black/10 bg-transparent px-2.5 text-xs dark:border-white/10"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 {t('navigation.back')}
@@ -1392,44 +1392,44 @@ export function Settings() {
             )}
             <h1 className={cn(
               'font-serif font-normal tracking-tight text-foreground',
-              currentSection === 'overview' ? 'mb-3 text-5xl md:text-6xl' : 'mb-2 text-4xl md:text-5xl',
+              currentSection === 'overview' ? 'mb-1.5 text-3xl' : 'mb-1 text-2xl',
             )}
               data-testid={pageTitleTestId}
             >
               {pageTitle}
             </h1>
-            <p className="text-subtitle text-foreground/70 font-medium">
+            <p className="max-w-3xl text-sm leading-5 text-muted-foreground">
               {pageSubtitle}
             </p>
           </div>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto pr-2 pb-10 min-h-0 -mr-2 space-y-12">
+        <div className="-mr-2 min-h-0 flex-1 space-y-8 overflow-y-auto pb-10 pr-2">
           {currentSection === 'overview' && (
-            <div data-testid="settings-overview" className="space-y-8">
+            <div data-testid="settings-overview" className="space-y-6">
               {settingsSectionGroups.map((group) => (
                 <section key={group.id} className="space-y-3">
                   <h2 className="text-sm font-semibold text-foreground/70">
                     {group.title}
                   </h2>
-                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid overflow-hidden rounded-lg border border-border md:grid-cols-2">
                     {group.sections.map((section) => (
                       <Card
                         key={section.id}
-                        className="group rounded-lg border-black/10 bg-surface-modal shadow-none transition-colors hover:bg-black/[0.03] dark:border-white/10 dark:hover:bg-white/[0.05]"
+                        className="group rounded-none border-0 border-b border-border bg-surface-modal shadow-none transition-colors last:border-b-0 hover:bg-black/[0.03] md:odd:border-r dark:hover:bg-white/[0.05]"
                       >
                         <Link
                           to={section.to}
                           data-testid={section.testId}
-                          className="flex h-full items-start gap-4 p-5"
+                          className="flex min-h-20 h-full items-center gap-3 px-4 py-3"
                         >
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-black/5 text-foreground/80 dark:bg-white/10">
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-black/5 text-foreground/80 dark:bg-white/10 [&_svg]:h-4 [&_svg]:w-4">
                             {section.icon}
                           </span>
                           <span className="min-w-0 flex-1">
-                            <span className="block text-base font-medium text-foreground">{section.title}</span>
-                            <span className="mt-1 block text-sm leading-5 text-muted-foreground">{section.description}</span>
+                            <span className="block text-sm font-medium text-foreground">{section.title}</span>
+                            <span className="mt-0.5 block text-xs leading-4 text-muted-foreground">{section.description}</span>
                           </span>
                           <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
                         </Link>

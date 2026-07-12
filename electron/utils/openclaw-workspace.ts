@@ -17,7 +17,7 @@ const VERSE_CLAW_END = '<!-- verse-claw:end -->';
 const DEFAULT_BOOTSTRAP_FILENAME = 'BOOTSTRAP.md';
 const DEFAULT_IDENTITY_FILENAME = 'IDENTITY.md';
 
-// ©¤©¤ Helpers ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+// ---- Helpers ------------------------------------------------------------------------------------------------------------
 
 async function fileExists(p: string): Promise<boolean> {
   try { await access(p, constants.F_OK); return true; } catch { return false; }
@@ -119,7 +119,7 @@ export async function ensureVerseClawDefaultIdentity(): Promise<void> {
   }
 }
 
-// ©¤©¤ Pure helpers (no I/O) ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+// ---- Pure helpers (no I/O) --------------------------------------------------------------------------------
 
 /**
  * Merge a Verse Claw context section into an existing file's content.
@@ -196,7 +196,7 @@ export function stripFirstRunSection(content: string): string {
   return result.join('\n').replace(/\n{3,}/g, '\n\n');
 }
 
-// ©¤©¤ Workspace directory resolution ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+// ---- Workspace directory resolution --------------------------------------------------------------
 
 type WorkspaceDir = {
   dir: string;
@@ -263,7 +263,7 @@ async function resolveAllWorkspaceDirs(): Promise<WorkspaceDir[]> {
   return [...dirs.values()];
 }
 
-// ©¤©¤ Bootstrap file repair ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+// ---- Bootstrap file repair --------------------------------------------------------------------------------
 
 /**
  * Detect and remove bootstrap .md files that contain only Verse Claw markers
@@ -307,7 +307,7 @@ export async function repairVerseClawOnlyBootstrapFiles(): Promise<void> {
   }
 }
 
-// ©¤©¤ Context merging ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+// ---- Context merging --------------------------------------------------------------------------------------------
 
 /**
  * Merge Verse Claw context snippets into workspace bootstrap files that already

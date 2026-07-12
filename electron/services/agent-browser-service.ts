@@ -24,6 +24,7 @@ type AgentBrowserWindow = Pick<
   BrowserWindow,
   | 'close'
   | 'focus'
+  | 'hide'
   | 'isDestroyed'
   | 'isMinimized'
   | 'isVisible'
@@ -546,6 +547,28 @@ export class AgentBrowserService {
       if (window.isMinimized()) window.restore();
       window.focus();
     }
+    return await this.refresh(record);
+  }
+
+  async show(sessionId: string): Promise<AgentBrowserSession> {
+    const record = this.getRecord(sessionId);
+    record.session = { ...record.session, mode: 'visible' };
+    if (record.engine === 'agent-browser-cli') {
+      return { ...record.session, updatedAt: this.now().toISOString() };
+    }
+    const window = this.requireWindow(record);
+    if (!window.isDestroyed()) window.show();
+    return await this.refresh(record);
+  }
+
+  async hide(sessionId: string): Promise<AgentBrowserSession> {
+    const record = this.getRecord(sessionId);
+    record.session = { ...record.session, mode: 'headless' };
+    if (record.engine === 'agent-browser-cli') {
+      return { ...record.session, updatedAt: this.now().toISOString() };
+    }
+    const window = this.requireWindow(record);
+    if (!window.isDestroyed()) window.hide();
     return await this.refresh(record);
   }
 

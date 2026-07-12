@@ -551,7 +551,7 @@ function PanelTabButton({ testId, icon, label, active, onClick }: PanelTabButton
         onClick();
       }}
       className={cn(
-        'relative z-40 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
+        'relative z-40 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-[background-color,color,transform] duration-150 active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100',
         active
           ? 'bg-foreground/10 text-foreground'
           : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',

@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   BarChart3,
+  CalendarDays,
   CheckCircle2,
   Coins,
   CreditCard,
@@ -573,7 +574,8 @@ function UsageHeatmap({
   return (
     <div
       className={cn(
-        'overflow-x-auto rounded-lg border p-5 shadow-none',
+        'overflow-x-auto rounded-lg border p-4 shadow-none sm:p-5',
+        '[--heat-cell:10px] [--heat-gap:3px] sm:[--heat-cell:12px] lg:[--heat-cell:13px]',
         'border-[#d0d7de] bg-white text-[#24292f] dark:border-[#30363d] dark:bg-[#0d1117] dark:text-white',
         '[--billing-heatgraph-level-0:#ebedf0] [--billing-heatgraph-level-1:#9be9a8] [--billing-heatgraph-level-2:#40c463] [--billing-heatgraph-level-3:#30a14e] [--billing-heatgraph-level-4:#216e39]',
         'dark:[--billing-heatgraph-level-0:#161b22] dark:[--billing-heatgraph-level-1:#0e4429] dark:[--billing-heatgraph-level-2:#006d32] dark:[--billing-heatgraph-level-3:#26a641] dark:[--billing-heatgraph-level-4:#39d353]',
@@ -589,24 +591,24 @@ function UsageHeatmap({
         className="min-w-max"
       >
         <div
-          className="grid gap-x-3 gap-y-2"
+          className="grid gap-x-2 gap-y-2 sm:gap-x-3"
           style={{
-            gridTemplateColumns: '40px auto',
+            gridTemplateColumns: 'minmax(32px,auto) auto',
             gridTemplateRows: '20px auto',
           }}
         >
           <div />
           <div
-            className="relative h-5 text-xs font-semibold text-[#24292f] dark:text-white"
-            style={{ width: `${weekCount * 12 + Math.max(0, weekCount - 1) * 3}px` }}
+            className="relative h-5 text-[11px] font-medium text-[#57606a] dark:text-[#8b949e]"
+            style={{ width: `calc(${weekCount} * var(--heat-cell) + ${Math.max(0, weekCount - 1)} * var(--heat-gap))` }}
           >
             <HeatGraph.MonthLabels>
-              {({ label }: { label: { column: number; month: number; year: number } }) => {
+              {({ label }: { label: { column: number; month: number } }) => {
                 if (label.column === 0) return null;
                 return (
                   <span
                     className="absolute top-0 whitespace-nowrap"
-                    style={{ left: `${label.column * 15}px` }}
+                    style={{ left: `calc(${label.column} * (var(--heat-cell) + var(--heat-gap)))` }}
                   >
                     {formatMonthLabel(label.month, locale)}
                   </span>
@@ -615,10 +617,10 @@ function UsageHeatmap({
             </HeatGraph.MonthLabels>
           </div>
           <div
-            className="grid text-sm font-semibold leading-3 text-[#24292f] dark:text-white"
+            className="grid text-[11px] font-medium text-[#57606a] dark:text-[#8b949e]"
             style={{
-              gridTemplateRows: 'repeat(7, 12px)',
-              rowGap: '3px',
+              gridTemplateRows: 'repeat(7, var(--heat-cell))',
+              rowGap: 'var(--heat-gap)',
             }}
           >
             <HeatGraph.DayLabels>
@@ -636,10 +638,10 @@ function UsageHeatmap({
             </HeatGraph.DayLabels>
           </div>
           <HeatGraph.Grid
-            className="gap-[3px]"
+            className="gap-[var(--heat-gap)]"
             style={{
-              gridTemplateColumns: `repeat(${weekCount}, 12px)`,
-              gridTemplateRows: 'repeat(7, 12px)',
+              gridTemplateColumns: `repeat(${weekCount}, var(--heat-cell))`,
+              gridTemplateRows: 'repeat(7, var(--heat-cell))',
             }}
           >
             {({ cell }: { cell: { date: Date; count: number } }) => {
@@ -648,7 +650,7 @@ function UsageHeatmap({
               const label = bucket?.label ?? formatDayLabel(cell.date);
               return (
                 <HeatGraph.Cell
-                  className="h-3 w-3 rounded-[2px]"
+                  className="aspect-square w-[var(--heat-cell)] rounded-[2px] outline-none transition-[filter,transform,box-shadow] duration-100 hover:relative hover:z-10 hover:brightness-110 hover:ring-2 hover:ring-foreground/30 focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none motion-reduce:hover:transform-none"
                   title={`${label}: ${formatTokenCount(cell.count)} ${tokensLabel}`}
                   data-billing-usage-date={dateKey}
                   data-billing-usage-records={bucket?.count ?? 0}
@@ -659,11 +661,11 @@ function UsageHeatmap({
             }}
           </HeatGraph.Grid>
         </div>
-        <div className="mt-4 flex items-center justify-end gap-2 text-sm text-[#57606a] dark:text-[#8b949e]">
+        <div className="mt-4 flex items-center justify-end gap-2 text-xs text-[#57606a] dark:text-[#8b949e]">
           <span>{lessLabel}</span>
-          <div className="flex gap-[3px]">
+          <div className="flex gap-[var(--heat-gap)]">
             <HeatGraph.Legend>
-              {() => <HeatGraph.LegendLevel className="h-3 w-3 rounded-[2px]" />}
+              {() => <HeatGraph.LegendLevel className="aspect-square w-[var(--heat-cell)] rounded-[2px]" />}
             </HeatGraph.Legend>
           </div>
           <span>{moreLabel}</span>
@@ -1003,7 +1005,7 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
 
               <section className="space-y-3">
                 <SectionHeader
-                  icon={<Grid3X3 />}
+                  icon={<CalendarDays />}
                   tone="cache"
                   title={t('dashboard:billing.heatmap.title')}
                   description={t('dashboard:billing.heatmap.description')}

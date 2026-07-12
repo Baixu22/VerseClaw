@@ -41,12 +41,14 @@ class EvidenceLedger {
       metadata: opts.metadata,
     };
 
-    const envelope: EvidenceEnvelope =
-      kind === 'mutation_evidence'
-        ? { ...base, kind, mutationEvidence: true }
-        : kind === 'completion_evidence'
-          ? { ...base, kind, completionEvidence: true }
-          : base;
+    let envelope: EvidenceEnvelope;
+    if (kind === 'mutation_evidence') {
+      envelope = { ...base, kind, mutationEvidence: true };
+    } else if (kind === 'completion_evidence') {
+      envelope = { ...base, kind, completionEvidence: true };
+    } else {
+      envelope = { ...base, kind };
+    }
 
     shadowSafetyBoundary.execute('evidence-ledger.collect', () => {
       this.envelopes.set(envelope.envelopeId, envelope);
