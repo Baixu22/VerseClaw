@@ -8,6 +8,7 @@ taskType: runtime-bridge
 intent: Preserve the Agent Reach TypeScript shadow verbatim, then adapt it in place as a default-enabled read-only OpenClaw plugin with safe Agent Browser fallback.
 touchedAreas:
   - harness/specs/tasks/agent-reach-readers-integration.md
+  - harness/src/profiles.mjs
   - harness/specs/rules/reach-readers-upstream-integrity.md
   - harness/specs/rules/reach-readers-readonly-network-boundary.md
   - harness/specs/rules/reach-readers-credential-hygiene.md
