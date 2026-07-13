@@ -302,6 +302,7 @@ describe('agent browser service', () => {
 
     const opened = await service.open({ url: 'example.com', profile: 'Work', mode: 'headless', runtimeMode: 'controlled_enhanced' });
     const sessionId = opened.session.id;
+    service.setEnabled(true);
     const dbg = windows[0].webContents.debugger;
 
     // takeSnapshot: 首次调用触发 attach + 启用域 + getFullAXTree
@@ -367,6 +368,7 @@ describe('agent browser service', () => {
 
     const opened = await service.open({ url: 'example.com', profile: 'Work' });
     const sessionId = opened.session.id;
+    service.setEnabled(true);
 
     await expect(service.takeSnapshot({ sessionId })).rejects.toThrow('browser-window engine');
     await expect(service.clickByUid({ sessionId, uid: '1_1' })).rejects.toThrow('browser-window engine');
@@ -503,6 +505,8 @@ describe('agent browser service', () => {
         command: ['--json', 'snapshot'],
       })),
       close: vi.fn(),
+      isEnabled: vi.fn(() => true),
+      setEnabled: vi.fn((enabled: boolean) => ({ enabled })),
     };
 
     const api = createAgentBrowserApi(service as never);

@@ -23,6 +23,7 @@ import type {
 } from '@shared/host-api/contract';
 import type { BrowserControlToolCall } from '@shared/agent-browser/types';
 import { getOriginFromUrl } from '@shared/agent-browser/tool-authorization';
+import { isBrowserControlRestrictedUrl } from '@shared/agent-browser/browser-control';
 import { BrowserControlActionExecutor } from './agent-browser/browser-control/actions';
 import { BoundaryChoiceToolExecutor } from './agent-browser/browser-control/boundary-choice-tool-executor';
 import { BrowserDebuggerConnection } from './agent-browser/browser-control/browser-debugger-connection';
@@ -289,6 +290,11 @@ export class AgentBrowserService {
   private readonly now: () => Date;
   private readonly userDataPath: string | undefined;
   private boundaryChoiceNotifier: ((sessionId: string, message: import('@shared/agent-browser/browser-control').BrowserControlBoundaryChoiceRequestMessage) => void) | undefined;
+  /**
+   * 全局浏览器控制开关。默认关闭，刷新/重载后回退到关闭（不持久化）。
+   * P1-1：browserControlEnabled 是全局运行态授权开关，不属于 chatPreferences。
+   */
+  private browserControlEnabled = false;
 
   constructor(options: AgentBrowserServiceOptions = {}) {
     this.cliRunner = options.cliRunner;
@@ -556,6 +562,7 @@ export class AgentBrowserService {
     const record = this.getRecord(payload.sessionId);
     const url = normalizeHttpUrl(payload.url);
     if (!url) throw new Error('Agent browser URL is required');
+    this.assertUrlNotRestricted(url);
     if (record.engine === 'agent-browser-cli') {
       const metadata = await this.requireCliRunner().navigate(record.session, url);
       return await this.refreshCli(record.session.id, metadata);
@@ -793,6 +800,7 @@ export class AgentBrowserService {
    * 后续调用复用同一连接。会话关闭时统一 detach。
    */
   async takeSnapshot(payload: { sessionId: string }): Promise<{ session: AgentBrowserSession; snapshot: string }> {
+    this.assertBrowserControlEnabled();
     const record = this.getRecord(payload.sessionId);
     if (record.engine !== 'browser-window') {
       throw new Error('Agent browser takeSnapshot requires the browser-window engine');
@@ -807,6 +815,7 @@ export class AgentBrowserService {
    * 通过 UID 点击元素。UID 来自最近一次 takeSnapshot 返回的快照。
    */
   async clickByUid(payload: { sessionId: string; uid: string }): Promise<AgentBrowserSession> {
+    this.assertBrowserControlEnabled();
     const record = this.getRecord(payload.sessionId);
     if (record.engine !== 'browser-window') {
       throw new Error('Agent browser clickByUid requires the browser-window engine');
@@ -833,6 +842,7 @@ export class AgentBrowserService {
     value: string;
     clear?: boolean;
   }): Promise<AgentBrowserSession> {
+    this.assertBrowserControlEnabled();
     const record = this.getRecord(payload.sessionId);
     if (record.engine !== 'browser-window') {
       throw new Error('Agent browser fillByUid requires the browser-window engine');
@@ -854,6 +864,7 @@ export class AgentBrowserService {
    * 全局键盘按键（不绑定 UID）。支持修饰键组合，例如 "Control+Enter"。
    */
   async pressKey(payload: { sessionId: string; key: string }): Promise<AgentBrowserSession> {
+    this.assertBrowserControlEnabled();
     const record = this.getRecord(payload.sessionId);
     if (record.engine !== 'browser-window') {
       throw new Error('Agent browser pressKey requires the browser-window engine');
@@ -989,6 +1000,51 @@ export class AgentBrowserService {
     notifier: ((sessionId: string, message: import('@shared/agent-browser/browser-control').BrowserControlBoundaryChoiceRequestMessage) => void) | undefined,
   ): void {
     this.boundaryChoiceNotifier = notifier;
+  }
+
+  /**
+   * 全局浏览器控制开关。P1-1：browserControlEnabled 不持久化，刷新回退关闭。
+   * 关闭时立即 detach 所有 session 的 debugger 连接，并清理 browserControlStates。
+   * 开启失败时前端必须回滚该运行态（由 UI 层负责）。
+   */
+  setEnabled(enabled: boolean): { enabled: boolean } {
+    if (!enabled) {
+      this.browserControlEnabled = false;
+      // 立即 detach 所有 session 的 debugger 连接
+      for (const control of this.browserControlStates.values()) {
+        void control.connection.detach().catch(() => {
+          // tab 已关闭或用户取消调试时，Electron 可能拒绝 detach；忽略
+        });
+      }
+      this.browserControlStates.clear();
+    } else {
+      this.browserControlEnabled = true;
+    }
+    return { enabled: this.browserControlEnabled };
+  }
+
+  isEnabled(): boolean {
+    return this.browserControlEnabled;
+  }
+
+  /**
+   * 断言全局浏览器控制开关已开启。
+   * browser-control 动作（takeSnapshot/clickByUid/fillByUid/pressKey）执行前必须校验。
+   */
+  private assertBrowserControlEnabled(): void {
+    if (!this.browserControlEnabled) {
+      throw new Error('浏览器控制未开启，请先调用 setEnabled(true) 开启全局运行态开关。');
+    }
+  }
+
+  /**
+   * 校验 URL 不是受限页面。P1-1：默认拒绝 chrome:// / edge:// / about: /
+   * chrome-extension:// / view-source: / Chrome Web Store / app:// / clawx:// / file://。
+   */
+  private assertUrlNotRestricted(url: string | undefined): void {
+    if (url && isBrowserControlRestrictedUrl(url)) {
+      throw new Error('当前页面属于浏览器受限页面，无法开启浏览器控制。请切换到普通网页后重试。');
+    }
   }
 
   /**

@@ -26,6 +26,8 @@ import type {
   AgentBrowserSelectorPayload,
   AgentBrowserSessionPayload,
   AgentBrowserSessionResult,
+  AgentBrowserSetEnabledPayload,
+  AgentBrowserSetEnabledResult,
   AgentBrowserStatusResult,
   AgentBrowserTakeSnapshotPayload,
   AgentBrowserTakeSnapshotResult,
@@ -721,6 +723,8 @@ export const hostApi = {
     open: (input?: AgentBrowserOpenPayload): Promise<AgentBrowserSessionResult> =>
       invokeHost('agentBrowser', 'open', input),
     status: (): Promise<AgentBrowserStatusResult> => invokeHost('agentBrowser', 'status'),
+    setEnabled: (input: AgentBrowserSetEnabledPayload): Promise<AgentBrowserSetEnabledResult> =>
+      invokeHost('agentBrowser', 'setEnabled', input),
     profiles: (): Promise<AgentBrowserProfilesResult> => invokeHost('agentBrowser', 'profiles'),
     saveProfile: (input: AgentBrowserProfileSavePayload): Promise<AgentBrowserProfileSaveResult> =>
       invokeHost('agentBrowser', 'saveProfile', input),
