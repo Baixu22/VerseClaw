@@ -6,10 +6,10 @@ import {
   RUNTIME_MEMORY_CONTEXT_PROVIDER_ID,
 } from "../../openclaw_runtime/src/context-engine/memory-context-provider";
 import {
-  createContextProviderRegistryPilot,
+  createTestContextProviderRegistry,
   LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
   LOOP_CONTEXT_PACK_PROVIDER_ID,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+} from "./helpers/context-provider-registry";
 import {
   SYMBOL_CONTEXT_PROVIDER_ID,
 } from "../../openclaw_runtime/src/context-engine/symbol-context-provider";
@@ -529,7 +529,7 @@ describe("runtime grounding consumer projections", () => {
   });
 
   it("does not register providers or change default registry ordering", () => {
-    const registry = createContextProviderRegistryPilot();
+    const registry = createTestContextProviderRegistry();
     const before = registry.listManifests().map((manifest) => manifest.id);
 
     groundingRefsFromMemoryEpisode(buildRuntimeMemoryEpisodeFixture());

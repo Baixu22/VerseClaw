@@ -8,8 +8,8 @@ import { formatTaskLoopContextPackForReviewer } from "../../openclaw_runtime/src
 import {
   LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
   LOOP_CONTEXT_PACK_PROVIDER_ID,
-  createContextProviderRegistryPilot,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+  createTestContextProviderRegistry,
+} from "./helpers/context-provider-registry";
 import {
   buildAgentMapResultFixture,
   buildBudgetedAgentMapResult,
@@ -441,7 +441,7 @@ describe("AgentMap prompt candidate runtime shadow replay proof", () => {
       expect(context).not.toContain("sendMessage(input: ChatInput)");
     }
 
-    expect(createContextProviderRegistryPilot().listManifests().map((manifest) => manifest.id))
+    expect(createTestContextProviderRegistry().listManifests().map((manifest) => manifest.id))
       .toEqual([
         LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
         LOOP_CONTEXT_PACK_PROVIDER_ID,

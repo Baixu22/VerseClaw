@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  createContextProviderRegistryPilot,
+  createTestContextProviderRegistry,
   LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
   LOOP_CONTEXT_PACK_PROVIDER_ID,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+} from "./helpers/context-provider-registry";
 import {
   buildGroundingRefFixture,
   createGroundingShadowConsumerSummary,
@@ -45,7 +45,7 @@ describe("single explicit grounding diagnostics-only consumer", () => {
   });
 
   it("runs only through direct explicit invocation and does not register providers", () => {
-    const registry = createContextProviderRegistryPilot();
+    const registry = createTestContextProviderRegistry();
     const before = registry.listManifests().map((manifest) => manifest.id);
     const sourceSummary = sanitizedSourceSummary();
 

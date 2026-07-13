@@ -8,8 +8,8 @@ import {
   createAgentMapContextProvider,
 } from "../../openclaw_runtime/src/context-engine/agent-map-context-provider";
 import {
-  runContextProviderRegistryPilot,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+  runTestContextProviderRegistry,
+} from "./helpers/context-provider-registry";
 import {
   buildRuntimeContextProviderManifestFixture,
   collectRuntimeRegistryDiagnostics,
@@ -445,7 +445,7 @@ async function produceRegistryProducerDiagnostics(): Promise<ProducerDiagnostic[
 }
 
 async function produceContextProviderDiagnostics(): Promise<ProducerDiagnostic[]> {
-  const defaultResult = await runContextProviderRegistryPilot({
+  const defaultResult = await runTestContextProviderRegistry({
     config: registryEnabledConfig,
     legacyMessages: [{ role: "user", content: "Legacy context stays authoritative." }] as never,
     loopContextInput: { systemAppRules: ["System rule"] },
@@ -466,7 +466,7 @@ async function produceContextProviderDiagnostics(): Promise<ProducerDiagnostic[]
       throw new Error("real producer context boom");
     },
   };
-  const failingResult = await runContextProviderRegistryPilot({
+  const failingResult = await runTestContextProviderRegistry({
     config: registryEnabledConfig,
     extraProviders: [failingProvider],
     extraProviderQueries: {
@@ -475,7 +475,7 @@ async function produceContextProviderDiagnostics(): Promise<ProducerDiagnostic[]
     sessionId: "real-producer-context-failure",
   });
 
-  const disabledAgentMapResult = await runContextProviderRegistryPilot({
+  const disabledAgentMapResult = await runTestContextProviderRegistry({
     config: registryEnabledConfig,
     extraProviders: [createAgentMapContextProvider()],
     extraProviderQueries: {

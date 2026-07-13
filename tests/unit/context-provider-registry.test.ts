@@ -7,11 +7,11 @@ import {
   CONTEXT_PROVIDER_REGISTRY_GROUNDING_SHADOW_CONSUMER_ID,
   LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
   LOOP_CONTEXT_PACK_PROVIDER_ID,
-  createContextProviderRegistryPilot,
+  createTestContextProviderRegistry,
   createLegacyContextEngineProvider,
   createLoopContextPackProvider,
-  runContextProviderRegistryPilot,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+  runTestContextProviderRegistry,
+} from "./helpers/context-provider-registry";
 import {
   AGENT_MAP_CONTEXT_PROVIDER_ID,
   createAgentMapContextProvider,
@@ -65,7 +65,7 @@ const range = (
 
 describe("context provider registry pilot", () => {
   it("keeps registry providers explicit and validates compatibility manifests", () => {
-    const registry = createContextProviderRegistryPilot();
+    const registry = createTestContextProviderRegistry();
     const legacy = registry.resolve(LEGACY_CONTEXT_ENGINE_PROVIDER_ID);
     const loop = registry.resolve(LOOP_CONTEXT_PACK_PROVIDER_ID);
 
@@ -98,7 +98,7 @@ describe("context provider registry pilot", () => {
     const baselinePack = buildLoopContextPack(loopContextInput);
     const baselinePrompt = formatLoopContextPackForPrompt(baselinePack);
 
-    const result = await runContextProviderRegistryPilot({
+    const result = await runTestContextProviderRegistry({
       config: {},
       legacyMessages: messages,
       loopContextInput,
@@ -136,7 +136,7 @@ describe("context provider registry pilot", () => {
       },
     });
 
-    const result = await runContextProviderRegistryPilot({
+    const result = await runTestContextProviderRegistry({
       config: {},
       extraProviders: [agentMapProvider, symbolProvider],
       sessionId: "session-extra-flag-off",
@@ -168,7 +168,7 @@ describe("context provider registry pilot", () => {
       },
     });
 
-    const defaultResult = await runContextProviderRegistryPilot({
+    const defaultResult = await runTestContextProviderRegistry({
       config: enabledConfig,
       legacyMessages: [{ role: "user", content: "Default providers only." }] as never,
       loopContextInput: { systemAppRules: ["System rule"] },
@@ -184,7 +184,7 @@ describe("context provider registry pilot", () => {
     expect(defaultResult.providerResults.map((providerResult) => providerResult.metadata?.providerId))
       .toEqual([LEGACY_CONTEXT_ENGINE_PROVIDER_ID, LOOP_CONTEXT_PACK_PROVIDER_ID]);
 
-    const explicitResult = await runContextProviderRegistryPilot({
+    const explicitResult = await runTestContextProviderRegistry({
       config: agentMapProviderEnabledConfig,
       extraProviders: [agentMapProvider],
       extraProviderQueries: {
@@ -210,7 +210,7 @@ describe("context provider registry pilot", () => {
 
   it("does not execute explicit AgentMap provider output unless the AgentMap provider flag is enabled", async () => {
     let agentMapRuns = 0;
-    const result = await runContextProviderRegistryPilot({
+    const result = await runTestContextProviderRegistry({
       config: enabledConfig,
       extraProviders: [
         createAgentMapContextProvider({
@@ -272,7 +272,7 @@ describe("context provider registry pilot", () => {
     };
     const baselinePrompt = formatLoopContextPackForPrompt(buildLoopContextPack(loopContextInput));
 
-    const result = await runContextProviderRegistryPilot({
+    const result = await runTestContextProviderRegistry({
       config: enabledConfig,
       legacyMessages: messages,
       loopContextInput,
@@ -323,7 +323,7 @@ describe("context provider registry pilot", () => {
   });
 
   it("feeds context provider diagnostics into the runtime-owned collector only when explicitly enabled", async () => {
-    const result = await runContextProviderRegistryPilot({
+    const result = await runTestContextProviderRegistry({
       config: enabledConfig,
       legacyMessages: [{ role: "user", content: "Collector stays shadow only." }] as never,
       loopContextInput: { systemAppRules: ["System rule"] },
@@ -359,8 +359,8 @@ describe("context provider registry pilot", () => {
       loopContextInput: { systemAppRules: ["System rule"] },
       sessionId: "session-grounding-default-off",
     };
-    const baseline = await runContextProviderRegistryPilot(input);
-    const disabled = await runContextProviderRegistryPilot({
+    const baseline = await runTestContextProviderRegistry(input);
+    const disabled = await runTestContextProviderRegistry({
       ...input,
       groundingShadow: {
         enabled: false,
@@ -402,7 +402,7 @@ describe("context provider registry pilot", () => {
       } as never,
     });
 
-    const result = await runContextProviderRegistryPilot({
+    const result = await runTestContextProviderRegistry({
       config: enabledConfig,
       sessionId: "session-grounding-shadow-pilot",
       groundingShadow: {
@@ -482,7 +482,7 @@ describe("context provider registry pilot", () => {
   });
 
   it("keeps provider ordering unchanged when runtime memory persistence is disabled", async () => {
-    const result = await runContextProviderRegistryPilot({
+    const result = await runTestContextProviderRegistry({
       config: {
         runtime: {
           ...enabledConfig.runtime,
@@ -519,7 +519,7 @@ describe("context provider registry pilot", () => {
       ],
     });
 
-    const result = await runContextProviderRegistryPilot({
+    const result = await runTestContextProviderRegistry({
       config: agentMapProviderEnabledConfig,
       legacyMessages: [{ role: "user", content: "Keep legacy prompt authoritative." }] as never,
       loopContextInput: { systemAppRules: ["System rule"] },
@@ -580,7 +580,7 @@ describe("context provider registry pilot", () => {
   });
 
   it("keeps legacy providers successful when explicit AgentMap collection fails", async () => {
-    const result = await runContextProviderRegistryPilot({
+    const result = await runTestContextProviderRegistry({
       config: agentMapProviderEnabledConfig,
       legacyMessages: [{ role: "user", content: "Legacy remains authoritative." }] as never,
       loopContextInput: { systemAppRules: ["System rule"] },
@@ -662,7 +662,7 @@ describe("context provider registry pilot", () => {
       },
     };
 
-    const result = await runContextProviderRegistryPilot({
+    const result = await runTestContextProviderRegistry({
       config: enabledConfig,
       extraProviders: [failingProvider],
       extraProviderQueries: {

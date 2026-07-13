@@ -9,11 +9,11 @@ import {
 } from "../../openclaw_runtime/src/context-engine/memory-context-provider";
 import {
   CONTEXT_PROVIDER_REGISTRY_GROUNDING_SHADOW_CONSUMER_ID,
-  createContextProviderRegistryPilot,
+  createTestContextProviderRegistry,
   LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
   LOOP_CONTEXT_PACK_PROVIDER_ID,
-  runContextProviderRegistryPilot,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+  runTestContextProviderRegistry,
+} from "./helpers/context-provider-registry";
 import {
   createSymbolContextProvider,
   SYMBOL_CONTEXT_PROVIDER_ID,
@@ -218,7 +218,7 @@ describe("grounding shadow consumer summaries", () => {
   });
 
   it("does not register providers or change default context provider ordering", () => {
-    const registry = createContextProviderRegistryPilot();
+    const registry = createTestContextProviderRegistry();
     const before = registry.listManifests().map((manifest) => manifest.id);
 
     createRuntimeMemoryGroundingShadowSummary(
@@ -371,9 +371,9 @@ describe("grounding shadow consumer summaries", () => {
   });
 
   it("keeps hostile grounding diagnostics metadata non-authoritative across all consumers", async () => {
-    const registry = createContextProviderRegistryPilot();
+    const registry = createTestContextProviderRegistry();
     const registryOrder = registry.listManifests().map((manifest) => manifest.id);
-    const registryResult = await runContextProviderRegistryPilot({
+    const registryResult = await runTestContextProviderRegistry({
       config: {
         runtime: {
           registryPilot: { enabled: true },
@@ -628,7 +628,7 @@ function expectShadowSummaryBoundary(
 }
 
 async function registryGroundingMetadata(): Promise<RuntimeCoreJsonObject> {
-  const result = await runContextProviderRegistryPilot({
+  const result = await runTestContextProviderRegistry({
     config: {
       runtime: {
         registryPilot: { enabled: true },

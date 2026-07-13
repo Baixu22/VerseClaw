@@ -8,10 +8,10 @@ import {
   RUNTIME_MEMORY_CONTEXT_PROVIDER_ID,
 } from "../../openclaw_runtime/src/context-engine/memory-context-provider";
 import {
-  createContextProviderRegistryPilot,
+  createTestContextProviderRegistry,
   LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
   LOOP_CONTEXT_PACK_PROVIDER_ID,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+} from "./helpers/context-provider-registry";
 import {
   createRuntimeMemoryRuntimeIntegration,
 } from "../../openclaw_runtime/src/runtime-core/memory-runtime-integration";
@@ -427,7 +427,7 @@ describe("runtime memory runtime integration adapter", () => {
       config: { runtime: { memory: { provider: true } } },
       queryFacts: (query) => loaded.store.queryFacts(query),
     });
-    const registry = createContextProviderRegistryPilot([memoryProvider]);
+    const registry = createTestContextProviderRegistry([memoryProvider]);
 
     expect(registry.listManifests().map((manifest) => manifest.id)).toEqual([
       LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
@@ -488,7 +488,7 @@ describe("runtime memory runtime integration adapter", () => {
         })];
       },
     });
-    const registry = createContextProviderRegistryPilot([provider]);
+    const registry = createTestContextProviderRegistry([provider]);
 
     expect(registry.listManifests().map((manifest) => manifest.id)).toEqual([
       LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
