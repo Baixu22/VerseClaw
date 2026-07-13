@@ -12,7 +12,6 @@
 import { describe, it, expect } from "vitest";
 import {
   decomposeQuestion,
-  type DecomposedQuestion,
 } from "./helpers/question-decomposer";
 import { hasDeepSeekKey } from "./helpers/runtime-memory-real-llm-client";
 

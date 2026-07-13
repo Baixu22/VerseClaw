@@ -50,7 +50,7 @@ export async function resolveCanonicalRootMemoryFile(workspaceDir: string): Prom
         return path.join(workspaceDir, entry.name);
       }
     }
-  } catch {}
+  } catch { /* ignore */ }
   return null;
 }
 

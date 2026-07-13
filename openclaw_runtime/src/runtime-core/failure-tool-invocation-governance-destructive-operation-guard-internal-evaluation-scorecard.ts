@@ -302,7 +302,7 @@ export async function scanRuntimeFailureDestructiveOperationGuardTranscriptRoot(
   });
   const files = await listTranscriptFiles(transcriptRoot, maxFiles);
   for (const file of files) {
-    let content = "";
+    let content;
     try {
       content = await readFile(file, "utf8");
     } catch {

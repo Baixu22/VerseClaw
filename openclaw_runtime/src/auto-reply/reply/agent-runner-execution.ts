@@ -1666,7 +1666,7 @@ export async function runAgentTurnWithFallback(params: {
   let fallbackModel = params.followupRun.run.model;
   let attemptedRuntimeProvider = fallbackProvider;
   let attemptedRuntimeModel = fallbackModel;
-  let fallbackAttempts: RuntimeFallbackAttempt[] = [];
+  let fallbackAttempts: RuntimeFallbackAttempt[];
   let transientHttpRetriesRemaining = 1;
   const consumeTransientHttpRetry = () => transientHttpRetriesRemaining-- > 0;
   let liveModelSwitchRetries = 0;
@@ -2781,8 +2781,8 @@ export async function runAgentTurnWithFallback(params: {
         if (effectiveRun !== runnableRun && effectiveRun !== params.followupRun.run) {
           applyLiveModelSwitchToRun(effectiveRun, err);
         }
-        fallbackProvider = err.provider;
-        fallbackModel = err.model;
+        void (err.provider);
+        void (err.model);
         continue;
       }
       const message = formatErrorMessage(err);

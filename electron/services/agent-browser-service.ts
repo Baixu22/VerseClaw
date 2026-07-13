@@ -926,7 +926,7 @@ export class AgentBrowserService {
       })();
     return source
       .split(/\r?\n|","|", "/)
-      .map((entry) => entry.replace(/[{}\[\]"]/g, '').trim())
+      .map((entry) => entry.replace(/[{}[]"]/g, '').trim())
       .filter((entry) => /error|failed|exception|ERR_|4\d\d|5\d\d/iu.test(entry))
       .slice(0, 20);
   }

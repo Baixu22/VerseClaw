@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, writeFile, rm, readFile } from 'node:fs/promises';
+import { mkdtemp, writeFile, rm, readFile } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -9,8 +9,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   beginSnapshot,
   collectDeclaredWritePaths,
-  type SnapshotHandle,
-  type SnapshotPlan,
 } from '../../openclaw_runtime/src/agents/sessions/extensions/policy-light-snapshotter';
 import type { WriteRiskProfile } from '../../openclaw_runtime/src/shared/tool-registration';
 

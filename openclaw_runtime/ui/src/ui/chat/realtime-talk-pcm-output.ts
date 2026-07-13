@@ -37,7 +37,7 @@ export class RealtimeTalkPcmOutputQueue {
     for (const source of this.sources) {
       try {
         source.stop();
-      } catch {}
+      } catch { /* ignore */ }
     }
     this.sources.clear();
     this.playhead = outputContext?.currentTime ?? 0;

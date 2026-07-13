@@ -45,6 +45,8 @@ function parseArgs(argv: string[]): CliOptions {
         );
         process.exit(0);
       }
+      // falls through
+
       default: {
         throw new Error(`Unknown argument: ${arg}`);
       }

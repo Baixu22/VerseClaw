@@ -111,7 +111,7 @@ function getFileExtension(url: string): string | undefined {
       if (/^https?:\/\//i.test(trimmed)) {
         return new URL(trimmed).pathname;
       }
-    } catch {}
+    } catch { /* ignore */ }
     return trimmed;
   })();
   const fileName = source.split(/[\\/]/).pop() ?? source;
@@ -138,7 +138,7 @@ function inferAttachmentKind(url: string): {
         const name = parsed.pathname.split("/").pop()?.trim();
         return name || parsed.hostname || url;
       }
-    } catch {}
+    } catch { /* ignore */ }
     const name = url.split(/[\\/]/).pop()?.trim();
     return name || url;
   })();

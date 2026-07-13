@@ -43,7 +43,7 @@ handoff:
     expect(compileRoleContractToSoul(result.role!)).toContain('Role contract: architect');
   });
 
-  it('ships eight valid built-in roles', () => {
+  it('ships nine valid built-in roles', () => {
     expect(BUILT_IN_ROLE_CONTRACTS.map((role) => role.name)).toEqual([
       'planner',
       'architect',
@@ -52,6 +52,7 @@ handoff:
       'reviewer',
       'security-reviewer',
       'docs-writer',
+      'knowledge-librarian',
       'skeptic',
     ]);
     for (const role of BUILT_IN_ROLE_CONTRACTS) {

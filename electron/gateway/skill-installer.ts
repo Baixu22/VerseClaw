@@ -207,7 +207,7 @@ export async function installSkillFromCatalog(
       const fallback = attemptFallbackBranch(branch);
       if (fallback) {
         await downloadZip(owner, repo, fallback, skillDir);
-        installed = true;
+        void (true);
       } else {
         throw zipErr;
       }

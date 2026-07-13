@@ -21,11 +21,11 @@ export async function awaitPendingManagerWork(params: {
   if (params.pendingSync) {
     try {
       await params.pendingSync;
-    } catch {}
+    } catch { /* ignore */ }
   }
   if (params.pendingProviderInit) {
     try {
       await params.pendingProviderInit;
-    } catch {}
+    } catch { /* ignore */ }
   }
 }

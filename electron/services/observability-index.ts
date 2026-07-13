@@ -273,7 +273,7 @@ export async function loadObservabilityIndex(): Promise<ObservabilityTraceIndexE
   loaded = true;
   entries.clear();
   traces.clear();
-  let raw = '';
+  let raw;
   try {
     raw = await readFile(getIndexPath(), 'utf8');
   } catch {

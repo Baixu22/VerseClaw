@@ -375,7 +375,7 @@ export async function dispatchOutbound(
                           replyToId: event.messageId,
                           account,
                         });
-                      } catch {}
+                      } catch { /* ignore */ }
                     }
                     return;
                   }

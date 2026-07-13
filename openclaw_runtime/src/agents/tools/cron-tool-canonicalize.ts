@@ -6,7 +6,9 @@
 import { timestampMsToIsoString } from "@openclaw/normalization-core/number-coercion";
 import { isRecord } from "../../utils.js";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- value retained for type derivation
 const CRON_SCHEDULE_KINDS = ["at", "every", "cron"] as const;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- type-only value
 const CRON_PAYLOAD_KINDS = ["systemEvent", "agentTurn"] as const;
 const CRON_FLAT_PAYLOAD_KEYS = [
   "message",

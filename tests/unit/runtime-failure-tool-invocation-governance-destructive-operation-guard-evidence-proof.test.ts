@@ -24,22 +24,19 @@ import {
 
 const NOW_MS = Date.parse("2026-07-01T12:00:00.000Z");
 const FIXTURE_DIR = join(process.cwd(), "tests/fixtures/runtime-replay");
-const FIXTURE_NAMES = [
-  "success.json",
-  "test-failure-after-repair.json",
-  "dirty-workspace.json",
-] as const;
+ 
+type FixtureName = "success.json" | "test-failure-after-repair.json" | "dirty-workspace.json";
 
 type ReplayFixtureFile = {
   replayCase: ReplayCase;
   fixtures: RuntimeFailureReplayFixtureBundle;
 };
 
-function loadFixture(name: typeof FIXTURE_NAMES[number]): ReplayFixtureFile {
+function loadFixture(name: FixtureName): ReplayFixtureFile {
   return JSON.parse(readFileSync(join(FIXTURE_DIR, name), "utf8")) as ReplayFixtureFile;
 }
 
-function replayReportFor(name: typeof FIXTURE_NAMES[number]): RuntimeFailureReplayReport {
+function replayReportFor(name: FixtureName): RuntimeFailureReplayReport {
   const fixture = loadFixture(name);
   const replayValidation = validateReplayCase(fixture.replayCase);
   expect(replayValidation.ok).toBe(true);

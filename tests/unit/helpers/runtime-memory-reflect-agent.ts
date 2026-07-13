@@ -150,7 +150,7 @@ export function shouldReflect(
   return false;
 }
 
-const STOPWORDS = new Set([
+export const _STOPWORDS = new Set([
   "the",
   "a",
   "an",

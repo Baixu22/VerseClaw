@@ -1124,7 +1124,7 @@ export function collectModelHygieneFindings(cfg: OpenClawConfig): SecurityAuditF
       .slice(0, 12)
       .map((m) => `- ${m.model} (${m.reason}) @ ${m.source}`)
       .join("\n");
-    const more = matches.length > 12 ? `\n�?{matches.length - 12} more` : "";
+    const more = matches.length > 12 ? `\n…${matches.length - 12} more` : "";
     findings.push({
       checkId: "models.legacy",
       severity: "warn",
@@ -1142,7 +1142,7 @@ export function collectModelHygieneFindings(cfg: OpenClawConfig): SecurityAuditF
       .slice(0, 12)
       .map((m) => `- ${m.model} (${m.reasons.join("; ")}) @ ${m.source}`)
       .join("\n");
-    const more = weakMatches.size > 12 ? `\n�?{weakMatches.size - 12} more` : "";
+    const more = weakMatches.size > 12 ? `\n…${weakMatches.size - 12} more` : "";
     findings.push({
       checkId: "models.weak_tier",
       severity: "warn",

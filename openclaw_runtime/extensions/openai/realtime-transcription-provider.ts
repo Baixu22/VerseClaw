@@ -202,6 +202,8 @@ function createOpenAIRealtimeTranscriptionSession(
         }
       }
 
+      // falls through
+
       default:
     }
   };

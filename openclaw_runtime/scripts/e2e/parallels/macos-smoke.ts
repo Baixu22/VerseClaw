@@ -240,6 +240,8 @@ export function parseArgs(argv: string[]): MacosOptions {
       case "--help":
         process.stdout.write(usage());
         process.exit(0);
+      // falls through
+
       default:
         die(`unknown arg: ${arg}`);
     }

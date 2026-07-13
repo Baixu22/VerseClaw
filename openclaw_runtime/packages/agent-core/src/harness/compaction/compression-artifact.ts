@@ -126,9 +126,22 @@ const RETRIEVAL_REASONS = new Set<CompressionRetrievalTraceEntry["reason"]>([
   "model_requested",
 ]);
 
+function redactSecretLikeText(text: string): string {
+  if (!text) return text;
+  // Keep secret labels (e.g. OPENAI_API_KEY) while stripping values and raw token prefixes.
+  let out = text.replace(
+    /\b([A-Za-z0-9_]*(?:API[_-]?KEY|TOKEN|SECRET|PASSWORD|PASSWD|PRIVATE[_-]?KEY)[A-Za-z0-9_]*)\s*[=:]\s*([^\s"',;]+)/gi,
+    (_match, name: string) => `${name}=[REDACTED]`,
+  );
+  out = out.replace(/\bsk-[A-Za-z0-9_-]{8,}\b/g, "[REDACTED]");
+  out = out.replace(/\b(ghp|github_pat|gsk|xox[baprs]|xapp|pplx|npm|hf|r8)_[A-Za-z0-9_-]{8,}\b/g, "[REDACTED]");
+  out = out.replace(/\bBearer\s+[A-Za-z0-9._\-+=]{18,}\b/gi, "Bearer [REDACTED]");
+  return out;
+}
+
 function normalizeText(value: unknown, maxChars = 600): string {
   if (typeof value !== "string") return "";
-  const compact = value.replace(/\s+/g, " ").trim();
+  const compact = redactSecretLikeText(value.replace(/\s+/g, " ").trim());
   if (compact.length <= maxChars) return compact;
   return `${compact.slice(0, Math.max(0, maxChars - 24)).trim()} [truncated]`;
 }
@@ -319,6 +332,77 @@ function optionalArray<T>(items: T[]): T[] | undefined {
   return items.length ? items : undefined;
 }
 
+function normalizeTelemetry(value: unknown): Partial<CompressionTelemetry> | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const record = value as Partial<CompressionTelemetry>;
+  const out: Partial<CompressionTelemetry> = {};
+  if (typeof record.tier === "string") out.tier = record.tier as CompressionTelemetry["tier"];
+  if (typeof record.strategy === "string") out.strategy = record.strategy as CompressionTelemetry["strategy"];
+  if (typeof record.pressure === "number" && Number.isFinite(record.pressure)) out.pressure = record.pressure;
+  if (typeof record.tokensBefore === "number" && Number.isFinite(record.tokensBefore)) out.tokensBefore = record.tokensBefore;
+  if (typeof record.tokensAfter === "number" && Number.isFinite(record.tokensAfter)) out.tokensAfter = record.tokensAfter;
+  if (typeof record.compressionRatio === "number" && Number.isFinite(record.compressionRatio)) {
+    out.compressionRatio = record.compressionRatio;
+  }
+  if (typeof record.staleExcludedCount === "number" && Number.isFinite(record.staleExcludedCount)) {
+    out.staleExcludedCount = record.staleExcludedCount;
+  }
+  if (typeof record.causalAnchorCount === "number" && Number.isFinite(record.causalAnchorCount)) {
+    out.causalAnchorCount = record.causalAnchorCount;
+  }
+  if (Array.isArray(record.rehydratedFiles)) {
+    out.rehydratedFiles = record.rehydratedFiles
+      .map((item) => normalizeText(item, 300))
+      .filter(Boolean)
+      .slice(0, 24);
+  }
+  if (Array.isArray(record.warnings)) {
+    out.warnings = record.warnings
+      .map((item) => normalizeText(item, 240))
+      .filter(Boolean)
+      .slice(0, 12);
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+function normalizeRehydratedFileContext(value: unknown, maxItems = 12): CompressionRehydratedFileContext[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const record = item as Partial<CompressionRehydratedFileContext>;
+    const path = normalizeText(record.path, 400);
+    if (!path) return [];
+    const evidenceRefs = Array.isArray(record.evidenceRefs)
+      ? record.evidenceRefs.flatMap((ref) => {
+          if (!ref || typeof ref !== "object") return [];
+          const entry = ref as Partial<CompressionEvidenceRef>;
+          const refValue = normalizeText(entry.ref, 300);
+          if (!refValue) return [];
+          const type = typeof entry.type === "string" && EVIDENCE_TYPES.has(entry.type as CompressionEvidenceRef["type"])
+            ? entry.type as CompressionEvidenceRef["type"]
+            : "file";
+          return [{
+            type,
+            ref: refValue,
+            ...(entry.label ? { label: normalizeText(entry.label, 120) } : {}),
+          }];
+        })
+      : [];
+    return [{
+      path,
+      ...(record.reason ? { reason: normalizeText(record.reason, 120) } : {}),
+      ...(typeof record.lineStart === "number" && Number.isFinite(record.lineStart)
+        ? { lineStart: Math.floor(record.lineStart) }
+        : {}),
+      ...(typeof record.lineEnd === "number" && Number.isFinite(record.lineEnd)
+        ? { lineEnd: Math.floor(record.lineEnd) }
+        : {}),
+      ...(record.excerptHash ? { excerptHash: normalizeText(record.excerptHash, 120) } : {}),
+      ...(evidenceRefs.length ? { evidenceRefs } : {}),
+    }];
+  }).slice(0, maxItems);
+}
+
 function buildQuality(artifact: Omit<CompressionArtifact, "quality">, targetTokens: number): CompressionArtifactQuality {
   const required: Array<keyof Omit<CompressionArtifact, "quality">> = [
     "objective",
@@ -364,6 +448,10 @@ function buildQuality(artifact: Omit<CompressionArtifact, "quality">, targetToke
   if (evidenceCoverage < 0.7) warnings.push("low_evidence_coverage");
   if (artifactTokens > targetTokens) warnings.push("artifact_over_token_budget");
   if (artifact.unverifiedClaims.length > 0) warnings.push("contains_unverified_claims");
+  for (const warning of artifact.telemetry?.warnings ?? []) {
+    const text = normalizeText(warning, 240);
+    if (text && !warnings.includes(text)) warnings.push(text);
+  }
   const score = Math.max(
     0,
     Math.min(1, fieldCoverage * 0.45 + evidenceCoverage * 0.35 + (artifactTokens <= targetTokens ? 0.2 : 0.05)),
@@ -451,7 +539,10 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
         .map((ref) => `Stale reference must be revalidated: ${ref.resourceId} ${ref.selector}`),
       ...(input.contextRuntimeKit?.unverifiedClaims ?? []).map((item) => normalizeText(item, 300)).filter(Boolean),
     ].slice(0, 8),
-    ...(input.telemetry ? { telemetry: { ...input.telemetry } } : {}),
+    ...(normalizeTelemetry(input.telemetry) ? { telemetry: normalizeTelemetry(input.telemetry) } : {}),
+    ...(optionalArray(normalizeRehydratedFileContext(input.rehydratedFileContext)) ? {
+      rehydratedFileContext: optionalArray(normalizeRehydratedFileContext(input.rehydratedFileContext)),
+    } : {}),
     ...(optionalArray(normalizeCvkEvidenceRefs(input.contextRuntimeKit?.retrievedContext)) ? {
       retrievedContext: optionalArray(normalizeCvkEvidenceRefs(input.contextRuntimeKit?.retrievedContext)),
     } : {}),
@@ -566,6 +657,18 @@ export function renderRecoveryContextProjection(
     artifact.unverifiedClaims.length
       ? `unverifiedClaims:\n${artifact.unverifiedClaims.slice(0, 4).map((item) => `- ${item}`).join("\n")}`
       : "",
+    artifact.telemetry
+      ? `compression: ${artifact.telemetry.tier ?? "unknown"} / ${artifact.telemetry.strategy ?? "unknown"}`
+      : "",
+    artifact.rehydratedFileContext?.length
+      ? artifact.rehydratedFileContext.slice(0, 8).map((item) => {
+          const range = item.lineStart !== undefined && item.lineEnd !== undefined
+            ? `${item.path}:${item.lineStart}-${item.lineEnd}`
+            : item.path;
+          const hash = item.excerptHash ? ` hash=${item.excerptHash}` : "";
+          return `${range}${hash}`;
+        }).join("\n")
+      : "",
   ].filter(Boolean);
   let text = sections.join("\n\n");
   const maxChars = Math.max(800, Math.floor(budgetTokens * 4));
@@ -641,6 +744,10 @@ export function normalizeCompressionArtifact(value: unknown): CompressionArtifac
     } : {}),
     ...(optionalArray(normalizeRetrievalTraceEntries(record.retrievalTrace)) ? {
       retrievalTrace: optionalArray(normalizeRetrievalTraceEntries(record.retrievalTrace)),
+    } : {}),
+    ...(normalizeTelemetry(record.telemetry) ? { telemetry: normalizeTelemetry(record.telemetry) } : {}),
+    ...(optionalArray(normalizeRehydratedFileContext(record.rehydratedFileContext)) ? {
+      rehydratedFileContext: optionalArray(normalizeRehydratedFileContext(record.rehydratedFileContext)),
     } : {}),
   };
   return { ...artifactWithoutQuality, quality: buildQuality(artifactWithoutQuality, DEFAULT_TARGET_ARTIFACT_TOKENS) };

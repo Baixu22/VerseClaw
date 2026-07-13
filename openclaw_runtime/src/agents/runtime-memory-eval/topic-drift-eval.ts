@@ -132,6 +132,7 @@ export function evaluateTopicDrift(
 
   // Map each segment's subject for cross-topic interference detection.
   const segmentBySubject = new Map(segments.map((s) => [s.subject, s]));
+  void segmentBySubject;
 
   const perTopicRecall: Array<{ topicId: string; recall: number }> = [];
   let totalExtraneous = 0;

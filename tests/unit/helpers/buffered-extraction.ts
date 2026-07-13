@@ -21,7 +21,7 @@
 //   BUFFERED_CHUNK_SIZE=5         → buffer size in turns (default 5)
 //   ENABLE_CONSOLIDATION=1         → run consolidation after each session (default: on)
 
-import { createHash } from "node:crypto";
+// createHash import was removed (unused); re-add if hashing is needed.
 
 export type FactAttribute = {
   name: string; // e.g., "location", "time", "reason", "items"
@@ -522,7 +522,7 @@ export async function extractFactsWithBufferedFlush(
     if (enableConsolidation && sessionFacts.length > 1) {
       // Assign stable IDs to pre-consolidation facts for evidenceRefs.
       const rawFactIds = sessionFacts.map(
-        (_, idx) => `${sessionId}_raw_${globalFactCounter++}`,
+        (_, _idx) => `${sessionId}_raw_${globalFactCounter++}`,
       );
       try {
         const cSystem = buildConsolidationSystemPrompt();

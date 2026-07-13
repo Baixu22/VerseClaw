@@ -49,7 +49,7 @@ type PendingRequest = {
 
 const DEFAULT_MAX_CONCURRENCY = 8;
 const DEFAULT_TIMEOUT_MS = 30_000;
-const DEFAULT_REQUEST_TIMEOUT_MS = DEFAULT_TIMEOUT_MS + 5_000;
+const _DEFAULT_REQUEST_TIMEOUT_MS = DEFAULT_TIMEOUT_MS + 5_000;
 const MAX_REQUEST_TIMEOUT_MS = 10 * 60_000;
 const MAX_RESTART_ATTEMPTS = 3;
 const RESTART_BASE_DELAY_MS = 1000;
@@ -235,7 +235,7 @@ interface DegradeState {
   consecutiveCount: number;
 }
 
-let degradeState: DegradeState = {
+const degradeState: DegradeState = {
   active: false,
   degradedAt: 0,
   lastErrorFingerprint: "",
@@ -643,7 +643,7 @@ function startAeProcess(): ChildProcess {
     aeProcess = null;
 
     // Reject all pending requests
-    for (const [id, entry] of pendingRequests) {
+    for (const [_id, entry] of pendingRequests) {
       clearTimeout(entry.timer);
       entry.reject(new Error(`VerseShell process exited (code=${code})`));
     }
@@ -931,6 +931,7 @@ export async function verseshellBatchEval(
   cmds: string[],
   opts?: { timeoutMs?: number; agentId?: string },
 ): Promise<VerseShellExecResult[]> {
+  // eslint-disable-next-line no-useless-assignment -- retained for control-flow clarity
   const proc = ensureVerseShell();
   await waitForReady();
 
@@ -946,31 +947,16 @@ export async function verseshellBatchEval(
 
   const requestJson = JSON.stringify(requests);
 
-  return Promise.all(
-    cmds.map((_, i) => {
-      const id = `${batchId}-${i}`;
-      return new Promise<VerseShellExecResult>((resolve, reject) => {
-        const timer = setTimeout(() => {
-          pendingRequests.delete(id);
-          reject(new Error(`Batch request ${id} timed out`));
-        }, timeoutMs + 250);
+  const pending = cmds.map((_, i) => {
+    const id = `${batchId}-${i}`;
+    return new Promise<VerseShellExecResult>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        pendingRequests.delete(id);
+        reject(new Error(`Batch request ${id} timed out`));
+      }, timeoutMs + 250);
 
-        pendingRequests.set(id, { resolve, reject, timer });
-      });
-    }),
-  ).finally(() => {
-    // Timeout safety: if any promises reject, clean up the remaining pending entries
-    setTimeout(() => {
-      cmds.forEach((_, i) => {
-        const id = `${batchId}-${i}`;
-        const entry = pendingRequests.get(id);
-        if (entry) {
-          clearTimeout(entry.timer);
-          pendingRequests.delete(id);
-          entry.reject(new Error(`Batch cleanup: ${id}`));
-        }
-      });
-    }, timeoutMs + 500);
+      pendingRequests.set(id, { resolve, reject, timer });
+    });
   });
 
   // Write the full batch array after pending promises are set up
@@ -989,6 +975,21 @@ export async function verseshellBatchEval(
     });
     throw err;
   }
+
+  return Promise.all(pending).finally(() => {
+    // Timeout safety: if any promises reject, clean up the remaining pending entries
+    setTimeout(() => {
+      cmds.forEach((_, i) => {
+        const id = `${batchId}-${i}`;
+        const entry = pendingRequests.get(id);
+        if (entry) {
+          clearTimeout(entry.timer);
+          pendingRequests.delete(id);
+          entry.reject(new Error(`Batch cleanup: ${id}`));
+        }
+      });
+    }, timeoutMs + 500);
+  });
 }
 
 // ── Typed Module Wrappers ───────────────────────────────────────────────────

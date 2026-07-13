@@ -29,6 +29,7 @@ const {
   providerAccountToConfigMock,
   providerServiceMock,
   readOpenClawConfigMock,
+  writeOpenClawConfigMock,
   readLogFileMock,
   readAgentBootstrapFileMock,
   removeAgentWorkspaceDirectoryMock,
@@ -105,6 +106,7 @@ const {
     updateAccount: vi.fn(),
   },
   readOpenClawConfigMock: vi.fn(),
+  writeOpenClawConfigMock: vi.fn(),
   readLogFileMock: vi.fn(),
   readAgentBootstrapFileMock: vi.fn(),
   readAgentSoulMock: vi.fn(),
@@ -172,6 +174,7 @@ vi.mock('@electron/utils/channel-config', () => ({
   listConfiguredChannels: (...args: unknown[]) => listConfiguredChannelsMock(...args),
   listConfiguredChannelsFromConfig: (...args: unknown[]) => listConfiguredChannelsFromConfigMock(...args),
   readOpenClawConfig: (...args: unknown[]) => readOpenClawConfigMock(...args),
+  writeOpenClawConfig: (...args: unknown[]) => writeOpenClawConfigMock(...args),
   saveChannelConfig: (...args: unknown[]) => saveChannelConfigMock(...args),
   setChannelDefaultAccount: vi.fn(),
   setChannelEnabled: vi.fn(),
@@ -179,6 +182,11 @@ vi.mock('@electron/utils/channel-config', () => ({
   validateChannelCredentials: vi.fn(),
 }));
 
+
+vi.mock('@electron/services/mcp-api', () => ({
+  syncAgentMcpExposureToOpenClawConfig: vi.fn().mockResolvedValue(undefined),
+  createMcpApi: vi.fn(),
+}));
 vi.mock('@electron/utils/agent-config', () => ({
   assignChannelAccountToAgent: (...args: unknown[]) => assignChannelAccountToAgentMock(...args),
   assignChannelToAgent: (...args: unknown[]) => assignChannelToAgentMock(...args),
@@ -283,6 +291,8 @@ vi.mock('@electron/utils/paths', () => ({
   getOpenClawConfigDir: () => testOpenClawConfigDir,
   getOpenClawDir: () => testOpenClawConfigDir,
   getOpenClawResolvedDir: () => testOpenClawConfigDir,
+  getDataDir: () => testOpenClawConfigDir,
+  getLogsDir: () => testOpenClawConfigDir,
   isOpenClawRuntimeEnabled: () => process.env.VERSE_CLAW_OPENCLAW_RUNTIME === 'source',
 }));
 

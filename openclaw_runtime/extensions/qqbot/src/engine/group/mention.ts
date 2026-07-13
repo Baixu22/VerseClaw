@@ -44,7 +44,7 @@ export function detectWasMentioned(input: DetectWasMentionedInput): boolean {
         if (new RegExp(pattern, "i").test(content)) {
           return true;
         }
-      } catch {}
+      } catch { /* ignore */ }
     }
   }
 

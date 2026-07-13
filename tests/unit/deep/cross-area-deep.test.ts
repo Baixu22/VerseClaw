@@ -91,7 +91,9 @@ describe('Cross-Area deep — composition and real-world workloads', () => {
       const planner = new ContextBudgetPlanner(makeGraph(5), 4);
       planner.plan();
       for (let i = 0; i < 100; i++) {
-        planner.replanOnResume(2);
+        // Alternate budgets so ResourceAwareWaveScheduler.rePlan accepts each resume
+        // (same maxWorkers is treated as no_change and does not count as re-execution).
+        planner.replanOnResume(i % 2 === 0 ? 2 : 3);
       }
 
       // A3: 100 anomaly classifications.

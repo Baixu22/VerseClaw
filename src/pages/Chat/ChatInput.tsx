@@ -1016,11 +1016,11 @@ export function ChatInput({
 
     return await new Promise<boolean>((resolve) => {
       let settled = false;
-      let toastId: string | number | undefined;
+      const toastRef: { id: string | number | undefined } = { id: undefined };
       const settle = (decision: PromptCacheRiskDecision) => {
         if (settled) return;
         settled = true;
-        if (toastId !== undefined) toast.dismiss(toastId);
+        if (toastRef.id !== undefined) toast.dismiss(toastRef.id);
         recordPromptCacheDecision(assessment, decision);
         resolve(decision === 'continued');
       };
@@ -1033,7 +1033,7 @@ export function ChatInput({
           defaultValue: assessment.reason,
         })
         : t('composer.promptCacheGuard.reason.default');
-      toastId = toast.warning(t('composer.promptCacheGuard.title'), {
+      toastRef.id = toast.warning(t('composer.promptCacheGuard.title'), {
         description: t('composer.promptCacheGuard.description', {
           action: actionLabel,
           tokens: formatCompactNumber(assessment.promptTokens),

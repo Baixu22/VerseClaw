@@ -263,6 +263,7 @@ export function resolveCvkCodebaseSelector(
   const selector = normalizeSelector(ref.selector);
   const fileMatch = parseFileSelector(selector);
   const sourceFiles = (index as CvkCodebaseIndex & { __sourceFiles?: CvkCodebaseFileInput[] }).__sourceFiles ?? [];
+  void sourceFiles;
 
   if (fileMatch) {
     const file = sourceFile(index, fileMatch.filePath);

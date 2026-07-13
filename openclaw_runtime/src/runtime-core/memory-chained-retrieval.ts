@@ -70,6 +70,7 @@ export function chainedRetrievalExpand(
   const initialScoreById = new Map(
     initialHits.map((h) => [h.fact.factId, h.rrfScore]),
   );
+  void initialScoreById;
 
   // Find related facts via entity relation graph
   const relatedIds: string[] = [];

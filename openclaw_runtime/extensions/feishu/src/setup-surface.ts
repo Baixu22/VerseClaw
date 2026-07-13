@@ -558,7 +558,7 @@ export const feishuSetupWizard: ChannelSetupWizard = {
         try {
           const { probeFeishu } = await import("./probe.js");
           probeResult = await probeFeishu(account);
-        } catch {}
+        } catch { /* ignore */ }
       }
       if (!configured) {
         return [formatFeishuStatusLine("needs-credentials")];

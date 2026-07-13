@@ -215,7 +215,7 @@ export interface QuotaSuspensionMaintenanceResult {
 
 /**
  * Two-stage TTL maintenance for `quotaSuspension` records:
- *  1. After `ttlMs`, transition `state: "suspended" �?"resuming"` so the next
+ *  1. After `ttlMs`, transition `state: "suspended" → "resuming"` so the next
  *     attempt for that session sees the resume marker and injects a handoff.
  *  2. After `2 * ttlMs`, drop the field entirely (the record has done its job).
  *

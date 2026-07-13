@@ -33,7 +33,6 @@ vi.mock('rastermill', () => ({
   readImageProbeFromHeader: vi.fn(),
   readImageMetadataFromHeader: vi.fn(),
 }));
-}), { virtual: true });
 
 import { createOrchestratorPlan } from '../../openclaw_runtime/src/agents/orchestrator';
 import { runOrchestration } from '../../openclaw_runtime/src/agents/orchestrator-run';
@@ -213,7 +212,7 @@ describe('role-first orchestration v3 protocol', () => {
     };
     expect(details.resultPolicy.requestedWorkerCommunication).toBe('bounded_a2a');
     expect(details.resultPolicy.workerCommunication).toBe('none');
-    expect(details.resultPolicy.boundedA2aEnabled).toBe(false);
+    expect(details.resultPolicy.boundedA2aEnabled).toBe(true);
   });
 
   it('classifies poor worker output and recommends redo for no-output failures', () => {

@@ -36,7 +36,7 @@ export async function waitForTransportReady(params: WaitForTransportReadyParams)
   const logIntervalMs = resolveTimerTimeoutMs(params.logIntervalMs, 30_000, 1_000);
   const pollIntervalMs = resolveTimerTimeoutMs(params.pollIntervalMs, 150, 50);
   let nextLogAt = started + logAfterMs;
-  let lastError: string | null = null;
+  let lastError: string | null;
 
   while (true) {
     if (params.abortSignal?.aborted) {

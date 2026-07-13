@@ -111,7 +111,7 @@ export function buildCategoryAwareDualTrackPrompt(
     options.reasoningHints.some((hint) => hint.trim().length > 0)
   ) {
     const hintLines = options.reasoningHints
-      .map((hint, index) => hint.trim())
+      .map((hint) => hint.trim())
       .filter(Boolean)
       .map((hint, index) => `  Hop ${index + 1} answer: ${hint}`)
       .join("\n");

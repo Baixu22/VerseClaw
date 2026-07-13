@@ -15,7 +15,6 @@ import {
   computeBridgeId,
   discoverBridges,
   extractEntityPairFromQuery,
-  type BridgeCandidate,
   type BridgeDiagnostics,
 } from "../../openclaw_runtime/src/runtime-core/memory-bridge-discovery";
 import {

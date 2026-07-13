@@ -139,7 +139,7 @@ async function writeJsonOrTextArtifact(params: {
   label: string;
 }): Promise<BrowserAutomationRunResult["evidence"]["artifacts"][number] | null> {
   const text = params.text.slice(0, MAX_TEXT_ARTIFACT_CHARS);
-  let content = text;
+  let content;
   let extension = "txt";
   let mimeType = "text/plain";
   try {

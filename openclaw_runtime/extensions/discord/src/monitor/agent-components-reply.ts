@@ -7,5 +7,5 @@ export async function replySilently(
 ) {
   try {
     await interaction.reply(params);
-  } catch {}
+  } catch { /* ignore */ }
 }

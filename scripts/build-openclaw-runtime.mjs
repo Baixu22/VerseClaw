@@ -194,8 +194,26 @@ console.log('Building openclaw_runtime with esbuild...');
 console.log(`  Source: ${join(RUNTIME_ROOT, 'src')}`);
 console.log(`  Output: ${DIST}`);
 
-rmSync(DIST, { recursive: true, force: true });
+// Full builds start from a clean dist. Targeted only-mode builds must not wipe
+// sibling entry outputs: unit tests run concurrent only-mode builds that each
+// need their own dist artifact to remain available for package-script checks.
+const isTargetedOnlyBuild =
+  process.argv.includes('--memory-operator-inspection-only') ||
+  process.argv.includes('--event-log-operator-inspection-only') ||
+  process.argv.includes('--memory-read-hydration-shadow-only');
+
 mkdirSync(DIST, { recursive: true });
+if (isTargetedOnlyBuild) {
+  for (const entryName of Object.keys(selectedRuntimeEntryPoints)) {
+    const outFile = join(DIST, `${entryName}.js`);
+    if (existsSync(outFile)) {
+      rmSync(outFile, { force: true });
+    }
+  }
+} else {
+  rmSync(DIST, { recursive: true, force: true });
+  mkdirSync(DIST, { recursive: true });
+}
 
 const nodeModulesPackages = collectNodeModulesPackages();
 console.log(`  Found ${nodeModulesPackages.length} npm packages (will keep external)`);

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { resolve, join, dirname, isAbsolute } from 'path';
+import { resolve, join } from 'path';
+import { cpus } from 'os';
 import { readFileSync, existsSync, statSync } from 'fs';
 import type { Plugin } from 'vite';
 
@@ -8,7 +9,7 @@ const RUNTIME_ROOT = resolve(__dirname, 'openclaw_runtime');
 
 /**
  * Resolve a tsconfig path-mapping target against RUNTIME_ROOT, mirroring the
- * esbuild build script's resolveFile (handles .ts extension + dir→index).
+ * esbuild build script's resolveFile (handles .ts extension + dir->index).
  */
 function resolveAliasFile(targetRel: string): string | null {
   const target = join(RUNTIME_ROOT, targetRel);
@@ -61,10 +62,10 @@ function runtimePathAliasPlugin(): Plugin {
       }
     }
   } catch {
-    // Runtime tsconfig missing — plugin is a no-op.
+    // Runtime tsconfig missing - plugin is a no-op.
   }
 
-  function resolveImport(importPath: string, importer: string | undefined): string | null {
+  function resolveImport(importPath: string, _importer: string | undefined): string | null {
     // Only rewrite @openclaw/* and openclaw/* bare specifiers.
     if (!importPath.startsWith('@openclaw/') && !importPath.startsWith('openclaw/')) {
       return null;
@@ -94,19 +95,45 @@ function runtimePathAliasPlugin(): Plugin {
       const resolved = resolveImport(source, importer);
       if (resolved) return resolved;
       // Vite needs relative import paths (./foo.js) inside the runtime tree to
-      // resolve normally — return null to defer to the default resolver.
+      // resolve normally - return null to defer to the default resolver.
       return null;
     },
   };
 }
 
+/** Strip #! shebangs so SSR evaluation of CLI .mjs scripts does not throw SyntaxError. */
+function stripShebangPlugin(): Plugin {
+  return {
+    name: 'strip-shebang-for-ssr',
+    enforce: 'pre',
+    transform(code, id) {
+      if (!code.startsWith('#!')) return null;
+      if (!id.includes('scripts') && !id.endsWith('.mjs') && !id.endsWith('.js')) return null;
+      return {
+        code: code.replace(/^#![^\r\n]*(?:\r?\n)?/, ''),
+        map: null,
+      };
+    },
+  };
+}
+
+// Full suite on Windows can thrash under high fan-out (transform/import dominate).
+// Cap workers and raise timeouts so real work finishes without load-induced flakes.
+const cpuCount = cpus()?.length ?? 4;
+const maxWorkers = process.env.VITEST_MAX_WORKERS
+  ? Number(process.env.VITEST_MAX_WORKERS)
+  : Math.max(1, Math.min(4, Math.floor(cpuCount / 2)));
+
 export default defineConfig({
-  plugins: [react(), runtimePathAliasPlugin()],
+  plugins: [react(), runtimePathAliasPlugin(), stripShebangPlugin()],
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./tests/setup.ts'],
     include: ['tests/unit/**/*.{test,spec}.{ts,tsx}', 'tests/integration/**/*.{test,spec}.{ts,tsx}'],
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
+    maxWorkers,
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', 'tests/'],
@@ -117,6 +144,7 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       '@electron': resolve(__dirname, 'electron'),
       '@shared': resolve(__dirname, 'shared'),
+      '@openclaw/runtime-redaction': resolve(__dirname, 'openclaw_runtime/src/logging/redact.ts'),
       rastermill: resolve(__dirname, 'tests/fixtures/rastermill.ts'),
     },
   },

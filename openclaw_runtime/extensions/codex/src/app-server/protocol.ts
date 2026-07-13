@@ -500,6 +500,7 @@ export type CodexListMcpServerStatusResponse = {
 
 export type CodexRequestObject = Record<string, unknown>;
 
+// eslint-disable-next-line @typescript-eslint/no-namespace -- protocol namespace shape
 export declare namespace v2 {
   export type AppInfo = CodexAppInfo;
   export type AppSummary = CodexAppSummary;

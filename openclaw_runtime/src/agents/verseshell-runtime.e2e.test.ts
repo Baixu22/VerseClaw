@@ -448,7 +448,7 @@ describe("VerseShell e2e: session cache and reuse", () => {
 
 describe("VerseShell e2e: concurrent requests", () => {
   it("handles 5 concurrent requests without errors", async () => {
-    const requests = Array.from({ length: 5 }, (_, i) =>
+    const requests = Array.from({ length: 5 }, (_, _i) =>
       sendJsonRequest(`sys.hostname()`),
     );
     const results = await Promise.all(requests);

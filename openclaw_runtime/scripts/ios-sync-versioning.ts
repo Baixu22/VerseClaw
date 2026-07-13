@@ -35,6 +35,8 @@ export function parseArgs(argv: string[]): { mode: Mode; rootDir: string } {
         );
         process.exit(0);
       }
+      // falls through
+
       default: {
         throw new Error(`Unknown argument: ${arg}`);
       }

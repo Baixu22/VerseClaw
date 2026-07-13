@@ -19,7 +19,7 @@ function stripInboundMediaVisionEnvelope(text: string): string {
     return text;
   }
 
-  let result = text.replace(/^\s*\[Image\]\s*\n?/i, '');
+  const result = text.replace(/^\s*\[Image\]\s*\n?/i, '');
 
   const userTextBlock = result.match(/^User text:\s*\n([\s\S]*?)(?:\n\s*Description:\s*\n[\s\S]*)?\s*$/i);
   if (userTextBlock) {

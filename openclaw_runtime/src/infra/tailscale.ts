@@ -463,7 +463,7 @@ function tailscaleProxyMatchesLoopbackPort(proxy: string, port: number): boolean
   // "https+insecure://localhost:18789/api"), or as the bare forms accepted
   // by `tailscale funnel/serve` ("localhost:18789", "18789"). Strip any
   // RFC 3986 scheme (ALPHA *( ALPHA / DIGIT / "+" / "-" / "." ) "://") and
-  // any trailing path before host/port match �?covers documented Tailscale
+  // any trailing path before host/port match — covers documented Tailscale
   // target schemes such as `http`, `https`, and `https+insecure`.
   const stripped = proxy.replace(/^[a-z][a-z0-9+\-.]*:\/\//i, "").replace(/\/.*$/, "");
   if (stripped === String(port)) {

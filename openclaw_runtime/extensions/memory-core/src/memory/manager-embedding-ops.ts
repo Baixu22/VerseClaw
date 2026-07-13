@@ -642,7 +642,7 @@ export abstract class MemoryManagerEmbeddingOps extends MemoryManagerSyncOps {
             `DELETE FROM ${VECTOR_TABLE} WHERE id IN (SELECT id FROM chunks WHERE path = ? AND source = ?)`,
           )
           .run(pathname, source);
-      } catch {}
+      } catch { /* ignore */ }
     }
     if (this.fts.enabled && this.fts.available) {
       try {
@@ -653,7 +653,7 @@ export abstract class MemoryManagerEmbeddingOps extends MemoryManagerSyncOps {
           source,
           currentModel: this.provider?.model,
         });
-      } catch {}
+      } catch { /* ignore */ }
     }
     this.db.prepare(`DELETE FROM chunks WHERE path = ? AND source = ?`).run(pathname, source);
   }

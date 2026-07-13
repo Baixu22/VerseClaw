@@ -15,7 +15,7 @@
 //   DISABLE_EMBEDDING_CACHE=1  → bypass cache (always call underlying provider)
 //   EMBEDDING_CACHE_VERBOSE=1  → log hit/miss stats
 
-import { readFileSync, appendFileSync, existsSync, mkdirSync, openSync, readSync, closeSync, statSync, createReadStream } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, statSync, createReadStream, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { createHash } from "node:crypto";
 import { createInterface } from "node:readline";
@@ -111,8 +111,7 @@ function writeCacheHeader(cachePath: string, providerId: string, embeddingDim: n
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
   const header = JSON.stringify({ version: CACHE_VERSION, providerId, embeddingDim }) + "\n";
   // Truncate existing file by overwriting with header.
-  const fs = require("node:fs");
-  fs.writeFileSync(cachePath, header);
+  writeFileSync(cachePath, header);
 }
 
 function appendCacheEntry(cachePath: string, entry: CacheEntry): void {

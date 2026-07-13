@@ -845,7 +845,7 @@ export function maybeRecoverSuspiciousConfigReadSync(
     params.deps.fs.copyFileSync(backupPath, params.configPath);
     try {
       params.deps.fs.chmodSync?.(params.configPath, 0o600);
-    } catch {}
+    } catch { /* ignore */ }
     restoredFromBackup = true;
   } catch (error) {
     restoreError = error;

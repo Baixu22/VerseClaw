@@ -64,6 +64,7 @@ export interface AppKeybindings {
 export type AppKeybinding = keyof AppKeybindings;
 
 declare module "@earendil-works/pi-tui" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- module augmentation merge target for pi-tui Keybindings
   interface Keybindings extends AppKeybindings {}
 }
 

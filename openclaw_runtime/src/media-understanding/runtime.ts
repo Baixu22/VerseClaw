@@ -122,7 +122,7 @@ function basenameFromMediaReference(value: string): string {
     try {
       const url = new URL(value);
       return path.basename(url.pathname) || "image";
-    } catch {}
+    } catch { /* ignore */ }
   }
   return path.basename(value);
 }

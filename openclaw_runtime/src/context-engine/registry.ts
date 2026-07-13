@@ -69,6 +69,7 @@ const SESSION_KEY_COMPAT_METHODS = [
   "assemble",
   "compact",
 ] as const;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- value retained for type derivation
 const LEGACY_COMPAT_PARAMS = ["sessionKey", "prompt"] as const;
 const LEGACY_COMPAT_METHOD_KEYS = {
   bootstrap: ["sessionKey"],

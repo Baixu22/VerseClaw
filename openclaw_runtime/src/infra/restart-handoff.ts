@@ -383,7 +383,7 @@ export function consumeGatewayRestartHandoffForExitedProcessSync(opts: {
 }): GatewayRestartHandoff | null {
   const env = opts.env ?? process.env;
   const handoffPath = resolveGatewayRestartHandoffPath(env);
-  let raw: string | null = null;
+  let raw: string | null;
   try {
     const stat = fs.lstatSync(handoffPath);
     // Consume uses the same regular-file guard as reads, then clears the file

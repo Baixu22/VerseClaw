@@ -208,7 +208,7 @@ export const createTelegramMessageProcessor = (deps: TelegramMessageProcessorDep
           "Something went wrong while processing your request. Please try again.",
           buildTelegramThreadParams(context.threadSpec),
         );
-      } catch {}
+      } catch { /* ignore */ }
     }
     return true;
   };

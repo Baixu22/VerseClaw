@@ -142,7 +142,7 @@ function ensureLegacyRefIndexImported(): void {
           ttlMs: Math.max(1, TTL_MS - (now - entry.t)),
         });
         imported++;
-      } catch {}
+      } catch { /* ignore */ }
     }
     migrationStore.register(LEGACY_REF_INDEX_MIGRATION_KEY, {
       importedAt: new Date().toISOString(),

@@ -714,6 +714,8 @@ describe('Chat execution graph lifecycle', () => {
     expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     expect(screen.queryByText('+1')).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    // Tasks stay primary when tool steps exist; line stats live on the Reports tab.
+    fireEvent.click(screen.getByText('turnWork.tabs.reports'));
     expect(screen.getByText('+1')).toBeInTheDocument();
     expect(screen.getByText('-1')).toBeInTheDocument();
   });

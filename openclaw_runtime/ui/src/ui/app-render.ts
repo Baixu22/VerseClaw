@@ -2043,6 +2043,8 @@ export function renderApp(state: AppViewState) {
           navRootLabel: "AI & Agents",
           includeSections: [...AI_AGENTS_SECTION_KEYS],
         });
+      // falls through
+
       default:
         return nothing;
     }
@@ -2061,6 +2063,7 @@ export function renderApp(state: AppViewState) {
       case "tools":
         void loadToolsCatalog(state, agentId);
         void refreshVisibleToolsEffectiveForCurrentSession(state);
+      // falls through
       case "overview":
       case "channels":
       case "cron":

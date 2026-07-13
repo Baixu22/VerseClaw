@@ -43,11 +43,11 @@ type ReaperResult = {
  */
 export async function sweepCronRunSessions(params: {
   cronConfig?: CronConfig;
-  /** Resolved path to sessions.json �?required. */
+  /** Resolved path to sessions.json — required. */
   sessionStorePath: string;
   nowMs?: number;
   log: Logger;
-  /** Override for testing �?skips the min-interval throttle. */
+  /** Override for testing — skips the min-interval throttle. */
   force?: boolean;
 }): Promise<ReaperResult> {
   const now = params.nowMs ?? Date.now();

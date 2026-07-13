@@ -128,7 +128,7 @@ function extractSherpaOnnxText(raw: string): { matched: boolean; text: string } 
           return { matched: true, text: text.trim() };
         }
       }
-    } catch {}
+    } catch { /* ignore */ }
     return noMatch;
   };
 
@@ -231,7 +231,7 @@ async function resolveCliOutput(params: {
       if (content.trim()) {
         return content.trim();
       }
-    } catch {}
+    } catch { /* ignore */ }
   }
 
   if (commandId === "gemini") {

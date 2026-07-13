@@ -200,9 +200,10 @@ export class RuntimeMemoryStore {
       options.maxInvalidations,
       RUNTIME_MEMORY_STORE_DEFAULT_MAX_INVALIDATIONS,
     );
-    this.evictionPolicy = options.evictionPolicy === "fifo"
-      ? "fifo"
-      : "importance";
+    // Default is fifo (documented). Opt into importance explicitly.
+    this.evictionPolicy = options.evictionPolicy === "importance"
+      ? "importance"
+      : "fifo";
     this.now = options.now ?? Date.now;
     // COMPASS 2.0: 保存 eviction compliance hook (可选)
     this.evictionComplianceHook = options.evictionComplianceHook;

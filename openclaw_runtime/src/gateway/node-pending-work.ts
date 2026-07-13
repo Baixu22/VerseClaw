@@ -11,10 +11,13 @@ import {
 // Pending node work is an in-memory per-node queue for gateway prompts such as
 // status/location requests. Nodes drain it opportunistically and acknowledge
 // item ids after handling them.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- value retained for type derivation
 const NODE_PENDING_WORK_TYPES = ["status.request", "location.request"] as const;
 /** Work item types that connected nodes understand today. */
 export type NodePendingWorkType = (typeof NODE_PENDING_WORK_TYPES)[number];
+ 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- type-only value
 const NODE_PENDING_WORK_PRIORITIES = ["default", "normal", "high"] as const;
 /** Priority labels used for pending work drain ordering. */
 export type NodePendingWorkPriority = (typeof NODE_PENDING_WORK_PRIORITIES)[number];

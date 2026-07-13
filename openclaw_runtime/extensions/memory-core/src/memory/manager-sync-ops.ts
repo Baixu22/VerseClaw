@@ -516,7 +516,7 @@ export abstract class MemoryManagerSyncOps {
       if (transactionStarted) {
         try {
           this.db.exec("ROLLBACK");
-        } catch {}
+        } catch { /* ignore */ }
       }
       throw err;
     }
@@ -1588,13 +1588,13 @@ export abstract class MemoryManagerSyncOps {
       if (deleteVectorRowsByPathAndSource) {
         try {
           deleteVectorRowsByPathAndSource.run(stale.path, "memory");
-        } catch {}
+        } catch { /* ignore */ }
       }
       deleteChunksByPathAndSource.run(stale.path, "memory");
       if (deleteFtsRowsByPathAndSource) {
         try {
           deleteFtsRowsByPathAndSource.run(stale.path, "memory");
-        } catch {}
+        } catch { /* ignore */ }
       }
     }
   }
@@ -1731,13 +1731,13 @@ export abstract class MemoryManagerSyncOps {
         if (deleteVectorRowsByPathAndSource) {
           try {
             deleteVectorRowsByPathAndSource.run(stale.path, "sessions");
-          } catch {}
+          } catch { /* ignore */ }
         }
         deleteChunksByPathAndSource.run(stale.path, "sessions");
         if (deleteFtsRowsByPathAndSource) {
           try {
             deleteFtsRowsByPathAndSource.run(stale.path, "sessions");
-          } catch {}
+          } catch { /* ignore */ }
         }
       } finally {
         await yieldAfterStaleSessionRow();
@@ -2149,7 +2149,7 @@ export abstract class MemoryManagerSyncOps {
           closeMemoryDatabase(tempDb);
           tempDbClosed = true;
         }
-      } catch {}
+      } catch { /* ignore */ }
       restoreOriginalState();
       throw err;
     }
@@ -2220,7 +2220,7 @@ export abstract class MemoryManagerSyncOps {
     if (this.fts.enabled && this.fts.available) {
       try {
         this.db.exec(`DROP TABLE IF EXISTS ${FTS_TABLE}`);
-      } catch {}
+      } catch { /* ignore */ }
     }
     this.ensureSchema();
     if (this.vector.enabled && this.vector.available) {

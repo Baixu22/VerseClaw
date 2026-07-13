@@ -28,6 +28,7 @@ export function useResolvedTheme(): ResolvedTheme {
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => resolveThemePreference(theme));
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- existing intentional effect/ref sync
     setResolvedTheme(resolveThemePreference(theme));
 
     if (theme !== 'system' || typeof window === 'undefined') return;

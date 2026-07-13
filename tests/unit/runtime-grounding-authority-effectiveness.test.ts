@@ -1,11 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  AGENT_MAP_CONTEXT_PROVIDER_ID,
   createAgentMapContextProvider,
 } from "../../openclaw_runtime/src/context-engine/agent-map-context-provider";
 import {
   createRuntimeMemoryContextProvider,
-  RUNTIME_MEMORY_CONTEXT_PROVIDER_ID,
 } from "../../openclaw_runtime/src/context-engine/memory-context-provider";
 import {
   CONTEXT_PROVIDER_REGISTRY_GROUNDING_SHADOW_CONSUMER_ID,
@@ -16,11 +14,9 @@ import {
 } from "./helpers/context-provider-registry";
 import {
   createSymbolContextProvider,
-  SYMBOL_CONTEXT_PROVIDER_ID,
 } from "../../openclaw_runtime/src/context-engine/symbol-context-provider";
 import {
   createRuntimeTraceContextProvider,
-  RUNTIME_TRACE_CONTEXT_PROVIDER_ID,
 } from "../../openclaw_runtime/src/context-engine/trace-context-provider";
 import {
   buildAgentMapResultFixture,

@@ -105,7 +105,7 @@ async function readResponsePrefix(res: Response, maxBytes: number): Promise<Resp
   } finally {
     try {
       reader.releaseLock();
-    } catch {}
+    } catch { /* ignore */ }
   }
 
   return { bytes: chunks, length, truncated };
@@ -147,7 +147,7 @@ async function readResponseTextWithLimit(
   } finally {
     try {
       reader.releaseLock();
-    } catch {}
+    } catch { /* ignore */ }
   }
 
   return new TextDecoder().decode(joinChunks(chunks, length));

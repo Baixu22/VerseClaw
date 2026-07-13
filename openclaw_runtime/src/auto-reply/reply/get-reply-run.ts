@@ -508,7 +508,8 @@ export async function runPreparedReply(
     execOverrides,
     abortedLastRun,
   } = params;
-  let { sessionEntry, resolvedThinkLevel, resolvedPromptMode } = params;
+  let { sessionEntry, resolvedThinkLevel } = params;
+  const { resolvedPromptMode } = params;
   const isHeartbeat = opts?.isHeartbeat === true;
   const traceAttributes = {
     provider,

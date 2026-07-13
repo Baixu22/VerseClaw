@@ -25,8 +25,8 @@
  */
 
 import { execFile } from "node:child_process";
-import { mkdir, copyFile, rm, stat, readdir, readFile } from "node:fs/promises";
-import { join, relative, dirname } from "node:path";
+import { mkdir, copyFile, rm, stat } from "node:fs/promises";
+import { join, dirname } from "node:path";
 import { promisify } from "node:util";
 
 import {
@@ -35,7 +35,6 @@ import {
   computeFileFingerprintsForDirectory,
   diffFileFingerprints,
   fingerprintFromRecord,
-  fingerprintToRecord,
 } from "../../long-task-control/file-fingerprint.js";
 import type { WriteRiskProfile } from "../../../shared/tool-registration.js";
 
@@ -259,7 +258,7 @@ function createNoOpHandle(plan: SnapshotPlan): SnapshotHandle {
 
 async function beginCopyOnWriteSnapshot(
   plan: SnapshotPlan,
-  config: PolicyLightSnapshotterConfig,
+  _config: PolicyLightSnapshotterConfig,
 ): Promise<SnapshotResult> {
   const snapshotDir = join(
     plan.workspaceRoot,

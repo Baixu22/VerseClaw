@@ -164,6 +164,8 @@ function registerTypedHostHandlers(
   mainWindow: BrowserWindow,
   hostApiRegistry: HostApiRegistry,
 ): void {
+  // Circular init with terminalManager requires deferred assignment.
+  // eslint-disable-next-line prefer-const -- assigned after terminalManager is created
   let webPreviewManager: ReturnType<typeof createWebPreviewManager>;
   const terminalManager = createTerminalSessionManager({
     mainWindow,

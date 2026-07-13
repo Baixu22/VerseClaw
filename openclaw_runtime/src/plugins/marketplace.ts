@@ -841,7 +841,7 @@ async function streamMarketplaceResponseToFile(params: {
     await fileHandle.close().catch(() => undefined);
     try {
       reader.releaseLock();
-    } catch {}
+    } catch { /* ignore */ }
   }
 }
 

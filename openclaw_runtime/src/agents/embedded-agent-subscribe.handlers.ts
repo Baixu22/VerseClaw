@@ -139,6 +139,8 @@ export function createEmbeddedAgentSessionEventHandler(ctx: EmbeddedAgentSubscri
         scheduleEvent(evt, () => {
           return handleAgentEnd(ctx, evt as never);
         });
+      // falls through
+
       default:
     }
   };

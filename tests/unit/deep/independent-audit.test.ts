@@ -26,7 +26,6 @@ import {
 } from '../../../openclaw_runtime/src/shared/tool-registration.js';
 import {
   beginSnapshot,
-  collectDeclaredWritePaths,
 } from '../../../openclaw_runtime/src/agents/sessions/extensions/policy-light-snapshotter.js';
 import {
   ShadowWriteEventRecorder,
@@ -60,7 +59,6 @@ import {
 } from '../../../openclaw_runtime/src/agents/long-task-control/file-fingerprint.js';
 import {
   buildTaskGraph,
-  buildExecutionWaves,
 } from '../../../openclaw_runtime/src/agents/orchestration-protocol.js';
 
 describe('独立审计 — A1 高风险信号验证', () => {
@@ -142,7 +140,7 @@ describe('独立审计 — A1 高风险信号验证', () => {
       const { stat } = await import('node:fs/promises');
       const snapshotDir = join(tempDir, '.openclaw', 'snapshots');
       try {
-        const s = await stat(snapshotDir);
+        await stat(snapshotDir);
         // 如果目录存在，检查是否还有子目录（snapshot 残留）
         const { readdir } = await import('node:fs/promises');
         const entries = await readdir(snapshotDir, { withFileTypes: true });

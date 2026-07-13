@@ -218,6 +218,7 @@ function WorkspaceTabContent({
 
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- existing intentional effect/ref sync
     setGitState((previous) => ({ ...previous, loading: true }));
     void hostApi.git.status()
       .then((result) => {

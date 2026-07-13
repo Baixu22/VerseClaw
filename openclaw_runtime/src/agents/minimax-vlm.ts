@@ -54,7 +54,7 @@ async function readErrorBodySnippet(res: Response): Promise<string> {
       }
       try {
         reader.releaseLock();
-      } catch {}
+      } catch { /* ignore */ }
     }
 
     return new TextDecoder()
@@ -103,7 +103,7 @@ function coerceApiHost(params: {
   try {
     const url = new URL(raw);
     return url.origin;
-  } catch {}
+  } catch { /* ignore */ }
 
   if (/^[a-z][a-z\d+.-]*:\/\//i.test(raw)) {
     return defaultHost;

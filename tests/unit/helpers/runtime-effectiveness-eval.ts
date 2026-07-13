@@ -104,7 +104,7 @@ export type RuntimeEffectivenessOptions = {
 type RegisteredCodeGraphTool = {
   tool: {
     name: string;
-    execute: (toolCallId: string, args: unknown) => Promise<any>;
+    execute: (toolCallId: string, args: unknown) => Promise<unknown>;
   };
 };
 
@@ -723,6 +723,7 @@ async function evaluateTranscriptAndToolRepair(): Promise<RuntimeEffectivenessCo
     modelApi: "openai-completions",
   });
   const baseFn = () => createToolCallRepairStream('tool.read {"path":"src/app.ts"}') as never;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test helper intentionally bypasses StreamFn type with never-cast args; the repaired stream is consumed via duck typing below
   const repairedStream = wrapStreamFnRepairMalformedToolCallArguments(baseFn as never)({} as never, {} as never, {} as never) as any;
   for await (const _event of repairedStream) {
     // Drain stream so repair wrappers can observe deltas.

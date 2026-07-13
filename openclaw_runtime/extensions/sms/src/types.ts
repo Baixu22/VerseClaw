@@ -21,7 +21,7 @@ export interface SmsChannelConfig extends SmsChannelConfigFields {
   defaultAccount?: string;
 }
 
-export interface SmsAccountRaw extends SmsChannelConfigFields {}
+export type SmsAccountRaw = SmsChannelConfigFields;
 
 export interface ResolvedSmsAccount {
   accountId: string;

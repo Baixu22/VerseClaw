@@ -12,6 +12,7 @@ import {
   buildRoleSpawnParams,
   buildRoleSystemPrompt,
   spawnRoleSubagent,
+  type SpawnFn,
 } from '../../openclaw_runtime/src/agents/role-spawn';
 import { runOrchestration } from '../../openclaw_runtime/src/agents/orchestrator-run';
 import { roleEffortToThinking } from '../../openclaw_runtime/src/agents/role-effort';
@@ -294,7 +295,7 @@ describe('role-driven spawn mapping', () => {
     const ok = await spawnRoleSubagent(
       { role: 'tester', task: 'write tests' },
       { agentSessionKey: 'agent:main:abc' },
-      { spawn: fakeSpawn as any },
+      { spawn: fakeSpawn as SpawnFn },
     );
     expect(ok.status).toBe('accepted');
     expect(ok.role?.name).toBe('tester');
@@ -303,7 +304,7 @@ describe('role-driven spawn mapping', () => {
     const missing = await spawnRoleSubagent(
       { role: 'does-not-exist', task: 'x' },
       { agentSessionKey: 'agent:main:abc' },
-      { spawn: fakeSpawn as any },
+      { spawn: fakeSpawn as SpawnFn },
     );
     expect(missing.status).toBe('role-not-found');
   });
@@ -321,7 +322,7 @@ describe('orchestrator run bridge', () => {
     const result = await runOrchestration(
       { task: '重构这个模块并补充测试', fileHints: ['a.ts', 'b.ts', 'c.ts'] },
       { agentSessionKey: 'agent:main:abc' },
-      { spawn: fakeSpawn as any },
+      { spawn: fakeSpawn as SpawnFn },
     );
     expect(result.plan.mode).toBe('lead-workers');
     // v2 starts workers first; verifier is gated on worker completion.
@@ -341,7 +342,7 @@ describe('orchestrator run bridge', () => {
     const result = await runOrchestration(
       { task: '解释这个函数做什么' },
       { agentSessionKey: 'agent:main:abc' },
-      { spawn: fakeSpawn as any },
+      { spawn: fakeSpawn as SpawnFn },
     );
     expect(result.plan.mode).toBe('router');
     expect(result.spawnedRunIds).toHaveLength(0);
@@ -357,7 +358,7 @@ describe('orchestrator run bridge', () => {
     const result = await runOrchestration(
       { task: 'security audit', templateId: 'security-audit', maxWorkers: 1, orchestrationRunId: 'orch_test' },
       { agentSessionKey: 'agent:main:abc' },
-      { spawn: fakeSpawn as any },
+      { spawn: fakeSpawn as SpawnFn },
     );
     expect(result.plan.templateId).toBe('security-audit');
     expect(result.plan.workers.map((worker) => worker.roleName)).toEqual(['security-reviewer', 'reviewer', 'tester']);

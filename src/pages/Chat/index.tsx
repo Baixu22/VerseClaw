@@ -1526,7 +1526,7 @@ export function Chat() {
 
   useEffect(() => {
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+    const timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
       void hostApi.usage.contextRange({
         sessionKey: currentSessionKey,
         modelRef: currentModelRef,
@@ -1548,7 +1548,7 @@ export function Chat() {
 
   useEffect(() => {
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+    const timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
       void hostApi.usage.live(currentSessionKey, activeRunId, sending || pendingFinal || Boolean(streamingMessage))
         .then((result) => {
           if (!cancelled) setLiveUsage(result.usage);
@@ -1565,7 +1565,7 @@ export function Chat() {
 
   useEffect(() => {
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+    const timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
       void hostApi.usage.promptCacheStatus({
         sessionKey: currentSessionKey,
         modelRef: currentModelRef,
@@ -1651,7 +1651,7 @@ export function Chat() {
 
   useEffect(() => {
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+    const timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
       void hostApi.sessions.compactionStatus({
         sessionKey: currentSessionKey,
         agentId: currentAgentId,
@@ -1671,7 +1671,7 @@ export function Chat() {
 
   useEffect(() => {
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+    const timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
       void hostApi.sessions.longTaskControlStatus({
         sessionKey: currentSessionKey,
         agentId: currentAgentId,

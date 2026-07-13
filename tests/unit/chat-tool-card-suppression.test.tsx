@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
@@ -12,9 +12,13 @@ const { gatewayState, agentsState } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
-}));
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return {
+    ...actual,
+    useNavigate: () => vi.fn(),
+  };
+});
 
 vi.mock('@/stores/gateway', () => ({
   useGatewayStore: (selector: (state: typeof gatewayState) => unknown) => selector(gatewayState),
@@ -26,6 +30,25 @@ vi.mock('@/stores/agents', () => ({
 
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
+    topics: {
+      list: vi.fn().mockResolvedValue({ topics: [], activeTopicId: null }),
+    },
+    knowledge: {
+      matchErrorExperience: vi.fn().mockResolvedValue({ success: true, matches: [] }),
+    },
+    files: {
+      writeText: vi.fn().mockResolvedValue({ success: true }),
+    },
+    workspaces: {
+      saveState: vi.fn().mockResolvedValue({ success: true }),
+      update: vi.fn().mockResolvedValue({ success: true }),
+    },
+    shell: {
+      openPath: vi.fn().mockResolvedValue({ success: true }),
+    },
+    dialog: {
+      open: vi.fn().mockResolvedValue({ canceled: true, filePaths: [] }),
+    },
     skills: {
       local: vi.fn().mockResolvedValue({ success: true, skills: [] }),
     },
@@ -33,14 +56,29 @@ vi.mock('@/lib/host-api', () => ({
       status: vi.fn().mockResolvedValue({ success: true, providers: [], capabilities: [], kitCapabilities: [], summary: {} }),
     },
     usage: {
-      contextRange: vi.fn().mockResolvedValue({ success: true }),
-      live: vi.fn().mockResolvedValue({ success: true }),
+      contextRange: vi.fn().mockResolvedValue({ usedTokens: 0, maxTokens: 0, percentage: 0 }),
+      live: vi.fn().mockResolvedValue({ input: 0, output: 0, total: 0, costUsd: 0 }),
       promptCacheStatus: vi.fn().mockResolvedValue({ success: true, assessment: null }),
       recordPromptCacheRiskEvent: vi.fn().mockResolvedValue({ success: true, event: null }),
     },
     sessions: {
-      compactionStatus: vi.fn().mockResolvedValue({ success: true }),
-      longTaskControlStatus: vi.fn().mockResolvedValue({ success: true }),
+      history: vi.fn().mockResolvedValue({ messages: [], hasMore: false }),
+      compactionStatus: vi.fn().mockResolvedValue({
+        success: true,
+        available: true,
+        canCompact: false,
+        inProgress: false,
+        pressure: 'low',
+        truncatedMessageCount: 0,
+        warnings: [],
+      }),
+      longTaskControlStatus: vi.fn().mockResolvedValue({
+        success: true,
+        available: false,
+        key: 'agent:main:main',
+        queueCount: 0,
+        warnings: [],
+      }),
     },
   },
   hostApiFetch: vi.fn().mockResolvedValue({ success: true, messages: [] }),
@@ -142,11 +180,14 @@ describe('Chat tool card suppression', () => {
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     });
 
     expect(screen.queryByTestId('assistant-tool-fallback')).not.toBeInTheDocument();
-    expect(screen.getByText('All done.')).toBeInTheDocument();
+    expect(screen.getAllByText('All done.').length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
     expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
+    expect(screen.queryByTestId('assistant-tool-fallback')).not.toBeInTheDocument();
   }, 10_000);
 });

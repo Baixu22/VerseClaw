@@ -330,10 +330,10 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
     // -----------------------------------------------------------------------
     // Stage C: Retrieval — can we find each accepted fact via hybridSearchFacts?
     // -----------------------------------------------------------------------
-    // Use the store's queryFacts() to get the live fact set (with invalidations
-    // overlaid), then run hybridSearchFacts on it — same path the production
+    // Use queryFacts({ includeInvalidated: true }) so invalid_at overlays remain
+    // visible; hybridSearchFacts then applies temporalMode/referenceTime filters — same path the production
     // context provider uses.
-    const liveFacts = store.queryFacts() as readonly RuntimeMemoryQueryableFact[];
+    const liveFacts = store.queryFacts({ includeInvalidated: true }) as readonly RuntimeMemoryQueryableFact[];
 
     let N_RETRIEVED = 0;
     const notRetrieved: Array<{ id: string; subject: string; reason: string }> = [];
@@ -480,7 +480,7 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
       if (result.accepted) verified.push(ef);
     }
 
-    const liveFacts = store.queryFacts() as readonly RuntimeMemoryQueryableFact[];
+    const liveFacts = store.queryFacts({ includeInvalidated: true }) as readonly RuntimeMemoryQueryableFact[];
     const RETRIEVAL_REF_TIME = T0 + 700 * DAY;
 
     let found = 0;
@@ -516,7 +516,7 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
       store.appendFact(buildCandidateFact(ef));
     }
 
-    const liveFacts = store.queryFacts() as readonly RuntimeMemoryQueryableFact[];
+    const liveFacts = store.queryFacts({ includeInvalidated: true }) as readonly RuntimeMemoryQueryableFact[];
     const RETRIEVAL_REF_TIME = T0 + 700 * DAY;
 
     // Default: includeCandidates is undefined/false → candidates filtered.
@@ -567,7 +567,7 @@ describe("E2E Fact Survival: AUDN extraction → store write → retrieval", () 
       }));
     }
 
-    const liveFacts = store.queryFacts() as readonly RuntimeMemoryQueryableFact[];
+    const liveFacts = store.queryFacts({ includeInvalidated: true }) as readonly RuntimeMemoryQueryableFact[];
 
     // Query BEFORE invalidation → should be retrievable.
     let foundBefore = 0;

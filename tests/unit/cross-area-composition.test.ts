@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ShadowWriteEventRecorder } from "../../openclaw_runtime/src/agents/sessions/extensions/shadow-write-event-recorder.js";
 import type { WriteRiskProfile } from "../../openclaw_runtime/src/shared/tool-registration.js";
-import { getFileFingerprint, diffFileFingerprints, type DirectoryFingerprint, type FileFingerprint } from "../../openclaw_runtime/src/agents/long-task-control/file-fingerprint.js";
+import { getFileFingerprint, diffFileFingerprints, type DirectoryFingerprint } from "../../openclaw_runtime/src/agents/long-task-control/file-fingerprint.js";
 import {
   ResourceAwareWaveScheduler,
 } from "../../openclaw_runtime/src/agents/resource-aware-wave-scheduler.js";
@@ -130,7 +130,6 @@ describe("Stage 3 / 3.3: A3+A6 — rollback before resume requires_reverificatio
   });
 
   it("requiresReverification is true only when rollback AND resume enabled", () => {
-    const verifier = new ResumeContractVerifier();
     // Construct a result manually to verify the contract logic.
     // (Full resume-shadow enabled path requires runtime config; the contract
     // logic is: requiresReverification = rollbackOccurred && enabled.)

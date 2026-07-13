@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  type UndeclaredWriteEvent,
   ShadowWriteEventRecorder,
   detectUndeclaredWrites,
 } from '../../openclaw_runtime/src/agents/sessions/extensions/shadow-write-event-recorder';

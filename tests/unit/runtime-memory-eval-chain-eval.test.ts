@@ -36,7 +36,6 @@ afterEach(() => {
 
 const TASK_ID = "task_chain_eval";
 const SUBJECT = "ChainSubject";
-const PREDICATE = "chainPredicate";
 const REFERENCE_TIME = 1_000;
 const TURNS = 4;
 

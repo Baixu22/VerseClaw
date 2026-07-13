@@ -89,16 +89,30 @@ describe('ArtifactPanel', () => {
       widthPct: ARTIFACT_PANEL_DEFAULT_WIDTH,
     });
 
-    render(
+    let sessionState: { workspaceView?: string } = {};
+    const rerenderPanelRef: { current?: () => void } = {};
+    const onSessionStateChange = (patch: { workspaceView?: string }) => {
+      sessionState = { ...sessionState, ...patch };
+      rerenderPanelRef.current?.();
+    };
+
+    const renderPanel = () => (
       <ArtifactPanel
         files={[makeGeneratedFile()]}
         agent={null}
-      />,
+        sessionState={sessionState as never}
+        onSessionStateChange={onSessionStateChange as never}
+      />
     );
+
+    const { rerender } = render(renderPanel());
+    rerenderPanelRef.current = () => rerender(renderPanel());
 
     expect(screen.getAllByTestId('file-preview-body')[1]).toHaveTextContent('SKILL.md');
 
     fireEvent.click(screen.getByRole('button', { name: 'Workspace' }));
+    expect(screen.getByTestId('workspace-launchpad')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('workspace-launchpad-entry-files'));
     expect(screen.getByTestId('workspace-browser')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Preview' }));

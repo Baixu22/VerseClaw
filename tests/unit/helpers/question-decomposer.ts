@@ -168,7 +168,7 @@ export async function decomposeQuestion(
       subQuestions,
       mergeStrategy: parsed.mergeStrategy,
     };
-  } catch (err) {
+  } catch {
     // LLM call failed — return original as single sub-question
     return {
       original: question,

@@ -91,8 +91,9 @@ describe('GeneratedFilesPanel', () => {
     expect(onRevealInFileManager).toHaveBeenNthCalledWith(2, expect.objectContaining({ filePath: files[1].filePath }));
   });
 
-  it('keeps unsupported non-preview document formats non-clickable', () => {
+  it('routes rich office documents to reveal-in-folder instead of inline open', () => {
     const onOpen = vi.fn();
+    const onRevealInFileManager = vi.fn();
     render(
       <GeneratedFilesPanel
         files={[
@@ -105,13 +106,15 @@ describe('GeneratedFilesPanel', () => {
           }),
         ]}
         onOpen={onOpen}
+        onRevealInFileManager={onRevealInFileManager}
       />,
     );
 
     const button = screen.getByRole('button', { name: /report\.docx/ });
-    expect(button).toBeDisabled();
+    expect(button).toBeEnabled();
     fireEvent.click(button);
     expect(onOpen).not.toHaveBeenCalled();
+    expect(onRevealInFileManager).toHaveBeenCalledWith(expect.objectContaining({ filePath: '/tmp/report.docx' }));
   });
 
   it('keeps supported text/code formats clickable', () => {

@@ -274,7 +274,7 @@ export function resolveDiscordModelPickerCurrentRuntime(params: {
     if (sessionRuntime) {
       return sessionRuntime;
     }
-  } catch {}
+  } catch { /* ignore */ }
 
   return "auto";
 }

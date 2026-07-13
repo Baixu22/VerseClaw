@@ -250,6 +250,7 @@ function NumberRoll({
   const [enhanced, setEnhanced] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- existing intentional effect/ref sync
     if (canAnimate()) setEnhanced(true);
   }, []);
 

@@ -104,7 +104,7 @@ export type RuntimeFailureReplayHarnessOptions = {
 
 type IssueSink = RuntimeFailureEvidenceReplayValidationIssue[];
 
-const LIVE_PROVIDER_PATTERN = /^(?:live|live_provider|provider:live|network|default)(?:$|[:_\-])/i;
+const LIVE_PROVIDER_PATTERN = /^(?:live|live_provider|provider:live|network|default)(?:$|[:_-])/i;
 const REPORT_TEXT_MAX_CHARS = 280;
 const REPORT_REF_MAX_CHARS = 160;
 
@@ -429,10 +429,10 @@ const SENSITIVE_PATTERNS: Array<[RegExp, string]> = [
   [/\b[A-Z][A-Z0-9_]{2,}\s*=\s*[^\s]+/g, "[redacted-env]"],
   [/[A-Za-z]:\\(?:[^\\\s]+\\)+[^\\\s]*/g, "[redacted-path]"],
   [/(?:\/Users|\/home|\/workspace|\/tmp|\/var\/folders)\/[^\s"',;]+/g, "[redacted-path]"],
-  [/"(prompt|messages|providerPayload|provider_payload|toolArgs|tool_args|toolResult|tool_result|args|result|secret)"\s*:\s*(?:"[^"]*"|\{[^{}]*\}|\[[^\]]*\])/gi, "\"redactedPayload\":\"[redacted]\""],
-  [/\b(prompt|messages|providerPayload|provider_payload|toolArgs|tool_args|toolResult|tool_result|args|result)\b\s*[:=]\s*(?:"[^"]*"|'[^']*'|\{[^{}]*\}|\[[^\]]*\]|[^\s;]+)/gi, "[redacted-payload]"],
+  [/"(prompt|messages|providerPayload|provider_payload|toolArgs|tool_args|toolResult|tool_result|args|result|secret)"\s*:\s*(?:"[^"]*"|\{[^{}]*\}|[[^]]*])/gi, "\"redactedPayload\":\"[redacted]\""],
+  [/\b(prompt|messages|providerPayload|provider_payload|toolArgs|tool_args|toolResult|tool_result|args|result)\b\s*[:=]\s*(?:"[^"]*"|'[^']*'|\{[^{}]*\}|[[^]]*]|[^\s;]+)/gi, "[redacted-payload]"],
   [/\{[^{}\n]{24,}\}/g, "{redacted-object}"],
-  [/\[[^[\]\n]{24,}\]/g, "[redacted-array]"],
+  [/[[^[]\n]{24,}]/g, "[redacted-array]"],
 ];
 
 function addIssue(

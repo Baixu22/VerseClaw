@@ -102,7 +102,7 @@ export async function runMemorySyncWithReadonlyRecovery(
     log.warn(`memory sync readonly handle detected; reopening sqlite connection`, { reason });
     try {
       state.closeDatabase(state.db);
-    } catch {}
+    } catch { /* ignore */ }
     const previousVectorDims = state.vector.dims;
     state.db = state.openDatabase();
     state.resetVectorState();

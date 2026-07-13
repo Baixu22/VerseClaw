@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- fixture file: exports helper hook for agent-map fixture workspace, not a real fast-refresh boundary */
 export type SettingsMode = "compact" | "expanded";
 
 export interface SettingsPanelProps {

@@ -30,7 +30,6 @@ import {
 } from "./memory-context.js";
 import {
   isEmbeddingProviderAvailable,
-  NO_EMBEDDING_PROVIDER,
   type EmbeddingProviderOrNone,
   type RuntimeEmbeddingProvider,
 } from "./memory-embedding-provider.js";
@@ -208,7 +207,6 @@ const BM25_B = 0.75;
 // amplifies the score for short queries without changing long-query behavior.
 // Source: mem0-main/mem0/memory/main.py adaptive_search method.
 const BM25_SHORT_QUERY_THRESHOLD = 3;
-const BM25_SHORT_QUERY_K1_BOOST = 1.2; // k1 effective = 1.5 × 1.2 = 1.8
 
 /**
  * P3-1: Compute adaptive BM25 parameters based on query length.
@@ -253,7 +251,10 @@ const FIELD_WEIGHTS = { subject: 3, predicate: 2, objectSummary: 1 } as const;
  * Measured (two-signal): MRR +0.011, Recall@5 +3.3pp vs Vector-only baseline.
  */
 export const OPTIMAL_HYBRID_FUSION: HybridSearchFusionOptions = {
-  normalizeByPathCount: true,
+  // Multi-path agreement should reinforce rank, not average it down.
+  // Dividing by pathCount made weak single-path hits outrank strong dual-path hits
+  // (embedding mock integration: f2 over f1). Ablations can still opt into normalize.
+  normalizeByPathCount: false,
   // P2-3 (2026-07-04): k=0 → k=60. With cross-encoder ceScore now driving
   // final ranking (S0-3), RRF only shapes the candidate pool. k=60 produces
   // a more diverse candidate pool (BM25/entity-only matches get closer scores
@@ -302,6 +303,7 @@ export function hybridSearchFacts(
     const policy = query.temporalPolicy;
     const now = query.referenceTime ?? Date.now();
     const asOfTime = query.asOfTime;
+    void asOfTime;
 
     // include_history_ranked: 对历史 fact 应用降权 (×0.5)
     if (policy === "include_history_ranked") {
