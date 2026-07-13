@@ -129,5 +129,21 @@ export function createAgentBrowserApi(
       service.close(payload.sessionId);
       return { success: true };
     },
+    takeSnapshot: async (payload) => ({
+      success: true,
+      ...(await service.takeSnapshot(payload)),
+    }),
+    clickByUid: async (payload) => ({
+      success: true,
+      session: await service.clickByUid(payload),
+    }),
+    fillByUid: async (payload) => ({
+      success: true,
+      session: await service.fillByUid(payload),
+    }),
+    pressKey: async (payload) => ({
+      success: true,
+      session: await service.pressKey(payload),
+    }),
   };
 }
