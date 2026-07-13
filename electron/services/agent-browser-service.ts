@@ -23,6 +23,11 @@ import type {
   AgentBrowserNetworkListResult,
   AgentBrowserNetworkWaitPayload,
   AgentBrowserNetworkWaitResult,
+  AgentBrowserNewPagePayload,
+  AgentBrowserNavigatePagePayload,
+  AgentBrowserClosePagePayload,
+  AgentBrowserListPagesResult,
+  AgentBrowserSelectPagePayload,
   AgentBrowserOpenPayload,
   AgentBrowserProfileEntry,
   AgentBrowserProfileSavePayload,
@@ -45,6 +50,7 @@ import { BrowserControlActionExecutor } from './agent-browser/browser-control/ac
 import { BoundaryChoiceToolExecutor } from './agent-browser/browser-control/boundary-choice-tool-executor';
 import { BrowserDebuggerConnection } from './agent-browser/browser-control/browser-debugger-connection';
 import { BrowserControlSnapshotManager } from './agent-browser/browser-control/snapshot-manager';
+import { AgentBrowserTabManager } from './agent-browser/browser-control/tab-manager';
 import { BrowserNetworkRecorder, type NetworkRequestFilter, type NetworkWaitFilter } from './agent-browser/browser-control/network-recorder';
 import type { AgentBrowserRunner } from './agent-browser-cli-runner';
 
@@ -71,6 +77,8 @@ type AgentBrowserRecord = {
   engine: 'browser-window' | 'agent-browser-cli';
   runtimeMode: AgentBrowserRuntimeMode;
   runtimeExpiresAt?: number;
+  /** P1-7：多标签页管理器，仅 browser-window 引擎可用。 */
+  tabManager?: AgentBrowserTabManager;
 };
 
 type AgentBrowserControlState = {
@@ -571,6 +579,16 @@ export class AgentBrowserService {
       },
     });
     this.sessions.set(session.id, { session, window, engine: 'browser-window', runtimeMode });
+    // P1-7：初始化多标签页管理器，注册主窗口为首页
+    const record = this.sessions.get(session.id)!;
+    record.tabManager = new AgentBrowserTabManager({
+      createWindow: this.createWindow,
+      profile,
+      mode: mode === 'visible' ? 'visible' : 'hidden',
+      width,
+      height,
+    });
+    record.tabManager.registerMainWindow(window, url ?? '', '');
     if (url) {
       await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
     }
@@ -913,9 +931,148 @@ export class AgentBrowserService {
       void this.requireCliRunner().close(record.session);
       return;
     }
-    const window = this.requireWindow(record);
-    if (!window.isDestroyed()) {
-      window.close();
+    // P1-7：关闭所有标签页窗口（主窗口 + newPage 创建的额外窗口）
+    if (record.tabManager) {
+      for (const page of record.tabManager.listPages()) {
+        const pageWindow = record.tabManager.getPageWindow(page.pageId);
+        if (pageWindow && !pageWindow.isDestroyed()) {
+          pageWindow.close();
+        }
+      }
+      record.tabManager.clear();
+    } else {
+      const window = this.requireWindow(record);
+      if (!window.isDestroyed()) {
+        window.close();
+      }
+    }
+  }
+
+  // ===== P1-7：多标签页受控 =====
+
+  async newPage(payload: AgentBrowserNewPagePayload): Promise<AgentBrowserListPagesResult> {
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine === 'agent-browser-cli') {
+      throw new Error('多标签页操作不支持 CLI 引擎，请使用 browser-window 引擎。');
+    }
+    const tabManager = this.requireTabManager(record);
+    await tabManager.newPage(payload.url, payload.background);
+    // 非后台创建时切换活动页：更新 record.window 并重置 control state
+    if (!payload.background) {
+      const newWindow = tabManager.getActiveWindow();
+      if (newWindow) {
+        record.window = newWindow as AgentBrowserWindow;
+        this.resetBrowserControlState(record.session.id);
+      }
+    }
+    return {
+      success: true,
+      session: await this.refresh(record),
+      pages: tabManager.listPages(),
+      activePageId: tabManager.getActivePageId(),
+    };
+  }
+
+  async listPages(payload: { sessionId: string }): Promise<AgentBrowserListPagesResult> {
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine === 'agent-browser-cli') {
+      throw new Error('多标签页操作不支持 CLI 引擎，请使用 browser-window 引擎。');
+    }
+    const tabManager = this.requireTabManager(record);
+    return {
+      success: true,
+      session: { ...record.session },
+      pages: tabManager.listPages(),
+      activePageId: tabManager.getActivePageId(),
+    };
+  }
+
+  async selectPage(payload: AgentBrowserSelectPagePayload): Promise<AgentBrowserListPagesResult> {
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine === 'agent-browser-cli') {
+      throw new Error('多标签页操作不支持 CLI 引擎，请使用 browser-window 引擎。');
+    }
+    const tabManager = this.requireTabManager(record);
+    const newWindow = tabManager.selectPage(payload.pageId);
+    record.window = newWindow as AgentBrowserWindow;
+    // P1-7 R4：切换页面后清理旧 UID，重建 control state
+    this.resetBrowserControlState(record.session.id);
+    return {
+      success: true,
+      session: await this.refresh(record),
+      pages: tabManager.listPages(),
+      activePageId: tabManager.getActivePageId(),
+    };
+  }
+
+  async closePage(payload: AgentBrowserClosePagePayload): Promise<AgentBrowserListPagesResult> {
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine === 'agent-browser-cli') {
+      throw new Error('多标签页操作不支持 CLI 引擎，请使用 browser-window 引擎。');
+    }
+    const tabManager = this.requireTabManager(record);
+    const result = tabManager.closePage(payload.pageId);
+    // 如果关闭的是活动页且切换到新页面，更新 record.window 并重置 control state
+    if (result.switchedTo) {
+      const newWindow = tabManager.getActiveWindow();
+      if (newWindow) {
+        record.window = newWindow as AgentBrowserWindow;
+        this.resetBrowserControlState(record.session.id);
+      }
+    }
+    return {
+      success: true,
+      session: await this.refresh(record),
+      pages: result.remaining,
+      activePageId: tabManager.getActivePageId(),
+    };
+  }
+
+  async navigatePage(payload: AgentBrowserNavigatePagePayload): Promise<AgentBrowserListPagesResult> {
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine === 'agent-browser-cli') {
+      throw new Error('多标签页操作不支持 CLI 引擎，请使用 browser-window 引擎。');
+    }
+    const tabManager = this.requireTabManager(record);
+    const { window, entry } = tabManager.navigatePage(payload.url, payload.pageId);
+    const waitUntil = payload.waitUntil === 'dom-ready' ? 'dom-ready' : 'did-finish-load';
+    // 先设置 wait promise 再 loadURL，避免竞态
+    const wait = waitForWebContents(window.webContents, waitUntil);
+    await window.loadURL(payload.url);
+    await wait;
+    tabManager.updatePageInfo(entry.pageId, {
+      url: payload.url,
+      title: window.webContents.getTitle(),
+    });
+    const isActivePage = entry.pageId === tabManager.getActivePageId();
+    return {
+      success: true,
+      session: isActivePage ? await this.refresh(record) : { ...record.session },
+      pages: tabManager.listPages(),
+      activePageId: tabManager.getActivePageId(),
+    };
+  }
+
+  /** P1-7：获取 tabManager，未初始化时抛出错误。 */
+  private requireTabManager(record: AgentBrowserRecord): AgentBrowserTabManager {
+    if (!record.tabManager) {
+      throw new Error(`多标签页管理器未初始化，session: ${record.session.id}`);
+    }
+    return record.tabManager;
+  }
+
+  /**
+   * P1-7：重置浏览器控制状态（切换/关闭页面时调用）。
+   *
+   * 断开旧 debugger 连接并清理 browserControlStates 条目，
+   * 使下次 getBrowserControl() 调用时懒重新 attach 到新的活动窗口。
+   * 这实现了 R4「切换页面后清理旧 UID」的要求。
+   */
+  private resetBrowserControlState(sessionId: string): void {
+    const controlState = this.browserControlStates.get(sessionId);
+    if (controlState) {
+      this.browserControlStates.delete(sessionId);
+      void controlState.connection.detach();
     }
   }
 
