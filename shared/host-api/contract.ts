@@ -53,6 +53,7 @@ import type {
 } from '../types/sandbox';
 import type { ChannelAccessPolicyView } from '../types/channel';
 import type { MarketplaceSkill, QuickAccessSkill, Skill } from '../types/skill';
+import type { JsSourceResource, JsSourceMatch, JsSourceContext, JsSourceFetchFailure } from '../agent-browser/types';
 import type {
   LiveTokenUsage,
   PermissionApprovalDecision,
@@ -1051,6 +1052,34 @@ export type AgentBrowserNetworkExtractJsPayload = AgentBrowserSessionPayload & {
 };
 export type AgentBrowserNetworkExtractJsResult = HostSuccess & {
   candidates: string;
+};
+export type AgentBrowserJsListResourcesPayload = AgentBrowserSessionPayload;
+export type AgentBrowserJsListResourcesResult = HostSuccess & {
+  resources: JsSourceResource[];
+  content: string;
+};
+export type AgentBrowserJsSearchSourcesPayload = AgentBrowserSessionPayload & {
+  keywords: string[];
+  urls?: string[];
+  limit?: number;
+  allowSameOriginFetch?: boolean;
+};
+export type AgentBrowserJsSearchSourcesResult = HostSuccess & {
+  resources: JsSourceResource[];
+  matches: JsSourceMatch[];
+  failedFetches: JsSourceFetchFailure[];
+  truncated: boolean;
+  content: string;
+};
+export type AgentBrowserJsExtractContextPayload = AgentBrowserSessionPayload & {
+  resourceId: string;
+  position: number;
+};
+export type AgentBrowserJsExtractContextResult = HostSuccess & {
+  resources: JsSourceResource[];
+  contexts: JsSourceContext[];
+  truncated: boolean;
+  content: string;
 };
 export type AgentBrowserPageInfo = {
   pageId: string;
@@ -3950,6 +3979,9 @@ export type HostApiContract = {
     selectPage: (payload: AgentBrowserSelectPagePayload) => AgentBrowserListPagesResult;
     closePage: (payload: AgentBrowserClosePagePayload) => AgentBrowserListPagesResult;
     navigatePage: (payload: AgentBrowserNavigatePagePayload) => AgentBrowserListPagesResult;
+    jsListResources: (payload: AgentBrowserJsListResourcesPayload) => AgentBrowserJsListResourcesResult;
+    jsSearchSources: (payload: AgentBrowserJsSearchSourcesPayload) => AgentBrowserJsSearchSourcesResult;
+    jsExtractContext: (payload: AgentBrowserJsExtractContextPayload) => AgentBrowserJsExtractContextResult;
   };
   mcp: {
     listServers: () => McpServerListResult;

@@ -28,6 +28,12 @@ import type {
   AgentBrowserClosePagePayload,
   AgentBrowserListPagesResult,
   AgentBrowserSelectPagePayload,
+  AgentBrowserJsListResourcesPayload,
+  AgentBrowserJsListResourcesResult,
+  AgentBrowserJsSearchSourcesPayload,
+  AgentBrowserJsSearchSourcesResult,
+  AgentBrowserJsExtractContextPayload,
+  AgentBrowserJsExtractContextResult,
   AgentBrowserOpenPayload,
   AgentBrowserProfileEntry,
   AgentBrowserProfileSavePayload,
@@ -51,6 +57,7 @@ import { BoundaryChoiceToolExecutor } from './agent-browser/browser-control/boun
 import { BrowserDebuggerConnection } from './agent-browser/browser-control/browser-debugger-connection';
 import { BrowserControlSnapshotManager } from './agent-browser/browser-control/snapshot-manager';
 import { AgentBrowserTabManager } from './agent-browser/browser-control/tab-manager';
+import { JsSourceToolExecutor } from './agent-browser/browser-control/js-source-tool-executor';
 import { BrowserNetworkRecorder, type NetworkRequestFilter, type NetworkWaitFilter } from './agent-browser/browser-control/network-recorder';
 import type { AgentBrowserRunner } from './agent-browser-cli-runner';
 
@@ -87,6 +94,7 @@ type AgentBrowserControlState = {
   actionExecutor: BrowserControlActionExecutor;
   boundaryExecutor: BoundaryChoiceToolExecutor;
   networkRecorder: BrowserNetworkRecorder;
+  jsSourceExecutor: JsSourceToolExecutor;
 };
 
 type AgentBrowserServiceOptions = {
@@ -1131,7 +1139,11 @@ export class AgentBrowserService {
     );
     const networkRecorder = new BrowserNetworkRecorder(connection);
     networkRecorder.start(webContents.id);
-    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder };
+    const jsSourceExecutor = new JsSourceToolExecutor({
+      recorder: networkRecorder,
+      getCurrentPageUrl: async () => webContents.getURL(),
+    });
+    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor };
     this.browserControlStates.set(record.session.id, state);
     return state;
   }
@@ -1682,6 +1694,51 @@ export class AgentBrowserService {
           .filter((meta) => isJavaScriptMeta(meta))
           .map((meta) => ({ ...meta, truncated: false, redacted: !revealRaw }) as NetworkRequestDetail);
     return { candidates: extractJsCandidates(details, { keywords: payload.keywords, urlIncludes: payload.urlIncludes }) };
+  }
+
+  // ===== P2-1：JS 资源索引 =====
+
+  async jsListResources(payload: AgentBrowserJsListResourcesPayload): Promise<Omit<AgentBrowserJsListResourcesResult, 'success'>> {
+    const { jsSourceExecutor } = this.getJsSourceExecutor(payload.sessionId);
+    return jsSourceExecutor.listResources();
+  }
+
+  async jsSearchSources(payload: AgentBrowserJsSearchSourcesPayload): Promise<Omit<AgentBrowserJsSearchSourcesResult, 'success'>> {
+    const { jsSourceExecutor, record } = this.getJsSourceExecutor(payload.sessionId);
+    // 仅 controlled_enhanced / full_access 模式允许同源 JS 补位抓取
+    const allowSameOriginFetch = payload.allowSameOriginFetch === true
+      && (record.runtimeMode === 'controlled_enhanced' || record.runtimeMode === 'full_access');
+    return jsSourceExecutor.searchSources({
+      keywords: payload.keywords,
+      urls: payload.urls,
+      limit: payload.limit,
+      allowSameOriginFetch,
+    });
+  }
+
+  async jsExtractContext(payload: AgentBrowserJsExtractContextPayload): Promise<Omit<AgentBrowserJsExtractContextResult, 'success'>> {
+    const { jsSourceExecutor } = this.getJsSourceExecutor(payload.sessionId);
+    return jsSourceExecutor.extractContext({
+      resourceId: payload.resourceId,
+      position: payload.position,
+    });
+  }
+
+  /**
+   * 获取指定 session 的 JS 源码执行器，复用 getNetworkRecorder 的安全校验链。
+   */
+  private getJsSourceExecutor(sessionId: string): { jsSourceExecutor: JsSourceToolExecutor; record: AgentBrowserRecord } {
+    this.assertBrowserControlEnabled();
+    const record = this.getRecord(sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('JS 源码工具仅支持 browser-window 引擎，当前会话使用 agent-browser-cli 引擎。');
+    }
+    this.assertActionAllowed(record);
+    const state = this.browserControlStates.get(record.session.id);
+    if (!state) {
+      throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
+    }
+    return { jsSourceExecutor: state.jsSourceExecutor, record };
   }
 
   /**

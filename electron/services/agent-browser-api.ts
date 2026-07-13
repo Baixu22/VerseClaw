@@ -195,5 +195,17 @@ export function createAgentBrowserApi(
     selectPage: async (payload) => service.selectPage(payload),
     closePage: async (payload) => service.closePage(payload),
     navigatePage: async (payload) => service.navigatePage(payload),
+    jsListResources: async (payload) => ({
+      success: true,
+      ...(await service.jsListResources(payload)),
+    }),
+    jsSearchSources: async (payload) => ({
+      success: true,
+      ...(await service.jsSearchSources(payload)),
+    }),
+    jsExtractContext: async (payload) => ({
+      success: true,
+      ...(await service.jsExtractContext(payload)),
+    }),
   };
 }

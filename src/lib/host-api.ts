@@ -37,6 +37,12 @@ import type {
   AgentBrowserClosePagePayload,
   AgentBrowserNavigatePagePayload,
   AgentBrowserListPagesResult,
+  AgentBrowserJsListResourcesPayload,
+  AgentBrowserJsListResourcesResult,
+  AgentBrowserJsSearchSourcesPayload,
+  AgentBrowserJsSearchSourcesResult,
+  AgentBrowserJsExtractContextPayload,
+  AgentBrowserJsExtractContextResult,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -820,6 +826,12 @@ export const hostApi = {
       invokeHost('agentBrowser', 'closePage', input),
     navigatePage: (input: AgentBrowserNavigatePagePayload): Promise<AgentBrowserListPagesResult> =>
       invokeHost('agentBrowser', 'navigatePage', input),
+    jsListResources: (input: AgentBrowserJsListResourcesPayload): Promise<AgentBrowserJsListResourcesResult> =>
+      invokeHost('agentBrowser', 'jsListResources', input),
+    jsSearchSources: (input: AgentBrowserJsSearchSourcesPayload): Promise<AgentBrowserJsSearchSourcesResult> =>
+      invokeHost('agentBrowser', 'jsSearchSources', input),
+    jsExtractContext: (input: AgentBrowserJsExtractContextPayload): Promise<AgentBrowserJsExtractContextResult> =>
+      invokeHost('agentBrowser', 'jsExtractContext', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),
