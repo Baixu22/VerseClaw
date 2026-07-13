@@ -64,3 +64,36 @@ export interface BrowserControlTabInfo {
   title: string;
   url: string;
 }
+
+/**
+ * Network 类型，抄写自 browser-ai-assistant-master/src/shared/types.ts（Network 部分）。
+ * 保留源文件粒度，便于后续同步上游修复。
+ */
+export interface NetworkHeader {
+  name: string;
+  value: string;
+}
+
+export interface NetworkRequestMeta {
+  id: string;
+  url: string;
+  method: string;
+  status?: number;
+  statusText?: string;
+  mimeType?: string;
+  resourceType?: string;
+  startedAt?: string;
+  durationMs?: number;
+  requestHeaders?: NetworkHeader[];
+  responseHeaders?: NetworkHeader[];
+  requestBody?: string;
+  failed?: boolean;
+  error?: string;
+}
+
+export interface NetworkRequestDetail extends NetworkRequestMeta {
+  responseBody?: string;
+  responseBodyEncoding?: string;
+  truncated: boolean;
+  redacted: boolean;
+}

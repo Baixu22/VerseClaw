@@ -990,6 +990,68 @@ export type AgentBrowserScreenshotResult = AgentBrowserActionResult & {
 export type AgentBrowserTakeSnapshotResult = AgentBrowserActionResult & {
   snapshot: string;
 };
+export type AgentBrowserNetworkFilter = {
+  urlIncludes?: string;
+  method?: string;
+  resourceType?: string;
+  status?: number;
+  limit?: number;
+  timeoutMs?: number;
+};
+export type AgentBrowserNetworkListPayload = AgentBrowserSessionPayload & {
+  filter?: AgentBrowserNetworkFilter;
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkListResult = HostSuccess & {
+  requests: Array<{
+    id: string;
+    url: string;
+    method: string;
+    status?: number;
+    statusText?: string;
+    mimeType?: string;
+    resourceType?: string;
+    failed?: boolean;
+    error?: string;
+  }>;
+};
+export type AgentBrowserNetworkDetailPayload = AgentBrowserSessionPayload & {
+  requestIds: string[];
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkDetailResult = HostSuccess & {
+  details: unknown[];
+};
+export type AgentBrowserNetworkClearPayload = AgentBrowserSessionPayload;
+export type AgentBrowserNetworkClearResult = HostSuccess;
+export type AgentBrowserNetworkWaitPayload = AgentBrowserSessionPayload & {
+  filter?: AgentBrowserNetworkFilter;
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkWaitResult = AgentBrowserNetworkListResult;
+export type AgentBrowserNetworkComparePayload = AgentBrowserSessionPayload & {
+  requestIds: string[];
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkCompareResult = HostSuccess & {
+  comparison: string;
+};
+export type AgentBrowserNetworkFindParamsPayload = AgentBrowserSessionPayload & {
+  requestIds: string[];
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkFindParamsResult = HostSuccess & {
+  candidates: string;
+};
+export type AgentBrowserNetworkExtractJsPayload = AgentBrowserSessionPayload & {
+  requestIds?: string[];
+  keywords?: string[];
+  urlIncludes?: string;
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkExtractJsResult = HostSuccess & {
+  candidates: string;
+};
 export type AgentBrowserCommandResult = HostSuccess & {
   session?: AgentBrowserSession;
   data?: unknown;
@@ -3850,6 +3912,13 @@ export type HostApiContract = {
     pressKey: (payload: AgentBrowserPressKeyPayload) => AgentBrowserActionResult;
     requestModeUpgrade: (payload: AgentBrowserRequestModeUpgradePayload) => AgentBrowserRequestModeUpgradeResult;
     respondBoundaryChoice: (payload: AgentBrowserRespondBoundaryChoicePayload) => AgentBrowserRespondBoundaryChoiceResult;
+    networkListRequests: (payload: AgentBrowserNetworkListPayload) => AgentBrowserNetworkListResult;
+    networkGetRequestDetails: (payload: AgentBrowserNetworkDetailPayload) => AgentBrowserNetworkDetailResult;
+    networkClearRequests: (payload: AgentBrowserNetworkClearPayload) => AgentBrowserNetworkClearResult;
+    networkWaitForRequests: (payload: AgentBrowserNetworkWaitPayload) => AgentBrowserNetworkWaitResult;
+    networkCompareRequests: (payload: AgentBrowserNetworkComparePayload) => AgentBrowserNetworkCompareResult;
+    networkFindParameterCandidates: (payload: AgentBrowserNetworkFindParamsPayload) => AgentBrowserNetworkFindParamsResult;
+    networkExtractJsCandidates: (payload: AgentBrowserNetworkExtractJsPayload) => AgentBrowserNetworkExtractJsResult;
   };
   mcp: {
     listServers: () => McpServerListResult;

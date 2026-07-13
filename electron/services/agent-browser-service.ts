@@ -8,6 +8,21 @@ import type {
   AgentBrowserCommandPayload,
   AgentBrowserConnectionMode,
   AgentBrowserConnectionSnapshot,
+  AgentBrowserNetworkClearPayload,
+  AgentBrowserNetworkClearResult,
+  AgentBrowserNetworkComparePayload,
+  AgentBrowserNetworkCompareResult,
+  AgentBrowserNetworkDetailPayload,
+  AgentBrowserNetworkDetailResult,
+  AgentBrowserNetworkExtractJsPayload,
+  AgentBrowserNetworkExtractJsResult,
+  AgentBrowserNetworkFilter,
+  AgentBrowserNetworkFindParamsPayload,
+  AgentBrowserNetworkFindParamsResult,
+  AgentBrowserNetworkListPayload,
+  AgentBrowserNetworkListResult,
+  AgentBrowserNetworkWaitPayload,
+  AgentBrowserNetworkWaitResult,
   AgentBrowserOpenPayload,
   AgentBrowserProfileEntry,
   AgentBrowserProfileSavePayload,
@@ -21,13 +36,16 @@ import type {
   BrowserAutomationRunResult,
   BrowserAutomationRunStep,
 } from '@shared/host-api/contract';
-import type { BrowserControlToolCall } from '@shared/agent-browser/types';
+import type { BrowserControlToolCall, NetworkHeader, NetworkRequestDetail, NetworkRequestMeta } from '@shared/agent-browser/types';
+import { redactNetworkRequestDetail, redactNetworkRequestMeta } from '@shared/agent-browser/network-context';
+import { truncateText } from '@shared/agent-browser/text';
 import { getOriginFromUrl } from '@shared/agent-browser/tool-authorization';
 import { isBrowserControlRestrictedUrl } from '@shared/agent-browser/browser-control';
 import { BrowserControlActionExecutor } from './agent-browser/browser-control/actions';
 import { BoundaryChoiceToolExecutor } from './agent-browser/browser-control/boundary-choice-tool-executor';
 import { BrowserDebuggerConnection } from './agent-browser/browser-control/browser-debugger-connection';
 import { BrowserControlSnapshotManager } from './agent-browser/browser-control/snapshot-manager';
+import { BrowserNetworkRecorder, type NetworkRequestFilter, type NetworkWaitFilter } from './agent-browser/browser-control/network-recorder';
 import type { AgentBrowserRunner } from './agent-browser-cli-runner';
 
 type AgentBrowserWindow = Pick<
@@ -60,6 +78,7 @@ type AgentBrowserControlState = {
   snapshotManager: BrowserControlSnapshotManager;
   actionExecutor: BrowserControlActionExecutor;
   boundaryExecutor: BoundaryChoiceToolExecutor;
+  networkRecorder: BrowserNetworkRecorder;
 };
 
 type AgentBrowserServiceOptions = {
@@ -930,6 +949,14 @@ export class AgentBrowserService {
       throw new Error(attachResult.message ?? 'Failed to attach browser debugger');
     }
 
+    // P1-2：attach 成功后安装 CDP 事件与 detach 监听器，
+    // 使 NetworkRecorder / SnapshotManager 等能收到 Network.* / Page.* 事件。
+    connection.installEventListener();
+    connection.installDetachListener(() => {
+      // 内部状态清理已在 installDetachListener 中完成；
+      // 此处可触发 service 层清理 browserControlStates（当前由 setEnabled/lifecycle 管理）。
+    });
+
     const snapshotManager = new BrowserControlSnapshotManager(connection, async () => ({
       title: webContents.getTitle(),
       url: webContents.getURL(),
@@ -945,7 +972,9 @@ export class AgentBrowserService {
         enhanced: this.isControlledEnhanced(record),
       }),
     );
-    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor };
+    const networkRecorder = new BrowserNetworkRecorder(connection);
+    networkRecorder.start(webContents.id);
+    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder };
     this.browserControlStates.set(record.session.id, state);
     return state;
   }
@@ -1404,10 +1433,398 @@ export class AgentBrowserService {
     return session;
   }
 
+  // ===== P1-2: Network 工具集服务方法 =====
+  // 以下 7 个方法抄写自 browser-ai-assistant-master/src/background/browserControl/networkToolExecutor.ts，
+  // 适配点：去掉 ModelToolCall/ModelToolResult 封装，直接以 service 方法暴露；
+  // redacted 默认 true，仅当 runtimeMode === 'full_access' 且调用方显式 redacted=false 时返回原始数据。
+
+  /**
+   * 列出当前受控页面捕获到的 Network 请求元信息。
+   * 元信息不含请求/响应头与 body，即使 redacted=false 也仅返回 meta。
+   */
+  async networkListRequests(payload: AgentBrowserNetworkListPayload): Promise<Omit<AgentBrowserNetworkListResult, 'success'>> {
+    const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
+    const filter = normalizeNetworkFilter(payload.filter);
+    const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const requests = recorder.listRequests(filter, { redacted: !revealRaw });
+    return {
+      requests: requests.map((meta) => toListMeta(revealRaw ? meta : redactNetworkRequestMeta(meta))),
+    };
+  }
+
+  /**
+   * 获取指定请求的详情（含 headers/body）。
+   * redacted=true 或非 full_access 模式下，敏感字段会被脱敏。
+   */
+  async networkGetRequestDetails(payload: AgentBrowserNetworkDetailPayload): Promise<Omit<AgentBrowserNetworkDetailResult, 'success'>> {
+    const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
+    const requestIds = normalizeRequestIds(payload.requestIds);
+    const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
+    return { details: revealRaw ? details : details.map(redactNetworkRequestDetail) };
+  }
+
+  /**
+   * 清空当前受控页面的 Network 请求缓存。
+   */
+  async networkClearRequests(payload: AgentBrowserNetworkClearPayload): Promise<Omit<AgentBrowserNetworkClearResult, 'success'>> {
+    const { recorder } = this.getNetworkRecorder(payload.sessionId);
+    recorder.clear();
+    return {};
+  }
+
+  /**
+   * 等待匹配 filter 的 Network 请求出现，超时返回已捕获的匹配项。
+   */
+  async networkWaitForRequests(payload: AgentBrowserNetworkWaitPayload): Promise<Omit<AgentBrowserNetworkWaitResult, 'success'>> {
+    const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
+    const filter = normalizeNetworkWaitFilter(payload.filter);
+    const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const requests = await recorder.waitForRequests(filter, { redacted: !revealRaw });
+    return {
+      requests: requests.map((meta) => toListMeta(revealRaw ? meta : redactNetworkRequestMeta(meta))),
+    };
+  }
+
+  /**
+   * 对比多个请求的稳定字段与变化字段，输出疑似关键参数候选。
+   * 至少需要 2 个请求才能对比。
+   */
+  async networkCompareRequests(payload: AgentBrowserNetworkComparePayload): Promise<Omit<AgentBrowserNetworkCompareResult, 'success'>> {
+    const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
+    const requestIds = normalizeRequestIds(payload.requestIds);
+    const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
+    return { comparison: compareNetworkRequests(details) };
+  }
+
+  /**
+   * 从请求详情中提取疑似签名/时间戳/nonce/凭据参数候选。
+   */
+  async networkFindParameterCandidates(payload: AgentBrowserNetworkFindParamsPayload): Promise<Omit<AgentBrowserNetworkFindParamsResult, 'success'>> {
+    const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
+    const requestIds = normalizeRequestIds(payload.requestIds);
+    const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
+    return { candidates: formatParameterCandidates(findParameterCandidates(details)) };
+  }
+
+  /**
+   * 从 JS 资源响应体中按 keywords 提取候选片段。
+   * 不依赖 jsSourceIndex/P2 模块，仅对 Script 资源做正则匹配。
+   */
+  async networkExtractJsCandidates(payload: AgentBrowserNetworkExtractJsPayload): Promise<Omit<AgentBrowserNetworkExtractJsResult, 'success'>> {
+    const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
+    const requestIds = payload.requestIds && payload.requestIds.length > 0
+      ? normalizeRequestIds(payload.requestIds)
+      : [];
+    const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const details = requestIds.length > 0
+      ? await recorder.getDetails(requestIds, { redacted: !revealRaw })
+      : recorder.listRequests({}, { redacted: !revealRaw })
+          .filter((meta) => isJavaScriptMeta(meta))
+          .map((meta) => ({ ...meta, truncated: false, redacted: !revealRaw }) as NetworkRequestDetail);
+    return { candidates: extractJsCandidates(details, { keywords: payload.keywords, urlIncludes: payload.urlIncludes }) };
+  }
+
+  /**
+   * 获取指定 session 的 Network 录制器与 record，校验浏览器控制开关 + 运行态模式 + 会话存在性 + engine。
+   * 调用顺序遵循 P1-1 安全优先设计：先 enabled，再 record，再 runtime mode，最后 control state。
+   */
+  private getNetworkRecorder(sessionId: string): { recorder: BrowserNetworkRecorder; record: AgentBrowserRecord } {
+    this.assertBrowserControlEnabled();
+    const record = this.getRecord(sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('Network 工具仅支持 browser-window 引擎，当前会话使用 agent-browser-cli 引擎。');
+    }
+    this.assertActionAllowed(record);
+    const state = this.browserControlStates.get(record.session.id);
+    if (!state) {
+      throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
+    }
+    return { recorder: state.networkRecorder, record };
+  }
+
+  /**
+   * 判断当前会话是否可以返回原始（未脱敏）的 Network 数据。
+   * 仅当 runtimeMode === 'full_access' 且调用方显式 redacted=false 时为 true。
+   * normal_restricted / controlled_enhanced 模式下永远返回 false（脱敏）。
+   */
+  private canRevealRaw(record: AgentBrowserRecord, redacted: boolean | undefined): boolean {
+    if (redacted !== false) return false;
+    this.refreshRuntimeModeExpiry(record);
+    return record.runtimeMode === 'full_access';
+  }
+
   private requireWindow(record: AgentBrowserRecord): AgentBrowserWindow {
     if (!record.window) {
       throw new Error(`Agent browser window is not available for session: ${record.session.id}`);
     }
     return record.window;
+  }
+}
+
+// ===== P1-2: Network 工具集模块级辅助函数 =====
+// 抄写自 browser-ai-assistant-master/src/background/browserControl/networkToolExecutor.ts，
+// 适配点：去掉 ModelToolCall 相关引用，直接以纯函数形式服务于 service 方法。
+
+const NETWORK_MAX_DETAIL_IDS = 100;
+const NETWORK_MAX_REQUEST_ID_LENGTH = 256;
+const NETWORK_MAX_LIST_LIMIT = 200;
+const NETWORK_MAX_FILTER_TEXT_LENGTH = 200;
+const NETWORK_MAX_METHOD_LENGTH = 32;
+const NETWORK_MAX_RESOURCE_TYPE_LENGTH = 64;
+const NETWORK_MAX_KEYWORDS = 20;
+const NETWORK_JS_SNIPPET_RADIUS = 120;
+const NETWORK_DEFAULT_JS_KEYWORDS = ['sign', 'signature', 'encrypt', 'crypto', 'md5', 'sha', 'aes', 'nonce', 'timestamp', 'token'];
+const NETWORK_REQUEST_IDS_INVALID_MESSAGE = 'requestIds 必须是包含 1 到 100 个非空字符串的数组。';
+
+interface NetworkParameterCandidate {
+  location: string;
+  name: string;
+  value: string;
+  reason: string;
+}
+
+function normalizeNetworkFilter(filter: AgentBrowserNetworkFilter | undefined): NetworkRequestFilter {
+  if (!filter) return {};
+  return {
+    urlIncludes: normalizeOptionalString(filter.urlIncludes, NETWORK_MAX_FILTER_TEXT_LENGTH),
+    method: normalizeOptionalString(filter.method, NETWORK_MAX_METHOD_LENGTH),
+    resourceType: normalizeOptionalString(filter.resourceType, NETWORK_MAX_RESOURCE_TYPE_LENGTH),
+    status: typeof filter.status === 'number' && Number.isInteger(filter.status) ? filter.status : undefined,
+    limit: normalizeLimit(filter.limit),
+  };
+}
+
+function normalizeNetworkWaitFilter(filter: AgentBrowserNetworkFilter | undefined): NetworkWaitFilter {
+  const base = normalizeNetworkFilter(filter);
+  const timeoutMs = filter && typeof filter.timeoutMs === 'number' ? filter.timeoutMs : undefined;
+  return timeoutMs !== undefined ? { ...base, timeoutMs } : base;
+}
+
+function normalizeRequestIds(value: string[] | undefined): string[] {
+  if (!Array.isArray(value) || value.length < 1 || value.length > NETWORK_MAX_DETAIL_IDS) {
+    throw new Error(NETWORK_REQUEST_IDS_INVALID_MESSAGE);
+  }
+  const requestIds = value.map((item) => (typeof item === 'string' ? item.trim() : ''));
+  if (requestIds.some((item) => !item || item.length > NETWORK_MAX_REQUEST_ID_LENGTH)) {
+    throw new Error(NETWORK_REQUEST_IDS_INVALID_MESSAGE);
+  }
+  return Array.from(new Set(requestIds));
+}
+
+function normalizeOptionalString(value: unknown, maxLength = NETWORK_MAX_FILTER_TEXT_LENGTH): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed ? trimmed.slice(0, maxLength) : undefined;
+}
+
+function normalizeLimit(value: unknown): number | undefined {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return undefined;
+  return Math.min(Math.max(Math.floor(value), 1), NETWORK_MAX_LIST_LIMIT);
+}
+
+function toListMeta(meta: NetworkRequestMeta): {
+  id: string;
+  url: string;
+  method: string;
+  status?: number;
+  statusText?: string;
+  mimeType?: string;
+  resourceType?: string;
+  failed?: boolean;
+  error?: string;
+} {
+  return {
+    id: meta.id,
+    url: meta.url,
+    method: meta.method,
+    ...(meta.status !== undefined ? { status: meta.status } : {}),
+    ...(meta.statusText !== undefined ? { statusText: meta.statusText } : {}),
+    ...(meta.mimeType !== undefined ? { mimeType: meta.mimeType } : {}),
+    ...(meta.resourceType !== undefined ? { resourceType: meta.resourceType } : {}),
+    ...(meta.failed !== undefined ? { failed: meta.failed } : {}),
+    ...(meta.error !== undefined ? { error: meta.error } : {}),
+  };
+}
+
+function isJavaScriptMeta(meta: { url: string; mimeType?: string; resourceType?: string }): boolean {
+  const pathname = safeUrl(meta.url).pathname.toLowerCase();
+  const mimeType = meta.mimeType?.toLowerCase() ?? '';
+  const resourceType = meta.resourceType?.toLowerCase() ?? '';
+  return resourceType === 'script' || /\.(?:m?js)$/i.test(pathname) || isTrustedJavaScriptMime(mimeType);
+}
+
+function isTrustedJavaScriptMime(mimeType: string): boolean {
+  const normalized = mimeType.split(';', 1)[0]?.trim() ?? '';
+  return normalized === 'application/javascript' ||
+    normalized === 'text/javascript' ||
+    normalized === 'application/ecmascript' ||
+    normalized === 'text/ecmascript' ||
+    normalized === 'application/x-javascript';
+}
+
+function compareNetworkRequests(details: NetworkRequestDetail[]): string {
+  if (details.length < 2) {
+    return '至少需要两个请求才能进行对比。';
+  }
+  const fieldsByRequest = details.map(flattenRequestFields);
+  const allKeys = Array.from(new Set(fieldsByRequest.flatMap((fields) => Array.from(fields.keys())))).sort();
+  const stableFields: string[] = [];
+  const changedFields: string[] = [];
+  for (const key of allKeys) {
+    const values = fieldsByRequest.map((fields) => fields.get(key) ?? '');
+    const uniqueValues = Array.from(new Set(values));
+    if (uniqueValues.length <= 1) {
+      stableFields.push(`${key}=${truncateText(uniqueValues[0] ?? '', 160).text}`);
+    } else {
+      changedFields.push(`${key}: ${uniqueValues.map((value) => truncateText(value, 80).text).join(' -> ')}`);
+    }
+  }
+  const candidates = findParameterCandidates(details);
+  return [
+    'Network 请求对比结果',
+    '',
+    '稳定字段：',
+    stableFields.slice(0, 30).map((item) => `- ${item}`).join('\n') || '- 无',
+    '',
+    '变化字段：',
+    changedFields.slice(0, 50).map((item) => `- ${item}`).join('\n') || '- 无',
+    '',
+    '疑似关键参数：',
+    formatParameterCandidates(candidates),
+  ].join('\n');
+}
+
+function flattenRequestFields(detail: NetworkRequestDetail): Map<string, string> {
+  const fields = new Map<string, string>();
+  fields.set('method', detail.method);
+  fields.set('path', safeUrl(detail.url).pathname);
+  for (const [key, value] of safeUrl(detail.url).searchParams.entries()) {
+    fields.set(`query.${key}`, value);
+  }
+  for (const header of detail.requestHeaders ?? []) {
+    fields.set(`requestHeader.${header.name.toLowerCase()}`, header.value);
+  }
+  for (const [key, value] of parseBodyFields(detail.requestBody, detail.requestHeaders)) {
+    fields.set(`body.${key}`, value);
+  }
+  return fields;
+}
+
+function findParameterCandidates(details: NetworkRequestDetail[]): NetworkParameterCandidate[] {
+  const candidates: NetworkParameterCandidate[] = [];
+  for (const detail of details) {
+    for (const [key, value] of safeUrl(detail.url).searchParams.entries()) {
+      appendParameterCandidate(candidates, 'query', key, value);
+    }
+    for (const header of detail.requestHeaders ?? []) {
+      appendParameterCandidate(candidates, 'requestHeader', header.name, header.value);
+    }
+    for (const [key, value] of parseBodyFields(detail.requestBody, detail.requestHeaders)) {
+      appendParameterCandidate(candidates, 'body', key, value);
+    }
+  }
+  return candidates;
+}
+
+function appendParameterCandidate(candidates: NetworkParameterCandidate[], location: string, name: string, value: string): void {
+  const lowerName = name.toLowerCase();
+  const lowerValue = value.toLowerCase();
+  const reasons: string[] = [];
+  if (/sign|signature|sig|x-sign/.test(lowerName)) reasons.push('疑似签名字段');
+  if (/timestamp|time|ts|_t/.test(lowerName)) reasons.push('疑似时间戳字段');
+  if (/nonce|uuid|requestid|traceid|random/.test(lowerName)) reasons.push('疑似随机数或请求标识字段');
+  if (/token|authorization|cookie/.test(lowerName)) reasons.push('疑似凭据字段');
+  if (/^[a-f0-9]{24,}$/i.test(value) || /^[a-z0-9_-]{32,}$/i.test(value) || /[+/=]{2,}/.test(value) || lowerValue.includes('%3d')) {
+    reasons.push('疑似加密或编码载荷');
+  }
+  for (const reason of reasons) {
+    candidates.push({ location, name, value: truncateText(value, 160).text, reason });
+  }
+}
+
+function formatParameterCandidates(candidates: NetworkParameterCandidate[]): string {
+  if (candidates.length === 0) return '未发现明显的参数候选。';
+  return candidates
+    .slice(0, 80)
+    .map((candidate) => `- ${candidate.reason}: ${candidate.location}.${candidate.name}=${candidate.value}`)
+    .join('\n');
+}
+
+function extractJsCandidates(details: NetworkRequestDetail[], args: { keywords?: string[]; urlIncludes?: string }): string {
+  const keywords = normalizeStringArray(args.keywords);
+  const urlIncludes = normalizeOptionalString(args.urlIncludes);
+  const searchTerms = keywords.length ? keywords : NETWORK_DEFAULT_JS_KEYWORDS;
+  const sections: string[] = [];
+  for (const detail of details) {
+    if (!isJavaScriptMeta(detail)) continue;
+    const body = detail.responseBody ?? '';
+    const matches = [...searchTerms, ...(urlIncludes ? [urlIncludes] : [])].flatMap((term) => findSnippets(body, term));
+    if (matches.length === 0) continue;
+    sections.push([
+      `JS 候选资源：${detail.url}`,
+      ...matches.slice(0, 8).map((match) => `- 命中 ${match.term}: ${match.snippet}`),
+    ].join('\n'));
+  }
+  return sections.length ? sections.join('\n\n') : '未找到匹配的 JS 候选资源。';
+}
+
+function normalizeStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return Array.from(new Set(value.map((item) => (typeof item === 'string' ? item.trim().slice(0, NETWORK_MAX_FILTER_TEXT_LENGTH) : '')).filter(Boolean))).slice(0, NETWORK_MAX_KEYWORDS);
+}
+
+function findSnippets(text: string, term: string): Array<{ term: string; snippet: string }> {
+  if (!text || !term) return [];
+  const lowerText = text.toLowerCase();
+  const lowerTerm = term.toLowerCase();
+  const index = lowerText.indexOf(lowerTerm);
+  if (index < 0) return [];
+  const start = Math.max(0, index - NETWORK_JS_SNIPPET_RADIUS);
+  const end = Math.min(text.length, index + term.length + NETWORK_JS_SNIPPET_RADIUS);
+  return [{ term, snippet: truncateText(text.slice(start, end).replace(/\s+/g, ' '), 320).text }];
+}
+
+function parseBodyFields(body: string | undefined, requestHeaders: NetworkHeader[] | undefined): Array<[string, string]> {
+  if (!body) return [];
+  if (isJsonBody(requestHeaders)) {
+    try {
+      const parsed = JSON.parse(body) as unknown;
+      return flattenJson(parsed);
+    } catch {
+      return [['body', truncateText(body, 320).text]];
+    }
+  }
+  if (isFormUrlEncoded(requestHeaders)) {
+    const params = new URLSearchParams(body);
+    return Array.from(params.entries());
+  }
+  return [['body', truncateText(body, 320).text]];
+}
+
+function isJsonBody(headers: NetworkHeader[] | undefined): boolean {
+  return headers?.some((header) => header.name.toLowerCase() === 'content-type' && header.value.toLowerCase().includes('json')) ?? false;
+}
+
+function isFormUrlEncoded(headers: NetworkHeader[] | undefined): boolean {
+  return headers?.some((header) => header.name.toLowerCase() === 'content-type' && header.value.toLowerCase().includes('application/x-www-form-urlencoded')) ?? false;
+}
+
+function flattenJson(value: unknown, prefix = ''): Array<[string, string]> {
+  if (value === null || value === undefined) return [];
+  if (typeof value !== 'object') return [[prefix || 'value', String(value)]];
+  if (Array.isArray(value)) {
+    return value.flatMap((item, index) => flattenJson(item, `${prefix}[${index}]`));
+  }
+  return Object.entries(value).flatMap(([key, item]) => flattenJson(item, prefix ? `${prefix}.${key}` : key));
+}
+
+function safeUrl(value: string): URL {
+  try {
+    return new URL(value);
+  } catch {
+    return new URL(value, 'https://example.invalid');
   }
 }
