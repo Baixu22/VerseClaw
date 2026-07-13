@@ -8,24 +8,28 @@ import { access, readFile } from "node:fs/promises";
 import * as Diff from "diff";
 import { resolveToCwd } from "./path-utils.js";
 
-export function detectLineEnding(content: string): "\r\n" | "\n" {
-  const crlfIdx = content.indexOf("\r\n");
-  const lfIdx = content.indexOf("\n");
-  if (lfIdx === -1) {
-    return "\n";
-  }
-  if (crlfIdx === -1) {
-    return "\n";
-  }
-  return crlfIdx < lfIdx ? "\r\n" : "\n";
+export type LineEnding = "\r\n" | "\n" | "\r";
+
+export function captureLineEndings(content: string): LineEnding[] {
+  return [...content.matchAll(/\r\n|\n|\r/g)].map((match) => match[0] as LineEnding);
+}
+
+export function detectLineEnding(content: string): LineEnding {
+  return captureLineEndings(content)[0] ?? "\n";
 }
 
 export function normalizeToLF(text: string): string {
   return text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
 }
 
-export function restoreLineEndings(text: string, ending: "\r\n" | "\n"): string {
-  return ending === "\r\n" ? text.replace(/\n/g, "\r\n") : text;
+export function restoreLineEndings(
+  text: string,
+  ending: LineEnding | readonly LineEnding[],
+): string {
+  const endings = typeof ending === "string" ? undefined : ending;
+  const fallback = typeof ending === "string" ? ending : (endings?.[0] ?? "\n");
+  let index = 0;
+  return text.replace(/\n/g, () => endings?.[index++] ?? fallback);
 }
 
 /**
@@ -74,6 +78,54 @@ export interface FuzzyMatchResult {
   contentForReplacement: string;
 }
 
+type FuzzyIndex = {
+  text: string;
+  spans: Array<{ start: number; end: number }>;
+};
+
+function normalizeFuzzyCharacter(char: string): string {
+  return char
+    .normalize("NFKC")
+    .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+    .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+    .replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212]/g, "-")
+    .replace(/[\u00A0\u2002-\u200A\u202F\u205F\u3000]/g, " ");
+}
+
+function buildFuzzyIndex(text: string): FuzzyIndex {
+  let normalized = "";
+  const spans: FuzzyIndex["spans"] = [];
+  let lineOutputStart = 0;
+
+  for (let index = 0; index < text.length; ) {
+    const codePoint = text.codePointAt(index);
+    const char = String.fromCodePoint(codePoint ?? 0);
+    const width = char.length;
+    if (char === "\n") {
+      while (normalized.length > lineOutputStart && /\s/u.test(normalized.at(-1) ?? "")) {
+        normalized = normalized.slice(0, -1);
+        spans.pop();
+      }
+      normalized += "\n";
+      spans.push({ start: index, end: index + width });
+      lineOutputStart = normalized.length;
+      index += width;
+      continue;
+    }
+    const transformed = normalizeFuzzyCharacter(char);
+    normalized += transformed;
+    for (let offset = 0; offset < transformed.length; offset += 1) {
+      spans.push({ start: index, end: index + width });
+    }
+    index += width;
+  }
+  while (normalized.length > lineOutputStart && /\s/u.test(normalized.at(-1) ?? "")) {
+    normalized = normalized.slice(0, -1);
+    spans.pop();
+  }
+  return { text: normalized, spans };
+}
+
 export interface Edit {
   oldText: string;
   newText: string;
@@ -111,7 +163,8 @@ export function fuzzyFindText(content: string, oldText: string): FuzzyMatchResul
   }
 
   // Try fuzzy match - work entirely in normalized space
-  const fuzzyContent = normalizeForFuzzyMatch(content);
+  const fuzzy = buildFuzzyIndex(content);
+  const fuzzyContent = fuzzy.text;
   const fuzzyOldText = normalizeForFuzzyMatch(oldText);
   const fuzzyIndex = fuzzyContent.indexOf(fuzzyOldText);
 
@@ -125,15 +178,23 @@ export function fuzzyFindText(content: string, oldText: string): FuzzyMatchResul
     };
   }
 
-  // When fuzzy matching, we work in the normalized space for replacement.
-  // This means the output will have normalized whitespace/quotes/dashes,
-  // which is acceptable since we're fixing minor formatting differences anyway.
+  const firstSpan = fuzzy.spans[fuzzyIndex];
+  const lastSpan = fuzzy.spans[fuzzyIndex + fuzzyOldText.length - 1];
+  if (!firstSpan || !lastSpan) {
+    return {
+      found: false,
+      index: -1,
+      matchLength: 0,
+      usedFuzzyMatch: false,
+      contentForReplacement: content,
+    };
+  }
   return {
     found: true,
-    index: fuzzyIndex,
-    matchLength: fuzzyOldText.length,
+    index: firstSpan.start,
+    matchLength: lastSpan.end - firstSpan.start,
     usedFuzzyMatch: true,
-    contentForReplacement: fuzzyContent,
+    contentForReplacement: content,
   };
 }
 
@@ -217,12 +278,7 @@ export function applyEditsToNormalizedContent(
     }
   }
 
-  const initialMatches = normalizedEdits.map((edit) =>
-    fuzzyFindText(normalizedContent, edit.oldText),
-  );
-  const baseContent = initialMatches.some((match) => match.usedFuzzyMatch)
-    ? normalizeForFuzzyMatch(normalizedContent)
-    : normalizedContent;
+  const baseContent = normalizedContent;
 
   const matchedEdits: MatchedEdit[] = [];
   for (let i = 0; i < normalizedEdits.length; i++) {

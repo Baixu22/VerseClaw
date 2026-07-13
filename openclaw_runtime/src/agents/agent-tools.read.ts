@@ -338,7 +338,7 @@ async function executeReadWithAdaptivePaging(params: {
       (truncation?.outputLines ?? 0) > 0 &&
       page < MAX_ADAPTIVE_READ_PAGES - 1;
     const pageText = canContinue ? stripReadContinuationNotice(rawText) : rawText;
-    const delimiter = aggregatedText && pageText ? "\n\n" : "";
+    const delimiter = aggregatedText && pageText ? "\n" : "";
     const nextBytes = Buffer.byteLength(`${delimiter}${pageText}`, "utf-8");
 
     if (aggregatedText && aggregatedBytes + nextBytes > params.maxBytes) {
@@ -351,7 +351,7 @@ async function executeReadWithAdaptivePaging(params: {
     aggregatedBytes += nextBytes;
 
     if (!canContinue || !truncation) {
-      return withToolResultText(pageResult, aggregatedText);
+      return withToolResultText(firstResult, aggregatedText);
     }
 
     nextOffset += truncation.outputLines;
@@ -947,7 +947,7 @@ function createSandboxEditOperations(params: SandboxToolParams) {
   return {
     readFile: (absolutePath: string) =>
       params.bridge.readFile({ filePath: absolutePath, cwd: params.root }),
-    writeFile: (absolutePath: string, content: string) =>
+    writeFile: (absolutePath: string, content: Buffer | string) =>
       params.bridge.writeFile({ filePath: absolutePath, cwd: params.root, data: content }),
     access: (absolutePath: string) => assertSandboxFileExists(params, absolutePath),
   } as const;
@@ -969,10 +969,14 @@ function resolveHostPath(filePath: string): string {
   return path.resolve(expandTildeToOsHome(filePath));
 }
 
-async function writeHostFile(absolutePath: string, content: string) {
+async function writeHostFile(absolutePath: string, content: Buffer | string) {
   const resolved = resolveHostPath(absolutePath);
   await fs.mkdir(path.dirname(resolved), { recursive: true });
-  await fs.writeFile(resolved, content, "utf-8");
+  if (typeof content === "string") {
+    await fs.writeFile(resolved, content, "utf-8");
+  } else {
+    await fs.writeFile(resolved, content);
+  }
 }
 
 async function statHostFile(absolutePath: string) {
@@ -1000,7 +1004,7 @@ async function writeWorkspaceFile(
   root: string,
   rootPromise: ReturnType<typeof fsRoot>,
   absolutePath: string,
-  content: string,
+  content: Buffer | string,
 ) {
   const relative = await toCanonicalRelativeWorkspacePath(root, absolutePath);
   await (await rootPromise).write(relative, content, { mkdir: true });
@@ -1033,7 +1037,7 @@ function createHostWriteOperations(root: string, options?: { workspaceOnly?: boo
       await assertSandboxPath({ filePath: resolved, cwd: root, root });
       await fs.mkdir(resolved, { recursive: true });
     },
-    writeFile: (absolutePath: string, content: string) =>
+    writeFile: (absolutePath: string, content: Buffer | string) =>
       writeWorkspaceFile(root, rootPromise, absolutePath, content),
     readFile: async (absolutePath: string) => {
       const relative = toRelativeWorkspacePath(root, absolutePath);
@@ -1070,7 +1074,7 @@ function createHostEditOperations(root: string, options?: { workspaceOnly?: bool
       const safeRead = await (await rootPromise).read(relative);
       return safeRead.buffer;
     },
-    writeFile: (absolutePath: string, content: string) =>
+    writeFile: (absolutePath: string, content: Buffer | string) =>
       writeWorkspaceFile(root, rootPromise, absolutePath, content),
     access: async (absolutePath: string) => {
       let relative: string;

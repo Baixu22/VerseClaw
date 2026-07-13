@@ -1,14 +1,14 @@
 ﻿# Agent Runtime Index
 
-这是后续开�?agent 的入口索引。目标是让任何新 agent 接手时，不必重新翻整套研究材料，也不会丢失阶段进度�?
+这是后续开发 agent 的入口索引。目标是让任何新 agent 接手时，不必重新翻整套研究材料，也不会丢失阶段进度。
 
 ## How To Use
 
-1. 先读本文件�?
-2. 根据任务类型跳到 `Read For Task`�?
-3. 再读对应项目�?`clawx-mapping.md`、`useful-tests.md` 和必要专题文档�?
-4. 开工前在当前代码中确认实际入口，不要只按研究文档猜�?
-5. 完成一个实施切片后，更新本文件�?`Implementation Status` �?`Last Known Pointers`�?
+1. 先读本文件。
+2. 根据任务类型跳到 `Read For Task`。
+3. 再读对应项目的 `clawx-mapping.md`、`useful-tests.md` 和必要专题文档。
+4. 开工前在当前代码中确认实际入口，不要只按研究文档猜。
+5. 完成一个实施切片后，更新本文件的 `Implementation Status` 和 `Last Known Pointers`。
 
 ## Current Status
 
@@ -19,7 +19,7 @@ runtime_code_implementation: accepted_phase_8_runtime_memory_cutover_readiness_d
 agentmap_component_boundary: accepted_line_b_agentmap_component_boundary_hardened_development_pause_recommended_default_on_still_forbidden
 ```
 
-当前已有研究产物�?
+当前已有研究产物：
 
 - `runtime-research/agent-runtime-core-spec.md`
 - `runtime-research/implementation-roadmap.md`
@@ -36,17 +36,17 @@ agentmap_component_boundary: accepted_line_b_agentmap_component_boundary_hardene
 | Task Intent | Read These First | Then Read |
 |---|---|---|
 | 做第一阶段并行调研 | `handoffs/phase-1-runtime-surface-inventory/README.md`, `handoffs/phase-1-runtime-surface-inventory/research-prompt.md` | `handoffs/phase-1-runtime-surface-inventory/parallel-lanes.md`, `handoffs/phase-1-runtime-surface-inventory/submission-template.md` |
-| 做迁移替�?切流计划 | `migration-execution-plan.md` | `implementation-roadmap.md`, `agent-runtime-core-spec.md` |
-| �?AgentMap / 上下文压�?| `aider/algorithms.md`, `aider/contracts.md` | `aider/clawx-mapping.md`, `aider/useful-tests.md` |
+| 做迁移替换/切流计划 | `migration-execution-plan.md` | `implementation-roadmap.md`, `agent-runtime-core-spec.md` |
+| 做 AgentMap / 上下文压缩 | `aider/algorithms.md`, `aider/contracts.md` | `aider/clawx-mapping.md`, `aider/useful-tests.md` |
 | 做符号级读写/引用/诊断 | `serena/symbol-api.md` | `serena/clawx-mapping.md`, `serena/useful-tests.md` |
-| �?provider registry | `continue/providers.md` | `continue/clawx-mapping.md`, `continue/useful-tests.md` |
-| �?tool invocation protocol | `continue/tool-provider.md` | `agent-runtime-core-spec.md`, `continue/useful-tests.md` |
-| �?slash/runtime commands | `continue/slash-command.md` | `continue/clawx-mapping.md` |
-| �?event log / checkpoint / resume | `temporal/workflow-semantics.md`, `openhands/runtime-events.md` | `temporal/clawx-mapping.md`, `openhands/clawx-mapping.md` |
-| �?verifier / evidence | `agent-runtime-core-spec.md` sections 5-7 | `temporal/useful-tests.md`, `openhands/useful-tests.md` |
-| �?trace context provider | `opentelemetry/trace-model.md`, `opentelemetry/query-and-source-mapping.md` | `opentelemetry/clawx-mapping.md`, `opentelemetry/useful-tests.md` |
-| �?runtime memory / temporal facts | `graphiti/temporal-knowledge-graph.md` | `graphiti/clawx-mapping.md`, `graphiti/useful-tests.md` |
-| �?AST patch planner | `ast-grep/rule-structure.md`, `ast-grep/patch-flow.md` | `ast-grep/clawx-mapping.md`, `ast-grep/useful-tests.md` |
+| 做 provider registry | `continue/providers.md` | `continue/clawx-mapping.md`, `continue/useful-tests.md` |
+| 做 tool invocation protocol | `continue/tool-provider.md` | `agent-runtime-core-spec.md`, `continue/useful-tests.md` |
+| 做 slash/runtime commands | `continue/slash-command.md` | `continue/clawx-mapping.md` |
+| 做 event log / checkpoint / resume | `temporal/workflow-semantics.md`, `openhands/runtime-events.md` | `temporal/clawx-mapping.md`, `openhands/clawx-mapping.md` |
+| 做 verifier / evidence | `agent-runtime-core-spec.md` sections 5-7 | `temporal/useful-tests.md`, `openhands/useful-tests.md` |
+| 做 trace context provider | `opentelemetry/trace-model.md`, `opentelemetry/query-and-source-mapping.md` | `opentelemetry/clawx-mapping.md`, `opentelemetry/useful-tests.md` |
+| 做 runtime memory / temporal facts | `graphiti/temporal-knowledge-graph.md` | `graphiti/clawx-mapping.md`, `graphiti/useful-tests.md` |
+| 做 AST patch planner | `ast-grep/rule-structure.md`, `ast-grep/patch-flow.md` | `ast-grep/clawx-mapping.md`, `ast-grep/useful-tests.md` |
 | 做总体计划/排期 | `implementation-roadmap.md`, `migration-execution-plan.md` | `agent-runtime-core-spec.md` |
 
 ## Implementation Status

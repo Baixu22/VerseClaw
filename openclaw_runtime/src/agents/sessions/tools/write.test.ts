@@ -72,20 +72,20 @@ describe("write tool: line endings and byte counting", () => {
     expect(result.content[0]).toMatchObject({ text: "Successfully wrote 7 bytes to crlf.txt" });
   });
 
-  it("reports content.length (code units), NOT UTF-8 byte length, in the success message", async () => {
+  it("reports the actual UTF-8 byte length in the success message", async () => {
     // characterization: current behavior, not necessarily desired — "bytes" in
     // the message is really String.length. "café" is 4 code units but 5 UTF-8
     // bytes; the file on disk is 5 bytes, yet the message says 4.
     const result = await executeWrite({ path: "unicode.txt", content: "café" });
-    expect(result.content[0]).toMatchObject({ text: "Successfully wrote 4 bytes to unicode.txt" });
+    expect(result.content[0]).toMatchObject({ text: "Successfully wrote 5 bytes to unicode.txt" });
     const onDisk = await stat(join(dir, "unicode.txt"));
     expect(onDisk.size).toBe(5);
   });
 
-  it("counts an astral emoji as its surrogate-pair length, diverging further from bytes", async () => {
+  it("reports an astral emoji using its UTF-8 byte length", async () => {
     // characterization: "😀" is 2 UTF-16 code units but 4 UTF-8 bytes.
     const result = await executeWrite({ path: "emoji.txt", content: "😀" });
-    expect(result.content[0]).toMatchObject({ text: "Successfully wrote 2 bytes to emoji.txt" });
+    expect(result.content[0]).toMatchObject({ text: "Successfully wrote 4 bytes to emoji.txt" });
     expect((await stat(join(dir, "emoji.txt"))).size).toBe(4);
   });
 });

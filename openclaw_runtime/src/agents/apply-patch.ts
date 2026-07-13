@@ -8,6 +8,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Type } from "typebox";
 import { openRootFile, type RootFileOpenResult } from "../infra/boundary-file-read.js";
+import { formatErrorMessage } from "../infra/errors.js";
 import { root as fsRoot } from "../infra/fs-safe.js";
 import { PATH_ALIAS_POLICIES, type PathAliasPolicy } from "../infra/path-alias-guards.js";
 import { applyUpdateHunk } from "./apply-patch-update.js";
@@ -15,6 +16,11 @@ import { toRelativeSandboxPath, resolvePathFromInput } from "./path-policy.js";
 import type { AgentToolWithMeta } from "./tools/common.js";
 import { assertSandboxPath } from "./sandbox-paths.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
+import {
+  decodeTextFile,
+  encodeTextFile,
+  type DecodedTextFile,
+} from "./sessions/tools/text-file-codec.js";
 
 const BEGIN_PATCH_MARKER = "*** Begin Patch";
 const END_PATCH_MARKER = "*** End Patch";
@@ -188,9 +194,20 @@ export async function applyPatch(
     }
 
     const target = await resolvePatchPath(hunk.path, options);
-    const applied = await applyUpdateHunk(target.resolved, hunk.chunks, {
-      readFile: (pathLocal) => fileOps.readFile(pathLocal),
+    const source = await fileOps.readFile(target.resolved).catch((error: unknown) => {
+      throw new Error(
+        `Failed to read file to update ${target.resolved}: ${formatErrorMessage(error)}`,
+      );
     });
+    const applied = await applyUpdateHunk(target.resolved, hunk.chunks, {
+      readFile: async () => source.text,
+    });
+    const encoded =
+      source.encoding === "utf8"
+        ? applied
+        : source.encoding === "utf8-bom"
+          ? `\uFEFF${applied}`
+          : encodeTextFile(applied, source.encoding);
 
     if (hunk.movePath) {
       const moveTarget = await resolvePatchPath(hunk.movePath, options);
@@ -200,7 +217,7 @@ export async function applyPatch(
         path.resolve(moveTarget.resolved) === path.resolve(target.resolved);
       await fileOps.writeFile(
         moveResolvesToSource ? target.resolved : moveTarget.resolved,
-        applied,
+        encoded,
       );
       if (!moveResolvesToSource) {
         await fileOps.remove(target.resolved);
@@ -212,7 +229,7 @@ export async function applyPatch(
         moveResolvesToSource ? target.display : moveTarget.display,
       );
     } else {
-      await fileOps.writeFile(target.resolved, applied);
+      await fileOps.writeFile(target.resolved, encoded);
       recordSummary(summary, seen, "modified", target.display);
     }
   }
@@ -255,8 +272,8 @@ function formatSummary(summary: ApplyPatchSummary): string {
 }
 
 type PatchFileOps = {
-  readFile: (filePath: string) => Promise<string>;
-  writeFile: (filePath: string, content: string) => Promise<void>;
+  readFile: (filePath: string) => Promise<DecodedTextFile>;
+  writeFile: (filePath: string, content: Buffer | string) => Promise<void>;
   remove: (filePath: string) => Promise<void>;
   mkdirp: (dir: string) => Promise<void>;
 };
@@ -267,7 +284,7 @@ function resolvePatchFileOps(options: ApplyPatchOptions): PatchFileOps {
     return {
       readFile: async (filePath) => {
         const buf = await bridge.readFile({ filePath, cwd: root });
-        return buf.toString("utf8");
+        return decodeTextFile(buf, filePath);
       },
       writeFile: (filePath, content) => bridge.writeFile({ filePath, cwd: root, data: content }),
       remove: (filePath) => bridge.remove({ filePath, cwd: root, force: false }),
@@ -279,7 +296,7 @@ function resolvePatchFileOps(options: ApplyPatchOptions): PatchFileOps {
   return {
     readFile: async (filePath) => {
       if (!workspaceOnly) {
-        return await fs.readFile(filePath, "utf8");
+        return decodeTextFile(await fs.readFile(filePath), filePath);
       }
       const opened = await openRootFile({
         absolutePath: filePath,
@@ -288,18 +305,30 @@ function resolvePatchFileOps(options: ApplyPatchOptions): PatchFileOps {
       });
       assertBoundaryRead(opened, filePath);
       try {
-        return syncFs.readFileSync(opened.fd, "utf8");
+        return decodeTextFile(syncFs.readFileSync(opened.fd), filePath);
       } finally {
         syncFs.closeSync(opened.fd);
       }
     },
     writeFile: async (filePath, content) => {
       if (!workspaceOnly) {
-        await fs.writeFile(filePath, content, "utf8");
+        if (typeof content === "string") {
+          await fs.writeFile(filePath, content, "utf8");
+        } else {
+          await fs.writeFile(filePath, content);
+        }
         return;
       }
       const relative = toRelativeSandboxPath(options.cwd, filePath);
-      await (await rootPromise)?.write(relative, content, { encoding: "utf8" });
+      const root = await rootPromise;
+      if (!root) {
+        return;
+      }
+      if (typeof content === "string") {
+        await root.write(relative, content, { encoding: "utf8" });
+      } else {
+        await root.write(relative, content);
+      }
     },
     remove: async (filePath) => {
       if (!workspaceOnly) {

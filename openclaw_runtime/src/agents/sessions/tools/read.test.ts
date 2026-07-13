@@ -18,10 +18,6 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { ImageContent, TextContent } from "../../../llm/types.js";
 import { createReadToolDefinition } from "./read.js";
 
-const BOM = String.fromCharCode(0xfeff); // U+FEFF byte-order mark
-const REPLACEMENT = String.fromCharCode(0xfffd); // U+FFFD replacement character
-const NUL = String.fromCharCode(0); // U+0000 null
-
 let dir: string;
 
 beforeEach(async () => {
@@ -66,8 +62,8 @@ describe("read tool: plain UTF-8", () => {
   });
 });
 
-describe("read tool: encoding blind spots", () => {
-  it("keeps a UTF-8 BOM in the returned text", async () => {
+describe("read tool: text encoding", () => {
+  it("strips a UTF-8 BOM from returned text", async () => {
     // characterization: current behavior, not necessarily desired — the BOM is
     // not stripped on read (edit.ts DOES strip it before matching), so a model
     // echoing this text as edit oldText will fail to match.
@@ -76,32 +72,37 @@ describe("read tool: encoding blind spots", () => {
       Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), Buffer.from("hello")]),
     );
     const result = await executeRead({ path: "bom.txt" });
-    expect(textOf(result)).toBe(`${BOM}hello`);
+    expect(textOf(result)).toBe("hello");
   });
 
-  it("returns mojibake for a UTF-16LE file (no encoding detection)", async () => {
+  it("decodes UTF-16LE text and strips its BOM", async () => {
     // characterization: current behavior, not necessarily desired — the buffer
     // is decoded as UTF-8 unconditionally: the FF FE BOM becomes two U+FFFD and
     // each ASCII char is trailed by its UTF-16 high byte (NUL, U+0000).
     const utf16 = Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from("hi", "utf16le")]);
     await writeFile(join(dir, "utf16.txt"), utf16);
     const result = await executeRead({ path: "utf16.txt" });
-    expect(textOf(result)).toBe(`${REPLACEMENT}${REPLACEMENT}h${NUL}i${NUL}`);
+    expect(textOf(result)).toBe("hi");
   });
 
-  it("returns control/replacement characters for a binary file (no binary detection)", async () => {
+  it("decodes UTF-16BE text and strips its BOM", async () => {
+    const utf16be = Buffer.from([0xfe, 0xff, 0x00, 0x68, 0x00, 0x69]);
+    await writeFile(join(dir, "utf16be.txt"), utf16be);
+    const result = await executeRead({ path: "utf16be.txt" });
+    expect(textOf(result)).toBe("hi");
+  });
+
+  it("rejects non-image binary data instead of returning garbled text", async () => {
     // characterization: current behavior, not necessarily desired — non-image
     // binary data is decoded as UTF-8 text instead of being reported as binary.
     // Bytes 00/01/02 pass through as C0 control chars; ff/fe become U+FFFD.
     await writeFile(join(dir, "bin.dat"), Buffer.from([0x00, 0x01, 0x02, 0xff, 0xfe]));
-    const result = await executeRead({ path: "bin.dat" });
-    const expected =
-      String.fromCharCode(0) +
-      String.fromCharCode(1) +
-      String.fromCharCode(2) +
-      REPLACEMENT +
-      REPLACEMENT;
-    expect(textOf(result)).toBe(expected);
+    await expect(executeRead({ path: "bin.dat" })).rejects.toThrowError(/binary file/i);
+  });
+
+  it("rejects unsupported GBK bytes instead of guessing a lossy decoding", async () => {
+    await writeFile(join(dir, "gbk.txt"), Buffer.from([0xc4, 0xe3, 0xba, 0xc3]));
+    await expect(executeRead({ path: "gbk.txt" })).rejects.toThrowError(/binary file/i);
   });
 });
 
@@ -132,7 +133,7 @@ describe("read tool: truncation boundaries", () => {
     });
   });
 
-  it("counts the phantom line after a trailing newline in the continuation notice", async () => {
+  it("does not count a phantom line after a trailing newline", async () => {
     // characterization: current behavior, not necessarily desired — split("\n")
     // on a trailing-newline file yields a final empty element, so a 2001-line
     // file is reported as "of 2002" in the notice (details.truncation.totalLines
@@ -141,7 +142,7 @@ describe("read tool: truncation boundaries", () => {
     await writeFile(join(dir, "trailing.txt"), `${lines.join("\n")}\n`, "utf-8");
     const result = await executeRead({ path: "trailing.txt" });
     expect(
-      textOf(result).endsWith("\n\n[Showing lines 1-2000 of 2002. Use offset=2001 to continue.]"),
+      textOf(result).endsWith("\n\n[Showing lines 1-2000 of 2001. Use offset=2001 to continue.]"),
     ).toBe(true);
     expect(result.details?.truncation).toMatchObject({ totalLines: 2001 });
   });
@@ -207,20 +208,21 @@ describe("read tool: offset/limit", () => {
     expect(textOf(result)).toBe("one\n\n[2 more lines in file. Use offset=2 to continue.]");
   });
 
-  it("returns empty text when offset targets the phantom line after a trailing newline", async () => {
+  it("rejects an offset targeting the phantom line after a trailing newline", async () => {
     // characterization: current behavior, not necessarily desired — "a\nb\n"
     // splits into ["a","b",""], so offset=3 addresses the empty phantom line.
     await writeFile(join(dir, "f.txt"), "a\nb\n", "utf-8");
-    const result = await executeRead({ path: "f.txt", offset: 3 });
-    expect(textOf(result)).toBe("");
+    await expect(executeRead({ path: "f.txt", offset: 3 })).rejects.toThrowError(
+      "Offset 3 is beyond end of file (2 lines total)",
+    );
   });
 
-  it("rejects an offset beyond the end, counting the phantom line in the total", async () => {
+  it("reports the physical line count for an offset beyond the end", async () => {
     // characterization: current behavior, not necessarily desired — the error
     // reports "3 lines total" for a 2-line file with a trailing newline.
     await writeFile(join(dir, "f.txt"), "a\nb\n", "utf-8");
     await expect(executeRead({ path: "f.txt", offset: 4 })).rejects.toThrowError(
-      "Offset 4 is beyond end of file (3 lines total)",
+      "Offset 4 is beyond end of file (2 lines total)",
     );
   });
 });

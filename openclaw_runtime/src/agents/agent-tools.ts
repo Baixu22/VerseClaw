@@ -80,7 +80,7 @@ import type { SandboxContext } from "./sandbox.js";
 import { SANDBOX_AGENT_WORKSPACE_MOUNT } from "./sandbox/constants.js";
 import { resolveReadOnlyWorkspaceSkillMounts } from "./sandbox/workspace-mounts.js";
 import { resolveSenderToolPolicy } from "./sender-tool-policy.js";
-import { createCodingTools, createReadTool } from "./sessions/index.js";
+import { createReadTool } from "./sessions/index.js";
 import {
   isSubagentEnvelopeSession,
   resolveSubagentCapabilityStore,
@@ -543,7 +543,6 @@ export function createOpenClawCodingTools(options?: {
   /** Runtime-only resolved skill paths that the read tool may load under workspaceOnly. */
   skillsSnapshot?: SkillSnapshot;
 }): AnyAgentTool[] {
-  const execToolName = "exec";
   const sandbox = options?.sandbox?.enabled ? options.sandbox : undefined;
   const isMemoryFlushRun = options?.trigger === "memory";
   if (isMemoryFlushRun && !options?.memoryFlushWritePath) {
@@ -743,70 +742,74 @@ export function createOpenClawCodingTools(options?: {
   const imageSanitization = resolveImageSanitizationLimits(options?.config);
   options?.recordToolPrepStage?.("workspace-policy");
 
-  const base: AnyAgentTool[] = [];
-  if (includeBaseCodingTools) {
-    // The ported bash tool is never used here (the shell surface is the native
-    // exec/process family below), so skip constructing it at all.
-    const baseCodingTools = createCodingTools(codingRoot, undefined, [
-      "read",
-      "edit",
-      "write",
-    ]) as unknown as AnyAgentTool[];
-    for (const tool of baseCodingTools) {
-      if (tool.name === "read") {
-        if (sandboxRoot) {
-          const sandboxed = createSandboxedReadTool({
-            root: sandboxRoot,
-            bridge: sandboxFsBridge!,
-            modelContextWindowTokens: options?.modelContextWindowTokens,
-            imageSanitization,
-          });
-          base.push(
-            workspaceOnly
+  const baseToolAssemblers: Array<{ name: "read" | "edit" | "write"; build: () => AnyAgentTool }> =
+    [
+      {
+        name: "read",
+        build: () => {
+          if (sandboxRoot) {
+            const sandboxed = createSandboxedReadTool({
+              root: sandboxRoot,
+              bridge: sandboxFsBridge!,
+              modelContextWindowTokens: options?.modelContextWindowTokens,
+              imageSanitization,
+            });
+            return workspaceOnly
               ? wrapToolWorkspaceRootGuardWithOptions(sandboxed, sandboxRoot, {
                   additionalContainerMounts: readOnlySandboxReadMounts(sandbox),
                   containerWorkdir: sandbox.containerWorkdir,
                 })
-              : sandboxed,
-          );
-          continue;
-        }
-        const freshReadTool = createReadTool(codingRoot);
-        const wrapped = createOpenClawReadTool(freshReadTool, {
-          modelContextWindowTokens: options?.modelContextWindowTokens,
-          imageSanitization,
-        });
-        base.push(
-          workspaceOnly
+              : sandboxed;
+          }
+          const wrapped = createOpenClawReadTool(createReadTool(codingRoot), {
+            modelContextWindowTokens: options?.modelContextWindowTokens,
+            imageSanitization,
+          });
+          return workspaceOnly
             ? wrapToolWorkspaceRootGuardWithOptions(wrapped, codingRoot, {
                 additionalRoots: skillReadRoots,
               })
-            : wrapped,
-        );
-        continue;
-      }
-      if (tool.name === "bash" || tool.name === execToolName) {
-        continue;
-      }
-      if (tool.name === "write") {
-        if (sandboxRoot) {
-          continue;
-        }
-        const wrapped = createHostWorkspaceWriteTool(codingRoot, { workspaceOnly });
-        base.push(workspaceOnly ? wrapToolWorkspaceRootGuard(wrapped, codingRoot) : wrapped);
-        continue;
-      }
-      if (tool.name === "edit") {
-        if (sandboxRoot) {
-          continue;
-        }
-        const wrapped = createHostWorkspaceEditTool(codingRoot, { workspaceOnly });
-        base.push(workspaceOnly ? wrapToolWorkspaceRootGuard(wrapped, codingRoot) : wrapped);
-        continue;
-      }
-      base.push(tool);
-    }
-  }
+            : wrapped;
+        },
+      },
+      {
+        name: "edit",
+        build: () => {
+          const wrapped = sandboxRoot
+            ? createSandboxedEditTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
+            : createHostWorkspaceEditTool(codingRoot, { workspaceOnly });
+          if (!workspaceOnly) {
+            return wrapped;
+          }
+          return sandboxRoot
+            ? wrapToolWorkspaceRootGuardWithOptions(wrapped, sandboxRoot, {
+                containerWorkdir: sandbox.containerWorkdir,
+              })
+            : wrapToolWorkspaceRootGuard(wrapped, codingRoot);
+        },
+      },
+      {
+        name: "write",
+        build: () => {
+          const wrapped = sandboxRoot
+            ? createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
+            : createHostWorkspaceWriteTool(codingRoot, { workspaceOnly });
+          if (!workspaceOnly) {
+            return wrapped;
+          }
+          return sandboxRoot
+            ? wrapToolWorkspaceRootGuardWithOptions(wrapped, sandboxRoot, {
+                containerWorkdir: sandbox.containerWorkdir,
+              })
+            : wrapToolWorkspaceRootGuard(wrapped, codingRoot);
+        },
+      },
+    ];
+  const base = includeBaseCodingTools
+    ? baseToolAssemblers
+        .filter(({ name }) => name === "read" || !sandboxRoot || allowWorkspaceWrites)
+        .map(({ build }) => build())
+    : [];
   options?.recordToolPrepStage?.("base-coding-tools");
 
   // COMPASS: memory_query tool — agent 可主动查询长期记忆 (受 persist + COMPASS 门控).
@@ -985,30 +988,6 @@ export function createOpenClawCodingTools(options?: {
     : [];
   const tools: AnyAgentTool[] = [
     ...base,
-    ...(includeBaseCodingTools && sandboxRoot
-      ? allowWorkspaceWrites
-        ? [
-            workspaceOnly
-              ? wrapToolWorkspaceRootGuardWithOptions(
-                  createSandboxedEditTool({ root: sandboxRoot, bridge: sandboxFsBridge! }),
-                  sandboxRoot,
-                  {
-                    containerWorkdir: sandbox.containerWorkdir,
-                  },
-                )
-              : createSandboxedEditTool({ root: sandboxRoot, bridge: sandboxFsBridge! }),
-            workspaceOnly
-              ? wrapToolWorkspaceRootGuardWithOptions(
-                  createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! }),
-                  sandboxRoot,
-                  {
-                    containerWorkdir: sandbox.containerWorkdir,
-                  },
-                )
-              : createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! }),
-          ]
-        : []
-      : []),
     ...(includeShellTools && applyPatchTool ? [applyPatchTool as unknown as AnyAgentTool] : []),
     ...(execTool ? [execTool as unknown as AnyAgentTool] : []),
     ...(processTool ? [processTool as unknown as AnyAgentTool] : []),

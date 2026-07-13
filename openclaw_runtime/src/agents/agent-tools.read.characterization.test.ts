@@ -210,7 +210,7 @@ describe("createOpenClawReadTool", () => {
     expect(textOf(result)).toBe("hello\nworld\n");
   });
 
-  it("aggregates a line-truncated read across pages, inserting a blank-line seam", async () => {
+  it("aggregates line-truncated pages without inventing a blank-line seam", async () => {
     // characterization: current behavior, not necessarily desired — with no
     // explicit limit, adaptive paging re-reads past the 2000-line truncation and
     // joins pages with "\n\n", so the reproduced text gains a blank line between
@@ -220,9 +220,10 @@ describe("createOpenClawReadTool", () => {
     const lines = Array.from({ length: 2100 }, (_, i) => `L${i + 1}`);
     await writeFile(join(dir, "big.txt"), lines.join("\n"), "utf-8");
     const result = await hostReadTool().execute("call", { path: "big.txt" }, undefined, undefined);
-    const expected = `${lines.slice(0, 2000).join("\n")}\n\n${lines.slice(2000).join("\n")}`;
-    expect(textOf(result)).toBe(expected);
-    expect(result.details).toBeUndefined();
+    expect(textOf(result)).toBe(lines.join("\n"));
+    expect(result.details).toMatchObject({
+      truncation: { truncated: true, truncatedBy: "lines", outputLines: 2000 },
+    });
   });
 
   it("caps multi-page output at 32KB, keeping page-1 truncation details minus the content field", async () => {

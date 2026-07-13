@@ -190,6 +190,143 @@ export function classifyTrackedFile(filePath, bytes) {
   return "text";
 }
 
+export function findReplacementCharacterLines(bytes) {
+  const lines = bytes.toString("utf8").split(/\r\n|\n|\r/);
+  const matches = [];
+  for (let index = 0; index < lines.length; index += 1) {
+    const count = [...lines[index]].filter((character) => character === "\uFFFD").length;
+    if (count > 0) {
+      matches.push({ line: index + 1, count });
+    }
+  }
+  return matches;
+}
+
+function globToRegExp(pattern) {
+  let expression = "^";
+  for (let index = 0; index < pattern.length; index += 1) {
+    const character = pattern[index];
+    if (character === "*") {
+      if (pattern[index + 1] === "*") {
+        expression += ".*";
+        index += 1;
+      } else {
+        expression += "[^/]*";
+      }
+    } else {
+      expression += character.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+    }
+  }
+  return new RegExp(`${expression}$`);
+}
+
+function prepareReplacementAllowlist(allowlist) {
+  if (!allowlist) {
+    return [];
+  }
+  if (allowlist.schemaVersion !== 1 || !Array.isArray(allowlist.entries)) {
+    throw new Error("invalid U+FFFD allowlist");
+  }
+  return allowlist.entries.map((entry, index) => {
+    if (
+      typeof entry.path !== "string" ||
+      entry.path.length === 0 ||
+      (entry.line !== "*" && (!Number.isInteger(entry.line) || entry.line < 1)) ||
+      typeof entry.reason !== "string" ||
+      entry.reason.trim().length === 0 ||
+      typeof entry.test !== "string" ||
+      entry.test.trim().length === 0
+    ) {
+      throw new Error(`invalid U+FFFD allowlist entry at index ${index}`);
+    }
+    const expected = entry.expected;
+    if (
+      !expected ||
+      !Number.isInteger(expected.files) ||
+      expected.files < 1 ||
+      !Number.isInteger(expected.lines) ||
+      expected.lines < 1 ||
+      !Number.isInteger(expected.units) ||
+      expected.units < 1
+    ) {
+      throw new Error(`invalid U+FFFD allowlist expected counts at index ${index}`);
+    }
+    return {
+      ...entry,
+      index,
+      pathMatcher: globToRegExp(entry.path.replaceAll("\\", "/")),
+      matchedFiles: new Set(),
+      matchedLines: new Set(),
+      matchedUnits: 0,
+    };
+  });
+}
+
+function auditReplacementCharacters(files, allowlist) {
+  const prepared = prepareReplacementAllowlist(allowlist);
+  let totalUnits = 0;
+  let allowedUnits = 0;
+  const auditedFiles = files.map((file) => ({
+    path: file.path,
+    lines: file.lines.map((line) => {
+      totalUnits += line.count;
+      const matchingEntries = prepared.filter(
+        (entry) =>
+          entry.pathMatcher.test(file.path) && (entry.line === "*" || entry.line === line.line),
+      );
+      if (matchingEntries.length !== 1) {
+        return {
+          ...line,
+          allowed: false,
+          allowlistMatches: matchingEntries.map((entry) => entry.index),
+        };
+      }
+      const [entry] = matchingEntries;
+      entry.matchedFiles.add(file.path);
+      entry.matchedLines.add(`${file.path}:${line.line}`);
+      entry.matchedUnits += line.count;
+      allowedUnits += line.count;
+      return {
+        ...line,
+        allowed: true,
+        allowlistEntry: entry.index,
+      };
+    }),
+  }));
+  const allowlistErrors = prepared.flatMap((entry) => {
+    const actual = {
+      files: entry.matchedFiles.size,
+      lines: entry.matchedLines.size,
+      units: entry.matchedUnits,
+    };
+    return actual.files === entry.expected.files &&
+      actual.lines === entry.expected.lines &&
+      actual.units === entry.expected.units
+      ? []
+      : [
+          {
+            entry: entry.index,
+            path: entry.path,
+            expected: entry.expected,
+            actual,
+          },
+        ];
+  });
+  return {
+    summary: {
+      files: auditedFiles.length,
+      lines: auditedFiles.reduce((total, file) => total + file.lines.length, 0),
+      units: totalUnits,
+      allowedUnits,
+      unallowedUnits: totalUnits - allowedUnits,
+      allowlistEntries: prepared.length,
+      allowlistErrors: allowlistErrors.length,
+    },
+    files: auditedFiles,
+    allowlistErrors,
+  };
+}
+
 function gitOutput(repoRoot, args) {
   return execFileSync("git", args, {
     cwd: repoRoot,
@@ -296,13 +433,19 @@ function withContext(bytes, range, contextBytes) {
   };
 }
 
-export function scanTrackedFiles({ repoRoot, pathspec, contextBytes = 16 }) {
+export function scanTrackedFiles({
+  repoRoot,
+  pathspec,
+  contextBytes = 16,
+  replacementAllowlist,
+}) {
   const objectFormat = gitOutput(repoRoot, ["rev-parse", "--show-object-format"]);
   const baseCommit = gitOutput(repoRoot, ["rev-parse", "HEAD"]);
   const entries = listIndexEntries(repoRoot, pathspec);
   const gitBlobs = readGitBlobs(repoRoot, entries);
   const worktreeOids = hashWorktreeFiles(repoRoot, entries);
   const files = [];
+  const replacementFiles = [];
   const summary = {
     trackedFiles: entries.length,
     textFiles: 0,
@@ -336,24 +479,29 @@ export function scanTrackedFiles({ repoRoot, pathspec, contextBytes = 16 }) {
       continue;
     }
 
-    const invalidRanges = findInvalidUtf8Ranges(bytes).map((range) =>
+    const rawInvalidRanges = findInvalidUtf8Ranges(bytes);
+    const invalidRanges = rawInvalidRanges.map((range) =>
       withContext(bytes, range, contextBytes),
     );
-    if (invalidRanges.length === 0) {
-      continue;
+    if (rawInvalidRanges.length === 0) {
+      const lines = findReplacementCharacterLines(bytes);
+      if (lines.length > 0) {
+        replacementFiles.push({ path: entry.path, lines });
+      }
     }
-
-    summary.invalidFiles += 1;
-    summary.invalidUnits += invalidRanges.length;
-    files.push({
-      path: entry.path,
-      gitBlobOid: entry.oid,
-      worktreeBlobOid: worktreeOid,
-      worktreeMatchesGit,
-      sha256: hashBytes(bytes),
-      byteLength: bytes.length,
-      invalidRanges,
-    });
+    if (invalidRanges.length > 0) {
+      summary.invalidFiles += 1;
+      summary.invalidUnits += invalidRanges.length;
+      files.push({
+        path: entry.path,
+        gitBlobOid: entry.oid,
+        worktreeBlobOid: worktreeOid,
+        worktreeMatchesGit,
+        sha256: hashBytes(bytes),
+        byteLength: bytes.length,
+        invalidRanges,
+      });
+    }
   }
 
   return {
@@ -363,6 +511,7 @@ export function scanTrackedFiles({ repoRoot, pathspec, contextBytes = 16 }) {
     pathspec: pathspec ?? null,
     summary,
     files,
+    replacementCharacters: auditReplacementCharacters(replacementFiles, replacementAllowlist),
   };
 }
 
@@ -593,15 +742,20 @@ function parseCliArgs(argv) {
     root: undefined,
     pathspec: "openclaw_runtime",
     output: undefined,
+    replacementAllowlist: undefined,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     if (argument === "--root") {
       options.root = argv[++index];
+    } else if (argument === "--all") {
+      options.pathspec = undefined;
     } else if (argument === "--pathspec") {
       options.pathspec = argv[++index];
     } else if (argument === "--output") {
       options.output = argv[++index];
+    } else if (argument === "--replacement-allowlist") {
+      options.replacementAllowlist = argv[++index];
     } else {
       throw new Error(`unknown argument: ${argument}`);
     }
@@ -622,12 +776,17 @@ function writeJsonAtomic(outputPath, value) {
 
 function runCli() {
   const options = parseCliArgs(process.argv.slice(2));
+  const replacementAllowlist = options.replacementAllowlist
+    ? JSON.parse(fs.readFileSync(path.resolve(options.replacementAllowlist), "utf8"))
+    : undefined;
   const manifest = scanTrackedFiles({
     repoRoot: path.resolve(options.root),
     pathspec: options.pathspec,
+    replacementAllowlist,
   });
   writeJsonAtomic(options.output, manifest);
   const { summary } = manifest;
+  const replacements = manifest.replacementCharacters.summary;
   process.stdout.write(
     [
       `trackedFiles=${summary.trackedFiles}`,
@@ -636,9 +795,17 @@ function runCli() {
       `invalidFiles=${summary.invalidFiles}`,
       `invalidUnits=${summary.invalidUnits}`,
       `worktreeMismatches=${summary.worktreeMismatches}`,
+      `replacementUnits=${replacements.units}`,
+      `unallowedReplacementUnits=${replacements.unallowedUnits}`,
+      `replacementAllowlistErrors=${replacements.allowlistErrors}`,
     ].join(" ") + "\n",
   );
-  if (summary.invalidUnits > 0 || summary.worktreeMismatches > 0) {
+  if (
+    summary.invalidUnits > 0 ||
+    summary.worktreeMismatches > 0 ||
+    replacements.unallowedUnits > 0 ||
+    replacements.allowlistErrors > 0
+  ) {
     process.exitCode = 1;
   }
 }

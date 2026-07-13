@@ -180,5 +180,22 @@ helper，不得因测试依赖而保留 deprecated 生产导出。
 | 阶段 1 注入语义未定义投影/去重 | transformContext 临时投影、exactly-once 与收窄 identity 条款 |
 | 完成报告可能混淆基础设施与真实增益 | producer coverage = 0 诚实声明；build 证据分列 |
 | mainKey 自定义值导致 DCS session 分类失真 | config-aware 共享谓词与四处私有判定收编 |
-| 两条休眠 role-memory pilot 可能演化为第三套通道 | provider-registry 待删；chat-turn pilot 仅作阶段 4 A/B 基线 |
+| 两条休眠 role-memory pilot 可能演化为第三套通道 | provider-registry pilot 已由 T1 删除；chat-turn pilot 仅作阶段 4 A/B 基线 |
 | CVK 与 DCS 双注入无联合预算 | 分别记录字符数；阶段 4 前声明合计上限 |
+
+---
+
+## T2 运维契约增补
+
+T2 不改变 DCS Stage 1-5 的行为面，只收紧 coding-tool 文件边界与注册结构：
+
+- read/edit/apply_patch 对 UTF-8、UTF-8 BOM、UTF-16LE/BE 采用严格解码，
+  对不支持的遗留编码及二进制输入在写入前失败；
+- edit/apply_patch 保留原始 BOM/编码、CRLF/LF/CR 物理换行分布和尾换行状态；
+- write 的成功字节数使用真实 UTF-8 字节数，且 edit/write/apply_patch 的
+  `details.working_memory` envelope 不变；
+- read/edit/write 的注册顺序、sandbox 只读策略、workspace guard 与审批边界不变；
+- 所有 tracked Git blob 文本必须为有效 UTF-8；U+FFFD 仅允许出现在有
+  path、line、reason、test 和固定计数的 allowlist 中；
+- sessions SDK 审计未证明任何可安全删除的公开导出，因此
+  `plugin-sdk/agent-sessions.ts` 的 wildcard 公共面保持不变。

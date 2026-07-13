@@ -94,6 +94,16 @@ describe("truncateTail threshold boundaries", () => {
     expect(result.content).toBe("123456789A");
     expect(result.lastLinePartial).toBe(true);
   });
+
+  it("replaces retained unpaired surrogate halves at a byte boundary", () => {
+    for (const surrogate of ["\uD800", "\uDC00"]) {
+      const result = truncateTail(`prefix${surrogate}`, { maxLines: 10, maxBytes: 3 });
+      expect(result.truncated).toBe(true);
+      expect(result.truncatedBy).toBe("bytes");
+      expect(result.content).toBe("\uFFFD");
+      expect(result.lastLinePartial).toBe(true);
+    }
+  });
 });
 
 describe("OutputAccumulator", () => {

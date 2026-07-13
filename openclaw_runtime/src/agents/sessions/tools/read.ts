@@ -31,6 +31,7 @@ import { resolveReadPath } from "./path-utils.js";
 import { getTextOutput, invalidArgText, replaceTabs, shortenPath, str } from "./render-utils.js";
 import type { ReadToolDetails } from "./tool-contracts.js";
 import { wrapToolDefinition } from "./tool-definition-wrapper.js";
+import { decodeTextFile } from "./text-file-codec.js";
 import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES, formatSize, truncateHead } from "./truncate.js";
 
 const readSchema = Type.Object({
@@ -104,6 +105,39 @@ function trimTrailingEmptyLines(lines: string[]): string[] {
     end--;
   }
   return lines.slice(0, end);
+}
+
+type PhysicalLines = {
+  lines: string[];
+  endings: string[];
+};
+
+function splitPhysicalLines(text: string): PhysicalLines {
+  const lines: string[] = [];
+  const endings: string[] = [];
+  const matcher = /\r\n|\n|\r/g;
+  let start = 0;
+  for (const match of text.matchAll(matcher)) {
+    const index = match.index;
+    lines.push(text.slice(start, index));
+    endings.push(match[0]);
+    start = index + match[0].length;
+  }
+  if (start < text.length || lines.length === 0) {
+    lines.push(text.slice(start));
+  }
+  return { lines, endings };
+}
+
+function slicePhysicalLines(source: PhysicalLines, start: number, end: number): string {
+  let text = "";
+  for (let index = start; index < end; index += 1) {
+    text += source.lines[index] ?? "";
+    if (index < end - 1 || end === source.lines.length) {
+      text += source.endings[index] ?? "";
+    }
+  }
+  return text;
 }
 
 function getNonVisionImageNote(model: Model | undefined): string | undefined {
@@ -339,8 +373,9 @@ export function createReadToolDefinition(
             } else {
               // Read text content.
               const buffer = await ops.readFile(absolutePath);
-              const textContent = buffer.toString("utf-8");
-              const allLines = textContent.split("\n");
+              const textContent = decodeTextFile(buffer, path).text;
+              const physical = splitPhysicalLines(textContent);
+              const allLines = physical.lines;
               const totalFileLines = allLines.length;
               // Apply offset if specified. Convert from 1-indexed input to 0-indexed array access.
               const startLine = offset ? Math.max(0, offset - 1) : 0;
@@ -357,10 +392,10 @@ export function createReadToolDefinition(
               if (limit !== undefined) {
                 const normalizedLimit = normalizePositiveLimit(limit, DEFAULT_MAX_LINES);
                 const endLine = Math.min(startLine + normalizedLimit, allLines.length);
-                selectedContent = allLines.slice(startLine, endLine).join("\n");
+                selectedContent = slicePhysicalLines(physical, startLine, endLine);
                 userLimitedLines = endLine - startLine;
               } else {
-                selectedContent = allLines.slice(startLine).join("\n");
+                selectedContent = slicePhysicalLines(physical, startLine, allLines.length);
               }
               // Apply truncation, respecting both line and byte limits.
               const truncation = truncateHead(selectedContent);

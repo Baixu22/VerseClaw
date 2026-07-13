@@ -296,6 +296,26 @@ activation 与完整回归证据。T3 codegraph unlock 不属于本 Goal，未�
 
 ---
 
+## T2 Encoding Hygiene And Structural Convergence
+
+T2 keeps the Stage 1-5 DCS contracts unchanged while hardening the coding-tool
+filesystem boundary:
+
+- strict UTF-8/UTF-16 decoding with BOM-aware, encoding-preserving updates;
+- physical CRLF/LF/CR and terminal-newline preservation for edit/apply_patch;
+- real UTF-8 byte accounting for write;
+- adaptive read paging without invented blank lines or lost truncation details;
+- deterministic read/edit/write assembly with unchanged sandbox and
+  workspace-root policy;
+- an all-repository tracked Git-blob UTF-8 gate plus a tested, count-guarded
+  U+FFFD allowlist.
+
+The sessions SDK audit found no safe deletion: the large sessions modules have
+live embedded-runner consumers and `plugin-sdk/agent-sessions.ts` remains a
+public wildcard API. T2 therefore preserves that export surface.
+
+---
+
 ## 审阅原则
 
 1. **对抗性思维**：不假设规范正确，主动找漏洞

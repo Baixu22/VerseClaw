@@ -623,10 +623,10 @@ function validateServer(server: McpServerConfig): void {
     throw new Error('stdio MCP 服务必须配置命令');
   }
   if (server.transport !== 'stdio' && !server.url?.trim()) {
-    throw new Error('URL �?MCP 服务必须配置地址');
+    throw new Error('URL 型 MCP 服务必须配置地址');
   }
   if (server.scope !== 'global' && !server.ownerId?.trim()) {
-    throw new Error('Agent �?Workspace 作用域必须配�?ownerId');
+    throw new Error('Agent 或 Workspace 作用域必须配置 ownerId');
   }
 }
 
@@ -896,14 +896,14 @@ async function checkMcpHeartbeat(server: McpServerConfig): Promise<{ message: st
     };
   }
   if (!server.url) {
-    throw new Error('URL �?MCP 服务缺少地址');
+    throw new Error('URL 型 MCP 服务缺少地址');
   }
   const networkPolicy = server.networkPolicy ?? 'localOnly';
   if (networkPolicy === 'disabled') {
-    throw new Error('�?MCP 服务网络策略为关闭，不能发起 HTTP 心跳');
+    throw new Error('当 MCP 服务网络策略为关闭，不能发起 HTTP 心跳');
   }
   if (networkPolicy === 'localOnly' && !isLocalMcpUrl(server.url)) {
-    throw new Error('localOnly 网络策略只允�?localhost / 127.0.0.1 MCP 服务');
+    throw new Error('localOnly 网络策略只允许 localhost / 127.0.0.1 MCP 服务');
   }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 3500);
