@@ -107,6 +107,12 @@ export type ToolAttachmentContextMode = "none" | "summary" | "selected_details";
 export type ToolAttachmentRetentionMode = "discard" | "summary" | "detail_pool" | "current_turn_detail";
 export type AutomationPlaybookSource = "builtin" | "skill" | "user";
 export type AutomationPlaybookConfidence = "low" | "medium" | "high";
+export type AutomationPlaybookRisk = "low" | "medium" | "high" | "critical";
+
+export interface AutomationPlaybookSettings {
+  disabledPlaybookIds: string[];
+}
+
 export type ChatToolCallStatus = "running" | "success" | "error";
 export type AutomationTimelineEventType = "tool_call" | "page_change" | "wait" | "user_confirmation" | "failure_recovery";
 export type AutomationReportType = "general" | "page_inspection" | "form_diagnosis" | "interface_analysis";
