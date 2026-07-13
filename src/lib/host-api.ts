@@ -18,6 +18,20 @@ import type {
   AgentBrowserRequestModeUpgradeResult,
   AgentBrowserRespondBoundaryChoicePayload,
   AgentBrowserRespondBoundaryChoiceResult,
+  AgentBrowserNetworkListPayload,
+  AgentBrowserNetworkListResult,
+  AgentBrowserNetworkDetailPayload,
+  AgentBrowserNetworkDetailResult,
+  AgentBrowserNetworkClearPayload,
+  AgentBrowserNetworkClearResult,
+  AgentBrowserNetworkWaitPayload,
+  AgentBrowserNetworkWaitResult,
+  AgentBrowserNetworkComparePayload,
+  AgentBrowserNetworkCompareResult,
+  AgentBrowserNetworkFindParamsPayload,
+  AgentBrowserNetworkFindParamsResult,
+  AgentBrowserNetworkExtractJsPayload,
+  AgentBrowserNetworkExtractJsResult,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -777,6 +791,20 @@ export const hostApi = {
       invokeHost('agentBrowser', 'requestModeUpgrade', input),
     respondBoundaryChoice: (input: AgentBrowserRespondBoundaryChoicePayload): Promise<AgentBrowserRespondBoundaryChoiceResult> =>
       invokeHost('agentBrowser', 'respondBoundaryChoice', input),
+    networkListRequests: (input: AgentBrowserNetworkListPayload): Promise<AgentBrowserNetworkListResult> =>
+      invokeHost('agentBrowser', 'networkListRequests', input),
+    networkGetRequestDetails: (input: AgentBrowserNetworkDetailPayload): Promise<AgentBrowserNetworkDetailResult> =>
+      invokeHost('agentBrowser', 'networkGetRequestDetails', input),
+    networkClearRequests: (input: AgentBrowserNetworkClearPayload): Promise<AgentBrowserNetworkClearResult> =>
+      invokeHost('agentBrowser', 'networkClearRequests', input),
+    networkWaitForRequests: (input: AgentBrowserNetworkWaitPayload): Promise<AgentBrowserNetworkWaitResult> =>
+      invokeHost('agentBrowser', 'networkWaitForRequests', input),
+    networkCompareRequests: (input: AgentBrowserNetworkComparePayload): Promise<AgentBrowserNetworkCompareResult> =>
+      invokeHost('agentBrowser', 'networkCompareRequests', input),
+    networkFindParameterCandidates: (input: AgentBrowserNetworkFindParamsPayload): Promise<AgentBrowserNetworkFindParamsResult> =>
+      invokeHost('agentBrowser', 'networkFindParameterCandidates', input),
+    networkExtractJsCandidates: (input: AgentBrowserNetworkExtractJsPayload): Promise<AgentBrowserNetworkExtractJsResult> =>
+      invokeHost('agentBrowser', 'networkExtractJsCandidates', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),

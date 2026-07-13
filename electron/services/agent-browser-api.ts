@@ -162,5 +162,33 @@ export function createAgentBrowserApi(
         { selectedChoiceIds: payload.selectedChoiceIds, otherText: payload.otherText },
       ),
     }),
+    networkListRequests: async (payload) => ({
+      success: true,
+      ...(await service.networkListRequests(payload)),
+    }),
+    networkGetRequestDetails: async (payload) => ({
+      success: true,
+      ...(await service.networkGetRequestDetails(payload)),
+    }),
+    networkClearRequests: async (payload) => ({
+      success: true,
+      ...(await service.networkClearRequests(payload)),
+    }),
+    networkWaitForRequests: async (payload) => ({
+      success: true,
+      ...(await service.networkWaitForRequests(payload)),
+    }),
+    networkCompareRequests: async (payload) => ({
+      success: true,
+      ...(await service.networkCompareRequests(payload)),
+    }),
+    networkFindParameterCandidates: async (payload) => ({
+      success: true,
+      ...(await service.networkFindParameterCandidates(payload)),
+    }),
+    networkExtractJsCandidates: async (payload) => ({
+      success: true,
+      ...(await service.networkExtractJsCandidates(payload)),
+    }),
   };
 }
