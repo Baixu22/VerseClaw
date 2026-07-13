@@ -14,6 +14,10 @@ import type {
   AgentBrowserNavigatePayload,
   AgentBrowserOpenPayload,
   AgentBrowserPressKeyPayload,
+  AgentBrowserRequestModeUpgradePayload,
+  AgentBrowserRequestModeUpgradeResult,
+  AgentBrowserRespondBoundaryChoicePayload,
+  AgentBrowserRespondBoundaryChoiceResult,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -765,6 +769,10 @@ export const hostApi = {
       invokeHost('agentBrowser', 'fillByUid', input),
     pressKey: (input: AgentBrowserPressKeyPayload): Promise<AgentBrowserActionResult> =>
       invokeHost('agentBrowser', 'pressKey', input),
+    requestModeUpgrade: (input: AgentBrowserRequestModeUpgradePayload): Promise<AgentBrowserRequestModeUpgradeResult> =>
+      invokeHost('agentBrowser', 'requestModeUpgrade', input),
+    respondBoundaryChoice: (input: AgentBrowserRespondBoundaryChoicePayload): Promise<AgentBrowserRespondBoundaryChoiceResult> =>
+      invokeHost('agentBrowser', 'respondBoundaryChoice', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),

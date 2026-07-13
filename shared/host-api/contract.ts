@@ -785,6 +785,7 @@ export type RemoteControlScreenshotResult = HostSuccess & {
 export type AgentBrowserSessionMode = 'headless' | 'visible';
 export type AgentBrowserAuthPersistenceMode = 'session-name' | 'profile' | 'off';
 export type AgentBrowserConnectionMode = 'managed' | 'auto-connect' | 'cdp' | 'external-profile';
+export type AgentBrowserRuntimeMode = 'normal_restricted' | 'controlled_enhanced' | 'full_access';
 export type AgentBrowserConnectionSnapshot = {
   mode: AgentBrowserConnectionMode;
   cdpEndpoint?: string;
@@ -802,6 +803,7 @@ export type AgentBrowserSession = {
   title?: string;
   createdAt: string;
   updatedAt: string;
+  runtimeMode?: AgentBrowserRuntimeMode;
 };
 export type AgentBrowserSecurityPayload = {
   authPersistence?: AgentBrowserAuthPersistenceMode;
@@ -818,6 +820,7 @@ export type AgentBrowserOpenPayload = {
   mode?: AgentBrowserSessionMode;
   width?: number;
   height?: number;
+  runtimeMode?: AgentBrowserRuntimeMode;
 } & AgentBrowserSecurityPayload;
 export type AgentBrowserSessionPayload = {
   sessionId: string;
@@ -852,6 +855,23 @@ export type AgentBrowserFillByUidPayload = AgentBrowserSessionPayload & {
 };
 export type AgentBrowserPressKeyPayload = AgentBrowserSessionPayload & {
   key: string;
+};
+export type AgentBrowserRequestModeUpgradePayload = AgentBrowserSessionPayload & {
+  targetMode: AgentBrowserRuntimeMode;
+  reason?: string;
+  expiresInMs?: number;
+};
+export type AgentBrowserRequestModeUpgradeResult = AgentBrowserActionResult & {
+  runtimeMode: AgentBrowserRuntimeMode;
+  expiresAt?: string;
+};
+export type AgentBrowserRespondBoundaryChoicePayload = AgentBrowserSessionPayload & {
+  requestId: string;
+  selectedChoiceIds: string[];
+  otherText?: string;
+};
+export type AgentBrowserRespondBoundaryChoiceResult = HostSuccess & {
+  accepted: boolean;
 };
 export type AgentBrowserCommandPayload = Partial<AgentBrowserSessionPayload> & {
   args: string[];
@@ -3820,6 +3840,8 @@ export type HostApiContract = {
     clickByUid: (payload: AgentBrowserClickByUidPayload) => AgentBrowserActionResult;
     fillByUid: (payload: AgentBrowserFillByUidPayload) => AgentBrowserActionResult;
     pressKey: (payload: AgentBrowserPressKeyPayload) => AgentBrowserActionResult;
+    requestModeUpgrade: (payload: AgentBrowserRequestModeUpgradePayload) => AgentBrowserRequestModeUpgradeResult;
+    respondBoundaryChoice: (payload: AgentBrowserRespondBoundaryChoicePayload) => AgentBrowserRespondBoundaryChoiceResult;
   };
   mcp: {
     listServers: () => McpServerListResult;

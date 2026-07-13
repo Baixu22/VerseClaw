@@ -300,7 +300,7 @@ describe('agent browser service', () => {
       now: () => new Date('2026-01-01T00:00:00.000Z'),
     });
 
-    const opened = await service.open({ url: 'example.com', profile: 'Work', mode: 'headless' });
+    const opened = await service.open({ url: 'example.com', profile: 'Work', mode: 'headless', runtimeMode: 'controlled_enhanced' });
     const sessionId = opened.session.id;
     const dbg = windows[0].webContents.debugger;
 

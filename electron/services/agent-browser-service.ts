@@ -11,6 +11,9 @@ import type {
   AgentBrowserOpenPayload,
   AgentBrowserProfileEntry,
   AgentBrowserProfileSavePayload,
+  AgentBrowserRequestModeUpgradePayload,
+  AgentBrowserRequestModeUpgradeResult,
+  AgentBrowserRuntimeMode,
   AgentBrowserSession,
   AgentBrowserSessionMode,
   AgentBrowserValidatePayload,
@@ -19,7 +22,9 @@ import type {
   BrowserAutomationRunStep,
 } from '@shared/host-api/contract';
 import type { BrowserControlToolCall } from '@shared/agent-browser/types';
+import { getOriginFromUrl } from '@shared/agent-browser/tool-authorization';
 import { BrowserControlActionExecutor } from './agent-browser/browser-control/actions';
+import { BoundaryChoiceToolExecutor } from './agent-browser/browser-control/boundary-choice-tool-executor';
 import { BrowserDebuggerConnection } from './agent-browser/browser-control/browser-debugger-connection';
 import { BrowserControlSnapshotManager } from './agent-browser/browser-control/snapshot-manager';
 import type { AgentBrowserRunner } from './agent-browser-cli-runner';
@@ -45,12 +50,15 @@ type AgentBrowserRecord = {
   session: AgentBrowserSession;
   window?: AgentBrowserWindow;
   engine: 'browser-window' | 'agent-browser-cli';
+  runtimeMode: AgentBrowserRuntimeMode;
+  runtimeExpiresAt?: number;
 };
 
 type AgentBrowserControlState = {
   connection: BrowserDebuggerConnection;
   snapshotManager: BrowserControlSnapshotManager;
   actionExecutor: BrowserControlActionExecutor;
+  boundaryExecutor: BoundaryChoiceToolExecutor;
 };
 
 type AgentBrowserServiceOptions = {
@@ -92,6 +100,16 @@ const CONTROLLED_CLI_FLAGS = new Set([
 
 function normalizeMode(value: unknown): AgentBrowserSessionMode {
   return value === 'visible' ? 'visible' : 'headless';
+}
+
+/**
+ * 规范化运行态模式。默认 normal_restricted（最受限）。
+ * 抄写自 browser-ai-assistant-master 的 BrowserAutomationMode 语义。
+ */
+function normalizeRuntimeMode(value: unknown): AgentBrowserRuntimeMode {
+  return value === 'controlled_enhanced' || value === 'full_access'
+    ? value
+    : 'normal_restricted';
 }
 
 function normalizeDimension(value: unknown, fallback: number): number {
@@ -270,6 +288,7 @@ export class AgentBrowserService {
   private readonly createWindow: (options: Electron.BrowserWindowConstructorOptions) => AgentBrowserWindow;
   private readonly now: () => Date;
   private readonly userDataPath: string | undefined;
+  private boundaryChoiceNotifier: ((sessionId: string, message: import('@shared/agent-browser/browser-control').BrowserControlBoundaryChoiceRequestMessage) => void) | undefined;
 
   constructor(options: AgentBrowserServiceOptions = {}) {
     this.cliRunner = options.cliRunner;
@@ -483,6 +502,7 @@ export class AgentBrowserService {
       ? normalizeAuthStateName(payload.authStateName, profile)
       : undefined;
     const connection = normalizeConnection(payload);
+    const runtimeMode = normalizeRuntimeMode(payload.runtimeMode);
     const createdAt = this.now().toISOString();
     const width = normalizeDimension(payload.width, DEFAULT_WIDTH);
     const height = normalizeDimension(payload.height, DEFAULT_HEIGHT);
@@ -495,11 +515,12 @@ export class AgentBrowserService {
       connection,
       createdAt,
       updatedAt: createdAt,
+      runtimeMode,
     };
     const url = normalizeHttpUrl(payload.url);
 
     if (this.cliRunner?.isAvailable()) {
-      this.sessions.set(session.id, { session, engine: 'agent-browser-cli' });
+      this.sessions.set(session.id, { session, engine: 'agent-browser-cli', runtimeMode });
       const metadata = await this.cliRunner.open({ session, url, width, height });
       await this.refreshCli(session.id, metadata);
       return {
@@ -524,7 +545,7 @@ export class AgentBrowserService {
         sandbox: true,
       },
     });
-    this.sessions.set(session.id, { session, window, engine: 'browser-window' });
+    this.sessions.set(session.id, { session, window, engine: 'browser-window', runtimeMode });
     if (url) {
       await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
     }
@@ -776,6 +797,7 @@ export class AgentBrowserService {
     if (record.engine !== 'browser-window') {
       throw new Error('Agent browser takeSnapshot requires the browser-window engine');
     }
+    this.assertActionAllowed(record);
     const control = await this.getBrowserControl(record);
     const snapshot = await control.snapshotManager.takeSnapshot();
     return { session: await this.refresh(record), snapshot };
@@ -789,6 +811,7 @@ export class AgentBrowserService {
     if (record.engine !== 'browser-window') {
       throw new Error('Agent browser clickByUid requires the browser-window engine');
     }
+    this.assertActionAllowed(record);
     const control = await this.getBrowserControl(record);
     const result = await this.executeBrowserAction(control, {
       id: `click-${randomUUID()}`,
@@ -814,6 +837,7 @@ export class AgentBrowserService {
     if (record.engine !== 'browser-window') {
       throw new Error('Agent browser fillByUid requires the browser-window engine');
     }
+    this.assertActionAllowed(record);
     const control = await this.getBrowserControl(record);
     const result = await this.executeBrowserAction(control, {
       id: `fill-${randomUUID()}`,
@@ -834,6 +858,7 @@ export class AgentBrowserService {
     if (record.engine !== 'browser-window') {
       throw new Error('Agent browser pressKey requires the browser-window engine');
     }
+    this.assertActionAllowed(record);
     const control = await this.getBrowserControl(record);
     const result = await this.executeBrowserAction(control, {
       id: `press_key-${randomUUID()}`,
@@ -899,7 +924,17 @@ export class AgentBrowserService {
       url: webContents.getURL(),
     }));
     const actionExecutor = new BrowserControlActionExecutor(connection, snapshotManager);
-    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor };
+    const boundaryExecutor = new BoundaryChoiceToolExecutor(
+      (message) => {
+        this.boundaryChoiceNotifier?.(record.session.id, message);
+      },
+      () => ({
+        tabId: webContents.id,
+        origin: getOriginFromUrl(webContents.getURL()),
+        enhanced: this.isControlledEnhanced(record),
+      }),
+    );
+    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor };
     this.browserControlStates.set(record.session.id, state);
     return state;
   }
@@ -909,6 +944,108 @@ export class AgentBrowserService {
     toolCall: BrowserControlToolCall,
   ) {
     return control.actionExecutor.execute(toolCall);
+  }
+
+  /**
+   * 判断当前会话是否处于受控增强或完全访问模式。
+   * 用于 BoundaryChoiceToolExecutor.canExpose() 的 enhanced 上下文。
+   */
+  private isControlledEnhanced(record: AgentBrowserRecord): boolean {
+    this.refreshRuntimeModeExpiry(record);
+    return record.runtimeMode === 'controlled_enhanced' || record.runtimeMode === 'full_access';
+  }
+
+  /**
+   * 检查运行态模式是否已过期，过期则回退到 normal_restricted。
+   * runtimeMode 不持久化，刷新/过期即回退，符合 P0-3 适配要点 5。
+   */
+  private refreshRuntimeModeExpiry(record: AgentBrowserRecord): void {
+    if (record.runtimeExpiresAt !== undefined && record.runtimeExpiresAt <= Date.now()) {
+      record.runtimeMode = 'normal_restricted';
+      record.runtimeExpiresAt = undefined;
+      record.session = { ...record.session, runtimeMode: 'normal_restricted' };
+    }
+  }
+
+  /**
+   * 断言当前会话允许执行浏览器控制动作。
+   * normal_restricted 模式下所有 browser-control 动作被拒绝，
+   * 必须先调用 requestModeUpgrade 升级到 controlled_enhanced 或 full_access。
+   */
+  private assertActionAllowed(record: AgentBrowserRecord): void {
+    this.refreshRuntimeModeExpiry(record);
+    if (record.runtimeMode === 'normal_restricted') {
+      throw new Error(
+        `Agent browser action requires runtime mode upgrade (current: normal_restricted). Call requestModeUpgrade first.`,
+      );
+    }
+  }
+
+  /**
+   * 注册 BoundaryChoice 通知回调。Renderer 侧通过此回调接收
+   * BoundaryChoiceToolExecutor 发出的用户边界确认请求，并展示 BoundaryChoiceDialog。
+   */
+  setBoundaryChoiceNotifier(
+    notifier: ((sessionId: string, message: import('@shared/agent-browser/browser-control').BrowserControlBoundaryChoiceRequestMessage) => void) | undefined,
+  ): void {
+    this.boundaryChoiceNotifier = notifier;
+  }
+
+  /**
+   * 响应 BoundaryChoiceToolExecutor 的 pending 用户边界确认请求。
+   * Renderer 侧 BoundaryChoiceDialog 用户选择后通过此方法回传结果。
+   */
+  respondBoundaryChoice(
+    sessionId: string,
+    requestId: string,
+    response: { selectedChoiceIds: string[]; otherText?: string },
+  ): boolean {
+    const control = this.browserControlStates.get(sessionId);
+    if (!control) {
+      return false;
+    }
+    return control.boundaryExecutor.respond(requestId, response);
+  }
+
+  /**
+   * 请求升级运行态模式。runtimeMode 不持久化，仅作用于当前会话生命周期。
+   * expiresInMs 可选，过期后自动回退到 normal_restricted。
+   */
+  async requestModeUpgrade(
+    payload: AgentBrowserRequestModeUpgradePayload,
+  ): Promise<Omit<AgentBrowserRequestModeUpgradeResult, 'success'>> {
+    const record = this.getRecord(payload.sessionId);
+    const targetMode = normalizeRuntimeMode(payload.targetMode);
+    if (targetMode === 'normal_restricted') {
+      // 降级回 normal_restricted：清理 grant context 与过期时间
+      record.runtimeMode = 'normal_restricted';
+      record.runtimeExpiresAt = undefined;
+      record.session = { ...record.session, runtimeMode: 'normal_restricted' };
+      const control = this.browserControlStates.get(record.session.id);
+      control?.boundaryExecutor.clearGrantContext();
+      return {
+        runtimeMode: 'normal_restricted',
+        session: { ...record.session },
+      };
+    }
+
+    const expiresInMs = typeof payload.expiresInMs === 'number' && Number.isFinite(payload.expiresInMs)
+      ? Math.max(10_000, Math.min(3_600_000, Math.floor(payload.expiresInMs)))
+      : undefined;
+    record.runtimeMode = targetMode;
+    record.runtimeExpiresAt = expiresInMs !== undefined ? Date.now() + expiresInMs : undefined;
+    record.session = {
+      ...record.session,
+      runtimeMode: targetMode,
+      updatedAt: this.now().toISOString(),
+    };
+    return {
+      runtimeMode: targetMode,
+      ...(record.runtimeExpiresAt !== undefined
+        ? { expiresAt: new Date(record.runtimeExpiresAt).toISOString() }
+        : {}),
+      session: { ...record.session },
+    };
   }
 
   private requireSelector(value: string): string {
@@ -1207,7 +1344,7 @@ export class AgentBrowserService {
       createdAt,
       updatedAt: createdAt,
     };
-    this.sessions.set(session.id, { session, engine: 'agent-browser-cli' });
+    this.sessions.set(session.id, { session, engine: 'agent-browser-cli', runtimeMode: 'normal_restricted' });
     return session;
   }
 
