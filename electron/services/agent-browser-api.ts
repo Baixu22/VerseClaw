@@ -145,5 +145,17 @@ export function createAgentBrowserApi(
       success: true,
       session: await service.pressKey(payload),
     }),
+    requestModeUpgrade: async (payload) => ({
+      success: true,
+      ...(await service.requestModeUpgrade(payload)),
+    }),
+    respondBoundaryChoice: (payload) => ({
+      success: true,
+      accepted: service.respondBoundaryChoice(
+        payload.sessionId,
+        payload.requestId,
+        { selectedChoiceIds: payload.selectedChoiceIds, otherText: payload.otherText },
+      ),
+    }),
   };
 }
