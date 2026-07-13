@@ -43,6 +43,12 @@ import type {
   AgentBrowserJsSearchSourcesResult,
   AgentBrowserJsExtractContextPayload,
   AgentBrowserJsExtractContextResult,
+  AgentBrowserSourceMapListCandidatesPayload,
+  AgentBrowserSourceMapListCandidatesResult,
+  AgentBrowserSourceMapResolveLocationPayload,
+  AgentBrowserSourceMapResolveLocationResult,
+  AgentBrowserSourceMapExtractOriginalContextPayload,
+  AgentBrowserSourceMapExtractOriginalContextResult,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -832,6 +838,12 @@ export const hostApi = {
       invokeHost('agentBrowser', 'jsSearchSources', input),
     jsExtractContext: (input: AgentBrowserJsExtractContextPayload): Promise<AgentBrowserJsExtractContextResult> =>
       invokeHost('agentBrowser', 'jsExtractContext', input),
+    sourceMapListCandidates: (input: AgentBrowserSourceMapListCandidatesPayload): Promise<AgentBrowserSourceMapListCandidatesResult> =>
+      invokeHost('agentBrowser', 'sourceMapListCandidates', input),
+    sourceMapResolveLocation: (input: AgentBrowserSourceMapResolveLocationPayload): Promise<AgentBrowserSourceMapResolveLocationResult> =>
+      invokeHost('agentBrowser', 'sourceMapResolveLocation', input),
+    sourceMapExtractOriginalContext: (input: AgentBrowserSourceMapExtractOriginalContextPayload): Promise<AgentBrowserSourceMapExtractOriginalContextResult> =>
+      invokeHost('agentBrowser', 'sourceMapExtractOriginalContext', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),
