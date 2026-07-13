@@ -818,7 +818,7 @@ export class AgentBrowserService {
     const result = await this.executeBrowserAction(control, {
       id: `fill-${randomUUID()}`,
       name: 'fill',
-      arguments: { uid: payload.uid, value: payload.value, clear: payload.clear },
+      arguments: { uid: payload.uid, value: payload.value },
     });
     if (result.isError) {
       throw new Error(result.content);
