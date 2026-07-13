@@ -1052,6 +1052,32 @@ export type AgentBrowserNetworkExtractJsPayload = AgentBrowserSessionPayload & {
 export type AgentBrowserNetworkExtractJsResult = HostSuccess & {
   candidates: string;
 };
+export type AgentBrowserPageInfo = {
+  pageId: string;
+  index: number;
+  url: string;
+  title: string;
+  active: boolean;
+};
+export type AgentBrowserNewPagePayload = AgentBrowserSessionPayload & {
+  url?: string;
+  background?: boolean;
+};
+export type AgentBrowserSelectPagePayload = AgentBrowserSessionPayload & {
+  pageId: string;
+};
+export type AgentBrowserClosePagePayload = AgentBrowserSessionPayload & {
+  pageId?: string;
+};
+export type AgentBrowserNavigatePagePayload = AgentBrowserSessionPayload & {
+  url: string;
+  pageId?: string;
+  waitUntil?: 'dom-ready' | 'load';
+};
+export type AgentBrowserListPagesResult = AgentBrowserActionResult & {
+  pages: AgentBrowserPageInfo[];
+  activePageId?: string;
+};
 export type AgentBrowserCommandResult = HostSuccess & {
   session?: AgentBrowserSession;
   data?: unknown;
@@ -3919,6 +3945,11 @@ export type HostApiContract = {
     networkCompareRequests: (payload: AgentBrowserNetworkComparePayload) => AgentBrowserNetworkCompareResult;
     networkFindParameterCandidates: (payload: AgentBrowserNetworkFindParamsPayload) => AgentBrowserNetworkFindParamsResult;
     networkExtractJsCandidates: (payload: AgentBrowserNetworkExtractJsPayload) => AgentBrowserNetworkExtractJsResult;
+    newPage: (payload: AgentBrowserNewPagePayload) => AgentBrowserListPagesResult;
+    listPages: (payload: AgentBrowserSessionPayload) => AgentBrowserListPagesResult;
+    selectPage: (payload: AgentBrowserSelectPagePayload) => AgentBrowserListPagesResult;
+    closePage: (payload: AgentBrowserClosePagePayload) => AgentBrowserListPagesResult;
+    navigatePage: (payload: AgentBrowserNavigatePagePayload) => AgentBrowserListPagesResult;
   };
   mcp: {
     listServers: () => McpServerListResult;

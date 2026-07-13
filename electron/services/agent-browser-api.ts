@@ -190,5 +190,10 @@ export function createAgentBrowserApi(
       success: true,
       ...(await service.networkExtractJsCandidates(payload)),
     }),
+    newPage: async (payload) => service.newPage(payload),
+    listPages: async (payload) => service.listPages(payload),
+    selectPage: async (payload) => service.selectPage(payload),
+    closePage: async (payload) => service.closePage(payload),
+    navigatePage: async (payload) => service.navigatePage(payload),
   };
 }

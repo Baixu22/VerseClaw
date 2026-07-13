@@ -32,6 +32,11 @@ import type {
   AgentBrowserNetworkFindParamsResult,
   AgentBrowserNetworkExtractJsPayload,
   AgentBrowserNetworkExtractJsResult,
+  AgentBrowserNewPagePayload,
+  AgentBrowserSelectPagePayload,
+  AgentBrowserClosePagePayload,
+  AgentBrowserNavigatePagePayload,
+  AgentBrowserListPagesResult,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -805,6 +810,16 @@ export const hostApi = {
       invokeHost('agentBrowser', 'networkFindParameterCandidates', input),
     networkExtractJsCandidates: (input: AgentBrowserNetworkExtractJsPayload): Promise<AgentBrowserNetworkExtractJsResult> =>
       invokeHost('agentBrowser', 'networkExtractJsCandidates', input),
+    newPage: (input: AgentBrowserNewPagePayload): Promise<AgentBrowserListPagesResult> =>
+      invokeHost('agentBrowser', 'newPage', input),
+    listPages: (input: AgentBrowserSessionPayload): Promise<AgentBrowserListPagesResult> =>
+      invokeHost('agentBrowser', 'listPages', input),
+    selectPage: (input: AgentBrowserSelectPagePayload): Promise<AgentBrowserListPagesResult> =>
+      invokeHost('agentBrowser', 'selectPage', input),
+    closePage: (input: AgentBrowserClosePagePayload): Promise<AgentBrowserListPagesResult> =>
+      invokeHost('agentBrowser', 'closePage', input),
+    navigatePage: (input: AgentBrowserNavigatePagePayload): Promise<AgentBrowserListPagesResult> =>
+      invokeHost('agentBrowser', 'navigatePage', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),
