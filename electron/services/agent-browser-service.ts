@@ -34,6 +34,12 @@ import type {
   AgentBrowserJsSearchSourcesResult,
   AgentBrowserJsExtractContextPayload,
   AgentBrowserJsExtractContextResult,
+  AgentBrowserSourceMapListCandidatesPayload,
+  AgentBrowserSourceMapListCandidatesResult,
+  AgentBrowserSourceMapResolveLocationPayload,
+  AgentBrowserSourceMapResolveLocationResult,
+  AgentBrowserSourceMapExtractOriginalContextPayload,
+  AgentBrowserSourceMapExtractOriginalContextResult,
   AgentBrowserOpenPayload,
   AgentBrowserProfileEntry,
   AgentBrowserProfileSavePayload,
@@ -58,6 +64,7 @@ import { BrowserDebuggerConnection } from './agent-browser/browser-control/brows
 import { BrowserControlSnapshotManager } from './agent-browser/browser-control/snapshot-manager';
 import { AgentBrowserTabManager } from './agent-browser/browser-control/tab-manager';
 import { JsSourceToolExecutor } from './agent-browser/browser-control/js-source-tool-executor';
+import { SourceMapToolExecutor } from './agent-browser/browser-control/source-map-tool-executor';
 import { BrowserNetworkRecorder, type NetworkRequestFilter, type NetworkWaitFilter } from './agent-browser/browser-control/network-recorder';
 import type { AgentBrowserRunner } from './agent-browser-cli-runner';
 
@@ -95,6 +102,7 @@ type AgentBrowserControlState = {
   boundaryExecutor: BoundaryChoiceToolExecutor;
   networkRecorder: BrowserNetworkRecorder;
   jsSourceExecutor: JsSourceToolExecutor;
+  sourceMapExecutor: SourceMapToolExecutor;
 };
 
 type AgentBrowserServiceOptions = {
@@ -1143,7 +1151,12 @@ export class AgentBrowserService {
       recorder: networkRecorder,
       getCurrentPageUrl: async () => webContents.getURL(),
     });
-    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor };
+    const sourceMapExecutor = new SourceMapToolExecutor({
+      recorder: networkRecorder,
+      jsSourceIndex: jsSourceExecutor.getIndex(),
+      getCurrentPageUrl: async () => webContents.getURL(),
+    });
+    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor, sourceMapExecutor };
     this.browserControlStates.set(record.session.id, state);
     return state;
   }
@@ -1739,6 +1752,59 @@ export class AgentBrowserService {
       throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
     }
     return { jsSourceExecutor: state.jsSourceExecutor, record };
+  }
+
+  async sourceMapListCandidates(payload: AgentBrowserSourceMapListCandidatesPayload): Promise<Omit<AgentBrowserSourceMapListCandidatesResult, 'success'>> {
+    const { sourceMapExecutor, record } = this.getSourceMapExecutor(payload.sessionId);
+    const allowSameOriginFetch = payload.allowSameOriginFetch === true
+      && (record.runtimeMode === 'controlled_enhanced' || record.runtimeMode === 'full_access');
+    return sourceMapExecutor.listCandidates({
+      resourceIds: payload.resourceIds,
+      limit: payload.limit,
+      allowSameOriginFetch,
+    });
+  }
+
+  async sourceMapResolveLocation(payload: AgentBrowserSourceMapResolveLocationPayload): Promise<Omit<AgentBrowserSourceMapResolveLocationResult, 'success'>> {
+    const { sourceMapExecutor, record } = this.getSourceMapExecutor(payload.sessionId);
+    const allowSameOriginFetch = payload.allowSameOriginFetch === true
+      && (record.runtimeMode === 'controlled_enhanced' || record.runtimeMode === 'full_access');
+    return sourceMapExecutor.resolveLocation({
+      resourceId: payload.resourceId,
+      line: payload.line,
+      column: payload.column,
+      allowSameOriginFetch,
+    });
+  }
+
+  async sourceMapExtractOriginalContext(payload: AgentBrowserSourceMapExtractOriginalContextPayload): Promise<Omit<AgentBrowserSourceMapExtractOriginalContextResult, 'success'>> {
+    const { sourceMapExecutor, record } = this.getSourceMapExecutor(payload.sessionId);
+    const allowSameOriginFetch = payload.allowSameOriginFetch === true
+      && (record.runtimeMode === 'controlled_enhanced' || record.runtimeMode === 'full_access');
+    return sourceMapExecutor.extractOriginalContext({
+      resourceId: payload.resourceId,
+      line: payload.line,
+      column: payload.column,
+      radius: payload.radius,
+      allowSameOriginFetch,
+    });
+  }
+
+  /**
+   * 获取指定 session 的 Source Map 执行器，复用 getJsSourceExecutor 的安全校验链。
+   */
+  private getSourceMapExecutor(sessionId: string): { sourceMapExecutor: SourceMapToolExecutor; record: AgentBrowserRecord } {
+    this.assertBrowserControlEnabled();
+    const record = this.getRecord(sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('Source Map 工具仅支持 browser-window 引擎，当前会话使用 agent-browser-cli 引擎。');
+    }
+    this.assertActionAllowed(record);
+    const state = this.browserControlStates.get(record.session.id);
+    if (!state) {
+      throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
+    }
+    return { sourceMapExecutor: state.sourceMapExecutor, record };
   }
 
   /**

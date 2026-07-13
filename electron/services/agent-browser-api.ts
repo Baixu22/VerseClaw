@@ -207,5 +207,17 @@ export function createAgentBrowserApi(
       success: true,
       ...(await service.jsExtractContext(payload)),
     }),
+    sourceMapListCandidates: async (payload) => ({
+      success: true,
+      ...(await service.sourceMapListCandidates(payload)),
+    }),
+    sourceMapResolveLocation: async (payload) => ({
+      success: true,
+      ...(await service.sourceMapResolveLocation(payload)),
+    }),
+    sourceMapExtractOriginalContext: async (payload) => ({
+      success: true,
+      ...(await service.sourceMapExtractOriginalContext(payload)),
+    }),
   };
 }

@@ -53,7 +53,7 @@ import type {
 } from '../types/sandbox';
 import type { ChannelAccessPolicyView } from '../types/channel';
 import type { MarketplaceSkill, QuickAccessSkill, Skill } from '../types/skill';
-import type { JsSourceResource, JsSourceMatch, JsSourceContext, JsSourceFetchFailure } from '../agent-browser/types';
+import type { JsSourceResource, JsSourceMatch, JsSourceContext, JsSourceFetchFailure, SourceMapCandidate, SourceMapResolvedLocation, SourceMapOriginalContext } from '../agent-browser/types';
 import type {
   LiveTokenUsage,
   PermissionApprovalDecision,
@@ -1078,6 +1078,44 @@ export type AgentBrowserJsExtractContextPayload = AgentBrowserSessionPayload & {
 export type AgentBrowserJsExtractContextResult = HostSuccess & {
   resources: JsSourceResource[];
   contexts: JsSourceContext[];
+  truncated: boolean;
+  content: string;
+};
+export type AgentBrowserSourceMapListCandidatesPayload = AgentBrowserSessionPayload & {
+  resourceIds?: string[];
+  limit?: number;
+  allowSameOriginFetch?: boolean;
+};
+export type AgentBrowserSourceMapListCandidatesResult = HostSuccess & {
+  candidates: SourceMapCandidate[];
+  failures: Array<{ resourceId?: string; url?: string; message: string }>;
+  truncated: boolean;
+  content: string;
+};
+export type AgentBrowserSourceMapResolveLocationPayload = AgentBrowserSessionPayload & {
+  resourceId: string;
+  line: number;
+  column: number;
+  allowSameOriginFetch?: boolean;
+};
+export type AgentBrowserSourceMapResolveLocationResult = HostSuccess & {
+  candidates: SourceMapCandidate[];
+  resolvedLocations: SourceMapResolvedLocation[];
+  failures: Array<{ resourceId?: string; url?: string; message: string }>;
+  content: string;
+};
+export type AgentBrowserSourceMapExtractOriginalContextPayload = AgentBrowserSessionPayload & {
+  resourceId: string;
+  line: number;
+  column: number;
+  radius?: number;
+  allowSameOriginFetch?: boolean;
+};
+export type AgentBrowserSourceMapExtractOriginalContextResult = HostSuccess & {
+  candidates: SourceMapCandidate[];
+  resolvedLocations: SourceMapResolvedLocation[];
+  originalContexts: SourceMapOriginalContext[];
+  failures: Array<{ resourceId?: string; url?: string; message: string }>;
   truncated: boolean;
   content: string;
 };
@@ -3982,6 +4020,9 @@ export type HostApiContract = {
     jsListResources: (payload: AgentBrowserJsListResourcesPayload) => AgentBrowserJsListResourcesResult;
     jsSearchSources: (payload: AgentBrowserJsSearchSourcesPayload) => AgentBrowserJsSearchSourcesResult;
     jsExtractContext: (payload: AgentBrowserJsExtractContextPayload) => AgentBrowserJsExtractContextResult;
+    sourceMapListCandidates: (payload: AgentBrowserSourceMapListCandidatesPayload) => AgentBrowserSourceMapListCandidatesResult;
+    sourceMapResolveLocation: (payload: AgentBrowserSourceMapResolveLocationPayload) => AgentBrowserSourceMapResolveLocationResult;
+    sourceMapExtractOriginalContext: (payload: AgentBrowserSourceMapExtractOriginalContextPayload) => AgentBrowserSourceMapExtractOriginalContextResult;
   };
   mcp: {
     listServers: () => McpServerListResult;
