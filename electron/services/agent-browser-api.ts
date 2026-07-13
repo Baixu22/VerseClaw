@@ -43,6 +43,11 @@ export function createAgentBrowserApi(
     status: () => ({
       success: true,
       sessions: service.list(),
+      browserControlEnabled: service.isEnabled(),
+    }),
+    setEnabled: (payload) => ({
+      success: true,
+      ...service.setEnabled(payload.enabled),
     }),
     profiles: async () => ({
       success: true,

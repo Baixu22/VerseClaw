@@ -969,6 +969,13 @@ export type AgentBrowserSessionResult = HostSuccess & {
 };
 export type AgentBrowserStatusResult = HostSuccess & {
   sessions: AgentBrowserSession[];
+  browserControlEnabled?: boolean;
+};
+export type AgentBrowserSetEnabledPayload = {
+  enabled: boolean;
+};
+export type AgentBrowserSetEnabledResult = HostSuccess & {
+  enabled: boolean;
 };
 export type AgentBrowserActionResult = HostSuccess & {
   session: AgentBrowserSession;
@@ -3814,6 +3821,7 @@ export type HostApiContract = {
   agentBrowser: {
     open: (payload?: AgentBrowserOpenPayload) => AgentBrowserSessionResult;
     status: () => AgentBrowserStatusResult;
+    setEnabled: (payload: AgentBrowserSetEnabledPayload) => AgentBrowserSetEnabledResult;
     profiles: () => AgentBrowserProfilesResult;
     saveProfile: (payload: AgentBrowserProfileSavePayload) => AgentBrowserProfileSaveResult;
     validate: (payload?: AgentBrowserValidatePayload) => AgentBrowserValidateResult;

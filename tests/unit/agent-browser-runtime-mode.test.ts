@@ -128,6 +128,7 @@ describe('agent browser runtime mode', () => {
     const { service } = createService();
     const opened = await service.open({ url: 'example.com', profile: 'Test', mode: 'headless' });
     const sessionId = opened.session.id;
+    service.setEnabled(true);
 
     await expect(service.takeSnapshot({ sessionId })).rejects.toThrow('runtime mode upgrade');
     await expect(service.clickByUid({ sessionId, uid: '1_2' })).rejects.toThrow('runtime mode upgrade');
@@ -141,6 +142,7 @@ describe('agent browser runtime mode', () => {
     const { service } = createService();
     const opened = await service.open({ url: 'example.com', profile: 'Test', mode: 'headless' });
     const sessionId = opened.session.id;
+    service.setEnabled(true);
 
     const upgraded = await service.requestModeUpgrade({
       sessionId,
@@ -164,6 +166,7 @@ describe('agent browser runtime mode', () => {
     const { service } = createService();
     const opened = await service.open({ url: 'example.com', profile: 'Test', mode: 'headless' });
     const sessionId = opened.session.id;
+    service.setEnabled(true);
 
     await service.requestModeUpgrade({
       sessionId,
@@ -180,6 +183,7 @@ describe('agent browser runtime mode', () => {
     const { service } = createService();
     const opened = await service.open({ url: 'example.com', profile: 'Test', mode: 'headless' });
     const sessionId = opened.session.id;
+    service.setEnabled(true);
 
     // 在升级前启用 fake timers，确保 requestModeUpgrade 内的 Date.now() 也用 fake 时间
     vi.useFakeTimers();
@@ -208,6 +212,7 @@ describe('agent browser runtime mode', () => {
     const { service } = createService();
     const opened = await service.open({ url: 'example.com', profile: 'Test', mode: 'headless' });
     const sessionId = opened.session.id;
+    service.setEnabled(true);
 
     await service.requestModeUpgrade({
       sessionId,
@@ -262,6 +267,7 @@ describe('agent browser runtime mode', () => {
       runtimeMode: 'controlled_enhanced',
     });
     expect(opened.session.runtimeMode).toBe('controlled_enhanced');
+    service.setEnabled(true);
 
     // 直接 takeSnapshot 可用，无需再 requestModeUpgrade
     const snap = await service.takeSnapshot({ sessionId: opened.session.id });

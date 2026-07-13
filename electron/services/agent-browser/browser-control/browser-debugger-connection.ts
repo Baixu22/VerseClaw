@@ -423,12 +423,28 @@ function normalizeDebuggerError(message = ""): string {
  * 规范化 detach 原因。
  *
  * 源项目：chrome.debugger.DetachReason 枚举（canceled_by_user / target_closed）
- * Electron：webContents.debugger 'detach' 事件 reason 参数为字符串。
+ * Electron：webContents.debugger 'detach' 事件 reason 参数为字符串，可能值包括
+ * "target_closed"、"replaced_with_devtools"、"canceled_by_user" 等。
+ *
+ * P1-1 加固：区分 4 种原因 + unknown，为 UI 状态同步预留可靠事件来源。
+ * - canceled_by_user: 用户主动取消调试
+ * - target_closed: 目标页面/标签页关闭
+ * - tab_removed: 标签页被移除（Electron 映射自 target_closed / replaced）
+ * - disabled_by_user: 用户通过 setEnabled 关闭开关
+ * - unknown: 其他未知原因
  */
 export function normalizeDetachReason(reason: string | undefined): BrowserControlDetachedReason {
-  if (reason === "canceled_by_user" || reason === "target_closed") {
-    return reason;
+  if (reason === "canceled_by_user") {
+    return "canceled_by_user";
   }
-
+  if (reason === "target_closed") {
+    return "target_closed";
+  }
+  if (reason === "replaced_with_devtools" || reason === "tab_removed") {
+    return "tab_removed";
+  }
+  if (reason === "disabled_by_user") {
+    return "disabled_by_user";
+  }
   return "unknown";
 }
