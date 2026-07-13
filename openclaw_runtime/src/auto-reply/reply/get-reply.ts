@@ -801,8 +801,9 @@ export async function getReplyFromConfig(
     perMessageQueueMode,
     perMessageQueueOptions,
   } = directiveResult.result;
-  let { directives, cleanedBody, resolvedThinkLevel, resolvedPromptMode, resolvedReasoningLevel } =
+  let { directives, cleanedBody, resolvedThinkLevel, resolvedReasoningLevel } =
     directiveResult.result;
+  const { resolvedPromptMode } = directiveResult.result;
   provider = resolvedProvider;
   model = resolvedModel;
 

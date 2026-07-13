@@ -204,7 +204,7 @@ async function getOrCreateCG(workspacePath: string): Promise<CGInstance> {
     cgInstances.set(workspacePath, inst);
     return inst;
   } catch (err: any) {
-    throw new Error(`CodeGraph init failed: ${err.message}`);
+    throw new Error(`CodeGraph init failed: ${err.message}`, { cause: err });
   }
 }
 
@@ -445,7 +445,7 @@ async function ensureFreshness(inst: CGInstance, mode: FreshnessMode, force = fa
         : "Using the previous index snapshot; consider codegraph_sync or strict mode.",
     };
     inst.lastFreshness = freshness;
-    if (mode === "strict") throw new Error(`CodeGraph strict sync failed: ${freshness.error}`);
+    if (mode === "strict") throw new Error(`CodeGraph strict sync failed: ${freshness.error}`, { cause: err });
     return freshness;
   }
 }

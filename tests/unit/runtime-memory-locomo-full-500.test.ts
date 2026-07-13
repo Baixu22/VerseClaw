@@ -134,7 +134,7 @@ import {
 } from "./helpers/memory-weighted-graph-traversal";
 import {
   consolidateObservations,
-  applyObservationsToFacts,
+  _applyObservationsToFacts,
   OBSERVATION_CACHE_VERSION,
   type ObservationFact,
   type ObservationInputFact,
@@ -1243,7 +1243,7 @@ function formatFullConversationText(turns: readonly LocomoTurn[]): string {
 // that a person who knew the answer might write. Each rewrite + the original
 // question is embedded and retrieved separately; results are merged with
 // standard RRF (k=60). This is the MultiQueryRetriever pattern (LangChain).
-async function rewriteQuery(question: string): Promise<string[]> {
+async function _rewriteQuery(question: string): Promise<string[]> {
   const system =
     "You rewrite questions into declarative statements that match the semantic form of factual memories. " +
     "Given a question, produce 3 different declarative statements that a person who knew the answer might write. " +
@@ -1261,12 +1261,12 @@ async function rewriteQuery(question: string): Promise<string[]> {
 
   return response.content
     .split("\n")
-    .map((s) => s.replace(/^\d+[\.\)]\s*/, "").replace(/^["'`]|["'`]$/g, "").trim())
+    .map((s) => s.replace(/^\d+[.)]\s*/, "").replace(/^["'`]|["'`]$/g, "").trim())
     .filter((s) => s.length > 0 && s.length < 500)
     .slice(0, 3);
 }
 
-async function generateAnswer(
+async function _generateAnswer(
   question: string,
   retrievedFacts: RuntimeMemoryQueryableFact[],
   profileContext?: string[],
@@ -1373,7 +1373,7 @@ function getSelfAskCache(): SelfAskCache {
 
 // Helper: run self-ask with cache. Returns cached hop answers if available,
 // otherwise runs self-ask and caches the result.
-async function runSelfAskWithCache(
+async function _runSelfAskWithCache(
   question: string,
   runSelfAsk: () => Promise<{ hopAnswers: string[]; subQuestions: string[]; used: boolean }>,
 ): Promise<{ hopAnswers: string[]; used: boolean }> {
@@ -2086,7 +2086,7 @@ describe.skipIf(
                       cachedFactContext.length > 0
                         ? `${cachedFactContext}\n\n${cachedEpisodic}`.trim()
                         : cachedEpisodic;
-                    let subQuestions: string[] = [];
+                    const subQuestions: string[] = [];
                     const selfAsk = await runSequentialSelfAsk({
                       question: qa.question,
                       decompose: decomposeForSelfAsk,
@@ -2540,7 +2540,7 @@ describe.skipIf(
             // Stage 1/2 constraint: UserProfile read-time augmentation stays disabled.
             // Two earlier profile-as-context variants regressed; profile-as-answer-source
             // routing is explicitly deferred to Stage 3.
-            let profileContext: string[] | undefined;
+            let _profileContext: string[] | undefined;
 
             // Phase 4 (disproven): Multi-query LLM rewriting was tested in two variants
             // (sum RRF k=60, max RRF k=1 w=5) and BOTH regressed vs single-query baseline
@@ -2981,7 +2981,7 @@ describe.skipIf(
               }
             }
 
-            let retrievedFacts = finalHits.map((h) => h.fact);
+            const retrievedFacts = finalHits.map((h) => h.fact);
 
             // === Agent Multi-Round Retrieval (Hindsight alignment, 2026-07-07) ===
             // Final round: maxRounds=5, 3-signal expansion (semantic kNN + entity + causal),

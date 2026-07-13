@@ -93,6 +93,8 @@ function normalizeMistralEncoding(
     case "g711-alaw":
     case "pcm_alaw":
       return "pcm_alaw";
+    // falls through
+
     default:
       throw new Error(`Invalid Mistral realtime transcription encoding: ${normalized}`);
   }
@@ -201,6 +203,8 @@ function createMistralRealtimeTranscriptionSession(
         return;
       case "error":
         config.onError?.(new Error(readErrorDetail(event)));
+
+      // falls through
 
       default:
     }

@@ -12,7 +12,6 @@ import {
   computeCheckpointFileHashes,
 } from '../../../openclaw_runtime/src/agents/long-task-control/file-fingerprint.js';
 import {
-  runRuntimeResumeShadow,
   isMutatingToolRequest,
 } from '../../../openclaw_runtime/src/runtime-core/resume-shadow.js';
 import {
@@ -40,7 +39,7 @@ import {
  */
 
 const MAX_FINGERPRINT_BYTES = 16 * 1024 * 1024; // 16 MB
-const MAX_FILES_PER_DIRECTORY = 10_000;
+// MAX_FILES_PER_DIRECTORY removed — was unused; the production module-private constant is the source of truth.
 
 /** Config shape that enables the resume replay shadow feature flag. */
 const RESUME_SHADOW_CONFIG = { runtime: { resume: { replayShadow: true } } };

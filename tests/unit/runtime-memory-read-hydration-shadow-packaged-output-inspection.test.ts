@@ -12,7 +12,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 const HYDRATION_COMMAND_OR_HELPER =
-  /runtime:memory:hydrate-shadow|inspect-runtime-memory-hydration-shadow\.mjs|memory-read-hydration-shadow|readRuntimeMemoryHydrationShadow|hydrateRuntimeMemoryShadowContext/iu;
+  /runtime:memory:hydrate-shadow|inspect-runtime-memory-hydration-shadow\.mjs|(?<![\\w-])memory-read-hydration-shadow(?![\\w-])|readRuntimeMemoryHydrationShadow|hydrateRuntimeMemoryShadowContext/iu;
 const HYDRATION_BUILD_FLAG = /--memory-read-hydration-shadow-only/iu;
 const IMPLICIT_SQLITE_FLAGS = /--persist|--read-shadow|--database\b|--db\b/iu;
 const MUTATION_CALL_TERMS =

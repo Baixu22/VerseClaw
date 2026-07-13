@@ -577,7 +577,7 @@ function signalCommandTree(child: ChildProcess, signal: NodeJS.Signals) {
     try {
       process.kill(-child.pid, signal);
       return;
-    } catch {}
+    } catch { /* ignore */ }
   }
   child.kill(signal);
 }
@@ -821,7 +821,7 @@ function killPidTree(pid: number | undefined) {
   } catch {
     try {
       process.kill(pid, "SIGTERM");
-    } catch {}
+    } catch { /* ignore */ }
   }
 }
 

@@ -711,9 +711,15 @@ function runPackageInspectionUtility(args: string[]): {
   stdout: string;
   stderr: string;
 } {
+  // Resolve pnpm through node (no shell) so Windows spawnSync does not
+  // collapse pnpm.cmd/PowerShell wrapper exit codes, and ensure the built
+  // inspector module is present before invoking the package script.
+  ensureMemoryOperatorInspectionBuilt();
+  const pnpmEntry = resolvePnpmEntry();
   const result = spawnSync(
-    process.platform === "win32" ? "pnpm.cmd" : "pnpm",
+    process.execPath,
     [
+      pnpmEntry,
       "--silent",
       "run",
       "runtime:memory:inspect",
@@ -727,7 +733,8 @@ function runPackageInspectionUtility(args: string[]): {
         ...process.env,
         pnpm_config_verify_deps_before_run: "false",
       },
-      shell: process.platform === "win32",
+      // Avoid shell:true; Windows shell + pnpm.cmd can report bogus exit codes.
+      windowsHide: true,
     },
   );
   if (result.error) {
@@ -738,6 +745,45 @@ function runPackageInspectionUtility(args: string[]): {
     stdout: (result.stdout ?? "").trim(),
     stderr: (result.stderr ?? "").trim(),
   };
+}
+
+function ensureMemoryOperatorInspectionBuilt(): void {
+  const outFile = path.join(
+    repoRoot(),
+    "openclaw_runtime",
+    "dist",
+    "runtime-core",
+    "memory-operator-inspection.js",
+  );
+  if (existsSync(outFile)) {
+    return;
+  }
+  execFileSync(
+    process.execPath,
+    [
+      "scripts/build-openclaw-runtime.mjs",
+      "--memory-operator-inspection-only",
+    ],
+    {
+      cwd: repoRoot(),
+      stdio: "pipe",
+    },
+  );
+}
+
+function resolvePnpmEntry(): string {
+  const candidates = [
+    path.join(process.env.APPDATA ?? "", "npm", "node_modules", "pnpm", "bin", "pnpm.mjs"),
+    path.join(process.env.APPDATA ?? "", "npm", "node_modules", "pnpm", "bin", "pnpm.cjs"),
+    path.join(repoRoot(), "node_modules", "pnpm", "bin", "pnpm.mjs"),
+    path.join(repoRoot(), "node_modules", "pnpm", "bin", "pnpm.cjs"),
+  ];
+  for (const candidate of candidates) {
+    if (candidate && existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  throw new Error("Unable to resolve pnpm entry for package-script inspection");
 }
 
 function packageScript(name: string): string {

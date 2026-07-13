@@ -99,6 +99,8 @@ function printSessionUpdate(notification: SessionNotification): void {
         console.log(`\n[commands] ${names}`);
       }
     }
+    // falls through
+
     default:
   }
 }

@@ -475,7 +475,7 @@ export class AcpGatewayAgent implements Agent {
     const start = cursor.offset;
     const end = start + pageSize;
     let fetchLimit = end + 1;
-    let rows: SessionInfo[] = [];
+    let rows: SessionInfo[];
 
     while (true) {
       const result = await this.gateway.request<SessionsListResult>("sessions.list", {

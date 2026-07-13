@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * VerseShell MCP Server — bridges VerseShell (ae --serve) to MCP-compatible AI agents.
+ * VerseShell MCP Server �?bridges VerseShell (ae --serve) to MCP-compatible AI agents.
  *
  * Usage:
  *   node verseshell-mcp-server.js [--ae-path <path>] [--workspace <dir>]
@@ -277,7 +277,7 @@ const TOOLS = [
 
   // Files
   { name: "verseshell_file_ls", description: "List directory contents (names and directory/not, minimal syscalls). Use file.stat for per-entry size/ext/modified.", parameters: { type: "object", properties: { path: { type: "string", description: "Directory path (default: .)" } } } },
-  { name: "verseshell_file_stat", description: "Get detailed file/directory metadata: size, is_file, is_dir, ext, modified, accessed, created", parameters: { type: "object", properties: { path: { type: "string" } }, required: ["path"] } } },
+  { name: "verseshell_file_stat", description: "Get detailed file/directory metadata: size, is_file, is_dir, ext, modified, accessed, created", parameters: { type: "object", properties: { path: { type: "string" } }, required: ["path"] } },
   { name: "verseshell_file_read", description: "Read file content", parameters: { type: "object", properties: { path: { type: "string", description: "File path" } }, required: ["path"] } },
   { name: "verseshell_file_write", description: "Write content to file (atomic: temp→fsync→rename)", parameters: { type: "object", properties: { path: { type: "string" }, content: { type: "string" } }, required: ["path", "content"] } },
   { name: "verseshell_file_exists", description: "Check if file/directory exists", parameters: { type: "object", properties: { path: { type: "string" } }, required: ["path"] } },
@@ -378,7 +378,7 @@ const TOOLS = [
   { name: "verseshell_clipboard_write", description: "Write text to the clipboard", parameters: { type: "object", properties: { text: { type: "string" } }, required: ["text"] } },
 ];
 
-// ── Tool → Command Mapping ────────────────────────────────────────────
+// ── Tool �?Command Mapping ────────────────────────────────────────────
 
 const COMMAND_MAP = {
   "verseshell_sys_info": 'sys.info()',

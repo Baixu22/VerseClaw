@@ -32,7 +32,9 @@ import { resolveTeamTemplate } from "../team-template.js";
 import type { AnyAgentTool } from "./common.js";
 import { jsonResult, readPositiveIntegerParam, readStringParam, ToolInputError } from "./common.js";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- value retained for type derivation
 const TEAM_ORCHESTRATE_NEXT_ACTIONS = ["yield_for_results", "synthesize_now"] as const;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- type-only value
 const TEAM_ORCHESTRATE_STATUSES = ["accepted", "partial", "error"] as const;
 const TEAM_ORCHESTRATE_QUALITY_STATE_REASON =
   "Ordinary team_orchestrate quality is scored from shadow evidence; Task Loop owns active repair quality semantics.";

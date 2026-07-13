@@ -1348,7 +1348,7 @@ async function finalizeReadConfigSnapshotInternalResult(
 
 async function collectInvalidConfigLegacyIssues(
   raw: unknown,
-  sourceRaw: unknown,
+  _sourceRaw: unknown,
 ): Promise<LegacyConfigIssue[]> {
   if (!raw || typeof raw !== "object") {
     return [];

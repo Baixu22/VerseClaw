@@ -118,7 +118,7 @@ export function createTaskLedgerEvent(
 
 export async function readTaskLedgerEvents(workspaceId?: string | null): Promise<TaskLedgerReadResult> {
   const eventsPath = getTaskLedgerEventsPathForKey(normalizeTaskLedgerWorkspaceId(workspaceId));
-  let raw = '';
+  let raw;
   try {
     raw = await readFile(eventsPath, 'utf8');
   } catch {

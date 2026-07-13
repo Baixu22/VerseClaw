@@ -85,7 +85,7 @@ export class ExecApprovalButton extends Button {
           content: "This approval is no longer valid.",
           ephemeral: true,
         });
-      } catch {}
+      } catch { /* ignore */ }
       return;
     }
 
@@ -97,7 +97,7 @@ export class ExecApprovalButton extends Button {
           content: "⛔ You are not authorized to approve exec requests.",
           ephemeral: true,
         });
-      } catch {}
+      } catch { /* ignore */ }
       return;
     }
 
@@ -110,7 +110,7 @@ export class ExecApprovalButton extends Button {
 
     try {
       await interaction.acknowledge();
-    } catch {}
+    } catch { /* ignore */ }
 
     const result = await this.ctx.resolveApproval(parsed.approvalId, parsed.action);
     if (!result.ok) {
@@ -122,7 +122,7 @@ export class ExecApprovalButton extends Button {
               : `Failed to submit approval decision for **${decisionLabel}**. The request may have expired or already been resolved.`,
           ephemeral: true,
         });
-      } catch {}
+      } catch { /* ignore */ }
     }
   }
 }

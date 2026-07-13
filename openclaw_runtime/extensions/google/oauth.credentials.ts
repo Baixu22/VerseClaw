@@ -252,7 +252,7 @@ function findGeminiCliCredentialsInTree(
         }
       }
     }
-  } catch {}
+  } catch { /* ignore */ }
   return null;
 }
 

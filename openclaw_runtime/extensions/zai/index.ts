@@ -66,7 +66,7 @@ function resolveDeprecatedPiAgentAccessToken(
         return token;
       }
     }
-  } catch {}
+  } catch { /* ignore */ }
   return undefined;
 }
 

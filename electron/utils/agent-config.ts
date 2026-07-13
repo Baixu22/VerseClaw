@@ -660,6 +660,7 @@ export async function writeAgentSoul(agentId: string, soulMd: string): Promise<{
 
 // ── Generic bootstrap file read/write ──────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- value retained for type derivation
 const ALL_BOOTSTRAP_FILES = [
   'AGENTS.md',
   'SOUL.md',

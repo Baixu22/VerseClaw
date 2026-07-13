@@ -157,7 +157,7 @@ describe('agent_browser tool', () => {
   });
 
   it('collects diagnostics for failure-like results and preserves error status', async () => {
-    const invoke = vi.fn(async (action, payload) => {
+    const invoke = vi.fn(async (action, _payload) => {
       if (action === 'click') {
         return {
           success: false,

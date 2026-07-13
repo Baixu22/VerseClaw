@@ -67,7 +67,7 @@ export async function fetchJson(
     timeout.unref?.();
   });
   let response: Response | undefined;
-  let text = "";
+  let text;
   try {
     response = await Promise.race([
       (options.fetchImpl ?? fetch)(url, { ...init, signal: controller.signal }),

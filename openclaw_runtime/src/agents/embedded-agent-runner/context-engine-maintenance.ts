@@ -516,7 +516,7 @@ async function runDeferredTurnMaintenanceWorker(params: {
     if (shutdownAbort.abortSignal?.aborted) {
       if (longRunningTimer) {
         clearTimeout(longRunningTimer);
-        longRunningTimer = null;
+        void (null);
       }
       const task = findTaskByRunIdForOwner({
         runId: params.runId,
@@ -534,7 +534,7 @@ async function runDeferredTurnMaintenanceWorker(params: {
     }
     if (longRunningTimer) {
       clearTimeout(longRunningTimer);
-      longRunningTimer = null;
+      void (null);
     }
     const endedAt = Date.now();
     const reason = formatErrorMessage(err);

@@ -33,7 +33,6 @@ import {
 import {
   generateLongTermCorpus,
   makeUniqueProbeToken,
-  type LongTermCorpus,
 } from "./helpers/runtime-memory-real-corpus";
 import {
   callDeepSeek,

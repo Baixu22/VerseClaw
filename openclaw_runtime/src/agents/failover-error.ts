@@ -323,7 +323,7 @@ function hasEmbeddedAttemptSessionTakeover(err: unknown, seen: Set<object> = new
  * True when the error is a local runtime coordination error (session write-lock
  * timeout or embedded attempt session takeover) rather than a provider/model
  * failure. The model fallback chain must abort on these instead of consuming
- * candidate slots �?retrying any model would hit the same local condition.
+ * candidate slots — retrying any model would hit the same local condition.
  * See #83510.
  */
 export function isNonProviderRuntimeCoordinationError(err: unknown): boolean {
@@ -556,7 +556,7 @@ export function resolveFailoverReasonFromError(
  * failure shape so callers can opportunistically append the hint without
  * branching on every reason themselves.
  *
- * Keep the string short and copy-pasteable �?operators see it in fallback
+ * Keep the string short and copy-pasteable — operators see it in fallback
  * summary errors and TUI status lines.
  */
 export function buildFailoverRemediationHint(err: unknown): string | undefined {

@@ -59,6 +59,7 @@ const NATIVE_HOOK_RELAY_EVENTS = [
   "before_agent_finalize",
 ] as const;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- value retained for type derivation
 const NATIVE_HOOK_RELAY_PROVIDERS = ["codex"] as const;
 
 export type NativeHookRelayEvent = (typeof NATIVE_HOOK_RELAY_EVENTS)[number];

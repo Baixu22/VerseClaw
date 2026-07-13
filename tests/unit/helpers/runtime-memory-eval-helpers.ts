@@ -377,6 +377,7 @@ export function evaluate(
   const guardedTruePositives = sum(perQuery.map((entry) => entry.guarded.truePositiveCount));
   const expectedTotal = sum(perQuery.map((entry) => entry.query.expectedFactIds.length));
   const baselineReturned = sum(perQuery.map((entry) => entry.baseline.returnedCount));
+  void baselineReturned;
   const naiveReturned = sum(perQuery.map((entry) => entry.naive.returnedCount));
   const guardedReturned = sum(perQuery.map((entry) => entry.guarded.returnedCount));
 
@@ -391,6 +392,7 @@ export function evaluate(
   const conflictCandidates = sum(perQuery.map((entry) => entry.conflictCandidateCount));
   const conflictReturned = sum(perQuery.map((entry) => entry.guardedConflictReturned));
   const distractorCandidates = sum(perQuery.map((entry) => entry.distractorCandidateCount));
+  void distractorCandidates;
   const distractorReturned = sum(perQuery.map((entry) => entry.guardedDistractorReturned));
 
   const guardedHazardReturned = sum(perQuery.map((entry) => entry.guardedHazardReturned));
@@ -825,7 +827,7 @@ export function toProjectionFromLite(
 // sanitization. Used by hazard-sentinel-eval to seed hazard text that the
 // persistence layer would reject, testing the consumer's defense-in-depth
 // sentinel paths.
-export function appendRawFactRowToDb(
+export async function appendRawFactRowToDb(
   dbPath: string,
   fields: {
     factId: string;
@@ -839,8 +841,8 @@ export function appendRawFactRowToDb(
     validAt: number;
     referenceTime: number;
   },
-): void {
-  const sqlite = require("node:sqlite") as typeof import("node:sqlite");
+): Promise<void> {
+  const sqlite = await import("node:sqlite");
   const db = new sqlite.DatabaseSync(dbPath);
   try {
     const now = Date.now();

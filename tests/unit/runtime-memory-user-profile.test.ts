@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
   buildUserProfile,
   selectProfileDimensions,
-  type ProfileDimension,
 } from "../../openclaw_runtime/src/runtime-core/memory-user-profile";
 import type { RuntimeMemoryQueryableFact } from "../../openclaw_runtime/src/runtime-core/memory-context";
 

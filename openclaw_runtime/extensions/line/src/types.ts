@@ -39,7 +39,7 @@ export interface LineConfig extends LineAccountBaseConfig {
   defaultAccount?: string;
 }
 
-export interface LineAccountConfig extends LineAccountBaseConfig {}
+export type LineAccountConfig = LineAccountBaseConfig;
 
 export interface LineGroupConfig {
   enabled?: boolean;

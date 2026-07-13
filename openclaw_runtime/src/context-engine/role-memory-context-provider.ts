@@ -40,7 +40,6 @@ import type {
   RuntimeContextProviderQuery,
   RuntimeContextProviderResult,
   RuntimeCoreJsonObject,
-  RuntimeRegistryDiagnostic,
   RuntimeRegistryDiagnosticReason,
 } from "../runtime-core/index.js";
 
@@ -171,7 +170,7 @@ export function createRoleMemoryContextProvider(
       }
 
       // Load cards (mirror role-spawn.ts:162-177 resolveRoleMemoryCards).
-      let cards: MemoryCard[] = [];
+      let cards: MemoryCard[];
       try {
         ensureMemoryCardsLoaded();
         cards = getMemoryCards({ roleName, status: "all" }).filter(

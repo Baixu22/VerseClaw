@@ -12,7 +12,6 @@ import {
   DEFAULT_WRITE_CURATION_CONFIG,
 } from "../../openclaw_runtime/src/runtime-core/memory-write-curation";
 import {
-  hybridSearchFacts,
   HybridSearchIndex,
 } from "../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
 import { RuntimeMemoryStore } from "../../openclaw_runtime/src/runtime-core/memory-store";
@@ -338,9 +337,9 @@ function runModuleB() {
   let bm25Hits = 0;
   let vectorHits = 0;
   let hybridHits = 0;
-  let bm25Ranks: number[] = [];
-  let vectorRanks: number[] = [];
-  let hybridRanks: number[] = [];
+  const bm25Ranks: number[] = [];
+  const vectorRanks: number[] = [];
+  const hybridRanks: number[] = [];
 
   for (const target of targets) {
     const start = performance.now();

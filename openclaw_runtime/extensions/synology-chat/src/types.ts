@@ -25,7 +25,7 @@ export interface SynologyChatChannelConfig extends SynologyChatConfigFields {
 }
 
 /** Raw per-account config (overrides base config) */
-export interface SynologyChatAccountRaw extends SynologyChatConfigFields {}
+export type SynologyChatAccountRaw = SynologyChatConfigFields;
 
 /** Fully resolved account config with defaults applied */
 export interface ResolvedSynologyChatAccount {

@@ -187,7 +187,7 @@ async function readPluginManifestExtensions(pluginPath: string): Promise<string[
   } catch (err) {
     // Re-throw so callers can surface a security finding for malformed manifests.
     // A malicious plugin could use a malformed package.json to hide declared
-    // extension entrypoints from deep scan �?callers must not silently drop them.
+    // extension entrypoints from deep scan — callers must not silently drop them.
     throw new Error(`Failed to parse plugin manifest at ${manifestPath}: ${String(err)}`, {
       cause: err,
     });
@@ -849,7 +849,7 @@ export async function collectPluginsCodeSafetyFindings(params: {
     try {
       extensionEntries = await readPluginManifestExtensions(pluginPath);
     } catch (manifestErr) {
-      // Malformed package.json �?surface a warning so the user investigates.
+      // Malformed package.json — surface a warning so the user investigates.
       // A plugin could deliberately corrupt its manifest to hide declared
       // extension entrypoints from the deep code scanner.
       findings.push({
@@ -862,7 +862,7 @@ export async function collectPluginsCodeSafetyFindings(params: {
         remediation:
           "Inspect the plugin package.json for syntax errors. If the plugin is untrusted, remove it from your OpenClaw extensions state directory.",
       });
-      // Continue �?getCodeSafetySummary below still scans the plugin directory
+      // Continue — getCodeSafetySummary below still scans the plugin directory
     }
     const forcedScanEntries: string[] = [];
     const escapedEntries: string[] = [];

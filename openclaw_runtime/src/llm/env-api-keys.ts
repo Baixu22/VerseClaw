@@ -22,6 +22,7 @@ function loadNodeBuiltinModule(specifier: string): NodeBuiltinModule | null {
     return getBuiltinModule.getBuiltinModule(specifier) as NodeBuiltinModule;
   }
   if (typeof require === "function") {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- dynamic builtin require fallback
     return require(specifier) as NodeBuiltinModule;
   }
   return null;
@@ -88,7 +89,9 @@ function getProcEnv(key: string): string | undefined {
 
   if (procEnvCache === null) {
     procEnvCache = new Map();
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- dynamic builtin require fallback
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports -- dynamic builtin require fallback
       const { readFileSync } = require("node:fs") as typeof import("node:fs");
       const data = readFileSync("/proc/self/environ", "utf-8");
       for (const entry of data.split("\0")) {

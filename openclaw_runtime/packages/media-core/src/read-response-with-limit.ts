@@ -78,7 +78,7 @@ async function readResponsePrefix(
   const reader = body.getReader();
   const chunks: Uint8Array[] = [];
   let total = 0;
-  let size = 0;
+  let size;
   let truncated = false;
   try {
     while (true) {
@@ -103,7 +103,7 @@ async function readResponsePrefix(
         truncated = true;
         try {
           await reader.cancel();
-        } catch {}
+        } catch { /* ignore */ }
         break;
       }
       chunks.push(value);
@@ -113,7 +113,7 @@ async function readResponsePrefix(
   } finally {
     try {
       reader.releaseLock();
-    } catch {}
+    } catch { /* ignore */ }
   }
 
   return {

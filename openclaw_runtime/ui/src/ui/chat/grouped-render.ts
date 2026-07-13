@@ -229,7 +229,7 @@ function labelForMediaPath(mediaPath: string): string {
       const parsed = new URL(trimmed);
       return parsed.pathname.split("/").pop()?.trim() || parsed.hostname || trimmed;
     }
-  } catch {}
+  } catch { /* ignore */ }
   return trimmed.split(/[\\/]/).pop()?.trim() || trimmed;
 }
 
@@ -906,7 +906,7 @@ function renderDeleteButton(onDelete: () => void, side: DeleteConfirmSide) {
             if (check.checked) {
               try {
                 getSafeLocalStorage()?.setItem(SKIP_DELETE_CONFIRM_KEY, "1");
-              } catch {}
+              } catch { /* ignore */ }
             }
             dismissPopover();
             onDelete();

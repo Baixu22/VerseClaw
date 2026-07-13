@@ -831,6 +831,7 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
               const text = sanitizeTransportPayloadText(reasoningContent);
               if (text.length > 0) {
                 const key = `reasoning_${choiceIndex}`;
+                void key;
                 let contentIndex = toolCallIndexes.get(
                   // Use negative key range for reasoning to avoid collision with tool calls
                   -(choiceIndex + 1),

@@ -13,7 +13,7 @@ import {
 } from "./scripts/lib/plugin-sdk-entries.mjs";
 import { tsdownPackageOutputRoot } from "./scripts/lib/tsdown-output-roots.mjs";
 
-type InputOptionsFactory = Extract<NonNullable<UserConfig["inputOptions"]>, Function>;
+type InputOptionsFactory = Extract<NonNullable<UserConfig["inputOptions"]>, (...args: never[]) => unknown>;
 type InputOptionsArg = InputOptionsFactory extends (
   options: infer Options,
   format: infer _Format,

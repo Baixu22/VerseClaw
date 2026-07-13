@@ -341,6 +341,6 @@ export function persistBoundedClobberedConfigSnapshotSync(params: {
   } finally {
     try {
       params.deps.fs.rmdirSync(paths.lockPath);
-    } catch {}
+    } catch { /* ignore */ }
   }
 }

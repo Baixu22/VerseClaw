@@ -244,11 +244,11 @@ const QUERY_MAX_LIMIT = RESULT_ITEM_LIMIT;
 const QUERY_MAX_PAGE = 10_000;
 const QUERY_MAX_TOKEN_BUDGET = 4_096;
 const GROUNDING_RAW_METADATA_KEY_PATTERN =
-  /(^|[._\-\s])(raw(prompt|chat|trace|payload|checkpoint)|full(trace|payload|checkpoint|eventpayload|toolargs|tooloutput)|prompt|model[._\-\s]?messages?|provider[._\-\s]?(ordering|selection)|runtime[._\-\s]?decisions?|gateway[._\-\s]?requests?|eventpayload|toolargs|tooloutput|stdout|stderr|process\.env|processenv|completeenv|env|secrets?|api[._\-\s]?key|access[._\-\s]?key|private[._\-\s]?key|authorization|auth[._\-\s]?headers?|password|traceparent|tracestate|baggage|transcript|jsonl)([._\-\s]|$)/i;
+  /(^|[.\s_-])(raw(prompt|chat|trace|payload|checkpoint)|full(trace|payload|checkpoint|eventpayload|toolargs|tooloutput)|prompt|model[.\s_-]?messages?|provider[.\s_-]?(ordering|selection)|runtime[.\s_-]?decisions?|gateway[.\s_-]?requests?|eventpayload|toolargs|tooloutput|stdout|stderr|process\.env|processenv|completeenv|env|secrets?|api[.\s_-]?key|access[.\s_-]?key|private[.\s_-]?key|authorization|auth[.\s_-]?headers?|password|traceparent|tracestate|baggage|transcript|jsonl)([.\s_-]|$)/i;
 const GROUNDING_RAW_METADATA_TEXT_PATTERN =
-  /\b(raw[\s_\-]*(prompt|chat|trace|payload|checkpoint)|full[\s_\-]*(trace|payload|checkpoint|event[\s_\-]*payload|tool[\s_\-]*(args|output))|prompt|model[\s_\-]*messages?|provider[\s_\-]*(ordering|selection)|runtime[\s_\-]*decisions?|gateway[\s_\-]*requests?|event[\s_\-]*payload|tool[\s_\-]*(args|output)|stdout|stderr|process\.env|complete[\s_\-]*env|traceparent|tracestate|baggage|authorization|password|secret|api[\s_\-]*key|access[\s_\-]*key|private[\s_\-]*key|bearer\s+[A-Za-z0-9._-]+|sk-[A-Za-z0-9_-]{8,})\b/i;
+  /\b(raw[\s_-]*(prompt|chat|trace|payload|checkpoint)|full[\s_-]*(trace|payload|checkpoint|event[\s_-]*payload|tool[\s_-]*(args|output))|prompt|model[\s_-]*messages?|provider[\s_-]*(ordering|selection)|runtime[\s_-]*decisions?|gateway[\s_-]*requests?|event[\s_-]*payload|tool[\s_-]*(args|output)|stdout|stderr|process\.env|complete[\s_-]*env|traceparent|tracestate|baggage|authorization|password|secret|api[\s_-]*key|access[\s_-]*key|private[\s_-]*key|bearer\s+[A-Za-z0-9._-]+|sk-[A-Za-z0-9_-]{8,})\b/i;
 const GROUNDING_AUTHORITY_METADATA_TEXT_PATTERN =
-  /\b(?!no)(runtime|completion|provider[\s_\-]*ordering|memory[\s_\-]*promotion|patch[\s_\-]*mutation|context[\s_\-]*item|provider[\s_\-]*result|prompt|durable[\s_\-]*fact|fact[\s_\-]*acceptance|episode[\s_\-]*write|memory[\s_\-]*persistence|symbol[\s_\-]*mutation)[\s_\-]*authority\s*[:=]\s*(true|yes|1|allow|allowed|enabled|grant|granted)\b/i;
+  /\b(?!no)(runtime|completion|provider[\s_-]*ordering|memory[\s_-]*promotion|patch[\s_-]*mutation|context[\s_-]*item|provider[\s_-]*result|prompt|durable[\s_-]*fact|fact[\s_-]*acceptance|episode[\s_-]*write|memory[\s_-]*persistence|symbol[\s_-]*mutation)[\s_-]*authority\s*[:=]\s*(true|yes|1|allow|allowed|enabled|grant|granted)\b/i;
 
 export type RuntimeTraceGroundingRefOptions = {
   taskId?: string;
@@ -3218,13 +3218,13 @@ function sanitizeMetadataValue(
 }
 
 function isRawGroundingMetadataKey(key: string): boolean {
-  const compact = key.replace(/[._\-\s]+/gu, "");
+  const compact = key.replace(/[.\s_-]+/gu, "");
   return GROUNDING_RAW_METADATA_KEY_PATTERN.test(key) ||
     GROUNDING_RAW_METADATA_KEY_PATTERN.test(compact);
 }
 
 function isRawGroundingMetadataText(value: string): boolean {
-  const normalized = value.replace(/[_\-]+/gu, " ");
+  const normalized = value.replace(/[_-]+/gu, " ");
   return rejectRawRuntimeMemoryInput(value) !== undefined ||
     GROUNDING_RAW_METADATA_TEXT_PATTERN.test(value) ||
     GROUNDING_RAW_METADATA_TEXT_PATTERN.test(normalized) ||

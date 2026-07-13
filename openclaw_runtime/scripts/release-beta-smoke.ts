@@ -91,6 +91,8 @@ export function parseArgs(argv: string[]): Options {
       case "--help":
         process.stdout.write(usage());
         process.exit(0);
+      // falls through
+
       default:
         throw new Error(`unknown option: ${arg}`);
     }

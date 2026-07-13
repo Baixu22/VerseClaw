@@ -1647,7 +1647,7 @@ async function streamBoundedTranscriptJsonl(params: {
         if (params.onRecord(JSON.parse(trimmed) as unknown)) {
           break;
         }
-      } catch {}
+      } catch { /* ignore */ }
     }
   } catch {
     // Treat transcript recovery as best-effort on timeout/abort paths.

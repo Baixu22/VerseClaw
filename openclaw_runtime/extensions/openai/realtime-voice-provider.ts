@@ -1165,6 +1165,8 @@ class OpenAIRealtimeVoiceBridge implements RealtimeVoiceBridge {
         this.config.onError?.(new Error(detail));
       }
 
+      // falls through
+
       default:
     }
   }
@@ -1243,7 +1245,7 @@ class OpenAIRealtimeVoiceBridge implements RealtimeVoiceBridge {
     let args: unknown = {};
     try {
       args = JSON.parse(fields.rawArgs || "{}");
-    } catch {}
+    } catch { /* ignore */ }
     this.config.onToolCall({
       itemId,
       callId,

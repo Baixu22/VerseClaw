@@ -532,11 +532,11 @@ export interface JsonlSessionListOptions {
   cwd?: string;
 }
 
-export interface JsonlSessionRepoApi extends SessionRepo<
+export type JsonlSessionRepoApi = SessionRepo<
   JsonlSessionMetadata,
   JsonlSessionCreateOptions,
   JsonlSessionListOptions
-> {}
+>;
 
 export type AgentHarnessPhase = "idle" | "turn" | "compaction" | "branch_summary" | "retry";
 

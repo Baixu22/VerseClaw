@@ -58,7 +58,7 @@ async function readErrorBodySnippet(res: Response): Promise<string> {
       }
       try {
         reader.releaseLock();
-      } catch {}
+      } catch { /* ignore */ }
     }
     return new TextDecoder()
       .decode(Buffer.concat(chunks, total))

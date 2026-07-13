@@ -519,6 +519,8 @@ export class OpenClawFilePreviewModal extends LitElement {
         return;
       case "ArrowUp":
         this.moveSelection(-1, event);
+      // falls through
+
       default:
     }
   };

@@ -33,10 +33,6 @@ function pct(n: number, total: number): number {
   return total > 0 ? (n / total) * 100 : 0;
 }
 
-function mean(arr: number[]): number {
-  return arr.length > 0 ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
-}
-
 function percentile(arr: number[], p: number): number {
   if (arr.length === 0) return 0;
   const sorted = [...arr].sort((a, b) => a - b);

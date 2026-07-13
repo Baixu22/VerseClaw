@@ -47,7 +47,9 @@ export function usePretextMeasure(
 ): PretextMeasure {
   const fontRef = useRef(font);
   const optionsRef = useRef(options);
+  // eslint-disable-next-line react-hooks/refs -- existing intentional effect/ref sync
   fontRef.current = font;
+  // eslint-disable-next-line react-hooks/refs -- existing intentional effect/ref sync
   optionsRef.current = options;
 
   const measure = useMemo<PretextMeasure>(() => {

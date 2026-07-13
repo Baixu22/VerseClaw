@@ -509,7 +509,7 @@ async function runPdfMerge(input: Record<string, unknown>): Promise<Record<strin
     };
   };
   const merged = await pdfLib.PDFDocument.create() as {
-    copyPages(source: unknown, pages: number[]): Promise<Array<{ }>>;
+    copyPages(source: unknown, pages: number[]): Promise<Array<Record<string, never>>>;
     addPage(page: unknown): void;
     save(): Promise<Uint8Array>;
   };

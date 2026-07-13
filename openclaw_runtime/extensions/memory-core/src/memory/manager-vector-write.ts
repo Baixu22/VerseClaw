@@ -19,7 +19,7 @@ export function replaceMemoryVectorRow(params: {
   const tableName = params.tableName ?? "chunks_vec";
   try {
     params.db.prepare(`DELETE FROM ${tableName} WHERE id = ?`).run(params.id);
-  } catch {}
+  } catch { /* ignore */ }
   params.db
     .prepare(`INSERT INTO ${tableName} (id, embedding) VALUES (?, ?)`)
     .run(params.id, vectorToBlob(params.embedding));

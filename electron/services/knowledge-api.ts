@@ -418,7 +418,7 @@ async function loadRoleRegistry(): Promise<KnowledgeRoleRegistryFile> {
     const parsed = JSON.parse(raw) as unknown;
     const { registry, issues } = normalizeRoleRegistry(parsed);
     if (issues.length > 0) {
-      // eslint-disable-next-line no-console
+       
       console.warn(`[knowledge] steward-roles.json issues:`, issues);
     }
     cachedRoleRegistry = registry;
@@ -428,7 +428,7 @@ async function loadRoleRegistry(): Promise<KnowledgeRoleRegistryFile> {
     // Missing file is the expected initial state — log debug, not warn.
     const code = (error as NodeJS.ErrnoException)?.code;
     if (code !== 'ENOENT') {
-      // eslint-disable-next-line no-console
+       
       console.warn(`[knowledge] steward-roles.json load failed (${code ?? 'unknown'}); using default`);
     }
     return DEFAULT_REGISTRY;
@@ -1706,7 +1706,7 @@ async function validateOkfBundleAtPath(inputPath: string): Promise<KnowledgeOkfV
     if (file.reserved) continue;
     conceptFiles += 1;
     const conceptId = okfConceptId(bundlePath, file.filePath);
-    let content = '';
+    let content;
     try {
       content = await readFile(file.filePath, 'utf8');
     } catch (error) {
@@ -2316,7 +2316,7 @@ export function createKnowledgeApi({
     if (!state) return;
     if (state.debounceTimer) clearTimeout(state.debounceTimer);
     if (state.watcher) {
-      try { state.watcher.close(); } catch {}
+      try { state.watcher.close(); } catch { /* ignore */ }
     }
     watchedStates.delete(configId);
   }
@@ -2428,7 +2428,7 @@ export function createKnowledgeApi({
       for (const config of configs) {
         if (config.enabled) startWatching(config);
       }
-    } catch {}
+    } catch { /* ignore */ }
   })();
   return {
     status: async () => {
@@ -3574,10 +3574,10 @@ export function createKnowledgeApi({
       let lintResult: KnowledgeLintResult | null = null;
       try {
         compileResult = await rpc<any>('wiki.compile', {}, 120_000);
-      } catch {}
+      } catch { /* ignore */ }
       try {
         lintResult = await rpc<any>('wiki.lint', {}, 60_000);
-      } catch {}
+      } catch { /* ignore */ }
 
       const issues: KnowledgeGovernanceIssue[] = [];
       const summaries = { contradictions: 0, stale: 0, dangling: 0, duplicates: 0, provenanceGaps: 0 };

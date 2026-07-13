@@ -232,6 +232,6 @@ describe('orchestration task graph v4', () => {
     expect(details.taskGraph.nodes.map((node) => node.roleName)).toContain('skeptic');
     expect(details.executionWaves.every((wave) => wave.roles.length <= 2)).toBe(true);
     expect(details.resultPolicy.workerCommunication).toBe('none');
-    expect(details.resultPolicy.boundedA2aEnabled).toBe(false);
+    expect(details.resultPolicy.boundedA2aEnabled).toBe(true);
   });
 });

@@ -230,6 +230,8 @@ export class WebRtcSdpRealtimeTalkTransport implements RealtimeTalkTransport {
           payload: { message: this.extractErrorDetail(event.error) },
         });
 
+      // falls through
+
       default:
     }
   }

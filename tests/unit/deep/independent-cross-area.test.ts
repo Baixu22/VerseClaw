@@ -14,8 +14,8 @@
  * 性能采集：A1 snapshot / A2 rePlan / A5 budget planning (p50/p95/p99)
  */
 
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { mkdtemp, writeFile, rm, mkdir } from 'node:fs/promises';
+import { describe, expect, it } from 'vitest';
+import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { performance } from 'node:perf_hooks';
@@ -33,7 +33,6 @@ import {
 } from '../../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js';
 import {
   ShadowWriteEventRecorder,
-  detectUndeclaredWrites,
 } from '../../../openclaw_runtime/src/agents/sessions/extensions/shadow-write-event-recorder.js';
 import {
   beginSnapshot,
@@ -46,14 +45,7 @@ import {
   deprecationCounters,
 } from '../../../openclaw_runtime/src/observability/deprecation-counters.js';
 
-function makeMinimalGraph() {
-  return buildTaskGraph({
-    graphRunId: 'test-run',
-    mode: 'router',
-    workers: [{ roleName: 'worker', task: 'do work' }],
-    requiredCapabilities: [],
-  });
-}
+// makeMinimalGraph was removed (unused); makeMultiWorkerGraph below covers all graph construction.
 
 function makeMultiWorkerGraph(count: number) {
   return buildTaskGraph({
@@ -196,7 +188,7 @@ describe('跨领域 — A3+A6: anomaly rollback 与 checkpoint', () => {
         deprecationCounters.incrementA3AnomalyNonNull();
         deprecationCounters.incrementA3MissionTicks();
       }
-      const a3 = deprecationCounters.getArea('a3') as any;
+      const a3 = deprecationCounters.getArea('a3') as { anomalyNonNullCount: number; totalMissionTicks: number };
       expect(a3.anomalyNonNullCount).toBe(5);
       expect(a3.totalMissionTicks).toBe(5);
       // anomaly 频率 100% >> 20% 阈值 → 应该 violated
@@ -227,7 +219,7 @@ describe('跨领域 — A3+A6: anomaly rollback 与 checkpoint', () => {
       const coord = new FingerprintLeaseCoordinator();
       // 第一次 pause
       coord.commitLease('lease-1', 1000);
-      const ckpt1 = coord.writeCheckpoint('ckpt-1', 1001);
+      coord.writeCheckpoint('ckpt-1', 1001);
       // replay_rollback 后第二次 pause — 需要新 lease
       // 🚨 BUG-FIND: FingerprintLeaseCoordinator 是有状态的，lastLease 仍是 lease-1
       // 第二次 writeCheckpoint 不需要新 commitLease — 可能引用 stale lease
@@ -408,11 +400,9 @@ describe('跨领域 — A1+A2: per-worker 隔离与 fan-in', () => {
       const recorder1 = new ShadowWriteEventRecorder([
         { name: 'tool-a', profile: { kind: 'declared_paths', writePaths: ['/path/a'] } as WriteRiskProfile },
       ]);
-      const recorder2 = new ShadowWriteEventRecorder([
-        { name: 'tool-b', profile: { kind: 'declared_paths', writePaths: ['/path/b'] } as WriteRiskProfile },
-      ]);
-      // 没有 recorder1.merge(recorder2) API
-      expect(typeof (recorder1 as any).merge).toBe('undefined');
+      // A second recorder would be needed to merge, but no merge API exists.
+      // 没有 recorder1.merge(secondRecorder) API
+      expect(typeof (recorder1 as unknown as Record<string, unknown>).merge).toBe('undefined');
       // 🚨 fan-in 时调用方需要自己合并 events — 容易遗漏
     });
   });
@@ -468,7 +458,7 @@ describe('跨领域 — A2+A6: worker crash 与 checkpoint', () => {
       scheduler.startWave(1);
       // 假设 wave 1 中 worker 2 崩溃
       // scheduler 没有 "markWorkerCrashed" API
-      expect(typeof (scheduler as any).markWorkerCrashed).toBe('undefined');
+      expect(typeof (scheduler as unknown as Record<string, unknown>).markWorkerCrashed).toBe('undefined');
       // 🚨 resume 时需要调用方重新构建 graph 并 rePlan
       // 没有 per-worker crash recovery 机制
     });
@@ -528,7 +518,6 @@ describe('跨领域 — 性能数值采集', () => {
       const p95 = percentile(samples, 95);
       const p99 = percentile(samples, 99);
       const max = samples[samples.length - 1];
-      // eslint-disable-next-line no-console
       console.log(`A1 beginSnapshot: p50=${p50.toFixed(2)}ms p95=${p95.toFixed(2)}ms p99=${p99.toFixed(2)}ms max=${max.toFixed(2)}ms`);
       await rm(tempDir, { recursive: true, force: true });
       // 性能预算: p99 ≤ 200ms（flag-off 时是 no-op，应该很快）
@@ -552,7 +541,6 @@ describe('跨领域 — 性能数值采集', () => {
       const p95 = percentile(samples, 95);
       const p99 = percentile(samples, 99);
       const max = samples[samples.length - 1];
-      // eslint-disable-next-line no-console
       console.log(`A2 rePlan: p50=${p50.toFixed(4)}ms p95=${p95.toFixed(4)}ms p99=${p99.toFixed(4)}ms max=${max.toFixed(4)}ms`);
       // 性能预算: ≤ 80ms
       expect(p99).toBeLessThan(80);
@@ -574,7 +562,6 @@ describe('跨领域 — 性能数值采集', () => {
       const p95 = percentile(samples, 95);
       const p99 = percentile(samples, 99);
       const max = samples[samples.length - 1];
-      // eslint-disable-next-line no-console
       console.log(`A5 budget planning: p50=${p50.toFixed(4)}ms p95=${p95.toFixed(4)}ms p99=${p99.toFixed(4)}ms max=${max.toFixed(4)}ms`);
       // 性能预算: p99 ≤ 30ms
       expect(p99).toBeLessThan(30);
@@ -599,7 +586,6 @@ describe('跨领域 — 性能数值采集', () => {
       const p50 = percentile(samples, 50);
       const p95 = percentile(samples, 95);
       const p99 = percentile(samples, 99);
-      // eslint-disable-next-line no-console
       console.log(`A3 classifyAnomalyPattern: p50=${p50.toFixed(5)}ms p95=${p95.toFixed(5)}ms p99=${p99.toFixed(5)}ms`);
       // 性能预算: ≤ 15ms
       expect(p99).toBeLessThan(15);

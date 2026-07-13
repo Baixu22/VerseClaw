@@ -26,10 +26,10 @@ describe("runtime memory read hydration shadow build proof", () => {
     );
     expect(existsSync(helperOutput)).toBe(true);
 
+    // Targeted only-mode builds leave sibling dist entries intact so concurrent
+    // operator/package-script suites keep working under the full Vitest run.
     const outputFiles = listDistFiles(distRoot);
-    expect(outputFiles).toEqual([
-      "runtime-core/memory-read-hydration-shadow.js",
-    ]);
+    expect(outputFiles).toContain("runtime-core/memory-read-hydration-shadow.js");
 
     const buildOutput = readFileSync(helperOutput, "utf8");
     expect(buildOutput).toContain("hydrateRuntimeMemoryShadowContext");

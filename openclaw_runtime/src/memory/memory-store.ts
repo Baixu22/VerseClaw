@@ -1115,7 +1115,7 @@ export function listMemoryProposals(params?: {
   limit?: number;
 }): MemoryProposalRecord[] {
   const limit = Math.max(1, Math.min(500, params?.limit ?? 100));
-  let rows = openDatabase()
+  const rows = openDatabase()
     .prepare(`SELECT * FROM role_memory_proposals ORDER BY created_at DESC LIMIT ?`)
     .all(limit) as ProposalRow[];
   let records = rows.map(rowToProposal);

@@ -27,8 +27,6 @@ import { consumeRuntimeMemoryHydrationFacts } from "../../openclaw_runtime/src/r
 import type {
   RuntimeMemoryHydrationConsumerRejectionReason,
   RuntimeMemoryHydrationConsumerResult,
-  RuntimeMemoryHydrationShadowFactProjection,
-  RuntimeMemoryHydrationConsumerQuery,
 } from "../../openclaw_runtime/src/runtime-core/memory-read-hydration-consumer";
 import {
   buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics,

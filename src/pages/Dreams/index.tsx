@@ -261,8 +261,10 @@ export function Dreams() {
       return;
     }
 
-    let refreshPromise!: Promise<void>;
-    refreshPromise = (async () => {
+    // Box the promise so finally can clear the same in-flight handle without
+    // fighting prefer-const / used-before-assigned.
+    const flight: { current: Promise<void> | null } = { current: null };
+    const refreshPromise = (async () => {
       setLoading(true);
       setError(null);
       try {
@@ -277,11 +279,12 @@ export function Dreams() {
         setError(isMemoryDoctorStartupError(message) ? t('errors.memoryInitializing') : message);
       } finally {
         setLoading(false);
-        if (refreshInFlightRef.current === refreshPromise) {
+        if (refreshInFlightRef.current === flight.current) {
           refreshInFlightRef.current = null;
         }
       }
     })();
+    flight.current = refreshPromise;
 
     refreshInFlightRef.current = refreshPromise;
     return refreshPromise;

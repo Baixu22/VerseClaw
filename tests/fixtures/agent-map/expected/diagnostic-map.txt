@@ -54,12 +54,12 @@ rank: 5 score: 34 reasons: uniqueDefinition+12, stableTieBreak+0
 @@ end tag:src/main/ipc.ts:3:16:registerChatIpc:definition:0
 
 ## src/renderer/SettingsPanel.tsx
-@@ symbol SettingsPanelProps.onModeChange (property) src/renderer/SettingsPanel.tsx:5:2-5:45
+@@ symbol SettingsPanelProps.onModeChange (property) src/renderer/SettingsPanel.tsx:6:2-6:45
 rank: 6 score: 34 reasons: uniqueDefinition+12, stableTieBreak+0
-5 |   onModeChange: (mode: SettingsMode) => void;
-@@ end tag:src/renderer/SettingsPanel.tsx:5:2:onModeChange:definition:3
+6 |   onModeChange: (mode: SettingsMode) => void;
+@@ end tag:src/renderer/SettingsPanel.tsx:6:2:onModeChange:definition:3
 
-@@ symbol SettingsMode (type) src/renderer/SettingsPanel.tsx:1:0-1:50
+@@ symbol SettingsMode (type) src/renderer/SettingsPanel.tsx:2:0-2:50
 rank: 7 score: 34 reasons: uniqueDefinition+12, stableTieBreak+0
-1 | export type SettingsMode = "compact" | "expanded";
-@@ end tag:src/renderer/SettingsPanel.tsx:1:12:SettingsMode:definition:0
+2 | export type SettingsMode = "compact" | "expanded";
+@@ end tag:src/renderer/SettingsPanel.tsx:2:12:SettingsMode:definition:0

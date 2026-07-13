@@ -5,7 +5,7 @@ const SESSION_KEY = "agent:main:main";
 function stableStringify(v) {
   if (v == null || typeof v !== "object") return JSON.stringify(v);
   if (Array.isArray(v)) return "[" + v.map(stableStringify).join(",") + "]";
-  var e = Object.entries(v).sort(([a],[b]) => a.localeCompare(b)).map(([k,val]) => JSON.stringify(k) + ":" + stableStringify(val));
+  const e = Object.entries(v).sort(([a],[b]) => a.localeCompare(b)).map(([k,val]) => JSON.stringify(k) + ":" + stableStringify(val));
   return "{" + e.join(",") + "}";
 }
 
@@ -15,40 +15,40 @@ const WSS = { profiles:[WS], activeWorkspaceId:WS.id, activeWorkspace:WS };
 
 async function openNewChat(app) {
   await app.evaluate(() => {
-    var p = process.mainModule;
-    var ipc = p.require("electron");
-    var menu = ipc.Menu.getApplicationMenu();
+    const p = process.mainModule;
+    const ipc = p.require("electron");
+    const menu = ipc.Menu.getApplicationMenu();
     function fi(items) {
-      for (var i = 0; i < items.length; i++) {
+      for (let i = 0; i < items.length; i++) {
         if (items[i].id === "new-chat") return items[i];
         if (items[i].submenu) {
-          var f = fi(items[i].submenu.items);
+          const f = fi(items[i].submenu.items);
           if (f) return f;
         }
       }
       return undefined;
     }
-    var item = fi(menu ? menu.items : []);
+    const item = fi(menu ? menu.items : []);
     if (item) item.click(undefined, ipc.BrowserWindow.getFocusedWindow() || ipc.BrowserWindow.getAllWindows()[0]);
   });
 }
 
 async function installRecorder(app) {
   await app.evaluate(async function() {
-    var ipc = process.mainModule.require("electron");
-    var h = ipc.ipcMain._invokeHandlers;
-    var prev = h.get("host:invoke");
+    const ipc = process.mainModule.require("electron");
+    const h = ipc.ipcMain._invokeHandlers;
+    const prev = h.get("host:invoke");
     if (!prev) return;
     globalThis.__cm = {};   
 
     ipc.ipcMain.removeHandler("host:invoke");
     ipc.ipcMain.handle("host:invoke", async function(ev, req) {
-      var m = req.module, a = req.action, p = req.payload;
+      const m = req.module, a = req.action, p = req.payload;
 
       if (m === "chat" && a === "sendWithMedia") {
-        var wm = p && p.workMode;
-        var pmMap = {plan:"none", build:"full", review:"minimal", docsData:"minimal"};
-        var pm = wm ? (pmMap[wm] || undefined) : undefined;
+        const wm = p && p.workMode;
+        const pmMap = {plan:"none", build:"full", review:"minimal", docsData:"minimal"};
+        const pm = wm ? (pmMap[wm] || undefined) : undefined;
         globalThis.__cm.last = Object.assign({}, p, {workMode: wm, promptMode: pm});
         return {id:req.id, ok:true, data:{success:true, result:{runId:"r"}}};
       }
@@ -58,9 +58,9 @@ async function installRecorder(app) {
 }
 
 function mkMocks() {
-  var k = (m, p) => stableStringify([m, p || null]);
-  var ok = (d) => ({ ok:true, data:d });
-  var js = (j) => ({ status:200, ok:true, json:j });
+  const k = (m, p) => stableStringify([m, p || null]);
+  const ok = (d) => ({ ok:true, data:d });
+  const js = (j) => ({ status:200, ok:true, json:j });
   return {
     gatewayStatus: { state:"running", port:18789, pid:12345 },
     gatewayRpc: {
@@ -95,7 +95,7 @@ test.describe("Work mode intensity E2E", () => {
         await page.getByTestId("chat-composer-input").click();
         await page.getByTestId("chat-composer-input").fill("Test msg");
         await page.getByTitle("Send").click();
-        var payload = await app.evaluate(() => globalThis.__cm && globalThis.__cm.last);
+        const payload = await app.evaluate(() => globalThis.__cm && globalThis.__cm.last);
         expect(payload).toBeDefined();
         if (mode === "plan") expect(payload.promptMode).toBe("none");
         else if (mode === "build") expect(payload.promptMode).toBe("full");
@@ -113,7 +113,7 @@ test.describe("Work mode intensity E2E", () => {
       await expect(page.getByTestId("chat-composer-input")).toBeVisible({ timeout:30000 });
       await page.getByTestId("chat-composer-input").fill("Hello");
       await page.getByTitle("Send").click();
-      var payload = await app.evaluate(() => globalThis.__cm && globalThis.__cm.last);
+      const payload = await app.evaluate(() => globalThis.__cm && globalThis.__cm.last);
       expect(payload).toBeDefined();
       expect(payload.promptMode).toBe("full");
     } finally { await closeElectronApp(app); }

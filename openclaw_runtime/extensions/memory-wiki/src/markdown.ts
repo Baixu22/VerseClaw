@@ -9,6 +9,7 @@ import {
 } from "openclaw/plugin-sdk/string-coerce-runtime";
 import YAML from "yaml";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- value retained for type derivation
 const WIKI_PAGE_KINDS = ["entity", "concept", "source", "synthesis", "report"] as const;
 export const WIKI_RELATED_START_MARKER = "<!-- openclaw:wiki:related:start -->";
 export const WIKI_RELATED_END_MARKER = "<!-- openclaw:wiki:related:end -->";

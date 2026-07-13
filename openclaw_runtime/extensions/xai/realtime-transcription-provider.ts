@@ -196,6 +196,8 @@ function createXaiRealtimeTranscriptionSession(
       case "error":
         config.onError?.(new Error(readErrorDetail(event.error ?? event.message)));
 
+      // falls through
+
       default:
     }
   };

@@ -214,7 +214,7 @@ type ValidationIssueSink = RuntimeFailureEvidenceReplayValidationIssue[];
 const ISO_TIMESTAMP_PATTERN =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
 
-const LIVE_PROVIDER_FIXTURE_PATTERN = /^(?:live|live_provider|provider:live|network|default)(?:$|[:_\-])/i;
+const LIVE_PROVIDER_FIXTURE_PATTERN = /^(?:live|live_provider|provider:live|network|default)(?:$|[:_-])/i;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));

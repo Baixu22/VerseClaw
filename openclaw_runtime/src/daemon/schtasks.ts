@@ -463,7 +463,7 @@ async function isStartupEntryInstalled(env: GatewayServiceEnv): Promise<boolean>
     try {
       await fs.access(startupEntryPath);
       return true;
-    } catch {}
+    } catch { /* ignore */ }
   }
   return false;
 }
@@ -1262,7 +1262,7 @@ export async function uninstallScheduledTask({
     try {
       await fs.unlink(startupEntryPath);
       stdout.write(`${formatLine("Removed Windows login item", startupEntryPath)}\n`);
-    } catch {}
+    } catch { /* ignore */ }
   }
 
   const scriptPath = resolveTaskScriptPath(env);
@@ -1271,7 +1271,7 @@ export async function uninstallScheduledTask({
     try {
       await fs.unlink(launcherPath);
       stdout.write(`${formatLine("Removed task launcher", launcherPath)}\n`);
-    } catch {}
+    } catch { /* ignore */ }
   }
   try {
     await fs.unlink(scriptPath);

@@ -558,7 +558,7 @@ async function* observeModelCallIterator<T>(
   startedAt: number,
   state: ModelCallObservationState,
 ): AsyncIterable<T> {
-  let terminalEmitted = false;
+  let terminalEmitted;
   try {
     for (;;) {
       const next = await iterator.next();

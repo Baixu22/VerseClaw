@@ -263,8 +263,7 @@ describe("Architecture Diagnostic: Do claimed capabilities actually work?", () =
       );
 
       // The key question: does boost actually change the order?
-      const bareOrder = bareHits.map((h) => h.fact.factId).join(",");
-      const boostOrder = boostHits.map((h) => h.fact.factId).join(",");
+      // (orders computed inline via console.log above; bareScores/boostScores below cover the rrf comparison)
 
       // They MIGHT be the same if BM25 dominates (different text lengths),
       // but the rrfScores should be different

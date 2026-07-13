@@ -1515,7 +1515,7 @@ async function main() {
   );
 
   let collector: Awaited<ReturnType<typeof startDockerOtelCollector>> | undefined;
-  let childExitCode = 1;
+  let childExitCode;
   try {
     let exportPort = port;
     if (options.collectorMode === "docker") {

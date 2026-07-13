@@ -153,7 +153,7 @@ export async function findInstalledSystemdGatewayScope(
     try {
       await fs.access(userPath);
       return { scope: "user", unitName: canonicalUnitName, unitPath: userPath };
-    } catch {}
+    } catch { /* ignore */ }
   }
   const systemPath = await findSystemSystemdUnitPath(env);
   if (systemPath) {

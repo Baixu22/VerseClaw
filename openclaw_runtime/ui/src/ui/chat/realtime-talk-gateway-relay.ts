@@ -211,6 +211,8 @@ export class GatewayRelayRealtimeTalkTransport implements RealtimeTalkTransport 
           this.stopLocal();
         }
 
+      // falls through
+
       default:
     }
   }

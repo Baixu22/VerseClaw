@@ -13,7 +13,6 @@ import {
   hybridSearchFacts,
   HybridSearchIndex,
   OPTIMAL_HYBRID_FUSION,
-  type HybridSearchHit,
 } from "../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
 import type { RuntimeMemoryTemporalFact } from "../../openclaw_runtime/src/runtime-core/memory-context";
 

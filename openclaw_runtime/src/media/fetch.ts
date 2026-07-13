@@ -457,7 +457,7 @@ async function* responseBodyChunks(
     }
     try {
       reader.releaseLock();
-    } catch {}
+    } catch { /* ignore */ }
   }
 }
 

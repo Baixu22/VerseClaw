@@ -69,6 +69,8 @@ export function parseArgs(argv: string[]): CliOptions {
         console.log(`${usage()}\n`);
         process.exit(0);
       }
+      // falls through
+
       default: {
         throw new Error(`Unknown argument: ${arg}`);
       }

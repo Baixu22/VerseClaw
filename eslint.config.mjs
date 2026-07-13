@@ -5,9 +5,34 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 
+const tsEslintRecommended =
+  tsPlugin.configs['flat/eslint-recommended']?.rules
+  ?? tsPlugin.configs['eslint-recommended']?.overrides?.[0]?.rules
+  ?? {
+    'no-redeclare': 'off',
+    'no-undef': 'off',
+    'no-unreachable': 'off',
+  };
+
 export default [
   {
-    ignores: ['dist/**', 'openclaw_runtime/dist/**', 'dist-electron/**', 'openclaw/**', 'release/**', 'build/**'],
+    ignores: [
+      '.tmp/**',
+      '**/.tmp/**',
+      '**/.artifacts/**',
+      'artifacts/**',
+      'dist/**',
+      'dist-electron/**',
+      'openclaw/**',
+      'release/**',
+      'build/**',
+      'openclaw_runtime/dist/**',
+      'openclaw_runtime/**/dist/**',
+      'openclaw_runtime/extensions/codegraph/dist/**',
+      'openclaw_runtime/packages/agent-core/dist/**',
+      // Fixture AST samples intentionally use synthetic use* identifiers.
+      'tests/fixtures/ast-patch-planner/**',
+    ],
   },
   {
     files: ['**/*.{ts,tsx}'],
@@ -28,15 +53,25 @@ export default [
     },
     rules: {
       ...js.configs.recommended.rules,
+      ...tsEslintRecommended,
       ...tsPlugin.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      // TypeScript handles these checks natively, disable ESLint duplicates
+      // TypeScript handles these checks natively; keep only TS-aware variants.
       'no-undef': 'off',
+      'no-redeclare': 'off',
+      'no-unreachable': 'off',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+        },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
@@ -60,6 +95,17 @@ export default [
     files: ['src/lib/api-client.ts'],
     rules: {
       'no-restricted-syntax': 'off',
+    },
+  },
+  {
+    // Non-React packages reuse use* names for non-hook helpers (Baileys auth, access-group resolvers).
+    files: [
+      'openclaw_runtime/extensions/whatsapp/src/session.ts',
+      'openclaw_runtime/src/channels/message-access/runtime.ts',
+      'openclaw_runtime/src/plugins/loader.test-fixtures.ts',
+    ],
+    rules: {
+      'react-hooks/rules-of-hooks': 'off',
     },
   },
 ];

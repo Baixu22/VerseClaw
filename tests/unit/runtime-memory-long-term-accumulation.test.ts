@@ -14,7 +14,6 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   buildRuntimeMemoryEpisodeFixture,
   buildRuntimeMemoryInvalidationProposalFixture,
-  buildRuntimeMemoryTemporalFactFixture,
 } from "../../openclaw_runtime/src/runtime-core";
 import { createRuntimeMemoryPersistenceStore } from "../../openclaw_runtime/src/runtime-core/memory-persistence";
 import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/state/openclaw-state-db";

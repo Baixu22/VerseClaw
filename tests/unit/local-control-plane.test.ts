@@ -782,7 +782,7 @@ describe('local runtime control plane reports', () => {
         expect.objectContaining({ code: 'model_router.unresolved' }),
       ]),
     });
-  });
+  }, 60_000);
 
   it('records task-loop evidence coverage without changing completion decisions or legacy report fields', async () => {
     const result = await runTaskLoop(

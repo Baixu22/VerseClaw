@@ -988,6 +988,8 @@ function recordDiagnosticEvent(
         numericValue(evt.bytes),
         BYTE_BUCKETS,
       );
+    // falls through
+
     default:
   }
 }

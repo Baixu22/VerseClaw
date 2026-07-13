@@ -292,7 +292,7 @@ export class AgentBrowserCliRunner {
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      throw new Error(`agent-browser CLI failed (${commandArgs.join(' ')}): ${message}`);
+      throw new Error(`agent-browser CLI failed (${commandArgs.join(' ')}): ${message}`, { cause: error });
     }
   }
 

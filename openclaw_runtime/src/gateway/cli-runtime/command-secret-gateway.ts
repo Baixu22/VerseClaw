@@ -8,7 +8,7 @@ import {
 import { validateSecretsResolveResult } from "../../../packages/gateway-protocol/src/index.js";
 import { callGateway } from "../call.js";
 import { analyzeCommandSecretAssignmentsFromSnapshot } from "../../secrets/command-config.js";
-import { getPath, setPathExistingStrict } from "../../secrets/path-utils.js";
+import { setPathExistingStrict } from "../../secrets/path-utils.js";
 import { resolveSecretRefValue } from "../../secrets/resolve.js";
 import { assertExpectedResolvedSecretValue } from "../../secrets/secret-value.js";
 import { discoverConfigSecretTargetsByIds } from "../../secrets/target-registry.js";

@@ -666,6 +666,8 @@ function registerDiagnosticRunActivityListener(): void {
       case "run.completed":
         recordRunCompleted(event);
 
+      // falls through
+
       default:
     }
   });

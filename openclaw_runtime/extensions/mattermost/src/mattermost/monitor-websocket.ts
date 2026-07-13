@@ -412,7 +412,7 @@ export function createMattermostConnectOnce(
           });
           try {
             ws.close();
-          } catch {}
+          } catch { /* ignore */ }
         });
       });
     } finally {

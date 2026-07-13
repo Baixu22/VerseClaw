@@ -81,7 +81,7 @@ describe('compression artifact', () => {
     expect(result.value.details?.artifact).toMatchObject({
       schemaVersion: 1,
       objective: expect.stringContaining('Preserve recovery facts'),
-      staleExcludedCount: 2,
+      telemetry: expect.objectContaining({ staleExcludedCount: 2 }),
     });
     expect(result.value.details?.artifact?.evidenceRefs.length).toBeGreaterThan(0);
     expect(result.value.details?.artifact?.filesTouched.map((item) => item.text)).toContain('shared/host-api/contract.ts');
@@ -171,13 +171,15 @@ describe('compression artifact', () => {
 
     const normalized = normalizeCompressionArtifact(artifact);
     expect(normalized).toMatchObject({
-      tier: 'tier3',
-      strategy: 'semantic-handoff',
-      compressionRatio: 0.24,
-      tokensBefore: 1000,
-      tokensAfter: 240,
-      staleExcludedCount: 2,
-      causalAnchorCount: 5,
+      telemetry: {
+        tier: 'tier3',
+        strategy: 'semantic-handoff',
+        compressionRatio: 0.24,
+        tokensBefore: 1000,
+        tokensAfter: 240,
+        staleExcludedCount: 2,
+        causalAnchorCount: 5,
+      },
     });
     expect(normalized?.quality.warnings).toContain('low_evidence_coverage');
     expect(renderRecoveryContextProjection(artifact)).toContain('compression: tier3 / semantic-handoff');

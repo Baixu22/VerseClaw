@@ -2445,7 +2445,7 @@ export const registerTelegramHandlers = ({
             if (errStr.includes("no text in the message")) {
               try {
                 await deleteCallbackMessage();
-              } catch {}
+              } catch { /* ignore */ }
               await replyToCallbackChat(
                 text,
                 keyboard ? { reply_markup: keyboard, ...extra } : extra,

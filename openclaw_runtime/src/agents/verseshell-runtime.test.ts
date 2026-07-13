@@ -65,7 +65,7 @@ function parseCompactDone(parts: string[]): Record<string, unknown> | null {
   const sessionAgeMs = parseInt(parts[6], 10) || 0;
 
   const valueToken = parts[3];
-  let value: unknown = null;
+  let value: unknown;
   if (valueToken === "N") value = null;
   else if (valueToken === "T") value = true;
   else if (valueToken === "F") value = false;

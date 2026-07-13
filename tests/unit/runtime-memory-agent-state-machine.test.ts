@@ -338,7 +338,7 @@ describe("complete multi_hop flow", () => {
     expect(r1.stateDelta.repeatedRecallCount).toBe(1);
 
     // Step 2: bridge_probe
-    const r2 = sm.executeStep("bridge_probe", {
+    sm.executeStep("bridge_probe", {
       hypotheses: ["Jon ↔ Mary bridge fact"],
       constraints: { entities: ["Jon", "Mary"] },
       missingInfo: "What evidence connects them?",
@@ -347,7 +347,7 @@ describe("complete multi_hop flow", () => {
     expect(sm.getState().bridgeProbeCount).toBe(1);
 
     // Step 3: evidence_expand
-    const r3 = sm.executeStep("evidence_expand", {
+    sm.executeStep("evidence_expand", {
       hypotheses: ["Jon met Mary at Google conference"],
       constraints: { entities: ["Jon", "Mary", "Google"] },
       missingInfo: null,
@@ -356,7 +356,7 @@ describe("complete multi_hop flow", () => {
     expect(sm.getState().evidenceExpandCount).toBe(1);
 
     // Step 4: generate
-    const r4 = sm.executeStep("generate", {
+    sm.executeStep("generate", {
       hypotheses: ["Jon met Mary at Google conference in 2020"],
       missingInfo: null,
       nextAction: "finalize",
@@ -396,7 +396,7 @@ describe("complete multi_hop flow", () => {
     sm.executeStep("bridge_probe", makeStateDelta({ nextAction: "reconcile" }));
 
     // reconcile: 检测到冲突, 调 LLM 调和
-    const r = sm.executeStep("reconcile", {
+    sm.executeStep("reconcile", {
       hypotheses: ["conflicting facts about Jon's location"],
       constraints: { temporalPolicy: "strict_current" },
       missingInfo: "Which location is current?",

@@ -179,6 +179,7 @@ async function applyApprovalFinalAction(params: {
       });
 
     // `clear-actions` updates interaction controls but leaves the delivered content in place.
+    // falls through
     case "leave":
   }
 }

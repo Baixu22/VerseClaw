@@ -141,6 +141,7 @@ type WeatherInteraction = {
   icon?: string;
   humidity?: number;
   windSpeed?: number;
+  windUnit?: string;
   forecast?: Array<{ day: string; condition: string; high: number; low: number }>;
 };
 
@@ -457,7 +458,7 @@ function normalizeInteractionType(value: unknown, payload: Record<string, unknow
   if (normalized === 'question-flow' || normalized === 'question' || normalized === 'question-flow-tool' || normalized === 'questionnaire') return 'question-flow';
   if (normalized === 'preferences-panel' || normalized === 'preferences' || normalized === 'preference-panel' || normalized === 'settings-panel') return 'preferences-panel';
   if (normalized === 'table' || normalized === 'data-table' || normalized === 'grid-table') return 'table';
-  if (normalized === 'weather' || normalized === 'weather-card' || normalized === 'weather-info') return 'weather';
+  if (normalized === 'weather' || normalized === 'weather-card' || normalized === 'weather-info' || normalized === 'weather-widget') return 'weather';
   if (normalized === 'directive-text' || normalized === 'directive' || normalized === 'callout' || normalized === 'notice') return 'directive-text';
   if (normalized === 'source' || normalized === 'sources' || normalized === 'citations' || normalized === 'references') return 'source';
   if (normalized === 'progress' || normalized === 'progress-bar' || normalized === 'progress-indicator') return 'progress';
@@ -826,7 +827,8 @@ function parseTable(payload: Record<string, unknown>, fallbackId: string): Table
 function parseWeather(payload: Record<string, unknown>, fallbackId: string): WeatherInteraction | null {
   const location = asString(payload.location) ?? asString(payload.city) ?? asString(payload.place);
   if (!location) return null;
-  const unit = normalizeType(payload.unit) === 'f' ? 'f' : 'c';
+  const unitRaw = normalizeType(payload.unit);
+  const unit = unitRaw === 'f' || unitRaw === 'fahrenheit' ? 'f' : 'c';
   const forecast = Array.isArray(payload.forecast)
     ? payload.forecast
       .filter(isRecord)
@@ -847,6 +849,7 @@ function parseWeather(payload: Record<string, unknown>, fallbackId: string): Wea
     icon: asString(payload.icon) ?? asString(payload.weatherIcon),
     humidity: asNumber(payload.humidity),
     windSpeed: asNumber(payload.windSpeed) ?? asNumber(payload.wind_speed),
+    windUnit: asString(payload.windUnit) ?? asString(payload.wind_unit) ?? undefined,
     forecast,
   };
 }
@@ -2674,16 +2677,20 @@ function WeatherCard({ interaction }: { interaction: WeatherInteraction }) {
   const tempDisplay = interaction.temperature != null
     ? `${Math.round(interaction.temperature)}°${interaction.unit === 'f' ? 'F' : 'C'}`
     : '--';
+  const windUnit = interaction.windUnit || (interaction.unit === 'f' ? 'mph' : 'km/h');
   return (
     <ToolUiShell icon={<CloudSun className="h-3.5 w-3.5" />} label={t('toolUi.weather.label', 'Weather')}>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4" data-testid="chat-tool-ui-weather">
+        {interaction.icon ? (
+          <span data-testid="chat-tool-ui-weather-icon" data-weather-icon={interaction.icon} className="sr-only">{interaction.icon}</span>
+        ) : null}
         <div className="text-3xl font-light text-foreground tabular-nums">{tempDisplay}</div>
         <div className="space-y-0.5">
           <p className="text-sm font-medium text-foreground">{interaction.location}</p>
           {interaction.condition && <p className="text-xs text-muted-foreground">{interaction.condition}</p>}
           <div className="flex gap-3 text-meta text-muted-foreground/70">
             {interaction.humidity != null && <span>{t('toolUi.weather.humidity', 'Humidity')}: {interaction.humidity}%</span>}
-            {interaction.windSpeed != null && <span>{t('toolUi.weather.wind', 'Wind')}: {interaction.windSpeed} km/h</span>}
+            {interaction.windSpeed != null && <span>{t('toolUi.weather.wind', 'Wind')}: {interaction.windSpeed} {windUnit}</span>}
           </div>
         </div>
       </div>
