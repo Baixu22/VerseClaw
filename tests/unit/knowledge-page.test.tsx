@@ -38,7 +38,13 @@ const hostApiMock = vi.hoisted(() => ({
   recordKnowledgeReference: vi.fn(),
   getProvenance: vi.fn(),
   openVault: vi.fn(),
+  stewardConfigGet: vi.fn(),
+  stewardConfigUpdate: vi.fn(),
   dialogOpen: vi.fn(),
+}));
+
+const i18nTest = vi.hoisted(() => ({
+  t: ((key: string, _options?: Record<string, unknown>) => key) as (key: string, options?: Record<string, unknown>) => string,
 }));
 
 vi.mock('@/lib/host-api', () => ({
@@ -79,6 +85,8 @@ vi.mock('@/lib/host-api', () => ({
       recordKnowledgeReference: hostApiMock.recordKnowledgeReference,
       getProvenance: hostApiMock.getProvenance,
       openVault: hostApiMock.openVault,
+      stewardConfigGet: hostApiMock.stewardConfigGet,
+      stewardConfigUpdate: hostApiMock.stewardConfigUpdate,
     },
     dialog: {
       open: hostApiMock.dialogOpen,
@@ -446,12 +454,14 @@ const labels: Record<string, string> = {
   'common:actions.refresh': 'Refresh',
 };
 
+i18nTest.t = (key: string, options?: Record<string, unknown>) => {
+  const template = labels[key] ?? key;
+  return template.replace(/\{\{(\w+)\}\}/g, (_match: string, name: string) => String(options?.[name] ?? ''));
+};
+
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, options?: Record<string, unknown>) => {
-      const template = labels[key] ?? key;
-      return template.replace(/\{\{(\w+)\}\}/g, (_, name: string) => String(options?.[name] ?? ''));
-    },
+    t: i18nTest.t,
   }),
 }));
 
@@ -498,6 +508,8 @@ describe('Knowledge page', () => {
     hostApiMock.recordKnowledgeReference.mockReset();
     hostApiMock.getProvenance.mockReset();
     hostApiMock.openVault.mockReset();
+    hostApiMock.stewardConfigGet.mockReset();
+    hostApiMock.stewardConfigUpdate.mockReset();
     hostApiMock.dialogOpen.mockReset();
 
     hostApiMock.status.mockResolvedValue({
@@ -901,6 +913,15 @@ describe('Knowledge page', () => {
       },
     });
     hostApiMock.openVault.mockResolvedValue({ success: true, path: 'C:/clawx/wiki' });
+    hostApiMock.stewardConfigGet.mockResolvedValue({
+      success: true,
+      registry: { defaultRoleId: 'knowledge-steward', roles: [{ roleId: 'knowledge-steward', label: 'Knowledge Steward' }] },
+      activeRole: { roleId: 'knowledge-steward', label: 'Knowledge Steward' },
+    });
+    hostApiMock.stewardConfigUpdate.mockResolvedValue({
+      success: true,
+      registry: { defaultRoleId: 'knowledge-steward', roles: [{ roleId: 'knowledge-steward', label: 'Knowledge Steward' }] },
+    });
     hostApiMock.dialogOpen.mockResolvedValue({ canceled: false, filePaths: ['C:/notes/decision.md'] });
   });
 
