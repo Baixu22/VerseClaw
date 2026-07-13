@@ -146,22 +146,22 @@ describe("edit tool: line-ending round trips", () => {
     );
   });
 
-  it("normalizes a mixed-endings file to the FIRST detected ending", async () => {
+  it("preserves each existing ending in a mixed-endings file", async () => {
     // characterization: current behavior, not necessarily desired — the file
     // mixes CRLF and LF; because the first newline is CRLF, the whole file is
     // rewritten with CRLF, silently changing untouched lines.
     await writeFile(join(dir, "mixed.txt"), "one\r\ntwo\nthree\n", "utf-8");
     await executeEdit({ path: "mixed.txt", edits: [{ oldText: "two", newText: "TWO" }] });
-    expect(await readFile(join(dir, "mixed.txt"), "utf-8")).toBe("one\r\nTWO\r\nthree\r\n");
+    expect(await readFile(join(dir, "mixed.txt"), "utf-8")).toBe("one\r\nTWO\nthree\n");
   });
 
-  it("rewrites a lone-CR (classic Mac) file entirely to LF", async () => {
+  it("preserves lone-CR (classic Mac) line endings", async () => {
     // characterization: current behavior, not necessarily desired — CR-only
     // files contain no \n, detection falls back to LF, and normalizeToLF has
     // already converted every \r, so the ending style is silently changed.
     await writeFile(join(dir, "cr.txt"), "one\rtwo\rthree", "utf-8");
     await executeEdit({ path: "cr.txt", edits: [{ oldText: "two", newText: "TWO" }] });
-    expect(await readFile(join(dir, "cr.txt"), "utf-8")).toBe("one\nTWO\nthree");
+    expect(await readFile(join(dir, "cr.txt"), "utf-8")).toBe("one\rTWO\rthree");
   });
 });
 
@@ -176,10 +176,25 @@ describe("edit tool: BOM handling", () => {
     expect([...onDisk.subarray(0, 3)]).toEqual([0xef, 0xbb, 0xbf]);
     expect(onDisk.toString("utf-8")).toBe("﻿ALPHA\nbeta\n");
   });
+
+  it("preserves UTF-16LE encoding and BOM while editing decoded text", async () => {
+    const filePath = join(dir, "utf16le.txt");
+    await writeFile(
+      filePath,
+      Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from("alpha\r\nbeta", "utf16le")]),
+    );
+    await executeEdit({
+      path: "utf16le.txt",
+      edits: [{ oldText: "beta", newText: "BETA" }],
+    });
+    const onDisk = await readFile(filePath);
+    expect([...onDisk.subarray(0, 2)]).toEqual([0xff, 0xfe]);
+    expect(onDisk.subarray(2).toString("utf16le")).toBe("alpha\r\nBETA");
+  });
 });
 
-describe("edit tool: fuzzy matching side effects", () => {
-  it("normalizes smart punctuation FILE-WIDE when any edit needs a fuzzy match", async () => {
+describe("edit tool: fuzzy matching boundaries", () => {
+  it("keeps untouched punctuation and trailing whitespace during a fuzzy edit", async () => {
     // characterization: current behavior, not necessarily desired — the edit
     // targets one line, but the untouched line's em-dash and smart quotes are
     // also rewritten to ASCII because replacement runs in fuzzy space.
@@ -188,7 +203,9 @@ describe("edit tool: fuzzy matching side effects", () => {
       path: "fuzzy.txt",
       edits: [{ oldText: 'say "hello"', newText: "say hi" }],
     });
-    expect(await readFile(join(dir, "fuzzy.txt"), "utf-8")).toBe("say hi\nkeep - this\n");
+    expect(await readFile(join(dir, "fuzzy.txt"), "utf-8")).toBe(
+      "say hi\nkeep \u2014 this\n",
+    );
   });
 });
 

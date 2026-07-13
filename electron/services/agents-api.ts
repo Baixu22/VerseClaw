@@ -173,7 +173,7 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
       const agentId = requireString(payload, 'id');
       const body = (isRecord(payload) ? payload : {}) as AgentBootstrapUpdateBody;
 
-      // Handle role profile â†?compiles to SOUL.md
+      // Handle role profile â†’compiles to SOUL.md
       const hasRoleProfile = body.roleProfile && typeof body.roleProfile === 'object';
       const hasRawSoulMd = typeof body.soulMd === 'string';
 

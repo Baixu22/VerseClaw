@@ -5,6 +5,11 @@
  */
 import fs from "node:fs/promises";
 import { formatErrorMessage } from "../infra/errors.js";
+import {
+  captureLineEndings,
+  normalizeToLF,
+  restoreLineEndings,
+} from "./sessions/tools/edit-diff.js";
 
 type UpdateFileChunk = {
   changeContext?: string;
@@ -28,17 +33,18 @@ export async function applyUpdateHunk(
     throw new Error(`Failed to read file to update ${filePath}: ${formatErrorMessage(err)}`);
   });
 
-  const originalLines = originalContents.split("\n");
+  const originalEndings = captureLineEndings(originalContents);
+  const normalizedContents = normalizeToLF(originalContents);
+  const originalLines = normalizedContents.split("\n");
+  const hadTrailingNewline = originalEndings.length > 0 && originalLines.at(-1) === "";
   if (originalLines.length > 0 && originalLines[originalLines.length - 1] === "") {
     originalLines.pop();
   }
 
   const replacements = computeReplacements(originalLines, filePath, chunks);
-  let newLines = applyReplacements(originalLines, replacements);
-  if (newLines.length === 0 || newLines[newLines.length - 1] !== "") {
-    newLines = [...newLines, ""];
-  }
-  return newLines.join("\n");
+  const newLines = applyReplacements(originalLines, replacements);
+  const normalizedResult = `${newLines.join("\n")}${hadTrailingNewline ? "\n" : ""}`;
+  return restoreLineEndings(normalizedResult, originalEndings);
 }
 
 function computeReplacements(

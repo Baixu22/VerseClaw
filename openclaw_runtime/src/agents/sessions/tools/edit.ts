@@ -16,8 +16,8 @@ import type { AgentTool } from "../../runtime/index.js";
 import type { ToolDefinition } from "../extensions/types.js";
 import {
   applyEditsToNormalizedContent,
+  captureLineEndings,
   computeEditsDiff,
-  detectLineEnding,
   type Edit,
   type EditDiffError,
   type EditDiffResult,
@@ -32,6 +32,7 @@ import { resolveToCwd } from "./path-utils.js";
 import { invalidArgText, shortenPath, str } from "./render-utils.js";
 import type { EditToolDetails, EditToolInput } from "./tool-contracts.js";
 import { wrapToolDefinition } from "./tool-definition-wrapper.js";
+import { decodeTextFile, encodeTextFile } from "./text-file-codec.js";
 
 type EditPreview = EditDiffResult | EditDiffError;
 
@@ -79,7 +80,7 @@ export interface EditOperations {
   /** Read file contents as a Buffer */
   readFile: (absolutePath: string) => Promise<Buffer>;
   /** Write content to a file */
-  writeFile: (absolutePath: string, content: string) => Promise<void>;
+  writeFile: (absolutePath: string, content: Buffer | string) => Promise<void>;
   /** Check if file is readable and writable (throw if not) */
   access: (absolutePath: string) => Promise<void>;
 }
@@ -109,7 +110,9 @@ function prepareEditArguments(input: unknown): EditToolInput {
       if (Array.isArray(parsed)) {
         args.edits = parsed;
       }
-    } catch {}
+    } catch {
+      // Leave unparseable model input unchanged for normal validation below.
+    }
   }
 
   const legacy = args as LegacyEditToolInput;
@@ -403,22 +406,29 @@ export function createEditToolDefinition(
         }
 
         const buffer = await ops.readFile(absolutePath);
-        const rawContent = buffer.toString("utf-8");
+        const decoded = decodeTextFile(buffer, path);
+        const rawContent = decoded.text;
         try {
           if (signal?.aborted) {
             throw new Error("Operation aborted");
           }
 
-          const { bom, text: content } = stripBom(rawContent);
-          const originalEnding = detectLineEnding(content);
+          const { text: content } = stripBom(rawContent);
+          const originalEndings = captureLineEndings(content);
           const normalizedContent = normalizeToLF(content);
           const { baseContent, newContent } = applyEditsToNormalizedContent(
             normalizedContent,
             edits,
             path,
           );
-          const finalContent = bom + restoreLineEndings(newContent, originalEnding);
-          await ops.writeFile(absolutePath, finalContent);
+          const finalContent = restoreLineEndings(newContent, originalEndings);
+          const encoded =
+            decoded.encoding === "utf8"
+              ? finalContent
+              : decoded.encoding === "utf8-bom"
+                ? `\uFEFF${finalContent}`
+                : encodeTextFile(finalContent, decoded.encoding);
+          await ops.writeFile(absolutePath, encoded);
           if (signal?.aborted) {
             throw new Error("Operation aborted");
           }

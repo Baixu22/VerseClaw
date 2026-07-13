@@ -11,6 +11,7 @@ import {
   applyRecoveryManifest,
   classifyTrackedFile,
   findInvalidUtf8Ranges,
+  findReplacementCharacterLines,
   scanTrackedFiles,
 } from "./runtime-utf8-inventory.mjs";
 
@@ -93,6 +94,85 @@ test("classifies explicit binary formats and NUL-bearing unknown files as binary
     classifyTrackedFile("fixtures/data.unknown", Buffer.from([0x61, 0x00, 0x62])),
     "binary",
   );
+});
+
+test("reports U+FFFD units by physical line", () => {
+  assert.deepEqual(findReplacementCharacterLines(Buffer.from("ok\r\n\uFFFDx\uFFFD\rlast\n")), [
+    { line: 2, count: 2 },
+  ]);
+});
+
+test("requires every U+FFFD unit to match one exact, count-guarded allowlist entry", (t) => {
+  const repoRoot = createGitFixture(t);
+  fs.mkdirSync(path.join(repoRoot, "src"));
+  fs.writeFileSync(path.join(repoRoot, "src", "intentional.ts"), "first\n\uFFFD\n");
+  fs.writeFileSync(path.join(repoRoot, "src", "unexpected.ts"), "\uFFFD\n");
+  runGit(repoRoot, ["add", "."]);
+  runGit(repoRoot, ["commit", "--quiet", "-m", "fixture"]);
+
+  const allowlist = {
+    schemaVersion: 1,
+    entries: [
+      {
+        path: "src/intentional.ts",
+        line: 2,
+        reason: "fixture",
+        test: "this test",
+        expected: { files: 1, lines: 1, units: 1 },
+      },
+    ],
+  };
+  const manifest = scanTrackedFiles({ repoRoot, replacementAllowlist: allowlist });
+
+  assert.deepEqual(manifest.replacementCharacters.summary, {
+    files: 2,
+    lines: 2,
+    units: 2,
+    allowedUnits: 1,
+    unallowedUnits: 1,
+    allowlistEntries: 1,
+    allowlistErrors: 0,
+  });
+  assert.equal(manifest.replacementCharacters.files[0].lines[0].allowed, true);
+  assert.equal(manifest.replacementCharacters.files[1].lines[0].allowed, false);
+});
+
+test("rejects stale, drifted, and overlapping U+FFFD allowlist entries", (t) => {
+  const repoRoot = createGitFixture(t);
+  fs.mkdirSync(path.join(repoRoot, "src"));
+  fs.writeFileSync(path.join(repoRoot, "src", "intentional.ts"), "\uFFFD\n");
+  runGit(repoRoot, ["add", "."]);
+  runGit(repoRoot, ["commit", "--quiet", "-m", "fixture"]);
+  const entry = {
+    path: "src/**",
+    line: "*",
+    reason: "fixture",
+    test: "this test",
+    expected: { files: 2, lines: 1, units: 1 },
+  };
+  const drifted = scanTrackedFiles({
+    repoRoot,
+    replacementAllowlist: { schemaVersion: 1, entries: [entry] },
+  });
+  assert.equal(drifted.replacementCharacters.summary.allowlistErrors, 1);
+
+  const overlapping = scanTrackedFiles({
+    repoRoot,
+    replacementAllowlist: {
+      schemaVersion: 1,
+      entries: [
+        { ...entry, expected: { files: 1, lines: 1, units: 1 } },
+        {
+          ...entry,
+          path: "src/intentional.ts",
+          line: 1,
+          expected: { files: 1, lines: 1, units: 1 },
+        },
+      ],
+    },
+  });
+  assert.equal(overlapping.replacementCharacters.summary.unallowedUnits, 1);
+  assert.equal(overlapping.replacementCharacters.summary.allowlistErrors, 2);
 });
 
 test("scans tracked files with Git preimage identity and byte context", (t) => {
@@ -704,4 +784,25 @@ test("CLI writes inventory evidence and exits nonzero while invalid UTF-8 remain
   assert.match(result.stdout, /invalidFiles=1 invalidUnits=1/);
   const manifest = JSON.parse(fs.readFileSync(outputPath, "utf8"));
   assert.equal(manifest.summary.invalidUnits, 1);
+});
+
+test("CLI --all scans tracked files outside the default Runtime pathspec", (t) => {
+  const repoRoot = createGitFixture(t);
+  const outputPath = path.join(repoRoot, "inventory.json");
+  fs.mkdirSync(path.join(repoRoot, "electron"));
+  fs.writeFileSync(path.join(repoRoot, "electron", "broken.ts"), Buffer.from([0xe2, 0x86, 0x3f]));
+  runGit(repoRoot, ["add", "."]);
+  runGit(repoRoot, ["commit", "--quiet", "-m", "fixture"]);
+  const scriptPath = fileURLToPath(new URL("./runtime-utf8-inventory.mjs", import.meta.url));
+
+  const result = spawnSync(
+    process.execPath,
+    [scriptPath, "--root", repoRoot, "--all", "--output", outputPath],
+    { encoding: "utf8" },
+  );
+
+  assert.equal(result.status, 1, result.stderr);
+  const manifest = JSON.parse(fs.readFileSync(outputPath, "utf8"));
+  assert.equal(manifest.pathspec, null);
+  assert.equal(manifest.summary.invalidFiles, 1);
 });

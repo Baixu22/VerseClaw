@@ -36,10 +36,10 @@ describe("detectLineEnding", () => {
     expect(detectLineEnding("a\nb\r\nc")).toBe("\n");
   });
 
-  it("returns LF for lone-CR (classic Mac) content", () => {
+  it("returns CR for lone-CR (classic Mac) content", () => {
     // characterization: current behavior, not necessarily desired — a file using
     // only \r line endings has no \n at all, so detection falls through to "\n".
-    expect(detectLineEnding("a\rb\rc")).toBe("\n");
+    expect(detectLineEnding("a\rb\rc")).toBe("\r");
   });
 });
 
@@ -157,7 +157,7 @@ describe("applyEditsToNormalizedContent", () => {
     ).toThrowError("edits[0] and edits[1] overlap in f.txt. Merge them into one edit or target disjoint regions.");
   });
 
-  it("falls back to fuzzy matching and rewrites the WHOLE file in fuzzy-normalized space", () => {
+  it("uses fuzzy matching without rewriting untouched content", () => {
     // characterization: current behavior, not necessarily desired — when any edit
     // needs fuzzy matching, baseContent becomes normalizeForFuzzyMatch(content),
     // so unrelated smart quotes / trailing whitespace elsewhere in the file are
@@ -169,8 +169,8 @@ describe("applyEditsToNormalizedContent", () => {
       [{ oldText: 'say "hello"', newText: "say hi" }],
       "f.txt",
     );
-    expect(result.baseContent).toBe('say "hello"\nkeep - this\ntarget line\n');
-    expect(result.newContent).toBe("say hi\nkeep - this\ntarget line\n");
+    expect(result.baseContent).toBe(content);
+    expect(result.newContent).toBe("say hi   \nkeep \u2014 this\ntarget line\n");
   });
 });
 

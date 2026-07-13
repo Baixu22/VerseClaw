@@ -356,11 +356,12 @@ async function recoverSuccessfulWrite(params: {
   if (currentContent !== params.content || !changed) {
     return null;
   }
+  const byteLength = Buffer.byteLength(params.content, "utf8");
   return {
     content: [
       {
         type: "text" as const,
-        text: `Successfully wrote ${params.content.length} bytes to ${params.path}`,
+        text: `Successfully wrote ${byteLength} bytes to ${params.path}`,
       },
     ],
     details: undefined,
@@ -396,6 +397,7 @@ export function createWriteToolDefinition(
       const absolutePath = resolveToCwd(path, cwd);
       const dir = dirname(absolutePath);
       return withFileMutationQueue(absolutePath, async () => {
+        const byteLength = Buffer.byteLength(content, "utf8");
         const precheck = await readOriginalWriteState(absolutePath, content, ops);
         try {
           if (signal?.aborted) {
@@ -413,12 +415,12 @@ export function createWriteToolDefinition(
             content: [
               {
                 type: "text" as const,
-                text: `Successfully wrote ${content.length} bytes to ${path}`,
+                text: `Successfully wrote ${byteLength} bytes to ${path}`,
               },
             ],
             details: {
               working_memory: {
-                result_summary: `Wrote ${path}: ${content.length} bytes`.slice(0, 100),
+                result_summary: `Wrote ${path}: ${byteLength} bytes`.slice(0, 100),
                 significance: "high",
               },
             },

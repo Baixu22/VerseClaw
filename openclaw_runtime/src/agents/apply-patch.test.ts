@@ -72,21 +72,45 @@ describe("applyPatch: update", () => {
     );
   });
 
-  it("appends a trailing newline to a file that had none", async () => {
+  it("preserves the absence of a trailing newline", async () => {
     // characterization: current behavior, not necessarily desired — updated
     // files always come out with a trailing newline.
     await writeFile(join(dir, "f.txt"), "a\nb", "utf-8");
     await applyPatch(patchLines("*** Update File: f.txt", "@@", "-b", "+B"), { cwd: dir });
-    expect(await readFile(join(dir, "f.txt"), "utf-8")).toBe("a\nB\n");
+    expect(await readFile(join(dir, "f.txt"), "utf-8")).toBe("a\nB");
   });
 
-  it("matches CRLF context lines via trimEnd fallback but writes replaced lines with LF", async () => {
+  it("preserves CRLF endings while replacing matched context", async () => {
     // characterization: current behavior, not necessarily desired — patching a
     // CRLF file produces MIXED endings: untouched lines keep their \r, replaced
     // lines are written bare-LF, and the whole file is joined with \n.
     await writeFile(join(dir, "crlf.txt"), "one\r\ntwo\r\nthree\r\n", "utf-8");
     await applyPatch(patchLines("*** Update File: crlf.txt", "@@", "-two", "+TWO"), { cwd: dir });
-    expect(await readFile(join(dir, "crlf.txt"), "utf-8")).toBe("one\r\nTWO\nthree\r\n");
+    expect(await readFile(join(dir, "crlf.txt"), "utf-8")).toBe("one\r\nTWO\r\nthree\r\n");
+  });
+
+  it("preserves UTF-16BE encoding while applying an update", async () => {
+    const filePath = join(dir, "utf16be.txt");
+    const littleEndian = Buffer.from("one\ntwo", "utf16le");
+    const bigEndian = Buffer.alloc(littleEndian.length);
+    for (let index = 0; index < littleEndian.length; index += 2) {
+      bigEndian[index] = littleEndian[index + 1];
+      bigEndian[index + 1] = littleEndian[index];
+    }
+    await writeFile(filePath, Buffer.concat([Buffer.from([0xfe, 0xff]), bigEndian]));
+    await applyPatch(
+      patchLines("*** Update File: utf16be.txt", "@@", "-two", "+TWO"),
+      { cwd: dir },
+    );
+    const onDisk = await readFile(filePath);
+    expect([...onDisk.subarray(0, 2)]).toEqual([0xfe, 0xff]);
+    const payload = onDisk.subarray(2);
+    const swapped = Buffer.alloc(payload.length);
+    for (let index = 0; index < payload.length; index += 2) {
+      swapped[index] = payload[index + 1];
+      swapped[index + 1] = payload[index];
+    }
+    expect(swapped.toString("utf16le")).toBe("one\nTWO");
   });
 
   it("supports Move to: writing the new path and removing the old one", async () => {

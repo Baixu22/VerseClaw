@@ -27,7 +27,19 @@ import {
   shouldSkipNodeApprovalPrepare,
 } from "./bash-tools.exec-host-node-phases.js";
 import type { ExecuteNodeHostCommandParams } from "./bash-tools.exec-host-node.types.js";
-import * as execHostShared from "./bash-tools.exec-host-shared.js";
+import {
+  buildDefaultExecApprovalRequestArgs,
+  buildExecApprovalFollowupTarget,
+  buildExecApprovalPendingToolResult,
+  buildHeadlessExecApprovalDeniedMessage,
+  createAndRegisterDefaultExecApprovalRequest,
+  createExecApprovalDecisionState,
+  enforceStrictInlineEvalApprovalBoundary,
+  resolveApprovalDecisionOrUndefined,
+  resolveExecHostApprovalContext,
+  sendExecApprovalFollowupResult,
+  shouldResolveExecApprovalUnavailableInline,
+} from "./bash-tools.exec-host-shared.js";
 import {
   DEFAULT_NOTIFY_TAIL_CHARS,
   createApprovalSlug,
@@ -95,7 +107,7 @@ function nodePolicyBlocksAutoReview(params: {
 export async function executeNodeHostCommand(
   params: ExecuteNodeHostCommandParams,
 ): Promise<AgentToolResult<ExecToolDetails>> {
-  const { hostSecurity, hostAsk, askFallback } = execHostShared.resolveExecHostApprovalContext({
+  const { hostSecurity, hostAsk, askFallback } = resolveExecHostApprovalContext({
     agentId: params.agentId,
     security: params.security,
     ask: params.ask,
@@ -249,7 +261,7 @@ export async function executeNodeHostCommand(
 
     if (!inlineApprovedByAsk) {
       // Human approval may complete after this tool call returns, so follow-up delivery owns invocation.
-      const requestArgs = execHostShared.buildDefaultExecApprovalRequestArgs({
+      const requestArgs = buildDefaultExecApprovalRequestArgs({
         warnings: params.warnings,
         approvalRunningNoticeMs: params.approvalRunningNoticeMs,
         createApprovalSlug,
@@ -265,23 +277,23 @@ export async function executeNodeHostCommand(
         initiatingSurface,
         sentApproverDms,
         unavailableReason,
-      } = await execHostShared.createAndRegisterDefaultExecApprovalRequest({
+      } = await createAndRegisterDefaultExecApprovalRequest({
         ...requestArgs,
         register: registerNodeApproval,
       });
       if (
-        execHostShared.shouldResolveExecApprovalUnavailableInline({
+        shouldResolveExecApprovalUnavailableInline({
           trigger: params.trigger,
           unavailableReason,
           preResolvedDecision,
         })
       ) {
         const { baseDecision, approvedByAsk, deniedReason } =
-          execHostShared.createExecApprovalDecisionState({
+          createExecApprovalDecisionState({
             decision: preResolvedDecision,
             askFallback,
           });
-        const strictInlineEvalDecision = execHostShared.enforceStrictInlineEvalApprovalBoundary({
+        const strictInlineEvalDecision = enforceStrictInlineEvalApprovalBoundary({
           baseDecision,
           approvedByAsk,
           deniedReason,
@@ -290,7 +302,7 @@ export async function executeNodeHostCommand(
         });
         if (strictInlineEvalDecision.deniedReason || !strictInlineEvalDecision.approvedByAsk) {
           throw new Error(
-            execHostShared.buildHeadlessExecApprovalDeniedMessage({
+            buildHeadlessExecApprovalDeniedMessage({
               trigger: params.trigger,
               host: "node",
               security: hostSecurity,
@@ -303,7 +315,7 @@ export async function executeNodeHostCommand(
         inlineApprovalDecision = strictInlineEvalDecision.approvedByAsk ? "allow-once" : null;
         inlineApprovalId = approvalId;
       } else {
-        const followupTarget = execHostShared.buildExecApprovalFollowupTarget({
+        const followupTarget = buildExecApprovalFollowupTarget({
           approvalId,
           sessionKey: params.notifySessionKey ?? params.sessionKey,
           expectedSessionId: params.sessionId,
@@ -316,11 +328,11 @@ export async function executeNodeHostCommand(
         });
 
         void (async () => {
-          const decision = await execHostShared.resolveApprovalDecisionOrUndefined({
+          const decision = await resolveApprovalDecisionOrUndefined({
             approvalId,
             preResolvedDecision,
             onFailure: () =>
-              void execHostShared.sendExecApprovalFollowupResult(
+              void sendExecApprovalFollowupResult(
                 followupTarget,
                 `Exec denied (node=${target.nodeId} id=${approvalId}, approval-request-failed): ${params.command}`,
               ),
@@ -333,7 +345,7 @@ export async function executeNodeHostCommand(
             baseDecision,
             approvedByAsk: initialApprovedByAsk,
             deniedReason: baseDeniedReason,
-          } = execHostShared.createExecApprovalDecisionState({
+          } = createExecApprovalDecisionState({
             decision,
             askFallback,
           });
@@ -351,7 +363,7 @@ export async function executeNodeHostCommand(
             approvalDecision = "allow-always";
           }
 
-          const strictBoundaryDecision = execHostShared.enforceStrictInlineEvalApprovalBoundary({
+          const strictBoundaryDecision = enforceStrictInlineEvalApprovalBoundary({
             baseDecision,
             approvedByAsk,
             deniedReason,
@@ -365,7 +377,7 @@ export async function executeNodeHostCommand(
           }
 
           if (deniedReason) {
-            await execHostShared.sendExecApprovalFollowupResult(
+            await sendExecApprovalFollowupResult(
               followupTarget,
               `Exec denied (node=${target.nodeId} id=${approvalId}, ${deniedReason}): ${params.command}`,
             );
@@ -418,16 +430,16 @@ export async function executeNodeHostCommand(
             const summary = output
               ? `Exec finished (node=${target.nodeId} id=${approvalId}, ${exitLabel})\n${output}`
               : `Exec finished (node=${target.nodeId} id=${approvalId}, ${exitLabel})`;
-            await execHostShared.sendExecApprovalFollowupResult(followupTarget, summary);
+            await sendExecApprovalFollowupResult(followupTarget, summary);
           } catch {
-            await execHostShared.sendExecApprovalFollowupResult(
+            await sendExecApprovalFollowupResult(
               followupTarget,
               `Exec denied (node=${target.nodeId} id=${approvalId}, invoke-failed): ${params.command}`,
             );
           }
         })();
 
-        return execHostShared.buildExecApprovalPendingToolResult({
+        return buildExecApprovalPendingToolResult({
           host: "node",
           command: params.command,
           cwd: params.workdir,

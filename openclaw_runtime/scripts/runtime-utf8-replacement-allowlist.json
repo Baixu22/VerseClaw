@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/utils/truncate.ts",
+      "line": 119,
+      "reason": "The UTF-8 truncator emits one replacement character when a retained byte prefix ends inside a code point.",
+      "test": "openclaw_runtime/src/agents/sessions/tools/output-accumulator.test.ts",
+      "expected": {
+        "files": 1,
+        "lines": 1,
+        "units": 1
+      }
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/utils/truncate.ts",
+      "line": 121,
+      "reason": "The UTF-8 truncator emits one replacement character when a retained byte suffix starts inside a code point.",
+      "test": "openclaw_runtime/src/agents/sessions/tools/output-accumulator.test.ts",
+      "expected": {
+        "files": 1,
+        "lines": 1,
+        "units": 1
+      }
+    },
+    {
+      "path": "output/context-compression-eval/**",
+      "line": "*",
+      "reason": "Immutable evaluation fixtures preserve replacement characters already present in archived transcript evidence.",
+      "test": "openclaw_runtime/scripts/runtime-utf8-inventory.test.mjs",
+      "expected": {
+        "files": 25,
+        "lines": 87,
+        "units": 1052
+      }
+    }
+  ]
+}
