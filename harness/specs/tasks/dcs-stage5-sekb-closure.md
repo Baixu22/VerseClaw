@@ -3,6 +3,7 @@ id: dcs-stage5-sekb-closure
 title: "DCS Stage 5: SEKB Distillation Write-Back Closure"
 scenario: gateway-backend-communication
 taskType: runtime-bridge
+diffBase: 56f50b8ab3b3db49961cc548663e02c7673f87f7
 intent: |
   Bridge `confirm_and_save` to write `experience` Blocks to BlockStore via
   ContextBlockSink. Implement `context_search` and `context_write` tools per
@@ -18,9 +19,31 @@ touchedAreas:
   - openclaw_runtime/src/context-engine/tools/context-write-tool.test.ts
   - openclaw_runtime/src/context-engine/provider-registry.ts
   - openclaw_runtime/src/context-engine/block.ts
+  - tests/unit/helpers/context-provider-registry.ts
+  - tests/unit/context-provider-registry.test.ts
+  - tests/unit/runtime-agent-map-component-boundary-hardening.test.ts
+  - tests/unit/runtime-agent-map-default-on-deep-validation.test.ts
+  - tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
+  - tests/unit/runtime-agent-map-default-on-implementation-spec.test.ts
+  - tests/unit/runtime-agent-map-prompt-candidate-runtime-shadow-replay.test.ts
+  - tests/unit/runtime-grounding-authority-effectiveness.test.ts
+  - tests/unit/runtime-grounding-default-on-diagnostics.test.ts
+  - tests/unit/runtime-grounding-ref-projections.test.ts
+  - tests/unit/runtime-grounding-shadow-consumers.test.ts
+  - tests/unit/runtime-grounding-single-explicit-diagnostics-consumer.test.ts
+  - tests/unit/runtime-memory-context-provider.test.ts
+  - tests/unit/runtime-memory-runtime-integration.test.ts
+  - tests/unit/runtime-provider-tool-registry-real-producer-diagnostic-consumer-validation.test.ts
+  - tests/unit/runtime-trace-context-provider.test.ts
   - package.json
   - harness/specs/tasks/dcs-stage5-sekb-closure.md
   - harness/specs/rules/dcs-stage5-sekb-closure-boundary.md
+  - harness/src/cli.mjs
+  - harness/src/git.mjs
+  - harness/src/git.test.mjs
+  - team/dcs/README.md
+  - team/dcs/dcs-v1.6.1-addendum.md
+  - docs/enhancements/05-adaptive-context-budget.md
 expectedUserBehavior: |
   After `confirm_and_save` is called, `context_search(query='principles')`
   returns the corresponding `experience` Block. `context_read('experience')`
@@ -31,10 +54,11 @@ requiredProfiles:
   - fast
   - comms
 requiredRules:
-  - harness/specs/rules/dcs-stage5-sekb-closure-boundary.md
+  - dcs-stage5-sekb-closure-boundary
 requiredTests:
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/knowledge/sekb/experience-block-bridge.test.ts src/knowledge/sekb/harness-integration.test.ts --since 848b667ea
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/context-engine/tools/context-search-tool.test.ts src/context-engine/tools/context-write-tool.test.ts
+  - pnpm exec vitest run tests/unit/context-provider-registry.test.ts tests/unit/runtime-agent-map-component-boundary-hardening.test.ts tests/unit/runtime-agent-map-default-on-deep-validation.test.ts tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts tests/unit/runtime-agent-map-default-on-implementation-spec.test.ts tests/unit/runtime-agent-map-prompt-candidate-runtime-shadow-replay.test.ts tests/unit/runtime-grounding-authority-effectiveness.test.ts tests/unit/runtime-grounding-default-on-diagnostics.test.ts tests/unit/runtime-grounding-ref-projections.test.ts tests/unit/runtime-grounding-shadow-consumers.test.ts tests/unit/runtime-grounding-single-explicit-diagnostics-consumer.test.ts tests/unit/runtime-memory-context-provider.test.ts tests/unit/runtime-memory-runtime-integration.test.ts tests/unit/runtime-provider-tool-registry-real-producer-diagnostic-consumer-validation.test.ts tests/unit/runtime-trace-context-provider.test.ts
 acceptance:
   - confirm_and_save writes experience Block to BlockStore via ContextBlockSink
   - experience Block admission uses confirmed=true and confidence in [0,1]
@@ -47,7 +71,7 @@ acceptance:
   - context_write supports append/replace/clear operations
   - context_write enforces role whitelist (planner/architect/implementer)
   - ANTI-8: suggest_principles_from_trajectories does NOT write any Block
-  - T1: provider-registry pilot functions deleted with zero production refs
+  - T1: provider-registry pilot functions deleted with zero production/test imports
   - All Stage 1-5 tests pass (no regression)
   - All gates pass (typecheck, lint:dcs, test:dcs, harness, contract, comms, build)
 docs:
@@ -93,8 +117,9 @@ R6 delivers DCS v1.6 Stage 5 (SEKB closure) + T1 (provider-registry pilot deleti
 ### 段B — T1
 
 Delete `createContextProviderRegistryPilot` and `runContextProviderRegistryPilot`
-from `provider-registry.ts` (zero production callers confirmed). If deletion
-entangles live paths, downgrade to `@deprecated` annotation.
+from `provider-registry.ts` (zero production callers confirmed). Migrate tests
+to direct `RuntimeContextProviderRegistry` construction through an explicit
+test-only helper; do not retain deprecated production exports.
 
 ## Implementation Plan
 
@@ -136,9 +161,9 @@ not block the save. The original SEKB-internal save path is unchanged.
 
 ### provider-registry.ts (MODIFIED — T1)
 
-Delete `createContextProviderRegistryPilot` (line 520) and
-`runContextProviderRegistryPilot` (line 530) if zero production refs confirmed.
-Otherwise add `@deprecated` annotation.
+Delete `createContextProviderRegistryPilot`, `runContextProviderRegistryPilot`,
+and their production-only orchestration. Preserve the compatibility provider
+factories and migrate valid coverage to a test-only formal-registry harness.
 
 ## RED → GREEN
 

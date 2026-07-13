@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  createContextProviderRegistryPilot,
+  createTestContextProviderRegistry,
   LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
   LOOP_CONTEXT_PACK_PROVIDER_ID,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+} from "./helpers/context-provider-registry";
 import {
   RUNTIME_TRACE_CONTEXT_PROVIDER_ID,
   createRuntimeTraceContextProvider,
@@ -34,8 +34,8 @@ describe("runtime trace context provider", () => {
   it("keeps registration optional, default-off, and shadow-only", () => {
     const store = createRuntimeTraceSpanStore();
     const provider = createRuntimeTraceContextProvider({ store, config: enabledConfig });
-    const defaultRegistry = createContextProviderRegistryPilot();
-    const registryWithTrace = createContextProviderRegistryPilot([provider]);
+    const defaultRegistry = createTestContextProviderRegistry();
+    const registryWithTrace = createTestContextProviderRegistry([provider]);
 
     expect(defaultRegistry.listManifests().map((manifest) => manifest.id)).toEqual([
       LEGACY_CONTEXT_ENGINE_PROVIDER_ID,

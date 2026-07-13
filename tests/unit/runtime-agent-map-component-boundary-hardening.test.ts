@@ -10,10 +10,10 @@ import {
   type AgentMapResult,
 } from "../../openclaw_runtime/src/runtime-core";
 import {
-  createContextProviderRegistryPilot,
+  createTestContextProviderRegistry,
   LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
   LOOP_CONTEXT_PACK_PROVIDER_ID,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+} from "./helpers/context-provider-registry";
 import {
   AGENT_MAP_TASKLOOP_EXPLICIT_INVOCATION_ALLOWED_CONSUMERS,
 } from "./helpers/agent-map-readiness-scorecard";
@@ -308,7 +308,7 @@ describe("AgentMap component boundary hardening", () => {
   });
 
   it("keeps provider ordering unchanged and AgentMap out of provider registration", () => {
-    const manifests = createContextProviderRegistryPilot().listManifests();
+    const manifests = createTestContextProviderRegistry().listManifests();
 
     expect(manifests.map((manifest) => manifest.id)).toEqual([
       LEGACY_CONTEXT_ENGINE_PROVIDER_ID,

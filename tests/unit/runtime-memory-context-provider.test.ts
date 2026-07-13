@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  createContextProviderRegistryPilot,
+  createTestContextProviderRegistry,
   LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
   LOOP_CONTEXT_PACK_PROVIDER_ID,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+} from "./helpers/context-provider-registry";
 import {
   createRuntimeMemoryContextProvider,
   createRuntimeMemoryProviderResult,
@@ -36,8 +36,8 @@ const RAW_GROUNDING_SENTINEL =
 describe("runtime memory context provider", () => {
   it("keeps registration optional, default-off, and shadow-only", () => {
     const provider = createRuntimeMemoryContextProvider({ config: enabledConfig });
-    const defaultRegistry = createContextProviderRegistryPilot();
-    const registryWithMemory = createContextProviderRegistryPilot([provider]);
+    const defaultRegistry = createTestContextProviderRegistry();
+    const registryWithMemory = createTestContextProviderRegistry([provider]);
 
     expect(defaultRegistry.listManifests().map((manifest) => manifest.id)).toEqual([
       LEGACY_CONTEXT_ENGINE_PROVIDER_ID,

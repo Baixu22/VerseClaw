@@ -9,11 +9,11 @@ import {
 } from "../../openclaw_runtime/src/context-engine/memory-context-provider";
 import {
   CONTEXT_PROVIDER_REGISTRY_GROUNDING_SHADOW_CONSUMER_ID,
-  createContextProviderRegistryPilot,
+  createTestContextProviderRegistry,
   LEGACY_CONTEXT_ENGINE_PROVIDER_ID,
   LOOP_CONTEXT_PACK_PROVIDER_ID,
-  runContextProviderRegistryPilot,
-} from "../../openclaw_runtime/src/context-engine/provider-registry";
+  runTestContextProviderRegistry,
+} from "./helpers/context-provider-registry";
 import {
   createSymbolContextProvider,
   SYMBOL_CONTEXT_PROVIDER_ID,
@@ -215,10 +215,10 @@ async function buildEffectivenessEvaluation(): Promise<{
   registryProviderOrder: string[];
   metrics: EffectivenessMetrics;
 }> {
-  const registryOrderBefore = createContextProviderRegistryPilot()
+  const registryOrderBefore = createTestContextProviderRegistry()
     .listManifests()
     .map((manifest) => manifest.id);
-  const registryResult = await runContextProviderRegistryPilot({
+  const registryResult = await runTestContextProviderRegistry({
     config: {
       runtime: {
         registryPilot: { enabled: true },

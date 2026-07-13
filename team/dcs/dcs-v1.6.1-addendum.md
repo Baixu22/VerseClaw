@@ -131,15 +131,16 @@ agent-scoped `main` 与自定义 mainKey 双份别名必须由共享谓词显式
 
 - `context-engine/provider-registry.ts:530` 的
   `createContextProviderRegistryPilot` /
-  `runContextProviderRegistryPilot` 没有生产调用方。
+  `runContextProviderRegistryPilot` 没有生产调用方；T1 已将 15 个测试文件迁移
+  到仅测试使用的正式 `RuntimeContextProviderRegistry` 构造 helper。
 - `context-engine/chat-turn-memory-injection.ts:43` 的 pilot 默认关闭，并具有
   flag-off pass-through 行为。
 
 ### 正式条文
 
-**`[MUST]`** provider-registry pilot 标记为 deprecated，并登记为待删除项；
-删除由 T1 执行，在删除前必须先证明零生产引用。若删除会牵连活路径，停止删除并
-降级为仅保留 deprecated 标记。
+**`[MUST]`** provider-registry pilot 由 T1 在证明零生产调用方后删除；有效测试
+覆盖必须迁移到正式 `RuntimeContextProviderRegistry` 构造路径或明确的 test-only
+helper，不得因测试依赖而保留 deprecated 生产导出。
 
 **`[MUST]`** chat-turn-memory-injection pilot 保留为 DCS 阶段 4 的 A/B
 对照基线；阶段 4 完成等价性、回退与全门禁验收后废弃。

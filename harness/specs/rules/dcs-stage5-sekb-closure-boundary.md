@@ -2,7 +2,9 @@
 id: dcs-stage5-sekb-closure-boundary
 title: "DCS Stage 5 SEKB Closure — Boundary Rule"
 scenario: gateway-backend-communication
-ruleType: boundary
+type: ai-coding-rule
+appliesTo:
+  - gateway-backend-communication
 ---
 
 # DCS Stage 5 SEKB Closure — Boundary Rule
@@ -81,8 +83,9 @@ BlockStore admission gate (already implemented):
 6. **No BlockMutability widening**: experience = `"system_managed"`,
    notes = `"agent_writable"`. No `"readonly"`.
 7. **No transport changes**: Renderer/Main/Gateway paths unchanged.
-8. **T1 boundary**: only delete pilot functions + their tests. Other code in
-   `provider-registry.ts` referenced by CVK/live paths must NOT be touched.
+8. **T1 boundary**: delete the pilot functions and their exclusive orchestration,
+   migrate valid tests to formal registry construction, and preserve provider
+   factories used by direct tests. Other live/CVK paths must NOT be touched.
 9. **No `chat-turn-memory-injection.ts` changes** (R5 already handled per 增补5).
 10. **No `assembler.ts` / `block-store.ts` / existing handler changes** for T1.
 
@@ -95,4 +98,5 @@ BlockStore admission gate (already implemented):
 5. `context_search` with entities → uses `queryByEntity`
 6. `context_search` without entities → `fallback_mode='vector_only'`
 7. `context_write` with non-whitelisted role → rejected (ANTI-7)
-8. T1: zero production references proven before deletion
+8. T1: zero production callers proven before deletion and zero production/test
+   imports after migration

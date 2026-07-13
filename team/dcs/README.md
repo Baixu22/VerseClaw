@@ -18,8 +18,8 @@ terminal-phase SEKB trajectory capture 已就位；tool_registry Block producer 
 Assembler injection 已就位（flag-gated, default off）；knowledge Block 统一
 （compass + role-memory 两条路径）已就位（flag-gated, default off）；SEKB
 experience Block 写回桥接 + context_search/context_write 工具已就位
-（best-effort, ANTI-7/ANTI-8 enforced）；T1 provider-registry pilot 已标注
-`@deprecated`（15 个测试文件引用，按增补5 降级）。
+（best-effort, ANTI-7/ANTI-8 enforced）；T1 provider-registry pilot 已删除，
+15 个测试文件已迁移到 test-only 正式 registry 构造 helper。
 
 ---
 
@@ -272,8 +272,9 @@ append/replace/clear，role whitelist `planner`/`architect`/`implementer`
 （ANTI-7 enforced via `Set<string>` membership）。ANTI-8 enforced：
 `suggest_principles_from_trajectories` 无 sink 参数，advisory 结果不写 Block。
 T1：`provider-registry.ts` 的 `createContextProviderRegistryPilot` 和
-`runContextProviderRegistryPilot` 标注 `@deprecated`（15 个测试文件引用，按
-增补5 降级，不删除）。`SourceSystem` union 新增 `"agent-notes"`。
+`runContextProviderRegistryPilot` 及专属 orchestration 已删除；15 个测试文件迁移
+到 test-only `RuntimeContextProviderRegistry` 构造 helper，保留有效覆盖且无生产
+API 泄漏。`SourceSystem` union 新增 `"agent-notes"`。
 
 | 交付物 | 路径 |
 |--------|------|
@@ -281,7 +282,7 @@ T1：`provider-registry.ts` 的 `createContextProviderRegistryPilot` 和
 | context_search tool（extractEntities / searchContext） | `openclaw_runtime/src/context-engine/tools/context-search-tool.ts` |
 | context_write tool（writeContext / CONTEXT_WRITE_ROLE_WHITELIST） | `openclaw_runtime/src/context-engine/tools/context-write-tool.ts` |
 | distillation-tool 可选 contextBlockSink + sessionId 参数 | `openclaw_runtime/src/knowledge/sekb/distillation-tool.ts` |
-| T1 @deprecated 标注 | `openclaw_runtime/src/context-engine/provider-registry.ts` |
+| T1 pilot 删除 + test-only registry helper | `openclaw_runtime/src/context-engine/provider-registry.ts`, `tests/unit/helpers/context-provider-registry.ts` |
 | SourceSystem += "agent-notes" | `openclaw_runtime/src/context-engine/block.ts` |
 | RED→GREEN experience-block-bridge 测试（14 tests） | `openclaw_runtime/src/knowledge/sekb/experience-block-bridge.test.ts` |
 | RED→GREEN context-search-tool 测试（10 tests） | `openclaw_runtime/src/context-engine/tools/context-search-tool.test.ts` |
@@ -289,7 +290,7 @@ T1：`provider-registry.ts` 的 `createContextProviderRegistryPilot` 和
 
 诚实声明：**SEKB experience Block 写回桥接 + context_search/context_write 工具
 已就位**（best-effort, ANTI-7/ANTI-8 enforced）。T1 provider-registry pilot
-已标注 `@deprecated`（15 个测试文件引用，按增补5 降级）。**DCS v1.6 Stage 0-5
+已删除，相关测试已迁移到正式 registry 构造 helper。**DCS v1.6 Stage 0-5
 implementation is now complete.** 所有 feature flag 缺省为 false，等待 flag-gated
 activation 与完整回归证据。T3 codegraph unlock 不属于本 Goal，未实现。
 
