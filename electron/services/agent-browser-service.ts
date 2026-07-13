@@ -18,6 +18,10 @@ import type {
   BrowserAutomationRunResult,
   BrowserAutomationRunStep,
 } from '@shared/host-api/contract';
+import type { BrowserControlToolCall } from '@shared/agent-browser/types';
+import { BrowserControlActionExecutor } from './agent-browser/browser-control/actions';
+import { BrowserDebuggerConnection } from './agent-browser/browser-control/browser-debugger-connection';
+import { BrowserControlSnapshotManager } from './agent-browser/browser-control/snapshot-manager';
 import type { AgentBrowserRunner } from './agent-browser-cli-runner';
 
 type AgentBrowserWindow = Pick<
@@ -41,6 +45,12 @@ type AgentBrowserRecord = {
   session: AgentBrowserSession;
   window?: AgentBrowserWindow;
   engine: 'browser-window' | 'agent-browser-cli';
+};
+
+type AgentBrowserControlState = {
+  connection: BrowserDebuggerConnection;
+  snapshotManager: BrowserControlSnapshotManager;
+  actionExecutor: BrowserControlActionExecutor;
 };
 
 type AgentBrowserServiceOptions = {
@@ -255,6 +265,7 @@ const WAIT_FOR_SELECTOR_SCRIPT = `(selector, timeoutMs) => new Promise((resolve)
 
 export class AgentBrowserService {
   private readonly sessions = new Map<string, AgentBrowserRecord>();
+  private readonly browserControlStates = new Map<string, AgentBrowserControlState>();
   private readonly cliRunner: AgentBrowserRunner | undefined;
   private readonly createWindow: (options: Electron.BrowserWindowConstructorOptions) => AgentBrowserWindow;
   private readonly now: () => Date;
@@ -754,9 +765,95 @@ export class AgentBrowserService {
     };
   }
 
+  /**
+   * 获取页面 Accessibility Tree 快照（含 UID 映射）。
+   *
+   * 仅在 browser-window 引擎下可用。首次调用会 attach webContents.debugger，
+   * 后续调用复用同一连接。会话关闭时统一 detach。
+   */
+  async takeSnapshot(payload: { sessionId: string }): Promise<{ session: AgentBrowserSession; snapshot: string }> {
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('Agent browser takeSnapshot requires the browser-window engine');
+    }
+    const control = await this.getBrowserControl(record);
+    const snapshot = await control.snapshotManager.takeSnapshot();
+    return { session: await this.refresh(record), snapshot };
+  }
+
+  /**
+   * 通过 UID 点击元素。UID 来自最近一次 takeSnapshot 返回的快照。
+   */
+  async clickByUid(payload: { sessionId: string; uid: string }): Promise<AgentBrowserSession> {
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('Agent browser clickByUid requires the browser-window engine');
+    }
+    const control = await this.getBrowserControl(record);
+    const result = await this.executeBrowserAction(control, {
+      id: `click-${randomUUID()}`,
+      name: 'click',
+      arguments: { uid: payload.uid },
+    });
+    if (result.isError) {
+      throw new Error(result.content);
+    }
+    return await this.refresh(record);
+  }
+
+  /**
+   * 通过 UID 填充表单元素。
+   */
+  async fillByUid(payload: {
+    sessionId: string;
+    uid: string;
+    value: string;
+    clear?: boolean;
+  }): Promise<AgentBrowserSession> {
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('Agent browser fillByUid requires the browser-window engine');
+    }
+    const control = await this.getBrowserControl(record);
+    const result = await this.executeBrowserAction(control, {
+      id: `fill-${randomUUID()}`,
+      name: 'fill',
+      arguments: { uid: payload.uid, value: payload.value, clear: payload.clear },
+    });
+    if (result.isError) {
+      throw new Error(result.content);
+    }
+    return await this.refresh(record);
+  }
+
+  /**
+   * 全局键盘按键（不绑定 UID）。支持修饰键组合，例如 "Control+Enter"。
+   */
+  async pressKey(payload: { sessionId: string; key: string }): Promise<AgentBrowserSession> {
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('Agent browser pressKey requires the browser-window engine');
+    }
+    const control = await this.getBrowserControl(record);
+    const result = await this.executeBrowserAction(control, {
+      id: `press_key-${randomUUID()}`,
+      name: 'press_key',
+      arguments: { key: payload.key },
+    });
+    if (result.isError) {
+      throw new Error(result.content);
+    }
+    return await this.refresh(record);
+  }
+
   close(sessionId: string): void {
     const record = this.getRecord(sessionId);
     this.sessions.delete(sessionId);
+    const controlState = this.browserControlStates.get(sessionId);
+    if (controlState) {
+      this.browserControlStates.delete(sessionId);
+      void controlState.connection.detach();
+    }
     if (record.engine === 'agent-browser-cli') {
       void this.requireCliRunner().close(record.session);
       return;
@@ -774,6 +871,44 @@ export class AgentBrowserService {
       throw new Error(`Agent browser session not found: ${sessionId}`);
     }
     return record;
+  }
+
+  /**
+   * 懒初始化并返回会话对应的浏览器控制三件套
+   * （BrowserDebuggerConnection + SnapshotManager + ActionExecutor）。
+   *
+   * 首次调用会 attach webContents.debugger 并启用必要的 CDP 域。
+   * 后续调用复用同一连接。会话 close 时统一 detach。
+   */
+  private async getBrowserControl(record: AgentBrowserRecord): Promise<AgentBrowserControlState> {
+    const existing = this.browserControlStates.get(record.session.id);
+    if (existing) {
+      return existing;
+    }
+
+    const window = this.requireWindow(record);
+    const webContents = window.webContents;
+    const connection = new BrowserDebuggerConnection();
+    const attachResult = await connection.attach(webContents);
+    if (!attachResult.ok) {
+      throw new Error(attachResult.message ?? 'Failed to attach browser debugger');
+    }
+
+    const snapshotManager = new BrowserControlSnapshotManager(connection, async () => ({
+      title: webContents.getTitle(),
+      url: webContents.getURL(),
+    }));
+    const actionExecutor = new BrowserControlActionExecutor(connection, snapshotManager);
+    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor };
+    this.browserControlStates.set(record.session.id, state);
+    return state;
+  }
+
+  private async executeBrowserAction(
+    control: AgentBrowserControlState,
+    toolCall: BrowserControlToolCall,
+  ) {
+    return control.actionExecutor.execute(toolCall);
   }
 
   private requireSelector(value: string): string {

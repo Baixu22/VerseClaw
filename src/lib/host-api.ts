@@ -2,6 +2,7 @@ import type {
   AgentCreatePayload,
   AgentBrowserClickPayload,
   AgentBrowserActionResult,
+  AgentBrowserClickByUidPayload,
   AgentBrowserCommandPayload,
   AgentBrowserCommandResult,
   AgentBrowserCredentialPayload,
@@ -9,8 +10,10 @@ import type {
   AgentBrowserCredentialSavePayload,
   AgentBrowserEvaluatePayload,
   AgentBrowserEvaluateResult,
+  AgentBrowserFillByUidPayload,
   AgentBrowserNavigatePayload,
   AgentBrowserOpenPayload,
+  AgentBrowserPressKeyPayload,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -20,6 +23,8 @@ import type {
   AgentBrowserSessionPayload,
   AgentBrowserSessionResult,
   AgentBrowserStatusResult,
+  AgentBrowserTakeSnapshotPayload,
+  AgentBrowserTakeSnapshotResult,
   AgentBrowserTaskCreatePayload,
   AgentBrowserTaskPayload,
   AgentBrowserTaskResult,
@@ -353,6 +358,7 @@ export type {
   AgentBrowserScreenshotResult,
   AgentBrowserSessionResult,
   AgentBrowserStatusResult,
+  AgentBrowserTakeSnapshotResult,
   AgentBrowserValidateResult,
   AgentDevCreateConversationResult,
   AgentDevCreateProviderConfigResult,
@@ -751,6 +757,14 @@ export const hostApi = {
     deleteCredential: (input: AgentBrowserCredentialPayload) =>
       invokeHost('agentBrowser', 'deleteCredential', input),
     close: (input: AgentBrowserSessionPayload) => invokeHost('agentBrowser', 'close', input),
+    takeSnapshot: (input: AgentBrowserTakeSnapshotPayload): Promise<AgentBrowserTakeSnapshotResult> =>
+      invokeHost('agentBrowser', 'takeSnapshot', input),
+    clickByUid: (input: AgentBrowserClickByUidPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'clickByUid', input),
+    fillByUid: (input: AgentBrowserFillByUidPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'fillByUid', input),
+    pressKey: (input: AgentBrowserPressKeyPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'pressKey', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),

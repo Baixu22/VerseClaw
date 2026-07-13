@@ -841,6 +841,18 @@ export type AgentBrowserEvaluatePayload = AgentBrowserSessionPayload & {
 export type AgentBrowserScreenshotPayload = AgentBrowserSessionPayload & {
   fullPage?: boolean;
 };
+export type AgentBrowserTakeSnapshotPayload = AgentBrowserSessionPayload;
+export type AgentBrowserClickByUidPayload = AgentBrowserSessionPayload & {
+  uid: string;
+};
+export type AgentBrowserFillByUidPayload = AgentBrowserSessionPayload & {
+  uid: string;
+  value: string;
+  clear?: boolean;
+};
+export type AgentBrowserPressKeyPayload = AgentBrowserSessionPayload & {
+  key: string;
+};
 export type AgentBrowserCommandPayload = Partial<AgentBrowserSessionPayload> & {
   args: string[];
   globalOptions?: string[];
@@ -947,6 +959,9 @@ export type AgentBrowserEvaluateResult = AgentBrowserActionResult & {
 export type AgentBrowserScreenshotResult = AgentBrowserActionResult & {
   dataUrl: string;
   format: 'png';
+};
+export type AgentBrowserTakeSnapshotResult = AgentBrowserActionResult & {
+  snapshot: string;
 };
 export type AgentBrowserCommandResult = HostSuccess & {
   session?: AgentBrowserSession;
@@ -3801,6 +3816,10 @@ export type HostApiContract = {
     saveCredential: (payload: AgentBrowserCredentialSavePayload) => AgentBrowserCredentialResult;
     deleteCredential: (payload: AgentBrowserCredentialPayload) => HostSuccess;
     close: (payload: AgentBrowserSessionPayload) => HostSuccess;
+    takeSnapshot: (payload: AgentBrowserTakeSnapshotPayload) => AgentBrowserTakeSnapshotResult;
+    clickByUid: (payload: AgentBrowserClickByUidPayload) => AgentBrowserActionResult;
+    fillByUid: (payload: AgentBrowserFillByUidPayload) => AgentBrowserActionResult;
+    pressKey: (payload: AgentBrowserPressKeyPayload) => AgentBrowserActionResult;
   };
   mcp: {
     listServers: () => McpServerListResult;
