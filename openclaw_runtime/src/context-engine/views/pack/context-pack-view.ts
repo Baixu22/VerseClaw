@@ -33,11 +33,11 @@ export const DEFAULT_PACK_BUDGET_CHARS = 12_000;
 const DEFAULT_MAX_SNIPPETS = 8;
 const FOCUS_WINDOW_LINES = 12;
 
-export function buildContextPack(
+export async function buildContextPack(
   store: FactStore,
   materializer: Materializer,
   request: ContextPackRequest,
-): ContextPack {
+): Promise<ContextPack> {
   const repoRoot = materializer.repoRoot;
   const budgetChars = request.budgetChars ?? DEFAULT_PACK_BUDGET_CHARS;
   const mode = resolveMode(request.mode, request.query);
@@ -47,13 +47,38 @@ export function buildContextPack(
   const retrieval = retrieveHybrid(store, repoRoot, queryContext, {
     limit: Math.max(request.maxSnippets ?? DEFAULT_MAX_SNIPPETS, 12),
   });
-  const hits = rerankWithGraph(store, repoRoot, retrieval.hits);
+  let hits = rerankWithGraph(store, repoRoot, retrieval.hits);
+
+  // Degradation chain (§3): index miss → automatic ripgrep backfill. Text hits are
+  // memoized into the store (producer=ripgrep) and served as snippets so a cold or
+  // partial store still answers at grep quality instead of returning nothing.
+  let grepFallbackUsed = false;
+  if (hits.length === 0) {
+    const pattern = ripgrepPatternFor(queryContext);
+    if (pattern) {
+      const textFacts = await materializer.ensureTextFacts(pattern);
+      if (textFacts.chunks.length > 0) {
+        grepFallbackUsed = true;
+        hits = textFacts.chunks.slice(0, 24).map((chunk) => ({
+          chunk,
+          score: 0.5,
+          source: "keyword" as const,
+          reason: `ripgrep fallback (producer=ripgrep) matched /${pattern}/`,
+        }));
+      }
+    }
+  }
 
   const ownerChain = buildOwnerChain(store, repoRoot, hits);
   const topology = buildTopology(store, repoRoot, ownerChain);
   const snippets = buildSnippets(hits, request.query, mode, request.maxSnippets ?? DEFAULT_MAX_SNIPPETS);
   const freshness = buildFreshness(store, repoRoot, ensure, ownerChain);
   const missingEvidence = buildMissingEvidence(ensure, hits, request.query);
+  if (grepFallbackUsed) {
+    missingEvidence.push(
+      "Evidence served by the ripgrep fallback (producer=ripgrep); structural facts for these files are pending materialization.",
+    );
+  }
   const relationships = buildRelationships(topology);
   const nextQueries = buildNextQueries(queryContext.codeTokens, ownerChain);
 
@@ -229,6 +254,19 @@ function buildMissingEvidence(ensure: EnsureFactsResult, hits: SearchHit[], quer
     entries.push(`No indexed evidence matched "${query}". The store may not cover the relevant files yet.`);
   }
   return entries;
+}
+
+/** OR-pattern over the strongest query terms for the T0 ripgrep fallback. */
+function ripgrepPatternFor(queryContext: ReturnType<typeof buildQueryContext>): string | undefined {
+  const terms = new Set<string>();
+  for (const token of queryContext.codeTokens) terms.add(token);
+  for (const term of queryContext.lexicalTerms) {
+    if ((term.source === "raw" || term.source === "identifier" || term.source === "lexicon") && term.term.length >= 3) {
+      terms.add(term.term);
+    }
+  }
+  const escaped = [...terms].slice(0, 8).map((term) => term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  return escaped.length > 0 ? escaped.join("|") : undefined;
 }
 
 function buildRelationships(topology: TopologyEdge[]): RelationshipEvidence[] {

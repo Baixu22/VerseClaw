@@ -280,3 +280,70 @@ export interface ContextPack {
   usedChars: number;
   budgetTrace?: ContextBudgetTrace;
 }
+
+// ---------------------------------------------------------------------------
+// Reuse contract (ragcode src/core/types.ts:780-845 + OwnerCandidate :920, verbatim).
+// ---------------------------------------------------------------------------
+
+export type ReuseDecision = "reuse" | "extend" | "wrap" | "implement_new" | "uncertain";
+
+export type ReuseCandidateKind =
+  | "helper"
+  | "service_method"
+  | "react_hook"
+  | "component"
+  | "api_wrapper"
+  | "type_or_schema"
+  | "test_fixture"
+  | "config_constant"
+  | "unknown";
+
+export interface ReuseCandidate {
+  filePath: string;
+  symbolName?: string;
+  kind: ReuseCandidateKind;
+  score: number;
+  confidence: "low" | "medium" | "high";
+  exported: boolean;
+  callerCount: number;
+  relatedTestCount: number;
+  structuralSignals: {
+    bodyFingerprint?: string;
+    bodyDuplicateCount: number;
+    signatureSimilarity: number;
+    importOverlap: number;
+    calleeOverlap: number;
+  };
+  reasons: string[];
+  whyReuse: string[];
+  snippet?: ContextSnippet;
+}
+
+export interface ReuseGuard {
+  status: "allow_new" | "block_new" | "review_required";
+  reason: string;
+  candidates: Array<{
+    filePath: string;
+    symbolName?: string;
+    score: number;
+    confidence: "low" | "medium" | "high";
+  }>;
+}
+
+export interface ReuseCandidateReport {
+  query: string;
+  decision: ReuseDecision;
+  confidence: "low" | "medium" | "high";
+  candidates: ReuseCandidate[];
+  duplicateRisk: "low" | "medium" | "high";
+  reuseGuard: ReuseGuard;
+  missingEvidence: string[];
+  nextQueries: string[];
+}
+
+export interface OwnerCandidate {
+  filePath: string;
+  score: number;
+  reasons: string[];
+  symbols: SymbolNode[];
+}
