@@ -1146,6 +1146,27 @@ export type AgentBrowserRuntimeDescribeFunctionResult = HostSuccess & {
   content: string;
   isError?: boolean;
 };
+export type AgentBrowserReplayPrepareRequestPayload = AgentBrowserSessionPayload & {
+  requestId: string;
+};
+export type AgentBrowserReplayPrepareRequestResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserReplaySendRequestPayload = AgentBrowserSessionPayload & {
+  draftId: string;
+};
+export type AgentBrowserReplaySendRequestResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserReplayCompareResponsesPayload = AgentBrowserSessionPayload & {
+  draftId: string;
+};
+export type AgentBrowserReplayCompareResponsesResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
 export type AgentBrowserPageInfo = {
   pageId: string;
   index: number;
@@ -4053,6 +4074,9 @@ export type HostApiContract = {
     runtimeInspectGlobals: (payload: AgentBrowserRuntimeInspectGlobalsPayload) => AgentBrowserRuntimeInspectGlobalsResult;
     runtimeSearchModules: (payload: AgentBrowserRuntimeSearchModulesPayload) => AgentBrowserRuntimeSearchModulesResult;
     runtimeDescribeFunction: (payload: AgentBrowserRuntimeDescribeFunctionPayload) => AgentBrowserRuntimeDescribeFunctionResult;
+    replayPrepareRequest: (payload: AgentBrowserReplayPrepareRequestPayload) => AgentBrowserReplayPrepareRequestResult;
+    replaySendRequest: (payload: AgentBrowserReplaySendRequestPayload) => AgentBrowserReplaySendRequestResult;
+    replayCompareResponses: (payload: AgentBrowserReplayCompareResponsesPayload) => AgentBrowserReplayCompareResponsesResult;
   };
   mcp: {
     listServers: () => McpServerListResult;

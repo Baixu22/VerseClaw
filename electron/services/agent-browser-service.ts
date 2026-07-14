@@ -46,6 +46,12 @@ import type {
   AgentBrowserRuntimeSearchModulesResult,
   AgentBrowserRuntimeDescribeFunctionPayload,
   AgentBrowserRuntimeDescribeFunctionResult,
+  AgentBrowserReplayPrepareRequestPayload,
+  AgentBrowserReplayPrepareRequestResult,
+  AgentBrowserReplaySendRequestPayload,
+  AgentBrowserReplaySendRequestResult,
+  AgentBrowserReplayCompareResponsesPayload,
+  AgentBrowserReplayCompareResponsesResult,
   AgentBrowserOpenPayload,
   AgentBrowserProfileEntry,
   AgentBrowserProfileSavePayload,
@@ -72,6 +78,7 @@ import { AgentBrowserTabManager } from './agent-browser/browser-control/tab-mana
 import { JsSourceToolExecutor } from './agent-browser/browser-control/js-source-tool-executor';
 import { SourceMapToolExecutor } from './agent-browser/browser-control/source-map-tool-executor';
 import { RuntimeReadToolExecutor } from './agent-browser/browser-control/runtime-read-tool-executor';
+import { ReplayToolExecutor } from './agent-browser/browser-control/replay-tool-executor';
 import { BrowserNetworkRecorder, type NetworkRequestFilter, type NetworkWaitFilter } from './agent-browser/browser-control/network-recorder';
 import type { AgentBrowserRunner } from './agent-browser-cli-runner';
 
@@ -111,6 +118,7 @@ type AgentBrowserControlState = {
   jsSourceExecutor: JsSourceToolExecutor;
   sourceMapExecutor: SourceMapToolExecutor;
   runtimeReadExecutor: RuntimeReadToolExecutor;
+  replayExecutor: ReplayToolExecutor;
 };
 
 type AgentBrowserServiceOptions = {
@@ -1165,7 +1173,17 @@ export class AgentBrowserService {
       getCurrentPageUrl: async () => webContents.getURL(),
     });
     const runtimeReadExecutor = new RuntimeReadToolExecutor(connection, () => this.getRuntimeReadAuthorization(record));
-    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor, sourceMapExecutor, runtimeReadExecutor };
+    const replayExecutor = new ReplayToolExecutor(
+      networkRecorder,
+      fetch,
+      () => ({
+        tabId: webContents.id,
+        origin: getOriginFromUrl(webContents.getURL()),
+        enhanced: this.isControlledEnhanced(record),
+        grant: boundaryExecutor.getCurrentGrantContext(),
+      }),
+    );
+    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor, sourceMapExecutor, runtimeReadExecutor, replayExecutor };
     this.browserControlStates.set(record.session.id, state);
     return state;
   }
@@ -1877,6 +1895,35 @@ export class AgentBrowserService {
       expiresAt: record.runtimeExpiresAt,
       reason: `runtimeMode=${record.runtimeMode}`,
     };
+  }
+
+  async replayPrepareRequest(payload: AgentBrowserReplayPrepareRequestPayload): Promise<Omit<AgentBrowserReplayPrepareRequestResult, 'success'>> {
+    const { replayExecutor } = this.getReplayExecutor(payload.sessionId);
+    return replayExecutor.prepareRequest({ requestId: payload.requestId });
+  }
+
+  async replaySendRequest(payload: AgentBrowserReplaySendRequestPayload): Promise<Omit<AgentBrowserReplaySendRequestResult, 'success'>> {
+    const { replayExecutor } = this.getReplayExecutor(payload.sessionId);
+    return replayExecutor.sendRequest({ draftId: payload.draftId });
+  }
+
+  async replayCompareResponses(payload: AgentBrowserReplayCompareResponsesPayload): Promise<Omit<AgentBrowserReplayCompareResponsesResult, 'success'>> {
+    const { replayExecutor } = this.getReplayExecutor(payload.sessionId);
+    return replayExecutor.compareResponses({ draftId: payload.draftId });
+  }
+
+  private getReplayExecutor(sessionId: string): { replayExecutor: ReplayToolExecutor; record: AgentBrowserRecord } {
+    this.assertBrowserControlEnabled();
+    const record = this.getRecord(sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('请求重放沙箱仅支持 browser-window 引擎，当前会话使用 agent-browser-cli 引擎。');
+    }
+    this.assertActionAllowed(record);
+    const state = this.browserControlStates.get(record.session.id);
+    if (!state) {
+      throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
+    }
+    return { replayExecutor: state.replayExecutor, record };
   }
 
   /**

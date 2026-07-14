@@ -231,5 +231,17 @@ export function createAgentBrowserApi(
       success: true,
       ...(await service.runtimeDescribeFunction(payload)),
     }),
+    replayPrepareRequest: async (payload) => ({
+      success: true,
+      ...(await service.replayPrepareRequest(payload)),
+    }),
+    replaySendRequest: async (payload) => ({
+      success: true,
+      ...(await service.replaySendRequest(payload)),
+    }),
+    replayCompareResponses: async (payload) => ({
+      success: true,
+      ...(await service.replayCompareResponses(payload)),
+    }),
   };
 }
