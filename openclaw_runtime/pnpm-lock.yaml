@@ -140,9 +140,24 @@ importers:
       tar:
         specifier: 7.5.15
         version: 7.5.15
+      tree-sitter:
+        specifier: ^0.21.1
+        version: 0.21.1
       tree-sitter-bash:
         specifier: 0.25.1
-        version: 0.25.1
+        version: 0.25.1(tree-sitter@0.21.1)
+      tree-sitter-go:
+        specifier: ^0.23.4
+        version: 0.23.4(tree-sitter@0.21.1)
+      tree-sitter-java:
+        specifier: ^0.23.5
+        version: 0.23.5(tree-sitter@0.21.1)
+      tree-sitter-python:
+        specifier: ^0.21.0
+        version: 0.21.0(tree-sitter@0.21.1)
+      tree-sitter-rust:
+        specifier: ^0.21.0
+        version: 0.21.0(tree-sitter@0.21.1)
       tslog:
         specifier: 4.10.2
         version: 4.10.2
@@ -473,7 +488,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/cloudflare-ai-gateway:
     devDependencies:
@@ -705,7 +720,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/document-extract:
     dependencies:
@@ -758,7 +773,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/file-transfer:
     dependencies:
@@ -832,7 +847,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/googlechat:
     dependencies:
@@ -851,7 +866,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/gradium:
     devDependencies:
@@ -925,7 +940,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/litellm:
     devDependencies:
@@ -990,7 +1005,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/mattermost:
     dependencies:
@@ -1006,7 +1021,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/media-understanding-core:
     devDependencies:
@@ -1031,7 +1046,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/memory-lancedb:
     dependencies:
@@ -1069,7 +1084,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/microsoft:
     dependencies:
@@ -1094,7 +1109,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/migrate-hermes:
     dependencies:
@@ -1107,7 +1122,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/minimax:
     devDependencies:
@@ -1153,7 +1168,7 @@ importers:
         version: 6.2.3
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/nextcloud-talk:
     dependencies:
@@ -1166,7 +1181,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/nostr:
     dependencies:
@@ -1182,7 +1197,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/novita:
     devDependencies:
@@ -1216,7 +1231,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/ollama:
     dependencies:
@@ -1291,7 +1306,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/policy:
     dependencies:
@@ -1304,7 +1319,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/qa-channel:
     dependencies:
@@ -1320,7 +1335,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/qa-lab:
     dependencies:
@@ -1354,7 +1369,7 @@ importers:
         version: link:../whatsapp
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/qa-matrix:
     dependencies:
@@ -1370,7 +1385,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/qianfan:
     devDependencies:
@@ -1404,7 +1419,7 @@ importers:
         version: 8.18.1
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/qwen:
     devDependencies:
@@ -1469,7 +1484,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/sms:
     dependencies:
@@ -1564,7 +1579,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/together:
     devDependencies:
@@ -1583,7 +1598,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/tts-local-cli:
     devDependencies:
@@ -1654,7 +1669,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/volcengine:
     devDependencies:
@@ -1714,7 +1729,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/workboard:
     dependencies:
@@ -1727,7 +1742,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/xai:
     dependencies:
@@ -1765,7 +1780,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   extensions/zalouser:
     dependencies:
@@ -1784,7 +1799,7 @@ importers:
         version: link:../../packages/plugin-sdk
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   packages/acp-core:
     dependencies:
@@ -1885,7 +1900,7 @@ importers:
     dependencies:
       openclaw:
         specifier: 2026.5.28
-        version: 2026.5.28
+        version: 2026.5.28(tree-sitter@0.21.1)
 
   packages/terminal-core:
     dependencies:
@@ -6341,6 +6356,9 @@ packages:
     resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
     engines: {node: '>= 0.6'}
 
+  node-addon-api@7.1.1:
+    resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
+
   node-addon-api@8.8.0:
     resolution: {integrity: sha512-c5Ko1fZJIJmzhFIkhRN76WTq+fC6tWnGy9CXA0fA+XygsWZmEwG8vmbkNqxMyoaa0Tin4djul49NzdVcJJcjeA==}
     engines: {node: ^18 || ^20 || >= 21}
@@ -7263,8 +7281,45 @@ packages:
       tree-sitter:
         optional: true
 
+  tree-sitter-go@0.23.4:
+    resolution: {integrity: sha512-iQaHEs4yMa/hMo/ZCGqLfG61F0miinULU1fFh+GZreCRtKylFLtvn798ocCZjO2r/ungNZgAY1s1hPFyAwkc7w==}
+    peerDependencies:
+      tree-sitter: ^0.21.1
+    peerDependenciesMeta:
+      tree-sitter:
+        optional: true
+
+  tree-sitter-java@0.23.5:
+    resolution: {integrity: sha512-Yju7oQ0Xx7GcUT01mUglPP+bYfvqjNCGdxqigTnew9nLGoII42PNVP3bHrYeMxswiCRM0yubWmN5qk+zsg0zMA==}
+    peerDependencies:
+      tree-sitter: ^0.21.1
+    peerDependenciesMeta:
+      tree-sitter:
+        optional: true
+
+  tree-sitter-python@0.21.0:
+    resolution: {integrity: sha512-IUKx7JcTVbByUx1iHGFS/QsIjx7pqwTMHL9bl/NGyhyyydbfNrpruo2C7W6V4KZrbkkCOlX8QVrCoGOFW5qecg==}
+    peerDependencies:
+      tree-sitter: ^0.21.0
+      tree_sitter: '*'
+    peerDependenciesMeta:
+      tree_sitter:
+        optional: true
+
+  tree-sitter-rust@0.21.0:
+    resolution: {integrity: sha512-unVr73YLn3VC4Qa/GF0Nk+Wom6UtI526p5kz9Rn2iZSqwIFedyCZ3e0fKCEmUJLIPGrTb/cIEdu3ZUNGzfZx7A==}
+    peerDependencies:
+      tree-sitter: ^0.21.1
+      tree_sitter: '*'
+    peerDependenciesMeta:
+      tree_sitter:
+        optional: true
+
   tree-sitter-wasms@0.1.13:
     resolution: {integrity: sha512-wT+cR6DwaIz80/vho3AvSF0N4txuNx/5bcRKoXouOfClpxh/qqrF4URNLQXbbt8MaAxeksZcZd1j8gcGjc+QxQ==}
+
+  tree-sitter@0.21.1:
+    resolution: {integrity: sha512-7dxoA6kYvtgWw80265MyqJlkRl4yawIjO7S5MigytjELkX43fV2WsAXzsNfO7sBpPPCF5Gp0+XzHk0DwLCq3xQ==}
 
   trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
@@ -12494,6 +12549,8 @@ snapshots:
 
   negotiator@1.0.0: {}
 
+  node-addon-api@7.1.1: {}
+
   node-addon-api@8.8.0: {}
 
   node-domexception@1.0.0: {}
@@ -12607,7 +12664,7 @@ snapshots:
       ws: 8.21.0
       zod: 4.4.3
 
-  openclaw@2026.5.28:
+  openclaw@2026.5.28(tree-sitter@0.21.1):
     dependencies:
       '@agentclientprotocol/sdk': 0.22.1(zod@4.4.3)
       '@anthropic-ai/sdk': 0.98.0(zod@4.4.3)
@@ -12657,7 +12714,7 @@ snapshots:
       quickjs-wasi: 3.0.0
       rastermill: 0.3.0
       tar: 7.5.15
-      tree-sitter-bash: 0.25.1
+      tree-sitter-bash: 0.25.1(tree-sitter@0.21.1)
       tslog: 4.10.2
       typebox: 1.1.38
       typescript: 6.0.3
@@ -13629,12 +13686,45 @@ snapshots:
 
   tree-kill@1.2.2: {}
 
-  tree-sitter-bash@0.25.1:
+  tree-sitter-bash@0.25.1(tree-sitter@0.21.1):
     dependencies:
       node-addon-api: 8.8.0
       node-gyp-build: 4.8.4
+    optionalDependencies:
+      tree-sitter: 0.21.1
+
+  tree-sitter-go@0.23.4(tree-sitter@0.21.1):
+    dependencies:
+      node-addon-api: 8.8.0
+      node-gyp-build: 4.8.4
+    optionalDependencies:
+      tree-sitter: 0.21.1
+
+  tree-sitter-java@0.23.5(tree-sitter@0.21.1):
+    dependencies:
+      node-addon-api: 8.8.0
+      node-gyp-build: 4.8.4
+    optionalDependencies:
+      tree-sitter: 0.21.1
+
+  tree-sitter-python@0.21.0(tree-sitter@0.21.1):
+    dependencies:
+      node-addon-api: 7.1.1
+      node-gyp-build: 4.8.4
+      tree-sitter: 0.21.1
+
+  tree-sitter-rust@0.21.0(tree-sitter@0.21.1):
+    dependencies:
+      node-addon-api: 7.1.1
+      node-gyp-build: 4.8.4
+      tree-sitter: 0.21.1
 
   tree-sitter-wasms@0.1.13: {}
+
+  tree-sitter@0.21.1:
+    dependencies:
+      node-addon-api: 8.8.0
+      node-gyp-build: 4.8.4
 
   trim-lines@3.0.1: {}
 
