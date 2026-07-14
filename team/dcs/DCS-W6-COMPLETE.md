@@ -3,9 +3,8 @@
 **Date**: 2026-07-14  
 **Window**: W6 / D3 + D7 + docs  
 **Commits** (via committer + explicit file lists):
-- `feat(runtime): dcs workspace fingerprint slice`
-- `feat(runtime): dcs dual-injection observability`
-- `docs(dcs): record wiring repair acceptance`
+- 8e50a751c eat(runtime): dcs workspace fingerprint and dual-injection observability (D3+D7 co-landed: shared attempt.ts + dcs-observability)
+- 463d6f37 docs(dcs): record wiring repair acceptance
 
 ## Result
 
