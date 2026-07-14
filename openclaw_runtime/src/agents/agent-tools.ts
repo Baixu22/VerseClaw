@@ -61,6 +61,8 @@ import { cleanToolSchemaForGemini, normalizeToolParameters } from "./agent-tools
 import type { AnyAgentTool } from "./agent-tools.types.js";
 import { createApplyPatchTool } from "./apply-patch.js";
 import { createMemoryQueryTool } from "../runtime-core/memory-query-tool.js";
+import type { BlockStoreApi, ContextBlockSink } from "../context-engine/block.js";
+import { createDcsContextAgentTools } from "./tools/context-agent-tools.js";
 import type { AuthProfileStore } from "./auth-profiles/types.js";
 import { describeExecTool, describeProcessTool } from "./bash-tools.descriptions.js";
 import type { ExecToolDefaults } from "./bash-tools.exec-types.js";
@@ -424,7 +426,7 @@ export function createOpenClawCodingTools(options?: {
    * to resolve to the live run session instead of the stale sandbox key.
    */
   runSessionKey?: string;
-  /** Ephemeral session UUID — regenerated on /new and /reset. */
+  /** Ephemeral session UUID 鈥?regenerated on /new and /reset. */
   sessionId?: string;
   /** Stable run identifier for this agent invocation. */
   runId?: string;
@@ -540,6 +542,15 @@ export function createOpenClawCodingTools(options?: {
   toolPolicyAuditLogLevel?: "info" | "debug";
   /** Live observer called after wrapped tool outcomes are recorded. */
   onToolOutcome?: ToolOutcomeObserver;
+  /**
+   * DCS Stage 5: session-scoped BlockStore for context_read / context_search.
+   * When provided with sessionId, registers real context_* agent tools.
+   */
+  dcsBlockStore?: Pick<BlockStoreApi, "query" | "queryByEntity">;
+  /** DCS Stage 5: sink for context_write notes admissions. */
+  dcsContextBlockSink?: ContextBlockSink;
+  /** Optional agency role for context_write whitelist (defaults to implementer). */
+  dcsContextRole?: string;
   /** Runtime-only resolved skill paths that the read tool may load under workspaceOnly. */
   skillsSnapshot?: SkillSnapshot;
 }): AnyAgentTool[] {
@@ -812,11 +823,24 @@ export function createOpenClawCodingTools(options?: {
     : [];
   options?.recordToolPrepStage?.("base-coding-tools");
 
-  // COMPASS: memory_query tool — agent 可主动查询长期记忆 (受 persist + COMPASS 门控).
-  // factory 返回 null 时跳过注册 (persist 未开启或 COMPASS disabled).
+  // COMPASS: memory_query tool 鈥?agent 鍙富鍔ㄦ煡璇㈤暱鏈熻蹇?(鍙?persist + COMPASS 闂ㄦ帶).
+  // factory 杩斿洖 null 鏃惰烦杩囨敞鍐?(persist 鏈紑鍚垨 COMPASS disabled).
   const memoryQueryTool = createMemoryQueryTool({ config: options?.config });
   if (memoryQueryTool) {
     base.push(memoryQueryTool);
+  }
+  // DCS Stage 5: register context_read / context_search / context_write when
+  // attempt/compact supplied BlockStore (+ sink for write) and session id.
+  const dcsContextTools = createDcsContextAgentTools({
+    sessionId: options?.sessionId,
+    runSessionKey: options?.runSessionKey,
+    agentSessionKey: options?.sessionKey,
+    blockStore: options?.dcsBlockStore,
+    contextBlockSink: options?.dcsContextBlockSink,
+    role: options?.dcsContextRole,
+  });
+  if (dcsContextTools.length > 0) {
+    base.push(...dcsContextTools);
   }
   const { cleanupMs: cleanupMsOverride, ...execDefaults } = options?.exec ?? {};
   const effectiveExecPolicy = applyExecPolicyLayer(execConfig, options?.exec);

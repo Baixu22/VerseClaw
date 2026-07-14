@@ -824,7 +824,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
         apiKeyInfo,
       ),
       // Skip header injection when runtime auth exchange produced a
-      // different credential — the SDK reads the exchanged token from
+      // different credential 鈥?the SDK reads the exchanged token from
       // authStorage automatically.
       hasRuntimeAuthExchange ? null : apiKeyInfo,
       params.config,
@@ -848,6 +848,10 @@ async function compactEmbeddedAgentSessionDirectOnce(
       });
 
     const runAbortController = new AbortController();
+    // DCS Stage 5 / W2: resolve BlockStore + sink once for context_* tools and extension factories.
+    const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
+      spawnedBy: params.spawnedBy,
+    });
     const toolsRaw = createOpenClawCodingTools({
       exec: {
         ...params.execOverrides,
@@ -864,6 +868,8 @@ async function compactEmbeddedAgentSessionDirectOnce(
           : undefined,
       sessionId: params.sessionId,
       runId: params.runId,
+      dcsBlockStore: dcsExtensionDeps?.workingMemoryStore,
+      dcsContextBlockSink: dcsExtensionDeps?.contextBlockSink,
       groupId: params.groupId,
       groupChannel: params.groupChannel,
       groupSpace: params.groupSpace,
@@ -1209,9 +1215,6 @@ async function compactEmbeddedAgentSessionDirectOnce(
       // that must be passed to the resource loader for the safeguard to be active.
       // DCS Stage 2: parity with attempt - pass sink/store when available so
       // session restore paths keep TaskStateHandlerConfig set.
-      const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
-        spawnedBy: params.spawnedBy,
-      });
       const extensionFactories = buildEmbeddedExtensionFactories({
         cfg: params.config,
         sessionManager,
@@ -1233,7 +1236,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
       });
       await resourceLoader.reload();
       // DefaultResourceLoader.reload() rehydrates settings from disk and can drop OpenClaw
-      // compaction overrides applied in createPreparedEmbeddedAgentSettingsManager — same
+      // compaction overrides applied in createPreparedEmbeddedAgentSettingsManager 鈥?same
       // rehydration also restores OpenClaw runtime's auto-compaction (openclaw#75799), so re-apply
       // both guards. effectiveModel.baseUrl matches the surrounding scope so
       // auth-profile-injected baseUrls reach the endpoint-class detector.
@@ -1412,7 +1415,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
 
           if (!containsRealConversationMessages(session.messages)) {
             log.info(
-              `[compaction] skipping — no real conversation messages (sessionKey=${params.sessionKey ?? params.sessionId})`,
+              `[compaction] skipping 鈥?no real conversation messages (sessionKey=${params.sessionKey ?? params.sessionId})`,
             );
             return {
               ok: true,
@@ -1427,7 +1430,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
           const messageCountCompactionInput = messageCountOriginal;
           // Estimate full session tokens BEFORE compaction (including system prompt,
           // bootstrap context, workspace files, and all history). This is needed for
-          // a correct sanity check — result.tokensBefore only covers the summarizable
+          // a correct sanity check 鈥?result.tokensBefore only covers the summarizable
           // history subset, not the full session.
           let fullSessionTokensBefore = 0;
           try {

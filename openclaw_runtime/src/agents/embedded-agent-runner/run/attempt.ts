@@ -1228,6 +1228,12 @@ export async function runEmbeddedAttempt(
       forceMessageTool: params.forceMessageTool,
       sourceReplyDeliveryMode: params.sourceReplyDeliveryMode,
     });
+    // DCS Stage 5 / W2: resolve BlockStore + sink once for both context_* agent tools
+    // and later extension factories (task-state). Best-effort; undefined is safe.
+    const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
+      prompt: params.prompt,
+      spawnedBy: params.spawnedBy,
+    });
     const shouldConstructTools =
       toolConstructionPlan.constructTools ||
       toolSearchControlsEnabledForRun ||
@@ -1275,6 +1281,8 @@ export async function runEmbeddedAttempt(
                 : undefined,
             sessionId: params.sessionId,
             runId: params.runId,
+            dcsBlockStore: dcsExtensionDeps?.workingMemoryStore,
+            dcsContextBlockSink: dcsExtensionDeps?.contextBlockSink,
             toolSearchCatalogRef,
             agentDir,
             cwd: effectiveCwd,
@@ -2190,10 +2198,6 @@ export async function runEmbeddedAttempt(
       // that must be passed to the resource loader for the safeguard to be active.
       // DCS Stage 2: supply BlockStore/sink (and optional objective/parent) so
       // task-state factory can set TaskStateHandlerConfig for phase producer writes.
-      const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
-        prompt: params.prompt,
-        spawnedBy: params.spawnedBy,
-      });
       const extensionFactories = buildEmbeddedExtensionFactories({
         cfg: params.config,
         sessionManager,
@@ -2215,7 +2219,7 @@ export async function runEmbeddedAttempt(
       });
       await resourceLoader.reload();
       // DefaultResourceLoader.reload() rehydrates settings from disk and can drop OpenClaw
-      // compaction overrides applied in createPreparedEmbeddedAgentSettingsManager — same
+      // compaction overrides applied in createPreparedEmbeddedAgentSettingsManager 鈥?same
       // rehydration also restores OpenClaw runtime's auto-compaction (openclaw#75799), so re-apply
       // both guards.
       applyAgentCompactionSettingsFromConfig({
@@ -2263,7 +2267,7 @@ export async function runEmbeddedAttempt(
       });
       // Exact raw names of every tool registered for this run, including
       // bundled/plugin tools. Used as the raw-name set for the trusted local
-      // media passthrough gate: a normalized alias is not sufficient — the
+      // media passthrough gate: a normalized alias is not sufficient 鈥?the
       // emitted tool name must match an exact registration of this run.
       const builtinToolNames = new Set(
         uncompactedEffectiveTools.flatMap((tool) => {
@@ -2826,7 +2830,7 @@ export async function runEmbeddedAttempt(
 
       // Mistral (and other strict providers) reject tool call IDs that don't match their
       // format requirements (e.g. [a-zA-Z0-9]{9}). sanitizeSessionHistory only processes
-      // historical messages at attempt start, but the agent loop's internal tool call →
+      // historical messages at attempt start, but the agent loop's internal tool call 鈫?
       // tool result cycles bypass that path. Wrap streamFn so every outbound request
       // sees sanitized tool call IDs.
       const replayToolCallIdSanitizerDecision = {
@@ -2924,7 +2928,7 @@ export async function runEmbeddedAttempt(
 
       // Wrap stream with idle timeout detection.
       //
-      // Prefer the caller's explicit `runTimeoutOverrideMs` when provided —
+      // Prefer the caller's explicit `runTimeoutOverrideMs` when provided 鈥?
       // it carries the "this run was launched with a deliberate per-run
       // timeout" signal without losing it when the value numerically equals
       // `agents.defaults.timeoutSeconds`. Fall back to the value-equality
@@ -3773,7 +3777,7 @@ export async function runEmbeddedAttempt(
         }
         // The model identity line is appended below; for a marker-free hook systemPrompt
         // override ensure the cache boundary first so the identity lands in the dynamic
-        // suffix, not the cached prefix — otherwise an idle turn's prefix (O + identity)
+        // suffix, not the cached prefix 鈥?otherwise an idle turn's prefix (O + identity)
         // diverges from an active media turn's prefix (O) and breaks prompt caching. Skip
         // empty prompts (raw/gateway runs) and turns with no identity line, which need none.
         const modelAwareSystemPrompt = appendModelIdentitySystemPrompt({
@@ -4761,12 +4765,12 @@ export async function runEmbeddedAttempt(
           // Flush buffered block replies before waiting for compaction so the
           // user receives the assistant response immediately.  Without this,
           // coalesced/buffered blocks stay in the pipeline until compaction
-          // finishes — which can take minutes on large contexts (#35074).
+          // finishes 鈥?which can take minutes on large contexts (#35074).
           if (onBlockReplyFlush) {
             await onBlockReplyFlush();
           }
 
-          // Skip compaction wait when yield aborted the run — the signal is
+          // Skip compaction wait when yield aborted the run 鈥?the signal is
           // already tripped and abortable() would immediately reject.
           const compactionRetryWait = yieldAborted
             ? { timedOut: false }
@@ -4810,11 +4814,11 @@ export async function runEmbeddedAttempt(
           compactionOccurredThisAttempt = getCompactionCount() > 0;
           // Append cache-TTL timestamp AFTER prompt + compaction retry completes.
           // Previously this was before the prompt, which caused a custom entry to be
-          // inserted between compaction and the next prompt — breaking the
+          // inserted between compaction and the next prompt 鈥?breaking the
           // prepareCompaction() guard that checks the last entry type, leading to
           // double-compaction. See: https://github.com/openclaw/openclaw/issues/9282
-          // Skip when timed out during compaction — session state may be inconsistent.
-          // Also skip when compaction ran this attempt — appending a custom entry
+          // Skip when timed out during compaction 鈥?session state may be inconsistent.
+          // Also skip when compaction ran this attempt 鈥?appending a custom entry
           // after compaction would break the guard again. See: #28491
           appendAttemptCacheTtlIfNeeded({
             sessionManager: activeSessionManager,
