@@ -19,6 +19,7 @@ import {
 import { handleRoleMemoryKnowledge } from "./handlers/role-memory-handler.js";
 import { formatToolRegistryInjection } from "./handlers/tool-registry-handler.js";
 import { parseWorkingMemoryActions } from "./handlers/working-memory-handler.js";
+import { dcsObservability } from "./dcs-observability.js";
 
 export interface AssembleRequest {
   session_id: string;
@@ -219,6 +220,7 @@ export class Assembler {
     if (hasRecentActionsHeading(output)) {
       // DCS v1.6.1 addendum 2: exactly-once — a prior injection point already
       // projected the window into this call's context; never accumulate a second.
+      dcsObservability.recordDcsTransformContextInjection({ chars: 0, suppressed: true });
       return output;
     }
     const blocks = await store.query({
@@ -230,8 +232,10 @@ export class Assembler {
     });
     const injection = formatWorkingMemoryInjection(blocks[0]);
     if (!injection) {
+      dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
     }
+    dcsObservability.recordDcsTransformContextInjection({ chars: injection.length });
     return [...output, { role: "user", content: injection }] as TExistingOutput;
   }
 
@@ -246,6 +250,7 @@ export class Assembler {
     if (hasToolsHeading(output)) {
       // DCS v1.6.1 addendum 2: exactly-once — a prior injection point already
       // projected the tool registry into this call's context; never accumulate.
+      dcsObservability.recordDcsTransformContextInjection({ chars: 0, suppressed: true });
       return output;
     }
     const blocks = await store.query({
@@ -257,15 +262,17 @@ export class Assembler {
     });
     const injection = formatToolRegistryInjection(blocks[0]);
     if (!injection) {
+      dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
     }
+    dcsObservability.recordDcsTransformContextInjection({ chars: injection.length });
     return [...output, { role: "user", content: injection }] as TExistingOutput;
   }
 
   /**
    * DCS Stage 4: knowledge Block injection.
    *
-   * Session-type-aware query — main sessions query compass Blocks, subagent
+   * Session-type-aware query 鈥?main sessions query compass Blocks, subagent
    * sessions query role-memory Blocks (ANTI-3). Exactly-once guard via
    * `## Knowledge` heading (addendum 2).
    */
@@ -281,10 +288,11 @@ export class Assembler {
     }
     if (hasKnowledgeHeading(output)) {
       // DCS v1.6.1 addendum 2: exactly-once.
+      dcsObservability.recordDcsTransformContextInjection({ chars: 0, suppressed: true });
       return output;
     }
-    // ANTI-3: main → compass only; subagent → role-memory only.
-    // Flags must also be ON — a flag-off source must never be injected.
+    // ANTI-3: main 鈫?compass only; subagent 鈫?role-memory only.
+    // Flags must also be ON 鈥?a flag-off source must never be injected.
     const sourceSystems: SourceSystem[] = [];
     if (eligibleHandlers.has("compass") && flags["runtime.contextBlock.compass.enabled"]) {
       sourceSystems.push("compass");
@@ -304,8 +312,10 @@ export class Assembler {
     });
     const injection = formatKnowledgeInjection(blocks[0]);
     if (!injection) {
+      dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
     }
+    dcsObservability.recordDcsTransformContextInjection({ chars: injection.length });
     return [...output, { role: "user", content: injection }] as TExistingOutput;
   }
 }

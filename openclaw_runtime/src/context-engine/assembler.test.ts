@@ -9,6 +9,7 @@ import {
   KNOWLEDGE_INJECTION_CHAR_BUDGET,
   selectHandlers,
 } from "./assembler.js";
+import { dcsObservability } from "./dcs-observability.js";
 
 describe("DCS Assembler", () => {
   it("使用共享谓词窄化 main session", () => {
@@ -222,6 +223,31 @@ describe("DCS v1.6.1 addendum 2: exactly-once working-memory injection", () => {
       },
     ]),
     upsert: vi.fn(),
+  });
+
+  it("records dual-injection observability chars and suppressions", async () => {
+    dcsObservability.reset();
+    const flags = { "runtime.contextBlock.working_memory.enabled": true } as const;
+    const perCallHookAssembler = new Assembler({ workingMemoryStore: storeWithWindow() });
+    const contextEngineAssembler = new Assembler({ workingMemoryStore: storeWithWindow() });
+    const messages = [{ role: "user" as const, content: "next" }];
+
+    const afterHook = await perCallHookAssembler.assemble(
+      { session_id: "session-a" },
+      { existing_output: messages },
+      flags,
+    );
+    const afterContextEngine = await contextEngineAssembler.assemble(
+      { session_id: "session-a" },
+      { existing_output: afterHook.output },
+      flags,
+    );
+
+    expect(countRecentActionsHeadings(afterContextEngine.output)).toBe(1);
+    const snap = dcsObservability.snapshot();
+    expect(snap.dcsTransformContextCalls).toBe(2);
+    expect(snap.dcsTransformContextChars).toBeGreaterThan(0);
+    expect(snap.injectionDuplicateSuppressions).toBe(1);
   });
 
   it("keeps exactly one Recent Actions heading when both injection points assemble", async () => {
