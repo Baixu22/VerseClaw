@@ -184,3 +184,80 @@ describe('applySourceRuntimeSandboxAutoFallback', () => {
     expect(JSON.stringify(result)).not.toContain('autoDisabledReason');
   });
 });
+
+describe('source runtime isolation user config merge', () => {
+  it('copies runtime.contextBlock flags from user config into isolated config', async () => {
+    const {
+      applySourceRuntimeIsolationUserConfig,
+      SOURCE_RUNTIME_ISOLATION_SYNC_KEYS,
+    } = await import('@electron/gateway/config-sync');
+
+    expect(SOURCE_RUNTIME_ISOLATION_SYNC_KEYS).toContain('runtime');
+
+    const isolated = {
+      agents: { list: [] },
+      models: { providers: {} },
+      plugins: { enabled: false },
+      runtime: { contextBlock: { sekb: { enabled: false } } },
+    };
+    const user = {
+      agents: { list: [{ id: 'main' }] },
+      models: { providers: { openai: {} } },
+      plugins: { enabled: true },
+      runtime: {
+        contextBlock: {
+          'working-memory': { enabled: true },
+          'tool-registry': { enabled: true },
+          sekb: { enabled: false },
+        },
+      },
+    };
+
+    const { config, changed } = applySourceRuntimeIsolationUserConfig(isolated, user);
+    expect(changed).toBe(true);
+    expect(config.runtime).toEqual(user.runtime);
+    expect(config.agents).toEqual(user.agents);
+  });
+
+  it('does not overwrite isolated runtime when user config omits runtime', async () => {
+    const { applySourceRuntimeIsolationUserConfig } = await import('@electron/gateway/config-sync');
+
+    const existingRuntime = {
+      contextBlock: {
+        'working-memory': { enabled: true },
+        sekb: { enabled: false },
+      },
+    };
+    const isolated = {
+      agents: { list: [] },
+      runtime: existingRuntime,
+    };
+    const user = {
+      agents: { list: [{ id: 'main' }] },
+      // runtime intentionally absent
+    };
+
+    const { config, changed } = applySourceRuntimeIsolationUserConfig(isolated, user);
+    expect(config.runtime).toEqual(existingRuntime);
+    expect(config.agents).toEqual(user.agents);
+    // agents changed, runtime preserved
+    expect(changed).toBe(true);
+    expect(
+      applySourceRuntimeIsolationUserConfig(
+        { runtime: existingRuntime },
+        {},
+      ).config.runtime,
+    ).toEqual(existingRuntime);
+  });
+
+  it('includes runtime on initial isolated config when user set it', async () => {
+    const { buildInitialSourceRuntimeIsolationConfig } = await import('@electron/gateway/config-sync');
+    const user = {
+      agents: { list: [{ id: 'main' }] },
+      runtime: { contextBlock: { 'working-memory': { enabled: true } } },
+    };
+    const initial = buildInitialSourceRuntimeIsolationConfig(user);
+    expect(initial.runtime).toEqual(user.runtime);
+    expect(buildInitialSourceRuntimeIsolationConfig({ agents: {} }).runtime).toBeUndefined();
+  });
+});
