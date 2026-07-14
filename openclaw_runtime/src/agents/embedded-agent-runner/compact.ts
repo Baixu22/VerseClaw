@@ -159,6 +159,7 @@ import {
   shouldRotateCompactionTranscript,
 } from "./compaction-successor-transcript.js";
 import { applyFinalEffectiveToolPolicy } from "./effective-tool-policy.js";
+import { resolveEmbeddedDcsExtensionDeps } from "./dcs-extension-deps.js";
 import { buildEmbeddedExtensionFactories } from "./extensions.js";
 import { applyExtraParamsToAgent } from "./extra-params.js";
 import { getHistoryLimitFromSessionKey, limitHistoryTurns } from "./history.js";
@@ -1206,12 +1207,23 @@ async function compactEmbeddedAgentSessionDirectOnce(
       });
       // Sets compaction/pruning runtime state and returns extension factories
       // that must be passed to the resource loader for the safeguard to be active.
+      // DCS Stage 2: parity with attempt - pass sink/store when available so
+      // session restore paths keep TaskStateHandlerConfig set.
+      const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
+        spawnedBy: params.spawnedBy,
+      });
       const extensionFactories = buildEmbeddedExtensionFactories({
         cfg: params.config,
         sessionManager,
         provider,
         modelId,
         model,
+        sessionId: params.sessionId,
+        sessionKey: params.sessionKey,
+        workingMemoryStore: dcsExtensionDeps?.workingMemoryStore,
+        contextBlockSink: dcsExtensionDeps?.contextBlockSink,
+        objective: dcsExtensionDeps?.objective,
+        parentSessionId: dcsExtensionDeps?.parentSessionId,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({
         cwd: effectiveCwd,

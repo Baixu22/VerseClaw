@@ -52,6 +52,8 @@ import {
   type RuntimeMemoryRuntimeIntegrationPort,
 } from "../runtime-core/memory-runtime-integration.js";
 import { createRuntimeTaskEventLogRuntimeIntegration } from "../runtime-core/event-log-persistence.js";
+import { createSubsystemLogger } from "../logging/subsystem.js";
+import { runAgentHarnessTaskPhaseChangeHook } from "./harness/lifecycle-hook-helpers.js";
 
 import type {
   ObservedOrchestrationRunRequest,
@@ -343,7 +345,7 @@ export type TaskLoopControllerDeps = {
   selfCheckDeps?: TaskLoopSelfCheckDeps;
   getSubagentRun?: (runId?: string, childSessionKey?: string) => SubagentRunRecord | null;
   ensureTaskLedgerRoot?: (input: LongTaskLedgerRootInput) => string | Promise<string>;
-  recordCheckpoint?: (input: TaskLoopCheckpointRecordInput) => unknown | Promise<unknown>;
+  recordCheckpoint?: (input: TaskLoopCheckpointRecordInput) => unknown;
   lifecycle?: (event: TaskLoopLifecycleEvent) => void;
   orchestrationLifecycle?: (event: OrchestrationLifecycleEvent, loop: TaskLoopRunRecord) => void;
   runtimeTaskEventLogShadow?: boolean;
@@ -407,6 +409,8 @@ export type RunObservedFn = (
 ) => Promise<OrchestrationRunResult>;
 
 const taskLoopRuns = new Map<string, TaskLoopRunRecord>();
+const taskLoopRuntimeStatusByRun = new WeakMap<TaskLoopRunRecord, RuntimeTaskStatus>();
+const taskLoopPhaseLog = createSubsystemLogger("agents/task-loop");
 const runtimeEventShadowFlags = new WeakMap<
   TaskLoopRunRecord,
   {
@@ -440,7 +444,7 @@ function positiveInt(value: unknown, fallback: number, min = 1, max = Number.MAX
 function resolveAgentTaskLoopConfig(cfg: OpenClawConfig | undefined, agentId?: string): TaskLoopConfig {
   const defaults = cfg?.agents?.defaults?.taskLoop ?? {};
   const agent = cfg?.agents?.list?.find((entry: AgentConfig) => entry.id === agentId);
-  return { ...defaults, ...(agent?.taskLoop ?? {}) };
+  return { ...defaults, ...(agent?.taskLoop ? agent.taskLoop : {}) };
 }
 
 function rolesConfig(cfg: OpenClawConfig): { agents?: { roles?: unknown; teams?: unknown } } {
@@ -1213,7 +1217,7 @@ function registryDiagnosticEvidenceRefWithMetadata(
   return {
     ...ref,
     metadata: runtimeCoreJsonObject({
-      ...(ref.metadata ?? {}),
+      ...(ref.metadata ? ref.metadata : {}),
       source: "task_loop.registry_shadow",
       registrySurface: diagnostic.surface,
       registryProviderId: diagnostic.providerId,
@@ -2292,7 +2296,7 @@ function taskLoopTraceContext(record: TaskLoopRunRecord, extra?: RuntimeCoreJson
       loopRunId: record.loopRunId,
       sessionKey: record.sessionKey,
       ...(record.taskLedgerRootId ? { taskLedgerRootId: record.taskLedgerRootId } : {}),
-      ...(extra ?? {}),
+      ...(extra ? extra : {}),
     },
   };
 }
@@ -2381,9 +2385,7 @@ function emitTaskLoopLifecycleShadow(
         testsRunCount: lifecycleEvent.testsRun?.length ?? record.evidenceGate?.testsRun.length ?? 0,
         evidenceVerifierShadow: lifecycleEvent.evidenceVerifierReport ? "present" : "absent",
       }),
-      events: [
-        ...(externalContextEvent ? [externalContextEvent] : []),
-      ],
+      events: externalContextEvent ? [externalContextEvent] : [],
       sourceRefs: [
         {
           file: "openclaw_runtime/src/agents/task-loop-controller.ts",
@@ -2665,6 +2667,64 @@ function emit(
   deps.lifecycle?.(event);
   emitTaskLoopLifecycleShadow(record, deps, event);
   recordTaskLoopMissionLifecycleReport(record, event);
+  // DCS Stage 2: primary task_phase_change producer (exactly once per true runtime status change).
+  emitTaskLoopTaskPhaseChange(record, event);
+}
+
+/**
+ * Authoritative TaskLoop -> DCS task_phase_change bridge.
+ * Maps legacy phase/status through runtimeTaskStatusForTaskLoop and dispatches
+ * runAgentHarnessTaskPhaseChangeHook only when RuntimeTaskStatus actually changes.
+ * Failures are logged; TaskLoop control flow never throws from this path.
+ */
+function emitTaskLoopTaskPhaseChange(
+  record: TaskLoopRunRecord,
+  lifecycleEvent: TaskLoopLifecycleEvent,
+): void {
+  const toStatus = runtimeTaskStatusForTaskLoop(lifecycleEvent.phase, lifecycleEvent.status);
+  const fromStatus = taskLoopRuntimeStatusByRun.get(record);
+  if (fromStatus === toStatus) {
+    return;
+  }
+  // First observation seeds the map without inventing a synthetic prior status.
+  if (fromStatus === undefined) {
+    taskLoopRuntimeStatusByRun.set(record, toStatus);
+    // Still emit the first transition from created unless already created.
+    if (toStatus === "created") {
+      return;
+    }
+  }
+  const effectiveFrom: RuntimeTaskStatus = fromStatus ?? "created";
+  taskLoopRuntimeStatusByRun.set(record, toStatus);
+  void runAgentHarnessTaskPhaseChangeHook({
+    event: {
+      sessionId: record.sessionKey,
+      taskId: record.loopRunId,
+      fromStatus: effectiveFrom,
+      toStatus,
+    },
+    ctx: {
+      sessionId: record.sessionKey,
+      runId: record.loopRunId,
+    },
+  }).catch((error: unknown) => {
+    taskLoopPhaseLog.warn(`task_phase_change producer failed: ${String(error)}`);
+  });
+}
+
+/** @internal test-only: invoke the production phase producer without running full TaskLoop. */
+export function __testOnly_emitTaskLoopTaskPhaseChange(
+  record: TaskLoopRunRecord,
+  lifecycleEvent: TaskLoopLifecycleEvent,
+): void {
+  emitTaskLoopTaskPhaseChange(record, lifecycleEvent);
+}
+
+/** @internal test-only: drop WeakMap status tracking between tests. */
+export function __testOnly_clearTaskLoopPhaseStatus(): void {
+  // WeakMap has no clear; reassign by replacing entries is impossible.
+  // Tests use fresh record object identities, so this is a no-op placeholder
+  // retained for API stability and future strong-map migrations.
 }
 
 function snapshot(record: TaskLoopRunRecord, selfCheck?: TaskLoopSelfCheckResult): void {

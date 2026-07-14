@@ -232,6 +232,7 @@ import { isCacheTtlEligibleProvider, readLastCacheTtlTimestamp } from "../cache-
 import { resolveCompactionTimeoutMs } from "../compaction-safety-timeout.js";
 import { runContextEngineMaintenance } from "../context-engine-maintenance.js";
 import { applyFinalEffectiveToolPolicy } from "../effective-tool-policy.js";
+import { resolveEmbeddedDcsExtensionDeps } from "../dcs-extension-deps.js";
 import { buildEmbeddedExtensionFactories } from "../extensions.js";
 import {
   applyExtraParamsToAgent,
@@ -2187,6 +2188,12 @@ export async function runEmbeddedAttempt(
 
       // Sets compaction/pruning runtime state and returns extension factories
       // that must be passed to the resource loader for the safeguard to be active.
+      // DCS Stage 2: supply BlockStore/sink (and optional objective/parent) so
+      // task-state factory can set TaskStateHandlerConfig for phase producer writes.
+      const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
+        prompt: params.prompt,
+        spawnedBy: params.spawnedBy,
+      });
       const extensionFactories = buildEmbeddedExtensionFactories({
         cfg: params.config,
         sessionManager,
@@ -2195,6 +2202,10 @@ export async function runEmbeddedAttempt(
         model: params.model,
         sessionId: params.sessionId,
         sessionKey: params.sessionKey,
+        workingMemoryStore: dcsExtensionDeps?.workingMemoryStore,
+        contextBlockSink: dcsExtensionDeps?.contextBlockSink,
+        objective: dcsExtensionDeps?.objective,
+        parentSessionId: dcsExtensionDeps?.parentSessionId,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({
         cwd: effectiveCwd,
