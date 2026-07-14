@@ -316,10 +316,14 @@ function buildGuidanceText(playbookId: string, title: string, reason: string): s
 export function registerPlaybookPreselectPlugin(api: OpenClawPluginApi): void {
   const readCurrentConfig = (): OpenClawConfig | undefined => {
     try {
-      return (api.runtime.config?.current?.() as OpenClawConfig | undefined) ??
-        (api.config as OpenClawConfig | undefined);
+      // api.runtime.config.current() returns DeepReadonly<OpenClawConfig>;
+      // bridge to OpenClawConfig to match the convention used by all bundled
+      // plugins (active-memory, diffs, codex, etc.). api.config is already
+      // typed as OpenClawConfig, so no cast is needed on the fallback path.
+      const live = api.runtime.config?.current?.() as OpenClawConfig | undefined;
+      return live ?? api.config;
     } catch {
-      return api.config as OpenClawConfig | undefined;
+      return api.config;
     }
   };
 
@@ -329,8 +333,9 @@ export function registerPlaybookPreselectPlugin(api: OpenClawPluginApi): void {
     if (plugins?.enabled === false) {
       return { enabled: false, timeoutMs: DEFAULT_TIMEOUT_MS };
     }
-    const pluginConfig = (cfg as { plugins?: { config?: Record<string, unknown> } } | undefined)
-      ?.plugins?.config?.["playbook-preselect"];
+    // cfg.plugins.config is typed as Record<string, unknown> | undefined
+    // (see config/types.plugins.ts), so no narrow cast is needed here.
+    const pluginConfig = plugins?.config?.["playbook-preselect"];
     return resolvePluginConfig(pluginConfig);
   };
 
