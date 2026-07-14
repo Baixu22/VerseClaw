@@ -375,6 +375,81 @@ describe('hostApi facade', () => {
     }));
   });
 
+  it('routes Agency role promotion methods through hostInvoke', async () => {
+    hostInvoke.mockResolvedValue({
+      id: 'req',
+      ok: true,
+      data: { success: true },
+    });
+    const { hostApi } = await import('@/lib/host-api');
+    const reviewPayload = {
+      sourceRoot: 'C:\\agency-agents-main',
+      draftId: 'agency:engineering:code-reviewer',
+      reviewer: 'operator',
+      candidate: {
+        name: 'agency-code-reviewer',
+        displayName: 'Agency Code Reviewer',
+        rolePrompt: 'Review implementation correctness and report actionable evidence.',
+        tools: ['read'],
+        effort: 'high' as const,
+        permissions: { filesystem: 'read' as const, network: 'none' as const, commands: [] },
+        tags: ['agency-source'],
+        outputFormat: 'markdown' as const,
+        outputSections: ['Findings', 'Evidence'],
+        handoffTo: ['implementer'],
+        handoffFrom: ['tester'],
+        requiresReview: true,
+        riskProfile: 'medium' as const,
+      },
+      toolHintDispositions: [{
+        hint: 'read',
+        disposition: 'mapped' as const,
+        selectedTools: ['read'],
+        reviewerNote: 'Required for inspection.',
+      }],
+      evidenceQualification: 'scenario-verified' as const,
+      evidenceRefs: ['artifact://role-eval/code-reviewer'],
+      comment: 'Scenario evidence reviewed.',
+    };
+    const decisionPayload = {
+      reviewId: 'review-1',
+      reviewer: 'operator',
+      comment: 'Approved for bounded runtime use.',
+    };
+
+    await hostApi.roles.agencyCatalog({ sourceRoot: 'C:\\agency-agents-main' });
+    await hostApi.roles.previewAgencyPromotion(reviewPayload);
+    await hostApi.roles.reviewAgencyPromotion(reviewPayload);
+    await hostApi.roles.approveAgencyPromotion(decisionPayload);
+    await hostApi.roles.retireAgencyPromotion(decisionPayload);
+
+    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      module: 'roles',
+      action: 'agencyCatalog',
+      payload: { sourceRoot: 'C:\\agency-agents-main' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      module: 'roles',
+      action: 'previewAgencyPromotion',
+      payload: reviewPayload,
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
+      module: 'roles',
+      action: 'reviewAgencyPromotion',
+      payload: reviewPayload,
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
+      module: 'roles',
+      action: 'approveAgencyPromotion',
+      payload: decisionPayload,
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
+      module: 'roles',
+      action: 'retireAgencyPromotion',
+      payload: decisionPayload,
+    }));
+  });
+
   it('calls providers.list through hostInvoke', async () => {
     hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: [] });
     const { hostApi } = await import('@/lib/host-api');
