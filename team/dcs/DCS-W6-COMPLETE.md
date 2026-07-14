@@ -1,24 +1,25 @@
-# DCS W6 COMPLETE ? D3 fingerprint slice + D7 dual-injection observability + docs honesty
+# DCS W6 COMPLETE - D3 fingerprint slice + D7 dual-injection observability + docs honesty
 
 **Date**: 2026-07-14  
 **Window**: W6 / D3 + D7 + docs  
 **Commits** (via committer + explicit file lists):
-- 8e50a751c eat(runtime): dcs workspace fingerprint and dual-injection observability (D3+D7 co-landed: shared attempt.ts + dcs-observability)
-- 463d6f37 docs(dcs): record wiring repair acceptance
+- 8e50a751c feat(runtime): dcs workspace fingerprint and dual-injection observability (D3+D7 co-landed: shared attempt.ts + dcs-observability)
+- a463d6f37 docs(dcs): record wiring repair acceptance
+- 612ab830d docs(dcs): note w6 commit SHAs
 
 ## Result
 
 Critical: **0**. Important: **0**.
 
-production wiring status: **partial-live** (D3 vertical slice live on embedded attempt; full Chat?Main trusted-root propagation residual)
+production wiring status: **partial-live** (D3 vertical slice live on embedded attempt; full Chat->Main trusted-root propagation residual)
 
 ## Goal
 
 1. **D3**: land the R2-deferred minimal workspace authority fingerprint / invalidate vertical slice (invalidate-no-schema decision).
 2. **D7**: record actual character counts + exactly-once suppression counts for CVK `systemPromptAddition` and DCS transformContext/assembler injection (reuse in-memory counter base; no fake dashboard).
-3. **Docs**: honest wiring-repair status; close D1?D8 acceptance table with residuals where true.
+3. **Docs**: honest wiring-repair status; close D1-D8 acceptance table with residuals where true.
 
-## D3 ? workspace fingerprint slice (LIVE, partial)
+## D3 - workspace fingerprint slice (LIVE, partial)
 
 ### What is live
 
@@ -34,14 +35,14 @@ Behavior:
 
 - In-memory last fingerprint per `sessionKey` (not BlockStore schema, not openclaw.json).
 - Missing/empty fingerprint ? skip (agent-config fallback path; no false invalidation).
-- Mismatch ? invalidate `working-memory:${sessionId}` then re-bind; counts `workspace_scope_invalidated`.
+- Mismatch -> invalidate `working-memory:${sessionId}` then re-bind; counts `workspace_scope_invalidated`.
 - Optional `enqueue` preserves S1-B same-session queue semantics for callers that pass it.
 
 ### NOT DONE / residual (honest)
 
 | Residual | file:line / note |
 |----------|------------------|
-| Chat?Main trusted rootPath fingerprint producer | `src/stores/chat.ts` / `electron/services/chat-api.ts` / `electron/services/workspaces-api.ts` `normalizeRootPath` ? not wired this window |
+| Chat->Main trusted rootPath fingerprint producer | `src/stores/chat.ts` / `electron/services/chat-api.ts` / `electron/services/workspaces-api.ts` `normalizeRootPath` ? not wired this window |
 | Gateway `chat.send` fingerprint field | `openclaw_runtime/src/gateway/server-methods/chat.ts` / `get-reply.ts` ? not added |
 | ACP cwd passthrough observability label | decision open point; not instrumented as `acp_cwd_passthrough` |
 | Matched A/B isolation E2E for workspace switch | not in W5 suite; still residual |
@@ -49,7 +50,7 @@ Behavior:
 
 Fingerprint authority today is **runtime effectiveWorkspace** on embedded attempt, not yet the full Main-resolved workspaceId chain.
 
-## D7 ? dual-injection observability (LIVE)
+## D7 - dual-injection observability (LIVE)
 
 | Channel | Call site | Counter API |
 |---------|-----------|-------------|
@@ -84,8 +85,8 @@ In-memory registry: `openclaw_runtime/src/context-engine/dcs-observability.ts` (
 
 ## Honesty corrections
 
-- **Producer unit PASS ? production caller.** R2 producer envelope unit green only proved tool success paths emit envelopes; production attempt/tool assembly must still be verified separately (W1?W5 did that for phase/tools/registry/SEKB/E2E).
-- **Infrastructure green ? Stage 2/5 revenue ready.** Flags remain default false; SEKB default off.
+- **Producer unit PASS != production caller.** R2 producer envelope unit green only proved tool success paths emit envelopes; production attempt/tool assembly must still be verified separately (W1-W5 did that for phase/tools/registry/SEKB/E2E).
+- **Infrastructure green != Stage 2/5 revenue ready.** Flags remain default false; SEKB default off.
 - **Fingerprint COMPLETE for this window means the vertical slice**, not the full R2 path-map Chat?Main?Gateway chain.
 
 ## Remaining residual debt after W6
