@@ -202,6 +202,10 @@ export function createDefaultAutomationPlaybookSelector(params: {
   agentId?: string;
 }): AutomationPlaybookSelectorFn | undefined {
   if (!params.cfg || !params.agentId) {
+    console.warn("[automation-playbook] selector 未就绪，工具将不注册", {
+      hasCfg: Boolean(params.cfg),
+      hasAgentId: Boolean(params.agentId),
+    });
     return undefined;
   }
   const playbooks = getBuiltinAutomationPlaybookCandidates();

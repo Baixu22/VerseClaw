@@ -8,8 +8,7 @@
  * 2. `../../shared/toolAuthorization` → `@shared/agent-browser/tool-authorization`
  *    （BoundaryGrantContext / BrowserAutomationGrant / createBoundaryGrantScopeKey 已抄入）
  * 3. `../../shared/models/toolRegistry` 的 BOUNDARY_REQUEST_USER_CHOICE_TOOL_ID/NAME
- *    → 本地常量（DST 尚未抄 toolRegistry，按"能抄绝不手写"原则保留源值，
- *       后续 P1-4 抄 toolRegistry 时统一替换为 import）
+ *    → `@shared/agent-browser/tool-registry`（已统一 import，不再使用本地常量副本）
  * 4. `ModelToolCall / ModelToolResult` → `BrowserControlToolCall / BrowserControlToolResult`
  *    （@shared/agent-browser/types，结构与源项目一致）
  * 5. `BoundaryChoiceNotifier` 的 `chrome.runtime.sendMessage` → 通过构造函数注入的 notify 回调
@@ -26,10 +25,10 @@ import { BROWSER_CONTROL_BOUNDARY_CHOICE_REQUEST_MESSAGE_TYPE } from "@shared/ag
 import type { BrowserControlToolCall, BrowserControlToolResult } from "@shared/agent-browser/types";
 import type { BoundaryGrantContext, BrowserAutomationGrant } from "@shared/agent-browser/tool-authorization";
 import { createBoundaryGrantScopeKey } from "@shared/agent-browser/tool-authorization";
-
-/** 源项目 src/shared/models/toolRegistry.ts 中的常量，P1-4 抄 toolRegistry 时替换为 import。 */
-const BOUNDARY_REQUEST_USER_CHOICE_TOOL_ID = "boundary.request_user_choice";
-const BOUNDARY_REQUEST_USER_CHOICE_TOOL_NAME = "boundary_request_user_choice";
+import {
+  BOUNDARY_REQUEST_USER_CHOICE_TOOL_ID,
+  BOUNDARY_REQUEST_USER_CHOICE_TOOL_NAME,
+} from "@shared/agent-browser/tool-registry";
 
 export type BoundaryChoiceNotifier = (message: BrowserControlBoundaryChoiceRequestMessage) => void;
 
