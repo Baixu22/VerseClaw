@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Resolve DCS (context-block) runtime dependencies for embedded-agent extension factories.
  *
  * Production attempt/compact paths use this helper so task-state wiring can set
@@ -12,7 +12,7 @@ import { createContextBlockSink } from "../harness/hook-context.js";
 import { log } from "./logger.js";
 
 export type EmbeddedDcsExtensionDeps = {
-  workingMemoryStore: Pick<BlockStoreApi, "query" | "upsert">;
+  workingMemoryStore: Pick<BlockStoreApi, "query" | "queryByEntity" | "upsert">;
   contextBlockSink: ContextBlockSink;
   objective?: string;
   parentSessionId?: string;
