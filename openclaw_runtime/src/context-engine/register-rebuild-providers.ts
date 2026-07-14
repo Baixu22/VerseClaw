@@ -1,8 +1,12 @@
-// Reuse + verify shadow providers and the capability routing composition
+// Reuse + verify providers and the capability routing composition
 // (SPEC Task 7 / ALIGNMENT 校正4): the six intent verbs land as capability strings on
-// the existing RuntimeContextProviderRegistry — no new facade class. Every rebuild
-// provider registers shadowOnly (校正6); the legacy pipeline stays authoritative
-// until Task I flips the switches with shadow-comparison evidence.
+// the existing RuntimeContextProviderRegistry — no new facade class.
+// Grading (校正6 + Task I decision): the four NEW rebuild views register
+// authoritative by default — the flip was approved on the shadow-comparison dossier
+// (G parity supersets, F three-way symbol equality, E/H gate evidence) with a
+// per-provider authority:"shadow" kill switch. The two pre-existing shadow providers
+// (agent-map/symbol) keep their own legacy grading: their authority transition belongs
+// to the runtime-convergence track and its 93-test interface contract.
 import {
   RuntimeContextProviderRegistry,
   type ContextItem,
@@ -59,6 +63,8 @@ function workspacePipelineCache(): (workspaceRoot: string) => WorkspacePipelines
 
 export type ReuseContextProviderOptions = {
   buildReport?: (query: RuntimeContextProviderQuery) => ReuseCandidateReport | undefined;
+  /** Grading switch (校正6): factory default "shadow"; production composition flips to authoritative (Task I). */
+  authority?: "authoritative" | "shadow";
 };
 
 export function createReuseContextProvider(options: ReuseContextProviderOptions = {}): RuntimeContextProvider {
@@ -91,6 +97,7 @@ export function createReuseContextProvider(options: ReuseContextProviderOptions 
     });
 
   return makeShadowProvider({
+    authority: options.authority,
     id: REUSE_CONTEXT_PROVIDER_ID,
     title: "Reuse shadow provider",
     description: "FactStore-backed reuse candidates (existing helpers before new code) as shadow diagnostics only.",
@@ -124,6 +131,8 @@ export function createReuseContextProvider(options: ReuseContextProviderOptions 
 
 export type VerifyContextProviderOptions = {
   review?: (query: RuntimeContextProviderQuery) => DiffReview | undefined;
+  /** Grading switch (校正6): factory default "shadow"; production composition flips to authoritative (Task I). */
+  authority?: "authoritative" | "shadow";
 };
 
 export function createVerifyContextProvider(options: VerifyContextProviderOptions = {}): RuntimeContextProvider {
@@ -145,6 +154,7 @@ export function createVerifyContextProvider(options: VerifyContextProviderOption
     });
 
   return makeShadowProvider({
+    authority: options.authority,
     id: VERIFY_CONTEXT_PROVIDER_ID,
     title: "Verify shadow provider",
     description: "FactStore-backed diff review (related tests + blast radius) as shadow diagnostics only.",
@@ -179,26 +189,37 @@ export interface RebuildProviderRegistration {
   registered: string[];
 }
 
+export interface RegisterRebuildProvidersOptions {
+  /** Grading for the four NEW rebuild views. Default "authoritative" (Task I flip). */
+  authority?: "authoritative" | "shadow";
+}
+
 /**
- * Registers the rebuild's shadow providers (plus the existing memory provider for the
+ * Registers the rebuild's providers (plus the existing memory provider for the
  * remember verb) on a RuntimeContextProviderRegistry. Capability → provider resolution
  * is the registry's listByCapability — the six intent verbs route without a facade:
  * understand→context.understand, locate→context.symbol, impact→context.impact,
  * reuse→context.reuse, verify→context.verify, remember→context.memory (existing system).
+ *
+ * The four new views (context-pack/impact/reuse/verify) default to authoritative —
+ * approved at Task I on the shadow dossier; pass authority:"shadow" to re-shadow.
+ * agent-map/symbol stay on their legacy shadow grading (runtime-convergence track).
  */
-export function registerRebuildShadowProviders(
+export function registerRebuildContextProviders(
   registry: RuntimeContextProviderRegistry = new RuntimeContextProviderRegistry(),
+  options: RegisterRebuildProvidersOptions = {},
 ): RebuildProviderRegistration {
+  const authority = options.authority ?? "authoritative";
   const bridgeFor = createWorkspaceFactStoreBridge();
   const providers: RuntimeContextProvider[] = [
-    createContextPackContextProvider(),
+    createContextPackContextProvider({ authority }),
     createSymbolContextProvider({
       getOverviews: (query) =>
         query.workspace ? bridgeFor(query.workspace).symbolOverviews({ activeFiles: query.activeFiles }) : undefined,
     }),
-    createImpactContextProvider(),
-    createReuseContextProvider(),
-    createVerifyContextProvider(),
+    createImpactContextProvider({ authority }),
+    createReuseContextProvider({ authority }),
+    createVerifyContextProvider({ authority }),
     createAgentMapContextProvider({
       getResult: (query) =>
         query.workspace
@@ -215,6 +236,13 @@ export function registerRebuildShadowProviders(
   return { registry, registered };
 }
 
+/** Shadow-mode composition (pre-flip behavior; kill switch and test harness). */
+export function registerRebuildShadowProviders(
+  registry: RuntimeContextProviderRegistry = new RuntimeContextProviderRegistry(),
+): RebuildProviderRegistration {
+  return registerRebuildContextProviders(registry, { authority: "shadow" });
+}
+
 // ── shared thin shadow-provider skeleton ───────────────────────────
 
 /** remember verb: the existing runtime-memory provider IS the system (校正4, 不新建). */
@@ -223,6 +251,7 @@ function createMemoryContextProviderForRemember(): RuntimeContextProvider {
 }
 
 interface ShadowProviderSpec {
+  authority?: "authoritative" | "shadow";
   id: string;
   title: string;
   description: string;
@@ -235,6 +264,7 @@ interface ShadowProviderSpec {
 }
 
 function makeShadowProvider(spec: ShadowProviderSpec): RuntimeContextProvider {
+  const authoritative = spec.authority === "authoritative";
   const providerRef: EvidenceRef = { type: "other", ref: spec.id, label: spec.title };
   const manifest = {
     id: spec.id,
@@ -250,13 +280,13 @@ function makeShadowProvider(spec: ShadowProviderSpec): RuntimeContextProvider {
       capability: spec.capability,
       reason: "Readonly diagnostics/evidence only; legacy prompt assembly remains authoritative.",
     },
-    enabledByDefault: false,
-    shadowOnly: true,
+    enabledByDefault: authoritative,
+    shadowOnly: !authoritative,
     fallbackReasons: ["legacy_authoritative" as const, "no_result" as const, "provider_error" as const],
     evidenceRefs: [{ type: "file" as const, ref: spec.evidenceFile }],
     outputKinds: ["summary" as const],
     dependsOnIndexing: false,
-    metadata: { ...SHADOW_METADATA },
+    metadata: { ...SHADOW_METADATA, shadowOnly: !authoritative, legacyAuthoritative: !authoritative },
   };
 
   return {

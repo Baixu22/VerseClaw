@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { registerRebuildShadowProviders } from "../register-rebuild-providers.js";
+import { registerRebuildContextProviders, registerRebuildShadowProviders } from "../register-rebuild-providers.js";
 import { closeAllFactStores, FactStore } from "../factstore/store.js";
 import { createMaterializer } from "../factstore/materialize.js";
 import { ripgrepSearch } from "../producers/ripgrep-producer.js";
@@ -54,13 +54,29 @@ describe("capability routing across the six intent verbs (gate H-1)", () => {
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it("registers all rebuild providers shadow-only", () => {
+  it("registers all rebuild providers shadow-only in shadow mode (kill switch)", () => {
     const { registry, registered } = registerRebuildShadowProviders();
     expect(registered).toHaveLength(7);
     for (const manifest of registry.listManifests()) {
       if (manifest.id === "runtime-memory") continue; // existing system, its own flags
       expect(manifest.shadowOnly, `${manifest.id} must be shadowOnly`).toBe(true);
       expect(manifest.enabledByDefault).toBe(false);
+    }
+  });
+
+  it("flips the four new views to authoritative by default; legacy two stay shadow (Task I grading)", () => {
+    const { registry } = registerRebuildContextProviders();
+    const byId = new Map(registry.listManifests().map((manifest) => [manifest.id, manifest]));
+    for (const id of ["context-pack-shadow", "impact-shadow", "reuse-shadow", "verify-shadow"]) {
+      const manifest = byId.get(id);
+      expect(manifest?.shadowOnly, `${id} must be authoritative`).toBe(false);
+      expect(manifest?.enabledByDefault, `${id} must be enabled by default`).toBe(true);
+    }
+    // The pre-existing shadow providers keep their legacy grading (runtime-convergence track).
+    for (const id of ["agent-map-readonly-shadow", "symbol-readonly-shadow"]) {
+      const manifest = byId.get(id);
+      expect(manifest?.shadowOnly, `${id} must remain shadowOnly`).toBe(true);
+      expect(manifest?.enabledByDefault).toBe(false);
     }
   });
 
