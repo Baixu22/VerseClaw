@@ -11,6 +11,8 @@ import { handleWorkingMemoryAction } from "../../context-engine/handlers/working
 import { handleBeforeAgentStartToolRegistry, type ToolRegistryEntry } from "../../context-engine/handlers/tool-registry-handler.js";
 import { restoreChildState, buildChildHandoffFromParent, writeChildHandoffPack, CHILD_CONTEXT_READ_INSTRUCTION } from "../../context-engine/handlers/task-loop-handler.js";
 import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
+import type { EmbeddedSekbRuntime, SekbInstallableAgent } from "./sekb-runtime.js";
+import { installEmbeddedSekbHarnessHooks } from "./sekb-runtime.js";
 import { isSubagentSessionKey } from "../../sessions/session-key-utils.js";
 import { openOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
@@ -366,6 +368,7 @@ function buildTaskStateFactory(params: {
   contextBlockSink?: ContextBlockSink;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
   trajectoryCapture?: TrajectoryCapture;
+  sekbRuntime?: EmbeddedSekbRuntime;
   objective?: string;
   parentSessionId?: string;
 }): ExtensionFactory | undefined {
@@ -451,6 +454,27 @@ function buildTaskStateFactory(params: {
   };
 }
 
+/**
+ * DCS Stage 5 / W4: install SEKB harness hooks when explicitly enabled.
+ * Uses the same agent extension event bus (before_agent_start / tool_result /
+ * agent_end) that other DCS factories use. Disabled by default.
+ */
+function buildSekbFactory(params: {
+  sekbRuntime?: EmbeddedSekbRuntime;
+  cfg?: OpenClawConfig | undefined;
+}): ExtensionFactory | undefined {
+  // sekbRuntime is only supplied when resolveEmbeddedSekbRuntime saw enablement
+  // (config and/or OPENCLAW_SEKB_ENABLED). Gate on the runtime object so env-only
+  // enable still installs hooks without re-reading cfg alone.
+  if (!params.sekbRuntime) {
+    return undefined;
+  }
+  const runtime = params.sekbRuntime;
+  return (agent) => {
+    installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime);
+  };
+}
+
 export function buildEmbeddedExtensionFactories(params: {
   cfg: OpenClawConfig | undefined;
   sessionManager: SessionManager;
@@ -463,6 +487,7 @@ export function buildEmbeddedExtensionFactories(params: {
   contextBlockSink?: ContextBlockSink;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
   trajectoryCapture?: TrajectoryCapture;
+  sekbRuntime?: EmbeddedSekbRuntime;
   objective?: string;
   parentSessionId?: string;
   toolEntries?: ToolRegistryEntry[];
@@ -508,6 +533,11 @@ export function buildEmbeddedExtensionFactories(params: {
   const pruningFactory = buildContextPruningFactory(params);
   if (pruningFactory) {
     factories.push(pruningFactory);
+  }
+  // DCS Stage 5 / W4: SEKB harness hooks when explicitly enabled.
+  const sekbFactory = buildSekbFactory(params);
+  if (sekbFactory) {
+    factories.push(sekbFactory);
   }
   // DCS Stage 2: task-state adapter and child-session handoff wiring.
   const taskStateFactory = buildTaskStateFactory(params);

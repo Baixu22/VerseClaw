@@ -1234,6 +1234,7 @@ export async function runEmbeddedAttempt(
     const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
       prompt: params.prompt,
       spawnedBy: params.spawnedBy,
+      cfg: params.config,
     });
     const shouldConstructTools =
       toolConstructionPlan.constructTools ||
@@ -2214,6 +2215,8 @@ export async function runEmbeddedAttempt(
         contextBlockSink: dcsExtensionDeps?.contextBlockSink,
         objective: dcsExtensionDeps?.objective,
         parentSessionId: dcsExtensionDeps?.parentSessionId,
+        trajectoryCapture: dcsExtensionDeps?.trajectoryCapture,
+        sekbRuntime: dcsExtensionDeps?.sekbRuntime,
         toolEntries,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({

@@ -121,6 +121,10 @@ export type RuntimeFeatureConfig = {
     "role-memory"?: {
       enabled?: boolean;
     };
+    /** Stage 5 SEKB trajectory capture + experience write-back. Default false. */
+    sekb?: {
+      enabled?: boolean;
+    };
   };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
   contextRuntimeKit?: {
