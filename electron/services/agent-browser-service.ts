@@ -52,6 +52,16 @@ import type {
   AgentBrowserReplaySendRequestResult,
   AgentBrowserReplayCompareResponsesPayload,
   AgentBrowserReplayCompareResponsesResult,
+  AgentBrowserFullAccessExecuteScriptPayload,
+  AgentBrowserFullAccessExecuteScriptResult,
+  AgentBrowserFullAccessFetchPayload,
+  AgentBrowserFullAccessFetchResult,
+  AgentBrowserFullAccessGetNetworkDetailsPayload,
+  AgentBrowserFullAccessGetNetworkDetailsResult,
+  AgentBrowserFullAccessReadStoragePayload,
+  AgentBrowserFullAccessReadStorageResult,
+  AgentBrowserFullAccessRevokePayload,
+  AgentBrowserFullAccessRevokeResult,
   AgentBrowserOpenPayload,
   AgentBrowserProfileEntry,
   AgentBrowserProfileSavePayload,
@@ -79,6 +89,7 @@ import { JsSourceToolExecutor } from './agent-browser/browser-control/js-source-
 import { SourceMapToolExecutor } from './agent-browser/browser-control/source-map-tool-executor';
 import { RuntimeReadToolExecutor } from './agent-browser/browser-control/runtime-read-tool-executor';
 import { ReplayToolExecutor } from './agent-browser/browser-control/replay-tool-executor';
+import { FullAccessToolExecutor } from './agent-browser/browser-control/full-access-tool-executor';
 import { BrowserNetworkRecorder, type NetworkRequestFilter, type NetworkWaitFilter } from './agent-browser/browser-control/network-recorder';
 import type { AgentBrowserRunner } from './agent-browser-cli-runner';
 
@@ -119,6 +130,7 @@ type AgentBrowserControlState = {
   sourceMapExecutor: SourceMapToolExecutor;
   runtimeReadExecutor: RuntimeReadToolExecutor;
   replayExecutor: ReplayToolExecutor;
+  fullAccessExecutor: FullAccessToolExecutor;
 };
 
 type AgentBrowserServiceOptions = {
@@ -1183,7 +1195,17 @@ export class AgentBrowserService {
         grant: boundaryExecutor.getCurrentGrantContext(),
       }),
     );
-    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor, sourceMapExecutor, runtimeReadExecutor, replayExecutor };
+    const fullAccessExecutor = new FullAccessToolExecutor(
+      connection,
+      networkRecorder,
+      () => ({
+        tabId: webContents.id,
+        origin: getOriginFromUrl(webContents.getURL()),
+        fullAccess: this.isFullAccess(record),
+      }),
+      () => this.revokeFullAccessRuntime(record),
+    );
+    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor, sourceMapExecutor, runtimeReadExecutor, replayExecutor, fullAccessExecutor };
     this.browserControlStates.set(record.session.id, state);
     return state;
   }
@@ -1924,6 +1946,71 @@ export class AgentBrowserService {
       throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
     }
     return { replayExecutor: state.replayExecutor, record };
+  }
+
+  async fullAccessExecuteScript(payload: AgentBrowserFullAccessExecuteScriptPayload): Promise<Omit<AgentBrowserFullAccessExecuteScriptResult, 'success'>> {
+    const { fullAccessExecutor } = this.getFullAccessExecutor(payload.sessionId);
+    return fullAccessExecutor.executeScript({ script: payload.script, awaitPromise: payload.awaitPromise });
+  }
+
+  async fullAccessFetch(payload: AgentBrowserFullAccessFetchPayload): Promise<Omit<AgentBrowserFullAccessFetchResult, 'success'>> {
+    const { fullAccessExecutor } = this.getFullAccessExecutor(payload.sessionId);
+    return fullAccessExecutor.fetchFromPage({
+      url: payload.url,
+      method: payload.method,
+      headers: payload.headers,
+      body: payload.body,
+      credentials: payload.credentials,
+    });
+  }
+
+  async fullAccessGetNetworkDetails(payload: AgentBrowserFullAccessGetNetworkDetailsPayload): Promise<Omit<AgentBrowserFullAccessGetNetworkDetailsResult, 'success'>> {
+    const { fullAccessExecutor } = this.getFullAccessExecutor(payload.sessionId);
+    return fullAccessExecutor.getNetworkDetails({ requestIds: payload.requestIds });
+  }
+
+  async fullAccessReadStorage(payload: AgentBrowserFullAccessReadStoragePayload): Promise<Omit<AgentBrowserFullAccessReadStorageResult, 'success'>> {
+    const { fullAccessExecutor } = this.getFullAccessExecutor(payload.sessionId);
+    return fullAccessExecutor.readStorage();
+  }
+
+  fullAccessRevoke(payload: AgentBrowserFullAccessRevokePayload): Omit<AgentBrowserFullAccessRevokeResult, 'success'> {
+    const { fullAccessExecutor } = this.getFullAccessExecutor(payload.sessionId);
+    return fullAccessExecutor.revokeFullAccess();
+  }
+
+  private getFullAccessExecutor(sessionId: string): { fullAccessExecutor: FullAccessToolExecutor; record: AgentBrowserRecord } {
+    this.assertBrowserControlEnabled();
+    const record = this.getRecord(sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('完全访问模式仅支持 browser-window 引擎，当前会话使用 agent-browser-cli 引擎。');
+    }
+    this.assertActionAllowed(record);
+    const state = this.browserControlStates.get(record.session.id);
+    if (!state) {
+      throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
+    }
+    return { fullAccessExecutor: state.fullAccessExecutor, record };
+  }
+
+  /**
+   * 判断当前会话是否处于完全访问模式（fail-closed：过期或未升级均返回 false）。
+   */
+  private isFullAccess(record: AgentBrowserRecord): boolean {
+    this.refreshRuntimeModeExpiry(record);
+    return record.runtimeMode === 'full_access';
+  }
+
+  /**
+   * 撤销完全访问运行态：回退到 normal_restricted 并清理 grant context。
+   * 不持久化，仅作用于当前会话生命周期。
+   */
+  private revokeFullAccessRuntime(record: AgentBrowserRecord): void {
+    record.runtimeMode = 'normal_restricted';
+    record.runtimeExpiresAt = undefined;
+    record.session = { ...record.session, runtimeMode: 'normal_restricted' };
+    const control = this.browserControlStates.get(record.session.id);
+    control?.boundaryExecutor.clearGrantContext();
   }
 
   /**
