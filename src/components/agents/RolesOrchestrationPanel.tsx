@@ -63,6 +63,7 @@ import { roleTone, toneClasses } from '@/lib/role-visuals';
 import { RoleCard, type RoleCardData } from './RoleCard';
 import { OrchestrationPlanView, type PlanView } from './OrchestrationPlanView';
 import { SubagentRunnerPanel } from './SubagentRunnerPanel';
+import { AgencyRolePromotionPanel } from './AgencyRolePromotionPanel';
 
 /**
  * Role-first runtime panel: browse role contracts (roles.list / roles.get),
@@ -1952,6 +1953,8 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
               </div>
             )}
           </div>
+
+          <AgencyRolePromotionPanel onRoleMaterialized={() => void loadRoles()} />
 
           <TooltipProvider>
             <div className="space-y-4 border-t border-border/60 pt-4" data-testid="role-memory-panel">
