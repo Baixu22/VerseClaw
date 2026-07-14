@@ -36,6 +36,7 @@ import {
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { ShimmerBlock } from '@/components/ai-elements/shimmer';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { CompactionArtifactViewer } from './CompactionArtifactViewer';
@@ -80,7 +81,6 @@ import {
   getWorkspaceAgentSessionKey,
 } from '@/lib/workspace-session';
 import { useStickToBottomInstant } from '@/hooks/use-stick-to-bottom-instant';
-import { useMinLoading } from '@/hooks/use-min-loading';
 import { extractGeneratedFiles, generatedFileHasDiffPayload, isHtmlPreviewExt, type GeneratedFile } from '@/lib/generated-files';
 import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistant-render/AssistantRender';
 import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
@@ -109,7 +109,7 @@ import type {
   WorkspaceUiState,
 } from '@shared/types/workspace';
 import type { WorkArtifact } from '@shared/types/work-artifact';
-import type { ChatSession, ChatRuntimeRunState, SendOptions } from '@/stores/chat/types';
+import type { ChatSession, ChatRuntimeRunState, ChatStartupPhase, SendOptions } from '@/stores/chat/types';
 import { toast } from 'sonner';
 
 const ArtifactPanelLazy = lazy(() =>
@@ -776,18 +776,21 @@ export function Chat() {
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
 
-  const { messages, currentSessionKey, currentAgentId, sessions, sessionLabels, loading, loadingMoreHistory, hasMoreHistory, sending, error, runError, streamingMessage, streamingTools, pendingFinal, activeRunId, runtimeRuns, lastUserMessageAt } = useChatStore(useShallow((s) => ({
+  const { messages, currentSessionKey, currentAgentId, sessions, sessionLabels, loading, historyRefreshing, loadingMoreHistory, hasMoreHistory, sending, error, runError, startupPhase, startupError, streamingMessage, streamingTools, pendingFinal, activeRunId, runtimeRuns, lastUserMessageAt } = useChatStore(useShallow((s) => ({
     messages: s.messages,
     currentSessionKey: s.currentSessionKey,
     currentAgentId: s.currentAgentId,
     sessions: s.sessions ?? [],
     sessionLabels: s.sessionLabels,
     loading: s.loading,
+    historyRefreshing: s.historyRefreshing,
     loadingMoreHistory: s.loadingMoreHistory,
     hasMoreHistory: s.hasMoreHistory,
     sending: s.sending,
     error: s.error,
     runError: s.runError,
+    startupPhase: s.startupPhase,
+    startupError: s.startupError,
     streamingMessage: s.streamingMessage,
     streamingTools: s.streamingTools,
     pendingFinal: s.pendingFinal,
@@ -806,6 +809,7 @@ export function Chat() {
   const cleanupEmptySession = useChatStore((s) => s.cleanupEmptySession);
   const loadHistory = useChatStore((s) => s.loadHistory);
   const loadSessions = useChatStore((s) => s.loadSessions);
+  const hydrateStartup = useChatStore((s) => s.hydrateStartup);
   const fetchAgents = useAgentsStore((s) => s.fetchAgents);
   const agents = useAgentsStore((s) => s.agents);
   const defaultModelRef = useAgentsStore((s) => s.defaultModelRef);
@@ -860,6 +864,7 @@ export function Chat() {
   );
   const currentModelRef = currentAgent?.modelRef || defaultModelRef || fallbackModelRef || null;
   const panelOpen = useArtifactPanel((s) => s.open);
+  const panelExpanded = useArtifactPanel((s) => s.expanded);
   const panelWidthPct = useArtifactPanel((s) => s.widthPct);
   const openChanges = useArtifactPanel((s) => s.openChanges);
   const openPreview = useArtifactPanel((s) => s.openPreview);
@@ -921,12 +926,13 @@ export function Chat() {
       artifactPanel: {
         ...previousArtifactPanel,
         open: panelOpen,
+        expanded: panelExpanded,
         activeTab: artifactTab,
       },
       graphExpanded: graphExpandedOverrides,
       turnSummaryExpanded: turnSummaryExpandedOverrides,
     };
-  }, [activeWorkspace, artifactTab, composerDraft, currentSessionKey, graphExpandedOverrides, knowledgeMode, knowledgeScope, panelOpen, turnSummaryExpandedOverrides]);
+  }, [activeWorkspace, artifactTab, composerDraft, currentSessionKey, graphExpandedOverrides, knowledgeMode, knowledgeScope, panelExpanded, panelOpen, turnSummaryExpandedOverrides]);
 
   const persistCurrentWorkspaceSessionState = useCallback(async (options?: {
     activeSessionKey?: string;
@@ -1129,8 +1135,30 @@ export function Chat() {
     }
   }, [currentSessionKey, persistCurrentWorkspaceSessionState]);
   const graphStepCache: Record<string, GraphStepCacheEntry> = graphStepCacheStore.get(currentSessionKey) ?? {};
-  const minLoading = useMinLoading(loading && messages.length > 0);
   const { contentRef, scrollRef, scrollToBottom, isAtBottom } = useStickToBottomInstant(currentSessionKey, sending);
+
+  const startupPending = messages.length === 0 && startupPhase !== 'ready' && startupPhase !== 'error';
+  const messageAreaLoading = startupPending || (loading && messages.length === 0);
+  const [showStartupStatus, setShowStartupStatus] = useState(false);
+  const [showSyncStatus, setShowSyncStatus] = useState(false);
+
+  useEffect(() => {
+    if (!messageAreaLoading) {
+      setShowStartupStatus(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setShowStartupStatus(true), 600);
+    return () => window.clearTimeout(timer);
+  }, [messageAreaLoading]);
+
+  useEffect(() => {
+    if (!historyRefreshing || messageAreaLoading) {
+      setShowSyncStatus(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setShowSyncStatus(true), 300);
+    return () => window.clearTimeout(timer);
+  }, [historyRefreshing, messageAreaLoading]);
 
   // Load data when gateway is running.
   // When the store already holds messages for this session (i.e. the user
@@ -1152,6 +1180,20 @@ export function Chat() {
   useEffect(() => {
     void fetchWorkspaces();
   }, [fetchWorkspaces]);
+
+  // Startup hydration is Main-owned through the chat store. Re-run when the
+  // Gateway runtime changes so a page mounted before readiness can load once
+  // the connection becomes available.
+  useEffect(() => {
+    void hydrateStartup();
+  }, [
+    gatewayStatus.connectedAt,
+    gatewayStatus.gatewayReady,
+    gatewayStatus.pid,
+    gatewayStatus.port,
+    gatewayStatus.state,
+    hydrateStartup,
+  ]);
 
   useEffect(() => {
     if (!activeWorkspace?.activeSessionKey) return;
@@ -2128,7 +2170,7 @@ export function Chat() {
     ? (streamingTimestampStore.get(currentSessionKey) ?? streamTimestamp)
     : 0;
 
-  const isEmpty = messages.length === 0 && !sending;
+  const isEmpty = startupPhase === 'ready' && !messageAreaLoading && messages.length === 0 && !sending;
   const showScrollToLatest = !isEmpty && !isAtBottom;
   const subagentCompletionInfos = useMemo(
     () => messages.map((message) => parseSubagentCompletionInfo(message)),
@@ -2156,7 +2198,13 @@ export function Chat() {
 
   const questionDirectoryRequested = questionDirectoryOpenSessionKey === currentSessionKey && questionDirectoryItems.length > 1;
   const chatAssistiveRailVisible = !panelOpen;
-  const questionDirectoryVisible = chatAssistiveRailVisible && questionDirectoryRequested;
+  // Keep the startup skeleton in a single centered column. `isEmpty` is
+  // intentionally false until history is confirmed, so it cannot decide
+  // whether a side rail should participate in the flex layout.
+  const canShowChatSideRail = !messageAreaLoading && startupPhase === 'ready';
+  const questionDirectoryVisible = canShowChatSideRail
+    && chatAssistiveRailVisible
+    && questionDirectoryRequested;
   const boundedPanelWidthPct = Math.min(
     ARTIFACT_PANEL_MAX_WIDTH,
     Math.max(ARTIFACT_PANEL_MIN_WIDTH, panelWidthPct),
@@ -2227,10 +2275,15 @@ export function Chat() {
       toast.error(t('messageActions.resendFailed'));
     });
   }, [currentSessionKey, inputRunActive, isGatewayRunning, resendUserMessage, t]);
-  const showTaskLedgerSummaryPanel = !isEmpty && !!activeWorkspaceId && taskLedgerSummaryVisible;
-  const showRollbackPlanPanel = hasRollbackPlanSidebarTrigger(rollbackPlan)
+  const showTaskLedgerSummaryPanel = canShowChatSideRail
+    && !isEmpty
+    && !!activeWorkspaceId
+    && taskLedgerSummaryVisible;
+  const showRollbackPlanPanel = canShowChatSideRail
+    && hasRollbackPlanSidebarTrigger(rollbackPlan)
     && (!isEmpty || !!longTaskControlStatus || !!compactionStatus);
-  const showChatAssistiveRail = chatAssistiveRailVisible
+  const showChatAssistiveRail = canShowChatSideRail
+    && chatAssistiveRailVisible
     && !isEmpty
     && !questionDirectoryVisible
     && (showTaskLedgerSummaryPanel || showRollbackPlanPanel);
@@ -2426,7 +2479,7 @@ export function Chat() {
       ref={splitContainerRef}
       data-testid="chat-page"
       className={cn(
-        'relative flex min-h-0 -m-6 overflow-hidden transition-colors duration-500',
+        'relative flex min-h-0 -m-6 overflow-hidden transition-colors duration-500 motion-reduce:transition-none',
         'bg-background',
         // Stack above MainLayout's mac-main-drag-region (z-10) so the right-hand
         // artifact/preview pane stays clickable; window drag is handled by the
@@ -2437,7 +2490,7 @@ export function Chat() {
       style={{ height: isMac ? 'calc(100vh - 1px)' : 'calc(100vh - 2.5rem)' }}
     >
       {/* Left column: chat */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div data-testid="chat-conversation-column" className="flex min-w-0 flex-1 flex-col">
       {/* Toolbar */}
       <div className="relative flex shrink-0 items-center justify-between gap-3 px-4 py-2">
         <div data-testid="chat-toolbar-drag-region" className="drag-region absolute inset-0 z-0" aria-hidden="true" />
@@ -2473,7 +2526,17 @@ export function Chat() {
             </div>
           )}
         </div>
-        <div data-testid="chat-toolbar-actions" className="no-drag relative z-10">
+        <div data-testid="chat-toolbar-actions" className="no-drag relative z-10 flex items-center gap-2">
+          {showSyncStatus && (
+            <div
+              data-testid="chat-history-sync-status"
+              className="flex items-center gap-1.5 text-xs text-muted-foreground"
+              role="status"
+            >
+              <DotMatrix state="syncing" label={t('startup.syncing')} className="size-3.5" />
+              <span>{t('startup.syncing')}</span>
+            </div>
+          )}
           <ChatToolbar
             questionDirectoryOpen={questionDirectoryVisible}
             questionDirectoryCount={questionDirectoryItems.length}
@@ -2506,7 +2569,17 @@ export function Chat() {
                 isEmpty ? "w-full max-w-3xl" : "max-w-4xl",
               )}
             >
-              {isEmpty ? (
+              {messageAreaLoading ? (
+                <ChatLoadingSkeleton
+                  phase={startupPhase}
+                  showStatus={showStartupStatus}
+                />
+              ) : startupPhase === 'error' ? (
+                <ChatStartupError
+                  message={startupError}
+                  onRetry={() => void hydrateStartup()}
+                />
+              ) : isEmpty ? (
                 <>
                   <WelcomeScreen onSend={handleSendMessage} disabled={!isGatewayRunning} />
                   {showRollbackPlanPanel && (
@@ -2551,6 +2624,7 @@ export function Chat() {
                     >
                       <ChatMessage
                         message={row.message}
+                        agent={currentAgent}
                         textOverride={row.textOverride}
                         suppressAssistantText={row.suppressAssistantText}
                         suppressToolCards={row.suppressToolCards}
@@ -2654,6 +2728,7 @@ export function Chat() {
                       OR when there's streaming content without an active graph */}
                   {showStandaloneStreamStatus && (
                     <ChatMessage
+                      agent={currentAgent}
                       message={{
                         role: 'assistant',
                         content: '',
@@ -2672,6 +2747,7 @@ export function Chat() {
                     || (hasStreamText && streamTools.length === 0 && !hasRunningStreamToolStatus && !hasRunningRuntimeToolStatus)
                   ) && (
                     <ChatMessage
+                      agent={currentAgent}
                       suppressToolCards={hasActiveExecutionGraph || runSegmentMessageIndices.size > 0}
                       message={buildStreamingRenderMessage({
                         stream: streamState,
@@ -2770,8 +2846,8 @@ export function Chat() {
       ) : null}
 
       {/* Error bar */}
-      {error && (
-        <div className="px-4 py-2">
+      {error && startupPhase === 'ready' && (
+        <div className="px-4 py-2" data-testid="chat-error">
           <div className="mx-auto max-w-4xl">
             <AssistantErrorCard title={t('assistantRender.error.title')} message={error} onDismiss={clearError} />
           </div>
@@ -2908,13 +2984,17 @@ export function Chat() {
       {/* Right column: artifact / file preview panel (WorkBuddy-style) */}
       {panelOpen && (
         <>
-          <Suspense fallback={null}>
-            <PanelResizeDividerLazy containerRef={splitContainerRef} />
-          </Suspense>
+          {panelExpanded && (
+            <Suspense fallback={null}>
+              <PanelResizeDividerLazy containerRef={splitContainerRef} />
+            </Suspense>
+          )}
           <aside
             data-testid="artifact-panel-aside"
+            data-expanded={panelExpanded ? 'true' : 'false'}
             className={cn(
-              'absolute inset-y-0 right-0 z-30 flex shrink-0 flex-col border-l border-black/5 bg-surface-modal shadow-2xl dark:border-white/10 xl:relative xl:z-20 xl:shadow-none',
+              'absolute inset-y-0 right-0 z-30 flex shrink-0 flex-col border-l border-black/5 bg-surface-modal shadow-2xl dark:border-white/10',
+              panelExpanded && 'xl:relative xl:z-20 xl:shadow-none',
               'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-4 motion-safe:duration-[250ms] motion-reduce:transition-none',
               isMac && 'no-drag',
             )}
@@ -3011,20 +3091,102 @@ export function Chat() {
         </DialogContent>
       </Dialog>
 
-      {/* Transparent loading overlay */}
-      {minLoading && !sending && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/20 backdrop-blur-[1px] rounded-xl pointer-events-auto">
-          <div className="bg-background shadow-lg rounded-full p-2.5 border border-border">
-            <LoadingSpinner size="md" />
-          </div>
-        </div>
-      )}
     </div>
     </TooltipProvider>
   );
 }
 
 // ── Question Directory ─────────────────────────────────────────
+
+function ChatLoadingSkeleton({
+  phase,
+  showStatus,
+}: {
+  phase: ChatStartupPhase;
+  showStatus: boolean;
+}) {
+  const { t } = useTranslation('chat');
+  const statusKey = phase === 'waiting-for-gateway'
+    ? 'startup.waitingForGateway'
+    : phase === 'loading-sessions'
+      ? 'startup.loadingSessions'
+      : 'startup.loadingHistory';
+
+  return (
+    <div
+      data-testid="chat-startup-skeleton"
+      data-startup-phase={phase}
+      className="mx-auto flex min-h-[50vh] w-full max-w-4xl flex-col gap-7 px-1 pt-4"
+      aria-busy="true"
+    >
+      {showStatus && (
+        <div
+          data-testid="chat-startup-status"
+          className="flex items-center justify-center gap-2 text-sm text-muted-foreground"
+          role="status"
+        >
+          <DotMatrix state="connecting" label={t(statusKey)} className="size-4 text-primary" />
+          <span>{t(statusKey)}</span>
+        </div>
+      )}
+      <div className="flex items-start gap-3">
+        <ShimmerBlock className="h-8 w-8 shrink-0 rounded-full" />
+        <div className="w-full max-w-xl space-y-2 rounded-2xl bg-black/[0.025] px-4 py-4 dark:bg-white/[0.035]">
+          <ShimmerBlock className="h-3 w-4/5" />
+          <ShimmerBlock className="h-3 w-3/5" />
+        </div>
+      </div>
+      <div className="ml-auto flex w-full max-w-2xl items-start justify-end gap-3">
+        <div className="w-full max-w-lg space-y-2 rounded-2xl bg-black/[0.04] px-4 py-4 dark:bg-white/[0.06]">
+          <ShimmerBlock className="h-3 w-11/12" />
+          <ShimmerBlock className="h-3 w-2/3" />
+          <ShimmerBlock className="h-3 w-1/2" />
+        </div>
+        <ShimmerBlock className="h-8 w-8 shrink-0 rounded-full" />
+      </div>
+      <div className="flex items-start gap-3">
+        <ShimmerBlock className="h-8 w-8 shrink-0 rounded-full" />
+        <div className="w-full max-w-2xl space-y-2 rounded-2xl bg-black/[0.025] px-4 py-4 dark:bg-white/[0.035]">
+          <ShimmerBlock className="h-3 w-5/6" />
+          <ShimmerBlock className="h-3 w-full" />
+          <ShimmerBlock className="h-3 w-3/4" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ChatStartupError({ message, onRetry }: { message: string | null; onRetry: () => void }) {
+  const { t } = useTranslation('chat');
+  return (
+    <div
+      data-testid="chat-startup-error"
+      className="mx-auto flex min-h-[45vh] w-full max-w-xl items-center justify-center px-4"
+    >
+      <div className="w-full rounded-2xl border border-red-200/70 bg-red-50/70 p-5 text-left dark:border-red-900/60 dark:bg-red-950/20">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-700 dark:text-red-400" />
+          <div className="min-w-0 flex-1">
+            <h2 className="text-sm font-medium text-foreground">{t('startup.errorTitle')}</h2>
+            <p className="mt-1 break-words text-sm text-muted-foreground">
+              {message || t('startup.errorDescription')}
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="mt-4"
+              data-testid="chat-startup-retry"
+              onClick={onRetry}
+            >
+              {t('startup.retry')}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function QuestionDirectory({ items }: { items: QuestionDirectoryItem[] }) {
   const { t } = useTranslation('chat');

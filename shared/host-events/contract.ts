@@ -114,6 +114,12 @@ export type WebPreviewDevServerOutputEvent = WebPreviewStatusEvent & {
 
 export type SubagentRuntimeLifecycleEvent = {
   runId: string;
+  orchestrationRunId?: string;
+  taskNodeId?: string;
+  roleInstanceId?: string;
+  agentId?: string;
+  childRunId?: string;
+  childSessionKey?: string;
   parentRunId?: string;
   sessionKey?: string;
   roleName?: string;

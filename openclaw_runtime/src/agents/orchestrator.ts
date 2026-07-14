@@ -31,6 +31,7 @@ import { buildTaskGraphFromRunbook } from "./runbook-task-graph.js";
 
 export type OrchestratorRequest = {
   task: string;
+  agentId?: string;
   fileHints?: string[];
   important?: boolean;
   roles?: readonly RoleContract[];
@@ -145,6 +146,7 @@ function buildPlanGraph(params: {
   const graphMode = normalizeGraphMode(params.request.graphMode);
   const taskGraph = buildTaskGraph({
     graphRunId: params.graphRunId,
+    agentId: params.request.agentId,
     mode: params.mode,
     graphMode,
     workers: params.workers,
@@ -224,7 +226,9 @@ function createRunbookPlan(
     knownRoleNames: availableRoles.map((role) => role.name),
     selectionTrace: metadata.runbookSelection,
   });
-  const taskGraph = graphResult.graph;
+  const taskGraph = request.agentId
+    ? { ...graphResult.graph, nodes: graphResult.graph.nodes.map((node) => ({ ...node, agentId: request.agentId })) }
+    : graphResult.graph;
   const workerNodes = taskGraphWorkerNodes(taskGraph);
   const verifierNode = taskGraph.nodes.find((node) => node.isVerifier);
   const leadRole = selected.template.requiredRoles[0] ?? workerNodes[0]?.roleName ?? "planner";

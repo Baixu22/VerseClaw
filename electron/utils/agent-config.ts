@@ -9,8 +9,16 @@ import { expandPath, getOpenClawConfigDir } from './paths';
 import * as logger from './logger';
 import { toUiChannelType } from './channel-alias';
 import { ensureVerseClawIdentityFile } from './openclaw-workspace';
-import type { AgentReasoningEffort, AgentRoleProfile } from '@shared/types/agent';
+import {
+  MANAGED_AGENT_AVATAR_SOURCE,
+  parseAgentIdentityMarkdown,
+  removeManagedAgentAvatar,
+  resolveAgentAvatarView,
+  writeManagedAgentAvatar,
+} from './agent-avatar';
+import type { AgentAvatarPreset, AgentAvatarView, AgentReasoningEffort, AgentRoleProfile } from '@shared/types/agent';
 import { DEFAULT_ROLE_PROFILE } from '@shared/types/agent';
+import { defaultAgentAvatarPreset } from '@shared/agent-avatar';
 
 const MAIN_AGENT_ID = 'main';
 const MAIN_AGENT_NAME = 'Main Agent';
@@ -60,6 +68,12 @@ interface AgentListEntry extends Record<string, unknown> {
   reasoningEffort?: AgentReasoningEffort;
   thinkingDefault?: AgentReasoningEffort;
   skills?: string[];
+  identity?: {
+    name?: string;
+    theme?: string;
+    emoji?: string;
+    avatar?: string;
+  };
 }
 
 interface AgentsConfig extends Record<string, unknown> {
@@ -106,6 +120,8 @@ export interface AgentSummary {
   agentDir: string;
   mainSessionKey: string;
   channelTypes: string[];
+  emoji?: string;
+  avatar: AgentAvatarView;
 }
 
 export interface AgentsSnapshot {
@@ -578,12 +594,22 @@ async function buildSnapshotFromConfig(config: AgentConfigDocument, preloadedCha
   const defaultModelConfig = (config.agents as AgentsConfig | undefined)?.defaults?.model;
   const defaultModelLabel = formatModelLabel(defaultModelConfig);
   const defaultModelRef = resolveModelRef(defaultModelConfig);
-  const agents: AgentSummary[] = entries.map((entry) => {
+  const agents: AgentSummary[] = await Promise.all(entries.map(async (entry) => {
     const explicitModelRef = resolveModelRef(entry.model);
     const modelLabel = formatModelLabel(entry.model) || defaultModelLabel || 'Not configured';
     const inheritedModel = !explicitModelRef && Boolean(defaultModelLabel);
     const entryIdNorm = normalizeAgentIdForBinding(entry.id);
     const ownedChannels = agentChannelSets.get(entryIdNorm) ?? new Set<string>();
+    const workspace = entry.workspace || (entry.id === MAIN_AGENT_ID ? getDefaultWorkspacePath(config) : `~/.openclaw/workspace-${entry.id}`);
+    const resolvedWorkspace = expandPath(workspace);
+    const identityContent = await readFile(join(resolvedWorkspace, 'IDENTITY.md'), 'utf8').catch(() => '');
+    const identity = parseAgentIdentityMarkdown(identityContent);
+    const avatar = await resolveAgentAvatarView({
+      agentId: entry.id,
+      workspace: resolvedWorkspace,
+      configAvatar: entry.identity?.avatar,
+      identityAvatar: identity.avatar,
+    });
     return {
       id: entry.id,
       name: entry.name || (entry.id === MAIN_AGENT_ID ? MAIN_AGENT_NAME : entry.id),
@@ -593,14 +619,16 @@ async function buildSnapshotFromConfig(config: AgentConfigDocument, preloadedCha
       overrideModelRef: explicitModelRef,
       inheritedModel,
       reasoningEffort: normalizeReasoningEffort(entry.thinkingDefault ?? entry.reasoningEffort),
-      workspace: entry.workspace || (entry.id === MAIN_AGENT_ID ? getDefaultWorkspacePath(config) : `~/.openclaw/workspace-${entry.id}`),
+      workspace,
       agentDir: entry.agentDir || getDefaultAgentDirPath(entry.id),
       mainSessionKey: buildAgentMainSessionKey(config, entry.id),
       channelTypes: configuredChannels
         .filter((ct) => ownedChannels.has(ct))
         .map((channelType) => toUiChannelType(channelType)),
+      emoji: entry.identity?.emoji || identity.emoji,
+      avatar,
     };
-  });
+  }));
 
   return {
     agents,
@@ -1012,12 +1040,16 @@ export async function createAgent(
     }
     nextEntries.push(newAgent);
 
+    await provisionAgentFilesystem(config, newAgent, { inheritWorkspace: options?.inheritWorkspace });
+    await writeManagedAgentAvatar(expandPath(newAgent.workspace!), nextId, defaultAgentAvatarPreset(nextId));
+    newAgent.identity = {
+      ...(newAgent.identity ?? {}),
+      avatar: MANAGED_AGENT_AVATAR_SOURCE,
+    };
     config.agents = {
       ...agentsConfig,
       list: nextEntries,
     };
-
-    await provisionAgentFilesystem(config, newAgent, { inheritWorkspace: options?.inheritWorkspace });
     await writeOpenClawConfig(config);
     logger.info('Created agent config entry', { agentId: nextId, inheritWorkspace: !!options?.inheritWorkspace });
     return buildSnapshotFromConfig(config);
@@ -1122,6 +1154,49 @@ export async function updateAgentReasoningEffort(agentId: string, reasoningEffor
 
     await writeOpenClawConfig(config);
     logger.info('Updated agent reasoning effort', { agentId, reasoningEffort: normalizedEffort });
+    return buildSnapshotFromConfig(config);
+  });
+}
+
+export async function updateAgentAvatar(agentId: string, preset: AgentAvatarPreset): Promise<AgentsSnapshot> {
+  return withConfigLock(async () => {
+    const config = await readOpenClawConfig() as AgentConfigDocument;
+    const { agentsConfig, entries } = normalizeAgentsConfig(config);
+    const index = entries.findIndex((entry) => entry.id === agentId);
+    if (index === -1) throw new Error(`Agent "${agentId}" not found`);
+    const entry = { ...entries[index] };
+    const workspace = expandPath(entry.workspace || (agentId === MAIN_AGENT_ID ? getDefaultWorkspacePath(config) : `~/.openclaw/workspace-${agentId}`));
+    await writeManagedAgentAvatar(workspace, agentId, preset);
+    entry.identity = {
+      ...(entry.identity ?? {}),
+      avatar: MANAGED_AGENT_AVATAR_SOURCE,
+    };
+    entries[index] = entry;
+    config.agents = { ...agentsConfig, list: entries };
+    await writeOpenClawConfig(config);
+    logger.info('Updated agent avatar', { agentId, style: preset.style });
+    return buildSnapshotFromConfig(config);
+  });
+}
+
+export async function resetAgentAvatar(agentId: string): Promise<AgentsSnapshot> {
+  return withConfigLock(async () => {
+    const config = await readOpenClawConfig() as AgentConfigDocument;
+    const { agentsConfig, entries } = normalizeAgentsConfig(config);
+    const index = entries.findIndex((entry) => entry.id === agentId);
+    if (index === -1) throw new Error(`Agent "${agentId}" not found`);
+    const entry = { ...entries[index] };
+    const workspace = expandPath(entry.workspace || (agentId === MAIN_AGENT_ID ? getDefaultWorkspacePath(config) : `~/.openclaw/workspace-${agentId}`));
+    if (entry.identity?.avatar === MANAGED_AGENT_AVATAR_SOURCE) {
+      const identity = { ...entry.identity };
+      delete identity.avatar;
+      entry.identity = Object.keys(identity).length > 0 ? identity : undefined;
+    }
+    entries[index] = entry;
+    config.agents = { ...agentsConfig, list: entries };
+    await writeOpenClawConfig(config);
+    await removeManagedAgentAvatar(workspace);
+    logger.info('Reset agent avatar', { agentId });
     return buildSnapshotFromConfig(config);
   });
 }

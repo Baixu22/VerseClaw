@@ -16,7 +16,7 @@
  * 逻辑结构（useState + toggleChoice + submit + cancel）原样抄写。
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { BrowserControlBoundaryChoiceRequestMessage } from '@shared/agent-browser/browser-control';
 import { Button } from '@/components/ui/button';
@@ -38,7 +38,18 @@ export function BoundaryChoiceDialog({ request, onSubmit }: BoundaryChoiceDialog
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [otherText, setOtherText] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const expired = Date.now() >= request.expiresAt;
+  const [expired, setExpired] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    const remaining = request.expiresAt - Date.now();
+    const timer = window.setTimeout(() => {
+      if (!cancelled) setExpired(true);
+    }, Math.max(0, remaining));
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [request.expiresAt]);
   const hasSelection = selectedIds.length > 0 || otherText.trim().length > 0;
 
   const toggleChoice = (choiceId: string) => {

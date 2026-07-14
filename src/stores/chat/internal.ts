@@ -7,8 +7,11 @@ export const initialChatState: Pick<
   ChatState,
   | 'messages'
   | 'loading'
+  | 'historyRefreshing'
   | 'error'
   | 'runError'
+  | 'startupPhase'
+  | 'startupError'
   | 'sending'
   | 'activeRunId'
   | 'streamingText'
@@ -28,8 +31,11 @@ export const initialChatState: Pick<
 > = {
   messages: [],
   loading: false,
+  historyRefreshing: false,
   error: null,
   runError: null,
+  startupPhase: 'waiting-for-gateway',
+  startupError: null,
 
   sending: false,
   activeRunId: null,

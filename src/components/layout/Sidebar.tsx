@@ -413,8 +413,8 @@ export function Sidebar() {
   const deleteSession = useChatStore((s) => s.deleteSession);
   const archiveSession = useChatStore((s) => s.archiveSession);
   const renameSession = useChatStore((s) => s.renameSession);
-  const loadSessions = useChatStore((s) => s.loadSessions);
   const loadHistory = useChatStore((s) => s.loadHistory);
+  const hydrateStartup = useChatStore((s) => s.hydrateStartup);
   const handleNewChat = useNewChatAction();
   const workspaceProfiles = useWorkspacesStore((s) => s.profiles);
   const createWorkspaceFolder = useWorkspacesStore((s) => s.createFolder);
@@ -434,26 +434,9 @@ export function Sidebar() {
   const storageHealthLow = storageRamLow || storageDiskLow;
   const gatewayRuntimeKey = `${gatewayStatus.pid ?? 'none'}:${gatewayStatus.connectedAt ?? 'none'}:${gatewayStatus.port}`;
 
-  const hasLoadedCurrentRuntimeRef = useRef(false);
-
   useEffect(() => {
-    hasLoadedCurrentRuntimeRef.current = false;
-  }, [gatewayRuntimeKey]);
-
-  useEffect(() => {
-    if (!isGatewayReady) return;
-    let cancelled = false;
-    (async () => {
-      await loadSessions();
-      if (cancelled) return;
-      if (hasLoadedCurrentRuntimeRef.current) return;
-      hasLoadedCurrentRuntimeRef.current = true;
-      await loadHistory(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [gatewayRuntimeKey, isGatewayReady, loadHistory, loadSessions]);
+    void hydrateStartup();
+  }, [gatewayRuntimeKey, isGatewayReady, hydrateStartup]);
   const agents = useAgentsStore((s) => s.agents);
   const fetchAgents = useAgentsStore((s) => s.fetchAgents);
 

@@ -131,6 +131,7 @@ Verse Claw 默认使用轻量 `policy-light` 沙盒层，由主进程权限门�
 Settings、Doctor 和 diagnostics 现在展示同一份 effective sandbox policy，包括请求/生效 provider、runtime level、exec 与 network policy、Docker 可用性和降级原因。
 Settings → System & Runtime 还提供 Project Rules Center，可检查当前 workspace 的 `AGENTS.md`，列出 `.clawx/rules/*.md`，展示确定性校验 warning，并在缺失时创建保守的 `AGENTS.md` 模板，而不会引入新的规则真相源。
 每个 Agent 还可以单独覆盖自己的 `provider/model` 运行时设置；未覆盖的 Agent 会继续继承全局默认模型。
+每个持久 Agent 现在都会在 Agents、Chat、编排与 Observability 中使用同一份有效身份投影。`main` 默认使用 Verse 品牌头像；其他 Agent 使用确定性的本地 DiceBear 头像，头像编辑器只保存白名单 preset，并把生成的 SVG 写入 `.clawx/avatar/`，不会调用 DiceBear 公共 API。临时编排 Role 仍是叠加在所属 Agent 头像上的徽章，不会变成独立身份。
 输入框的上下文状态现在提供需要确认的“压缩当前会话”操作，可展示 token 压力、已隐藏消息数量、上次压缩时间和压缩质量；长期任务状态仍进入 Task Ledger / Context Pack，而不是依赖无限增长的 transcript。压缩还会保存高密度 recovery artifact，接力到新对话时会优先使用它，再回退到 transcript 证据。运行时会先在手动/显式 opt-in 压缩中使用分层渐进式压缩计划；自动压缩路径先记录遥测，等质量门禁证明稳定后再接管。
 输入框还会显示长对话的 checkpoint 恢复状态：排队后续、最近一次人工介入/checkpoint、恢复警告，以及在会话空闲时立即发送已持久化排队后续的操作；这些排队消息可在 Gateway 重启后继续恢复。
 Chat 回滚方案现在提供复核优先的恢复面板，显示安全/复核/高风险计数，以及检查点、队列、上下文、终端、Git、Task Ledger、记忆信号；破坏性操作会进入带审批的工具链，记忆事实会变成 Knowledge 草稿或提案。
@@ -139,6 +140,7 @@ Agents 编排面板现在也提供有界的 **任务循环** 操作，用于受�
 
 同一面板现在也提供 **Lightweight Subagent Runner**，用于无需 ClawGraph YAML 的预设并行流程。Explorer 会启动 planner 与 architect worker 查找方案，Reviewer 会审查当前 staged 与 unstaged Git diff，Tester 会让 tester 与 reviewer 查找测试缺口，Compare 3 approaches 会启动三个带标签的 architect worker。Runner 不会自动合并代码，并会把完成的运行链接到 Observability trace。
 直接角色编排结果现在也包含这个有边界的综合视图，验证失败和证据不会被摘要隐藏。
+Chat 会把编排进度显示为响应式 Wave 时间线。稳定的 task node 与 role instance 标识可让重复 Role 从计划、实时生命周期到最终结果 bundle 始终保持独立；窄屏会自动变为纵向时间线，不产生页面级横向滚动。
 
 同一面板现在也提供 **Mission Control**，用于更长目标。它通过 `mission.run` 启动或恢复 Mission，把 Mission 状态写入 OpenClaw state DB，从 ResumeCheckpoint、Task Ledger、记忆和 trace 证据重建有界上下文，每个 tick 运行一次内部 `task_loop`，再进行 Mission reviewer 反思、写入 checkpoint、提出记忆候选，并在界面显示 pause/resume/cancel、tick 阶段、decision、next wake、blocked reason 和 trace 证据。定时 tick 需要显式启用；完成判定始终来自证据而不是唤醒触发器。
 Engineering Control Signals 会把 evidence gap、scope drift、validation missing 和 unverified claim 明确写入现有 checkpoint、Mission/Task reviewer、HostEvent 与 Task Ledger metadata 路径；Verse Claw 不会创建第二套进度文件，也不会把 Observability trace 自动当作完成事实。

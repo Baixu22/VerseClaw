@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import {
   AlertTriangle,
+  ArrowDown,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
@@ -13,6 +14,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { roleTone, toneClasses } from '@/lib/role-visuals';
+import { AgentRoleIdentity, RoleBadge } from '@/components/agents/AgentAvatar';
+import { useAgentsStore } from '@/stores/agents';
+import { useChatStore } from '@/stores/chat';
+import type { AgentSummary } from '@/types/agent';
 import type {
   TeamOrchestrationAlertView,
   TeamOrchestrationDiagnosticsView,
@@ -29,12 +34,16 @@ function statusTone(status: string): string {
   if (normalized === 'failed' || normalized === 'error' || normalized === 'refuted') {
     return 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-400';
   }
-  if (normalized === 'partial' || normalized === 'running' || normalized === 'planned') {
+  if (normalized === 'running') {
+    return 'border-blue-500/25 bg-blue-500/10 text-blue-700 dark:text-blue-400';
+  }
+  if (normalized === 'partial' || normalized === 'planned' || normalized === 'ready') {
     return 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400';
   }
-  if (normalized === 'verified' || normalized === 'completed') {
+  if (normalized === 'verified' || normalized === 'completed' || normalized === 'accepted') {
     return 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400';
   }
+  if (normalized === 'skipped') return 'border-border bg-black/5 text-muted-foreground dark:bg-white/5';
   return 'border-border bg-surface-input text-muted-foreground';
 }
 
@@ -43,7 +52,7 @@ function statusIcon(status: string) {
   if (normalized === 'failed' || normalized === 'error' || normalized === 'refuted') {
     return <AlertTriangle className="h-3.5 w-3.5" />;
   }
-  if (normalized === 'verified' || normalized === 'completed') {
+  if (normalized === 'verified' || normalized === 'completed' || normalized === 'accepted') {
     return <CheckCircle2 className="h-3.5 w-3.5" />;
   }
   return <CircleDashed className="h-3.5 w-3.5" />;
@@ -63,15 +72,26 @@ function RoleChip({ role }: { role: string }) {
   );
 }
 
-function NodeRow({ node }: { node: TeamOrchestrationNodeView }) {
+function NodeCard({ node, agent }: { node: TeamOrchestrationNodeView; agent: AgentSummary | null }) {
   const { t } = useTranslation('chat');
-  const tone = toneClasses(roleTone(node.roleName));
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const status = node.status ?? 'planned';
+  const running = status === 'running';
   return (
-    <div className="flex min-w-0 items-start gap-2 border-t border-border/60 py-2 first:border-t-0">
-      <span className={cn('mt-1 h-2 w-2 shrink-0 rounded-full', tone.dot)} />
-      <div className="min-w-0 flex-1">
-        <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-          <span className="truncate text-xs font-medium text-foreground">{node.roleName}</span>
+    <div className={cn(
+      'min-w-0 rounded-xl border border-border/70 bg-surface-modal p-3 shadow-sm transition-colors',
+      running && 'border-blue-500/30 bg-blue-500/[0.04] motion-safe:animate-pulse',
+    )} data-testid={`chat-team-node-${node.taskNodeId}`}>
+      <div className="flex min-w-0 items-start gap-2.5">
+        {agent ? (
+          <AgentRoleIdentity agentId={agent.id} name={agent.name} avatar={agent.avatar} roleName={node.roleName} size={36} />
+        ) : <RoleBadge roleName={node.roleName} size={28} />}
+        <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 items-center gap-1.5">
+            <span className="truncate text-xs font-semibold text-foreground" title={agent?.name ?? node.agentId ?? node.roleName}>{agent?.name ?? node.agentId ?? node.roleName}</span>
+            <span className="truncate text-2xs text-muted-foreground" title={node.roleName}>{node.roleName}</span>
+          </div>
+          <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5">
           {node.phase && (
             <span className="rounded-md bg-black/5 px-1.5 py-0.5 text-2xs text-muted-foreground dark:bg-white/10">
               {t(`teamOrchestration.phase.${node.phase}`, { defaultValue: node.phase })}
@@ -83,16 +103,34 @@ function NodeRow({ node }: { node: TeamOrchestrationNodeView }) {
               {t('teamOrchestration.verifier')}
             </span>
           )}
-          {node.status && (
-            <span className={cn('rounded-md border px-1.5 py-0.5 text-2xs', statusTone(node.status))}>
-              {t(`teamOrchestration.status.${node.status}`, { defaultValue: node.status })}
+            <span className={cn('inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-2xs', statusTone(status))}>
+              {statusIcon(status)}
+              {t(`teamOrchestration.status.${status}`, { defaultValue: status })}
             </span>
-          )}
+          </div>
         </div>
-        {node.task && (
-          <p className="mt-0.5 line-clamp-2 text-xs leading-5 text-muted-foreground">{node.task}</p>
+      </div>
+      {node.task && <p className="mt-2 line-clamp-2 text-xs leading-5 text-muted-foreground" title={node.task}>{node.task}</p>}
+      <div className="mt-2 flex items-center justify-between gap-2 text-2xs text-muted-foreground">
+        <div className="flex min-w-0 items-center gap-2">
+          {node.modelRef && <span className="max-w-32 truncate" title={node.modelRef}>{node.modelRef}</span>}
+          <span className="shrink-0">{t('teamOrchestration.dependencies', { count: node.dependsOn.length })}</span>
+        </div>
+        {(node.modelRef || node.childSessionKey || node.roleInstanceId) && (
+          <button type="button" className="inline-flex items-center gap-1 hover:text-foreground" onClick={() => setDetailsOpen((value) => !value)}>
+            {t('teamOrchestration.details')}
+            {detailsOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+          </button>
         )}
       </div>
+      {detailsOpen && (
+        <div className="mt-2 space-y-1 border-t border-border/60 pt-2 font-mono text-2xs text-muted-foreground">
+          {node.modelRef && <p className="truncate">{node.modelRef}</p>}
+          {node.childSessionKey && <p className="break-all">{node.childSessionKey}</p>}
+          {node.roleInstanceId && <p className="break-all">{node.roleInstanceId}</p>}
+          {node.dependsOn.length > 0 && <p className="break-all">{node.dependsOn.join(', ')}</p>}
+        </div>
+      )}
     </div>
   );
 }
@@ -178,16 +216,43 @@ function DiagnosticsPanel({ diagnostics }: { diagnostics: TeamOrchestrationDiagn
 
 export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardProps) {
   const { t } = useTranslation('chat');
-  const [expanded, setExpanded] = useState(
-    orchestration.status === 'running' || (orchestration.diagnostics?.status != null && orchestration.diagnostics.status !== 'ok'),
-  );
-  const visibleNodes = useMemo(
-    () => orchestration.nodes.slice(0, expanded ? orchestration.nodes.length : 4),
-    [expanded, orchestration.nodes],
-  );
+  const agents = useAgentsStore((state) => state.agents);
+  const currentAgentId = useChatStore((state) => state.currentAgentId);
+  const autoExpanded =
+    orchestration.status === 'running'
+    || (orchestration.diagnostics?.status != null && orchestration.diagnostics.status !== 'ok');
+  const [userExpanded, setUserExpanded] = useState<boolean | null>(null);
+  const expanded = userExpanded ?? autoExpanded;
+  const setExpanded = (value: boolean | ((prev: boolean) => boolean)) => {
+    setUserExpanded((prev) => {
+      const current = prev ?? autoExpanded;
+      return typeof value === 'function' ? value(current) : value;
+    });
+  };
+  const waveSections = useMemo(() => {
+    if (orchestration.waves.length === 0) return [{ wave: 1, nodes: orchestration.nodes }];
+    const assigned = new Set<string>();
+    const sections = orchestration.waves.map((wave) => {
+      const nodes = wave.taskNodeIds.flatMap((id) => {
+        const node = orchestration.nodes.find((candidate) => candidate.taskNodeId === id);
+        if (node) assigned.add(node.taskNodeId);
+        return node ? [node] : [];
+      });
+      return { wave: wave.wave, nodes };
+    });
+    const remaining = orchestration.nodes.filter((node) => !assigned.has(node.taskNodeId));
+    if (remaining.length > 0) sections.push({ wave: sections.length + 1, nodes: remaining });
+    return sections;
+  }, [orchestration.nodes, orchestration.waves]);
+  const resolveNodeAgent = (node: TeamOrchestrationNodeView) => {
+    const agentId = node.agentId ?? currentAgentId;
+    return agents.find((agent) => agent.id === agentId) ?? null;
+  };
+  const leadAgent = agents.find((agent) => agent.id === currentAgentId)
+    ?? agents.find((agent) => agent.isDefault)
+    ?? null;
   const runId = compactId(orchestration.orchestrationRunId);
   const status = orchestration.graphStatus ?? orchestration.status;
-  const hiddenNodeCount = Math.max(0, orchestration.nodes.length - visibleNodes.length);
 
   return (
     <div
@@ -196,9 +261,13 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
     >
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-2">
-          <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-black/5 text-muted-foreground dark:bg-white/10">
-            <GitBranchPlus className="h-4 w-4" />
-          </div>
+          {leadAgent ? (
+            <AgentRoleIdentity agentId={leadAgent.id} name={leadAgent.name} avatar={leadAgent.avatar} roleName="lead" size={32} />
+          ) : (
+            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-black/5 text-muted-foreground dark:bg-white/10">
+              <GitBranchPlus className="h-4 w-4" />
+            </div>
+          )}
           <div className="min-w-0">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <p className="text-sm font-medium text-foreground">{t('teamOrchestration.title')}</p>
@@ -217,7 +286,8 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
         </div>
         <button
           type="button"
-          onClick={() => setExpanded((value) => !value)}
+          onClick={() => {            setExpanded((value) => !value);
+          }}
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
           aria-label={expanded ? t('teamOrchestration.collapse') : t('teamOrchestration.expand')}
           title={expanded ? t('teamOrchestration.collapse') : t('teamOrchestration.expand')}
@@ -240,8 +310,8 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
           <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.verifierCount}</p>
         </div>
         <div className="rounded-md bg-surface-input px-2.5 py-2">
-          <p className="text-2xs uppercase text-muted-foreground">{t('teamOrchestration.metrics.signals')}</p>
-          <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.alerts.length}</p>
+          <p className="text-2xs uppercase text-muted-foreground">{t('teamOrchestration.metrics.failures')}</p>
+          <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.failureCount}</p>
         </div>
       </div>
 
@@ -249,7 +319,7 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
         <p className="mt-3 line-clamp-2 text-xs leading-5 text-muted-foreground">{orchestration.task}</p>
       )}
 
-      {orchestration.waves.length > 0 && (
+      {!expanded && orchestration.waves.length > 0 && (
         <div className="mt-3 space-y-2" data-testid="chat-team-orchestration-waves">
           {orchestration.waves.map((wave) => (
             <div key={wave.wave} className="flex min-w-0 items-center gap-2">
@@ -289,20 +359,28 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
         </div>
       )}
 
-      {orchestration.nodes.length > 0 && (
-        <div className="mt-3 rounded-md bg-surface-input px-2.5 py-1">
-          {visibleNodes.map((node) => (
-            <NodeRow key={node.taskNodeId} node={node} />
+      {expanded && orchestration.nodes.length > 0 && (
+        <div className="mt-4 space-y-4" data-testid="chat-team-orchestration-timeline">
+          {waveSections.map((section, index) => (
+            <section key={section.wave} className="relative pl-7">
+              {index < waveSections.length - 1 && (
+                <>
+                  <span className="absolute left-[11px] top-7 h-[calc(100%+1rem)] w-px bg-border" />
+                  <ArrowDown className="absolute -bottom-3 left-[5px] h-3 w-3 text-muted-foreground" aria-hidden="true" />
+                </>
+              )}
+              <span className="absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-surface-modal text-2xs font-semibold text-muted-foreground">
+                {section.wave}
+              </span>
+              <div className="mb-2 flex items-center gap-2">
+                <p className="text-xs font-semibold text-foreground">{t('teamOrchestration.wave', { wave: section.wave })}</p>
+                <span className="text-2xs text-muted-foreground">{t('teamOrchestration.nodeCount', { count: section.nodes.length })}</span>
+              </div>
+              <div className="grid gap-2.5 [grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr))]">
+                {section.nodes.map((node) => <NodeCard key={node.taskNodeId} node={node} agent={resolveNodeAgent(node)} />)}
+              </div>
+            </section>
           ))}
-          {hiddenNodeCount > 0 && (
-            <button
-              type="button"
-              className="w-full border-t border-border/60 py-2 text-left text-xs text-muted-foreground hover:text-foreground"
-              onClick={() => setExpanded(true)}
-            >
-              {t('teamOrchestration.showMoreNodes', { count: hiddenNodeCount })}
-            </button>
-          )}
         </div>
       )}
     </div>

@@ -25,6 +25,8 @@ export type BundleEvidenceRef = {
 
 export type RoleOutcomeBundle = {
   roleName: string;
+  agentId?: string;
+  taskNodeId?: string;
   task: string;
   phase: "worker" | "verifier";
   taskId?: string;

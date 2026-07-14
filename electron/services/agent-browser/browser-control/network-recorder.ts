@@ -158,7 +158,7 @@ export class BrowserNetworkRecorder {
     return new Promise((resolve) => {
       let done = false;
       let idleTimer: ReturnType<typeof setTimeout> | undefined;
-      let timeoutTimer: ReturnType<typeof setTimeout> | undefined;
+
       const cleanup = () => {
         done = true;
         if (idleTimer) {
@@ -193,7 +193,7 @@ export class BrowserNetworkRecorder {
           scheduleIdleCheck();
         }
       };
-      timeoutTimer = setTimeout(() => {
+      const timeoutTimer = setTimeout(() => {
         if (done) {
           return;
         }

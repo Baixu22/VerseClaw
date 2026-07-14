@@ -86,6 +86,30 @@ function parseToolCallArguments(inputJson: string): unknown {
   return parseStreamingJson(inputJson);
 }
 
+function resolveResponsesEventType(event: Record<string, unknown>): string {
+  return typeof event.type === "string"
+    ? event.type
+    : typeof event.event === "string"
+      ? event.event
+      : "";
+}
+
+function resolveResponsesFunctionCallId(item: Record<string, unknown> | undefined): string {
+  return typeof item?.call_id === "string"
+    ? item.call_id
+    : typeof item?.id === "string"
+      ? item.id
+      : "";
+}
+
+function resolveResponsesStopReason(
+  status: string | undefined,
+  hasToolCall: boolean,
+): string {
+  if (hasToolCall) return "toolUse";
+  return status === "incomplete" ? "length" : "stop";
+}
+
 function applyProviderUsage(
   output: MutableAssistantOutput,
   model: Model,
@@ -429,7 +453,7 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
         const blocks = output.content;
 
         for await (const event of responseStream as unknown as AsyncIterable<Record<string, unknown>>) {
-          const eventType = typeof event.event === "string" ? event.event : "";
+          const eventType = resolveResponsesEventType(event);
 
           if (eventType === "response.created") {
             const response = event.response as Record<string, unknown> | undefined;
@@ -589,7 +613,7 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
             if (item?.type === "function_call") {
               const block: TransportContentBlock = {
                 type: "toolCall",
-                id: typeof item.id === "string" ? item.id : "",
+                id: resolveResponsesFunctionCallId(item),
                 name: typeof item.name === "string" ? item.name : "",
                 arguments: {},
                 partialJson: "",
@@ -665,17 +689,38 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
 
           if (eventType === "response.output_item.done") {
             const item = event.item as Record<string, unknown> | undefined;
-            // Clean up index on item completion
             if (item?.type === "function_call") {
               const outputIndex =
                 typeof event.output_index === "number" ? event.output_index : -1;
               const idx = blocks.findIndex(
-                (b) => b.type === "toolCall" && b.index === outputIndex,
+                (b) =>
+                  b.type === "toolCall" &&
+                  (b.index === outputIndex || b.id === resolveResponsesFunctionCallId(item)),
               );
               if (idx !== -1) {
                 const b = blocks[idx];
                 if (b.type === "toolCall") {
+                  const doneArgs = typeof item.arguments === "string" ? item.arguments : undefined;
+                  if (doneArgs !== undefined) {
+                    b.arguments = coerceTransportToolCallArguments(
+                      parseToolCallArguments(doneArgs),
+                    );
+                  } else if (typeof b.partialJson === "string" && b.partialJson.length > 0) {
+                    b.arguments = coerceTransportToolCallArguments(
+                      parseToolCallArguments(b.partialJson),
+                    );
+                  }
+                  const wasPending = b.partialJson !== undefined || b.index !== undefined;
+                  delete b.partialJson;
                   delete b.index;
+                  if (wasPending) {
+                    stream.push({
+                      type: "toolcall_end",
+                      contentIndex: idx,
+                      toolCall: b as never,
+                      partial: output as never,
+                    });
+                  }
                 }
               }
             }
@@ -689,12 +734,10 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
             const stopReason =
               typeof response?.status === "string" ? response.status : undefined;
 
-            output.stopReason =
-              stopReason === "completed"
-                ? "stop"
-                : stopReason === "incomplete"
-                  ? "length"
-                  : "stop";
+            output.stopReason = resolveResponsesStopReason(
+              stopReason,
+              output.content.some((block) => block.type === "toolCall"),
+            );
 
             applyProviderUsage(output, model, usage);
           }
@@ -1174,7 +1217,7 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
         const blocks = output.content;
 
         for await (const event of responseStream as unknown as AsyncIterable<Record<string, unknown>>) {
-          const eventType = typeof event.event === "string" ? event.event : "";
+          const eventType = resolveResponsesEventType(event);
 
           if (eventType === "response.created") {
             const response = event.response as Record<string, unknown> | undefined;
@@ -1333,7 +1376,7 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
             if (item?.type === "function_call") {
               const block: TransportContentBlock = {
                 type: "toolCall",
-                id: typeof item.id === "string" ? item.id : "",
+                id: resolveResponsesFunctionCallId(item),
                 name: typeof item.name === "string" ? item.name : "",
                 arguments: {},
                 partialJson: "",
@@ -1416,12 +1459,10 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
             const stopReason =
               typeof response?.status === "string" ? response.status : undefined;
 
-            output.stopReason =
-              stopReason === "completed"
-                ? "stop"
-                : stopReason === "incomplete"
-                  ? "length"
-                  : "stop";
+            output.stopReason = resolveResponsesStopReason(
+              stopReason,
+              output.content.some((block) => block.type === "toolCall"),
+            );
 
             applyProviderUsage(output, model, usage);
           }
@@ -1496,3 +1537,9 @@ export function buildOpenAICompletionsParams(
 
   return params;
 }
+
+export const testing = {
+  resolveResponsesEventType,
+  resolveResponsesFunctionCallId,
+  resolveResponsesStopReason,
+};

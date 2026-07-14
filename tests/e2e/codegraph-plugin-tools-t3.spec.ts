@@ -241,13 +241,13 @@ async function resolveMainSessionKey(app: ElectronApplication): Promise<string> 
       const existing = await listMainSessionKey(app);
       if (existing) return existing;
     } catch (error) {
-      lastError = error;
+
       const message = error instanceof Error ? error.message : String(error);
       if (/RPC timeout|timed out|unavailable during gateway startup/i.test(message)) {
         try {
           await ensureGatewayReady(app);
-        } catch (readyError) {
-          lastError = readyError;
+        } catch {
+          // gateway re-check failed; retry loop continues
         }
       }
     }

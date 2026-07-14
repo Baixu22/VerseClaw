@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { ActionBarPrimitive, MessageProvider, TextMessagePartProvider, type ThreadMessage } from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
 import type { CodeHeaderProps } from '@assistant-ui/react-markdown';
+import 'katex/dist/katex.min.css';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -30,14 +31,15 @@ import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
 import { Shimmer } from '@/components/ai-elements/shimmer';
 import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { AttachmentName, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
-import characterImg from '@/assets/logo+character.png';
-import characterDarkImg from '@/assets/logo+character-dark.png';
+import { AgentAvatar } from '@/components/agents/AgentAvatar';
+import type { AgentSummary } from '@/types/agent';
 
 import { extractText, extractImages, extractToolUse, formatTimestamp, isUnresolvableImageUrl } from './message-utils';
 import { copyImageToClipboard, type ImageCopyTarget } from './copy-image';
 
 interface ChatMessageProps {
   message: RawMessage;
+  agent?: Pick<AgentSummary, 'id' | 'name' | 'avatar'> | null;
   textOverride?: string;
   suppressToolCards?: boolean;
   suppressProcessAttachments?: boolean;
@@ -270,6 +272,7 @@ function imageSrc(img: ExtractedImage): string | null {
 
 export const ChatMessage = memo(function ChatMessage({
   message,
+  agent,
   textOverride,
   suppressToolCards = false,
   suppressProcessAttachments = false,
@@ -505,12 +508,13 @@ export const ChatMessage = memo(function ChatMessage({
           overflows ±4px above/below the line, which mirrors how chat avatars
           sit alongside a single line of text. */}
       {!isUser && (
-        <div
-          className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-input ring-1 ring-border"
-          data-testid="chat-assistant-avatar"
-        >
-          <img src={characterImg} alt="Verse" className="block h-full w-full object-cover dark:hidden" />
-          <img src={characterDarkImg} alt="Verse" className="hidden h-full w-full object-cover dark:block" />
+        <div className="mt-0.5" data-testid="chat-assistant-avatar">
+          <AgentAvatar
+            agentId={agent?.id ?? 'main'}
+            name={agent?.name ?? 'Verse'}
+            avatar={agent?.avatar ?? { kind: 'brand', source: 'default', revision: 'verse-brand-v1' }}
+            size={32}
+          />
         </div>
       )}
 

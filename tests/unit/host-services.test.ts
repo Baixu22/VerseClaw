@@ -45,6 +45,8 @@ const {
   syncProxyConfigToOpenClawMock,
   testOpenClawConfigDir,
   updateAgentNameMock,
+  updateAgentAvatarMock,
+  resetAgentAvatarMock,
   validateApiKeyWithProviderMock,
   writeAgentBootstrapFileMock,
   writeAgentBootstrapToolsMock,
@@ -122,6 +124,8 @@ const {
   syncProxyConfigToOpenClawMock: vi.fn(),
   testOpenClawConfigDir: '/tmp/verse-claw-host-services-openclaw',
   updateAgentNameMock: vi.fn(),
+  updateAgentAvatarMock: vi.fn(),
+  resetAgentAvatarMock: vi.fn(),
   validateApiKeyWithProviderMock: vi.fn(),
   writeAgentBootstrapFileMock: vi.fn(),
   writeAgentBootstrapToolsMock: vi.fn(),
@@ -203,6 +207,8 @@ vi.mock('@electron/utils/agent-config', () => ({
   removeAgentWorkspaceDirectory: (...args: unknown[]) => removeAgentWorkspaceDirectoryMock(...args),
   resolveAccountIdForAgent: vi.fn((agentId: string) => agentId === 'main' ? 'default' : agentId),
   updateAgentModel: vi.fn(),
+  updateAgentAvatar: (...args: unknown[]) => updateAgentAvatarMock(...args),
+  resetAgentAvatar: (...args: unknown[]) => resetAgentAvatarMock(...args),
   updateAgentName: (...args: unknown[]) => updateAgentNameMock(...args),
   writeAgentBootstrapFile: (...args: unknown[]) => writeAgentBootstrapFileMock(...args),
   writeAgentBootstrapTools: (...args: unknown[]) => writeAgentBootstrapToolsMock(...args),
@@ -772,6 +778,33 @@ describe('host services', () => {
     expect(deleteAgentConfigMock).toHaveBeenCalledWith('code');
     expect(gatewayManager.restart).toHaveBeenCalledTimes(1);
     expect(removeAgentWorkspaceDirectoryMock).toHaveBeenCalledWith(removedEntry);
+  });
+
+  it('updates and resets avatars through the typed agents Host API', async () => {
+    const snapshot = {
+      agents: [],
+      defaultAgentId: 'main',
+      defaultModelRef: null,
+      configuredChannelTypes: [],
+      channelOwners: {},
+      channelAccountOwners: {},
+    };
+    updateAgentAvatarMock.mockResolvedValue(snapshot);
+    resetAgentAvatarMock.mockResolvedValue(snapshot);
+    const gatewayManager = {
+      getStatus: vi.fn(() => ({ state: 'running' })),
+      debouncedReload: vi.fn(),
+    };
+    const { createAgentsApi } = await import('@electron/services/agents-api');
+    const api = createAgentsApi({ gatewayManager: gatewayManager as never });
+    const preset = { style: 'identicon' as const, seed: 'host-api', backgroundColor: '#dbeafe' };
+
+    await expect(api.updateAvatar({ id: 'research', preset })).resolves.toEqual({ success: true, ...snapshot });
+    await expect(api.resetAvatar({ id: 'research' })).resolves.toEqual({ success: true, ...snapshot });
+
+    expect(updateAgentAvatarMock).toHaveBeenCalledWith('research', preset);
+    expect(resetAgentAvatarMock).toHaveBeenCalledWith('research');
+    expect(gatewayManager.debouncedReload).toHaveBeenCalledTimes(2);
   });
 
   it('reads and updates agent bootstrap tooling config', async () => {

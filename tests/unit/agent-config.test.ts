@@ -575,6 +575,55 @@ describe('agent config lifecycle', () => {
     await expect(readFile(join(testHome, '.openclaw', 'workspace-research', 'IDENTITY.md'), 'utf8')).resolves.toContain('Verse Claw');
     await expect(readFile(join(testHome, '.openclaw', 'workspace-research', '.verse-claw', 'harness', 'README.md'), 'utf8')).resolves.toContain('Verse Claw Agent Harness');
   });
+
+  it('creates a managed DiceBear avatar for new non-main agents and keeps it stable after rename', async () => {
+    await writeOpenClawJson({
+      agents: {
+        list: [{ id: 'main', name: 'Main', default: true }],
+      },
+    });
+    const { createAgent, updateAgentName } = await import('@electron/utils/agent-config');
+
+    const created = await createAgent('Research');
+    const createdAgent = created.agents.find((agent) => agent.id === 'research');
+    expect(createdAgent?.avatar).toMatchObject({ kind: 'dicebear', source: 'config' });
+    const revision = createdAgent?.avatar.revision;
+    const config = await readOpenClawJson() as {
+      agents?: { list?: Array<{ id: string; identity?: { avatar?: string } }> };
+    };
+    expect(config.agents?.list?.find((agent) => agent.id === 'research')?.identity?.avatar)
+      .toBe('.clawx/avatar/avatar.svg');
+    await expect(access(join(testHome, '.openclaw', 'workspace-research', '.clawx', 'avatar', 'avatar.svg'))).resolves.toBeUndefined();
+
+    const renamed = await updateAgentName('research', 'Research Partner');
+    expect(renamed.agents.find((agent) => agent.id === 'research')?.avatar.revision).toBe(revision);
+  });
+
+  it('resets only the managed override and preserves a user-authored IDENTITY.md avatar', async () => {
+    await writeOpenClawJson({
+      agents: {
+        list: [{ id: 'main', name: 'Main', default: true }],
+      },
+    });
+    const { createAgent, resetAgentAvatar, updateAgentAvatar } = await import('@electron/utils/agent-config');
+    await createAgent('Research');
+    const workspace = join(testHome, '.openclaw', 'workspace-research');
+    await writeFile(join(workspace, 'custom.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>', 'utf8');
+    await writeFile(join(workspace, 'IDENTITY.md'), '- Avatar: custom.svg\n- Emoji: 🧭\n', 'utf8');
+    await updateAgentAvatar('research', {
+      style: 'pixel-art-neutral',
+      seed: 'managed-face',
+      backgroundColor: '#fee2e2',
+    });
+
+    const reset = await resetAgentAvatar('research');
+    expect(reset.agents.find((agent) => agent.id === 'research')).toMatchObject({
+      emoji: '🧭',
+      avatar: { kind: 'image', source: 'identity' },
+    });
+    await expect(readFile(join(workspace, 'IDENTITY.md'), 'utf8')).resolves.toContain('Avatar: custom.svg');
+    await expect(access(join(workspace, '.clawx', 'avatar', 'avatar.svg'))).rejects.toThrow();
+  });
 });
 
 // ── Area 1: Persona sidecar round-trip ───────────────────────────────────

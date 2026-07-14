@@ -1,4 +1,4 @@
-﻿import { closeSync, mkdirSync, openSync, rmSync } from 'node:fs';
+import { closeSync, mkdirSync, openSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { app } from 'electron';
 import { acquireProcessInstanceFileLock } from './process-instance-lock';
