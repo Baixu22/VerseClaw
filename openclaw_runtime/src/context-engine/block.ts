@@ -18,6 +18,7 @@ export type SourceSystem =
   | "cvk"
   | "task-loop"
   | "working-memory"
+  // "codegraph" is a retired producer id (context-engine rebuild Task I); kept for stored-block compatibility.
   | "codegraph"
   | "agent-map"
   | "agent-notes";
