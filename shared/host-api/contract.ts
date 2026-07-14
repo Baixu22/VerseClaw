@@ -1204,6 +1204,37 @@ export type AgentBrowserFullAccessRevokeResult = HostSuccess & {
   content: string;
   isError?: boolean;
 };
+export type AgentBrowserExtractPageTextRule = {
+  id: string;
+  alias: string;
+  urlPattern: string;
+  selectorsText: string;
+  sortOrder: number;
+  createdAt: number;
+  updatedAt: number;
+};
+export type AgentBrowserExtractPageTextPayload = AgentBrowserSessionPayload & {
+  rules: AgentBrowserExtractPageTextRule[];
+  maxLength?: number;
+  extractMode?: 'text' | 'all';
+  selectorType?: 'css' | 'xpath';
+  allowFallback?: boolean;
+};
+export type AgentBrowserExtractPageTextResult = HostSuccess & {
+  text: string;
+  truncated: boolean;
+  usedFallback: boolean;
+  matchedRuleId?: string;
+};
+export type AgentBrowserValidateExtractionRulePayload = {
+  alias: string;
+  urlPattern: string;
+  selectorsText: string;
+};
+export type AgentBrowserValidateExtractionRuleResult = HostSuccess & {
+  ok: boolean;
+  message?: string;
+};
 export type AgentBrowserPageInfo = {
   pageId: string;
   index: number;
@@ -4119,6 +4150,8 @@ export type HostApiContract = {
     fullAccessGetNetworkDetails: (payload: AgentBrowserFullAccessGetNetworkDetailsPayload) => AgentBrowserFullAccessGetNetworkDetailsResult;
     fullAccessReadStorage: (payload: AgentBrowserFullAccessReadStoragePayload) => AgentBrowserFullAccessReadStorageResult;
     fullAccessRevoke: (payload: AgentBrowserFullAccessRevokePayload) => AgentBrowserFullAccessRevokeResult;
+    extractPageText: (payload: AgentBrowserExtractPageTextPayload) => AgentBrowserExtractPageTextResult;
+    validateExtractionRule: (payload: AgentBrowserValidateExtractionRulePayload) => AgentBrowserValidateExtractionRuleResult;
   };
   mcp: {
     listServers: () => McpServerListResult;

@@ -102,6 +102,17 @@ export interface NetworkRequestDetail extends NetworkRequestMeta {
 export type EndpointType = "openai_chat" | "anthropic_messages";
 export type ChatRole = "system" | "user" | "assistant";
 export type PageContextExtractMode = "text" | "all";
+export type ExtractionSelectorType = "css" | "xpath";
+
+export interface ExtractionRule {
+  id: string;
+  alias: string;
+  urlPattern: string;
+  selectorsText: string;
+  sortOrder: number;
+  createdAt: number;
+  updatedAt: number;
+}
 export type WebSearchProviderType = "tavily";
 export type ToolAttachmentContextMode = "none" | "summary" | "selected_details";
 export type ToolAttachmentRetentionMode = "discard" | "summary" | "detail_pool" | "current_turn_detail";
