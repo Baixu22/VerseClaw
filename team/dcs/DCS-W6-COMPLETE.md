@@ -6,6 +6,7 @@
 - 8e50a751c feat(runtime): dcs workspace fingerprint and dual-injection observability (D3+D7 co-landed: shared attempt.ts + dcs-observability)
 - a463d6f37 docs(dcs): record wiring repair acceptance
 - 612ab830d docs(dcs): note w6 commit SHAs
+- 0191e54c0 docs(dcs): fix w6 acceptance encoding
 
 ## Result
 
