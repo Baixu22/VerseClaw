@@ -212,8 +212,12 @@ async function main() {
 }
 
 if (process.argv[1]?.replaceAll('\\', '/').endsWith('/scripts/contract-check.mjs')) {
-  const { pathToFileURL } = await import('node:url');
-  if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-    await main();
-  }
+  import('node:url').then(({ pathToFileURL }) => {
+    if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+      main().catch((error) => {
+        console.error(error);
+        process.exitCode = 1;
+      });
+    }
+  });
 }
