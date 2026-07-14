@@ -729,6 +729,34 @@ export function applySourceRuntimeSandboxAutoFallback(config: Record<string, unk
   return nextConfig;
 }
 
+/** Pure source-runtime isolation env. Does not force-disable plugin tools. */
+export function buildSourceRuntimeIsolationEnv(params: {
+  stateDir: string;
+  homeDir: string;
+  configPath: string;
+}): Record<string, string> {
+  // Desktop source isolation defers post-ready sidecars so chat can attach quickly.
+  // Playwright E2E needs startup-gated RPCs (tools.effective) available before
+  // assertions; with defer enabled, tools.effective stays unavailable until
+  // sidecars finish - and a hung/slow plugin service never unblocks it. Under
+  // VERSE_CLAW_E2E we therefore skip defer entirely so sidecars complete on
+  // the ready path (production keeps the long defer).
+  const isE2E = process.env.VERSE_CLAW_E2E === '1';
+  return {
+    OPENCLAW_STATE_DIR: params.stateDir,
+    OPENCLAW_CONFIG_PATH: params.configPath,
+    OPENCLAW_HOME: params.homeDir,
+    OPENCLAW_SKIP_LEGACY_STATE_MIGRATION: '1',
+    OPENCLAW_NO_AUTO_UPDATE: '1',
+    ...(isE2E
+      ? {}
+      : {
+          OPENCLAW_DEFER_STARTUP_SIDECARS: '1',
+          OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS: '600000',
+        }),
+  };
+}
+
 function prepareSourceRuntimeIsolation(): {
   stateDir: string;
   homeDir: string;
@@ -829,16 +857,7 @@ function prepareSourceRuntimeIsolation(): {
     stateDir,
     homeDir,
     configPath,
-    env: {
-      OPENCLAW_STATE_DIR: stateDir,
-      OPENCLAW_CONFIG_PATH: configPath,
-      OPENCLAW_HOME: homeDir,
-      OPENCLAW_SKIP_LEGACY_STATE_MIGRATION: '1',
-      OPENCLAW_NO_AUTO_UPDATE: '1',
-      OPENCLAW_DEFER_STARTUP_SIDECARS: '1',
-      OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS: '600000',
-      OPENCLAW_SKIP_AGENT_PLUGIN_TOOLS: '1',
-    },
+    env: buildSourceRuntimeIsolationEnv({ stateDir, homeDir, configPath }),
   };
 }
 
