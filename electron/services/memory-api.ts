@@ -19,6 +19,7 @@ import type {
   MemoryListPayload,
   MemoryListResult,
   MemoryProposeResult,
+  MemoryProposalPreviewResult,
   MemorySearchPayload,
   MemoryUpdatePayload,
   MemoryUpdateResult,
@@ -80,6 +81,21 @@ export function createMemoryApi(ctx: MemoryApiContext) {
         return unwrapResult<MemoryDetailResult>(raw);
       } catch (err) {
         logger.warn('[memory:detail] failed', { err: String(err) });
+        return errorResult(String(err));
+      }
+    },
+
+    previewProposal: async (payload: MemoryProposal): Promise<MemoryProposalPreviewResult> => {
+      if (!ctx.gatewayManager) return errorResult('Gateway manager unavailable');
+      try {
+        const raw = await ctx.gatewayManager.rpc(
+          'memory.previewProposal',
+          { proposal: payload },
+          RPC_TIMEOUT_MS,
+        );
+        return unwrapResult<MemoryProposalPreviewResult>(raw);
+      } catch (err) {
+        logger.warn('[memory:previewProposal] failed', { err: String(err) });
         return errorResult(String(err));
       }
     },

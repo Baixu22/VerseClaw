@@ -88,6 +88,42 @@ describe("memory host API facade", () => {
     );
   });
 
+  it("wraps preview payload for the existing read-only memory preview RPC", async () => {
+    const gatewayManager = {
+      rpc: vi.fn().mockResolvedValue({
+        success: true,
+        preview: {
+          operation: "create",
+          proposal: {},
+          normalized: {},
+          decision: { action: "needs_review", accepted: false },
+          conflicts: [],
+          evidence: {},
+          wouldWrite: false,
+        },
+      }),
+    };
+    const { createMemoryApi } = await import("@electron/services/memory-api");
+    const api = createMemoryApi({ gatewayManager: gatewayManager as never });
+    const proposal = {
+      type: "procedure" as const,
+      scope: "role" as const,
+      content: "Verify each finding.",
+    };
+
+    const result = await api.previewProposal(proposal);
+
+    expect(gatewayManager.rpc).toHaveBeenCalledWith(
+      "memory.previewProposal",
+      { proposal },
+      15_000,
+    );
+    expect(result).toMatchObject({
+      success: true,
+      preview: { wouldWrite: false },
+    });
+  });
+
   it("forwards update calls to memory.update", async () => {
     const gatewayManager = {
       rpc: vi.fn().mockResolvedValue({ success: true }),

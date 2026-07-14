@@ -383,8 +383,7 @@ describe('hostApi facade', () => {
     });
     const { hostApi } = await import('@/lib/host-api');
     const reviewPayload = {
-      sourceRoot: 'C:\\agency-agents-main',
-      draftId: 'agency:engineering:code-reviewer',
+      packageId: 'a'.repeat(64),
       reviewer: 'operator',
       candidate: {
         name: 'agency-code-reviewer',
@@ -418,7 +417,20 @@ describe('hostApi facade', () => {
     };
 
     await hostApi.roles.agencyCatalog({ sourceRoot: 'C:\\agency-agents-main' });
+    await hostApi.roles.listAgencyPackages();
+    await hostApi.roles.importAgencyPackage({
+      sourceRoot: 'C:\\agency-agents-main',
+      draftId: 'agency:engineering:code-reviewer',
+    });
+    await hostApi.roles.refreshAgencyPackage({
+      packageId: 'a'.repeat(64),
+      sourceRoot: 'D:\\agency-agents-main',
+    });
     await hostApi.roles.previewAgencyPromotion(reviewPayload);
+    await hostApi.roles.previewAgencyMemoryProposals({
+      packageId: 'a'.repeat(64),
+      reviewId: 'review-1',
+    });
     await hostApi.roles.reviewAgencyPromotion(reviewPayload);
     await hostApi.roles.approveAgencyPromotion(decisionPayload);
     await hostApi.roles.retireAgencyPromotion(decisionPayload);
@@ -430,20 +442,48 @@ describe('hostApi facade', () => {
     }));
     expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
       module: 'roles',
+      action: 'listAgencyPackages',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
+      module: 'roles',
+      action: 'importAgencyPackage',
+      payload: {
+        sourceRoot: 'C:\\agency-agents-main',
+        draftId: 'agency:engineering:code-reviewer',
+      },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
+      module: 'roles',
+      action: 'refreshAgencyPackage',
+      payload: {
+        packageId: 'a'.repeat(64),
+        sourceRoot: 'D:\\agency-agents-main',
+      },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
+      module: 'roles',
       action: 'previewAgencyPromotion',
       payload: reviewPayload,
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(6, expect.objectContaining({
+      module: 'roles',
+      action: 'previewAgencyMemoryProposals',
+      payload: {
+        packageId: 'a'.repeat(64),
+        reviewId: 'review-1',
+      },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(7, expect.objectContaining({
       module: 'roles',
       action: 'reviewAgencyPromotion',
       payload: reviewPayload,
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
       module: 'roles',
       action: 'approveAgencyPromotion',
       payload: decisionPayload,
     }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
+    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
       module: 'roles',
       action: 'retireAgencyPromotion',
       payload: decisionPayload,

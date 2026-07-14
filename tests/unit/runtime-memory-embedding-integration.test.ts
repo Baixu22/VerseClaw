@@ -137,7 +137,9 @@ describe("runtime memory embedding integration", () => {
       makeFact("f2", "User", "owns a cat named Whiskers"),
       makeFact("f3", "User", "prefers Python over Rust for scripting"),
     ];
-    const provider = createMockRuntimeEmbeddingProvider();
+    // Keep this ranking assertion focused on the embedding path rather than
+    // collisions in the intentionally simple n-gram hash fixture.
+    const provider = createMockRuntimeEmbeddingProvider(4096);
     const hits = await hybridSearchFactsWithEmbedding(
       facts,
       { queryText: "Python programming", taskId: "emb_test", topK: 3 },

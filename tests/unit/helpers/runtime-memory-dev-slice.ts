@@ -83,7 +83,7 @@ export type DevSliceCache<TQuestion = unknown> = {
 //   reason, and the consolidation prompt enforces PREFER UPDATE OVER CREATE
 //   + ONE OBSERVATION PER DISTINCT FACET. Old observation caches lack the
 //   new fields and the new merge boundaries.
-export const DEV_SLICE_CACHE_VERSION = "31.0-p0-sota-aligned-2026-07-05";
+export const DEV_SLICE_CACHE_VERSION = "34.0-audn-lifecycle-2026-07-06";
 export const DEV_SLICE_SAMPLE_SEED = 42;
 export const DEV_SLICE_SAMPLE_SIZES: Record<string, number> = {
   single_hop: 82,

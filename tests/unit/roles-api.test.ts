@@ -133,13 +133,11 @@ function candidateFrom(
 }
 
 function reviewPayload(
-  sourceRoot: string,
-  draftId: string,
+  packageId: string,
   candidate: AgencyRoleCandidatePayload,
 ): AgencyRoleReviewPayload {
   return {
-    sourceRoot,
-    draftId,
+    packageId,
     reviewer: 'release-operator',
     candidate,
     toolHintDispositions: [],
@@ -333,8 +331,15 @@ describe('roles host API', () => {
     });
 
     const draft = catalog.drafts[0]!;
+    const imported = await rolesApi.importAgencyPackage({ sourceRoot, draftId: draft.id });
+    expect(imported.package).toMatchObject({
+      packageId: expect.stringMatching(/^[a-f0-9]{64}$/),
+      completeness: 'complete',
+      draft: { id: draft.id },
+    });
+    expect((await rolesApi.listAgencyPackages()).packages).toHaveLength(1);
     const preview = await rolesApi.previewAgencyPromotion(
-      reviewPayload(sourceRoot, draft.id, candidateFrom(draft.roleCandidate)),
+      reviewPayload(imported.package.packageId, candidateFrom(draft.roleCandidate)),
     );
     expect(preview).toMatchObject({
       success: true,
@@ -366,7 +371,8 @@ describe('roles host API', () => {
     const rolesApi = createRolesApi();
     const catalog = await rolesApi.agencyCatalog({ sourceRoot });
     const draft = catalog.drafts[0]!;
-    const payload = reviewPayload(sourceRoot, draft.id, candidateFrom(draft.roleCandidate));
+    const imported = await rolesApi.importAgencyPackage({ sourceRoot, draftId: draft.id });
+    const payload = reviewPayload(imported.package.packageId, candidateFrom(draft.roleCandidate));
 
     const reviewed = await rolesApi.reviewAgencyPromotion(payload);
     expect(reviewed).toMatchObject({
@@ -423,34 +429,255 @@ describe('roles host API', () => {
     });
   });
 
-  it('rejects changed sources and reconciles sanitized interrupted writes by exact digest', async () => {
+  it('previews reviewed memory proposals only for an exact active complete package', async () => {
+    const sourceRoot = await createAgencyFixture();
+    await writeFile(join(sourceRoot, 'engineering', 'code-reviewer.md'), [
+      '---',
+      'name: Code Reviewer',
+      'description: Reviews code with bounded evidence.',
+      '---',
+      '# Code Reviewer Agent',
+      '',
+      '## Identity',
+      'You are a legendary reviewer.',
+      '',
+      '## Critical Rules',
+      'Never approve a change without evidence.',
+      '',
+      '```bash',
+      'pnpm install',
+      '```',
+      '',
+      '## Workflow',
+      '1. Read the diff.',
+      '2. Verify each finding.',
+      '',
+      '## Tools',
+      'Run `pnpm test` with shell access.',
+    ].join('\n'));
+    const { createRolesApi } = await import('@electron/services/roles-api');
+    const rolesApi = createRolesApi();
+    const draft = (await rolesApi.agencyCatalog({ sourceRoot })).drafts[0]!;
+    const imported = await rolesApi.importAgencyPackage({ sourceRoot, draftId: draft.id });
+    const reviewed = await rolesApi.reviewAgencyPromotion(
+      reviewPayload(imported.package.packageId, candidateFrom(draft.roleCandidate)),
+    );
+
+    await expect(rolesApi.previewAgencyMemoryProposals({
+      packageId: imported.package.packageId,
+      reviewId: reviewed.record.id,
+    })).rejects.toThrow(/active|complete/i);
+
+    const active = await rolesApi.approveAgencyPromotion({
+      reviewId: reviewed.record.id,
+      reviewer: 'approver',
+      comment: 'Approve exact role.',
+    });
+    const preview = await rolesApi.previewAgencyMemoryProposals({
+      packageId: imported.package.packageId,
+      reviewId: active.record.id,
+    });
+
+    expect(preview).toMatchObject({
+      success: true,
+      packageId: imported.package.packageId,
+      reviewId: active.record.id,
+      materializedRoleName: 'agency-code-reviewer',
+      candidates: [
+        {
+          type: 'constraint',
+          headingPath: ['Critical Rules'],
+          content: 'Never approve a change without evidence.',
+          sectionId: expect.stringMatching(/^[a-f0-9]{64}$/),
+          proposal: {
+            type: 'constraint',
+            scope: 'role',
+            scopeKey: 'agency-code-reviewer',
+            roleTags: ['agency-code-reviewer'],
+            ownerRole: 'agency-code-reviewer',
+            applicableRoles: ['agency-code-reviewer'],
+            content: 'Never approve a change without evidence.',
+            confidence: 0.6,
+            importance: 0.8,
+            sensitivity: 'normal',
+            durability: 'long_term',
+            source: 'system',
+            evidenceRefs: [{
+              type: 'file',
+              ref: expect.stringMatching(/agency-role-packages.+source\.md$/),
+              excerpt: 'Never approve a change without evidence.',
+            }],
+          },
+        },
+        {
+          type: 'procedure',
+          headingPath: ['Workflow'],
+          proposal: {
+            confidence: 0.6,
+            importance: 0.65,
+          },
+        },
+      ],
+    });
+    expect(JSON.stringify(preview.candidates)).not.toMatch(
+      /legendary|pnpm install|shell access/i,
+    );
+
+    await expect(rolesApi.previewAgencyMemoryProposals({
+      packageId: 'f'.repeat(64),
+      reviewId: active.record.id,
+    })).rejects.toThrow(/package|match|found/i);
+    await expect(rolesApi.previewAgencyMemoryProposals({
+      packageId: imported.package.packageId,
+      reviewId: 'missing-review',
+    })).rejects.toThrow(/review|found/i);
+
+    await rolesApi.retireAgencyPromotion({
+      reviewId: active.record.id,
+      reviewer: 'approver',
+      comment: 'Retire exact role.',
+    });
+    await expect(rolesApi.previewAgencyMemoryProposals({
+      packageId: imported.package.packageId,
+      reviewId: active.record.id,
+    })).rejects.toThrow(/active|complete/i);
+  });
+
+  it('fails closed when the reviewed local package is tampered', async () => {
+    const sourceRoot = await createAgencyFixture();
+    const { createRolesApi } = await import('@electron/services/roles-api');
+    const rolesApi = createRolesApi();
+    const draft = (await rolesApi.agencyCatalog({ sourceRoot })).drafts[0]!;
+    const imported = await rolesApi.importAgencyPackage({ sourceRoot, draftId: draft.id });
+    await writeFile(
+      join(
+        testHome,
+        '.verse-claw',
+        'agency-role-packages',
+        'v1',
+        imported.package.packageId,
+        'source.md',
+      ),
+      'tampered',
+    );
+
+    await expect(rolesApi.previewAgencyPromotion(
+      reviewPayload(imported.package.packageId, candidateFrom(draft.roleCandidate)),
+    )).rejects.toThrow(/integrity|hash/i);
+  });
+
+  it('migrates legacy reviews to reconstructed packages before removing sourceRoot', async () => {
+    const sourceRoot = await createAgencyFixture();
+    const { createRolesApi } = await import('@electron/services/roles-api');
+    const rolesApi = createRolesApi();
+    const draft = (await rolesApi.agencyCatalog({ sourceRoot })).drafts[0]!;
+    const imported = await rolesApi.importAgencyPackage({ sourceRoot, draftId: draft.id });
+    const reviewed = await rolesApi.reviewAgencyPromotion(
+      reviewPayload(imported.package.packageId, candidateFrom(draft.roleCandidate)),
+    );
+    const document = storeDocuments.get('agency-role-promotions')!;
+    const legacy = structuredClone((document.records as Array<Record<string, unknown>>)[0]!);
+    delete legacy.packageId;
+    legacy.sourceRoot = sourceRoot;
+    document.records = [legacy];
+    await rm(
+      join(testHome, '.verse-claw', 'agency-role-packages'),
+      { recursive: true, force: true },
+    );
+
+    vi.resetModules();
+    const migratedApi = (await import('@electron/services/roles-api')).createRolesApi();
+    const local = await migratedApi.listAgencyPackages();
+
+    expect(local.packages).toEqual([
+      expect.objectContaining({ completeness: 'legacy-reconstructed' }),
+    ]);
+    expect(local.reviews).toEqual([
+      expect.objectContaining({
+        id: reviewed.record.id,
+        packageId: local.packages[0]!.packageId,
+      }),
+    ]);
+    expect(promotionRecords()[0]).not.toHaveProperty('sourceRoot');
+
+    await rm(sourceRoot, { recursive: true, force: true });
+    const migratedActive = await migratedApi.approveAgencyPromotion({
+      reviewId: reviewed.record.id,
+      reviewer: 'approver',
+      comment: 'Approve reconstructed review.',
+    });
+    expect(migratedActive).toMatchObject({
+      success: true,
+      record: { lifecycle: 'active' },
+    });
+    await expect(migratedApi.previewAgencyMemoryProposals({
+      packageId: local.packages[0]!.packageId,
+      reviewId: migratedActive.record.id,
+    })).rejects.toThrow(/complete archived source snapshot/i);
+  });
+
+  it('rejects memory proposals after the exact materialized role is replaced', async () => {
+    const sourceRoot = await createAgencyFixture();
+    const { createRolesApi } = await import('@electron/services/roles-api');
+    const rolesApi = createRolesApi();
+    const draft = (await rolesApi.agencyCatalog({ sourceRoot })).drafts[0]!;
+    const imported = await rolesApi.importAgencyPackage({ sourceRoot, draftId: draft.id });
+    const reviewed = await rolesApi.reviewAgencyPromotion(
+      reviewPayload(imported.package.packageId, candidateFrom(draft.roleCandidate)),
+    );
+    const active = await rolesApi.approveAgencyPromotion({
+      reviewId: reviewed.record.id,
+      reviewer: 'approver',
+      comment: 'Approve exact role.',
+    });
+
+    await rolesApi.upsertConfigRole({
+      ...active.record.candidate,
+      displayName: 'User Replacement',
+      tags: ['user-authored'],
+    });
+
+    await expect(rolesApi.previewAgencyMemoryProposals({
+      packageId: imported.package.packageId,
+      reviewId: active.record.id,
+    })).rejects.toThrow(/exact materialized role contract/i);
+  });
+
+  it('approves from the local package after source deletion and reconciles interrupted writes', async () => {
     const sourceRoot = await createAgencyFixture();
     const { createRolesApi } = await import('@electron/services/roles-api');
     const rolesApi = createRolesApi();
     const catalog = await rolesApi.agencyCatalog({ sourceRoot });
     const draft = catalog.drafts[0]!;
+    const imported = await rolesApi.importAgencyPackage({ sourceRoot, draftId: draft.id });
     const reviewed = await rolesApi.reviewAgencyPromotion(
-      reviewPayload(sourceRoot, draft.id, candidateFrom(draft.roleCandidate)),
+      reviewPayload(imported.package.packageId, candidateFrom(draft.roleCandidate)),
     );
 
     await writeFile(
       join(sourceRoot, 'engineering', 'code-reviewer.md'),
       '# Code Reviewer\n\nChanged after review.',
     );
-    const changed = await rolesApi.approveAgencyPromotion({
+    await rm(sourceRoot, { recursive: true, force: true });
+    const approvedWithoutSource = await rolesApi.approveAgencyPromotion({
       reviewId: reviewed.record.id,
       reviewer: 'approver',
-      comment: 'Should fail.',
+      comment: 'Approve from immutable local package.',
     });
-    expect(changed).toMatchObject({ success: false });
-    expect(changed.error).toMatch(/source.*changed|fingerprint/i);
+    expect(approvedWithoutSource).toMatchObject({
+      success: true,
+      record: { lifecycle: 'active', packageId: imported.package.packageId },
+    });
 
-    await rm(sourceRoot, { recursive: true, force: true });
     const freshRoot = await createAgencyFixture();
     const freshCatalog = await rolesApi.agencyCatalog({ sourceRoot: freshRoot });
     const freshDraft = freshCatalog.drafts[0]!;
+    const freshPackage = await rolesApi.importAgencyPackage({
+      sourceRoot: freshRoot,
+      draftId: freshDraft.id,
+    });
     const freshReview = await rolesApi.reviewAgencyPromotion(
-      reviewPayload(freshRoot, freshDraft.id, candidateFrom(freshDraft.roleCandidate, {
+      reviewPayload(freshPackage.package.packageId, candidateFrom(freshDraft.roleCandidate, {
         name: 'agency-recovery-reviewer',
       })),
     );
@@ -471,7 +698,7 @@ describe('roles host API', () => {
     expect(failed.record.materialization.error).not.toContain('provider-key');
 
     writeConfigState.afterWriteError = '';
-    const reconciled = await rolesApi.agencyCatalog({ sourceRoot: freshRoot });
+    const reconciled = await rolesApi.listAgencyPackages();
     expect(reconciled.reviews).toEqual([
       expect.objectContaining({
         id: freshReview.record.id,
@@ -488,9 +715,10 @@ describe('roles host API', () => {
     const rolesApi = createRolesApi();
     const catalog = await rolesApi.agencyCatalog({ sourceRoot });
     const draft = catalog.drafts[0]!;
+    const imported = await rolesApi.importAgencyPackage({ sourceRoot, draftId: draft.id });
 
     const firstReview = await rolesApi.reviewAgencyPromotion(
-      reviewPayload(sourceRoot, draft.id, candidateFrom(draft.roleCandidate)),
+      reviewPayload(imported.package.packageId, candidateFrom(draft.roleCandidate)),
     );
     const active = await rolesApi.approveAgencyPromotion({
       reviewId: firstReview.record.id,
@@ -518,7 +746,7 @@ describe('roles host API', () => {
     expect(((configAfterRetire.agents as Record<string, unknown>).roles as unknown[])).toEqual([]);
 
     const secondReview = await rolesApi.reviewAgencyPromotion(
-      reviewPayload(sourceRoot, draft.id, candidateFrom(draft.roleCandidate)),
+      reviewPayload(imported.package.packageId, candidateFrom(draft.roleCandidate)),
     );
     const secondActive = await rolesApi.approveAgencyPromotion({
       reviewId: secondReview.record.id,

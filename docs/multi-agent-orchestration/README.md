@@ -21,6 +21,30 @@ never becomes runnable. Retry reconciles exact contract identity, while
 retirement removes only that exact config role and preserves the review audit
 history.
 
+The package-localization extension uses:
+
+- `docs/superpowers/specs/2026-07-12-agency-role-package-localization-design.md`
+- `docs/multi-agent-orchestration/phase-constraints/agency-role-package-localization.md`
+- `harness/specs/tasks/agency-role-package-localization.md`
+- `harness/specs/rules/agency-role-package-boundary.md`
+
+It imports one selected draft into an immutable app-owned package. Review,
+approval, retry, and retirement then operate without the external checkout.
+Changed upstream content creates a linked package version and a new review;
+the package itself remains independent of Role Memory.
+
+The separately gated memory-import extension uses:
+
+- `docs/superpowers/specs/2026-07-13-agency-role-memory-import-design.md`
+- `harness/specs/tasks/agency-role-memory-import.md`
+- `harness/specs/rules/agency-role-memory-import-boundary.md`
+
+It parses only complete active package snapshots with a Markdown AST and
+offers recognized governance sections as confidence `0.6` proposals. Selected
+items use the existing Memory preview, duplicate/conflict, proposal, and human
+review path; no Agency source text can directly create an active card or grant
+runtime authority.
+
 > 文件性质: Goal 模式开发前置控制包索引。
 >
 > 适用范围: Role-First 多 Agent 编排 P0-P4 的长开发轮次。当前只允许启动 P0: 验证闭环硬化。
