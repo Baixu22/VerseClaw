@@ -1609,6 +1609,100 @@ export type RoleUpsertConfigRoleResult = HostSuccess & {
   role: RoleConfigRoleSummary;
   pendingRuntimeRefresh: boolean;
 };
+export type AgencyRoleLifecycle = 'draft' | 'reviewed' | 'active' | 'retired';
+export type AgencyRoleEvidenceQualification =
+  | 'unverified'
+  | 'scenario-verified'
+  | 'release-qualified';
+export type AgencyRoleMaterializationStatus =
+  | 'not-started'
+  | 'pending'
+  | 'complete'
+  | 'failed';
+export type AgencyRoleSourcePayload = { sourceRoot: string };
+export type AgencyRoleDraftPayload = AgencyRoleSourcePayload & { draftId: string };
+export type AgencyRoleToolHintDisposition = {
+  hint: string;
+  disposition: 'mapped' | 'waived';
+  selectedTools: string[];
+  reviewerNote: string;
+};
+export type AgencyRoleCandidatePayload = RoleUpsertConfigRolePayload & {
+  outputFormat: 'markdown' | 'json' | 'text';
+  outputSections: string[];
+  handoffTo: string[];
+  handoffFrom: string[];
+  requiresReview: boolean;
+  riskProfile: 'low' | 'medium' | 'high' | 'critical';
+};
+export type AgencyRoleReviewPayload = AgencyRoleDraftPayload & {
+  reviewer: string;
+  candidate: AgencyRoleCandidatePayload;
+  toolHintDispositions: AgencyRoleToolHintDisposition[];
+  evidenceQualification: AgencyRoleEvidenceQualification;
+  evidenceRefs: string[];
+  comment: string;
+};
+export type AgencyRoleDecisionPayload = {
+  reviewId: string;
+  reviewer: string;
+  comment: string;
+};
+export type AgencyRoleDraftSummary = {
+  id: string;
+  status: 'draft';
+  sourceDivision?: string;
+  sourceAgentName: string;
+  roleName: string;
+  displayName: string;
+  description?: string;
+  capabilityHints: string[];
+  toolHints: string[];
+  handoffHints: string[];
+  sourceRef: { relativePath: string; sha256: string };
+  roleCandidate: AgencyRoleCandidatePayload;
+  validationIssues: Array<{ path: string; message: string }>;
+  toolMappingSuggestions: Array<{ hint: string; candidateTools: string[] }>;
+};
+export type AgencyRolePromotionRecord = {
+  id: string;
+  draftId: string;
+  sourceRef: { relativePath: string; sha256: string };
+  lifecycle: AgencyRoleLifecycle;
+  evidenceQualification: AgencyRoleEvidenceQualification;
+  evidenceRefs: string[];
+  reviewer: string;
+  reviewedAt: string;
+  decision?: 'approved' | 'retired';
+  decidedBy?: string;
+  decidedAt?: string;
+  comment: string;
+  candidate: AgencyRoleCandidatePayload;
+  toolHintDispositions: AgencyRoleToolHintDisposition[];
+  contractSha256: string;
+  materializedRoleName?: string;
+  materialization: {
+    status: AgencyRoleMaterializationStatus;
+    error?: string;
+  };
+};
+export type AgencyRoleListResult = HostSuccess & {
+  drafts: AgencyRoleDraftSummary[];
+  reviews: AgencyRolePromotionRecord[];
+};
+export type AgencyRolePromotionPreviewResult = HostSuccess & {
+  persisted: false;
+  validation: {
+    ok: boolean;
+    issues: Array<{ path: string; message: string }>;
+  };
+  contractSha256: string;
+  role: RoleConfigRoleSummary;
+};
+export type AgencyRolePromotionResult = HostSuccess & {
+  record: AgencyRolePromotionRecord;
+  pendingRuntimeRefresh: boolean;
+};
 export type AgentBootstrapResult = HostSuccess & {
   agentId: string;
   soulMd: string;
@@ -4214,6 +4308,11 @@ export type HostApiContract = {
   };
   roles: {
     upsertConfigRole: (payload: RoleUpsertConfigRolePayload) => RoleUpsertConfigRoleResult;
+    agencyCatalog: (payload: AgencyRoleSourcePayload) => AgencyRoleListResult;
+    previewAgencyPromotion: (payload: AgencyRoleReviewPayload) => AgencyRolePromotionPreviewResult;
+    reviewAgencyPromotion: (payload: AgencyRoleReviewPayload) => AgencyRolePromotionResult;
+    approveAgencyPromotion: (payload: AgencyRoleDecisionPayload) => AgencyRolePromotionResult;
+    retireAgencyPromotion: (payload: AgencyRoleDecisionPayload) => AgencyRolePromotionResult;
   };
   diagnostics: {
     gatewaySnapshot: () => DiagnosticsGatewaySnapshotResult;

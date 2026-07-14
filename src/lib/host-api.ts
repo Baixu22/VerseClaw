@@ -126,6 +126,12 @@ import type {
   AgentDevWorkbenchEvidenceResult,
   AgentUpdateReasoningEffortPayload,
   AgentUpdatePayload,
+  AgencyRoleDecisionPayload,
+  AgencyRoleListResult,
+  AgencyRolePromotionPreviewResult,
+  AgencyRolePromotionResult,
+  AgencyRoleReviewPayload,
+  AgencyRoleSourcePayload,
   CapabilityPublicationQuery,
   CapabilityPublicationResult,
   ChannelAccountsPayload,
@@ -1031,6 +1037,29 @@ export const hostApi = {
   roles: {
     upsertConfigRole: (input: RoleUpsertConfigRolePayload): Promise<RoleUpsertConfigRoleResult> => (
       invokeHost('roles', 'upsertConfigRole', input)
+    ),
+    agencyCatalog: (input: AgencyRoleSourcePayload): Promise<AgencyRoleListResult> => (
+      invokeHost('roles', 'agencyCatalog', input)
+    ),
+    previewAgencyPromotion: (
+      input: AgencyRoleReviewPayload,
+    ): Promise<AgencyRolePromotionPreviewResult> => (
+      invokeHost('roles', 'previewAgencyPromotion', input)
+    ),
+    reviewAgencyPromotion: (
+      input: AgencyRoleReviewPayload,
+    ): Promise<AgencyRolePromotionResult> => (
+      invokeHost('roles', 'reviewAgencyPromotion', input)
+    ),
+    approveAgencyPromotion: (
+      input: AgencyRoleDecisionPayload,
+    ): Promise<AgencyRolePromotionResult> => (
+      invokeHost('roles', 'approveAgencyPromotion', input)
+    ),
+    retireAgencyPromotion: (
+      input: AgencyRoleDecisionPayload,
+    ): Promise<AgencyRolePromotionResult> => (
+      invokeHost('roles', 'retireAgencyPromotion', input)
     ),
   },
   diagnostics: {
