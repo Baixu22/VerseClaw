@@ -71,6 +71,10 @@ import type {
   AgentBrowserFullAccessReadStorageResult,
   AgentBrowserFullAccessRevokePayload,
   AgentBrowserFullAccessRevokeResult,
+  AgentBrowserExtractPageTextPayload,
+  AgentBrowserExtractPageTextResult,
+  AgentBrowserValidateExtractionRulePayload,
+  AgentBrowserValidateExtractionRuleResult,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -888,6 +892,10 @@ export const hostApi = {
       invokeHost('agentBrowser', 'fullAccessReadStorage', input),
     fullAccessRevoke: (input: AgentBrowserFullAccessRevokePayload): Promise<AgentBrowserFullAccessRevokeResult> =>
       invokeHost('agentBrowser', 'fullAccessRevoke', input),
+    extractPageText: (input: AgentBrowserExtractPageTextPayload): Promise<AgentBrowserExtractPageTextResult> =>
+      invokeHost('agentBrowser', 'extractPageText', input),
+    validateExtractionRule: (input: AgentBrowserValidateExtractionRulePayload): Promise<AgentBrowserValidateExtractionRuleResult> =>
+      invokeHost('agentBrowser', 'validateExtractionRule', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),

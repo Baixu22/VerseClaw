@@ -62,6 +62,10 @@ import type {
   AgentBrowserFullAccessReadStorageResult,
   AgentBrowserFullAccessRevokePayload,
   AgentBrowserFullAccessRevokeResult,
+  AgentBrowserExtractPageTextPayload,
+  AgentBrowserExtractPageTextResult,
+  AgentBrowserValidateExtractionRulePayload,
+  AgentBrowserValidateExtractionRuleResult,
   AgentBrowserOpenPayload,
   AgentBrowserProfileEntry,
   AgentBrowserProfileSavePayload,
@@ -90,6 +94,8 @@ import { SourceMapToolExecutor } from './agent-browser/browser-control/source-ma
 import { RuntimeReadToolExecutor } from './agent-browser/browser-control/runtime-read-tool-executor';
 import { ReplayToolExecutor } from './agent-browser/browser-control/replay-tool-executor';
 import { FullAccessToolExecutor } from './agent-browser/browser-control/full-access-tool-executor';
+import { PageTextExtractor } from './agent-browser/browser-control/page-text-extractor';
+import { validateExtractionRuleDraft } from '@shared/agent-browser/extraction-rules/validation';
 import { BrowserNetworkRecorder, type NetworkRequestFilter, type NetworkWaitFilter } from './agent-browser/browser-control/network-recorder';
 import type { AgentBrowserRunner } from './agent-browser-cli-runner';
 
@@ -131,6 +137,7 @@ type AgentBrowserControlState = {
   runtimeReadExecutor: RuntimeReadToolExecutor;
   replayExecutor: ReplayToolExecutor;
   fullAccessExecutor: FullAccessToolExecutor;
+  pageTextExtractor: PageTextExtractor;
 };
 
 type AgentBrowserServiceOptions = {
@@ -1205,7 +1212,7 @@ export class AgentBrowserService {
       }),
       () => this.revokeFullAccessRuntime(record),
     );
-    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor, sourceMapExecutor, runtimeReadExecutor, replayExecutor, fullAccessExecutor };
+    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor, sourceMapExecutor, runtimeReadExecutor, replayExecutor, fullAccessExecutor, pageTextExtractor: new PageTextExtractor(connection) };
     this.browserControlStates.set(record.session.id, state);
     return state;
   }
@@ -2011,6 +2018,40 @@ export class AgentBrowserService {
     record.session = { ...record.session, runtimeMode: 'normal_restricted' };
     const control = this.browserControlStates.get(record.session.id);
     control?.boundaryExecutor.clearGrantContext();
+  }
+
+  async extractPageText(payload: AgentBrowserExtractPageTextPayload): Promise<Omit<AgentBrowserExtractPageTextResult, 'success'>> {
+    this.assertBrowserControlEnabled();
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('页面文本提取仅支持 browser-window 引擎，当前会话使用 agent-browser-cli 引擎。');
+    }
+    this.assertActionAllowed(record);
+    const state = this.browserControlStates.get(record.session.id);
+    if (!state) {
+      throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
+    }
+    const window = record.window;
+    if (!window) {
+      throw new Error('浏览器窗口不可用。');
+    }
+    return state.pageTextExtractor.extract({
+      url: window.webContents.getURL(),
+      rules: payload.rules,
+      maxLength: payload.maxLength,
+      extractMode: payload.extractMode,
+      selectorType: payload.selectorType,
+      allowFallback: payload.allowFallback,
+    });
+  }
+
+  validateExtractionRule(payload: AgentBrowserValidateExtractionRulePayload): Omit<AgentBrowserValidateExtractionRuleResult, 'success'> {
+    const result = validateExtractionRuleDraft({
+      alias: payload.alias,
+      urlPattern: payload.urlPattern,
+      selectorsText: payload.selectorsText,
+    });
+    return result.ok ? { ok: true } : { ok: false, message: result.message };
   }
 
   /**

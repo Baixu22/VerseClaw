@@ -263,5 +263,13 @@ export function createAgentBrowserApi(
       success: true,
       ...service.fullAccessRevoke(payload),
     }),
+    extractPageText: async (payload) => ({
+      success: true,
+      ...(await service.extractPageText(payload)),
+    }),
+    validateExtractionRule: (payload) => ({
+      success: true,
+      ...service.validateExtractionRule(payload),
+    }),
   };
 }
