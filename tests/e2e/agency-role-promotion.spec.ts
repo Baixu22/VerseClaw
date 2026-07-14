@@ -10,6 +10,8 @@ function stableStringify(value: unknown): string {
 }
 
 const sourceRoot = 'C:\\agency-agents-main';
+const packageId = 'c'.repeat(64);
+const updatedPackageId = 'd'.repeat(64);
 const draft = {
   id: 'agency:engineering:code-reviewer',
   status: 'draft',
@@ -52,8 +54,20 @@ const draft = {
   ],
 };
 
+const rolePackage = {
+  packageId,
+  draftId: draft.id,
+  sourceRef: draft.sourceRef,
+  completeness: 'complete',
+  importedAt: '2026-07-12T09:00:00.000Z',
+  sourceDivision: 'engineering',
+  matchedRunbooks: ['engineering-review'],
+  draft,
+};
+
 const reviewedRecord = {
   id: 'agency-review-e2e',
+  packageId,
   draftId: draft.id,
   sourceRef: draft.sourceRef,
   lifecycle: 'reviewed',
@@ -146,6 +160,24 @@ test.describe('Agency role promotion', () => {
             drafts: [draft],
             reviews: [],
           },
+          [stableStringify(['roles', 'listAgencyPackages', null])]: {
+            success: true,
+            packages: [],
+            reviews: [],
+          },
+          [stableStringify(['roles', 'importAgencyPackage', null])]: {
+            success: true,
+            package: rolePackage,
+          },
+          [stableStringify(['roles', 'refreshAgencyPackage', null])]: {
+            success: true,
+            package: {
+              ...rolePackage,
+              packageId: updatedPackageId,
+              supersedesPackageId: packageId,
+              importedAt: '2026-07-12T11:00:00.000Z',
+            },
+          },
           [stableStringify(['roles', 'previewAgencyPromotion', null])]: {
             success: true,
             persisted: false,
@@ -171,6 +203,59 @@ test.describe('Agency role promotion', () => {
             },
             pendingRuntimeRefresh: true,
           },
+          [stableStringify(['roles', 'previewAgencyMemoryProposals', null])]: {
+            success: true,
+            packageId,
+            reviewId: reviewedRecord.id,
+            materializedRoleName: 'agency-code-reviewer',
+            candidates: [{
+              sectionId: 'agency-memory-section-e2e',
+              type: 'constraint',
+              headingPath: ['Critical Rules'],
+              content: 'Never approve a change without evidence.',
+              proposal: {
+                type: 'constraint',
+                scope: 'role',
+                scopeKey: 'agency-code-reviewer',
+                roleTags: ['agency-code-reviewer'],
+                ownerRole: 'agency-code-reviewer',
+                applicableRoles: ['agency-code-reviewer'],
+                content: 'Never approve a change without evidence.',
+                evidenceRefs: [{
+                  type: 'file',
+                  ref: `C:\\userData\\agency-role-packages\\v1\\${packageId}\\source.md`,
+                  excerpt: 'Never approve a change without evidence.',
+                }],
+                confidence: 0.6,
+                importance: 0.8,
+                sensitivity: 'normal',
+                durability: 'long_term',
+                source: 'system',
+              },
+            }],
+          },
+          [stableStringify(['memory', 'previewProposal', null])]: {
+            success: true,
+            preview: {
+              operation: 'create',
+              proposal: {},
+              normalized: {},
+              decision: {
+                action: 'needs_review',
+                accepted: false,
+                reason: 'Confidence requires operator review.',
+              },
+              conflicts: [],
+              evidence: { status: 'verified', refs: [], summary: 'Archived source.' },
+              wouldWrite: false,
+            },
+          },
+          [stableStringify(['memory', 'propose', null])]: {
+            success: true,
+            action: 'needs_review',
+            accepted: false,
+            reason: 'Confidence requires operator review.',
+          },
           [stableStringify(['roles', 'retireAgencyPromotion', null])]: {
             success: true,
             record: {
@@ -195,7 +280,8 @@ test.describe('Agency role promotion', () => {
 
       await page.getByTestId('agency-source-select').click();
       await expect(page.getByTestId('agency-source-path')).toContainText(sourceRoot);
-      await page.getByText('Code Reviewer').click();
+      await page.getByTestId(`agency-import-${draft.id}`).click();
+      await page.getByTestId(`agency-package-${packageId}`).click();
       await expect(page.getByTestId('agency-draft-status')).toContainText('Draft');
 
       await page.getByTestId('agency-hint-read-map').click();
@@ -214,6 +300,17 @@ test.describe('Agency role promotion', () => {
       await expect(page.getByTestId('agency-promotion-lifecycle')).toContainText('Active');
       await expect(page.getByText(/Saved to config/)).toBeVisible();
 
+      await page.getByTestId('agency-memory-extract').click();
+      await expect(
+        page.getByTestId('agency-memory-candidate-agency-memory-section-e2e'),
+      ).toContainText('Never approve a change without evidence.');
+      await page.getByTestId('agency-memory-preview').click();
+      await expect(
+        page.getByTestId('agency-memory-candidate-agency-memory-section-e2e'),
+      ).toContainText('Needs review');
+      await page.getByTestId('agency-memory-submit').click();
+      await expect(page.getByText(/1 memory proposals submitted for review/)).toBeVisible();
+
       const calls = await app.evaluate(() => (
         (globalThis as unknown as {
           __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }>;
@@ -225,8 +322,7 @@ test.describe('Agency role promotion', () => {
           module: 'roles',
           action: 'reviewAgencyPromotion',
           payload: expect.objectContaining({
-            sourceRoot,
-            draftId: draft.id,
+            packageId,
             evidenceQualification: 'scenario-verified',
             evidenceRefs: ['runbook://startup-mvp/evidence'],
             toolHintDispositions: [
@@ -253,11 +349,63 @@ test.describe('Agency role promotion', () => {
           },
         }),
       ]));
+      expect(calls).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          module: 'roles',
+          action: 'previewAgencyMemoryProposals',
+          payload: {
+            packageId,
+            reviewId: reviewedRecord.id,
+          },
+        }),
+        expect.objectContaining({
+          module: 'memory',
+          action: 'previewProposal',
+          payload: expect.objectContaining({
+            type: 'constraint',
+            scope: 'role',
+            scopeKey: 'agency-code-reviewer',
+            confidence: 0.6,
+          }),
+        }),
+        expect.objectContaining({
+          module: 'memory',
+          action: 'propose',
+          payload: expect.objectContaining({
+            type: 'constraint',
+            scope: 'role',
+            scopeKey: 'agency-code-reviewer',
+            confidence: 0.6,
+          }),
+        }),
+      ]));
+      const reviewCall = roleCalls.find((call) => call.action === 'reviewAgencyPromotion');
+      expect(reviewCall?.payload).not.toHaveProperty('sourceRoot');
+      expect(reviewCall?.payload).not.toHaveProperty('draftId');
 
       await page.getByTestId('agency-promotion-retire').click();
       await page.getByTestId('confirm-dialog-confirm-button').click();
       await expect(page.getByTestId('agency-promotion-lifecycle')).toContainText('Retired');
       await expect(page.getByTestId('agency-draft-status')).toContainText('Draft');
+
+      await page.getByTestId(`agency-package-refresh-${packageId}`).click();
+      await expect(page.getByTestId(`agency-package-${updatedPackageId}`)).toBeVisible();
+      await expect(page.getByTestId(`agency-package-${packageId}`)).toContainText(
+        'Newer version available',
+      );
+
+      const refreshedCalls = await app.evaluate(() => (
+        (globalThis as unknown as {
+          __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }>;
+        }).__verseClawE2eHostCalls ?? []
+      ));
+      expect(refreshedCalls).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          module: 'roles',
+          action: 'refreshAgencyPackage',
+          payload: { packageId, sourceRoot },
+        }),
+      ]));
     } finally {
       await closeElectronApp(app);
     }

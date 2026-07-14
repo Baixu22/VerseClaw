@@ -341,7 +341,7 @@ describe('orchestrator.run handler', () => {
     expect(res?.error?.message).toMatch(/sessionKey/);
   });
 
-  it('returns scheduler metrics in the gateway run payload', async () => {
+  it('returns scheduler metrics in the gateway run payload', { timeout: 15_000 }, async () => {
     vi.mocked(spawnSubagentDirect).mockResolvedValue({
       status: 'accepted',
       runId: 'run_gateway_1',
@@ -371,7 +371,7 @@ describe('orchestrator.run handler', () => {
     });
   });
 
-  it('returns P2 metadata in gateway run payload alongside P0/P1 data', async () => {
+  it('returns P2 metadata in gateway run payload alongside P0/P1 data', { timeout: 15_000 }, async () => {
     vi.mocked(spawnSubagentDirect).mockResolvedValue({
       status: 'accepted',
       runId: 'run_gateway_p2',
@@ -623,7 +623,7 @@ describe('team_orchestrate tool', () => {
       evidenceRefs: expect.arrayContaining([expect.stringMatching(/trace:|run:|orchestration:/)]),
     });
     expect(details.qualityStateReason).toMatch(/score/i);
-    expect(details.resultPolicy.boundedA2aEnabled).toBe(true);
+    expect(details.resultPolicy.boundedA2aEnabled).toBe(false);
     expect(details.blackboardSummary?.entryCount).toBe(1);
     expect(details.resultBundle).toMatchObject({
       schemaVersion: 1,

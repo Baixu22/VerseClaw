@@ -1,5 +1,6 @@
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { existsSync, statSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { readOpenClawConfig, writeOpenClawConfig, type OpenClawConfig } from '../utils/channel-config';
 import { withConfigLock } from '../utils/config-mutex';
@@ -18,11 +19,19 @@ import type { AgencyDraftRoleEntry } from '../../openclaw_runtime/src/agents/age
 import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contract';
 import {
   createRolePromotionStore,
+  type AnyStoredAgencyRolePromotionRecord,
+  type LegacyStoredAgencyRolePromotionRecord,
   type StoredAgencyRolePromotionRecord,
 } from './role-promotion-store';
+import {
+  createAgencyRolePackageStore,
+  type AgencyRolePackage,
+} from './agency-role-package-store';
+import { buildAgencyMemoryProposalCandidates } from './agency-role-memory-import';
 import type {
   AgencyRoleCandidatePayload,
   AgencyRoleDraftSummary,
+  AgencyRolePackageSummary,
   AgencyRolePromotionRecord,
   AgencyRoleReviewPayload,
   RoleConfigPermissions,
@@ -324,13 +333,6 @@ function toDraftSummary(entry: AgencyDraftRoleEntry): AgencyRoleDraftSummary {
   };
 }
 
-function findDraft(catalog: AgencyRepositoryCatalog, draftId: string): AgencyDraftRoleEntry {
-  const draft = catalog.entries.find((entry) => entry.id === draftId);
-  if (!draft) throw new Error(`Agency draft "${draftId}" was not found.`);
-  if (!draft.sourceRef) throw new Error(`Agency draft "${draftId}" has no source fingerprint.`);
-  return draft;
-}
-
 function toPromotionCandidate(payload: AgencyRoleReviewPayload): AgencyPromotionCandidate {
   return {
     contract: candidateToContract(payload.candidate),
@@ -350,8 +352,73 @@ function createReviewId(): string {
 }
 
 function publicRecord(record: StoredAgencyRolePromotionRecord): AgencyRolePromotionRecord {
-  const { sourceRoot: _sourceRoot, ...result } = record;
-  return result;
+  return structuredClone(record);
+}
+
+function toPackageSummary(value: AgencyRolePackage): AgencyRolePackageSummary {
+  return {
+    packageId: value.packageId,
+    draftId: value.draftId,
+    sourceRef: { ...value.sourceRef },
+    completeness: value.completeness,
+    importedAt: value.importedAt,
+    ...(value.supersedesPackageId ? { supersedesPackageId: value.supersedesPackageId } : {}),
+    ...(value.sourceDivision ? { sourceDivision: value.sourceDivision } : {}),
+    matchedRunbooks: [...value.matchedRunbooks],
+    draft: toDraftSummary(value.draft),
+  };
+}
+
+function isCanonicalRecord(
+  record: AnyStoredAgencyRolePromotionRecord,
+): record is StoredAgencyRolePromotionRecord {
+  return typeof record.packageId === 'string';
+}
+
+function reconstructedDraft(record: LegacyStoredAgencyRolePromotionRecord): AgencyDraftRoleEntry {
+  return {
+    id: record.draftId,
+    status: 'draft',
+    source: 'agency',
+    sourceRef: { ...record.sourceRef },
+    sourceAgentName: record.candidate.displayName,
+    roleName: record.candidate.name,
+    displayName: record.candidate.displayName,
+    ...(record.candidate.description ? { description: record.candidate.description } : {}),
+    capabilityHints: [],
+    toolHints: record.toolHintDispositions.map((entry) => entry.hint),
+    handoffHints: [
+      ...record.candidate.handoffTo,
+      ...record.candidate.handoffFrom,
+    ],
+    roleCandidate: candidateToContract(record.candidate),
+    validationIssues: [],
+  };
+}
+
+async function loadPromotionRecords(): Promise<StoredAgencyRolePromotionRecord[]> {
+  const store = await createRolePromotionStore();
+  const packageStore = createAgencyRolePackageStore();
+  const canonical: StoredAgencyRolePromotionRecord[] = [];
+  for (const record of await store.list()) {
+    if (isCanonicalRecord(record)) {
+      canonical.push(record);
+      continue;
+    }
+    const rolePackage = await packageStore.reconstructLegacy({
+      draft: reconstructedDraft(record),
+      sourceRef: record.sourceRef,
+      importedAt: record.reviewedAt,
+    });
+    const { sourceRoot: _sourceRoot, ...legacy } = record;
+    const migrated: StoredAgencyRolePromotionRecord = {
+      ...legacy,
+      packageId: rolePackage.packageId,
+    };
+    await store.put(migrated);
+    canonical.push(migrated);
+  }
+  return canonical;
 }
 
 function sanitizedMaterializationError(): string {
@@ -401,8 +468,7 @@ export function createRolesApi(): CompleteHostServiceRegistry['roles'] {
     agencyCatalog: async (payload) => {
       try {
         const catalog = validateRepository(payload.sourceRoot);
-        const store = await createRolePromotionStore();
-        const reviews = await reconcileRecords(await store.list());
+        const reviews = await reconcileRecords(await loadPromotionRecords());
         return {
           success: true,
           drafts: catalog.entries.map(toDraftSummary),
@@ -417,9 +483,34 @@ export function createRolesApi(): CompleteHostServiceRegistry['roles'] {
         };
       }
     },
+    listAgencyPackages: async () => {
+      const reviews = await reconcileRecords(await loadPromotionRecords());
+      const packages = await createAgencyRolePackageStore().list();
+      return {
+        success: true,
+        packages: packages.map(toPackageSummary),
+        reviews: reviews.map(publicRecord),
+      };
+    },
+    importAgencyPackage: async (payload) => {
+      validateRepository(payload.sourceRoot);
+      const rolePackage = await createAgencyRolePackageStore().importFromRepository(payload);
+      return {
+        success: true,
+        package: toPackageSummary(rolePackage),
+      };
+    },
+    refreshAgencyPackage: async (payload) => {
+      validateRepository(payload.sourceRoot);
+      const rolePackage = await createAgencyRolePackageStore().refreshFromRepository(payload);
+      return {
+        success: true,
+        package: toPackageSummary(rolePackage),
+      };
+    },
     previewAgencyPromotion: async (payload) => {
-      const catalog = validateRepository(payload.sourceRoot);
-      const draft = findDraft(catalog, payload.draftId);
+      const rolePackage = await createAgencyRolePackageStore().get(payload.packageId);
+      const draft = rolePackage.draft;
       const validation = validateAgencyPromotionCandidate(draft, toPromotionCandidate(payload));
       const role = contractToConfigRole(validation.contract);
       return {
@@ -433,16 +524,58 @@ export function createRolesApi(): CompleteHostServiceRegistry['roles'] {
         role: toRoleSummary(role),
       };
     },
+    previewAgencyMemoryProposals: async (payload) => {
+      const review = (await loadPromotionRecords()).find(
+        (entry) => entry.id === payload.reviewId,
+      );
+      if (!review) {
+        throw new Error(`Agency promotion review "${payload.reviewId}" was not found.`);
+      }
+      if (review.packageId !== payload.packageId) {
+        throw new Error('Agency package does not match the selected promotion review.');
+      }
+      if (
+        review.lifecycle !== 'active'
+        || review.materialization.status !== 'complete'
+        || !review.materializedRoleName
+      ) {
+        throw new Error('Agency memory proposals require an active, complete materialized role.');
+      }
+      if (!await hasEquivalentConfigRole(
+        review.materializedRoleName,
+        review.contractSha256,
+      )) {
+        throw new Error('Agency memory proposals require the exact materialized role contract.');
+      }
+
+      const rolePackage = await createAgencyRolePackageStore().get(payload.packageId);
+      if (rolePackage.completeness !== 'complete' || !rolePackage.sourcePath) {
+        throw new Error('Agency memory proposals require a complete archived source snapshot.');
+      }
+      const markdown = await readFile(rolePackage.sourcePath, 'utf8');
+      return {
+        success: true,
+        packageId: rolePackage.packageId,
+        reviewId: review.id,
+        materializedRoleName: review.materializedRoleName,
+        candidates: buildAgencyMemoryProposalCandidates({
+          packageId: rolePackage.packageId,
+          markdown,
+          materializedRoleName: review.materializedRoleName,
+          sourcePath: rolePackage.sourcePath,
+        }),
+      };
+    },
     reviewAgencyPromotion: async (payload) => {
-      const catalog = validateRepository(payload.sourceRoot);
-      const draft = findDraft(catalog, payload.draftId);
+      const rolePackage = await createAgencyRolePackageStore().get(payload.packageId);
+      const draft = rolePackage.draft;
       const candidate = toPromotionCandidate(payload);
       const contract = materializeAgencyRoleContract(draft, candidate);
       const now = new Date().toISOString();
       const record: StoredAgencyRolePromotionRecord = {
         id: createReviewId(),
+        packageId: rolePackage.packageId,
         draftId: draft.id,
-        sourceRoot: payload.sourceRoot,
         sourceRef: { ...draft.sourceRef! },
         lifecycle: 'reviewed',
         evidenceQualification: payload.evidenceQualification,
@@ -469,7 +602,7 @@ export function createRolesApi(): CompleteHostServiceRegistry['roles'] {
     },
     approveAgencyPromotion: async (payload) => {
       const store = await createRolePromotionStore();
-      const current = await store.get(payload.reviewId);
+      const current = (await loadPromotionRecords()).find((entry) => entry.id === payload.reviewId);
       if (!current) throw new Error(`Agency promotion review "${payload.reviewId}" was not found.`);
       if (current.lifecycle === 'active' && current.materialization.status === 'complete') {
         return {
@@ -478,13 +611,14 @@ export function createRolesApi(): CompleteHostServiceRegistry['roles'] {
           pendingRuntimeRefresh: true,
         };
       }
-      const catalog = validateRepository(current.sourceRoot);
-      const draft = findDraft(catalog, current.draftId);
-      if (draft.sourceRef!.sha256 !== current.sourceRef.sha256
-        || draft.sourceRef!.relativePath !== current.sourceRef.relativePath) {
+      const rolePackage = await createAgencyRolePackageStore().get(current.packageId);
+      const draft = rolePackage.draft;
+      if (draft.id !== current.draftId
+        || draft.sourceRef?.sha256 !== current.sourceRef.sha256
+        || draft.sourceRef?.relativePath !== current.sourceRef.relativePath) {
         return {
           success: false,
-          error: 'Agency source changed after review; review the current fingerprint again.',
+          error: 'Reviewed Agency package identity no longer matches the review.',
           record: publicRecord(current),
           pendingRuntimeRefresh: false,
         };
@@ -564,7 +698,7 @@ export function createRolesApi(): CompleteHostServiceRegistry['roles'] {
     },
     retireAgencyPromotion: async (payload) => {
       const store = await createRolePromotionStore();
-      const current = await store.get(payload.reviewId);
+      const current = (await loadPromotionRecords()).find((entry) => entry.id === payload.reviewId);
       if (!current) throw new Error(`Agency promotion review "${payload.reviewId}" was not found.`);
       if (
         current.lifecycle !== 'active'

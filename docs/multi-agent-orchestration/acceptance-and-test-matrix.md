@@ -241,6 +241,11 @@ Before marking P2 complete:
 
 | Acceptance item | Primary test | Evidence required |
 | --- | --- | --- |
+| Package identity excludes machine-local paths | `tests/unit/agency-role-package.test.ts` | Equal source content from different roots produces the same package digest |
+| Package writes and reads fail closed | `tests/unit/agency-role-package.test.ts`, `tests/unit/roles-api.test.ts` | Atomic write succeeds; tampering, missing files, and unsupported schema are rejected |
+| External checkout is not required after import | `tests/unit/roles-api.test.ts` | Review and approval continue after the selected source directory is removed |
+| Changed content creates a linked immutable version | `tests/unit/agency-role-package.test.ts`, `tests/e2e/agency-role-promotion.spec.ts` | New package id has `supersedesPackageId`; old package and review remain |
+| Legacy records migrate only after verified package persistence | `tests/unit/roles-api.test.ts` | Reconstructed package preserves audit and contract identity and removes old `sourceRoot` only on success |
 | Source fingerprint is stable for identical relative path and content | `tests/unit/agency-role-importer.test.ts` | Equal lowercase SHA-256 identity across repeated imports |
 | Unresolved tool hints reject review and approval | `tests/unit/agency-role-promotion.test.ts`, `tests/unit/roles-api.test.ts` | Every source hint has an explicit mapped or waived disposition |
 | Agency drafts remain permanently non-spawnable | `tests/unit/agency-role-importer.test.ts`, `tests/unit/role-contract-drift.test.ts` | `canSpawnAgencyDraft()` remains literal `false`; draft is absent from runtime registry |
@@ -248,7 +253,12 @@ Before marking P2 complete:
 | Interrupted config writes reconcile by exact digest | `tests/unit/roles-api.test.ts` | Pending/failed record becomes active only for matching role name and contract digest |
 | Retirement guards exact digest identity | `tests/unit/roles-api.test.ts` | Matching role is removed; same-name replacement is preserved; audit record remains |
 | Review UI has all four locales | `tests/unit/agency-role-promotion-panel.test.tsx`, `pnpm i18n:lint` | Display keys exist for `en`, `zh`, `ja`, and `ru` |
-| Electron workflow covers review through retirement | `tests/e2e/agency-role-promotion.spec.ts` | Select source, map/waive hints, attach evidence, review, approve, refresh notice, and retire |
+| Electron workflow covers import through package update | `tests/e2e/agency-role-promotion.spec.ts` | Browse source, import one role, review by `packageId`, approve, retire, and create a linked update |
+| Memory extraction uses an AST whitelist | `tests/unit/agency-role-memory-import.test.ts` | Recognized governance sections are deterministic and bounded; persona, tools, commands, code, mission, and templates are absent |
+| Memory candidates require exact active materialization | `tests/unit/roles-api.test.ts` | Reviewed, retired, mismatched, replaced, reconstructed, or source-less packages fail closed |
+| Proposal defaults force governed review | `tests/unit/roles-api.test.ts`, `tests/e2e/agency-role-promotion.spec.ts` | Role scope, exact owner, system source, long-term durability, normal sensitivity, and confidence `0.6` reach `memory.previewProposal` and `memory.propose` |
+| Memory-disabled state preserves package controls | `tests/unit/agency-role-promotion-panel.test.tsx` | Extraction and submission are disabled while local browse, update, review, approval, retry, and retirement remain available |
+| Existing gatekeeper owns duplicates and conflicts | `tests/unit/role-orchestration-methods.test.ts` | Duplicate active content returns `needs_review` with conflicts and does not write a second active card |
 
 Lifecycle and evidence qualification are reporting and governance axes only.
 Neither axis changes runtime permissions, tools, model access, memory access,

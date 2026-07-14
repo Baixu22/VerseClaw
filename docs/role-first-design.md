@@ -637,18 +637,38 @@ Observability 页面展示 role-first trace,12 种 span:
 ## Agency Role Promotion Control Plane
 
 Agency Agents repositories are source catalogs, not runtime authorities. A
-selected Markdown draft remains immutable and permanently non-runnable.
-Promotion records the exact source path and SHA-256 fingerprint, requires an
-operator to map or waive every tool hint, and materializes a separate,
-validated `RoleContract` in `openclaw.json` under `agents.roles`.
+selected Markdown draft is imported as one immutable, content-addressed package
+under `<userData>/agency-role-packages/v1/<packageSha256>/`. The package owns
+its normalized draft, source snapshot, license snapshot, manifest, and file
+digests. Absolute source paths and import timestamps do not affect identity.
+The external checkout is needed only for browsing, initial import, or an
+explicit update check.
 
 ```mermaid
 flowchart LR
-  A["Agency source draft (never runnable)"] --> B["Reviewed promotion record"]
-  B --> C["Approved decision, materialization pending"]
-  C --> D["Config RoleContract active"]
-  D --> E["Retired; config role removed"]
+  A["External Agency draft (browse only)"] --> B["Immutable local role package"]
+  B --> C["Reviewed promotion record"]
+  C --> D["Approved decision, materialization pending"]
+  D --> E["Config RoleContract active"]
+  E --> F["Retired; config role removed"]
+  E --> G["AST-filtered memory candidates"]
+  G --> H["Memory preview and proposal gatekeeper"]
+  H --> I["Human review queue"]
 ```
+
+Package writes use a verified temporary directory and atomic rename. Every
+read rechecks package identity and file hashes. Identical imports are
+idempotent; changed source creates a new package linked by
+`supersedesPackageId` and never changes an old review or active role. Approval,
+retry, and retirement read only the local package, promotion record, and exact
+contract digest, so moving or deleting the external checkout does not affect
+them.
+
+Legacy promotion records are migrated lazily. A verified
+`legacy-reconstructed` package preserves the candidate, tool dispositions,
+source fingerprint, audit fields, and contract digest. Because its original
+Markdown cannot be recovered, the UI labels that limitation. The old record is
+rewritten only after the reconstructed package has been stored and verified.
 
 Evidence qualification is an independent axis:
 `unverified -> scenario-verified -> release-qualified`. Neither lifecycle
@@ -662,15 +682,28 @@ match. Retirement likewise removes only the exact materialized digest, so a
 later same-name replacement is preserved. Review and retirement records
 remain available for audit.
 
-The following are separate future projects and are not implemented by the
-Agency promotion control plane:
+Agency Markdown, runbooks, tools, licenses, and lifecycle evidence remain
+review material and never grant runtime authority. For an exact active,
+completely materialized role backed by a complete package, the separately
+gated memory-import path parses `source.md` with unified/remark and emits only
+recognized constraint, procedure, risk, and handoff sections. Identity,
+personality, experience, tools, commands, code, mission, templates, and
+unknown sections are excluded.
+
+Generated proposals are role-scoped, system-sourced, long-term, normal
+sensitivity, and confidence `0.6`. The renderer first calls the existing
+`memory.previewProposal` gatekeeper and then explicitly submits selected items
+through `memory.propose`. It never writes an active card directly; duplicate,
+conflict, evidence, and human-review decisions remain owned by Role Memory.
+Disabling Role Memory disables only proposal generation and submission.
+
+The following are separate projects and are not implemented by this phase:
 
 1. DCS production producer coverage and shared working-state integration using existing `ContextBlock`/`BlockStore` plus Typed Blackboard.
-2. Role Memory effect wiring through the current proposal, gatekeeper, and history path.
-3. Background consolidation using current runtime memory ownership, explicit enablement, and budgets.
-4. Tool sequencing and approval rules integrated into the existing tool loop and descriptors.
-5. Consumption of `RoleContract.model.fallback` in `buildRoleSpawnParams()`.
-6. Provider reliability and error normalization.
+2. Background consolidation using current runtime memory ownership, explicit enablement, and budgets.
+3. Tool sequencing and approval rules integrated into the existing tool loop and descriptors.
+4. Consumption of `RoleContract.model.fallback` in `buildRoleSpawnParams()`.
+5. Provider reliability and error normalization.
 
 Each track requires its own harness task because it has a distinct authority
 owner and rollback surface.

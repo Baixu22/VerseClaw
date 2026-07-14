@@ -1,21 +1,31 @@
 import type { AgencyRolePromotionRecord } from '@shared/host-api/contract';
 
 type PromotionStoreDocument = {
-  records: StoredAgencyRolePromotionRecord[];
+  records: AnyStoredAgencyRolePromotionRecord[];
 };
 
 export type StoredAgencyRolePromotionRecord = AgencyRolePromotionRecord & {
-  sourceRoot: string;
+  sourceRoot?: never;
 };
+export type LegacyStoredAgencyRolePromotionRecord = Omit<AgencyRolePromotionRecord, 'packageId'> & {
+  sourceRoot: string;
+  packageId?: never;
+};
+export type AnyStoredAgencyRolePromotionRecord =
+  | StoredAgencyRolePromotionRecord
+  | LegacyStoredAgencyRolePromotionRecord;
 
 export type RolePromotionStore = {
-  list(): Promise<StoredAgencyRolePromotionRecord[]>;
-  get(id: string): Promise<StoredAgencyRolePromotionRecord | undefined>;
-  put(record: StoredAgencyRolePromotionRecord): Promise<void>;
+  list(): Promise<AnyStoredAgencyRolePromotionRecord[]>;
+  get(id: string): Promise<AnyStoredAgencyRolePromotionRecord | undefined>;
+  put(record: AnyStoredAgencyRolePromotionRecord): Promise<void>;
 };
 
 const MAX_RECORDS = 2_000;
-let storeInstance: { get(key: 'records'): unknown; set(key: 'records', value: StoredAgencyRolePromotionRecord[]): void } | null = null;
+let storeInstance: {
+  get(key: 'records'): unknown;
+  set(key: 'records', value: AnyStoredAgencyRolePromotionRecord[]): void;
+} | null = null;
 let writeQueue: Promise<void> = Promise.resolve();
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -26,7 +36,7 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((entry) => typeof entry === 'string');
 }
 
-function normalizeRecord(value: unknown): StoredAgencyRolePromotionRecord | undefined {
+function normalizeRecord(value: unknown): AnyStoredAgencyRolePromotionRecord | undefined {
   if (!isRecord(value) || !isRecord(value.sourceRef) || !isRecord(value.candidate)) return undefined;
   if (!isRecord(value.materialization) || !Array.isArray(value.toolHintDispositions)) return undefined;
   const lifecycle = value.lifecycle;
@@ -39,7 +49,6 @@ function normalizeRecord(value: unknown): StoredAgencyRolePromotionRecord | unde
   const requiredStrings = [
     value.id,
     value.draftId,
-    value.sourceRoot,
     value.sourceRef.relativePath,
     value.sourceRef.sha256,
     value.reviewer,
@@ -47,10 +56,12 @@ function normalizeRecord(value: unknown): StoredAgencyRolePromotionRecord | unde
     value.comment,
     value.contractSha256,
   ];
+  if (typeof value.packageId !== 'string' && typeof value.sourceRoot !== 'string') return undefined;
+  if (typeof value.packageId === 'string' && !/^[a-f0-9]{64}$/.test(value.packageId)) return undefined;
   if (requiredStrings.some((entry) => typeof entry !== 'string' || !entry)) return undefined;
   if (!isStringArray(value.evidenceRefs)) return undefined;
 
-  return structuredClone(value) as StoredAgencyRolePromotionRecord;
+  return structuredClone(value) as AnyStoredAgencyRolePromotionRecord;
 }
 
 async function getStore() {
@@ -70,7 +81,7 @@ async function getStore() {
   return storeInstance;
 }
 
-async function readRecords(): Promise<StoredAgencyRolePromotionRecord[]> {
+async function readRecords(): Promise<AnyStoredAgencyRolePromotionRecord[]> {
   try {
     const store = await getStore();
     const raw = store.get('records');
@@ -83,7 +94,7 @@ async function readRecords(): Promise<StoredAgencyRolePromotionRecord[]> {
   }
 }
 
-async function writeRecords(records: StoredAgencyRolePromotionRecord[]): Promise<void> {
+async function writeRecords(records: AnyStoredAgencyRolePromotionRecord[]): Promise<void> {
   const store = await getStore();
   store.set('records', records.slice(0, MAX_RECORDS));
 }

@@ -1,11 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  AlertTriangle,
   Archive,
+  BookOpen,
   CheckCircle2,
+  Download,
   FolderOpen,
+  Library,
   Loader2,
   RefreshCw,
   Search,
+  Send,
   ShieldCheck,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -19,9 +24,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { hostApi } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
 import type {
+  AgencyMemoryProposalCandidate,
   AgencyRoleCandidatePayload,
   AgencyRoleDraftSummary,
   AgencyRoleEvidenceQualification,
+  AgencyRolePackageSummary,
   AgencyRolePromotionRecord,
   AgencyRoleReviewPayload,
   AgencyRoleToolHintDisposition,
@@ -49,6 +56,8 @@ type ConfirmAction = 'approve' | 'retire' | null;
 
 export type AgencyRolePromotionPanelProps = {
   onRoleMaterialized: () => void;
+  roleMemoryEnabled?: boolean;
+  onMemoryProposed?: () => void;
 };
 
 function splitList(value: string): string[] {
@@ -133,12 +142,17 @@ function lifecycleTone(lifecycle: AgencyRolePromotionRecord['lifecycle']): strin
 
 export function AgencyRolePromotionPanel({
   onRoleMaterialized,
+  roleMemoryEnabled = true,
+  onMemoryProposed,
 }: AgencyRolePromotionPanelProps) {
   const { t } = useTranslation('agents');
+  const translateRef = useRef(t);
+  translateRef.current = t;
   const [sourceRoot, setSourceRoot] = useState('');
   const [drafts, setDrafts] = useState<AgencyRoleDraftSummary[]>([]);
+  const [packages, setPackages] = useState<AgencyRolePackageSummary[]>([]);
   const [reviews, setReviews] = useState<AgencyRolePromotionRecord[]>([]);
-  const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
+  const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
   const [candidate, setCandidate] = useState<CandidateDraft | null>(null);
   const [hints, setHints] = useState<Record<string, HintDraft>>({});
   const [qualification, setQualification] =
@@ -151,11 +165,19 @@ export function AgencyRolePromotionPanel({
   const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState(false);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
+  const [memoryCandidates, setMemoryCandidates] = useState<AgencyMemoryProposalCandidate[]>([]);
+  const [selectedMemorySections, setSelectedMemorySections] = useState<Set<string>>(new Set());
+  const [memoryPreviews, setMemoryPreviews] = useState<Record<
+    string,
+    { action: string; conflicts: number }
+  >>({});
 
-  const selectedDraft = drafts.find((draft) => draft.id === selectedDraftId) ?? null;
+  const selectedPackage =
+    packages.find((entry) => entry.packageId === selectedPackageId) ?? null;
+  const selectedDraft = selectedPackage?.draft ?? null;
   const selectedReview = useMemo(
-    () => reviews.find((review) => review.draftId === selectedDraftId) ?? null,
-    [reviews, selectedDraftId],
+    () => reviews.find((review) => review.packageId === selectedPackageId) ?? null,
+    [reviews, selectedPackageId],
   );
   const filteredDrafts = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -166,6 +188,12 @@ export function AgencyRolePromotionPanel({
       draft.roleName,
     ].some((value) => value?.toLowerCase().includes(query)));
   }, [drafts, search]);
+  const newerPackageIds = useMemo(
+    () => new Set(packages.flatMap((entry) => (
+      entry.supersedesPackageId ? [entry.supersedesPackageId] : []
+    ))),
+    [packages],
+  );
 
   const hintsComplete = selectedDraft?.toolHints.every((hint) => {
     const value = hints[hint];
@@ -187,6 +215,41 @@ export function AgencyRolePromotionPanel({
     && candidateComplete
     && !busy,
   );
+  const selectedMemoryCandidates = memoryCandidates.filter(
+    (entry) => selectedMemorySections.has(entry.sectionId),
+  );
+  const canExtractMemory = Boolean(
+    roleMemoryEnabled
+    && selectedPackage?.completeness === 'complete'
+    && selectedReview?.lifecycle === 'active'
+    && selectedReview.materialization.status === 'complete'
+    && !busy,
+  );
+  const canSubmitMemory = selectedMemoryCandidates.length > 0
+    && selectedMemoryCandidates.every((entry) => memoryPreviews[entry.sectionId])
+    && !busy;
+
+  const loadPackages = useCallback(async () => {
+    setLoading(true);
+    try {
+      const result = await hostApi.roles.listAgencyPackages();
+      if (!result.success) {
+        throw new Error(
+          result.error ?? translateRef.current('roles.agencyPromotion.libraryError'),
+        );
+      }
+      setPackages(result.packages);
+      setReviews(result.reviews);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadPackages();
+  }, [loadPackages]);
 
   const loadCatalog = async (root: string) => {
     setLoading(true);
@@ -196,7 +259,6 @@ export function AgencyRolePromotionPanel({
         throw new Error(result.error ?? t('roles.agencyPromotion.catalogError'));
       }
       setDrafts(result.drafts);
-      setReviews(result.reviews);
       setIssues([]);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : String(error));
@@ -213,14 +275,69 @@ export function AgencyRolePromotionPanel({
     const root = result.filePaths[0];
     if (result.canceled || !root) return;
     setSourceRoot(root);
-    setSelectedDraftId(null);
-    setCandidate(null);
     await loadCatalog(root);
   };
 
-  const selectDraft = (draft: AgencyRoleDraftSummary) => {
-    const review = reviews.find((entry) => entry.draftId === draft.id);
-    setSelectedDraftId(draft.id);
+  const importDraft = async (draft: AgencyRoleDraftSummary) => {
+    if (!sourceRoot) return;
+    setBusy(true);
+    try {
+      const result = await hostApi.roles.importAgencyPackage({
+        sourceRoot,
+        draftId: draft.id,
+      });
+      if (!result.success) {
+        throw new Error(result.error ?? t('roles.agencyPromotion.importError'));
+      }
+      setPackages((current) => [
+        result.package,
+        ...current.filter((entry) => entry.packageId !== result.package.packageId),
+      ]);
+      selectPackage(result.package);
+      toast.success(t('roles.agencyPromotion.imported'));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const refreshPackage = async (rolePackage: AgencyRolePackageSummary) => {
+    const selection = await hostApi.dialog.open({
+      title: t('roles.agencyPromotion.selectUpdateSource'),
+      properties: ['openDirectory'],
+    });
+    const root = selection.filePaths[0];
+    if (selection.canceled || !root) return;
+    setBusy(true);
+    try {
+      const result = await hostApi.roles.refreshAgencyPackage({
+        packageId: rolePackage.packageId,
+        sourceRoot: root,
+      });
+      if (!result.success) {
+        throw new Error(result.error ?? t('roles.agencyPromotion.updateError'));
+      }
+      setPackages((current) => [
+        result.package,
+        ...current.filter((entry) => entry.packageId !== result.package.packageId),
+      ]);
+      if (result.package.packageId !== rolePackage.packageId) {
+        toast.success(t('roles.agencyPromotion.updateAvailable'));
+      } else {
+        toast.message(t('roles.agencyPromotion.upToDate'));
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const selectPackage = (rolePackage: AgencyRolePackageSummary) => {
+    const draft = rolePackage.draft;
+    const review = reviews.find((entry) => entry.packageId === rolePackage.packageId);
+    setSelectedPackageId(rolePackage.packageId);
     setCandidate(candidateDraft(review?.candidate ?? draft.roleCandidate));
     setHints(review ? recordHintDrafts(review) : hintDrafts(draft));
     setQualification(review?.evidenceQualification ?? 'unverified');
@@ -228,6 +345,9 @@ export function AgencyRolePromotionPanel({
     setReviewer(review?.reviewer ?? 'operator');
     setComment(review?.comment ?? '');
     setIssues([]);
+    setMemoryCandidates([]);
+    setSelectedMemorySections(new Set());
+    setMemoryPreviews({});
   };
 
   const updateCandidate = (patch: Partial<CandidateDraft>) => {
@@ -248,8 +368,7 @@ export function AgencyRolePromotionPanel({
       throw new Error(t('roles.agencyPromotion.selectDraftFirst'));
     }
     return {
-      sourceRoot,
-      draftId: selectedDraft.id,
+      packageId: selectedPackage!.packageId,
       reviewer: reviewer.trim(),
       candidate: candidatePayload(candidate),
       toolHintDispositions: dispositionPayload(hints),
@@ -330,6 +449,73 @@ export function AgencyRolePromotionPanel({
     }
   };
 
+  const extractMemoryCandidates = async () => {
+    if (!selectedPackage || !selectedReview || !canExtractMemory) return;
+    setBusy(true);
+    try {
+      const result = await hostApi.roles.previewAgencyMemoryProposals({
+        packageId: selectedPackage.packageId,
+        reviewId: selectedReview.id,
+      });
+      if (!result.success) {
+        throw new Error(result.error ?? t('roles.agencyPromotion.memory.extractError'));
+      }
+      setMemoryCandidates(result.candidates);
+      setSelectedMemorySections(new Set(result.candidates.map((entry) => entry.sectionId)));
+      setMemoryPreviews({});
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const previewMemoryCandidates = async () => {
+    if (selectedMemoryCandidates.length === 0 || !roleMemoryEnabled) return;
+    setBusy(true);
+    try {
+      const entries = await Promise.all(selectedMemoryCandidates.map(async (candidate) => {
+        const result = await hostApi.memory.previewProposal(candidate.proposal);
+        if (!result.success) {
+          throw new Error(result.error ?? t('roles.agencyPromotion.memory.previewError'));
+        }
+        return [
+          candidate.sectionId,
+          {
+            action: result.preview.decision.action,
+            conflicts: result.preview.conflicts.length,
+          },
+        ] as const;
+      }));
+      setMemoryPreviews(Object.fromEntries(entries));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitMemoryCandidates = async () => {
+    if (!canSubmitMemory || !roleMemoryEnabled) return;
+    setBusy(true);
+    try {
+      for (const candidate of selectedMemoryCandidates) {
+        const result = await hostApi.memory.propose(candidate.proposal);
+        if (!result.success) {
+          throw new Error(result.error ?? t('roles.agencyPromotion.memory.submitError'));
+        }
+      }
+      toast.success(t('roles.agencyPromotion.memory.submitted', {
+        count: selectedMemoryCandidates.length,
+      }));
+      onMemoryProposed?.();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <section
       className="space-y-4 border-t border-border/60 pt-4"
@@ -380,64 +566,165 @@ export function AgencyRolePromotionPanel({
       )}
 
       {sourceRoot && (
-        <div className="grid min-h-[28rem] gap-4 lg:grid-cols-[minmax(14rem,0.8fr)_minmax(0,2fr)]">
-          <div className="min-w-0 space-y-2 border-b border-border/60 pb-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-4">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
-              <Input
-                data-testid="agency-catalog-search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder={t('roles.agencyPromotion.search')}
-                className="h-9 pl-8 text-xs"
-              />
-            </div>
-            <div data-testid="agency-draft-list" className="max-h-[34rem] space-y-1 overflow-y-auto">
-              {filteredDrafts.map((draft) => (
-                <button
-                  key={draft.id}
-                  type="button"
-                  onClick={() => selectDraft(draft)}
-                  className={cn(
-                    'w-full rounded-md border border-transparent px-2.5 py-2 text-left',
-                    selectedDraftId === draft.id
-                      ? 'bg-black/5 dark:bg-white/10'
-                      : 'hover:bg-black/5 dark:hover:bg-white/10',
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="min-w-0 truncate text-xs font-medium">{draft.displayName}</span>
+        <div className="space-y-2 border-b border-border/60 pb-4">
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="text-xs font-medium">
+              {t('roles.agencyPromotion.externalDirectory')}
+            </h4>
+            <Button
+              variant="ghost"
+              size="icon"
+              title={t('roles.agencyPromotion.refresh')}
+              onClick={() => void loadCatalog(sourceRoot)}
+              disabled={loading}
+            >
+              <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+            </Button>
+          </div>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              data-testid="agency-catalog-search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder={t('roles.agencyPromotion.search')}
+              className="h-9 pl-8 text-xs"
+            />
+          </div>
+          <div data-testid="agency-draft-list" className="grid gap-2 sm:grid-cols-2">
+            {filteredDrafts.map((draft) => (
+              <div
+                key={draft.id}
+                className="flex min-w-0 items-center justify-between gap-2 rounded-md border border-border/60 bg-surface-input px-3 py-2"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="min-w-0 flex-1 truncate text-xs font-medium">
+                      {draft.displayName}
+                    </p>
                     <Badge
-                      data-testid="agency-draft-status"
+                      data-testid="agency-external-draft-status"
                       variant="outline"
                       className="shrink-0 rounded-full text-2xs"
                     >
                       {t('roles.agencyPromotion.draft')}
                     </Badge>
                   </div>
-                  <p className="mt-1 truncate text-2xs text-muted-foreground">
+                  <p className="truncate text-2xs text-muted-foreground">
                     {draft.sourceDivision ?? draft.roleName}
                   </p>
+                </div>
+                <Button
+                  data-testid={`agency-import-${draft.id}`}
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => void importDraft(draft)}
+                >
+                  <Download className="mr-1.5 h-3.5 w-3.5" />
+                  {t('roles.agencyPromotion.import')}
+                </Button>
+              </div>
+            ))}
+            {!loading && filteredDrafts.length === 0 && (
+              <p className="py-3 text-xs text-muted-foreground">
+                {t('roles.agencyPromotion.noDrafts')}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="grid min-h-[28rem] gap-4 lg:grid-cols-[minmax(14rem,0.8fr)_minmax(0,2fr)]">
+        <div
+          data-testid="agency-local-library"
+          className="min-w-0 space-y-2 border-b border-border/60 pb-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-4"
+        >
+          <div className="flex items-center gap-2">
+            <Library className="h-4 w-4 text-muted-foreground" />
+            <h4 className="text-xs font-medium">
+              {t('roles.agencyPromotion.localLibrary')}
+            </h4>
+          </div>
+          <div className="max-h-[34rem] space-y-1 overflow-y-auto">
+            {packages.map((rolePackage) => (
+              <div
+                key={rolePackage.packageId}
+                className={cn(
+                  'flex items-start gap-1 rounded-md border border-transparent',
+                  selectedPackageId === rolePackage.packageId
+                    ? 'bg-black/5 dark:bg-white/10'
+                    : 'hover:bg-black/5 dark:hover:bg-white/10',
+                )}
+              >
+                <button
+                  data-testid={`agency-package-${rolePackage.packageId}`}
+                  type="button"
+                  onClick={() => selectPackage(rolePackage)}
+                  className="min-w-0 flex-1 px-2.5 py-2 text-left"
+                >
+                  <span className="block truncate text-xs font-medium">
+                    {rolePackage.draft.displayName}
+                  </span>
+                  <span className="mt-1 flex flex-wrap gap-1">
+                    <Badge variant="outline" className="rounded-full text-2xs">
+                      {t(`roles.agencyPromotion.completeness.${rolePackage.completeness}`)}
+                    </Badge>
+                    {newerPackageIds.has(rolePackage.packageId) && (
+                      <Badge variant="secondary" className="rounded-full text-2xs">
+                        {t('roles.agencyPromotion.newerVersion')}
+                      </Badge>
+                    )}
+                  </span>
                 </button>
-              ))}
-              {!loading && filteredDrafts.length === 0 && (
-                <p className="px-2 py-4 text-center text-xs text-muted-foreground">
-                  {t('roles.agencyPromotion.noDrafts')}
+                {rolePackage.completeness === 'complete' && (
+                  <Button
+                    data-testid={`agency-package-refresh-${rolePackage.packageId}`}
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    className="mt-1 h-8 w-8 shrink-0"
+                    title={t('roles.agencyPromotion.checkUpdate')}
+                    disabled={busy}
+                    onClick={() => void refreshPackage(rolePackage)}
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                  </Button>
+                )}
+              </div>
+            ))}
+            {!loading && packages.length === 0 && (
+              <p className="px-2 py-4 text-center text-xs text-muted-foreground">
+                {t('roles.agencyPromotion.noLocalPackages')}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          {!selectedDraft || !candidate ? (
+            <div className="flex min-h-52 items-center justify-center rounded-md border border-dashed border-border/70 bg-surface-input p-6 text-center text-xs text-muted-foreground">
+              {t('roles.agencyPromotion.selectPackage')}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {selectedPackage?.completeness === 'legacy-reconstructed' && (
+                <p
+                  data-testid="agency-package-reconstructed-warning"
+                  className="flex items-start gap-2 rounded-md border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400"
+                >
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                  {t('roles.agencyPromotion.reconstructedWarning')}
                 </p>
               )}
-            </div>
-          </div>
-
-          <div className="min-w-0">
-            {!selectedDraft || !candidate ? (
-              <div className="flex min-h-52 items-center justify-center rounded-md border border-dashed border-border/70 bg-surface-input p-6 text-center text-xs text-muted-foreground">
-                {t('roles.agencyPromotion.selectDraft')}
-              </div>
-            ) : (
-              <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm font-medium">{selectedDraft.displayName}</span>
-                  <Badge variant="outline" className="rounded-full text-2xs">
+                  <Badge
+                    data-testid="agency-draft-status"
+                    variant="outline"
+                    className="rounded-full text-2xs"
+                  >
                     {t('roles.agencyPromotion.draft')}
                   </Badge>
                   {selectedReview && (
@@ -456,7 +743,7 @@ export function AgencyRolePromotionPanel({
                   )}
                 </div>
                 <p className="break-all font-mono text-2xs text-muted-foreground">
-                  {selectedDraft.sourceRef.relativePath} · {selectedDraft.sourceRef.sha256}
+                  {selectedDraft.sourceRef.relativePath} / {selectedDraft.sourceRef.sha256}
                 </p>
 
                 <div className="grid gap-3 md:grid-cols-2">
@@ -766,11 +1053,131 @@ export function AgencyRolePromotionPanel({
                     </Button>
                   )}
                 </div>
+
+                {selectedReview?.lifecycle === 'active' && (
+                  <div className="space-y-3 border-t border-border/60 pt-4">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <BookOpen className="h-4 w-4 text-primary" />
+                          <h4 className="text-xs font-medium">
+                            {t('roles.agencyPromotion.memory.title')}
+                          </h4>
+                        </div>
+                        <p className="text-2xs text-muted-foreground">
+                          {t('roles.agencyPromotion.memory.description')}
+                        </p>
+                      </div>
+                      <Button
+                        data-testid="agency-memory-extract"
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={!canExtractMemory}
+                        onClick={() => void extractMemoryCandidates()}
+                      >
+                        {busy
+                          ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                          : <Search className="mr-1.5 h-4 w-4" />}
+                        {t('roles.agencyPromotion.memory.extract')}
+                      </Button>
+                    </div>
+
+                    {!roleMemoryEnabled && (
+                      <p
+                        data-testid="agency-memory-disabled"
+                        className="rounded-md border border-zinc-500/20 bg-zinc-500/10 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-400"
+                      >
+                        {t('roles.agencyPromotion.memory.disabled')}
+                      </p>
+                    )}
+
+                    {memoryCandidates.length > 0 && (
+                      <>
+                        <div className="space-y-2">
+                          {memoryCandidates.map((memoryCandidate) => {
+                            const preview = memoryPreviews[memoryCandidate.sectionId];
+                            return (
+                              <label
+                                key={memoryCandidate.sectionId}
+                                data-testid={`agency-memory-candidate-${memoryCandidate.sectionId}`}
+                                className="flex items-start gap-3 rounded-md border border-border/60 bg-surface-input p-3"
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+                                  checked={selectedMemorySections.has(memoryCandidate.sectionId)}
+                                  onChange={(event) => {
+                                    const checked = event.target.checked;
+                                    setSelectedMemorySections((current) => {
+                                      const next = new Set(current);
+                                      if (checked) next.add(memoryCandidate.sectionId);
+                                      else next.delete(memoryCandidate.sectionId);
+                                      return next;
+                                    });
+                                    setMemoryPreviews({});
+                                  }}
+                                />
+                                <span className="min-w-0 flex-1 space-y-1">
+                                  <span className="flex flex-wrap items-center gap-1.5">
+                                    <Badge variant="outline" className="rounded-full text-2xs">
+                                      {t(`roles.agencyPromotion.memory.type.${memoryCandidate.type}`)}
+                                    </Badge>
+                                    <span className="text-2xs text-muted-foreground">
+                                      {memoryCandidate.headingPath.join(' / ')}
+                                    </span>
+                                    {preview && (
+                                      <Badge variant="secondary" className="rounded-full text-2xs">
+                                        {preview.action === 'needs_review'
+                                          ? t('roles.agencyPromotion.memory.needsReview')
+                                          : preview.action}
+                                        {preview.conflicts > 0
+                                          ? ` · ${t('roles.agencyPromotion.memory.conflicts', {
+                                            count: preview.conflicts,
+                                          })}`
+                                          : ''}
+                                      </Badge>
+                                    )}
+                                  </span>
+                                  <span className="block whitespace-pre-wrap text-xs">
+                                    {memoryCandidate.content}
+                                  </span>
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                        <div className="flex flex-wrap justify-end gap-2">
+                          <Button
+                            data-testid="agency-memory-preview"
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={selectedMemoryCandidates.length === 0 || busy}
+                            onClick={() => void previewMemoryCandidates()}
+                          >
+                            <ShieldCheck className="mr-1.5 h-4 w-4" />
+                            {t('roles.agencyPromotion.memory.preview')}
+                          </Button>
+                          <Button
+                            data-testid="agency-memory-submit"
+                            type="button"
+                            size="sm"
+                            disabled={!canSubmitMemory}
+                            onClick={() => void submitMemoryCandidates()}
+                          >
+                            <Send className="mr-1.5 h-4 w-4" />
+                            {t('roles.agencyPromotion.memory.submit')}
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>
         </div>
-      )}
 
       <ConfirmDialog
         open={confirmAction === 'approve'}

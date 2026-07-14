@@ -1954,7 +1954,11 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
             )}
           </div>
 
-          <AgencyRolePromotionPanel onRoleMaterialized={() => void loadRoles()} />
+          <AgencyRolePromotionPanel
+            onRoleMaterialized={() => void loadRoles()}
+            roleMemoryEnabled={roleMemoryEnabled}
+            onMemoryProposed={() => void loadRoleMemory()}
+          />
 
           <TooltipProvider>
             <div className="space-y-4 border-t border-border/60 pt-4" data-testid="role-memory-panel">
