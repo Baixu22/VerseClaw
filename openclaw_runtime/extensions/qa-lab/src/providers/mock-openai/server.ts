@@ -9,7 +9,12 @@ import { closeQaHttpServer } from "../../bus-server.js";
 type ResponsesInputItem = Record<string, unknown>;
 
 type StreamEvent =
-  | { type: "response.output_item.added"; item: Record<string, unknown> }
+  | {
+      type: "response.output_item.added";
+      response_id?: string;
+      output_index?: number;
+      item: Record<string, unknown>;
+    }
   | {
       type: "response.output_text.delta";
       item_id: string;
@@ -24,8 +29,34 @@ type StreamEvent =
       content_index: number;
       text: string;
     }
-  | { type: "response.function_call_arguments.delta"; delta: string }
-  | { type: "response.output_item.done"; item: Record<string, unknown> }
+  | {
+      type: "response.content_part.added";
+      item_id?: string;
+      output_index?: number;
+      content_index?: number;
+      part: Record<string, unknown>;
+    }
+  | {
+      type: "response.function_call_arguments.delta";
+      response_id?: string;
+      item_id?: string;
+      output_index?: number;
+      delta: string;
+    }
+  | {
+      type: "response.function_call_arguments.done";
+      response_id?: string;
+      item_id?: string;
+      output_index?: number;
+      name?: string;
+      arguments?: string;
+    }
+  | {
+      type: "response.output_item.done";
+      response_id?: string;
+      output_index?: number;
+      item: Record<string, unknown>;
+    }
   | {
       type: "response.completed";
       response: {
@@ -187,10 +218,16 @@ const QA_GROUP_AUDIO_TRANSCRIPTION_TEXT =
   "openclawqa reply with only this exact marker after group audio preflight: WHATSAPP_QA_GROUP_AUDIO_TRANSCRIPT_OK";
 const QA_GROUP_AUDIO_MIN_MULTIPART_BODY_CHARS = 48_000;
 const QA_MCP_CODE_MODE_API_FILE_PROMPT_RE = /mcp code mode api file qa check/i;
+const QA_DCS_W5_OFF_PROMPT_RE = /DCS_W5_OFF: return the fixed off-path marker without tools/i;
+const QA_DCS_W5_MAIN_PROMPT_RE = /DCS_W5_MAIN: execute the scripted production wiring proof/i;
+const QA_DCS_W5_READ_ONLY_PROMPT_RE = /DCS_W5_READ_ONLY: read notes without modifying context/i;
 
 type MockScenarioState = {
   subagentFanoutPhase: number;
   subagentHandoffSpawned: boolean;
+  dcsW5MainActive: boolean;
+  dcsW5MainPhase: number;
+  dcsW5ReadOnlyPhase: number;
 };
 
 function sourceDiscoveryReadPathForProvider(providerVariant: MockOpenAiProviderVariant) {
@@ -775,6 +812,8 @@ function buildToolCallEventsWithArgs(name: string, args: Record<string, unknown>
   return [
     {
       type: "response.output_item.added",
+      response_id: call.responseId,
+      output_index: 0,
       item: {
         type: "function_call",
         id: call.itemId,
@@ -783,9 +822,25 @@ function buildToolCallEventsWithArgs(name: string, args: Record<string, unknown>
         arguments: "",
       },
     },
-    { type: "response.function_call_arguments.delta", delta: call.serialized },
+    {
+      type: "response.function_call_arguments.delta",
+      response_id: call.responseId,
+      item_id: call.itemId,
+      output_index: 0,
+      delta: call.serialized,
+    },
+    {
+      type: "response.function_call_arguments.done",
+      response_id: call.responseId,
+      item_id: call.itemId,
+      output_index: 0,
+      name,
+      arguments: call.serialized,
+    },
     {
       type: "response.output_item.done",
+      response_id: call.responseId,
+      output_index: 0,
       item: call.item,
     },
     {
@@ -1665,7 +1720,17 @@ function appendAssistantMessageEvents(events: StreamEvent[], spec: MockAssistant
       status: "in_progress",
     },
   });
-  for (const delta of spec.streamDeltas ?? []) {
+  const streamDeltas = spec.streamDeltas ?? (spec.text ? splitMockStreamingText(spec.text) : []);
+  if (streamDeltas.length > 0) {
+    events.push({
+      type: "response.content_part.added",
+      item_id: spec.id,
+      output_index: 0,
+      content_index: 0,
+      part: { type: "output_text", text: "" },
+    });
+  }
+  for (const delta of streamDeltas) {
     events.push({
       type: "response.output_text.delta",
       item_id: spec.id,
@@ -1674,7 +1739,7 @@ function appendAssistantMessageEvents(events: StreamEvent[], spec: MockAssistant
       delta,
     });
   }
-  if ((spec.streamDeltas ?? []).length > 0) {
+  if (streamDeltas.length > 0) {
     events.push({
       type: "response.output_text.done",
       item_id: spec.id,
@@ -1750,7 +1815,17 @@ function buildAssistantEvents(specsOrText: MockAssistantMessageSpec[] | string):
         status: "in_progress",
       },
     });
-    for (const delta of spec.streamDeltas ?? []) {
+    const streamDeltas = spec.streamDeltas ?? (spec.text ? splitMockStreamingText(spec.text) : []);
+    if (streamDeltas.length > 0) {
+      events.push({
+        type: "response.content_part.added",
+        item_id: spec.id,
+        output_index: outputIndex,
+        content_index: 0,
+        part: { type: "output_text", text: "" },
+      });
+    }
+    for (const delta of streamDeltas) {
       events.push({
         type: "response.output_text.delta",
         item_id: spec.id,
@@ -1759,7 +1834,7 @@ function buildAssistantEvents(specsOrText: MockAssistantMessageSpec[] | string):
         delta,
       });
     }
-    if ((spec.streamDeltas ?? []).length > 0) {
+    if (streamDeltas.length > 0) {
       events.push({
         type: "response.output_text.done",
         item_id: spec.id,
@@ -1952,6 +2027,54 @@ async function buildResponsesPayload(
     const command = execCommandFromToolProgressPrompt(toolProgressPrompt || prompt || allInputText);
     return command ? buildToolCallEventsWithArgs("exec", { command }) : null;
   };
+  if (QA_DCS_W5_OFF_PROMPT_RE.test(allInputText)) {
+    const text = "DCS_W5_OFF_OK";
+    return buildAssistantEvents([{
+      id: "msg_mock_dcs_w5_off",
+      phase: "final_answer",
+      streamDeltas: splitMockStreamingText(text),
+      text,
+    }]);
+  }
+  if (QA_DCS_W5_READ_ONLY_PROMPT_RE.test(allInputText)) {
+    scenarioState.dcsW5MainActive = false;
+    if (scenarioState.dcsW5ReadOnlyPhase === 0) {
+      scenarioState.dcsW5ReadOnlyPhase = 1;
+      return buildToolCallEventsWithArgs("context_read", { block_type: "notes" });
+    }
+    const text = "DCS_W5_READ_ONLY_OK";
+    return buildAssistantEvents([{
+      id: "msg_mock_dcs_w5_read_only",
+      phase: "final_answer",
+      streamDeltas: splitMockStreamingText(text),
+      text,
+    }]);
+  }
+  if (QA_DCS_W5_MAIN_PROMPT_RE.test(allInputText)) {
+    scenarioState.dcsW5MainActive = true;
+  }
+  if (scenarioState.dcsW5MainActive) {
+    const scriptedCalls: Array<[string, Record<string, unknown>]> = [
+      ["context_read", { block_type: "notes" }],
+      ["context_write", { operation: "delete", content: "must-not-write" }],
+      ["context_write", { operation: "replace", content: "dcs-w5-note" }],
+      ["context_read", { block_type: "notes" }],
+      ["context_search", { query: "dcs-w5-note", limit: 5 }],
+    ];
+    const next = scriptedCalls[scenarioState.dcsW5MainPhase];
+    scenarioState.dcsW5MainPhase += 1;
+    if (next) {
+      return buildToolCallEventsWithArgs(next[0], next[1]);
+    }
+    scenarioState.dcsW5MainActive = false;
+    const text = "DCS_W5_ON_OK";
+    return buildAssistantEvents([{
+      id: "msg_mock_dcs_w5_on",
+      phase: "final_answer",
+      streamDeltas: splitMockStreamingText(text),
+      text,
+    }]);
+  }
   if (
     (QA_TOOL_SEARCH_PROMPT_RE.test(allInputText) ||
       QA_TOOL_SEARCH_FAILURE_PROMPT_RE.test(allInputText)) &&
@@ -3272,6 +3395,9 @@ export async function startQaMockOpenAiServer(params?: { host?: string; port?: n
   const scenarioState: MockScenarioState = {
     subagentFanoutPhase: 0,
     subagentHandoffSpawned: false,
+    dcsW5MainActive: false,
+    dcsW5MainPhase: 0,
+    dcsW5ReadOnlyPhase: 0,
   };
   let lastRequest: MockOpenAiRequestSnapshot | null = null;
   const requests: MockOpenAiRequestSnapshot[] = [];
