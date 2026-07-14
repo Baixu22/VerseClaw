@@ -19,6 +19,101 @@ export interface ToolRegistryEntry {
   category?: string;
 }
 
+
+export type ToolRegistryToolLike = {
+  name?: string;
+  label?: string;
+  description?: string;
+  displaySummary?: string;
+  parameters?: unknown;
+  risk?: string;
+};
+
+/**
+ * Map production agent tools into ToolRegistryEntry[] for the tool_registry Block.
+ * Uses name as resourceId, label/title heuristics for title, and description/displaySummary
+ * (with a short schema property list) for purpose. Drops tools without a usable name.
+ */
+export function mapToolsToToolRegistryEntries(
+  tools: ReadonlyArray<ToolRegistryToolLike> | undefined | null,
+): ToolRegistryEntry[] {
+  if (!tools || tools.length === 0) {
+    return [];
+  }
+  const entries: ToolRegistryEntry[] = [];
+  const seen = new Set<string>();
+  for (const tool of tools) {
+    const name = typeof tool.name === "string" ? tool.name.trim() : "";
+    if (!name || seen.has(name)) {
+      continue;
+    }
+    seen.add(name);
+    const title =
+      (typeof tool.label === "string" && tool.label.trim()) ||
+      humanizeToolName(name);
+    const purpose = summarizeToolPurpose(tool);
+    const category = typeof tool.risk === "string" && tool.risk.trim() ? tool.risk.trim() : undefined;
+    entries.push({
+      resourceId: name,
+      kind: "toolset",
+      title,
+      purpose,
+      ...(category ? { category } : {}),
+    });
+  }
+  return entries;
+}
+
+function humanizeToolName(name: string): string {
+  return name
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (ch) => ch.toUpperCase());
+}
+
+function summarizeToolPurpose(tool: ToolRegistryToolLike): string {
+  const description =
+    (typeof tool.description === "string" && tool.description.trim()) ||
+    (typeof tool.displaySummary === "string" && tool.displaySummary.trim()) ||
+    "";
+  const schemaHint = summarizeSchemaProperties(tool.parameters);
+  if (description && schemaHint) {
+    return truncatePurpose(`${description} [${schemaHint}]`);
+  }
+  if (description) {
+    return truncatePurpose(description);
+  }
+  if (schemaHint) {
+    return truncatePurpose(`params: ${schemaHint}`);
+  }
+  return tool.name?.trim() || "tool";
+}
+
+function summarizeSchemaProperties(parameters: unknown): string | undefined {
+  if (!parameters || typeof parameters !== "object") {
+    return undefined;
+  }
+  const record = parameters as Record<string, unknown>;
+  const props = record.properties;
+  if (!props || typeof props !== "object" || Array.isArray(props)) {
+    return undefined;
+  }
+  const keys = Object.keys(props as Record<string, unknown>).slice(0, 8);
+  if (keys.length === 0) {
+    return undefined;
+  }
+  return keys.join(", ");
+}
+
+function truncatePurpose(value: string, max = 200): string {
+  const trimmed = value.replace(/\s+/g, " ").trim();
+  if (trimmed.length <= max) {
+    return trimmed;
+  }
+  return `${trimmed.slice(0, max - 1)}?`;
+}
+
 export interface BuildToolRegistryBlockParams {
   sessionId: string;
   entries: ToolRegistryEntry[];

@@ -4,9 +4,11 @@
  * Verifies that buildEmbeddedExtensionFactories wires the tool-registry adapter:
  * - The factory is omitted when no sink or no toolEntries are provided.
  * - The factory is omitted when the feature flag is off.
+ * - The factory is omitted for empty toolEntries (safe no-write).
  * - The factory registers a before_agent_start handler that produces a
- *   tool_registry Block through ContextBlockSink.
+ *   tool_registry Block through ContextBlockSink with real mapped entries.
  * - The handler is best-effort: sink failure does not block agent start.
+ * - Production mapping: mapToolsToToolRegistryEntries feeds toolEntries.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ExtensionAPI, SessionManager } from "../sessions/index.js";
@@ -16,7 +18,10 @@ import type {
   ContextBlockSink,
 } from "../../context-engine/block.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
-import type { ToolRegistryEntry } from "../../context-engine/handlers/tool-registry-handler.js";
+import {
+  mapToolsToToolRegistryEntries,
+  type ToolRegistryEntry,
+} from "../../context-engine/handlers/tool-registry-handler.js";
 import { buildEmbeddedExtensionFactories } from "./extensions.js";
 
 type RegisteredHandler = (event: unknown, ctx: { cwd?: string }) => unknown;
@@ -190,4 +195,96 @@ describe("DCS Stage 3 tool-registry extension wiring", () => {
     // Should not throw, should return undefined
     expect(results.every((r) => r === undefined)).toBe(true);
   });
+
+  it("omits the tool-registry factory when toolEntries is an empty array", async () => {
+    const sink: ContextBlockSink = vi.fn(async () => [{ accepted: true }]);
+    const store: Pick<BlockStoreApi, "query" | "upsert"> = {
+      query: vi.fn(async () => []),
+      upsert: vi.fn(async () => ({ accepted: true })),
+    };
+    const agent = createAgentRecorder();
+    for (const factory of buildEmbeddedExtensionFactories(
+      baseFactoryParams(enabledCfg, sink, store, []),
+    )) {
+      void factory(agent as unknown as ExtensionAPI);
+    }
+    for (const handler of agent.handlers.before_agent_start ?? []) {
+      await handler({ type: "before_agent_start", prompt: "test" }, {});
+    }
+    expect(sink).not.toHaveBeenCalled();
+  });
+
+  it("flag on + mapped real agent tools writes tool_registry with those entries", async () => {
+    const sink: ContextBlockSink = vi.fn(async (writes) =>
+      writes.map(() => ({ accepted: true })),
+    );
+    const store: Pick<BlockStoreApi, "query" | "upsert"> = {
+      query: vi.fn(async () => []),
+      upsert: vi.fn(async () => ({ accepted: true })),
+    };
+    // Simulate production: map effective agent tools then pass toolEntries.
+    const mapped = mapToolsToToolRegistryEntries([
+      {
+        name: "context_read",
+        label: "Context Read",
+        description: "Read full context blocks on demand",
+        risk: "readonly",
+        parameters: {
+          type: "object",
+          properties: { block_type: { type: "string" } },
+        },
+      },
+      {
+        name: "write",
+        label: "Write",
+        description: "Write a file",
+        risk: "write",
+      },
+    ]);
+    expect(mapped.map((e) => e.resourceId)).toEqual(["context_read", "write"]);
+
+    const agent = createAgentRecorder();
+    for (const factory of buildEmbeddedExtensionFactories(
+      baseFactoryParams(enabledCfg, sink, store, mapped),
+    )) {
+      void factory(agent as unknown as ExtensionAPI);
+    }
+    for (const handler of agent.handlers.before_agent_start ?? []) {
+      await handler({ type: "before_agent_start", prompt: "test" }, {});
+    }
+
+    expect(sink).toHaveBeenCalledTimes(1);
+    const writeArg = (sink as ReturnType<typeof vi.fn>).mock.calls[0][0] as Array<{
+      block: { block_type: string; full_content?: string };
+    }>;
+    expect(writeArg[0].block.block_type).toBe("tool_registry");
+    const parsed = JSON.parse(writeArg[0].block.full_content ?? "{}") as {
+      entries: ToolRegistryEntry[];
+    };
+    expect(parsed.entries.map((e) => e.resourceId)).toEqual(["context_read", "write"]);
+    expect(parsed.entries[0]?.title).toBe("Context Read");
+    expect(parsed.entries[0]?.purpose).toContain("Read full context blocks");
+  });
+
+  it("flag off does not write even when real mapped toolEntries are provided", async () => {
+    const sink: ContextBlockSink = vi.fn(async () => [{ accepted: true }]);
+    const store: Pick<BlockStoreApi, "query" | "upsert"> = {
+      query: vi.fn(async () => []),
+      upsert: vi.fn(async () => ({ accepted: true })),
+    };
+    const mapped = mapToolsToToolRegistryEntries([
+      { name: "edit", description: "Edit a file" },
+    ]);
+    const agent = createAgentRecorder();
+    for (const factory of buildEmbeddedExtensionFactories(
+      baseFactoryParams(disabledCfg, sink, store, mapped),
+    )) {
+      void factory(agent as unknown as ExtensionAPI);
+    }
+    for (const handler of agent.handlers.before_agent_start ?? []) {
+      await handler({ type: "before_agent_start", prompt: "test" }, {});
+    }
+    expect(sink).not.toHaveBeenCalled();
+  });
+
 });
