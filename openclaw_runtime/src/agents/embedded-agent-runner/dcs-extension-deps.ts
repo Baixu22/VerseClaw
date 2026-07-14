@@ -19,7 +19,7 @@ import {
 } from "./sekb-runtime.js";
 
 export type EmbeddedDcsExtensionDeps = {
-  workingMemoryStore: Pick<BlockStoreApi, "query" | "queryByEntity" | "upsert">;
+  workingMemoryStore: Pick<BlockStoreApi, "query" | "queryByEntity" | "upsert" | "invalidate">;
   contextBlockSink: ContextBlockSink;
   objective?: string;
   parentSessionId?: string;

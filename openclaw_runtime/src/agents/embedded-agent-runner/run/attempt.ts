@@ -233,6 +233,11 @@ import { resolveCompactionTimeoutMs } from "../compaction-safety-timeout.js";
 import { runContextEngineMaintenance } from "../context-engine-maintenance.js";
 import { applyFinalEffectiveToolPolicy } from "../effective-tool-policy.js";
 import { resolveEmbeddedDcsExtensionDeps } from "../dcs-extension-deps.js";
+import { dcsObservability } from "../../../context-engine/dcs-observability.js";
+import {
+  bindSessionWorkspaceFingerprint,
+  computeWorkspaceFingerprint,
+} from "../../../context-engine/workspace-fingerprint.js";
 import { buildEmbeddedExtensionFactories } from "../extensions.js";
 import { mapToolsToToolRegistryEntries } from "../../../context-engine/handlers/tool-registry-handler.js";
 import {
@@ -1236,6 +1241,27 @@ export async function runEmbeddedAttempt(
       spawnedBy: params.spawnedBy,
       cfg: params.config,
     });
+    // D3 minimal slice: in-memory session↔workspace fingerprint; mismatch invalidates
+    // working-memory scope before tools/injection read. Full Chat→Main trusted-root
+    // propagation remains residual (see team/dcs/DCS-W6-COMPLETE.md).
+    {
+      const sessionScopeKey = params.sessionKey?.trim() || params.sessionId;
+      const fingerprint = computeWorkspaceFingerprint(effectiveWorkspace);
+      if (sessionScopeKey && fingerprint) {
+        try {
+          await bindSessionWorkspaceFingerprint({
+            sessionKey: sessionScopeKey,
+            sessionId: params.sessionId,
+            fingerprint,
+            invalidate: dcsExtensionDeps
+              ? (blockId) => dcsExtensionDeps.workingMemoryStore.invalidate(blockId)
+              : undefined,
+          });
+        } catch (error) {
+          log.warn(`workspace fingerprint bind failed: ${String(error)}`);
+        }
+      }
+    }
     const shouldConstructTools =
       toolConstructionPlan.constructTools ||
       toolSearchControlsEnabledForRun ||
@@ -3146,6 +3172,10 @@ export async function runEmbeddedAttempt(
               unwindowedContextEngineMessagesForPrecheck =
                 preassemblyContextEngineMessagesForPrecheck;
             }
+            // D7: record CVK systemPromptAddition actual chars (addendum 6).
+            dcsObservability.recordCvkSystemPromptAddition(
+              assembled.systemPromptAddition?.length ?? 0,
+            );
             if (assembled.systemPromptAddition) {
               setActiveSessionSystemPrompt(
                 prependSystemPromptAddition({
