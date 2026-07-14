@@ -9,5 +9,24 @@
   "tasks": { "name": "タスク名", "url": "対象 URL", "objective": "目的", "runNow": "今すぐ実行", "empty": "ブラウザタスクはありません" },
   "profiles": { "localState": "永続 Electron サイト状態", "active": "{{count}} 件アクティブ" },
   "vault": { "protected": "パスワードは OS により保護され、Agent には表示されません。", "empty": "保存された認証情報はありません" },
-  "status": { "queued": "待機中", "running": "実行中", "waiting-approval": "承認待ち", "paused": "一時停止", "completed": "完了", "failed": "失敗", "cancelled": "キャンセル済み" }
+  "status": { "queued": "待機中", "running": "実行中", "waiting-approval": "承認待ち", "paused": "一時停止", "completed": "完了", "failed": "失敗", "cancelled": "キャンセル済み" },
+  "runtimeMode": {
+    "label": "ランタイムモード",
+    "normalRestricted": "標準制限",
+    "controlledEnhanced": "制御拡張",
+    "fullAccess": "フルアクセス",
+    "upgrade": "モード昇格",
+    "actionRequired": "この操作にはランタイムモードの昇格が必要です"
+  },
+  "boundaryChoice": {
+    "dialogLabel": "AI 境界確認",
+    "other": "その他",
+    "otherPlaceholder": "追加要件。直接承認されません。",
+    "cancel": "キャンセル",
+    "submit": "選択を送信",
+    "grants": "承認",
+    "grantsCount": "承認 {{count}} 件",
+    "cancelled": "ユーザーが今回の境界確認をキャンセルしました。",
+    "expired": "この確認リクエストは期限切れです。"
+  }
 }

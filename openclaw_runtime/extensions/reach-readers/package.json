@@ -1,0 +1,31 @@
+{
+  "name": "@openclaw/reach-readers",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Readonly Agent Reach platform readers for OpenClaw with guarded API, CLI, and Agent Browser fallbacks.",
+  "type": "module",
+  "main": "dist/index.js",
+  "openclaw": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  },
+  "scripts": {
+    "build": "tsc",
+    "demo": "tsx demo/runner.ts",
+    "demo:probe": "tsx demo/runner.ts --probe",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@openclaw/plugin-sdk": "workspace:*",
+    "tsx": "^4.20.3"
+  },
+  "dependencies": {
+    "typebox": "1.1.39"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "license": "MIT"
+}

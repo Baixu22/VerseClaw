@@ -53,6 +53,7 @@ import type {
 } from '../types/sandbox';
 import type { ChannelAccessPolicyView } from '../types/channel';
 import type { MarketplaceSkill, QuickAccessSkill, Skill } from '../types/skill';
+import type { JsSourceResource, JsSourceMatch, JsSourceContext, JsSourceFetchFailure, SourceMapCandidate, SourceMapResolvedLocation, SourceMapOriginalContext } from '../agent-browser/types';
 import type {
   LiveTokenUsage,
   PermissionApprovalDecision,
@@ -785,6 +786,7 @@ export type RemoteControlScreenshotResult = HostSuccess & {
 export type AgentBrowserSessionMode = 'headless' | 'visible';
 export type AgentBrowserAuthPersistenceMode = 'session-name' | 'profile' | 'off';
 export type AgentBrowserConnectionMode = 'managed' | 'auto-connect' | 'cdp' | 'external-profile';
+export type AgentBrowserRuntimeMode = 'normal_restricted' | 'controlled_enhanced' | 'full_access';
 export type AgentBrowserConnectionSnapshot = {
   mode: AgentBrowserConnectionMode;
   cdpEndpoint?: string;
@@ -802,6 +804,7 @@ export type AgentBrowserSession = {
   title?: string;
   createdAt: string;
   updatedAt: string;
+  runtimeMode?: AgentBrowserRuntimeMode;
 };
 export type AgentBrowserSecurityPayload = {
   authPersistence?: AgentBrowserAuthPersistenceMode;
@@ -818,6 +821,7 @@ export type AgentBrowserOpenPayload = {
   mode?: AgentBrowserSessionMode;
   width?: number;
   height?: number;
+  runtimeMode?: AgentBrowserRuntimeMode;
 } & AgentBrowserSecurityPayload;
 export type AgentBrowserSessionPayload = {
   sessionId: string;
@@ -840,6 +844,35 @@ export type AgentBrowserEvaluatePayload = AgentBrowserSessionPayload & {
 };
 export type AgentBrowserScreenshotPayload = AgentBrowserSessionPayload & {
   fullPage?: boolean;
+};
+export type AgentBrowserTakeSnapshotPayload = AgentBrowserSessionPayload;
+export type AgentBrowserClickByUidPayload = AgentBrowserSessionPayload & {
+  uid: string;
+};
+export type AgentBrowserFillByUidPayload = AgentBrowserSessionPayload & {
+  uid: string;
+  value: string;
+  clear?: boolean;
+};
+export type AgentBrowserPressKeyPayload = AgentBrowserSessionPayload & {
+  key: string;
+};
+export type AgentBrowserRequestModeUpgradePayload = AgentBrowserSessionPayload & {
+  targetMode: AgentBrowserRuntimeMode;
+  reason?: string;
+  expiresInMs?: number;
+};
+export type AgentBrowserRequestModeUpgradeResult = AgentBrowserActionResult & {
+  runtimeMode: AgentBrowserRuntimeMode;
+  expiresAt?: string;
+};
+export type AgentBrowserRespondBoundaryChoicePayload = AgentBrowserSessionPayload & {
+  requestId: string;
+  selectedChoiceIds: string[];
+  otherText?: string;
+};
+export type AgentBrowserRespondBoundaryChoiceResult = HostSuccess & {
+  accepted: boolean;
 };
 export type AgentBrowserCommandPayload = Partial<AgentBrowserSessionPayload> & {
   args: string[];
@@ -937,6 +970,13 @@ export type AgentBrowserSessionResult = HostSuccess & {
 };
 export type AgentBrowserStatusResult = HostSuccess & {
   sessions: AgentBrowserSession[];
+  browserControlEnabled?: boolean;
+};
+export type AgentBrowserSetEnabledPayload = {
+  enabled: boolean;
+};
+export type AgentBrowserSetEnabledResult = HostSuccess & {
+  enabled: boolean;
 };
 export type AgentBrowserActionResult = HostSuccess & {
   session: AgentBrowserSession;
@@ -947,6 +987,283 @@ export type AgentBrowserEvaluateResult = AgentBrowserActionResult & {
 export type AgentBrowserScreenshotResult = AgentBrowserActionResult & {
   dataUrl: string;
   format: 'png';
+};
+export type AgentBrowserTakeSnapshotResult = AgentBrowserActionResult & {
+  snapshot: string;
+};
+export type AgentBrowserNetworkFilter = {
+  urlIncludes?: string;
+  method?: string;
+  resourceType?: string;
+  status?: number;
+  limit?: number;
+  timeoutMs?: number;
+};
+export type AgentBrowserNetworkListPayload = AgentBrowserSessionPayload & {
+  filter?: AgentBrowserNetworkFilter;
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkListResult = HostSuccess & {
+  requests: Array<{
+    id: string;
+    url: string;
+    method: string;
+    status?: number;
+    statusText?: string;
+    mimeType?: string;
+    resourceType?: string;
+    failed?: boolean;
+    error?: string;
+  }>;
+};
+export type AgentBrowserNetworkDetailPayload = AgentBrowserSessionPayload & {
+  requestIds: string[];
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkDetailResult = HostSuccess & {
+  details: unknown[];
+};
+export type AgentBrowserNetworkClearPayload = AgentBrowserSessionPayload;
+export type AgentBrowserNetworkClearResult = HostSuccess;
+export type AgentBrowserNetworkWaitPayload = AgentBrowserSessionPayload & {
+  filter?: AgentBrowserNetworkFilter;
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkWaitResult = AgentBrowserNetworkListResult;
+export type AgentBrowserNetworkComparePayload = AgentBrowserSessionPayload & {
+  requestIds: string[];
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkCompareResult = HostSuccess & {
+  comparison: string;
+};
+export type AgentBrowserNetworkFindParamsPayload = AgentBrowserSessionPayload & {
+  requestIds: string[];
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkFindParamsResult = HostSuccess & {
+  candidates: string;
+};
+export type AgentBrowserNetworkExtractJsPayload = AgentBrowserSessionPayload & {
+  requestIds?: string[];
+  keywords?: string[];
+  urlIncludes?: string;
+  redacted?: boolean;
+};
+export type AgentBrowserNetworkExtractJsResult = HostSuccess & {
+  candidates: string;
+};
+export type AgentBrowserJsListResourcesPayload = AgentBrowserSessionPayload;
+export type AgentBrowserJsListResourcesResult = HostSuccess & {
+  resources: JsSourceResource[];
+  content: string;
+};
+export type AgentBrowserJsSearchSourcesPayload = AgentBrowserSessionPayload & {
+  keywords: string[];
+  urls?: string[];
+  limit?: number;
+  allowSameOriginFetch?: boolean;
+};
+export type AgentBrowserJsSearchSourcesResult = HostSuccess & {
+  resources: JsSourceResource[];
+  matches: JsSourceMatch[];
+  failedFetches: JsSourceFetchFailure[];
+  truncated: boolean;
+  content: string;
+};
+export type AgentBrowserJsExtractContextPayload = AgentBrowserSessionPayload & {
+  resourceId: string;
+  position: number;
+};
+export type AgentBrowserJsExtractContextResult = HostSuccess & {
+  resources: JsSourceResource[];
+  contexts: JsSourceContext[];
+  truncated: boolean;
+  content: string;
+};
+export type AgentBrowserSourceMapListCandidatesPayload = AgentBrowserSessionPayload & {
+  resourceIds?: string[];
+  limit?: number;
+  allowSameOriginFetch?: boolean;
+};
+export type AgentBrowserSourceMapListCandidatesResult = HostSuccess & {
+  candidates: SourceMapCandidate[];
+  failures: Array<{ resourceId?: string; url?: string; message: string }>;
+  truncated: boolean;
+  content: string;
+};
+export type AgentBrowserSourceMapResolveLocationPayload = AgentBrowserSessionPayload & {
+  resourceId: string;
+  line: number;
+  column: number;
+  allowSameOriginFetch?: boolean;
+};
+export type AgentBrowserSourceMapResolveLocationResult = HostSuccess & {
+  candidates: SourceMapCandidate[];
+  resolvedLocations: SourceMapResolvedLocation[];
+  failures: Array<{ resourceId?: string; url?: string; message: string }>;
+  content: string;
+};
+export type AgentBrowserSourceMapExtractOriginalContextPayload = AgentBrowserSessionPayload & {
+  resourceId: string;
+  line: number;
+  column: number;
+  radius?: number;
+  allowSameOriginFetch?: boolean;
+};
+export type AgentBrowserSourceMapExtractOriginalContextResult = HostSuccess & {
+  candidates: SourceMapCandidate[];
+  resolvedLocations: SourceMapResolvedLocation[];
+  originalContexts: SourceMapOriginalContext[];
+  failures: Array<{ resourceId?: string; url?: string; message: string }>;
+  truncated: boolean;
+  content: string;
+};
+export type AgentBrowserRuntimeInspectGlobalsPayload = AgentBrowserSessionPayload & {
+  paths: string[];
+  maxDepth?: number;
+  limit?: number;
+};
+export type AgentBrowserRuntimeInspectGlobalsResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserRuntimeSearchModulesPayload = AgentBrowserSessionPayload & {
+  keywords: string[];
+  limit?: number;
+  radius?: number;
+};
+export type AgentBrowserRuntimeSearchModulesResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserRuntimeDescribeFunctionPayload = AgentBrowserSessionPayload & {
+  path: string;
+  keywords?: string[];
+  radius?: number;
+};
+export type AgentBrowserRuntimeDescribeFunctionResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserReplayPrepareRequestPayload = AgentBrowserSessionPayload & {
+  requestId: string;
+};
+export type AgentBrowserReplayPrepareRequestResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserReplaySendRequestPayload = AgentBrowserSessionPayload & {
+  draftId: string;
+};
+export type AgentBrowserReplaySendRequestResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserReplayCompareResponsesPayload = AgentBrowserSessionPayload & {
+  draftId: string;
+};
+export type AgentBrowserReplayCompareResponsesResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserConsoleMessagesPayload = AgentBrowserSessionPayload;
+export type AgentBrowserConsoleMessagesResult = HostSuccess & {
+  content: string;
+};
+export type AgentBrowserFullAccessExecuteScriptPayload = AgentBrowserSessionPayload & {
+  script: string;
+  awaitPromise?: boolean;
+};
+export type AgentBrowserFullAccessExecuteScriptResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserFullAccessFetchPayload = AgentBrowserSessionPayload & {
+  url: string;
+  method?: string;
+  headers?: Record<string, string>;
+  body?: string;
+  credentials?: 'include' | 'same-origin' | 'omit';
+};
+export type AgentBrowserFullAccessFetchResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserFullAccessGetNetworkDetailsPayload = AgentBrowserSessionPayload & {
+  requestIds: string[];
+};
+export type AgentBrowserFullAccessGetNetworkDetailsResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+  toolAttachments?: unknown[];
+};
+export type AgentBrowserFullAccessReadStoragePayload = AgentBrowserSessionPayload;
+export type AgentBrowserFullAccessReadStorageResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserFullAccessRevokePayload = AgentBrowserSessionPayload;
+export type AgentBrowserFullAccessRevokeResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserExtractPageTextRule = {
+  id: string;
+  alias: string;
+  urlPattern: string;
+  selectorsText: string;
+  sortOrder: number;
+  createdAt: number;
+  updatedAt: number;
+};
+export type AgentBrowserExtractPageTextPayload = AgentBrowserSessionPayload & {
+  rules: AgentBrowserExtractPageTextRule[];
+  maxLength?: number;
+  extractMode?: 'text' | 'all';
+  selectorType?: 'css' | 'xpath';
+  allowFallback?: boolean;
+};
+export type AgentBrowserExtractPageTextResult = HostSuccess & {
+  text: string;
+  truncated: boolean;
+  usedFallback: boolean;
+  matchedRuleId?: string;
+};
+export type AgentBrowserValidateExtractionRulePayload = {
+  alias: string;
+  urlPattern: string;
+  selectorsText: string;
+};
+export type AgentBrowserValidateExtractionRuleResult = HostSuccess & {
+  ok: boolean;
+  message?: string;
+};
+export type AgentBrowserPageInfo = {
+  pageId: string;
+  index: number;
+  url: string;
+  title: string;
+  active: boolean;
+};
+export type AgentBrowserNewPagePayload = AgentBrowserSessionPayload & {
+  url?: string;
+  background?: boolean;
+};
+export type AgentBrowserSelectPagePayload = AgentBrowserSessionPayload & {
+  pageId: string;
+};
+export type AgentBrowserClosePagePayload = AgentBrowserSessionPayload & {
+  pageId?: string;
+};
+export type AgentBrowserNavigatePagePayload = AgentBrowserSessionPayload & {
+  url: string;
+  pageId?: string;
+  waitUntil?: 'dom-ready' | 'load';
+};
+export type AgentBrowserListPagesResult = AgentBrowserActionResult & {
+  pages: AgentBrowserPageInfo[];
+  activePageId?: string;
 };
 export type AgentBrowserCommandResult = HostSuccess & {
   session?: AgentBrowserSession;
@@ -3779,6 +4096,7 @@ export type HostApiContract = {
   agentBrowser: {
     open: (payload?: AgentBrowserOpenPayload) => AgentBrowserSessionResult;
     status: () => AgentBrowserStatusResult;
+    setEnabled: (payload: AgentBrowserSetEnabledPayload) => AgentBrowserSetEnabledResult;
     profiles: () => AgentBrowserProfilesResult;
     saveProfile: (payload: AgentBrowserProfileSavePayload) => AgentBrowserProfileSaveResult;
     validate: (payload?: AgentBrowserValidatePayload) => AgentBrowserValidateResult;
@@ -3801,6 +4119,44 @@ export type HostApiContract = {
     saveCredential: (payload: AgentBrowserCredentialSavePayload) => AgentBrowserCredentialResult;
     deleteCredential: (payload: AgentBrowserCredentialPayload) => HostSuccess;
     close: (payload: AgentBrowserSessionPayload) => HostSuccess;
+    takeSnapshot: (payload: AgentBrowserTakeSnapshotPayload) => AgentBrowserTakeSnapshotResult;
+    clickByUid: (payload: AgentBrowserClickByUidPayload) => AgentBrowserActionResult;
+    fillByUid: (payload: AgentBrowserFillByUidPayload) => AgentBrowserActionResult;
+    pressKey: (payload: AgentBrowserPressKeyPayload) => AgentBrowserActionResult;
+    requestModeUpgrade: (payload: AgentBrowserRequestModeUpgradePayload) => AgentBrowserRequestModeUpgradeResult;
+    respondBoundaryChoice: (payload: AgentBrowserRespondBoundaryChoicePayload) => AgentBrowserRespondBoundaryChoiceResult;
+    networkListRequests: (payload: AgentBrowserNetworkListPayload) => AgentBrowserNetworkListResult;
+    networkGetRequestDetails: (payload: AgentBrowserNetworkDetailPayload) => AgentBrowserNetworkDetailResult;
+    networkClearRequests: (payload: AgentBrowserNetworkClearPayload) => AgentBrowserNetworkClearResult;
+    networkWaitForRequests: (payload: AgentBrowserNetworkWaitPayload) => AgentBrowserNetworkWaitResult;
+    networkCompareRequests: (payload: AgentBrowserNetworkComparePayload) => AgentBrowserNetworkCompareResult;
+    networkFindParameterCandidates: (payload: AgentBrowserNetworkFindParamsPayload) => AgentBrowserNetworkFindParamsResult;
+    networkExtractJsCandidates: (payload: AgentBrowserNetworkExtractJsPayload) => AgentBrowserNetworkExtractJsResult;
+    newPage: (payload: AgentBrowserNewPagePayload) => AgentBrowserListPagesResult;
+    listPages: (payload: AgentBrowserSessionPayload) => AgentBrowserListPagesResult;
+    selectPage: (payload: AgentBrowserSelectPagePayload) => AgentBrowserListPagesResult;
+    closePage: (payload: AgentBrowserClosePagePayload) => AgentBrowserListPagesResult;
+    navigatePage: (payload: AgentBrowserNavigatePagePayload) => AgentBrowserListPagesResult;
+    jsListResources: (payload: AgentBrowserJsListResourcesPayload) => AgentBrowserJsListResourcesResult;
+    jsSearchSources: (payload: AgentBrowserJsSearchSourcesPayload) => AgentBrowserJsSearchSourcesResult;
+    jsExtractContext: (payload: AgentBrowserJsExtractContextPayload) => AgentBrowserJsExtractContextResult;
+    sourceMapListCandidates: (payload: AgentBrowserSourceMapListCandidatesPayload) => AgentBrowserSourceMapListCandidatesResult;
+    sourceMapResolveLocation: (payload: AgentBrowserSourceMapResolveLocationPayload) => AgentBrowserSourceMapResolveLocationResult;
+    sourceMapExtractOriginalContext: (payload: AgentBrowserSourceMapExtractOriginalContextPayload) => AgentBrowserSourceMapExtractOriginalContextResult;
+    runtimeInspectGlobals: (payload: AgentBrowserRuntimeInspectGlobalsPayload) => AgentBrowserRuntimeInspectGlobalsResult;
+    runtimeSearchModules: (payload: AgentBrowserRuntimeSearchModulesPayload) => AgentBrowserRuntimeSearchModulesResult;
+    runtimeDescribeFunction: (payload: AgentBrowserRuntimeDescribeFunctionPayload) => AgentBrowserRuntimeDescribeFunctionResult;
+    replayPrepareRequest: (payload: AgentBrowserReplayPrepareRequestPayload) => AgentBrowserReplayPrepareRequestResult;
+    replaySendRequest: (payload: AgentBrowserReplaySendRequestPayload) => AgentBrowserReplaySendRequestResult;
+    replayCompareResponses: (payload: AgentBrowserReplayCompareResponsesPayload) => AgentBrowserReplayCompareResponsesResult;
+    getConsoleMessages: (payload: AgentBrowserConsoleMessagesPayload) => AgentBrowserConsoleMessagesResult;
+    fullAccessExecuteScript: (payload: AgentBrowserFullAccessExecuteScriptPayload) => AgentBrowserFullAccessExecuteScriptResult;
+    fullAccessFetch: (payload: AgentBrowserFullAccessFetchPayload) => AgentBrowserFullAccessFetchResult;
+    fullAccessGetNetworkDetails: (payload: AgentBrowserFullAccessGetNetworkDetailsPayload) => AgentBrowserFullAccessGetNetworkDetailsResult;
+    fullAccessReadStorage: (payload: AgentBrowserFullAccessReadStoragePayload) => AgentBrowserFullAccessReadStorageResult;
+    fullAccessRevoke: (payload: AgentBrowserFullAccessRevokePayload) => AgentBrowserFullAccessRevokeResult;
+    extractPageText: (payload: AgentBrowserExtractPageTextPayload) => AgentBrowserExtractPageTextResult;
+    validateExtractionRule: (payload: AgentBrowserValidateExtractionRulePayload) => AgentBrowserValidateExtractionRuleResult;
   };
   mcp: {
     listServers: () => McpServerListResult;

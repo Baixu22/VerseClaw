@@ -48,6 +48,8 @@ async function invokeAgentBrowser(
       return { success: true, ...(await service.screenshot(request.payload as never)) };
     case 'command':
       return { success: true, ...(await service.command(request.payload as never)) };
+    case 'getConsoleMessages':
+      return { success: true, ...(await service.getConsoleMessages(request.payload as never)) };
     case 'close':
       service.close(String(request.payload.sessionId ?? ''));
       return { success: true };

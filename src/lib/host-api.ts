@@ -2,6 +2,7 @@ import type {
   AgentCreatePayload,
   AgentBrowserClickPayload,
   AgentBrowserActionResult,
+  AgentBrowserClickByUidPayload,
   AgentBrowserCommandPayload,
   AgentBrowserCommandResult,
   AgentBrowserCredentialPayload,
@@ -9,8 +10,73 @@ import type {
   AgentBrowserCredentialSavePayload,
   AgentBrowserEvaluatePayload,
   AgentBrowserEvaluateResult,
+  AgentBrowserFillByUidPayload,
   AgentBrowserNavigatePayload,
   AgentBrowserOpenPayload,
+  AgentBrowserPressKeyPayload,
+  AgentBrowserRequestModeUpgradePayload,
+  AgentBrowserRequestModeUpgradeResult,
+  AgentBrowserRespondBoundaryChoicePayload,
+  AgentBrowserRespondBoundaryChoiceResult,
+  AgentBrowserNetworkListPayload,
+  AgentBrowserNetworkListResult,
+  AgentBrowserNetworkDetailPayload,
+  AgentBrowserNetworkDetailResult,
+  AgentBrowserNetworkClearPayload,
+  AgentBrowserNetworkClearResult,
+  AgentBrowserNetworkWaitPayload,
+  AgentBrowserNetworkWaitResult,
+  AgentBrowserNetworkComparePayload,
+  AgentBrowserNetworkCompareResult,
+  AgentBrowserNetworkFindParamsPayload,
+  AgentBrowserNetworkFindParamsResult,
+  AgentBrowserNetworkExtractJsPayload,
+  AgentBrowserNetworkExtractJsResult,
+  AgentBrowserNewPagePayload,
+  AgentBrowserSelectPagePayload,
+  AgentBrowserClosePagePayload,
+  AgentBrowserNavigatePagePayload,
+  AgentBrowserListPagesResult,
+  AgentBrowserJsListResourcesPayload,
+  AgentBrowserJsListResourcesResult,
+  AgentBrowserJsSearchSourcesPayload,
+  AgentBrowserJsSearchSourcesResult,
+  AgentBrowserJsExtractContextPayload,
+  AgentBrowserJsExtractContextResult,
+  AgentBrowserSourceMapListCandidatesPayload,
+  AgentBrowserSourceMapListCandidatesResult,
+  AgentBrowserSourceMapResolveLocationPayload,
+  AgentBrowserSourceMapResolveLocationResult,
+  AgentBrowserSourceMapExtractOriginalContextPayload,
+  AgentBrowserSourceMapExtractOriginalContextResult,
+  AgentBrowserRuntimeInspectGlobalsPayload,
+  AgentBrowserRuntimeInspectGlobalsResult,
+  AgentBrowserRuntimeSearchModulesPayload,
+  AgentBrowserRuntimeSearchModulesResult,
+  AgentBrowserRuntimeDescribeFunctionPayload,
+  AgentBrowserRuntimeDescribeFunctionResult,
+  AgentBrowserReplayPrepareRequestPayload,
+  AgentBrowserReplayPrepareRequestResult,
+  AgentBrowserReplaySendRequestPayload,
+  AgentBrowserReplaySendRequestResult,
+  AgentBrowserReplayCompareResponsesPayload,
+  AgentBrowserReplayCompareResponsesResult,
+  AgentBrowserConsoleMessagesPayload,
+  AgentBrowserConsoleMessagesResult,
+  AgentBrowserFullAccessExecuteScriptPayload,
+  AgentBrowserFullAccessExecuteScriptResult,
+  AgentBrowserFullAccessFetchPayload,
+  AgentBrowserFullAccessFetchResult,
+  AgentBrowserFullAccessGetNetworkDetailsPayload,
+  AgentBrowserFullAccessGetNetworkDetailsResult,
+  AgentBrowserFullAccessReadStoragePayload,
+  AgentBrowserFullAccessReadStorageResult,
+  AgentBrowserFullAccessRevokePayload,
+  AgentBrowserFullAccessRevokeResult,
+  AgentBrowserExtractPageTextPayload,
+  AgentBrowserExtractPageTextResult,
+  AgentBrowserValidateExtractionRulePayload,
+  AgentBrowserValidateExtractionRuleResult,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -19,7 +85,11 @@ import type {
   AgentBrowserSelectorPayload,
   AgentBrowserSessionPayload,
   AgentBrowserSessionResult,
+  AgentBrowserSetEnabledPayload,
+  AgentBrowserSetEnabledResult,
   AgentBrowserStatusResult,
+  AgentBrowserTakeSnapshotPayload,
+  AgentBrowserTakeSnapshotResult,
   AgentBrowserTaskCreatePayload,
   AgentBrowserTaskPayload,
   AgentBrowserTaskResult,
@@ -353,6 +423,7 @@ export type {
   AgentBrowserScreenshotResult,
   AgentBrowserSessionResult,
   AgentBrowserStatusResult,
+  AgentBrowserTakeSnapshotResult,
   AgentBrowserValidateResult,
   AgentDevCreateConversationResult,
   AgentDevCreateProviderConfigResult,
@@ -711,6 +782,8 @@ export const hostApi = {
     open: (input?: AgentBrowserOpenPayload): Promise<AgentBrowserSessionResult> =>
       invokeHost('agentBrowser', 'open', input),
     status: (): Promise<AgentBrowserStatusResult> => invokeHost('agentBrowser', 'status'),
+    setEnabled: (input: AgentBrowserSetEnabledPayload): Promise<AgentBrowserSetEnabledResult> =>
+      invokeHost('agentBrowser', 'setEnabled', input),
     profiles: (): Promise<AgentBrowserProfilesResult> => invokeHost('agentBrowser', 'profiles'),
     saveProfile: (input: AgentBrowserProfileSavePayload): Promise<AgentBrowserProfileSaveResult> =>
       invokeHost('agentBrowser', 'saveProfile', input),
@@ -751,6 +824,82 @@ export const hostApi = {
     deleteCredential: (input: AgentBrowserCredentialPayload) =>
       invokeHost('agentBrowser', 'deleteCredential', input),
     close: (input: AgentBrowserSessionPayload) => invokeHost('agentBrowser', 'close', input),
+    takeSnapshot: (input: AgentBrowserTakeSnapshotPayload): Promise<AgentBrowserTakeSnapshotResult> =>
+      invokeHost('agentBrowser', 'takeSnapshot', input),
+    clickByUid: (input: AgentBrowserClickByUidPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'clickByUid', input),
+    fillByUid: (input: AgentBrowserFillByUidPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'fillByUid', input),
+    pressKey: (input: AgentBrowserPressKeyPayload): Promise<AgentBrowserActionResult> =>
+      invokeHost('agentBrowser', 'pressKey', input),
+    requestModeUpgrade: (input: AgentBrowserRequestModeUpgradePayload): Promise<AgentBrowserRequestModeUpgradeResult> =>
+      invokeHost('agentBrowser', 'requestModeUpgrade', input),
+    respondBoundaryChoice: (input: AgentBrowserRespondBoundaryChoicePayload): Promise<AgentBrowserRespondBoundaryChoiceResult> =>
+      invokeHost('agentBrowser', 'respondBoundaryChoice', input),
+    networkListRequests: (input: AgentBrowserNetworkListPayload): Promise<AgentBrowserNetworkListResult> =>
+      invokeHost('agentBrowser', 'networkListRequests', input),
+    networkGetRequestDetails: (input: AgentBrowserNetworkDetailPayload): Promise<AgentBrowserNetworkDetailResult> =>
+      invokeHost('agentBrowser', 'networkGetRequestDetails', input),
+    networkClearRequests: (input: AgentBrowserNetworkClearPayload): Promise<AgentBrowserNetworkClearResult> =>
+      invokeHost('agentBrowser', 'networkClearRequests', input),
+    networkWaitForRequests: (input: AgentBrowserNetworkWaitPayload): Promise<AgentBrowserNetworkWaitResult> =>
+      invokeHost('agentBrowser', 'networkWaitForRequests', input),
+    networkCompareRequests: (input: AgentBrowserNetworkComparePayload): Promise<AgentBrowserNetworkCompareResult> =>
+      invokeHost('agentBrowser', 'networkCompareRequests', input),
+    networkFindParameterCandidates: (input: AgentBrowserNetworkFindParamsPayload): Promise<AgentBrowserNetworkFindParamsResult> =>
+      invokeHost('agentBrowser', 'networkFindParameterCandidates', input),
+    networkExtractJsCandidates: (input: AgentBrowserNetworkExtractJsPayload): Promise<AgentBrowserNetworkExtractJsResult> =>
+      invokeHost('agentBrowser', 'networkExtractJsCandidates', input),
+    newPage: (input: AgentBrowserNewPagePayload): Promise<AgentBrowserListPagesResult> =>
+      invokeHost('agentBrowser', 'newPage', input),
+    listPages: (input: AgentBrowserSessionPayload): Promise<AgentBrowserListPagesResult> =>
+      invokeHost('agentBrowser', 'listPages', input),
+    selectPage: (input: AgentBrowserSelectPagePayload): Promise<AgentBrowserListPagesResult> =>
+      invokeHost('agentBrowser', 'selectPage', input),
+    closePage: (input: AgentBrowserClosePagePayload): Promise<AgentBrowserListPagesResult> =>
+      invokeHost('agentBrowser', 'closePage', input),
+    navigatePage: (input: AgentBrowserNavigatePagePayload): Promise<AgentBrowserListPagesResult> =>
+      invokeHost('agentBrowser', 'navigatePage', input),
+    jsListResources: (input: AgentBrowserJsListResourcesPayload): Promise<AgentBrowserJsListResourcesResult> =>
+      invokeHost('agentBrowser', 'jsListResources', input),
+    jsSearchSources: (input: AgentBrowserJsSearchSourcesPayload): Promise<AgentBrowserJsSearchSourcesResult> =>
+      invokeHost('agentBrowser', 'jsSearchSources', input),
+    jsExtractContext: (input: AgentBrowserJsExtractContextPayload): Promise<AgentBrowserJsExtractContextResult> =>
+      invokeHost('agentBrowser', 'jsExtractContext', input),
+    sourceMapListCandidates: (input: AgentBrowserSourceMapListCandidatesPayload): Promise<AgentBrowserSourceMapListCandidatesResult> =>
+      invokeHost('agentBrowser', 'sourceMapListCandidates', input),
+    sourceMapResolveLocation: (input: AgentBrowserSourceMapResolveLocationPayload): Promise<AgentBrowserSourceMapResolveLocationResult> =>
+      invokeHost('agentBrowser', 'sourceMapResolveLocation', input),
+    sourceMapExtractOriginalContext: (input: AgentBrowserSourceMapExtractOriginalContextPayload): Promise<AgentBrowserSourceMapExtractOriginalContextResult> =>
+      invokeHost('agentBrowser', 'sourceMapExtractOriginalContext', input),
+    runtimeInspectGlobals: (input: AgentBrowserRuntimeInspectGlobalsPayload): Promise<AgentBrowserRuntimeInspectGlobalsResult> =>
+      invokeHost('agentBrowser', 'runtimeInspectGlobals', input),
+    runtimeSearchModules: (input: AgentBrowserRuntimeSearchModulesPayload): Promise<AgentBrowserRuntimeSearchModulesResult> =>
+      invokeHost('agentBrowser', 'runtimeSearchModules', input),
+    runtimeDescribeFunction: (input: AgentBrowserRuntimeDescribeFunctionPayload): Promise<AgentBrowserRuntimeDescribeFunctionResult> =>
+      invokeHost('agentBrowser', 'runtimeDescribeFunction', input),
+    replayPrepareRequest: (input: AgentBrowserReplayPrepareRequestPayload): Promise<AgentBrowserReplayPrepareRequestResult> =>
+      invokeHost('agentBrowser', 'replayPrepareRequest', input),
+    replaySendRequest: (input: AgentBrowserReplaySendRequestPayload): Promise<AgentBrowserReplaySendRequestResult> =>
+      invokeHost('agentBrowser', 'replaySendRequest', input),
+    replayCompareResponses: (input: AgentBrowserReplayCompareResponsesPayload): Promise<AgentBrowserReplayCompareResponsesResult> =>
+      invokeHost('agentBrowser', 'replayCompareResponses', input),
+    getConsoleMessages: (input: AgentBrowserConsoleMessagesPayload): Promise<AgentBrowserConsoleMessagesResult> =>
+      invokeHost('agentBrowser', 'getConsoleMessages', input),
+    fullAccessExecuteScript: (input: AgentBrowserFullAccessExecuteScriptPayload): Promise<AgentBrowserFullAccessExecuteScriptResult> =>
+      invokeHost('agentBrowser', 'fullAccessExecuteScript', input),
+    fullAccessFetch: (input: AgentBrowserFullAccessFetchPayload): Promise<AgentBrowserFullAccessFetchResult> =>
+      invokeHost('agentBrowser', 'fullAccessFetch', input),
+    fullAccessGetNetworkDetails: (input: AgentBrowserFullAccessGetNetworkDetailsPayload): Promise<AgentBrowserFullAccessGetNetworkDetailsResult> =>
+      invokeHost('agentBrowser', 'fullAccessGetNetworkDetails', input),
+    fullAccessReadStorage: (input: AgentBrowserFullAccessReadStoragePayload): Promise<AgentBrowserFullAccessReadStorageResult> =>
+      invokeHost('agentBrowser', 'fullAccessReadStorage', input),
+    fullAccessRevoke: (input: AgentBrowserFullAccessRevokePayload): Promise<AgentBrowserFullAccessRevokeResult> =>
+      invokeHost('agentBrowser', 'fullAccessRevoke', input),
+    extractPageText: (input: AgentBrowserExtractPageTextPayload): Promise<AgentBrowserExtractPageTextResult> =>
+      invokeHost('agentBrowser', 'extractPageText', input),
+    validateExtractionRule: (input: AgentBrowserValidateExtractionRulePayload): Promise<AgentBrowserValidateExtractionRuleResult> =>
+      invokeHost('agentBrowser', 'validateExtractionRule', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),

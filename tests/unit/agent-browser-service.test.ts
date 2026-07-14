@@ -6,10 +6,54 @@ import { join } from 'node:path';
 import { AgentBrowserService } from '@electron/services/agent-browser-service';
 import { createAgentBrowserApi } from '@electron/services/agent-browser-api';
 
+/**
+ * 模拟 Electron webContents.debugger。
+ *
+ * - attach(version) / detach() / sendCommand(method, params) 均为 vitest mock，
+ *   默认 sendCommand 返回 Accessibility.getFullAXTree 的最小 fixture。
+ * - on('detach' | 'message', ...) 走 EventEmitter，测试可手动 emit。
+ */
+class FakeDebugger extends EventEmitter {
+  readonly attach = vi.fn(async (_version: string) => undefined);
+  readonly detach = vi.fn(async () => undefined);
+  readonly sendCommand = vi.fn(async (method: string, _params?: Record<string, unknown>) => {
+    if (method === 'Accessibility.getFullAXTree') {
+      return {
+        nodes: [
+          {
+            nodeId: 'root',
+            backendDOMNodeId: 1,
+            role: { value: 'RootWebArea' },
+            name: { value: 'Test Page' },
+            childIds: ['btn'],
+          },
+          {
+            nodeId: 'btn',
+            backendDOMNodeId: 2,
+            role: { value: 'button' },
+            name: { value: 'Submit' },
+          },
+        ],
+      };
+    }
+    if (method === 'DOM.resolveNode') {
+      return { object: { objectId: 'obj-1' } };
+    }
+    if (method === 'DOM.getBoxModel') {
+      return { model: { content: [0, 0, 100, 0, 100, 50, 0, 50] } };
+    }
+    if (method === 'Runtime.callFunctionOn') {
+      return { result: { value: true } };
+    }
+    return {};
+  });
+}
+
 class FakeWebContents extends EventEmitter {
   url = '';
   title = '';
   scripts: string[] = [];
+  readonly debugger = new FakeDebugger();
 
   getURL() {
     return this.url;
@@ -245,6 +289,94 @@ describe('agent browser service', () => {
     expect(service.list()).toHaveLength(0);
   });
 
+  it('drives browser-control CDP actions (takeSnapshot/clickByUid/fillByUid/pressKey)', async () => {
+    const windows: FakeWindow[] = [];
+    const service = new AgentBrowserService({
+      createWindow: () => {
+        const win = new FakeWindow();
+        windows.push(win);
+        return win as never;
+      },
+      now: () => new Date('2026-01-01T00:00:00.000Z'),
+    });
+
+    const opened = await service.open({ url: 'example.com', profile: 'Work', mode: 'headless', runtimeMode: 'controlled_enhanced' });
+    const sessionId = opened.session.id;
+    service.setEnabled(true);
+    const dbg = windows[0].webContents.debugger;
+
+    // takeSnapshot: 首次调用触发 attach + 启用域 + getFullAXTree
+    const snap = await service.takeSnapshot({ sessionId });
+    expect(snap.snapshot).toContain('uid=');
+    expect(snap.snapshot).toContain('button');
+    expect(snap.snapshot).toContain('Submit');
+    expect(dbg.attach).toHaveBeenCalledTimes(1);
+    expect(dbg.sendCommand).toHaveBeenCalledWith('Accessibility.getFullAXTree', expect.anything());
+
+    // 从快照中提取 button 的 uid
+    const uidMatch = snap.snapshot.match(/uid=(\d+_\d+)/);
+    expect(uidMatch).not.toBeNull();
+    const buttonUid = uidMatch![1];
+
+    // clickByUid: 走 DOM.resolveNode + getBoxModel + callFunctionOn + dispatchMouseEvent
+    await expect(service.clickByUid({ sessionId, uid: buttonUid })).resolves.toMatchObject({ id: sessionId });
+    expect(dbg.sendCommand).toHaveBeenCalledWith('DOM.resolveNode', { backendNodeId: expect.any(Number) });
+
+    // fillByUid: 走 getElementInfo + fillTextInput
+    await expect(service.fillByUid({ sessionId, uid: buttonUid, value: 'Ada' })).resolves.toMatchObject({ id: sessionId });
+
+    // pressKey: 走 dispatchKeyEvent
+    await expect(service.pressKey({ sessionId, key: 'Enter' })).resolves.toMatchObject({ id: sessionId });
+    expect(dbg.sendCommand).toHaveBeenCalledWith(
+      'Input.dispatchKeyEvent',
+      expect.objectContaining({ type: 'keyDown' }),
+    );
+
+    // 错误 UID 应抛出
+    await expect(service.clickByUid({ sessionId, uid: 'stale_uid' })).rejects.toThrow();
+
+    // close 清理 debugger 连接
+    service.close(sessionId);
+    expect(dbg.detach).toHaveBeenCalled();
+  });
+
+  it('rejects browser-control actions on the agent-browser-cli engine', async () => {
+    const runner = {
+      isAvailable: vi.fn(() => true),
+      open: vi.fn(async () => ({ url: 'https://example.com/', title: 'CLI page' })),
+      navigate: vi.fn(async () => ({ url: 'https://example.com/', title: 'CLI page' })),
+      waitForSelector: vi.fn(async () => ({ title: 'Ready' })),
+      click: vi.fn(async () => ({ title: 'Clicked' })),
+      type: vi.fn(async () => ({ title: 'Typed' })),
+      evaluate: vi.fn(async () => ({ session: { title: 'Evaluated' }, value: 42 })),
+      screenshot: vi.fn(async () => ({ session: { title: 'Shot' }, dataUrl: 'data:image/png;base64,cli' })),
+      command: vi.fn(async () => ({
+        session: { title: 'Snapshot' },
+        data: { tree: [] },
+        stdout: '{"success":true}',
+        stderr: '',
+        command: ['--json', 'snapshot'],
+      })),
+      textSample: vi.fn(async () => 'cli text'),
+      close: vi.fn(async () => undefined),
+    };
+    const service = new AgentBrowserService({
+      cliRunner: runner,
+      createWindow: vi.fn(() => { throw new Error('should not create window'); }) as never,
+      now: () => new Date('2026-01-01T00:00:00.000Z'),
+    });
+
+    const opened = await service.open({ url: 'example.com', profile: 'Work' });
+    const sessionId = opened.session.id;
+    service.setEnabled(true);
+
+    await expect(service.takeSnapshot({ sessionId })).rejects.toThrow('browser-window engine');
+    await expect(service.clickByUid({ sessionId, uid: '1_1' })).rejects.toThrow('browser-window engine');
+    await expect(service.fillByUid({ sessionId, uid: '1_1', value: 'x' })).rejects.toThrow('browser-window engine');
+    await expect(service.pressKey({ sessionId, key: 'Enter' })).rejects.toThrow('browser-window engine');
+    service.close(sessionId);
+  });
+
   it('lists and saves reusable browser profiles', async () => {
     const userDataPath = await mkdtemp(join(tmpdir(), 'agent-browser-profiles-'));
     try {
@@ -373,6 +505,8 @@ describe('agent browser service', () => {
         command: ['--json', 'snapshot'],
       })),
       close: vi.fn(),
+      isEnabled: vi.fn(() => true),
+      setEnabled: vi.fn((enabled: boolean) => ({ enabled })),
     };
 
     const api = createAgentBrowserApi(service as never);

@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 import {
   buildPluginSdkDtsRootFiles,
+  resolvePackageDeclarationPath,
   resolveStagedDeclarationPath,
   stagePluginSdkDeclarations,
 } from "./build-plugin-sdk-source-dts.mjs";
@@ -45,6 +46,25 @@ test("uses the canonical public entrypoint set unless private QA declarations ar
   assert.ok(privateQaRoots.length > publicRoots.length);
   assert.equal(new Set(publicRoots).size, publicRoots.length);
   assert.equal(new Set(privateQaRoots).size, privateQaRoots.length);
+  for (const privateEntry of [
+    "channel-contract-testing",
+    "plugin-test-runtime",
+    "testing",
+  ]) {
+    assert.equal(publicRoots.includes(`../src/plugin-sdk/${privateEntry}.ts`), false);
+  }
+});
+
+test("maps retained declarations into the package boundary layout", () => {
+  assert.equal(
+    resolvePackageDeclarationPath("dist/plugin-sdk/src/plugin-sdk/health.d.ts"),
+    "packages/plugin-sdk/dist/src/plugin-sdk/health.d.ts",
+  );
+  assert.equal(
+    resolvePackageDeclarationPath("dist/plugin-sdk/packages/llm-core/src/index.d.ts"),
+    "packages/plugin-sdk/dist/packages/llm-core/src/index.d.ts",
+  );
+  assert.equal(resolvePackageDeclarationPath("dist/shared/types/context-family.d.ts"), null);
 });
 
 test("stages declarations without writing generated files beside shared sources", () => {

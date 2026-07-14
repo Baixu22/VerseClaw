@@ -240,6 +240,24 @@ export function createPluginRuntime(_options: CreatePluginRuntimeOptions = {}): 
       _options.allowGatewaySubagentBinding === true,
     ),
     nodes: _options.nodes ?? createLateBindingNodes(_options.allowGatewaySubagentBinding === true),
+    agentBrowser: {
+      async invoke(params) {
+        if (params.signal?.aborted) {
+          throw new Error("agent browser invoke aborted");
+        }
+        const { callGateway } = await import("../../gateway/call.js");
+        return await callGateway({
+          method: "agentBrowser.invoke",
+          params: {
+            action: params.action,
+            payload: params.payload,
+            timeoutMs: params.timeoutMs,
+          },
+          timeoutMs: params.timeoutMs ?? 120_000,
+          signal: params.signal,
+        });
+      },
+    },
     system: createRuntimeSystem(),
     media: createRuntimeMedia(),
     webSearch: {

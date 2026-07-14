@@ -182,6 +182,8 @@ Verse Claw 现在还内置了腾讯官方个人微信渠道插件，可直接在
 现在定时任务页面已经可以直接配置外部投递，统一拆成“发送账号”和“接收目标”两个下拉选择。对于已支持的通道，接收目标会从通道目录能力或已知会话历史中自动发现，不需要再手动修改 `jobs.json`。
 定时任务也可以运行 Agent Browser 自动化：配置 URL、浏览器 profile/auth state、安全策略、成功/失败判定、保守安全步骤重试和诊断项后，就能让网页签到、页面监控、草稿发布等任务通过内部 managed browser 复用持久化登录态，并在失败时展示简洁证据。
 
+Verse Claw 还内置默认启用的只读 Reach Readers 插件，覆盖 Web、RSS、V2EX、雪球、哔哩哔哩、YouTube、GitHub、Twitter 和小红书。平台 API/CLI 始终优先；现有 Agent Browser profile 只作为安全页面兜底或可见登录接力，并且不会向模型暴露 Cookie 或 token。
+
 
 ### 🧩 可扩展技能系统
 通过预构建的技能扩展 AI 智能体的能力。集成的 Skills 页面采用“本地优先”方式：会扫描托管目录与 workspace 技能目录，并且无需依赖 Gateway 即可启用或停用技能；在企业扩展接管时，也可以显示扩展提供的 marketplace。

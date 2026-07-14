@@ -9,5 +9,24 @@
   "tasks": { "name": "任务名称", "url": "目标地址", "objective": "任务目标", "runNow": "立即运行", "empty": "暂无浏览器任务" },
   "profiles": { "localState": "持久化 Electron 站点状态", "active": "{{count}} 个活动会话" },
   "vault": { "protected": "密码由操作系统保护，且不会向 Agent 展示。", "empty": "暂无已保存凭据" },
-  "status": { "queued": "排队中", "running": "运行中", "waiting-approval": "等待授权", "paused": "已暂停", "completed": "已完成", "failed": "失败", "cancelled": "已取消" }
+  "status": { "queued": "排队中", "running": "运行中", "waiting-approval": "等待授权", "paused": "已暂停", "completed": "已完成", "failed": "失败", "cancelled": "已取消" },
+  "runtimeMode": {
+    "label": "运行模式",
+    "normalRestricted": "标准受限",
+    "controlledEnhanced": "受控增强",
+    "fullAccess": "完全访问",
+    "upgrade": "升级模式",
+    "actionRequired": "此操作需要升级运行模式"
+  },
+  "boundaryChoice": {
+    "dialogLabel": "AI 边界确认",
+    "other": "其他",
+    "otherPlaceholder": "补充要求，不会直接授权。",
+    "cancel": "取消",
+    "submit": "提交选择",
+    "grants": "授权",
+    "grantsCount": "授权 {{count}} 项",
+    "cancelled": "用户取消本次边界确认。",
+    "expired": "此确认请求已过期。"
+  }
 }
