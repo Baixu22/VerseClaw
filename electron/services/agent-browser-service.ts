@@ -40,6 +40,12 @@ import type {
   AgentBrowserSourceMapResolveLocationResult,
   AgentBrowserSourceMapExtractOriginalContextPayload,
   AgentBrowserSourceMapExtractOriginalContextResult,
+  AgentBrowserRuntimeInspectGlobalsPayload,
+  AgentBrowserRuntimeInspectGlobalsResult,
+  AgentBrowserRuntimeSearchModulesPayload,
+  AgentBrowserRuntimeSearchModulesResult,
+  AgentBrowserRuntimeDescribeFunctionPayload,
+  AgentBrowserRuntimeDescribeFunctionResult,
   AgentBrowserOpenPayload,
   AgentBrowserProfileEntry,
   AgentBrowserProfileSavePayload,
@@ -56,7 +62,7 @@ import type {
 import type { BrowserControlToolCall, NetworkHeader, NetworkRequestDetail, NetworkRequestMeta } from '@shared/agent-browser/types';
 import { redactNetworkRequestDetail, redactNetworkRequestMeta } from '@shared/agent-browser/network-context';
 import { truncateText } from '@shared/agent-browser/text';
-import { getOriginFromUrl } from '@shared/agent-browser/tool-authorization';
+import { getOriginFromUrl, type ToolAuthorizationContext } from '@shared/agent-browser/tool-authorization';
 import { isBrowserControlRestrictedUrl } from '@shared/agent-browser/browser-control';
 import { BrowserControlActionExecutor } from './agent-browser/browser-control/actions';
 import { BoundaryChoiceToolExecutor } from './agent-browser/browser-control/boundary-choice-tool-executor';
@@ -65,6 +71,7 @@ import { BrowserControlSnapshotManager } from './agent-browser/browser-control/s
 import { AgentBrowserTabManager } from './agent-browser/browser-control/tab-manager';
 import { JsSourceToolExecutor } from './agent-browser/browser-control/js-source-tool-executor';
 import { SourceMapToolExecutor } from './agent-browser/browser-control/source-map-tool-executor';
+import { RuntimeReadToolExecutor } from './agent-browser/browser-control/runtime-read-tool-executor';
 import { BrowserNetworkRecorder, type NetworkRequestFilter, type NetworkWaitFilter } from './agent-browser/browser-control/network-recorder';
 import type { AgentBrowserRunner } from './agent-browser-cli-runner';
 
@@ -103,6 +110,7 @@ type AgentBrowserControlState = {
   networkRecorder: BrowserNetworkRecorder;
   jsSourceExecutor: JsSourceToolExecutor;
   sourceMapExecutor: SourceMapToolExecutor;
+  runtimeReadExecutor: RuntimeReadToolExecutor;
 };
 
 type AgentBrowserServiceOptions = {
@@ -1156,7 +1164,8 @@ export class AgentBrowserService {
       jsSourceIndex: jsSourceExecutor.getIndex(),
       getCurrentPageUrl: async () => webContents.getURL(),
     });
-    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor, sourceMapExecutor };
+    const runtimeReadExecutor = new RuntimeReadToolExecutor(connection, () => this.getRuntimeReadAuthorization(record));
+    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor, sourceMapExecutor, runtimeReadExecutor };
     this.browserControlStates.set(record.session.id, state);
     return state;
   }
@@ -1805,6 +1814,69 @@ export class AgentBrowserService {
       throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
     }
     return { sourceMapExecutor: state.sourceMapExecutor, record };
+  }
+
+  async runtimeInspectGlobals(payload: AgentBrowserRuntimeInspectGlobalsPayload): Promise<Omit<AgentBrowserRuntimeInspectGlobalsResult, 'success'>> {
+    const { runtimeReadExecutor } = this.getRuntimeReadExecutor(payload.sessionId);
+    return runtimeReadExecutor.inspectGlobals({
+      paths: payload.paths,
+      maxDepth: payload.maxDepth,
+      limit: payload.limit,
+    });
+  }
+
+  async runtimeSearchModules(payload: AgentBrowserRuntimeSearchModulesPayload): Promise<Omit<AgentBrowserRuntimeSearchModulesResult, 'success'>> {
+    const { runtimeReadExecutor } = this.getRuntimeReadExecutor(payload.sessionId);
+    return runtimeReadExecutor.searchModules({
+      keywords: payload.keywords,
+      limit: payload.limit,
+      radius: payload.radius,
+    });
+  }
+
+  async runtimeDescribeFunction(payload: AgentBrowserRuntimeDescribeFunctionPayload): Promise<Omit<AgentBrowserRuntimeDescribeFunctionResult, 'success'>> {
+    const { runtimeReadExecutor } = this.getRuntimeReadExecutor(payload.sessionId);
+    return runtimeReadExecutor.describeFunction({
+      path: payload.path,
+      keywords: payload.keywords,
+      radius: payload.radius,
+    });
+  }
+
+  /**
+   * 获取指定 session 的 Runtime 只读执行器，复用安全校验链。
+   */
+  private getRuntimeReadExecutor(sessionId: string): { runtimeReadExecutor: RuntimeReadToolExecutor; record: AgentBrowserRecord } {
+    this.assertBrowserControlEnabled();
+    const record = this.getRecord(sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('Runtime 只读工具仅支持 browser-window 引擎，当前会话使用 agent-browser-cli 引擎。');
+    }
+    this.assertActionAllowed(record);
+    const state = this.browserControlStates.get(record.session.id);
+    if (!state) {
+      throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
+    }
+    return { runtimeReadExecutor: state.runtimeReadExecutor, record };
+  }
+
+  /**
+   * 构造 Runtime 只读授权上下文。
+   * controlled_enhanced 模式映射为 controlled_enhanced（允许 runtime read）；
+   * normal_restricted 映射为 normal（fail-closed）；full_access 映射为 full_access（fail-closed，必须走 full_access.*）。
+   */
+  private getRuntimeReadAuthorization(record: AgentBrowserRecord): ToolAuthorizationContext {
+    const mode: ToolAuthorizationContext['mode'] = record.runtimeMode === 'controlled_enhanced'
+      ? 'controlled_enhanced'
+      : record.runtimeMode === 'full_access'
+        ? 'full_access'
+        : 'normal';
+    return {
+      mode,
+      createdAt: record.runtimeExpiresAt ? record.runtimeExpiresAt - 60000 : Date.now(),
+      expiresAt: record.runtimeExpiresAt,
+      reason: `runtimeMode=${record.runtimeMode}`,
+    };
   }
 
   /**

@@ -219,5 +219,17 @@ export function createAgentBrowserApi(
       success: true,
       ...(await service.sourceMapExtractOriginalContext(payload)),
     }),
+    runtimeInspectGlobals: async (payload) => ({
+      success: true,
+      ...(await service.runtimeInspectGlobals(payload)),
+    }),
+    runtimeSearchModules: async (payload) => ({
+      success: true,
+      ...(await service.runtimeSearchModules(payload)),
+    }),
+    runtimeDescribeFunction: async (payload) => ({
+      success: true,
+      ...(await service.runtimeDescribeFunction(payload)),
+    }),
   };
 }
