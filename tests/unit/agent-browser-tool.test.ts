@@ -234,4 +234,55 @@ describe('agent_browser tool', () => {
     expect(payload?.browserAutomationEvents).toBeUndefined();
     expect(invoke).toHaveBeenCalledTimes(1);
   });
+
+  it('routes getConsoleMessages with sessionId payload and skips failure diagnostics', async () => {
+    const invoke = vi.fn(async (_action, payload) => ({
+      success: true,
+      content: `[console] sample message for session ${(payload as { sessionId: string }).sessionId}`,
+    }));
+    const tool = createAgentBrowserTool({ invoke });
+
+    const result = await tool!.execute('tool-1', {
+      action: 'getConsoleMessages',
+      sessionId: 's-console',
+    });
+    const payload = readJsonResult(result);
+
+    expect(payload).toMatchObject({
+      success: true,
+      content: '[console] sample message for session s-console',
+      browserAutomationEvent: {
+        action: 'getConsoleMessages',
+        ok: true,
+        sessionId: 's-console',
+      },
+    });
+    expect(invoke).toHaveBeenCalledTimes(1);
+    expect(invoke.mock.calls[0]).toEqual(['getConsoleMessages', { sessionId: 's-console' }]);
+  });
+
+  it('getConsoleMessages does not trigger failure diagnostics when invoker throws', async () => {
+    const invoke = vi.fn(async (action) => {
+      if (action === 'getConsoleMessages') {
+        throw new Error('console recorder not initialized');
+      }
+      return { success: true };
+    });
+    const tool = createAgentBrowserTool({ invoke });
+
+    const result = await tool!.execute('tool-1', {
+      action: 'getConsoleMessages',
+      sessionId: 's-console',
+    });
+    const payload = readJsonResult(result);
+
+    expect(isToolResultError(result)).toBe(true);
+    expect(payload).toMatchObject({
+      status: 'error',
+      success: false,
+      error: 'console recorder not initialized',
+    });
+    expect(payload?.browserAutomationEvents).toBeUndefined();
+    expect(invoke).toHaveBeenCalledTimes(1);
+  });
 });
