@@ -20,6 +20,9 @@ describe("runtime.contextBlock working-memory config", () => {
           "role-memory"?: {
             enabled?: boolean;
           };
+          sekb?: {
+            enabled?: boolean;
+          };
         }
       | undefined
     >();

@@ -101,6 +101,12 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+        sekb: z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),

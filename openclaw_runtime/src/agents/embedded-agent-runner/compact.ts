@@ -852,6 +852,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
     // DCS Stage 5 / W2: resolve BlockStore + sink once for context_* tools and extension factories.
     const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
       spawnedBy: params.spawnedBy,
+      cfg: params.config,
     });
     const toolsRaw = createOpenClawCodingTools({
       exec: {
@@ -1231,6 +1232,8 @@ async function compactEmbeddedAgentSessionDirectOnce(
         contextBlockSink: dcsExtensionDeps?.contextBlockSink,
         objective: dcsExtensionDeps?.objective,
         parentSessionId: dcsExtensionDeps?.parentSessionId,
+        trajectoryCapture: dcsExtensionDeps?.trajectoryCapture,
+        sekbRuntime: dcsExtensionDeps?.sekbRuntime,
         toolEntries,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({

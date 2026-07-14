@@ -20,6 +20,9 @@ describe("runtime.contextBlock tool-registry config", () => {
           "role-memory"?: {
             enabled?: boolean;
           };
+          sekb?: {
+            enabled?: boolean;
+          };
         }
       | undefined
     >();

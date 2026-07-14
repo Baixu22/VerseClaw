@@ -20,6 +20,9 @@ describe("runtime.contextBlock compass config", () => {
           "role-memory"?: {
             enabled?: boolean;
           };
+          sekb?: {
+            enabled?: boolean;
+          };
         }
       | undefined
     >();

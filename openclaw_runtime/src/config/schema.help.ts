@@ -1984,6 +1984,10 @@ export const FIELD_HELP: Record<string, string> = {
     "Stage 4 role-memory knowledge context block controls for subagent-session knowledge Block production from buildContextPack.",
   "runtime.contextBlock.role-memory.enabled":
     "Enable DCS Stage 4 role-memory knowledge Block production and ## Knowledge prompt injection for subagent sessions (default: false).",
+  "runtime.contextBlock.sekb":
+    "Stage 5 SEKB controls for trajectory capture, harness hooks, and experience Block write-back after confirmed distillation.",
+  "runtime.contextBlock.sekb.enabled":
+    "Enable DCS Stage 5 SEKB harness hooks, terminal trajectoryCapture, and experience Block write-back on confirm_and_save (default: false). Also toggled by OPENCLAW_SEKB_ENABLED.",
   "runtime.eventLog":
     "Append-only RuntimeTaskEvent event-log shadow settings. These flags are default-off and must not wire live TaskLoop execution by themselves.",
   "runtime.eventLog.shadow":

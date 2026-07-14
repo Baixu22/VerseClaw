@@ -728,6 +728,8 @@ export const FIELD_LABELS: Record<string, string> = {
   "runtime.contextBlock.compass.enabled": "Compass Knowledge Context Block Enabled",
   "runtime.contextBlock.role-memory": "Role Memory Knowledge Context Block",
   "runtime.contextBlock.role-memory.enabled": "Role Memory Knowledge Context Block Enabled",
+  "runtime.contextBlock.sekb": "SEKB Experience Context Block",
+  "runtime.contextBlock.sekb.enabled": "SEKB Experience Context Block Enabled",
   "runtime.eventLog": "Runtime Event Log",
   "runtime.eventLog.shadow": "Runtime Event Log Shadow",
   "runtime.eventLog.persist": "Runtime Event Log Persist",

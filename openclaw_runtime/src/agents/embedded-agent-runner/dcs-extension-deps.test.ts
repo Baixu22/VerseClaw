@@ -1,4 +1,4 @@
-﻿/**
+/**
  * DCS W1: production attempt wiring characterization for DCS factory deps.
  *
  * Proves resolveEmbeddedDcsExtensionDeps supplies sink/store so
@@ -93,6 +93,15 @@ describe("DCS W1 attempt factory deps wiring", () => {
       void factory(agent as unknown as ExtensionAPI);
     }
     expect(getTaskStateHandlerConfig()).toBeUndefined();
+  });
+
+  it("omits trajectoryCapture when SEKB is not enabled", () => {
+    const deps = resolveEmbeddedDcsExtensionDeps({
+      prompt: "Implement D2 wiring",
+      spawnedBy: "agent:parent:main",
+    });
+    expect(deps?.trajectoryCapture).toBeUndefined();
+    expect(deps?.sekbRuntime).toBeUndefined();
   });
 });
 

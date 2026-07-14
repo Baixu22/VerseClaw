@@ -17,9 +17,9 @@ export type SekbTaskClassifier = (event: {
 export type SekbHarnessHookTarget = {
   on(
     type: string,
-    handler: (event: unknown, context?: unknown) => unknown | Promise<unknown>,
+    handler: (event: unknown, context?: unknown) => unknown,
   ): () => void;
-  subscribe?: (listener: (event: unknown) => unknown | Promise<unknown>) => () => void;
+  subscribe?: (listener: (event: unknown) => unknown) => () => void;
 };
 
 export type InstallSekbHarnessHooksOptions = {
@@ -311,10 +311,12 @@ function readBeforeAgentStartEvent(value: unknown): BeforeAgentStartPayload | nu
   if (typeof value.prompt !== "string") {
     return null;
   }
-  const hasSystemPrompt = typeof value.systemPrompt === "string";
+  const systemPromptValue = value.systemPrompt;
+  const hasSystemPrompt = typeof systemPromptValue === "string";
+  const systemPrompt: string = hasSystemPrompt ? systemPromptValue : "";
   return {
     prompt: value.prompt,
-    systemPrompt: hasSystemPrompt ? value.systemPrompt : "",
+    systemPrompt,
     resources: value.resources,
     hasSystemPrompt,
   };
@@ -433,9 +435,13 @@ function appendAdviceToToolResultMessage(
   message: ToolResultMessage,
   advice: string,
 ): ToolResultMessage {
+  const nextContent = appendAdvice(
+    message.content as unknown as ContentBlock[],
+    advice,
+  ) as unknown as ToolResultMessage["content"];
   return {
     ...message,
-    content: appendAdvice(message.content, advice),
+    content: nextContent,
   };
 }
 
