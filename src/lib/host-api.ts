@@ -55,6 +55,12 @@ import type {
   AgentBrowserRuntimeSearchModulesResult,
   AgentBrowserRuntimeDescribeFunctionPayload,
   AgentBrowserRuntimeDescribeFunctionResult,
+  AgentBrowserReplayPrepareRequestPayload,
+  AgentBrowserReplayPrepareRequestResult,
+  AgentBrowserReplaySendRequestPayload,
+  AgentBrowserReplaySendRequestResult,
+  AgentBrowserReplayCompareResponsesPayload,
+  AgentBrowserReplayCompareResponsesResult,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -856,6 +862,12 @@ export const hostApi = {
       invokeHost('agentBrowser', 'runtimeSearchModules', input),
     runtimeDescribeFunction: (input: AgentBrowserRuntimeDescribeFunctionPayload): Promise<AgentBrowserRuntimeDescribeFunctionResult> =>
       invokeHost('agentBrowser', 'runtimeDescribeFunction', input),
+    replayPrepareRequest: (input: AgentBrowserReplayPrepareRequestPayload): Promise<AgentBrowserReplayPrepareRequestResult> =>
+      invokeHost('agentBrowser', 'replayPrepareRequest', input),
+    replaySendRequest: (input: AgentBrowserReplaySendRequestPayload): Promise<AgentBrowserReplaySendRequestResult> =>
+      invokeHost('agentBrowser', 'replaySendRequest', input),
+    replayCompareResponses: (input: AgentBrowserReplayCompareResponsesPayload): Promise<AgentBrowserReplayCompareResponsesResult> =>
+      invokeHost('agentBrowser', 'replayCompareResponses', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),
