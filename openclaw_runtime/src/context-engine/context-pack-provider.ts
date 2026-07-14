@@ -26,6 +26,13 @@ export type ContextPackContextProviderOptions = {
     query: RuntimeContextProviderQuery,
     extras?: RuntimeContextProviderExtras,
   ) => ContextPack | undefined | Promise<ContextPack | undefined>;
+  /**
+   * Grading switch (ALIGNMENT 校正6). Factory default stays "shadow"; the production
+   * composition (register-rebuild-providers) passes "authoritative" — the flip was
+   * approved at rebuild Task I on the shadow-comparison dossier, with this option as
+   * the documented kill switch back to shadow.
+   */
+  authority?: "authoritative" | "shadow";
 };
 
 const PROVIDER_EVIDENCE_REF: EvidenceRef = {
@@ -45,6 +52,7 @@ const SHADOW_METADATA = {
 export function createContextPackContextProvider(
   options: ContextPackContextProviderOptions = {},
 ): RuntimeContextProvider {
+  const authoritative = options.authority === "authoritative";
   const manifest = {
     id: CONTEXT_PACK_CONTEXT_PROVIDER_ID,
     kind: "context" as const,
@@ -60,8 +68,8 @@ export function createContextPackContextProvider(
       capability: "context.understand",
       reason: "Readonly diagnostics/evidence only; legacy prompt assembly remains authoritative.",
     },
-    enabledByDefault: false,
-    shadowOnly: true,
+    enabledByDefault: authoritative,
+    shadowOnly: !authoritative,
     fallbackReasons: ["legacy_authoritative" as const, "no_result" as const, "provider_error" as const],
     evidenceRefs: [
       {
@@ -75,7 +83,7 @@ export function createContextPackContextProvider(
     ],
     outputKinds: ["summary" as const, "evidence" as const],
     dependsOnIndexing: false,
-    metadata: { ...SHADOW_METADATA },
+    metadata: { ...SHADOW_METADATA, shadowOnly: !authoritative, legacyAuthoritative: !authoritative },
   };
 
   const buildPack = options.buildPack ?? defaultBuildPack();

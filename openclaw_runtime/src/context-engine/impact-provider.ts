@@ -18,6 +18,8 @@ export const IMPACT_CONTEXT_PROVIDER_ID = "impact-shadow";
 export type ImpactContextProviderOptions = {
   /** Override the analysis source (tests). Defaults to the FactStore pipeline. */
   analyze?: (query: RuntimeContextProviderQuery) => ImpactAnalysis | undefined | Promise<ImpactAnalysis | undefined>;
+  /** Grading switch (校正6): factory default "shadow"; production composition flips to authoritative (Task I). */
+  authority?: "authoritative" | "shadow";
 };
 
 const PROVIDER_EVIDENCE_REF: EvidenceRef = {
@@ -35,6 +37,7 @@ const SHADOW_METADATA = {
 } as const;
 
 export function createImpactContextProvider(options: ImpactContextProviderOptions = {}): RuntimeContextProvider {
+  const authoritative = options.authority === "authoritative";
   const manifest = {
     id: IMPACT_CONTEXT_PROVIDER_ID,
     kind: "context" as const,
@@ -49,8 +52,8 @@ export function createImpactContextProvider(options: ImpactContextProviderOption
       capability: "context.impact",
       reason: "Readonly diagnostics/evidence only; vendored codegraph remains authoritative until Task I.",
     },
-    enabledByDefault: false,
-    shadowOnly: true,
+    enabledByDefault: authoritative,
+    shadowOnly: !authoritative,
     fallbackReasons: ["legacy_authoritative" as const, "no_result" as const, "provider_error" as const],
     evidenceRefs: [
       { type: "file" as const, ref: "openclaw_runtime/src/context-engine/views/impact/impact-view.ts" },
@@ -58,7 +61,7 @@ export function createImpactContextProvider(options: ImpactContextProviderOption
     ],
     outputKinds: ["summary" as const, "evidence" as const],
     dependsOnIndexing: false,
-    metadata: { ...SHADOW_METADATA },
+    metadata: { ...SHADOW_METADATA, shadowOnly: !authoritative, legacyAuthoritative: !authoritative },
   };
 
   const analyze = options.analyze ?? defaultAnalyze();

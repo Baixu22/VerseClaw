@@ -1,11 +1,8 @@
 {
   "id": "codegraph",
-  "activation": {
-    "onStartup": true
-  },
-  "enabledByDefault": true,
+  "enabledByDefault": false,
   "name": "CodeGraph",
-  "description": "Semantic code intelligence: auto-indexes codebase, provides decision boundaries, source-reading plans, symbol search, call graph traversal, entry point detection, business flow tracing, minimal context generation, git history analysis, incremental sync, and freshness metadata.",
+  "description": "RETIRED (context-engine rebuild Task I): superseded by the in-process FactStore context engine (context.understand/impact/reuse/verify capabilities). Vendored dist retained solely as the impact-parity baseline harness. Semantic code intelligence: auto-indexes codebase, provides decision boundaries, source-reading plans, symbol search, call graph traversal, entry point detection, business flow tracing, minimal context generation, git history analysis, incremental sync, and freshness metadata.",
   "contracts": {
     "tools": [
       "codegraph_decide",
