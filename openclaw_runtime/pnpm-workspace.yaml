@@ -13,4 +13,9 @@ allowBuilds:
   openclaw: false
   protobufjs: false
   sharp: false
+  tree-sitter: true
   tree-sitter-bash: false
+  tree-sitter-go: true
+  tree-sitter-java: true
+  tree-sitter-python: true
+  tree-sitter-rust: true
