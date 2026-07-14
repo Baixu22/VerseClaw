@@ -348,6 +348,27 @@ public wildcard API. T2 therefore preserves that export surface.
 | [DCS-T2-ACCEPTANCE.md](./DCS-T2-ACCEPTANCE.md) | encoding + structural convergence 验收 |
 | [DCS-T3-ACCEPTANCE.md](./DCS-T3-ACCEPTANCE.md) | Electron CodeGraph 工具解锁验收 |
 
+## Wiring repair status (W1-W6, 2026-07-14)
+
+**Infrastructure ready = TRUE. Stage 2/5 product revenue ready = FALSE** (flags default off; no Settings control plane).
+
+| Window | Debt | Result |
+|--------|------|--------|
+| W1 | D2 phase producer + attempt DCS deps | live — [DCS-W1-COMPLETE.md](./DCS-W1-COMPLETE.md) |
+| W2 | D1 context_* agent tools | live — [DCS-W2-COMPLETE.md](./DCS-W2-COMPLETE.md) |
+| W3 | D5 toolEntries | live (flag-gated) — [DCS-W3-COMPLETE.md](./DCS-W3-COMPLETE.md) |
+| W4 | D4 SEKB production path | live (flag/env gated) — [DCS-W4-COMPLETE.md](./DCS-W4-COMPLETE.md) |
+| W5 | D6 Windows Electron E2E off/on | live-with-e2e — [DCS-W5-COMPLETE.md](./DCS-W5-COMPLETE.md) |
+| W6 | D3 fingerprint slice + D7 dual-injection counters + honesty docs | partial-live + residual chain — [DCS-W6-COMPLETE.md](./DCS-W6-COMPLETE.md) |
+
+**Final acceptance table**: [DCS-WIRING-REPAIR-ACCEPTANCE.md](./DCS-WIRING-REPAIR-ACCEPTANCE.md) (D1-D8 CONFIRMED closed / residual with file:line).
+
+### Honesty corrections (do not re-debate)
+
+- **Producer unit PASS !== production caller.** R2/R* unit green for envelope or handler helpers does not by itself prove a production TaskLoop/attempt/tool catalog caller. W1-W5 closed the real callers; treat ROUND COMPLETE reports as infrastructure + unit evidence unless a W* report cites the production site.
+- **D3 residual**: embedded attempt binds effectiveWorkspace fingerprint and invalidates working-memory on mismatch. Full Chat workspaceId to Main normalizeRootPath to Gateway field chain is **not** delivered.
+- **D7**: counters are in-memory observability (dcs-observability.ts), not a product dashboard.
+
 ## 后续工作
 
 1. 后续阶段以 [dcs-v1.6-spec.md](./dcs-v1.6-spec.md) 与已收编的
