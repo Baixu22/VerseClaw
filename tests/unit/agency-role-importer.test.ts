@@ -4,7 +4,6 @@ import {
   canSpawnAgencyDraft,
   reviewAgencyDraftPromotion,
   validateAgencyDraftPromotion,
-  type AgencyDraftRoleEntry,
 } from '../../openclaw_runtime/src/agents/agency-draft-catalog';
 import {
   importAgencyDraftRoles,
@@ -74,22 +73,19 @@ describe('Agency draft role importer', () => {
     expect(invalidPromotion.ok).toBe(false);
     expect(incomplete.status).toBe('draft');
 
-    const reviewed: AgencyDraftRoleEntry = {
-      ...importAgencyDraftRoles({
-        agents: [{
-          name: 'Release Reviewer',
-          description: 'Review release readiness, verify acceptance evidence, and report blockers.',
-          capabilities: ['review'],
-          handoff: ['Return a readiness verdict to the lead.'],
-        }],
-      })[0]!,
-      status: 'reviewed',
-    };
+    const reviewed = importAgencyDraftRoles({
+      agents: [{
+        name: 'Release Reviewer',
+        description: 'Review release readiness, verify acceptance evidence, and report blockers.',
+        capabilities: ['review'],
+        handoff: ['Return a readiness verdict to the lead.'],
+      }],
+    })[0]!;
 
     const validPromotion = validateAgencyDraftPromotion(reviewed);
 
     expect(validPromotion).toEqual({ ok: true, issues: [] });
-    expect(reviewed.status).toBe('reviewed');
+    expect(reviewed.status).toBe('draft');
     expect(canSpawnAgencyDraft(reviewed)).toBe(false);
   });
 
@@ -114,7 +110,7 @@ describe('Agency draft role importer', () => {
     expect(entries[0]?.roleCandidate?.toolRequirements).toEqual([]);
   });
 
-  it('does not allow reviewed or active draft catalog entries to spawn directly', () => {
+  it('keeps draft catalog entries permanently non-runnable', () => {
     const entry = importAgencyDraftRoles({
       agents: [{
         name: 'Evidence Reviewer',
@@ -122,8 +118,8 @@ describe('Agency draft role importer', () => {
       }],
     })[0]!;
 
-    expect(canSpawnAgencyDraft({ ...entry, status: 'reviewed' })).toBe(false);
-    expect(canSpawnAgencyDraft({ ...entry, status: 'active' })).toBe(false);
+    expect(entry.status).toBe('draft');
+    expect(canSpawnAgencyDraft(entry)).toBe(false);
   });
 
   it('creates a promotion review record without activating Agency drafts', () => {
@@ -140,7 +136,6 @@ describe('Agency draft role importer', () => {
 
     const reviewed = {
       ...draft!,
-      status: 'reviewed' as const,
       roleCandidate: {
         name: 'agency-reviewer-candidate',
         displayName: 'Agency Reviewer Candidate',
@@ -225,6 +220,10 @@ You are **Code Reviewer**, an expert who provides thorough, constructive code re
       sourceDivision: 'engineering',
       sourceAgentName: 'Code Reviewer',
       roleName: 'engineering-code-reviewer',
+      sourceRef: {
+        relativePath: 'engineering/engineering-code-reviewer.md',
+        sha256: expect.stringMatching(/^[a-f0-9]{64}$/),
+      },
     });
     expect(codeReviewer?.roleCandidate?.tools).toEqual([]);
     expect(codeReviewer?.roleCandidate?.toolRequirements).toEqual([]);
@@ -244,6 +243,10 @@ You are **Code Reviewer**, an expert who provides thorough, constructive code re
       status: 'draft',
       sourceDivision: 'game-development',
       roleName: 'unreal-world-builder',
+      sourceRef: {
+        relativePath: 'game-development/unreal-engine/unreal-world-builder.md',
+        sha256: expect.stringMatching(/^[a-f0-9]{64}$/),
+      },
     });
     expect(nestedUnrealAgent?.roleCandidate?.tools).toEqual([]);
   });
