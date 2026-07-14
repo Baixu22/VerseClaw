@@ -49,6 +49,10 @@ import {
   type AutomationPlaybookCandidate,
   type AutomationPlaybookSelectorFn,
 } from "./tools/automation-playbook-selector-tool.js";
+import {
+  createDefaultAutomationPlaybookSelector,
+  getBuiltinAutomationPlaybookCandidates,
+} from "./tools/automation-playbook-selector-default.js";
 import type { AnyAgentTool } from "./tools/common.js";
 import { createCronTool } from "./tools/cron-tool.js";
 import { createEmbeddedCallGateway } from "./tools/embedded-gateway-stub.js";
@@ -371,11 +375,16 @@ export function createOpenClawTools(
     invoke: agentBrowserInvoker,
   });
   options?.recordToolPrepStage?.("openclaw-tools:agent-browser-tool");
+  const automationPlaybookSelector =
+    options?.automationPlaybookSelector ??
+    createDefaultAutomationPlaybookSelector({ cfg: resolvedConfig, agentId: sessionAgentId });
+  const automationPlaybookCandidates =
+    options?.automationPlaybookCandidates ?? getBuiltinAutomationPlaybookCandidates();
   const automationPlaybookTool =
-    options?.automationPlaybookSelector && options?.automationPlaybookCandidates
+    automationPlaybookSelector && automationPlaybookCandidates
       ? createAutomationPlaybookSelectorTool({
-          select: options.automationPlaybookSelector,
-          candidates: options.automationPlaybookCandidates,
+          select: automationPlaybookSelector,
+          candidates: automationPlaybookCandidates,
         })
       : null;
   options?.recordToolPrepStage?.("openclaw-tools:automation-playbook-selector-tool");
