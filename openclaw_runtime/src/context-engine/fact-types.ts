@@ -1,8 +1,19 @@
 // Adapted from ragcode-context-engine (MIT), https://github.com/MarshallEriksen-Neura/ragcode
-// Source: src/core/types.ts:1-127 (+ ProjectIdentity from :506-515).
+// Source: src/core/types.ts:1-127 (+ ProjectIdentity from :506-515)
+//         + ContextPack contract from :382-436, :459-476, :499, :555-579, :625-630, :701.
 // Fact-layer data contract shared by Producers, FactStore, and Views.
 // NOTE: SPEC appendix A targets `context-engine/types.ts`, but that path is
 // occupied by the existing provider-runtime types, so the fact types live here.
+// ContextPack deltas vs ragcode (recorded per SPEC §6.1 adaptation):
+// - freshness uses the local hash-compare FreshnessReport (factstore/freshness.ts),
+//   not ragcode's watcher/semantic report — one store, one freshness clock.
+// - memorySnippets/memoryHints dropped (ragcode src/memory is on the do-not-copy list).
+// - editReadiness (types.ts:701 tri-state) is carried on the pack itself: the
+//   "可动手判定" is part of this architecture's core contract.
+// - MissingEvidenceHint.expandContext points at the context.understand capability
+//   (ALIGNMENT 校正4), not ragcode's get_context MCP tool.
+
+import type { FreshnessReport } from "./factstore/freshness.js";
 
 export type LanguageId =
   | "typescript"
@@ -141,4 +152,131 @@ export interface RepoIndex {
   edges: GraphEdge[];
   skippedFiles: SkippedFile[];
   analysisWarnings?: IndexAnalysisWarning[];
+}
+
+// ---------------------------------------------------------------------------
+// ContextPack contract (ragcode src/core/types.ts:382-436 + :701, adapted).
+// Markdown output order iron rule (SPEC §6.1):
+// brief → freshness → ownerChain → topology → snippets → missingEvidence → nextQueries.
+// ---------------------------------------------------------------------------
+
+export type ExpansionLevel = "file_card" | "skeleton" | "focused_body" | "full_body";
+
+export type EditReadiness = "safe_to_edit_after_reading" | "investigate_only" | "not_enough_context";
+
+export interface ContextSnippet {
+  filePath: string;
+  startLine: number;
+  endLine: number;
+  content: string;
+  score: number;
+  reason: string;
+  role: string;
+  expansionLevel: ExpansionLevel;
+  originalLineCount: number;
+  returnedLineCount: number;
+  elidedLineCount: number;
+}
+
+export interface OwnerNode {
+  filePath: string;
+  role: string;
+  reason: string;
+  score: number;
+  symbols: Array<{
+    name: string;
+    kind: string;
+    startLine: number;
+    endLine: number;
+  }>;
+}
+
+export interface TopologyEdge {
+  from: string;
+  to: string;
+  edge: EdgeKind;
+  confidence: "low" | "medium" | "high";
+  reason: string;
+  sourceFile?: string;
+  targetFile?: string;
+}
+
+export interface RelationshipEvidence {
+  source: string;
+  target: string;
+  kind: EdgeKind;
+  reason: string;
+}
+
+export interface MissingEvidenceHint {
+  code:
+    | "context_budget_truncated"
+    | "compact_fallback"
+    | "context_budget_too_small"
+    | "no_context_match"
+    | "index_stale"
+    | "index_pending"
+    | "indexing_in_progress"
+    | "index_skipped_files";
+  message: string;
+  omittedSnippets?: {
+    count: number;
+    originalCount: number;
+    returnedCount: number;
+    filePaths: string[];
+  };
+  omittedFiles?: {
+    count: number;
+    freshnessCategories: Array<"staleFiles" | "missingFiles">;
+  };
+  expandContext?: {
+    capability: "context.understand";
+    args: {
+      repoRoot: string;
+      query: string;
+      mode: Exclude<ContextMode, "auto">;
+      budgetChars: number;
+      format?: "json" | "markdown";
+    };
+  };
+}
+
+export interface ContextBudgetTrace {
+  hardByteCap: number;
+  targetByteCap: number;
+  renderedBytes: number;
+  transportBytes: number;
+  estimatedModelTokens: number;
+  tokenEstimateApproximate: boolean;
+  tokenizer?: string;
+  providerHint?: string;
+  format: "json" | "markdown";
+  omittedSnippets: number;
+  omittedFiles: number;
+  truncated: boolean;
+  fallbackUsed: boolean;
+  degradationLevel?: number;
+  fallbackReason?: string;
+}
+
+export interface ContextPack {
+  query: string;
+  repoRoot: string;
+  projectId: string;
+  mode: Exclude<ContextMode, "auto">;
+  answerable: boolean;
+  confidence: "low" | "medium" | "high";
+  editReadiness: EditReadiness;
+  brief: string;
+  freshness: FreshnessReport;
+  ownerChain: OwnerNode[];
+  topology: TopologyEdge[];
+  snippets: ContextSnippet[];
+  relationships: RelationshipEvidence[];
+  missingEvidence: string[];
+  nextQueries: string[];
+  missingEvidenceHints?: MissingEvidenceHint[];
+  budgetChars: number;
+  usedChars: number;
+  budgetTrace?: ContextBudgetTrace;
 }
