@@ -1119,6 +1119,33 @@ export type AgentBrowserSourceMapExtractOriginalContextResult = HostSuccess & {
   truncated: boolean;
   content: string;
 };
+export type AgentBrowserRuntimeInspectGlobalsPayload = AgentBrowserSessionPayload & {
+  paths: string[];
+  maxDepth?: number;
+  limit?: number;
+};
+export type AgentBrowserRuntimeInspectGlobalsResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserRuntimeSearchModulesPayload = AgentBrowserSessionPayload & {
+  keywords: string[];
+  limit?: number;
+  radius?: number;
+};
+export type AgentBrowserRuntimeSearchModulesResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserRuntimeDescribeFunctionPayload = AgentBrowserSessionPayload & {
+  path: string;
+  keywords?: string[];
+  radius?: number;
+};
+export type AgentBrowserRuntimeDescribeFunctionResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
 export type AgentBrowserPageInfo = {
   pageId: string;
   index: number;
@@ -4023,6 +4050,9 @@ export type HostApiContract = {
     sourceMapListCandidates: (payload: AgentBrowserSourceMapListCandidatesPayload) => AgentBrowserSourceMapListCandidatesResult;
     sourceMapResolveLocation: (payload: AgentBrowserSourceMapResolveLocationPayload) => AgentBrowserSourceMapResolveLocationResult;
     sourceMapExtractOriginalContext: (payload: AgentBrowserSourceMapExtractOriginalContextPayload) => AgentBrowserSourceMapExtractOriginalContextResult;
+    runtimeInspectGlobals: (payload: AgentBrowserRuntimeInspectGlobalsPayload) => AgentBrowserRuntimeInspectGlobalsResult;
+    runtimeSearchModules: (payload: AgentBrowserRuntimeSearchModulesPayload) => AgentBrowserRuntimeSearchModulesResult;
+    runtimeDescribeFunction: (payload: AgentBrowserRuntimeDescribeFunctionPayload) => AgentBrowserRuntimeDescribeFunctionResult;
   };
   mcp: {
     listServers: () => McpServerListResult;

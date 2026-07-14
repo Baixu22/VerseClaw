@@ -49,6 +49,12 @@ import type {
   AgentBrowserSourceMapResolveLocationResult,
   AgentBrowserSourceMapExtractOriginalContextPayload,
   AgentBrowserSourceMapExtractOriginalContextResult,
+  AgentBrowserRuntimeInspectGlobalsPayload,
+  AgentBrowserRuntimeInspectGlobalsResult,
+  AgentBrowserRuntimeSearchModulesPayload,
+  AgentBrowserRuntimeSearchModulesResult,
+  AgentBrowserRuntimeDescribeFunctionPayload,
+  AgentBrowserRuntimeDescribeFunctionResult,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -844,6 +850,12 @@ export const hostApi = {
       invokeHost('agentBrowser', 'sourceMapResolveLocation', input),
     sourceMapExtractOriginalContext: (input: AgentBrowserSourceMapExtractOriginalContextPayload): Promise<AgentBrowserSourceMapExtractOriginalContextResult> =>
       invokeHost('agentBrowser', 'sourceMapExtractOriginalContext', input),
+    runtimeInspectGlobals: (input: AgentBrowserRuntimeInspectGlobalsPayload): Promise<AgentBrowserRuntimeInspectGlobalsResult> =>
+      invokeHost('agentBrowser', 'runtimeInspectGlobals', input),
+    runtimeSearchModules: (input: AgentBrowserRuntimeSearchModulesPayload): Promise<AgentBrowserRuntimeSearchModulesResult> =>
+      invokeHost('agentBrowser', 'runtimeSearchModules', input),
+    runtimeDescribeFunction: (input: AgentBrowserRuntimeDescribeFunctionPayload): Promise<AgentBrowserRuntimeDescribeFunctionResult> =>
+      invokeHost('agentBrowser', 'runtimeDescribeFunction', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),
