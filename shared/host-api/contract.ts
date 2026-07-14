@@ -1167,6 +1167,43 @@ export type AgentBrowserReplayCompareResponsesResult = HostSuccess & {
   content: string;
   isError?: boolean;
 };
+export type AgentBrowserFullAccessExecuteScriptPayload = AgentBrowserSessionPayload & {
+  script: string;
+  awaitPromise?: boolean;
+};
+export type AgentBrowserFullAccessExecuteScriptResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserFullAccessFetchPayload = AgentBrowserSessionPayload & {
+  url: string;
+  method?: string;
+  headers?: Record<string, string>;
+  body?: string;
+  credentials?: 'include' | 'same-origin' | 'omit';
+};
+export type AgentBrowserFullAccessFetchResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserFullAccessGetNetworkDetailsPayload = AgentBrowserSessionPayload & {
+  requestIds: string[];
+};
+export type AgentBrowserFullAccessGetNetworkDetailsResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+  toolAttachments?: unknown[];
+};
+export type AgentBrowserFullAccessReadStoragePayload = AgentBrowserSessionPayload;
+export type AgentBrowserFullAccessReadStorageResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
+export type AgentBrowserFullAccessRevokePayload = AgentBrowserSessionPayload;
+export type AgentBrowserFullAccessRevokeResult = HostSuccess & {
+  content: string;
+  isError?: boolean;
+};
 export type AgentBrowserPageInfo = {
   pageId: string;
   index: number;
@@ -4077,6 +4114,11 @@ export type HostApiContract = {
     replayPrepareRequest: (payload: AgentBrowserReplayPrepareRequestPayload) => AgentBrowserReplayPrepareRequestResult;
     replaySendRequest: (payload: AgentBrowserReplaySendRequestPayload) => AgentBrowserReplaySendRequestResult;
     replayCompareResponses: (payload: AgentBrowserReplayCompareResponsesPayload) => AgentBrowserReplayCompareResponsesResult;
+    fullAccessExecuteScript: (payload: AgentBrowserFullAccessExecuteScriptPayload) => AgentBrowserFullAccessExecuteScriptResult;
+    fullAccessFetch: (payload: AgentBrowserFullAccessFetchPayload) => AgentBrowserFullAccessFetchResult;
+    fullAccessGetNetworkDetails: (payload: AgentBrowserFullAccessGetNetworkDetailsPayload) => AgentBrowserFullAccessGetNetworkDetailsResult;
+    fullAccessReadStorage: (payload: AgentBrowserFullAccessReadStoragePayload) => AgentBrowserFullAccessReadStorageResult;
+    fullAccessRevoke: (payload: AgentBrowserFullAccessRevokePayload) => AgentBrowserFullAccessRevokeResult;
   };
   mcp: {
     listServers: () => McpServerListResult;

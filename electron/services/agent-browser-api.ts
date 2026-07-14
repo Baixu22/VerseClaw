@@ -243,5 +243,25 @@ export function createAgentBrowserApi(
       success: true,
       ...(await service.replayCompareResponses(payload)),
     }),
+    fullAccessExecuteScript: async (payload) => ({
+      success: true,
+      ...(await service.fullAccessExecuteScript(payload)),
+    }),
+    fullAccessFetch: async (payload) => ({
+      success: true,
+      ...(await service.fullAccessFetch(payload)),
+    }),
+    fullAccessGetNetworkDetails: async (payload) => ({
+      success: true,
+      ...(await service.fullAccessGetNetworkDetails(payload)),
+    }),
+    fullAccessReadStorage: async (payload) => ({
+      success: true,
+      ...(await service.fullAccessReadStorage(payload)),
+    }),
+    fullAccessRevoke: (payload) => ({
+      success: true,
+      ...service.fullAccessRevoke(payload),
+    }),
   };
 }

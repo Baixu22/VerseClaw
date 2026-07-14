@@ -61,6 +61,16 @@ import type {
   AgentBrowserReplaySendRequestResult,
   AgentBrowserReplayCompareResponsesPayload,
   AgentBrowserReplayCompareResponsesResult,
+  AgentBrowserFullAccessExecuteScriptPayload,
+  AgentBrowserFullAccessExecuteScriptResult,
+  AgentBrowserFullAccessFetchPayload,
+  AgentBrowserFullAccessFetchResult,
+  AgentBrowserFullAccessGetNetworkDetailsPayload,
+  AgentBrowserFullAccessGetNetworkDetailsResult,
+  AgentBrowserFullAccessReadStoragePayload,
+  AgentBrowserFullAccessReadStorageResult,
+  AgentBrowserFullAccessRevokePayload,
+  AgentBrowserFullAccessRevokeResult,
   AgentBrowserProfileSavePayload,
   AgentBrowserProfileSaveResult,
   AgentBrowserProfilesResult,
@@ -868,6 +878,16 @@ export const hostApi = {
       invokeHost('agentBrowser', 'replaySendRequest', input),
     replayCompareResponses: (input: AgentBrowserReplayCompareResponsesPayload): Promise<AgentBrowserReplayCompareResponsesResult> =>
       invokeHost('agentBrowser', 'replayCompareResponses', input),
+    fullAccessExecuteScript: (input: AgentBrowserFullAccessExecuteScriptPayload): Promise<AgentBrowserFullAccessExecuteScriptResult> =>
+      invokeHost('agentBrowser', 'fullAccessExecuteScript', input),
+    fullAccessFetch: (input: AgentBrowserFullAccessFetchPayload): Promise<AgentBrowserFullAccessFetchResult> =>
+      invokeHost('agentBrowser', 'fullAccessFetch', input),
+    fullAccessGetNetworkDetails: (input: AgentBrowserFullAccessGetNetworkDetailsPayload): Promise<AgentBrowserFullAccessGetNetworkDetailsResult> =>
+      invokeHost('agentBrowser', 'fullAccessGetNetworkDetails', input),
+    fullAccessReadStorage: (input: AgentBrowserFullAccessReadStoragePayload): Promise<AgentBrowserFullAccessReadStorageResult> =>
+      invokeHost('agentBrowser', 'fullAccessReadStorage', input),
+    fullAccessRevoke: (input: AgentBrowserFullAccessRevokePayload): Promise<AgentBrowserFullAccessRevokeResult> =>
+      invokeHost('agentBrowser', 'fullAccessRevoke', input),
   },
   mcp: {
     listServers: () => invokeHost('mcp', 'listServers'),
