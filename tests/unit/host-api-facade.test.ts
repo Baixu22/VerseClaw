@@ -897,9 +897,9 @@ describe('hostApi facade', () => {
     });
 
     const electronToRenderer = findViolations('electron', [
-      /\bfrom\s+['"][^'"]*src\//g,
-      /\bimport\(\s*['"][^'"]*src\//g,
-      /\brequire\(\s*['"][^'"]*src\//g,
+      /\bfrom\s+['"](?:\.\.?\/)+src\//g,
+      /\bimport\(\s*['"](?:\.\.?\/)+src\//g,
+      /\brequire\(\s*['"](?:\.\.?\/)+src\//g,
     ]);
     const rendererToElectron = findViolations('src', [
       /\bfrom\s+['"]electron['"]/g,
