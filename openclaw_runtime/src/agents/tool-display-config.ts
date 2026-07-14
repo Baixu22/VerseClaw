@@ -687,5 +687,10 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
       title: "TTS",
       detailKeys: ["text", "channel"],
     },
+    select_automation_playbook: {
+      emoji: "📋",
+      title: "Select Automation Playbook",
+      detailKeys: ["userContent", "pageContextSummary", "playbookId"],
+    },
   },
 };

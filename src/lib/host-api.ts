@@ -125,9 +125,16 @@ import type {
   AgentDevVisualPresetResult,
   AgentDevWorkbenchEvidenceResult,
   AgentUpdateReasoningEffortPayload,
+  AgentUpdateAvatarPayload,
   AgentUpdatePayload,
   AgencyRoleDecisionPayload,
   AgencyRoleListResult,
+  AgencyRoleMemoryProposalsPayload,
+  AgencyRoleMemoryProposalsResult,
+  AgencyRolePackageImportPayload,
+  AgencyRolePackageListResult,
+  AgencyRolePackageRefreshPayload,
+  AgencyRolePackageResult,
   AgencyRolePromotionPreviewResult,
   AgencyRolePromotionResult,
   AgencyRoleReviewPayload,
@@ -400,6 +407,7 @@ import type {
   MemoryExplainInjectionPayload,
   MemoryListPayload,
   MemoryProposal,
+  MemoryProposalPreviewResult,
   MemorySearchPayload,
   MemoryUpdatePayload,
 } from '@shared/host-api/contract';
@@ -957,6 +965,8 @@ export const hostApi = {
     list: (input: MemoryListPayload) => invokeHost('memory', 'list', input),
     search: (input: MemorySearchPayload) => invokeHost('memory', 'search', input),
     detail: (input: MemoryDetailPayload) => invokeHost('memory', 'detail', input),
+    previewProposal: (input: MemoryProposal): Promise<MemoryProposalPreviewResult> =>
+      invokeHost('memory', 'previewProposal', input),
     propose: (input: MemoryProposal) => invokeHost('memory', 'propose', input),
     update: (input: MemoryUpdatePayload) => invokeHost('memory', 'update', input),
     health: () => invokeHost('memory', 'health'),
@@ -1024,6 +1034,10 @@ export const hostApi = {
     updateReasoningEffort: (id: string, reasoningEffort: AgentUpdateReasoningEffortPayload['reasoningEffort']) => (
       invokeHost('agents', 'updateReasoningEffort', { id, reasoningEffort })
     ),
+    updateAvatar: (id: string, preset: AgentUpdateAvatarPayload['preset']) => (
+      invokeHost('agents', 'updateAvatar', { id, preset })
+    ),
+    resetAvatar: (id: string) => invokeHost('agents', 'resetAvatar', { id }),
     getBootstrap: (id: string) => invokeHost('agents', 'getBootstrap', { id }),
     updateBootstrap: (input: AgentBootstrapUpdatePayload) => invokeHost('agents', 'updateBootstrap', input),
     delete: (id: string) => invokeHost('agents', 'delete', { id }),
@@ -1041,10 +1055,24 @@ export const hostApi = {
     agencyCatalog: (input: AgencyRoleSourcePayload): Promise<AgencyRoleListResult> => (
       invokeHost('roles', 'agencyCatalog', input)
     ),
+    listAgencyPackages: (): Promise<AgencyRolePackageListResult> => (
+      invokeHost('roles', 'listAgencyPackages')
+    ),
+    importAgencyPackage: (input: AgencyRolePackageImportPayload): Promise<AgencyRolePackageResult> => (
+      invokeHost('roles', 'importAgencyPackage', input)
+    ),
+    refreshAgencyPackage: (input: AgencyRolePackageRefreshPayload): Promise<AgencyRolePackageResult> => (
+      invokeHost('roles', 'refreshAgencyPackage', input)
+    ),
     previewAgencyPromotion: (
       input: AgencyRoleReviewPayload,
     ): Promise<AgencyRolePromotionPreviewResult> => (
       invokeHost('roles', 'previewAgencyPromotion', input)
+    ),
+    previewAgencyMemoryProposals: (
+      input: AgencyRoleMemoryProposalsPayload,
+    ): Promise<AgencyRoleMemoryProposalsResult> => (
+      invokeHost('roles', 'previewAgencyMemoryProposals', input)
     ),
     reviewAgencyPromotion: (
       input: AgencyRoleReviewPayload,

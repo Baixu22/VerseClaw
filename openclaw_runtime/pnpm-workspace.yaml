@@ -19,3 +19,7 @@ allowBuilds:
   tree-sitter-java: true
   tree-sitter-python: true
   tree-sitter-rust: true
+
+# TEMP: allow baileys@7.0.0-rc.9 -> libsignal git subdependency (same as root workspace).
+# Debt: upgrade baileys >=7.0.0-rc12 (GHSA-qvv5-jq5g-4cgg) then drop this flag.
+blockExoticSubdeps: false
