@@ -61,6 +61,8 @@ import type {
   AgentBrowserReplaySendRequestResult,
   AgentBrowserReplayCompareResponsesPayload,
   AgentBrowserReplayCompareResponsesResult,
+  AgentBrowserConsoleMessagesPayload,
+  AgentBrowserConsoleMessagesResult,
   AgentBrowserFullAccessExecuteScriptPayload,
   AgentBrowserFullAccessExecuteScriptResult,
   AgentBrowserFullAccessFetchPayload,
@@ -882,6 +884,8 @@ export const hostApi = {
       invokeHost('agentBrowser', 'replaySendRequest', input),
     replayCompareResponses: (input: AgentBrowserReplayCompareResponsesPayload): Promise<AgentBrowserReplayCompareResponsesResult> =>
       invokeHost('agentBrowser', 'replayCompareResponses', input),
+    getConsoleMessages: (input: AgentBrowserConsoleMessagesPayload): Promise<AgentBrowserConsoleMessagesResult> =>
+      invokeHost('agentBrowser', 'getConsoleMessages', input),
     fullAccessExecuteScript: (input: AgentBrowserFullAccessExecuteScriptPayload): Promise<AgentBrowserFullAccessExecuteScriptResult> =>
       invokeHost('agentBrowser', 'fullAccessExecuteScript', input),
     fullAccessFetch: (input: AgentBrowserFullAccessFetchPayload): Promise<AgentBrowserFullAccessFetchResult> =>

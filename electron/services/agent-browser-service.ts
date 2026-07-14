@@ -52,6 +52,8 @@ import type {
   AgentBrowserReplaySendRequestResult,
   AgentBrowserReplayCompareResponsesPayload,
   AgentBrowserReplayCompareResponsesResult,
+  AgentBrowserConsoleMessagesPayload,
+  AgentBrowserConsoleMessagesResult,
   AgentBrowserFullAccessExecuteScriptPayload,
   AgentBrowserFullAccessExecuteScriptResult,
   AgentBrowserFullAccessFetchPayload,
@@ -93,6 +95,7 @@ import { JsSourceToolExecutor } from './agent-browser/browser-control/js-source-
 import { SourceMapToolExecutor } from './agent-browser/browser-control/source-map-tool-executor';
 import { RuntimeReadToolExecutor } from './agent-browser/browser-control/runtime-read-tool-executor';
 import { ReplayToolExecutor } from './agent-browser/browser-control/replay-tool-executor';
+import { BrowserConsoleRecorder } from './agent-browser/browser-control/console-recorder';
 import { FullAccessToolExecutor } from './agent-browser/browser-control/full-access-tool-executor';
 import { PageTextExtractor } from './agent-browser/browser-control/page-text-extractor';
 import { validateExtractionRuleDraft } from '@shared/agent-browser/extraction-rules/validation';
@@ -132,6 +135,7 @@ type AgentBrowserControlState = {
   actionExecutor: BrowserControlActionExecutor;
   boundaryExecutor: BoundaryChoiceToolExecutor;
   networkRecorder: BrowserNetworkRecorder;
+  consoleRecorder: BrowserConsoleRecorder;
   jsSourceExecutor: JsSourceToolExecutor;
   sourceMapExecutor: SourceMapToolExecutor;
   runtimeReadExecutor: RuntimeReadToolExecutor;
@@ -1212,7 +1216,9 @@ export class AgentBrowserService {
       }),
       () => this.revokeFullAccessRuntime(record),
     );
-    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, jsSourceExecutor, sourceMapExecutor, runtimeReadExecutor, replayExecutor, fullAccessExecutor, pageTextExtractor: new PageTextExtractor(connection) };
+    const consoleRecorder = new BrowserConsoleRecorder(connection);
+    consoleRecorder.start(webContents.id);
+    const state: AgentBrowserControlState = { connection, snapshotManager, actionExecutor, boundaryExecutor, networkRecorder, consoleRecorder, jsSourceExecutor, sourceMapExecutor, runtimeReadExecutor, replayExecutor, fullAccessExecutor, pageTextExtractor: new PageTextExtractor(connection) };
     this.browserControlStates.set(record.session.id, state);
     return state;
   }
@@ -2070,6 +2076,24 @@ export class AgentBrowserService {
       throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
     }
     return { recorder: state.networkRecorder, record };
+  }
+
+  /**
+   * 获取 browser-window 引擎下累积的 Console 消息摘要。
+   * 通过 BrowserConsoleRecorder 状态化累积 Runtime.consoleAPICalled / Runtime.exceptionThrown / Log.entryAdded 事件。
+   */
+  async getConsoleMessages(payload: AgentBrowserConsoleMessagesPayload): Promise<Omit<AgentBrowserConsoleMessagesResult, 'success'>> {
+    this.assertBrowserControlEnabled();
+    const record = this.getRecord(payload.sessionId);
+    if (record.engine !== 'browser-window') {
+      throw new Error('Console 消息工具仅支持 browser-window 引擎，当前会话使用 agent-browser-cli 引擎。');
+    }
+    this.assertActionAllowed(record);
+    const state = this.browserControlStates.get(record.session.id);
+    if (!state) {
+      throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
+    }
+    return { content: state.consoleRecorder.formatMessages() };
   }
 
   /**

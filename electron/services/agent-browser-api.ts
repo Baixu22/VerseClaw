@@ -243,6 +243,10 @@ export function createAgentBrowserApi(
       success: true,
       ...(await service.replayCompareResponses(payload)),
     }),
+    getConsoleMessages: async (payload) => ({
+      success: true,
+      ...(await service.getConsoleMessages(payload)),
+    }),
     fullAccessExecuteScript: async (payload) => ({
       success: true,
       ...(await service.fullAccessExecuteScript(payload)),

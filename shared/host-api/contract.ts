@@ -1167,6 +1167,10 @@ export type AgentBrowserReplayCompareResponsesResult = HostSuccess & {
   content: string;
   isError?: boolean;
 };
+export type AgentBrowserConsoleMessagesPayload = AgentBrowserSessionPayload;
+export type AgentBrowserConsoleMessagesResult = HostSuccess & {
+  content: string;
+};
 export type AgentBrowserFullAccessExecuteScriptPayload = AgentBrowserSessionPayload & {
   script: string;
   awaitPromise?: boolean;
@@ -4145,6 +4149,7 @@ export type HostApiContract = {
     replayPrepareRequest: (payload: AgentBrowserReplayPrepareRequestPayload) => AgentBrowserReplayPrepareRequestResult;
     replaySendRequest: (payload: AgentBrowserReplaySendRequestPayload) => AgentBrowserReplaySendRequestResult;
     replayCompareResponses: (payload: AgentBrowserReplayCompareResponsesPayload) => AgentBrowserReplayCompareResponsesResult;
+    getConsoleMessages: (payload: AgentBrowserConsoleMessagesPayload) => AgentBrowserConsoleMessagesResult;
     fullAccessExecuteScript: (payload: AgentBrowserFullAccessExecuteScriptPayload) => AgentBrowserFullAccessExecuteScriptResult;
     fullAccessFetch: (payload: AgentBrowserFullAccessFetchPayload) => AgentBrowserFullAccessFetchResult;
     fullAccessGetNetworkDetails: (payload: AgentBrowserFullAccessGetNetworkDetailsPayload) => AgentBrowserFullAccessGetNetworkDetailsResult;
