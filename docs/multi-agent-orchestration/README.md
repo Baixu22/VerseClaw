@@ -1,5 +1,19 @@
 # Multi-Agent Orchestration Goal Control Pack
 
+## Agency Role Promotion Control Pack
+
+The controlled Agency draft review and config-role materialization project uses:
+
+- `docs/superpowers/specs/2026-07-12-agency-role-promotion-control-plane-design.md`
+- `docs/multi-agent-orchestration/phase-constraints/agency-role-promotion-control-plane.md`
+- `docs/superpowers/plans/2026-07-12-agency-role-promotion-control-plane.md`
+- `docs/multi-agent-orchestration/goal-mode-start-prompt-agency-role-promotion.md`
+- `harness/specs/tasks/agency-role-promotion-control-plane.md`
+- `harness/specs/rules/agency-role-promotion-boundary.md`
+
+Use the dedicated start prompt for this project. It runs R0-R5 in order and
+requires a ClawX/Agency Agents/Letta reference ledger in every round report.
+
 > 文件性质: Goal 模式开发前置控制包索引。
 >
 > 适用范围: Role-First 多 Agent 编排 P0-P4 的长开发轮次。当前只允许启动 P0: 验证闭环硬化。
