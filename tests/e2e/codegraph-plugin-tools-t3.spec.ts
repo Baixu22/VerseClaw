@@ -203,7 +203,7 @@ async function listMainSessionKey(app: ElectronApplication): Promise<string | nu
   const listed = await hostInvoke<SessionsListResult>(app, 'gateway', 'rpc', {
     method: 'sessions.list',
     params: { agentId: 'main' },
-    timeoutMs: 30_000,
+    timeoutMs: 60_000,
   });
   const existing = (listed.sessions ?? []).find((session) => typeof session.key === 'string' && session.key);
   return existing?.key ?? null;
@@ -231,17 +231,25 @@ async function resolveMainSessionKey(app: ElectronApplication): Promise<string> 
   // to the well-known "agent:main:main" string - tools.effective requires a real
   // persisted session entry and rejects unknown keys hard.
   //
-  // Interleave list + create: skip-path tests do not call tools.catalog first, so
+  // Interleave list + create: skip-path tests may not call tools.catalog first, so
   // the UI may not have a dashboard session yet. Creating early avoids burning the
-  // whole budget on empty list polls.
-  const deadline = Date.now() + 120_000;
+  // whole budget on empty list polls. On RPC timeout, re-check gateway readiness.
+  const deadline = Date.now() + 180_000;
   let lastError: unknown;
   while (Date.now() < deadline) {
     try {
       const existing = await listMainSessionKey(app);
       if (existing) return existing;
-    } catch {
-      // list can race while sessions store is still empty; keep trying create.
+    } catch (error) {
+      lastError = error;
+      const message = error instanceof Error ? error.message : String(error);
+      if (/RPC timeout|timed out|unavailable during gateway startup/i.test(message)) {
+        try {
+          await ensureGatewayReady(app);
+        } catch (readyError) {
+          lastError = readyError;
+        }
+      }
     }
 
     // Create a real dashboard session when none exists yet (skip-path E2E).
@@ -255,10 +263,18 @@ async function resolveMainSessionKey(app: ElectronApplication): Promise<string> 
         if (raced) return raced;
       } catch (listError) {
         lastError = listError;
+        const message = listError instanceof Error ? listError.message : String(listError);
+        if (/RPC timeout|timed out|unavailable during gateway startup/i.test(message)) {
+          try {
+            await ensureGatewayReady(app);
+          } catch (readyError) {
+            lastError = readyError;
+          }
+        }
       }
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 1_500));
+    await new Promise((resolve) => setTimeout(resolve, 2_000));
   }
 
   throw lastError instanceof Error
@@ -418,6 +434,11 @@ test.describe('T3 CodeGraph plugin tools via real Electron Gateway', () => {
         permissionMode: 'fullAccess',
       });
       await ensureGatewayReady(app);
+
+      // Warm the Gateway RPC path before sessions.* on the skip launch. Catalog is
+      // a discovery surface and may still list plugin metadata under skip; agent
+      // visibility is proven only via tools.effective below.
+      await waitForToolsCatalog(app, 120_000);
 
       // Agent-visible inventory must omit plugin tools when the Runtime-native
       // skip switch is set. tools.catalog is a discovery surface and may still
