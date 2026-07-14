@@ -7,9 +7,9 @@
 ## 游标
 
 - **CURRENT_TASK**: I
-- **LOOP_STATUS**: blocked        <!-- running | blocked | done -->
-- **BLOCKED_REASON**: Task I 到达 SPEC-GAP-1 人工确认点。影子已验证态还原点=tag `rebuild-shadow-verified`(be64066dc)，shadow 比对证据已达标（见迭代11 dossier）。需你拍板三件事：**D1** 确认退役范围=核心5 parity 即解绑（运维4 被按需物化替代；分析6 不迁移列后续 View，清单见迭代11）；**D2** 授权翻权威（六 rebuild provider shadowOnly:false + enabledByDefault:true）+ 解绑 codegraph plugin（openclaw.plugin.json enabledByDefault:false/移除 onStartup）+ 处置 test:codegraph-runtime 门；**D3** 两处边界：block.ts:21 SourceSystem "codegraph" 枚举值是 ALIGNMENT 校正0 冻结契约（建议保留作数据兼容+退役注释，满足门禁⑤"退役注释除外"）；SPEC Task8"删 agent-map 旧代码"与 F① 93 单测全绿冲突（建议翻权威稳定后另开后续任务删除）。拍板后重启循环即可执行剩余 I③④⑤⑥。
-- **迭代计数**: 11
+- **LOOP_STATUS**: done           <!-- running | blocked | done -->
+- **BLOCKED_REASON**: （无——迭代12 用户授权执行者按工程经验代裁 D1/D2/D3，已裁定并执行完毕）
+- **迭代计数**: 12
 
 ## 任务表（A→I，按 ALIGNMENT 校正5 重排）
 
@@ -23,7 +23,7 @@
 | F | agent-map/symbol 两影子 provider 接 FactStore 真实数据 | C,D | done | 0 |
 | G | impact provider 达 codegraph parity（基线=vendored extension） | C,D | done | 0 |
 | H | capability 路由打通 + grep 降级 + Day-1 零税验证 | E,F,G | done | 0 |
-| I | 灰度转权威 + codegraph extension 解绑 + 清理（含 git 还原点） | H | in_progress | 0 |
+| I | 灰度转权威 + codegraph extension 解绑 + 清理（含 git 还原点） | H | done | 0 |
 
 状态取值：`pending` / `in_progress` / `done` / `blocked`。**只有硬验收命令真实通过（贴出输出）才可置 done。**
 
@@ -49,7 +49,7 @@
 
 ## SPEC-GAP 待决清单（需人拍板则停机）
 
-- **SPEC-GAP-1｜codegraph parity 范围**（登记于迭代1，详见 SEAM_MAP）：extension 实有 15 工具非 5。建议核心 5（search/callers/callees/impact/explore）达 parity 即退役绑定；status/sync/init/freshness 被按需物化天然替代；其余 6 分析能力（entrypoints/find_flow/minimal_context/git_stats/decide/context_plan）列为后续独立 View。**不阻塞 B-F；Task G 按缩范围执行；Task I 退役前列"未迁移6能力"清单。需人最终确认。**
+- **SPEC-GAP-1｜codegraph parity 范围**（登记于迭代1；**已消解于迭代12**——用户授权执行者代裁，裁定=接受缩范围：核心 5 达 parity 即退役绑定；运维 4 被按需物化替代；分析 6（entrypoints/find_flow/minimal_context/git_stats/decide/context_plan）不迁移、列后续独立 View，清单在迭代11 dossier）。
 - **SPEC-GAP-2｜根 package.json test 脚本损坏**（`"test":"test"` 占位坏值）：不阻塞，改用 `cd openclaw_runtime && pnpm exec vitest run <文件>` 定向命令（包真名=openclaw，--filter openclaw_runtime 无效）；Task H/I 全量测试入口以 SEAM_MAP §0 为准。自扛，仅登记。
 
 - **SPEC-GAP-3｜tree-sitter 原生 vs WASM**（登记于迭代1续；**已消解于迭代4，无需人拍板**）：按 B① 原案实装原生成功——pnpm 11 `allowBuilds` 放行五件套后 `pnpm add -w` 全走 node-gyp-build 预编译（Node v24.15.0 win32 x64，零本地编译），require+parse 冒烟全过。门禁语义未变更；web-tree-sitter 与原生并存（各归各用，互不影响）。
@@ -70,3 +70,14 @@
 - 迭代9 | Task G done | `views/impact/impact-view.ts`（[语义 ragcode:impact-report.ts+target-matcher.ts]：qualified path:symbol/模糊双模 target、callers=按 metadata.targetName 名字联接的 BFS depth 2、callees=matched 出边名字解析、impactedFiles=目标∪caller∪callee∪importer(specifier stem 联接)、references+riskLevel）+ `impact-provider.ts`（capability context.impact，shadowOnly:true，codegraph 转权威前保持权威）+ `impact-parity.test.ts` 活基线 parity 装置：**vendored codegraph extension 测试时现场跑**（createRequire dist/index.js → CG.init(fixture,{index:true}) 451ms 起图，SEAM_MAP §C 复现参数 searchNodes top-1→getCallers(id,2)/getImpactRadius(id,3)），fixture=本仓 7 个真实文件副本（factstore 五件+hash+ripgrep-producer），**13 条 golden 查询全取自真实代码**（openFactStore/factStorePathFor/closeAllFactStores/upsertFileFacts/normalizeFactPath/factStoreIgnoreReason/sha256/stableId/projectIdForRoot/checkFileFreshness/gateFreshness/migrateFactStoreSchema/createMaterializer）。**G② 超集判定全过**：直接调用者覆盖规则=同文件同名 ∨ 行区间包含（粒度更粗允许、缺失不允许）∨ codegraph 模块级调用节点(name=文件名,line 1)以"同文件任一 caller/incoming call 引用"覆盖；受影响文件逐条 ⊆。**G③ 差异清单（多不缺，样例）**：sha256 基线 13 callers/4 files vs 新 6 callers(粗粒度覆盖)/4 files 缺0；normalizeFactPath 基线16/3 vs 新11/3 +extraCaller onFileTouched@materialize.ts；upsertFileFacts +extraFiles hash.ts,ignore.ts（importer 联接真命中）；createMaterializer +4 extraFiles（同上）；migrateFactStoreSchema +extraCaller FactStore@store.ts（构造器调用，真命中）——多出均为 importer/构造器真实关系非噪声。**验收**：`vitest run src/context-engine/views/impact` = **16/16**（13 golden 超集+qualified target+provider 冒烟+基线全解析）；回归 7 files **69/69**；tsgo 201 基线**逐字节 diff 为空**。Windows 收尾註记：codegraph watcher 句柄致 fixture 临时目录删除 EPERM，清理改 best-effort（OS 温存清理）。| commit `0ed73e8de`（3 文件 +688）；游标 → H
 - 迭代10 | Task H done | 9 文件 +1605/-15。**补齐两 verb**：reuse=[CP ragcode:reuse-detector.ts 617 行 verbatim（1 未用参下划线化）+snippet-renderer.ts 185 行 verbatim+类型段 6 块]接 FactStore 检索管线；verify=[语义 diff-files+store.reviewDiff]（本地统一 diff 头解析器替代 parse-diff npm 依赖，零新依赖）。**降级链**：materializer 增 `ensureTextFacts(pattern)`（rg 命中→仅对 store 未知文件回填 chunks，producer=ripgrep、produced_hash 空=结构性 stale 由定义成立）；buildContextPack async 化，命中为零自动走 rg 回填并在 snippet reason+missingEvidence 双标 producer=ripgrep。**路由**：`register-rebuild-providers.ts` 在既有 RuntimeContextProviderRegistry 上注册 7 provider（context-pack/symbol/impact/reuse/verify/agent-map 全 shadowOnly + 既有 runtime-memory 承接 remember，校正4 不新建门面）。**验收全过**：H① `vitest run views/capability-routing.test.ts` = **9/9**——六动词逐个 e2e（understand→context.understand 含 ## Brief、locate→context.symbol 按序遍历候选（agent-map flag 关时移交 symbol provider，真实路由语义）、impact/reuse/verify 各有实证输出、remember→context.memory 优雅降级）+全员 shadowOnly:false 前置校验；H② grep 降级 e2e=只物化 auth 文件后查 ZEBRA_FALLBACK_MARKER_9000→snippet 来自 hidden-corner.ts 且 reason 含 producer=ripgrep→store 回填记录 provenance.producer=ripgrep/produced_hash=""；H③ **Day-1 零税：裸 rg=23.2ms vs 冷 store 首查=28.7ms，开销 5.5ms << 200ms**（打点输出在案）。**回归**：新代码 8 files **78/78** + agent-map 接口套件 **93/93**；tsgo 修 1 处 cp 源 TS6133 后与 201 基线**逐字节 diff 为空**。E 测试同步 async 化后仍 6/6。| commit `c88e2cf88`；游标 → I
 - 迭代11 | Task I in_progress→**blocked（需人拍板）** | **I① 还原点**：影子已验证态=commit `be64066dc`（A-H 全 done），加注 tag `rebuild-shadow-verified`。**I② shadow 比对证据 dossier（翻权威前置材料，全部已在案）**：G parity=13 golden 上新 impact 召回 ⊇ 活基线 codegraph（16/16，差异清单"多不缺"，多出均 importer/构造器真命中）；F 单一事实源=agent-map/symbol/store 三方 symbol 集合逐 (name@line) 相等（7/7）+接口兼容 93/93；E pack 契约 6/6（含中文查询落英文实现）；H 六动词路由 9/9+grep 降级 producer=ripgrep 可查+Day-1 零税 5.5ms<<200ms；全程 tsgo 201 基线逐字节 diff 为空；每任务均有 git 还原点。**未迁移 6 分析能力清单（SPEC-GAP-1 附件，退役后消失的工具）**：codegraph_entrypoints / codegraph_find_flow / codegraph_minimal_context / codegraph_git_stats / codegraph_decide / codegraph_context_plan——处置建议=列为后续独立 View（entrypoints/find_flow 可由 FactStore edges 低成本重建；minimal_context 与 ContextPack 功能重叠可归并；git_stats/decide/context_plan 属独立分析器）。**退役面摸底**：绑定点=extensions/codegraph/openclaw.plugin.json（enabledByDefault:true+onStartup，15 工具）；src 内 codegraph 引用 22 处=1 处 block.ts:21 SourceSystem 枚举值（校正0 冻结契约，D3 待裁）+21 处退役语境注释/测试（门禁⑤豁免类）；`test:codegraph-runtime` 门+runtime.e2e.test.ts 依赖 extension 存续；**parity 装置本身依赖 vendored dist——退役=解绑注册非删除目录（校正2），装置可长期存活**。**待人决策 D1/D2/D3 见 BLOCKED_REASON。**拍板后剩余执行项：翻 shadowOnly（I②后半）→改 plugin manifest（I③）→全量 typecheck+测试（I④）→grep 复扫（I⑤）→DoD §10 五条核对+完成报告（I⑥/STEP6 done 收尾）。| 本轮无代码变更，纯档案+标签；LOOP_STATUS → blocked，cron 循环已注销
+- 迭代12 | Task I done｜**全部任务 done，LOOP_STATUS → done** | 用户授权按工程经验代裁三决策并执行。**裁决**：D1=接受缩范围（核心5 parity 即退役；分析6 列后续 View）；D2=分层翻权威——四个新 View（context-pack/impact/reuse/verify）经 `authority` 参数在生产组合点 `registerRebuildContextProviders` 默认 authoritative（shadowOnly:false+enabledByDefault:true），工厂默认仍 shadow=杀开关；**agent-map/symbol 两既有影子不动**（其翻转属 runtime 并网轨道，93 冻结契约测试保全）；解绑 codegraph plugin（openclaw.plugin.json enabledByDefault:false+去 onStartup+描述标 RETIRED），vendored dist 保留供 parity 装置；D3=block.ts "codegraph" 枚举保留+退役注释（存量 Block 数据兼容）；agent-map 旧引擎删除**明记延期**至并网翻转后（避免打破 F① 契约）。**I②-⑤ 验收**：I② shadow 证据=迭代11 dossier+翻转断言入测（routing 测试 10/10：四新员 authoritative、两旧员 shadow、杀开关可回）；I③ 解绑落地且 `pnpm run test:codegraph-runtime` 解绑后仍 **CODEGRAPH_RUNTime_GATE_PASS**（15 工具、dist 完整——装置存活验证）；I④ 全量=新代码 8 files **79/79**+agent-map **93/93**+根 typecheck 3×exit 0+tsgo 201 基线**逐字节 diff 为空**；I⑤ 复扫=src 内 23 处 codegraph 字串中 21 处为退役语境注释、余 2 处=block.ts:22 枚举值（带退役注释）+block-store.test.ts 5 行数据兼容测试值——**零活调用/导入**。**I⑥ DoD §10 五条核对**：①能力不丢 ✓（B 五语言 16/16、E 骨架/中文 6/6、G impact ⊇ codegraph 16/16）；②无损耗融合 ✓（query→pack 全进程内函数调用，唯一子进程=SPEC §5.2 钦定的 rg T0 producer；一份 .sqlite 一个时钟，verseshell 膜验证）；③无选择风险 ✓（全仓同管线，降级是逐查询自动非项目级路由；plugin 不再自动注册）；④Day-1 零税 ✓（5.5ms<<200ms）+二查降本 ✓（18.0ms→0.45ms 打点）；⑤不留技术债 **达成但携带两项明记延期**：(a) agent-map 旧引擎保留（legacy 仍权威+93 契约，删除=并网轨道后续任务）、(b) codegraph dist 保留（parity 装置依赖，绑定已除）——均有承重理由非遗忘。| commit `cdf041753`；还原点链 f3308272f→57d58d91a→673020905→ae6bf6b29→41e13d788→47857c9b4→0ed73e8de→c88e2cf88→cdf041753 + tag rebuild-shadow-verified
+
+## REBUILD 完成报告（迭代12 收尾）
+
+**做了什么**：按 SPEC/ALIGNMENT 在 9 个任务里把 context-engine 从"预建索引再服务"改成"摸过即解析、记忆化进带内容哈希的 FactStore、缺什么补什么并诚实声明"：Producer 层（ragcode analyzers 五语言 cp+原生 tree-sitter+ripgrep T0）→ FactStore（七表+provenance/heat+哈希新鲜度门+ignore+verseshell 中立膜）→ 按需物化闭环（预算 12/查询+parse-on-touch+rg 回填降级）→ ContextPack/agent-map/symbol/impact/reuse/verify 六 View 全部 capability 化挂上既有 registry → 影子灰度全链证据后四新员转权威、codegraph 插件解绑退役。
+
+**验收证据索引**：各任务门禁输出见迭代4-12 日志行；关键数字=测试 79+93+16 全绿、tsgo 201 基线全程逐字节不变、Day-1 零税 5.5ms、暖查 0.45ms、G parity 13 golden 全超集。
+
+**codegraph 退役确认**：plugin manifest enabledByDefault:false+无 onStartup（不再自动注册）；src 零活引用；vendored dist 留作 parity 基线装置（`pnpm run test:codegraph-runtime` 仍绿）；未迁移 6 分析工具清单在迭代11（后续 View 候选）。
+
+**遗留（均明记非悬置）**：①agent-map 旧引擎+两影子 provider 的权威翻转=runtime 并网轨道任务（W0-W5）；②分析 6 工具重建=后续独立 View；③SPEC-GAP-2 根 test 脚本占位坏值未修（用 SEAM_MAP §0 命令绕行，属仓库级卫生非本工程范围）。
