@@ -27,6 +27,7 @@ export default [
       'release/**',
       'build/**',
       'openclaw_runtime/dist/**',
+      'openclaw_runtime/dist-runtime/**',
       'openclaw_runtime/**/dist/**',
       'openclaw_runtime/extensions/codegraph/dist/**',
       'openclaw_runtime/packages/agent-core/dist/**',
