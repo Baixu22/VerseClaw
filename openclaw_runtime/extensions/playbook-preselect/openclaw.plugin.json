@@ -1,0 +1,24 @@
+{
+  "id": "playbook-preselect",
+  "activation": {
+    "onStartup": true
+  },
+  "name": "Playbook Preselect",
+  "description": "Deterministic automation playbook pre-selection before prompt build (B1). Calls the playbook selector on each chat turn and injects the chosen playbook's guidance into the prompt context.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "default": true
+      },
+      "timeoutMs": {
+        "type": "number",
+        "minimum": 1000,
+        "maximum": 30000,
+        "default": 10000
+      }
+    }
+  }
+}
