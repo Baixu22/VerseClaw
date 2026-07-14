@@ -71,12 +71,44 @@ describe("capability routing across the six intent verbs (gate H-1)", () => {
       const manifest = byId.get(id);
       expect(manifest?.shadowOnly, `${id} must be authoritative`).toBe(false);
       expect(manifest?.enabledByDefault, `${id} must be enabled by default`).toBe(true);
+      // The flip must reach the manifest metadata too, not just the top-level flags.
+      expect(manifest?.metadata?.shadowOnly, `${id} metadata must not claim shadow`).toBe(false);
+      expect(manifest?.metadata?.noPromptAuthority, `${id} metadata must not deny prompt authority`).toBe(false);
+      expect(manifest?.metadata?.legacyAuthoritative).toBe(false);
     }
     // The pre-existing shadow providers keep their legacy grading (runtime-convergence track).
     for (const id of ["agent-map-readonly-shadow", "symbol-readonly-shadow"]) {
       const manifest = byId.get(id);
       expect(manifest?.shadowOnly, `${id} must remain shadowOnly`).toBe(true);
       expect(manifest?.enabledByDefault).toBe(false);
+    }
+  });
+
+  it("authoritative payloads carry authoritative grading: no shadow claims, no legacy_authoritative diagnostic", async () => {
+    const { registry } = registerRebuildContextProviders();
+    const query = {
+      goal: "loadAuthConfig",
+      workspace: repoRoot,
+      activeFiles: ["src/auth.ts", "tests/auth.test.ts"],
+      metadata: { changedFiles: ["src/auth.ts"] },
+    };
+    for (const id of ["context-pack-shadow", "impact-shadow", "reuse-shadow", "verify-shadow"]) {
+      const provider = registry.resolve(id);
+      expect(provider, `${id} must resolve`).toBeDefined();
+      const result = await provider!.getContext(query);
+      if (Array.isArray(result)) throw new Error("expected full provider result");
+      expect(result.status, `${id} should succeed on the fixture repo`).toBe("success");
+      expect(result.metadata?.shadowOnly, `${id} result must not claim shadowOnly`).toBe(false);
+      expect(result.metadata?.noPromptAuthority, `${id} result must not deny prompt authority`).toBe(false);
+      expect(result.metadata?.legacyAuthoritative).toBe(false);
+      expect(
+        result.diagnostics.some((diag) => diag.reason === "legacy_authoritative"),
+        `${id} must not emit a legacy_authoritative diagnostic when authoritative`,
+      ).toBe(false);
+      for (const item of result.contextItems) {
+        expect(item.metadata?.shadowOnly, `${id} items must not claim shadowOnly`).toBe(false);
+        expect(item.metadata?.noPromptAuthority).toBe(false);
+      }
     }
   });
 

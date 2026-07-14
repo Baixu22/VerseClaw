@@ -7,6 +7,10 @@
 // per-provider authority:"shadow" kill switch. The two pre-existing shadow providers
 // (agent-map/symbol) keep their own legacy grading: their authority transition belongs
 // to the runtime-convergence track and its 93-test interface contract.
+// NOTE (acceptance review 2026-07-14): this composition point has no production
+// caller yet — wiring the composed registry into the default runtime belongs to the
+// runtime-convergence track (W0-W5). Until that wiring lands, the flip is effective
+// only where this function is invoked (tests, future runtime bootstrap).
 import {
   RuntimeContextProviderRegistry,
   type ContextItem,
@@ -22,6 +26,7 @@ import { createContextPackContextProvider } from "./context-pack-provider.js";
 import { createImpactContextProvider } from "./impact-provider.js";
 import { createRuntimeMemoryContextProvider } from "./memory-context-provider.js";
 import { createSymbolContextProvider } from "./symbol-context-provider.js";
+import { gradingMetadata, type GradingMetadata } from "./provider-grading.js";
 import { createMaterializer, type Materializer } from "./factstore/materialize.js";
 import { openFactStore, type FactStore } from "./factstore/store.js";
 import { createWorkspaceFactStoreBridge } from "./views/factstore-bridge.js";
@@ -33,14 +38,6 @@ import { reviewDiff, type DiffReview } from "./views/verify/review-diff-view.js"
 
 export const REUSE_CONTEXT_PROVIDER_ID = "reuse-shadow";
 export const VERIFY_CONTEXT_PROVIDER_ID = "verify-shadow";
-
-const SHADOW_METADATA = {
-  shadowOnly: true,
-  legacyAuthoritative: true,
-  noPromptAuthority: true,
-  noToolAuthority: true,
-  noRuntimeAuthority: true,
-} as const;
 
 interface WorkspacePipelines {
   store: FactStore;
@@ -96,11 +93,11 @@ export function createReuseContextProvider(options: ReuseContextProviderOptions 
       return buildReuseCandidateReport({ query: goal, hits: retrieval.hits, owners, symbols, edges, chunks });
     });
 
-  return makeShadowProvider({
+  return makeGradedProvider({
     authority: options.authority,
     id: REUSE_CONTEXT_PROVIDER_ID,
-    title: "Reuse shadow provider",
-    description: "FactStore-backed reuse candidates (existing helpers before new code) as shadow diagnostics only.",
+    title: "Reuse context provider",
+    description: "FactStore-backed reuse candidates (existing helpers before new code)",
     capability: "context.reuse",
     priority: 24,
     evidenceFile: "openclaw_runtime/src/context-engine/views/reuse-detector.ts",
@@ -153,11 +150,11 @@ export function createVerifyContextProvider(options: VerifyContextProviderOption
       return reviewDiff(store, materializer.repoRoot, { diff, changedFiles });
     });
 
-  return makeShadowProvider({
+  return makeGradedProvider({
     authority: options.authority,
     id: VERIFY_CONTEXT_PROVIDER_ID,
-    title: "Verify shadow provider",
-    description: "FactStore-backed diff review (related tests + blast radius) as shadow diagnostics only.",
+    title: "Verify context provider",
+    description: "FactStore-backed diff review (related tests + blast radius)",
     capability: "context.verify",
     priority: 22,
     evidenceFile: "openclaw_runtime/src/context-engine/views/verify/review-diff-view.ts",
@@ -243,17 +240,18 @@ export function registerRebuildShadowProviders(
   return registerRebuildContextProviders(registry, { authority: "shadow" });
 }
 
-// ── shared thin shadow-provider skeleton ───────────────────────────
+// ── shared graded provider skeleton (shadow ↔ authoritative) ───────
 
 /** remember verb: the existing runtime-memory provider IS the system (校正4, 不新建). */
 function createMemoryContextProviderForRemember(): RuntimeContextProvider {
   return createRuntimeMemoryContextProvider();
 }
 
-interface ShadowProviderSpec {
+interface GradedProviderSpec {
   authority?: "authoritative" | "shadow";
   id: string;
   title: string;
+  /** Grading-neutral summary; the shadow suffix is appended in shadow mode. */
   description: string;
   capability: string;
   priority: number;
@@ -263,14 +261,15 @@ interface ShadowProviderSpec {
   ) => { summaryText: string; metadata: RuntimeCoreJsonObject } | undefined;
 }
 
-function makeShadowProvider(spec: ShadowProviderSpec): RuntimeContextProvider {
+function makeGradedProvider(spec: GradedProviderSpec): RuntimeContextProvider {
   const authoritative = spec.authority === "authoritative";
+  const grading = gradingMetadata(authoritative);
   const providerRef: EvidenceRef = { type: "other", ref: spec.id, label: spec.title };
   const manifest = {
     id: spec.id,
     kind: "context" as const,
     title: spec.title,
-    description: spec.description,
+    description: authoritative ? `${spec.description}.` : `${spec.description} as shadow diagnostics only.`,
     source: "runtime-core" as const,
     capabilities: [spec.capability],
     priority: spec.priority,
@@ -278,15 +277,19 @@ function makeShadowProvider(spec: ShadowProviderSpec): RuntimeContextProvider {
     permission: {
       decision: "allow" as const,
       capability: spec.capability,
-      reason: "Readonly diagnostics/evidence only; legacy prompt assembly remains authoritative.",
+      reason: authoritative
+        ? `Authoritative provider for ${spec.capability} (rebuild Task I flip); readonly FactStore evidence.`
+        : "Readonly diagnostics/evidence only; legacy prompt assembly remains authoritative.",
     },
     enabledByDefault: authoritative,
     shadowOnly: !authoritative,
-    fallbackReasons: ["legacy_authoritative" as const, "no_result" as const, "provider_error" as const],
+    fallbackReasons: authoritative
+      ? ["no_result" as const, "provider_error" as const]
+      : ["legacy_authoritative" as const, "no_result" as const, "provider_error" as const],
     evidenceRefs: [{ type: "file" as const, ref: spec.evidenceFile }],
     outputKinds: ["summary" as const],
     dependsOnIndexing: false,
-    metadata: { ...SHADOW_METADATA, shadowOnly: !authoritative, legacyAuthoritative: !authoritative },
+    metadata: { ...grading },
   };
 
   return {
@@ -297,13 +300,13 @@ function makeShadowProvider(spec: ShadowProviderSpec): RuntimeContextProvider {
         payload = spec.getPayload(query);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        return shadowResult(spec.id, providerRef, "error", [], [
-          shadowDiagnostic(spec.id, providerRef, "error", "provider_error", message),
+        return gradedResult(spec.id, providerRef, grading, "error", [], [
+          gradedDiagnostic(spec.id, providerRef, grading, "error", "provider_error", message),
         ]);
       }
       if (!payload) {
-        return shadowResult(spec.id, providerRef, "fallback", [], [
-          shadowDiagnostic(spec.id, providerRef, "skipped", "no_result", "No workspace/goal available for this query."),
+        return gradedResult(spec.id, providerRef, grading, "fallback", [], [
+          gradedDiagnostic(spec.id, providerRef, grading, "skipped", "no_result", "No workspace/goal available for this query."),
         ]);
       }
       const item: ContextItem = {
@@ -313,25 +316,32 @@ function makeShadowProvider(spec: ShadowProviderSpec): RuntimeContextProvider {
         source: spec.id,
         priority: "P2",
         evidenceRefs: [providerRef],
-        metadata: { providerId: spec.id, ...SHADOW_METADATA, ...payload.metadata },
+        metadata: { providerId: spec.id, ...grading, ...payload.metadata },
       };
-      return shadowResult(spec.id, providerRef, "success", [item], [
-        shadowDiagnostic(
-          spec.id,
-          providerRef,
-          "fallback",
-          "legacy_authoritative",
-          `${spec.title} output is exposed as shadow diagnostics/evidence only.`,
-          payload.metadata,
-        ),
-      ]);
+      // Shadow mode declares the legacy system authoritative on every success;
+      // authoritative mode has nothing to hand off to, so no fallback diagnostic.
+      const diagnostics = authoritative
+        ? []
+        : [
+            gradedDiagnostic(
+              spec.id,
+              providerRef,
+              grading,
+              "fallback",
+              "legacy_authoritative",
+              `${spec.title} output is exposed as shadow diagnostics/evidence only.`,
+              payload.metadata,
+            ),
+          ];
+      return gradedResult(spec.id, providerRef, grading, "success", [item], diagnostics);
     },
   };
 }
 
-function shadowResult(
+function gradedResult(
   providerId: string,
   providerRef: EvidenceRef,
+  grading: GradingMetadata,
   status: RuntimeContextProviderResult["status"],
   contextItems: ContextItem[],
   diagnostics: RuntimeRegistryDiagnostic[],
@@ -341,13 +351,14 @@ function shadowResult(
     contextItems,
     diagnostics,
     evidenceRefs: [providerRef, ...contextItems.flatMap((item) => item.evidenceRefs)],
-    metadata: { providerId, ...SHADOW_METADATA, contextItemCount: contextItems.length },
+    metadata: { providerId, ...grading, contextItemCount: contextItems.length },
   };
 }
 
-function shadowDiagnostic(
+function gradedDiagnostic(
   providerId: string,
   providerRef: EvidenceRef,
+  grading: GradingMetadata,
   status: RuntimeRegistryDiagnostic["status"],
   reason: RuntimeRegistryDiagnostic["reason"],
   message: string,
@@ -360,6 +371,6 @@ function shadowDiagnostic(
     reason,
     message,
     evidenceRefs: [providerRef],
-    metadata: { ...SHADOW_METADATA, ...metadata },
+    metadata: { ...grading, ...metadata },
   };
 }

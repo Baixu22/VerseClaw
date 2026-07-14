@@ -1,5 +1,5 @@
 // Adapted from ragcode-context-engine (MIT), https://github.com/MarshallEriksen-Neura/ragcode
-// Source: src/retrieval/query-context.ts (verbatim; import paths localized).
+// Source: src/retrieval/query-context.ts (verbatim).
 import { categoriesFromLexiconMatches, matchDomainLexicon, type DomainLexiconCategory } from "./domain-lexicon.js";
 
 export type DetectedQueryLanguage = "en" | "zh" | "mixed";
@@ -27,8 +27,8 @@ export interface QueryContext {
   termCategories: DomainLexiconCategory[];
 }
 
-const CJK_RE = /[㐀-鿿]/;
-const CJK_SLICE_RE = /[㐀-鿿]+/g;
+const CJK_RE = /[\u3400-\u9fff]/;
+const CJK_SLICE_RE = /[\u3400-\u9fff]+/g;
 const CODE_TOKEN_RE = /`([^`]+)`|"([^"]+)"|'([^']+)'|(?:\.?\/)?[\w.-]+\/[\w./-]+\.[A-Za-z0-9]+|\b[A-Z][A-Z0-9_]{2,}\b|\b[A-Za-z_$][A-Za-z0-9_$]*(?:[A-Z][A-Za-z0-9_$]*)+\b/g;
 const CJK_STOPWORDS = new Set(["的", "了", "在", "是", "和", "或", "与", "哪个", "哪里", "什么", "怎么", "如何", "请", "给"]);
 

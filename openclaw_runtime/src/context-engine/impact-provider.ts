@@ -1,5 +1,7 @@
-// Impact shadow provider (ALIGNMENT 校正4: impact → context.impact capability).
-// shadowOnly per 校正6 — codegraph extension remains authoritative until Task I.
+// Impact provider (ALIGNMENT 校正4: impact → context.impact capability).
+// Grading per 校正6: factory default "shadow"; the Task I flip passes
+// authority:"authoritative" at the composition point (register-rebuild-providers),
+// which also unbound the codegraph plugin. authority:"shadow" is the kill switch.
 import type {
   ContextItem,
   EvidenceRef,
@@ -9,6 +11,7 @@ import type {
   RuntimeCoreJsonObject,
   RuntimeRegistryDiagnostic,
 } from "../runtime-core/index.js";
+import { gradingMetadata, type GradingMetadata } from "./provider-grading.js";
 import { createMaterializer, type Materializer } from "./factstore/materialize.js";
 import { openFactStore } from "./factstore/store.js";
 import { analyzeImpact, type ImpactAnalysis } from "./views/impact/impact-view.js";
@@ -22,27 +25,23 @@ export type ImpactContextProviderOptions = {
   authority?: "authoritative" | "shadow";
 };
 
+// Historical stable identifier (predates the Task I flip); not a grading claim.
 const PROVIDER_EVIDENCE_REF: EvidenceRef = {
   type: "other",
   ref: IMPACT_CONTEXT_PROVIDER_ID,
-  label: "Impact shadow provider",
+  label: "Impact context provider",
 };
-
-const SHADOW_METADATA = {
-  shadowOnly: true,
-  legacyAuthoritative: true,
-  noPromptAuthority: true,
-  noToolAuthority: true,
-  noRuntimeAuthority: true,
-} as const;
 
 export function createImpactContextProvider(options: ImpactContextProviderOptions = {}): RuntimeContextProvider {
   const authoritative = options.authority === "authoritative";
+  const grading = gradingMetadata(authoritative);
   const manifest = {
     id: IMPACT_CONTEXT_PROVIDER_ID,
     kind: "context" as const,
-    title: "Impact shadow provider",
-    description: "FactStore-backed blast-radius analysis (callers/callees/impacted files) as shadow diagnostics only.",
+    title: "Impact context provider",
+    description: authoritative
+      ? "FactStore-backed blast-radius analysis (callers/callees/impacted files)."
+      : "FactStore-backed blast-radius analysis (callers/callees/impacted files) as shadow diagnostics only.",
     source: "runtime-core" as const,
     capabilities: ["context.impact"],
     priority: 26,
@@ -50,18 +49,22 @@ export function createImpactContextProvider(options: ImpactContextProviderOption
     permission: {
       decision: "allow" as const,
       capability: "context.impact",
-      reason: "Readonly diagnostics/evidence only; vendored codegraph remains authoritative until Task I.",
+      reason: authoritative
+        ? "Authoritative provider for context.impact (rebuild Task I flip); readonly FactStore evidence."
+        : "Readonly diagnostics/evidence only; legacy prompt assembly remains authoritative.",
     },
     enabledByDefault: authoritative,
     shadowOnly: !authoritative,
-    fallbackReasons: ["legacy_authoritative" as const, "no_result" as const, "provider_error" as const],
+    fallbackReasons: authoritative
+      ? ["no_result" as const, "provider_error" as const]
+      : ["legacy_authoritative" as const, "no_result" as const, "provider_error" as const],
     evidenceRefs: [
       { type: "file" as const, ref: "openclaw_runtime/src/context-engine/views/impact/impact-view.ts" },
       { type: "file" as const, ref: "openclaw_runtime/src/context-engine/impact-provider.ts" },
     ],
     outputKinds: ["summary" as const, "evidence" as const],
     dependsOnIndexing: false,
-    metadata: { ...SHADOW_METADATA, shadowOnly: !authoritative, legacyAuthoritative: !authoritative },
+    metadata: { ...grading },
   };
 
   const analyze = options.analyze ?? defaultAnalyze();
@@ -74,28 +77,34 @@ export function createImpactContextProvider(options: ImpactContextProviderOption
         analysis = await analyze(query);
       } catch (error) {
         return result("error", [], [
-          diagnostic("error", "provider_error", error instanceof Error ? error.message : String(error)),
-        ], { providerId: manifest.id, ...SHADOW_METADATA });
+          diagnostic(grading, "error", "provider_error", error instanceof Error ? error.message : String(error)),
+        ], { providerId: manifest.id, ...grading });
       }
       if (!analysis) {
         return result("fallback", [], [
-          diagnostic("skipped", "no_result", "No workspace/goal available for impact analysis."),
-        ], { providerId: manifest.id, ...SHADOW_METADATA });
+          diagnostic(grading, "skipped", "no_result", "No workspace/goal available for impact analysis."),
+        ], { providerId: manifest.id, ...grading });
       }
-      const items = impactItems(analysis);
-      return result("success", items, [
-        diagnostic("fallback", "legacy_authoritative", "Impact output is exposed as shadow diagnostics/evidence only.", {
-          target: analysis.target,
-          callerCount: analysis.callers.length,
-          calleeCount: analysis.callees.length,
-          impactedFileCount: analysis.impactedFiles.length,
-          riskLevel: analysis.riskLevel,
-        }),
-      ], {
-        providerId: manifest.id,
-        ...SHADOW_METADATA,
-        contextItemCount: items.length,
+      const items = impactItems(analysis, grading);
+      const analysisCounts = {
+        target: analysis.target,
+        callerCount: analysis.callers.length,
+        calleeCount: analysis.callees.length,
+        impactedFileCount: analysis.impactedFiles.length,
         riskLevel: analysis.riskLevel,
+      };
+      // Shadow mode declares the legacy system authoritative on every success;
+      // authoritative mode has nothing to hand off to, so no fallback diagnostic.
+      const diagnostics = authoritative
+        ? []
+        : [
+            diagnostic(grading, "fallback", "legacy_authoritative", "Impact output is exposed as shadow diagnostics/evidence only.", analysisCounts),
+          ];
+      return result("success", items, diagnostics, {
+        providerId: manifest.id,
+        ...grading,
+        contextItemCount: items.length,
+        ...analysisCounts,
       });
     },
   };
@@ -120,7 +129,7 @@ function defaultAnalyze(): NonNullable<ImpactContextProviderOptions["analyze"]> 
   };
 }
 
-function impactItems(analysis: ImpactAnalysis): ContextItem[] {
+function impactItems(analysis: ImpactAnalysis, grading: GradingMetadata): ContextItem[] {
   const summaryLines = [
     `Impact of ${analysis.target}: risk=${analysis.riskLevel}`,
     `- matched: ${analysis.matchedSymbols.map((symbol) => `${symbol.name}@${symbol.filePath}`).join(", ") || "none"}`,
@@ -136,7 +145,7 @@ function impactItems(analysis: ImpactAnalysis): ContextItem[] {
     evidenceRefs: [PROVIDER_EVIDENCE_REF],
     metadata: {
       providerId: IMPACT_CONTEXT_PROVIDER_ID,
-      ...SHADOW_METADATA,
+      ...grading,
       riskLevel: analysis.riskLevel,
       impactedFileCount: analysis.impactedFiles.length,
     },
@@ -148,7 +157,7 @@ function impactItems(analysis: ImpactAnalysis): ContextItem[] {
     source: `impact:caller:${caller.filePath}:${caller.startLine}`,
     priority: caller.depth === 1 ? "P1" : "P2",
     evidenceRefs: [PROVIDER_EVIDENCE_REF, { type: "file", ref: caller.filePath, label: `L${caller.startLine}` }],
-    metadata: { providerId: IMPACT_CONTEXT_PROVIDER_ID, ...SHADOW_METADATA, depth: caller.depth },
+    metadata: { providerId: IMPACT_CONTEXT_PROVIDER_ID, ...grading, depth: caller.depth },
   }));
   return [summary, ...callerItems];
 }
@@ -169,6 +178,7 @@ function result(
 }
 
 function diagnostic(
+  grading: GradingMetadata,
   status: RuntimeRegistryDiagnostic["status"],
   reason: RuntimeRegistryDiagnostic["reason"],
   message: string,
@@ -181,6 +191,6 @@ function diagnostic(
     reason,
     message,
     evidenceRefs: [PROVIDER_EVIDENCE_REF],
-    metadata: { ...SHADOW_METADATA, ...metadata },
+    metadata: { ...grading, ...metadata },
   };
 }

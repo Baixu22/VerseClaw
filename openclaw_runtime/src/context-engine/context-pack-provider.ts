@@ -1,7 +1,9 @@
-// ContextPack shadow provider (SPEC Task 4 / ALIGNMENT 校正4+6): exposes the
-// context.understand capability on the existing provider registry, strictly
-// shadowOnly — diagnostics/evidence only, legacy prompt assembly stays authoritative.
-// Follows the agent-map/symbol shadow provider pattern (options-injected data source).
+// ContextPack provider (SPEC Task 4 / ALIGNMENT 校正4+6): exposes the
+// context.understand capability on the existing provider registry. Grading per
+// 校正6: factory default "shadow" (diagnostics/evidence only); the Task I flip
+// passes authority:"authoritative" at the composition point
+// (register-rebuild-providers). Follows the agent-map/symbol provider pattern
+// (options-injected data source).
 import type {
   ContextItem,
   EvidenceRef,
@@ -13,6 +15,7 @@ import type {
   RuntimeRegistryDiagnostic,
 } from "../runtime-core/index.js";
 import type { ContextPack } from "./fact-types.js";
+import { gradingMetadata, type GradingMetadata } from "./provider-grading.js";
 import { createMaterializer, type Materializer } from "./factstore/materialize.js";
 import { openFactStore } from "./factstore/store.js";
 import { buildContextPack, DEFAULT_PACK_BUDGET_CHARS } from "./views/pack/context-pack-view.js";
@@ -35,30 +38,25 @@ export type ContextPackContextProviderOptions = {
   authority?: "authoritative" | "shadow";
 };
 
+// Historical stable identifier (predates the Task I flip); not a grading claim.
 const PROVIDER_EVIDENCE_REF: EvidenceRef = {
   type: "other",
   ref: CONTEXT_PACK_CONTEXT_PROVIDER_ID,
-  label: "ContextPack shadow provider",
+  label: "ContextPack context provider",
 };
-
-const SHADOW_METADATA = {
-  shadowOnly: true,
-  legacyAuthoritative: true,
-  noPromptAuthority: true,
-  noToolAuthority: true,
-  noRuntimeAuthority: true,
-} as const;
 
 export function createContextPackContextProvider(
   options: ContextPackContextProviderOptions = {},
 ): RuntimeContextProvider {
   const authoritative = options.authority === "authoritative";
+  const grading = gradingMetadata(authoritative);
   const manifest = {
     id: CONTEXT_PACK_CONTEXT_PROVIDER_ID,
     kind: "context" as const,
-    title: "ContextPack shadow provider",
-    description:
-      "FactStore-backed ContextPack (evidence + declared gaps + edit-readiness) exposed as shadow diagnostics only.",
+    title: "ContextPack context provider",
+    description: authoritative
+      ? "FactStore-backed ContextPack (evidence + declared gaps + edit-readiness)."
+      : "FactStore-backed ContextPack (evidence + declared gaps + edit-readiness) exposed as shadow diagnostics only.",
     source: "runtime-core" as const,
     capabilities: ["context.understand"],
     priority: 28,
@@ -66,11 +64,15 @@ export function createContextPackContextProvider(
     permission: {
       decision: "allow" as const,
       capability: "context.understand",
-      reason: "Readonly diagnostics/evidence only; legacy prompt assembly remains authoritative.",
+      reason: authoritative
+        ? "Authoritative provider for context.understand (rebuild Task I flip); readonly FactStore evidence."
+        : "Readonly diagnostics/evidence only; legacy prompt assembly remains authoritative.",
     },
     enabledByDefault: authoritative,
     shadowOnly: !authoritative,
-    fallbackReasons: ["legacy_authoritative" as const, "no_result" as const, "provider_error" as const],
+    fallbackReasons: authoritative
+      ? ["no_result" as const, "provider_error" as const]
+      : ["legacy_authoritative" as const, "no_result" as const, "provider_error" as const],
     evidenceRefs: [
       {
         type: "file" as const,
@@ -83,7 +85,7 @@ export function createContextPackContextProvider(
     ],
     outputKinds: ["summary" as const, "evidence" as const],
     dependsOnIndexing: false,
-    metadata: { ...SHADOW_METADATA, shadowOnly: !authoritative, legacyAuthoritative: !authoritative },
+    metadata: { ...grading },
   };
 
   const buildPack = options.buildPack ?? defaultBuildPack();
@@ -104,10 +106,10 @@ export function createContextPackContextProvider(
               status: "error",
               reason: "provider_error",
               message,
-              metadata: { ...SHADOW_METADATA, providerFailureIsolated: true },
+              metadata: { ...grading, providerFailureIsolated: true },
             }),
           ],
-          metadata: { providerId: manifest.id, ...SHADOW_METADATA, contextItemCount: 0 },
+          metadata: { providerId: manifest.id, ...grading, contextItemCount: 0 },
           manifestEvidenceRefs: manifest.evidenceRefs,
         });
       }
@@ -121,42 +123,46 @@ export function createContextPackContextProvider(
               status: "skipped",
               reason: "no_result",
               message: "No workspace/goal available to build a ContextPack for this query.",
-              metadata: { ...SHADOW_METADATA },
+              metadata: { ...grading },
             }),
           ],
-          metadata: { providerId: manifest.id, ...SHADOW_METADATA, contextItemCount: 0 },
+          metadata: { providerId: manifest.id, ...grading, contextItemCount: 0 },
           manifestEvidenceRefs: manifest.evidenceRefs,
         });
       }
 
-      const contextItems = contextPackItems(pack);
+      const contextItems = contextPackItems(pack, grading);
+      const packStats = {
+        answerable: pack.answerable,
+        confidence: pack.confidence,
+        editReadiness: pack.editReadiness,
+        snippetCount: pack.snippets.length,
+        ownerCount: pack.ownerChain.length,
+        missingEvidenceCount: pack.missingEvidence.length,
+        usedChars: pack.usedChars,
+        budgetChars: pack.budgetChars,
+      };
+      // Shadow mode declares the legacy system authoritative on every success;
+      // authoritative mode has nothing to hand off to, so no fallback diagnostic.
+      const diagnostics = authoritative
+        ? []
+        : [
+            diagnostic({
+              status: "fallback",
+              reason: "legacy_authoritative",
+              message: "ContextPack output is exposed as shadow diagnostics/evidence only.",
+              metadata: { ...grading, ...packStats },
+            }),
+          ];
       return providerResult({
         status: "success",
         contextItems,
-        diagnostics: [
-          diagnostic({
-            status: "fallback",
-            reason: "legacy_authoritative",
-            message: "ContextPack output is exposed as shadow diagnostics/evidence only.",
-            metadata: {
-              ...SHADOW_METADATA,
-              answerable: pack.answerable,
-              confidence: pack.confidence,
-              editReadiness: pack.editReadiness,
-              snippetCount: pack.snippets.length,
-              ownerCount: pack.ownerChain.length,
-              missingEvidenceCount: pack.missingEvidence.length,
-              usedChars: pack.usedChars,
-              budgetChars: pack.budgetChars,
-            },
-          }),
-        ],
+        diagnostics,
         metadata: {
           providerId: manifest.id,
-          ...SHADOW_METADATA,
+          ...grading,
           contextItemCount: contextItems.length,
-          answerable: pack.answerable,
-          editReadiness: pack.editReadiness,
+          ...packStats,
         },
         manifestEvidenceRefs: manifest.evidenceRefs,
       });
@@ -188,7 +194,7 @@ function defaultBuildPack(): NonNullable<ContextPackContextProviderOptions["buil
   };
 }
 
-function contextPackItems(pack: ContextPack): ContextItem[] {
+function contextPackItems(pack: ContextPack, grading: GradingMetadata): ContextItem[] {
   const summary: ContextItem = {
     id: `${CONTEXT_PACK_CONTEXT_PROVIDER_ID}:pack:${pack.projectId}`,
     kind: "summary",
@@ -198,7 +204,7 @@ function contextPackItems(pack: ContextPack): ContextItem[] {
     evidenceRefs: [PROVIDER_EVIDENCE_REF],
     metadata: {
       providerId: CONTEXT_PACK_CONTEXT_PROVIDER_ID,
-      ...SHADOW_METADATA,
+      ...grading,
       answerable: pack.answerable,
       confidence: pack.confidence,
       editReadiness: pack.editReadiness,
@@ -219,7 +225,7 @@ function contextPackItems(pack: ContextPack): ContextItem[] {
     ],
     metadata: {
       providerId: CONTEXT_PACK_CONTEXT_PROVIDER_ID,
-      ...SHADOW_METADATA,
+      ...grading,
       score: snippet.score,
       role: snippet.role,
       expansionLevel: snippet.expansionLevel,
