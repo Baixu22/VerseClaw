@@ -7,11 +7,13 @@
 
 | 用途 | 命令（在 worktree 根） | 出处 |
 |---|---|---|
-| typecheck | `node scripts/typecheck-agent-dev.mjs` | 根 package.json:typecheck |
+| typecheck（仓库根 node+web） | `node scripts/typecheck-agent-dev.mjs` | 根 package.json:typecheck；⚠️ 不覆盖 openclaw_runtime/src |
+| typecheck（runtime 源码，rebuild 代码归它管） | `cd openclaw_runtime && pnpm tsgo`（=tsgo:core，tsconfig.core.json） | openclaw_runtime/package.json:tsgo；**已知 201 条基线错误（shared/types、cvk 等，先在）**，验收标准=错误集对基线逐字节 diff 无增量（同 DCS 轨道锚点），非 exit 0 |
 | 单元测试 | `cd openclaw_runtime && pnpm exec vitest run <文件>`（包真名=`openclaw`，`--filter openclaw_runtime` 无效，实测 No projects matched） | openclaw_runtime/package.json:name + vitest 4.1.7 实测 |
 | 全量测试 | `vitest run && pnpm run test:dcs` | 根 package.json:test |
 | runtime 构建 | `node openclaw_runtime/scripts/build-all.mjs` | openclaw_runtime/package.json:build |
 | lint | `node openclaw_runtime/scripts/run-oxlint-shards.mjs` | openclaw_runtime/package.json:lint |
+| 原生模块构建放行 | `openclaw_runtime/pnpm-workspace.yaml:allowBuilds`（pnpm 11 拦 install 脚本；tree-sitter 五件套已置 true，Node v24 走 node-gyp-build 预编译无本地编译） | 迭代4 实测 |
 
 > ⚠️ 根 `package.json` 的 `"test":"test"` 是占位坏值；真实测试入口是 vitest（openclaw_runtime 有 vitest.config.ts）。Task B 起用 `cd openclaw_runtime && pnpm exec vitest run <文件>` 定向跑新测试。
 
