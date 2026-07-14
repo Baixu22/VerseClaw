@@ -44,6 +44,11 @@ import {
   createAgentBrowserTool,
   type AgentBrowserInvoker,
 } from "./tools/agent-browser-tool.js";
+import {
+  createAutomationPlaybookSelectorTool,
+  type AutomationPlaybookCandidate,
+  type AutomationPlaybookSelectorFn,
+} from "./tools/automation-playbook-selector-tool.js";
 import type { AnyAgentTool } from "./tools/common.js";
 import { createCronTool } from "./tools/cron-tool.js";
 import { createEmbeddedCallGateway } from "./tools/embedded-gateway-stub.js";
@@ -197,6 +202,14 @@ export function createOpenClawTools(
     onYield?: (message: string) => Promise<void> | void;
     /** Optional Electron-owned internal browser bridge for desktop agent automation. */
     agentBrowserInvoker?: AgentBrowserInvoker;
+    /**
+     * Optional automation playbook selector (B2). When provided, registers a
+     * `select_automation_playbook` tool the agent can call at the start of a
+     * browser-automation task. B1 follow-up (issue #2) will add a
+     * before_prompt_build hook for deterministic pre-selection.
+     */
+    automationPlaybookSelector?: AutomationPlaybookSelectorFn;
+    automationPlaybookCandidates?: AutomationPlaybookCandidate[];
     /** Allow plugin tools for this tool set to late-bind the gateway subagent. */
     allowGatewaySubagentBinding?: boolean;
   } & SpawnedToolContext,
@@ -358,6 +371,14 @@ export function createOpenClawTools(
     invoke: agentBrowserInvoker,
   });
   options?.recordToolPrepStage?.("openclaw-tools:agent-browser-tool");
+  const automationPlaybookTool =
+    options?.automationPlaybookSelector && options?.automationPlaybookCandidates
+      ? createAutomationPlaybookSelectorTool({
+          select: options.automationPlaybookSelector,
+          candidates: options.automationPlaybookCandidates,
+        })
+      : null;
+  options?.recordToolPrepStage?.("openclaw-tools:automation-playbook-selector-tool");
   const messageTool = options?.disableMessageTool
     ? null
     : createMessageTool({
@@ -606,6 +627,7 @@ export function createOpenClawTools(
       webSearchTool,
       webFetchTool,
       agentBrowserTool,
+      automationPlaybookTool,
       imageTool,
       pdfTool,
     ]),
