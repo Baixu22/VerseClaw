@@ -234,6 +234,7 @@ import { runContextEngineMaintenance } from "../context-engine-maintenance.js";
 import { applyFinalEffectiveToolPolicy } from "../effective-tool-policy.js";
 import { resolveEmbeddedDcsExtensionDeps } from "../dcs-extension-deps.js";
 import { buildEmbeddedExtensionFactories } from "../extensions.js";
+import { mapToolsToToolRegistryEntries } from "../../../context-engine/handlers/tool-registry-handler.js";
 import {
   applyExtraParamsToAgent,
   resolveAgentTransportOverride,
@@ -2198,6 +2199,9 @@ export async function runEmbeddedAttempt(
       // that must be passed to the resource loader for the safeguard to be active.
       // DCS Stage 2: supply BlockStore/sink (and optional objective/parent) so
       // task-state factory can set TaskStateHandlerConfig for phase producer writes.
+      // DCS Stage 3 / W3: pass this attempt's real agent tool list so tool_registry
+      // can be produced from production tools when the feature flag is on.
+      const toolEntries = mapToolsToToolRegistryEntries(effectiveTools);
       const extensionFactories = buildEmbeddedExtensionFactories({
         cfg: params.config,
         sessionManager,
@@ -2210,6 +2214,7 @@ export async function runEmbeddedAttempt(
         contextBlockSink: dcsExtensionDeps?.contextBlockSink,
         objective: dcsExtensionDeps?.objective,
         parentSessionId: dcsExtensionDeps?.parentSessionId,
+        toolEntries,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({
         cwd: effectiveCwd,

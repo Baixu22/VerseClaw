@@ -161,6 +161,7 @@ import {
 import { applyFinalEffectiveToolPolicy } from "./effective-tool-policy.js";
 import { resolveEmbeddedDcsExtensionDeps } from "./dcs-extension-deps.js";
 import { buildEmbeddedExtensionFactories } from "./extensions.js";
+import { mapToolsToToolRegistryEntries } from "../../context-engine/handlers/tool-registry-handler.js";
 import { applyExtraParamsToAgent } from "./extra-params.js";
 import { getHistoryLimitFromSessionKey, limitHistoryTurns } from "./history.js";
 import { log } from "./logger.js";
@@ -1215,6 +1216,9 @@ async function compactEmbeddedAgentSessionDirectOnce(
       // that must be passed to the resource loader for the safeguard to be active.
       // DCS Stage 2: parity with attempt - pass sink/store when available so
       // session restore paths keep TaskStateHandlerConfig set.
+      // DCS Stage 3 / W3: parity with attempt ? pass compact-path effective tools
+      // so tool_registry can be produced when the feature flag is on.
+      const toolEntries = mapToolsToToolRegistryEntries(effectiveTools);
       const extensionFactories = buildEmbeddedExtensionFactories({
         cfg: params.config,
         sessionManager,
@@ -1227,6 +1231,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
         contextBlockSink: dcsExtensionDeps?.contextBlockSink,
         objective: dcsExtensionDeps?.objective,
         parentSessionId: dcsExtensionDeps?.parentSessionId,
+        toolEntries,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({
         cwd: effectiveCwd,

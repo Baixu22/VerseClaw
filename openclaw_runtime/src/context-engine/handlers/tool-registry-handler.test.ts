@@ -4,6 +4,7 @@ import {
   buildToolRegistryBlock,
   formatToolRegistryInjection,
   handleBeforeAgentStartToolRegistry,
+  mapToolsToToolRegistryEntries,
   type ToolRegistryEntry,
 } from "./tool-registry-handler.js";
 
@@ -216,4 +217,61 @@ describe("DCS Stage 3 tool-registry handler", () => {
       );
     });
   });
+
+
+  describe("mapToolsToToolRegistryEntries", () => {
+    it("maps production tools to ToolRegistryEntry fields", () => {
+      const entries = mapToolsToToolRegistryEntries([
+        {
+          name: "context_read",
+          label: "Context Read",
+          description: "Read context blocks on demand",
+          parameters: {
+            type: "object",
+            properties: { block_type: { type: "string" }, category: { type: "string" } },
+          },
+          risk: "readonly",
+        },
+        {
+          name: "edit",
+          description: "Edit a file",
+          displaySummary: "Edit files",
+        },
+      ]);
+      expect(entries).toEqual([
+        {
+          resourceId: "context_read",
+          kind: "toolset",
+          title: "Context Read",
+          purpose: "Read context blocks on demand [block_type, category]",
+          category: "readonly",
+        },
+        {
+          resourceId: "edit",
+          kind: "toolset",
+          title: "Edit",
+          purpose: "Edit a file",
+        },
+      ]);
+    });
+
+    it("returns empty array for empty/missing tools without throwing", () => {
+      expect(mapToolsToToolRegistryEntries([])).toEqual([]);
+      expect(mapToolsToToolRegistryEntries(undefined)).toEqual([]);
+      expect(mapToolsToToolRegistryEntries(null)).toEqual([]);
+    });
+
+    it("skips nameless tools and dedupes by name", () => {
+      const entries = mapToolsToToolRegistryEntries([
+        { name: "  " },
+        { name: "write", description: "first" },
+        { name: "write", description: "second" },
+        { description: "no name" },
+      ]);
+      expect(entries).toHaveLength(1);
+      expect(entries[0]?.resourceId).toBe("write");
+      expect(entries[0]?.purpose).toBe("first");
+    });
+  });
+
 });

@@ -320,7 +320,15 @@ function buildToolRegistryFactory(params: {
   toolEntries?: ToolRegistryEntry[];
 }): ExtensionFactory | undefined {
   const sessionKey = params.sessionKey?.trim() || params.sessionId?.trim();
-  if (!sessionKey || !params.contextBlockSink || !params.toolEntries) {
+  // Omit when missing deps or empty tool list: empty array is a valid mapped
+  // production tools result (e.g. tools disabled) and must not register a
+  // no-op-looking factory that still fires before_agent_start.
+  if (
+    !sessionKey ||
+    !params.contextBlockSink ||
+    !params.toolEntries ||
+    params.toolEntries.length === 0
+  ) {
     return undefined;
   }
   const entries = params.toolEntries;
