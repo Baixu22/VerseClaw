@@ -14,6 +14,13 @@ The controlled Agency draft review and config-role materialization project uses:
 Use the dedicated start prompt for this project. It runs R0-R5 in order and
 requires a ClawX/Agency Agents/Letta reference ledger in every round report.
 
+The delivered control plane lets an operator select an Agency Agents checkout,
+review an immutable candidate, explicitly map or waive every tool hint, attach
+evidence, and approve a separate config-backed `RoleContract`. The source draft
+never becomes runnable. Retry reconciles exact contract identity, while
+retirement removes only that exact config role and preserves the review audit
+history.
+
 > 文件性质: Goal 模式开发前置控制包索引。
 >
 > 适用范围: Role-First 多 Agent 编排 P0-P4 的长开发轮次。当前只允许启动 P0: 验证闭环硬化。

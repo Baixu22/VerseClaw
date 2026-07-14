@@ -631,3 +631,46 @@ Observability 页面展示 role-first trace,12 种 span:
 ---
 
 **文档版本**:基于 2026-07-06 仓库代码撰写。所有代码锚点可在上述文件路径中溯源。
+
+---
+
+## Agency Role Promotion Control Plane
+
+Agency Agents repositories are source catalogs, not runtime authorities. A
+selected Markdown draft remains immutable and permanently non-runnable.
+Promotion records the exact source path and SHA-256 fingerprint, requires an
+operator to map or waive every tool hint, and materializes a separate,
+validated `RoleContract` in `openclaw.json` under `agents.roles`.
+
+```mermaid
+flowchart LR
+  A["Agency source draft (never runnable)"] --> B["Reviewed promotion record"]
+  B --> C["Approved decision, materialization pending"]
+  C --> D["Config RoleContract active"]
+  D --> E["Retired; config role removed"]
+```
+
+Evidence qualification is an independent axis:
+`unverified -> scenario-verified -> release-qualified`. Neither lifecycle
+state nor evidence qualification grants tools, filesystem or network access,
+commands, model access, memory access, background execution, or handoff
+authority. Runtime authority remains exclusively in the validated
+`RoleContract`.
+
+Approval and retry reconcile only an exact role-name and contract-digest
+match. Retirement likewise removes only the exact materialized digest, so a
+later same-name replacement is preserved. Review and retirement records
+remain available for audit.
+
+The following are separate future projects and are not implemented by the
+Agency promotion control plane:
+
+1. DCS production producer coverage and shared working-state integration using existing `ContextBlock`/`BlockStore` plus Typed Blackboard.
+2. Role Memory effect wiring through the current proposal, gatekeeper, and history path.
+3. Background consolidation using current runtime memory ownership, explicit enablement, and budgets.
+4. Tool sequencing and approval rules integrated into the existing tool loop and descriptors.
+5. Consumption of `RoleContract.model.fallback` in `buildRoleSpawnParams()`.
+6. Provider reliability and error normalization.
+
+Each track requires its own harness task because it has a distinct authority
+owner and rollback surface.

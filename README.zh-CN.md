@@ -49,6 +49,7 @@ Product capability statements must be checked against the canonical matrix in `s
 
 同一个 Agents -> Roles & Orchestration 界面现在还提供 **Lightweight Subagent Runner**，用于无需编写 ClawGraph YAML 的常见工作流。用户可以选择 Explorer、Reviewer、Tester 或 Compare 3 approaches，输入目标后通过现有 Gateway 权限路径启动显式角色 worker，并在 Verse Claw 中查看实时 worker 状态、摘要、失败原因和 Observability trace 链接。
 角色优先编排运行也会显示只读综合结果，保留验证决策、证据数量、trace 数量和可见失败原因。
+Roles & Orchestration 界面还支持受治理的 Agency 角色晋升：选择一个 Agency Agents checkout，复核不可变候选，显式映射或豁免每条工具提示，附加证据，再批准一个独立的配置角色。源草稿始终不可运行；退役晋升角色时会保留完整审计历史。
 
 对于需要跨长对话、检查点、证据复核和显式定时 tick 延续的目标，Agents 面板现在提供 **Mission Control**：它通过 `mission.run` 启动或恢复 Mission，持久化 Mission 状态，基于 ResumeCheckpoint、Task Ledger、记忆和 trace 证据重建有界上下文，每个 tick 运行一次内部 `task_loop`，再由 reviewer 决定继续、修复、休眠、询问、完成或阻塞。
 Mission 和 Task loop 现在会携带内部 Engineering Control Signals，例如 `evidence_gap`、`validation_missing`、`scope_drift`、`unverified_claim` 和 `replan_required`；这些信号会保存在 checkpoint、生命周期事件和 Task Ledger metadata 中，并阻止只凭 trace 或内部 loop 完成状态就把长期目标当作已完成事实。

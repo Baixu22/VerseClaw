@@ -237,6 +237,23 @@ Before marking P2 complete:
 - No open A2A channel is added.
 - Every success/failure claim in the final report is backed by a command result.
 
+## Agency Role Promotion Acceptance Matrix
+
+| Acceptance item | Primary test | Evidence required |
+| --- | --- | --- |
+| Source fingerprint is stable for identical relative path and content | `tests/unit/agency-role-importer.test.ts` | Equal lowercase SHA-256 identity across repeated imports |
+| Unresolved tool hints reject review and approval | `tests/unit/agency-role-promotion.test.ts`, `tests/unit/roles-api.test.ts` | Every source hint has an explicit mapped or waived disposition |
+| Agency drafts remain permanently non-spawnable | `tests/unit/agency-role-importer.test.ts`, `tests/unit/role-contract-drift.test.ts` | `canSpawnAgencyDraft()` remains literal `false`; draft is absent from runtime registry |
+| Approval materializes a separate config role | `tests/unit/roles-api.test.ts` | Source draft is unchanged; validated contract is written under `openclaw.json` `agents.roles` |
+| Interrupted config writes reconcile by exact digest | `tests/unit/roles-api.test.ts` | Pending/failed record becomes active only for matching role name and contract digest |
+| Retirement guards exact digest identity | `tests/unit/roles-api.test.ts` | Matching role is removed; same-name replacement is preserved; audit record remains |
+| Review UI has all four locales | `tests/unit/agency-role-promotion-panel.test.tsx`, `pnpm i18n:lint` | Display keys exist for `en`, `zh`, `ja`, and `ru` |
+| Electron workflow covers review through retirement | `tests/e2e/agency-role-promotion.spec.ts` | Select source, map/waive hints, attach evidence, review, approve, refresh notice, and retire |
+
+Lifecycle and evidence qualification are reporting and governance axes only.
+Neither axis changes runtime permissions, tools, model access, memory access,
+background execution, or handoff authority.
+
 ## 13. P3 Required Commands
 
 Run before implementation when possible:
