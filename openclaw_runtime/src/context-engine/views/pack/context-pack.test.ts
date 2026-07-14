@@ -79,8 +79,8 @@ describe("context pack view (gate E)", () => {
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it("emits a valid ContextPack with the frozen field order (gate E-1)", () => {
-    const pack = buildContextPack(store, materializer, {
+  it("emits a valid ContextPack with the frozen field order (gate E-1)", async () => {
+    const pack = await buildContextPack(store, materializer, {
       query: "loadAuthConfig",
       activeFiles: files,
     });
@@ -107,9 +107,9 @@ describe("context pack view (gate E)", () => {
     expect([...sectionPositions].sort((a, b) => a - b)).toEqual(sectionPositions);
   });
 
-  it("reproduces the edit-readiness tri-state (gate E-2)", () => {
+  it("reproduces the edit-readiness tri-state (gate E-2)", async () => {
     // State 1: full evidence, everything fresh → safe_to_edit_after_reading.
-    const safe = buildContextPack(store, materializer, {
+    const safe = await buildContextPack(store, materializer, {
       query: "loadAuthConfig",
       activeFiles: files,
     });
@@ -119,7 +119,7 @@ describe("context pack view (gate E)", () => {
 
     // State 2: evidence exists but provenance is stale → investigate_only.
     store.observeContentHash(repoRoot, "src/auth/auth-config.ts", "d3adbeefd3adbeef");
-    const investigate = buildContextPack(store, materializer, {
+    const investigate = await buildContextPack(store, materializer, {
       query: "loadAuthConfig",
       activeFiles: [],
     });
@@ -128,7 +128,7 @@ describe("context pack view (gate E)", () => {
     expect(investigate.editReadiness).toBe("investigate_only");
 
     // State 3: nothing matches → not_enough_context.
-    const notEnough = buildContextPack(store, materializer, {
+    const notEnough = await buildContextPack(store, materializer, {
       query: "zz_totally_unknown_symbol_qq",
       activeFiles: [],
     });
@@ -138,8 +138,8 @@ describe("context pack view (gate E)", () => {
     expect(notEnough.missingEvidence.some((entry) => entry.includes("No indexed evidence matched"))).toBe(true);
   });
 
-  it("truncates to budget and declares it via context_budget_truncated (gate E-3)", () => {
-    const pack = buildContextPack(store, materializer, {
+  it("truncates to budget and declares it via context_budget_truncated (gate E-3)", async () => {
+    const pack = await buildContextPack(store, materializer, {
       query: "auth config full source 完整",
       activeFiles: files,
       budgetChars: 900,
@@ -152,8 +152,8 @@ describe("context pack view (gate E)", () => {
     expect(pack.missingEvidence.some((entry) => entry.startsWith("Results truncated to fit"))).toBe(true);
   });
 
-  it("lands a Chinese query on the English implementation file (gate E-4)", () => {
-    const pack = buildContextPack(store, materializer, {
+  it("lands a Chinese query on the English implementation file (gate E-4)", async () => {
+    const pack = await buildContextPack(store, materializer, {
       query: "鉴权在哪配置",
       activeFiles: files,
     });

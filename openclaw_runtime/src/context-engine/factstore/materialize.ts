@@ -8,10 +8,10 @@
 import { readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
-import type { CodeFile } from "../fact-types.js";
+import type { CodeChunk, CodeFile } from "../fact-types.js";
 import { analyzeFileWithRegistry } from "../producers/analyzers/registry.js";
 import { projectIdForRoot, sha256 } from "../producers/hash.js";
-import { languageForPath } from "../producers/ripgrep-producer.js";
+import { languageForPath, ripgrepSearch } from "../producers/ripgrep-producer.js";
 import { factStoreIgnoreReason, normalizeFactPath } from "./ignore.js";
 import type { FactProducer, FactStore } from "./store.js";
 
@@ -59,11 +59,30 @@ export interface Materializer {
   readonly repoRoot: string;
   readonly projectId: string;
   ensureFacts(input: EnsureFactsInput): EnsureFactsResult;
+  /**
+   * T0 grep fallback (§3 degradation chain): runs ripgrep over the repo, memoizes the
+   * text hits as chunks (producer=ripgrep, produced_hash empty ⇒ structurally stale by
+   * definition) for files the store has never analyzed, and returns the hit chunks.
+   */
+  ensureTextFacts(pattern: string, options?: EnsureTextFactsOptions): Promise<EnsureTextFactsResult>;
   /** parse-on-touch hook: agent Read/Grep tools report each file they actually read. */
   onFileTouched(relPath: string): void;
   /** Drains the touch queue through ensureFacts under the same budget rules. */
   flushTouched(budget?: MaterializeBudget): EnsureFactsResult;
   pendingTouchedCount(): number;
+}
+
+export interface EnsureTextFactsOptions {
+  maxMatches?: number;
+  timeoutMs?: number;
+}
+
+export interface EnsureTextFactsResult {
+  chunks: CodeChunk[];
+  /** Files whose text chunks were memoized into the store this call (previously unknown files). */
+  backfilled: string[];
+  truncated: boolean;
+  error?: string;
 }
 
 export interface CreateMaterializerOptions {
@@ -199,6 +218,46 @@ export function createMaterializer(
     repoRoot: resolvedRoot,
     projectId,
     ensureFacts,
+    async ensureTextFacts(pattern: string, textOptions: EnsureTextFactsOptions = {}): Promise<EnsureTextFactsResult> {
+      const result = await ripgrepSearch(pattern, resolvedRoot, {
+        projectId,
+        maxMatches: textOptions.maxMatches ?? 60,
+        timeoutMs: textOptions.timeoutMs,
+      });
+      const chunks = result.chunks.filter((chunk) => !factStoreIgnoreReason(chunk.filePath));
+      const chunksByFile = new Map<string, CodeChunk[]>();
+      for (const chunk of chunks) {
+        const list = chunksByFile.get(chunk.filePath) ?? [];
+        list.push(chunk);
+        chunksByFile.set(chunk.filePath, list);
+      }
+      const backfilled: string[] = [];
+      for (const [relPath, fileChunks] of chunksByFile) {
+        // Only memoize files the store knows nothing about — never clobber
+        // structural facts with text-only ones.
+        if (store.getFileRecord(resolvedRoot, relPath)) continue;
+        const upsert = store.upsertFileFacts({
+          repoRoot: resolvedRoot,
+          file: {
+            projectId,
+            path: relPath,
+            absolutePath: path.join(resolvedRoot, relPath),
+            language: languageForPath(relPath),
+            sizeBytes: 0,
+            // Unknown content hash: produced_hash stays empty, so the freshness
+            // gate reports these facts stale until a structural producer runs.
+            contentHash: "",
+            modifiedAtMs: 0,
+          },
+          producer: "ripgrep",
+          symbols: [],
+          edges: [],
+          chunks: fileChunks,
+        });
+        if (upsert.stored) backfilled.push(relPath);
+      }
+      return { chunks, backfilled, truncated: result.truncated, ...(result.error ? { error: result.error } : {}) };
+    },
     onFileTouched(relPath: string): void {
       const normalized = normalizeFactPath(relPath);
       if (normalized) touched.add(normalized);
