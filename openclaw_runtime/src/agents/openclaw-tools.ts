@@ -387,16 +387,6 @@ export function createOpenClawTools(
           candidates: automationPlaybookCandidates,
         })
       : null;
-  if (!automationPlaybookTool) {
-    console.warn("[openclaw-tools] select_automation_playbook 工具未注册", {
-      reason: !automationPlaybookSelector
-        ? "selector 未就绪（cfg 或 agentId 缺失）"
-        : "candidates 为空",
-      hasSelector: Boolean(automationPlaybookSelector),
-      hasCandidates: Boolean(automationPlaybookCandidates),
-      agentId: sessionAgentId ?? null,
-    });
-  }
   options?.recordToolPrepStage?.("openclaw-tools:automation-playbook-selector-tool");
   const messageTool = options?.disableMessageTool
     ? null
