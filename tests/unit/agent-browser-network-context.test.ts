@@ -20,7 +20,7 @@ import {
   formatNetworkAttachmentSummary,
   formatNetworkAttachmentForExport,
 } from '@shared/agent-browser/network-context';
-import type { NetworkHeader, NetworkRequestDetail, NetworkRequestMeta } from '@shared/agent-browser/types';
+import type { NetworkRequestDetail, NetworkRequestMeta } from '@shared/agent-browser/types';
 
 const REDACTED = '[已脱敏]';
 

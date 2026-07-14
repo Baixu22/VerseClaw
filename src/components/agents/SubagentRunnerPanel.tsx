@@ -10,6 +10,9 @@ import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
 import type { SubagentRuntimeLifecycleEvent } from '@shared/host-events/contract';
+import { subagentLifecycleIdentityKey } from '@shared/subagent-lifecycle';
+import { useAgentsStore } from '@/stores/agents';
+import { AgentRoleIdentity, RoleBadge } from './AgentAvatar';
 
 type RunnerPresetId = 'explorer' | 'reviewer' | 'tester' | 'compare';
 
@@ -35,6 +38,8 @@ type LabelTranslator = (key: string, defaultValue: string) => string;
 
 type LifecycleEntry = {
   id: string;
+  agentId?: string;
+  taskNodeId?: string;
   roleName: string;
   label?: string;
   task: string;
@@ -204,6 +209,8 @@ export function SubagentRunnerPanel({
   const [preset, setPreset] = useState<RunnerPresetId>('explorer');
   const [goal, setGoal] = useState('');
   const [running, setRunning] = useState(false);
+  const agents = useAgentsStore((state) => state.agents);
+  const anchorAgent = agents.find((agent) => agent.id === anchorAgentId) ?? null;
   const activeWorkerKeysRef = useRef<Set<string>>(new Set());
   const [events, setEvents] = useState<Record<string, LifecycleEntry>>({});
   const [result, setResult] = useState<RunnerResult>({
@@ -228,15 +235,13 @@ export function SubagentRunnerPanel({
       if (!roleName || !task) return;
       const key = workerKey({ roleName, task });
       if (!activeWorkerKeysRef.current.has(key)) return;
-      const id = typeof event.runId === 'string' && event.runId
-        ? event.runId
-        : typeof event.childRunId === 'string' && event.childRunId
-          ? event.childRunId
-          : key;
+      const id = subagentLifecycleIdentityKey(event);
       setEvents((prev) => ({
         ...prev,
         [id]: {
           id,
+          agentId: event.agentId || anchorAgentId,
+          taskNodeId: event.taskNodeId,
           roleName,
           label: result.workers.find((worker) => workerKey(worker) === key)?.label,
           task,
@@ -248,7 +253,7 @@ export function SubagentRunnerPanel({
       }));
     });
     return unsubscribe;
-  }, [result.workers]);
+  }, [anchorAgentId, result.workers]);
 
   const resolveTraceId = useCallback(async (orchestrationRunId: string): Promise<string | undefined> => {
     try {
@@ -417,18 +422,27 @@ export function SubagentRunnerPanel({
             </Badge>
           </div>
 
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {result.workers.map((worker, index) => (
-              <Badge key={`${worker.roleName}:${worker.label ?? index}`} variant="outline" className="rounded-full text-2xs">
-                {worker.label ? `${worker.label}: ` : ''}{worker.roleName}
-              </Badge>
+              <div key={`${worker.roleName}:${worker.label ?? index}`} className="flex min-w-0 items-center gap-2 rounded-xl border border-border/60 bg-surface-input px-2.5 py-2">
+                {anchorAgent ? (
+                  <AgentRoleIdentity agentId={anchorAgent.id} name={anchorAgent.name} avatar={anchorAgent.avatar} roleName={worker.roleName} size={32} />
+                ) : <RoleBadge roleName={worker.roleName} size={24} />}
+                <span className="min-w-0 text-2xs text-muted-foreground">
+                  {worker.label && <span className="block truncate">{worker.label}</span>}
+                  <span className="block truncate font-medium text-foreground">{worker.roleName}</span>
+                </span>
+              </div>
             ))}
           </div>
 
           {orderedEvents.length > 0 && (
             <div data-testid="subagent-runner-events" className="mt-3 space-y-1">
               {orderedEvents.map((event) => (
-                <div key={event.id} data-testid="subagent-runner-event" className="flex items-center gap-2">
+                <div key={event.id} data-testid="subagent-runner-event" className="flex items-center gap-2 rounded-lg px-1 py-1">
+                  {anchorAgent ? (
+                    <AgentRoleIdentity agentId={event.agentId ?? anchorAgent.id} name={anchorAgent.name} avatar={anchorAgent.avatar} roleName={event.roleName} size={28} />
+                  ) : <RoleBadge roleName={event.roleName} size={22} />}
                   {event.status === 'started' ? (
                     <Loader2 className="h-3 w-3 shrink-0 animate-spin text-blue-500" />
                   ) : event.status === 'completed' || event.status === 'verified' ? (

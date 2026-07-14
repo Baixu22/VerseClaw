@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { hostApi } from '@/lib/host-api';
 import type { ChannelType } from '@/types/channel';
-import type { AgentReasoningEffort, AgentSummary, AgentsSnapshot } from '@/types/agent';
+import type { AgentAvatarPreset, AgentReasoningEffort, AgentSummary, AgentsSnapshot } from '@/types/agent';
 
 interface AgentsState {
   agents: AgentSummary[];
@@ -17,6 +17,8 @@ interface AgentsState {
   updateAgent: (agentId: string, name: string) => Promise<void>;
   updateAgentModel: (agentId: string, modelRef: string | null) => Promise<void>;
   updateAgentReasoningEffort: (agentId: string, reasoningEffort: AgentReasoningEffort) => Promise<void>;
+  updateAgentAvatar: (agentId: string, preset: AgentAvatarPreset) => Promise<void>;
+  resetAgentAvatar: (agentId: string) => Promise<void>;
   deleteAgent: (agentId: string) => Promise<void>;
   assignChannel: (agentId: string, channelType: ChannelType) => Promise<void>;
   removeChannel: (agentId: string, channelType: ChannelType) => Promise<void>;
@@ -97,6 +99,28 @@ export const useAgentsStore = create<AgentsState>((set) => ({
     set({ error: null });
     try {
       const snapshot = await hostApi.agents.updateReasoningEffort(agentId, reasoningEffort);
+      set(applySnapshot(snapshot));
+    } catch (error) {
+      set({ error: String(error) });
+      throw error;
+    }
+  },
+
+  updateAgentAvatar: async (agentId: string, preset: AgentAvatarPreset) => {
+    set({ error: null });
+    try {
+      const snapshot = await hostApi.agents.updateAvatar(agentId, preset);
+      set(applySnapshot(snapshot));
+    } catch (error) {
+      set({ error: String(error) });
+      throw error;
+    }
+  },
+
+  resetAgentAvatar: async (agentId: string) => {
+    set({ error: null });
+    try {
+      const snapshot = await hostApi.agents.resetAvatar(agentId);
       set(applySnapshot(snapshot));
     } catch (error) {
       set({ error: String(error) });

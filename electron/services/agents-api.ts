@@ -1,6 +1,6 @@
 import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
-import type { AgentReasoningEffort, AgentRoleProfile } from '@shared/types/agent';
+import type { AgentAvatarPreset, AgentReasoningEffort, AgentRoleProfile } from '@shared/types/agent';
 import {
   assignChannelToAgent,
   clearChannelBinding,
@@ -16,6 +16,8 @@ import {
   updateAgentModel,
   updateAgentName,
   updateAgentReasoningEffort,
+  updateAgentAvatar,
+  resetAgentAvatar,
   writeAgentBootstrapFile,
   writeAgentBootstrapTools,
   writeAgentRoleProfile,
@@ -132,6 +134,19 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
       const agentId = requireString(payload, 'id');
       const reasoningEffort = requireReasoningEffort(payload);
       const snapshot = await updateAgentReasoningEffort(agentId, reasoningEffort);
+      return { success: true, ...snapshot };
+    },
+    updateAvatar: async (payload) => {
+      const agentId = requireString(payload, 'id');
+      if (!isRecord(payload) || !isRecord(payload.preset)) throw new Error('preset is invalid');
+      const snapshot = await updateAgentAvatar(agentId, payload.preset as AgentAvatarPreset);
+      scheduleGatewayReload(ctx, 'update-agent-avatar');
+      return { success: true, ...snapshot };
+    },
+    resetAvatar: async (payload) => {
+      const agentId = requireString(payload, 'id');
+      const snapshot = await resetAgentAvatar(agentId);
+      scheduleGatewayReload(ctx, 'reset-agent-avatar');
       return { success: true, ...snapshot };
     },
     getBootstrap: async (payload) => {

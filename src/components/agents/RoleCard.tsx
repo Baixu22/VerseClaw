@@ -12,8 +12,9 @@ import { ChevronDown, FileText, Globe, Terminal, ShieldCheck } from 'lucide-reac
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { effortTone, roleTone, toneClasses } from '@/lib/role-visuals';
+import { effortTone, toneClasses } from '@/lib/role-visuals';
 import { hostApi } from '@/lib/host-api';
+import { RoleBadge } from './AgentAvatar';
 
 export type RoleCardData = {
   name: string;
@@ -55,8 +56,6 @@ export function RoleCard({ role, selected, onSelect, tt }: RoleCardProps) {
   const [soulLoading, setSoulLoading] = useState(false);
   const [soulText, setSoulText] = useState<string | null>(null);
   const tone = effortTone(role.effort);
-  const dotTone = roleTone(role.name);
-  const dotClasses = toneClasses(dotTone);
 
   const loadSoul = async () => {
     if (soulText !== null) {
@@ -98,7 +97,7 @@ export function RoleCard({ role, selected, onSelect, tt }: RoleCardProps) {
       {/* Header row */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
-          <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', dotClasses.dot)} />
+          <RoleBadge roleName={role.name} size={22} />
           <span className="font-medium text-sm truncate">{role.displayName}</span>
           {role.origin && (
             <span

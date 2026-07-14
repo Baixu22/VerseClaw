@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 
 vi.mock('@/components/layout/Sidebar', () => ({
@@ -11,10 +12,16 @@ vi.mock('@/components/layout/TitleBar', () => ({
 }));
 
 describe('MainLayout platform layout', () => {
+  const renderMainLayout = () => render(
+    <MemoryRouter>
+      <MainLayout />
+    </MemoryRouter>,
+  );
+
   it('uses a left/right shell on macOS with a top drag strip over content', () => {
     window.electron.platform = 'darwin';
 
-    render(<MainLayout />);
+    renderMainLayout();
 
     expect(screen.getByTestId('main-layout')).toHaveClass('flex-row');
     expect(screen.getByTestId('main-content')).toHaveClass('relative');
@@ -24,7 +31,7 @@ describe('MainLayout platform layout', () => {
   it('keeps a top titlebar column shell on Windows', () => {
     window.electron.platform = 'win32';
 
-    render(<MainLayout />);
+    renderMainLayout();
 
     const layout = screen.getByTestId('main-layout');
     expect(layout).toHaveClass('flex-col');

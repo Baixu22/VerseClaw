@@ -1,6 +1,15 @@
 {
   "gatewayNotRunning": "ゲートウェイが停止中",
   "gatewayRequired": "チャットを利用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
+  "startup": {
+    "waitingForGateway": "OpenClaw に接続しています…",
+    "loadingSessions": "会話を読み込んでいます…",
+    "loadingHistory": "会話履歴を読み込んでいます…",
+    "syncing": "同期中",
+    "errorTitle": "この会話を読み込めませんでした",
+    "errorDescription": "OpenClaw から会話履歴を取得できませんでした。",
+    "retry": "再読み込み"
+  },
   "welcome": {
     "title": "Verse Claw チャット",
     "subtitle": "お手伝いできることはありますか？",
@@ -374,7 +383,9 @@
       }
     },
     "actions": {
-      "back": "一覧に戻る"
+      "back": "一覧に戻る",
+      "expand": "パネルを展開",
+      "collapse": "パネルを折りたたむ"
     },
     "changes": {
       "heading": "ファイルの変更（{{count}} 件）",
@@ -821,10 +832,14 @@
     "wave": "Wave {{wave}}",
     "routeReasons": "ルーティング信号",
     "showMoreNodes": "さらに {{count}} 個のタスクノードを表示",
+    "dependencies": "依存関係 {{count}} 件",
+    "details": "詳細",
+    "nodeCount": "{{count}} ノード",
     "metrics": {
       "workers": "ワーカー",
       "waves": "Wave",
       "verifier": "検証者",
+      "failures": "失敗",
       "signals": "信号"
     },
     "alert": {

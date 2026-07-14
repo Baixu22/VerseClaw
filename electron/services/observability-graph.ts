@@ -79,6 +79,11 @@ function nodeKindForSpan(kind: string): ObservabilityGraphNodeKind {
   }
 }
 
+function agentIdFromSessionKey(sessionKey: string | undefined): string | undefined {
+  const match = sessionKey?.match(/^agent:([^:]+):/u);
+  return match?.[1];
+}
+
 function phaseForSpan(kind: string): ObservabilityGraphPhase {
   switch (kind) {
     case 'role-router':
@@ -377,6 +382,7 @@ export function buildObservabilityTraceGraph(
     error: truncatePreview(trace.error),
     sequence: sequence++,
     depth: 0,
+    agentId: agentIdFromSessionKey(trace.sessionKey),
     eventCount: traceEvents.length,
     warningCount: traceEvents.filter((event) => /warn/iu.test(event.type)).length,
     artifactCount: traceEvents.filter((event) => /file|patch|artifact|output/iu.test(event.type)).length,
@@ -411,6 +417,9 @@ export function buildObservabilityTraceGraph(
       durationMs: span.durationMs,
       spanId: span.id,
       parentId: span.parentSpanId ? `span:${span.parentSpanId}` : root.id,
+      agentId: typeof span.attributes?.agentId === 'string'
+        ? span.attributes.agentId
+        : root.agentId,
       roleName: span.roleName,
       modelRef: span.modelRef,
       tokenUsage: span.tokenUsage,

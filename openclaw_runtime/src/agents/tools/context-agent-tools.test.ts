@@ -1,4 +1,4 @@
-﻿import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type {
   BlockEntityQuery,
   BlockQuery,
@@ -68,8 +68,15 @@ function makeBlockStore(
   };
 }
 
-async function executeTool(tool: { execute: Function }, params: unknown) {
-  return tool.execute("call-1", params);
+type ToolExecuteResult = { details?: unknown; content?: unknown; [key: string]: unknown };
+async function executeTool(
+  tool: { execute?: ((id: string, params: unknown) => unknown) | undefined } | null,
+  params: unknown,
+): Promise<ToolExecuteResult> {
+  if (!tool?.execute) {
+    throw new Error("tool.execute missing");
+  }
+  return (await tool.execute("call-1", params)) as ToolExecuteResult;
 }
 
 describe("DCS Stage 5 context agent tools", () => {

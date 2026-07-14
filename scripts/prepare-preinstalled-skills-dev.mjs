@@ -4,6 +4,7 @@ import 'zx/globals';
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { spawn } from 'node:child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -22,8 +23,27 @@ if (existsSync(lockPath)) {
 
 echo`Preinstalled skills bundle missing, preparing for dev startup...`;
 
+function runNodeScript(scriptPath) {
+  return new Promise((resolve, reject) => {
+    // Avoid zx template string interpolation of Windows paths: backslashes like
+    // \U, \D, \c become escape sequences and mangle the path (Users933\Desktopawx).
+    // Pass path via argv with shell:false so separators stay literal.
+    const child = spawn(process.execPath, [scriptPath], {
+      cwd: ROOT,
+      stdio: 'inherit',
+      shell: false,
+      env: process.env,
+    });
+    child.on('error', reject);
+    child.on('exit', (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`bundle-preinstalled-skills exited with code ${code}`));
+    });
+  });
+}
+
 try {
-  await $`zx ${bundleScript}`;
+  await runNodeScript(bundleScript);
 } catch (error) {
   // Dev startup should remain available even if network-based skill fetching fails.
   echo`Warning: failed to prepare preinstalled skills for dev startup: ${error?.message || error}`;

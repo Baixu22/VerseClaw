@@ -1,6 +1,15 @@
 {
   "gatewayNotRunning": "Gateway Not Running",
   "gatewayRequired": "The OpenClaw Gateway needs to be running to use chat. It will start automatically, or you can start it from Settings.",
+  "startup": {
+    "waitingForGateway": "Connecting to OpenClaw…",
+    "loadingSessions": "Loading conversations…",
+    "loadingHistory": "Loading conversation history…",
+    "syncing": "Syncing",
+    "errorTitle": "Couldn’t load this conversation",
+    "errorDescription": "OpenClaw did not return conversation history.",
+    "retry": "Retry loading"
+  },
   "welcome": {
     "title": "Verse Claw Chat",
     "subtitle": "What can I do for you?",
@@ -374,7 +383,9 @@
       }
     },
     "actions": {
-      "back": "Back to list"
+      "back": "Back to list",
+      "expand": "Expand panel",
+      "collapse": "Collapse panel"
     },
     "changes": {
       "heading": "File changes ({{count}})",
@@ -821,10 +832,14 @@
     "wave": "Wave {{wave}}",
     "routeReasons": "Routing signals",
     "showMoreNodes": "Show {{count}} more task nodes",
+    "dependencies": "{{count}} dependencies",
+    "details": "Details",
+    "nodeCount": "{{count}} nodes",
     "metrics": {
       "workers": "Workers",
       "waves": "Waves",
       "verifier": "Verifier",
+      "failures": "Failures",
       "signals": "Signals"
     },
     "alert": {

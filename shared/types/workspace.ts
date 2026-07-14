@@ -112,6 +112,8 @@ export type KnowledgeInvocationMode = 'manual' | 'suggest' | 'auto-read';
 
 export interface WorkspaceArtifactPanelState {
   open?: boolean;
+  /** Whether the panel occupies layout space instead of overlaying the chat. */
+  expanded?: boolean;
   activeTab?: string;
   workspaceView?: 'home' | 'files' | 'terminal' | 'web' | 'audit' | 'git';
   selectedPath?: string | null;

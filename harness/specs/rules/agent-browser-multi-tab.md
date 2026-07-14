@@ -1,3 +1,9 @@
+---
+id: agent-browser-multi-tab
+title: Agent Browser Multi-tab Control
+severity: error
+---
+
 # Rule: Agent Browser 多标签页受控
 
 > 抄写自 browser-ai-assistant-master/AGENTS.md §15「浏览器自动化控制规划」第 808-826 行，

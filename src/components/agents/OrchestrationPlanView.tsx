@@ -6,15 +6,18 @@
 // The plan's mode is shown as a header badge; reasons[] (previously discarded)
 // render as a collapsible muted list.
 import { useState } from 'react';
-import { ArrowDown, ArrowUp, Ban, CheckCircle2, ChevronDown, CircleDot, Diamond, Edit3, RefreshCw, Save, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, Ban, CheckCircle2, ChevronDown, Edit3, RefreshCw, Save, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { effortTone, roleTone, toneClasses } from '@/lib/role-visuals';
+import { effortTone, toneClasses } from '@/lib/role-visuals';
+import { useAgentsStore } from '@/stores/agents';
+import { AgentRoleIdentity, RoleBadge } from './AgentAvatar';
 
 export type PlanWorker = {
   roleName: string;
+  agentId?: string;
   task: string;
   effort?: string;
   taskNodeId?: string;
@@ -62,7 +65,6 @@ function planWorkerId(worker: PlanWorker, index: number): string {
 function WorkerCard({
   label,
   worker,
-  isVerifier,
   nodeId,
   editControl,
   tt,
@@ -71,17 +73,18 @@ function WorkerCard({
 }: {
   label: string;
   worker: PlanWorker;
-  isVerifier: boolean;
   nodeId: string;
   editControl?: PlanEditControl;
   tt: (key: string, defaultValue: string, vars?: Record<string, unknown>) => string;
   previousNodeId?: string | null;
   nextBeforeNodeId?: string | null;
 }) {
-  const dotTone = roleTone(worker.roleName);
   const effTone = effortTone(worker.effort);
-  const dot = toneClasses(dotTone);
   const disabled = Boolean(editControl?.disabledNodeIds.includes(nodeId));
+  const agents = useAgentsStore((state) => state.agents);
+  const agent = agents.find((candidate) => candidate.id === worker.agentId)
+    ?? agents.find((candidate) => candidate.isDefault)
+    ?? null;
   return (
     <div className={cn(
       'rounded-xl bg-surface-modal border border-black/5 dark:border-white/5 p-3',
@@ -89,11 +92,9 @@ function WorkerCard({
     )}>
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
-          {isVerifier ? (
-            <Diamond className={cn('h-3 w-3 shrink-0', dot.text)} />
-          ) : (
-            <CircleDot className={cn('h-3 w-3 shrink-0', dot.text)} />
-          )}
+          {agent ? (
+            <AgentRoleIdentity agentId={agent.id} name={agent.name} avatar={agent.avatar} roleName={worker.roleName} size={30} />
+          ) : <RoleBadge roleName={worker.roleName} size={22} />}
           <span className="text-sm font-medium truncate">{worker.roleName}</span>
           <span className="text-2xs text-muted-foreground shrink-0">{label}</span>
         </div>
@@ -280,7 +281,6 @@ export function OrchestrationPlanView({ plan, tt, editControl }: OrchestrationPl
         <WorkerCard
           label={tt('roles.lead', 'Lead')}
           worker={{ ...leadWorker }}
-          isVerifier={false}
           nodeId={nodeIdForWorker(leadWorker)}
           editControl={editControl}
           tt={tt}
@@ -296,7 +296,6 @@ export function OrchestrationPlanView({ plan, tt, editControl }: OrchestrationPl
               key={nodeIdForWorker(worker)}
               label={tt('roles.worker', 'Worker')}
               worker={worker}
-              isVerifier={false}
               nodeId={nodeIdForWorker(worker)}
               editControl={editControl}
               tt={tt}
@@ -312,7 +311,6 @@ export function OrchestrationPlanView({ plan, tt, editControl }: OrchestrationPl
           <WorkerCard
             label={tt('roles.verifier', 'Verifier')}
             worker={verifierWorker ?? { roleName: plan.verifierRole, task: tt('roles.verifierTask', 'Verify completion and quality'), effort: undefined }}
-            isVerifier
             nodeId={verifierWorker ? nodeIdForWorker(verifierWorker) : 'verifier'}
             editControl={verifierWorker ? editControl : undefined}
             tt={tt}

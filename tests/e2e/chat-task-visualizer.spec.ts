@@ -200,14 +200,25 @@ const teamOrchestrationResult = {
     nodes: [
       {
         taskNodeId: 'implementer-1',
+        agentId: 'main',
         roleName: 'implementer',
         phase: 'implementation',
         task: 'Implement the safe UI change.',
-        status: 'ready',
+        status: 'running',
+        dependsOn: [],
+      },
+      {
+        taskNodeId: 'implementer-2',
+        agentId: 'main',
+        roleName: 'implementer',
+        phase: 'implementation',
+        task: 'Implement the alternative layout path.',
+        status: 'accepted',
         dependsOn: [],
       },
       {
         taskNodeId: 'tester-1',
+        agentId: 'main',
         roleName: 'tester',
         phase: 'verification',
         task: 'Validate the rendered orchestration card.',
@@ -216,6 +227,7 @@ const teamOrchestrationResult = {
       },
       {
         taskNodeId: 'reviewer-1',
+        agentId: 'main',
         roleName: 'reviewer',
         phase: 'verifier',
         task: 'Review the worker evidence.',
@@ -227,13 +239,14 @@ const teamOrchestrationResult = {
     edges: [],
   },
   executionWaves: [
-    { wave: 1, taskNodeIds: ['implementer-1'], roles: ['implementer'] },
+    { wave: 1, taskNodeIds: ['implementer-1', 'implementer-2'], roles: ['implementer', 'implementer'] },
     { wave: 2, taskNodeIds: ['tester-1'], roles: ['tester'] },
     { wave: 3, taskNodeIds: ['reviewer-1'], roles: ['reviewer'] },
   ],
   routeDiagnostics: {
     reasons: ['Task graph selected for staged multi-agent work.'],
   },
+  failures: [{ roleName: 'tester', status: 'error', error: 'Snapshot mismatch' }],
 };
 
 const teamOrchestrationHistory = [
@@ -277,7 +290,7 @@ test.describe('Verse Claw chat execution graph', () => {
 
     try {
       await installIpcMocks(app, {
-        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true, connectedAt: Date.now() },
         gatewayRpc: {
           [stableStringify(['sessions.list', {}])]: {
             success: true,
@@ -304,7 +317,7 @@ test.describe('Verse Claw chat execution graph', () => {
             data: {
               status: 200,
               ok: true,
-              json: { state: 'running', port: 18789, pid: 12345 },
+              json: { state: 'running', port: 18789, pid: 12345, gatewayReady: true, connectedAt: Date.now() },
             },
           },
           [stableStringify(['/api/chat/sessions', 'GET'])]: {
@@ -357,14 +370,43 @@ test.describe('Verse Claw chat execution graph', () => {
           throw error;
         }
       }
+      await app.evaluate(({ BrowserWindow }) => {
+        BrowserWindow.getAllWindows()[0]?.webContents.send('gateway:status-changed', {
+          state: 'running',
+          port: 18789,
+          pid: 12345,
+          gatewayReady: true,
+          connectedAt: Date.now(),
+        });
+      });
 
       await expect(page.getByTestId('main-layout')).toBeVisible();
+      await page.waitForTimeout(2_000);
+      console.log('team-orchestration-host-calls', await app.evaluate(() => (
+        globalThis as unknown as { __verseClawE2eHostCalls?: unknown[] }
+      ).__verseClawE2eHostCalls ?? []));
+      const summary = page.getByTestId('chat-turn-summary-card');
+      await expect(summary).toBeVisible({ timeout: 30_000 });
+      if (await summary.getByTestId('chat-turn-summary-toggle').getAttribute('aria-expanded') === 'false') {
+        await summary.getByTestId('chat-turn-summary-toggle').click();
+      }
       await expect(page.getByTestId('chat-team-orchestration-card')).toBeVisible({ timeout: 30_000 });
       const card = page.getByTestId('chat-team-orchestration-card');
       await expect(card).toContainText('implementer');
       await expect(card).toContainText('tester');
       await expect(card).toContainText('reviewer');
       await expect(card).toContainText('Task graph selected for staged multi-agent work.');
+      await expect(card.getByTestId('chat-team-node-implementer-1')).toBeVisible();
+      await expect(card.getByTestId('chat-team-node-implementer-2')).toBeVisible();
+      await expect(card).toContainText('Snapshot mismatch');
+
+      await page.setViewportSize({ width: 480, height: 820 });
+      await expect(card.getByTestId('chat-team-orchestration-timeline')).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+
+      await page.evaluate(() => document.documentElement.classList.add('dark'));
+      await expect(card.getByTestId('agent-avatar-main').first()).toBeVisible();
+      await expect(card.getByTestId('role-badge-implementer').first()).toBeVisible();
     } finally {
       await closeElectronApp(app);
     }
@@ -468,6 +510,11 @@ test.describe('Verse Claw chat execution graph', () => {
         }
       }
       await expect(page.getByTestId('main-layout')).toBeVisible();
+      const summary = page.getByTestId('chat-turn-summary-card');
+      await expect(summary).toBeVisible({ timeout: 30_000 });
+      if (await summary.getByTestId('chat-turn-summary-toggle').getAttribute('aria-expanded') === 'false') {
+        await summary.getByTestId('chat-turn-summary-toggle').click();
+      }
       await expect(page.getByTestId('chat-execution-graph')).toBeVisible({ timeout: 30_000 });
       // Completed runs auto-collapse into a single-line summary button. Expand
       // it first so the underlying step details are rendered.
@@ -583,11 +630,16 @@ test.describe('Verse Claw chat execution graph', () => {
       }
 
       await expect(page.getByTestId('main-layout')).toBeVisible();
+      const summary = page.getByTestId('chat-turn-summary-card');
+      await expect(summary).toBeVisible({ timeout: 30_000 });
+      if (await summary.getByTestId('chat-turn-summary-toggle').getAttribute('aria-expanded') === 'false') {
+        await summary.getByTestId('chat-turn-summary-toggle').click();
+      }
       await expect(page.getByTestId('chat-execution-graph')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-execution-graph')).toHaveAttribute('data-collapsed', 'true');
       await expect(page.getByTestId('chat-execution-graph')).toContainText(/0\s+(tool calls|个工具调用)/);
       await expect(page.getByTestId('chat-execution-graph')).toContainText(/9\s+(process messages|条过程消息)/);
-      await expect(page.getByText(longRunSummary, { exact: true })).toBeVisible();
+      await expect(summary.getByText(longRunSummary, { exact: true })).toBeVisible();
       await expect(page.getByText(longRunReplyText, { exact: true })).toHaveCount(0);
     } finally {
       await closeElectronApp(app);

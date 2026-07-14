@@ -57,6 +57,7 @@ export type OrchestrationTaskLedgerEntry = {
 
 export type OrchestrationTaskNode = {
   taskNodeId: string;
+  agentId?: string;
   roleName: string;
   task: string;
   phase: OrchestrationTaskNodePhase;
@@ -124,6 +125,7 @@ export type OrchestrationDiagnostics = {
 export type OrchestratorGraphWorker = {
   roleName: string;
   task: string;
+  agentId?: string;
   modelRef?: string | null;
 };
 
@@ -338,6 +340,7 @@ function buildEdges(nodes: readonly OrchestrationTaskNode[]): OrchestrationTaskE
 
 export function buildTaskGraph(params: {
   graphRunId: string;
+  agentId?: string;
   mode: string;
   graphMode?: OrchestrationGraphMode;
   workers: readonly OrchestratorGraphWorker[];
@@ -360,6 +363,7 @@ export function buildTaskGraph(params: {
       : [];
     nodes.push({
       taskNodeId: nodeIdForRole(worker.roleName, occurrence),
+      ...(worker.agentId ?? params.agentId ? { agentId: worker.agentId ?? params.agentId } : {}),
       roleName: worker.roleName,
       task: worker.task,
       phase,
@@ -378,6 +382,7 @@ export function buildTaskGraph(params: {
     const occurrence = (occurrences.get(params.verifierRole) ?? 0) + 1;
     const verifierNode: OrchestrationTaskNode = {
       taskNodeId: nodeIdForRole(params.verifierRole, occurrence),
+      ...(params.agentId ? { agentId: params.agentId } : {}),
       roleName: params.verifierRole,
       task: params.verifierTask ?? `Verify completion as ${params.verifierRole}`,
       phase: "verifier",

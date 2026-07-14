@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Application Menu Configuration
  * Creates the native application menu for macOS/Windows/Linux
  */
