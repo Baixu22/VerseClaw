@@ -21,6 +21,7 @@ const AGENT_BROWSER_ACTIONS = [
   "screenshot",
   "command",
   "close",
+  "getConsoleMessages",
 ] as const;
 const FAILURE_DIAGNOSTIC_COMMANDS: string[][] = [
   ["snapshot", "-i"],
@@ -135,6 +136,7 @@ function buildPayload(action: AgentBrowserAction, params: Record<string, unknown
       };
     case "screenshot":
     case "close":
+    case "getConsoleMessages":
       return { sessionId: requireSession(params, action) };
     case "command":
       return pickPayload(params, [
@@ -200,7 +202,7 @@ function shouldCollectFailureDiagnostics(action: AgentBrowserAction, sessionId?:
   if (!sessionId) {
     return false;
   }
-  return !["status", "screenshot", "command", "close"].includes(action);
+  return !["status", "screenshot", "command", "close", "getConsoleMessages"].includes(action);
 }
 
 async function collectFailureDiagnostics(params: {
@@ -259,7 +261,7 @@ export function createAgentBrowserTool(options?: {
     label: "Agent Browser",
     name: "agent_browser",
     description:
-      "Drive Verse Claw's internal Agent Browser for web automation. Login state persists by profile by default through authStateName/session-name. Use simple actions for common tasks, or action='command' with agent-browser CLI argv to access advanced features such as snapshot, console, errors, network, cookies, storage, trace, record, vitals, tabs, auth, plugins, and MCP. External browser reuse via auto-connect, CDP, or existing Chrome profiles requires allowExternalBrowser=true.",
+      "Drive Verse Claw's internal Agent Browser for web automation. Login state persists by profile by default through authStateName/session-name. Use simple actions for common tasks; action='getConsoleMessages' reads CDP-captured console logs for the current browser-window session. Use action='command' with agent-browser CLI argv to access advanced features such as snapshot, console, errors, network, cookies, storage, trace, record, vitals, tabs, auth, plugins, and MCP. External browser reuse via auto-connect, CDP, or existing Chrome profiles requires allowExternalBrowser=true.",
     parameters: AgentBrowserSchema,
     execute: async (_toolCallId, args) => {
       const params = asToolParamsRecord(args);

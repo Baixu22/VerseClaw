@@ -43,6 +43,11 @@ export function createAgentBrowserApi(
     status: () => ({
       success: true,
       sessions: service.list(),
+      browserControlEnabled: service.isEnabled(),
+    }),
+    setEnabled: (payload) => ({
+      success: true,
+      ...service.setEnabled(payload.enabled),
     }),
     profiles: async () => ({
       success: true,
@@ -129,5 +134,146 @@ export function createAgentBrowserApi(
       service.close(payload.sessionId);
       return { success: true };
     },
+    takeSnapshot: async (payload) => ({
+      success: true,
+      ...(await service.takeSnapshot(payload)),
+    }),
+    clickByUid: async (payload) => ({
+      success: true,
+      session: await service.clickByUid(payload),
+    }),
+    fillByUid: async (payload) => ({
+      success: true,
+      session: await service.fillByUid(payload),
+    }),
+    pressKey: async (payload) => ({
+      success: true,
+      session: await service.pressKey(payload),
+    }),
+    requestModeUpgrade: async (payload) => ({
+      success: true,
+      ...(await service.requestModeUpgrade(payload)),
+    }),
+    respondBoundaryChoice: (payload) => ({
+      success: true,
+      accepted: service.respondBoundaryChoice(
+        payload.sessionId,
+        payload.requestId,
+        { selectedChoiceIds: payload.selectedChoiceIds, otherText: payload.otherText },
+      ),
+    }),
+    networkListRequests: async (payload) => ({
+      success: true,
+      ...(await service.networkListRequests(payload)),
+    }),
+    networkGetRequestDetails: async (payload) => ({
+      success: true,
+      ...(await service.networkGetRequestDetails(payload)),
+    }),
+    networkClearRequests: async (payload) => ({
+      success: true,
+      ...(await service.networkClearRequests(payload)),
+    }),
+    networkWaitForRequests: async (payload) => ({
+      success: true,
+      ...(await service.networkWaitForRequests(payload)),
+    }),
+    networkCompareRequests: async (payload) => ({
+      success: true,
+      ...(await service.networkCompareRequests(payload)),
+    }),
+    networkFindParameterCandidates: async (payload) => ({
+      success: true,
+      ...(await service.networkFindParameterCandidates(payload)),
+    }),
+    networkExtractJsCandidates: async (payload) => ({
+      success: true,
+      ...(await service.networkExtractJsCandidates(payload)),
+    }),
+    newPage: async (payload) => service.newPage(payload),
+    listPages: async (payload) => service.listPages(payload),
+    selectPage: async (payload) => service.selectPage(payload),
+    closePage: async (payload) => service.closePage(payload),
+    navigatePage: async (payload) => service.navigatePage(payload),
+    jsListResources: async (payload) => ({
+      success: true,
+      ...(await service.jsListResources(payload)),
+    }),
+    jsSearchSources: async (payload) => ({
+      success: true,
+      ...(await service.jsSearchSources(payload)),
+    }),
+    jsExtractContext: async (payload) => ({
+      success: true,
+      ...(await service.jsExtractContext(payload)),
+    }),
+    sourceMapListCandidates: async (payload) => ({
+      success: true,
+      ...(await service.sourceMapListCandidates(payload)),
+    }),
+    sourceMapResolveLocation: async (payload) => ({
+      success: true,
+      ...(await service.sourceMapResolveLocation(payload)),
+    }),
+    sourceMapExtractOriginalContext: async (payload) => ({
+      success: true,
+      ...(await service.sourceMapExtractOriginalContext(payload)),
+    }),
+    runtimeInspectGlobals: async (payload) => ({
+      success: true,
+      ...(await service.runtimeInspectGlobals(payload)),
+    }),
+    runtimeSearchModules: async (payload) => ({
+      success: true,
+      ...(await service.runtimeSearchModules(payload)),
+    }),
+    runtimeDescribeFunction: async (payload) => ({
+      success: true,
+      ...(await service.runtimeDescribeFunction(payload)),
+    }),
+    replayPrepareRequest: async (payload) => ({
+      success: true,
+      ...(await service.replayPrepareRequest(payload)),
+    }),
+    replaySendRequest: async (payload) => ({
+      success: true,
+      ...(await service.replaySendRequest(payload)),
+    }),
+    replayCompareResponses: async (payload) => ({
+      success: true,
+      ...(await service.replayCompareResponses(payload)),
+    }),
+    getConsoleMessages: async (payload) => ({
+      success: true,
+      ...(await service.getConsoleMessages(payload)),
+    }),
+    fullAccessExecuteScript: async (payload) => ({
+      success: true,
+      ...(await service.fullAccessExecuteScript(payload)),
+    }),
+    fullAccessFetch: async (payload) => ({
+      success: true,
+      ...(await service.fullAccessFetch(payload)),
+    }),
+    fullAccessGetNetworkDetails: async (payload) => ({
+      success: true,
+      ...(await service.fullAccessGetNetworkDetails(payload)),
+    }),
+    fullAccessReadStorage: async (payload) => ({
+      success: true,
+      ...(await service.fullAccessReadStorage(payload)),
+    }),
+    fullAccessRevoke: (payload) => ({
+      success: true,
+      ...service.fullAccessRevoke(payload),
+    }),
+    extractPageText: async (payload) => ({
+      success: true,
+      ...(await service.extractPageText(payload)),
+    }),
+    validateExtractionRule: (payload) => ({
+      success: true,
+      ...service.validateExtractionRule(payload),
+    }),
   };
 }

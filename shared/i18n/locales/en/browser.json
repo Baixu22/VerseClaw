@@ -9,5 +9,24 @@
   "tasks": { "name": "Task name", "url": "Target URL", "objective": "Objective", "runNow": "Run now", "empty": "No browser tasks yet" },
   "profiles": { "localState": "Persistent Electron site state", "active": "{{count}} active" },
   "vault": { "protected": "Passwords are protected by the operating system and never shown to agents.", "empty": "No saved credentials" },
-  "status": { "queued": "Queued", "running": "Running", "waiting-approval": "Waiting approval", "paused": "Paused", "completed": "Completed", "failed": "Failed", "cancelled": "Cancelled" }
+  "status": { "queued": "Queued", "running": "Running", "waiting-approval": "Waiting approval", "paused": "Paused", "completed": "Completed", "failed": "Failed", "cancelled": "Cancelled" },
+  "runtimeMode": {
+    "label": "Runtime mode",
+    "normalRestricted": "Normal restricted",
+    "controlledEnhanced": "Controlled enhanced",
+    "fullAccess": "Full access",
+    "upgrade": "Upgrade mode",
+    "actionRequired": "This action requires a runtime mode upgrade"
+  },
+  "boundaryChoice": {
+    "dialogLabel": "AI boundary confirmation",
+    "other": "Other",
+    "otherPlaceholder": "Additional requirements, will not directly authorize.",
+    "cancel": "Cancel",
+    "submit": "Submit choice",
+    "grants": "Grants",
+    "grantsCount": "{{count}} grants",
+    "cancelled": "User cancelled this boundary confirmation.",
+    "expired": "This confirmation request has expired."
+  }
 }

@@ -18,6 +18,7 @@ import enRemoteTasks from './locales/en/remoteTasks.json';
 import enClawGraph from './locales/en/clawGraph.json';
 import enKnowledge from './locales/en/knowledge.json';
 import enCodeReview from './locales/en/codeReview.json';
+import enBrowser from './locales/en/browser.json';
 
 // ZH
 import zhCommon from './locales/zh/common.json';
@@ -37,6 +38,7 @@ import zhRemoteTasks from './locales/zh/remoteTasks.json';
 import zhClawGraph from './locales/zh/clawGraph.json';
 import zhKnowledge from './locales/zh/knowledge.json';
 import zhCodeReview from './locales/zh/codeReview.json';
+import zhBrowser from './locales/zh/browser.json';
 
 // JA
 import jaCommon from './locales/ja/common.json';
@@ -56,6 +58,7 @@ import jaRemoteTasks from './locales/ja/remoteTasks.json';
 import jaClawGraph from './locales/ja/clawGraph.json';
 import jaKnowledge from './locales/ja/knowledge.json';
 import jaCodeReview from './locales/ja/codeReview.json';
+import jaBrowser from './locales/ja/browser.json';
 
 // RU
 import ruCommon from './locales/ru/common.json';
@@ -75,6 +78,7 @@ import ruRemoteTasks from './locales/ru/remoteTasks.json';
 import ruClawGraph from './locales/ru/clawGraph.json';
 import ruKnowledge from './locales/ru/knowledge.json';
 import ruCodeReview from './locales/ru/codeReview.json';
+import ruBrowser from './locales/ru/browser.json';
 
 export const I18N_NAMESPACES = [
   'common',
@@ -94,6 +98,7 @@ export const I18N_NAMESPACES = [
   'clawGraph',
   'knowledge',
   'codeReview',
+  'browser',
 ] as const;
 
 export const I18N_RESOURCES = {
@@ -115,6 +120,7 @@ export const I18N_RESOURCES = {
     clawGraph: enClawGraph,
     knowledge: enKnowledge,
     codeReview: enCodeReview,
+    browser: enBrowser,
   },
   zh: {
     common: zhCommon,
@@ -134,6 +140,7 @@ export const I18N_RESOURCES = {
     clawGraph: zhClawGraph,
     knowledge: zhKnowledge,
     codeReview: zhCodeReview,
+    browser: zhBrowser,
   },
   ja: {
     common: jaCommon,
@@ -153,6 +160,7 @@ export const I18N_RESOURCES = {
     clawGraph: jaClawGraph,
     knowledge: jaKnowledge,
     codeReview: jaCodeReview,
+    browser: jaBrowser,
   },
   ru: {
     common: ruCommon,
@@ -172,6 +180,7 @@ export const I18N_RESOURCES = {
     clawGraph: ruClawGraph,
     knowledge: ruKnowledge,
     codeReview: ruCodeReview,
+    browser: ruBrowser,
   },
 } as const;
 
