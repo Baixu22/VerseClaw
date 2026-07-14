@@ -2,7 +2,7 @@
 
 **用途**：Working Context × Memory 统一设计约束规范（DCS）的多轮对抗审阅与阶段 0 实现索引。
 
-**最后更新**：2026-07-12
+**最后更新**：2026-07-14
 **当前状态**：v1.6 已收敛（致命问题 0），v1.6.1 正式增补已收编；阶段 0
 接口层与 Stage 1 working-memory 已在 main 收口（R1 COMPLETE）；R2 producer
 envelope vertical slice 已在 main 收口（R2 COMPLETE）；R3 Stage 2 task state
@@ -11,7 +11,7 @@ tool_registry Block producer 与 Assembler injection 已在 main 收口（R4 COM
 R5 Stage 4 knowledge Block 统一（compass + role-memory）已在 main 收口
 （R5 COMPLETE）；R6 Stage 5 SEKB 蒸馏回写 closure + T1 provider-registry pilot
 disposition 已在 main 收口（R6 COMPLETE）。
-**DCS all stages complete.** DCS working-memory infrastructure ready; production
+**DCS all stages complete. T 系列（T0/T1/T2/T3）已在 main 收口（见 DCS-T0..T3-ACCEPTANCE）。** DCS working-memory infrastructure ready; production
 producer coverage = 3/3（edit/write/apply_patch 均已产出 `details.working_memory`
 envelope）；task_state adapter + child handoff + direct-parent authorization +
 terminal-phase SEKB trajectory capture 已就位；tool_registry Block producer +
@@ -292,7 +292,7 @@ API 泄漏。`SourceSystem` union 新增 `"agent-notes"`。
 已就位**（best-effort, ANTI-7/ANTI-8 enforced）。T1 provider-registry pilot
 已删除，相关测试已迁移到正式 registry 构造 helper。**DCS v1.6 Stage 0-5
 implementation is now complete.** 所有 feature flag 缺省为 false，等待 flag-gated
-activation 与完整回归证据。T3 codegraph unlock 不属于本 Goal，未实现。
+activation 与完整回归证据。T3 CodeGraph unlock 已在 main 完成（见 DCS-T3-ACCEPTANCE）。
 
 ---
 
@@ -337,6 +337,16 @@ public wildcard API. T2 therefore preserves that export surface.
 | DCS 轮次派单手册 | `C:\Users\27933\Desktop\clawx\team\claude\DCS-ROUND-DISPATCH.md` | R1-R6 串行执行、验收与 handoff |
 
 ---
+
+
+### T 系列验收（基线 / T1 / T2 / T3）
+
+| 文件 | 说明 |
+|------|------|
+| [DCS-T0-BASELINE-ACCEPTANCE.md](./DCS-T0-BASELINE-ACCEPTANCE.md) | 根 lint/test 基线恢复验收 |
+| [DCS-T1-ACCEPTANCE.md](./DCS-T1-ACCEPTANCE.md) | provider-registry pilot 清理验收 |
+| [DCS-T2-ACCEPTANCE.md](./DCS-T2-ACCEPTANCE.md) | encoding + structural convergence 验收 |
+| [DCS-T3-ACCEPTANCE.md](./DCS-T3-ACCEPTANCE.md) | Electron CodeGraph 工具解锁验收 |
 
 ## 后续工作
 
