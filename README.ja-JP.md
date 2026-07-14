@@ -49,6 +49,7 @@ Product capability statements must be checked against the canonical matrix in `s
 
 同じ Agents -> Roles & Orchestration 画面には、ClawGraph YAML を書かずに一般的なワークフローを始められる **Lightweight Subagent Runner** もあります。Explorer、Reviewer、Tester、Compare 3 approaches から選び、目標を入力すると、既存の Gateway 権限経路で明示的なロール worker を起動し、Verse Claw がライブ worker 状態、要約、失敗理由、Observability trace リンクを表示します。
 role-first のオーケストレーション実行では、読み取り専用の統合結果も表示し、検証判断、証拠数、trace 数、可視化された失敗理由をそのまま確認できます。
+Roles & Orchestration では、統制された Agency ロール昇格も行えます。Agency Agents checkout を選び、不変の候補をレビューし、すべてのツールヒントを明示的にマップまたは免除し、証拠を添付して、独立した設定ロールを承認します。ソースドラフトは常に実行不能で、昇格ロールを廃止しても監査履歴は保持されます。
 
 長い会話、チェックポイント、証拠レビュー、明示的な scheduled tick をまたいで継続する目標向けに、Agents パネルには **Mission Control** もあります。`mission.run` で Mission を開始または再開し、Mission 状態を永続化し、ResumeCheckpoint、Task Ledger、メモリ、trace 証拠から有界なコンテキストを再構築し、各 tick で内部 `task_loop` を実行してから、reviewer が続行、修復、休眠、ユーザー確認、完了、またはブロックを判断します。
 Mission と Task loop は内部の Engineering Control Signals（`evidence_gap`、`validation_missing`、`scope_drift`、`unverified_claim`、`replan_required` など）も運びます。これらは checkpoint、lifecycle event、Task Ledger metadata に残り、trace だけ、または内部 loop の complete だけを長期目標の完了事実として扱わないためのガードになります。
