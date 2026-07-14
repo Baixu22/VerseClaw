@@ -21,7 +21,7 @@ touchedAreas:
   - src/lib/host-api.ts
   - src/components/agents/AgencyRolePromotionPanel.tsx
   - src/components/agents/RolesOrchestrationPanel.tsx
-  - shared/i18n/locales
+  - shared/i18n/locales/**/agents.json
   - tests/unit/agency-role-importer.test.ts
   - tests/unit/agency-role-promotion.test.ts
   - tests/unit/roles-api.test.ts
@@ -30,7 +30,11 @@ touchedAreas:
   - tests/unit/roles-orchestration-panel.test.tsx
   - tests/e2e/agency-role-promotion.spec.ts
   - docs/role-first-design.md
-  - docs/multi-agent-orchestration
+  - docs/multi-agent-orchestration/**
+  - docs/superpowers/specs/2026-07-12-agency-role-promotion-control-plane-design.md
+  - docs/superpowers/plans/2026-07-12-agency-role-promotion-control-plane.md
+  - harness/specs/rules/agency-role-promotion-boundary.md
+  - harness/specs/tasks/agency-role-promotion-control-plane.md
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
