@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { validateRoleContract, type RoleContract } from "./role-contract.js";
@@ -6,6 +7,7 @@ import type { AgencyDraftRoleEntry } from "./agency-draft-catalog.js";
 type AgencySourceAgent = {
   sourceDivision?: string;
   agent: Record<string, unknown>;
+  sourceRef?: AgencyDraftRoleEntry["sourceRef"];
 };
 
 export type AgencyRepositoryCatalog = {
@@ -146,8 +148,8 @@ function buildCandidate(params: {
   };
 }
 
-export function importAgencyDraftRoles(source: unknown): AgencyDraftRoleEntry[] {
-  return collectAgents(source).map(({ sourceDivision, agent }) => {
+function importAgencySourceAgents(sourceAgents: AgencySourceAgent[]): AgencyDraftRoleEntry[] {
+  return sourceAgents.map(({ sourceDivision, agent, sourceRef }) => {
     const sourceAgentName = stringValue(agent.name ?? agent.agentName ?? agent.id) ?? "Unnamed Agency Agent";
     const roleName = kebabCase(stringValue(agent.roleName ?? agent.role) ?? sourceAgentName);
     const description = stringValue(agent.description ?? agent.prompt ?? agent.instructions);
@@ -166,6 +168,7 @@ export function importAgencyDraftRoles(source: unknown): AgencyDraftRoleEntry[] 
       id: `agency:${sourceDivision ? `${kebabCase(sourceDivision)}:` : ""}${roleName}`,
       status: "draft",
       source: "agency",
+      ...(sourceRef ? { sourceRef } : {}),
       ...(sourceDivision ? { sourceDivision } : {}),
       sourceAgentName,
       roleName,
@@ -178,6 +181,10 @@ export function importAgencyDraftRoles(source: unknown): AgencyDraftRoleEntry[] 
       validationIssues: validation.issues,
     };
   });
+}
+
+export function importAgencyDraftRoles(source: unknown): AgencyDraftRoleEntry[] {
+  return importAgencySourceAgents(collectAgents(source));
 }
 
 export function parseAgencyAgentMarkdown(relativePath: string, source: string): { division?: string; agent: Record<string, unknown> } {
@@ -210,16 +217,22 @@ export function importAgencyDraftRolesFromRepository(rootDir: string): AgencyRep
       continue;
     }
     for (const fullPath of collectMarkdownFiles(divisionDir)) {
-      const parsed = parseAgencyAgentMarkdown(relative(rootDir, fullPath), readFileSync(fullPath, "utf8"));
-      agents.push({ sourceDivision: parsed.division ?? division, agent: parsed.agent });
+      const content = readFileSync(fullPath);
+      const relativePath = relative(rootDir, fullPath).replace(/\\/g, "/");
+      const parsed = parseAgencyAgentMarkdown(relativePath, content.toString("utf8"));
+      agents.push({
+        sourceDivision: parsed.division ?? division,
+        agent: parsed.agent,
+        sourceRef: {
+          relativePath,
+          sha256: createHash("sha256").update(content).digest("hex"),
+        },
+      });
     }
   }
 
   return {
-    entries: importAgencyDraftRoles({ divisions: Object.keys(divisionsRoot).map((division) => ({
-      name: division,
-      agents: agents.filter((entry) => entry.sourceDivision === division).map((entry) => entry.agent),
-    })) }),
+    entries: importAgencySourceAgents(agents),
     divisions: divisionsRoot as Record<string, Record<string, unknown>>,
     tools: toolsRoot as Record<string, Record<string, unknown>>,
     runbooks: runbooksRoot,

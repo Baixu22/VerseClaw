@@ -5,12 +5,14 @@ import {
   type RoleContractValidationResult,
 } from "./role-contract.js";
 
-export type AgencyDraftStatus = "draft" | "reviewed" | "active";
-
 export type AgencyDraftRoleEntry = {
   id: string;
-  status: AgencyDraftStatus;
+  status: "draft";
   source: "agency";
+  sourceRef?: {
+    relativePath: string;
+    sha256: string;
+  };
   sourceDivision?: string;
   sourceAgentName: string;
   roleName: string;
