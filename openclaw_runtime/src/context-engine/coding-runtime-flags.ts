@@ -14,6 +14,8 @@ export const DEFAULT_CODING_FEATURE_FLAGS = {
   /** C4-H: inprocess until git backend ACCEPT evidence. */
   "runtime.coding.worktree.backend": "inprocess" as const,
   /** C5-H: memory until multi-process WAL ACCEPT evidence. */
+  /** C5-1: symbol lease on write tools. Default off (shared path unperturbed). */
+  "runtime.coding.symbolLease.enabled": false,
   "runtime.coding.symbolLease.mode": "memory" as const,
   /** C5-H: patch-flow remains recommend-only. */
   "runtime.coding.patchFlow.default": false,
@@ -114,6 +116,21 @@ export function resolveWorktreeBackend(
   return DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.worktree.backend"];
 }
 
+
+/** C5-1 symbol lease on write tools. Default false (shared path unperturbed). */
+export function isCodingSymbolLeaseEnabled(
+  cfg?: OpenClawConfig,
+  overrides?: { symbolLeaseEnabled?: boolean },
+): boolean {
+  if (typeof overrides?.symbolLeaseEnabled === "boolean") {
+    return overrides.symbolLeaseEnabled;
+  }
+  const leaf = asRecord(codingConfigFrom(cfg)?.symbolLease) as CodingFlagLeaf | undefined;
+  if (typeof leaf?.enabled === "boolean") {
+    return leaf.enabled;
+  }
+  return DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.symbolLease.enabled"];
+}
 /** C5-H symbol lease mode. Default memory (safe). */
 export function resolveSymbolLeaseMode(
   cfg?: OpenClawConfig,

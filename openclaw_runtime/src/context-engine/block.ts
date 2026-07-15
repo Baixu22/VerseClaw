@@ -32,6 +32,10 @@ export interface BlockPresence {
     auto_register: boolean;
   };
   background?: boolean;
+  /** C6 lifecycle overlay persisted via presence_json (archive not discard). */
+  lifecycle_state?: "active" | "archived";
+  archived_at?: string;
+  heat?: number;
 }
 
 export type BlockMutability = "system_managed" | "agent_writable";

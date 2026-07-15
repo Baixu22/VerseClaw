@@ -17,4 +17,24 @@ describe("isolation-mode-matrix (C5-3)", () => {
       recommendIsolationMode({ durationMinutes: 45, workerCount: 4, writeDensity: 0.7 }).mode,
     ).toBe("patch-flow");
   });
+  it("treats high writeSet overlap like write density for multi-worker", () => {
+    expect(
+      recommendIsolationMode({
+        durationMinutes: 10,
+        workerCount: 2,
+        writeDensity: 0.1,
+        writeSetOverlapRisk: 0.5,
+      }).mode,
+    ).toBe("worktree");
+  });
+  it("keeps shared when writeSet empty / zero overlap risk and low density", () => {
+    expect(
+      recommendIsolationMode({
+        durationMinutes: 20,
+        workerCount: 2,
+        writeDensity: 0.1,
+        writeSetOverlapRisk: 0,
+      }).mode,
+    ).toBe("shared");
+  });
 });

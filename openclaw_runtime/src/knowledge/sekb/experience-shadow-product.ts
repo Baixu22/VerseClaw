@@ -70,25 +70,13 @@ export function productizeExperienceShadow(params: {
     return { journaled: false };
   }
   const block = buildExperienceBlock(params.build);
-  let journaled = false;
-  if (params.dualWrite) {
-    appendExperienceShadowEvent(params.workspaceRoot, {
-      atMs: Date.now(),
-      sessionId: params.build.sessionId,
-      principleId: params.build.principle.principle_id,
-      mode: "dual-write-shadow",
-    });
-    journaled = true;
-  } else {
-    appendExperienceShadowEvent(params.workspaceRoot, {
-      atMs: Date.now(),
-      sessionId: params.build.sessionId,
-      principleId: params.build.principle.principle_id,
-      mode: "shadow",
-    });
-    journaled = true;
-  }
-  return { block, journaled };
+  appendExperienceShadowEvent(params.workspaceRoot, {
+    atMs: Date.now(),
+    sessionId: params.build.sessionId,
+    principleId: params.build.principle.principle_id,
+    mode: params.dualWrite ? "dual-write-shadow" : "shadow",
+  });
+  return { block, journaled: true };
 }
 
 /**
