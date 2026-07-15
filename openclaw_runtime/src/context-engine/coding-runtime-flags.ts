@@ -1,5 +1,5 @@
 /**
- * Runtime coding feature flags (C0-2 / C0-4 and later C2/C4-H/C5-H flags).
+ * Runtime coding feature flags (C0-2 / C0-4 and later C2/C4-H/C5-H/C7 flags).
  *
  * Defaults match CODING-OPTIMIZATION-EDD section 0.3. Config path:
  *   runtime.coding.<flag>...
@@ -30,7 +30,7 @@ export type CodingFeatureFlagName = keyof typeof DEFAULT_CODING_FEATURE_FLAGS;
 export type WorktreeBackend = "inprocess" | "git";
 export type SymbolLeaseMode = "memory" | "wal";
 
-type CodingFlagLeaf = { enabled?: boolean; backend?: string; mode?: string; default?: boolean };
+type CodingFlagLeaf = { enabled?: boolean; backend?: string; mode?: string; default?: boolean; shadow?: boolean };
 
 function asRecord(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === "object" && !Array.isArray(value)

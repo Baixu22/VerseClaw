@@ -71,7 +71,7 @@ export function readRoutingMemo(workspaceRoot: string): RoutingMemoEntry[] {
 
 /**
  * Gated dual-write shadow. When `enabled` is false (default for production flags),
- * this is a pure no-op — zero filesystem or prompt side effects.
+ * this is a pure no-op with zero filesystem or prompt side effects.
  */
 export function recordRoutingMemoShadow(params: {
   workspaceRoot: string;
