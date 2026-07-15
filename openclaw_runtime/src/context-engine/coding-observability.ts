@@ -43,6 +43,8 @@ export type CodingObservabilitySnapshot = {
   toolRoutingCorrect: number;
   toolRoutingTotal: number;
   compactionLayerHits: Record<string, number>;
+  taskStateRewriteOk: number;
+  taskStateRewriteDrift: number;
 };
 
 const ZERO: CodingObservabilitySnapshot = {
@@ -86,6 +88,8 @@ const ZERO: CodingObservabilitySnapshot = {
   toolRoutingCorrect: 0,
   toolRoutingTotal: 0,
   compactionLayerHits: {},
+  taskStateRewriteOk: 0,
+  taskStateRewriteDrift: 0,
 };
 
 class CodingObservabilityRegistry {
@@ -178,6 +182,11 @@ class CodingObservabilityRegistry {
   recordCompactionLayer(layer: string): void {
     const key = layer.trim() || "unknown";
     this.#counters.compactionLayerHits[key] = (this.#counters.compactionLayerHits[key] ?? 0) + 1;
+  }
+
+  recordTaskStateRewrite(ok: boolean): void {
+    if (ok) this.#counters.taskStateRewriteOk += 1;
+    else this.#counters.taskStateRewriteDrift += 1;
   }
 
   rates(): {

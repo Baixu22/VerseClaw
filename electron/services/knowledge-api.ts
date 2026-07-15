@@ -3595,7 +3595,7 @@ export function createKnowledgeApi({
       }
     },
 
-     runtimeLessonsReport: async (): Promise<KnowledgeRuntimeLessonsReportResult> => (
+    runtimeLessonsReport: async (): Promise<KnowledgeRuntimeLessonsReportResult> => (
       runtimeLessonsReporter()
     ),
 
