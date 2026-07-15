@@ -16,8 +16,7 @@ import type {
 } from "../runtime-core/index.js";
 import type { ContextPack } from "./fact-types.js";
 import { gradingMetadata, type GradingMetadata } from "./provider-grading.js";
-import { createMaterializer, type Materializer } from "./factstore/materialize.js";
-import { openFactStore } from "./factstore/store.js";
+import { resolveWorkspaceFactService } from "./factstore/workspace-fact-service.js";
 import { buildContextPack, DEFAULT_PACK_BUDGET_CHARS } from "./views/pack/context-pack-view.js";
 import { formatContextPackMarkdown } from "./views/pack/markdown.js";
 
@@ -170,23 +169,17 @@ export function createContextPackContextProvider(
   };
 }
 
-/** Default pipeline: per-workspace FactStore + materializer, lazily cached. */
+/** Default pipeline: shared workspace-scoped FactStore + materializer (C0-3). */
 function defaultBuildPack(): NonNullable<ContextPackContextProviderOptions["buildPack"]> {
-  const materializers = new Map<string, Materializer>();
   return (query) => {
     const workspace = query.workspace;
     const goal = query.goal?.trim();
     if (!workspace || !goal) return undefined;
-    const store = openFactStore(workspace);
-    let materializer = materializers.get(workspace);
-    if (!materializer) {
-      materializer = createMaterializer(store, workspace);
-      materializers.set(workspace, materializer);
-    }
+    const service = resolveWorkspaceFactService(workspace);
     for (const file of query.activeFiles ?? []) {
-      materializer.onFileTouched(file);
+      service.materializer.onFileTouched(file);
     }
-    return buildContextPack(store, materializer, {
+    return buildContextPack(service.store, service.materializer, {
       query: goal,
       activeFiles: query.activeFiles,
       budgetChars: query.tokenBudget ? Math.max(2_000, query.tokenBudget * 4) : DEFAULT_PACK_BUDGET_CHARS,
