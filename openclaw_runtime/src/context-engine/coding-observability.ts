@@ -1,5 +1,5 @@
 /**
- * In-memory coding scorecard counters (decision plan + C2 write kit + C3 concurrent).
+ * In-memory coding scorecard counters (C0-C3 + C1 sim + C4 merge + C6 compaction).
  * Process-local, same pattern as dcs-observability — not a dashboard product surface.
  */
 export type CodingObservabilitySnapshot = {
@@ -27,7 +27,6 @@ export type CodingObservabilitySnapshot = {
   diagSilent: number;
   approvalPrompts: number;
   approvalSkips: number;
-  // C3 concurrent / write-set metrics
   waveConflictChecks: number;
   waveConflicts: number;
   writeSetPredCorrect: number;
@@ -35,6 +34,15 @@ export type CodingObservabilitySnapshot = {
   writeSetNodesPopulated: number;
   writeSetNodesTotal: number;
   tokenBudgetAborts: number;
+  mergeSuccess: number;
+  mergeRework: number;
+  taskPass: number;
+  taskFail: number;
+  dupToolCalls: number;
+  tokenCost: number;
+  toolRoutingCorrect: number;
+  toolRoutingTotal: number;
+  compactionLayerHits: Record<string, number>;
 };
 
 const ZERO: CodingObservabilitySnapshot = {
@@ -69,12 +77,22 @@ const ZERO: CodingObservabilitySnapshot = {
   writeSetNodesPopulated: 0,
   writeSetNodesTotal: 0,
   tokenBudgetAborts: 0,
+  mergeSuccess: 0,
+  mergeRework: 0,
+  taskPass: 0,
+  taskFail: 0,
+  dupToolCalls: 0,
+  tokenCost: 0,
+  toolRoutingCorrect: 0,
+  toolRoutingTotal: 0,
+  compactionLayerHits: {},
 };
 
 class CodingObservabilityRegistry {
   #counters: CodingObservabilitySnapshot = {
     ...ZERO,
     factToolCallsByName: {},
+    compactionLayerHits: {},
   };
 
   recordFactToolCall(toolName: string): void {
@@ -84,17 +102,10 @@ class CodingObservabilityRegistry {
   }
 
   recordFactStoreHit(hit: boolean): void {
-    if (hit) {
-      this.#counters.factStoreHits += 1;
-    } else {
-      this.#counters.factStoreMisses += 1;
-    }
+    if (hit) this.#counters.factStoreHits += 1;
+    else this.#counters.factStoreMisses += 1;
   }
 
-  /**
-   * W0-4 / addendum 6: record injected tool schema character occupancy.
-   * Callers supply toolCount + serialized schema chars for the active catalog.
-   */
   recordSchemaOccupancy(toolCount: number, schemaChars: number): void {
     this.#counters.schemaToolCount = Math.max(0, toolCount);
     this.#counters.schemaChars = Math.max(0, schemaChars);
@@ -104,80 +115,69 @@ class CodingObservabilityRegistry {
     const latency = Math.max(0, ms);
     this.#counters.touchCount += 1;
     this.#counters.touchLatencyMsSum += latency;
-    if (latency > this.#counters.touchLatencyMsMax) {
-      this.#counters.touchLatencyMsMax = latency;
-    }
+    if (latency > this.#counters.touchLatencyMsMax) this.#counters.touchLatencyMsMax = latency;
   }
 
-  recordParseOnWriteHit(): void {
-    this.#counters.parseOnWriteHits += 1;
-  }
-
-  recordStaleBlock(): void {
-    this.#counters.staleBlocks += 1;
-  }
-
-  recordStaleAllowance(): void {
-    this.#counters.staleAllowances += 1;
-  }
+  recordParseOnWriteHit(): void { this.#counters.parseOnWriteHits += 1; }
+  recordStaleBlock(): void { this.#counters.staleBlocks += 1; }
+  recordStaleAllowance(): void { this.#counters.staleAllowances += 1; }
 
   recordJournalLatency(ms: number, ok: boolean): void {
     const latency = Math.max(0, ms);
     this.#counters.journalLatencyMsSum += latency;
-    if (latency > this.#counters.journalLatencyMsMax) {
-      this.#counters.journalLatencyMsMax = latency;
-    }
+    if (latency > this.#counters.journalLatencyMsMax) this.#counters.journalLatencyMsMax = latency;
     if (ok) this.#counters.journalSnapshots += 1;
     else this.#counters.journalFailures += 1;
   }
 
-  recordUndo(): void {
-    this.#counters.undoCount += 1;
-  }
-
+  recordUndo(): void { this.#counters.undoCount += 1; }
   recordSyntaxCheck(hit: boolean): void {
     if (hit) this.#counters.syntaxCheckHits += 1;
     else this.#counters.syntaxCheckSilent += 1;
   }
-
-  recordVerifyConsumeHit(): void {
-    this.#counters.verifyConsumeHits += 1;
-  }
-
-  recordDiagHit(): void {
-    this.#counters.diagHits += 1;
-  }
-
-  recordDiagSilent(): void {
-    this.#counters.diagSilent += 1;
-  }
-
-  recordApprovalPrompt(): void {
-    this.#counters.approvalPrompts += 1;
-  }
-
-  recordApprovalSkip(): void {
-    this.#counters.approvalSkips += 1;
-  }
-
+  recordVerifyConsumeHit(): void { this.#counters.verifyConsumeHits += 1; }
+  recordDiagHit(): void { this.#counters.diagHits += 1; }
+  recordDiagSilent(): void { this.#counters.diagSilent += 1; }
+  recordApprovalPrompt(): void { this.#counters.approvalPrompts += 1; }
+  recordApprovalSkip(): void { this.#counters.approvalSkips += 1; }
   recordWaveConflictCheck(conflicted: boolean): void {
     this.#counters.waveConflictChecks += 1;
     if (conflicted) this.#counters.waveConflicts += 1;
   }
-
   recordWriteSetPrediction(correct: boolean): void {
     this.#counters.writeSetPredTotal += 1;
     if (correct) this.#counters.writeSetPredCorrect += 1;
   }
-
-  /** C3 probe: how many graph worker nodes carry a non-empty writeSet. */
   recordWriteSetCoverage(params: { total: number; populated: number }): void {
     this.#counters.writeSetNodesTotal += Math.max(0, params.total);
     this.#counters.writeSetNodesPopulated += Math.max(0, params.populated);
   }
+  recordTokenBudgetAbort(): void { this.#counters.tokenBudgetAborts += 1; }
 
-  recordTokenBudgetAbort(): void {
-    this.#counters.tokenBudgetAborts += 1;
+  recordMergeOutcome(rework: boolean): void {
+    if (rework) this.#counters.mergeRework += 1;
+    else this.#counters.mergeSuccess += 1;
+  }
+
+  recordReplayTask(params: {
+    dupToolCalls: number;
+    tokenCost: number;
+    passed: boolean;
+    routingCorrect?: boolean;
+  }): void {
+    this.#counters.dupToolCalls += Math.max(0, params.dupToolCalls);
+    this.#counters.tokenCost += Math.max(0, params.tokenCost);
+    if (params.passed) this.#counters.taskPass += 1;
+    else this.#counters.taskFail += 1;
+    if (typeof params.routingCorrect === "boolean") {
+      this.#counters.toolRoutingTotal += 1;
+      if (params.routingCorrect) this.#counters.toolRoutingCorrect += 1;
+    }
+  }
+
+  recordCompactionLayer(layer: string): void {
+    const key = layer.trim() || "unknown";
+    this.#counters.compactionLayerHits[key] = (this.#counters.compactionLayerHits[key] ?? 0) + 1;
   }
 
   rates(): {
@@ -188,6 +188,9 @@ class CodingObservabilityRegistry {
     waveConflictRate: number;
     writeSetPredAccuracy: number;
     writeSetCoverageRate: number;
+    taskPassRate: number;
+    toolRoutingAccuracy: number;
+    mergeReworkRate: number;
   } {
     const c = this.#counters;
     const div = (n: number, d: number) => (d <= 0 ? 0 : n / d);
@@ -199,6 +202,9 @@ class CodingObservabilityRegistry {
       waveConflictRate: div(c.waveConflicts, c.waveConflictChecks),
       writeSetPredAccuracy: div(c.writeSetPredCorrect, c.writeSetPredTotal),
       writeSetCoverageRate: div(c.writeSetNodesPopulated, c.writeSetNodesTotal),
+      taskPassRate: div(c.taskPass, c.taskPass + c.taskFail),
+      toolRoutingAccuracy: div(c.toolRoutingCorrect, c.toolRoutingTotal),
+      mergeReworkRate: div(c.mergeRework, c.mergeRework + c.mergeSuccess),
     };
   }
 
@@ -206,6 +212,7 @@ class CodingObservabilityRegistry {
     return {
       ...this.#counters,
       factToolCallsByName: { ...this.#counters.factToolCallsByName },
+      compactionLayerHits: { ...this.#counters.compactionLayerHits },
     };
   }
 
@@ -213,6 +220,7 @@ class CodingObservabilityRegistry {
     this.#counters = {
       ...ZERO,
       factToolCallsByName: {},
+      compactionLayerHits: {},
     };
   }
 }
@@ -235,4 +243,10 @@ export const CODING_METRIC_NAMES = {
   writeSetPredAccuracy: "coding.concurrent.writeSetPredAccuracy",
   writeSetCoverageRate: "coding.concurrent.writeSetCoverageRate",
   tokenBudgetAborts: "coding.concurrent.tokenBudgetAborts",
+  mergeReworkRate: "coding.concurrent.mergeReworkRate",
+  dupToolCalls: "coding.read.dupToolCalls",
+  tokenCost: "coding.read.tokenCost",
+  taskPassRate: "coding.read.taskPassRate",
+  toolRoutingAccuracy: "coding.read.toolRoutingAccuracy",
+  compactionLayerDist: "coding.context.compactionLayerDist",
 } as const;
