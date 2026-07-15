@@ -88,6 +88,12 @@ artifacts/*
 !artifacts/coding-c3/**
 !artifacts/coding-c4/
 !artifacts/coding-c4/**
+!artifacts/coding-c5/
+!artifacts/coding-c5/**
+!artifacts/coding-c6/
+!artifacts/coding-c6/**
+!artifacts/coding-c7/
+!artifacts/coding-c7/**
 
 # SEKB Hermes Phase A5 acceptance evidence (Pass-D1 hold pack)
 !artifacts/sekb-hermes-phase-a5/

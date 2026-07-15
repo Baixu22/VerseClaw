@@ -931,7 +931,6 @@ export async function verseshellBatchEval(
   cmds: string[],
   opts?: { timeoutMs?: number; agentId?: string },
 ): Promise<VerseShellExecResult[]> {
-  // eslint-disable-next-line no-useless-assignment -- retained for control-flow clarity
   const proc = ensureVerseShell();
   await waitForReady();
 

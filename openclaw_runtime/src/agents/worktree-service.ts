@@ -17,7 +17,6 @@ import {
   readdirSync,
   rmSync,
   statSync,
-  writeFileSync,
 } from "node:fs";
 import path from "node:path";
 import { codingObservability } from "../context-engine/coding-observability.js";

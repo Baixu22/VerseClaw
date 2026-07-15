@@ -1,0 +1,52 @@
+{
+    "live64k":  false,
+    "archiveWorks":  true,
+    "branch":  "codex/dcs-c6-context-ladder",
+    "modules":  {
+                    "l4Eval":  "openclaw_runtime/src/context-engine/l4-semantic-eval.ts",
+                    "taskStateRewrite":  "openclaw_runtime/src/context-engine/task-state-rewrite.ts",
+                    "contextLadder":  "openclaw_runtime/src/context-engine/context-ladder.ts",
+                    "blockLifecycle":  "openclaw_runtime/src/context-engine/block-lifecycle.ts",
+                    "longChatCurve":  "openclaw_runtime/src/context-engine/coding-long-chat-curve.ts",
+                    "tokenPressure":  "openclaw_runtime/src/context-engine/token-pressure.ts",
+                    "toolOutputCompress":  "openclaw_runtime/src/agents/tool-output-compress.ts"
+                },
+    "baseline":  "main@7e6e50a6b (ancestor C2+C3 1045e09d0)",
+    "worktree":  "C:\\Users\\27933\\Desktop\\clawx\\ClawX-c6-work",
+    "gates":  {
+                  "lint:check":  {
+                                     "oxlint":  0,
+                                     "warningsBudget":  111,
+                                     "errors":  0,
+                                     "warnings":  109,
+                                     "exit":  0
+                                 },
+                  "typecheck":  0,
+                  "openclaw_runtime_build":  0,
+                  "test:dcs":  0,
+                  "e2e_dcs_w5":  0,
+                  "targeted_c6_unit":  0
+              },
+    "completionClass":  "interface+structure+synthetic-64k",
+    "l4Decision":  "defer",
+    "notes":  [
+                  "C6-1..C6-5 library modules + context_read includeArchived + observability counters",
+                  "Assembler production flags not flipped; applyContextLadder is opt-in only",
+                  "L4 embedding remains deferred (eval only); hybrid-retriever non-semantic defaults kept",
+                  "64K curve is synthetic fixture (C6-H completion class); not live traffic",
+                  "Baseline unblockers: host-api runtimeLessonsReport Promise; KnowledgeRuntimeLessonsMetric unavailable; knowledge-api mid-file BOM strip; sekb script BOM; expectTypeOf sekb shape; unused writeFileSync; journaled rewrite; unused eslint-disable"
+              ],
+    "generatedAt":  "2026-07-15T09:13:11.1943082Z",
+    "taskStateRewriteOk":  true,
+    "emergencyPreservesCore":  true,
+    "toolCompressWorks":  true,
+    "unitTests":  {
+                      "token-pressure.test.ts":  "pass",
+                      "block-lifecycle.test.ts":  "pass",
+                      "tool-output-compress.test.ts":  "pass",
+                      "coding-long-chat-curve.test.ts":  "pass",
+                      "context-read-tool.test.ts":  "pass (includeArchived)"
+                  },
+    "metricsPresent":  true,
+    "ok":  true
+}
