@@ -566,6 +566,13 @@ function parseBlockPresence(value: string): ContextBlock["presence"] {
         }
       : {}),
     ...(typeof parsed.background === "boolean" ? { background: parsed.background } : {}),
+    ...(parsed.lifecycle_state === "active" || parsed.lifecycle_state === "archived"
+      ? { lifecycle_state: parsed.lifecycle_state }
+      : {}),
+    ...(typeof parsed.archived_at === "string" ? { archived_at: parsed.archived_at } : {}),
+    ...(typeof parsed.heat === "number" && Number.isFinite(parsed.heat)
+      ? { heat: parsed.heat }
+      : {}),
   };
 }
 

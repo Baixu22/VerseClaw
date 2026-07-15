@@ -1,0 +1,19 @@
+{
+  "source": "coding-long-chat-curve.ts unit path",
+  "completionClass": "synthetic-fixture",
+  "live64k": false,
+  "targetCumulativeChars": 64000,
+  "toolOutputCharsPerTurn": 5000,
+  "totalTurns": 13,
+  "cumulativeRawChars": 65000,
+  "flipGates": {
+    "promptNotLinearExploding": true,
+    "compactionLayersHit": true,
+    "passRateFloor": true,
+    "readyToConsiderAssemblerFlip": false,
+    "notes": [
+      "assembler production flags remain unflipped; this report is evidence only",
+      "synthetic curve validated by coding-long-chat-curve.test.ts"
+    ]
+  }
+}

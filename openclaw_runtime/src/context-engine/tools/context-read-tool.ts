@@ -1,4 +1,9 @@
 import type { BlockStoreApi, BlockType, ContextBlock } from "../block.js";
+import {
+  filterBlocksByLifecycle,
+  hydrateLifecycleBlock,
+  type LifecycleBlock,
+} from "../block-lifecycle.js";
 
 /**
  * DCS Stage 5: context_read tool library
@@ -29,6 +34,8 @@ export interface ReadContextParams {
   targetSessionId?: string;
   blockStore: Pick<BlockStoreApi, "query">;
   limit?: number;
+  /** When true, include archived lifecycle blocks (C6-1). Default false. */
+  includeArchived?: boolean;
 }
 
 export interface ReadContextResult {
@@ -118,7 +125,12 @@ export async function readContext(params: ReadContextParams): Promise<ReadContex
     limit,
   });
 
-  const contents = blocks.map((block) => {
+  const lifecycleBlocks: LifecycleBlock[] = blocks.map((block) => hydrateLifecycleBlock(block));
+  const visible = filterBlocksByLifecycle(lifecycleBlocks, {
+    includeArchived: params.includeArchived === true,
+  });
+
+  const contents = visible.map((block) => {
     if (params.block_type === "tool_registry" && params.category?.trim()) {
       return filterToolRegistryContentByCategory(block.full_content, params.category);
     }

@@ -22,6 +22,17 @@ describe("runtime.contextBlock compass config", () => {
           };
           sekb?: {
             enabled?: boolean;
+            shadowEvaluation?: {
+              enabled?: boolean;
+            };
+            batchDistillationAssistant?: {
+              enabled?: boolean;
+            };
+            phaseCWouldTrigger?: {
+              enabled?: boolean;
+              owner?: string;
+              timeoutMs?: number;
+            };
           };
         }
       | undefined
