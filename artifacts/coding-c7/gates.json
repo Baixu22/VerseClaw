@@ -51,5 +51,6 @@
                   "C7-1":  "routing-memo JSONL dual-write shadow (default off)",
                   "C7-3":  "verifierNoSelfRepair + lead fix task factory",
                   "C7-2":  "SEKB experience confirm shadow journal (default off; cutoverAllowed always false)"
-              }
+              },
+    "sha":  "d5bd9fc189b3fd583fa872e292fb235b7d9887e3"
 }
