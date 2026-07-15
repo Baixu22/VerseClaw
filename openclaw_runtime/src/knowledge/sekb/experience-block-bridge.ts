@@ -3,6 +3,7 @@ import type {
   ContextBlockSink,
 } from "../../context-engine/block.js";
 import type { DistillationSuggestion, Principle } from "./types.js";
+import { productizeExperienceShadow } from "./experience-shadow-product.js";
 
 /**
  * DCS Stage 5: Bridge between SEKB distillation `confirm_and_save` and the
@@ -64,12 +65,39 @@ export interface HandleConfirmAndSaveParams {
   sessionId: string;
   contextBlockSink?: ContextBlockSink;
   now?: Date;
+  /**
+   * C7-2: optional experience shadow journal. Omitted / enabled:false = zero
+   * shadow side effects (production default path unchanged).
+   */
+  experienceShadow?: {
+    workspaceRoot: string;
+    enabled: boolean;
+    dualWrite?: boolean;
+  };
 }
 
 export async function handleConfirmAndSave(
   params: HandleConfirmAndSaveParams,
 ): Promise<{ accepted: boolean } | undefined> {
   if (!params.contextBlockSink) {
+    // Shadow-only confirm path: journal experience without production BlockStore write.
+    if (params.experienceShadow?.enabled && params.experienceShadow.workspaceRoot) {
+      try {
+        productizeExperienceShadow({
+          workspaceRoot: params.experienceShadow.workspaceRoot,
+          enabled: true,
+          dualWrite: params.experienceShadow.dualWrite ?? false,
+          build: {
+            principle: params.principle,
+            suggestion: params.suggestion,
+            sessionId: params.sessionId,
+            now: params.now,
+          },
+        });
+      } catch {
+        // best-effort
+      }
+    }
     return undefined;
   }
   const block = buildExperienceBlock({
@@ -88,5 +116,25 @@ export async function handleConfirmAndSave(
       },
     },
   ]);
+
+  // C7-2 shadow journal (default-off; never flips production cutover).
+  if (params.experienceShadow?.enabled && params.experienceShadow.workspaceRoot) {
+    try {
+      productizeExperienceShadow({
+        workspaceRoot: params.experienceShadow.workspaceRoot,
+        enabled: true,
+        dualWrite: params.experienceShadow.dualWrite ?? true,
+        build: {
+          principle: params.principle,
+          suggestion: params.suggestion,
+          sessionId: params.sessionId,
+          now: params.now,
+        },
+      });
+    } catch {
+      // Shadow path is best-effort only.
+    }
+  }
+
   return result ? { accepted: result.accepted } : undefined;
 }
