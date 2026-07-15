@@ -1,4 +1,4 @@
-// Qa Lab plugin module implements server behavior.
+﻿// Qa Lab plugin module implements server behavior.
 import { createHash } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { setTimeout as sleep } from "node:timers/promises";
@@ -83,9 +83,9 @@ type StreamEvent =
  * raw model string.
  *
  * Policy:
- * - `openai/*`, `gpt-*`, `o1-*`, anything starting with `gpt-` → `"openai"`
- * - `anthropic/*`, `claude-*` → `"anthropic"`
- * - Everything else (including empty strings) → `"unknown"`
+ * - `openai/*`, `gpt-*`, `o1-*`, anything starting with `gpt-` 鈫?`"openai"`
+ * - `anthropic/*`, `claude-*` 鈫?`"anthropic"`
+ * - Everything else (including empty strings) 鈫?`"unknown"`
  *
  * The `/v1/messages` route always feeds `body.model` straight through,
  * so an Anthropic request with an `openai/gpt-5.5` model string is still
@@ -103,7 +103,7 @@ export function resolveProviderVariant(model: string | undefined): MockOpenAiPro
     return "unknown";
   }
   // Prefer the explicit `provider/model` or `provider:model` prefix when
-  // the caller supplied one — that's the most reliable signal.
+  // the caller supplied one 鈥?that's the most reliable signal.
   const separatorMatch = /^([^/:]+)[/:]/.exec(trimmed);
   const provider = separatorMatch?.[1] ?? trimmed;
   if (provider === "openai") {
@@ -141,7 +141,7 @@ type MockOpenAiRequestSnapshot = {
 };
 
 // Anthropic /v1/messages request/response shapes the mock actually needs.
-// This is a subset of the real Anthropic Messages API — just enough so the
+// This is a subset of the real Anthropic Messages API 鈥?just enough so the
 // QA suite can run its parity pack against a "baseline" Anthropic provider
 // without needing real API keys. The scenarios drive their dispatch through
 // the shared mock scenario logic (buildResponsesPayload), with `model`
@@ -1039,7 +1039,7 @@ function extractWhatsAppStickerMarkerDirective(text: string) {
 }
 
 function shouldUseWhatsAppLocationMarker(prompt: string) {
-  return /(?:^|[\n:]\s*)📍\s*37\.774900,\s*-122\.419400\b/u.test(prompt.trim());
+  return /(?:^|[\n:]\s*)馃搷\s*37\.774900,\s*-122\.419400\b/u.test(prompt.trim());
 }
 
 function shouldUseWhatsAppContactMarker(prompt: string) {
@@ -1210,7 +1210,7 @@ function extractSessionStatusSessionKey(
   if (typeof topLevelSessionKey === "string" && topLevelSessionKey.trim()) {
     return topLevelSessionKey.trim();
   }
-  const statusLineSessionKey = /(?:^|\n)[^\n]*Session:\s*([^\s•\n]+)/u.exec(toolOutput)?.[1];
+  const statusLineSessionKey = /(?:^|\n)[^\n]*Session:\s*([^\s鈥n]+)/u.exec(toolOutput)?.[1];
   if (statusLineSessionKey?.trim()) {
     return statusLineSessionKey.trim();
   }
@@ -3149,7 +3149,7 @@ function convertAnthropicMessagesToResponsesInput(params: {
     // returns) AFTER the parent role message so extractLastUserText and
     // extractToolOutput walk the array in the order they expect. For a
     // tool_result-only user turn with no text/image blocks, the parent
-    // message is intentionally omitted — the function_call_output itself
+    // message is intentionally omitted 鈥?the function_call_output itself
     // represents the user's "return the tool output" turn.
     for (const toolUse of toolUseItems) {
       items.push(toolUse);
@@ -3190,7 +3190,7 @@ function extractFinalAssistantOutputFromEvents(events: StreamEvent[]): Extracted
             input = parsed as Record<string, unknown>;
           }
         } catch {
-          // keep empty input on malformed args — mock dispatcher owns arg shape
+          // keep empty input on malformed args 鈥?mock dispatcher owns arg shape
         }
       }
       toolCalls.push({
