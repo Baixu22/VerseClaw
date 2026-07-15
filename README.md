@@ -30,7 +30,7 @@
 </p>
 
 <p align="center">
-  English | <a href="README.zh-CN.md">绠€浣撲腑鏂?/a> | <a href="README.ja-JP.md">鏃ユ湰瑾?/a> | <a href="README.ru-RU.md">袪褍褋褋泻懈泄</a>
+  English | <a href="README.zh-CN.md">绠-浣撲腑鏂?/a> | <a href="README.ja-JP.md">鏃ユ湰瑾?/a> | <a href="README.ru-RU.md">袪褍褋褋泻懈泄</a>
 </p>
 
 ---
@@ -49,7 +49,6 @@ For controlled autonomous execution, the Agents orchestration panel now includes
 
 The same Agents -> Roles & Orchestration surface now includes a **Lightweight Subagent Runner** for common no-YAML workflows. Users can choose Explorer, Reviewer, Tester, or Compare 3 approaches, enter a goal, and launch explicit role workers through the existing Gateway permission path while Verse Claw shows live worker status, summary, failures, and an Observability trace link.
 Role-first orchestration runs also render a read-only synthesis that keeps verifier decisions, evidence counts, trace counts, and visible failures in view.
-The Roles & Orchestration surface also supports governed Agency role promotion: select an Agency Agents checkout, review an immutable candidate, explicitly map or waive every tool hint, attach evidence, and approve a separate config-backed role. The source draft never becomes runnable, and retiring the promoted role preserves its audit history.
 
 For goals that need to survive long conversations, checkpoints, evidence review, and explicit scheduled ticks, the Agents panel now includes **Mission Control**. It starts or resumes a Mission through `mission.run`, persists Mission state, rebuilds bounded context from ResumeCheckpoint, Task Ledger, memory, and trace evidence, runs one inner `task_loop` per tick, then lets the reviewer decide continue, repair, sleep, ask the user, complete, or block.
 Mission and Task loops now carry internal Engineering Control Signals such as `evidence_gap`, `validation_missing`, `scope_drift`, `unverified_claim`, and `replan_required`; these signals stay in checkpoints, lifecycle events, and Task Ledger metadata, and they prevent trace-only or inner-loop-only results from being treated as durable completion facts.
@@ -164,6 +163,27 @@ The Review Center runs read-only AI review over uncommitted changes, diffs again
 
 ### Knowledge Hub
 The Knowledge page manages source-backed wiki context through OpenClaw `memory-wiki`. It defaults to an isolated Verse Claw-managed native vault, can import bounded text files or folders without switching to unsafe local-vault mode, and can validate/import local OKF v0.1 Markdown bundles as a thin compatibility adapter over `wiki.ingest`. It offers status, search, inspect, compile, lint, Knowledge Inbox, draft/proposal review, provenance, and governance workflows. Inbox items capture chat, task, file, OKF, ClawGraph, or agent candidates outside the formal wiki until the user promotes or dismisses them; provenance records source refs and read/reference events without mutating wiki pages. Chat knowledge scope (`None`, `Memory`, `Wiki`, or `All`) is read-only: agents may search/get context, but cannot write, update, archive, delete, merge, or apply knowledge because a scope is enabled. In Chat, `/wiki` searches and attaches explicit wiki references as visible chips before send, while `/memory`, `/all`, `/none`, and `/scope` adjust read scope without turning it into write permission. The invocation mode defaults to Suggest, where relevant knowledge appears as optional chips; Auto-read is opt-in and only attaches a small read-only set of fresh, high-confidence references. Session knowledge and agent/steward suggestions enter editable drafts/proposals first; only explicit user confirmation applies them to the wiki. Obsidian remains optional rather than required. A governance dashboard surfaces contradictions, stale pages, and dangling references through on-demand health checks; watched directories keep project docs flowing into pending Inbox items and never direct-ingest or create syntheses automatically.
+
+For advanced SEKB diagnostics, `runtime.contextBlock.sekb.shadowEvaluation.enabled` is an explicit default-off operator flag. It requires `runtime.contextBlock.sekb.enabled`; `OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED` can override the shadow flag only. It stores bounded, deterministic advisory metadata for capture and completion evidence, and never filters trajectories, writes principles, or changes task completion.
+
+The optional `runtime.contextBlock.sekb.batchDistillationAssistant.enabled` is also default-off and requires the SEKB master gate; `OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED` overrides only this assistant flag. An operator must explicitly invoke it; Host/CLI may use DEEPSEEK_API_KEY when present, otherwise the caller supplies a provider. It sends only bounded redacted trajectory projections and bounded existing-principle summaries, allows one observable 30-second retry, then returns the existing deterministic distillation suggestions on provider, timeout, JSON, schema, or limit failure. It records safe aggregate trace/cost evidence only; it never writes a principle, memory, ContextBlock, index, or trajectory state before the existing `confirm_and_save` confirmation path.
+
+SEKB Hermes operator surfaces are CLI and Host API only (no SEKB ops GUI). All features remain default-off and never auto-write principles, memory, ContextBlock, indexes, or trajectory state; `confirm_and_save` is still the only durable confirmation path. Offline artifacts under `artifacts/sekb-hermes-phase-a5/` are non-authoritative evaluation evidence.
+
+Local CLI/Host ops load `openclaw_runtime/dist/knowledge/sekb/index.js`. Build it with `pnpm build:runtime` or the targeted `pnpm exec node scripts/build-openclaw-runtime.mjs --sekb-only`. Without that dist, Host routes degrade to `runtimeUnavailable` and CLI commands exit with a build hint; `pnpm sekb:hermes:gate` does not need dist.
+
+CLI:
+
+- `pnpm sekb:hermes:export` - privacy-bounded shadow export
+- `pnpm sekb:hermes:protocol` - dual-review protocol sample + reviews template
+- `pnpm sekb:hermes:report -- --reviews <path>` - offline report (`shadow_only` until promotion gates pass)
+- `pnpm sekb:hermes:suggest` / `--batch` - deterministic suggestions; batch requires flags; Host/CLI use DEEPSEEK_API_KEY when set, else deterministic fallback
+- `pnpm sekb:hermes:confirm` / `pnpm sekb:hermes:reject` - existing DistillationTool boundaries
+- `pnpm sekb:hermes:gate` - focused tests + contract + harness validate
+
+Host API (`knowledge.*`): `runtimeLessonsReport`, `sekbShadowEvaluationExport`, `sekbShadowEvaluationProtocol`, `sekbShadowEvaluationReport`, `sekbSuggestPrinciples`, `sekbBatchDistillSuggest`, `sekbConfirmPrinciple`, `sekbRejectSuggestion`.
+
+Shadow V1 scoring and threshold 50 are frozen; labeling kit readiness is not promotion readiness. Phase C/D filtering and scheduling remain deferred.
 
 ### Workspace Git Control
 The Workspace sidebar now opens to a compact entry launcher; repository review appears as a Review entry only when the active workspace is a Git repository, so non-Git projects are not shown Git controls.
@@ -288,48 +308,48 @@ Notes:
 Verse Claw employs a **dual-process architecture** with a unified host API layer. The renderer talks to a single client abstraction, while Electron Main owns protocol selection and process lifecycle:
 
 ```
-鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹屸攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹?
 鈹?                       Verse Claw Desktop App                         鈹?
 鈹?                                                                 鈹?
-鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?
+鈹? 鈹屸攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹? 鈹?
 鈹? 鈹?             Electron Main Process                         鈹? 鈹?
 鈹? 鈹? 鈥?Window & application lifecycle management               鈹? 鈹?
 鈹? 鈹? 鈥?Gateway process supervision                             鈹? 鈹?
 鈹? 鈹? 鈥?System integration (tray, notifications, keychain)      鈹? 鈹?
 鈹? 鈹? 鈥?Release packaging only                               鈹? 鈹?
-鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?
+鈹? 鈹斺攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹? 鈹?
 鈹?                             鈹?                                  鈹?
 鈹?                             鈹?IPC (authoritative control plane) 鈹?
 鈹?                             鈻?                                  鈹?
-鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?
+鈹? 鈹屸攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹? 鈹?
 鈹? 鈹?             React Renderer Process                        鈹? 鈹?
 鈹? 鈹? 鈥?Modern component-based UI (React 19)                    鈹? 鈹?
 鈹? 鈹? 鈥?State management with Zustand                           鈹? 鈹?
 鈹? 鈹? 鈥?Unified host-api/api-client calls                       鈹? 鈹?
 鈹? 鈹? 鈥?Rich Markdown rendering                                 鈹? 鈹?
-鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?
-鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹? 鈹斺攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹? 鈹?
+鈹斺攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹?
                                鈹?
                                鈹?Typed IPC requests
                                鈻?
-鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹屸攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹?
 鈹?               Main Host Services & Gateway Manager              鈹?
 鈹?                                                                 鈹?
 鈹? 鈥?host:invoke typed service dispatcher                          鈹?
 鈹? 鈥?Settings, files, sessions, skills, providers, diagnostics     鈹?
 鈹? 鈥?Main-owned Gateway WebSocket and process supervision          鈹?
-鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹斺攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹?
                                鈹?
                                鈹?Main-owned WebSocket
                                鈻?
-鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹屸攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹?
 鈹?                    OpenClaw Gateway                             鈹?
 鈹?                                                                 鈹?
 鈹? 鈥?AI agent runtime and orchestration                            鈹?
 鈹? 鈥?Message channel management                                    鈹?
 鈹? 鈥?Skill/plugin execution environment                            鈹?
 鈹? 鈥?Provider abstraction layer                                    鈹?
-鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?
+鈹斺攢鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹-鈹?
 ```
 ### Design Principles
 
@@ -386,28 +406,28 @@ Chain multiple skills together to create sophisticated automation pipelines. Pro
 ### Project Structure
 
 ```Verse Claw/
-鈹溾攢鈹€ electron/                 # Electron Main Process
-鈹?  鈹溾攢鈹€ services/            # Typed host APIs, provider, secrets and runtime services
-鈹?  鈹?  鈹溾攢鈹€ providers/       # Provider/account model sync logic
-鈹?  鈹?  鈹斺攢鈹€ secrets/         # OS keychain and secret storage
-鈹?  鈹溾攢鈹€ shared/              # Shared provider schemas/constants
-鈹?  鈹?  鈹斺攢鈹€ providers/
-鈹?  鈹溾攢鈹€ main/                # App entry, windows, IPC registration
-鈹?  鈹溾攢鈹€ gateway/             # OpenClaw Gateway process manager
-鈹?  鈹溾攢鈹€ preload/             # Secure IPC bridge
-鈹?  鈹斺攢鈹€ utils/               # Utilities (storage, auth, paths)
-鈹溾攢鈹€ src/                      # React Renderer Process
-鈹?  鈹溾攢鈹€ lib/                 # Unified frontend API + error model
-鈹?  鈹溾攢鈹€ stores/              # Zustand stores (settings/chat/gateway)
-鈹?  鈹溾攢鈹€ components/          # Reusable UI components
-鈹?  鈹溾攢鈹€ pages/               # Setup/Dashboard/Chat/Billing/Channels/Skills/Cron/Settings
-鈹?  鈹溾攢鈹€ i18n/                # Localization resources
-鈹?  鈹斺攢鈹€ types/               # TypeScript type definitions
-鈹溾攢鈹€ tests/
-鈹?  鈹溾攢鈹€ e2e/                 # Playwright Electron end-to-end smoke tests
-鈹?  鈹斺攢鈹€ unit/                # Vitest unit/integration-like tests
-鈹溾攢鈹€ resources/                # Static assets (icons/images)
-鈹斺攢鈹€ scripts/                  # Build and utility scripts
+鈹溾攢鈹- electron/                 # Electron Main Process
+鈹?  鈹溾攢鈹- services/            # Typed host APIs, provider, secrets and runtime services
+鈹?  鈹?  鈹溾攢鈹- providers/       # Provider/account model sync logic
+鈹?  鈹?  鈹斺攢鈹- secrets/         # OS keychain and secret storage
+鈹?  鈹溾攢鈹- shared/              # Shared provider schemas/constants
+鈹?  鈹?  鈹斺攢鈹- providers/
+鈹?  鈹溾攢鈹- main/                # App entry, windows, IPC registration
+鈹?  鈹溾攢鈹- gateway/             # OpenClaw Gateway process manager
+鈹?  鈹溾攢鈹- preload/             # Secure IPC bridge
+鈹?  鈹斺攢鈹- utils/               # Utilities (storage, auth, paths)
+鈹溾攢鈹- src/                      # React Renderer Process
+鈹?  鈹溾攢鈹- lib/                 # Unified frontend API + error model
+鈹?  鈹溾攢鈹- stores/              # Zustand stores (settings/chat/gateway)
+鈹?  鈹溾攢鈹- components/          # Reusable UI components
+鈹?  鈹溾攢鈹- pages/               # Setup/Dashboard/Chat/Billing/Channels/Skills/Cron/Settings
+鈹?  鈹溾攢鈹- i18n/                # Localization resources
+鈹?  鈹斺攢鈹- types/               # TypeScript type definitions
+鈹溾攢鈹- tests/
+鈹?  鈹溾攢鈹- e2e/                 # Playwright Electron end-to-end smoke tests
+鈹?  鈹斺攢鈹- unit/                # Vitest unit/integration-like tests
+鈹溾攢鈹- resources/                # Static assets (icons/images)
+鈹斺攢鈹- scripts/                  # Build and utility scripts
 ```
 ### Available Commands
 

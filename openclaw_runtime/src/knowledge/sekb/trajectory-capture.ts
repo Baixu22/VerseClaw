@@ -1,12 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { extractErrorSignatureSync, type ErrorSignatureExtractor } from "./error-signature.js";
 import type { KnowledgeStore } from "./knowledge-store.js";
+import { attachSekbShadowMetadata, evaluateTrajectoryShadowV1 } from "./shadow-evaluator.js";
 import { normalizeTags, type Trajectory, type TrajectoryOutcome, type TrajectoryStep } from "./types.js";
 
 export type TrajectoryCaptureOptions = {
   store: KnowledgeStore;
   now?: () => Date;
   errorSignatureExtractor?: ErrorSignatureExtractor;
+  shadowEvaluation?: boolean;
 };
 
 type ActiveTrajectory = {
@@ -23,12 +25,14 @@ export class TrajectoryCapture {
   readonly #store: KnowledgeStore;
   readonly #now: () => Date;
   readonly #errorSignatureExtractor?: ErrorSignatureExtractor;
+  readonly #shadowEvaluation: boolean;
   readonly #active = new Map<string, ActiveTrajectory>();
 
   constructor(options: TrajectoryCaptureOptions) {
     this.#store = options.store;
     this.#now = options.now ?? (() => new Date());
     this.#errorSignatureExtractor = options.errorSignatureExtractor;
+    this.#shadowEvaluation = options.shadowEvaluation === true;
   }
 
   start_trajectory(task_intent: string, task_type: string, context_fingerprint: string[]): string {
@@ -92,6 +96,15 @@ export class TrajectoryCapture {
       expires_at: null,
       metadata: {},
     };
+    if (this.#shadowEvaluation) {
+      const priorMatchingErrorSignatureCount = error_signature
+        ? this.#store.count_trajectories_by_error_signature(error_signature)
+        : 0;
+      trajectory.metadata = attachSekbShadowMetadata(
+        trajectory.metadata,
+        evaluateTrajectoryShadowV1(trajectory, priorMatchingErrorSignatureCount),
+      );
+    }
     this.#store.save_trajectory(trajectory);
     this.#active.delete(trajectory_id);
     return trajectory;

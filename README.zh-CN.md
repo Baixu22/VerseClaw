@@ -49,7 +49,6 @@ Product capability statements must be checked against the canonical matrix in `s
 
 同一个 Agents -> Roles & Orchestration 界面现在还提供 **Lightweight Subagent Runner**，用于无需编写 ClawGraph YAML 的常见工作流。用户可以选择 Explorer、Reviewer、Tester 或 Compare 3 approaches，输入目标后通过现有 Gateway 权限路径启动显式角色 worker，并在 Verse Claw 中查看实时 worker 状态、摘要、失败原因和 Observability trace 链接。
 角色优先编排运行也会显示只读综合结果，保留验证决策、证据数量、trace 数量和可见失败原因。
-Roles & Orchestration 界面还支持受治理的 Agency 角色晋升：选择一个 Agency Agents checkout，复核不可变候选，显式映射或豁免每条工具提示，附加证据，再批准一个独立的配置角色。源草稿始终不可运行；退役晋升角色时会保留完整审计历史。
 
 对于需要跨长对话、检查点、证据复核和显式定时 tick 延续的目标，Agents 面板现在提供 **Mission Control**：它通过 `mission.run` 启动或恢复 Mission，持久化 Mission 状态，基于 ResumeCheckpoint、Task Ledger、记忆和 trace 证据重建有界上下文，每个 tick 运行一次内部 `task_loop`，再由 reviewer 决定继续、修复、休眠、询问、完成或阻塞。
 Mission 和 Task loop 现在会携带内部 Engineering Control Signals，例如 `evidence_gap`、`validation_missing`、`scope_drift`、`unverified_claim` 和 `replan_required`；这些信号会保存在 checkpoint、生命周期事件和 Task Ledger metadata 中，并阻止只凭 trace 或内部 loop 完成状态就把长期目标当作已完成事实。
@@ -166,6 +165,27 @@ Review Center 可以对未提交改动、相对基准分支的 diff 或指定 co
 
 ### Knowledge Hub
 Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上下文。默认使用 Verse Claw 托管的隔离 native vault，可在不切换到 unsafe local-vault 模式的情况下导入受限的文本文件或文件夹，也可以验证并导入本地 OKF v0.1 Markdown bundle，作为覆盖在 `wiki.ingest` 之上的轻量兼容适配层。它提供状态、搜索、查看、compile、lint、Knowledge Inbox、draft/proposal 审查、provenance 和治理流程。Inbox 会把 Chat、任务账本、文件、OKF、ClawGraph 或 agent 提出的候选知识暂存在正式 wiki 之外，直到用户选择提升为草稿或忽略；provenance 只记录来源引用和读取/引用事件，不修改 wiki 页面。Chat 的知识范围（`None`、`Memory`、`Wiki` 或 `All`）只代表读取范围：agent 可以 search/get 上下文，但不能因为启用 scope 就写入、修改、归档、删除、合并或 apply 知识。在 Chat 中，`/wiki` 会搜索并以可见 chip 挂载明确的 wiki 引用后再发送，`/memory`、`/all`、`/none` 和 `/scope` 只调整读取范围，不会变成写权限。知识调用模式默认是 Suggest：相关知识只显示为可选 chip；Auto-read 需要用户显式开启，并且只会附加少量新鲜、高置信、只读引用。会话知识以及 agent/知识管理员建议都会先进入可编辑 draft/proposal，只有用户明确确认后才写入 wiki。Obsidian 是可选增强，不是必需依赖。治理仪表盘按需运行健康检查，呈现矛盾条目、陈旧页面和无主引用；监控目录只会把项目文档放入 pending Inbox，不会自动 direct-ingest 到正式 wiki，也不会自动生成 synthesis。
+
+高级 SEKB 诊断可显式启用默认关闭的 `runtime.contextBlock.sekb.shadowEvaluation.enabled`。它依赖 `runtime.contextBlock.sekb.enabled`；`OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED` 只能覆盖影子开关。该功能只保存有界、确定性的采集与完成证据建议元数据，不会过滤轨迹、写入原则或改变任务完成结论。
+
+可选的 `runtime.contextBlock.sekb.batchDistillationAssistant.enabled` 同样默认关闭，并依赖 SEKB 主开关；`OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED` 只覆盖该建议器开关。操作员必须显式手动调用；Host/CLI 在存在 DEEPSEEK_API_KEY 时可用其作为 provider，否则回退 deterministic。它仅发送有界、脱敏的轨迹投影和有界的既有原则摘要，最多进行一次可观测的 30 秒重试；provider 不可用、超时、JSON 或 schema 无效、或触发限额时，都会返回现有确定性蒸馏建议。它只记录安全的聚合 trace/cost 证据；在既有 `confirm_and_save` 确认路径之前，绝不写入 Principle、Memory、ContextBlock、索引或 trajectory 状态。
+
+SEKB Hermes 运营入口仅为 CLI 与 Host API（无 SEKB 运营 GUI）。全部能力默认关闭，不会自动写入 principle、memory、ContextBlock、索引或 trajectory 状态；`confirm_and_save` 仍是唯一持久确认路径。`artifacts/sekb-hermes-phase-a5/` 下的离线产物仅作非权威评估证据。
+
+本地 CLI/Host 运维入口依赖 `openclaw_runtime/dist/knowledge/sekb/index.js`。请先执行 `pnpm build:runtime`，或定向构建 `pnpm exec node scripts/build-openclaw-runtime.mjs --sekb-only`。缺少 dist 时 Host 会诚实降级为 `runtimeUnavailable`，CLI 会提示构建；`pnpm sekb:hermes:gate` 不需要 dist。
+
+CLI：
+
+- `pnpm sekb:hermes:export` - 隐私有界 shadow 导出
+- `pnpm sekb:hermes:protocol` - 双审协议样本与 reviews 模板
+- `pnpm sekb:hermes:report -- --reviews <path>` - 离线报告（未过晋级门槛前为 `shadow_only`）
+- `pnpm sekb:hermes:suggest` / `--batch` - 确定性建议；batch 需开关；有 DEEPSEEK_API_KEY 时 Host/CLI 可用，否则 deterministic fallback
+- `pnpm sekb:hermes:confirm` / `pnpm sekb:hermes:reject` - 既有 DistillationTool 边界
+- `pnpm sekb:hermes:gate` - 聚焦测试 + contract + harness validate
+
+Host API（`knowledge.*`）：`runtimeLessonsReport`、`sekbShadowEvaluationExport`、`sekbShadowEvaluationProtocol`、`sekbShadowEvaluationReport`、`sekbSuggestPrinciples`、`sekbBatchDistillSuggest`、`sekbConfirmPrinciple`、`sekbRejectSuggestion`。
+
+Shadow V1 评分与阈值 50 冻结；标注工具包就绪不等于可晋级。Phase C/D 过滤与调度仍延期。
 
 ### Workspace Git 控制
 Workspace 侧栏现在会先打开精简入口面板；只有当前 workspace 是 Git 仓库时才显示“审查”入口，非 Git 项目不会暴露 Git 控件。

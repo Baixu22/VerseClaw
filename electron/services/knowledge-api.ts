@@ -1,13 +1,13 @@
 import { shell } from 'electron';
 import { createHash, randomUUID } from 'node:crypto';
-import { existsSync, watch as fsWatch, type Dirent, type FSWatcher } from 'node:fs';
+import { existsSync, readFileSync, watch as fsWatch, type Dirent, type FSWatcher } from 'node:fs';
 import { mkdir, readFile, readdir, writeFile, appendFile, stat, unlink } from 'node:fs/promises';
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
-import { expandPath, getOpenClawConfigDir, getOpenClawRuntimeDir } from '../utils/paths';
+import { expandPath, getDataDir, getOpenClawConfigDir, getOpenClawRuntimeDir } from '../utils/paths';
 import { isRecord } from './payload-utils';
 import type {
   HostSuccess,
@@ -18,6 +18,20 @@ import type {
   KnowledgeRouteContextPayload,
   KnowledgeRouteContextResult,
   KnowledgeRuntimeLessonsReportResult,
+  KnowledgeSekbBatchDistillSuggestPayload,
+  KnowledgeSekbBatchDistillSuggestResult,
+  KnowledgeSekbConfirmPrinciplePayload,
+  KnowledgeSekbConfirmPrincipleResult,
+  KnowledgeSekbRejectSuggestionPayload,
+  KnowledgeSekbRejectSuggestionResult,
+  KnowledgeSekbShadowEvaluationExportPayload,
+  KnowledgeSekbShadowEvaluationExportResult,
+  KnowledgeSekbShadowEvaluationProtocolPayload,
+  KnowledgeSekbShadowEvaluationProtocolResult,
+  KnowledgeSekbShadowEvaluationReportPayload,
+  KnowledgeSekbShadowEvaluationReportResult,
+  KnowledgeSekbSuggestPrinciplesPayload,
+  KnowledgeSekbSuggestPrinciplesResult,
   KnowledgeChangeOperation,
   KnowledgeChangeProposal,
   KnowledgeCreateDraftPayload,
@@ -133,6 +147,49 @@ type KnowledgeIngestItemRecord = {
 
 type RuntimeLessonsReporter = () => Promise<KnowledgeRuntimeLessonsReportResult>;
 
+const EMPTY_BATCH_METRIC = { status: 'unavailable' as const, reason: 'not_persisted' };
+const EMPTY_RUNTIME_LESSONS_EVIDENCE: KnowledgeRuntimeLessonsReportResult['evidence'] = {
+  state: 'unknown',
+  ageDistribution: { underHour: 0, underDay: 0, underWeek: 0, older: 0, invalid: 0 },
+  trajectoriesByOutcome: { success: 0, partial: 0, failure: 0 },
+  steps: { min: 0, max: 0, average: 0 },
+  durationSeconds: { min: 0, max: 0, average: 0 },
+  errorSignatures: { withoutSignature: 0, distinct: 0, recurringTrajectories: 0 },
+  shadow: {
+    evaluatedTrajectories: 0,
+    captureRecommendations: { retain: 0, review_low_signal: 0 },
+    completionStatuses: { supported: 0, partial: 0, unsupported: 0, unknown: 0 },
+  },
+  feedback: {
+    confirmedPrinciples: 0,
+    rejectedSuggestions: 0,
+    rejectionBreakdown: { general: 0, batchAssisted: 0 },
+    retrievals: 0,
+    adoptions: 0,
+    postAdoptionSuccesses: 0,
+  },
+  batchDistillationAssistant: {
+    state: 'unknown',
+    suggestionCount: EMPTY_BATCH_METRIC,
+    acceptedCount: EMPTY_BATCH_METRIC,
+    rejectedCount: EMPTY_BATCH_METRIC,
+    normalizedEditDistance: EMPTY_BATCH_METRIC,
+    duplicateSuggestionRate: { status: 'unavailable', reason: 'not_evaluated' },
+    sourceAttributionCompleteness: { status: 'unavailable', reason: 'not_evaluated' },
+    inputTokens: EMPTY_BATCH_METRIC,
+    outputTokens: EMPTY_BATCH_METRIC,
+    totalCostUsd: EMPTY_BATCH_METRIC,
+    fallbackCount: EMPTY_BATCH_METRIC,
+    subsequentAdoption: EMPTY_BATCH_METRIC,
+  },
+  metricsUnavailable: [
+    { metric: 'historical_suggestion_count', reason: 'not_persisted' },
+    { metric: 'suggestion_edit_distance', reason: 'not_persisted' },
+    { metric: 'historical_acceptance_rate', reason: 'not_persisted' },
+    { metric: 'duplicate_principle_rate', reason: 'not_evaluated' },
+  ],
+};
+
 const EMPTY_RUNTIME_LESSONS_REPORT: Omit<
   KnowledgeRuntimeLessonsReportResult,
   'success' | 'available' | 'reason'
@@ -141,7 +198,104 @@ const EMPTY_RUNTIME_LESSONS_REPORT: Omit<
   undistilled: [],
   activePrinciples: [],
   indexPreview: '',
+  evidence: EMPTY_RUNTIME_LESSONS_EVIDENCE,
 };
+
+/** Align Host SEKB state with Electron/OPENCLAW_STATE_DIR (pnpm dev: %APPDATA%/Electron/openclaw-source-state). */
+export function resolveHostOpenClawStateDir(
+  env: NodeJS.ProcessEnv = process.env,
+  userDataDir: string = getDataDir(),
+): string {
+  const fromEnv = env.OPENCLAW_STATE_DIR?.trim();
+  if (fromEnv) return fromEnv;
+  return join(userDataDir, 'openclaw-source-state');
+}
+
+/**
+ * Artifact workspace root for offline SEKB evaluation only.
+ * Prefer VERSE_CLAW_REPO_ROOT; never default to process.cwd().
+ */
+export function resolveHostSekbWorkspaceRoot(env: NodeJS.ProcessEnv = process.env): string {
+  const fromEnv = env.VERSE_CLAW_REPO_ROOT?.trim();
+  if (fromEnv) return fromEnv;
+  return resolve(getOpenClawRuntimeDir(), '..');
+}
+
+type SekbRuntimeModule = {
+  KnowledgeStore: new (options?: { database?: { env?: NodeJS.ProcessEnv } }) => {
+    query_trajectories: (filters?: Record<string, unknown>) => unknown[];
+  };
+  DistillationTool: new (options: { store: unknown }) => {
+    suggest_principles_from_trajectories: (
+      trajectoryIds?: string[] | null,
+      minClusterSize?: number,
+    ) => unknown[];
+    confirm_and_save: (suggestion: unknown, edits?: unknown) => string;
+    reject_suggestion: (suggestion: unknown, reason?: string) => void;
+  };
+  SekbBatchDistillationAssistant: new (options: Record<string, unknown>) => {
+    suggest: (input: Record<string, unknown>) => Promise<{
+      suggestions: unknown[];
+      userVisibleStatus: string;
+      operatorEvidence?: Record<string, unknown>;
+      mode?: string;
+    }>;
+  };
+  buildSekbOperatorReport: (
+    store: unknown,
+    options?: Record<string, unknown>,
+  ) => Omit<KnowledgeRuntimeLessonsReportResult, 'success' | 'available' | 'reason'>;
+  buildSekbShadowEvaluationExport: (input: Record<string, unknown>) => Record<string, unknown>;
+  writeSekbShadowEvaluationExportArtifact: (input: Record<string, unknown>) => {
+    artifactPath: string;
+    artifact: { records: unknown[] };
+  };
+  createSekbShadowEvaluationReviewProtocol: (
+    artifact: Record<string, unknown>,
+    options?: Record<string, unknown>,
+  ) => { sample: Array<{ trajectoryId: string; split: string }> };
+  buildSekbOfflineEvaluationReport: (input: Record<string, unknown>) => Record<string, unknown>;
+  writeSekbOfflineEvaluationReportArtifact: (input: Record<string, unknown>) => { artifactPath: string };
+  isSekbBatchDistillationAssistantEnabled: (
+    cfg?: unknown,
+    env?: NodeJS.ProcessEnv,
+  ) => boolean;
+  createDeepSeekSekbBatchDistillationProvider?: () => unknown;
+};
+
+async function loadSekbRuntimeModule(): Promise<SekbRuntimeModule | null> {
+  const entryPath = join(getOpenClawRuntimeDir(), 'dist', 'knowledge', 'sekb', 'index.js');
+  if (!existsSync(entryPath)) return null;
+  return import(pathToFileURL(entryPath).href) as Promise<SekbRuntimeModule>;
+}
+
+function createHostSekbStore(sekb: SekbRuntimeModule) {
+  const stateDir = resolveHostOpenClawStateDir();
+  return new sekb.KnowledgeStore({
+    database: {
+      env: {
+        ...process.env,
+        OPENCLAW_STATE_DIR: stateDir,
+      },
+    },
+  });
+}
+
+function readHostSekbFlagConfig(): unknown {
+  try {
+    const candidates = [
+      join(resolveHostOpenClawStateDir(), 'openclaw.json'),
+      join(process.env.USERPROFILE || process.env.HOME || '', '.openclaw', 'openclaw.json'),
+    ];
+    for (const configPath of candidates) {
+      if (!configPath || !existsSync(configPath)) continue;
+      return JSON.parse(readFileSync(configPath, 'utf8'));
+    }
+  } catch {
+    // ignore malformed local config
+  }
+  return undefined;
+}
 
 type OkfMarkdownFile = {
   filePath: string;
@@ -2068,8 +2222,8 @@ export function mergeSemanticReview(
 }
 
 async function defaultRuntimeLessonsReporter(): Promise<KnowledgeRuntimeLessonsReportResult> {
-  const entryPath = join(getOpenClawRuntimeDir(), 'dist', 'knowledge', 'sekb', 'index.js');
-  if (!existsSync(entryPath)) {
+  const sekb = await loadSekbRuntimeModule();
+  if (!sekb) {
     return {
       success: true,
       available: false,
@@ -2079,13 +2233,8 @@ async function defaultRuntimeLessonsReporter(): Promise<KnowledgeRuntimeLessonsR
   }
 
   try {
-    const sekb = await import(pathToFileURL(entryPath).href) as {
-      KnowledgeStore: new () => unknown;
-      buildSekbOperatorReport: (
-        store: unknown,
-      ) => Omit<KnowledgeRuntimeLessonsReportResult, 'success' | 'available' | 'reason'>;
-    };
-    const report = sekb.buildSekbOperatorReport(new sekb.KnowledgeStore());
+    const store = createHostSekbStore(sekb);
+    const report = sekb.buildSekbOperatorReport(store);
     return { success: true, available: true, ...report };
   } catch (error) {
     return {
@@ -3446,9 +3595,391 @@ export function createKnowledgeApi({
       }
     },
 
-    runtimeLessonsReport: async (): Promise<KnowledgeRuntimeLessonsReportResult> => (
+﻿    runtimeLessonsReport: async (): Promise<KnowledgeRuntimeLessonsReportResult> => (
       runtimeLessonsReporter()
     ),
+
+    sekbShadowEvaluationExport: async (
+      payload: KnowledgeSekbShadowEvaluationExportPayload,
+    ): Promise<KnowledgeSekbShadowEvaluationExportResult> => {
+      const body = isRecord(payload) ? payload : {};
+      const key = typeof body.pseudonymizationKey === 'string' ? body.pseudonymizationKey.trim() : '';
+      if (!key) {
+        return {
+          success: false,
+          available: false,
+          reason: 'missingKey',
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+        };
+      }
+      const sekb = await loadSekbRuntimeModule();
+      if (!sekb) {
+        return {
+          success: true,
+          available: false,
+          reason: 'runtimeUnavailable',
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+        };
+      }
+      try {
+        const store = createHostSekbStore(sekb);
+        const trajectories = store.query_trajectories({});
+        const workspaceRoot = typeof body.workspaceRoot === 'string' && body.workspaceRoot.trim()
+          ? body.workspaceRoot.trim()
+          : resolveHostSekbWorkspaceRoot();
+        const writeArtifact = body.writeArtifact !== false;
+        if (writeArtifact) {
+          const written = sekb.writeSekbShadowEvaluationExportArtifact({
+            trajectories,
+            pseudonymizationKey: key,
+            workspaceRoot,
+          });
+          return {
+            success: true,
+            available: true,
+            authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+            artifactPath: written.artifactPath,
+            recordCount: written.artifact.records.length,
+            export: written.artifact,
+          };
+        }
+        const artifact = sekb.buildSekbShadowEvaluationExport({
+          trajectories,
+          pseudonymizationKey: key,
+        });
+        return {
+          success: true,
+          available: true,
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+          recordCount: Array.isArray((artifact as { records?: unknown[] }).records)
+            ? (artifact as { records: unknown[] }).records.length
+            : 0,
+          export: artifact,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          available: false,
+          reason: 'exportFailed',
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
+
+    sekbShadowEvaluationProtocol: async (
+      payload: KnowledgeSekbShadowEvaluationProtocolPayload,
+    ): Promise<KnowledgeSekbShadowEvaluationProtocolResult> => {
+      const body = isRecord(payload) ? payload : {};
+      const key = typeof body.pseudonymizationKey === 'string' ? body.pseudonymizationKey.trim() : '';
+      if (!key) {
+        return {
+          success: false,
+          available: false,
+          reason: 'missingKey',
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+        };
+      }
+      const sekb = await loadSekbRuntimeModule();
+      if (!sekb) {
+        return {
+          success: true,
+          available: false,
+          reason: 'runtimeUnavailable',
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+        };
+      }
+      try {
+        const store = createHostSekbStore(sekb);
+        const trajectories = store.query_trajectories({});
+        const artifact = sekb.buildSekbShadowEvaluationExport({
+          trajectories,
+          pseudonymizationKey: key,
+        }) as Record<string, unknown>;
+        const protocol = sekb.createSekbShadowEvaluationReviewProtocol(artifact, {
+          sampleSize: typeof body.sampleSize === 'number' ? body.sampleSize : undefined,
+          holdoutFraction: typeof body.holdoutFraction === 'number' ? body.holdoutFraction : undefined,
+        });
+        const workspaceRoot = typeof body.workspaceRoot === 'string' && body.workspaceRoot.trim()
+          ? body.workspaceRoot.trim()
+          : resolveHostSekbWorkspaceRoot();
+        let artifactPath: string | undefined;
+        let reviewsTemplatePath: string | undefined;
+        if (body.writeArtifact !== false) {
+          sekb.writeSekbShadowEvaluationExportArtifact({
+            trajectories,
+            pseudonymizationKey: key,
+            workspaceRoot,
+          });
+          const dir = join(workspaceRoot, 'artifacts', 'sekb-hermes-phase-a5');
+          await mkdir(dir, { recursive: true });
+          const protocolPath = join(dir, 'shadow-evaluation-review-protocol.v1.json');
+          reviewsTemplatePath = join(dir, 'shadow-evaluation-reviews.template.v1.json');
+          await writeFile(protocolPath, `${JSON.stringify(protocol, null, 2)}\n`, 'utf8');
+          const template = {
+            schema: 'sekb-shadow-evaluation-reviews.v1',
+            authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+            labels: ['valuable', 'not_valuable', 'uncertain'],
+            reviewers: ['reviewerA', 'reviewerB'],
+            notes: [
+              'Fill label for each reviewer/trajectory pair.',
+              'Do not tune score weights or thresholds on holdout.',
+              'Kit readiness is not promotion; need >=200 dual reviews before evaluable_for_promotion.',
+            ],
+            reviews: protocol.sample.flatMap((sample) => ([
+              { trajectoryId: sample.trajectoryId, reviewerId: 'reviewerA', split: sample.split, label: null },
+              { trajectoryId: sample.trajectoryId, reviewerId: 'reviewerB', split: sample.split, label: null },
+            ])),
+          };
+          await writeFile(reviewsTemplatePath, `${JSON.stringify(template, null, 2)}\n`, 'utf8');
+          artifactPath = protocolPath;
+        }
+        return {
+          success: true,
+          available: true,
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+          artifactPath,
+          protocol: protocol as unknown as Record<string, unknown>,
+          reviewsTemplatePath,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          available: false,
+          reason: 'protocolFailed',
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
+
+    sekbShadowEvaluationReport: async (
+      payload: KnowledgeSekbShadowEvaluationReportPayload,
+    ): Promise<KnowledgeSekbShadowEvaluationReportResult> => {
+      const body = isRecord(payload) ? payload : {};
+      const reviews = Array.isArray(body.reviews) ? body.reviews : null;
+      const reviewers = Array.isArray(body.reviewers) ? body.reviewers : null;
+      if (!reviews || !reviewers || reviewers.length !== 2 || !body.export || !body.protocol) {
+        return {
+          success: false,
+          available: false,
+          reason: 'invalidInput',
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+        };
+      }
+      const sekb = await loadSekbRuntimeModule();
+      if (!sekb) {
+        return {
+          success: true,
+          available: false,
+          reason: 'runtimeUnavailable',
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+        };
+      }
+      try {
+        const report = sekb.buildSekbOfflineEvaluationReport({
+          artifact: body.export,
+          protocol: body.protocol,
+          reviews,
+          reviewers: [String(reviewers[0]), String(reviewers[1])],
+        });
+        let artifactPath: string | undefined;
+        if (body.writeArtifact !== false) {
+          const workspaceRoot = typeof body.workspaceRoot === 'string' && body.workspaceRoot.trim()
+            ? body.workspaceRoot.trim()
+            : resolveHostSekbWorkspaceRoot();
+          artifactPath = sekb.writeSekbOfflineEvaluationReportArtifact({
+            report,
+            workspaceRoot,
+          }).artifactPath;
+        }
+        return {
+          success: true,
+          available: true,
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+          artifactPath,
+          report,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          available: false,
+          reason: 'reportFailed',
+          authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
+
+    sekbSuggestPrinciples: async (
+      payload?: KnowledgeSekbSuggestPrinciplesPayload,
+    ): Promise<KnowledgeSekbSuggestPrinciplesResult> => {
+      const sekb = await loadSekbRuntimeModule();
+      if (!sekb) {
+        return {
+          success: true,
+          available: false,
+          reason: 'runtimeUnavailable',
+          mode: 'deterministic',
+          suggestions: [],
+        };
+      }
+      try {
+        const body = isRecord(payload) ? payload : {};
+        const store = createHostSekbStore(sekb);
+        const distiller = new sekb.DistillationTool({ store });
+        const suggestions = distiller.suggest_principles_from_trajectories(
+          Array.isArray(body.trajectoryIds) ? body.trajectoryIds as string[] : null,
+          typeof body.minClusterSize === 'number' ? body.minClusterSize : undefined,
+        ) as KnowledgeSekbSuggestPrinciplesResult['suggestions'];
+        return {
+          success: true,
+          available: true,
+          mode: 'deterministic',
+          suggestions,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          available: false,
+          reason: 'suggestFailed',
+          mode: 'deterministic',
+          suggestions: [],
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
+
+    sekbBatchDistillSuggest: async (
+      payload?: KnowledgeSekbBatchDistillSuggestPayload,
+    ): Promise<KnowledgeSekbBatchDistillSuggestResult> => {
+      const sekb = await loadSekbRuntimeModule();
+      if (!sekb) {
+        return {
+          success: true,
+          available: false,
+          reason: 'runtimeUnavailable',
+          mode: 'deterministic_fallback',
+          userVisibleStatus: 'runtimeUnavailable',
+          suggestions: [],
+        };
+      }
+      try {
+        const body = isRecord(payload) ? payload : {};
+        const store = createHostSekbStore(sekb);
+        const distiller = new sekb.DistillationTool({ store });
+        const enabled = sekb.isSekbBatchDistillationAssistantEnabled(
+          readHostSekbFlagConfig(),
+          process.env,
+        );
+        if (!enabled) {
+          return {
+            success: true,
+            available: true,
+            reason: 'featureDisabled',
+            mode: 'feature_disabled',
+            userVisibleStatus: 'feature_disabled',
+            suggestions: [],
+          };
+        }
+        const provider = typeof sekb.createDeepSeekSekbBatchDistillationProvider === 'function'
+          ? sekb.createDeepSeekSekbBatchDistillationProvider()
+          : undefined;
+        const assistant = new sekb.SekbBatchDistillationAssistant({
+          store,
+          enabled,
+          ...(provider ? { provider } : {}),
+          fallback: (ids: string[] | null | undefined, min?: number) =>
+            distiller.suggest_principles_from_trajectories(ids, min),
+        });
+        const result = await assistant.suggest({
+          trajectoryIds: Array.isArray(body.trajectoryIds) ? body.trajectoryIds : null,
+          minClusterSize: typeof body.minClusterSize === 'number' ? body.minClusterSize : undefined,
+        });
+        return {
+          success: true,
+          available: true,
+          mode: 'batch',
+          userVisibleStatus: result.userVisibleStatus,
+          suggestions: result.suggestions as KnowledgeSekbBatchDistillSuggestResult['suggestions'],
+          operatorEvidence: result.operatorEvidence,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          available: false,
+          reason: 'suggestFailed',
+          mode: 'deterministic_fallback',
+          userVisibleStatus: 'suggestFailed',
+          suggestions: [],
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
+
+    sekbConfirmPrinciple: async (
+      payload: KnowledgeSekbConfirmPrinciplePayload,
+    ): Promise<KnowledgeSekbConfirmPrincipleResult> => {
+      const sekb = await loadSekbRuntimeModule();
+      if (!sekb) {
+        return {
+          success: true,
+          available: false,
+          reason: 'runtimeUnavailable',
+        };
+      }
+      try {
+        const body = isRecord(payload) ? payload : {};
+        const store = createHostSekbStore(sekb);
+        const distiller = new sekb.DistillationTool({ store });
+        const principleId = distiller.confirm_and_save(body.suggestion, body.edits ?? null);
+        return {
+          success: true,
+          available: true,
+          principleId,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          available: false,
+          reason: 'confirmFailed',
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
+
+    sekbRejectSuggestion: async (
+      payload: KnowledgeSekbRejectSuggestionPayload,
+    ): Promise<KnowledgeSekbRejectSuggestionResult> => {
+      const sekb = await loadSekbRuntimeModule();
+      if (!sekb) {
+        return {
+          success: true,
+          available: false,
+          reason: 'runtimeUnavailable',
+        };
+      }
+      try {
+        const body = isRecord(payload) ? payload : {};
+        const store = createHostSekbStore(sekb);
+        const distiller = new sekb.DistillationTool({ store });
+        distiller.reject_suggestion(
+          body.suggestion,
+          typeof body.reason === 'string' ? body.reason : undefined,
+        );
+        return {
+          success: true,
+          available: true,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          available: false,
+          reason: 'rejectFailed',
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
 
     matchErrorExperience: async (payload) => {
       try {

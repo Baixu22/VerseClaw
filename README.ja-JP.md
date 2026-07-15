@@ -49,7 +49,6 @@ Product capability statements must be checked against the canonical matrix in `s
 
 同じ Agents -> Roles & Orchestration 画面には、ClawGraph YAML を書かずに一般的なワークフローを始められる **Lightweight Subagent Runner** もあります。Explorer、Reviewer、Tester、Compare 3 approaches から選び、目標を入力すると、既存の Gateway 権限経路で明示的なロール worker を起動し、Verse Claw がライブ worker 状態、要約、失敗理由、Observability trace リンクを表示します。
 role-first のオーケストレーション実行では、読み取り専用の統合結果も表示し、検証判断、証拠数、trace 数、可視化された失敗理由をそのまま確認できます。
-Roles & Orchestration では、統制された Agency ロール昇格も行えます。Agency Agents checkout を選び、不変の候補をレビューし、すべてのツールヒントを明示的にマップまたは免除し、証拠を添付して、独立した設定ロールを承認します。ソースドラフトは常に実行不能で、昇格ロールを廃止しても監査履歴は保持されます。
 
 長い会話、チェックポイント、証拠レビュー、明示的な scheduled tick をまたいで継続する目標向けに、Agents パネルには **Mission Control** もあります。`mission.run` で Mission を開始または再開し、Mission 状態を永続化し、ResumeCheckpoint、Task Ledger、メモリ、trace 証拠から有界なコンテキストを再構築し、各 tick で内部 `task_loop` を実行してから、reviewer が続行、修復、休眠、ユーザー確認、完了、またはブロックを判断します。
 Mission と Task loop は内部の Engineering Control Signals（`evidence_gap`、`validation_missing`、`scope_drift`、`unverified_claim`、`replan_required` など）も運びます。これらは checkpoint、lifecycle event、Task Ledger metadata に残り、trace だけ、または内部 loop の complete だけを長期目標の完了事実として扱わないためのガードになります。
@@ -165,6 +164,27 @@ Review Center は、未コミット変更、ベースブランチとの差分、
 
 ### Knowledge Hub
 Knowledge ページは OpenClaw `memory-wiki` を通じて、出典付き wiki コンテキストを管理します。既定では Verse Claw 管理の隔離 native vault を使い、unsafe local-vault モードへ切り替えずに、制限されたテキストファイルやフォルダーを取り込めます。また、ローカル OKF v0.1 Markdown bundle を検証して `wiki.ingest` 上の薄い互換アダプターとしてインポートできます。状態確認、検索、結果確認、compile、lint、Knowledge Inbox、draft/proposal レビュー、provenance、ガバナンスの流れを備えています。Inbox は Chat、Task Ledger、ファイル、OKF、ClawGraph、agent 由来の候補知識を正式な wiki の外に保持し、ユーザーがドラフトへ昇格または破棄するまで書き込みません。provenance は出典参照と読み取り/参照イベントだけを記録し、wiki ページを変更しません。Chat の知識範囲（`None`、`Memory`、`Wiki`、`All`）は読み取り範囲だけを表します。Agent は search/get で文脈を読めますが、scope が有効でも書き込み、更新、アーカイブ、削除、マージ、apply はできません。Chat では `/wiki` で検索し、明示的な wiki 参照を visible chip として添付してから送信できます。`/memory`、`/all`、`/none`、`/scope` は読み取り範囲だけを変更し、書き込み権限にはなりません。知識呼び出しモードの既定は Suggest で、関連知識は任意の chip として表示されます。Auto-read は明示的に有効化した場合のみ、少数の新しく高信頼な読み取り専用参照を添付します。セッション由来の知識や agent/Knowledge Steward の提案は編集可能な draft/proposal に入り、ユーザーの明示的な確認後にだけ wiki へ適用されます。Obsidian は任意の拡張であり、必須依存ではありません。ガバナンスダッシュボードはオンデマンドの健全性チェックにより矛盾、陳腐化、未解決参照を可視化します。監視ディレクトリはプロジェクト文書を pending Inbox にだけ入れ、正式な wiki への direct-ingest や synthesis 作成は自動実行しません。
+
+高度な SEKB 診断では、既定でオフの `runtime.contextBlock.sekb.shadowEvaluation.enabled` を明示的に有効化できます。`runtime.contextBlock.sekb.enabled` も必要であり、`OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED` は shadow フラグだけを上書きします。この機能は capture と completion の証拠用に有界で決定的な advisory metadata を保存するだけで、trajectory の除外、principle の書き込み、タスク完了判定の変更は行いません。
+
+任意の `runtime.contextBlock.sekb.batchDistillationAssistant.enabled` も既定ではオフで、SEKB の主ゲートが必要です。`OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED` はこの assistant のフラグだけを上書きします。operator は明示的に手動実行する必要があります。Host/CLI は DEEPSEEK_API_KEY があればそれを使い、なければ deterministic fallback になります。この assistant が送信するのは、有界かつ秘匿化した trajectory projection と有界な既存 principle summary だけです。可観測な 30 秒の retry は一度だけで、provider unavailable、timeout、無効な JSON/schema、または上限到達時には既存の決定的な distillation suggestion を返します。安全な集約 trace/cost evidence だけを記録し、既存の `confirm_and_save` 確認パスより前に Principle、Memory、ContextBlock、index、trajectory state を書き換えることはありません。
+
+SEKB Hermes の運用入口は CLI と Host API のみです（SEKB 運用 GUI なし）。すべて既定オフで、principle / memory / ContextBlock / index / trajectory state を自動書き込みしません。耐久的な確認パスは引き続き `confirm_and_save` のみです。`artifacts/sekb-hermes-phase-a5/` のオフライン成果物は非権威の評価証跡です。
+
+ローカル CLI/Host ops は `openclaw_runtime/dist/knowledge/sekb/index.js` を読み込みます。`pnpm build:runtime` または `pnpm exec node scripts/build-openclaw-runtime.mjs --sekb-only` で構築してください。dist がない場合 Host は `runtimeUnavailable` に降格し、CLI はビルド案内を出します。`pnpm sekb:hermes:gate` に dist は不要です。
+
+CLI:
+
+- `pnpm sekb:hermes:export` - プライバシー境界付き shadow export
+- `pnpm sekb:hermes:protocol` - 二重レビュー protocol サンプルと reviews テンプレート
+- `pnpm sekb:hermes:report -- --reviews <path>` - オフライン report（昇格ゲート通過前は `shadow_only`）
+- `pnpm sekb:hermes:suggest` / `--batch` - 決定的 suggestion；batch は flag が必要。DEEPSEEK_API_KEY があれば Host/CLI が利用、なければ deterministic fallback
+- `pnpm sekb:hermes:confirm` / `pnpm sekb:hermes:reject` - 既存 DistillationTool 境界
+- `pnpm sekb:hermes:gate` - focused tests + contract + harness validate
+
+Host API（`knowledge.*`）: `runtimeLessonsReport`, `sekbShadowEvaluationExport`, `sekbShadowEvaluationProtocol`, `sekbShadowEvaluationReport`, `sekbSuggestPrinciples`, `sekbBatchDistillSuggest`, `sekbConfirmPrinciple`, `sekbRejectSuggestion`。
+
+Shadow V1 のスコアリングと閾値 50 は凍結。ラベリング kit の準備完了は昇格準備完了を意味しません。Phase C/D の filtering / scheduling は延期です。
 
 ### Workspace Git コントロール
 Workspace サイドバーはまずコンパクトな入口ランチャーを開きます。現在の workspace が Git リポジトリの場合だけ Review 入口が表示され、Git ではないプロジェクトには Git コントロールを表示しません。

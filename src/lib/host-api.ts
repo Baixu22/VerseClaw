@@ -126,12 +126,6 @@ import type {
   AgentDevWorkbenchEvidenceResult,
   AgentUpdateReasoningEffortPayload,
   AgentUpdatePayload,
-  AgencyRoleDecisionPayload,
-  AgencyRoleListResult,
-  AgencyRolePromotionPreviewResult,
-  AgencyRolePromotionResult,
-  AgencyRoleReviewPayload,
-  AgencyRoleSourcePayload,
   CapabilityPublicationQuery,
   CapabilityPublicationResult,
   ChannelAccountsPayload,
@@ -242,6 +236,20 @@ import type {
   KnowledgeRouteContextPayload,
   KnowledgeRouteContextResult,
   KnowledgeRuntimeLessonsReportResult,
+  KnowledgeSekbBatchDistillSuggestPayload,
+  KnowledgeSekbBatchDistillSuggestResult,
+  KnowledgeSekbConfirmPrinciplePayload,
+  KnowledgeSekbConfirmPrincipleResult,
+  KnowledgeSekbRejectSuggestionPayload,
+  KnowledgeSekbRejectSuggestionResult,
+  KnowledgeSekbShadowEvaluationExportPayload,
+  KnowledgeSekbShadowEvaluationExportResult,
+  KnowledgeSekbShadowEvaluationProtocolPayload,
+  KnowledgeSekbShadowEvaluationProtocolResult,
+  KnowledgeSekbShadowEvaluationReportPayload,
+  KnowledgeSekbShadowEvaluationReportResult,
+  KnowledgeSekbSuggestPrinciplesPayload,
+  KnowledgeSekbSuggestPrinciplesResult,
   KnowledgeSearchPayload,
   KnowledgeSearchResult,
   KnowledgeSaveSourceSetPayload,
@@ -510,6 +518,20 @@ export type {
   KnowledgeRouteCandidateGroupKey,
   KnowledgeRouteContextResult,
   KnowledgeRuntimeLessonsReportResult,
+  KnowledgeSekbBatchDistillSuggestPayload,
+  KnowledgeSekbBatchDistillSuggestResult,
+  KnowledgeSekbConfirmPrinciplePayload,
+  KnowledgeSekbConfirmPrincipleResult,
+  KnowledgeSekbRejectSuggestionPayload,
+  KnowledgeSekbRejectSuggestionResult,
+  KnowledgeSekbShadowEvaluationExportPayload,
+  KnowledgeSekbShadowEvaluationExportResult,
+  KnowledgeSekbShadowEvaluationProtocolPayload,
+  KnowledgeSekbShadowEvaluationProtocolResult,
+  KnowledgeSekbShadowEvaluationReportPayload,
+  KnowledgeSekbShadowEvaluationReportResult,
+  KnowledgeSekbSuggestPrinciplesPayload,
+  KnowledgeSekbSuggestPrinciplesResult,
   KnowledgeErrorGuardAdvisory,
   KnowledgeErrorGuardSignal,
   KnowledgeMatchErrorExperienceResult,
@@ -1038,29 +1060,6 @@ export const hostApi = {
     upsertConfigRole: (input: RoleUpsertConfigRolePayload): Promise<RoleUpsertConfigRoleResult> => (
       invokeHost('roles', 'upsertConfigRole', input)
     ),
-    agencyCatalog: (input: AgencyRoleSourcePayload): Promise<AgencyRoleListResult> => (
-      invokeHost('roles', 'agencyCatalog', input)
-    ),
-    previewAgencyPromotion: (
-      input: AgencyRoleReviewPayload,
-    ): Promise<AgencyRolePromotionPreviewResult> => (
-      invokeHost('roles', 'previewAgencyPromotion', input)
-    ),
-    reviewAgencyPromotion: (
-      input: AgencyRoleReviewPayload,
-    ): Promise<AgencyRolePromotionResult> => (
-      invokeHost('roles', 'reviewAgencyPromotion', input)
-    ),
-    approveAgencyPromotion: (
-      input: AgencyRoleDecisionPayload,
-    ): Promise<AgencyRolePromotionResult> => (
-      invokeHost('roles', 'approveAgencyPromotion', input)
-    ),
-    retireAgencyPromotion: (
-      input: AgencyRoleDecisionPayload,
-    ): Promise<AgencyRolePromotionResult> => (
-      invokeHost('roles', 'retireAgencyPromotion', input)
-    ),
   },
   diagnostics: {
     gatewaySnapshot: () => invokeHost('diagnostics', 'gatewaySnapshot'),
@@ -1389,6 +1388,27 @@ export const hostApi = {
     ),
     runtimeLessonsReport: (): Promise<KnowledgeRuntimeLessonsReportResult> => (
       invokeHost('knowledge', 'runtimeLessonsReport')
+    ),
+    sekbShadowEvaluationExport: (input: KnowledgeSekbShadowEvaluationExportPayload): Promise<KnowledgeSekbShadowEvaluationExportResult> => (
+      invokeHost('knowledge', 'sekbShadowEvaluationExport', input)
+    ),
+    sekbShadowEvaluationProtocol: (input: KnowledgeSekbShadowEvaluationProtocolPayload): Promise<KnowledgeSekbShadowEvaluationProtocolResult> => (
+      invokeHost('knowledge', 'sekbShadowEvaluationProtocol', input)
+    ),
+    sekbShadowEvaluationReport: (input: KnowledgeSekbShadowEvaluationReportPayload): Promise<KnowledgeSekbShadowEvaluationReportResult> => (
+      invokeHost('knowledge', 'sekbShadowEvaluationReport', input)
+    ),
+    sekbSuggestPrinciples: (input?: KnowledgeSekbSuggestPrinciplesPayload): Promise<KnowledgeSekbSuggestPrinciplesResult> => (
+      invokeHost('knowledge', 'sekbSuggestPrinciples', input)
+    ),
+    sekbBatchDistillSuggest: (input?: KnowledgeSekbBatchDistillSuggestPayload): Promise<KnowledgeSekbBatchDistillSuggestResult> => (
+      invokeHost('knowledge', 'sekbBatchDistillSuggest', input)
+    ),
+    sekbConfirmPrinciple: (input: KnowledgeSekbConfirmPrinciplePayload): Promise<KnowledgeSekbConfirmPrincipleResult> => (
+      invokeHost('knowledge', 'sekbConfirmPrinciple', input)
+    ),
+    sekbRejectSuggestion: (input: KnowledgeSekbRejectSuggestionPayload): Promise<KnowledgeSekbRejectSuggestionResult> => (
+      invokeHost('knowledge', 'sekbRejectSuggestion', input)
     ),
     matchErrorExperience: (input: KnowledgeMatchErrorExperiencePayload): Promise<KnowledgeMatchErrorExperienceResult> => (
       invokeHost('knowledge', 'matchErrorExperience', input)

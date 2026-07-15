@@ -1,0 +1,7 @@
+{
+  "title": "Compare similar SEKB task paths before acting",
+  "condition": "When handling eval/protocol tasks",
+  "action": "Review clustered SEKB trajectories and confirm reusable constraints before applying tools",
+  "reason": "Human-edited distillation from deterministic suggest; confirms confirm_and_save is the only durable write",
+  "criticality": "medium"
+}

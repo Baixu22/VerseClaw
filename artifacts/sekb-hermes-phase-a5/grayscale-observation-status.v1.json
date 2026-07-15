@@ -1,0 +1,278 @@
+{
+  "schema": "sekb-hermes-b-grayscale-observation-status.v1",
+  "authority": "offline_evaluation_evidence_not_runtime_source_of_truth",
+  "generatedAt": "2026-07-14T16:32:04Z",
+  "runId": "b-gray-2026-07-14T16-32-03-287Z-a0ba48bd",
+  "phase": "B_grayscale_capture_report_only",
+  "startedAt": "2026-07-14T16:32:03Z",
+  "finishedAt": "2026-07-14T16:32:04Z",
+  "stateDir": "C:\\Users\\27933\\AppData\\Roaming\\Electron\\openclaw-source-state",
+  "flags": {
+    "configPath": "C:\\Users\\27933\\AppData\\Roaming\\Electron\\openclaw-source-state\\openclaw.json",
+    "sekb": {
+      "enabled": true,
+      "shadowEvaluation": {
+        "enabled": true
+      },
+      "batchDistillationAssistant": {
+        "enabled": false
+      }
+    },
+    "masterEnabled": true,
+    "shadowEnabled": true,
+    "batchEnabled": false
+  },
+  "inventory": {
+    "sqlite": {
+      "path": "C:\\Users\\27933\\AppData\\Roaming\\Electron\\openclaw-source-state\\state\\openclaw.sqlite",
+      "exists": true,
+      "sekbTrajectoryCount": 105,
+      "sekbPrincipleCount": 0,
+      "batchDistillationEventCount": 0,
+      "bytes": 1421312,
+      "taskTypeDistribution": {
+        "docs/config": 22,
+        "config/db": 22,
+        "ops/debug": 21,
+        "ops/auth": 20,
+        "eval/protocol": 20
+      },
+      "contextTagDistribution": {
+        "sekb": 85,
+        "shadow": 22,
+        "sqlite": 22,
+        "inventory": 21,
+        "auth": 20,
+        "provider": 20,
+        "a5": 20
+      },
+      "outcomeDistribution": {
+        "success": 64,
+        "partial": 21,
+        "failure": 20
+      },
+      "shadow": {
+        "withMetadata": 105,
+        "withoutMetadata": 0,
+        "scoreBuckets": {
+          "0-24": 0,
+          "25-49": 0,
+          "50-74": 43,
+          "75-100": 62,
+          "missing": 0
+        },
+        "retain": 105,
+        "reviewLowSignal": 0,
+        "retainRatio": 1,
+        "metadataBytes": {
+          "max": 993,
+          "over2KiB": 0
+        }
+      },
+      "createdAtRange": {
+        "min": "2026-07-14T14:55:32.361Z",
+        "max": "2026-07-14T16:29:51.664Z"
+      }
+    },
+    "exportRecordCount": 105,
+    "exportMatchesSqlite": true,
+    "protocolSampleCount": 20
+  },
+  "distributions": {
+    "taskType": {
+      "docs/config": 22,
+      "config/db": 22,
+      "ops/debug": 21,
+      "ops/auth": 20,
+      "eval/protocol": 20
+    },
+    "contextTags": {
+      "sekb": 85,
+      "shadow": 22,
+      "sqlite": 22,
+      "inventory": 21,
+      "auth": 20,
+      "provider": 20,
+      "a5": 20
+    },
+    "outcomes": {
+      "success": 64,
+      "partial": 21,
+      "failure": 20
+    },
+    "classifierCollapse": {
+      "distinctTaskTypes": 5,
+      "agentTaskCount": 0,
+      "agentTaskRatio": 0,
+      "collapsedToAgentTask": false,
+      "note": "task_type distribution has meaningful spread (or smoke scenarios forced types)"
+    },
+    "shadow": {
+      "withMetadata": 105,
+      "withoutMetadata": 0,
+      "scoreBuckets": {
+        "0-24": 0,
+        "25-49": 0,
+        "50-74": 43,
+        "75-100": 62,
+        "missing": 0
+      },
+      "retain": 105,
+      "reviewLowSignal": 0,
+      "retainRatio": 1,
+      "metadataBytes": {
+        "max": 993,
+        "over2KiB": 0
+      }
+    }
+  },
+  "privacy": {
+    "ok": true,
+    "recordCount": 105,
+    "sampleKeys": [
+      "trajectoryId",
+      "terminalOutcome",
+      "counts",
+      "shadow",
+      "error"
+    ],
+    "findings": []
+  },
+  "operatorReport": {
+    "state": "ready",
+    "counts": {
+      "trajectories": 105,
+      "undistilledTrajectories": 105,
+      "activePrinciples": 0
+    },
+    "shadow": {
+      "evaluatedTrajectories": 105,
+      "captureRecommendations": {
+        "retain": 105,
+        "review_low_signal": 0
+      },
+      "completionStatuses": {
+        "supported": 64,
+        "partial": 21,
+        "unsupported": 20,
+        "unknown": 0
+      }
+    },
+    "batch": {
+      "state": "disabled",
+      "suggestionCount": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "acceptedCount": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "rejectedCount": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "normalizedEditDistance": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "duplicateSuggestionRate": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "sourceAttributionCompleteness": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "inputTokens": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "outputTokens": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "totalCostUsd": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "fallbackCount": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "subsequentAdoption": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      }
+    },
+    "honestStatesAllowed": [
+      "disabled",
+      "unavailable",
+      "unknown",
+      "insufficient_data",
+      "ready"
+    ]
+  },
+  "offlineReport": {
+    "status": "insufficient_data",
+    "promotion": {
+      "status": "shadow_only",
+      "blockers": [
+        "reviewed_samples_below_200",
+        "cohens_kappa_no_independent_review_pairs",
+        "valuable_recall_no_consensus_labels",
+        "projected_false_drop_no_consensus_labels"
+      ]
+    }
+  },
+  "promotion": {
+    "status": "shadow_only",
+    "evaluableForPromotion": false,
+    "reason": "tier_b_grayscale_observation_only_human_dual_review_required_for_tier_c"
+  },
+  "readiness": {
+    "tierCTrafficStabilityReady": true,
+    "blockers": [],
+    "warnings": [
+      "trajectory_count_below_200_human_dual_review_target",
+      "very_high_retain_ratio_expected_because_capture_value_neq_task_success"
+    ],
+    "note": "Traffic/stability premises for Tier C dual-review campaign look acceptable; human dual review still required and promotion remains deferred.",
+    "explicitNonGoals": [
+      "No fabricated human dual-review labels",
+      "No Shadow V1 retune",
+      "No Phase C/D activation",
+      "No automatic principle writes",
+      "No production benefit claim from grayscale alone"
+    ]
+  },
+  "findings": [
+    {
+      "severity": "P1",
+      "id": "high_shadow_retain_ratio",
+      "retainRatio": 1,
+      "blocksTierC": false,
+      "note": "Expected while capture value != task success; do not retune Shadow V1 threshold in Tier B."
+    }
+  ],
+  "pipeline": {
+    "export": "shadow-evaluation-export.v1.json",
+    "protocol": "shadow-evaluation-review-protocol.v1.json",
+    "grayscaleReviews": "shadow-evaluation-reviews.grayscale.v1.json",
+    "report": "shadow-evaluation-report.v1.json",
+    "status": "grayscale-observation-status.v1.json"
+  },
+  "explicitNonGoals": [
+    "No fabricated human dual-review labels",
+    "No Shadow V1 retune",
+    "No Phase C/D activation",
+    "No automatic principle writes",
+    "No production benefit claim from grayscale alone"
+  ],
+  "notes": [
+    "Grayscale is opt-in; production default remains off.",
+    "Human dual review (Tier C) is still required before any promotion decision.",
+    "Shadow V1 threshold frozen at 50; no retune in this phase.",
+    "confirm_and_save remains the only durable L2 write path."
+  ]
+}

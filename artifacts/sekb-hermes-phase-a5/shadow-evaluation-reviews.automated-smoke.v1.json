@@ -1,0 +1,162 @@
+{
+  "schema": "sekb-shadow-evaluation-reviews.v1",
+  "authority": "offline_evaluation_evidence_not_runtime_source_of_truth",
+  "labels": [
+    "valuable",
+    "not_valuable",
+    "uncertain"
+  ],
+  "reviewers": [
+    "autoReviewerA",
+    "autoReviewerB"
+  ],
+  "notes": [
+    "AUTOMATED SMOKE LABELS ONLY — not independent human dual review.",
+    "labelSource=automated_smoke_not_human for every row.",
+    "These labels must never be used to claim evaluable_for_promotion.",
+    "Shadow V1 threshold remains frozen at 50. Phase C/D not activated."
+  ],
+  "labelAuthority": "automated_smoke_not_human",
+  "reviews": [
+    {
+      "trajectoryId": "trj_012344c951fe88528c18d0b18f45001c",
+      "reviewerId": "autoReviewerA",
+      "split": "holdout",
+      "label": "uncertain",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_012344c951fe88528c18d0b18f45001c",
+      "reviewerId": "autoReviewerB",
+      "split": "holdout",
+      "label": "not_valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_097ec40f36c1066f020ecca0a1532661",
+      "reviewerId": "autoReviewerA",
+      "split": "holdout",
+      "label": "uncertain",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_097ec40f36c1066f020ecca0a1532661",
+      "reviewerId": "autoReviewerB",
+      "split": "holdout",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_0a7b88974f758c5495f829611525dab0",
+      "reviewerId": "autoReviewerA",
+      "split": "holdout",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_0a7b88974f758c5495f829611525dab0",
+      "reviewerId": "autoReviewerB",
+      "split": "holdout",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_0cfc4ef489e6ae2f8ae864cce47e1c48",
+      "reviewerId": "autoReviewerA",
+      "split": "holdout",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_0cfc4ef489e6ae2f8ae864cce47e1c48",
+      "reviewerId": "autoReviewerB",
+      "split": "holdout",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_192ee917eef907ec5809f0069bdc610d",
+      "reviewerId": "autoReviewerA",
+      "split": "development",
+      "label": "uncertain",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_192ee917eef907ec5809f0069bdc610d",
+      "reviewerId": "autoReviewerB",
+      "split": "development",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_1b482388fde9e2558d4d31b3f559ab11",
+      "reviewerId": "autoReviewerA",
+      "split": "development",
+      "label": "uncertain",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_1b482388fde9e2558d4d31b3f559ab11",
+      "reviewerId": "autoReviewerB",
+      "split": "development",
+      "label": "not_valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_250aea554fb13209fa68a7f1622fca65",
+      "reviewerId": "autoReviewerA",
+      "split": "development",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_250aea554fb13209fa68a7f1622fca65",
+      "reviewerId": "autoReviewerB",
+      "split": "development",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_2b43cec24cae4cfd34ebefbda35b5747",
+      "reviewerId": "autoReviewerA",
+      "split": "development",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_2b43cec24cae4cfd34ebefbda35b5747",
+      "reviewerId": "autoReviewerB",
+      "split": "development",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_2f97d2401d185a9d4e70899530f9e2aa",
+      "reviewerId": "autoReviewerA",
+      "split": "development",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_2f97d2401d185a9d4e70899530f9e2aa",
+      "reviewerId": "autoReviewerB",
+      "split": "development",
+      "label": "valuable",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_3b972c695ceb0887c1ed11d010785bb8",
+      "reviewerId": "autoReviewerA",
+      "split": "development",
+      "label": "uncertain",
+      "labelSource": "automated_smoke_not_human"
+    },
+    {
+      "trajectoryId": "trj_3b972c695ceb0887c1ed11d010785bb8",
+      "reviewerId": "autoReviewerB",
+      "split": "development",
+      "label": "not_valuable",
+      "labelSource": "automated_smoke_not_human"
+    }
+  ]
+}

@@ -375,121 +375,6 @@ describe('hostApi facade', () => {
     }));
   });
 
-  it('routes Agency role promotion methods through hostInvoke', async () => {
-    hostInvoke.mockResolvedValue({
-      id: 'req',
-      ok: true,
-      data: { success: true },
-    });
-    const { hostApi } = await import('@/lib/host-api');
-    const reviewPayload = {
-      packageId: 'a'.repeat(64),
-      reviewer: 'operator',
-      candidate: {
-        name: 'agency-code-reviewer',
-        displayName: 'Agency Code Reviewer',
-        rolePrompt: 'Review implementation correctness and report actionable evidence.',
-        tools: ['read'],
-        effort: 'high' as const,
-        permissions: { filesystem: 'read' as const, network: 'none' as const, commands: [] },
-        tags: ['agency-source'],
-        outputFormat: 'markdown' as const,
-        outputSections: ['Findings', 'Evidence'],
-        handoffTo: ['implementer'],
-        handoffFrom: ['tester'],
-        requiresReview: true,
-        riskProfile: 'medium' as const,
-      },
-      toolHintDispositions: [{
-        hint: 'read',
-        disposition: 'mapped' as const,
-        selectedTools: ['read'],
-        reviewerNote: 'Required for inspection.',
-      }],
-      evidenceQualification: 'scenario-verified' as const,
-      evidenceRefs: ['artifact://role-eval/code-reviewer'],
-      comment: 'Scenario evidence reviewed.',
-    };
-    const decisionPayload = {
-      reviewId: 'review-1',
-      reviewer: 'operator',
-      comment: 'Approved for bounded runtime use.',
-    };
-
-    await hostApi.roles.agencyCatalog({ sourceRoot: 'C:\\agency-agents-main' });
-    await hostApi.roles.listAgencyPackages();
-    await hostApi.roles.importAgencyPackage({
-      sourceRoot: 'C:\\agency-agents-main',
-      draftId: 'agency:engineering:code-reviewer',
-    });
-    await hostApi.roles.refreshAgencyPackage({
-      packageId: 'a'.repeat(64),
-      sourceRoot: 'D:\\agency-agents-main',
-    });
-    await hostApi.roles.previewAgencyPromotion(reviewPayload);
-    await hostApi.roles.previewAgencyMemoryProposals({
-      packageId: 'a'.repeat(64),
-      reviewId: 'review-1',
-    });
-    await hostApi.roles.reviewAgencyPromotion(reviewPayload);
-    await hostApi.roles.approveAgencyPromotion(decisionPayload);
-    await hostApi.roles.retireAgencyPromotion(decisionPayload);
-
-    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      module: 'roles',
-      action: 'agencyCatalog',
-      payload: { sourceRoot: 'C:\\agency-agents-main' },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
-      module: 'roles',
-      action: 'listAgencyPackages',
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
-      module: 'roles',
-      action: 'importAgencyPackage',
-      payload: {
-        sourceRoot: 'C:\\agency-agents-main',
-        draftId: 'agency:engineering:code-reviewer',
-      },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
-      module: 'roles',
-      action: 'refreshAgencyPackage',
-      payload: {
-        packageId: 'a'.repeat(64),
-        sourceRoot: 'D:\\agency-agents-main',
-      },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
-      module: 'roles',
-      action: 'previewAgencyPromotion',
-      payload: reviewPayload,
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(6, expect.objectContaining({
-      module: 'roles',
-      action: 'previewAgencyMemoryProposals',
-      payload: {
-        packageId: 'a'.repeat(64),
-        reviewId: 'review-1',
-      },
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(7, expect.objectContaining({
-      module: 'roles',
-      action: 'reviewAgencyPromotion',
-      payload: reviewPayload,
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
-      module: 'roles',
-      action: 'approveAgencyPromotion',
-      payload: decisionPayload,
-    }));
-    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
-      module: 'roles',
-      action: 'retireAgencyPromotion',
-      payload: decisionPayload,
-    }));
-  });
-
   it('calls providers.list through hostInvoke', async () => {
     hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: [] });
     const { hostApi } = await import('@/lib/host-api');
@@ -587,6 +472,34 @@ describe('hostApi facade', () => {
     await hostApi.knowledge.promoteInboxItemToDraft({ id: 'inbox-1' });
     await hostApi.knowledge.recordKnowledgeReference({ targetId: 'notes/a.md', reference: { kind: 'search', lookup: 'notes/a.md' } });
     await hostApi.knowledge.runtimeLessonsReport();
+    await hostApi.knowledge.sekbSuggestPrinciples({ minClusterSize: 2 });
+    await hostApi.knowledge.sekbShadowEvaluationExport({ pseudonymizationKey: 'k', writeArtifact: false });
+    await hostApi.knowledge.sekbShadowEvaluationProtocol({ pseudonymizationKey: 'k', writeArtifact: false });
+    await hostApi.knowledge.sekbShadowEvaluationReport({
+      export: { schema: 'sekb-shadow-evaluation-export.v1', authority: 'offline_evaluation_evidence_not_runtime_source_of_truth', records: [] },
+      protocol: { schema: 'sekb-shadow-evaluation-review-protocol.v1', sample: [] },
+      reviews: [],
+      reviewers: ['reviewerA', 'reviewerB'],
+      writeArtifact: false,
+    });
+    await hostApi.knowledge.sekbBatchDistillSuggest({ minClusterSize: 2 });
+    await hostApi.knowledge.sekbConfirmPrinciple({
+      suggestion: {
+        cluster_summary: 'x',
+        source_trajectory_ids: [],
+        suggested_principle: {},
+        confidence: 0.1,
+      },
+    });
+    await hostApi.knowledge.sekbRejectSuggestion({
+      suggestion: {
+        cluster_summary: 'x',
+        source_trajectory_ids: [],
+        suggested_principle: {},
+        confidence: 0.1,
+      },
+      reason: 'nope',
+    });
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
       module: 'knowledge',
@@ -626,6 +539,38 @@ describe('hostApi facade', () => {
     expect(hostInvoke).toHaveBeenNthCalledWith(8, expect.objectContaining({
       module: 'knowledge',
       action: 'runtimeLessonsReport',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(9, expect.objectContaining({
+      module: 'knowledge',
+      action: 'sekbSuggestPrinciples',
+      payload: { minClusterSize: 2 },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(10, expect.objectContaining({
+      module: 'knowledge',
+      action: 'sekbShadowEvaluationExport',
+      payload: { pseudonymizationKey: 'k', writeArtifact: false },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(11, expect.objectContaining({
+      module: 'knowledge',
+      action: 'sekbShadowEvaluationProtocol',
+      payload: { pseudonymizationKey: 'k', writeArtifact: false },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(12, expect.objectContaining({
+      module: 'knowledge',
+      action: 'sekbShadowEvaluationReport',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(13, expect.objectContaining({
+      module: 'knowledge',
+      action: 'sekbBatchDistillSuggest',
+      payload: { minClusterSize: 2 },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(14, expect.objectContaining({
+      module: 'knowledge',
+      action: 'sekbConfirmPrinciple',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(15, expect.objectContaining({
+      module: 'knowledge',
+      action: 'sekbRejectSuggestion',
     }));
   });
 
@@ -937,9 +882,9 @@ describe('hostApi facade', () => {
     });
 
     const electronToRenderer = findViolations('electron', [
-      /\bfrom\s+['"](?:\.\.?\/)+src\//g,
-      /\bimport\(\s*['"](?:\.\.?\/)+src\//g,
-      /\brequire\(\s*['"](?:\.\.?\/)+src\//g,
+      /\bfrom\s+['"][^'"]*src\//g,
+      /\bimport\(\s*['"][^'"]*src\//g,
+      /\brequire\(\s*['"][^'"]*src\//g,
     ]);
     const rendererToElectron = findViolations('src', [
       /\bfrom\s+['"]electron['"]/g,

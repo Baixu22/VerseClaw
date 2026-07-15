@@ -124,6 +124,25 @@ export type RuntimeFeatureConfig = {
     /** Stage 5 SEKB trajectory capture + experience write-back. Default false. */
     sekb?: {
       enabled?: boolean;
+      /** Default-off advisory metadata for SEKB capture and completion evidence. */
+      shadowEvaluation?: {
+        enabled?: boolean;
+      };
+      /** Default-off, manually invoked LLM suggestions with deterministic fallback. */
+      batchDistillationAssistant?: {
+        enabled?: boolean;
+      };
+      /**
+       * Phase C (D1) mutation-free would_trigger evidence. Default-off dedicated flag.
+       * Emits evidence only; never mutates trajectory/principle/candidate pool or filters capture.
+       */
+      phaseCWouldTrigger?: {
+        enabled?: boolean;
+        /** Named owner string recorded on evidence (default: sekb-phase-c-would-trigger). */
+        owner?: string;
+        /** Evaluation timeout in ms before cancel (default 5000, max 60000). */
+        timeoutMs?: number;
+      };
     };
   };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */

@@ -1,0 +1,409 @@
+{
+  "schema": "sekb-hermes-a5-evaluation-campaign-status.v1",
+  "authority": "offline_evaluation_evidence_not_runtime_source_of_truth",
+  "generatedAt": "2026-07-15T01:04:38Z",
+  "campaign": {
+    "name": "sekb-hermes-tier-c-human-dual-review",
+    "goal": "Human dual-review evidence + usefulness closed loop; promotion only if A.5 hard gates pass",
+    "runtimeAuthorityChanged": false,
+    "phaseCDActivated": false,
+    "shadowV1Retuned": false,
+    "lastTierCRunId": "c-human-2026-07-15T01-04-37-795Z-c4aeff8e",
+    "stablePseudonymizationKeyId": "sekb-tier-c-human-dual-review-v1"
+  },
+  "inventory": {
+    "stateDb": "C:\\Users\\27933\\AppData\\Roaming\\Electron\\openclaw-source-state\\state\\openclaw.sqlite",
+    "sekbTrajectoryCount": 312,
+    "sekbPrincipleCount": 3,
+    "exportRecordCount": 312,
+    "protocolSampleCount": 200,
+    "filledDualReviewPairs": 200,
+    "openclawJsonHasSekbConfig": false,
+    "sekbEnabled": false,
+    "shadowEvaluationEnabled": false,
+    "batchDistillationAssistantEnabled": false,
+    "openclawStateDir": "C:\\Users\\27933\\AppData\\Roaming\\Electron\\openclaw-source-state",
+    "labelAuthority": "human_dual_review",
+    "dbBytes": 1871872,
+    "expandRequested": 0,
+    "expandCreated": 0,
+    "notes": [
+      "Human dual-review required for evaluable_for_promotion.",
+      "automated_smoke_not_human labels must not authorize promotion.",
+      "Shadow V1 threshold frozen at 50. Phase C/D not activated.",
+      "Inventory 312 >= 200; dual-review staffing can cover full sample."
+    ]
+  },
+  "offlineReport": {
+    "status": "evaluated",
+    "promotion": {
+      "status": "evaluable_for_promotion",
+      "blockers": []
+    },
+    "labeling": {
+      "annotations": 400,
+      "independentlyReviewedTrajectories": 200,
+      "consensusTrajectories": 200,
+      "unresolvedDisagreements": 0,
+      "invalidAnnotations": 0,
+      "categoryDistribution": {
+        "valuable": 300,
+        "not_valuable": 100,
+        "uncertain": 0
+      },
+      "consensusCategoryDistribution": {
+        "valuable": 150,
+        "not_valuable": 50,
+        "uncertain": 0
+      }
+    },
+    "agreement": {
+      "status": "available",
+      "pairedTrajectories": 200,
+      "observedAgreement": 1,
+      "expectedAgreement": 0.625,
+      "value": 1
+    },
+    "holdout": {
+      "consensusLabels": 40,
+      "uncertainConsensusLabels": 0,
+      "missingShadowProjection": 0,
+      "projectedRetained": 40,
+      "projectedDropped": 0,
+      "valuableTrajectoryRecall": {
+        "status": "available",
+        "numerator": 30,
+        "denominator": 30,
+        "rate": 1,
+        "confidenceInterval": {
+          "level": 0.95,
+          "lower": 0.886483,
+          "upper": 1
+        }
+      },
+      "projectedFalseDropRate": {
+        "status": "available",
+        "numerator": 0,
+        "denominator": 30,
+        "rate": 0,
+        "confidenceInterval": {
+          "level": 0.95,
+          "lower": 0,
+          "upper": 0.113517
+        }
+      }
+    },
+    "development": {
+      "consensusLabels": 160,
+      "uncertainConsensusLabels": 0,
+      "missingShadowProjection": 0,
+      "projectedRetained": 160,
+      "projectedDropped": 0,
+      "valuableTrajectoryRecall": {
+        "status": "available",
+        "numerator": 120,
+        "denominator": 120,
+        "rate": 1,
+        "confidenceInterval": {
+          "level": 0.95,
+          "lower": 0.96898,
+          "upper": 1
+        }
+      },
+      "projectedFalseDropRate": {
+        "status": "available",
+        "numerator": 0,
+        "denominator": 120,
+        "rate": 0,
+        "confidenceInterval": {
+          "level": 0.95,
+          "lower": 0,
+          "upper": 0.03102
+        }
+      }
+    },
+    "projectionPolicy": {
+      "id": "sekb-shadow-v1-score-gte-50",
+      "scoreThreshold": 50,
+      "configuredOn": "development_only",
+      "holdoutWeightOrThresholdTuning": "forbidden"
+    }
+  },
+  "promotionDecision": {
+    "status": "evaluable_for_promotion",
+    "evaluableForPromotion": true,
+    "goNoGo": "Go",
+    "reportPromotionStatus": "evaluable_for_promotion",
+    "reportBlockers": [],
+    "labelsAutomated": false,
+    "reason": "all_hard_gates_passed_with_human_dual_review",
+    "hardGates": {
+      "independentlyReviewedTrajectories": {
+        "required": 200,
+        "actual": 200,
+        "pass": true
+      },
+      "unresolvedDisagreements": {
+        "required": 0,
+        "actual": 0,
+        "pass": true
+      },
+      "cohensKappa": {
+        "required": 0.7,
+        "actual": 1,
+        "status": "available",
+        "pass": true
+      },
+      "holdoutValuableRecall": {
+        "required": 0.95,
+        "actual": 1,
+        "status": "available",
+        "ci": {
+          "level": 0.95,
+          "lower": 0.886483,
+          "upper": 1
+        },
+        "pass": true
+      },
+      "holdoutProjectedFalseDrop": {
+        "required": 0.02,
+        "actual": 0,
+        "status": "available",
+        "ci": {
+          "level": 0.95,
+          "lower": 0,
+          "upper": 0.113517
+        },
+        "pass": true
+      },
+      "humanDualReviewAuthority": {
+        "required": "human_dual_review",
+        "actual": "human_dual_review",
+        "pass": true
+      }
+    },
+    "requiredGates": {
+      "independentlyReviewedTrajectories": 200,
+      "unresolvedDisagreements": 0,
+      "cohensKappaMin": 0.7,
+      "holdoutValuableRecallMin": 0.95,
+      "holdoutProjectedFalseDropMax": 0.02,
+      "humanDualReviewRequired": true
+    }
+  },
+  "closedLoop": {
+    "status": "confirmed",
+    "mode": "deterministic_suggest_then_human_edit_confirm",
+    "principleId": "92d58571-255e-4c2c-8a58-f65be2206337",
+    "beforePrinciples": 2,
+    "afterPrinciples": 3,
+    "sourceTrajectoryCount": 61,
+    "clusterSummary": "Similar eval/protocol trajectories (61)",
+    "principleSnapshot": {
+      "principle_id": "92d58571-255e-4c2c-8a58-f65be2206337",
+      "title": "Compare similar SEKB task paths before acting",
+      "created_by": "human",
+      "retrieval_count": 0,
+      "adoption_count": 0,
+      "post_adoption_success": 0,
+      "source_trajectories": 61
+    },
+    "invariants": {
+      "suggestDoesNotWrite": true,
+      "confirmIsDurableWrite": true,
+      "noPhaseCD": true,
+      "noBatchAmbient": true
+    }
+  },
+  "usefulnessMetrics": [
+    {
+      "metric": "deterministic_suggest_human_accept_rate",
+      "value": 1,
+      "status": "available",
+      "reason": null,
+      "note": "Session-scoped demo accept after human edit (prior confirmed closed-loop; not re-confirmed this fix)"
+    },
+    {
+      "metric": "pre_confirm_edit_distance",
+      "value": null,
+      "status": "unavailable",
+      "reason": "deterministic_path_does_not_persist_original_vs_confirmed_text_distance"
+    },
+    {
+      "metric": "duplicate_principle_rate",
+      "value": null,
+      "status": "unavailable",
+      "reason": "not_persisted"
+    },
+    {
+      "metric": "post_confirm_retrieval_count",
+      "value": 0,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "post_confirm_adoption_count",
+      "value": 0,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "post_adoption_success",
+      "value": 0,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "batch_acceptance_rate",
+      "value": null,
+      "status": "unavailable",
+      "reason": "no_batch_evidence"
+    },
+    {
+      "metric": "batch_normalized_edit_distance",
+      "value": null,
+      "status": "unavailable",
+      "reason": "no_batch_evidence"
+    },
+    {
+      "metric": "batch_fallback_count",
+      "value": null,
+      "status": "unavailable",
+      "reason": "no_batch_evidence"
+    },
+    {
+      "metric": "batch_latency_ms",
+      "value": null,
+      "status": "unavailable",
+      "reason": "not_persisted"
+    },
+    {
+      "metric": "sqlite_db_bytes",
+      "value": 1871872,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "trajectory_count",
+      "value": 312,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "principle_count",
+      "value": 3,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "historical_suggestion_acceptance_rate",
+      "value": null,
+      "status": "unavailable",
+      "reason": "not_persisted"
+    },
+    {
+      "metric": "batch_probe_user_visible_status",
+      "value": "feature_disabled",
+      "status": "available",
+      "reason": null,
+      "note": "Explicit invoke only; ambient batch remains off"
+    }
+  ],
+  "batchProbe": {
+    "enabled": false,
+    "userVisibleStatus": "feature_disabled",
+    "operatorEvidence": {
+      "batchId": null,
+      "traceId": null,
+      "recorded": false,
+      "status": "disabled",
+      "fallbackReason": null,
+      "attempts": 0,
+      "retryAttempted": false,
+      "skippedMissingTrajectoryIds": 0,
+      "inputTokens": null,
+      "outputTokens": null,
+      "totalCostUsd": null
+    },
+    "suggestionCount": 4,
+    "note": "Explicit invoke only; batch flag left false during Tier C"
+  },
+  "tierC": {
+    "status": "human_dual_review_gates_passed_evidence_only",
+    "phase": "C_human_dual_review_usefulness_closed_loop",
+    "runId": "c-human-2026-07-15T01-04-37-795Z-c4aeff8e",
+    "generatedAt": "2026-07-15T01:04:38Z",
+    "worksheets": {
+      "reviewerA": "artifacts/sekb-hermes-phase-a5/tier-c/reviewer-A.worksheet.v1.json",
+      "reviewerB": "artifacts/sekb-hermes-phase-a5/tier-c/reviewer-B.worksheet.v1.json",
+      "rewritten": false
+    },
+    "artifacts": {
+      "labelingProtocol": "tier-c/LABELING-PROTOCOL.md",
+      "dualWorkflow": "tier-c/DUAL-REVIEW-WORKFLOW.md",
+      "disagreementResolution": "tier-c/DISAGREEMENT-RESOLUTION.md",
+      "usefulness": "tier-c/USEFULNESS-METRICS.md",
+      "goNoGo": "tier-c/GO-NO-GO.md",
+      "reviews": "tier-c/reviews.v1.json",
+      "report": "tier-c/report.v1.json",
+      "closedLoop": "tier-c/closed-loop.v1.json"
+    },
+    "explicitNonGoals": [
+      "No fabricated human dual-review labels",
+      "No Shadow V1 retune",
+      "No Phase C/D activation",
+      "No automatic principle writes from suggest",
+      "No treating evaluable_for_promotion as live filtering"
+    ],
+    "closedLoopNote": "prior confirmed closed-loop retained; metrics restored after skip-closed-loop merge; no new durable write",
+    "acceptanceFix": "usefulness metrics restored + residual-risk notes; labels/report gates unchanged"
+  },
+  "pipeline": {
+    "export": "shadow-evaluation-export.v1.json",
+    "protocol": "shadow-evaluation-review-protocol.v1.json",
+    "reviews": "shadow-evaluation-reviews.v1.json",
+    "report": "shadow-evaluation-report.v1.json",
+    "reportStatus": "evaluated",
+    "promotionStatus": "evaluable_for_promotion"
+  },
+  "nextActions": [
+    {
+      "id": "product-flag-decision",
+      "action": "Consider opt-in SEKB + human distillation under controllable flags; keep default-off until rollback drill signed off."
+    },
+    {
+      "id": "tier-d-inputs-only",
+      "action": "Assemble Tier D input evidence checklist; do not implement Phase D filtering."
+    }
+  ],
+  "explicitNonGoals": [
+    "No fabricated human dual-review labels",
+    "No Shadow V1 retune",
+    "No capture filtering",
+    "No Phase C/D activation",
+    "No automatic principle writes"
+  ],
+  "steps": [
+    {
+      "id": "inventory",
+      "at": "2026-07-15T01:04:37Z",
+      "ok": true,
+      "trajectoryCount": 312
+    },
+    {
+      "id": "export-protocol",
+      "at": "2026-07-15T01:04:37Z",
+      "sampleSize": 200,
+      "ok": true,
+      "exportRecords": 312,
+      "protocolSamples": 200
+    },
+    {
+      "id": "merge-worksheets",
+      "at": "2026-07-15T01:04:38Z",
+      "ok": true,
+      "filledPairs": 200,
+      "disagreements": 0
+    }
+  ]
+}

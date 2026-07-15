@@ -1,0 +1,252 @@
+{
+  "schema": "sekb-phase-c-would-trigger-observation.v1",
+  "status": "pass_d1",
+  "generatedAt": "2026-07-15T02:35:01.472Z",
+  "source": "synthetic_agent_lab",
+  "agentOnly": true,
+  "n1Status": "pass_proxy_permanent",
+  "labelOrigin": "agent_dual_review_proxy",
+  "observationWindow": {
+    "mode": "synthetic_agent_trajectories",
+    "embeddedTrafficDays": "N/A (agent-only lab)",
+    "syntheticTrajectoryCount": 220,
+    "thresholdMet": true
+  },
+  "flagDefault": "off",
+  "flagNames": {
+    "config": "runtime.contextBlock.sekb.phaseCWouldTrigger.enabled",
+    "env": "OPENCLAW_SEKB_PHASE_C_WOULD_TRIGGER_ENABLED",
+    "masterRequired": "runtime.contextBlock.sekb.enabled / OPENCLAW_SEKB_ENABLED"
+  },
+  "shadowV1": {
+    "policyId": "sekb-shadow-v1-score-gte-50",
+    "threshold": 50,
+    "holdoutRetune": "forbidden",
+    "retuned": false
+  },
+  "durableMutation": false,
+  "offlineArtifactsUsed": false,
+  "scoreDistribution": {
+    "below50": 66,
+    "atOrAbove50": 154
+  },
+  "metrics": {
+    "evidenceCount": 220,
+    "wouldTriggerTrue": 154,
+    "wouldTriggerFalse": 66,
+    "triggerRate": 0.7,
+    "errorRate": 0,
+    "evalBatchMs": 0.29640000000000555,
+    "latency": {
+      "baselineProjectionMs": {
+        "samples": [
+          0.011700000000018917,
+          0.012200000000007094,
+          0.012299999999981992,
+          0.01290000000000191,
+          0.019800000000032014,
+          0.021000000000015007,
+          0.10439999999999827
+        ],
+        "p50": 0.01290000000000191,
+        "p95": 0.10439999999999827,
+        "mean": 0.027757142857150745
+      },
+      "onPathProjectionMs": {
+        "samples": [
+          0.010500000000035925,
+          0.010600000000010823,
+          0.01089999999999236,
+          0.011199999999973898,
+          0.013599999999996726,
+          0.015699999999981173,
+          0.03710000000000946
+        ],
+        "p50": 0.011199999999973898,
+        "p95": 0.03710000000000946,
+        "mean": 0.015657142857142908
+      },
+      "deltaPct": -43.59238291303695,
+      "budgetPass": true,
+      "budget": "mean_on <= baseline*1.05 OR absolute_delta_ms<=25"
+    }
+  },
+  "storeParity": {
+    "mode": "sqlite_isolated",
+    "stateDir": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH",
+    "dbPath": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH\\openclaw.sqlite",
+    "principlesBefore": 0,
+    "principlesAfter": 0,
+    "trajectoriesBefore": 220,
+    "trajectoriesAfter": 220,
+    "principlesUnchanged": true,
+    "trajectoriesUnchanged": true,
+    "durableMutationDetected": false
+  },
+  "observability": {
+    "would_trigger.count": 220,
+    "would_trigger.true": 154,
+    "would_trigger.suppressed_by_flag": 1,
+    "would_trigger.lease_busy": 0,
+    "would_trigger.timeout_cancel": 0,
+    "pilot.flag_state": "off_after_lab",
+    "owner": "sekb-phase-c-would-trigger"
+  },
+  "flagOffSuppression": {
+    "suppressed_by_flag": 1,
+    "evidenceWhenOff": 0
+  },
+  "sampleEvidence": [
+    {
+      "schema": "sekb-phase-c-would-trigger-evidence.v1",
+      "owner": "sekb-phase-c-would-trigger",
+      "workspaceKey": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH",
+      "trajectoryId": "synth-d1-0000",
+      "evaluatedAt": "2026-07-15T02:35:01.898Z",
+      "wouldTrigger": false,
+      "reason": "shadow_v1_score_10_lt_50",
+      "shadowScore": 10,
+      "threshold": 50,
+      "policyId": "sekb-shadow-v1-score-gte-50",
+      "suppressedByFlag": false,
+      "leaseBusy": false,
+      "timedOut": false,
+      "durableMutation": false,
+      "offlineArtifactsUsed": false
+    },
+    {
+      "schema": "sekb-phase-c-would-trigger-evidence.v1",
+      "owner": "sekb-phase-c-would-trigger",
+      "workspaceKey": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH",
+      "trajectoryId": "synth-d1-0001",
+      "evaluatedAt": "2026-07-15T02:35:01.898Z",
+      "wouldTrigger": false,
+      "reason": "shadow_v1_score_11_lt_50",
+      "shadowScore": 11,
+      "threshold": 50,
+      "policyId": "sekb-shadow-v1-score-gte-50",
+      "suppressedByFlag": false,
+      "leaseBusy": false,
+      "timedOut": false,
+      "durableMutation": false,
+      "offlineArtifactsUsed": false
+    },
+    {
+      "schema": "sekb-phase-c-would-trigger-evidence.v1",
+      "owner": "sekb-phase-c-would-trigger",
+      "workspaceKey": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH",
+      "trajectoryId": "synth-d1-0002",
+      "evaluatedAt": "2026-07-15T02:35:01.898Z",
+      "wouldTrigger": false,
+      "reason": "shadow_v1_score_12_lt_50",
+      "shadowScore": 12,
+      "threshold": 50,
+      "policyId": "sekb-shadow-v1-score-gte-50",
+      "suppressedByFlag": false,
+      "leaseBusy": false,
+      "timedOut": false,
+      "durableMutation": false,
+      "offlineArtifactsUsed": false
+    },
+    {
+      "schema": "sekb-phase-c-would-trigger-evidence.v1",
+      "owner": "sekb-phase-c-would-trigger",
+      "workspaceKey": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH",
+      "trajectoryId": "synth-d1-0003",
+      "evaluatedAt": "2026-07-15T02:35:01.898Z",
+      "wouldTrigger": false,
+      "reason": "shadow_v1_score_13_lt_50",
+      "shadowScore": 13,
+      "threshold": 50,
+      "policyId": "sekb-shadow-v1-score-gte-50",
+      "suppressedByFlag": false,
+      "leaseBusy": false,
+      "timedOut": false,
+      "durableMutation": false,
+      "offlineArtifactsUsed": false
+    },
+    {
+      "schema": "sekb-phase-c-would-trigger-evidence.v1",
+      "owner": "sekb-phase-c-would-trigger",
+      "workspaceKey": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH",
+      "trajectoryId": "synth-d1-0004",
+      "evaluatedAt": "2026-07-15T02:35:01.898Z",
+      "wouldTrigger": false,
+      "reason": "shadow_v1_score_14_lt_50",
+      "shadowScore": 14,
+      "threshold": 50,
+      "policyId": "sekb-shadow-v1-score-gte-50",
+      "suppressedByFlag": false,
+      "leaseBusy": false,
+      "timedOut": false,
+      "durableMutation": false,
+      "offlineArtifactsUsed": false
+    },
+    {
+      "schema": "sekb-phase-c-would-trigger-evidence.v1",
+      "owner": "sekb-phase-c-would-trigger",
+      "workspaceKey": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH",
+      "trajectoryId": "synth-d1-0005",
+      "evaluatedAt": "2026-07-15T02:35:01.898Z",
+      "wouldTrigger": false,
+      "reason": "shadow_v1_score_15_lt_50",
+      "shadowScore": 15,
+      "threshold": 50,
+      "policyId": "sekb-shadow-v1-score-gte-50",
+      "suppressedByFlag": false,
+      "leaseBusy": false,
+      "timedOut": false,
+      "durableMutation": false,
+      "offlineArtifactsUsed": false
+    },
+    {
+      "schema": "sekb-phase-c-would-trigger-evidence.v1",
+      "owner": "sekb-phase-c-would-trigger",
+      "workspaceKey": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH",
+      "trajectoryId": "synth-d1-0006",
+      "evaluatedAt": "2026-07-15T02:35:01.898Z",
+      "wouldTrigger": false,
+      "reason": "shadow_v1_score_16_lt_50",
+      "shadowScore": 16,
+      "threshold": 50,
+      "policyId": "sekb-shadow-v1-score-gte-50",
+      "suppressedByFlag": false,
+      "leaseBusy": false,
+      "timedOut": false,
+      "durableMutation": false,
+      "offlineArtifactsUsed": false
+    },
+    {
+      "schema": "sekb-phase-c-would-trigger-evidence.v1",
+      "owner": "sekb-phase-c-would-trigger",
+      "workspaceKey": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH",
+      "trajectoryId": "synth-d1-0007",
+      "evaluatedAt": "2026-07-15T02:35:01.898Z",
+      "wouldTrigger": false,
+      "reason": "shadow_v1_score_17_lt_50",
+      "shadowScore": 17,
+      "threshold": 50,
+      "policyId": "sekb-shadow-v1-score-gte-50",
+      "suppressedByFlag": false,
+      "leaseBusy": false,
+      "timedOut": false,
+      "durableMutation": false,
+      "offlineArtifactsUsed": false
+    }
+  ],
+  "hardFails": [],
+  "n3": {
+    "N3.1_functional": "pass",
+    "N3.2_safety_parity": "pass",
+    "N3.3_observation_window": "pass",
+    "N3.4_rollback_drill": "pass"
+  },
+  "notes": [
+    "Mutation-free Phase C evidence only",
+    "Synthetic lab satisfies >=200 trajectory observation under agent-only policy",
+    "7-day embedded traffic = N/A (agent-only lab)",
+    "Not production filtering; D2 not authorized",
+    "Shadow V1 threshold frozen at 50",
+    "Pass-Proxy permanent — not live-human dual-review"
+  ]
+}

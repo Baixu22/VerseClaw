@@ -1,6 +1,11 @@
 import { randomUUID } from "node:crypto";
 import type { ContextBlockSink } from "../../context-engine/block.js";
 import { handleConfirmAndSave } from "./experience-block-bridge.js";
+import {
+  getSekbBatchSuggestionProvenance,
+  normalizedEditDistance,
+  originalSuggestionContent,
+} from "./batch-distillation-assistant.js";
 import type { KnowledgeStore } from "./knowledge-store.js";
 import {
   buildPrincipleFullContent,
@@ -35,7 +40,9 @@ export class DistillationTool {
     min_cluster_size = 2,
   ): DistillationSuggestion[] {
     const trajectories = trajectory_ids
-      ? trajectory_ids.map((id) => this.#store.get_trajectory(id))
+      ? trajectory_ids
+          .map((id) => this.#store.find_trajectory(id))
+          .filter((trajectory): trajectory is NonNullable<typeof trajectory> => trajectory !== null)
       : this.#store.query_trajectories({ distilled: false });
     const byTaskType = new Map<string, typeof trajectories>();
     for (const trajectory of trajectories) {
@@ -113,6 +120,17 @@ export class DistillationTool {
       });
     }
 
+    const batchProvenance = getSekbBatchSuggestionProvenance(suggestion);
+    if (batchProvenance) {
+      const originalContent = originalSuggestionContent(suggestion);
+      // The original response stays in this call frame only. Persisting its
+      // derived edit distance is enough for the read-only evidence report.
+      this.#store.record_batch_distillation_confirmation(
+        batchProvenance.batchId,
+        originalContent ? normalizedEditDistance(originalContent, principle.full_content) : null,
+      );
+    }
+
     // DCS Stage 5: best-effort experience Block write via ContextBlockSink.
     // ANTI-8: suggest_principles_from_trajectories does NOT write Blocks;
     // only confirm_and_save (here) writes experience Blocks.
@@ -132,6 +150,13 @@ export class DistillationTool {
   }
 
   reject_suggestion(suggestion: DistillationSuggestion, reason: string): void {
+    const batchProvenance = getSekbBatchSuggestionProvenance(suggestion);
+    if (batchProvenance) {
+      // Do not put an LLM response or an operator's free-form rejection reason
+      // into the historical rejection payload. Aggregate evidence is sufficient.
+      this.#store.record_batch_distillation_rejection(batchProvenance.batchId);
+      return;
+    }
     this.#store.save_distillation_rejection({
       rejection_id: randomUUID(),
       created_at: this.#now().toISOString(),

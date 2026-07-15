@@ -1,0 +1,107 @@
+{
+  "schema": "sekb-shadow-evaluation-report.v1",
+  "authority": "offline_evaluation_evidence_not_runtime_source_of_truth",
+  "status": "evaluated",
+  "labeling": {
+    "annotations": 400,
+    "independentlyReviewedTrajectories": 200,
+    "consensusTrajectories": 200,
+    "unresolvedDisagreements": 0,
+    "invalidAnnotations": 0,
+    "categoryDistribution": {
+      "valuable": 300,
+      "not_valuable": 100,
+      "uncertain": 0
+    },
+    "consensusCategoryDistribution": {
+      "valuable": 150,
+      "not_valuable": 50,
+      "uncertain": 0
+    }
+  },
+  "agreement": {
+    "status": "available",
+    "pairedTrajectories": 200,
+    "observedAgreement": 1,
+    "expectedAgreement": 0.625,
+    "value": 1
+  },
+  "projectionPolicy": {
+    "id": "sekb-shadow-v1-score-gte-50",
+    "scoreThreshold": 50,
+    "configuredOn": "development_only",
+    "holdoutWeightOrThresholdTuning": "forbidden"
+  },
+  "development": {
+    "consensusLabels": 160,
+    "uncertainConsensusLabels": 0,
+    "missingShadowProjection": 0,
+    "projectedRetained": 160,
+    "projectedDropped": 0,
+    "valuableTrajectoryRecall": {
+      "status": "available",
+      "numerator": 120,
+      "denominator": 120,
+      "rate": 1,
+      "confidenceInterval": {
+        "level": 0.95,
+        "lower": 0.96898,
+        "upper": 1
+      }
+    },
+    "projectedFalseDropRate": {
+      "status": "available",
+      "numerator": 0,
+      "denominator": 120,
+      "rate": 0,
+      "confidenceInterval": {
+        "level": 0.95,
+        "lower": 0,
+        "upper": 0.03102
+      }
+    }
+  },
+  "holdout": {
+    "consensusLabels": 40,
+    "uncertainConsensusLabels": 0,
+    "missingShadowProjection": 0,
+    "projectedRetained": 40,
+    "projectedDropped": 0,
+    "valuableTrajectoryRecall": {
+      "status": "available",
+      "numerator": 30,
+      "denominator": 30,
+      "rate": 1,
+      "confidenceInterval": {
+        "level": 0.95,
+        "lower": 0.886483,
+        "upper": 1
+      }
+    },
+    "projectedFalseDropRate": {
+      "status": "available",
+      "numerator": 0,
+      "denominator": 30,
+      "rate": 0,
+      "confidenceInterval": {
+        "level": 0.95,
+        "lower": 0,
+        "upper": 0.113517
+      }
+    }
+  },
+  "unavailableMetrics": [
+    {
+      "metric": "historical_suggestion_acceptance_rate",
+      "reason": "not_persisted"
+    },
+    {
+      "metric": "historical_suggestion_edit_distance",
+      "reason": "not_persisted"
+    }
+  ],
+  "promotion": {
+    "status": "evaluable_for_promotion",
+    "blockers": []
+  }
+}

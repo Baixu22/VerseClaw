@@ -100,6 +100,35 @@ export type DistillationRejection = {
   reason: string;
 };
 
+/** Safe aggregate evidence for an explicitly invoked Phase B assistant run. */
+export type SekbBatchDistillationFallbackReason =
+  | "provider_unavailable"
+  | "timeout"
+  | "invalid_json"
+  | "schema_invalid"
+  | "limit_exceeded"
+  | "no_eligible_trajectories";
+
+export type SekbBatchDistillationEvent = {
+  batch_id: string;
+  created_at: string;
+  status: "assisted" | "fallback";
+  fallback_reason: SekbBatchDistillationFallbackReason | null;
+  attempts: number;
+  suggestion_count: number;
+  duplicate_suggestion_count: number;
+  attributed_suggestion_count: number;
+  attribution_total: number;
+  input_tokens: number | null;
+  output_tokens: number | null;
+  total_cost_usd: number | null;
+  trace_id: string;
+  confirmation_count: number;
+  rejection_count: number;
+  edit_distance_sum: number;
+  edit_distance_count: number;
+};
+
 export const SEKB_L1_TOKEN_BUDGET = 2_000;
 
 export function approxTokenCount(value: string): number {

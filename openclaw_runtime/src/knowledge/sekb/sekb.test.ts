@@ -91,6 +91,35 @@ describe("SEKB-MVP", () => {
       .toThrow(/raw_error/i);
   });
 
+  it("keeps capture and candidate behavior unchanged when the shadow evaluator is off", () => {
+    const store = createStore();
+    const rawSecret = "sk-shadow-must-not-persist";
+    const off = new TrajectoryCapture({ store, now: fixedClock() });
+    const offId = off.start_trajectory(`task ${rawSecret}`, "config/db", []);
+    off.log_step(offId, "tool.call", { token: rawSecret }, { ignored: rawSecret });
+    const offTrajectory = off.finish_trajectory(offId, "success");
+
+    const on = new TrajectoryCapture({ store, now: fixedClock(), shadowEvaluation: true });
+    const onId = on.start_trajectory(`task ${rawSecret}`, "config/db", []);
+    on.log_step(onId, "tool.call", { token: rawSecret }, { ignored: rawSecret });
+    on.log_step(onId, "tool.result", { token: rawSecret }, { isError: false, content: rawSecret });
+    const onTrajectory = on.finish_trajectory(onId, "success");
+
+    expect(offTrajectory.metadata).toEqual({});
+    expect(onTrajectory.metadata).toMatchObject({
+      sekbShadow: {
+        captureQuality: { schema: "sekb-capture-quality-shadow.v1" },
+        completionEvidence: { schema: "sekb-completion-evidence.v1" },
+      },
+    });
+    expect(JSON.stringify(onTrajectory.metadata)).not.toContain(rawSecret);
+    expect(store.query_trajectories({ distilled: false }).map((trajectory) => trajectory.trajectory_id).toSorted())
+      .toEqual([offId, onId].toSorted());
+    expect(new DistillationTool({ store }).suggest_principles_from_trajectories(null, 2)[0]?.source_trajectory_ids.toSorted())
+      .toEqual([offId, onId].toSorted());
+    expect(store.query_principles({})).toHaveLength(0);
+  });
+
   it("retrieves advisory principles for similar tasks and error signatures", () => {
     const store = createStore();
     const principleId = store.save_principle(postgresPrinciple());
@@ -407,7 +436,10 @@ describe("SEKB-MVP", () => {
     });
     store.save_principle(postgresPrinciple({ source_trajectories: [trajectoryId] }));
 
-    const report = buildSekbOperatorReport(store);
+    const report = buildSekbOperatorReport(store, {
+      now: fixedClock(new Date("2026-07-07T08:00:00.000Z")),
+      shadowEvaluationEnabled: true,
+    });
     expect(report.counts).toMatchObject({
       trajectories: 1,
       undistilledTrajectories: 1,
@@ -419,8 +451,82 @@ describe("SEKB-MVP", () => {
       outcome: "failure",
     });
     expect(report.indexPreview).toContain("Check PG access");
+    expect(report.evidence).toMatchObject({
+      state: "insufficient_data",
+      trajectoriesByOutcome: { success: 0, partial: 0, failure: 1 },
+      feedback: {
+        confirmedPrinciples: 1,
+        rejectedSuggestions: 0,
+        rejectionBreakdown: { general: 0, batchAssisted: 0 },
+        retrievals: 0,
+        adoptions: 0,
+        postAdoptionSuccesses: 0,
+      },
+      shadow: {
+        evaluatedTrajectories: 0,
+        captureRecommendations: { retain: 0, review_low_signal: 0 },
+      },
+    });
+    expect(report.evidence.metricsUnavailable.map((entry) => entry.metric)).toContain("historical_suggestion_count");
+    expect(report.evidence.batchDistillationAssistant).toMatchObject({
+      state: "unknown",
+      suggestionCount: { status: "unavailable", reason: "no_batch_evidence" },
+      normalizedEditDistance: { status: "unavailable", reason: "no_batch_evidence" },
+    });
+    expect(JSON.stringify(report.evidence)).not.toContain("connect PostgreSQL");
   });
 });
+
+  it("counts rejectionBreakdown totals general and batch rejections", () => {
+    const store = createStore();
+    const distiller = new DistillationTool({ store });
+    const t1 = randomUUID();
+    const t2 = randomUUID();
+    for (const [id, taskType] of [[t1, "config/db"], [t2, "config/db"]] as const) {
+      store.save_trajectory({
+        trajectory_id: id,
+        created_at: "2026-07-06T08:00:00.000Z",
+        task_intent: "intent",
+        task_type: taskType,
+        context_fingerprint: ["db"],
+        steps: [],
+        outcome: "success",
+        error_signature: null,
+        cost: { tokens: 1, duration_seconds: 1, retries: 0 },
+        distilled: false,
+        distilled_into: [],
+        expires_at: null,
+        metadata: {},
+      });
+    }
+    const suggestion = distiller.suggest_principles_from_trajectories(null, 2)[0];
+    distiller.reject_suggestion(suggestion, "not useful");
+    store.save_batch_distillation_event({
+      batch_id: randomUUID(),
+      created_at: "2026-07-06T09:00:00.000Z",
+      status: "fallback",
+      fallback_reason: "provider_unavailable",
+      attempts: 0,
+      suggestion_count: 1,
+      duplicate_suggestion_count: 0,
+      attributed_suggestion_count: 0,
+      attribution_total: 0,
+      input_tokens: null,
+      output_tokens: null,
+      total_cost_usd: null,
+      trace_id: "trace-test",
+      confirmation_count: 0,
+      rejection_count: 2,
+      edit_distance_sum: 0,
+      edit_distance_count: 0,
+    });
+    const report = buildSekbOperatorReport(store, {
+      shadowEvaluationEnabled: false,
+      batchDistillationAssistantEnabled: true,
+    });
+    expect(report.evidence.feedback.rejectionBreakdown).toEqual({ general: 1, batchAssisted: 2 });
+    expect(report.evidence.feedback.rejectedSuggestions).toBe(3);
+  });
 
 function createStore(): KnowledgeStore {
   const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-test-"));

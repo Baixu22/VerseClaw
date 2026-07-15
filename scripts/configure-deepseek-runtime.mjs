@@ -149,11 +149,36 @@ function configureRuntime() {
     config.plugins.entries && typeof config.plugins.entries === 'object' ? config.plugins.entries : {};
   config.plugins.entries.deepseek = { ...(config.plugins.entries.deepseek || {}), enabled: true };
   config.channels = config.channels && typeof config.channels === 'object' ? config.channels : {};
+
+  // SEKB/shadow stay opt-in: DeepSeek setup must not force capture flags on.
+  // Pass --enable-sekb-shadow to enable master+shadow for local A.5 capture.
+  const enableSekbShadow = process.argv.includes('--enable-sekb-shadow');
+  let sekbEnabled = null;
+  let shadowEnabled = null;
+  if (enableSekbShadow) {
+    config.runtime = config.runtime && typeof config.runtime === 'object' ? config.runtime : {};
+    config.runtime.contextBlock =
+      config.runtime.contextBlock && typeof config.runtime.contextBlock === 'object'
+        ? config.runtime.contextBlock
+        : {};
+    const previousSekb =
+      config.runtime.contextBlock.sekb && typeof config.runtime.contextBlock.sekb === 'object'
+        ? config.runtime.contextBlock.sekb
+        : {};
+    config.runtime.contextBlock.sekb = {
+      ...previousSekb,
+      enabled: true,
+      shadowEvaluation: { enabled: true },
+    };
+    sekbEnabled = true;
+    shadowEnabled = true;
+  }
   writeJson(runtimeConfigPath, config);
+  return { sekbEnabled, shadowEnabled, enableSekbShadow };
 }
 
 configureProviderStore();
-configureRuntime();
+const sekbResult = configureRuntime();
 
 console.log(JSON.stringify({
   ok: true,
@@ -163,4 +188,10 @@ console.log(JSON.stringify({
   providerStorePath,
   runtimeConfigPath,
   apiKeySource: apiKey ? 'environment-or-existing-script-input' : 'not-set-by-script',
+  sekbShadowOptIn: Boolean(sekbResult?.enableSekbShadow),
+  sekbEnabled: sekbResult?.sekbEnabled,
+  shadowEvaluationEnabled: sekbResult?.shadowEnabled,
+  note: sekbResult?.enableSekbShadow
+    ? 'SEKB master + shadowEvaluation enabled via --enable-sekb-shadow'
+    : 'SEKB flags left unchanged (pass --enable-sekb-shadow to enable local A.5 capture)',
 }, null, 2));

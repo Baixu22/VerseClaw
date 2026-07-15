@@ -1609,100 +1609,6 @@ export type RoleUpsertConfigRoleResult = HostSuccess & {
   role: RoleConfigRoleSummary;
   pendingRuntimeRefresh: boolean;
 };
-export type AgencyRoleLifecycle = 'draft' | 'reviewed' | 'active' | 'retired';
-export type AgencyRoleEvidenceQualification =
-  | 'unverified'
-  | 'scenario-verified'
-  | 'release-qualified';
-export type AgencyRoleMaterializationStatus =
-  | 'not-started'
-  | 'pending'
-  | 'complete'
-  | 'failed';
-export type AgencyRoleSourcePayload = { sourceRoot: string };
-export type AgencyRoleDraftPayload = AgencyRoleSourcePayload & { draftId: string };
-export type AgencyRoleToolHintDisposition = {
-  hint: string;
-  disposition: 'mapped' | 'waived';
-  selectedTools: string[];
-  reviewerNote: string;
-};
-export type AgencyRoleCandidatePayload = RoleUpsertConfigRolePayload & {
-  outputFormat: 'markdown' | 'json' | 'text';
-  outputSections: string[];
-  handoffTo: string[];
-  handoffFrom: string[];
-  requiresReview: boolean;
-  riskProfile: 'low' | 'medium' | 'high' | 'critical';
-};
-export type AgencyRoleReviewPayload = AgencyRoleDraftPayload & {
-  reviewer: string;
-  candidate: AgencyRoleCandidatePayload;
-  toolHintDispositions: AgencyRoleToolHintDisposition[];
-  evidenceQualification: AgencyRoleEvidenceQualification;
-  evidenceRefs: string[];
-  comment: string;
-};
-export type AgencyRoleDecisionPayload = {
-  reviewId: string;
-  reviewer: string;
-  comment: string;
-};
-export type AgencyRoleDraftSummary = {
-  id: string;
-  status: 'draft';
-  sourceDivision?: string;
-  sourceAgentName: string;
-  roleName: string;
-  displayName: string;
-  description?: string;
-  capabilityHints: string[];
-  toolHints: string[];
-  handoffHints: string[];
-  sourceRef: { relativePath: string; sha256: string };
-  roleCandidate: AgencyRoleCandidatePayload;
-  validationIssues: Array<{ path: string; message: string }>;
-  toolMappingSuggestions: Array<{ hint: string; candidateTools: string[] }>;
-};
-export type AgencyRolePromotionRecord = {
-  id: string;
-  draftId: string;
-  sourceRef: { relativePath: string; sha256: string };
-  lifecycle: AgencyRoleLifecycle;
-  evidenceQualification: AgencyRoleEvidenceQualification;
-  evidenceRefs: string[];
-  reviewer: string;
-  reviewedAt: string;
-  decision?: 'approved' | 'retired';
-  decidedBy?: string;
-  decidedAt?: string;
-  comment: string;
-  candidate: AgencyRoleCandidatePayload;
-  toolHintDispositions: AgencyRoleToolHintDisposition[];
-  contractSha256: string;
-  materializedRoleName?: string;
-  materialization: {
-    status: AgencyRoleMaterializationStatus;
-    error?: string;
-  };
-};
-export type AgencyRoleListResult = HostSuccess & {
-  drafts: AgencyRoleDraftSummary[];
-  reviews: AgencyRolePromotionRecord[];
-};
-export type AgencyRolePromotionPreviewResult = HostSuccess & {
-  persisted: false;
-  validation: {
-    ok: boolean;
-    issues: Array<{ path: string; message: string }>;
-  };
-  contractSha256: string;
-  role: RoleConfigRoleSummary;
-};
-export type AgencyRolePromotionResult = HostSuccess & {
-  record: AgencyRolePromotionRecord;
-  pendingRuntimeRefresh: boolean;
-};
 export type AgentBootstrapResult = HostSuccess & {
   agentId: string;
   soulMd: string;
@@ -2814,6 +2720,174 @@ export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
     adoption_count: number;
   }>;
   indexPreview: string;
+  evidence: {
+    state: 'disabled' | 'unavailable' | 'insufficient_data' | 'ready' | 'unknown';
+    ageDistribution: {
+      underHour: number;
+      underDay: number;
+      underWeek: number;
+      older: number;
+      invalid: number;
+    };
+    trajectoriesByOutcome: {
+      success: number;
+      partial: number;
+      failure: number;
+    };
+    steps: { min: number; max: number; average: number };
+    durationSeconds: { min: number; max: number; average: number };
+    errorSignatures: {
+      withoutSignature: number;
+      distinct: number;
+      recurringTrajectories: number;
+    };
+    shadow: {
+      evaluatedTrajectories: number;
+      captureRecommendations: { retain: number; review_low_signal: number };
+      completionStatuses: { supported: number; partial: number; unsupported: number; unknown: number };
+    };
+    feedback: {
+      confirmedPrinciples: number;
+      rejectedSuggestions: number;
+      rejectionBreakdown: {
+        general: number;
+        batchAssisted: number;
+      };
+      retrievals: number;
+      adoptions: number;
+      postAdoptionSuccesses: number;
+    };
+    batchDistillationAssistant: {
+      state: 'disabled' | 'unavailable' | 'insufficient_data' | 'ready' | 'unknown';
+      suggestionCount: KnowledgeRuntimeLessonsMetric;
+      acceptedCount: KnowledgeRuntimeLessonsMetric;
+      rejectedCount: KnowledgeRuntimeLessonsMetric;
+      normalizedEditDistance: KnowledgeRuntimeLessonsMetric;
+      duplicateSuggestionRate: KnowledgeRuntimeLessonsMetric;
+      sourceAttributionCompleteness: KnowledgeRuntimeLessonsMetric;
+      inputTokens: KnowledgeRuntimeLessonsMetric;
+      outputTokens: KnowledgeRuntimeLessonsMetric;
+      totalCostUsd: KnowledgeRuntimeLessonsMetric;
+      fallbackCount: KnowledgeRuntimeLessonsMetric;
+      subsequentAdoption: KnowledgeRuntimeLessonsMetric;
+    };
+    metricsUnavailable: Array<{
+      metric: 'historical_suggestion_count' | 'suggestion_edit_distance' | 'historical_acceptance_rate' | 'duplicate_principle_rate';
+      reason: 'not_persisted' | 'not_evaluated';
+    }>;
+  };
+};
+
+export type KnowledgeRuntimeLessonsMetric =
+  | { status: 'available'; value: number }
+  | { status: 'unavailable'; reason: string };
+
+export type KnowledgeSekbDistillationSuggestion = {
+  cluster_summary: string;
+  source_trajectory_ids: string[];
+  suggested_principle: Record<string, unknown>;
+  confidence: number;
+};
+
+export type KnowledgeSekbShadowEvaluationExportPayload = {
+  workspaceRoot?: string;
+  pseudonymizationKey: string;
+  writeArtifact?: boolean;
+};
+
+export type KnowledgeSekbShadowEvaluationExportResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'exportFailed' | 'missingKey';
+  authority: 'offline_evaluation_evidence_not_runtime_source_of_truth';
+  artifactPath?: string;
+  recordCount?: number;
+  export?: Record<string, unknown>;
+};
+
+export type KnowledgeSekbShadowEvaluationProtocolPayload = {
+  workspaceRoot?: string;
+  pseudonymizationKey: string;
+  sampleSize?: number;
+  holdoutFraction?: number;
+  writeArtifact?: boolean;
+};
+
+export type KnowledgeSekbShadowEvaluationProtocolResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'protocolFailed' | 'missingKey';
+  authority: 'offline_evaluation_evidence_not_runtime_source_of_truth';
+  artifactPath?: string;
+  protocol?: Record<string, unknown>;
+  reviewsTemplatePath?: string;
+};
+
+export type KnowledgeSekbShadowEvaluationReportPayload = {
+  workspaceRoot?: string;
+  export?: Record<string, unknown>;
+  protocol?: Record<string, unknown>;
+  reviews: Array<{
+    trajectoryId: string;
+    reviewerId: string;
+    split: 'development' | 'holdout';
+    label: 'valuable' | 'not_valuable' | 'uncertain';
+  }>;
+  reviewers: [string, string];
+  writeArtifact?: boolean;
+};
+
+export type KnowledgeSekbShadowEvaluationReportResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'reportFailed' | 'invalidInput';
+  authority: 'offline_evaluation_evidence_not_runtime_source_of_truth';
+  artifactPath?: string;
+  report?: Record<string, unknown>;
+};
+
+export type KnowledgeSekbSuggestPrinciplesPayload = {
+  trajectoryIds?: string[] | null;
+  minClusterSize?: number;
+};
+
+export type KnowledgeSekbSuggestPrinciplesResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'suggestFailed';
+  mode: 'deterministic';
+  suggestions: KnowledgeSekbDistillationSuggestion[];
+};
+
+export type KnowledgeSekbBatchDistillSuggestPayload = {
+  trajectoryIds?: string[] | null;
+  minClusterSize?: number;
+};
+
+export type KnowledgeSekbBatchDistillSuggestResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'suggestFailed' | 'featureDisabled';
+  mode: 'batch' | 'deterministic_fallback' | 'feature_disabled';
+  userVisibleStatus: string;
+  suggestions: KnowledgeSekbDistillationSuggestion[];
+  operatorEvidence?: Record<string, unknown>;
+};
+
+export type KnowledgeSekbConfirmPrinciplePayload = {
+  suggestion: KnowledgeSekbDistillationSuggestion;
+  edits?: Record<string, unknown> | null;
+};
+
+export type KnowledgeSekbConfirmPrincipleResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'confirmFailed';
+  principleId?: string;
+};
+
+export type KnowledgeSekbRejectSuggestionPayload = {
+  suggestion: KnowledgeSekbDistillationSuggestion;
+  reason?: string;
+};
+
+export type KnowledgeSekbRejectSuggestionResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'rejectFailed';
 };
 
 export type KnowledgeConfigurePayload = {
@@ -4308,11 +4382,6 @@ export type HostApiContract = {
   };
   roles: {
     upsertConfigRole: (payload: RoleUpsertConfigRolePayload) => RoleUpsertConfigRoleResult;
-    agencyCatalog: (payload: AgencyRoleSourcePayload) => AgencyRoleListResult;
-    previewAgencyPromotion: (payload: AgencyRoleReviewPayload) => AgencyRolePromotionPreviewResult;
-    reviewAgencyPromotion: (payload: AgencyRoleReviewPayload) => AgencyRolePromotionResult;
-    approveAgencyPromotion: (payload: AgencyRoleDecisionPayload) => AgencyRolePromotionResult;
-    retireAgencyPromotion: (payload: AgencyRoleDecisionPayload) => AgencyRolePromotionResult;
   };
   diagnostics: {
     gatewaySnapshot: () => DiagnosticsGatewaySnapshotResult;
@@ -4458,6 +4527,13 @@ export type HostApiContract = {
     stewardConfigUpdate: (payload: KnowledgeStewardConfigUpdatePayload) => KnowledgeStewardConfigUpdateResult;
     routeContext: (payload: KnowledgeRouteContextPayload) => KnowledgeRouteContextResult;
     runtimeLessonsReport: () => KnowledgeRuntimeLessonsReportResult;
+    sekbShadowEvaluationExport: (payload: KnowledgeSekbShadowEvaluationExportPayload) => KnowledgeSekbShadowEvaluationExportResult;
+    sekbShadowEvaluationProtocol: (payload: KnowledgeSekbShadowEvaluationProtocolPayload) => KnowledgeSekbShadowEvaluationProtocolResult;
+    sekbShadowEvaluationReport: (payload: KnowledgeSekbShadowEvaluationReportPayload) => KnowledgeSekbShadowEvaluationReportResult;
+    sekbSuggestPrinciples: (payload?: KnowledgeSekbSuggestPrinciplesPayload) => KnowledgeSekbSuggestPrinciplesResult;
+    sekbBatchDistillSuggest: (payload?: KnowledgeSekbBatchDistillSuggestPayload) => KnowledgeSekbBatchDistillSuggestResult;
+    sekbConfirmPrinciple: (payload: KnowledgeSekbConfirmPrinciplePayload) => KnowledgeSekbConfirmPrincipleResult;
+    sekbRejectSuggestion: (payload: KnowledgeSekbRejectSuggestionPayload) => KnowledgeSekbRejectSuggestionResult;
     matchErrorExperience: (payload: KnowledgeMatchErrorExperiencePayload) => KnowledgeMatchErrorExperienceResult;
     updateErrorExperienceEffectiveness: (payload: KnowledgeUpdateErrorExperienceEffectivenessPayload) => KnowledgeUpdateErrorExperienceEffectivenessResult;
     recordKnowledgeReference: (payload: KnowledgeRecordReferencePayload) => KnowledgeProvenanceResult;

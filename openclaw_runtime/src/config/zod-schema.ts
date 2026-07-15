@@ -104,6 +104,26 @@ const RuntimeFeatureSchema = z
         sekb: z
           .object({
             enabled: z.boolean().optional(),
+            shadowEvaluation: z
+              .object({
+                enabled: z.boolean().optional(),
+              })
+              .strict()
+              .optional(),
+            batchDistillationAssistant: z
+              .object({
+                enabled: z.boolean().optional(),
+              })
+              .strict()
+              .optional(),
+            phaseCWouldTrigger: z
+              .object({
+                enabled: z.boolean().optional(),
+                owner: z.string().min(1).max(200).optional(),
+                timeoutMs: z.number().int().min(1).max(60_000).optional(),
+              })
+              .strict()
+              .optional(),
           })
           .strict()
           .optional(),
