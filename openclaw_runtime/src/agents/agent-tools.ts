@@ -68,7 +68,10 @@ import {
   isCodingParseOnTouchEnabled,
   isCodingStaleWriteGuardEnabled,
   isCodingWriteJournalEnabled,
+  isCodingSymbolLeaseEnabled,
+  resolveSymbolLeaseMode,
 } from "../context-engine/coding-runtime-flags.js";
+import { wrapToolWithSymbolLease } from "./symbol-lease-guard.js";
 import { wrapToolWithParseOnTouch } from "./parse-on-touch.js";
 import { wrapToolWithStaleWriteGuard } from "./stale-write-guard.js";
 import { wrapToolWithWriteSideEffects } from "./write-side-effects.js";
@@ -441,7 +444,7 @@ export function createOpenClawCodingTools(options?: {
    * to resolve to the live run session instead of the stale sandbox key.
    */
   runSessionKey?: string;
-  /** Ephemeral session UUID 鈥?regenerated on /new and /reset. */
+  /** Ephemeral session UUID 閳?regenerated on /new and /reset. */
   sessionId?: string;
   /** Stable run identifier for this agent invocation. */
   runId?: string;
@@ -579,6 +582,8 @@ export function createOpenClawCodingTools(options?: {
   staleWriteGuardEnabled?: boolean;
   /** C2-8 override for write journal (default true). */
   writeJournalEnabled?: boolean;
+  /** C5-1 override for symbol lease on write tools (default false). */
+  symbolLeaseEnabled?: boolean;
   /** Runtime-only resolved skill paths that the read tool may load under workspaceOnly. */
   skillsSnapshot?: SkillSnapshot;
 }): AnyAgentTool[] {
@@ -756,6 +761,10 @@ export function createOpenClawCodingTools(options?: {
   const writeJournalEnabled = isCodingWriteJournalEnabled(options?.config, {
     writeJournalEnabled: options?.writeJournalEnabled,
   });
+  const symbolLeaseEnabled = isCodingSymbolLeaseEnabled(options?.config, {
+    symbolLeaseEnabled: options?.symbolLeaseEnabled,
+  });
+  const symbolLeaseMode = resolveSymbolLeaseMode(options?.config);
   const codingSessionId = options?.sessionId;
   const applyParseOnTouch = (tool: AnyAgentTool): AnyAgentTool =>
     wrapToolWithParseOnTouch(tool, {
@@ -767,6 +776,13 @@ export function createOpenClawCodingTools(options?: {
     });
   const applyWriteKit = (tool: AnyAgentTool, kind: "edit" | "write" | "apply_patch"): AnyAgentTool => {
     let next = tool;
+    // C5-1 symbol lease (default off): acquire before other write kit layers
+    next = wrapToolWithSymbolLease(next, {
+      workspaceRoot: codingRoot,
+      holderId: codingSessionId ?? "anonymous",
+      enabled: symbolLeaseEnabled,
+      mode: symbolLeaseMode,
+    });
     // C2-8 journal first (pre-write snapshot)
     next = wrapToolWithWriteJournal(next, {
       workspaceRoot: codingRoot,
@@ -915,8 +931,8 @@ export function createOpenClawCodingTools(options?: {
     : [];
   options?.recordToolPrepStage?.("base-coding-tools");
 
-  // COMPASS: memory_query tool 鈥?agent 鍙富鍔ㄦ煡璇㈤暱鏈熻蹇?(鍙?persist + COMPASS 闂ㄦ帶).
-  // factory 杩斿洖 null 鏃惰烦杩囨敞鍐?(persist 鏈紑鍚垨 COMPASS disabled).
+  // COMPASS: memory_query tool 閳?agent 閸欘垯瀵岄崝銊︾叀鐠囥垽鏆遍張鐔活唶韫?(閸?persist + COMPASS 闂傘劍甯?.
+  // factory 鏉╂柨娲?null 閺冩儼鐑︽潻鍥ㄦ暈閸?(persist 閺堫亜绱戦崥顖涘灗 COMPASS disabled).
   const memoryQueryTool = createMemoryQueryTool({ config: options?.config });
   if (memoryQueryTool) {
     base.push(memoryQueryTool);
