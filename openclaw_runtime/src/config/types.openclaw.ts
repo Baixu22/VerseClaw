@@ -158,6 +158,8 @@ export type RuntimeFeatureConfig = {
     symbolLease?: { enabled?: boolean; mode?: "memory" | "wal" };
     patchFlow?: { default?: boolean; enabled?: boolean };
     sekb?: { enabled?: boolean; experienceShadow?: boolean };
+    routingMemo?: { shadow?: boolean; enabled?: boolean };
+    verifier?: { noSelfRepair?: boolean };
   };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
   contextRuntimeKit?: {

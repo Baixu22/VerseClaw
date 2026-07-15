@@ -23,6 +23,12 @@ export type DistillationToolOptions = {
 export type ConfirmAndSaveOptions = {
   contextBlockSink?: ContextBlockSink;
   sessionId?: string;
+  /** C7-2: opt-in experience shadow journal (default off / omitted). */
+  experienceShadow?: {
+    workspaceRoot: string;
+    enabled: boolean;
+    dualWrite?: boolean;
+  };
 };
 
 /** Manual SEKB distillation flow: suggestions are advisory until confirmed. */
@@ -134,15 +140,18 @@ export class DistillationTool {
     // DCS Stage 5: best-effort experience Block write via ContextBlockSink.
     // ANTI-8: suggest_principles_from_trajectories does NOT write Blocks;
     // only confirm_and_save (here) writes experience Blocks.
-    if (options.contextBlockSink && options.sessionId) {
+    // Production BlockStore write when sink+session present (unchanged).
+    // C7-2 experience shadow is opt-in only via options.experienceShadow.enabled.
+    if ((options.contextBlockSink && options.sessionId) || (options.experienceShadow?.enabled && options.sessionId)) {
       void handleConfirmAndSave({
         principle,
         suggestion,
-        sessionId: options.sessionId,
+        sessionId: options.sessionId!,
         contextBlockSink: options.contextBlockSink,
         now,
+        ...(options.experienceShadow ? { experienceShadow: options.experienceShadow } : {}),
       }).catch(() => {
-        // Best-effort: sink failure does not block the SEKB save.
+        // Best-effort: sink/shadow failure does not block the SEKB save.
       });
     }
 
