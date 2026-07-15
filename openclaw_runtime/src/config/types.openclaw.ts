@@ -145,6 +145,20 @@ export type RuntimeFeatureConfig = {
       };
     };
   };
+  /**
+   * Coding FactStore / write-kit / residual isolation flags (CODING-OPTIMIZATION-EDD).
+   * Advanced backends stay opt-in with safe defaults.
+   */
+  coding?: {
+    factViews?: { enabled?: boolean };
+    parseOnTouch?: { enabled?: boolean };
+    staleWriteGuard?: { enabled?: boolean };
+    writeJournal?: { enabled?: boolean };
+    worktree?: { backend?: "inprocess" | "git" };
+    symbolLease?: { mode?: "memory" | "wal" };
+    patchFlow?: { default?: boolean; enabled?: boolean };
+    sekb?: { enabled?: boolean; experienceShadow?: boolean };
+  };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
   contextRuntimeKit?: {
     /** Set false to roll backend context engine selection back to legacy without UI changes. */

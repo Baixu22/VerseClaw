@@ -1,0 +1,11 @@
+﻿{
+  "ok": true,
+  "remaining": true,
+  "c0": true,
+  "c2": true,
+  "c1_2": { "fixtureCount": 12, "reductionFactor": 5.083, "meetsGate": true },
+  "c4": { "merge": ["merged", "conflict"] },
+  "c5": { "leaseHeld": true, "mode": "patch-flow" },
+  "c6": { "compaction": ["archive", "tool_output_compress", "token_pressure_emergency"] },
+  "c7": { "memoCount": 1, "verifierNoSelfRepair": true }
+}
