@@ -84,6 +84,8 @@ artifacts/*
 !artifacts/coding-c1/**
 !artifacts/coding-c2/
 !artifacts/coding-c2/**
+!artifacts/coding-c3/
+!artifacts/coding-c3/**
 .delivery/
 docs/pr-session-notes-*.md
 

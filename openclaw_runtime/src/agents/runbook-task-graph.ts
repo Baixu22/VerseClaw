@@ -1,3 +1,4 @@
+import { resolveWorkerWriteSet } from "./orchestration-protocol.js";
 import type {
   OrchestrationTaskEdge,
   OrchestrationTaskGraph,
@@ -23,6 +24,8 @@ export type BuildTaskGraphFromRunbookInput = {
   graphRunId: string;
   knownRoleNames: readonly string[];
   selectionTrace?: RunbookSelectionResult;
+  /** Optional file scope; applied only to writer-like runbook nodes. */
+  fileHints?: readonly string[];
 };
 
 function phaseForRunbookNode(node: RunbookTemplateNode): OrchestrationTaskNodePhase {
@@ -104,6 +107,12 @@ export function buildTaskGraphFromRunbook(
   const idMap = new Map(input.template.graph.nodes.map((node) => [node.id, prefixedNodeId(input.template, node.id)]));
   const nodes = input.template.graph.nodes.map((node) => {
     const isVerifier = node.verifier === true || node.roleName === input.template.verification.verifierRole;
+    const writeSet = isVerifier
+      ? undefined
+      : resolveWorkerWriteSet({
+          roleName: node.roleName,
+          fileHints: input.fileHints,
+        });
     return {
       taskNodeId: idMap.get(node.id)!,
       roleName: node.roleName,
@@ -118,6 +127,7 @@ export function buildTaskGraphFromRunbook(
       },
       status: node.dependsOn?.length ? "planned" : "ready",
       ...(isVerifier ? { isVerifier: true } : {}),
+      ...(writeSet ? { writeSet } : {}),
     } satisfies OrchestrationTaskNode;
   });
 
