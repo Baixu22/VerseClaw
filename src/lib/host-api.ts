@@ -125,7 +125,20 @@ import type {
   AgentDevVisualPresetResult,
   AgentDevWorkbenchEvidenceResult,
   AgentUpdateReasoningEffortPayload,
+  AgentUpdateAvatarPayload,
   AgentUpdatePayload,
+  AgencyRoleDecisionPayload,
+  AgencyRoleListResult,
+  AgencyRoleMemoryProposalsPayload,
+  AgencyRoleMemoryProposalsResult,
+  AgencyRolePackageImportPayload,
+  AgencyRolePackageListResult,
+  AgencyRolePackageRefreshPayload,
+  AgencyRolePackageResult,
+  AgencyRolePromotionPreviewResult,
+  AgencyRolePromotionResult,
+  AgencyRoleReviewPayload,
+  AgencyRoleSourcePayload,
   CapabilityPublicationQuery,
   CapabilityPublicationResult,
   ChannelAccountsPayload,
@@ -236,20 +249,20 @@ import type {
   KnowledgeRouteContextPayload,
   KnowledgeRouteContextResult,
   KnowledgeRuntimeLessonsReportResult,
-  KnowledgeSekbBatchDistillSuggestPayload,
-  KnowledgeSekbBatchDistillSuggestResult,
-  KnowledgeSekbConfirmPrinciplePayload,
-  KnowledgeSekbConfirmPrincipleResult,
-  KnowledgeSekbRejectSuggestionPayload,
-  KnowledgeSekbRejectSuggestionResult,
-  KnowledgeSekbShadowEvaluationExportPayload,
-  KnowledgeSekbShadowEvaluationExportResult,
-  KnowledgeSekbShadowEvaluationProtocolPayload,
-  KnowledgeSekbShadowEvaluationProtocolResult,
-  KnowledgeSekbShadowEvaluationReportPayload,
-  KnowledgeSekbShadowEvaluationReportResult,
-  KnowledgeSekbSuggestPrinciplesPayload,
   KnowledgeSekbSuggestPrinciplesResult,
+  KnowledgeSekbSuggestPrinciplesPayload,
+  KnowledgeSekbShadowEvaluationReportResult,
+  KnowledgeSekbShadowEvaluationReportPayload,
+  KnowledgeSekbShadowEvaluationProtocolResult,
+  KnowledgeSekbShadowEvaluationProtocolPayload,
+  KnowledgeSekbShadowEvaluationExportResult,
+  KnowledgeSekbShadowEvaluationExportPayload,
+  KnowledgeSekbRejectSuggestionResult,
+  KnowledgeSekbRejectSuggestionPayload,
+  KnowledgeSekbConfirmPrincipleResult,
+  KnowledgeSekbConfirmPrinciplePayload,
+  KnowledgeSekbBatchDistillSuggestResult,
+  KnowledgeSekbBatchDistillSuggestPayload,
   KnowledgeSearchPayload,
   KnowledgeSearchResult,
   KnowledgeSaveSourceSetPayload,
@@ -408,6 +421,7 @@ import type {
   MemoryExplainInjectionPayload,
   MemoryListPayload,
   MemoryProposal,
+  MemoryProposalPreviewResult,
   MemorySearchPayload,
   MemoryUpdatePayload,
 } from '@shared/host-api/contract';
@@ -518,20 +532,20 @@ export type {
   KnowledgeRouteCandidateGroupKey,
   KnowledgeRouteContextResult,
   KnowledgeRuntimeLessonsReportResult,
-  KnowledgeSekbBatchDistillSuggestPayload,
-  KnowledgeSekbBatchDistillSuggestResult,
-  KnowledgeSekbConfirmPrinciplePayload,
-  KnowledgeSekbConfirmPrincipleResult,
-  KnowledgeSekbRejectSuggestionPayload,
-  KnowledgeSekbRejectSuggestionResult,
-  KnowledgeSekbShadowEvaluationExportPayload,
-  KnowledgeSekbShadowEvaluationExportResult,
-  KnowledgeSekbShadowEvaluationProtocolPayload,
-  KnowledgeSekbShadowEvaluationProtocolResult,
-  KnowledgeSekbShadowEvaluationReportPayload,
-  KnowledgeSekbShadowEvaluationReportResult,
-  KnowledgeSekbSuggestPrinciplesPayload,
   KnowledgeSekbSuggestPrinciplesResult,
+  KnowledgeSekbSuggestPrinciplesPayload,
+  KnowledgeSekbShadowEvaluationReportResult,
+  KnowledgeSekbShadowEvaluationReportPayload,
+  KnowledgeSekbShadowEvaluationProtocolResult,
+  KnowledgeSekbShadowEvaluationProtocolPayload,
+  KnowledgeSekbShadowEvaluationExportResult,
+  KnowledgeSekbShadowEvaluationExportPayload,
+  KnowledgeSekbRejectSuggestionResult,
+  KnowledgeSekbRejectSuggestionPayload,
+  KnowledgeSekbConfirmPrincipleResult,
+  KnowledgeSekbConfirmPrinciplePayload,
+  KnowledgeSekbBatchDistillSuggestResult,
+  KnowledgeSekbBatchDistillSuggestPayload,
   KnowledgeErrorGuardAdvisory,
   KnowledgeErrorGuardSignal,
   KnowledgeMatchErrorExperienceResult,
@@ -979,6 +993,8 @@ export const hostApi = {
     list: (input: MemoryListPayload) => invokeHost('memory', 'list', input),
     search: (input: MemorySearchPayload) => invokeHost('memory', 'search', input),
     detail: (input: MemoryDetailPayload) => invokeHost('memory', 'detail', input),
+    previewProposal: (input: MemoryProposal): Promise<MemoryProposalPreviewResult> =>
+      invokeHost('memory', 'previewProposal', input),
     propose: (input: MemoryProposal) => invokeHost('memory', 'propose', input),
     update: (input: MemoryUpdatePayload) => invokeHost('memory', 'update', input),
     health: () => invokeHost('memory', 'health'),
@@ -1046,6 +1062,10 @@ export const hostApi = {
     updateReasoningEffort: (id: string, reasoningEffort: AgentUpdateReasoningEffortPayload['reasoningEffort']) => (
       invokeHost('agents', 'updateReasoningEffort', { id, reasoningEffort })
     ),
+    updateAvatar: (id: string, preset: AgentUpdateAvatarPayload['preset']) => (
+      invokeHost('agents', 'updateAvatar', { id, preset })
+    ),
+    resetAvatar: (id: string) => invokeHost('agents', 'resetAvatar', { id }),
     getBootstrap: (id: string) => invokeHost('agents', 'getBootstrap', { id }),
     updateBootstrap: (input: AgentBootstrapUpdatePayload) => invokeHost('agents', 'updateBootstrap', input),
     delete: (id: string) => invokeHost('agents', 'delete', { id }),
@@ -1059,6 +1079,43 @@ export const hostApi = {
   roles: {
     upsertConfigRole: (input: RoleUpsertConfigRolePayload): Promise<RoleUpsertConfigRoleResult> => (
       invokeHost('roles', 'upsertConfigRole', input)
+    ),
+    agencyCatalog: (input: AgencyRoleSourcePayload): Promise<AgencyRoleListResult> => (
+      invokeHost('roles', 'agencyCatalog', input)
+    ),
+    listAgencyPackages: (): Promise<AgencyRolePackageListResult> => (
+      invokeHost('roles', 'listAgencyPackages')
+    ),
+    importAgencyPackage: (input: AgencyRolePackageImportPayload): Promise<AgencyRolePackageResult> => (
+      invokeHost('roles', 'importAgencyPackage', input)
+    ),
+    refreshAgencyPackage: (input: AgencyRolePackageRefreshPayload): Promise<AgencyRolePackageResult> => (
+      invokeHost('roles', 'refreshAgencyPackage', input)
+    ),
+    previewAgencyPromotion: (
+      input: AgencyRoleReviewPayload,
+    ): Promise<AgencyRolePromotionPreviewResult> => (
+      invokeHost('roles', 'previewAgencyPromotion', input)
+    ),
+    previewAgencyMemoryProposals: (
+      input: AgencyRoleMemoryProposalsPayload,
+    ): Promise<AgencyRoleMemoryProposalsResult> => (
+      invokeHost('roles', 'previewAgencyMemoryProposals', input)
+    ),
+    reviewAgencyPromotion: (
+      input: AgencyRoleReviewPayload,
+    ): Promise<AgencyRolePromotionResult> => (
+      invokeHost('roles', 'reviewAgencyPromotion', input)
+    ),
+    approveAgencyPromotion: (
+      input: AgencyRoleDecisionPayload,
+    ): Promise<AgencyRolePromotionResult> => (
+      invokeHost('roles', 'approveAgencyPromotion', input)
+    ),
+    retireAgencyPromotion: (
+      input: AgencyRoleDecisionPayload,
+    ): Promise<AgencyRolePromotionResult> => (
+      invokeHost('roles', 'retireAgencyPromotion', input)
     ),
   },
   diagnostics: {
@@ -1386,7 +1443,21 @@ export const hostApi = {
     routeContext: (input: KnowledgeRouteContextPayload): Promise<KnowledgeRouteContextResult> => (
       invokeHost('knowledge', 'routeContext', input)
     ),
-    runtimeLessonsReport: (): Promise<KnowledgeRuntimeLessonsReportResult> => (
+    runtimeLessonsReport: (): Promise<KnowledgeRuntimeLessonsReportResult,
+  KnowledgeSekbSuggestPrinciplesResult,
+  KnowledgeSekbSuggestPrinciplesPayload,
+  KnowledgeSekbShadowEvaluationReportResult,
+  KnowledgeSekbShadowEvaluationReportPayload,
+  KnowledgeSekbShadowEvaluationProtocolResult,
+  KnowledgeSekbShadowEvaluationProtocolPayload,
+  KnowledgeSekbShadowEvaluationExportResult,
+  KnowledgeSekbShadowEvaluationExportPayload,
+  KnowledgeSekbRejectSuggestionResult,
+  KnowledgeSekbRejectSuggestionPayload,
+  KnowledgeSekbConfirmPrincipleResult,
+  KnowledgeSekbConfirmPrinciplePayload,
+  KnowledgeSekbBatchDistillSuggestResult,
+  KnowledgeSekbBatchDistillSuggestPayload> => (
       invokeHost('knowledge', 'runtimeLessonsReport')
     ),
     sekbShadowEvaluationExport: (input: KnowledgeSekbShadowEvaluationExportPayload): Promise<KnowledgeSekbShadowEvaluationExportResult> => (
@@ -1410,7 +1481,7 @@ export const hostApi = {
     sekbRejectSuggestion: (input: KnowledgeSekbRejectSuggestionPayload): Promise<KnowledgeSekbRejectSuggestionResult> => (
       invokeHost('knowledge', 'sekbRejectSuggestion', input)
     ),
-    matchErrorExperience: (input: KnowledgeMatchErrorExperiencePayload): Promise<KnowledgeMatchErrorExperienceResult> => (
+        matchErrorExperience: (input: KnowledgeMatchErrorExperiencePayload): Promise<KnowledgeMatchErrorExperienceResult> => (
       invokeHost('knowledge', 'matchErrorExperience', input)
     ),
     updateErrorExperienceEffectiveness: (input: KnowledgeUpdateErrorExperienceEffectivenessPayload): Promise<KnowledgeUpdateErrorExperienceEffectivenessResult> => (

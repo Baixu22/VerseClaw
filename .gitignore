@@ -78,6 +78,14 @@ build/
 artifacts/*
 !artifacts/capability-claims/
 !artifacts/capability-claims/status-table.json
+!artifacts/coding-c0/
+!artifacts/coding-c0/**
+!artifacts/coding-c1/
+!artifacts/coding-c1/**
+!artifacts/coding-c2/
+!artifacts/coding-c2/**
+!artifacts/coding-c3/
+!artifacts/coding-c3/**
 
 # SEKB Hermes Phase A5 acceptance evidence (Pass-D1 hold pack)
 !artifacts/sekb-hermes-phase-a5/
