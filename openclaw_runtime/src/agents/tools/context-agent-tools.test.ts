@@ -435,7 +435,8 @@ describe("DCS FactStore view tools (C0-1')", () => {
     const budget = recordContextToolSchemaBudget(tools);
     expect(budget.toolCount).toBe(7);
     expect(budget.schemaChars).toBeGreaterThan(0);
-    expect(serializeContextToolSchemas(tools).length).toBe(budget.schemaChars);
+    expect(serializeContextToolSchemas(tools, budget.schemaMode).length).toBe(budget.schemaChars);
+    expect(budget.summarySchemaChars).toBeLessThanOrEqual(budget.fullSchemaChars);
     const snap = codingObservability.snapshot();
     expect(snap.schemaToolCount).toBe(7);
     expect(snap.schemaChars).toBe(budget.schemaChars);

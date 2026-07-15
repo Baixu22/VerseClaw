@@ -678,12 +678,6 @@ export function recordContextToolSchemaBudget(tools: AnyAgentTool[]): {
     registrySavingsChars: registry.savingsChars,
     schemaMode,
   };
-} {
-  const serialized = serializeContextToolSchemas(tools);
-  const toolCount = tools.length;
-  const schemaChars = serialized.length;
-  codingObservability.recordSchemaOccupancy(toolCount, schemaChars);
-  return { toolCount, schemaChars };
 }
 
 /** Build DCS context tools that have required deps; omit missing ones. */
