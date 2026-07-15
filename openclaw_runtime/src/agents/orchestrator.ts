@@ -9,8 +9,10 @@ import {
   buildTaskGraph,
   resolveWorkerWriteSet,
   normalizeGraphMode,
+  normalizeIsolationMode,
   normalizeRepairPolicy,
   taskGraphWorkerNodes,
+  type CodingIsolationMode,
   type OrchestrationExecutionWave,
   type OrchestrationGraphMode,
   type OrchestrationQualityPolicy,
@@ -34,6 +36,11 @@ export type OrchestratorRequest = {
   task: string;
   agentId?: string;
   fileHints?: string[];
+  /**
+   * C4-4: workspace isolation. Default shared. Opt-in worktree for heavy multi-worker jobs.
+   * Interface only in this wave — production default must remain shared.
+   */
+  isolation?: CodingIsolationMode;
   important?: boolean;
   roles?: readonly RoleContract[];
   /** Optional explicit worker plan supplied by operator UI wrappers. */
@@ -80,6 +87,10 @@ export type OrchestratorWorkerPlan = {
    * inherit request.fileHints via resolveWorkerWriteSet (no free-text invention).
    */
   writeSet?: string[];
+  /** C4-4: per-worker isolation override (defaults to plan/request isolation). */
+  isolation?: CodingIsolationMode;
+  /** C4-3: worktree id when isolation=worktree. */
+  worktreeId?: string;
 };
 
 export type OrchestratorPlan = {
@@ -96,6 +107,8 @@ export type OrchestratorPlan = {
   executionWaves: OrchestrationExecutionWave[];
   capabilityGaps: RouteDiagnostics["capabilityGaps"];
   estimatedRepairPolicy: OrchestrationRepairPolicy;
+  /** C4-4: plan-level isolation (default shared). */
+  isolation: CodingIsolationMode;
   complexityDecision: ComplexityGateDecision;
   runbookSelection: RunbookSelectionResult;
 };
@@ -147,20 +160,25 @@ function buildPlanGraph(params: {
   executionWaves: OrchestrationExecutionWave[];
   estimatedRepairPolicy: OrchestrationRepairPolicy;
   projectedWorkers: OrchestratorWorkerPlan[];
+  isolation: CodingIsolationMode;
 } {
   const repairPolicy = params.request.repairPolicy ?? normalizeRepairPolicy(undefined);
   const graphMode = normalizeGraphMode(params.request.graphMode);
+  const isolation = normalizeIsolationMode(params.request.isolation);
   const graphWorkers = params.workers.map((worker) => {
     const writeSet = resolveWorkerWriteSet({
       roleName: worker.roleName,
       explicit: worker.writeSet,
       fileHints: params.request.fileHints,
     });
+    const workerIsolation = normalizeIsolationMode(worker.isolation ?? isolation);
     return {
       roleName: worker.roleName,
       task: worker.task,
       ...(worker.modelRef !== undefined ? { modelRef: worker.modelRef } : {}),
       ...(writeSet ? { writeSet } : {}),
+      ...(workerIsolation !== "shared" ? { isolation: workerIsolation } : worker.isolation ? { isolation: worker.isolation } : {}),
+      ...(worker.worktreeId ? { worktreeId: worker.worktreeId } : {}),
     };
   });
   const taskGraph = buildTaskGraph({
@@ -189,9 +207,17 @@ function buildPlanGraph(params: {
       label: source?.label,
       modelRef: node.modelRef,
       ...(node.writeSet ? { writeSet: [...node.writeSet] } : {}),
+      ...(node.isolation ? { isolation: node.isolation } : source?.isolation ? { isolation: source.isolation } : {}),
+      ...(node.worktreeId ? { worktreeId: node.worktreeId } : source?.worktreeId ? { worktreeId: source.worktreeId } : {}),
     };
   });
-  return { taskGraph, executionWaves, estimatedRepairPolicy: repairPolicy, projectedWorkers };
+  return {
+    taskGraph,
+    executionWaves,
+    estimatedRepairPolicy: repairPolicy,
+    projectedWorkers,
+    isolation,
+  };
 }
 
 function buildP2Metadata(request: OrchestratorRequest): {
@@ -224,10 +250,14 @@ function buildP2Metadata(request: OrchestratorRequest): {
 }
 
 function attachP2Metadata(
-  plan: Omit<OrchestratorPlan, "complexityDecision" | "runbookSelection">,
+  plan: Omit<OrchestratorPlan, "complexityDecision" | "runbookSelection" | "isolation"> & {
+    isolation?: CodingIsolationMode;
+  },
   metadata: ReturnType<typeof buildP2Metadata>,
+  request?: OrchestratorRequest,
 ): OrchestratorPlan {
-  return { ...plan, ...metadata };
+  const isolation = normalizeIsolationMode(plan.isolation ?? request?.isolation);
+  return { ...plan, isolation, ...metadata };
 }
 
 function createRunbookPlan(
@@ -283,8 +313,10 @@ function createRunbookPlan(
       executionWaves: buildExecutionWaves(taskGraph, normalizeMaxWorkers(request.maxWorkers)),
       capabilityGaps: routeDiagnostics.capabilityGaps,
       estimatedRepairPolicy: repairPolicy,
+      isolation: normalizeIsolationMode(request.isolation),
     },
     metadata,
+    request,
   );
 }
 
@@ -307,6 +339,8 @@ function createExplicitWorkersPlan(request: OrchestratorRequest): OrchestratorPl
     label: worker.label,
     modelRef: worker.modelRef ?? null,
     ...(worker.writeSet !== undefined ? { writeSet: [...worker.writeSet] } : {}),
+    ...(worker.isolation ? { isolation: worker.isolation } : {}),
+    ...(worker.worktreeId ? { worktreeId: worker.worktreeId } : {}),
   }));
   const workers = capWorkers(allWorkers, maxWorkers);
   const reasons = [
@@ -343,8 +377,10 @@ function createExplicitWorkersPlan(request: OrchestratorRequest): OrchestratorPl
       executionWaves: graph.executionWaves,
       capabilityGaps: routeDiagnostics.capabilityGaps,
       estimatedRepairPolicy: graph.estimatedRepairPolicy,
+      isolation: graph.isolation,
     },
     metadata,
+    request,
   );
 }
 
@@ -429,8 +465,10 @@ function createTemplatePlan(
       executionWaves: graph.executionWaves,
       capabilityGaps: routeDiagnostics.capabilityGaps,
       estimatedRepairPolicy: graph.estimatedRepairPolicy,
+      isolation: graph.isolation,
     },
     metadata,
+    request,
   );
 }
 
@@ -531,8 +569,10 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
         executionWaves: graph.executionWaves,
         capabilityGaps: routeDiagnostics.capabilityGaps,
         estimatedRepairPolicy: graph.estimatedRepairPolicy,
+        isolation: graph.isolation,
       },
       metadata,
+      request,
     );
   }
   const workerNames = [...new Set(route.supporting.map((match) => match.role.name))];
@@ -579,8 +619,10 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
       executionWaves: graph.executionWaves,
       capabilityGaps: routeDiagnostics.capabilityGaps,
       estimatedRepairPolicy: graph.estimatedRepairPolicy,
+      isolation: graph.isolation,
     },
     metadata,
+    request,
   );
 }
 

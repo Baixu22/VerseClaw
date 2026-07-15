@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "cards": {
+    "C4-1": "worktree create/merge/cleanup under .openclaw/worktrees/<id>",
+    "C4-2": "serial merge queue + configurable conflict policy (default mark_conflict)",
+    "C4-3": "HandoffPack writeSet + worktreeId + isolation coordinates",
+    "C4-4": "isolation request shared|worktree (default shared)"
+  },
+  "honesty": {
+    "completionClass": "done (interface)",
+    "defaultIsolation": "shared",
+    "defaultBackend": "inprocess",
+    "productionGitWorktreeHardened": false,
+    "notC4H": true
+  }
+}

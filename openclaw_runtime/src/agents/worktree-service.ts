@@ -1,9 +1,12 @@
 /**
- * C4 / C4-H: worktree isolation primitives create/merge/cleanup + merge queue.
+ * C4 worktree isolation interface: create/merge/cleanup + serial merge queue.
  *
  * Backends:
  * - inprocess (default): directory simulation under `.openclaw/worktrees/<id>`
  * - git: real `git worktree add/remove` when repo is a git work tree; falls back to inprocess
+ *
+ * Completion class for this wave: interface (inprocess default). Git backend is
+ * opt-in and not claimed as production-hardened C4-H.
  */
 import { execFileSync } from "node:child_process";
 import {
@@ -41,19 +44,26 @@ export type MergeQueueItem = {
   reason?: string;
 };
 
+/** Safe default marks conflict; optional policies return work to worker or escalate lead. */
+export type MergeConflictPolicy = "mark_conflict" | "return_worker" | "escalate_lead";
+
 export type WorktreeService = {
   backend: WorktreeBackend;
   create(id: string, options?: { writeSet?: string[]; seedFiles?: string[] }): WorktreeRecord;
   pathFor(id: string): string;
   list(): WorktreeRecord[];
   enqueueMerge(item: Omit<MergeQueueItem, "status"> & { status?: MergeQueueItem["status"] }): MergeQueueItem;
-  processMergeQueue(factStore?: FactStore): MergeQueueItem[];
+  processMergeQueue(
+    factStore?: FactStore,
+    options?: { conflictPolicy?: MergeConflictPolicy },
+  ): MergeQueueItem[];
   cleanup(id: string): void;
   getMergeQueue(): MergeQueueItem[];
 };
 
 export type CreateWorktreeServiceOptions = {
   backend?: WorktreeBackend;
+  conflictPolicy?: MergeConflictPolicy;
 };
 
 const registry = new Map<string, { records: Map<string, WorktreeRecord>; queue: MergeQueueItem[] }>();
@@ -93,6 +103,26 @@ function resolveBackend(baseRoot: string, requested: WorktreeBackend): WorktreeB
   return isGitRepo(baseRoot) ? "git" : "inprocess";
 }
 
+function applyConflictPolicy(
+  item: MergeQueueItem,
+  rec: WorktreeRecord | undefined,
+  baseReason: string,
+  policy: MergeConflictPolicy,
+): void {
+  if (policy === "return_worker") {
+    item.status = "rework";
+    item.reason = `return_worker:${baseReason}`;
+  } else if (policy === "escalate_lead") {
+    item.status = "conflict";
+    item.reason = `escalate_lead:${baseReason}`;
+  } else {
+    item.status = "conflict";
+    item.reason = baseReason;
+  }
+  if (rec) rec.status = "conflict";
+  codingObservability.recordMergeOutcome(true);
+}
+
 export function createWorktreeService(
   baseRoot: string,
   options?: CreateWorktreeServiceOptions,
@@ -100,6 +130,7 @@ export function createWorktreeService(
   const resolved = path.resolve(baseRoot);
   const requested = options?.backend ?? "inprocess";
   const backend = resolveBackend(resolved, requested);
+  const defaultConflictPolicy: MergeConflictPolicy = options?.conflictPolicy ?? "mark_conflict";
   const rootDir = path.join(resolved, ".openclaw", "worktrees");
 
   return {
@@ -120,14 +151,11 @@ export function createWorktreeService(
         }
         gitBranch = `openclaw/wt-${id.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 40)}`;
         try {
-          // Prefer detached worktree from HEAD for isolation.
           git(["worktree", "add", "--detach", wtRoot, "HEAD"], resolved);
         } catch {
-          // Fallback: branch-based worktree
           try {
             git(["worktree", "add", "-B", gitBranch, wtRoot, "HEAD"], resolved);
           } catch {
-            // Ultimate fallback: inprocess tree for this id
             mkdirSync(wtRoot, { recursive: true });
             gitBranch = undefined;
           }
@@ -159,10 +187,9 @@ export function createWorktreeService(
         createdAtMs: Date.now(),
         status: "active",
         writeSet: createOptions?.writeSet,
-        backend: existsSync(path.join(wtRoot, ".git")) || backend === "git" ? backend : "inprocess",
+        backend: "inprocess",
         gitBranch,
       };
-      // If git worktree created, .git is a file pointer; treat requested backend as authoritative when tree exists.
       if (backend === "git" && existsSync(wtRoot)) {
         rec.backend = "git";
       }
@@ -187,8 +214,9 @@ export function createWorktreeService(
       s.queue.push(entry);
       return entry;
     },
-    processMergeQueue(factStore) {
+    processMergeQueue(factStore, processOptions) {
       const s = scope(resolved);
+      const policy = processOptions?.conflictPolicy ?? defaultConflictPolicy;
       const results: MergeQueueItem[] = [];
       // Serial merge
       for (const item of s.queue) {
@@ -198,27 +226,21 @@ export function createWorktreeService(
         }
         const rec = s.records.get(item.worktreeId);
         if (!rec) {
-          item.status = "conflict";
-          item.reason = "missing_worktree";
-          codingObservability.recordMergeOutcome(true);
+          applyConflictPolicy(item, undefined, "missing_worktree", policy);
           results.push(item);
           continue;
         }
-        // Conflict if another active worktree claims overlapping changed files already merged
         const conflictWith = results.find(
           (other) =>
             other.status === "merged" &&
             other.changedFiles.some((f) => item.changedFiles.includes(f)),
         );
         if (conflictWith) {
-          item.status = "conflict";
-          item.reason = `overlap_with_${conflictWith.worktreeId}`;
-          rec.status = "conflict";
-          codingObservability.recordMergeOutcome(true);
+          applyConflictPolicy(item, rec, `overlap_with_${conflictWith.worktreeId}`, policy);
           results.push(item);
           continue;
         }
-        // Content-level conflict: if base file differs from worktree and was also changed by another merge path
+        let contentConflict = false;
         for (const rel of item.changedFiles) {
           const src = path.join(rec.root, rel);
           const dest = path.join(resolved, rel);
@@ -226,20 +248,17 @@ export function createWorktreeService(
             try {
               const a = readFileSync(src, "utf8");
               const b = readFileSync(dest, "utf8");
-              // soft signal only; hard conflict already covered by overlap
               if (a !== b && results.some((r) => r.status === "merged" && r.changedFiles.includes(rel))) {
-                item.status = "conflict";
-                item.reason = `content_conflict_${rel}`;
-                rec.status = "conflict";
-                codingObservability.recordMergeOutcome(true);
+                applyConflictPolicy(item, rec, `content_conflict_${rel}`, policy);
+                contentConflict = true;
                 break;
               }
             } catch {
-              // ignore
+              // ignore read errors
             }
           }
         }
-        if (item.status === "conflict") {
+        if (contentConflict) {
           results.push(item);
           continue;
         }
@@ -254,7 +273,6 @@ export function createWorktreeService(
             // fail-open review
           }
         }
-        // Copy worktree files into base (works for both backends)
         for (const rel of item.changedFiles) {
           const src = path.join(rec.root, rel);
           const dest = path.join(resolved, rel);
@@ -314,4 +332,11 @@ export function listWorktreeDirs(baseRoot: string): string[] {
   const dir = path.join(path.resolve(baseRoot), ".openclaw", "worktrees");
   if (!existsSync(dir)) return [];
   return readdirSync(dir);
+}
+
+/** Ensure parent dirs exist before writing a relative path under a worktree root. */
+export function writeWorktreeFile(worktreeRoot: string, relativePath: string, content: string): void {
+  const dest = path.join(worktreeRoot, relativePath);
+  mkdirSync(path.dirname(dest), { recursive: true });
+  writeFileSync(dest, content, "utf8");
 }

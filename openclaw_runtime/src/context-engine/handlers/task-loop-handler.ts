@@ -163,6 +163,14 @@ export function buildChildHandoffPack(params: {
   currentPhase: RuntimeTaskStatus;
   recentActions: WorkingMemoryAction[];
   parentSessionId: string;
+  /** C4-3/C3: optional write-set coordinate (empty/absent = no constraint). */
+  writeSet?: string[];
+  /** C4-3: worktree id when isolation=worktree. */
+  worktreeId?: string;
+  /** Optional worktree root for diagnostics. */
+  worktreeRoot?: string;
+  /** C4-4: isolation mode (default shared when omitted). */
+  isolation?: "shared" | "worktree";
 }): HandoffPack {
   return {
     objective: params.objective.slice(0, 2000),
@@ -171,6 +179,10 @@ export function buildChildHandoffPack(params: {
       .filter((a) => a.significance === "high" || a.significance === "medium")
       .slice(0, 5),
     parent_session_id: params.parentSessionId,
+    ...(params.writeSet !== undefined ? { writeSet: [...params.writeSet] } : {}),
+    ...(params.worktreeId ? { worktreeId: params.worktreeId } : {}),
+    ...(params.worktreeRoot ? { worktreeRoot: params.worktreeRoot } : {}),
+    ...(params.isolation ? { isolation: params.isolation } : {}),
   };
 }
 
