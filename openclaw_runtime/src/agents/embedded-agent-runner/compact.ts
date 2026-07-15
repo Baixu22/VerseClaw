@@ -853,6 +853,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
     const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
       spawnedBy: params.spawnedBy,
       cfg: params.config,
+      workspaceRoot: effectiveWorkspace,
     });
     const toolsRaw = createOpenClawCodingTools({
       exec: {
@@ -872,6 +873,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
       runId: params.runId,
       dcsBlockStore: dcsExtensionDeps?.workingMemoryStore,
       dcsContextBlockSink: dcsExtensionDeps?.contextBlockSink,
+      factService: dcsExtensionDeps?.factService,
       groupId: params.groupId,
       groupChannel: params.groupChannel,
       groupSpace: params.groupSpace,

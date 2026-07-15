@@ -12,8 +12,7 @@ import type {
   RuntimeRegistryDiagnostic,
 } from "../runtime-core/index.js";
 import { gradingMetadata, type GradingMetadata } from "./provider-grading.js";
-import { createMaterializer, type Materializer } from "./factstore/materialize.js";
-import { openFactStore } from "./factstore/store.js";
+import { resolveWorkspaceFactService } from "./factstore/workspace-fact-service.js";
 import { analyzeImpact, type ImpactAnalysis } from "./views/impact/impact-view.js";
 
 export const IMPACT_CONTEXT_PROVIDER_ID = "impact-shadow";
@@ -111,21 +110,15 @@ export function createImpactContextProvider(options: ImpactContextProviderOption
 }
 
 function defaultAnalyze(): NonNullable<ImpactContextProviderOptions["analyze"]> {
-  const materializers = new Map<string, Materializer>();
   return (query) => {
     const workspace = query.workspace;
     const goal = query.goal?.trim();
     if (!workspace || !goal) return undefined;
-    const store = openFactStore(workspace);
-    let materializer = materializers.get(workspace);
-    if (!materializer) {
-      materializer = createMaterializer(store, workspace);
-      materializers.set(workspace, materializer);
-    }
+    const service = resolveWorkspaceFactService(workspace);
     if (query.activeFiles && query.activeFiles.length > 0) {
-      materializer.ensureFacts({ paths: query.activeFiles });
+      service.materializer.ensureFacts({ paths: query.activeFiles });
     }
-    return analyzeImpact(store, workspace, goal);
+    return analyzeImpact(service.store, service.repoRoot, goal);
   };
 }
 
