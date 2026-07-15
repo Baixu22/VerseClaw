@@ -155,7 +155,7 @@ export type RuntimeFeatureConfig = {
     staleWriteGuard?: { enabled?: boolean };
     writeJournal?: { enabled?: boolean };
     worktree?: { backend?: "inprocess" | "git" };
-    symbolLease?: { mode?: "memory" | "wal" };
+    symbolLease?: { enabled?: boolean; mode?: "memory" | "wal" };
     patchFlow?: { default?: boolean; enabled?: boolean };
     sekb?: { enabled?: boolean; experienceShadow?: boolean };
   };

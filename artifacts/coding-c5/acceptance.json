@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "card": "C5",
+  "completionClass": "done (interface)",
+  "leaseHeld": true,
+  "leaseConflictBlocked": true,
+  "leaseExpireReacquire": true,
+  "patchFlowSerialApply": true,
+  "destructiveApprovalPath": true,
+  "matrixRecommend": {
+    "light": "shared",
+    "multi": "worktree",
+    "dense": "patch-flow"
+  },
+  "defaultStillShared": true,
+  "flags": {
+    "symbolLeaseEnabled": false,
+    "symbolLeaseMode": "memory",
+    "patchFlowDefault": false
+  },
+  "howToEnable": {
+    "symbolLease": "runtime.coding.symbolLease.enabled=true (optional mode=memory|wal; default mode memory)",
+    "patchFlow": "call applyPatchProposalsSerial() / recommendIsolationMode(); do not set runtime.coding.patchFlow.default=true without C5-H evidence",
+    "isolationRecommend": "recommendIsolationMode({ durationMinutes, workerCount, writeDensity })"
+  },
+  "notC5H": true,
+  "multiProcessWalHardened": false,
+  "ts": "2026-07-15T08:57:38.009Z"
+}

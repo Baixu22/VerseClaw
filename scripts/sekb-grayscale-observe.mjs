@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 /**
  * SEKB Hermes Tier B grayscale observation (capture + report only).
  *
