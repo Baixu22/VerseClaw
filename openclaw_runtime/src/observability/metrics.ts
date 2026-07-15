@@ -128,3 +128,31 @@ export function buildDashboardSnapshot(
     alerts,
   };
 }
+
+
+/**
+ * Decision plan §5 "read" axis metric hooks (C0/C1-2 prep).
+ * Process counters live in context-engine/coding-observability.ts;
+ * this export is a stable name map for scorecard / A-B harnesses.
+ * Recording here is a no-op stub (does not change dashboard behavior).
+ */
+export const CODING_READ_AXIS_METRICS = {
+  /** Tool call count / token cost for navigation coding tasks (off/on A-B). */
+  toolCallsAndTokenCost: "coding.read.toolCallsAndTokenCost",
+  /** FactStore materializer hit rate (fresh / (fresh+parsed)). */
+  factStoreHitRate: "coding.read.factStoreHitRate",
+  /** Injected tool schema character occupancy (W0-4 / addendum 6). */
+  schemaOccupancy: "coding.read.schemaOccupancy",
+} as const;
+
+export type CodingReadAxisMetricKey =
+  (typeof CODING_READ_AXIS_METRICS)[keyof typeof CODING_READ_AXIS_METRICS];
+
+/** No-op stub: reserved for future dashboard wiring without changing current behavior. */
+export function recordCodingReadAxisMetric(
+  _key: CodingReadAxisMetricKey,
+  _value: number,
+  _labels?: Record<string, string>,
+): void {
+  // intentional no-op (C1-2 prep)
+}
