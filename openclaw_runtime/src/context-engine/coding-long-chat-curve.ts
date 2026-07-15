@@ -54,7 +54,7 @@ function makeToolBlock(turn: number, text: string): LifecycleBlock {
     presence: { always_on: false, background: true },
     entities: [],
     valid_at: new Date(),
-    created_at: new Date(),
+    created_at: new Date(Date.UTC(2026, 0, 1, 0, 0, turn)),
     mutability: "system_managed",
     summary: text.slice(0, 80),
     full_content: text,
@@ -79,7 +79,7 @@ export function runLongChatCurve(options?: LongChatCurveOptions): LongChatCurveR
     {
       block_id: "persona:main",
       block_type: "persona",
-      source_system: "system",
+      source_system: "role-contract",
       session_id: "long-chat-curve",
       presence: { always_on: true, background: false },
       entities: [],
@@ -95,7 +95,7 @@ export function runLongChatCurve(options?: LongChatCurveOptions): LongChatCurveR
     {
       block_id: "task:main",
       block_type: "task_state",
-      source_system: "system",
+      source_system: "task-loop",
       session_id: "long-chat-curve",
       presence: { always_on: true, background: false },
       entities: [],

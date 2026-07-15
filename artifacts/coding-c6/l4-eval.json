@@ -1,0 +1,30 @@
+{
+  "decision": "defer",
+  "evaluatedAt": "2026-07-15T08:25:20.976178+00:00",
+  "hybridRetrieverMode": "exact_keyword_fts_rrf_graph",
+  "semanticBranchPresent": false,
+  "embeddingDefaultOn": false,
+  "criteria": {
+    "recallLiftVsBaseline": null,
+    "latencyBudgetMs": null,
+    "costAcceptable": null,
+    "ablationComplete": false
+  },
+  "thresholds": {
+    "minRecallLift": 0.08,
+    "maxLatencyMs": 250
+  },
+  "evidence": [
+    "hybrid-retriever semantic branch removed (FTS + exact + RRF + graph only)",
+    "runtime-embedding-adapter available but not permanently defaulted for L4",
+    "C6 synthetic eval only; no live embedding ablation corpus"
+  ],
+  "recommendation": "Defer L4 embedding reinsert; keep hybrid-retriever non-semantic defaults",
+  "notes": [
+    "recall lift missing or below floor",
+    "latency budget missing or over max",
+    "cost acceptance not proven",
+    "ablation incomplete",
+    "C6-5 is evaluation-only; this wave must not permanently enable L4 embedding"
+  ]
+}

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 /**
  * SEKB local flag + inventory helper (CLI only, no GUI).
  *

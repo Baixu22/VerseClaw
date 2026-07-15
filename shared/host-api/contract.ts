@@ -2922,6 +2922,7 @@ export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
 
 export type KnowledgeRuntimeLessonsMetric =
   | { status: 'available'; value: number }
+  | { status: 'unavailable'; reason: string };
 
 export type KnowledgeSekbDistillationSuggestion = {
   cluster_summary: string;

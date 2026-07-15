@@ -196,6 +196,51 @@ describe("DCS Stage 5 context-read-tool", () => {
     expect(filtered).toContain('"resourceId":"a"');
   });
 
+
+  it("excludes archived blocks by default and returns them with includeArchived", async () => {
+    const { store } = createStore();
+    await store.upsert(
+      makeBlock("wm:active", "working_memory", {
+        source_system: "working-memory",
+        full_content: "active-note",
+        presence: { always_on: false, background: true },
+      }),
+      { write_origin: "handler", significance: "high" },
+    );
+    await store.upsert(
+      makeBlock("wm:archived", "working_memory", {
+        source_system: "working-memory",
+        full_content: "archived-note",
+        presence: {
+          always_on: false,
+          background: true,
+          lifecycle_state: "archived",
+          archived_at: BASE_TIME.toISOString(),
+        },
+      }),
+      { write_origin: "handler", significance: "high" },
+    );
+
+    const activeOnly = await readContext({
+      block_type: "working_memory",
+      sessionId: "session-a",
+      blockStore: store,
+      limit: 10,
+    });
+    expect(activeOnly.ok).toBe(true);
+    expect(activeOnly.contents).toEqual(["active-note"]);
+
+    const withArchived = await readContext({
+      block_type: "working_memory",
+      sessionId: "session-a",
+      blockStore: store,
+      limit: 10,
+      includeArchived: true,
+    });
+    expect(withArchived.ok).toBe(true);
+    expect(withArchived.contents.sort()).toEqual(["active-note", "archived-note"].sort());
+  });
+
   it("returns empty contents when no blocks match", async () => {
     const { store } = createStore();
     const result = await readContext({

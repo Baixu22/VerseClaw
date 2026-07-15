@@ -15,6 +15,7 @@ export type DcsObservabilitySnapshot = {
   injectionDuplicateSuppressions: number;
   workspaceScopeBound: number;
   workspaceScopeInvalidated: number;
+  contextLadderActionHits: Record<string, number>;
 };
 
 const ZERO: DcsObservabilitySnapshot = {
@@ -25,10 +26,11 @@ const ZERO: DcsObservabilitySnapshot = {
   injectionDuplicateSuppressions: 0,
   workspaceScopeBound: 0,
   workspaceScopeInvalidated: 0,
+  contextLadderActionHits: {},
 };
 
 class DcsObservabilityRegistry {
-  #counters: DcsObservabilitySnapshot = { ...ZERO };
+  #counters: DcsObservabilitySnapshot = { ...ZERO, contextLadderActionHits: {} };
 
   /**
    * Record one CVK systemPromptAddition injection application.
@@ -64,12 +66,21 @@ class DcsObservabilityRegistry {
     this.#counters.workspaceScopeInvalidated += delta;
   }
 
+  recordContextLadderAction(action: string): void {
+    const key = action.trim() || "unknown";
+    this.#counters.contextLadderActionHits[key] =
+      (this.#counters.contextLadderActionHits[key] ?? 0) + 1;
+  }
+
   snapshot(): DcsObservabilitySnapshot {
-    return { ...this.#counters };
+    return {
+      ...this.#counters,
+      contextLadderActionHits: { ...this.#counters.contextLadderActionHits },
+    };
   }
 
   reset(): void {
-    this.#counters = { ...ZERO };
+    this.#counters = { ...ZERO, contextLadderActionHits: {} };
   }
 }
 

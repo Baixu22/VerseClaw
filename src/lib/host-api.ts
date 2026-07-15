@@ -1443,21 +1443,7 @@ export const hostApi = {
     routeContext: (input: KnowledgeRouteContextPayload): Promise<KnowledgeRouteContextResult> => (
       invokeHost('knowledge', 'routeContext', input)
     ),
-    runtimeLessonsReport: (): Promise<KnowledgeRuntimeLessonsReportResult,
-  KnowledgeSekbSuggestPrinciplesResult,
-  KnowledgeSekbSuggestPrinciplesPayload,
-  KnowledgeSekbShadowEvaluationReportResult,
-  KnowledgeSekbShadowEvaluationReportPayload,
-  KnowledgeSekbShadowEvaluationProtocolResult,
-  KnowledgeSekbShadowEvaluationProtocolPayload,
-  KnowledgeSekbShadowEvaluationExportResult,
-  KnowledgeSekbShadowEvaluationExportPayload,
-  KnowledgeSekbRejectSuggestionResult,
-  KnowledgeSekbRejectSuggestionPayload,
-  KnowledgeSekbConfirmPrincipleResult,
-  KnowledgeSekbConfirmPrinciplePayload,
-  KnowledgeSekbBatchDistillSuggestResult,
-  KnowledgeSekbBatchDistillSuggestPayload> => (
+    runtimeLessonsReport: (): Promise<KnowledgeRuntimeLessonsReportResult> => (
       invokeHost('knowledge', 'runtimeLessonsReport')
     ),
     sekbShadowEvaluationExport: (input: KnowledgeSekbShadowEvaluationExportPayload): Promise<KnowledgeSekbShadowEvaluationExportResult> => (

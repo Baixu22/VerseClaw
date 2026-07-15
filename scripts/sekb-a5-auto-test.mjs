@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SEKB A.5 automated local test runner.
  *
  * Captures trajectories (DeepSeek-backed when key present), runs export/protocol/report,

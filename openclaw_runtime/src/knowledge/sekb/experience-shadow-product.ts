@@ -70,7 +70,6 @@ export function productizeExperienceShadow(params: {
     return { journaled: false };
   }
   const block = buildExperienceBlock(params.build);
-  let journaled = false;
   if (params.dualWrite) {
     appendExperienceShadowEvent(params.workspaceRoot, {
       atMs: Date.now(),
@@ -78,7 +77,6 @@ export function productizeExperienceShadow(params: {
       principleId: params.build.principle.principle_id,
       mode: "dual-write-shadow",
     });
-    journaled = true;
   } else {
     appendExperienceShadowEvent(params.workspaceRoot, {
       atMs: Date.now(),
@@ -86,9 +84,8 @@ export function productizeExperienceShadow(params: {
       principleId: params.build.principle.principle_id,
       mode: "shadow",
     });
-    journaled = true;
   }
-  return { block, journaled };
+  return { block, journaled: true };
 }
 
 /**
