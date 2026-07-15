@@ -1,0 +1,20 @@
+{
+  "schema": "sekb-shadow-evaluation-reviews.v1",
+  "authority": "offline_evaluation_evidence_not_runtime_source_of_truth",
+  "labels": [
+    "valuable",
+    "not_valuable",
+    "uncertain"
+  ],
+  "reviewers": [
+    "reviewerA",
+    "reviewerB"
+  ],
+  "notes": [
+    "Tier B grayscale observation uses unfilled reviews on purpose.",
+    "Do not treat automated smoke labels as human dual review.",
+    "evaluable_for_promotion remains false."
+  ],
+  "labelAuthority": "unfilled_grayscale_observation",
+  "reviews": []
+}

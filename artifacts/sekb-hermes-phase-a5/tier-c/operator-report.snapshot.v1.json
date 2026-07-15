@@ -1,0 +1,98 @@
+{
+  "counts": {
+    "trajectories": 312,
+    "undistilledTrajectories": 149,
+    "activePrinciples": 3
+  },
+  "evidence": {
+    "feedback": {
+      "confirmedPrinciples": 3,
+      "rejectedSuggestions": 0,
+      "rejectionBreakdown": {
+        "general": 0,
+        "batchAssisted": 0
+      },
+      "retrievals": 0,
+      "adoptions": 0,
+      "postAdoptionSuccesses": 0
+    },
+    "batchDistillationAssistant": {
+      "state": "disabled",
+      "suggestionCount": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "acceptedCount": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "rejectedCount": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "normalizedEditDistance": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "duplicateSuggestionRate": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "sourceAttributionCompleteness": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "inputTokens": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "outputTokens": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "totalCostUsd": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "fallbackCount": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      },
+      "subsequentAdoption": {
+        "status": "unavailable",
+        "reason": "no_batch_evidence"
+      }
+    },
+    "metricsUnavailable": [
+      {
+        "metric": "historical_suggestion_count",
+        "reason": "not_persisted"
+      },
+      {
+        "metric": "suggestion_edit_distance",
+        "reason": "not_persisted"
+      },
+      {
+        "metric": "historical_acceptance_rate",
+        "reason": "not_persisted"
+      },
+      {
+        "metric": "duplicate_principle_rate",
+        "reason": "not_evaluated"
+      }
+    ],
+    "shadow": {
+      "evaluatedTrajectories": 312,
+      "captureRecommendations": {
+        "retain": 312,
+        "review_low_signal": 0
+      },
+      "completionStatuses": {
+        "supported": 189,
+        "partial": 62,
+        "unsupported": 61,
+        "unknown": 0
+      }
+    }
+  }
+}

@@ -445,12 +445,97 @@ function appendAdviceToToolResultMessage(
   };
 }
 
-function defaultSekbTaskClassifier(event: BeforeAgentStartPayload): SekbTaskClassification {
+/** Maximum characters retained for task_intent from the raw prompt. */
+export const SEKB_DEFAULT_TASK_INTENT_MAX_CHARS = 2_000;
+
+/**
+ * Deterministic default classifier used when callers do not supply classifyTask.
+ * Coarse buckets only; no LLM and no expansion of sensitive persistence.
+ */
+export function defaultSekbTaskClassifier(event: {
+  prompt: string;
+  systemPrompt?: string;
+  resources?: unknown;
+}): SekbTaskClassification {
+  const prompt = typeof event.prompt === "string" ? event.prompt : "";
+  const systemPrompt = typeof event.systemPrompt === "string" ? event.systemPrompt : "";
+  const haystack = `${prompt}
+${systemPrompt}`.toLowerCase();
+  const tags: string[] = [];
+  let task_type = "agent/task";
+
+  if (matchesAny(haystack, [
+    "browser", "playwright", "puppeteer", "selenium", "navigate to", "click the",
+    "webpage", "web page", "http://", "https://",
+  ])) {
+    task_type = "browser/task";
+    tags.push("browser");
+  } else if (matchesAny(haystack, [
+    "debug", "troubleshoot", "stack trace", "stacktrace", "failing test",
+    "runtime error", "exception", "crash", "fix the bug",
+  ])) {
+    task_type = "debug/task";
+    tags.push("debug");
+  } else if (matchesAny(haystack, [
+    "deploy", "docker", "kubernetes", "k8s", "ci/cd", "pipeline", "infrastructure",
+    "ops/", "server config", "systemd",
+  ])) {
+    task_type = "ops/task";
+    tags.push("ops");
+  } else if (matchesAny(haystack, [
+    "typescript", "javascript", "python", "refactor", "compile", "eslint",
+    "unit test", "source code", "function ", "class ", "git commit", "pull request",
+    "code review",
+  ])) {
+    task_type = "code/task";
+    tags.push("code");
+  }
+
+  // Structured non-sensitive cues only (resource type labels, never payloads).
+  for (const tag of extractResourceTags(event.resources)) {
+    if (!tags.includes(tag)) {
+      tags.push(tag);
+    }
+  }
+
+  const task_intent = prompt.length > SEKB_DEFAULT_TASK_INTENT_MAX_CHARS
+    ? prompt.slice(0, SEKB_DEFAULT_TASK_INTENT_MAX_CHARS)
+    : prompt;
+
   return {
-    task_intent: event.prompt,
-    task_type: "agent/task",
-    context_tags: [],
+    task_intent,
+    task_type,
+    context_tags: tags.slice(0, 8),
   };
+}
+
+function matchesAny(haystack: string, needles: readonly string[]): boolean {
+  return needles.some((needle) => haystack.includes(needle));
+}
+
+function extractResourceTags(resources: unknown): string[] {
+  if (!Array.isArray(resources)) {
+    return [];
+  }
+  const tags: string[] = [];
+  for (const resource of resources) {
+    if (!resource || typeof resource !== "object") {
+      continue;
+    }
+    const record = resource as Record<string, unknown>;
+    const type = typeof record.type === "string" ? record.type.trim().toLowerCase() : "";
+    const kind = typeof record.kind === "string" ? record.kind.trim().toLowerCase() : "";
+    const candidate = type || kind;
+    if (
+      candidate
+      && candidate.length <= 40
+      && /^[a-z0-9][a-z0-9._/-]*$/.test(candidate)
+      && !/(?:secret|password|token|api[_-]?key|authorization)/.test(candidate)
+    ) {
+      tags.push(candidate);
+    }
+  }
+  return tags.slice(0, 4);
 }
 
 function safe<T>(

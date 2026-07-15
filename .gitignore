@@ -78,6 +78,14 @@ build/
 artifacts/*
 !artifacts/capability-claims/
 !artifacts/capability-claims/status-table.json
+
+# SEKB Hermes Phase A5 acceptance evidence (Pass-D1 hold pack)
+!artifacts/sekb-hermes-phase-a5/
+!artifacts/sekb-hermes-phase-a5/**
+artifacts/sekb-hermes-phase-a5/freezes/
+artifacts/sekb-hermes-phase-a5/runs/
+artifacts/sekb-hermes-phase-a5/**/*.log
+artifacts/sekb-hermes-phase-a5/**/*.sqlite
 .delivery/
 docs/pr-session-notes-*.md
 

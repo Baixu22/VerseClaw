@@ -1,0 +1,19 @@
+{
+  "enabled": false,
+  "userVisibleStatus": "feature_disabled",
+  "operatorEvidence": {
+    "batchId": null,
+    "traceId": null,
+    "recorded": false,
+    "status": "disabled",
+    "fallbackReason": null,
+    "attempts": 0,
+    "retryAttempted": false,
+    "skippedMissingTrajectoryIds": 0,
+    "inputTokens": null,
+    "outputTokens": null,
+    "totalCostUsd": null
+  },
+  "suggestionCount": 4,
+  "note": "Explicit invoke only; batch flag left false during Tier C"
+}

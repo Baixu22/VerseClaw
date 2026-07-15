@@ -10,6 +10,16 @@ import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { ContextBlockSink } from "../../context-engine/block.js";
 import { DistillationTool } from "../../knowledge/sekb/distillation-tool.js";
 import {
+  isSekbBatchDistillationAssistantEnabled as resolveSekbBatchDistillationAssistantEnabled,
+  isSekbEnabled as resolveSekbEnabled,
+  isSekbPhaseCWouldTriggerEnabled as resolveSekbPhaseCWouldTriggerEnabled,
+  isSekbShadowEvaluationEnabled as resolveSekbShadowEvaluationEnabled,
+} from "../../knowledge/sekb/feature-flags.js";
+import {
+  SekbBatchDistillationAssistant,
+  type SekbBatchDistillationAssistantOptions,
+} from "../../knowledge/sekb/batch-distillation-assistant.js";
+import {
   installSekbHarnessHooks,
   type SekbHarnessHookTarget,
 } from "../../knowledge/sekb/harness-integration.js";
@@ -30,6 +40,7 @@ export type EmbeddedSekbRuntime = {
   capture: TrajectoryCapture;
   injector: ContextInjector;
   distiller: DistillationTool;
+  batchDistillationAssistantEnabled: boolean;
 };
 
 /**
@@ -40,15 +51,36 @@ export function isSekbEnabled(
   cfg?: OpenClawConfig,
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
-  const raw = env.OPENCLAW_SEKB_ENABLED?.trim().toLowerCase();
-  if (raw === "1" || raw === "true" || raw === "yes" || raw === "on") {
-    return true;
-  }
-  if (raw === "0" || raw === "false" || raw === "no" || raw === "off") {
-    return false;
-  }
-  return cfg?.runtime?.contextBlock?.sekb?.enabled === true;
+  return resolveSekbEnabled(cfg, env);
 }
+
+/** Shadow metadata is opt-in and cannot activate the SEKB runtime on its own. */
+export function isSekbShadowEvaluationEnabled(
+  cfg?: OpenClawConfig,
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  return resolveSekbShadowEvaluationEnabled(cfg, env);
+}
+
+/**
+ * The batch assistant has its own environment override but still requires the
+ * existing SEKB master gate. It is only constructed by an explicit caller.
+ */
+export function isSekbBatchDistillationAssistantEnabled(
+  cfg?: OpenClawConfig,
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  return resolveSekbBatchDistillationAssistantEnabled(cfg, env);
+}
+
+/** Phase C would_trigger evidence is opt-in and never mutates durable SEKB state. */
+export function isSekbPhaseCWouldTriggerEnabled(
+  cfg?: OpenClawConfig,
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  return resolveSekbPhaseCWouldTriggerEnabled(cfg, env);
+}
+
 
 /**
  * Best-effort SEKB runtime for production embedded runs.
@@ -63,10 +95,22 @@ export function resolveEmbeddedSekbRuntime(params: {
   }
   try {
     const store = new KnowledgeStore();
-    const capture = new TrajectoryCapture({ store });
+    const capture = new TrajectoryCapture({
+      store,
+      shadowEvaluation: isSekbShadowEvaluationEnabled(params.cfg, params.env ?? process.env),
+    });
     const injector = new RetrievalEngine({ store }).create_context_injector();
     const distiller = new DistillationTool({ store });
-    return { store, capture, injector, distiller };
+    return {
+      store,
+      capture,
+      injector,
+      distiller,
+      batchDistillationAssistantEnabled: isSekbBatchDistillationAssistantEnabled(
+        params.cfg,
+        params.env ?? process.env,
+      ),
+    };
   } catch (error) {
     log.warn(`sekb runtime unavailable: ${String(error)}`);
     return undefined;
@@ -171,5 +215,23 @@ export function confirmAndSaveSekbExperienceFromRuntime(params: {
     edits: params.edits,
     sessionId: params.sessionId,
     contextBlockSink: params.contextBlockSink,
+  });
+}
+
+/**
+ * Creates no worker and makes no provider call. The returned assistant runs
+ * only when its caller explicitly invokes `suggest`, preserving normal SEKB
+ * distillation parity when the flag is off.
+ */
+export function createSekbBatchDistillationAssistant(params: {
+  runtime: EmbeddedSekbRuntime;
+  options?: Omit<SekbBatchDistillationAssistantOptions, "store" | "fallback" | "enabled">;
+}): SekbBatchDistillationAssistant {
+  return new SekbBatchDistillationAssistant({
+    store: params.runtime.store,
+    enabled: params.runtime.batchDistillationAssistantEnabled,
+    fallback: (trajectoryIds, minClusterSize) =>
+      params.runtime.distiller.suggest_principles_from_trajectories(trajectoryIds, minClusterSize),
+    ...params.options,
   });
 }

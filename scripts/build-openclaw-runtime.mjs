@@ -76,6 +76,8 @@ const runtimeEntryPoints = {
   'agents/code-mode.worker': join(RUNTIME_ROOT, 'src', 'agents', 'code-mode.worker.ts'),
   'agents/compaction-planning.worker': join(RUNTIME_ROOT, 'src', 'agents', 'compaction-planning.worker.ts'),
   'agents/model-provider-auth.worker': join(RUNTIME_ROOT, 'src', 'agents', 'model-provider-auth.worker.ts'),
+  // SEKB Hermes ops surfaces (Host knowledge-api + CLI) load this module path.
+  'knowledge/sekb/index': join(RUNTIME_ROOT, 'src', 'knowledge', 'sekb', 'index.ts'),
   'runtime-core/memory-operator-inspection': join(
     RUNTIME_ROOT,
     'src',
@@ -112,6 +114,11 @@ function selectRuntimeEntryPoints() {
   if (process.argv.includes('--memory-read-hydration-shadow-only')) {
     return {
       'runtime-core/memory-read-hydration-shadow': memoryReadHydrationShadowEntry,
+    };
+  }
+  if (process.argv.includes('--sekb-only')) {
+    return {
+      'knowledge/sekb/index': runtimeEntryPoints['knowledge/sekb/index'],
     };
   }
   return runtimeEntryPoints;
@@ -200,7 +207,8 @@ console.log(`  Output: ${DIST}`);
 const isTargetedOnlyBuild =
   process.argv.includes('--memory-operator-inspection-only') ||
   process.argv.includes('--event-log-operator-inspection-only') ||
-  process.argv.includes('--memory-read-hydration-shadow-only');
+  process.argv.includes('--memory-read-hydration-shadow-only') ||
+  process.argv.includes('--sekb-only');
 
 mkdirSync(DIST, { recursive: true });
 if (isTargetedOnlyBuild) {

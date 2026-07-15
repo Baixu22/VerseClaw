@@ -1988,6 +1988,22 @@ export const FIELD_HELP: Record<string, string> = {
     "Stage 5 SEKB controls for trajectory capture, harness hooks, and experience Block write-back after confirmed distillation.",
   "runtime.contextBlock.sekb.enabled":
     "Enable DCS Stage 5 SEKB harness hooks, terminal trajectoryCapture, and experience Block write-back on confirm_and_save (default: false). Also toggled by OPENCLAW_SEKB_ENABLED.",
+  "runtime.contextBlock.sekb.shadowEvaluation":
+    "Default-off SEKB shadow metadata controls. Shadow results are advisory and do not change trajectory capture, distillation, completion, or ContextBlock writes.",
+  "runtime.contextBlock.sekb.shadowEvaluation.enabled":
+    "Persist bounded, deterministic SEKB capture-quality and completion-evidence shadow metadata (default: false). Requires runtime.contextBlock.sekb.enabled and can be overridden by OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED.",
+  "runtime.contextBlock.sekb.batchDistillationAssistant":
+    "Default-off controls for the manual SEKB batch LLM distillation assistant. It only returns suggestions and never writes until existing human confirmation.",
+  "runtime.contextBlock.sekb.batchDistillationAssistant.enabled":
+    "Allow an explicitly invoked, bounded SEKB batch LLM suggestion request with one retry and deterministic fallback (default: false). Requires runtime.contextBlock.sekb.enabled and can be overridden by OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED.",
+  "runtime.contextBlock.sekb.phaseCWouldTrigger":
+    "Phase C (D1) mutation-free would_trigger evidence controls. Default-off; emits evidence only; never mutates trajectory, principle, candidate pool, or capture filtering.",
+  "runtime.contextBlock.sekb.phaseCWouldTrigger.enabled":
+    "Enable explicit Phase C would_trigger evidence evaluation (default: false). Requires runtime.contextBlock.sekb.enabled and can be overridden by OPENCLAW_SEKB_PHASE_C_WOULD_TRIGGER_ENABLED. Kill switch: set false / env off. Not production filtering.",
+  "runtime.contextBlock.sekb.phaseCWouldTrigger.owner":
+    "Named owner string recorded on Phase C would_trigger evidence (default: sekb-phase-c-would-trigger).",
+  "runtime.contextBlock.sekb.phaseCWouldTrigger.timeoutMs":
+    "Phase C evaluation timeout in milliseconds before cancel (default: 5000, max: 60000).",
   "runtime.eventLog":
     "Append-only RuntimeTaskEvent event-log shadow settings. These flags are default-off and must not wire live TaskLoop execution by themselves.",
   "runtime.eventLog.shadow":

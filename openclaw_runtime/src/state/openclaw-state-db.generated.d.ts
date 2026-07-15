@@ -895,6 +895,26 @@ export interface SchemaMeta {
   updated_at: number;
 }
 
+export interface SekbBatchDistillationEvents {
+  attempts: Generated<number>;
+  attributed_suggestion_count: Generated<number>;
+  attribution_total: Generated<number>;
+  batch_id: string;
+  confirmation_count: Generated<number>;
+  created_at: string;
+  duplicate_suggestion_count: Generated<number>;
+  edit_distance_count: Generated<number>;
+  edit_distance_sum: Generated<number>;
+  fallback_reason: string | null;
+  input_tokens: number | null;
+  output_tokens: number | null;
+  rejection_count: Generated<number>;
+  status: string;
+  suggestion_count: Generated<number>;
+  total_cost_usd: number | null;
+  trace_id: string;
+}
+
 export interface SekbDistillationRejections {
   created_at: string;
   reason: string;
@@ -1198,6 +1218,7 @@ export interface DB {
   runtime_task_event_log_records: RuntimeTaskEventLogRecords;
   sandbox_registry_entries: SandboxRegistryEntries;
   schema_meta: SchemaMeta;
+  sekb_batch_distillation_events: SekbBatchDistillationEvents;
   sekb_distillation_rejections: SekbDistillationRejections;
   sekb_error_signature_cache: SekbErrorSignatureCache;
   sekb_principles: SekbPrinciples;

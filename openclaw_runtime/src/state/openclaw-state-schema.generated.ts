@@ -1204,6 +1204,31 @@ CREATE TABLE IF NOT EXISTS sekb_distillation_rejections (
   reason TEXT NOT NULL
 );
 
+-- Phase B stores aggregate operational evidence only. Raw model requests and
+-- responses, trajectory IDs, principle IDs, and suggestion text never enter this table.
+CREATE TABLE IF NOT EXISTS sekb_batch_distillation_events (
+  batch_id TEXT NOT NULL PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  status TEXT NOT NULL,
+  fallback_reason TEXT,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  suggestion_count INTEGER NOT NULL DEFAULT 0,
+  duplicate_suggestion_count INTEGER NOT NULL DEFAULT 0,
+  attributed_suggestion_count INTEGER NOT NULL DEFAULT 0,
+  attribution_total INTEGER NOT NULL DEFAULT 0,
+  input_tokens INTEGER,
+  output_tokens INTEGER,
+  total_cost_usd REAL,
+  trace_id TEXT NOT NULL,
+  confirmation_count INTEGER NOT NULL DEFAULT 0,
+  rejection_count INTEGER NOT NULL DEFAULT 0,
+  edit_distance_sum REAL NOT NULL DEFAULT 0,
+  edit_distance_count INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS idx_sekb_batch_distillation_events_created
+  ON sekb_batch_distillation_events(created_at DESC, batch_id);
+
 CREATE TABLE IF NOT EXISTS mission_runs (
   mission_id TEXT NOT NULL PRIMARY KEY,
   session_key TEXT NOT NULL,

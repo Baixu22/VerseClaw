@@ -1,0 +1,37 @@
+{
+  "schema": "sekb-d1-rollback-drill.v1",
+  "stage": "D1",
+  "flagName": "runtime.contextBlock.sekb.phaseCWouldTrigger.enabled / OPENCLAW_SEKB_PHASE_C_WOULD_TRIGGER_ENABLED",
+  "operator": "codex-agent",
+  "date": "2026-07-15T02:35:01.472Z",
+  "workspace": "C:\\Users\\27933\\AppData\\Local\\Temp\\sekb-d1-lab-GeKQRH",
+  "passFail": "Pass",
+  "baseline": {
+    "principles": 0,
+    "trajectories": 220,
+    "counters": {
+      "count": 0,
+      "wouldTriggerTrue": 0,
+      "suppressed_by_flag": 0,
+      "lease_busy": 0,
+      "timeout_cancel": 0,
+      "error": 0
+    }
+  },
+  "flagOn": {
+    "evidence": 20,
+    "wouldTriggerTrue": 0,
+    "durableMutation": false
+  },
+  "flagOff": {
+    "suppressed_by_flag": 1,
+    "evidence": 0
+  },
+  "parity": {
+    "principlesUnchanged": true,
+    "trajectoriesUnchanged": true,
+    "drillParity": true
+  },
+  "sla": "immediate_flag_off_no_migration_no_cleanup",
+  "notes": "Kill switch restores evaluation path; store counts unchanged by D1 evaluate"
+}

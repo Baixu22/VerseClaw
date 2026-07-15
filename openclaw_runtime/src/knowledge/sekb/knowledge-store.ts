@@ -28,11 +28,14 @@ import {
   type TrajectoryOutcome,
   type TrajectoryQuery,
   type TrajectoryStep,
+  type SekbBatchDistillationEvent,
+  type SekbBatchDistillationFallbackReason,
 } from "./types.js";
 
 type SekbDatabase = Pick<
   OpenClawStateKyselyDatabase,
   | "sekb_distillation_rejections"
+  | "sekb_batch_distillation_events"
   | "sekb_error_signature_cache"
   | "sekb_principles"
   | "sekb_trajectories"
@@ -41,6 +44,9 @@ type SekbDatabase = Pick<
 type SekbTrajectoryRow = Selectable<OpenClawStateKyselyDatabase["sekb_trajectories"]>;
 type SekbPrincipleRow = Selectable<OpenClawStateKyselyDatabase["sekb_principles"]>;
 type SekbRejectionRow = Selectable<OpenClawStateKyselyDatabase["sekb_distillation_rejections"]>;
+type SekbBatchDistillationEventRow = Selectable<
+  OpenClawStateKyselyDatabase["sekb_batch_distillation_events"]
+>;
 type SekbErrorSignatureCacheRow = Selectable<
   OpenClawStateKyselyDatabase["sekb_error_signature_cache"]
 >;
@@ -99,15 +105,52 @@ export class KnowledgeStore {
   }
 
   get_trajectory(id: string): Trajectory {
+    const trajectory = this.find_trajectory(id);
+    if (!trajectory) {
+      throw new Error(`SEKB trajectory not found: ${id}`);
+    }
+    return trajectory;
+  }
+
+  /** Returns null when the trajectory id is missing; does not throw. */
+  find_trajectory(id: string): Trajectory | null {
     const { db, query } = this.#stateDb();
     const row = executeSqliteQuerySync(
       db,
       query.selectFrom("sekb_trajectories").selectAll().where("trajectory_id", "=", id).limit(1),
     ).rows[0] as SekbTrajectoryRow | undefined;
-    if (!row) {
-      throw new Error(`SEKB trajectory not found: ${id}`);
+    return row ? trajectoryFromRow(row) : null;
+  }
+
+  /**
+   * Count trajectories matching an exact error signature without loading full rows.
+   * Used by shadow recurrence scoring; no schema change required.
+   */
+  count_trajectories_by_error_signature(error_signature: string): number {
+    const signature = error_signature.trim();
+    if (!signature) {
+      return 0;
     }
-    return trajectoryFromRow(row);
+    const { db, query } = this.#stateDb();
+    const row = executeSqliteQuerySync(
+      db,
+      query
+        .selectFrom("sekb_trajectories")
+        .select((eb) => eb.fn.countAll<number | bigint>().as("count"))
+        .where("error_signature", "=", signature),
+    ).rows[0] as { count?: number | bigint | string } | undefined;
+    const count = row?.count;
+    if (typeof count === "bigint") {
+      return Number(count);
+    }
+    if (typeof count === "number" && Number.isFinite(count)) {
+      return count;
+    }
+    if (typeof count === "string" && count.trim()) {
+      const parsed = Number(count);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+    return 0;
   }
 
   query_trajectories(filters: TrajectoryQuery = {}): Trajectory[] {
@@ -320,6 +363,75 @@ export class KnowledgeStore {
     }));
   }
 
+  /** Stores aggregate evidence only; callers must never pass model input or output. */
+  save_batch_distillation_event(event: SekbBatchDistillationEvent): void {
+    runOpenClawStateWriteTransaction((database) => {
+      const query = getNodeSqliteKysely<SekbDatabase>(database.db);
+      executeSqliteQuerySync(
+        database.db,
+        query.insertInto("sekb_batch_distillation_events").values(rowFromBatchDistillationEvent(event)),
+      );
+    }, this.#database);
+  }
+
+  list_batch_distillation_events(): SekbBatchDistillationEvent[] {
+    const { db, query } = this.#stateDb();
+    return (executeSqliteQuerySync(
+      db,
+      query
+        .selectFrom("sekb_batch_distillation_events")
+        .selectAll()
+        .orderBy("created_at", "desc")
+        .orderBy("batch_id", "asc"),
+    ).rows as SekbBatchDistillationEventRow[]).map(batchDistillationEventFromRow);
+  }
+
+  record_batch_distillation_confirmation(batchId: string, editDistance: number | null): void {
+    this.#updateBatchDistillationEvent(batchId, (event) => ({
+      confirmation_count: event.confirmation_count + 1,
+      edit_distance_sum: editDistance === null ? event.edit_distance_sum : event.edit_distance_sum + editDistance,
+      edit_distance_count: editDistance === null ? event.edit_distance_count : event.edit_distance_count + 1,
+    }));
+  }
+
+  record_batch_distillation_rejection(batchId: string): void {
+    this.#updateBatchDistillationEvent(batchId, (event) => ({
+      rejection_count: event.rejection_count + 1,
+    }));
+  }
+
+  #updateBatchDistillationEvent(
+    batchId: string,
+    updates: (event: SekbBatchDistillationEvent) => Partial<SekbBatchDistillationEvent>,
+  ): void {
+    runOpenClawStateWriteTransaction((database) => {
+      const query = getNodeSqliteKysely<SekbDatabase>(database.db);
+      const row = executeSqliteQuerySync(
+        database.db,
+        query
+          .selectFrom("sekb_batch_distillation_events")
+          .selectAll()
+          .where("batch_id", "=", batchId)
+          .limit(1),
+      ).rows[0] as SekbBatchDistillationEventRow | undefined;
+      if (!row) return;
+      const event = batchDistillationEventFromRow(row);
+      const next = { ...event, ...updates(event) };
+      executeSqliteQuerySync(
+        database.db,
+        query
+          .updateTable("sekb_batch_distillation_events")
+          .set({
+            confirmation_count: next.confirmation_count,
+            rejection_count: next.rejection_count,
+            edit_distance_sum: next.edit_distance_sum,
+            edit_distance_count: next.edit_distance_count,
+          })
+          .where("batch_id", "=", batchId),
+      );
+    }, this.#database);
+  }
+
   #stateDb(): {
     db: OpenClawStateDatabase["db"];
     query: ReturnType<typeof getNodeSqliteKysely<SekbDatabase>>;
@@ -348,6 +460,50 @@ function rowFromTrajectory(trajectory: Trajectory, updatedAtMs: number): SekbTra
     expires_at: trajectory.expires_at,
     metadata_json: JSON.stringify(trajectory.metadata),
     updated_at_ms: updatedAtMs,
+  };
+}
+
+function rowFromBatchDistillationEvent(event: SekbBatchDistillationEvent) {
+  return {
+    batch_id: event.batch_id,
+    created_at: event.created_at,
+    status: event.status,
+    fallback_reason: event.fallback_reason,
+    attempts: event.attempts,
+    suggestion_count: event.suggestion_count,
+    duplicate_suggestion_count: event.duplicate_suggestion_count,
+    attributed_suggestion_count: event.attributed_suggestion_count,
+    attribution_total: event.attribution_total,
+    input_tokens: event.input_tokens,
+    output_tokens: event.output_tokens,
+    total_cost_usd: event.total_cost_usd,
+    trace_id: event.trace_id,
+    confirmation_count: event.confirmation_count,
+    rejection_count: event.rejection_count,
+    edit_distance_sum: event.edit_distance_sum,
+    edit_distance_count: event.edit_distance_count,
+  };
+}
+
+function batchDistillationEventFromRow(row: SekbBatchDistillationEventRow): SekbBatchDistillationEvent {
+  return {
+    batch_id: row.batch_id,
+    created_at: row.created_at,
+    status: row.status === "assisted" ? "assisted" : "fallback",
+    fallback_reason: normalizeBatchFallbackReason(row.fallback_reason),
+    attempts: normalizeNonnegativeInteger(row.attempts),
+    suggestion_count: normalizeNonnegativeInteger(row.suggestion_count),
+    duplicate_suggestion_count: normalizeNonnegativeInteger(row.duplicate_suggestion_count),
+    attributed_suggestion_count: normalizeNonnegativeInteger(row.attributed_suggestion_count),
+    attribution_total: normalizeNonnegativeInteger(row.attribution_total),
+    input_tokens: normalizeNullableMetric(row.input_tokens),
+    output_tokens: normalizeNullableMetric(row.output_tokens),
+    total_cost_usd: normalizeNullableMetric(row.total_cost_usd),
+    trace_id: row.trace_id,
+    confirmation_count: normalizeNonnegativeInteger(row.confirmation_count),
+    rejection_count: normalizeNonnegativeInteger(row.rejection_count),
+    edit_distance_sum: normalizeNonnegativeNumber(row.edit_distance_sum),
+    edit_distance_count: normalizeNonnegativeInteger(row.edit_distance_count),
   };
 }
 
@@ -550,6 +706,29 @@ function parseJson(value: string): unknown {
 function normalizeNumber(value: unknown): number {
   const numeric = Number(value ?? 0);
   return Number.isFinite(numeric) ? numeric : 0;
+}
+
+function normalizeNonnegativeInteger(value: unknown): number {
+  return Math.max(0, Math.trunc(normalizeNumber(value)));
+}
+
+function normalizeNonnegativeNumber(value: unknown): number {
+  return Math.max(0, normalizeNumber(value));
+}
+
+function normalizeNullableMetric(value: unknown): number | null {
+  return value === null || value === undefined ? null : normalizeNonnegativeNumber(value);
+}
+
+function normalizeBatchFallbackReason(value: unknown): SekbBatchDistillationFallbackReason | null {
+  return value === "provider_unavailable"
+    || value === "timeout"
+    || value === "invalid_json"
+    || value === "schema_invalid"
+    || value === "limit_exceeded"
+    || value === "no_eligible_trajectories"
+    ? value
+    : null;
 }
 
 function isoNow(now: () => Date): string {

@@ -1,0 +1,100 @@
+{
+  "schema": "sekb-tier-c-usefulness-metrics.v1",
+  "generatedAt": "2026-07-15T01:16:47Z",
+  "source": "restored_from_prior_confirmed_closed_loop",
+  "closedLoopPrincipleId": "92d58571-255e-4c2c-8a58-f65be2206337",
+  "rows": [
+    {
+      "metric": "deterministic_suggest_human_accept_rate",
+      "value": 1,
+      "status": "available",
+      "reason": null,
+      "note": "Session-scoped demo accept after human edit (prior confirmed closed-loop; not re-confirmed this fix)"
+    },
+    {
+      "metric": "pre_confirm_edit_distance",
+      "value": null,
+      "status": "unavailable",
+      "reason": "deterministic_path_does_not_persist_original_vs_confirmed_text_distance"
+    },
+    {
+      "metric": "duplicate_principle_rate",
+      "value": null,
+      "status": "unavailable",
+      "reason": "not_persisted"
+    },
+    {
+      "metric": "post_confirm_retrieval_count",
+      "value": 0,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "post_confirm_adoption_count",
+      "value": 0,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "post_adoption_success",
+      "value": 0,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "batch_acceptance_rate",
+      "value": null,
+      "status": "unavailable",
+      "reason": "no_batch_evidence"
+    },
+    {
+      "metric": "batch_normalized_edit_distance",
+      "value": null,
+      "status": "unavailable",
+      "reason": "no_batch_evidence"
+    },
+    {
+      "metric": "batch_fallback_count",
+      "value": null,
+      "status": "unavailable",
+      "reason": "no_batch_evidence"
+    },
+    {
+      "metric": "batch_latency_ms",
+      "value": null,
+      "status": "unavailable",
+      "reason": "not_persisted"
+    },
+    {
+      "metric": "sqlite_db_bytes",
+      "value": 1871872,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "trajectory_count",
+      "value": 312,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "principle_count",
+      "value": 3,
+      "status": "available",
+      "reason": null
+    },
+    {
+      "metric": "historical_suggestion_acceptance_rate",
+      "value": null,
+      "status": "unavailable",
+      "reason": "not_persisted"
+    },
+    {
+      "metric": "batch_probe_user_visible_status",
+      "value": "feature_disabled",
+      "status": "available",
+      "reason": null,
+      "note": "Explicit invoke only; ambient batch remains off"
+    }
+  ]
+}

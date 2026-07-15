@@ -26,7 +26,9 @@ import {
   confirmAndSaveSekbExperience,
   confirmAndSaveSekbExperienceFromRuntime,
   installEmbeddedSekbHarnessHooks,
+  isSekbBatchDistillationAssistantEnabled,
   isSekbEnabled,
+  isSekbShadowEvaluationEnabled,
   resolveEmbeddedSekbRuntime,
 } from "./sekb-runtime.js";
 
@@ -43,6 +45,8 @@ afterEach(() => {
     rmSync(root, { recursive: true, force: true });
   }
   delete process.env.OPENCLAW_SEKB_ENABLED;
+  delete process.env.OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED;
+  delete process.env.OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED;
   delete process.env.OPENCLAW_STATE_DIR;
 });
 
@@ -66,6 +70,65 @@ describe("isSekbEnabled", () => {
     expect(isSekbEnabled(cfgOn, { OPENCLAW_SEKB_ENABLED: "0" })).toBe(false);
     expect(isSekbEnabled(undefined, { OPENCLAW_SEKB_ENABLED: "true" })).toBe(true);
     expect(isSekbEnabled(undefined, { OPENCLAW_SEKB_ENABLED: "yes" })).toBe(true);
+  });
+});
+
+describe("isSekbShadowEvaluationEnabled", () => {
+  const sekbEnabled = {
+    runtime: { contextBlock: { sekb: { enabled: true } } },
+  } as OpenClawConfig;
+
+  it("defaults to false and requires the SEKB master gate", () => {
+    expect(isSekbShadowEvaluationEnabled(undefined, {})).toBe(false);
+    expect(isSekbShadowEvaluationEnabled({
+      runtime: { contextBlock: { sekb: { shadowEvaluation: { enabled: true } } } },
+    } as OpenClawConfig, {})).toBe(false);
+  });
+
+  it("enables only from its nested config when SEKB is enabled", () => {
+    expect(isSekbShadowEvaluationEnabled({
+      runtime: { contextBlock: { sekb: { enabled: true, shadowEvaluation: { enabled: true } } } },
+    } as OpenClawConfig, {})).toBe(true);
+  });
+
+  it("uses the dedicated environment variable as the final override", () => {
+    const cfg = {
+      runtime: { contextBlock: { sekb: { enabled: true, shadowEvaluation: { enabled: false } } } },
+    } as OpenClawConfig;
+    expect(isSekbShadowEvaluationEnabled(cfg, {
+      OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED: "true",
+    })).toBe(true);
+    expect(isSekbShadowEvaluationEnabled(sekbEnabled, {
+      OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED: "0",
+    })).toBe(false);
+  });
+});
+
+describe("isSekbBatchDistillationAssistantEnabled", () => {
+  it("defaults to false and cannot activate SEKB by itself", () => {
+    expect(isSekbBatchDistillationAssistantEnabled(undefined, {})).toBe(false);
+    expect(isSekbBatchDistillationAssistantEnabled({
+      runtime: { contextBlock: { sekb: { batchDistillationAssistant: { enabled: true } } } },
+    } as OpenClawConfig, {})).toBe(false);
+  });
+
+  it("uses its nested config and dedicated environment override after the master gate", () => {
+    const cfg = {
+      runtime: {
+        contextBlock: {
+          sekb: { enabled: true, batchDistillationAssistant: { enabled: false } },
+        },
+      },
+    } as OpenClawConfig;
+    expect(isSekbBatchDistillationAssistantEnabled(cfg, {})).toBe(false);
+    expect(isSekbBatchDistillationAssistantEnabled(cfg, {
+      OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED: "true",
+    })).toBe(true);
+    expect(isSekbBatchDistillationAssistantEnabled({
+      runtime: { contextBlock: { sekb: { enabled: true, batchDistillationAssistant: { enabled: true } } } },
+    } as OpenClawConfig, {
+      OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED: "0",
+    })).toBe(false);
   });
 });
 
@@ -101,6 +164,29 @@ describe("resolveEmbeddedSekbRuntime + install", () => {
     expect(Object.keys(target.handlers).length).toBeGreaterThan(0);
     expect(target.handlers.before_agent_start?.length).toBeGreaterThan(0);
     uninstall();
+  });
+
+  it("wires the nested shadow flag into terminal trajectory capture only", () => {
+    const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-shadow-runtime-"));
+    tempRoots.push(root);
+    process.env.OPENCLAW_STATE_DIR = root;
+    const cfg = {
+      runtime: { contextBlock: { sekb: { enabled: true, shadowEvaluation: { enabled: true } } } },
+    } as OpenClawConfig;
+    const runtime = resolveEmbeddedSekbRuntime({ cfg, env: {} });
+    expect(runtime).toBeDefined();
+    if (!runtime) {
+      return;
+    }
+
+    const trajectoryId = runtime.capture.start_trajectory("sensitive task", "config/db", []);
+    runtime.capture.log_step(trajectoryId, "tool.call", { secret: "do-not-copy" }, {});
+    const trajectory = runtime.capture.finish_trajectory(trajectoryId, "success");
+
+    expect(trajectory.metadata).toMatchObject({
+      sekbShadow: { schema: "sekb-shadow-metadata.v1" },
+    });
+    expect(JSON.stringify(trajectory.metadata)).not.toContain("do-not-copy");
   });
 });
 

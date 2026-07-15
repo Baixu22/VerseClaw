@@ -1,0 +1,2050 @@
+{
+  "schema": "sekb-shadow-evaluation-review-protocol.v1",
+  "labels": [
+    "valuable",
+    "not_valuable",
+    "uncertain"
+  ],
+  "minimumIndependentReviewers": 2,
+  "holdoutPolicy": {
+    "assignment": "deterministic_stratified",
+    "developmentAndHoldoutAreSeparate": true,
+    "holdoutTuning": "forbidden"
+  },
+  "sample": [
+    {
+      "trajectoryId": "trj_006ef104355d386d83afcaba4c402d42",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_02c9dc3d2177f0ee7db5f2d6ffe6021e",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_02cf41ed9bc518a9d9de956caee9f987",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_04d0bc5ec747634f860ec805e418ca24",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_052b08d46f52120244a73a5a5c614675",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_05ee12b1a4284b3957370b9a111e3827",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_06211823212403e41d9f2b316c29d55e",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_090fb961368cda37940c28ce86439b8c",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_095b39d7469d417b3fedcf5b64b0d272",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_0a5428bf72fc950a9f068fba913701e2",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_0b1f557eaade4b853ed930eb030a2434",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_0b4f1db67d15d454aff40c62aa9de288",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_0db63469ee882400a1a9f240f2c499cb",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_0dddba493c09abfb918a8323e0254083",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_0dfb1ef6649047197b19d6b7e21f262b",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_0e32527192f86de72da96e189a7be9e0",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_0eb10bed31a531e611f0a62551dbec75",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_0f3a9f561d390f28512b8940ca38332f",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_0f5aa3a70568f5b9cd1239c2c7883e6c",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_10c9fd6875e996b36f25f71a915eb8e4",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_10d46bc77704703ad16b5bf990a3bf31",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_144f5e843294691b2e0f5138ae9e2271",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_15c01a6457e41144da0945c74068c1c2",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_16466942735add172949632f8fb26e20",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_182da23ab7f95ca34fb60fbeca3a5f66",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_199df814e3cefff27e2d72e1dd4a0b73",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_1acdc3154a6d7ff19bd7c0d3cfcd6720",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_1c51fe66b3b5836e04f161686f1b65d7",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_1d0c24ffdd4fa74810f17e6a9e8f7bd7",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_1d4111e1f0bec6736b3186aa0fcfc7a9",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_1f7a7aec8022eb1e93b0f11cedb78d16",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_1ffdb3553a74bdc39ceee2f6c5817dd2",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_20177e4b8fbdcb81561818c9fd8224af",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_2039faa1d96396c31f5092a34227448d",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_215753a41fdd0374c958fd30aa4b8ee0",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_2179a77e4d3cdda379b42bd3cb047845",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_21bb46bcc9b77a58605822ca7d21447c",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_21f7f3b845a577c6d116319bac142d76",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_2301642c3dc74244e4101ed6f7584555",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_23052121a91731f4afb945a89881c774",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_2371e504dcb6d68aa5c4810440ba81d0",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_23d62cbc7121a7b652c2f2dd35873655",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_243ccd32e460873f54b624b7f5e3e106",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_25de23a5771c07eb788cf743c33fd9aa",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_25e3b7d18ad0351ecdc9778c0772ffa5",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_2688a47701ff01361ebc891d663f94fb",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_269a294d6ce958dd442cb4b0e0a441be",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_26c22e21455d1eadd99bd462fdad7057",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_29aef70945e8d89d93dd321f7c0d1199",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_2b78e64288da62bddf2947405b7f7aa4",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_2be9fcf9b6415f9feb3bc574a04335db",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_2d46bebd4ec275001ffd9361907d345d",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_2db3856b38329a5109c61b5f2c3da411",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_2e64b69a7ad00cce17f3eba1f4085d2e",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_304ddc462fc2568eced112f467e81168",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_316c36b8bb85ab017c0c1b7573ed1ba2",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_31f725f44c4e23c2f99312048ec3ec91",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_323db21d1b65e8f986e41c3510ae1e72",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_3252ae5dbbbc04291bdb9288e678778e",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_32a95943d0a271ded1f2bca2fd42270d",
+      "split": "holdout",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_334d6e84b3bcc855eca664ead381f9f0",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_3359c7c0de203a4ef0e393efa3ee7267",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_339331e75c0c465f20c1a68b29819943",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_34ce194e42b027d4a248eb1e72df23ef",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_355d013d7936a52d4af7b2393bbd4623",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_36a65c77f6e891add69b7864e16b818d",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_370af757370afdcfd70c9391842c67cd",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_37e82e419184c8da7472f04eb302891a",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_37f1f9f0105f576c31d44c6b91598e15",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_39bd35ef55443bc3ae198d57f5ca3427",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_39ef6cb60edf583658508be4f2a22068",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_3b7b57dcabd51779da0afa78e6a67662",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_3b8823c0aa90ce67835105315736b2ee",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_3d661a254b6aeca94d81f1a31f05693f",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_3d86ab346ab2378105649a96d3978b89",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_3dbb0845242cf5b006d7209a4250e79d",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_40a9f647b6bb23ad5b071e5c2ee9b031",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_40ab3b15bb7292e4f4fdfb4b6f37074a",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_410c864f590c8009acfdfbe31be22a03",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_41222ead1eb27c971d5b96d32605ce53",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_418d84e7e261d479e3c884b1dcf02862",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_41ac6d319cf62ae75493975322f26165",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_41d66ea5caca8b2da422ed1d9819515e",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_42ac01bba21689dc6fdcd1003fd55989",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_430673155763760be33db1557cdb2de0",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_43546c594a08d2d35b86fba858670343",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_43c31c4d053482e4076da1b48aa3be20",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_443ffb2dd54fb26ab7e0294157206445",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_44532e263913a2895bc7cdff7a4c2fcb",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_445bad8e7554f48915fc02a569018eff",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_44e521c2857b3f73d9e1c454ba543093",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_467baa7c71468d2b0b47689ea7c4d490",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_48cb5c044234c94b3299a2568b1b62b6",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_493ec494668e9812a534d4542b6bbc71",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_4984f89f05833c45433870804084c33f",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_4b6274bf09521b3220d9dd3ce32ee772",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_4d4a2d35fef99dccec35ae79170f590a",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_4dd7e4a802d9afd5a12eaad344e4a132",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_4f1580fc1384ed9f6da443d08dfe2372",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_4f1bb07823be58d7c6e3df271dcd47dc",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_4fc0ac9f6896548573964a7a3b4d6dbe",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_50a12269ef768c1af1a8d6c0f1bdf58a",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_51640bdf9f29ad1bcbed2a48fea5c502",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_527da6bb9355a8429f30a0133ec89895",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_52d43fe6d6d3a8ba064be5e07c274e83",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_532982f5ce677b8966c4ede3973d39a3",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_547b8741ac9385f5ecab0c815afb9089",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_54984678905499d5820c9b6e135c7960",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_571bf99b1ac66881fb08b34b7951a5bb",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_5782bbb7976d977a8c61d7c9fd62f7fa",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_57b20c68e62cbd8a83acf560148cecac",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_587463fb83926b09e42ebb009779dfd5",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_5a37a34f7822a931bbbfee6c0d97a9c9",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_5b1fbafe53897b6e81fcebdd07d6f3db",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_5b62bb9c6f5e70ad3276c466c66f8860",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_600f6f4f6d7af6ce2b537b9d8c105d74",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_603aaff4164e62f219c9d69cddd5d4d5",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_61d51cb8b34493a3b0ffc3c1ec5209b2",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_625bc7bada4d9443eab3280da6854849",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_628722e23c346422bf303dae7633513b",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_63f9e00dfe8e313514e4849d09c2d5b9",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_64bd47442bd03b2e370b8102c09a876c",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_673ce16a1fd40962c884bf8cec57730b",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_6c91e83df83ce5c3bc945f709b888b23",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_6cfcdac9e215ea5aa3d13829f3b2cd35",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_6dd4341b0350aa9ed0bd96c770aacfd1",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_6df61fe6ee953dff88f8687d2e76a583",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_6e6a5be4ef2c78ee2564459a7691ecf8",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_6f6e5c37b38524b8d44f549bae054fc6",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_6feb38534b29cd45c9e57144ed80ce6d",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "none",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_724842b5e7135424e734442653130f1d",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_729ac87c691b0832f24164da73c3d4a5",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_736b2d330a968dbef407419f0151ce9f",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_73d4d074dee5259e61c0d9bb2f44170b",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_77b0c00ae98f342877da9d3ff23237c1",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_797062960679a4a5a55d7a24e5985ba6",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_79cdec3508e171846308ecaca053e0db",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_7a3ebee70fc9cf43da811da83f708f31",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_7a474643ff492e8f9b167f7005e072fc",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_7a7e7283c70677c6f16bb75611b3e1ba",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_7bd4d81a66e101b11000622abd9b70ff",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_7d600510154eb63dac1ee13541c955b5",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_7d901130f6436c28fdf8a3d64969ee65",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_7e340c30acde1b6b201a6073c0518477",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_7f1ea3534807b6c4bf4c13decb018f1f",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_7ff85d9eb4c62e62cf548195cdbb2069",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_80e843119d8d6b638987190798dadaff",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_81a6d9899cfcc7957554c47cefbfb103",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_8727125a50881aa9cdd2ef8426ec8210",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_895ddf5e1a8dbdb609f1252660a8180b",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_89b26811619a0d7ed0f6a22f096e066a",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_8aabf741a95a916fb909c8139d6784a1",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_8b661685a07735b82951f4b8f4c586d6",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_8c000422010bc5df1717f518efaafbe3",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_8c360cb57ae837fc4702e0bd887af4ab",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_8deb0ed346facd83d2b536700c7c1725",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_8e1dccab61291a6cd539f0ea31caae46",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_8f6cb809720556fa096064e2fee665ea",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_900509e9e7be6a9ec13f8ff54d74023f",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_91067531c867e11b2b607cb10c69e199",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_918c57006e991ade055f6d236a3529e8",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_9555e78ffed79540deb8c8248cfc4355",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_9ad519ada031b62a1f772ee19ae8780b",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_9b1c8b8d1aba7b58b0c104e5d7beea37",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_9b470d6f49543d4b353dbf684200b0b1",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_9cb01f5c1fe57866d515ca20d27aceab",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_9ce6eec71dc32cdca399b63f9498c02c",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_a0963d334bcf62bab782a8700452299b",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_a12dd35a90d2fb9318dbeaaf1ca1ec85",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_a147e8a64b4ceb09a078d707053df980",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_a3e61210b8356437cdcc164162e85503",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_a4633e4fdf39a718d15b0907a4f43d39",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_a7149c92d98f45a275bb1fb32a955df9",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_a7270e04d25c9e170aeea57e0b8a12ba",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_a7ee73a834328f062c2d34f5fb4d8616",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_a9462cce5b26b076f0d0c3b8745d9104",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_abab1221387756d616a751c8e4833efe",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_abeed792db9ba0008112cac72dbb3cc1",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_add5e844b47243367259b04385e7adb5",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_ae254c859dc459e5eda6f1ed302e78e7",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_af7ad7ccf94bd11e3739bf1c5381c310",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_afc6f7def92eae611f7928e76bdbfced",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_b110b511948381e14ff4da1ec91e3415",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "success",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_b2cf498ecf475244edf819230591a34c",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_b7aba6b01e324443c68726671ae84a05",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_b7f9b95b6a66efd97161844eec58943a",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_ba600012921904c4615f50039c471250",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_bb6c3bd3950e923e95874e5e7b261d72",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_be677cfa43a18262b6a700d0ce9f3dcb",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_bedecafd5e3656b73cdf0c51cb75093d",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_bf03cb90a28486335d241507e9b58785",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_c0c81ec69398609f5c056ca60679ef93",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_c4060b513e4feb24ccac3199b462b9ea",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_c47bac503a9442042d1755756d5ff0ce",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_c56a61e2b6f4116ccb58e53fcbb67ff3",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_c892c4d4b961cf4c64696b6079e0b5cd",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_ca72dc5cd32fe61751e09223335b6674",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "partial",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "none"
+      }
+    },
+    {
+      "trajectoryId": "trj_d02fca69ae917f64574dce6762b80b32",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_d03a2f32477e4713519afc4ccf27e64c",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    },
+    {
+      "trajectoryId": "trj_d95ff2a8375e755b60c2acc5be2eb05a",
+      "split": "development",
+      "stratum": {
+        "terminalOutcome": "failure",
+        "toolActivity": "observed",
+        "shadowScore": "high",
+        "errorRecurrence": "recurring"
+      }
+    }
+  ],
+  "strata": [
+    {
+      "terminalOutcome": "failure",
+      "toolActivity": "observed",
+      "shadowScore": "high",
+      "errorRecurrence": "recurring",
+      "population": 61,
+      "sampled": 50
+    },
+    {
+      "terminalOutcome": "partial",
+      "toolActivity": "observed",
+      "shadowScore": "high",
+      "errorRecurrence": "none",
+      "population": 62,
+      "sampled": 50
+    },
+    {
+      "terminalOutcome": "success",
+      "toolActivity": "none",
+      "shadowScore": "high",
+      "errorRecurrence": "none",
+      "population": 125,
+      "sampled": 50
+    },
+    {
+      "terminalOutcome": "success",
+      "toolActivity": "observed",
+      "shadowScore": "high",
+      "errorRecurrence": "none",
+      "population": 64,
+      "sampled": 50
+    }
+  ]
+}

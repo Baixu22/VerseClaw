@@ -1,0 +1,215 @@
+{
+  "schema": "sekb-hermes-tier-d-promotion-decision.v1",
+  "authority": "offline_evaluation_evidence_not_runtime_source_of_truth",
+  "generatedAt": "2026-07-15T12:00:00Z",
+  "refreshedAt": "2026-07-15T02:42:26Z",
+  "refreshStage": "pass_d1_hold_end_state",
+  "package": "D0",
+  "runtimeMutationAuthorized": false,
+  "phaseCDActivated": false,
+  "shadowV1Retuned": false,
+  "decision": {
+    "status": "pass_d1_hold_closed",
+    "goNoGoForD1D2": "Hold",
+    "goNoGoMeaning": "Pass-D1 closed; D2 not authorized; production filtering not authorized; default-off posture",
+    "n2PassD0": true,
+    "firstPromotionObject": "operator_review_ranking_and_candidate_priority",
+    "deferredPromotionObjects": [
+      "phase_c_would_trigger_evidence_only",
+      "phase_d_narrow_filter_pilot",
+      "full_production_filtering",
+      "default_on_sekb"
+    ],
+    "evaluableForPromotionMeans": "offline_evidence_may_support_later_design_decision_not_live_filtering",
+    "labelOrigin": "agent_dual_review_proxy",
+    "labelOriginNote": "pipeline labelAuthority=human_dual_review after full worksheet fill; not live-human dual-review equivalence",
+    "shadowV1": {
+      "policyId": "sekb-shadow-v1-score-gte-50",
+      "threshold": 50,
+      "holdoutRetune": "forbidden",
+      "ifInsufficient": "define_shadow_v2_with_fresh_holdout_do_not_retune_v1"
+    },
+    "d1Authorized": true,
+    "d2Authorized": false,
+    "d1Pass": true,
+    "n1Status": "pass_proxy_permanent",
+    "liveHumanDualReviewClaim": false,
+    "endState": "pass_d1_hold",
+    "implementationFrozen": true
+  },
+  "tierCGateAudit": {
+    "sourceRunId": "c-human-2026-07-15T01-04-37-795Z-c4aeff8e",
+    "freezePath": "artifacts/sekb-hermes-phase-a5/tier-c/EVIDENCE-FREEZE.md",
+    "freezeMirror": "artifacts/sekb-hermes-phase-a5/freezes/tier-c-c-human-2026-07-15T01-04-37-795Z-c4aeff8e/",
+    "sourceArtifacts": {
+      "status": "artifacts/sekb-hermes-phase-a5/tier-c/TIER-C-STATUS.md",
+      "goNoGo": "artifacts/sekb-hermes-phase-a5/tier-c/GO-NO-GO.md",
+      "campaignStatus": "artifacts/sekb-hermes-phase-a5/tier-c/evaluation-campaign-status.v1.json",
+      "report": "artifacts/sekb-hermes-phase-a5/tier-c/report.v1.json",
+      "freeze": "artifacts/sekb-hermes-phase-a5/tier-c/EVIDENCE-FREEZE.md"
+    },
+    "evaluableForPromotion": true,
+    "labelAuthority": "human_dual_review",
+    "labelOrigin": "agent_dual_review_proxy",
+    "goNoGo": "Go",
+    "hardGates": {
+      "independentlyReviewedTrajectories": {
+        "required": 200,
+        "actual": 200,
+        "pass": true
+      },
+      "unresolvedDisagreements": {
+        "required": 0,
+        "actual": 0,
+        "pass": true
+      },
+      "cohensKappa": {
+        "required": 0.7,
+        "actual": 1,
+        "status": "available",
+        "pass": true
+      },
+      "holdoutValuableRecall": {
+        "required": 0.95,
+        "actual": 1,
+        "status": "available",
+        "ci": {
+          "level": 0.95,
+          "lower": 0.886483,
+          "upper": 1
+        },
+        "pass": true
+      },
+      "holdoutProjectedFalseDrop": {
+        "required": 0.02,
+        "actual": 0,
+        "status": "available",
+        "ci": {
+          "level": 0.95,
+          "lower": 0,
+          "upper": 0.113517
+        },
+        "pass": true
+      },
+      "humanDualReviewAuthority": {
+        "required": "human_dual_review",
+        "actual": "human_dual_review",
+        "pass": true,
+        "originNote": "agent_dual_review_proxy_not_live_human"
+      }
+    },
+    "allHardGatesGreen": true,
+    "residualRisks": [
+      "kappa_optimism_perfect_agreement",
+      "holdout_discrimination_limited_all_scores_gte_50",
+      "agent_proxy_not_live_human",
+      "evaluable_for_promotion_not_production_filtering"
+    ],
+    "n1Status": "pass_proxy_permanent"
+  },
+  "usefulnessPrivacyLatency": {
+    "certifiedNoMajorRegression": false,
+    "reason": "offline_gates_green_but_session_scoped_usefulness_and_agent_proxy_origin_do_not_certify_production_regression",
+    "closedLoopConfirmPath": "confirmed",
+    "deterministicSuggestHumanAcceptRate": {
+      "value": 1,
+      "status": "available"
+    },
+    "batchAmbient": "off",
+    "notes": [
+      "Unavailable metrics remain null; no fabrication",
+      "Session-scoped demo accept rate is not a production usefulness certificate",
+      "N0 freeze records closed-loop confirmed + usefulness restored"
+    ]
+  },
+  "approvals": {
+    "d0DesignStance": {
+      "product": null,
+      "tech": null,
+      "designOnlyRecordedInPack": true,
+      "agentProxyAcceptedForDesignOnly": true,
+      "requiredForImplementation": false
+    },
+    "d1WouldTriggerImplementation": {
+      "productTech": {
+        "status": "approved",
+        "date": "2026-07-15",
+        "path": "artifacts/sekb-hermes-phase-a5/tier-d/D1-WRITTEN-APPROVAL.md"
+      },
+      "required": true,
+      "blockedUntil": [
+        "n2_pass_d0",
+        "written_approval",
+        "n1_pass_human_or_agent_proxy_risk_waiver"
+      ]
+    },
+    "d1AgentProxyRiskWaiver": {
+      "status": "accepted_permanent_pass_proxy",
+      "path": "artifacts/sekb-hermes-phase-a5/tier-c/PROXY-LABEL-AUTHORITY.md",
+      "requiredIfSkippingN1": true
+    },
+    "d2ActivePilot": {
+      "productTech": null,
+      "required": true,
+      "blockedUntil": [
+        "d0",
+        "d1_pass",
+        "written_approval",
+        "pilot_scope",
+        "v1_holdout_policy_frozen"
+      ]
+    },
+    "fullProductionFiltering": {
+      "status": "not_authorized_by_this_package"
+    },
+    "n1PassProxyPermanent": {
+      "status": "recorded",
+      "path": "artifacts/sekb-hermes-phase-a5/tier-c/PROXY-LABEL-AUTHORITY.md"
+    }
+  },
+  "rollback": {
+    "mechanism": "single_feature_flag_per_stage",
+    "reverseMigration": false,
+    "dataCleanupRequired": false,
+    "drillStatus": "executed_pass",
+    "procedurePath": "artifacts/sekb-hermes-phase-a5/tier-d/ROLLBACK-DRILL.md",
+    "drillEvidence": "artifacts/sekb-hermes-phase-a5/tier-d/d1-rollback-drill.v1.json"
+  },
+  "nonGoals": [
+    "task_success_authority",
+    "permission_authority",
+    "retry_authority",
+    "confirm_and_save_boundary_change",
+    "auto_principle_write",
+    "offline_artifact_runtime_authority",
+    "shadow_v1_holdout_retune",
+    "auto_smoke_as_human_labels",
+    "sekb_ops_gui",
+    "default_on_filtering",
+    "agent_proxy_as_live_human_equivalence_without_n1_or_waiver"
+  ],
+  "nextActions": [
+    "maintain_default_off_flags",
+    "use_confirm_and_save_only_for_durable_principles",
+    "reopen_only_with_new_written_approval_for_d2_or_phase_d_or_live_human"
+  ],
+  "docs": {
+    "decisionPack": "artifacts/sekb-hermes-phase-a5/tier-d/D0-PROMOTION-DECISION-PACK.md",
+    "tierDStatus": "artifacts/sekb-hermes-phase-a5/tier-d/TIER-D-STATUS.md",
+    "rollbackDrill": "artifacts/sekb-hermes-phase-a5/tier-d/ROLLBACK-DRILL.md",
+    "n0Freeze": "artifacts/sekb-hermes-phase-a5/tier-c/EVIDENCE-FREEZE.md",
+    "nextAcceptancePlan": "artifacts/sekb-hermes-phase-a5/NEXT-ACCEPTANCE-PLAN.md",
+    "proxyAuthority": "artifacts/sekb-hermes-phase-a5/tier-c/PROXY-LABEL-AUTHORITY.md",
+    "d1Observation": "artifacts/sekb-hermes-phase-a5/tier-d/D1-OBSERVATION.md",
+    "d2DesignStub": "artifacts/sekb-hermes-phase-a5/tier-d/D2-DESIGN-STUB.md",
+    "endState": "artifacts/sekb-hermes-phase-a5/END-STATE.md",
+    "configChecklist": "artifacts/sekb-hermes-phase-a5/CONFIG-CHECKLIST.md",
+    "publicMessaging": "artifacts/sekb-hermes-phase-a5/PUBLIC-MESSAGING.md"
+  },
+  "d1PassEvidence": {
+    "observation": "artifacts/sekb-hermes-phase-a5/tier-d/d1-observation.v1.json",
+    "observationMd": "artifacts/sekb-hermes-phase-a5/tier-d/D1-OBSERVATION.md",
+    "syntheticCount": 220,
+    "status": "pass_d1"
+  }
+}

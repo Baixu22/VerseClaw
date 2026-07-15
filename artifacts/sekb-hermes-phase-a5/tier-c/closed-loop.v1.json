@@ -1,0 +1,24 @@
+{
+  "status": "confirmed",
+  "mode": "deterministic_suggest_then_human_edit_confirm",
+  "principleId": "92d58571-255e-4c2c-8a58-f65be2206337",
+  "beforePrinciples": 2,
+  "afterPrinciples": 3,
+  "sourceTrajectoryCount": 61,
+  "clusterSummary": "Similar eval/protocol trajectories (61)",
+  "principleSnapshot": {
+    "principle_id": "92d58571-255e-4c2c-8a58-f65be2206337",
+    "title": "Compare similar SEKB task paths before acting",
+    "created_by": "human",
+    "retrieval_count": 0,
+    "adoption_count": 0,
+    "post_adoption_success": 0,
+    "source_trajectories": 61
+  },
+  "invariants": {
+    "suggestDoesNotWrite": true,
+    "confirmIsDurableWrite": true,
+    "noPhaseCD": true,
+    "noBatchAmbient": true
+  }
+}

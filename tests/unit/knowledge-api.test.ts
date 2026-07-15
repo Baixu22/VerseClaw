@@ -14,6 +14,9 @@ const root = join(tmpdir(), `clawx-knowledge-api-${Date.now()}`);
 vi.mock('@electron/utils/paths', () => ({
   expandPath: (path: string) => path,
   getOpenClawConfigDir: () => root,
+  getDataDir: () => join(root, 'userData'),
+  // Point at a temp root without openclaw_runtime dist so SEKB ops degrade honestly.
+  getOpenClawRuntimeDir: () => join(root, 'missing-openclaw-runtime'),
 }));
 
 describe('knowledge host API', () => {
@@ -75,6 +78,42 @@ describe('knowledge host API', () => {
         adoption_count: 2,
       }],
       indexPreview: 'SEKB L1 index preview',
+      evidence: {
+        state: 'unknown' as const,
+        ageDistribution: { underHour: 0, underDay: 0, underWeek: 0, older: 0, invalid: 0 },
+        trajectoriesByOutcome: { success: 2, partial: 0, failure: 1 },
+        steps: { min: 0, max: 0, average: 0 },
+        durationSeconds: { min: 0, max: 0, average: 0 },
+        errorSignatures: { withoutSignature: 3, distinct: 0, recurringTrajectories: 0 },
+        shadow: {
+          evaluatedTrajectories: 0,
+          captureRecommendations: { retain: 0, review_low_signal: 0 },
+          completionStatuses: { supported: 0, partial: 0, unsupported: 0, unknown: 0 },
+        },
+        feedback: {
+          confirmedPrinciples: 1,
+          rejectedSuggestions: 0,
+          rejectionBreakdown: { general: 0, batchAssisted: 0 },
+          retrievals: 4,
+          adoptions: 2,
+          postAdoptionSuccesses: 0,
+        },
+        batchDistillationAssistant: {
+          state: 'unknown' as const,
+          suggestionCount: { status: 'unavailable' as const, reason: 'not_persisted' },
+          acceptedCount: { status: 'unavailable' as const, reason: 'not_persisted' },
+          rejectedCount: { status: 'unavailable' as const, reason: 'not_persisted' },
+          normalizedEditDistance: { status: 'unavailable' as const, reason: 'not_persisted' },
+          duplicateSuggestionRate: { status: 'unavailable' as const, reason: 'not_evaluated' },
+          sourceAttributionCompleteness: { status: 'unavailable' as const, reason: 'not_evaluated' },
+          inputTokens: { status: 'unavailable' as const, reason: 'not_persisted' },
+          outputTokens: { status: 'unavailable' as const, reason: 'not_persisted' },
+          totalCostUsd: { status: 'unavailable' as const, reason: 'not_persisted' },
+          fallbackCount: { status: 'unavailable' as const, reason: 'not_persisted' },
+          subsequentAdoption: { status: 'unavailable' as const, reason: 'not_persisted' },
+        },
+        metricsUnavailable: [{ metric: 'historical_suggestion_count', reason: 'not_persisted' }],
+      },
     }));
     const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
     const api = createKnowledgeApi({ gatewayManager: gatewayManager as never, runtimeLessonsReporter });
@@ -88,6 +127,78 @@ describe('knowledge host API', () => {
       indexPreview: 'SEKB L1 index preview',
     });
     expect(runtimeLessonsReporter).toHaveBeenCalledTimes(1);
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
+  it('resolves Host SEKB state dir and workspace root without using process.cwd defaults', async () => {
+    const {
+      resolveHostOpenClawStateDir,
+      resolveHostSekbWorkspaceRoot,
+    } = await import('@electron/services/knowledge-api');
+
+    expect(resolveHostOpenClawStateDir({ OPENCLAW_STATE_DIR: 'C:/tmp/custom-state' }, join(root, 'userData')))
+      .toBe('C:/tmp/custom-state');
+    expect(resolveHostOpenClawStateDir({}, join(root, 'userData')))
+      .toBe(join(root, 'userData', 'openclaw-source-state'));
+
+    const previous = process.env.VERSE_CLAW_REPO_ROOT;
+    process.env.VERSE_CLAW_REPO_ROOT = join(root, 'repo-root');
+    try {
+      expect(resolveHostSekbWorkspaceRoot(process.env)).toBe(join(root, 'repo-root'));
+    } finally {
+      if (previous === undefined) delete process.env.VERSE_CLAW_REPO_ROOT;
+      else process.env.VERSE_CLAW_REPO_ROOT = previous;
+    }
+  });
+
+  it('exposes SEKB ops host routes without gateway RPC and without auto-writes', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async () => {
+        throw new Error('SEKB ops routes must not call Gateway RPC');
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    await expect(api.sekbShadowEvaluationExport({ pseudonymizationKey: '' })).resolves.toMatchObject({
+      success: false,
+      reason: 'missingKey',
+      authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
+    });
+    // Without a built openclaw_runtime dist, routes degrade honestly.
+    await expect(api.sekbSuggestPrinciples({})).resolves.toMatchObject({
+      available: false,
+      reason: 'runtimeUnavailable',
+      mode: 'deterministic',
+      suggestions: [],
+    });
+    await expect(api.sekbBatchDistillSuggest({})).resolves.toMatchObject({
+      available: false,
+      reason: 'runtimeUnavailable',
+    });
+    await expect(api.sekbConfirmPrinciple({
+      suggestion: {
+        cluster_summary: 'x',
+        source_trajectory_ids: [],
+        suggested_principle: {},
+        confidence: 0.1,
+      },
+    })).resolves.toMatchObject({
+      available: false,
+      reason: 'runtimeUnavailable',
+    });
+    await expect(api.sekbRejectSuggestion({
+      suggestion: {
+        cluster_summary: 'x',
+        source_trajectory_ids: [],
+        suggested_principle: {},
+        confidence: 0.1,
+      },
+      reason: 'nope',
+    })).resolves.toMatchObject({
+      available: false,
+      reason: 'runtimeUnavailable',
+    });
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
   });
 
