@@ -593,16 +593,18 @@ export function parseHandoffPack(value: string | null): HandoffPack | undefined 
   }
   try {
     const parsed = JSON.parse(value) as Partial<HandoffPack>;
-    const allowedKeys = new Set([
+    const requiredKeys = [
       "objective",
       "current_phase",
       "recent_actions",
       "parent_session_id",
-    ]);
+    ] as const;
+    const optionalKeys = new Set(["writeSet", "worktreeId", "worktreeRoot", "isolation"]);
+    const allowedKeys = new Set<string>([...requiredKeys, ...optionalKeys]);
     const keys = Object.keys(parsed);
     if (
-      keys.length !== allowedKeys.size ||
       keys.some((key) => !allowedKeys.has(key)) ||
+      requiredKeys.some((key) => !keys.includes(key)) ||
       typeof parsed.objective !== "string" ||
       parsed.objective.length > 2_000 ||
       !isRuntimeTaskStatus(parsed.current_phase) ||
@@ -625,6 +627,28 @@ export function parseHandoffPack(value: string | null): HandoffPack | undefined 
           (action.significance === "high" || action.significance === "medium"),
       )
     ) {
+      return undefined;
+    }
+    // C4 optional coordinates (absent = shared / no writeSet constraint)
+    if (parsed.writeSet !== undefined) {
+      if (
+        !Array.isArray(parsed.writeSet) ||
+        !parsed.writeSet.every((p) => typeof p === "string" && p.trim().length > 0 && p.length <= 512)
+      ) {
+        return undefined;
+      }
+    }
+    if (parsed.worktreeId !== undefined) {
+      if (typeof parsed.worktreeId !== "string" || !parsed.worktreeId.trim() || parsed.worktreeId.length > 200) {
+        return undefined;
+      }
+    }
+    if (parsed.worktreeRoot !== undefined) {
+      if (typeof parsed.worktreeRoot !== "string" || !parsed.worktreeRoot.trim() || parsed.worktreeRoot.length > 1024) {
+        return undefined;
+      }
+    }
+    if (parsed.isolation !== undefined && parsed.isolation !== "shared" && parsed.isolation !== "worktree") {
       return undefined;
     }
     return parsed as HandoffPack;

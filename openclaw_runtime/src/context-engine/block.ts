@@ -68,6 +68,14 @@ export interface HandoffPack {
     significance: "high" | "medium";
   }>;
   parent_session_id: string;
+  /** C4-3: optional write-set coordinate (compatible with C3 empty semantics). */
+  writeSet?: string[];
+  /** C4-3: worktree id when isolation=worktree. */
+  worktreeId?: string;
+  /** Optional absolute/relative worktree root for diagnostics. */
+  worktreeRoot?: string;
+  /** C4-4: isolation mode (default shared when omitted). */
+  isolation?: "shared" | "worktree";
 }
 
 export interface BlockAdmissionContext {

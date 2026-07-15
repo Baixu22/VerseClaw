@@ -21,6 +21,9 @@ export type OrchestrationTaskNodePhase =
   | "followup";
 export type OrchestrationTaskEdgeType = "dependency" | "handoff" | "verification" | "repair_of" | "followup_of";
 
+/** C4-4: workspace isolation mode for multi-worker coding. Default shared. */
+export type CodingIsolationMode = "shared" | "worktree";
+
 export type OrchestrationRepairPolicy = {
   maxRepairAttempts: number;
   maxRedoAttempts: number;
@@ -76,6 +79,10 @@ export type OrchestrationTaskNode = {
    * (backward compatible with pre-C3 packing).
    */
   writeSet?: string[];
+  /** C4-4: isolation mode for this node (default shared when omitted). */
+  isolation?: CodingIsolationMode;
+  /** C4-3: worktree id when isolation=worktree. */
+  worktreeId?: string;
 };
 
 export type OrchestrationTaskEdge = {
@@ -138,6 +145,10 @@ export type OrchestratorGraphWorker = {
    * this unset; absent/empty writeSet does not constrain wave packing.
    */
   writeSet?: string[];
+  /** C4-4: isolation mode (default shared). */
+  isolation?: CodingIsolationMode;
+  /** C4-3: worktree id when isolation=worktree. */
+  worktreeId?: string;
 };
 
 export type WorkerQualityScore = {
@@ -388,6 +399,8 @@ export function buildTaskGraph(params: {
       status: dependsOn.length === 0 ? "ready" : "planned",
       ...(worker.modelRef !== undefined ? { modelRef: worker.modelRef } : {}),
       ...(worker.writeSet !== undefined ? { writeSet: [...worker.writeSet] } : {}),
+      ...(worker.isolation ? { isolation: worker.isolation } : {}),
+      ...(worker.worktreeId ? { worktreeId: worker.worktreeId } : {}),
     });
   }
   if (params.verifierRole) {
@@ -1016,6 +1029,11 @@ export function summarizeQuality(scores: readonly WorkerQualityScore[]): {
     needsAttention: scores.filter((score) => score.overall === "needs_attention").length,
     poorAttempts: scores.filter((score) => score.overall === "poor_attempt").length,
   };
+}
+
+/** C4-4: normalize isolation request. Omitted/unknown => shared (safe default). */
+export function normalizeIsolationMode(value: unknown): CodingIsolationMode {
+  return value === "worktree" ? "worktree" : "shared";
 }
 
 export function readStringArray(value: unknown): string[] {
