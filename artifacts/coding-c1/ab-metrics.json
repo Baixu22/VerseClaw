@@ -1,0 +1,202 @@
+{
+  "generatedAt": "2026-07-15T02:08:49.730Z",
+  "wave": "C1-2",
+  "targetReduction": 5,
+  "avgReduction": 4.5,
+  "meetsGate": false,
+  "judgment": "below_target",
+  "defaultFlipRecommendation": "KEEP shadow/default-off; see gaps",
+  "gaps": [
+    "avg tool-call reduction 4.50x < 5x target"
+  ],
+  "pairs": [
+    {
+      "fixture": "impact",
+      "offCalls": 5,
+      "onCalls": 1,
+      "reduction": 5,
+      "onPass": true
+    },
+    {
+      "fixture": "understand",
+      "offCalls": 5,
+      "onCalls": 1,
+      "reduction": 5,
+      "onPass": true
+    },
+    {
+      "fixture": "verify",
+      "offCalls": 4,
+      "onCalls": 1,
+      "reduction": 4,
+      "onPass": true
+    },
+    {
+      "fixture": "registration",
+      "offCalls": 4,
+      "onCalls": 1,
+      "reduction": 4,
+      "onPass": true
+    }
+  ],
+  "results": [
+    {
+      "fixture": "impact",
+      "arm": "off",
+      "toolCalls": 5,
+      "tokenCostStub": 4000,
+      "factStoreHits": 0,
+      "factStoreMisses": 0,
+      "evidenceAdopted": false,
+      "pass": true,
+      "notes": "plan=grep>read>grep>read>read"
+    },
+    {
+      "fixture": "impact",
+      "arm": "on",
+      "toolCalls": 1,
+      "tokenCostStub": 400,
+      "factStoreHits": 1,
+      "factStoreMisses": 0,
+      "evidenceAdopted": true,
+      "pass": true,
+      "notes": "callers=2"
+    },
+    {
+      "fixture": "impact",
+      "arm": "mcp_control",
+      "toolCalls": 1,
+      "tokenCostStub": 500,
+      "factStoreHits": 0,
+      "factStoreMisses": 0,
+      "evidenceAdopted": false,
+      "pass": true,
+      "notes": "eval-only package codebase-memory-mcp@0.9.0; not executed (iron law 1)"
+    },
+    {
+      "fixture": "understand",
+      "arm": "off",
+      "toolCalls": 5,
+      "tokenCostStub": 4500,
+      "factStoreHits": 0,
+      "factStoreMisses": 0,
+      "evidenceAdopted": false,
+      "pass": true,
+      "notes": "plan=exec_ls>grep>read>read>read"
+    },
+    {
+      "fixture": "understand",
+      "arm": "on",
+      "toolCalls": 1,
+      "tokenCostStub": 400,
+      "factStoreHits": 1,
+      "factStoreMisses": 0,
+      "evidenceAdopted": true,
+      "pass": true,
+      "notes": ""
+    },
+    {
+      "fixture": "understand",
+      "arm": "mcp_control",
+      "toolCalls": 1,
+      "tokenCostStub": 500,
+      "factStoreHits": 0,
+      "factStoreMisses": 0,
+      "evidenceAdopted": false,
+      "pass": true,
+      "notes": "eval-only package codebase-memory-mcp@0.9.0; not executed (iron law 1)"
+    },
+    {
+      "fixture": "verify",
+      "arm": "off",
+      "toolCalls": 4,
+      "tokenCostStub": 2800,
+      "factStoreHits": 0,
+      "factStoreMisses": 0,
+      "evidenceAdopted": false,
+      "pass": true,
+      "notes": "plan=exec_git_diff>read>grep>read"
+    },
+    {
+      "fixture": "verify",
+      "arm": "on",
+      "toolCalls": 1,
+      "tokenCostStub": 400,
+      "factStoreHits": 1,
+      "factStoreMisses": 0,
+      "evidenceAdopted": true,
+      "pass": true,
+      "notes": ""
+    },
+    {
+      "fixture": "verify",
+      "arm": "mcp_control",
+      "toolCalls": 1,
+      "tokenCostStub": 500,
+      "factStoreHits": 0,
+      "factStoreMisses": 0,
+      "evidenceAdopted": false,
+      "pass": true,
+      "notes": "eval-only package codebase-memory-mcp@0.9.0; not executed (iron law 1)"
+    },
+    {
+      "fixture": "registration",
+      "arm": "off",
+      "toolCalls": 4,
+      "tokenCostStub": 2400,
+      "factStoreHits": 0,
+      "factStoreMisses": 0,
+      "evidenceAdopted": false,
+      "pass": true,
+      "notes": "plan=grep>read>read>read"
+    },
+    {
+      "fixture": "registration",
+      "arm": "on",
+      "toolCalls": 1,
+      "tokenCostStub": 400,
+      "factStoreHits": 0,
+      "factStoreMisses": 0,
+      "evidenceAdopted": true,
+      "pass": true,
+      "notes": "toolCount=7"
+    },
+    {
+      "fixture": "registration",
+      "arm": "mcp_control",
+      "toolCalls": 1,
+      "tokenCostStub": 500,
+      "factStoreHits": 0,
+      "factStoreMisses": 0,
+      "evidenceAdopted": false,
+      "pass": true,
+      "notes": "eval-only package codebase-memory-mcp@0.9.0; not executed (iron law 1)"
+    }
+  ],
+  "schema": {
+    "toolCount": 7,
+    "schemaChars": 642,
+    "fullSchemaChars": 2101,
+    "summarySchemaChars": 642,
+    "registrySummaryChars": 608,
+    "registryFullSchemaChars": 2528,
+    "registrySavingsChars": 1920,
+    "schemaMode": "summary",
+    "registry": {
+      "contextToolCount": 7,
+      "summaryChars": 608,
+      "fullSchemaChars": 2528,
+      "savingsChars": 1920
+    },
+    "c0BaselineFullCatalog": {
+      "toolCount": 34,
+      "schemaChars": 41484
+    },
+    "routingPromptChars": 318
+  },
+  "evidenceNotes": {
+    "offArm": "Fixed native multi-step plans for same nav questions (call-count baseline)",
+    "onArm": "Real createContext*Tool execute against WorkspaceFactService fixture",
+    "mcpControl": "Eval package presence only; iron law forbids prod MCP execution"
+  }
+}
