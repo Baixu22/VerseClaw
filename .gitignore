@@ -1,4 +1,4 @@
-# Dependencies
+﻿# Dependencies
 node_modules/
 .pnp
 .pnp.js
@@ -78,6 +78,10 @@ build/
 artifacts/*
 !artifacts/capability-claims/
 !artifacts/capability-claims/status-table.json
+!artifacts/coding-c0/
+!artifacts/coding-c0/**
+!artifacts/coding-c1/
+!artifacts/coding-c1/**
 .delivery/
 docs/pr-session-notes-*.md
 
