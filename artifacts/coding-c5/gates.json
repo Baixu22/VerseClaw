@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "cards": {
+    "C5-1": "symbol/path lease acquire/release/expire; write-tool wrap flag default off",
+    "C5-2": "patch-flow workers propose; lead serial apply+verify; destructive approval surface",
+    "C5-3": "recommendIsolationMode shared|worktree|patch-flow (recommend only)"
+  },
+  "honesty": {
+    "completionClass": "done (interface)",
+    "defaultIsolation": "shared",
+    "symbolLeaseDefaultEnabled": false,
+    "patchFlowDefault": false,
+    "multiProcessWalHardened": false,
+    "notC5H": true
+  }
+}
