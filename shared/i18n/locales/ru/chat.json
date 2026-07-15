@@ -1,6 +1,15 @@
 {
   "gatewayNotRunning": "Шлюз не запущен",
   "gatewayRequired": "Для использования чата требуется запущенный шлюз OpenClaw. Он запустится автоматически, или вы можете запустить его в Настройках.",
+  "startup": {
+    "waitingForGateway": "Подключение к OpenClaw…",
+    "loadingSessions": "Загрузка разговоров…",
+    "loadingHistory": "Загрузка истории разговора…",
+    "syncing": "Синхронизация",
+    "errorTitle": "Не удалось загрузить разговор",
+    "errorDescription": "OpenClaw не вернул историю разговора.",
+    "retry": "Повторить загрузку"
+  },
   "welcome": {
     "title": "Чат Verse Claw",
     "subtitle": "Чем могу помочь?",
@@ -374,7 +383,9 @@
       }
     },
     "actions": {
-      "back": "Назад к списку"
+      "back": "Назад к списку",
+      "expand": "Развернуть панель",
+      "collapse": "Свернуть панель"
     },
     "changes": {
       "heading": "Изменения файлов ({{count}})",
@@ -821,10 +832,14 @@
     "wave": "Волна {{wave}}",
     "routeReasons": "Сигналы маршрутизации",
     "showMoreNodes": "Показать еще {{count}} узлов задач",
+    "dependencies": "Зависимостей: {{count}}",
+    "details": "Подробности",
+    "nodeCount": "Узлов: {{count}}",
     "metrics": {
       "workers": "Работники",
       "waves": "Волны",
       "verifier": "Проверяющий",
+      "failures": "Ошибки",
       "signals": "Сигналы"
     },
     "alert": {

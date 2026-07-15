@@ -64,6 +64,9 @@ import { RoleCard, type RoleCardData } from './RoleCard';
 import { OrchestrationPlanView, type PlanView } from './OrchestrationPlanView';
 import { SubagentRunnerPanel } from './SubagentRunnerPanel';
 import { AgencyRolePromotionPanel } from './AgencyRolePromotionPanel';
+import { AgentRoleIdentity, RoleBadge } from './AgentAvatar';
+import type { AgentAvatarView } from '@shared/types/agent';
+import { subagentLifecycleIdentityKey } from '@shared/subagent-lifecycle';
 
 /**
  * Role-first runtime panel: browse role contracts (roles.list / roles.get),
@@ -81,10 +84,19 @@ type AgentLike = {
   name: string;
   isDefault: boolean;
   mainSessionKey: string;
+  avatar?: AgentAvatarView;
 };
 
 type LifecyclePhase = 'started' | 'completed' | 'error' | 'verified';
-type LifecycleEntry = { phase: LifecyclePhase; ts: number; error?: string; task?: string };
+type LifecycleEntry = {
+  phase: LifecyclePhase;
+  ts: number;
+  roleName: string;
+  agentId?: string;
+  taskNodeId?: string;
+  error?: string;
+  task?: string;
+};
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -734,6 +746,10 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     const def = agents.find((agent) => agent.isDefault) ?? agents[0];
     return def?.id ?? '';
   }, [agents]);
+  const anchorAgent = useMemo(
+    () => agents.find((agent) => agent.id === anchorAgentId) ?? null,
+    [agents, anchorAgentId],
+  );
   const showRoleMemoryDisabledToast = useCallback(() => {
     toast.message(tt('roles.memoryDisabledToast', 'Role Memory is disabled in Settings.'));
   }, [tt]);
@@ -1343,7 +1359,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
   }, []);
 
   // Subscribe to subagent lifecycle events for real-time orchestration progress.
-  // Events arrive via the gateway broadcast → main relay → hostEvents pipeline.
+  // Events arrive via the gateway broadcast -> main relay -> host
   useEffect(() => {
     if (typeof hostEvents.onSubagentLifecycle !== 'function') {
       return;
@@ -1351,11 +1367,15 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     const unsubscribe = hostEvents.onSubagentLifecycle((event) => {
       const roleName = event.roleName;
       if (!roleName) return;
+      const eventKey = subagentLifecycleIdentityKey(event);
       setLifecycleEvents((prev) => ({
         ...prev,
-        [roleName]: {
+        [eventKey]: {
           phase: event.status as LifecyclePhase,
           ts: event.ts ?? Date.now(),
+          roleName,
+          agentId: event.agentId,
+          taskNodeId: event.taskNodeId,
           error: event.error,
           task: event.task,
         },
@@ -1416,6 +1436,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     try {
       const result = await hostApi.gateway.rpc('orchestrator.plan', {
         task: task.trim(),
+        agentId: anchorAgentId,
         ...(selectedRole ? { leadRole: selectedRole } : {}),
       });
       const unwrapped = unwrapRpc(result);
@@ -1462,7 +1483,7 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
     } finally {
       setPlanning(false);
     }
-  }, [activeWorkspaceId, anchorSession, task, selectedRole, tt]);
+  }, [activeWorkspaceId, anchorAgentId, anchorSession, task, selectedRole, tt]);
 
   const updatePlanEditDraft = useCallback((operation: Parameters<typeof applyPlanEditOperation>[1]) => {
     setPlanEditDraft((current) => current ? applyPlanEditOperation(current, operation) : current);
@@ -2939,11 +2960,21 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
             {Object.keys(lifecycleEvents).length > 0 && (
               <div data-testid="role-task-loop-progress" className="rounded-xl bg-surface-input p-3 space-y-1">
                 <p className="text-2xs font-medium text-muted-foreground">{tt('roles.progress', 'Orchestration progress')}</p>
-                {Object.entries(lifecycleEvents).map(([roleName, entry]) => {
+                {Object.entries(lifecycleEvents).map(([eventKey, entry]) => {
+                  const roleName = entry.roleName;
                   const tone = roleTone(roleName);
                   const dotClasses = toneClasses(tone);
                   return (
-                    <div key={roleName} className="flex items-center gap-2">
+                    <div key={eventKey} className="flex items-center gap-2 rounded-lg py-1">
+                      {anchorAgent ? (
+                        <AgentRoleIdentity
+                          agentId={entry.agentId ?? anchorAgent.id}
+                          name={anchorAgent.name}
+                          avatar={anchorAgent.avatar ?? { kind: anchorAgent.id === 'main' ? 'brand' : 'fallback', source: 'default', revision: `fallback:${anchorAgent.id}` }}
+                          roleName={roleName}
+                          size={28}
+                        />
+                      ) : <RoleBadge roleName={roleName} size={22} />}
                       {entry.phase === 'started' ? (
                         <Loader2 className={cn('h-3 w-3 shrink-0 animate-spin', dotClasses.text)} />
                       ) : entry.phase === 'completed' || entry.phase === 'verified' ? (

@@ -566,12 +566,12 @@ function computeBodyFingerprint(chunk: CodeChunk): string {
     ts.forEachChild(sourceFile, visit);
     return sha256(parts.join("|")).slice(0, 32);
   }
-  return sha256(chunk.content.replace(/[A-Za-z_$][\w$]*/g, "Identifier").replace(/\d+(?:\.\d+)?|(['\"]).*?\1/g, "Literal").replace(/\s+/g, " ").trim()).slice(0, 32);
+  return sha256(chunk.content.replace(/[A-Za-z_$][\w$]*/g, "Identifier").replace(/\d+(?:\.\d+)?|(['"]).*?\1/g, "Literal").replace(/\s+/g, " ").trim()).slice(0, 32);
 }
 
 function normalizedSignatureTokens(signature: string): Set<string> {
   const normalized = signature
-    .replace(/(['\"]).*?\1/g, " Literal ")
+    .replace(/(['"]).*?\1/g, " Literal ")
     .replace(/\b\d+(?:\.\d+)?\b/g, " Literal ")
     .replace(/[A-Za-z_$][\w$]*/g, (token) => signatureKeywordTokens.has(token) ? token : "Identifier");
   return new Set(tokenize(normalized));

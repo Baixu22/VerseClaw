@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
@@ -105,6 +105,36 @@ function buildOpenClawConfig(workspaceDir: string, baseUrl: string, enabled: boo
   };
 }
 
+async function seedUserOpenClawOnly(
+  homeDir: string,
+  workspaceDir: string,
+  baseUrl: string,
+  enabled: boolean,
+): Promise<void> {
+  const openclawDir = join(homeDir, '.openclaw');
+  await mkdir(openclawDir, { recursive: true });
+  const serialized = `${JSON.stringify(buildOpenClawConfig(workspaceDir, baseUrl, enabled), null, 2)}\n`;
+  await writeFile(join(openclawDir, 'openclaw.json'), serialized, 'utf8');
+  // Intentionally do NOT pre-seed userData/openclaw-source-state/openclaw.json.
+  // prepareSourceRuntimeIsolation + config-sync must carry runtime flags.
+}
+
+async function seedIsolatedWithoutRuntime(
+  userDataDir: string,
+  workspaceDir: string,
+  baseUrl: string,
+): Promise<void> {
+  const sourceStateDir = join(userDataDir, 'openclaw-source-state');
+  await mkdir(sourceStateDir, { recursive: true });
+  const config = buildOpenClawConfig(workspaceDir, baseUrl, false);
+  // Strip runtime so the user config is the only source of DCS flags.
+  delete (config as { runtime?: unknown }).runtime;
+  await writeFile(
+    join(sourceStateDir, 'openclaw.json'),
+    `${JSON.stringify(config, null, 2)}\n`,
+    'utf8',
+  );
+}
 async function seedOpenClaw(
   homeDir: string,
   userDataDir: string,
@@ -416,6 +446,47 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
       expect(after).toEqual(before);
       expect(JSON.stringify(providerRequests.slice(-2))).toContain('context_read');
       expect(readContextRows(userDataDir).some((row) => row.block_type === 'experience')).toBe(false);
+    } finally {
+      await closeElectronApp(app);
+      await provider.stop();
+      await rm(workspaceDir, { recursive: true, force: true });
+      if (previousSekb === undefined) delete process.env.OPENCLAW_SEKB_ENABLED;
+      else process.env.OPENCLAW_SEKB_ENABLED = previousSekb;
+      if (previousOpenAiKey === undefined) delete process.env.OPENAI_API_KEY;
+      else process.env.OPENAI_API_KEY = previousOpenAiKey;
+      if (previousNoProxy === undefined) delete process.env.NO_PROXY;
+      else process.env.NO_PROXY = previousNoProxy;
+    }
+  });
+  test('config-sync copies user runtime.contextBlock flags into openclaw-source-state', async ({ homeDir, userDataDir, launchElectronApp }) => {
+    test.setTimeout(300_000);
+    const provider = await startQaMockOpenAiServer();
+    const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-w5-sync-'));
+    // User-facing config has DCS flags enabled; isolated config starts without runtime.
+    await seedUserOpenClawOnly(homeDir, workspaceDir, `${provider.baseUrl}/v1`, true);
+    await seedIsolatedWithoutRuntime(userDataDir, workspaceDir, `${provider.baseUrl}/v1`);
+    const previousSekb = process.env.OPENCLAW_SEKB_ENABLED;
+    const previousOpenAiKey = process.env.OPENAI_API_KEY;
+    const previousNoProxy = process.env.NO_PROXY;
+    process.env.OPENCLAW_SEKB_ENABLED = '0';
+    process.env.OPENAI_API_KEY = 'w5-test-key';
+    process.env.NO_PROXY = '127.0.0.1,localhost';
+    const app = await launchElectronApp({ skipSetup: true });
+    try {
+      const page = await getStableWindow(app);
+      await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+      // Gateway launch runs prepareSourceRuntimeIsolation which must merge runtime.
+      await ensureGatewayReady(app);
+
+      const isolatedPath = join(userDataDir, 'openclaw-source-state', 'openclaw.json');
+      const isolated = JSON.parse(await readFile(isolatedPath, 'utf8')) as {
+        runtime?: {
+          contextBlock?: Record<string, { enabled?: boolean }>;
+        };
+      };
+      expect(isolated.runtime?.contextBlock?.['working-memory']?.enabled, JSON.stringify(isolated.runtime)).toBe(true);
+      expect(isolated.runtime?.contextBlock?.['tool-registry']?.enabled).toBe(true);
+      expect(isolated.runtime?.contextBlock?.sekb?.enabled).toBe(false);
     } finally {
       await closeElectronApp(app);
       await provider.stop();

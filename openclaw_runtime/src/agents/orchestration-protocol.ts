@@ -1,4 +1,5 @@
 import type { RoleContract } from "./role-contract.js";
+import { codingObservability } from "../context-engine/coding-observability.js";
 
 export type OrchestrationDifficulty = "simple" | "moderate" | "complex" | "high_risk";
 export type OrchestrationQualityPolicy = "standard" | "strict";
@@ -57,6 +58,7 @@ export type OrchestrationTaskLedgerEntry = {
 
 export type OrchestrationTaskNode = {
   taskNodeId: string;
+  agentId?: string;
   roleName: string;
   task: string;
   phase: OrchestrationTaskNodePhase;
@@ -69,6 +71,11 @@ export type OrchestrationTaskNode = {
   isVerifier?: boolean;
   repairOf?: string;
   followupOf?: string;
+  /**
+   * C3-1: optional write-set (paths or globs). Absent/empty = no constraint
+   * (backward compatible with pre-C3 packing).
+   */
+  writeSet?: string[];
 };
 
 export type OrchestrationTaskEdge = {
@@ -124,7 +131,13 @@ export type OrchestrationDiagnostics = {
 export type OrchestratorGraphWorker = {
   roleName: string;
   task: string;
+  agentId?: string;
   modelRef?: string | null;
+  /**
+   * Optional C3 write-set for this worker node. Production planners may leave
+   * this unset; absent/empty writeSet does not constrain wave packing.
+   */
+  writeSet?: string[];
 };
 
 export type WorkerQualityScore = {
@@ -338,6 +351,7 @@ function buildEdges(nodes: readonly OrchestrationTaskNode[]): OrchestrationTaskE
 
 export function buildTaskGraph(params: {
   graphRunId: string;
+  agentId?: string;
   mode: string;
   graphMode?: OrchestrationGraphMode;
   workers: readonly OrchestratorGraphWorker[];
@@ -360,6 +374,7 @@ export function buildTaskGraph(params: {
       : [];
     nodes.push({
       taskNodeId: nodeIdForRole(worker.roleName, occurrence),
+      ...(worker.agentId ?? params.agentId ? { agentId: worker.agentId ?? params.agentId } : {}),
       roleName: worker.roleName,
       task: worker.task,
       phase,
@@ -372,12 +387,14 @@ export function buildTaskGraph(params: {
       },
       status: dependsOn.length === 0 ? "ready" : "planned",
       ...(worker.modelRef !== undefined ? { modelRef: worker.modelRef } : {}),
+      ...(worker.writeSet !== undefined ? { writeSet: [...worker.writeSet] } : {}),
     });
   }
   if (params.verifierRole) {
     const occurrence = (occurrences.get(params.verifierRole) ?? 0) + 1;
     const verifierNode: OrchestrationTaskNode = {
       taskNodeId: nodeIdForRole(params.verifierRole, occurrence),
+      ...(params.agentId ? { agentId: params.agentId } : {}),
       roleName: params.verifierRole,
       task: params.verifierTask ?? `Verify completion as ${params.verifierRole}`,
       phase: "verifier",
@@ -403,32 +420,184 @@ export function buildTaskGraph(params: {
   };
 }
 
+/** Roles that may receive fileHints-derived writeSet (writers only). */
+const WRITER_LIKE_ROLES = new Set([
+  "implementer",
+  "docs-writer",
+]);
+
+export function isWriterLikeRole(roleName: string): boolean {
+  const normalized = roleName.trim().toLowerCase();
+  if (!normalized) return false;
+  if (WRITER_LIKE_ROLES.has(normalized)) return true;
+  // Conservative custom-role match: only clear implement/coder patterns.
+  return /implement|coder|code-writer|developer/.test(normalized);
+}
+
+/** Normalize path list: trim, unify slashes, drop empties, dedupe. */
+export function normalizeWriteSetPaths(
+  paths: readonly string[] | undefined,
+): string[] | undefined {
+  if (!paths || paths.length === 0) return undefined;
+  const next = [
+    ...new Set(
+      paths
+        .map((path) => path.trim().replace(/\\/g, "/"))
+        .filter((path) => path.length > 0),
+    ),
+  ];
+  return next.length > 0 ? next : undefined;
+}
+
+/**
+ * C3 live writeSet policy (conservative — no path invention from free text):
+ * 1) explicit worker writeSet wins when non-empty
+ * 2) else writer-like roles inherit normalized fileHints when present
+ * 3) planner/reviewer/tester/skeptic/etc. stay unset
+ */
+export function resolveWorkerWriteSet(params: {
+  roleName: string;
+  explicit?: readonly string[];
+  fileHints?: readonly string[];
+}): string[] | undefined {
+  const explicit = normalizeWriteSetPaths(params.explicit);
+  if (explicit) return explicit;
+  if (!isWriterLikeRole(params.roleName)) return undefined;
+  return normalizeWriteSetPaths(params.fileHints);
+}
+
+/**
+ * C3-1/C3-2: true when two write sets may conflict.
+ * - Missing or empty writeSet = no constraint (backward compatible)
+ * - Both non-empty => conflict when any normalized path/glob intersects
+ */
+export function writeSetsConflict(
+  a: readonly string[] | undefined,
+  b: readonly string[] | undefined,
+): boolean {
+  if (!a?.length || !b?.length) {
+    return false;
+  }
+  const normalize = (value: string) => value.replace(/\\/g, "/").toLowerCase();
+  const left = a.map(normalize);
+  const right = b.map(normalize);
+  for (const x of left) {
+    for (const y of right) {
+      if (x === y) {
+        return true;
+      }
+      if (x.endsWith("/*") && y.startsWith(x.slice(0, -1))) {
+        return true;
+      }
+      if (y.endsWith("/*") && x.startsWith(y.slice(0, -1))) {
+        return true;
+      }
+      // Conservative: any other wildcard pair is treated as potential conflict.
+      if (x.includes("*") || y.includes("*")) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * C3-3: optional semantic conflict via impact radii (impacted file lists).
+ * Callers supply impact lists from existing C0 impact/context_impact tools.
+ */
+export function impactRadiiConflict(
+  aImpactedFiles: readonly string[] | undefined,
+  bImpactedFiles: readonly string[] | undefined,
+): boolean {
+  if (!aImpactedFiles?.length || !bImpactedFiles?.length) {
+    return false;
+  }
+  const right = new Set(bImpactedFiles.map((p) => p.replace(/\\/g, "/").toLowerCase()));
+  for (const filePath of aImpactedFiles) {
+    if (right.has(filePath.replace(/\\/g, "/").toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export type BuildExecutionWavesOptions = {
+  /**
+   * Optional map of taskNodeId -> impacted files for C3-3 semantic conflict.
+   * When omitted (default), only pure path writeSet conflicts apply.
+   * Production default: off (do not force impact radius mode).
+   */
+  impactByNodeId?: ReadonlyMap<string, readonly string[]>;
+  /**
+   * Explicit toggle for impact-radius mode. Defaults false when omitted.
+   * Has effect only when impactByNodeId is also provided.
+   */
+  impactRadiusEnabled?: boolean;
+};
+
 export function buildExecutionWaves(
   graph: OrchestrationTaskGraph,
   maxWorkers?: number,
+  options?: BuildExecutionWavesOptions,
 ): OrchestrationExecutionWave[] {
+  // C3 population probe: track whether live graphs carry writeSet (still often empty).
+  const coverageNodes = graph.nodes.filter((node) => !node.isVerifier);
+  codingObservability.recordWriteSetCoverage({
+    total: coverageNodes.length,
+    populated: coverageNodes.filter((node) => Array.isArray(node.writeSet) && node.writeSet.length > 0).length,
+  });
+
   const remaining = new Map(graph.nodes.map((node) => [node.taskNodeId, node]));
   const completed = new Set<string>();
   const waves: OrchestrationExecutionWave[] = [];
   const workerCap = Math.max(1, Math.floor(maxWorkers ?? Number.MAX_SAFE_INTEGER));
+  // Opt-in: impact radius mode is active only when callers supply impactByNodeId.
+  // Production planners leave this unset (default off).
+  const impactByNodeId =
+    options?.impactRadiusEnabled === false ? undefined : options?.impactByNodeId;
+
   while (remaining.size > 0) {
-    const ready = [...remaining.values()]
-      .filter((node) => node.dependsOn.every((dep) => completed.has(dep)));
+    const ready = [...remaining.values()].filter((node) =>
+      node.dependsOn.every((dep) => completed.has(dep)),
+    );
     if (ready.length === 0) {
       break;
     }
-    for (let index = 0; index < ready.length; index += workerCap) {
-      const chunk = ready.slice(index, index + workerCap);
-      const wave = waves.length + 1;
-      waves.push({
-        wave,
-        taskNodeIds: chunk.map((node) => node.taskNodeId),
-        roles: chunk.map((node) => node.roleName),
-      });
-      for (const node of chunk) {
-        remaining.delete(node.taskNodeId);
-        completed.add(node.taskNodeId);
+
+    const chunk: OrchestrationTaskNode[] = [];
+    for (const candidate of ready) {
+      if (chunk.length >= workerCap) {
+        break;
       }
+      const conflicts = chunk.some((existing) => {
+        const writeConflict = writeSetsConflict(existing.writeSet, candidate.writeSet);
+        const impactConflict = impactByNodeId
+          ? impactRadiiConflict(
+              impactByNodeId.get(existing.taskNodeId),
+              impactByNodeId.get(candidate.taskNodeId),
+            )
+          : false;
+        const hit = writeConflict || impactConflict;
+        codingObservability.recordWaveConflictCheck(hit);
+        return hit;
+      });
+      if (!conflicts) {
+        chunk.push(candidate);
+      }
+    }
+    if (chunk.length === 0) {
+      // Progress guarantee when every ready pair conflicts.
+      chunk.push(ready[0]!);
+    }
+
+    waves.push({
+      wave: waves.length + 1,
+      taskNodeIds: chunk.map((node) => node.taskNodeId),
+      roles: chunk.map((node) => node.roleName),
+    });
+    for (const node of chunk) {
+      remaining.delete(node.taskNodeId);
+      completed.add(node.taskNodeId);
     }
   }
   return waves;

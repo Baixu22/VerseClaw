@@ -72,6 +72,7 @@ export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
 
 export type OrchestrationWorkerOutcome = {
   roleName: string;
+  agentId?: string;
   task: string;
   isVerifier: boolean;
   ledger: OrchestrationTaskLedgerEntry;
@@ -114,6 +115,10 @@ export type ObservedOrchestrationTraceAttrs = {
  */
 export type OrchestrationLifecycleEvent = {
   status: "started" | "completed" | "error" | "verified";
+  orchestrationRunId?: string;
+  taskNodeId?: string;
+  roleInstanceId?: string;
+  agentId?: string;
   roleName: string;
   task: string;
   isVerifier: boolean;
@@ -228,9 +233,11 @@ function bundleOutcome(outcome: OrchestrationWorkerOutcome): RoleOutcomeBundle {
     : [];
   return {
     roleName: outcome.roleName,
+    ...(outcome.agentId ? { agentId: outcome.agentId } : {}),
     task: outcome.task,
     phase: outcome.isVerifier ? "verifier" : "worker",
     taskId,
+    ...(outcome.ledger.taskNodeId ? { taskNodeId: outcome.ledger.taskNodeId } : {}),
     roleInstanceId: outcome.ledger.roleInstanceId,
     attempt: outcome.ledger.attempt,
     status:
@@ -385,19 +392,6 @@ export async function runOrchestrationWithRecorder(
       roleName,
       input: task,
     });
-    // Emit lifecycle "started" before the async spawn so the UI shows the worker
-    // as in-flight immediately (the spawn itself may take seconds).
-    try {
-      lifecycle?.({
-        status: "started",
-        roleName,
-        task,
-        isVerifier,
-        ts: Date.now(),
-      });
-    } catch {
-      /* lifecycle callback is best-effort */
-    }
     const ledger = makeTaskLedgerEntry({
       orchestrationRunId,
       roleName,
@@ -415,6 +409,23 @@ export async function runOrchestrationWithRecorder(
       status: "planned",
       startedAt: Date.now(),
     });
+    // Stable node and role-instance ids let renderer projections keep duplicate
+    // roles separate while the asynchronous spawn is still in flight.
+    try {
+      lifecycle?.({
+        status: "started",
+        orchestrationRunId,
+        taskNodeId: ledger.taskNodeId,
+        roleInstanceId: ledger.roleInstanceId,
+        agentId: request.agentId,
+        roleName,
+        task,
+        isVerifier,
+        ts: Date.now(),
+      });
+    } catch {
+      /* lifecycle callback is best-effort */
+    }
     try {
       const role = resolvePlanRole(roleName, request);
       const spawn = await spawnRoleSubagent(
@@ -470,7 +481,7 @@ export async function runOrchestrationWithRecorder(
         status: spawn.status === "accepted" ? "accepted" : "failed",
         endedAt: Date.now(),
       };
-      outcomes.push({ roleName, task, isVerifier, ledger: endedLedger, spawn });
+      outcomes.push({ roleName, agentId: request.agentId, task, isVerifier, ledger: endedLedger, spawn });
       const runId = spawn.result?.runId;
       const childSessionKey = spawn.result?.childSessionKey;
       if (spawn.status === "accepted" && runId) {
@@ -500,6 +511,10 @@ export async function runOrchestrationWithRecorder(
         if (spawn.status === "accepted") {
           lifecycle?.({
             status: isVerifier ? "verified" : "completed",
+            orchestrationRunId,
+            taskNodeId: endedLedger.taskNodeId,
+            roleInstanceId: endedLedger.roleInstanceId,
+            agentId: request.agentId,
             roleName,
             task,
             isVerifier,
@@ -510,6 +525,10 @@ export async function runOrchestrationWithRecorder(
         } else {
           lifecycle?.({
             status: "error",
+            orchestrationRunId,
+            taskNodeId: endedLedger.taskNodeId,
+            roleInstanceId: endedLedger.roleInstanceId,
+            agentId: request.agentId,
             roleName,
             task,
             isVerifier,
@@ -529,6 +548,10 @@ export async function runOrchestrationWithRecorder(
       try {
         lifecycle?.({
           status: "error",
+          orchestrationRunId,
+          taskNodeId: ledger.taskNodeId,
+          roleInstanceId: ledger.roleInstanceId,
+          agentId: request.agentId,
           roleName,
           task,
           isVerifier,

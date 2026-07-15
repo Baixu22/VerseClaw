@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   AlertCircle,
-  Bot,
   Check,
   ChevronDown,
   Info,
@@ -34,6 +33,8 @@ import {
 } from '@/components/ui/select';
 import RoleProfileEditor from '@/components/agents/RoleProfileEditor';
 import RolesOrchestrationPanel from '@/components/agents/RolesOrchestrationPanel';
+import { AgentAvatar } from '@/components/agents/AgentAvatar';
+import { AgentAvatarEditor } from '@/components/agents/AgentAvatarEditor';
 import type { AgentRoleProfile } from '@shared/types/agent';
 import { DEFAULT_ROLE_PROFILE } from '@shared/types/agent';
 import { Badge } from '@/components/ui/badge';
@@ -327,9 +328,7 @@ function AgentCard({
         agent.isDefault && 'bg-black/[0.04] dark:bg-white/[0.06]'
       )}
     >
-      <div className="h-[46px] w-[46px] shrink-0 flex items-center justify-center text-primary bg-primary/10 rounded-full shadow-sm mb-3">
-        <Bot className="h-[22px] w-[22px]" />
-      </div>
+      <AgentAvatar agentId={agent.id} name={agent.name} avatar={agent.avatar} size={46} className="mb-3 shadow-sm" />
       <div className="flex flex-col flex-1 min-w-0 py-0.5 mt-1">
         <div className="flex items-center justify-between gap-3 mb-1">
           <div className="flex items-center gap-2 min-w-0">
@@ -1116,9 +1115,10 @@ function AgentSettingsModal({
   onClose: () => void;
 }) {
   const { t } = useTranslation('agents');
-  const { updateAgent, defaultModelRef } = useAgentsStore();
+  const { updateAgent, updateAgentAvatar, resetAgentAvatar, defaultModelRef } = useAgentsStore();
   const [name, setName] = useState(agent.name);
   const [savingName, setSavingName] = useState(false);
+  const [savingAvatar, setSavingAvatar] = useState(false);
   const [soulMd, setSoulMd] = useState('');
   const [baselineSkillIds, setBaselineSkillIds] = useState<string[]>([]);
   const [baselineMcpServerIds, setBaselineMcpServerIds] = useState<string[]>([]);
@@ -1390,6 +1390,33 @@ function AgentSettingsModal({
               </button>
             </div>
           </div>
+
+          <AgentAvatarEditor
+            agent={agent}
+            saving={savingAvatar}
+            onSave={async (preset) => {
+              setSavingAvatar(true);
+              try {
+                await updateAgentAvatar(agent.id, preset);
+                toast.success(t('avatar.saved'));
+              } catch (error) {
+                toast.error(t('avatar.saveFailed', { error: String(error) }));
+              } finally {
+                setSavingAvatar(false);
+              }
+            }}
+            onReset={async () => {
+              setSavingAvatar(true);
+              try {
+                await resetAgentAvatar(agent.id);
+                toast.success(t('avatar.resetDone'));
+              } catch (error) {
+                toast.error(t('avatar.resetFailed', { error: String(error) }));
+              } finally {
+                setSavingAvatar(false);
+              }
+            }}
+          />
 
           <div className="space-y-4">
             <div>

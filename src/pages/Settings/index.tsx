@@ -2,7 +2,7 @@
  * Settings Page
  * Application configuration
  */
-import { lazy, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -42,9 +42,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { useSettingsStore } from '@/stores/settings';
 import { useGatewayStore } from '@/stores/gateway';
-import { ProjectRulesCenter } from '@/components/settings/ProjectRulesCenter';
-import { AgentDevWorkbenchPanel } from '@/components/settings/AgentDevWorkbenchPanel';
-import { StorageCleanerSection } from './sections/StorageCleanerSection';
+import { SettingsSectionLoading } from './sections/SettingsSectionLoading';
 import { toUserMessage } from '@/lib/error-message';
 import {
   clearUiTelemetry,
@@ -58,52 +56,75 @@ import { SUPPORTED_LANGUAGES } from '@/i18n';
 import { hostApi, type OpenClawDoctorResult } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
+import { recoverFromDynamicImportLoadError } from '@/lib/dynamic-import-recovery';
 import type { SandboxNetworkPolicy, SandboxProviderId, SandboxProviderStatus } from '@shared/types/sandbox';
 import type { KnowledgeWatchedDirectoryConfig } from '@shared/host-api/contract';
+import { resolveSettingsSection, type SettingsSectionId } from './route-config';
 
-const SettingsModelsLazy = lazy(() => import('@/pages/Models').then((m) => ({ default: m.Models })));
-const SettingsAgentsLazy = lazy(() => import('@/pages/Agents').then((m) => ({ default: m.Agents })));
-const SettingsChannelsLazy = lazy(() => import('@/pages/Channels').then((m) => ({ default: m.Channels })));
-const SettingsSkillsLazy = lazy(() => import('@/pages/Skills').then((m) => ({ default: m.Skills })));
-const SettingsBillingLazy = lazy(() => import('@/pages/Billing').then((m) => ({ default: m.Billing })));
+function getE2ESectionDelayMs(): number {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('e2eSkipSetup') !== '1') return 0;
+  const delay = Number(params.get('e2eSettingsSectionDelayMs'));
+  return Number.isFinite(delay) && delay > 0 ? Math.min(delay, 30_000) : 0;
+}
+
+function createPreloadableLazy<P extends object>(loader: () => Promise<{ default: ComponentType<P> }>) {
+  let pending: Promise<{ default: ComponentType<P> }> | null = null;
+  const load = () => {
+    if (!pending) {
+      const modulePromise = loader();
+      const delayMs = getE2ESectionDelayMs();
+      pending = (delayMs > 0
+        ? Promise.all([
+            modulePromise,
+            new Promise<void>((resolve) => window.setTimeout(resolve, delayMs)),
+          ]).then(([module]) => module)
+        : modulePromise).catch((error) => {
+          pending = null;
+          recoverFromDynamicImportLoadError(error);
+          throw error;
+        });
+    }
+    return pending;
+  };
+  return { Component: lazy(load), preload: () => { void load(); } };
+}
+
+const settingsModels = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Models').then((m) => ({ default: m.Models })));
+const settingsAgents = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Agents').then((m) => ({ default: m.Agents })));
+const settingsChannels = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Channels').then((m) => ({ default: m.Channels })));
+const settingsSkills = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Skills').then((m) => ({ default: m.Skills })));
+const settingsBilling = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Billing').then((m) => ({ default: m.Billing })));
+const settingsProjectRules = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ProjectRulesCenter').then((m) => ({ default: m.ProjectRulesCenter as ComponentType<Record<string, never>> })));
+const settingsAgentDev = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/AgentDevWorkbenchPanel').then((m) => ({ default: m.AgentDevWorkbenchPanel as ComponentType<Record<string, never>> })));
+const settingsStorage = createPreloadableLazy<Record<string, never>>(() => import('./sections/StorageCleanerSection').then((m) => ({ default: m.StorageCleanerSection as ComponentType<Record<string, never>> })));
+
+const SettingsModelsLazy = settingsModels.Component;
+const SettingsAgentsLazy = settingsAgents.Component;
+const SettingsChannelsLazy = settingsChannels.Component;
+const SettingsSkillsLazy = settingsSkills.Component;
+const SettingsBillingLazy = settingsBilling.Component;
+const ProjectRulesCenterLazy = settingsProjectRules.Component;
+const AgentDevWorkbenchPanelLazy = settingsAgentDev.Component;
+const StorageCleanerSectionLazy = settingsStorage.Component;
 type ControlUiInfo = {
   url: string;
   token: string;
   port: number;
 };
 
-type SettingsSectionId =
-  | 'overview'
-  | 'general'
-  | 'models'
-  | 'agents'
-  | 'channels'
-  | 'skills'
-  | 'system'
-  | 'developer'
-  | 'billing'
-  | 'storage';
-
-const SETTINGS_SECTION_SEGMENTS: Record<Exclude<SettingsSectionId, 'overview'>, string> = {
-  general: 'general',
-  models: 'models',
-  agents: 'agents',
-  channels: 'channels',
-  skills: 'skills',
-  system: 'system',
-  developer: 'developer',
-  billing: 'billing',
-  storage: 'storage',
-};
-
-function resolveSettingsSection(pathname: string): SettingsSectionId {
-  const normalized = pathname.replace(/\/+$/, '');
-  const segment = normalized.split('/').filter(Boolean)[1];
-  if (!segment) return 'overview';
-
-  const match = Object.entries(SETTINGS_SECTION_SEGMENTS)
-    .find(([, value]) => value === segment);
-  return match ? (match[0] as SettingsSectionId) : 'overview';
+function preloadSettingsSection(section: SettingsSectionId) {
+  switch (section) {
+    case 'models': settingsModels.preload(); break;
+    case 'agents': settingsAgents.preload(); break;
+    case 'channels': settingsChannels.preload(); break;
+    case 'skills': settingsSkills.preload(); break;
+    case 'billing': settingsBilling.preload(); break;
+    case 'system': settingsProjectRules.preload(); break;
+    case 'developer': settingsAgentDev.preload(); break;
+    case 'storage': settingsStorage.preload(); break;
+    default: break;
+  }
 }
 
 function SettingsPageShell({ children }: { children: ReactNode }) {
@@ -191,6 +212,7 @@ export function Settings() {
   const [logContent, setLogContent] = useState('');
 
   useEffect(() => {
+    if (currentSection !== 'general') return;
     let cancelled = false;
     void hostApi.app.version()
       .then((version) => {
@@ -202,7 +224,7 @@ export function Settings() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [currentSection]);
   const [doctorRunningMode, setDoctorRunningMode] = useState<'diagnose' | 'fix' | null>(null);
   const [doctorResult, setDoctorResult] = useState<OpenClawDoctorResult | null>(null);
   const [watchedDirectories, setWatchedDirectories] = useState<KnowledgeWatchedDirectoryConfig[]>([]);
@@ -517,7 +539,7 @@ export function Settings() {
   };
 
   useEffect(() => {
-    if (!showCliTools) return;
+    if (currentSection !== 'developer' || !showCliTools) return;
     let cancelled = false;
 
     (async () => {
@@ -539,7 +561,7 @@ export function Settings() {
     })();
 
     return () => { cancelled = true; };
-  }, [devModeUnlocked, showCliTools]);
+  }, [currentSection, devModeUnlocked, showCliTools]);
 
   const handleCopyCliCommand = async () => {
     if (!openclawCliCommand) return;
@@ -552,14 +574,15 @@ export function Settings() {
   };
 
   useEffect(() => {
+    if (currentSection !== 'developer') return;
     const unsubscribe = hostEvents.onOpenClawCliInstalled((installedPath) => {
       toast.success(`openclaw CLI installed at ${installedPath}`);
     });
     return () => { unsubscribe?.(); };
-  }, []);
+  }, [currentSection]);
 
   useEffect(() => {
-    if (!devModeUnlocked) return;
+    if (currentSection !== 'developer' || !devModeUnlocked) return;
     setTelemetryEntries(getUiTelemetrySnapshot(200));
     const unsubscribe = subscribeUiTelemetry((entry) => {
       setTelemetryEntries((prev) => {
@@ -571,7 +594,7 @@ export function Settings() {
       });
     });
     return unsubscribe;
-  }, [devModeUnlocked]);
+  }, [currentSection, devModeUnlocked]);
 
   useEffect(() => {
     setProxyEnabledDraft(proxyEnabled);
@@ -586,8 +609,9 @@ export function Settings() {
   }, [cdpRemoteDebuggingPort]);
 
   useEffect(() => {
+    if (currentSection !== 'system') return;
     void refreshRemoteControlStatus();
-  }, [cdpRemoteControlEnabled, cdpRemoteDebuggingPort]);
+  }, [cdpRemoteControlEnabled, cdpRemoteDebuggingPort, currentSection]);
 
   const refreshSandboxStatus = useCallback(async () => {
     setSandboxLoading(true);
@@ -622,9 +646,9 @@ export function Settings() {
   };
 
   useEffect(() => {
-    if (!devModeUnlocked) return;
+    if (currentSection !== 'developer' || !devModeUnlocked) return;
     void refreshSandboxStatus();
-  }, [devModeUnlocked, refreshSandboxStatus]);
+  }, [currentSection, devModeUnlocked, refreshSandboxStatus]);
 
   useEffect(() => {
     setProxyServerDraft(proxyServer);
@@ -1422,6 +1446,8 @@ export function Settings() {
                         <Link
                           to={section.to}
                           data-testid={section.testId}
+                          onPointerEnter={() => preloadSettingsSection(section.id)}
+                          onFocus={() => preloadSettingsSection(section.id)}
                           className="flex min-h-20 h-full items-center gap-3 px-4 py-3"
                         >
                           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-black/5 text-foreground/80 dark:bg-white/10 [&_svg]:h-4 [&_svg]:w-4">
@@ -1535,19 +1561,27 @@ export function Settings() {
           )}
 
           {currentSection === 'models' && (
-            <SettingsModelsLazy embedded />
+            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+              <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsModelsLazy embedded /></div>
+            </Suspense>
           )}
 
           {currentSection === 'agents' && (
-            <SettingsAgentsLazy embedded />
+            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+              <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsAgentsLazy embedded /></div>
+            </Suspense>
           )}
 
           {currentSection === 'skills' && (
-            <SettingsSkillsLazy embedded />
+            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+              <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsSkillsLazy embedded /></div>
+            </Suspense>
           )}
 
           {currentSection === 'channels' && (
-            <SettingsChannelsLazy embedded />
+            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+              <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsChannelsLazy embedded /></div>
+            </Suspense>
           )}
 
           {currentSection === 'system' && (
@@ -1685,7 +1719,9 @@ export function Settings() {
               </div>
 
               {remoteControlSection}
-              <ProjectRulesCenter />
+              <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+                <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><ProjectRulesCenterLazy /></div>
+              </Suspense>
               <div className="rounded-lg border border-black/10 bg-surface-modal p-5 shadow-none dark:border-white/10">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
@@ -1859,7 +1895,9 @@ export function Settings() {
 
           {/* Developer */}
           {currentSection === 'billing' && (
-            <SettingsBillingLazy embedded />
+            <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+              <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><SettingsBillingLazy embedded /></div>
+            </Suspense>
           )}
 
           {currentSection === 'developer' && (
@@ -2044,7 +2082,9 @@ export function Settings() {
                     </div>
                   </div>
 
-                  <AgentDevWorkbenchPanel />
+                  <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+                    <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><AgentDevWorkbenchPanelLazy /></div>
+                  </Suspense>
 
                   {showCliTools && (
                     <div className="space-y-3">
@@ -2262,7 +2302,9 @@ export function Settings() {
                 <h2 data-testid="settings-storage-title" className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
                   {t('storage.title')}
                 </h2>
-                <StorageCleanerSection />
+                <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
+                  <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><StorageCleanerSectionLazy /></div>
+                </Suspense>
               </div>
             </>
           )}

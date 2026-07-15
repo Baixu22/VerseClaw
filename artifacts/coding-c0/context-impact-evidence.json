@@ -1,0 +1,76 @@
+{
+  "ok": true,
+  "tools": [
+    "context_understand",
+    "context_impact",
+    "context_reuse",
+    "context_verify"
+  ],
+  "impact": {
+    "callers": [
+      {
+        "name": "handleRequest",
+        "filePath": "src/auth.ts",
+        "kind": "function",
+        "startLine": 5,
+        "endLine": 7,
+        "depth": 1,
+        "via": "login"
+      },
+      {
+        "name": "testLogin",
+        "filePath": "src/auth.test.ts",
+        "kind": "function",
+        "startLine": 2,
+        "endLine": 4,
+        "depth": 1,
+        "via": "login"
+      }
+    ],
+    "evidence": [
+      {
+        "name": "handleRequest",
+        "filePath": "src/auth.ts",
+        "depth": 1,
+        "via": "login"
+      },
+      {
+        "name": "testLogin",
+        "filePath": "src/auth.test.ts",
+        "depth": 1,
+        "via": "login"
+      }
+    ],
+    "riskLevel": "medium",
+    "evidenceCount": 2
+  },
+  "understand": {
+    "answerable": true,
+    "snippetCount": 3
+  },
+  "reuse": {
+    "decision": "reuse",
+    "candidateCount": 3
+  },
+  "verify": {
+    "relatedTests": [
+      "src/auth.test.ts"
+    ],
+    "riskLevel": "low"
+  },
+  "schema": {
+    "toolCount": 7,
+    "schemaChars": 2101,
+    "baselineSchemaChars": 39625,
+    "baselineToolCount": 30,
+    "deltaSchemaChars": 2101,
+    "note": "W0-4: full-catalog delta recorded in CODING-C0-COMPLETE from W5-style schemaChars; this is the 7 context_* shell occupancy."
+  },
+  "metrics": {
+    "factToolCalls": 4,
+    "factStoreHits": 4,
+    "factStoreMisses": 0,
+    "schemaToolCount": 7,
+    "schemaChars": 2101
+  }
+}

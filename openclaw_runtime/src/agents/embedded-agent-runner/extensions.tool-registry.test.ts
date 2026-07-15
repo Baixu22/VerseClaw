@@ -263,7 +263,7 @@ describe("DCS Stage 3 tool-registry extension wiring", () => {
     };
     expect(parsed.entries.map((e) => e.resourceId)).toEqual(["context_read", "write"]);
     expect(parsed.entries[0]?.title).toBe("Context Read");
-    expect(parsed.entries[0]?.purpose).toContain("Read full context blocks");
+    expect(parsed.entries[0]?.purpose).toContain("context block");
   });
 
   it("flag off does not write even when real mapped toolEntries are provided", async () => {

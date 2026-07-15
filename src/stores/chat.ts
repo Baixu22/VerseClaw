@@ -70,6 +70,7 @@ export type {
   RawMessage,
   ToolStatus,
   ChatRuntimeRunState,
+  ChatStartupPhase,
 } from './chat/types';
 
 // Module-level timestamp tracking the last chat event received.
@@ -95,6 +96,9 @@ let _historyPollTimer: ReturnType<typeof setTimeout> | null = null;
 let _errorRecoveryTimer: ReturnType<typeof setTimeout> | null = null;
 let _loadSessionsInFlight: Promise<void> | null = null;
 let _lastLoadSessionsAt = 0;
+let _startupHydrationInFlight: Promise<void> | null = null;
+let _startupHydrationRuntimeKey: string | null = null;
+let _hydratedGatewayRuntimeKey: string | null = null;
 /** Simple LRU map with O(1) get/set and bounded size. Evicts least-recently used entries. */
 class LruMap<K, V> {
   private _map = new Map<K, V>();
@@ -472,6 +476,16 @@ function getHistoryForegroundLoadKey(sessionKey: string): string {
   const gatewayStatus = gatewayState?.status;
   const gatewayRuntimeKey = `${gatewayStatus?.pid ?? 'none'}:${gatewayStatus?.connectedAt ?? 'none'}:${gatewayStatus?.port ?? 'none'}`;
   return `${gatewayRuntimeKey}|${sessionKey}`;
+}
+
+function getGatewayRuntimeKey(): string {
+  const { status } = useGatewayStore.getState();
+  return `${status.pid ?? 'none'}:${status.connectedAt ?? 'none'}:${status.port ?? 'none'}`;
+}
+
+function isGatewayReadyForChat(): boolean {
+  const { status } = useGatewayStore.getState();
+  return status.state === 'running' && status.gatewayReady !== false;
 }
 
 function pruneChatEventDedupe(now: number): void {
@@ -1829,6 +1843,8 @@ function buildSessionSwitchPatch(
     | 'streamingMessage'
     | 'streamingTools'
     | 'pendingToolImages'
+    | 'startupPhase'
+    | 'startupError'
   >,
   nextSessionKey: string,
 ): Partial<ChatState> {
@@ -1866,9 +1882,13 @@ function buildSessionSwitchPatch(
       ? clearSessionEntryFromMap(state.sessionLastActivity, state.currentSessionKey)
       : state.sessionLastActivity,
     messages: cachedNextSession?.messages ?? [],
+    loading: cachedNextSession == null,
+    historyRefreshing: cachedNextSession != null,
     hasMoreHistory: cachedNextSession ? cachedNextSession.messages.length >= HISTORY_PAGE_SIZE : false,
     loadingMoreHistory: false,
     thinkingLevel: cachedNextSession?.thinkingLevel ?? state.thinkingLevel ?? null,
+    startupPhase: cachedNextSession ? 'ready' : 'loading-history',
+    startupError: null,
     ...cachedRunState,
     error: null,
     runError: null,
@@ -2571,10 +2591,13 @@ async function ensureSessionLinkedToLedger(sessionKey: string): Promise<void> {
 export const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
   loading: false,
+  historyRefreshing: false,
   loadingMoreHistory: false,
   hasMoreHistory: false,
   error: null,
   runError: null,
+  startupPhase: 'waiting-for-gateway',
+  startupError: null,
 
   sending: false,
   activeRunId: null,
@@ -2602,6 +2625,110 @@ export const useChatStore = create<ChatState>((set, get) => ({
   taskLedgerLoaded: false,
 
   // ── Load sessions via sessions.list ──
+
+  hydrateStartup: async () => {
+    const hasCachedMessages = get().messages.length > 0;
+    if (hasCachedMessages && get().startupPhase !== 'ready') {
+      set({ startupPhase: 'ready', startupError: null });
+    }
+
+    if (!isGatewayReadyForChat()) {
+      if (!hasCachedMessages) {
+        // A previous foreground history attempt may have raced the Gateway
+        // lifecycle. While it is starting, that transport failure is not a
+        // user-facing Chat error; wait for the ready transition instead.
+        set({
+          startupPhase: 'waiting-for-gateway',
+          startupError: null,
+          error: null,
+          loading: false,
+          historyRefreshing: false,
+        });
+      }
+      return;
+    }
+
+    const runtimeKey = getGatewayRuntimeKey();
+    if (_startupHydrationInFlight) {
+      const activeRuntimeKey = _startupHydrationRuntimeKey;
+      await _startupHydrationInFlight;
+      if (
+        activeRuntimeKey !== getGatewayRuntimeKey()
+        && isGatewayReadyForChat()
+      ) {
+        await get().hydrateStartup();
+      }
+      return;
+    }
+    if (_hydratedGatewayRuntimeKey === runtimeKey && get().startupPhase === 'ready') {
+      return;
+    }
+
+    _startupHydrationRuntimeKey = runtimeKey;
+    _startupHydrationInFlight = (async () => {
+      const keepCachedContentVisible = get().messages.length > 0;
+      if (!keepCachedContentVisible) {
+        set({ startupPhase: 'loading-sessions', startupError: null });
+      }
+
+      await get().loadSessions();
+
+      // A gateway restart can complete while sessions.list is still pending.
+      // Do not let the superseded runtime continue into history hydration; the
+      // caller waiting on this hydration will schedule the current runtime next.
+      if (!isGatewayReadyForChat() || getGatewayRuntimeKey() !== runtimeKey) {
+        return;
+      }
+
+      const refreshQuietly = get().messages.length > 0;
+      const historyAlreadySettled = !refreshQuietly
+        && get().startupPhase === 'ready'
+        && !get().loading
+        && !get().historyRefreshing;
+      if (!refreshQuietly && !historyAlreadySettled) {
+        set({ startupPhase: 'loading-history', startupError: null });
+      }
+      if (!historyAlreadySettled) {
+        await get().loadHistory(refreshQuietly);
+      }
+
+      const state = get();
+      if (!isGatewayReadyForChat() || getGatewayRuntimeKey() !== runtimeKey) {
+        return;
+      }
+      if (state.messages.length === 0 && state.error) {
+        set({
+          startupPhase: 'error',
+          startupError: state.error,
+          loading: false,
+          historyRefreshing: false,
+        });
+        return;
+      }
+
+      _hydratedGatewayRuntimeKey = runtimeKey;
+      set({ startupPhase: 'ready', startupError: null });
+    })();
+
+    try {
+      await _startupHydrationInFlight;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (get().messages.length === 0) {
+        set({
+          startupPhase: 'error',
+          startupError: message,
+          loading: false,
+          historyRefreshing: false,
+        });
+      } else {
+        set({ startupPhase: 'ready', startupError: null, historyRefreshing: false });
+      }
+    } finally {
+      _startupHydrationInFlight = null;
+      _startupHydrationRuntimeKey = null;
+    }
+  },
 
   loadSessions: async () => {
     const now = Date.now();
@@ -2898,7 +3025,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // shows only the local transcript snapshot and loses the live execution UI.
     clearHistoryPoll();
     clearBaselines();
-    set((s) => buildSessionSwitchPatch(s, newKey));
+    set((s) => ({
+      ...buildSessionSwitchPatch(s, newKey),
+      loading: false,
+      historyRefreshing: false,
+      startupPhase: 'ready',
+      startupError: null,
+    }));
     void get().refreshTaskLedger();
     void ensureSessionLinkedToLedger(newKey);
   },
@@ -3087,7 +3220,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       return;
     }
 
+    const shouldShowBackgroundRefreshing = get().messages.length > 0;
     if (shouldShowForegroundLoading) set({ loading: true, error: null, runError: null });
+    if (shouldShowBackgroundRefreshing) set({ historyRefreshing: true });
 
     // Safety guard: if history loading takes too long, force loading to false
     // to prevent the UI from being stuck in a spinner forever.
@@ -3182,9 +3317,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
         if (!isCurrentSession()) return;
         set((state) => {
           const mergedMessages = mergePendingOptimisticUserMessages(currentSessionKey, state.messages);
+          const startupFailed = mergedMessages.length === 0
+            && (state.startupPhase === 'loading-history' || state.startupPhase === 'loading-sessions');
           return {
             loading: false,
             error: shouldShowForegroundLoading && errorMessage ? errorMessage : state.error,
+            ...(startupFailed
+              ? { startupPhase: 'error' as const, startupError: errorMessage }
+              : {}),
             ...(mergedMessages.length > 0 ? { messages: mergedMessages } : { messages: [] as RawMessage[] }),
           };
         });
@@ -3266,12 +3406,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
         && isRecoverableRuntimeError(latestTerminalAssistantErrorMessage),
       );
 
-      set({
+      set((state) => ({
         messages: finalMessages,
         thinkingLevel,
         loading: false,
+        error: null,
         runError: historyErrorIsTransient ? null : latestTerminalAssistantErrorMessage,
-      });
+        ...(state.startupPhase !== 'ready' || state.startupError
+          ? { startupPhase: 'ready' as const, startupError: null }
+          : {}),
+      }));
       cacheSessionHistory(currentSessionKey, finalMessages, thinkingLevel);
       void recordCompletedHistoryTurnsToTaskLedger(
         currentSessionKey,
@@ -3618,10 +3762,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
           } else if (localFallbackApplied) {
             set({ loading: false });
           } else if (errorKind === 'timeout' && isInitialForegroundLoad) {
-            // Keep startup usable while Gateway RPC routing catches up.  The
-            // Sidebar/gateway event refreshes will retry quietly instead of
-            // showing a transient "RPC timeout: chat.history" error.
-            set({ loading: false });
+            const timeoutMessage = (lastError instanceof Error ? lastError.message : String(lastError))
+              || 'Failed to load chat history';
+            set({
+              loading: false,
+              error: timeoutMessage,
+              startupPhase: 'error',
+              startupError: timeoutMessage,
+            });
           } else {
             applyLoadFailure(
               (lastError instanceof Error ? lastError.message : String(lastError))
@@ -3671,6 +3819,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const active = _historyLoadInFlight.get(currentSessionKey);
       if (active === loadPromise) {
         _historyLoadInFlight.delete(currentSessionKey);
+      }
+      if (get().currentSessionKey === currentSessionKey) {
+        set({ historyRefreshing: false });
       }
     }
   },

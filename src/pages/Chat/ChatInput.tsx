@@ -62,6 +62,7 @@ import { rendererExtensionRegistry } from '@/extensions/registry';
 import { collectDroppedFiles } from '@/lib/collect-dropped-files';
 import { fetchQuickAccessSkills } from '@/lib/quick-access-skills';
 import { ChatAgentEffortButton } from '@/components/chat/ChatAgentEffortPopover';
+import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import {
   buildCapabilityActionMessage,
   executeChatCapabilityActions,
@@ -3225,10 +3226,13 @@ export function ChatInput({
                               disabled={selected}
                               onClick={() => handleWorkspaceAction(() => onSwitchAgent(agent.id))}
                             >
-                              <span className="min-w-0">
+                              <span className="flex min-w-0 items-center gap-2">
+                                <AgentAvatar agentId={agent.id} name={agent.name} avatar={agent.avatar} size={28} />
+                                <span className="min-w-0">
                                 <span className="block truncate font-medium">{agent.name}</span>
                                 <span className="block truncate text-tiny text-muted-foreground">
                                   {t('composer.modelSourceDefault')}: {agent.modelDisplay}
+                                </span>
                                 </span>
                               </span>
                               {selected && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
@@ -4130,13 +4134,14 @@ function AgentPickerItem({
       type="button"
       onClick={onSelect}
       className={cn(
-        'flex w-full flex-col items-start rounded-xl px-3 py-2 text-left transition-colors',
+        'flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left transition-colors',
         selected ? 'bg-primary/10 text-foreground' : 'hover:bg-black/5 dark:hover:bg-white/5'
       )}
     >
-      <span className="text-sm font-medium text-foreground">{agent.name}</span>
-      <span className="text-tiny text-muted-foreground">
-        {agent.modelDisplay}
+      <AgentAvatar agentId={agent.id} name={agent.name} avatar={agent.avatar} size={30} />
+      <span className="min-w-0">
+        <span className="block truncate text-sm font-medium text-foreground">{agent.name}</span>
+        <span className="block truncate text-tiny text-muted-foreground">{agent.modelDisplay}</span>
       </span>
     </button>
   );

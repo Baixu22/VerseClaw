@@ -1,14 +1,24 @@
 import type { ContextBlock, ContextBlockSink } from "../block.js";
+import {
+  CODING_TOOL_ROUTING_PROMPT,
+  contextToolOneLineSummary,
+  isContextAgentToolName,
+} from "../coding-tool-navigation.js";
+import {
+  resolveContextToolSchemaMode,
+  type ContextToolSchemaMode,
+} from "../dcs-context-tools-flags.js";
 
 /**
  * DCS Stage 3 tool_registry Block handler.
  *
- * A `before_agent_start` hook produces one system-managed `tool_registry` Block
- * through `ContextBlockSink`. The Block carries `always_on=true`,
- * `token_budget=200`, `priority=7`, and the fixed `context_read` expand tool.
+ * A before_agent_start hook produces one system-managed tool_registry Block
+ * through ContextBlockSink. The Block carries always_on=true,
+ * token_budget=200, priority=7, and the fixed context_read expand tool.
  *
- * The existing CVK `ContextRuntimeKitContextEngine.assemble` path is unchanged;
- * this handler is a parallel, flag-gated producer.
+ * C1-1: context_* tools use on_demand summary mode - Block entries expose
+ * name + one-line purpose; full parameter schema lives in full_content and is
+ * expanded via context_read('tool_registry').
  */
 
 export interface ToolRegistryEntry {
@@ -17,8 +27,9 @@ export interface ToolRegistryEntry {
   title: string;
   purpose: string;
   category?: string;
+  /** Full tool parameters schema for on_demand expand (C1-1). */
+  inputSchema?: unknown;
 }
-
 
 export type ToolRegistryToolLike = {
   name?: string;
@@ -29,17 +40,25 @@ export type ToolRegistryToolLike = {
   risk?: string;
 };
 
+export type MapToolsToToolRegistryOptions = {
+  /**
+   * summary (default): context_* purpose is one-line; parameters stored as inputSchema.
+   * full: legacy purpose includes property name dump (no inputSchema field).
+   */
+  schemaMode?: ContextToolSchemaMode;
+};
+
 /**
  * Map production agent tools into ToolRegistryEntry[] for the tool_registry Block.
- * Uses name as resourceId, label/title heuristics for title, and description/displaySummary
- * (with a short schema property list) for purpose. Drops tools without a usable name.
  */
 export function mapToolsToToolRegistryEntries(
   tools: ReadonlyArray<ToolRegistryToolLike> | undefined | null,
+  options: MapToolsToToolRegistryOptions = {},
 ): ToolRegistryEntry[] {
   if (!tools || tools.length === 0) {
     return [];
   }
+  const schemaMode = options.schemaMode ?? resolveContextToolSchemaMode();
   const entries: ToolRegistryEntry[] = [];
   const seen = new Set<string>();
   for (const tool of tools) {
@@ -51,15 +70,19 @@ export function mapToolsToToolRegistryEntries(
     const title =
       (typeof tool.label === "string" && tool.label.trim()) ||
       humanizeToolName(name);
-    const purpose = summarizeToolPurpose(tool);
+    const purpose = summarizeToolPurpose(tool, name, schemaMode);
     const category = typeof tool.risk === "string" && tool.risk.trim() ? tool.risk.trim() : undefined;
-    entries.push({
+    const entry: ToolRegistryEntry = {
       resourceId: name,
       kind: "toolset",
       title,
       purpose,
       ...(category ? { category } : {}),
-    });
+    };
+    if (schemaMode === "summary" && isContextAgentToolName(name) && tool.parameters !== undefined) {
+      entry.inputSchema = tool.parameters;
+    }
+    entries.push(entry);
   }
   return entries;
 }
@@ -72,7 +95,19 @@ function humanizeToolName(name: string): string {
     .replace(/\b\w/g, (ch) => ch.toUpperCase());
 }
 
-function summarizeToolPurpose(tool: ToolRegistryToolLike): string {
+function summarizeToolPurpose(
+  tool: ToolRegistryToolLike,
+  name: string,
+  schemaMode: ContextToolSchemaMode,
+): string {
+  if (schemaMode === "summary" && isContextAgentToolName(name)) {
+    const description =
+      (typeof tool.description === "string" && tool.description.trim()) ||
+      (typeof tool.displaySummary === "string" && tool.displaySummary.trim()) ||
+      "";
+    return truncatePurpose(contextToolOneLineSummary(name, description));
+  }
+
   const description =
     (typeof tool.description === "string" && tool.description.trim()) ||
     (typeof tool.displaySummary === "string" && tool.displaySummary.trim()) ||
@@ -111,13 +146,14 @@ function truncatePurpose(value: string, max = 200): string {
   if (trimmed.length <= max) {
     return trimmed;
   }
-  return `${trimmed.slice(0, max - 1)}?`;
+  return `${trimmed.slice(0, max - 1)}…`;
 }
 
 export interface BuildToolRegistryBlockParams {
   sessionId: string;
   entries: ToolRegistryEntry[];
   now?: Date;
+  includeRoutingHint?: boolean;
 }
 
 const TOOL_REGISTRY_TOKEN_BUDGET = 200;
@@ -128,7 +164,16 @@ export function buildToolRegistryBlock(params: BuildToolRegistryBlockParams): Co
   const now = params.now ?? new Date();
   const entries = params.entries.slice(0, TOOL_REGISTRY_MAX_ENTRIES);
   const count = entries.length;
-  const summary = `## Tools (${count} available)\n→ context_read('tool_registry') for full schema`;
+  const hasContextTools = entries.some((entry) => isContextAgentToolName(entry.resourceId));
+  const includeRouting = params.includeRoutingHint ?? hasContextTools;
+  const summaryLines = [
+    `## Tools (${count} available)`,
+    "→ context_read('tool_registry') for full schema",
+  ];
+  if (includeRouting) {
+    summaryLines.push(CODING_TOOL_ROUTING_PROMPT);
+  }
+  const summary = summaryLines.join("\n");
 
   return {
     block_id: `tool-registry:${params.sessionId}`,
@@ -189,10 +234,52 @@ export function formatToolRegistryInjection(block: ContextBlock | undefined): st
     if (entries.length === 0) {
       return undefined;
     }
-    return `## Tools (${entries.length} available)\n→ context_read('tool_registry') for full schema`;
+    const hasContextTools = entries.some((entry) => isContextAgentToolName(entry.resourceId));
+    const lines = [
+      `## Tools (${entries.length} available)`,
+      "→ context_read('tool_registry') for full schema",
+    ];
+    if (hasContextTools) {
+      lines.push(CODING_TOOL_ROUTING_PROMPT);
+    }
+    return lines.join("\n");
   } catch {
     return undefined;
   }
+}
+
+/**
+ * C1-1 occupancy helper: measure always_on summary chars vs full schema chars
+ * for context_* entries under summary mode.
+ */
+export function measureContextToolRegistryOccupancy(entries: ToolRegistryEntry[]): {
+  contextToolCount: number;
+  summaryChars: number;
+  fullSchemaChars: number;
+  savingsChars: number;
+} {
+  let contextToolCount = 0;
+  let summaryChars = 0;
+  let fullSchemaChars = 0;
+  for (const entry of entries) {
+    if (!isContextAgentToolName(entry.resourceId)) continue;
+    contextToolCount += 1;
+    summaryChars += JSON.stringify({
+      name: entry.resourceId,
+      purpose: entry.purpose,
+    }).length;
+    fullSchemaChars += JSON.stringify({
+      name: entry.resourceId,
+      purpose: entry.purpose,
+      parameters: entry.inputSchema ?? null,
+    }).length;
+  }
+  return {
+    contextToolCount,
+    summaryChars,
+    fullSchemaChars,
+    savingsChars: Math.max(0, fullSchemaChars - summaryChars),
+  };
 }
 
 function isToolRegistryEntry(value: unknown): value is ToolRegistryEntry {

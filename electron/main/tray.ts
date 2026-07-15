@@ -1,4 +1,4 @@
-﻿/**
+/**
  * System Tray Management
  * Creates and manages the system tray icon and menu
  */

@@ -45,7 +45,7 @@ function baseHostApiMocks() {
       data: {
         status: 200,
         ok: true,
-        json: { success: true, agents: [{ id: 'main', name: 'main' }] },
+        json: { success: true, agents: [{ id: 'main', name: 'main', workspace: '/tmp/artifact-workspace' }] },
       },
     },
     [stableStringify(['/api/workspaces', 'GET'])]: {
@@ -108,6 +108,7 @@ test.describe('Chat artifact panel', () => {
       await page.waitForTimeout(3000);
 
       const artifactTabButton = page.locator('[data-testid="artifact-panel-tab-artifact"]');
+      await expect(page.getByTestId('artifact-panel-aside')).toHaveAttribute('data-expanded', 'false');
       await expect(artifactTabButton).toBeVisible();
       await expect(artifactTabButton).toContainText('Artifacts');
     } finally {
@@ -198,4 +199,58 @@ test.describe('Chat artifact panel', () => {
       await closeElectronApp(app);
     }
   });
+});
+
+test('keeps the conversation column in place until the workspace panel expands', async ({ launchElectronApp }) => {
+  const app = await launchElectronApp({ skipSetup: true });
+
+  try {
+    await installIpcMocks(app, {
+      gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+      gatewayRpc: {
+        [stableStringify(['sessions.list', {}])]: {
+          success: true,
+          result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] },
+        },
+        [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200 }])]: {
+          success: true,
+          result: { messages: [], hasMore: false },
+        },
+        [stableStringify(['workspaces.getSessionState', { workspaceId: WORKSPACE.id, sessionKey: SESSION_KEY }])]: {
+          success: true,
+          result: { artifactPanel: { open: false } },
+        },
+      },
+      hostApi: baseHostApiMocks(),
+    });
+
+    const page = await getStableWindow(app);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const workspaceToggle = page.getByTestId('chat-workspace-toggle');
+    await expect(workspaceToggle).toBeEnabled({ timeout: 30_000 });
+
+    await workspaceToggle.click();
+    const panel = page.getByTestId('artifact-panel-aside');
+    await expect(panel).toHaveAttribute('data-expanded', 'false');
+    await expect.poll(async () => panel.evaluate((element) => getComputedStyle(element).position)).toBe('absolute');
+
+    const collapsedWidths = await page.evaluate(() => {
+      const page = document.querySelector<HTMLElement>('[data-testid="chat-page"]');
+      const conversation = document.querySelector<HTMLElement>('[data-testid="chat-conversation-column"]');
+      return { page: page?.getBoundingClientRect().width ?? 0, conversation: conversation?.getBoundingClientRect().width ?? 0 };
+    });
+    expect(Math.abs(collapsedWidths.page - collapsedWidths.conversation)).toBeLessThan(2);
+
+    await page.getByTestId('artifact-panel-expand').click();
+    await expect(panel).toHaveAttribute('data-expanded', 'true');
+    await expect.poll(async () => panel.evaluate((element) => getComputedStyle(element).position)).toBe('relative');
+
+    const expandedWidths = await page.evaluate(() => {
+      const conversation = document.querySelector<HTMLElement>('[data-testid="chat-conversation-column"]');
+      return conversation?.getBoundingClientRect().width ?? 0;
+    });
+    expect(expandedWidths).toBeLessThan(collapsedWidths.conversation - 100);
+  } finally {
+    await closeElectronApp(app);
+  }
 });

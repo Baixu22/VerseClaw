@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Skill Installer
  * Downloads skills from GitHub repos and installs them to ~/.openclaw/skills/
  */

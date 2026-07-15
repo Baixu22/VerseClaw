@@ -1,5 +1,28 @@
 export type AgentReasoningEffort = 'auto' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh';
 
+export const AGENT_AVATAR_STYLES = [
+  'lorelei-neutral',
+  'notionists-neutral',
+  'pixel-art-neutral',
+  'identicon',
+] as const;
+
+export type AgentAvatarStyle = typeof AGENT_AVATAR_STYLES[number];
+
+export type AgentAvatarPreset = {
+  style: AgentAvatarStyle;
+  seed: string;
+  backgroundColor: string;
+};
+
+export type AgentAvatarView = {
+  kind: 'brand' | 'dicebear' | 'image' | 'fallback';
+  source: 'config' | 'identity' | 'default';
+  preset?: AgentAvatarPreset;
+  uri?: string;
+  revision: string;
+};
+
 /**
  * **Assistant** — persistent identity (canonical taxonomy).
  *
@@ -23,6 +46,8 @@ export interface AgentSummary {
   agentDir: string;
   mainSessionKey: string;
   channelTypes: string[];
+  emoji?: string;
+  avatar?: AgentAvatarView;
 }
 
 export interface AgentsSnapshot {

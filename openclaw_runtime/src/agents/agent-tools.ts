@@ -63,6 +63,21 @@ import { createApplyPatchTool } from "./apply-patch.js";
 import { createMemoryQueryTool } from "../runtime-core/memory-query-tool.js";
 import type { BlockStoreApi, ContextBlockSink } from "../context-engine/block.js";
 import { createDcsContextAgentTools } from "./tools/context-agent-tools.js";
+import type { WorkspaceFactService } from "../context-engine/factstore/workspace-fact-service.js";
+import {
+  isCodingParseOnTouchEnabled,
+  isCodingStaleWriteGuardEnabled,
+  isCodingWriteJournalEnabled,
+} from "../context-engine/coding-runtime-flags.js";
+import { wrapToolWithParseOnTouch } from "./parse-on-touch.js";
+import { wrapToolWithStaleWriteGuard } from "./stale-write-guard.js";
+import { wrapToolWithWriteSideEffects } from "./write-side-effects.js";
+import { wrapToolWithSoftWriteGates } from "./write-soft-gates.js";
+import { wrapToolWithDestructiveTier } from "./write-destructive-tier.js";
+import {
+  createUndoWriteTool,
+  wrapToolWithWriteJournal,
+} from "./tools/write-journal.js";
 import type { AuthProfileStore } from "./auth-profiles/types.js";
 import { describeExecTool, describeProcessTool } from "./bash-tools.descriptions.js";
 import type { ExecToolDefaults } from "./bash-tools.exec-types.js";
@@ -551,6 +566,19 @@ export function createOpenClawCodingTools(options?: {
   dcsContextBlockSink?: ContextBlockSink;
   /** Optional agency role for context_write whitelist (defaults to implementer). */
   dcsContextRole?: string;
+  /**
+   * C0-3: shared per-workspace FactStore + Materializer for Fact view tools.
+   * When omitted, the four view tools are absent (dep-gate, same as Block tools).
+   */
+  factService?: WorkspaceFactService;
+  /** Optional ContextPack budget for context_understand (W0-4). */
+  dcsFactBudgetChars?: number;
+  /** C0-2 override for parse-on-touch after successful reads / parse-on-write. */
+  parseOnTouchEnabled?: boolean;
+  /** C2-2 override for stale full-file write guard (default false). */
+  staleWriteGuardEnabled?: boolean;
+  /** C2-8 override for write journal (default true). */
+  writeJournalEnabled?: boolean;
   /** Runtime-only resolved skill paths that the read tool may load under workspaceOnly. */
   skillsSnapshot?: SkillSnapshot;
 }): AnyAgentTool[] {
@@ -719,6 +747,61 @@ export function createOpenClawCodingTools(options?: {
   const workspaceRoot = resolveWorkspaceRoot(options?.workspaceDir);
   const runtimeRoot = resolveWorkspaceRoot(options?.cwd ?? options?.workspaceDir);
   const codingRoot = sandboxRoot ?? runtimeRoot;
+  const parseOnTouchEnabled = isCodingParseOnTouchEnabled(options?.config, {
+    parseOnTouchEnabled: options?.parseOnTouchEnabled,
+  });
+  const staleWriteGuardEnabled = isCodingStaleWriteGuardEnabled(options?.config, {
+    staleWriteGuardEnabled: options?.staleWriteGuardEnabled,
+  });
+  const writeJournalEnabled = isCodingWriteJournalEnabled(options?.config, {
+    writeJournalEnabled: options?.writeJournalEnabled,
+  });
+  const codingSessionId = options?.sessionId;
+  const applyParseOnTouch = (tool: AnyAgentTool): AnyAgentTool =>
+    wrapToolWithParseOnTouch(tool, {
+      workspaceRoot: codingRoot,
+      materializer: options?.factService?.materializer,
+      enabled: parseOnTouchEnabled,
+      sessionId: codingSessionId,
+      trackReadHashes: true,
+    });
+  const applyWriteKit = (tool: AnyAgentTool, kind: "edit" | "write" | "apply_patch"): AnyAgentTool => {
+    let next = tool;
+    // C2-8 journal first (pre-write snapshot)
+    next = wrapToolWithWriteJournal(next, {
+      workspaceRoot: codingRoot,
+      sessionId: codingSessionId,
+      enabled: writeJournalEnabled,
+    });
+    // C2-2 stale guard only for full-file write
+    if (kind === "write") {
+      next = wrapToolWithStaleWriteGuard(next, {
+        workspaceRoot: codingRoot,
+        sessionId: codingSessionId,
+        enabled: staleWriteGuardEnabled,
+        factStore: options?.factService?.store,
+      });
+    }
+    // C2-1 parse-on-write + C2-9 syntax check + C2-5 diag + C2-3 verify after success
+    next = wrapToolWithWriteSideEffects(next, {
+      workspaceRoot: codingRoot,
+      materializer: options?.factService?.materializer,
+      factStore: options?.factService?.store,
+      parseOnWriteEnabled: parseOnTouchEnabled,
+      syntaxCheckEnabled: true,
+      verifyConsumeEnabled: true,
+    });
+    // C2-4 / C2-7 soft warnings (never hard-block)
+    next = wrapToolWithSoftWriteGates(next, {
+      workspaceRoot: codingRoot,
+      factService: options?.factService,
+      impactPrecheckEnabled: true,
+      editReadinessEnabled: true,
+    });
+    // C2-10 destructive tier classification + approval metrics
+    next = wrapToolWithDestructiveTier(next, { journalEnabled: writeJournalEnabled });
+    return next;
+  };
   const memoryFlushWriteRoot = sandboxRoot ?? workspaceRoot;
   const includeCoreTools = options?.includeCoreTools !== false;
   const toolConstructionPlan = options?.toolConstructionPlan ?? {
@@ -819,7 +902,16 @@ export function createOpenClawCodingTools(options?: {
   const base = includeBaseCodingTools
     ? baseToolAssemblers
         .filter(({ name }) => name === "read" || !sandboxRoot || allowWorkspaceWrites)
-        .map(({ build }) => build())
+        .map(({ name, build }) => {
+          const tool = build();
+          if (name === "read") {
+            return applyParseOnTouch(tool);
+          }
+          if (name === "edit" || name === "write") {
+            return applyWriteKit(tool, name);
+          }
+          return tool;
+        })
     : [];
   options?.recordToolPrepStage?.("base-coding-tools");
 
@@ -838,9 +930,20 @@ export function createOpenClawCodingTools(options?: {
     blockStore: options?.dcsBlockStore,
     contextBlockSink: options?.dcsContextBlockSink,
     role: options?.dcsContextRole,
+    factService: options?.factService,
+    budgetChars: options?.dcsFactBudgetChars,
   });
   if (dcsContextTools.length > 0) {
     base.push(...dcsContextTools);
+  }
+  // C2-8: undo_write when journal enabled
+  const undoWriteTool = createUndoWriteTool({
+    workspaceRoot: codingRoot,
+    sessionId: codingSessionId,
+    enabled: writeJournalEnabled && includeBaseCodingTools,
+  });
+  if (undoWriteTool) {
+    base.push(undoWriteTool);
   }
   const { cleanupMs: cleanupMsOverride, ...execDefaults } = options?.exec ?? {};
   const effectiveExecPolicy = applyExecPolicyLayer(execConfig, options?.exec);
@@ -905,7 +1008,7 @@ export function createOpenClawCodingTools(options?: {
         scopeKey,
       })
     : null;
-  const applyPatchTool =
+  const applyPatchToolRaw =
     !includeShellTools || !applyPatchEnabled || (sandboxRoot && !allowWorkspaceWrites)
       ? null
       : createApplyPatchTool({
@@ -916,6 +1019,9 @@ export function createOpenClawCodingTools(options?: {
               : undefined,
           workspaceOnly: applyPatchWorkspaceOnly,
         });
+  const applyPatchTool = applyPatchToolRaw
+    ? applyWriteKit(applyPatchToolRaw as unknown as AnyAgentTool, "apply_patch")
+    : null;
   options?.recordToolPrepStage?.("shell-tools");
   const pluginToolAllowlist = collectExplicitAllowlist([
     profilePolicy,

@@ -9,7 +9,7 @@ import { Toaster } from 'sonner';
 import i18n from './i18n';
 import { MainLayout } from './components/layout/MainLayout';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { LoadingSpinner } from './components/common/LoadingSpinner';
+import { BootShellHandoff, SetupRouteLoadingShell } from './components/loading/RouteLoadingShell';
 import { useSettingsStore } from './stores/settings';
 import { useGatewayStore } from './stores/gateway';
 import { useProviderStore } from './stores/providers';
@@ -21,6 +21,7 @@ import { hostEvents } from './lib/host-events';
 import { recoverFromDynamicImportLoadError } from './lib/dynamic-import-recovery';
 import { getAgentDevScenarioRoute, installAgentDevTestSurface } from './lib/agent-dev';
 import { applyDocumentTheme } from './lib/theme';
+import { SettingsRoute } from './pages/Settings/SettingsRoute';
 
 const Chat = lazy(() => import('./pages/Chat').then((m) => ({ default: m.Chat })));
 const Cron = lazy(() => import('./pages/Cron').then((m) => ({ default: m.Cron })));
@@ -32,14 +33,14 @@ const TaskLedgerPage = lazy(() => import('./pages/TaskLedger'));
 const ClawGraphPage = lazy(() => import('./pages/ClawGraph'));
 const CodeReviewPage = lazy(() => import('./pages/CodeReview'));
 const Knowledge = lazy(() => import('./pages/Knowledge').then((m) => ({ default: m.Knowledge })));
-const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.Settings })));
 const Setup = lazy(() => import('./pages/Setup').then((m) => ({ default: m.Setup })));
 
-function RouteFallback() {
+function SetupRoute() {
   return (
-    <div className="flex h-full min-h-[240px] items-center justify-center">
-      <LoadingSpinner />
-    </div>
+    <Suspense fallback={<SetupRouteLoadingShell />}>
+      <BootShellHandoff />
+      <Setup />
+    </Suspense>
   );
 }
 
@@ -78,7 +79,9 @@ class ErrorBoundary extends Component<
           minHeight: '100vh',
           fontFamily: 'monospace'
         }}>
-          <h1 style={{ fontSize: '24px', marginBottom: '16px' }}>Something went wrong</h1>
+          <h1 style={{ fontSize: '24px', marginBottom: '16px' }}>
+            {i18n.t('common:status.error')}
+          </h1>
           <pre style={{
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-all',
@@ -103,7 +106,7 @@ class ErrorBoundary extends Component<
               cursor: 'pointer'
             }}
           >
-            Reload
+            {i18n.t('menu:view.reload')}
           </button>
         </div>
       );
@@ -228,34 +231,32 @@ function App() {
   return (
     <ErrorBoundary>
       <TooltipProvider delayDuration={300}>
-        <Suspense fallback={<RouteFallback />}>
-          <Routes>
-            {/* Setup wizard (shown on first launch) */}
-            <Route path="/setup/*" element={<Setup />} />
+        <Routes>
+          {/* Setup wizard (shown on first launch) */}
+          <Route path="/setup/*" element={<SetupRoute />} />
 
-            {/* Main application routes */}
-            <Route element={<MainLayout />}>
-              <Route path="/" element={<Chat />} />
-              <Route path="/models" element={<Navigate to="/settings/models" replace />} />
-              <Route path="/agents" element={<Navigate to="/settings/agents" replace />} />
-              <Route path="/channels" element={<Navigate to="/settings/channels" replace />} />
-              <Route path="/skills" element={<Navigate to="/settings/skills" replace />} />
-              <Route path="/cron" element={<Cron />} />
-              <Route path="/remote-tasks" element={<RemoteTasks />} />
-              <Route path="/task-ledger" element={<TaskLedgerPage />} />
-              <Route path="/clawgraph" element={<ClawGraphPage />} />
-              <Route path="/code-review" element={<CodeReviewPage />} />
-              <Route path="/knowledge" element={<Knowledge />} />
-              <Route path="/image-generation" element={devModeUnlocked ? <ImageGenerationPage /> : <Navigate to="/" replace />} />
-              <Route path="/dreams" element={devModeUnlocked ? <Dreams /> : <Navigate to="/" replace />} />
-              <Route path="/observability" element={<ObservabilityDashboard />} />
-              <Route path="/settings/*" element={<Settings />} />
-              {extraRoutes.map((r) => (
-                <Route key={r.path} path={r.path} element={<r.component />} />
-              ))}
-            </Route>
-          </Routes>
-        </Suspense>
+          {/* Main application routes */}
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Chat />} />
+            <Route path="/models" element={<Navigate to="/settings/models" replace />} />
+            <Route path="/agents" element={<Navigate to="/settings/agents" replace />} />
+            <Route path="/channels" element={<Navigate to="/settings/channels" replace />} />
+            <Route path="/skills" element={<Navigate to="/settings/skills" replace />} />
+            <Route path="/cron" element={<Cron />} />
+            <Route path="/remote-tasks" element={<RemoteTasks />} />
+            <Route path="/task-ledger" element={<TaskLedgerPage />} />
+            <Route path="/clawgraph" element={<ClawGraphPage />} />
+            <Route path="/code-review" element={<CodeReviewPage />} />
+            <Route path="/knowledge" element={<Knowledge />} />
+            <Route path="/image-generation" element={devModeUnlocked ? <ImageGenerationPage /> : <Navigate to="/" replace />} />
+            <Route path="/dreams" element={devModeUnlocked ? <Dreams /> : <Navigate to="/" replace />} />
+            <Route path="/observability" element={<ObservabilityDashboard />} />
+            <Route path="/settings/*" element={<SettingsRoute />} />
+            {extraRoutes.map((r) => (
+              <Route key={r.path} path={r.path} element={<r.component />} />
+            ))}
+          </Route>
+        </Routes>
 
         {/* Global toast notifications */}
         <Toaster

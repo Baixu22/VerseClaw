@@ -21,6 +21,7 @@ import {
   type CvkToolCallGateDiagnostic,
 } from './tool-call-gate.js';
 import { generateCvkViews } from './views.js';
+import { CODING_TOOL_ROUTING_PROMPT } from '../coding-tool-navigation.js';
 
 export const CONTEXT_RUNTIME_KIT_ENGINE_ID = 'context-runtime-kit';
 
@@ -125,6 +126,7 @@ function formatPromptAddition(params: {
     ...(params.contextStatusLines ?? []),
     '[Context Runtime Kit]',
     'Use selector-backed context surfaces below as navigation and diagnostics. Do not treat compact views as raw source evidence for hard claims.',
+    CODING_TOOL_ROUTING_PROMPT,
     `artifact: ${params.artifact.buildReport.artifactHash}`,
     `metrics: SC=${params.artifact.buildReport.metrics.sourceCoverage.rate} RRR=${params.artifact.buildReport.metrics.referenceResolutionRate.rate} AR=${params.artifact.buildReport.metrics.artifactReproducibilityRate.rate}`,
     'tool gate mode: report_only',

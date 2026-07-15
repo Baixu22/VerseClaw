@@ -28,6 +28,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { roleTone, spanKindTone, toneClasses } from '@/lib/role-visuals';
 import { useTranslation } from 'react-i18next';
+import { AgentRoleIdentity } from '@/components/agents/AgentAvatar';
+import { useAgentsStore } from '@/stores/agents';
 
 const NODE_WIDTH = 168;
 const NODE_HEIGHT = 40;
@@ -186,6 +188,7 @@ export function AgentTraceGraph({
   onSelectNode: (nodeId: string) => void;
 }) {
   const { t } = useTranslation('observability');
+  const agents = useAgentsStore((state) => state.agents);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const dragRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
   const [zoom, setZoom] = useState(1);
@@ -476,6 +479,7 @@ export function AgentTraceGraph({
 
           {filteredNodes.map((node) => {
             const Icon = nodeIcon(node.kind);
+            const agent = agents.find((candidate) => candidate.id === node.agentId) ?? null;
             const tone = toneClasses(nodeTone(node));
             const selected = selectedNodeId === node.id;
             const connected = selectedRelated.size === 0 || selectedRelated.has(node.id);
@@ -503,7 +507,9 @@ export function AgentTraceGraph({
                 style={{ left: node.x, top: node.y }}
                 data-testid={`trace-graph-node-${node.kind}`}
               >
-                <span className={cn('relative flex h-6 w-6 shrink-0 items-center justify-center rounded border', tone.tint)}>
+                {agent && (node.kind === 'agent' || node.kind === 'subagent' || node.roleName) ? (
+                  <AgentRoleIdentity agentId={agent.id} name={agent.name} avatar={agent.avatar} roleName={node.roleName ?? node.kind} size={26} />
+                ) : <span className={cn('relative flex h-6 w-6 shrink-0 items-center justify-center rounded border', tone.tint)}>
                   <Icon className="h-3.5 w-3.5" />
                   {isSlow && (
                     <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-amber-500 text-white">
@@ -515,7 +521,7 @@ export function AgentTraceGraph({
                       <Zap className="h-2 w-2" />
                     </span>
                   )}
-                </span>
+                </span>}
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-xs font-medium text-foreground">{node.label}</span>
                 </span>

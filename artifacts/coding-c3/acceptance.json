@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "card": "C3",
+  "waveSplitOnConflict": true,
+  "emptyWriteSetCompatible": true,
+  "impactRadiusMode": "opt-in-via-impactByNodeId",
+  "impactRadiusDefaultOff": true,
+  "plannerFill": "partial",
+  "metricsPresent": true,
+  "packWavesForDisjoint": 1,
+  "tokenBudgetAborts": 1,
+  "waveConflictChecks": 10,
+  "waveConflicts": 2,
+  "writeSetNodesTotal": 15,
+  "writeSetNodesPopulated": 12,
+  "rates": {
+    "waveConflictRate": 0.2,
+    "writeSetCoverageRate": 0.8,
+    "writeSetPredAccuracy": 0
+  },
+  "ts": "2026-07-15T03:34:21.527Z"
+}

@@ -135,7 +135,7 @@ describe('请求重放沙箱执行器', () => {
       status: 200,
       headers: { 'content-type': 'application/json', 'x-trace-id': 'abc' },
     })) as unknown as typeof fetch;
-    let grant: BoundaryGrantContext | undefined;
+    const grant: BoundaryGrantContext | undefined;
     const executor = createExecutor({ fetcher, getGrant: () => grant });
 
     const draftId = prepareDraft(executor);
@@ -170,7 +170,7 @@ describe('请求重放沙箱执行器', () => {
         headers: { 'content-type': 'application/json' },
       });
     }) as unknown as typeof fetch;
-    let grant: BoundaryGrantContext | undefined;
+    const grant: BoundaryGrantContext | undefined;
     const executor = createExecutor({
       fetcher,
       getGrant: () => grant,

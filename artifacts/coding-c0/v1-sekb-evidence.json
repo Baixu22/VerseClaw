@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "conclusion": "D2_cleared",
+  "sekbEnabled": true,
+  "depsHasTrajectoryCapture": true,
+  "trajectories": [
+    {
+      "trajectory_id": "3dfba7a5-059e-40b0-bec2-d7bc34d2a1fe",
+      "task_intent": "V-1 SEKB terminal phase verification",
+      "task_type": "agent/task",
+      "outcome": "success",
+      "context_fingerprint": [
+        "completed"
+      ]
+    },
+    {
+      "trajectory_id": "11ebb71e-61e1-4936-a1c1-f7d8a4dab990",
+      "task_intent": "V-1 SEKB terminal phase verification",
+      "task_type": "agent/task",
+      "outcome": "success",
+      "context_fingerprint": [
+        "completed"
+      ]
+    }
+  ],
+  "anchors": [
+    "openclaw_runtime/src/agents/embedded-agent-runner/dcs-extension-deps.ts:resolveEmbeddedSekbRuntime",
+    "openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts:isSekbEnabled/resolveEmbeddedSekbRuntime",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts:buildTaskStateFactory setTaskStateHandlerConfig.trajectoryCapture",
+    "openclaw_runtime/src/agents/harness/lifecycle-hook-helpers.ts:runAgentHarnessTaskPhaseChangeHook terminal capture",
+    "openclaw_runtime/src/agents/task-loop-controller.ts:emitTaskLoopTaskPhaseChange",
+    "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts:start_trajectory/finish_trajectory"
+  ]
+}

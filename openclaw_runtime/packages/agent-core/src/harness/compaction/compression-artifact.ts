@@ -48,6 +48,15 @@ export type CompressionLargeDurableFactRef = {
   text: string;
 };
 
+export type CompressionRehydratedFileContext = {
+  path: string;
+  reason?: string;
+  lineStart?: number;
+  lineEnd?: number;
+  excerptHash?: string;
+  evidenceRefs?: CompressionEvidenceRef[];
+};
+
 export type CompressionArtifact = {
   schemaVersion: 1;
   objective: string;
@@ -70,6 +79,7 @@ export type CompressionArtifact = {
   capabilityActivations?: CompressionCapabilityActivation[];
   staleReferences?: CompressionCvkEvidenceRef[];
   retrievalTrace?: CompressionRetrievalTraceEntry[];
+  rehydratedFileContext?: CompressionRehydratedFileContext[];
   telemetry?: Partial<CompressionTelemetry>;
   quality: CompressionArtifactQuality;
 };
@@ -80,6 +90,7 @@ export type CompressionArtifactInput = {
   summary?: string;
   readFiles?: string[];
   modifiedFiles?: string[];
+  rehydratedFileContext?: CompressionRehydratedFileContext[];
   targetArtifactTokens?: number;
   telemetry?: Partial<CompressionTelemetry>;
   contextRuntimeKit?: {

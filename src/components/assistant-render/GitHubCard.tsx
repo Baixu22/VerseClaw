@@ -1,4 +1,4 @@
-﻿import { ExternalLink, Github } from 'lucide-react';
+import { ExternalLink, Github } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { hostApi } from '@/lib/host-api';
 import { cn } from '@/lib/utils';

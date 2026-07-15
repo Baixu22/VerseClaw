@@ -308,6 +308,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     }
     const plan = createOrchestratorPlan({
       task,
+      agentId: readString(params.agentId),
       fileHints: readStringArray(params.fileHints),
       important: readBoolean(params.important) ?? false,
       workers,

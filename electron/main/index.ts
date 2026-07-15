@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Electron Main Process Entry
  * Manages window creation, system tray, and IPC handlers
  */
@@ -784,14 +784,47 @@ function sendMainWindowEvent(channel: string, payload: unknown): void {
   win.webContents.send(channel, payload);
 }
 
+type RendererBootTheme = 'light' | 'dark';
+
+const BOOT_BACKGROUND_COLORS: Record<RendererBootTheme, string> = {
+  light: '#faf9f5',
+  dark: '#1b1b1d',
+};
+
+async function resolveRendererBootTheme(): Promise<RendererBootTheme> {
+  try {
+    const theme = await getSetting('theme');
+    if (theme === 'light' || theme === 'dark') return theme;
+  } catch (error) {
+    logger.warn('Failed to read persisted theme for renderer startup:', error);
+  }
+  return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+}
+
+function getE2EDelayQuery(envName: string): string | undefined {
+  if (!isE2EMode) return undefined;
+  const value = Number(process.env[envName]);
+  if (!Number.isFinite(value) || value <= 0) return undefined;
+  return String(Math.min(Math.floor(value), 30_000));
+}
+
 /**
  * Create the main application window
  */
-function createWindow(): BrowserWindow {
+async function createWindow(): Promise<BrowserWindow> {
   const isMac = process.platform === 'darwin';
   const isWindows = process.platform === 'win32';
   const useCustomTitleBar = isWindows;
   const shouldSkipSetupForE2E = process.env.VERSE_CLAW_E2E_SKIP_SETUP === '1';
+  const bootTheme = await resolveRendererBootTheme();
+  const rendererQuery: Record<string, string> = { bootTheme };
+  const e2eBootHoldMs = getE2EDelayQuery('CLAWX_E2E_BOOT_HOLD_MS');
+  const e2eSettingsSectionDelayMs = getE2EDelayQuery('CLAWX_E2E_SETTINGS_SECTION_DELAY_MS');
+  if (shouldSkipSetupForE2E) rendererQuery.e2eSkipSetup = '1';
+  if (e2eBootHoldMs) rendererQuery.e2eBootHoldMs = e2eBootHoldMs;
+  if (e2eSettingsSectionDelayMs) {
+    rendererQuery.e2eSettingsSectionDelayMs = e2eSettingsSectionDelayMs;
+  }
 
   const win = new BrowserWindow({
     width: 1280,
@@ -811,6 +844,7 @@ function createWindow(): BrowserWindow {
       ? getMacTrafficLightPosition(false)
       : undefined,
     frame: isMac || !useCustomTitleBar,
+    backgroundColor: BOOT_BACKGROUND_COLORS[bootTheme],
     show: false,
   });
 
@@ -843,8 +877,8 @@ function createWindow(): BrowserWindow {
   // Load the app
   if (process.env.VITE_DEV_SERVER_URL) {
     const rendererUrl = new URL(process.env.VITE_DEV_SERVER_URL);
-    if (shouldSkipSetupForE2E) {
-      rendererUrl.searchParams.set('e2eSkipSetup', '1');
+    for (const [key, value] of Object.entries(rendererQuery)) {
+      rendererUrl.searchParams.set(key, value);
     }
     win.loadURL(rendererUrl.toString());
     if (!isE2EMode) {
@@ -852,9 +886,7 @@ function createWindow(): BrowserWindow {
     }
   } else {
     win.loadFile(join(__dirname, '../../dist/index.html'), {
-      query: shouldSkipSetupForE2E
-        ? { e2eSkipSetup: '1' }
-        : undefined,
+      query: rendererQuery,
     });
   }
 
@@ -883,8 +915,8 @@ function focusMainWindow(): void {
   focusWindow(mainWindow);
 }
 
-function createMainWindow(): BrowserWindow {
-  const win = createWindow();
+async function createMainWindow(): Promise<BrowserWindow> {
+  const win = await createWindow();
   applySystemThemeIcons(win);
 
   win.once('ready-to-show', () => {
@@ -957,7 +989,7 @@ async function initialize(): Promise<void> {
   await createMenu();
 
   // Create the main window
-  const window = createMainWindow();
+  const window = await createMainWindow();
 
   // Create system tray
   if (!isE2EMode) {
@@ -1294,7 +1326,9 @@ if (gotTheLock) {
     // "Cannot create BrowserWindow before app is ready" on macOS.
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) {
-        createMainWindow();
+        void createMainWindow().catch((error) => {
+          logger.error('Failed to recreate main window:', error);
+        });
       } else {
         focusMainWindow();
       }
