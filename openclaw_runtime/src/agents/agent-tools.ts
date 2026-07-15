@@ -63,6 +63,7 @@ import { createApplyPatchTool } from "./apply-patch.js";
 import { createMemoryQueryTool } from "../runtime-core/memory-query-tool.js";
 import type { BlockStoreApi, ContextBlockSink } from "../context-engine/block.js";
 import { createDcsContextAgentTools } from "./tools/context-agent-tools.js";
+import type { WorkspaceFactService } from "../context-engine/factstore/workspace-fact-service.js";
 import type { AuthProfileStore } from "./auth-profiles/types.js";
 import { describeExecTool, describeProcessTool } from "./bash-tools.descriptions.js";
 import type { ExecToolDefaults } from "./bash-tools.exec-types.js";
@@ -551,6 +552,13 @@ export function createOpenClawCodingTools(options?: {
   dcsContextBlockSink?: ContextBlockSink;
   /** Optional agency role for context_write whitelist (defaults to implementer). */
   dcsContextRole?: string;
+  /**
+   * C0-3: shared per-workspace FactStore + Materializer for Fact view tools.
+   * When omitted, the four view tools are absent (dep-gate, same as Block tools).
+   */
+  factService?: WorkspaceFactService;
+  /** Optional ContextPack budget for context_understand (W0-4). */
+  dcsFactBudgetChars?: number;
   /** Runtime-only resolved skill paths that the read tool may load under workspaceOnly. */
   skillsSnapshot?: SkillSnapshot;
 }): AnyAgentTool[] {
@@ -838,6 +846,8 @@ export function createOpenClawCodingTools(options?: {
     blockStore: options?.dcsBlockStore,
     contextBlockSink: options?.dcsContextBlockSink,
     role: options?.dcsContextRole,
+    factService: options?.factService,
+    budgetChars: options?.dcsFactBudgetChars,
   });
   if (dcsContextTools.length > 0) {
     base.push(...dcsContextTools);
