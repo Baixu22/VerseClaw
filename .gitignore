@@ -1,4 +1,4 @@
-﻿# Dependencies
+# Dependencies
 node_modules/
 .pnp
 .pnp.js
@@ -82,6 +82,10 @@ artifacts/*
 !artifacts/coding-c0/**
 !artifacts/coding-c1/
 !artifacts/coding-c1/**
+!artifacts/coding-c2/
+!artifacts/coding-c2/**
+!artifacts/coding-c3/
+!artifacts/coding-c3/**
 .delivery/
 docs/pr-session-notes-*.md
 

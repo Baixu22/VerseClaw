@@ -1,0 +1,13 @@
+{
+    "lint_errors":  0,
+    "c2_unit_tests":  "25/25",
+    "e2e_dcs_w5":  "3/3",
+    "acceptance":  "artifacts/coding-c2/acceptance.json",
+    "openclaw_runtime_build":  0,
+    "typecheck":  0,
+    "lint_check":  0,
+    "ok":  true,
+    "lint_warnings":  111,
+    "full_acceptance":  "artifacts/coding-c2/full-acceptance.json",
+    "test_dcs":  0
+}
