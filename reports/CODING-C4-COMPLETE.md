@@ -48,8 +48,8 @@ Integrated C4 worktree isolation interface on mainline residual C4 surface:
 | monorepo `pnpm run typecheck` | **pre-existing fail** on `electron/services/knowledge-api.ts` (untouched by C4) |
 | monorepo `pnpm run lint:check` | **pre-existing fail** UTF-8 BOM on sekb helper scripts (untouched by C4) |
 | `pnpm run lint:dcs` (full DCS set) | pre-existing TS2344 on runtime-context-block config tests (untouched) |
-| `pnpm --dir openclaw_runtime build` | long-running tsdown under Windows memory pressure; re-check in CI |
-| playwright `dcs-production-wiring-w5` | long Electron run / env-sensitive; not a C4 code-path change; re-check in CI |
+| pnpm --dir openclaw_runtime build | **pass** (total ~387s; tsdown ~366s) |
+| playwright dcs-production-wiring-w5 | **partial** — first case failed (~3.2m) on mock-openai incomplete response (env/runtime; not C4 surface); remaining aborted when hung; re-check in CI |
 
 ## Key paths
 
