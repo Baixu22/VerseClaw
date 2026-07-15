@@ -5,7 +5,7 @@
 **Scope**: DCS Phase5 C7-1..C7-3 unified memory/knowledge **shadow** (routing-memo + SEKB experience + verifier discipline)
 **Completion class**: `done (shadow)`
 **Cutover recommended**: **false** (no default production injection flip)
-**SHA**: *(filled after closeout commit)*
+**SHA**: `d5bd9fc189b3fd583fa872e292fb235b7d9887e3`
 
 ## Honesty (required)
 
