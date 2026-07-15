@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "c2_5_diag": true,
+  "c2_6_wm": "working-memory:s",
+  "c2_10_delete_approval": true,
+  "c2_10_edit_skip": true,
+  "parseOnWriteHits": 1,
+  "diagHits": 1,
+  "rates": {
+    "approvalPromptRate": 0,
+    "diagHitRate": 0.5,
+    "verifyHitRate": 0,
+    "falseBlockRate": 0
+  }
+}
