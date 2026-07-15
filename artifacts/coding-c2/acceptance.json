@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "parseOnWriteHits": 2,
+  "syntaxCheckHits": 1,
+  "staleBlocks": 1,
+  "journalSnapshots": 2,
+  "undoCount": 1,
+  "journalLatencyMsMax": 1.7973000000001775,
+  "rates": {
+    "approvalPromptRate": 0,
+    "diagHitRate": 0.5,
+    "verifyHitRate": 0,
+    "falseBlockRate": 0.3333333333333333
+  }
+}
