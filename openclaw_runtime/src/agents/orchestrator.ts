@@ -31,6 +31,7 @@ import {
 } from "./routing-memo.js";
 import { selectRunbookCandidates, type RunbookSelectionResult } from "./runbook-registry.js";
 import { buildTaskGraphFromRunbook } from "./runbook-task-graph.js";
+import { DEFAULT_VERIFIER_DISCIPLINE } from "./verifier-discipline.js";
 
 export type OrchestratorRequest = {
   task: string;
@@ -67,6 +68,11 @@ export type OrchestratorRequest = {
   allowFollowupPlanning?: boolean;
   graphMode?: OrchestrationGraphMode;
   allowAutoRepair?: boolean;
+  /**
+   * C7-3: when true (default), verifier failures never self-repair and escalate
+   * a lead fix task. Explicit false is compatible opt-out of the factory path.
+   */
+  verifierNoSelfRepair?: boolean;
   /**
    * Area 3 §3.1: workspace directory for the routing memo store. When present
    * and the routing memo pilot is enabled (`runtime.orchestration.routingMemoPilot`),
@@ -109,6 +115,8 @@ export type OrchestratorPlan = {
   estimatedRepairPolicy: OrchestrationRepairPolicy;
   /** C4-4: plan-level isolation (default shared). */
   isolation: CodingIsolationMode;
+  /** C7-3: verifier discipline - default true (no self-repair). */
+  verifierNoSelfRepair: boolean;
   complexityDecision: ComplexityGateDecision;
   runbookSelection: RunbookSelectionResult;
 };
@@ -250,14 +258,19 @@ function buildP2Metadata(request: OrchestratorRequest): {
 }
 
 function attachP2Metadata(
-  plan: Omit<OrchestratorPlan, "complexityDecision" | "runbookSelection" | "isolation"> & {
+  plan: Omit<OrchestratorPlan, "complexityDecision" | "runbookSelection" | "isolation" | "verifierNoSelfRepair"> & {
     isolation?: CodingIsolationMode;
+    verifierNoSelfRepair?: boolean;
   },
   metadata: ReturnType<typeof buildP2Metadata>,
   request?: OrchestratorRequest,
 ): OrchestratorPlan {
   const isolation = normalizeIsolationMode(plan.isolation ?? request?.isolation);
-  return { ...plan, isolation, ...metadata };
+  const verifierNoSelfRepair =
+    plan.verifierNoSelfRepair ??
+    request?.verifierNoSelfRepair ??
+    DEFAULT_VERIFIER_DISCIPLINE.verifierNoSelfRepair;
+  return { ...plan, isolation, verifierNoSelfRepair, ...metadata };
 }
 
 function createRunbookPlan(

@@ -19,6 +19,8 @@ export const DEFAULT_CODING_FEATURE_FLAGS = {
   "runtime.coding.patchFlow.default": false,
   /** C7-H: experience shadow dual-write off until stable window. */
   "runtime.coding.sekb.experienceShadow": false,
+  /** C7-1: routing memo JSONL dual-write shadow. Default false (no production injection). */
+  "runtime.coding.routingMemo.shadow": false,
 } as const;
 
 export type CodingFeatureFlagName = keyof typeof DEFAULT_CODING_FEATURE_FLAGS;
@@ -163,4 +165,24 @@ export function isCodingSekbExperienceShadowEnabled(
     return sekb.enabled;
   }
   return DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.sekb.experienceShadow"];
+}
+
+/** C7-1 routing memo JSONL dual-write shadow. Default false (no cutover / no prompt injection). */
+export function isCodingRoutingMemoShadowEnabled(
+  cfg?: OpenClawConfig,
+  overrides?: { routingMemoShadow?: boolean },
+): boolean {
+  if (typeof overrides?.routingMemoShadow === "boolean") {
+    return overrides.routingMemoShadow;
+  }
+  const leaf = asRecord(codingConfigFrom(cfg)?.routingMemo) as CodingFlagLeaf & {
+    shadow?: boolean;
+  } | undefined;
+  if (typeof leaf?.shadow === "boolean") {
+    return leaf.shadow;
+  }
+  if (typeof leaf?.enabled === "boolean") {
+    return leaf.enabled;
+  }
+  return DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.routingMemo.shadow"];
 }
