@@ -7,6 +7,7 @@ import {
   buildExecutionWaves,
   buildRouteDiagnostics,
   buildTaskGraph,
+  resolveWorkerWriteSet,
   normalizeGraphMode,
   normalizeRepairPolicy,
   taskGraphWorkerNodes,
@@ -74,6 +75,11 @@ export type OrchestratorWorkerPlan = {
   task: string;
   label?: string;
   modelRef?: string | null;
+  /**
+   * Optional C3 write-set. Explicit values win; otherwise writer-like roles may
+   * inherit request.fileHints via resolveWorkerWriteSet (no free-text invention).
+   */
+  writeSet?: string[];
 };
 
 export type OrchestratorPlan = {
@@ -144,12 +150,25 @@ function buildPlanGraph(params: {
 } {
   const repairPolicy = params.request.repairPolicy ?? normalizeRepairPolicy(undefined);
   const graphMode = normalizeGraphMode(params.request.graphMode);
+  const graphWorkers = params.workers.map((worker) => {
+    const writeSet = resolveWorkerWriteSet({
+      roleName: worker.roleName,
+      explicit: worker.writeSet,
+      fileHints: params.request.fileHints,
+    });
+    return {
+      roleName: worker.roleName,
+      task: worker.task,
+      ...(worker.modelRef !== undefined ? { modelRef: worker.modelRef } : {}),
+      ...(writeSet ? { writeSet } : {}),
+    };
+  });
   const taskGraph = buildTaskGraph({
     graphRunId: params.graphRunId,
     agentId: params.request.agentId,
     mode: params.mode,
     graphMode,
-    workers: params.workers,
+    workers: graphWorkers,
     verifierRole: params.verifierRole,
     verifierTask: params.verifierRole
       ? taskForRole(params.verifierRole, params.request.task)
@@ -169,6 +188,7 @@ function buildPlanGraph(params: {
       task: node.task,
       label: source?.label,
       modelRef: node.modelRef,
+      ...(node.writeSet ? { writeSet: [...node.writeSet] } : {}),
     };
   });
   return { taskGraph, executionWaves, estimatedRepairPolicy: repairPolicy, projectedWorkers };
@@ -225,6 +245,7 @@ function createRunbookPlan(
     graphRunId: selected.template.id,
     knownRoleNames: availableRoles.map((role) => role.name),
     selectionTrace: metadata.runbookSelection,
+    fileHints: request.fileHints,
   });
   const taskGraph = request.agentId
     ? { ...graphResult.graph, nodes: graphResult.graph.nodes.map((node) => ({ ...node, agentId: request.agentId })) }
@@ -251,6 +272,7 @@ function createRunbookPlan(
         roleName: node.roleName,
         task: node.task,
         modelRef: node.modelRef,
+        ...(node.writeSet ? { writeSet: [...node.writeSet] } : {}),
       })),
       ...(verifierNode ? { verifierRole: verifierNode.roleName } : {}),
       templateId: selected.template.id,
@@ -284,6 +306,7 @@ function createExplicitWorkersPlan(request: OrchestratorRequest): OrchestratorPl
     task: worker.task,
     label: worker.label,
     modelRef: worker.modelRef ?? null,
+    ...(worker.writeSet !== undefined ? { writeSet: [...worker.writeSet] } : {}),
   }));
   const workers = capWorkers(allWorkers, maxWorkers);
   const reasons = [

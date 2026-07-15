@@ -1,5 +1,5 @@
 /**
- * In-memory coding scorecard counters (decision plan + C2 write kit).
+ * In-memory coding scorecard counters (decision plan + C2 write kit + C3 concurrent).
  * Process-local, same pattern as dcs-observability — not a dashboard product surface.
  */
 export type CodingObservabilitySnapshot = {
@@ -27,6 +27,14 @@ export type CodingObservabilitySnapshot = {
   diagSilent: number;
   approvalPrompts: number;
   approvalSkips: number;
+  // C3 concurrent / write-set metrics
+  waveConflictChecks: number;
+  waveConflicts: number;
+  writeSetPredCorrect: number;
+  writeSetPredTotal: number;
+  writeSetNodesPopulated: number;
+  writeSetNodesTotal: number;
+  tokenBudgetAborts: number;
 };
 
 const ZERO: CodingObservabilitySnapshot = {
@@ -54,6 +62,13 @@ const ZERO: CodingObservabilitySnapshot = {
   diagSilent: 0,
   approvalPrompts: 0,
   approvalSkips: 0,
+  waveConflictChecks: 0,
+  waveConflicts: 0,
+  writeSetPredCorrect: 0,
+  writeSetPredTotal: 0,
+  writeSetNodesPopulated: 0,
+  writeSetNodesTotal: 0,
+  tokenBudgetAborts: 0,
 };
 
 class CodingObservabilityRegistry {
@@ -145,11 +160,34 @@ class CodingObservabilityRegistry {
     this.#counters.approvalSkips += 1;
   }
 
+  recordWaveConflictCheck(conflicted: boolean): void {
+    this.#counters.waveConflictChecks += 1;
+    if (conflicted) this.#counters.waveConflicts += 1;
+  }
+
+  recordWriteSetPrediction(correct: boolean): void {
+    this.#counters.writeSetPredTotal += 1;
+    if (correct) this.#counters.writeSetPredCorrect += 1;
+  }
+
+  /** C3 probe: how many graph worker nodes carry a non-empty writeSet. */
+  recordWriteSetCoverage(params: { total: number; populated: number }): void {
+    this.#counters.writeSetNodesTotal += Math.max(0, params.total);
+    this.#counters.writeSetNodesPopulated += Math.max(0, params.populated);
+  }
+
+  recordTokenBudgetAbort(): void {
+    this.#counters.tokenBudgetAborts += 1;
+  }
+
   rates(): {
     approvalPromptRate: number;
     diagHitRate: number;
     verifyHitRate: number;
     falseBlockRate: number;
+    waveConflictRate: number;
+    writeSetPredAccuracy: number;
+    writeSetCoverageRate: number;
   } {
     const c = this.#counters;
     const div = (n: number, d: number) => (d <= 0 ? 0 : n / d);
@@ -158,6 +196,9 @@ class CodingObservabilityRegistry {
       diagHitRate: div(c.diagHits, c.diagHits + c.diagSilent),
       verifyHitRate: div(c.verifyConsumeHits, c.verifyConsumeHits + c.syntaxCheckSilent + 1),
       falseBlockRate: div(c.staleBlocks, c.staleBlocks + c.staleAllowances),
+      waveConflictRate: div(c.waveConflicts, c.waveConflictChecks),
+      writeSetPredAccuracy: div(c.writeSetPredCorrect, c.writeSetPredTotal),
+      writeSetCoverageRate: div(c.writeSetNodesPopulated, c.writeSetNodesTotal),
     };
   }
 
@@ -177,3 +218,21 @@ class CodingObservabilityRegistry {
 }
 
 export const codingObservability = new CodingObservabilityRegistry();
+
+export const CODING_METRIC_NAMES = {
+  factToolCalls: "coding.read.factToolCalls",
+  touchLatencyMs: "coding.read.touchLatencyMs",
+  parseOnWriteHits: "coding.write.parseOnWriteHits",
+  staleBlocks: "coding.write.staleBlocks",
+  falseBlockRate: "coding.write.falseBlockRate",
+  journalLatencyMs: "coding.write.journalLatencyMs",
+  undoCount: "coding.write.undoCount",
+  syntaxCheckHits: "coding.write.syntaxCheckHits",
+  verifyHitRate: "coding.write.verifyHitRate",
+  diagHitRate: "coding.write.diagHitRate",
+  approvalPromptRate: "coding.write.approvalPromptRate",
+  waveConflictRate: "coding.concurrent.waveConflictRate",
+  writeSetPredAccuracy: "coding.concurrent.writeSetPredAccuracy",
+  writeSetCoverageRate: "coding.concurrent.writeSetCoverageRate",
+  tokenBudgetAborts: "coding.concurrent.tokenBudgetAborts",
+} as const;
