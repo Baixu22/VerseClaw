@@ -5,10 +5,15 @@ type AnyRecord = Record<string, unknown>;
 
 export type TeamOrchestrationNodeView = {
   taskNodeId: string;
+  agentId?: string;
+  roleInstanceId?: string;
+  childRunId?: string;
+  childSessionKey?: string;
   roleName: string;
   phase?: string;
   status?: string;
   task?: string;
+  modelRef?: string;
   dependsOn: string[];
   isVerifier: boolean;
 };
@@ -164,22 +169,35 @@ function normalizeStatus(value: unknown, fallback = 'running'): string {
   return typeof value === 'string' && value.trim() ? value.trim() : fallback;
 }
 
-function readString(record: AnyRecord | null, key: string): string | undefined {
+function readString(record: AnyRecord | null | undefined, key: string): string | undefined {
   const value = record?.[key];
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
 function toNodes(payload: AnyRecord | null): TeamOrchestrationNodeView[] {
   const graph = asRecord(payload?.taskGraph);
-  return arrayOfRecords(graph?.nodes).map((node, index) => ({
-    taskNodeId: readString(node, 'taskNodeId') ?? `node-${index + 1}`,
-    roleName: readString(node, 'roleName') ?? 'worker',
-    phase: readString(node, 'phase'),
-    status: readString(node, 'status'),
-    task: readString(node, 'task'),
-    dependsOn: stringArray(node.dependsOn),
-    isVerifier: node.isVerifier === true,
-  }));
+  const bundle = asRecord(payload?.resultBundle);
+  const outcomes = arrayOfRecords(bundle?.roleOutcomes);
+  return arrayOfRecords(graph?.nodes).map((node, index) => {
+    const taskNodeId = readString(node, 'taskNodeId') ?? `node-${index + 1}`;
+    const outcome = outcomes.find((candidate) => (
+      readString(candidate, 'taskNodeId') === taskNodeId || readString(candidate, 'taskId') === taskNodeId
+    ));
+    return {
+      taskNodeId,
+      agentId: readString(outcome, 'agentId') ?? readString(node, 'agentId'),
+      roleInstanceId: readString(outcome, 'roleInstanceId') ?? readString(node, 'roleInstanceId'),
+      childRunId: readString(outcome, 'childRunId') ?? readString(node, 'childRunId'),
+      childSessionKey: readString(outcome, 'childSessionKey') ?? readString(node, 'childSessionKey'),
+      roleName: readString(node, 'roleName') ?? 'worker',
+      phase: readString(node, 'phase'),
+      status: readString(outcome, 'status') ?? readString(node, 'status'),
+      task: readString(node, 'task'),
+      modelRef: readString(node, 'modelRef'),
+      dependsOn: stringArray(node.dependsOn),
+      isVerifier: node.isVerifier === true,
+    };
+  });
 }
 
 function toWaves(payload: AnyRecord | null): TeamOrchestrationWaveView[] {

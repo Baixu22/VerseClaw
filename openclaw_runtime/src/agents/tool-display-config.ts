@@ -59,6 +59,41 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
       title: "Read",
       detailKeys: ["path"],
     },
+    context_read: {
+      emoji: "📚",
+      title: "Context Read",
+      detailKeys: ["block_type"],
+    },
+    context_search: {
+      emoji: "🔎",
+      title: "Context Search",
+      detailKeys: ["query"],
+    },
+    context_write: {
+      emoji: "🗒️",
+      title: "Context Write",
+      detailKeys: ["operation"],
+    },
+    context_understand: {
+      emoji: "🧠",
+      title: "Context Understand",
+      detailKeys: ["query"],
+    },
+    context_impact: {
+      emoji: "💥",
+      title: "Context Impact",
+      detailKeys: ["target"],
+    },
+    context_reuse: {
+      emoji: "♻️",
+      title: "Context Reuse",
+      detailKeys: ["query"],
+    },
+    context_verify: {
+      emoji: "✅",
+      title: "Context Verify",
+      detailKeys: ["changedFiles"],
+    },
     write: {
       emoji: "✍️",
       title: "Write",
@@ -686,6 +721,11 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
       emoji: "🔊",
       title: "TTS",
       detailKeys: ["text", "channel"],
+    },
+    select_automation_playbook: {
+      emoji: "📋",
+      title: "Select Automation Playbook",
+      detailKeys: ["userContent", "pageContextSummary", "playbookId"],
     },
   },
 };

@@ -218,6 +218,7 @@ export type ObservabilityGraphNode = {
   durationMs?: number;
   spanId?: string;
   parentId?: string;
+  agentId?: string;
   roleName?: string;
   modelRef?: string;
   tokenUsage?: ObservabilityTokenUsage;

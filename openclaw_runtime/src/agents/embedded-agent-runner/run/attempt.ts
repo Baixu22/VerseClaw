@@ -238,6 +238,7 @@ import {
   bindSessionWorkspaceFingerprint,
   computeWorkspaceFingerprint,
 } from "../../../context-engine/workspace-fingerprint.js";
+import { invalidateWorkspaceFactServiceByFingerprint } from "../../../context-engine/factstore/workspace-fact-service.js";
 import { buildEmbeddedExtensionFactories } from "../extensions.js";
 import { mapToolsToToolRegistryEntries } from "../../../context-engine/handlers/tool-registry-handler.js";
 import {
@@ -1240,6 +1241,7 @@ export async function runEmbeddedAttempt(
       prompt: params.prompt,
       spawnedBy: params.spawnedBy,
       cfg: params.config,
+      workspaceRoot: effectiveWorkspace,
     });
     // D3 minimal slice: in-memory session↔workspace fingerprint; mismatch invalidates
     // working-memory scope before tools/injection read. Full Chat→Main trusted-root
@@ -1249,7 +1251,7 @@ export async function runEmbeddedAttempt(
       const fingerprint = computeWorkspaceFingerprint(effectiveWorkspace);
       if (sessionScopeKey && fingerprint) {
         try {
-          await bindSessionWorkspaceFingerprint({
+          const bindResult = await bindSessionWorkspaceFingerprint({
             sessionKey: sessionScopeKey,
             sessionId: params.sessionId,
             fingerprint,
@@ -1257,6 +1259,10 @@ export async function runEmbeddedAttempt(
               ? (blockId) => dcsExtensionDeps.workingMemoryStore.invalidate(blockId)
               : undefined,
           });
+          // C0-3: session workspace switch drops previous materializer cache.
+          if (bindResult.action === "invalidated" && bindResult.previousFingerprint) {
+            invalidateWorkspaceFactServiceByFingerprint(bindResult.previousFingerprint);
+          }
         } catch (error) {
           log.warn(`workspace fingerprint bind failed: ${String(error)}`);
         }
@@ -1311,6 +1317,7 @@ export async function runEmbeddedAttempt(
             runId: params.runId,
             dcsBlockStore: dcsExtensionDeps?.workingMemoryStore,
             dcsContextBlockSink: dcsExtensionDeps?.contextBlockSink,
+            factService: dcsExtensionDeps?.factService,
             toolSearchCatalogRef,
             agentDir,
             cwd: effectiveCwd,

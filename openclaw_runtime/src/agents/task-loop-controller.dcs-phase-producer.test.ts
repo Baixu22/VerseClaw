@@ -1,4 +1,4 @@
-﻿/**
+/**
  * DCS W1: TaskLoop production producer for task_phase_change.
  *
  * Focused unit surface for emitTaskLoopTaskPhaseChange behavior via the

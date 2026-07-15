@@ -221,23 +221,26 @@ describe("DCS Stage 3 tool-registry handler", () => {
 
   describe("mapToolsToToolRegistryEntries", () => {
     it("maps production tools to ToolRegistryEntry fields", () => {
-      const entries = mapToolsToToolRegistryEntries([
-        {
-          name: "context_read",
-          label: "Context Read",
-          description: "Read context blocks on demand",
-          parameters: {
-            type: "object",
-            properties: { block_type: { type: "string" }, category: { type: "string" } },
+      const entries = mapToolsToToolRegistryEntries(
+        [
+          {
+            name: "context_read",
+            label: "Context Read",
+            description: "Read context blocks on demand",
+            parameters: {
+              type: "object",
+              properties: { block_type: { type: "string" }, category: { type: "string" } },
+            },
+            risk: "readonly",
           },
-          risk: "readonly",
-        },
-        {
-          name: "edit",
-          description: "Edit a file",
-          displaySummary: "Edit files",
-        },
-      ]);
+          {
+            name: "edit",
+            description: "Edit a file",
+            displaySummary: "Edit files",
+          },
+        ],
+        { schemaMode: "full" },
+      );
       expect(entries).toEqual([
         {
           resourceId: "context_read",
@@ -255,10 +258,60 @@ describe("DCS Stage 3 tool-registry handler", () => {
       ]);
     });
 
+    it("on_demand summary mode stores inputSchema without prop dump in purpose", () => {
+      const entries = mapToolsToToolRegistryEntries(
+        [
+          {
+            name: "context_read",
+            label: "Context Read",
+            description: "Read context blocks on demand",
+            parameters: {
+              type: "object",
+              properties: { block_type: { type: "string" }, category: { type: "string" } },
+            },
+            risk: "readonly",
+          },
+        ],
+        { schemaMode: "summary" },
+      );
+      expect(entries).toHaveLength(1);
+      expect(entries[0]?.purpose).toBe("Read full content of a context block on demand");
+      expect(entries[0]?.purpose).not.toContain("[");
+      expect(entries[0]?.inputSchema).toEqual({
+        type: "object",
+        properties: { block_type: { type: "string" }, category: { type: "string" } },
+      });
+    });
+
     it("returns empty array for empty/missing tools without throwing", () => {
       expect(mapToolsToToolRegistryEntries([])).toEqual([]);
       expect(mapToolsToToolRegistryEntries(undefined)).toEqual([]);
       expect(mapToolsToToolRegistryEntries(null)).toEqual([]);
+    });
+
+    it("on_demand summary mode stores inputSchema without prop dump in purpose", () => {
+      const entries = mapToolsToToolRegistryEntries(
+        [
+          {
+            name: "context_read",
+            label: "Context Read",
+            description: "Read context blocks on demand",
+            parameters: {
+              type: "object",
+              properties: { block_type: { type: "string" }, category: { type: "string" } },
+            },
+            risk: "readonly",
+          },
+        ],
+        { schemaMode: "summary" },
+      );
+      expect(entries).toHaveLength(1);
+      expect(entries[0]?.purpose).toBe("Read full content of a context block on demand");
+      expect(entries[0]?.purpose).not.toContain("[");
+      expect(entries[0]?.inputSchema).toEqual({
+        type: "object",
+        properties: { block_type: { type: "string" }, category: { type: "string" } },
+      });
     });
 
     it("skips nameless tools and dedupes by name", () => {

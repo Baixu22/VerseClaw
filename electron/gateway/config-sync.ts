@@ -757,6 +757,70 @@ export function buildSourceRuntimeIsolationEnv(params: {
   };
 }
 
+/**
+ * Keys copied from ~/.openclaw/openclaw.json into the isolated source-runtime
+ * config (userData/openclaw-source-state/openclaw.json).
+ *
+ * - agents/models/plugins: keep existing sync so the source gateway resolves the
+ *   same providers the desktop UI configured.
+ * - runtime: whole-key sync (not contextBlock/sekb subkey whitelist).
+ *   Rationale: DCS flags live under runtime.contextBlock.* and runtime sekb;
+ *   whole-key keeps nesting intact and avoids half-merged defaults. Defaults stay
+ *   all-false unless the user explicitly writes them in openclaw.json.
+ *
+ * Merge rule (applySourceRuntimeIsolationUserConfig):
+ * 1. When user config has a non-null value for a sync key and it differs from the
+ *    isolated config, copy user -> isolated.
+ * 2. When the user config omits the key (or value is null/undefined), leave the
+ *    isolated value unchanged. Never wipe an existing isolated runtime block.
+ * 3. stripSourceRuntimeIncompatibleConfigKeys still only removes agents.list[].reasoningEffort
+ *    and must not touch runtime.* keys.
+ */
+export const SOURCE_RUNTIME_ISOLATION_SYNC_KEYS = ['agents', 'models', 'plugins', 'runtime'] as const;
+export type SourceRuntimeIsolationSyncKey = typeof SOURCE_RUNTIME_ISOLATION_SYNC_KEYS[number];
+
+export function applySourceRuntimeIsolationUserConfig(
+  isolatedConfig: Record<string, unknown>,
+  userConfig: Record<string, unknown>,
+  keys: readonly SourceRuntimeIsolationSyncKey[] = SOURCE_RUNTIME_ISOLATION_SYNC_KEYS,
+): { config: Record<string, unknown>; changed: boolean } {
+  let changed = false;
+  const nextConfig: Record<string, unknown> = { ...isolatedConfig };
+  for (const key of keys) {
+    const userValue = userConfig[key];
+    if (userValue == null) {
+      // Preserve existing isolated value when the user did not set this key.
+      continue;
+    }
+    const isolatedValue = nextConfig[key];
+    const userSerialized = JSON.stringify(userValue);
+    const isolatedSerialized = isolatedValue != null ? JSON.stringify(isolatedValue) : null;
+    if (userSerialized !== isolatedSerialized) {
+      nextConfig[key] = userValue;
+      changed = true;
+    }
+  }
+  return { config: nextConfig, changed };
+}
+
+export function buildInitialSourceRuntimeIsolationConfig(
+  userConfig: Record<string, unknown>,
+): Record<string, unknown> {
+  return {
+    gateway: {
+      mode: 'local',
+      controlUi: { enabled: false },
+    },
+    update: { checkOnStart: false },
+    agents: userConfig.agents ?? {},
+    models: userConfig.models ?? { providers: {} },
+    plugins: userConfig.plugins ?? { enabled: false },
+    // Carry DCS/runtime flags from the desktop-facing config when present.
+    ...(userConfig.runtime != null ? { runtime: userConfig.runtime } : {}),
+    channels: {},
+  };
+}
+
 function prepareSourceRuntimeIsolation(): {
   stateDir: string;
   homeDir: string;
@@ -785,19 +849,7 @@ function prepareSourceRuntimeIsolation(): {
   }
 
   if (!existsSync(fsPath(configPath))) {
-    const minimalConfig = {
-      gateway: {
-        mode: 'local',
-        controlUi: { enabled: false },
-      },
-      update: { checkOnStart: false },
-      // Inherit the user's model/agent/plugin config so the source runtime
-      // can resolve the same providers and models the user configured.
-      agents: userConfig.agents ?? {},
-      models: userConfig.models ?? { providers: {} },
-      plugins: userConfig.plugins ?? { enabled: false },
-      channels: {},
-    };
+    const minimalConfig = buildInitialSourceRuntimeIsolationConfig(userConfig);
     const isolatedConfig = applySourceRuntimeSandboxAutoFallback(stripSourceRuntimeIncompatibleConfigKeys(minimalConfig));
     writeFileSync(fsPath(configPath), `${JSON.stringify(isolatedConfig, null, 2)}\n`, 'utf-8');
   } else {
@@ -815,22 +867,14 @@ function prepareSourceRuntimeIsolation(): {
         needsWrite = true;
       }
 
-      // Sync the user's model/agent/plugin settings into the isolated config
+      // Sync the user's model/agent/plugin/runtime settings into the isolated config
       // so the source runtime always uses the models the user configured in
-      // Verse Claw. Without this, a previously-created blank isolated config would
-      // lack any model providers and fall back to openai/gpt-5.5 (which is
-      // not a registered model).
-      for (const key of ['agents', 'models', 'plugins'] as const) {
-        const userValue = userConfig[key];
-        const isolatedValue = nextConfig[key];
-        const userSerialized = userValue != null ? JSON.stringify(userValue) : null;
-        const isolatedSerialized = isolatedValue != null ? JSON.stringify(isolatedValue) : null;
-        if (userSerialized !== isolatedSerialized) {
-          if (userValue != null) {
-            nextConfig[key] = userValue;
-          }
-          needsWrite = true;
-        }
+      // Verse Claw, and DCS runtime.contextBlock flags reach the gateway when set.
+      // See applySourceRuntimeIsolationUserConfig for the no-overwrite-when-absent rule.
+      const synced = applySourceRuntimeIsolationUserConfig(nextConfig, userConfig);
+      if (synced.changed) {
+        nextConfig = synced.config;
+        needsWrite = true;
       }
 
       const schemaAdjustedConfig = stripSourceRuntimeIncompatibleConfigKeys(nextConfig);

@@ -11,6 +11,8 @@ type LaunchElectronOptions = {
   flags?: string[];
   visualMode?: boolean;
   devScenario?: string;
+  bootHoldMs?: number;
+  settingsSectionDelayMs?: number;
 };
 
 type IpcMockConfig = {
@@ -189,6 +191,12 @@ async function launchVerseClawElectron(
       ...(options.flags?.length ? { CLAWX_FLAGS: options.flags.join(',') } : {}),
       ...(options.visualMode ? { CLAWX_VISUAL_MODE: '1' } : {}),
       ...(options.devScenario ? { CLAWX_DEV_SCENARIO: options.devScenario } : {}),
+      ...(typeof options.bootHoldMs === 'number'
+        ? { CLAWX_E2E_BOOT_HOLD_MS: String(Math.max(0, Math.round(options.bootHoldMs))) }
+        : {}),
+      ...(typeof options.settingsSectionDelayMs === 'number'
+        ? { CLAWX_E2E_SETTINGS_SECTION_DELAY_MS: String(Math.max(0, Math.round(options.settingsSectionDelayMs))) }
+        : {}),
       VERSE_CLAW_USER_DATA_DIR: userDataDir,
       ...(options.skipSetup ? { VERSE_CLAW_E2E_SKIP_SETUP: '1' } : {}),
       VERSE_CLAW_PORT_CLAWX_HOST_API: String(hostApiPort),

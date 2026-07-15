@@ -152,14 +152,24 @@ export type SendOptions = {
   modelRefOverride?: string | null;
 };
 
+export type ChatStartupPhase =
+  | 'waiting-for-gateway'
+  | 'loading-sessions'
+  | 'loading-history'
+  | 'ready'
+  | 'error';
+
 export interface ChatState {
   // Messages
   messages: RawMessage[];
   loading: boolean;
+  historyRefreshing: boolean;
   loadingMoreHistory: boolean;
   hasMoreHistory: boolean;
   error: string | null;
   runError: string | null;
+  startupPhase: ChatStartupPhase;
+  startupError: string | null;
 
   // Streaming
   sending: boolean;
@@ -195,6 +205,7 @@ export interface ChatState {
   taskLedgerLoaded: boolean;
 
   // Actions
+  hydrateStartup: () => Promise<void>;
   loadSessions: () => Promise<void>;
   switchSession: (key: string) => void;
   resetSessionView: (key?: string) => void;

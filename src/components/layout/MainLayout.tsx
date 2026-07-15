@@ -2,13 +2,27 @@
  * Main Layout Component
  * Platform-aware application shell.
  */
-import { Outlet } from 'react-router-dom';
+import { Suspense } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TitleBar } from './TitleBar';
 import { MAC_SIDEBAR_CHROME_HEIGHT } from '@shared/sidebar-layout';
 import { cn } from '@/lib/utils';
+import {
+  BootShellHandoff,
+  ChatRouteLoadingShell,
+  GenericRouteLoadingShell,
+  SettingsRouteLoadingShell,
+} from '@/components/loading/RouteLoadingShell';
+
+function RouteLoadingFallback({ pathname }: { pathname: string }) {
+  if (pathname === '/') return <ChatRouteLoadingShell />;
+  if (pathname.startsWith('/settings')) return <SettingsRouteLoadingShell />;
+  return <GenericRouteLoadingShell />;
+}
 
 export function MainLayout() {
+  const location = useLocation();
   const platform = window.electron?.platform;
   const isMac = platform === 'darwin';
   const isWin = platform === 'win32';
@@ -23,6 +37,7 @@ export function MainLayout() {
         isMac ? 'flex-row' : 'flex-col',
       )}
     >
+      <BootShellHandoff />
       <TitleBar />
 
       <div className="flex min-h-0 flex-1 overflow-hidden bg-surface-sidebar">
@@ -42,7 +57,9 @@ export function MainLayout() {
               style={{ height: MAC_SIDEBAR_CHROME_HEIGHT }}
             />
           )}
-          <Outlet />
+          <Suspense fallback={<RouteLoadingFallback pathname={location.pathname} />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

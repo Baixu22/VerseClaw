@@ -26,6 +26,8 @@ export const ARTIFACT_PANEL_DEFAULT_WIDTH = 45;
 
 interface ArtifactPanelState {
   open: boolean;
+  /** Expanded panels take space beside the chat; collapsed panels overlay it. */
+  expanded: boolean;
   tab: ArtifactTab;
   /**
    * The currently selected file inside the panel.  Shared between the
@@ -38,6 +40,7 @@ interface ArtifactPanelState {
   widthPct: number;
   setTab: (tab: ArtifactTab) => void;
   setFocusedFile: (file: FilePreviewTarget | null) => void;
+  setExpanded: (expanded: boolean) => void;
   /** Open the changes tab. Optionally focus a single file. */
   openChanges: (file?: FilePreviewTarget | null) => void;
   /** Open the preview tab on a specific file. */
@@ -48,7 +51,7 @@ interface ArtifactPanelState {
   close: () => void;
   /** Update the panel width (clamped). */
   setWidthPct: (pct: number) => void;
-  restoreSessionState: (state: { open?: boolean; activeTab?: string; selectedPath?: string | null }) => void;
+  restoreSessionState: (state: { open?: boolean; expanded?: boolean; activeTab?: string; selectedPath?: string | null }) => void;
 }
 
 function clampWidth(pct: number): number {
@@ -62,6 +65,7 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
   persist(
     (set, get) => ({
       open: false,
+      expanded: false,
       tab: 'changes',
       focusedFile: null,
       widthPct: ARTIFACT_PANEL_DEFAULT_WIDTH,
@@ -71,14 +75,18 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
         set({ tab, focusedFile: get().focusedFile });
       },
       setFocusedFile: (focusedFile) => set({ focusedFile }),
-      openChanges: (file = null) => set({ open: true, tab: 'changes', focusedFile: file ?? null }),
-      openPreview: (file = null) => set({ open: true, tab: 'preview', focusedFile: file ?? null }),
-      openBrowser: () => set({ open: true, tab: 'browser', focusedFile: get().focusedFile }),
+      setExpanded: (expanded) => set({ expanded }),
+      openChanges: (file = null) => set({ open: true, expanded: false, tab: 'changes', focusedFile: file ?? null }),
+      openPreview: (file = null) => set({ open: true, expanded: false, tab: 'preview', focusedFile: file ?? null }),
+      openBrowser: () => set({ open: true, expanded: false, tab: 'browser', focusedFile: get().focusedFile }),
       toggle: () => set((s) => ({ open: !s.open })),
-      close: () => set({ open: false, focusedFile: null }),
+      close: () => set({ open: false, expanded: false, focusedFile: null }),
       setWidthPct: (pct) => set({ widthPct: clampWidth(pct) }),
       restoreSessionState: (state) => set((current) => ({
         open: state.open ?? false,
+        // Panels created before expanded state existed must not reclaim
+        // conversation width until the user explicitly expands them.
+        expanded: state.expanded ?? false,
         tab: state.activeTab === 'preview' || state.activeTab === 'browser' || state.activeTab === 'changes' || state.activeTab === 'artifact'
           ? state.activeTab
           : current.tab,

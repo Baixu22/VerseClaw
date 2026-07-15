@@ -1,4 +1,7 @@
 {
+  "loading": {
+    "section": "正在加载设置内容"
+  },
   "title": "设置",
   "subtitle": "配置您的 Verse Claw 体验",
   "navigation": {

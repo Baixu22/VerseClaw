@@ -28,3 +28,9 @@ allowBuilds:
   protobufjs: true
   sharp: true
   tree-sitter-bash: false
+
+# TEMP: allow baileys@7.0.0-rc.9 -> libsignal git subdependency.
+# pnpm@11 defaults blockExoticSubdeps=true which fails fresh `pnpm install`.
+# Debt: upgrade baileys >=7.0.0-rc12 (GHSA-qvv5-jq5g-4cgg) then drop this flag.
+# Tracked as production-readiness backlog; not fixed in this change set.
+blockExoticSubdeps: false

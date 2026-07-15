@@ -1,4 +1,7 @@
 {
+  "loading": {
+    "section": "Загрузка раздела настроек"
+  },
   "title": "Настройки",
   "subtitle": "Настройте ваш опыт работы с Verse Claw",
   "navigation": {

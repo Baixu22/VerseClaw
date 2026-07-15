@@ -1,4 +1,4 @@
-﻿import { BookOpen, Archive, X } from 'lucide-react';
+import { BookOpen, Archive, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { ChatKnowledgeReference } from '@/lib/host-api';

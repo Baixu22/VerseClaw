@@ -240,7 +240,7 @@ describe('agent browser runtime mode', () => {
   });
 
   it('setBoundaryChoiceNotifier 注册回调可被调用', async () => {
-    const { service, windows } = createService();
+    const { service, _windows } = createService();
     let notified = false;
     service.setBoundaryChoiceNotifier(() => {
       notified = true;

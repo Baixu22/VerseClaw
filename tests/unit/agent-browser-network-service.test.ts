@@ -21,7 +21,7 @@ import { AgentBrowserService } from '@electron/services/agent-browser-service';
 class FakeDebugger extends EventEmitter {
   readonly attach = vi.fn(async (_version: string) => undefined);
   readonly detach = vi.fn(async () => undefined);
-  readonly sendCommand = vi.fn(async (method: string, params?: Record<string, unknown>) => {
+  readonly sendCommand = vi.fn(async (method: string, _params?: Record<string, unknown>) => {
     if (method === 'Accessibility.getFullAXTree') {
       return {
         nodes: [
@@ -406,7 +406,7 @@ describe('P1-2 networkWaitForRequests', () => {
   });
 
   it('无匹配超时返回空', async () => {
-    const { service, windows } = createService();
+    const { service, _windows } = createService();
     const { sessionId } = await setupControlledSession(service);
 
     const result = await service.networkWaitForRequests({

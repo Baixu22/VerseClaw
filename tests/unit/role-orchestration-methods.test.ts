@@ -309,6 +309,23 @@ describe('orchestrator.plan handler', () => {
     ]);
   });
 
+  it('projects the anchor agent id and stable node ids across duplicate roles', async () => {
+    const res = await callHandler('orchestrator.plan', {
+      task: 'compare implementation approaches',
+      agentId: 'research',
+      workers: [
+        { roleName: 'architect', task: 'Compare a conservative path' },
+        { roleName: 'architect', task: 'Compare a modular path' },
+      ],
+    });
+    expect(res?.ok).toBe(true);
+    const payload = res?.payload as {
+      taskGraph: { nodes: Array<{ taskNodeId: string; agentId?: string; roleName: string }> };
+    };
+    expect(payload.taskGraph.nodes.every((node) => node.agentId === 'research')).toBe(true);
+    expect(new Set(payload.taskGraph.nodes.map((node) => node.taskNodeId)).size).toBe(payload.taskGraph.nodes.length);
+  });
+
   it('errors when explicit workers are empty', async () => {
     const res = await callHandler('orchestrator.plan', {
       task: 'compare implementation approaches',

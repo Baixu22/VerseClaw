@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Verse Claw workspace harness template seeding.
  *
  * This is intentionally best-effort: workspace/project creation should not

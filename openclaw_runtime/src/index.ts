@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 // Re-exports the OpenClaw library API for external consumers.
 // The CLI entry path was removed with the CLI/TUI deletion (P5).
 

@@ -1,6 +1,9 @@
 {
   "title": "Settings",
   "subtitle": "Configure your Verse Claw experience",
+  "loading": {
+    "section": "Loading settings section"
+  },
   "navigation": {
     "back": "Back to Settings",
     "groups": {

@@ -169,6 +169,7 @@ function renderSettings(path = '/settings/system') {
 
 describe('Settings remote control section', () => {
   beforeEach(() => {
+    window.history.replaceState({}, '', '/');
     vi.clearAllMocks();
     settingsState.devModeUnlocked = false;
     settingsState.workModeToolBundles = {};
@@ -335,5 +336,18 @@ describe('Settings remote control section', () => {
       expect(setWorkModeKitsMock).not.toHaveBeenCalled();
       expect(setWorkModeToolBundlesMock).not.toHaveBeenCalled();
     });
+  });
+
+  it('keeps the settings shell visible while a lazy section is loading', async () => {
+    window.history.replaceState({}, '', '/?e2eSkipSetup=1&e2eSettingsSectionDelayMs=900');
+    renderSettings('/settings/storage');
+
+    expect(screen.getByTestId('settings-page')).toBeInTheDocument();
+    expect(screen.getByTestId('settings-back-button')).toBeInTheDocument();
+    expect(screen.getByTestId('settings-section-loading')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('settings-section-loading-status')).toHaveClass('opacity-100');
+    }, { timeout: 800 });
   });
 });

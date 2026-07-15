@@ -1,6 +1,15 @@
 {
   "gatewayNotRunning": "网关未运行",
   "gatewayRequired": "OpenClaw 网关需要运行才能使用聊天。它将自动启动，或者您可以从设置中启动。",
+  "startup": {
+    "waitingForGateway": "正在连接 OpenClaw…",
+    "loadingSessions": "正在加载会话…",
+    "loadingHistory": "正在加载会话记录…",
+    "syncing": "正在同步",
+    "errorTitle": "无法加载此会话",
+    "errorDescription": "OpenClaw 未能返回会话记录。",
+    "retry": "重新加载"
+  },
   "welcome": {
     "title": "Verse Claw 聊天",
     "subtitle": "我能为你做些什么？",
@@ -374,7 +383,9 @@
       }
     },
     "actions": {
-      "back": "返回列表"
+      "back": "返回列表",
+      "expand": "展开面板",
+      "collapse": "收起面板"
     },
     "changes": {
       "heading": "文件变更（{{count}} 个）",
@@ -821,10 +832,14 @@
     "wave": "第 {{wave}} 波",
     "routeReasons": "路由信号",
     "showMoreNodes": "显示另外 {{count}} 个任务节点",
+    "dependencies": "{{count}} 个依赖",
+    "details": "详情",
+    "nodeCount": "{{count}} 个节点",
     "metrics": {
       "workers": "执行者",
       "waves": "波次",
       "verifier": "验证者",
+      "failures": "失败",
       "signals": "信号"
     },
     "alert": {

@@ -1439,6 +1439,10 @@ Capability-aware routing preserves role-first semantics: role responsibilities d
 
 **Real-time lifecycle events**: Each worker spawn emits `subagent-lifecycle` broadcast 鈫?`event-dispatch` 鈫?`main/index.ts` relay 鈫?renderer `hostEvents.onSubagentLifecycle` 鈫?RolesOrchestrationPanel progress panel (per-worker status: started/completed/verified/error with role-tone colors).
 
+**Local Agent identity projection**: Main resolves `agents.list[].identity.avatar`, then `IDENTITY.md`, then the `main` Verse brand or deterministic Agent-id fallback into one `AgentSummary.avatar`. ClawX-managed DiceBear presets and generated SVGs live under `<workspace>/.clawx/avatar/`; Renderer previews use the same four explicitly imported styles but all persistence and local-image reads remain Main-owned through `agents.updateAvatar` / `agents.resetAvatar`. Role contracts are execution identities, so UI uses `AgentRoleIdentity` to layer a `RoleBadge` over the persistent Agent avatar.
+
+**Wave timeline identity**: orchestration plans, lifecycle broadcasts, result bundles, and task graphs carry optional `agentId`, `taskNodeId`, `roleInstanceId`, and `orchestrationRunId`. Renderer merge order is `taskNodeId -> roleInstanceId -> childRunId -> roleName + task`, preserving duplicate Roles and compatibility with older payloads. Chat renders the task graph as responsive Wave card grids with a 220px preferred minimum and a single-column narrow fallback rather than a draggable DAG canvas.
+
 **Trace status correctness**: `failures.length > 0 鈫?status: "error"` (not always "completed") + error summary passed to `completeObservedRun`.
 
 **Worker quality**: Team Result Bundles include deterministic worker quality signals (`schemaCompliance`, `evidenceCoverage`, `scopeDiscipline`, `actionability`, `verificationSignal`, `verifierVerdict`, `runtimeHealth`). Poor attempts are used as demotion/repair evidence; the runtime does not delete role contracts at run time.
@@ -1473,6 +1477,8 @@ Runtime supports `codex`, `claude`, `gemini`, `opencode`, `droid` as ACP harness
 | Component | File | Purpose |
 |---|---|---|
 | `RolesOrchestrationPanel` | `src/components/agents/RolesOrchestrationPanel.tsx` | Role browsing, plan preview, orchestration launch, approval round-trip, run result feedback, real-time progress panel |
+| `AgentAvatar` / `AgentRoleIdentity` | `src/components/agents/AgentAvatar.tsx` | Unified Verse brand, DiceBear, image, fallback, and overlaid Role-badge rendering |
+| `AgentAvatarEditor` | `src/components/agents/AgentAvatarEditor.tsx` | Four-candidate local DiceBear preset preview, save, regenerate, and managed reset |
 | `SubagentRunnerPanel` | `src/components/agents/SubagentRunnerPanel.tsx` | Preset-based Explorer / Reviewer / Tester / Compare launcher with goal input, per-child lifecycle status, failures, summary, and Observability trace link |
 | `RoleCard` | `src/components/agents/RoleCard.tsx` | Role card with effort tone, tool grid, permission trio, SOUL preview |
 | `OrchestrationPlanView` | `src/components/agents/OrchestrationPlanView.tsx` | Layered card flow (Lead 鈫?Workers 鈫?Verifier) with connectors |
@@ -1492,8 +1498,8 @@ The model-callable `team_orchestrate` tool is not a separate transport. It reuse
 | `roles.list` | read | List builtin + config roles |
 | `roles.get` | read | Get single role contract + compiled SOUL |
 | `teams.list` | read | List builtin + config team templates |
-| `orchestrator.plan` | read | Preview orchestration plan (no spawn); accepts optional explicit `workers[]`, `templateId`/`teamTemplateId`, `maxWorkers`, `graphMode`, quality/repair/communication policy fields, and returns `taskGraph`, `executionWaves`, `routeDiagnostics`, and capability gaps |
-| `orchestrator.run` | write | Execute orchestration (spawns subagents, records trace, emits lifecycle events, logs audit); accepts optional explicit `workers[]`, `templateId`/`teamTemplateId`, `maxWorkers`, `graphMode`, quality/repair/communication policy fields, and returns `orchestrationRunId`, `taskGraph`, `executionWaves`, `expectedChildren`, `pendingVerifier`, `attempts`, `repairNodes`, `rerouteRecommendations`, and `routeDiagnostics` |
+| `orchestrator.plan` | read | Preview orchestration plan (no spawn); accepts an optional anchor `agentId`, explicit `workers[]`, `templateId`/`teamTemplateId`, `maxWorkers`, `graphMode`, quality/repair/communication policy fields, and returns identity-bearing `taskGraph`, `executionWaves`, `routeDiagnostics`, and capability gaps |
+| `orchestrator.run` | write | Execute orchestration (spawns subagents, records trace, emits stable node/role/agent identity lifecycle events, logs audit); accepts an optional anchor `agentId`, explicit `workers[]`, `templateId`/`teamTemplateId`, `maxWorkers`, `graphMode`, quality/repair/communication policy fields, and returns `orchestrationRunId`, identity-bearing `taskGraph`, `executionWaves`, `expectedChildren`, `pendingVerifier`, `attempts`, `repairNodes`, `rerouteRecommendations`, and `routeDiagnostics` |
 | `observability.reportTrace` | write | Store a trace |
 | `observability.traces` | read | Get trace buffer + scorecards |
 | `memory.list` | read | List role-memory cards by scope, role, status, type, conflict state, and sensitivity |

@@ -18,7 +18,7 @@
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, Eye, FileEdit, FolderOpen, FolderTree, GitBranch, Globe, History, Layers, Plus, TerminalSquare, X } from 'lucide-react';
+import { ArrowLeft, Eye, FileEdit, FolderOpen, FolderTree, GitBranch, Globe, History, Layers, PanelRightClose, PanelRightOpen, Plus, TerminalSquare, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -64,6 +64,8 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
   const setTab = useArtifactPanel((s) => s.setTab);
   const focusedFile = useArtifactPanel((s) => s.focusedFile);
   const setFocusedFile = useArtifactPanel((s) => s.setFocusedFile);
+  const expanded = useArtifactPanel((s) => s.expanded);
+  const setExpanded = useArtifactPanel((s) => s.setExpanded);
   const close = useArtifactPanel((s) => s.close);
   const richFocusedFile = !!focusedFile && supportsRichDocumentPreview(focusedFile.ext);
   const requestedTab = !WORKSPACE_BROWSER_ENABLED && tab === 'browser' ? 'changes' : tab;
@@ -74,6 +76,11 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
     hostApi.shell.showItemInFolder(focusedFile.filePath).catch(() => {
       toast.error(t('filePreview.errors.openInFinderFailed', 'Could not reveal in file manager'));
     });
+  };
+
+  const handleExpandedChange = (nextExpanded: boolean) => {
+    setExpanded(nextExpanded);
+    onSessionStateChange?.({ expanded: nextExpanded });
   };
 
   return (
@@ -128,16 +135,33 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
             onClick={() => setTab('artifact')}
           />
         </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn('h-7 w-7 shrink-0', isMac && 'no-drag relative z-10')}
-          onClick={close}
-          aria-label={t('filePreview.actions.close', 'Close')}
-        >
-          <X className="h-4 w-4 pointer-events-none" />
-        </Button>
+        <div className={cn('flex shrink-0 items-center gap-1', isMac && 'no-drag relative z-10')}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={() => handleExpandedChange(!expanded)}
+            aria-label={t(expanded ? 'artifactPanel.actions.collapse' : 'artifactPanel.actions.expand')}
+            title={t(expanded ? 'artifactPanel.actions.collapse' : 'artifactPanel.actions.expand')}
+            aria-pressed={expanded}
+            data-testid="artifact-panel-expand"
+          >
+            {expanded
+              ? <PanelRightClose className="h-4 w-4 pointer-events-none" />
+              : <PanelRightOpen className="h-4 w-4 pointer-events-none" />}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={close}
+            aria-label={t('filePreview.actions.close', 'Close')}
+          >
+            <X className="h-4 w-4 pointer-events-none" />
+          </Button>
+        </div>
       </div>
 
       <div className={cn('relative z-0 min-h-0 flex-1 overflow-hidden', isMac && 'no-drag')}>

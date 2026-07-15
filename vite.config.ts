@@ -1,4 +1,4 @@
-﻿import { defineConfig } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
@@ -58,6 +58,15 @@ function rendererManualChunks(id: string): string | undefined {
   const normalized = id.replace(/\\/g, '/');
   const packageName = packageNameFromModuleId(normalized);
 
+  if (
+    normalized.includes('vite/preload-helper')
+    || normalized.includes('vite/modulepreload-polyfill')
+  ) {
+    return 'vite-runtime';
+  }
+  if (normalized.endsWith('/src/pages/Chat/index.tsx')) return 'chat-core';
+  if (normalized.endsWith('/src/pages/Settings/SettingsRoute.tsx')) return 'settings-overview';
+  if (normalized.endsWith('/src/pages/Settings/index.tsx')) return 'settings-detail';
   if (normalized.includes('/src/lib/monaco/')) return 'editor';
   if (!packageName) return undefined;
   if (packageName === 'monaco-editor' || packageName === '@monaco-editor/react') return 'editor';
@@ -163,10 +172,12 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    manifest: true,
     reportCompressedSize: false,
     rollupOptions: {
       output: {
         manualChunks: rendererManualChunks,
+        onlyExplicitManualChunks: true,
       },
     },
   },
