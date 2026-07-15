@@ -1,6 +1,6 @@
 import type { RawMessage } from '../chat/types';
 import type { PermissionDecisionEvent } from '../product-semantics';
-import type { AgentReasoningEffort, AgentsSnapshot } from '../types/agent';
+import type { AgentAvatarPreset, AgentReasoningEffort, AgentsSnapshot } from '../types/agent';
 import type { CronJob, CronJobCreateInput, CronJobUpdateInput } from '../types/cron';
 import type { GatewayHealth, GatewayStatus } from '../types/gateway';
 import type { ArchiveHandle } from '../types/context-family';
@@ -14,6 +14,7 @@ import type {
   MemoryHealthReport,
   MemoryInjectionRecord,
   MemoryProposal,
+  MemoryProposalPreview,
   MemoryProposalRecord,
 } from '../types/memory';
 import type {
@@ -1568,6 +1569,7 @@ export type AgentCreatePayload = { name: string; inheritWorkspace?: boolean };
 export type AgentUpdatePayload = { id: string; name: string };
 export type AgentUpdateModelPayload = { id: string; modelRef: string | null };
 export type AgentUpdateReasoningEffortPayload = { id: string; reasoningEffort: AgentReasoningEffort };
+export type AgentUpdateAvatarPayload = { id: string; preset: AgentAvatarPreset };
 export type AgentIdPayload = { id: string };
 export type AgentChannelPayload = { id: string; channelType: string };
 export type RoleConfigEffort = 'low' | 'medium' | 'high';
@@ -1607,6 +1609,146 @@ export type RoleConfigRoleSummary = {
 };
 export type RoleUpsertConfigRoleResult = HostSuccess & {
   role: RoleConfigRoleSummary;
+  pendingRuntimeRefresh: boolean;
+};
+export type AgencyRoleLifecycle = 'draft' | 'reviewed' | 'active' | 'retired';
+export type AgencyRoleEvidenceQualification =
+  | 'unverified'
+  | 'scenario-verified'
+  | 'release-qualified';
+export type AgencyRoleMaterializationStatus =
+  | 'not-started'
+  | 'pending'
+  | 'complete'
+  | 'failed';
+export type AgencyRoleSourcePayload = { sourceRoot: string };
+export type AgencyRoleDraftPayload = AgencyRoleSourcePayload & { draftId: string };
+export type AgencyRoleToolHintDisposition = {
+  hint: string;
+  disposition: 'mapped' | 'waived';
+  selectedTools: string[];
+  reviewerNote: string;
+};
+export type AgencyRoleCandidatePayload = RoleUpsertConfigRolePayload & {
+  outputFormat: 'markdown' | 'json' | 'text';
+  outputSections: string[];
+  handoffTo: string[];
+  handoffFrom: string[];
+  requiresReview: boolean;
+  riskProfile: 'low' | 'medium' | 'high' | 'critical';
+};
+export type AgencyRoleReviewPayload = {
+  packageId: string;
+  reviewer: string;
+  candidate: AgencyRoleCandidatePayload;
+  toolHintDispositions: AgencyRoleToolHintDisposition[];
+  evidenceQualification: AgencyRoleEvidenceQualification;
+  evidenceRefs: string[];
+  comment: string;
+};
+
+export type AgencyRoleDecisionPayload = {
+  reviewId: string;
+  reviewer: string;
+  comment: string;
+};
+export type AgencyRoleDraftSummary = {
+  id: string;
+  status: 'draft';
+  sourceDivision?: string;
+  sourceAgentName: string;
+  roleName: string;
+  displayName: string;
+  description?: string;
+  capabilityHints: string[];
+  toolHints: string[];
+  handoffHints: string[];
+  sourceRef: { relativePath: string; sha256: string };
+  roleCandidate: AgencyRoleCandidatePayload;
+  validationIssues: Array<{ path: string; message: string }>;
+  toolMappingSuggestions: Array<{ hint: string; candidateTools: string[] }>;
+};
+export type AgencyRolePackageImportPayload = AgencyRoleDraftPayload;
+export type AgencyRolePackageRefreshPayload = {
+  packageId: string;
+  sourceRoot: string;
+};
+export type AgencyRoleMemoryProposalsPayload = {
+  packageId: string;
+  reviewId: string;
+};
+export type AgencyRolePackageSummary = {
+  packageId: string;
+  draftId: string;
+  sourceRef: { relativePath: string; sha256: string };
+  completeness: 'complete' | 'legacy-reconstructed';
+  importedAt: string;
+  supersedesPackageId?: string;
+  sourceDivision?: string;
+  matchedRunbooks: string[];
+  draft: AgencyRoleDraftSummary;
+};
+
+export type AgencyRolePromotionRecord = {
+  id: string;
+  packageId: string;
+  draftId: string;
+  sourceRef: { relativePath: string; sha256: string };
+  lifecycle: AgencyRoleLifecycle;
+  evidenceQualification: AgencyRoleEvidenceQualification;
+  evidenceRefs: string[];
+  reviewer: string;
+  reviewedAt: string;
+  decision?: 'approved' | 'retired';
+  decidedBy?: string;
+  decidedAt?: string;
+  comment: string;
+  candidate: AgencyRoleCandidatePayload;
+  toolHintDispositions: AgencyRoleToolHintDisposition[];
+  contractSha256: string;
+  materializedRoleName?: string;
+  materialization: {
+    status: AgencyRoleMaterializationStatus;
+    error?: string;
+  };
+};
+export type AgencyRolePackageListResult = HostSuccess & {
+  packages: AgencyRolePackageSummary[];
+  reviews: AgencyRolePromotionRecord[];
+};
+export type AgencyRolePackageResult = HostSuccess & {
+  package: AgencyRolePackageSummary;
+};
+export type AgencyMemoryProposalCandidate =
+  AgencyRoleMemoryProposalCandidate;
+export type AgencyRoleMemoryProposalCandidate = {
+  sectionId: string;
+  type: 'constraint' | 'procedure' | 'risk' | 'handoff';
+  headingPath: string[];
+  content: string;
+  proposal: MemoryProposal;
+};
+export type AgencyRoleMemoryProposalsResult = HostSuccess & {
+  packageId: string;
+  reviewId: string;
+  materializedRoleName: string;
+  candidates: AgencyRoleMemoryProposalCandidate[];
+};
+export type AgencyRoleListResult = HostSuccess & {
+  drafts: AgencyRoleDraftSummary[];
+  reviews: AgencyRolePromotionRecord[];
+};
+export type AgencyRolePromotionPreviewResult = HostSuccess & {
+  persisted: false;
+  validation: {
+    ok: boolean;
+    issues: Array<{ path: string; message: string }>;
+  };
+  contractSha256: string;
+  role: RoleConfigRoleSummary;
+};
+export type AgencyRolePromotionResult = HostSuccess & {
+  record: AgencyRolePromotionRecord;
   pendingRuntimeRefresh: boolean;
 };
 export type AgentBootstrapResult = HostSuccess & {
@@ -2780,7 +2922,6 @@ export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
 
 export type KnowledgeRuntimeLessonsMetric =
   | { status: 'available'; value: number }
-  | { status: 'unavailable'; reason: string };
 
 export type KnowledgeSekbDistillationSuggestion = {
   cluster_summary: string;
@@ -4094,6 +4235,12 @@ export type MemoryDetailResult = HostSuccess & {
 // under a `decision` key. The result type matches that shape.
 export type MemoryProposeResult = HostSuccess & Partial<MemoryGatekeeperDecision>;
 
+// Gateway memory.previewProposal returns the same decision surface as MemoryProposalPreview
+// (wouldWrite:false, conflicts, evidence) flattened under HostSuccess.
+export type MemoryProposalPreviewResult = HostSuccess & {
+  preview: MemoryProposalPreview;
+};
+
 export type MemoryUpdatePayload = {
   id: string;
   patch: MemoryProposal;
@@ -4374,6 +4521,8 @@ export type HostApiContract = {
     update: (payload: AgentUpdatePayload) => AgentSnapshotResult;
     updateModel: (payload: AgentUpdateModelPayload) => AgentSnapshotResult;
     updateReasoningEffort: (payload: AgentUpdateReasoningEffortPayload) => AgentSnapshotResult;
+    updateAvatar: (payload: AgentUpdateAvatarPayload) => AgentSnapshotResult;
+    resetAvatar: (payload: AgentIdPayload) => AgentSnapshotResult;
     getBootstrap: (payload: AgentIdPayload) => AgentBootstrapResult;
     updateBootstrap: (payload: AgentBootstrapUpdatePayload) => AgentBootstrapResult;
     delete: (payload: AgentIdPayload) => AgentSnapshotResult;
@@ -4382,6 +4531,15 @@ export type HostApiContract = {
   };
   roles: {
     upsertConfigRole: (payload: RoleUpsertConfigRolePayload) => RoleUpsertConfigRoleResult;
+    agencyCatalog: (payload: AgencyRoleSourcePayload) => AgencyRoleListResult;
+    listAgencyPackages: () => AgencyRolePackageListResult;
+    importAgencyPackage: (payload: AgencyRolePackageImportPayload) => AgencyRolePackageResult;
+    refreshAgencyPackage: (payload: AgencyRolePackageRefreshPayload) => AgencyRolePackageResult;
+    previewAgencyPromotion: (payload: AgencyRoleReviewPayload) => AgencyRolePromotionPreviewResult;
+    previewAgencyMemoryProposals: (payload: AgencyRoleMemoryProposalsPayload) => AgencyRoleMemoryProposalsResult;
+    reviewAgencyPromotion: (payload: AgencyRoleReviewPayload) => AgencyRolePromotionResult;
+    approveAgencyPromotion: (payload: AgencyRoleDecisionPayload) => AgencyRolePromotionResult;
+    retireAgencyPromotion: (payload: AgencyRoleDecisionPayload) => AgencyRolePromotionResult;
   };
   diagnostics: {
     gatewaySnapshot: () => DiagnosticsGatewaySnapshotResult;
@@ -4527,7 +4685,7 @@ export type HostApiContract = {
     stewardConfigUpdate: (payload: KnowledgeStewardConfigUpdatePayload) => KnowledgeStewardConfigUpdateResult;
     routeContext: (payload: KnowledgeRouteContextPayload) => KnowledgeRouteContextResult;
     runtimeLessonsReport: () => KnowledgeRuntimeLessonsReportResult;
-    sekbShadowEvaluationExport: (payload: KnowledgeSekbShadowEvaluationExportPayload) => KnowledgeSekbShadowEvaluationExportResult;
+        sekbShadowEvaluationExport: (payload: KnowledgeSekbShadowEvaluationExportPayload) => KnowledgeSekbShadowEvaluationExportResult;
     sekbShadowEvaluationProtocol: (payload: KnowledgeSekbShadowEvaluationProtocolPayload) => KnowledgeSekbShadowEvaluationProtocolResult;
     sekbShadowEvaluationReport: (payload: KnowledgeSekbShadowEvaluationReportPayload) => KnowledgeSekbShadowEvaluationReportResult;
     sekbSuggestPrinciples: (payload?: KnowledgeSekbSuggestPrinciplesPayload) => KnowledgeSekbSuggestPrinciplesResult;
@@ -4670,6 +4828,7 @@ export type HostApiContract = {
     list: (payload: MemoryListPayload) => MemoryListResult;
     search: (payload: MemorySearchPayload) => MemoryListResult;
     detail: (payload: MemoryDetailPayload) => MemoryDetailResult;
+    previewProposal: (payload: MemoryProposal) => MemoryProposalPreviewResult;
     propose: (payload: MemoryProposal) => MemoryProposeResult;
     update: (payload: MemoryUpdatePayload) => MemoryUpdateResult;
     health: () => MemoryHealthReportResult;
