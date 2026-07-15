@@ -1,5 +1,8 @@
 /**
  * C7-1: routing memo JSONL dual-write shadow into BlockStore-shaped records (no cutover).
+ *
+ * Default path is opt-in via `enabled: false` callers / `runtime.coding.routingMemo.shadow`.
+ * Production prompt injection is never flipped by this module.
  */
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
@@ -11,6 +14,12 @@ export type RoutingMemoEntry = {
   query: string;
   chosenTool: string;
   success: boolean;
+};
+
+export type RoutingMemoShadowRecordResult = {
+  written: boolean;
+  entry?: RoutingMemoEntry;
+  shadowBlock?: ContextBlock;
 };
 
 export function routingMemoPath(workspaceRoot: string): string {
@@ -38,7 +47,7 @@ export function routingMemoToShadowBlock(entry: RoutingMemoEntry): ContextBlock 
     valid_at: new Date(entry.atMs),
     created_at: new Date(entry.atMs),
     mutability: "system_managed",
-    summary: `route ${entry.query.slice(0, 80)} → ${entry.chosenTool}`,
+    summary: `route ${entry.query.slice(0, 80)} -> ${entry.chosenTool}`,
     full_content: JSON.stringify(entry),
     compression_depth: 0,
     entity_extraction_status: "empty",
@@ -58,4 +67,26 @@ export function readRoutingMemo(workspaceRoot: string): RoutingMemoEntry[] {
     }
   }
   return out;
+}
+
+/**
+ * Gated dual-write shadow. When `enabled` is false (default for production flags),
+ * this is a pure no-op with zero filesystem or prompt side effects.
+ */
+export function recordRoutingMemoShadow(params: {
+  workspaceRoot: string;
+  entry: RoutingMemoEntry;
+  /** Must be true to write. Defaults false. */
+  enabled?: boolean;
+}): RoutingMemoShadowRecordResult {
+  if (!params.enabled) {
+    return { written: false };
+  }
+  appendRoutingMemo(params.workspaceRoot, params.entry);
+  const shadowBlock = routingMemoToShadowBlock(params.entry);
+  return {
+    written: true,
+    entry: params.entry,
+    shadowBlock,
+  };
 }

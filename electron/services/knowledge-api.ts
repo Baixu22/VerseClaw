@@ -3602,7 +3602,7 @@ export function createKnowledgeApi({
     sekbShadowEvaluationExport: async (
       payload: KnowledgeSekbShadowEvaluationExportPayload,
     ): Promise<KnowledgeSekbShadowEvaluationExportResult> => {
-      const body = isRecord(payload) ? payload : {};
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
       const key = typeof body.pseudonymizationKey === 'string' ? body.pseudonymizationKey.trim() : '';
       if (!key) {
         return {
@@ -3670,7 +3670,7 @@ export function createKnowledgeApi({
     sekbShadowEvaluationProtocol: async (
       payload: KnowledgeSekbShadowEvaluationProtocolPayload,
     ): Promise<KnowledgeSekbShadowEvaluationProtocolResult> => {
-      const body = isRecord(payload) ? payload : {};
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
       const key = typeof body.pseudonymizationKey === 'string' ? body.pseudonymizationKey.trim() : '';
       if (!key) {
         return {
@@ -3756,7 +3756,7 @@ export function createKnowledgeApi({
     sekbShadowEvaluationReport: async (
       payload: KnowledgeSekbShadowEvaluationReportPayload,
     ): Promise<KnowledgeSekbShadowEvaluationReportResult> => {
-      const body = isRecord(payload) ? payload : {};
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
       const reviews = Array.isArray(body.reviews) ? body.reviews : null;
       const reviewers = Array.isArray(body.reviewers) ? body.reviewers : null;
       if (!reviews || !reviewers || reviewers.length !== 2 || !body.export || !body.protocol) {
@@ -3825,7 +3825,7 @@ export function createKnowledgeApi({
         };
       }
       try {
-        const body = isRecord(payload) ? payload : {};
+        const body: Record<string, unknown> = isRecord(payload) ? payload : {};
         const store = createHostSekbStore(sekb);
         const distiller = new sekb.DistillationTool({ store });
         const suggestions = distiller.suggest_principles_from_trajectories(
@@ -3865,7 +3865,7 @@ export function createKnowledgeApi({
         };
       }
       try {
-        const body = isRecord(payload) ? payload : {};
+        const body: Record<string, unknown> = isRecord(payload) ? payload : {};
         const store = createHostSekbStore(sekb);
         const distiller = new sekb.DistillationTool({ store });
         const enabled = sekb.isSekbBatchDistillationAssistantEnabled(
@@ -3929,7 +3929,7 @@ export function createKnowledgeApi({
         };
       }
       try {
-        const body = isRecord(payload) ? payload : {};
+        const body: Record<string, unknown> = isRecord(payload) ? payload : {};
         const store = createHostSekbStore(sekb);
         const distiller = new sekb.DistillationTool({ store });
         const principleId = distiller.confirm_and_save(body.suggestion, body.edits ?? null);
@@ -3960,7 +3960,7 @@ export function createKnowledgeApi({
         };
       }
       try {
-        const body = isRecord(payload) ? payload : {};
+        const body: Record<string, unknown> = isRecord(payload) ? payload : {};
         const store = createHostSekbStore(sekb);
         const distiller = new sekb.DistillationTool({ store });
         distiller.reject_suggestion(

@@ -1,5 +1,5 @@
 /**
- * Runtime coding feature flags (C0-2 / C0-4 and later C2/C4-H/C5-H flags).
+ * Runtime coding feature flags (C0-2 / C0-4 and later C2/C4-H/C5-H/C7 flags).
  *
  * Defaults match CODING-OPTIMIZATION-EDD section 0.3. Config path:
  *   runtime.coding.<flag>...
@@ -21,6 +21,8 @@ export const DEFAULT_CODING_FEATURE_FLAGS = {
   "runtime.coding.patchFlow.default": false,
   /** C7-H: experience shadow dual-write off until stable window. */
   "runtime.coding.sekb.experienceShadow": false,
+  /** C7-1: routing memo JSONL dual-write shadow. Default false (no production injection). */
+  "runtime.coding.routingMemo.shadow": false,
 } as const;
 
 export type CodingFeatureFlagName = keyof typeof DEFAULT_CODING_FEATURE_FLAGS;
@@ -28,7 +30,7 @@ export type CodingFeatureFlagName = keyof typeof DEFAULT_CODING_FEATURE_FLAGS;
 export type WorktreeBackend = "inprocess" | "git";
 export type SymbolLeaseMode = "memory" | "wal";
 
-type CodingFlagLeaf = { enabled?: boolean; backend?: string; mode?: string; default?: boolean };
+type CodingFlagLeaf = { enabled?: boolean; backend?: string; mode?: string; default?: boolean; shadow?: boolean };
 
 function asRecord(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === "object" && !Array.isArray(value)
@@ -180,4 +182,24 @@ export function isCodingSekbExperienceShadowEnabled(
     return sekb.enabled;
   }
   return DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.sekb.experienceShadow"];
+}
+
+/** C7-1 routing memo JSONL dual-write shadow. Default false (no cutover / no prompt injection). */
+export function isCodingRoutingMemoShadowEnabled(
+  cfg?: OpenClawConfig,
+  overrides?: { routingMemoShadow?: boolean },
+): boolean {
+  if (typeof overrides?.routingMemoShadow === "boolean") {
+    return overrides.routingMemoShadow;
+  }
+  const leaf = asRecord(codingConfigFrom(cfg)?.routingMemo) as CodingFlagLeaf & {
+    shadow?: boolean;
+  } | undefined;
+  if (typeof leaf?.shadow === "boolean") {
+    return leaf.shadow;
+  }
+  if (typeof leaf?.enabled === "boolean") {
+    return leaf.enabled;
+  }
+  return DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.routingMemo.shadow"];
 }
