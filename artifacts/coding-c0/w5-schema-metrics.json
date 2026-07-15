@@ -1,0 +1,34 @@
+{
+  "gate": "w5-e2e",
+  "exit": 0,
+  "cases": 3,
+  "passed": 3,
+  "metrics": {
+    "off": {
+      "toolCount": 34,
+      "schemaChars": 41484,
+      "schemaUtf8Bytes": 41488,
+      "codegraphCount": 0
+    },
+    "on": {
+      "toolCount": 34,
+      "schemaChars": 41484,
+      "schemaUtf8Bytes": 41488,
+      "codegraphCount": 0
+    }
+  },
+  "baseline": {
+    "toolCount": 30,
+    "schemaChars": 39625
+  },
+  "delta": {
+    "toolCount": 4,
+    "schemaChars": 1859
+  },
+  "shellOnly": {
+    "toolCount": 7,
+    "schemaChars": 2101
+  },
+  "c1_1_early_trigger": false,
+  "note": "Full-catalog after C0-1' four view tools. Shell-only context_* occupancy remains 2101/7."
+}
