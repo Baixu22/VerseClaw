@@ -37,6 +37,12 @@ import {
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
 import { decideGatewayRpc, isApprovalRisk } from './workspace-permissions';
+import {
+  classifyGatewayMethodForSandboxGate,
+  composeWithSandboxHighRiskGate,
+  decideSandboxHighRiskAction,
+  loadSandboxHighRiskPolicy,
+} from '@electron/utils/sandbox-high-risk-gate';
 
 type HealthPayload = {
   probe?: unknown;
@@ -378,7 +384,22 @@ export function createGatewayApi(
       const workspace = await getActiveWorkspaceProfile();
 
       if (workspace) {
-        const decision = decideGatewayRpc(method, workspace.permissionMode, body.params);
+        let decision = decideGatewayRpc(method, workspace.permissionMode, body.params);
+        const sandboxClass = classifyGatewayMethodForSandboxGate(method);
+        if (sandboxClass) {
+          const sandboxPolicy = await loadSandboxHighRiskPolicy();
+          const sandboxDecision = decideSandboxHighRiskAction(sandboxPolicy, sandboxClass, { allowApproval: true });
+          decision = composeWithSandboxHighRiskGate(decision, sandboxDecision);
+          if (sandboxDecision.forceVisible || !sandboxDecision.allowed) {
+            void recordPermissionDecisionEvent(createWorkspacePermissionDecisionEvent({
+              workspaceMode: workspace.permissionMode,
+              tool: method,
+              boundary: 'sandbox-runtime',
+              requestId: approvalId ?? buildGatewayRequestHash(method, body.params),
+              decision,
+            }));
+          }
+        }
         void recordPermissionDecisionEvent(createWorkspacePermissionDecisionEvent({
           workspaceMode: workspace.permissionMode,
           tool: method,

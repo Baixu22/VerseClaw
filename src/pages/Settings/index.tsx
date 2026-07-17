@@ -1115,6 +1115,7 @@ export function Settings() {
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
+          ['degraded', t('sandbox.degraded'), sandboxStatus ? (sandboxStatus.degraded ? t('sandbox.degradedYes') : t('sandbox.degradedNo')) : '-'],
           ['requestedProviderId', t('sandbox.requestedProvider'), sandboxStatus?.requestedProviderId ?? '-'],
           ['effectiveProviderId', t('sandbox.effectiveProvider'), sandboxStatus?.effectiveProviderId ?? '-'],
           ['permissionMode', t('sandbox.permissionMode'), sandboxStatus?.permissionMode ?? '-'],

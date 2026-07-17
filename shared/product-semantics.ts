@@ -558,6 +558,8 @@ export type PermissionDecisionBoundary =
   | 'gateway-rpc'
   | 'role-tool'
   | 'provider-call'
+  | 'sandbox-runtime'
+  | 'webview-security'
   | 'unknown';
 
 export type PermissionDecisionEvent = {

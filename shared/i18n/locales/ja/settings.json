@@ -305,7 +305,9 @@
       "cli": "Docker CLI",
       "daemon": "Docker daemon",
       "image": "サンドボックスイメージ"
-    }
+    },
+    "degradedYes": "はい（強力サンドボックス不可）",
+    "degradedNo": "いいえ"
   },
   "remoteControl": {
     "title": "Electron リモート制御",

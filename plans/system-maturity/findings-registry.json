@@ -169,7 +169,7 @@
       "category": "ISO",
       "severity": "Medium",
       "decision": "Track",
-      "status": "Partial",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [],
       "attackChain": [
@@ -177,7 +177,9 @@
       ],
       "tasks": [
         "P2-004"
-      ]
+      ],
+      "fixedBy": "P2-004",
+      "fixedAt": "2026-07-17"
     },
     {
       "id": "F-ISO-002",
@@ -185,7 +187,7 @@
       "category": "ISO",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [
         "F-SEC-010",
@@ -197,7 +199,9 @@
       ],
       "tasks": [
         "P2-004"
-      ]
+      ],
+      "fixedBy": "P2-004",
+      "fixedAt": "2026-07-17"
     },
     {
       "id": "F-AUTH-001",

@@ -5,6 +5,7 @@
 import { app, BrowserWindow, nativeTheme, session } from 'electron';
 import { join } from 'path';
 import { openExternalSafe } from '../utils/safe-open-external';
+import { registerWebViewSecurity } from '../utils/register-webview-security';
 import { GatewayManager } from '../gateway/manager';
 import { registerIpcHandlers } from './ipc-handlers';
 import { HostApiRegistry } from './ipc/host-invoke';
@@ -958,6 +959,10 @@ async function initialize(): Promise<void> {
   // Initialize logger first
   logger.init();
   logger.info('=== Verse Claw Application Starting ===');
+
+  // P2-004 / F-ISO-002: install WebView attach/permission/navigation controls
+  // before any BrowserWindow or guest <webview> is created.
+  registerWebViewSecurity();
 
   // Start resource tracker for port/heartbeat monitoring and auto-cleanup
   getResourceTracker().start();

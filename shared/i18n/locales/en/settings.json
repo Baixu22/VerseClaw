@@ -305,7 +305,9 @@
       "cli": "Docker CLI",
       "daemon": "Docker daemon",
       "image": "Sandbox image"
-    }
+    },
+    "degradedYes": "Yes (strong sandbox unavailable)",
+    "degradedNo": "No"
   },
   "remoteControl": {
     "title": "Electron Remote Control",

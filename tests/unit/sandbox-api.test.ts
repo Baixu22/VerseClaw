@@ -162,4 +162,31 @@ describe('sandbox api', () => {
       ]),
     });
   });
+
+  it('force-visible degraded fields when docker-strong is unavailable (P2-004)', async () => {
+    const { createSandboxApi } = await import('@electron/services/sandbox-api');
+    const api = createSandboxApi();
+
+    await api.updateProfile({
+      id: 'docker',
+      name: 'Docker strong',
+      providerId: 'docker-strong',
+      networkPolicy: 'disabled',
+    });
+
+    const status = await api.status();
+    expect(status.degraded).toBe(true);
+    expect(status.degradeReason).toBeTruthy();
+    expect(status.warnings.some((w: string) => /Docker|unavailable|policy-light/i.test(w))).toBe(true);
+
+    const explained = await api.explain({ workspaceId: 'workspace-1', agentId: 'main' });
+    expect(explained.explanation.items).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ key: 'degraded', value: 'yes' }),
+        expect.objectContaining({ key: 'degradeReason' }),
+      ]),
+    );
+    expect(explained.explain.some((line: string) => /Degraded: yes/i.test(line) || /degraded/i.test(line))).toBe(true);
+  });
+
 });

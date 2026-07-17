@@ -12,6 +12,10 @@ import {
   detectSandboxProviderSnapshot,
 } from '../utils/sandbox-provider-detection';
 import { resolveSandboxEffectivePolicy } from '../utils/sandbox-policy-resolver';
+import {
+  buildForcedDegradedVisibility,
+} from '../utils/sandbox-high-risk-gate';
+export { getActiveSandboxHighRiskPolicy } from '@electron/utils/active-sandbox-high-risk-policy';
 import { normalizeSandboxProviderId } from '../utils/workspace-runtime-permissions';
 import { isRecord } from './payload-utils';
 import { getActiveWorkspaceProfile } from './workspaces-api';
@@ -99,10 +103,21 @@ function normalizeProfilePayload(payload: unknown): Partial<SandboxProfile> {
 
 function buildSandboxExplanation(status: SandboxStatus): SandboxExplanation {
   const execPolicy = `${status.execPolicy.host}/${status.execPolicy.security}/${status.execPolicy.ask}`;
+  const forced = buildForcedDegradedVisibility(status);
+  const warnings = Array.from(new Set([
+    ...status.warnings,
+    ...forced.warnings,
+  ]));
   return {
     summary: status.summary,
-    warnings: status.warnings,
+    warnings,
     items: [
+      {
+        key: 'degraded',
+        label: 'Degraded',
+        value: status.degraded ? 'yes' : 'no',
+        tone: status.degraded ? 'danger' : 'success',
+      },
       { key: 'requestedProvider', label: 'Requested provider', value: status.requestedProviderId },
       {
         key: 'effectiveProvider',
@@ -132,9 +147,16 @@ function buildSandboxExplanation(status: SandboxStatus): SandboxExplanation {
           : 'unknown',
         tone: status.docker?.cli && status.docker.daemon && status.docker.image ? 'success' : 'neutral',
       },
-      ...(status.degradeReason
-        ? [{ key: 'degradeReason', label: 'Degraded reason', value: status.degradeReason, tone: 'warning' as const }]
-        : []),
+      ...(status.degraded
+        ? [{
+            key: 'degradeReason',
+            label: 'Degraded reason',
+            value: status.degradeReason ?? forced.reason ?? 'Strong sandbox unavailable',
+            tone: 'danger' as const,
+          }]
+        : status.degradeReason
+          ? [{ key: 'degradeReason', label: 'Degraded reason', value: status.degradeReason, tone: 'warning' as const }]
+          : []),
     ],
   };
 }

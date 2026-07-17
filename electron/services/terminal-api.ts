@@ -24,6 +24,12 @@ import {
   requireWorkspace,
   type WorkspaceCommandRisk,
 } from './workspace-permissions';
+import {
+  classifyTerminalRiskForSandboxGate,
+  composeWithSandboxHighRiskGate,
+  decideSandboxHighRiskAction,
+  loadSandboxHighRiskPolicy,
+} from '@electron/utils/sandbox-high-risk-gate';
 
 type RunPayload = {
   command?: unknown;
@@ -252,7 +258,22 @@ export function createTerminalApi({
       const timeoutMs = clampTimeout(body.timeoutMs);
       const approvalId = normalizeApprovalId(body.approvalId);
       const workspace = requireWorkspace(await getActiveWorkspaceProfile());
-      const decision = decideWorkspaceCommand(command, workspace.permissionMode);
+      let decision = decideWorkspaceCommand(command, workspace.permissionMode);
+      const sandboxClass = classifyTerminalRiskForSandboxGate(decision.risk);
+      if (sandboxClass) {
+        const sandboxPolicy = await loadSandboxHighRiskPolicy();
+        const sandboxDecision = decideSandboxHighRiskAction(sandboxPolicy, sandboxClass, { allowApproval: true });
+        decision = composeWithSandboxHighRiskGate(decision, sandboxDecision);
+        if (sandboxDecision.forceVisible || !sandboxDecision.allowed) {
+          void recordPermissionDecisionEvent(createWorkspacePermissionDecisionEvent({
+            workspaceMode: workspace.permissionMode,
+            tool: 'terminal.run',
+            boundary: 'sandbox-runtime',
+            requestId: approvalId ?? buildTerminalRequestHash(command, workspace.rootPath),
+            decision,
+          }));
+        }
+      }
       void recordPermissionDecisionEvent(createWorkspacePermissionDecisionEvent({
         workspaceMode: workspace.permissionMode,
         tool: 'terminal.run',
