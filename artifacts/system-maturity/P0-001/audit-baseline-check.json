@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "task": "P0-001",
+  "checkedAt": "2026-07-17T04:02:47.210Z",
+  "ok": true,
+  "fail": [],
+  "warn": [],
+  "info": [
+    "A1 findings.head matches baseline: 60061e33554311ac3c9871195210df59fe1b5bf2",
+    "A1 manifest.head matches baseline: 60061e33554311ac3c9871195210df59fe1b5bf2",
+    "A1 dirty patch hash OK (bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42) bytes=833074",
+    "A1 productDevelopmentHead=b1ff416dd162554f74e325fe77be5b5fba29387b",
+    "known post-audit content drift allowed: electron/services/roles-api.ts",
+    "known post-audit content drift allowed: src/lib/host-api.ts",
+    "known post-audit content drift allowed: shared/dcs/prod-flags-catalog.ts",
+    "known post-audit content drift allowed: package.json",
+    "manifest missing (allowlisted generated): artifacts/agent-dev-audit/report.json",
+    "manifest missing (allowlisted generated): artifacts/agent-dev-deep-test/report.json",
+    "known post-audit content drift allowed: electron/services/mcp-api.ts",
+    "manifest files: matched=68 lfNorm=6 drift=5 missing=2",
+    "A2 unique Finding IDs: 35",
+    "A2 related links OK",
+    "A2 task Finding refs resolve (34 tasks scanned)"
+  ]
+}

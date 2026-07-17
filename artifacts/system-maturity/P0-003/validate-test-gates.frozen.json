@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "task": "P0-003",
+  "checkedAt": "2026-07-17T04:02:22.472Z",
+  "ok": true,
+  "selectedLoop": "release",
+  "releaseCommands": [
+    "node scripts/audit-baseline-check.mjs",
+    "node scripts/validate-system-maturity-plan.mjs",
+    "node scripts/validate-test-gates.mjs",
+    "pnpm contract:check",
+    "pnpm run typecheck",
+    "pnpm run harness:ci",
+    "pnpm agent-dev:deep-test",
+    "pnpm run test:e2e:agent-dev-quality",
+    "pnpm run release:validate"
+  ],
+  "prCommands": [
+    "node scripts/audit-baseline-check.mjs",
+    "node scripts/validate-system-maturity-plan.mjs",
+    "pnpm contract:check",
+    "pnpm run typecheck",
+    "pnpm run harness:ci",
+    "pnpm agent-dev:fast"
+  ],
+  "dailyCommands": [
+    "pnpm contract:check",
+    "pnpm i18n:lint",
+    "pnpm agent-dev:workbench",
+    "pnpm agent-dev:unit:fast"
+  ],
+  "fail": [],
+  "warn": [],
+  "info": [
+    "A2 daily/pr loops cannot substitute release",
+    "A2 forbidden release evidence ids not present in release.commands",
+    "vitest.config.ts passWithNoTests:false",
+    "vitest.agent-dev.node.config.ts passWithNoTests:false",
+    "vitest.runtime-effectiveness.config.ts passWithNoTests:false"
+  ]
+}

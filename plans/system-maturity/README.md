@@ -12,10 +12,22 @@
 
 ## Status values
 
+### Task status
+
 - todo
 - in_progress
 - blocked
 - done
+
+### Phase status (`STATUS.json.phaseStatus`)
+
+- planned
+- in_progress
+- blocked
+- done
+
+Task status and phase status are separate enums. `phaseStatus=done` is allowed only when every task in that phase is `done`.
+
 
 ## Status files
 

@@ -1467,7 +1467,7 @@ export const hostApi = {
     sekbRejectSuggestion: (input: KnowledgeSekbRejectSuggestionPayload): Promise<KnowledgeSekbRejectSuggestionResult> => (
       invokeHost('knowledge', 'sekbRejectSuggestion', input)
     ),
-        matchErrorExperience: (input: KnowledgeMatchErrorExperiencePayload): Promise<KnowledgeMatchErrorExperienceResult> => (
+    matchErrorExperience: (input: KnowledgeMatchErrorExperiencePayload): Promise<KnowledgeMatchErrorExperienceResult> => (
       invokeHost('knowledge', 'matchErrorExperience', input)
     ),
     updateErrorExperienceEffectiveness: (input: KnowledgeUpdateErrorExperienceEffectivenessPayload): Promise<KnowledgeUpdateErrorExperienceEffectivenessResult> => (

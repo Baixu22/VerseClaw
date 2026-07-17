@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-17T04:04:09.601Z",
+  "entries": [
+    {
+      "task": "P0-001",
+      "path": "plans/system-maturity/BASELINE.json",
+      "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379"
+    },
+    {
+      "task": "P0-001",
+      "path": "plans/system-maturity/findings-registry.json",
+      "sha256": "c644519a0cd5380d6e12123114f039af6c9347d39226fa3067a982be0dbab6ad"
+    },
+    {
+      "task": "P0-001",
+      "path": "scripts/audit-baseline-check.mjs",
+      "sha256": "d7e74e3e44875f553aff02fc88faa64aa5e8406793a5376515bc31a8e4e529af"
+    },
+    {
+      "task": "P0-001",
+      "path": "plans/system-maturity/EXECUTION-ORDER.md",
+      "sha256": "54207381825bdcfa67a3524b3e8fa4cde9b448b858020fa6e18ae91c8b45b7ed"
+    },
+    {
+      "task": "P0-001",
+      "path": "artifacts/system-maturity/P0-001/audit-baseline-check.frozen.json",
+      "sha256": "e8e1420a3aaeb22bfacb63305f58b3cfe67ee21cfa06a921bdd778606d6f5a4d"
+    },
+    {
+      "task": "P0-001",
+      "path": "artifacts/system-maturity/P0-001/audit-baseline-check.stdout.txt",
+      "sha256": "e8b1090ddcf78e7800aa647bc5db0b750143d2f0e1403a76f72f48d2ffd4b716"
+    },
+    {
+      "task": "P0-001",
+      "path": "artifacts/system-maturity/P0-001/harness-validate.stdout.txt",
+      "sha256": "bfcbabd108c46cfcb541c7421fdd02610d8efa0701db3a602e18c4413252f743"
+    },
+    {
+      "task": "P0-002",
+      "path": "scripts/validate-system-maturity-plan.mjs",
+      "sha256": "6528863708939d23308f77f3d39985b33dc6316ce0fa7499e57ac88ca0818d32"
+    },
+    {
+      "task": "P0-002",
+      "path": "plans/system-maturity/README.md",
+      "sha256": "61179483b8114379d9e3ab3b44277ee49aabd103c5c8568f8d012024873a245a"
+    },
+    {
+      "task": "P0-002",
+      "path": "artifacts/system-maturity/P0-002/validate-system-maturity-plan.frozen.json",
+      "sha256": "f1338c2c8e8a895857c3580a1bc5bacacc88e8c14961918800b322a570398f6c"
+    },
+    {
+      "task": "P0-002",
+      "path": "artifacts/system-maturity/P0-002/validate.stdout.txt",
+      "sha256": "b108fc8cb1a6e1a70513153456ed87b045288caca0e2db3f73da74bccf8444ca"
+    },
+    {
+      "task": "P0-003",
+      "path": "plans/system-maturity/gates.json",
+      "sha256": "4c399cf891d2ce62f282503a47c5da996fa0141e08856781e4aae0c57e7d7e3a"
+    },
+    {
+      "task": "P0-003",
+      "path": "scripts/validate-test-gates.mjs",
+      "sha256": "317c91d240487f256b3649f396733982cb84afb64dc80a540e21630fe6ad0580"
+    },
+    {
+      "task": "P0-003",
+      "path": "vitest.config.ts",
+      "sha256": "5921adc4d7c09671ec2d42560cfb3acac226fe5dd4ddb310ee6dd5650a5e5231"
+    },
+    {
+      "task": "P0-003",
+      "path": "vitest.agent-dev.node.config.ts",
+      "sha256": "3f22193832c75ed40b7d76f74258f1fd6f5aca918daf934f98412c2a7a46fdef"
+    },
+    {
+      "task": "P0-003",
+      "path": "vitest.runtime-effectiveness.config.ts",
+      "sha256": "94d96bd2f2ffcc8c6754fbfdd111ae2ac3f0de4b92826ac869d9e797cca926c6"
+    },
+    {
+      "task": "P0-003",
+      "path": "src/lib/host-api.ts",
+      "sha256": "e52afc540817c1c127a0e284ffd61aef2f9fb3c248e50836bf2da90728b7acfe"
+    },
+    {
+      "task": "P0-003",
+      "path": "tests/unit/host-api-facade.test.ts",
+      "sha256": "106345ca9edfd87d17bc2c6e9cb7f9369adbd5b6411f1109319be2f7305357d7"
+    },
+    {
+      "task": "P0-003",
+      "path": "package.json",
+      "sha256": "0cf5f34f66b1b40054f935dbb5c0e0cf176d49d77481ad669592639bb139e2cc"
+    },
+    {
+      "task": "P0-003",
+      "path": "artifacts/system-maturity/P0-003/validate-test-gates.frozen.json",
+      "sha256": "bc10458525f54b1c7712ce695f5644e70efd70b22f880426711ae98e627d6f4d"
+    },
+    {
+      "task": "P0-003",
+      "path": "artifacts/system-maturity/P0-003/release-gates.commands.json",
+      "sha256": "2a21c2c0bb5306882f4daa0993aeebe153d98460a073794af0ca9b2f0bc79ed3"
+    },
+    {
+      "task": "P0-003",
+      "path": "artifacts/system-maturity/P0-003/empty-shard.stdout.txt",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "task": "P0-003",
+      "path": "artifacts/system-maturity/P0-003/agent-dev-fast.stdout.txt",
+      "sha256": "b3899ecf132858468b6b6ff95b61917ace221f36abb467ae7b294dda176f65df"
+    },
+    {
+      "task": "P0-003",
+      "path": "artifacts/system-maturity/P0-003/harness-ci.stdout.txt",
+      "sha256": "6c03b685505a221ec69b5599e265d2dba77855cd31b5f83f12a8f462459a84b5"
+    },
+    {
+      "task": "P0-003",
+      "path": "artifacts/system-maturity/P0-003/typecheck.stdout.txt",
+      "sha256": "dbfa562e65b3c17b7df5849e56c72a843fc31554e6138df67b2e032c84926b4c"
+    },
+    {
+      "task": "P0-004",
+      "path": "scripts/validate-system-maturity-evidence.mjs",
+      "sha256": "6bbc44b04f821e2ae42a984133d8775f6af3d398d6767748735b451e739db702"
+    },
+    {
+      "task": "P0-004",
+      "path": "package.json",
+      "sha256": "0cf5f34f66b1b40054f935dbb5c0e0cf176d49d77481ad669592639bb139e2cc"
+    },
+    {
+      "task": "P0-004",
+      "path": "plans/system-maturity/BASELINE.json",
+      "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379"
+    },
+    {
+      "task": "P0-004",
+      "path": "plans/system-maturity/phase0-foundation/STATUS.json",
+      "sha256": "c9f4e1df2ee9dddb39a43ad6fb0fd25bd44e9c60cd6956a7a2d3c747ad9d69f6"
+    },
+    {
+      "task": "P0-004",
+      "path": "artifacts/system-maturity/P0-004/a1-missing-evidence-probe.txt",
+      "sha256": "33d844b0003332db2d8a699331c6944ccbcfd1847819ecd148556f3cdf78f316"
+    },
+    {
+      "task": "P0-004",
+      "path": "artifacts/system-maturity/P0-004/baseline.stdout.txt",
+      "sha256": "a4bd4ff89a18d4f050c42c52304d3eead6255690810012aa7952f4892979989a"
+    },
+    {
+      "task": "P0-004",
+      "path": "artifacts/system-maturity/P0-004/plan.stdout.txt",
+      "sha256": "b161d10bab1dbab0856e4a3f8bafedf9ed0600740b1df072f0cb47e315161ac7"
+    },
+    {
+      "task": "P0-004",
+      "path": "artifacts/system-maturity/P0-004/harness.stdout.txt",
+      "sha256": "3bd743790cabfa618a256ba8ead3a362182c2a286389365462d836b08ed32319"
+    }
+  ]
+}

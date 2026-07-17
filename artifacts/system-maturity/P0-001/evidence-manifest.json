@@ -1,0 +1,41 @@
+{
+  "task": "P0-001",
+  "evidence": [
+    {
+      "path": "plans/system-maturity/BASELINE.json",
+      "sha256": "88eae3a882302f6aa66182f1c123ee066509e68d5e7589d369626e56010e6533",
+      "bytes": 4683
+    },
+    {
+      "path": "plans/system-maturity/findings-registry.json",
+      "sha256": "c644519a0cd5380d6e12123114f039af6c9347d39226fa3067a982be0dbab6ad",
+      "bytes": 26063
+    },
+    {
+      "path": "scripts/audit-baseline-check.mjs",
+      "sha256": "d7e74e3e44875f553aff02fc88faa64aa5e8406793a5376515bc31a8e4e529af",
+      "bytes": 8821
+    },
+    {
+      "path": "plans/system-maturity/EXECUTION-ORDER.md",
+      "sha256": "54207381825bdcfa67a3524b3e8fa4cde9b448b858020fa6e18ae91c8b45b7ed",
+      "bytes": 6131
+    },
+    {
+      "path": "artifacts/system-maturity/P0-001/audit-baseline-check.json",
+      "sha256": "0990d24069bad8b4c861d26aef8a2423d7fc01c712edfff2e894af4b4d42d856",
+      "bytes": 1084
+    },
+    {
+      "path": "artifacts/system-maturity/P0-001/audit-baseline-check.stdout.txt",
+      "sha256": "e8b1090ddcf78e7800aa647bc5db0b750143d2f0e1403a76f72f48d2ffd4b716",
+      "bytes": 1934
+    },
+    {
+      "path": "artifacts/system-maturity/P0-001/harness-validate.stdout.txt",
+      "sha256": "bfcbabd108c46cfcb541c7421fdd02610d8efa0701db3a602e18c4413252f743",
+      "bytes": 1832
+    }
+  ],
+  "checkedAt": "2026-07-17T03:47:57.078Z"
+}

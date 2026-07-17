@@ -881,10 +881,17 @@ describe('hostApi facade', () => {
       ));
     });
 
+    // Match renderer app `src/` and `@/` only — not openclaw_runtime/src.
     const electronToRenderer = findViolations('electron', [
-      /\bfrom\s+['"][^'"]*src\//g,
-      /\bimport\(\s*['"][^'"]*src\//g,
-      /\brequire\(\s*['"][^'"]*src\//g,
+      /\bfrom\s+['"]@\//g,
+      /\bfrom\s+['"](?:\.\.\/)+src\//g,
+      /\bfrom\s+['"]src\//g,
+      /\bimport\(\s*['"]@\//g,
+      /\bimport\(\s*['"](?:\.\.\/)+src\//g,
+      /\bimport\(\s*['"]src\//g,
+      /\brequire\(\s*['"]@\//g,
+      /\brequire\(\s*['"](?:\.\.\/)+src\//g,
+      /\brequire\(\s*['"]src\//g,
     ]);
     const rendererToElectron = findViolations('src', [
       /\bfrom\s+['"]electron['"]/g,

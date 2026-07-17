@@ -2,9 +2,24 @@
 
 ## Start invariant
 
+## Canonical baseline (frozen by P0-001)
+
+| Role | SHA |
+|---|---|
+| **Product development head** | `b1ff416dd162554f74e325fe77be5b5fba29387b` |
+| **Audit evidence head** | `60061e33554311ac3c9871195210df59fe1b5bf2` |
+| **Branch reconciliation compared against** | `836a8e2dd4a7fa5f4e10a0948316f1a8a1d251b8` |
+
+- Audit dirty patch (LF-normalized): `bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42` (833074 bytes)
+- Machine-readable freeze: `plans/system-maturity/BASELINE.json`
+- Finding registry: `plans/system-maturity/findings-registry.json`
+- Validator: `node scripts/audit-baseline-check.mjs`
+
+Do not silently replace these heads. Any baseline change requires a new governance task with fresh evidence.
+
 1. 当前仓库存在用户 dirty changes；禁止 reset、clean、覆盖或批量搬运。
 2. 规划文件所在工作树只保存规划变更，不作为产品开发工作树。
-3. 产品开发从 `HEAD 60061e33554311ac3c9871195210df59fe1b5bf2` 建独立 worktree；需要用户 dirty 变更时，只迁移明确文件并复核。
+3. 产品开发从 **product development head** `b1ff416dd162554f74e325fe77be5b5fba29387b`（P0-001 固化；审计证据仍锚定 `60061e33554311ac3c9871195210df59fe1b5bf2` + dirty patch）建独立 worktree；需要用户 dirty 变更时，只迁移明确文件并复核。
 4. 每个 worktree 只允许一个活跃任务链；同一文件不得被两个 worktree 同时改动。
 5. 每个 wave 合并后必须运行集成门禁，门禁通过后才更新 STATUS。
 

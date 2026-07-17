@@ -127,6 +127,7 @@ const maxWorkers = process.env.VITEST_MAX_WORKERS
 export default defineConfig({
   plugins: [react(), runtimePathAliasPlugin(), stripShebangPlugin()],
   test: {
+    passWithNoTests: false,
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./tests/setup.ts'],

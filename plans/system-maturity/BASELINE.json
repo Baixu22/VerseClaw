@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "program": "clawx-system-maturity",
+  "frozenAt": "2026-07-17T03:45:44.283Z",
+  "frozenBy": "P0-001",
+  "canonical": {
+    "productDevelopmentHead": "b1ff416dd162554f74e325fe77be5b5fba29387b",
+    "auditEvidenceHead": "60061e33554311ac3c9871195210df59fe1b5bf2",
+    "branchReconciliationComparedAgainst": "836a8e2dd4a7fa5f4e10a0948316f1a8a1d251b8"
+  },
+  "auditEvidence": {
+    "head": "60061e33554311ac3c9871195210df59fe1b5bf2",
+    "dirtyPatchPath": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.dirty.patch",
+    "dirtyPatchSha256": "bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42",
+    "dirtyPatchBytes": 833074,
+    "hashNormalization": "LF; CRLF is normalized before hashing",
+    "measuredPatchSha256Lf": "bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42",
+    "measuredPatchBytesLf": 833074,
+    "measuredPatchBytesRaw": 859766,
+    "patchHashMatch": true,
+    "manifestPath": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.manifest.json",
+    "findingsPath": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+    "reportPath": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.md",
+    "attackChainsPath": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.attack-chains.md",
+    "gapChecklistPath": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.gap-checklist.md",
+    "findingCount": 35
+  },
+  "productDevelopmentBaseline": {
+    "head": "b1ff416dd162554f74e325fe77be5b5fba29387b",
+    "branch": "codex/maturity-p0",
+    "worktree": "C:/Users/27933/Desktop/clawx/ClawX-maturity-p0",
+    "rationale": "Program start product baseline is current main tip. It includes the audit package, DCS production hardening, evidence formatting, local ignore rules, and branch reconciliation. Security Finding evidence remains anchored to auditEvidence.head + dirty patch; product worktrees branch from productDevelopmentHead unless a task explicitly requires replaying the audit snapshot."
+  },
+  "commitsBetweenAuditAndProduct": [
+    {
+      "sha": "b1ff416dd162554f74e325fe77be5b5fba29387b",
+      "subject": "docs: record stale branch reconciliation"
+    },
+    {
+      "sha": "836a8e2dd4a7fa5f4e10a0948316f1a8a1d251b8",
+      "subject": "chore: ignore local temporary workspace files"
+    },
+    {
+      "sha": "ddf763e47e2641d80bc8b962d2fb40fbe038c4fb",
+      "subject": "chore: normalize DCS evidence formatting"
+    },
+    {
+      "sha": "138cd5136bfdd1890c5848bdf5242b3de95bbe6e",
+      "subject": "feat(dcs): add production hardening and evidence gates"
+    },
+    {
+      "sha": "2eb69243c2ac9d2f52360aebdc669624053f853b",
+      "subject": "docs: add security audit and maturity program"
+    }
+  ],
+  "branchReconciliation": {
+    "comparedAgainst": "836a8e2dd4a7fa5f4e10a0948316f1a8a1d251b8",
+    "recordPath": "plans/system-maturity/BRANCH-RECONCILIATION.md",
+    "decision": "No listed branch is safe for direct merge; reimplement from product baseline if still needed"
+  },
+  "knownContentDriftFromAuditManifest": [
+    {
+      "path": "electron/services/roles-api.ts",
+      "auditSha256": "0a4e30f6fea7d12563f1cf7ef05889ad5429ffe3f8191fb6e7146c280c7b62b7",
+      "auditBytes": 27175,
+      "workingSha256": "6ab804bde02d8d6e6fd0481a563c2f094e0f5838e3f132958c445c11c8767be7",
+      "workingBytes": 27833
+    },
+    {
+      "path": "shared/dcs/prod-flags-catalog.ts",
+      "auditSha256": "986098c6583282fad14fa774b0565698b8ba1f614ad8bba3eaab7101064ff77b",
+      "auditBytes": 9251,
+      "workingSha256": "f7b687897d6883c1eafbb013ec7b71dfd8d043f8b973e776f9ee2e732955ad8c",
+      "workingBytes": 9509
+    },
+    {
+      "path": "electron/services/mcp-api.ts",
+      "auditSha256": "b3757f373290f422fca3f7aee15a0fbb2791ba801ffe22011950a40d3fa29a7c",
+      "auditBytes": 53384,
+      "workingSha256": "b192c3c6846d019de69291406cf7f1fa2dfb7e5b1426095c414fd3129a89c7de",
+      "workingBytes": 53389
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "auditSha256": "96ac6898986b6f8ee0fb94b36f234ea6965877d102a46613fb4cc0b063efedd5",
+      "auditBytes": 79992,
+      "workingSha256": "e52afc540817c1c127a0e284ffd61aef2f9fb3c248e50836bf2da90728b7acfe",
+      "workingBytes": 79987,
+      "reason": "P0-003 gate repair during phase0 control plane (facade indent / package scripts / boundary test precision)"
+    },
+    {
+      "path": "package.json",
+      "auditSha256": "8a533daaacc552777a679036d6133f8716b3b49f7dbe2a690a0c61c3cc9293cd",
+      "auditBytes": 24773,
+      "workingSha256": "0cf5f34f66b1b40054f935dbb5c0e0cf176d49d77481ad669592639bb139e2cc",
+      "workingBytes": 25353,
+      "reason": "P0-003 gate repair during phase0 control plane (facade indent / package scripts / boundary test precision)"
+    }
+  ],
+  "crlfNormalizedMatches": [
+    "electron/services/agent-browser-vault.ts",
+    "openclaw_runtime/src/agents/role-permissions-policy.ts",
+    "electron/services/sessions-api.ts",
+    "electron/services/observability-redaction.ts",
+    "openclaw_runtime/src/context-engine/assembler.ts",
+    "openclaw_runtime/src/memory/gatekeeper.ts",
+    "package.json"
+  ],
+  "missingGeneratedArtifactsAtFreeze": [
+    "artifacts/agent-dev-audit/report.json",
+    "artifacts/agent-dev-deep-test/report.json"
+  ],
+  "rules": {
+    "doNotMergeReconciledBranches": true,
+    "doNotReplaceCanonicalHeadsWithoutNewP0Task": true,
+    "productWorktreeMustBranchFrom": "canonical.productDevelopmentHead",
+    "auditHashValidationUses": "auditEvidence + LF normalization"
+  },
+  "updatedBy": "P0-004",
+  "updatedAt": "2026-07-17T04:01:31.891Z"
+}

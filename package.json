@@ -147,7 +147,13 @@
     "dcs:prod-accept-2": "pnpm --dir openclaw_runtime exec node --import tsx scripts/coding-prod-round-accept-2.mts",
     "dcs:corpus:validate": "pnpm --dir openclaw_runtime exec node --import tsx scripts/dcs-corpus-validate.mts",
     "dcs:corpus:synthetic": "pnpm --dir openclaw_runtime exec node --import tsx scripts/dcs-corpus-synthetic-generate.mts",
-    "dcs:canary:c1": "pnpm --dir openclaw_runtime exec node --import tsx scripts/dcs-canary-c1.mts"
+    "dcs:canary:c1": "pnpm --dir openclaw_runtime exec node --import tsx scripts/dcs-canary-c1.mts",
+    "maturity:baseline": "node scripts/audit-baseline-check.mjs",
+    "maturity:plan": "node scripts/validate-system-maturity-plan.mjs",
+    "maturity:gates": "node scripts/validate-test-gates.mjs",
+    "maturity:release-gates": "node scripts/validate-test-gates.mjs --loop release --list",
+    "maturity:validate": "node scripts/audit-baseline-check.mjs && node scripts/validate-system-maturity-plan.mjs && node scripts/validate-test-gates.mjs && node scripts/validate-system-maturity-evidence.mjs",
+    "maturity:evidence": "node scripts/validate-system-maturity-evidence.mjs"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",

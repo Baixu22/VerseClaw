@@ -3,6 +3,7 @@ import { resolve } from 'path';
 
 export default defineConfig({
   test: {
+    passWithNoTests: false,
     globals: true,
     environment: 'node',
     setupFiles: ['./tests/setup-agent-dev-node.ts'],

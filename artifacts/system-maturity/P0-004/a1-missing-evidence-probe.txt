@@ -1,0 +1,30 @@
+exit=1
+failedAsExpected=true
+---stdout---
+INFO  A2 P0-002 hash OK scripts/validate-system-maturity-plan.mjs
+INFO  A2 P0-002 hash OK plans/system-maturity/README.md
+INFO  A2 P0-002 hash OK artifacts/system-maturity/P0-002/validate-system-maturity-plan.json
+INFO  A2 P0-002 hash OK artifacts/system-maturity/P0-002/validate.stdout.txt
+INFO  A2 P0-003 hash OK plans/system-maturity/gates.json
+INFO  A2 P0-003 hash OK scripts/validate-test-gates.mjs
+INFO  A2 P0-003 hash OK vitest.config.ts
+INFO  A2 P0-003 hash OK vitest.agent-dev.node.config.ts
+INFO  A2 P0-003 hash OK vitest.runtime-effectiveness.config.ts
+INFO  A2 P0-003 hash OK src/lib/host-api.ts
+INFO  A2 P0-003 hash OK tests/unit/host-api-facade.test.ts
+INFO  A2 P0-003 hash OK package.json
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/validate-test-gates.json
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/release-gates.commands.json
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/empty-shard.stdout.txt
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/agent-dev-fast.stdout.txt
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/harness-ci.stdout.txt
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/typecheck.stdout.txt
+INFO  A1 regression probe: missing evidence path correctly detectable
+
+---stderr---
+FAIL  A1 P0-001 evidence path missing: ACCEPTANCE: A1
+FAIL  A1 P0-001 evidence path missing: A2
+FAIL  A1 P0-001 evidence path missing: A3
+
+validate-system-maturity-evidence: FAILED (3)
+
