@@ -1,0 +1,32 @@
+{
+  "A1": {
+    "id": "A1",
+    "statement": "New workspace does not default to acceptEdits",
+    "status": "passed",
+    "proof": [
+      "DEFAULT_WORKSPACE_PERMISSION_MODE=readOnly in shared/types/workspace.ts",
+      "workspaces-api create/list default use readOnly",
+      "unit: creates new workspaces with readOnly permission mode by default"
+    ]
+  },
+  "A2": {
+    "id": "A2",
+    "statement": "Mode changes are visible and auditable",
+    "status": "passed",
+    "proof": [
+      "workspaces.update writes permission-decision event boundary=workspace-mode",
+      "UI already exposes composer permission mode selector",
+      "unit: preserves explicit acceptEdits and audits permission mode changes"
+    ]
+  },
+  "A3": {
+    "id": "A3",
+    "statement": "Write rules cover all entry points",
+    "status": "passed",
+    "proof": [
+      "files/terminal/web-preview use decideWorkspace* helpers",
+      "git enforces readOnly/plan deny and audits acceptEdits writes",
+      "unit matrix for files/commands/gateway across modes"
+    ]
+  }
+}

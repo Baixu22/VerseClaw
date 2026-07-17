@@ -554,6 +554,7 @@ export type PermissionDecisionBoundary =
   | 'user-file'
   | 'system-metadata'
   | 'workspace-command'
+  | 'workspace-mode'
   | 'gateway-rpc'
   | 'role-tool'
   | 'provider-call'

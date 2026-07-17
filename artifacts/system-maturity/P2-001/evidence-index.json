@@ -1,0 +1,92 @@
+{
+  "taskId": "P2-001",
+  "finding": "F-AUTH-001",
+  "generatedAt": "2026-07-17T05:42:14Z",
+  "summary": {
+    "defaultPermissionMode": "readOnly",
+    "modeChangeAudited": true,
+    "entryPointsCovered": [
+      "files",
+      "terminal",
+      "git",
+      "web-preview",
+      "gateway-rpc"
+    ],
+    "tests": {
+      "unit": "tests/unit/workspace-permissions.test.ts + files-permissions-api.test.ts + workspaces-api.test.ts",
+      "result": "27 passed (electron binary unhandled rejection after tests is env-known)"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "bytes": 32838,
+      "sha256": "d4031397aed69e6da79357369978c110fc0663540656196366807a5aa65c71ba"
+    },
+    {
+      "path": "electron/services/workspace-permissions.ts",
+      "bytes": 9791,
+      "sha256": "45c639fd11b8170872752cfe0ca128c0a3cf26af9a2f037ceb3872f5b1db2dce"
+    },
+    {
+      "path": "electron/services/workspace-runtime-sync.ts",
+      "bytes": 1219,
+      "sha256": "a7a316b0e9403247962194fed0d081fa6b3a7778ad3fb2534fee958092485c18"
+    },
+    {
+      "path": "electron/services/sandbox-api.ts",
+      "bytes": 7276,
+      "sha256": "06d97e4d26aead297ed6855abe99bc686507d87ec23023fc5268201612c5b619"
+    },
+    {
+      "path": "electron/services/git-api.ts",
+      "bytes": 41563,
+      "sha256": "d5ce43bb8aaaf630f1916079ebac8c3fb14d7f50232423eb5df78280c1899f7c"
+    },
+    {
+      "path": "electron/utils/workspace-runtime-permissions.ts",
+      "bytes": 11096,
+      "sha256": "0249e3d847af9f5f0830caf90903cd45b5884a1870bc5b17127c8b7ac35025f9"
+    },
+    {
+      "path": "shared/types/workspace.ts",
+      "bytes": 9960,
+      "sha256": "d000806b3dad9f7f8e75f66ea94864952ded94d4198c704a456e8f09aa236d90"
+    },
+    {
+      "path": "shared/product-semantics.ts",
+      "bytes": 28074,
+      "sha256": "c06aa08305cf1748395668175c62a5c047f8275f7158edef8c24b3ed2a088ac2"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "bytes": 183189,
+      "sha256": "c83ed59f7fac6f6d875a418504d5106a97ad5440b263139096af3b3473bbe214"
+    },
+    {
+      "path": "tests/unit/workspace-permissions.test.ts",
+      "bytes": 6894,
+      "sha256": "1b80fc453cd97a44cdaa10854dcaf0f61a6eaee27e9486aad60d00a461b2d78a"
+    },
+    {
+      "path": "tests/unit/files-permissions-api.test.ts",
+      "bytes": 7138,
+      "sha256": "6efda5d0be5d16b4d4fcaa7b1a9bd9dc6706f083d0bb022a11cb0a661ff4cb17"
+    },
+    {
+      "path": "tests/unit/workspaces-api.test.ts",
+      "bytes": 17218,
+      "sha256": "8ef30f1fb18b087b31a9999c087c66a1c8b6d8f67c3a1a07adecbaee4e931cf3"
+    },
+    {
+      "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+      "bytes": 239,
+      "sha256": "3589b0fe3d5bfa9e671b7b9fd2ee9a76d77d446f4768efbbec3b242c09af42fe"
+    },
+    {
+      "path": "artifacts/system-maturity/P2-001/vitest.stdout.txt",
+      "bytes": 3542,
+      "sha256": "71b0ba78c9383f4be5e4efcae9b1e04d2202af49d6150dcf55a3b25ba5050eff"
+    }
+  ]
+}

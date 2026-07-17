@@ -5,10 +5,12 @@ import {
   decideGatewayRpc,
   decideWorkspaceCommand,
   decideWorkspaceFileWrite,
+  DEFAULT_WORKSPACE_PERMISSION_MODE,
   isDevOnlyGatewayRpc,
   isDevOnlyGatewayRpcEnabled,
   isPathInsideWorkspace,
 } from '@electron/services/workspace-permissions';
+import { normalizeWorkspacePermissionMode } from '@shared/types/workspace';
 import { mapWorkspacePermissionToExecApproval } from '@electron/utils/workspace-runtime-permissions';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
@@ -113,4 +115,40 @@ describe('workspace permission policy', () => {
       risk: 'write',
     });
   });
+
+  it('defaults new/untrusted workspace permission mode to readOnly (P2-001 / F-AUTH-001)', () => {
+    expect(DEFAULT_WORKSPACE_PERMISSION_MODE).toBe('readOnly');
+    expect(normalizeWorkspacePermissionMode(undefined)).toBe('readOnly');
+    expect(normalizeWorkspacePermissionMode(null)).toBe('readOnly');
+    expect(normalizeWorkspacePermissionMode('bogus')).toBe('readOnly');
+    // Migration must not silently loosen valid restricted modes or invent acceptEdits.
+    expect(normalizeWorkspacePermissionMode('plan')).toBe('plan');
+    expect(normalizeWorkspacePermissionMode('acceptEdits')).toBe('acceptEdits');
+  });
+
+  it('covers write decisions across permission modes for files and commands', () => {
+    // files
+    expect(decideWorkspaceFileWrite('C:/project/a.ts', workspace('readOnly'))).toMatchObject({ allowed: false });
+    expect(decideWorkspaceFileWrite('C:/project/a.ts', workspace('plan'))).toMatchObject({ allowed: false });
+    expect(decideWorkspaceFileWrite('C:/project/a.ts', workspace('acceptEdits'))).toMatchObject({ allowed: true, risk: 'write' });
+    expect(decideWorkspaceFileWrite('C:/other/a.ts', workspace('acceptEdits'))).toMatchObject({
+      allowed: false,
+      requiresApproval: true,
+      risk: 'external-write',
+    });
+    // commands / gateway (entry points share these decision helpers)
+    expect(decideWorkspaceCommand('mkdir dist', 'readOnly')).toMatchObject({ allowed: false });
+    expect(decideWorkspaceCommand('mkdir dist', 'plan')).toMatchObject({ allowed: false });
+    expect(decideWorkspaceCommand('mkdir dist', 'acceptEdits')).toMatchObject({ allowed: true, risk: 'write' });
+    expect(decideWorkspaceCommand('git clean -fd', 'acceptEdits')).toMatchObject({
+      allowed: false,
+      requiresApproval: true,
+    });
+    expect(decideGatewayRpc('config.set', 'readOnly')).toMatchObject({ allowed: false });
+    expect(decideGatewayRpc('config.set', 'acceptEdits')).toMatchObject({
+      allowed: false,
+      requiresApproval: true,
+    });
+  });
+
 });

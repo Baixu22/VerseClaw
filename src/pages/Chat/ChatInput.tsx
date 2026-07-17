@@ -954,7 +954,7 @@ export function ChatInput({
     || onSwitchAgent
     || onNewSession,
   );
-  const activePermissionMode = workspace?.permissionMode ?? 'acceptEdits';
+  const activePermissionMode = workspace?.permissionMode ?? 'readOnly';
   const workspaceMenuLabel = workspace && onPermissionModeChange
     ? t(`composer.permissionMode.${activePermissionMode}`)
     : t('composer.workspaceActions');

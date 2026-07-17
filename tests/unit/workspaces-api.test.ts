@@ -5,6 +5,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const storeState = vi.hoisted(() => ({
   activeWorkspaceId: 'legacy',
   profiles: [] as unknown[],
+  approvals: [] as unknown[],
+  decisionEvents: [] as unknown[],
 }));
 
 const harnessTemplate = vi.hoisted(() => ({
@@ -32,12 +34,16 @@ vi.mock('electron-store', () => {
     get(key: string) {
       if (key === 'profiles') return storeState.profiles;
       if (key === 'activeWorkspaceId') return storeState.activeWorkspaceId;
+      if (key === 'approvals') return storeState.approvals;
+      if (key === 'decisionEvents') return storeState.decisionEvents;
       return undefined;
     }
 
     set(key: string, value: unknown) {
       if (key === 'profiles') storeState.profiles = Array.isArray(value) ? [...value] : [];
       if (key === 'activeWorkspaceId') storeState.activeWorkspaceId = typeof value === 'string' ? value : null;
+      if (key === 'approvals') storeState.approvals = Array.isArray(value) ? [...value] : [];
+      if (key === 'decisionEvents') storeState.decisionEvents = Array.isArray(value) ? [...value] : [];
     }
   }
 
@@ -72,6 +78,8 @@ describe('workspaces api compatibility migration', () => {
         draftInput: 'legacy draft',
       },
     }];
+    storeState.approvals = [];
+    storeState.decisionEvents = [];
     harnessTemplate.ensureVerseClawWorkspaceHarness.mockClear();
     await rm(testWorkspaceRoot, { recursive: true, force: true });
   });
@@ -429,4 +437,87 @@ describe('workspaces api compatibility migration', () => {
       },
     ]);
   });
+
+  it('P2-001: creates new workspaces with readOnly permission mode by default', async () => {
+    const projectRoot = join(testWorkspaceRoot, 'restricted-default');
+    await mkdir(projectRoot, { recursive: true });
+    storeState.activeWorkspaceId = null;
+    storeState.profiles = [];
+
+    const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    const api = createWorkspacesApi();
+    const result = await api.create({ rootPath: projectRoot, name: 'Restricted Default' });
+    expect(result).toMatchObject({
+      success: true,
+      activeWorkspace: {
+        permissionMode: 'readOnly',
+      },
+    });
+    expect(result.profiles?.[0]?.permissionMode).toBe('readOnly');
+  });
+
+  it('P2-001: preserves explicit acceptEdits and audits permission mode changes', async () => {
+    const projectRoot = join(testWorkspaceRoot, 'mode-audit');
+    await mkdir(projectRoot, { recursive: true });
+    storeState.activeWorkspaceId = null;
+    storeState.profiles = [];
+
+    const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    const { listPermissionDecisionEvents } = await import('@electron/services/permissions-api');
+    const api = createWorkspacesApi();
+
+    const created = await api.create({
+      rootPath: projectRoot,
+      name: 'Mode Audit',
+      permissionMode: 'acceptEdits',
+    });
+    expect(created.activeWorkspace?.permissionMode).toBe('acceptEdits');
+
+    const updated = await api.update({
+      id: created.activeWorkspaceId,
+      permissionMode: 'readOnly',
+    });
+    expect(updated.activeWorkspace?.permissionMode).toBe('readOnly');
+
+    // allow async fire-and-forget audit write
+    await new Promise((r) => setTimeout(r, 50));
+    const events = await listPermissionDecisionEvents(20);
+    expect(events).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        kind: 'permission-decision',
+        tool: 'workspaces.updatePermissionMode',
+        boundary: 'workspace-mode',
+        workspaceMode: 'readOnly',
+        decision: 'allow',
+      }),
+    ]));
+  });
+
+  it('P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits', async () => {
+    storeState.activeWorkspaceId = null;
+    storeState.profiles = [];
+    const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    const api = createWorkspacesApi();
+    const listed = await api.list();
+    expect(listed.activeWorkspace?.permissionMode).toBe('readOnly');
+
+    storeState.profiles = [{
+      id: 'legacy',
+      name: 'Legacy',
+      rootPath: 'C:/legacy',
+      agentId: 'main',
+      selectedAgentId: 'main',
+      activeSessionKey: 'agent:main:main',
+      permissionMode: 'not-a-mode' as any,
+      createdAt: 1,
+      updatedAt: 1,
+      lastOpenedAt: 1,
+      state: {},
+      sessionStates: {},
+    }];
+    storeState.activeWorkspaceId = 'legacy';
+    const again = await api.list();
+    expect(again.activeWorkspace?.permissionMode).toBe('readOnly');
+  });
+
 });
