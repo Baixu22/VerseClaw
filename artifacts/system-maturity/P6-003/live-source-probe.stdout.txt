@@ -1,0 +1,2 @@
+[supply-chain-integrity] LIVE: upstream digests, ossutil bytes, and Action commits verified
+[supply-chain-integrity] OK: assets=14 actions=8

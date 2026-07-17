@@ -160,7 +160,11 @@
     "release:windows-update-policy": "node scripts/validate-windows-update-feed-policy.mts",
     "release:windows-update-policy:live": "node scripts/validate-windows-update-feed-policy.mts --probe-live --version 1.0.0",
     "release:windows-update-policy:evidence": "node scripts/collect-p6-002-evidence.mjs",
-    "release:windows-update-policy:evidence:full": "node scripts/collect-p6-002-evidence.mjs --full"
+    "release:windows-update-policy:evidence:full": "node scripts/collect-p6-002-evidence.mjs --full",
+    "release:supply-chain-policy": "node scripts/validate-supply-chain-integrity.mjs",
+    "release:supply-chain-policy:live": "node scripts/validate-supply-chain-integrity.mjs --probe-live",
+    "release:supply-chain-policy:evidence": "node scripts/collect-p6-003-evidence.mjs",
+    "release:supply-chain-policy:evidence:full": "node scripts/collect-p6-003-evidence.mjs --full"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",

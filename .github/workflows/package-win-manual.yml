@@ -17,18 +17,18 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           ref: ${{ inputs.ref || github.ref }}
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
 
       - name: Get pnpm store directory
         shell: bash
@@ -36,7 +36,7 @@ jobs:
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
       - name: Setup pnpm cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -63,7 +63,7 @@ jobs:
         run: pnpm run package:win
 
       - name: Upload Windows Installer (x64)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: windows-installer-x64
           path: release/*-win-x64.exe
@@ -71,7 +71,7 @@ jobs:
           retention-days: 7
 
       - name: Upload Windows Installer (arm64)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: windows-installer-arm64
           path: release/*-win-arm64.exe
@@ -79,7 +79,7 @@ jobs:
           retention-days: 7
 
       - name: Upload Windows Blockmap Files
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: windows-blockmap
           path: release/*.blockmap
@@ -87,7 +87,7 @@ jobs:
           retention-days: 7
 
       - name: Upload Windows Update Manifests
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: windows-update-manifests
           path: |

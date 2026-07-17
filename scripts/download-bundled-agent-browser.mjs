@@ -1,10 +1,11 @@
 #!/usr/bin/env zx
 
 import 'zx/globals';
+import { downloadVerifiedAssetToFile } from './lib/verified-download.mjs';
+import { getReleaseAsset, getReleaseComponent } from './release-integrity-manifest.mjs';
 
 const ROOT_DIR = path.resolve(__dirname, '..');
-const AGENT_BROWSER_VERSION = 'v0.29.0';
-const BASE_URL = `https://github.com/vercel-labs/agent-browser/releases/download/${AGENT_BROWSER_VERSION}`;
+const AGENT_BROWSER_VERSION = getReleaseComponent('agentBrowser').version;
 const OUTPUT_BASE = path.join(ROOT_DIR, 'resources', 'bin');
 
 // Mapping Node platforms/archs to agent-browser release asset naming.
@@ -62,7 +63,8 @@ async function setupTarget(id) {
   const targetDir = path.join(OUTPUT_BASE, id);
   const destBin = path.join(targetDir, target.binName);
   const tempBin = path.join(targetDir, `${target.binName}.download`);
-  const downloadUrl = `${BASE_URL}/${target.asset}`;
+  const integrityAsset = getReleaseAsset('agentBrowser', target.asset);
+  const downloadUrl = integrityAsset.url;
   const reusesX64 = id === 'win32-arm64';
 
   echo(chalk.blue(`\n📦 [agent-browser ${AGENT_BROWSER_VERSION}] Installing for ${id}...`));
@@ -70,6 +72,7 @@ async function setupTarget(id) {
   echo(`   dest:   ${destBin}`);
 
   await fs.ensureDir(targetDir);
+  await fs.remove(destBin);
   if (await fs.pathExists(tempBin)) {
     await fs.remove(tempBin);
   }
@@ -77,12 +80,7 @@ async function setupTarget(id) {
   // Download (bare binary — no extraction needed)
   const startedAt = Date.now();
   echo(`   ⬇️  Downloading: ${downloadUrl}`);
-  const response = await fetch(downloadUrl);
-  if (!response.ok) {
-    throw new Error(`Failed to download ${target.asset}: ${response.status} ${response.statusText}`);
-  }
-  const buffer = await response.arrayBuffer();
-  await fs.writeFile(tempBin, Buffer.from(buffer));
+  await downloadVerifiedAssetToFile(integrityAsset, tempBin);
 
   // Permission fix
   if (os.platform() !== 'win32') {
@@ -116,7 +114,7 @@ const downloadAll = argv.all;
 const platform = argv.platform;
 
 echo(chalk.cyan(`🔧 agent-browser bundler — version ${AGENT_BROWSER_VERSION}`));
-echo(chalk.cyan(`   source: ${BASE_URL}`));
+echo(chalk.cyan(`   source: pinned GitHub release assets`));
 echo(chalk.cyan(`   output: ${OUTPUT_BASE}/<platform-arch>/`));
 
 if (downloadAll) {

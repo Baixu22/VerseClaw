@@ -1,10 +1,11 @@
 #!/usr/bin/env zx
 
 import 'zx/globals';
+import { downloadVerifiedAssetToFile } from './lib/verified-download.mjs';
+import { getReleaseAsset, getReleaseComponent } from './release-integrity-manifest.mjs';
 
 const ROOT_DIR = path.resolve(__dirname, '..');
-const NODE_VERSION = '22.16.0';
-const BASE_URL = `https://nodejs.org/dist/v${NODE_VERSION}`;
+const NODE_VERSION = getReleaseComponent('node').version;
 const OUTPUT_BASE = path.join(ROOT_DIR, 'resources', 'bin');
 
 const TARGETS = {
@@ -32,7 +33,8 @@ async function setupTarget(id) {
   const targetDir = path.join(OUTPUT_BASE, id);
   const tempDir = path.join(ROOT_DIR, 'temp_node_extract');
   const archivePath = path.join(ROOT_DIR, target.filename);
-  const downloadUrl = `${BASE_URL}/${target.filename}`;
+  const integrityAsset = getReleaseAsset('node', target.filename);
+  const downloadUrl = integrityAsset.url;
 
   echo(chalk.blue`\n📦 Setting up Node.js for ${id}...`);
 
@@ -48,10 +50,7 @@ async function setupTarget(id) {
 
   try {
     echo`⬇️ Downloading: ${downloadUrl}`;
-    const response = await fetch(downloadUrl);
-    if (!response.ok) throw new Error(`Failed to download: ${response.statusText}`);
-    const buffer = await response.arrayBuffer();
-    await fs.writeFile(archivePath, Buffer.from(buffer));
+    await downloadVerifiedAssetToFile(integrityAsset, archivePath);
 
     echo`📂 Extracting...`;
     if (os.platform() === 'win32') {

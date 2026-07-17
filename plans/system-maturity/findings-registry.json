@@ -15,12 +15,12 @@
       "Low": 1
     },
     "byStatus": {
-      "Open": 6,
+      "Open": 5,
       "Fixed": 27,
-      "Partial": 2,
+      "Partial": 3,
       "Unverified": 0
     },
-    "open": 6,
+    "open": 5,
     "fixed": 27
   },
   "intentionalIdGaps": {
@@ -468,7 +468,7 @@
       "category": "REL",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Partial",
       "evidenceLevel": "L2-L3",
       "related": [
         "F-SEC-003",
@@ -748,7 +748,10 @@
       "tasks": [
         "P6-003",
         "P6-004"
-      ]
+      ],
+      "notes": "P6-003: bundled uv, agent-browser, and Node downloads are version/size/SHA256 pinned; ossutil installs from a verified job-local archive without remote shell piping; all external GitHub Actions use manifest-approved commit SHAs. Remaining SBOM, provenance, ASAR integrity, and Electron fuse closure is P6-004.",
+      "updatedBy": "P6-003",
+      "updatedAt": "2026-07-17T19:08:24.984Z"
     }
   ],
   "tasks": {

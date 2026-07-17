@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "taskId": "P6-003",
+  "generatedAt": "2026-07-17T19:21:00.517Z",
+  "files": {
+    "vitest.stdout.txt": {
+      "sha256": "a9e15c7003a5937f868e63679e2890a223abb4e3988a4d964fbeab6f84df2fd3",
+      "bytes": 372
+    },
+    "vitest.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "vitest.exit.txt": {
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    "policy-validate.stdout.txt": {
+      "sha256": "587e4191668fb8bbeb22b51b5912729af2a2ce2a9f30fc13e5ba9dd4d3393532",
+      "bytes": 49
+    },
+    "policy-validate.stderr.txt": {
+      "sha256": "7e2f5fdb3d596fb2a686999539e321656ce81b4bfb1b4b7a629baa11356b5c04",
+      "bytes": 51
+    },
+    "policy-validate.exit.txt": {
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    "live-source-probe.stdout.txt": {
+      "sha256": "416a5a36379d9a5f80fd3a8ff4ec83561b20cb4370f3540912c88e0b3b2f46ea",
+      "bytes": 141
+    },
+    "live-source-probe.stderr.txt": {
+      "sha256": "782d98b87aba89c8c76eb5e454ec24330fb46f72b6ae8406226910fa00b04674",
+      "bytes": 64
+    },
+    "live-source-probe.exit.txt": {
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    "checksum-mismatch-deny.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "checksum-mismatch-deny.stderr.txt": {
+      "sha256": "0adf19df8d47464d2df404b543afc607e5d47d69cfea578427aa159635a95f7d",
+      "bytes": 211
+    },
+    "checksum-mismatch-deny.exit.txt": {
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    "harness-validate.stdout.txt": {
+      "sha256": "2edb4b61a013ef0292a9d5106516c55cd3734b2b4f75e1be9901522d002ab870",
+      "bytes": 69
+    },
+    "harness-validate.stderr.txt": {
+      "sha256": "68a0b60186d7a0fbc1b7f30381514feb192b4f5932287ab3c24609868114035a",
+      "bytes": 265
+    },
+    "harness-validate.exit.txt": {
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    "workflow-yaml.stdout.txt": {
+      "sha256": "bf7af0d727ed6a722dceb381fbaac81a326298722c51d6ab1115939c9388d1aa",
+      "bytes": 23
+    },
+    "workflow-yaml.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "workflow-yaml.exit.txt": {
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    "full-test.stdout.txt": {
+      "sha256": "4f83948353e36f8c50850dc98beb8e3d65b400a5f0c395173a51c22b65606231",
+      "bytes": 6262
+    },
+    "full-test.stderr.txt": {
+      "sha256": "458552bbf03c15eea8b2e37c9451e5c16d0b33a8791cd29d98829bc3c1b026fa",
+      "bytes": 92853
+    },
+    "full-test.exit.txt": {
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    "typecheck.stdout.txt": {
+      "sha256": "bd1f55aa278e2807f63006b29d597f2d6af412ec93824f56bf573d7a3f5f6198",
+      "bytes": 12863
+    },
+    "typecheck.stderr.txt": {
+      "sha256": "b9dc801248da3af9eef9021d08d90bc326bd4a354a8147813f5d5a2cbece6b58",
+      "bytes": 148
+    },
+    "typecheck.exit.txt": {
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    "harness-ci.stdout.txt": {
+      "sha256": "3bab1bab2bc7ced9026f671c9a5605b9fe7239c38e66f1a7c5bd369a66ad8628",
+      "bytes": 5440
+    },
+    "harness-ci.stderr.txt": {
+      "sha256": "66836381b700446b14fe14633ce20eb1db5174909e7da87bacf94df62b16501f",
+      "bytes": 1213
+    },
+    "harness-ci.exit.txt": {
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    "acceptance-matrix.json": {
+      "sha256": "2bf412174ac53e0576bfd64417fba0380f4cb4b69a1b6ee4ce2068f5d71f54eb",
+      "bytes": 4281
+    },
+    "full-gate-assessment.json": {
+      "sha256": "994e2f33f5c4aff4c2e28f5c84c44e5b4c666f231c8ed1020dff08723c76e8c3",
+      "bytes": 364
+    }
+  }
+}
