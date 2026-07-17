@@ -1,0 +1,123 @@
+﻿node.exe : (node:17204) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connect
+ions and HTTPS requests insecure by disabling certificate verification.
+At C:\Users\27933\AppData\Roaming\npm\pnpm.ps1:21 char:3
++   & $node "$basedir/node_modules/pnpm/bin/pnpm.mjs" $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:17204) Wa...e verification.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p0[39m
+
+ [31m❯[39m tests/unit/terminal-api.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 176[2mms[22m[39m
+[31m     [31m×[31m requires approval for dangerous commands before delegating to OpenClaw[39m[32m 7[2mms[22m[39m
+[31m     [31m×[31m blocks mutating commands in read-only mode before reaching Gateway[39m[32m 2[2mms[22m[39m
+ [31m❯[39m tests/unit/gateway-permissions-api.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 194[2mms[22m[39m
+[31m     [31m×[31m requires approval for dangerous gateway RPC and consumes approval before replay[39m[32m 183[2mms[22m[39m
+ [31m❯[39m tests/unit/files-permissions-api.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 60[2mms[22m[39m
+[31m     [31m×[31m returns an approval event for workspace-external writes and consumes it once[39m[32m 51[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 4 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/files-permissions-api.test.ts[2m > [22mfiles api permission approval flow[2m > 
+[22mreturns an approval event for workspace-external writes and consumes it once
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: false, …(3) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "approval": {[39m
+[32m-     "paths": [[39m
+[32m-       "C:\\Users\\27933\\AppData\\Local\\Temp\\clawx-outside-v5EJSw\\note.txt",[39m
+[32m-     ],[39m
+[32m-     "source": "file",[39m
+[32m-   },[39m
+[32m-   "approvalRequired": true,[39m
+[32m-   "error": "approvalRequired",[39m
+[31m+   "error": "Electron failed to install correctly, please delete node_modules/electron and try installing again",
+[39m
+[2m    "ok": false,[22m
+[2m  }[22m
+
+[36m [2m❯[22m tests/unit/files-permissions-api.test.ts:[2m101:19[22m[39m
+    [90m 99|[39m
+    [90m100|[39m     const first = await api.writeText({ path: filePath, content: 'new'…
+    [90m101|[39m     [34mexpect[39m(first)[33m.[39m[34mtoMatchObject[39m({
+    [90m   |[39m                   [31m^[39m
+    [90m102|[39m       ok[33m:[39m [35mfalse[39m[33m,[39m
+    [90m103|[39m       error[33m:[39m [32m'approvalRequired'[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/gateway-permissions-api.test.ts[2m > [22mgateway permission approval flow[2m > 
+[22mrequires approval for dangerous gateway RPC and consumes approval before replay
+[31m[1mError[22m: Electron failed to install correctly, please delete node_modules/electron and try installing again
+[39m
+[90m [2m❯[22m getElectronPath node_modules/.pnpm/electron@40.8.4/node_modules/electron/index.js:[2m17:11[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/.pnpm/electron@40.8.4/node_modules/electron/index.js:[2m21:18[22m[3
+9m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/terminal-api.test.ts[2m > [22mterminal api OpenClaw exec integration[2m > [22m
+requires approval for dangerous commands before delegating to OpenClaw
+[31m[1mAssertionError[22m: expected { Object (success, blocked, ...) } to match object { success: false, blocked: tr
+ue, …(2) }
+(24 matching properties omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "approvalRequired": true,[22m
+[2m    "blocked": true,[22m
+[32m-   "reason": "接受修改模式需要先批准高风险命令",[39m
+[31m+   "reason": "Accept-edits mode requires approval for high-risk commands",[39m
+[2m    "success": false,[22m
+[2m  }[22m
+
+[36m [2m❯[22m tests/unit/terminal-api.test.ts:[2m163:19[22m[39m
+    [90m161|[39m
+    [90m162|[39m     [35mconst[39m first [33m=[39m [35mawait[39m api[33m.[39m[34mrun[39m({ command[33m:[3
+9m [32m'git clean -fd'[39m })[33m;[39m
+    [90m163|[39m     [34mexpect[39m(first)[33m.[39m[34mtoMatchObject[39m({
+    [90m   |[39m                   [31m^[39m
+    [90m164|[39m       success[33m:[39m [35mfalse[39m[33m,[39m
+    [90m165|[39m       blocked[33m:[39m [35mtrue[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/terminal-api.test.ts[2m > [22mterminal api OpenClaw exec integration[2m > [22m
+blocks mutating commands in read-only mode before reaching Gateway
+[31m[1mAssertionError[22m: expected { success: false, blocked: true, …(8) } to match object { success: false, blocke
+d: true, …(1) }
+(7 matching properties omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "blocked": true,[22m
+[32m-   "reason": "只读模式仅允许查看类命令",[39m
+[31m+   "reason": "Read-only mode only allows inspection commands",[39m
+[2m    "success": false,[22m
+[2m  }[22m
+
+[36m [2m❯[22m tests/unit/terminal-api.test.ts:[2m193:54[22m[39m
+    [90m191|[39m     const api = createTerminalApi({ gatewayManager: gatewayManager(rpc…
+    [90m192|[39m
+    [90m193|[39m     await expect(api.run({ command: 'pnpm install' })).resolves.toMatc…
+    [90m   |[39m                                                      [31m^[39m
+    [90m194|[39m       success[33m:[39m [35mfalse[39m[33m,[39m
+    [90m195|[39m       blocked[33m:[39m [35mtrue[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m32 passed[39m[22m[90m (36)[39m
+[2m   Start at [22m 13:47:49
+[2m   Duration [22m 2.39s[2m (transform 831ms, setup 568ms, import 350ms, tests 679ms, environment 3.45s)[22m
+

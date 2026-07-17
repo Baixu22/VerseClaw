@@ -1,0 +1,14 @@
+{
+  "A1": {
+    "status": "passed",
+    "proof": "Promise.all 3 consumers -> exactly 1 success"
+  },
+  "A2": {
+    "status": "passed",
+    "proof": "pending TTL expire cannot be approved; consume on expired is null"
+  },
+  "A3": {
+    "status": "passed",
+    "proof": "path/hash/command mismatch returns null; missing hash when stored denies"
+  }
+}
