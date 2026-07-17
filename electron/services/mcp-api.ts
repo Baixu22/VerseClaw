@@ -39,9 +39,30 @@ import {
   emitMcpToolProviderRegistryShadow,
 } from './tool-provider-registry';
 import type { McpToolProviderRegistryShadowRecord } from './tool-provider-registry';
+import { redactMcpEnvMap, type McpEnvMap } from '../../shared/mcp/secret-ref';
+import {
+  assertMcpNetworkPolicyAllows,
+  projectMcpSecurityFields,
+} from '../../shared/mcp/runtime-projection';
+import {
+  filterToolsWithValidSchemas,
+  validateToolArgsAgainstSchema,
+} from '../../shared/mcp/tool-schema';
+import {
+  deleteMcpEnvSecretsForServer,
+  migrateLegacyMcpEnv,
+  resolveMcpEnvMap,
+  sealMcpEnvMap,
+  type McpEnvSecretVault,
+} from './secrets/mcp-env-broker';
 
 type McpStoreDocument = {
   servers: McpServerConfig[];
+  envSecrets?: McpEnvSecretVault;
+};
+
+type StoredMcpServer = Omit<McpServerConfig, 'env'> & {
+  env?: McpEnvMap;
 };
 
 type McpApiContext = {
@@ -650,6 +671,8 @@ function buildServer(
     cwd: normalizeString(payload.cwd),
     url: normalizeString(payload.url),
     env: normalizeEnv(payload.env),
+    headers: normalizeEnv(payload.headers),
+    sslVerify: payload.sslVerify,
     enabled: payload.enabled !== false,
     scope: normalizeScope(payload.scope),
     ownerId: normalizeString(payload.ownerId),
@@ -683,6 +706,8 @@ function updateServer(current: McpServerConfig, payload: McpServerUpdatePayload)
     cwd: payload.cwd === undefined ? current.cwd : normalizeString(payload.cwd),
     url: payload.url === undefined ? current.url : normalizeString(payload.url),
     env: payload.env === undefined ? current.env : normalizeEnv(payload.env),
+    headers: payload.headers === undefined ? current.headers : normalizeEnv(payload.headers),
+    sslVerify: payload.sslVerify === undefined ? current.sslVerify : payload.sslVerify,
     enabled: payload.enabled === undefined ? current.enabled : payload.enabled !== false,
     scope: payload.scope === undefined ? current.scope : normalizeScope(payload.scope),
     ownerId: payload.ownerId === undefined ? current.ownerId : normalizeString(payload.ownerId),
@@ -700,20 +725,55 @@ function updateServer(current: McpServerConfig, payload: McpServerUpdatePayload)
   return next;
 }
 
-async function readServers(): Promise<McpServerConfig[]> {
+async function readEnvVault(): Promise<McpEnvSecretVault> {
+  const store = await getMcpStore();
+  const vault = store.get('envSecrets');
+  return isRecord(vault) ? { ...(vault as McpEnvSecretVault) } : {};
+}
+
+async function writeEnvVault(vault: McpEnvSecretVault): Promise<void> {
+  const store = await getMcpStore();
+  store.set('envSecrets', vault);
+}
+
+async function readServers(): Promise<StoredMcpServer[]> {
   const store = await getMcpStore();
   const servers = store.get('servers');
   if (!Array.isArray(servers)) return [];
-  const hydrated = hydrateMcpServerAddresses(servers as McpServerConfig[]);
-  if (hydrated.some((server, index) => server !== servers[index])) {
-    store.set('servers', hydrated.slice(0, MAX_MCP_SERVERS));
+  let vault = await readEnvVault();
+  let vaultDirty = false;
+  let serversDirty = false;
+  const migrated: StoredMcpServer[] = [];
+  for (const raw of servers as StoredMcpServer[]) {
+    const base = hydrateMcpServerAddress(raw as McpServerConfig) as StoredMcpServer;
+    if (base !== raw) {
+      serversDirty = true;
+    }
+    const result = await migrateLegacyMcpEnv(base.id, base.env, vault);
+    if (result.migrated) {
+      vault = result.vault;
+      vaultDirty = true;
+      serversDirty = true;
+      migrated.push({ ...base, env: result.env });
+    } else {
+      migrated.push(base);
+    }
   }
-  return hydrated;
+  if (vaultDirty || serversDirty) {
+    store.set('servers', migrated.slice(0, MAX_MCP_SERVERS));
+  }
+  if (vaultDirty) {
+    await writeEnvVault(vault);
+  }
+  return migrated;
 }
 
-async function writeServers(servers: McpServerConfig[]): Promise<void> {
+async function writeServers(servers: StoredMcpServer[], vault?: McpEnvSecretVault): Promise<void> {
   const store = await getMcpStore();
-  store.set('servers', hydrateMcpServerAddresses(servers).slice(0, MAX_MCP_SERVERS));
+  store.set('servers', hydrateMcpServerAddresses(servers as McpServerConfig[]).slice(0, MAX_MCP_SERVERS));
+  if (vault) {
+    store.set('envSecrets', vault);
+  }
 }
 
 function normalizeRuntimeMcpTransport(server: McpServerConfig): 'sse' | 'streamable-http' | undefined {
@@ -732,6 +792,35 @@ function withMembership(values: string[] | undefined, value: string, enabled: bo
   }
   const next = [...set].sort((a, b) => a.localeCompare(b));
   return next.length > 0 ? next : undefined;
+}
+
+function redactHeadersForRenderer(
+  headers: Record<string, string> | undefined,
+): Record<string, string> | undefined {
+  if (!headers || Object.keys(headers).length === 0) return undefined;
+  return Object.fromEntries(Object.keys(headers).map((key) => [key, '????']));
+}
+
+/** Renderer-safe projection: never includes plaintext env/header secrets. */
+function toRendererServer(server: StoredMcpServer | McpServerConfig): McpServerConfig {
+  const env = redactMcpEnvMap(server.env as McpEnvMap | undefined);
+  const headers = redactHeadersForRenderer(server.headers);
+  return {
+    ...(server as McpServerConfig),
+    env,
+    headers,
+  };
+}
+
+async function toRuntimeServer(
+  server: StoredMcpServer | McpServerConfig,
+  vault: McpEnvSecretVault,
+): Promise<McpServerConfig> {
+  const env = await resolveMcpEnvMap(server.env as McpEnvMap | undefined, vault);
+  return {
+    ...(server as McpServerConfig),
+    env,
+  };
 }
 
 function projectServerToRuntimeConfig(
@@ -755,20 +844,20 @@ function projectServerToRuntimeConfig(
     delete next.command;
     delete next.args;
   }
-  if (server.env) {
-    next.env = server.env;
-  } else {
-    delete next.env;
-  }
-  if (server.toolAllowlist || server.toolDenylist) {
-    next.toolFilter = {
-      ...(server.toolAllowlist ? { include: server.toolAllowlist } : {}),
-      ...(server.toolDenylist ? { exclude: server.toolDenylist } : {}),
-    };
-  } else {
-    delete next.toolFilter;
-  }
-  return next;
+
+  // Security fields + env/headers/toolFilter must project into runtime (A1).
+  return projectMcpSecurityFields({
+    permissionMode: server.permissionMode,
+    sandboxProfileId: server.sandboxProfileId,
+    networkPolicy: server.networkPolicy,
+    sslVerify: server.sslVerify,
+    headers: server.headers,
+    toolAllowlist: server.toolAllowlist,
+    toolDenylist: server.toolDenylist,
+    env: server.env as Record<string, string> | undefined,
+    transport: server.transport,
+    url: server.url,
+  }, next);
 }
 
 export async function syncAgentMcpExposureToOpenClawConfig(
@@ -793,8 +882,10 @@ export async function syncAgentMcpExposureToOpenClawConfig(
       if (!selected && !existing) {
         continue;
       }
+      const vault = await readEnvVault();
+      const runtimeServer = selected ? await toRuntimeServer(server, vault) : (server as McpServerConfig);
       const next = selected
-        ? projectServerToRuntimeConfig(server, existing)
+        ? projectServerToRuntimeConfig(runtimeServer, existing)
         : { ...(existing ?? {}) };
       const exposure = isRecord(next.exposure) ? { ...next.exposure } as Record<string, unknown> : {};
       const agents = withMembership(normalizeStringArray(exposure.agents), agentId, selected);
@@ -815,8 +906,12 @@ export async function syncAgentMcpExposureToOpenClawConfig(
   });
 }
 
-function listResult(servers: McpServerConfig[]) {
-  return { success: true, servers: [VERSE_CLAW_GIT_MCP_SERVER, VERSE_CLAW_STORAGE_MCP_SERVER, ...hydrateMcpServerAddresses(servers)] };
+function listResult(servers: Array<StoredMcpServer | McpServerConfig>) {
+  const custom = hydrateMcpServerAddresses(servers as McpServerConfig[]).map((server) => toRendererServer(server));
+  return {
+    success: true,
+    servers: [VERSE_CLAW_GIT_MCP_SERVER, VERSE_CLAW_STORAGE_MCP_SERVER, ...custom],
+  };
 }
 
 export async function listMcpServersForCapabilityPublication(input: {
@@ -861,6 +956,8 @@ function orderResolvedServers(servers: McpServerConfig[], defaultIdSet = new Set
 export async function resolveMcpServersForContext(input: {
   workspaceId?: string | null;
   agentId?: string | null;
+  /** When true, resolve env SecretRefs to plaintext for runtime/gateway only. */
+  forRuntime?: boolean;
 }): Promise<McpServerConfig[]> {
   const servers = await readServers();
   const defaultMcpServerIds = input.agentId
@@ -868,24 +965,30 @@ export async function resolveMcpServersForContext(input: {
     : [];
   const defaultIdSet = new Set(defaultMcpServerIds);
   const resolved = servers.filter((server) => (
-    matchesContext(server, input.workspaceId, input.agentId)
+    matchesContext(server as McpServerConfig, input.workspaceId, input.agentId)
     || (server.enabled && defaultIdSet.has(server.id))
   ));
-  return [VERSE_CLAW_GIT_MCP_SERVER, VERSE_CLAW_STORAGE_MCP_SERVER, ...orderResolvedServers(resolved, defaultIdSet)];
+  const ordered = orderResolvedServers(resolved as McpServerConfig[], defaultIdSet) as StoredMcpServer[];
+  const withBuiltins: Array<StoredMcpServer | McpServerConfig> = [
+    VERSE_CLAW_GIT_MCP_SERVER,
+    VERSE_CLAW_STORAGE_MCP_SERVER,
+    ...ordered,
+  ];
+  if (!input.forRuntime) {
+    return withBuiltins.map((server) => toRendererServer(server));
+  }
+  const vault = await readEnvVault();
+  const runtime: McpServerConfig[] = [];
+  for (const server of withBuiltins) {
+    runtime.push(await toRuntimeServer(server, vault));
+  }
+  return runtime;
 }
 
 function parsePayload<T>(payload: unknown): T {
   return (isRecord(payload) ? payload : {}) as T;
 }
 
-function isLocalMcpUrl(rawUrl: string): boolean {
-  try {
-    const parsed = new URL(rawUrl);
-    return ['localhost', '127.0.0.1', '::1', '[::1]'].includes(parsed.hostname);
-  } catch {
-    return false;
-  }
-}
 
 async function checkMcpHeartbeat(server: McpServerConfig): Promise<{ message: string; latencyMs: number }> {
   const startedAt = Date.now();
@@ -898,13 +1001,7 @@ async function checkMcpHeartbeat(server: McpServerConfig): Promise<{ message: st
   if (!server.url) {
     throw new Error('URL 型 MCP 服务缺少地址');
   }
-  const networkPolicy = server.networkPolicy ?? 'localOnly';
-  if (networkPolicy === 'disabled') {
-    throw new Error('当 MCP 服务网络策略为关闭，不能发起 HTTP 心跳');
-  }
-  if (networkPolicy === 'localOnly' && !isLocalMcpUrl(server.url)) {
-    throw new Error('localOnly 网络策略只允许 localhost / 127.0.0.1 MCP 服务');
-  }
+  assertMcpNetworkPolicyAllows(server);
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 3500);
   try {
@@ -940,7 +1037,7 @@ async function findServer(id: string): Promise<McpServerConfig> {
   if (id === VERSE_CLAW_GIT_MCP_SERVER_ID) return VERSE_CLAW_GIT_MCP_SERVER;
   if (id === VERSE_CLAW_STORAGE_MCP_SERVER_ID) return VERSE_CLAW_STORAGE_MCP_SERVER;
   const server = (await readServers()).find((entry) => entry.id === id);
-  if (!server) throw new Error(`MCP 服务 "${id}" 不存在`);
+  if (!server) throw new Error(`MCP server "${id}" not found`);
   return server;
 }
 
@@ -1155,27 +1252,77 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
   // electron-store `mcp-servers.json` is the authoritative MCP server
   // store; this RPC only sends the resolved server snapshot for any
   // runtime that can apply it without touching openclaw.json.
-  const dispatchReload = async () => {
-    if (ctx.gatewayManager?.getStatus().state !== 'running') return;
-    let workspaceId: string | null = null;
-    let agentId: string | null = null;
-    let servers: McpServerConfig[] = [];
-    try {
-      const workspace = await getActiveWorkspaceProfile();
-      workspaceId = workspace?.id ?? null;
-      agentId = workspace?.selectedAgentId || workspace?.agentId || null;
-      servers = await resolveMcpServersForContext({ workspaceId, agentId });
-    } catch {
-      // Non-disruptive: fall through with whatever we have.
+  /**
+   * Fail-closed reload: when Gateway is running, mcp.reload must ACK.
+   * Returns {ok:true} when Gateway is not running (persist-only / restart path).
+   */
+  const reloadRuntimeStrict = async (options?: {
+    workspaceId?: string | null;
+    agentId?: string | null;
+  }): Promise<{ ok: boolean; hotReloaded: boolean; restartRequired: boolean; error?: string; serverCount: number; workspaceId: string | null; agentId: string | null }> => {
+    let workspaceId = options?.workspaceId ?? null;
+    let agentId = options?.agentId ?? null;
+    if (workspaceId === undefined || agentId === undefined || (options?.workspaceId === undefined && options?.agentId === undefined)) {
+      try {
+        const workspace = await getActiveWorkspaceProfile();
+        workspaceId = workspace?.id ?? null;
+        agentId = workspace?.selectedAgentId || workspace?.agentId || null;
+      } catch {
+        workspaceId = workspaceId ?? null;
+        agentId = agentId ?? null;
+      }
+    }
+    const servers = await resolveMcpServersForContext({
+      workspaceId,
+      agentId,
+      forRuntime: true,
+    });
+    const gatewayState = ctx.gatewayManager?.getStatus().state;
+    if (gatewayState !== 'running') {
+      return {
+        ok: true,
+        hotReloaded: false,
+        restartRequired: true,
+        serverCount: servers.length,
+        workspaceId,
+        agentId,
+      };
     }
     try {
-      await ctx.gatewayManager.rpc(
+      const runtime = await ctx.gatewayManager!.rpc(
         'mcp.reload',
         { workspaceId, agentId, servers },
-        4000,
+        5000,
       );
-    } catch {
-      // Non-disruptive by design.
+      if (runtime == null) {
+        return {
+          ok: false,
+          hotReloaded: false,
+          restartRequired: true,
+          error: 'MCP reload returned no acknowledgement; configuration was not applied hot',
+          serverCount: servers.length,
+          workspaceId,
+          agentId,
+        };
+      }
+      return {
+        ok: true,
+        hotReloaded: true,
+        restartRequired: false,
+        serverCount: servers.length,
+        workspaceId,
+        agentId,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        hotReloaded: false,
+        restartRequired: true,
+        error: error instanceof Error ? error.message : String(error),
+        serverCount: servers.length,
+        workspaceId,
+        agentId,
+      };
     }
   };
 
@@ -1183,10 +1330,25 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
     listServers: async () => listResult(await readServers()),
     createServer: async (payload) => {
       const servers = await readServers();
-      const server = buildServer(parsePayload<McpServerCreatePayload>(payload), new Set(servers.map((entry) => entry.id)));
+      const previous = [...servers];
+      const previousVault = await readEnvVault();
+      const built = buildServer(
+        parsePayload<McpServerCreatePayload>(payload),
+        new Set(servers.map((entry) => entry.id)),
+      ) as StoredMcpServer;
+      const sealed = await sealMcpEnvMap({
+        serverId: built.id,
+        env: normalizeEnv(parsePayload<McpServerCreatePayload>(payload).env),
+        vault: previousVault,
+      });
+      const server: StoredMcpServer = { ...built, env: sealed.env };
       const next = [server, ...servers];
-      await writeServers(next);
-      await dispatchReload();
+      await writeServers(next, sealed.vault);
+      const ack = await reloadRuntimeStrict();
+      if (!ack.ok) {
+        await writeServers(previous, previousVault);
+        throw new Error(ack.error || 'MCP reload failed; create rolled back');
+      }
       return listResult(next);
     },
     updateServer: async (payload) => {
@@ -1195,21 +1357,47 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       if (!id) throw new Error('id is required');
       const servers = await readServers();
       const index = servers.findIndex((server) => server.id === id);
-      if (index === -1) throw new Error(`MCP 服务 "${id}" 不存在`);
+      if (index === -1) throw new Error(`MCP server "${id}" not found`);
+      const previous = [...servers];
+      const previousVault = await readEnvVault();
+      const current = servers[index];
+      const updated = updateServer(current as McpServerConfig, body) as StoredMcpServer;
+      let vault = previousVault;
+      if (body.env !== undefined) {
+        const sealed = await sealMcpEnvMap({
+          serverId: id,
+          env: normalizeEnv(body.env),
+          previousEnv: current.env as McpEnvMap | undefined,
+          vault,
+        });
+        updated.env = sealed.env;
+        vault = sealed.vault;
+      }
       const next = [...servers];
-      next[index] = updateServer(next[index], body);
-      await writeServers(next);
-      await dispatchReload();
+      next[index] = updated;
+      await writeServers(next, vault);
+      const ack = await reloadRuntimeStrict();
+      if (!ack.ok) {
+        await writeServers(previous, previousVault);
+        throw new Error(ack.error || 'MCP reload failed; update rolled back');
+      }
       return listResult(next);
     },
     deleteServer: async (payload) => {
       const id = normalizeString((parsePayload<{ id?: unknown }>(payload)).id);
       if (!id) throw new Error('id is required');
       const servers = await readServers();
+      const previous = [...servers];
+      const previousVault = await readEnvVault();
       const next = servers.filter((server) => server.id !== id);
-      if (next.length === servers.length) throw new Error(`MCP 服务 "${id}" 不存在`);
-      await writeServers(next);
-      await dispatchReload();
+      if (next.length === servers.length) throw new Error(`MCP server "${id}" not found`);
+      const vault = deleteMcpEnvSecretsForServer(previousVault, id);
+      await writeServers(next, vault);
+      const ack = await reloadRuntimeStrict();
+      if (!ack.ok) {
+        await writeServers(previous, previousVault);
+        throw new Error(ack.error || 'MCP reload failed; delete rolled back');
+      }
       return listResult(next);
     },
     testServer: async (payload) => {
@@ -1232,7 +1420,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
             : await checkMcpHeartbeat(server);
         return {
           success: true,
-          server,
+          server: toRendererServer(server),
           message: heartbeat.message,
         };
       } catch (error) {
@@ -1264,7 +1452,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           status: 'connected',
           latencyMs: 0,
           message: 'Verse Claw Git tools are available through the host Git service.',
-          server,
+          server: toRendererServer(server),
         };
       }
       if (id === VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
@@ -1274,7 +1462,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           status: 'connected',
           latencyMs: 0,
           message: 'Verse Claw Storage tools are available through the host System service.',
-          server,
+          server: toRendererServer(server),
         };
       }
       const runtime = await tryGatewayMcpRpc<McpHeartbeatResult>(ctx.gatewayManager, 'mcp.heartbeat', { serverId: id });
@@ -1285,7 +1473,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           lastHeartbeatMs: runtime.latencyMs,
           lastHeartbeatError: undefined,
         });
-        return { ...runtime, server: updated ?? server };
+        return { ...runtime, server: toRendererServer((updated ?? server) as McpServerConfig) };
       }
       try {
         const heartbeat = await checkMcpHeartbeat(server);
@@ -1301,7 +1489,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           status: 'connected',
           latencyMs: heartbeat.latencyMs,
           message: heartbeat.message,
-          server: updated ?? server,
+          server: toRendererServer((updated ?? server) as McpServerConfig),
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -1315,7 +1503,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           serverId: id,
           status: 'error',
           error: message,
-          server: updated ?? server,
+          server: toRendererServer((updated ?? server) as McpServerConfig),
         };
       }
     },
@@ -1324,6 +1512,19 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       const id = normalizeString(body.serverId);
       if (!id) throw new Error('serverId is required');
       const server = await findServer(id);
+      if (id !== VERSE_CLAW_GIT_MCP_SERVER_ID && id !== VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
+        try {
+          assertMcpNetworkPolicyAllows(server);
+        } catch (error) {
+          return {
+            success: false,
+            serverId: id,
+            tools: [],
+            status: 'error' as const,
+            error: error instanceof Error ? error.message : String(error),
+          };
+        }
+      }
       if (id === VERSE_CLAW_GIT_MCP_SERVER_ID) {
         return {
           success: true,
@@ -1344,11 +1545,21 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       }
       const runtime = await tryGatewayMcpRpc<McpListToolsResult>(ctx.gatewayManager, 'mcp.listTools', { serverId: id });
       if (runtime?.success) {
+        const filtered = filterToolsWithValidSchemas(runtime.tools ?? []);
+        if (filtered.rejected.length > 0) {
+          return {
+            success: false,
+            serverId: id,
+            tools: [],
+            status: 'error' as const,
+            error: `Rejected invalid tool schema(s): ${filtered.rejected.map((entry) => `${entry.name} (${entry.reason})`).join('; ')}`,
+          };
+        }
         await updateServerRuntimeFields(id, {
           runtimeStatus: runtime.status,
-          toolCount: runtime.tools.length,
+          toolCount: filtered.tools.length,
         });
-        return runtime;
+        return { ...runtime, tools: filtered.tools };
       }
       return {
         success: true,
@@ -1367,6 +1578,54 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       const approvalId = normalizeString(body.approvalId);
       const workspaceId = normalizeString(body.workspaceId) ?? undefined;
       const agentId = normalizeString(body.agentId) ?? undefined;
+
+      // A4: reject calls whose tool schema is invalid or args do not conform.
+      if (serverId === VERSE_CLAW_GIT_MCP_SERVER_ID || serverId === VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
+        const catalog = serverId === VERSE_CLAW_GIT_MCP_SERVER_ID
+          ? VERSE_CLAW_GIT_MCP_TOOLS
+          : VERSE_CLAW_STORAGE_MCP_TOOLS;
+        const tool = catalog.find((entry) => entry.name === toolName);
+        if (!tool) {
+          return {
+            success: false,
+            serverId,
+            toolName,
+            blocked: true,
+            reason: `Unknown tool "${toolName}"`,
+            error: `Unknown tool "${toolName}"`,
+          };
+        }
+        const schemaCheck = validateToolArgsAgainstSchema(tool.inputSchema, args);
+        if (!schemaCheck.ok) {
+          return {
+            success: false,
+            serverId,
+            toolName,
+            blocked: true,
+            reason: schemaCheck.reason,
+            error: schemaCheck.reason,
+          };
+        }
+      } else {
+        try {
+          const remoteServer = await findServer(serverId);
+          assertMcpNetworkPolicyAllows(remoteServer);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          // Unknown server ids fall through to Gateway (legacy). Policy failures fail closed.
+          if (!message.toLowerCase().includes('not found')) {
+            return {
+              success: false,
+              serverId,
+              toolName,
+              blocked: true,
+              reason: message,
+              error: message,
+            };
+          }
+        }
+      }
+
       const requestShadow = createMcpToolCallRequestShadow({
         serverId,
         toolName,
@@ -1471,22 +1730,29 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       const body = parsePayload<McpReloadRuntimePayload>(payload);
       const workspaceId = normalizeString(body.workspaceId) ?? null;
       const agentId = normalizeString(body.agentId) ?? null;
-      const servers = await resolveMcpServersForContext({ workspaceId, agentId });
-      const runtime = await tryGatewayMcpRpc<Record<string, unknown>>(ctx.gatewayManager, 'mcp.reload', {
-        workspaceId,
-        agentId,
-        servers,
-      });
+      const ack = await reloadRuntimeStrict({ workspaceId, agentId });
+      if (!ack.ok) {
+        return {
+          success: false,
+          workspaceId: ack.workspaceId,
+          agentId: ack.agentId,
+          serverCount: ack.serverCount,
+          hotReloaded: false,
+          restartRequired: true,
+          error: ack.error || 'MCP reload failed without acknowledgement',
+          message: ack.error || 'MCP reload failed without acknowledgement',
+        };
+      }
       return {
         success: true,
-        workspaceId,
-        agentId,
-        serverCount: servers.length,
-        hotReloaded: Boolean(runtime),
-        restartRequired: false,
-        message: runtime
-          ? 'MCP Runtime 已热重载'
-          : 'MCP 配置已保存；Gateway 未提供热重载响应，将在下次启动时生效',
+        workspaceId: ack.workspaceId,
+        agentId: ack.agentId,
+        serverCount: ack.serverCount,
+        hotReloaded: ack.hotReloaded,
+        restartRequired: ack.restartRequired,
+        message: ack.hotReloaded
+          ? 'MCP Runtime hot-reloaded'
+          : 'MCP config saved; Gateway not running, applies on next start',
       };
     },
   };

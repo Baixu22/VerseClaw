@@ -23,7 +23,11 @@ export interface McpServerConfig {
   cwd?: string;
   url?: string;
   headers?: Record<string, string>;
-  env?: Record<string, string>;
+  /** Env values are SecretRef or legacy plaintext in Main store; Renderer always receives masked strings. */
+  env?: Record<string, string | { kind: 'secret-ref'; secretId: string }>;
+  headers?: Record<string, string>;
+  /** HTTP TLS verification; default true for remote transports. */
+  sslVerify?: boolean;
   enabled: boolean;
   scope: McpScope;
   ownerId?: string;

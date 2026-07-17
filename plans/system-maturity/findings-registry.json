@@ -49,9 +49,9 @@
         "P4-003",
         "P4-004"
       ],
-      "notes": "P1-001: provider dual-write removed; encrypted secret-store single source; Channel/MCP remaining under P4-003/P4-004.",
-      "updatedBy": "P1-001",
-      "updatedAt": "2026-07-17T04:24:41.078Z"
+      "notes": "P1-001 provider dual-write removed; P4-003 MCP env sealed via secret broker and redacted from Renderer; Channel secrets remain under P4-004.",
+      "updatedBy": "P4-003",
+      "updatedAt": "2026-07-17T09:16:20.000Z"
     },
     {
       "id": "F-SEC-002",
@@ -662,15 +662,18 @@
       "category": "AUTH",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
-      "evidenceLevel": "L3",
+      "status": "Fixed",
+      "evidenceLevel": "L4",
       "related": [],
       "attackChain": [
         "AC-13"
       ],
       "tasks": [
         "P4-003"
-      ]
+      ],
+      "updatedBy": "P4-003",
+      "updatedAt": "2026-07-17T09:16:20.000Z",
+      "notes": "P4-003: permission/sandbox/network/sslVerify project to runtime; networkPolicy enforced; tool schema fail-closed; MCP env SecretRef broker."
     },
     {
       "id": "F-DATA-005",
