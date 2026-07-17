@@ -1,0 +1,28 @@
+{
+  "taskId": "P4-004",
+  "generatedAt": "2026-07-17T09:24:01Z",
+  "commands": [
+    "pnpm exec vitest run tests/unit/channels-p4-004-inbound-trust.test.ts"
+  ],
+  "results": {
+    "vitest": "7 passed (1 file)"
+  },
+  "findings": {
+    "F-AUTH-008": "Fixed",
+    "F-SEC-001": "Partial (MCP env + channel form redaction)"
+  },
+  "artifacts": [
+    {
+      "path": "artifacts/system-maturity/P4-004/acceptance-matrix.json",
+      "sha256": "1aa366e002c26399e1b19d37190618a0d6c24812e0548e274259efd6d66883b5"
+    },
+    {
+      "path": "artifacts/system-maturity/P4-004/vitest.stdout.txt",
+      "sha256": "f88a22ff4bc164087b4c8dfca96ba46037beaeb01f94ef4b60e2615707078cf4"
+    },
+    {
+      "path": "artifacts/system-maturity/P4-004/evidence-index.json",
+      "sha256": "154fb8c090019fcb6a607feabc0e7c54d008b6e5a4fc698b051f61412bd8ba89"
+    }
+  ]
+}

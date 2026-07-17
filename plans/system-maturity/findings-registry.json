@@ -49,9 +49,9 @@
         "P4-003",
         "P4-004"
       ],
-      "notes": "P1-001 provider dual-write removed; P4-003 MCP env sealed via secret broker and redacted from Renderer; Channel secrets remain under P4-004.",
-      "updatedBy": "P4-003",
-      "updatedAt": "2026-07-17T09:16:20.000Z"
+      "notes": "P1-001 provider sealed; P4-003 MCP env sealed; P4-004 channel form credentials redacted to Renderer. Residual: full channel secret broker/at-rest encryption may remain.",
+      "updatedBy": "P4-004",
+      "updatedAt": "2026-07-17T09:24:01.000Z"
     },
     {
       "id": "F-SEC-002",
@@ -646,15 +646,18 @@
       "category": "AUTH",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
-      "evidenceLevel": "L3",
+      "status": "Fixed",
+      "evidenceLevel": "L4",
       "related": [],
       "attackChain": [
         "AC-12"
       ],
       "tasks": [
         "P4-004"
-      ]
+      ],
+      "updatedBy": "P4-004",
+      "updatedAt": "2026-07-17T09:24:01.000Z",
+      "notes": "P4-004: Feishu/WeCom default dmPolicy=pairing; no auto allowFrom=*; unauthorized sender matrix + webhook signature/replay fail-closed."
     },
     {
       "id": "F-AUTH-009",
