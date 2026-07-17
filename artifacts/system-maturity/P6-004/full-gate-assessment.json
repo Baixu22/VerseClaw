@@ -1,0 +1,18 @@
+{
+  "status": "baseline-fail-no-p6-signature",
+  "runs": [
+    {
+      "name": "full-test",
+      "exitCode": 1
+    },
+    {
+      "name": "typecheck",
+      "exitCode": 1
+    },
+    {
+      "name": "harness-ci",
+      "exitCode": 0
+    }
+  ],
+  "note": "Repository-wide non-P6 failures remain P6-005 release-baseline work; a P6 signature fails this collector."
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-17T20:41:22.336Z",
+  "artifacts": [
+    {
+      "name": "ClawX.exe",
+      "size": 17,
+      "sha256": "fe2fca1a4b9cb639c7ef809d1b6b0bb21c38b69c4e37cae31bed8586a4dab80b"
+    },
+    {
+      "name": "latest.yml",
+      "size": 23,
+      "sha256": "c4c0d8b1a2174210b3376fca22006a8dd6939bee2fd439d3e8a8604d0e1f10db"
+    }
+  ]
+}

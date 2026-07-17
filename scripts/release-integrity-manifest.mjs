@@ -99,6 +99,11 @@ export const RELEASE_INTEGRITY_MANIFEST = {
     'actions/upload-artifact': action('ea165f8d65b6e75b540449e92b4886f43607fa02', 'v4'),
     'actions/download-artifact': action('d3f86a106a0bac45b974a628896c90dbdf5c8093', 'v4'),
     'actions/cache': action('0057852bfaa89a56745cba8c7296529d2fc39830', 'v4'),
+    'actions/attest-build-provenance': action(
+      '977bb373ede98d70efdf65b84cb5f73e068dcc2a',
+      'v3',
+    ),
+    'actions/attest-sbom': action('4651f806c01d8637787e274ac3bdf724ef169f34', 'v3'),
     'signpath/github-action-submit-signing-request': action(
       'b9d91eadd323de506c0c81cf0c7fe7438f3360fd',
       'v2',

@@ -361,6 +361,9 @@ jobs:
         if: matrix.platform == 'linux'
         run: pnpm run package:linux
 
+      - name: P6-004 verify packaged Electron fuse wire and app.asar digest
+        run: node scripts/verify-packaged-electron-trust.mjs --app-dir release --platform "${{ matrix.platform }}" --output "release/${{ matrix.platform }}-electron-trust.json"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -375,6 +378,7 @@ jobs:
             release/*.rpm
             release/*.yml
             release/windows-signing-attestation.json
+            release/*-electron-trust.json
             !release/builder-debug.yml
           retention-days: 7
 
@@ -383,6 +387,11 @@ jobs:
   release-policy-gate:
     needs: release
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      attestations: write
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout code
@@ -428,6 +437,74 @@ jobs:
 
       - name: P6-003 assert pinned supply-chain inputs
         run: node scripts/validate-supply-chain-integrity.mjs
+
+      - name: P6-004 generate release SBOM and provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          node scripts/generate-release-trust-metadata.mjs \
+            --artifacts release-artifacts \
+            --out release-trust-metadata \
+            --version "$VERSION" \
+            --commit "${GITHUB_SHA}" \
+            --repository "${GITHUB_REPOSITORY}" \
+            --ref "${GITHUB_REF}" \
+            --run-id "${GITHUB_RUN_ID}" \
+            --run-attempt "${GITHUB_RUN_ATTEMPT}"
+
+      - name: P6-004 validate portable SBOM and provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          node scripts/validate-release-trust-metadata.mjs \
+            --artifacts release-artifacts \
+            --inventory release-trust-metadata/release-artifact-inventory.json \
+            --sbom release-trust-metadata/release-sbom.cdx.json \
+            --provenance release-trust-metadata/release-provenance.intoto.json \
+            --version "$VERSION" \
+            --commit "${GITHUB_SHA}" \
+            --repository "${GITHUB_REPOSITORY}" \
+            --ref "${GITHUB_REF}"
+
+      - name: P6-004 attest build provenance
+        id: attest-build-provenance
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
+        with:
+          subject-path: release-artifacts/**/*
+
+      - name: P6-004 attest release SBOM
+        id: attest-release-sbom
+        uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3
+        with:
+          subject-path: release-artifacts/**/*
+          sbom-path: release-trust-metadata/release-sbom.cdx.json
+
+      - name: Collect portable GitHub attestation bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp "${{ steps.attest-build-provenance.outputs.bundle-path }}" release-trust-metadata/github-build-provenance.sigstore.json
+          cp "${{ steps.attest-release-sbom.outputs.bundle-path }}" release-trust-metadata/github-sbom.sigstore.json
+          test -s release-trust-metadata/github-build-provenance.sigstore.json
+          test -s release-trust-metadata/github-sbom.sigstore.json
+
+      - name: Upload release trust metadata
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-trust-metadata
+          path: release-trust-metadata
+          if-no-files-found: error
+          retention-days: 30
 
   # ──────────────────────────────────────────────────────────────
   # Job: Publish to GitHub Releases

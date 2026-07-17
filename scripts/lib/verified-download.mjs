@@ -1,6 +1,8 @@
-import { createHash } from 'node:crypto';
-import { mkdir, rename, rm, writeFile } from 'node:fs/promises';
-import { dirname } from 'node:path';
+import { createHash, randomUUID } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
+import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
 
 export class ReleaseIntegrityError extends Error {
   constructor(code, message) {
@@ -42,6 +44,7 @@ export async function fetchVerifiedAsset(
   {
     fetchImpl = globalThis.fetch,
     tlsRejectUnauthorized = process.env.NODE_TLS_REJECT_UNAUTHORIZED,
+    systemProxyFetch = process.platform === 'win32' ? fetchWithWindowsSystemProxy : null,
   } = {},
 ) {
   if (tlsRejectUnauthorized === '0') {
@@ -54,7 +57,21 @@ export async function fetchVerifiedAsset(
   if (typeof fetchImpl !== 'function') {
     throw new ReleaseIntegrityError('ERR_RELEASE_FETCH_UNAVAILABLE', 'fetch implementation is unavailable');
   }
-  const response = await fetchImpl(source, { redirect: 'follow' });
+  let response;
+  try {
+    response = await fetchImpl(source, { redirect: 'follow' });
+  } catch (error) {
+    if (!systemProxyFetch) throw error;
+    const fallback = await systemProxyFetch(source);
+    if (!fallback.url) {
+      throw new ReleaseIntegrityError(
+        'ERR_RELEASE_TLS_REQUIRED',
+        'Windows system-proxy download did not report its final HTTPS URL',
+      );
+    }
+    assertHttps(fallback.url, 'release asset response');
+    return verifyAssetBuffer(asset, fallback.buffer);
+  }
   if (!response.ok) {
     throw new ReleaseIntegrityError(
       'ERR_RELEASE_DOWNLOAD_FAILED',
@@ -70,6 +87,40 @@ export async function fetchVerifiedAsset(
     );
   }
   return verifyAssetBuffer(asset, Buffer.from(await response.arrayBuffer()));
+}
+
+async function fetchWithWindowsSystemProxy(url) {
+  const temporary = join(tmpdir(), `clawx-release-download-${randomUUID()}.bin`);
+  const escapedUrl = url.replaceAll("'", "''");
+  const escapedPath = temporary.replaceAll("'", "''");
+  const command = [
+    "$ErrorActionPreference='Stop'",
+    `$response=Invoke-WebRequest -UseBasicParsing -Uri '${escapedUrl}' -OutFile '${escapedPath}'`,
+    '@{status=[int]$response.StatusCode;url=$response.BaseResponse.ResponseUri.AbsoluteUri} | ConvertTo-Json -Compress',
+  ].join('; ');
+  try {
+    const result = spawnSync('powershell.exe', ['-NoProfile', '-Command', command], {
+      encoding: 'utf8',
+      maxBuffer: 1024 * 1024,
+      timeout: 5 * 60 * 1000,
+    });
+    if (result.status !== 0) {
+      throw new ReleaseIntegrityError(
+        'ERR_RELEASE_SYSTEM_PROXY_DOWNLOAD_FAILED',
+        `Windows system-proxy download failed: ${result.stderr || result.stdout || ''}`,
+      );
+    }
+    const metadata = JSON.parse(result.stdout);
+    if (metadata.status > 0 && (metadata.status < 200 || metadata.status >= 300)) {
+      throw new ReleaseIntegrityError(
+        'ERR_RELEASE_SYSTEM_PROXY_DOWNLOAD_FAILED',
+        `Windows system-proxy download returned status=${metadata.status}`,
+      );
+    }
+    return { buffer: await readFile(temporary), url: metadata.url };
+  } finally {
+    await rm(temporary, { force: true });
+  }
 }
 
 export async function downloadVerifiedAssetToFile(asset, destination, options = {}) {

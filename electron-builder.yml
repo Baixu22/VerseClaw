@@ -41,6 +41,9 @@ extraResources:
 afterPack: ./scripts/after-pack.cjs
 
 asar: true
+electronFuses:
+  enableEmbeddedAsarIntegrityValidation: true
+  onlyLoadAppFromAsar: true
 asarUnpack:
   - "**/*.node"
   # lru-cache CJS/ESM interop: older CJS versions (v5, v6, v7) don't export

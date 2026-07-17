@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "platform": "win",
+  "packages": [
+    {
+      "platform": "win",
+      "executable": "win-unpacked/Verse Claw.exe",
+      "appAsar": "win-unpacked/resources/app.asar",
+      "appAsarSize": 81973049,
+      "appAsarSha256": "ba3d523b255f2705129ea43abd5aca57e1a62bf63b74cdb806f1646555415ee6",
+      "fuses": {
+        "enableEmbeddedAsarIntegrityValidation": true,
+        "onlyLoadAppFromAsar": true
+      }
+    }
+  ]
+}

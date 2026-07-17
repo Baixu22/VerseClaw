@@ -1,0 +1,2 @@
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/release-artifact-attestation-integrity.md" "--since" "95e21e4eb"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/release-artifact-attestation-integrity.md" "--since" "95e21e4eb"
