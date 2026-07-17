@@ -1351,6 +1351,8 @@ export type McpServerCreatePayload = {
   cwd?: string;
   url?: string;
   env?: Record<string, string>;
+  headers?: Record<string, string>;
+  sslVerify?: boolean;
   enabled?: boolean;
   scope?: McpScope;
   ownerId?: string;

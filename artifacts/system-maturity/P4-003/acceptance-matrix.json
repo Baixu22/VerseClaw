@@ -1,0 +1,49 @@
+{
+  "A1": {
+    "id": "A1",
+    "statement": "Security fields fully project to runtime",
+    "status": "passed",
+    "proof": [
+      "projectMcpSecurityFields maps permissionMode/sandboxProfileId/networkPolicy/sslVerify/headers/env/toolFilter",
+      "projectServerToRuntimeConfig uses projectMcpSecurityFields for OpenClaw sync",
+      "mcp.reload runtime payload includes security fields with resolved env",
+      "networkPolicy matrix enforced via evaluateMcpNetworkPolicy/assertMcpNetworkPolicyAllows",
+      "unit: mcp-p4-003-runtime-surface.test.ts A1 + OpenClaw sync"
+    ]
+  },
+  "A2": {
+    "id": "A2",
+    "statement": "reload fails closed without rollback of durable state when ACK missing",
+    "status": "passed",
+    "proof": [
+      "reloadRuntimeStrict requires Gateway ACK when state=running",
+      "reloadRuntime returns success:false without hotReloaded on failure",
+      "create/update/delete roll back store + vault when reload fails under running Gateway",
+      "unit: A2 fail-closed + rollback cases"
+    ]
+  },
+  "A3": {
+    "id": "A3",
+    "statement": "env is not returned as plaintext to Renderer",
+    "status": "passed",
+    "proof": [
+      "sealMcpEnvMap stores SecretRef + encrypted vault entries",
+      "listServers/testServer/heartbeat use toRendererServer redactMcpEnvMap",
+      "resolveMcpEnvMap recovers plaintext only for Main/runtime projection",
+      "canary scan: listed JSON does not contain env plaintext",
+      "unit: A3 secret broker surface"
+    ]
+  },
+  "A4": {
+    "id": "A4",
+    "statement": "Invalid tool schema is rejected",
+    "status": "passed",
+    "proof": [
+      "isValidMcpToolInputSchema rejects non-object types",
+      "filterToolsWithValidSchemas drops invalid runtime tools (fail closed list)",
+      "validateToolArgsAgainstSchema rejects missing required / unexpected args",
+      "built-in callTool enforces schema before execution",
+      "unit: A4 schema negative tests"
+    ]
+  }
+}

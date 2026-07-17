@@ -45,6 +45,7 @@ const { createGitApiMock, gitApiMock } = vi.hoisted(() => {
 
 const storeState = vi.hoisted(() => ({
   servers: [] as unknown[],
+  envSecrets: {} as Record<string, unknown>,
 }));
 
 vi.mock('electron-store', () => {
@@ -56,12 +57,17 @@ vi.mock('electron-store', () => {
     }
 
     get(key: string) {
-      return key === 'servers' ? storeState.servers : undefined;
+      if (key === 'servers') return storeState.servers;
+      if (key === 'envSecrets') return storeState.envSecrets;
+      return undefined;
     }
 
     set(key: string, value: unknown) {
       if (key === 'servers') {
         storeState.servers = Array.isArray(value) ? [...value] : [];
+      }
+      if (key === 'envSecrets') {
+        storeState.envSecrets = value && typeof value === 'object' ? { ...(value as Record<string, unknown>) } : {};
       }
     }
   }
@@ -80,6 +86,7 @@ vi.mock('@electron/services/git-api', () => ({
 describe('mcp api registry', () => {
   beforeEach(() => {
     storeState.servers = [];
+    storeState.envSecrets = {};
     readAgentBootstrapToolsMock.mockResolvedValue({
       defaultSkillIds: [],
       defaultMcpServerIds: [],
@@ -241,7 +248,10 @@ describe('mcp api registry', () => {
     const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
     const gatewayManager = {
       getStatus: vi.fn(() => ({ state: 'running' })),
-      rpc: vi.fn(async () => {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'mcp.reload') {
+          return { ok: true };
+        }
         throw new Error('runtime method unavailable');
       }),
       debouncedReload: vi.fn(),
@@ -262,7 +272,7 @@ describe('mcp api registry', () => {
       expect.objectContaining({
         servers: expect.any(Array),
       }),
-      4000,
+      5000,
     );
     const reloadPayload = gatewayManager.rpc.mock.calls.find((call) => call[0] === 'mcp.reload')?.[1] as Record<string, unknown>;
     expect(reloadPayload.openclawServers).toBeUndefined();

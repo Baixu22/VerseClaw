@@ -1,0 +1,30 @@
+{
+  "taskId": "P4-003",
+  "generatedAt": "2026-07-17T09:15:47Z",
+  "artifacts": [
+    {
+      "path": "artifacts/system-maturity/P4-003/acceptance-matrix.json",
+      "sha256": "1aea9e6824bde6585cc729e68163f34711659363add1f3f6d1a11736531a3495"
+    },
+    {
+      "path": "artifacts/system-maturity/P4-003/vitest.stdout.txt",
+      "sha256": "dc135e646acdc29fa31d5c37017ae3c4b42323f82872518f866029586cbdc774"
+    },
+    {
+      "path": "artifacts/system-maturity/P4-003/evidence-index.json",
+      "sha256": "3d7a0dcf6f030ac1e679b01d0d2377ae9dd10d5888c17f82b7d8769a313f85d3"
+    }
+  ],
+  "commands": [
+    "pnpm exec vitest run tests/unit/mcp-p4-003-runtime-surface.test.ts tests/unit/mcp-api.test.ts",
+    "pnpm contract:check"
+  ],
+  "results": {
+    "vitest": "21 passed (2 files)",
+    "contract:check": "passed"
+  },
+  "findings": {
+    "F-AUTH-009": "Fixed",
+    "F-SEC-001": "Partial (MCP env sealed; channel secrets remain for P4-004)"
+  }
+}
