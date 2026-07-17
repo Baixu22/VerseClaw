@@ -15,12 +15,12 @@
       "Low": 1
     },
     "byStatus": {
-      "Open": 9,
+      "Open": 8,
       "Fixed": 23,
-      "Partial": 2,
+      "Partial": 3,
       "Unverified": 1
     },
-    "open": 9,
+    "open": 8,
     "fixed": 23
   },
   "intentionalIdGaps": {
@@ -486,7 +486,7 @@
       "category": "SUPPLY",
       "severity": "High",
       "decision": "Publish-blocker",
-      "status": "Open",
+      "status": "Partial",
       "evidenceLevel": "L3",
       "related": [],
       "attackChain": [
@@ -496,7 +496,10 @@
         "P6-001",
         "P6-002",
         "P7-002"
-      ]
+      ],
+      "notes": "P6-001: channel/signing policy is single-sourced; signing-required builds verify Authenticode; post-sign latest.yml hashes are checked; GitHub and OSS publish jobs depend on a version-bound signing-attestation gate. Remaining updater feed/source/tamper closure is P6-002.",
+      "updatedBy": "P6-001",
+      "updatedAt": "2026-07-17T16:11:26.232Z"
     },
     {
       "id": "F-GOV-001",

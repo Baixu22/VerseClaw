@@ -1,0 +1,3 @@
+[windows-release-policy] FAIL: Windows artifacts are unsigned but policy requires code signing
+[windows-release-policy] FAIL: public publish requires proven Windows code signing
+[windows-release-policy] FAIL: unsigned Windows artifacts cannot enter public release

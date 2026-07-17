@@ -1,0 +1,1027 @@
+$ vitest run && pnpm run test:dcs
+[90mstderr[2m | tests/unit/chat-message.test.tsx[2m > [22m[2mChatMessage attachment dedupe[2m > [22m[2mrenders the assistant avatar in a fully clipped stable slot
+[22m[39mreact-i18next:: useTranslation: You will need to pass in an i18next instance by using initReactI18next { code: [32m'NO_I18NEXT_INSTANCE'[39m }
+
+[90mstderr[2m | tests/unit/chat-artifact-panel-layout.test.tsx[2m > [22m[2mChat artifact panel layout[2m > [22m[2mkeeps the chat toolbar background draggable while actions remain clickable
+[22m[39mA suspended resource finished loading inside a test, but the event was not wrapped in act(...).
+
+When testing, code that resolves suspended data should be wrapped into act(...):
+
+act(() => {
+  /* finish loading suspended data */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+(node:35884) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33472) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:5672) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29684) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37408) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10728) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+(node:29684) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34988) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/agent-browser-replay-tool-executor.test.ts[2m [ tests/unit/agent-browser-replay-tool-executor.test.ts ][22m
+[31m[1mError[22m: Transform failed with 2 errors:
+C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/tests/unit/agent-browser-replay-tool-executor.test.ts:138:10: ERROR: The constant "grant" must be initialized
+C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/tests/unit/agent-browser-replay-tool-executor.test.ts:173:10: ERROR: The constant "grant" must be initialized[39m
+  Plugin: [35mvite:esbuild[39m
+  File: [36mC:/Users/27933/Desktop/clawx/ClawX-maturity-p0/tests/unit/agent-browser-replay-tool-executor.test.ts[39m:138:10
+[33m
+  [33mThe constant "grant" must be initialized[33m
+  136 |        headers: { 'content-type': 'application/json', 'x-trace-id': 'abc' },
+  137 |      })) as unknown as typeof fetch;
+  138 |      const grant: BoundaryGrantContext | undefined;
+      |            ^
+  139 |      const executor = createExecutor({ fetcher, getGrant: () => grant });
+  140 |
+
+  [33mThe constant "grant" must be initialized[33m
+  171 |        });
+  172 |      }) as unknown as typeof fetch;
+  173 |      const grant: BoundaryGrantContext | undefined;
+      |            ^
+  174 |      const executor = createExecutor({
+  175 |        fetcher,
+  [39m
+[90m [2m❯[22m failureErrorWithLog node_modules/.pnpm/esbuild@0.27.4/node_modules/esbuild/lib/main.js:[2m1748:15[22m[39m
+[90m [2m❯[22m node_modules/.pnpm/esbuild@0.27.4/node_modules/esbuild/lib/main.js:[2m1017:50[22m[39m
+[90m [2m❯[22m responseCallbacks.<computed> node_modules/.pnpm/esbuild@0.27.4/node_modules/esbuild/lib/main.js:[2m884:9[22m[39m
+[90m [2m❯[22m handleIncomingPacket node_modules/.pnpm/esbuild@0.27.4/node_modules/esbuild/lib/main.js:[2m939:12[22m[39m
+[90m [2m❯[22m Socket.readFromStdout node_modules/.pnpm/esbuild@0.27.4/node_modules/esbuild/lib/main.js:[2m862:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/30]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 29 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/agent-browser-service.test.ts[2m > [22magent browser service[2m > [22mexposes the service through the host api adapter
+[31m[1mAssertionError[22m: expected Promise{…} to match object { success: true, …(1) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- {[39m
+[32m-   "sessions": [[39m
+[32m-     {[39m
+[32m-       "id": "s1",[39m
+[32m-     },[39m
+[32m-   ],[39m
+[32m-   "success": true,[39m
+[32m- }[39m
+[31m+ Promise {}[39m
+
+[36m [2m❯[22m tests/unit/agent-browser-service.test.ts:[2m518:26[22m[39m
+    [90m516|[39m       session[33m:[39m { id[33m:[39m [32m's1'[39m }[33m,[39m
+    [90m517|[39m     })[33m;[39m
+    [90m518|[39m     expect(api.status()).toMatchObject({ success: true, sessions: [{ i…
+    [90m   |[39m                          [31m^[39m
+    [90m519|[39m     [35mawait[39m [34mexpect[39m(api[33m.[39m[34mprofiles[39m())[33m.[39mresolves[33m.[39m[34mtoMatchObject[39m({
+    [90m520|[39m       success[33m:[39m [35mtrue[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/chat-artifact-panel-layout.test.tsx[2m > [22mChat artifact panel layout[2m > [22mkeeps the chat toolbar background draggable while actions remain clickable
+[41m[1m FAIL [22m[49m tests/unit/chat-artifact-panel-layout.test.tsx[2m > [22mChat artifact panel layout[2m > [22mstacks the chat page above the macOS main drag strip
+[41m[1m FAIL [22m[49m tests/unit/chat-artifact-panel-layout.test.tsx[2m > [22mChat artifact panel layout[2m > [22mlayers the right artifact panel above the macOS drag strip
+[41m[1m FAIL [22m[49m tests/unit/chat-artifact-panel-layout.test.tsx[2m > [22mChat artifact panel layout[2m > [22mhides the chat assistive rail while the artifact panel is open
+[41m[1m FAIL [22m[49m tests/unit/chat-artifact-panel-layout.test.tsx[2m > [22mChat artifact panel layout[2m > [22mdoes not show the chat assistive rail before work starts
+[31m[1mTypeError[22m: hydrateStartup is not a function[39m
+[36m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+    [90m1187|[39m   // the connection becomes available.
+    [90m1188|[39m   useEffect(() => {
+    [90m1189|[39m     void hydrateStartup();
+    [90m   |[39m          [31m^[39m
+    [90m1190|[39m   }, [
+    [90m1191|[39m     gatewayStatus.connectedAt,
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+[90m [2m❯[22m flushPassiveEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m18432:9[22m[39m
+[90m [2m❯[22m flushPendingEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m18358:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/chat-message.test.tsx[2m > [22mChatMessage attachment dedupe[2m > [22mrenders the assistant avatar in a fully clipped stable slot
+[31m[1mError[22m: [2mexpect([22m[31melement[31m[2m).toHaveClass([22m[32m[32m"h-8 w-8 overflow-hidden rounded-full"[32m[31m[2m)[22m
+
+Expected the element to have class:
+[32m  h-8 w-8 overflow-hidden rounded-full[31m
+Received:
+[31m  mt-0.5[31m[39m
+[36m [2m❯[22m tests/unit/chat-message.test.tsx:[2m31:20[22m[39m
+    [90m 29|[39m
+    [90m 30|[39m     [35mconst[39m avatar [33m=[39m screen[33m.[39m[34mgetByTestId[39m([32m'chat-assistant-avatar'[39m)[33m;[39m
+    [90m 31|[39m     expect(avatar).toHaveClass('h-8', 'w-8', 'overflow-hidden', 'round…
+    [90m   |[39m                    [31m^[39m
+    [90m 32|[39m     expect(avatar.querySelector('img')).toHaveClass('h-full', 'w-full'…
+    [90m 33|[39m   })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/chat-question-directory.test.tsx[2m > [22mChat question directory[2m > [22mkeeps real repeated questions as separate directory entries
+[31m[1mTypeError[22m: hydrateStartup is not a function[39m
+[36m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+    [90m1187|[39m   // the connection becomes available.
+    [90m1188|[39m   useEffect(() => {
+    [90m1189|[39m     void hydrateStartup();
+    [90m   |[39m          [31m^[39m
+    [90m1190|[39m   }, [
+    [90m1191|[39m     gatewayStatus.connectedAt,
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15718:11[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15476:11[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/chat-save-to-knowledge.test.tsx[2m > [22mChat Save to Knowledge[2m > [22mopens an editable draft and creates a pending proposal only after confirmation
+[31m[1mTypeError[22m: hydrateStartup is not a function[39m
+[36m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+    [90m1187|[39m   // the connection becomes available.
+    [90m1188|[39m   useEffect(() => {
+    [90m1189|[39m     void hydrateStartup();
+    [90m   |[39m          [31m^[39m
+    [90m1190|[39m   }, [
+    [90m1191|[39m     gatewayStatus.connectedAt,
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15718:11[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15718:11[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/chat-store-history-retry.test.ts[2m > [22museChatStore startup history retry[2m > [22mstops retrying once the user switches sessions mid-load
+[31m[1mAssertionError[22m: expected 'RPC timeout: chat.history' to be null[39m
+
+[32m- Expected:[39m
+null
+
+[31m+ Received:[39m
+"RPC timeout: chat.history"
+
+[36m [2m❯[22m tests/unit/chat-store-history-retry.test.ts:[2m857:43[22m[39m
+    [90m855|[39m     expect(useChatStore.getState().currentSessionKey).toBe('agent:main…
+    [90m856|[39m     expect(useChatStore.getState().messages.map((message) => message.c…
+    [90m857|[39m     [34mexpect[39m(useChatStore[33m.[39m[34mgetState[39m()[33m.[39merror)[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m   |[39m                                           [31m^[39m
+    [90m858|[39m     [34mexpect[39m(warnSpy)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m859|[39m     warnSpy[33m.[39m[34mmockRestore[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/dev-slice.test.ts[2m > [22mruntime memory dev slice[2m > [22muses the Stage 2 cache contract with retrieval scores and no profile augmentation
+[31m[1mAssertionError[22m: expected '34.0-audn-lifecycle-2026-07-06' to be '31.0-p0-sota-aligned-2026-07-05' // Object.is equality[39m
+
+Expected: [32m"3[7m1.0-p0-sota-aligned[27m-2026-07-0[7m5[27m"[39m
+Received: [31m"3[7m4.0-audn-lifecycle[27m-2026-07-0[7m6[27m"[39m
+
+[36m [2m❯[22m tests/unit/dev-slice.test.ts:[2m10:37[22m[39m
+    [90m  8|[39m [34mdescribe[39m([32m"runtime memory dev slice"[39m[33m,[39m () [33m=>[39m {
+    [90m  9|[39m   it("uses the Stage 2 cache contract with retrieval scores and no pro…
+    [90m 10|[39m     expect(DEV_SLICE_CACHE_VERSION).toBe("31.0-p0-sota-aligned-2026-07…
+    [90m   |[39m                                     [31m^[39m
+    [90m 11|[39m   })[33m;[39m
+    [90m 12|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/files-permissions-api.test.ts[2m > [22mfiles api permission approval flow[2m > [22mreturns an approval event for workspace-external writes and consumes it once
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: false, …(3) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "approval": {[39m
+[32m-     "paths": [[39m
+[32m-       "C:\\Users\\27933\\AppData\\Local\\Temp\\clawx-outside-pWQOv0\\note.txt",[39m
+[32m-     ],[39m
+[32m-     "source": "file",[39m
+[32m-   },[39m
+[32m-   "approvalRequired": true,[39m
+[32m-   "error": "approvalRequired",[39m
+[31m+   "error": "Electron failed to install correctly, please delete node_modules/electron and try installing again",[39m
+[2m    "ok": false,[22m
+[2m  }[22m
+
+[36m [2m❯[22m tests/unit/files-permissions-api.test.ts:[2m101:19[22m[39m
+    [90m 99|[39m
+    [90m100|[39m     const first = await api.writeText({ path: filePath, content: 'new'…
+    [90m101|[39m     [34mexpect[39m(first)[33m.[39m[34mtoMatchObject[39m({
+    [90m   |[39m                   [31m^[39m
+    [90m102|[39m       ok[33m:[39m [35mfalse[39m[33m,[39m
+    [90m103|[39m       error[33m:[39m [32m'approvalRequired'[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/gateway-permissions-api.test.ts[2m > [22mgateway permission approval flow[2m > [22mrequires approval for dangerous gateway RPC and consumes approval before replay
+[31m[1mError[22m: Electron failed to install correctly, please delete node_modules/electron and try installing again[39m
+[90m [2m❯[22m getElectronPath node_modules/.pnpm/electron@40.8.4/node_modules/electron/index.js:[2m17:11[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/.pnpm/electron@40.8.4/node_modules/electron/index.js:[2m21:18[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/locomo-report-comparator.test.ts[2m > [22mloadReportFromFile[2m > [22m加载真实 phase3 baseline
+[31m[1mError[22m: Report file not found: C:\Users\27933\Desktop\clawx\ClawX-maturity-p0\artifacts\runtime-memory-eval\locomo-full-500-report-phase3-baseline.json[39m
+[36m [2m❯[22m loadReportFromFile tests/unit/helpers/locomo-report-comparator.ts:[2m227:11[22m[39m
+    [90m225|[39m )[33m:[39m [33mNormalizedReportMetrics[39m {
+    [90m226|[39m   [35mif[39m ([33m![39m[34mexistsSync[39m(path)) {
+    [90m227|[39m     [35mthrow[39m [35mnew[39m [33mError[39m([32m`Report file not found: [39m[36m${[39mpath[36m}[39m[32m`[39m)[33m;[39m
+    [90m   |[39m           [31m^[39m
+    [90m228|[39m   }
+    [90m229|[39m   [35mconst[39m raw [33m=[39m [34mreadFileSync[39m(path[33m,[39m [32m"utf-8"[39m)[33m;[39m
+[90m [2m❯[22m tests/unit/locomo-report-comparator.test.ts:[2m389:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/locomo-report-comparator.test.ts[2m > [22mloadReportFromFile[2m > [22m加载真实 phase4 regression baseline
+[31m[1mError[22m: Report file not found: C:\Users\27933\Desktop\clawx\ClawX-maturity-p0\artifacts\runtime-memory-eval\locomo-full-500-report-phase4.0-regression.json[39m
+[36m [2m❯[22m loadReportFromFile tests/unit/helpers/locomo-report-comparator.ts:[2m227:11[22m[39m
+    [90m225|[39m )[33m:[39m [33mNormalizedReportMetrics[39m {
+    [90m226|[39m   [35mif[39m ([33m![39m[34mexistsSync[39m(path)) {
+    [90m227|[39m     [35mthrow[39m [35mnew[39m [33mError[39m([32m`Report file not found: [39m[36m${[39mpath[36m}[39m[32m`[39m)[33m;[39m
+    [90m   |[39m           [31m^[39m
+    [90m228|[39m   }
+    [90m229|[39m   [35mconst[39m raw [33m=[39m [34mreadFileSync[39m(path[33m,[39m [32m"utf-8"[39m)[33m;[39m
+[90m [2m❯[22m tests/unit/locomo-report-comparator.test.ts:[2m403:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/locomo-report-comparator.test.ts[2m > [22mloadReportFromFile[2m > [22m加载真实 current report (新 schema)
+[31m[1mError[22m: Report file not found: C:\Users\27933\Desktop\clawx\ClawX-maturity-p0\artifacts\runtime-memory-eval\locomo-full-500-report.json[39m
+[36m [2m❯[22m loadReportFromFile tests/unit/helpers/locomo-report-comparator.ts:[2m227:11[22m[39m
+    [90m225|[39m )[33m:[39m [33mNormalizedReportMetrics[39m {
+    [90m226|[39m   [35mif[39m ([33m![39m[34mexistsSync[39m(path)) {
+    [90m227|[39m     [35mthrow[39m [35mnew[39m [33mError[39m([32m`Report file not found: [39m[36m${[39mpath[36m}[39m[32m`[39m)[33m;[39m
+    [90m   |[39m           [31m^[39m
+    [90m228|[39m   }
+    [90m229|[39m   [35mconst[39m raw [33m=[39m [34mreadFileSync[39m(path[33m,[39m [32m"utf-8"[39m)[33m;[39m
+[90m [2m❯[22m tests/unit/locomo-report-comparator.test.ts:[2m414:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/locomo-report-comparator.test.ts[2m > [22mloadReportFromFile[2m > [22msource 未指定时使用 path
+[31m[1mError[22m: Report file not found: C:\Users\27933\Desktop\clawx\ClawX-maturity-p0\artifacts\runtime-memory-eval\locomo-full-500-report-phase3-baseline.json[39m
+[36m [2m❯[22m loadReportFromFile tests/unit/helpers/locomo-report-comparator.ts:[2m227:11[22m[39m
+    [90m225|[39m )[33m:[39m [33mNormalizedReportMetrics[39m {
+    [90m226|[39m   [35mif[39m ([33m![39m[34mexistsSync[39m(path)) {
+    [90m227|[39m     [35mthrow[39m [35mnew[39m [33mError[39m([32m`Report file not found: [39m[36m${[39mpath[36m}[39m[32m`[39m)[33m;[39m
+    [90m   |[39m           [31m^[39m
+    [90m228|[39m   }
+    [90m229|[39m   [35mconst[39m raw [33m=[39m [34mreadFileSync[39m(path[33m,[39m [32m"utf-8"[39m)[33m;[39m
+[90m [2m❯[22m tests/unit/locomo-report-comparator.test.ts:[2m428:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/locomo-report-comparator.test.ts[2m > [22mloadBaselineReport[2m > [22m文件存在 → 返回 metrics, source = baselineName
+[31m[1mAssertionError[22m: expected null not to be null[39m
+[36m [2m❯[22m tests/unit/locomo-report-comparator.test.ts:[2m443:19[22m[39m
+    [90m441|[39m   [34mit[39m([32m"文件存在 → 返回 metrics, source = baselineName"[39m[33m,[39m () [33m=>[39m {
+    [90m442|[39m     const m = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report…
+    [90m443|[39m     [34mexpect[39m(m)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m   |[39m                   [31m^[39m
+    [90m444|[39m     expect(m!.source).toBe("locomo-full-500-report-phase3-baseline.jso…
+    [90m445|[39m     [34mexpect[39m(m[33m![39m[33m.[39moverallJ)[33m.[39m[34mtoBeCloseTo[39m([34m0.452[39m[33m,[39m [34m6[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/locomo-report-comparator.test.ts[2m > [22m集成测试: 真实 baseline reports[2m > [22mphase3 → current: 大幅提升
+[31m[1mAssertionError[22m: expected null not to be null[39m
+[36m [2m❯[22m tests/unit/locomo-report-comparator.test.ts:[2m590:24[22m[39m
+    [90m588|[39m     const phase3 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-r…
+    [90m589|[39m     const current = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-…
+    [90m590|[39m     [34mexpect[39m(phase3)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m   |[39m                        [31m^[39m
+    [90m591|[39m     [34mexpect[39m(current)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m592|[39m     [35mconst[39m delta [33m=[39m [34mcompareReports[39m(phase3[33m![39m[33m,[39m current[33m![39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/locomo-report-comparator.test.ts[2m > [22m集成测试: 真实 baseline reports[2m > [22mphase3 → phase4: 回归 (历史回归基线)
+[31m[1mAssertionError[22m: expected null not to be null[39m
+[36m [2m❯[22m tests/unit/locomo-report-comparator.test.ts:[2m607:24[22m[39m
+    [90m605|[39m     const phase3 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-r…
+    [90m606|[39m     const phase4 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-r…
+    [90m607|[39m     [34mexpect[39m(phase3)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m   |[39m                        [31m^[39m
+    [90m608|[39m     [34mexpect[39m(phase4)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m609|[39m     [35mconst[39m delta [33m=[39m [34mcompareReports[39m(phase3[33m![39m[33m,[39m phase4[33m![39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/locomo-report-comparator.test.ts[2m > [22m集成测试: 真实 baseline reports[2m > [22mphase4 → current: 大幅提升 (从回归中恢复)
+[31m[1mAssertionError[22m: expected null not to be null[39m
+[36m [2m❯[22m tests/unit/locomo-report-comparator.test.ts:[2m623:24[22m[39m
+    [90m621|[39m     const phase4 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-r…
+    [90m622|[39m     const current = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-…
+    [90m623|[39m     [34mexpect[39m(phase4)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m   |[39m                        [31m^[39m
+    [90m624|[39m     [34mexpect[39m(current)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m625|[39m     [35mconst[39m delta [33m=[39m [34mcompareReports[39m(phase4[33m![39m[33m,[39m current[33m![39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/locomo-report-comparator.test.ts[2m > [22m集成测试: 真实 baseline reports[2m > [22m完整 pipeline: load → normalize → compare → markdown (无 throw)
+[31m[1mTypeError[22m: Cannot read properties of null (reading 'overallJ')[39m
+[36m [2m❯[22m compareReports tests/unit/helpers/locomo-report-comparator.ts:[2m157:28[22m[39m
+    [90m155|[39m   threshold[33m:[39m number [33m=[39m [34m0.01[39m[33m,[39m
+    [90m156|[39m )[33m:[39m [33mRegressionDelta[39m {
+    [90m157|[39m   [35mconst[39m overallJ [33m=[39m current[33m.[39moverallJ [33m-[39m baseline[33m.[39moverallJ[33m;[39m
+    [90m   |[39m                            [31m^[39m
+    [90m158|[39m   [35mconst[39m overallRecall5 [33m=[39m
+    [90m159|[39m     baseline.overallRecall5 !== undefined && current.overallRecall5 !=…
+[90m [2m❯[22m tests/unit/locomo-report-comparator.test.ts:[2m636:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/observability-index.test.ts[2m > [22mobservability local trace index[2m > [22mpersists sanitized trace envelopes and rehydrates graph data
+[31m[1mAssertionError[22m: expected '' to contain 'promptHash'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- promptHash[39m
+
+[36m [2m❯[22m tests/unit/observability-index.test.ts:[2m107:22[22m[39m
+    [90m105|[39m     expect(rawIndex).not.toContain('RAW_ATTRIBUTE_PROMPT_SHOULD_NOT_LE…
+    [90m106|[39m     [34mexpect[39m(rawIndex)[33m.[39mnot[33m.[39m[34mtoContain[39m([32m'RAW_EVENT_OUTPUT_SHOULD_NOT_LEAK'[39m)[33m;[39m
+    [90m107|[39m     [34mexpect[39m(rawIndex)[33m.[39m[34mtoContain[39m([32m'promptHash'[39m)[33m;[39m
+    [90m   |[39m                      [31m^[39m
+    [90m108|[39m     [34mexpect[39m(rawIndex)[33m.[39m[34mtoContain[39m([32m'outputHash'[39m)[33m;[39m
+    [90m109|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/observability-index.test.ts[2m > [22mobservability local trace index[2m > [22mqueries status, tool calls, artifacts, keyword, pagination, and sort order
+[31m[1mAssertionError[22m: expected [] to deeply equal [ 'trace-error' ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- [[39m
+[32m-   "trace-error",[39m
+[32m- ][39m
+[31m+ [][39m
+
+[36m [2m❯[22m tests/unit/observability-index.test.ts:[2m158:51[22m[39m
+    [90m156|[39m
+    [90m157|[39m     const failures = await queryObservabilityTraces({ hasErrors: true,…
+    [90m158|[39m     expect(failures.items.map((item) => item.id)).toEqual(['trace-erro…
+    [90m   |[39m                                                   [31m^[39m
+    [90m159|[39m     expect(failures.items[0].issues.some((issue) => issue.category ===…
+    [90m160|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/path-broker-resolved.test.ts[2m > [22mworkspace junction write escape (P1-003 / F-SEC-006)[2m > [22mdenies writes that realpath outside workspace via symlink/junction
+[31m[1mAssertionError[22m: expected [ 'approvalRequired', …(4) ] to include 'Electron failed to install correctly,…'[39m
+[36m [2m❯[22m tests/unit/path-broker-resolved.test.ts:[2m75:97[22m[39m
+    [90m 73|[39m     const result = await api.writeText({ path: target, content: 'pwned…
+    [90m 74|[39m     [34mexpect[39m(result[33m.[39mok)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m 75|[39m     expect(['approvalRequired', 'permissionDenied', 'adsPath', 'unsafe…
+    [90m   |[39m                                                                                                 [31m^[39m
+    [90m 76|[39m       (result [35mas[39m { error[33m?[39m[33m:[39m string })[33m.[39merror[33m,[39m
+    [90m 77|[39m     )[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/role-memory-v2.test.ts[2m > [22mrole memory v2 governance[2m > [22mchecks evidence health without writing native memory and simulates injection with the real selector
+[31m[1mAssertionError[22m: expected undefined to be true // Object.is equality[39m
+
+[32m- Expected:[39m
+true
+
+[31m+ Received:[39m
+undefined
+
+[36m [2m❯[22m tests/unit/role-memory-v2.test.ts:[2m415:33[22m[39m
+    [90m413|[39m     })[33m;[39m
+    [90m414|[39m     const real = realPack.candidateExplanations?.find((entry) => entry…
+    [90m415|[39m     [34mexpect[39m(simulated[33m?.[39mselected)[33m.[39m[34mtoBe[39m(real[33m?.[39mselected)[33m;[39m
+    [90m   |[39m                                 [31m^[39m
+    [90m416|[39m     [34mexpect[39m(simulated[33m?.[39minjectionClass)[33m.[39m[34mtoBe[39m([32m'must'[39m)[33m;[39m
+    [90m417|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/role-orchestration-methods.test.ts[2m > [22mteam_orchestrate tool[2m > [22mruns router-mode orchestration without a template and returns yield guidance
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m tests/unit/role-orchestration-methods.test.ts:[2m643:52[22m[39m
+    [90m641|[39m     })[33m;[39m
+    [90m642|[39m     [34mexpect[39m(details[33m.[39mqualityStateReason)[33m.[39m[34mtoMatch[39m([36m/score/i[39m)[33m;[39m
+    [90m643|[39m     [34mexpect[39m(details[33m.[39mresultPolicy[33m.[39mboundedA2aEnabled)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m   |[39m                                                    [31m^[39m
+    [90m644|[39m     [34mexpect[39m(details[33m.[39mblackboardSummary[33m?.[39mentryCount)[33m.[39m[34mtoBe[39m([34m1[39m)[33m;[39m
+    [90m645|[39m     [34mexpect[39m(details[33m.[39mresultBundle)[33m.[39m[34mtoMatchObject[39m({
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/role-orchestration-methods.test.ts[2m > [22mmemory.* handlers (store/read round-trip with persistence)[2m > [22mmemory.feedback records real utility feedback and memory.utilityReport does not invent eval deltas
+[31m[1mAssertionError[22m: expected 0 to be greater than 0[39m
+[36m [2m❯[22m tests/unit/role-orchestration-methods.test.ts:[2m1059:69[22m[39m
+    [90m1057|[39m     [34mexpect[39m(evalPayload[33m.[39mreport[33m.[39maggregate[33m.[39mtaskSuccessDelta)[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m1058|[39m     [34mexpect[39m(evalPayload[33m.[39mdryRun[33m?.[39mroleName)[33m.[39m[34mtoBe[39m([32m'architect'[39m)[33m;[39m
+    [90m1059|[39m     expect(evalPayload.dryRun?.pack?.candidateExplanations?.length).to…
+    [90m   |[39m                                                                     [31m^[39m
+    [90m1060|[39m   })[33m;[39m
+    [90m1061|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/30]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/workspace-browser-body.test.tsx[2m > [22mWorkspaceBrowserBody[2m > [22mrenders html files as sandboxed HTML preview instead of raw source
+[31m[1mError[22m: [2mexpect([22m[31melement[31m[2m).toHaveAttribute([22m[32m[32m"sandbox"[32m[31m[2m, [22m[32m[32m"allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-downloads"[32m[31m[2m) // element.getAttribute("sandbox") === "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-downloads"[22m
+
+Expected the element to have attribute:
+[32m  sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-downloads"[31m
+Received:
+[31m  sandbox="allow-scripts allow-forms allow-presentation"[31m[39m
+[36m [2m❯[22m tests/unit/workspace-browser-body.test.tsx:[2m120:19[22m[39m
+    [90m118|[39m     [35mconst[39m frame [33m=[39m [35mawait[39m screen[33m.[39m[34mfindByTestId[39m([32m'html-preview-frame'[39m)[33m;[39m
+    [90m119|[39m     [34mexpect[39m(frame)[33m.[39m[34mtoBeVisible[39m()[33m;[39m
+    [90m120|[39m     [34mexpect[39m(frame)[33m.[39m[34mtoHaveAttribute[39m(
+    [90m   |[39m                   [31m^[39m
+    [90m121|[39m       [32m'sandbox'[39m[33m,[39m
+    [90m122|[39m       'allow-scripts allow-forms allow-popups allow-popups-to-escape-s…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/30]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 22 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15718:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-history-reply-while-sending.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mshows assistant reply from history even when sending is still true[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mkeeps the execution graph expanded while the reply is still streaming and shows only the reply suffix in the bubble[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mcollapses completed long task work into a deterministic summary card by default[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mkeeps short conversations as normal messages without a turn summary card[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mrenders a team orchestration card for team_orchestrate task graph results[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mrenders ordinary orchestration diagnostics without Task Loop repair wording[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mkeeps runtime tool status inside the execution graph while a tool is running[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mrenders the execution graph immediately for an active run before any stream content arrives[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mrenders generated file cards with line stats for edit tools[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mshows a scroll-to-latest button when the chat is scrolled away from the bottom[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mstops showing trailing thinking and renders run error callout after terminal model error[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mkeeps history final reply folded while matching streamed text is still active[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mstops trailing thinking when history already contains the final reply but sending is stuck[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1msettles composer when generated image media arrives without transcript tool calls[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mstops trailing thinking when generated image media arrives but session wake is missed[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mshows trailing thinking together with a running tool status[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mkeeps trailing thinking visible while waiting for final history after completed tool status[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1msettles image generation runs after message tool delivers generated media[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mkeeps image generation runs active after async task status narration[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15519:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-page-execution-graph.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mkeeps the run active when narration landed in history before tools finished[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15718:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-leading-orphan-tools.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mhides paginated-prefix tool rows and folds them into the first user execution graph[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: useGatewayStore.getState is not a function[39m
+[36m [2m❯[22m isGatewayReadyForChat src/stores/chat.ts:[2m531:38[22m[39m
+    [90m529|[39m
+    [90m530|[39m function isGatewayReadyForChat(): boolean {
+    [90m531|[39m   const { status } = useGatewayStore.getState();
+    [90m   |[39m                                      [31m^[39m
+    [90m532|[39m   return status.state === 'running' && status.gatewayReady !== false;
+    [90m533|[39m }
+[90m [2m❯[22m hydrateStartup src/stores/chat.ts:[2m2679:10[22m[39m
+[90m [2m❯[22m src/pages/Chat/index.tsx:[2m1189:10[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15484:13[22m[39m
+[90m [2m❯[22m recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom-client.development.js:[2m15718:11[22m[39m
+
+[31mThis error originated in "[1mtests/unit/chat-tool-card-suppression.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mdoes not render standalone tool cards for messages inside a user run segment[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m

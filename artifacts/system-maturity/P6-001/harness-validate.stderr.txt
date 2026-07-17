@@ -1,0 +1,2 @@
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/windows-release-signing-policy.md"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/windows-release-signing-policy.md"

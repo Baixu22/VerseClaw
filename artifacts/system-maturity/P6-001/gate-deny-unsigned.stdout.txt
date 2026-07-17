@@ -1,0 +1,17 @@
+{
+  "allowed": false,
+  "policy": {
+    "channel": "stable",
+    "ossChannelDir": "latest",
+    "requireCodeSigning": true,
+    "allowPublicPublish": true,
+    "githubPrereleaseRequired": false,
+    "riskLevel": "high",
+    "summary": "Stable Windows builds MUST be SignPath-signed; unsigned artifacts cannot enter public publish (GitHub latest / OSS latest/)."
+  },
+  "reasons": [
+    "Windows artifacts are unsigned but policy requires code signing",
+    "public publish requires proven Windows code signing",
+    "unsigned Windows artifacts cannot enter public release"
+  ]
+}

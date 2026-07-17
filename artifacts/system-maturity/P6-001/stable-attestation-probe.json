@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "task": "P6-001",
+  "platform": "win",
+  "version": "1.0.0",
+  "channel": "stable",
+  "requiresCodeSigning": true,
+  "targetPublicPublish": true,
+  "isStable": true,
+  "windowsArtifactsSigned": true,
+  "exeCount": 1,
+  "exeNames": [
+    "notepad.exe"
+  ],
+  "signatureVerification": {
+    "status": "verified",
+    "verifiedExeCount": 1,
+    "verifiedExeNames": [
+      "notepad.exe"
+    ],
+    "signatures": [
+      {
+        "path": "C:\\WINDOWS\\System32\\notepad.exe",
+        "name": "notepad.exe",
+        "status": "Valid",
+        "signerSubject": "CN=Microsoft Windows, O=Microsoft Corporation, L=Redmond, S=Washington, C=US",
+        "signerThumbprint": "3B77DB29AC72AA6B5880ECB2ED5EC1EC6601D847",
+        "timestampSubject": "CN=Microsoft Time-Stamp Service, OU=nShield TSS ESN:3703-05E0-D947, OU=Microsoft America Operations, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+      }
+    ]
+  },
+  "signedAt": "2026-07-17T16:27:24.061Z",
+  "policy": "shared/release-policy/windows-signing-policy.mjs",
+  "evidenceScope": "local Windows Authenticode control probe; CI uses release/*.exe"
+}
