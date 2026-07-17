@@ -34,6 +34,8 @@ export type TeamOrchestrationMetadata = {
   verifierSkippedReason?: "all-workers-failed" | "no-verifier-role" | "spawn-failed";
   verifierStartedAt?: number;
   verifierSkippedAt?: number;
+  /** Explicit structured verifier decision; free text alone cannot authorize pass (F-AUTH-005). */
+  verificationVerdict?: "pass" | "fail" | "repair_required";
   taskId?: string;
   taskNodeId?: string;
   graphRunId?: string;

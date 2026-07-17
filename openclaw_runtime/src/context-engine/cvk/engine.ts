@@ -17,8 +17,10 @@ import {
 } from './runtime-adapter.js';
 import {
   collectRequiredToolSelectors,
+  resolveCvkToolCallGateMode,
   verifyCvkToolCallSelectors,
   type CvkToolCallGateDiagnostic,
+  type CvkToolCallGateMode,
 } from './tool-call-gate.js';
 import { generateCvkViews } from './views.js';
 import { CODING_TOOL_ROUTING_PROMPT } from '../coding-tool-navigation.js';
@@ -30,6 +32,8 @@ export type ContextRuntimeKitContextEngineOptions = {
   maxPromptAdditionChars?: number;
   contextStatusEnabled?: boolean;
   contextStatusSnapshot?: ContextStatusSnapshot;
+  /** CVK tool-call gate mode (report_only | enforce). Defaults via OPENCLAW_CVK_TOOL_GATE_MODE or report_only. */
+  toolCallGateMode?: CvkToolCallGateMode;
 };
 
 const DEFAULT_MAX_PROMPT_ADDITION_CHARS = 8_000;
@@ -56,10 +60,11 @@ function activeToolNames(input: CvkCompilerFixtureInput): string[] {
 function toolGateDiagnostics(
   artifact: CvkFixtureArtifact,
   toolNames: string[],
+  mode: CvkToolCallGateMode,
 ): CvkToolCallGateDiagnostic[] {
   return toolNames.flatMap((toolName) => verifyCvkToolCallSelectors({
     artifact,
-    mode: 'report_only',
+    mode,
     resourceId: RUNTIME_TOOLSET_RESOURCE_ID,
     toolName,
     retrievedSelectors: [],
@@ -116,12 +121,13 @@ function formatPromptAddition(params: {
   input: CvkCompilerFixtureInput;
   maxChars: number;
   contextStatusLines?: string[];
+  toolCallGateMode: CvkToolCallGateMode;
 }): string {
   const viewProjection = generateCvkViews(params.artifact, {
     selectedSkillResourceIds: selectedSkillResourceIds(params.input),
   });
   const toolNames = activeToolNames(params.input);
-  const diagnostics = toolGateDiagnostics(params.artifact, toolNames);
+  const diagnostics = toolGateDiagnostics(params.artifact, toolNames, params.toolCallGateMode);
   const lines = [
     ...(params.contextStatusLines ?? []),
     '[Context Runtime Kit]',
@@ -129,7 +135,7 @@ function formatPromptAddition(params: {
     CODING_TOOL_ROUTING_PROMPT,
     `artifact: ${params.artifact.buildReport.artifactHash}`,
     `metrics: SC=${params.artifact.buildReport.metrics.sourceCoverage.rate} RRR=${params.artifact.buildReport.metrics.referenceResolutionRate.rate} AR=${params.artifact.buildReport.metrics.artifactReproducibilityRate.rate}`,
-    'tool gate mode: report_only',
+    `tool gate mode: ${params.toolCallGateMode}`,
     '',
     'registry:',
     ...viewProjection.registryView.entries.slice(0, 40).map((entry) => (
@@ -180,10 +186,12 @@ export class ContextRuntimeKitContextEngine implements ContextEngine {
       skillsMetadata: params.skillsMetadata,
     });
     const artifact = compileCvkFixtureSources(fixtureInput);
+    const toolCallGateMode = resolveCvkToolCallGateMode(this.options.toolCallGateMode);
     const systemPromptAddition = formatPromptAddition({
       artifact,
       input: fixtureInput,
       maxChars: this.options.maxPromptAdditionChars ?? DEFAULT_MAX_PROMPT_ADDITION_CHARS,
+      toolCallGateMode,
       contextStatusLines: this.options.contextStatusEnabled
         ? formatContextStatusProjection({
             sessionId: params.sessionId,

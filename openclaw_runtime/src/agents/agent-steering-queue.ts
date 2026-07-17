@@ -29,6 +29,7 @@ import {
   runVerifierGate,
   type GateResult,
 } from "./orchestration-gates.js";
+import { buildVerifierReport } from "./orchestration-verifier-report.js";
 
 // Steering queue utilities for delivering completed subagent results back into
 // the requester session. Items are leased before injection to avoid duplicate
@@ -310,29 +311,10 @@ function verifierReportFor(
   if (!verifier) {
     return undefined;
   }
-  const text = selectResultText(verifier.payload) ?? "";
-  const failed = verifier.payload.outcome?.status === "error" || /\b(fail|failed|refuted|reject|rejected)\b/iu.test(text);
-  const repairRequired = /\b(repair required|repair_required|needs repair|replan required)\b/iu.test(text);
-  const decision: VerificationReport["decision"] = failed ? "fail" : repairRequired ? "repair_required" : "pass";
-  const evidenceRefs: BundleEvidenceRef[] = [{
-    type: "run",
-    ref: verifier.payload.childRunId,
-    roleName: verifier.payload.orchestration?.roleName ?? verifier.payload.label,
-    ...(verifier.payload.orchestration?.taskId ? { taskId: verifier.payload.orchestration.taskId } : {}),
-  }];
-  return {
-    decision,
-    verifierRole: verifier.payload.orchestration?.roleName ?? verifier.payload.label,
-    childRunId: verifier.payload.childRunId,
-    evidenceRefs,
-    reasons: decision === "pass"
-      ? []
-      : [{
-          code: decision === "repair_required" ? "verifier_repair_required" : "verifier_failed",
-          message: text.trim() || describeOutcome(verifier.payload),
-          evidenceRefs,
-        }],
-  };
+  return buildVerifierReport({
+    payload: verifier.payload,
+    resultText: selectResultText(verifier.payload),
+  });
 }
 
 function roleOutcomeFromItem(item: AgentSteeringQueueItem): RoleOutcomeBundle {

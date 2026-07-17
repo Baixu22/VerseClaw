@@ -1,0 +1,66 @@
+{
+  "taskId": "P2-005",
+  "generatedAt": "2026-07-17T06:50:49.708Z",
+  "files": [
+    {
+      "path": "openclaw_runtime/src/context-engine/cvk/tool-call-gate.ts",
+      "sha256": "3264642eae902e4cd3e6d6275eef0a3b42207a65cce64699ecea5962a75078e9",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/cvk/engine.ts",
+      "sha256": "2dd721044943cfe472584cf33ac36c5763e87d5df22e381578c320cdf1f8f77b",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-spine/gate-engine.ts",
+      "sha256": "9eab495d51784153f32e2fadf1598b9088296e2282ede90a56bf1141bb9d365f",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-verifier-report.ts",
+      "sha256": "512e6c2e19d83e5a6aae5fad886b4daadecb311f7b2f227f5eabaabac01e0a31",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-steering-queue.ts",
+      "sha256": "1f7e260be89b25172499272a8542b5b2cfc0e063833975fead0661631b230311",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry.types.ts",
+      "sha256": "253a14c1e7cc329151ba8f8619afc77a93f71b7a63af7721385097a773f0f80a",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/context-runtime-kit-tool-call-gate.test.ts",
+      "sha256": "3f44f05a534a81b7a7f8e55064dcb9707761cd6f5c6dff93d5ad3e750a70032f",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/runtime-spine-gate-engine-p2-005.test.ts",
+      "sha256": "690a41ee950adef127538fc580f6424a76c7df61520c0797efa53c01e800bbb8",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+      "sha256": "ac689aa6369742732c210e828ac3c2dd4210dd989485fa0ae488b6b4e48ca596",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P2-005/vitest.stdout.txt",
+      "sha256": "14581a2fa31acc7676ce72c45132cbaf16b75f882c0c519ca93bc68af2a023aa",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P2-005/acceptance-matrix.json",
+      "sha256": "4eafc7fb455327247b62e585abd4634d124c533c63ea6c817e0e52234034c424",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P2-005/P2-005.delivery.md",
+      "sha256": "654389722cd709bbc742b722342c01cf352abc48f39f8d2931e1e672032a4ab9",
+      "exists": true
+    }
+  ]
+}

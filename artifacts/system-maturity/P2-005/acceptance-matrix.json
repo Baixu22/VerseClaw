@@ -1,0 +1,33 @@
+{
+  "A1": {
+    "id": "A1",
+    "statement": "High-risk actions are denied in blocking/enforce mode",
+    "status": "passed",
+    "proof": [
+      "CVK enforce mode sets denied=true and severity=block when selectors missing",
+      "Runtime Spine default authorityOverrides for destructive_op/pre_mutation = blocking",
+      "Failed checker or thrown checker under blocking => status blocked",
+      "unit: context-runtime-kit-tool-call-gate enforce + runtime-spine-gate-engine-p2-005"
+    ]
+  },
+  "A2": {
+    "id": "A2",
+    "statement": "Text heuristics alone cannot authorize pass",
+    "status": "passed",
+    "proof": [
+      "buildVerifierReport requires structured verificationVerdict or outcome.status for pass",
+      "Adversarial free-text pass corpus yields missing_structured_verdict fail",
+      "unit: orchestration-verifier-report-p2-005 adversarial cases"
+    ]
+  },
+  "A3": {
+    "id": "A3",
+    "statement": "Missing provenance does not elevate trust",
+    "status": "passed",
+    "proof": [
+      "Absent outcome and unstructured text => decision fail with missing_structured_verdict",
+      "Text fail/repair heuristics fail-closed only; never alone grant pass",
+      "TeamOrchestrationMetadata.verificationVerdict is the preferred structured field"
+    ]
+  }
+}

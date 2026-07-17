@@ -106,3 +106,60 @@ describe('Context Runtime Kit report-only tool call gate', () => {
     ]);
   });
 });
+
+
+describe('Context Runtime Kit enforce tool call gate (P2-005 / F-AUTH-003)', () => {
+  it('denies tool calls when required selectors are missing in enforce mode', () => {
+    const result = verifyCvkToolCallSelectors({
+      artifact: loadArtifact(),
+      mode: 'enforce',
+      resourceId: TOOL_RESOURCE_ID,
+      toolName: TOOL_NAME,
+      retrievedSelectors: [],
+    });
+
+    expect(result.mode).toBe('enforce');
+    expect(result.ok).toBe(false);
+    expect(result.wouldBlock).toBe(true);
+    expect(result.denied).toBe(true);
+    expect(result.diagnostics.length).toBeGreaterThan(0);
+    expect(result.diagnostics.every((d) => d.severity === 'block')).toBe(true);
+    expect(result.diagnostics[0]?.message).toMatch(/Enforce tool gate blocks/);
+  });
+
+  it('allows tool calls when all required selectors are present in enforce mode', () => {
+    const result = verifyCvkToolCallSelectors({
+      artifact: loadArtifact(),
+      mode: 'enforce',
+      resourceId: TOOL_RESOURCE_ID,
+      toolName: TOOL_NAME,
+      retrievedSelectors: REQUIRED_SELECTORS,
+    });
+
+    expect(result).toMatchObject({
+      ok: true,
+      mode: 'enforce',
+      wouldBlock: false,
+      denied: false,
+      missingSelectors: [],
+      diagnostics: [],
+    });
+  });
+
+  it('keeps report_only non-denying even when selectors are missing', () => {
+    const result = verifyCvkToolCallSelectors({
+      artifact: loadArtifact(),
+      mode: 'report_only',
+      resourceId: TOOL_RESOURCE_ID,
+      toolName: TOOL_NAME,
+      retrievedSelectors: [],
+    });
+
+    expect(result.mode).toBe('report_only');
+    expect(result.ok).toBe(false);
+    expect(result.wouldBlock).toBe(true);
+    expect(result.denied).toBe(false);
+    expect(result.diagnostics.every((d) => d.severity === 'would_block')).toBe(true);
+  });
+});
+
