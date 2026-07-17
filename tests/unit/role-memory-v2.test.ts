@@ -404,6 +404,7 @@ describe('role memory v2 governance', () => {
     const simulation = simulateMemoryInjection({
       roleName: 'architect',
       task: 'Check role memory native MEMORY boundary',
+      dualGate: { useEnabled: true },
     });
     const simulated = simulation.pack.candidateExplanations?.find((entry) => entry.cardId === decision.card!.id);
     const realPack = buildContextPack({

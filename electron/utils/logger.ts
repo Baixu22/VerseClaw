@@ -87,7 +87,6 @@ let purgedCount = 0;
 const recentLogs: string[] = [];
 let writeBuffer: string[] = [];
 let flushTimer: NodeJS.Timeout | null = null;
-let flushing = false;
 
 let lastWriteOkAt: string | null = null;
 let lastWriteError: string | null = null;
@@ -107,16 +106,16 @@ export function redactLogText(input: string): string {
   let text = input;
 
   // Explicit canary tokens used by maturity / boundary tests.
-  text = text.replace(/\bCLAWX_CANARY_[A-Za-z0-9_\-]{6,}\b/g, `[${REDACTED}_CANARY]`);
-  text = text.replace(/\bOPENCLAW_CANARY_[A-Za-z0-9_\-]{6,}\b/g, `[${REDACTED}_CANARY]`);
+  text = text.replace(/\bCLAWX_CANARY_[A-Za-z0-9_-]{6,}\b/g, `[${REDACTED}_CANARY]`);
+  text = text.replace(/\bOPENCLAW_CANARY_[A-Za-z0-9_-]{6,}\b/g, `[${REDACTED}_CANARY]`);
 
   // Bearer / Basic auth headers and inline tokens.
-  text = text.replace(/\bBearer\s+[A-Za-z0-9._\-+=/]{12,}\b/gi, `Bearer ${REDACTED}`);
+  text = text.replace(/\bBearer\s+[A-Za-z0-9._+=/-]{12,}\b/gi, `Bearer ${REDACTED}`);
   text = text.replace(/\bBasic\s+[A-Za-z0-9+/=]{12,}\b/gi, `Basic ${REDACTED}`);
 
   // Common provider key shapes (OpenAI sk-, sk-proj-, Anthropic-style).
-  text = text.replace(/\bsk-proj-[A-Za-z0-9_\-]{16,}\b/g, `sk-proj-${REDACTED}`);
-  text = text.replace(/\bsk-ant-[A-Za-z0-9_\-]{16,}\b/g, `sk-ant-${REDACTED}`);
+  text = text.replace(/\bsk-proj-[A-Za-z0-9_-]{16,}\b/g, `sk-proj-${REDACTED}`);
+  text = text.replace(/\bsk-ant-[A-Za-z0-9_-]{16,}\b/g, `sk-ant-${REDACTED}`);
   text = text.replace(/\bsk-[A-Za-z0-9]{20,}\b/g, `sk-${REDACTED}`);
 
   // ENV / assignment forms: API_KEY=..., token: "...", "apiKey":"..."
@@ -220,7 +219,6 @@ export function resetLoggerForTests(): void {
     flushTimer = null;
   }
   writeBuffer = [];
-  flushing = false;
   flushChain = Promise.resolve();
   recentLogs.length = 0;
   logFilePath = null;
@@ -427,7 +425,6 @@ async function flushBuffer(): Promise<void> {
   // Serialize flushes so callers (and tests) can await completion.
   const run = async (): Promise<void> => {
     if (writeBuffer.length === 0 || !logFilePath) return;
-    flushing = true;
     const batch = writeBuffer.join('');
     writeBuffer = [];
     try {
@@ -440,8 +437,6 @@ async function flushBuffer(): Promise<void> {
     } catch (err) {
       recordWriteFailure(err);
       // Do not re-queue batch on ENOSPC/EACCES — would grow forever.
-    } finally {
-      flushing = false;
     }
   };
   const next = flushChain.then(run, run);

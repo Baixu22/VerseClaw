@@ -1,4 +1,4 @@
-import { test, expect, openAgentDevScenario } from './fixtures/electron';
+import { test, expect, installIpcMocks, openAgentDevScenario } from './fixtures/electron';
 import { scanBasicAccessibility } from './fixtures/a11y';
 import { writeFile } from 'node:fs/promises';
 
@@ -21,7 +21,20 @@ test.describe('agent dev quality gates', () => {
     expect(report.issueCount).toBeLessThanOrEqual(maxIssues);
   });
 
-  test('renders assistant-ui welcome suggestions with aligned card styling', async ({ page }, testInfo) => {
+  test('renders assistant-ui welcome suggestions with aligned card styling', async ({ electronApp, page }, testInfo) => {
+    await installIpcMocks(electronApp, {
+      gatewayStatus: {
+        state: 'running',
+        port: 18789,
+        pid: 12345,
+        connectedAt: Date.now(),
+        gatewayReady: true,
+      },
+      gatewayRpc: {
+        '["sessions.list",null]': { sessions: [] },
+        '["chat.history",null]': { messages: [] },
+      },
+    });
     await openAgentDevScenario(page, 'chat-empty', { visualMode: true });
     await page.setViewportSize({ width: 1440, height: 900 });
     await expect(page.getByTestId('main-layout')).toBeVisible();

@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import {
   assertMemoryDefaultOffConsistent,
@@ -126,8 +126,6 @@ describe('P3-003 Memory/COMPASS dual gate + poison revoke', () => {
     expect(DEFAULT_MEMORY_RUNTIME_CONFIG.featureFlags.enablePreReplyRetrieval).toBe(false);
     expect(DEFAULT_MEMORY_RUNTIME_CONFIG.featureFlags.enableSessionStatePage).toBe(false);
 
-    const memoryUi = (enAgents as { agents?: { detail?: Record<string, string> } }).agents?.detail
-      ?? (enAgents as Record<string, unknown>);
     // agents.json nests under roles/detail differently — probe known keys via JSON stringify
     const json = JSON.stringify(enAgents);
     expect(json).toContain('Role Memory is off');

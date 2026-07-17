@@ -71,7 +71,7 @@ const currentReport = {
   generatedAt: "2026-07-04T08:00:00.000Z",
 };
 
-const ARTIFACT_DIR = join(process.cwd(), "artifacts", "runtime-memory-eval");
+const ARTIFACT_DIR = join(process.cwd(), "tests", "fixtures", "runtime-memory-eval");
 
 // === normalizeReportMetrics ===
 

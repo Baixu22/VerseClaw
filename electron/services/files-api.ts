@@ -190,16 +190,16 @@ async function resolveSandboxedPath(
     expanded = assertSafeHostFilePath(expandPath(input));
   } catch (error) {
     if (error instanceof PathBrokerError) {
-      throw new Error(error.code);
+      throw new Error(error.code, { cause: error });
     }
-    throw new Error('outsideSandbox');
+    throw new Error('outsideSandbox', { cause: error });
   }
   let real: string;
   try {
     real = await realpathOrResolve(expanded);
   } catch (error) {
     if (error instanceof PathBrokerError) {
-      throw new Error(error.code);
+      throw new Error(error.code, { cause: error });
     }
     real = resolve(expanded);
   }
@@ -625,4 +625,3 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
     },
   };
 }
-

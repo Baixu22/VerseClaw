@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-003",
-  "checkedAt": "2026-07-17T04:02:22.472Z",
+  "checkedAt": "2026-07-17T23:23:33.007Z",
   "ok": true,
   "selectedLoop": "release",
   "releaseCommands": [
@@ -9,10 +9,13 @@
     "node scripts/validate-system-maturity-plan.mjs",
     "node scripts/validate-test-gates.mjs",
     "pnpm contract:check",
+    "pnpm test",
+    "pnpm run lint:check",
     "pnpm run typecheck",
     "pnpm run harness:ci",
     "pnpm agent-dev:deep-test",
     "pnpm run test:e2e:agent-dev-quality",
+    "pnpm run maturity:validate",
     "pnpm run release:validate"
   ],
   "prCommands": [
@@ -36,6 +39,7 @@
     "A2 forbidden release evidence ids not present in release.commands",
     "vitest.config.ts passWithNoTests:false",
     "vitest.agent-dev.node.config.ts passWithNoTests:false",
-    "vitest.runtime-effectiveness.config.ts passWithNoTests:false"
+    "vitest.runtime-effectiveness.config.ts passWithNoTests:false",
+    "A1 empty test shard failed as required (exit=1)"
   ]
 }

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Session hard-delete cascade + TTL (P3-004 / F-DATA-005).
  *
  * Cascades delete across SEKB principles/trajectories, session-scoped memory,

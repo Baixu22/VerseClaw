@@ -23,6 +23,7 @@ requiredRules:
   - windows-release-signing-policy
   - supply-chain-integrity-pinning
   - release-artifact-attestation-integrity
+  - clean-release-baseline-reproducibility
 ---
 
 Windows release trust covers the policy and evidence chain from release channel

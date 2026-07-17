@@ -1,4 +1,4 @@
-﻿/**
+/**
  * P2-004 / F-ISO-001: High-risk action gate when strong sandbox is degraded
  * to policy-light. Degraded mode forces per-action approval (or fail-closed
  * where no approval path exists). Intentionally choosing policy-light
@@ -76,6 +76,7 @@ export function classifyAgentBrowserAction(
     || normalized === 'list'
     || normalized === 'takeSnapshot'
     || normalized === 'takesnapshot'
+    || normalized === 'close'
   ) {
     return null;
   }

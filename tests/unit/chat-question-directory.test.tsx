@@ -40,6 +40,7 @@ const chatState = {
   currentAgentId: 'main',
   sessionLabels: {},
   loading: false,
+  startupPhase: 'ready',
   loadingMoreHistory: false,
   hasMoreHistory: false,
   sending: false,
@@ -57,6 +58,7 @@ const chatState = {
   refresh: vi.fn(),
   refreshTaskLedger: vi.fn(),
   cleanupEmptySession: vi.fn(),
+  hydrateStartup: vi.fn(),
   lastUserMessageAt: null,
 };
 

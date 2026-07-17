@@ -28,8 +28,59 @@ jobs:
       - name: Assert tag matches package.json
         run: node scripts/assert-tag-matches-package.mjs
 
-  release:
+  # P6-005: packaging cannot start until a clean, ref-bound source snapshot has
+  # passed every full release gate with hash-addressed evidence.
+  release-baseline:
     needs: validate-release
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact release source
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Prefer HTTPS for public GitHub git dependencies
+        run: |
+          git config --global "url.https://github.com/.insteadOf" "git@github.com:"
+          git config --global --add "url.https://github.com/.insteadOf" "ssh://git@github.com/"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: P6-005 collect clean release baseline evidence
+        shell: pwsh
+        run: |
+          $version = if ($env:GITHUB_REF.StartsWith('refs/tags/v')) {
+            $env:GITHUB_REF.Substring('refs/tags/v'.Length)
+          } else {
+            '${{ github.event.inputs.version }}'
+          }
+          node scripts/collect-p6-005-evidence.mjs `
+            --out "$env:RUNNER_TEMP\release-baseline" `
+            --version "$version" `
+            --ref "$env:GITHUB_REF" `
+            --commit "$env:GITHUB_SHA"
+
+      - name: Upload P6-005 release baseline evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-baseline
+          path: ${{ runner.temp }}/release-baseline
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    needs: release-baseline
     strategy:
       matrix:
         include:
@@ -47,6 +98,28 @@ jobs:
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
+
+      - name: Download P6-005 release baseline evidence
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release-baseline
+          path: ${{ runner.temp }}/release-baseline
+
+      - name: P6-005 verify source and full-gate evidence before packaging
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          node scripts/validate-release-baseline.mjs \
+            --manifest "${RUNNER_TEMP}/release-baseline/release-source-manifest.json" \
+            --evidence "${RUNNER_TEMP}/release-baseline/release-gate-evidence.json" \
+            --version "${VERSION}" \
+            --ref "${GITHUB_REF}" \
+            --commit "${GITHUB_SHA}"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4

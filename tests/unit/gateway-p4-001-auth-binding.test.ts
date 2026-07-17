@@ -1,4 +1,4 @@
-﻿import { EventEmitter } from 'node:events';
+import { EventEmitter } from 'node:events';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { registerAgentBrowserGatewayBridge } from '@electron/gateway/agent-browser-bridge';
 import {

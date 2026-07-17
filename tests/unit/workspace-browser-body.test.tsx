@@ -119,7 +119,7 @@ describe('WorkspaceBrowserBody', () => {
     expect(frame).toBeVisible();
     expect(frame).toHaveAttribute(
       'sandbox',
-      'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-downloads',
+      'allow-scripts allow-forms allow-presentation',
     );
     expect(screen.queryByText('<!doctype html>')).not.toBeInTheDocument();
   });

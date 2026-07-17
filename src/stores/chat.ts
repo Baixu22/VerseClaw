@@ -29,11 +29,9 @@ import {
 import { loadSessionTranscriptFallback } from './chat/history-transcript-fallback';
 import {
   capMessagesForMemory,
-  evaluateTurnBudget,
   formatBudgetRejection,
   getAgentResourceLimits,
   isTurnTimedOut,
-  type SessionUsageSnapshot,
 } from '../../shared/agent-resource-limits';
 import { hydrateGatewayHistoryFromTranscript } from './chat/history-transcript-hydrate';
 import {
@@ -528,7 +526,11 @@ function getGatewayRuntimeKey(): string {
 }
 
 function isGatewayReadyForChat(): boolean {
-  const { status } = useGatewayStore.getState();
+  const getState = (useGatewayStore as typeof useGatewayStore & {
+    getState?: typeof useGatewayStore.getState;
+  }).getState;
+  if (typeof getState !== 'function') return false;
+  const { status } = getState();
   return status.state === 'running' && status.gatewayReady !== false;
 }
 
@@ -3783,6 +3785,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             void refreshVisibleSessionSummaries(set, get);
           }
         } else {
+          if (!isCurrentSession()) return;
           const errorKind = classifyHistoryStartupRetryError(lastError);
           if (isCurrentSession() && isInitialForegroundLoad && errorKind) {
             console.warn('[chat.history] startup retry exhausted', {

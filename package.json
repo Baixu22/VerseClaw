@@ -167,7 +167,10 @@
     "release:supply-chain-policy:evidence:full": "node scripts/collect-p6-003-evidence.mjs --full",
     "release:trust-policy": "node scripts/validate-release-trust-metadata.mjs --builder-config electron-builder.yml --workflow .github/workflows/release.yml",
     "release:trust-policy:evidence": "node scripts/collect-p6-004-evidence.mjs",
-    "release:trust-policy:evidence:full": "node scripts/collect-p6-004-evidence.mjs --full"
+    "release:trust-policy:evidence:full": "node scripts/collect-p6-004-evidence.mjs --full",
+    "release:baseline:manifest": "node scripts/release-baseline-manifest.mjs",
+    "release:baseline:validate": "node scripts/validate-release-baseline.mjs",
+    "release:baseline:evidence": "node scripts/collect-p6-005-evidence.mjs"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",

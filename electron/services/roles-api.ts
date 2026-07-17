@@ -17,10 +17,7 @@ import {
 } from '../../openclaw_runtime/src/agents/agency-role-importer';
 import type { AgencyDraftRoleEntry } from '../../openclaw_runtime/src/agents/agency-draft-catalog';
 import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contract';
-import {
-  BUILT_IN_ROLE_NAMES as RUNTIME_BUILT_IN_ROLE_NAMES,
-  isBuiltInRoleName,
-} from '../../openclaw_runtime/src/agents/role-contract';
+import { isBuiltInRoleName } from '../../openclaw_runtime/src/agents/role-contract';
 import {
   createRolePromotionStore,
   type AnyStoredAgencyRolePromotionRecord,
@@ -60,9 +57,6 @@ type OpenClawConfigWithRoles = OpenClawConfig & {
 };
 
 const CONFIG_ROLE_NAME_PATTERN = /^[a-z][a-z0-9-]{1,63}$/;
-// P2-003 / F-AUTH-002: built-in role names are owned by runtime role-contract.ts
-const BUILT_IN_ROLE_NAMES = RUNTIME_BUILT_IN_ROLE_NAMES;
-
 function stringList(value: unknown): string[] {
   const raw = Array.isArray(value) ? value : [];
   const seen = new Set<string>();
